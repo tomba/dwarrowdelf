@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TerrainInfos>
+  <TerrainInfo>
+    <Name>dummy</Name>
+    <IsWalkable>true</IsWalkable>
+  </TerrainInfo>
+  <TerrainInfo>
+    <Name>Dungeon Floor</Name>
+    <IsWalkable>true</IsWalkable>
+    <CharSymbol>.</CharSymbol>
+  </TerrainInfo>
+  <TerrainInfo>
+    <Name>Dungeon Wall</Name>
+    <IsWalkable>false</IsWalkable>
+    <CharSymbol>#</CharSymbol>
+  </TerrainInfo>
+</TerrainInfos>

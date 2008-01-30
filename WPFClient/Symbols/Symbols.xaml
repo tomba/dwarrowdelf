@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingImage x:Key="Dungeon Wall">
+		<DrawingImage.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FF383325" Geometry="F1 M 3.97364e-007,0L 32,0L 32,32L 3.97364e-007,32L 3.97364e-007,0 Z "/>
+					<GeometryDrawing Brush="#FFE1AF22" Geometry="F1 M 4.33269,13.7203L 15.9388,13.7203L 15.9388,27.1696L 4.33269,27.1696L 4.33269,13.7203 Z "/>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingImage.Drawing>
+	</DrawingImage>
+	<DrawingImage x:Key="Dungeon Floor">
+		<DrawingImage.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 47.5484,12.9738C 49.2475,12.9738 50.6249,14.3726 50.6249,16.0982C 50.6249,17.8237 49.2475,19.2225 47.5484,19.2225C 45.8494,19.2225 44.472,17.8237 44.472,16.0982C 44.472,14.3726 45.8493,12.9738 47.5484,12.9738 Z ">
+						<GeometryDrawing.Brush>
+							<RadialGradientBrush RadiusX="0.651211" RadiusY="0.656135" Center="0.442847,0.19127" GradientOrigin="0.442847,0.19127">
+								<RadialGradientBrush.GradientStops>
+									<GradientStop Color="#FFF9FFEB" Offset="0"/>
+									<GradientStop Color="#FFC6E19D" Offset="0.15918"/>
+									<GradientStop Color="#FF9FC82D" Offset="0.464844"/>
+									<GradientStop Color="#FF3E5912" Offset="0.814453"/>
+								</RadialGradientBrush.GradientStops>
+								<RadialGradientBrush.RelativeTransform>
+									<TransformGroup>
+										<SkewTransform CenterX="0.442847" CenterY="0.19127" AngleX="-0.771017" AngleY="0"/>
+										<RotateTransform CenterX="0.442847" CenterY="0.19127" Angle="59.3562"/>
+									</TransformGroup>
+								</RadialGradientBrush.RelativeTransform>
+							</RadialGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingImage.Drawing>
+	</DrawingImage>
+	<DrawingImage x:Key="Player">
+		<DrawingImage.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FFFF5000" Geometry="F1 M 79.8763,11.0903C 82.3156,11.0903 84.293,13.9257 84.293,17.4236C 84.293,20.9214 82.3156,23.7569 79.8763,23.7569C 77.4371,23.7569 75.4597,20.9214 75.4597,17.4236C 75.4597,13.9257 77.437,11.0903 79.8763,11.0903 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF5000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF5000" Geometry="F1 M 72.9661,10.7235C 75.8893,12.3481 77.9329,14.2521 77.5305,14.9763C 77.1281,15.7004 74.4321,14.9704 71.5088,13.3458C 68.5855,11.7211 66.5419,9.8172 66.9443,9.09308C 67.3467,8.36896 70.0428,9.09894 72.9661,10.7235 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF5000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF5000" Geometry="F1 M 86.8143,10.8347C 83.891,12.4592 81.8474,14.3632 82.2499,15.0873C 82.6523,15.8115 85.3483,15.0815 88.2716,13.4568C 91.1949,11.8323 93.2385,9.92828 92.836,9.20416C 92.4336,8.48004 89.7376,9.21002 86.8143,10.8347 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF5000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF5000" Geometry="F1 M 73.9432,25.0781C 71.8104,27.6541 70.5986,30.1707 71.2368,30.699C 71.8749,31.2273 74.1211,29.5673 76.2539,26.9912C 78.3868,24.4152 79.5985,21.8986 78.9604,21.3703C 78.3223,20.842 76.076,22.502 73.9432,25.0781 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF5000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFF5000" Geometry="F1 M 85.2539,25.1336C 87.3867,27.7097 88.5984,30.2263 87.9604,30.7546C 87.3222,31.2829 85.076,29.6229 82.9432,27.0468C 80.8103,24.4708 79.5986,21.9542 80.2367,21.4258C 80.8748,20.8975 83.1211,22.5576 85.2539,25.1336 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF5000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FFFFFC00" Geometry="F1 M 80.1081,1.35699C 82.9702,1.35699 85.2902,3.40485 85.2902,5.93121C 85.2902,8.45746 82.9701,10.5054 80.1081,10.5054C 77.2461,10.5054 74.926,8.45746 74.926,5.93121C 74.926,3.40485 77.2461,1.35699 80.1081,1.35699 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FFFF0000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FF000000" Geometry="F1 M 78.5708,3.86792C 79.0003,3.86792 79.3485,4.21613 79.3485,4.64575C 79.3485,5.07532 79.0003,5.42352 78.5708,5.42352C 78.1412,5.42352 77.793,5.07532 77.793,4.64575C 77.793,4.21613 78.1412,3.86792 78.5708,3.86792 Z "/>
+					<GeometryDrawing Brush="#FF000000" Geometry="F1 M 81.293,3.70135C 81.7839,3.70135 82.1819,4.0993 82.1819,4.59021C 82.1819,5.08112 81.7839,5.47906 81.293,5.47906C 80.8021,5.47906 80.4041,5.08112 80.4041,4.59021C 80.4041,4.0993 80.8021,3.70135 81.293,3.70135 Z "/>
+					<GeometryDrawing Geometry="F1 M 76.8486,6.29742C 76.8486,10.0279 82.8327,10.0279 83.293,6.2569">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF000000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingImage.Drawing>
+	</DrawingImage>
+</ResourceDictionary>

@@ -1,0 +1,31 @@
+﻿<Window x:Class="MyGame.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MyGame"
+    Title="Window1" Height="424" Width="608"
+        >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" />
+
+        <StackPanel Grid.Column="1" Grid.RowSpan="2">
+            <Button>foo</Button>
+            <Button>foo</Button>
+        </StackPanel>
+        
+        <TextBox Name="logTextBox" Grid.ColumnSpan="2" Grid.Row="1" VerticalScrollBarVisibility="Visible"
+                 IsReadOnly="True" FontFamily="Lucida Console"/>
+        
+        <GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Grid.Row="0"
+                      ShowsPreview="True" Height="5" ResizeDirection="Rows"/>
+</Grid>
+    </Window>
