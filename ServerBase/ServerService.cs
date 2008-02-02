@@ -14,6 +14,7 @@ namespace MyGame
 
 		World m_world;
 		ServerGameObject m_player;
+		InteractiveActor m_actor;
 
 		public ServerService()
 		{
@@ -32,12 +33,18 @@ namespace MyGame
 			World.CurrentWorld = m_world;
 
 
+			// xxx
 			var monster = new ServerGameObject();
 			monster.MoveTo(m_world.Map, new Location(2, 5));
-
+			var monsterAI = new MonsterActor(monster);
+			m_world.AddActor(monsterAI);
 
 			m_world.ChangesEvent += new HandleChanges(m_world_ChangesEvent);
+
 			m_player = new ServerGameObject();
+			m_actor = new InteractiveActor();
+			m_player.SetActor(m_actor);
+			m_world.AddActor(m_actor);
 
 			m_client.LoginReply(m_player.ObjectID);
 
@@ -89,6 +96,7 @@ namespace MyGame
 			MyDebug.WriteLine("Logout");
 			World.CurrentWorld = m_world;
 			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
+			m_world.RemoveActor(m_actor);
 
 			m_client = null;
 		}
@@ -99,7 +107,7 @@ namespace MyGame
 			if (action.ObjectID != m_player.ObjectID)
 				throw new Exception("Illegal ob id");
 
-			m_world.Dispatcher.EnqueueAction(action);
+			m_actor.EnqueueAction(action);
 		}
 
 		public void ToggleTile(Location l)

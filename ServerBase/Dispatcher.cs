@@ -18,6 +18,7 @@ namespace MyGame
 		{
 			m_world = world;
 			m_performCallback = performCallback;
+			
 		}
 
 		public void EnqueueAction(GameAction action)

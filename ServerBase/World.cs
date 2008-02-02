@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MyGame
 {
@@ -17,16 +19,88 @@ namespace MyGame
 		public Dispatcher Dispatcher { get; private set; }
 		public List<Change> m_changeList = new List<Change>();
 
+		List<IActor> m_actorList;
+
 		AreaDefinition m_area;
 		MapLevel m_map;
 
+		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
+
 		public World()
 		{
-			this.Dispatcher = new Dispatcher(this, PerformAction);
+			//this.Dispatcher = new Dispatcher(this, PerformAction);
 
-			m_area = new AreaDefinition();
+			m_area = new AreaDefinition(this);
 			m_map = m_area.GetLevel(1);
+			m_actorList = new List<IActor>();
+
+			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, true);
 		}
+
+		internal void AddActor(IActor actor)
+		{
+			lock (m_actorList)
+			{
+				m_actorList.Add(actor);
+				actor.ActionQueuedEvent += SignalActorStateChanged;
+			}
+		}
+
+		internal void RemoveActor(IActor actor)
+		{
+			lock (m_actorList)
+			{
+				actor.ActionQueuedEvent -= SignalActorStateChanged;
+				bool removed = m_actorList.Remove(actor);
+				Debug.Assert(removed);
+			}
+		}
+
+		internal void SignalActorStateChanged()
+		{
+			Debug.WriteLine("SignalActor");
+			m_actorEvent.Set();
+		}
+
+		void Tick(object state, bool timedOut)
+		{
+			Debug.WriteLine("Tick");
+			lock (m_actorList)
+			{
+				while (true)
+				{
+					int count = 0;
+					foreach (IActor ob in m_actorList)
+					{
+						if (ob.PeekAction() != null)
+							count++;
+					}
+
+					if (count != m_actorList.Count)
+						break;
+
+					// All actors are ready
+
+					foreach (IActor ob in m_actorList)
+					{
+						GameAction action = ob.PeekAction();
+						// if action was cancelled just now, the actor misses the turn
+						if (action == null)
+							continue;
+
+						bool done = PerformAction(action);
+
+						if (done)
+							ob.DequeueAction();
+					}
+				}
+
+				SendChanges();
+			}
+			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, true);
+			Debug.WriteLine("Tick done");
+		}
+
 
 		public void AddChange(Change change)
 		{
@@ -55,7 +129,7 @@ namespace MyGame
 			get { return m_map; }
 		}
 
-		void PerformAction(GameAction action)
+		bool PerformAction(GameAction action)
 		{
 			ServerGameObject ob = FindObject(action.ObjectID);
 
@@ -66,8 +140,22 @@ namespace MyGame
 			{
 				MoveAction ma = (MoveAction)action;
 				ob.MoveDir(ma.Direction);
+				return true;
 			}
+			else if (action is WaitAction)
+			{
+				WaitAction wa = (WaitAction)action;
+				wa.Turns--;
+				if (wa.Turns == 0)
+					return true;
+				else 
+					return false;
+			}
+			else
+				throw new NotImplementedException();
 		}
+
+
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 
@@ -96,6 +184,7 @@ namespace MyGame
 		{
 			return new ObjectID(m_objectIDcounter++);
 		}
+
 	}
 }
 	

@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract, KnownType(typeof(MoveAction))]
+	[DataContract, KnownType(typeof(MoveAction)), KnownType(typeof(WaitAction))]
 	public abstract class GameAction
 	{
 		GameObject m_target;
@@ -33,4 +33,18 @@ namespace MyGame
 			this.Direction = direction;
 		}
 	}
+	[DataContract]
+	public class WaitAction : GameAction
+	{
+		[DataMember]
+		public int Turns { get; set; }
+
+		public WaitAction(GameObject target, int turns)
+			: base(target)
+		{
+			this.Turns = turns;
+		}
+	}
+
+
 }

@@ -399,12 +399,19 @@ namespace MyGame
 				case Key.End: dir = Direction.DownLeft; break;
 				case Key.PageUp: dir = Direction.UpRight; break;
 				case Key.PageDown: dir = Direction.DownRight; break;
+
+				case Key.Space:
+					{
+						e.Handled = true;
+						GameData.Data.Connection.Server.DoAction(new WaitAction(GameData.Data.Player, 1));
+						return;
+					}
+
 				default:
 					return;
 			}
 
 			e.Handled = true;
-
 			GameData.Data.Connection.Server.DoAction(new MoveAction(GameData.Data.Player, dir));
 		}
 

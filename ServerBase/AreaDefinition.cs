@@ -11,11 +11,14 @@ namespace MyGame
 {
 	class AreaDefinition
 	{
+		public World World { get; private set; }
 		public TerrainInfo[] Terrains { get; protected set; }
 		MapLevel m_map;
 
-		public AreaDefinition()
+		public AreaDefinition(World world)
 		{
+			this.World = world;
+
 			System.Reflection.Assembly thisExe = System.Reflection.Assembly.GetExecutingAssembly();
 			System.IO.Stream resStream = thisExe.GetManifestResourceStream("MyGame.Symbols.xml");
 

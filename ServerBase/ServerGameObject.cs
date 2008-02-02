@@ -9,6 +9,15 @@ namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, MapLevel e, Location l);
 
+	interface IActor
+	{
+		void EnqueueAction(GameAction action);
+		GameAction DequeueAction();
+		GameAction PeekAction();
+
+		event Action ActionQueuedEvent;
+	}
+
 	class ServerGameObject : GameObject
 	{
 		public int SymbolID { get; protected set; }
@@ -20,12 +29,20 @@ namespace MyGame
 
 		public event ObjectMoved ObjectMoved;
 
+		IActor m_actorImpl;
+
 		public ServerGameObject()
 			: base(World.CurrentWorld.GetNewObjectID())
 		{
 			this.SymbolID = 3;
 			World.CurrentWorld.AddGameObject(this);
 		}
+
+		public void SetActor(IActor actor)
+		{
+			m_actorImpl = actor;
+		}
+
 
 		public bool MoveTo(MapLevel level, Location l)
 		{
