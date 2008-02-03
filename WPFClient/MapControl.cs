@@ -62,7 +62,7 @@ namespace MyGame
 
 			foreach(Location l in m_mapTiles.GetLocations())
 			{
-				MapTile tile = new MapTile();
+				MapTile tile = new MapTile(this);
 				m_mapTiles[l] = tile;
 				this.AddVisualChild(tile);
 			}
@@ -277,14 +277,14 @@ namespace MyGame
 			PopulateMapTiles(); // xxx update all for now
 		}
 
-		Location ScreenToMap(Location sl)
+		public Location ScreenToMap(Location sl)
 		{
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;
 			return new Location(sl.X + dx, sl.Y + dy);
 		}
 
-		Location MapToScreen(Location ml)
+		public Location MapToScreen(Location ml)
 		{
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;

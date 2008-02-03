@@ -85,9 +85,9 @@ namespace MyGame
 						// we should only get changes about events on this level
 						// so if an ob doesn't have an env, it must be here
 						if (ob.Environment == null)
-							ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.Location);
+							ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.TargetLocation);
 						else
-							ob.Location = lc.Location;
+							ob.Location = lc.TargetLocation;
 					}
 					else
 						throw new NotImplementedException();

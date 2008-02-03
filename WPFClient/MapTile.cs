@@ -12,9 +12,12 @@ namespace MyGame
 	{
 		BitmapSource m_bmp;
 		BitmapSource m_objectBmp;
+		
+		MapControl m_mapControl; // for debugging. remove later
 
-		public MapTile()
+		public MapTile(MapControl mapControl)
 		{
+			m_mapControl = mapControl;
 			this.IsHitTestVisible = false;
 		}
 
@@ -60,14 +63,16 @@ namespace MyGame
 			}
 
 
-#if DEBUGa
+#if DEBUGx
 			int x = (int)(this.VisualOffset.X / this.RenderSize.Width);
 			int y = (int)(this.VisualOffset.Y / this.RenderSize.Width);
-			FormattedText ft = new FormattedText(String.Format("{0},{1}", x, y),
+			Location sl = new Location(x, y);
+			Location ml = m_mapControl.ScreenToMap(sl);
+			FormattedText ft = new FormattedText(String.Format("{0},{1}\n{2},{3}", x, y, ml.X, ml.Y),
 				System.Globalization.CultureInfo.GetCultureInfo("en-us"),
 				FlowDirection.LeftToRight,
 				new Typeface("Verdana"),
-				10, Brushes.Black);
+				10, Brushes.White);
 
 			drawingContext.DrawText(ft, new Point(0, 0));
 #endif

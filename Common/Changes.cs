@@ -25,17 +25,21 @@ namespace MyGame
 	public class LocationChange : Change
 	{
 		[DataMember]
-		public Location Location { get; set; }
+		public Location TargetLocation { get; set; }
+		[DataMember]
+		public Location SourceLocation { get; set; }
 
-		public LocationChange(GameObject target, Location location)
+		public LocationChange(GameObject target, Location from, Location to)
 			: base(target)
 		{
-			this.Location = location;
+			this.SourceLocation = from;
+			this.TargetLocation = to;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("LocationChange {0} {1}", this.ObjectID, this.Location);
+			return String.Format("LocationChange {0} {1}->{2}", this.ObjectID, 
+				this.SourceLocation, this.TargetLocation);
 		}
 	}
 

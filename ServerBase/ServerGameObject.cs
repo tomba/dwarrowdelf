@@ -51,6 +51,8 @@ namespace MyGame
 
 			bool envChanged = this.Environment != level;
 
+			Location oldLocation = this.Location;
+
 			this.Environment = level;
 			this.Location = l;
 			level.AddObject(this, l);
@@ -58,7 +60,7 @@ namespace MyGame
 			if(envChanged)
 				m_world.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
 			else
-				m_world.AddChange(new LocationChange(this, l));
+				m_world.AddChange(new LocationChange(this, oldLocation, l));
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, level, l);
@@ -95,7 +97,13 @@ namespace MyGame
 
 		public bool Sees(Location l)
 		{
-			return true;
+			if (Math.Abs(l.X - this.Location.X) < this.ViewRange &&
+				Math.Abs(l.Y - this.Location.Y) < this.ViewRange)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

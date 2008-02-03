@@ -177,11 +177,20 @@ namespace MyGame
 			{
 				EnvironmentChange ec = (EnvironmentChange)change;
 				if (ec.MapID == m_player.Environment.ObjectID)
-					return new LocationChange(m_world.FindObject(change.ObjectID), ec.Location);
+					change = new LocationChange(m_world.FindObject(change.ObjectID), new Location(), ec.Location);
 				else
 					return null;
 			}
 
+			if (change is LocationChange)
+			{
+				LocationChange lc = (LocationChange)change;
+				if (!m_player.Sees(lc.SourceLocation) && !m_player.Sees(lc.TargetLocation))
+				{
+					MyDebug.WriteLine("plr doesn't see ob at {0}, skipping change", lc.SourceLocation);
+					return null;
+				}
+			}
 			// send only changes that the player sees and needs to know
 
 			return change;
