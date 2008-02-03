@@ -32,6 +32,11 @@ namespace MyGame
 		{
 			this.Location = location;
 		}
+
+		public override string ToString()
+		{
+			return String.Format("LocationChange {0} {1}", this.ObjectID, this.Location);
+		}
 	}
 
 	[DataContract]
@@ -47,6 +52,11 @@ namespace MyGame
 		{
 			this.Location = location;
 			this.MapID = mapID;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("EnvironmentChange {0}, {1}, {2}", this.ObjectID, this.MapID, this.Location);
 		}
 	}
 }

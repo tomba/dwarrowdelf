@@ -17,22 +17,46 @@ namespace MyGame
 
 		public void LoginReply(ObjectID playerID)
 		{
-			ClientGameObject player = new ClientGameObject(playerID);
-			GameData.Data.Player = player;
-			MainWindow.s_mainWindow.map.FollowObject = player;
+			try
+			{
+				ClientGameObject player = new ClientGameObject(playerID);
+				GameData.Data.Player = player;
+				MainWindow.s_mainWindow.map.FollowObject = player;
 
-			MapLevel level = new MapLevel(1000, 1000); // xxx
-			MainWindow.s_mainWindow.Map = level;
+				MapLevel level = new MapLevel(1000, 1000); // xxx
+				MainWindow.s_mainWindow.Map = level;
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
 		}
 
 		public void MapChanged(Location l, int[] items)
 		{
-			MainWindow.s_mainWindow.Map.SetContents(l, items);
+			try
+			{
+				MainWindow.s_mainWindow.Map.SetContents(l, items);
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
 		}
 
 		public void DeliverMapTerrains(MapLocation[] locations)
 		{
-			MainWindow.s_mainWindow.Map.SetTerrains(locations);
+			try
+			{
+				MainWindow.s_mainWindow.Map.SetTerrains(locations);
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
 		}
 
 		public void PlayerMoved(Location l)
@@ -41,28 +65,38 @@ namespace MyGame
 
 		public void DeliverChanges(Change[] changes)
 		{
-			foreach (Change change in changes)
+			try
 			{
-				//MyDebug.WriteLine("DeliverChanges: {0}", change);
-
-				ClientGameObject ob = ClientGameObject.FindObject(change.ObjectID);
-
-				if (ob == null)
+				foreach (Change change in changes)
 				{
-					MyDebug.WriteLine("New object appeared");
-					ob = new ClientGameObject(change.ObjectID);
-				}
+					MyDebug.WriteLine("DeliverChanges: {0}", change);
 
-				if (change is LocationChange)
-				{
-					LocationChange lc = (LocationChange)change;
-					ob.Location = lc.Location;
+					ClientGameObject ob = ClientGameObject.FindObject(change.ObjectID);
+
+					if (ob == null)
+					{
+						MyDebug.WriteLine("New object appeared");
+						ob = new ClientGameObject(change.ObjectID);
+					}
+
+					if (change is LocationChange)
+					{
+						LocationChange lc = (LocationChange)change;
+						// we should only get changes about events on this level
+						// so if an ob doesn't have an env, it must be here
+						if (ob.Environment == null)
+							ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.Location);
+						else
+							ob.Location = lc.Location;
+					}
+					else
+						throw new NotImplementedException();
 				}
-				else if (change is EnvironmentChange)
-				{
-					EnvironmentChange ec = (EnvironmentChange)change;
-					ob.SetEnvironment(MainWindow.s_mainWindow.Map, ec.Location);
-				}
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
 			}
 		}
 

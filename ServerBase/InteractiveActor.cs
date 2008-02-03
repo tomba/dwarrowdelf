@@ -14,10 +14,6 @@ namespace MyGame
 			m_actionQueue = new Queue<GameAction>();
 		}
 
-		#region IActor Members
-
-		public event Action ActionQueuedEvent;
-
 		public void EnqueueAction(GameAction action)
 		{
 			lock (m_actionQueue)
@@ -28,6 +24,10 @@ namespace MyGame
 			if (ActionQueuedEvent != null)
 				ActionQueuedEvent();
 		}
+
+		#region IActor Members
+
+		public event Action ActionQueuedEvent;
 
 		public GameAction DequeueAction()
 		{
@@ -45,6 +45,15 @@ namespace MyGame
 					return null;
 
 				return m_actionQueue.Peek();
+			}
+		}
+
+		public bool HasAction
+		{
+			get 
+			{
+				lock (m_actionQueue)
+					return m_actionQueue.Count > 0;
 			}
 		}
 

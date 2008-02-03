@@ -10,13 +10,16 @@ namespace MyGame
 	public struct ObjectID : IEquatable<ObjectID>
 	{
 		[DataMember]
-		int m_value;
-		
+		readonly int m_value;
+
+		public static readonly ObjectID NullObjectID = new ObjectID(0);
+
 		public ObjectID(int value)
 			: this()
 		{
 			m_value = value;
 		}
+
 
 		#region IEquatable<Location> Members
 

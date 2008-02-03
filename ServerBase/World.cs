@@ -11,12 +11,22 @@ namespace MyGame
 
 	class World
 	{
-		[ThreadStatic]
-		public static World CurrentWorld;
+		// the same single world for everybody, for now
+		public static readonly World TheWorld;
+
+		static World()
+		{
+			World world = new World();
+			TheWorld = world;
+
+			var monster = new ServerGameObject(world);
+			monster.MoveTo(world.Map, new Location(2, 5));
+			var monsterAI = new MonsterActor(monster);
+			world.AddActor(monsterAI);
+		}
 
 		public event HandleChanges ChangesEvent;
 
-		public Dispatcher Dispatcher { get; private set; }
 		public List<Change> m_changeList = new List<Change>();
 
 		List<IActor> m_actorList;
@@ -28,19 +38,18 @@ namespace MyGame
 
 		public World()
 		{
-			//this.Dispatcher = new Dispatcher(this, PerformAction);
-
 			m_area = new AreaDefinition(this);
 			m_map = m_area.GetLevel(1);
 			m_actorList = new List<IActor>();
 
-			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, true);
+			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
 
 		internal void AddActor(IActor actor)
 		{
 			lock (m_actorList)
 			{
+				Debug.Assert(!m_actorList.Contains(actor));
 				m_actorList.Add(actor);
 				actor.ActionQueuedEvent += SignalActorStateChanged;
 			}
@@ -58,27 +67,28 @@ namespace MyGame
 
 		internal void SignalActorStateChanged()
 		{
-			Debug.WriteLine("SignalActor");
+			MyDebug.WriteLine("SignalActor");
 			m_actorEvent.Set();
 		}
 
 		void Tick(object state, bool timedOut)
 		{
-			Debug.WriteLine("Tick");
+			MyDebug.WriteLine("Tick");
 			lock (m_actorList)
 			{
 				while (true)
 				{
+					
 					int count = 0;
 					foreach (IActor ob in m_actorList)
 					{
-						if (ob.PeekAction() != null)
+						if (ob.HasAction)
 							count++;
 					}
 
 					if (count != m_actorList.Count)
 						break;
-
+					
 					// All actors are ready
 
 					foreach (IActor ob in m_actorList)
@@ -97,8 +107,8 @@ namespace MyGame
 
 				SendChanges();
 			}
-			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, true);
-			Debug.WriteLine("Tick done");
+
+			MyDebug.WriteLine("Tick done");
 		}
 
 
@@ -122,11 +132,6 @@ namespace MyGame
 
 			if(arr != null && arr.Length > 0)
 				ChangesEvent(arr);
-		}
-
-		public MapLevel Map
-		{
-			get { return m_map; }
 		}
 
 		bool PerformAction(GameAction action)
@@ -156,8 +161,16 @@ namespace MyGame
 		}
 
 
+		public MapLevel Map
+		{
+			get { return m_map; }
+		}
+
+
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
+
+		int m_objectIDcounter = 0;
 
 		public ServerGameObject FindObject(ObjectID objectID)
 		{
@@ -178,11 +191,9 @@ namespace MyGame
 			m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 		}
 
-		int m_objectIDcounter = 1;
-
 		internal ObjectID GetNewObjectID()
 		{
-			return new ObjectID(m_objectIDcounter++);
+			return new ObjectID(Interlocked.Increment(ref m_objectIDcounter));
 		}
 
 	}

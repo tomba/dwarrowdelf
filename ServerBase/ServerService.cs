@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ServiceModel;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -25,42 +26,105 @@ namespace MyGame
 
 		public void Login(string name)
 		{
-			MyDebug.WriteLine("Login {0}", name);
+			try
+			{
+				MyDebug.WriteLine("Login {0}", name);
 
-			m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
+				m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
 
-			m_world = new World();
-			World.CurrentWorld = m_world;
+				m_world = World.TheWorld;
 
+				m_world.ChangesEvent += new HandleChanges(m_world_ChangesEvent);
 
-			// xxx
-			var monster = new ServerGameObject();
-			monster.MoveTo(m_world.Map, new Location(2, 5));
-			var monsterAI = new MonsterActor(monster);
-			m_world.AddActor(monsterAI);
+				m_player = new ServerGameObject(m_world);
+				m_actor = new InteractiveActor();
+				m_player.SetActor(m_actor);
+				m_world.AddActor(m_actor);
 
-			m_world.ChangesEvent += new HandleChanges(m_world_ChangesEvent);
+				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
-			m_player = new ServerGameObject();
-			m_actor = new InteractiveActor();
-			m_player.SetActor(m_actor);
-			m_world.AddActor(m_actor);
+				m_client.LoginReply(m_player.ObjectID);
 
-			m_client.LoginReply(m_player.ObjectID);
+				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
+					throw new Exception("Unable to move player");
 
-			if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
-				throw new Exception("Unable to move player");
+				SendMap();
 
-			SendMap();
+				m_world.SendChanges();
 
-			m_world.SendChanges();
+				/*
+				m_player.ObjectMoved += new ObjectMoved(m_player_ObjectMoved);
+				m_map.MapChanged += new MapChanged(m_map_MapChanged);
 
-			/*
-			m_player.ObjectMoved += new ObjectMoved(m_player_ObjectMoved);
-			m_map.MapChanged += new MapChanged(m_map_MapChanged);
-
-			 */
+				 */
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
 		}
+
+
+		public void Logout()
+		{
+			try
+			{
+				MyDebug.WriteLine("Logout");
+				m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
+				m_world.RemoveActor(m_actor);
+
+				m_world.AddChange(new EnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
+				m_world.SendChanges();
+
+				m_client = null;
+
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
+		public void DoAction(GameAction action)
+		{
+			try
+			{
+				if (action.ObjectID != m_player.ObjectID)
+					throw new Exception("Illegal ob id");
+
+				m_actor.EnqueueAction(action);
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
+		public void ToggleTile(Location l)
+		{
+			try
+			{
+				if (!m_world.Map.Bounds.Contains(l))
+					return;
+
+				if (m_world.Map.GetTerrain(l) == 1)
+					m_world.Map.SetTerrain(l, 2);
+				else
+					m_world.Map.SetTerrain(l, 1);
+
+				SendMap();
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
+		#endregion
 
 		void SendMap()
 		{
@@ -91,48 +155,34 @@ namespace MyGame
 			m_client.DeliverMapTerrains(locations.ToArray());
 		}
 
-		public void Logout()
+		Change ChangeSelector(Change change)
 		{
-			MyDebug.WriteLine("Logout");
-			World.CurrentWorld = m_world;
-			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
-			m_world.RemoveActor(m_actor);
+			if (change is EnvironmentChange)
+			{
+				EnvironmentChange ec = (EnvironmentChange)change;
+				if (ec.MapID == m_player.Environment.ObjectID)
+					return new LocationChange(m_world.FindObject(change.ObjectID), ec.Location);
+				else
+					return null;
+			}
 
-			m_client = null;
+			// send only changes that the player sees and needs to know
+
+			return change;
 		}
-
-		public void DoAction(GameAction action)
-		{
-			World.CurrentWorld = m_world;
-			if (action.ObjectID != m_player.ObjectID)
-				throw new Exception("Illegal ob id");
-
-			m_actor.EnqueueAction(action);
-		}
-
-		public void ToggleTile(Location l)
-		{
-			World.CurrentWorld = m_world;
-
-			if (!m_world.Map.Bounds.Contains(l))
-				return;
-
-			if (m_world.Map.GetTerrain(l) == 1)
-				m_world.Map.SetTerrain(l, 2);
-			else
-				m_world.Map.SetTerrain(l, 1);
-
-			SendMap();
-
-		}
-
-		#endregion
 
 		void m_world_ChangesEvent(Change[] changes)
 		{
-			m_client.DeliverChanges(changes);
-			SendMap(); // xxx
+			MyDebug.WriteLine("ChangesEvent plr id {0}", m_player.ObjectID);
+			Debug.Indent();
+			foreach(Change c  in changes)
+				MyDebug.WriteLine(c.ToString());
+			Debug.Unindent();
 
+			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
+
+			m_client.DeliverChanges(arr.ToArray());
+			SendMap(); // xxx
 		}
 	}
 }

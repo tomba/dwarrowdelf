@@ -17,23 +17,6 @@ namespace MyGame
 			m_currentAction = GetNewAction();
 		}
 
-		#region IActor Members
-
-		public void EnqueueAction(GameAction action)
-		{
-			throw new NotImplementedException();
-		}
-
-		public GameAction DequeueAction()
-		{
-			if (m_currentAction == null)
-				m_currentAction = GetNewAction();
-
-			GameAction action = m_currentAction;
-			m_currentAction = null;
-			return action;
-		}
-
 		GameAction GetNewAction()
 		{
 			GameAction action;
@@ -46,12 +29,29 @@ namespace MyGame
 			return action;
 		}
 
+		#region IActor Members
+
+		public GameAction DequeueAction()
+		{
+			if (m_currentAction == null)
+				m_currentAction = GetNewAction();
+
+			GameAction action = m_currentAction;
+			m_currentAction = null;
+			return action;
+		}
+
 		public GameAction PeekAction()
 		{
 			if (m_currentAction == null)
 				m_currentAction = GetNewAction();
 
 			return m_currentAction;
+		}
+
+		public bool HasAction
+		{
+			get { return true; }
 		}
 
 		public event Action ActionQueuedEvent;

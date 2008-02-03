@@ -32,7 +32,7 @@ namespace MyGame
 			GameData.Data.MyTraceListener = new MyTraceListener();
 			Debug.Listeners.Add(GameData.Data.MyTraceListener);
 
-			m_serverInAppDomain = true;
+			m_serverInAppDomain = false;
 
 			if (m_serverInAppDomain)
 			{

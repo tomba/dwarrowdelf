@@ -49,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AreaDefinition.cs" />
-    <Compile Include="Dispatcher.cs" />
+    <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />
     <Compile Include="MapLevel.cs" />
     <Compile Include="MonsterActor.cs" />

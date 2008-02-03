@@ -75,8 +75,7 @@ namespace MyGame
 
 			set
 			{
-				if (this.Environment != null)
-					this.Environment.RemoveObject(this, m_location);
+				this.Environment.RemoveObject(this, m_location);
 
 				m_location = value;
 

@@ -9,15 +9,6 @@ namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, MapLevel e, Location l);
 
-	interface IActor
-	{
-		void EnqueueAction(GameAction action);
-		GameAction DequeueAction();
-		GameAction PeekAction();
-
-		event Action ActionQueuedEvent;
-	}
-
 	class ServerGameObject : GameObject
 	{
 		public int SymbolID { get; protected set; }
@@ -31,11 +22,14 @@ namespace MyGame
 
 		IActor m_actorImpl;
 
-		public ServerGameObject()
-			: base(World.CurrentWorld.GetNewObjectID())
+		World m_world;
+
+		internal ServerGameObject(World world)
+			: base(world.GetNewObjectID())
 		{
+			m_world = world;
+			m_world.AddGameObject(this);
 			this.SymbolID = 3;
-			World.CurrentWorld.AddGameObject(this);
 		}
 
 		public void SetActor(IActor actor)
@@ -62,9 +56,9 @@ namespace MyGame
 			level.AddObject(this, l);
 
 			if(envChanged)
-				World.CurrentWorld.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
+				m_world.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
 			else
-				World.CurrentWorld.AddChange(new LocationChange(this, l));
+				m_world.AddChange(new LocationChange(this, l));
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, level, l);
@@ -101,61 +95,6 @@ namespace MyGame
 
 		public bool Sees(Location l)
 		{
-			return true;
-			if (Math.Abs(l.X - this.X) > this.ViewRange || Math.Abs(l.Y - this.Y) > this.ViewRange)
-				return false;
-
-			double dx = this.Location.X - l.X;
-			double dy = this.Location.Y - l.Y;
-
-			if (dx == 0 && dy == 0)
-				return true;
-
-			if (Math.Abs(dx) > Math.Abs(dy))
-			{
-				double k = dy / dx;
-
-				int x1 = Math.Min(this.Location.X, l.X);
-				int x2 = Math.Max(this.Location.X, l.X);
-				for (int x = x1; x <= x2; x++)
-				{
-					int y = (int)((x-this.Location.X) * k + this.Location.Y);
-
-					Debug.Assert(x >= 0 && y >= 0 && x < this.Environment.Width && y < this.Environment.Height);
-
-					int terrain = this.Environment.GetTerrain(new Location(x, y));
-					if (!this.Environment.Area.Terrains[terrain].IsWalkable)
-					{
-						if (x == x2)
-							return true;
-						else
-							return false;
-					}					
-				}
-			}
-			else
-			{
-				double k = dx / dy;
-
-				int y1 = Math.Min(this.Location.Y, l.Y);
-				int y2 = Math.Max(this.Location.Y, l.Y);
-				for (int y = y1; y <= y2; y++)
-				{
-					int x = (int)((y - this.Location.Y) * k + this.Location.X);
-
-					Debug.Assert(x >= 0 && y >= 0 && x < this.Environment.Width && y < this.Environment.Height);
-
-					int terrain = this.Environment.GetTerrain(new Location(x, y));
-					if (!this.Environment.Area.Terrains[terrain].IsWalkable)
-					{
-						if (y == y2)
-							return true;
-						else
-							return false;
-					}
-				}
-			}
-
 			return true;
 		}
 	}
