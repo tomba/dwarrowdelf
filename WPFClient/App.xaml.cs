@@ -42,9 +42,17 @@ namespace MyGame
 			}
 
 			m_connection = new Connection();
-			m_connection.Connect();
-			m_connection.Server.Login("tomba");
-			GameData.Data.Connection = m_connection;
+
+			if (m_connection.Connect() == false)
+			{
+				MessageBox.Show("Failed to connect");
+				Shutdown();
+			}
+			else
+			{
+				m_connection.Server.Login("tomba");
+				GameData.Data.Connection = m_connection;
+			}
 		}
 
 		protected override void OnExit(ExitEventArgs e)

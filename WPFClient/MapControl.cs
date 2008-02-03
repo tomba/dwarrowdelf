@@ -33,6 +33,9 @@ namespace MyGame
 
 		MapLevel m_mapLevel;
 
+		Canvas m_effectsCanvas = new Canvas();
+		Rectangle m_hiliteRectangle = new Rectangle();
+
 		public MapControl()
 		{
 			this.Focusable = true;
@@ -43,6 +46,14 @@ namespace MyGame
 			CreateSymbolBitmaps();
 
 			CreateMapTiles();
+
+			this.AddVisualChild(m_effectsCanvas);
+
+			m_effectsCanvas.Children.Add(m_hiliteRectangle);
+			m_hiliteRectangle.Width = m_tileSize;
+			m_hiliteRectangle.Height = m_tileSize;
+			m_hiliteRectangle.Stroke = Brushes.Blue;
+			m_hiliteRectangle.StrokeThickness = 2;
 		}
 
 		void CreateMapTiles()
@@ -126,6 +137,9 @@ namespace MyGame
 
 					CreateSymbolBitmaps();
 
+					m_hiliteRectangle.Width = m_tileSize;
+					m_hiliteRectangle.Height = m_tileSize;
+
 					InvalidateVisual();
 				}
 			}
@@ -184,6 +198,8 @@ namespace MyGame
 			else
 				rows = (int)(s.Height / m_tileSize);
 
+			m_effectsCanvas.Measure(s);
+
 			return new Size(columns * m_tileSize, rows * m_tileSize);
 		}
 
@@ -214,6 +230,8 @@ namespace MyGame
 					m_mapTiles[l].Arrange(new Rect(l.X * m_tileSize, l.Y * m_tileSize, m_tileSize, m_tileSize));
 			}
 
+			m_effectsCanvas.Arrange(new Rect(this.RenderSize));
+
 			return base.ArrangeOverride(s);
 		}
 
@@ -226,12 +244,16 @@ namespace MyGame
 		{
 			get
 			{
-				return m_mapTiles.Width * m_mapTiles.Height;
+				return m_mapTiles.Width * m_mapTiles.Height + 1;
 			}
 		}
 
 		protected override Visual GetVisualChild(int index)
 		{
+			// canvas is last, so it's on top of tiles
+			if (index == m_columns * m_rows)
+				return m_effectsCanvas;
+
 			int y = index / m_columns;
 			int x = index % m_columns;
 			return m_mapTiles[x, y];
@@ -260,6 +282,13 @@ namespace MyGame
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;
 			return new Location(sl.X + dx, sl.Y + dy);
+		}
+
+		Location MapToScreen(Location ml)
+		{
+			int dx = m_center.X - m_columns / 2;
+			int dy = m_center.Y - m_rows / 2;
+			return new Location(ml.X - dx, ml.Y - dy);
 		}
 
 		void PopulateMapTiles()
@@ -321,6 +350,7 @@ namespace MyGame
 
 			m_mapTiles[sl].Bitmap = bmp;
 
+			lit = true; // lit always so we see what server sends
 			if (lit)
 			{
 				List<ClientGameObject> obs = m_mapLevel.GetContents(ml);
@@ -436,6 +466,9 @@ namespace MyGame
 				m_center = newCenter;
 				PopulateMapTiles();
 			}
+
+			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);
+			Canvas.SetTop(m_hiliteRectangle, MapToScreen(l).Y * m_tileSize);
 
 			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}

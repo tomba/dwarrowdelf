@@ -54,8 +54,11 @@ namespace MyGame
 				drawingContext.DrawLine(new Pen(Brushes.Red, 1), new Point(0, 0), 
 					new Point(this.RenderSize.Width, this.RenderSize.Height));
 
-			if(m_objectBmp != null)
+			if (m_objectBmp != null)
+			{
 				drawingContext.DrawImage(m_objectBmp, new Rect(this.RenderSize));
+			}
+
 
 #if DEBUGa
 			int x = (int)(this.VisualOffset.X / this.RenderSize.Width);

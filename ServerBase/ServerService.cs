@@ -22,6 +22,20 @@ namespace MyGame
 			MyDebug.WriteLine("New ServerService");
 		}
 
+		void CleanUp()
+		{
+			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
+			m_world.RemoveActor(m_actor);
+
+			m_world.AddChange(new EnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
+			m_world.SendChanges();
+
+			m_client = null;
+			m_player = null;
+			m_world = null;
+		}
+
+
 		#region IServerService Members
 
 		public void Login(string name)
@@ -71,14 +85,7 @@ namespace MyGame
 			try
 			{
 				MyDebug.WriteLine("Logout");
-				m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
-				m_world.RemoveActor(m_actor);
-
-				m_world.AddChange(new EnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
-				m_world.SendChanges();
-
-				m_client = null;
-
+				CleanUp();
 			}
 			catch (Exception e)
 			{
@@ -152,7 +159,16 @@ namespace MyGame
 				}
 			}
 
-			m_client.DeliverMapTerrains(locations.ToArray());
+			try
+			{
+				m_client.DeliverMapTerrains(locations.ToArray());
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Failed to send map to client");
+				MyDebug.WriteLine(e.ToString());
+				CleanUp();
+			}
 		}
 
 		Change ChangeSelector(Change change)
@@ -181,8 +197,17 @@ namespace MyGame
 
 			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
 
-			m_client.DeliverChanges(arr.ToArray());
-			SendMap(); // xxx
+			try
+			{
+				m_client.DeliverChanges(arr.ToArray());
+				SendMap(); // xxx
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Failed to send changes to client");
+				MyDebug.WriteLine(e.ToString());
+				CleanUp();
+			}
 		}
 	}
 }

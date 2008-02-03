@@ -11,7 +11,7 @@ namespace MyGame
 		ClientCallback m_clientCallback;
 		IServerService m_server;
 
-		public void Connect()
+		public bool Connect()
 		{
 			m_clientCallback = new ClientCallback();
 
@@ -24,6 +24,18 @@ namespace MyGame
 					binding, "net.tcp://localhost:8000/MyGame/Server");
 
 			m_server = cf.CreateChannel();
+
+			try
+			{
+				(m_server as ICommunicationObject).Open();
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Failed to connect");
+				MyDebug.WriteLine(e.ToString());
+			}
+
+			return (m_server as ICommunicationObject).State == CommunicationState.Opened;
 		}
 
 		public void Disconnect()
