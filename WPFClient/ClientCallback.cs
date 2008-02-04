@@ -71,23 +71,33 @@ namespace MyGame
 				{
 					MyDebug.WriteLine("DeliverChanges: {0}", change);
 
-					ClientGameObject ob = ClientGameObject.FindObject(change.ObjectID);
-
-					if (ob == null)
+					if (change is ObjectChange)
 					{
-						MyDebug.WriteLine("New object appeared");
-						ob = new ClientGameObject(change.ObjectID);
-					}
+						ObjectChange oc = (ObjectChange)change;
+						ClientGameObject ob = ClientGameObject.FindObject(oc.ObjectID);
 
-					if (change is LocationChange)
-					{
-						LocationChange lc = (LocationChange)change;
-						// we should only get changes about events on this level
-						// so if an ob doesn't have an env, it must be here
-						if (ob.Environment == null)
-							ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.TargetLocation);
+						if (ob == null)
+						{
+							MyDebug.WriteLine("New object appeared");
+							ob = new ClientGameObject(oc.ObjectID);
+						}
+
+						if (change is LocationChange)
+						{
+							LocationChange lc = (LocationChange)change;
+							// we should only get changes about events on this level
+							// so if an ob doesn't have an env, it must be here
+							if (ob.Environment == null)
+								ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.TargetLocation);
+							else
+								ob.Location = lc.TargetLocation;
+						}
 						else
-							ob.Location = lc.TargetLocation;
+							throw new NotImplementedException();
+					}
+					else if (change is TurnChange)
+					{
+						TurnChange tc = (TurnChange)change;
 					}
 					else
 						throw new NotImplementedException();

@@ -177,7 +177,7 @@ namespace MyGame
 			{
 				EnvironmentChange ec = (EnvironmentChange)change;
 				if (ec.MapID == m_player.Environment.ObjectID)
-					change = new LocationChange(m_world.FindObject(change.ObjectID), new Location(), ec.Location);
+					change = new LocationChange(m_world.FindObject(ec.ObjectID), ec.Location, ec.Location);
 				else
 					return null;
 			}

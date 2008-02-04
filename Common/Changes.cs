@@ -7,14 +7,41 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract, KnownType(typeof(LocationChange)), KnownType(typeof(EnvironmentChange))]
+	[DataContract, 
+	KnownType(typeof(TurnChange)),
+	KnownType(typeof(ObjectChange)),
+	KnownType(typeof(LocationChange)), 
+	KnownType(typeof(EnvironmentChange))
+	]
 	public abstract class Change
+	{
+	}
+
+	[DataContract]
+	public class TurnChange : Change
+	{
+		[DataMember]
+		public int TurnNumber { get; set; }
+
+		public TurnChange(int turnNumber)
+		{
+			this.TurnNumber = turnNumber;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("TurnChange({0})", this.TurnNumber);
+		}
+	}
+
+	[DataContract]
+	public abstract class ObjectChange : Change
 	{
 		GameObject m_target;
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 
-		public Change(GameObject target)
+		public ObjectChange(GameObject target)
 		{
 			m_target = target;
 			this.ObjectID = m_target.ObjectID;
@@ -22,7 +49,7 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public class LocationChange : Change
+	public class LocationChange : ObjectChange
 	{
 		[DataMember]
 		public Location TargetLocation { get; set; }
@@ -44,7 +71,7 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public class EnvironmentChange : Change
+	public class EnvironmentChange : ObjectChange
 	{
 		[DataMember]
 		public Location Location { get; set; }

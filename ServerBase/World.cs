@@ -36,6 +36,8 @@ namespace MyGame
 
 		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
 
+		int m_turnNumber = 0;
+
 		public World()
 		{
 			m_area = new AreaDefinition(this);
@@ -91,24 +93,32 @@ namespace MyGame
 					
 					// All actors are ready
 
-					foreach (IActor ob in m_actorList)
-					{
-						GameAction action = ob.PeekAction();
-						// if action was cancelled just now, the actor misses the turn
-						if (action == null)
-							continue;
-
-						bool done = PerformAction(action);
-
-						if (done)
-							ob.DequeueAction();
-					}
+					ProceedTurn();
 				}
 
 				SendChanges();
 			}
 
 			MyDebug.WriteLine("Tick done");
+		}
+
+		private void ProceedTurn()
+		{
+			m_turnNumber++;
+			AddChange(new TurnChange(m_turnNumber));
+
+			foreach (IActor ob in m_actorList)
+			{
+				GameAction action = ob.PeekAction();
+				// if action was cancelled just now, the actor misses the turn
+				if (action == null)
+					continue;
+
+				bool done = PerformAction(action);
+
+				if (done)
+					ob.DequeueAction();
+			}
 		}
 
 
