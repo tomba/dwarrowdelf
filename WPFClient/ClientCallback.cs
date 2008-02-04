@@ -98,6 +98,7 @@ namespace MyGame
 					else if (change is TurnChange)
 					{
 						TurnChange tc = (TurnChange)change;
+						GameData.Data.TurnNumber = tc.TurnNumber;
 					}
 					else
 						throw new NotImplementedException();
