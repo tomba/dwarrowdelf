@@ -3,18 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace MyGame
 {
+	class ActionCollection : ObservableCollection<GameAction> { }
+
 	class GameData : INotifyPropertyChanged
 	{
 		public static readonly GameData Data = new GameData();
+
+		public GameData()
+		{
+			this.ActionCollection = new ActionCollection();
+		}
 
 		public Connection Connection { get; set; }
 
 		public GameObject Player { get; set; }
 
 		public MyTraceListener MyTraceListener { get; set; }
+
+		public ActionCollection ActionCollection { get; set; }
 
 		int m_turnNumber;
 		public int TurnNumber

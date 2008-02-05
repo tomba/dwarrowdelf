@@ -52,7 +52,7 @@ namespace MyGame
 				this.map.MapLevel = value;
 			}
 		}
-		
+	
 	}
 
 }

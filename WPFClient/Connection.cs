@@ -10,6 +10,7 @@ namespace MyGame
 	{
 		ClientCallback m_clientCallback;
 		IServerService m_server;
+		int m_transactionNumber;
 
 		public bool Connect()
 		{
@@ -40,8 +41,18 @@ namespace MyGame
 
 		public void Disconnect()
 		{
-			if(!HasFaulted())
-				(m_server as ICommunicationObject).Close();
+			if (!HasFaulted())
+			{
+				try
+				{
+					(m_server as ICommunicationObject).Close();
+				}
+				catch (Exception e)
+				{
+					MyDebug.WriteLine("Failed to disconnect");
+					MyDebug.WriteLine(e.ToString());
+				}
+			}
 		}
 
 		public IServerService Server
@@ -49,9 +60,20 @@ namespace MyGame
 			get { return m_server; }
 		}
 
+		public void DoAction(GameAction action)
+		{
+			GameData.Data.ActionCollection.Add(action);
+			this.Server.DoAction(action);
+		}
+
 		public bool HasFaulted()
 		{
 			return (m_server as ICommunicationObject).State == CommunicationState.Faulted;
+		}
+
+		public int GetTransactionID()
+		{
+			return System.Threading.Interlocked.Increment(ref m_transactionNumber);
 		}
 
 	}

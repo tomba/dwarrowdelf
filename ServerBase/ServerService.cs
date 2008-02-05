@@ -52,6 +52,7 @@ namespace MyGame
 
 				m_player = new ServerGameObject(m_world);
 				m_actor = new InteractiveActor();
+				m_actor.ActionDequeuedEvent += m_actor_ActionDequeuedEvent;
 				m_player.SetActor(m_actor);
 				m_world.AddActor(m_actor);
 
@@ -77,6 +78,11 @@ namespace MyGame
 				MyDebug.WriteLine("Uncaught exception");
 				MyDebug.WriteLine(e.ToString());
 			}
+		}
+
+		void m_actor_ActionDequeuedEvent(int transactionID)
+		{
+			m_client.TransactionDone(transactionID);
 		}
 
 

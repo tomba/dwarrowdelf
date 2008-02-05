@@ -22,9 +22,9 @@ namespace MyGame
 			GameAction action;
 
 			if (m_random.Next(4) == 0)
-				action = new WaitAction(m_object, m_random.Next(3) + 1);
+				action = new WaitAction(0, m_object, m_random.Next(3) + 1);
 			else
-				action = new MoveAction(m_object, (Direction)m_random.Next(8));
+				action = new MoveAction(0, m_object, (Direction)m_random.Next(8));
 
 			return action;
 		}

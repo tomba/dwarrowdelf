@@ -433,7 +433,8 @@ namespace MyGame
 				case Key.Space:
 					{
 						e.Handled = true;
-						GameData.Data.Connection.Server.DoAction(new WaitAction(GameData.Data.Player, 1));
+						int wtid = GameData.Data.Connection.GetTransactionID();
+						GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
 						return;
 					}
 
@@ -442,7 +443,8 @@ namespace MyGame
 			}
 
 			e.Handled = true;
-			GameData.Data.Connection.Server.DoAction(new MoveAction(GameData.Data.Player, dir));
+			int tid = GameData.Data.Connection.GetTransactionID();
+			GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
 		}
 
 		void FollowedObjectMoved(MapLevel e, Location l)

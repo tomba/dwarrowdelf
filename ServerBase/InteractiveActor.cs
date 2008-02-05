@@ -25,16 +25,23 @@ namespace MyGame
 				ActionQueuedEvent();
 		}
 
+		public event Action<int> ActionDequeuedEvent;
+
 		#region IActor Members
 
 		public event Action ActionQueuedEvent;
 
 		public GameAction DequeueAction()
 		{
+			GameAction action;
+
 			lock (m_actionQueue)
 			{
-				return m_actionQueue.Dequeue();
+				action = m_actionQueue.Dequeue();
 			}
+
+			ActionDequeuedEvent(action.TransactionID);
+			return action;
 		}
 
 		public GameAction PeekAction()

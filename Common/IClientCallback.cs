@@ -22,5 +22,8 @@ namespace MyGame
 
 		[OperationContract(IsOneWay = true)]
 		void DeliverChanges(Change[] changes);
+
+		[OperationContract(IsOneWay = true)]
+		void TransactionDone(int transactionID);
 	}
 }

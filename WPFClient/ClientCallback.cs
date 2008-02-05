@@ -63,6 +63,13 @@ namespace MyGame
 		{
 		}
 
+		public void TransactionDone(int transactionID)
+		{
+			MyDebug.WriteLine("TransactionDone({0})", transactionID);
+			GameAction action = GameData.Data.ActionCollection.Single(a => a.TransactionID == transactionID);
+			GameData.Data.ActionCollection.Remove(action);
+		}
+
 		public void DeliverChanges(Change[] changes)
 		{
 			try

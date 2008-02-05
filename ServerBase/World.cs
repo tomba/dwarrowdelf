@@ -94,9 +94,9 @@ namespace MyGame
 					// All actors are ready
 
 					ProceedTurn();
-				}
 
-				SendChanges();
+					SendChanges();
+				}
 			}
 
 			MyDebug.WriteLine("Tick done");
