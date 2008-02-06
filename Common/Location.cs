@@ -23,7 +23,7 @@ namespace MyGame
 
 	public enum Direction
 	{
-		Up,
+		Up = 0,
 		Down,
 		Left,
 		Right,
