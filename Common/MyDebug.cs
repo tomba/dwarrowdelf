@@ -14,9 +14,9 @@ namespace MyGame
 		public static void WriteLine(string str)
 		{
 			if (Prefix != null)
-				Debug.Write(Prefix);
-
-			Debug.WriteLine(str);
+				Debug.WriteLine(Prefix + str);
+			else
+				Debug.WriteLine(str);
 		}
 
 		public static void WriteLine(string format, params object[] args)

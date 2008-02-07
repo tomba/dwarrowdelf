@@ -31,17 +31,12 @@ namespace MyGame
 
 		#region IActor Members
 
-		public GameAction DequeueAction()
+		public void RemoveAction(GameAction action)
 		{
-			if (m_currentAction == null)
-				m_currentAction = GetNewAction();
-
-			GameAction action = m_currentAction;
 			m_currentAction = null;
-			return action;
 		}
 
-		public GameAction PeekAction()
+		public GameAction GetCurrentAction()
 		{
 			if (m_currentAction == null)
 				m_currentAction = GetNewAction();

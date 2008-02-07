@@ -7,8 +7,8 @@ namespace MyGame
 {
 	interface IActor
 	{
-		GameAction DequeueAction();
-		GameAction PeekAction();
+		void RemoveAction(GameAction action);
+		GameAction GetCurrentAction();
 		bool HasAction { get; }
 
 		event Action ActionQueuedEvent;

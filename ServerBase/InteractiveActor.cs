@@ -31,20 +31,20 @@ namespace MyGame
 
 		public event Action ActionQueuedEvent;
 
-		public GameAction DequeueAction()
+		public void RemoveAction(GameAction action)
 		{
-			GameAction action;
-
 			lock (m_actionQueue)
 			{
-				action = m_actionQueue.Dequeue();
+				GameAction topAction = m_actionQueue.Peek();
+
+				if (topAction == action)
+					m_actionQueue.Dequeue();
 			}
 
 			ActionDequeuedEvent(action.TransactionID);
-			return action;
 		}
 
-		public GameAction PeekAction()
+		public GameAction GetCurrentAction()
 		{
 			lock (m_actionQueue)
 			{

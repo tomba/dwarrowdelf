@@ -109,7 +109,7 @@ namespace MyGame
 
 			foreach (IActor ob in m_actorList)
 			{
-				GameAction action = ob.PeekAction();
+				GameAction action = ob.GetCurrentAction();
 				// if action was cancelled just now, the actor misses the turn
 				if (action == null)
 					continue;
@@ -117,7 +117,7 @@ namespace MyGame
 				bool done = PerformAction(action);
 
 				if (done)
-					ob.DequeueAction();
+					ob.RemoveAction(action);
 			}
 		}
 
