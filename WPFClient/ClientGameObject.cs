@@ -29,6 +29,7 @@ namespace MyGame
 		Location m_location;
 		MapLevel m_environment;
 		LocationGrid<bool> m_visibilityMap;
+		public int VisionRange { get; set; }
 
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
@@ -84,11 +85,6 @@ namespace MyGame
 				if(ObjectMoved != null)
 					ObjectMoved(this.Environment, this.Location);
 			}
-		}
-
-		public int VisionRange
-		{
-			get { return 6; }
 		}
 
 		public LocationGrid<bool> VisibilityMap

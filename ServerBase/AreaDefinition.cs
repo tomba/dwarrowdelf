@@ -9,6 +9,10 @@ using System.Resources;
 
 namespace MyGame
 {
+	class TerrainList : List<TerrainInfo>
+	{
+	}
+
 	class AreaDefinition
 	{
 		public World World { get; private set; }

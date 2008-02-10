@@ -15,11 +15,12 @@ namespace MyGame
 
 		#region IClientCallback Members
 
-		public void LoginReply(ObjectID playerID)
+		public void LoginReply(ObjectID playerID, int visionRange)
 		{
 			try
 			{
 				ClientGameObject player = new ClientGameObject(playerID);
+				player.VisionRange = visionRange;
 				GameData.Data.Player = player;
 				MainWindow.s_mainWindow.map.FollowObject = player;
 
@@ -33,23 +34,16 @@ namespace MyGame
 			}
 		}
 
-		public void MapChanged(Location l, int[] items)
+		public void DeliverMapTerrains(MapLocationTerrain[] locations)
 		{
 			try
 			{
-				MainWindow.s_mainWindow.Map.SetContents(l, items);
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
-		}
+				MyDebug.WriteLine("Received locations: {0}",
+					string.Join(", ", 
+						locations.Select<MapLocationTerrain, string>(
+							ml => String.Format("({0},{1})", ml.Location.X, ml.Location.Y)
+							).ToArray()));
 
-		public void DeliverMapTerrains(MapLocation[] locations)
-		{
-			try
-			{
 				MainWindow.s_mainWindow.Map.SetTerrains(locations);
 			}
 			catch (Exception e)
@@ -57,10 +51,6 @@ namespace MyGame
 				MyDebug.WriteLine("Uncaught exception");
 				MyDebug.WriteLine(e.ToString());
 			}
-		}
-
-		public void PlayerMoved(Location l)
-		{
 		}
 
 		public void TransactionDone(int transactionID)

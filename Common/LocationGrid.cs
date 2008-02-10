@@ -53,13 +53,22 @@ namespace MyGame
 			}
 		}
 
+		public IntRect Bounds
+		{
+			get 
+			{
+				return new IntRect(0 - this.Origin.X, 0 - this.Origin.Y,
+					this.Width, this.Height);
+			}
+		}
+
 		public IEnumerable<Location> GetLocations()
 		{
 			for (int x = 0; x < this.Width; x++)
 			{
 				for (int y = 0; y < this.Height; y++)
 				{
-					yield return new Location(x, y);
+					yield return new Location(x - Origin.X, y - Origin.Y);
 				}
 			}
 		}

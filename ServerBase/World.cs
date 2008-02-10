@@ -18,18 +18,24 @@ namespace MyGame
 		{
 			World world = new World();
 			TheWorld = world;
-
-			var monster = new ServerGameObject(world);
+			
+			var monster = new Living(world);
 			monster.MoveTo(world.Map, new Location(2, 5));
 			var monsterAI = new MonsterActor(monster);
-			world.AddActor(monsterAI);
+			monster.Actor = monsterAI;
+			 
 		}
+
+
+
+		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
+		int m_objectIDcounter = 0;
+
+		List<Living> m_livingList;
 
 		public event HandleChanges ChangesEvent;
 
 		public List<Change> m_changeList = new List<Change>();
-
-		List<IActor> m_actorList;
 
 		AreaDefinition m_area;
 		MapLevel m_map;
@@ -42,27 +48,27 @@ namespace MyGame
 		{
 			m_area = new AreaDefinition(this);
 			m_map = m_area.GetLevel(1);
-			m_actorList = new List<IActor>();
+			m_livingList = new List<Living>();
 
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
 
-		internal void AddActor(IActor actor)
+		internal void AddLiving(Living living)
 		{
-			lock (m_actorList)
+			lock (m_livingList)
 			{
-				Debug.Assert(!m_actorList.Contains(actor));
-				m_actorList.Add(actor);
-				actor.ActionQueuedEvent += SignalActorStateChanged;
+				Debug.Assert(!m_livingList.Contains(living));
+				m_livingList.Add(living);
+				living.ActionQueuedEvent += SignalActorStateChanged;
 			}
 		}
 
-		internal void RemoveActor(IActor actor)
+		internal void RemoveLiving(Living living)
 		{
-			lock (m_actorList)
+			lock (m_livingList)
 			{
-				actor.ActionQueuedEvent -= SignalActorStateChanged;
-				bool removed = m_actorList.Remove(actor);
+				living.ActionQueuedEvent -= SignalActorStateChanged;
+				bool removed = m_livingList.Remove(living);
 				Debug.Assert(removed);
 			}
 		}
@@ -76,24 +82,26 @@ namespace MyGame
 		void Tick(object state, bool timedOut)
 		{
 			MyDebug.WriteLine("Tick");
-			lock (m_actorList)
+			lock (m_livingList)
 			{
 				while (true)
 				{
 					
 					int count = 0;
-					foreach (IActor ob in m_actorList)
+					foreach (Living living in m_livingList)
 					{
-						if (ob.HasAction)
+						if (living.HasAction)
 							count++;
 					}
 
-					if (count != m_actorList.Count)
+					if (count != m_livingList.Count)
 						break;
 					
 					// All actors are ready
 
 					ProceedTurn();
+
+					PostTurn();
 
 					SendChanges();
 				}
@@ -107,20 +115,19 @@ namespace MyGame
 			m_turnNumber++;
 			AddChange(new TurnChange(m_turnNumber));
 
-			foreach (IActor ob in m_actorList)
+			foreach (Living living in m_livingList)
 			{
-				GameAction action = ob.GetCurrentAction();
-				// if action was cancelled just now, the actor misses the turn
-				if (action == null)
-					continue;
-
-				bool done = PerformAction(action);
-
-				if (done)
-					ob.RemoveAction(action);
+				living.PerformAction();
 			}
 		}
 
+		public void PostTurn()
+		{
+			foreach (Living living in m_livingList)
+			{
+				living.PostTurn();
+			}
+		}
 
 		public void AddChange(Change change)
 		{
@@ -144,43 +151,12 @@ namespace MyGame
 				ChangesEvent(arr);
 		}
 
-		bool PerformAction(GameAction action)
-		{
-			ServerGameObject ob = FindObject(action.ObjectID);
-
-			if (ob == null)
-				throw new Exception("Couldn't find servergameobject");
-
-			if (action is MoveAction)
-			{
-				MoveAction ma = (MoveAction)action;
-				ob.MoveDir(ma.Direction);
-				return true;
-			}
-			else if (action is WaitAction)
-			{
-				WaitAction wa = (WaitAction)action;
-				wa.Turns--;
-				if (wa.Turns == 0)
-					return true;
-				else 
-					return false;
-			}
-			else
-				throw new NotImplementedException();
-		}
-
-
 		public MapLevel Map
 		{
 			get { return m_map; }
 		}
 
 
-
-		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
-
-		int m_objectIDcounter = 0;
 
 		public ServerGameObject FindObject(ObjectID objectID)
 		{

@@ -20,23 +20,15 @@ namespace MyGame
 
 		public event ObjectMoved ObjectMoved;
 
-		IActor m_actorImpl;
-
-		World m_world;
+		public World World { get; protected set; }
 
 		internal ServerGameObject(World world)
 			: base(world.GetNewObjectID())
 		{
-			m_world = world;
-			m_world.AddGameObject(this);
+			this.World = world;
+			this.World.AddGameObject(this);
 			this.SymbolID = 3;
 		}
-
-		public void SetActor(IActor actor)
-		{
-			m_actorImpl = actor;
-		}
-
 
 		public bool MoveTo(MapLevel level, Location l)
 		{
@@ -58,9 +50,9 @@ namespace MyGame
 			level.AddObject(this, l);
 
 			if(envChanged)
-				m_world.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
+				this.World.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
 			else
-				m_world.AddChange(new LocationChange(this, oldLocation, l));
+				this.World.AddChange(new LocationChange(this, oldLocation, l));
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, level, l);
@@ -93,17 +85,5 @@ namespace MyGame
 			return MoveTo(this.Environment, l);
 		}
 
-		public int ViewRange { get { return 6; } }
-
-		public bool Sees(Location l)
-		{
-			if (Math.Abs(l.X - this.Location.X) < this.ViewRange &&
-				Math.Abs(l.Y - this.Location.Y) < this.ViewRange)
-			{
-				return true;
-			}
-
-			return false;
-		}
 	}
 }

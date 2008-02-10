@@ -25,8 +25,6 @@ namespace MyGame
 				ActionQueuedEvent();
 		}
 
-		public event Action<int> ActionDequeuedEvent;
-
 		#region IActor Members
 
 		public event Action ActionQueuedEvent;
@@ -40,8 +38,6 @@ namespace MyGame
 				if (topAction == action)
 					m_actionQueue.Dequeue();
 			}
-
-			ActionDequeuedEvent(action.TransactionID);
 		}
 
 		public GameAction GetCurrentAction()

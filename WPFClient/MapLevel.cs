@@ -65,14 +65,35 @@ namespace MyGame
 				}
 		}
 
-		public void SetTerrains(MapLocation[] locations)
+		public void SetTerrains(MapLocationTerrain[] locInfos)
 		{
-			//m_terrainData = new int[m_width, m_height]; // xxx clears the old one
-			foreach (MapLocation l in locations)
+			//m_terrainData = new LocationGrid<TerrainData>(m_width, m_height);	// xxx clears the old one
+			foreach (MapLocationTerrain locInfo in locInfos)
 			{
-				m_terrainData[l.Location] = new TerrainData(l.Terrain);
+				Location l = locInfo.Location;
+				m_terrainData[l] = new TerrainData(locInfo.Terrain);
+				if (locInfo.Objects != null)
+				{
+					foreach(ObjectID oid in locInfo.Objects)
+					{
+						ClientGameObject ob = ClientGameObject.FindObject(oid);
+						if (ob == null)
+						{
+							MyDebug.WriteLine("New object {0}", oid);
+							ob = new ClientGameObject(oid);
+						}
+
+						MyDebug.WriteLine("OB AT {0}", l);
+
+						if (ob.Environment == null)
+							ob.SetEnvironment(this, l);
+						else
+							ob.Location = l;
+
+ 					}
+				}
 				if (MapChanged != null)
-					MapChanged(l.Location);
+					MapChanged(l);
 			}
 		}
 
@@ -104,6 +125,8 @@ namespace MyGame
 		{
 			if (m_mapContents[l] == null)
 				m_mapContents[l] = new List<ClientGameObject>();
+
+			Debug.Assert(!m_mapContents[l].Contains(ob));
 			m_mapContents[l].Add(ob);
 
 			if (MapChanged != null)

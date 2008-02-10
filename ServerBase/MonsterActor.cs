@@ -19,6 +19,7 @@ namespace MyGame
 
 		GameAction GetNewAction()
 		{
+			return null;
 			GameAction action;
 
 			if (m_random.Next(4) == 0)

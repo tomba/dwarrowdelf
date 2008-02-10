@@ -14,7 +14,7 @@ namespace MyGame
 		IClientCallback m_client;
 
 		World m_world;
-		ServerGameObject m_player;
+		Living m_player;
 		InteractiveActor m_actor;
 
 		public ServerService()
@@ -25,7 +25,7 @@ namespace MyGame
 		void CleanUp()
 		{
 			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
-			m_world.RemoveActor(m_actor);
+			m_player.Actor = null;
 
 			m_world.AddChange(new EnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
 			m_world.SendChanges();
@@ -50,20 +50,19 @@ namespace MyGame
 
 				m_world.ChangesEvent += new HandleChanges(m_world_ChangesEvent);
 
-				m_player = new ServerGameObject(m_world);
+				m_player = new Living(m_world);
+				m_player.ClientCallback = m_client;
 				m_actor = new InteractiveActor();
-				m_actor.ActionDequeuedEvent += m_actor_ActionDequeuedEvent;
-				m_player.SetActor(m_actor);
-				m_world.AddActor(m_actor);
+				m_player.Actor = m_actor;
 
 				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
-				m_client.LoginReply(m_player.ObjectID);
+				m_client.LoginReply(m_player.ObjectID, m_player.VisionRange);
 
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
 
-				SendMap();
+				//SendMap();
 
 				m_world.SendChanges();
 
@@ -144,9 +143,9 @@ namespace MyGame
 			LocationGrid<int> map = m_world.Map.GetTerrain();
 
 			Location ploc = m_player.Location;
-			int viewRange = m_player.ViewRange;
+			int viewRange = m_player.VisionRange;
 
-			List<MapLocation> locations = new List<MapLocation>();
+			List<MapLocationTerrain> locations = new List<MapLocationTerrain>();
 
 			for (int y = ploc.Y - viewRange; y < ploc.Y + viewRange; y++)
 			{
@@ -160,7 +159,7 @@ namespace MyGame
 
 					if (m_player.Sees(new Location(x, y)))
 					{
-						locations.Add(new MapLocation(new Location(x, y), map[x, y]));
+						locations.Add(new MapLocationTerrain(new Location(x, y), map[x, y], null));
 					}
 				}
 			}
@@ -215,7 +214,7 @@ namespace MyGame
 			try
 			{
 				m_client.DeliverChanges(arr.ToArray());
-				SendMap(); // xxx
+				//SendMap(); // xxx
 			}
 			catch (Exception e)
 			{

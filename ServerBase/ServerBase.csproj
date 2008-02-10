@@ -51,6 +51,7 @@
     <Compile Include="AreaDefinition.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />
+    <Compile Include="Living.cs" />
     <Compile Include="MapLevel.cs" />
     <Compile Include="MonsterActor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

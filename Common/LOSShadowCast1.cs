@@ -6,7 +6,7 @@ using System.Text;
 namespace MyGame
 {
 	// http://sc.tri-bit.com/Computing_LOS_for_Large_Areas
-	public class LOSShadowCast1
+	public static class LOSShadowCast1
 	{
 		class LOSCell // xxx struct?
 		{
@@ -37,6 +37,8 @@ namespace MyGame
 		static public void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
 			Func<Location, bool> blockerDelegate)
 		{
+			visionRange += 1; // visionrange does not include the tile where the observer is
+
 			if (cells == null || cells.Length < visionRange)
 			{
 				cells = new LOSCell[visionRange];
@@ -58,7 +60,7 @@ namespace MyGame
 
 			//bool visibleCorner = false;
 
-			for (int x = 1; x < visionRange; x++)
+			for (int x = 0; x < visionRange; x++)
 			{
 				for (int y = 0; y <= x; y++)
 				{
