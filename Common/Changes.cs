@@ -39,7 +39,7 @@ namespace MyGame
 	public class MapChange : Change
 	{
 		[DataMember]
-		public ObjectID ObjectID { get; set; }
+		public ObjectID MapID { get; set; }
 		[DataMember]
 		public Location Location { get; set; }
 		[DataMember]
@@ -47,9 +47,14 @@ namespace MyGame
 
 		public MapChange(ObjectID mapID, Location l, int terrainType)
 		{
-			this.ObjectID = mapID;
+			this.MapID = mapID;
 			this.Location = l;
 			this.TerrainType = terrainType;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("MapChange {0}, {1}, {2}", this.MapID, this.Location, this.TerrainType);
 		}
 	}
 

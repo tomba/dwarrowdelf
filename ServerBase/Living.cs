@@ -83,12 +83,31 @@ namespace MyGame
 		}
 
 		// called after turn. world state is valid.
-		public void PostTurn()
+		public void ProcessChanges(Change[] changes)
 		{
-			CalculateLOSAndSend();
+			List<Location> newLocations = CalculateLOS();
+
+			if (this.ClientCallback != null)
+			{
+				FilterAndSendChanges(changes);
+
+				MapLocationTerrain[] terrains = new MapLocationTerrain[newLocations.Count];
+				int i = 0;
+				foreach (Location l in newLocations)
+				{
+					ObjectID[] obs = null;
+					if (this.Environment.GetContents(l) != null)
+						obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
+
+					terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);
+				}
+
+				this.ClientCallback.DeliverMapTerrains(terrains);
+			}
 		}
 
-		public void CalculateLOSAndSend()
+		// calculate los and returns a list of new locations in sight
+		List<Location> CalculateLOS()
 		{
 			// xxx todo: optimize
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
@@ -123,21 +142,53 @@ namespace MyGame
 			this.VisionMap = visionMap;
 			this.VisionLocation = this.Location;
 
-			if (this.ClientCallback != null)
+			return newLocations;
+		}
+
+		Change ChangeSelector(Change change)
+		{
+			if (change is ObjectEnvironmentChange)
 			{
-				MapLocationTerrain[] terrains = new MapLocationTerrain[newLocations.Count];
-				int i = 0;
-				foreach (Location l in newLocations)
-				{
-					ObjectID[] obs = null;
-					if (this.Environment.GetContents(l) != null)
-						obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
-
-					terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);
-				}
-
-				this.ClientCallback.DeliverMapTerrains(terrains);
+				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
+				if (ec.MapID == this.Environment.ObjectID)
+					change = new ObjectLocationChange(this.World.FindObject(ec.ObjectID), ec.Location, ec.Location);
+				else
+					return null;
 			}
+
+			if (change is ObjectLocationChange)
+			{
+				ObjectLocationChange lc = (ObjectLocationChange)change;
+				if (!Sees(lc.SourceLocation) && !Sees(lc.TargetLocation))
+				{
+					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", lc.SourceLocation);
+					return null;
+				}
+			}
+
+			if (change is MapChange)
+			{
+				MapChange mc = (MapChange)change;
+				if (!Sees(mc.Location))
+				{
+					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
+					return null;
+				}
+			}
+			// send only changes that the player sees and needs to know
+
+			return change;
+		}
+
+		void FilterAndSendChanges(Change[] changes)
+		{
+			MyDebug.WriteLine("Sending changes to plr id {0}", this.ObjectID);
+			foreach (Change c in changes)
+				MyDebug.WriteLine("\t" + c.ToString());
+
+			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
+
+			this.ClientCallback.DeliverChanges(arr.ToArray());
 		}
 
 		#region IActor Members
@@ -161,18 +212,20 @@ namespace MyGame
 
 		#endregion
 
-
-
-
 		public bool Sees(Location l)
 		{
-			if (Math.Abs(l.X - this.Location.X) <= this.VisionRange &&
-				Math.Abs(l.Y - this.Location.Y) <= this.VisionRange)
+			Location dl = l - this.Location;
+
+			if (Math.Abs(dl.X) > this.VisionRange ||
+				Math.Abs(dl.Y) > this.VisionRange)
 			{
-				return true;
+				return false;
 			}
 
-			return false;
+			if (this.VisionMap[l - this.Location] == false)
+				return false;
+
+			return true;
 		}
 
 	}

@@ -88,7 +88,8 @@ namespace MyGame
 			{
 				while (true)
 				{
-					
+					Debug.Assert(m_changeList.Count == 0);
+
 					int count = 0;
 					foreach (Living living in m_livingList)
 					{
@@ -101,11 +102,8 @@ namespace MyGame
 					
 					// All actors are ready
 
-					ProceedTurn();
-
-					PostTurn();
-
-					SendChanges();
+					ProceedTurn(); // this creates a bunch of changes
+					ProcessChanges(); // this sends them to livings, who send them to clients
 				}
 			}
 
@@ -123,36 +121,38 @@ namespace MyGame
 			}
 		}
 
-		public void PostTurn()
-		{
-			foreach (Living living in m_livingList)
-			{
-				living.PostTurn();
-			}
-		}
-
 		public void AddChange(Change change)
 		{
 			//MyDebug.WriteLine("AddChange {0}", change);
 			lock(m_changeList)
 				m_changeList.Add(change);
-
-			SendChanges(); // xxx we send every change immediately, to keep the order of the messages. sigh.
 		}
 
-		public void SendChanges()
+		public Change[] GetChanges()
+		{
+			return m_changeList.ToArray();
+		}
+
+		public void ProcessChanges()
 		{
 			Change[] arr = null;
 
 			lock (m_changeList)
 			{
-				if (ChangesEvent != null)
-					arr = m_changeList.ToArray();
+				arr = m_changeList.ToArray();
 				m_changeList.Clear();
 			}
 
-			if(arr != null && arr.Length > 0)
-				ChangesEvent(arr);
+			if (arr.Length > 0)
+			{
+				if(ChangesEvent != null)
+					ChangesEvent(arr); // xxx is this needed? perhaps for loggers or something
+
+				foreach (Living living in m_livingList)
+				{
+					living.ProcessChanges(arr);
+				}
+			}
 		}
 
 		void MapChangedCallback(ObjectID mapID, Location l, int terrainID)

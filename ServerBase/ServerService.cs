@@ -24,11 +24,10 @@ namespace MyGame
 
 		void CleanUp()
 		{
-			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
 			m_player.Actor = null;
 
 			m_world.AddChange(new ObjectEnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
-			m_world.SendChanges();
+			m_world.ProcessChanges();
 
 			m_client = null;
 			m_player = null;
@@ -48,8 +47,6 @@ namespace MyGame
 
 				m_world = World.TheWorld;
 
-				m_world.ChangesEvent += new HandleChanges(m_world_ChangesEvent);
-
 				m_player = new Living(m_world);
 				m_player.ClientCallback = m_client;
 				m_actor = new InteractiveActor();
@@ -62,15 +59,7 @@ namespace MyGame
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
 
-				//SendMap();
-
-				m_world.SendChanges();
-
-				/*
-				m_player.ObjectMoved += new ObjectMoved(m_player_ObjectMoved);
-				m_map.MapChanged += new MapChanged(m_map_MapChanged);
-
-				 */
+				m_world.ProcessChanges();
 			}
 			catch (Exception e)
 			{
@@ -78,12 +67,6 @@ namespace MyGame
 				MyDebug.WriteLine(e.ToString());
 			}
 		}
-
-		void m_actor_ActionDequeuedEvent(int transactionID)
-		{
-			m_client.TransactionDone(transactionID);
-		}
-
 
 		public void Logout()
 		{
@@ -127,9 +110,7 @@ namespace MyGame
 				else
 					m_world.Map.SetTerrain(l, 1);
 
-				m_world.SendChanges();
-				//m_player.CalculateLOSAndSend();
-				//SendMap();
+				m_world.ProcessChanges();
 			}
 			catch (Exception e)
 			{
@@ -139,53 +120,5 @@ namespace MyGame
 		}
 
 		#endregion
-
-		Change ChangeSelector(Change change)
-		{
-			if (change is ObjectEnvironmentChange)
-			{
-				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				if (ec.MapID == m_player.Environment.ObjectID)
-					change = new ObjectLocationChange(m_world.FindObject(ec.ObjectID), ec.Location, ec.Location);
-				else
-					return null;
-			}
-
-			if (change is ObjectLocationChange)
-			{
-				ObjectLocationChange lc = (ObjectLocationChange)change;
-				if (!m_player.Sees(lc.SourceLocation) && !m_player.Sees(lc.TargetLocation))
-				{
-					MyDebug.WriteLine("plr doesn't see ob at {0}, skipping change", lc.SourceLocation);
-					return null;
-				}
-			}
-			// send only changes that the player sees and needs to know
-
-			return change;
-		}
-
-		void m_world_ChangesEvent(Change[] changes)
-		{
-			MyDebug.WriteLine("ChangesEvent plr id {0}", m_player.ObjectID);
-			Debug.Indent();
-			foreach(Change c  in changes)
-				MyDebug.WriteLine(c.ToString());
-			Debug.Unindent();
-
-			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
-
-			try
-			{
-				m_client.DeliverChanges(arr.ToArray());
-				//SendMap(); // xxx
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Failed to send changes to client");
-				MyDebug.WriteLine(e.ToString());
-				CleanUp();
-			}
-		}
 	}
 }
