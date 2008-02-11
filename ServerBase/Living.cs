@@ -85,6 +85,11 @@ namespace MyGame
 		// called after turn. world state is valid.
 		public void PostTurn()
 		{
+			CalculateLOSAndSend();
+		}
+
+		public void CalculateLOSAndSend()
+		{
 			// xxx todo: optimize
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
 			LocationGrid<bool> visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
@@ -125,7 +130,7 @@ namespace MyGame
 				foreach (Location l in newLocations)
 				{
 					ObjectID[] obs = null;
-					if(this.Environment.GetContents(l) != null)
+					if (this.Environment.GetContents(l) != null)
 						obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
 
 					terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);

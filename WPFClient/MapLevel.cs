@@ -52,17 +52,11 @@ namespace MyGame
 			return m_terrainData[l].m_terrainID;
 		}
 
-		public void SetTerrain(Location topLeft, int width, int height, int[] data)
+		public void SetTerrain(Location l, int terrainID)
 		{
-			int i = 0;
-			for (int y = topLeft.Y; y < topLeft.Y + height; y++)
-				for (int x = topLeft.X; x < topLeft.X + width; x++)
-				{
-					m_terrainData[x, y] = new TerrainData(data[i++]);
-
-					if (MapChanged != null)
-						MapChanged(new Location(x, y));
-				}
+			m_terrainData[l] = new TerrainData(terrainID);
+			if (MapChanged != null)
+				MapChanged(l);
 		}
 
 		public void SetTerrains(MapLocationTerrain[] locInfos)

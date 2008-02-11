@@ -79,9 +79,9 @@ namespace MyGame
 							ob = new ClientGameObject(oc.ObjectID);
 						}
 
-						if (change is LocationChange)
+						if (change is ObjectLocationChange)
 						{
-							LocationChange lc = (LocationChange)change;
+							ObjectLocationChange lc = (ObjectLocationChange)change;
 							// we should only get changes about events on this level
 							// so if an ob doesn't have an env, it must be here
 							if (ob.Environment == null)
@@ -91,6 +91,11 @@ namespace MyGame
 						}
 						else
 							throw new NotImplementedException();
+					}
+					else if (change is MapChange)
+					{
+						MapChange mc = (MapChange)change;
+						MainWindow.s_mainWindow.Map.SetTerrain(mc.Location, mc.TerrainType);
 					}
 					else if (change is TurnChange)
 					{

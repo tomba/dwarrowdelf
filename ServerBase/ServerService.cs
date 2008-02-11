@@ -27,7 +27,7 @@ namespace MyGame
 			m_world.ChangesEvent -= new HandleChanges(m_world_ChangesEvent);
 			m_player.Actor = null;
 
-			m_world.AddChange(new EnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
+			m_world.AddChange(new ObjectEnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
 			m_world.SendChanges();
 
 			m_client = null;
@@ -127,7 +127,9 @@ namespace MyGame
 				else
 					m_world.Map.SetTerrain(l, 1);
 
-				SendMap();
+				m_world.SendChanges();
+				//m_player.CalculateLOSAndSend();
+				//SendMap();
 			}
 			catch (Exception e)
 			{
@@ -138,58 +140,20 @@ namespace MyGame
 
 		#endregion
 
-		void SendMap()
-		{
-			LocationGrid<int> map = m_world.Map.GetTerrain();
-
-			Location ploc = m_player.Location;
-			int viewRange = m_player.VisionRange;
-
-			List<MapLocationTerrain> locations = new List<MapLocationTerrain>();
-
-			for (int y = ploc.Y - viewRange; y < ploc.Y + viewRange; y++)
-			{
-				if (y < 0 || y >= m_world.Map.Height)
-					continue;
-
-				for (int x = ploc.X - viewRange; x < ploc.X + viewRange; x++)
-				{
-					if (x < 0 || x >= m_world.Map.Width)
-						continue;
-
-					if (m_player.Sees(new Location(x, y)))
-					{
-						locations.Add(new MapLocationTerrain(new Location(x, y), map[x, y], null));
-					}
-				}
-			}
-
-			try
-			{
-				m_client.DeliverMapTerrains(locations.ToArray());
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Failed to send map to client");
-				MyDebug.WriteLine(e.ToString());
-				CleanUp();
-			}
-		}
-
 		Change ChangeSelector(Change change)
 		{
-			if (change is EnvironmentChange)
+			if (change is ObjectEnvironmentChange)
 			{
-				EnvironmentChange ec = (EnvironmentChange)change;
+				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
 				if (ec.MapID == m_player.Environment.ObjectID)
-					change = new LocationChange(m_world.FindObject(ec.ObjectID), ec.Location, ec.Location);
+					change = new ObjectLocationChange(m_world.FindObject(ec.ObjectID), ec.Location, ec.Location);
 				else
 					return null;
 			}
 
-			if (change is LocationChange)
+			if (change is ObjectLocationChange)
 			{
-				LocationChange lc = (LocationChange)change;
+				ObjectLocationChange lc = (ObjectLocationChange)change;
 				if (!m_player.Sees(lc.SourceLocation) && !m_player.Sees(lc.TargetLocation))
 				{
 					MyDebug.WriteLine("plr doesn't see ob at {0}, skipping change", lc.SourceLocation);

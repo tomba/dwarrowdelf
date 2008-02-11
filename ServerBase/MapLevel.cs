@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	delegate void MapChanged(Location l);
+	delegate void MapChanged(ObjectID mapID, Location l, int terrainID);
 
 	class MapLevel : IIdentifiable
 	{
@@ -55,6 +55,11 @@ namespace MyGame
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
 
+		public ObjectID MapID
+		{
+			get { return m_mapID; }
+		}
+
 		public LocationGrid<int> GetTerrain()
 		{
 			return m_mapTerrains;
@@ -70,7 +75,7 @@ namespace MyGame
 			m_mapTerrains[l] = terrainID;
 
 			if (MapChanged != null)
-				MapChanged(l);
+				MapChanged(this.MapID, l, terrainID);
 		}
 
 		public List<ServerGameObject> GetContents(Location l)
@@ -86,9 +91,6 @@ namespace MyGame
 
 			removed = m_containedObjects.Remove(ob);
 			Debug.Assert(removed);
-
-			if (MapChanged != null)
-				MapChanged(l);
 		}
 
 		public void AddObject(ServerGameObject ob, Location l)
@@ -101,9 +103,6 @@ namespace MyGame
 
 			Debug.Assert(!m_containedObjects.Contains(ob));
 			m_containedObjects.Add(ob);
-
-			if (MapChanged != null)
-				MapChanged(l);
 		}
 
 		public int Width

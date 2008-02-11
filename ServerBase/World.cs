@@ -48,7 +48,9 @@ namespace MyGame
 		{
 			m_area = new AreaDefinition(this);
 			m_map = m_area.GetLevel(1);
+			m_map.MapChanged += MapChangedCallback;
 			m_livingList = new List<Living>();
+
 
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
@@ -151,6 +153,12 @@ namespace MyGame
 
 			if(arr != null && arr.Length > 0)
 				ChangesEvent(arr);
+		}
+
+		void MapChangedCallback(ObjectID mapID, Location l, int terrainID)
+		{
+			// is this needed?
+			AddChange(new MapChange(mapID, l, terrainID));
 		}
 
 		public MapLevel Map

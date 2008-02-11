@@ -50,9 +50,9 @@ namespace MyGame
 			level.AddObject(this, l);
 
 			if(envChanged)
-				this.World.AddChange(new EnvironmentChange(this, this.Environment.ObjectID, l));
+				this.World.AddChange(new ObjectEnvironmentChange(this, this.Environment.ObjectID, l));
 			else
-				this.World.AddChange(new LocationChange(this, oldLocation, l));
+				this.World.AddChange(new ObjectLocationChange(this, oldLocation, l));
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, level, l);
