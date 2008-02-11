@@ -22,6 +22,9 @@ namespace MyGame
 
 		public GameObject Player { get; set; }
 
+		public bool DisableLOS { get; set; }	// debug
+		public bool ShowChangedTiles { get; set; } // debug
+
 		public MyTraceListener MyTraceListener { get; set; }
 
 		public ActionCollection ActionCollection { get; set; }

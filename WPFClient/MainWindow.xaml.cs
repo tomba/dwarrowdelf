@@ -52,6 +52,11 @@ namespace MyGame
 				this.map.MapLevel = value;
 			}
 		}
+
+		private void OnClearLogClicked(object sender, RoutedEventArgs e)
+		{
+			this.logTextBox.Clear();
+		}
 	
 	}
 

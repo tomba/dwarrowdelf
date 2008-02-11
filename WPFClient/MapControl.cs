@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Effects;
+using System.Windows.Threading;
 
 namespace MyGame
 {
@@ -36,6 +37,8 @@ namespace MyGame
 		Canvas m_effectsCanvas = new Canvas();
 		Rectangle m_hiliteRectangle = new Rectangle();
 
+		DispatcherTimer m_updateTimer;
+
 		public MapControl()
 		{
 			this.Focusable = true;
@@ -54,6 +57,10 @@ namespace MyGame
 			m_hiliteRectangle.Height = m_tileSize;
 			m_hiliteRectangle.Stroke = Brushes.Blue;
 			m_hiliteRectangle.StrokeThickness = 2;
+
+			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
+			m_updateTimer.Tick += UpdateTimerTick;
+			m_updateTimer.Interval = TimeSpan.FromMilliseconds(10);
 		}
 
 		void CreateMapTiles()
@@ -222,7 +229,12 @@ namespace MyGame
 				CreateMapTiles();
 
 				if (m_mapLevel != null)
-					PopulateMapTiles();
+				{
+					if (!m_updateTimer.IsEnabled)
+						m_updateTimer.Start();
+
+					//PopulateMapTiles();
+				}
 			}
 
 			foreach(Location l in m_mapTiles.GetLocations())
@@ -244,7 +256,7 @@ namespace MyGame
 		{
 			get
 			{
-				return m_mapTiles.Width * m_mapTiles.Height + 1;
+				return m_mapTiles.Width * m_mapTiles.Height + 1; // +1 for effect canvas
 			}
 		}
 
@@ -265,17 +277,33 @@ namespace MyGame
 		{
 			//MyDebug.WriteLine(String.Format("Mapchanged {0}", ml));
 
+			if (!m_updateTimer.IsEnabled)
+				m_updateTimer.Start();
+		}
+
+		void UpdateTimerTick(object sender, EventArgs e)
+		{
+			MyDebug.WriteLine("UpdateTimerTick");
+
+			m_updateTimer.Stop();
+			/*
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;
-
+			
 			Location sl = new Location(ml.X - dx, ml.Y - dy);
 
 			if (sl.X < 0 || sl.Y < 0 || sl.X >= m_columns || sl.Y >= m_rows)
 				return;
 
-			//UpdateTile(ml, sl);
-			PopulateMapTiles(); // xxx update all for now
-		}
+			UpdateTile(ml, sl);
+			 */
+
+/*
+			if(m_mapLevel != null)
+				PopulateMapTiles(); // xxx update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
+*/		}
+
+
 
 		public Location ScreenToMap(Location sl)
 		{
@@ -351,7 +379,9 @@ namespace MyGame
 
 			m_mapTiles[sl].Bitmap = bmp;
 
-			//lit = true; // lit always so we see what server sends
+			if(GameData.Data.DisableLOS)
+				lit = true; // lit always so we see what server sends
+
 			if (lit)
 			{
 				List<ClientGameObject> obs = m_mapLevel.GetContents(ml);
@@ -467,7 +497,11 @@ namespace MyGame
 			if (m_center != newCenter)
 			{
 				m_center = newCenter;
-				PopulateMapTiles();
+
+				if (!m_updateTimer.IsEnabled)
+					m_updateTimer.Start();
+
+				//PopulateMapTiles();
 			}
 
 			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);

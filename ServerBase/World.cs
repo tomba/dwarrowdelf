@@ -134,6 +134,8 @@ namespace MyGame
 			//MyDebug.WriteLine("AddChange {0}", change);
 			lock(m_changeList)
 				m_changeList.Add(change);
+
+			SendChanges(); // xxx we send every change immediately, to keep the order of the messages. sigh.
 		}
 
 		public void SendChanges()
