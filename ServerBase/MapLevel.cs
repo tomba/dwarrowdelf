@@ -55,7 +55,7 @@ namespace MyGame
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
 
-		public ObjectID MapID
+		public ObjectID MapID // objectid already exists...
 		{
 			get { return m_mapID; }
 		}

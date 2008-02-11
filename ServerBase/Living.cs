@@ -14,6 +14,14 @@ namespace MyGame
 			world.AddLiving(this);
 		}
 
+		public void Cleanup()
+		{
+			if (this.Environment != null)
+				this.Environment.RemoveObject(this, this.Location);
+
+			World.RemoveLiving(this);
+		}
+
 		public IClientCallback ClientCallback { get; set; }
 
 		IActor m_actorImpl;
@@ -150,8 +158,10 @@ namespace MyGame
 			if (change is ObjectEnvironmentChange)
 			{
 				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				if (ec.MapID == this.Environment.ObjectID)
-					change = new ObjectLocationChange(this.World.FindObject(ec.ObjectID), ec.Location, ec.Location);
+				if (ec.DestinationMapID == this.Environment.ObjectID)
+					change = new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
+						ec.DestinationLocation, ec.DestinationLocation);
+					// xxx what when srcmap == thismap
 				else
 					return null;
 			}

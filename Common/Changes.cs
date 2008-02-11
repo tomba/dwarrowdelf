@@ -98,20 +98,28 @@ namespace MyGame
 	public class ObjectEnvironmentChange : ObjectChange
 	{
 		[DataMember]
-		public Location Location { get; set; }
+		public ObjectID SourceMapID { get; set; }
 		[DataMember]
-		public ObjectID MapID { get; set; }
+		public Location SourceLocation { get; set; }
+		[DataMember]
+		public ObjectID DestinationMapID { get; set; }
+		[DataMember]
+		public Location DestinationLocation { get; set; }
 
-		public ObjectEnvironmentChange(GameObject target, ObjectID mapID, Location location)
+		public ObjectEnvironmentChange(GameObject target, ObjectID sourceMapID, Location sourceLocation,
+			ObjectID destinationMapID, Location destinationLocation)
 			: base(target)
 		{
-			this.Location = location;
-			this.MapID = mapID;
+			this.SourceMapID = sourceMapID;
+			this.SourceLocation = sourceLocation;
+			this.DestinationMapID = destinationMapID;
+			this.DestinationLocation = destinationLocation;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("EnvironmentChange {0}, {1}, {2}", this.ObjectID, this.MapID, this.Location);
+			return String.Format("EnvironmentChange {0} ({1}, {2}) -> ({3}, {4})",
+				this.ObjectID, this.SourceMapID, this.SourceLocation, this.DestinationMapID, this.DestinationLocation);
 		}
 	}
 }

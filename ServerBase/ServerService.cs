@@ -24,9 +24,12 @@ namespace MyGame
 
 		void CleanUp()
 		{
+			m_player.Cleanup();
+
 			m_player.Actor = null;
 
-			m_world.AddChange(new ObjectEnvironmentChange(m_player, ObjectID.NullObjectID, new Location()));
+			m_world.AddChange(new ObjectEnvironmentChange(m_player, m_player.Environment.ObjectID, m_player.Location,
+				ObjectID.NullObjectID, new Location()));
 			m_world.ProcessChanges();
 
 			m_client = null;

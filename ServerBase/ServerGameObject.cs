@@ -43,6 +43,9 @@ namespace MyGame
 
 			bool envChanged = this.Environment != level;
 
+			ObjectID oldMapID = ObjectID.NullObjectID;
+			if (this.Environment != null)
+				oldMapID = this.Environment.ObjectID;
 			Location oldLocation = this.Location;
 
 			this.Environment = level;
@@ -50,7 +53,8 @@ namespace MyGame
 			level.AddObject(this, l);
 
 			if(envChanged)
-				this.World.AddChange(new ObjectEnvironmentChange(this, this.Environment.ObjectID, l));
+				this.World.AddChange(new ObjectEnvironmentChange(this, oldMapID, oldLocation,
+					this.Environment.ObjectID, l));
 			else
 				this.World.AddChange(new ObjectLocationChange(this, oldLocation, l));
 
