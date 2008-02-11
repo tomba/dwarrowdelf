@@ -298,10 +298,9 @@ namespace MyGame
 			UpdateTile(ml, sl);
 			 */
 
-/*
 			if(m_mapLevel != null)
 				PopulateMapTiles(); // xxx update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
-*/		}
+		}
 
 
 
