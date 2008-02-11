@@ -19,7 +19,9 @@ namespace MyGame
 
 		GameAction GetNewAction()
 		{
+#if !STAYSTILL
 			return null;
+#else
 			GameAction action;
 
 			if (m_random.Next(4) == 0)
@@ -28,6 +30,7 @@ namespace MyGame
 				action = new MoveAction(0, m_object, (Direction)m_random.Next(8));
 
 			return action;
+#endif
 		}
 
 		#region IActor Members
