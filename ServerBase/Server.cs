@@ -56,7 +56,7 @@ namespace MyGame
 				}
 				else
 				{
-					MyDebug.WriteLine("Press enter to exit");
+					Console.WriteLine("Press enter to exit");
 					Console.ReadLine();
 				}
 
