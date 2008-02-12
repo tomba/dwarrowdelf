@@ -11,6 +11,7 @@ namespace MyGame
 	{
 		public static string Prefix { get; set; }
 
+		[Conditional("DEBUG")]
 		public static void WriteLine(string str)
 		{
 			if (Prefix != null)
@@ -19,6 +20,7 @@ namespace MyGame
 				Debug.WriteLine(str);
 		}
 
+		[Conditional("DEBUG")]
 		public static void WriteLine(string format, params object[] args)
 		{
 			WriteLine(String.Format(format, args));
