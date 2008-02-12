@@ -19,7 +19,7 @@ namespace MyGame
 
 		GameAction GetNewAction()
 		{
-#if !STAYSTILL
+#if STAYSTILL
 			return null;
 #else
 			GameAction action;

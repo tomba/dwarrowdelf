@@ -322,8 +322,9 @@ namespace MyGame
 		{
 			LocationGrid<TerrainData> terrainData = m_mapLevel.GetTerrain();
 			
-			LOSShadowCast1.CalculateLOS(m_followObject.Location, m_followObject.VisionRange, 
-				m_followObject.VisibilityMap, (Location l) => { return terrainData[l].m_terrainID == 2; });
+			LOSShadowCast1.CalculateLOS(m_followObject.Location, m_followObject.VisionRange,
+				m_followObject.VisibilityMap, m_mapLevel.Bounds, 
+				(Location l) => { return terrainData[l].m_terrainID == 2; });
 			
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;

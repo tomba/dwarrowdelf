@@ -30,12 +30,11 @@ namespace MyGame
 			}
 		}
 
-		//LOSDebugWindow window = new LOSDebugWindow();
 		static LOSCell[] cells;
 
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
 		static public void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
-			Func<Location, bool> blockerDelegate)
+			IntRect mapBounds, Func<Location, bool> blockerDelegate)
 		{
 			visionRange += 1; // visionrange does not include the tile where the observer is
 
@@ -47,14 +46,12 @@ namespace MyGame
 			}
 
 			for (int i = 0; i < 8; i++)
-				CalculateLOS(viewerLocation, visionRange, visibilityMap, blockerDelegate, i);
+				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
 		}
 
-		static void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
-			Func<Location, bool> blockerDelegate, int octant)
+		static void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<Location, bool> blockerDelegate, int octant)
 		{
-			//window.SetGridSize(10);
-
 			// Cell (0,0) is assumed to be lit and visible in all cases.
 			cells[0].Initialize();
 
@@ -67,9 +64,6 @@ namespace MyGame
 					Location translatedLocation = OctantTranslate(new Location(x, y), octant);
 					Location mapLocation = translatedLocation + viewerLocation;
 
-					if (mapLocation.X < 0 || mapLocation.Y < 0)
-						break;
-
 					LOSCell cell = cells[y];
 					LOSCell cellS = null;
 					if (y > 0)
@@ -78,10 +72,15 @@ namespace MyGame
 					// does the current cell represent a grid square that blocks LOS?
 					bool blocker;
 
-					if (blockerDelegate(mapLocation))
-						blocker = true;
+					if (mapBounds.Contains(mapLocation))
+					{
+						if (blockerDelegate(mapLocation))
+							blocker = true;
+						else
+							blocker = false;
+					}
 					else
-						blocker = false;
+						blocker = true;
 
 					double upInc = 1;
 					double lowInc = 1;
@@ -224,25 +223,17 @@ namespace MyGame
 						cell.lit = true;
 
 					// STEP 7 - apply 'lit' value
-					if (cell.lit || (blocker && cell.visible))
-						visibilityMap[translatedLocation] = true;
+					if (mapBounds.Contains(mapLocation))
+					{
+						if (cell.lit || (blocker && cell.visible))
+							visibilityMap[translatedLocation] = true;
+						else
+							visibilityMap[translatedLocation] = false;
+					}
 					else
 						visibilityMap[translatedLocation] = false;
-					/*
-					StringBuilder sb = new StringBuilder();
-					sb.AppendFormat("{0},{1}  {2}\n", x, y, blocker ? "block" : "");
-					sb.AppendFormat("up m/c {0:F2}/{1:F2}\n", cell.upperShadowMax, cell.upperShadowCount);
-					sb.AppendFormat("lo m/c {0:F2}/{1:F2}\n", cell.lowerShadowMax, cell.lowerShadowCount);
-					sb.AppendFormat("vis {0}, lit {1}, litdelay {2}\n",
-						cell.visible ? "y" : "-", cell.lit ? "y" : "-", cell.litDelay ? "y" : "-");
-					window.SetGridElementData(x, y, sb.ToString(),
-						cell.lit || (blocker && cell.visible),
-						blocker);
-					 */
 				}
 			}
-
-			//window.Show();
 		}
 
 		static bool CellReachedUpMax(LOSCell cell)

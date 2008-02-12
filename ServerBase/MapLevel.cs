@@ -55,11 +55,6 @@ namespace MyGame
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
 
-		public ObjectID MapID // objectid already exists...
-		{
-			get { return m_mapID; }
-		}
-
 		public LocationGrid<int> GetTerrain()
 		{
 			return m_mapTerrains;
@@ -75,7 +70,7 @@ namespace MyGame
 			m_mapTerrains[l] = terrainID;
 
 			if (MapChanged != null)
-				MapChanged(this.MapID, l, terrainID);
+				MapChanged(this.ObjectID, l, terrainID);
 		}
 
 		public List<ServerGameObject> GetContents(Location l)

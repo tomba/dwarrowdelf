@@ -98,20 +98,27 @@ namespace MyGame
 			if (this.ClientCallback != null)
 			{
 				FilterAndSendChanges(changes);
-
-				MapLocationTerrain[] terrains = new MapLocationTerrain[newLocations.Count];
-				int i = 0;
-				foreach (Location l in newLocations)
-				{
-					ObjectID[] obs = null;
-					if (this.Environment.GetContents(l) != null)
-						obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
-
-					terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);
-				}
-
-				this.ClientCallback.DeliverMapTerrains(terrains);
+				SendNewTerrains(newLocations);
 			}
+		}
+
+		void SendNewTerrains(List<Location> newLocations)
+		{
+			if (newLocations.Count == 0)
+				return;
+
+			MapLocationTerrain[] terrains = new MapLocationTerrain[newLocations.Count];
+			int i = 0;
+			foreach (Location l in newLocations)
+			{
+				ObjectID[] obs = null;
+				if (this.Environment.GetContents(l) != null)
+					obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
+
+				terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);
+			}
+
+			this.ClientCallback.DeliverMapTerrains(terrains);
 		}
 
 		// calculate los and returns a list of new locations in sight
@@ -121,7 +128,7 @@ namespace MyGame
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
 			LocationGrid<bool> visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
 				this.VisionRange, this.VisionRange);
-			LOSShadowCast1.CalculateLOS(this.Location, this.VisionRange, visionMap,
+			LOSShadowCast1.CalculateLOS(this.Location, this.VisionRange, visionMap, this.Environment.Bounds,
 				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
 
 			List<Location> newLocations = new List<Location>();
