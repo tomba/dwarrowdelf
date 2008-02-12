@@ -18,8 +18,6 @@ namespace MyGame
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 
-		public event ObjectMoved ObjectMoved;
-
 		public World World { get; protected set; }
 
 		internal ServerGameObject(World world)
@@ -57,9 +55,6 @@ namespace MyGame
 					this.Environment.ObjectID, l));
 			else
 				this.World.AddChange(new ObjectLocationChange(this, oldLocation, l));
-
-			if (ObjectMoved != null)
-				ObjectMoved(this, level, l);
 
 			return true;
 		}
