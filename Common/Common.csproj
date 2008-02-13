@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Changes.cs" />
+    <Compile Include="GrowingLocationGrid.cs" />
     <Compile Include="IntRect.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="LocationGrid.cs" />
