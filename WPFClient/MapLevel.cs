@@ -10,51 +10,47 @@ namespace MyGame
 {
 	delegate void MapChanged(Location l);
 
-	struct TerrainData
+	struct TileData
 	{
 		public int m_terrainID;
-
-		public TerrainData(int terrainID)
-		{
-			m_terrainID = terrainID;
-		}
+		public List<ClientGameObject> m_contentList;
 	}
 
-	class MapLevel
+	class MapLevel : GrowingLocationGrid<TileData>
 	{
 		public event MapChanged MapChanged;
 
-		LocationGrid<TerrainData> m_terrainData;
-		LocationGrid<List<ClientGameObject>> m_mapContents;
-		int m_width;
-		int m_height;
-
-		public MapLevel(int width, int height)
+		public MapLevel(int width, int height) : base(8)
 		{
-			m_width = width;
-			m_height = height;
-			m_terrainData = new LocationGrid<TerrainData>(width, height);
-			m_mapContents = new LocationGrid<List<ClientGameObject>>(m_width, m_height);
 		}
-
+/*
 		public IntRect Bounds
 		{
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
-
-		public LocationGrid<TerrainData> GetTerrain()
+*/
+		public int GetTerrainType(Location l)
 		{
-			return m_terrainData;
+			int x = l.X;
+			int y = l.Y;
+
+			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+
+			if (block == null)
+				return 0;
+
+			return block[x, y].m_terrainID;
 		}
 
-		public int GetTerrain(Location l)
+		public void SetTerrainType(Location l, int terrainID)
 		{
-			return m_terrainData[l].m_terrainID;
-		}
+			int x = l.X;
+			int y = l.Y;
 
-		public void SetTerrain(Location l, int terrainID)
-		{
-			m_terrainData[l] = new TerrainData(terrainID);
+			TileData[,] block = base.GetBlock(ref x, ref y, true, true);
+
+			block[x, y].m_terrainID = terrainID;
+
 			if (MapChanged != null)
 				MapChanged(l);
 		}
@@ -65,7 +61,14 @@ namespace MyGame
 			foreach (MapLocationTerrain locInfo in locInfos)
 			{
 				Location l = locInfo.Location;
-				m_terrainData[l] = new TerrainData(locInfo.Terrain);
+
+				int x = l.X;
+				int y = l.Y;
+
+				TileData[,] block = base.GetBlock(ref x, ref y, true, true);
+
+				block[x, y].m_terrainID = locInfo.Terrain;
+
 				if (locInfo.Objects != null)
 				{
 					foreach(ObjectID oid in locInfo.Objects)
@@ -93,7 +96,15 @@ namespace MyGame
 
 		public List<ClientGameObject> GetContents(Location l)
 		{
-			return m_mapContents[l];
+			int x = l.X;
+			int y = l.Y;
+
+			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+
+			if (block == null)
+				return null;
+
+			return block[x, y].m_contentList;
 		}
 
 		public void SetContents(Location l, int[] symbols)
@@ -107,8 +118,16 @@ namespace MyGame
 
 		public void RemoveObject(ClientGameObject ob, Location l)
 		{
-			Debug.Assert(m_mapContents[l] != null);
-			bool removed = m_mapContents[l].Remove(ob);
+			int x = l.X;
+			int y = l.Y;
+
+			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+
+			Debug.Assert(block != null);
+			Debug.Assert(block[x, y].m_contentList != null);
+
+			bool removed = block[x, y].m_contentList.Remove(ob);
+
 			Debug.Assert(removed);
 
 			if (MapChanged != null)
@@ -117,16 +136,23 @@ namespace MyGame
 
 		public void AddObject(ClientGameObject ob, Location l)
 		{
-			if (m_mapContents[l] == null)
-				m_mapContents[l] = new List<ClientGameObject>();
+			int x = l.X;
+			int y = l.Y;
 
-			Debug.Assert(!m_mapContents[l].Contains(ob));
-			m_mapContents[l].Add(ob);
+			TileData[,] block = base.GetBlock(ref x, ref y, true, true);
+
+			Debug.Assert(block != null);
+
+			if (block[x, y].m_contentList == null)
+				block[x, y].m_contentList = new List<ClientGameObject>();
+
+			Debug.Assert(!block[x, y].m_contentList.Contains(ob));
+			block[x, y].m_contentList.Add(ob);
 
 			if (MapChanged != null)
 				MapChanged(l);
 		}
-
+		/*
 		public int Width
 		{
 			get { return m_width; }
@@ -136,7 +162,7 @@ namespace MyGame
 		{
 			get { return m_height; }
 		}
-
+		*/
 
 	}
 }

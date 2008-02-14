@@ -95,7 +95,7 @@ namespace MyGame
 					else if (change is MapChange)
 					{
 						MapChange mc = (MapChange)change;
-						MainWindow.s_mainWindow.Map.SetTerrain(mc.Location, mc.TerrainType);
+						MainWindow.s_mainWindow.Map.SetTerrainType(mc.Location, mc.TerrainType);
 					}
 					else if (change is TurnChange)
 					{

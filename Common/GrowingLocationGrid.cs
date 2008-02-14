@@ -10,7 +10,6 @@ namespace MyGame
 		T[,][,] m_grid;
 
 		IntRect m_mainRect;
-
 		int m_blockSize;
 
 		public GrowingLocationGrid(int blockSize)
@@ -39,58 +38,101 @@ namespace MyGame
 			}
 		}
 
+		protected T[,][,] Grid
+		{
+			get { return m_grid; }
+		}
+
 		public T this[int x, int y]
 		{
 			get
 			{
-				int blockX = Math.DivRem(x, m_blockSize, out x) - m_mainRect.Left;
-				int blockY = Math.DivRem(y, m_blockSize, out y) - m_mainRect.Top;
+				int blockX;
+				int blockY;
 
-				if (x < 0)
-				{
-					blockX -= 1;
-					x = m_blockSize + x;
-				}
-
-				if (y < 0)
-				{
-					blockY -= 1;
-					y = m_blockSize + y;
-				}
-
-				if (m_grid[blockX, blockY] == null)
-					m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
+				if (Ensure(ref x, ref y, out blockX, out blockY, false) == false)
+					throw new Exception("resize not allowed");
 
 				return m_grid[blockX, blockY][x, y];
 			}
 
 			set
 			{
-				int blockX = Math.DivRem(x, m_blockSize, out x);
-				int blockY = Math.DivRem(y, m_blockSize, out y);
+				int blockX;
+				int blockY;
 
-				if (x < 0)
-				{
-					blockX -= 1;
-					x = m_blockSize + x;
-				}
+				Ensure(ref x, ref y, out blockX, out blockY, true);
 
-				if (y < 0)
-				{
-					blockY -= 1;
-					y = m_blockSize + y;
-				}
-
-				if (!m_mainRect.Contains(new Location(blockX, blockY)))
-					Resize(blockX, blockY);
-
-				blockX -= m_mainRect.Left;
-				blockY -= m_mainRect.Top;
-
-				if(m_grid[blockX, blockY] == null)
-					m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
 				m_grid[blockX, blockY][x, y] = value;
 			}
+		}
+
+		protected bool Ensure(ref int x, ref int y, out int blockX, out int blockY, bool allowResize)
+		{
+			blockX = Math.DivRem(x, m_blockSize, out x);
+			blockY = Math.DivRem(y, m_blockSize, out y);
+
+			if (x < 0)
+			{
+				blockX -= 1;
+				x = m_blockSize + x;
+			}
+
+			if (y < 0)
+			{
+				blockY -= 1;
+				y = m_blockSize + y;
+			}
+
+			if (!m_mainRect.Contains(new Location(blockX, blockY)))
+			{
+				if (allowResize)
+					Resize(blockX, blockY);
+				else
+					return false;
+			}
+
+			blockX -= m_mainRect.Left;
+			blockY -= m_mainRect.Top;
+
+			if (m_grid[blockX, blockY] == null)
+				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
+
+			return true;
+		}
+
+		protected T[,] GetBlock(ref int x, ref int y, bool allowResize, bool allowCreate)
+		{
+			int blockX = Math.DivRem(x, m_blockSize, out x);
+			int blockY = Math.DivRem(y, m_blockSize, out y);
+
+			if (x < 0)
+			{
+				blockX -= 1;
+				x = m_blockSize + x;
+			}
+
+			if (y < 0)
+			{
+				blockY -= 1;
+				y = m_blockSize + y;
+			}
+
+			if (!m_mainRect.Contains(new Location(blockX, blockY)))
+			{
+				if (allowResize)
+					Resize(blockX, blockY);
+				else
+					return null;
+			}
+
+			blockX -= m_mainRect.Left;
+			blockY -= m_mainRect.Top;
+
+			if (m_grid[blockX, blockY] == null)
+				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
+
+			return m_grid[blockX, blockY];
 		}
 
 		public T this[Location l]

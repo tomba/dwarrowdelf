@@ -320,11 +320,9 @@ namespace MyGame
 
 		void PopulateMapTiles()
 		{
-			LocationGrid<TerrainData> terrainData = m_mapLevel.GetTerrain();
-			
 			LOSShadowCast1.CalculateLOS(m_followObject.Location, m_followObject.VisionRange,
 				m_followObject.VisibilityMap, m_mapLevel.Bounds, 
-				(Location l) => { return terrainData[l].m_terrainID == 2; });
+				(Location l) => { return m_mapLevel.GetTerrainType(l) == 2; });
 			
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;
@@ -350,7 +348,7 @@ namespace MyGame
 				return;
 			}
 
-			int terrainID = m_mapLevel.GetTerrain(ml);
+			int terrainID = m_mapLevel.GetTerrainType(ml);
 			BitmapSource bmp;
 			bool lit = true;
 			if (m_followObject.Location == ml)
