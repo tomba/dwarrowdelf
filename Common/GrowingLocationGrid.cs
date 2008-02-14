@@ -11,33 +11,31 @@ namespace MyGame
 
 		IntRect m_mainRect;
 
-		int m_blockWidth;
-		int m_blockHeight;
+		int m_blockSize;
 
-		public GrowingLocationGrid(int blockWidth, int blockHeight)
+		public GrowingLocationGrid(int blockSize)
 		{
-			m_blockWidth = blockWidth;
-			m_blockHeight = blockHeight;
+			m_blockSize = blockSize;
 			m_mainRect = new IntRect(0, 0, 1, 1);
 			m_grid = new T[m_mainRect.Width, m_mainRect.Height][,];
 		}
 
 		public int Width
 		{
-			get { return m_mainRect.Width * m_blockWidth; }
+			get { return m_mainRect.Width * m_blockSize; }
 		}
 
 		public int Height
 		{
-			get { return m_mainRect.Height * m_blockHeight; }
+			get { return m_mainRect.Height * m_blockSize; }
 		}
 
 		public IntRect Bounds
 		{
 			get
 			{
-				return new IntRect(m_mainRect.X * m_blockWidth, m_mainRect.Y * m_blockHeight,
-					m_mainRect.Width * m_blockWidth, m_mainRect.Height * m_blockWidth);
+				return new IntRect(m_mainRect.X * m_blockSize, m_mainRect.Y * m_blockSize,
+					m_mainRect.Width * m_blockSize, m_mainRect.Height * m_blockSize);
 			}
 		}
 
@@ -45,42 +43,42 @@ namespace MyGame
 		{
 			get
 			{
-				int blockX = Math.DivRem(x, m_blockHeight, out x) - m_mainRect.Left;
-				int blockY = Math.DivRem(y, m_blockWidth, out y) - m_mainRect.Top;
+				int blockX = Math.DivRem(x, m_blockSize, out x) - m_mainRect.Left;
+				int blockY = Math.DivRem(y, m_blockSize, out y) - m_mainRect.Top;
 
 				if (x < 0)
 				{
 					blockX -= 1;
-					x = m_blockWidth + x;
+					x = m_blockSize + x;
 				}
 
 				if (y < 0)
 				{
 					blockY -= 1;
-					y = m_blockHeight + y;
+					y = m_blockSize + y;
 				}
 
 				if (m_grid[blockX, blockY] == null)
-					m_grid[blockX, blockY] = new T[m_blockWidth, m_blockHeight];
+					m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
 
 				return m_grid[blockX, blockY][x, y];
 			}
 
 			set
 			{
-				int blockX = Math.DivRem(x, m_blockHeight, out x);
-				int blockY = Math.DivRem(y, m_blockWidth, out y);
+				int blockX = Math.DivRem(x, m_blockSize, out x);
+				int blockY = Math.DivRem(y, m_blockSize, out y);
 
 				if (x < 0)
 				{
 					blockX -= 1;
-					x = m_blockWidth + x;
+					x = m_blockSize + x;
 				}
 
 				if (y < 0)
 				{
 					blockY -= 1;
-					y = m_blockHeight + y;
+					y = m_blockSize + y;
 				}
 
 				if (!m_mainRect.Contains(new Location(blockX, blockY)))
@@ -90,7 +88,7 @@ namespace MyGame
 				blockY -= m_mainRect.Top;
 
 				if(m_grid[blockX, blockY] == null)
-					m_grid[blockX, blockY] = new T[m_blockWidth, m_blockHeight];
+					m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
 				m_grid[blockX, blockY][x, y] = value;
 			}
 		}
