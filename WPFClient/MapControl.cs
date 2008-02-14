@@ -382,7 +382,7 @@ namespace MyGame
 
 			if (lit)
 			{
-				List<ClientGameObject> obs = m_mapLevel.GetContents(ml);
+				IList<ClientGameObject> obs = m_mapLevel.GetContents(ml);
 				if (obs != null && obs.Count > 0)
 				{
 					bmp = m_symbolBitmaps[obs[0].SymbolID];

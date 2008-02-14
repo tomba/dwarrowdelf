@@ -16,40 +16,47 @@ namespace MyGame
 		public List<ClientGameObject> m_contentList;
 	}
 
-	class MapLevel : GrowingLocationGrid<TileData>
+	class MapLevel
 	{
 		public event MapChanged MapChanged;
 
-		public MapLevel(int width, int height) : base(8)
+		GrowingLocationGrid<TileData> m_tileGrid;
+
+		public MapLevel(int width, int height)
 		{
+			m_tileGrid = new GrowingLocationGrid<TileData>(10);
 		}
-/*
+
+		public int Width
+		{
+			get { return m_tileGrid.Width; }
+		}
+
+		public int Height
+		{
+			get { return m_tileGrid.Height; }
+		}
+
 		public IntRect Bounds
 		{
-			get { return new IntRect(0, 0, m_width, m_height); }
+			get { return m_tileGrid.Bounds; }
 		}
-*/
+
 		public int GetTerrainType(Location l)
 		{
-			int x = l.X;
-			int y = l.Y;
-
-			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
 
 			if (block == null)
 				return 0;
 
-			return block[x, y].m_terrainID;
+			return block[l.X, l.Y].m_terrainID;
 		}
 
 		public void SetTerrainType(Location l, int terrainID)
 		{
-			int x = l.X;
-			int y = l.Y;
+			TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
 
-			TileData[,] block = base.GetBlock(ref x, ref y, true, true);
-
-			block[x, y].m_terrainID = terrainID;
+			block[l.X, l.Y].m_terrainID = terrainID;
 
 			if (MapChanged != null)
 				MapChanged(l);
@@ -62,12 +69,9 @@ namespace MyGame
 			{
 				Location l = locInfo.Location;
 
-				int x = l.X;
-				int y = l.Y;
+				TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
 
-				TileData[,] block = base.GetBlock(ref x, ref y, true, true);
-
-				block[x, y].m_terrainID = locInfo.Terrain;
+				block[l.X, l.Y].m_terrainID = locInfo.Terrain;
 
 				if (locInfo.Objects != null)
 				{
@@ -94,39 +98,27 @@ namespace MyGame
 			}
 		}
 
-		public List<ClientGameObject> GetContents(Location l)
+		public IList<ClientGameObject> GetContents(Location l)
 		{
-			int x = l.X;
-			int y = l.Y;
-
-			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
 
 			if (block == null)
 				return null;
 
-			return block[x, y].m_contentList;
-		}
+			if (block[l.X, l.Y].m_contentList == null)
+				return null;
 
-		public void SetContents(Location l, int[] symbols)
-		{
-			throw new NotImplementedException();
-			/*
-			m_mapContents[l] = new List<int>(symbols);
-			MapChanged(l);
-			 */
+			return block[l.X, l.Y].m_contentList.AsReadOnly();
 		}
 
 		public void RemoveObject(ClientGameObject ob, Location l)
 		{
-			int x = l.X;
-			int y = l.Y;
-
-			TileData[,] block = base.GetBlock(ref x, ref y, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
 
 			Debug.Assert(block != null);
-			Debug.Assert(block[x, y].m_contentList != null);
+			Debug.Assert(block[l.X, l.Y].m_contentList != null);
 
-			bool removed = block[x, y].m_contentList.Remove(ob);
+			bool removed = block[l.X, l.Y].m_contentList.Remove(ob);
 
 			Debug.Assert(removed);
 
@@ -136,33 +128,18 @@ namespace MyGame
 
 		public void AddObject(ClientGameObject ob, Location l)
 		{
-			int x = l.X;
-			int y = l.Y;
-
-			TileData[,] block = base.GetBlock(ref x, ref y, true, true);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
 
 			Debug.Assert(block != null);
 
-			if (block[x, y].m_contentList == null)
-				block[x, y].m_contentList = new List<ClientGameObject>();
+			if (block[l.X, l.Y].m_contentList == null)
+				block[l.X, l.Y].m_contentList = new List<ClientGameObject>();
 
-			Debug.Assert(!block[x, y].m_contentList.Contains(ob));
-			block[x, y].m_contentList.Add(ob);
+			Debug.Assert(!block[l.X, l.Y].m_contentList.Contains(ob));
+			block[l.X, l.Y].m_contentList.Add(ob);
 
 			if (MapChanged != null)
 				MapChanged(l);
 		}
-		/*
-		public int Width
-		{
-			get { return m_width; }
-		}
-
-		public int Height
-		{
-			get { return m_height; }
-		}
-		*/
-
 	}
 }

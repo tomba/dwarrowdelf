@@ -38,70 +38,44 @@ namespace MyGame
 			}
 		}
 
-		protected T[,][,] Grid
-		{
-			get { return m_grid; }
-		}
-
 		public T this[int x, int y]
 		{
 			get
 			{
-				int blockX;
-				int blockY;
+				T[,] block = GetBlock(ref x, ref y, false, true);
+				if (block == null)
+					throw new IndexOutOfRangeException("Resize not allowed");
 
-				if (Ensure(ref x, ref y, out blockX, out blockY, false) == false)
-					throw new Exception("resize not allowed");
-
-				return m_grid[blockX, blockY][x, y];
+				return block[x, y];
 			}
 
 			set
 			{
-				int blockX;
-				int blockY;
-
-				Ensure(ref x, ref y, out blockX, out blockY, true);
-
-				m_grid[blockX, blockY][x, y] = value;
+				T[,] block = GetBlock(ref x, ref y, true, true);
+				block[x, y] = value;
 			}
 		}
 
-		protected bool Ensure(ref int x, ref int y, out int blockX, out int blockY, bool allowResize)
+		public T this[Location l]
 		{
-			blockX = Math.DivRem(x, m_blockSize, out x);
-			blockY = Math.DivRem(y, m_blockSize, out y);
-
-			if (x < 0)
-			{
-				blockX -= 1;
-				x = m_blockSize + x;
-			}
-
-			if (y < 0)
-			{
-				blockY -= 1;
-				y = m_blockSize + y;
-			}
-
-			if (!m_mainRect.Contains(new Location(blockX, blockY)))
-			{
-				if (allowResize)
-					Resize(blockX, blockY);
-				else
-					return false;
-			}
-
-			blockX -= m_mainRect.Left;
-			blockY -= m_mainRect.Top;
-
-			if (m_grid[blockX, blockY] == null)
-				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
-
-			return true;
+			get { return this[l.X, l.Y]; }
+			set { this[l.X, l.Y] = value; }
 		}
 
-		protected T[,] GetBlock(ref int x, ref int y, bool allowResize, bool allowCreate)
+		public T[,] GetBlock(ref Location l, bool allowResize, bool allowCreate)
+		{
+			int x = l.X;
+			int y = l.Y;
+
+			T[,] block = GetBlock(ref x, ref y, allowResize, allowCreate);
+
+			l.X = x;
+			l.Y = y;
+
+			return block;
+		}
+
+		public T[,] GetBlock(ref int x, ref int y, bool allowResize, bool allowCreate)
 		{
 			int blockX = Math.DivRem(x, m_blockSize, out x);
 			int blockY = Math.DivRem(y, m_blockSize, out y);
@@ -133,12 +107,6 @@ namespace MyGame
 				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
 
 			return m_grid[blockX, blockY];
-		}
-
-		public T this[Location l]
-		{
-			get { return this[l.X, l.Y]; }
-			set { this[l.X, l.Y] = value; }
 		}
 
 		void Resize(int blockX, int blockY)
