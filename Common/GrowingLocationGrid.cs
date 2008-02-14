@@ -14,19 +14,31 @@ namespace MyGame
 		int m_blockWidth;
 		int m_blockHeight;
 
-		public Location Origin { get; set; }
-
 		public GrowingLocationGrid(int blockWidth, int blockHeight)
 		{
 			m_blockWidth = blockWidth;
 			m_blockHeight = blockHeight;
 			m_mainRect = new IntRect(0, 0, 1, 1);
-			ReallocateGrid();
+			m_grid = new T[m_mainRect.Width, m_mainRect.Height][,];
 		}
 
-		void ReallocateGrid()
+		public int Width
 		{
-			m_grid = new T[m_mainRect.Width, m_mainRect.Height][,];
+			get { return m_mainRect.Width * m_blockWidth; }
+		}
+
+		public int Height
+		{
+			get { return m_mainRect.Height * m_blockHeight; }
+		}
+
+		public IntRect Bounds
+		{
+			get
+			{
+				return new IntRect(m_mainRect.X * m_blockWidth, m_mainRect.Y * m_blockHeight,
+					m_mainRect.Width * m_blockWidth, m_mainRect.Height * m_blockWidth);
+			}
 		}
 
 		public T this[int x, int y]
@@ -35,26 +47,58 @@ namespace MyGame
 			{
 				int blockX = Math.DivRem(x, m_blockHeight, out x) - m_mainRect.Left;
 				int blockY = Math.DivRem(y, m_blockWidth, out y) - m_mainRect.Top;
+
+				if (x < 0)
+				{
+					blockX -= 1;
+					x = m_blockWidth + x;
+				}
+
+				if (y < 0)
+				{
+					blockY -= 1;
+					y = m_blockHeight + y;
+				}
+
+				if (m_grid[blockX, blockY] == null)
+					m_grid[blockX, blockY] = new T[m_blockWidth, m_blockHeight];
+
 				return m_grid[blockX, blockY][x, y];
 			}
 
 			set
 			{
-				int blockX = Math.DivRem(x, m_blockHeight, out x) - m_mainRect.Left;
-				int blockY = Math.DivRem(y, m_blockWidth, out y) - m_mainRect.Top;
+				int blockX = Math.DivRem(x, m_blockHeight, out x);
+				int blockY = Math.DivRem(y, m_blockWidth, out y);
+
+				if (x < 0)
+				{
+					blockX -= 1;
+					x = m_blockWidth + x;
+				}
+
+				if (y < 0)
+				{
+					blockY -= 1;
+					y = m_blockHeight + y;
+				}
 
 				if (!m_mainRect.Contains(new Location(blockX, blockY)))
-				{
 					Resize(blockX, blockY);
 
-					blockX = Math.DivRem(x, m_blockHeight, out x) - m_mainRect.Left;
-					blockY = Math.DivRem(y, m_blockWidth, out y) - m_mainRect.Top;
-				}
+				blockX -= m_mainRect.Left;
+				blockY -= m_mainRect.Top;
 
 				if(m_grid[blockX, blockY] == null)
 					m_grid[blockX, blockY] = new T[m_blockWidth, m_blockHeight];
 				m_grid[blockX, blockY][x, y] = value;
 			}
+		}
+
+		public T this[Location l]
+		{
+			get { return this[l.X, l.Y]; }
+			set { this[l.X, l.Y] = value; }
 		}
 
 		void Resize(int blockX, int blockY)
