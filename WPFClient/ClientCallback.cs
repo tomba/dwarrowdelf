@@ -77,6 +77,7 @@ namespace MyGame
 						{
 							MyDebug.WriteLine("New object appeared");
 							ob = new ClientGameObject(oc.ObjectID);
+							ob.SymbolID = 4;
 						}
 
 						if (change is ObjectLocationChange)

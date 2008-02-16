@@ -82,6 +82,7 @@ namespace MyGame
 						{
 							MyDebug.WriteLine("New object {0}", oid);
 							ob = new ClientGameObject(oid);
+							ob.SymbolID = 4;
 						}
 
 						MyDebug.WriteLine("OB AT {0}", l);

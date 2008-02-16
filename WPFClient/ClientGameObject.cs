@@ -25,7 +25,7 @@ namespace MyGame
 			return null;
 		}
 
-		public int SymbolID { get; protected set; }
+		public int SymbolID { get; set; }
 		Location m_location;
 		MapLevel m_environment;
 		LocationGrid<bool> m_visibilityMap;
