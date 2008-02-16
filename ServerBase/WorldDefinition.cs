@@ -13,13 +13,13 @@ namespace MyGame
 	{
 	}
 
-	class AreaDefinition
+	class WorldDefinition
 	{
 		public World World { get; private set; }
 		public TerrainInfo[] Terrains { get; protected set; }
 		MapLevel m_map;
 
-		public AreaDefinition(World world)
+		public WorldDefinition(World world)
 		{
 			this.World = world;
 

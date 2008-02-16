@@ -11,7 +11,7 @@ namespace MyGame
 
 	class MapLevel : IIdentifiable
 	{
-		public AreaDefinition Area { get; protected set; }
+		public WorldDefinition Area { get; protected set; }
 		public event MapChanged MapChanged;
 
 		LocationGrid<int> m_mapTerrains;
@@ -23,7 +23,7 @@ namespace MyGame
 
 		readonly ObjectID m_mapID = new ObjectID(123);
 
-		public MapLevel(AreaDefinition area)
+		public MapLevel(WorldDefinition area)
 		{
 			this.Area = area;
 

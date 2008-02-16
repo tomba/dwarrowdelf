@@ -37,7 +37,7 @@ namespace MyGame
 
 		public List<Change> m_changeList = new List<Change>();
 
-		AreaDefinition m_area;
+		WorldDefinition m_area;
 		MapLevel m_map;
 
 		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
@@ -46,7 +46,7 @@ namespace MyGame
 
 		public World()
 		{
-			m_area = new AreaDefinition(this);
+			m_area = new WorldDefinition(this);
 			m_map = m_area.GetLevel(1);
 			m_map.MapChanged += MapChangedCallback;
 			m_livingList = new List<Living>();

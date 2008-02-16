@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AreaDefinition.cs" />
+    <Compile Include="WorldDefinition.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />
     <Compile Include="Living.cs" />
