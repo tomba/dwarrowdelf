@@ -13,12 +13,48 @@ namespace MyGame
 		Drawing[] m_symbolDrawings = new Drawing[6];
 		ResourceDictionary m_symbolResources;
 
+		class DrawingInfo
+		{
+			public Point m_location;
+			public Size m_size;
+		}
+
+		Dictionary<string, DrawingInfo> m_drawingInfos;
+
 		public SymbolDrawings()
 		{
+			m_drawingInfos = new Dictionary<string, DrawingInfo>();
+			DrawingInfo di = new DrawingInfo();
+			di.m_location = new Point(10, 10);
+			di.m_size = new Size(80, 80);
+			m_drawingInfos["Character_Cat_Girl"] = di;
+
+			di = new DrawingInfo();
+			di.m_location = new Point(0, 20);
+			di.m_size = new Size(100, 60);
+			m_drawingInfos["Enemy_Bug"] = di;
+
+			di = new DrawingInfo();
+			di.m_location = new Point(0, 0);
+			di.m_size = new Size(100, 140);
+			m_drawingInfos["Dirt_Block"] = di;
+
+			di = new DrawingInfo();
+			di.m_location = new Point(0, 0);
+			di.m_size = new Size(100, 140);
+			m_drawingInfos["Stone_Block"] = di;
+
+			di = new DrawingInfo();
+			di.m_location = new Point(0, 0);
+			di.m_size = new Size(100, 100);
+			m_drawingInfos["Gem_Blue"] = di;
+
 			m_symbolResources = (ResourceDictionary)Application.LoadComponent(
 				new Uri("Symbols/PlanetCute.xaml", UriKind.Relative));
 
 			m_symbolDrawings[0] = CreateUnknownDrawing();
+			m_symbolDrawings[0] = NormalizeDrawing(m_symbolDrawings[0], new Point(), new Size(100, 100));
+
 			m_symbolDrawings[1] = GetDrawingByName("Dirt_Block");
 			m_symbolDrawings[2] = GetDrawingByName("Stone_Block");
 			m_symbolDrawings[3] = GetDrawingByName("Character_Cat_Girl");
@@ -29,21 +65,30 @@ namespace MyGame
 		Drawing GetDrawingByName(string name)
 		{
 			Drawing d = ((DrawingImage)m_symbolResources[name]).Drawing;
-			//d = NormalizeDrawing(d);
+			if (m_drawingInfos.ContainsKey(name))
+			{
+				DrawingInfo di = m_drawingInfos[name];
+				d = NormalizeDrawing(d, di.m_location, di.m_size);
+			}
+			else
+			{
+				d = NormalizeDrawing(d, new Point(), new Size(100, 100));
+			}
 			return d;
 		}
 
-		Drawing NormalizeDrawing(Drawing drawing)
+		Drawing NormalizeDrawing(Drawing drawing, Point location, Size size)
 		{
 			DrawingGroup dGroup = new DrawingGroup();
 			using (DrawingContext dc = dGroup.Open())
 			{
-				double xc = (drawing.Bounds.Left + drawing.Bounds.Right) / 2;
-				double yc = (drawing.Bounds.Top + drawing.Bounds.Bottom) / 2;
-				xc = (double)((int)(xc / 32)) * 32;
-				yc = (double)((int)(yc / 32)) * 32;
-				dc.PushTransform(new TranslateTransform(-xc, -yc));
+				dc.PushTransform(new TranslateTransform(location.X, location.Y));
+				dc.PushTransform(new ScaleTransform(size.Width / drawing.Bounds.Width, 
+					size.Height / drawing.Bounds.Height));
+				dc.PushTransform(new TranslateTransform(-drawing.Bounds.Left, -drawing.Bounds.Top));
 				dc.DrawDrawing(drawing);
+				dc.Pop();
+				dc.Pop();
 				dc.Pop();
 			}
 			dGroup.Freeze();

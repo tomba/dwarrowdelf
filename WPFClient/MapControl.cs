@@ -169,12 +169,9 @@ namespace MyGame
 				Drawing d = m_symbolDrawings[i];
 
 				drawingContext.PushTransform(
-					new ScaleTransform(Math.Floor(m_tileSize) / d.Bounds.Width, Math.Floor(m_tileSize) / d.Bounds.Height));
-				drawingContext.PushTransform(
-					new TranslateTransform(-d.Bounds.X, -d.Bounds.Y));
+					new ScaleTransform(Math.Floor(m_tileSize) / 100, Math.Floor(m_tileSize) / 100));
 				
 				drawingContext.DrawDrawing(d);
-				drawingContext.Pop();
 				drawingContext.Pop();
 
 				drawingContext.Close();
