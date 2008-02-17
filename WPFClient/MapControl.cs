@@ -43,11 +43,6 @@ namespace MyGame
 		{
 			this.Focusable = true;
 
-			m_symbolDrawings = new SymbolDrawings();
-			m_symbolBitmaps = new BitmapSource[m_symbolDrawings.Count];
-			m_symbolBitmapsDark = new BitmapSource[m_symbolDrawings.Count];
-			CreateSymbolBitmaps();
-
 			CreateMapTiles();
 
 			this.AddVisualChild(m_effectsCanvas);
@@ -61,6 +56,16 @@ namespace MyGame
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(10);
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			m_symbolDrawings = new SymbolDrawings();
+			m_symbolBitmaps = new BitmapSource[m_symbolDrawings.Count];
+			m_symbolBitmapsDark = new BitmapSource[m_symbolDrawings.Count];
+			CreateSymbolBitmaps();
 		}
 
 		void CreateMapTiles()

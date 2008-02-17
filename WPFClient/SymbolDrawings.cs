@@ -10,7 +10,7 @@ namespace MyGame
 {
 	class SymbolDrawings
 	{
-		Drawing[] m_symbolDrawings = new Drawing[5];
+		Drawing[] m_symbolDrawings = new Drawing[6];
 		ResourceDictionary m_symbolResources;
 
 		public SymbolDrawings()
@@ -23,6 +23,7 @@ namespace MyGame
 			m_symbolDrawings[2] = GetDrawingByName("Stone_Block");
 			m_symbolDrawings[3] = GetDrawingByName("Character_Cat_Girl");
 			m_symbolDrawings[4] = GetDrawingByName("Enemy_Bug");
+			m_symbolDrawings[5] = GetDrawingByName("Gem_Blue");
 
 			//CreateSymbolDrawings();
 		}
