@@ -114,6 +114,21 @@ namespace MyGame
 			}
 		}
 
+		public void DeliverInventory(ItemData[] items)
+		{
+			MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
+
+			ItemCollection itemCollection = GameData.Data.Player.Inventory;
+			itemCollection.Clear();
+			foreach (ItemData item in items)
+			{
+				ItemObject ob = new ItemObject(item.ObjectID);
+				ob.Name = item.Name;
+				ob.SymbolID = item.SymbolID;
+				itemCollection.Add(ob);
+			}
+		}
+
 		#endregion
 	}
 }

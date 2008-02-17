@@ -55,12 +55,24 @@ namespace MyGame
 				m_actor = new InteractiveActor();
 				m_player.Actor = m_actor;
 
+				ItemObject item = new ItemObject(m_world);
+				item.Name = "itemi1";
+				item.SymbolID = 4;
+				m_player.Inventory.Add(item);
+
+				item = new ItemObject(m_world);
+				item.Name = "itemi2";
+				item.SymbolID = 5;
+				m_player.Inventory.Add(item);
+
 				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
 				m_client.LoginReply(m_player.ObjectID, m_player.VisionRange);
 
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
+
+				m_player.SendInventory();
 
 				m_world.ProcessChanges();
 			}

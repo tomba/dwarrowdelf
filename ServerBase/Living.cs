@@ -8,10 +8,13 @@ namespace MyGame
 {
 	class Living : ServerGameObject, IActor
 	{
+		public List<ItemObject> Inventory { get; private set; }
+
 		public Living(World world)
 			: base(world)
 		{
 			world.AddLiving(this);
+			this.Inventory = new List<ItemObject>();
 		}
 
 		public void Cleanup()
@@ -206,6 +209,24 @@ namespace MyGame
 			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
 
 			this.ClientCallback.DeliverChanges(arr.ToArray());
+		}
+
+		public void SendInventory()
+		{
+			if (this.ClientCallback != null)
+			{
+				List<ItemData> items = new List<ItemData>(this.Inventory.Count);
+				foreach (ItemObject item in this.Inventory)
+				{
+					ItemData data = new ItemData();
+					data.ObjectID = item.ObjectID;
+					data.Name = item.Name;
+					data.SymbolID = item.SymbolID;
+					items.Add(data);
+				}
+
+				this.ClientCallback.DeliverInventory(items.ToArray());
+			}
 		}
 
 		#region IActor Members

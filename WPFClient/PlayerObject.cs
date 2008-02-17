@@ -18,15 +18,7 @@ namespace MyGame
 			: base(objectID)
 		{
 			this.Inventory = new ItemCollection();
-			ItemObject item1 = new ItemObject(new ObjectID(444));
-			item1.Name = "gemi";
-			item1.SymbolID = 3;
-
-			Inventory.Add(item1);
-			ItemObject item2 = new ItemObject(new ObjectID(446));
-			item2.Name = "gemi2";
-			item2.SymbolID = 5;
-			Inventory.Add(item2);
+			this.SymbolID = 3;
 		}
 
 	}

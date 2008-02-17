@@ -41,7 +41,6 @@ namespace MyGame
 			: base(objectID)
 		{
 			s_objectMap.Add(this.ObjectID, new WeakReference(this));
-			this.SymbolID = 3;
 		}
 
 		public void SetEnvironment(MapLevel map, Location l)

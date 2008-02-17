@@ -11,7 +11,7 @@ namespace MyGame
 
 	class ServerGameObject : GameObject
 	{
-		public int SymbolID { get; protected set; }
+		public int SymbolID { get; set; }
 
 		public MapLevel Environment { get; private set; }
 		public Location Location { get; private set; }

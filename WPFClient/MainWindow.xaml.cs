@@ -19,7 +19,7 @@ namespace MyGame
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		public static MainWindow s_mainWindow;
+		public static MainWindow s_mainWindow; // xxx
 
 		public MainWindow()
 		{

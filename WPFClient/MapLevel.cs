@@ -25,6 +25,11 @@ namespace MyGame
 		public MapLevel()
 		{
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
+
+			ItemObject item = new ItemObject(new ObjectID(1234));
+			item.Name = "Foo";
+			item.SymbolID = 5;
+			this.AddObject(item, new Location(3, 3));
 		}
 
 		public int Width
