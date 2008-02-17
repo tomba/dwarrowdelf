@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="ItemObject.cs" />
     <Compile Include="MyTraceListener.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="ClientGameObject.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="MapControl.cs" />
     <Compile Include="MapLevel.cs" />
     <Compile Include="MapTile.cs" />
+    <Compile Include="PlayerObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

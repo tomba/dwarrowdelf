@@ -39,6 +39,7 @@ namespace MyGame
 
 		DispatcherTimer m_updateTimer;
 
+		
 		public MapControl()
 		{
 			this.Focusable = true;
@@ -62,7 +63,7 @@ namespace MyGame
 		{
 			base.OnInitialized(e);
 
-			m_symbolDrawings = new SymbolDrawings();
+			m_symbolDrawings = GameData.Data.SymbolDrawings;
 			m_symbolBitmaps = new BitmapSource[m_symbolDrawings.Count];
 			m_symbolBitmapsDark = new BitmapSource[m_symbolDrawings.Count];
 			CreateSymbolBitmaps();

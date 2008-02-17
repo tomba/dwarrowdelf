@@ -16,26 +16,37 @@ namespace MyGame
 		public GameData()
 		{
 			this.ActionCollection = new ActionCollection();
+			this.SymbolDrawings = new SymbolDrawings();
 		}
 
 		public Connection Connection { get; set; }
 
-		public GameObject Player { get; set; }
+		PlayerObject m_player;
+		public PlayerObject Player
+		{
+			get	{ return m_player; }
+
+			set
+			{
+				m_player = value;
+				Notify("Player");
+			}
+		}
 
 		public bool DisableLOS { get; set; }	// debug
 		public bool ShowChangedTiles { get; set; } // debug
 
 		public MyTraceListener MyTraceListener { get; set; }
 
-		public ActionCollection ActionCollection { get; set; }
+		public ActionCollection ActionCollection { get; private set; }
+
+		public SymbolDrawings SymbolDrawings { get; private set; }
+
 
 		int m_turnNumber;
 		public int TurnNumber
 		{
-			get
-			{
-				return m_turnNumber;
-			}
+			get { return m_turnNumber; }
 
 			set
 			{

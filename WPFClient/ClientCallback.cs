@@ -19,12 +19,12 @@ namespace MyGame
 		{
 			try
 			{
-				ClientGameObject player = new ClientGameObject(playerID);
+				PlayerObject player = new PlayerObject(playerID);
 				player.VisionRange = visionRange;
 				GameData.Data.Player = player;
 				MainWindow.s_mainWindow.map.FollowObject = player;
 
-				MapLevel level = new MapLevel(1000, 1000); // xxx
+				MapLevel level = new MapLevel();
 				MainWindow.s_mainWindow.Map = level;
 			}
 			catch (Exception e)

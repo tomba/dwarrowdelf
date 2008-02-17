@@ -22,7 +22,7 @@ namespace MyGame
 
 		GrowingLocationGrid<TileData> m_tileGrid;
 
-		public MapLevel(int width, int height)
+		public MapLevel()
 		{
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
 		}
@@ -69,9 +69,9 @@ namespace MyGame
 			{
 				Location l = locInfo.Location;
 
-				TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
-
-				block[l.X, l.Y].m_terrainID = locInfo.Terrain;
+				Location bl = l;
+				TileData[,] block = m_tileGrid.GetBlock(ref bl, true, true);
+				block[bl.X, bl.Y].m_terrainID = locInfo.Terrain;
 
 				if (locInfo.Objects != null)
 				{
@@ -80,12 +80,12 @@ namespace MyGame
 						ClientGameObject ob = ClientGameObject.FindObject(oid);
 						if (ob == null)
 						{
-							MyDebug.WriteLine("New object {0}", oid);
 							ob = new ClientGameObject(oid);
 							ob.SymbolID = 4;
+							MyDebug.WriteLine("New object {0}", ob);
 						}
 
-						MyDebug.WriteLine("OB AT {0}", l);
+						MyDebug.WriteLine("{0} AT {1}", ob, l);
 
 						if (ob.Environment == null)
 							ob.SetEnvironment(this, l);
