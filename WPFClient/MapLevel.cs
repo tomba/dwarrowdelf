@@ -25,11 +25,6 @@ namespace MyGame
 		public MapLevel()
 		{
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
-
-			ItemObject item = new ItemObject(new ObjectID(1234));
-			item.Name = "Foo";
-			item.SymbolID = 5;
-			this.AddObject(item, new Location(3, 3));
 		}
 
 		public int Width
@@ -86,7 +81,7 @@ namespace MyGame
 						if (ob == null)
 						{
 							ob = new ClientGameObject(oid);
-							ob.SymbolID = 4;
+							//ob.SymbolID = 4;
 							MyDebug.WriteLine("New object {0}", ob);
 						}
 

@@ -23,7 +23,9 @@ namespace MyGame
 			monster.MoveTo(world.Map, new Location(2, 5));
 			var monsterAI = new MonsterActor(monster);
 			monster.Actor = monsterAI;
-			 
+
+			var item = new ItemObject(world);
+			item.MoveTo(world.Map, new Location(1, 1));
 		}
 
 

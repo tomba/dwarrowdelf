@@ -25,7 +25,6 @@ namespace MyGame
 		{
 			this.World = world;
 			this.World.AddGameObject(this);
-			this.SymbolID = 3;
 		}
 
 		public bool MoveTo(MapLevel level, Location l)
