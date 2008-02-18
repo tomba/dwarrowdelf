@@ -465,7 +465,7 @@ namespace MyGame
 				case Key.Space:
 					{
 						e.Handled = true;
-						int wtid = GameData.Data.Connection.GetTransactionID();
+						int wtid = GameData.Data.Connection.GetNewTransactionID();
 						GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
 						return;
 					}
@@ -475,7 +475,7 @@ namespace MyGame
 			}
 
 			e.Handled = true;
-			int tid = GameData.Data.Connection.GetTransactionID();
+			int tid = GameData.Data.Connection.GetNewTransactionID();
 			GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
 		}
 

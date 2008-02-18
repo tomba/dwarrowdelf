@@ -71,7 +71,7 @@ namespace MyGame
 			return (m_server as ICommunicationObject).State == CommunicationState.Faulted;
 		}
 
-		public int GetTransactionID()
+		public int GetNewTransactionID()
 		{
 			return System.Threading.Interlocked.Increment(ref m_transactionNumber);
 		}
