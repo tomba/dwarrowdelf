@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
+using MyGame.ClientMsgs;
 
 namespace MyGame
 {
@@ -34,22 +35,64 @@ namespace MyGame
 			}
 		}
 
-		public void DeliverMapTerrains(MapLocationTerrain[] locations)
+		public void DeliverMessage(Message[] messages)
 		{
-			try
+			foreach (Message msg in messages)
 			{
-				MyDebug.WriteLine("Received locations: {0}",
-					string.Join(", ", 
-						locations.Select<MapLocationTerrain, string>(
-							ml => String.Format("({0},{1})", ml.Location.X, ml.Location.Y)
-							).ToArray()));
+				try
+				{
+					if (msg is TerrainData)
+					{
+						MainWindow.s_mainWindow.Map.SetTerrains(((TerrainData)msg).MapDataList);
+					}
+					else if (msg is MapData)
+					{
+						MainWindow.s_mainWindow.Map.SetTerrains(new MapData[] { (MapData)msg });
+					}
+					else if (msg is ClientMsgs.TurnChange)
+					{
+						GameData.Data.TurnNumber = ((ClientMsgs.TurnChange)msg).TurnNumber;
+					}
+					else if (msg is ObjectMove)
+					{
+						ObjectMove om = (ObjectMove)msg;
+						ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
 
-				MainWindow.s_mainWindow.Map.SetTerrains(locations);
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
+						if (ob == null)
+						{
+							MyDebug.WriteLine("New object appeared");
+							ob = new ClientGameObject(om.ObjectID);
+						}
+
+						if (ob.Environment == null)
+							ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
+						else
+							ob.Location = om.TargetLocation;
+					}
+					else if (msg is ItemData)
+					{
+						/*
+						ItemData id = (ItemData)msg;
+
+						MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
+
+						ItemCollection itemCollection = GameData.Data.Player.Inventory;
+						itemCollection.Clear();
+						foreach (ItemData item in items)
+						{
+							ItemObject ob = new ItemObject(item.ObjectID);
+							ob.Name = item.Name;
+							ob.SymbolID = item.SymbolID;
+							itemCollection.Add(ob);
+						}
+						 */
+					}
+				}
+				catch (Exception e)
+				{
+					MyDebug.WriteLine("Uncaught exception");
+					MyDebug.WriteLine(e.ToString());
+				}
 			}
 		}
 
@@ -60,74 +103,6 @@ namespace MyGame
 			GameData.Data.ActionCollection.Remove(action);
 		}
 
-		public void DeliverChanges(Change[] changes)
-		{
-			try
-			{
-				foreach (Change change in changes)
-				{
-					MyDebug.WriteLine("DeliverChanges: {0}", change);
-
-					if (change is ObjectChange)
-					{
-						ObjectChange oc = (ObjectChange)change;
-						ClientGameObject ob = ClientGameObject.FindObject(oc.ObjectID);
-
-						if (ob == null)
-						{
-							MyDebug.WriteLine("New object appeared");
-							ob = new ClientGameObject(oc.ObjectID);
-							//ob.SymbolID = 4;
-						}
-
-						if (change is ObjectLocationChange)
-						{
-							ObjectLocationChange lc = (ObjectLocationChange)change;
-							// we should only get changes about events on this level
-							// so if an ob doesn't have an env, it must be here
-							if (ob.Environment == null)
-								ob.SetEnvironment(MainWindow.s_mainWindow.Map, lc.TargetLocation);
-							else
-								ob.Location = lc.TargetLocation;
-						}
-						else
-							throw new NotImplementedException();
-					}
-					else if (change is MapChange)
-					{
-						MapChange mc = (MapChange)change;
-						MainWindow.s_mainWindow.Map.SetTerrainType(mc.Location, mc.TerrainType);
-					}
-					else if (change is TurnChange)
-					{
-						TurnChange tc = (TurnChange)change;
-						GameData.Data.TurnNumber = tc.TurnNumber;
-					}
-					else
-						throw new NotImplementedException();
-				}
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
-		}
-
-		public void DeliverInventory(ItemData[] items)
-		{
-			MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
-
-			ItemCollection itemCollection = GameData.Data.Player.Inventory;
-			itemCollection.Clear();
-			foreach (ItemData item in items)
-			{
-				ItemObject ob = new ItemObject(item.ObjectID);
-				ob.Name = item.Name;
-				ob.SymbolID = item.SymbolID;
-				itemCollection.Add(ob);
-			}
-		}
 
 		#endregion
 	}

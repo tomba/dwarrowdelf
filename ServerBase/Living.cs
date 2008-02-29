@@ -110,7 +110,7 @@ namespace MyGame
 			if (newLocations.Count == 0)
 				return;
 
-			MapLocationTerrain[] terrains = new MapLocationTerrain[newLocations.Count];
+			var terrains = new ClientMsgs.MapData[newLocations.Count];
 			int i = 0;
 			foreach (Location l in newLocations)
 			{
@@ -118,10 +118,16 @@ namespace MyGame
 				if (this.Environment.GetContents(l) != null)
 					obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
 
-				terrains[i++] = new MapLocationTerrain(l, this.Environment.GetTerrain(l), obs);
+				terrains[i++] = new ClientMsgs.MapData()
+				{
+					Location = l,
+					Terrain = this.Environment.GetTerrain(l),
+					Objects = obs 
+				};
 			}
 
-			this.ClientCallback.DeliverMapTerrains(terrains);
+			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
+			this.ClientCallback.DeliverMessage(msgs);
 		}
 
 		// calculate los and returns a list of new locations in sight
@@ -163,7 +169,7 @@ namespace MyGame
 			return newLocations;
 		}
 
-		Change ChangeSelector(Change change)
+		ClientMsgs.Message ChangeSelector(Change change)
 		{
 			if (change is ObjectEnvironmentChange)
 			{
@@ -184,6 +190,8 @@ namespace MyGame
 					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", lc.SourceLocation);
 					return null;
 				}
+
+				return new ClientMsgs.ObjectMove(lc.Target, lc.SourceLocation, lc.TargetLocation);
 			}
 
 			if (change is MapChange)
@@ -194,10 +202,20 @@ namespace MyGame
 					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
 					return null;
 				}
+
+				// xxx no objects
+				return new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType, Objects = null };
 			}
 			// send only changes that the player sees and needs to know
 
-			return change;
+			if (change is TurnChange)
+			{
+				return new ClientMsgs.TurnChange() { TurnNumber = ((TurnChange)change).TurnNumber };
+			}
+
+			Debug.Assert(false);
+
+			return null;
 		}
 
 		void FilterAndSendChanges(Change[] changes)
@@ -206,26 +224,26 @@ namespace MyGame
 			foreach (Change c in changes)
 				MyDebug.WriteLine("\t" + c.ToString());
 
-			IEnumerable<Change> arr = changes.Select<Change, Change>(ChangeSelector).Where(c => { return c != null; });
+			IEnumerable<ClientMsgs.Message> arr = changes.Select<Change, ClientMsgs.Message>(ChangeSelector).Where(c => { return c != null; });
 
-			this.ClientCallback.DeliverChanges(arr.ToArray());
+			this.ClientCallback.DeliverMessage(arr.ToArray());
 		}
 
 		public void SendInventory()
 		{
 			if (this.ClientCallback != null)
 			{
-				List<ItemData> items = new List<ItemData>(this.Inventory.Count);
+				var items = new List<ClientMsgs.ItemData>(this.Inventory.Count);
 				foreach (ItemObject item in this.Inventory)
 				{
-					ItemData data = new ItemData();
+					var data = new ClientMsgs.ItemData();
 					data.ObjectID = item.ObjectID;
 					data.Name = item.Name;
 					data.SymbolID = item.SymbolID;
 					items.Add(data);
 				}
 
-				this.ClientCallback.DeliverInventory(items.ToArray());
+				this.ClientCallback.DeliverMessage(items.ToArray());
 			}
 		}
 

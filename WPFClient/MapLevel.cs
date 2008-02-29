@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Windows.Controls;
 using System.Diagnostics;
+using MyGame.ClientMsgs;
 
 namespace MyGame
 {
@@ -62,10 +63,10 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void SetTerrains(MapLocationTerrain[] locInfos)
+		public void SetTerrains(ClientMsgs.MapData[] locInfos)
 		{
 			//m_terrainData = new LocationGrid<TerrainData>(m_width, m_height);	// xxx clears the old one
-			foreach (MapLocationTerrain locInfo in locInfos)
+			foreach (MapData locInfo in locInfos)
 			{
 				Location l = locInfo.Location;
 

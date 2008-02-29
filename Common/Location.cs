@@ -6,24 +6,6 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
-	public class MapLocationTerrain
-	{
-		[DataMember]
-		public Location Location { get; set; }
-		[DataMember]
-		public int Terrain { get; set; }
-		[DataMember]
-		public ObjectID[] Objects { get; set; }
-
-		public MapLocationTerrain(Location l, int terrain, ObjectID[] objects)
-		{
-			this.Location = l;
-			this.Terrain = terrain;
-			this.Objects = objects;
-		}
-	}
-
 	public enum Direction : byte
 	{
 		Up = 0,

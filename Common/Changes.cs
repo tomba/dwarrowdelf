@@ -7,21 +7,12 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract, 
-	KnownType(typeof(TurnChange)),
-	KnownType(typeof(MapChange)),
-	KnownType(typeof(ObjectChange)),
-	KnownType(typeof(ObjectLocationChange)), 
-	KnownType(typeof(ObjectEnvironmentChange))
-	]
 	public abstract class Change
 	{
 	}
 
-	[DataContract]
 	public class TurnChange : Change
 	{
-		[DataMember]
 		public int TurnNumber { get; set; }
 
 		public TurnChange(int turnNumber)
@@ -35,14 +26,10 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	public class MapChange : Change
 	{
-		[DataMember]
 		public ObjectID MapID { get; set; }
-		[DataMember]
 		public Location Location { get; set; }
-		[DataMember]
 		public int TerrainType { get; set; }
 
 		public MapChange(ObjectID mapID, Location l, int terrainType)
@@ -58,26 +45,21 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	public abstract class ObjectChange : Change
 	{
-		GameObject m_target;
-		[DataMember]
+		public GameObject Target { get; set; }
 		public ObjectID ObjectID { get; set; }
 
 		public ObjectChange(GameObject target)
 		{
-			m_target = target;
-			this.ObjectID = m_target.ObjectID;
+			this.Target = target;
+			this.ObjectID = target.ObjectID;
 		}
 	}
 
-	[DataContract]
 	public class ObjectLocationChange : ObjectChange
 	{
-		[DataMember]
 		public Location TargetLocation { get; set; }
-		[DataMember]
 		public Location SourceLocation { get; set; }
 
 		public ObjectLocationChange(GameObject target, Location from, Location to)
@@ -94,16 +76,11 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	public class ObjectEnvironmentChange : ObjectChange
 	{
-		[DataMember]
 		public ObjectID SourceMapID { get; set; }
-		[DataMember]
 		public Location SourceLocation { get; set; }
-		[DataMember]
 		public ObjectID DestinationMapID { get; set; }
-		[DataMember]
 		public Location DestinationLocation { get; set; }
 
 		public ObjectEnvironmentChange(GameObject target, ObjectID sourceMapID, Location sourceLocation,
