@@ -20,11 +20,13 @@ namespace MyGame
 			TheWorld = world;
 			
 			var monster = new Living(world);
-			monster.MoveTo(world.Map, new Location(2, 5));
+			monster.SymbolID = 4;
+			monster.MoveTo(world.Map, new Location(2, 2));
 			var monsterAI = new MonsterActor(monster);
 			monster.Actor = monsterAI;
 
 			var item = new ItemObject(world);
+			item.SymbolID = 5;
 			item.MoveTo(world.Map, new Location(1, 1));
 		}
 

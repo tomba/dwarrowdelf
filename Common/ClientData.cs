@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace MyGame.ClientMsgs
 {
 	[DataContract,
-	KnownType(typeof(ItemData)),
+	KnownType(typeof(ItemsData)),
 	KnownType(typeof(MapData)),
 	KnownType(typeof(TerrainData)),
 	KnownType(typeof(ObjectMove)),
@@ -22,7 +22,7 @@ namespace MyGame.ClientMsgs
 
 	/* Item in inventory or floor */
 	[DataContract]
-	public class ItemData : Message
+	public class ItemData
 	{
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
@@ -30,6 +30,13 @@ namespace MyGame.ClientMsgs
 		public string Name { get; set; }
 		[DataMember]
 		public int SymbolID { get; set; }
+	}
+
+	[DataContract]
+	public class ItemsData : Message
+	{
+		[DataMember]
+		public ItemData[] Items { get; set; }
 	}
 
 	/* Tile that came visible */
@@ -60,10 +67,13 @@ namespace MyGame.ClientMsgs
 		public Location TargetLocation { get; set; }
 		[DataMember]
 		public Location SourceLocation { get; set; }
+		[DataMember]
+		public int Symbol { get; set; }
 
-		public ObjectMove(GameObject target, Location from, Location to)
+		public ObjectMove(GameObject target, int symbol, Location from, Location to)
 		{
 			this.ObjectID = target.ObjectID;
+			this.Symbol = symbol;
 			this.SourceLocation = from;
 			this.TargetLocation = to;
 		}

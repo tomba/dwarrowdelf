@@ -64,15 +64,17 @@ namespace MyGame
 							ob = new ClientGameObject(om.ObjectID);
 						}
 
+						ob.SymbolID = om.Symbol;
+
 						if (ob.Environment == null)
 							ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
 						else
 							ob.Location = om.TargetLocation;
 					}
-					else if (msg is ItemData)
-					{
-						/*
-						ItemData id = (ItemData)msg;
+					else if (msg is ItemsData)
+					{						
+						ItemsData id = (ItemsData)msg;
+						var items = id.Items;
 
 						MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
 
@@ -85,7 +87,7 @@ namespace MyGame
 							ob.SymbolID = item.SymbolID;
 							itemCollection.Add(ob);
 						}
-						 */
+						
 					}
 				}
 				catch (Exception e)

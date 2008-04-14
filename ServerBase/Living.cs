@@ -191,7 +191,9 @@ namespace MyGame
 					return null;
 				}
 
-				return new ClientMsgs.ObjectMove(lc.Target, lc.SourceLocation, lc.TargetLocation);
+				int symbol = ((ServerGameObject)lc.Target).SymbolID;
+
+				return new ClientMsgs.ObjectMove(lc.Target, symbol, lc.SourceLocation, lc.TargetLocation);
 			}
 
 			if (change is MapChange)
@@ -243,7 +245,9 @@ namespace MyGame
 					items.Add(data);
 				}
 
-				this.ClientCallback.DeliverMessage(items.ToArray());
+				var msgs = new ClientMsgs.Message[] { new ClientMsgs.ItemsData() { Items = items.ToArray() } };
+
+				this.ClientCallback.DeliverMessage(msgs);
 			}
 		}
 

@@ -51,6 +51,7 @@ namespace MyGame
 				m_world = World.TheWorld;
 
 				m_player = new Living(m_world);
+				m_player.SymbolID = 3;
 				m_player.ClientCallback = m_client;
 				m_actor = new InteractiveActor();
 				m_player.Actor = m_actor;
