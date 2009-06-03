@@ -28,14 +28,14 @@ namespace MyGame
 				Debug.Listeners.Add(listener);
 			}
 
-			MyDebug.WriteLine("Server starting");
+			MyDebug.WriteLine("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
 
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.Message;
+			binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
 			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 
 			serviceHost.AddServiceEndpoint(typeof(IServerService),

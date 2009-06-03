@@ -21,6 +21,7 @@ namespace MyGame
 		public ServerService()
 		{
 			MyDebug.WriteLine("New ServerService");
+			m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
 		}
 
 		void CleanUp()
@@ -46,8 +47,6 @@ namespace MyGame
 			try
 			{
 				MyDebug.WriteLine("Login {0}", name);
-
-				m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
 
 				m_world = World.TheWorld;
 

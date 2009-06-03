@@ -14,12 +14,14 @@ namespace MyGame
 
 		public bool Connect()
 		{
+			MyDebug.WriteLine("connecting to server");
+
 			m_clientCallback = new ClientCallback();
 
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.Message;
+			binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
 			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-		
+			
 			EndpointAddress ea = new EndpointAddress(new Uri("net.tcp://localhost:8000/MyGame/Server"),
 				EndpointIdentity.CreateDnsIdentity("CompanyXYZ Server"));
 
@@ -43,6 +45,8 @@ namespace MyGame
 				MyDebug.WriteLine("Failed to connect");
 				MyDebug.WriteLine(e.ToString());
 			}
+
+			MyDebug.WriteLine("connect done");
 
 			return (m_server as ICommunicationObject).State == CommunicationState.Opened;
 		}
