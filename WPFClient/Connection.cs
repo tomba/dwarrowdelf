@@ -17,12 +17,20 @@ namespace MyGame
 			m_clientCallback = new ClientCallback();
 
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.None;
-			binding.Security.Message.ClientCredentialType = MessageCredentialType.None;
+			binding.Security.Mode = SecurityMode.Message;
+			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+		
+			EndpointAddress ea = new EndpointAddress(new Uri("net.tcp://localhost:8000/MyGame/Server"),
+				EndpointIdentity.CreateDnsIdentity("CompanyXYZ Server"));
 
 			DuplexChannelFactory<IServerService> cf = 
 				new DuplexChannelFactory<IServerService>(m_clientCallback,
-					binding, "net.tcp://localhost:8000/MyGame/Server");
+					binding, ea);
+
+			cf.Credentials.ServiceCertificate.Authentication.CertificateValidationMode =
+				System.ServiceModel.Security.X509CertificateValidationMode.None;
+			cf.Credentials.UserName.UserName = "tomba";
+			cf.Credentials.UserName.Password = "passu";
 
 			m_server = cf.CreateChannel();
 

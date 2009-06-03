@@ -5,6 +5,7 @@ using System.Text;
 using System.ServiceModel;
 using System.Threading;
 using System.Diagnostics;
+using System.ServiceModel.Description;
 
 namespace MyGame
 {

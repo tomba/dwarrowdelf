@@ -6,6 +6,8 @@ using System.Text;
 using System.ServiceModel;
 using System.Threading;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MyGame
 {
@@ -31,13 +33,26 @@ namespace MyGame
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
 			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
-			
+
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.None;
-			binding.Security.Message.ClientCredentialType = MessageCredentialType.None;
+			binding.Security.Mode = SecurityMode.Message;
+			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 
 			serviceHost.AddServiceEndpoint(typeof(IServerService),
 				binding, "net.tcp://localhost:8000/MyGame/Server");
+
+			serviceHost.Credentials.UserNameAuthentication.UserNamePasswordValidationMode =
+				System.ServiceModel.Security.UserNamePasswordValidationMode.Custom;
+			serviceHost.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator =
+				new CustomUserNameValidator();
+
+			/*
+			 * makecert -r -pe -n "CN=CompanyXYZ Server" -b 01/01/2007 -e 01/01/2010 -sky exchange Server.cer -sv Server.pvk
+			 * pvk2pfx.exe -pvk Server.pvk -spc Server.cer -pfx Server.pfx
+			 */
+			
+			X509Certificate2 cert = new X509Certificate2("Server.pfx");
+			serviceHost.Credentials.ServiceCertificate.Certificate = cert;
 
 			EventWaitHandle serverWaitHandle =
 				new EventWaitHandle(false, EventResetMode.AutoReset, "MyGame.ServerWaitHandle");
@@ -76,6 +91,25 @@ namespace MyGame
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			MyDebug.WriteLine("tuli exc");
+
+		}
+
+	}
+
+	public class CustomUserNameValidator : System.IdentityModel.Selectors.UserNamePasswordValidator
+	{
+		public override void Validate(string userName, string password)
+		{
+			MyDebug.WriteLine("Validate {0}, {1}", userName, password);
+
+			if (null == userName || null == password)
+			{
+				throw new ArgumentNullException();
+			}
+
+			if (userName != "tomba")
+				throw new System.IdentityModel.Tokens.SecurityTokenValidationException("illegal user");
+
 		}
 	}
 }

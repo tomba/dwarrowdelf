@@ -32,7 +32,7 @@ namespace MyGame
 			GameData.Data.MyTraceListener = new MyTraceListener();
 			Debug.Listeners.Add(GameData.Data.MyTraceListener);
 
-			m_serverInAppDomain = true;
+			m_serverInAppDomain = false;
 
 			if (m_serverInAppDomain)
 			{
@@ -45,8 +45,9 @@ namespace MyGame
 
 			if (m_connection.Connect() == false)
 			{
-				MessageBox.Show("Failed to connect");
-				Shutdown();
+				//MessageBox.Show("Failed to connect");
+				//Shutdown();
+				
 			}
 			else
 			{
