@@ -28,7 +28,7 @@ namespace MyGame
 			InitializeComponent();
 
 			this.Width = 1024;
-			this.Height = 700;
+			this.Height = 600;
 		}
 
 		protected override void OnInitialized(EventArgs e)

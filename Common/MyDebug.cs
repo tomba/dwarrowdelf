@@ -14,10 +14,17 @@ namespace MyGame
 		[Conditional("DEBUG")]
 		public static void WriteLine(string str)
 		{
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append(DateTime.Now.ToString("hh:mm:ss.ff"));
+			sb.Append(" ");
+
 			if (Prefix != null)
-				Debug.WriteLine(Prefix + str);
-			else
-				Debug.WriteLine(str);
+				sb.Append(Prefix);
+
+			sb.Append(str);
+
+			Debug.WriteLine(sb.ToString());
 		}
 
 		[Conditional("DEBUG")]
