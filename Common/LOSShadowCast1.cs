@@ -31,11 +31,27 @@ namespace MyGame
 		}
 
 		static LOSCell[] cells;
+		static bool s_tested;
 
+		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="viewerLocation"></param>
+		/// <param name="visionRange"></param>
+		/// <param name="visibilityMap">Modified to represent visibility</param>
+		/// <param name="mapBounds"></param>
+		/// <param name="blockerDelegate"></param>
 		static public void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
 			IntRect mapBounds, Func<Location, bool> blockerDelegate)
 		{
+			if (s_tested == false)
+			{
+				s_tested = true;
+				Test();
+			}
+
 			visionRange += 1; // visionrange does not include the tile where the observer is
 
 			if (cells == null || cells.Length < visionRange)
@@ -267,6 +283,49 @@ namespace MyGame
 			int ty = l.X * yxcomp[octant] + l.Y * yycomp[octant];
 
 			return new Location(tx, ty);
+		}
+
+		static void Test()
+		{
+			const int w = 7;
+
+			int[,] blocks = {
+							 { 0, 0, 0, 0, 0, 0, 0 },
+							 { 0, 0, 1, 1, 1, 0, 0 },
+							 { 0, 0, 0, 0, 0, 0, 0 },
+							 { 0, 1, 0, 0, 1, 0, 0 },
+							 { 0, 0, 0, 0, 0, 0, 0 },
+							 { 0, 0, 0, 0, 0, 0, 0 },
+							 { 0, 0, 1, 1, 1, 0, 0 },
+							};
+
+			int[,] expected = {
+							 { 0, 1, 1, 1, 1, 1, 0 },
+							 { 0, 0, 0, 0, 0, 0, 1 },
+							 { 0, 0, 0, 0, 0, 1, 1 },
+							 { 1, 0, 0, 0, 0, 1, 1 },
+							 { 0, 0, 0, 0, 0, 1, 1 },
+							 { 0, 0, 0, 0, 0, 0, 1 },
+							 { 0, 0, 0, 0, 0, 0, 0 },
+							};
+
+			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w/2, w/2);
+			Location loc = new Location(w/2, w/2);
+			IntRect bounds = new IntRect(0, 0, w, w);
+
+			LOSShadowCast1.CalculateLOS(loc, 3, vis, bounds,
+								(Location l) => { 
+									return blocks[l.Y, l.X] != 0;
+								});
+			vis.Origin = new Location(0, 0);
+			for (int y = 0; y < w; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					if (vis[x, y] && expected[y, x] != 0)
+						throw new Exception("LOS algo failed self check");
+				}
+			}
 		}
 	}
 }
