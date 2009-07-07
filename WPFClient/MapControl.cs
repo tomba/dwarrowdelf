@@ -18,6 +18,8 @@ namespace MyGame
 {
 	class MapControl : FrameworkElement
 	{
+		LOSAlgo m_losAlgo = new LOSShadowCast1();
+
 		SymbolDrawings m_symbolDrawings;
 		BitmapSource[] m_symbolBitmaps;
 		BitmapSource[] m_symbolBitmapsDark;
@@ -311,7 +313,7 @@ namespace MyGame
 
 		void PopulateMapTiles()
 		{
-			LOSShadowCast1.CalculateLOS(m_followObject.Location, m_followObject.VisionRange,
+			m_losAlgo.Calculate(m_followObject.Location, m_followObject.VisionRange,
 				m_followObject.VisibilityMap, m_mapLevel.Bounds, 
 				(Location l) => { return m_mapLevel.GetTerrainType(l) == 2; });
 			

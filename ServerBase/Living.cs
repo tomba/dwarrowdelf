@@ -8,6 +8,9 @@ namespace MyGame
 {
 	class Living : ServerGameObject, IActor
 	{
+		// XXX note: not re-entrant
+		static LOSAlgo s_losAlgo = new LOSShadowCast1();
+
 		public List<ItemObject> Inventory { get; private set; }
 
 		public Living(World world)
@@ -137,7 +140,7 @@ namespace MyGame
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
 			LocationGrid<bool> visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
 				this.VisionRange, this.VisionRange);
-			LOSShadowCast1.CalculateLOS(this.Location, this.VisionRange, visionMap, this.Environment.Bounds,
+			s_losAlgo.Calculate(this.Location, this.VisionRange, visionMap, this.Environment.Bounds,
 				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
 
 			List<Location> newLocations = new List<Location>();
@@ -145,6 +148,9 @@ namespace MyGame
 
 			foreach (Location l in visionMap.GetLocations())
 			{
+				if (!this.Environment.Bounds.Contains(l + this.Location))
+					continue;
+
 				bool wasVisible = false;
 				if (this.VisionMap != null)
 				{

@@ -5,8 +5,33 @@ using System.Text;
 
 namespace MyGame
 {
+	public interface LOSAlgo
+	{
+		void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<Location, bool> blockerDelegate);
+	}
+
+	public class LOSNull : LOSAlgo
+	{
+		public void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<Location, bool> blockerDelegate)
+		{
+			for (int y = -visionRange; y <= visionRange; ++y)
+			{
+				for (int x = -visionRange; x <= visionRange; ++x)
+				{
+					Location l = new Location(x, y);
+					if (mapBounds.Contains(viewerLocation + l))
+						visibilityMap[l] = true;
+					else
+						visibilityMap[l] = true;
+				}
+			}
+		}
+	}
+
 	// http://sc.tri-bit.com/Computing_LOS_for_Large_Areas
-	public static class LOSShadowCast1
+	public class LOSShadowCast1 : LOSAlgo
 	{
 		class LOSCell // xxx struct?
 		{
@@ -30,20 +55,11 @@ namespace MyGame
 			}
 		}
 
-		static LOSCell[] cells;
+		LOSCell[] m_cells;
 		static bool s_tested;
-
 		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="viewerLocation"></param>
-		/// <param name="visionRange"></param>
-		/// <param name="visibilityMap">Modified to represent visibility</param>
-		/// <param name="mapBounds"></param>
-		/// <param name="blockerDelegate"></param>
-		static public void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
+		public void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
 			IntRect mapBounds, Func<Location, bool> blockerDelegate)
 		{
 			if (s_tested == false)
@@ -54,22 +70,22 @@ namespace MyGame
 
 			visionRange += 1; // visionrange does not include the tile where the observer is
 
-			if (cells == null || cells.Length < visionRange)
+			if (m_cells == null || m_cells.Length < visionRange)
 			{
-				cells = new LOSCell[visionRange];
+				m_cells = new LOSCell[visionRange];
 				for (int i = 0; i < visionRange; i++)
-					cells[i] = new LOSCell();
+					m_cells[i] = new LOSCell();
 			}
 
 			for (int i = 0; i < 8; i++)
 				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
 		}
 
-		static void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+		void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
 			IntRect mapBounds, Func<Location, bool> blockerDelegate, int octant)
 		{
 			// Cell (0,0) is assumed to be lit and visible in all cases.
-			cells[0].Initialize();
+			m_cells[0].Initialize();
 
 			//bool visibleCorner = false;
 
@@ -80,10 +96,10 @@ namespace MyGame
 					Location translatedLocation = OctantTranslate(new Location(x, y), octant);
 					Location mapLocation = translatedLocation + viewerLocation;
 
-					LOSCell cell = cells[y];
+					LOSCell cell = m_cells[y];
 					LOSCell cellS = null;
 					if (y > 0)
-						cellS = cells[y - 1];
+						cellS = m_cells[y - 1];
 
 					// does the current cell represent a grid square that blocks LOS?
 					bool blocker;
@@ -312,8 +328,9 @@ namespace MyGame
 			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w/2, w/2);
 			Location loc = new Location(w/2, w/2);
 			IntRect bounds = new IntRect(0, 0, w, w);
+			LOSShadowCast1 los = new LOSShadowCast1();
 
-			LOSShadowCast1.CalculateLOS(loc, 3, vis, bounds,
+			los.Calculate(loc, 3, vis, bounds,
 								(Location l) => { 
 									return blocks[l.Y, l.X] != 0;
 								});
