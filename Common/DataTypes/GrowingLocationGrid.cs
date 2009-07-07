@@ -5,18 +5,20 @@ using System.Text;
 
 namespace MyGame
 {
+	/**
+	 * 2D grid, made of smaller blocks, allowing the grid to grow
+	 */
 	public class GrowingLocationGrid<T>
 	{
 		T[,][,] m_grid;
 
+		// m_mainRect tells the size of m_grid, but also the origin
 		IntRect m_mainRect;
 		int m_blockSize;
 
 		public GrowingLocationGrid(int blockSize)
 		{
 			m_blockSize = blockSize;
-			m_mainRect = new IntRect(0, 0, 1, 1);
-			m_grid = new T[m_mainRect.Width, m_mainRect.Height][,];
 		}
 
 		public int Width
@@ -42,7 +44,7 @@ namespace MyGame
 		{
 			get
 			{
-				T[,] block = GetBlock(ref x, ref y, false, true);
+				T[,] block = GetBlock(ref x, ref y, false);
 				if (block == null)
 					throw new IndexOutOfRangeException("Resize not allowed");
 
@@ -51,7 +53,7 @@ namespace MyGame
 
 			set
 			{
-				T[,] block = GetBlock(ref x, ref y, true, true);
+				T[,] block = GetBlock(ref x, ref y, true);
 				block[x, y] = value;
 			}
 		}
@@ -62,12 +64,12 @@ namespace MyGame
 			set { this[l.X, l.Y] = value; }
 		}
 
-		public T[,] GetBlock(ref Location l, bool allowResize, bool allowCreate)
+		public T[,] GetBlock(ref Location l, bool allowResize)
 		{
 			int x = l.X;
 			int y = l.Y;
 
-			T[,] block = GetBlock(ref x, ref y, allowResize, allowCreate);
+			T[,] block = GetBlock(ref x, ref y, allowResize);
 
 			l.X = x;
 			l.Y = y;
@@ -75,8 +77,14 @@ namespace MyGame
 			return block;
 		}
 
-		public T[,] GetBlock(ref int x, ref int y, bool allowResize, bool allowCreate)
+		public T[,] GetBlock(ref int x, ref int y, bool allowResize)
 		{
+			if (m_grid == null)
+			{
+				m_mainRect = new IntRect(x / m_blockSize, y / m_blockSize, 1, 1);
+				m_grid = new T[1, 1][,];
+			}
+
 			int blockX = Math.DivRem(x, m_blockSize, out x);
 			int blockY = Math.DivRem(y, m_blockSize, out y);
 
@@ -104,7 +112,12 @@ namespace MyGame
 			blockY -= m_mainRect.Top;
 
 			if (m_grid[blockX, blockY] == null)
+			{
+				if (!allowResize)
+					return null;
+
 				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
+			}
 
 			return m_grid[blockX, blockY];
 		}

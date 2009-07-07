@@ -35,7 +35,8 @@ namespace MyGame
 			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
 
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
+			//binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
+			binding.Security.Mode = SecurityMode.None;
 			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 
 			serviceHost.AddServiceEndpoint(typeof(IServerService),
@@ -50,10 +51,10 @@ namespace MyGame
 			 * makecert -r -pe -n "CN=CompanyXYZ Server" -b 01/01/2007 -e 01/01/2010 -sky exchange Server.cer -sv Server.pvk
 			 * pvk2pfx.exe -pvk Server.pvk -spc Server.cer -pfx Server.pfx
 			 */
-			
+			/*
 			X509Certificate2 cert = new X509Certificate2("Server.pfx");
 			serviceHost.Credentials.ServiceCertificate.Certificate = cert;
-
+			*/
 			EventWaitHandle serverWaitHandle =
 				new EventWaitHandle(false, EventResetMode.AutoReset, "MyGame.ServerWaitHandle");
 

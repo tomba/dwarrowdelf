@@ -65,14 +65,14 @@ namespace MyGame
 
 			switch (dir)
 			{
-				case Direction.Up: y = -1; break;
-				case Direction.Down: y = 1; break;
-				case Direction.Left: x = -1; break;
-				case Direction.Right: x = 1; break;
-				case Direction.UpLeft: x = -1; y = -1; break;
-				case Direction.DownLeft: x = -1; y = 1; break;
-				case Direction.UpRight: x = 1; y = -1; break;
-				case Direction.DownRight: x = 1; y = 1; break;
+				case Direction.North: y = -1; break;
+				case Direction.South: y = 1; break;
+				case Direction.West: x = -1; break;
+				case Direction.East: x = 1; break;
+				case Direction.NorthWest: x = -1; y = -1; break;
+				case Direction.SouthWest: x = -1; y = 1; break;
+				case Direction.NorthEast: x = 1; y = -1; break;
+				case Direction.SouthEast: x = 1; y = 1; break;
 				default:
 					throw new Exception();
 			}

@@ -453,14 +453,14 @@ namespace MyGame
 			Direction dir;
 			switch (e.Key)
 			{
-				case Key.Up: dir = Direction.Up; break;
-				case Key.Down: dir = Direction.Down; break;
-				case Key.Left: dir = Direction.Left; break;
-				case Key.Right: dir = Direction.Right; break;
-				case Key.Home: dir = Direction.UpLeft; break;
-				case Key.End: dir = Direction.DownLeft; break;
-				case Key.PageUp: dir = Direction.UpRight; break;
-				case Key.PageDown: dir = Direction.DownRight; break;
+				case Key.Up: dir = Direction.North; break;
+				case Key.Down: dir = Direction.South; break;
+				case Key.Left: dir = Direction.West; break;
+				case Key.Right: dir = Direction.East; break;
+				case Key.Home: dir = Direction.NorthWest; break;
+				case Key.End: dir = Direction.SouthWest; break;
+				case Key.PageUp: dir = Direction.NorthEast; break;
+				case Key.PageDown: dir = Direction.SouthEast; break;
 
 				case Key.Space:
 					{

@@ -6,18 +6,9 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	public enum Direction : byte
-	{
-		Up = 0,
-		Down,
-		Left,
-		Right,
-		UpLeft,
-		UpRight,
-		DownLeft,
-		DownRight
-	}
-
+	/**
+	 * Location datatype, x/y
+	 */
 	[DataContract]
 	public struct Location : IEquatable<Location>
 	{

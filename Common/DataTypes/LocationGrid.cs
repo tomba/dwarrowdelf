@@ -6,6 +6,10 @@ using System.Collections;
 
 namespace MyGame
 {
+	/**
+	 * 2D grid made of <T>s
+	 * Coordinates offset by Origin
+	 */
 	public class LocationGrid<T> : IEnumerable<T>
 	{
 		T[,] m_grid;
@@ -18,6 +22,7 @@ namespace MyGame
 			this.Width = width;
 			this.Height = height;
 			m_grid = new T[width, height];
+			this.Origin = new Location(0, 0);
 		}
 
 		public LocationGrid(int width, int height, int originX, int originY) : this(width, height)

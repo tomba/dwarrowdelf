@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using System.Windows.Controls;
 using System.Diagnostics;
 using MyGame.ClientMsgs;
 
@@ -45,7 +43,7 @@ namespace MyGame
 
 		public int GetTerrainType(Location l)
 		{
-			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
 			if (block == null)
 				return 0;
@@ -55,7 +53,7 @@ namespace MyGame
 
 		public void SetTerrainType(Location l, int terrainID)
 		{
-			TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, true);
 
 			block[l.X, l.Y].m_terrainID = terrainID;
 
@@ -71,7 +69,7 @@ namespace MyGame
 				Location l = locInfo.Location;
 
 				Location bl = l;
-				TileData[,] block = m_tileGrid.GetBlock(ref bl, true, true);
+				TileData[,] block = m_tileGrid.GetBlock(ref bl, true);
 				block[bl.X, bl.Y].m_terrainID = locInfo.Terrain;
 
 				if (locInfo.Objects != null)
@@ -102,7 +100,7 @@ namespace MyGame
 
 		public IList<ClientGameObject> GetContents(Location l)
 		{
-			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
 			if (block == null)
 				return null;
@@ -115,7 +113,7 @@ namespace MyGame
 
 		public void RemoveObject(ClientGameObject ob, Location l)
 		{
-			TileData[,] block = m_tileGrid.GetBlock(ref l, false, false);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
 			Debug.Assert(block != null);
 			Debug.Assert(block[l.X, l.Y].m_contentList != null);
@@ -130,7 +128,7 @@ namespace MyGame
 
 		public void AddObject(ClientGameObject ob, Location l)
 		{
-			TileData[,] block = m_tileGrid.GetBlock(ref l, true, true);
+			TileData[,] block = m_tileGrid.GetBlock(ref l, true);
 
 			Debug.Assert(block != null);
 

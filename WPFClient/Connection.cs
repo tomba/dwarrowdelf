@@ -19,7 +19,8 @@ namespace MyGame
 			m_clientCallback = new ClientCallback();
 
 			NetTcpBinding binding = new NetTcpBinding();
-			binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
+			//binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
+			binding.Security.Mode = SecurityMode.None;
 			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 			
 			EndpointAddress ea = new EndpointAddress(new Uri("net.tcp://localhost:8000/MyGame/Server"),
