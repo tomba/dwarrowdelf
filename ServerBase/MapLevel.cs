@@ -63,23 +63,26 @@ namespace MyGame
 		{
 			this.Area = area;
 
-			m_width = 80;
-			m_height = 20;
+			m_width = 512;
+			m_height = 512;
 
 			m_tileGrid = new TileGrid(m_width, m_height);
 
+			Random r = new Random();
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)
 				{
-					m_tileGrid.SetTerrainType(new Location(x, y), 1); // fill with floor tiles
+					if (r.Next() % 8 == 0)
+						m_tileGrid.SetTerrainType(new Location(x, y), 2); // wall
+					else
+						m_tileGrid.SetTerrainType(new Location(x, y), 1); // fill with floor tiles
 				}
 			}
 
-			m_tileGrid.SetTerrainType(new Location(4, 1), 2);
-			m_tileGrid.SetTerrainType(new Location(5, 1), 2);
-			m_tileGrid.SetTerrainType(new Location(5, 2), 2);
-			m_tileGrid.SetTerrainType(new Location(5, 3), 2);
+			m_tileGrid.SetTerrainType(new Location(0, 0), 1);
+			m_tileGrid.SetTerrainType(new Location(1, 1), 1);
+			m_tileGrid.SetTerrainType(new Location(2, 2), 1);
 
 			m_containedObjects = new List<ServerGameObject>();
 		}

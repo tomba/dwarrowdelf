@@ -48,15 +48,15 @@ namespace MyGame
 
 			this.AddVisualChild(m_effectsCanvas);
 
-			m_effectsCanvas.Children.Add(m_hiliteRectangle);
 			m_hiliteRectangle.Width = m_tileSize;
 			m_hiliteRectangle.Height = m_tileSize;
 			m_hiliteRectangle.Stroke = Brushes.Blue;
 			m_hiliteRectangle.StrokeThickness = 2;
+			m_effectsCanvas.Children.Add(m_hiliteRectangle);
 
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
 			m_updateTimer.Tick += UpdateTimerTick;
-			m_updateTimer.Interval = TimeSpan.FromMilliseconds(10);
+			m_updateTimer.Interval = TimeSpan.FromMilliseconds(30);
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -289,23 +289,11 @@ namespace MyGame
 			MyDebug.WriteLine("UpdateTimerTick");
 
 			m_updateTimer.Stop();
-			/*
-			int dx = m_center.X - m_columns / 2;
-			int dy = m_center.Y - m_rows / 2;
-			
-			Location sl = new Location(ml.X - dx, ml.Y - dy);
 
-			if (sl.X < 0 || sl.Y < 0 || sl.X >= m_columns || sl.Y >= m_rows)
-				return;
-
-			UpdateTile(ml, sl);
-			 */
-
-			if(m_mapLevel != null)
-				PopulateMapTiles(); // xxx update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
+			// XXX update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
+			if (m_mapLevel != null)
+				PopulateMapTiles(); 
 		}
-
-
 
 		public Location ScreenToMap(Location sl)
 		{
