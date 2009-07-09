@@ -175,8 +175,11 @@ namespace MyGame
 			return newLocations;
 		}
 
+		// Filter and convert changes
 		ClientMsgs.Message ChangeSelector(Change change)
 		{
+			// send only changes that the player sees and needs to know
+
 			if (change is ObjectEnvironmentChange)
 			{
 				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
@@ -211,10 +214,15 @@ namespace MyGame
 					return null;
 				}
 
+				// XXX these should be collected
 				// xxx no objects
-				return new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType, Objects = null };
+				return new ClientMsgs.TerrainData()
+				{
+					MapDataList = new ClientMsgs.MapData[] {
+						new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType, Objects = null }
+					}
+				};
 			}
-			// send only changes that the player sees and needs to know
 
 			if (change is TurnChange)
 			{

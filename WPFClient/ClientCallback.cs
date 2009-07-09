@@ -39,15 +39,12 @@ namespace MyGame
 		{
 			foreach (Message msg in messages)
 			{
+				MyDebug.WriteLine("Received msg {0}", msg.GetType().ToString());
 				try
 				{
 					if (msg is TerrainData)
 					{
 						MainWindow.s_mainWindow.Map.SetTerrains(((TerrainData)msg).MapDataList);
-					}
-					else if (msg is MapData)
-					{
-						MainWindow.s_mainWindow.Map.SetTerrains(new MapData[] { (MapData)msg });
 					}
 					else if (msg is ClientMsgs.TurnChange)
 					{
@@ -60,7 +57,7 @@ namespace MyGame
 
 						if (ob == null)
 						{
-							MyDebug.WriteLine("New object appeared");
+							MyDebug.WriteLine("New object appeared {0}", om.ObjectID);
 							ob = new ClientGameObject(om.ObjectID);
 						}
 

@@ -10,22 +10,46 @@ namespace MyGame
 
 	class ClientGameObject : GameObject
 	{
+		// XXX not re-entrant
+		static LOSAlgo s_losAlgo = new LOSShadowCast1();
+
 		static Dictionary<ObjectID, WeakReference> s_objectMap = new Dictionary<ObjectID, WeakReference>();
+
+		static void AddObject(ClientGameObject ob)
+		{
+			lock (s_objectMap)
+				s_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+			GameData.Data.Objects = null;
+		}
 
 		public static ClientGameObject FindObject(ObjectID objectID)
 		{
-			if (s_objectMap.ContainsKey(objectID))
+			lock (s_objectMap)
 			{
-				WeakReference weakref = s_objectMap[objectID];
-				if (weakref.IsAlive)
-					return (ClientGameObject)s_objectMap[objectID].Target;
-				else
-					s_objectMap.Remove(objectID);
+				if (s_objectMap.ContainsKey(objectID))
+				{
+					WeakReference weakref = s_objectMap[objectID];
+					if (weakref.IsAlive)
+						return (ClientGameObject)s_objectMap[objectID].Target;
+					else
+						s_objectMap.Remove(objectID);
+				}
+
+				return null;
 			}
-
-			return null;
 		}
-
+		
+		public static ClientGameObject[] GetObjects()
+		{
+			lock (s_objectMap)
+			{
+				return s_objectMap.
+					Where(kvp => kvp.Value.IsAlive).
+					Select(kvp => (ClientGameObject)kvp.Value.Target).
+					ToArray();
+			}
+		}
+		
 		public int SymbolID { get; set; }
 		Location m_location;
 		MapLevel m_environment;
@@ -40,7 +64,15 @@ namespace MyGame
 		public ClientGameObject(ObjectID objectID)
 			: base(objectID)
 		{
-			s_objectMap.Add(this.ObjectID, new WeakReference(this));
+			AddObject(this);
+		}
+
+		public DrawingImage Drawing
+		{
+			get
+			{
+				return new DrawingImage(GameData.Data.SymbolDrawings[this.SymbolID]);
+			}
 		}
 
 		public void SetEnvironment(MapLevel map, Location l)
@@ -56,15 +88,8 @@ namespace MyGame
 
 		public MapLevel Environment
 		{
-			get
-			{
-				return m_environment;
-			}
-
-			set
-			{
-				m_environment = value;
-			}
+			get { return m_environment; }
+			set { m_environment = value; }
 		}
 
 		public Location Location
@@ -85,6 +110,13 @@ namespace MyGame
 				if(ObjectMoved != null)
 					ObjectMoved(this.Environment, this.Location);
 			}
+		}
+
+		public void UpdateVisibilityMap()
+		{
+			s_losAlgo.Calculate(this.Location, this.VisionRange,
+				this.VisibilityMap, this.Environment.Bounds,
+				(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
 		}
 
 		public LocationGrid<bool> VisibilityMap

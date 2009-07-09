@@ -11,8 +11,8 @@
 			<ToolBar>
 				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
 				<ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
-				<Button Click="OnClearLogClicked">Clearn Log</Button>
-			</ToolBar>
+                <Button Click="OnClearLogClicked">Clear Log</Button>
+            </ToolBar>
 		</ToolBarTray>
 
 		<Grid>
@@ -29,7 +29,7 @@
 			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" />
 
 			<StackPanel Grid.Column="1" Grid.RowSpan="2">
-				<TextBlock>
+                <TextBlock>
 					Turn <TextBlock Text="{Binding Path=TurnNumber}" />
 				</TextBlock>
 				<ListBox Name="actionListBox" ItemsSource="{Binding Path=ActionCollection}"/>
@@ -50,14 +50,28 @@
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
-			</StackPanel>
+
+                <ComboBox ItemsSource="{Binding Path=Objects}" SelectionChanged="ComboBox_SelectionChanged" IsReadOnly="True">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Path=Name}" />
+                                <Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
 
 			<TextBox Name="logTextBox" Grid.ColumnSpan="2" Grid.Row="1" VerticalScrollBarVisibility="Visible"
 				 IsReadOnly="True" FontFamily="Lucida Console" AcceptsTab="True" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" />
 
 			<GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Grid.Row="0"
 					  ShowsPreview="True" Height="5" ResizeDirection="Rows"/>
-		</Grid>
+
+            <GridSplitter HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Column="0" Grid.RowSpan="1"
+					  ShowsPreview="True" Width="5" ResizeDirection="Columns"/>
+        </Grid>
 
 	</DockPanel>
 

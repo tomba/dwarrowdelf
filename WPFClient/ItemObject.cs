@@ -16,14 +16,6 @@ namespace MyGame
 
 		public string Name { get; set; }
 
-		public DrawingImage Drawing
-		{
-			get
-			{
-				return new DrawingImage(GameData.Data.SymbolDrawings[this.SymbolID]);
-			}
-		}
-
 		public override string ToString()
 		{
 			return String.Format("Item({0})", this.ObjectID);

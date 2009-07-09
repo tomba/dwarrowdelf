@@ -18,5 +18,10 @@ namespace MyGame
 		{
 			this.ObjectID = objectID;
 		}
+
+		public override string ToString()
+		{
+			return String.Format("GameObject({0})", this.ObjectID);
+		}
 	}
 }

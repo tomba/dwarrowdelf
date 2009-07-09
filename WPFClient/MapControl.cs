@@ -18,8 +18,6 @@ namespace MyGame
 {
 	class MapControl : FrameworkElement
 	{
-		LOSAlgo m_losAlgo = new LOSShadowCast1();
-
 		SymbolDrawings m_symbolDrawings;
 		BitmapSource[] m_symbolBitmaps;
 		BitmapSource[] m_symbolBitmapsDark;
@@ -288,7 +286,7 @@ namespace MyGame
 
 		void UpdateTimerTick(object sender, EventArgs e)
 		{
-			MyDebug.WriteLine("UpdateTimerTick");
+			//MyDebug.WriteLine("UpdateTimerTick");
 
 			m_updateTimer.Stop();
 
@@ -313,9 +311,8 @@ namespace MyGame
 
 		void PopulateMapTiles()
 		{
-			m_losAlgo.Calculate(m_followObject.Location, m_followObject.VisionRange,
-				m_followObject.VisibilityMap, m_mapLevel.Bounds, 
-				(Location l) => { return m_mapLevel.GetTerrainType(l) == 2; });
+			if (m_followObject != null)
+				m_followObject.UpdateVisibilityMap();
 			
 			int dx = m_center.X - m_columns / 2;
 			int dy = m_center.Y - m_rows / 2;
@@ -343,25 +340,31 @@ namespace MyGame
 
 			int terrainID = m_mapLevel.GetTerrainType(ml);
 			BitmapSource bmp;
-			bool lit = true;
-			if (m_followObject.Location == ml)
+			bool lit = false;
+			if (m_followObject != null)
 			{
-				// current location always lit
-				lit = true;
+				if (m_followObject.Location == ml)
+				{
+					// current location always lit
+					lit = true;
+				}
+				else if (Math.Abs(m_followObject.Location.X - ml.X) > m_followObject.VisionRange ||
+					Math.Abs(m_followObject.Location.Y - ml.Y) > m_followObject.VisionRange)
+				{
+					// out of vision range
+					lit = false;
+				}
+				else if (m_followObject.VisibilityMap[ml - m_followObject.Location] == false)
+				{
+					// can't see
+					lit = false;
+				}
+				else
+				{
+					// else in range, not blocked
+					lit = true;
+				}
 			}
-			else if (Math.Abs(m_followObject.Location.X - ml.X) > m_followObject.VisionRange ||
-				Math.Abs(m_followObject.Location.Y - ml.Y) > m_followObject.VisionRange)
-			{
-				// out of vision range
-				lit = false;
-			}
-			else if (m_followObject.VisibilityMap[ml - m_followObject.Location] == false)
-			{
-				// can't see
-				lit = false;
-			}
-			else
-				lit = true;
 
 			if (lit)
 				bmp = m_symbolBitmaps[terrainID];

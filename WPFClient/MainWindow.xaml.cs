@@ -42,22 +42,28 @@ namespace MyGame
 
 		internal MapLevel Map
 		{
-			get
-			{
-				return this.map.MapLevel;
-			}
-
-			set
-			{
-				this.map.MapLevel = value;
-			}
+			get { return this.map.MapLevel; }
+			set { this.map.MapLevel = value; }
 		}
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
 		{
 			this.logTextBox.Clear();
 		}
-	
+
+		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count != 1)
+			{
+				map.FollowObject = null;
+				return;
+			}
+
+			ClientGameObject ob = (ClientGameObject)e.AddedItems[0];
+
+			map.FollowObject = ob;
+		}
+
 	}
 
 }

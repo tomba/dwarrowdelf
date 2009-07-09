@@ -33,6 +33,12 @@ namespace MyGame
 			}
 		}
 
+		public ClientGameObject[] Objects
+		{
+			get { return ClientGameObject.GetObjects(); }
+			set { Notify("Objects"); }
+		}
+
 		public bool DisableLOS { get; set; }	// debug
 		public bool ShowChangedTiles { get; set; } // debug
 

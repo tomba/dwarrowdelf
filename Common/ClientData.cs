@@ -41,7 +41,7 @@ namespace MyGame.ClientMsgs
 
 	/* Tile that came visible */
 	[DataContract]
-	public class MapData : Message
+	public class MapData
 	{
 		[DataMember]
 		public Location Location { get; set; }
