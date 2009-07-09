@@ -14,6 +14,8 @@ namespace MyGame
 		// the same single world for everybody, for now
 		public static readonly World TheWorld;
 
+		public static readonly Living TheMonster; // XXX
+
 		static World()
 		{
 			World world = new World();
@@ -25,6 +27,7 @@ namespace MyGame
 			monster.MoveTo(world.Map, new Location(2, 2));
 			var monsterAI = new MonsterActor(monster);
 			monster.Actor = monsterAI;
+			TheMonster = monster;
 
 			// Add an item
 			var item = new ItemObject(world);

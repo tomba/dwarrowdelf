@@ -39,7 +39,7 @@ namespace MyGame
 		{
 			foreach (Message msg in messages)
 			{
-				MyDebug.WriteLine("Received msg {0}", msg.GetType().ToString());
+				MyDebug.WriteLine("Received msg {0}", msg);
 				try
 				{
 					if (msg is TerrainData)
@@ -98,7 +98,7 @@ namespace MyGame
 		public void TransactionDone(int transactionID)
 		{
 			MyDebug.WriteLine("TransactionDone({0})", transactionID);
-			GameAction action = GameData.Data.ActionCollection.Single(a => a.TransactionID == transactionID);
+			GameAction action = GameData.Data.ActionCollection.SingleOrDefault(a => a.TransactionID == transactionID);
 			GameData.Data.ActionCollection.Remove(action);
 		}
 

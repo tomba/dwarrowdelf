@@ -56,6 +56,21 @@ namespace MyGame.ClientMsgs
 	{
 		[DataMember]
 		public MapData[] MapDataList { get; set; }
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append("TerrainData ");
+
+			string[] arr = this.MapDataList.
+				Select(md => String.Format("{0},{1}", md.Location.X, md.Location.Y)).
+				ToArray();
+
+			sb.Append(String.Join(" ", arr));
+
+			return sb.ToString();
+		}
 	}
 
 	[DataContract]
@@ -90,6 +105,11 @@ namespace MyGame.ClientMsgs
 	{
 		[DataMember]
 		public int TurnNumber { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("TurnChange({0})", this.TurnNumber);
+		}
 	}
 
 

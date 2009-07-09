@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define LOCAL
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,10 +36,16 @@ namespace MyGame
 
 			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
 
-			NetTcpBinding binding = new NetTcpBinding();
+#if LOCAL
+			NetNamedPipeBinding binding = new NetNamedPipeBinding();
+			binding.Security.Mode = NetNamedPipeSecurityMode.None;
+			serviceHost.AddServiceEndpoint(typeof(IServerService),
+				binding, "net.pipe://localhost/MyGame/Server");
+#else
+			//NetTcpBinding binding = new NetTcpBinding();
 			//binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
-			binding.Security.Mode = SecurityMode.None;
-			binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
+			//binding.Security.Mode = SecurityMode.None;
+			//binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
 
 			serviceHost.AddServiceEndpoint(typeof(IServerService),
 				binding, "net.tcp://localhost:8000/MyGame/Server");
@@ -55,6 +63,8 @@ namespace MyGame
 			X509Certificate2 cert = new X509Certificate2("Server.pfx");
 			serviceHost.Credentials.ServiceCertificate.Certificate = cert;
 			*/
+#endif
+
 			EventWaitHandle serverWaitHandle =
 				new EventWaitHandle(false, EventResetMode.AutoReset, "MyGame.ServerWaitHandle");
 

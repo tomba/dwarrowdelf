@@ -37,6 +37,8 @@ namespace MyGame
 			m_client = null;
 			m_player = null;
 			m_world = null;
+
+			World.TheMonster.ClientCallback = null;
 		}
 
 
@@ -74,6 +76,8 @@ namespace MyGame
 					throw new Exception("Unable to move player");
 
 				m_player.SendInventory();
+
+				//World.TheMonster.ClientCallback = m_client;
 
 				m_world.ProcessChanges();
 			}

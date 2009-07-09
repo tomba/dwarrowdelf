@@ -175,47 +175,25 @@ namespace MyGame
 			return newLocations;
 		}
 
-		// Filter and convert changes
-		ClientMsgs.Message ChangeSelector(Change change)
+		ClientMsgs.Message ChangeToMessage(Change change)
 		{
-			// send only changes that the player sees and needs to know
-
 			if (change is ObjectEnvironmentChange)
 			{
 				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				if (ec.DestinationMapID == this.Environment.ObjectID)
-					change = new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
-						ec.DestinationLocation, ec.DestinationLocation);
-					// xxx what when srcmap == thismap
-				else
-					return null;
+				return ChangeToMessage(new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
+					ec.DestinationLocation, ec.DestinationLocation));
 			}
 
 			if (change is ObjectLocationChange)
 			{
 				ObjectLocationChange lc = (ObjectLocationChange)change;
-				if (!Sees(lc.SourceLocation) && !Sees(lc.TargetLocation))
-				{
-					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", lc.SourceLocation);
-					return null;
-				}
-
 				int symbol = ((ServerGameObject)lc.Target).SymbolID;
-
 				return new ClientMsgs.ObjectMove(lc.Target, symbol, lc.SourceLocation, lc.TargetLocation);
 			}
 
 			if (change is MapChange)
 			{
 				MapChange mc = (MapChange)change;
-				if (!Sees(mc.Location))
-				{
-					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
-					return null;
-				}
-
-				// XXX these should be collected
-				// xxx no objects
 				return new ClientMsgs.TerrainData()
 				{
 					MapDataList = new ClientMsgs.MapData[] {
@@ -234,15 +212,72 @@ namespace MyGame
 			return null;
 		}
 
+		bool ChangeFilter(Change change)
+		{
+			// send only changes that the player sees and needs to know
+
+			if (change is ObjectEnvironmentChange)
+			{
+				// xxx what when srcmap == thismap
+				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
+				if (ec.DestinationMapID == this.Environment.ObjectID)
+					return ChangeFilter(new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
+						ec.DestinationLocation, ec.DestinationLocation));
+				else
+					return false;
+			}
+
+			if (change is ObjectLocationChange)
+			{
+				ObjectLocationChange lc = (ObjectLocationChange)change;
+				if (!Sees(lc.SourceLocation) && !Sees(lc.TargetLocation))
+				{
+					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", lc.SourceLocation);
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}
+
+			if (change is MapChange)
+			{
+				MapChange mc = (MapChange)change;
+				if (!Sees(mc.Location))
+				{
+					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}
+
+			if (change is TurnChange)
+			{
+				return true;
+			}
+
+			Debug.Assert(false);
+
+			return false;
+		}
+
 		void FilterAndSendChanges(Change[] changes)
 		{
 			MyDebug.WriteLine("Sending changes to plr id {0}", this.ObjectID);
 			foreach (Change c in changes)
 				MyDebug.WriteLine("\t" + c.ToString());
 
-			IEnumerable<ClientMsgs.Message> arr = changes.Select<Change, ClientMsgs.Message>(ChangeSelector).Where(c => { return c != null; });
+			ClientMsgs.Message[] arr = changes.
+				Where(ChangeFilter).
+				Where(c => c != null).
+				Select<Change, ClientMsgs.Message>(ChangeToMessage).
+				ToArray();
 
-			this.ClientCallback.DeliverMessage(arr.ToArray());
+			this.ClientCallback.DeliverMessage(arr);
 		}
 
 		public void SendInventory()
