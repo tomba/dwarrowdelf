@@ -42,7 +42,7 @@ namespace MyGame
 
 		List<Living> m_livingList;
 
-		public event HandleChanges ChangesEvent;
+		public event HandleChanges HandleChangesEvent;
 
 		public List<Change> m_changeList = new List<Change>();
 
@@ -64,6 +64,11 @@ namespace MyGame
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
 
+		public int TurnNumber
+		{
+			get { return m_turnNumber; }
+		}
+
 		internal void AddLiving(Living living)
 		{
 			lock (m_livingList)
@@ -82,6 +87,12 @@ namespace MyGame
 				bool removed = m_livingList.Remove(living);
 				Debug.Assert(removed);
 			}
+		}
+
+		public Living[] GetLivings()
+		{
+			lock (m_livingList)
+				return m_livingList.ToArray();
 		}
 
 		internal void SignalActorStateChanged()
@@ -154,8 +165,8 @@ namespace MyGame
 
 			if (arr.Length > 0)
 			{
-				if(ChangesEvent != null)
-					ChangesEvent(arr); // xxx is this needed? perhaps for loggers or something
+				if(HandleChangesEvent != null)
+					HandleChangesEvent(arr); // xxx is this needed? perhaps for loggers or something
 
 				foreach (Living living in m_livingList)
 				{

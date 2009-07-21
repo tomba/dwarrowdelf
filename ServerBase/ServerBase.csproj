@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ItemObject.cs" />
-    <Compile Include="User.cs" />
     <Compile Include="WorldDefinition.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />

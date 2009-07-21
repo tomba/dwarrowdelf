@@ -34,6 +34,8 @@ namespace MyGame
 				ObjectID.NullObjectID, new Location()));
 			m_world.ProcessChanges();
 
+			m_world.HandleChangesEvent -= HandleChanges;
+
 			m_client = null;
 			m_player = null;
 			m_world = null;
@@ -78,7 +80,7 @@ namespace MyGame
 				m_player.SendInventory();
 
 				//World.TheMonster.ClientCallback = m_client;
-
+				m_world.HandleChangesEvent += HandleChanges;
 				m_world.ProcessChanges();
 			}
 			catch (Exception e)
@@ -140,5 +142,57 @@ namespace MyGame
 		}
 
 		#endregion
+
+		void HandleChanges(Change[] changes)
+		{
+			ClientMsgs.Message[] arr = changes.
+				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
+				ToArray();
+
+			m_client.DeliverMessage(arr);
+
+			Living[] livings = m_world.GetLivings();
+			Dictionary<MapLevel, HashSet<Location>> newLocs = new Dictionary<MapLevel, HashSet<Location>>();
+			
+			foreach (Living l in livings)
+			{
+				if (l.Environment == null)
+					continue;
+
+				if (!newLocs.ContainsKey(l.Environment))
+					newLocs[l.Environment] = new HashSet<Location>();
+
+				newLocs[l.Environment].UnionWith(l.GetNewLocations());
+			}
+
+			foreach (var kvp in newLocs)
+				SendNewTerrains(kvp.Key, kvp.Value.ToArray());
+		}
+
+		void SendNewTerrains(MapLevel env, Location[] newLocations)
+		{
+			if (newLocations.Length == 0)
+				return;
+
+			var terrains = new ClientMsgs.MapData[newLocations.Length];
+			int i = 0;
+			foreach (Location l in newLocations)
+			{
+				ObjectID[] obs = null;
+				List<ServerGameObject> items = env.GetContents(l);
+				if (items != null)
+					obs = items.Select(o => o.ObjectID).ToArray();
+
+				terrains[i++] = new ClientMsgs.MapData()
+				{
+					Location = l,
+					Terrain = env.GetTerrain(l),
+					Objects = obs 
+				};
+			}
+
+			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
+			m_client.DeliverMessage(msgs);
+		}
 	}
 }

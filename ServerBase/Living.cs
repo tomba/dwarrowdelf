@@ -48,6 +48,9 @@ namespace MyGame
 			}
 		}
 
+		int m_losTurn = -1;
+		List<Location> m_newLocations;
+
 		public int VisionRange { get { return 3; } }
 		public LocationGrid<bool> VisionMap { get; set; }
 		public Location VisionLocation { get; set; }
@@ -99,11 +102,12 @@ namespace MyGame
 		// called after turn. world state is valid.
 		public void ProcessChanges(Change[] changes)
 		{
+			return;
 			List<Location> newLocations = CalculateLOS();
 
 			if (this.ClientCallback != null)
 			{
-				FilterAndSendChanges(changes);
+				//FilterAndSendChanges(changes);
 				SendNewTerrains(newLocations);
 			}
 		}
@@ -133,54 +137,72 @@ namespace MyGame
 			this.ClientCallback.DeliverMessage(msgs);
 		}
 
+		public List<Location> GetNewLocations()
+		{
+			UpdateLOS();
+			return m_newLocations;
+		}
+
+		void UpdateLOS()
+		{
+			if (m_losTurn != this.World.TurnNumber)
+			{
+				m_newLocations = CalculateLOS();
+				m_losTurn = this.World.TurnNumber;
+			}
+		}
+
 		// calculate los and returns a list of new locations in sight
 		List<Location> CalculateLOS()
 		{
-			// xxx todo: optimize
+			LocationGrid<bool> oldVisionMap = this.VisionMap;
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
-			LocationGrid<bool> visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
+			LocationGrid<bool> newVisionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
 				this.VisionRange, this.VisionRange);
-			s_losAlgo.Calculate(this.Location, this.VisionRange, visionMap, this.Environment.Bounds,
+			s_losAlgo.Calculate(this.Location, this.VisionRange, newVisionMap, this.Environment.Bounds,
 				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
 
 			List<Location> newLocations = new List<Location>();
 			Location dl = this.Location - this.VisionLocation; // new/old location diff
 
-			foreach (Location l in visionMap.GetLocations())
+			// xxx todo: optimize
+
+			foreach (Location l in newVisionMap.GetLocations())
 			{
 				if (!this.Environment.Bounds.Contains(l + this.Location))
 					continue;
 
 				bool wasVisible = false;
-				if (this.VisionMap != null)
+				if (oldVisionMap != null)
 				{
 					Location oldLocation = l + dl;
 
-					if (this.VisionMap.Bounds.Contains(oldLocation))
+					if (oldVisionMap.Bounds.Contains(oldLocation))
 					{
-						if (this.VisionMap[oldLocation] == true)
+						if (oldVisionMap[oldLocation] == true)
 							wasVisible = true;
 					}
 				}
 
-				bool isVisible = visionMap[l] == true;
+				bool isVisible = newVisionMap[l] == true;
 
 				if (wasVisible == false && isVisible == true)
 					newLocations.Add(l + this.Location);
 			}
 
-			this.VisionMap = visionMap;
+			this.VisionMap = newVisionMap;
 			this.VisionLocation = this.Location;
 
 			return newLocations;
 		}
 
-		ClientMsgs.Message ChangeToMessage(Change change)
+		// XXX move to somewhere generic
+		public static ClientMsgs.Message ChangeToMessage(Change change)
 		{
 			if (change is ObjectEnvironmentChange)
 			{
 				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				return ChangeToMessage(new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
+				return ChangeToMessage(new ObjectLocationChange(ec.Target,
 					ec.DestinationLocation, ec.DestinationLocation));
 			}
 
@@ -330,6 +352,8 @@ namespace MyGame
 			{
 				return false;
 			}
+
+			UpdateLOS();
 
 			if (this.VisionMap[l - this.Location] == false)
 				return false;

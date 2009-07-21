@@ -65,6 +65,7 @@ namespace MyGame
 			: base(objectID)
 		{
 			AddObject(this);
+			this.VisionRange = 3;
 		}
 
 		public DrawingImage Drawing
@@ -114,9 +115,12 @@ namespace MyGame
 
 		public void UpdateVisibilityMap()
 		{
-			s_losAlgo.Calculate(this.Location, this.VisionRange,
-				this.VisibilityMap, this.Environment.Bounds,
-				(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
+			if (this.Environment != null)
+				s_losAlgo.Calculate(this.Location, this.VisionRange,
+					this.VisibilityMap, this.Environment.Bounds,
+					(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
+			else
+				m_visibilityMap = null;
 		}
 
 		public LocationGrid<bool> VisibilityMap

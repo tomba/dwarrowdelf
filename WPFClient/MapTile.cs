@@ -58,9 +58,7 @@ namespace MyGame
 					new Point(this.RenderSize.Width, this.RenderSize.Height));
 
 			if (m_objectBmp != null)
-			{
 				drawingContext.DrawImage(m_objectBmp, new Rect(this.RenderSize));
-			}
 
 
 #if DEBUGx
