@@ -248,15 +248,21 @@ namespace MyGame
 			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}
 
-		public Location ScreenToMap(Location sl)
+		Location ScreenToMap(Location sl)
 		{
 			return sl + m_screenToMapDelta;
 		}
 
-		public Location MapToScreen(Location ml)
+		Location MapToScreen(Location ml)
 		{
 			return ml - m_screenToMapDelta;
 		}
 
+		public Location MapLocationFromPoint(Point p)
+		{
+			Location sl = map.LocationFromPoint(TranslatePoint(p, map));
+			Location ml = ScreenToMap(sl);
+			return ml;
+		}
 	}
 }

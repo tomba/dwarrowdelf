@@ -138,7 +138,7 @@ namespace MyGame
 			return m_mapTiles[l.X + l.Y * m_columns];
 		}
 
-		public Location TileFromPoint(Point p)
+		public Location LocationFromPoint(Point p)
 		{
 			return new Location((int)(p.X / m_tileSize), (int)(p.Y / m_tileSize));
 		}

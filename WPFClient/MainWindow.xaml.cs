@@ -32,8 +32,9 @@ namespace MyGame
 			this.Height = 600;
 
 			map.KeyDown += MapControl_KeyDown;
-			map.MouseDown += new MouseButtonEventHandler(MapControl_MouseDown);
+			map.MouseDown += MapControl_MouseDown;
 		}
+
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
@@ -92,20 +93,18 @@ namespace MyGame
 		{
 			//this.Focus();
 			//MyDebug.WriteLine("Mouse down");
-			/*
+			
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
-				Location sl = map.TileFromPoint(e.GetPosition(map));
-				Location ml = ScreenToMap(sl);
+				Location ml = map.MapLocationFromPoint(e.GetPosition(map));
 
-				if (!m_mapLevel.Bounds.Contains(ml))
+				if (!map.Map.Bounds.Contains(ml))
 					return;
 
 				GameData.Data.Connection.Server.ToggleTile(ml);
 
 				e.Handled = true;
 			}
-			 */
 		}
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
