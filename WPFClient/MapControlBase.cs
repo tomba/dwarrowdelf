@@ -23,20 +23,10 @@ namespace MyGame
 		
 		double m_tileSize = 40;
 
-		Canvas m_effectsCanvas = new Canvas();
-		Rectangle m_hiliteRectangle = new Rectangle();
-
 		MapTile[] m_mapTiles = new MapTile[0];
 
 		public MapControlBase()
 		{
-			this.AddVisualChild(m_effectsCanvas);
-
-			m_hiliteRectangle.Width = m_tileSize;
-			m_hiliteRectangle.Height = m_tileSize;
-			m_hiliteRectangle.Stroke = Brushes.Blue;
-			m_hiliteRectangle.StrokeThickness = 2;
-			m_effectsCanvas.Children.Add(m_hiliteRectangle);
 		}
 
 		public int Columns { get { return m_columns; } }
@@ -54,10 +44,6 @@ namespace MyGame
 				if (m_tileSize != value)
 				{
 					m_tileSize = value;
-
-					m_hiliteRectangle.Width = m_tileSize;
-					m_hiliteRectangle.Height = m_tileSize;
-
 					InvalidateVisual();
 				}
 			}
@@ -77,8 +63,6 @@ namespace MyGame
 				rows = 20;
 			else
 				rows = (int)(s.Height / m_tileSize);
-
-			m_effectsCanvas.Measure(s);
 
 			return new Size(columns * m_tileSize, rows * m_tileSize);
 		}
@@ -131,8 +115,6 @@ namespace MyGame
 				m_mapTiles[i].Arrange(new Rect(x * m_tileSize, y * m_tileSize, m_tileSize, m_tileSize));
 			}
 
-			m_effectsCanvas.Arrange(new Rect(this.RenderSize));
-
 			return base.ArrangeOverride(s);
 		}
 
@@ -143,17 +125,12 @@ namespace MyGame
 
 		protected override int VisualChildrenCount
 		{
-			// +1 for effect canvas
-			get { return m_mapTiles.Length + 1; }
+			get { return m_mapTiles.Length; }
 		}
 
 		protected override Visual GetVisualChild(int index)
 		{
-			if (index < m_mapTiles.Length)
-				return m_mapTiles[index];
-
-			// canvas is last, so it's on top of tiles
-			return m_effectsCanvas;
+			return m_mapTiles[index];
 		}
 
 		public MapTile GetTile(Location l)

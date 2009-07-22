@@ -29,6 +29,9 @@ namespace MyGame
 		int m_tileSize;
 		MapControlBase map;
 
+		Canvas m_effectsCanvas = new Canvas();
+		Rectangle m_hiliteRectangle = new Rectangle();
+
 		public MapControl()
 		{
 			m_bitmapCache = new SymbolBitmapCache();
@@ -38,11 +41,22 @@ namespace MyGame
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(30);
 
+			Grid grid = new Grid();
+			this.AddChild(grid);
+
 			map = new MapControlBase();
 			map.DimensionsChangedEvent += MapControl_DimensionsChanged;
-			this.AddChild(map);
+			grid.Children.Add(map);
 
 			this.TileSize = 40;
+
+			grid.Children.Add(m_effectsCanvas);
+
+			m_hiliteRectangle.Width = m_tileSize;
+			m_hiliteRectangle.Height = m_tileSize;
+			m_hiliteRectangle.Stroke = Brushes.Blue;
+			m_hiliteRectangle.StrokeThickness = 2;
+			m_effectsCanvas.Children.Add(m_hiliteRectangle);
 		}
 
 		public int TileSize
@@ -52,8 +66,12 @@ namespace MyGame
 			set
 			{
 				m_tileSize = value;
+
 				map.TileSize = value;
 				m_bitmapCache.TileSize = value;
+
+				m_hiliteRectangle.Width = m_tileSize;
+				m_hiliteRectangle.Height = m_tileSize;
 			}
 		}
 
@@ -86,6 +104,9 @@ namespace MyGame
 
 		void PopulateMapTiles()
 		{
+			if (m_followObject != null)
+				m_followObject.UpdateVisibilityMap();
+
 			for (int y = 0; y < map.Rows; y++)
 				for (int x = 0; x < map.Columns; x++)
 					UpdateTile(new Location(x, y));
@@ -95,39 +116,68 @@ namespace MyGame
 		{
 			BitmapSource bmp = null;
 			MapTile tile;
+			bool lit = false;
+			Location ml = sl + m_screenToMapDelta;
+
+			if (m_followObject != null)
+			{
+				if (m_followObject.Location == ml)
+				{
+					// current location always lit
+					lit = true;
+				}
+				else if (Math.Abs(m_followObject.Location.X - ml.X) > m_followObject.VisionRange ||
+					Math.Abs(m_followObject.Location.Y - ml.Y) > m_followObject.VisionRange)
+				{
+					// out of vision range
+					lit = false;
+				}
+				else if (m_followObject.VisibilityMap[ml - m_followObject.Location] == false)
+				{
+					// can't see
+					lit = false;
+				}
+				else
+				{
+					// else in range, not blocked
+					lit = true;
+				}
+			}
 
 			tile = map.GetTile(sl);
 
-			bmp = GetBitmap(sl);
+			bmp = GetBitmap(ml, lit);
 			tile.Bitmap = bmp;
 
-			bmp = GetObjectBitmap(sl);
+			if(GameData.Data.DisableLOS)
+				lit = true; // lit always so we see what server sends
+
+			if (lit)
+				bmp = GetObjectBitmap(ml, lit);
+			else
+				bmp = null;
 			tile.ObjectBitmap = bmp;
 		}
 
-		BitmapSource GetBitmap(Location sl)
+		BitmapSource GetBitmap(Location ml, bool lit)
 		{
 			if (this.Map == null)
 				return null;
-
-			Location ml = sl + m_screenToMapDelta;
 
 			int terrainID = this.Map.GetTerrainType(ml);
-			return m_bitmapCache.GetBitmap(terrainID, false);
+			return m_bitmapCache.GetBitmap(terrainID, !lit);
 		}
 
-		BitmapSource GetObjectBitmap(Location sl)
+		BitmapSource GetObjectBitmap(Location ml, bool lit)
 		{
 			if (this.Map == null)
 				return null;
-
-			Location ml = sl + m_screenToMapDelta;
 
 			IList<ClientGameObject> obs = this.Map.GetContents(ml);
 			if (obs != null && obs.Count > 0)
 			{
 				int id = obs[0].SymbolID;
-				return m_bitmapCache.GetBitmap(id, false);
+				return m_bitmapCache.GetBitmap(id, !lit);
 			}
 			else
 				return null;
@@ -192,8 +242,8 @@ namespace MyGame
 				UpdateMap();
 			}
 
-			//Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);
-			//Canvas.SetTop(m_hiliteRectangle, MapToScreen(l).Y * m_tileSize);
+			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);
+			Canvas.SetTop(m_hiliteRectangle, MapToScreen(l).Y * m_tileSize);
 
 			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}
