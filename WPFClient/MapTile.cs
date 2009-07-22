@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace MyGame
 {
-	class MapTile: UIElement
+	public class MapTile: UIElement
 	{
 		BitmapSource m_bmp;
 		BitmapSource m_objectBmp;

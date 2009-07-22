@@ -23,7 +23,7 @@ namespace MyGame
 				PlayerObject player = new PlayerObject(playerID);
 				player.VisionRange = visionRange;
 				GameData.Data.Player = player;
-				MainWindow.s_mainWindow.map.FollowObject = player;
+				MainWindow.s_mainWindow.FollowObject = player;
 
 				MapLevel level = new MapLevel();
 				MainWindow.s_mainWindow.Map = level;

@@ -27,7 +27,7 @@
 			</Grid.RowDefinitions>
 
 			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" />
-
+            
 			<StackPanel Grid.Column="1" Grid.RowSpan="2">
                 <TextBlock>
 					Turn <TextBlock Text="{Binding Path=TurnNumber}" />

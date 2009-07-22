@@ -52,9 +52,7 @@ namespace MyGame
 			m_symbolResources = (ResourceDictionary)Application.LoadComponent(
 				new Uri("Symbols/PlanetCute.xaml", UriKind.Relative));
 
-			m_symbolDrawings[0] = CreateUnknownDrawing();
-			m_symbolDrawings[0] = NormalizeDrawing(m_symbolDrawings[0], new Point(), new Size(100, 100));
-
+			m_symbolDrawings[0] = CreateCharacterDrawing('?');
 			m_symbolDrawings[1] = GetDrawingByName("Dirt_Block");
 			m_symbolDrawings[2] = GetDrawingByName("Stone_Block");
 			m_symbolDrawings[3] = GetDrawingByName("Character_Cat_Girl");
@@ -105,27 +103,26 @@ namespace MyGame
 
 		public int Count { get { return m_symbolDrawings.Length; } }
 
-		Drawing CreateUnknownDrawing()
+		public Drawing[] Drawings { get { return m_symbolDrawings; } }
+
+		Drawing CreateCharacterDrawing(char c)
 		{
 			DrawingGroup dGroup = new DrawingGroup();
 
-			// Obtain a DrawingContext from 
-			// the DrawingGroup.
 			using (DrawingContext dc = dGroup.Open())
 			{
 				FormattedText formattedText = new FormattedText(
-						"?",
+						c.ToString(),
 						System.Globalization.CultureInfo.GetCultureInfo("en-us"),
 						FlowDirection.LeftToRight,
 						new Typeface("Lucida Console"),
 						16,
-						Brushes.Black);
+						Brushes.White);
 
 				dc.DrawText(formattedText, new Point(0, 0));
 			}
 
-			dGroup.Freeze();
-			return dGroup;
+			return NormalizeDrawing(dGroup, new Point(), new Size(100, 100));
 		}
 
 	}

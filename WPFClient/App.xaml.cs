@@ -34,7 +34,7 @@ namespace MyGame
 
 			MyDebug.WriteLine("Start");
 
-			m_serverInAppDomain = true;
+			m_serverInAppDomain = false;
 
 			if (m_serverInAppDomain)
 			{
