@@ -13,9 +13,9 @@ namespace MyGame
 		BitmapSource m_bmp;
 		BitmapSource m_objectBmp;
 		
-		MapControl m_mapControl; // for debugging. remove later
+		MapControlBase m_mapControl; // for debugging. remove later
 
-		public MapTile(MapControl mapControl)
+		public MapTile(MapControlBase mapControl)
 		{
 			m_mapControl = mapControl;
 			this.IsHitTestVisible = false;

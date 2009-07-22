@@ -26,7 +26,7 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" />
+			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" BorderThickness="0" Focusable="True" />
             
 			<StackPanel Grid.Column="1" Grid.RowSpan="2">
                 <TextBlock>

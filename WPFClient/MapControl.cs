@@ -11,162 +11,202 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Media.Effects;
 using System.Windows.Threading;
 
-namespace MyGame 
+namespace MyGame
 {
-	public class MapControl : FrameworkElement
+	public class MapControl : UserControl
 	{
-		int m_columns = 5;
-		int m_rows = 5;
-		
-		double m_tileSize = 40;
+		SymbolBitmapCache m_bitmapCache;
 
-		Canvas m_effectsCanvas = new Canvas();
-		Rectangle m_hiliteRectangle = new Rectangle();
+		DispatcherTimer m_updateTimer;
+		Location m_screenToMapDelta;
 
-		MapTile[] m_mapTiles = new MapTile[0];
+		Location m_center;
+		ClientGameObject m_followObject;
+		MapLevel m_mapLevel;
+
+		int m_tileSize;
+		MapControlBase map;
 
 		public MapControl()
 		{
-			this.Focusable = true;
+			m_bitmapCache = new SymbolBitmapCache();
+			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.Drawings;
 
-			this.AddVisualChild(m_effectsCanvas);
+			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
+			m_updateTimer.Tick += UpdateTimerTick;
+			m_updateTimer.Interval = TimeSpan.FromMilliseconds(30);
 
-			m_hiliteRectangle.Width = m_tileSize;
-			m_hiliteRectangle.Height = m_tileSize;
-			m_hiliteRectangle.Stroke = Brushes.Blue;
-			m_hiliteRectangle.StrokeThickness = 2;
-			m_effectsCanvas.Children.Add(m_hiliteRectangle);
+			map = new MapControlBase();
+			map.DimensionsChangedEvent += MapControl_DimensionsChanged;
+			this.AddChild(map);
+
+			this.TileSize = 40;
 		}
 
-		public int Columns { get { return m_columns; } }
-		public int Rows { get { return m_rows; } }
-
-		public double TileSize
+		public int TileSize
 		{
 			get { return m_tileSize; }
 
 			set
 			{
-				if (value < 2)
-					throw new ArgumentException();
-
-				if (m_tileSize != value)
-				{
-					m_tileSize = value;
-
-					m_hiliteRectangle.Width = m_tileSize;
-					m_hiliteRectangle.Height = m_tileSize;
-
-					InvalidateVisual();
-				}
+				m_tileSize = value;
+				map.TileSize = value;
+				m_bitmapCache.TileSize = value;
 			}
 		}
 
-		protected override Size MeasureOverride(Size s)
+		void MapControl_DimensionsChanged()
 		{
-			int columns;
-			int rows;
+			UpdateScreenToMapDelta();
+			UpdateMap();
+		}
 
-			if (Double.IsInfinity(s.Width))
-				columns = 20;
+		void UpdateScreenToMapDelta()
+		{
+			int dx = m_center.X - map.Columns / 2;
+			int dy = m_center.Y - map.Rows / 2;
+			m_screenToMapDelta = new Location(dx, dy);
+		}
+
+		public void UpdateMap()
+		{
+			if (!m_updateTimer.IsEnabled)
+				m_updateTimer.Start();
+		}
+
+		void UpdateTimerTick(object sender, EventArgs e)
+		{
+			m_updateTimer.Stop();
+
+			// XXX update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
+			PopulateMapTiles(); 
+		}
+
+		void PopulateMapTiles()
+		{
+			for (int y = 0; y < map.Rows; y++)
+				for (int x = 0; x < map.Columns; x++)
+					UpdateTile(new Location(x, y));
+		}
+
+		void UpdateTile(Location sl)
+		{
+			BitmapSource bmp = null;
+			MapTile tile;
+
+			tile = map.GetTile(sl);
+
+			bmp = GetBitmap(sl);
+			tile.Bitmap = bmp;
+
+			bmp = GetObjectBitmap(sl);
+			tile.ObjectBitmap = bmp;
+		}
+
+		BitmapSource GetBitmap(Location sl)
+		{
+			if (this.Map == null)
+				return null;
+
+			Location ml = sl + m_screenToMapDelta;
+
+			int terrainID = this.Map.GetTerrainType(ml);
+			return m_bitmapCache.GetBitmap(terrainID, false);
+		}
+
+		BitmapSource GetObjectBitmap(Location sl)
+		{
+			if (this.Map == null)
+				return null;
+
+			Location ml = sl + m_screenToMapDelta;
+
+			IList<ClientGameObject> obs = this.Map.GetContents(ml);
+			if (obs != null && obs.Count > 0)
+			{
+				int id = obs[0].SymbolID;
+				return m_bitmapCache.GetBitmap(id, false);
+			}
 			else
-				columns = (int)(s.Width / m_tileSize);
-
-			if (Double.IsInfinity(s.Height))
-				rows = 20;
-			else
-				rows = (int)(s.Height / m_tileSize);
-
-			m_effectsCanvas.Measure(s);
-
-			return new Size(columns * m_tileSize, rows * m_tileSize);
+				return null;
 		}
 
-		void ReCreateMapTiles()
+		internal MapLevel Map
 		{
-			if (m_mapTiles != null)
+			get { return m_mapLevel; }
+
+			set
 			{
-				for (int i = 0; i < m_mapTiles.Length; ++i)
-				{
-					this.RemoveVisualChild(m_mapTiles[i]);
-					m_mapTiles[i] = null;
-				}
-
-				m_mapTiles = null;
-			}
-
-			m_mapTiles = new MapTile[m_columns * m_rows];
-
-			for (int i = 0; i < m_mapTiles.Length; ++i)
-			{
-				MapTile tile = new MapTile(this);
-				m_mapTiles[i] = tile;
-				this.AddVisualChild(tile);
+				if (m_mapLevel != null)
+					m_mapLevel.MapChanged -= MapChangedCallback;
+				m_mapLevel = value;
+				m_mapLevel.MapChanged += new MapChanged(MapChangedCallback);
+				UpdateMap();
 			}
 		}
 
-		public event Action DimensionsChangedEvent;
-
-		protected override Size ArrangeOverride(Size s)
+		void MapChangedCallback(Location l)
 		{
-			int newColumns = (int)(s.Width / m_tileSize);
-			int newRows = (int)(s.Height / m_tileSize);
+			UpdateMap();
+		}
 
-			if (newColumns != m_columns || newRows != m_rows)
+		internal ClientGameObject FollowObject
+		{
+			get
 			{
-				m_columns = newColumns;
-				m_rows = newRows;
-
-				ReCreateMapTiles();
-
-				if (DimensionsChangedEvent != null)
-					DimensionsChangedEvent();
+				return m_followObject;
 			}
 
-			for (int i = 0; i < m_mapTiles.Length; ++i)
+			set
 			{
-				int y = i / m_columns;
-				int x = i % m_columns;
-				m_mapTiles[i].Arrange(new Rect(x * m_tileSize, y * m_tileSize, m_tileSize, m_tileSize));
+				if (m_followObject != null)
+					m_followObject.ObjectMoved -= FollowedObjectMoved;
+				m_followObject = value;
+				m_followObject.ObjectMoved += FollowedObjectMoved;
+
+				if (m_followObject.Environment != null)
+					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
 			}
 
-			m_effectsCanvas.Arrange(new Rect(this.RenderSize));
-
-			return base.ArrangeOverride(s);
 		}
 
-		protected override void OnRender(DrawingContext drawingContext)
+		void FollowedObjectMoved(MapLevel e, Location l)
 		{
-			drawingContext.DrawRectangle(Brushes.Black, null, new Rect(this.RenderSize));
+			if (e != m_mapLevel)
+			{
+				this.Map = m_mapLevel;
+				m_center = new Location(-1, -1);
+			}
+
+			int xd = map.Columns / 2;
+			int yd = map.Rows / 2;
+			Location newCenter = new Location(((l.X+xd/2) / xd) * xd, ((l.Y+yd/2) / yd) * yd);
+
+			if (m_center != newCenter)
+			{
+				m_center = newCenter;
+				UpdateScreenToMapDelta();
+
+				UpdateMap();
+			}
+
+			//Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);
+			//Canvas.SetTop(m_hiliteRectangle, MapToScreen(l).Y * m_tileSize);
+
+			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}
 
-		protected override int VisualChildrenCount
+		public Location ScreenToMap(Location sl)
 		{
-			// +1 for effect canvas
-			get { return m_mapTiles.Length + 1; }
+			return sl + m_screenToMapDelta;
 		}
 
-		protected override Visual GetVisualChild(int index)
+		public Location MapToScreen(Location ml)
 		{
-			if (index < m_mapTiles.Length)
-				return m_mapTiles[index];
-
-			// canvas is last, so it's on top of tiles
-			return m_effectsCanvas;
+			return ml - m_screenToMapDelta;
 		}
 
-		public MapTile GetTile(int x, int y)
-		{
-			return m_mapTiles[x + y * m_columns];
-		}
-
-		public void TileFromPoint(Point p, out int x, out int y)
-		{
-			x = (int)(p.X / m_tileSize);
-			y = (int)(p.Y / m_tileSize);
-		}
 	}
 }
