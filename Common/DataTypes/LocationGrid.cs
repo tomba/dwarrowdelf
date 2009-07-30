@@ -10,7 +10,7 @@ namespace MyGame
 	 * 2D grid made of <T>s
 	 * Coordinates offset by Origin
 	 */
-	public class LocationGrid<T> : IEnumerable<T>
+	public class LocationGrid<T> : IEnumerable<KeyValuePair<Location, T>>
 	{
 		T[,] m_grid;
 		public Location Origin { get; set; }
@@ -80,13 +80,16 @@ namespace MyGame
 
 		#region IEnumerable<T> Members
 
-		public IEnumerator<T> GetEnumerator()
+		public IEnumerator<KeyValuePair<Location, T>> GetEnumerator()
 		{
 			for (int x = 0; x < this.Width; x++)
 			{
 				for (int y = 0; y < this.Height; y++)
 				{
-					yield return m_grid[x, y];
+					yield return new KeyValuePair<Location, T>(
+						new Location(x - Origin.X, y - Origin.Y),
+						m_grid[x, y]
+						);
 				}
 			}
 		}

@@ -162,29 +162,48 @@ namespace MyGame
 			m_client.DeliverMessages(arr);
 
 			Living[] livings = m_world.GetLivings();
-			var newLocs = new Dictionary<MapLevel, HashSet<Location>>();
+			var newKnownLocs = new Dictionary<MapLevel, HashSet<Location>>();
 			
 			foreach (Living l in livings)
 			{
 				if (l.Environment == null)
 					continue;
 
-				if (!newLocs.ContainsKey(l.Environment))
-					newLocs[l.Environment] = new HashSet<Location>();
+				var newLocList =
+					l.VisionMap.
+						Where(kvp => kvp.Value == true).
+						Select(kvp => kvp.Key + l.Location);
 
-				newLocs[l.Environment].UnionWith(l.GetNewLocations());
+				if (!newKnownLocs.ContainsKey(l.Environment))
+					newKnownLocs[l.Environment] = new HashSet<Location>();
+
+				newKnownLocs[l.Environment].UnionWith(newLocList);
 			}
 
-			foreach (var kvp in newLocs)
-				SendNewTerrains(kvp.Key, kvp.Value.ToArray());
+			var revealedLocs = new Dictionary<MapLevel, IEnumerable<Location>>();
+
+			foreach (var kvp in newKnownLocs)
+			{
+				if (m_knownLocations.ContainsKey(kvp.Key))
+					revealedLocs[kvp.Key] = kvp.Value.Except(m_knownLocations[kvp.Key]);
+				else
+					revealedLocs[kvp.Key] = kvp.Value;
+			}
+
+			m_knownLocations = newKnownLocs;
+
+			foreach (var kvp in revealedLocs)
+				SendNewTerrains(kvp.Key, kvp.Value);
 		}
 
-		void SendNewTerrains(MapLevel env, Location[] newLocations)
+		void SendNewTerrains(MapLevel env, IEnumerable<Location> newLocations)
 		{
-			if (newLocations.Length == 0)
+			int count = newLocations.Count();
+
+			if (count == 0)
 				return;
 
-			var terrains = new ClientMsgs.MapData[newLocations.Length];
+			var terrains = new ClientMsgs.MapData[count];
 			int i = 0;
 			foreach (Location l in newLocations)
 			{

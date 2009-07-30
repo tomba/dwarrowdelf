@@ -49,11 +49,24 @@ namespace MyGame
 		}
 
 		int m_losTurn = -1;
-		List<Location> m_newLocations;
 
-		public int VisionRange { get { return 5; } }
-		public LocationGrid<bool> VisionMap { get; set; }
-		public Location VisionLocation { get; set; }
+		int m_visionRange = 5;
+		public int VisionRange
+		{
+			get { return m_visionRange; }
+			set
+			{
+				m_visionRange = value;
+				m_visionMap = null;
+			}
+		}
+
+		LocationGrid<bool> m_visionMap;
+		public LocationGrid<bool> VisionMap
+		{
+			get { UpdateLOS(); return m_visionMap; }
+			set { m_visionMap = value; }
+		}
 
 		void HandleActionQueued()
 		{
@@ -102,98 +115,21 @@ namespace MyGame
 		// called after turn. world state is valid.
 		public void ProcessChanges(Change[] changes)
 		{
-			return;
-			List<Location> newLocations = CalculateLOS();
-
-			if (this.ClientCallback != null)
-			{
-				//FilterAndSendChanges(changes);
-				SendNewTerrains(newLocations);
-			}
-		}
-
-		void SendNewTerrains(List<Location> newLocations)
-		{
-			if (newLocations.Count == 0)
-				return;
-
-			var terrains = new ClientMsgs.MapData[newLocations.Count];
-			int i = 0;
-			foreach (Location l in newLocations)
-			{
-				ObjectID[] obs = null;
-				if (this.Environment.GetContents(l) != null)
-					obs = this.Environment.GetContents(l).Select<ServerGameObject, ObjectID>(o => o.ObjectID).ToArray();
-
-				terrains[i++] = new ClientMsgs.MapData()
-				{
-					Location = l,
-					Terrain = this.Environment.GetTerrain(l),
-					Objects = obs 
-				};
-			}
-
-			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
-			this.ClientCallback.DeliverMessages(msgs);
-		}
-
-		public List<Location> GetNewLocations()
-		{
-			UpdateLOS();
-			return m_newLocations;
 		}
 
 		void UpdateLOS()
 		{
-			if (m_losTurn != this.World.TurnNumber)
-			{
-				m_newLocations = CalculateLOS();
-				m_losTurn = this.World.TurnNumber;
-			}
-		}
+			if (m_losTurn == this.World.TurnNumber)
+				return;
 
-		// calculate los and returns a list of new locations in sight
-		List<Location> CalculateLOS()
-		{
-			LocationGrid<bool> oldVisionMap = this.VisionMap;
+			m_losTurn = this.World.TurnNumber;
+
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
-			LocationGrid<bool> newVisionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
+			if (m_visionMap == null)
+				m_visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
 				this.VisionRange, this.VisionRange);
-			s_losAlgo.Calculate(this.Location, this.VisionRange, newVisionMap, this.Environment.Bounds,
+			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
 				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
-
-			List<Location> newLocations = new List<Location>();
-			Location dl = this.Location - this.VisionLocation; // new/old location diff
-
-			// xxx todo: optimize
-
-			foreach (Location l in newVisionMap.GetLocations())
-			{
-				if (!this.Environment.Bounds.Contains(l + this.Location))
-					continue;
-
-				bool wasVisible = false;
-				if (oldVisionMap != null)
-				{
-					Location oldLocation = l + dl;
-
-					if (oldVisionMap.Bounds.Contains(oldLocation))
-					{
-						if (oldVisionMap[oldLocation] == true)
-							wasVisible = true;
-					}
-				}
-
-				bool isVisible = newVisionMap[l] == true;
-
-				if (wasVisible == false && isVisible == true)
-					newLocations.Add(l + this.Location);
-			}
-
-			this.VisionMap = newVisionMap;
-			this.VisionLocation = this.Location;
-
-			return newLocations;
 		}
 
 		// XXX move to somewhere generic

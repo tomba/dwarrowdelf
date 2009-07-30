@@ -251,8 +251,11 @@ namespace MyGame
 
 				UpdateMap();
 
-				Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
-				Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
+				if (this.SelectedTile != null)
+				{
+					Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
+					Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
+				}
 			}
 			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}
