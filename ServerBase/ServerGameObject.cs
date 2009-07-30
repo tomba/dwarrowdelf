@@ -13,6 +13,7 @@ namespace MyGame
 	{
 		public int SymbolID { get; set; }
 
+		public string Name { get; set; }
 		public MapLevel Environment { get; private set; }
 		public Location Location { get; private set; }
 		public int X { get { return this.Location.X; } }

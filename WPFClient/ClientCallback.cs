@@ -97,7 +97,25 @@ namespace MyGame
 						ob.SymbolID = item.SymbolID;
 						itemCollection.Add(ob);
 					}
+				}
+				else if (msg is ItemData)
+				{
+					ItemData id = (ItemData)msg;
 
+					ClientGameObject ob = ClientGameObject.FindObject(id.ObjectID);
+
+					if (ob == null)
+					{
+						MyDebug.WriteLine("New object appeared {0}", id.ObjectID);
+						ob = new ItemObject(id.ObjectID);
+					}
+
+					ob.Name = id.Name;
+					ob.SymbolID = id.SymbolID;
+				}
+				else
+				{
+					throw new Exception("unknown messagetype");
 				}
 			}
 			catch (Exception e)

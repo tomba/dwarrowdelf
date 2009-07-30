@@ -57,7 +57,13 @@ namespace MyGame
 		Location m_location;
 		MapLevel m_environment;
 		LocationGrid<bool> m_visibilityMap;
-		public int VisionRange { get; set; }
+
+		int m_visionRange;
+		public int VisionRange
+		{
+			get { return m_visionRange; }
+			set { m_visionRange = value; m_visibilityMap = null; }
+		}
 
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
@@ -68,7 +74,6 @@ namespace MyGame
 			: base(objectID)
 		{
 			this.Inventory = new ItemCollection();
-			this.VisionRange = 3;
 			AddObject(this);
 		}
 

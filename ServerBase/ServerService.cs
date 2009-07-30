@@ -56,6 +56,7 @@ namespace MyGame
 
 				m_player = new Living(m_world);
 				m_player.SymbolID = 3;
+				m_player.Name = "player";
 				m_player.ClientCallback = m_client;
 				m_actor = new InteractiveActor();
 				m_player.Actor = m_actor;
@@ -73,14 +74,6 @@ namespace MyGame
 				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
 				m_client.LoginReply(m_player.ObjectID);
-				m_client.DeliverMessage(new ClientMsgs.LivingData()
-				{
-					ObjectID = m_player.ObjectID,
-					SymbolID = 3,
-					Name = "player",
-					VisionRange = m_player.VisionRange
-				}
-				);
 
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
@@ -152,6 +145,7 @@ namespace MyGame
 		#endregion
 
 		Dictionary<MapLevel, HashSet<Location>> m_knownLocations = new Dictionary<MapLevel, HashSet<Location>>();
+		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
 		void HandleChanges(Change[] changes)
 		{
@@ -163,21 +157,30 @@ namespace MyGame
 
 			Living[] livings = m_world.GetLivings();
 			var newKnownLocs = new Dictionary<MapLevel, HashSet<Location>>();
+			var newKnownObs = new HashSet<ServerGameObject>();
 			
 			foreach (Living l in livings)
 			{
 				if (l.Environment == null)
 					continue;
 
-				var newLocList =
+				// locations this living sees
+				var locList =
 					l.VisionMap.
 						Where(kvp => kvp.Value == true).
 						Select(kvp => kvp.Key + l.Location);
 
 				if (!newKnownLocs.ContainsKey(l.Environment))
 					newKnownLocs[l.Environment] = new HashSet<Location>();
+				newKnownLocs[l.Environment].UnionWith(locList);
 
-				newKnownLocs[l.Environment].UnionWith(newLocList);
+				foreach(Location loc in locList)
+				{
+					var obList = l.Environment.GetContents(loc);
+					if (obList == null)
+						continue;
+					newKnownObs.UnionWith(obList);
+				}
 			}
 
 			var revealedLocs = new Dictionary<MapLevel, IEnumerable<Location>>();
@@ -190,10 +193,42 @@ namespace MyGame
 					revealedLocs[kvp.Key] = kvp.Value;
 			}
 
+			var revealedObs = newKnownObs.Except(m_knownObjects);
+
 			m_knownLocations = newKnownLocs;
+			m_knownObjects = newKnownObs;
 
 			foreach (var kvp in revealedLocs)
 				SendNewTerrains(kvp.Key, kvp.Value);
+
+			foreach (var ob in revealedObs)
+			{
+				if (ob is Living)
+				{
+					Living l = (Living)ob;
+					var msg = new ClientMsgs.LivingData()
+					{
+						ObjectID = l.ObjectID,
+						SymbolID = l.SymbolID,
+						Name = l.Name,
+						VisionRange = l.VisionRange
+					};
+					m_client.DeliverMessage(msg);
+				}
+				else if (ob is ItemObject)
+				{
+					ItemObject item = (ItemObject)ob;
+					var msg = new ClientMsgs.ItemData()
+					{
+						ObjectID = item.ObjectID,
+						SymbolID = item.SymbolID,
+						Name = item.Name,
+					};
+					m_client.DeliverMessage(msg);
+				}
+				else
+					throw new Exception();
+			}
 		}
 
 		void SendNewTerrains(MapLevel env, IEnumerable<Location> newLocations)

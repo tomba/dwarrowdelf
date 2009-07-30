@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 namespace MyGame.ClientMsgs
 {
 	[DataContract,
+	KnownType(typeof(ItemData)),
 	KnownType(typeof(ItemsData)),
 	KnownType(typeof(LivingData)),
 	KnownType(typeof(MapData)),
@@ -23,7 +24,7 @@ namespace MyGame.ClientMsgs
 
 	/* Item in inventory or floor */
 	[DataContract]
-	public class ItemData
+	public class ItemData : Message
 	{
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
@@ -31,6 +32,11 @@ namespace MyGame.ClientMsgs
 		public string Name { get; set; }
 		[DataMember]
 		public int SymbolID { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ItemData {0} {1}", this.ObjectID, this.Name);
+		}
 	}
 
 	[DataContract]
@@ -51,6 +57,11 @@ namespace MyGame.ClientMsgs
 		public int VisionRange { get; set; }
 		[DataMember]
 		public string Name { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("LivingData {0} {1}", this.ObjectID, this.Name);
+		}
 	}
 
 	/* Tile that came visible */

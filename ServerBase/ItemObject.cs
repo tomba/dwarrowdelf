@@ -11,7 +11,5 @@ namespace MyGame
 			: base(world)
 		{
 		}
-
-		public string Name { get; set; }
 	}
 }
