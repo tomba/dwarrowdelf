@@ -21,8 +21,8 @@ namespace MyGame
 
 		public Connection Connection { get; set; }
 
-		PlayerObject m_player;
-		public PlayerObject Player
+		ClientGameObject m_player;
+		public ClientGameObject Player
 		{
 			get	{ return m_player; }
 

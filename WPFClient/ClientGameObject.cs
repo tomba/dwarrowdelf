@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace MyGame
 {
 	delegate void ObjectMoved(MapLevel e, Location l);
+	class ItemCollection : ObservableCollection<ClientGameObject> { }
 
-	class ClientGameObject : GameObject
+	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
 		// XXX not re-entrant
 		static LOSAlgo s_losAlgo = new LOSShadowCast1();
@@ -50,7 +53,7 @@ namespace MyGame
 			}
 		}
 		
-		public int SymbolID { get; set; }
+		public ItemCollection Inventory { get; private set; }
 		Location m_location;
 		MapLevel m_environment;
 		LocationGrid<bool> m_visibilityMap;
@@ -64,8 +67,27 @@ namespace MyGame
 		public ClientGameObject(ObjectID objectID)
 			: base(objectID)
 		{
-			AddObject(this);
+			this.Inventory = new ItemCollection();
 			this.VisionRange = 3;
+			AddObject(this);
+		}
+
+		string m_name;
+		public string Name {
+			get { return m_name; }
+			set { m_name = value; Notify("Name"); }
+		}
+
+		int m_symbolID;
+		public int SymbolID
+		{
+			get { return m_symbolID; }
+			set
+			{
+				m_symbolID = value;
+				Notify("SymbolID");
+				Notify("Drawing");
+			}
 		}
 
 		public DrawingImage Drawing
@@ -133,5 +155,17 @@ namespace MyGame
 				return m_visibilityMap;
 			}
 		}
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
 	}
 }

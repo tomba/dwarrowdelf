@@ -12,11 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.ComponentModel;
 
 namespace MyGame
 {
-	public class MapControl : UserControl
+	class MapControl : UserControl, INotifyPropertyChanged
 	{
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		SymbolBitmapCache m_bitmapCache;
 
 		DispatcherTimer m_updateTimer;
@@ -57,6 +60,8 @@ namespace MyGame
 			m_hiliteRectangle.Stroke = Brushes.Blue;
 			m_hiliteRectangle.StrokeThickness = 2;
 			m_effectsCanvas.Children.Add(m_hiliteRectangle);
+
+			this.Focusable = true;
 		}
 
 		public int TileSize
@@ -119,6 +124,15 @@ namespace MyGame
 			bool lit = false;
 			Location ml = sl + m_screenToMapDelta;
 
+			tile = map.GetTile(sl);
+
+			if (m_mapLevel == null || !m_mapLevel.Bounds.Contains(ml))
+			{
+				tile.Bitmap = null;
+				tile.ObjectBitmap = null;
+				return;
+			}
+
 			if (m_followObject != null)
 			{
 				if (m_followObject.Location == ml)
@@ -144,8 +158,6 @@ namespace MyGame
 				}
 			}
 
-			tile = map.GetTile(sl);
-
 			bmp = GetBitmap(ml, lit);
 			tile.Bitmap = bmp;
 
@@ -161,18 +173,12 @@ namespace MyGame
 
 		BitmapSource GetBitmap(Location ml, bool lit)
 		{
-			if (this.Map == null)
-				return null;
-
 			int terrainID = this.Map.GetTerrainType(ml);
 			return m_bitmapCache.GetBitmap(terrainID, !lit);
 		}
 
 		BitmapSource GetObjectBitmap(Location ml, bool lit)
 		{
-			if (this.Map == null)
-				return null;
-
 			IList<ClientGameObject> obs = this.Map.GetContents(ml);
 			if (obs != null && obs.Count > 0)
 			{
@@ -193,6 +199,7 @@ namespace MyGame
 					m_mapLevel.MapChanged -= MapChangedCallback;
 				m_mapLevel = value;
 				m_mapLevel.MapChanged += new MapChanged(MapChangedCallback);
+
 				UpdateMap();
 			}
 		}
@@ -202,7 +209,7 @@ namespace MyGame
 			UpdateMap();
 		}
 
-		internal ClientGameObject FollowObject
+		public ClientGameObject FollowObject
 		{
 			get
 			{
@@ -218,6 +225,9 @@ namespace MyGame
 
 				if (m_followObject.Environment != null)
 					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("FollowObject"));
 			}
 
 		}
@@ -240,11 +250,10 @@ namespace MyGame
 				UpdateScreenToMapDelta();
 
 				UpdateMap();
+
+				Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
+				Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
 			}
-
-			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(l).X * m_tileSize);
-			Canvas.SetTop(m_hiliteRectangle, MapToScreen(l).Y * m_tileSize);
-
 			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
 		}
 
@@ -264,5 +273,96 @@ namespace MyGame
 			Location ml = ScreenToMap(sl);
 			return ml;
 		}
+
+		TileInfo m_tileInfo;
+		public TileInfo SelectedTile
+		{
+			get { return m_tileInfo; }
+			set
+			{
+				if (m_tileInfo != null)
+					m_tileInfo.StopObserve();
+				m_tileInfo = value;
+				m_tileInfo.StartObserve();
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTile"));
+			}
+		}
+
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			this.Focus();
+
+			if (e.LeftButton != MouseButtonState.Pressed)
+			{
+				base.OnMouseDown(e);
+				return;
+			}
+
+			Location ml = MapLocationFromPoint(e.GetPosition(this));
+			this.SelectedTile = new TileInfo(m_mapLevel, ml);
+
+			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
+			Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
+
+			e.Handled = true;
+		}
+	}
+
+	class TileInfo : INotifyPropertyChanged
+	{
+		MapLevel m_mapLevel;
+		Location m_location;
+		public TileInfo(MapLevel mapLevel, Location location)
+		{
+			m_mapLevel = mapLevel;
+			m_location = location;
+		}
+
+		public void StartObserve()
+		{
+			m_mapLevel.MapChanged += MapChanged;
+		}
+
+		public void StopObserve()
+		{
+			m_mapLevel.MapChanged -= MapChanged;
+		}
+
+		void MapChanged(Location l)
+		{
+			if (l == m_location)
+			{
+				Notify("TerrainType");
+				Notify("Objects");
+			}
+		}
+
+		public Location Location
+		{
+			get { return m_location; }
+		}
+
+		public int TerrainType
+		{
+			get { return m_mapLevel.GetTerrainType(m_location); }
+		}
+
+		public IList<ClientGameObject> Objects
+		{
+			get { return m_mapLevel.GetContents(m_location); }
+		}
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
 	}
 }

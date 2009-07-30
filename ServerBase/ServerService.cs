@@ -72,7 +72,15 @@ namespace MyGame
 
 				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
-				m_client.LoginReply(m_player.ObjectID, m_player.VisionRange);
+				m_client.LoginReply(m_player.ObjectID);
+				m_client.DeliverMessage(new ClientMsgs.LivingData()
+				{
+					ObjectID = m_player.ObjectID,
+					SymbolID = 3,
+					Name = "player",
+					VisionRange = m_player.VisionRange
+				}
+				);
 
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
@@ -143,16 +151,18 @@ namespace MyGame
 
 		#endregion
 
+		Dictionary<MapLevel, HashSet<Location>> m_knownLocations = new Dictionary<MapLevel, HashSet<Location>>();
+
 		void HandleChanges(Change[] changes)
 		{
 			ClientMsgs.Message[] arr = changes.
 				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
 				ToArray();
 
-			m_client.DeliverMessage(arr);
+			m_client.DeliverMessages(arr);
 
 			Living[] livings = m_world.GetLivings();
-			Dictionary<MapLevel, HashSet<Location>> newLocs = new Dictionary<MapLevel, HashSet<Location>>();
+			var newLocs = new Dictionary<MapLevel, HashSet<Location>>();
 			
 			foreach (Living l in livings)
 			{
@@ -192,7 +202,7 @@ namespace MyGame
 			}
 
 			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
-			m_client.DeliverMessage(msgs);
+			m_client.DeliverMessages(msgs);
 		}
 	}
 }

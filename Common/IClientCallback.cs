@@ -11,10 +11,13 @@ namespace MyGame
 	public interface IClientCallback
 	{
 		[OperationContract(IsOneWay = true)]
-		void LoginReply(ObjectID playerID, int visionRange);
+		void LoginReply(ObjectID playerID);
 
 		[OperationContract(IsOneWay = true)]
-		void DeliverMessage(ClientMsgs.Message[] messages);
+		void DeliverMessage(ClientMsgs.Message message);
+
+		[OperationContract(IsOneWay = true)]
+		void DeliverMessages(ClientMsgs.Message[] messages);
 /*
 		[OperationContract(IsOneWay = true)]
 		void DeliverMapTerrains(MapLocationTerrain[] locations);

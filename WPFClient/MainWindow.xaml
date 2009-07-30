@@ -2,22 +2,49 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:MyGame"
-	Title="Window1" Height="424" Width="608"
+        xmlns:prop="clr-namespace:WpfPropertyGrid;assembly=WpfPropertyGrid"
+	Title="Window1" Height="424" Width="800"
     DataContext="{x:Static local:GameData.Data}">
-
-	<DockPanel>
-
-		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
-				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
-				<ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
+    
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
+                <ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
                 <Button Click="OnClearLogClicked">Clear Log</Button>
             </ToolBar>
-		</ToolBarTray>
+            
+            <ToolBar>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
+
+                    <ComboBox MinWidth="100" ItemsSource="{Binding Objects}"
+                          SelectedItem="{Binding Path=FollowObject, ElementName=map}"
+                          IsReadOnly="True">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" />
+                                    <Image Source="{Binding Drawing}" Stretch="Uniform" Height="20" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+            </ToolBar>
+
+        </ToolBarTray>
+
+        <StatusBar DockPanel.Dock="Bottom" >
+            <TextBlock>
+        		Turn <TextBlock Text="{Binding Path=TurnNumber}" />
+			</TextBlock>
+        </StatusBar>
 
 		<Grid>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="6*"/>
+				<ColumnDefinition Width="3*"/>
+				<ColumnDefinition Width="1*"/>
 				<ColumnDefinition Width="1*"/>
 			</Grid.ColumnDefinitions>
 
@@ -26,44 +53,67 @@
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" BorderThickness="0" Focusable="True" />
+			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" BorderThickness="0" />
             
-			<StackPanel Grid.Column="1" Grid.RowSpan="2">
-                <TextBlock>
-					Turn <TextBlock Text="{Binding Path=TurnNumber}" />
-				</TextBlock>
-				<ListBox Name="actionListBox" ItemsSource="{Binding Path=ActionCollection}"/>
-				<ListBox Name="inventoryListBox" 
-						 ItemsSource="{Binding Path=Player.Inventory}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<StackPanel.ToolTip>
-									<StackPanel Orientation="Vertical">
-										<TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" />
-										<Image Source="{Binding Path=Drawing}" Stretch="Uniform" />
-									</StackPanel>
-								</StackPanel.ToolTip>
-								<TextBlock Text="{Binding Path=Name}" />
-								<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
-							</StackPanel>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
 
-                <ComboBox ItemsSource="{Binding Path=Objects}" SelectionChanged="ComboBox_SelectionChanged" IsReadOnly="True">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=Name}" />
-                                <Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                <DockPanel Grid.Row="0">
+
+                    <prop:PropertyGrid x:Name="prop" />
+                </DockPanel>
+
+                <StackPanel Grid.Row="1">
+                    <ListBox ItemsSource="{Binding Path=ActionCollection}" />
+                    <ListBox Name="inventoryListBox" 
+						 ItemsSource="{Binding Path=Player.Inventory}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.ToolTip>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                                            <Image Source="{Binding Path=Drawing}" Stretch="Uniform" />
+                                        </StackPanel>
+                                    </StackPanel.ToolTip>
+                                    <TextBlock Text="{Binding Path=Name}" />
+                                    <Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="0"
+                        DataContext="{Binding Path=SelectedTile, ElementName=map}">
+                <StackPanel>
+                    <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                    <TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
+                </StackPanel>
+                <StackPanel>
+                    <TreeView>
+                        <TreeViewItem Header="test" />
+                    </TreeView>
+                    <ListBox ItemsSource="{Binding Objects}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=Name}" />
+                                    <Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    
+                </StackPanel>
             </StackPanel>
 
-			<TextBox Name="logTextBox" Grid.ColumnSpan="2" Grid.Row="1" VerticalScrollBarVisibility="Visible"
+            <TextBox Name="logTextBox" Grid.ColumnSpan="3" Grid.Row="1" VerticalScrollBarVisibility="Visible"
 				 IsReadOnly="True" FontFamily="Lucida Console" AcceptsTab="True" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" />
 
 			<GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Grid.Row="0"
@@ -72,7 +122,7 @@
             <GridSplitter HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Column="0" Grid.RowSpan="1"
 					  ShowsPreview="True" Width="5" ResizeDirection="Columns"/>
         </Grid>
-
+        
 	</DockPanel>
 
 </Window>

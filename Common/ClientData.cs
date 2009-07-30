@@ -12,6 +12,7 @@ namespace MyGame.ClientMsgs
 {
 	[DataContract,
 	KnownType(typeof(ItemsData)),
+	KnownType(typeof(LivingData)),
 	KnownType(typeof(MapData)),
 	KnownType(typeof(TerrainData)),
 	KnownType(typeof(ObjectMove)),
@@ -37,6 +38,19 @@ namespace MyGame.ClientMsgs
 	{
 		[DataMember]
 		public ItemData[] Items { get; set; }
+	}
+
+	[DataContract]
+	public class LivingData : Message
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+		[DataMember]
+		public int SymbolID { get; set; }
+		[DataMember]
+		public int VisionRange { get; set; }
+		[DataMember]
+		public string Name { get; set; }
 	}
 
 	/* Tile that came visible */

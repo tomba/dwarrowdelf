@@ -91,7 +91,7 @@ namespace MyGame
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			//this.Focus();
+			map.Focus();
 			//MyDebug.WriteLine("Mouse down");
 			
 			if (e.RightButton == MouseButtonState.Pressed)
@@ -110,19 +110,6 @@ namespace MyGame
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
 		{
 			this.logTextBox.Clear();
-		}
-
-		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.AddedItems.Count != 1)
-			{
-				map.FollowObject = null;
-				return;
-			}
-
-			ClientGameObject ob = (ClientGameObject)e.AddedItems[0];
-
-			map.FollowObject = ob;
 		}
 
 		internal MapLevel Map

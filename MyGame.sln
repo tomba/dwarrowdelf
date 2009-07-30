@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerBase", "ServerBase\ServerBase.csproj", "{0C31C7C2-586F-4F67-8225-1C09E816695B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfPropertyGrid", "WpfPropertyGrid\WpfPropertyGrid.csproj", "{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{0C31C7C2-586F-4F67-8225-1C09E816695B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C31C7C2-586F-4F67-8225-1C09E816695B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C31C7C2-586F-4F67-8225-1C09E816695B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

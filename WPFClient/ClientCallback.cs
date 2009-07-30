@@ -16,12 +16,11 @@ namespace MyGame
 
 		#region IClientCallback Members
 
-		public void LoginReply(ObjectID playerID, int visionRange)
+		public void LoginReply(ObjectID playerID)
 		{
 			try
 			{
-				PlayerObject player = new PlayerObject(playerID);
-				player.VisionRange = visionRange;
+				ClientGameObject player = new ClientGameObject(playerID);
 				GameData.Data.Player = player;
 				MainWindow.s_mainWindow.map.FollowObject = player;
 
@@ -35,63 +34,84 @@ namespace MyGame
 			}
 		}
 
-		public void DeliverMessage(Message[] messages)
+		public void DeliverMessage(Message msg)
+		{
+			MyDebug.WriteLine("Received msg {0}", msg);
+			try
+			{
+				if (msg is TerrainData)
+				{
+					MainWindow.s_mainWindow.Map.SetTerrains(((TerrainData)msg).MapDataList);
+				}
+				else if (msg is ClientMsgs.TurnChange)
+				{
+					GameData.Data.TurnNumber = ((ClientMsgs.TurnChange)msg).TurnNumber;
+				}
+				else if (msg is ObjectMove)
+				{
+					ObjectMove om = (ObjectMove)msg;
+					ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
+
+					if (ob == null)
+					{
+						MyDebug.WriteLine("New object appeared {0}", om.ObjectID);
+						ob = new ClientGameObject(om.ObjectID);
+					}
+
+					ob.SymbolID = om.Symbol;
+
+					if (ob.Environment == null)
+						ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
+					else
+						ob.Location = om.TargetLocation;
+				}
+				else if (msg is LivingData)
+				{
+					LivingData ld = (LivingData)msg;
+
+					ClientGameObject ob = ClientGameObject.FindObject(ld.ObjectID);
+
+					if (ob == null)
+					{
+						MyDebug.WriteLine("New living appeared {0}", ld.ObjectID);
+						ob = new ClientGameObject(ld.ObjectID);
+					}
+
+					ob.SymbolID = ld.SymbolID;
+					ob.VisionRange = ld.VisionRange;
+					ob.Name = ld.Name;
+				}
+				else if (msg is ItemsData)
+				{
+					ItemsData id = (ItemsData)msg;
+					var items = id.Items;
+
+					MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
+
+					ItemCollection itemCollection = GameData.Data.Player.Inventory;
+					itemCollection.Clear();
+					foreach (ItemData item in items)
+					{
+						ItemObject ob = new ItemObject(item.ObjectID);
+						ob.Name = item.Name;
+						ob.SymbolID = item.SymbolID;
+						itemCollection.Add(ob);
+					}
+
+				}
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
+		public void DeliverMessages(Message[] messages)
 		{
 			foreach (Message msg in messages)
 			{
-				MyDebug.WriteLine("Received msg {0}", msg);
-				try
-				{
-					if (msg is TerrainData)
-					{
-						MainWindow.s_mainWindow.Map.SetTerrains(((TerrainData)msg).MapDataList);
-					}
-					else if (msg is ClientMsgs.TurnChange)
-					{
-						GameData.Data.TurnNumber = ((ClientMsgs.TurnChange)msg).TurnNumber;
-					}
-					else if (msg is ObjectMove)
-					{
-						ObjectMove om = (ObjectMove)msg;
-						ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
-
-						if (ob == null)
-						{
-							MyDebug.WriteLine("New object appeared {0}", om.ObjectID);
-							ob = new ClientGameObject(om.ObjectID);
-						}
-
-						ob.SymbolID = om.Symbol;
-
-						if (ob.Environment == null)
-							ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
-						else
-							ob.Location = om.TargetLocation;
-					}
-					else if (msg is ItemsData)
-					{						
-						ItemsData id = (ItemsData)msg;
-						var items = id.Items;
-
-						MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
-
-						ItemCollection itemCollection = GameData.Data.Player.Inventory;
-						itemCollection.Clear();
-						foreach (ItemData item in items)
-						{
-							ItemObject ob = new ItemObject(item.ObjectID);
-							ob.Name = item.Name;
-							ob.SymbolID = item.SymbolID;
-							itemCollection.Add(ob);
-						}
-						
-					}
-				}
-				catch (Exception e)
-				{
-					MyDebug.WriteLine("Uncaught exception");
-					MyDebug.WriteLine(e.ToString());
-				}
+				DeliverMessage(msg);
 			}
 		}
 

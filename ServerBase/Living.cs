@@ -51,7 +51,7 @@ namespace MyGame
 		int m_losTurn = -1;
 		List<Location> m_newLocations;
 
-		public int VisionRange { get { return 3; } }
+		public int VisionRange { get { return 5; } }
 		public LocationGrid<bool> VisionMap { get; set; }
 		public Location VisionLocation { get; set; }
 
@@ -134,7 +134,7 @@ namespace MyGame
 			}
 
 			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
-			this.ClientCallback.DeliverMessage(msgs);
+			this.ClientCallback.DeliverMessages(msgs);
 		}
 
 		public List<Location> GetNewLocations()
@@ -299,7 +299,7 @@ namespace MyGame
 				Select<Change, ClientMsgs.Message>(ChangeToMessage).
 				ToArray();
 
-			this.ClientCallback.DeliverMessage(arr);
+			this.ClientCallback.DeliverMessages(arr);
 		}
 
 		public void SendInventory()
@@ -318,7 +318,7 @@ namespace MyGame
 
 				var msgs = new ClientMsgs.Message[] { new ClientMsgs.ItemsData() { Items = items.ToArray() } };
 
-				this.ClientCallback.DeliverMessage(msgs);
+				this.ClientCallback.DeliverMessages(msgs);
 			}
 		}
 
