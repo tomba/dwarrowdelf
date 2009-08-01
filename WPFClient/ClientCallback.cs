@@ -80,6 +80,12 @@ namespace MyGame
 					ob.SymbolID = ld.SymbolID;
 					ob.VisionRange = ld.VisionRange;
 					ob.Name = ld.Name;
+
+					// XXX
+					if (ob.Environment == null)
+						ob.SetEnvironment(MainWindow.s_mainWindow.Map, ld.Location);
+					else
+						ob.Location = ld.Location;
 				}
 				else if (msg is ItemsData)
 				{
@@ -112,6 +118,12 @@ namespace MyGame
 
 					ob.Name = id.Name;
 					ob.SymbolID = id.SymbolID;
+
+					// XXX
+					if (ob.Environment == null)
+						ob.SetEnvironment(MainWindow.s_mainWindow.Map, id.Location);
+					else
+						ob.Location = id.Location;
 				}
 				else
 				{

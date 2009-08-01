@@ -35,6 +35,9 @@ namespace MyGame
 			item.SymbolID = 5;
 			item.Name = "testi-itemi";
 			item.MoveTo(world.Map, new Location(1, 1));
+
+			// process changes so that moves above are handled
+			world.ProcessChanges();
 		}
 
 
@@ -61,7 +64,6 @@ namespace MyGame
 			m_map = m_area.GetLevel(1);
 			m_map.MapChanged += MapChangedCallback;
 			m_livingList = new List<Living>();
-
 
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
@@ -110,7 +112,8 @@ namespace MyGame
 			{
 				while (true)
 				{
-					Debug.Assert(m_changeList.Count == 0);
+					lock(m_changeList)
+						Debug.Assert(m_changeList.Count == 0);
 
 					int count = 0;
 					foreach (Living living in m_livingList)
@@ -152,9 +155,13 @@ namespace MyGame
 
 		public Change[] GetChanges()
 		{
-			return m_changeList.ToArray();
+			lock(m_changeList)
+				return m_changeList.ToArray();
 		}
 
+		/* if changes happen outside the normal Tick processing,
+		 * ProcessChanges has to be called manually after that
+		 */
 		public void ProcessChanges()
 		{
 			Change[] arr = null;

@@ -50,7 +50,7 @@ namespace MyGame
 
 		int m_losTurn = -1;
 
-		int m_visionRange = 5;
+		int m_visionRange = 3;
 		public int VisionRange
 		{
 			get { return m_visionRange; }
@@ -155,7 +155,7 @@ namespace MyGame
 				return new ClientMsgs.TerrainData()
 				{
 					MapDataList = new ClientMsgs.MapData[] {
-						new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType, Objects = null }
+						new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType }
 					}
 				};
 			}
@@ -170,7 +170,7 @@ namespace MyGame
 			return null;
 		}
 
-		bool ChangeFilter(Change change)
+		public bool ChangeFilter(Change change)
 		{
 			// send only changes that the player sees and needs to know
 

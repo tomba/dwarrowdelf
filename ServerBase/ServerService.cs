@@ -144,18 +144,24 @@ namespace MyGame
 
 		#endregion
 
+		// These are used to determine new tiles and objects in sight
 		Dictionary<MapLevel, HashSet<Location>> m_knownLocations = new Dictionary<MapLevel, HashSet<Location>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
 		void HandleChanges(Change[] changes)
 		{
+			// list of livings that this player can observe
+			Living[] livings = m_world.GetLivings();
+			livings = new Living[] { m_player };
+
+			// filter changes that livings see
 			ClientMsgs.Message[] arr = changes.
+				Where(c => livings.Any(l => l.ChangeFilter(c))).
 				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
 				ToArray();
 
 			m_client.DeliverMessages(arr);
 
-			Living[] livings = m_world.GetLivings();
 			var newKnownLocs = new Dictionary<MapLevel, HashSet<Location>>();
 			var newKnownObs = new HashSet<ServerGameObject>();
 			
@@ -164,9 +170,9 @@ namespace MyGame
 				if (l.Environment == null)
 					continue;
 
+
 				// locations this living sees
-				var locList =
-					l.VisionMap.
+				var locList = l.VisionMap.
 						Where(kvp => kvp.Value == true).
 						Select(kvp => kvp.Key + l.Location);
 
@@ -198,65 +204,65 @@ namespace MyGame
 			m_knownLocations = newKnownLocs;
 			m_knownObjects = newKnownObs;
 
-			foreach (var kvp in revealedLocs)
-				SendNewTerrains(kvp.Key, kvp.Value);
+			SendNewTerrains(revealedLocs);
 
+			SendNewObjects(revealedObs);
+		}
+
+		void SendNewTerrains(Dictionary<MapLevel, IEnumerable<Location>> revealedLocs)
+		{
+			foreach (var kvp in revealedLocs)
+			{
+				var env = kvp.Key;
+				var newLocations = kvp.Value;
+
+				var mapDataList = newLocations.Select(l => new ClientMsgs.MapData() { Location = l, Terrain = env.GetTerrain(l) });
+				var mapDataArr = mapDataList.ToArray();
+				if (mapDataArr.Length == 0)
+					continue;
+				var msg = new ClientMsgs.TerrainData() { MapDataList = mapDataArr };
+
+				m_client.DeliverMessage(msg);
+			}
+		}
+
+		void SendNewObjects(IEnumerable<ServerGameObject> revealedObs)
+		{
 			foreach (var ob in revealedObs)
 			{
+				ClientMsgs.Message msg;
+
 				if (ob is Living)
 				{
 					Living l = (Living)ob;
-					var msg = new ClientMsgs.LivingData()
+					msg = new ClientMsgs.LivingData()
 					{
 						ObjectID = l.ObjectID,
 						SymbolID = l.SymbolID,
 						Name = l.Name,
-						VisionRange = l.VisionRange
+						VisionRange = l.VisionRange,
+						Environment = l.Environment.ObjectID,
+						Location = l.Location,
 					};
-					m_client.DeliverMessage(msg);
 				}
 				else if (ob is ItemObject)
 				{
 					ItemObject item = (ItemObject)ob;
-					var msg = new ClientMsgs.ItemData()
+					msg = new ClientMsgs.ItemData()
 					{
 						ObjectID = item.ObjectID,
 						SymbolID = item.SymbolID,
 						Name = item.Name,
+						Environment = item.Environment.ObjectID,
+						Location = item.Location,
 					};
-					m_client.DeliverMessage(msg);
 				}
 				else
 					throw new Exception();
-			}
-		}
 
-		void SendNewTerrains(MapLevel env, IEnumerable<Location> newLocations)
-		{
-			int count = newLocations.Count();
-
-			if (count == 0)
-				return;
-
-			var terrains = new ClientMsgs.MapData[count];
-			int i = 0;
-			foreach (Location l in newLocations)
-			{
-				ObjectID[] obs = null;
-				List<ServerGameObject> items = env.GetContents(l);
-				if (items != null)
-					obs = items.Select(o => o.ObjectID).ToArray();
-
-				terrains[i++] = new ClientMsgs.MapData()
-				{
-					Location = l,
-					Terrain = env.GetTerrain(l),
-					Objects = obs 
-				};
+				m_client.DeliverMessage(msg);
 			}
 
-			var msgs = new ClientMsgs.Message[] { new ClientMsgs.TerrainData() { MapDataList = terrains } };
-			m_client.DeliverMessages(msgs);
 		}
 	}
 }

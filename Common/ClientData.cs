@@ -33,6 +33,11 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public int SymbolID { get; set; }
 
+		[DataMember]
+		public Location Location { get; set; }
+		[DataMember]
+		public ObjectID Environment { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("ItemData {0} {1}", this.ObjectID, this.Name);
@@ -58,6 +63,11 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public string Name { get; set; }
 
+		[DataMember]
+		public Location Location { get; set; }
+		[DataMember]
+		public ObjectID Environment { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("LivingData {0} {1}", this.ObjectID, this.Name);
@@ -72,8 +82,6 @@ namespace MyGame.ClientMsgs
 		public Location Location { get; set; }
 		[DataMember]
 		public int Terrain { get; set; }
-		[DataMember]
-		public ObjectID[] Objects { get; set; }
 	}
 
 	[DataContract]

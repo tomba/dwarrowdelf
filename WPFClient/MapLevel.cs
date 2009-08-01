@@ -72,6 +72,7 @@ namespace MyGame
 				TileData[,] block = m_tileGrid.GetBlock(ref bl, true);
 				block[bl.X, bl.Y].m_terrainID = locInfo.Terrain;
 
+				/*
 				if (locInfo.Objects != null)
 				{
 					foreach(ObjectID oid in locInfo.Objects)
@@ -93,6 +94,7 @@ namespace MyGame
 
  					}
 				}
+				 */
 				if (MapChanged != null)
 					MapChanged(l);
 			}
