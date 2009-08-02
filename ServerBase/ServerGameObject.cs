@@ -9,7 +9,7 @@ namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, MapLevel e, Location l);
 
-	class ServerGameObject : GameObject
+	abstract class ServerGameObject : GameObject
 	{
 		public int SymbolID { get; set; }
 

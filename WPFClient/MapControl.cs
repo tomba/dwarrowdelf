@@ -126,7 +126,7 @@ namespace MyGame
 
 			tile = map.GetTile(sl);
 
-			if (m_mapLevel == null || !m_mapLevel.Bounds.Contains(ml))
+			if (m_mapLevel == null) // || !m_mapLevel.Bounds.Contains(ml))
 			{
 				tile.Bitmap = null;
 				tile.ObjectBitmap = null;
@@ -135,7 +135,12 @@ namespace MyGame
 
 			if (m_followObject != null)
 			{
-				if (m_followObject.Location == ml)
+				if (m_mapLevel.GetTerrainType(ml) == 0)
+				{
+					// unknown locations always unlit
+					lit = false;
+				}
+				else if (m_followObject.Location == ml)
 				{
 					// current location always lit
 					lit = true;

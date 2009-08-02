@@ -74,13 +74,17 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	/* Tile that came visible */
 	[DataContract]
-	public class MapData
+	public class MapData : Message
 	{
 		[DataMember]
+		public ObjectID ObjectID { get; set; }
+	}
+
+	/* Tile that came visible */
+	public struct MapTileData
+	{
 		public Location Location { get; set; }
-		[DataMember]
 		public int Terrain { get; set; }
 	}
 
@@ -88,7 +92,7 @@ namespace MyGame.ClientMsgs
 	public class TerrainData : Message
 	{
 		[DataMember]
-		public MapData[] MapDataList { get; set; }
+		public MapTileData[] MapDataList { get; set; }
 
 		public override string ToString()
 		{
@@ -115,13 +119,10 @@ namespace MyGame.ClientMsgs
 		public Location TargetLocation { get; set; }
 		[DataMember]
 		public Location SourceLocation { get; set; }
-		[DataMember]
-		public int Symbol { get; set; }
 
-		public ObjectMove(GameObject target, int symbol, Location from, Location to)
+		public ObjectMove(GameObject target, Location from, Location to)
 		{
 			this.ObjectID = target.ObjectID;
-			this.Symbol = symbol;
 			this.SourceLocation = from;
 			this.TargetLocation = to;
 		}

@@ -75,6 +75,12 @@ namespace MyGame
 
 				m_client.LoginReply(m_player.ObjectID);
 
+				ClientMsgs.MapData md = new ClientMsgs.MapData() { ObjectID = m_world.Map.ObjectID };
+				m_client.DeliverMessage(md);
+
+				if (m_seeAll || m_world.VisibilityMode == VisibilityMode.AllVisible)
+					SendAllTerrainsAndObjects(m_world);
+
 				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
 					throw new Exception("Unable to move player");
 
@@ -148,20 +154,39 @@ namespace MyGame
 		Dictionary<MapLevel, HashSet<Location>> m_knownLocations = new Dictionary<MapLevel, HashSet<Location>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
-		void HandleChanges(Change[] changes)
+		// this user sees all
+		bool m_seeAll = true;
+
+		void HandleChanges(Change[] changeArr)
 		{
-			// list of livings that this player can observe
+			// list of "friendly" livings that this player can observe
 			Living[] livings = m_world.GetLivings();
 			livings = new Living[] { m_player };
 
+			SendChanges(livings, changeArr);
+
+			// if the user sees all, no need to send new terrains/objects
+			if (!m_seeAll && m_world.VisibilityMode != VisibilityMode.AllVisible)
+				SendNewTerrainsAndObjects(livings);
+		}
+
+		void SendChanges(Living[] livings, Change[] changeArr)
+		{
 			// filter changes that livings see
-			ClientMsgs.Message[] arr = changes.
-				Where(c => livings.Any(l => l.ChangeFilter(c))).
+			IEnumerable<Change> changes = changeArr;
+
+			if (!m_seeAll)
+				changes = changes.Where(c => livings.Any(l => l.ChangeFilter(c)));
+
+			ClientMsgs.Message[] msgArr = changes.
 				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
 				ToArray();
 
-			m_client.DeliverMessages(arr);
+			m_client.DeliverMessages(msgArr);
+		}
 
+		void SendNewTerrainsAndObjects(Living[] livings)
+		{
 			var newKnownLocs = new Dictionary<MapLevel, HashSet<Location>>();
 			var newKnownObs = new HashSet<ServerGameObject>();
 			
@@ -170,11 +195,7 @@ namespace MyGame
 				if (l.Environment == null)
 					continue;
 
-
-				// locations this living sees
-				var locList = l.VisionMap.
-						Where(kvp => kvp.Value == true).
-						Select(kvp => kvp.Key + l.Location);
+				IEnumerable<Location> locList = l.GetVisibleLocations();
 
 				if (!newKnownLocs.ContainsKey(l.Environment))
 					newKnownLocs[l.Environment] = new HashSet<Location>();
@@ -216,7 +237,7 @@ namespace MyGame
 				var env = kvp.Key;
 				var newLocations = kvp.Value;
 
-				var mapDataList = newLocations.Select(l => new ClientMsgs.MapData() { Location = l, Terrain = env.GetTerrain(l) });
+				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, Terrain = env.GetTerrain(l) });
 				var mapDataArr = mapDataList.ToArray();
 				if (mapDataArr.Length == 0)
 					continue;
@@ -241,7 +262,7 @@ namespace MyGame
 						SymbolID = l.SymbolID,
 						Name = l.Name,
 						VisionRange = l.VisionRange,
-						Environment = l.Environment.ObjectID,
+						Environment = l.Environment != null ? l.Environment.ObjectID : ObjectID.NullObjectID,
 						Location = l.Location,
 					};
 				}
@@ -253,16 +274,41 @@ namespace MyGame
 						ObjectID = item.ObjectID,
 						SymbolID = item.SymbolID,
 						Name = item.Name,
-						Environment = item.Environment.ObjectID,
+						Environment = item.Environment != null ? item.Environment.ObjectID : ObjectID.NullObjectID,
 						Location = item.Location,
 					};
 				}
 				else
-					throw new Exception();
+					continue;
 
 				m_client.DeliverMessage(msg);
 			}
+		}
 
+		void SendAllTerrainsAndObjects(World world)
+		{
+			MapLevel env = world.Map;
+
+			ClientMsgs.MapTileData[] mapDataArr = new ClientMsgs.MapTileData[env.Width * env.Height];
+
+			for (int y = 0; y < env.Height; ++y)
+			{
+				for (int x = 0; x < env.Width; ++x)
+				{
+					Location l = new Location(x, y);
+					ClientMsgs.MapTileData td = new ClientMsgs.MapTileData();
+					td.Location = l;
+					td.Terrain = env.GetTerrain(l);
+					mapDataArr[x + y * env.Width] = td;
+				}
+			}
+
+			var msg = new ClientMsgs.TerrainData() { MapDataList = mapDataArr };
+
+			m_client.DeliverMessage(msg);
+
+			// XXX
+			m_world.ForEachObject(o => SendNewObjects(new ServerGameObject[] { o }));
 		}
 	}
 }

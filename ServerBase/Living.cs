@@ -64,8 +64,17 @@ namespace MyGame
 		LocationGrid<bool> m_visionMap;
 		public LocationGrid<bool> VisionMap
 		{
-			get { UpdateLOS(); return m_visionMap; }
-			set { m_visionMap = value; }
+			get
+			{
+				Debug.Assert(this.World.VisibilityMode == VisibilityMode.LOS);
+				UpdateLOS();
+				return m_visionMap;
+			}
+			set
+			{
+				Debug.Assert(this.World.VisibilityMode == VisibilityMode.LOS);
+				m_visionMap = value;
+			}
 		}
 
 		void HandleActionQueued()
@@ -122,6 +131,9 @@ namespace MyGame
 			if (m_losTurn == this.World.TurnNumber)
 				return;
 
+			if (this.World.VisibilityMode != VisibilityMode.LOS)
+				throw new Exception();
+
 			m_losTurn = this.World.TurnNumber;
 
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
@@ -145,8 +157,7 @@ namespace MyGame
 			if (change is ObjectLocationChange)
 			{
 				ObjectLocationChange lc = (ObjectLocationChange)change;
-				int symbol = ((ServerGameObject)lc.Target).SymbolID;
-				return new ClientMsgs.ObjectMove(lc.Target, symbol, lc.SourceLocation, lc.TargetLocation);
+				return new ClientMsgs.ObjectMove(lc.Target, lc.SourceLocation, lc.TargetLocation);
 			}
 
 			if (change is MapChange)
@@ -154,8 +165,8 @@ namespace MyGame
 				MapChange mc = (MapChange)change;
 				return new ClientMsgs.TerrainData()
 				{
-					MapDataList = new ClientMsgs.MapData[] {
-						new ClientMsgs.MapData() { Location = mc.Location, Terrain = mc.TerrainType }
+					MapDataList = new ClientMsgs.MapTileData[] {
+						new ClientMsgs.MapTileData() { Location = mc.Location, Terrain = mc.TerrainType }
 					}
 				};
 			}
@@ -170,9 +181,11 @@ namespace MyGame
 			return null;
 		}
 
+		// send only changes that the player sees and needs to know
 		public bool ChangeFilter(Change change)
 		{
-			// send only changes that the player sees and needs to know
+			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
+				return true;
 
 			if (change is ObjectEnvironmentChange)
 			{
@@ -281,6 +294,9 @@ namespace MyGame
 
 		public bool Sees(Location l)
 		{
+			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
+				return true;
+
 			Location dl = l - this.Location;
 
 			if (Math.Abs(dl.X) > this.VisionRange ||
@@ -289,6 +305,9 @@ namespace MyGame
 				return false;
 			}
 
+			if (this.World.VisibilityMode == VisibilityMode.SimpleFOV)
+				return true;
+
 			UpdateLOS();
 
 			if (this.VisionMap[l - this.Location] == false)
@@ -296,6 +315,37 @@ namespace MyGame
 
 			return true;
 		}
+
+		IEnumerable<Location> GetVisibleLocationsSimpleFOV()
+		{
+			for (int y = this.Y - this.VisionRange; y <= this.Y + this.VisionRange; ++y)
+			{
+				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
+				{
+					Location loc = new Location(x, y);
+					if (!this.Environment.Bounds.Contains(loc))
+						continue;
+
+					yield return loc;
+				}
+			}
+		}
+
+		IEnumerable<Location> GetVisibleLocationsLOS()
+		{
+			return this.VisionMap.
+					Where(kvp => kvp.Value == true).
+					Select(kvp => kvp.Key + this.Location);
+		}
+
+		public IEnumerable<Location> GetVisibleLocations()
+		{
+			if (World.VisibilityMode == VisibilityMode.LOS)
+				return GetVisibleLocationsLOS();
+			else
+				return GetVisibleLocationsSimpleFOV();
+		}
+
 
 	}
 }

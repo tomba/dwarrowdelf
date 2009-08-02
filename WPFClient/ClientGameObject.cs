@@ -41,6 +41,23 @@ namespace MyGame
 				return null;
 			}
 		}
+
+		public static T FindObject<T>(ObjectID objectID) where T : ClientGameObject
+		{
+			lock (s_objectMap)
+			{
+				if (s_objectMap.ContainsKey(objectID))
+				{
+					WeakReference weakref = s_objectMap[objectID];
+					if (weakref.IsAlive)
+						return (T)s_objectMap[objectID].Target;
+					else
+						s_objectMap.Remove(objectID);
+				}
+
+				return default(T);
+			}
+		}
 		
 		public static ClientGameObject[] GetObjects()
 		{

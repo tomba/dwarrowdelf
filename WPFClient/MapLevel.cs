@@ -15,13 +15,13 @@ namespace MyGame
 		public List<ClientGameObject> m_contentList;
 	}
 
-	class MapLevel
+	class MapLevel : ClientGameObject
 	{
 		public event MapChanged MapChanged;
 
 		GrowingLocationGrid<TileData> m_tileGrid;
 
-		public MapLevel()
+		public MapLevel(ObjectID objectID) : base(objectID)
 		{
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
 		}
@@ -61,10 +61,10 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void SetTerrains(ClientMsgs.MapData[] locInfos)
+		public void SetTerrains(ClientMsgs.MapTileData[] locInfos)
 		{
 			//m_terrainData = new LocationGrid<TerrainData>(m_width, m_height);	// xxx clears the old one
-			foreach (MapData locInfo in locInfos)
+			foreach (MapTileData locInfo in locInfos)
 			{
 				Location l = locInfo.Location;
 

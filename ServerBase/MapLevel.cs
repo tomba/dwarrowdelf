@@ -46,7 +46,7 @@ namespace MyGame
 
 	}
 
-	class MapLevel : IIdentifiable
+	class MapLevel : ServerGameObject 
 	{
 		public WorldDefinition Area { get; protected set; }
 		public event MapChanged MapChanged;
@@ -57,14 +57,13 @@ namespace MyGame
 		int m_height;
 
 
-		readonly ObjectID m_mapID = new ObjectID(123);
-
-		public MapLevel(WorldDefinition area)
+		public MapLevel(WorldDefinition area) : base(area.World)
 		{
 			this.Area = area;
+			base.Name = "map";
 
-			m_width = 512;
-			m_height = 512;
+			m_width = 55;
+			m_height = 55;
 
 			m_tileGrid = new TileGrid(m_width, m_height);
 
@@ -141,14 +140,5 @@ namespace MyGame
 		{
 			get { return m_height; }
 		}
-
-		#region IIdentifiable Members
-
-		public ObjectID ObjectID
-		{
-			get { return m_mapID; }
-		}
-
-		#endregion
 	}
 }

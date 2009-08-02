@@ -25,6 +25,7 @@ namespace MyGame
 		public MainWindow()
 		{
 			s_mainWindow = this;
+			this.WindowState = WindowState.Maximized;
 
 			InitializeComponent();
 

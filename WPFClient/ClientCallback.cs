@@ -23,9 +23,6 @@ namespace MyGame
 				ClientGameObject player = new ClientGameObject(playerID);
 				GameData.Data.Player = player;
 				MainWindow.s_mainWindow.map.FollowObject = player;
-
-				MapLevel level = new MapLevel();
-				MainWindow.s_mainWindow.Map = level;
 			}
 			catch (Exception e)
 			{
@@ -53,17 +50,26 @@ namespace MyGame
 					ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
 
 					if (ob == null)
-					{
-						MyDebug.WriteLine("New object appeared {0}", om.ObjectID);
-						ob = new ClientGameObject(om.ObjectID);
-					}
-
-					ob.SymbolID = om.Symbol;
+						throw new Exception();
 
 					if (ob.Environment == null)
 						ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
 					else
 						ob.Location = om.TargetLocation;
+				}
+				else if (msg is MapData)
+				{
+					MapData md = (MapData)msg;
+
+					ClientGameObject ob = ClientGameObject.FindObject(md.ObjectID);
+
+					if (ob == null)
+					{
+						MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
+						MapLevel map = new MapLevel(md.ObjectID);
+						MainWindow.s_mainWindow.Map = map;
+						map.Name = "map";
+					}
 				}
 				else if (msg is LivingData)
 				{
@@ -98,7 +104,9 @@ namespace MyGame
 					itemCollection.Clear();
 					foreach (ItemData item in items)
 					{
-						ItemObject ob = new ItemObject(item.ObjectID);
+						ClientGameObject ob = ClientGameObject.FindObject(item.ObjectID);
+						if (ob == null)
+							ob = new ItemObject(item.ObjectID);
 						ob.Name = item.Name;
 						ob.SymbolID = item.SymbolID;
 						itemCollection.Add(ob);
@@ -119,11 +127,15 @@ namespace MyGame
 					ob.Name = id.Name;
 					ob.SymbolID = id.SymbolID;
 
-					// XXX
-					if (ob.Environment == null)
-						ob.SetEnvironment(MainWindow.s_mainWindow.Map, id.Location);
-					else
-						ob.Location = id.Location;
+					MapLevel env = ClientGameObject.FindObject<MapLevel>(id.Environment);
+
+					if (env != null)
+					{
+						if (ob.Environment == null)
+							ob.SetEnvironment(env, id.Location);
+						else
+							ob.Location = id.Location;
+					}
 				}
 				else
 				{
