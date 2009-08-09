@@ -73,6 +73,8 @@ namespace MyGame
 		public ItemCollection Inventory { get; private set; }
 		Location m_location;
 		MapLevel m_environment;
+
+		Location m_visibilityLocation;
 		LocationGrid<bool> m_visibilityMap;
 
 		int m_visionRange;
@@ -157,23 +159,27 @@ namespace MyGame
 			}
 		}
 
-		public void UpdateVisibilityMap()
-		{
-			if (this.Environment != null)
-				s_losAlgo.Calculate(this.Location, this.VisionRange,
-					this.VisibilityMap, this.Environment.Bounds,
-					(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
-			else
-				m_visibilityMap = null;
-		}
-
 		public LocationGrid<bool> VisibilityMap
 		{
 			get
 			{
+				bool update = m_visibilityLocation != m_location;
+
 				if (m_visibilityMap == null)
-					m_visibilityMap = new LocationGrid<bool>(VisionRange*2+1, VisionRange*2+1,
-						VisionRange, VisionRange);
+				{
+					m_visibilityMap = new LocationGrid<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
+						m_visionRange, m_visionRange);
+					update = true;
+				}
+
+				if (update && this.Environment != null)
+				{
+					s_losAlgo.Calculate(m_location, m_visionRange,
+						m_visibilityMap, this.Environment.Bounds,
+						(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
+					m_visibilityLocation = m_location;
+				}
+
 				return m_visibilityMap;
 			}
 		}

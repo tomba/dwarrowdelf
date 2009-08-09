@@ -155,7 +155,7 @@ namespace MyGame
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		void HandleChanges(Change[] changeArr)
 		{

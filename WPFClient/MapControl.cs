@@ -16,115 +16,35 @@ using System.ComponentModel;
 
 namespace MyGame
 {
-	class MapControl : UserControl, INotifyPropertyChanged
+	class MapControl : MapControlBase, INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		SymbolBitmapCache m_bitmapCache;
 
-		DispatcherTimer m_updateTimer;
-		Location m_screenToMapDelta;
-
-		Location m_center;
 		ClientGameObject m_followObject;
 		MapLevel m_mapLevel;
-
-		int m_tileSize;
-		MapControlBase map;
-
-		Canvas m_effectsCanvas = new Canvas();
-		Rectangle m_hiliteRectangle = new Rectangle();
 
 		public MapControl()
 		{
 			m_bitmapCache = new SymbolBitmapCache();
 			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.Drawings;
 
-			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
-			m_updateTimer.Tick += UpdateTimerTick;
-			m_updateTimer.Interval = TimeSpan.FromMilliseconds(30);
-
-			Grid grid = new Grid();
-			this.AddChild(grid);
-
-			map = new MapControlBase();
-			map.DimensionsChangedEvent += MapControl_DimensionsChanged;
-			grid.Children.Add(map);
-
-			this.TileSize = 40;
-
-			grid.Children.Add(m_effectsCanvas);
-
-			m_hiliteRectangle.Width = m_tileSize;
-			m_hiliteRectangle.Height = m_tileSize;
-			m_hiliteRectangle.Stroke = Brushes.Blue;
-			m_hiliteRectangle.StrokeThickness = 2;
-			m_effectsCanvas.Children.Add(m_hiliteRectangle);
-
 			this.Focusable = true;
+
+			base.SelectionChanged += OnSelectionChanged;
 		}
 
-		public int TileSize
+		protected override UIElement CreateTile()
 		{
-			get { return m_tileSize; }
-
-			set
-			{
-				m_tileSize = value;
-
-				map.TileSize = value;
-				m_bitmapCache.TileSize = value;
-
-				m_hiliteRectangle.Width = m_tileSize;
-				m_hiliteRectangle.Height = m_tileSize;
-			}
+			return new MapControlTile();
 		}
 
-		void MapControl_DimensionsChanged()
-		{
-			UpdateScreenToMapDelta();
-			UpdateMap();
-		}
-
-		void UpdateScreenToMapDelta()
-		{
-			int dx = m_center.X - map.Columns / 2;
-			int dy = m_center.Y - map.Rows / 2;
-			m_screenToMapDelta = new Location(dx, dy);
-		}
-
-		public void UpdateMap()
-		{
-			if (!m_updateTimer.IsEnabled)
-				m_updateTimer.Start();
-		}
-
-		void UpdateTimerTick(object sender, EventArgs e)
-		{
-			m_updateTimer.Stop();
-
-			// XXX update all for now. this may be ok anyway, LOS etc changes quite a lot of the screen
-			PopulateMapTiles(); 
-		}
-
-		void PopulateMapTiles()
-		{
-			if (m_followObject != null)
-				m_followObject.UpdateVisibilityMap();
-
-			for (int y = 0; y < map.Rows; y++)
-				for (int x = 0; x < map.Columns; x++)
-					UpdateTile(new Location(x, y));
-		}
-
-		void UpdateTile(Location sl)
+		protected override void UpdateTile(UIElement _tile, Location ml)
 		{
 			BitmapSource bmp = null;
-			MapTile tile;
+			MapControlTile tile = (MapControlTile)_tile;
 			bool lit = false;
-			Location ml = sl + m_screenToMapDelta;
-
-			tile = map.GetTile(sl);
 
 			if (m_mapLevel == null) // || !m_mapLevel.Bounds.Contains(ml))
 			{
@@ -205,13 +125,13 @@ namespace MyGame
 				m_mapLevel = value;
 				m_mapLevel.MapChanged += new MapChanged(MapChangedCallback);
 
-				UpdateMap();
+				InvalidateTiles();
 			}
 		}
 
 		void MapChangedCallback(Location l)
 		{
-			UpdateMap();
+			InvalidateTiles();
 		}
 
 		public ClientGameObject FollowObject
@@ -242,44 +162,17 @@ namespace MyGame
 			if (e != m_mapLevel)
 			{
 				this.Map = m_mapLevel;
-				m_center = new Location(-1, -1);
+//				m_center = new Location(-1, -1);
 			}
 
-			int xd = map.Columns / 2;
-			int yd = map.Rows / 2;
-			Location newCenter = new Location(((l.X+xd/2) / xd) * xd, ((l.Y+yd/2) / yd) * yd);
+			int xd = this.Columns / 2;
+			int yd = this.Rows / 2;
+			int x = l.X - xd;
+			int y = l.Y - yd;
+			//Location newPos = new Location(((x+xd/2) / xd) * xd, ((y+yd/2) / yd) * yd);
+			Location newPos = new Location(x, y);
 
-			if (m_center != newCenter)
-			{
-				m_center = newCenter;
-				UpdateScreenToMapDelta();
-
-				UpdateMap();
-
-				if (this.SelectedTile != null)
-				{
-					Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
-					Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
-				}
-			}
-			//MyDebug.WriteLine(String.Format("FollowedObjectMoved {0}, center {1}", l, m_center));
-		}
-
-		Location ScreenToMap(Location sl)
-		{
-			return sl + m_screenToMapDelta;
-		}
-
-		Location MapToScreen(Location ml)
-		{
-			return ml - m_screenToMapDelta;
-		}
-
-		public Location MapLocationFromPoint(Point p)
-		{
-			Location sl = map.LocationFromPoint(TranslatePoint(p, map));
-			Location ml = ScreenToMap(sl);
-			return ml;
+			this.Pos = newPos;
 		}
 
 		TileInfo m_tileInfo;
@@ -291,29 +184,19 @@ namespace MyGame
 				if (m_tileInfo != null)
 					m_tileInfo.StopObserve();
 				m_tileInfo = value;
-				m_tileInfo.StartObserve();
+				if (m_tileInfo != null)
+					m_tileInfo.StartObserve();
 				if (PropertyChanged != null)
 					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTile"));
 			}
 		}
 
-		protected override void OnMouseDown(MouseButtonEventArgs e)
+		void OnSelectionChanged()
 		{
-			this.Focus();
-
-			if (e.LeftButton != MouseButtonState.Pressed)
-			{
-				base.OnMouseDown(e);
-				return;
-			}
-
-			Location ml = MapLocationFromPoint(e.GetPosition(this));
-			this.SelectedTile = new TileInfo(m_mapLevel, ml);
-
-			Canvas.SetLeft(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).X * m_tileSize);
-			Canvas.SetTop(m_hiliteRectangle, MapToScreen(this.SelectedTile.Location).Y * m_tileSize);
-
-			e.Handled = true;
+			if (this.Selection != null)
+				this.SelectedTile = new TileInfo(this.m_mapLevel, this.Selection.End);
+			else
+				this.SelectedTile = null;
 		}
 	}
 
@@ -372,5 +255,53 @@ namespace MyGame
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+	}
+
+	public class MapControlTile : UIElement
+	{
+		BitmapSource m_bmp;
+		BitmapSource m_objectBmp;
+
+		public MapControlTile()
+		{
+			this.IsHitTestVisible = false;
+		}
+
+		public BitmapSource Bitmap
+		{
+			get { return m_bmp; }
+
+			set
+			{
+				if (m_bmp != value)
+				{
+					m_bmp = value;
+					this.InvalidateVisual();
+				}
+			}
+		}
+
+		public BitmapSource ObjectBitmap
+		{
+			get { return m_objectBmp; }
+
+			set
+			{
+				if (m_objectBmp != value)
+				{
+					m_objectBmp = value;
+					this.InvalidateVisual();
+				}
+			}
+		}
+
+		protected override void OnRender(DrawingContext drawingContext)
+		{
+			if (m_bmp != null)
+				drawingContext.DrawImage(m_bmp, new Rect(this.RenderSize));
+
+			if (m_objectBmp != null)
+				drawingContext.DrawImage(m_objectBmp, new Rect(this.RenderSize));
+		}
 	}
 }

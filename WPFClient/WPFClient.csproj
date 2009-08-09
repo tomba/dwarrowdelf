@@ -97,10 +97,9 @@
   <ItemGroup>
     <Compile Include="ClientCallback.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="MapControl.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="MapControlBase.cs" />
-    <Compile Include="MapControl.cs" />
-    <Compile Include="MapTile.cs" />
     <Compile Include="MyTraceListener.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="ClientGameObject.cs" />
