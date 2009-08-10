@@ -32,7 +32,7 @@ namespace MyGame
 			var monster = new Living(world);
 			monster.SymbolID = 4;
 			monster.Name = "monsu";
-			monster.MoveTo(world.Map, new Location(2, 2));
+			monster.MoveTo(world.Map, new IntPoint(2, 2));
 			var monsterAI = new MonsterActor(monster);
 			monster.Actor = monsterAI;
 			TheMonster = monster;
@@ -41,7 +41,7 @@ namespace MyGame
 			var item = new ItemObject(world);
 			item.SymbolID = 5;
 			item.Name = "testi-itemi";
-			item.MoveTo(world.Map, new Location(1, 1));
+			item.MoveTo(world.Map, new IntPoint(1, 1));
 
 			// process changes so that moves above are handled
 			world.ProcessChanges();
@@ -194,7 +194,7 @@ namespace MyGame
 			}
 		}
 
-		void MapChangedCallback(ObjectID mapID, Location l, int terrainID)
+		void MapChangedCallback(ObjectID mapID, IntPoint l, int terrainID)
 		{
 			// is this needed?
 			AddChange(new MapChange(mapID, l, terrainID));

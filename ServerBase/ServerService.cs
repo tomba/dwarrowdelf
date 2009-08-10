@@ -31,7 +31,7 @@ namespace MyGame
 			m_player.Actor = null;
 
 			m_world.AddChange(new ObjectEnvironmentChange(m_player, m_player.Environment.ObjectID, m_player.Location,
-				ObjectID.NullObjectID, new Location()));
+				ObjectID.NullObjectID, new IntPoint()));
 			m_world.ProcessChanges();
 
 			m_world.HandleChangesEvent -= HandleChanges;
@@ -81,7 +81,7 @@ namespace MyGame
 				if (m_seeAll || m_world.VisibilityMode == VisibilityMode.AllVisible)
 					SendAllTerrainsAndObjects(m_world);
 
-				if (!m_player.MoveTo(m_world.Map, new Location(0, 0)))
+				if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
 					throw new Exception("Unable to move player");
 
 				m_player.SendInventory();
@@ -127,7 +127,7 @@ namespace MyGame
 			}
 		}
 
-		public void ToggleTile(Location l)
+		public void ToggleTile(IntPoint l)
 		{
 			try
 			{
@@ -151,7 +151,7 @@ namespace MyGame
 		#endregion
 
 		// These are used to determine new tiles and objects in sight
-		Dictionary<MapLevel, HashSet<Location>> m_knownLocations = new Dictionary<MapLevel, HashSet<Location>>();
+		Dictionary<MapLevel, HashSet<IntPoint>> m_knownLocations = new Dictionary<MapLevel, HashSet<IntPoint>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
 		// this user sees all
@@ -187,7 +187,7 @@ namespace MyGame
 
 		void SendNewTerrainsAndObjects(Living[] livings)
 		{
-			var newKnownLocs = new Dictionary<MapLevel, HashSet<Location>>();
+			var newKnownLocs = new Dictionary<MapLevel, HashSet<IntPoint>>();
 			var newKnownObs = new HashSet<ServerGameObject>();
 			
 			foreach (Living l in livings)
@@ -195,13 +195,13 @@ namespace MyGame
 				if (l.Environment == null)
 					continue;
 
-				IEnumerable<Location> locList = l.GetVisibleLocations();
+				IEnumerable<IntPoint> locList = l.GetVisibleLocations();
 
 				if (!newKnownLocs.ContainsKey(l.Environment))
-					newKnownLocs[l.Environment] = new HashSet<Location>();
+					newKnownLocs[l.Environment] = new HashSet<IntPoint>();
 				newKnownLocs[l.Environment].UnionWith(locList);
 
-				foreach(Location loc in locList)
+				foreach(IntPoint loc in locList)
 				{
 					var obList = l.Environment.GetContents(loc);
 					if (obList == null)
@@ -210,7 +210,7 @@ namespace MyGame
 				}
 			}
 
-			var revealedLocs = new Dictionary<MapLevel, IEnumerable<Location>>();
+			var revealedLocs = new Dictionary<MapLevel, IEnumerable<IntPoint>>();
 
 			foreach (var kvp in newKnownLocs)
 			{
@@ -230,7 +230,7 @@ namespace MyGame
 			SendNewObjects(revealedObs);
 		}
 
-		void SendNewTerrains(Dictionary<MapLevel, IEnumerable<Location>> revealedLocs)
+		void SendNewTerrains(Dictionary<MapLevel, IEnumerable<IntPoint>> revealedLocs)
 		{
 			foreach (var kvp in revealedLocs)
 			{
@@ -295,7 +295,7 @@ namespace MyGame
 			{
 				for (int x = 0; x < env.Width; ++x)
 				{
-					Location l = new Location(x, y);
+					IntPoint l = new IntPoint(x, y);
 					ClientMsgs.MapTileData td = new ClientMsgs.MapTileData();
 					td.Location = l;
 					td.Terrain = env.GetTerrain(l);

@@ -35,12 +35,17 @@ namespace MyGame
 			base.SelectionChanged += OnSelectionChanged;
 		}
 
+		protected override void OnTileSizeChanged(double newSize)
+		{
+			m_bitmapCache.TileSize = newSize;
+		}
+
 		protected override UIElement CreateTile()
 		{
 			return new MapControlTile();
 		}
 
-		protected override void UpdateTile(UIElement _tile, Location ml)
+		protected override void UpdateTile(UIElement _tile, IntPoint ml)
 		{
 			BitmapSource bmp = null;
 			MapControlTile tile = (MapControlTile)_tile;
@@ -96,13 +101,13 @@ namespace MyGame
 			tile.ObjectBitmap = bmp;
 		}
 
-		BitmapSource GetBitmap(Location ml, bool lit)
+		BitmapSource GetBitmap(IntPoint ml, bool lit)
 		{
 			int terrainID = this.Map.GetTerrainType(ml);
 			return m_bitmapCache.GetBitmap(terrainID, !lit);
 		}
 
-		BitmapSource GetObjectBitmap(Location ml, bool lit)
+		BitmapSource GetObjectBitmap(IntPoint ml, bool lit)
 		{
 			IList<ClientGameObject> obs = this.Map.GetContents(ml);
 			if (obs != null && obs.Count > 0)
@@ -129,7 +134,7 @@ namespace MyGame
 			}
 		}
 
-		void MapChangedCallback(Location l)
+		void MapChangedCallback(IntPoint l)
 		{
 			InvalidateTiles();
 		}
@@ -157,7 +162,7 @@ namespace MyGame
 
 		}
 
-		void FollowedObjectMoved(MapLevel e, Location l)
+		void FollowedObjectMoved(MapLevel e, IntPoint l)
 		{
 			if (e != m_mapLevel)
 			{
@@ -170,7 +175,7 @@ namespace MyGame
 			int x = l.X - xd;
 			int y = l.Y - yd;
 			//Location newPos = new Location(((x+xd/2) / xd) * xd, ((y+yd/2) / yd) * yd);
-			Location newPos = new Location(x, y);
+			IntPoint newPos = new IntPoint(x, y);
 
 			this.Pos = newPos;
 		}
@@ -193,18 +198,20 @@ namespace MyGame
 
 		void OnSelectionChanged()
 		{
+			/*
 			if (this.Selection != null)
 				this.SelectedTile = new TileInfo(this.m_mapLevel, this.Selection.End);
 			else
 				this.SelectedTile = null;
+			 */
 		}
 	}
 
 	class TileInfo : INotifyPropertyChanged
 	{
 		MapLevel m_mapLevel;
-		Location m_location;
-		public TileInfo(MapLevel mapLevel, Location location)
+		IntPoint m_location;
+		public TileInfo(MapLevel mapLevel, IntPoint location)
 		{
 			m_mapLevel = mapLevel;
 			m_location = location;
@@ -220,7 +227,7 @@ namespace MyGame
 			m_mapLevel.MapChanged -= MapChanged;
 		}
 
-		void MapChanged(Location l)
+		void MapChanged(IntPoint l)
 		{
 			if (l == m_location)
 			{
@@ -229,7 +236,7 @@ namespace MyGame
 			}
 		}
 
-		public Location Location
+		public IntPoint Location
 		{
 			get { return m_location; }
 		}

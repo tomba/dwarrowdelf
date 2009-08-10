@@ -58,13 +58,13 @@ namespace MyGame
 			}
 		}
 
-		public T this[Location l]
+		public T this[IntPoint l]
 		{
 			get { return this[l.X, l.Y]; }
 			set { this[l.X, l.Y] = value; }
 		}
 
-		public T[,] GetBlock(ref Location l, bool allowResize)
+		public T[,] GetBlock(ref IntPoint l, bool allowResize)
 		{
 			int x = l.X;
 			int y = l.Y;
@@ -100,7 +100,7 @@ namespace MyGame
 				y = m_blockSize + y;
 			}
 
-			if (!m_mainRect.Contains(new Location(blockX, blockY)))
+			if (!m_mainRect.Contains(new IntPoint(blockX, blockY)))
 			{
 				if (allowResize)
 					Resize(blockX, blockY);

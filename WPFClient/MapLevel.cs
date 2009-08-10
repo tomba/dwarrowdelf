@@ -7,7 +7,7 @@ using MyGame.ClientMsgs;
 
 namespace MyGame
 {
-	delegate void MapChanged(Location l);
+	delegate void MapChanged(IntPoint l);
 
 	struct TileData
 	{
@@ -41,7 +41,7 @@ namespace MyGame
 			get { return m_tileGrid.Bounds; }
 		}
 
-		public int GetTerrainType(Location l)
+		public int GetTerrainType(IntPoint l)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
@@ -51,7 +51,7 @@ namespace MyGame
 			return block[l.X, l.Y].m_terrainID;
 		}
 
-		public void SetTerrainType(Location l, int terrainID)
+		public void SetTerrainType(IntPoint l, int terrainID)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, true);
 
@@ -66,9 +66,9 @@ namespace MyGame
 			//m_terrainData = new LocationGrid<TerrainData>(m_width, m_height);	// xxx clears the old one
 			foreach (MapTileData locInfo in locInfos)
 			{
-				Location l = locInfo.Location;
+				IntPoint l = locInfo.Location;
 
-				Location bl = l;
+				IntPoint bl = l;
 				TileData[,] block = m_tileGrid.GetBlock(ref bl, true);
 				block[bl.X, bl.Y].m_terrainID = locInfo.Terrain;
 
@@ -100,7 +100,7 @@ namespace MyGame
 			}
 		}
 
-		public IList<ClientGameObject> GetContents(Location l)
+		public IList<ClientGameObject> GetContents(IntPoint l)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
@@ -113,7 +113,7 @@ namespace MyGame
 			return block[l.X, l.Y].m_contentList.AsReadOnly();
 		}
 
-		public void RemoveObject(ClientGameObject ob, Location l)
+		public void RemoveObject(ClientGameObject ob, IntPoint l)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
@@ -128,7 +128,7 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void AddObject(ClientGameObject ob, Location l)
+		public void AddObject(ClientGameObject ob, IntPoint l)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, true);
 

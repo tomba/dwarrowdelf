@@ -10,10 +10,10 @@ namespace MyGame
 	 * 2D grid made of <T>s
 	 * Coordinates offset by Origin
 	 */
-	public class LocationGrid<T> : IEnumerable<KeyValuePair<Location, T>>
+	public class LocationGrid<T> : IEnumerable<KeyValuePair<IntPoint, T>>
 	{
 		T[,] m_grid;
-		public Location Origin { get; set; }
+		public IntPoint Origin { get; set; }
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
@@ -22,15 +22,15 @@ namespace MyGame
 			this.Width = width;
 			this.Height = height;
 			m_grid = new T[width, height];
-			this.Origin = new Location(0, 0);
+			this.Origin = new IntPoint(0, 0);
 		}
 
 		public LocationGrid(int width, int height, int originX, int originY) : this(width, height)
 		{
-			this.Origin = new Location(originX, originY);
+			this.Origin = new IntPoint(originX, originY);
 		}
 
-		public T this[Location l]
+		public T this[IntPoint l]
 		{
 			get
 			{
@@ -49,12 +49,12 @@ namespace MyGame
 		{
 			get
 			{
-				return this[new Location(x, y)];
+				return this[new IntPoint(x, y)];
 			}
 
 			set
 			{
-				this[new Location(x, y)] = value;
+				this[new IntPoint(x, y)] = value;
 			}
 		}
 
@@ -67,27 +67,27 @@ namespace MyGame
 			}
 		}
 
-		public IEnumerable<Location> GetLocations()
+		public IEnumerable<IntPoint> GetLocations()
 		{
 			for (int x = 0; x < this.Width; x++)
 			{
 				for (int y = 0; y < this.Height; y++)
 				{
-					yield return new Location(x - Origin.X, y - Origin.Y);
+					yield return new IntPoint(x - Origin.X, y - Origin.Y);
 				}
 			}
 		}
 
 		#region IEnumerable<T> Members
 
-		public IEnumerator<KeyValuePair<Location, T>> GetEnumerator()
+		public IEnumerator<KeyValuePair<IntPoint, T>> GetEnumerator()
 		{
 			for (int x = 0; x < this.Width; x++)
 			{
 				for (int y = 0; y < this.Height; y++)
 				{
-					yield return new KeyValuePair<Location, T>(
-						new Location(x - Origin.X, y - Origin.Y),
+					yield return new KeyValuePair<IntPoint, T>(
+						new IntPoint(x - Origin.X, y - Origin.Y),
 						m_grid[x, y]
 						);
 				}

@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(MapLevel e, Location l);
+	delegate void ObjectMoved(MapLevel e, IntPoint l);
 	class ItemCollection : ObservableCollection<ClientGameObject> { }
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
@@ -71,10 +71,10 @@ namespace MyGame
 		}
 		
 		public ItemCollection Inventory { get; private set; }
-		Location m_location;
+		IntPoint m_location;
 		MapLevel m_environment;
 
-		Location m_visibilityLocation;
+		IntPoint m_visibilityLocation;
 		LocationGrid<bool> m_visibilityMap;
 
 		int m_visionRange;
@@ -122,12 +122,12 @@ namespace MyGame
 			}
 		}
 
-		public void SetEnvironment(MapLevel map, Location l)
+		public void SetEnvironment(MapLevel map, IntPoint l)
 		{
 			if (this.Environment != null)
 				this.Environment.RemoveObject(this, m_location);
 
-			this.Environment = map;
+			m_environment = map;
 			m_location = l;
 
 			this.Environment.AddObject(this, m_location);
@@ -136,15 +136,11 @@ namespace MyGame
 		public MapLevel Environment
 		{
 			get { return m_environment; }
-			set { m_environment = value; }
 		}
 
-		public Location Location
+		public IntPoint Location
 		{
-			get
-			{
-				return m_location;
-			}
+			get { return m_location; }
 
 			set
 			{
@@ -176,7 +172,7 @@ namespace MyGame
 				{
 					s_losAlgo.Calculate(m_location, m_visionRange,
 						m_visibilityMap, this.Environment.Bounds,
-						(Location l) => { return this.Environment.GetTerrainType(l) == 2; });
+						(IntPoint l) => { return this.Environment.GetTerrainType(l) == 2; });
 					m_visibilityLocation = m_location;
 				}
 

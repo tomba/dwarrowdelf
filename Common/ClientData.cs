@@ -34,7 +34,7 @@ namespace MyGame.ClientMsgs
 		public int SymbolID { get; set; }
 
 		[DataMember]
-		public Location Location { get; set; }
+		public IntPoint Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
 
@@ -64,7 +64,7 @@ namespace MyGame.ClientMsgs
 		public string Name { get; set; }
 
 		[DataMember]
-		public Location Location { get; set; }
+		public IntPoint Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
 
@@ -84,7 +84,7 @@ namespace MyGame.ClientMsgs
 	/* Tile that came visible */
 	public struct MapTileData
 	{
-		public Location Location { get; set; }
+		public IntPoint Location { get; set; }
 		public int Terrain { get; set; }
 	}
 
@@ -116,11 +116,11 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 		[DataMember]
-		public Location TargetLocation { get; set; }
+		public IntPoint TargetLocation { get; set; }
 		[DataMember]
-		public Location SourceLocation { get; set; }
+		public IntPoint SourceLocation { get; set; }
 
-		public ObjectMove(GameObject target, Location from, Location to)
+		public ObjectMove(GameObject target, IntPoint from, IntPoint to)
 		{
 			this.ObjectID = target.ObjectID;
 			this.SourceLocation = from;

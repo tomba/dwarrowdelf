@@ -292,12 +292,12 @@ namespace MyGame
 
 		#endregion
 
-		public bool Sees(Location l)
+		public bool Sees(IntPoint l)
 		{
 			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			Location dl = l - this.Location;
+			IntPoint dl = l - this.Location;
 
 			if (Math.Abs(dl.X) > this.VisionRange ||
 				Math.Abs(dl.Y) > this.VisionRange)
@@ -316,13 +316,13 @@ namespace MyGame
 			return true;
 		}
 
-		IEnumerable<Location> GetVisibleLocationsSimpleFOV()
+		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
 		{
 			for (int y = this.Y - this.VisionRange; y <= this.Y + this.VisionRange; ++y)
 			{
 				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
 				{
-					Location loc = new Location(x, y);
+					IntPoint loc = new IntPoint(x, y);
 					if (!this.Environment.Bounds.Contains(loc))
 						continue;
 
@@ -331,14 +331,14 @@ namespace MyGame
 			}
 		}
 
-		IEnumerable<Location> GetVisibleLocationsLOS()
+		IEnumerable<IntPoint> GetVisibleLocationsLOS()
 		{
 			return this.VisionMap.
 					Where(kvp => kvp.Value == true).
 					Select(kvp => kvp.Key + this.Location);
 		}
 
-		public IEnumerable<Location> GetVisibleLocations()
+		public IEnumerable<IntPoint> GetVisibleLocations()
 		{
 			if (World.VisibilityMode == VisibilityMode.LOS)
 				return GetVisibleLocationsLOS();

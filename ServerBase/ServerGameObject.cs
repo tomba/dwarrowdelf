@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(ServerGameObject o, MapLevel e, Location l);
+	delegate void ObjectMoved(ServerGameObject o, MapLevel e, IntPoint l);
 
 	abstract class ServerGameObject : GameObject
 	{
@@ -15,7 +15,7 @@ namespace MyGame
 
 		public string Name { get; set; }
 		public MapLevel Environment { get; private set; }
-		public Location Location { get; private set; }
+		public IntPoint Location { get; private set; }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 
@@ -28,7 +28,7 @@ namespace MyGame
 			this.World.AddGameObject(this);
 		}
 
-		public bool MoveTo(MapLevel level, Location l)
+		public bool MoveTo(MapLevel level, IntPoint l)
 		{
 			if (l.X < 0 || l.Y < 0 || l.X >= level.Width || l.Y >= level.Height)
 				return false;
@@ -44,7 +44,7 @@ namespace MyGame
 			ObjectID oldMapID = ObjectID.NullObjectID;
 			if (this.Environment != null)
 				oldMapID = this.Environment.ObjectID;
-			Location oldLocation = this.Location;
+			IntPoint oldLocation = this.Location;
 
 			this.Environment = level;
 			this.Location = l;
@@ -78,7 +78,7 @@ namespace MyGame
 					throw new Exception();
 			}
 
-			Location l = this.Location;
+			IntPoint l = this.Location;
 			l.X += x;
 			l.Y += y;
 			return MoveTo(this.Environment, l);

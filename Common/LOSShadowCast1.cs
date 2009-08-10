@@ -7,20 +7,20 @@ namespace MyGame
 {
 	public interface LOSAlgo
 	{
-		void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
-			IntRect mapBounds, Func<Location, bool> blockerDelegate);
+		void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate);
 	}
 
 	public class LOSNull : LOSAlgo
 	{
-		public void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
-			IntRect mapBounds, Func<Location, bool> blockerDelegate)
+		public void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
 		{
 			for (int y = -visionRange; y <= visionRange; ++y)
 			{
 				for (int x = -visionRange; x <= visionRange; ++x)
 				{
-					Location l = new Location(x, y);
+					IntPoint l = new IntPoint(x, y);
 					if (mapBounds.Contains(viewerLocation + l))
 						visibilityMap[l] = true;
 					else
@@ -59,8 +59,8 @@ namespace MyGame
 		static bool s_tested;
 		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
-		public void Calculate(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
-			IntRect mapBounds, Func<Location, bool> blockerDelegate)
+		public void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
+			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
 		{
 			if (s_tested == false)
 			{
@@ -81,8 +81,8 @@ namespace MyGame
 				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
 		}
 
-		void CalculateLOS(Location viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
-			IntRect mapBounds, Func<Location, bool> blockerDelegate, int octant)
+		void CalculateLOS(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate, int octant)
 		{
 			// Cell (0,0) is assumed to be lit and visible in all cases.
 			m_cells[0].Initialize();
@@ -93,8 +93,8 @@ namespace MyGame
 			{
 				for (int y = 0; y <= x; y++)
 				{
-					Location translatedLocation = OctantTranslate(new Location(x, y), octant);
-					Location mapLocation = translatedLocation + viewerLocation;
+					IntPoint translatedLocation = OctantTranslate(new IntPoint(x, y), octant);
+					IntPoint mapLocation = translatedLocation + viewerLocation;
 
 					LOSCell cell = m_cells[y];
 					LOSCell cellS = null;
@@ -293,12 +293,12 @@ namespace MyGame
 		static readonly int[] yxcomp = { 0, 1, 1, 0, 0, -1, -1, 0 };
 		static readonly int[] yycomp = { 1, 0, 0, 1, -1, 0, 0, -1 };
 
-		static Location OctantTranslate(Location l, int octant)
+		static IntPoint OctantTranslate(IntPoint l, int octant)
 		{
 			int tx = l.X * xxcomp[octant] + l.Y * xycomp[octant];
 			int ty = l.X * yxcomp[octant] + l.Y * yycomp[octant];
 
-			return new Location(tx, ty);
+			return new IntPoint(tx, ty);
 		}
 
 		static void Test()
@@ -326,15 +326,15 @@ namespace MyGame
 							};
 
 			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w/2, w/2);
-			Location loc = new Location(w/2, w/2);
+			IntPoint loc = new IntPoint(w/2, w/2);
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 
 			los.Calculate(loc, 3, vis, bounds,
-								(Location l) => { 
+								(IntPoint l) => { 
 									return blocks[l.Y, l.X] != 0;
 								});
-			vis.Origin = new Location(0, 0);
+			vis.Origin = new IntPoint(0, 0);
 			for (int y = 0; y < w; ++y)
 			{
 				for (int x = 0; x < w; ++x)

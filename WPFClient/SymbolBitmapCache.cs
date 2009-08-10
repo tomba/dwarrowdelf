@@ -13,7 +13,7 @@ namespace MyGame
 		BitmapSource[] m_symbolBitmaps;
 		BitmapSource[] m_symbolBitmapsDark;
 
-		double m_size = 40;
+		double m_size = 32;
 
 		public double TileSize
 		{

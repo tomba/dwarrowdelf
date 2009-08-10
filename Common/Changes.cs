@@ -29,10 +29,10 @@ namespace MyGame
 	public class MapChange : Change
 	{
 		public ObjectID MapID { get; set; }
-		public Location Location { get; set; }
+		public IntPoint Location { get; set; }
 		public int TerrainType { get; set; }
 
-		public MapChange(ObjectID mapID, Location l, int terrainType)
+		public MapChange(ObjectID mapID, IntPoint l, int terrainType)
 		{
 			this.MapID = mapID;
 			this.Location = l;
@@ -59,10 +59,10 @@ namespace MyGame
 
 	public class ObjectLocationChange : ObjectChange
 	{
-		public Location TargetLocation { get; set; }
-		public Location SourceLocation { get; set; }
+		public IntPoint TargetLocation { get; set; }
+		public IntPoint SourceLocation { get; set; }
 
-		public ObjectLocationChange(GameObject target, Location from, Location to)
+		public ObjectLocationChange(GameObject target, IntPoint from, IntPoint to)
 			: base(target)
 		{
 			this.SourceLocation = from;
@@ -79,12 +79,12 @@ namespace MyGame
 	public class ObjectEnvironmentChange : ObjectChange
 	{
 		public ObjectID SourceMapID { get; set; }
-		public Location SourceLocation { get; set; }
+		public IntPoint SourceLocation { get; set; }
 		public ObjectID DestinationMapID { get; set; }
-		public Location DestinationLocation { get; set; }
+		public IntPoint DestinationLocation { get; set; }
 
-		public ObjectEnvironmentChange(GameObject target, ObjectID sourceMapID, Location sourceLocation,
-			ObjectID destinationMapID, Location destinationLocation)
+		public ObjectEnvironmentChange(GameObject target, ObjectID sourceMapID, IntPoint sourceLocation,
+			ObjectID destinationMapID, IntPoint destinationLocation)
 			: base(target)
 		{
 			this.SourceMapID = sourceMapID;

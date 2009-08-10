@@ -44,7 +44,7 @@ namespace MyGame
 			get { return Y + Height; }
 		}
 
-		public bool Contains(Location l)
+		public bool Contains(IntPoint l)
 		{
 			if (l.X < this.X || l.Y < this.Y || l.X >= this.X + this.Width || l.Y >= this.Y + this.Height)
 				return false;

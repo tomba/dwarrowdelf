@@ -53,6 +53,8 @@
   <ItemGroup>
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="DataTypes\IntVector.cs" />
+    <Compile Include="DataTypes\IntSize.cs" />
     <Compile Include="DataTypes\Grid3D.cs" />
     <Compile Include="DataTypes\IntCube.cs" />
     <Compile Include="DataTypes\LocationGrid3D.cs" />
@@ -69,7 +71,7 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="IClientCallback.cs" />
     <Compile Include="IServerService.cs" />
-    <Compile Include="DataTypes\Location.cs" />
+    <Compile Include="DataTypes\IntPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerrainInfo.cs" />
   </ItemGroup>

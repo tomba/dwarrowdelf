@@ -38,6 +38,8 @@ namespace MyGame
 
 		protected override void OnInitialized(EventArgs e)
 		{
+			map.ContextMenu = null;
+
 			base.OnInitialized(e);
 
 			GameData.Data.MyTraceListener.TextBox = this.logTextBox;
@@ -92,9 +94,14 @@ namespace MyGame
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
+	//		Location ml = map.MapLocationFromPoint(e.GetPosition(map));
+
+		//	map.Selection = new MapControlBase.TileSelection() { Start = ml, End = ml };
+
+			return;
 			map.Focus();
 			//MyDebug.WriteLine("Mouse down");
-			
+			/*
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
 				Location ml = map.MapLocationFromPoint(e.GetPosition(map));
@@ -105,7 +112,7 @@ namespace MyGame
 				GameData.Data.Connection.Server.ToggleTile(ml);
 
 				e.Handled = true;
-			}
+			}*/
 		}
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)

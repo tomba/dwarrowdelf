@@ -19,6 +19,6 @@ namespace MyGame
 		void DoAction(GameAction action);
 
 		[OperationContract(IsOneWay = true)]
-		void ToggleTile(Location l);
+		void ToggleTile(IntPoint l);
 	}
 }

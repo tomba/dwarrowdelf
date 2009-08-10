@@ -18,16 +18,10 @@ namespace MyGame
 {
 	public abstract class MapControlBase : Control
 	{
-		public class TileSelection
-		{
-			public Location Start;
-			public Location End;
-		}
-
 		int m_columns;
 		int m_rows;
 
-		Location m_pos;
+		IntPoint m_pos;
 
 		double m_tileSize = 32;
 
@@ -35,9 +29,9 @@ namespace MyGame
 
 		VisualCollection m_tileCollection;
 
-		Rectangle m_selRect;
-
-		public TileSelection Selection { get; private set; }
+		Rectangle m_selectionRect;
+		IntPoint m_selectionStart;
+		IntSize m_selectionSize;
 
 		public MapControlBase()
 		{
@@ -47,16 +41,16 @@ namespace MyGame
 
 			m_tileCollection = new VisualCollection(this);
 
-			m_selRect = new Rectangle();
-			m_selRect.Visibility = Visibility.Hidden;
-			m_selRect.Width = m_tileSize;
-			m_selRect.Height = m_tileSize;
-			m_selRect.Stroke = Brushes.Blue;
-			m_selRect.StrokeThickness = 1;
-			m_selRect.Fill = new SolidColorBrush(Colors.Blue);
-			m_selRect.Fill.Opacity = 0.2;
-			m_selRect.Fill.Freeze();
-			AddVisualChild(m_selRect);
+			m_selectionRect = new Rectangle();
+			//m_selectionRect.Visibility = Visibility.Hidden;
+			m_selectionRect.Width = m_tileSize;
+			m_selectionRect.Height = m_tileSize;
+			m_selectionRect.Stroke = Brushes.Blue;
+			m_selectionRect.StrokeThickness = 1;
+			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
+			m_selectionRect.Fill.Opacity = 0.2;
+			m_selectionRect.Fill.Freeze();
+			AddVisualChild(m_selectionRect);
 
 			ClipToBounds = true; // does this slow down?
 		}
@@ -77,11 +71,14 @@ namespace MyGame
 				{
 					m_tileSize = value;
 					InvalidateVisual();
+					OnTileSizeChanged(value);
 				}
 			}
 		}
 
-		public Location Pos
+		protected virtual void OnTileSizeChanged(double newSize) { }
+
+		public IntPoint Pos
 		{
 			get { return m_pos; }
 			set
@@ -139,20 +136,20 @@ namespace MyGame
 				++i;
 			}
 
-			if (this.Selection != null)
+			if (!m_selectionSize.IsEmpty)
 			{
 				double x, y, w, h;
-				Location l1 = this.Selection.Start;
-				Location l2 = this.Selection.End;
+				IntPoint l1 = m_selectionStart - m_pos;
+				IntSize l2 = m_selectionSize;
 
-				x = (Math.Min(l1.X, l2.X) - m_pos.X) * m_tileSize;
-				y = (Math.Min(l1.Y, l2.Y) - m_pos.Y) * m_tileSize;
-				w = (Math.Abs(l1.X - l2.X) + 1) * m_tileSize;
-				h = (Math.Abs(l1.Y - l2.Y) + 1) * m_tileSize;
+				x = l1.X * m_tileSize;
+				y = l1.Y * m_tileSize;
+				w = l2.Width * m_tileSize;
+				h = l2.Height * m_tileSize;
 
-				m_selRect.Width = w;
-				m_selRect.Height = h;
-				m_selRect.Arrange(new Rect(x, y, w, h));
+				m_selectionRect.Width = w;
+				m_selectionRect.Height = h;
+				m_selectionRect.Arrange(new Rect(x, y, w, h));
 			}
 
 			return s;
@@ -172,49 +169,76 @@ namespace MyGame
 		protected override Visual GetVisualChild(int index)
 		{
 			if (index == m_tileCollection.Count)
-				return m_selRect;
+				return m_selectionRect;
 
 			return m_tileCollection[index];
 		}
 
-		public UIElement GetTile(Location l)
+		public UIElement GetTile(IntPoint l)
 		{
 			return (UIElement)m_tileCollection[l.X + l.Y * m_columns];
 		}
 
-		public Location LocationFromPoint(Point p)
+		public IntPoint LocationFromPoint(Point p)
 		{
-			return new Location((int)(p.X / m_tileSize), (int)(p.Y / m_tileSize));
+			return new IntPoint((int)(p.X / m_tileSize), (int)(p.Y / m_tileSize));
 		}
 
-		public Location MapLocationFromPoint(Point p)
+		public IntPoint MapLocationFromPoint(Point p)
 		{
 			return LocationFromPoint(p) + m_pos;
 		}
 
-		protected override void OnMouseDown(MouseButtonEventArgs e)
+		public IntPoint SelectionStart
 		{
-			Point pos = e.GetPosition(this);
+			get { return m_selectionStart; }
 
-			if (e.RightButton == MouseButtonState.Pressed)
+			set
 			{
-				m_selRect.Visibility = Visibility.Hidden;
-				this.Selection = null;
+				m_selectionStart = value;
+				/*
+				if (m_selectionStart != m_selectionEnd)
+					m_selectionRect.Visibility = Visibility.Visible;
+				else
+					m_selectionRect.Visibility = Visibility.Hidden;
+				*/
+				InvalidateVisual();
+
 				if (SelectionChanged != null)
 					SelectionChanged();
-				//e.Handled = true;
-				return;
 			}
+		}
 
-			Focus();
+		public IntSize SelectionSize
+		{
+			get { return m_selectionSize; }
 
-			this.Selection = new TileSelection();
-			this.Selection.Start = LocationFromPoint(pos) + m_pos;
-			this.Selection.End = LocationFromPoint(pos) + m_pos;
-			m_selRect.Visibility = Visibility.Visible;
+			set
+			{
+				m_selectionSize = value;
+				/*
+				if (m_selectionStart != m_selectionEnd)
+					m_selectionRect.Visibility = Visibility.Visible;
+				else
+					m_selectionRect.Visibility = Visibility.Hidden;
+				*/
+				InvalidateVisual();
 
-			if (SelectionChanged != null)
-				SelectionChanged();
+				if (SelectionChanged != null)
+					SelectionChanged();
+			}
+		}
+
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			if (e.LeftButton != MouseButtonState.Pressed)
+				return;
+
+			Point pos = e.GetPosition(this);
+
+			this.SelectionStart = LocationFromPoint(pos) + m_pos;
+			this.SelectionSize = new IntSize(1, 1);
+			m_selectionRect.Visibility = Visibility.Visible;
 
 			InvalidateArrange();
 
@@ -256,17 +280,12 @@ namespace MyGame
 				InvalidateTiles();
 			}
 
-			Location l = LocationFromPoint(pos);
-			if (l != this.Selection.End)
-			{
-				this.Selection.End = l + m_pos;
+			IntPoint l = LocationFromPoint(pos) + m_pos;
+			IntSize s = new IntSize(l.X - m_selectionStart.X, l.Y - m_selectionStart.Y);
 
-				if (SelectionChanged != null)
-					SelectionChanged();
-
-				InvalidateArrange();
-			}
-
+			m_selectionSize = s;
+			InvalidateArrange();
+			
 			e.Handled = true;
 
 			base.OnMouseMove(e);
@@ -298,7 +317,7 @@ namespace MyGame
 			{
 				int x = i % m_columns;
 				int y = i / m_columns;
-				Location loc = m_pos + new Location(x, y);
+				IntPoint loc = m_pos + new IntPoint(x, y);
 
 				UpdateTile(tile, loc);
 
@@ -309,7 +328,7 @@ namespace MyGame
 		public event Action SelectionChanged;
 
 		protected abstract UIElement CreateTile();
-		protected abstract void UpdateTile(UIElement tile, Location loc);
+		protected abstract void UpdateTile(UIElement tile, IntPoint loc);
 	}
 
 }

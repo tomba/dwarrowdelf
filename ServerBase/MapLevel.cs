@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	delegate void MapChanged(ObjectID mapID, Location l, int terrainID);
+	delegate void MapChanged(ObjectID mapID, IntPoint l, int terrainID);
 
 	struct TileData
 	{
@@ -24,22 +24,22 @@ namespace MyGame
 			m_tileGrid = new TileData[width, height];
 		}
 
-		public void SetTerrainType(Location l, int terrainType)
+		public void SetTerrainType(IntPoint l, int terrainType)
 		{
 			m_tileGrid[l.X, l.Y].m_terrainID = terrainType;
 		}
 
-		public int GetTerrainType(Location l)
+		public int GetTerrainType(IntPoint l)
 		{
 			return m_tileGrid[l.X, l.Y].m_terrainID;
 		}
 
-		public List<ServerGameObject> GetContentList(Location l)
+		public List<ServerGameObject> GetContentList(IntPoint l)
 		{
 			return m_tileGrid[l.X, l.Y].m_contentList;
 		}
 
-		public void SetContentList(Location l, List<ServerGameObject> list)
+		public void SetContentList(IntPoint l, List<ServerGameObject> list)
 		{
 			m_tileGrid[l.X, l.Y].m_contentList = list;
 		}
@@ -73,15 +73,15 @@ namespace MyGame
 				for (int x = 0; x < m_width; x++)
 				{
 					if (r.Next() % 8 == 0)
-						m_tileGrid.SetTerrainType(new Location(x, y), 2); // wall
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), 2); // wall
 					else
-						m_tileGrid.SetTerrainType(new Location(x, y), 1); // fill with floor tiles
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), 1); // fill with floor tiles
 				}
 			}
 
-			m_tileGrid.SetTerrainType(new Location(0, 0), 1);
-			m_tileGrid.SetTerrainType(new Location(1, 1), 1);
-			m_tileGrid.SetTerrainType(new Location(2, 2), 1);
+			m_tileGrid.SetTerrainType(new IntPoint(0, 0), 1);
+			m_tileGrid.SetTerrainType(new IntPoint(1, 1), 1);
+			m_tileGrid.SetTerrainType(new IntPoint(2, 2), 1);
 
 			m_containedObjects = new List<ServerGameObject>();
 		}
@@ -91,12 +91,12 @@ namespace MyGame
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
 
-		public int GetTerrain(Location l)
+		public int GetTerrain(IntPoint l)
 		{
 			return m_tileGrid.GetTerrainType(l);
 		}
 
-		public void SetTerrain(Location l, int terrainID)
+		public void SetTerrain(IntPoint l, int terrainID)
 		{
 			m_tileGrid.SetTerrainType(l, terrainID);
 
@@ -104,12 +104,12 @@ namespace MyGame
 				MapChanged(this.ObjectID, l, terrainID);
 		}
 
-		public List<ServerGameObject> GetContents(Location l)
+		public List<ServerGameObject> GetContents(IntPoint l)
 		{
 			return m_tileGrid.GetContentList(l);
 		}
 
-		public void RemoveObject(ServerGameObject ob, Location l)
+		public void RemoveObject(ServerGameObject ob, IntPoint l)
 		{
 			Debug.Assert(m_tileGrid.GetContentList(l) != null);
 			bool removed = m_tileGrid.GetContentList(l).Remove(ob);
@@ -119,7 +119,7 @@ namespace MyGame
 			Debug.Assert(removed);
 		}
 
-		public void AddObject(ServerGameObject ob, Location l)
+		public void AddObject(ServerGameObject ob, IntPoint l)
 		{
 			if (m_tileGrid.GetContentList(l) == null)
 				m_tileGrid.SetContentList(l, new List<ServerGameObject>());
