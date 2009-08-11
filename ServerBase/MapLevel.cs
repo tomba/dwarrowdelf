@@ -56,9 +56,11 @@ namespace MyGame
 		int m_width;
 		int m_height;
 
+		public uint Version { get; private set; }
 
 		public MapLevel(WorldDefinition area) : base(area.World)
 		{
+			this.Version = 1;
 			this.Area = area;
 			base.Name = "map";
 
@@ -98,6 +100,8 @@ namespace MyGame
 
 		public void SetTerrain(IntPoint l, int terrainID)
 		{
+			this.Version += 1;
+
 			m_tileGrid.SetTerrainType(l, terrainID);
 
 			if (MapChanged != null)

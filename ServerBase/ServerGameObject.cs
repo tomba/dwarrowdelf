@@ -28,36 +28,44 @@ namespace MyGame
 			this.World.AddGameObject(this);
 		}
 
-		public bool MoveTo(MapLevel level, IntPoint l)
+		public bool MoveTo(MapLevel env, IntPoint l)
 		{
-			if (l.X < 0 || l.Y < 0 || l.X >= level.Width || l.Y >= level.Height)
+			if (l.X < 0 || l.Y < 0 || l.X >= env.Width || l.Y >= env.Height)
 				return false;
 
-			if (!level.Area.Terrains[level.GetTerrain(l)].IsWalkable)
+			if (!env.Area.Terrains[env.GetTerrain(l)].IsWalkable)
 				return false;
 
 			if (this.Environment != null)
 				this.Environment.RemoveObject(this, this.Location);
 
-			bool envChanged = this.Environment != level;
+			bool envChanged = this.Environment != env;
 
+			MapLevel oldEnv = this.Environment;
 			ObjectID oldMapID = ObjectID.NullObjectID;
 			if (this.Environment != null)
 				oldMapID = this.Environment.ObjectID;
 			IntPoint oldLocation = this.Location;
 
-			this.Environment = level;
+			this.Environment = env;
 			this.Location = l;
-			level.AddObject(this, l);
+			env.AddObject(this, l);
 
-			if(envChanged)
+			if (envChanged)
+			{
+				OnEnvironmentChanged(oldEnv, env);
 				this.World.AddChange(new ObjectEnvironmentChange(this, oldMapID, oldLocation,
 					this.Environment.ObjectID, l));
+			}
 			else
+			{
 				this.World.AddChange(new ObjectLocationChange(this, oldLocation, l));
+			}
 
 			return true;
 		}
+
+		protected virtual void OnEnvironmentChanged(MapLevel oldEnv, MapLevel newEnv) { }
 
 		public bool MoveDir(Direction dir)
 		{

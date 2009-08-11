@@ -74,14 +74,15 @@ namespace MyGame
 		IntPoint m_location;
 		MapLevel m_environment;
 
-		IntPoint m_visibilityLocation;
-		LocationGrid<bool> m_visibilityMap;
-
+		uint m_losMapVersion;
+		IntPoint m_losLocation;
 		int m_visionRange;
+		LocationGrid<bool> m_visionMap;
+
 		public int VisionRange
 		{
 			get { return m_visionRange; }
-			set { m_visionRange = value; m_visibilityMap = null; }
+			set { m_visionRange = value; m_visionMap = null; }
 		}
 
 		public int X { get { return this.Location.X; } }
@@ -155,29 +156,37 @@ namespace MyGame
 			}
 		}
 
-		public LocationGrid<bool> VisibilityMap
+		public LocationGrid<bool> VisionMap
 		{
 			get
 			{
-				bool update = m_visibilityLocation != m_location;
-
-				if (m_visibilityMap == null)
-				{
-					m_visibilityMap = new LocationGrid<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
-						m_visionRange, m_visionRange);
-					update = true;
-				}
-
-				if (update && this.Environment != null)
-				{
-					s_losAlgo.Calculate(m_location, m_visionRange,
-						m_visibilityMap, this.Environment.Bounds,
-						(IntPoint l) => { return this.Environment.GetTerrainType(l) == 2; });
-					m_visibilityLocation = m_location;
-				}
-
-				return m_visibilityMap;
+				UpdateLOS();
+				return m_visionMap;
 			}
+		}
+
+		void UpdateLOS()
+		{
+			if (this.Environment == null)
+				return;
+
+			if (m_losLocation == m_location &&
+				m_losMapVersion == this.Environment.Version)
+				return;
+
+			if (m_visionMap == null)
+			{
+				m_visionMap = new LocationGrid<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
+					m_visionRange, m_visionRange);
+				m_losMapVersion = 0;
+			}
+
+			s_losAlgo.Calculate(m_location, m_visionRange,
+				m_visionMap, this.Environment.Bounds,
+				(IntPoint l) => { return this.Environment.GetTerrainType(l) == 2; });
+
+			m_losMapVersion = this.Environment.Version;
+			m_losLocation = m_location;
 		}
 
 		void Notify(string name)

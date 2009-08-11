@@ -5,9 +5,6 @@ using System.Text;
 
 namespace MyGame
 {
-	/**
-	 * Rectangle datatype with integer dimensions
-	 */
 	public struct IntRect
 	{
 		public int X { get; set; }

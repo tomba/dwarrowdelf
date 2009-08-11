@@ -19,9 +19,6 @@ namespace MyGame
 		void DoAction(GameAction action);
 
 		[OperationContract(IsOneWay = true)]
-		void ToggleTile(IntPoint l);
-
-		[OperationContract(IsOneWay = true)]
 		void SetTiles(IntRect r, int type);
 	}
 }

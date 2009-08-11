@@ -127,27 +127,6 @@ namespace MyGame
 			}
 		}
 
-		public void ToggleTile(IntPoint l)
-		{
-			try
-			{
-				if (!m_world.Map.Bounds.Contains(l))
-					return;
-
-				if (m_world.Map.GetTerrain(l) == 1)
-					m_world.Map.SetTerrain(l, 2);
-				else
-					m_world.Map.SetTerrain(l, 1);
-
-				m_world.ProcessChanges();
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
-		}
-
 		public void SetTiles(IntRect r, int type)
 		{
 			try

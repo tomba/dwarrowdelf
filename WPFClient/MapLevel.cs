@@ -21,8 +21,11 @@ namespace MyGame
 
 		GrowingLocationGrid<TileData> m_tileGrid;
 
+		public uint Version { get; private set; }
+
 		public MapLevel(ObjectID objectID) : base(objectID)
 		{
+			this.Version = 1;
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
 		}
 
@@ -53,6 +56,8 @@ namespace MyGame
 
 		public void SetTerrainType(IntPoint l, int terrainID)
 		{
+			this.Version += 1;
+
 			TileData[,] block = m_tileGrid.GetBlock(ref l, true);
 
 			block[l.X, l.Y].m_terrainID = terrainID;
@@ -63,6 +68,8 @@ namespace MyGame
 
 		public void SetTerrains(ClientMsgs.MapTileData[] locInfos)
 		{
+			this.Version += 1;
+
 			//m_terrainData = new LocationGrid<TerrainData>(m_width, m_height);	// xxx clears the old one
 			foreach (MapTileData locInfo in locInfos)
 			{

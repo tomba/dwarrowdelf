@@ -76,7 +76,7 @@ namespace MyGame
 					// out of vision range
 					lit = false;
 				}
-				else if (m_followObject.VisibilityMap[ml - (IntVector)m_followObject.Location] == false)
+				else if (m_followObject.VisionMap[ml - (IntVector)m_followObject.Location] == false)
 				{
 					// can't see
 					lit = false;
@@ -128,7 +128,8 @@ namespace MyGame
 				if (m_mapLevel != null)
 					m_mapLevel.MapChanged -= MapChangedCallback;
 				m_mapLevel = value;
-				m_mapLevel.MapChanged += new MapChanged(MapChangedCallback);
+				if (m_mapLevel != null)
+					m_mapLevel.MapChanged += MapChangedCallback;
 
 				InvalidateTiles();
 			}

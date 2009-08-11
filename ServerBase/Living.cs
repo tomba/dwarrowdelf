@@ -13,6 +13,13 @@ namespace MyGame
 
 		public List<ItemObject> Inventory { get; private set; }
 
+		uint m_losMapVersion;
+		IntPoint m_losLocation;
+		int m_visionRange = 3;
+		LocationGrid<bool> m_visionMap;
+
+		IActor m_actorImpl;
+
 		public Living(World world)
 			: base(world)
 		{
@@ -30,8 +37,6 @@ namespace MyGame
 
 		public IClientCallback ClientCallback { get; set; }
 
-		IActor m_actorImpl;
-
 		public IActor Actor
 		{
 			get { return m_actorImpl; }
@@ -48,20 +53,12 @@ namespace MyGame
 			}
 		}
 
-		int m_losTurn = -1;
-
-		int m_visionRange = 3;
 		public int VisionRange
 		{
 			get { return m_visionRange; }
-			set
-			{
-				m_visionRange = value;
-				m_visionMap = null;
-			}
+			set { m_visionRange = value; m_visionMap = null; }
 		}
 
-		LocationGrid<bool> m_visionMap;
 		public LocationGrid<bool> VisionMap
 		{
 			get
@@ -69,11 +66,6 @@ namespace MyGame
 				Debug.Assert(this.World.VisibilityMode == VisibilityMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
-			}
-			set
-			{
-				Debug.Assert(this.World.VisibilityMode == VisibilityMode.LOS);
-				m_visionMap = value;
 			}
 		}
 
@@ -126,22 +118,36 @@ namespace MyGame
 		{
 		}
 
+		protected override void OnEnvironmentChanged(MapLevel oldEnv, MapLevel newEnv)
+		{
+			m_losMapVersion = 0;
+		}
+
 		void UpdateLOS()
 		{
-			if (m_losTurn == this.World.TurnNumber)
+			if (this.Environment == null)
+				return;
+
+			if (m_losLocation == this.Location &&
+				m_losMapVersion == this.Environment.Version)
 				return;
 
 			if (this.World.VisibilityMode != VisibilityMode.LOS)
 				throw new Exception();
 
-			m_losTurn = this.World.TurnNumber;
+			if (m_visionMap == null)
+			{
+				m_visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
+					this.VisionRange, this.VisionRange);
+				m_losMapVersion = 0;
+			}
 
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
-			if (m_visionMap == null)
-				m_visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
-				this.VisionRange, this.VisionRange);
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
 				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
+
+			m_losMapVersion = this.Environment.Version;
+			m_losLocation = this.Location;
 		}
 
 		// XXX move to somewhere generic
@@ -307,8 +313,6 @@ namespace MyGame
 
 			if (this.World.VisibilityMode == VisibilityMode.SimpleFOV)
 				return true;
-
-			UpdateLOS();
 
 			if (this.VisionMap[l - (IntVector)this.Location] == false)
 				return false;
