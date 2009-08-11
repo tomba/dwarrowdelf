@@ -31,7 +31,7 @@ namespace MyGame
 
 		Rectangle m_selectionRect;
 		IntPoint m_selectionStart;
-		IntSize m_selectionSize;
+		IntPoint m_selectionEnd;
 
 		public MapControlBase()
 		{
@@ -42,7 +42,7 @@ namespace MyGame
 			m_tileCollection = new VisualCollection(this);
 
 			m_selectionRect = new Rectangle();
-			//m_selectionRect.Visibility = Visibility.Hidden;
+			m_selectionRect.Visibility = Visibility.Hidden;
 			m_selectionRect.Width = m_tileSize;
 			m_selectionRect.Height = m_tileSize;
 			m_selectionRect.Stroke = Brushes.Blue;
@@ -136,20 +136,20 @@ namespace MyGame
 				++i;
 			}
 
-			if (!m_selectionSize.IsEmpty)
-			{
-				double x, y, w, h;
-				IntPoint l1 = m_selectionStart - m_pos;
-				IntSize l2 = m_selectionSize;
+			if (m_selectionRect.Visibility == Visibility.Visible)
+			{			
+				var p1 = m_selectionStart - m_pos;
+				var p2 = m_selectionEnd - m_pos;
 
-				x = l1.X * m_tileSize;
-				y = l1.Y * m_tileSize;
-				w = l2.Width * m_tileSize;
-				h = l2.Height * m_tileSize;
+				Rect r = new Rect(new Point(p1.X * m_tileSize, p1.Y * m_tileSize),
+					new Point(p2.X * m_tileSize, p2.Y * m_tileSize));
 
-				m_selectionRect.Width = w;
-				m_selectionRect.Height = h;
-				m_selectionRect.Arrange(new Rect(x, y, w, h));
+				r.Width += m_tileSize;
+				r.Height += m_tileSize;
+
+				m_selectionRect.Width = r.Width;
+				m_selectionRect.Height = r.Height;
+				m_selectionRect.Arrange(r);
 			}
 
 			return s;
@@ -160,7 +160,6 @@ namespace MyGame
 			drawingContext.DrawRectangle(Brushes.Black, null, new Rect(this.RenderSize));
 		}
 		
-
 		protected override int VisualChildrenCount
 		{
 			get { return m_tileCollection.Count + 1; }
@@ -186,43 +185,41 @@ namespace MyGame
 
 		public IntPoint MapLocationFromPoint(Point p)
 		{
-			return LocationFromPoint(p) + m_pos;
+			return LocationFromPoint(p) + (IntVector)m_pos;
 		}
 
-		public IntPoint SelectionStart
+		public IntRect SelectionRect
 		{
-			get { return m_selectionStart; }
-
-			set
+			get
 			{
-				m_selectionStart = value;
-				/*
-				if (m_selectionStart != m_selectionEnd)
-					m_selectionRect.Visibility = Visibility.Visible;
-				else
-					m_selectionRect.Visibility = Visibility.Hidden;
-				*/
-				InvalidateVisual();
+				if (m_selectionRect.Visibility != Visibility.Visible)
+					return new IntRect();
 
-				if (SelectionChanged != null)
-					SelectionChanged();
+				var p1 = m_selectionStart;
+				var p2 = m_selectionEnd;
+
+				IntRect r = new IntRect(p1, p2);
+
+				r.Width += 1;
+				r.Height += 1;
+
+				return r;
 			}
-		}
-
-		public IntSize SelectionSize
-		{
-			get { return m_selectionSize; }
 
 			set
 			{
-				m_selectionSize = value;
-				/*
-				if (m_selectionStart != m_selectionEnd)
-					m_selectionRect.Visibility = Visibility.Visible;
-				else
+				if (value.Width == 0 || value.Height == 0)
+				{
 					m_selectionRect.Visibility = Visibility.Hidden;
-				*/
-				InvalidateVisual();
+					return;
+				}
+
+				m_selectionStart = value.TopLeft;
+				m_selectionEnd = value.BottomRight - new IntVector(1, 1);
+
+				m_selectionRect.Visibility = Visibility.Visible;
+
+				InvalidateArrange();
 
 				if (SelectionChanged != null)
 					SelectionChanged();
@@ -236,8 +233,8 @@ namespace MyGame
 
 			Point pos = e.GetPosition(this);
 
-			this.SelectionStart = LocationFromPoint(pos) + m_pos;
-			this.SelectionSize = new IntSize(1, 1);
+			m_selectionStart = LocationFromPoint(pos) + (IntVector)m_pos;
+			m_selectionEnd = m_selectionStart;
 			m_selectionRect.Visibility = Visibility.Visible;
 
 			InvalidateArrange();
@@ -245,6 +242,9 @@ namespace MyGame
 			CaptureMouse();
 
 			e.Handled = true;
+
+			if (SelectionChanged != null)
+				SelectionChanged();
 
 			base.OnMouseDown(e);
 		}
@@ -280,13 +280,15 @@ namespace MyGame
 				InvalidateTiles();
 			}
 
-			IntPoint l = LocationFromPoint(pos) + m_pos;
-			IntSize s = new IntSize(l.X - m_selectionStart.X, l.Y - m_selectionStart.Y);
+			IntPoint l = LocationFromPoint(pos) + (IntVector)m_pos;
+			m_selectionEnd = l;
 
-			m_selectionSize = s;
 			InvalidateArrange();
 			
 			e.Handled = true;
+
+			if (SelectionChanged != null)
+				SelectionChanged();
 
 			base.OnMouseMove(e);
 		}
@@ -317,7 +319,7 @@ namespace MyGame
 			{
 				int x = i % m_columns;
 				int y = i / m_columns;
-				IntPoint loc = m_pos + new IntPoint(x, y);
+				IntPoint loc = m_pos + new IntVector(x, y);
 
 				UpdateTile(tile, loc);
 

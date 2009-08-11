@@ -24,6 +24,22 @@ namespace MyGame
 			this.Height = height;
 		}
 
+		public IntRect(IntPoint point1, IntPoint point2) : this()
+		{
+			this.X = Math.Min(point1.X, point2.X);
+			this.Y = Math.Min(point1.Y, point2.Y);
+			this.Width = Math.Max((Math.Max(point1.X, point2.X) - this.X), 0);
+			this.Height = Math.Max((Math.Max(point1.Y, point2.Y) - this.Y), 0);
+		}
+
+		public IntRect(IntPoint point, IntSize size) : this()
+		{
+			this.X = point.X;
+			this.Y = point.Y;
+			this.Width = size.Width;
+			this.Height = size.Height;
+		}
+
 		public int Left
 		{
 			get { return X; }
@@ -42,6 +58,16 @@ namespace MyGame
 		public int Bottom
 		{
 			get { return Y + Height; }
+		}
+
+		public IntPoint TopLeft
+		{
+			get { return new IntPoint(this.X, this.Y); }
+		}
+
+		public IntPoint BottomRight
+		{
+			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
 		}
 
 		public bool Contains(IntPoint l)

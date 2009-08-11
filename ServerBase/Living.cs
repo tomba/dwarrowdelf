@@ -297,7 +297,7 @@ namespace MyGame
 			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			IntPoint dl = l - this.Location;
+			IntVector dl = l - this.Location;
 
 			if (Math.Abs(dl.X) > this.VisionRange ||
 				Math.Abs(dl.Y) > this.VisionRange)
@@ -310,7 +310,7 @@ namespace MyGame
 
 			UpdateLOS();
 
-			if (this.VisionMap[l - this.Location] == false)
+			if (this.VisionMap[l - (IntVector)this.Location] == false)
 				return false;
 
 			return true;
@@ -335,7 +335,7 @@ namespace MyGame
 		{
 			return this.VisionMap.
 					Where(kvp => kvp.Value == true).
-					Select(kvp => kvp.Key + this.Location);
+					Select(kvp => kvp.Key + (IntVector)this.Location);
 		}
 
 		public IEnumerable<IntPoint> GetVisibleLocations()

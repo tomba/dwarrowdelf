@@ -38,8 +38,6 @@ namespace MyGame
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			map.ContextMenu = null;
-
 			base.OnInitialized(e);
 
 			GameData.Data.MyTraceListener.TextBox = this.logTextBox;
@@ -94,25 +92,17 @@ namespace MyGame
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-	//		Location ml = map.MapLocationFromPoint(e.GetPosition(map));
-
-		//	map.Selection = new MapControlBase.TileSelection() { Start = ml, End = ml };
-
-			return;
-			map.Focus();
-			//MyDebug.WriteLine("Mouse down");
-			/*
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
-				Location ml = map.MapLocationFromPoint(e.GetPosition(map));
+				IntRect r = map.SelectionRect;
 
-				if (!map.Map.Bounds.Contains(ml))
+				if (r.Width > 1 || r.Height > 1)
 					return;
 
-				GameData.Data.Connection.Server.ToggleTile(ml);
+				IntPoint ml = map.MapLocationFromPoint(e.GetPosition(map));
 
-				e.Handled = true;
-			}*/
+				map.SelectionRect = new IntRect(ml, new IntSize(1, 1));
+			}
 		}
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
@@ -124,6 +114,18 @@ namespace MyGame
 		{
 			get { return map.Map; }
 			set { map.Map = value; }
+		}
+
+		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
+		{
+			IntRect r = map.SelectionRect;
+			GameData.Data.Connection.Server.SetTiles(r, 1);
+		}
+
+		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
+		{
+			IntRect r = map.SelectionRect;
+			GameData.Data.Connection.Server.SetTiles(r, 2);
 		}
 	}
 }

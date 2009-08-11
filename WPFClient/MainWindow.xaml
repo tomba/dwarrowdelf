@@ -57,8 +57,8 @@
                 <local:MapControl.ContextMenu>
                     <ContextMenu x:Name="mapcm">
                         <MenuItem Header="Change tile">
-                            <MenuItem Header="Floor"/>
-                            <MenuItem Header="Wall"/>
+                            <MenuItem Header="Floor" Click="MenuItem_Click_Floor" />
+                            <MenuItem Header="Wall" Click="MenuItem_Click_Wall"/>
                         </MenuItem>
                         <MenuItem Header="File"/>
                         <MenuItem Header="Save"/>

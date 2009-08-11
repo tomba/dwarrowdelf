@@ -20,5 +20,8 @@ namespace MyGame
 
 		[OperationContract(IsOneWay = true)]
 		void ToggleTile(IntPoint l);
+
+		[OperationContract(IsOneWay = true)]
+		void SetTiles(IntRect r, int type);
 	}
 }

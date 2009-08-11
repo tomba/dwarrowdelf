@@ -13,7 +13,7 @@ namespace MyGame
 	public class LocationGrid<T> : IEnumerable<KeyValuePair<IntPoint, T>>
 	{
 		T[,] m_grid;
-		public IntPoint Origin { get; set; }
+		public IntVector Origin { get; set; }
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
@@ -22,12 +22,12 @@ namespace MyGame
 			this.Width = width;
 			this.Height = height;
 			m_grid = new T[width, height];
-			this.Origin = new IntPoint(0, 0);
+			this.Origin = new IntVector(0, 0);
 		}
 
 		public LocationGrid(int width, int height, int originX, int originY) : this(width, height)
 		{
-			this.Origin = new IntPoint(originX, originY);
+			this.Origin = new IntVector(originX, originY);
 		}
 
 		public T this[IntPoint l]

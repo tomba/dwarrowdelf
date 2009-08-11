@@ -76,7 +76,7 @@ namespace MyGame
 					// out of vision range
 					lit = false;
 				}
-				else if (m_followObject.VisibilityMap[ml - m_followObject.Location] == false)
+				else if (m_followObject.VisibilityMap[ml - (IntVector)m_followObject.Location] == false)
 				{
 					// can't see
 					lit = false;
@@ -198,12 +198,15 @@ namespace MyGame
 
 		void OnSelectionChanged()
 		{
-			/*
-			if (this.Selection != null)
-				this.SelectedTile = new TileInfo(this.m_mapLevel, this.Selection.End);
-			else
+			IntRect sel = this.SelectionRect;
+
+			if (sel.Width != 1 || sel.Height != 1)
+			{
 				this.SelectedTile = null;
-			 */
+				return;
+			}
+
+			this.SelectedTile = new TileInfo(this.m_mapLevel, sel.TopLeft);
 		}
 	}
 

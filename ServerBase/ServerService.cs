@@ -148,6 +148,32 @@ namespace MyGame
 			}
 		}
 
+		public void SetTiles(IntRect r, int type)
+		{
+			try
+			{
+				for (int y = r.Top; y < r.Bottom; ++y)
+				{
+					for (int x = r.Left; x < r.Right; ++x)
+					{
+						IntPoint p = new IntPoint(x, y);
+
+						if (!m_world.Map.Bounds.Contains(p))
+							continue;
+
+						m_world.Map.SetTerrain(p, type);
+					}
+				}
+
+				m_world.ProcessChanges();
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
 		#endregion
 
 		// These are used to determine new tiles and objects in sight

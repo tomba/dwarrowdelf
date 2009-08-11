@@ -20,8 +20,8 @@ namespace MyGame
 			{
 				for (int x = -visionRange; x <= visionRange; ++x)
 				{
-					IntPoint l = new IntPoint(x, y);
-					if (mapBounds.Contains(viewerLocation + l))
+					var l = new IntPoint(x, y);
+					if (mapBounds.Contains(l + (IntVector)viewerLocation))
 						visibilityMap[l] = true;
 					else
 						visibilityMap[l] = true;
@@ -94,7 +94,7 @@ namespace MyGame
 				for (int y = 0; y <= x; y++)
 				{
 					IntPoint translatedLocation = OctantTranslate(new IntPoint(x, y), octant);
-					IntPoint mapLocation = translatedLocation + viewerLocation;
+					IntPoint mapLocation = translatedLocation + (IntVector)viewerLocation;
 
 					LOSCell cell = m_cells[y];
 					LOSCell cellS = null;
@@ -334,7 +334,7 @@ namespace MyGame
 								(IntPoint l) => { 
 									return blocks[l.Y, l.X] != 0;
 								});
-			vis.Origin = new IntPoint(0, 0);
+			vis.Origin = new IntVector(0, 0);
 			for (int y = 0; y < w; ++y)
 			{
 				for (int x = 0; x < w; ++x)
