@@ -7,14 +7,14 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(ServerGameObject o, MapLevel e, IntPoint l);
+	delegate void ObjectMoved(ServerGameObject o, Environment e, IntPoint l);
 
 	abstract class ServerGameObject : GameObject
 	{
 		public int SymbolID { get; set; }
 
 		public string Name { get; set; }
-		public MapLevel Environment { get; private set; }
+		public Environment Environment { get; private set; }
 		public IntPoint Location { get; private set; }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
@@ -28,7 +28,7 @@ namespace MyGame
 			this.World.AddGameObject(this);
 		}
 
-		public bool MoveTo(MapLevel env, IntPoint l)
+		public bool MoveTo(Environment env, IntPoint l)
 		{
 			if (l.X < 0 || l.Y < 0 || l.X >= env.Width || l.Y >= env.Height)
 				return false;
@@ -41,7 +41,7 @@ namespace MyGame
 
 			bool envChanged = this.Environment != env;
 
-			MapLevel oldEnv = this.Environment;
+			Environment oldEnv = this.Environment;
 			ObjectID oldMapID = ObjectID.NullObjectID;
 			if (this.Environment != null)
 				oldMapID = this.Environment.ObjectID;
@@ -65,7 +65,7 @@ namespace MyGame
 			return true;
 		}
 
-		protected virtual void OnEnvironmentChanged(MapLevel oldEnv, MapLevel newEnv) { }
+		protected virtual void OnEnvironmentChanged(Environment oldEnv, Environment newEnv) { }
 
 		public bool MoveDir(Direction dir)
 		{

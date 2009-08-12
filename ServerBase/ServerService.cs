@@ -156,7 +156,7 @@ namespace MyGame
 		#endregion
 
 		// These are used to determine new tiles and objects in sight
-		Dictionary<MapLevel, HashSet<IntPoint>> m_knownLocations = new Dictionary<MapLevel, HashSet<IntPoint>>();
+		Dictionary<Environment, HashSet<IntPoint>> m_knownLocations = new Dictionary<Environment, HashSet<IntPoint>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
 		// this user sees all
@@ -192,7 +192,7 @@ namespace MyGame
 
 		void SendNewTerrainsAndObjects(Living[] livings)
 		{
-			var newKnownLocs = new Dictionary<MapLevel, HashSet<IntPoint>>();
+			var newKnownLocs = new Dictionary<Environment, HashSet<IntPoint>>();
 			var newKnownObs = new HashSet<ServerGameObject>();
 			
 			foreach (Living l in livings)
@@ -215,7 +215,7 @@ namespace MyGame
 				}
 			}
 
-			var revealedLocs = new Dictionary<MapLevel, IEnumerable<IntPoint>>();
+			var revealedLocs = new Dictionary<Environment, IEnumerable<IntPoint>>();
 
 			foreach (var kvp in newKnownLocs)
 			{
@@ -235,7 +235,7 @@ namespace MyGame
 			SendNewObjects(revealedObs);
 		}
 
-		void SendNewTerrains(Dictionary<MapLevel, IEnumerable<IntPoint>> revealedLocs)
+		void SendNewTerrains(Dictionary<Environment, IEnumerable<IntPoint>> revealedLocs)
 		{
 			foreach (var kvp in revealedLocs)
 			{
@@ -292,7 +292,7 @@ namespace MyGame
 
 		void SendAllTerrainsAndObjects(World world)
 		{
-			MapLevel env = world.Map;
+			Environment env = world.Map;
 
 			ClientMsgs.MapTileData[] mapDataArr = new ClientMsgs.MapTileData[env.Width * env.Height];
 

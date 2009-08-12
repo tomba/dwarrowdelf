@@ -53,7 +53,7 @@ namespace MyGame
 
 	}
 
-	class MapLevel : ServerGameObject 
+	class Environment : ServerGameObject 
 	{
 		public WorldDefinition Area { get; protected set; }
 		public event MapChanged MapChanged;
@@ -67,7 +67,7 @@ namespace MyGame
 
 		public VisibilityMode VisibilityMode { get; private set; }
 
-		public MapLevel(WorldDefinition area)
+		public Environment(WorldDefinition area)
 			: base(area.World)
 		{
 			this.Version = 1;

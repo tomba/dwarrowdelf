@@ -52,7 +52,7 @@ namespace MyGame
 		public List<Change> m_changeList = new List<Change>();
 
 		WorldDefinition m_area;
-		MapLevel m_map;
+		Environment m_map;
 
 		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
 
@@ -190,7 +190,7 @@ namespace MyGame
 			AddChange(new MapChange(mapID, l, terrainID));
 		}
 
-		public MapLevel Map
+		public Environment Map
 		{
 			get { return m_map; }
 		}

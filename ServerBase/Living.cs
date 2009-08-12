@@ -118,7 +118,7 @@ namespace MyGame
 		{
 		}
 
-		protected override void OnEnvironmentChanged(MapLevel oldEnv, MapLevel newEnv)
+		protected override void OnEnvironmentChanged(Environment oldEnv, Environment newEnv)
 		{
 			m_losMapVersion = 0;
 		}

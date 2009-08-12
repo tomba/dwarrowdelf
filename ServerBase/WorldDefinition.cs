@@ -13,7 +13,7 @@ namespace MyGame
 	{
 		public World World { get; private set; }
 		public TerrainInfo[] Terrains { get; protected set; }
-		MapLevel m_map;
+		Environment m_map;
 
 		public WorldDefinition(World world)
 		{
@@ -40,10 +40,10 @@ namespace MyGame
 
 			this.Terrains = terrainInfos;
 
-			m_map = new MapLevel(this);
+			m_map = new Environment(this);
 		}
 
-		public MapLevel GetLevel(int levelID)
+		public Environment GetLevel(int levelID)
 		{
 			return m_map;
 		}
