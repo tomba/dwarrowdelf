@@ -33,11 +33,15 @@ namespace MyGame
 			this.Focusable = true;
 
 			base.SelectionChanged += OnSelectionChanged;
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
+				typeof(MapControlBase));
+			dpd.AddValueChanged(this, OnTileSizeChanged);
 		}
 
-		protected override void OnTileSizeChanged(double newSize)
+		void OnTileSizeChanged(object ob, EventArgs e)
 		{
-			m_bitmapCache.TileSize = newSize;
+			m_bitmapCache.TileSize = this.TileSize;
 		}
 
 		protected override UIElement CreateTile()

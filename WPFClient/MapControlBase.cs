@@ -23,8 +23,6 @@ namespace MyGame
 
 		IntPoint m_pos;
 
-		double m_tileSize = 32;
-
 		DispatcherTimer m_updateTimer;
 
 		VisualCollection m_tileCollection;
@@ -43,8 +41,8 @@ namespace MyGame
 
 			m_selectionRect = new Rectangle();
 			m_selectionRect.Visibility = Visibility.Hidden;
-			m_selectionRect.Width = m_tileSize;
-			m_selectionRect.Height = m_tileSize;
+			m_selectionRect.Width = this.TileSize;
+			m_selectionRect.Height = this.TileSize;
 			m_selectionRect.Stroke = Brushes.Blue;
 			m_selectionRect.StrokeThickness = 1;
 			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
@@ -58,25 +56,16 @@ namespace MyGame
 		public int Columns { get { return m_columns; } }
 		public int Rows { get { return m_rows; } }
 
+		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
+			"TileSize", typeof(double), typeof(MapControlBase),
+			new FrameworkPropertyMetadata(32.0,	FrameworkPropertyMetadataOptions.AffectsArrange),
+			v => ((double)v) >= 2);
+
 		public double TileSize
 		{
-			get { return m_tileSize; }
-
-			set
-			{
-				if (value < 2)
-					throw new ArgumentException();
-
-				if (m_tileSize != value)
-				{
-					m_tileSize = value;
-					InvalidateVisual();
-					OnTileSizeChanged(value);
-				}
-			}
+			get { return (double)GetValue(TileSizeProperty); }
+			set { SetValue(TileSizeProperty, value); }
 		}
-
-		protected virtual void OnTileSizeChanged(double newSize) { }
 
 		public IntPoint Pos
 		{
@@ -121,8 +110,8 @@ namespace MyGame
 		{
 			//MyDebug.WriteLine("Arrange");
 
-			int newColumns = (int)Math.Ceiling(s.Width / m_tileSize);
-			int newRows = (int)Math.Ceiling(s.Height / m_tileSize);
+			int newColumns = (int)Math.Ceiling(s.Width / this.TileSize);
+			int newRows = (int)Math.Ceiling(s.Height / this.TileSize);
 
 			if (newColumns != m_columns || newRows != m_rows)
 			{
@@ -137,7 +126,7 @@ namespace MyGame
 			{
 				int y = i / m_columns;
 				int x = i % m_columns;
-				tile.Arrange(new Rect(x * m_tileSize, y * m_tileSize, m_tileSize, m_tileSize));
+				tile.Arrange(new Rect(x * this.TileSize, y * this.TileSize, this.TileSize, this.TileSize));
 				++i;
 			}
 
@@ -146,11 +135,11 @@ namespace MyGame
 			var p1 = m_selectionStart - m_pos;
 			var p2 = m_selectionEnd - m_pos;
 
-			Rect r = new Rect(new Point(p1.X * m_tileSize, p1.Y * m_tileSize),
-				new Point(p2.X * m_tileSize, p2.Y * m_tileSize));
+			Rect r = new Rect(new Point(p1.X * this.TileSize, p1.Y * this.TileSize),
+				new Point(p2.X * this.TileSize, p2.Y * this.TileSize));
 
-			r.Width += m_tileSize;
-			r.Height += m_tileSize;
+			r.Width += this.TileSize;
+			r.Height += this.TileSize;
 
 			m_selectionRect.Width = r.Width;
 			m_selectionRect.Height = r.Height;
@@ -184,7 +173,7 @@ namespace MyGame
 
 		public IntPoint LocationFromPoint(Point p)
 		{
-			return new IntPoint((int)(p.X / m_tileSize), (int)(p.Y / m_tileSize));
+			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
 		public IntPoint MapLocationFromPoint(Point p)
@@ -237,6 +226,8 @@ namespace MyGame
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
+			Focus(); // XXX
+
 			if (e.LeftButton != MouseButtonState.Pressed)
 			{
 				base.OnMouseDown(e);

@@ -93,8 +93,6 @@ namespace MyGame
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
 		{
-			map.Focus();
-
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
 				IntRect r = map.SelectionRect;

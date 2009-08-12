@@ -55,7 +55,7 @@
 
             <local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0">
                 <local:MapControl.ContextMenu>
-                    <ContextMenu x:Name="mapcm">
+                    <ContextMenu>
                         <MenuItem Header="Change tile">
                             <MenuItem Header="Floor" Click="MenuItem_Click_Floor" />
                             <MenuItem Header="Wall" Click="MenuItem_Click_Wall"/>
