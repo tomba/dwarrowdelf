@@ -77,9 +77,9 @@ namespace MyGame
 
 				case Key.Subtract:
 					e.Handled = true;
-					if (map.TileSize <= 10)
+					if (map.TileSize <= 16)
 						return;
-					map.TileSize -= 10;
+					map.TileSize -= 8;
 					return;
 
 				default:

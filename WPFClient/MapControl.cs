@@ -270,61 +270,43 @@ namespace MyGame
 
 	public class MapControlTile : UIElement
 	{
-		BitmapSource m_bmp;
-		BitmapSource m_objectBmp;
-
 		public MapControlTile()
 		{
 			this.IsHitTestVisible = false;
 		}
 
+		public static readonly DependencyProperty BitmapProperty = DependencyProperty.Register(
+			"Bitmap", typeof(BitmapSource), typeof(MapControlTile),
+			new PropertyMetadata(null, ValueChangedCallback));
+
 		public BitmapSource Bitmap
 		{
-			get { return m_bmp; }
-
-			set
-			{
-				if (m_bmp != value)
-				{
-					m_bmp = value;
-					this.InvalidateVisual();
-				}
-			}
+			get { return (BitmapSource)GetValue(BitmapProperty); }
+			set { SetValue(BitmapProperty, value); }
 		}
+
+		public static readonly DependencyProperty ObjectBitmapProperty = DependencyProperty.Register(
+			"ObjectBitmap", typeof(BitmapSource), typeof(MapControlTile),
+			new PropertyMetadata(null, ValueChangedCallback));
 
 		public BitmapSource ObjectBitmap
 		{
-			get { return m_objectBmp; }
-
-			set
-			{
-				if (m_objectBmp != value)
-				{
-					m_objectBmp = value;
-					this.InvalidateVisual();
-				}
-			}
-		}
-		/*
-		protected override void ArrangeCore(Rect finalRect)
-		{
-			MyDebug.WriteLine("Arrange");
-			base.ArrangeCore(finalRect);
+			get { return (BitmapSource)GetValue(ObjectBitmapProperty); }
+			set { SetValue(ObjectBitmapProperty, value); }
 		}
 
-		protected override Size MeasureCore(Size availableSize)
+		static void ValueChangedCallback(DependencyObject ob, DependencyPropertyChangedEventArgs e)
 		{
-			MyDebug.WriteLine("Measure");
-			return base.MeasureCore(availableSize);
+			((MapControlTile)ob).InvalidateVisual();
 		}
-		*/
+		
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			if (m_bmp != null)
-				drawingContext.DrawImage(m_bmp, new Rect(this.RenderSize));
+			if (this.Bitmap != null)
+				drawingContext.DrawImage(this.Bitmap, new Rect(this.RenderSize));
 
-			if (m_objectBmp != null)
-				drawingContext.DrawImage(m_objectBmp, new Rect(this.RenderSize));
+			if (this.ObjectBitmap != null)
+				drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
 		}
 	}
 }
