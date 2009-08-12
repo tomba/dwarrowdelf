@@ -9,6 +9,13 @@ namespace MyGame
 {
 	delegate void MapChanged(ObjectID mapID, IntPoint l, int terrainID);
 
+	enum VisibilityMode
+	{
+		AllVisible,	// everything visible
+		SimpleFOV,	// everything inside VisionRange is visible
+		LOS,		// use LOS algorithm
+	}
+
 	struct TileData
 	{
 		public int m_terrainID;
@@ -58,18 +65,22 @@ namespace MyGame
 
 		public uint Version { get; private set; }
 
-		public MapLevel(WorldDefinition area) : base(area.World)
+		public VisibilityMode VisibilityMode { get; private set; }
+
+		public MapLevel(WorldDefinition area)
+			: base(area.World)
 		{
 			this.Version = 1;
 			this.Area = area;
 			base.Name = "map";
+			this.VisibilityMode = VisibilityMode.LOS;
 
 			m_width = 55;
 			m_height = 55;
 
 			m_tileGrid = new TileGrid(m_width, m_height);
 
-			Random r = new Random();
+			Random r = new Random(123);
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)

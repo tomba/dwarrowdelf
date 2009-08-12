@@ -6,11 +6,8 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	/**
-	 * Location3D datatype, x/y/z
-	 */
 	[DataContract]
-	public struct Location3D : IEquatable<Location3D>
+	public struct IntPoint3D : IEquatable<IntPoint3D>
 	{
 		[DataMember]
 		public int X { get; set; }
@@ -19,7 +16,7 @@ namespace MyGame
 		[DataMember]
 		public int Z { get; set; }
 
-		public Location3D(int x, int y, int z)
+		public IntPoint3D(int x, int y, int z)
 			: this()
 		{
 			X = x;
@@ -29,7 +26,7 @@ namespace MyGame
 
 		#region IEquatable<Location3D> Members
 
-		public bool Equals(Location3D l)
+		public bool Equals(IntPoint3D l)
 		{
 			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
 		}
@@ -38,31 +35,31 @@ namespace MyGame
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is Location3D))
+			if (!(obj is IntPoint3D))
 				return false;
 
-			Location3D l = (Location3D)obj;
+			IntPoint3D l = (IntPoint3D)obj;
 			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
 		}
 
-		public static bool operator ==(Location3D left, Location3D right)
+		public static bool operator ==(IntPoint3D left, IntPoint3D right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
 		}
 
-		public static bool operator !=(Location3D left, Location3D right)
+		public static bool operator !=(IntPoint3D left, IntPoint3D right)
 		{
 			return !(left == right);
 		}
 
-		public static Location3D operator +(Location3D left, Location3D right)
+		public static IntPoint3D operator +(IntPoint3D left, IntPoint3D right)
 		{
-			return new Location3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+			return new IntPoint3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
-		public static Location3D operator -(Location3D left, Location3D right)
+		public static IntPoint3D operator -(IntPoint3D left, IntPoint3D right)
 		{
-			return new Location3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+			return new IntPoint3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
 
 		public override int GetHashCode()
@@ -72,7 +69,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("Location3D({0}, {1}, {2})", X, Y, Z);
+			return String.Format("IntPoint3D({0}, {1}, {2})", X, Y, Z);
 		}
 	}
 }

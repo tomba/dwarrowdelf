@@ -58,7 +58,7 @@ namespace MyGame
 			get { return Z + Depth; }
 		}
 
-		public bool Contains(Location3D l)
+		public bool Contains(IntPoint3D l)
 		{
 			if (l.X < this.X || l.Y < this.Y || l.Z < this.Z ||
 				l.X >= this.X + this.Width || l.Y >= this.Y + this.Height || l.Z >= this.Z + this.Depth)

@@ -53,11 +53,15 @@
   <ItemGroup>
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="DataTypes\Grid3D.cs" />
+    <Compile Include="DataTypes\IntCube.cs" />
     <Compile Include="DataTypes\IntVector.cs" />
     <Compile Include="DataTypes\IntSize.cs" />
     <Compile Include="DataTypes\Direction.cs" />
     <Compile Include="DataTypes\GrowingLocationGrid.cs" />
     <Compile Include="DataTypes\IntRect.cs" />
+    <Compile Include="DataTypes\IntPoint3D.cs" />
+    <Compile Include="DataTypes\LocationGrid3D.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="DataTypes\LocationGrid.cs" />
     <Compile Include="LOSShadowCast1.cs" />

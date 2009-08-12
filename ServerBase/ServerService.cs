@@ -78,7 +78,7 @@ namespace MyGame
 				ClientMsgs.MapData md = new ClientMsgs.MapData() { ObjectID = m_world.Map.ObjectID };
 				m_client.DeliverMessage(md);
 
-				if (m_seeAll || m_world.VisibilityMode == VisibilityMode.AllVisible)
+				if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
 					SendAllTerrainsAndObjects(m_world);
 
 				if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
@@ -171,7 +171,7 @@ namespace MyGame
 			SendChanges(livings, changeArr);
 
 			// if the user sees all, no need to send new terrains/objects
-			if (!m_seeAll && m_world.VisibilityMode != VisibilityMode.AllVisible)
+			if (!m_seeAll && m_player.Environment.VisibilityMode != VisibilityMode.AllVisible)
 				SendNewTerrainsAndObjects(livings);
 		}
 

@@ -13,7 +13,7 @@ namespace MyGame
 	public class LocationGrid3D<T> : IEnumerable<T>
 	{
 		T[,,] m_grid;
-		public Location3D Origin { get; set; }
+		public IntPoint3D Origin { get; set; }
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 		public int Depth { get; private set; }
@@ -24,16 +24,16 @@ namespace MyGame
 			this.Height = height;
 			this.Depth = depth;
 			m_grid = new T[width, height, depth];
-			this.Origin = new Location3D(0, 0, 0);
+			this.Origin = new IntPoint3D(0, 0, 0);
 		}
 
 		public LocationGrid3D(int width, int height, int depth,
 			int originX, int originY, int originZ) : this(width, height, depth)
 		{
-			this.Origin = new Location3D(originX, originY, originZ);
+			this.Origin = new IntPoint3D(originX, originY, originZ);
 		}
 
-		public T this[Location3D l]
+		public T this[IntPoint3D l]
 		{
 			get
 			{
@@ -50,8 +50,8 @@ namespace MyGame
 		
 		public T this[int x, int y, int z]
 		{
-			get { return this[new Location3D(x, y, z)]; }
-			set { this[new Location3D(x, y, z)] = value; }
+			get { return this[new IntPoint3D(x, y, z)]; }
+			set { this[new IntPoint3D(x, y, z)] = value; }
 		}
 
 		public IntCube Bounds
@@ -63,7 +63,7 @@ namespace MyGame
 			}
 		}
 
-		public IEnumerable<Location3D> GetLocations()
+		public IEnumerable<IntPoint3D> GetLocations()
 		{
 			for (int x = 0; x < this.Width; x++)
 			{
@@ -71,7 +71,7 @@ namespace MyGame
 				{
 					for (int z = 0; z < this.Depth; z++)
 					{
-						yield return new Location3D(x - Origin.X, y - Origin.Y, z - Origin.Z);
+						yield return new IntPoint3D(x - Origin.X, y - Origin.Y, z - Origin.Z);
 					}
 				}
 			}

@@ -63,7 +63,7 @@ namespace MyGame
 		{
 			get
 			{
-				Debug.Assert(this.World.VisibilityMode == VisibilityMode.LOS);
+				Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
@@ -132,7 +132,7 @@ namespace MyGame
 				m_losMapVersion == this.Environment.Version)
 				return;
 
-			if (this.World.VisibilityMode != VisibilityMode.LOS)
+			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
 				throw new Exception();
 
 			if (m_visionMap == null)
@@ -190,7 +190,7 @@ namespace MyGame
 		// send only changes that the player sees and needs to know
 		public bool ChangeFilter(Change change)
 		{
-			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
+			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
 			if (change is ObjectEnvironmentChange)
@@ -300,7 +300,7 @@ namespace MyGame
 
 		public bool Sees(IntPoint l)
 		{
-			if (this.World.VisibilityMode == VisibilityMode.AllVisible)
+			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
 			IntVector dl = l - this.Location;
@@ -311,7 +311,7 @@ namespace MyGame
 				return false;
 			}
 
-			if (this.World.VisibilityMode == VisibilityMode.SimpleFOV)
+			if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
 				return true;
 
 			if (this.VisionMap[l - (IntVector)this.Location] == false)
@@ -344,7 +344,7 @@ namespace MyGame
 
 		public IEnumerable<IntPoint> GetVisibleLocations()
 		{
-			if (World.VisibilityMode == VisibilityMode.LOS)
+			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
 				return GetVisibleLocationsLOS();
 			else
 				return GetVisibleLocationsSimpleFOV();

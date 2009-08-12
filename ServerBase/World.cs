@@ -9,13 +9,6 @@ namespace MyGame
 {
 	delegate void HandleChanges(Change[] changes);
 
-	enum VisibilityMode
-	{
-		AllVisible,	// everything visible
-		SimpleFOV,	// everything inside VisionRange is visible
-		LOS,		// use LOS algorithm
-	}
-
 	class World
 	{
 		// the same single world for everybody, for now
@@ -65,15 +58,12 @@ namespace MyGame
 
 		int m_turnNumber = 0;
 
-		public VisibilityMode VisibilityMode { get; private set; }
-
 		public World()
 		{
 			m_area = new WorldDefinition(this);
 			m_map = m_area.GetLevel(1);
 			m_map.MapChanged += MapChangedCallback;
 			m_livingList = new List<Living>();
-			this.VisibilityMode = VisibilityMode.LOS;
 
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}

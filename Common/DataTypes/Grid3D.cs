@@ -19,7 +19,7 @@ namespace MyGame
 			m_blockSize = blockSize;
 		}
 
-		public T this[Location3D l]
+		public T this[IntPoint3D l]
 		{
 			get
 			{
@@ -45,8 +45,8 @@ namespace MyGame
 
 		public T this[int x, int y, int z]
 		{
-			get { return this[new Location3D(x, y, z)]; }
-			set { this[new Location3D(x, y, z)] = value; }
+			get { return this[new IntPoint3D(x, y, z)]; }
+			set { this[new IntPoint3D(x, y, z)] = value; }
 		}
 
 		T[,] GetBlock(ref int x, ref int y, int z, bool allowResize)
