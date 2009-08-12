@@ -22,7 +22,8 @@ namespace MyGame
 			if (isEmbedded)
 			{
 				TraceListener listener = (TraceListener)AppDomain.CurrentDomain.GetData("DebugTextWriter");
-				Debug.Listeners.Add(listener);
+				if (listener != null)
+					Debug.Listeners.Add(listener);
 			}
 			else
 			{

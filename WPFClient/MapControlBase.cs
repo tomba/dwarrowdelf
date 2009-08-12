@@ -84,12 +84,15 @@ namespace MyGame
 			set
 			{
 				m_pos = value;
-				InvalidateVisual();
+				/* InvalidateTiles() is not enough, because we need to reposition the select rect */
+				//InvalidateTiles();
+				InvalidateArrange();
 			}
 		}
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
+			//MyDebug.WriteLine("Measure");
 			return availableSize;
 		}
 
@@ -116,6 +119,8 @@ namespace MyGame
 
 		protected override Size ArrangeOverride(Size s)
 		{
+			//MyDebug.WriteLine("Arrange");
+
 			int newColumns = (int)Math.Ceiling(s.Width / m_tileSize);
 			int newRows = (int)Math.Ceiling(s.Height / m_tileSize);
 
@@ -136,21 +141,20 @@ namespace MyGame
 				++i;
 			}
 
-			if (m_selectionRect.Visibility == Visibility.Visible)
-			{			
-				var p1 = m_selectionStart - m_pos;
-				var p2 = m_selectionEnd - m_pos;
+			// selection rect
 
-				Rect r = new Rect(new Point(p1.X * m_tileSize, p1.Y * m_tileSize),
-					new Point(p2.X * m_tileSize, p2.Y * m_tileSize));
+			var p1 = m_selectionStart - m_pos;
+			var p2 = m_selectionEnd - m_pos;
 
-				r.Width += m_tileSize;
-				r.Height += m_tileSize;
+			Rect r = new Rect(new Point(p1.X * m_tileSize, p1.Y * m_tileSize),
+				new Point(p2.X * m_tileSize, p2.Y * m_tileSize));
 
-				m_selectionRect.Width = r.Width;
-				m_selectionRect.Height = r.Height;
-				m_selectionRect.Arrange(r);
-			}
+			r.Width += m_tileSize;
+			r.Height += m_tileSize;
+
+			m_selectionRect.Width = r.Width;
+			m_selectionRect.Height = r.Height;
+			m_selectionRect.Arrange(r);
 
 			return s;
 		}
@@ -214,12 +218,17 @@ namespace MyGame
 					return;
 				}
 
-				m_selectionStart = value.TopLeft;
-				m_selectionEnd = value.BottomRight - new IntVector(1, 1);
+				var newStart = value.TopLeft;
+				var newEnd = value.BottomRight - new IntVector(1, 1);
+
+				if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
+				{
+					m_selectionStart = newStart;
+					m_selectionEnd = newEnd;
+					InvalidateArrange();
+				}
 
 				m_selectionRect.Visibility = Visibility.Visible;
-
-				InvalidateArrange();
 
 				if (SelectionChanged != null)
 					SelectionChanged();
@@ -229,15 +238,24 @@ namespace MyGame
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			if (e.LeftButton != MouseButtonState.Pressed)
+			{
+				base.OnMouseDown(e);
 				return;
+			}
 
 			Point pos = e.GetPosition(this);
 
-			m_selectionStart = LocationFromPoint(pos) + (IntVector)m_pos;
-			m_selectionEnd = m_selectionStart;
-			m_selectionRect.Visibility = Visibility.Visible;
+			var newStart = LocationFromPoint(pos) + (IntVector)m_pos;
+			var newEnd = newStart;
 
-			InvalidateArrange();
+			if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
+			{
+				m_selectionStart = newStart;
+				m_selectionEnd = newEnd;
+				InvalidateArrange();
+			}
+
+			m_selectionRect.Visibility = Visibility.Visible;
 
 			CaptureMouse();
 
@@ -252,7 +270,10 @@ namespace MyGame
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			if (!IsMouseCaptured)
+			{
+				base.OnMouseMove(e);
 				return;
+			}
 
 			Point pos = e.GetPosition(this);
 
@@ -280,10 +301,13 @@ namespace MyGame
 				InvalidateTiles();
 			}
 
-			IntPoint l = LocationFromPoint(pos) + (IntVector)m_pos;
-			m_selectionEnd = l;
+			var newEnd = LocationFromPoint(pos) + (IntVector)m_pos;
 
-			InvalidateArrange();
+			if (newEnd != m_selectionEnd)
+			{
+				m_selectionEnd = newEnd;
+				InvalidateArrange();
+			}
 			
 			e.Handled = true;
 

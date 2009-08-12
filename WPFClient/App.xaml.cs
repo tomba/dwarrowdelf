@@ -30,7 +30,9 @@ namespace MyGame
 			base.OnStartup(e);
 
 			GameData.Data.MyTraceListener = new MyTraceListener();
-			Debug.Listeners.Add(GameData.Data.MyTraceListener);
+
+			if (GameData.Data.MyTraceListener != null)
+				Debug.Listeners.Add(GameData.Data.MyTraceListener);
 
 			MyDebug.WriteLine("Start");
 

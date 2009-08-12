@@ -305,7 +305,19 @@ namespace MyGame
 				}
 			}
 		}
+		/*
+		protected override void ArrangeCore(Rect finalRect)
+		{
+			MyDebug.WriteLine("Arrange");
+			base.ArrangeCore(finalRect);
+		}
 
+		protected override Size MeasureCore(Size availableSize)
+		{
+			MyDebug.WriteLine("Measure");
+			return base.MeasureCore(availableSize);
+		}
+		*/
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			if (m_bmp != null)

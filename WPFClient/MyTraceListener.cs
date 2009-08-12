@@ -32,12 +32,13 @@ namespace MyGame
 			set 
 			{
 				m_textBox = value;
+
+				if (m_textBox == null)
+					return;
+
 				if (m_sb != null && m_sb.Length > 0)
 				{
-					m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-						new AppendTextDelegate(AppendText), m_sb.ToString());
-//					m_textBox.AppendText(m_sb.ToString());
-//					m_textBox.ScrollToEnd();
+					Write(m_sb.ToString());
 					m_sb = null;
 				}
 			}
@@ -47,10 +48,11 @@ namespace MyGame
 		{
 			if (m_textBox != null)
 			{
-				m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-					new AppendTextDelegate(AppendText), value);
-//				m_textBox.AppendText(value);
-//				m_textBox.ScrollToEnd();
+				if (m_textBox.Dispatcher.CheckAccess())
+					AppendText(value);
+				else
+					m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+						new AppendTextDelegate(AppendText), value);
 			}
 			else
 			{

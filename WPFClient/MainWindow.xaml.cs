@@ -40,7 +40,8 @@ namespace MyGame
 		{
 			base.OnInitialized(e);
 
-			GameData.Data.MyTraceListener.TextBox = this.logTextBox;
+			if (GameData.Data.MyTraceListener != null)
+				GameData.Data.MyTraceListener.TextBox = this.logTextBox;
 
 			map.Focus();
 		}
