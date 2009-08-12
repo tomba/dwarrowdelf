@@ -9,7 +9,7 @@ namespace MyGame
 	class Living : ServerGameObject, IActor
 	{
 		// XXX note: not re-entrant
-		static LOSAlgo s_losAlgo = new LOSShadowCast1();
+		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
 		public List<ItemObject> Inventory { get; private set; }
 
@@ -144,7 +144,7 @@ namespace MyGame
 
 			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
-				l => { return terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false; });
+				l => terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

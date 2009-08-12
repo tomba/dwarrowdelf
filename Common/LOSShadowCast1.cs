@@ -5,13 +5,13 @@ using System.Text;
 
 namespace MyGame
 {
-	public interface LOSAlgo
+	public interface ILOSAlgo
 	{
 		void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate);
 	}
 
-	public class LOSNull : LOSAlgo
+	public class LOSNull : ILOSAlgo
 	{
 		public void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
@@ -31,7 +31,7 @@ namespace MyGame
 	}
 
 	// http://sc.tri-bit.com/Computing_LOS_for_Large_Areas
-	public class LOSShadowCast1 : LOSAlgo
+	public class LOSShadowCast1 : ILOSAlgo
 	{
 		class LOSCell // xxx struct?
 		{
@@ -330,10 +330,7 @@ namespace MyGame
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 
-			los.Calculate(loc, 3, vis, bounds,
-								(IntPoint l) => { 
-									return blocks[l.Y, l.X] != 0;
-								});
+			los.Calculate(loc, 3, vis, bounds, l => blocks[l.Y, l.X] != 0);
 			vis.Origin = new IntVector(0, 0);
 			for (int y = 0; y < w; ++y)
 			{
@@ -343,6 +340,40 @@ namespace MyGame
 						throw new Exception("LOS algo failed self check");
 				}
 			}
+		}
+
+		public static long PerfTest()
+		{
+			var sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+			DoPerfTest();
+			sw.Stop();
+			return sw.ElapsedTicks;
+		}
+
+		static void DoPerfTest()
+		{
+			const int w = 13;
+			Random rand = new Random(1234);
+
+			bool[,] blocks = new bool[w, w];
+
+			for (int y = 0; y < w; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					blocks[x, y] = rand.Next() % 2 == 0;
+				}
+			}
+
+			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w / 2, w / 2);
+			IntPoint loc = new IntPoint(w / 2, w / 2);
+			IntRect bounds = new IntRect(0, 0, w, w);
+			LOSShadowCast1 los = new LOSShadowCast1();
+
+			// 1.4M ticks
+			for (int i = 0; i < 5000; ++i)
+				los.Calculate(loc, w / 2, vis, bounds, l => blocks[l.Y, l.X]);
 		}
 	}
 }

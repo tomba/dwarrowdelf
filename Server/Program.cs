@@ -15,6 +15,11 @@ namespace MyGame
 	{
 		static void Main(string[] args)
 		{
+			/*
+			long t = LOSShadowCast1.PerfTest();
+			Console.WriteLine(t);
+			return;
+			*/
 			Server server = new Server();
 			server.RunServer(false);
 		}

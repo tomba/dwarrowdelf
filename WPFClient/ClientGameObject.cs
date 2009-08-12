@@ -14,7 +14,7 @@ namespace MyGame
 	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
 		// XXX not re-entrant
-		static LOSAlgo s_losAlgo = new LOSShadowCast1();
+		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
 		static Dictionary<ObjectID, WeakReference> s_objectMap = new Dictionary<ObjectID, WeakReference>();
 
@@ -183,7 +183,7 @@ namespace MyGame
 
 			s_losAlgo.Calculate(m_location, m_visionRange,
 				m_visionMap, this.Environment.Bounds,
-				(IntPoint l) => { return this.Environment.GetTerrainType(l) == 2; });
+				l => this.Environment.GetTerrainType(l) == 2);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = m_location;
