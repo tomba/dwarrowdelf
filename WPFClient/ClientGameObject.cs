@@ -183,7 +183,7 @@ namespace MyGame
 
 			s_losAlgo.Calculate(m_location, m_visionRange,
 				m_visionMap, this.Environment.Bounds,
-				l => this.Environment.GetTerrainType(l) == 2);
+				l => this.Environment.Terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = m_location;

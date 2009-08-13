@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	class Living : ServerGameObject, IActor
+	public class Living : ServerGameObject, IActor
 	{
 		// XXX note: not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
@@ -142,9 +142,9 @@ namespace MyGame
 				m_losMapVersion = 0;
 			}
 
-			TerrainInfo[] terrainInfo = this.Environment.Area.Terrains;
+			var terrains = this.Environment.World.Terrains;
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
-				l => terrainInfo[this.Environment.GetTerrain(l)].IsWalkable == false);
+				l => terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

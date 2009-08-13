@@ -35,6 +35,20 @@ namespace MyGame
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+
+			/* Load area */
+
+			IAreaData areaData = new MyAreaData.AreaData();
+			IArea area = new MyArea.Area();
+
+			World.s_areaData = areaData;
+			World.s_area = area;
+
+			World.TheWorld = new World();
+			area.InitializeWorld(World.TheWorld);
+
+			/* WCF */
+
 			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
 
 #if LOCAL

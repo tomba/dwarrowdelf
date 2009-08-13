@@ -65,7 +65,7 @@ namespace MyGame
 		public override void WriteLine(string message)
 		{
 			Write(message);
-			Write(Environment.NewLine);
+			Write(System.Environment.NewLine);
 		}
 	}
 }

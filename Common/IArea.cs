@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace MyGame
 {
-	public class ItemObject : ServerGameObject
+	public interface IAreaData
 	{
-		public ItemObject(World world)
-			: base(world)
-		{
-		}
+		Terrains GetTerrains();
+		Stream GetPlanetCute();
 	}
+
 }

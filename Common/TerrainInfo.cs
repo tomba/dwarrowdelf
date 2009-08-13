@@ -12,4 +12,25 @@ namespace MyGame
 		public bool IsWalkable { get; set; }
 		public char CharSymbol { get; set; }
 	}
+
+	public class Terrains
+	{
+		TerrainInfo[] m_terrains;
+
+		public Terrains(TerrainInfo[] terrains)
+		{
+			m_terrains = terrains;
+		}
+
+		public TerrainInfo FindTerrainByName(string name)
+		{
+			return m_terrains.First(t => t.Name == name);
+		}
+
+
+		public TerrainInfo this[int id]
+		{
+			get { return m_terrains[id]; }
+		}
+	}
 }

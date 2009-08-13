@@ -39,8 +39,6 @@ namespace MyGame
 			m_client = null;
 			m_player = null;
 			m_world = null;
-
-			World.TheMonster.ClientCallback = null;
 		}
 
 
@@ -242,7 +240,7 @@ namespace MyGame
 				var env = kvp.Key;
 				var newLocations = kvp.Value;
 
-				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, Terrain = env.GetTerrain(l) });
+				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, Terrain = env.GetTerrainID(l) });
 				var mapDataArr = mapDataList.ToArray();
 				if (mapDataArr.Length == 0)
 					continue;
@@ -303,7 +301,7 @@ namespace MyGame
 					IntPoint l = new IntPoint(x, y);
 					ClientMsgs.MapTileData td = new ClientMsgs.MapTileData();
 					td.Location = l;
-					td.Terrain = env.GetTerrain(l);
+					td.Terrain = env.GetTerrainID(l);
 					mapDataArr[x + y * env.Width] = td;
 				}
 			}

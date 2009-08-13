@@ -9,7 +9,7 @@ namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, Environment e, IntPoint l);
 
-	abstract class ServerGameObject : GameObject
+	abstract public class ServerGameObject : GameObject
 	{
 		public int SymbolID { get; set; }
 
@@ -33,7 +33,7 @@ namespace MyGame
 			if (l.X < 0 || l.Y < 0 || l.X >= env.Width || l.Y >= env.Height)
 				return false;
 
-			if (!env.Area.Terrains[env.GetTerrain(l)].IsWalkable)
+			if (!env.World.Terrains[env.GetTerrainID(l)].IsWalkable)
 				return false;
 
 			if (this.Environment != null)

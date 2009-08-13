@@ -7,8 +7,6 @@ using MyGame.ClientMsgs;
 
 namespace MyGame
 {
-	delegate void MapChanged(IntPoint l);
-
 	struct TileData
 	{
 		public int m_terrainID;
@@ -17,16 +15,21 @@ namespace MyGame
 
 	class MapLevel : ClientGameObject
 	{
-		public event MapChanged MapChanged;
+		public event Action<IntPoint> MapChanged;
 
 		GrowingLocationGrid<TileData> m_tileGrid;
 
 		public uint Version { get; private set; }
 
+		public Terrains Terrains { get; protected set; } // move to "world" or similar
+
 		public MapLevel(ObjectID objectID) : base(objectID)
 		{
 			this.Version = 1;
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
+
+			IAreaData areaData = new MyAreaData.AreaData();
+			this.Terrains = areaData.GetTerrains();
 		}
 
 		public int Width
@@ -44,7 +47,7 @@ namespace MyGame
 			get { return m_tileGrid.Bounds; }
 		}
 
-		public int GetTerrainType(IntPoint l)
+		public int GetTerrainID(IntPoint l)
 		{
 			TileData[,] block = m_tileGrid.GetBlock(ref l, false);
 
@@ -54,7 +57,7 @@ namespace MyGame
 			return block[l.X, l.Y].m_terrainID;
 		}
 
-		public void SetTerrainType(IntPoint l, int terrainID)
+		public void SetTerrainID(IntPoint l, int terrainID)
 		{
 			this.Version += 1;
 

@@ -7,20 +7,28 @@ using System.Threading;
 
 namespace MyGame
 {
-	delegate void HandleChanges(Change[] changes);
+	public delegate void HandleChanges(Change[] changes);
 
-	class World
+	public interface IArea
 	{
-		// the same single world for everybody, for now
-		public static readonly World TheWorld;
+		void InitializeWorld(World world);
+	}
 
-		public static readonly Living TheMonster; // XXX
+	public class World
+	{
+		public static IArea s_area;
+		public static IAreaData s_areaData;
+
+		// the same single world for everybody, for now
+		public static World TheWorld;
+
+		//public static readonly Living TheMonster; // XXX
 
 		static World()
 		{
-			World world = new World();
-			TheWorld = world;
-			
+			//World world = new World();
+			//TheWorld = world;
+#if asd
 			// Add a monster
 			var monster = new Living(world);
 			monster.SymbolID = 4;
@@ -38,6 +46,7 @@ namespace MyGame
 
 			// process changes so that moves above are handled
 			world.ProcessChanges();
+#endif
 		}
 
 
@@ -51,7 +60,6 @@ namespace MyGame
 
 		public List<Change> m_changeList = new List<Change>();
 
-		WorldDefinition m_area;
 		Environment m_map;
 
 		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
@@ -60,13 +68,16 @@ namespace MyGame
 
 		public World()
 		{
-			m_area = new WorldDefinition(this);
-			m_map = m_area.GetLevel(1);
+			this.Terrains = World.s_areaData.GetTerrains();
+
+			m_map = new Environment(this);
 			m_map.MapChanged += MapChangedCallback;
 			m_livingList = new List<Living>();
 
 			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
 		}
+
+		public Terrains Terrains { get; protected set; }
 
 		public int TurnNumber
 		{

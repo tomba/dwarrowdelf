@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MyGame
 {
-	class MonsterActor : IActor
+	public class MonsterActor : IActor
 	{
 		ServerGameObject m_object;
 		GameAction m_currentAction;

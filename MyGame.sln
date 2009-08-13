@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerBase", "ServerBase\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfPropertyGrid", "WpfPropertyGrid\WpfPropertyGrid.csproj", "{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyAreaData", "MyAreaData\MyAreaData.csproj", "{73280BF6-102E-4224-B477-BE6AE4875B23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyArea", "MyArea\MyArea.csproj", "{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +44,14 @@ Global
 		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73280BF6-102E-4224-B477-BE6AE4875B23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73280BF6-102E-4224-B477-BE6AE4875B23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73280BF6-102E-4224-B477-BE6AE4875B23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73280BF6-102E-4224-B477-BE6AE4875B23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

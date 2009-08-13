@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MyGame
 {
-	interface IActor
+	public interface IActor
 	{
 		void RemoveAction(GameAction action);
 		GameAction GetCurrentAction();

@@ -49,9 +49,14 @@ namespace MyGame
 			di.m_size = new Size(100, 100);
 			m_drawingInfos["Gem_Blue"] = di;
 
+			IAreaData areaData = new MyAreaData.AreaData();
+			var stream = areaData.GetPlanetCute();
+
+			m_symbolResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(stream);
+			/*
 			m_symbolResources = (ResourceDictionary)Application.LoadComponent(
 				new Uri("Symbols/PlanetCute.xaml", UriKind.Relative));
-
+			*/
 			m_symbolDrawings[0] = CreateCharacterDrawing('?');
 			m_symbolDrawings[1] = GetDrawingByName("Dirt_Block");
 			m_symbolDrawings[2] = GetDrawingByName("Stone_Block");

@@ -2,27 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using System.Xml.Serialization;
+using MyGame;
 using System.Xml.Linq;
-using System.Resources;
+using System.IO;
 
-namespace MyGame
+namespace MyAreaData
 {
-	class WorldDefinition
+	public class AreaData : IAreaData
 	{
-		public World World { get; private set; }
-		public TerrainInfo[] Terrains { get; protected set; }
-		Environment m_map;
-
-		public WorldDefinition(World world)
+		public Terrains GetTerrains()
 		{
-			this.World = world;
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+			Stream resStream = ass.GetManifestResourceStream("MyAreaData.Symbols.xml");
 
-			System.Reflection.Assembly thisExe = System.Reflection.Assembly.GetExecutingAssembly();
-			System.IO.Stream resStream = thisExe.GetManifestResourceStream("MyGame.Symbols.xml");
-
-			XDocument root = XDocument.Load(new System.IO.StreamReader(resStream));
+			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement terrainInfosElem = root.Element("TerrainInfos");
 
 			TerrainInfo[] terrainInfos = new TerrainInfo[terrainInfosElem.Elements().Count()];
@@ -38,17 +31,14 @@ namespace MyGame
 				terrainInfos[terrain.TerrainID] = terrain;
 			}
 
-			this.Terrains = terrainInfos;
-
-			m_map = new Environment(this);
+			return new Terrains(terrainInfos);
 		}
 
-		public Environment GetLevel(int levelID)
+		public Stream GetPlanetCute()
 		{
-			return m_map;
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+			Stream resStream = ass.GetManifestResourceStream("MyAreaData.PlanetCute.xaml");
+			return resStream;
 		}
 	}
-
-
-
 }

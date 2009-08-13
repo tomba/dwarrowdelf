@@ -94,7 +94,7 @@ namespace MyGame
 
 			string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			path = System.IO.Path.GetDirectoryName(path);
-			path = System.IO.Path.Combine(path, "ServerBase.dll");
+			path = System.IO.Path.Combine(path, "Server.exe");
 
 			IServer server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
 			server.RunServer(true);

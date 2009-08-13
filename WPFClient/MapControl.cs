@@ -64,7 +64,7 @@ namespace MyGame
 
 			if (m_followObject != null)
 			{
-				if (m_mapLevel.GetTerrainType(ml) == 0)
+				if (m_mapLevel.GetTerrainID(ml) == 0)
 				{
 					// unknown locations always unlit
 					lit = false;
@@ -107,7 +107,7 @@ namespace MyGame
 
 		BitmapSource GetBitmap(IntPoint ml, bool lit)
 		{
-			int terrainID = this.Map.GetTerrainType(ml);
+			int terrainID = this.Map.GetTerrainID(ml);
 			return m_bitmapCache.GetBitmap(terrainID, !lit);
 		}
 
@@ -251,7 +251,7 @@ namespace MyGame
 
 		public int TerrainType
 		{
-			get { return m_mapLevel.GetTerrainType(m_location); }
+			get { return m_mapLevel.GetTerrainID(m_location); }
 		}
 
 		public IList<ClientGameObject> Objects

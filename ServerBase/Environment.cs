@@ -7,9 +7,9 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	delegate void MapChanged(ObjectID mapID, IntPoint l, int terrainID);
+	public delegate void MapChanged(ObjectID mapID, IntPoint l, int terrainID);
 
-	enum VisibilityMode
+	public enum VisibilityMode
 	{
 		AllVisible,	// everything visible
 		SimpleFOV,	// everything inside VisionRange is visible
@@ -36,7 +36,7 @@ namespace MyGame
 			m_tileGrid[l.X, l.Y].m_terrainID = terrainType;
 		}
 
-		public int GetTerrainType(IntPoint l)
+		public int GetTerrainID(IntPoint l)
 		{
 			return m_tileGrid[l.X, l.Y].m_terrainID;
 		}
@@ -53,9 +53,8 @@ namespace MyGame
 
 	}
 
-	class Environment : ServerGameObject 
+	public class Environment : ServerGameObject 
 	{
-		public WorldDefinition Area { get; protected set; }
 		public event MapChanged MapChanged;
 
 		TileGrid m_tileGrid;
@@ -67,11 +66,10 @@ namespace MyGame
 
 		public VisibilityMode VisibilityMode { get; private set; }
 
-		public Environment(WorldDefinition area)
-			: base(area.World)
+		public Environment(World world)
+			: base(world)
 		{
 			this.Version = 1;
-			this.Area = area;
 			base.Name = "map";
 			this.VisibilityMode = VisibilityMode.LOS;
 
@@ -81,20 +79,22 @@ namespace MyGame
 			m_tileGrid = new TileGrid(m_width, m_height);
 
 			Random r = new Random(123);
+			TerrainInfo floor = world.Terrains.FindTerrainByName("Dungeon Floor");
+			TerrainInfo wall = world.Terrains.FindTerrainByName("Dungeon Wall");
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)
 				{
 					if (r.Next() % 8 == 0)
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), 2); // wall
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), wall.TerrainID);
 					else
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), 1); // fill with floor tiles
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), floor.TerrainID);
 				}
 			}
 
-			m_tileGrid.SetTerrainType(new IntPoint(0, 0), 1);
-			m_tileGrid.SetTerrainType(new IntPoint(1, 1), 1);
-			m_tileGrid.SetTerrainType(new IntPoint(2, 2), 1);
+			m_tileGrid.SetTerrainType(new IntPoint(0, 0), floor.TerrainID);
+			m_tileGrid.SetTerrainType(new IntPoint(1, 1), floor.TerrainID);
+			m_tileGrid.SetTerrainType(new IntPoint(2, 2), floor.TerrainID);
 
 			m_containedObjects = new List<ServerGameObject>();
 		}
@@ -104,9 +104,9 @@ namespace MyGame
 			get { return new IntRect(0, 0, m_width, m_height); }
 		}
 
-		public int GetTerrain(IntPoint l)
+		public int GetTerrainID(IntPoint l)
 		{
-			return m_tileGrid.GetTerrainType(l);
+			return m_tileGrid.GetTerrainID(l);
 		}
 
 		public void SetTerrain(IntPoint l, int terrainID)
