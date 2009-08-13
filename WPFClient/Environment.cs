@@ -13,7 +13,7 @@ namespace MyGame
 		public List<ClientGameObject> m_contentList;
 	}
 
-	class MapLevel : ClientGameObject
+	class Environment : ClientGameObject
 	{
 		public event Action<IntPoint> MapChanged;
 
@@ -23,7 +23,9 @@ namespace MyGame
 
 		public Terrains Terrains { get; protected set; } // move to "world" or similar
 
-		public MapLevel(ObjectID objectID) : base(objectID)
+		public VisibilityMode VisibilityMode { get; set; }
+
+		public Environment(ObjectID objectID) : base(objectID)
 		{
 			this.Version = 1;
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);

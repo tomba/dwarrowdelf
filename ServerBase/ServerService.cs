@@ -30,7 +30,7 @@ namespace MyGame
 
 			m_player.Actor = null;
 
-			m_world.AddChange(new ObjectEnvironmentChange(m_player, m_player.Environment.ObjectID, m_player.Location,
+			m_world.AddChange(new ObjectMoveChange(m_player, m_player.Environment.ObjectID, m_player.Location,
 				ObjectID.NullObjectID, new IntPoint()));
 			m_world.ProcessChanges();
 
@@ -73,7 +73,11 @@ namespace MyGame
 
 				m_client.LoginReply(m_player.ObjectID);
 
-				ClientMsgs.MapData md = new ClientMsgs.MapData() { ObjectID = m_world.Map.ObjectID };
+				ClientMsgs.MapData md = new ClientMsgs.MapData()
+				{
+					ObjectID = m_world.Map.ObjectID,
+					VisibilityMode = m_world.Map.VisibilityMode,
+				};
 				m_client.DeliverMessage(md);
 
 				if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
@@ -244,7 +248,7 @@ namespace MyGame
 				var mapDataArr = mapDataList.ToArray();
 				if (mapDataArr.Length == 0)
 					continue;
-				var msg = new ClientMsgs.TerrainData() { MapDataList = mapDataArr };
+				var msg = new ClientMsgs.TerrainData() { Environment = env.ObjectID, MapDataList = mapDataArr };
 
 				m_client.DeliverMessage(msg);
 			}
@@ -306,7 +310,7 @@ namespace MyGame
 				}
 			}
 
-			var msg = new ClientMsgs.TerrainData() { MapDataList = mapDataArr };
+			var msg = new ClientMsgs.TerrainData() { Environment = env.ObjectID, MapDataList = mapDataArr };
 
 			m_client.DeliverMessage(msg);
 

@@ -153,17 +153,11 @@ namespace MyGame
 		// XXX move to somewhere generic
 		public static ClientMsgs.Message ChangeToMessage(Change change)
 		{
-			if (change is ObjectEnvironmentChange)
+			if (change is ObjectMoveChange)
 			{
-				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				return ChangeToMessage(new ObjectLocationChange(ec.Target,
-					ec.DestinationLocation, ec.DestinationLocation));
-			}
-
-			if (change is ObjectLocationChange)
-			{
-				ObjectLocationChange lc = (ObjectLocationChange)change;
-				return new ClientMsgs.ObjectMove(lc.Target, lc.SourceLocation, lc.TargetLocation);
+				ObjectMoveChange mc = (ObjectMoveChange)change;
+				return new ClientMsgs.ObjectMove(mc.Target, mc.SourceMapID, mc.SourceLocation,
+					mc.DestinationMapID, mc.DestinationLocation);
 			}
 
 			if (change is MapChange)
@@ -171,6 +165,7 @@ namespace MyGame
 				MapChange mc = (MapChange)change;
 				return new ClientMsgs.TerrainData()
 				{
+					Environment = mc.MapID,
 					MapDataList = new ClientMsgs.MapTileData[] {
 						new ClientMsgs.MapTileData() { Location = mc.Location, Terrain = mc.TerrainType }
 					}
@@ -193,29 +188,20 @@ namespace MyGame
 			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			if (change is ObjectEnvironmentChange)
+			if (change is ObjectMoveChange)
 			{
-				// xxx what when srcmap == thismap
-				ObjectEnvironmentChange ec = (ObjectEnvironmentChange)change;
-				if (ec.DestinationMapID == this.Environment.ObjectID)
-					return ChangeFilter(new ObjectLocationChange(this.World.FindObject(ec.ObjectID),
-						ec.DestinationLocation, ec.DestinationLocation));
-				else
-					return false;
-			}
+				ObjectMoveChange ec = (ObjectMoveChange)change;
 
-			if (change is ObjectLocationChange)
-			{
-				ObjectLocationChange lc = (ObjectLocationChange)change;
-				if (!Sees(lc.SourceLocation) && !Sees(lc.TargetLocation))
-				{
-					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", lc.SourceLocation);
+				if (ec.DestinationMapID != this.Environment.ObjectID &&
+					ec.SourceMapID != this.Environment.ObjectID)
 					return false;
-				}
-				else
-				{
+
+				if (ec.DestinationMapID == this.Environment.ObjectID && Sees(ec.DestinationLocation))
 					return true;
-				}
+
+				MyDebug.WriteLine("\tplr doesn't see ob moving {0}->{1}, skipping change",
+					ec.SourceLocation, ec.DestinationLocation);
+				return false;
 			}
 
 			if (change is MapChange)

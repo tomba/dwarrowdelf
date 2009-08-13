@@ -23,7 +23,7 @@ namespace MyGame
 		SymbolBitmapCache m_bitmapCache;
 
 		ClientGameObject m_followObject;
-		MapLevel m_mapLevel;
+		Environment m_env;
 
 		public MapControl()
 		{
@@ -55,16 +55,20 @@ namespace MyGame
 			MapControlTile tile = (MapControlTile)_tile;
 			bool lit = false;
 
-			if (m_mapLevel == null) // || !m_mapLevel.Bounds.Contains(ml))
+			if (m_env == null) // || !m_mapLevel.Bounds.Contains(ml))
 			{
 				tile.Bitmap = null;
 				tile.ObjectBitmap = null;
 				return;
 			}
 
-			if (m_followObject != null)
+			if (m_env.VisibilityMode == VisibilityMode.AllVisible)
 			{
-				if (m_mapLevel.GetTerrainID(ml) == 0)
+				lit = true;
+			}
+			else if (m_followObject != null)
+			{
+				if (m_env.GetTerrainID(ml) == 0)
 				{
 					// unknown locations always unlit
 					lit = false;
@@ -80,7 +84,8 @@ namespace MyGame
 					// out of vision range
 					lit = false;
 				}
-				else if (m_followObject.VisionMap[ml - (IntVector)m_followObject.Location] == false)
+				else if (m_env.VisibilityMode == VisibilityMode.LOS &&
+					m_followObject.VisionMap[ml - (IntVector)m_followObject.Location] == false)
 				{
 					// can't see
 					lit = false;
@@ -123,17 +128,17 @@ namespace MyGame
 				return null;
 		}
 
-		internal MapLevel Map
+		internal Environment Map
 		{
-			get { return m_mapLevel; }
+			get { return m_env; }
 
 			set
 			{
-				if (m_mapLevel != null)
-					m_mapLevel.MapChanged -= MapChangedCallback;
-				m_mapLevel = value;
-				if (m_mapLevel != null)
-					m_mapLevel.MapChanged += MapChangedCallback;
+				if (m_env != null)
+					m_env.MapChanged -= MapChangedCallback;
+				m_env = value;
+				if (m_env != null)
+					m_env.MapChanged += MapChangedCallback;
 
 				InvalidateTiles();
 			}
@@ -167,11 +172,11 @@ namespace MyGame
 
 		}
 
-		void FollowedObjectMoved(MapLevel e, IntPoint l)
+		void FollowedObjectMoved(Environment e, IntPoint l)
 		{
-			if (e != m_mapLevel)
+			if (e != m_env)
 			{
-				this.Map = m_mapLevel;
+				this.Map = m_env;
 //				m_center = new Location(-1, -1);
 			}
 
@@ -211,28 +216,28 @@ namespace MyGame
 				return;
 			}
 
-			this.SelectedTile = new TileInfo(this.m_mapLevel, sel.TopLeft);
+			this.SelectedTile = new TileInfo(this.m_env, sel.TopLeft);
 		}
 	}
 
 	class TileInfo : INotifyPropertyChanged
 	{
-		MapLevel m_mapLevel;
+		Environment m_env;
 		IntPoint m_location;
-		public TileInfo(MapLevel mapLevel, IntPoint location)
+		public TileInfo(Environment mapLevel, IntPoint location)
 		{
-			m_mapLevel = mapLevel;
+			m_env = mapLevel;
 			m_location = location;
 		}
 
 		public void StartObserve()
 		{
-			m_mapLevel.MapChanged += MapChanged;
+			m_env.MapChanged += MapChanged;
 		}
 
 		public void StopObserve()
 		{
-			m_mapLevel.MapChanged -= MapChanged;
+			m_env.MapChanged -= MapChanged;
 		}
 
 		void MapChanged(IntPoint l)
@@ -251,12 +256,12 @@ namespace MyGame
 
 		public int TerrainType
 		{
-			get { return m_mapLevel.GetTerrainID(m_location); }
+			get { return m_env.GetTerrainID(m_location); }
 		}
 
 		public IList<ClientGameObject> Objects
 		{
-			get { return m_mapLevel.GetContents(m_location); }
+			get { return m_env.GetContents(m_location); }
 		}
 
 		void Notify(string name)

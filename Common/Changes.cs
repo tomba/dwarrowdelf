@@ -57,33 +57,14 @@ namespace MyGame
 		}
 	}
 
-	public class ObjectLocationChange : ObjectChange
-	{
-		public IntPoint TargetLocation { get; set; }
-		public IntPoint SourceLocation { get; set; }
-
-		public ObjectLocationChange(GameObject target, IntPoint from, IntPoint to)
-			: base(target)
-		{
-			this.SourceLocation = from;
-			this.TargetLocation = to;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("LocationChange {0} {1}->{2}", this.ObjectID, 
-				this.SourceLocation, this.TargetLocation);
-		}
-	}
-
-	public class ObjectEnvironmentChange : ObjectChange
+	public class ObjectMoveChange : ObjectChange
 	{
 		public ObjectID SourceMapID { get; set; }
 		public IntPoint SourceLocation { get; set; }
 		public ObjectID DestinationMapID { get; set; }
 		public IntPoint DestinationLocation { get; set; }
 
-		public ObjectEnvironmentChange(GameObject target, ObjectID sourceMapID, IntPoint sourceLocation,
+		public ObjectMoveChange(GameObject target, ObjectID sourceMapID, IntPoint sourceLocation,
 			ObjectID destinationMapID, IntPoint destinationLocation)
 			: base(target)
 		{
@@ -95,7 +76,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("EnvironmentChange {0} ({1}, {2}) -> ({3}, {4})",
+			return String.Format("MoveChange {0} ({1}, {2}) -> ({3}, {4})",
 				this.ObjectID, this.SourceMapID, this.SourceLocation, this.DestinationMapID, this.DestinationLocation);
 		}
 	}

@@ -52,15 +52,10 @@ namespace MyGame
 			env.AddObject(this, l);
 
 			if (envChanged)
-			{
 				OnEnvironmentChanged(oldEnv, env);
-				this.World.AddChange(new ObjectEnvironmentChange(this, oldMapID, oldLocation,
-					this.Environment.ObjectID, l));
-			}
-			else
-			{
-				this.World.AddChange(new ObjectLocationChange(this, oldLocation, l));
-			}
+
+			this.World.AddChange(new ObjectMoveChange(this, oldMapID, oldLocation,
+				this.Environment.ObjectID, l));
 
 			return true;
 		}

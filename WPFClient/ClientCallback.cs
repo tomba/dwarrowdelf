@@ -38,7 +38,11 @@ namespace MyGame
 			{
 				if (msg is TerrainData)
 				{
-					MainWindow.s_mainWindow.Map.SetTerrains(((TerrainData)msg).MapDataList);
+					TerrainData td = (TerrainData)msg;
+					var env = ClientGameObject.FindObject<Environment>(td.Environment);
+					if (env == null)
+						throw new Exception();
+					env.SetTerrains(td.MapDataList);
 				}
 				else if (msg is ClientMsgs.TurnChange)
 				{
@@ -52,24 +56,41 @@ namespace MyGame
 					if (ob == null)
 						throw new Exception();
 
-					if (ob.Environment == null)
-						ob.SetEnvironment(MainWindow.s_mainWindow.Map, om.TargetLocation);
+					if (om.TargetEnvID == ObjectID.NullObjectID)
+					{
+						ob.SetEnvironment(null, new IntPoint());
+					}
 					else
-						ob.Location = om.TargetLocation;
+					{
+						if (ob.Environment == null || ob.Environment.ObjectID != om.TargetEnvID)
+						{
+							var env = ClientGameObject.FindObject<Environment>(om.TargetEnvID);
+							if (env == null)
+								throw new Exception();
+							ob.SetEnvironment(env, om.TargetLocation);
+						}
+						else
+						{
+							ob.Location = om.TargetLocation;
+						}
+					}
 				}
 				else if (msg is MapData)
 				{
 					MapData md = (MapData)msg;
 
-					ClientGameObject ob = ClientGameObject.FindObject(md.ObjectID);
+					var env = ClientGameObject.FindObject<Environment>(md.ObjectID);
 
-					if (ob == null)
+					if (env == null)
 					{
 						MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
-						MapLevel map = new MapLevel(md.ObjectID);
-						MainWindow.s_mainWindow.Map = map;
-						map.Name = "map";
+						env = new Environment(md.ObjectID);
+						World.TheWorld.AddEnvironment(env);
+						env.Name = "map";
+						MainWindow.s_mainWindow.Map = env;
 					}
+
+					env.VisibilityMode = md.VisibilityMode;
 				}
 				else if (msg is LivingData)
 				{
@@ -87,11 +108,24 @@ namespace MyGame
 					ob.VisionRange = ld.VisionRange;
 					ob.Name = ld.Name;
 
-					// XXX
-					if (ob.Environment == null)
-						ob.SetEnvironment(MainWindow.s_mainWindow.Map, ld.Location);
+					if (ld.Environment == ObjectID.NullObjectID)
+					{
+						ob.SetEnvironment(null, new IntPoint());
+					}
 					else
-						ob.Location = ld.Location;
+					{
+						if (ob.Environment == null || ob.Environment.ObjectID != ld.Environment)
+						{
+							var env = ClientGameObject.FindObject<Environment>(ld.Environment);
+							if (env == null)
+								throw new Exception();
+							ob.SetEnvironment(env, ld.Location);
+						}
+						else
+						{
+							ob.Location = ld.Location;
+						}
+					}
 				}
 				else if (msg is ItemsData)
 				{
@@ -104,7 +138,7 @@ namespace MyGame
 					itemCollection.Clear();
 					foreach (ItemData item in items)
 					{
-						ClientGameObject ob = ClientGameObject.FindObject(item.ObjectID);
+						var ob = ClientGameObject.FindObject<ItemObject>(item.ObjectID);
 						if (ob == null)
 							ob = new ItemObject(item.ObjectID);
 						ob.Name = item.Name;
@@ -116,7 +150,7 @@ namespace MyGame
 				{
 					ItemData id = (ItemData)msg;
 
-					ClientGameObject ob = ClientGameObject.FindObject(id.ObjectID);
+					var ob = ClientGameObject.FindObject<ItemObject>(id.ObjectID);
 
 					if (ob == null)
 					{
@@ -127,14 +161,20 @@ namespace MyGame
 					ob.Name = id.Name;
 					ob.SymbolID = id.SymbolID;
 
-					MapLevel env = ClientGameObject.FindObject<MapLevel>(id.Environment);
-
-					if (env != null)
+					if (id.Environment != ObjectID.NullObjectID)
 					{
-						if (ob.Environment == null)
-							ob.SetEnvironment(env, id.Location);
-						else
-							ob.Location = id.Location;
+						Environment env = ClientGameObject.FindObject<Environment>(id.Environment);
+
+						if (env == null)
+							throw new Exception();
+
+						if (env != null)
+						{
+							if (ob.Environment == null)
+								ob.SetEnvironment(env, id.Location);
+							else
+								ob.Location = id.Location;
+						}
 					}
 				}
 				else

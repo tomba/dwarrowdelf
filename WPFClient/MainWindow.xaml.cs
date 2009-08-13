@@ -111,7 +111,7 @@ namespace MyGame
 			this.logTextBox.Clear();
 		}
 
-		internal MapLevel Map
+		internal Environment Map
 		{
 			get { return map.Map; }
 			set { map.Map = value; }

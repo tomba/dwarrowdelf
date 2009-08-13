@@ -79,6 +79,8 @@ namespace MyGame.ClientMsgs
 	{
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
+		[DataMember]
+		public VisibilityMode VisibilityMode { get; set; }
 	}
 
 	/* Tile that came visible */
@@ -91,6 +93,8 @@ namespace MyGame.ClientMsgs
 	[DataContract]
 	public class TerrainData : Message
 	{
+		[DataMember]
+		public ObjectID Environment { get; set; }
 		[DataMember]
 		public MapTileData[] MapDataList { get; set; }
 
@@ -116,14 +120,20 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 		[DataMember]
+		public ObjectID TargetEnvID { get; set; }
+		[DataMember]
 		public IntPoint TargetLocation { get; set; }
+		[DataMember]
+		public ObjectID SourceEnvID { get; set; }
 		[DataMember]
 		public IntPoint SourceLocation { get; set; }
 
-		public ObjectMove(GameObject target, IntPoint from, IntPoint to)
+		public ObjectMove(GameObject target, ObjectID fromID, IntPoint from, ObjectID toID, IntPoint to)
 		{
 			this.ObjectID = target.ObjectID;
+			this.SourceEnvID = fromID;
 			this.SourceLocation = from;
+			this.TargetEnvID = toID;
 			this.TargetLocation = to;
 		}
 

@@ -5,6 +5,13 @@ using System.Text;
 
 namespace MyGame
 {
+	public enum VisibilityMode
+	{
+		AllVisible,	// everything visible
+		SimpleFOV,	// everything inside VisionRange is visible
+		LOS,		// use LOS algorithm
+	}
+
 	public class TerrainInfo
 	{
 		public int TerrainID { get; set; }

@@ -9,13 +9,6 @@ namespace MyGame
 {
 	public delegate void MapChanged(ObjectID mapID, IntPoint l, int terrainID);
 
-	public enum VisibilityMode
-	{
-		AllVisible,	// everything visible
-		SimpleFOV,	// everything inside VisionRange is visible
-		LOS,		// use LOS algorithm
-	}
-
 	struct TileData
 	{
 		public int m_terrainID;
@@ -71,7 +64,7 @@ namespace MyGame
 		{
 			this.Version = 1;
 			base.Name = "map";
-			this.VisibilityMode = VisibilityMode.LOS;
+			this.VisibilityMode = VisibilityMode.SimpleFOV;
 
 			m_width = 55;
 			m_height = 55;

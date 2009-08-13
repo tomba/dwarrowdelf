@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(MapLevel e, IntPoint l);
+	delegate void ObjectMoved(Environment e, IntPoint l);
 	class ItemCollection : ObservableCollection<ClientGameObject> { }
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
@@ -20,6 +20,9 @@ namespace MyGame
 
 		static void AddObject(ClientGameObject ob)
 		{
+			if (ob.ObjectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
 			lock (s_objectMap)
 				s_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 			GameData.Data.Objects = null;
@@ -27,6 +30,9 @@ namespace MyGame
 
 		public static ClientGameObject FindObject(ObjectID objectID)
 		{
+			if (objectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
 			lock (s_objectMap)
 			{
 				if (s_objectMap.ContainsKey(objectID))
@@ -44,6 +50,9 @@ namespace MyGame
 
 		public static T FindObject<T>(ObjectID objectID) where T : ClientGameObject
 		{
+			if (objectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
 			lock (s_objectMap)
 			{
 				if (s_objectMap.ContainsKey(objectID))
@@ -72,7 +81,7 @@ namespace MyGame
 		
 		public ItemCollection Inventory { get; private set; }
 		IntPoint m_location;
-		MapLevel m_environment;
+		Environment m_environment;
 
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
@@ -123,7 +132,7 @@ namespace MyGame
 			}
 		}
 
-		public void SetEnvironment(MapLevel map, IntPoint l)
+		public void SetEnvironment(Environment map, IntPoint l)
 		{
 			if (this.Environment != null)
 				this.Environment.RemoveObject(this, m_location);
@@ -131,10 +140,14 @@ namespace MyGame
 			m_environment = map;
 			m_location = l;
 
-			this.Environment.AddObject(this, m_location);
+			if (m_environment != null)
+				this.Environment.AddObject(this, m_location);
+
+			if (ObjectMoved != null)
+				ObjectMoved(m_environment, m_location);
 		}
 
-		public MapLevel Environment
+		public Environment Environment
 		{
 			get { return m_environment; }
 		}
@@ -169,6 +182,9 @@ namespace MyGame
 		{
 			if (this.Environment == null)
 				return;
+
+			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
+				throw new Exception();
 
 			if (m_losLocation == m_location &&
 				m_losMapVersion == this.Environment.Version)

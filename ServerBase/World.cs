@@ -7,8 +7,6 @@ using System.Threading;
 
 namespace MyGame
 {
-	public delegate void HandleChanges(Change[] changes);
-
 	public interface IArea
 	{
 		void InitializeWorld(World world);
@@ -22,33 +20,6 @@ namespace MyGame
 		// the same single world for everybody, for now
 		public static World TheWorld;
 
-		//public static readonly Living TheMonster; // XXX
-
-		static World()
-		{
-			//World world = new World();
-			//TheWorld = world;
-#if asd
-			// Add a monster
-			var monster = new Living(world);
-			monster.SymbolID = 4;
-			monster.Name = "monsu";
-			monster.MoveTo(world.Map, new IntPoint(2, 2));
-			var monsterAI = new MonsterActor(monster);
-			monster.Actor = monsterAI;
-			TheMonster = monster;
-
-			// Add an item
-			var item = new ItemObject(world);
-			item.SymbolID = 5;
-			item.Name = "testi-itemi";
-			item.MoveTo(world.Map, new IntPoint(1, 1));
-
-			// process changes so that moves above are handled
-			world.ProcessChanges();
-#endif
-		}
-
 
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
@@ -56,9 +27,9 @@ namespace MyGame
 
 		List<Living> m_livingList;
 
-		public event HandleChanges HandleChangesEvent;
+		public event Action<Change[]> HandleChangesEvent;
 
-		public List<Change> m_changeList = new List<Change>();
+		List<Change> m_changeList = new List<Change>();
 
 		Environment m_map;
 
@@ -201,6 +172,7 @@ namespace MyGame
 			AddChange(new MapChange(mapID, l, terrainID));
 		}
 
+		// XXX
 		public Environment Map
 		{
 			get { return m_map; }
@@ -210,6 +182,9 @@ namespace MyGame
 
 		public ServerGameObject FindObject(ObjectID objectID)
 		{
+			if (objectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
 			if (m_objectMap.ContainsKey(objectID))
 			{
 				WeakReference weakref = m_objectMap[objectID];
@@ -224,6 +199,9 @@ namespace MyGame
 
 		internal void AddGameObject(ServerGameObject ob)
 		{
+			if (ob.ObjectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
 			m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 		}
 
