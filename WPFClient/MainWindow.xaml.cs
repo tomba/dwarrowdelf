@@ -25,6 +25,7 @@ namespace MyGame
 		public MainWindow()
 		{
 			s_mainWindow = this;
+			Application.Current.MainWindow = this;
 			this.WindowState = WindowState.Maximized;
 
 			InitializeComponent();
@@ -39,9 +40,6 @@ namespace MyGame
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
-
-			if (GameData.Data.MyTraceListener != null)
-				GameData.Data.MyTraceListener.TextBox = this.logTextBox;
 
 			map.Focus();
 		}
@@ -108,7 +106,7 @@ namespace MyGame
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
 		{
-			this.logTextBox.Clear();
+			App.s_debugWindow.logTextBox.Clear();
 		}
 
 		internal Environment Map

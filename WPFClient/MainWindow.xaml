@@ -5,7 +5,7 @@
     xmlns:prop="clr-namespace:WpfPropertyGrid;assembly=WpfPropertyGrid"
 	Title="Window1" Height="424" Width="800"
     DataContext="{x:Static local:GameData.Data}">
-    
+
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
@@ -13,7 +13,7 @@
                 <ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
                 <Button Click="OnClearLogClicked">Clear Log</Button>
             </ToolBar>
-            
+
             <ToolBar>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
@@ -41,17 +41,16 @@
 			</TextBlock>
         </StatusBar>
 
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-			</Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="3*"/>
-				<RowDefinition Height="1*"/>
-			</Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
             <local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0">
                 <local:MapControl.ContextMenu>
@@ -67,7 +66,7 @@
                 </local:MapControl.ContextMenu>
             </local:MapControl>
 
-                <Grid Grid.Column="1" Grid.RowSpan="2">
+            <Grid Grid.Column="1" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
@@ -121,20 +120,14 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    
+
                 </StackPanel>
             </StackPanel>
 
-            <TextBox Name="logTextBox" Grid.ColumnSpan="3" Grid.Row="1" VerticalScrollBarVisibility="Visible"
-				 IsReadOnly="True" FontFamily="Lucida Console" AcceptsTab="True" AcceptsReturn="True" HorizontalScrollBarVisibility="Auto" />
-
-			<GridSplitter HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="2" Grid.Row="0"
-					  ShowsPreview="True" Height="5" ResizeDirection="Rows"/>
-
-            <GridSplitter HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Column="0" Grid.RowSpan="1"
+            <GridSplitter HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Column="0"
 					  ShowsPreview="True" Width="5" ResizeDirection="Columns"/>
         </Grid>
-        
-	</DockPanel>
+
+    </DockPanel>
 
 </Window>

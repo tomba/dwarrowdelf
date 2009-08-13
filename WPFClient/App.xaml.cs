@@ -23,16 +23,24 @@ namespace MyGame
 		EventWaitHandle m_serverWaitHandle;
 		bool m_serverInAppDomain;
 
+		public static DebugWindow s_debugWindow;
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			MyDebug.Prefix = "[Client] ";
 
 			base.OnStartup(e);
 
+#if DEBUG
 			GameData.Data.MyTraceListener = new MyTraceListener();
 
 			if (GameData.Data.MyTraceListener != null)
 				Debug.Listeners.Add(GameData.Data.MyTraceListener);
+
+			s_debugWindow = new DebugWindow();
+			s_debugWindow.Show();
+			s_debugWindow.WindowState = WindowState.Maximized;
+#endif
 
 			MyDebug.WriteLine("Start");
 
