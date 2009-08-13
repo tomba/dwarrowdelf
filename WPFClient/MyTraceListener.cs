@@ -12,18 +12,23 @@ namespace MyGame
 	class MyTraceListener : TraceListener
 	{
 		TextBox m_textBox;
-		StringBuilder m_sb;
-
-		delegate void AppendTextDelegate(string s);
+		StringBuilder m_sb = new StringBuilder();
 
 		public MyTraceListener()
 		{
 		}
 
-		void AppendText(string s)
+		void AppendText()
 		{
-			m_textBox.AppendText(s);
-			m_textBox.ScrollToEnd();
+			lock (m_sb)
+			{
+				if (m_sb.Length > 0)
+				{
+					m_textBox.AppendText(m_sb.ToString());
+					m_textBox.ScrollToEnd();
+					m_sb.Length = 0;
+				}
+			}
 		}
 
 		public TextBox TextBox
@@ -36,36 +41,28 @@ namespace MyGame
 				if (m_textBox == null)
 					return;
 
-				if (m_sb != null && m_sb.Length > 0)
-				{
-					Write(m_sb.ToString());
-					m_sb = null;
-				}
+				AppendText();
 			}
 		}
 
 		public override void Write(string value)
 		{
-			if (m_textBox != null)
-			{
-				if (m_textBox.Dispatcher.CheckAccess())
-					AppendText(value);
-				else
-					m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-						new AppendTextDelegate(AppendText), value);
-			}
-			else
-			{
-				if (m_sb == null)
-					m_sb = new StringBuilder();
+			lock (m_sb)
 				m_sb.Append(value);
-			}
+
+			if (m_textBox != null)
+					m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+						new Action(AppendText));
 		}
 
 		public override void WriteLine(string message)
 		{
-			Write(message);
-			Write(System.Environment.NewLine);
+			lock (m_sb)
+				m_sb.AppendLine(message);
+
+			if (m_textBox != null)
+				m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+					new Action(AppendText));
 		}
 	}
 }
