@@ -14,10 +14,8 @@ namespace MyGame
 		IServerService m_server;
 		int m_transactionNumber;
 
-		public bool Connect()
+		public Connection()
 		{
-			MyDebug.WriteLine("connecting to server");
-
 			m_clientCallback = new ClientCallback();
 
 #if LOCAL
@@ -35,7 +33,7 @@ namespace MyGame
 				EndpointIdentity.CreateDnsIdentity("CompanyXYZ Server"));
 #endif
 
-			DuplexChannelFactory<IServerService> cf = 
+			DuplexChannelFactory<IServerService> cf =
 				new DuplexChannelFactory<IServerService>(m_clientCallback,
 					binding, ea);
 
@@ -45,6 +43,16 @@ namespace MyGame
 			cf.Credentials.UserName.Password = "passu";
 
 			m_server = cf.CreateChannel();
+		}
+
+		public void BeginConnect(AsyncCallback callback, object state)
+		{
+			(m_server as ICommunicationObject).BeginOpen(callback, state);
+		}
+
+		public bool Connect()
+		{
+			MyDebug.WriteLine("connecting to server");
 
 			try
 			{
@@ -59,6 +67,11 @@ namespace MyGame
 			MyDebug.WriteLine("connect done");
 
 			return (m_server as ICommunicationObject).State == CommunicationState.Opened;
+		}
+
+		public CommunicationState CommState
+		{
+			get { return (m_server as ICommunicationObject).State; }
 		}
 
 		public void Disconnect()

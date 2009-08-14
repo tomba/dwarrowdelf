@@ -45,7 +45,8 @@ namespace MyGame
 		{
 			base.OnClosing(e);
 
-			GameData.Data.MyTraceListener.TextBox = null;
+			if (GameData.Data.MyTraceListener != null)
+				GameData.Data.MyTraceListener.TextBox = null;
 		}
 	}
 }

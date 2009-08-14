@@ -18,7 +18,7 @@ namespace MyGame.ClientMsgs
 	KnownType(typeof(TerrainData)),
 	KnownType(typeof(ObjectMove)),
 	KnownType(typeof(TurnChange))]
-	public abstract class Message
+	public class Message
 	{
 	}
 

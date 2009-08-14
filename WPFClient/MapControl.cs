@@ -191,7 +191,7 @@ namespace MyGame
 		}
 
 		TileInfo m_tileInfo;
-		public TileInfo SelectedTile
+		public TileInfo SelectedTileInfo
 		{
 			get { return m_tileInfo; }
 			set
@@ -202,7 +202,7 @@ namespace MyGame
 				if (m_tileInfo != null)
 					m_tileInfo.StartObserve();
 				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTile"));
+					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTileInfo"));
 			}
 		}
 
@@ -212,11 +212,11 @@ namespace MyGame
 
 			if (sel.Width != 1 || sel.Height != 1)
 			{
-				this.SelectedTile = null;
+				this.SelectedTileInfo = null;
 				return;
 			}
 
-			this.SelectedTile = new TileInfo(this.m_env, sel.TopLeft);
+			this.SelectedTileInfo = new TileInfo(this.m_env, sel.TopLeft);
 		}
 	}
 
@@ -232,12 +232,14 @@ namespace MyGame
 
 		public void StartObserve()
 		{
-			m_env.MapChanged += MapChanged;
+			if (m_env != null)
+				m_env.MapChanged += MapChanged;
 		}
 
 		public void StopObserve()
 		{
-			m_env.MapChanged -= MapChanged;
+			if (m_env != null)
+				m_env.MapChanged -= MapChanged;
 		}
 
 		void MapChanged(IntPoint l)

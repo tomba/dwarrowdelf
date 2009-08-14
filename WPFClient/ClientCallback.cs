@@ -11,12 +11,38 @@ namespace MyGame
 	{
 		public ClientCallback()
 		{
-			MyDebug.WriteLine("ClientCallback()");
 		}
 
 		#region IClientCallback Members
 
 		public void LoginReply(ObjectID playerID)
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<ObjectID>(_LoginReply), playerID);
+		}
+
+		public void DeliverMessage(Message msg)
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<Message>(_DeliverMessage), msg);
+		}
+
+		public void DeliverMessages(Message[] messages)
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<IList<Message>>(_DeliverMessages), (IList<Message>)messages);
+		}
+
+		public void TransactionDone(int transactionID)
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<int>(_TransactionDone), transactionID);
+		}
+
+		#endregion
+
+
+		void _LoginReply(ObjectID playerID)
 		{
 			try
 			{
@@ -31,7 +57,7 @@ namespace MyGame
 			}
 		}
 
-		public void DeliverMessage(Message msg)
+		void _DeliverMessage(Message msg)
 		{
 			MyDebug.WriteLine("Received msg {0}", msg);
 			try
@@ -189,22 +215,19 @@ namespace MyGame
 			}
 		}
 
-		public void DeliverMessages(Message[] messages)
+		void _DeliverMessages(IList<Message> messages)
 		{
 			foreach (Message msg in messages)
 			{
-				DeliverMessage(msg);
+				_DeliverMessage(msg);
 			}
 		}
 
-		public void TransactionDone(int transactionID)
+		void _TransactionDone(int transactionID)
 		{
 			MyDebug.WriteLine("TransactionDone({0})", transactionID);
 			GameAction action = GameData.Data.ActionCollection.SingleOrDefault(a => a.TransactionID == transactionID);
 			GameData.Data.ActionCollection.Remove(action);
 		}
-
-
-		#endregion
 	}
 }

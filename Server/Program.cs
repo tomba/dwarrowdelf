@@ -7,6 +7,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 
 namespace MyGame
@@ -20,8 +21,9 @@ namespace MyGame
 			Console.WriteLine(t);
 			return;
 			*/
+			TraceListener listener = new ConsoleTraceListener();
 			Server server = new Server();
-			server.RunServer(false);
+			server.RunServer(false, listener, null, null);
 		}
 	}
 }

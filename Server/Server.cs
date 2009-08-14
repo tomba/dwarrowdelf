@@ -15,26 +15,17 @@ namespace MyGame
 {
 	public class Server : MarshalByRefObject, IServer
 	{
-		public void RunServer(bool isEmbedded)
+		public void RunServer(bool isEmbedded, TraceListener traceListener,
+			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
 			MyDebug.Prefix = "[Server] ";
 
-			if (isEmbedded)
-			{
-				TraceListener listener = (TraceListener)AppDomain.CurrentDomain.GetData("DebugTextWriter");
-				if (listener != null)
-					Debug.Listeners.Add(listener);
-			}
-			else
-			{
-				TraceListener listener = new ConsoleTraceListener();
-				Debug.Listeners.Add(listener);
-			}
+			if (traceListener != null)
+				Debug.Listeners.Add(traceListener);
 
 			MyDebug.WriteLine("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-
 
 			/* Load area */
 
@@ -80,8 +71,7 @@ namespace MyGame
 			*/
 #endif
 
-			EventWaitHandle serverWaitHandle =
-				new EventWaitHandle(false, EventResetMode.AutoReset, "MyGame.ServerWaitHandle");
+			//EventWaitHandle serverWaitHandle = EventWaitHandle.OpenExisting("MyGame.ServerWaitHandle");
 
 			try
 			{
@@ -92,8 +82,11 @@ namespace MyGame
 				if (isEmbedded)
 				{
 					MyDebug.WriteLine("Server signaling client for start.");
-					serverWaitHandle.Set();
-					serverWaitHandle.WaitOne();
+					if (serverStartWaitHandle != null)
+					{
+						serverStartWaitHandle.Set();
+						serverStopWaitHandle.WaitOne();
+					}
 				}
 				else
 				{

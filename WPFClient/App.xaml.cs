@@ -20,7 +20,9 @@ namespace MyGame
 	{
 		Thread m_serverThread;
 		Connection m_connection;
-		EventWaitHandle m_serverWaitHandle;
+		EventWaitHandle m_serverStartWaitHandle;
+		EventWaitHandle m_serverStopWaitHandle;
+		RegisteredWaitHandle m_registeredWaitHandle;
 		bool m_serverInAppDomain;
 
 		public static DebugWindow s_debugWindow;
@@ -46,66 +48,79 @@ namespace MyGame
 
 			m_serverInAppDomain = true;
 
-			if (m_serverInAppDomain)
-			{
-				m_serverWaitHandle =
-					new EventWaitHandle(false, EventResetMode.AutoReset, "MyGame.ServerWaitHandle");
-				StartServer();
-			}
-
 			m_connection = new Connection();
 
-			if (m_connection.Connect() == false)
+			if (m_serverInAppDomain)
 			{
-				//MessageBox.Show("Failed to connect");
-				//Shutdown();
-				
+				m_serverStartWaitHandle = new AutoResetEvent(false);
+				m_serverStopWaitHandle = new AutoResetEvent(false);
+
+				m_registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(m_serverStartWaitHandle,
+					ServerStartedCallback, null, TimeSpan.FromMinutes(1), true);
+
+				m_serverThread = new Thread(ServerThreadStart);
+				m_serverThread.Start();
 			}
 			else
 			{
-				m_connection.Server.Login("tomba");
-				GameData.Data.Connection = m_connection;
+				m_connection.BeginConnect(ConnectCallback, null);
 			}
+		}
+
+		void ServerStartedCallback(object state, bool timedOut)
+		{
+			if (timedOut)
+				throw new Exception();
+
+			m_registeredWaitHandle.Unregister(m_serverStartWaitHandle);
+			m_registeredWaitHandle = null;
+			m_serverStartWaitHandle.Close();
+			m_serverStartWaitHandle = null;
+
+			m_connection.BeginConnect(ConnectCallback, null);
+		}
+
+		void ConnectCallback(object data)
+		{
+			if (m_connection.CommState != System.ServiceModel.CommunicationState.Opened)
+				throw new Exception();
+
+			m_connection.Server.Login("tomba");
+			GameData.Data.Connection = m_connection;
 		}
 
 		protected override void OnExit(ExitEventArgs e)
 		{
 			base.OnExit(e);
 
-			if(!m_connection.HasFaulted())
-				m_connection.Server.Logout();
-			m_connection.Disconnect();
-
-			if (m_serverInAppDomain)
+			if (m_connection != null)
 			{
-				m_serverWaitHandle.Set();
+				if (!m_connection.HasFaulted())
+					m_connection.Server.Logout();
+				m_connection.Disconnect();
+			}
+
+			if (m_serverInAppDomain && m_serverStopWaitHandle != null)
+			{
+				m_serverStopWaitHandle.Set();
 				m_serverThread.Join();
 			}
 
 			MyDebug.WriteLine("Exiting");
 		}
 
-		void StartServer()
-		{
-			m_serverThread = new Thread(ServerThreadStart);
-			m_serverThread.Start();
-
-			MyDebug.WriteLine("Client waiting for server start");
-			m_serverWaitHandle.WaitOne();
-			MyDebug.WriteLine("Client got server start");
-		}
 
 		void ServerThreadStart()
 		{
 			AppDomain domain = AppDomain.CreateDomain("ServerDomain");
-			domain.SetData("DebugTextWriter", GameData.Data.MyTraceListener);
 
 			string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
 			IServer server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
-			server.RunServer(true);
+			server.RunServer(true, GameData.Data.MyTraceListener,
+				m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);
 		}
