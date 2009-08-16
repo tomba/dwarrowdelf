@@ -15,16 +15,35 @@ namespace MyGame
 {
 	public class Server : MarshalByRefObject, IServer
 	{
-		public void RunServer(bool isEmbedded, TraceListener traceListener,
+		TraceListener m_traceListener;
+
+		public Server()
+		{
+			MyDebug.Prefix = "[Server] ";
+		}
+
+		public TraceListener TraceListener 
+		{ 
+			set 
+			{
+				if (value != null)
+				{
+					Debug.Assert(m_traceListener == null);
+					m_traceListener = value;
+					Debug.Listeners.Add(value);
+				}
+				else
+				{
+					if (m_traceListener != null)
+						Debug.Listeners.Remove(m_traceListener);
+					m_traceListener = null;
+				}
+			}
+		}
+
+		public void RunServer(bool isEmbedded,
 			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
-			bool debugServer = true;
-
-			MyDebug.Prefix = "[Server] ";
-
-			if (debugServer && traceListener != null)
-				Debug.Listeners.Add(traceListener);
-
 			MyDebug.WriteLine("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);

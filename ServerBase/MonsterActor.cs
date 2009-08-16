@@ -60,6 +60,8 @@ namespace MyGame
 			get { return false; }
 		}
 
+		// Disable "event not used"
+#pragma warning disable 67
 		public event Action ActionQueuedEvent;
 
 		#endregion

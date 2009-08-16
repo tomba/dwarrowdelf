@@ -8,7 +8,6 @@ using System.Windows;
 using System.Xml.Serialization;
 using System.Windows.Resources;
 using System.Threading;
-using System.Diagnostics;
 
 
 namespace MyGame
@@ -24,28 +23,32 @@ namespace MyGame
 		EventWaitHandle m_serverStopWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
 		bool m_serverInAppDomain;
+		IServer m_server;
+
+		public IServer Server { get { return m_server; } }
 
 		public static DebugWindow s_debugWindow;
+
+		public new static App Current { get { return (App)Application.Current; } }
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			m_serverInAppDomain = true;
-			bool m_debugClient = true;
-
 
 			MyDebug.Prefix = "[Client] ";
 
 			base.OnStartup(e);
 
 #if DEBUG
-			//GameData.Data.MyTraceListener = new MyTraceListener();
+			bool debugClient = MyGame.Properties.Settings.Default.DebugClient;
+			bool debugServer = m_serverInAppDomain && MyGame.Properties.Settings.Default.DebugServer;
 
-			if (m_debugClient && GameData.Data.MyTraceListener != null)
-				Debug.Listeners.Add(GameData.Data.MyTraceListener);
-
-			s_debugWindow = new DebugWindow();
-			s_debugWindow.Show();
-			s_debugWindow.WindowState = WindowState.Maximized;
+			if (debugClient || debugServer)
+			{
+				s_debugWindow = new DebugWindow();
+				s_debugWindow.Show();
+				s_debugWindow.WindowState = WindowState.Maximized;
+			}
 #endif
 
 			MyDebug.WriteLine("Start");
@@ -120,9 +123,9 @@ namespace MyGame
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
-			IServer server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
-			server.RunServer(true, GameData.Data.MyTraceListener,
-				m_serverStartWaitHandle, m_serverStopWaitHandle);
+			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
+			m_server.TraceListener = GameData.Data.MyTraceListener;
+			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);
 		}

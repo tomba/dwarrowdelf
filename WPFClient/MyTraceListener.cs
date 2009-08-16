@@ -18,6 +18,11 @@ namespace MyGame
 		{
 		}
 
+		~MyTraceListener()
+		{
+			Console.WriteLine("gone");
+		}
+
 		void AppendText()
 		{
 			lock (m_sb)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 
 namespace MyGame
@@ -11,6 +12,7 @@ namespace MyGame
 	{
 		public static string Prefix { get; set; }
 
+		[MethodImpl(MethodImplOptions.Synchronized)]
 		[Conditional("DEBUG")]
 		public static void WriteLine(string str)
 		{
@@ -19,8 +21,9 @@ namespace MyGame
 			sb.Append(DateTime.Now.ToString("hh:mm:ss.ff"));
 			sb.Append(" ");
 
-			if (Prefix != null)
-				sb.Append(Prefix);
+			string prefix = Prefix;
+			if (prefix != null)
+				sb.Append(prefix);
 
 			sb.Append(str);
 

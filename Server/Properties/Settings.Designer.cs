@@ -26,18 +26,6 @@ namespace MyGame.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool DebugClient {
-            get {
-                return ((bool)(this["DebugClient"]));
-            }
-            set {
-                this["DebugClient"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool DebugServer {
             get {
                 return ((bool)(this["DebugServer"]));

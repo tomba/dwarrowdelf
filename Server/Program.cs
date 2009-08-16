@@ -21,9 +21,18 @@ namespace MyGame
 			Console.WriteLine(t);
 			return;
 			*/
-			TraceListener listener = new ConsoleTraceListener();
+
+			bool debugServer = Properties.Settings.Default.DebugServer;
+
 			Server server = new Server();
-			server.RunServer(false, listener, null, null);
+
+			if (debugServer)
+			{
+				TraceListener listener = new ConsoleTraceListener();
+				server.TraceListener = listener;
+			}
+
+			server.RunServer(false, null, null);
 		}
 	}
 }

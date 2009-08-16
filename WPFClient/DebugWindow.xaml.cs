@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -18,6 +19,18 @@ namespace MyGame
 		public DebugWindow()
 		{
 			InitializeComponent();
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			Debug.Assert(GameData.Data.MyTraceListener == null);
+
+			GameData.Data.MyTraceListener = new MyTraceListener();
+			GameData.Data.MyTraceListener.TextBox = this.logTextBox;
+			if (MyGame.Properties.Settings.Default.DebugClient)
+				Debug.Listeners.Add(GameData.Data.MyTraceListener);
 
 			if (System.Windows.Forms.SystemInformation.MonitorCount == 2)
 			{
@@ -33,20 +46,19 @@ namespace MyGame
 			}
 		}
 
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
-
-			if (GameData.Data.MyTraceListener != null)
-				GameData.Data.MyTraceListener.TextBox = this.logTextBox;
-		}
-
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
 			base.OnClosing(e);
 
-			if (GameData.Data.MyTraceListener != null)
-				GameData.Data.MyTraceListener.TextBox = null;
+			if (MyGame.Properties.Settings.Default.DebugClient)
+				Debug.Listeners.Remove(GameData.Data.MyTraceListener);
+			if (App.Current.Server != null)
+				App.Current.Server.TraceListener = null;
+			GameData.Data.MyTraceListener.TextBox = null;
+			var tl = GameData.Data.MyTraceListener;
+			GameData.Data.MyTraceListener = null;
+			tl.Close();
+			tl.Dispose();
 		}
 	}
 }
