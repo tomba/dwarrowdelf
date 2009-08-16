@@ -4,7 +4,8 @@ namespace MyGame
 {
 	public enum Direction : byte
 	{
-		North = 0,
+		None,
+		North,
 		South,
 		West,
 		East,

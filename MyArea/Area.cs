@@ -14,7 +14,8 @@ namespace MyArea
 			var monster = new Living(world);
 			monster.SymbolID = 4;
 			monster.Name = "monsu";
-			monster.MoveTo(world.Map, new IntPoint(2, 2));
+			if (monster.MoveTo(world.Map, new IntPoint(6, 6)) == false)
+				throw new Exception();
 			var monsterAI = new MonsterActor(monster);
 			monster.Actor = monsterAI;
 
@@ -22,7 +23,7 @@ namespace MyArea
 			var item = new ItemObject(world);
 			item.SymbolID = 5;
 			item.Name = "testi-itemi";
-			item.MoveTo(world.Map, new IntPoint(1, 1));
+			item.MoveTo(world.Map, new IntPoint(3, 0));
 		}
 	}
 }

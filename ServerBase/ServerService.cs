@@ -78,6 +78,14 @@ namespace MyGame
 			m_player.SendInventory();
 
 			m_world.HandleChangesEvent += HandleChanges;
+			
+			var pet = new Living(m_world);
+			pet.SymbolID = 4;
+			pet.Name = "lemmikki";
+			var petAI = new PetActor(pet, m_player);
+			pet.Actor = petAI;
+			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
+			
 		}
 
 		public void Logout()
@@ -173,7 +181,20 @@ namespace MyGame
 
 			if (!m_seeAll)
 				changes = changes.Where(c => livings.Any(l => l.ChangeFilter(c)));
-
+			
+			/* this sends info about objects that appeared from some other env.
+			 * I don't like this here */
+			List<ServerGameObject> newLivings = new List<ServerGameObject>();
+			foreach (Change change in changes)
+			{
+				if (!(change is ObjectMoveChange))
+					continue;
+				ObjectMoveChange mc = (ObjectMoveChange)change;
+				if (livings.Any(l => mc.SourceMapID != l.Environment.ObjectID))
+					newLivings.Add((ServerGameObject)mc.Target);
+			}
+			SendNewObjects(newLivings);
+			
 			ClientMsgs.Message[] msgArr = changes.
 				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
 				ToArray();

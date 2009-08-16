@@ -67,6 +67,9 @@ namespace MyGame
 			int x = 0;
 			int y = 0;
 
+			if (this.Environment == null)
+				throw new Exception();
+
 			switch (dir)
 			{
 				case Direction.North: y = -1; break;

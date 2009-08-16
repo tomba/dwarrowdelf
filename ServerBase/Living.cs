@@ -91,17 +91,19 @@ namespace MyGame
 			Debug.Assert(action.ObjectID == this.ObjectID);
 
 			bool done;
+			bool success;
 
 			if (action is MoveAction)
 			{
 				MoveAction ma = (MoveAction)action;
-				MoveDir(ma.Direction);
+				success = MoveDir(ma.Direction);
 				done = true;
 			}
 			else if (action is WaitAction)
 			{
 				WaitAction wa = (WaitAction)action;
 				wa.Turns--;
+				success = true;
 				if (wa.Turns == 0)
 					done = true;
 				else
@@ -109,6 +111,8 @@ namespace MyGame
 			}
 			else
 				throw new NotImplementedException();
+
+			ReportAction(done, success);
 
 			if (done)
 			{
@@ -232,21 +236,6 @@ namespace MyGame
 			return false;
 		}
 
-		void FilterAndSendChanges(Change[] changes)
-		{
-			MyDebug.WriteLine("Sending changes to plr id {0}", this.ObjectID);
-			foreach (Change c in changes)
-				MyDebug.WriteLine("\t" + c.ToString());
-
-			ClientMsgs.Message[] arr = changes.
-				Where(ChangeFilter).
-				Where(c => c != null).
-				Select<Change, ClientMsgs.Message>(ChangeToMessage).
-				ToArray();
-
-			this.ClientCallback.DeliverMessages(arr);
-		}
-
 		public void SendInventory()
 		{
 			if (this.ClientCallback != null)
@@ -287,6 +276,11 @@ namespace MyGame
 		public bool IsInteractive
 		{
 			get { return this.Actor.IsInteractive; }
+		}
+
+		public void ReportAction(bool done, bool success)
+		{
+			this.Actor.ReportAction(done, success);
 		}
 
 		public event Action ActionQueuedEvent;

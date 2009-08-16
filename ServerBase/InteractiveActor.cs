@@ -65,6 +65,10 @@ namespace MyGame
 			get { return true; }
 		}
 
+		public void ReportAction(bool done, bool success)
+		{
+		}
+
 		#endregion
 	}
 }

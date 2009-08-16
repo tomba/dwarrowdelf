@@ -11,6 +11,7 @@ namespace MyGame
 		GameAction GetCurrentAction();
 		bool HasAction { get; }
 		bool IsInteractive { get; }
+		void ReportAction(bool done, bool success);
 
 		event Action ActionQueuedEvent;
 	}
