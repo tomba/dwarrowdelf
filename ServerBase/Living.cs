@@ -33,6 +33,9 @@ namespace MyGame
 				this.Environment.RemoveObject(this, this.Location);
 
 			World.RemoveLiving(this);
+
+			World.AddChange(new ObjectMoveChange(this, this.Environment.ObjectID, this.Location,
+				ObjectID.NullObjectID, new IntPoint()));
 		}
 
 		public IClientCallback ClientCallback { get; set; }
@@ -82,6 +85,8 @@ namespace MyGame
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 				return;
+
+			MyDebug.WriteLine("PerformAction {0} : {1}", Name, action);
 
 			Debug.Assert(action.ObjectID == this.ObjectID);
 
@@ -278,6 +283,11 @@ namespace MyGame
 		public bool HasAction
 		{
 			get { return this.Actor.HasAction; }
+		}
+
+		public bool IsInteractive
+		{
+			get { return this.Actor.IsInteractive; }
 		}
 
 		public event Action ActionQueuedEvent;

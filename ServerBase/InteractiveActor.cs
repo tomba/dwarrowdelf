@@ -60,6 +60,11 @@ namespace MyGame
 			}
 		}
 
+		public bool IsInteractive
+		{
+			get { return true; }
+		}
+
 		#endregion
 	}
 }

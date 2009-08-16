@@ -29,14 +29,18 @@ namespace MyGame
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			m_serverInAppDomain = true;
+			bool m_debugClient = true;
+
+
 			MyDebug.Prefix = "[Client] ";
 
 			base.OnStartup(e);
 
 #if DEBUG
-			GameData.Data.MyTraceListener = new MyTraceListener();
+			//GameData.Data.MyTraceListener = new MyTraceListener();
 
-			if (GameData.Data.MyTraceListener != null)
+			if (m_debugClient && GameData.Data.MyTraceListener != null)
 				Debug.Listeners.Add(GameData.Data.MyTraceListener);
 
 			s_debugWindow = new DebugWindow();
@@ -45,8 +49,6 @@ namespace MyGame
 #endif
 
 			MyDebug.WriteLine("Start");
-
-			m_serverInAppDomain = true;
 
 			m_connection = new Connection();
 

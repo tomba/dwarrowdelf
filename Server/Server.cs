@@ -18,9 +18,11 @@ namespace MyGame
 		public void RunServer(bool isEmbedded, TraceListener traceListener,
 			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
+			bool debugServer = true;
+
 			MyDebug.Prefix = "[Server] ";
 
-			if (traceListener != null)
+			if (debugServer && traceListener != null)
 				Debug.Listeners.Add(traceListener);
 
 			MyDebug.WriteLine("Start");
@@ -35,8 +37,11 @@ namespace MyGame
 			World.s_areaData = areaData;
 			World.s_area = area;
 
-			World.TheWorld = new World();
-			area.InitializeWorld(World.TheWorld);
+			var world = new World();
+			area.InitializeWorld(world);
+			world.StartWorld();
+
+			World.TheWorld = world;
 
 			/* WCF */
 

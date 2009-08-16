@@ -23,9 +23,6 @@ namespace MyArea
 			item.SymbolID = 5;
 			item.Name = "testi-itemi";
 			item.MoveTo(world.Map, new IntPoint(1, 1));
-
-			// process changes so that moves above are handled
-			world.ProcessChanges();
 		}
 	}
 }

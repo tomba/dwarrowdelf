@@ -10,6 +10,7 @@ namespace MyGame
 		void RemoveAction(GameAction action);
 		GameAction GetCurrentAction();
 		bool HasAction { get; }
+		bool IsInteractive { get; }
 
 		event Action ActionQueuedEvent;
 	}

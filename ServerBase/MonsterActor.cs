@@ -55,6 +55,11 @@ namespace MyGame
 			get { return true; }
 		}
 
+		public bool IsInteractive
+		{
+			get { return false; }
+		}
+
 		public event Action ActionQueuedEvent;
 
 		#endregion

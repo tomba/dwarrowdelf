@@ -24,93 +24,82 @@ namespace MyGame
 			m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
 		}
 
-		void CleanUp()
-		{
-			m_player.Cleanup();
-
-			m_player.Actor = null;
-
-			m_world.AddChange(new ObjectMoveChange(m_player, m_player.Environment.ObjectID, m_player.Location,
-				ObjectID.NullObjectID, new IntPoint()));
-			m_world.ProcessChanges();
-
-			m_world.HandleChangesEvent -= HandleChanges;
-
-			m_client = null;
-			m_player = null;
-			m_world = null;
-		}
-
-
 		#region IServerService Members
 
 		public void Login(string name)
 		{
-			try
+			MyDebug.WriteLine("BeginLogin {0}", name);
+
+			m_world = World.TheWorld;
+
+			m_world.BeginInvoke(_Login, name);
+		}
+
+		void _Login(object data)
+		{
+			string name = (string)data;
+
+			MyDebug.WriteLine("Login {0}", name);
+
+			m_player = new Living(m_world);
+			m_player.SymbolID = 3;
+			m_player.Name = "player";
+			m_player.ClientCallback = m_client;
+			m_actor = new InteractiveActor();
+			m_player.Actor = m_actor;
+
+			ItemObject item = new ItemObject(m_world);
+			item.Name = "itemi1";
+			item.SymbolID = 4;
+			m_player.Inventory.Add(item);
+
+			item = new ItemObject(m_world);
+			item.Name = "itemi2";
+			item.SymbolID = 5;
+			m_player.Inventory.Add(item);
+
+			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
+
+			m_client.LoginReply(m_player.ObjectID);
+
+			ClientMsgs.MapData md = new ClientMsgs.MapData()
 			{
-				MyDebug.WriteLine("Login {0}", name);
+				ObjectID = m_world.Map.ObjectID,
+				VisibilityMode = m_world.Map.VisibilityMode,
+			};
+			m_client.DeliverMessage(md);
 
-				m_world = World.TheWorld;
+			if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
+				SendAllTerrainsAndObjects(m_world);
 
-				m_player = new Living(m_world);
-				m_player.SymbolID = 3;
-				m_player.Name = "player";
-				m_player.ClientCallback = m_client;
-				m_actor = new InteractiveActor();
-				m_player.Actor = m_actor;
+			if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
+				throw new Exception("Unable to move player");
 
-				ItemObject item = new ItemObject(m_world);
-				item.Name = "itemi1";
-				item.SymbolID = 4;
-				m_player.Inventory.Add(item);
+			m_player.SendInventory();
 
-				item = new ItemObject(m_world);
-				item.Name = "itemi2";
-				item.SymbolID = 5;
-				m_player.Inventory.Add(item);
-
-				MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
-
-				m_client.LoginReply(m_player.ObjectID);
-
-				ClientMsgs.MapData md = new ClientMsgs.MapData()
-				{
-					ObjectID = m_world.Map.ObjectID,
-					VisibilityMode = m_world.Map.VisibilityMode,
-				};
-				m_client.DeliverMessage(md);
-
-				if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
-					SendAllTerrainsAndObjects(m_world);
-
-				if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
-					throw new Exception("Unable to move player");
-
-				m_player.SendInventory();
-
-				//World.TheMonster.ClientCallback = m_client;
-				m_world.HandleChangesEvent += HandleChanges;
-				m_world.ProcessChanges();
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
+			m_world.HandleChangesEvent += HandleChanges;
 		}
 
 		public void Logout()
 		{
-			try
-			{
-				MyDebug.WriteLine("Logout");
-				CleanUp();
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
+			MyDebug.WriteLine("BeginLogout");
+
+			m_world.BeginInvoke(_Logout);
+		}
+
+		void _Logout(object data)
+		{
+			MyDebug.WriteLine("Logout");
+
+			m_player.Actor = null;
+
+			m_world.HandleChangesEvent -= HandleChanges;
+
+			m_player.Cleanup();
+
+			m_client = null;
+			m_player = null;
+			m_world = null;
 		}
 
 		public void DoAction(GameAction action)
@@ -120,6 +109,7 @@ namespace MyGame
 				if (action.ObjectID != m_player.ObjectID)
 					throw new Exception("Illegal ob id");
 
+				// this is safe to call out of world thread (is it? =)
 				m_actor.EnqueueAction(action);
 			}
 			catch (Exception e)
@@ -131,27 +121,26 @@ namespace MyGame
 
 		public void SetTiles(IntRect r, int type)
 		{
-			try
+			m_world.BeginInvokeInstant(_SetTiles, new object[] { r, type });
+		}
+
+		void _SetTiles(object data)
+		{
+			object[] arr = (object[])data;
+			IntRect r = (IntRect)arr[0];
+			int type = (int)arr[1];
+
+			for (int y = r.Top; y < r.Bottom; ++y)
 			{
-				for (int y = r.Top; y < r.Bottom; ++y)
+				for (int x = r.Left; x < r.Right; ++x)
 				{
-					for (int x = r.Left; x < r.Right; ++x)
-					{
-						IntPoint p = new IntPoint(x, y);
+					IntPoint p = new IntPoint(x, y);
 
-						if (!m_world.Map.Bounds.Contains(p))
-							continue;
+					if (!m_world.Map.Bounds.Contains(p))
+						continue;
 
-						m_world.Map.SetTerrain(p, type);
-					}
+					m_world.Map.SetTerrain(p, type);
 				}
-
-				m_world.ProcessChanges();
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
 			}
 		}
 

@@ -12,6 +12,35 @@ namespace MyGame
 		void InitializeWorld(World world);
 	}
 
+	enum WorldTickMethod
+	{
+		Simultaneous,
+
+		Sequential,
+
+		// All actors make choice of move. After all actions have been received,
+		// actions are processed in priority order
+		PrioritizedSimultaneous,
+
+		// Actors are given turn in priority order. Each action changes world state.
+		PrioritizedSequential,
+
+		// All actors have certain common time to make a move. After all actions have been received,
+		// actions are processed in priority order.
+		TimedPrioritizedSimultaneous,
+
+		// Actors are given turn in priority order, with timeout. Each action changes world state.
+		TimedPrioritizedSequential,
+	}
+
+	enum WorldState
+	{
+		Idle,
+		TurnStarting,
+		TurnOngoing,
+		TurnEnding,
+	}
+
 	public class World
 	{
 		public static IArea s_area;
@@ -22,10 +51,17 @@ namespace MyGame
 
 
 
+
+
+		WorldState m_state = WorldState.Idle;
+
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 		int m_objectIDcounter = 0;
 
-		List<Living> m_livingList;
+		List<Living> m_livingList = new List<Living>();
+		List<Living>.Enumerator m_livingEnumerator;
+		List<Living> m_addLivingList = new List<Living>();
+		List<Living> m_removeLivingList = new List<Living>();
 
 		public event Action<Change[]> HandleChangesEvent;
 
@@ -33,9 +69,23 @@ namespace MyGame
 
 		Environment m_map;
 
-		AutoResetEvent m_actorEvent = new AutoResetEvent(false);
+		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
 		int m_turnNumber = 0;
+
+		WorldTickMethod m_tickMethod = WorldTickMethod.Simultaneous;
+
+		class InvokeInfo
+		{
+			public Action<object> Action;
+			public object Data;
+		}
+
+		List<InvokeInfo> m_preTurnInvokeList = new List<InvokeInfo>();
+		List<InvokeInfo> m_instantInvokeList = new List<InvokeInfo>();
+
+		bool m_workActive;
+		object m_workLock = new object();
 
 		public World()
 		{
@@ -43,9 +93,21 @@ namespace MyGame
 
 			m_map = new Environment(this);
 			m_map.MapChanged += MapChangedCallback;
-			m_livingList = new List<Living>();
 
-			ThreadPool.RegisterWaitForSingleObject(m_actorEvent, Tick, null, -1, false);
+			// mark as active for the initialization
+			m_workActive = true;
+		}
+
+		public void StartWorld()
+		{
+			Debug.Assert(m_workActive);
+
+			// process any changes from world initialization
+			ProcessChanges();
+
+			m_workActive = false;
+
+			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
 		}
 
 		public Terrains Terrains { get; protected set; }
@@ -55,81 +117,413 @@ namespace MyGame
 			get { return m_turnNumber; }
 		}
 
+		// thread safe
 		internal void AddLiving(Living living)
 		{
+			lock (m_addLivingList)
+				m_addLivingList.Add(living);
+
+			SignalWorld();
+		}
+
+		void ProcessAddLivingList()
+		{
+			Debug.Assert(m_workActive);
+
 			lock (m_livingList)
 			{
-				Debug.Assert(!m_livingList.Contains(living));
-				m_livingList.Add(living);
-				living.ActionQueuedEvent += SignalActorStateChanged;
+				lock (m_addLivingList)
+				{
+					if (m_addLivingList.Count > 0)
+						MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
+					foreach (var living in m_addLivingList)
+					{
+						Debug.Assert(!m_livingList.Contains(living));
+						m_livingList.Add(living);
+						living.ActionQueuedEvent += SignalActorStateChanged;
+					}
+
+					m_addLivingList.Clear();
+				}
 			}
 		}
 
+		// thread safe
 		internal void RemoveLiving(Living living)
 		{
+			lock (m_removeLivingList)
+				m_removeLivingList.Add(living);
+
+			SignalWorld();
+		}
+
+		void ProcessRemoveLivingList()
+		{
+			Debug.Assert(m_workActive);
+
 			lock (m_livingList)
 			{
-				living.ActionQueuedEvent -= SignalActorStateChanged;
-				bool removed = m_livingList.Remove(living);
-				Debug.Assert(removed);
+				lock (m_removeLivingList)
+				{
+					if (m_removeLivingList.Count > 0)
+						MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
+					foreach (var living in m_removeLivingList)
+					{
+						living.ActionQueuedEvent -= SignalActorStateChanged;
+						bool removed = m_livingList.Remove(living);
+						Debug.Assert(removed);
+					}
+
+					m_removeLivingList.Clear();
+				}
 			}
 		}
+
 
 		public Living[] GetLivings()
 		{
+			Debug.Assert(m_workActive);
+			
 			lock (m_livingList)
 				return m_livingList.ToArray();
 		}
 
+		// thread safe
+		public void BeginInvoke(Action<object> callback)
+		{
+			BeginInvoke(callback, null);
+		}
+
+		// thread safe
+		public void BeginInvoke(Action<object> callback, object data)
+		{
+			lock (m_preTurnInvokeList)
+				m_preTurnInvokeList.Add(new InvokeInfo() { Action = callback, Data = data });
+
+			SignalWorld();
+		}
+
+		void ProcessInvokeList()
+		{
+			Debug.Assert(m_workActive);
+			
+			lock (m_preTurnInvokeList)
+			{
+				if (m_preTurnInvokeList.Count > 0)
+					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTurnInvokeList.Count);
+				foreach (InvokeInfo a in m_preTurnInvokeList)
+					a.Action(a.Data);
+				m_preTurnInvokeList.Clear();
+			}
+		}
+
+
+
+		// thread safe
+		public void BeginInvokeInstant(Action<object> callback)
+		{
+			BeginInvokeInstant(callback, null);
+		}
+
+		// thread safe
+		public void BeginInvokeInstant(Action<object> callback, object data)
+		{
+			lock (m_instantInvokeList)
+				m_instantInvokeList.Add(new InvokeInfo() { Action = callback, Data = data });
+
+			SignalWorld();
+		}
+
+		void ProcessInstantInvokeList()
+		{
+			Debug.Assert(m_workActive);
+
+			lock (m_instantInvokeList)
+			{
+				if (m_instantInvokeList.Count > 0)
+					MyDebug.WriteLine("Processing {0} instant invoke callbacks", m_instantInvokeList.Count);
+				foreach (InvokeInfo a in m_instantInvokeList)
+					a.Action(a.Data);
+				m_instantInvokeList.Clear();
+			}
+		}
+
+
+
+		// thread safe
+		void SignalWorld()
+		{
+			MyDebug.WriteLine("SignalWorld");
+			m_worldSignal.Set();
+		}
+
+		// thread safe
 		internal void SignalActorStateChanged()
 		{
 			MyDebug.WriteLine("SignalActor");
-			m_actorEvent.Set();
+			SignalWorld();
 		}
 
-		void Tick(object state, bool timedOut)
+		// Called whenever world is signalled
+		void WorldSignalledWork(object state, bool timedOut)
 		{
-			MyDebug.WriteLine("Tick");
-			lock (m_livingList)
+			lock (m_workLock)
 			{
-				while (true)
+				if (m_workActive)
+					return;
+				m_workActive = true;
+			}
+
+			MyDebug.WriteLine("WorldSignalledWork");
+
+			while (true)
+			{
+				if (m_tickMethod == WorldTickMethod.Simultaneous)
+					SimultaneousWork();
+				if (m_tickMethod == WorldTickMethod.Sequential)
+					SequentialWork();
+
+				lock (m_workLock)
 				{
-					lock(m_changeList)
-						Debug.Assert(m_changeList.Count == 0);
+					bool work = false;
 
-					int count = 0;
-					foreach (Living living in m_livingList)
+					if (m_tickMethod == WorldTickMethod.Simultaneous)
+						work = SimultaneousWorkAvailable();
+					if (m_tickMethod == WorldTickMethod.Sequential)
+						work = SequentialWorkAvailable();
+
+					if (!work)
 					{
-						if (living.HasAction)
-							count++;
-					}
-
-					if (count != m_livingList.Count)
+						m_workActive = false;
 						break;
-					
-					// All actors are ready
-
-					ProceedTurn(); // this creates a bunch of changes
-					ProcessChanges(); // this sends them to livings, who send them to clients
+					}
 				}
 			}
 
-			MyDebug.WriteLine("Tick done");
+			MyDebug.WriteLine("WorldSignalledWork done");
 		}
 
-		private void ProceedTurn()
+		bool SimultaneousWorkAvailable()
 		{
-			m_turnNumber++;
-			AddChange(new TurnChange(m_turnNumber));
+			Debug.Assert(m_workActive);
 
-			foreach (Living living in m_livingList)
+			lock (m_instantInvokeList)
+				if (m_instantInvokeList.Count > 0)
+					return true;
+
+			lock (m_preTurnInvokeList)
+				if (m_preTurnInvokeList.Count > 0)
+					return true;
+
+			lock (m_addLivingList)
+				if (m_addLivingList.Count > 0)
+					return true;
+
+			lock (m_removeLivingList)
+				if (m_removeLivingList.Count > 0)
+					return true;
+
+			lock (m_livingList)
 			{
-				living.PerformAction();
+				// if at least one is interactive and everybody has an action
+				if (m_livingList.Any(l => l.IsInteractive) &&
+					m_livingList.All(l => l.HasAction))
+					return true;
+			}
+
+			return false;
+		}
+
+		void SimultaneousWork()
+		{
+			Debug.Assert(m_workActive);
+			Debug.Assert(m_state == WorldState.Idle);
+
+			MyDebug.WriteLine("SimultaneousWork");
+
+			ProcessInstantInvokeList();
+
+			// Pre-turn events
+			ProcessInvokeList();
+			ProcessAddLivingList();
+			ProcessRemoveLivingList();
+
+			// process pre-turn changes
+			ProcessChanges();
+
+			if (m_livingList.Any(l => l.IsInteractive) &&
+				m_livingList.All(l => l.HasAction))
+			{
+				lock (m_livingList)
+				{
+					lock (m_changeList)
+					{
+						Debug.Assert(m_changeList.Count == 0);
+
+						Debug.Assert(m_livingList.All(l => l.HasAction));
+
+						StartTurn();
+
+						// this creates a bunch of changes
+						while (true)
+						{
+							Living living = m_livingEnumerator.Current;
+
+							if (living.HasAction)
+								living.PerformAction();
+							else
+								throw new Exception();
+
+							if (m_livingEnumerator.MoveNext() == false)
+								break;
+						}
+
+						ProcessChanges(); // this sends them to livings, who send them to clients
+
+						EndTurn();
+					}
+				}
+			}
+
+			MyDebug.WriteLine("SimultaneousWork Done");
+		}
+
+
+
+		bool SequentialWorkAvailable()
+		{
+			Debug.Assert(m_workActive);
+
+			lock (m_instantInvokeList)
+				if (m_instantInvokeList.Count > 0)
+					return true;
+
+			if (m_state == WorldState.Idle)
+			{
+				lock (m_preTurnInvokeList)
+					if (m_preTurnInvokeList.Count > 0)
+						return true;
+
+				lock (m_addLivingList)
+					if (m_addLivingList.Count > 0)
+						return true;
+
+				lock (m_removeLivingList)
+					if (m_removeLivingList.Count > 0)
+						return true;
+			}
+
+			lock (m_livingList)
+			{
+				if (m_state == WorldState.Idle &&
+					m_livingList.Any(l => l.IsInteractive))
+					return true;
+
+				if (m_state == WorldState.TurnOngoing &&
+					m_livingEnumerator.Current.HasAction)
+					return true;
+			}
+
+			return false;
+		}
+
+		void SequentialWork()
+		{
+			Debug.Assert(m_workActive);
+
+			MyDebug.WriteLine("SequentialWork");
+
+			ProcessInstantInvokeList();
+			ProcessChanges();
+
+			if (m_state == WorldState.Idle)
+			{
+				MyDebug.WriteLine("-- Preturn events --");
+
+				// Pre-turn events
+				ProcessInvokeList();
+				ProcessAddLivingList();
+				ProcessRemoveLivingList();
+
+				// process pre-turn changes
+				ProcessChanges();
+
+				MyDebug.WriteLine("-- Preturn events done --");
+
+				if (m_livingList.Any(l => l.IsInteractive))
+				{
+					StartTurn();
+					ProcessChanges();
+				}
+			}
+
+			if (m_state == WorldState.TurnOngoing)
+			{
+				while (true)
+				{
+					Debug.Assert(m_changeList.Count == 0);
+
+					var living = m_livingEnumerator.Current;
+
+					if (!living.HasAction)
+						break;
+
+					living.PerformAction();
+					ProcessChanges();
+
+					bool last = !m_livingEnumerator.MoveNext();
+					if (last)
+					{
+						MyDebug.WriteLine("last living handled");
+						EndTurn();
+						break;
+					}
+				}
+			}
+
+			MyDebug.WriteLine("SequentialWork Done");
+		}
+
+		void StartTurn()
+		{
+			Debug.Assert(m_workActive);
+
+			lock (m_livingList)
+			{
+				m_turnNumber++;
+				AddChange(new TurnChange(m_turnNumber));
+
+				MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
+
+				m_livingEnumerator = m_livingList.GetEnumerator();
+				if (m_livingEnumerator.MoveNext() == false)
+					throw new Exception("no livings");
+				m_state = WorldState.TurnOngoing;
 			}
 		}
 
+		void EndTurn()
+		{
+			Debug.Assert(m_workActive);
+
+			lock (m_livingList)
+			{
+				m_state = WorldState.TurnEnding;
+
+				ProcessAddLivingList();
+				ProcessRemoveLivingList();
+
+				MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
+
+				m_state = WorldState.Idle;
+			}
+		}
+
+
 		public void AddChange(Change change)
 		{
+			Debug.Assert(m_workActive);
+
 			//MyDebug.WriteLine("AddChange {0}", change);
 			lock(m_changeList)
 				m_changeList.Add(change);
@@ -137,15 +531,16 @@ namespace MyGame
 
 		public Change[] GetChanges()
 		{
-			lock(m_changeList)
+			Debug.Assert(m_workActive);
+
+			lock (m_changeList)
 				return m_changeList.ToArray();
 		}
 
-		/* if changes happen outside the normal Tick processing,
-		 * ProcessChanges has to be called manually after that
-		 */
-		public void ProcessChanges()
+		void ProcessChanges()
 		{
+			Debug.Assert(m_workActive);
+
 			Change[] arr = null;
 
 			lock (m_changeList)
@@ -168,6 +563,7 @@ namespace MyGame
 
 		void MapChangedCallback(ObjectID mapID, IntPoint l, int terrainID)
 		{
+			Debug.Assert(m_workActive);
 			// is this needed?
 			AddChange(new MapChange(mapID, l, terrainID));
 		}
@@ -185,13 +581,16 @@ namespace MyGame
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
 
-			if (m_objectMap.ContainsKey(objectID))
+			lock (m_objectMap)
 			{
-				WeakReference weakref = m_objectMap[objectID];
-				if (weakref.IsAlive)
-					return (ServerGameObject)m_objectMap[objectID].Target;
-				else
-					m_objectMap.Remove(objectID);
+				if (m_objectMap.ContainsKey(objectID))
+				{
+					WeakReference weakref = m_objectMap[objectID];
+					if (weakref.IsAlive)
+						return (ServerGameObject)m_objectMap[objectID].Target;
+					else
+						m_objectMap.Remove(objectID);
+				}
 			}
 
 			return null;
@@ -202,7 +601,8 @@ namespace MyGame
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
 
-			m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+			lock (m_objectMap)
+				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 		}
 
 		internal ObjectID GetNewObjectID()
@@ -212,13 +612,16 @@ namespace MyGame
 
 		public void ForEachObject(Action<ServerGameObject> action)
 		{
-			foreach (WeakReference weakob in m_objectMap.Values)
+			// XXX action can do something that needs objectmap...
+			lock (m_objectMap)
 			{
-				if (weakob.IsAlive && weakob.Target != null)
-					action((ServerGameObject)weakob.Target);
+				foreach (WeakReference weakob in m_objectMap.Values)
+				{
+					if (weakob.IsAlive && weakob.Target != null)
+						action((ServerGameObject)weakob.Target);
+				}
 			}
 		}
-
 	}
 }
 	

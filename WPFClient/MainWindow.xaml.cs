@@ -47,6 +47,8 @@ namespace MyGame
 		void MapControl_KeyDown(object sender, KeyEventArgs e)
 		{
 			//MyDebug.WriteLine("OnMyKeyDown");
+			if (GameData.Data.Connection == null)
+				return;
 
 			Direction dir;
 			switch (e.Key)
