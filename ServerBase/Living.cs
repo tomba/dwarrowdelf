@@ -197,9 +197,8 @@ namespace MyGame
 			{
 				ObjectMoveChange ec = (ObjectMoveChange)change;
 
-				if (ec.DestinationMapID != this.Environment.ObjectID &&
-					ec.SourceMapID != this.Environment.ObjectID)
-					return false;
+				if (ec.SourceMapID == this.Environment.ObjectID && Sees(ec.SourceLocation))
+					return true;
 
 				if (ec.DestinationMapID == this.Environment.ObjectID && Sees(ec.DestinationLocation))
 					return true;
