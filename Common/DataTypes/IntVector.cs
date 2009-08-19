@@ -151,6 +151,27 @@ namespace MyGame
 			this.Y = (int)Math.Round(y);
 		}
 
+		/// <summary>
+		/// Return 8 IntVectors pointing to main directions, each rotated 45 degrees
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<IntVector> GetAllDirs()
+		{
+			return GetAllDirs(Direction.North);
+		}
+
+		/// <summary>
+		/// Return 8 IntVectors pointing to main directions, each rotated 45 degrees
+		/// </summary>
+		/// <param name="startDir">Start direction</param>
+		/// <returns></returns>
+		public static IEnumerable<IntVector> GetAllDirs(Direction startDir)
+		{
+			var v = FromDirection(startDir);
+			for (int i = 0; i < 8; ++i, v.FastRotate(1))
+				yield return v;
+		}
+
 
 
 
