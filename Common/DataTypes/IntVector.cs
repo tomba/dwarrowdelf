@@ -150,6 +150,71 @@ namespace MyGame
 			this.X = (int)Math.Round(x);
 			this.Y = (int)Math.Round(y);
 		}
+
+
+
+
+		int FastCos(int rot)
+		{
+			rot %= 8;
+			if (rot < 0)
+				rot += 8;
+			if (rot == 0 || rot == 1 || rot == 7)
+				return 1;
+			if (rot == 2 || rot == 6)
+				return 0;
+			return -1;
+		}
+
+		int FastSin(int rot)
+		{
+			rot %= 8;
+			if (rot < 0)
+				rot += 8;
+			if (rot == 1 || rot == 2 || rot == 3)
+				return 1;
+			if (rot == 0 || rot == 4)
+				return 0;
+			return -1;
+		}
+
+		int FastMul(int a, int b)
+		{
+			if (a == 0 || b == 0)
+				return 0;
+			if (a == b)
+				return 1;
+			return -1;
+		}
+
+		/// <summary>
+		/// Rotate unit vector in 45 degree steps
+		/// </summary>
+		/// <param name="rotate">Rotation units, in 45 degree steps</param>
+		public void FastRotate(int rotate)
+		{
+			int x = FastMul(FastCos(rotate), this.X) - FastMul(FastSin(rotate), this.Y);
+			int y = FastMul(FastSin(rotate), this.X) + FastMul(FastCos(rotate), this.Y);
+
+			this.X = x > 1 ? 1 : (x < -1 ? -1 : x);
+			this.Y = y > 1 ? 1 : (y < -1 ? -1 : y);
+		}
+
+		public static Direction RotateDir(Direction dir, int rotate)
+		{
+			int x = ((byte)dir >> (byte)Direction.XShift) & (byte)Direction.Mask;
+			int y = ((byte)dir >> (byte)Direction.YShift) & (byte)Direction.Mask;
+
+			if (x == (int)Direction.DirNeg)
+				x = -1;
+
+			if (y == (int)Direction.DirNeg)
+				y = -1;
+
+			IntVector v = new IntVector(x, y);
+			v.FastRotate(rotate);
+			return v.ToDirection();
+		}
 	}
 
 }
