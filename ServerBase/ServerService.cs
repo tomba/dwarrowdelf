@@ -41,8 +41,10 @@ namespace MyGame
 
 			MyDebug.WriteLine("Login {0}", name);
 
+			var obs = m_world.AreaData.Objects;
+
 			m_player = new Living(m_world);
-			m_player.SymbolID = 3;
+			m_player.SymbolID = obs.FindObjectByName("Player").SymbolID; ;
 			m_player.Name = "player";
 			m_player.ClientCallback = m_client;
 			m_actor = new InteractiveActor();
@@ -50,12 +52,12 @@ namespace MyGame
 
 			ItemObject item = new ItemObject(m_world);
 			item.Name = "itemi1";
-			item.SymbolID = 4;
+			item.SymbolID = obs.FindObjectByName("Gem").SymbolID;;
 			m_player.Inventory.Add(item);
 
 			item = new ItemObject(m_world);
 			item.Name = "itemi2";
-			item.SymbolID = 5;
+			item.SymbolID = obs.FindObjectByName("Monster").SymbolID;
 			m_player.Inventory.Add(item);
 
 			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
@@ -80,7 +82,7 @@ namespace MyGame
 			m_world.HandleChangesEvent += HandleChanges;
 			
 			var pet = new Living(m_world);
-			pet.SymbolID = 4;
+			pet.SymbolID = obs.FindObjectByName("Monster").SymbolID;
 			pet.Name = "lemmikki";
 			var petAI = new PetActor(pet, m_player);
 			pet.Actor = petAI;
@@ -254,7 +256,7 @@ namespace MyGame
 				var env = kvp.Key;
 				var newLocations = kvp.Value;
 
-				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, Terrain = env.GetTerrainID(l) });
+				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, TerrainID = env.GetTerrainID(l) });
 				var mapDataArr = mapDataList.ToArray();
 				if (mapDataArr.Length == 0)
 					continue;
@@ -315,7 +317,7 @@ namespace MyGame
 					IntPoint l = new IntPoint(x, y);
 					ClientMsgs.MapTileData td = new ClientMsgs.MapTileData();
 					td.Location = l;
-					td.Terrain = env.GetTerrainID(l);
+					td.TerrainID = env.GetTerrainID(l);
 					mapDataArr[x + y * env.Width] = td;
 				}
 			}

@@ -8,8 +8,9 @@ namespace MyGame
 {
 	public interface IAreaData
 	{
-		Terrains GetTerrains();
-		Stream GetPlanetCute();
+		Terrains Terrains { get; }
+		Objects Objects { get; }
+		Stream DrawingStream { get; }
 	}
 
 }

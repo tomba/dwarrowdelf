@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows;
-using System.Windows.Media.Effects;
 
 namespace MyGame
 {
 	class SymbolDrawings
 	{
-		Drawing[] m_symbolDrawings = new Drawing[6];
+		Drawing[] m_objectDrawings;
+		Drawing[] m_terrainDrawings;
+
 		ResourceDictionary m_symbolResources;
 
 		class DrawingInfo
@@ -23,6 +24,9 @@ namespace MyGame
 
 		public SymbolDrawings()
 		{
+			bool useChars = true;
+
+			// this data should be in the AreaData
 			m_drawingInfos = new Dictionary<string, DrawingInfo>();
 			DrawingInfo di = new DrawingInfo();
 			di.m_location = new Point(10, 10);
@@ -50,19 +54,48 @@ namespace MyGame
 			m_drawingInfos["Gem_Blue"] = di;
 
 			IAreaData areaData = new MyAreaData.AreaData();
-			var stream = areaData.GetPlanetCute();
+			var stream = areaData.DrawingStream;
 
 			m_symbolResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(stream);
+
+			var obs = areaData.Objects;
+			m_objectDrawings = new Drawing[obs.Count];
+			for (int i = 0; i < obs.Count; i++)
+			{
+				Drawing drawing;
+				if (useChars)
+					drawing = CreateCharacterDrawing(obs[i].CharSymbol);
+				else
+					drawing = GetDrawingByName(obs[i].DrawingName);
+				m_objectDrawings[i] = drawing;
+			}
+
+			var terrains = areaData.Terrains;
+			m_terrainDrawings = new Drawing[terrains.Count];
+			for (int i = 0; i < terrains.Count; i++)
+			{
+				Drawing drawing;
+				if (useChars)
+				{
+					drawing = CreateCharacterDrawing(terrains[i].CharSymbol);
+				}
+				else
+				{
+					if (terrains[i].DrawingName == null)
+						drawing = CreateCharacterDrawing('?');
+					else
+						drawing = GetDrawingByName(terrains[i].DrawingName);
+				}
+				m_terrainDrawings[i] = drawing;
+			}
 			/*
-			m_symbolResources = (ResourceDictionary)Application.LoadComponent(
-				new Uri("Symbols/PlanetCute.xaml", UriKind.Relative));
-			*/
 			m_symbolDrawings[0] = CreateCharacterDrawing('?');
 			m_symbolDrawings[1] = GetDrawingByName("Dirt_Block");
 			m_symbolDrawings[2] = GetDrawingByName("Stone_Block");
 			m_symbolDrawings[3] = GetDrawingByName("Character_Cat_Girl");
 			m_symbolDrawings[4] = GetDrawingByName("Enemy_Bug");
 			m_symbolDrawings[5] = GetDrawingByName("Gem_Blue");
+			 */
 		}
 
 		Drawing GetDrawingByName(string name)
@@ -98,17 +131,8 @@ namespace MyGame
 			return dGroup;
 		}
 
-		public Drawing this[int i]
-		{
-			get
-			{
-				return m_symbolDrawings[i];
-			}
-		}
-
-		public int Count { get { return m_symbolDrawings.Length; } }
-
-		public Drawing[] Drawings { get { return m_symbolDrawings; } }
+		public Drawing[] TerrainDrawings { get { return m_terrainDrawings; } }
+		public Drawing[] ObjectDrawings { get { return m_objectDrawings; } }
 
 		Drawing CreateCharacterDrawing(char c)
 		{
@@ -124,6 +148,10 @@ namespace MyGame
 						16,
 						Brushes.White);
 
+				// draw black background, for two reasons. First, to cover the terrain below an object,
+				// second, to move the drawn text properly. There's probably a better way to do the second
+				// one.
+				dc.DrawRectangle(Brushes.Black, null, new Rect(new Size(formattedText.Width, formattedText.Height)));
 				dc.DrawText(formattedText, new Point(0, 0));
 			}
 

@@ -53,10 +53,7 @@ namespace MyGame
 			IAreaData areaData = new MyAreaData.AreaData();
 			IArea area = new MyArea.Area();
 
-			World.s_areaData = areaData;
-			World.s_area = area;
-
-			var world = new World();
+			var world = new World(area, areaData);
 			area.InitializeWorld(world);
 			world.StartWorld();
 

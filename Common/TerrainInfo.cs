@@ -18,6 +18,7 @@ namespace MyGame
 		public string Name { get; set; }
 		public bool IsWalkable { get; set; }
 		public char CharSymbol { get; set; }
+		public string DrawingName { get; set; }
 	}
 
 	public class Terrains
@@ -29,11 +30,12 @@ namespace MyGame
 			m_terrains = terrains;
 		}
 
+		public int Count { get { return m_terrains.Length; } }
+
 		public TerrainInfo FindTerrainByName(string name)
 		{
 			return m_terrains.First(t => t.Name == name);
 		}
-
 
 		public TerrainInfo this[int id]
 		{

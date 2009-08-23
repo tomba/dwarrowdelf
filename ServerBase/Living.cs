@@ -153,7 +153,7 @@ namespace MyGame
 
 			var terrains = this.Environment.World.Terrains;
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
-				l => terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
+				l => !this.Environment.IsWalkable(l));
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
@@ -176,7 +176,7 @@ namespace MyGame
 				{
 					Environment = mc.MapID,
 					MapDataList = new ClientMsgs.MapTileData[] {
-						new ClientMsgs.MapTileData() { Location = mc.Location, Terrain = mc.TerrainType }
+						new ClientMsgs.MapTileData() { Location = mc.Location, TerrainID = mc.TerrainType }
 					}
 				};
 			}

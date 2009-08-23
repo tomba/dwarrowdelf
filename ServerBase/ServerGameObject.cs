@@ -33,7 +33,7 @@ namespace MyGame
 			if (l.X < 0 || l.Y < 0 || l.X >= env.Width || l.Y >= env.Height)
 				return false;
 
-			if (!env.World.Terrains[env.GetTerrainID(l)].IsWalkable)
+			if (!env.IsWalkable(l))
 				return false;
 
 			if (this.Environment != null)

@@ -87,7 +87,7 @@ namespace MyGame.ClientMsgs
 	public struct MapTileData
 	{
 		public IntPoint Location { get; set; }
-		public int Terrain { get; set; }
+		public int TerrainID { get; set; }
 	}
 
 	[DataContract]

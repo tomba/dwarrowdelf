@@ -124,14 +124,6 @@ namespace MyGame
 			}
 		}
 
-		public DrawingImage Drawing
-		{
-			get
-			{
-				return new DrawingImage(GameData.Data.SymbolDrawings[this.SymbolID]);
-			}
-		}
-
 		public void SetEnvironment(Environment map, IntPoint l)
 		{
 			if (this.Environment != null)

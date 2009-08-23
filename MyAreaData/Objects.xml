@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Objects>
+  <Object>
+    <Name>Player</Name>
+    <CharSymbol>@</CharSymbol>
+    <DrawingName>Character_Cat_Girl</DrawingName>
+  </Object>
+  <Object>
+    <Name>Monster</Name>
+    <CharSymbol>b</CharSymbol>
+    <DrawingName>Enemy_Bug</DrawingName>
+  </Object>
+  <Object>
+    <Name>Gem</Name>
+    <CharSymbol>*</CharSymbol>
+    <DrawingName>Gem_Blue</DrawingName>
+  </Object>
+</Objects>

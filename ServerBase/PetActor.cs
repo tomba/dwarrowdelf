@@ -44,6 +44,9 @@ namespace MyGame
 				m_pathDest = m_player.Location;
 			}
 
+			if (m_pathDirs.Count == 0)
+				return new WaitAction(0, m_object, 1);
+
 			Direction dir = m_pathDirs.Dequeue();
 			if (m_pathDirs.Count == 0)
 				m_pathDirs = null;
@@ -59,7 +62,7 @@ namespace MyGame
 
 			var v = m_player.Location - m_object.Location;
 
-			if (v.Length < 2)
+			if (v.ManhattanLength < 3)
 				return new WaitAction(0, m_object, 1);
 
 			v.Normalize();
@@ -68,7 +71,6 @@ namespace MyGame
 				return new WaitAction(0, m_object, 1);
 
 			var env = m_object.Environment;
-			Terrains terrains = env.World.Terrains;
 
 			action = null;
 			int angle = 45;
@@ -80,7 +82,7 @@ namespace MyGame
 				angle = ((i + 1) / 2) * (i % 2 * 2 - 1);
 				v.FastRotate(angle);
 
-				if (terrains[env.GetTerrainID(m_object.Location + v)].IsWalkable)
+				if (env.IsWalkable(m_object.Location + v))
 				{
 					Direction dir = v.ToDirection();
 					if (dir == Direction.None)

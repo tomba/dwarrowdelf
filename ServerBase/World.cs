@@ -43,8 +43,8 @@ namespace MyGame
 
 	public class World
 	{
-		public static IArea s_area;
-		public static IAreaData s_areaData;
+		public IArea Area { get; private set; }
+		public IAreaData AreaData { get; private set; }
 
 		// the same single world for everybody, for now
 		public static World TheWorld;
@@ -87,9 +87,11 @@ namespace MyGame
 		bool m_workActive;
 		object m_workLock = new object();
 
-		public World()
+		public World(IArea area, IAreaData areaData)
 		{
-			this.Terrains = World.s_areaData.GetTerrains();
+			this.Area = area;
+			this.AreaData = areaData;
+			this.Terrains = this.AreaData.Terrains;
 
 			m_map = new Environment(this);
 			m_map.MapChanged += MapChangedCallback;

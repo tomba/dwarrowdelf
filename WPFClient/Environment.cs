@@ -31,7 +31,7 @@ namespace MyGame
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
 
 			IAreaData areaData = new MyAreaData.AreaData();
-			this.Terrains = areaData.GetTerrains();
+			this.Terrains = areaData.Terrains;
 		}
 
 		public int Width
@@ -82,7 +82,7 @@ namespace MyGame
 
 				IntPoint bl = l;
 				TileData[,] block = m_tileGrid.GetBlock(ref bl, true);
-				block[bl.X, bl.Y].m_terrainID = locInfo.Terrain;
+				block[bl.X, bl.Y].m_terrainID = locInfo.TerrainID;
 
 				/*
 				if (locInfo.Objects != null)
