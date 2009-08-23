@@ -20,6 +20,41 @@ namespace MyGame
 
 		GameAction GetNewAction()
 		{
+			return GetNewActionAstar();
+		}
+
+		Queue<Direction> m_pathDirs;
+		IntPoint m_pathDest;
+
+		GameAction GetNewActionAstar()
+		{
+			GameAction action;
+
+			var v = m_player.Location - m_object.Location;
+
+			if (v.ManhattanLength < 3)
+				return new WaitAction(0, m_object, 1);
+
+			if (m_pathDirs == null || (m_player.Location - m_pathDest).ManhattanLength > 3)
+			{
+				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location, m_player.Location,
+					l => m_object.Environment.Bounds.Contains(l) && m_object.Environment.IsWalkable(l));
+
+				m_pathDirs = new Queue<Direction>(dirs);
+				m_pathDest = m_player.Location;
+			}
+
+			Direction dir = m_pathDirs.Dequeue();
+			if (m_pathDirs.Count == 0)
+				m_pathDirs = null;
+
+			action = new MoveAction(0, m_object, dir);
+
+			return action;
+		}
+
+		GameAction GetNewActionNoAstar()
+		{
 			GameAction action;
 
 			var v = m_player.Location - m_object.Location;
@@ -42,8 +77,8 @@ namespace MyGame
 			{
 				v = ov;
 				// 0, 45, -45, 90, -90, 135, -135, 180
-				angle = 45 * ((i + 1) / 2) * (i % 2 * 2 - 1);
-				v.Rotate(angle);
+				angle = ((i + 1) / 2) * (i % 2 * 2 - 1);
+				v.FastRotate(angle);
 
 				if (terrains[env.GetTerrainID(m_object.Location + v)].IsWalkable)
 				{

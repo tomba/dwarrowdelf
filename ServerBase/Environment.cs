@@ -112,6 +112,11 @@ namespace MyGame
 				MapChanged(this.ObjectID, l, terrainID);
 		}
 
+		public bool IsWalkable(IntPoint l)
+		{
+			return this.World.Terrains[GetTerrainID(l)].IsWalkable;
+		}
+
 		public List<ServerGameObject> GetContents(IntPoint l)
 		{
 			return m_tileGrid.GetContentList(l);

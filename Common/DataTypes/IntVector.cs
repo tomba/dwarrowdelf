@@ -41,10 +41,12 @@ namespace MyGame
 
 		public double Length
 		{
-			get
-			{
-				return Math.Sqrt(this.X * this.X + this.Y * this.Y);
-			}
+			get { return Math.Sqrt(this.X * this.X + this.Y * this.Y); }
+		}
+
+		public int ManhattanLength
+		{
+			get { return Math.Abs(this.X) + Math.Abs(this.Y); }
 		}
 
 		public void Normalize()
@@ -71,6 +73,11 @@ namespace MyGame
 		public static IntVector operator -(IntVector left, IntVector right)
 		{
 			return new IntVector(left.X - right.X, left.Y - right.Y);
+		}
+
+		public static IntVector operator *(IntVector left, int num)
+		{
+			return new IntVector(left.X * num, left.Y * num);
 		}
 
 		public override int GetHashCode()
@@ -152,20 +159,20 @@ namespace MyGame
 		}
 
 		/// <summary>
-		/// Return 8 IntVectors pointing to main directions, each rotated 45 degrees
+		/// Return 8 IntVectors pointing to main directions on X-Y plane, each rotated 45 degrees
 		/// </summary>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllDirs()
+		public static IEnumerable<IntVector> GetAllXYDirs()
 		{
-			return GetAllDirs(Direction.North);
+			return GetAllXYDirs(Direction.North);
 		}
 
 		/// <summary>
-		/// Return 8 IntVectors pointing to main directions, each rotated 45 degrees
+		/// Return 8 IntVectors pointing to main directions on X-Y plane, each rotated 45 degrees
 		/// </summary>
 		/// <param name="startDir">Start direction</param>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllDirs(Direction startDir)
+		public static IEnumerable<IntVector> GetAllXYDirs(Direction startDir)
 		{
 			var v = FromDirection(startDir);
 			for (int i = 0; i < 8; ++i, v.FastRotate(1))
