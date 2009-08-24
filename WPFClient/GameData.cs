@@ -16,7 +16,7 @@ namespace MyGame
 		public GameData()
 		{
 			this.ActionCollection = new ActionCollection();
-			this.SymbolDrawings = new SymbolDrawings();
+			this.SymbolDrawings = new SymbolDrawings(World.TheWorld.AreaData);
 		}
 
 		public Connection Connection { get; set; }

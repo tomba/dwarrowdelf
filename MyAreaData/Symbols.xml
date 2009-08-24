@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Symbols>
+  <Symbol>
+    <Name>Unknown</Name>
+    <CharSymbol>?</CharSymbol>
+  </Symbol>
+  <Symbol>
+    <Name>Dungeon Floor</Name>
+    <CharSymbol>.</CharSymbol>
+    <Drawing x="0" y="0" w="100" h="140">Dirt_Block</Drawing>
+  </Symbol>
+  <Symbol>
+    <Name>Dungeon Wall</Name>
+    <CharSymbol>#</CharSymbol>
+    <Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
+  </Symbol>
+  <Symbol>
+    <Name>Player</Name>
+    <CharSymbol>@</CharSymbol>
+    <Drawing x="10" y="10" w="80" h="80">Character_Cat_Girl</Drawing>
+  </Symbol>
+  <Symbol>
+    <Name>Monster</Name>
+    <CharSymbol>b</CharSymbol>
+    <Drawing x="0" y="20" w="100" h="60">Enemy_Bug</Drawing>
+  </Symbol>
+  <Symbol>
+    <Name>Gem</Name>
+    <CharSymbol>*</CharSymbol>
+    <Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
+  </Symbol>
+</Symbols>

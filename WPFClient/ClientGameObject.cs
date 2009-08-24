@@ -124,6 +124,14 @@ namespace MyGame
 			}
 		}
 
+		public DrawingImage Drawing
+		{
+			get
+			{
+				return new DrawingImage(GameData.Data.SymbolDrawings.Drawings[m_symbolID]);
+			}
+		}
+
 		public void SetEnvironment(Environment map, IntPoint l)
 		{
 			if (this.Environment != null)
@@ -189,9 +197,11 @@ namespace MyGame
 				m_losMapVersion = 0;
 			}
 
+			var terrains = this.Environment.World.AreaData.Terrains;
+
 			s_losAlgo.Calculate(m_location, m_visionRange,
 				m_visionMap, this.Environment.Bounds,
-				l => this.Environment.Terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
+				l => terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = m_location;

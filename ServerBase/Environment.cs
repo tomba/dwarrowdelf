@@ -72,22 +72,22 @@ namespace MyGame
 			m_tileGrid = new TileGrid(m_width, m_height);
 
 			Random r = new Random(123);
-			TerrainInfo floor = world.Terrains.FindTerrainByName("Dungeon Floor");
-			TerrainInfo wall = world.Terrains.FindTerrainByName("Dungeon Wall");
+			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
+			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)
 				{
 					if (r.Next() % 8 == 0)
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), wall.TerrainID);
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), wall.ID);
 					else
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), floor.TerrainID);
+						m_tileGrid.SetTerrainType(new IntPoint(x, y), floor.ID);
 				}
 			}
 
-			m_tileGrid.SetTerrainType(new IntPoint(0, 0), floor.TerrainID);
-			m_tileGrid.SetTerrainType(new IntPoint(1, 1), floor.TerrainID);
-			m_tileGrid.SetTerrainType(new IntPoint(2, 2), floor.TerrainID);
+			m_tileGrid.SetTerrainType(new IntPoint(0, 0), floor.ID);
+			m_tileGrid.SetTerrainType(new IntPoint(1, 1), floor.ID);
+			m_tileGrid.SetTerrainType(new IntPoint(2, 2), floor.ID);
 
 			m_containedObjects = new List<ServerGameObject>();
 		}
@@ -114,7 +114,7 @@ namespace MyGame
 
 		public bool IsWalkable(IntPoint l)
 		{
-			return this.World.Terrains[GetTerrainID(l)].IsWalkable;
+			return this.World.AreaData.Terrains[GetTerrainID(l)].IsWalkable;
 		}
 
 		public List<ServerGameObject> GetContents(IntPoint l)

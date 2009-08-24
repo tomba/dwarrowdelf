@@ -3,13 +3,11 @@
   <TerrainInfo>
     <Name>Dungeon Floor</Name>
     <IsWalkable>true</IsWalkable>
-    <CharSymbol>.</CharSymbol>
-    <DrawingName>Dirt_Block</DrawingName>
+    <Symbol>Dungeon Floor</Symbol>
   </TerrainInfo>
   <TerrainInfo>
     <Name>Dungeon Wall</Name>
     <IsWalkable>false</IsWalkable>
-    <CharSymbol>#</CharSymbol>
-    <DrawingName>Stone_Block</DrawingName>
+    <Symbol>Dungeon Wall</Symbol>
   </TerrainInfo>
 </TerrainInfos>

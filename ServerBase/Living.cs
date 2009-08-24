@@ -151,7 +151,7 @@ namespace MyGame
 				m_losMapVersion = 0;
 			}
 
-			var terrains = this.Environment.World.Terrains;
+			var terrains = this.Environment.World.AreaData.Terrains;
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
 				l => !this.Environment.IsWalkable(l));
 

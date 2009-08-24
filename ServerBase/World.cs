@@ -91,7 +91,6 @@ namespace MyGame
 		{
 			this.Area = area;
 			this.AreaData = areaData;
-			this.Terrains = this.AreaData.Terrains;
 
 			m_map = new Environment(this);
 			m_map.MapChanged += MapChangedCallback;
@@ -111,8 +110,6 @@ namespace MyGame
 
 			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
 		}
-
-		public Terrains Terrains { get; protected set; }
 
 		public int TurnNumber
 		{

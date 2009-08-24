@@ -10,12 +10,14 @@ namespace MyAreaData
 {
 	public class AreaData : IAreaData
 	{
-		Terrains m_terrains;
 		Stream m_drawingStream;
-		Objects m_objects;
+		List<SymbolInfo> m_symbolList;
+		List<TerrainInfo> m_terrains;
+		List<ObjectInfo> m_objects;
 
 		public AreaData()
 		{
+			ParseSymbols();
 			ParseTerrains();
 			ParseObjects();
 
@@ -23,19 +25,52 @@ namespace MyAreaData
 			m_drawingStream = ass.GetManifestResourceStream("MyAreaData.PlanetCute.xaml");
 		}
 
-		public Terrains Terrains
-		{
-			get { return m_terrains; }
-		}
+		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
+		public IList<TerrainInfo> Terrains { get { return m_terrains.AsReadOnly(); } }
+		public IList<ObjectInfo> Objects { get { return m_objects.AsReadOnly(); } }
+		public Stream DrawingStream { get { return m_drawingStream; } }
 
-		public Objects Objects
+		void ParseSymbols()
 		{
-			get { return m_objects; }
-		}
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+			Stream resStream = ass.GetManifestResourceStream("MyAreaData.Symbols.xml");
 
-		public Stream DrawingStream
-		{
-			get { return m_drawingStream; }
+			XDocument root = XDocument.Load(new StreamReader(resStream));
+			XElement rootElem = root.Element("Symbols");
+
+			m_symbolList = new List<SymbolInfo>(rootElem.Elements().Count());
+			int id = 0;
+			foreach (XElement elem in rootElem.Elements())
+			{
+				var symbol = new SymbolInfo();
+				symbol.ID = id++;
+				symbol.Name = (string)elem.Element("Name");
+				symbol.CharSymbol = ((string)elem.Element("CharSymbol"))[0];
+				if (elem.Element("Drawing") != null)
+				{
+					var drawingElem = elem.Element("Drawing");
+					XAttribute attr;
+
+					attr = drawingElem.Attribute("x");
+					if (attr != null)
+						symbol.X = (double)attr;
+
+					attr = drawingElem.Attribute("y");
+					if (attr != null)
+						symbol.Y = (double)attr;
+
+					attr = drawingElem.Attribute("w");
+					if (attr != null)
+						symbol.Width = (double)attr;
+
+					attr = drawingElem.Attribute("h");
+					if (attr != null)
+						symbol.Height = (double)attr;
+
+					symbol.DrawingName = (string)drawingElem;
+				}
+				m_symbolList.Add(symbol);
+			}
 		}
 
 		void ParseTerrains()
@@ -46,21 +81,20 @@ namespace MyAreaData
 			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement terrainInfosElem = root.Element("TerrainInfos");
 
-			TerrainInfo[] terrainInfos = new TerrainInfo[terrainInfosElem.Elements().Count() + 1];
-			terrainInfos[0] = new TerrainInfo() { TerrainID = 0, CharSymbol = '?' };
+			m_terrains = new List<TerrainInfo>(terrainInfosElem.Elements().Count() + 1);
+			m_terrains.Add(new TerrainInfo() { ID = 0, SymbolID = 0 });
 			int terrainID = 1;
 			foreach (XElement terrainElem in terrainInfosElem.Elements())
 			{
 				TerrainInfo terrain = new TerrainInfo();
-				terrain.TerrainID = terrainID++;
+				terrain.ID = terrainID++;
 				terrain.Name = (string)terrainElem.Element("Name");
 				terrain.IsWalkable = (bool)terrainElem.Element("IsWalkable");
-				terrain.CharSymbol = ((string)terrainElem.Element("CharSymbol"))[0];
-				terrain.DrawingName = (string)terrainElem.Element("DrawingName");
-				terrainInfos[terrain.TerrainID] = terrain;
+				string symbolName = (string)terrainElem.Element("Symbol");
+				SymbolInfo symbol = m_symbolList.Single(s => s.Name == symbolName);
+				terrain.SymbolID = symbol.ID;
+				m_terrains.Add(terrain);
 			}
-
-			m_terrains = new Terrains(terrainInfos);
 		}
 
 		void ParseObjects()
@@ -71,19 +105,18 @@ namespace MyAreaData
 			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement objectInfosElem = root.Element("Objects");
 
-			ObjectInfo[] objectInfos = new ObjectInfo[objectInfosElem.Elements().Count()];
+			m_objects = new List<ObjectInfo>(objectInfosElem.Elements().Count());
 			int idx = 0;
 			foreach (XElement objectElem in objectInfosElem.Elements())
 			{
 				ObjectInfo ob = new ObjectInfo();
-				ob.SymbolID = idx;
+				ob.SymbolID = idx++;
 				ob.Name = (string)objectElem.Element("Name");
-				ob.CharSymbol = ((string)objectElem.Element("CharSymbol"))[0];
-				ob.DrawingName = (string)objectElem.Element("DrawingName");
-				objectInfos[idx++] = ob;
+				string symbolName = (string)objectElem.Element("Symbol");
+				SymbolInfo symbol = m_symbolList.Single(s => s.Name == symbolName);
+				ob.SymbolID = symbol.ID;
+				m_objects.Add(ob);
 			}
-
-			m_objects = new Objects(objectInfos);
 		}
 	}
 }

@@ -7,10 +7,9 @@ namespace MyGame
 {
 	public class ObjectInfo
 	{
-		public int SymbolID { get; set; }
+		public int ID { get; set; }
 		public string Name { get; set; }
-		public char CharSymbol { get; set; }
-		public string DrawingName { get; set; }
+		public int SymbolID { get; set; }
 	}
 
 	public class Objects

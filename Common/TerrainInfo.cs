@@ -14,11 +14,10 @@ namespace MyGame
 
 	public class TerrainInfo
 	{
-		public int TerrainID { get; set; }
+		public int ID { get; set; }
 		public string Name { get; set; }
+		public int SymbolID { get; set; }
 		public bool IsWalkable { get; set; }
-		public char CharSymbol { get; set; }
-		public string DrawingName { get; set; }
 	}
 
 	public class Terrains

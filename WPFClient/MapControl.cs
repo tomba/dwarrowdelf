@@ -20,18 +20,15 @@ namespace MyGame
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		SymbolBitmapCache m_objectBitmapCache;
-		SymbolBitmapCache m_terrainBitmapCache;
+		SymbolBitmapCache m_bitmapCache;
 
 		ClientGameObject m_followObject;
 		Environment m_env;
 
 		public MapControl()
 		{
-			m_objectBitmapCache = new SymbolBitmapCache();
-			m_objectBitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.ObjectDrawings;
-			m_terrainBitmapCache = new SymbolBitmapCache();
-			m_terrainBitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.TerrainDrawings;
+			m_bitmapCache = new SymbolBitmapCache();
+			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.Drawings;
 
 			this.Focusable = true;
 
@@ -44,8 +41,7 @@ namespace MyGame
 
 		void OnTileSizeChanged(object ob, EventArgs e)
 		{
-			m_objectBitmapCache.TileSize = this.TileSize;
-			m_terrainBitmapCache.TileSize = this.TileSize;
+			m_bitmapCache.TileSize = this.TileSize;
 		}
 
 		protected override UIElement CreateTile()
@@ -117,7 +113,8 @@ namespace MyGame
 		BitmapSource GetBitmap(IntPoint ml, bool lit)
 		{
 			int terrainID = this.Map.GetTerrainID(ml);
-			return m_terrainBitmapCache.GetBitmap(terrainID, !lit);
+			int id = this.Map.World.AreaData.Terrains[terrainID].SymbolID;
+			return m_bitmapCache.GetBitmap(id, !lit);
 		}
 
 		BitmapSource GetObjectBitmap(IntPoint ml, bool lit)
@@ -126,7 +123,7 @@ namespace MyGame
 			if (obs != null && obs.Count > 0)
 			{
 				int id = obs[0].SymbolID;
-				return m_objectBitmapCache.GetBitmap(id, !lit);
+				return m_bitmapCache.GetBitmap(id, !lit);
 			}
 			else
 				return null;

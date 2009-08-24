@@ -16,8 +16,11 @@ namespace MyGame
 
 		List<Environment> m_envList = new List<Environment>();
 
+		public IAreaData AreaData { get; private set; }
+
 		public World()
 		{
+			this.AreaData = new MyAreaData.AreaData(); // XXX
 		}
 
 		public void AddEnvironment(Environment env)

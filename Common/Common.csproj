@@ -54,6 +54,7 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="SymbolInfo.cs" />
     <Compile Include="ObjectInfo.cs" />
     <Compile Include="DataTypes\Grid3D.cs" />
     <Compile Include="DataTypes\IntCube.cs" />

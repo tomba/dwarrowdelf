@@ -119,14 +119,16 @@ namespace MyGame
 
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
 		{
+			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
 			IntRect r = map.SelectionRect;
-			GameData.Data.Connection.Server.SetTiles(r, 1);
+			GameData.Data.Connection.Server.SetTiles(r, terrain.ID);
 		}
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
+			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 			IntRect r = map.SelectionRect;
-			GameData.Data.Connection.Server.SetTiles(r, 2);
+			GameData.Data.Connection.Server.SetTiles(r, terrain.ID);
 		}
 	}
 }

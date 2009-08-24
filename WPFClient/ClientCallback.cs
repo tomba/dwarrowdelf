@@ -107,8 +107,9 @@ namespace MyGame
 				if (env == null)
 				{
 					MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
-					env = new Environment(md.ObjectID);
-					World.TheWorld.AddEnvironment(env);
+					var world = World.TheWorld;
+					env = new Environment(world, md.ObjectID);
+					world.AddEnvironment(env);
 					env.Name = "map";
 					MainWindow.s_mainWindow.Map = env;
 				}

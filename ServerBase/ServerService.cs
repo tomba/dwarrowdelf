@@ -44,7 +44,7 @@ namespace MyGame
 			var obs = m_world.AreaData.Objects;
 
 			m_player = new Living(m_world);
-			m_player.SymbolID = obs.FindObjectByName("Player").SymbolID; ;
+			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
 			m_player.Name = "player";
 			m_player.ClientCallback = m_client;
 			m_actor = new InteractiveActor();
@@ -52,12 +52,12 @@ namespace MyGame
 
 			ItemObject item = new ItemObject(m_world);
 			item.Name = "itemi1";
-			item.SymbolID = obs.FindObjectByName("Gem").SymbolID;;
+			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;;
 			m_player.Inventory.Add(item);
 
 			item = new ItemObject(m_world);
 			item.Name = "itemi2";
-			item.SymbolID = obs.FindObjectByName("Monster").SymbolID;
+			item.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
 			m_player.Inventory.Add(item);
 
 			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
@@ -82,7 +82,7 @@ namespace MyGame
 			m_world.HandleChangesEvent += HandleChanges;
 			
 			var pet = new Living(m_world);
-			pet.SymbolID = obs.FindObjectByName("Monster").SymbolID;
+			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
 			pet.Name = "lemmikki";
 			var petAI = new PetActor(pet, m_player);
 			pet.Actor = petAI;

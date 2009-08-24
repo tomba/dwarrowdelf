@@ -21,17 +21,15 @@ namespace MyGame
 
 		public uint Version { get; private set; }
 
-		public Terrains Terrains { get; protected set; } // move to "world" or similar
-
 		public VisibilityMode VisibilityMode { get; set; }
 
-		public Environment(ObjectID objectID) : base(objectID)
+		public World World { get; private set; }
+
+		public Environment(World world, ObjectID objectID) : base(objectID)
 		{
 			this.Version = 1;
+			this.World = world;
 			m_tileGrid = new GrowingLocationGrid<TileData>(10);
-
-			IAreaData areaData = new MyAreaData.AreaData();
-			this.Terrains = areaData.Terrains;
 		}
 
 		public int Width
