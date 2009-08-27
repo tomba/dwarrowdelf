@@ -145,10 +145,6 @@
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WpfPropertyGrid\WpfPropertyGrid.csproj">
-      <Project>{0A87FB18-F3CB-4F4B-B117-65F580EFF5F3}</Project>
-      <Name>WpfPropertyGrid</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

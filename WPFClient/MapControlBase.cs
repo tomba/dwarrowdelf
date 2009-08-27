@@ -31,7 +31,7 @@ namespace MyGame
 		IntPoint m_selectionStart;
 		IntPoint m_selectionEnd;
 
-		public MapControlBase()
+		protected MapControlBase()
 		{
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
 			m_updateTimer.Tick += UpdateTimerTick;

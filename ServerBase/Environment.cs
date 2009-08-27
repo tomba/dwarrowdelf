@@ -117,7 +117,7 @@ namespace MyGame
 			return this.World.AreaData.Terrains[GetTerrainID(l)].IsWalkable;
 		}
 
-		public List<ServerGameObject> GetContents(IntPoint l)
+		public IList<ServerGameObject> GetContents(IntPoint l)
 		{
 			return m_tileGrid.GetContentList(l);
 		}
