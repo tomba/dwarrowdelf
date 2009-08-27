@@ -72,7 +72,7 @@ namespace MyGame
 
 				case Key.Add:
 					e.Handled = true;
-					map.TileSize += 10;
+					map.TileSize += 8;
 					return;
 
 				case Key.Subtract:

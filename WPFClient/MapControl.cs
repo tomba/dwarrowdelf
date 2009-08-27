@@ -183,12 +183,11 @@ namespace MyGame
 
 			int xd = this.Columns / 2;
 			int yd = this.Rows / 2;
-			int x = l.X - xd;
-			int y = l.Y - yd;
-			//Location newPos = new Location(((x+xd/2) / xd) * xd, ((y+yd/2) / yd) * yd);
-			IntPoint newPos = new IntPoint(x, y);
+			int x = l.X;
+			int y = l.Y;
+			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
-			this.Pos = newPos;
+			this.CenterPos = newPos;
 		}
 
 		TileInfo m_tileInfo;

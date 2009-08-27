@@ -21,7 +21,7 @@ namespace MyGame
 		int m_columns;
 		int m_rows;
 
-		IntPoint m_pos;
+		IntPoint m_centerPos;
 
 		DispatcherTimer m_updateTimer;
 
@@ -67,15 +67,17 @@ namespace MyGame
 			set { SetValue(TileSizeProperty, value); }
 		}
 
-		public IntPoint Pos
+		public IntPoint CenterPos
 		{
-			get { return m_pos; }
+			get { return m_centerPos; }
 			set
 			{
-				m_pos = value;
-				/* InvalidateTiles() is not enough, because we need to reposition the select rect */
-				//InvalidateTiles();
-				InvalidateArrange();
+				if (m_centerPos != value)
+				{
+					m_centerPos = value;
+					InvalidateArrange();
+					InvalidateTiles();
+				}
 			}
 		}
 
@@ -132,8 +134,8 @@ namespace MyGame
 
 			// selection rect
 
-			var p1 = m_selectionStart - m_pos;
-			var p2 = m_selectionEnd - m_pos;
+			var p1 = m_selectionStart - this.TopLeftPos;
+			var p2 = m_selectionEnd - this.TopLeftPos;
 
 			Rect r = new Rect(new Point(p1.X * this.TileSize, p1.Y * this.TileSize),
 				new Point(p2.X * this.TileSize, p2.Y * this.TileSize));
@@ -178,7 +180,7 @@ namespace MyGame
 
 		public IntPoint MapLocationFromPoint(Point p)
 		{
-			return LocationFromPoint(p) + (IntVector)m_pos;
+			return LocationFromPoint(p) + (IntVector)this.TopLeftPos;
 		}
 
 		public IntRect SelectionRect
@@ -236,7 +238,7 @@ namespace MyGame
 
 			Point pos = e.GetPosition(this);
 
-			var newStart = LocationFromPoint(pos) + (IntVector)m_pos;
+			var newStart = LocationFromPoint(pos) + (IntVector)this.TopLeftPos;
 			var newEnd = newStart;
 
 			if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
@@ -272,27 +274,27 @@ namespace MyGame
 
 			if (this.ActualWidth - pos.X < limit)
 			{
-				++m_pos.X;
+				++m_centerPos.X;
 				InvalidateTiles();
 			}
 			else if (pos.X < limit)
 			{
-				--m_pos.X;
+				--m_centerPos.X;
 				InvalidateTiles();
 			}
 
 			if (this.ActualHeight - pos.Y < limit)
 			{
-				++m_pos.Y;
+				++m_centerPos.Y;
 				InvalidateTiles();
 			}
 			else if (pos.Y < limit)
 			{
-				--m_pos.Y;
+				--m_centerPos.Y;
 				InvalidateTiles();
 			}
 
-			var newEnd = LocationFromPoint(pos) + (IntVector)m_pos;
+			var newEnd = LocationFromPoint(pos) + (IntVector)this.TopLeftPos;
 
 			if (newEnd != m_selectionEnd)
 			{
@@ -327,6 +329,11 @@ namespace MyGame
 			UpdateTiles();
 		}
 
+		IntPoint TopLeftPos
+		{
+			get { return m_centerPos - new IntVector(m_columns / 2, m_rows / 2); }
+		}
+
 		void UpdateTiles()
 		{
 			int i = 0;
@@ -334,7 +341,7 @@ namespace MyGame
 			{
 				int x = i % m_columns;
 				int y = i / m_columns;
-				IntPoint loc = m_pos + new IntVector(x, y);
+				IntPoint loc = this.TopLeftPos + new IntVector(x, y);
 
 				UpdateTile(tile, loc);
 

@@ -41,7 +41,7 @@ namespace MyGame
 
 		Drawing GetDrawingByName(string name, Rect rect)
 		{
-			Drawing d = ((DrawingImage)m_symbolResources[name]).Drawing;
+			Drawing d = ((DrawingBrush)m_symbolResources[name]).Drawing;
 			d = NormalizeDrawing(d, rect.Location, rect.Size);
 			return d;
 		}
