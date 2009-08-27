@@ -26,6 +26,12 @@ namespace MyArea
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
 			item.Name = "testi-itemi";
 			item.MoveTo(world.Map, new IntPoint(3, 0));
+
+			item = new ItemObject(world);
+			item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;
+			item.Name = "puu";
+			item.MoveTo(world.Map, new IntPoint(0, 3));
+
 		}
 	}
 }

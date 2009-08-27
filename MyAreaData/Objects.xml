@@ -12,4 +12,8 @@
     <Name>Gem</Name>
     <Symbol>Gem</Symbol>
   </Object>
+  <Object>
+    <Name>Tree</Name>
+    <Symbol>Tree</Symbol>
+  </Object>
 </Objects>

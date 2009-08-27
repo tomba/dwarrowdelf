@@ -29,4 +29,9 @@
     <CharSymbol>*</CharSymbol>
     <Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
   </Symbol>
+  <Symbol>
+    <Name>Tree</Name>
+    <CharSymbol>£</CharSymbol>
+    <Drawing x="0" y="0" w="100" h="100">Tree_Tall</Drawing>
+  </Symbol>
 </Symbols>
