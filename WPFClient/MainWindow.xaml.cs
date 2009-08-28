@@ -108,7 +108,7 @@ namespace MyGame
 
 		private void OnClearLogClicked(object sender, RoutedEventArgs e)
 		{
-			App.s_debugWindow.logTextBox.Clear();
+			App.DebugWindow.logTextBox.Clear();
 		}
 
 		internal Environment Map

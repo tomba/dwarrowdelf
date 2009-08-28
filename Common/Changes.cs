@@ -9,6 +9,9 @@ namespace MyGame
 {
 	public abstract class Change
 	{
+		protected Change()
+		{
+		}
 	}
 
 	public class TurnChange : Change

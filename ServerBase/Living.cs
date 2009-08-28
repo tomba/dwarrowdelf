@@ -11,7 +11,7 @@ namespace MyGame
 		// XXX note: not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
-		public List<ItemObject> Inventory { get; private set; }
+		public IList<ItemObject> Inventory { get; private set; }
 
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
@@ -151,7 +151,6 @@ namespace MyGame
 				m_losMapVersion = 0;
 			}
 
-			var terrains = this.Environment.World.AreaData.Terrains;
 			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
 				l => !this.Environment.IsWalkable(l));
 

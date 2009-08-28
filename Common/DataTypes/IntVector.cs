@@ -23,9 +23,9 @@ namespace MyGame
 
 		#region IEquatable<IntVector> Members
 
-		public bool Equals(IntVector l)
+		public bool Equals(IntVector other)
 		{
-			return ((l.X == this.X) && (l.Y == this.Y));
+			return ((other.X == this.X) && (other.Y == this.Y));
 		}
 
 		#endregion
@@ -75,19 +75,20 @@ namespace MyGame
 			return new IntVector(left.X - right.X, left.Y - right.Y);
 		}
 
-		public static IntVector operator *(IntVector left, int num)
+		public static IntVector operator *(IntVector left, int number)
 		{
-			return new IntVector(left.X * num, left.Y * num);
+			return new IntVector(left.X * number, left.Y * number);
 		}
 
 		public override int GetHashCode()
 		{
-			return (this.X ^ this.Y);
+			return (this.X << 16) | this.Y;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("IntVector({0}, {1})", X, Y);
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"IntVector({0}, {1})", X, Y);
 		}
 
 		public static explicit operator IntVector(IntPoint point)
@@ -162,9 +163,9 @@ namespace MyGame
 		/// Return 8 IntVectors pointing to main directions on X-Y plane, each rotated 45 degrees
 		/// </summary>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllXYDirs()
+		public static IEnumerable<IntVector> GetAllXYDirections()
 		{
-			return GetAllXYDirs(Direction.North);
+			return GetAllXYDirections(Direction.North);
 		}
 
 		/// <summary>
@@ -172,7 +173,7 @@ namespace MyGame
 		/// </summary>
 		/// <param name="startDir">Start direction</param>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllXYDirs(Direction startDir)
+		public static IEnumerable<IntVector> GetAllXYDirections(Direction startDir)
 		{
 			var v = FromDirection(startDir);
 			for (int i = 0; i < 8; ++i, v.FastRotate(1))
@@ -182,7 +183,7 @@ namespace MyGame
 
 
 
-		int FastCos(int rot)
+		static int FastCos(int rot)
 		{
 			rot %= 8;
 			if (rot < 0)
@@ -194,7 +195,7 @@ namespace MyGame
 			return -1;
 		}
 
-		int FastSin(int rot)
+		static int FastSin(int rot)
 		{
 			rot %= 8;
 			if (rot < 0)
@@ -206,7 +207,7 @@ namespace MyGame
 			return -1;
 		}
 
-		int FastMul(int a, int b)
+		static int FastMul(int a, int b)
 		{
 			if (a == 0 || b == 0)
 				return 0;

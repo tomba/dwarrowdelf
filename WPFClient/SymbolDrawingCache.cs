@@ -83,7 +83,7 @@ namespace MyGame
 			}
 		}
 
-		string TintReplacer(System.Text.RegularExpressions.Match m, Color tint)
+		static string TintReplacer(System.Text.RegularExpressions.Match m, Color tint)
 		{
 			uint val = uint.Parse(m.Groups[4].Value, System.Globalization.NumberStyles.HexNumber);
 			byte a = (byte)((val >> 24) & 0xff);
@@ -105,7 +105,7 @@ namespace MyGame
 		// h = [0,360], s = [0,1], v = [0,1]
 		//		if s == 0, then h = -1 (undefined)
 
-		void RGBtoHSV(float r, float g, float b, out float h, out float s, out float v)
+		static void RGBtoHSV(float r, float g, float b, out float h, out float s, out float v)
 		{
 			float min, max, delta;
 
@@ -138,7 +138,7 @@ namespace MyGame
 
 		}
 
-		void HSVtoRGB(out float r, out float g, out float b, float h, float s, float v)
+		static void HSVtoRGB(out float r, out float g, out float b, float h, float s, float v)
 		{
 			int i;
 			float f, p, q, t;
@@ -193,7 +193,7 @@ namespace MyGame
 
 		}
 
-		Color TintColor(Color c, Color tint)
+		static Color TintColor(Color c, Color tint)
 		{
 			byte r = c.R;
 			byte g = c.G;
@@ -219,7 +219,7 @@ namespace MyGame
 			return Color.FromArgb(c.A, r, g, b);
 		}
 
-		Drawing NormalizeDrawing(Drawing drawing, Point location, Size size)
+		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size)
 		{
 			DrawingGroup dGroup = new DrawingGroup();
 			using (DrawingContext dc = dGroup.Open())
@@ -237,7 +237,7 @@ namespace MyGame
 			return dGroup;
 		}
 
-		Drawing CreateCharacterDrawing(char c, Color color)
+		static Drawing CreateCharacterDrawing(char c, Color color)
 		{
 			if (color == Colors.Black)
 				color = Colors.White;

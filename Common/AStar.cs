@@ -10,7 +10,7 @@ namespace MyGame
 	public static class AStar
 	{
 		// tries to save some memory by using ushorts
-		public class Node
+		class Node
 		{
 			public IntPoint Loc { get; private set; }
 			public Node Parent;
@@ -25,7 +25,7 @@ namespace MyGame
 				Parent = parent;
 			}
 		}
-
+		/*
 		public static IEnumerable<Node> FindPathNodes(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
 			var nodes = FindPathInternal(src, dst, locValid);
@@ -33,7 +33,7 @@ namespace MyGame
 				return null;
 			return nodes.Values;
 		}
-
+		*/
 		public static IEnumerable<Direction> FindPathReverse(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
 			var nodes = FindPathInternal(src, dst, locValid);
@@ -122,7 +122,7 @@ namespace MyGame
 		static void CheckNeighbors(Node node, IntPoint dst, OpenList openList,
 			IDictionary<IntPoint, Node> nodeMap, Func<IntPoint, bool> locValid)
 		{
-			foreach (IntVector v in IntVector.GetAllXYDirs())
+			foreach (IntVector v in IntVector.GetAllXYDirections())
 			{
 				IntPoint newLoc = node.Loc + v;
 				if (!locValid(newLoc))

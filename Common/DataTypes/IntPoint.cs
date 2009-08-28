@@ -23,9 +23,9 @@ namespace MyGame
 
 		#region IEquatable<IntPoint> Members
 
-		public bool Equals(IntPoint l)
+		public bool Equals(IntPoint other)
 		{
-			return ((l.X == this.X) && (l.Y == this.Y));
+			return ((other.X == this.X) && (other.Y == this.Y));
 		}
 
 		#endregion
@@ -73,12 +73,12 @@ namespace MyGame
 
 		public override int GetHashCode()
 		{
-			return (this.X ^ this.Y);
+			return (this.X << 16) | this.Y;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("IntPoint({0}, {1})", X, Y);
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture, "IntPoint({0}, {1})", X, Y);
 		}
 
 		public static explicit operator IntPoint(IntVector vector)

@@ -1,0 +1,3441 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FxCopProject Version="1.36" Name="My FxCop Project">
+ <ProjectOptions>
+  <SharedProject>True</SharedProject>
+  <Stylesheet Apply="False">c:\program files\microsoft fxcop 1.36\Xml\FxCopReport.xsl</Stylesheet>
+  <SaveMessages>
+   <Project Status="Active, Excluded" NewOnly="False" />
+   <Report Status="Active" NewOnly="False" />
+  </SaveMessages>
+  <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
+  <SourceLookup>True</SourceLookup>
+  <AnalysisExceptionsThreshold>10</AnalysisExceptionsThreshold>
+  <RuleExceptionsThreshold>1</RuleExceptionsThreshold>
+  <Spelling Locale="en-US" />
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
+  <SearchGlobalAssemblyCache>False</SearchGlobalAssemblyCache>
+  <DeadlockDetectionTimeout>120</DeadlockDetectionTimeout>
+  <IgnoreGeneratedCode>False</IgnoreGeneratedCode>
+  <TargetFrameworkVersion>3.5</TargetFrameworkVersion>
+ </ProjectOptions>
+ <Targets>
+  <Target Name="$(ProjectDir)/WPFClient/bin/Debug/Common.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/WPFClient/bin/Debug/ServerBase.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/WPFClient/bin/Debug/WPFClient.exe" Analyze="True" AnalyzeAllChildren="True" />
+ </Targets>
+ <Rules>
+  <RuleFiles>
+   <RuleFile Name="$(FxCopDir)\Rules\DesignRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\InteroperabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MobilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PortabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+  </RuleFiles>
+  <Groups />
+  <Settings />
+ </Rules>
+ <FxCopReport Version="1.36">
+  <Namespaces>
+   <Namespace Name="MyGame.ClientMsgs">
+    <Messages>
+     <Message Id="Msgs" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+      <Issue Name="Namespace">
+       <Item>Msgs</Item>
+       <Item>MyGame.ClientMsgs</Item>
+      </Issue>
+     </Message>
+    </Messages>
+   </Namespace>
+  </Namespaces>
+  <Targets>
+   <Target Name="$(ProjectDir)/WPFClient/bin/Debug/Common.dll">
+    <Modules>
+     <Module Name="common.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Status="Excluded" Created="2009-08-28 19:41:09Z">
+        <Issue Name="NoStrongName">
+         <Item>'Common.dll'</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Status="Excluded" Created="2009-08-28 19:41:09Z">
+        <Issue>
+         <Item>'Common.dll'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="MyGame">
+        <Types>
+         <Type Name="AStar">
+          <Members>
+           <Member Name="#FindPath(MyGame.IntPoint,MyGame.IntPoint,System.Func`2&lt;MyGame.IntPoint,System.Boolean&gt;)">
+            <Messages>
+             <Message Id="src" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameter">
+               <Item>'AStar.FindPath(IntPoint, IntPoint, Func&lt;IntPoint, bool&gt;)'</Item>
+               <Item>src</Item>
+               <Item>'src'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#FindPathInternal(MyGame.IntPoint,MyGame.IntPoint,System.Func`2&lt;MyGame.IntPoint,System.Boolean&gt;)">
+            <Messages>
+             <Message Id="System.Int64.ToString" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'long.ToString()'</Item>
+               <Item>'AStar.FindPathInternal(IntPoint, IntPoint, Func&lt;IntPoint, bool&gt;)'</Item>
+               <Item>'long.ToString(IFormatProvider)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#FindPathReverse(MyGame.IntPoint,MyGame.IntPoint,System.Func`2&lt;MyGame.IntPoint,System.Boolean&gt;)">
+            <Messages>
+             <Message Id="src" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameter">
+               <Item>'AStar.FindPathReverse(IntPoint, IntPoint, Func&lt;IntPoint, bool&gt;)'</Item>
+               <Item>src</Item>
+               <Item>'src'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="AStar+OpenList">
+          <Members>
+           <Member Name="#NodeUpdated(MyGame.AStar+Node)">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-08-28 19:41:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>'AStar.OpenList.NodeUpdated(AStar.Node)'</Item>
+              </Issue>
+             </Message>
+             <Message Id="node" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-08-28 19:41:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>'node'</Item>
+               <Item>'AStar.OpenList.NodeUpdated(AStar.Node)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Test()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 19:41:09Z">
+              <Issue Name="TooGeneric">
+               <Item>'AStar.OpenList.Test()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'AStar.OpenList.Test()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Direction">
+          <Messages>
+           <Message TypeName="EnumStorageShouldBeInt32" Category="Microsoft.Design" CheckId="CA1028" Created="2009-08-28 19:41:09Z">
+            <Issue Name="NotInt32">
+             <Item>'Direction'</Item>
+             <Item>'byte'</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="MarkEnumsWithFlags" Category="Microsoft.Design" CheckId="CA1027" Created="2009-08-28 19:41:09Z">
+            <Issue>
+             <Item>'Direction'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#DirNeg">
+            <Messages>
+             <Message Id="Neg" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Neg</Item>
+               <Item>'Direction.DirNeg'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#NorthEast">
+            <Messages>
+             <Message Id="NorthEast" TypeName="CompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1702" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberShouldBeDiscreteTerm">
+               <Item>NorthEast</Item>
+               <Item>'Direction.NorthEast'</Item>
+               <Item>Northeast</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#NorthWest">
+            <Messages>
+             <Message Id="NorthWest" TypeName="CompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1702" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberShouldBeDiscreteTerm">
+               <Item>NorthWest</Item>
+               <Item>'Direction.NorthWest'</Item>
+               <Item>Northwest</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SouthEast">
+            <Messages>
+             <Message Id="SouthEast" TypeName="CompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1702" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberShouldBeDiscreteTerm">
+               <Item>SouthEast</Item>
+               <Item>'Direction.SouthEast'</Item>
+               <Item>Southeast</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SouthWest">
+            <Messages>
+             <Message Id="SouthWest" TypeName="CompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1702" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberShouldBeDiscreteTerm">
+               <Item>SouthWest</Item>
+               <Item>'Direction.SouthWest'</Item>
+               <Item>Southwest</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GameAction">
+          <Messages>
+           <Message TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012" Created="2009-08-28 19:41:09Z">
+            <Issue>
+             <Item>'GameAction'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#.ctor(System.Int32,MyGame.GameObject)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'GameAction.GameAction(int, GameObject)'</Item>
+               <Item>ID</Item>
+               <Item>'transID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'GameAction.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#TransactionID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'GameAction.TransactionID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GameColor">
+          <Members>
+           <Member Name="#.ctor(System.Byte,System.Byte,System.Byte)">
+            <Messages>
+             <Message Id="b" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GameColor.GameColor(byte, byte, byte)'</Item>
+               <Item>'b'</Item>
+              </Issue>
+             </Message>
+             <Message Id="g" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GameColor.GameColor(byte, byte, byte)'</Item>
+               <Item>'g'</Item>
+              </Issue>
+             </Message>
+             <Message Id="r" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GameColor.GameColor(byte, byte, byte)'</Item>
+               <Item>'r'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#B">
+            <Messages>
+             <Message Id="B" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'GameColor.B'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#G">
+            <Messages>
+             <Message Id="G" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'GameColor.G'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#R">
+            <Messages>
+             <Message Id="R" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'GameColor.R'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GameObject">
+          <Members>
+           <Member Name="#.ctor(MyGame.ObjectID)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'GameObject.GameObject(ObjectID)'</Item>
+               <Item>ID</Item>
+               <Item>'objectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'GameObject.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Grid3D`1">
+          <Members>
+           <Member Name="#GetBlock(System.Int32&amp;,System.Int32&amp;,System.Int32,System.Boolean)">
+            <Messages>
+             <Message Id="Return" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Return">
+               <Item>'Grid3D&lt;T&gt;.GetBlock(ref int, ref int, int, bool)'</Item>
+               <Item>'T[,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[MyGame.IntPoint3D]">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Grid3D&lt;T&gt;.this[IntPoint3D]'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="UseIntegralOrStringArgumentForIndexers" Category="Microsoft.Design" CheckId="CA1043" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'Grid3D&lt;T&gt;.this[IntPoint3D]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+            <Accessors>
+             <Accessor Name="#get_Item(MyGame.IntPoint3D)">
+              <Messages>
+               <Message TypeName="DoNotRaiseExceptionsInUnexpectedLocations" Category="Microsoft.Design" CheckId="CA1065" Created="2009-08-28 19:41:09Z" FixCategory="Breaking">
+                <Issue Name="PropertyGetter" Level="Warning">
+                 <Item>'Grid3D&lt;T&gt;.this.get(IntPoint3D)'</Item>
+                 <Item>'IndexOutOfRangeException'</Item>
+                </Issue>
+               </Message>
+               <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 19:41:09Z">
+                <Issue Name="Reserved">
+                 <Item>'Grid3D&lt;T&gt;.this.get(IntPoint3D)'</Item>
+                 <Item>'IndexOutOfRangeException'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#Item[System.Int32,System.Int32,System.Int32]">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Grid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Grid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Grid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'z'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IndexersShouldNotBeMultidimensional" Category="Microsoft.Design" CheckId="CA1023" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'Grid3D&lt;T&gt;.this[int, int, int]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Resize(System.Int32)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 19:41:09Z">
+              <Issue Name="TooGeneric">
+               <Item>'Grid3D&lt;T&gt;.Resize(int)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GrowingLocationGrid`1">
+          <Members>
+           <Member Name="#GetBlock(MyGame.IntPoint&amp;,System.Boolean)">
+            <Messages>
+             <Message Id="0#" TypeName="DoNotPassTypesByReference" Category="Microsoft.Design" CheckId="CA1045" Created="2009-08-28 19:41:09Z">
+              <Issue Certainty="50">
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref IntPoint, bool)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message Id="Return" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Return">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref IntPoint, bool)'</Item>
+               <Item>'T[,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetBlock(System.Int32&amp;,System.Int32&amp;,System.Boolean)">
+            <Messages>
+             <Message Id="0#" TypeName="DoNotPassTypesByReference" Category="Microsoft.Design" CheckId="CA1045" Created="2009-08-28 19:41:09Z">
+              <Issue Certainty="50">
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="1#" TypeName="DoNotPassTypesByReference" Category="Microsoft.Design" CheckId="CA1045" Created="2009-08-28 19:41:09Z">
+              <Issue Certainty="50">
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref int, ref int, bool)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref int, ref int, bool)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="Body" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Body">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref int, ref int, bool)'</Item>
+               <Item>'T[,]'</Item>
+              </Issue>
+              <Issue Name="Body">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref int, ref int, bool)'</Item>
+               <Item>'T[,][,]'</Item>
+              </Issue>
+             </Message>
+             <Message Id="Return" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Return">
+               <Item>'GrowingLocationGrid&lt;T&gt;.GetBlock(ref int, ref int, bool)'</Item>
+               <Item>'T[,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[MyGame.IntPoint]">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.this[IntPoint]'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="UseIntegralOrStringArgumentForIndexers" Category="Microsoft.Design" CheckId="CA1043" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'GrowingLocationGrid&lt;T&gt;.this[IntPoint]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[System.Int32,System.Int32]">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.this[int, int]'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'GrowingLocationGrid&lt;T&gt;.this[int, int]'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IndexersShouldNotBeMultidimensional" Category="Microsoft.Design" CheckId="CA1023" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'GrowingLocationGrid&lt;T&gt;.this[int, int]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+            <Accessors>
+             <Accessor Name="#get_Item(System.Int32,System.Int32)">
+              <Messages>
+               <Message TypeName="DoNotRaiseExceptionsInUnexpectedLocations" Category="Microsoft.Design" CheckId="CA1065" Created="2009-08-28 19:41:09Z" FixCategory="Breaking">
+                <Issue Name="PropertyGetter" Level="Warning">
+                 <Item>'GrowingLocationGrid&lt;T&gt;.this.get(int, int)'</Item>
+                 <Item>'IndexOutOfRangeException'</Item>
+                </Issue>
+               </Message>
+               <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 19:41:09Z">
+                <Issue Name="Reserved">
+                 <Item>'GrowingLocationGrid&lt;T&gt;.this.get(int, int)'</Item>
+                 <Item>'IndexOutOfRangeException'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#m_grid">
+            <Messages>
+             <Message Id="Member" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'GrowingLocationGrid&lt;T&gt;.m_grid'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Resize(System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="Body" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Body">
+               <Item>'GrowingLocationGrid&lt;T&gt;.Resize(int, int)'</Item>
+               <Item>'T[,][,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IClientCallback">
+          <Members>
+           <Member Name="#LoginReply(MyGame.ObjectID)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'IClientCallback.LoginReply(ObjectID)'</Item>
+               <Item>ID</Item>
+               <Item>'playerID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="Login" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Login</Item>
+               <Item>'IClientCallback.LoginReply(ObjectID)'</Item>
+               <Item>LogOn</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#TransactionDone(System.Int32)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'IClientCallback.TransactionDone(int)'</Item>
+               <Item>ID</Item>
+               <Item>'transactionID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IIdentifiable">
+          <Members>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'IIdentifiable.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ILOSAlgo">
+          <Messages>
+           <Message Id="LOS" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Type">
+             <Item>LOS</Item>
+             <Item>'ILOSAlgo'</Item>
+             <Item>Los</Item>
+            </Issue>
+           </Message>
+           <Message Id="Algo" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Type">
+             <Item>Algo</Item>
+             <Item>'ILOSAlgo'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="IntCube">
+          <Messages>
+           <Message TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Equals">
+             <Item>'IntCube'</Item>
+            </Issue>
+            <Issue Name="op_Equality">
+             <Item>'IntCube'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#.ctor(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntCube.IntCube(int, int, int, int, int, int)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntCube.IntCube(int, int, int, int, int, int)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntCube.IntCube(int, int, int, int, int, int)'</Item>
+               <Item>'z'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Contains(MyGame.IntPoint3D)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntCube.Contains(IntPoint3D)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object[])" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, params object[])'</Item>
+               <Item>'IntCube.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntCube.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntCube.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Z">
+            <Messages>
+             <Message Id="Z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntCube.Z'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IntPoint">
+          <Members>
+           <Member Name="#.ctor(System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntPoint.IntPoint(int, int)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntPoint.IntPoint(int, int)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Equals(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'IntPoint.Equals(IntPoint)'</Item>
+               <Item>'l'</Item>
+               <Item>'other'</Item>
+               <Item>'IEquatable&lt;IntPoint&gt;.Equals(IntPoint)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Addition(MyGame.IntPoint,MyGame.IntVector)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Add</Item>
+               <Item>'IntPoint.operator +(IntPoint, IntVector)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Subtraction(MyGame.IntPoint,MyGame.IntPoint)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Subtract</Item>
+               <Item>'IntPoint.operator -(IntPoint, IntPoint)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Subtraction(MyGame.IntPoint,MyGame.IntVector)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Subtract</Item>
+               <Item>'IntPoint.operator -(IntPoint, IntVector)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'IntPoint.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntPoint.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntPoint.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IntPoint3D">
+          <Members>
+           <Member Name="#.ctor(System.Int32,System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntPoint3D.IntPoint3D(int, int, int)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntPoint3D.IntPoint3D(int, int, int)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntPoint3D.IntPoint3D(int, int, int)'</Item>
+               <Item>'z'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Addition(MyGame.IntPoint3D,MyGame.IntPoint3D)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Add</Item>
+               <Item>'IntPoint3D.operator +(IntPoint3D, IntPoint3D)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Subtraction(MyGame.IntPoint3D,MyGame.IntPoint3D)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Subtract</Item>
+               <Item>'IntPoint3D.operator -(IntPoint3D, IntPoint3D)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntPoint3D.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntPoint3D.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Z">
+            <Messages>
+             <Message Id="Z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntPoint3D.Z'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IntRect">
+          <Messages>
+           <Message TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Equals">
+             <Item>'IntRect'</Item>
+            </Issue>
+            <Issue Name="op_Equality">
+             <Item>'IntRect'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#.ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntRect.IntRect(int, int, int, int)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntRect.IntRect(int, int, int, int)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Contains(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntRect.Contains(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntRect.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntRect.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IntSize">
+          <Members>
+           <Member Name="#Equals(MyGame.IntSize)">
+            <Messages>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'IntSize.Equals(IntSize)'</Item>
+               <Item>'s'</Item>
+               <Item>'other'</Item>
+               <Item>'IEquatable&lt;IntSize&gt;.Equals(IntSize)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'IntSize.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IntVector">
+          <Members>
+           <Member Name="#.ctor(System.Int32,System.Int32)">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntVector.IntVector(int, int)'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IntVector.IntVector(int, int)'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetAllXYDirs()">
+            <Messages>
+             <Message Id="Dirs" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Dirs</Item>
+               <Item>'IntVector.GetAllXYDirs()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetAllXYDirs(MyGame.Direction)">
+            <Messages>
+             <Message Id="Dirs" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Dirs</Item>
+               <Item>'IntVector.GetAllXYDirs(Direction)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Addition(MyGame.IntVector,MyGame.IntVector)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Add</Item>
+               <Item>'IntVector.operator +(IntVector, IntVector)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Multiply(MyGame.IntVector,System.Int32)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Multiply</Item>
+               <Item>'IntVector.operator *(IntVector, int)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#op_Subtraction(MyGame.IntVector,MyGame.IntVector)">
+            <Messages>
+             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>Subtract</Item>
+               <Item>'IntVector.operator -(IntVector, IntVector)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntVector.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'IntVector.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IServer">
+          <Members>
+           <Member Name="#TraceListener">
+            <Messages>
+             <Message TypeName="PropertiesShouldNotBeWriteOnly" Category="Microsoft.Design" CheckId="CA1044" Created="2009-08-28 19:41:09Z">
+              <Issue Name="AddGetter">
+               <Item>'IServer.TraceListener'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IServerService">
+          <Members>
+           <Member Name="#Login(System.String)">
+            <Messages>
+             <Message Id="Login" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Login</Item>
+               <Item>'IServerService.Login(string)'</Item>
+               <Item>LogOn</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Logout()">
+            <Messages>
+             <Message Id="Logout" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Logout</Item>
+               <Item>'IServerService.Logout()'</Item>
+               <Item>LogOff</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SetTiles(MyGame.IntRect,System.Int32)">
+            <Messages>
+             <Message Id="r" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'IServerService.SetTiles(IntRect, int)'</Item>
+               <Item>'r'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="LocationGrid`1">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 19:41:09Z">
+            <Issue>
+             <Item>'LocationGrid&lt;T&gt;'</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#GetLocations()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2009-08-28 19:41:09Z">
+              <Issue Certainty="50">
+               <Item>'LocationGrid&lt;T&gt;.GetLocations()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[MyGame.IntPoint]">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid&lt;T&gt;.this[IntPoint]'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="UseIntegralOrStringArgumentForIndexers" Category="Microsoft.Design" CheckId="CA1043" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid&lt;T&gt;.this[IntPoint]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[System.Int32,System.Int32]">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid&lt;T&gt;.this[int, int]'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid&lt;T&gt;.this[int, int]'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IndexersShouldNotBeMultidimensional" Category="Microsoft.Design" CheckId="CA1023" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid&lt;T&gt;.this[int, int]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#m_grid">
+            <Messages>
+             <Message Id="Member" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid&lt;T&gt;.m_grid'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="LocationGrid3D`1">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 19:41:09Z">
+            <Issue>
+             <Item>'LocationGrid3D&lt;T&gt;'</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#GetLocations()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2009-08-28 19:41:09Z">
+              <Issue Certainty="50">
+               <Item>'LocationGrid3D&lt;T&gt;.GetLocations()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[MyGame.IntPoint3D]">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid3D&lt;T&gt;.this[IntPoint3D]'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="UseIntegralOrStringArgumentForIndexers" Category="Microsoft.Design" CheckId="CA1043" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid3D&lt;T&gt;.this[IntPoint3D]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Item[System.Int32,System.Int32,System.Int32]">
+            <Messages>
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'x'</Item>
+              </Issue>
+             </Message>
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'y'</Item>
+              </Issue>
+             </Message>
+             <Message Id="z" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'LocationGrid3D&lt;T&gt;.this[int, int, int]'</Item>
+               <Item>'z'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IndexersShouldNotBeMultidimensional" Category="Microsoft.Design" CheckId="CA1023" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid3D&lt;T&gt;.this[int, int, int]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#m_grid">
+            <Messages>
+             <Message Id="Member" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'LocationGrid3D&lt;T&gt;.m_grid'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="LOSNull">
+          <Messages>
+           <Message Id="LOS" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Type">
+             <Item>LOS</Item>
+             <Item>'LOSNull'</Item>
+             <Item>Los</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="LOSShadowCast1">
+          <Messages>
+           <Message Id="LOS" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Type">
+             <Item>LOS</Item>
+             <Item>'LOSShadowCast1'</Item>
+             <Item>Los</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#DoPerfTest()">
+            <Messages>
+             <Message Id="Body" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Body">
+               <Item>'LOSShadowCast1.DoPerfTest()'</Item>
+               <Item>'bool[,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#PerfTest()">
+            <Messages>
+             <Message Id="Perf" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Perf</Item>
+               <Item>'LOSShadowCast1.PerfTest()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Test()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 19:41:09Z">
+              <Issue Name="TooGeneric">
+               <Item>'LOSShadowCast1.Test()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+             <Message Id="Body" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Body">
+               <Item>'LOSShadowCast1.Test()'</Item>
+               <Item>'int[,]'</Item>
+              </Issue>
+              <Issue Name="Body">
+               <Item>'LOSShadowCast1.Test()'</Item>
+               <Item>'int[,]'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapChange">
+          <Members>
+           <Member Name="#.ctor(MyGame.ObjectID,MyGame.IntPoint,System.Int32)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'MapChange.MapChange(ObjectID, IntPoint, int)'</Item>
+               <Item>ID</Item>
+               <Item>'mapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'MapChange.MapChange(ObjectID, IntPoint, int)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#MapID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'MapChange.MapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object, object)'</Item>
+               <Item>'MapChange.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MoveAction">
+          <Members>
+           <Member Name="#.ctor(System.Int32,MyGame.GameObject,MyGame.Direction)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'MoveAction.MoveAction(int, GameObject, Direction)'</Item>
+               <Item>ID</Item>
+               <Item>'transID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'MoveAction.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MyDebug">
+          <Members>
+           <Member Name="#WriteLine(System.String)">
+            <Messages>
+             <Message Id="str" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameter">
+               <Item>'MyDebug.WriteLine(string)'</Item>
+               <Item>str</Item>
+               <Item>'str'</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.DateTime.ToString(System.String)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'DateTime.ToString(string)'</Item>
+               <Item>'MyDebug.WriteLine(string)'</Item>
+               <Item>'DateTime.ToString(string, IFormatProvider)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#WriteLine(System.String,System.Object[])">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object[])" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, params object[])'</Item>
+               <Item>'MyDebug.WriteLine(string, params object[])'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ObjectChange">
+          <Messages>
+           <Message TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012" Created="2009-08-28 19:41:09Z">
+            <Issue>
+             <Item>'ObjectChange'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectChange.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ObjectID">
+          <Messages>
+           <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+            <Issue Name="TypeAbbreviation">
+             <Item>ID</Item>
+             <Item>'ObjectID'</Item>
+             <Item>Id</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#Equals(MyGame.ObjectID)">
+            <Messages>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'ObjectID.Equals(ObjectID)'</Item>
+               <Item>'objectID'</Item>
+               <Item>'other'</Item>
+               <Item>'IEquatable&lt;ObjectID&gt;.Equals(ObjectID)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#NullObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectID.NullObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'ObjectID.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ObjectInfo">
+          <Members>
+           <Member Name="#ID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectInfo.ID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SymbolID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectInfo.SymbolID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ObjectMoveChange">
+          <Members>
+           <Member Name="#.ctor(MyGame.GameObject,MyGame.ObjectID,MyGame.IntPoint,MyGame.ObjectID,MyGame.IntPoint)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'ObjectMoveChange.ObjectMoveChange(GameObject, ObjectID, IntPoint, ObjectID, IntPoint)'</Item>
+               <Item>ID</Item>
+               <Item>'destinationMapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'ObjectMoveChange.ObjectMoveChange(GameObject, ObjectID, IntPoint, ObjectID, IntPoint)'</Item>
+               <Item>ID</Item>
+               <Item>'sourceMapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#DestinationMapID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectMoveChange.DestinationMapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SourceMapID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectMoveChange.SourceMapID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object[])" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, params object[])'</Item>
+               <Item>'ObjectMoveChange.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SymbolInfo">
+          <Members>
+           <Member Name="#ID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'SymbolInfo.ID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'SymbolInfo.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'SymbolInfo.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TerrainInfo">
+          <Members>
+           <Member Name="#ID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'TerrainInfo.ID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#IsWalkable">
+            <Messages>
+             <Message Id="Walkable" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Walkable</Item>
+               <Item>'TerrainInfo.IsWalkable'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SymbolID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'TerrainInfo.SymbolID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TurnChange">
+          <Members>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'TurnChange.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="WaitAction">
+          <Members>
+           <Member Name="#.ctor(System.Int32,MyGame.GameObject,System.Int32)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'WaitAction.WaitAction(int, GameObject, int)'</Item>
+               <Item>ID</Item>
+               <Item>'transID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'WaitAction.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="VisibilityMode">
+          <Members>
+           <Member Name="#LOS">
+            <Messages>
+             <Message Id="LOS" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>LOS</Item>
+               <Item>'VisibilityMode.LOS'</Item>
+               <Item>Los</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SimpleFOV">
+            <Messages>
+             <Message Id="FOV" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>FOV</Item>
+               <Item>'VisibilityMode.SimpleFOV'</Item>
+               <Item>Fov</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+       <Namespace Name="MyGame.ClientMsgs">
+        <Types>
+         <Type Name="ItemData">
+          <Members>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ItemData.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SymbolID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ItemData.SymbolID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'ItemData.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ItemsData">
+          <Members>
+           <Member Name="#Items">
+            <Messages>
+             <Message TypeName="PropertiesShouldNotReturnArrays" Category="Microsoft.Performance" CheckId="CA1819" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'ItemsData.Items'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="LivingData">
+          <Members>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'LivingData.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SymbolID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'LivingData.SymbolID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'LivingData.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapData">
+          <Members>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'MapData.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapTileData">
+          <Messages>
+           <Message TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815" Created="2009-08-28 19:41:09Z">
+            <Issue Name="Equals">
+             <Item>'MapTileData'</Item>
+            </Issue>
+            <Issue Name="op_Equality">
+             <Item>'MapTileData'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#TerrainID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'MapTileData.TerrainID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ObjectMove">
+          <Members>
+           <Member Name="#.ctor(MyGame.GameObject,MyGame.ObjectID,MyGame.IntPoint,MyGame.ObjectID,MyGame.IntPoint)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'ObjectMove.ObjectMove(GameObject, ObjectID, IntPoint, ObjectID, IntPoint)'</Item>
+               <Item>ID</Item>
+               <Item>'fromID'</Item>
+               <Item>Id</Item>
+              </Issue>
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'ObjectMove.ObjectMove(GameObject, ObjectID, IntPoint, ObjectID, IntPoint)'</Item>
+               <Item>ID</Item>
+               <Item>'toID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ObjectID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectMove.ObjectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SourceEnvID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectMove.SourceEnvID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="Env" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Env</Item>
+               <Item>'ObjectMove.SourceEnvID'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#TargetEnvID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 19:41:09Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ObjectMove.TargetEnvID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="Env" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+              <Issue Name="Member">
+               <Item>Env</Item>
+               <Item>'ObjectMove.TargetEnvID'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object, object)'</Item>
+               <Item>'ObjectMove.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TerrainData">
+          <Members>
+           <Member Name="#MapDataList">
+            <Messages>
+             <Message TypeName="PropertiesShouldNotReturnArrays" Category="Microsoft.Performance" CheckId="CA1819" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'TerrainData.MapDataList'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'TerrainData.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TurnChange">
+          <Members>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'TurnChange.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/WPFClient/bin/Debug/ServerBase.dll">
+    <Modules>
+     <Module Name="serverbase.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2009-08-28 20:08:43Z">
+        <Issue Name="NoStrongName">
+         <Item>'ServerBase.dll'</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2009-08-28 20:08:43Z">
+        <Issue>
+         <Item>'ServerBase.dll'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="MyGame">
+        <Types>
+         <Type Name="Environment">
+          <Members>
+           <Member Name="#AddObject(MyGame.ServerGameObject,MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.AddObject(ServerGameObject, IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetContents(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.GetContents(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetTerrainID(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'Environment.GetTerrainID(IntPoint)'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.GetTerrainID(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#IsWalkable(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="Walkable" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Member">
+               <Item>Walkable</Item>
+               <Item>'Environment.IsWalkable(IntPoint)'</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.IsWalkable(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#RemoveObject(MyGame.ServerGameObject,MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.RemoveObject(ServerGameObject, IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SetTerrain(MyGame.IntPoint,System.Int32)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'Environment.SetTerrain(IntPoint, int)'</Item>
+               <Item>ID</Item>
+               <Item>'terrainID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Environment.SetTerrain(IntPoint, int)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#MapChanged" Kind="Event">
+            <Messages>
+             <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Created="2009-08-28 20:08:43Z">
+              <Issue Name="First">
+               <Item>'MapChanged'</Item>
+              </Issue>
+              <Issue Name="Second">
+               <Item>'MapChanged'</Item>
+              </Issue>
+              <Issue Name="TooMany">
+               <Item>'MapChanged'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'MapChanged'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IActor">
+          <Members>
+           <Member Name="#GetCurrentAction()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2009-08-28 20:08:43Z">
+              <Issue Certainty="50">
+               <Item>'IActor.GetCurrentAction()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ActionQueuedEvent" Kind="Event">
+            <Messages>
+             <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Created="2009-08-28 20:08:43Z">
+              <Issue Name="First">
+               <Item>'Action'</Item>
+              </Issue>
+              <Issue Name="Second">
+               <Item>'Action'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'Action'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Living">
+          <Members>
+           <Member Name="#ChangeFilter(MyGame.Change)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Parameter">
+               <Item>'change'</Item>
+               <Item>'MapChange'</Item>
+               <Item>'Living.ChangeFilter(Change)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'change'</Item>
+               <Item>'ObjectMoveChange'</Item>
+               <Item>'Living.ChangeFilter(Change)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ChangeToMessage(MyGame.Change)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Parameter">
+               <Item>'change'</Item>
+               <Item>'MapChange'</Item>
+               <Item>'Living.ChangeToMessage(Change)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'change'</Item>
+               <Item>'ObjectMoveChange'</Item>
+               <Item>'Living.ChangeToMessage(Change)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'change'</Item>
+               <Item>'TurnChange'</Item>
+               <Item>'Living.ChangeToMessage(Change)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetVisibleLocations()">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2009-08-28 20:08:43Z">
+              <Issue Certainty="50">
+               <Item>'Living.GetVisibleLocations()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#PerformAction()">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Local">
+               <Item>'action'</Item>
+               <Item>'MoveAction'</Item>
+               <Item>'Living.PerformAction()'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Local">
+               <Item>'action'</Item>
+               <Item>'WaitAction'</Item>
+               <Item>'Living.PerformAction()'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ProcessChanges(MyGame.Change[])">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2009-08-28 20:08:43Z" FixCategory="DependsOnFix">
+              <Issue>
+               <Item>'Living.ProcessChanges(Change[])'</Item>
+              </Issue>
+             </Message>
+             <Message Id="changes" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-08-28 20:08:43Z" FixCategory="DependsOnFix">
+              <Issue>
+               <Item>'changes'</Item>
+               <Item>'Living.ProcessChanges(Change[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Sees(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'Living.Sees(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#UpdateLOS()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'Living.UpdateLOS()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ActionQueuedEvent" Kind="Event">
+            <Messages>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'Action'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapChanged">
+          <Messages>
+           <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:08:43Z">
+            <Issue Name="DelegateParameterAbbreviation">
+             <Item>'MapChanged'</Item>
+             <Item>ID</Item>
+             <Item>'mapID'</Item>
+             <Item>Id</Item>
+            </Issue>
+            <Issue Name="DelegateParameterAbbreviation">
+             <Item>'MapChanged'</Item>
+             <Item>ID</Item>
+             <Item>'terrainID'</Item>
+             <Item>Id</Item>
+            </Issue>
+           </Message>
+           <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+            <Issue Name="DelegateParameterMoreMeaningfulName">
+             <Item>'MapChanged'</Item>
+             <Item>'l'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="MonsterActor">
+          <Members>
+           <Member Name="#GetNewAction()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'MonsterActor.GetNewAction()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ActionQueuedEvent" Kind="Event">
+            <Messages>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'Action'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="PetActor">
+          <Members>
+           <Member Name="#GetNewActionNoAstar()">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'PetActor.GetNewActionNoAstar()'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'PetActor.GetNewActionNoAstar()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#m_random">
+            <Messages>
+             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'PetActor.m_random'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ActionQueuedEvent" Kind="Event">
+            <Messages>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'Action'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ServerGameObject">
+          <Members>
+           <Member Name="#MoveDir(MyGame.Direction)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'ServerGameObject.MoveDir(Direction)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'ServerGameObject.MoveDir(Direction)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#MoveTo(MyGame.Environment,MyGame.IntPoint)">
+            <Messages>
+             <Message Id="env" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameter">
+               <Item>'ServerGameObject.MoveTo(Environment, IntPoint)'</Item>
+               <Item>env</Item>
+               <Item>'env'</Item>
+              </Issue>
+             </Message>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'ServerGameObject.MoveTo(Environment, IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#OnEnvironmentChanged(MyGame.Environment,MyGame.Environment)">
+            <Messages>
+             <Message Id="Env" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameter">
+               <Item>'ServerGameObject.OnEnvironmentChanged(Environment, Environment)'</Item>
+               <Item>Env</Item>
+               <Item>'newEnv'</Item>
+              </Issue>
+              <Issue Name="MemberParameter">
+               <Item>'ServerGameObject.OnEnvironmentChanged(Environment, Environment)'</Item>
+               <Item>Env</Item>
+               <Item>'oldEnv'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SymbolID">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberAbbreviation">
+               <Item>ID</Item>
+               <Item>'ServerGameObject.SymbolID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Messages>
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'ServerGameObject.X'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Y">
+            <Messages>
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberMoreMeaningfulName">
+               <Item>'ServerGameObject.Y'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ServerService">
+          <Members>
+           <Member Name="#.ctor()">
+            <Messages>
+             <Message TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'ServerService.ServerService()'</Item>
+               <Item>'ServerService.m_seeAll'</Item>
+               <Item>'bool'</Item>
+               <Item>false</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#_Login(System.Object)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'ServerService._Login(object)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#DoAction(MyGame.GameAction)">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'ServerService.DoAction(GameAction)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'ServerService.DoAction(GameAction)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SendChanges(MyGame.Living[],MyGame.Change[])">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Local">
+               <Item>'change'</Item>
+               <Item>'ObjectMoveChange'</Item>
+               <Item>'ServerService.SendChanges(Living[], Change[])'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SendNewObjects(System.Collections.Generic.IEnumerable`1&lt;MyGame.ServerGameObject&gt;)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:08:43Z">
+              <Issue Name="Local">
+               <Item>'ob'</Item>
+               <Item>'ItemObject'</Item>
+               <Item>'ServerService.SendNewObjects(IEnumerable&lt;ServerGameObject&gt;)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Local">
+               <Item>'ob'</Item>
+               <Item>'Living'</Item>
+               <Item>'ServerService.SendNewObjects(IEnumerable&lt;ServerGameObject&gt;)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TileGrid">
+          <Members>
+           <Member Name="#m_tileGrid">
+            <Messages>
+             <Message Id="Member" TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'TileGrid.m_tileGrid'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="World">
+          <Messages>
+           <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Created="2009-08-28 20:08:43Z" FixCategory="DependsOnFix">
+            <Issue Name="DependsOnFix">
+             <Item>'World'</Item>
+             <Item>'AutoResetEvent'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#.ctor(MyGame.IArea,MyGame.IAreaData)">
+            <Messages>
+             <Message TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'World.World(IArea, IAreaData)'</Item>
+               <Item>'World.m_objectIDcounter'</Item>
+               <Item>'int'</Item>
+               <Item>0</Item>
+              </Issue>
+              <Issue>
+               <Item>'World.World(IArea, IAreaData)'</Item>
+               <Item>'World.m_turnNumber'</Item>
+               <Item>'int'</Item>
+               <Item>0</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#AddGameObject(MyGame.ServerGameObject)">
+            <Messages>
+             <Message TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208" Created="2009-08-28 20:08:43Z">
+              <Issue Name="NoArguments">
+               <Item>'ArgumentException'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#FindObject(MyGame.ObjectID)">
+            <Messages>
+             <Message Id="ID" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:08:43Z">
+              <Issue Name="MemberParameterAbbreviation">
+               <Item>'World.FindObject(ObjectID)'</Item>
+               <Item>ID</Item>
+               <Item>'objectID'</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208" Created="2009-08-28 20:08:43Z">
+              <Issue Name="NoArguments">
+               <Item>'ArgumentException'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SimultaneousWork()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'World.SimultaneousWork()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#StartTurn()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:08:43Z">
+              <Issue Name="TooGeneric">
+               <Item>'World.StartTurn()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#TheWorld">
+            <Messages>
+             <Message TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'World.TheWorld'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#HandleChangesEvent" Kind="Event">
+            <Messages>
+             <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Created="2009-08-28 20:08:43Z">
+              <Issue Name="First">
+               <Item>'Action&lt;Change[]&gt;'</Item>
+              </Issue>
+              <Issue Name="Second">
+               <Item>'Action&lt;Change[]&gt;'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:08:43Z">
+              <Issue>
+               <Item>'Action&lt;Change[]&gt;'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+   <Target Name="$(ProjectDir)/WPFClient/bin/Debug/WPFClient.exe">
+    <Modules>
+     <Module Name="wpfclient.exe">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2009-08-28 20:03:56Z">
+        <Issue Name="NoStrongName">
+         <Item>'WPFClient.exe'</Item>
+        </Issue>
+       </Message>
+       <Message Id="WPF" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2009-08-28 20:03:56Z">
+        <Issue Name="Assembly">
+         <Item>WPF</Item>
+         <Item>'WPFClient.exe'</Item>
+         <Item>Wpf</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2009-08-28 20:03:56Z">
+        <Issue>
+         <Item>'WPFClient.exe'</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824" Created="2009-08-28 20:03:56Z">
+        <Issue>
+         <Item>'WPFClient.exe'</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="MyGame">
+        <Types>
+         <Type Name="App">
+          <Messages>
+           <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Created="2009-08-28 20:03:56Z" FixCategory="DependsOnFix">
+            <Issue Name="DependsOnFix">
+             <Item>'App'</Item>
+             <Item>'AutoResetEvent'</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="#ConnectCallback(System.Object)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:03:56Z">
+              <Issue Name="TooGeneric">
+               <Item>'App.ConnectCallback(object)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#s_debugWindow">
+            <Messages>
+             <Message TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'App.s_debugWindow'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#ServerStartedCallback(System.Object,System.Boolean)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:03:56Z">
+              <Issue Name="TooGeneric">
+               <Item>'App.ServerStartedCallback(object, bool)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ClientCallback">
+          <Members>
+           <Member Name="#_DeliverMessage(MyGame.ClientMsgs.Message)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:03:56Z">
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'ItemData'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'ItemsData'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'LivingData'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'MapData'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'ObjectMove'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'TerrainData'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+              <Issue Name="Parameter">
+               <Item>'msg'</Item>
+               <Item>'TurnChange'</Item>
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:03:56Z">
+              <Issue Name="TooGeneric">
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>'ClientCallback._DeliverMessage(Message)'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ClientGameObject">
+          <Members>
+           <Member Name="#AddObject(MyGame.ClientGameObject)">
+            <Messages>
+             <Message TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208" Created="2009-08-28 20:03:56Z">
+              <Issue Name="NoArguments">
+               <Item>'ArgumentException'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Drawing">
+            <Accessors>
+             <Accessor Name="#get_Drawing()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'ClientGameObject.Drawing.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#FindObject(MyGame.ObjectID)">
+            <Messages>
+             <Message TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208" Created="2009-08-28 20:03:56Z">
+              <Issue Name="NoArguments">
+               <Item>'ArgumentException'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#FindObject`1(MyGame.ObjectID)">
+            <Messages>
+             <Message TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208" Created="2009-08-28 20:03:56Z">
+              <Issue Name="NoArguments">
+               <Item>'ArgumentException'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetObjects()">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'ClientGameObject.GetObjects()'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Name">
+            <Accessors>
+             <Accessor Name="#get_Name()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'ClientGameObject.Name.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#UpdateLOS()">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:03:56Z">
+              <Issue Name="TooGeneric">
+               <Item>'ClientGameObject.UpdateLOS()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#X">
+            <Accessors>
+             <Accessor Name="#get_X()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'ClientGameObject.X.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#Y">
+            <Accessors>
+             <Accessor Name="#get_Y()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'ClientGameObject.Y.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Connection">
+          <Members>
+           <Member Name="#Connect()">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'Connection.Connect()'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'Connection.Connect()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Disconnect()">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'Connection.Disconnect()'</Item>
+               <Item>'Exception'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="DebugWindow">
+          <Members>
+           <Member Name="#OnClosing(System.ComponentModel.CancelEventArgs)">
+            <Messages>
+             <Message TypeName="DoNotIndirectlyExposeMethodsWithLinkDemands" Category="Microsoft.Security" CheckId="CA2122" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'DebugWindow.OnClosing(CancelEventArgs)'</Item>
+               <Item>'Debug.Listeners.get()'</Item>
+               <Item>&#xD;&#xA;   -&gt;'DebugWindow.OnClosing(CancelEventArgs)'&#xD;&#xA;   -&gt;'DebugWindow.OnClosing(CancelEventArgs)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#OnInitialized(System.EventArgs)">
+            <Messages>
+             <Message TypeName="DoNotIndirectlyExposeMethodsWithLinkDemands" Category="Microsoft.Security" CheckId="CA2122" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'DebugWindow.OnInitialized(EventArgs)'</Item>
+               <Item>'Debug.Listeners.get()'</Item>
+               <Item>&#xD;&#xA;   -&gt;'DebugWindow.OnInitialized(EventArgs)'&#xD;&#xA;   -&gt;'DebugWindow.OnInitialized(EventArgs)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
+            <Messages>
+             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'DebugWindow'</Item>
+               <Item>'IComponentConnector.Connect(int, object)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Environment">
+          <Members>
+           <Member Name="#Height">
+            <Accessors>
+             <Accessor Name="#get_Height()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'Environment.Height.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#SetTerrainID(MyGame.IntPoint,System.Int32)">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'Environment.SetTerrainID(IntPoint, int)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#Width">
+            <Accessors>
+             <Accessor Name="#get_Width()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'Environment.Width.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GameData">
+          <Members>
+           <Member Name="#DisableLOS">
+            <Accessors>
+             <Accessor Name="#set_DisableLOS(System.Boolean)">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.DisableLOS.set(bool)'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#Objects">
+            <Accessors>
+             <Accessor Name="#get_Objects()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.Objects.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+             <Accessor Name="#set_Objects(MyGame.ClientGameObject[])">
+              <Messages>
+               <Message Id="value" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2009-08-28 20:03:56Z" FixCategory="NonBreaking">
+                <Issue>
+                 <Item>'value'</Item>
+                 <Item>'GameData.Objects.set(ClientGameObject[])'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#ShowChangedTiles">
+            <Accessors>
+             <Accessor Name="#get_ShowChangedTiles()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.ShowChangedTiles.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+             <Accessor Name="#set_ShowChangedTiles(System.Boolean)">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.ShowChangedTiles.set(bool)'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#SymbolDrawings">
+            <Accessors>
+             <Accessor Name="#get_SymbolDrawings()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.SymbolDrawings.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#TurnNumber">
+            <Accessors>
+             <Accessor Name="#get_TurnNumber()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'GameData.TurnNumber.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ItemObject">
+          <Members>
+           <Member Name="#ToString()">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'string.Format(string, object)'</Item>
+               <Item>'ItemObject.ToString()'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MainWindow">
+          <Members>
+           <Member Name="#_CreateDelegate(System.Type,System.String)">
+            <Messages>
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'MainWindow._CreateDelegate(Type, string)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#inventoryListBox">
+            <Messages>
+             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'MainWindow.inventoryListBox'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#s_mainWindow">
+            <Messages>
+             <Message TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'MainWindow.s_mainWindow'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2009-08-28 20:03:56Z">
+              <Issue Name="Parameter">
+               <Item>'target'</Item>
+               <Item>'MenuItem'</Item>
+               <Item>'MainWindow.IComponentConnector.Connect(int, object)'</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'MainWindow'</Item>
+               <Item>'IComponentConnector.Connect(int, object)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapControl">
+          <Members>
+           <Member Name="#FollowObject">
+            <Accessors>
+             <Accessor Name="#get_FollowObject()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'MapControl.FollowObject.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#SelectedTileInfo">
+            <Accessors>
+             <Accessor Name="#get_SelectedTileInfo()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'MapControl.SelectedTileInfo.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MapControlBase">
+          <Members>
+           <Member Name="#ArrangeOverride(System.Windows.Size)">
+            <Messages>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'MapControlBase.ArrangeOverride(Size)'</Item>
+               <Item>'s'</Item>
+               <Item>'arrangeBounds'</Item>
+               <Item>'Control.ArrangeOverride(Size)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#GetTile(MyGame.IntPoint)">
+            <Messages>
+             <Message Id="l" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:03:56Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'MapControlBase.GetTile(IntPoint)'</Item>
+               <Item>'l'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#LocationFromPoint(System.Windows.Point)">
+            <Messages>
+             <Message Id="p" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:03:56Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'MapControlBase.LocationFromPoint(Point)'</Item>
+               <Item>'p'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#MapLocationFromPoint(System.Windows.Point)">
+            <Messages>
+             <Message Id="p" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 20:03:56Z">
+              <Issue Name="MemberParameterMoreMeaningfulName">
+               <Item>'MapControlBase.MapLocationFromPoint(Point)'</Item>
+               <Item>'p'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="#SelectionChanged" Kind="Event">
+            <Messages>
+             <Message TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009" Created="2009-08-28 20:03:56Z">
+              <Issue Name="First">
+               <Item>'Action'</Item>
+              </Issue>
+              <Issue Name="Second">
+               <Item>'Action'</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'Action'</Item>
+               <Item>EventHandler</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MyTraceListener">
+          <Members>
+           <Member Name="#TextBox">
+            <Accessors>
+             <Accessor Name="#get_TextBox()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'MyTraceListener.TextBox.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SymbolBitmapCache">
+          <Members>
+           <Member Name="#SymbolDrawings">
+            <Accessors>
+             <Accessor Name="#get_SymbolDrawings()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'SymbolBitmapCache.SymbolDrawings.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+             <Accessor Name="#set_SymbolDrawings(MyGame.SymbolDrawingCache)">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'SymbolBitmapCache.SymbolDrawings.set(SymbolDrawingCache)'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#TileSize">
+            <Accessors>
+             <Accessor Name="#get_TileSize()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'SymbolBitmapCache.TileSize.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SymbolDrawingCache">
+          <Members>
+           <Member Name="#TintReplacer(System.Text.RegularExpressions.Match,System.Windows.Media.Color)">
+            <Messages>
+             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'string.Format(string, object, object)'</Item>
+               <Item>'SymbolDrawingCache.TintReplacer(Match, Color)'</Item>
+               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.UInt32.Parse(System.String,System.Globalization.NumberStyles)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 20:03:56Z">
+              <Issue>
+               <Item>'uint.Parse(string, NumberStyles)'</Item>
+               <Item>'SymbolDrawingCache.TintReplacer(Match, Color)'</Item>
+               <Item>'uint.Parse(string, NumberStyles, IFormatProvider)'</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TileInfo">
+          <Members>
+           <Member Name="#Location">
+            <Accessors>
+             <Accessor Name="#get_Location()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'TileInfo.Location.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#Objects">
+            <Accessors>
+             <Accessor Name="#get_Objects()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'TileInfo.Objects.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="#TerrainType">
+            <Accessors>
+             <Accessor Name="#get_TerrainType()">
+              <Messages>
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2009-08-28 20:03:56Z">
+                <Issue>
+                 <Item>'TileInfo.TerrainType.get()'</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+  </Targets>
+  <Rules>
+   <Rule TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012">
+    <Resolution Name="Default">Change the accessibility of all public constructors in {0} to protected.</Resolution>
+   </Rule>
+   <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
+    <Resolution Name="NoStrongName">Sign {0} with a strong name key.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811">
+    <Resolution Name="Default">{0} appears to have no upstream public or protected callers.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823">
+    <Resolution Name="Default">It appears that field {0} is never used or is only ever assigned to. Use this field or remove it.</Resolution>
+   </Rule>
+   <Rule TypeName="CompoundWordsShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1702">
+    <Resolution Name="MemberShouldBeDiscreteTerm">The compound word '{0}' in member name {1} exists as a discrete term. If your usage is intended to be single word, case it as '{2}' or strip the first token entirely if it represents any sort of Hungarian notation.</Resolution>
+   </Rule>
+   <Rule TypeName="DeclareEventHandlersCorrectly" Category="Microsoft.Design" CheckId="CA1009">
+    <Resolution Name="First">Declare the first parameter of {0} as an object named 'sender'.</Resolution>
+    <Resolution Name="Second">Declare the second parameter of {0} as an EventArgs, or an instance of a type that extends EventArgs, named 'e'.</Resolution>
+    <Resolution Name="TooMany">Remove all but the first two parameters of {0}.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800">
+    <Resolution Name="Local">{0}, a variable, is cast to type {1} multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
+    <Resolution Name="Parameter">{0}, a parameter, is cast to type {1} multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031">
+    <Resolution Name="Default">Modify {0} to catch a more specific exception than {1} or rethrow the exception.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotIndirectlyExposeMethodsWithLinkDemands" Category="Microsoft.Security" CheckId="CA2122">
+    <Resolution Name="Default">{0} calls into {1} which has a LinkDemand. By making this call, {1} is indirectly exposed to user code. Review the following call stack that might expose a way to circumvent security protection: {2}</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805">
+    <Resolution Name="Default">{0} initializes field {1} of type {2} to {3}. Remove this initialization because it will be done automatically by the runtime.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotPassTypesByReference" Category="Microsoft.Design" CheckId="CA1045">
+    <Resolution Name="Default">Consider a design that does not require that {0} be a reference parameter.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotRaiseExceptionsInUnexpectedLocations" Category="Microsoft.Design" CheckId="CA1065">
+    <Resolution Name="PropertyGetter">{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201">
+    <Resolution Name="Reserved">{0} creates an exception of type {1}, an exception type that is reserved by the runtime and should never be raised by managed code. If this exception instance might be thrown, use a different exception type.</Resolution>
+    <Resolution Name="TooGeneric">{0} creates an exception of type {1}, an exception type that is not sufficiently specific and should never be raised by user code. If this exception instance might be thrown, use a different exception type.</Resolution>
+   </Rule>
+   <Rule TypeName="EnumStorageShouldBeInt32" Category="Microsoft.Design" CheckId="CA1028">
+    <Resolution Name="NotInt32">If possible, make the underlying type of {0} System.Int32 instead of {1}.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709">
+    <Resolution Name="Assembly">Correct the casing of '{0}' in assembly name {1} by changing it to '{2}'.</Resolution>
+    <Resolution Name="DelegateParameterAbbreviation">In delegate {0}, correct the casing of '{1}' in parameter name {2} by changing it to '{3}'. '{3}' is an abbreviation and therefore is not subject to acronym casing guidelines.</Resolution>
+    <Resolution Name="Member">Correct the casing of '{0}' in member name {1} by changing it to '{2}'.</Resolution>
+    <Resolution Name="MemberAbbreviation">Correct the casing of '{0}' in member name {1} by changing it to '{2}'. '{2}' is an abbreviation and therefore is not subject to acronym casing guidelines.</Resolution>
+    <Resolution Name="MemberParameterAbbreviation">In member {0}, correct the casing of '{1}' in parameter name {2} by changing it to '{3}'. '{3}' is an abbreviation and therefore is not subject to acronym casing guidelines.</Resolution>
+    <Resolution Name="Type">Correct the casing of '{0}' in type name {1} by changing it to '{2}'.</Resolution>
+    <Resolution Name="TypeAbbreviation">Correct the casing of '{0}' in type name {1} by changing it to '{2}'. '{2}' is an abbreviation and therefore is not subject to acronym casing guidelines.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704">
+    <Resolution Name="DelegateParameterMoreMeaningfulName">In delegate {0}, consider providing a more meaningful name than parameter name {1}.</Resolution>
+    <Resolution Name="Member">Correct the spelling of '{0}' in member name {1} or remove it entirely if it represents any sort of Hungarian notation.</Resolution>
+    <Resolution Name="MemberMoreMeaningfulName">Consider providing a more meaningful name than member name {0}.</Resolution>
+    <Resolution Name="MemberParameter">In method {0}, correct the spelling of '{1}' in parameter name {2} or remove it entirely if it represents any sort of Hungarian notation.</Resolution>
+    <Resolution Name="MemberParameterMoreMeaningfulName">In method {0}, consider providing a more meaningful name than parameter name {1}.</Resolution>
+    <Resolution Name="Namespace">Correct the spelling of '{0}' in namespace name '{1}'.</Resolution>
+    <Resolution Name="Type">Correct the spelling of '{0}' in type name {1}.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710">
+    <Resolution Name="Default">Rename {0} to end in '{1}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IndexersShouldNotBeMultidimensional" Category="Microsoft.Design" CheckId="CA1023">
+    <Resolution Name="Default">Redesign indexer {0} to use a single string or integer value as its index.</Resolution>
+   </Rule>
+   <Rule TypeName="InstantiateArgumentExceptionsCorrectly" Category="Microsoft.Usage" CheckId="CA2208">
+    <Resolution Name="NoArguments">Call the {0} constructor that contains a message and/or paramName parameter.</Resolution>
+   </Rule>
+   <Rule TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033">
+    <Resolution Name="Default">Make {0} sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of {1} and is visible to derived classes.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014">
+    <Resolution Name="Default">Mark {0} with CLSCompliant(true) because it exposes externally visible types.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824">
+    <Resolution Name="Default">Because assembly {0} contains a ResX-based resource file, mark it with the NeutralResourcesLanguage attribute, specifying the language of the resources within the assembly. This could improve lookup performance the first time a resource is retrieved.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkEnumsWithFlags" Category="Microsoft.Design" CheckId="CA1027">
+    <Resolution Name="Default">The constituent members of {0} appear to represent flags that can be combined rather than discrete values. If this is correct, mark the enumeration with FlagsAttribute.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822">
+    <Resolution Name="Default">The 'this' parameter (or 'Me' in Visual Basic) of {0} is never used. Mark the member as static (or Shared in Visual Basic) or use 'this'/'Me' in the method body or at least one property accessor, if appropriate.</Resolution>
+   </Rule>
+   <Rule TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211">
+    <Resolution Name="Default">Consider making {0} non-public or a constant.</Resolution>
+   </Rule>
+   <Rule TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225">
+    <Resolution Name="Default">Provide a method named '{0}' as a friendly alternate for operator {1}.</Resolution>
+   </Rule>
+   <Rule TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815">
+    <Resolution Name="Equals">{0} should override Equals.</Resolution>
+    <Resolution Name="op_Equality">{0} should override the equality (==) and inequality (!=) operators.</Resolution>
+   </Rule>
+   <Rule TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725">
+    <Resolution Name="Default">In member {0}, change parameter name {1} to {2} in order to match the identifier as it has been declared in {3}.</Resolution>
+   </Rule>
+   <Rule TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814">
+    <Resolution Name="Body">{0} uses a multidimensional array of {1}. Replace it with a jagged array if possible.</Resolution>
+    <Resolution Name="Default">{0} is a multidimensional array. Replace it with a jagged array if possible.</Resolution>
+    <Resolution Name="Return">{0} returns a multidimensional array of {1}. Replace it with a jagged array if possible.</Resolution>
+   </Rule>
+   <Rule TypeName="PropertiesShouldNotBeWriteOnly" Category="Microsoft.Design" CheckId="CA1044">
+    <Resolution Name="AddGetter">Because property {0} is write-only, either add a property getter with an accessibility that is greater than or equal to its setter or convert this property into a method.</Resolution>
+   </Rule>
+   <Rule TypeName="PropertiesShouldNotReturnArrays" Category="Microsoft.Performance" CheckId="CA1819">
+    <Resolution Name="Default">Change {0} to return a collection or make it a method.</Resolution>
+   </Rule>
+   <Rule TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801">
+    <Resolution Name="Default">Parameter {0} of {1} is never used. Remove the parameter or use it in the method body.</Resolution>
+   </Rule>
+   <Rule TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305">
+    <Resolution Name="Default">Because the behavior of {0} could vary based on the current user's locale settings, replace this call in {1} with a call to {2}. If the result of {2} will be displayed to the user, specify 'CultureInfo.CurrentCulture' as the 'IFormatProvider' parameter. Otherwise, if the result will be stored and accessed by software, such as when it is persisted to disk or to a database, specify 'CultureInfo.InvariantCulture'.</Resolution>
+   </Rule>
+   <Rule TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001">
+    <Resolution Name="DependsOnFix">Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</Resolution>
+   </Rule>
+   <Rule TypeName="UseIntegralOrStringArgumentForIndexers" Category="Microsoft.Design" CheckId="CA1043">
+    <Resolution Name="Default">Use an integral value or string as the parameter to indexer {0}.</Resolution>
+   </Rule>
+   <Rule TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726">
+    <Resolution Name="Member">Replace the term '{0}' in member name {1} with the preferred alternate '{2}'.</Resolution>
+   </Rule>
+   <Rule TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024">
+    <Resolution Name="Default">Change {0} to a property if appropriate.</Resolution>
+   </Rule>
+  </Rules>
+ </FxCopReport>
+</FxCopProject>

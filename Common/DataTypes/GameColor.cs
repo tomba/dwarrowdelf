@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract]
-	public struct GameColor
+	public struct GameColor : IEquatable<GameColor>
 	{
 		[DataMember]
 		byte m_r, m_g, m_b;
@@ -25,7 +25,40 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("Color({0:X},{1:X},{2:X})", m_r, m_g, m_b);
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"Color({0:X},{1:X},{2:X})", m_r, m_g, m_b);
+		}
+
+		#region IEquatable<GameColor> Members
+
+		public bool Equals(GameColor other)
+		{
+			return ((other.m_r == this.m_r) && (other.m_g == this.m_g) && (other.m_b == this.m_b));
+		}
+
+		#endregion
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is GameColor))
+				return false;
+
+			return Equals((GameColor)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return (m_r << 16) | (m_g << 8) | m_b;
+		}
+
+		public static bool operator== (GameColor left, GameColor right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(GameColor left, GameColor right)
+		{
+			return !left.Equals(right);
 		}
 	}
 }

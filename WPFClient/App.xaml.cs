@@ -17,6 +17,9 @@ namespace MyGame
 	/// </summary>
 	public partial class App : Application
 	{
+		public static DebugWindow DebugWindow { get; set; }
+		public new static App Current { get { return (App)Application.Current; } }
+
 		Thread m_serverThread;
 		Connection m_connection;
 		EventWaitHandle m_serverStartWaitHandle;
@@ -26,10 +29,6 @@ namespace MyGame
 		IServer m_server;
 
 		public IServer Server { get { return m_server; } }
-
-		public static DebugWindow s_debugWindow;
-
-		public new static App Current { get { return (App)Application.Current; } }
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -45,9 +44,9 @@ namespace MyGame
 
 			if (debugClient || debugServer)
 			{
-				s_debugWindow = new DebugWindow();
-				s_debugWindow.Show();
-				s_debugWindow.WindowState = WindowState.Maximized;
+				DebugWindow = new DebugWindow();
+				DebugWindow.Show();
+				DebugWindow.WindowState = WindowState.Maximized;
 			}
 #endif
 

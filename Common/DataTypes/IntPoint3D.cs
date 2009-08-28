@@ -26,9 +26,9 @@ namespace MyGame
 
 		#region IEquatable<Location3D> Members
 
-		public bool Equals(IntPoint3D l)
+		public bool Equals(IntPoint3D other)
 		{
-			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+			return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
 		}
 
 		#endregion
@@ -69,7 +69,8 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("IntPoint3D({0}, {1}, {2})", X, Y, Z);
+			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+				"IntPoint3D({0}, {1}, {2})", X, Y, Z);
 		}
 	}
 }
