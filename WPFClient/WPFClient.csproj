@@ -118,7 +118,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SymbolBitmapCache.cs" />
-    <Compile Include="SymbolDrawings.cs" />
+    <Compile Include="SymbolDrawingCache.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

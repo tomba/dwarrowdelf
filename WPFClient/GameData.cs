@@ -16,7 +16,7 @@ namespace MyGame
 		public GameData()
 		{
 			this.ActionCollection = new ActionCollection();
-			this.SymbolDrawings = new SymbolDrawings(World.TheWorld.AreaData);
+			this.SymbolDrawings = new SymbolDrawingCache(World.TheWorld.AreaData);
 		}
 
 		public Connection Connection { get; set; }
@@ -46,7 +46,7 @@ namespace MyGame
 
 		public ActionCollection ActionCollection { get; private set; }
 
-		public SymbolDrawings SymbolDrawings { get; private set; }
+		public SymbolDrawingCache SymbolDrawings { get; private set; }
 
 
 		int m_turnNumber;

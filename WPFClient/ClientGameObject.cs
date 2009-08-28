@@ -124,11 +124,16 @@ namespace MyGame
 			}
 		}
 
+		public Color Color
+		{
+			get { return Colors.Black; }
+		}
+
 		public DrawingImage Drawing
 		{
 			get
 			{
-				return new DrawingImage(GameData.Data.SymbolDrawings.Drawings[m_symbolID]);
+				return new DrawingImage(GameData.Data.SymbolDrawings.GetDrawing(m_symbolID, this.Color));
 			}
 		}
 

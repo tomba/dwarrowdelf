@@ -28,7 +28,7 @@ namespace MyGame
 		public MapControl()
 		{
 			m_bitmapCache = new SymbolBitmapCache();
-			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings.Drawings;
+			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings;
 
 			this.Focusable = true;
 
@@ -114,7 +114,8 @@ namespace MyGame
 		{
 			int terrainID = this.Map.GetTerrainID(ml);
 			int id = this.Map.World.AreaData.Terrains[terrainID].SymbolID;
-			return m_bitmapCache.GetBitmap(id, !lit);
+			Color c = Colors.Black;
+			return m_bitmapCache.GetBitmap(id, c, !lit);
 		}
 
 		BitmapSource GetObjectBitmap(IntPoint ml, bool lit)
@@ -123,7 +124,8 @@ namespace MyGame
 			if (obs != null && obs.Count > 0)
 			{
 				int id = obs[0].SymbolID;
-				return m_bitmapCache.GetBitmap(id, !lit);
+				Color c = obs[0].Color;
+				return m_bitmapCache.GetBitmap(id, c, !lit);
 			}
 			else
 				return null;

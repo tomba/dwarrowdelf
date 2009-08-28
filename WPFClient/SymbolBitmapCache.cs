@@ -9,9 +9,16 @@ namespace MyGame
 {
 	class SymbolBitmapCache
 	{
-		Drawing[] m_symbolDrawings;
-		BitmapSource[] m_symbolBitmaps;
-		BitmapSource[] m_symbolBitmapsDark;
+		class CacheData
+		{
+			public BitmapSource Bitmap;
+			public BitmapSource BitmapDark;
+		}
+
+		SymbolDrawingCache m_symbolDrawings;
+
+		Dictionary<int, Dictionary<Color, CacheData>> m_bitmapMap =
+			new Dictionary<int,Dictionary<Color,CacheData>>();
 
 		double m_size = 32;
 
@@ -22,48 +29,66 @@ namespace MyGame
 			set
 			{
 				m_size = value;
-				for (int i = 0; i < m_symbolBitmaps.Length; ++i)
-					m_symbolBitmaps[i] = null;
-				for (int i = 0; i < m_symbolBitmapsDark.Length; ++i)
-					m_symbolBitmapsDark[i] = null;
+				m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
 			}
 		}
 
-		public Drawing[] SymbolDrawings
+		public SymbolDrawingCache SymbolDrawings
 		{
 			get { return m_symbolDrawings; }
 
 			set
 			{
 				m_symbolDrawings = value;
-				m_symbolBitmaps = new BitmapSource[m_symbolDrawings.Length];
-				m_symbolBitmapsDark = new BitmapSource[m_symbolDrawings.Length];
+				m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
 			}
 		}
 
-		public BitmapSource GetBitmap(int idx, bool dark)
+		public BitmapSource GetBitmap(int symbolID, Color color, bool dark)
 		{
-			if (dark)
+			Dictionary<Color, CacheData> map;
+			CacheData data;
+
+			if (!m_bitmapMap.TryGetValue(symbolID, out map))
 			{
-				if (m_symbolBitmapsDark[idx] == null)
-					CreateSymbolBitmaps(idx);
-				return m_symbolBitmapsDark[idx];
+				map = new Dictionary<Color, CacheData>();
+				m_bitmapMap[symbolID] = map;
+			}
+
+			if (!map.TryGetValue(color, out data))
+			{
+				data = new CacheData();
+				map[color] = data;
+			}
+
+			if (!dark)
+			{
+				if (data.Bitmap == null)
+				{
+					BitmapSource bmp = CreateSymbolBitmap(symbolID, color, dark);
+					data.Bitmap = bmp;
+				}
+
+				return data.Bitmap;
 			}
 			else
 			{
-				if (m_symbolBitmaps[idx] == null)
-					CreateSymbolBitmaps(idx);
+				if (data.BitmapDark == null)
+				{
+					BitmapSource bmp = CreateSymbolBitmap(symbolID, color, dark);
+					data.BitmapDark = bmp;
+				}
 
-				return m_symbolBitmaps[idx];
+				return data.BitmapDark;
 			}
 		}
 
-		void CreateSymbolBitmaps(int idx)
+		BitmapSource CreateSymbolBitmap(int symbolID, Color color, bool dark)
 		{
 			DrawingVisual drawingVisual = new DrawingVisual();
 			DrawingContext drawingContext = drawingVisual.RenderOpen();
 
-			Drawing d = m_symbolDrawings[idx];
+			Drawing d = m_symbolDrawings.GetDrawing(symbolID, color);
 
 			drawingContext.PushTransform(
 				new ScaleTransform(Math.Floor(m_size) / 100, Math.Floor(m_size) / 100));
@@ -73,17 +98,13 @@ namespace MyGame
 
 			drawingContext.Close();
 
+			if (dark)
+				drawingVisual.Opacity = 0.2;
+
 			RenderTargetBitmap bmp = new RenderTargetBitmap((int)m_size, (int)m_size, 96, 96, PixelFormats.Default);
 			bmp.Render(drawingVisual);
 			bmp.Freeze();
-			m_symbolBitmaps[idx] = bmp;
-
-			drawingVisual.Opacity = 0.2;
-
-			bmp = new RenderTargetBitmap((int)m_size, (int)m_size, 96, 96, PixelFormats.Default);
-			bmp.Render(drawingVisual);
-			bmp.Freeze();
-			m_symbolBitmapsDark[idx] = bmp;
+			return bmp;
 		}
 	}
 }
