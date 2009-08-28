@@ -288,14 +288,7 @@ namespace MyGame
 				else if (ob is ItemObject)
 				{
 					ItemObject item = (ItemObject)ob;
-					msg = new ClientMsgs.ItemData()
-					{
-						ObjectID = item.ObjectID,
-						SymbolID = item.SymbolID,
-						Name = item.Name,
-						Environment = item.Environment != null ? item.Environment.ObjectID : ObjectID.NullObjectID,
-						Location = item.Location,
-					};
+					msg = item.Serialize();
 				}
 				else
 					continue;

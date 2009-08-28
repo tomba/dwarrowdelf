@@ -7,6 +7,14 @@ using System.Collections.ObjectModel;
 
 namespace MyGame
 {
+	public static class MyExtensions
+	{
+		public static System.Windows.Media.Color ToColor(this GameColor color)
+		{
+			return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
+		}
+	}   
+
 	class ActionCollection : ObservableCollection<GameAction> { }
 
 	class GameData : INotifyPropertyChanged

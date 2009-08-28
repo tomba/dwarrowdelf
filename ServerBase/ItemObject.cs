@@ -11,5 +11,19 @@ namespace MyGame
 			: base(world)
 		{
 		}
+
+		public GameColor Color { get; set; }
+
+		public ClientMsgs.ItemData Serialize()
+		{
+			var data = new ClientMsgs.ItemData();
+			data.ObjectID = this.ObjectID;
+			data.Name = this.Name;
+			data.SymbolID = this.SymbolID;
+			data.Environment = this.Environment != null ? this.Environment.ObjectID : ObjectID.NullObjectID;
+			data.Location = this.Location;
+			data.Color = this.Color;
+			return data;
+		}
 	}
 }

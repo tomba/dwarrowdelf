@@ -184,6 +184,7 @@ namespace MyGame
 
 				ob.Name = id.Name;
 				ob.SymbolID = id.SymbolID;
+				ob.Color = id.Color.ToColor();
 
 				if (id.Environment != ObjectID.NullObjectID)
 				{

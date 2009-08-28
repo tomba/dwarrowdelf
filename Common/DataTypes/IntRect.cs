@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace MyGame
 {
+	[DataContract]
 	public struct IntRect
 	{
+		[DataMember]
 		public int X { get; set; }
+		[DataMember]
 		public int Y { get; set; }
+		[DataMember]
 		public int Width { get; set; }
+		[DataMember]
 		public int Height { get; set; }
 
 		public IntRect(int x, int y, int width, int height)

@@ -15,7 +15,7 @@ namespace MyGame
 		Dictionary<int, Dictionary<Color, Drawing>> m_drawingMap =
 			new Dictionary<int, Dictionary<Color, Drawing>>();
 
-		bool m_useOnlyChars = false;
+		bool m_useOnlyChars = true;
 
 		public SymbolDrawingCache(IAreaData areaData)
 		{

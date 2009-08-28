@@ -24,8 +24,14 @@ namespace MyArea
 			// Add an item
 			var item = new ItemObject(world);
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-			item.Name = "testi-itemi";
+			item.Name = "red gem";
+			item.Color = new GameColor(255, 0, 0);
 			item.MoveTo(world.Map, new IntPoint(3, 0));
+
+			item = new ItemObject(world);
+			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
+			item.Name = "gem";
+			item.MoveTo(world.Map, new IntPoint(2, 0));
 
 			item = new ItemObject(world);
 			item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;

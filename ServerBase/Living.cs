@@ -243,10 +243,7 @@ namespace MyGame
 				var items = new List<ClientMsgs.ItemData>(this.Inventory.Count);
 				foreach (ItemObject item in this.Inventory)
 				{
-					var data = new ClientMsgs.ItemData();
-					data.ObjectID = item.ObjectID;
-					data.Name = item.Name;
-					data.SymbolID = item.SymbolID;
+					var data = item.Serialize();
 					items.Add(data);
 				}
 

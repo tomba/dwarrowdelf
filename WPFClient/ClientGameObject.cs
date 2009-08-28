@@ -104,6 +104,7 @@ namespace MyGame
 		{
 			this.Inventory = new ItemCollection();
 			AddObject(this);
+			this.Color = Colors.Black;
 		}
 
 		string m_name;
@@ -124,9 +125,9 @@ namespace MyGame
 			}
 		}
 
-		public Color Color
-		{
-			get { return Colors.Black; }
+		public Color Color { 
+			get; 
+			set;
 		}
 
 		public DrawingImage Drawing
