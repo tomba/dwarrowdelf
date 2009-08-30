@@ -6,22 +6,36 @@ using System.Collections;
 
 namespace MyGame
 {
+	public class Grid2DBase<T>
+	{
+		public int Width { get; private set; }
+		public int Height { get; private set; }
+
+		public Grid2DBase(int width, int height)
+		{
+			this.Width = width;
+			this.Height = height;
+			this.Grid = new T[width * height];
+		}
+
+		protected T[] Grid { get; private set; }
+
+		protected int GetIndex(IntPoint p)
+		{
+			return p.Y * this.Width + p.X;
+		}
+	}
+
 	/**
 	 * 2D grid made of <T>s
 	 * Coordinates offset by Origin
 	 */
-	public class LocationGrid<T> : IEnumerable<KeyValuePair<IntPoint, T>>
+	public class LocationGrid<T> : Grid2DBase<T>, IEnumerable<KeyValuePair<IntPoint, T>>
 	{
-		T[,] m_grid;
 		public IntVector Origin { get; set; }
-		public int Width { get; private set; }
-		public int Height { get; private set; }
 
-		public LocationGrid(int width, int height)
+		public LocationGrid(int width, int height) : base(width, height)
 		{
-			this.Width = width;
-			this.Height = height;
-			m_grid = new T[width, height];
 			this.Origin = new IntVector(0, 0);
 		}
 
@@ -35,13 +49,13 @@ namespace MyGame
 			get
 			{
 				l = l + this.Origin;
-				return m_grid[l.X, l.Y];
+				return base.Grid[GetIndex(l)];
 			}
 
 			set
 			{
 				l = l + this.Origin;
-				m_grid[l.X, l.Y] = value;
+				base.Grid[GetIndex(l)] = value;
 			}
 		}
 		
@@ -82,13 +96,13 @@ namespace MyGame
 
 		public IEnumerator<KeyValuePair<IntPoint, T>> GetEnumerator()
 		{
-			for (int x = 0; x < this.Width; x++)
+			for (int y = 0; y < this.Height; y++)
 			{
-				for (int y = 0; y < this.Height; y++)
+				for (int x = 0; x < this.Width; x++)
 				{
 					yield return new KeyValuePair<IntPoint, T>(
 						new IntPoint(x - Origin.X, y - Origin.Y),
-						m_grid[x, y]
+						base.Grid[GetIndex(new IntPoint(x, y))]
 						);
 				}
 			}

@@ -10,7 +10,24 @@ namespace MyGame
 	 */
 	public class GrowingLocationGrid<T>
 	{
-		T[,][,] m_grid;
+		protected class Block : Grid2DBase<T>
+		{
+			public Block(int size) : base(size, size) { }
+			public new T[] Grid { get { return base.Grid; } }
+			public new int GetIndex(IntPoint p) { return base.GetIndex(p); }
+		}
+
+		class MainGrid : Grid2DBase<Block>
+		{
+			public MainGrid(int width, int height) : base(width, height) { }
+			public Block this[int x, int y]
+			{
+				get { return base.Grid[base.GetIndex(new IntPoint(x, y))]; }
+				set { base.Grid[base.GetIndex(new IntPoint(x, y))] = value; }
+			}
+		}
+
+		MainGrid m_grid;
 
 		// m_mainRect tells the size of m_grid, but also the origin
 		IntRect m_mainRect;
@@ -40,49 +57,25 @@ namespace MyGame
 			}
 		}
 
-		public T this[int x, int y]
+		protected Block GetBlock(ref IntPoint p, bool allowResize)
 		{
-			get
-			{
-				T[,] block = GetBlock(ref x, ref y, false);
-				if (block == null)
-					throw new IndexOutOfRangeException("Resize not allowed");
+			int x = p.X;
+			int y = p.Y;
 
-				return block[x, y];
-			}
+			var block = GetBlock(ref x, ref y, allowResize);
 
-			set
-			{
-				T[,] block = GetBlock(ref x, ref y, true);
-				block[x, y] = value;
-			}
-		}
-
-		public T this[IntPoint l]
-		{
-			get { return this[l.X, l.Y]; }
-			set { this[l.X, l.Y] = value; }
-		}
-
-		public T[,] GetBlock(ref IntPoint l, bool allowResize)
-		{
-			int x = l.X;
-			int y = l.Y;
-
-			T[,] block = GetBlock(ref x, ref y, allowResize);
-
-			l.X = x;
-			l.Y = y;
+			p.X = x;
+			p.Y = y;
 
 			return block;
 		}
 
-		public T[,] GetBlock(ref int x, ref int y, bool allowResize)
+		protected Block GetBlock(ref int x, ref int y, bool allowResize)
 		{
 			if (m_grid == null)
 			{
 				m_mainRect = new IntRect(x / m_blockSize, y / m_blockSize, 1, 1);
-				m_grid = new T[1, 1][,];
+				m_grid = new MainGrid(1, 1);
 			}
 
 			int blockX = Math.DivRem(x, m_blockSize, out x);
@@ -116,7 +109,7 @@ namespace MyGame
 				if (!allowResize)
 					return null;
 
-				m_grid[blockX, blockY] = new T[m_blockSize, m_blockSize];
+				m_grid[blockX, blockY] = new Block(m_blockSize);
 			}
 
 			return m_grid[blockX, blockY];
@@ -131,7 +124,7 @@ namespace MyGame
 				newRect.Width += (newRect.Left - blockX);
 				newRect.X = blockX;
 			}
-			else if(blockX > newRect.Right - 1)
+			else if (blockX > newRect.Right - 1)
 			{
 				newRect.Width += (blockX - (newRect.Right - 1));
 			}
@@ -146,7 +139,7 @@ namespace MyGame
 				newRect.Height += (blockY - (newRect.Bottom - 1));
 			}
 
-			T[,][,] newGrid = new T[newRect.Width, newRect.Height][,];
+			MainGrid newGrid = new MainGrid(newRect.Width, newRect.Height);
 
 			for (int y = 0; y < m_mainRect.Height; y++)
 			{

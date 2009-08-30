@@ -36,7 +36,46 @@
    <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\PortabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
-   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="False">
+    <Rule Name="AttributeStringLiteralsShouldParseCorrectly" Enabled="True" />
+    <Rule Name="CallBaseClassMethodsOnISerializableTypes" Enabled="True" />
+    <Rule Name="CallGCSuppressFinalizeCorrectly" Enabled="True" />
+    <Rule Name="CollectionPropertiesShouldBeReadOnly" Enabled="True" />
+    <Rule Name="DisposableFieldsShouldBeDisposed" Enabled="True" />
+    <Rule Name="DisposableTypesShouldDeclareFinalizer" Enabled="True" />
+    <Rule Name="DoNotCallOverridableMethodsInConstructors" Enabled="True" />
+    <Rule Name="DoNotDecreaseInheritedMemberVisibility" Enabled="True" />
+    <Rule Name="DoNotIgnoreMethodResults" Enabled="True" />
+    <Rule Name="DoNotMarkEnumsWithFlags" Enabled="True" />
+    <Rule Name="DoNotMarkServicedComponentsWithWebMethod" Enabled="True" />
+    <Rule Name="DoNotRaiseExceptionsInExceptionClauses" Enabled="True" />
+    <Rule Name="DoNotRaiseReservedExceptionTypes" Enabled="True" />
+    <Rule Name="DoNotShipUnreleasedResourceFormats" Enabled="True" />
+    <Rule Name="FinalizersShouldBeProtected" Enabled="True" />
+    <Rule Name="FinalizersShouldCallBaseClassFinalizer" Enabled="True" />
+    <Rule Name="ImplementISerializableCorrectly" Enabled="True" />
+    <Rule Name="ImplementSerializationConstructors" Enabled="True" />
+    <Rule Name="ImplementSerializationMethodsCorrectly" Enabled="True" />
+    <Rule Name="InitializeValueTypeStaticFieldsInline" Enabled="True" />
+    <Rule Name="InstantiateArgumentExceptionsCorrectly" Enabled="True" />
+    <Rule Name="MarkAllNonSerializableFields" Enabled="True" />
+    <Rule Name="MarkISerializableTypesWithSerializable" Enabled="True" />
+    <Rule Name="MarkWindowsFormsEntryPointsWithStaThread" Enabled="True" />
+    <Rule Name="MembersShouldDifferByMoreThanReturnType" Enabled="True" />
+    <Rule Name="NonConstantFieldsShouldNotBeVisible" Enabled="True" />
+    <Rule Name="OperationsShouldNotOverflow" Enabled="True" />
+    <Rule Name="OperatorsShouldHaveSymmetricalOverloads" Enabled="True" />
+    <Rule Name="OverloadOperatorEqualsOnOverridingValueTypeEquals" Enabled="True" />
+    <Rule Name="OverrideEqualsOnOverloadingOperatorEquals" Enabled="True" />
+    <Rule Name="OverrideGetHashCodeOnOverridingEquals" Enabled="True" />
+    <Rule Name="PassSystemUriObjectsInsteadOfStrings" Enabled="True" />
+    <Rule Name="ProvideDeserializationMethodsForOptionalFields" Enabled="True" />
+    <Rule Name="RethrowToPreserveStackDetails" Enabled="True" />
+    <Rule Name="ReviewUnusedParameters" Enabled="True" />
+    <Rule Name="TestForNaNCorrectly" Enabled="True" />
+    <Rule Name="UseManagedEquivalentsOfWin32Api" Enabled="True" />
+    <Rule Name="UseParamsForVariableArguments" Enabled="True" />
+   </RuleFile>
   </RuleFiles>
   <Groups />
   <Settings />
@@ -718,13 +757,13 @@
           <Members>
            <Member Name="#.ctor(System.Int32,System.Int32)">
             <Messages>
-             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+             <Message Id="x" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
               <Issue Name="MemberParameterMoreMeaningfulName">
                <Item>'IntPoint.IntPoint(int, int)'</Item>
                <Item>'x'</Item>
               </Issue>
              </Message>
-             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+             <Message Id="y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
               <Issue Name="MemberParameterMoreMeaningfulName">
                <Item>'IntPoint.IntPoint(int, int)'</Item>
                <Item>'y'</Item>
@@ -732,62 +771,9 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#Equals(MyGame.IntPoint)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2009-08-28 19:41:09Z">
-              <Issue>
-               <Item>'IntPoint.Equals(IntPoint)'</Item>
-               <Item>'l'</Item>
-               <Item>'other'</Item>
-               <Item>'IEquatable&lt;IntPoint&gt;.Equals(IntPoint)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#op_Addition(MyGame.IntPoint,MyGame.IntVector)">
-            <Messages>
-             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
-              <Issue>
-               <Item>Add</Item>
-               <Item>'IntPoint.operator +(IntPoint, IntVector)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#op_Subtraction(MyGame.IntPoint,MyGame.IntPoint)">
-            <Messages>
-             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
-              <Issue>
-               <Item>Subtract</Item>
-               <Item>'IntPoint.operator -(IntPoint, IntPoint)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#op_Subtraction(MyGame.IntPoint,MyGame.IntVector)">
-            <Messages>
-             <Message TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" Created="2009-08-28 19:41:09Z">
-              <Issue>
-               <Item>Subtract</Item>
-               <Item>'IntPoint.operator -(IntPoint, IntVector)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#ToString()">
-            <Messages>
-             <Message Id="System.String.Format(System.String,System.Object,System.Object)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2009-08-28 19:41:09Z">
-              <Issue>
-               <Item>'string.Format(string, object, object)'</Item>
-               <Item>'IntPoint.ToString()'</Item>
-               <Item>'string.Format(IFormatProvider, string, params object[])'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
            <Member Name="#X">
             <Messages>
-             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+             <Message Id="X" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
               <Issue Name="MemberMoreMeaningfulName">
                <Item>'IntPoint.X'</Item>
               </Issue>
@@ -796,7 +782,7 @@
            </Member>
            <Member Name="#Y">
             <Messages>
-             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
+             <Message Id="Y" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
               <Issue Name="MemberMoreMeaningfulName">
                <Item>'IntPoint.Y'</Item>
               </Issue>
@@ -977,26 +963,6 @@
               <Issue Name="MemberParameterMoreMeaningfulName">
                <Item>'IntVector.IntVector(int, int)'</Item>
                <Item>'y'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#GetAllXYDirs()">
-            <Messages>
-             <Message Id="Dirs" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2009-08-28 19:41:09Z">
-              <Issue Name="Member">
-               <Item>Dirs</Item>
-               <Item>'IntVector.GetAllXYDirs()'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#GetAllXYDirs(MyGame.Direction)">
-            <Messages>
-             <Message Id="Dirs" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Status="Excluded" Created="2009-08-28 19:41:09Z">
-              <Issue Name="Member">
-               <Item>Dirs</Item>
-               <Item>'IntVector.GetAllXYDirs(Direction)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -2630,15 +2596,6 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#s_debugWindow">
-            <Messages>
-             <Message TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211" Created="2009-08-28 20:03:56Z">
-              <Issue>
-               <Item>'App.s_debugWindow'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
            <Member Name="#ServerStartedCallback(System.Object,System.Boolean)">
             <Messages>
              <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2009-08-28 20:03:56Z">
@@ -3397,9 +3354,7 @@
    <Rule TypeName="NonConstantFieldsShouldNotBeVisible" Category="Microsoft.Usage" CheckId="CA2211">
     <Resolution Name="Default">Consider making {0} non-public or a constant.</Resolution>
    </Rule>
-   <Rule TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225">
-    <Resolution Name="Default">Provide a method named '{0}' as a friendly alternate for operator {1}.</Resolution>
-   </Rule>
+   <Rule TypeName="OperatorOverloadsHaveNamedAlternates" Category="Microsoft.Usage" CheckId="CA2225" />
    <Rule TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815">
     <Resolution Name="Equals">{0} should override Equals.</Resolution>
     <Resolution Name="op_Equality">{0} should override the equality (==) and inequality (!=) operators.</Resolution>

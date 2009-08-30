@@ -15,35 +15,32 @@ namespace MyGame
 		public List<ServerGameObject> m_contentList;
 	}
 
-	class TileGrid
+	class TileGrid : Grid2DBase<TileData>
 	{
-		TileData[,] m_tileGrid;
-
 		public TileGrid(int width, int height)
+			: base(width, height)
 		{
-			m_tileGrid = new TileData[width, height];
 		}
 
 		public void SetTerrainType(IntPoint l, int terrainType)
 		{
-			m_tileGrid[l.X, l.Y].m_terrainID = terrainType;
+			base.Grid[GetIndex(l)].m_terrainID = terrainType;
 		}
 
 		public int GetTerrainID(IntPoint l)
 		{
-			return m_tileGrid[l.X, l.Y].m_terrainID;
+			return base.Grid[GetIndex(l)].m_terrainID;
 		}
 
 		public List<ServerGameObject> GetContentList(IntPoint l)
 		{
-			return m_tileGrid[l.X, l.Y].m_contentList;
+			return base.Grid[GetIndex(l)].m_contentList;
 		}
 
 		public void SetContentList(IntPoint l, List<ServerGameObject> list)
 		{
-			m_tileGrid[l.X, l.Y].m_contentList = list;
+			base.Grid[GetIndex(l)].m_contentList = list;
 		}
-
 	}
 
 	public class Environment : ServerGameObject 
@@ -64,7 +61,7 @@ namespace MyGame
 		{
 			this.Version = 1;
 			base.Name = "map";
-			this.VisibilityMode = VisibilityMode.SimpleFOV;
+			this.VisibilityMode = VisibilityMode.LOS;
 
 			m_width = 55;
 			m_height = 55;
