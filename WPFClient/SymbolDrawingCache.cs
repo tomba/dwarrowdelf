@@ -15,7 +15,7 @@ namespace MyGame
 		Dictionary<int, Dictionary<Color, Drawing>> m_drawingMap =
 			new Dictionary<int, Dictionary<Color, Drawing>>();
 
-		bool m_useOnlyChars = true;
+		bool m_useOnlyChars = false;
 
 		public SymbolDrawingCache(IAreaData areaData)
 		{
@@ -25,10 +25,10 @@ namespace MyGame
 			{
 				var symbolResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(areaData.DrawingStream);
 				m_resourceDrawingMap = new Dictionary<string, Drawing>(symbolResources.Count);
-				foreach (System.Collections.DictionaryEntry a in symbolResources)
+				foreach (System.Collections.DictionaryEntry de in symbolResources)
 				{
-					Drawing drawing = ((DrawingBrush)a.Value).Drawing;
-					string name = (string)a.Key;
+					Drawing drawing = ((DrawingBrush)de.Value).Drawing;
+					string name = (string)de.Key;
 
 					SymbolInfo si = m_symbolInfoList.Single(s => s.DrawingName == name);
 					drawing = NormalizeDrawing(drawing, new Point(si.X, si.Y), new Size(si.Width, si.Height));
@@ -69,42 +69,70 @@ namespace MyGame
 			else
 			{
 				drawing = m_resourceDrawingMap[symbol.DrawingName];
-				
+
 				if (color == Colors.Black)
 					return drawing;
-
-				// aarga this is horrible!
-				string xamlstr = System.Windows.Markup.XamlWriter.Save(drawing);
-				var regex = new System.Text.RegularExpressions.Regex("((Brush)|(Color))=\"#(........)\"");
-				xamlstr = regex.Replace(xamlstr, m => TintReplacer(m, color));
-				drawing = (Drawing)System.Windows.Markup.XamlReader.Parse(xamlstr);
+				
+				drawing = drawing.Clone();
+				ColorizeDrawing(drawing, color);
+				drawing.Freeze();
 
 				return drawing;
 			}
 		}
 
-		static string TintReplacer(System.Text.RegularExpressions.Match m, Color tint)
+		static void ColorizeDrawing(Drawing drawing, Color tintColor)
 		{
-			uint val = uint.Parse(m.Groups[4].Value, System.Globalization.NumberStyles.HexNumber);
-			byte a = (byte)((val >> 24) & 0xff);
-			byte r = (byte)((val >> 16) & 0xff);
-			byte g = (byte)((val >> 8) & 0xff);
-			byte b = (byte)((val >> 0) & 0xff);
+			if (drawing is DrawingGroup)
+			{
+				var dg = (DrawingGroup)drawing;
+				foreach (var d in dg.Children)
+				{
+					ColorizeDrawing(d, tintColor);
+				}
+			}
+			else if (drawing is GeometryDrawing)
+			{
+				var gd = (GeometryDrawing)drawing;
+				if (gd.Brush != null)
+					ColorizeBrush(gd.Brush, tintColor);
+				if (gd.Pen != null)
+					ColorizeBrush(gd.Pen.Brush, tintColor);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
 
-			var c = Color.FromArgb(a, r, g, b);
-
-			//float t = 0.2f;
-			//c = Color.Multiply(c, t) + Color.Multiply(tint, 1 - t);
-
-			c = TintColor(c, tint);
-
-			return String.Format("{0}=\"{1}\"", m.Groups[1].Value, c);
+		static void ColorizeBrush(Brush brush, Color tintColor)
+		{
+			if (brush is SolidColorBrush)
+			{
+				var b = (SolidColorBrush)brush;
+				b.Color = tintColor;
+			}
+			else if (brush is LinearGradientBrush)
+			{
+				var b = (LinearGradientBrush)brush;
+				foreach (var stop in b.GradientStops)
+					stop.Color = TintColor(stop.Color, tintColor);
+			}
+			else if (brush is RadialGradientBrush)
+			{
+				var b = (RadialGradientBrush)brush;
+				foreach (var stop in b.GradientStops)
+					stop.Color = TintColor(stop.Color, tintColor);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		// r,g,b values are from 0 to 1
 		// h = [0,360], s = [0,1], v = [0,1]
 		//		if s == 0, then h = -1 (undefined)
-
 		static void RGBtoHSV(float r, float g, float b, out float h, out float s, out float v)
 		{
 			float min, max, delta;
