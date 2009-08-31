@@ -86,9 +86,12 @@ namespace MyGame.ClientMsgs
 	}
 
 	/* Tile that came visible */
+	[DataContract]
 	public struct MapTileData
 	{
+		[DataMember]
 		public IntPoint Location { get; set; }
+		[DataMember]
 		public int TerrainID { get; set; }
 	}
 
