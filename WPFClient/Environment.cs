@@ -139,17 +139,19 @@ namespace MyGame
 			return list.AsReadOnly();
 		}
 
-		public void RemoveObject(ClientGameObject ob, IntPoint l)
+		protected override void ChildAdded(ClientGameObject child)
 		{
-			m_tileGrid.RemoveObject(l, ob);
+			IntPoint l = child.Location;
+			m_tileGrid.AddObject(l, child);
 
 			if (MapChanged != null)
 				MapChanged(l);
 		}
 
-		public void AddObject(ClientGameObject ob, IntPoint l)
+		protected override void ChildRemoved(ClientGameObject child)
 		{
-			m_tileGrid.AddObject(l, ob);
+			IntPoint l = child.Location;
+			m_tileGrid.RemoveObject(l, child);
 
 			if (MapChanged != null)
 				MapChanged(l);

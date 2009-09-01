@@ -17,7 +17,7 @@ namespace MyGame
 		void DeliverMessage(ClientMsgs.Message message);
 
 		[OperationContract(IsOneWay = true)]
-		void DeliverMessages(ClientMsgs.Message[] messages);
+		void DeliverMessages(IEnumerable<ClientMsgs.Message> messages);
 /*
 		[OperationContract(IsOneWay = true)]
 		void DeliverMapTerrains(MapLocationTerrain[] locations);

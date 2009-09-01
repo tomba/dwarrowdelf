@@ -11,8 +11,6 @@ namespace MyGame
 		// XXX note: not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
-		public IList<ItemObject> Inventory { get; private set; }
-
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
 		int m_visionRange = 3;
@@ -24,13 +22,11 @@ namespace MyGame
 			: base(world)
 		{
 			world.AddLiving(this);
-			this.Inventory = new List<ItemObject>();
 		}
 
 		public void Cleanup()
 		{
-			if (this.Environment != null)
-				this.Environment.RemoveObject(this, this.Location);
+			this.MoveTo(null, new IntPoint());
 
 			World.RemoveLiving(this);
 
@@ -127,7 +123,7 @@ namespace MyGame
 		{
 		}
 
-		protected override void OnEnvironmentChanged(Environment oldEnv, Environment newEnv)
+		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
 		{
 			m_losMapVersion = 0;
 		}
@@ -239,16 +235,14 @@ namespace MyGame
 		{
 			if (this.ClientCallback != null)
 			{
-				var items = new List<ClientMsgs.ItemData>(this.Inventory.Count);
+				var items = new List<ClientMsgs.Message>(this.Inventory.Count);
 				foreach (ItemObject item in this.Inventory)
 				{
 					var data = item.Serialize();
 					items.Add(data);
 				}
 
-				var msgs = new ClientMsgs.Message[] { new ClientMsgs.ItemsData() { Items = items.ToArray() } };
-
-				this.ClientCallback.DeliverMessages(msgs);
+				this.ClientCallback.DeliverMessages(items);
 			}
 		}
 
@@ -341,11 +335,16 @@ namespace MyGame
 			data.ObjectID = this.ObjectID;
 			data.Name = this.Name;
 			data.SymbolID = this.SymbolID;
-			data.Environment = this.Environment != null ? this.Environment.ObjectID : ObjectID.NullObjectID;
+			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 			data.Color = this.Color;
 			data.VisionRange = this.VisionRange;
 			return data;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("Living({0})", this.ObjectID);
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace MyGame
 			data.ObjectID = this.ObjectID;
 			data.Name = this.Name;
 			data.SymbolID = this.SymbolID;
-			data.Environment = this.Environment != null ? this.Environment.ObjectID : ObjectID.NullObjectID;
+			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 			data.Color = this.Color;
 			return data;

@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Media;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(Environment e, IntPoint l);
-	class ItemCollection : ObservableCollection<ClientGameObject> { }
+	class ObservableObjectCollection : ObservableKeyedCollection<ObjectID, ClientGameObject>
+	{
+		protected override ObjectID GetKeyForItem(ClientGameObject item)
+		{
+			return item.ObjectID;
+		}
+	}
+
+	delegate void ObjectMoved(ClientGameObject e, IntPoint l);
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
@@ -39,7 +44,7 @@ namespace MyGame
 				{
 					WeakReference weakref = s_objectMap[objectID];
 					if (weakref.IsAlive)
-						return (ClientGameObject)s_objectMap[objectID].Target;
+						return (ClientGameObject)weakref.Target;
 					else
 						s_objectMap.Remove(objectID);
 				}
@@ -59,7 +64,7 @@ namespace MyGame
 				{
 					WeakReference weakref = s_objectMap[objectID];
 					if (weakref.IsAlive)
-						return (T)s_objectMap[objectID].Target;
+						return (T)weakref.Target;
 					else
 						s_objectMap.Remove(objectID);
 				}
@@ -79,9 +84,8 @@ namespace MyGame
 			}
 		}
 		
-		public ItemCollection Inventory { get; private set; }
-		IntPoint m_location;
-		Environment m_environment;
+		// inventory should be read-only, and only modifiable by MoveTo()
+		public ObservableObjectCollection Inventory { get; private set; }
 
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
@@ -99,10 +103,14 @@ namespace MyGame
 
 		public event ObjectMoved ObjectMoved;
 
+		public Color Color { get; set; }
+		public ClientGameObject Parent { get; private set; }
+		public IntPoint Location { get; private set; }
+
 		public ClientGameObject(ObjectID objectID)
 			: base(objectID)
 		{
-			this.Inventory = new ItemCollection();
+			this.Inventory = new ObservableObjectCollection();
 			AddObject(this);
 			this.Color = Colors.Black;
 		}
@@ -125,11 +133,6 @@ namespace MyGame
 			}
 		}
 
-		public Color Color { 
-			get; 
-			set;
-		}
-
 		public DrawingImage Drawing
 		{
 			get
@@ -138,41 +141,36 @@ namespace MyGame
 			}
 		}
 
-		public void SetEnvironment(Environment map, IntPoint l)
+		protected virtual void ChildAdded(ClientGameObject child) { }
+		protected virtual void ChildRemoved(ClientGameObject child) { }
+
+		public void MoveTo(ClientGameObject parent, IntPoint location)
 		{
-			if (this.Environment != null)
-				this.Environment.RemoveObject(this, m_location);
+			ClientGameObject oldParent = this.Parent;
+			IntPoint oldLocation = this.Location;
 
-			m_environment = map;
-			m_location = l;
+			if (oldParent != null)
+			{
+				oldParent.Inventory.Remove(this);
+				oldParent.ChildRemoved(this);
+			}
 
-			if (m_environment != null)
-				this.Environment.AddObject(this, m_location);
+			this.Parent = parent;
+			this.Location = location;
+
+			if (parent != null)
+			{
+				parent.Inventory.Add(this);
+				parent.ChildAdded(this);
+			}
 
 			if (ObjectMoved != null)
-				ObjectMoved(m_environment, m_location);
+				ObjectMoved(this.Parent, this.Location);
 		}
 
 		public Environment Environment
 		{
-			get { return m_environment; }
-		}
-
-		public IntPoint Location
-		{
-			get { return m_location; }
-
-			set
-			{
-				this.Environment.RemoveObject(this, m_location);
-
-				m_location = value;
-
-				this.Environment.AddObject(this, m_location);
-
-				if(ObjectMoved != null)
-					ObjectMoved(this.Environment, this.Location);
-			}
+			get { return this.Parent as Environment; }
 		}
 
 		public LocationGrid<bool> VisionMap
@@ -192,7 +190,7 @@ namespace MyGame
 			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
 				throw new Exception();
 
-			if (m_losLocation == m_location &&
+			if (m_losLocation == this.Location &&
 				m_losMapVersion == this.Environment.Version)
 				return;
 
@@ -205,12 +203,12 @@ namespace MyGame
 
 			var terrains = this.Environment.World.AreaData.Terrains;
 
-			s_losAlgo.Calculate(m_location, m_visionRange,
+			s_losAlgo.Calculate(this.Location, m_visionRange,
 				m_visionMap, this.Environment.Bounds,
 				l => terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
-			m_losLocation = m_location;
+			m_losLocation = this.Location;
 		}
 
 		void Notify(string name)

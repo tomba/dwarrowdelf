@@ -50,19 +50,23 @@ namespace MyGame
 			m_actor = new InteractiveActor();
 			m_player.Actor = m_actor;
 
+			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
+
+			m_client.LoginReply(m_player.ObjectID);
+
+
 			ItemObject item = new ItemObject(m_world);
 			item.Name = "itemi1";
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;;
-			m_player.Inventory.Add(item);
+			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
+			item.MoveTo(m_player);
 
 			item = new ItemObject(m_world);
 			item.Name = "itemi2";
 			item.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
-			m_player.Inventory.Add(item);
+			item.MoveTo(m_player);
 
-			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
-			m_client.LoginReply(m_player.ObjectID);
+
 
 			ClientMsgs.MapData md = new ClientMsgs.MapData()
 			{
@@ -196,12 +200,10 @@ namespace MyGame
 					newLivings.Add((ServerGameObject)mc.Target);
 			}
 			SendNewObjects(newLivings);
-			
-			ClientMsgs.Message[] msgArr = changes.
-				Select<Change, ClientMsgs.Message>(Living.ChangeToMessage).
-				ToArray();
 
-			m_client.DeliverMessages(msgArr);
+			var msgs = changes.Select<Change, ClientMsgs.Message>(Living.ChangeToMessage);
+
+			m_client.DeliverMessages(msgs);
 		}
 
 		void SendNewTerrainsAndObjects(Living[] livings)

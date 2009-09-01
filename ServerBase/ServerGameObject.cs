@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace MyGame
 {
@@ -10,13 +11,29 @@ namespace MyGame
 
 	abstract public class ServerGameObject : GameObject
 	{
+		class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
+		{
+			public KeyedObjectCollection() : base(null, 10) { }
+
+			protected override ObjectID GetKeyForItem(ServerGameObject item)
+			{
+				return item.ObjectID;
+			}
+		}
+
 		public int SymbolID { get; set; }
 
 		public string Name { get; set; }
-		public Environment Environment { get; private set; }
+
+		public ServerGameObject Parent { get; private set; }
+		public Environment Environment { get { return this.Parent as Environment; } }
+		KeyedObjectCollection m_children;
+		public ReadOnlyCollection<ServerGameObject> Inventory { get; private set; }
+
 		public IntPoint Location { get; private set; }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
+
 		public GameColor Color { get; set; }
 
 		public World World { get; private set; }
@@ -26,69 +43,71 @@ namespace MyGame
 		{
 			this.World = world;
 			this.World.AddGameObject(this);
+			m_children = new KeyedObjectCollection();
+			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
-		public bool MoveTo(Environment env, IntPoint l)
+		protected virtual bool OkToAddChild(ServerGameObject child, IntPoint p) { return true; }
+		protected virtual void ChildAdded(ServerGameObject child) { }
+		protected virtual void ChildRemoved(ServerGameObject child) { }
+		protected virtual void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv) { }
+
+		public bool MoveTo(ServerGameObject parent)
 		{
-			if (l.X < 0 || l.Y < 0 || l.X >= env.Width || l.Y >= env.Height)
-				return false;
+			return MoveTo(parent, new IntPoint());
+		}
 
-			if (!env.IsWalkable(l))
-				return false;
-
-			if (this.Environment != null)
-				this.Environment.RemoveObject(this, this.Location);
-
-			bool envChanged = this.Environment != env;
-
-			Environment oldEnv = this.Environment;
-			ObjectID oldMapID = ObjectID.NullObjectID;
-			if (this.Environment != null)
-				oldMapID = this.Environment.ObjectID;
+		public bool MoveTo(ServerGameObject parent, IntPoint location)
+		{
+			ServerGameObject oldParent = this.Parent;
 			IntPoint oldLocation = this.Location;
 
-			this.Environment = env;
-			this.Location = l;
-			env.AddObject(this, l);
+			if (!parent.OkToAddChild(this, location))
+				return false;
 
-			if (envChanged)
-				OnEnvironmentChanged(oldEnv, env);
+			if (oldParent != parent)
+			{
+				if (oldParent != null)
+				{
+					oldParent.ChildRemoved(this);
+					oldParent.m_children.Remove(this);
+				}
 
-			this.World.AddChange(new ObjectMoveChange(this, oldMapID, oldLocation,
-				this.Environment.ObjectID, l));
+				this.Parent = parent;
+			}
+
+			this.Location = location;
+
+			if (oldParent != parent)
+			{
+				if (parent != null)
+				{
+					parent.m_children.Add(this);
+					parent.ChildAdded(this);
+				}
+			}
+
+			if (oldParent != parent)
+				OnEnvironmentChanged(oldParent, parent);
+
+			this.World.AddChange(new ObjectMoveChange(this,
+				oldParent != null ? oldParent.ObjectID : ObjectID.NullObjectID, oldLocation,
+				parent != null ? parent.ObjectID : ObjectID.NullObjectID, location));
 
 			return true;
 		}
 
-		protected virtual void OnEnvironmentChanged(Environment oldEnv, Environment newEnv) { }
-
 		public bool MoveDir(Direction dir)
 		{
-			int x = 0;
-			int y = 0;
-
 			if (this.Environment == null)
 				throw new Exception();
 
-			switch (dir)
-			{
-				case Direction.North: y = -1; break;
-				case Direction.South: y = 1; break;
-				case Direction.West: x = -1; break;
-				case Direction.East: x = 1; break;
-				case Direction.NorthWest: x = -1; y = -1; break;
-				case Direction.SouthWest: x = -1; y = 1; break;
-				case Direction.NorthEast: x = 1; y = -1; break;
-				case Direction.SouthEast: x = 1; y = 1; break;
-				default:
-					throw new Exception();
-			}
-
-			IntPoint l = this.Location;
-			l.X += x;
-			l.Y += y;
-			return MoveTo(this.Environment, l);
+			return MoveTo(this.Environment, this.Location + IntVector.FromDirection(dir));
 		}
 
+		public override string ToString()
+		{
+			return String.Format("ServerGameObject({0})", this.ObjectID);
+		}
 	}
 }

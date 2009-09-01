@@ -27,10 +27,10 @@ namespace MyGame
 			app.Dispatcher.BeginInvoke(new Action<Message>(_DeliverMessage), msg);
 		}
 
-		public void DeliverMessages(Message[] messages)
+		public void DeliverMessages(IEnumerable<Message> messages)
 		{
 			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<IList<Message>>(_DeliverMessages), (IList<Message>)messages);
+			app.Dispatcher.BeginInvoke(new Action<IEnumerable<Message>>(_DeliverMessages), messages);
 		}
 
 		public void TransactionDone(int transactionID)
@@ -79,24 +79,11 @@ namespace MyGame
 					return;
 				}
 
-				if (om.TargetEnvID == ObjectID.NullObjectID)
-				{
-					ob.SetEnvironment(null, new IntPoint());
-				}
-				else
-				{
-					if (ob.Environment == null || ob.Environment.ObjectID != om.TargetEnvID)
-					{
-						var env = ClientGameObject.FindObject<Environment>(om.TargetEnvID);
-						if (env == null)
-							throw new Exception();
-						ob.SetEnvironment(env, om.TargetLocation);
-					}
-					else
-					{
-						ob.Location = om.TargetLocation;
-					}
-				}
+				ClientGameObject env = null;
+				if (om.TargetEnvID != ObjectID.NullObjectID)
+					env = ClientGameObject.FindObject(om.TargetEnvID);
+
+				ob.MoveTo(env, om.TargetLocation);
 			}
 			else if (msg is MapData)
 			{
@@ -133,43 +120,11 @@ namespace MyGame
 				ob.Name = ld.Name;
 				ob.Color = ld.Color.ToColor();
 
-				if (ld.Environment == ObjectID.NullObjectID)
-				{
-					ob.SetEnvironment(null, new IntPoint());
-				}
-				else
-				{
-					if (ob.Environment == null || ob.Environment.ObjectID != ld.Environment)
-					{
-						var env = ClientGameObject.FindObject<Environment>(ld.Environment);
-						if (env == null)
-							throw new Exception();
-						ob.SetEnvironment(env, ld.Location);
-					}
-					else
-					{
-						ob.Location = ld.Location;
-					}
-				}
-			}
-			else if (msg is ItemsData)
-			{
-				ItemsData id = (ItemsData)msg;
-				var items = id.Items;
+				ClientGameObject env = null;
+				if (ld.Environment != ObjectID.NullObjectID)
+					env = ClientGameObject.FindObject(ld.Environment);
 
-				MyDebug.WriteLine("DeliverInventory, {0} items", items.Length);
-
-				ItemCollection itemCollection = GameData.Data.Player.Inventory;
-				itemCollection.Clear();
-				foreach (ItemData item in items)
-				{
-					var ob = ClientGameObject.FindObject<ItemObject>(item.ObjectID);
-					if (ob == null)
-						ob = new ItemObject(item.ObjectID);
-					ob.Name = item.Name;
-					ob.SymbolID = item.SymbolID;
-					itemCollection.Add(ob);
-				}
+				ob.MoveTo(env, ld.Location);
 			}
 			else if (msg is ItemData)
 			{
@@ -187,21 +142,11 @@ namespace MyGame
 				ob.SymbolID = id.SymbolID;
 				ob.Color = id.Color.ToColor();
 
+				ClientGameObject env = null;
 				if (id.Environment != ObjectID.NullObjectID)
-				{
-					Environment env = ClientGameObject.FindObject<Environment>(id.Environment);
+					env = ClientGameObject.FindObject(id.Environment);
 
-					if (env == null)
-						throw new Exception();
-
-					if (env != null)
-					{
-						if (ob.Environment == null)
-							ob.SetEnvironment(env, id.Location);
-						else
-							ob.Location = id.Location;
-					}
-				}
+				ob.MoveTo(env, id.Location);
 			}
 			else
 			{
@@ -209,12 +154,10 @@ namespace MyGame
 			}
 		}
 
-		void _DeliverMessages(IList<Message> messages)
+		void _DeliverMessages(IEnumerable<Message> messages)
 		{
 			foreach (Message msg in messages)
-			{
 				_DeliverMessage(msg);
-			}
 		}
 
 		void _TransactionDone(int transactionID)

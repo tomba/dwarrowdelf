@@ -175,11 +175,13 @@ namespace MyGame
 
 		}
 
-		void FollowedObjectMoved(Environment e, IntPoint l)
+		void FollowedObjectMoved(ClientGameObject e, IntPoint l)
 		{
-			if (e != m_env)
+			Environment env = e as Environment;
+
+			if (env != m_env)
 			{
-				this.Map = m_env;
+				this.Map = env;
 //				m_center = new Location(-1, -1);
 			}
 

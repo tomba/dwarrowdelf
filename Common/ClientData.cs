@@ -12,7 +12,6 @@ namespace MyGame.ClientMsgs
 {
 	[DataContract,
 	KnownType(typeof(ItemData)),
-	KnownType(typeof(ItemsData)),
 	KnownType(typeof(LivingData)),
 	KnownType(typeof(MapData)),
 	KnownType(typeof(TerrainData)),
@@ -44,13 +43,6 @@ namespace MyGame.ClientMsgs
 		{
 			return String.Format("ItemData {0} {1}", this.ObjectID, this.Name);
 		}
-	}
-
-	[DataContract]
-	public class ItemsData : Message
-	{
-		[DataMember]
-		public ItemData[] Items { get; set; }
 	}
 
 	[DataContract]
