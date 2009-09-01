@@ -11,10 +11,11 @@ namespace MyGame
 	{
 		ServerGameObject m_object;
 		GameAction m_currentAction;
-		Random m_random = new Random();
+		Random m_random;
 
 		public MonsterActor(ServerGameObject ob)
 		{
+			m_random = new Random(GetHashCode());
 			m_object = ob;
 			m_currentAction = GetNewAction();
 		}

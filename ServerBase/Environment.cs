@@ -61,7 +61,7 @@ namespace MyGame
 		{
 			this.Version = 1;
 			base.Name = "map";
-			this.VisibilityMode = VisibilityMode.LOS;
+			this.VisibilityMode = VisibilityMode.AllVisible;
 
 			m_width = 55;
 			m_height = 55;

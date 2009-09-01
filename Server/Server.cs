@@ -112,7 +112,8 @@ namespace MyGame
 				else
 				{
 					Console.WriteLine("Press enter to exit");
-					Console.ReadLine();
+					while (Console.ReadKey().Key != ConsoleKey.Enter)
+						world.SignalWorld();
 				}
 
 				MyDebug.WriteLine("Server exiting");

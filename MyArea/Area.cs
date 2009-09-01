@@ -12,14 +12,17 @@ namespace MyArea
 		{
 			var obs = world.AreaData.Objects;
 
-			// Add a monster
-			var monster = new Living(world);
-			monster.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
-			monster.Name = "monsu";
-			if (monster.MoveTo(world.Map, new IntPoint(6, 6)) == false)
-				throw new Exception();
-			var monsterAI = new MonsterActor(monster);
-			monster.Actor = monsterAI;
+			for (int i = 0; i < 10; ++i)
+			{
+				// Add a monster
+				var monster = new Living(world);
+				monster.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
+				monster.Name = String.Format("monsu{0}", i);
+				if (monster.MoveTo(world.Map, new IntPoint(6, 6)) == false)
+					throw new Exception();
+				var monsterAI = new MonsterActor(monster);
+				monster.Actor = monsterAI;
+			}
 
 			// Add an item
 			var item = new ItemObject(world);

@@ -13,5 +13,4 @@ namespace MyGame
 		IList<ObjectInfo> Objects { get; }
 		Stream DrawingStream { get; }
 	}
-
 }

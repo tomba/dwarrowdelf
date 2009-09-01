@@ -7,6 +7,7 @@ using System.Threading;
 
 namespace MyGame
 {
+	// XXX move somewhere else, but inside Server side */
 	public interface IArea
 	{
 		void InitializeWorld(World world);
@@ -15,30 +16,13 @@ namespace MyGame
 	enum WorldTickMethod
 	{
 		Simultaneous,
-
 		Sequential,
-
-		// All actors make choice of move. After all actions have been received,
-		// actions are processed in priority order
-		PrioritizedSimultaneous,
-
-		// Actors are given turn in priority order. Each action changes world state.
-		PrioritizedSequential,
-
-		// All actors have certain common time to make a move. After all actions have been received,
-		// actions are processed in priority order.
-		TimedPrioritizedSimultaneous,
-
-		// Actors are given turn in priority order, with timeout. Each action changes world state.
-		TimedPrioritizedSequential,
 	}
 
 	enum WorldState
 	{
 		Idle,
-		TurnStarting,
 		TurnOngoing,
-		TurnEnding,
 	}
 
 	public class World
@@ -67,13 +51,30 @@ namespace MyGame
 
 		List<Change> m_changeList = new List<Change>();
 
-		Environment m_map;
+		Environment m_map; // XXX
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
 		int m_turnNumber = 0;
 
 		WorldTickMethod m_tickMethod = WorldTickMethod.Simultaneous;
+
+		// maximum time for one living to make its move
+		bool m_useMaxMoveTime = false;
+		TimeSpan m_maxMoveTime = TimeSpan.FromMilliseconds(1000);
+		DateTime m_nextMove = DateTime.MaxValue;
+
+		// minimum time between turns
+		bool m_useMinTurnTime = false;
+		TimeSpan m_minTurnTime = TimeSpan.FromMilliseconds(2000);
+		DateTime m_nextTurn = DateTime.MinValue;
+
+		// Timer is used out-of-turn to start the turn after m_minTurnTime
+		// and inside-turn to timeout player movements after m_maxMoveTime
+		Timer m_tickTimer;
+
+		// Require an interactive to be in game for turns to proceed
+		bool m_requireInteractive = true;
 
 		class InvokeInfo
 		{
@@ -87,10 +88,12 @@ namespace MyGame
 		bool m_workActive;
 		object m_workLock = new object();
 
+
 		public World(IArea area, IAreaData areaData)
 		{
 			this.Area = area;
 			this.AreaData = areaData;
+			m_tickTimer = new Timer(this.TickTimerCallback);
 
 			m_map = new Environment(this);
 			m_map.MapChanged += MapChangedCallback;
@@ -250,7 +253,7 @@ namespace MyGame
 
 
 		// thread safe
-		void SignalWorld()
+		public void SignalWorld()
 		{
 			MyDebug.WriteLine("SignalWorld");
 			m_worldSignal.Set();
@@ -260,6 +263,12 @@ namespace MyGame
 		internal void SignalActorStateChanged()
 		{
 			MyDebug.WriteLine("SignalActor");
+			SignalWorld();
+		}
+
+		void TickTimerCallback(object stateInfo)
+		{
+			MyDebug.WriteLine("TickTimerCallback");
 			SignalWorld();
 		}
 
@@ -277,21 +286,11 @@ namespace MyGame
 
 			while (true)
 			{
-				if (m_tickMethod == WorldTickMethod.Simultaneous)
-					SimultaneousWork();
-				if (m_tickMethod == WorldTickMethod.Sequential)
-					SequentialWork();
+				Work();
 
 				lock (m_workLock)
 				{
-					bool work = false;
-
-					if (m_tickMethod == WorldTickMethod.Simultaneous)
-						work = SimultaneousWorkAvailable();
-					if (m_tickMethod == WorldTickMethod.Sequential)
-						work = SequentialWorkAvailable();
-
-					if (!work)
+					if (!WorkAvailable())
 					{
 						m_workActive = false;
 						break;
@@ -302,94 +301,54 @@ namespace MyGame
 			MyDebug.WriteLine("WorldSignalledWork done");
 		}
 
-		bool SimultaneousWorkAvailable()
+		bool IsTimeToStartTurn()
 		{
-			Debug.Assert(m_workActive);
+			if (m_state != WorldState.Idle)
+				return false;
 
-			lock (m_instantInvokeList)
-				if (m_instantInvokeList.Count > 0)
-					return true;
+			if (m_useMinTurnTime && DateTime.Now < m_nextTurn)
+				return false;
 
-			lock (m_preTurnInvokeList)
-				if (m_preTurnInvokeList.Count > 0)
-					return true;
+			if (m_requireInteractive)
+				lock (m_livingList)
+					if (!m_livingList.Any(l => l.IsInteractive))
+						return false;
 
-			lock (m_addLivingList)
-				if (m_addLivingList.Count > 0)
-					return true;
-
-			lock (m_removeLivingList)
-				if (m_removeLivingList.Count > 0)
-					return true;
-
-			lock (m_livingList)
-			{
-				// if at least one is interactive and everybody has an action
-				if (m_livingList.Any(l => l.IsInteractive) &&
-					m_livingList.All(l => l.HasAction))
-					return true;
-			}
-
-			return false;
+			return true;
 		}
 
-		void SimultaneousWork()
+		void Work()
 		{
-			Debug.Assert(m_workActive);
-			Debug.Assert(m_state == WorldState.Idle);
-
-			MyDebug.WriteLine("SimultaneousWork");
-
 			ProcessInstantInvokeList();
 
-			// Pre-turn events
-			ProcessInvokeList();
-			ProcessAddLivingList();
-			ProcessRemoveLivingList();
-
-			// process pre-turn changes
-			ProcessChanges();
-
-			if (m_livingList.Any(l => l.IsInteractive) &&
-				m_livingList.All(l => l.HasAction))
+			if (m_state == WorldState.Idle)
 			{
-				lock (m_livingList)
-				{
-					lock (m_changeList)
-					{
-						Debug.Assert(m_changeList.Count == 0);
+				MyDebug.WriteLine("-- Preturn {0} events --", m_turnNumber + 1);
 
-						Debug.Assert(m_livingList.All(l => l.HasAction));
+				ProcessInvokeList();
+				ProcessAddLivingList();
+				ProcessRemoveLivingList();
 
+				MyDebug.WriteLine("-- Preturn {0} events done --", m_turnNumber + 1);
+
+				if (IsTimeToStartTurn())
 						StartTurn();
-
-						// this creates a bunch of changes
-						while (true)
-						{
-							Living living = m_livingEnumerator.Current;
-
-							if (living.HasAction)
-								living.PerformAction();
-							else
-								throw new Exception();
-
-							if (m_livingEnumerator.MoveNext() == false)
-								break;
-						}
-
-						ProcessChanges(); // this sends them to livings, who send them to clients
-
-						EndTurn();
-					}
-				}
 			}
 
-			MyDebug.WriteLine("SimultaneousWork Done");
+			if (m_state == WorldState.TurnOngoing)
+			{
+				if (m_tickMethod == WorldTickMethod.Simultaneous)
+					SimultaneousWork();
+				else if (m_tickMethod == WorldTickMethod.Sequential)
+					SequentialWork();
+				else
+					throw new NotImplementedException();
+			}
+
+			ProcessChanges();
 		}
 
-
-
-		bool SequentialWorkAvailable()
+		bool WorkAvailable()
 		{
 			Debug.Assert(m_workActive);
 
@@ -410,18 +369,90 @@ namespace MyGame
 				lock (m_removeLivingList)
 					if (m_removeLivingList.Count > 0)
 						return true;
+
+				if (IsTimeToStartTurn())
+					return true;
+
+				return false;
 			}
+			else if (m_state == WorldState.TurnOngoing)
+			{
+				if (m_tickMethod == WorldTickMethod.Simultaneous)
+					return SimultaneousWorkAvailable();
+				else if (m_tickMethod == WorldTickMethod.Sequential)
+					return SequentialWorkAvailable();
+				else
+					throw new NotImplementedException();
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
+		bool SimultaneousWorkAvailable()
+		{
+			Debug.Assert(m_state == WorldState.TurnOngoing);
 
 			lock (m_livingList)
 			{
-				if (m_state == WorldState.Idle &&
-					m_livingList.Any(l => l.IsInteractive))
-					return true;
-
-				if (m_state == WorldState.TurnOngoing &&
-					m_livingEnumerator.Current.HasAction)
+				if (m_livingList.All(l => l.HasAction))
 					return true;
 			}
+
+			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
+				return true;
+
+			return false;
+		}
+
+		void SimultaneousWork()
+		{
+			Debug.Assert(m_workActive);
+			Debug.Assert(m_state == WorldState.TurnOngoing);
+
+			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
+
+			MyDebug.WriteLine("SimultaneousWork");
+
+			lock (m_livingList)
+			{
+				if (!forceMove && !m_livingList.All(l => l.HasAction))
+					return;
+
+				if (!forceMove)
+					Debug.Assert(m_livingList.All(l => l.HasAction));
+
+				while (true)
+				{
+					Living living = m_livingEnumerator.Current;
+
+					if (living.HasAction)
+						living.PerformAction();
+					else if (!forceMove)
+						throw new Exception();
+
+					if (m_livingEnumerator.MoveNext() == false)
+						break;
+				}
+
+				EndTurn();
+			}
+
+			MyDebug.WriteLine("SimultaneousWork Done");
+		}
+
+
+
+		bool SequentialWorkAvailable()
+		{
+			Debug.Assert(m_state == WorldState.TurnOngoing);
+
+			if (m_livingEnumerator.Current.HasAction)
+				return true;
+
+			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
+				return true;
 
 			return false;
 		}
@@ -429,56 +460,38 @@ namespace MyGame
 		void SequentialWork()
 		{
 			Debug.Assert(m_workActive);
+			Debug.Assert(m_state == WorldState.TurnOngoing);
+
+			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
 			MyDebug.WriteLine("SequentialWork");
 
-			ProcessInstantInvokeList();
-			ProcessChanges();
-
-			if (m_state == WorldState.Idle)
+			while (true)
 			{
-				MyDebug.WriteLine("-- Preturn events --");
+				var living = m_livingEnumerator.Current;
 
-				// Pre-turn events
-				ProcessInvokeList();
-				ProcessAddLivingList();
-				ProcessRemoveLivingList();
-
-				// process pre-turn changes
-				ProcessChanges();
-
-				MyDebug.WriteLine("-- Preturn events done --");
-
-				if (m_livingList.Any(l => l.IsInteractive))
+				if (!forceMove && !living.HasAction)
 				{
-					StartTurn();
-					ProcessChanges();
-				}
-			}
-
-			if (m_state == WorldState.TurnOngoing)
-			{
-				while (true)
-				{
-					Debug.Assert(m_changeList.Count == 0);
-
-					var living = m_livingEnumerator.Current;
-
-					if (!living.HasAction)
-						break;
-
-					living.PerformAction();
-					ProcessChanges();
-
-					bool last = !m_livingEnumerator.MoveNext();
-					if (last)
+					if (m_useMaxMoveTime)
 					{
-						MyDebug.WriteLine("last living handled");
-						EndTurn();
-						break;
+						m_nextMove = DateTime.Now + m_maxMoveTime;
+						m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
 					}
+					break;
+				}
+
+				if (living.HasAction)
+					living.PerformAction();
+
+				bool last = !m_livingEnumerator.MoveNext();
+				if (last)
+				{
+					MyDebug.WriteLine("last living handled");
+					EndTurn();
+					break;
 				}
 			}
+
 
 			MyDebug.WriteLine("SequentialWork Done");
 		}
@@ -487,17 +500,24 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
+			m_turnNumber++;
+			AddChange(new TurnChange(m_turnNumber));
+
+			MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
+
 			lock (m_livingList)
 			{
-				m_turnNumber++;
-				AddChange(new TurnChange(m_turnNumber));
-
-				MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
-
 				m_livingEnumerator = m_livingList.GetEnumerator();
 				if (m_livingEnumerator.MoveNext() == false)
 					throw new Exception("no livings");
-				m_state = WorldState.TurnOngoing;
+			}
+
+			m_state = WorldState.TurnOngoing;
+
+			if (m_useMaxMoveTime)
+			{
+				m_nextMove = DateTime.Now + m_maxMoveTime;
+				m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
 			}
 		}
 
@@ -505,19 +525,15 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
-			lock (m_livingList)
+			if (m_useMinTurnTime)
 			{
-				m_state = WorldState.TurnEnding;
-
-				ProcessAddLivingList();
-				ProcessRemoveLivingList();
-
-				MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
-
-				m_state = WorldState.Idle;
+				m_nextTurn = DateTime.Now + m_minTurnTime;
+				m_tickTimer.Change(m_minTurnTime, TimeSpan.FromTicks(-1));
 			}
-		}
 
+			MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
+			m_state = WorldState.Idle;
+		}
 
 		public void AddChange(Change change)
 		{
