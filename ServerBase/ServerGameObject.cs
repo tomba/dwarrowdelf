@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-
 namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, Environment e, IntPoint l);
@@ -18,8 +17,9 @@ namespace MyGame
 		public IntPoint Location { get; private set; }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
+		public GameColor Color { get; set; }
 
-		public World World { get; protected set; }
+		public World World { get; private set; }
 
 		internal ServerGameObject(World world)
 			: base(world.GetNewObjectID())

@@ -12,8 +12,6 @@ namespace MyGame
 		{
 		}
 
-		public GameColor Color { get; set; }
-
 		public ClientMsgs.ItemData Serialize()
 		{
 			var data = new ClientMsgs.ItemData();

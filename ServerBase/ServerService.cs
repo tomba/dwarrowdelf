@@ -275,15 +275,7 @@ namespace MyGame
 				if (ob is Living)
 				{
 					Living l = (Living)ob;
-					msg = new ClientMsgs.LivingData()
-					{
-						ObjectID = l.ObjectID,
-						SymbolID = l.SymbolID,
-						Name = l.Name,
-						VisionRange = l.VisionRange,
-						Environment = l.Environment != null ? l.Environment.ObjectID : ObjectID.NullObjectID,
-						Location = l.Location,
-					};
+					msg = l.Serialize();
 				}
 				else if (ob is ItemObject)
 				{

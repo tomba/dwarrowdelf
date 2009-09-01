@@ -69,6 +69,8 @@ namespace MyGame.ClientMsgs
 		public IntPoint Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
+		[DataMember]
+		public GameColor Color { get; set; }
 
 		public override string ToString()
 		{

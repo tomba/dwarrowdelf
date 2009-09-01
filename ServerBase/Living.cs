@@ -335,6 +335,17 @@ namespace MyGame
 				return GetVisibleLocationsSimpleFOV();
 		}
 
-
+		public ClientMsgs.LivingData Serialize()
+		{
+			var data = new ClientMsgs.LivingData();
+			data.ObjectID = this.ObjectID;
+			data.Name = this.Name;
+			data.SymbolID = this.SymbolID;
+			data.Environment = this.Environment != null ? this.Environment.ObjectID : ObjectID.NullObjectID;
+			data.Location = this.Location;
+			data.Color = this.Color;
+			data.VisionRange = this.VisionRange;
+			return data;
+		}
 	}
 }

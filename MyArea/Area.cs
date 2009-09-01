@@ -22,6 +22,7 @@ namespace MyArea
 					throw new Exception();
 				var monsterAI = new MonsterActor(monster);
 				monster.Actor = monsterAI;
+				monster.Color = (i % 2 == 0) ? new GameColor(255, 0, 0) : new GameColor(0, 255, 0);
 			}
 
 			// Add an item

@@ -131,6 +131,7 @@ namespace MyGame
 				ob.SymbolID = ld.SymbolID;
 				ob.VisionRange = ld.VisionRange;
 				ob.Name = ld.Name;
+				ob.Color = ld.Color.ToColor();
 
 				if (ld.Environment == ObjectID.NullObjectID)
 				{
