@@ -110,7 +110,7 @@ namespace MyGame
 			if (brush is SolidColorBrush)
 			{
 				var b = (SolidColorBrush)brush;
-				b.Color = tintColor;
+				b.Color = TintColor(b.Color, tintColor);
 			}
 			else if (brush is LinearGradientBrush)
 			{
