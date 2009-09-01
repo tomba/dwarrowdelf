@@ -35,7 +35,7 @@ namespace MyGame
 
 
 
-
+		bool m_verbose = false;
 
 		WorldState m_state = WorldState.Idle;
 
@@ -255,20 +255,23 @@ namespace MyGame
 		// thread safe
 		public void SignalWorld()
 		{
-			MyDebug.WriteLine("SignalWorld");
+			if (m_verbose)
+				MyDebug.WriteLine("SignalWorld");
 			m_worldSignal.Set();
 		}
 
 		// thread safe
 		internal void SignalActorStateChanged()
 		{
-			MyDebug.WriteLine("SignalActor");
+			if (m_verbose)
+				MyDebug.WriteLine("SignalActor");
 			SignalWorld();
 		}
 
 		void TickTimerCallback(object stateInfo)
 		{
-			MyDebug.WriteLine("TickTimerCallback");
+			if (m_verbose)
+				MyDebug.WriteLine("TickTimerCallback");
 			SignalWorld();
 		}
 
@@ -282,7 +285,8 @@ namespace MyGame
 				m_workActive = true;
 			}
 
-			MyDebug.WriteLine("WorldSignalledWork");
+			if (m_verbose)
+				MyDebug.WriteLine("WorldSignalledWork");
 
 			while (true)
 			{
@@ -298,7 +302,8 @@ namespace MyGame
 				}
 			}
 
-			MyDebug.WriteLine("WorldSignalledWork done");
+			if (m_verbose)
+				MyDebug.WriteLine("WorldSignalledWork done");
 		}
 
 		bool IsTimeToStartTurn()
@@ -413,7 +418,8 @@ namespace MyGame
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
-			MyDebug.WriteLine("SimultaneousWork");
+			if (m_verbose)
+				MyDebug.WriteLine("SimultaneousWork");
 
 			lock (m_livingList)
 			{
@@ -439,7 +445,8 @@ namespace MyGame
 				EndTurn();
 			}
 
-			MyDebug.WriteLine("SimultaneousWork Done");
+			if (m_verbose)
+				MyDebug.WriteLine("SimultaneousWork Done");
 		}
 
 
@@ -464,7 +471,8 @@ namespace MyGame
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
-			MyDebug.WriteLine("SequentialWork");
+			if (m_verbose)
+				MyDebug.WriteLine("SequentialWork");
 
 			while (true)
 			{
@@ -486,14 +494,16 @@ namespace MyGame
 				bool last = !m_livingEnumerator.MoveNext();
 				if (last)
 				{
-					MyDebug.WriteLine("last living handled");
+					if (m_verbose)
+						MyDebug.WriteLine("last living handled");
 					EndTurn();
 					break;
 				}
 			}
 
 
-			MyDebug.WriteLine("SequentialWork Done");
+			if (m_verbose)
+				MyDebug.WriteLine("SequentialWork Done");
 		}
 
 		void StartTurn()
