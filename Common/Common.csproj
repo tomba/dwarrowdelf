@@ -55,6 +55,7 @@
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
+    <Compile Include="DataTypes\Grid2DBase.cs" />
     <Compile Include="SymbolInfo.cs" />
     <Compile Include="ObjectInfo.cs" />
     <Compile Include="DataTypes\IntCube.cs" />
