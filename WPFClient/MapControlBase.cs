@@ -134,11 +134,10 @@ namespace MyGame
 
 			// selection rect
 
-			var p1 = m_selectionStart - this.TopLeftPos;
-			var p2 = m_selectionEnd - this.TopLeftPos;
+			var p1 = MapLocationToScreenPoint(m_selectionStart);
+			var p2 = MapLocationToScreenPoint(m_selectionEnd);
 
-			Rect r = new Rect(new Point(p1.X * this.TileSize, p1.Y * this.TileSize),
-				new Point(p2.X * this.TileSize, p2.Y * this.TileSize));
+			Rect r = new Rect(p1, p2);
 
 			r.Width += this.TileSize;
 			r.Height += this.TileSize;
@@ -173,14 +172,23 @@ namespace MyGame
 			return (UIElement)m_tileCollection[l.X + l.Y * m_columns];
 		}
 
-		public IntPoint LocationFromPoint(Point p)
+		IntPoint ScreenPointToScreenLocation(Point p)
 		{
 			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
-		public IntPoint MapLocationFromPoint(Point p)
+		public IntPoint ScreenPointToMapLocation(Point p)
 		{
-			return LocationFromPoint(p) + (IntVector)this.TopLeftPos;
+			var loc = ScreenPointToScreenLocation(p);
+			loc.Y = -loc.Y;
+			return loc + (IntVector)this.TopLeftPos;
+		}
+
+		Point MapLocationToScreenPoint(IntPoint loc)
+		{
+			loc -= (IntVector)this.TopLeftPos;
+			loc.Y = -loc.Y;
+			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 		}
 
 		public IntRect SelectionRect
@@ -238,7 +246,7 @@ namespace MyGame
 
 			Point pos = e.GetPosition(this);
 
-			var newStart = LocationFromPoint(pos) + (IntVector)this.TopLeftPos;
+			var newStart = ScreenPointToMapLocation(pos);
 			var newEnd = newStart;
 
 			if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
@@ -285,16 +293,16 @@ namespace MyGame
 
 			if (this.ActualHeight - pos.Y < limit)
 			{
-				++m_centerPos.Y;
+				--m_centerPos.Y;
 				InvalidateTiles();
 			}
 			else if (pos.Y < limit)
 			{
-				--m_centerPos.Y;
+				++m_centerPos.Y;
 				InvalidateTiles();
 			}
 
-			var newEnd = LocationFromPoint(pos) + (IntVector)this.TopLeftPos;
+			var newEnd = ScreenPointToMapLocation(pos);
 
 			if (newEnd != m_selectionEnd)
 			{
@@ -331,7 +339,7 @@ namespace MyGame
 
 		IntPoint TopLeftPos
 		{
-			get { return m_centerPos - new IntVector(m_columns / 2, m_rows / 2); }
+			get { return m_centerPos + new IntVector(-m_columns / 2, m_rows / 2); }
 		}
 
 		void UpdateTiles()
@@ -341,7 +349,7 @@ namespace MyGame
 			{
 				int x = i % m_columns;
 				int y = i / m_columns;
-				IntPoint loc = this.TopLeftPos + new IntVector(x, y);
+				IntPoint loc = this.TopLeftPos + new IntVector(x, -y);
 
 				UpdateTile(tile, loc);
 

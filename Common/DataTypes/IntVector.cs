@@ -106,45 +106,32 @@ namespace MyGame
 			IntVector v = this;
 			v.Normalize();
 
-			Direction dir;
+			Direction dir = 0;
 
-			if (v == new IntVector(1, 1))
-				dir = Direction.SouthEast;
-			else if (v == new IntVector(-1, -1))
-				dir = Direction.NorthWest;
-			else if (v == new IntVector(1, -1))
-				dir = Direction.NorthEast;
-			else if (v == new IntVector(-1, 1))
-				dir = Direction.SouthWest;
-			else if (v == new IntVector(1, 0))
-				dir = Direction.East;
-			else if (v == new IntVector(-1, 0))
-				dir = Direction.West;
-			else if (v == new IntVector(0, 1))
-				dir = Direction.South;
-			else if (v == new IntVector(0, -1))
-				dir = Direction.North;
-			else
-				dir = Direction.None;
+			if (v.X > 0)
+				dir |= Direction.East;
+			else if (v.X < 0)
+				dir |= Direction.West;
+
+			if (v.Y > 0)
+				dir |= Direction.North;
+			else if (v.Y < 0)
+				dir |= Direction.South;
 
 			return dir;
 		}
 
 		public static IntVector FromDirection(Direction dir)
 		{
-			int x = 0, y = 0;
+			int x, y;
 
-			switch (dir)
-			{
-				case Direction.North: y = -1; break;
-				case Direction.South: y = 1; break;
-				case Direction.West: x = -1; break;
-				case Direction.East: x = 1; break;
-				case Direction.NorthWest: x = -1; y = -1; break;
-				case Direction.SouthWest: x = -1; y = 1; break;
-				case Direction.NorthEast: x = 1; y = -1; break;
-				case Direction.SouthEast: x = 1; y = 1; break;
-			}
+			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+
+			if (x == DirectionConsts.DirNeg)
+				x = -1;
+			if (y == DirectionConsts.DirNeg)
+				y = -1;
 
 			return new IntVector(x, y);
 		}
@@ -231,13 +218,13 @@ namespace MyGame
 
 		public static Direction RotateDir(Direction dir, int rotate)
 		{
-			int x = ((byte)dir >> (byte)Direction.XShift) & (byte)Direction.Mask;
-			int y = ((byte)dir >> (byte)Direction.YShift) & (byte)Direction.Mask;
+			int x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			if (x == (int)Direction.DirNeg)
+			if (x == DirectionConsts.DirNeg)
 				x = -1;
 
-			if (y == (int)Direction.DirNeg)
+			if (y == DirectionConsts.DirNeg)
 				y = -1;
 
 			IntVector v = new IntVector(x, y);

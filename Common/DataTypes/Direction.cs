@@ -2,31 +2,31 @@
 
 namespace MyGame
 {
+	public static class DirectionConsts
+	{
+		public const int Mask = 0x3;
+
+		public const int XShift = 0;
+		public const int YShift = 2;
+		public const int ZShift = 4;
+
+		public const int DirNone = 0;
+		public const int DirPos = 1;
+		public const int DirNeg = 2;
+	}
+
 	public enum Direction : byte
 	{
 		None = 0,
-		North = DirNeg << YShift,
-		South = DirPos << YShift,
-		West = DirNeg << XShift,
-		East = DirPos << XShift,
-		NorthWest = (DirNeg << YShift) | (DirNeg << XShift),
-		NorthEast = (DirNeg << YShift) | (DirPos << XShift),
-		SouthWest = (DirPos << YShift) | (DirNeg << XShift),
-		SouthEast = (DirPos << YShift) | (DirPos << XShift),
-		Up = DirPos << ZShift,
-		Down = DirNeg << ZShift,
-
-		Mask = 0x3,
-		XMask = 0x3,
-		YMask = 0x3 << 2,
-		ZMask = 0x3 << 4,
-
-		XShift = 0,
-		YShift = 2,
-		ZShift = 4,
-
-		DirNone = 0,
-		DirPos = 1,
-		DirNeg = 2,
+		North = DirectionConsts.DirPos << DirectionConsts.YShift,
+		South = DirectionConsts.DirNeg << DirectionConsts.YShift,
+		West = DirectionConsts.DirNeg << DirectionConsts.XShift,
+		East = DirectionConsts.DirPos << DirectionConsts.XShift,
+		NorthWest = North | West,
+		NorthEast = North | East,
+		SouthWest = South | West,
+		SouthEast = South | East,
+		Up = DirectionConsts.DirPos << DirectionConsts.ZShift,
+		Down = DirectionConsts.DirNeg << DirectionConsts.ZShift,
 	}
 }

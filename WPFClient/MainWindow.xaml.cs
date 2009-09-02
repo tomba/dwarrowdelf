@@ -100,7 +100,7 @@ namespace MyGame
 				if (r.Width > 1 || r.Height > 1)
 					return;
 
-				IntPoint ml = map.MapLocationFromPoint(e.GetPosition(map));
+				IntPoint ml = map.ScreenPointToMapLocation(e.GetPosition(map));
 
 				map.SelectionRect = new IntRect(ml, new IntSize(1, 1));
 			}
