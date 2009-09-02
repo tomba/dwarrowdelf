@@ -55,35 +55,17 @@ namespace MyGame
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
-		public Environment(World world)
+		public Environment(World world, int width, int height, VisibilityMode visibilityMode)
 			: base(world)
 		{
 			this.Version = 1;
 			base.Name = "map";
-			this.VisibilityMode = VisibilityMode.AllVisible;
+			this.VisibilityMode = visibilityMode;
 
-			this.Width = 55;
-			this.Height = 55;
+			this.Width = width;
+			this.Height = height;
 
 			m_tileGrid = new TileGrid(this.Width, this.Height);
-
-			Random r = new Random(123);
-			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
-			for (int y = 0; y < this.Height; y++)
-			{
-				for (int x = 0; x < this.Width; x++)
-				{
-					if (r.Next() % 8 == 0)
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), wall.ID);
-					else
-						m_tileGrid.SetTerrainType(new IntPoint(x, y), floor.ID);
-				}
-			}
-
-			m_tileGrid.SetTerrainType(new IntPoint(0, 0), floor.ID);
-			m_tileGrid.SetTerrainType(new IntPoint(1, 1), floor.ID);
-			m_tileGrid.SetTerrainType(new IntPoint(2, 2), floor.ID);
 		}
 
 		public IntRect Bounds

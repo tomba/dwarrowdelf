@@ -52,6 +52,21 @@ namespace MyGame
 		List<Change> m_changeList = new List<Change>();
 
 		Environment m_map; // XXX
+		public Environment Map 
+		{
+			get { return m_map; }
+
+			set
+			{
+				if (m_map != null)
+					m_map.MapChanged -= this.MapChangedCallback;
+
+				m_map = value;
+
+				if (m_map != null)
+					m_map.MapChanged += this.MapChangedCallback;
+			}
+		}
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -94,9 +109,6 @@ namespace MyGame
 			this.Area = area;
 			this.AreaData = areaData;
 			m_tickTimer = new Timer(this.TickTimerCallback);
-
-			m_map = new Environment(this);
-			m_map.MapChanged += MapChangedCallback;
 
 			// mark as active for the initialization
 			m_workActive = true;
@@ -592,14 +604,6 @@ namespace MyGame
 			// is this needed?
 			AddChange(new MapChange(mapID, l, terrainID));
 		}
-
-		// XXX
-		public Environment Map
-		{
-			get { return m_map; }
-		}
-
-
 
 		public ServerGameObject FindObject(ObjectID objectID)
 		{
