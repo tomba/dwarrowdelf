@@ -119,6 +119,7 @@ namespace MyGame
 		protected override void ChildAdded(ServerGameObject child)
 		{
 			IntPoint l = child.Location;
+
 			if (m_tileGrid.GetContentList(l) == null)
 				m_tileGrid.SetContentList(l, new List<ServerGameObject>());
 
@@ -143,6 +144,19 @@ namespace MyGame
 				return false;
 
 			return true;
+		}
+
+		protected override void ChildMoved(ServerGameObject child, IntPoint oldLocation, IntPoint newLocation)
+		{
+			Debug.Assert(m_tileGrid.GetContentList(oldLocation) != null);
+			bool removed = m_tileGrid.GetContentList(oldLocation).Remove(child);
+			Debug.Assert(removed);
+
+			if (m_tileGrid.GetContentList(newLocation) == null)
+				m_tileGrid.SetContentList(newLocation, new List<ServerGameObject>());
+
+			Debug.Assert(!m_tileGrid.GetContentList(newLocation).Contains(child));
+			m_tileGrid.GetContentList(newLocation).Add(child);
 		}
 
 		public override string ToString()

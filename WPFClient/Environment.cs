@@ -44,7 +44,7 @@ namespace MyGame
 			return block.Grid[block.GetIndex(p)].m_contentList;
 		}
 
-		public void AddObject(IntPoint p, ClientGameObject ob)
+		public void AddObject(IntPoint p, ClientGameObject ob, bool tail)
 		{
 			var block = base.GetBlock(ref p, true);
 
@@ -61,7 +61,10 @@ namespace MyGame
 			}
 
 			Debug.Assert(!list.Contains(ob));
-			list.Add(ob);
+			if (tail)
+				list.Add(ob);
+			else
+				list.Insert(0, ob);
 		}
 
 		public void RemoveObject(IntPoint p, ClientGameObject ob)
@@ -142,7 +145,7 @@ namespace MyGame
 		protected override void ChildAdded(ClientGameObject child)
 		{
 			IntPoint l = child.Location;
-			m_tileGrid.AddObject(l, child);
+			m_tileGrid.AddObject(l, child, !child.IsLiving);
 
 			if (MapChanged != null)
 				MapChanged(l);

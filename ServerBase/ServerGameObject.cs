@@ -50,6 +50,7 @@ namespace MyGame
 		protected virtual bool OkToAddChild(ServerGameObject child, IntPoint p) { return true; }
 		protected virtual void ChildAdded(ServerGameObject child) { }
 		protected virtual void ChildRemoved(ServerGameObject child) { }
+		protected virtual void ChildMoved(ServerGameObject child, IntPoint oldLocation, IntPoint newLocation) { }
 		protected virtual void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv) { }
 
 		public bool MoveTo(ServerGameObject parent)
@@ -76,7 +77,12 @@ namespace MyGame
 				this.Parent = parent;
 			}
 
-			this.Location = location;
+			if (this.Location != location)
+			{
+				this.Location = location;
+				if (oldParent == parent)
+					parent.ChildMoved(this, oldLocation, location);
+			}
 
 			if (oldParent != parent)
 			{

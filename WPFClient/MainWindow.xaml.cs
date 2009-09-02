@@ -33,7 +33,7 @@ namespace MyGame
 			this.Width = 1024;
 			this.Height = 600;
 
-			map.KeyDown += MapControl_KeyDown;
+			this.PreviewKeyDown += Window_PreKeyDown;
 			map.MouseDown += MapControl_MouseDown;
 		}
 
@@ -44,7 +44,7 @@ namespace MyGame
 			map.Focus();
 		}
 
-		void MapControl_KeyDown(object sender, KeyEventArgs e)
+		void Window_PreKeyDown(object sender, KeyEventArgs e)
 		{
 			//MyDebug.WriteLine("OnMyKeyDown");
 			if (GameData.Data.Connection == null)
@@ -129,6 +129,41 @@ namespace MyGame
 			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 			IntRect r = map.SelectionRect;
 			GameData.Data.Connection.Server.SetTiles(r, terrain.ID);
+		}
+
+		private void Get_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var plr = GameData.Data.Player;
+			if (!(plr.Environment is Environment))
+				throw new Exception();
+
+			var item = (ClientGameObject)currentTileItems.SelectedItem;
+
+			if (item == null || item == plr)
+				return;
+
+			if (item.Environment != plr.Environment ||
+				item.Location != plr.Location)
+				throw new Exception();
+
+			MyDebug.WriteLine("get {0}", item);
+
+			int wtid = GameData.Data.Connection.GetNewTransactionID();
+			GameData.Data.Connection.DoAction(new GetAction(wtid, plr, item));
+		}
+
+		private void Drop_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var item = (ClientGameObject)inventoryListBox.SelectedItem;
+			if (item == null)
+				return;
+
+			MyDebug.WriteLine("{0}", item);
+
+			var plr = GameData.Data.Player;
+
+			int wtid = GameData.Data.Connection.GetNewTransactionID();
+			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, item));
 		}
 	}
 }

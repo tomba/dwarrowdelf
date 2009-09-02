@@ -106,6 +106,7 @@ namespace MyGame
 		public Color Color { get; set; }
 		public ClientGameObject Parent { get; private set; }
 		public IntPoint Location { get; private set; }
+		public bool IsLiving { get; set; }
 
 		public ClientGameObject(ObjectID objectID)
 			: base(objectID)
@@ -222,5 +223,10 @@ namespace MyGame
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+
+		public override string ToString()
+		{
+			return String.Format("Object({0}/{1})", this.Name, this.ObjectID);
+		}
 	}
 }

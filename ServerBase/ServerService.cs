@@ -120,7 +120,7 @@ namespace MyGame
 		{
 			try
 			{
-				if (action.ObjectID != m_player.ObjectID)
+				if (action.ActorObjectID != m_player.ObjectID)
 					throw new Exception("Illegal ob id");
 
 				// this is safe to call out of world thread (is it? =)

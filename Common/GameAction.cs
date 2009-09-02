@@ -7,20 +7,25 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract, KnownType(typeof(MoveAction)), KnownType(typeof(WaitAction))]
+	[DataContract,
+	KnownType(typeof(MoveAction)),
+	KnownType(typeof(WaitAction)),
+	KnownType(typeof(GetAction)),
+	KnownType(typeof(DropAction)),
+	]
 	public abstract class GameAction
 	{
 		GameObject m_target;
 		[DataMember]
-		public ObjectID ObjectID { get; set; }
+		public ObjectID ActorObjectID { get; set; }
 		[DataMember]
 		public int TransactionID { get; set; }
 
-		public GameAction(int transID, GameObject target)
+		public GameAction(int transID, GameObject actor)
 		{
 			this.TransactionID = transID;
-			m_target = target;
-			this.ObjectID = m_target.ObjectID;
+			m_target = actor;
+			this.ActorObjectID = m_target.ObjectID;
 		}
 	}
 
@@ -30,8 +35,8 @@ namespace MyGame
 		[DataMember]
 		public Direction Direction { get; set; }
 
-		public MoveAction(int transID, GameObject target, Direction direction)
-			: base(transID, target)
+		public MoveAction(int transID, GameObject actor, Direction direction)
+			: base(transID, actor)
 		{
 			this.Direction = direction;
 		}
@@ -41,14 +46,15 @@ namespace MyGame
 			return String.Format("MoveAction({0})", this.Direction);
 		}
 	}
+
 	[DataContract]
 	public class WaitAction : GameAction
 	{
 		[DataMember]
 		public int Turns { get; set; }
 
-		public WaitAction(int transID, GameObject target, int turns)
-			: base(transID, target)
+		public WaitAction(int transID, GameObject actor, int turns)
+			: base(transID, actor)
 		{
 			this.Turns = turns;
 		}
@@ -59,5 +65,39 @@ namespace MyGame
 		}
 	}
 
+	[DataContract]
+	public class DropAction : GameAction
+	{
+		[DataMember]
+		public ObjectID ItemObjectID { get; set; }
 
+		public DropAction(int transID, GameObject actor, GameObject item)
+			: base(transID, actor)
+		{
+			this.ItemObjectID = item.ObjectID;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("DropAction({0})", this.ItemObjectID);
+		}
+	}
+
+	[DataContract]
+	public class GetAction : GameAction
+	{
+		[DataMember]
+		public ObjectID ItemObjectID { get; set; }
+
+		public GetAction(int transID, GameObject actor, GameObject item)
+			: base(transID, actor)
+		{
+			this.ItemObjectID = item.ObjectID;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("GetAction({0})", this.ItemObjectID);
+		}
+	}
 }

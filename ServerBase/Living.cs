@@ -74,6 +74,52 @@ namespace MyGame
 				this.ActionQueuedEvent();
 		}
 
+		void PerformGet(GetAction action, out bool done, out bool success)
+		{
+			done = true;
+			success = false;
+
+			if (action.ItemObjectID == this.ObjectID)
+				return;
+
+			if (this.Environment == null)
+				return;
+
+			var list = this.Environment.GetContents(this.Location);
+			if (list == null)
+				return;
+
+			var item = list.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
+			if (item == null)
+				return;
+
+			item.MoveTo(this);
+			success = true;
+		}
+
+		void PerformDrop(DropAction action, out bool done, out bool success)
+		{
+			done = true;
+			success = false;
+
+			if (action.ItemObjectID == this.ObjectID)
+				return;
+
+			if (this.Environment == null)
+				return;
+
+			var list = this.Inventory;
+			if (list == null)
+				return;
+
+			var item = list.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
+			if (item == null)
+				return;
+
+			item.MoveTo(this.Environment, this.Location);
+			success = true;
+		}
+
 		// called during turn processing. the world state is not quite valid.
 		public void PerformAction()
 		{
@@ -84,7 +130,7 @@ namespace MyGame
 
 			MyDebug.WriteLine("PerformAction {0} : {1}", Name, action);
 
-			Debug.Assert(action.ObjectID == this.ObjectID);
+			Debug.Assert(action.ActorObjectID == this.ObjectID);
 
 			bool done;
 			bool success;
@@ -105,8 +151,18 @@ namespace MyGame
 				else
 					done = false;
 			}
+			else if (action is GetAction)
+			{
+				PerformGet((GetAction)action, out done, out success);
+			}
+			else if (action is DropAction)
+			{
+				PerformDrop((DropAction)action, out done, out success);
+			}
 			else
+			{
 				throw new NotImplementedException();
+			}
 
 			ReportAction(done, success);
 

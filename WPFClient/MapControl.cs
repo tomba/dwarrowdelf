@@ -192,19 +192,37 @@ namespace MyGame
 			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
 			this.CenterPos = newPos;
+
+			this.CurrentTileInfo = new TileInfo(this.m_env, l);
 		}
 
-		TileInfo m_tileInfo;
-		public TileInfo SelectedTileInfo
+		TileInfo m_currentTileInfo;
+		public TileInfo CurrentTileInfo
 		{
-			get { return m_tileInfo; }
+			get { return m_currentTileInfo; }
 			set
 			{
-				if (m_tileInfo != null)
-					m_tileInfo.StopObserve();
-				m_tileInfo = value;
-				if (m_tileInfo != null)
-					m_tileInfo.StartObserve();
+				if (m_currentTileInfo != null)
+					m_currentTileInfo.StopObserve();
+				m_currentTileInfo = value;
+				if (m_currentTileInfo != null)
+					m_currentTileInfo.StartObserve();
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("CurrentTileInfo"));
+			}
+		}
+
+		TileInfo m_selectedTileInfo;
+		public TileInfo SelectedTileInfo
+		{
+			get { return m_selectedTileInfo; }
+			set
+			{
+				if (m_selectedTileInfo != null)
+					m_selectedTileInfo.StopObserve();
+				m_selectedTileInfo = value;
+				if (m_selectedTileInfo != null)
+					m_selectedTileInfo.StartObserve();
 				if (PropertyChanged != null)
 					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTileInfo"));
 			}

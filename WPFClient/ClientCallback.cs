@@ -119,6 +119,7 @@ namespace MyGame
 				ob.VisionRange = ld.VisionRange;
 				ob.Name = ld.Name;
 				ob.Color = ld.Color.ToColor();
+				ob.IsLiving = true;
 
 				ClientGameObject env = null;
 				if (ld.Environment != ObjectID.NullObjectID)
@@ -141,6 +142,7 @@ namespace MyGame
 				ob.Name = id.Name;
 				ob.SymbolID = id.SymbolID;
 				ob.Color = id.Color.ToColor();
+				ob.IsLiving = false;
 
 				ClientGameObject env = null;
 				if (id.Environment != ObjectID.NullObjectID)

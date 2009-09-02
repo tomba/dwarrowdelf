@@ -23,8 +23,8 @@
 						<ComboBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="{Binding Name}" />
 									<Image Source="{Binding Drawing}" Stretch="Uniform" Height="20" />
+									<TextBlock Text="{Binding Name}" />
 								</StackPanel>
 							</DataTemplate>
 						</ComboBox.ItemTemplate>
@@ -49,9 +49,10 @@
 
 			<Grid.RowDefinitions>
 				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0">
+			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
 				<local:MapControl.ContextMenu>
 					<ContextMenu>
 						<MenuItem Header="Change tile">
@@ -65,66 +66,73 @@
 				</local:MapControl.ContextMenu>
 			</local:MapControl>
 
-			<Grid Grid.Column="1" Grid.RowSpan="2">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="1*"/>
-					<RowDefinition Height="1*"/>
-				</Grid.RowDefinitions>
-
-				<DockPanel Grid.Row="0">
-					<TextBlock DockPanel.Dock="Top">Inventory</TextBlock>
-					<ListBox Name="inventoryListBox" 
-						 ItemsSource="{Binding Path=Player.Inventory}">
+			<GroupBox Grid.Column="1" Grid.Row="0" Header="Inventory" Focusable="False">
+				<DockPanel>
+					<Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
+					<ListBox Name="inventoryListBox"
+							 ItemsSource="{Binding Path=Player.Inventory}">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
 									<StackPanel.ToolTip>
 										<StackPanel Orientation="Vertical">
-											<TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" />
 											<Image Source="{Binding Path=Drawing}" Stretch="Uniform" />
+											<TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" />
 										</StackPanel>
 									</StackPanel.ToolTip>
-									<TextBlock Text="{Binding Path=Name}" />
 									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+									<TextBlock Text="{Binding Path=Name}" />
 								</StackPanel>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
 				</DockPanel>
+			</GroupBox>
 
-				<DockPanel Grid.Row="1">
-					<TextBlock DockPanel.Dock="Top">Pending Actions</TextBlock>
-					<ListBox ItemsSource="{Binding Path=ActionCollection}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
+			<GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
+				<ListBox ItemsSource="{Binding Path=ActionCollection}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
+			</GroupBox>
+
+			<GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
+					  DataContext="{Binding Path=CurrentTileInfo, ElementName=map}">
+				<DockPanel>
+					<StackPanel DockPanel.Dock="Top">
+						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
+					</StackPanel>
+					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
+					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}">
+						<ListBox.ItemTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+									<TextBlock Text="{Binding Path=Name}" />
+								</StackPanel>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
+					</ListBox>
 				</DockPanel>
-				
-			</Grid>
+			</GroupBox>
 
-			<StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="0"
-                        DataContext="{Binding Path=SelectedTileInfo, ElementName=map}">
-				<StackPanel>
-					<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-					<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
-				</StackPanel>
-				<StackPanel>
-					<TreeView>
-						<TreeViewItem Header="test" />
-					</TreeView>
+			<GroupBox Grid.Column="2" Grid.Row="1" Header="Selected Tile Info"
+					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map}">
+				<DockPanel>
+					<StackPanel DockPanel.Dock="Top">
+						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
+					</StackPanel>
 					<ListBox ItemsSource="{Binding Objects}">
 						<ListBox.ItemTemplate>
 							<DataTemplate>
 								<StackPanel Orientation="Horizontal">
-									<TextBlock Text="{Binding Path=Name}" />
 									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
+									<TextBlock Text="{Binding Path=Name}" />
 								</StackPanel>
 							</DataTemplate>
 						</ListBox.ItemTemplate>
 					</ListBox>
-
-				</StackPanel>
-			</StackPanel>
-
-			<GridSplitter HorizontalAlignment="Right" VerticalAlignment="Stretch" Grid.Column="0"
-					  ShowsPreview="True" Width="5" ResizeDirection="Columns"/>
+				</DockPanel>
+			</GroupBox>
 		</Grid>
 
 	</DockPanel>

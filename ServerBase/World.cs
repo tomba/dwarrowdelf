@@ -57,7 +57,7 @@ namespace MyGame
 
 		int m_turnNumber = 0;
 
-		WorldTickMethod m_tickMethod = WorldTickMethod.Simultaneous;
+		WorldTickMethod m_tickMethod = WorldTickMethod.Sequential;
 
 		// maximum time for one living to make its move
 		bool m_useMaxMoveTime = false;
