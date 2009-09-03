@@ -37,6 +37,8 @@ namespace MyGame
 			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
 				typeof(MapControlBase));
 			dpd.AddValueChanged(this, OnTileSizeChanged);
+
+			this.CurrentTileInfo = new TileInfo();
 		}
 
 		void OnTileSizeChanged(object ob, EventArgs e)
@@ -100,7 +102,7 @@ namespace MyGame
 			bmp = GetBitmap(ml, lit);
 			tile.Bitmap = bmp;
 
-			if(GameData.Data.DisableLOS)
+			if (GameData.Data.DisableLOS)
 				lit = true; // lit always so we see what server sends
 
 			if (lit)
@@ -182,7 +184,9 @@ namespace MyGame
 			if (env != m_env)
 			{
 				this.Map = env;
-//				m_center = new Location(-1, -1);
+				this.CurrentTileInfo.Environment = env;
+				// XXX hack to get the MapChanged event. Do this somehow else.
+				this.CurrentTileInfo = this.CurrentTileInfo;
 			}
 
 			int xd = this.Columns / 2;
@@ -193,7 +197,7 @@ namespace MyGame
 
 			this.CenterPos = newPos;
 
-			this.CurrentTileInfo = new TileInfo(this.m_env, l);
+			this.CurrentTileInfo.Location = l;
 		}
 
 		TileInfo m_currentTileInfo;
@@ -238,7 +242,15 @@ namespace MyGame
 				return;
 			}
 
-			this.SelectedTileInfo = new TileInfo(this.m_env, sel.TopLeft);
+			if (this.SelectedTileInfo == null)
+			{
+				this.SelectedTileInfo = new TileInfo(m_env, sel.TopLeft);
+			}
+			else
+			{
+				this.SelectedTileInfo.Environment = m_env;
+				this.SelectedTileInfo.Location = sel.TopLeft;
+			}
 		}
 	}
 
@@ -246,6 +258,11 @@ namespace MyGame
 	{
 		Environment m_env;
 		IntPoint m_location;
+
+		public TileInfo()
+		{
+		}
+
 		public TileInfo(Environment mapLevel, IntPoint location)
 		{
 			m_env = mapLevel;
@@ -273,19 +290,48 @@ namespace MyGame
 			}
 		}
 
+		public Environment Environment
+		{
+			get { return m_env; }
+			set
+			{
+				m_env = value;
+				Notify("Environment");
+				Notify("TerrainType");
+				Notify("Objects");
+			}
+		}
+
 		public IntPoint Location
 		{
 			get { return m_location; }
+			set
+			{
+				m_location = value;
+				Notify("Location");
+				Notify("TerrainType");
+				Notify("Objects");
+			}
 		}
 
 		public int TerrainType
 		{
-			get { return m_env.GetTerrainID(m_location); }
+			get
+			{
+				if (m_env == null)
+					return 0;
+				return m_env.GetTerrainID(m_location);
+			}
 		}
 
 		public IList<ClientGameObject> Objects
 		{
-			get { return m_env.GetContents(m_location); }
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetContents(m_location);
+			}
 		}
 
 		void Notify(string name)
@@ -332,7 +378,7 @@ namespace MyGame
 		{
 			((MapControlTile)ob).InvalidateVisual();
 		}
-		
+
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			if (this.Bitmap != null)
