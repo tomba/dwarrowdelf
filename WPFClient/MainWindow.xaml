@@ -4,6 +4,55 @@
 	xmlns:local="clr-namespace:MyGame"
 	Title="Window1" Height="424" Width="800"
     DataContext="{x:Static local:GameData.Data}">
+	<Window.Resources>
+		<DataTemplate x:Key="objectDataTemplate">
+			<DataTemplate.Resources>
+				<Style TargetType="TextBlock">
+					<Setter Property="Margin" Value="5,3" />
+				</Style>
+			</DataTemplate.Resources>
+			<StackPanel Orientation="Horizontal">
+				<Image Source="{Binding Path=Drawing}" Stretch="Uniform"
+					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}"
+					   HorizontalAlignment="Left" />
+				<TextBlock Name="nameTextBlock" Text="{Binding Path=Name}" />
+				<StackPanel.ToolTip>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+						<Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+							   Source="{Binding Path=Drawing}" Stretch="Uniform" />
+
+						<TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="1"
+								   Text="{Binding Path=Name}" />
+
+						<TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="2"
+								   Text="{Binding Path=Color}" />
+
+						<TextBlock Grid.Column="0" Grid.Row="3">ObjectID</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="3"
+								   Text="{Binding Path=ObjectID}" />
+
+						<TextBlock Grid.Column="0" Grid.Row="4">Parent</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="4"
+								   Text="{Binding Path=Parent}" />
+					</Grid>
+				</StackPanel.ToolTip>
+			</StackPanel>
+		</DataTemplate>
+	</Window.Resources>
 
 	<DockPanel>
 		<ToolBarTray DockPanel.Dock="Top">
@@ -16,19 +65,10 @@
 			<ToolBar>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
-
 					<ComboBox MinWidth="100" ItemsSource="{Binding Objects}"
                           SelectedItem="{Binding Path=FollowObject, ElementName=map}"
-                          IsReadOnly="True">
-						<ComboBox.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<Image Source="{Binding Drawing}" Stretch="Uniform" Height="20" />
-									<TextBlock Text="{Binding Name}" />
-								</StackPanel>
-							</DataTemplate>
-						</ComboBox.ItemTemplate>
-					</ComboBox>
+							  ItemTemplate="{StaticResource objectDataTemplate}"
+                          IsReadOnly="True" />
 				</StackPanel>
 			</ToolBar>
 
@@ -70,27 +110,13 @@
 				<DockPanel>
 					<Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
 					<ListBox Name="inventoryListBox"
-							 ItemsSource="{Binding Path=Player.Inventory}">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<StackPanel.ToolTip>
-										<StackPanel Orientation="Vertical">
-											<Image Source="{Binding Path=Drawing}" Stretch="Uniform" />
-											<TextBlock Text="{Binding Path=Name}" HorizontalAlignment="Center" />
-										</StackPanel>
-									</StackPanel.ToolTip>
-									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
-									<TextBlock Text="{Binding Path=Name}" />
-								</StackPanel>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+							 ItemsSource="{Binding Path=Player.Inventory}"
+							 ItemTemplate="{StaticResource objectDataTemplate}" />
 				</DockPanel>
 			</GroupBox>
 
 			<GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
-				<ListBox ItemsSource="{Binding Path=ActionCollection}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
+				<ListBox ItemsSource="{Binding Path=ActionCollection}" />
 			</GroupBox>
 
 			<GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
@@ -101,16 +127,8 @@
 						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
 					</StackPanel>
 					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
-									<TextBlock Text="{Binding Path=Name}" />
-								</StackPanel>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
+							 ItemTemplate="{StaticResource objectDataTemplate}" />
 				</DockPanel>
 			</GroupBox>
 
@@ -121,16 +139,7 @@
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
 						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
 					</StackPanel>
-					<ListBox ItemsSource="{Binding Objects}">
-						<ListBox.ItemTemplate>
-							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<Image Source="{Binding Path=Drawing}" Stretch="Uniform" Height="20" />
-									<TextBlock Text="{Binding Path=Name}" />
-								</StackPanel>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
-					</ListBox>
+					<ListBox ItemsSource="{Binding Objects}" ItemTemplate="{StaticResource objectDataTemplate}" />
 				</DockPanel>
 			</GroupBox>
 		</Grid>
