@@ -111,7 +111,7 @@
 					<Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
 					<ListBox Name="inventoryListBox"
 							 ItemsSource="{Binding Path=Player.Inventory}"
-							 ItemTemplate="{StaticResource objectDataTemplate}" />
+							 ItemTemplate="{StaticResource objectDataTemplate}" SelectionMode="Extended" />
 				</DockPanel>
 			</GroupBox>
 
@@ -128,7 +128,7 @@
 					</StackPanel>
 					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
 					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
-							 ItemTemplate="{StaticResource objectDataTemplate}" />
+							 ItemTemplate="{StaticResource objectDataTemplate}" SelectionMode="Extended" />
 				</DockPanel>
 			</GroupBox>
 

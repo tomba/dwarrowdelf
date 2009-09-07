@@ -68,18 +68,19 @@ namespace MyGame
 	[DataContract]
 	public class DropAction : GameAction
 	{
-		[DataMember]
-		public ObjectID ItemObjectID { get; set; }
+        [DataMember]
+        public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-		public DropAction(int transID, GameObject actor, GameObject item)
-			: base(transID, actor)
-		{
-			this.ItemObjectID = item.ObjectID;
-		}
+        public DropAction(int transID, GameObject actor, IEnumerable<GameObject> items)
+            : base(transID, actor)
+        {
+            this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+        }
 
 		public override string ToString()
 		{
-			return String.Format("DropAction({0})", this.ItemObjectID);
+			return String.Format("DropAction({0})",
+				String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray()));
 		}
 	}
 
@@ -87,17 +88,18 @@ namespace MyGame
 	public class GetAction : GameAction
 	{
 		[DataMember]
-		public ObjectID ItemObjectID { get; set; }
+		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-		public GetAction(int transID, GameObject actor, GameObject item)
-			: base(transID, actor)
-		{
-			this.ItemObjectID = item.ObjectID;
-		}
+		public GetAction(int transID, GameObject actor, IEnumerable<GameObject> items)
+            : base(transID, actor)
+        {
+            this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+        }
 
 		public override string ToString()
 		{
-			return String.Format("GetAction({0})", this.ItemObjectID);
+			return String.Format("GetAction({0})",
+				String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray()));
 		}
 	}
 }

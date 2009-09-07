@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -137,33 +138,32 @@ namespace MyGame
 			if (!(plr.Environment is Environment))
 				throw new Exception();
 
-			var item = (ClientGameObject)currentTileItems.SelectedItem;
+			var list = currentTileItems.SelectedItems.Cast<ClientGameObject>();
 
-			if (item == null || item == plr)
+			if (list.Count() == 0)
 				return;
 
-			if (item.Environment != plr.Environment ||
-				item.Location != plr.Location)
-				throw new Exception();
+			if (list.Contains(plr))
+				return;
 
-			MyDebug.WriteLine("get {0}", item);
+			Debug.Assert(list.All(o => o.Environment == plr.Environment));
+			Debug.Assert(list.All(o => o.Location == plr.Location));
 
 			int wtid = GameData.Data.Connection.GetNewTransactionID();
-			GameData.Data.Connection.DoAction(new GetAction(wtid, plr, item));
+			GameData.Data.Connection.DoAction(new GetAction(wtid, plr, list.Cast<GameObject>()));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var item = (ClientGameObject)inventoryListBox.SelectedItem;
-			if (item == null)
-				return;
+			var list = inventoryListBox.SelectedItems.Cast<ClientGameObject>();
 
-			MyDebug.WriteLine("{0}", item);
+			if (list.Count() == 0)
+				return;
 
 			var plr = GameData.Data.Player;
 
 			int wtid = GameData.Data.Connection.GetNewTransactionID();
-			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, item));
+			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, list.Cast<GameObject>()));
 		}
 	}
 }

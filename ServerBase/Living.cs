@@ -79,9 +79,6 @@ namespace MyGame
 			done = true;
 			success = false;
 
-			if (action.ItemObjectID == this.ObjectID)
-				return;
-
 			if (this.Environment == null)
 				return;
 
@@ -89,11 +86,19 @@ namespace MyGame
 			if (list == null)
 				return;
 
-			var item = list.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
-			if (item == null)
-				return;
+			foreach (var itemID in action.ItemObjectIDs)
+			{
+				if (itemID == this.ObjectID)
+					throw new Exception();
 
-			item.MoveTo(this);
+				var item = list.FirstOrDefault(o => o.ObjectID == itemID);
+				if (item == null)
+					throw new Exception();
+
+				if (item.MoveTo(this) == false)
+					throw new Exception();
+			}
+
 			success = true;
 		}
 
@@ -102,21 +107,26 @@ namespace MyGame
 			done = true;
 			success = false;
 
-			if (action.ItemObjectID == this.ObjectID)
-				return;
-
 			if (this.Environment == null)
 				return;
 
 			var list = this.Inventory;
 			if (list == null)
-				return;
+				throw new Exception();
 
-			var item = list.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
-			if (item == null)
-				return;
+			foreach (var itemID in action.ItemObjectIDs)
+			{
+				if (itemID == this.ObjectID)
+					throw new Exception();
 
-			item.MoveTo(this.Environment, this.Location);
+				var ob = list.FirstOrDefault(o => o.ObjectID == itemID);
+				if (ob == null)
+					throw new Exception();
+
+				if (ob.MoveTo(this.Environment, this.Location) == false)
+					throw new Exception();
+			}
+
 			success = true;
 		}
 
