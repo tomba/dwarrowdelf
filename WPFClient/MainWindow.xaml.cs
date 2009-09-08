@@ -45,14 +45,11 @@ namespace MyGame
 			map.Focus();
 		}
 
-		void Window_PreKeyDown(object sender, KeyEventArgs e)
+		Direction KeyToDir(Key key)
 		{
-			//MyDebug.WriteLine("OnMyKeyDown");
-			if (GameData.Data.Connection == null)
-				return;
-
 			Direction dir;
-			switch (e.Key)
+
+			switch (key)
 			{
 				case Key.Up: dir = Direction.North; break;
 				case Key.Down: dir = Direction.South; break;
@@ -62,34 +59,65 @@ namespace MyGame
 				case Key.End: dir = Direction.SouthWest; break;
 				case Key.PageUp: dir = Direction.NorthEast; break;
 				case Key.PageDown: dir = Direction.SouthEast; break;
-
-				case Key.Space:
-					{
-						e.Handled = true;
-						int wtid = GameData.Data.Connection.GetNewTransactionID();
-						GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
-						return;
-					}
-
-				case Key.Add:
-					e.Handled = true;
-					map.TileSize += 8;
-					return;
-
-				case Key.Subtract:
-					e.Handled = true;
-					if (map.TileSize <= 16)
-						return;
-					map.TileSize -= 8;
-					return;
-
 				default:
+					throw new Exception();
+			}
+
+			return dir;
+		}
+
+		bool KeyIsDir(Key key)
+		{
+			switch (key)
+			{
+				case Key.Up: break;
+				case Key.Down: break;
+				case Key.Left: break;
+				case Key.Right: break;
+				case Key.Home: break;
+				case Key.End: break;
+				case Key.PageUp: break;
+				case Key.PageDown: break;
+				default:
+					return false;
+			}
+			return true;
+		}
+
+		void Window_PreKeyDown(object sender, KeyEventArgs e)
+		{
+			//MyDebug.WriteLine("OnMyKeyDown");
+			if (GameData.Data.Connection == null)
+				return;
+
+			if (KeyIsDir(e.Key))
+			{
+				Direction dir = KeyToDir(e.Key);
+				int tid = GameData.Data.Connection.GetNewTransactionID();
+				GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
+			}
+			else if (e.Key == Key.Space)
+			{
+				e.Handled = true;
+				int wtid = GameData.Data.Connection.GetNewTransactionID();
+				GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
+			}
+
+			else if (e.Key == Key.Add)
+			{
+				e.Handled = true;
+				map.TileSize += 8;
+			}
+
+			else if (e.Key == Key.Subtract)
+			{
+				e.Handled = true;
+				if (map.TileSize <= 16)
 					return;
+				map.TileSize -= 8;
 			}
 
 			e.Handled = true;
-			int tid = GameData.Data.Connection.GetNewTransactionID();
-			GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
