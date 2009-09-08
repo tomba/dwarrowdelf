@@ -11,7 +11,13 @@ namespace MyGame
 	public interface IClientCallback
 	{
 		[OperationContract(IsOneWay = true)]
-		void LoginReply(ObjectID playerID);
+		void LogOnReply();
+
+		[OperationContract(IsOneWay = true)]
+		void LogOnCharReply(ObjectID playerID);
+
+		[OperationContract(IsOneWay = true)]
+		void LogOffCharReply();
 
 		[OperationContract(IsOneWay = true)]
 		void DeliverMessage(ClientMsgs.Message message);

@@ -89,7 +89,7 @@ namespace MyGame
 			if (m_connection.CommState != System.ServiceModel.CommunicationState.Opened)
 				throw new Exception();
 
-			m_connection.Server.Login("tomba");
+			m_connection.Server.LogOn("tomba");
 			GameData.Data.Connection = m_connection;
 		}
 
@@ -100,7 +100,7 @@ namespace MyGame
 			if (m_connection != null)
 			{
 				if (!m_connection.HasFaulted())
-					m_connection.Server.Logout();
+					m_connection.Server.LogOff();
 				m_connection.Disconnect();
 			}
 

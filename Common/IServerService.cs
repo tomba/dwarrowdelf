@@ -10,15 +10,25 @@ namespace MyGame
 	public interface IServerService
 	{
 		[OperationContract(IsOneWay=true)]
-		void Login(string name);
+		void LogOn(string name);
 
 		[OperationContract(IsOneWay = true)]
-		void Logout();
-
-		[OperationContract(IsOneWay = true)]
-		void DoAction(GameAction action);
+		void LogOff();
 
 		[OperationContract(IsOneWay = true)]
 		void SetTiles(IntRect r, int type);
+
+		[OperationContract(IsOneWay = true)]
+		void ProceedTurn();
+
+		/* actions for livings */
+		[OperationContract(IsOneWay = true)]
+		void LogOnChar(string name);
+
+		[OperationContract(IsOneWay = true)]
+		void LogOffChar();
+
+		[OperationContract(IsOneWay = true)]
+		void DoAction(GameAction action);
 	}
 }

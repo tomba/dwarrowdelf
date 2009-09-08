@@ -57,20 +57,20 @@ namespace MyGame
 			MapControlTile tile = (MapControlTile)_tile;
 			bool lit = false;
 
-			if (m_env == null) // || !m_mapLevel.Bounds.Contains(ml))
+			if (this.Environment == null) // || !m_mapLevel.Bounds.Contains(ml))
 			{
 				tile.Bitmap = null;
 				tile.ObjectBitmap = null;
 				return;
 			}
 
-			if (m_env.VisibilityMode == VisibilityMode.AllVisible)
+			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 			{
 				lit = true;
 			}
 			else if (m_followObject != null)
 			{
-				if (m_env.GetTerrainID(ml) == 0)
+				if (this.Environment.GetTerrainID(ml) == 0)
 				{
 					// unknown locations always unlit
 					lit = false;
@@ -86,7 +86,7 @@ namespace MyGame
 					// out of vision range
 					lit = false;
 				}
-				else if (m_env.VisibilityMode == VisibilityMode.LOS &&
+				else if (this.Environment.VisibilityMode == VisibilityMode.LOS &&
 					m_followObject.VisionMap[ml - (IntVector)m_followObject.Location] == false)
 				{
 					// can't see
@@ -114,15 +114,15 @@ namespace MyGame
 
 		BitmapSource GetBitmap(IntPoint ml, bool lit)
 		{
-			int terrainID = this.Map.GetTerrainID(ml);
-			int id = this.Map.World.AreaData.Terrains[terrainID].SymbolID;
+			int terrainID = this.Environment.GetTerrainID(ml);
+			int id = this.Environment.World.AreaData.Terrains[terrainID].SymbolID;
 			Color c = Colors.Black;
 			return m_bitmapCache.GetBitmap(id, c, !lit);
 		}
 
 		BitmapSource GetObjectBitmap(IntPoint ml, bool lit)
 		{
-			IList<ClientGameObject> obs = this.Map.GetContents(ml);
+			IList<ClientGameObject> obs = this.Environment.GetContents(ml);
 			if (obs != null && obs.Count > 0)
 			{
 				int id = obs[0].SymbolID;
@@ -133,7 +133,7 @@ namespace MyGame
 				return null;
 		}
 
-		internal Environment Map
+		internal Environment Environment
 		{
 			get { return m_env; }
 
@@ -144,6 +144,9 @@ namespace MyGame
 				m_env = value;
 				if (m_env != null)
 					m_env.MapChanged += MapChangedCallback;
+
+				this.CurrentTileInfo.Environment = value;
+				this.CurrentTileInfo = this.CurrentTileInfo;
 
 				InvalidateTiles();
 			}
@@ -166,10 +169,12 @@ namespace MyGame
 				if (m_followObject != null)
 					m_followObject.ObjectMoved -= FollowedObjectMoved;
 				m_followObject = value;
-				m_followObject.ObjectMoved += FollowedObjectMoved;
-
-				if (m_followObject.Environment != null)
-					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+				if (m_followObject != null)
+				{
+					m_followObject.ObjectMoved += FollowedObjectMoved;
+					if (m_followObject.Environment != null)
+						FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+				}
 
 				if (PropertyChanged != null)
 					PropertyChanged(this, new PropertyChangedEventArgs("FollowObject"));
@@ -181,12 +186,9 @@ namespace MyGame
 		{
 			Environment env = e as Environment;
 
-			if (env != m_env)
+			if (env != this.Environment)
 			{
-				this.Map = env;
-				this.CurrentTileInfo.Environment = env;
-				// XXX hack to get the MapChanged event. Do this somehow else.
-				this.CurrentTileInfo = this.CurrentTileInfo;
+				this.Environment = env;
 			}
 
 			int xd = this.Columns / 2;
@@ -244,11 +246,11 @@ namespace MyGame
 
 			if (this.SelectedTileInfo == null)
 			{
-				this.SelectedTileInfo = new TileInfo(m_env, sel.TopLeft);
+				this.SelectedTileInfo = new TileInfo(this.Environment, sel.TopLeft);
 			}
 			else
 			{
-				this.SelectedTileInfo.Environment = m_env;
+				this.SelectedTileInfo.Environment = this.Environment;
 				this.SelectedTileInfo.Location = sel.TopLeft;
 			}
 		}

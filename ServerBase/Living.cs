@@ -30,8 +30,8 @@ namespace MyGame
 
 			World.RemoveLiving(this);
 
-			World.AddChange(new ObjectMoveChange(this, this.Environment.ObjectID, this.Location,
-				ObjectID.NullObjectID, new IntPoint()));
+//			World.AddChange(new ObjectMoveChange(this, this.Environment.ObjectID, this.Location,
+//				ObjectID.NullObjectID, new IntPoint()));
 		}
 
 		public IClientCallback ClientCallback { get; set; }

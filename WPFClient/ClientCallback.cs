@@ -15,10 +15,22 @@ namespace MyGame
 
 		#region IClientCallback Members
 
-		public void LoginReply(ObjectID playerID)
+		public void LogOnReply()
 		{
 			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<ObjectID>(_LoginReply), playerID);
+			app.Dispatcher.BeginInvoke(new Action(_LogOnReply));
+		}
+
+		public void LogOnCharReply(ObjectID playerID)
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<ObjectID>(_LogOnCharReply), playerID);
+		}
+
+		public void LogOffCharReply()
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action(_LogOffCharReply));
 		}
 
 		public void DeliverMessage(Message msg)
@@ -41,12 +53,22 @@ namespace MyGame
 
 		#endregion
 
+		void _LogOnReply()
+		{
+			GameData.Data.Connection.Server.LogOnChar("tomba");
+		}
 
-		void _LoginReply(ObjectID playerID)
+		void _LogOnCharReply(ObjectID playerID)
 		{
 			ClientGameObject player = new ClientGameObject(playerID);
 			GameData.Data.Player = player;
 			MainWindow.s_mainWindow.map.FollowObject = player;
+		}
+
+		void _LogOffCharReply()
+		{
+			GameData.Data.Player = null;
+			MainWindow.s_mainWindow.map.FollowObject = null;
 		}
 
 		void _DeliverMessage(Message msg)

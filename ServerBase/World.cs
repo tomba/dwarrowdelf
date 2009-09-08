@@ -88,6 +88,9 @@ namespace MyGame
 		// and inside-turn to timeout player movements after m_maxMoveTime
 		Timer m_tickTimer;
 
+		// If the user has requested to proceed
+		bool m_turnRequested;
+
 		// Require an interactive to be in game for turns to proceed
 		bool m_requireInteractive = true;
 
@@ -272,6 +275,12 @@ namespace MyGame
 			m_worldSignal.Set();
 		}
 
+		internal void RequestTurn()
+		{
+			m_turnRequested = true;
+			SignalWorld();
+		}
+
 		// thread safe
 		internal void SignalActorStateChanged()
 		{
@@ -326,7 +335,7 @@ namespace MyGame
 			if (m_useMinTurnTime && DateTime.Now < m_nextTurn)
 				return false;
 
-			if (m_requireInteractive)
+			if (m_requireInteractive && m_turnRequested == false)
 				lock (m_livingList)
 					if (!m_livingList.Any(l => l.IsInteractive))
 						return false;
@@ -554,6 +563,7 @@ namespace MyGame
 			}
 
 			MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
+			m_turnRequested = false;
 			m_state = WorldState.Idle;
 		}
 

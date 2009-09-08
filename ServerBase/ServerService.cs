@@ -18,6 +18,9 @@ namespace MyGame
 		Living m_player;
 		InteractiveActor m_actor;
 
+		// this user sees all
+		bool m_seeAll = true;
+
 		public ServerService()
 		{
 			MyDebug.WriteLine("New ServerService");
@@ -26,47 +29,20 @@ namespace MyGame
 
 		#region IServerService Members
 
-		public void Login(string name)
+		public void LogOn(string name)
 		{
-			MyDebug.WriteLine("BeginLogin {0}", name);
-
 			m_world = World.TheWorld;
 
-			m_world.BeginInvoke(_Login, name);
+			m_world.BeginInvoke(_LogOn, name);
 		}
 
-		void _Login(object data)
+		void _LogOn(object data)
 		{
 			string name = (string)data;
 
-			MyDebug.WriteLine("Login {0}", name);
+			MyDebug.WriteLine("LogOn {0}", name);
 
-			var obs = m_world.AreaData.Objects;
-
-			m_player = new Living(m_world);
-			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
-			m_player.Name = "player";
-			m_player.ClientCallback = m_client;
-			m_actor = new InteractiveActor();
-			m_player.Actor = m_actor;
-
-			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
-
-			m_client.LoginReply(m_player.ObjectID);
-
-
-			ItemObject item = new ItemObject(m_world);
-			item.Name = "itemi1";
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
-			item.MoveTo(m_player);
-
-			item = new ItemObject(m_world);
-			item.Name = "itemi2";
-			item.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
-			item.MoveTo(m_player);
-
-
-
+			m_client.LogOnReply();
 
 			ClientMsgs.MapData md = new ClientMsgs.MapData()
 			{
@@ -78,59 +54,25 @@ namespace MyGame
 			if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
 				SendAllTerrainsAndObjects(m_world);
 
-			if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
-				throw new Exception("Unable to move player");
-
-			m_player.SendInventory();
-
 			m_world.HandleChangesEvent += HandleChanges;
-			
-			var pet = new Living(m_world);
-			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
-			pet.Name = "lemmikki";
-			var petAI = new PetActor(pet, m_player);
-			pet.Actor = petAI;
-			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
-			
 		}
 
-		public void Logout()
+		public void LogOff()
 		{
-			MyDebug.WriteLine("BeginLogout");
-
-			m_world.BeginInvoke(_Logout);
+			m_world.BeginInvoke(_LogOff);
 		}
 
-		void _Logout(object data)
+		void _LogOff(object data)
 		{
 			MyDebug.WriteLine("Logout");
 
-			m_player.Actor = null;
+			if (m_player != null)
+				_LogOffChar(null);
 
 			m_world.HandleChangesEvent -= HandleChanges;
 
-			m_player.Cleanup();
-
 			m_client = null;
-			m_player = null;
 			m_world = null;
-		}
-
-		public void DoAction(GameAction action)
-		{
-			try
-			{
-				if (action.ActorObjectID != m_player.ObjectID)
-					throw new Exception("Illegal ob id");
-
-				// this is safe to call out of world thread (is it? =)
-				m_actor.EnqueueAction(action);
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
-			}
 		}
 
 		public void SetTiles(IntRect r, int type)
@@ -158,20 +100,123 @@ namespace MyGame
 			}
 		}
 
+		public void ProceedTurn()
+		{
+			m_world.BeginInvoke(_ProceedTurn);
+		}
+
+		public void _ProceedTurn(object data)
+		{
+			MyDebug.WriteLine("ProceedTurn command");
+			m_world.RequestTurn();
+		}
+
+		/* functions for livings */
+		public void LogOnChar(string name)
+		{
+			m_world.BeginInvoke(_LogOnChar, name);
+		}
+
+		public void _LogOnChar(object data)
+		{
+			string name = (string)data;
+
+			MyDebug.WriteLine("LogOnChar {0}", name);
+
+			var obs = m_world.AreaData.Objects;
+
+			m_player = new Living(m_world);
+			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
+			m_player.Name = "player";
+			m_player.ClientCallback = m_client;
+			m_actor = new InteractiveActor();
+			m_player.Actor = m_actor;
+
+			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
+
+			m_client.LogOnCharReply(m_player.ObjectID);
+
+
+			ItemObject item = new ItemObject(m_world);
+			item.Name = "jalokivi1";
+			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
+			item.MoveTo(m_player);
+
+			item = new ItemObject(m_world);
+			item.Name = "jalokivi2";
+			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
+			item.Color = new GameColor(0, 255, 0);
+			item.MoveTo(m_player);
+
+			if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
+				throw new Exception("Unable to move player");
+
+			m_player.SendInventory();
+
+			var pet = new Living(m_world);
+			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
+			pet.Name = "lemmikki";
+			var petAI = new PetActor(pet, m_player);
+			pet.Actor = petAI;
+			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
+			
+		}
+
+		public void LogOffChar()
+		{
+			m_world.BeginInvokeInstant(_LogOffChar);
+		}
+
+		void _LogOffChar(object data)
+		{
+			m_actor.EnqueueAction(new WaitAction(0, m_player, 1));
+			m_world.BeginInvoke(__LogOffChar);
+		}
+
+		void __LogOffChar(object data)
+		{
+			MyDebug.WriteLine("LogOffChar");
+
+			m_player.Actor = null;
+			m_player.Cleanup();
+			m_player = null;
+
+			m_client.LogOffCharReply();
+		}
+
+		public void DoAction(GameAction action)
+		{
+			try
+			{
+				if (action.ActorObjectID != m_player.ObjectID)
+					throw new Exception("Illegal ob id");
+
+				// this is safe to call out of world thread (is it? =)
+				m_actor.EnqueueAction(action);
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
 		#endregion
 
 		// These are used to determine new tiles and objects in sight
 		Dictionary<Environment, HashSet<IntPoint>> m_knownLocations = new Dictionary<Environment, HashSet<IntPoint>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
-		// this user sees all
-		bool m_seeAll = false;
-
 		void HandleChanges(Change[] changeArr)
 		{
 			// list of "friendly" livings that this player can observe
-			Living[] livings = m_world.GetLivings();
-			livings = new Living[] { m_player };
+			Living[] livings;
+			if (m_seeAll)
+				livings = m_world.GetLivings();
+			else if (m_player != null)
+				livings = new Living[] { m_player };
+			else
+				livings = new Living[0];
 
 			SendChanges(livings, changeArr);
 
@@ -190,16 +235,16 @@ namespace MyGame
 			
 			/* this sends info about objects that appeared from some other env.
 			 * I don't like this here */
-			List<ServerGameObject> newLivings = new List<ServerGameObject>();
+			List<ServerGameObject> newObjects = new List<ServerGameObject>();
 			foreach (Change change in changes)
 			{
 				if (!(change is ObjectMoveChange))
 					continue;
 				ObjectMoveChange mc = (ObjectMoveChange)change;
 				if (livings.Any(l => mc.SourceMapID != l.Environment.ObjectID))
-					newLivings.Add((ServerGameObject)mc.Target);
+					newObjects.Add((ServerGameObject)mc.Target);
 			}
-			SendNewObjects(newLivings);
+			SendNewObjects(newObjects);
 
 			var msgs = changes.Select<Change, ClientMsgs.Message>(Living.ChangeToMessage);
 

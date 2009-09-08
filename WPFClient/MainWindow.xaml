@@ -60,6 +60,8 @@
 				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
 				<ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
 				<Button Click="OnClearLogClicked">Clear Log</Button>
+				<Button Click="LogOn_Button_Click">LogOn</Button>
+				<Button Click="LogOff_Button_Click">LogOff</Button>
 			</ToolBar>
 
 			<ToolBar>

@@ -63,7 +63,7 @@ namespace MyGame
 			ServerGameObject oldParent = this.Parent;
 			IntPoint oldLocation = this.Location;
 
-			if (!parent.OkToAddChild(this, location))
+			if (parent != null && !parent.OkToAddChild(this, location))
 				return false;
 
 			if (oldParent != parent)
@@ -80,7 +80,7 @@ namespace MyGame
 			if (this.Location != location)
 			{
 				this.Location = location;
-				if (oldParent == parent)
+				if (parent != null && oldParent == parent)
 					parent.ChildMoved(this, oldLocation, location);
 			}
 

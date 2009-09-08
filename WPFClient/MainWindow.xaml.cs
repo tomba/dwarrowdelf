@@ -92,17 +92,31 @@ namespace MyGame
 
 			if (KeyIsDir(e.Key))
 			{
+				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				int tid = GameData.Data.Connection.GetNewTransactionID();
-				GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
+				if (GameData.Data.Player != null)
+				{
+					int tid = GameData.Data.Connection.GetNewTransactionID();
+					GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
+				}
+				else
+				{
+					map.CenterPos += IntVector.FromDirection(dir);
+				}
 			}
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				int wtid = GameData.Data.Connection.GetNewTransactionID();
-				GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
+				if (GameData.Data.Player != null)
+				{
+					int wtid = GameData.Data.Connection.GetNewTransactionID();
+					GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
+				}
+				else
+				{
+					GameData.Data.Connection.Server.ProceedTurn();
+				}
 			}
-
 			else if (e.Key == Key.Add)
 			{
 				e.Handled = true;
@@ -117,7 +131,6 @@ namespace MyGame
 				map.TileSize -= 8;
 			}
 
-			e.Handled = true;
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -142,8 +155,8 @@ namespace MyGame
 
 		internal Environment Map
 		{
-			get { return map.Map; }
-			set { map.Map = value; }
+			get { return map.Environment; }
+			set { map.Environment = value; }
 		}
 
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
@@ -192,6 +205,18 @@ namespace MyGame
 
 			int wtid = GameData.Data.Connection.GetNewTransactionID();
 			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, list.Cast<GameObject>()));
+		}
+
+		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Player == null)
+				GameData.Data.Connection.Server.LogOnChar("tomba");
+		}
+
+		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Player != null)
+				GameData.Data.Connection.Server.LogOffChar();
 		}
 	}
 }
