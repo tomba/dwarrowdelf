@@ -54,6 +54,8 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="DataTypes\IntVector3D.cs" />
+    <Compile Include="DataTypes\Grid3DBase.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\Grid2DBase.cs" />
     <Compile Include="SymbolInfo.cs" />
@@ -65,10 +67,10 @@
     <Compile Include="DataTypes\GrowingLocationGrid.cs" />
     <Compile Include="DataTypes\IntRect.cs" />
     <Compile Include="DataTypes\IntPoint3D.cs" />
-    <Compile Include="DataTypes\LocationGrid3D.cs" />
+    <Compile Include="DataTypes\Grid3D.cs" />
     <Compile Include="IArea.cs" />
     <Compile Include="IServer.cs" />
-    <Compile Include="DataTypes\LocationGrid.cs" />
+    <Compile Include="DataTypes\Grid2D.cs" />
     <Compile Include="LOSShadowCast1.cs" />
     <Compile Include="MyDebug.cs" />
     <Compile Include="ObjectID.cs" />

@@ -14,7 +14,7 @@ namespace MyGame
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
 		int m_visionRange = 3;
-		LocationGrid<bool> m_visionMap;
+		Grid2D<bool> m_visionMap;
 
 		IActor m_actorImpl;
 
@@ -58,7 +58,7 @@ namespace MyGame
 			set { m_visionRange = value; m_visionMap = null; }
 		}
 
-		public LocationGrid<bool> VisionMap
+		public Grid2D<bool> VisionMap
 		{
 			get
 			{
@@ -208,7 +208,7 @@ namespace MyGame
 
 			if (m_visionMap == null)
 			{
-				m_visionMap = new LocationGrid<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
+				m_visionMap = new Grid2D<bool>(this.VisionRange * 2 + 1, this.VisionRange * 2 + 1,
 					this.VisionRange, this.VisionRange);
 				m_losMapVersion = 0;
 			}

@@ -90,7 +90,7 @@ namespace MyGame
 		uint m_losMapVersion;
 		IntPoint m_losLocation;
 		int m_visionRange;
-		LocationGrid<bool> m_visionMap;
+		Grid2D<bool> m_visionMap;
 
 		public int VisionRange
 		{
@@ -174,7 +174,7 @@ namespace MyGame
 			get { return this.Parent as Environment; }
 		}
 
-		public LocationGrid<bool> VisionMap
+		public Grid2D<bool> VisionMap
 		{
 			get
 			{
@@ -197,7 +197,7 @@ namespace MyGame
 
 			if (m_visionMap == null)
 			{
-				m_visionMap = new LocationGrid<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
+				m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
 					m_visionRange, m_visionRange);
 				m_losMapVersion = 0;
 			}

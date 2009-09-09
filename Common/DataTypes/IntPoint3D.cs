@@ -64,7 +64,7 @@ namespace MyGame
 
 		public override int GetHashCode()
 		{
-			return (this.X ^ this.Y ^ this.Z);
+			return (this.X << 20) | (this.Y << 10) | this.Z;
 		}
 
 		public override string ToString()

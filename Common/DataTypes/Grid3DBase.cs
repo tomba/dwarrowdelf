@@ -5,23 +5,25 @@ using System.Text;
 
 namespace MyGame
 {
-	public abstract class Grid2DBase<T>
+	public class Grid3DBase<T>
 	{
 		public int Width { get; private set; }
 		public int Height { get; private set; }
+		public int Depth { get; private set; }
 
-		protected Grid2DBase(int width, int height)
+		protected Grid3DBase(int width, int height, int depth)
 		{
 			this.Width = width;
 			this.Height = height;
-			this.Grid = new T[width * height];
+			this.Depth = depth;
+			this.Grid = new T[width * height * depth];
 		}
 
 		protected T[] Grid { get; private set; }
 
-		protected int GetIndex(IntPoint p)
+		protected int GetIndex(IntPoint3D p)
 		{
-			return p.Y * this.Width + p.X;
+			return p.X + p.Y * this.Width + p.Z * this.Width * this.Height;
 		}
 	}
 }

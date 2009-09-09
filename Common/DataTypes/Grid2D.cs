@@ -6,21 +6,20 @@ using System.Collections;
 
 namespace MyGame
 {
-
 	/**
 	 * 2D grid made of <T>s
 	 * Coordinates offset by Origin
 	 */
-	public class LocationGrid<T> : Grid2DBase<T>, IEnumerable<KeyValuePair<IntPoint, T>>
+	public class Grid2D<T> : Grid2DBase<T>, IEnumerable<KeyValuePair<IntPoint, T>>
 	{
 		public IntVector Origin { get; set; }
 
-		public LocationGrid(int width, int height) : base(width, height)
+		public Grid2D(int width, int height) : base(width, height)
 		{
 			this.Origin = new IntVector(0, 0);
 		}
 
-		public LocationGrid(int width, int height, int originX, int originY) : this(width, height)
+		public Grid2D(int width, int height, int originX, int originY) : this(width, height)
 		{
 			this.Origin = new IntVector(originX, originY);
 		}

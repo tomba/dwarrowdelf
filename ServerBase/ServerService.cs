@@ -145,7 +145,7 @@ namespace MyGame
 			item = new ItemObject(m_world);
 			item.Name = "jalokivi2";
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
-			item.Color = new GameColor(0, 255, 0);
+			item.Color = GameColors.Green;
 			item.MoveTo(m_player);
 
 			if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))

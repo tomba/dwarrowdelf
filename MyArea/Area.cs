@@ -42,14 +42,14 @@ namespace MyArea
 					throw new Exception();
 				var monsterAI = new MonsterActor(monster);
 				monster.Actor = monsterAI;
-				monster.Color = (i % 2 == 0) ? new GameColor(255, 0, 0) : new GameColor(0, 255, 0);
+				monster.Color = (i % 2 == 0) ? GameColors.Red : GameColors.Green;
 			}
 
 			// Add an item
 			var item = new ItemObject(world);
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
 			item.Name = "red gem";
-			item.Color = new GameColor(255, 0, 0);
+			item.Color = GameColors.Red;
 			item.MoveTo(env, new IntPoint(3, 0));
 
 			item = new ItemObject(world);

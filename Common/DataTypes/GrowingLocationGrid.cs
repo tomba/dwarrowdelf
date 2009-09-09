@@ -8,7 +8,7 @@ namespace MyGame
 	/**
 	 * 2D grid, made of smaller blocks, allowing the grid to grow
 	 */
-	public class GrowingLocationGrid<T>
+	public abstract class GrowingLocationGrid<T>
 	{
 		protected class Block : Grid2DBase<T>
 		{
@@ -33,7 +33,7 @@ namespace MyGame
 		IntRect m_mainRect;
 		int m_blockSize;
 
-		public GrowingLocationGrid(int blockSize)
+		protected GrowingLocationGrid(int blockSize)
 		{
 			m_blockSize = blockSize;
 		}

@@ -51,8 +51,9 @@ namespace MyGame
 
 		public void Normalize()
 		{
-			this.X = (int)Math.Round(this.X / this.Length);
-			this.Y = (int)Math.Round(this.Y / this.Length);
+			double len = this.Length;
+			this.X = (int)Math.Round(this.X / len);
+			this.Y = (int)Math.Round(this.Y / len);
 		}
 
 		public static bool operator ==(IntVector left, IntVector right)

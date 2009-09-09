@@ -7,13 +7,13 @@ namespace MyGame
 {
 	public interface ILOSAlgo
 	{
-		void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+		void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate);
 	}
 
 	public class LOSNull : ILOSAlgo
 	{
-		public void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+		public void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
 		{
 			for (int y = -visionRange; y <= visionRange; ++y)
@@ -59,7 +59,7 @@ namespace MyGame
 		static bool s_tested;
 		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
-		public void Calculate(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap, 
+		public void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap, 
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
 		{
 			if (s_tested == false)
@@ -81,7 +81,7 @@ namespace MyGame
 				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
 		}
 
-		void CalculateLOS(IntPoint viewerLocation, int visionRange, LocationGrid<bool> visibilityMap,
+		void CalculateLOS(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate, int octant)
 		{
 			// Cell (0,0) is assumed to be lit and visible in all cases.
@@ -325,7 +325,7 @@ namespace MyGame
 							 { 0, 0, 0, 0, 0, 0, 0 },
 							};
 
-			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w/2, w/2);
+			Grid2D<bool> vis = new Grid2D<bool>(w, w, w/2, w/2);
 			IntPoint loc = new IntPoint(w/2, w/2);
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
@@ -366,7 +366,7 @@ namespace MyGame
 				}
 			}
 
-			LocationGrid<bool> vis = new LocationGrid<bool>(w, w, w / 2, w / 2);
+			Grid2D<bool> vis = new Grid2D<bool>(w, w, w / 2, w / 2);
 			IntPoint loc = new IntPoint(w / 2, w / 2);
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
