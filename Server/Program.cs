@@ -16,12 +16,6 @@ namespace MyGame
 	{
 		static void Main(string[] args)
 		{
-			/*
-			long t = LOSShadowCast1.PerfTest();
-			Console.WriteLine(t);
-			return;
-			*/
-
 			bool debugServer = Properties.Settings.Default.DebugServer;
 
 			Server server = new Server();

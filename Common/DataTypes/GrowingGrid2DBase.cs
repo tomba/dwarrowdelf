@@ -8,7 +8,7 @@ namespace MyGame
 	/**
 	 * 2D grid, made of smaller blocks, allowing the grid to grow
 	 */
-	public abstract class GrowingLocationGrid<T>
+	public abstract class GrowingGrid2DBase<T>
 	{
 		protected class Block : Grid2DBase<T>
 		{
@@ -33,7 +33,7 @@ namespace MyGame
 		IntRect m_mainRect;
 		int m_blockSize;
 
-		protected GrowingLocationGrid(int blockSize)
+		protected GrowingGrid2DBase(int blockSize)
 		{
 			m_blockSize = blockSize;
 		}
@@ -104,15 +104,18 @@ namespace MyGame
 			blockX -= m_mainRect.Left;
 			blockY -= m_mainRect.Top;
 
-			if (m_grid[blockX, blockY] == null)
+			var block = m_grid[blockX, blockY];
+
+			if (block == null)
 			{
 				if (!allowResize)
 					return null;
 
-				m_grid[blockX, blockY] = new Block(m_blockSize);
+				block = new Block(m_blockSize);
+				m_grid[blockX, blockY] = block;
 			}
 
-			return m_grid[blockX, blockY];
+			return block;
 		}
 
 		void Resize(int blockX, int blockY)

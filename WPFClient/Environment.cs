@@ -13,7 +13,7 @@ namespace MyGame
 		public List<ClientGameObject> m_contentList;
 	}
 
-	class MyGrowingGrid : GrowingLocationGrid<TileData>
+	class MyGrowingGrid : GrowingGrid2DBase<TileData>
 	{
 		public MyGrowingGrid(int blockSize) : base(blockSize)
 		{
