@@ -24,7 +24,7 @@ namespace MyGame
 		}
 
 		Queue<Direction> m_pathDirs;
-		IntPoint m_pathDest;
+		IntPoint3D m_pathDest;
 
 		GameAction GetNewActionAstar()
 		{
@@ -37,8 +37,11 @@ namespace MyGame
 
 			if (m_pathDirs == null || (m_player.Location - m_pathDest).ManhattanLength > 3)
 			{
-				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location, m_player.Location,
-					l => m_object.Environment.Bounds.Contains(l) && m_object.Environment.IsWalkable(l));
+				// ZZZ only 2D
+				int z = m_player.Z;
+				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location2D, m_player.Location2D,
+					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) && 
+						m_object.Environment.IsWalkable(new IntPoint3D(l, z)));
 
 				m_pathDirs = new Queue<Direction>(dirs);
 				m_pathDest = m_player.Location;
@@ -67,14 +70,14 @@ namespace MyGame
 
 			v.Normalize();
 
-			if (v == new IntVector(0, 0))
+			if (v == new IntVector3D())
 				return new WaitAction(0, m_object, 1);
 
 			var env = m_object.Environment;
 
 			action = null;
 			int angle = 45;
-			IntVector ov = v;
+			IntVector3D ov = v;
 			for (int i = 0; i < 8; ++i)
 			{
 				v = ov;

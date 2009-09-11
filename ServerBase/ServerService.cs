@@ -90,7 +90,7 @@ namespace MyGame
 			{
 				for (int x = r.Left; x < r.Right; ++x)
 				{
-					IntPoint p = new IntPoint(x, y);
+					var p = new IntPoint3D(x, y, 0); // ZZZ
 
 					if (!m_world.Map.Bounds.Contains(p))
 						continue;
@@ -148,7 +148,7 @@ namespace MyGame
 			item.Color = GameColors.Green;
 			item.MoveTo(m_player);
 
-			if (!m_player.MoveTo(m_world.Map, new IntPoint(0, 0)))
+			if (!m_player.MoveTo(m_world.Map, new IntPoint3D(0, 0, 0)))
 				throw new Exception("Unable to move player");
 
 			m_player.SendInventory();
@@ -269,7 +269,7 @@ namespace MyGame
 
 				foreach(IntPoint loc in locList)
 				{
-					var obList = l.Environment.GetContents(loc);
+					var obList = l.Environment.GetContents(new IntPoint3D(loc, l.Z));
 					if (obList == null)
 						continue;
 					newKnownObs.UnionWith(obList);
@@ -303,7 +303,9 @@ namespace MyGame
 				var env = kvp.Key;
 				var newLocations = kvp.Value;
 
-				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() { Location = l, TerrainID = env.GetTerrainID(l) });
+				// ZZZ always 0z
+				var mapDataList = newLocations.Select(l => new ClientMsgs.MapTileData() 
+				{ Location = new IntPoint3D(l, 0), TerrainID = env.GetTerrainID(new IntPoint3D(l, 0)) });
 				var mapDataArr = mapDataList.ToArray();
 				if (mapDataArr.Length == 0)
 					continue;
@@ -348,8 +350,8 @@ namespace MyGame
 				{
 					IntPoint l = new IntPoint(x, y);
 					ClientMsgs.MapTileData td = new ClientMsgs.MapTileData();
-					td.Location = l;
-					td.TerrainID = env.GetTerrainID(l);
+					td.Location = new IntPoint3D(l, 0); // ZZZ always 0
+					td.TerrainID = env.GetTerrainID(new IntPoint3D(l, 0)); // ZZZ always 0
 					mapDataArr[x + y * env.Width] = td;
 				}
 			}

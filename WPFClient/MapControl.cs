@@ -24,6 +24,7 @@ namespace MyGame
 
 		ClientGameObject m_followObject;
 		Environment m_env;
+		int m_z;
 
 		public MapControl()
 		{
@@ -51,11 +52,12 @@ namespace MyGame
 			return new MapControlTile();
 		}
 
-		protected override void UpdateTile(UIElement _tile, IntPoint ml)
+		protected override void UpdateTile(UIElement _tile, IntPoint _ml)
 		{
 			BitmapSource bmp = null;
 			MapControlTile tile = (MapControlTile)_tile;
 			bool lit = false;
+			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, m_z);
 
 			if (this.Environment == null) // || !m_mapLevel.Bounds.Contains(ml))
 			{
@@ -87,7 +89,8 @@ namespace MyGame
 					lit = false;
 				}
 				else if (this.Environment.VisibilityMode == VisibilityMode.LOS &&
-					m_followObject.VisionMap[ml - (IntVector)m_followObject.Location] == false)
+					m_followObject.VisionMap[new IntPoint(ml.X - m_followObject.Location.X, 
+						ml.Y - m_followObject.Location.Y)] == false)
 				{
 					// can't see
 					lit = false;
@@ -112,7 +115,7 @@ namespace MyGame
 			tile.ObjectBitmap = bmp;
 		}
 
-		BitmapSource GetBitmap(IntPoint ml, bool lit)
+		BitmapSource GetBitmap(IntPoint3D ml, bool lit)
 		{
 			int terrainID = this.Environment.GetTerrainID(ml);
 			int id = this.Environment.World.AreaData.Terrains[terrainID].SymbolID;
@@ -120,7 +123,7 @@ namespace MyGame
 			return m_bitmapCache.GetBitmap(id, c, !lit);
 		}
 
-		BitmapSource GetObjectBitmap(IntPoint ml, bool lit)
+		BitmapSource GetObjectBitmap(IntPoint3D ml, bool lit)
 		{
 			IList<ClientGameObject> obs = this.Environment.GetContents(ml);
 			if (obs != null && obs.Count > 0)
@@ -152,7 +155,7 @@ namespace MyGame
 			}
 		}
 
-		void MapChangedCallback(IntPoint l)
+		void MapChangedCallback(IntPoint3D l)
 		{
 			InvalidateTiles();
 		}
@@ -182,7 +185,7 @@ namespace MyGame
 
 		}
 
-		void FollowedObjectMoved(ClientGameObject e, IntPoint l)
+		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
 		{
 			Environment env = e as Environment;
 
@@ -246,12 +249,12 @@ namespace MyGame
 
 			if (this.SelectedTileInfo == null)
 			{
-				this.SelectedTileInfo = new TileInfo(this.Environment, sel.TopLeft);
+				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.TopLeft, m_z));
 			}
 			else
 			{
 				this.SelectedTileInfo.Environment = this.Environment;
-				this.SelectedTileInfo.Location = sel.TopLeft;
+				this.SelectedTileInfo.Location = new IntPoint3D(sel.TopLeft, m_z);
 			}
 		}
 	}
@@ -259,13 +262,13 @@ namespace MyGame
 	class TileInfo : INotifyPropertyChanged
 	{
 		Environment m_env;
-		IntPoint m_location;
+		IntPoint3D m_location;
 
 		public TileInfo()
 		{
 		}
 
-		public TileInfo(Environment mapLevel, IntPoint location)
+		public TileInfo(Environment mapLevel, IntPoint3D location)
 		{
 			m_env = mapLevel;
 			m_location = location;
@@ -283,7 +286,7 @@ namespace MyGame
 				m_env.MapChanged -= MapChanged;
 		}
 
-		void MapChanged(IntPoint l)
+		void MapChanged(IntPoint3D l)
 		{
 			if (l == m_location)
 			{
@@ -304,7 +307,7 @@ namespace MyGame
 			}
 		}
 
-		public IntPoint Location
+		public IntPoint3D Location
 		{
 			get { return m_location; }
 			set

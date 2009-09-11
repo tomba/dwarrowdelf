@@ -24,6 +24,14 @@ namespace MyGame
 			Z = z;
 		}
 
+		public IntPoint3D(IntPoint p, int z)
+			: this()
+		{
+			X = p.X;
+			Y = p.Y;
+			Z = z;
+		}
+
 		#region IEquatable<Location3D> Members
 
 		public bool Equals(IntPoint3D other)
@@ -52,14 +60,19 @@ namespace MyGame
 			return !(left == right);
 		}
 
-		public static IntPoint3D operator +(IntPoint3D left, IntPoint3D right)
+		public static IntPoint3D operator +(IntPoint3D left, IntVector3D right)
 		{
 			return new IntPoint3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
-		public static IntPoint3D operator -(IntPoint3D left, IntPoint3D right)
+		public static IntVector3D operator -(IntPoint3D left, IntPoint3D right)
 		{
-			return new IntPoint3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+			return new IntVector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+		}
+
+		public static IntPoint3D operator +(IntPoint3D left, IntVector right)
+		{
+			return new IntPoint3D(left.X + right.X, left.Y + right.Y, left.Z);
 		}
 
 		public override int GetHashCode()

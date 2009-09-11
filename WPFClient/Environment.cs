@@ -13,6 +13,53 @@ namespace MyGame
 		public List<ClientGameObject> m_contentList;
 	}
 
+	class MyGrowingGrid3D : GrowingGrid3DBase<MyGrowingGrid>
+	{
+		public MyGrowingGrid3D(int blockSize)
+			: base(blockSize)
+		{
+		}
+
+		protected override MyGrowingGrid CreateLevel(int blockSize)
+		{
+			return new MyGrowingGrid(blockSize);
+		}
+
+		public int GetTerrainID(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return 0;
+			return level.GetTerrainID(new IntPoint(p.X, p.Y));
+		}
+
+		public void SetTerrainID(IntPoint3D p, int terrainID)
+		{
+			var level = base.GetLevel(p.Z, true);
+			level.SetTerrainID(new IntPoint(p.X, p.Y), terrainID);
+		}
+
+		public List<ClientGameObject> GetContents(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return null;
+			return level.GetContents(new IntPoint(p.X, p.Y));
+		}
+
+		public void AddObject(IntPoint3D p, ClientGameObject ob, bool tail)
+		{
+			var level = base.GetLevel(p.Z, true);
+			level.AddObject(new IntPoint(p.X, p.Y), ob, tail);
+		}
+
+		public void RemoveObject(IntPoint3D p, ClientGameObject ob)
+		{
+			var level = base.GetLevel(p.Z, true);
+			level.RemoveObject(new IntPoint(p.X, p.Y), ob);
+		}
+	}
+
 	class MyGrowingGrid : GrowingGrid2DBase<TileData>
 	{
 		public MyGrowingGrid(int blockSize) : base(blockSize)
@@ -79,9 +126,9 @@ namespace MyGame
 
 	class Environment : ClientGameObject
 	{
-		public event Action<IntPoint> MapChanged;
+		public event Action<IntPoint3D> MapChanged;
 
-		MyGrowingGrid m_tileGrid;
+		MyGrowingGrid3D m_tileGrid;
 
 		public uint Version { get; private set; }
 
@@ -93,21 +140,20 @@ namespace MyGame
 		{
 			this.Version = 1;
 			this.World = world;
-			m_tileGrid = new MyGrowingGrid(10);
+			m_tileGrid = new MyGrowingGrid3D(10);
 		}
 
-		public int Width { get { return m_tileGrid.Width; } }
+		public MyGrowingGrid GetLevel(int z)
+		{
+			return m_tileGrid.GetLevel(z, false);
+		}
 
-		public int Height { get { return m_tileGrid.Height; } }
-
-		public IntRect Bounds { get { return m_tileGrid.Bounds; } }
-
-		public int GetTerrainID(IntPoint l)
+		public int GetTerrainID(IntPoint3D l)
 		{
 			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public void SetTerrainID(IntPoint l, int terrainID)
+		public void SetTerrainID(IntPoint3D l, int terrainID)
 		{
 			this.Version += 1;
 
@@ -123,7 +169,7 @@ namespace MyGame
 
 			foreach (MapTileData locInfo in locInfos)
 			{
-				IntPoint l = locInfo.Location;
+				IntPoint3D l = locInfo.Location;
 
 				m_tileGrid.SetTerrainID(l, locInfo.TerrainID);
 
@@ -132,7 +178,7 @@ namespace MyGame
 			}
 		}
 
-		public IList<ClientGameObject> GetContents(IntPoint l)
+		public IList<ClientGameObject> GetContents(IntPoint3D l)
 		{
 			var list = m_tileGrid.GetContents(l);
 
@@ -144,7 +190,7 @@ namespace MyGame
 
 		protected override void ChildAdded(ClientGameObject child)
 		{
-			IntPoint l = child.Location;
+			IntPoint3D l = child.Location;
 			m_tileGrid.AddObject(l, child, !child.IsLiving);
 
 			if (MapChanged != null)
@@ -153,7 +199,7 @@ namespace MyGame
 
 		protected override void ChildRemoved(ClientGameObject child)
 		{
-			IntPoint l = child.Location;
+			IntPoint3D l = child.Location;
 			m_tileGrid.RemoveObject(l, child);
 
 			if (MapChanged != null)

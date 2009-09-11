@@ -14,7 +14,7 @@ namespace MyGame
 		}
 	}
 
-	delegate void ObjectMoved(ClientGameObject e, IntPoint l);
+	delegate void ObjectMoved(ClientGameObject e, IntPoint3D l);
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
@@ -88,7 +88,7 @@ namespace MyGame
 		public ObservableObjectCollection Inventory { get; private set; }
 
 		uint m_losMapVersion;
-		IntPoint m_losLocation;
+		IntPoint3D m_losLocation;
 		int m_visionRange;
 		Grid2D<bool> m_visionMap;
 
@@ -105,7 +105,8 @@ namespace MyGame
 
 		public Color Color { get; set; }
 		public ClientGameObject Parent { get; private set; }
-		public IntPoint Location { get; private set; }
+		public IntPoint3D Location { get; private set; }
+		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public bool IsLiving { get; set; }
 
 		public ClientGameObject(ObjectID objectID)
@@ -145,10 +146,10 @@ namespace MyGame
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
 
-		public void MoveTo(ClientGameObject parent, IntPoint location)
+		public void MoveTo(ClientGameObject parent, IntPoint3D location)
 		{
 			ClientGameObject oldParent = this.Parent;
-			IntPoint oldLocation = this.Location;
+			IntPoint3D oldLocation = this.Location;
 
 			if (oldParent != null)
 			{
@@ -203,10 +204,11 @@ namespace MyGame
 			}
 
 			var terrains = this.Environment.World.AreaData.Terrains;
+			var level = this.Environment.GetLevel(this.Location.Z);
 
-			s_losAlgo.Calculate(this.Location, m_visionRange,
-				m_visionMap, this.Environment.Bounds,
-				l => terrains[this.Environment.GetTerrainID(l)].IsWalkable == false);
+			s_losAlgo.Calculate(this.Location2D, m_visionRange,
+				m_visionMap, level.Bounds,
+				l => terrains[level.GetTerrainID(l)].IsWalkable == false);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

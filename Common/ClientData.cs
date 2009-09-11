@@ -33,7 +33,7 @@ namespace MyGame.ClientMsgs
 		public int SymbolID { get; set; }
 
 		[DataMember]
-		public IntPoint Location { get; set; }
+		public IntPoint3D Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
@@ -58,7 +58,7 @@ namespace MyGame.ClientMsgs
 		public string Name { get; set; }
 
 		[DataMember]
-		public IntPoint Location { get; set; }
+		public IntPoint3D Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
@@ -84,7 +84,7 @@ namespace MyGame.ClientMsgs
 	public struct MapTileData
 	{
 		[DataMember]
-		public IntPoint Location { get; set; }
+		public IntPoint3D Location { get; set; }
 		[DataMember]
 		public int TerrainID { get; set; }
 	}
@@ -121,13 +121,13 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID TargetEnvID { get; set; }
 		[DataMember]
-		public IntPoint TargetLocation { get; set; }
+		public IntPoint3D TargetLocation { get; set; }
 		[DataMember]
 		public ObjectID SourceEnvID { get; set; }
 		[DataMember]
-		public IntPoint SourceLocation { get; set; }
+		public IntPoint3D SourceLocation { get; set; }
 
-		public ObjectMove(GameObject target, ObjectID fromID, IntPoint from, ObjectID toID, IntPoint to)
+		public ObjectMove(GameObject target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
 		{
 			this.ObjectID = target.ObjectID;
 			this.SourceEnvID = fromID;

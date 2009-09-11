@@ -608,7 +608,7 @@ namespace MyGame
 			}
 		}
 
-		void MapChangedCallback(ObjectID mapID, IntPoint l, int terrainID)
+		void MapChangedCallback(ObjectID mapID, IntPoint3D l, int terrainID)
 		{
 			Debug.Assert(m_workActive);
 			// is this needed?

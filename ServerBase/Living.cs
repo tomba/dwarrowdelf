@@ -12,7 +12,7 @@ namespace MyGame
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
 		uint m_losMapVersion;
-		IntPoint m_losLocation;
+		IntPoint3D m_losLocation;
 		int m_visionRange = 3;
 		Grid2D<bool> m_visionMap;
 
@@ -26,7 +26,7 @@ namespace MyGame
 
 		public void Cleanup()
 		{
-			this.MoveTo(null, new IntPoint());
+			this.MoveTo(null, new IntPoint3D());
 
 			World.RemoveLiving(this);
 
@@ -213,8 +213,9 @@ namespace MyGame
 				m_losMapVersion = 0;
 			}
 
-			s_losAlgo.Calculate(this.Location, this.VisionRange, m_visionMap, this.Environment.Bounds,
-				l => !this.Environment.IsWalkable(l));
+			int z = this.Z;
+			s_losAlgo.Calculate(this.Location2D, this.VisionRange, m_visionMap, this.Environment.Bounds2D,
+				l => !this.Environment.IsWalkable(new IntPoint3D(l, z)));
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
@@ -343,12 +344,15 @@ namespace MyGame
 
 		#endregion
 
-		public bool Sees(IntPoint l)
+		public bool Sees(IntPoint3D l)
 		{
 			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			IntVector dl = l - this.Location;
+			IntVector3D dl = l - this.Location;
+
+			if (dl.Z != 0)
+				return false;
 
 			if (Math.Abs(dl.X) > this.VisionRange ||
 				Math.Abs(dl.Y) > this.VisionRange)
@@ -359,7 +363,7 @@ namespace MyGame
 			if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
 				return true;
 
-			if (this.VisionMap[l - (IntVector)this.Location] == false)
+			if (this.VisionMap[new IntPoint(dl.X, dl.Y)] == false)
 				return false;
 
 			return true;
@@ -372,7 +376,7 @@ namespace MyGame
 				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
 				{
 					IntPoint loc = new IntPoint(x, y);
-					if (!this.Environment.Bounds.Contains(loc))
+					if (!this.Environment.Bounds2D.Contains(loc))
 						continue;
 
 					yield return loc;
@@ -384,7 +388,7 @@ namespace MyGame
 		{
 			return this.VisionMap.
 					Where(kvp => kvp.Value == true).
-					Select(kvp => kvp.Key + (IntVector)this.Location);
+					Select(kvp => kvp.Key + new IntVector(this.X, this.Y));
 		}
 
 		public IEnumerable<IntPoint> GetVisibleLocations()
