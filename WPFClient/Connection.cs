@@ -21,6 +21,12 @@ namespace MyGame
 #if LOCAL
 			NetNamedPipeBinding binding = new NetNamedPipeBinding();
 			binding.Security.Mode = NetNamedPipeSecurityMode.None;
+			binding.MaxReceivedMessageSize = 2147483647;
+			binding.ReaderQuotas.MaxDepth = 2147483647;
+			binding.ReaderQuotas.MaxArrayLength = 2147483647;
+			binding.ReaderQuotas.MaxBytesPerRead = 2147483647;
+			binding.ReaderQuotas.MaxNameTableCharCount = 2147483647;
+			binding.ReaderQuotas.MaxStringContentLength = 2147483647;
 			EndpointAddress ea = new EndpointAddress(new Uri("net.pipe://localhost/MyGame/Server"),
 				EndpointIdentity.CreateDnsIdentity("CompanyXYZ Server"));
 #else
