@@ -148,6 +148,30 @@ namespace MyGame
 			m_tileGrid.GetContentList(newLocation).Add(child);
 		}
 
+		public override ClientMsgs.Message Serialize()
+		{
+			int[] arr = new int[this.Width * this.Height * this.Depth];
+			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
+
+			foreach (var p in this.Bounds.Range())
+			{
+				arr[p.X + p.Y * this.Width + p.Z * this.Width * this.Height] = GetTerrainID(p);
+				var obs = GetContents(p);
+				if (obs != null)
+					obList.AddRange(obs.Select(o => o.Serialize()));
+			}
+
+			var msg = new ClientMsgs.FullMapData()
+			{
+				ObjectID = this.ObjectID,
+				Bounds = this.Bounds,
+				TerrainIDs = arr,
+				ObjectData = obList,
+			};
+
+			return msg;
+		}
+
 		public override string ToString()
 		{
 			return String.Format("Environment({0})", this.ObjectID);

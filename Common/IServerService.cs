@@ -16,7 +16,7 @@ namespace MyGame
 		void LogOff();
 
 		[OperationContract(IsOneWay = true)]
-		void SetTiles(IntRect r, int type);
+		void SetTiles(IntCube cube, int type);
 
 		[OperationContract(IsOneWay = true)]
 		void ProceedTurn();

@@ -12,7 +12,7 @@ namespace MyGame
 		{
 		}
 
-		public ClientMsgs.ItemData Serialize()
+		public override ClientMsgs.Message Serialize()
 		{
 			var data = new ClientMsgs.ItemData();
 			data.ObjectID = this.ObjectID;

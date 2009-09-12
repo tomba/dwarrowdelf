@@ -100,7 +100,10 @@ namespace MyGame
 			if (m_connection != null)
 			{
 				if (!m_connection.HasFaulted())
+				{
 					m_connection.Server.LogOff();
+					Thread.Sleep(500); // XXX hrm.. sleep a bit so server doesn't crash =)
+				}
 				m_connection.Disconnect();
 			}
 

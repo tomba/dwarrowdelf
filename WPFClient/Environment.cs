@@ -136,11 +136,20 @@ namespace MyGame
 
 		public World World { get; private set; }
 
-		public Environment(World world, ObjectID objectID) : base(objectID)
+		public Environment(World world, ObjectID objectID)
+			: base(objectID)
 		{
 			this.Version = 1;
 			this.World = world;
 			m_tileGrid = new MyGrowingGrid3D(10);
+		}
+
+		public Environment(World world, ObjectID objectID, IntCube bounds)
+			: base(objectID)
+		{
+			this.Version = 1;
+			this.World = world;
+			m_tileGrid = new MyGrowingGrid3D(Math.Max(bounds.Width, bounds.Height));
 		}
 
 		public MyGrowingGrid GetLevel(int z)
@@ -163,7 +172,7 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void SetTerrains(ClientMsgs.MapTileData[] locInfos)
+		public void SetTerrains(IEnumerable<ClientMsgs.MapTileData> locInfos)
 		{
 			this.Version += 1;
 
@@ -175,6 +184,17 @@ namespace MyGame
 
 				if (MapChanged != null)
 					MapChanged(l);
+			}
+		}
+
+		public void SetTerrains(IntCube bounds, IEnumerable<int> terrainIDs)
+		{
+			var iter = terrainIDs.GetEnumerator();
+			foreach (IntPoint3D p in bounds.Range())
+			{
+				iter.MoveNext();
+				int terrainID = iter.Current;
+				m_tileGrid.SetTerrainID(p, terrainID);
 			}
 		}
 

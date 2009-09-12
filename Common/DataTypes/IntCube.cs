@@ -28,6 +28,17 @@ namespace MyGame
 			this.Depth = depth;
 		}
 
+		public IntCube(IntRect rect, int z)
+			: this()
+		{
+			this.X = rect.X;
+			this.Y = rect.Y;
+			this.Z = z;
+			this.Width = rect.Width;
+			this.Height = rect.Height;
+			this.Depth = 1;
+		}
+
 		public int Left
 		{
 			get { return X; }
@@ -50,12 +61,12 @@ namespace MyGame
 
 		public int Front
 		{
-			get { return Z; }
+			get { return Z + Depth; }
 		}
 
 		public int Back
 		{
-			get { return Z + Depth; }
+			get { return Z; }
 		}
 
 		public bool Contains(IntPoint3D l)
@@ -65,6 +76,14 @@ namespace MyGame
 				return false;
 			else
 				return true;
+		}
+
+		public IEnumerable<IntPoint3D> Range()
+		{
+			for (int z = this.Z; z < this.Z + this.Depth; ++z)
+				for (int y = this.Y; y < this.Y + this.Height; ++y)
+					for (int x = this.X; x < this.X + this.Width; ++x)
+						yield return new IntPoint3D(x, y, z);
 		}
 
 		public override string ToString()

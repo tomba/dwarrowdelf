@@ -47,7 +47,7 @@ namespace MyGame
 		List<Living> m_addLivingList = new List<Living>();
 		List<Living> m_removeLivingList = new List<Living>();
 
-		public event Action<Change[]> HandleChangesEvent;
+		public event Action<IEnumerable<Change>> HandleChangesEvent;
 
 		List<Change> m_changeList = new List<Change>();
 
@@ -588,23 +588,12 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
-			Change[] arr = null;
-
 			lock (m_changeList)
 			{
-				arr = m_changeList.ToArray();
+				if (HandleChangesEvent != null)
+					HandleChangesEvent(m_changeList);
+
 				m_changeList.Clear();
-			}
-
-			if (arr.Length > 0)
-			{
-				if(HandleChangesEvent != null)
-					HandleChangesEvent(arr); // xxx is this needed? perhaps for loggers or something
-
-				foreach (Living living in m_livingList)
-				{
-					living.ProcessChanges(arr);
-				}
 			}
 		}
 

@@ -50,30 +50,43 @@ namespace MyGame
 
 	public abstract class ObjectChange : Change
 	{
-		public GameObject Target { get; set; }
-		public ObjectID ObjectID { get; set; }
+		public GameObject Object { get; private set; }
+		public ObjectID ObjectID { get { return this.Object.ObjectID; } }
 
-		public ObjectChange(GameObject target)
+		public ObjectChange(GameObject @object)
 		{
-			this.Target = target;
-			this.ObjectID = target.ObjectID;
+			this.Object = @object;
 		}
 	}
 
 	public class ObjectMoveChange : ObjectChange
 	{
-		public ObjectID SourceMapID { get; set; }
-		public IntPoint3D SourceLocation { get; set; }
-		public ObjectID DestinationMapID { get; set; }
-		public IntPoint3D DestinationLocation { get; set; }
-
-		public ObjectMoveChange(GameObject target, ObjectID sourceMapID, IntPoint3D sourceLocation,
-			ObjectID destinationMapID, IntPoint3D destinationLocation)
-			: base(target)
+		public GameObject Source { get; private set; }
+		public ObjectID SourceMapID
 		{
-			this.SourceMapID = sourceMapID;
+			get
+			{
+				return this.Source == null ? ObjectID.NullObjectID : this.Source.ObjectID;
+			}
+		}
+		public IntPoint3D SourceLocation { get; private set; }
+		public GameObject Destination { get; private set; }
+		public ObjectID DestinationMapID
+		{
+			get
+			{
+				return this.Destination == null ? ObjectID.NullObjectID : this.Destination.ObjectID;
+			}
+		}
+		public IntPoint3D DestinationLocation { get; private set; }
+
+		public ObjectMoveChange(GameObject mover, GameObject sourceEnv, IntPoint3D sourceLocation,
+			GameObject destinationEnv, IntPoint3D destinationLocation)
+			: base(mover)
+		{
+			this.Source = sourceEnv;
 			this.SourceLocation = sourceLocation;
-			this.DestinationMapID = destinationMapID;
+			this.Destination = destinationEnv;
 			this.DestinationLocation = destinationLocation;
 		}
 

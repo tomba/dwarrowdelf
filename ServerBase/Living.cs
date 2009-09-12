@@ -184,11 +184,6 @@ namespace MyGame
 			}
 		}
 
-		// called after turn. world state is valid.
-		public void ProcessChanges(Change[] changes)
-		{
-		}
-
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
 		{
 			m_losMapVersion = 0;
@@ -227,7 +222,7 @@ namespace MyGame
 			if (change is ObjectMoveChange)
 			{
 				ObjectMoveChange mc = (ObjectMoveChange)change;
-				return new ClientMsgs.ObjectMove(mc.Target, mc.SourceMapID, mc.SourceLocation,
+				return new ClientMsgs.ObjectMove(mc.Object, mc.SourceMapID, mc.SourceLocation,
 					mc.DestinationMapID, mc.DestinationLocation);
 			}
 
@@ -263,10 +258,10 @@ namespace MyGame
 			{
 				ObjectMoveChange ec = (ObjectMoveChange)change;
 
-				if (ec.SourceMapID == this.Environment.ObjectID && Sees(ec.SourceLocation))
+				if (ec.Source == this.Environment && Sees(ec.SourceLocation))
 					return true;
 
-				if (ec.DestinationMapID == this.Environment.ObjectID && Sees(ec.DestinationLocation))
+				if (ec.Destination == this.Environment && Sees(ec.DestinationLocation))
 					return true;
 
 				MyDebug.WriteLine("\tplr doesn't see ob moving {0}->{1}, skipping change",
@@ -399,7 +394,7 @@ namespace MyGame
 				return GetVisibleLocationsSimpleFOV();
 		}
 
-		public ClientMsgs.LivingData Serialize()
+		public override ClientMsgs.Message Serialize()
 		{
 			var data = new ClientMsgs.LivingData();
 			data.ObjectID = this.ObjectID;

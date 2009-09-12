@@ -49,6 +49,8 @@ namespace MyGame
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
+		public abstract ClientMsgs.Message Serialize();
+
 		protected virtual bool OkToAddChild(ServerGameObject child, IntPoint3D p) { return true; }
 		protected virtual void ChildAdded(ServerGameObject child) { }
 		protected virtual void ChildRemoved(ServerGameObject child) { }
@@ -98,9 +100,7 @@ namespace MyGame
 			if (oldParent != parent)
 				OnEnvironmentChanged(oldParent, parent);
 
-			this.World.AddChange(new ObjectMoveChange(this,
-				oldParent != null ? oldParent.ObjectID : ObjectID.NullObjectID, oldLocation,
-				parent != null ? parent.ObjectID : ObjectID.NullObjectID, location));
+			this.World.AddChange(new ObjectMoveChange(this, oldParent, oldLocation, parent, location));
 
 			return true;
 		}

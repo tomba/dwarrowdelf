@@ -13,7 +13,9 @@ namespace MyGame.ClientMsgs
 	[DataContract,
 	KnownType(typeof(ItemData)),
 	KnownType(typeof(LivingData)),
+	KnownType(typeof(FullMapData)),
 	KnownType(typeof(MapData)),
+	KnownType(typeof(MapTileData)),
 	KnownType(typeof(TerrainData)),
 	KnownType(typeof(ObjectMove)),
 	KnownType(typeof(TurnChange))]
@@ -71,6 +73,20 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	public class FullMapData : Message
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+		[DataMember]
+		public IntCube Bounds { get; set; }
+		[DataMember]
+		public IEnumerable<int> TerrainIDs { get; set; }
+		[DataMember]
+		public IEnumerable<ClientMsgs.Message> ObjectData { get; set; }
+	}
+
+
+	[DataContract]
 	public class MapData : Message
 	{
 		[DataMember]
@@ -95,7 +111,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public MapTileData[] MapDataList { get; set; }
+		public IEnumerable<MapTileData> MapDataList { get; set; }
 
 		public override string ToString()
 		{

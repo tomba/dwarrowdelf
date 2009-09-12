@@ -11,7 +11,7 @@ namespace MyArea
 		public void InitializeWorld(World world)
 		{
 			// XXX some size limit with the size in WCF
-			var env = new MyGame.Environment(world, 100, 100, VisibilityMode.AllVisible);
+			var env = new MyGame.Environment(world, 100, 100, VisibilityMode.LOS);
 
 			Random r = new Random(123);
 			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");

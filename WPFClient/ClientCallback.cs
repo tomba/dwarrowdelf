@@ -93,19 +93,32 @@ namespace MyGame
 				ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
 				
 				if (ob == null)
-				{
-					/* An object moved into our field of vision, but we didn't get
-					 * the object info yet. It should be coming just after the move
-					 * changes, so we'll just skip this.
-					 * I'm not sure if this is good... */
-					return;
-				}
+					throw new Exception();
 
 				ClientGameObject env = null;
 				if (om.TargetEnvID != ObjectID.NullObjectID)
 					env = ClientGameObject.FindObject(om.TargetEnvID);
 
 				ob.MoveTo(env, om.TargetLocation);
+			}
+			else if (msg is FullMapData)
+			{
+				FullMapData md = (FullMapData)msg;
+				var env = ClientGameObject.FindObject<Environment>(md.ObjectID);
+
+				if (env == null)
+				{
+					MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
+					var world = World.TheWorld;
+					env = new Environment(world, md.ObjectID, md.Bounds);
+					world.AddEnvironment(env);
+					env.Name = "map";
+					MainWindow.s_mainWindow.Map = env;
+				}
+
+				env.SetTerrains(md.Bounds, md.TerrainIDs);
+
+				_DeliverMessages(md.ObjectData);
 			}
 			else if (msg is MapData)
 			{

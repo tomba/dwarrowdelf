@@ -80,6 +80,17 @@ namespace MyGame
 			return (this.X << 20) | (this.Y << 10) | this.Z;
 		}
 
+		public static IEnumerable<IntPoint3D> Range(int x, int y, int z, int width, int height, int depth)
+		{
+			int max_x = x + width;
+			int max_y = y + height;
+			int max_z = z + depth;
+			for (; z < max_z; ++z)
+				for (; y < max_y; ++y)
+					for (; x < max_x; ++x)
+						yield return new IntPoint3D(x, y, z);
+		}
+
 		public override string ToString()
 		{
 			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
