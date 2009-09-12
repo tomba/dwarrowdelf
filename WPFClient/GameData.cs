@@ -47,6 +47,8 @@ namespace MyGame
 			set { Notify("Objects"); }
 		}
 
+		public ClientGameObject[] Controllables { get; set; }
+
 		public bool DisableLOS { get; set; }	// debug
 		public bool ShowChangedTiles { get; set; } // debug
 

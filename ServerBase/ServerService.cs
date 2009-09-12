@@ -163,6 +163,7 @@ namespace MyGame
 			pet.Name = "lemmikki";
 			var petAI = new PetActor(pet, m_player);
 			pet.Actor = petAI;
+			m_friendlies.Add(pet);
 			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
 
 		}

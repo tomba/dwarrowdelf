@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -186,14 +187,12 @@ namespace MyGame
 
 		void UpdateLOS()
 		{
+			Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+
 			if (this.Environment == null)
 				return;
 
-			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
-				throw new Exception();
-
-			if (m_losLocation == this.Location &&
-				m_losMapVersion == this.Environment.Version)
+			if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version)
 				return;
 
 			if (m_visionMap == null)

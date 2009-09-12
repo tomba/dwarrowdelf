@@ -66,41 +66,7 @@ namespace MyGame
 				return;
 			}
 
-			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
-			{
-				lit = true;
-			}
-			else if (m_followObject != null)
-			{
-				if (this.Environment.GetTerrainID(ml) == 0)
-				{
-					// unknown locations always unlit
-					lit = false;
-				}
-				else if (m_followObject.Location == ml)
-				{
-					// current location always lit
-					lit = true;
-				}
-				else if (Math.Abs(m_followObject.Location.X - ml.X) > m_followObject.VisionRange ||
-					Math.Abs(m_followObject.Location.Y - ml.Y) > m_followObject.VisionRange)
-				{
-					// out of vision range
-					lit = false;
-				}
-				else if (this.Environment.VisibilityMode == VisibilityMode.LOS &&
-					m_followObject.VisionMap[new IntPoint(ml.X - m_followObject.Location.X, 
-						ml.Y - m_followObject.Location.Y)] == false)
-				{
-					// can't see
-					lit = false;
-				}
-				else
-				{
-					// else in range, not blocked
-					lit = true;
-				}
-			}
+			lit = TileVisible(ml);
 
 			bmp = GetBitmap(ml, lit);
 			tile.Bitmap = bmp;
@@ -113,6 +79,46 @@ namespace MyGame
 			else
 				bmp = null;
 			tile.ObjectBitmap = bmp;
+		}
+
+		bool TileVisible(IntPoint3D ml)
+		{
+			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
+				return true;
+
+			// unknown location?
+			if (this.Environment.GetTerrainID(ml) == 0)
+				return false;
+
+			var controllables = GameData.Data.Controllables;
+
+			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
+			{
+				foreach (var l in controllables)
+				{
+					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
+
+					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
+						l.VisionMap[vp] == true)
+						return true;
+				}
+			}
+			else if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
+			{
+				foreach (var l in controllables)
+				{
+					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
+
+					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
+						return true;
+				}
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			return false;
 		}
 
 		BitmapSource GetBitmap(IntPoint3D ml, bool lit)

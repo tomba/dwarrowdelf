@@ -62,6 +62,7 @@ namespace MyGame
 		{
 			ClientGameObject player = new ClientGameObject(playerID);
 			GameData.Data.Player = player;
+			GameData.Data.Controllables = new ClientGameObject[] { player };
 			MainWindow.s_mainWindow.map.FollowObject = player;
 		}
 

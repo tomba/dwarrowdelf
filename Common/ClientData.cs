@@ -66,6 +66,9 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public GameColor Color { get; set; }
 
+		[DataMember]
+		public bool Controllable { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("LivingData {0} {1}", this.ObjectID, this.Name);
