@@ -16,6 +16,7 @@ namespace MyGame
 	}   
 
 	class ActionCollection : ObservableCollection<GameAction> { }
+	class ObjectCollection : ObservableCollection<ClientGameObject> { }
 
 	class GameData : INotifyPropertyChanged
 	{
@@ -24,30 +25,20 @@ namespace MyGame
 		public GameData()
 		{
 			this.ActionCollection = new ActionCollection();
+			this.Controllables = new ObjectCollection();
 			this.SymbolDrawings = new SymbolDrawingCache(World.TheWorld.AreaData);
 		}
 
 		public Connection Connection { get; set; }
 
-		ClientGameObject m_player;
-		public ClientGameObject Player
+		public ObjectCollection Controllables { get; private set; }
+
+		ClientGameObject m_currentObject;
+		public ClientGameObject CurrentObject
 		{
-			get	{ return m_player; }
-
-			set
-			{
-				m_player = value;
-				Notify("Player");
-			}
+			get { return m_currentObject; }
+			set { m_currentObject = value; Notify("CurrentObject"); }
 		}
-
-		public ClientGameObject[] Objects
-		{
-			get { return ClientGameObject.GetObjects(); }
-			set { Notify("Objects"); }
-		}
-
-		public ClientGameObject[] Controllables { get; set; }
 
 		public bool DisableLOS { get; set; }	// debug
 		public bool ShowChangedTiles { get; set; } // debug

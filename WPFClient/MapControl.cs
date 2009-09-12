@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -12,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.ComponentModel;
 
 namespace MyGame
 {
@@ -24,14 +24,12 @@ namespace MyGame
 
 		ClientGameObject m_followObject;
 		Environment m_env;
-		int m_z;
+		public int Z { get; set; }
 
 		public MapControl()
 		{
 			m_bitmapCache = new SymbolBitmapCache();
 			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings;
-
-			this.Focusable = true;
 
 			base.SelectionChanged += OnSelectionChanged;
 
@@ -57,9 +55,9 @@ namespace MyGame
 			BitmapSource bmp = null;
 			MapControlTile tile = (MapControlTile)_tile;
 			bool lit = false;
-			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, m_z);
+			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 
-			if (this.Environment == null) // || !m_mapLevel.Bounds.Contains(ml))
+			if (this.Environment == null)
 			{
 				tile.Bitmap = null;
 				tile.ObjectBitmap = null;
@@ -86,7 +84,6 @@ namespace MyGame
 			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			// unknown location?
 			if (this.Environment.GetTerrainID(ml) == 0)
 				return false;
 
@@ -96,6 +93,9 @@ namespace MyGame
 			{
 				foreach (var l in controllables)
 				{
+					if (l.Environment != this.Environment)
+						continue;
+
 					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
@@ -107,6 +107,9 @@ namespace MyGame
 			{
 				foreach (var l in controllables)
 				{
+					if (l.Environment != this.Environment)
+						continue;
+
 					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
@@ -196,9 +199,7 @@ namespace MyGame
 			Environment env = e as Environment;
 
 			if (env != this.Environment)
-			{
 				this.Environment = env;
-			}
 
 			int xd = this.Columns / 2;
 			int yd = this.Rows / 2;
@@ -255,12 +256,12 @@ namespace MyGame
 
 			if (this.SelectedTileInfo == null)
 			{
-				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.TopLeft, m_z));
+				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.TopLeft, this.Z));
 			}
 			else
 			{
 				this.SelectedTileInfo.Environment = this.Environment;
-				this.SelectedTileInfo.Location = new IntPoint3D(sel.TopLeft, m_z);
+				this.SelectedTileInfo.Location = new IntPoint3D(sel.TopLeft, this.Z);
 			}
 		}
 	}

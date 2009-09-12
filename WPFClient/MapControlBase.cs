@@ -56,6 +56,8 @@ namespace MyGame
 		public int Columns { get { return m_columns; } }
 		public int Rows { get { return m_rows; } }
 
+		public bool SelectionEnabled { get; set; }
+
 		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
 			"TileSize", typeof(double), typeof(MapControlBase),
 			new FrameworkPropertyMetadata(32.0,	FrameworkPropertyMetadataOptions.AffectsArrange),
@@ -211,6 +213,9 @@ namespace MyGame
 
 			set
 			{
+				if (this.SelectionEnabled == false)
+					return;
+
 				if (value.Width == 0 || value.Height == 0)
 				{
 					m_selectionRect.Visibility = Visibility.Hidden;
@@ -236,7 +241,8 @@ namespace MyGame
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			Focus(); // XXX
+			if (this.SelectionEnabled == false)
+				return;
 
 			if (e.LeftButton != MouseButtonState.Pressed)
 			{
@@ -270,6 +276,9 @@ namespace MyGame
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+			if (this.SelectionEnabled == false)
+				return;
+
 			if (!IsMouseCaptured)
 			{
 				base.OnMouseMove(e);
@@ -320,6 +329,9 @@ namespace MyGame
 
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
+			if (this.SelectionEnabled == false)
+				return;
+
 			ReleaseMouseCapture();
 
 			base.OnMouseUp(e);

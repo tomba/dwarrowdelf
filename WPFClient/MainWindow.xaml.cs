@@ -21,11 +21,10 @@ namespace MyGame
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		public static MainWindow s_mainWindow; // xxx
+		public MiniMap MiniMap { get; private set; }
 
 		public MainWindow()
 		{
-			s_mainWindow = this;
 			Application.Current.MainWindow = this;
 			this.WindowState = WindowState.Maximized;
 
@@ -41,8 +40,16 @@ namespace MyGame
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
+		}
 
-			map.Focus();
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+		
+			this.MiniMap = new MiniMap();
+			this.MiniMap.Owner = this;
+			this.MiniMap.ShowActivated = false;
+			this.MiniMap.Show();
 		}
 
 		Direction KeyToDir(Key key)
@@ -94,10 +101,10 @@ namespace MyGame
 			{
 				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				if (GameData.Data.Player != null)
+				if (GameData.Data.CurrentObject != null)
 				{
 					int tid = GameData.Data.Connection.GetNewTransactionID();
-					GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.Player, dir));
+					GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
 				}
 				else
 				{
@@ -107,10 +114,10 @@ namespace MyGame
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				if (GameData.Data.Player != null)
+				if (GameData.Data.CurrentObject != null)
 				{
 					int wtid = GameData.Data.Connection.GetNewTransactionID();
-					GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.Player, 1));
+					GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.CurrentObject, 1));
 				}
 				else
 				{
@@ -163,21 +170,21 @@ namespace MyGame
 		{
 			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
 			IntRect r = map.SelectionRect;
-			// ZZZ level 0
-			GameData.Data.Connection.Server.SetTiles(new IntCube(r, 0), terrain.ID);
+			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
+				new IntCube(r, map.Z), terrain.ID);
 		}
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
 			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 			IntRect r = map.SelectionRect;
-			// ZZZ level 0
-			GameData.Data.Connection.Server.SetTiles(new IntCube(r, 0), terrain.ID);
+			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
+				new IntCube(r, map.Z), terrain.ID);
 		}
 
 		private void Get_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var plr = GameData.Data.Player;
+			var plr = GameData.Data.CurrentObject;
 			if (!(plr.Environment is Environment))
 				throw new Exception();
 
@@ -203,7 +210,7 @@ namespace MyGame
 			if (list.Count() == 0)
 				return;
 
-			var plr = GameData.Data.Player;
+			var plr = GameData.Data.CurrentObject;
 
 			int wtid = GameData.Data.Connection.GetNewTransactionID();
 			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, list.Cast<GameObject>()));
@@ -211,14 +218,12 @@ namespace MyGame
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Player == null)
-				GameData.Data.Connection.Server.LogOnChar("tomba");
+			GameData.Data.Connection.Server.LogOnChar("tomba");
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Player != null)
-				GameData.Data.Connection.Server.LogOffChar();
+			GameData.Data.Connection.Server.LogOffChar();
 		}
 	}
 }

@@ -31,7 +31,6 @@ namespace MyGame
 
 			lock (s_objectMap)
 				s_objectMap.Add(ob.ObjectID, new WeakReference(ob));
-			GameData.Data.Objects = null;
 		}
 
 		public static ClientGameObject FindObject(ObjectID objectID)

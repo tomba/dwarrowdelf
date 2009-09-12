@@ -61,15 +61,22 @@ namespace MyGame
 		void _LogOnCharReply(ObjectID playerID)
 		{
 			ClientGameObject player = new ClientGameObject(playerID);
-			GameData.Data.Player = player;
-			GameData.Data.Controllables = new ClientGameObject[] { player };
-			MainWindow.s_mainWindow.map.FollowObject = player;
+			GameData.Data.Controllables.Add(player);
+			if (GameData.Data.CurrentObject == null)
+				GameData.Data.CurrentObject = player;
+
+			if (App.MainWindow.map.FollowObject == null)
+				App.MainWindow.map.FollowObject = player;
+			else if (App.MainWindow.MiniMap.map.FollowObject == null)
+				App.MainWindow.MiniMap.map.FollowObject = player;
 		}
 
 		void _LogOffCharReply()
 		{
-			GameData.Data.Player = null;
-			MainWindow.s_mainWindow.map.FollowObject = null;
+			GameData.Data.Controllables.Clear();
+			GameData.Data.CurrentObject = null;
+			App.MainWindow.map.FollowObject = null;
+			App.MainWindow.MiniMap.map.FollowObject = null;
 		}
 
 		void _DeliverMessage(Message msg)
@@ -105,6 +112,7 @@ namespace MyGame
 			else if (msg is FullMapData)
 			{
 				FullMapData md = (FullMapData)msg;
+
 				var env = ClientGameObject.FindObject<Environment>(md.ObjectID);
 
 				if (env == null)
@@ -114,7 +122,7 @@ namespace MyGame
 					env = new Environment(world, md.ObjectID, md.Bounds);
 					world.AddEnvironment(env);
 					env.Name = "map";
-					MainWindow.s_mainWindow.Map = env;
+					App.MainWindow.Map = env;
 				}
 
 				env.SetTerrains(md.Bounds, md.TerrainIDs);
@@ -134,7 +142,7 @@ namespace MyGame
 					env = new Environment(world, md.ObjectID);
 					world.AddEnvironment(env);
 					env.Name = "map";
-					MainWindow.s_mainWindow.Map = env;
+					App.MainWindow.Map = env;
 				}
 
 				env.VisibilityMode = md.VisibilityMode;

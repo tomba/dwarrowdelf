@@ -83,16 +83,20 @@ namespace MyGame
 			m_world = null;
 		}
 
-		public void SetTiles(IntCube cube, int type)
+		public void SetTiles(ObjectID mapID, IntCube cube, int type)
 		{
-			m_world.BeginInvokeInstant(_SetTiles, new object[] { cube, type });
+			m_world.BeginInvokeInstant(_SetTiles, new object[] { mapID, cube, type });
 		}
 
 		void _SetTiles(object data)
 		{
 			object[] arr = (object[])data;
-			IntCube r = (IntCube)arr[0];
-			int type = (int)arr[1];
+			ObjectID mapID = (ObjectID)arr[0];
+			IntCube r = (IntCube)arr[1];
+			int type = (int)arr[2];
+
+			if (mapID != m_world.Map.ObjectID)
+				throw new Exception();
 
 			foreach (var p in r.Range())
 			{
@@ -137,9 +141,8 @@ namespace MyGame
 
 			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
-			m_client.LogOnCharReply(m_player.ObjectID);
-
 			m_friendlies.Add(m_player);
+			m_client.LogOnCharReply(m_player.ObjectID);
 
 
 			ItemObject item = new ItemObject(m_world);
@@ -164,8 +167,9 @@ namespace MyGame
 			var petAI = new PetActor(pet, m_player);
 			pet.Actor = petAI;
 			m_friendlies.Add(pet);
-			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
+			m_client.LogOnCharReply(pet.ObjectID);
 
+			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
 		}
 
 		public void LogOffChar()

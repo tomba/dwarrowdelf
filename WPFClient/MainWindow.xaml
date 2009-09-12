@@ -67,9 +67,9 @@
 			<ToolBar>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
-					<ComboBox MinWidth="100" ItemsSource="{Binding Objects}"
-                          SelectedItem="{Binding Path=FollowObject, ElementName=map}"
-							  ItemTemplate="{StaticResource objectDataTemplate}"
+					<ComboBox MinWidth="100" ItemsSource="{Binding Controllables}"
+                          SelectedItem="{Binding Path=CurrentObject}"
+						  ItemTemplate="{StaticResource objectDataTemplate}"
                           IsReadOnly="True" />
 				</StackPanel>
 			</ToolBar>
@@ -94,7 +94,8 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+			<local:MapControl x:Name="map" SelectionEnabled="False"
+							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
 				<local:MapControl.ContextMenu>
 					<ContextMenu>
 						<MenuItem Header="Change tile">

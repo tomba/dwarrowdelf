@@ -32,7 +32,7 @@ namespace MyGame
 
 			var v = m_player.Location - m_object.Location;
 
-			if (v.ManhattanLength < 3)
+			if (v.ManhattanLength < 5)
 				return new WaitAction(0, m_object, 1);
 
 			if (m_pathDirs == null || (m_player.Location - m_pathDest).ManhattanLength > 3)
