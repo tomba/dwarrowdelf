@@ -23,10 +23,14 @@ namespace MyGame
 	{
 		public MiniMap MiniMap { get; private set; }
 
+		ClientGameObject m_followObject;
+
 		public MainWindow()
 		{
 			Application.Current.MainWindow = this;
 			this.WindowState = WindowState.Maximized;
+
+			this.CurrentTileInfo = new TileInfo();
 
 			InitializeComponent();
 
@@ -45,12 +49,56 @@ namespace MyGame
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
-		
+
 			this.MiniMap = new MiniMap();
 			this.MiniMap.Owner = this;
 			this.MiniMap.ShowActivated = false;
 			this.MiniMap.Show();
 		}
+
+		internal ClientGameObject FollowObject
+		{
+			get { return m_followObject; }
+
+			set
+			{
+				if (m_followObject != null)
+					m_followObject.ObjectMoved -= FollowedObjectMoved;
+
+				m_followObject = value;
+
+				if (m_followObject != null)
+				{
+					m_followObject.ObjectMoved += FollowedObjectMoved;
+					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+				}
+				else
+				{
+					this.CurrentTileInfo.Environment = null;
+					this.CurrentTileInfo.Location = new IntPoint3D();
+				}
+			}
+		}
+
+		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
+		{
+			Environment env = e as Environment;
+
+			map.Environment = env;
+
+			int xd = map.Columns / 2;
+			int yd = map.Rows / 2;
+			int x = l.X;
+			int y = l.Y;
+			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
+
+			map.CenterPos = newPos;
+
+			this.CurrentTileInfo.Environment = env;
+			this.CurrentTileInfo.Location = l;
+		}
+
+		public TileInfo CurrentTileInfo { get; set; }
 
 		Direction KeyToDir(Key key)
 		{

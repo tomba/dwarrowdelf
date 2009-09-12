@@ -3,9 +3,11 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:MyGame"
 	Title="Window1" Height="424" Width="800"
-    DataContext="{x:Static local:GameData.Data}">
+	x:ClassModifier="internal"
+	x:Name="mainWindow"
+    DataContext="{x:Static local:GameData.Data}" >
 	<Window.Resources>
-		<DataTemplate x:Key="objectDataTemplate">
+		<DataTemplate DataType="{x:Type local:ClientGameObject}">
 			<DataTemplate.Resources>
 				<Style TargetType="TextBlock">
 					<Setter Property="Margin" Value="5,3" />
@@ -69,7 +71,6 @@
 					<TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
 					<ComboBox MinWidth="100" ItemsSource="{Binding Controllables}"
                           SelectedItem="{Binding Path=CurrentObject}"
-						  ItemTemplate="{StaticResource objectDataTemplate}"
                           IsReadOnly="True" />
 				</StackPanel>
 			</ToolBar>
@@ -94,7 +95,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" SelectionEnabled="False"
+			<local:MapControl x:Name="map" SelectionEnabled="True"
 							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
 				<local:MapControl.ContextMenu>
 					<ContextMenu>
@@ -113,8 +114,8 @@
 				<DockPanel>
 					<Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
 					<ListBox Name="inventoryListBox"
-							 ItemsSource="{Binding Path=Player.Inventory}"
-							 ItemTemplate="{StaticResource objectDataTemplate}" SelectionMode="Extended" />
+							 ItemsSource="{Binding Path=CurrentObject.Inventory}"
+							 SelectionMode="Extended" />
 				</DockPanel>
 			</GroupBox>
 
@@ -123,7 +124,7 @@
 			</GroupBox>
 
 			<GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
-					  DataContext="{Binding Path=CurrentTileInfo, ElementName=map}">
+					  DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
 				<DockPanel>
 					<StackPanel DockPanel.Dock="Top">
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
@@ -131,7 +132,7 @@
 					</StackPanel>
 					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
 					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
-							 ItemTemplate="{StaticResource objectDataTemplate}" SelectionMode="Extended" />
+							 SelectionMode="Extended" />
 				</DockPanel>
 			</GroupBox>
 
@@ -142,7 +143,7 @@
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
 						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
 					</StackPanel>
-					<ListBox ItemsSource="{Binding Objects}" ItemTemplate="{StaticResource objectDataTemplate}" />
+					<ListBox ItemsSource="{Binding Objects}" />
 				</DockPanel>
 			</GroupBox>
 		</Grid>

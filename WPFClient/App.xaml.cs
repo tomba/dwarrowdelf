@@ -19,7 +19,7 @@ namespace MyGame
 	{
 		public static DebugWindow DebugWindow { get; set; }
 		public new static App Current { get { return (App)Application.Current; } }
-		public new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		Thread m_serverThread;
 		Connection m_connection;

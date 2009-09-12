@@ -65,18 +65,18 @@ namespace MyGame
 			if (GameData.Data.CurrentObject == null)
 				GameData.Data.CurrentObject = player;
 
-			if (App.MainWindow.map.FollowObject == null)
-				App.MainWindow.map.FollowObject = player;
-			else if (App.MainWindow.MiniMap.map.FollowObject == null)
-				App.MainWindow.MiniMap.map.FollowObject = player;
+			if (App.MainWindow.FollowObject == null)
+				App.MainWindow.FollowObject = player;
+			else if (App.MainWindow.MiniMap.FollowObject == null)
+				App.MainWindow.MiniMap.FollowObject = player;
 		}
 
 		void _LogOffCharReply()
 		{
 			GameData.Data.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
-			App.MainWindow.map.FollowObject = null;
-			App.MainWindow.MiniMap.map.FollowObject = null;
+			App.MainWindow.FollowObject = null;
+			App.MainWindow.MiniMap.FollowObject = null;
 		}
 
 		void _DeliverMessage(Message msg)

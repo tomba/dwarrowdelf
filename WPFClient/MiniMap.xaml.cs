@@ -18,9 +18,44 @@ namespace MyGame
 	/// </summary>
 	public partial class MiniMap : Window
 	{
+		ClientGameObject m_followObject;
+
 		public MiniMap()
 		{
 			InitializeComponent();
+		}
+
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			this.FollowObject = null;
+			base.OnClosing(e);
+		}
+
+		internal ClientGameObject FollowObject
+		{
+			get { return m_followObject; }
+
+			set
+			{
+				if (m_followObject != null)
+					m_followObject.ObjectMoved -= FollowedObjectMoved;
+
+				m_followObject = value;
+
+				if (m_followObject != null)
+				{
+					m_followObject.ObjectMoved += FollowedObjectMoved;
+					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+				}
+			}
+		}
+
+		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
+		{
+			Environment env = e as Environment;
+
+			map.Environment = env;
+			map.CenterPos = new IntPoint(l.X, l.Y);
 		}
 	}
 }

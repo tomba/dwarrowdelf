@@ -22,7 +22,6 @@ namespace MyGame
 
 		SymbolBitmapCache m_bitmapCache;
 
-		ClientGameObject m_followObject;
 		Environment m_env;
 		public int Z { get; set; }
 
@@ -36,8 +35,6 @@ namespace MyGame
 			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
 				typeof(MapControlBase));
 			dpd.AddValueChanged(this, OnTileSizeChanged);
-
-			this.CurrentTileInfo = new TileInfo();
 		}
 
 		void OnTileSizeChanged(object ob, EventArgs e)
@@ -151,14 +148,14 @@ namespace MyGame
 
 			set
 			{
+				if (m_env == value)
+					return;
+
 				if (m_env != null)
 					m_env.MapChanged -= MapChangedCallback;
 				m_env = value;
 				if (m_env != null)
 					m_env.MapChanged += MapChangedCallback;
-
-				this.CurrentTileInfo.Environment = value;
-				this.CurrentTileInfo = this.CurrentTileInfo;
 
 				InvalidateTiles();
 			}
@@ -169,76 +166,17 @@ namespace MyGame
 			InvalidateTiles();
 		}
 
-		public ClientGameObject FollowObject
-		{
-			get
-			{
-				return m_followObject;
-			}
-
-			set
-			{
-				if (m_followObject != null)
-					m_followObject.ObjectMoved -= FollowedObjectMoved;
-				m_followObject = value;
-				if (m_followObject != null)
-				{
-					m_followObject.ObjectMoved += FollowedObjectMoved;
-					if (m_followObject.Environment != null)
-						FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
-				}
-
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("FollowObject"));
-			}
-
-		}
-
-		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
-		{
-			Environment env = e as Environment;
-
-			if (env != this.Environment)
-				this.Environment = env;
-
-			int xd = this.Columns / 2;
-			int yd = this.Rows / 2;
-			int x = l.X;
-			int y = l.Y;
-			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
-
-			this.CenterPos = newPos;
-
-			this.CurrentTileInfo.Location = l;
-		}
-
-		TileInfo m_currentTileInfo;
-		public TileInfo CurrentTileInfo
-		{
-			get { return m_currentTileInfo; }
-			set
-			{
-				if (m_currentTileInfo != null)
-					m_currentTileInfo.StopObserve();
-				m_currentTileInfo = value;
-				if (m_currentTileInfo != null)
-					m_currentTileInfo.StartObserve();
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("CurrentTileInfo"));
-			}
-		}
-
 		TileInfo m_selectedTileInfo;
 		public TileInfo SelectedTileInfo
 		{
 			get { return m_selectedTileInfo; }
 			set
 			{
-				if (m_selectedTileInfo != null)
-					m_selectedTileInfo.StopObserve();
+				if (m_selectedTileInfo == value)
+					return;
+
 				m_selectedTileInfo = value;
-				if (m_selectedTileInfo != null)
-					m_selectedTileInfo.StartObserve();
+
 				if (PropertyChanged != null)
 					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTileInfo"));
 			}
@@ -250,6 +188,8 @@ namespace MyGame
 
 			if (sel.Width != 1 || sel.Height != 1)
 			{
+				if (this.SelectedTileInfo != null)
+					this.SelectedTileInfo.StopObserve();
 				this.SelectedTileInfo = null;
 				return;
 			}
@@ -279,10 +219,6 @@ namespace MyGame
 		{
 			m_env = mapLevel;
 			m_location = location;
-		}
-
-		public void StartObserve()
-		{
 			if (m_env != null)
 				m_env.MapChanged += MapChanged;
 		}
@@ -307,7 +243,14 @@ namespace MyGame
 			get { return m_env; }
 			set
 			{
+				if (m_env != null)
+					m_env.MapChanged -= MapChanged;
+
 				m_env = value;
+
+				if (m_env != null)
+					m_env.MapChanged += MapChanged;
+
 				Notify("Environment");
 				Notify("TerrainType");
 				Notify("Objects");
@@ -359,7 +302,7 @@ namespace MyGame
 		#endregion
 	}
 
-	public class MapControlTile : UIElement
+	class MapControlTile : UIElement
 	{
 		public MapControlTile()
 		{
