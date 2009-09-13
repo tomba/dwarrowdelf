@@ -79,7 +79,15 @@
 
 		<StatusBar DockPanel.Dock="Bottom" >
 			<TextBlock>
-        		Turn <TextBlock Text="{Binding Path=TurnNumber}" />
+       			Turn <TextBlock Text="{Binding Path=TurnNumber}" />
+			</TextBlock>
+			<Separator />
+			<TextBlock>
+        		Env <TextBlock Text="{Binding Path=Environment, ElementName=map}" />
+			</TextBlock>
+			<Separator />
+			<TextBlock>
+        		Z <TextBlock Text="{Binding Path=Z, ElementName=map}" />
 			</TextBlock>
 		</StatusBar>
 

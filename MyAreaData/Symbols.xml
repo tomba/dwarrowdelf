@@ -14,7 +14,16 @@
     <CharSymbol>#</CharSymbol>
     <Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
   </Symbol>
-  <Symbol>
+	<Symbol>
+		<Name>Stairs Up</Name>
+		<CharSymbol>&lt;</CharSymbol>
+	</Symbol>
+	<Symbol>
+		<Name>Stairs Down</Name>
+		<CharSymbol>&gt;</CharSymbol>
+	</Symbol>
+
+	<Symbol>
     <Name>Player</Name>
     <CharSymbol>@</CharSymbol>
     <Drawing x="20" y="10" w="60" h="80">Character_Cat_Girl</Drawing>

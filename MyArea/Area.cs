@@ -11,27 +11,30 @@ namespace MyArea
 		public void InitializeWorld(World world)
 		{
 			// XXX some size limit with the size in WCF
-			var env = new MyGame.Environment(world, 100, 100, VisibilityMode.LOS);
+			var env = new MyGame.Environment(world, 100, 100, 4, VisibilityMode.LOS);
 
 			Random r = new Random(123);
 			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
 			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
-			for (int y = 0; y < env.Height; y++)
+			TerrainInfo down = world.AreaData.Terrains.Single(t => t.Name == "Stairs Down");
+			TerrainInfo up = world.AreaData.Terrains.Single(t => t.Name == "Stairs Up");
+
+			foreach (var p in env.Bounds.Range())
 			{
-				for (int x = 0; x < env.Width; x++)
-				{
-					if (x < 7 && y < 7)
-						env.SetTerrain(new IntPoint3D(x, y, 0), floor.ID);
-					else if (r.Next() % 8 == 0)
-						env.SetTerrain(new IntPoint3D(x, y, 0), wall.ID);
-					else
-						env.SetTerrain(new IntPoint3D(x, y, 0), floor.ID);
-				}
+				if (p.X == 2 && p.Y == 2)
+					env.SetTerrain(p, (p.Z % 2) == 0 ? down.ID : up.ID);
+				else if (p.X == 3 && p.Y == 3)
+					env.SetTerrain(p, (p.Z % 2) != 0 ? down.ID : up.ID);
+				else if (p.X < 7 && p.Y < 7)
+					env.SetTerrain(p, floor.ID);
+				else if (r.Next() % 8 == 0)
+					env.SetTerrain(p, wall.ID);
+				else
+					env.SetTerrain(p, floor.ID);
 			}
 
-
 			var obs = world.AreaData.Objects;
-
+			/*
 			var rand = new Random();
 			for (int i = 0; i < 10; ++i)
 			{
@@ -45,7 +48,7 @@ namespace MyArea
 				monster.Actor = monsterAI;
 				monster.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
 			}
-
+			*/
 			// Add an item
 			var item = new ItemObject(world);
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;

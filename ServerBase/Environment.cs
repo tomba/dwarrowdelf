@@ -56,7 +56,7 @@ namespace MyGame
 		public int Height { get; private set; }
 		public int Depth { get; private set; }
 
-		public Environment(World world, int width, int height, VisibilityMode visibilityMode)
+		public Environment(World world, int width, int height, int depth, VisibilityMode visibilityMode)
 			: base(world)
 		{
 			this.Version = 1;
@@ -65,7 +65,7 @@ namespace MyGame
 
 			this.Width = width;
 			this.Height = height;
-			this.Depth = 1;
+			this.Depth = depth;
 
 			m_tileGrid = new TileGrid(this.Width, this.Height, this.Depth);
 		}

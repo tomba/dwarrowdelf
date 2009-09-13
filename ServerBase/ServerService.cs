@@ -9,7 +9,8 @@ using System.ServiceModel.Description;
 
 namespace MyGame
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Single)]
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession,
+		ConcurrencyMode = ConcurrencyMode.Single, MaxItemsInObjectGraph = 1147483647)]
 	public class ServerService : IServerService
 	{
 		IClientCallback m_client;
@@ -19,7 +20,7 @@ namespace MyGame
 		InteractiveActor m_actor;
 
 		// this user sees all
-		bool m_seeAll = false;
+		bool m_seeAll = true;
 
 		List<Living> m_friendlies = new List<Living>();
 

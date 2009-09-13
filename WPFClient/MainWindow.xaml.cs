@@ -38,6 +38,7 @@ namespace MyGame
 			this.Height = 600;
 
 			this.PreviewKeyDown += Window_PreKeyDown;
+			this.PreviewTextInput += Window_PreTextInput;
 			map.MouseDown += MapControl_MouseDown;
 		}
 
@@ -74,6 +75,8 @@ namespace MyGame
 				}
 				else
 				{
+					map.InvalidateTiles();
+
 					this.CurrentTileInfo.Environment = null;
 					this.CurrentTileInfo.Location = new IntPoint3D();
 				}
@@ -93,6 +96,7 @@ namespace MyGame
 			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
 			map.CenterPos = newPos;
+			map.Z = l.Z;
 
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = l;
@@ -144,7 +148,6 @@ namespace MyGame
 			//MyDebug.WriteLine("OnMyKeyDown");
 			if (GameData.Data.Connection == null)
 				return;
-
 			if (KeyIsDir(e.Key))
 			{
 				e.Handled = true;
@@ -186,6 +189,36 @@ namespace MyGame
 				map.TileSize -= 8;
 			}
 
+		}
+
+		void Window_PreTextInput(object sender, TextCompositionEventArgs e)
+		{
+			string text = e.Text;
+			Direction dir;
+
+			if (text == ">")
+			{
+				dir = Direction.Down;
+			}
+			else if (text == "<")
+			{
+				dir = Direction.Up;
+			}
+			else
+			{
+				return;
+			}
+
+			e.Handled = true;
+			if (GameData.Data.CurrentObject != null)
+			{
+				int tid = GameData.Data.Connection.GetNewTransactionID();
+				GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
+			}
+			else
+			{
+				map.Z += IntVector3D.FromDirection(dir).Z;
+			}
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)

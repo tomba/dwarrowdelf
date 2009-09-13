@@ -68,6 +68,7 @@ namespace MyGame
 			binding.Security.Mode = NetNamedPipeSecurityMode.None;
 			serviceHost.AddServiceEndpoint(typeof(IServerService),
 				binding, "net.pipe://localhost/MyGame/Server");
+
 #else
 			//NetTcpBinding binding = new NetTcpBinding();
 			//binding.Security.Mode = SecurityMode.TransportWithMessageCredential;

@@ -23,7 +23,7 @@ namespace MyGame
 		SymbolBitmapCache m_bitmapCache;
 
 		Environment m_env;
-		public int Z { get; set; }
+		int m_z;
 
 		public MapControl()
 		{
@@ -142,7 +142,7 @@ namespace MyGame
 				return null;
 		}
 
-		internal Environment Environment
+		public Environment Environment
 		{
 			get { return m_env; }
 
@@ -158,8 +158,28 @@ namespace MyGame
 					m_env.MapChanged += MapChangedCallback;
 
 				InvalidateTiles();
+
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("Environment"));
 			}
 		}
+
+		public int Z
+		{
+			get { return m_z; }
+
+			set
+			{
+				if (m_z == value)
+					return;
+
+				m_z = value;
+				InvalidateTiles();
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("Z"));
+			}
+		}
+
 
 		void MapChangedCallback(IntPoint3D l)
 		{

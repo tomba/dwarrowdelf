@@ -101,9 +101,6 @@ namespace MyGame
 			return new IntVector3D(point.X, point.Y, point.Z);
 		}
 
-
-		// ZZZ only 2D
-
 		public Direction ToDirection()
 		{
 			IntVector3D v = this;
@@ -121,22 +118,30 @@ namespace MyGame
 			else if (v.Y < 0)
 				dir |= Direction.South;
 
+			if (v.Z > 0)
+				dir |= Direction.Up;
+			else if (v.Z < 0)
+				dir |= Direction.Down;
+
 			return dir;
 		}
 
 		public static IntVector3D FromDirection(Direction dir)
 		{
-			int x, y;
+			int x, y, z;
 
 			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
 			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
 			if (x == DirectionConsts.DirNeg)
 				x = -1;
 			if (y == DirectionConsts.DirNeg)
 				y = -1;
+			if (z == DirectionConsts.DirNeg)
+				z = -1;
 
-			return new IntVector3D(x, y, 0);
+			return new IntVector3D(x, y, z);
 		}
 
 		static int FastCos(int rot)

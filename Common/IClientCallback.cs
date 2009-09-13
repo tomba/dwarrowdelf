@@ -24,20 +24,7 @@ namespace MyGame
 
 		[OperationContract(IsOneWay = true)]
 		void DeliverMessages(IEnumerable<ClientMsgs.Message> messages);
-/*
-		[OperationContract(IsOneWay = true)]
-		void DeliverMapTerrains(MapLocationTerrain[] locations);
 
-		[OperationContract(IsOneWay = true)]
-		void DeliverChanges(Change[] changes);
-
-
-		[OperationContract(IsOneWay = true)]
-		void DeliverInventory(ItemData[] items);
-
-		[OperationContract(IsOneWay = true)]
-		void TurnChange(int turnNumber);
-*/
 		[OperationContract(IsOneWay = true)]
 		void TransactionDone(int transactionID);
 	}

@@ -10,4 +10,14 @@
     <IsWalkable>false</IsWalkable>
     <Symbol>Dungeon Wall</Symbol>
   </TerrainInfo>
+	<TerrainInfo>
+		<Name>Stairs Up</Name>
+		<IsWalkable>true</IsWalkable>
+		<Symbol>Stairs Up</Symbol>
+	</TerrainInfo>
+	<TerrainInfo>
+		<Name>Stairs Down</Name>
+		<IsWalkable>true</IsWalkable>
+		<Symbol>Stairs Down</Symbol>
+	</TerrainInfo>
 </TerrainInfos>
