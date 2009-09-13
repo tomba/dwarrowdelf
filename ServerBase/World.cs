@@ -141,6 +141,16 @@ namespace MyGame
 			m_rwLock.ExitWriteLock();
 		}
 
+		public void EnterReadLock()
+		{
+			m_rwLock.EnterReadLock();
+		}
+
+		public void ExitReadLock()
+		{
+			m_rwLock.ExitReadLock();
+		}
+
 		public void StartWorld()
 		{
 			Debug.Assert(m_workActive);

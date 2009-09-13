@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace MyGame
 {
@@ -111,8 +112,24 @@ namespace MyGame
 		{
 			if (m_object.HasAction)
 				return;
+
+			ManualResetEvent e = new ManualResetEvent(false);
+			System.Threading.ThreadPool.QueueUserWorkItem(DetermineWork, e);
+			e.WaitOne();
+		}
+
+		void DetermineWork(object state)
+		{
+			EventWaitHandle handle = (EventWaitHandle)state;
+
+			m_object.World.EnterReadLock();
+
+			handle.Set();
+
 			var a = GetNewAction();
 			m_object.EnqueueAction(a);
+
+			m_object.World.ExitReadLock();
 		}
 
 		#endregion
