@@ -90,7 +90,7 @@ namespace MyGame
 			{
 				foreach (var l in controllables)
 				{
-					if (l.Environment != this.Environment)
+					if (l.Environment != this.Environment || l.Location.Z != this.Z)
 						continue;
 
 					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
@@ -104,7 +104,7 @@ namespace MyGame
 			{
 				foreach (var l in controllables)
 				{
-					if (l.Environment != this.Environment)
+					if (l.Environment != this.Environment || l.Location.Z != this.Z)
 						continue;
 
 					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
