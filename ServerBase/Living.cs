@@ -258,10 +258,10 @@ namespace MyGame
 			{
 				ObjectMoveChange ec = (ObjectMoveChange)change;
 
-				if (ec.Source == this.Environment && Sees(ec.SourceLocation))
+				if (Sees(ec.Source, ec.SourceLocation))
 					return true;
 
-				if (ec.Destination == this.Environment && Sees(ec.DestinationLocation))
+				if (Sees(ec.Destination, ec.DestinationLocation))
 					return true;
 
 				MyDebug.WriteLine("\tplr doesn't see ob moving {0}->{1}, skipping change",
@@ -272,7 +272,7 @@ namespace MyGame
 			if (change is MapChange)
 			{
 				MapChange mc = (MapChange)change;
-				if (!Sees(mc.Location))
+				if (!Sees(mc.Map, mc.Location))
 				{
 					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
 					return false;
@@ -339,9 +339,18 @@ namespace MyGame
 
 		#endregion
 
-		public bool Sees(IntPoint3D l)
+		public bool Sees(GameObject ob, IntPoint3D l)
 		{
-			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
+			if (ob != this.Environment)
+				return false;
+
+			var env = ob as Environment;
+
+			// if the ob is not Environment, and we're in it, we see everything there
+			if (env == null)
+				return true;
+
+			if (env.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
 			IntVector3D dl = l - this.Location;
@@ -355,7 +364,7 @@ namespace MyGame
 				return false;
 			}
 
-			if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
+			if (env.VisibilityMode == VisibilityMode.SimpleFOV)
 				return true;
 
 			if (this.VisionMap[new IntPoint(dl.X, dl.Y)] == false)

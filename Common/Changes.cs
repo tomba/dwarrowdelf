@@ -31,13 +31,14 @@ namespace MyGame
 
 	public class MapChange : Change
 	{
-		public ObjectID MapID { get; set; }
+		public GameObject Map { get; private set; }
+		public ObjectID MapID { get { return this.Map.ObjectID; } }
 		public IntPoint3D Location { get; set; }
 		public int TerrainType { get; set; }
 
-		public MapChange(ObjectID mapID, IntPoint3D l, int terrainType)
+		public MapChange(GameObject map, IntPoint3D l, int terrainType)
 		{
-			this.MapID = mapID;
+			this.Map = map;
 			this.Location = l;
 			this.TerrainType = terrainType;
 		}

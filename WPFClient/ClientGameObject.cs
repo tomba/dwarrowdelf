@@ -149,7 +149,6 @@ namespace MyGame
 		public void MoveTo(ClientGameObject parent, IntPoint3D location)
 		{
 			ClientGameObject oldParent = this.Parent;
-			IntPoint3D oldLocation = this.Location;
 
 			if (oldParent != null)
 			{

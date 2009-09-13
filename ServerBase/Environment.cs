@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	public delegate void MapChanged(ObjectID mapID, IntPoint3D l, int terrainID);
+	public delegate void MapChanged(Environment map, IntPoint3D l, int terrainID);
 
 	struct TileData
 	{
@@ -92,7 +92,7 @@ namespace MyGame
 			m_tileGrid.SetTerrainType(l, terrainID);
 
 			if (MapChanged != null)
-				MapChanged(this.ObjectID, l, terrainID);
+				MapChanged(this, l, terrainID);
 		}
 
 		public bool IsWalkable(IntPoint3D l)

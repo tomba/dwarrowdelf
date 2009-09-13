@@ -597,11 +597,10 @@ namespace MyGame
 			}
 		}
 
-		void MapChangedCallback(ObjectID mapID, IntPoint3D l, int terrainID)
+		void MapChangedCallback(Environment map, IntPoint3D l, int terrainID)
 		{
 			Debug.Assert(m_workActive);
-			// is this needed?
-			AddChange(new MapChange(mapID, l, terrainID));
+			AddChange(new MapChange(map, l, terrainID));
 		}
 
 		public ServerGameObject FindObject(ObjectID objectID)
