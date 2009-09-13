@@ -118,7 +118,7 @@ namespace MyGame
 			if (action == null)
 				return;
 
-			MyDebug.WriteLine("PerformAction {0} : {1}", Name, action);
+			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
 
 			Debug.Assert(action.ActorObjectID == this.ObjectID);
 
@@ -363,7 +363,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("Living({0})", this.ObjectID);
+			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
 		}
 	}
 }

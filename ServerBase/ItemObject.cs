@@ -23,5 +23,11 @@ namespace MyGame
 			data.Color = this.Color;
 			return data;
 		}
+
+		public override string ToString()
+		{
+			return String.Format("ItemObject({0}/{1})", this.Name, this.ObjectID);
+		} 
+
 	}
 }
