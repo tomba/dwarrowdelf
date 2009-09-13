@@ -87,6 +87,8 @@ namespace MyGame
 
 		public void SetTerrain(IntPoint3D l, int terrainID)
 		{
+			Debug.Assert(this.World.IsWriteable);
+
 			this.Version += 1;
 
 			m_tileGrid.SetTerrainType(l, terrainID);
@@ -100,7 +102,8 @@ namespace MyGame
 			return this.World.AreaData.Terrains[GetTerrainID(l)].IsWalkable;
 		}
 
-		public IList<ServerGameObject> GetContents(IntPoint3D l)
+		// XXX not a good func. contents can be changed by the caller
+		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
 		{
 			return m_tileGrid.GetContentList(l);
 		}
@@ -126,6 +129,8 @@ namespace MyGame
 
 		protected override bool OkToAddChild(ServerGameObject child, IntPoint3D p)
 		{
+			Debug.Assert(this.World.IsWriteable);
+
 			if (!this.Bounds.Contains(p))
 				return false;
 

@@ -13,11 +13,15 @@ namespace MyGame
 		ConcurrencyMode = ConcurrencyMode.Single, MaxItemsInObjectGraph = 1147483647)]
 	public class ServerService : IServerService
 	{
+		static int s_userIDs = 1;
+
 		IClientCallback m_client;
 
 		World m_world;
 		Living m_player;
 		InteractiveActor m_actor;
+
+		int m_userID;
 
 		// this user sees all
 		bool m_seeAll = false;
@@ -45,7 +49,9 @@ namespace MyGame
 
 			MyDebug.WriteLine("LogOn {0}", name);
 
-			m_client.LogOnReply();
+			m_userID = s_userIDs++;
+
+			m_client.LogOnReply(m_userID);
 
 			ClientMsgs.MapData md = new ClientMsgs.MapData()
 			{
@@ -64,6 +70,7 @@ namespace MyGame
 			}
 
 			m_world.HandleChangesEvent += HandleChanges;
+			m_world.HandleEventsEvent += HandleEvents;
 		}
 
 		public void LogOff()
@@ -79,6 +86,7 @@ namespace MyGame
 				_LogOffChar(null);
 
 			m_world.HandleChangesEvent -= HandleChanges;
+			m_world.HandleEventsEvent -= HandleEvents;
 
 			m_client = null;
 			m_world = null;
@@ -136,7 +144,6 @@ namespace MyGame
 			m_player = new Living(m_world);
 			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
 			m_player.Name = "player";
-			m_player.ClientCallback = m_client;
 			m_actor = new InteractiveActor();
 			m_player.Actor = m_actor;
 
@@ -160,7 +167,8 @@ namespace MyGame
 			if (!m_player.MoveTo(m_world.Map, new IntPoint3D(0, 0, 0)))
 				throw new Exception("Unable to move player");
 
-			m_player.SendInventory();
+			var inv = m_player.SerializeInventory();
+			m_client.DeliverMessage(inv);
 
 			var pet = new Living(m_world);
 			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
@@ -201,8 +209,12 @@ namespace MyGame
 		{
 			try
 			{
-				if (action.ActorObjectID != m_player.ObjectID)
+				if (m_friendlies.All(l => l.ObjectID != action.ActorObjectID))
 					throw new Exception("Illegal ob id");
+
+				action.UserID = m_userID;
+
+				// XXX all actions go to the main living
 
 				// this is safe to call out of world thread (is it? =)
 				m_actor.EnqueueAction(action);
@@ -216,28 +228,52 @@ namespace MyGame
 
 		#endregion
 
+
+		void HandleEvents(IEnumerable<Event> events)
+		{
+			events = events.Where(e => EventFilter(e));
+
+			var msgs = events.Select(e => (ClientMsgs.Message)new ClientMsgs.EventMessage(e));
+
+			m_client.DeliverMessages(msgs);
+		}
+
+		public bool EventFilter(Event @event)
+		{
+			if (@event is ActionDoneEvent)
+			{
+				ActionDoneEvent e = (ActionDoneEvent)@event;
+				return e.UserID == m_userID;
+			}
+
+			if (@event is TurnChangeEvent)
+				return true;
+
+			return true;
+		}
+
 		// These are used to determine new tiles and objects in sight
 		Dictionary<Environment, HashSet<IntPoint3D>> m_knownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
-		void HandleChanges(IEnumerable<Change> changeArr)
+		void HandleChanges(IEnumerable<Change> changes)
 		{
 			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
 
 			// if the user sees all, no need to send new terrains/objects
 			if (!m_seeAll)
 			{
-				var m = SendNewTerrainsAndObjects(m_friendlies);
+				var m = CollectNewTerrainsAndObjects(m_friendlies);
 				msgs = msgs.Concat(m);
 			}
 
-			var changeMsgs = SendChanges(m_friendlies, changeArr);
+			var changeMsgs = CollectChanges(m_friendlies, changes);
 			msgs = msgs.Concat(changeMsgs);
 
 			m_client.DeliverMessages(msgs);
 		}
 
-		IEnumerable<ClientMsgs.Message> SendChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
+		IEnumerable<ClientMsgs.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
 		{
 			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
 
@@ -250,7 +286,7 @@ namespace MyGame
 					Where(c => c.SourceMapID == ObjectID.NullObjectID).
 					Select(c => (ServerGameObject)c.Object);
 
-				var newObMsgs = SendNewObjects(newObjects);
+				var newObMsgs = ObjectsToMessages(newObjects);
 				msgs = msgs.Concat(newObMsgs);
 			}
 			else
@@ -264,14 +300,14 @@ namespace MyGame
 						((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible).
 					Select(c => (ServerGameObject)c.Object);
 
-				var newObMsgs = SendNewObjects(newObjects);
+				var newObMsgs = ObjectsToMessages(newObjects);
 				msgs = msgs.Concat(newObMsgs);
 
 				// filter changes that friendlies see
 				changes = changes.Where(c => friendlies.Any(l => l.ChangeFilter(c)));
 			}
 
-			var changeMsgs = changes.Select<Change, ClientMsgs.Message>(Living.ChangeToMessage);
+			var changeMsgs = changes.Select(c => ChangeToMessage(c));
 			
 			// NOTE: send changes last, so that object/map/tile information has already
 			// been received by the client
@@ -280,7 +316,31 @@ namespace MyGame
 			return msgs;
 		}
 
-		IEnumerable<ClientMsgs.Message> SendNewTerrainsAndObjects(IEnumerable<Living> friendlies)
+		public ClientMsgs.Message ChangeToMessage(Change change)
+		{
+			if (change is ObjectMoveChange)
+			{
+				ObjectMoveChange mc = (ObjectMoveChange)change;
+				return new ClientMsgs.ObjectMove(mc.Object, mc.SourceMapID, mc.SourceLocation,
+					mc.DestinationMapID, mc.DestinationLocation);
+			}
+			else if (change is MapChange)
+			{
+				MapChange mc = (MapChange)change;
+				return new ClientMsgs.TerrainData()
+				{
+					Environment = mc.MapID,
+					MapDataList = new ClientMsgs.MapTileData[] {
+						new ClientMsgs.MapTileData() { Location = mc.Location, TerrainID = mc.TerrainType }
+					}
+				};
+			}
+
+			throw new Exception();
+		}
+
+
+		IEnumerable<ClientMsgs.Message> CollectNewTerrainsAndObjects(IEnumerable<Living> friendlies)
 		{
 			// Collect all locations that friendlies see
 			var newKnownLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
@@ -332,13 +392,13 @@ namespace MyGame
 			m_knownLocations = newKnownLocs;
 			m_knownObjects = newKnownObs;
 
-			var terrainMsgs = SendNewTerrains(revealedLocs);
-			var objectMsgs = SendNewObjects(revealedObs);
+			var terrainMsgs = TilesToMessages(revealedLocs);
+			var objectMsgs = ObjectsToMessages(revealedObs);
 
 			return terrainMsgs.Concat(objectMsgs);
 		}
 
-		IEnumerable<ClientMsgs.Message> SendNewTerrains(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)
+		IEnumerable<ClientMsgs.Message> TilesToMessages(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)
 		{
 			var msgs = revealedLocs.Select(kvp => (ClientMsgs.Message)new ClientMsgs.TerrainData()
 			{
@@ -356,7 +416,7 @@ namespace MyGame
 			return msgs;
 		}
 
-		IEnumerable<ClientMsgs.Message> SendNewObjects(IEnumerable<ServerGameObject> revealedObs)
+		IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<ServerGameObject> revealedObs)
 		{
 			var msgs = revealedObs.Select(o => o.Serialize());
 			return msgs;

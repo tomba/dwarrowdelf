@@ -34,6 +34,10 @@ namespace MyGame
 		public static World TheWorld;
 
 
+#if DEBUG
+		public bool IsWriteable { get; private set; }
+#endif
+		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		bool m_verbose = false;
 
@@ -48,8 +52,10 @@ namespace MyGame
 		List<Living> m_removeLivingList = new List<Living>();
 
 		public event Action<IEnumerable<Change>> HandleChangesEvent;
+		public event Action<IEnumerable<Event>> HandleEventsEvent;
 
 		List<Change> m_changeList = new List<Change>();
+		List<Event> m_eventList = new List<Event>();
 
 		Environment m_map; // XXX
 		public Environment Map
@@ -115,6 +121,23 @@ namespace MyGame
 
 			// mark as active for the initialization
 			m_workActive = true;
+			EnterWriteLock();
+		}
+
+		void EnterWriteLock()
+		{
+			m_rwLock.EnterWriteLock();
+#if DEBUG
+			this.IsWriteable = true;
+#endif
+		}
+
+		void ExitWriteLock()
+		{
+#if DEBUG
+			this.IsWriteable = false;
+#endif
+			m_rwLock.ExitWriteLock();
 		}
 
 		public void StartWorld()
@@ -124,7 +147,10 @@ namespace MyGame
 			// process any changes from world initialization
 			ProcessChanges();
 
+			ProcessEvents();
+
 			m_workActive = false;
+			ExitWriteLock();
 
 			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
 		}
@@ -331,6 +357,8 @@ namespace MyGame
 
 		void Work()
 		{
+			EnterWriteLock();
+
 			ProcessInstantInvokeList();
 
 			if (m_state == WorldState.Idle)
@@ -357,7 +385,10 @@ namespace MyGame
 					throw new NotImplementedException();
 			}
 
+			ExitWriteLock();
+
 			ProcessChanges();
+			ProcessEvents();
 		}
 
 		bool WorkAvailable()
@@ -513,7 +544,7 @@ namespace MyGame
 			Debug.Assert(m_workActive);
 
 			m_turnNumber++;
-			AddChange(new TurnChange(m_turnNumber));
+			AddEvent(new TurnChangeEvent(m_turnNumber));
 
 			MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
 
@@ -559,6 +590,22 @@ namespace MyGame
 				HandleChangesEvent(m_changeList);
 
 			m_changeList.Clear();
+		}
+
+		public void AddEvent(Event @event)
+		{
+			Debug.Assert(m_workActive);
+			m_eventList.Add(@event);
+		}
+
+		void ProcessEvents()
+		{
+			Debug.Assert(m_workActive);
+
+			if (HandleEventsEvent != null)
+				HandleEventsEvent(m_eventList);
+
+			m_eventList.Clear();
 		}
 
 		void MapChangedCallback(Environment map, IntPoint3D l, int terrainID)

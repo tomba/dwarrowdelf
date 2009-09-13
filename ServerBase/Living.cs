@@ -27,14 +27,8 @@ namespace MyGame
 		public void Cleanup()
 		{
 			this.MoveTo(null, new IntPoint3D());
-
 			World.RemoveLiving(this);
-
-//			World.AddChange(new ObjectMoveChange(this, this.Environment.ObjectID, this.Location,
-//				ObjectID.NullObjectID, new IntPoint()));
 		}
-
-		public IClientCallback ClientCallback { get; set; }
 
 		public IActor Actor
 		{
@@ -133,6 +127,8 @@ namespace MyGame
 		// called during turn processing. the world state is not quite valid.
 		public void PerformAction()
 		{
+			Debug.Assert(this.World.IsWriteable);
+
 			GameAction action = GetCurrentAction();
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
@@ -179,8 +175,16 @@ namespace MyGame
 			if (done)
 			{
 				RemoveAction(action);
-				if(this.ClientCallback != null)
-					this.ClientCallback.TransactionDone(action.TransactionID);
+				
+				// is the action originator an user?
+				if (action.UserID != 0)
+				{
+					this.World.AddEvent(new ActionDoneEvent()
+					{
+						UserID = action.UserID,
+						TransactionID = action.TransactionID
+					});
+				}
 			}
 		}
 
@@ -209,51 +213,18 @@ namespace MyGame
 			}
 
 			int z = this.Z;
-			s_losAlgo.Calculate(this.Location2D, this.VisionRange, m_visionMap, this.Environment.Bounds2D,
-				l => !this.Environment.IsWalkable(new IntPoint3D(l, z)));
+			var env = this.Environment;
+			s_losAlgo.Calculate(this.Location2D, this.VisionRange, m_visionMap, env.Bounds2D,
+				l => !env.IsWalkable(new IntPoint3D(l, z)));
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
 		}
 
-		// XXX move to somewhere generic
-		public static ClientMsgs.Message ChangeToMessage(Change change)
-		{
-			if (change is ObjectMoveChange)
-			{
-				ObjectMoveChange mc = (ObjectMoveChange)change;
-				return new ClientMsgs.ObjectMove(mc.Object, mc.SourceMapID, mc.SourceLocation,
-					mc.DestinationMapID, mc.DestinationLocation);
-			}
 
-			if (change is MapChange)
-			{
-				MapChange mc = (MapChange)change;
-				return new ClientMsgs.TerrainData()
-				{
-					Environment = mc.MapID,
-					MapDataList = new ClientMsgs.MapTileData[] {
-						new ClientMsgs.MapTileData() { Location = mc.Location, TerrainID = mc.TerrainType }
-					}
-				};
-			}
-
-			if (change is TurnChange)
-			{
-				return new ClientMsgs.TurnChange() { TurnNumber = ((TurnChange)change).TurnNumber };
-			}
-
-			Debug.Assert(false);
-
-			return null;
-		}
-
-		// send only changes that the player sees and needs to know
+		// pass changes that this living sees
 		public bool ChangeFilter(Change change)
 		{
-			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
-				return true;
-
 			if (change is ObjectMoveChange)
 			{
 				ObjectMoveChange ec = (ObjectMoveChange)change;
@@ -264,81 +235,19 @@ namespace MyGame
 				if (Sees(ec.Destination, ec.DestinationLocation))
 					return true;
 
-				MyDebug.WriteLine("\tplr doesn't see ob moving {0}->{1}, skipping change",
-					ec.SourceLocation, ec.DestinationLocation);
 				return false;
 			}
-
-			if (change is MapChange)
+			else if (change is MapChange)
 			{
 				MapChange mc = (MapChange)change;
-				if (!Sees(mc.Map, mc.Location))
-				{
-					MyDebug.WriteLine("\tplr doesn't see ob at {0}, skipping change", mc.Location);
-					return false;
-				}
-				else
-				{
-					return true;
-				}
+
+				return Sees(mc.Map, mc.Location);
 			}
 
-			if (change is TurnChange)
-			{
-				return true;
-			}
-
-			Debug.Assert(false);
-
-			return false;
+			throw new Exception();
 		}
 
-		public void SendInventory()
-		{
-			if (this.ClientCallback != null)
-			{
-				var items = new List<ClientMsgs.Message>(this.Inventory.Count);
-				foreach (ItemObject item in this.Inventory)
-				{
-					var data = item.Serialize();
-					items.Add(data);
-				}
-
-				this.ClientCallback.DeliverMessages(items);
-			}
-		}
-
-		#region IActor Members
-
-		public void RemoveAction(GameAction action)
-		{
-			this.Actor.RemoveAction(action);
-		}
-
-		public GameAction GetCurrentAction()
-		{
-			return this.Actor.GetCurrentAction();
-		}
-
-		public bool HasAction
-		{
-			get { return this.Actor.HasAction; }
-		}
-
-		public bool IsInteractive
-		{
-			get { return this.Actor.IsInteractive; }
-		}
-
-		public void ReportAction(bool done, bool success)
-		{
-			this.Actor.ReportAction(done, success);
-		}
-
-		public event Action ActionQueuedEvent;
-
-		#endregion
-
+		// does this living see location l in object ob
 		public bool Sees(GameObject ob, IntPoint3D l)
 		{
 			if (ob != this.Environment)
@@ -372,6 +281,45 @@ namespace MyGame
 
 			return true;
 		}
+
+
+		public ClientMsgs.Message SerializeInventory()
+		{
+			var items = this.Inventory.Select(o => o.Serialize()).ToArray();
+			return new ClientMsgs.CompoundMessage() { Messages = items };
+		}
+
+		#region IActor Members
+
+		public void RemoveAction(GameAction action)
+		{
+			this.Actor.RemoveAction(action);
+		}
+
+		public GameAction GetCurrentAction()
+		{
+			return this.Actor.GetCurrentAction();
+		}
+
+		public bool HasAction
+		{
+			get { return this.Actor.HasAction; }
+		}
+
+		public bool IsInteractive
+		{
+			get { return this.Actor.IsInteractive; }
+		}
+
+		public void ReportAction(bool done, bool success)
+		{
+			this.Actor.ReportAction(done, success);
+		}
+
+		public event Action ActionQueuedEvent;
+
+		#endregion
+
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
 		{

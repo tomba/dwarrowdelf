@@ -29,6 +29,7 @@ namespace MyGame
 			this.SymbolDrawings = new SymbolDrawingCache(World.TheWorld.AreaData);
 		}
 
+		public int UserID { get; set; }
 		public Connection Connection { get; set; }
 
 		public ObjectCollection Controllables { get; private set; }

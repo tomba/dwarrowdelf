@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 namespace MyGame.ClientMsgs
 {
 	[DataContract,
+	KnownType(typeof(CompoundMessage)),
 	KnownType(typeof(ItemData)),
 	KnownType(typeof(LivingData)),
 	KnownType(typeof(FullMapData)),
@@ -18,9 +19,22 @@ namespace MyGame.ClientMsgs
 	KnownType(typeof(MapTileData)),
 	KnownType(typeof(TerrainData)),
 	KnownType(typeof(ObjectMove)),
-	KnownType(typeof(TurnChange))]
-	public class Message
+	KnownType(typeof(EventMessage)),
+	]
+	public abstract class Message
 	{
+	}
+
+	[DataContract]
+	public class CompoundMessage : Message
+	{
+		[DataMember]
+		public IEnumerable<Message> Messages { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("CompoundMessage");
+		}
 	}
 
 	/* Item in inventory or floor */
@@ -163,17 +177,21 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class TurnChange : Message
+	public class EventMessage : Message
 	{
 		[DataMember]
-		public int TurnNumber { get; set; }
+		public Event Event { get; set; }
+
+		public EventMessage(Event @event)
+		{
+			this.Event = @event;
+		}
 
 		public override string ToString()
 		{
-			return String.Format("TurnChange({0})", this.TurnNumber);
+			return String.Format("EventMessage({0})", this.Event);
 		}
 	}
-
 
 
 }

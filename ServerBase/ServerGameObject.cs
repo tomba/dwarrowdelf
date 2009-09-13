@@ -64,6 +64,8 @@ namespace MyGame
 
 		public bool MoveTo(ServerGameObject parent, IntPoint3D location)
 		{
+			Debug.Assert(this.World.IsWriteable);
+
 			ServerGameObject oldParent = this.Parent;
 			var oldLocation = this.Location;
 

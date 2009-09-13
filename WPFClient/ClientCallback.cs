@@ -15,10 +15,10 @@ namespace MyGame
 
 		#region IClientCallback Members
 
-		public void LogOnReply()
+		public void LogOnReply(int userID)
 		{
 			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action(_LogOnReply));
+			app.Dispatcher.BeginInvoke(new Action<int>(_LogOnReply), userID);
 		}
 
 		public void LogOnCharReply(ObjectID playerID)
@@ -45,16 +45,11 @@ namespace MyGame
 			app.Dispatcher.BeginInvoke(new Action<IEnumerable<Message>>(_DeliverMessages), messages);
 		}
 
-		public void TransactionDone(int transactionID)
-		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<int>(_TransactionDone), transactionID);
-		}
-
 		#endregion
 
-		void _LogOnReply()
+		void _LogOnReply(int userID)
 		{
+			GameData.Data.UserID = userID;
 			GameData.Data.Connection.Server.LogOnChar("tomba");
 		}
 
@@ -90,10 +85,6 @@ namespace MyGame
 				if (env == null)
 					throw new Exception();
 				env.SetTerrains(td.MapDataList);
-			}
-			else if (msg is ClientMsgs.TurnChange)
-			{
-				GameData.Data.TurnNumber = ((ClientMsgs.TurnChange)msg).TurnNumber;
 			}
 			else if (msg is ObjectMove)
 			{
@@ -194,6 +185,14 @@ namespace MyGame
 
 				ob.MoveTo(env, id.Location);
 			}
+			else if (msg is EventMessage)
+			{
+				HandleEvents(((EventMessage)msg).Event);
+			}
+			else if (msg is CompoundMessage)
+			{
+				_DeliverMessages(((CompoundMessage)msg).Messages);
+			}
 			else
 			{
 				throw new Exception("unknown messagetype");
@@ -206,11 +205,21 @@ namespace MyGame
 				_DeliverMessage(msg);
 		}
 
-		void _TransactionDone(int transactionID)
+		void HandleEvents(Event @event)
 		{
-			MyDebug.WriteLine("TransactionDone({0})", transactionID);
-			GameAction action = GameData.Data.ActionCollection.SingleOrDefault(a => a.TransactionID == transactionID);
-			GameData.Data.ActionCollection.Remove(action);
+			if (@event is TurnChangeEvent)
+			{
+				var e = (TurnChangeEvent)@event;
+				GameData.Data.TurnNumber = e.TurnNumber;
+			}
+			else if (@event is ActionDoneEvent)
+			{
+				var e = (ActionDoneEvent)@event;
+
+				MyDebug.WriteLine("TransactionDone({0})", e.TransactionID);
+				GameAction action = GameData.Data.ActionCollection.SingleOrDefault(a => a.TransactionID == e.TransactionID);
+				GameData.Data.ActionCollection.Remove(action);
+			}
 		}
 	}
 }

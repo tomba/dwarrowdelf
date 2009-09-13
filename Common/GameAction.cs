@@ -21,6 +21,8 @@ namespace MyGame
 		[DataMember]
 		public int TransactionID { get; set; }
 
+		public int UserID { get; set; }
+
 		public GameAction(int transID, GameObject actor)
 		{
 			this.TransactionID = transID;

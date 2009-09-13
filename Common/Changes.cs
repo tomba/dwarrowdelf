@@ -7,25 +7,51 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	public abstract class Change
+	[DataContract,
+	KnownType(typeof(TurnChangeEvent)),
+	KnownType(typeof(ActionDoneEvent)),
+	]
+	public abstract class Event
 	{
-		protected Change()
-		{
-		}
 	}
 
-	public class TurnChange : Change
+	[DataContract]
+	public class TurnChangeEvent : Event
 	{
+		[DataMember]
 		public int TurnNumber { get; set; }
 
-		public TurnChange(int turnNumber)
+		public TurnChangeEvent(int turnNumber)
 		{
 			this.TurnNumber = turnNumber;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("TurnChange({0})", this.TurnNumber);
+			return String.Format("TurnChangeEvent({0})", this.TurnNumber);
+		}
+	}
+
+	[DataContract]
+	public class ActionDoneEvent : Event
+	{
+		public int UserID { get; set; }
+		[DataMember]
+		public int TransactionID { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ActionDoneEvent({0}, {1})", this.UserID, this.TransactionID);
+		}
+	}
+
+
+
+
+	public abstract class Change
+	{
+		protected Change()
+		{
 		}
 	}
 

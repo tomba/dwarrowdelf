@@ -34,7 +34,7 @@ namespace MyArea
 			}
 
 			var obs = world.AreaData.Objects;
-
+			/*
 			var rand = new Random();
 			for (int i = 0; i < 10; ++i)
 			{
@@ -48,7 +48,7 @@ namespace MyArea
 				monster.Actor = monsterAI;
 				monster.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
 			}
-
+			*/
 			// Add an item
 			var item = new ItemObject(world);
 			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
