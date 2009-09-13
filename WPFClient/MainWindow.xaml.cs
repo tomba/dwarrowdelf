@@ -54,6 +54,8 @@ namespace MyGame
 			this.MiniMap = new MiniMap();
 			this.MiniMap.Owner = this;
 			this.MiniMap.ShowActivated = false;
+			this.MiniMap.Left = map.PointToScreen(new Point(0, 0)).X + 2;
+			this.MiniMap.Top = map.PointToScreen(new Point(0, 0)).Y + 2;
 			this.MiniMap.Show();
 		}
 

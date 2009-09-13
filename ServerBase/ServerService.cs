@@ -20,7 +20,7 @@ namespace MyGame
 		InteractiveActor m_actor;
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		List<Living> m_friendlies = new List<Living>();
 
