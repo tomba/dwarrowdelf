@@ -52,7 +52,7 @@ namespace MyGame
 		List<Change> m_changeList = new List<Change>();
 
 		Environment m_map; // XXX
-		public Environment Map 
+		public Environment Map
 		{
 			get { return m_map; }
 
@@ -147,21 +147,18 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
-			lock (m_livingList)
+			lock (m_addLivingList)
 			{
-				lock (m_addLivingList)
+				if (m_addLivingList.Count > 0)
+					MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
+				foreach (var living in m_addLivingList)
 				{
-					if (m_addLivingList.Count > 0)
-						MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
-					foreach (var living in m_addLivingList)
-					{
-						Debug.Assert(!m_livingList.Contains(living));
-						m_livingList.Add(living);
-						living.ActionQueuedEvent += SignalActorStateChanged;
-					}
-
-					m_addLivingList.Clear();
+					Debug.Assert(!m_livingList.Contains(living));
+					m_livingList.Add(living);
+					living.ActionQueuedEvent += SignalActorStateChanged;
 				}
+
+				m_addLivingList.Clear();
 			}
 		}
 
@@ -178,31 +175,19 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
-			lock (m_livingList)
+			lock (m_removeLivingList)
 			{
-				lock (m_removeLivingList)
+				if (m_removeLivingList.Count > 0)
+					MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
+				foreach (var living in m_removeLivingList)
 				{
-					if (m_removeLivingList.Count > 0)
-						MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
-					foreach (var living in m_removeLivingList)
-					{
-						living.ActionQueuedEvent -= SignalActorStateChanged;
-						bool removed = m_livingList.Remove(living);
-						Debug.Assert(removed);
-					}
-
-					m_removeLivingList.Clear();
+					living.ActionQueuedEvent -= SignalActorStateChanged;
+					bool removed = m_livingList.Remove(living);
+					Debug.Assert(removed);
 				}
+
+				m_removeLivingList.Clear();
 			}
-		}
-
-
-		public Living[] GetLivings()
-		{
-			Debug.Assert(m_workActive);
-			
-			lock (m_livingList)
-				return m_livingList.ToArray();
 		}
 
 		// thread safe
@@ -223,7 +208,7 @@ namespace MyGame
 		void ProcessInvokeList()
 		{
 			Debug.Assert(m_workActive);
-			
+
 			lock (m_preTurnInvokeList)
 			{
 				if (m_preTurnInvokeList.Count > 0)
@@ -329,6 +314,8 @@ namespace MyGame
 
 		bool IsTimeToStartTurn()
 		{
+			Debug.Assert(m_workActive);
+
 			if (m_state != WorldState.Idle)
 				return false;
 
@@ -336,9 +323,8 @@ namespace MyGame
 				return false;
 
 			if (m_requireInteractive && m_turnRequested == false)
-				lock (m_livingList)
-					if (!m_livingList.Any(l => l.IsInteractive))
-						return false;
+				if (!m_livingList.Any(l => l.IsInteractive))
+					return false;
 
 			return true;
 		}
@@ -358,7 +344,7 @@ namespace MyGame
 				MyDebug.WriteLine("-- Preturn {0} events done --", m_turnNumber + 1);
 
 				if (IsTimeToStartTurn())
-						StartTurn();
+					StartTurn();
 			}
 
 			if (m_state == WorldState.TurnOngoing)
@@ -418,13 +404,11 @@ namespace MyGame
 
 		bool SimultaneousWorkAvailable()
 		{
+			Debug.Assert(m_workActive);
 			Debug.Assert(m_state == WorldState.TurnOngoing);
 
-			lock (m_livingList)
-			{
-				if (m_livingList.All(l => l.HasAction))
-					return true;
-			}
+			if (m_livingList.All(l => l.HasAction))
+				return true;
 
 			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
 				return true;
@@ -442,29 +426,26 @@ namespace MyGame
 			if (m_verbose)
 				MyDebug.WriteLine("SimultaneousWork");
 
-			lock (m_livingList)
+			if (!forceMove && !m_livingList.All(l => l.HasAction))
+				return;
+
+			if (!forceMove)
+				Debug.Assert(m_livingList.All(l => l.HasAction));
+
+			while (true)
 			{
-				if (!forceMove && !m_livingList.All(l => l.HasAction))
-					return;
+				Living living = m_livingEnumerator.Current;
 
-				if (!forceMove)
-					Debug.Assert(m_livingList.All(l => l.HasAction));
+				if (living.HasAction)
+					living.PerformAction();
+				else if (!forceMove)
+					throw new Exception();
 
-				while (true)
-				{
-					Living living = m_livingEnumerator.Current;
-
-					if (living.HasAction)
-						living.PerformAction();
-					else if (!forceMove)
-						throw new Exception();
-
-					if (m_livingEnumerator.MoveNext() == false)
-						break;
-				}
-
-				EndTurn();
+				if (m_livingEnumerator.MoveNext() == false)
+					break;
 			}
+
+			EndTurn();
 
 			if (m_verbose)
 				MyDebug.WriteLine("SimultaneousWork Done");
@@ -536,12 +517,9 @@ namespace MyGame
 
 			MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
 
-			lock (m_livingList)
-			{
-				m_livingEnumerator = m_livingList.GetEnumerator();
-				if (m_livingEnumerator.MoveNext() == false)
-					throw new Exception("no livings");
-			}
+			m_livingEnumerator = m_livingList.GetEnumerator();
+			if (m_livingEnumerator.MoveNext() == false)
+				throw new Exception("no livings");
 
 			m_state = WorldState.TurnOngoing;
 
@@ -570,31 +548,17 @@ namespace MyGame
 		public void AddChange(Change change)
 		{
 			Debug.Assert(m_workActive);
-
-			//MyDebug.WriteLine("AddChange {0}", change);
-			lock(m_changeList)
-				m_changeList.Add(change);
-		}
-
-		public Change[] GetChanges()
-		{
-			Debug.Assert(m_workActive);
-
-			lock (m_changeList)
-				return m_changeList.ToArray();
+			m_changeList.Add(change);
 		}
 
 		void ProcessChanges()
 		{
 			Debug.Assert(m_workActive);
 
-			lock (m_changeList)
-			{
-				if (HandleChangesEvent != null)
-					HandleChangesEvent(m_changeList);
+			if (HandleChangesEvent != null)
+				HandleChangesEvent(m_changeList);
 
-				m_changeList.Clear();
-			}
+			m_changeList.Clear();
 		}
 
 		void MapChangedCallback(Environment map, IntPoint3D l, int terrainID)
@@ -636,19 +600,5 @@ namespace MyGame
 		{
 			return new ObjectID(Interlocked.Increment(ref m_objectIDcounter));
 		}
-
-		public void ForEachObject(Action<ServerGameObject> action)
-		{
-			// XXX action can do something that needs objectmap...
-			lock (m_objectMap)
-			{
-				foreach (WeakReference weakob in m_objectMap.Values)
-				{
-					if (weakob.IsAlive && weakob.Target != null)
-						action((ServerGameObject)weakob.Target);
-				}
-			}
-		}
 	}
 }
-	
