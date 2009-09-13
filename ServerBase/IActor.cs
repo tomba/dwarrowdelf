@@ -7,7 +7,6 @@ namespace MyGame
 {
 	public interface IActor
 	{
-		bool IsInteractive { get; } // XXX should be removed
 		void DetermineAction();
 	}
 }

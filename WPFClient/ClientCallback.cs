@@ -113,7 +113,6 @@ namespace MyGame
 					env = new Environment(world, md.ObjectID, md.Bounds);
 					world.AddEnvironment(env);
 					env.Name = "map";
-					App.MainWindow.Map = env;
 				}
 
 				env.SetTerrains(md.Bounds, md.TerrainIDs);
@@ -133,7 +132,6 @@ namespace MyGame
 					env = new Environment(world, md.ObjectID);
 					world.AddEnvironment(env);
 					env.Name = "map";
-					App.MainWindow.Map = env;
 				}
 
 				env.VisibilityMode = md.VisibilityMode;

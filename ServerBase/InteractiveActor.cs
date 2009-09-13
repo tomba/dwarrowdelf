@@ -13,11 +13,6 @@ namespace MyGame
 
 		#region IActor Members
 
-		public bool IsInteractive
-		{
-			get { return true; }
-		}
-
 		public void DetermineAction()
 		{
 		}

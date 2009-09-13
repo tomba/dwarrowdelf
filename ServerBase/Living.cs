@@ -313,11 +313,6 @@ namespace MyGame
 			}
 		}
 
-		public bool IsInteractive
-		{
-			get { return this.Actor.IsInteractive; }
-		}
-
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
 		{
 			for (int y = this.Y - this.VisionRange; y <= this.Y + this.VisionRange; ++y)

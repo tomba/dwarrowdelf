@@ -139,6 +139,8 @@ namespace MyGame
 
 			MyDebug.WriteLine("LogOnChar {0}", name);
 
+			m_world.AddUser(this);
+
 			var obs = m_world.AreaData.Objects;
 
 			m_player = new Living(m_world);
@@ -197,6 +199,8 @@ namespace MyGame
 			MyDebug.WriteLine("LogOffChar");
 
 			m_friendlies.Remove(m_player);
+		
+			m_world.RemoveUser(this);
 
 			m_player.Actor = null;
 			m_player.Cleanup();

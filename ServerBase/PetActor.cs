@@ -103,11 +103,6 @@ namespace MyGame
 
 		#region IActor Members
 
-		public bool IsInteractive
-		{
-			get { return false; }
-		}
-
 		public void DetermineAction()
 		{
 			if (m_object.HasAction)

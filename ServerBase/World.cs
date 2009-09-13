@@ -58,6 +58,8 @@ namespace MyGame
 		List<Change> m_changeList = new List<Change>();
 		List<Event> m_eventList = new List<Event>();
 
+		List<ServerService> m_userList = new List<ServerService>();
+
 		Environment m_map; // XXX
 		public Environment Map
 		{
@@ -98,8 +100,8 @@ namespace MyGame
 		// If the user has requested to proceed
 		bool m_turnRequested;
 
-		// Require an interactive to be in game for turns to proceed
-		bool m_requireInteractive = true;
+		// Require an user to be in game for turns to proceed
+		bool m_requireUser = true;
 
 		class InvokeInfo
 		{
@@ -169,6 +171,24 @@ namespace MyGame
 		public int TurnNumber
 		{
 			get { return m_turnNumber; }
+		}
+
+		// thread safe
+		internal void AddUser(ServerService user)
+		{
+			lock (m_userList)
+				m_userList.Add(user);
+
+			SignalWorld();
+		}
+
+		// thread safe
+		internal void RemoveUser(ServerService user)
+		{
+			lock (m_userList)
+				m_userList.Add(user);
+
+			SignalWorld();
 		}
 
 		// thread safe
@@ -349,10 +369,12 @@ namespace MyGame
 			if (m_useMinTurnTime && DateTime.Now < m_nextTurn)
 				return false;
 
-			// XXX this should really check connected users, not anything from living
-			if (m_requireInteractive && m_turnRequested == false)
-				if (!m_livingList.Any(l => l.IsInteractive))
-					return false;
+			if (m_requireUser && m_turnRequested == false)
+			{
+				lock (m_userList)
+					if (m_userList.Count == 0)
+						return false;
+			}
 
 			return true;
 		}
