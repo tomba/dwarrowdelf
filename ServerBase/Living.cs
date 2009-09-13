@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	public class Living : ServerGameObject, IActor
+	public class Living : ServerGameObject
 	{
 		// XXX note: not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
@@ -33,17 +33,7 @@ namespace MyGame
 		public IActor Actor
 		{
 			get { return m_actorImpl; }
-
-			set
-			{
-				if (m_actorImpl != null)
-					m_actorImpl.ActionQueuedEvent -= HandleActionQueued;
-
-				m_actorImpl = value;
-
-				if (m_actorImpl != null)
-					m_actorImpl.ActionQueuedEvent += HandleActionQueued;
-			}
+			set { m_actorImpl = value; }
 		}
 
 		public int VisionRange
@@ -60,12 +50,6 @@ namespace MyGame
 				UpdateLOS();
 				return m_visionMap;
 			}
-		}
-
-		void HandleActionQueued()
-		{
-			if (this.ActionQueuedEvent != null)
-				this.ActionQueuedEvent();
 		}
 
 		void PerformGet(GetAction action, out bool done, out bool success)
@@ -169,8 +153,6 @@ namespace MyGame
 			{
 				throw new NotImplementedException();
 			}
-
-			ReportAction(done, success);
 
 			if (done)
 			{
@@ -289,37 +271,52 @@ namespace MyGame
 			return new ClientMsgs.CompoundMessage() { Messages = items };
 		}
 
-		#region IActor Members
+		// Actor stuff
+		Queue<GameAction> m_actionQueue = new Queue<GameAction>();
+
+		public void EnqueueAction(GameAction action)
+		{
+			lock (m_actionQueue)
+				m_actionQueue.Enqueue(action);
+
+			this.World.SignalWorld();
+		}
 
 		public void RemoveAction(GameAction action)
 		{
-			this.Actor.RemoveAction(action);
+			lock (m_actionQueue)
+			{
+				GameAction topAction = m_actionQueue.Peek();
+
+				if (topAction == action)
+					m_actionQueue.Dequeue();
+			}
 		}
 
 		public GameAction GetCurrentAction()
 		{
-			return this.Actor.GetCurrentAction();
+			lock (m_actionQueue)
+			{
+				if (m_actionQueue.Count == 0)
+					return null;
+
+				return m_actionQueue.Peek();
+			}
 		}
 
 		public bool HasAction
 		{
-			get { return this.Actor.HasAction; }
+			get
+			{
+				lock (m_actionQueue)
+					return m_actionQueue.Count > 0;
+			}
 		}
 
 		public bool IsInteractive
 		{
 			get { return this.Actor.IsInteractive; }
 		}
-
-		public void ReportAction(bool done, bool success)
-		{
-			this.Actor.ReportAction(done, success);
-		}
-
-		public event Action ActionQueuedEvent;
-
-		#endregion
-
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
 		{

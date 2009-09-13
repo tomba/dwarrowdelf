@@ -188,7 +188,7 @@ namespace MyGame
 
 		void _LogOffChar(object data)
 		{
-			m_actor.EnqueueAction(new WaitAction(0, m_player, 1));
+			m_player.EnqueueAction(new WaitAction(0, m_player, 1));
 			m_world.BeginInvoke(__LogOffChar);
 		}
 
@@ -209,15 +209,14 @@ namespace MyGame
 		{
 			try
 			{
-				if (m_friendlies.All(l => l.ObjectID != action.ActorObjectID))
+				var living = m_friendlies.SingleOrDefault(l => l.ObjectID == action.ActorObjectID);
+
+				if (living == null)
 					throw new Exception("Illegal ob id");
 
 				action.UserID = m_userID;
 
-				// XXX all actions go to the main living
-
-				// this is safe to call out of world thread (is it? =)
-				m_actor.EnqueueAction(action);
+				living.EnqueueAction(action);
 			}
 			catch (Exception e)
 			{

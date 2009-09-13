@@ -23,6 +23,7 @@ namespace MyGame
 	{
 		Idle,
 		TurnOngoing,
+		TurnEnded,
 	}
 
 	public class World
@@ -181,7 +182,6 @@ namespace MyGame
 				{
 					Debug.Assert(!m_livingList.Contains(living));
 					m_livingList.Add(living);
-					living.ActionQueuedEvent += SignalActorStateChanged;
 				}
 
 				m_addLivingList.Clear();
@@ -207,7 +207,6 @@ namespace MyGame
 					MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
 				foreach (var living in m_removeLivingList)
 				{
-					living.ActionQueuedEvent -= SignalActorStateChanged;
 					bool removed = m_livingList.Remove(living);
 					Debug.Assert(removed);
 				}
@@ -292,14 +291,6 @@ namespace MyGame
 			SignalWorld();
 		}
 
-		// thread safe
-		internal void SignalActorStateChanged()
-		{
-			if (m_verbose)
-				MyDebug.WriteLine("SignalActor");
-			SignalWorld();
-		}
-
 		void TickTimerCallback(object stateInfo)
 		{
 			if (m_verbose)
@@ -348,6 +339,7 @@ namespace MyGame
 			if (m_useMinTurnTime && DateTime.Now < m_nextTurn)
 				return false;
 
+			// XXX this should really check connected users, not anything from living
 			if (m_requireInteractive && m_turnRequested == false)
 				if (!m_livingList.Any(l => l.IsInteractive))
 					return false;
@@ -358,37 +350,54 @@ namespace MyGame
 		void Work()
 		{
 			EnterWriteLock();
-
 			ProcessInstantInvokeList();
+			ExitWriteLock();
 
 			if (m_state == WorldState.Idle)
 			{
 				MyDebug.WriteLine("-- Preturn {0} events --", m_turnNumber + 1);
 
+				EnterWriteLock();
 				ProcessInvokeList();
 				ProcessAddLivingList();
 				ProcessRemoveLivingList();
+				ExitWriteLock();
 
 				MyDebug.WriteLine("-- Preturn {0} events done --", m_turnNumber + 1);
 
 				if (IsTimeToStartTurn())
+				{
+					// XXX making decision here is ok for Simultaneous mode, but not quite
+					// for sequential...
+					// note: write lock is off, actors can take read-lock and process in the
+					// background
+					foreach (Living l in m_livingList)
+						l.Actor.DetermineAction();
+
 					StartTurn();
+				}
 			}
 
 			if (m_state == WorldState.TurnOngoing)
 			{
+				EnterWriteLock();
 				if (m_tickMethod == WorldTickMethod.Simultaneous)
 					SimultaneousWork();
 				else if (m_tickMethod == WorldTickMethod.Sequential)
 					SequentialWork();
 				else
 					throw new NotImplementedException();
+				ExitWriteLock();
 			}
-
-			ExitWriteLock();
 
 			ProcessChanges();
 			ProcessEvents();
+
+			if (m_state == WorldState.TurnEnded)
+			{
+				// perhaps this is not needed for anything
+				m_state = WorldState.Idle;
+			}
 		}
 
 		bool WorkAvailable()
@@ -573,7 +582,7 @@ namespace MyGame
 
 			MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
 			m_turnRequested = false;
-			m_state = WorldState.Idle;
+			m_state = WorldState.TurnEnded;
 		}
 
 		public void AddChange(Change change)

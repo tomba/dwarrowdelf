@@ -9,15 +9,13 @@ namespace MyGame
 {
 	public class MonsterActor : IActor
 	{
-		ServerGameObject m_object;
-		GameAction m_currentAction;
+		Living m_object;
 		Random m_random;
 
-		public MonsterActor(ServerGameObject ob)
+		public MonsterActor(Living ob)
 		{
 			m_random = new Random(GetHashCode());
 			m_object = ob;
-			m_currentAction = GetNewAction();
 		}
 
 		GameAction GetNewAction()
@@ -47,36 +45,18 @@ namespace MyGame
 
 		#region IActor Members
 
-		public void RemoveAction(GameAction action)
-		{
-			m_currentAction = null;
-		}
-
-		public GameAction GetCurrentAction()
-		{
-			if (m_currentAction == null)
-				m_currentAction = GetNewAction();
-
-			return m_currentAction;
-		}
-
-		public bool HasAction
-		{
-			get { return true; }
-		}
-
 		public bool IsInteractive
 		{
 			get { return false; }
 		}
 
-		public void ReportAction(bool done, bool success)
+		public void DetermineAction()
 		{
+			if (m_object.HasAction)
+				return;
+			var a = GetNewAction();
+			m_object.EnqueueAction(a);
 		}
-
-		// Disable "event not used"
-#pragma warning disable 67
-		public event Action ActionQueuedEvent;
 
 		#endregion
 	}

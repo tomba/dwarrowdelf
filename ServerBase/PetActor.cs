@@ -7,12 +7,11 @@ namespace MyGame
 {
 	public class PetActor : IActor
 	{
-		ServerGameObject m_object;
+		Living m_object;
 		Living m_player;
-		GameAction m_currentAction;
 		Random m_random = new Random();
 
-		public PetActor(ServerGameObject ob, Living player)
+		public PetActor(Living ob, Living player)
 		{
 			m_object = ob;
 			m_player = player;
@@ -103,36 +102,18 @@ namespace MyGame
 
 		#region IActor Members
 
-		public void RemoveAction(GameAction action)
-		{
-			m_currentAction = null;
-		}
-
-		public GameAction GetCurrentAction()
-		{
-			if (m_currentAction == null)
-				m_currentAction = GetNewAction();
-
-			return m_currentAction;
-		}
-
-		public bool HasAction
-		{
-			get { return true; }
-		}
-
 		public bool IsInteractive
 		{
 			get { return false; }
 		}
 
-		public void ReportAction(bool done, bool success)
+		public void DetermineAction()
 		{
+			if (m_object.HasAction)
+				return;
+			var a = GetNewAction();
+			m_object.EnqueueAction(a);
 		}
-
-		// Disable "event not used"
-#pragma warning disable 67
-		public event Action ActionQueuedEvent;
 
 		#endregion
 	}

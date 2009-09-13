@@ -7,12 +7,7 @@ namespace MyGame
 {
 	public interface IActor
 	{
-		void RemoveAction(GameAction action);
-		GameAction GetCurrentAction();
-		bool HasAction { get; }
-		bool IsInteractive { get; }
-		void ReportAction(bool done, bool success);
-
-		event Action ActionQueuedEvent;
+		bool IsInteractive { get; } // XXX should be removed
+		void DetermineAction();
 	}
 }
