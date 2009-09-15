@@ -27,6 +27,8 @@ namespace MyGame
 			this.ActionCollection = new ActionCollection();
 			this.Controllables = new ObjectCollection();
 			this.SymbolDrawings = new SymbolDrawingCache(World.TheWorld.AreaData);
+
+			this.Objects = new ObjectCollection();
 		}
 
 		public int UserID { get; set; }
@@ -42,7 +44,6 @@ namespace MyGame
 		}
 
 		public bool DisableLOS { get; set; }	// debug
-		public bool ShowChangedTiles { get; set; } // debug
 
 		public MyTraceListener MyTraceListener { get; set; }
 
@@ -50,6 +51,8 @@ namespace MyGame
 
 		public SymbolDrawingCache SymbolDrawings { get; private set; }
 
+		public ObjectCollection Objects { get; private set; }
+		public ObservableCollection<Environment> Environments { get { return World.TheWorld.Environments; } }
 
 		int m_turnNumber;
 		public int TurnNumber
@@ -69,7 +72,7 @@ namespace MyGame
 
 		#endregion
 
-		void Notify(String info)
+		void Notify(string info)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(info));

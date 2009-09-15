@@ -11,9 +11,18 @@ namespace MyArea
 	{
 		public void InitializeWorld(World world, IList<Environment> environments)
 		{
+			var map1 = CreateMap1(world);
+			environments.Add(map1);
+
+			var map2 = CreateMap2(world);
+			environments.Add(map2);
+		}
+
+		Environment CreateMap1(World world)
+		{
 			// XXX some size limit with the size in WCF
 			var env = new Environment(world, 100, 100, 4, VisibilityMode.LOS);
-			environments.Add(env);
+			env.Name = "map1";
 
 			Random r = new Random(123);
 			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
@@ -70,6 +79,27 @@ namespace MyArea
 			item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;
 			item.Name = "puu";
 			item.MoveTo(env, new IntPoint3D(0, 3, 0));
+
+			return env;
+		}
+
+		Environment CreateMap2(World world)
+		{
+			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
+			env.Name = "map2";
+
+			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
+			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
+			TerrainInfo down = world.AreaData.Terrains.Single(t => t.Name == "Stairs Down");
+			TerrainInfo up = world.AreaData.Terrains.Single(t => t.Name == "Stairs Up");
+			TerrainInfo portal = world.AreaData.Terrains.Single(t => t.Name == "Portal");
+
+			foreach (var p in env.Bounds.Range())
+				env.SetTerrain(p, floor.ID);
+
+			env.SetTerrain(new IntPoint3D(2, 2, 0), portal.ID);
+
+			return env;
 		}
 	}
 }

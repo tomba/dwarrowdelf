@@ -60,15 +60,17 @@
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
 				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
-				<ToggleButton IsChecked="{Binding Path=ShowChangedTiles}">Show New Tiles</ToggleButton>
+				<Separator />
 				<Button Click="OnClearLogClicked">Clear Log</Button>
+				<Separator />
 				<Button Click="LogOn_Button_Click">LogOn</Button>
+				<Separator />
 				<Button Click="LogOff_Button_Click">LogOff</Button>
 			</ToolBar>
 
 			<ToolBar>
 				<StackPanel Orientation="Horizontal">
-					<TextBlock VerticalAlignment="Center">FollowOb</TextBlock>
+					<TextBlock VerticalAlignment="Center">CurrentObject</TextBlock>
 					<ComboBox MinWidth="100" ItemsSource="{Binding Controllables}"
                           SelectedItem="{Binding Path=CurrentObject}"
                           IsReadOnly="True" />
@@ -101,10 +103,11 @@
 			<Grid.RowDefinitions>
 				<RowDefinition />
 				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<local:MapControl x:Name="map" SelectionEnabled="True"
-							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
+							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
 				<local:MapControl.ContextMenu>
 					<ContextMenu>
 						<MenuItem Header="Change tile">
@@ -153,6 +156,16 @@
 					</StackPanel>
 					<ListBox ItemsSource="{Binding Objects}" />
 				</DockPanel>
+			</GroupBox>
+
+			<GroupBox Grid.Column="1" Grid.Row="2" Header="Objects">
+				<ListBox ItemsSource="{Binding Path=Objects}" 
+						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
+			</GroupBox>
+
+			<GroupBox Grid.Column="2" Grid.Row="2" Header="Environments">
+				<ListBox ItemsSource="{Binding Path=Environments}"
+						 SelectedItem="{Binding Path=Environment, ElementName=map}" />
 			</GroupBox>
 		</Grid>
 

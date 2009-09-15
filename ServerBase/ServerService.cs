@@ -57,13 +57,6 @@ namespace MyGame
 			{
 				foreach (var env in m_world.Environments)
 				{
-					ClientMsgs.MapData md = new ClientMsgs.MapData()
-					{
-						ObjectID = env.ObjectID,
-						VisibilityMode = env.VisibilityMode,
-					};
-					m_client.DeliverMessage(md);
-
 					var msg = env.Serialize();
 					m_client.DeliverMessage(msg);
 				}

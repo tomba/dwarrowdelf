@@ -13,13 +13,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace MyGame
 {
 	/// <summary>
 	/// Interaction logic for Window1.xaml
 	/// </summary>
-	partial class MainWindow : Window
+	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		public MiniMap MiniMap { get; private set; }
 
@@ -59,12 +60,15 @@ namespace MyGame
 			this.MiniMap.Show();
 		}
 
-		internal ClientGameObject FollowObject
+		public ClientGameObject FollowObject
 		{
 			get { return m_followObject; }
 
 			set
 			{
+				if (m_followObject == value)
+					return;
+
 				if (m_followObject != null)
 					m_followObject.ObjectMoved -= FollowedObjectMoved;
 
@@ -82,6 +86,8 @@ namespace MyGame
 					this.CurrentTileInfo.Environment = null;
 					this.CurrentTileInfo.Location = new IntPoint3D();
 				}
+
+				Notify("FollowObject");
 			}
 		}
 
@@ -307,6 +313,18 @@ namespace MyGame
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
 		{
 			GameData.Data.Connection.Server.LogOffChar();
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		void Notify(string info)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(info));
 		}
 	}
 }

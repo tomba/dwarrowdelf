@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace MyGame
 {
@@ -14,18 +15,19 @@ namespace MyGame
 			TheWorld = new World();
 		}
 
-		List<Environment> m_envList = new List<Environment>();
+		public ObservableCollection<Environment> Environments { get; private set; }
 
 		public IAreaData AreaData { get; private set; }
 
 		public World()
 		{
 			this.AreaData = new MyAreaData.AreaData(); // XXX
+			this.Environments = new ObservableCollection<Environment>();
 		}
 
 		public void AddEnvironment(Environment env)
 		{
-			m_envList.Add(env);
+			this.Environments.Add(env);
 		}
 	}
 }

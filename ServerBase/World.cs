@@ -171,7 +171,7 @@ namespace MyGame
 		internal void RemoveUser(ServerService user)
 		{
 			lock (m_userList)
-				m_userList.Add(user);
+				m_userList.Remove(user);
 
 			SignalWorld();
 		}

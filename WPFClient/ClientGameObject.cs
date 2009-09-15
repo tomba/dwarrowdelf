@@ -31,6 +31,8 @@ namespace MyGame
 
 			lock (s_objectMap)
 				s_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+
+			GameData.Data.Objects.Add(ob); // XXX
 		}
 
 		public static ClientGameObject FindObject(ObjectID objectID)
@@ -84,7 +86,7 @@ namespace MyGame
 			}
 		}
 		
-		// inventory should be read-only, and only modifiable by MoveTo()
+		// XXX inventory should be read-only, and only modifiable by MoveTo()
 		public ObservableObjectCollection Inventory { get; private set; }
 
 		uint m_losMapVersion;

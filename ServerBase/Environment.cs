@@ -60,7 +60,7 @@ namespace MyGame
 			: base(world)
 		{
 			this.Version = 1;
-			base.Name = "map";
+			base.Name = "unnamed map";
 			this.VisibilityMode = visibilityMode;
 
 			this.Width = width;
@@ -169,6 +169,7 @@ namespace MyGame
 			var msg = new ClientMsgs.FullMapData()
 			{
 				ObjectID = this.ObjectID,
+				VisibilityMode = this.VisibilityMode,
 				Bounds = this.Bounds,
 				TerrainIDs = arr,
 				ObjectData = obList,

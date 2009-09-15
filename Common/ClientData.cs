@@ -95,6 +95,8 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 		[DataMember]
+		public VisibilityMode VisibilityMode { get; set; }
+		[DataMember]
 		public IntCube Bounds { get; set; }
 		[DataMember]
 		public IEnumerable<int> TerrainIDs { get; set; }

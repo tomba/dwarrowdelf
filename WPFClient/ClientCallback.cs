@@ -122,6 +122,7 @@ namespace MyGame
 				}
 
 				env.SetTerrains(md.Bounds, md.TerrainIDs);
+				env.VisibilityMode = md.VisibilityMode;
 
 				_DeliverMessages(md.ObjectData);
 			}
