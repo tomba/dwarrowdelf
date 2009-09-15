@@ -9,13 +9,58 @@ namespace MyArea
 {
 	public class Area : IArea
 	{
+		Environment m_map1;
+		Environment m_map2;
+
 		public void InitializeWorld(World world, IList<Environment> environments)
 		{
-			var map1 = CreateMap1(world);
-			environments.Add(map1);
+			m_map1 = CreateMap1(world);
+			environments.Add(m_map1);
 
-			var map2 = CreateMap2(world);
-			environments.Add(map2);
+			m_map2 = CreateMap2(world);
+			environments.Add(m_map2);
+		}
+
+		bool ActionHandler(ServerGameObject ob, GameAction action)
+		{
+			if (ob.Environment == m_map1 && ob.Location == new IntPoint3D(2, 3, 0))
+			{
+				var a = action as MoveAction;
+
+				if (a == null)
+					return false;
+
+				if (a.Direction != Direction.Up && a.Direction != Direction.Down)
+					return false;
+
+				var dst = m_map2;
+				var dstPos = new IntPoint3D(0, 0, 0);
+
+				var ok = ob.MoveTo(dst, dstPos);
+
+				return ok;
+			}
+			else if (ob.Environment == m_map2 && ob.Location == new IntPoint3D(2, 3, 0))
+			{
+				var a = action as MoveAction;
+
+				if (a == null)
+					return false;
+
+				if (a.Direction != Direction.Up && a.Direction != Direction.Down)
+					return false;
+
+				var dst = m_map1;
+				var dstPos = new IntPoint3D(0, 0, 0);
+
+				var ok = ob.MoveTo(dst, dstPos);
+
+				return ok;
+			}
+			else
+			{
+				throw new Exception();
+			}
 		}
 
 		Environment CreateMap1(World world)
@@ -37,8 +82,6 @@ namespace MyArea
 					env.SetTerrain(p, (p.Z % 2) == 0 ? down.ID : up.ID);
 				else if (p.X == 3 && p.Y == 3)
 					env.SetTerrain(p, (p.Z % 2) != 0 ? down.ID : up.ID);
-				else if (p.X == 2 && p.Y == 3 && p.Z == 0)
-					env.SetTerrain(p, portal.ID);
 				else if (p.X < 7 && p.Y < 7)
 					env.SetTerrain(p, floor.ID);
 				else if (r.Next() % 8 == 0)
@@ -46,6 +89,10 @@ namespace MyArea
 				else
 					env.SetTerrain(p, floor.ID);
 			}
+
+			var pp = new IntPoint3D(2, 3, 0);
+			env.SetTerrain(pp, portal.ID);
+			env.SetActionHandler(pp, ActionHandler);
 
 			var obs = world.AreaData.Objects;
 
@@ -97,7 +144,9 @@ namespace MyArea
 			foreach (var p in env.Bounds.Range())
 				env.SetTerrain(p, floor.ID);
 
-			env.SetTerrain(new IntPoint3D(2, 2, 0), portal.ID);
+			var pp = new IntPoint3D(2, 3, 0);
+			env.SetTerrain(pp, portal.ID);
+			env.SetActionHandler(pp, ActionHandler);
 
 			return env;
 		}

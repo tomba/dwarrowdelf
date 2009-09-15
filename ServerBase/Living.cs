@@ -122,10 +122,21 @@ namespace MyGame
 
 			Debug.Assert(action.ActorObjectID == this.ObjectID);
 
-			bool done;
+			bool done = false;
 			bool success;
 
-			if (action is MoveAction)
+			if (this.Parent != null)
+			{
+				var handled = this.Parent.HandleChildAction(this, action);
+				if (handled)
+					done = true;
+			}
+
+			if (done)
+			{
+				// do nothing
+			}
+			else if (action is MoveAction)
 			{
 				MoveAction ma = (MoveAction)action;
 				success = MoveDir(ma.Direction);

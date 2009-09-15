@@ -54,6 +54,7 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="DataTypes\EnvPos.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>

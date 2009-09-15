@@ -136,21 +136,6 @@ namespace MyGame
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-			ClientMsgs.MapData md = new ClientMsgs.MapData()
-			{
-				ObjectID = env.ObjectID,
-				VisibilityMode = env.VisibilityMode,
-			};
-			m_client.DeliverMessage(md);
-
-			if (env.VisibilityMode == VisibilityMode.AllVisible)
-			{
-				// When we log on, we need to send everything
-				var msg = env.Serialize();
-				m_client.DeliverMessage(msg);
-			}
-
-
 			m_world.AddUser(this);
 
 			var obs = m_world.AreaData.Objects;
@@ -357,6 +342,7 @@ namespace MyGame
 
 		IEnumerable<ClientMsgs.Message> CollectNewTerrainsAndObjects(IEnumerable<Living> friendlies)
 		{
+			List<ClientMsgs.Message> mapMsgs = new List<ClientMsgs.Message>();
 			// Collect all locations that friendlies see
 			var newKnownLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
 			foreach (Living l in friendlies)
@@ -371,7 +357,24 @@ namespace MyGame
 				IEnumerable<IntPoint3D> locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
 
 				if (!newKnownLocs.ContainsKey(l.Environment))
+				{
 					newKnownLocs[l.Environment] = new HashSet<IntPoint3D>();
+
+					// new environment for this user, so send map info
+					var md = new ClientMsgs.MapData()
+					{
+						ObjectID = l.Environment.ObjectID,
+						VisibilityMode = l.Environment.VisibilityMode,
+					};
+					mapMsgs.Add(md);
+
+					if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
+					{
+						var msg = l.Environment.Serialize();
+						mapMsgs.Add(msg);
+					}
+
+				}
 				newKnownLocs[l.Environment].UnionWith(locList);
 			}
 
@@ -410,7 +413,7 @@ namespace MyGame
 			var terrainMsgs = TilesToMessages(revealedLocs);
 			var objectMsgs = ObjectsToMessages(revealedObs);
 
-			return terrainMsgs.Concat(objectMsgs);
+			return mapMsgs.Concat(terrainMsgs).Concat(objectMsgs);
 		}
 
 		IEnumerable<ClientMsgs.Message> TilesToMessages(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)

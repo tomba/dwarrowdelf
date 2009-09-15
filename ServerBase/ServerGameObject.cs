@@ -35,6 +35,7 @@ namespace MyGame
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
+		public EnvPos EnvLoc { get { return new EnvPos(this.Parent, this.Location); } }
 
 		public GameColor Color { get; set; }
 
@@ -51,10 +52,15 @@ namespace MyGame
 
 		public abstract ClientMsgs.Message Serialize();
 
-		protected virtual bool OkToAddChild(ServerGameObject child, IntPoint3D p) { return true; }
-		protected virtual void ChildAdded(ServerGameObject child) { }
-		protected virtual void ChildRemoved(ServerGameObject child) { }
-		protected virtual void ChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation) { }
+		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
+
+		protected virtual bool OkToAddChild(ServerGameObject ob, IntPoint3D dstLoc) { return true; }
+		protected virtual bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc) { return true; }
+
+		protected virtual void OnChildAdded(ServerGameObject child) { }
+		protected virtual void OnChildRemoved(ServerGameObject child) { }
+		protected virtual void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation) { }
+
 		protected virtual void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv) { }
 
 		public bool MoveTo(ServerGameObject parent)
@@ -62,57 +68,73 @@ namespace MyGame
 			return MoveTo(parent, new IntPoint3D());
 		}
 
-		public bool MoveTo(ServerGameObject parent, IntPoint3D location)
+		public bool MoveTo(ServerGameObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWriteable);
 
-			ServerGameObject oldParent = this.Parent;
-			var oldLocation = this.Location;
-
-			if (parent != null && !parent.OkToAddChild(this, location))
+			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
 
-			if (oldParent != parent)
-			{
-				if (oldParent != null)
-				{
-					oldParent.ChildRemoved(this);
-					oldParent.m_children.Remove(this);
-				}
-
-				this.Parent = parent;
-			}
-
-			if (this.Location != location)
-			{
-				this.Location = location;
-				if (parent != null && oldParent == parent)
-					parent.ChildMoved(this, oldLocation, location);
-			}
-
-			if (oldParent != parent)
-			{
-				if (parent != null)
-				{
-					parent.m_children.Add(this);
-					parent.ChildAdded(this);
-				}
-			}
-
-			if (oldParent != parent)
-				OnEnvironmentChanged(oldParent, parent);
-
-			this.World.AddChange(new ObjectMoveChange(this, oldParent, oldLocation, parent, location));
+			MoveToLow(dst, dstLoc);
 
 			return true;
 		}
 
 		public bool MoveDir(Direction dir)
 		{
+			Debug.Assert(this.World.IsWriteable);
+
 			if (this.Environment == null)
 				throw new Exception();
 
-			return MoveTo(this.Environment, this.Location + IntVector3D.FromDirection(dir));
+			var dirVec = IntVector3D.FromDirection(dir);
+			var dst = this.Environment;
+			var dstLoc = this.Location + dirVec;
+
+			if (!dst.OkToMoveChild(this, dirVec, dstLoc))
+				return false;
+
+			MoveToLow(dst, dstLoc);
+
+			return true;
+		}
+
+		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
+		{
+			var src = this.Environment;
+			var srcLoc = this.Location;
+
+			if (src != dst)
+			{
+				if (src != null)
+				{
+					src.OnChildRemoved(this);
+					src.m_children.Remove(this);
+				}
+
+				this.Parent = dst;
+			}
+
+			if (this.Location != dstLoc)
+			{
+				this.Location = dstLoc;
+				if (dst != null && src == dst)
+					dst.OnChildMoved(this, srcLoc, dstLoc);
+			}
+
+			if (src != dst)
+			{
+				if (dst != null)
+				{
+					dst.m_children.Add(this);
+					dst.OnChildAdded(this);
+				}
+			}
+
+			if (src != dst)
+				OnEnvironmentChanged(src, dst);
+
+			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
 
 		public override string ToString()

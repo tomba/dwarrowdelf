@@ -9,40 +9,6 @@ namespace MyGame
 {
 	public delegate void MapChanged(Environment map, IntPoint3D l, int terrainID);
 
-	struct TileData
-	{
-		public int m_terrainID;
-		public List<ServerGameObject> m_contentList;
-	}
-
-	class TileGrid : Grid3DBase<TileData>
-	{
-		public TileGrid(int width, int height, int depth)
-			: base(width, height, depth)
-		{
-		}
-
-		public void SetTerrainType(IntPoint3D l, int terrainType)
-		{
-			base.Grid[GetIndex(l)].m_terrainID = terrainType;
-		}
-
-		public int GetTerrainID(IntPoint3D l)
-		{
-			return base.Grid[GetIndex(l)].m_terrainID;
-		}
-
-		public List<ServerGameObject> GetContentList(IntPoint3D l)
-		{
-			return base.Grid[GetIndex(l)].m_contentList;
-		}
-
-		public void SetContentList(IntPoint3D l, List<ServerGameObject> list)
-		{
-			base.Grid[GetIndex(l)].m_contentList = list;
-		}
-	}
-
 	public class Environment : ServerGameObject 
 	{
 		public event MapChanged MapChanged;
@@ -80,6 +46,23 @@ namespace MyGame
 			get { return new IntCube(0, 0, 0, this.Width, this.Height, this.Depth); }
 		}
 
+		public delegate bool ActionHandlerDelegate(ServerGameObject ob, GameAction action);
+
+		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
+		public void SetActionHandler(IntPoint3D p, ActionHandlerDelegate handler)
+		{
+			m_actionHandlers[p] = handler;
+		}
+
+		public override bool HandleChildAction(ServerGameObject child, GameAction action)
+		{
+			ActionHandlerDelegate handler;
+			if (m_actionHandlers.TryGetValue(child.Location, out handler) == false)
+				return false;
+
+			return handler(child, action);
+		}
+
 		public int GetTerrainID(IntPoint3D l)
 		{
 			return m_tileGrid.GetTerrainID(l);
@@ -108,7 +91,7 @@ namespace MyGame
 			return m_tileGrid.GetContentList(l);
 		}
 
-		protected override void ChildAdded(ServerGameObject child)
+		protected override void OnChildAdded(ServerGameObject child)
 		{
 			IntPoint3D l = child.Location;
 
@@ -119,7 +102,7 @@ namespace MyGame
 			m_tileGrid.GetContentList(l).Add(child);
 		}
 
-		protected override void ChildRemoved(ServerGameObject child)
+		protected override void OnChildRemoved(ServerGameObject child)
 		{
 			IntPoint3D l = child.Location;
 			Debug.Assert(m_tileGrid.GetContentList(l) != null);
@@ -127,7 +110,7 @@ namespace MyGame
 			Debug.Assert(removed);
 		}
 
-		protected override bool OkToAddChild(ServerGameObject child, IntPoint3D p)
+		protected override bool OkToAddChild(ServerGameObject ob, IntPoint3D p)
 		{
 			Debug.Assert(this.World.IsWriteable);
 
@@ -140,7 +123,37 @@ namespace MyGame
 			return true;
 		}
 
-		protected override void ChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)
+		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D p)
+		{
+			Debug.Assert(this.World.IsWriteable);
+
+			if (!this.Bounds.Contains(p))
+				return false;
+
+			if (!this.IsWalkable(p))
+				return false;
+
+			if (dirVec.Z == 0)
+				return true;
+
+			if (dirVec.X != 0 || dirVec.Y != 0)
+				return false;
+
+			int tileID = m_tileGrid.GetTerrainID(ob.Location);
+			// XXX Aaeeeaaaaargh!!
+			int upID = this.World.AreaData.Terrains.Single(t => t.Name == "Stairs Up").ID;
+			int downID = this.World.AreaData.Terrains.Single(t => t.Name == "Stairs Down").ID;
+
+			if (tileID == upID && dirVec.Z == 1)
+				return true;
+
+			if (tileID == downID && dirVec.Z == -1)
+				return true;
+
+			return false;
+		}
+
+		protected override void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)
 		{
 			Debug.Assert(m_tileGrid.GetContentList(oldLocation) != null);
 			bool removed = m_tileGrid.GetContentList(oldLocation).Remove(child);
@@ -181,6 +194,41 @@ namespace MyGame
 		public override string ToString()
 		{
 			return String.Format("Environment({0})", this.ObjectID);
+		}
+
+
+		struct TileData
+		{
+			public int m_terrainID;
+			public List<ServerGameObject> m_contentList;
+		}
+
+		class TileGrid : Grid3DBase<TileData>
+		{
+			public TileGrid(int width, int height, int depth)
+				: base(width, height, depth)
+			{
+			}
+
+			public void SetTerrainType(IntPoint3D l, int terrainType)
+			{
+				base.Grid[GetIndex(l)].m_terrainID = terrainType;
+			}
+
+			public int GetTerrainID(IntPoint3D l)
+			{
+				return base.Grid[GetIndex(l)].m_terrainID;
+			}
+
+			public List<ServerGameObject> GetContentList(IntPoint3D l)
+			{
+				return base.Grid[GetIndex(l)].m_contentList;
+			}
+
+			public void SetContentList(IntPoint3D l, List<ServerGameObject> list)
+			{
+				base.Grid[GetIndex(l)].m_contentList = list;
+			}
 		}
 	}
 }
