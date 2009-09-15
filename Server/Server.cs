@@ -54,9 +54,6 @@ namespace MyGame
 			IArea area = new MyArea.Area();
 
 			var world = new World(area, areaData);
-			area.InitializeWorld(world);
-			world.StartWorld();
-
 			World.TheWorld = world;
 
 			/* WCF */

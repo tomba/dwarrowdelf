@@ -22,6 +22,10 @@
 		<Name>Stairs Down</Name>
 		<CharSymbol>&gt;</CharSymbol>
 	</Symbol>
+	<Symbol>
+		<Name>Portal</Name>
+		<CharSymbol>O</CharSymbol>
+	</Symbol>
 
 	<Symbol>
     <Name>Player</Name>

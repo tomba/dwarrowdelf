@@ -53,20 +53,20 @@ namespace MyGame
 
 			m_client.LogOnReply(m_userID);
 
-			ClientMsgs.MapData md = new ClientMsgs.MapData()
+			if (m_seeAll)
 			{
-				ObjectID = m_world.Map.ObjectID,
-				VisibilityMode = m_world.Map.VisibilityMode,
-			};
-			m_client.DeliverMessage(md);
+				foreach (var env in m_world.Environments)
+				{
+					ClientMsgs.MapData md = new ClientMsgs.MapData()
+					{
+						ObjectID = env.ObjectID,
+						VisibilityMode = env.VisibilityMode,
+					};
+					m_client.DeliverMessage(md);
 
-			if (m_seeAll || m_world.Map.VisibilityMode == VisibilityMode.AllVisible)
-			{
-				// When we log on, we need to send everything
-				// XXX only this env
-				Environment env = m_world.Map;
-				var msg = env.Serialize();
-				m_client.DeliverMessage(msg);
+					var msg = env.Serialize();
+					m_client.DeliverMessage(msg);
+				}
 			}
 
 			m_world.HandleChangesEvent += HandleChanges;
@@ -104,15 +104,16 @@ namespace MyGame
 			IntCube r = (IntCube)arr[1];
 			int type = (int)arr[2];
 
-			if (mapID != m_world.Map.ObjectID)
+			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
+			if (env == null)
 				throw new Exception();
 
 			foreach (var p in r.Range())
 			{
-				if (!m_world.Map.Bounds.Contains(p))
+				if (!env.Bounds.Contains(p))
 					continue;
 
-				m_world.Map.SetTerrain(p, type);
+				env.SetTerrain(p, type);
 			}
 		}
 
@@ -138,6 +139,24 @@ namespace MyGame
 			string name = (string)data;
 
 			MyDebug.WriteLine("LogOnChar {0}", name);
+
+
+			var env = m_world.Environments.First(); // XXX entry location
+
+			ClientMsgs.MapData md = new ClientMsgs.MapData()
+			{
+				ObjectID = env.ObjectID,
+				VisibilityMode = env.VisibilityMode,
+			};
+			m_client.DeliverMessage(md);
+
+			if (env.VisibilityMode == VisibilityMode.AllVisible)
+			{
+				// When we log on, we need to send everything
+				var msg = env.Serialize();
+				m_client.DeliverMessage(msg);
+			}
+
 
 			m_world.AddUser(this);
 
@@ -166,7 +185,7 @@ namespace MyGame
 			item.Color = GameColors.Green;
 			item.MoveTo(m_player);
 
-			if (!m_player.MoveTo(m_world.Map, new IntPoint3D(0, 0, 0)))
+			if (!m_player.MoveTo(env, new IntPoint3D(0, 0, 0)))
 				throw new Exception("Unable to move player");
 
 			var inv = m_player.SerializeInventory();

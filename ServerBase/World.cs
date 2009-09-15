@@ -10,7 +10,7 @@ namespace MyGame
 	// XXX move somewhere else, but inside Server side */
 	public interface IArea
 	{
-		void InitializeWorld(World world);
+		void InitializeWorld(World world, IList<Environment> environments);
 	}
 
 	enum WorldTickMethod
@@ -60,22 +60,8 @@ namespace MyGame
 
 		List<ServerService> m_userList = new List<ServerService>();
 
-		Environment m_map; // XXX
-		public Environment Map
-		{
-			get { return m_map; }
-
-			set
-			{
-				if (m_map != null)
-					m_map.MapChanged -= this.MapChangedCallback;
-
-				m_map = value;
-
-				if (m_map != null)
-					m_map.MapChanged += this.MapChangedCallback;
-			}
-		}
+		List<Environment> m_environments = new List<Environment>();
+		public IEnumerable<Environment> Environments { get { return m_environments; } }
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -125,6 +111,20 @@ namespace MyGame
 			// mark as active for the initialization
 			m_workActive = true;
 			EnterWriteLock();
+
+			area.InitializeWorld(this, m_environments);
+
+			foreach (var env in m_environments)
+				env.MapChanged += this.MapChangedCallback;
+
+			// process any changes from world initialization
+			ProcessChanges();
+			ProcessEvents();
+
+			m_workActive = false;
+			ExitWriteLock();
+
+			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
 		}
 
 		void EnterWriteLock()
@@ -151,21 +151,6 @@ namespace MyGame
 		public void ExitReadLock()
 		{
 			m_rwLock.ExitReadLock();
-		}
-
-		public void StartWorld()
-		{
-			Debug.Assert(m_workActive);
-
-			// process any changes from world initialization
-			ProcessChanges();
-
-			ProcessEvents();
-
-			m_workActive = false;
-			ExitWriteLock();
-
-			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
 		}
 
 		public int TurnNumber

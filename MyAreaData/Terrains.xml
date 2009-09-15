@@ -20,4 +20,9 @@
 		<IsWalkable>true</IsWalkable>
 		<Symbol>Stairs Down</Symbol>
 	</TerrainInfo>
+	<TerrainInfo>
+		<Name>Portal</Name>
+		<IsWalkable>true</IsWalkable>
+		<Symbol>Portal</Symbol>
+	</TerrainInfo>
 </TerrainInfos>
