@@ -90,9 +90,15 @@ namespace MyGame
 			{
 				ObjectMove om = (ObjectMove)msg;
 				ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
-				
+
 				if (ob == null)
-					throw new Exception();
+				{
+					/* There's a special case where we don't get objectinfo, but we do get
+					 * ObjectMove: If the object move from tile, that just case visible to us, 
+					 * to a tile that we cannot see. So let's not throw exception, but exit
+					 * silently */
+					return;
+				}
 
 				ClientGameObject env = null;
 				if (om.TargetEnvID != ObjectID.NullObjectID)
