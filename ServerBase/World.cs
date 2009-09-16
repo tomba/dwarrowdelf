@@ -34,10 +34,9 @@ namespace MyGame
 		// the same single world for everybody, for now
 		public static World TheWorld;
 
-
-#if DEBUG
+		// only for debugging
 		public bool IsWriteable { get; private set; }
-#endif
+	
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		bool m_verbose = false;
