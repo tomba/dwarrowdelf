@@ -78,10 +78,10 @@ namespace MyGame
 		static IDictionary<IntPoint, Node> FindPathInternal(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
 			OpenList.Test();
-
+			/*
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
-
+			*/
 			var openList = new OpenList();
 			var nodeMap = new Dictionary<IntPoint, Node>();
 
@@ -99,9 +99,10 @@ namespace MyGame
 
 				CheckNeighbors(node, dst, openList, nodeMap, locValid);
 			}
-
+			/*
 			sw.Stop();
 			Console.WriteLine(sw.ElapsedTicks.ToString());
+			 */
 			// 1472794 ticks
 			// 329821
 			// 249457 ticks
