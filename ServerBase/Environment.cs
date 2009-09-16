@@ -14,6 +14,8 @@ namespace MyGame
 		public event MapChanged MapChanged;
 
 		TileGrid m_tileGrid;
+		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
+		KeyedObjectCollection[] m_contentArray;
 
 		public uint Version { get; private set; }
 
@@ -34,6 +36,9 @@ namespace MyGame
 			this.Depth = depth;
 
 			m_tileGrid = new TileGrid(this.Width, this.Height, this.Depth);
+			m_contentArray = new KeyedObjectCollection[this.Depth];
+			for (int i = 0; i < depth; ++i)
+				m_contentArray[i] = new KeyedObjectCollection();
 		}
 
 		public IntRect Bounds2D
@@ -88,26 +93,22 @@ namespace MyGame
 		// XXX not a good func. contents can be changed by the caller
 		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
 		{
-			return m_tileGrid.GetContentList(l);
+			var list = m_contentArray[l.Z];
+			return list.Where(o => o.Location == l);
 		}
 
 		protected override void OnChildAdded(ServerGameObject child)
 		{
-			IntPoint3D l = child.Location;
-
-			if (m_tileGrid.GetContentList(l) == null)
-				m_tileGrid.SetContentList(l, new List<ServerGameObject>());
-
-			Debug.Assert(!m_tileGrid.GetContentList(l).Contains(child));
-			m_tileGrid.GetContentList(l).Add(child);
+			var list = m_contentArray[child.Z];
+			Debug.Assert(!list.Contains(child));
+			list.Add(child);
 		}
 
 		protected override void OnChildRemoved(ServerGameObject child)
 		{
-			IntPoint3D l = child.Location;
-			Debug.Assert(m_tileGrid.GetContentList(l) != null);
-			bool removed = m_tileGrid.GetContentList(l).Remove(child);
-			Debug.Assert(removed);
+			var list = m_contentArray[child.Z];
+			Debug.Assert(list.Contains(child));
+			list.Remove(child);
 		}
 
 		protected override bool OkToAddChild(ServerGameObject ob, IntPoint3D p)
@@ -155,15 +156,16 @@ namespace MyGame
 
 		protected override void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)
 		{
-			Debug.Assert(m_tileGrid.GetContentList(oldLocation) != null);
-			bool removed = m_tileGrid.GetContentList(oldLocation).Remove(child);
-			Debug.Assert(removed);
+			if (oldLocation.Z == newLocation.Z)
+				return;
 
-			if (m_tileGrid.GetContentList(newLocation) == null)
-				m_tileGrid.SetContentList(newLocation, new List<ServerGameObject>());
+			var list = m_contentArray[oldLocation.Z];
+			Debug.Assert(list.Contains(child));
+			list.Remove(child);
 
-			Debug.Assert(!m_tileGrid.GetContentList(newLocation).Contains(child));
-			m_tileGrid.GetContentList(newLocation).Add(child);
+			list = m_contentArray[newLocation.Z];
+			Debug.Assert(!list.Contains(child));
+			list.Add(child);
 		}
 
 		public override ClientMsgs.Message Serialize()
@@ -200,7 +202,6 @@ namespace MyGame
 		struct TileData
 		{
 			public int m_terrainID;
-			public List<ServerGameObject> m_contentList;
 		}
 
 		class TileGrid : Grid3DBase<TileData>
@@ -220,15 +221,6 @@ namespace MyGame
 				return base.Grid[GetIndex(l)].m_terrainID;
 			}
 
-			public List<ServerGameObject> GetContentList(IntPoint3D l)
-			{
-				return base.Grid[GetIndex(l)].m_contentList;
-			}
-
-			public void SetContentList(IntPoint3D l, List<ServerGameObject> list)
-			{
-				base.Grid[GetIndex(l)].m_contentList = list;
-			}
 		}
 	}
 }

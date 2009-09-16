@@ -9,18 +9,18 @@ namespace MyGame
 {
 	delegate void ObjectMoved(ServerGameObject o, Environment e, IntPoint l);
 
+	class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
+	{
+		public KeyedObjectCollection() : base(null, 10) { }
+
+		protected override ObjectID GetKeyForItem(ServerGameObject item)
+		{
+			return item.ObjectID;
+		}
+	}
+
 	abstract public class ServerGameObject : GameObject
 	{
-		class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
-		{
-			public KeyedObjectCollection() : base(null, 10) { }
-
-			protected override ObjectID GetKeyForItem(ServerGameObject item)
-			{
-				return item.ObjectID;
-			}
-		}
-
 		public int SymbolID { get; set; }
 
 		public string Name { get; set; }
