@@ -240,9 +240,9 @@ namespace MyGame
 
 		public bool EventFilter(Event @event)
 		{
-			if (@event is ActionDoneEvent)
+			if (@event is ActionProgressEvent)
 			{
-				ActionDoneEvent e = (ActionDoneEvent)@event;
+				ActionProgressEvent e = (ActionProgressEvent)@event;
 				return e.UserID == m_userID;
 			}
 

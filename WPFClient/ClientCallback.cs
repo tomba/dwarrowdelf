@@ -217,13 +217,22 @@ namespace MyGame
 				var e = (TurnChangeEvent)@event;
 				GameData.Data.TurnNumber = e.TurnNumber;
 			}
-			else if (@event is ActionDoneEvent)
+			else if (@event is ActionProgressEvent)
 			{
-				var e = (ActionDoneEvent)@event;
+				var e = (ActionProgressEvent)@event;
 
-				MyDebug.WriteLine("TransactionDone({0})", e.TransactionID);
-				GameAction action = GameData.Data.ActionCollection.SingleOrDefault(a => a.TransactionID == e.TransactionID);
-				GameData.Data.ActionCollection.Remove(action);
+				MyDebug.WriteLine("ActionProgressEvent({0})", e.TransactionID);
+
+				var list = GameData.Data.ActionCollection;
+				GameAction action = list.SingleOrDefault(a => a.TransactionID == e.TransactionID);
+				action.TurnsLeft = e.TurnsLeft;
+
+				// XXX GameAction doesn't have INotifyProperty changed, so we have to update manually
+				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
+				itemsView.Refresh();
+
+				if (e.TurnsLeft == 0)
+					GameData.Data.ActionCollection.Remove(action);
 			}
 		}
 	}

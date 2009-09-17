@@ -75,7 +75,7 @@ namespace MyGame
 
 		// minimum time between turns
 		bool m_useMinTurnTime = false;
-		TimeSpan m_minTurnTime = TimeSpan.FromMilliseconds(2000);
+		TimeSpan m_minTurnTime = TimeSpan.FromMilliseconds(1000);
 		DateTime m_nextTurn = DateTime.MinValue;
 
 		// Timer is used out-of-turn to start the turn after m_minTurnTime

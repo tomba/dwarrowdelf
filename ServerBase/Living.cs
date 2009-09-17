@@ -108,6 +108,12 @@ namespace MyGame
 			success = true;
 		}
 
+		void PerformMove(MoveAction action, out bool done, out bool success)
+		{
+			success = MoveDir(action.Direction);
+			done = true;
+		}
+
 		// called during turn processing. the world state is not quite valid.
 		public void PerformAction()
 		{
@@ -118,66 +124,86 @@ namespace MyGame
 			if (action == null)
 				return;
 
-			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
-
 			Debug.Assert(action.ActorObjectID == this.ObjectID);
 
-			bool done = false;
-			bool success;
-
-			if (this.Parent != null)
+			// new action?
+			if (action.TurnsLeft == 0)
 			{
-				var handled = this.Parent.HandleChildAction(this, action);
-				if (handled)
-					done = true;
-			}
-
-			if (done)
-			{
-				// do nothing
-			}
-			else if (action is MoveAction)
-			{
-				MoveAction ma = (MoveAction)action;
-				success = MoveDir(ma.Direction);
-				done = true;
-			}
-			else if (action is WaitAction)
-			{
-				WaitAction wa = (WaitAction)action;
-				wa.Turns--;
-				success = true;
-				if (wa.Turns == 0)
-					done = true;
+				// The action should be initialized somewhere
+				if (action is WaitAction)
+				{
+					action.TurnsLeft = ((WaitAction)action).WaitTurns;
+				}
 				else
-					done = false;
+				{
+					action.TurnsLeft = 1;
+				}
 			}
-			else if (action is GetAction)
+
+			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
+
+			bool done = false;
+			bool success = false;
+
+			action.TurnsLeft -= 1;
+
+			if (action.TurnsLeft > 0)
 			{
-				PerformGet((GetAction)action, out done, out success);
-			}
-			else if (action is DropAction)
-			{
-				PerformDrop((DropAction)action, out done, out success);
+				done = false;
+				success = true;
 			}
 			else
 			{
-				throw new NotImplementedException();
+				if (this.Parent != null)
+				{
+					var handled = this.Parent.HandleChildAction(this, action);
+					if (handled)
+					{
+						done = true;
+						success = true;
+					}
+				}
+
+				if (!done)
+				{
+					if (action is MoveAction)
+					{
+						PerformMove((MoveAction)action, out done, out success);
+					}
+					else if (action is WaitAction)
+					{
+						// do nothing
+						success = true;
+						done = true;
+					}
+					else if (action is GetAction)
+					{
+						PerformGet((GetAction)action, out done, out success);
+					}
+					else if (action is DropAction)
+					{
+						PerformDrop((DropAction)action, out done, out success);
+					}
+					else
+					{
+						throw new NotImplementedException();
+					}
+				}
 			}
 
 			if (done)
-			{
 				RemoveAction(action);
-				
-				// is the action originator an user?
-				if (action.UserID != 0)
+
+			// is the action originator an user?
+			if (action.UserID != 0)
+			{
+				this.World.AddEvent(new ActionProgressEvent()
 				{
-					this.World.AddEvent(new ActionDoneEvent()
-					{
-						UserID = action.UserID,
-						TransactionID = action.TransactionID
-					});
-				}
+					UserID = action.UserID,
+					TransactionID = action.TransactionID,
+					TurnsLeft = action.TurnsLeft,
+					Success = success,
+				});
 			}
 		}
 

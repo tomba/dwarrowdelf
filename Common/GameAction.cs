@@ -12,6 +12,7 @@ namespace MyGame
 	KnownType(typeof(WaitAction)),
 	KnownType(typeof(GetAction)),
 	KnownType(typeof(DropAction)),
+	KnownType(typeof(MineAction)),
 	]
 	public abstract class GameAction
 	{
@@ -22,6 +23,7 @@ namespace MyGame
 		public int TransactionID { get; set; }
 
 		public int UserID { get; set; }
+		public int TurnsLeft { get; set; }
 
 		public GameAction(int transID, GameObject actor)
 		{
@@ -45,7 +47,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("MoveAction({0})", this.Direction);
+			return String.Format("MoveAction({0}, left {1})", this.Direction, this.TurnsLeft);
 		}
 	}
 
@@ -53,17 +55,17 @@ namespace MyGame
 	public class WaitAction : GameAction
 	{
 		[DataMember]
-		public int Turns { get; set; }
+		public int WaitTurns { get; set; }
 
 		public WaitAction(int transID, GameObject actor, int turns)
 			: base(transID, actor)
 		{
-			this.Turns = turns;
+			this.WaitTurns = turns;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("WaitAction({0})", this.Turns);
+			return String.Format("WaitAction({0})", this.WaitTurns);
 		}
 	}
 
@@ -102,6 +104,24 @@ namespace MyGame
 		{
 			return String.Format("GetAction({0})",
 				String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray()));
+		}
+	}
+
+	[DataContract]
+	public class MineAction : GameAction
+	{
+		[DataMember]
+		public IntPoint3D Location;
+
+		public MineAction(int transID, GameObject actor, IntPoint3D location)
+			: base(transID, actor)
+		{
+			this.Location = location;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("MineAction({0})", Location);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace MyGame
 {
 	[DataContract,
 	KnownType(typeof(TurnChangeEvent)),
-	KnownType(typeof(ActionDoneEvent)),
+	KnownType(typeof(ActionProgressEvent)),
 	]
 	public abstract class Event
 	{
@@ -33,15 +33,20 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public class ActionDoneEvent : Event
+	public class ActionProgressEvent : Event
 	{
 		public int UserID { get; set; }
 		[DataMember]
 		public int TransactionID { get; set; }
+		[DataMember]
+		public int TurnsLeft { get; set; }
+		[DataMember]
+		public bool Success { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("ActionDoneEvent({0}, {1})", this.UserID, this.TransactionID);
+			return String.Format("ActionProgressEvent({0}, trid: {1}, left: {2}, ok: {3})",
+				this.UserID, this.TransactionID, this.TurnsLeft, this.Success);
 		}
 	}
 
