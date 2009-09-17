@@ -111,17 +111,17 @@ namespace MyGame
 	public class MineAction : GameAction
 	{
 		[DataMember]
-		public IntPoint3D Location;
+		public Direction Direction { get; set; }
 
-		public MineAction(int transID, GameObject actor, IntPoint3D location)
+		public MineAction(int transID, GameObject actor, Direction dir)
 			: base(transID, actor)
 		{
-			this.Location = location;
+			this.Direction = dir;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("MineAction({0})", Location);
+			return String.Format("MineAction({0})", this.Direction);
 		}
 	}
 }

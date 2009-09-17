@@ -163,7 +163,10 @@ namespace MyGame
 				if (GameData.Data.CurrentObject != null)
 				{
 					int tid = GameData.Data.Connection.GetNewTransactionID();
-					GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
+					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
+						GameData.Data.Connection.DoAction(new MineAction(tid, GameData.Data.CurrentObject, dir));
+					else
+						GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
 				}
 				else
 				{

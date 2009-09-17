@@ -114,6 +114,27 @@ namespace MyGame
 			done = true;
 		}
 
+		void PerformMine(MineAction action, out bool done, out bool success)
+		{
+			IntPoint3D p = this.Location + IntVector3D.FromDirection(action.Direction);
+
+			TerrainInfo floor = this.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
+			TerrainInfo wall = this.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
+			int id = this.Environment.GetTerrainID(p);
+
+			if (id == wall.ID)
+			{
+				this.Environment.SetTerrain(p, floor.ID);
+				success = true;
+				done = true;
+			}
+			else
+			{
+				done = true;
+				success = false;
+			}
+		}
+
 		// called during turn processing. the world state is not quite valid.
 		public void PerformAction()
 		{
@@ -183,6 +204,10 @@ namespace MyGame
 					else if (action is DropAction)
 					{
 						PerformDrop((DropAction)action, out done, out success);
+					}
+					else if (action is  MineAction)
+					{
+						PerformMine((MineAction)action, out done, out success);
 					}
 					else
 					{
