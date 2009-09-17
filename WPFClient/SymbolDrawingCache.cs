@@ -30,7 +30,9 @@ namespace MyGame
 					Drawing drawing = ((DrawingBrush)de.Value).Drawing;
 					string name = (string)de.Key;
 
-					SymbolInfo si = m_symbolInfoList.Single(s => s.DrawingName == name);
+					SymbolInfo si = m_symbolInfoList.SingleOrDefault(s => s.DrawingName == name);
+					if (si == null)
+						continue;
 					drawing = NormalizeDrawing(drawing, new Point(si.X, si.Y), new Size(si.Width, si.Height));
 					m_resourceDrawingMap[name] = drawing;
 				}
@@ -64,7 +66,7 @@ namespace MyGame
 
 			if (m_useOnlyChars || symbol.DrawingName == null)
 			{
-				return CreateCharacterDrawing(symbol.CharSymbol, color);
+				return CreateCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars);
 			}
 			else
 			{
@@ -265,7 +267,7 @@ namespace MyGame
 			return dGroup;
 		}
 
-		static Drawing CreateCharacterDrawing(char c, Color color)
+		static Drawing CreateCharacterDrawing(char c, Color color, bool fillBg)
 		{
 			if (color == Colors.Black)
 				color = Colors.White;
@@ -274,18 +276,24 @@ namespace MyGame
 			Brush brush = new SolidColorBrush(color);
 			using (DrawingContext dc = dGroup.Open())
 			{
-				FormattedText formattedText = new FormattedText(
+				var typeFace = new Typeface(new FontFamily("Lucida Console"),
+					FontStyles.Normal,
+					FontWeights.Bold,
+					FontStretches.Normal);
+
+				var formattedText = new FormattedText(
 						c.ToString(),
 						System.Globalization.CultureInfo.GetCultureInfo("en-us"),
 						FlowDirection.LeftToRight,
-						new Typeface("Lucida Console"),
-						16,	brush);
+						typeFace,
+						16,	Brushes.Black);
 
-				// draw black background, for two reasons. First, to cover the terrain below an object,
-				// second, to move the drawn text properly. There's probably a better way to do the second
-				// one.
-				dc.DrawRectangle(Brushes.Black, null, new Rect(new Size(formattedText.Width, formattedText.Height)));
-				dc.DrawText(formattedText, new Point(0, 0));
+				var geometry = formattedText.BuildGeometry(new System.Windows.Point(0, 0));
+
+				var bg = fillBg ? Brushes.Black : Brushes.Transparent;
+				var pen = fillBg ? null : new Pen(Brushes.Black, 0.5);
+				dc.DrawRectangle(bg, null, new Rect(new Size(formattedText.Width, formattedText.Height)));
+				dc.DrawGeometry(brush, pen, geometry);
 			}
 
 			return NormalizeDrawing(dGroup, new Point(10, 0), new Size(80, 100));
