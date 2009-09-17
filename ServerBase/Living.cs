@@ -13,7 +13,7 @@ namespace MyGame
 
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
-		int m_visionRange = 3;
+		int m_visionRange = 10;
 		Grid2D<bool> m_visionMap;
 
 		IActor m_actorImpl;

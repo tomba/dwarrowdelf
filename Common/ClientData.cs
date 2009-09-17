@@ -134,17 +134,7 @@ namespace MyGame.ClientMsgs
 
 		public override string ToString()
 		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append("TerrainData ");
-
-			string[] arr = this.MapDataList.
-				Select(md => String.Format("{0},{1}", md.Location.X, md.Location.Y)).
-				ToArray();
-
-			sb.Append(String.Join(" ", arr));
-
-			return sb.ToString();
+			return String.Format("TerrainData({0} tiles)", this.MapDataList.Count());
 		}
 	}
 
