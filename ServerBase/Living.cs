@@ -52,13 +52,18 @@ namespace MyGame
 			}
 		}
 
-		void PerformGet(GetAction action, out bool done, out bool success)
+		void PerformGet(GetAction action, out bool success)
 		{
-			done = true;
 			success = false;
 
 			if (this.Environment == null)
 				return;
+
+			if (action.TurnsLeft > 0)
+			{
+				success = true;
+				return;
+			}
 
 			var list = this.Environment.GetContents(this.Location);
 			if (list == null)
@@ -80,13 +85,18 @@ namespace MyGame
 			success = true;
 		}
 
-		void PerformDrop(DropAction action, out bool done, out bool success)
+		void PerformDrop(DropAction action, out bool success)
 		{
-			done = true;
 			success = false;
 
 			if (this.Environment == null)
 				return;
+
+			if (action.TurnsLeft > 0)
+			{
+				success = true;
+				return;
+			}
 
 			var list = this.Inventory;
 			if (list == null)
@@ -108,13 +118,16 @@ namespace MyGame
 			success = true;
 		}
 
-		void PerformMove(MoveAction action, out bool done, out bool success)
+		void PerformMove(MoveAction action, out bool success)
 		{
-			success = MoveDir(action.Direction);
-			done = true;
+			// this should check if movement is blocked, even when TurnsLeft > 0
+			if (action.TurnsLeft == 0)
+				success = MoveDir(action.Direction);
+			else
+				success = true;
 		}
 
-		void PerformMine(MineAction action, out bool done, out bool success)
+		void PerformMine(MineAction action, out bool success)
 		{
 			IntPoint3D p = this.Location + IntVector3D.FromDirection(action.Direction);
 
@@ -124,15 +137,19 @@ namespace MyGame
 
 			if (id == wall.ID)
 			{
-				this.Environment.SetTerrain(p, floor.ID);
+				if (action.TurnsLeft == 0)
+					this.Environment.SetTerrain(p, floor.ID);
 				success = true;
-				done = true;
 			}
 			else
 			{
-				done = true;
 				success = false;
 			}
+		}
+
+		void PerformWait(WaitAction action, out bool success)
+		{
+			success = true;
 		}
 
 		// called during turn processing. the world state is not quite valid.
@@ -155,6 +172,10 @@ namespace MyGame
 				{
 					action.TurnsLeft = ((WaitAction)action).WaitTurns;
 				}
+				else if (action is MineAction)
+				{
+					action.TurnsLeft = 3;
+				}
 				else
 				{
 					action.TurnsLeft = 1;
@@ -163,60 +184,53 @@ namespace MyGame
 
 			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
 
-			bool done = false;
-			bool success = false;
-
 			action.TurnsLeft -= 1;
 
-			if (action.TurnsLeft > 0)
-			{
-				done = false;
-				success = true;
-			}
-			else
-			{
-				if (this.Parent != null)
-				{
-					var handled = this.Parent.HandleChildAction(this, action);
-					if (handled)
-					{
-						done = true;
-						success = true;
-					}
-				}
+			bool success = false;
+			bool done = false;
 
-				if (!done)
+			if (this.Parent != null)
+			{
+				var handled = this.Parent.HandleChildAction(this, action);
+				if (handled)
 				{
-					if (action is MoveAction)
-					{
-						PerformMove((MoveAction)action, out done, out success);
-					}
-					else if (action is WaitAction)
-					{
-						// do nothing
-						success = true;
-						done = true;
-					}
-					else if (action is GetAction)
-					{
-						PerformGet((GetAction)action, out done, out success);
-					}
-					else if (action is DropAction)
-					{
-						PerformDrop((DropAction)action, out done, out success);
-					}
-					else if (action is  MineAction)
-					{
-						PerformMine((MineAction)action, out done, out success);
-					}
-					else
-					{
-						throw new NotImplementedException();
-					}
+					done = true;
+					success = true;
 				}
 			}
 
-			if (done)
+			if (!done)
+			{
+				if (action is MoveAction)
+				{
+					PerformMove((MoveAction)action, out success);
+				}
+				else if (action is WaitAction)
+				{
+					PerformWait((WaitAction)action, out success);
+				}
+				else if (action is GetAction)
+				{
+					PerformGet((GetAction)action, out success);
+				}
+				else if (action is DropAction)
+				{
+					PerformDrop((DropAction)action, out success);
+				}
+				else if (action is MineAction)
+				{
+					PerformMine((MineAction)action, out success);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+
+			if (success == false)
+				action.TurnsLeft = 0;
+
+			if (action.TurnsLeft == 0)
 				RemoveAction(action);
 
 			// is the action originator an user?

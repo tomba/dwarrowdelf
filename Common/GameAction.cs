@@ -121,7 +121,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("MineAction({0})", this.Direction);
+			return String.Format("MineAction({0}, turns: {1})", this.Direction, this.TurnsLeft);
 		}
 	}
 }
