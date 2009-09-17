@@ -96,13 +96,6 @@ namespace MyGame
 					IntPoint translatedLocation = OctantTranslate(new IntPoint(x, y), octant);
 					IntPoint mapLocation = translatedLocation + (IntVector)viewerLocation;
 
-					// this makes the LOS area round
-					if (new IntVector(x, y).Length > visionRange)
-					{
-						visibilityMap[translatedLocation] = false;
-						continue;
-					}
-
 					LOSCell cell = m_cells[y];
 					LOSCell cellS = null;
 					if (y > 0)
@@ -271,6 +264,14 @@ namespace MyGame
 					}
 					else
 						visibilityMap[translatedLocation] = false;
+
+					// this makes the LOS area round
+					if (new IntVector(x, y).Length > visionRange)
+					{
+						// I'm sure this could be integrated better in the code above.
+						// perhaps this could even be in the beginning of the loop
+						visibilityMap[translatedLocation] = false;
+					}
 				}
 			}
 		}
