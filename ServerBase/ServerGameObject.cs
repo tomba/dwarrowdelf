@@ -7,8 +7,6 @@ using System.Collections.ObjectModel;
 
 namespace MyGame
 {
-	delegate void ObjectMoved(ServerGameObject o, Environment e, IntPoint l);
-
 	class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
 	{
 		public KeyedObjectCollection() : base(null, 10) { }
@@ -101,7 +99,7 @@ namespace MyGame
 
 		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
 		{
-			var src = this.Environment;
+			var src = this.Parent;
 			var srcLoc = this.Location;
 
 			if (src != dst)
