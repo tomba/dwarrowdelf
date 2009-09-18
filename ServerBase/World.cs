@@ -100,6 +100,12 @@ namespace MyGame
 		bool m_workActive;
 		object m_workLock = new object();
 
+		[Conditional("DEBUG")]
+		void VDbg(string format, params object[] args)
+		{
+			if (m_verbose)
+				MyDebug.WriteLine(format, args);
+		}
 
 		public World(IArea area, IAreaData areaData)
 		{
@@ -294,8 +300,7 @@ namespace MyGame
 		// thread safe
 		public void SignalWorld()
 		{
-			if (m_verbose)
-				MyDebug.WriteLine("SignalWorld");
+			VDbg("SignalWorld");
 			m_worldSignal.Set();
 		}
 
@@ -307,8 +312,7 @@ namespace MyGame
 
 		void TickTimerCallback(object stateInfo)
 		{
-			if (m_verbose)
-				MyDebug.WriteLine("TickTimerCallback");
+			VDbg("TickTimerCallback");
 			SignalWorld();
 		}
 
@@ -322,8 +326,7 @@ namespace MyGame
 				m_workActive = true;
 			}
 
-			if (m_verbose)
-				MyDebug.WriteLine("WorldSignalledWork");
+			VDbg("WorldSignalledWork");
 
 			while (true)
 			{
@@ -339,8 +342,7 @@ namespace MyGame
 				}
 			}
 
-			if (m_verbose)
-				MyDebug.WriteLine("WorldSignalledWork done");
+			VDbg("WorldSignalledWork done");
 		}
 
 		bool IsTimeToStartTurn()
@@ -422,24 +424,39 @@ namespace MyGame
 
 			lock (m_instantInvokeList)
 				if (m_instantInvokeList.Count > 0)
+				{
+					VDbg("WorkAvailable: InstantInvoke");
 					return true;
+				}
 
 			if (m_state == WorldState.Idle)
 			{
 				lock (m_preTurnInvokeList)
 					if (m_preTurnInvokeList.Count > 0)
+					{
+						VDbg("WorkAvailable: PreTurnInvoke");
 						return true;
+					}
 
 				lock (m_addLivingList)
 					if (m_addLivingList.Count > 0)
+					{
+						VDbg("WorkAvailable: AddLiving");
 						return true;
+					}
 
 				lock (m_removeLivingList)
 					if (m_removeLivingList.Count > 0)
+					{
+						VDbg("WorkAvailable: RemoveLiving");
 						return true;
+					}
 
 				if (IsTimeToStartTurn())
+				{
+					VDbg("WorkAvailable: IsTimeToStartTurn");
 					return true;
+				}
 
 				return false;
 			}
@@ -479,8 +496,7 @@ namespace MyGame
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
-			if (m_verbose)
-				MyDebug.WriteLine("SimultaneousWork");
+			VDbg("SimultaneousWork");
 
 			if (!forceMove && !m_livingList.All(l => l.HasAction))
 				return;
@@ -503,8 +519,7 @@ namespace MyGame
 
 			EndTurn();
 
-			if (m_verbose)
-				MyDebug.WriteLine("SimultaneousWork Done");
+			VDbg("SimultaneousWork Done");
 		}
 
 
@@ -514,10 +529,16 @@ namespace MyGame
 			Debug.Assert(m_state == WorldState.TurnOngoing);
 
 			if (m_livingEnumerator.Current.HasAction)
+			{
+				VDbg("WorkAvailable: Living.HasAction");
 				return true;
+			}
 
 			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
+			{
+				VDbg("WorkAvailable: NextMoveTime");
 				return true;
+			}
 
 			return false;
 		}
@@ -529,8 +550,7 @@ namespace MyGame
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
-			if (m_verbose)
-				MyDebug.WriteLine("SequentialWork");
+			VDbg("SequentialWork");
 
 			while (true)
 			{
@@ -544,7 +564,6 @@ namespace MyGame
 						m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
 					}
 
-					// XXX this probably needs to be sent elsewhere also
 					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
 
 					break;
@@ -556,16 +575,14 @@ namespace MyGame
 				bool last = !m_livingEnumerator.MoveNext();
 				if (last)
 				{
-					if (m_verbose)
-						MyDebug.WriteLine("last living handled");
+					VDbg("last living handled");
 					EndTurn();
 					break;
 				}
 			}
 
 
-			if (m_verbose)
-				MyDebug.WriteLine("SequentialWork Done");
+			VDbg("SequentialWork Done");
 		}
 
 		void StartTurn()
