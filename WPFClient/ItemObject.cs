@@ -8,8 +8,8 @@ namespace MyGame
 {
 	class ItemObject : ClientGameObject
 	{
-		public ItemObject(ObjectID objectID)
-			: base(objectID)
+		public ItemObject(World world, ObjectID objectID)
+			: base(world, objectID)
 		{
 			
 		}

@@ -53,6 +53,11 @@ namespace MyGame
 
 			MyDebug.WriteLine("Start");
 
+			var areaData = new MyAreaData.AreaData();
+			var world = new World(areaData);
+			World.TheWorld = world;
+
+
 			m_connection = new Connection();
 
 			if (m_serverInAppDomain)

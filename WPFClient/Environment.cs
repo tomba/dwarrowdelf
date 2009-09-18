@@ -134,21 +134,17 @@ namespace MyGame
 
 		public VisibilityMode VisibilityMode { get; set; }
 
-		public World World { get; private set; }
-
 		public Environment(World world, ObjectID objectID)
-			: base(objectID)
+			: base(world, objectID)
 		{
 			this.Version = 1;
-			this.World = world;
 			m_tileGrid = new MyGrowingGrid3D(10);
 		}
 
 		public Environment(World world, ObjectID objectID, IntCube bounds)
-			: base(objectID)
+			: base(world, objectID)
 		{
 			this.Version = 1;
-			this.World = world;
 			m_tileGrid = new MyGrowingGrid3D(Math.Max(bounds.Width, bounds.Height));
 		}
 

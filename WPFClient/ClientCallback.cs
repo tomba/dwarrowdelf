@@ -49,14 +49,14 @@ namespace MyGame
 
 		void _LogOnReply(int userID)
 		{
-			GameData.Data.UserID = userID;
+			World.TheWorld.UserID = userID;
 			GameData.Data.Connection.Server.LogOnChar("tomba");
 		}
 
 		void _LogOnCharReply(ObjectID playerID)
 		{
-			ClientGameObject player = new ClientGameObject(playerID);
-			GameData.Data.Controllables.Add(player);
+			ClientGameObject player = new ClientGameObject(World.TheWorld, playerID);
+			World.TheWorld.Controllables.Add(player);
 			if (GameData.Data.CurrentObject == null)
 				GameData.Data.CurrentObject = player;
 
@@ -68,7 +68,7 @@ namespace MyGame
 
 		void _LogOffCharReply()
 		{
-			GameData.Data.Controllables.Clear();
+			World.TheWorld.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
 			App.MainWindow.FollowObject = null;
 			App.MainWindow.MiniMap.FollowObject = null;
@@ -81,7 +81,7 @@ namespace MyGame
 			if (msg is TerrainData)
 			{
 				TerrainData td = (TerrainData)msg;
-				var env = ClientGameObject.FindObject<Environment>(td.Environment);
+				var env = World.TheWorld.FindObject<Environment>(td.Environment);
 				if (env == null)
 					throw new Exception();
 				env.SetTerrains(td.MapDataList);
@@ -89,7 +89,7 @@ namespace MyGame
 			else if (msg is ObjectMove)
 			{
 				ObjectMove om = (ObjectMove)msg;
-				ClientGameObject ob = ClientGameObject.FindObject(om.ObjectID);
+				ClientGameObject ob = World.TheWorld.FindObject(om.ObjectID);
 
 				if (ob == null)
 				{
@@ -102,7 +102,7 @@ namespace MyGame
 
 				ClientGameObject env = null;
 				if (om.TargetEnvID != ObjectID.NullObjectID)
-					env = ClientGameObject.FindObject(om.TargetEnvID);
+					env = World.TheWorld.FindObject(om.TargetEnvID);
 
 				ob.MoveTo(env, om.TargetLocation);
 			}
@@ -110,7 +110,7 @@ namespace MyGame
 			{
 				FullMapData md = (FullMapData)msg;
 
-				var env = ClientGameObject.FindObject<Environment>(md.ObjectID);
+				var env = World.TheWorld.FindObject<Environment>(md.ObjectID);
 
 				if (env == null)
 				{
@@ -130,7 +130,7 @@ namespace MyGame
 			{
 				MapData md = (MapData)msg;
 
-				var env = ClientGameObject.FindObject<Environment>(md.ObjectID);
+				var env = World.TheWorld.FindObject<Environment>(md.ObjectID);
 
 				if (env == null)
 				{
@@ -147,12 +147,12 @@ namespace MyGame
 			{
 				LivingData ld = (LivingData)msg;
 
-				ClientGameObject ob = ClientGameObject.FindObject(ld.ObjectID);
+				ClientGameObject ob = World.TheWorld.FindObject(ld.ObjectID);
 
 				if (ob == null)
 				{
 					MyDebug.WriteLine("New living appeared {0}", ld.ObjectID);
-					ob = new ClientGameObject(ld.ObjectID);
+					ob = new ClientGameObject(World.TheWorld, ld.ObjectID);
 				}
 
 				ob.SymbolID = ld.SymbolID;
@@ -163,7 +163,7 @@ namespace MyGame
 
 				ClientGameObject env = null;
 				if (ld.Environment != ObjectID.NullObjectID)
-					env = ClientGameObject.FindObject(ld.Environment);
+					env = World.TheWorld.FindObject(ld.Environment);
 
 				ob.MoveTo(env, ld.Location);
 			}
@@ -171,12 +171,12 @@ namespace MyGame
 			{
 				ItemData id = (ItemData)msg;
 
-				var ob = ClientGameObject.FindObject<ItemObject>(id.ObjectID);
+				var ob = World.TheWorld.FindObject<ItemObject>(id.ObjectID);
 
 				if (ob == null)
 				{
 					MyDebug.WriteLine("New object appeared {0}", id.ObjectID);
-					ob = new ItemObject(id.ObjectID);
+					ob = new ItemObject(World.TheWorld, id.ObjectID);
 				}
 
 				ob.Name = id.Name;
@@ -186,7 +186,7 @@ namespace MyGame
 
 				ClientGameObject env = null;
 				if (id.Environment != ObjectID.NullObjectID)
-					env = ClientGameObject.FindObject(id.Environment);
+					env = World.TheWorld.FindObject(id.Environment);
 
 				ob.MoveTo(env, id.Location);
 			}
@@ -215,7 +215,7 @@ namespace MyGame
 			if (@event is TurnChangeEvent)
 			{
 				var e = (TurnChangeEvent)@event;
-				GameData.Data.TurnNumber = e.TurnNumber;
+				World.TheWorld.TurnNumber = e.TurnNumber;
 			}
 			else if (@event is ActionProgressEvent)
 			{

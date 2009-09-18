@@ -77,7 +77,7 @@ namespace MyGame
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+					FollowedObjectMoved(m_followObject, m_followObject.Environment, m_followObject.Location);
 				}
 				else
 				{
@@ -91,23 +91,23 @@ namespace MyGame
 			}
 		}
 
-		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
+		void FollowedObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc)
 		{
-			Environment env = e as Environment;
+			Environment env = dst as Environment;
 
 			map.Environment = env;
 
 			int xd = map.Columns / 2;
 			int yd = map.Rows / 2;
-			int x = l.X;
-			int y = l.Y;
+			int x = loc.X;
+			int y = loc.Y;
 			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
 			map.CenterPos = newPos;
-			map.Z = l.Z;
+			map.Z = loc.Z;
 
 			this.CurrentTileInfo.Environment = env;
-			this.CurrentTileInfo.Location = l;
+			this.CurrentTileInfo.Location = loc;
 		}
 
 		public TileInfo CurrentTileInfo { get; set; }

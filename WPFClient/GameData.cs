@@ -25,16 +25,10 @@ namespace MyGame
 		public GameData()
 		{
 			this.ActionCollection = new ActionCollection();
-			this.Controllables = new ObjectCollection();
-			this.SymbolDrawings = new SymbolDrawingCache(World.TheWorld.AreaData);
-
-			this.Objects = new ObjectCollection();
 		}
 
-		public int UserID { get; set; }
-		public Connection Connection { get; set; }
 
-		public ObjectCollection Controllables { get; private set; }
+		public Connection Connection { get; set; }
 
 		ClientGameObject m_currentObject;
 		public ClientGameObject CurrentObject
@@ -49,22 +43,6 @@ namespace MyGame
 
 		public ActionCollection ActionCollection { get; private set; }
 
-		public SymbolDrawingCache SymbolDrawings { get; private set; }
-
-		public ObjectCollection Objects { get; private set; }
-		public ObservableCollection<Environment> Environments { get { return World.TheWorld.Environments; } }
-
-		int m_turnNumber;
-		public int TurnNumber
-		{
-			get { return m_turnNumber; }
-
-			set
-			{
-				m_turnNumber = value;
-				Notify("TurnNumber");
-			}
-		}
 
 		#region INotifyPropertyChanged Members
 

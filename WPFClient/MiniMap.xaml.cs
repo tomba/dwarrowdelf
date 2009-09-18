@@ -45,14 +45,14 @@ namespace MyGame
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					FollowedObjectMoved(m_followObject.Environment, m_followObject.Location);
+					FollowedObjectMoved(m_followObject, m_followObject.Environment, m_followObject.Location);
 				}
 			}
 		}
 
-		void FollowedObjectMoved(ClientGameObject e, IntPoint3D l)
+		void FollowedObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D l)
 		{
-			Environment env = e as Environment;
+			Environment env = dst as Environment;
 
 			map.Environment = env;
 			map.CenterPos = new IntPoint(l.X, l.Y);

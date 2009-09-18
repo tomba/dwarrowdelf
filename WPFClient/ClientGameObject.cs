@@ -15,79 +15,23 @@ namespace MyGame
 		}
 	}
 
-	delegate void ObjectMoved(ClientGameObject e, IntPoint3D l);
+	class ReadOnlyObservableObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, ClientGameObject>
+	{
+		public ReadOnlyObservableObjectCollection(ObservableObjectCollection collection)
+			: base(collection)
+		{
+		}
+	}
+
+	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
 
-		static Dictionary<ObjectID, WeakReference> s_objectMap = new Dictionary<ObjectID, WeakReference>();
-
-		static void AddObject(ClientGameObject ob)
-		{
-			if (ob.ObjectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
-
-			lock (s_objectMap)
-				s_objectMap.Add(ob.ObjectID, new WeakReference(ob));
-
-			GameData.Data.Objects.Add(ob); // XXX
-		}
-
-		public static ClientGameObject FindObject(ObjectID objectID)
-		{
-			if (objectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
-
-			lock (s_objectMap)
-			{
-				if (s_objectMap.ContainsKey(objectID))
-				{
-					WeakReference weakref = s_objectMap[objectID];
-					if (weakref.IsAlive)
-						return (ClientGameObject)weakref.Target;
-					else
-						s_objectMap.Remove(objectID);
-				}
-
-				return null;
-			}
-		}
-
-		public static T FindObject<T>(ObjectID objectID) where T : ClientGameObject
-		{
-			if (objectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
-
-			lock (s_objectMap)
-			{
-				if (s_objectMap.ContainsKey(objectID))
-				{
-					WeakReference weakref = s_objectMap[objectID];
-					if (weakref.IsAlive)
-						return (T)weakref.Target;
-					else
-						s_objectMap.Remove(objectID);
-				}
-
-				return default(T);
-			}
-		}
-		
-		public static ClientGameObject[] GetObjects()
-		{
-			lock (s_objectMap)
-			{
-				return s_objectMap.
-					Where(kvp => kvp.Value.IsAlive).
-					Select(kvp => (ClientGameObject)kvp.Value.Target).
-					ToArray();
-			}
-		}
-		
-		// XXX inventory should be read-only, and only modifiable by MoveTo()
-		public ObservableObjectCollection Inventory { get; private set; }
+		ObservableObjectCollection m_inventory;
+		public ReadOnlyObservableObjectCollection Inventory { get; private set; }
 
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
@@ -110,12 +54,15 @@ namespace MyGame
 		public IntPoint3D Location { get; private set; }
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public bool IsLiving { get; set; }
+		public World World { get; private set; }
 
-		public ClientGameObject(ObjectID objectID)
+		public ClientGameObject(World world, ObjectID objectID)
 			: base(objectID)
 		{
-			this.Inventory = new ObservableObjectCollection();
-			AddObject(this);
+			this.World = world;
+			this.World.AddObject(this);
+			m_inventory = new ObservableObjectCollection();
+			this.Inventory = new ReadOnlyObservableObjectCollection(m_inventory);
 			this.Color = Colors.Black;
 		}
 
@@ -141,7 +88,7 @@ namespace MyGame
 		{
 			get
 			{
-				return new DrawingImage(GameData.Data.SymbolDrawings.GetDrawing(m_symbolID, this.Color));
+				return new DrawingImage(this.World.SymbolDrawings.GetDrawing(m_symbolID, this.Color));
 			}
 		}
 
@@ -154,7 +101,7 @@ namespace MyGame
 
 			if (oldParent != null)
 			{
-				oldParent.Inventory.Remove(this);
+				oldParent.m_inventory.Remove(this);
 				oldParent.ChildRemoved(this);
 			}
 
@@ -163,12 +110,12 @@ namespace MyGame
 
 			if (parent != null)
 			{
-				parent.Inventory.Add(this);
+				parent.m_inventory.Add(this);
 				parent.ChildAdded(this);
 			}
 
 			if (ObjectMoved != null)
-				ObjectMoved(this.Parent, this.Location);
+				ObjectMoved(this, this.Parent, this.Location);
 		}
 
 		public Environment Environment

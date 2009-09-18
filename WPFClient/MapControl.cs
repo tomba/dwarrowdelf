@@ -28,7 +28,7 @@ namespace MyGame
 		public MapControl()
 		{
 			m_bitmapCache = new SymbolBitmapCache();
-			m_bitmapCache.SymbolDrawings = GameData.Data.SymbolDrawings;
+			m_bitmapCache.SymbolDrawings = World.TheWorld.SymbolDrawings;
 
 			base.SelectionChanged += OnSelectionChanged;
 
@@ -84,7 +84,7 @@ namespace MyGame
 			if (this.Environment.GetTerrainID(ml) == 0)
 				return false;
 
-			var controllables = GameData.Data.Controllables;
+			var controllables = this.Environment.World.Controllables;
 
 			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
 			{
