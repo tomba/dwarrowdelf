@@ -543,6 +543,10 @@ namespace MyGame
 						m_nextMove = DateTime.Now + m_maxMoveTime;
 						m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
 					}
+
+					// XXX this probably needs to be sent elsewhere also
+					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
+
 					break;
 				}
 

@@ -10,6 +10,7 @@ namespace MyGame
 	[DataContract,
 	KnownType(typeof(TurnChangeEvent)),
 	KnownType(typeof(ActionProgressEvent)),
+	KnownType(typeof(ActionRequiredEvent)),
 	]
 	public abstract class Event
 	{
@@ -50,6 +51,17 @@ namespace MyGame
 		}
 	}
 
+	[DataContract]
+	public class ActionRequiredEvent : Event
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ActionRequiredEvent({0})", this.ObjectID);
+		}
+	}
 
 
 

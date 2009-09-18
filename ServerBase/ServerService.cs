@@ -19,7 +19,6 @@ namespace MyGame
 
 		World m_world;
 		Living m_player;
-		InteractiveActor m_actor;
 
 		int m_userID;
 
@@ -143,8 +142,7 @@ namespace MyGame
 			m_player = new Living(m_world);
 			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
 			m_player.Name = "player";
-			m_actor = new InteractiveActor();
-			m_player.Actor = m_actor;
+			m_player.Actor = new InteractiveActor();
 
 			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
@@ -172,8 +170,7 @@ namespace MyGame
 			var pet = new Living(m_world);
 			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
 			pet.Name = "lemmikki";
-			var petAI = new PetActor(pet, m_player);
-			pet.Actor = petAI;
+			pet.Actor = new InteractiveActor();
 			m_friendlies.Add(pet);
 			m_client.LogOnCharReply(pet.ObjectID);
 
@@ -196,7 +193,7 @@ namespace MyGame
 			MyDebug.WriteLine("LogOffChar");
 
 			m_friendlies.Remove(m_player);
-		
+
 			m_world.RemoveUser(this);
 
 			m_player.Actor = null;
@@ -270,7 +267,8 @@ namespace MyGame
 			var changeMsgs = CollectChanges(m_friendlies, changes);
 			msgs = msgs.Concat(changeMsgs);
 
-			m_client.DeliverMessages(msgs);
+			if (msgs.Count() > 0)
+				m_client.DeliverMessages(msgs);
 		}
 
 		IEnumerable<ClientMsgs.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
@@ -308,7 +306,7 @@ namespace MyGame
 			}
 
 			var changeMsgs = changes.Select(c => ChangeToMessage(c));
-			
+
 			// NOTE: send changes last, so that object/map/tile information has already
 			// been received by the client
 			msgs = msgs.Concat(changeMsgs);
@@ -350,30 +348,35 @@ namespace MyGame
 				if (l.Environment == null)
 					continue;
 
-				// for AllVisible we already know all the objects and terrains
-				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
-					continue;
+				IEnumerable<IntPoint3D> locList;
 
-				IEnumerable<IntPoint3D> locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
+				/* for AllVisible maps we don't track visible locations, but we still
+				 * need to handle newly visible maps */
+				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
+					locList = new List<IntPoint3D>();
+				else
+					locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
 
 				if (!newKnownLocs.ContainsKey(l.Environment))
 				{
 					newKnownLocs[l.Environment] = new HashSet<IntPoint3D>();
 
-					// new environment for this user, so send map info
-					var md = new ClientMsgs.MapData()
+					if (!m_knownLocations.ContainsKey(l.Environment))
 					{
-						ObjectID = l.Environment.ObjectID,
-						VisibilityMode = l.Environment.VisibilityMode,
-					};
-					mapMsgs.Add(md);
+						// new environment for this user, so send map info
+						var md = new ClientMsgs.MapData()
+						{
+							ObjectID = l.Environment.ObjectID,
+							VisibilityMode = l.Environment.VisibilityMode,
+						};
+						mapMsgs.Add(md);
 
-					if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
-					{
-						var msg = l.Environment.Serialize();
-						mapMsgs.Add(msg);
+						if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
+						{
+							var msg = l.Environment.Serialize();
+							mapMsgs.Add(msg);
+						}
 					}
-
 				}
 				newKnownLocs[l.Environment].UnionWith(locList);
 			}
@@ -418,18 +421,19 @@ namespace MyGame
 
 		IEnumerable<ClientMsgs.Message> TilesToMessages(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)
 		{
-			var msgs = revealedLocs.Select(kvp => (ClientMsgs.Message)new ClientMsgs.TerrainData()
-			{
-				Environment = kvp.Key.ObjectID,
-				MapDataList = kvp.Value.Select(l =>
-					new ClientMsgs.MapTileData()
-					{
-						Location = l,
-						TerrainID = kvp.Key.GetTerrainID(l),
-					}).ToArray()
-				// XXX there seems to be a problem serializing this.
-				// evaluating it with ToArray() fixes it
-			});
+			var msgs = revealedLocs.Where(kvp => kvp.Value.Count() > 0).
+				Select(kvp => (ClientMsgs.Message)new ClientMsgs.TerrainData()
+				{
+					Environment = kvp.Key.ObjectID,
+					MapDataList = kvp.Value.Select(l =>
+						new ClientMsgs.MapTileData()
+						{
+							Location = l,
+							TerrainID = kvp.Key.GetTerrainID(l),
+						}).ToArray()
+					// XXX there seems to be a problem serializing this.
+					// evaluating it with ToArray() fixes it
+				});
 
 			return msgs;
 		}

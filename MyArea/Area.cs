@@ -66,7 +66,7 @@ namespace MyArea
 		Environment CreateMap1(World world)
 		{
 			// XXX some size limit with the size in WCF
-			var env = new Environment(world, 100, 100, 4, VisibilityMode.LOS);
+			var env = new Environment(world, 100, 100, 4, VisibilityMode.AllVisible);
 			env.Name = "map1";
 
 			Random r = new Random(123);

@@ -84,6 +84,7 @@ namespace MyGame
 				var env = World.TheWorld.FindObject<Environment>(td.Environment);
 				if (env == null)
 					throw new Exception();
+				MyDebug.WriteLine("Received TerrainData for {0} tiles", td.MapDataList.Count());
 				env.SetTerrains(td.MapDataList);
 			}
 			else if (msg is ObjectMove)
@@ -121,6 +122,7 @@ namespace MyGame
 					env.Name = "map";
 				}
 
+				MyDebug.WriteLine("Received TerrainData for {0} tiles", md.TerrainIDs.Count());
 				env.SetTerrains(md.Bounds, md.TerrainIDs);
 				env.VisibilityMode = md.VisibilityMode;
 
@@ -233,6 +235,20 @@ namespace MyGame
 
 				if (e.TurnsLeft == 0)
 					GameData.Data.ActionCollection.Remove(action);
+			}
+			else if (@event is ActionRequiredEvent)
+			{
+				var e = (ActionRequiredEvent)@event;
+
+				MyDebug.WriteLine("{0}", e);
+
+				var ob = World.TheWorld.FindObject(e.ObjectID);
+
+				if (ob == null)
+					throw new Exception();
+
+				GameData.Data.CurrentObject = ob;
+
 			}
 		}
 	}
