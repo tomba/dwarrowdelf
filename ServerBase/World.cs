@@ -389,6 +389,7 @@ namespace MyGame
 					// for sequential...
 					// note: write lock is off, actors can take read-lock and process in the
 					// background
+					// perhaps here we should also send ActionRequestEvents?
 					foreach (Living l in m_livingList)
 						l.Actor.DetermineAction();
 
@@ -593,6 +594,17 @@ namespace MyGame
 			AddEvent(new TurnChangeEvent(m_turnNumber));
 
 			MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
+
+			if (m_tickMethod == WorldTickMethod.Simultaneous)
+			{
+				// This presumes that non-user controlled livings already have actions
+				var events = m_livingList.
+					Where(l => !l.HasAction).
+					Select(l => new ActionRequiredEvent() { ObjectID = l.ObjectID });
+
+				foreach (var e in events)
+					AddEvent(e);
+			}
 
 			m_livingEnumerator = m_livingList.GetEnumerator();
 			if (m_livingEnumerator.MoveNext() == false)
