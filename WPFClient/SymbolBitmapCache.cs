@@ -20,7 +20,12 @@ namespace MyGame
 		Dictionary<int, Dictionary<Color, CacheData>> m_bitmapMap =
 			new Dictionary<int,Dictionary<Color,CacheData>>();
 
-		double m_size = 32;
+		double m_size = 8;
+
+		public SymbolBitmapCache(double size)
+		{
+			m_size = size;
+		}
 
 		public double TileSize
 		{
@@ -28,8 +33,11 @@ namespace MyGame
 
 			set
 			{
-				m_size = value;
-				m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
+				if (m_size != value)
+				{
+					m_size = value;
+					m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
+				}
 			}
 		}
 

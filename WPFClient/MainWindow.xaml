@@ -131,7 +131,16 @@
 			</GroupBox>
 
 			<GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
-				<ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}" />
+				<ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock>
+								<TextBlock Text="{Binding ActorObjectID}" />
+								: left <TextBlock Text="{Binding TurnsLeft}" />
+							</TextBlock>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
 			</GroupBox>
 
 			<GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"

@@ -148,6 +148,11 @@ namespace MyGame
 			m_tileGrid = new MyGrowingGrid3D(Math.Max(bounds.Width, bounds.Height));
 		}
 
+		public bool IsWalkable(IntPoint3D l)
+		{
+			return this.World.AreaData.Terrains[GetTerrainID(l)].IsWalkable;
+		}
+
 		public MyGrowingGrid GetLevel(int z)
 		{
 			return m_tileGrid.GetLevel(z, false);

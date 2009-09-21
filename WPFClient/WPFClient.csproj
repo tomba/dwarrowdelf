@@ -99,6 +99,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI.cs" />
     <Compile Include="ClientCallback.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="DebugWindow.xaml.cs">

@@ -247,8 +247,7 @@ namespace MyGame
 				if (ob == null)
 					throw new Exception();
 
-				GameData.Data.CurrentObject = ob;
-
+				ob.AI.ActionRequired();
 			}
 		}
 	}

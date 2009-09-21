@@ -56,6 +56,8 @@ namespace MyGame
 		public bool IsLiving { get; set; }
 		public World World { get; private set; }
 
+		public AI AI { get; private set; }
+
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(objectID)
 		{
@@ -64,6 +66,7 @@ namespace MyGame
 			m_inventory = new ObservableObjectCollection();
 			this.Inventory = new ReadOnlyObservableObjectCollection(m_inventory);
 			this.Color = Colors.Black;
+			this.AI = new AI(this);
 		}
 
 		string m_name;

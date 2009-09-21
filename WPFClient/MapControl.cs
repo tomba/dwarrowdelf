@@ -20,6 +20,7 @@ namespace MyGame
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		World m_world;
 		SymbolBitmapCache m_bitmapCache;
 
 		Environment m_env;
@@ -27,9 +28,6 @@ namespace MyGame
 
 		public MapControl()
 		{
-			m_bitmapCache = new SymbolBitmapCache();
-			m_bitmapCache.SymbolDrawings = World.TheWorld.SymbolDrawings;
-
 			base.SelectionChanged += OnSelectionChanged;
 
 			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
@@ -39,7 +37,8 @@ namespace MyGame
 
 		void OnTileSizeChanged(object ob, EventArgs e)
 		{
-			m_bitmapCache.TileSize = this.TileSize;
+			if (m_bitmapCache != null)
+				m_bitmapCache.TileSize = this.TileSize;
 		}
 
 		protected override UIElement CreateTile()
@@ -150,6 +149,13 @@ namespace MyGame
 			{
 				if (m_env == value)
 					return;
+
+				if (m_world != value.World)
+				{
+					m_world = value.World;
+					m_bitmapCache = new SymbolBitmapCache(this.TileSize);
+					m_bitmapCache.SymbolDrawings = m_world.SymbolDrawings;
+				}
 
 				if (m_env != null)
 					m_env.MapChanged -= MapChangedCallback;
