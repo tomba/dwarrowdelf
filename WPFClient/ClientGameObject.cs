@@ -97,6 +97,7 @@ namespace MyGame
 
 		public void DoAction(GameAction action)
 		{
+			action.ActorObjectID = this.ObjectID;
 			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
 			GameData.Data.ActionCollection.Add(action);
 			GameData.Data.Connection.DoAction(action);

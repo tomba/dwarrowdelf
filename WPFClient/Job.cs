@@ -80,7 +80,7 @@ namespace MyGame
 			Debug.Assert(m_currentAction == null);
 
 			var dir = GetNext();
-			m_currentAction = new MoveAction(m_job.Worker, dir);
+			m_currentAction = new MoveAction(dir);
 			return m_currentAction;
 		}
 
@@ -154,7 +154,7 @@ namespace MyGame
 			MyDebug.WriteLine("mine!");
 
 			var v = m_location - m_job.Worker.Location;
-			m_currentAction = new MineAction(m_job.Worker, v.ToDirection());
+			m_currentAction = new MineAction(v.ToDirection());
 			return m_currentAction;
 		}
 

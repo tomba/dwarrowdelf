@@ -352,6 +352,8 @@ namespace MyGame
 
 		public void EnqueueAction(GameAction action)
 		{
+			action.ActorObjectID = this.ObjectID;
+
 			lock (m_actionQueue)
 				m_actionQueue.Enqueue(action);
 

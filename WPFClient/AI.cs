@@ -72,7 +72,7 @@ namespace MyGame
 		void Idle()
 		{
 			MyDebug.WriteLine("no job to do");
-			var action = new WaitAction(m_object, 1);
+			var action = new WaitAction(1);
 			m_object.DoAction(action);
 		}
 

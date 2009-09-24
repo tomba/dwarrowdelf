@@ -26,7 +26,7 @@ namespace MyGame
 			GameAction action;
 
 			if (m_random.Next(4) == 0)
-				action = new WaitAction(m_object, m_random.Next(3) + 1);
+				action = new WaitAction(m_random.Next(3) + 1);
 			else
 			{
 				IntVector v = new IntVector(1, 1);
@@ -36,7 +36,7 @@ namespace MyGame
 				if (dir == Direction.None)
 					throw new Exception();
 
-				action = new MoveAction(m_object, dir);
+				action = new MoveAction(dir);
 			}
 
 			return action;

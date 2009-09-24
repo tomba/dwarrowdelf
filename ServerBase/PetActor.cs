@@ -33,7 +33,7 @@ namespace MyGame
 			var v = m_player.Location - m_object.Location;
 
 			if (v.ManhattanLength < 5)
-				return new WaitAction(m_object, 1);
+				return new WaitAction(1);
 
 			if (m_pathDirs == null || (m_player.Location - m_pathDest).ManhattanLength > 3)
 			{
@@ -48,13 +48,13 @@ namespace MyGame
 			}
 
 			if (m_pathDirs.Count == 0)
-				return new WaitAction(m_object, 1);
+				return new WaitAction(1);
 
 			Direction dir = m_pathDirs.Dequeue();
 			if (m_pathDirs.Count == 0)
 				m_pathDirs = null;
 
-			action = new MoveAction(m_object, dir);
+			action = new MoveAction(dir);
 
 			return action;
 		}
@@ -66,12 +66,12 @@ namespace MyGame
 			var v = m_player.Location - m_object.Location;
 
 			if (v.ManhattanLength < 3)
-				return new WaitAction(m_object, 1);
+				return new WaitAction(1);
 
 			v.Normalize();
 
 			if (v == new IntVector3D())
-				return new WaitAction(m_object, 1);
+				return new WaitAction(1);
 
 			var env = m_object.Environment;
 
@@ -90,13 +90,13 @@ namespace MyGame
 					Direction dir = v.ToDirection();
 					if (dir == Direction.None)
 						throw new Exception();
-					action = new MoveAction(m_object, dir);
+					action = new MoveAction(dir);
 					break;
 				}
 			}
 
 			if (action == null)
-				return new WaitAction(m_object, 1);
+				return new WaitAction(1);
 
 			return action;
 		}

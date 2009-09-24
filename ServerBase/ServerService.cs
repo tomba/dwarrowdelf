@@ -184,7 +184,7 @@ namespace MyGame
 
 		void _LogOffChar(object data)
 		{
-			m_player.EnqueueAction(new WaitAction(m_player, 1));
+			m_player.EnqueueAction(new WaitAction(1));
 			m_world.BeginInvoke(__LogOffChar);
 		}
 

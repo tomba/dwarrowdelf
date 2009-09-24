@@ -16,7 +16,6 @@ namespace MyGame
 	]
 	public abstract class GameAction
 	{
-		GameObject m_target;
 		[DataMember]
 		public ObjectID ActorObjectID { get; set; }
 		[DataMember]
@@ -25,10 +24,8 @@ namespace MyGame
 		public int UserID { get; set; }
 		public int TurnsLeft { get; set; }
 
-		public GameAction(GameObject actor)
+		public GameAction()
 		{
-			m_target = actor;
-			this.ActorObjectID = m_target.ObjectID;
 		}
 	}
 
@@ -38,8 +35,7 @@ namespace MyGame
 		[DataMember]
 		public Direction Direction { get; set; }
 
-		public MoveAction(GameObject actor, Direction direction)
-			: base(actor)
+		public MoveAction(Direction direction)
 		{
 			this.Direction = direction;
 		}
@@ -56,8 +52,7 @@ namespace MyGame
 		[DataMember]
 		public int WaitTurns { get; set; }
 
-		public WaitAction(GameObject actor, int turns)
-			: base(actor)
+		public WaitAction(int turns)
 		{
 			this.WaitTurns = turns;
 		}
@@ -74,8 +69,7 @@ namespace MyGame
         [DataMember]
         public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-        public DropAction(GameObject actor, IEnumerable<GameObject> items)
-            : base(actor)
+        public DropAction(IEnumerable<GameObject> items)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }
@@ -93,8 +87,7 @@ namespace MyGame
 		[DataMember]
 		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-		public GetAction(GameObject actor, IEnumerable<GameObject> items)
-            : base( actor)
+		public GetAction(IEnumerable<GameObject> items)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }
@@ -112,8 +105,7 @@ namespace MyGame
 		[DataMember]
 		public Direction Direction { get; set; }
 
-		public MineAction(GameObject actor, Direction dir)
-			: base(actor)
+		public MineAction(Direction dir)
 		{
 			this.Direction = dir;
 		}
