@@ -156,17 +156,19 @@ namespace MyGame
 			//MyDebug.WriteLine("OnMyKeyDown");
 			if (GameData.Data.Connection == null)
 				return;
+
+			var currentOb = GameData.Data.CurrentObject;
+
 			if (KeyIsDir(e.Key))
 			{
 				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				if (GameData.Data.CurrentObject != null)
+				if (currentOb != null)
 				{
-					int tid = GameData.Data.Connection.GetNewTransactionID();
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
-						GameData.Data.Connection.DoAction(new MineAction(tid, GameData.Data.CurrentObject, dir));
+						currentOb.DoAction(new MineAction(currentOb, dir));
 					else
-						GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
+						currentOb.DoAction(new MoveAction(currentOb, dir));
 				}
 				else
 				{
@@ -176,10 +178,9 @@ namespace MyGame
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				if (GameData.Data.CurrentObject != null)
+				if (currentOb != null)
 				{
-					int wtid = GameData.Data.Connection.GetNewTransactionID();
-					GameData.Data.Connection.DoAction(new WaitAction(wtid, GameData.Data.CurrentObject, 1));
+					currentOb.DoAction(new WaitAction(currentOb, 1));
 				}
 				else
 				{
@@ -221,15 +222,11 @@ namespace MyGame
 			}
 
 			e.Handled = true;
-			if (GameData.Data.CurrentObject != null)
-			{
-				int tid = GameData.Data.Connection.GetNewTransactionID();
-				GameData.Data.Connection.DoAction(new MoveAction(tid, GameData.Data.CurrentObject, dir));
-			}
+			var currentOb = GameData.Data.CurrentObject;
+			if (currentOb != null)
+				currentOb.DoAction(new MoveAction(currentOb, dir));
 			else
-			{
 				map.Z += IntVector3D.FromDirection(dir).Z;
-			}
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
@@ -274,6 +271,33 @@ namespace MyGame
 				new IntCube(r, map.Z), terrain.ID);
 		}
 
+		private void MenuItem_Click_Job(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			if (tag == "Mine")
+			{
+				var wall = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
+				IntRect r = map.SelectionRect;
+				var env = map.Environment;
+				int z = map.Z;
+
+				foreach (var p in r.Range())
+				{
+					if (env.GetTerrainID(new IntPoint3D(p, z)) != wall.ID)
+						continue;
+
+					var job = new MineJob(env, new IntPoint3D(p, z));
+					this.Map.World.Jobs.Add(job);
+				}
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
 		private void Get_Button_Click(object sender, RoutedEventArgs e)
 		{
 			var plr = GameData.Data.CurrentObject;
@@ -291,8 +315,7 @@ namespace MyGame
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			int wtid = GameData.Data.Connection.GetNewTransactionID();
-			GameData.Data.Connection.DoAction(new GetAction(wtid, plr, list.Cast<GameObject>()));
+			plr.DoAction(new GetAction(plr, list.Cast<GameObject>()));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -304,8 +327,7 @@ namespace MyGame
 
 			var plr = GameData.Data.CurrentObject;
 
-			int wtid = GameData.Data.Connection.GetNewTransactionID();
-			GameData.Data.Connection.DoAction(new DropAction(wtid, plr, list.Cast<GameObject>()));
+			plr.DoAction(new DropAction(plr, list.Cast<GameObject>()));
 		}
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)

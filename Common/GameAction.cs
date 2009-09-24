@@ -25,9 +25,8 @@ namespace MyGame
 		public int UserID { get; set; }
 		public int TurnsLeft { get; set; }
 
-		public GameAction(int transID, GameObject actor)
+		public GameAction(GameObject actor)
 		{
-			this.TransactionID = transID;
 			m_target = actor;
 			this.ActorObjectID = m_target.ObjectID;
 		}
@@ -39,8 +38,8 @@ namespace MyGame
 		[DataMember]
 		public Direction Direction { get; set; }
 
-		public MoveAction(int transID, GameObject actor, Direction direction)
-			: base(transID, actor)
+		public MoveAction(GameObject actor, Direction direction)
+			: base(actor)
 		{
 			this.Direction = direction;
 		}
@@ -57,8 +56,8 @@ namespace MyGame
 		[DataMember]
 		public int WaitTurns { get; set; }
 
-		public WaitAction(int transID, GameObject actor, int turns)
-			: base(transID, actor)
+		public WaitAction(GameObject actor, int turns)
+			: base(actor)
 		{
 			this.WaitTurns = turns;
 		}
@@ -75,8 +74,8 @@ namespace MyGame
         [DataMember]
         public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-        public DropAction(int transID, GameObject actor, IEnumerable<GameObject> items)
-            : base(transID, actor)
+        public DropAction(GameObject actor, IEnumerable<GameObject> items)
+            : base(actor)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }
@@ -94,8 +93,8 @@ namespace MyGame
 		[DataMember]
 		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-		public GetAction(int transID, GameObject actor, IEnumerable<GameObject> items)
-            : base(transID, actor)
+		public GetAction(GameObject actor, IEnumerable<GameObject> items)
+            : base( actor)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }
@@ -113,8 +112,8 @@ namespace MyGame
 		[DataMember]
 		public Direction Direction { get; set; }
 
-		public MineAction(int transID, GameObject actor, Direction dir)
-			: base(transID, actor)
+		public MineAction(GameObject actor, Direction dir)
+			: base(actor)
 		{
 			this.Direction = dir;
 		}

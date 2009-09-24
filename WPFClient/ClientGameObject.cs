@@ -95,6 +95,21 @@ namespace MyGame
 			}
 		}
 
+		public void DoAction(GameAction action)
+		{
+			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
+			GameData.Data.ActionCollection.Add(action);
+			GameData.Data.Connection.DoAction(action);
+		}
+
+		public void ActionDone(GameAction action)
+		{
+			MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+			GameData.Data.ActionCollection.Remove(action);
+		}
+
+
+
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
 

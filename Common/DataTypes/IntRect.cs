@@ -81,6 +81,13 @@ namespace MyGame
 				return true;
 		}
 
+		public IEnumerable<IntPoint> Range()
+		{
+			for (int y = this.Y; y < this.Y + this.Height; ++y)
+				for (int x = this.X; x < this.X + this.Width; ++x)
+					yield return new IntPoint(x, y);
+		}
+
 		public override string ToString()
 		{
 			return ("{X=" + this.X + ",Y=" + this.Y + ",Width=" + this.Width + ",Height=" + this.Height + "}");

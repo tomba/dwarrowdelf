@@ -36,7 +36,8 @@ namespace MyGame
 		*/
 		public static IEnumerable<Direction> FindPathReverse(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
-			var nodes = FindPathInternal(src, dst, locValid);
+			Node lastNode;
+			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
 			if(nodes == null)
 				yield break;
 
@@ -48,14 +49,16 @@ namespace MyGame
 			}
 		}
 
-		public static IEnumerable<Direction> FindPath(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
+		public static IEnumerable<Direction> FindPath(IntPoint src, IntPoint dst, bool exactLocation,
+			Func<IntPoint, bool> locValid)
 		{
-			var nodes = FindPathInternal(src, dst, locValid);
+			Node lastNode;
+			var nodes = FindPathInternal(src, dst, exactLocation, locValid, out lastNode);
 			if (nodes == null)
 				yield break;
 
 			Node n1 = null;
-			Node n2 = nodes[dst];
+			Node n2 = lastNode;
 			Node n3 = n2.Parent;
 			while (n3 != null)
 			{
@@ -75,13 +78,16 @@ namespace MyGame
 			}
 		}
 
-		static IDictionary<IntPoint, Node> FindPathInternal(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
+		static IDictionary<IntPoint, Node> FindPathInternal(IntPoint src, IntPoint dst, bool exactLocation,
+			Func<IntPoint, bool> locValid, out Node lastNode)
 		{
 			OpenList.Test();
 			/*
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 			*/
+			lastNode = null;
+
 			var openList = new OpenList();
 			var nodeMap = new Dictionary<IntPoint, Node>();
 
@@ -94,8 +100,17 @@ namespace MyGame
 				node = openList.Pop();
 				node.Closed = true;
 
-				if (node.Loc == dst)
+				if (exactLocation && node.Loc == dst)
+				{
+					lastNode = node;
 					break;
+				}
+
+				if (!exactLocation && (node.Loc - dst).IsAdjacent)
+				{
+					lastNode = node;
+					break;
+				}
 
 				CheckNeighbors(node, dst, openList, nodeMap, locValid);
 			}
@@ -108,7 +123,10 @@ namespace MyGame
 			// 249457 ticks
 			// 143858
 
-			if (node.Loc != dst)
+			if (exactLocation && node.Loc != dst)
+				return null;
+
+			if (!exactLocation && !(node.Loc - dst).IsAdjacent)
 				return null;
 
 			return nodeMap;

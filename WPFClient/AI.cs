@@ -8,13 +8,36 @@ namespace MyGame
 	class AI
 	{
 		ClientGameObject m_object;
-
-		Queue<Direction> m_pathDirs;
-		IntPoint3D m_pathDest;
+		Job m_job;
 
 		public AI(ClientGameObject ob)
 		{
 			m_object = ob;
+		}
+
+		public void ActionProgress(ActionProgressEvent e)
+		{
+			if (m_job == null)
+				return;
+
+			var progress = m_job.ActionProgress(e);
+
+			if (progress == Progress.Done)
+			{
+				MyDebug.WriteLine("JOB DONE!");
+				World.TheWorld.Jobs.Remove(m_job);
+				m_job = null;
+			}
+			else if (progress == Progress.Fail)
+			{
+				MyDebug.WriteLine("JOB FAIL!!!");
+				World.TheWorld.Jobs.Remove(m_job);
+				m_job = null;
+			}
+			else
+			{
+				MyDebug.WriteLine("Job progressing");
+			}
 		}
 
 		public void ActionRequired()
@@ -22,42 +45,54 @@ namespace MyGame
 			if (m_object == GameData.Data.CurrentObject)
 				return;
 
-			var action = GetNewActionAstar(GameData.Data.CurrentObject);
-			GameData.Data.Connection.DoAction(action);
-		}
-
-		GameAction GetNewActionAstar(ClientGameObject player)
-		{
-			GameAction action;
-			var tid = GameData.Data.Connection.GetNewTransactionID();
-
-			var v = player.Location - m_object.Location;
-
-			if (v.ManhattanLength < 5)
-				return new WaitAction(tid, m_object, 1);
-
-			if (m_pathDirs == null || (player.Location - m_pathDest).ManhattanLength > 3)
+			if (m_job == null)
 			{
-				// ZZZ only 2D
-				int z = player.Location.Z;
-				var env = m_object.Environment;
-				var dirs = AStar.FindPath(m_object.Location2D, player.Location2D,
-					l => env.IsWalkable(new IntPoint3D(l, z)));
+				var job = FindJob();
 
-				m_pathDirs = new Queue<Direction>(dirs);
-				m_pathDest = player.Location;
+				if (job == null)
+				{
+					Idle();
+					return;
+				}
+
+				m_job = job;
 			}
 
-			if (m_pathDirs.Count == 0)
-				return new WaitAction(tid, m_object, 1);
+			var action = m_job.Do();
+			if (action != null)
+			{
+				m_object.DoAction(action);
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
 
-			Direction dir = m_pathDirs.Dequeue();
-			if (m_pathDirs.Count == 0)
-				m_pathDirs = null;
+		void Idle()
+		{
+			MyDebug.WriteLine("no job to do");
+			var action = new WaitAction(m_object, 1);
+			m_object.DoAction(action);
+		}
 
-			action = new MoveAction(tid, m_object, dir);
+		Job FindJob()
+		{
+			foreach (var job in m_object.World.Jobs.Where(j => j.Worker == null))
+			{
+				var res = job.Take(m_object);
+				if (res == Progress.Ok)
+				{
+					return job;
+				}
+				else if (res == Progress.Done)
+				{
+					MyDebug.WriteLine("JOB (already) DONE!");
+					World.TheWorld.Jobs.Remove(m_job);
+				}
+			}
 
-			return action;
+			return null;
 		}
 	}
 }

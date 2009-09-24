@@ -33,13 +33,13 @@ namespace MyGame
 			var v = m_player.Location - m_object.Location;
 
 			if (v.ManhattanLength < 5)
-				return new WaitAction(0, m_object, 1);
+				return new WaitAction(m_object, 1);
 
 			if (m_pathDirs == null || (m_player.Location - m_pathDest).ManhattanLength > 3)
 			{
 				// ZZZ only 2D
 				int z = m_player.Z;
-				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location2D, m_player.Location2D,
+				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location2D, m_player.Location2D, true,
 					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) && 
 						m_object.Environment.IsWalkable(new IntPoint3D(l, z)));
 
@@ -48,13 +48,13 @@ namespace MyGame
 			}
 
 			if (m_pathDirs.Count == 0)
-				return new WaitAction(0, m_object, 1);
+				return new WaitAction(m_object, 1);
 
 			Direction dir = m_pathDirs.Dequeue();
 			if (m_pathDirs.Count == 0)
 				m_pathDirs = null;
 
-			action = new MoveAction(0, m_object, dir);
+			action = new MoveAction(m_object, dir);
 
 			return action;
 		}
@@ -66,12 +66,12 @@ namespace MyGame
 			var v = m_player.Location - m_object.Location;
 
 			if (v.ManhattanLength < 3)
-				return new WaitAction(0, m_object, 1);
+				return new WaitAction(m_object, 1);
 
 			v.Normalize();
 
 			if (v == new IntVector3D())
-				return new WaitAction(0, m_object, 1);
+				return new WaitAction(m_object, 1);
 
 			var env = m_object.Environment;
 
@@ -90,13 +90,13 @@ namespace MyGame
 					Direction dir = v.ToDirection();
 					if (dir == Direction.None)
 						throw new Exception();
-					action = new MoveAction(0, m_object, dir);
+					action = new MoveAction(m_object, dir);
 					break;
 				}
 			}
 
 			if (action == null)
-				return new WaitAction(0, m_object, 1);
+				return new WaitAction(m_object, 1);
 
 			return action;
 		}

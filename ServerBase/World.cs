@@ -558,22 +558,12 @@ namespace MyGame
 				var living = m_livingEnumerator.Current;
 
 				if (!forceMove && !living.HasAction)
-				{
-					if (m_useMaxMoveTime)
-					{
-						m_nextMove = DateTime.Now + m_maxMoveTime;
-						m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
-					}
-
-					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
-
 					break;
-				}
 
 				if (living.HasAction)
 					living.PerformAction();
 
-				bool last = !m_livingEnumerator.MoveNext();
+				var last = GetNextLivingSeq();
 				if (last)
 				{
 					VDbg("last living handled");
@@ -581,7 +571,6 @@ namespace MyGame
 					break;
 				}
 			}
-
 
 			VDbg("SequentialWork Done");
 		}
@@ -607,16 +596,49 @@ namespace MyGame
 			}
 
 			m_livingEnumerator = m_livingList.GetEnumerator();
-			if (m_livingEnumerator.MoveNext() == false)
-				throw new Exception("no livings");
 
 			m_state = WorldState.TurnOngoing;
+
+			if (m_tickMethod == WorldTickMethod.Simultaneous)
+			{
+				if (!m_livingEnumerator.MoveNext())
+					throw new Exception("no livings");
+
+				if (m_useMaxMoveTime)
+				{
+					m_nextMove = DateTime.Now + m_maxMoveTime;
+					m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
+				}
+			}
+			else if (m_tickMethod == WorldTickMethod.Sequential)
+			{
+				bool last = GetNextLivingSeq();
+				if (last)
+					throw new Exception("no livings");
+			}
+		}
+
+		bool GetNextLivingSeq()
+		{
+			bool last = !m_livingEnumerator.MoveNext();
+
+			if (last)
+				return true;
 
 			if (m_useMaxMoveTime)
 			{
 				m_nextMove = DateTime.Now + m_maxMoveTime;
 				m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
 			}
+
+			if (m_tickMethod == WorldTickMethod.Sequential)
+			{
+				var living = m_livingEnumerator.Current;
+				if (!living.HasAction)
+					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
+			}
+
+			return false;
 		}
 
 		void EndTurn()

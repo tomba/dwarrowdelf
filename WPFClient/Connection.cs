@@ -75,6 +75,13 @@ namespace MyGame
 			return (m_server as ICommunicationObject).State == CommunicationState.Opened;
 		}
 
+		public void DoAction(GameAction action)
+		{
+			int tid = GetNewTransactionID();
+			action.TransactionID = tid;
+			this.Server.DoAction(action);
+		}
+
 		public CommunicationState CommState
 		{
 			get { return (m_server as ICommunicationObject).State; }
@@ -99,12 +106,6 @@ namespace MyGame
 		public IServerService Server
 		{
 			get { return m_server; }
-		}
-
-		public void DoAction(GameAction action)
-		{
-			GameData.Data.ActionCollection.Add(action);
-			this.Server.DoAction(action);
 		}
 
 		public bool HasFaulted()

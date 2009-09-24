@@ -205,5 +205,37 @@ namespace MyGame
 			v.FastRotate(rotate);
 			return v.ToDirection();
 		}
+
+		// XXX needs better name
+		public bool IsAdjacent
+		{
+			get
+			{
+				if (this.X <= 1 && this.X >= -1 && this.Y <= 1 && this.Y >= -1 && this.Z <= 1 && this.Z >= -1)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		// XXX needs better name
+		public bool IsAdjacent2D
+		{
+			get
+			{
+				if (this.X <= 1 && this.X >= -1 && this.Y <= 1 && this.Y >= -1 && this.Z == 0)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		public bool IsNull
+		{
+			get
+			{
+				return this.X == 0 && this.Y == 0 && this.Z == 0;
+			}
+		}
 	}
 }

@@ -19,6 +19,8 @@ namespace MyGame
 		ObservableObjectCollection m_objects;
 		public ReadOnlyObservableObjectCollection Objects { get; private set; }
 
+		public ObservableCollection<Job> Jobs { get; private set; }
+
 		public SymbolDrawingCache SymbolDrawings { get; private set; }
 
 		// perhaps this is not needed in client side
@@ -32,6 +34,7 @@ namespace MyGame
 			m_objects = new ObservableObjectCollection();
 			this.Objects = new ReadOnlyObservableObjectCollection(m_objects);
 			this.SymbolDrawings = new SymbolDrawingCache(areaData);
+			this.Jobs = new ObservableCollection<Job>();
 		}
 
 		public void AddEnvironment(Environment env)

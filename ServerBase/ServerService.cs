@@ -184,7 +184,7 @@ namespace MyGame
 
 		void _LogOffChar(object data)
 		{
-			m_player.EnqueueAction(new WaitAction(0, m_player, 1));
+			m_player.EnqueueAction(new WaitAction(m_player, 1));
 			m_world.BeginInvoke(__LogOffChar);
 		}
 
@@ -207,6 +207,9 @@ namespace MyGame
 		{
 			try
 			{
+				if (action.TransactionID == 0)
+					throw new Exception();
+
 				var living = m_friendlies.SingleOrDefault(l => l.ObjectID == action.ActorObjectID);
 
 				if (living == null)

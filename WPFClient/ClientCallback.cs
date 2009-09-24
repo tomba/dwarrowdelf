@@ -76,7 +76,7 @@ namespace MyGame
 
 		void _DeliverMessage(Message msg)
 		{
-			MyDebug.WriteLine("Received msg {0}", msg);
+			MyDebug.WriteLine("[RX] {0}", msg);
 
 			if (msg is TerrainData)
 			{
@@ -223,7 +223,7 @@ namespace MyGame
 			{
 				var e = (ActionProgressEvent)@event;
 
-				MyDebug.WriteLine("ActionProgressEvent({0})", e.TransactionID);
+				//MyDebug.WriteLine("ActionProgressEvent({0})", e.TransactionID);
 
 				var list = GameData.Data.ActionCollection;
 				GameAction action = list.SingleOrDefault(a => a.TransactionID == e.TransactionID);
@@ -233,14 +233,20 @@ namespace MyGame
 				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
 				itemsView.Refresh();
 
+				var ob = World.TheWorld.FindObject(action.ActorObjectID);
+				if (ob == null)
+					throw new Exception();
+
 				if (e.TurnsLeft == 0)
-					GameData.Data.ActionCollection.Remove(action);
+					ob.ActionDone(action);
+
+				ob.AI.ActionProgress(e);
 			}
 			else if (@event is ActionRequiredEvent)
 			{
 				var e = (ActionRequiredEvent)@event;
 
-				MyDebug.WriteLine("{0}", e);
+				//MyDebug.WriteLine("{0}", e);
 
 				var ob = World.TheWorld.FindObject(e.ObjectID);
 
