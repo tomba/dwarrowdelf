@@ -9,18 +9,46 @@ namespace MyGame
 {
 	abstract class Task : INotifyPropertyChanged
 	{
-		protected Job m_job;
-		protected GameAction m_currentAction;
+		public Job Job { get; private set; }
+		public Living Worker { get { return this.Job.Worker; } }
+		GameAction m_currentAction;
 
 		protected Task(Job job)
 		{
-			m_job = job;
+			this.Job = job;
 		}
 
-		public abstract Progress ActionProgress(ActionProgressEvent e);
 		public abstract Progress Prepare();
 
-		public abstract GameAction Do();
+		public GameAction ActionRequired()
+		{
+			Debug.Assert(m_currentAction == null);
+			m_currentAction = GetNextAction();
+			return m_currentAction;
+		}
+
+		public Progress ActionProgress(ActionProgressEvent e)
+		{
+			if (m_currentAction == null || e.TransactionID != m_currentAction.TransactionID)
+				return Progress.None;
+
+			if (e.Success == false)
+			{
+				m_currentAction = null;
+				return Progress.Fail;
+			}
+
+			if (e.TurnsLeft > 0)
+				return Progress.Ok;
+
+			m_currentAction = null;
+
+			var progress = CheckDone();
+			return progress;
+		}
+
+		protected abstract GameAction GetNextAction();
+		protected abstract Progress CheckDone();
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -38,6 +66,7 @@ namespace MyGame
 		Queue<Direction> m_pathDirs;
 		IntPoint3D m_dest;
 		bool m_adjacent;
+		IntPoint3D m_supposedLocation;
 
 		public MoveTask(Job job, IntPoint3D destination, bool adjacent)
 			: base(job)
@@ -48,15 +77,15 @@ namespace MyGame
 
 		public override Progress Prepare()
 		{
-			var v = m_dest - m_job.Worker.Location;
+			var v = m_dest - this.Worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
 				return Progress.Done;
 
 			// ZZZ only 2D
 			int z = m_dest.Z;
-			var src2d = m_job.Worker.Location2D;
+			var src2d = this.Worker.Location2D;
 			var dest2d = new IntPoint(m_dest.X, m_dest.Y);
-			var env = m_job.Environment;
+			var env = this.Job.Environment;
 			var dirs = AStar.FindPath(src2d, dest2d, !m_adjacent,
 				l => env.IsWalkable(new IntPoint3D(l, z)));
 
@@ -65,42 +94,33 @@ namespace MyGame
 			if (m_pathDirs.Count == 0)
 				return Progress.Fail;
 
+			m_supposedLocation = this.Worker.Location;
+
 			return Progress.Ok;
 		}
 
-		public override GameAction Do()
+		protected override GameAction GetNextAction()
 		{
-			Debug.Assert(m_currentAction == null);
+			if (m_supposedLocation != this.Worker.Location)
+				return null;
 
-			var dir = GetNext();
-			m_currentAction = new MoveAction(dir);
-			return m_currentAction;
+			var dir = GetNextDir();
+			var action = new MoveAction(dir);
+			m_supposedLocation += IntVector3D.FromDirection(dir);
+
+			return action;
 		}
 
-		public override Progress ActionProgress(ActionProgressEvent e)
+		protected override Progress CheckDone()
 		{
-			Debug.Assert(m_currentAction != null);
-
-			if (e.Success == false)
-			{
-				m_currentAction = null;
-				return Progress.Fail;
-			}
-
-			if (e.TurnsLeft > 0)
-				return Progress.Ok;
-
-			m_currentAction = null;
-
-			var v = m_dest - m_job.Worker.Location;
-
+			var v = m_dest - this.Worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
 				return Progress.Done;
-
-			return Progress.Ok;
+			else
+				return Progress.Ok;
 		}
 
-		Direction GetNext()
+		Direction GetNextDir()
 		{
 			if (m_pathDirs.Count == 0)
 				return Direction.None;
@@ -131,41 +151,26 @@ namespace MyGame
 
 		public override Progress Prepare()
 		{
-			Debug.Assert(m_currentAction == null);
-
-			var v = m_location - m_job.Worker.Location;
+			var v = m_location - this.Worker.Location;
 			if (v.IsAdjacent2D)
 				return Progress.Ok;
 			else
 				return Progress.Fail;
 		}
 
-		public override GameAction Do()
+		protected override GameAction GetNextAction()
 		{
-			Debug.Assert(m_currentAction == null);
+			var v = m_location - this.Worker.Location;
 
-			MyDebug.WriteLine("mine!");
+			if (!v.IsAdjacent2D)
+				return null;
 
-			var v = m_location - m_job.Worker.Location;
-			m_currentAction = new MineAction(v.ToDirection());
-			return m_currentAction;
+			var action = new MineAction(v.ToDirection());
+			return action;
 		}
 
-		public override Progress ActionProgress(ActionProgressEvent e)
+		protected override Progress CheckDone()
 		{
-			Debug.Assert(m_currentAction != null);
-
-			if (e.Success == false)
-			{
-				m_currentAction = null;
-				return Progress.Fail;
-			}
-
-			if (e.TurnsLeft > 0)
-				return Progress.Ok;
-
-			m_currentAction = null;
-
 			return Progress.Done;
 		}
 

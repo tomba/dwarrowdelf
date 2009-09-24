@@ -7,6 +7,7 @@ namespace MyGame
 {
 	public enum Progress
 	{
+		None,
 		Ok,
 		Fail,
 		Done,
@@ -31,17 +32,18 @@ namespace MyGame
 
 			if (progress == Progress.Done)
 			{
-				MyDebug.WriteLine("JOB DONE!");
+				MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_job);
 				World.TheWorld.Jobs.Remove(m_job);
 				m_job = null;
 			}
 			else if (progress == Progress.Fail)
 			{
-				MyDebug.WriteLine("JOB FAIL!!!");
+				MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_job);
 				World.TheWorld.Jobs.Remove(m_job);
+				m_job.Quit();
 				m_job = null;
 			}
-			else
+			else if (progress == Progress.Ok)
 			{
 				MyDebug.WriteLine("Job progressing");
 			}
@@ -49,8 +51,8 @@ namespace MyGame
 
 		public void ActionRequired()
 		{
-//			if (m_object == GameData.Data.CurrentObject)
-//				return;
+			if (m_object == GameData.Data.CurrentObject)
+				return;
 
 			if (m_job == null)
 			{
@@ -65,20 +67,22 @@ namespace MyGame
 				m_job = job;
 			}
 
-			var action = m_job.Do();
+			var action = m_job.ActionRequired();
 			if (action != null)
 			{
 				m_object.EnqueueAction(action);
 			}
 			else
 			{
-				throw new Exception();
+				MyDebug.WriteLine("[AI] JOB ABORTED ({0})!!!", m_job);
+				m_job.Quit();
+				m_job = null;
 			}
 		}
 
 		void Idle()
 		{
-			MyDebug.WriteLine("no job to do");
+			MyDebug.WriteLine("[AI] no job to do");
 			var action = new WaitAction(1);
 			m_object.EnqueueAction(action);
 		}
@@ -94,7 +98,7 @@ namespace MyGame
 				}
 				else if (res == Progress.Done)
 				{
-					MyDebug.WriteLine("JOB (already) DONE!");
+					MyDebug.WriteLine("[AI] JOB (already) DONE!");
 					World.TheWorld.Jobs.Remove(m_job);
 				}
 			}

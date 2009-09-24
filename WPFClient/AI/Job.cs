@@ -12,8 +12,8 @@ namespace MyGame
 		public Environment Environment { get; protected set; }
 		public IntPoint3D Location { get; protected set; }
 
-		ClientGameObject m_worker;
-		public ClientGameObject Worker
+		Living m_worker;
+		public Living Worker
 		{
 			get { return m_worker; }
 			protected set
@@ -37,20 +37,14 @@ namespace MyGame
 
 		protected Queue<Task> m_tasks = new Queue<Task>();
 
-
-		public GameAction Do()
-		{
-			return this.CurrentTask.Do();
-		}
-
 		protected abstract bool Prepare();
 
-		public virtual void Cancel()
+		public GameAction ActionRequired()
 		{
-			this.Worker = null;
+			return this.CurrentTask.ActionRequired();
 		}
 
-		public Progress Take(ClientGameObject worker)
+		public Progress Take(Living worker)
 		{
 			if (this.Worker != null)
 				throw new Exception();
@@ -83,31 +77,52 @@ namespace MyGame
 			}
 		}
 
+		public void Quit()
+		{
+			if (this.Worker == null)
+				throw new Exception();
+
+			this.Worker = null;
+			m_tasks.Clear();
+		}
+
 		public Progress ActionProgress(ActionProgressEvent e)
 		{
-			if (e.Success == false)
-			{
-				MyDebug.WriteLine("JOB FAIL!!!");
-				Cancel();
-				return Progress.Fail;
-			}
+			if (this.CurrentTask == null)
+				return Progress.None;
 
-			if (e.TurnsLeft == 0)
+			var progress = this.CurrentTask.ActionProgress(e);
+
+			switch (progress)
 			{
-				var progress = this.CurrentTask.ActionProgress(e);
-				if (progress == Progress.Done)
-				{
+				case Progress.None:
+					return Progress.None;
+
+				case Progress.Ok:
+					return Progress.Ok;
+
+				case Progress.Fail:
+					MyDebug.WriteLine("[AI] Task failed, cancel job");
+					this.CurrentTask = null;
+					this.Worker = null;
+					return Progress.Fail;
+
+				case Progress.Done:
 					if (m_tasks.Count == 0)
 					{
 						this.CurrentTask = null;
+						this.Worker = null;
 						return Progress.Done;
 					}
+					else
+					{
+						this.CurrentTask = m_tasks.Dequeue();
+						return Progress.Ok;
+					}
 
-					this.CurrentTask = m_tasks.Dequeue();
-				}
+				default:
+					throw new Exception();
 			}
-
-			return Progress.Ok;
 		}
 
 		#region INotifyPropertyChanged Members
