@@ -99,13 +99,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI.cs" />
+    <Compile Include="AI\AI.cs" />
+    <Compile Include="AI\Task.cs" />
     <Compile Include="ClientCallback.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Job.cs" />
+    <Compile Include="AI\Job.cs" />
     <Compile Include="Living.cs" />
     <Compile Include="MapControl.cs" />
     <Compile Include="ItemObject.cs" />

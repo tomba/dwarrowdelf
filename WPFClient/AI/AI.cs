@@ -5,6 +5,13 @@ using System.Text;
 
 namespace MyGame
 {
+	public enum Progress
+	{
+		Ok,
+		Fail,
+		Done,
+	}
+
 	class AI
 	{
 		Living m_object;
@@ -42,8 +49,8 @@ namespace MyGame
 
 		public void ActionRequired()
 		{
-			if (m_object == GameData.Data.CurrentObject)
-				return;
+//			if (m_object == GameData.Data.CurrentObject)
+//				return;
 
 			if (m_job == null)
 			{
