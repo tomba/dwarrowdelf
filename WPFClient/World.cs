@@ -14,10 +14,10 @@ namespace MyGame
 		public IAreaData AreaData { get; private set; }
 		public ObservableCollection<Environment> Environments { get; private set; }
 
-		public ObjectCollection Controllables { get; private set; }
+		public LivingCollection Controllables { get; private set; }
 
-		ObservableObjectCollection m_objects;
-		public ReadOnlyObservableObjectCollection Objects { get; private set; }
+		KeyedObjectCollection m_objects;
+		public ReadOnlyKeyedObjectCollection Objects { get; private set; }
 
 		public ObservableCollection<Job> Jobs { get; private set; }
 
@@ -30,9 +30,9 @@ namespace MyGame
 		{
 			this.AreaData = areaData;
 			this.Environments = new ObservableCollection<Environment>();
-			this.Controllables = new ObjectCollection();
-			m_objects = new ObservableObjectCollection();
-			this.Objects = new ReadOnlyObservableObjectCollection(m_objects);
+			this.Controllables = new LivingCollection();
+			m_objects = new KeyedObjectCollection();
+			this.Objects = new ReadOnlyKeyedObjectCollection(m_objects);
 			this.SymbolDrawings = new SymbolDrawingCache(areaData);
 			this.Jobs = new ObservableCollection<Job>();
 		}

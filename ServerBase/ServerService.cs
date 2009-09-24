@@ -203,7 +203,7 @@ namespace MyGame
 			m_client.LogOffCharReply();
 		}
 
-		public void DoAction(GameAction action)
+		public void EnqueueAction(GameAction action)
 		{
 			try
 			{

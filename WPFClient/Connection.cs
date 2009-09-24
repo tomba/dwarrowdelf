@@ -75,11 +75,11 @@ namespace MyGame
 			return (m_server as ICommunicationObject).State == CommunicationState.Opened;
 		}
 
-		public void DoAction(GameAction action)
+		public void EnqueueAction(GameAction action)
 		{
 			int tid = GetNewTransactionID();
 			action.TransactionID = tid;
-			this.Server.DoAction(action);
+			this.Server.EnqueueAction(action);
 		}
 
 		public CommunicationState CommState

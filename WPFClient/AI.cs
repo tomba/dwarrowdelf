@@ -7,10 +7,10 @@ namespace MyGame
 {
 	class AI
 	{
-		ClientGameObject m_object;
+		Living m_object;
 		Job m_job;
 
-		public AI(ClientGameObject ob)
+		public AI(Living ob)
 		{
 			m_object = ob;
 		}
@@ -61,7 +61,7 @@ namespace MyGame
 			var action = m_job.Do();
 			if (action != null)
 			{
-				m_object.DoAction(action);
+				m_object.EnqueueAction(action);
 			}
 			else
 			{
@@ -73,7 +73,7 @@ namespace MyGame
 		{
 			MyDebug.WriteLine("no job to do");
 			var action = new WaitAction(1);
-			m_object.DoAction(action);
+			m_object.EnqueueAction(action);
 		}
 
 		Job FindJob()

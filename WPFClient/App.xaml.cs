@@ -132,7 +132,7 @@ namespace MyGame
 			path = System.IO.Path.Combine(path, "Server.exe");
 
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
-			//m_server.TraceListener = GameData.Data.MyTraceListener;
+			m_server.TraceListener = GameData.Data.MyTraceListener;
 			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);

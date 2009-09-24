@@ -166,9 +166,9 @@ namespace MyGame
 				if (currentOb != null)
 				{
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
-						currentOb.DoAction(new MineAction(dir));
+						currentOb.EnqueueAction(new MineAction(dir));
 					else
-						currentOb.DoAction(new MoveAction(dir));
+						currentOb.EnqueueAction(new MoveAction(dir));
 				}
 				else
 				{
@@ -180,7 +180,7 @@ namespace MyGame
 				e.Handled = true;
 				if (currentOb != null)
 				{
-					currentOb.DoAction(new WaitAction(1));
+					currentOb.EnqueueAction(new WaitAction(1));
 				}
 				else
 				{
@@ -224,7 +224,7 @@ namespace MyGame
 			e.Handled = true;
 			var currentOb = GameData.Data.CurrentObject;
 			if (currentOb != null)
-				currentOb.DoAction(new MoveAction(dir));
+				currentOb.EnqueueAction(new MoveAction(dir));
 			else
 				map.Z += IntVector3D.FromDirection(dir).Z;
 		}
@@ -315,7 +315,7 @@ namespace MyGame
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			plr.DoAction(new GetAction(list.Cast<GameObject>()));
+			plr.EnqueueAction(new GetAction(list.Cast<GameObject>()));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -327,7 +327,7 @@ namespace MyGame
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.DoAction(new DropAction(list.Cast<GameObject>()));
+			plr.EnqueueAction(new DropAction(list.Cast<GameObject>()));
 		}
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)

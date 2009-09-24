@@ -106,6 +106,7 @@
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Job.cs" />
+    <Compile Include="Living.cs" />
     <Compile Include="MapControl.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="MapControlBase.cs" />

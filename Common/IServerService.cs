@@ -29,6 +29,6 @@ namespace MyGame
 		void LogOffChar();
 
 		[OperationContract(IsOneWay = true)]
-		void DoAction(GameAction action);
+		void EnqueueAction(GameAction action);
 	}
 }

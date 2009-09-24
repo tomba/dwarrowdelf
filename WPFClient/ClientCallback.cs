@@ -55,7 +55,7 @@ namespace MyGame
 
 		void _LogOnCharReply(ObjectID playerID)
 		{
-			ClientGameObject player = new ClientGameObject(World.TheWorld, playerID);
+			var player = new Living(World.TheWorld, playerID);
 			World.TheWorld.Controllables.Add(player);
 			if (GameData.Data.CurrentObject == null)
 				GameData.Data.CurrentObject = player;
@@ -149,19 +149,18 @@ namespace MyGame
 			{
 				LivingData ld = (LivingData)msg;
 
-				ClientGameObject ob = World.TheWorld.FindObject(ld.ObjectID);
+				var ob = World.TheWorld.FindObject<Living>(ld.ObjectID);
 
 				if (ob == null)
 				{
-					MyDebug.WriteLine("New living appeared {0}", ld.ObjectID);
-					ob = new ClientGameObject(World.TheWorld, ld.ObjectID);
+					MyDebug.WriteLine("New living appeared {0}/{1}", ld.Name, ld.ObjectID);
+					ob = new Living(World.TheWorld, ld.ObjectID);
 				}
 
 				ob.SymbolID = ld.SymbolID;
 				ob.VisionRange = ld.VisionRange;
 				ob.Name = ld.Name;
 				ob.Color = ld.Color.ToColor();
-				ob.IsLiving = true;
 
 				ClientGameObject env = null;
 				if (ld.Environment != ObjectID.NullObjectID)
@@ -177,14 +176,13 @@ namespace MyGame
 
 				if (ob == null)
 				{
-					MyDebug.WriteLine("New object appeared {0}", id.ObjectID);
+					MyDebug.WriteLine("New object appeared {0}/{1}", id.Name, id.ObjectID);
 					ob = new ItemObject(World.TheWorld, id.ObjectID);
 				}
 
 				ob.Name = id.Name;
 				ob.SymbolID = id.SymbolID;
 				ob.Color = id.Color.ToColor();
-				ob.IsLiving = false;
 
 				ClientGameObject env = null;
 				if (id.Environment != ObjectID.NullObjectID)
@@ -233,7 +231,7 @@ namespace MyGame
 				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
 				itemsView.Refresh();
 
-				var ob = World.TheWorld.FindObject(action.ActorObjectID);
+				var ob = World.TheWorld.FindObject<Living>(action.ActorObjectID);
 				if (ob == null)
 					throw new Exception();
 
@@ -248,7 +246,7 @@ namespace MyGame
 
 				//MyDebug.WriteLine("{0}", e);
 
-				var ob = World.TheWorld.FindObject(e.ObjectID);
+				var ob = World.TheWorld.FindObject<Living>(e.ObjectID);
 
 				if (ob == null)
 					throw new Exception();

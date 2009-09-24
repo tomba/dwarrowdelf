@@ -16,7 +16,6 @@ namespace MyGame
 	}   
 
 	class ActionCollection : ObservableCollection<GameAction> { }
-	class ObjectCollection : ObservableCollection<ClientGameObject> { }
 
 	class GameData : INotifyPropertyChanged
 	{
@@ -30,8 +29,8 @@ namespace MyGame
 
 		public Connection Connection { get; set; }
 
-		ClientGameObject m_currentObject;
-		public ClientGameObject CurrentObject
+		Living m_currentObject;
+		public Living CurrentObject
 		{
 			get { return m_currentObject; }
 			set { m_currentObject = value; Notify("CurrentObject"); }

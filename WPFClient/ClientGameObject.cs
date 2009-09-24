@@ -4,10 +4,13 @@ using System.Linq;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace MyGame
 {
-	class ObservableObjectCollection : ObservableKeyedCollection<ObjectID, ClientGameObject>
+	class ObjectCollection : ObservableCollection<ClientGameObject> { }
+
+	class KeyedObjectCollection : ObservableKeyedCollection<ObjectID, ClientGameObject>
 	{
 		protected override ObjectID GetKeyForItem(ClientGameObject item)
 		{
@@ -15,9 +18,9 @@ namespace MyGame
 		}
 	}
 
-	class ReadOnlyObservableObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, ClientGameObject>
+	class ReadOnlyKeyedObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, ClientGameObject>
 	{
-		public ReadOnlyObservableObjectCollection(ObservableObjectCollection collection)
+		public ReadOnlyKeyedObjectCollection(KeyedObjectCollection collection)
 			: base(collection)
 		{
 		}
@@ -27,22 +30,8 @@ namespace MyGame
 
 	class ClientGameObject : GameObject, INotifyPropertyChanged
 	{
-		// XXX not re-entrant
-		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
-
-		ObservableObjectCollection m_inventory;
-		public ReadOnlyObservableObjectCollection Inventory { get; private set; }
-
-		uint m_losMapVersion;
-		IntPoint3D m_losLocation;
-		int m_visionRange;
-		Grid2D<bool> m_visionMap;
-
-		public int VisionRange
-		{
-			get { return m_visionRange; }
-			set { m_visionRange = value; m_visionMap = null; }
-		}
+		KeyedObjectCollection m_inventory;
+		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
 
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
@@ -53,20 +42,17 @@ namespace MyGame
 		public ClientGameObject Parent { get; private set; }
 		public IntPoint3D Location { get; private set; }
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
-		public bool IsLiving { get; set; }
+		public bool IsLiving { get; protected set; }
 		public World World { get; private set; }
-
-		public AI AI { get; private set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(objectID)
 		{
 			this.World = world;
 			this.World.AddObject(this);
-			m_inventory = new ObservableObjectCollection();
-			this.Inventory = new ReadOnlyObservableObjectCollection(m_inventory);
+			m_inventory = new KeyedObjectCollection();
+			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
 			this.Color = Colors.Black;
-			this.AI = new AI(this);
 		}
 
 		string m_name;
@@ -94,22 +80,6 @@ namespace MyGame
 				return new DrawingImage(this.World.SymbolDrawings.GetDrawing(m_symbolID, this.Color));
 			}
 		}
-
-		public void DoAction(GameAction action)
-		{
-			action.ActorObjectID = this.ObjectID;
-			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
-			GameData.Data.ActionCollection.Add(action);
-			GameData.Data.Connection.DoAction(action);
-		}
-
-		public void ActionDone(GameAction action)
-		{
-			MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
-			GameData.Data.ActionCollection.Remove(action);
-		}
-
-
 
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
@@ -142,42 +112,6 @@ namespace MyGame
 			get { return this.Parent as Environment; }
 		}
 
-		public Grid2D<bool> VisionMap
-		{
-			get
-			{
-				UpdateLOS();
-				return m_visionMap;
-			}
-		}
-
-		void UpdateLOS()
-		{
-			Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
-
-			if (this.Environment == null)
-				return;
-
-			if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version)
-				return;
-
-			if (m_visionMap == null)
-			{
-				m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
-					m_visionRange, m_visionRange);
-				m_losMapVersion = 0;
-			}
-
-			var terrains = this.Environment.World.AreaData.Terrains;
-			var level = this.Environment.GetLevel(this.Location.Z);
-
-			s_losAlgo.Calculate(this.Location2D, m_visionRange,
-				m_visionMap, level.Bounds,
-				l => terrains[level.GetTerrainID(l)].IsWalkable == false);
-
-			m_losMapVersion = this.Environment.Version;
-			m_losLocation = this.Location;
-		}
 
 		void Notify(string name)
 		{
