@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyAreaData", "MyAreaData\My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyArea", "MyArea\MyArea.csproj", "{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFClientControls", "WPFClientControls\WPFClientControls.csproj", "{994FA20F-F963-4847-BFE7-4EC2A256CE71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFMapControlTest", "WPFMapControlTest\WPFMapControlTest.csproj", "{52C1CC46-CA65-432D-8568-C5AA6954EC59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +50,14 @@ Global
 		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}.Release|Any CPU.Build.0 = Release|Any CPU
+		{994FA20F-F963-4847-BFE7-4EC2A256CE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{994FA20F-F963-4847-BFE7-4EC2A256CE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{994FA20F-F963-4847-BFE7-4EC2A256CE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{994FA20F-F963-4847-BFE7-4EC2A256CE71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52C1CC46-CA65-432D-8568-C5AA6954EC59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52C1CC46-CA65-432D-8568-C5AA6954EC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52C1CC46-CA65-432D-8568-C5AA6954EC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52C1CC46-CA65-432D-8568-C5AA6954EC59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
