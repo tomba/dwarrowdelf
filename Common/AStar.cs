@@ -10,7 +10,8 @@ namespace MyGame
 	public static class AStar
 	{
 		// tries to save some memory by using ushorts
-		class Node
+		// public, so that AStarTest can show the internals
+		public class Node
 		{
 			public IntPoint Loc { get; private set; }
 			public Node Parent;
@@ -25,15 +26,17 @@ namespace MyGame
 				Parent = parent;
 			}
 		}
-		/*
+		
+		// public for AStarTest
 		public static IEnumerable<Node> FindPathNodes(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
-			var nodes = FindPathInternal(src, dst, locValid);
+			Node lastNode;
+			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
 			if (nodes == null)
 				return null;
 			return nodes.Values;
 		}
-		*/
+		
 		public static IEnumerable<Direction> FindPathReverse(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
 			Node lastNode;
