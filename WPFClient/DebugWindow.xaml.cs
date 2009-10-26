@@ -34,7 +34,17 @@ namespace MyGame
 
 			if (System.Windows.Forms.SystemInformation.MonitorCount == 2)
 			{
-				var screen = System.Windows.Forms.Screen.AllScreens[1];
+				System.Windows.Forms.Screen screen = null;
+				for (int i = 0; i < System.Windows.Forms.Screen.AllScreens.Length; ++i)
+				{
+					if (System.Windows.Forms.Screen.AllScreens[i] !=
+						System.Windows.Forms.Screen.PrimaryScreen)
+					{
+						screen = System.Windows.Forms.Screen.AllScreens[i];
+						break;
+					}
+				}
+
 				var wa = screen.WorkingArea;
 				Rect r = new Rect(wa.Left, wa.Top, wa.Width, wa.Height);
 
