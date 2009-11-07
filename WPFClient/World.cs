@@ -19,7 +19,7 @@ namespace MyGame
 		KeyedObjectCollection m_objects;
 		public ReadOnlyKeyedObjectCollection Objects { get; private set; }
 
-		public ObservableCollection<Job> Jobs { get; private set; }
+		public ObservableCollection<IJob> Jobs { get; private set; }
 
 		public SymbolDrawingCache SymbolDrawings { get; private set; }
 
@@ -34,7 +34,7 @@ namespace MyGame
 			m_objects = new KeyedObjectCollection();
 			this.Objects = new ReadOnlyKeyedObjectCollection(m_objects);
 			this.SymbolDrawings = new SymbolDrawingCache(areaData);
-			this.Jobs = new ObservableCollection<Job>();
+			this.Jobs = new ObservableCollection<IJob>();
 		}
 
 		public void AddEnvironment(Environment env)

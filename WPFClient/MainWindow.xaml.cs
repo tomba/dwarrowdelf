@@ -285,8 +285,8 @@ namespace MyGame
 
 				foreach (var p in r.Range())
 				{
-					if (env.GetTerrainID(new IntPoint3D(p, z)) != wall.ID)
-						continue;
+					//if (env.GetTerrainID(new IntPoint3D(p, z)) != wall.ID)
+					//	continue;
 
 					var job = new MineJob(env, new IntPoint3D(p, z));
 					this.Map.World.Jobs.Add(job);

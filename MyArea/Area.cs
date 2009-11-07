@@ -95,7 +95,7 @@ namespace MyArea
 			env.SetActionHandler(pp, ActionHandler);
 
 			var obs = world.AreaData.Objects;
-			
+
 			var rand = new Random();
 			for (int i = 0; i < 10; ++i)
 			{
@@ -109,23 +109,42 @@ namespace MyArea
 				monster.Actor = monsterAI;
 				monster.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
 			}
-			
-			// Add an item
-			var item = new ItemObject(world);
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-			item.Name = "red gem";
-			item.Color = GameColors.Red;
-			item.MoveTo(env, new IntPoint3D(3, 0, 0));
 
-			item = new ItemObject(world);
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-			item.Name = "gem";
-			item.MoveTo(env, new IntPoint3D(2, 0, 0));
+			// Add items
+			for (int i = 0; i < 10; ++i)
+			{
+				IntPoint3D p;
+				do
+				{
+					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
+				} while (env.GetTerrainID(p) != floor.ID);
 
-			item = new ItemObject(world);
-			item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;
-			item.Name = "puu";
-			item.MoveTo(env, new IntPoint3D(0, 3, 0));
+
+				var item = new ItemObject(world);
+				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
+				item.Name = "gem" + i.ToString();
+				item.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
+				item.MoveTo(env, p);
+			}
+
+			{
+				// Add an item
+				var item = new ItemObject(world);
+				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
+				item.Name = "red gem";
+				item.Color = GameColors.Red;
+				item.MoveTo(env, new IntPoint3D(3, 0, 0));
+
+				item = new ItemObject(world);
+				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
+				item.Name = "gem";
+				item.MoveTo(env, new IntPoint3D(2, 0, 0));
+
+				item = new ItemObject(world);
+				item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;
+				item.Name = "puu";
+				item.MoveTo(env, new IntPoint3D(0, 3, 0));
+			}
 
 			return env;
 		}

@@ -9,23 +9,26 @@ namespace MyGame
 {
 	abstract class Task : INotifyPropertyChanged
 	{
-		public Job Job { get; private set; }
+		public IJob Job { get; private set; }
 		public Living Worker { get { return this.Job.Worker; } }
 		GameAction m_currentAction;
 
-		protected Task(Job job)
+		protected Task(IJob job)
 		{
 			this.Job = job;
 		}
 
-		public abstract Progress Prepare();
-
-		public GameAction ActionRequired()
+		public GameAction CurrentAction
 		{
-			Debug.Assert(m_currentAction == null);
-			m_currentAction = GetNextAction();
-			return m_currentAction;
+			get { return m_currentAction; }
+			protected set { m_currentAction = value; }
 		}
+
+		public void Quit()
+		{
+		}
+
+		public abstract Progress PrepareNextAction();
 
 		public Progress ActionProgress(ActionProgressEvent e)
 		{
@@ -43,12 +46,12 @@ namespace MyGame
 
 			m_currentAction = null;
 
-			var progress = CheckDone();
+			var progress = CheckProgress();
+
 			return progress;
 		}
 
-		protected abstract GameAction GetNextAction();
-		protected abstract Progress CheckDone();
+		protected abstract Progress CheckProgress();
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -64,72 +67,66 @@ namespace MyGame
 	class MoveTask : Task
 	{
 		Queue<Direction> m_pathDirs;
+		Environment m_environment;
 		IntPoint3D m_dest;
 		bool m_adjacent;
 		IntPoint3D m_supposedLocation;
 
-		public MoveTask(Job job, IntPoint3D destination, bool adjacent)
+		public MoveTask(IJob job, Environment environment, IntPoint3D destination, bool adjacent)
 			: base(job)
 		{
+			m_environment = environment;
 			m_dest = destination;
 			m_adjacent = adjacent;
 		}
 
-		public override Progress Prepare()
+		public override Progress PrepareNextAction()
 		{
-			var v = m_dest - this.Worker.Location;
-			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
-				return Progress.Done;
+			if (m_pathDirs == null || m_supposedLocation != this.Worker.Location)
+			{
+				var v = m_dest - this.Worker.Location;
+				if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
+					return Progress.Done;
 
-			// ZZZ only 2D
-			int z = m_dest.Z;
-			var src2d = this.Worker.Location2D;
-			var dest2d = new IntPoint(m_dest.X, m_dest.Y);
-			var env = this.Job.Environment;
-			var dirs = AStar.FindPath(src2d, dest2d, !m_adjacent,
-				l => env.IsWalkable(new IntPoint3D(l, z)));
+				// ZZZ only 2D
+				int z = m_dest.Z;
+				var src2d = this.Worker.Location2D;
+				var dest2d = new IntPoint(m_dest.X, m_dest.Y);
+				var env = m_environment;
+				var dirs = AStar.FindPath(src2d, dest2d, !m_adjacent,
+					l => env.IsWalkable(new IntPoint3D(l, z)));
 
-			m_pathDirs = new Queue<Direction>(dirs);
+				m_pathDirs = new Queue<Direction>(dirs);
+
+				if (m_pathDirs.Count == 0)
+				{
+					m_pathDirs = null;
+					return Progress.Fail;
+				}
+
+				m_supposedLocation = this.Worker.Location;
+			}
+
+			Direction dir = m_pathDirs.Dequeue();
 
 			if (m_pathDirs.Count == 0)
-				return Progress.Fail;
+				m_pathDirs = null;
 
-			m_supposedLocation = this.Worker.Location;
+			var action = new MoveAction(dir);
+			m_supposedLocation += IntVector3D.FromDirection(dir);
+
+			this.CurrentAction = action;
 
 			return Progress.Ok;
 		}
 
-		protected override GameAction GetNextAction()
-		{
-			if (m_supposedLocation != this.Worker.Location)
-				return null;
-
-			var dir = GetNextDir();
-			var action = new MoveAction(dir);
-			m_supposedLocation += IntVector3D.FromDirection(dir);
-
-			return action;
-		}
-
-		protected override Progress CheckDone()
+		protected override Progress CheckProgress()
 		{
 			var v = m_dest - this.Worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
 				return Progress.Done;
 			else
 				return Progress.Ok;
-		}
-
-		Direction GetNextDir()
-		{
-			if (m_pathDirs.Count == 0)
-				return Direction.None;
-
-			Direction dir = m_pathDirs.Dequeue();
-			if (m_pathDirs.Count == 0)
-				m_pathDirs = null;
-
-			return dir;
 		}
 
 		public override string ToString()
@@ -142,36 +139,39 @@ namespace MyGame
 	class MineTask : Task
 	{
 		IntPoint3D m_location;
+		Environment m_environment;
 
-		public MineTask(Job job, IntPoint3D location)
+		public MineTask(IJob job, Environment environment, IntPoint3D location)
 			: base(job)
 		{
+			m_environment = environment;
 			m_location = location;
 		}
 
-		public override Progress Prepare()
-		{
-			var v = m_location - this.Worker.Location;
-			if (v.IsAdjacent2D)
-				return Progress.Ok;
-			else
-				return Progress.Fail;
-		}
-
-		protected override GameAction GetNextAction()
+		public override Progress PrepareNextAction()
 		{
 			var v = m_location - this.Worker.Location;
 
 			if (!v.IsAdjacent2D)
-				return null;
+				return Progress.Fail;
+
+			if (CheckProgress() == Progress.Done)
+				return Progress.Done;
 
 			var action = new MineAction(v.ToDirection());
-			return action;
+
+			this.CurrentAction = action;
+
+			return Progress.Ok;
 		}
 
-		protected override Progress CheckDone()
+		protected override Progress CheckProgress()
 		{
-			return Progress.Done;
+			var floor = m_environment.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
+			if (m_environment.GetTerrainID(m_location) == floor.ID)
+				return Progress.Done;
+			else
+				return Progress.Ok;
 		}
 
 		public override string ToString()

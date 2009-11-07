@@ -7,99 +7,204 @@ namespace MyGame
 {
 	public enum Progress
 	{
+		/// <summary>
+		/// None
+		/// </summary>
 		None,
+		/// <summary>
+		/// Everything ok
+		/// </summary>
 		Ok,
+		/// <summary>
+		/// Job failed, and nobody else can do it either
+		/// </summary>
 		Fail,
+		/// <summary>
+		/// Job failed, the worker wasn't able to do it
+		/// </summary>
+		Abort,
+		/// <summary>
+		/// Job has been done successfully
+		/// </summary>
 		Done,
 	}
 
 	class AI
 	{
-		Living m_object;
-		Job m_job;
+		Living m_living;
+		IJob m_currentJob;
 
-		public AI(Living ob)
+		public AI(Living living)
 		{
-			m_object = ob;
+			m_living = living;
+		}
+
+		void HandleProgress(Progress progress)
+		{
+			switch (progress)
+			{
+				case Progress.None:
+					break;
+
+				case Progress.Ok:
+					MyDebug.WriteLine("[AI] Job progressing");
+					break;
+
+				case Progress.Done:
+					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					break;
+
+				case Progress.Fail:
+					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					break;
+
+				case Progress.Abort:
+					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
+					m_currentJob = null;
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public void ActionProgress(ActionProgressEvent e)
 		{
-			if (m_job == null)
+			if (m_currentJob == null)
 				return;
 
-			var progress = m_job.ActionProgress(e);
+			var progress = m_currentJob.ActionProgress(e);
 
-			if (progress == Progress.Done)
+			switch (progress)
 			{
-				MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_job);
-				World.TheWorld.Jobs.Remove(m_job);
-				m_job = null;
-			}
-			else if (progress == Progress.Fail)
-			{
-				MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_job);
-				World.TheWorld.Jobs.Remove(m_job);
-				m_job.Quit();
-				m_job = null;
-			}
-			else if (progress == Progress.Ok)
-			{
-				MyDebug.WriteLine("Job progressing");
+				case Progress.None:
+					break;
+
+				case Progress.Ok:
+					MyDebug.WriteLine("[AI] Job progressing");
+					break;
+
+				case Progress.Done:
+					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					break;
+
+				case Progress.Fail:
+					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					break;
+
+				case Progress.Abort:
+					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
+					m_currentJob = null;
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 
 		public void ActionRequired()
 		{
-			if (m_object == GameData.Data.CurrentObject)
+			if (m_living == GameData.Data.CurrentObject)
 				return;
 
-			if (m_job == null)
+			if (m_currentJob == null)
 			{
 				var job = FindJob();
 
 				if (job == null)
 				{
-					Idle();
+					DoIdle();
 					return;
 				}
 
-				m_job = job;
+				m_currentJob = job;
 			}
 
-			var action = m_job.ActionRequired();
-			if (action != null)
+			var progress = m_currentJob.PrepareNextAction();
+
+			switch (progress)
 			{
-				m_object.EnqueueAction(action);
-			}
-			else
-			{
-				MyDebug.WriteLine("[AI] JOB ABORTED ({0})!!!", m_job);
-				m_job.Quit();
-				m_job = null;
+				case Progress.Ok:
+					var action = m_currentJob.CurrentAction;
+					if (action == null)
+						throw new Exception();
+
+					m_living.EnqueueAction(action);
+					break;
+
+				case Progress.Done:
+					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					DoIdle();
+					break;
+
+				case Progress.Fail:
+					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
+					World.TheWorld.Jobs.Remove(m_currentJob);
+					m_currentJob = null;
+					DoIdle();
+					break;
+
+				case Progress.Abort:
+					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
+					m_currentJob = null;
+					DoIdle();
+					break;
+
+				case Progress.None:
+				default:
+					throw new Exception();
 			}
 		}
 
-		void Idle()
+		void DoIdle()
 		{
 			MyDebug.WriteLine("[AI] no job to do");
 			var action = new WaitAction(1);
-			m_object.EnqueueAction(action);
+			m_living.EnqueueAction(action);
 		}
 
-		Job FindJob()
+		IJob FindJob()
 		{
-			foreach (var job in m_object.World.Jobs.Where(j => j.Worker == null))
+			// XXX we modify jobs, so as quickfix make a copy
+			IJob[] jobs = m_living.World.Jobs.Where(j => j.Worker == null).ToArray();
+
+			foreach (var job in jobs)
 			{
-				var res = job.Take(m_object);
-				if (res == Progress.Ok)
+				var progress = job.Assign(m_living);
+
+				switch (progress)
 				{
-					return job;
-				}
-				else if (res == Progress.Done)
-				{
-					MyDebug.WriteLine("[AI] JOB (already) DONE!");
-					World.TheWorld.Jobs.Remove(m_job);
+					case Progress.Ok:
+						MyDebug.WriteLine("[AI] new job {0}", job);
+						return job;
+
+					case Progress.Done:
+						MyDebug.WriteLine("[AI] JOB (already) DONE!");
+						World.TheWorld.Jobs.Remove(job);
+						break;
+
+					case Progress.Fail:
+						MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", job);
+						World.TheWorld.Jobs.Remove(job);
+						break;
+
+					case Progress.Abort:
+						MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", job);
+						break;
+
+					case Progress.None:
+					default:
+						throw new Exception();
 				}
 			}
 

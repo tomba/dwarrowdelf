@@ -7,11 +7,19 @@ using System.ComponentModel;
 
 namespace MyGame
 {
-	abstract class Job : INotifyPropertyChanged
+	interface IJob
 	{
-		public Environment Environment { get; protected set; }
-		public IntPoint3D Location { get; protected set; }
+		GameAction CurrentAction { get; }
+		Living Worker { get; }
 
+		Progress Assign(Living worker);
+		void Quit();
+		Progress PrepareNextAction();
+		Progress ActionProgress(ActionProgressEvent e);
+	}
+
+	abstract class CompoundJob : IJob, INotifyPropertyChanged
+	{
 		Living m_worker;
 		public Living Worker
 		{
@@ -37,42 +45,61 @@ namespace MyGame
 
 		protected Queue<Task> m_tasks = new Queue<Task>();
 
-		protected abstract bool Prepare();
-
-		public GameAction ActionRequired()
+		public GameAction CurrentAction
 		{
-			return this.CurrentTask.ActionRequired();
+			get { return this.CurrentTask.CurrentAction; }
 		}
 
-		public Progress Take(Living worker)
+		public Progress Assign(Living worker)
 		{
 			if (this.Worker != null)
 				throw new Exception();
 
-			if (worker.Environment != this.Environment)
-				return Progress.Fail;
+			var res = AssignOverride(worker);
+			if (res != Progress.Ok)
+				return res;
 
 			this.Worker = worker;
 
-			Prepare();
+			return Progress.Ok;
+		}
 
+		protected abstract Progress AssignOverride(Living worker);
+
+		public Progress PrepareNextAction()
+		{
 			while (true)
 			{
 				if (m_tasks.Count == 0)
+				{
+					Quit();
 					return Progress.Done;
-
-				this.CurrentTask = m_tasks.Dequeue();
-				var res = this.CurrentTask.Prepare();
-
-				if (res == Progress.Fail)
-				{
-					this.Worker = null;
-					m_tasks.Clear();
-					return Progress.Fail;
 				}
-				else if (res == Progress.Ok)
+
+				if (this.CurrentTask == null)
+					this.CurrentTask = m_tasks.Dequeue();
+
+				var res = this.CurrentTask.PrepareNextAction();
+
+				switch (res)
 				{
-					return Progress.Ok;
+					case Progress.Ok:
+						return Progress.Ok;
+
+					case Progress.Done:
+						this.CurrentTask = null;
+						continue;
+
+					case Progress.Abort:
+					case Progress.Fail:
+						Quit();
+						return res;
+
+					case Progress.None:
+						throw new Exception();
+
+					default:
+						throw new Exception();
 				}
 			}
 		}
@@ -82,12 +109,22 @@ namespace MyGame
 			if (this.Worker == null)
 				throw new Exception();
 
-			this.Worker = null;
+			foreach (Task t in m_tasks)
+				t.Quit();
 			m_tasks.Clear();
+
+			QuitOverride();
+
+			this.Worker = null;
 		}
+
+		protected abstract void QuitOverride();
 
 		public Progress ActionProgress(ActionProgressEvent e)
 		{
+			if (this.Worker == null)
+				throw new Exception();
+
 			if (this.CurrentTask == null)
 				return Progress.None;
 
@@ -101,22 +138,21 @@ namespace MyGame
 				case Progress.Ok:
 					return Progress.Ok;
 
+				case Progress.Abort:
 				case Progress.Fail:
 					MyDebug.WriteLine("[AI] Task failed, cancel job");
-					this.CurrentTask = null;
-					this.Worker = null;
-					return Progress.Fail;
+					Quit();
+					return progress;
 
 				case Progress.Done:
 					if (m_tasks.Count == 0)
 					{
-						this.CurrentTask = null;
-						this.Worker = null;
+						Quit();
 						return Progress.Done;
 					}
 					else
 					{
-						this.CurrentTask = m_tasks.Dequeue();
+						this.CurrentTask = null;
 						return Progress.Ok;
 					}
 
@@ -136,19 +172,34 @@ namespace MyGame
 		}
 	}
 
-	class MineJob : Job
+	class MineJob : CompoundJob
 	{
+		public Environment m_environment;
+		public IntPoint3D m_location;
+
 		public MineJob(Environment env, IntPoint3D location)
 		{
-			this.Environment = env;
-			this.Location = location;
+			m_environment = env;
+			m_location = location;
 		}
 
-		protected override bool Prepare()
+		protected override Progress AssignOverride(Living worker)
 		{
-			m_tasks.Enqueue(new MoveTask(this, this.Location, true));
-			m_tasks.Enqueue(new MineTask(this, this.Location));
-			return true;
+			if (worker.Environment != m_environment)
+				return Progress.Abort;
+
+			var floor = m_environment.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
+			if (m_environment.GetTerrainID(m_location) == floor.ID)
+				return Progress.Done;
+
+			m_tasks.Enqueue(new MoveTask(this, m_environment, m_location, true));
+			m_tasks.Enqueue(new MineTask(this, m_environment, m_location));
+
+			return Progress.Ok;
+		}
+
+		protected override void QuitOverride()
+		{
 		}
 
 		public override string ToString()
