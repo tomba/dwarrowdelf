@@ -9,7 +9,7 @@ namespace MyGame
 	public interface IAreaData
 	{
 		IList<SymbolInfo> Symbols { get; }
-		IList<TerrainInfo> Terrains { get; }
+		Terrains Terrains { get; }
 		IList<ObjectInfo> Objects { get; }
 		Stream DrawingStream { get; }
 	}

@@ -153,7 +153,8 @@
 				<DockPanel>
 					<StackPanel DockPanel.Dock="Top">
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
+						<TextBlock>Interior: <TextBlock Text="{Binding InteriorID}" /></TextBlock>
+						<TextBlock>Floor: <TextBlock Text="{Binding FloorID}" /></TextBlock>
 					</StackPanel>
 					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
 					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
@@ -166,7 +167,8 @@
 				<DockPanel>
 					<StackPanel DockPanel.Dock="Top">
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-						<TextBlock>Terrain: <TextBlock Text="{Binding TerrainType}" /></TextBlock>
+						<TextBlock>Interior: <TextBlock Text="{Binding InteriorID}" /></TextBlock>
+						<TextBlock>Floor: <TextBlock Text="{Binding FloorID}" /></TextBlock>
 					</StackPanel>
 					<ListBox ItemsSource="{Binding Objects}" />
 				</DockPanel>

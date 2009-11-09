@@ -99,7 +99,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCube Bounds { get; set; }
 		[DataMember]
-		public IEnumerable<int> TerrainIDs { get; set; }
+		public IEnumerable<TileIDs> TerrainIDs { get; set; }
 		[DataMember]
 		public IEnumerable<ClientMsgs.Message> ObjectData { get; set; }
 	}
@@ -121,7 +121,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntPoint3D Location { get; set; }
 		[DataMember]
-		public int TerrainID { get; set; }
+		public TileIDs TileData { get; set; }
 	}
 
 	[DataContract]

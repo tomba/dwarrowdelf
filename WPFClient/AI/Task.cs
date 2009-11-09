@@ -167,8 +167,7 @@ namespace MyGame
 
 		protected override Progress CheckProgress()
 		{
-			var floor = m_environment.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			if (m_environment.GetTerrainID(m_location) == floor.ID)
+			if (m_environment.GetInteriorID(m_location) == InteriorID.Empty)
 				return Progress.Done;
 			else
 				return Progress.Ok;

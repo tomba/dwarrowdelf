@@ -84,7 +84,7 @@ namespace MyGame
 			m_world = null;
 		}
 
-		public void SetTiles(ObjectID mapID, IntCube cube, int type)
+		public void SetTiles(ObjectID mapID, IntCube cube, InteriorID type)
 		{
 			m_world.BeginInvokeInstant(_SetTiles, new object[] { mapID, cube, type });
 		}
@@ -94,7 +94,7 @@ namespace MyGame
 			object[] arr = (object[])data;
 			ObjectID mapID = (ObjectID)arr[0];
 			IntCube r = (IntCube)arr[1];
-			int type = (int)arr[2];
+			InteriorID type = (InteriorID)arr[2];
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
 			if (env == null)
@@ -105,7 +105,7 @@ namespace MyGame
 				if (!env.Bounds.Contains(p))
 					continue;
 
-				env.SetTerrain(p, type);
+				env.SetInteriorID(p, type);
 			}
 		}
 
@@ -332,7 +332,7 @@ namespace MyGame
 				{
 					Environment = mc.MapID,
 					MapDataList = new ClientMsgs.MapTileData[] {
-						new ClientMsgs.MapTileData() { Location = mc.Location, TerrainID = mc.TerrainType }
+						new ClientMsgs.MapTileData() { Location = mc.Location, TileData = mc.TerrainType }
 					}
 				};
 			}
@@ -432,7 +432,11 @@ namespace MyGame
 						new ClientMsgs.MapTileData()
 						{
 							Location = l,
-							TerrainID = kvp.Key.GetTerrainID(l),
+							TileData = new TileIDs()
+							{
+								m_interiorID = kvp.Key.GetInteriorID(l),
+								m_floorID = kvp.Key.GetFloorID(l),
+							}
 						}).ToArray()
 					// XXX there seems to be a problem serializing this.
 					// evaluating it with ToArray() fixes it

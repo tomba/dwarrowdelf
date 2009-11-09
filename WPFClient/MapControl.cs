@@ -80,7 +80,7 @@ namespace MyGame
 			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			if (this.Environment.GetTerrainID(ml) == 0)
+			if (this.Environment.GetInteriorID(ml) == 0)
 				return false;
 
 			var controllables = this.Environment.World.Controllables;
@@ -122,9 +122,26 @@ namespace MyGame
 
 		BitmapSource GetBitmap(IntPoint3D ml, bool lit)
 		{
-			int terrainID = this.Environment.GetTerrainID(ml);
-			int id = this.Environment.World.AreaData.Terrains[terrainID].SymbolID;
-			Color c = Colors.Black;
+			var interiorID = this.Environment.GetInteriorID(ml);
+			int id;
+			Color c;
+
+			if (interiorID != InteriorID.Empty)
+			{
+				InteriorInfo iinfo = this.Environment.World.AreaData.Terrains.GetInteriorInfo(interiorID);
+				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iinfo.Name);
+				id = symbol.ID;
+				c = Colors.Black;
+			}
+			else
+			{
+				var floorID = this.Environment.GetFloorID(ml);
+				FloorInfo iinfo = this.Environment.World.AreaData.Terrains.GetFloorInfo(floorID);
+				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iinfo.Name);
+				id = symbol.ID;
+				c = Colors.Black;
+			}
+
 			return m_bitmapCache.GetBitmap(id, c, !lit);
 		}
 
@@ -259,7 +276,8 @@ namespace MyGame
 		{
 			if (l == m_location)
 			{
-				Notify("TerrainType");
+				Notify("InteriorID");
+				Notify("FloorID");
 				Notify("Objects");
 			}
 		}
@@ -278,7 +296,8 @@ namespace MyGame
 					m_env.MapChanged += MapChanged;
 
 				Notify("Environment");
-				Notify("TerrainType");
+				Notify("InteriorID");
+				Notify("FloorID");
 				Notify("Objects");
 			}
 		}
@@ -290,18 +309,29 @@ namespace MyGame
 			{
 				m_location = value;
 				Notify("Location");
-				Notify("TerrainType");
+				Notify("InteriorID");
+				Notify("FloorID");
 				Notify("Objects");
 			}
 		}
 
-		public int TerrainType
+		public InteriorID InteriorID
 		{
 			get
 			{
 				if (m_env == null)
 					return 0;
-				return m_env.GetTerrainID(m_location);
+				return m_env.GetInteriorID(m_location);
+			}
+		}
+
+		public FloorID FloorID
+		{
+			get
+			{
+				if (m_env == null)
+					return 0;
+				return m_env.GetFloorID(m_location);
 			}
 		}
 

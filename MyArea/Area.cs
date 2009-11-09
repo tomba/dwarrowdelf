@@ -66,32 +66,29 @@ namespace MyArea
 		Environment CreateMap1(World world)
 		{
 			// XXX some size limit with the size in WCF
-			var env = new Environment(world, 100, 100, 4, VisibilityMode.AllVisible);
+			var env = new Environment(world, 50, 50, 3, VisibilityMode.AllVisible);
 			env.Name = "map1";
 
 			Random r = new Random(123);
-			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
-			TerrainInfo down = world.AreaData.Terrains.Single(t => t.Name == "Stairs Down");
-			TerrainInfo up = world.AreaData.Terrains.Single(t => t.Name == "Stairs Up");
-			TerrainInfo portal = world.AreaData.Terrains.Single(t => t.Name == "Portal");
 
 			foreach (var p in env.Bounds.Range())
 			{
 				if (p.X == 2 && p.Y == 2)
-					env.SetTerrain(p, (p.Z % 2) == 0 ? down.ID : up.ID);
+					env.SetInteriorID(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp);
 				else if (p.X == 3 && p.Y == 3)
-					env.SetTerrain(p, (p.Z % 2) != 0 ? down.ID : up.ID);
+					env.SetInteriorID(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp);
 				else if (p.X < 7 && p.Y < 7)
-					env.SetTerrain(p, floor.ID);
+					env.SetInteriorID(p, InteriorID.Empty);
 				else if (r.Next() % 8 == 0)
-					env.SetTerrain(p, wall.ID);
+					env.SetInteriorID(p, InteriorID.NaturalWall);
 				else
-					env.SetTerrain(p, floor.ID);
+					env.SetInteriorID(p, InteriorID.Empty);
+
+				env.SetFloorID(p, FloorID.NaturalFloor);
 			}
 
 			var pp = new IntPoint3D(2, 3, 0);
-			env.SetTerrain(pp, portal.ID);
+			env.SetInteriorID(pp, InteriorID.Portal);
 			env.SetActionHandler(pp, ActionHandler);
 
 			var obs = world.AreaData.Objects;
@@ -117,7 +114,7 @@ namespace MyArea
 				do
 				{
 					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
-				} while (env.GetTerrainID(p) != floor.ID);
+				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
 
 				var item = new ItemObject(world);
@@ -154,17 +151,14 @@ namespace MyArea
 			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
 			env.Name = "map2";
 
-			TerrainInfo floor = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			TerrainInfo wall = world.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
-			TerrainInfo down = world.AreaData.Terrains.Single(t => t.Name == "Stairs Down");
-			TerrainInfo up = world.AreaData.Terrains.Single(t => t.Name == "Stairs Up");
-			TerrainInfo portal = world.AreaData.Terrains.Single(t => t.Name == "Portal");
-
 			foreach (var p in env.Bounds.Range())
-				env.SetTerrain(p, floor.ID);
+			{
+				env.SetInteriorID(p, InteriorID.Empty);
+				env.SetFloorID(p, FloorID.NaturalFloor);
+			}
 
 			var pp = new IntPoint3D(2, 3, 0);
-			env.SetTerrain(pp, portal.ID);
+			env.SetInteriorID(pp, InteriorID.Portal);
 			env.SetActionHandler(pp, ActionHandler);
 
 			return env;

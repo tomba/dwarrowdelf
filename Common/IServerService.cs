@@ -16,7 +16,7 @@ namespace MyGame
 		void LogOff();
 
 		[OperationContract(IsOneWay = true)]
-		void SetTiles(ObjectID mapID, IntCube cube, int type);
+		void SetTiles(ObjectID mapID, IntCube cube, InteriorID type);
 
 		[OperationContract(IsOneWay = true)]
 		void ProceedTurn();

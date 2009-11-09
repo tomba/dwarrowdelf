@@ -9,7 +9,8 @@ namespace MyGame
 {
 	struct TileData
 	{
-		public int m_terrainID;
+		public InteriorID m_interiorID;
+		public FloorID m_floorID;
 		public List<ClientGameObject> m_contentList;
 	}
 
@@ -25,18 +26,32 @@ namespace MyGame
 			return new MyGrowingGrid(blockSize);
 		}
 
-		public int GetTerrainID(IntPoint3D p)
+		public InteriorID GetInteriorID(IntPoint3D p)
 		{
 			var level = base.GetLevel(p.Z, false);
 			if (level == null)
 				return 0;
-			return level.GetTerrainID(new IntPoint(p.X, p.Y));
+			return level.GetInteriorID(new IntPoint(p.X, p.Y));
 		}
 
-		public void SetTerrainID(IntPoint3D p, int terrainID)
+		public void SetInteriorID(IntPoint3D p, InteriorID interiorID)
 		{
 			var level = base.GetLevel(p.Z, true);
-			level.SetTerrainID(new IntPoint(p.X, p.Y), terrainID);
+			level.SetInteriorID(new IntPoint(p.X, p.Y), interiorID);
+		}
+
+		public FloorID GetFloorID(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return 0;
+			return level.GetFloorID(new IntPoint(p.X, p.Y));
+		}
+
+		public void SetFloorID(IntPoint3D p, FloorID floorID)
+		{
+			var level = base.GetLevel(p.Z, true);
+			level.SetFloorID(new IntPoint(p.X, p.Y), floorID);
 		}
 
 		public List<ClientGameObject> GetContents(IntPoint3D p)
@@ -66,21 +81,35 @@ namespace MyGame
 		{
 		}
 
-		public int GetTerrainID(IntPoint p)
+		public InteriorID GetInteriorID(IntPoint p)
 		{
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].m_terrainID;
+			return block.Grid[block.GetIndex(p)].m_interiorID;
 		}
 
-		public void SetTerrainID(IntPoint p, int terrainID)
+		public void SetInteriorID(IntPoint p, InteriorID interiorID)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)].m_terrainID = terrainID;
+			block.Grid[block.GetIndex(p)].m_interiorID = interiorID;
 		}
 
+		public FloorID GetFloorID(IntPoint p)
+		{
+			var block = base.GetBlock(ref p, false);
+			if (block == null)
+				return 0;
+			return block.Grid[block.GetIndex(p)].m_floorID;
+		}
+
+		public void SetFloorID(IntPoint p, FloorID floorID)
+		{
+			var block = base.GetBlock(ref p, true);
+
+			block.Grid[block.GetIndex(p)].m_floorID = floorID;
+		}
 		public List<ClientGameObject> GetContents(IntPoint p)
 		{
 			var block = base.GetBlock(ref p, false);
@@ -150,7 +179,7 @@ namespace MyGame
 
 		public bool IsWalkable(IntPoint3D l)
 		{
-			return this.World.AreaData.Terrains[GetTerrainID(l)].IsWalkable;
+			return !this.World.AreaData.Terrains.GetInteriorInfo(GetInteriorID(l)).Blocker;
 		}
 
 		public MyGrowingGrid GetLevel(int z)
@@ -158,16 +187,31 @@ namespace MyGame
 			return m_tileGrid.GetLevel(z, false);
 		}
 
-		public int GetTerrainID(IntPoint3D l)
+		public InteriorID GetInteriorID(IntPoint3D l)
 		{
-			return m_tileGrid.GetTerrainID(l);
+			return m_tileGrid.GetInteriorID(l);
 		}
 
-		public void SetTerrainID(IntPoint3D l, int terrainID)
+		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
 			this.Version += 1;
 
-			m_tileGrid.SetTerrainID(l, terrainID);
+			m_tileGrid.SetInteriorID(l, interiorID);
+
+			if (MapChanged != null)
+				MapChanged(l);
+		}
+
+		public FloorID GetFloorID(IntPoint3D l)
+		{
+			return m_tileGrid.GetFloorID(l);
+		}
+
+		public void SetFloorID(IntPoint3D l, FloorID floorID)
+		{
+			this.Version += 1;
+
+			m_tileGrid.SetFloorID(l, floorID);
 
 			if (MapChanged != null)
 				MapChanged(l);
@@ -181,21 +225,23 @@ namespace MyGame
 			{
 				IntPoint3D l = locInfo.Location;
 
-				m_tileGrid.SetTerrainID(l, locInfo.TerrainID);
+				m_tileGrid.SetInteriorID(l, locInfo.TileData.m_interiorID);
+				m_tileGrid.SetFloorID(l, locInfo.TileData.m_floorID);
 
 				if (MapChanged != null)
 					MapChanged(l);
 			}
 		}
 
-		public void SetTerrains(IntCube bounds, IEnumerable<int> terrainIDs)
+		public void SetTerrains(IntCube bounds, IEnumerable<TileIDs> tileIDList)
 		{
-			var iter = terrainIDs.GetEnumerator();
+			var iter = tileIDList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())
 			{
 				iter.MoveNext();
-				int terrainID = iter.Current;
-				m_tileGrid.SetTerrainID(p, terrainID);
+				var td = iter.Current;
+				m_tileGrid.SetInteriorID(p, td.m_interiorID);
+				m_tileGrid.SetFloorID(p, td.m_floorID);
 			}
 		}
 

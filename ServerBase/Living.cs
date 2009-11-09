@@ -131,14 +131,12 @@ namespace MyGame
 		{
 			IntPoint3D p = this.Location + IntVector3D.FromDirection(action.Direction);
 
-			TerrainInfo floor = this.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			TerrainInfo wall = this.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
-			int id = this.Environment.GetTerrainID(p);
+			var id = this.Environment.GetInteriorID(p);
 
-			if (id == wall.ID)
+			if (id == InteriorID.NaturalWall)
 			{
 				if (action.TurnsLeft == 0)
-					this.Environment.SetTerrain(p, floor.ID);
+					this.Environment.SetInteriorID(p, InteriorID.Empty);
 				success = true;
 			}
 			else

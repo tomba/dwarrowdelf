@@ -257,18 +257,16 @@ namespace MyGame
 
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
 		{
-			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
 			IntRect r = map.SelectionRect;
 			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
-				new IntCube(r, map.Z), terrain.ID);
+				new IntCube(r, map.Z), InteriorID.Empty);
 		}
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
-			var terrain = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 			IntRect r = map.SelectionRect;
 			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
-				new IntCube(r, map.Z), terrain.ID);
+				new IntCube(r, map.Z), InteriorID.NaturalWall);
 		}
 
 		private void MenuItem_Click_Job(object sender, RoutedEventArgs e)
@@ -278,15 +276,14 @@ namespace MyGame
 
 			if (tag == "Mine")
 			{
-				var wall = this.Map.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Wall");
 				IntRect r = map.SelectionRect;
 				var env = map.Environment;
 				int z = map.Z;
 
 				foreach (var p in r.Range())
 				{
-					//if (env.GetTerrainID(new IntPoint3D(p, z)) != wall.ID)
-					//	continue;
+					if (env.GetInteriorID(new IntPoint3D(p, z)) != InteriorID.NaturalWall)
+						continue;
 
 					var job = new MineJob(env, new IntPoint3D(p, z));
 					this.Map.World.Jobs.Add(job);

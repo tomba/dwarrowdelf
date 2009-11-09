@@ -188,8 +188,7 @@ namespace MyGame
 			if (worker.Environment != m_environment)
 				return Progress.Abort;
 
-			var floor = m_environment.World.AreaData.Terrains.Single(t => t.Name == "Dungeon Floor");
-			if (m_environment.GetTerrainID(m_location) == floor.ID)
+			if (m_environment.GetInteriorID(m_location) == InteriorID.Empty)
 				return Progress.Done;
 
 			m_tasks.Enqueue(new MoveTask(this, m_environment, m_location, true));

@@ -12,21 +12,21 @@ namespace MyAreaData
 	{
 		Stream m_drawingStream;
 		List<SymbolInfo> m_symbolList;
-		List<TerrainInfo> m_terrains;
+		Terrains m_terrains; // XXX move somewhere else
 		List<ObjectInfo> m_objects;
 
 		public AreaData()
 		{
 			ParseSymbols();
-			ParseTerrains();
 			ParseObjects();
+			m_terrains = new Terrains();
 
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
 			m_drawingStream = ass.GetManifestResourceStream("MyAreaData.PlanetCute.xaml");
 		}
 
 		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
-		public IList<TerrainInfo> Terrains { get { return m_terrains.AsReadOnly(); } }
+		public Terrains Terrains { get { return m_terrains; } }
 		public IList<ObjectInfo> Objects { get { return m_objects.AsReadOnly(); } }
 		public Stream DrawingStream { get { return m_drawingStream; } }
 
@@ -70,30 +70,6 @@ namespace MyAreaData
 					symbol.DrawingName = (string)drawingElem;
 				}
 				m_symbolList.Add(symbol);
-			}
-		}
-
-		void ParseTerrains()
-		{
-			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyAreaData.Terrains.xml");
-
-			XDocument root = XDocument.Load(new StreamReader(resStream));
-			XElement terrainInfosElem = root.Element("TerrainInfos");
-
-			m_terrains = new List<TerrainInfo>(terrainInfosElem.Elements().Count() + 1);
-			m_terrains.Add(new TerrainInfo() { ID = 0, SymbolID = 0 });
-			int terrainID = 1;
-			foreach (XElement terrainElem in terrainInfosElem.Elements())
-			{
-				TerrainInfo terrain = new TerrainInfo();
-				terrain.ID = terrainID++;
-				terrain.Name = (string)terrainElem.Element("Name");
-				terrain.IsWalkable = (bool)terrainElem.Element("IsWalkable");
-				string symbolName = (string)terrainElem.Element("Symbol");
-				SymbolInfo symbol = m_symbolList.Single(s => s.Name == symbolName);
-				terrain.SymbolID = symbol.ID;
-				m_terrains.Add(terrain);
 			}
 		}
 

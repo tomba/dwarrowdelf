@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Symbols>
   <Symbol>
-    <Name>Unknown</Name>
+    <Name>Undefined</Name>
     <CharSymbol>?</CharSymbol>
   </Symbol>
   <Symbol>
-    <Name>Dungeon Floor</Name>
+    <Name>NaturalFloor</Name>
     <CharSymbol>.</CharSymbol>
     <Drawing x="0" y="0" w="100" h="140">Dirt_Block</Drawing>
   </Symbol>
   <Symbol>
-    <Name>Dungeon Wall</Name>
+    <Name>NaturalWall</Name>
     <CharSymbol>#</CharSymbol>
     <Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
   </Symbol>
 	<Symbol>
-		<Name>Stairs Up</Name>
+		<Name>StairsUp</Name>
 		<CharSymbol>&lt;</CharSymbol>
 	</Symbol>
 	<Symbol>
-		<Name>Stairs Down</Name>
+		<Name>StairsDown</Name>
 		<CharSymbol>&gt;</CharSymbol>
 	</Symbol>
 	<Symbol>
