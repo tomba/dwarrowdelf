@@ -22,7 +22,7 @@ namespace MyGame
 		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		Thread m_serverThread;
-		Connection m_connection;
+		ClientConnection m_connection;
 		EventWaitHandle m_serverStartWaitHandle;
 		EventWaitHandle m_serverStopWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
@@ -58,7 +58,7 @@ namespace MyGame
 			World.TheWorld = world;
 
 
-			m_connection = new Connection();
+			m_connection = new ClientConnection();
 
 			if (m_serverInAppDomain)
 			{
@@ -73,7 +73,7 @@ namespace MyGame
 			}
 			else
 			{
-				m_connection.BeginConnect(ConnectCallback, null);
+				m_connection.BeginConnect(ConnectCallback);
 			}
 		}
 
@@ -87,15 +87,12 @@ namespace MyGame
 			m_serverStartWaitHandle.Close();
 			m_serverStartWaitHandle = null;
 
-			m_connection.BeginConnect(ConnectCallback, null);
+			m_connection.BeginConnect(ConnectCallback);
 		}
 
-		void ConnectCallback(object data)
+		void ConnectCallback()
 		{
-			if (m_connection.CommState != System.ServiceModel.CommunicationState.Opened)
-				throw new Exception();
-
-			m_connection.Server.LogOn("tomba");
+			m_connection.LogOn("tomba");
 			GameData.Data.Connection = m_connection;
 		}
 
@@ -105,11 +102,7 @@ namespace MyGame
 
 			if (m_connection != null)
 			{
-				if (!m_connection.HasFaulted())
-				{
-					m_connection.Server.LogOff();
-					Thread.Sleep(500); // XXX hrm.. sleep a bit so server doesn't crash =)
-				}
+				m_connection.LogOff();
 				m_connection.Disconnect();
 			}
 
@@ -132,7 +125,7 @@ namespace MyGame
 			path = System.IO.Path.Combine(path, "Server.exe");
 
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
-			//m_server.TraceListener = GameData.Data.MyTraceListener;
+			m_server.TraceListener = GameData.Data.MyTraceListener;
 			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);

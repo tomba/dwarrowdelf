@@ -27,7 +27,7 @@ namespace MyGame
 		}
 
 
-		public Connection Connection { get; set; }
+		public ClientConnection Connection { get; set; }
 
 		Living m_currentObject;
 		public Living CurrentObject

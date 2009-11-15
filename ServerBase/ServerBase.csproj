@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServerConnection.cs" />
     <Compile Include="PetActor.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="IActor.cs" />

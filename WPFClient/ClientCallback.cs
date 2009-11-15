@@ -50,7 +50,7 @@ namespace MyGame
 		void _LogOnReply(int userID)
 		{
 			World.TheWorld.UserID = userID;
-			GameData.Data.Connection.Server.LogOnChar("tomba");
+			GameData.Data.Connection.Send(new LogOnCharMessage() { Name = "tomba" });
 		}
 
 		void _LogOnCharReply(ObjectID playerID)

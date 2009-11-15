@@ -5,7 +5,6 @@ using System.Text;
 using System.ServiceModel;
 using System.Threading;
 using System.Diagnostics;
-using System.ServiceModel.Description;
 
 namespace MyGame
 {
@@ -15,22 +14,28 @@ namespace MyGame
 	{
 		static int s_userIDs = 1;
 
-		IClientCallback m_client;
-
 		World m_world;
 		Living m_player;
 
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = false;
+		bool m_seeAll = true;
 
 		List<Living> m_friendlies = new List<Living>();
 
-		public ServerService()
+		ServerConnection m_connection;
+
+		public ServerService(ServerConnection connection)
 		{
 			MyDebug.WriteLine("New ServerService");
-			m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
+			m_connection = connection;
+			//m_client = OperationContext.Current.GetCallbackChannel<IClientCallback>();
+		}
+
+		public void Stop()
+		{
+			m_connection = null;
 		}
 
 		#region IServerService Members
@@ -50,14 +55,14 @@ namespace MyGame
 
 			m_userID = s_userIDs++;
 
-			m_client.LogOnReply(m_userID);
+			m_connection.Send(new ClientMsgs.LogOnReply() { UserID = m_userID });
 
 			if (m_seeAll)
 			{
 				foreach (var env in m_world.Environments)
 				{
 					var msg = env.Serialize();
-					m_client.DeliverMessage(msg);
+					m_connection.Send(msg);
 				}
 			}
 
@@ -80,7 +85,6 @@ namespace MyGame
 			m_world.HandleChangesEvent -= HandleChanges;
 			m_world.HandleEventsEvent -= HandleEvents;
 
-			m_client = null;
 			m_world = null;
 		}
 
@@ -147,7 +151,7 @@ namespace MyGame
 			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
 
 			m_friendlies.Add(m_player);
-			m_client.LogOnCharReply(m_player.ObjectID);
+			m_connection.Send(new ClientMsgs.LogOnCharReply() { PlayerID = m_player.ObjectID });
 
 
 			ItemObject item = new ItemObject(m_world);
@@ -165,14 +169,14 @@ namespace MyGame
 				throw new Exception("Unable to move player");
 
 			var inv = m_player.SerializeInventory();
-			m_client.DeliverMessage(inv);
+			m_connection.Send(inv);
 
 			var pet = new Living(m_world);
 			pet.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
 			pet.Name = "lemmikki";
 			pet.Actor = new InteractiveActor();
 			m_friendlies.Add(pet);
-			m_client.LogOnCharReply(pet.ObjectID);
+			m_connection.Send(new ClientMsgs.LogOnCharReply() { PlayerID = pet.ObjectID });
 
 			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
 		}
@@ -200,7 +204,7 @@ namespace MyGame
 			m_player.Cleanup();
 			m_player = null;
 
-			m_client.LogOffCharReply();
+			m_connection.Send(new ClientMsgs.LogOffCharReply());
 		}
 
 		public void EnqueueAction(GameAction action)
@@ -235,7 +239,7 @@ namespace MyGame
 
 			var msgs = events.Select(e => (ClientMsgs.Message)new ClientMsgs.EventMessage(e));
 
-			m_client.DeliverMessages(msgs);
+			m_connection.Send(msgs);
 		}
 
 		public bool EventFilter(Event @event)
@@ -271,7 +275,7 @@ namespace MyGame
 			msgs = msgs.Concat(changeMsgs);
 
 			if (msgs.Count() > 0)
-				m_client.DeliverMessages(msgs);
+				m_connection.Send(msgs);
 		}
 
 		IEnumerable<ClientMsgs.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)

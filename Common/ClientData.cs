@@ -10,18 +10,58 @@ using System.Runtime.Serialization;
 
 namespace MyGame.ClientMsgs
 {
-	[DataContract,
-	KnownType(typeof(CompoundMessage)),
-	KnownType(typeof(ItemData)),
-	KnownType(typeof(LivingData)),
-	KnownType(typeof(FullMapData)),
-	KnownType(typeof(MapData)),
-	KnownType(typeof(MapTileData)),
-	KnownType(typeof(TerrainData)),
-	KnownType(typeof(ObjectMove)),
-	KnownType(typeof(EventMessage)),
-	]
+	[DataContract]
 	public abstract class Message
+	{
+	}
+
+	[DataContract]
+	public class LogOnMessage : Message
+	{
+		[DataMember]
+		public string Name { get; set; }
+	}
+
+	[DataContract]
+	public class LogOnReply : Message
+	{
+		[DataMember]
+		public int UserID { get; set; }
+	}
+
+	[DataContract]
+	public class LogOnCharMessage : Message
+	{
+		[DataMember]
+		public string Name { get; set; }
+	}
+
+	[DataContract]
+	public class LogOnCharReply : Message
+	{
+		[DataMember]
+		public ObjectID PlayerID { get; set; }
+	}
+
+	[DataContract]
+	public class LogOffCharMessage : Message
+	{
+	}
+
+	[DataContract]
+	public class LogOffCharReply : Message
+	{
+	}
+
+	[DataContract]
+	public class EnqueueActionMessage : Message
+	{
+		[DataMember]
+		public GameAction Action { get; set; }
+	}
+
+	[DataContract]
+	public class ProceedTurnMessage : Message
 	{
 	}
 

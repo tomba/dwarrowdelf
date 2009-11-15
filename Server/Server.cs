@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using System.ServiceModel;
 using System.Threading;
 using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.Sockets;
+using System.Net;
 
 namespace MyGame
 {
@@ -56,76 +55,44 @@ namespace MyGame
 			var world = new World(area, areaData);
 			World.TheWorld = world;
 
-			/* WCF */
+			var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 9999));
+			listener.Start();
+			var a = listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
 
-			ServiceHost serviceHost = new ServiceHost(typeof(ServerService));
+			MyDebug.WriteLine("The service is ready.");
 
-#if LOCAL
-			NetNamedPipeBinding binding = new NetNamedPipeBinding();
-			binding.Security.Mode = NetNamedPipeSecurityMode.None;
-			serviceHost.AddServiceEndpoint(typeof(IServerService),
-				binding, "net.pipe://localhost/MyGame/Server");
-
-#else
-			//NetTcpBinding binding = new NetTcpBinding();
-			//binding.Security.Mode = SecurityMode.TransportWithMessageCredential;
-			//binding.Security.Mode = SecurityMode.None;
-			//binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-
-			serviceHost.AddServiceEndpoint(typeof(IServerService),
-				binding, "net.tcp://localhost:8000/MyGame/Server");
-
-			serviceHost.Credentials.UserNameAuthentication.UserNamePasswordValidationMode =
-				System.ServiceModel.Security.UserNamePasswordValidationMode.Custom;
-			serviceHost.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator =
-				new CustomUserNameValidator();
-
-			/*
-			 * makecert -r -pe -n "CN=CompanyXYZ Server" -b 01/01/2007 -e 01/01/2010 -sky exchange Server.cer -sv Server.pvk
-			 * pvk2pfx.exe -pvk Server.pvk -spc Server.cer -pfx Server.pfx
-			 */
-			/*
-			X509Certificate2 cert = new X509Certificate2("Server.pfx");
-			serviceHost.Credentials.ServiceCertificate.Certificate = cert;
-			*/
-#endif
-
-			//EventWaitHandle serverWaitHandle = EventWaitHandle.OpenExisting("MyGame.ServerWaitHandle");
-
-			try
+			if (isEmbedded)
 			{
-				serviceHost.Open();
-
-				MyDebug.WriteLine("The service is ready.");
-
-				if (isEmbedded)
+				MyDebug.WriteLine("Server signaling client for start.");
+				if (serverStartWaitHandle != null)
 				{
-					MyDebug.WriteLine("Server signaling client for start.");
-					if (serverStartWaitHandle != null)
-					{
-						serverStartWaitHandle.Set();
-						serverStopWaitHandle.WaitOne();
-					}
+					serverStartWaitHandle.Set();
+					serverStopWaitHandle.WaitOne();
 				}
-				else
-				{
-					Console.WriteLine("Press enter to exit");
-					while (Console.ReadKey().Key != ConsoleKey.Enter)
-						world.SignalWorld();
-				}
-
-				MyDebug.WriteLine("Server exiting");
-
-				serviceHost.Close();
 			}
-			catch (CommunicationException ce)
+			else
 			{
-				MyDebug.WriteLine("An exception occurred: {0}", ce.Message);
-				serviceHost.Abort();
+				Console.WriteLine("Press enter to exit");
+				while (Console.ReadKey().Key != ConsoleKey.Enter)
+					world.SignalWorld();
 			}
+
+			MyDebug.WriteLine("Server exiting");
+
+			listener.Stop();
 
 			MyDebug.WriteLine("Server exit");
 		}
+
+		public static void AcceptTcpClientCallback(IAsyncResult ar)
+		{
+			TcpListener listener = (TcpListener)ar.AsyncState;
+			TcpClient client = listener.EndAcceptTcpClient(ar);
+
+			var c = new ServerConnection(client);
+			c.Start();
+		}
+
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
@@ -133,22 +100,5 @@ namespace MyGame
 
 		}
 
-	}
-
-	public class CustomUserNameValidator : System.IdentityModel.Selectors.UserNamePasswordValidator
-	{
-		public override void Validate(string userName, string password)
-		{
-			MyDebug.WriteLine("Validate {0}, {1}", userName, password);
-
-			if (null == userName || null == password)
-			{
-				throw new ArgumentNullException();
-			}
-
-			if (userName != "tomba")
-				throw new System.IdentityModel.Tokens.SecurityTokenValidationException("illegal user");
-
-		}
 	}
 }

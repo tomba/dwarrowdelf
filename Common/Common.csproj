@@ -54,6 +54,7 @@
     <Compile Include="AStar.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="DataTypes\EnvPos.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
@@ -62,6 +63,7 @@
     <Compile Include="DataTypes\Grid3DBase.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\Grid2DBase.cs" />
+    <Compile Include="Serializer.cs" />
     <Compile Include="SymbolInfo.cs" />
     <Compile Include="ObjectInfo.cs" />
     <Compile Include="DataTypes\IntCube.cs" />

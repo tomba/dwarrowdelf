@@ -102,7 +102,7 @@
     <Compile Include="AI\AI.cs" />
     <Compile Include="AI\Task.cs" />
     <Compile Include="ClientCallback.cs" />
-    <Compile Include="Connection.cs" />
+    <Compile Include="ClientConnection.cs" />
     <Compile Include="DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
