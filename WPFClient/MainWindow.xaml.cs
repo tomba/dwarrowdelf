@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
 using System.ComponentModel;
+using MyGame.ClientMsgs;
 
 namespace MyGame
 {
@@ -184,7 +185,7 @@ namespace MyGame
 				}
 				else
 				{
-					GameData.Data.Connection.Server.ProceedTurn();
+					GameData.Data.Connection.Send(new ProceedTurnMessage());
 				}
 			}
 			else if (e.Key == Key.Add)
@@ -258,15 +259,23 @@ namespace MyGame
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
 		{
 			IntRect r = map.SelectionRect;
-			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
-				new IntCube(r, map.Z), InteriorID.Empty);
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCube(r, map.Z),
+				TileID = InteriorID.Empty,
+			});
 		}
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
 			IntRect r = map.SelectionRect;
-			GameData.Data.Connection.Server.SetTiles(map.Environment.ObjectID,
-				new IntCube(r, map.Z), InteriorID.NaturalWall);
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCube(r, map.Z),
+				TileID = InteriorID.NaturalWall,
+			});
 		}
 
 		private void MenuItem_Click_Job(object sender, RoutedEventArgs e)
@@ -329,12 +338,12 @@ namespace MyGame
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.Server.LogOnChar("tomba");
+			GameData.Data.Connection.Send(new LogOnCharMessage() { Name = "tomba" });
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.Server.LogOffChar();
+			GameData.Data.Connection.Send(new LogOffCharMessage());
 		}
 
 		#region INotifyPropertyChanged Members

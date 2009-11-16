@@ -48,7 +48,7 @@ namespace MyGame
 			BinaryWriter sw = new BinaryWriter(stream);
 			sw.Write(len);
 
-			MyDebug.WriteLine("Sending {0} bytes", len);
+			//MyDebug.WriteLine("Sending {0} bytes", len);
 			var buffer = stream.ToArray();
 			netStream.Write(buffer, 0, len);
 		}

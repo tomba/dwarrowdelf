@@ -55,27 +55,10 @@ namespace MyGame
 		{
 		}
 
-		public IServerService Server
-		{
-			get { return null; }
-		}
-
 		protected override void HandleMessage(Message msg)
 		{
-			if (msg is LogOnReply)
-			{
-				var m = (LogOnReply)msg;
-				m_cc.LogOnReply(m.UserID);
-			}
-			else if (msg is LogOnCharReply)
-			{
-				var m = (LogOnCharReply)msg;
-				m_cc.LogOnCharReply(m.PlayerID);
-			}
-			else
-			{
-				m_cc.DeliverMessage(msg);
-			}
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action<Message>(m_cc.DeliverMessage), msg);
 		}
 
 		public int GetNewTransactionID()

@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.ServiceModel;
 using System.Threading;
 using System.Diagnostics;
 
 namespace MyGame
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession,
-		ConcurrencyMode = ConcurrencyMode.Single, MaxItemsInObjectGraph = 1147483647)]
-	public class ServerService : IServerService
+	public class ServerService
 	{
 		static int s_userIDs = 1;
 

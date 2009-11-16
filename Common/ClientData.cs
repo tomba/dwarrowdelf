@@ -65,6 +65,18 @@ namespace MyGame.ClientMsgs
 	{
 	}
 
+
+	[DataContract]
+	public class SetTilesMessage : Message
+	{
+		[DataMember]
+		public ObjectID MapID { get; set; }
+		[DataMember]
+		public IntCube Cube { get; set; }
+		[DataMember]
+		public InteriorID TileID { get; set; }
+	}
+
 	[DataContract]
 	public class CompoundMessage : Message
 	{

@@ -44,7 +44,7 @@ namespace MyGame
 			var stream = (NetworkStream)ar.AsyncState;
 			int len = stream.EndRead(ar);
 
-			MyDebug.WriteLine("Received {0} bytes", len);
+			//MyDebug.WriteLine("Received {0} bytes", len);
 
 			if (len == 0)
 			{
@@ -65,7 +65,7 @@ namespace MyGame
 				{
 					var memstream = new MemoryStream(m_buffer, 0, len);
 					m_expectedLen = new BinaryReader(memstream).ReadInt32();
-					MyDebug.WriteLine("Expecting msg of {0} bytes", m_expectedLen);
+					//MyDebug.WriteLine("Expecting msg of {0} bytes", m_expectedLen);
 
 					if (m_expectedLen > m_buffer.Length)
 						throw new Exception();
@@ -85,7 +85,7 @@ namespace MyGame
 				}
 				else
 				{
-					MyDebug.WriteLine("{0} != {1}", m_expectedLen, m_bufferUsed);
+					//MyDebug.WriteLine("{0} != {1}", m_expectedLen, m_bufferUsed);
 					break;
 				}
 			}

@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net.Sockets;
-using System.IO;
 using MyGame.ClientMsgs;
 
 namespace MyGame
 {
+
 	public class ServerConnection : Connection
 	{
 		ServerService m_user;
+		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
 
-		public ServerConnection(TcpClient client) : base(client)
+		public ServerConnection(TcpClient client)
+			: base(client)
 		{
 			m_user = new ServerService(this);
 		}
@@ -30,30 +30,44 @@ namespace MyGame
 
 		protected override void HandleMessage(Message msg)
 		{
-			if (msg is LogOnMessage)
+			Action<Message> f;
+			Type t = msg.GetType();
+			if (!m_handlerMap.TryGetValue(t, out f))
 			{
-				var m = (LogOnMessage)msg;
-				m_user.LogOn(m.Name);
+				f = WrapperGenerator.CreateHandlerWrapper<Message>("HandleMessage", t, this);
+
+				if (f == null)
+					throw new Exception();
+
+				m_handlerMap[t] = f;
 			}
-			else if (msg is LogOnCharMessage)
-			{
-				var m = (LogOnCharMessage)msg;
-				m_user.LogOnChar(m.Name);
-			}
-			else if (msg is EnqueueActionMessage)
-			{
-				var m = (EnqueueActionMessage)msg;
-				m_user.EnqueueAction(m.Action);
-			}
-			else if (msg is ProceedTurnMessage)
-			{
-				var m = (ProceedTurnMessage)msg;
-				m_user.ProceedTurn();
-			}
-			else
-			{
-				throw new Exception();
-			}
+
+			f(msg);
+		}
+
+		void HandleMessage(LogOnMessage msg)
+		{
+			m_user.LogOn(msg.Name);
+		}
+
+		void HandleMessage(LogOnCharMessage msg)
+		{
+			m_user.LogOnChar(msg.Name);
+		}
+
+		void HandleMessage(EnqueueActionMessage msg)
+		{
+			m_user.EnqueueAction(msg.Action);
+		}
+
+		void HandleMessage(ProceedTurnMessage msg)
+		{
+			m_user.ProceedTurn();
+		}
+
+		void HandleMessage(SetTilesMessage msg)
+		{
+			m_user.SetTiles(msg.MapID, msg.Cube, msg.TileID);
 		}
 	}
 }

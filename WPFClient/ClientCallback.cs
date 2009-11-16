@@ -7,55 +7,48 @@ using MyGame.ClientMsgs;
 
 namespace MyGame
 {
-	class ClientCallback : IClientCallback
+	class ClientCallback
 	{
+		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
+
 		public ClientCallback()
 		{
 		}
 
-		#region IClientCallback Members
-
-		public void LogOnReply(int userID)
-		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<int>(_LogOnReply), userID);
-		}
-
-		public void LogOnCharReply(ObjectID playerID)
-		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<ObjectID>(_LogOnCharReply), playerID);
-		}
-
-		public void LogOffCharReply()
-		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action(_LogOffCharReply));
-		}
-
 		public void DeliverMessage(Message msg)
 		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<Message>(_DeliverMessage), msg);
+			MyDebug.WriteLine("[RX] {0}", msg);
+
+			Action<Message> f;
+			Type t = msg.GetType();
+			if (!m_handlerMap.TryGetValue(t, out f))
+			{
+				f = WrapperGenerator.CreateHandlerWrapper<Message>("HandleMessage", t, this);
+
+				if (f == null)
+					throw new Exception();
+
+				m_handlerMap[t] = f;
+			}
+
+			f(msg);
 		}
 
-		public void DeliverMessages(IEnumerable<Message> messages)
+		void DeliverMessages(IEnumerable<Message> messages)
 		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<IEnumerable<Message>>(_DeliverMessages), messages);
+			foreach (Message msg in messages)
+				DeliverMessage(msg);
 		}
 
-		#endregion
-
-		void _LogOnReply(int userID)
+		void HandleMessage(LogOnReply msg)
 		{
-			World.TheWorld.UserID = userID;
+			World.TheWorld.UserID = msg.UserID;
 			GameData.Data.Connection.Send(new LogOnCharMessage() { Name = "tomba" });
 		}
 
-		void _LogOnCharReply(ObjectID playerID)
+		void HandleMessage(LogOnCharReply msg)
 		{
-			var player = new Living(World.TheWorld, playerID);
+			var player = new Living(World.TheWorld, msg.PlayerID);
 			World.TheWorld.Controllables.Add(player);
 			if (GameData.Data.CurrentObject == null)
 				GameData.Data.CurrentObject = player;
@@ -66,7 +59,7 @@ namespace MyGame
 				App.MainWindow.MiniMap.FollowObject = player;
 		}
 
-		void _LogOffCharReply()
+		void HandleMessage(LogOffCharReply msg)
 		{
 			World.TheWorld.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
@@ -74,140 +67,122 @@ namespace MyGame
 			App.MainWindow.MiniMap.FollowObject = null;
 		}
 
-		void _DeliverMessage(Message msg)
+		void HandleMessage(TerrainData msg)
 		{
-			MyDebug.WriteLine("[RX] {0}", msg);
-
-			if (msg is TerrainData)
-			{
-				TerrainData td = (TerrainData)msg;
-				var env = World.TheWorld.FindObject<Environment>(td.Environment);
-				if (env == null)
-					throw new Exception();
-				MyDebug.WriteLine("Received TerrainData for {0} tiles", td.MapDataList.Count());
-				env.SetTerrains(td.MapDataList);
-			}
-			else if (msg is ObjectMove)
-			{
-				ObjectMove om = (ObjectMove)msg;
-				ClientGameObject ob = World.TheWorld.FindObject(om.ObjectID);
-
-				if (ob == null)
-				{
-					/* There's a special case where we don't get objectinfo, but we do get
-					 * ObjectMove: If the object move from tile, that just case visible to us, 
-					 * to a tile that we cannot see. So let's not throw exception, but exit
-					 * silently */
-					return;
-				}
-
-				ClientGameObject env = null;
-				if (om.TargetEnvID != ObjectID.NullObjectID)
-					env = World.TheWorld.FindObject(om.TargetEnvID);
-
-				ob.MoveTo(env, om.TargetLocation);
-			}
-			else if (msg is FullMapData)
-			{
-				FullMapData md = (FullMapData)msg;
-
-				var env = World.TheWorld.FindObject<Environment>(md.ObjectID);
-
-				if (env == null)
-				{
-					MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
-					var world = World.TheWorld;
-					env = new Environment(world, md.ObjectID, md.Bounds);
-					world.AddEnvironment(env);
-					env.Name = "map";
-				}
-
-				MyDebug.WriteLine("Received TerrainData for {0} tiles", md.TerrainIDs.Count());
-				env.SetTerrains(md.Bounds, md.TerrainIDs);
-				env.VisibilityMode = md.VisibilityMode;
-
-				_DeliverMessages(md.ObjectData);
-			}
-			else if (msg is MapData)
-			{
-				MapData md = (MapData)msg;
-
-				var env = World.TheWorld.FindObject<Environment>(md.ObjectID);
-
-				if (env == null)
-				{
-					MyDebug.WriteLine("New map appeared {0}", md.ObjectID);
-					var world = World.TheWorld;
-					env = new Environment(world, md.ObjectID);
-					world.AddEnvironment(env);
-					env.Name = "map";
-				}
-
-				env.VisibilityMode = md.VisibilityMode;
-			}
-			else if (msg is LivingData)
-			{
-				LivingData ld = (LivingData)msg;
-
-				var ob = World.TheWorld.FindObject<Living>(ld.ObjectID);
-
-				if (ob == null)
-				{
-					MyDebug.WriteLine("New living appeared {0}/{1}", ld.Name, ld.ObjectID);
-					ob = new Living(World.TheWorld, ld.ObjectID);
-				}
-
-				ob.SymbolID = ld.SymbolID;
-				ob.VisionRange = ld.VisionRange;
-				ob.Name = ld.Name;
-				ob.Color = ld.Color.ToColor();
-
-				ClientGameObject env = null;
-				if (ld.Environment != ObjectID.NullObjectID)
-					env = World.TheWorld.FindObject(ld.Environment);
-
-				ob.MoveTo(env, ld.Location);
-			}
-			else if (msg is ItemData)
-			{
-				ItemData id = (ItemData)msg;
-
-				var ob = World.TheWorld.FindObject<ItemObject>(id.ObjectID);
-
-				if (ob == null)
-				{
-					MyDebug.WriteLine("New object appeared {0}/{1}", id.Name, id.ObjectID);
-					ob = new ItemObject(World.TheWorld, id.ObjectID);
-				}
-
-				ob.Name = id.Name;
-				ob.SymbolID = id.SymbolID;
-				ob.Color = id.Color.ToColor();
-
-				ClientGameObject env = null;
-				if (id.Environment != ObjectID.NullObjectID)
-					env = World.TheWorld.FindObject(id.Environment);
-
-				ob.MoveTo(env, id.Location);
-			}
-			else if (msg is EventMessage)
-			{
-				HandleEvents(((EventMessage)msg).Event);
-			}
-			else if (msg is CompoundMessage)
-			{
-				_DeliverMessages(((CompoundMessage)msg).Messages);
-			}
-			else
-			{
-				throw new Exception("unknown messagetype");
-			}
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.MapDataList.Count());
+			env.SetTerrains(msg.MapDataList);
 		}
 
-		void _DeliverMessages(IEnumerable<Message> messages)
+		void HandleMessage(ObjectMove msg)
 		{
-			foreach (Message msg in messages)
-				_DeliverMessage(msg);
+			ClientGameObject ob = World.TheWorld.FindObject(msg.ObjectID);
+
+			if (ob == null)
+			{
+				/* There's a special case where we don't get objectinfo, but we do get
+				 * ObjectMove: If the object move from tile, that just case visible to us, 
+				 * to a tile that we cannot see. So let's not throw exception, but exit
+				 * silently */
+				return;
+			}
+
+			ClientGameObject env = null;
+			if (msg.TargetEnvID != ObjectID.NullObjectID)
+				env = World.TheWorld.FindObject(msg.TargetEnvID);
+
+			ob.MoveTo(env, msg.TargetLocation);
+		}
+
+		void HandleMessage(FullMapData msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.ObjectID);
+
+			if (env == null)
+			{
+				MyDebug.WriteLine("New map appeared {0}", msg.ObjectID);
+				var world = World.TheWorld;
+				env = new Environment(world, msg.ObjectID, msg.Bounds);
+				world.AddEnvironment(env);
+				env.Name = "map";
+			}
+
+			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TerrainIDs.Count());
+			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
+			env.VisibilityMode = msg.VisibilityMode;
+
+			DeliverMessages(msg.ObjectData);
+		}
+
+		void HandleMessage(MapData msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.ObjectID);
+
+			if (env == null)
+			{
+				MyDebug.WriteLine("New map appeared {0}", msg.ObjectID);
+				var world = World.TheWorld;
+				env = new Environment(world, msg.ObjectID);
+				world.AddEnvironment(env);
+				env.Name = "map";
+			}
+
+			env.VisibilityMode = msg.VisibilityMode;
+		}
+
+		void HandleMessage(LivingData msg)
+		{
+			var ob = World.TheWorld.FindObject<Living>(msg.ObjectID);
+
+			if (ob == null)
+			{
+				MyDebug.WriteLine("New living appeared {0}/{1}", msg.Name, msg.ObjectID);
+				ob = new Living(World.TheWorld, msg.ObjectID);
+			}
+
+			ob.SymbolID = msg.SymbolID;
+			ob.VisionRange = msg.VisionRange;
+			ob.Name = msg.Name;
+			ob.Color = msg.Color.ToColor();
+
+			ClientGameObject env = null;
+			if (msg.Environment != ObjectID.NullObjectID)
+				env = World.TheWorld.FindObject(msg.Environment);
+
+			ob.MoveTo(env, msg.Location);
+		}
+
+		void HandleMessage(ItemData msg)
+		{
+			var ob = World.TheWorld.FindObject<ItemObject>(msg.ObjectID);
+
+			if (ob == null)
+			{
+				MyDebug.WriteLine("New object appeared {0}/{1}", msg.Name, msg.ObjectID);
+				ob = new ItemObject(World.TheWorld, msg.ObjectID);
+			}
+
+			ob.Name = msg.Name;
+			ob.SymbolID = msg.SymbolID;
+			ob.Color = msg.Color.ToColor();
+
+			ClientGameObject env = null;
+			if (msg.Environment != ObjectID.NullObjectID)
+				env = World.TheWorld.FindObject(msg.Environment);
+
+			ob.MoveTo(env, msg.Location);
+		}
+
+		void HandleMessage(EventMessage msg)
+		{
+			HandleEvents(msg.Event);
+		}
+
+		void HandleMessage(CompoundMessage msg)
+		{
+			DeliverMessages(msg.Messages);
 		}
 
 		void HandleEvents(Event @event)
