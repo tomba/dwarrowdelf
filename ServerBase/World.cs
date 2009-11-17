@@ -90,8 +90,8 @@ namespace MyGame
 
 		class InvokeInfo
 		{
-			public Action<object> Action;
-			public object Data;
+			public Delegate Action;
+			public object[] Args;
 		}
 
 		List<InvokeInfo> m_preTurnInvokeList = new List<InvokeInfo>();
@@ -242,10 +242,10 @@ namespace MyGame
 		}
 
 		// thread safe
-		public void BeginInvoke(Action<object> callback, object data)
+		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			lock (m_preTurnInvokeList)
-				m_preTurnInvokeList.Add(new InvokeInfo() { Action = callback, Data = data });
+				m_preTurnInvokeList.Add(new InvokeInfo() { Action = callback, Args = args});
 
 			SignalWorld();
 		}
@@ -259,7 +259,7 @@ namespace MyGame
 				if (m_preTurnInvokeList.Count > 0)
 					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTurnInvokeList.Count);
 				foreach (InvokeInfo a in m_preTurnInvokeList)
-					a.Action(a.Data);
+					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
 				m_preTurnInvokeList.Clear();
 			}
 		}
@@ -273,10 +273,10 @@ namespace MyGame
 		}
 
 		// thread safe
-		public void BeginInvokeInstant(Action<object> callback, object data)
+		public void BeginInvokeInstant(Delegate callback, params object[] args)
 		{
 			lock (m_instantInvokeList)
-				m_instantInvokeList.Add(new InvokeInfo() { Action = callback, Data = data });
+				m_instantInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
 
 			SignalWorld();
 		}
@@ -290,7 +290,7 @@ namespace MyGame
 				if (m_instantInvokeList.Count > 0)
 					MyDebug.WriteLine("Processing {0} instant invoke callbacks", m_instantInvokeList.Count);
 				foreach (InvokeInfo a in m_instantInvokeList)
-					a.Action(a.Data);
+					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
 				m_instantInvokeList.Clear();
 			}
 		}

@@ -8,8 +8,32 @@ namespace MyGame
 {
 	public class ServerConnection : Connection
 	{
+		class WorldInvokeAttribute : Attribute
+		{
+			public WorldInvokeStyle Style { get; set; }
+
+			public WorldInvokeAttribute(WorldInvokeStyle style)
+			{
+				this.Style = style;
+			}
+		}
+
+		enum WorldInvokeStyle
+		{
+			None,
+			Normal,
+			Instant,
+		}
+
+		class InvokeInfo
+		{
+			public Action<Message> Action;
+			public WorldInvokeStyle Style;
+		}
+
+
 		static int s_userIDs = 1;
-		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
+		Dictionary<Type, InvokeInfo> m_handlerMap = new Dictionary<Type, InvokeInfo>();
 		World m_world;
 		Living m_player;
 
@@ -36,30 +60,53 @@ namespace MyGame
 
 		protected override void ReceiveMessage(Message msg)
 		{
-			Action<Message> f;
+			InvokeInfo f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
-				f = WrapperGenerator.CreateHandlerWrapper<Message>("ReceiveMessage", t, this);
+				System.Reflection.MethodInfo mi;
+				f = new InvokeInfo();
+				f.Action = WrapperGenerator.CreateHandlerWrapper<Message>("ReceiveMessage", t, this, out mi);
 
 				if (f == null)
 					throw new Exception("Unknown Message");
 
+				var attr = (WorldInvokeAttribute)Attribute.GetCustomAttribute(mi, typeof(WorldInvokeAttribute));
+
+				if (attr == null || attr.Style == WorldInvokeStyle.None)
+					f.Style = WorldInvokeStyle.None;
+				else if (attr.Style == WorldInvokeStyle.Normal)
+					f.Style = WorldInvokeStyle.Normal;
+				else if (attr.Style == WorldInvokeStyle.Instant)
+					f.Style = WorldInvokeStyle.Instant;
+				else
+					throw new Exception();
+
 				m_handlerMap[t] = f;
 			}
 
-			f(msg);
+			switch (f.Style)
+			{
+				case WorldInvokeStyle.None:
+					f.Action(msg);
+					break;
+				case WorldInvokeStyle.Normal:
+					m_world.BeginInvoke(f.Action, msg);
+					break;
+				case WorldInvokeStyle.Instant:
+					m_world.BeginInvokeInstant(f.Action, msg);
+					break;
+				default:
+					throw new Exception();
+			}
 		}
 
 
+
+		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(LogOnRequest msg)
 		{
-			m_world.BeginInvoke(_LogOn, msg.Name);
-		}
-
-		void _LogOn(object data)
-		{
-			string name = (string)data;
+			string name = msg.Name;
 
 			MyDebug.WriteLine("LogOn {0}", name);
 
@@ -71,8 +118,8 @@ namespace MyGame
 			{
 				foreach (var env in m_world.Environments)
 				{
-					var msg = env.Serialize();
-					Send(msg);
+					var m = env.Serialize();
+					Send(m);
 				}
 			}
 
@@ -80,17 +127,13 @@ namespace MyGame
 			m_world.HandleEventsEvent += HandleEvents;
 		}
 
+		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(LogOffMessage msg)
-		{
-			m_world.BeginInvoke(_LogOff);
-		}
-
-		void _LogOff(object data)
 		{
 			MyDebug.WriteLine("Logout");
 
 			if (m_player != null)
-				_LogOffChar(null);
+				ReceiveMessage(new LogOffCharRequest()); // XXX
 
 			m_world.HandleChangesEvent -= HandleChanges;
 			m_world.HandleEventsEvent -= HandleEvents;
@@ -98,17 +141,12 @@ namespace MyGame
 			m_world = null;
 		}
 
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(SetTilesMessage msg)
 		{
-			m_world.BeginInvokeInstant(_SetTiles, new object[] { msg.MapID, msg.Cube, msg.TileID });
-		}
-
-		void _SetTiles(object data)
-		{
-			object[] arr = (object[])data;
-			ObjectID mapID = (ObjectID)arr[0];
-			IntCube r = (IntCube)arr[1];
-			InteriorID type = (InteriorID)arr[2];
+			ObjectID mapID = msg.MapID;
+			IntCube r = msg.Cube;
+			InteriorID type = msg.TileID;
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
 			if (env == null)
@@ -123,29 +161,20 @@ namespace MyGame
 			}
 		}
 
+		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(ProceedTurnMessage msg)
-		{
-			m_world.BeginInvoke(_ProceedTurn);
-		}
-
-		public void _ProceedTurn(object data)
 		{
 			MyDebug.WriteLine("ProceedTurn command");
 			m_world.RequestTurn();
 		}
 
 		/* functions for livings */
+		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(LogOnCharRequest msg)
 		{
-			m_world.BeginInvoke(_LogOnChar, msg.Name);
-		}
-
-		public void _LogOnChar(object data)
-		{
-			string name = (string)data;
+			string name = msg.Name;
 
 			MyDebug.WriteLine("LogOnChar {0}", name);
-
 
 			var env = m_world.Environments.First(); // XXX entry location
 
@@ -191,18 +220,14 @@ namespace MyGame
 			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
 		}
 
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffCharRequest msg)
 		{
-			m_world.BeginInvokeInstant(_LogOffChar);
-		}
-
-		void _LogOffChar(object data)
-		{
 			m_player.EnqueueAction(new WaitAction(1));
-			m_world.BeginInvoke(__LogOffChar);
+			m_world.BeginInvoke(new Action(__LogOffChar));
 		}
 
-		void __LogOffChar(object data)
+		void __LogOffChar()
 		{
 			MyDebug.WriteLine("LogOffChar");
 

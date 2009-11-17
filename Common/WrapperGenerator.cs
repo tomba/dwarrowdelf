@@ -15,8 +15,15 @@ namespace MyGame
 		/// </summary>
 		public static Action<T> CreateHandlerWrapper<T>(string methodName, Type argType, object bindOb)
 		{
+			MethodInfo dummy;
+			return CreateHandlerWrapper<T>(methodName, argType, bindOb, out dummy);
+		}
+
+		public static Action<T> CreateHandlerWrapper<T>(string methodName, Type argType, object bindOb,
+			out MethodInfo method)
+		{
 			Type bindType = bindOb.GetType();
-			var method = bindType.GetMethod(methodName,
+			method = bindType.GetMethod(methodName,
 				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding, null,
 				new Type[] { argType }, null);
 
