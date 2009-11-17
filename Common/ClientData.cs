@@ -16,7 +16,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class LogOnMessage : Message
+	public class LogOnRequest : Message
 	{
 		[DataMember]
 		public string Name { get; set; }
@@ -30,7 +30,12 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class LogOnCharMessage : Message
+	public class LogOffMessage : Message
+	{
+	}
+
+	[DataContract]
+	public class LogOnCharRequest : Message
 	{
 		[DataMember]
 		public string Name { get; set; }
@@ -44,7 +49,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class LogOffCharMessage : Message
+	public class LogOffCharRequest : Message
 	{
 	}
 

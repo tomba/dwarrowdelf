@@ -18,6 +18,8 @@ namespace MyGame
 		int m_bufferUsed;
 		int m_expectedLen;
 
+		protected TcpClient Client { get { return m_client; } }
+
 		public Connection()
 		{
 			m_client = new TcpClient();
@@ -26,11 +28,25 @@ namespace MyGame
 		public Connection(TcpClient client)
 		{
 			m_client = client;
+			BeginRead();
 		}
 
-		protected TcpClient Client { get { return m_client; } }
+		public void BeginConnect(Action callback)
+		{
+			Client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
+		}
 
-		protected void BeginRead()
+		void ConnectCallback(IAsyncResult ar)
+		{
+			var callback = (Action)ar.AsyncState;
+			Client.EndConnect(ar);
+
+			callback.Invoke();
+
+			BeginRead();
+		}
+
+		void BeginRead()
 		{
 			var stream = m_client.GetStream();
 			stream.BeginRead(m_buffer, m_bufferUsed, m_buffer.Length - m_bufferUsed, ReadCallback, stream);
@@ -75,7 +91,7 @@ namespace MyGame
 				{
 					var memstream = new MemoryStream(m_buffer, 4, m_expectedLen - 4);
 					var msg = m_serializer.Deserialize(memstream);
-					HandleMessage(msg);
+					ReceiveMessage(msg);
 
 					int copy = m_bufferUsed - m_expectedLen;
 					Array.Copy(m_buffer, m_expectedLen, m_buffer, 0, copy);
@@ -93,6 +109,8 @@ namespace MyGame
 			BeginRead();
 		}
 
+		protected abstract void ReceiveMessage(Message msg);
+
 		public void Disconnect()
 		{
 			m_client.Client.Shutdown(SocketShutdown.Both);
@@ -104,7 +122,5 @@ namespace MyGame
 		{
 			m_serializer.Send(m_client.GetStream(), msg);
 		}
-	
-		protected abstract void HandleMessage(Message msg);
 	}
 }

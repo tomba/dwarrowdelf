@@ -89,8 +89,7 @@ namespace MyGame
 			TcpListener listener = (TcpListener)ar.AsyncState;
 			TcpClient client = listener.EndAcceptTcpClient(ar);
 
-			var c = new ServerConnection(client);
-			c.Start();
+			var c = new ServerConnection(client, World.TheWorld);
 		}
 
 

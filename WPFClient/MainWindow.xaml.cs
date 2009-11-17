@@ -338,12 +338,12 @@ namespace MyGame
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.Send(new LogOnCharMessage() { Name = "tomba" });
+			GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.Send(new LogOffCharMessage());
+			GameData.Data.Connection.Send(new LogOffCharRequest());
 		}
 
 		#region INotifyPropertyChanged Members

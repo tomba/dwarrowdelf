@@ -58,7 +58,6 @@
     <Compile Include="MonsterActor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGameObject.cs" />
-    <Compile Include="ServerService.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

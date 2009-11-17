@@ -92,8 +92,8 @@ namespace MyGame
 
 		void ConnectCallback()
 		{
-			m_connection.LogOn("tomba");
 			GameData.Data.Connection = m_connection;
+			m_connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
 		}
 
 		protected override void OnExit(ExitEventArgs e)
@@ -102,8 +102,9 @@ namespace MyGame
 
 			if (m_connection != null)
 			{
-				m_connection.LogOff();
+				m_connection.Send(new ClientMsgs.LogOffMessage());
 				m_connection.Disconnect();
+				m_connection = null;
 			}
 
 			if (m_serverInAppDomain && m_serverStopWaitHandle != null)

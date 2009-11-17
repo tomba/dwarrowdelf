@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace MyGame
 {
-	public class WrapperGenerator
+	public static class WrapperGenerator
 	{
 		/// <summary>
 		/// Creates a wrapper delegate, that converts argument from T to argType,
@@ -17,7 +17,7 @@ namespace MyGame
 		{
 			Type bindType = bindOb.GetType();
 			var method = bindType.GetMethod(methodName,
-				BindingFlags.NonPublic | BindingFlags.Instance, null,
+				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding, null,
 				new Type[] { argType }, null);
 
 			if (method == null)

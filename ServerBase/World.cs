@@ -57,7 +57,7 @@ namespace MyGame
 		List<Change> m_changeList = new List<Change>();
 		List<Event> m_eventList = new List<Event>();
 
-		List<ServerService> m_userList = new List<ServerService>();
+		List<ServerConnection> m_userList = new List<ServerConnection>();
 
 		List<Environment> m_environments = new List<Environment>();
 		public IEnumerable<Environment> Environments { get { return m_environments; } }
@@ -164,7 +164,7 @@ namespace MyGame
 		}
 
 		// thread safe
-		internal void AddUser(ServerService user)
+		internal void AddUser(ServerConnection user)
 		{
 			lock (m_userList)
 				m_userList.Add(user);
@@ -173,7 +173,7 @@ namespace MyGame
 		}
 
 		// thread safe
-		internal void RemoveUser(ServerService user)
+		internal void RemoveUser(ServerConnection user)
 		{
 			lock (m_userList)
 				m_userList.Remove(user);
