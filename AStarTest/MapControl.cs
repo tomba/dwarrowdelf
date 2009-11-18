@@ -215,7 +215,7 @@ namespace MyGame
 				iv *= (int)Math.Round(this.RenderSize.Width / 3);
 				Point mp = new Point(this.RenderSize.Width / 2, this.RenderSize.Height / 2);
 				dc.DrawEllipse(Brushes.White, null, mp, 3, 3);
-				dc.DrawLine(new Pen(Brushes.White, 2), mp, mp + new Vector(iv.X, iv.Y));
+				dc.DrawLine(new Pen(Brushes.White, 2), mp, mp + new Vector(iv.X, -iv.Y));
 			}
 
 			if (G != 0 || H != 0)
