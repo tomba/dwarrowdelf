@@ -18,7 +18,7 @@ using AStarTest;
 
 namespace MyGame
 {
-	class MapControl : MapControlBase
+	public class MapControl : MapControlBase, INotifyPropertyChanged
 	{
 		struct MapTile
 		{
@@ -26,8 +26,6 @@ namespace MyGame
 		}
 
 		Grid2D<MapTile> m_realMap;
-
-		Grid2D<Square> m_map;
 
 		const int MapWidth = 400;
 		const int MapHeight = 400;
@@ -42,8 +40,9 @@ namespace MyGame
 			this.TileSize = 32;
 
 			m_realMap = new Grid2D<MapTile>(MapWidth, MapHeight);
-			for (int y = 0; y < 350; ++y)
-				m_realMap[5, y] = new MapTile() { Blocked = true };
+			//for (int y = 0; y < 350; ++y)
+			//	m_realMap[5, y] = new MapTile() { Blocked = true };
+			m_realMap[0, 0] = new MapTile() { Blocked = true };
 
 			base.CenterPos = new IntPoint(10, 10);
 			ClearMap();
@@ -61,8 +60,7 @@ namespace MyGame
 
 		void ClearMap()
 		{
-			m_map = new Grid2D<Square>(MapWidth, MapHeight);
-
+			m_nodeMap = null;
 			InvalidateTiles();
 		}
 
@@ -75,28 +73,39 @@ namespace MyGame
 		{
 			MapControlTile tile = (MapControlTile)_tile;
 
-			if (!m_map.Bounds.Contains(ml))
-				return;
-
-			if (m_realMap[ml].Blocked)
+			tile.ClearTile();
+			if (!m_realMap.Bounds.Contains(ml))
 			{
-				tile.Color = Colors.Blue;
+				tile.Brush = Brushes.DarkBlue;
+			}
+			else if (m_realMap[ml].Blocked)
+			{
+				tile.Brush = Brushes.Blue;
 			}
 			else if (m_state > 0 && ml == m_from)
 			{
-				tile.Color = Colors.Green;
+				tile.Brush = Brushes.Green;
 			}
 			else if (m_state > 1 && ml == m_to)
 			{
-				tile.Color = Colors.Red;
+				tile.Brush = Brushes.Red;
 			}
-			else
+			else if (m_nodeMap != null)
 			{
-				Square s = m_map[ml];
-				tile.Color = s.Color;
-				tile.G = s.G;
-				tile.H = s.H;
-				tile.From = s.From;
+				if (m_nodeMap.ContainsKey(ml))
+				{
+					var node = m_nodeMap[ml];
+					tile.G = node.G;
+					tile.H = node.H;
+
+					if (node.Parent == null)
+						tile.From = Direction.None;
+					else
+						tile.From = (node.Parent.Loc - node.Loc).ToDirection();
+
+					if (m_path.Contains(ml))
+						tile.Brush = Brushes.DarkGray;
+				}
 			}
 
 			tile.InvalidateVisual();
@@ -105,6 +114,9 @@ namespace MyGame
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
+
+			if (!m_realMap.Bounds.Contains(ml))
+				Console.Beep();
 
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{
@@ -143,71 +155,99 @@ namespace MyGame
 			return true;
 		}
 
+		long m_memUsed;
+		public long MemUsed
+		{
+			get { return m_memUsed; }
+			set { m_memUsed = value; Notify("MemUsed"); }
+		}
+
+		long m_ticksUsed;
+		public long TicksUsed
+		{
+			get { return m_ticksUsed; }
+			set { m_ticksUsed = value; Notify("TicksUsed"); }
+		}
+
+		IDictionary<IntPoint, AStar.Node> m_nodeMap;
+		IEnumerable<IntPoint> m_path;
 
 		void DoAStar(IntPoint src, IntPoint dst)
 		{
 			long startBytes, stopBytes;
-			
-			startBytes = System.GC.GetTotalMemory(true);
-			IEnumerable<AStar.Node> list = AStar.FindPathNodes(src, dst, LocValid);
-			stopBytes = System.GC.GetTotalMemory(true);
-			GC.KeepAlive(list);
-			Console.WriteLine("mem {0}", stopBytes - startBytes);
-			
-			DrawNodes(src, dst, list);
-		}
+			Stopwatch sw = new Stopwatch();
+			startBytes = GC.GetTotalMemory(true);
+			sw.Start();
+			m_nodeMap = AStar.FindPathNodeMap(src, dst, LocValid);
+			sw.Stop();
+			stopBytes = GC.GetTotalMemory(true);
 
+			this.MemUsed = stopBytes - startBytes;
+			this.TicksUsed = sw.ElapsedTicks;
 
-
-		void DrawNodes(IntPoint src, IntPoint dst, IEnumerable<AStar.Node> list)
-		{
-			m_map[dst] = new Square() { Color = Colors.Red };
-
-			foreach (var n in list)
+			if (m_nodeMap == null)
 			{
-				if (n.Parent == null)
-					continue;
-
-				Direction from = (n.Parent.Loc - n.Loc).ToDirection();
-				m_map[n.Loc] = new Square() { From = from, G = n.G, H = n.H };
+				m_path = null;
+				return;
 			}
 
+			List<IntPoint> pathList = new List<IntPoint>();
+			var n = m_nodeMap.First(kvp => kvp.Key == dst).Value;
+			while (n.Parent != null)
 			{
-				var n = list.First(x => x.Loc == dst);
-				while (n.Parent != null)
-				{
-					Square s = m_map[n.Loc];
-					s.Color = Colors.DarkGray;
-					m_map[n.Loc] = s;
-					n = n.Parent;
-				}
+				pathList.Add(n.Loc);
+				n = n.Parent;
 			}
+			m_path = pathList;
 		}
 
-		struct Square
+		void Notify(string propertyName)
 		{
-			public Color Color;
-			public Direction From;
-			public int G;
-			public int H;
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
 	}
 
 	class MapControlTile : UIElement
 	{
+		static Pen s_edgePen;
+
+		static MapControlTile()
+		{
+			s_edgePen = new Pen(Brushes.Gray, 1);
+			s_edgePen.Freeze();
+		}
+
 		public MapControlTile()
 		{
 			this.IsHitTestVisible = false;
 		}
 
-		public Color Color;
+		public Brush Brush;
 		public int G;
 		public int H;
 		public Direction From;
 
+		public void ClearTile()
+		{
+			this.Brush = Brushes.Black;
+			this.G = 0;
+			this.H = 0;
+			this.From = Direction.None;
+		}
+
 		protected override void OnRender(DrawingContext dc)
 		{
-			dc.DrawRectangle(new SolidColorBrush(this.Color), new Pen(Brushes.Gray, 1), new Rect(this.RenderSize));
+			dc.DrawRectangle(this.Brush, s_edgePen, new Rect(this.RenderSize));
+
+			if (this.RenderSize.Width < 32)
+				return;
 
 			if (From != Direction.None)
 			{

@@ -24,6 +24,11 @@ namespace AStarTest
 		{
 			InitializeComponent();
 		}
+
+		private void OnBMClicked(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 
 }

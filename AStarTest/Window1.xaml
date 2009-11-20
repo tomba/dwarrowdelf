@@ -3,7 +3,24 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:MyGame"
     Title="Window1" Height="600" Width="800">
-    <Grid>
-        <local:MapControl x:Name="map" />
-    </Grid>
+    <DockPanel>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<Button Click="OnBMClicked" Tag="1">Benchmark 1</Button>
+				<Separator />
+			</ToolBar>
+		</ToolBarTray>
+
+		<StatusBar DockPanel.Dock="Bottom" >
+			<TextBlock>Memory</TextBlock>
+			<TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=MemUsed, Mode=OneWay}" />
+			<Separator />
+			<TextBlock>Ticks</TextBlock>
+			<TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=TicksUsed, Mode=OneWay}" />
+			<Separator />
+		</StatusBar>
+		<local:MapControl x:Name="map" />
+    </DockPanel>
 </Window>

@@ -26,7 +26,15 @@ namespace MyGame
 				Parent = parent;
 			}
 		}
-		
+
+		// public for AStarTest
+		public static IDictionary<IntPoint,Node> FindPathNodeMap(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
+		{
+			Node lastNode;
+			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
+			return nodes;
+		}
+
 		// public for AStarTest
 		public static IEnumerable<Node> FindPathNodes(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
 		{
