@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-using System.Xml.Serialization;
 using System.Windows.Resources;
 using System.Threading;
 
