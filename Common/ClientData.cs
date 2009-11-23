@@ -158,9 +158,9 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCube Bounds { get; set; }
 		[DataMember]
-		public IEnumerable<MapTileData> TerrainIDs { get; set; }
+		public IEnumerable<TileData> TerrainIDs { get; set; }
 		[DataMember]
-		public IEnumerable<ClientMsgs.Message> ObjectData { get; set; }
+		public IEnumerable<Message> ObjectData { get; set; }
 	}
 
 
@@ -168,18 +168,9 @@ namespace MyGame.ClientMsgs
 	public class MapData : Message
 	{
 		[DataMember]
-		public ObjectID ObjectID { get; set; }
+		public ObjectID Environment { get; set; }
 		[DataMember]
 		public VisibilityMode VisibilityMode { get; set; }
-	}
-
-	[DataContract]
-	public struct MapTileDataLoc
-	{
-		[DataMember]
-		public IntPoint3D Location { get; set; }
-		[DataMember]
-		public MapTileData TileData { get; set; }
 	}
 
 	[DataContract]
@@ -188,7 +179,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IEnumerable<MapTileDataLoc> TileDataList { get; set; }
+		public IEnumerable<KeyValuePair<IntPoint3D, TileData>> TileDataList { get; set; }
 		
 		public override string ToString()
 		{

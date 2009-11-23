@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	public delegate void MapChanged(Environment map, IntPoint3D l, MapTileData tileData);
+	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
 
 	public class Environment : ServerGameObject 
 	{
@@ -86,7 +86,7 @@ namespace MyGame
 
 			m_tileGrid.SetInteriorID(l, interiorID);
 
-			var d = new MapTileData()
+			var d = new TileData()
 			{
 				InteriorID = interiorID,
 				FloorID = m_tileGrid.GetFloorID(l),
@@ -105,7 +105,7 @@ namespace MyGame
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			var d = new MapTileData()
+			var d = new TileData()
 			{
 				InteriorID = m_tileGrid.GetInteriorID(l),
 				FloorID = floorID,
@@ -116,7 +116,7 @@ namespace MyGame
 				MapChanged(this, l, d);
 		}
 
-		public MapTileData GetTileData(IntPoint3D l)
+		public TileData GetTileData(IntPoint3D l)
 		{
 			return m_tileGrid.GetTileData(l);
 		}
@@ -203,12 +203,12 @@ namespace MyGame
 
 		public override ClientMsgs.Message Serialize()
 		{
-			var arr = new MapTileData[this.Width * this.Height * this.Depth];
+			var arr = new TileData[this.Width * this.Height * this.Depth];
 			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
 
 			foreach (var p in this.Bounds.Range())
 			{
-				MapTileData d;
+				TileData d;
 				d = m_tileGrid.GetTileData(p);
 				arr[p.X + p.Y * this.Width + p.Z * this.Width * this.Height] = d;
 				var obs = GetContents(p);
@@ -234,14 +234,14 @@ namespace MyGame
 		}
 
 
-		class TileGrid : Grid3DBase<MapTileData>
+		class TileGrid : Grid3DBase<TileData>
 		{
 			public TileGrid(int width, int height, int depth)
 				: base(width, height, depth)
 			{
 			}
 
-			public MapTileData GetTileData(IntPoint3D p)
+			public TileData GetTileData(IntPoint3D p)
 			{
 				return base.Grid[GetIndex(p)];
 			}

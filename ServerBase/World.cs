@@ -688,7 +688,7 @@ namespace MyGame
 			m_eventList.Clear();
 		}
 
-		void MapChangedCallback(Environment map, IntPoint3D l, MapTileData tileData)
+		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)
 		{
 			Debug.Assert(m_workActive);
 			AddChange(new MapChange(map, l, tileData));

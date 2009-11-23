@@ -136,13 +136,13 @@ namespace MyGame
 
 		void HandleMessage(MapData msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.ObjectID);
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
 
 			if (env == null)
 			{
-				MyDebug.WriteLine("New map appeared {0}", msg.ObjectID);
+				MyDebug.WriteLine("New map appeared {0}", msg.Environment);
 				var world = World.TheWorld;
-				env = new Environment(world, msg.ObjectID);
+				env = new Environment(world, msg.Environment);
 				world.AddEnvironment(env);
 				env.Name = "map";
 			}

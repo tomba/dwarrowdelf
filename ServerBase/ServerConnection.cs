@@ -372,11 +372,9 @@ namespace MyGame
 				return new ClientMsgs.TerrainData()
 				{
 					Environment = mc.MapID,
-					TileDataList = new ClientMsgs.MapTileDataLoc[] {
-						new ClientMsgs.MapTileDataLoc() {
-							Location = mc.Location, 
-							TileData = mc.TileData,
-						}
+					TileDataList = new KeyValuePair<IntPoint3D, TileData>[]
+					{
+						new KeyValuePair<IntPoint3D, TileData>(mc.Location, mc.TileData)
 					}
 				};
 			}
@@ -413,7 +411,7 @@ namespace MyGame
 						// new environment for this user, so send map info
 						var md = new ClientMsgs.MapData()
 						{
-							ObjectID = l.Environment.ObjectID,
+							Environment = l.Environment.ObjectID,
 							VisibilityMode = l.Environment.VisibilityMode,
 						};
 						mapMsgs.Add(md);
@@ -473,11 +471,8 @@ namespace MyGame
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
-						new ClientMsgs.MapTileDataLoc()
-						{
-							Location = l,
-							TileData = kvp.Key.GetTileData(l),
-						}).ToArray()
+						new KeyValuePair<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
+						).ToArray(),
 					// XXX there seems to be a problem serializing this.
 					// evaluating it with ToArray() fixes it
 				});

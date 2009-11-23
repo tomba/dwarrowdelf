@@ -7,12 +7,6 @@ using MyGame.ClientMsgs;
 
 namespace MyGame
 {
-	struct TileData
-	{
-		public InteriorID m_interiorID;
-		public FloorID m_floorID;
-		public List<ClientGameObject> m_contentList;
-	}
 
 	class MyGrowingGrid3D : GrowingGrid3DBase<MyGrowingGrid>
 	{
@@ -53,26 +47,6 @@ namespace MyGame
 			var level = base.GetLevel(p.Z, true);
 			level.SetFloorID(new IntPoint(p.X, p.Y), floorID);
 		}
-
-		public List<ClientGameObject> GetContents(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return null;
-			return level.GetContents(new IntPoint(p.X, p.Y));
-		}
-
-		public void AddObject(IntPoint3D p, ClientGameObject ob, bool tail)
-		{
-			var level = base.GetLevel(p.Z, true);
-			level.AddObject(new IntPoint(p.X, p.Y), ob, tail);
-		}
-
-		public void RemoveObject(IntPoint3D p, ClientGameObject ob)
-		{
-			var level = base.GetLevel(p.Z, true);
-			level.RemoveObject(new IntPoint(p.X, p.Y), ob);
-		}
 	}
 
 	class MyGrowingGrid : GrowingGrid2DBase<TileData>
@@ -86,14 +60,14 @@ namespace MyGame
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].m_interiorID;
+			return block.Grid[block.GetIndex(p)].InteriorID;
 		}
 
 		public void SetInteriorID(IntPoint p, InteriorID interiorID)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)].m_interiorID = interiorID;
+			block.Grid[block.GetIndex(p)].InteriorID = interiorID;
 		}
 
 		public FloorID GetFloorID(IntPoint p)
@@ -101,55 +75,14 @@ namespace MyGame
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].m_floorID;
+			return block.Grid[block.GetIndex(p)].FloorID;
 		}
 
 		public void SetFloorID(IntPoint p, FloorID floorID)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)].m_floorID = floorID;
-		}
-		public List<ClientGameObject> GetContents(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-
-			if (block == null)
-				return null;
-
-			return block.Grid[block.GetIndex(p)].m_contentList;
-		}
-
-		public void AddObject(IntPoint p, ClientGameObject ob, bool tail)
-		{
-			var block = base.GetBlock(ref p, true);
-
-			Debug.Assert(block != null);
-
-			int idx = block.GetIndex(p);
-
-			var list = block.Grid[idx].m_contentList;
-
-			if (list == null)
-			{
-				list = new List<ClientGameObject>();
-				block.Grid[idx].m_contentList = list;
-			}
-
-			Debug.Assert(!list.Contains(ob));
-			if (tail)
-				list.Add(ob);
-			else
-				list.Insert(0, ob);
-		}
-
-		public void RemoveObject(IntPoint p, ClientGameObject ob)
-		{
-			var block = base.GetBlock(ref p, false);
-
-			bool removed = block.Grid[block.GetIndex(p)].m_contentList.Remove(ob);
-
-			Debug.Assert(removed);
+			block.Grid[block.GetIndex(p)].FloorID = floorID;
 		}
 	}
 
@@ -158,6 +91,7 @@ namespace MyGame
 		public event Action<IntPoint3D> MapChanged;
 
 		MyGrowingGrid3D m_tileGrid;
+		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
 
 		public uint Version { get; private set; }
 
@@ -168,6 +102,7 @@ namespace MyGame
 		{
 			this.Version = 1;
 			m_tileGrid = new MyGrowingGrid3D(10);
+			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 		}
 
 		public Environment(World world, ObjectID objectID, IntCube bounds)
@@ -175,6 +110,7 @@ namespace MyGame
 		{
 			this.Version = 1;
 			m_tileGrid = new MyGrowingGrid3D(Math.Max(bounds.Width, bounds.Height));
+			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 		}
 
 		public bool IsWalkable(IntPoint3D l)
@@ -217,23 +153,23 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void SetTerrains(IEnumerable<ClientMsgs.MapTileDataLoc> locInfos)
+		public void SetTerrains(IEnumerable<KeyValuePair<IntPoint3D, TileData>> tileDataList)
 		{
 			this.Version += 1;
 
-			foreach (MapTileDataLoc locInfo in locInfos)
+			foreach (var locInfo in tileDataList)
 			{
-				IntPoint3D l = locInfo.Location;
+				IntPoint3D l = locInfo.Key;
 
-				m_tileGrid.SetInteriorID(l, locInfo.TileData.InteriorID);
-				m_tileGrid.SetFloorID(l, locInfo.TileData.FloorID);
+				m_tileGrid.SetInteriorID(l, locInfo.Value.InteriorID);
+				m_tileGrid.SetFloorID(l, locInfo.Value.FloorID);
 
 				if (MapChanged != null)
 					MapChanged(l);
 			}
 		}
 
-		public void SetTerrains(IntCube bounds, IEnumerable<MapTileData> tileDataList)
+		public void SetTerrains(IntCube bounds, IEnumerable<TileData> tileDataList)
 		{
 			var iter = tileDataList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())
@@ -247,18 +183,28 @@ namespace MyGame
 
 		public IList<ClientGameObject> GetContents(IntPoint3D l)
 		{
-			var list = m_tileGrid.GetContents(l);
-
-			if (list == null)
+			List<ClientGameObject> obs;
+			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
 				return null;
-			
-			return list.AsReadOnly();
+
+			return obs.AsReadOnly();
 		}
 
 		protected override void ChildAdded(ClientGameObject child)
 		{
 			IntPoint3D l = child.Location;
-			m_tileGrid.AddObject(l, child, !child.IsLiving);
+
+			List<ClientGameObject> obs;
+			if (!m_objectMap.TryGetValue(l, out obs))
+			{
+				obs = new List<ClientGameObject>();
+				m_objectMap[l] = obs;
+			}
+
+			if (child.IsLiving)
+				obs.Insert(0, child);
+			else
+				obs.Add(child);
 
 			if (MapChanged != null)
 				MapChanged(l);
@@ -267,7 +213,12 @@ namespace MyGame
 		protected override void ChildRemoved(ClientGameObject child)
 		{
 			IntPoint3D l = child.Location;
-			m_tileGrid.RemoveObject(l, child);
+
+			Debug.Assert(m_objectMap.ContainsKey(l));
+
+			List<ClientGameObject> obs = m_objectMap[l];
+
+			obs.Remove(child);
 
 			if (MapChanged != null)
 				MapChanged(l);

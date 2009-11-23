@@ -76,9 +76,9 @@ namespace MyGame
 		public GameObject Map { get; private set; }
 		public ObjectID MapID { get { return this.Map.ObjectID; } }
 		public IntPoint3D Location { get; set; }
-		public MapTileData TileData { get; set; }
+		public TileData TileData { get; set; }
 
-		public MapChange(GameObject map, IntPoint3D l, MapTileData tileData)
+		public MapChange(GameObject map, IntPoint3D l, TileData tileData)
 		{
 			this.Map = map;
 			this.Location = l;

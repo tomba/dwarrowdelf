@@ -26,7 +26,7 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public struct MapTileData
+	public struct TileData
 	{
 		[DataMember]
 		public InteriorID InteriorID { get; set; }
