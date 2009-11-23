@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace MyGame
 {
@@ -24,10 +25,18 @@ namespace MyGame
 		Floor,
 	}
 
-	public struct TileIDs
+	[DataContract]
+	public struct MapTileData
 	{
-		public InteriorID m_interiorID;
-		public FloorID m_floorID;
+		[DataMember]
+		public InteriorID InteriorID { get; set; }
+		[DataMember]
+		public MaterialID InteriorMaterialID { get; set; }
+
+		[DataMember]
+		public FloorID FloorID { get; set; }
+		[DataMember]
+		public MaterialID FloorMaterialID { get; set; }
 	}
 
 	public enum VisibilityMode

@@ -688,10 +688,10 @@ namespace MyGame
 			m_eventList.Clear();
 		}
 
-		void MapChangedCallback(Environment map, IntPoint3D l, TileIDs tileIDs)
+		void MapChangedCallback(Environment map, IntPoint3D l, MapTileData tileData)
 		{
 			Debug.Assert(m_workActive);
-			AddChange(new MapChange(map, l, tileIDs));
+			AddChange(new MapChange(map, l, tileData));
 		}
 
 		public ServerGameObject FindObject(ObjectID objectID)

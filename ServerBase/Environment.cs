@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	public delegate void MapChanged(Environment map, IntPoint3D l, TileIDs tileIDs);
+	public delegate void MapChanged(Environment map, IntPoint3D l, MapTileData tileData);
 
 	public class Environment : ServerGameObject 
 	{
@@ -78,15 +78,21 @@ namespace MyGame
 			return m_tileGrid.GetFloorID(l);
 		}
 
-		public void SetInteriorID(IntPoint3D l, InteriorID floorID)
+		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
 			Debug.Assert(this.World.IsWriteable);
 
 			this.Version += 1;
 
-			m_tileGrid.SetInteriorID(l, floorID);
+			m_tileGrid.SetInteriorID(l, interiorID);
 
-			var d = new TileIDs() { m_interiorID = floorID, m_floorID = GetFloorID(l) };
+			var d = new MapTileData()
+			{
+				InteriorID = interiorID,
+				FloorID = m_tileGrid.GetFloorID(l),
+				InteriorMaterialID = m_tileGrid.GetInteriorMaterialID(l),
+				FloorMaterialID = m_tileGrid.GetFloorMaterialID(l),
+			};
 			if (MapChanged != null)
 				MapChanged(this, l, d);
 		}
@@ -99,9 +105,20 @@ namespace MyGame
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			var d = new TileIDs() { m_interiorID = GetInteriorID(l), m_floorID = floorID };
+			var d = new MapTileData()
+			{
+				InteriorID = m_tileGrid.GetInteriorID(l),
+				FloorID = floorID,
+				InteriorMaterialID = m_tileGrid.GetInteriorMaterialID(l),
+				FloorMaterialID = m_tileGrid.GetFloorMaterialID(l),
+			};
 			if (MapChanged != null)
 				MapChanged(this, l, d);
+		}
+
+		public MapTileData GetTileData(IntPoint3D l)
+		{
+			return m_tileGrid.GetTileData(l);
 		}
 
 		public bool IsWalkable(IntPoint3D l)
@@ -186,14 +203,13 @@ namespace MyGame
 
 		public override ClientMsgs.Message Serialize()
 		{
-			TileIDs[] arr = new TileIDs[this.Width * this.Height * this.Depth];
+			var arr = new MapTileData[this.Width * this.Height * this.Depth];
 			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
 
 			foreach (var p in this.Bounds.Range())
 			{
-				TileIDs d;
-				d.m_interiorID = GetInteriorID(p);
-				d.m_floorID = GetFloorID(p);
+				MapTileData d;
+				d = m_tileGrid.GetTileData(p);
 				arr[p.X + p.Y * this.Width + p.Z * this.Width * this.Height] = d;
 				var obs = GetContents(p);
 				if (obs != null)
@@ -218,43 +234,59 @@ namespace MyGame
 		}
 
 
-		class TileGrid : Grid3DBase<TileGrid.TileData>
+		class TileGrid : Grid3DBase<MapTileData>
 		{
-			struct TileData
-			{
-				// empty, natural wall, wall, stairs
-				public InteriorID m_interiorID;
-				public byte m_interiorMaterialID;
-
-				// natural floor, floor, 
-				public FloorID m_floorID;
-				public byte m_floorMaterialID;
-			}
-
 			public TileGrid(int width, int height, int depth)
 				: base(width, height, depth)
 			{
 			}
 
+			public MapTileData GetTileData(IntPoint3D p)
+			{
+				return base.Grid[GetIndex(p)];
+			}
+
 			public void SetInteriorID(IntPoint3D p, InteriorID id)
 			{
-				base.Grid[GetIndex(p)].m_interiorID = id;
+				base.Grid[GetIndex(p)].InteriorID = id;
 			}
 
 			public InteriorID GetInteriorID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].m_interiorID;
+				return base.Grid[GetIndex(p)].InteriorID;
 			}
 
 			public void SetFloorID(IntPoint3D p, FloorID id)
 			{
-				base.Grid[GetIndex(p)].m_floorID = id;
+				base.Grid[GetIndex(p)].FloorID = id;
 			}
 
 			public FloorID GetFloorID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].m_floorID;
+				return base.Grid[GetIndex(p)].FloorID;
 			}
+
+
+			public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
+			{
+				base.Grid[GetIndex(p)].InteriorMaterialID = id;
+			}
+
+			public MaterialID GetInteriorMaterialID(IntPoint3D p)
+			{
+				return base.Grid[GetIndex(p)].InteriorMaterialID;
+			}
+
+			public void SetFloorMaterialID(IntPoint3D p, MaterialID id)
+			{
+				base.Grid[GetIndex(p)].FloorMaterialID = id;
+			}
+
+			public MaterialID GetFloorMaterialID(IntPoint3D p)
+			{
+				return base.Grid[GetIndex(p)].FloorMaterialID;
+			}		
 		}
+
 	}
 }

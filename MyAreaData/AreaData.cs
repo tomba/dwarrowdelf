@@ -13,6 +13,7 @@ namespace MyAreaData
 		Stream m_drawingStream;
 		List<SymbolInfo> m_symbolList;
 		Terrains m_terrains; // XXX move somewhere else
+		Materials m_materials;
 		List<ObjectInfo> m_objects;
 
 		public AreaData()
@@ -20,6 +21,7 @@ namespace MyAreaData
 			ParseSymbols();
 			ParseObjects();
 			m_terrains = new Terrains();
+			m_materials = new Materials();
 
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
 			m_drawingStream = ass.GetManifestResourceStream("MyAreaData.PlanetCute.xaml");
@@ -27,6 +29,7 @@ namespace MyAreaData
 
 		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
 		public Terrains Terrains { get { return m_terrains; } }
+		public Materials Materials { get { return m_materials; } }
 		public IList<ObjectInfo> Objects { get { return m_objects.AsReadOnly(); } }
 		public Stream DrawingStream { get { return m_drawingStream; } }
 

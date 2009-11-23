@@ -10,6 +10,7 @@ namespace MyGame
 	{
 		IList<SymbolInfo> Symbols { get; }
 		Terrains Terrains { get; }
+		Materials Materials { get; }
 		IList<ObjectInfo> Objects { get; }
 		Stream DrawingStream { get; }
 	}

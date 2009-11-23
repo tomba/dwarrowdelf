@@ -76,18 +76,18 @@ namespace MyGame
 		public GameObject Map { get; private set; }
 		public ObjectID MapID { get { return this.Map.ObjectID; } }
 		public IntPoint3D Location { get; set; }
-		public TileIDs TerrainType { get; set; }
+		public MapTileData TileData { get; set; }
 
-		public MapChange(GameObject map, IntPoint3D l, TileIDs terrainType)
+		public MapChange(GameObject map, IntPoint3D l, MapTileData tileData)
 		{
 			this.Map = map;
 			this.Location = l;
-			this.TerrainType = terrainType;
+			this.TileData = tileData;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("MapChange {0}, {1}, {2}", this.MapID, this.Location, this.TerrainType);
+			return String.Format("MapChange {0}, {1}, {2}", this.MapID, this.Location, this.TileData);
 		}
 	}
 

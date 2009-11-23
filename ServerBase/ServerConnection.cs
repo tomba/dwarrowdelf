@@ -40,7 +40,7 @@ namespace MyGame
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();
@@ -372,8 +372,11 @@ namespace MyGame
 				return new ClientMsgs.TerrainData()
 				{
 					Environment = mc.MapID,
-					MapDataList = new ClientMsgs.MapTileData[] {
-						new ClientMsgs.MapTileData() { Location = mc.Location, TileData = mc.TerrainType }
+					TileDataList = new ClientMsgs.MapTileDataLoc[] {
+						new ClientMsgs.MapTileDataLoc() {
+							Location = mc.Location, 
+							TileData = mc.TileData,
+						}
 					}
 				};
 			}
@@ -469,15 +472,11 @@ namespace MyGame
 				Select(kvp => (ClientMsgs.Message)new ClientMsgs.TerrainData()
 				{
 					Environment = kvp.Key.ObjectID,
-					MapDataList = kvp.Value.Select(l =>
-						new ClientMsgs.MapTileData()
+					TileDataList = kvp.Value.Select(l =>
+						new ClientMsgs.MapTileDataLoc()
 						{
 							Location = l,
-							TileData = new TileIDs()
-							{
-								m_interiorID = kvp.Key.GetInteriorID(l),
-								m_floorID = kvp.Key.GetFloorID(l),
-							}
+							TileData = kvp.Key.GetTileData(l),
 						}).ToArray()
 					// XXX there seems to be a problem serializing this.
 					// evaluating it with ToArray() fixes it

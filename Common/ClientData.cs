@@ -111,6 +111,8 @@ namespace MyGame.ClientMsgs
 		public ObjectID Environment { get; set; }
 		[DataMember]
 		public GameColor Color { get; set; }
+		[DataMember]
+		public MaterialID MaterialID { get; set; }
 
 		public override string ToString()
 		{
@@ -156,7 +158,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCube Bounds { get; set; }
 		[DataMember]
-		public IEnumerable<TileIDs> TerrainIDs { get; set; }
+		public IEnumerable<MapTileData> TerrainIDs { get; set; }
 		[DataMember]
 		public IEnumerable<ClientMsgs.Message> ObjectData { get; set; }
 	}
@@ -171,14 +173,13 @@ namespace MyGame.ClientMsgs
 		public VisibilityMode VisibilityMode { get; set; }
 	}
 
-	/* Tile that came visible */
 	[DataContract]
-	public struct MapTileData
+	public struct MapTileDataLoc
 	{
 		[DataMember]
 		public IntPoint3D Location { get; set; }
 		[DataMember]
-		public TileIDs TileData { get; set; }
+		public MapTileData TileData { get; set; }
 	}
 
 	[DataContract]
@@ -187,11 +188,11 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IEnumerable<MapTileData> MapDataList { get; set; }
-
+		public IEnumerable<MapTileDataLoc> TileDataList { get; set; }
+		
 		public override string ToString()
 		{
-			return String.Format("TerrainData({0} tiles)", this.MapDataList.Count());
+			return String.Format("TerrainData({0} tiles)", this.TileDataList.Count());
 		}
 	}
 

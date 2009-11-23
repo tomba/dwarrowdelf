@@ -217,31 +217,31 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public void SetTerrains(IEnumerable<ClientMsgs.MapTileData> locInfos)
+		public void SetTerrains(IEnumerable<ClientMsgs.MapTileDataLoc> locInfos)
 		{
 			this.Version += 1;
 
-			foreach (MapTileData locInfo in locInfos)
+			foreach (MapTileDataLoc locInfo in locInfos)
 			{
 				IntPoint3D l = locInfo.Location;
 
-				m_tileGrid.SetInteriorID(l, locInfo.TileData.m_interiorID);
-				m_tileGrid.SetFloorID(l, locInfo.TileData.m_floorID);
+				m_tileGrid.SetInteriorID(l, locInfo.TileData.InteriorID);
+				m_tileGrid.SetFloorID(l, locInfo.TileData.FloorID);
 
 				if (MapChanged != null)
 					MapChanged(l);
 			}
 		}
 
-		public void SetTerrains(IntCube bounds, IEnumerable<TileIDs> tileIDList)
+		public void SetTerrains(IntCube bounds, IEnumerable<MapTileData> tileDataList)
 		{
-			var iter = tileIDList.GetEnumerator();
+			var iter = tileDataList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())
 			{
 				iter.MoveNext();
 				var td = iter.Current;
-				m_tileGrid.SetInteriorID(p, td.m_interiorID);
-				m_tileGrid.SetFloorID(p, td.m_floorID);
+				m_tileGrid.SetInteriorID(p, td.InteriorID);
+				m_tileGrid.SetFloorID(p, td.FloorID);
 			}
 		}
 

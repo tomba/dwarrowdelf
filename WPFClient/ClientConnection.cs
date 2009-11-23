@@ -90,8 +90,8 @@ namespace MyGame
 			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
-			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.MapDataList.Count());
-			env.SetTerrains(msg.MapDataList);
+			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
+			env.SetTerrains(msg.TileDataList);
 		}
 
 		void HandleMessage(ObjectMove msg)
