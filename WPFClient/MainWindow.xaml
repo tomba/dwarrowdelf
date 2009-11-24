@@ -31,6 +31,8 @@
 							<RowDefinition />
 							<RowDefinition />
 							<RowDefinition />
+							<RowDefinition />
+
 						</Grid.RowDefinitions>
 						<Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
 							   Source="{Binding Path=Drawing}" Stretch="Uniform" />
@@ -43,12 +45,16 @@
 						<TextBlock Grid.Column="1" Grid.Row="2"
 								   Text="{Binding Path=Color}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="3">ObjectID</TextBlock>
+						<TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
 						<TextBlock Grid.Column="1" Grid.Row="3"
+								   Text="{Binding Path=Material}" />
+
+						<TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="4"
 								   Text="{Binding Path=ObjectID}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="4">Parent</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="4"
+						<TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
+						<TextBlock Grid.Column="1" Grid.Row="5"
 								   Text="{Binding Path=Parent}" />
 					</Grid>
 				</StackPanel.ToolTip>

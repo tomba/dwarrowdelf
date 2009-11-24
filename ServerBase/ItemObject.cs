@@ -21,6 +21,7 @@ namespace MyGame
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 			data.Color = this.Color;
+			data.MaterialID = this.MaterialID;
 			return data;
 		}
 

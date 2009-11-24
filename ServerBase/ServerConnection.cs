@@ -192,16 +192,23 @@ namespace MyGame
 			m_friendlies.Add(m_player);
 			Send(new ClientMsgs.LogOnCharReply() { PlayerID = m_player.ObjectID });
 
+			var diamond = m_world.AreaData.Materials.GetMaterialInfo("Diamond").ID;
 
-			ItemObject item = new ItemObject(m_world);
-			item.Name = "jalokivi1";
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
+			ItemObject item = new ItemObject(m_world)
+			{
+				Name = "jalokivi1",
+				SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+				MaterialID = diamond,
+			};
 			item.MoveTo(m_player);
 
-			item = new ItemObject(m_world);
-			item.Name = "jalokivi2";
-			item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID;
-			item.Color = GameColors.Green;
+			item = new ItemObject(m_world)
+			{
+				Name = "jalokivi2",
+				SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+				Color = GameColors.Green,
+				MaterialID = diamond,
+			};
 			item.MoveTo(m_player);
 
 			if (!m_player.MoveTo(env, new IntPoint3D(0, 0, 0)))

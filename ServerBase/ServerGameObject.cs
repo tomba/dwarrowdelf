@@ -36,6 +36,7 @@ namespace MyGame
 		public EnvPos EnvLoc { get { return new EnvPos(this.Parent, this.Location); } }
 
 		public GameColor Color { get; set; }
+		public MaterialID MaterialID { get; set; }
 
 		public World World { get; private set; }
 

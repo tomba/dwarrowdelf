@@ -73,6 +73,8 @@ namespace MyArea
 
 			var stone = world.AreaData.Materials.GetMaterialInfo("Stone").ID;
 			var steel = world.AreaData.Materials.GetMaterialInfo("Steel").ID;
+			var diamond = world.AreaData.Materials.GetMaterialInfo("Diamond").ID;
+			var wood = world.AreaData.Materials.GetMaterialInfo("Wood").ID;
 
 			foreach (var p in env.Bounds.Range())
 			{
@@ -119,30 +121,42 @@ namespace MyArea
 					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
 				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
+				var item = new ItemObject(world)
+				{
+					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					Name = "gem" + i.ToString(),
+					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
+					MaterialID = diamond,
+				};
 
-				var item = new ItemObject(world);
-				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-				item.Name = "gem" + i.ToString();
-				item.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
 				item.MoveTo(env, p);
 			}
 
 			{
 				// Add an item
-				var item = new ItemObject(world);
-				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-				item.Name = "red gem";
-				item.Color = GameColors.Red;
+				var item = new ItemObject(world)
+				{
+					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					Name = "red gem",
+					Color = GameColors.Red,
+					MaterialID = diamond,
+				};
 				item.MoveTo(env, new IntPoint3D(3, 0, 0));
 
-				item = new ItemObject(world);
-				item.SymbolID = obs.Single(o => o.Name == "Gem").SymbolID; ;
-				item.Name = "gem";
+				item = new ItemObject(world)
+				{
+					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					Name = "gem",
+					MaterialID = diamond,
+				};
 				item.MoveTo(env, new IntPoint3D(2, 0, 0));
 
-				item = new ItemObject(world);
-				item.SymbolID = obs.Single(o => o.Name == "Tree").SymbolID; ;
-				item.Name = "puu";
+				item = new ItemObject(world)
+				{
+					SymbolID = obs.Single(o => o.Name == "Tree").SymbolID,
+					Name = "puu",
+					MaterialID = wood,
+				};
 				item.MoveTo(env, new IntPoint3D(0, 3, 0));
 			}
 

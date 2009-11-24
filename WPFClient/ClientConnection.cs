@@ -182,15 +182,7 @@ namespace MyGame
 				ob = new ItemObject(World.TheWorld, msg.ObjectID);
 			}
 
-			ob.Name = msg.Name;
-			ob.SymbolID = msg.SymbolID;
-			ob.Color = msg.Color.ToColor();
-
-			ClientGameObject env = null;
-			if (msg.Environment != ObjectID.NullObjectID)
-				env = World.TheWorld.FindObject(msg.Environment);
-
-			ob.MoveTo(env, msg.Location);
+			ob.Deserialize(msg);
 		}
 
 		void HandleMessage(EventMessage msg)

@@ -79,6 +79,8 @@ namespace MyGame
 			Add(new MaterialInfo(new MaterialID(id++), "Stone"));
 			Add(new MaterialInfo(new MaterialID(id++), "Iron"));
 			Add(new MaterialInfo(new MaterialID(id++), "Steel"));
+			Add(new MaterialInfo(new MaterialID(id++), "Diamond"));
+			Add(new MaterialInfo(new MaterialID(id++), "Wood"));
 		}
 
 		void Add(MaterialInfo info)
