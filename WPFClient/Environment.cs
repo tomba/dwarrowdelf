@@ -144,7 +144,7 @@ namespace MyGame
 
 		public bool IsWalkable(IntPoint3D l)
 		{
-			return !this.World.AreaData.Terrains.GetInteriorInfo(GetInteriorID(l)).Blocker;
+			return GetInterior(l).Blocker == false;
 		}
 
 		public MyGrowingGrid GetLevel(int z)
@@ -152,9 +152,10 @@ namespace MyGame
 			return m_tileGrid.GetLevel(z, false);
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D l)
+		public InteriorInfo GetInterior(IntPoint3D l)
 		{
-			return m_tileGrid.GetInteriorID(l);
+			var id = m_tileGrid.GetInteriorID(l);
+			return this.World.AreaData.Terrains.GetInteriorInfo(id);
 		}
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
@@ -167,9 +168,10 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public FloorID GetFloorID(IntPoint3D l)
+		public FloorInfo GetFloor(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorID(l);
+			var id = m_tileGrid.GetFloorID(l);
+			return this.World.AreaData.Terrains.GetFloorInfo(id);
 		}
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
@@ -182,14 +184,16 @@ namespace MyGame
 				MapChanged(l);
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
 		{
-			return m_tileGrid.GetTileData(l).InteriorMaterialID;
+			var id = m_tileGrid.GetTileData(l).InteriorMaterialID;
+			return this.World.AreaData.Materials.GetMaterialInfo(id);
 		}
 
-		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		public MaterialInfo GetFloorMaterial(IntPoint3D l)
 		{
-			return m_tileGrid.GetTileData(l).FloorMaterialID;
+			var id = m_tileGrid.GetTileData(l).FloorMaterialID;
+			return this.World.AreaData.Materials.GetMaterialInfo(id);
 		}
 
 		public TileData GetTileData(IntPoint3D p)

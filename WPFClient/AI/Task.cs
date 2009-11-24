@@ -167,7 +167,7 @@ namespace MyGame
 
 		protected override Progress CheckProgress()
 		{
-			if (m_environment.GetInteriorID(m_location) == InteriorID.Empty)
+			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
 				return Progress.Done;
 			else
 				return Progress.Ok;

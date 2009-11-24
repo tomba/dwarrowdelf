@@ -80,7 +80,7 @@ namespace MyGame
 			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
-			if (this.Environment.GetInteriorID(ml) == 0)
+			if (this.Environment.GetInterior(ml).ID == InteriorID.Undefined)
 				return false;
 
 			var controllables = this.Environment.World.Controllables;
@@ -122,22 +122,21 @@ namespace MyGame
 
 		BitmapSource GetBitmap(IntPoint3D ml, bool lit)
 		{
-			var interiorID = this.Environment.GetInteriorID(ml);
 			int id;
 			Color c;
 
-			if (interiorID != InteriorID.Empty)
+			var iInfo = this.Environment.GetInterior(ml);
+
+			if (iInfo.ID != InteriorID.Empty)
 			{
-				InteriorInfo iinfo = this.Environment.World.AreaData.Terrains.GetInteriorInfo(interiorID);
-				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iinfo.Name);
+				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iInfo.Name);
 				id = symbol.ID;
 				c = Colors.Black;
 			}
 			else
 			{
-				var floorID = this.Environment.GetFloorID(ml);
-				FloorInfo iinfo = this.Environment.World.AreaData.Terrains.GetFloorInfo(floorID);
-				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iinfo.Name);
+				var fInfo = this.Environment.GetFloor(ml);
+				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == fInfo.Name);
 				id = symbol.ID;
 				c = Colors.Black;
 			}
@@ -276,8 +275,8 @@ namespace MyGame
 		{
 			if (l == m_location)
 			{
-				Notify("InteriorID");
-				Notify("FloorID");
+				Notify("Interior");
+				Notify("Floor");
 				Notify("FloorMaterial");
 				Notify("InteriorMaterial");
 				Notify("Objects");
@@ -298,8 +297,8 @@ namespace MyGame
 					m_env.MapChanged += MapChanged;
 
 				Notify("Environment");
-				Notify("InteriorID");
-				Notify("FloorID");
+				Notify("Interior");
+				Notify("Floor");
 				Notify("FloorMaterial");
 				Notify("InteriorMaterial");
 				Notify("Objects");
@@ -313,53 +312,51 @@ namespace MyGame
 			{
 				m_location = value;
 				Notify("Location");
-				Notify("InteriorID");
-				Notify("FloorID");
+				Notify("Interior");
+				Notify("Floor");
 				Notify("FloorMaterial");
 				Notify("InteriorMaterial");
 				Notify("Objects");
 			}
 		}
 
-		public InteriorID InteriorID
+		public InteriorInfo Interior
 		{
 			get
 			{
 				if (m_env == null)
-					return 0;
-				return m_env.GetInteriorID(m_location);
+					return null;
+				return m_env.GetInterior(m_location);
 			}
 		}
 
-		public string InteriorMaterial
+		public MaterialInfo InteriorMaterial
 		{
 			get
 			{
 				if (m_env == null)
-					return "";
-				var id = m_env.GetInteriorMaterialID(m_location);
-				return m_env.World.AreaData.Materials.GetMaterialInfo(id).Name;
+					return null;
+				return m_env.GetInteriorMaterial(m_location);
 			}
 		}
 
-		public string FloorMaterial
+		public MaterialInfo FloorMaterial
 		{
 			get
 			{
 				if (m_env == null)
-					return "";
-				var id = m_env.GetFloorMaterialID(m_location);
-				return m_env.World.AreaData.Materials.GetMaterialInfo(id).Name;
+					return null;
+				return m_env.GetFloorMaterial(m_location);
 			}
 		}
 
-		public FloorID FloorID
+		public FloorInfo Floor
 		{
 			get
 			{
 				if (m_env == null)
-					return 0;
-				return m_env.GetFloorID(m_location);
+					return null;
+				return m_env.GetFloor(m_location);
 			}
 		}
 

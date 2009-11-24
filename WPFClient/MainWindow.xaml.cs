@@ -308,7 +308,7 @@ namespace MyGame
 
 				foreach (var p in r.Range())
 				{
-					if (env.GetInteriorID(new IntPoint3D(p, z)) != InteriorID.NaturalWall)
+					if (env.GetInterior(new IntPoint3D(p, z)).ID != InteriorID.NaturalWall)
 						continue;
 
 					var job = new MineJob(env, new IntPoint3D(p, z));

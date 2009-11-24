@@ -39,8 +39,7 @@ namespace MyGame
 		public event ObjectMoved ObjectMoved;
 
 		public Color Color { get; set; }
-		public MaterialID MaterialID { get; set; }
-		public string Material { get { return this.World.AreaData.Materials.GetMaterialInfo(this.MaterialID).Name; } }
+		public MaterialInfo Material { get; set; }
 
 		public ClientGameObject Parent { get; private set; }
 		public IntPoint3D Location { get; private set; }

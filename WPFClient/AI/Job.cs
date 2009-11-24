@@ -188,7 +188,7 @@ namespace MyGame
 			if (worker.Environment != m_environment)
 				return Progress.Abort;
 
-			if (m_environment.GetInteriorID(m_location) == InteriorID.Empty)
+			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
 				return Progress.Done;
 
 			m_tasks.Enqueue(new MoveTask(this, m_environment, m_location, true));

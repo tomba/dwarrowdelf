@@ -47,7 +47,7 @@
 
 						<TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
 						<TextBlock Grid.Column="1" Grid.Row="3"
-								   Text="{Binding Path=Material}" />
+								   Text="{Binding Path=Material.Name}" />
 
 						<TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
 						<TextBlock Grid.Column="1" Grid.Row="4"
@@ -160,12 +160,12 @@
 					<StackPanel DockPanel.Dock="Top">
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
 						<TextBlock>Interior:
-							<TextBlock Text="{Binding InteriorID}" />
-							(<TextBlock Text="{Binding InteriorMaterial}" />)
+							<TextBlock Text="{Binding Interior.Name}" />
+							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
 						<TextBlock>Floor:
-							<TextBlock Text="{Binding FloorID}" />
-							(<TextBlock Text="{Binding FloorMaterial}" />)
+							<TextBlock Text="{Binding Floor.Name}" />
+							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
 					</StackPanel>
 					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
@@ -180,12 +180,12 @@
 					<StackPanel DockPanel.Dock="Top">
 						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
 						<TextBlock>Interior:
-							<TextBlock Text="{Binding InteriorID}" />
-							(<TextBlock Text="{Binding InteriorMaterial}" />)
+							<TextBlock Text="{Binding Interior.Name}" />
+							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
 						<TextBlock>Floor:
-							<TextBlock Text="{Binding FloorID}" />
-							(<TextBlock Text="{Binding FloorMaterial}" />)
+							<TextBlock Text="{Binding Floor.Name}" />
+							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
 					</StackPanel>
 					<ListBox ItemsSource="{Binding Objects}" />
