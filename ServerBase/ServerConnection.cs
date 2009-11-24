@@ -146,7 +146,7 @@ namespace MyGame
 		{
 			ObjectID mapID = msg.MapID;
 			IntCube r = msg.Cube;
-			InteriorID type = msg.TileID;
+			TileData data = msg.TileData;
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
 			if (env == null)
@@ -157,7 +157,7 @@ namespace MyGame
 				if (!env.Bounds.Contains(p))
 					continue;
 
-				env.SetInteriorID(p, type);
+				env.SetTileData(p, data);
 			}
 		}
 

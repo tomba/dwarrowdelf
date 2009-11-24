@@ -73,8 +73,9 @@ namespace MyGame
 
 		public Materials()
 		{
-			int id = 1;
+			Add(new MaterialInfo(new MaterialID(0), "Undefined"));
 
+			int id = 1;
 			Add(new MaterialInfo(new MaterialID(id++), "Stone"));
 			Add(new MaterialInfo(new MaterialID(id++), "Iron"));
 			Add(new MaterialInfo(new MaterialID(id++), "Steel"));
@@ -85,6 +86,11 @@ namespace MyGame
 			m_materialMap[info.ID] = info;
 			if (info.ID == info.ID)
 				return;
+		}
+
+		public MaterialInfo GetMaterialInfo(string name)
+		{
+			return m_materialMap.Values.Single(m => m.Name == name);
 		}
 
 		public MaterialInfo GetMaterialInfo(MaterialID id)

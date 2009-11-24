@@ -278,6 +278,8 @@ namespace MyGame
 			{
 				Notify("InteriorID");
 				Notify("FloorID");
+				Notify("FloorMaterial");
+				Notify("InteriorMaterial");
 				Notify("Objects");
 			}
 		}
@@ -298,6 +300,8 @@ namespace MyGame
 				Notify("Environment");
 				Notify("InteriorID");
 				Notify("FloorID");
+				Notify("FloorMaterial");
+				Notify("InteriorMaterial");
 				Notify("Objects");
 			}
 		}
@@ -311,6 +315,8 @@ namespace MyGame
 				Notify("Location");
 				Notify("InteriorID");
 				Notify("FloorID");
+				Notify("FloorMaterial");
+				Notify("InteriorMaterial");
 				Notify("Objects");
 			}
 		}
@@ -322,6 +328,28 @@ namespace MyGame
 				if (m_env == null)
 					return 0;
 				return m_env.GetInteriorID(m_location);
+			}
+		}
+
+		public string InteriorMaterial
+		{
+			get
+			{
+				if (m_env == null)
+					return "";
+				var id = m_env.GetInteriorMaterialID(m_location);
+				return m_env.World.AreaData.Materials.GetMaterialInfo(id).Name;
+			}
+		}
+
+		public string FloorMaterial
+		{
+			get
+			{
+				if (m_env == null)
+					return "";
+				var id = m_env.GetFloorMaterialID(m_location);
+				return m_env.World.AreaData.Materials.GetMaterialInfo(id).Name;
 			}
 		}
 

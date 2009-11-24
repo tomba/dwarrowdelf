@@ -78,6 +78,36 @@ namespace MyGame
 			return m_tileGrid.GetFloorID(l);
 		}
 
+		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		{
+			Debug.Assert(this.World.IsWriteable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetInteriorID(p, interiorID);
+			m_tileGrid.SetInteriorMaterialID(p, materialID);
+
+			var d = m_tileGrid.GetTileData(p);
+
+			if (MapChanged != null)
+				MapChanged(this, p, d);
+		}
+
+		public void SetFloor(IntPoint3D p, FloorID floorID, MaterialID materialID)
+		{
+			Debug.Assert(this.World.IsWriteable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetFloorID(p, floorID);
+			m_tileGrid.SetFloorMaterialID(p, materialID);
+
+			var d = m_tileGrid.GetTileData(p);
+
+			if (MapChanged != null)
+				MapChanged(this, p, d);
+		}
+
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
 			Debug.Assert(this.World.IsWriteable);
@@ -86,13 +116,8 @@ namespace MyGame
 
 			m_tileGrid.SetInteriorID(l, interiorID);
 
-			var d = new TileData()
-			{
-				InteriorID = interiorID,
-				FloorID = m_tileGrid.GetFloorID(l),
-				InteriorMaterialID = m_tileGrid.GetInteriorMaterialID(l),
-				FloorMaterialID = m_tileGrid.GetFloorMaterialID(l),
-			};
+			var d = m_tileGrid.GetTileData(l);
+
 			if (MapChanged != null)
 				MapChanged(this, l, d);
 		}
@@ -105,13 +130,8 @@ namespace MyGame
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			var d = new TileData()
-			{
-				InteriorID = m_tileGrid.GetInteriorID(l),
-				FloorID = floorID,
-				InteriorMaterialID = m_tileGrid.GetInteriorMaterialID(l),
-				FloorMaterialID = m_tileGrid.GetFloorMaterialID(l),
-			};
+			var d = m_tileGrid.GetTileData(l);
+
 			if (MapChanged != null)
 				MapChanged(this, l, d);
 		}
@@ -119,6 +139,20 @@ namespace MyGame
 		public TileData GetTileData(IntPoint3D l)
 		{
 			return m_tileGrid.GetTileData(l);
+		}
+
+		public void SetTileData(IntPoint3D l, TileData data)
+		{
+			Debug.Assert(this.World.IsWriteable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetTileData(l, data);
+
+			var d = m_tileGrid.GetTileData(l);
+
+			if (MapChanged != null)
+				MapChanged(this, l, d);
 		}
 
 		public bool IsWalkable(IntPoint3D l)
@@ -244,6 +278,11 @@ namespace MyGame
 			public TileData GetTileData(IntPoint3D p)
 			{
 				return base.Grid[GetIndex(p)];
+			}
+
+			public void SetTileData(IntPoint3D p, TileData data)
+			{
+				base.Grid[GetIndex(p)] = data;
 			}
 
 			public void SetInteriorID(IntPoint3D p, InteriorID id)

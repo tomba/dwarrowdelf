@@ -79,7 +79,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCube Cube { get; set; }
 		[DataMember]
-		public InteriorID TileID { get; set; }
+		public TileData TileData { get; set; }
 	}
 
 	[DataContract]

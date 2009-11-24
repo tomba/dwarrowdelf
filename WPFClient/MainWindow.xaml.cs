@@ -259,22 +259,39 @@ namespace MyGame
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
 		{
 			IntRect r = map.SelectionRect;
+
+			var stone = map.Environment.World.AreaData.Materials.GetMaterialInfo("Stone").ID;
+			var undef = new MaterialID(0);
+
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = new IntCube(r, map.Z),
-				TileID = InteriorID.Empty,
+				TileData = new TileData() {
+					FloorID = FloorID.NaturalFloor,
+					FloorMaterialID = stone,
+					InteriorID = InteriorID.Empty,
+					InteriorMaterialID = undef,
+				}
 			});
 		}
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
 			IntRect r = map.SelectionRect;
+
+			var stone = map.Environment.World.AreaData.Materials.GetMaterialInfo("Stone").ID;
+
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = new IntCube(r, map.Z),
-				TileID = InteriorID.NaturalWall,
+				TileData = new TileData() {
+					FloorID = FloorID.NaturalFloor,
+					FloorMaterialID = stone,
+					InteriorID = InteriorID.NaturalWall,
+					InteriorMaterialID = stone,
+				}
 			});
 		}
 

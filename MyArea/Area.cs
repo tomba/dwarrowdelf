@@ -71,24 +71,27 @@ namespace MyArea
 
 			Random r = new Random(123);
 
+			var stone = world.AreaData.Materials.GetMaterialInfo("Stone").ID;
+			var steel = world.AreaData.Materials.GetMaterialInfo("Steel").ID;
+
 			foreach (var p in env.Bounds.Range())
 			{
 				if (p.X == 2 && p.Y == 2)
-					env.SetInteriorID(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp);
+					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
 				else if (p.X == 3 && p.Y == 3)
-					env.SetInteriorID(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp);
+					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
 				else if (p.X < 7 && p.Y < 7)
 					env.SetInteriorID(p, InteriorID.Empty);
 				else if (r.Next() % 8 == 0)
-					env.SetInteriorID(p, InteriorID.NaturalWall);
+					env.SetInterior(p, InteriorID.NaturalWall, stone);
 				else
 					env.SetInteriorID(p, InteriorID.Empty);
 
-				env.SetFloorID(p, FloorID.NaturalFloor);
+				env.SetFloor(p, FloorID.NaturalFloor, stone);
 			}
 
 			var pp = new IntPoint3D(2, 3, 0);
-			env.SetInteriorID(pp, InteriorID.Portal);
+			env.SetInterior(pp, InteriorID.Portal, steel);
 			env.SetActionHandler(pp, ActionHandler);
 
 			var obs = world.AreaData.Objects;
@@ -151,14 +154,17 @@ namespace MyArea
 			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
 			env.Name = "map2";
 
+			var stone = world.AreaData.Materials.GetMaterialInfo("Stone").ID;
+			var steel = world.AreaData.Materials.GetMaterialInfo("Steel").ID;
+
 			foreach (var p in env.Bounds.Range())
 			{
 				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloorID(p, FloorID.NaturalFloor);
+				env.SetFloor(p, FloorID.NaturalFloor, stone);
 			}
 
 			var pp = new IntPoint3D(2, 3, 0);
-			env.SetInteriorID(pp, InteriorID.Portal);
+			env.SetInterior(pp, InteriorID.Portal, steel);
 			env.SetActionHandler(pp, ActionHandler);
 
 			return env;

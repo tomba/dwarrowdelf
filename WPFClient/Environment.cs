@@ -20,6 +20,20 @@ namespace MyGame
 			return new MyGrowingGrid(blockSize);
 		}
 
+		public TileData GetTileData(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return new TileData();
+			return level.GetTileData(new IntPoint(p.X, p.Y));
+		}
+
+		public void SetTileData(IntPoint3D p, TileData data)
+		{
+			var level = base.GetLevel(p.Z, true);
+			level.SetTileData(new IntPoint(p.X, p.Y), data);
+		}
+
 		public InteriorID GetInteriorID(IntPoint3D p)
 		{
 			var level = base.GetLevel(p.Z, false);
@@ -53,6 +67,21 @@ namespace MyGame
 	{
 		public MyGrowingGrid(int blockSize) : base(blockSize)
 		{
+		}
+
+		public TileData GetTileData(IntPoint p)
+		{
+			var block = base.GetBlock(ref p, false);
+			if (block == null)
+				return new TileData();
+			return block.Grid[block.GetIndex(p)];
+		}
+
+		public void SetTileData(IntPoint p, TileData data)
+		{
+			var block = base.GetBlock(ref p, true);
+
+			block.Grid[block.GetIndex(p)] = data;
 		}
 
 		public InteriorID GetInteriorID(IntPoint p)
@@ -153,31 +182,47 @@ namespace MyGame
 				MapChanged(l);
 		}
 
+		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetTileData(l).InteriorMaterialID;
+		}
+
+		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetTileData(l).FloorMaterialID;
+		}
+
+		public TileData GetTileData(IntPoint3D p)
+		{
+			return m_tileGrid.GetTileData(p);
+		}
+
 		public void SetTerrains(IEnumerable<KeyValuePair<IntPoint3D, TileData>> tileDataList)
 		{
 			this.Version += 1;
 
-			foreach (var locInfo in tileDataList)
+			foreach (var kvp in tileDataList)
 			{
-				IntPoint3D l = locInfo.Key;
+				IntPoint3D p = kvp.Key;
+				TileData data = kvp.Value;
 
-				m_tileGrid.SetInteriorID(l, locInfo.Value.InteriorID);
-				m_tileGrid.SetFloorID(l, locInfo.Value.FloorID);
+				m_tileGrid.SetTileData(p, data);
 
 				if (MapChanged != null)
-					MapChanged(l);
+					MapChanged(p);
 			}
 		}
 
 		public void SetTerrains(IntCube bounds, IEnumerable<TileData> tileDataList)
 		{
+			this.Version += 1;
+
 			var iter = tileDataList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())
 			{
 				iter.MoveNext();
-				var td = iter.Current;
-				m_tileGrid.SetInteriorID(p, td.InteriorID);
-				m_tileGrid.SetFloorID(p, td.FloorID);
+				TileData data = iter.Current;
+				m_tileGrid.SetTileData(p, data);
 			}
 		}
 
