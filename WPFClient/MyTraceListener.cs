@@ -5,69 +5,41 @@ using System.Text;
 using System.IO;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 
 namespace MyGame
 {
-	class MyTraceListener : TraceListener
+	class ClientDebugListener : MyDebugListener
 	{
-		TextBox m_textBox;
-		StringBuilder m_sb = new StringBuilder();
-
-		public MyTraceListener()
-		{
-		}
-
-		~MyTraceListener()
-		{
-			Console.WriteLine("gone");
-		}
+		List<DebugEntry> m_entryList = new List<DebugEntry>();
 
 		void AppendText()
 		{
-			lock (m_sb)
+			List<DebugEntry> list;
+
+			lock (m_entryList)
 			{
-				if (m_sb.Length > 0)
-				{
-					m_textBox.AppendText(m_sb.ToString());
-					m_textBox.ScrollToEnd();
-					m_sb.Length = 0;
-				}
+				list = m_entryList;
+				m_entryList = new List<DebugEntry>();
 			}
+
+			App.DebugWindow.AddRange(list);
 		}
 
-		public TextBox TextBox
+		public override void Write(DebugFlag flags, string msg)
 		{
-			get { return m_textBox; }
-			set 
+			bool call;
+
+			lock (m_entryList)
 			{
-				m_textBox = value;
-
-				if (m_textBox == null)
-					return;
-
-				AppendText();
+				call = m_entryList.Count == 0;
+				m_entryList.Add(new DebugEntry(msg, flags));
 			}
-		}
 
-		public override void Write(string value)
-		{
-			lock (m_sb)
-				m_sb.Append(value);
+			if (call)
+				App.DebugWindow.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(AppendText));
 
-			if (m_textBox != null)
-					m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-						new Action(AppendText));
-		}
-
-		public override void WriteLine(string message)
-		{
-			lock (m_sb)
-				m_sb.AppendLine(message);
-
-			if (m_textBox != null)
-				m_textBox.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-					new Action(AppendText));
 		}
 	}
 }

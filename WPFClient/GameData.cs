@@ -38,7 +38,7 @@ namespace MyGame
 
 		public bool DisableLOS { get; set; }	// debug
 
-		public MyTraceListener MyTraceListener { get; set; }
+		public MyDebugListener MyTraceListener { get; set; }
 
 		public ActionCollection ActionCollection { get; private set; }
 

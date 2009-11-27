@@ -8,26 +8,27 @@ using System.Runtime.CompilerServices;
 
 namespace MyGame
 {
+	[Flags]
+	public enum DebugFlag
+	{
+		None,
+		Mark,
+		Client,
+		Server,
+		Net,
+	}
+
 	public static class MyDebug
 	{
-		public static string Prefix { get; set; }
+		public static DebugFlag DefaultFlags { get; set; }
 
-		[MethodImpl(MethodImplOptions.Synchronized)]
+		public static MyDebugListener Listener { get; set; }
+
 		[Conditional("DEBUG")]
 		public static void WriteLine(string str)
 		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.Append(DateTime.Now.ToString("hh:mm:ss.ff"));
-			sb.Append(" ");
-
-			string prefix = Prefix;
-			if (prefix != null)
-				sb.Append(prefix);
-
-			sb.Append(str);
-
-			Debug.WriteLine(sb.ToString());
+			if (Listener != null)
+				Listener.Write(DefaultFlags, str);
 		}
 
 		[Conditional("DEBUG")]
@@ -35,6 +36,27 @@ namespace MyGame
 		{
 			WriteLine(String.Format(format, args));
 		}
-
 	}
+
+	public abstract class MyDebugListener : MarshalByRefObject
+	{
+		public abstract void Write(DebugFlag flags, string msg);
+	}
+
+	public class DefaultDebugListener : MyDebugListener
+	{
+		public override void Write(DebugFlag flags, string msg)
+		{
+			Debug.WriteLine(msg, flags.ToString());
+		}
+	}
+
+	public class ConsoleDebugListener : MyDebugListener
+	{
+		public override void Write(DebugFlag flags, string msg)
+		{
+			Console.WriteLine("{0}: {1}", flags, msg);
+		}
+	}
+
 }

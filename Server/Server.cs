@@ -14,14 +14,14 @@ namespace MyGame
 {
 	public class Server : MarshalByRefObject, IServer
 	{
-		TraceListener m_traceListener;
+		MyDebugListener m_traceListener;
 
 		public Server()
 		{
-			MyDebug.Prefix = "[Server] ";
+			MyDebug.DefaultFlags = DebugFlag.Server;
 		}
 
-		public TraceListener TraceListener 
+		public MyDebugListener TraceListener 
 		{ 
 			set 
 			{
@@ -29,12 +29,12 @@ namespace MyGame
 				{
 					Debug.Assert(m_traceListener == null);
 					m_traceListener = value;
-					Debug.Listeners.Add(value);
+					MyDebug.Listener = value;
 				}
 				else
 				{
 					if (m_traceListener != null)
-						Debug.Listeners.Remove(m_traceListener);
+						MyDebug.Listener = null;
 					m_traceListener = null;
 				}
 			}

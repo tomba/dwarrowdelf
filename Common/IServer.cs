@@ -9,7 +9,7 @@ namespace MyGame
 {
 	public interface IServer
 	{
-		TraceListener TraceListener { set; }
+		MyDebugListener TraceListener { set; }
 
 		void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle,
 			EventWaitHandle serverStopWaitHandle);

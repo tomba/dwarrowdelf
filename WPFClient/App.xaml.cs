@@ -34,7 +34,7 @@ namespace MyGame
 		{
 			m_serverInAppDomain = true;
 
-			MyDebug.Prefix = "[Client] ";
+			MyDebug.DefaultFlags = DebugFlag.Client;
 
 			base.OnStartup(e);
 
@@ -55,7 +55,6 @@ namespace MyGame
 			var areaData = new MyAreaData.AreaData();
 			var world = new World(areaData);
 			World.TheWorld = world;
-
 
 			m_connection = new ClientConnection();
 
