@@ -33,7 +33,6 @@ namespace MyGame
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
-		public EnvPos EnvLoc { get { return new EnvPos(this.Parent, this.Location); } }
 
 		public GameColor Color { get; set; }
 		public MaterialID MaterialID { get; set; }
