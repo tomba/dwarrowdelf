@@ -27,7 +27,12 @@ namespace MyGame
 		}
 
 
-		public ClientConnection Connection { get; set; }
+		ClientConnection m_connection;
+		public ClientConnection Connection
+		{
+			get { return m_connection; }
+			set { m_connection = value; Notify("Connection"); }
+		}
 
 		Living m_currentObject;
 		public Living CurrentObject

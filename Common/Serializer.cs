@@ -37,7 +37,7 @@ namespace MyGame
 			}
 		}
 
-		public void Send(NetworkStream netStream, Message msg)
+		public int Send(NetworkStream netStream, Message msg)
 		{
 			var stream = new MemoryStream();
 			stream.Seek(4, SeekOrigin.Begin);
@@ -51,6 +51,8 @@ namespace MyGame
 			//MyDebug.WriteLine("Sending {0} bytes", len);
 			var buffer = stream.ToArray();
 			netStream.Write(buffer, 0, len);
+
+			return len;
 		}
 	}
 }

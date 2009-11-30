@@ -8,16 +8,48 @@ using System.Net;
 using MyGame.ClientMsgs;
 using System.Runtime.Serialization;
 using System.IO;
+using System.ComponentModel;
 
 namespace MyGame
 {
-	class ClientConnection : Connection
+	public class ClientNetStatistics : INotifyPropertyChanged
+	{
+		public int SentMessages { get; set; }
+		public int SentBytes { get; set; }
+		public int ReceivedMessages { get; set; }
+		public int ReceivedBytes { get; set; }
+
+		public void Refresh()
+		{
+			Notify("SentMessages");
+			Notify("SentBytes");
+			Notify("ReceivedMessages");
+			Notify("ReceivedBytes");
+		}
+
+		void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+	}
+
+	public class ClientConnection : Connection
 	{
 		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
 		int m_transactionNumber;
 
+		public ClientNetStatistics Stats { get; private set; }
+
 		public ClientConnection() : base()
 		{
+			this.Stats = new ClientNetStatistics();
 		}
 
 		public void EnqueueAction(GameAction action)
@@ -25,6 +57,15 @@ namespace MyGame
 			int tid = System.Threading.Interlocked.Increment(ref m_transactionNumber);
 			action.TransactionID = tid;
 			Send(new EnqueueActionMessage() { Action = action });
+		}
+
+		public override void Send(Message msg)
+		{
+			base.Send(msg);
+
+			this.Stats.SentBytes = base.SentBytes;
+			this.Stats.SentMessages = base.SentMessages;
+			this.Stats.Refresh();
 		}
 
 		protected override void ReceiveMessage(Message msg)
@@ -35,6 +76,10 @@ namespace MyGame
 
 		void DeliverMessage(Message msg)
 		{
+			this.Stats.ReceivedBytes = base.ReceivedBytes;
+			this.Stats.ReceivedMessages = base.ReceivedMessages;
+			this.Stats.Refresh();
+
 			MyDebug.WriteLine("[RX] {0}", msg);
 
 			Action<Message> f;

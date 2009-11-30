@@ -20,6 +20,11 @@ namespace MyGame
 
 		protected TcpClient Client { get { return m_client; } }
 
+		public int SentMessages { get; private set; }
+		public int SentBytes { get; private set; }
+		public int ReceivedMessages { get; private set; }
+		public int ReceivedBytes { get; private set; }
+
 		public Connection()
 		{
 			m_client = new TcpClient();
@@ -92,6 +97,8 @@ namespace MyGame
 					var memstream = new MemoryStream(m_buffer, 4, m_expectedLen - 4);
 					var msg = m_serializer.Deserialize(memstream);
 					ReceiveMessage(msg);
+					this.ReceivedMessages++;
+					this.ReceivedBytes += m_expectedLen;
 
 					int copy = m_bufferUsed - m_expectedLen;
 					Array.Copy(m_buffer, m_expectedLen, m_buffer, 0, copy);
@@ -118,9 +125,11 @@ namespace MyGame
 			m_client.Close();
 		}
 
-		public void Send(Message msg)
+		public virtual void Send(Message msg)
 		{
-			m_serializer.Send(m_client.GetStream(), msg);
+			var bytes = m_serializer.Send(m_client.GetStream(), msg);
+			this.SentMessages++;
+			this.SentBytes += bytes;
 		}
 	}
 }

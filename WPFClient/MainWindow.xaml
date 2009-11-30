@@ -86,17 +86,33 @@
 		</ToolBarTray>
 
 		<StatusBar DockPanel.Dock="Bottom" >
-			<TextBlock>
-       			Turn <TextBlock Text="{Binding Path=TurnNumber, Source={x:Static local:World.TheWorld}}" />
+			Turn
+			<TextBlock Text="{Binding Path=TurnNumber, Source={x:Static local:World.TheWorld}}" />
+			<Separator />
+			Env
+			<TextBlock Text="{Binding Path=Environment, ElementName=map}" />
+			<Separator />
+			Z
+			<TextBlock Text="{Binding Path=Z, ElementName=map}" />
+			<Separator />
+			<TextBlock DataContext="{Binding Connection.Stats}">
+				<TextBlock.Text>
+					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
+						<Binding Path="SentMessages" />
+						<Binding Path="SentBytes" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 			<Separator />
-			<TextBlock>
-        		Env <TextBlock Text="{Binding Path=Environment, ElementName=map}" />
+			<TextBlock DataContext="{Binding Connection.Stats}">
+				<TextBlock.Text>
+					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
+						<Binding Path="ReceivedMessages" />
+						<Binding Path="ReceivedBytes" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 			<Separator />
-			<TextBlock>
-        		Z <TextBlock Text="{Binding Path=Z, ElementName=map}" />
-			</TextBlock>
 		</StatusBar>
 
 		<Grid>
@@ -205,7 +221,7 @@
 					</ListBox.ItemTemplate>
 				</ListBox>
 			</GroupBox>
-			
+
 			<GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
 				<ListBox ItemsSource="{Binding Path=Objects, Source={x:Static local:World.TheWorld}}" 
 						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
