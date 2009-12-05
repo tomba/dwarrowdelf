@@ -46,5 +46,27 @@ namespace MyGame.Properties {
                 this["DebugServer"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::MyGame.WindowPlacement MainWindowPlacement {
+            get {
+                return ((global::MyGame.WindowPlacement)(this["MainWindowPlacement"]));
+            }
+            set {
+                this["MainWindowPlacement"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::MyGame.WindowPlacement DebugWindowPlacement {
+            get {
+                return ((global::MyGame.WindowPlacement)(this["DebugWindowPlacement"]));
+            }
+            set {
+                this["DebugWindowPlacement"] = value;
+            }
+        }
     }
 }

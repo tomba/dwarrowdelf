@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="SymbolDrawingCache.cs" />
+    <Compile Include="Win32.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

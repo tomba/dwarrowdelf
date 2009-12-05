@@ -46,7 +46,6 @@ namespace MyGame
 			{
 				DebugWindow = new DebugWindow();
 				DebugWindow.Show();
-				DebugWindow.WindowState = WindowState.Maximized;
 			}
 #endif
 

@@ -97,29 +97,15 @@ namespace MyGame
 			GameData.Data.MyTraceListener = new ClientDebugListener();
 			if (MyGame.Properties.Settings.Default.DebugClient)
 				MyDebug.Listener = GameData.Data.MyTraceListener;
+		}
 
-			if (System.Windows.Forms.SystemInformation.MonitorCount == 2)
-			{
-				System.Windows.Forms.Screen screen = null;
-				for (int i = 0; i < System.Windows.Forms.Screen.AllScreens.Length; ++i)
-				{
-					if (System.Windows.Forms.Screen.AllScreens[i] !=
-						System.Windows.Forms.Screen.PrimaryScreen)
-					{
-						screen = System.Windows.Forms.Screen.AllScreens[i];
-						break;
-					}
-				}
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
 
-				var wa = screen.WorkingArea;
-				Rect r = new Rect(wa.Left, wa.Top, wa.Width, wa.Height);
-
-				WindowStartupLocation = WindowStartupLocation.Manual;
-				Left = r.Left;
-				Top = r.Top;
-				Width = r.Width;
-				Height = r.Height;
-			}
+			var p = (WindowPlacement)Properties.Settings.Default.DebugWindowPlacement;
+			if (p != null)
+				Win32.LoadWindowPlacement(this, p);
 		}
 
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -131,6 +117,10 @@ namespace MyGame
 			if (App.Current.Server != null)
 				App.Current.Server.TraceListener = null;
 			GameData.Data.MyTraceListener = null;
+
+			var p = Win32.SaveWindowPlacement(this);
+			Properties.Settings.Default.DebugWindowPlacement = p;
+			Properties.Settings.Default.Save();
 		}
 	}
 }

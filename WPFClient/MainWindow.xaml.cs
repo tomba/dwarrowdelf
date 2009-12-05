@@ -30,14 +30,14 @@ namespace MyGame
 		public MainWindow()
 		{
 			Application.Current.MainWindow = this;
-			this.WindowState = WindowState.Maximized;
+			//this.WindowState = WindowState.Maximized;
 
 			this.CurrentTileInfo = new TileInfo();
 
 			InitializeComponent();
 
-			this.Width = 1024;
-			this.Height = 600;
+			//this.Width = 1024;
+			//this.Height = 600;
 
 			this.PreviewKeyDown += Window_PreKeyDown;
 			this.PreviewTextInput += Window_PreTextInput;
@@ -53,12 +53,25 @@ namespace MyGame
 		{
 			base.OnSourceInitialized(e);
 
+			var p = (WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
+			if (p != null)
+				Win32.LoadWindowPlacement(this, p);
+
 			this.MiniMap = new MiniMap();
 			this.MiniMap.Owner = this;
 			this.MiniMap.ShowActivated = false;
 			this.MiniMap.Left = map.PointToScreen(new Point(0, 0)).X + 2;
 			this.MiniMap.Top = map.PointToScreen(new Point(0, 0)).Y + 2;
 			this.MiniMap.Show();
+		}
+
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			var p = Win32.SaveWindowPlacement(this);
+			Properties.Settings.Default.MainWindowPlacement = p;
+			Properties.Settings.Default.Save();
 		}
 
 		public ClientGameObject FollowObject
