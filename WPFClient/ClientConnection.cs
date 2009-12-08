@@ -242,10 +242,10 @@ namespace MyGame
 
 		void HandleEvents(Event @event)
 		{
-			if (@event is TurnChangeEvent)
+			if (@event is TickChangeEvent)
 			{
-				var e = (TurnChangeEvent)@event;
-				World.TheWorld.TurnNumber = e.TurnNumber;
+				var e = (TickChangeEvent)@event;
+				World.TheWorld.TickNumber = e.TickNumber;
 			}
 			else if (@event is ActionProgressEvent)
 			{
@@ -255,7 +255,7 @@ namespace MyGame
 
 				var list = GameData.Data.ActionCollection;
 				GameAction action = list.SingleOrDefault(a => a.TransactionID == e.TransactionID);
-				action.TurnsLeft = e.TurnsLeft;
+				action.TicksLeft = e.TicksLeft;
 
 				// XXX GameAction doesn't have INotifyProperty changed, so we have to update manually
 				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
@@ -265,7 +265,7 @@ namespace MyGame
 				if (ob == null)
 					throw new Exception();
 
-				if (e.TurnsLeft == 0)
+				if (e.TicksLeft == 0)
 					ob.ActionDone(action);
 
 				ob.AI.ActionProgress(e);

@@ -22,8 +22,8 @@ namespace MyGame
 	enum WorldState
 	{
 		Idle,
-		TurnOngoing,
-		TurnEnded,
+		TickOngoing,
+		TickEnded,
 	}
 
 	public class World
@@ -64,7 +64,7 @@ namespace MyGame
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
-		int m_turnNumber = 0;
+		int m_tickNumber = 0;
 
 		WorldTickMethod m_tickMethod = WorldTickMethod.Sequential;
 
@@ -73,19 +73,19 @@ namespace MyGame
 		TimeSpan m_maxMoveTime = TimeSpan.FromMilliseconds(1000);
 		DateTime m_nextMove = DateTime.MaxValue;
 
-		// minimum time between turns
-		bool m_useMinTurnTime = false;
-		TimeSpan m_minTurnTime = TimeSpan.FromMilliseconds(1000);
-		DateTime m_nextTurn = DateTime.MinValue;
+		// minimum time between ticks
+		bool m_useMinTickTime = false;
+		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(1000);
+		DateTime m_nextTick = DateTime.MinValue;
 
-		// Timer is used out-of-turn to start the turn after m_minTurnTime
-		// and inside-turn to timeout player movements after m_maxMoveTime
+		// Timer is used out-of-tick to start the tick after m_minTickTime
+		// and inside-tick to timeout player movements after m_maxMoveTime
 		Timer m_tickTimer;
 
 		// If the user has requested to proceed
-		bool m_turnRequested;
+		bool m_tickRequested;
 
-		// Require an user to be in game for turns to proceed
+		// Require an user to be in game for ticks to proceed
 		bool m_requireUser = true;
 
 		class InvokeInfo
@@ -94,7 +94,7 @@ namespace MyGame
 			public object[] Args;
 		}
 
-		List<InvokeInfo> m_preTurnInvokeList = new List<InvokeInfo>();
+		List<InvokeInfo> m_preTickInvokeList = new List<InvokeInfo>();
 		List<InvokeInfo> m_instantInvokeList = new List<InvokeInfo>();
 
 		bool m_workActive;
@@ -158,9 +158,9 @@ namespace MyGame
 			m_rwLock.ExitReadLock();
 		}
 
-		public int TurnNumber
+		public int TickNumber
 		{
-			get { return m_turnNumber; }
+			get { return m_tickNumber; }
 		}
 
 		// thread safe
@@ -244,8 +244,8 @@ namespace MyGame
 		// thread safe
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
-			lock (m_preTurnInvokeList)
-				m_preTurnInvokeList.Add(new InvokeInfo() { Action = callback, Args = args});
+			lock (m_preTickInvokeList)
+				m_preTickInvokeList.Add(new InvokeInfo() { Action = callback, Args = args});
 
 			SignalWorld();
 		}
@@ -254,13 +254,13 @@ namespace MyGame
 		{
 			Debug.Assert(m_workActive);
 
-			lock (m_preTurnInvokeList)
+			lock (m_preTickInvokeList)
 			{
-				if (m_preTurnInvokeList.Count > 0)
-					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTurnInvokeList.Count);
-				foreach (InvokeInfo a in m_preTurnInvokeList)
+				if (m_preTickInvokeList.Count > 0)
+					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTickInvokeList.Count);
+				foreach (InvokeInfo a in m_preTickInvokeList)
 					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
-				m_preTurnInvokeList.Clear();
+				m_preTickInvokeList.Clear();
 			}
 		}
 
@@ -304,9 +304,9 @@ namespace MyGame
 			m_worldSignal.Set();
 		}
 
-		internal void RequestTurn()
+		internal void RequestTick()
 		{
-			m_turnRequested = true;
+			m_tickRequested = true;
 			SignalWorld();
 		}
 
@@ -345,17 +345,17 @@ namespace MyGame
 			VDbg("WorldSignalledWork done");
 		}
 
-		bool IsTimeToStartTurn()
+		bool IsTimeToStartTick()
 		{
 			Debug.Assert(m_workActive);
 
 			if (m_state != WorldState.Idle)
 				return false;
 
-			if (m_useMinTurnTime && DateTime.Now < m_nextTurn)
+			if (m_useMinTickTime && DateTime.Now < m_nextTick)
 				return false;
 
-			if (m_requireUser && m_turnRequested == false)
+			if (m_requireUser && m_tickRequested == false)
 			{
 				lock (m_userList)
 					if (m_userList.Count == 0)
@@ -373,7 +373,7 @@ namespace MyGame
 
 			if (m_state == WorldState.Idle)
 			{
-				MyDebug.WriteLine("-- Preturn {0} events --", m_turnNumber + 1);
+				//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
 
 				EnterWriteLock();
 				ProcessInvokeList();
@@ -381,9 +381,9 @@ namespace MyGame
 				ProcessRemoveLivingList();
 				ExitWriteLock();
 
-				MyDebug.WriteLine("-- Preturn {0} events done --", m_turnNumber + 1);
+				//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
 
-				if (IsTimeToStartTurn())
+				if (IsTimeToStartTick())
 				{
 					// XXX making decision here is ok for Simultaneous mode, but not quite
 					// for sequential...
@@ -393,11 +393,11 @@ namespace MyGame
 					foreach (Living l in m_livingList)
 						l.Actor.DetermineAction();
 
-					StartTurn();
+					StartTick();
 				}
 			}
 
-			if (m_state == WorldState.TurnOngoing)
+			if (m_state == WorldState.TickOngoing)
 			{
 				EnterWriteLock();
 				if (m_tickMethod == WorldTickMethod.Simultaneous)
@@ -412,7 +412,7 @@ namespace MyGame
 			ProcessChanges();
 			ProcessEvents();
 
-			if (m_state == WorldState.TurnEnded)
+			if (m_state == WorldState.TickEnded)
 			{
 				// perhaps this is not needed for anything
 				m_state = WorldState.Idle;
@@ -432,10 +432,10 @@ namespace MyGame
 
 			if (m_state == WorldState.Idle)
 			{
-				lock (m_preTurnInvokeList)
-					if (m_preTurnInvokeList.Count > 0)
+				lock (m_preTickInvokeList)
+					if (m_preTickInvokeList.Count > 0)
 					{
-						VDbg("WorkAvailable: PreTurnInvoke");
+						VDbg("WorkAvailable: PreTickInvoke");
 						return true;
 					}
 
@@ -453,15 +453,15 @@ namespace MyGame
 						return true;
 					}
 
-				if (IsTimeToStartTurn())
+				if (IsTimeToStartTick())
 				{
-					VDbg("WorkAvailable: IsTimeToStartTurn");
+					VDbg("WorkAvailable: IsTimeToStartTick");
 					return true;
 				}
 
 				return false;
 			}
-			else if (m_state == WorldState.TurnOngoing)
+			else if (m_state == WorldState.TickOngoing)
 			{
 				if (m_tickMethod == WorldTickMethod.Simultaneous)
 					return SimultaneousWorkAvailable();
@@ -479,7 +479,7 @@ namespace MyGame
 		bool SimultaneousWorkAvailable()
 		{
 			Debug.Assert(m_workActive);
-			Debug.Assert(m_state == WorldState.TurnOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingList.All(l => l.HasAction))
 				return true;
@@ -493,7 +493,7 @@ namespace MyGame
 		void SimultaneousWork()
 		{
 			Debug.Assert(m_workActive);
-			Debug.Assert(m_state == WorldState.TurnOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
@@ -518,7 +518,7 @@ namespace MyGame
 					break;
 			}
 
-			EndTurn();
+			EndTick();
 
 			VDbg("SimultaneousWork Done");
 		}
@@ -527,7 +527,7 @@ namespace MyGame
 
 		bool SequentialWorkAvailable()
 		{
-			Debug.Assert(m_state == WorldState.TurnOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingEnumerator.Current.HasAction)
 			{
@@ -547,7 +547,7 @@ namespace MyGame
 		void SequentialWork()
 		{
 			Debug.Assert(m_workActive);
-			Debug.Assert(m_state == WorldState.TurnOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
 
@@ -567,7 +567,7 @@ namespace MyGame
 				if (last)
 				{
 					VDbg("last living handled");
-					EndTurn();
+					EndTick();
 					break;
 				}
 			}
@@ -575,14 +575,14 @@ namespace MyGame
 			VDbg("SequentialWork Done");
 		}
 
-		void StartTurn()
+		void StartTick()
 		{
 			Debug.Assert(m_workActive);
 
-			m_turnNumber++;
-			AddEvent(new TurnChangeEvent(m_turnNumber));
+			m_tickNumber++;
+			AddEvent(new TickChangeEvent(m_tickNumber));
 
-			MyDebug.WriteLine("-- Turn {0} started --", m_turnNumber);
+			MyDebug.WriteLine("-- Tick {0} started --", m_tickNumber);
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -597,7 +597,7 @@ namespace MyGame
 
 			m_livingEnumerator = m_livingList.GetEnumerator();
 
-			m_state = WorldState.TurnOngoing;
+			m_state = WorldState.TickOngoing;
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -641,19 +641,19 @@ namespace MyGame
 			return false;
 		}
 
-		void EndTurn()
+		void EndTick()
 		{
 			Debug.Assert(m_workActive);
 
-			if (m_useMinTurnTime)
+			if (m_useMinTickTime)
 			{
-				m_nextTurn = DateTime.Now + m_minTurnTime;
-				m_tickTimer.Change(m_minTurnTime, TimeSpan.FromTicks(-1));
+				m_nextTick = DateTime.Now + m_minTickTime;
+				m_tickTimer.Change(m_minTickTime, TimeSpan.FromTicks(-1));
 			}
 
-			MyDebug.WriteLine("-- Turn {0} ended --", m_turnNumber);
-			m_turnRequested = false;
-			m_state = WorldState.TurnEnded;
+			MyDebug.WriteLine("-- Tick {0} ended --", m_tickNumber);
+			m_tickRequested = false;
+			m_state = WorldState.TickEnded;
 		}
 
 		public void AddChange(Change change)

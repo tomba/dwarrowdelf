@@ -66,7 +66,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class ProceedTurnMessage : Message
+	public class ProceedTickMessage : Message
 	{
 	}
 

@@ -41,7 +41,7 @@ namespace MyGame
 				return Progress.Fail;
 			}
 
-			if (e.TurnsLeft > 0)
+			if (e.TicksLeft > 0)
 				return Progress.Ok;
 
 			m_currentAction = null;

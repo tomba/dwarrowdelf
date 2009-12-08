@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract,
-	KnownType(typeof(TurnChangeEvent)),
+	KnownType(typeof(TickChangeEvent)),
 	KnownType(typeof(ActionProgressEvent)),
 	KnownType(typeof(ActionRequiredEvent)),
 	]
@@ -16,19 +16,19 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public class TurnChangeEvent : Event
+	public class TickChangeEvent : Event
 	{
 		[DataMember]
-		public int TurnNumber { get; set; }
+		public int TickNumber { get; set; }
 
-		public TurnChangeEvent(int turnNumber)
+		public TickChangeEvent(int tickNumber)
 		{
-			this.TurnNumber = turnNumber;
+			this.TickNumber = tickNumber;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("TurnChangeEvent({0})", this.TurnNumber);
+			return String.Format("TickChangeEvent({0})", this.TickNumber);
 		}
 	}
 
@@ -39,14 +39,14 @@ namespace MyGame
 		[DataMember]
 		public int TransactionID { get; set; }
 		[DataMember]
-		public int TurnsLeft { get; set; }
+		public int TicksLeft { get; set; }
 		[DataMember]
 		public bool Success { get; set; }
 
 		public override string ToString()
 		{
 			return String.Format("ActionProgressEvent({0}, trid: {1}, left: {2}, ok: {3})",
-				this.UserID, this.TransactionID, this.TurnsLeft, this.Success);
+				this.UserID, this.TransactionID, this.TicksLeft, this.Success);
 		}
 	}
 

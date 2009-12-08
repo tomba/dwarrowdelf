@@ -86,8 +86,8 @@
 		</ToolBarTray>
 
 		<StatusBar DockPanel.Dock="Bottom" >
-			Turn
-			<TextBlock Text="{Binding Path=TurnNumber, Source={x:Static local:World.TheWorld}}" />
+			Tick
+			<TextBlock Text="{Binding Path=TickNumber, Source={x:Static local:World.TheWorld}}" />
 			<Separator />
 			Env
 			<TextBlock Text="{Binding Path=Environment, ElementName=map}" />
@@ -163,7 +163,7 @@
 						<DataTemplate>
 							<TextBlock>
 								<TextBlock Text="{Binding ActorObjectID}" />
-								: left <TextBlock Text="{Binding TurnsLeft}" />
+								: left <TextBlock Text="{Binding TicksLeft}" />
 							</TextBlock>
 						</DataTemplate>
 					</ListBox.ItemTemplate>

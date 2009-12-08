@@ -59,7 +59,7 @@ namespace MyGame
 			if (this.Environment == null)
 				return;
 
-			if (action.TurnsLeft > 0)
+			if (action.TicksLeft > 0)
 			{
 				success = true;
 				return;
@@ -92,7 +92,7 @@ namespace MyGame
 			if (this.Environment == null)
 				return;
 
-			if (action.TurnsLeft > 0)
+			if (action.TicksLeft > 0)
 			{
 				success = true;
 				return;
@@ -120,8 +120,8 @@ namespace MyGame
 
 		void PerformMove(MoveAction action, out bool success)
 		{
-			// this should check if movement is blocked, even when TurnsLeft > 0
-			if (action.TurnsLeft == 0)
+			// this should check if movement is blocked, even when TicksLeft > 0
+			if (action.TicksLeft == 0)
 				success = MoveDir(action.Direction);
 			else
 				success = true;
@@ -135,7 +135,7 @@ namespace MyGame
 
 			if (id == InteriorID.NaturalWall)
 			{
-				if (action.TurnsLeft == 0)
+				if (action.TicksLeft == 0)
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
 				success = true;
 			}
@@ -150,7 +150,7 @@ namespace MyGame
 			success = true;
 		}
 
-		// called during turn processing. the world state is not quite valid.
+		// called during tick processing. the world state is not quite valid.
 		public void PerformAction()
 		{
 			Debug.Assert(this.World.IsWriteable);
@@ -163,26 +163,30 @@ namespace MyGame
 			Debug.Assert(action.ActorObjectID == this.ObjectID);
 
 			// new action?
-			if (action.TurnsLeft == 0)
+			if (action.TicksLeft == 0)
 			{
 				// The action should be initialized somewhere
 				if (action is WaitAction)
 				{
-					action.TurnsLeft = ((WaitAction)action).WaitTurns;
+					action.TicksLeft = ((WaitAction)action).WaitTicks;
 				}
 				else if (action is MineAction)
 				{
-					action.TurnsLeft = 3;
+					action.TicksLeft = 3;
+				}
+				else if (action is MoveAction)
+				{
+					action.TicksLeft = 4;
 				}
 				else
 				{
-					action.TurnsLeft = 1;
+					action.TicksLeft = 1;
 				}
 			}
 
 			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
 
-			action.TurnsLeft -= 1;
+			action.TicksLeft -= 1;
 
 			bool success = false;
 			bool done = false;
@@ -226,9 +230,9 @@ namespace MyGame
 			}
 
 			if (success == false)
-				action.TurnsLeft = 0;
+				action.TicksLeft = 0;
 
-			if (action.TurnsLeft == 0)
+			if (action.TicksLeft == 0)
 				RemoveAction(action);
 
 			// is the action originator an user?
@@ -238,7 +242,7 @@ namespace MyGame
 				{
 					UserID = action.UserID,
 					TransactionID = action.TransactionID,
-					TurnsLeft = action.TurnsLeft,
+					TicksLeft = action.TicksLeft,
 					Success = success,
 				});
 			}

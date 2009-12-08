@@ -42,11 +42,11 @@ namespace MyGame
 			this.Environments.Add(env);
 		}
 
-		int m_turnNumber;
-		public int TurnNumber
+		int m_tickNumber;
+		public int TickNumber
 		{
-			get { return m_turnNumber; }
-			set { m_turnNumber = value; Notify("TurnNumber"); }
+			get { return m_tickNumber; }
+			set { m_tickNumber = value; Notify("TickNumber"); }
 		}
 
 

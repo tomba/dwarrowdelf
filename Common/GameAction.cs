@@ -21,7 +21,7 @@ namespace MyGame
 		public int TransactionID { get; set; }
 
 		public int UserID { get; set; }
-		public int TurnsLeft { get; set; }
+		public int TicksLeft { get; set; }
 
 		public GameAction()
 		{
@@ -41,7 +41,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("MoveAction({0}, left {1})", this.Direction, this.TurnsLeft);
+			return String.Format("MoveAction({0}, left {1})", this.Direction, this.TicksLeft);
 		}
 	}
 
@@ -49,16 +49,16 @@ namespace MyGame
 	public class WaitAction : GameAction
 	{
 		[DataMember]
-		public int WaitTurns { get; set; }
+		public int WaitTicks { get; set; }
 
-		public WaitAction(int turns)
+		public WaitAction(int ticks)
 		{
-			this.WaitTurns = turns;
+			this.WaitTicks = ticks;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("WaitAction({0})", this.WaitTurns);
+			return String.Format("WaitAction({0})", this.WaitTicks);
 		}
 	}
 
@@ -111,7 +111,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("MineAction({0}, turns: {1})", this.Direction, this.TurnsLeft);
+			return String.Format("MineAction({0}, turns: {1})", this.Direction, this.TicksLeft);
 		}
 	}
 }

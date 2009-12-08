@@ -162,10 +162,10 @@ namespace MyGame
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Normal)]
-		void ReceiveMessage(ProceedTurnMessage msg)
+		void ReceiveMessage(ProceedTickMessage msg)
 		{
-			MyDebug.WriteLine("ProceedTurn command");
-			m_world.RequestTurn();
+			MyDebug.WriteLine("ProceedTick command");
+			m_world.RequestTick();
 		}
 
 		/* functions for livings */
@@ -294,7 +294,7 @@ namespace MyGame
 				return e.UserID == m_userID;
 			}
 
-			if (@event is TurnChangeEvent)
+			if (@event is TickChangeEvent)
 				return true;
 
 			return true;

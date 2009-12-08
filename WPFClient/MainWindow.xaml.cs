@@ -198,7 +198,7 @@ namespace MyGame
 				}
 				else
 				{
-					GameData.Data.Connection.Send(new ProceedTurnMessage());
+					GameData.Data.Connection.Send(new ProceedTickMessage());
 				}
 			}
 			else if (e.Key == Key.Add)
