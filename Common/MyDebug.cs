@@ -40,6 +40,16 @@ namespace MyGame
 
 	public abstract class MyDebugListener : MarshalByRefObject
 	{
+		public override object InitializeLifetimeService()
+		{
+			var lease = (System.Runtime.Remoting.Lifetime.ILease)base.InitializeLifetimeService();
+
+			if (lease.CurrentState == System.Runtime.Remoting.Lifetime.LeaseState.Initial)
+				lease.InitialLeaseTime = TimeSpan.Zero;
+
+			return lease;
+		}
+
 		public abstract void Write(DebugFlag flags, string msg);
 	}
 
