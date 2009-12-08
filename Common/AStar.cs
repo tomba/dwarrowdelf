@@ -28,10 +28,10 @@ namespace MyGame
 		}
 
 		// public for AStarTest
-		public static IDictionary<IntPoint,Node> FindPathNodeMap(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
+		public static IDictionary<IntPoint,Node> FindPathNodeMap(IntPoint src, IntPoint dst, bool exactLocation,
+			out Node lastNode, Func<IntPoint, bool> locValid)
 		{
-			Node lastNode;
-			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
+			var nodes = FindPathInternal(src, dst, exactLocation, locValid, out lastNode);
 			return nodes;
 		}
 
@@ -97,7 +97,11 @@ namespace MyGame
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 			*/
+
 			lastNode = null;
+
+			if (exactLocation && !locValid(dst))
+				return null;
 
 			var openList = new OpenList();
 			var nodeMap = new Dictionary<IntPoint, Node>();

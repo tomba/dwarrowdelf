@@ -40,9 +40,8 @@ namespace MyGame
 			this.TileSize = 32;
 
 			m_realMap = new Grid2D<MapTile>(MapWidth, MapHeight);
-			//for (int y = 0; y < 350; ++y)
-			//	m_realMap[5, y] = new MapTile() { Blocked = true };
-			m_realMap[0, 0] = new MapTile() { Blocked = true };
+			for (int y = 0; y < 350; ++y)
+				m_realMap[5, y] = new MapTile() { Blocked = true };
 
 			base.CenterPos = new IntPoint(10, 10);
 			ClearMap();
@@ -116,7 +115,10 @@ namespace MyGame
 			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
 
 			if (!m_realMap.Bounds.Contains(ml))
+			{
 				Console.Beep();
+				return;
+			}
 
 			if (e.LeftButton == MouseButtonState.Pressed)
 			{
@@ -175,10 +177,11 @@ namespace MyGame
 		void DoAStar(IntPoint src, IntPoint dst)
 		{
 			long startBytes, stopBytes;
+			AStar.Node lastNode;
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_nodeMap = AStar.FindPathNodeMap(src, dst, LocValid);
+			m_nodeMap = AStar.FindPathNodeMap(src, dst, true, out lastNode, LocValid);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -192,7 +195,7 @@ namespace MyGame
 			}
 
 			List<IntPoint> pathList = new List<IntPoint>();
-			var n = m_nodeMap.First(kvp => kvp.Key == dst).Value;
+			var n = lastNode;
 			while (n.Parent != null)
 			{
 				pathList.Add(n.Loc);
