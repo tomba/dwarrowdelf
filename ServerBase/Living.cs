@@ -18,6 +18,9 @@ namespace MyGame
 
 		IActor m_actorImpl;
 
+		public GameColor Color { get; set; }
+		public MaterialID MaterialID { get; set; }
+
 		public Living(World world)
 			: base(world)
 		{
@@ -308,7 +311,7 @@ namespace MyGame
 		}
 
 		// does this living see location l in object ob
-		public bool Sees(GameObject ob, IntPoint3D l)
+		public bool Sees(IIdentifiable ob, IntPoint3D l)
 		{
 			if (ob != this.Environment)
 				return false;

@@ -7,6 +7,9 @@ namespace MyGame
 {
 	public class ItemObject : ServerGameObject
 	{
+		public GameColor Color { get; set; }
+		public MaterialID MaterialID { get; set; }
+
 		public ItemObject(World world)
 			: base(world)
 		{

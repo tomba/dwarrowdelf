@@ -17,7 +17,20 @@ namespace MyGame
 		}
 	}
 
-	abstract public class ServerGameObject : GameObject
+	abstract public class BaseGameObject : IIdentifiable
+	{
+		public ObjectID ObjectID { get; private set; }
+		public World World { get; private set; }
+
+		protected BaseGameObject(World world)
+		{
+			this.ObjectID = world.GetNewObjectID();
+			this.World = world;
+			this.World.AddGameObject(this);
+		}
+	}
+
+	abstract public class ServerGameObject : BaseGameObject
 	{
 		public int SymbolID { get; set; }
 
@@ -34,16 +47,9 @@ namespace MyGame
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		public GameColor Color { get; set; }
-		public MaterialID MaterialID { get; set; }
-
-		public World World { get; private set; }
-
 		internal ServerGameObject(World world)
-			: base(world.GetNewObjectID())
+			: base(world)
 		{
-			this.World = world;
-			this.World.AddGameObject(this);
 			m_children = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}

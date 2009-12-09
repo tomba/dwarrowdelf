@@ -694,7 +694,16 @@ namespace MyGame
 			AddChange(new MapChange(map, l, tileData));
 		}
 
-		public ServerGameObject FindObject(ObjectID objectID)
+		internal void AddGameObject(IIdentifiable ob)
+		{
+			if (ob.ObjectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
+			lock (m_objectMap)
+				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+		}
+
+		public IIdentifiable FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -705,7 +714,7 @@ namespace MyGame
 				{
 					WeakReference weakref = m_objectMap[objectID];
 					if (weakref.IsAlive)
-						return (ServerGameObject)m_objectMap[objectID].Target;
+						return (IIdentifiable)m_objectMap[objectID].Target;
 					else
 						m_objectMap.Remove(objectID);
 				}
@@ -714,13 +723,14 @@ namespace MyGame
 			return null;
 		}
 
-		internal void AddGameObject(ServerGameObject ob)
+		public T FindObject<T>(ObjectID objectID) where T : class, IIdentifiable
 		{
-			if (ob.ObjectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
+			var ob = FindObject(objectID);
 
-			lock (m_objectMap)
-				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+			if (ob == null)
+				return null;
+
+			return (T)ob;
 		}
 
 		internal ObjectID GetNewObjectID()

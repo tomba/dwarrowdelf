@@ -28,8 +28,10 @@ namespace MyGame
 
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	class ClientGameObject : GameObject, INotifyPropertyChanged
+	class ClientGameObject : IIdentifiable, INotifyPropertyChanged
 	{
+		public ObjectID ObjectID { get; private set; }
+
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
 
@@ -48,8 +50,8 @@ namespace MyGame
 		public World World { get; private set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
-			: base(objectID)
 		{
+			this.ObjectID = objectID;
 			this.World = world;
 			this.World.AddObject(this);
 			m_inventory = new KeyedObjectCollection();

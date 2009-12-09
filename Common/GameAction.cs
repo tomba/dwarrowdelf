@@ -68,7 +68,7 @@ namespace MyGame
         [DataMember]
         public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-        public DropAction(IEnumerable<GameObject> items)
+        public DropAction(IEnumerable<IIdentifiable> items)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }
@@ -86,7 +86,7 @@ namespace MyGame
 		[DataMember]
 		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-		public GetAction(IEnumerable<GameObject> items)
+		public GetAction(IEnumerable<IIdentifiable> items)
         {
             this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
         }

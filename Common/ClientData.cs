@@ -201,7 +201,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntPoint3D SourceLocation { get; set; }
 
-		public ObjectMove(GameObject target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
+		public ObjectMove(IIdentifiable target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
 		{
 			this.ObjectID = target.ObjectID;
 			this.SourceEnvID = fromID;

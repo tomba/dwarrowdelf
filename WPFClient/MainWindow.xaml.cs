@@ -350,7 +350,7 @@ namespace MyGame
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			plr.EnqueueAction(new GetAction(list.Cast<GameObject>()));
+			plr.EnqueueAction(new GetAction(list.Cast<IIdentifiable>()));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -362,7 +362,7 @@ namespace MyGame
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.EnqueueAction(new DropAction(list.Cast<GameObject>()));
+			plr.EnqueueAction(new DropAction(list.Cast<IIdentifiable>()));
 		}
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)

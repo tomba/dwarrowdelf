@@ -73,12 +73,12 @@ namespace MyGame
 
 	public class MapChange : Change
 	{
-		public GameObject Map { get; private set; }
+		public IIdentifiable Map { get; private set; }
 		public ObjectID MapID { get { return this.Map.ObjectID; } }
 		public IntPoint3D Location { get; set; }
 		public TileData TileData { get; set; }
 
-		public MapChange(GameObject map, IntPoint3D l, TileData tileData)
+		public MapChange(IIdentifiable map, IntPoint3D l, TileData tileData)
 		{
 			this.Map = map;
 			this.Location = l;
@@ -93,10 +93,10 @@ namespace MyGame
 
 	public abstract class ObjectChange : Change
 	{
-		public GameObject Object { get; private set; }
+		public IIdentifiable Object { get; private set; }
 		public ObjectID ObjectID { get { return this.Object.ObjectID; } }
 
-		public ObjectChange(GameObject @object)
+		public ObjectChange(IIdentifiable @object)
 		{
 			this.Object = @object;
 		}
@@ -104,7 +104,7 @@ namespace MyGame
 
 	public class ObjectMoveChange : ObjectChange
 	{
-		public GameObject Source { get; private set; }
+		public IIdentifiable Source { get; private set; }
 		public ObjectID SourceMapID
 		{
 			get
@@ -113,7 +113,7 @@ namespace MyGame
 			}
 		}
 		public IntPoint3D SourceLocation { get; private set; }
-		public GameObject Destination { get; private set; }
+		public IIdentifiable Destination { get; private set; }
 		public ObjectID DestinationMapID
 		{
 			get
@@ -123,8 +123,8 @@ namespace MyGame
 		}
 		public IntPoint3D DestinationLocation { get; private set; }
 
-		public ObjectMoveChange(GameObject mover, GameObject sourceEnv, IntPoint3D sourceLocation,
-			GameObject destinationEnv, IntPoint3D destinationLocation)
+		public ObjectMoveChange(IIdentifiable mover, IIdentifiable sourceEnv, IntPoint3D sourceLocation,
+			IIdentifiable destinationEnv, IntPoint3D destinationLocation)
 			: base(mover)
 		{
 			this.Source = sourceEnv;
