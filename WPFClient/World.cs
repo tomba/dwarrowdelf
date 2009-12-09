@@ -51,7 +51,7 @@ namespace MyGame
 
 
 
-		internal void AddObject(ClientGameObject ob)
+		internal void AddObject(IIdentifiable ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -59,7 +59,7 @@ namespace MyGame
 			m_objects.Add(ob);
 		}
 
-		public ClientGameObject FindObject(ObjectID objectID)
+		public IIdentifiable FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();

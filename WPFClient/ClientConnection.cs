@@ -141,7 +141,7 @@ namespace MyGame
 
 		void HandleMessage(ObjectMove msg)
 		{
-			ClientGameObject ob = World.TheWorld.FindObject(msg.ObjectID);
+			ClientGameObject ob = World.TheWorld.FindObject<ClientGameObject>(msg.ObjectID);
 
 			if (ob == null)
 			{
@@ -154,7 +154,7 @@ namespace MyGame
 
 			ClientGameObject env = null;
 			if (msg.TargetEnvID != ObjectID.NullObjectID)
-				env = World.TheWorld.FindObject(msg.TargetEnvID);
+				env = World.TheWorld.FindObject<ClientGameObject>(msg.TargetEnvID);
 
 			ob.MoveTo(env, msg.TargetLocation);
 		}
@@ -212,7 +212,7 @@ namespace MyGame
 
 			ClientGameObject env = null;
 			if (msg.Environment != ObjectID.NullObjectID)
-				env = World.TheWorld.FindObject(msg.Environment);
+				env = World.TheWorld.FindObject<ClientGameObject>(msg.Environment);
 
 			ob.MoveTo(env, msg.Location);
 		}

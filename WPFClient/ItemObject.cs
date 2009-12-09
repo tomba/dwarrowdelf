@@ -27,7 +27,7 @@ namespace MyGame
 
 			ClientGameObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)
-				env = this.World.FindObject(data.Environment);
+				env = this.World.FindObject<ClientGameObject>(data.Environment);
 
 			this.MoveTo(env, data.Location);
 		}

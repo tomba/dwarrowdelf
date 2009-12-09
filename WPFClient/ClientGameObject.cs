@@ -10,15 +10,15 @@ namespace MyGame
 {
 	class ObjectCollection : ObservableCollection<ClientGameObject> { }
 
-	class KeyedObjectCollection : ObservableKeyedCollection<ObjectID, ClientGameObject>
+	class KeyedObjectCollection : ObservableKeyedCollection<ObjectID, IIdentifiable>
 	{
-		protected override ObjectID GetKeyForItem(ClientGameObject item)
+		protected override ObjectID GetKeyForItem(IIdentifiable item)
 		{
 			return item.ObjectID;
 		}
 	}
 
-	class ReadOnlyKeyedObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, ClientGameObject>
+	class ReadOnlyKeyedObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, IIdentifiable>
 	{
 		public ReadOnlyKeyedObjectCollection(KeyedObjectCollection collection)
 			: base(collection)
@@ -28,10 +28,21 @@ namespace MyGame
 
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	class ClientGameObject : IIdentifiable, INotifyPropertyChanged
+	abstract class BaseGameObject : IIdentifiable
 	{
 		public ObjectID ObjectID { get; private set; }
+		public World World { get; private set; }
 
+		protected BaseGameObject(World world, ObjectID objectID)
+		{
+			this.ObjectID = objectID;
+			this.World = world;
+			this.World.AddObject(this);
+		}
+	}
+
+	class ClientGameObject : BaseGameObject, INotifyPropertyChanged
+	{
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
 
@@ -47,20 +58,18 @@ namespace MyGame
 		public IntPoint3D Location { get; private set; }
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public bool IsLiving { get; protected set; }
-		public World World { get; private set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
+			: base(world, objectID)
 		{
-			this.ObjectID = objectID;
-			this.World = world;
-			this.World.AddObject(this);
 			m_inventory = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
 			this.Color = Colors.Black;
 		}
 
 		string m_name;
-		public string Name {
+		public string Name
+		{
 			get { return m_name; }
 			set { m_name = value; Notify("Name"); }
 		}
