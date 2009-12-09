@@ -98,8 +98,8 @@
 			<TextBlock DataContext="{Binding Connection.Stats}">
 				<TextBlock.Text>
 					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
-						<Binding Path="SentMessages" />
-						<Binding Path="SentBytes" />
+						<Binding Path="SentMessages" FallbackValue="0" />
+						<Binding Path="SentBytes" FallbackValue="0" />
 					</MultiBinding>
 				</TextBlock.Text>
 			</TextBlock>
@@ -107,8 +107,8 @@
 			<TextBlock DataContext="{Binding Connection.Stats}">
 				<TextBlock.Text>
 					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
-						<Binding Path="ReceivedMessages" />
-						<Binding Path="ReceivedBytes" />
+						<Binding Path="ReceivedMessages" FallbackValue="0" />
+						<Binding Path="ReceivedBytes" FallbackValue="0" />
 					</MultiBinding>
 				</TextBlock.Text>
 			</TextBlock>
