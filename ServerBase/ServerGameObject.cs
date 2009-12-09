@@ -28,6 +28,8 @@ namespace MyGame
 			this.World = world;
 			this.World.AddGameObject(this);
 		}
+
+		public abstract ClientMsgs.Message Serialize();
 	}
 
 	abstract public class ServerGameObject : BaseGameObject
@@ -53,8 +55,6 @@ namespace MyGame
 			m_children = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
-
-		public abstract ClientMsgs.Message Serialize();
 
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
 
