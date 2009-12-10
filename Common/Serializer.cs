@@ -13,7 +13,7 @@ namespace MyGame
 	public class Serializer
 	{
 		DataContractSerializer m_serializer;
-		
+
 		public Serializer()
 		{
 			var types = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
@@ -39,20 +39,25 @@ namespace MyGame
 
 		public int Send(NetworkStream netStream, Message msg)
 		{
-			var stream = new MemoryStream();
-			stream.Seek(4, SeekOrigin.Begin);
-			Serialize(stream, msg);
-			int len = (int)stream.Position;
+			using (var stream = new MemoryStream())
+			{
+				stream.Seek(8, SeekOrigin.Begin);
+				Serialize(stream, msg);
+				int len = (int)stream.Position;
 
-			stream.Seek(0, SeekOrigin.Begin);
-			BinaryWriter sw = new BinaryWriter(stream);
-			sw.Write(len);
+				stream.Seek(0, SeekOrigin.Begin);
+				using (var bw = new BinaryWriter(stream))
+				{
+					bw.Write((int)0x12345678);
+					bw.Write(len);
+				}
 
-			//MyDebug.WriteLine("Sending {0} bytes", len);
-			var buffer = stream.ToArray();
-			netStream.Write(buffer, 0, len);
+				//MyDebug.WriteLine("Sending {0} bytes", len);
+				var buffer = stream.ToArray();
+				netStream.Write(buffer, 0, len);
 
-			return len;
+				return len;
+			}
 		}
 	}
 }

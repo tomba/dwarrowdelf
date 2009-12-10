@@ -212,8 +212,8 @@ namespace MyGame.ClientMsgs
 
 		public override string ToString()
 		{
-			return String.Format("ObjectMove {0} {1}->{2}", this.ObjectID,
-				this.SourceLocation, this.TargetLocation);
+			return String.Format("ObjectMove {0} {1}/{2}->{3}/{4}", this.ObjectID,
+				this.SourceEnvID, this.SourceLocation, this.TargetEnvID, this.TargetLocation);
 		}
 	}
 

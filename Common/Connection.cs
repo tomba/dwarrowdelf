@@ -13,6 +13,7 @@ namespace MyGame
 	public abstract class Connection
 	{
 		TcpClient m_client;
+		NetworkStream m_netStream;
 		Serializer m_serializer = new Serializer();
 		byte[] m_buffer = new byte[1024 * 1024];
 		int m_bufferUsed;
@@ -32,12 +33,20 @@ namespace MyGame
 
 		public Connection(TcpClient client)
 		{
+			if (client.Connected == false)
+				throw new Exception();
+
 			m_client = client;
+			m_netStream = m_client.GetStream();
+
 			BeginRead();
 		}
 
 		public void BeginConnect(Action callback)
 		{
+			if (m_client.Connected == true)
+				throw new Exception();
+
 			Client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
 		}
 
@@ -46,6 +55,8 @@ namespace MyGame
 			var callback = (Action)ar.AsyncState;
 			Client.EndConnect(ar);
 
+			m_netStream = m_client.GetStream();
+
 			callback.Invoke();
 
 			BeginRead();
@@ -53,40 +64,54 @@ namespace MyGame
 
 		void BeginRead()
 		{
-			var stream = m_client.GetStream();
-			stream.BeginRead(m_buffer, m_bufferUsed, m_buffer.Length - m_bufferUsed, ReadCallback, stream);
+			m_netStream.BeginRead(m_buffer, m_bufferUsed, m_buffer.Length - m_bufferUsed, ReadCallback, m_netStream);
 		}
 
 		void ReadCallback(IAsyncResult ar)
 		{
 			if (!m_client.Client.Connected)
+			{
+				MyDebug.WriteLine("Socket not connected");
 				return;
+			}
 
 			var stream = (NetworkStream)ar.AsyncState;
 			int len = stream.EndRead(ar);
 
-			//MyDebug.WriteLine("Received {0} bytes", len);
+			//MyDebug.WriteLine("[RX] {0} bytes", len);
 
 			if (len == 0)
 			{
+				MyDebug.WriteLine("socket disconnected");
 				return;
 			}
 
 			m_bufferUsed += len;
 
-			if (len < 4)
+			if (len < 8)
 			{
 				BeginRead();
 				return;
 			}
 
-			while (m_bufferUsed > 0)
+			while (m_bufferUsed > 8)
 			{
 				if (m_expectedLen == 0)
 				{
-					var memstream = new MemoryStream(m_buffer, 0, len);
-					m_expectedLen = new BinaryReader(memstream).ReadInt32();
-					//MyDebug.WriteLine("Expecting msg of {0} bytes", m_expectedLen);
+					using (var memstream = new MemoryStream(m_buffer, 0, len))
+					{
+						using (var reader = new BinaryReader(memstream))
+						{
+							var magic = reader.ReadInt32();
+
+							if (magic != 0x12345678)
+								throw new Exception();
+
+							m_expectedLen = reader.ReadInt32();
+						}
+					}
+
+					//MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
 
 					if (m_expectedLen > m_buffer.Length)
 						throw new Exception();
@@ -94,8 +119,12 @@ namespace MyGame
 
 				if (m_bufferUsed >= m_expectedLen)
 				{
-					var memstream = new MemoryStream(m_buffer, 4, m_expectedLen - 4);
-					var msg = m_serializer.Deserialize(memstream);
+					Message msg;
+
+					using (var memstream = new MemoryStream(m_buffer, 8, m_expectedLen - 8))
+						msg = m_serializer.Deserialize(memstream);
+
+					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
 					ReceiveMessage(msg);
 					this.ReceivedMessages++;
 					this.ReceivedBytes += m_expectedLen;
@@ -108,7 +137,7 @@ namespace MyGame
 				}
 				else
 				{
-					//MyDebug.WriteLine("{0} != {1}", m_expectedLen, m_bufferUsed);
+					//MyDebug.WriteLine("[RX] {0} != {1}", m_expectedLen, m_bufferUsed);
 					break;
 				}
 			}
@@ -121,12 +150,14 @@ namespace MyGame
 		public void Disconnect()
 		{
 			m_client.Client.Shutdown(SocketShutdown.Both);
-			m_client.Client.Close();
 			m_client.Close();
+			m_netStream.Close();
 		}
 
 		public virtual void Send(Message msg)
 		{
+			MyDebug.WriteLine("[TX] {0}", msg);
+
 			var bytes = m_serializer.Send(m_client.GetStream(), msg);
 			this.SentMessages++;
 			this.SentBytes += bytes;

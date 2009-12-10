@@ -47,7 +47,8 @@ namespace MyGame
 
 		public ClientNetStatistics Stats { get; private set; }
 
-		public ClientConnection() : base()
+		public ClientConnection()
+			: base()
 		{
 			this.Stats = new ClientNetStatistics();
 		}
@@ -80,7 +81,7 @@ namespace MyGame
 			this.Stats.ReceivedMessages = base.ReceivedMessages;
 			this.Stats.Refresh();
 
-			MyDebug.WriteLine("[RX] {0}", msg);
+			MyDebug.WriteLine("DeliverMessage {0}", msg);
 
 			Action<Message> f;
 			Type t = msg.GetType();
