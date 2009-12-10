@@ -106,7 +106,7 @@
 			<Separator />
 			<TextBlock DataContext="{Binding Connection.Stats}">
 				<TextBlock.Text>
-					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
+					<MultiBinding StringFormat="Recv: {0} / {1:N0}">
 						<Binding Path="ReceivedMessages" FallbackValue="0" />
 						<Binding Path="ReceivedBytes" FallbackValue="0" />
 					</MultiBinding>

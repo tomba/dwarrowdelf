@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 
 namespace MyGame
 {
@@ -43,12 +44,16 @@ namespace MyGame
 	{
 		ObservableCollection<DebugEntry> m_debugCollection = new ObservableCollection<DebugEntry>();
 		System.Windows.Threading.DispatcherTimer m_markTimer;
+		StreamWriter m_logFile;
+		bool m_scrollToEnd = true;
 
 		public DebugWindow()
 		{
 			m_markTimer = new System.Windows.Threading.DispatcherTimer();
 			m_markTimer.Interval = TimeSpan.FromSeconds(4);
 			m_markTimer.Tick += new EventHandler(MarkTimerTick);
+
+			m_logFile = File.CreateText("test.log");
 
 			InitializeComponent();
 		}
@@ -62,7 +67,8 @@ namespace MyGame
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
 
-			logListView.ScrollIntoView(entry);
+			if (m_scrollToEnd)
+				logListView.ScrollIntoView(entry);
 		}
 
 		public ObservableCollection<DebugEntry> DebugEntries { get { return m_debugCollection; } }
@@ -77,12 +83,16 @@ namespace MyGame
 			{
 				m_debugCollection.Add(e);
 				last = e;
+
+				m_logFile.WriteLine(String.Format("{0} | {1}: {2}", e.Time, e.Flags, e.Message));
 			}
+
+			m_logFile.Flush();
 
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
 
-			if (last != null)
+			if (m_scrollToEnd && last != null)
 				logListView.ScrollIntoView(last);
 
 			m_markTimer.Start();
