@@ -156,7 +156,7 @@ namespace MyGame
 		// called during tick processing. the world state is not quite valid.
 		public void PerformAction()
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			GameAction action = GetCurrentAction();
 			// if action was cancelled just now, the actor misses the turn

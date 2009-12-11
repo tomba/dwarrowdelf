@@ -53,6 +53,7 @@ namespace MyGame
 			IArea area = new MyArea.Area();
 
 			var world = new World(area, areaData);
+			world.Start();
 			World.TheWorld = world;
 
 			var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 9999));
@@ -76,6 +77,8 @@ namespace MyGame
 				while (Console.ReadKey().Key != ConsoleKey.Enter)
 					world.SignalWorld();
 			}
+
+			world.Stop();
 
 			MyDebug.WriteLine("Server exiting");
 

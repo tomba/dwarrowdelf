@@ -35,7 +35,7 @@ namespace MyGame
 		public static World TheWorld;
 
 		// only for debugging
-		public bool IsWriteable { get; private set; }
+		public bool IsWritable { get; private set; }
 	
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
@@ -44,7 +44,7 @@ namespace MyGame
 		WorldState m_state = WorldState.Idle;
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
-		int m_objectIDcounter = 0;
+		int m_objectIDcounter;
 
 		List<Living> m_livingList = new List<Living>();
 		List<Living>.Enumerator m_livingEnumerator;
@@ -64,7 +64,7 @@ namespace MyGame
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
-		int m_tickNumber = 0;
+		int m_tickNumber;
 
 		WorldTickMethod m_tickMethod = WorldTickMethod.Sequential;
 
@@ -97,8 +97,8 @@ namespace MyGame
 		List<InvokeInfo> m_preTickInvokeList = new List<InvokeInfo>();
 		List<InvokeInfo> m_instantInvokeList = new List<InvokeInfo>();
 
-		bool m_workActive;
-		object m_workLock = new object();
+		Thread m_worldThread;
+		volatile bool m_exit = false;
 
 		[Conditional("DEBUG")]
 		void VDbg(string format, params object[] args)
@@ -113,37 +113,88 @@ namespace MyGame
 			this.AreaData = areaData;
 			m_tickTimer = new Timer(this.TickTimerCallback);
 
-			// mark as active for the initialization
-			m_workActive = true;
+			m_worldThread = new Thread(Main);
+			m_worldThread.Name = "World";
+		}
+
+		public void Start()
+		{
+			Debug.Assert(!m_worldThread.IsAlive);
+
+			using (var initEvent = new ManualResetEvent(false))
+			{
+				m_worldThread.Start(initEvent);
+				initEvent.WaitOne();
+			}
+		}
+
+		public void Stop()
+		{
+			Debug.Assert(m_worldThread.IsAlive);
+
+			m_exit = true;
+			SignalWorld();
+			m_worldThread.Join();
+		}
+
+		void Init()
+		{
 			EnterWriteLock();
 
-			area.InitializeWorld(this, m_environments);
+			this.Area.InitializeWorld(this, m_environments);
 
 			foreach (var env in m_environments)
 				env.MapChanged += this.MapChangedCallback;
 
+			ExitWriteLock();
+
 			// process any changes from world initialization
 			ProcessChanges();
 			ProcessEvents();
+		}
 
-			m_workActive = false;
-			ExitWriteLock();
+		void Main(object arg)
+		{
+			VerifyAccess();
 
-			ThreadPool.RegisterWaitForSingleObject(m_worldSignal, WorldSignalledWork, null, -1, false);
+			MyDebug.WriteLine("WorldMain");
+
+			Init();
+
+			EventWaitHandle initEvent = (EventWaitHandle)arg;
+			initEvent.Set();
+
+			while (m_exit == false)
+			{
+				m_worldSignal.WaitOne();
+
+				do
+				{
+					Work();
+				} while (WorkAvailable());
+			}
+
+			MyDebug.WriteLine("WorldMain end");
+		}
+
+		void VerifyAccess()
+		{
+			if (Thread.CurrentThread != m_worldThread)
+				throw new Exception();
 		}
 
 		void EnterWriteLock()
 		{
 			m_rwLock.EnterWriteLock();
 #if DEBUG
-			this.IsWriteable = true;
+			this.IsWritable = true;
 #endif
 		}
 
 		void ExitWriteLock()
 		{
 #if DEBUG
-			this.IsWriteable = false;
+			this.IsWritable = false;
 #endif
 			m_rwLock.ExitWriteLock();
 		}
@@ -192,7 +243,7 @@ namespace MyGame
 
 		void ProcessAddLivingList()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			lock (m_addLivingList)
 			{
@@ -219,7 +270,7 @@ namespace MyGame
 
 		void ProcessRemoveLivingList()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			lock (m_removeLivingList)
 			{
@@ -252,7 +303,7 @@ namespace MyGame
 
 		void ProcessInvokeList()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			lock (m_preTickInvokeList)
 			{
@@ -263,7 +314,6 @@ namespace MyGame
 				m_preTickInvokeList.Clear();
 			}
 		}
-
 
 
 		// thread safe
@@ -283,7 +333,7 @@ namespace MyGame
 
 		void ProcessInstantInvokeList()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			lock (m_instantInvokeList)
 			{
@@ -316,38 +366,9 @@ namespace MyGame
 			SignalWorld();
 		}
 
-		// Called whenever world is signalled
-		void WorldSignalledWork(object state, bool timedOut)
-		{
-			lock (m_workLock)
-			{
-				if (m_workActive)
-					return;
-				m_workActive = true;
-			}
-
-			VDbg("WorldSignalledWork");
-
-			while (true)
-			{
-				Work();
-
-				lock (m_workLock)
-				{
-					if (!WorkAvailable())
-					{
-						m_workActive = false;
-						break;
-					}
-				}
-			}
-
-			VDbg("WorldSignalledWork done");
-		}
-
 		bool IsTimeToStartTick()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			if (m_state != WorldState.Idle)
 				return false;
@@ -367,19 +388,19 @@ namespace MyGame
 
 		void Work()
 		{
+			VerifyAccess();
+
 			EnterWriteLock();
+
 			ProcessInstantInvokeList();
-			ExitWriteLock();
 
 			if (m_state == WorldState.Idle)
 			{
 				//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
 
-				EnterWriteLock();
 				ProcessInvokeList();
 				ProcessAddLivingList();
 				ProcessRemoveLivingList();
-				ExitWriteLock();
 
 				//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
 
@@ -399,16 +420,17 @@ namespace MyGame
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				EnterWriteLock();
 				if (m_tickMethod == WorldTickMethod.Simultaneous)
 					SimultaneousWork();
 				else if (m_tickMethod == WorldTickMethod.Sequential)
 					SequentialWork();
 				else
 					throw new NotImplementedException();
-				ExitWriteLock();
 			}
 
+			ExitWriteLock();
+
+			// no point in entering read lock here, as this thread is the only one that can get a write lock
 			ProcessChanges();
 			ProcessEvents();
 
@@ -421,7 +443,7 @@ namespace MyGame
 
 		bool WorkAvailable()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			lock (m_instantInvokeList)
 				if (m_instantInvokeList.Count > 0)
@@ -478,7 +500,7 @@ namespace MyGame
 
 		bool SimultaneousWorkAvailable()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingList.All(l => l.HasAction))
@@ -492,7 +514,7 @@ namespace MyGame
 
 		void SimultaneousWork()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
@@ -527,6 +549,7 @@ namespace MyGame
 
 		bool SequentialWorkAvailable()
 		{
+			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingEnumerator.Current.HasAction)
@@ -546,7 +569,7 @@ namespace MyGame
 
 		void SequentialWork()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
@@ -577,7 +600,7 @@ namespace MyGame
 
 		void StartTick()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			m_tickNumber++;
 			AddEvent(new TickChangeEvent(m_tickNumber));
@@ -643,7 +666,7 @@ namespace MyGame
 
 		void EndTick()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			if (m_useMinTickTime)
 			{
@@ -658,13 +681,13 @@ namespace MyGame
 
 		public void AddChange(Change change)
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			m_changeList.Add(change);
 		}
 
 		void ProcessChanges()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			if (HandleChangesEvent != null)
 				HandleChangesEvent(m_changeList);
@@ -674,13 +697,13 @@ namespace MyGame
 
 		public void AddEvent(Event @event)
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			m_eventList.Add(@event);
 		}
 
 		void ProcessEvents()
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 
 			if (HandleEventsEvent != null)
 				HandleEventsEvent(m_eventList);
@@ -690,14 +713,14 @@ namespace MyGame
 
 		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)
 		{
-			Debug.Assert(m_workActive);
+			VerifyAccess();
 			AddChange(new MapChange(map, l, tileData));
 		}
 
 		internal void AddGameObject(IIdentifiable ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
+				throw new ArgumentException("Null ObjectID");
 
 			lock (m_objectMap)
 				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
@@ -706,7 +729,7 @@ namespace MyGame
 		public IIdentifiable FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
+				throw new ArgumentException("Null ObjectID");
 
 			lock (m_objectMap)
 			{

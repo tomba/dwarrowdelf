@@ -74,7 +74,7 @@ namespace MyGame
 
 		public bool MoveTo(ServerGameObject dst, IntPoint3D dstLoc)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
@@ -86,7 +86,7 @@ namespace MyGame
 
 		public bool MoveDir(Direction dir)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			if (this.Environment == null)
 				throw new Exception();

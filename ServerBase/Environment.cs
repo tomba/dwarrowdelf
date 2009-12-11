@@ -80,7 +80,7 @@ namespace MyGame
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -95,7 +95,7 @@ namespace MyGame
 
 		public void SetFloor(IntPoint3D p, FloorID floorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -110,7 +110,7 @@ namespace MyGame
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -124,7 +124,7 @@ namespace MyGame
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -143,7 +143,7 @@ namespace MyGame
 
 		public void SetTileData(IntPoint3D l, TileData data)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -183,7 +183,7 @@ namespace MyGame
 
 		protected override bool OkToAddChild(ServerGameObject ob, IntPoint3D p)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			if (!this.Bounds.Contains(p))
 				return false;
@@ -196,7 +196,7 @@ namespace MyGame
 
 		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D p)
 		{
-			Debug.Assert(this.World.IsWriteable);
+			Debug.Assert(this.World.IsWritable);
 
 			if (!this.Bounds.Contains(p))
 				return false;
