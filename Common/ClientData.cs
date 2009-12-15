@@ -27,10 +27,17 @@ namespace MyGame.ClientMsgs
 	{
 		[DataMember]
 		public int UserID { get; set; }
+		[DataMember]
+		public bool IsSeeAll { get; set; }
 	}
 
 	[DataContract]
-	public class LogOffMessage : Message
+	public class LogOffRequest : Message
+	{
+	}
+
+	[DataContract]
+	public class LogOffReply : Message
 	{
 	}
 

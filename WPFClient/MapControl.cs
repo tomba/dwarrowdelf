@@ -60,7 +60,10 @@ namespace MyGame
 				return;
 			}
 
-			lit = TileVisible(ml);
+			if (GameData.Data.IsSeeAll)
+				lit = true;
+			else
+				lit = TileVisible(ml);
 
 			bmp = GetBitmap(ml, lit);
 			tile.Bitmap = bmp;
@@ -166,18 +169,27 @@ namespace MyGame
 				if (m_env == value)
 					return;
 
-				if (m_world != value.World)
-				{
-					m_world = value.World;
-					m_bitmapCache = new SymbolBitmapCache(this.TileSize);
-					m_bitmapCache.SymbolDrawings = m_world.SymbolDrawings;
-				}
-
 				if (m_env != null)
 					m_env.MapChanged -= MapChangedCallback;
+
 				m_env = value;
+
 				if (m_env != null)
+				{
 					m_env.MapChanged += MapChangedCallback;
+
+					if (m_world != m_env.World)
+					{
+						m_world = m_env.World;
+						m_bitmapCache = new SymbolBitmapCache(this.TileSize);
+						m_bitmapCache.SymbolDrawings = m_world.SymbolDrawings;
+					}
+				}
+				else
+				{
+					m_world = null;
+					m_bitmapCache = null;
+				}
 
 				InvalidateTiles();
 

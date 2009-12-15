@@ -40,7 +40,7 @@ namespace MyGame
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = false;
+		bool m_seeAll = true;
 
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();
@@ -56,6 +56,21 @@ namespace MyGame
 		{
 			foreach (var msg in msgs)
 				Send(msg);
+		}
+
+		protected override void DisconnectOverride()
+		{
+			m_world.BeginInvokeInstant(new Action(ClientDisconnected), null);
+		}
+
+		void ClientDisconnected()
+		{
+			m_world.RemoveUser(this);
+
+			m_world.HandleChangesEvent -= HandleChanges;
+			m_world.HandleEventsEvent -= HandleEvents;
+
+			m_world = null;
 		}
 
 		protected override void ReceiveMessage(Message msg)
@@ -112,7 +127,7 @@ namespace MyGame
 
 			m_userID = s_userIDs++;
 
-			Send(new ClientMsgs.LogOnReply() { UserID = m_userID });
+			Send(new ClientMsgs.LogOnReply() { UserID = m_userID, IsSeeAll = m_seeAll });
 
 			if (m_seeAll)
 			{
@@ -125,20 +140,26 @@ namespace MyGame
 
 			m_world.HandleChangesEvent += HandleChanges;
 			m_world.HandleEventsEvent += HandleEvents;
+
+			m_world.AddUser(this);
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Normal)]
-		void ReceiveMessage(LogOffMessage msg)
+		void ReceiveMessage(LogOffRequest msg)
 		{
 			MyDebug.WriteLine("Logout");
 
 			if (m_player != null)
 				ReceiveMessage(new LogOffCharRequest()); // XXX
 
+			m_world.RemoveUser(this);
+
 			m_world.HandleChangesEvent -= HandleChanges;
 			m_world.HandleEventsEvent -= HandleEvents;
 
 			m_world = null;
+
+			Send(new ClientMsgs.LogOffReply());
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
@@ -177,8 +198,6 @@ namespace MyGame
 			MyDebug.WriteLine("LogOnChar {0}", name);
 
 			var env = m_world.Environments.First(); // XXX entry location
-
-			m_world.AddUser(this);
 
 			var obs = m_world.AreaData.Objects;
 
@@ -239,8 +258,6 @@ namespace MyGame
 			MyDebug.WriteLine("LogOffChar");
 
 			m_friendlies.Remove(m_player);
-
-			m_world.RemoveUser(this);
 
 			m_player.Actor = null;
 			m_player.Cleanup();

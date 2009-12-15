@@ -58,7 +58,7 @@ namespace MyGame
 
 			var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 9999));
 			listener.Start();
-			var a = listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
+			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
 
 			MyDebug.WriteLine("The service is ready.");
 
@@ -82,17 +82,35 @@ namespace MyGame
 
 			MyDebug.WriteLine("Server exiting");
 
+			m_acceptStopEvent = new ManualResetEvent(false);
+
 			listener.Stop();
+
+			m_acceptStopEvent.WaitOne();
+			m_acceptStopEvent.Close();
+			m_acceptStopEvent = null;
 
 			MyDebug.WriteLine("Server exit");
 		}
 
-		public static void AcceptTcpClientCallback(IAsyncResult ar)
+		ManualResetEvent m_acceptStopEvent;
+
+		public void AcceptTcpClientCallback(IAsyncResult ar)
 		{
 			TcpListener listener = (TcpListener)ar.AsyncState;
-			TcpClient client = listener.EndAcceptTcpClient(ar);
+			TcpClient client;
 
-			var c = new ServerConnection(client, World.TheWorld);
+			if (!listener.Server.IsBound)
+			{
+				m_acceptStopEvent.Set();
+				return;
+			}
+
+			client = listener.EndAcceptTcpClient(ar);
+
+			new ServerConnection(client, World.TheWorld);
+
+			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
 		}
 
 

@@ -74,7 +74,7 @@ namespace MyGame
 		DateTime m_nextMove = DateTime.MaxValue;
 
 		// minimum time between ticks
-		bool m_useMinTickTime = false;
+		bool m_useMinTickTime = true;
 		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(1000);
 		DateTime m_nextTick = DateTime.MinValue;
 

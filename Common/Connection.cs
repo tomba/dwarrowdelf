@@ -26,9 +26,10 @@ namespace MyGame
 		public int ReceivedMessages { get; private set; }
 		public int ReceivedBytes { get; private set; }
 
+		public bool IsConnected { get { return m_client != null && m_client.Connected; } }
+
 		public Connection()
 		{
-			m_client = new TcpClient();
 		}
 
 		public Connection(TcpClient client)
@@ -44,8 +45,10 @@ namespace MyGame
 
 		public void BeginConnect(Action callback)
 		{
-			if (m_client.Connected == true)
+			if (m_client != null)
 				throw new Exception();
+
+			m_client = new TcpClient();
 
 			Client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
 		}
@@ -69,9 +72,10 @@ namespace MyGame
 
 		void ReadCallback(IAsyncResult ar)
 		{
-			if (!m_client.Client.Connected)
+			if (m_client == null || !m_client.Client.Connected)
 			{
 				MyDebug.WriteLine("Socket not connected");
+				DisconnectOverride();
 				return;
 			}
 
@@ -83,6 +87,7 @@ namespace MyGame
 			if (len == 0)
 			{
 				MyDebug.WriteLine("socket disconnected");
+				DisconnectOverride();
 				return;
 			}
 
@@ -145,6 +150,8 @@ namespace MyGame
 			BeginRead();
 		}
 
+		protected abstract void DisconnectOverride();
+
 		protected abstract void ReceiveMessage(Message msg);
 
 		public void Disconnect()
@@ -152,6 +159,7 @@ namespace MyGame
 			m_client.Client.Shutdown(SocketShutdown.Both);
 			m_client.Close();
 			m_netStream.Close();
+			m_client = null;
 		}
 
 		public virtual void Send(Message msg)

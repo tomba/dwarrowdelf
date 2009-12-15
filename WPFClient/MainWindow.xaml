@@ -72,12 +72,16 @@
 				<Button Click="LogOn_Button_Click">LogOn</Button>
 				<Separator />
 				<Button Click="LogOff_Button_Click">LogOff</Button>
-			</ToolBar>
+                <Separator />
+                <Button Click="LogOnChar_Button_Click">LogOnChar</Button>
+                <Separator />
+                <Button Click="LogOffChar_Button_Click">LogOffChar</Button>
+            </ToolBar>
 
 			<ToolBar>
 				<StackPanel Orientation="Horizontal">
 					<TextBlock VerticalAlignment="Center">CurrentObject</TextBlock>
-					<ComboBox MinWidth="100" ItemsSource="{Binding Controllables, Source={x:Static local:World.TheWorld}}"
+					<ComboBox MinWidth="100" ItemsSource="{Binding World.Controllables}"
                           SelectedItem="{Binding Path=CurrentObject}"
                           IsReadOnly="True" />
 				</StackPanel>
@@ -87,7 +91,7 @@
 
 		<StatusBar DockPanel.Dock="Bottom" >
 			Tick
-			<TextBlock Text="{Binding Path=TickNumber, Source={x:Static local:World.TheWorld}}" />
+			<TextBlock Text="{Binding World.TickNumber}" />
 			<Separator />
 			Env
 			<TextBlock Text="{Binding Path=Environment, ElementName=map}" />
@@ -209,7 +213,7 @@
 			</GroupBox>
 
 			<GroupBox Grid.Column="1" Grid.Row="2" Header="Jobs">
-				<ListBox ItemsSource="{Binding Path=Jobs, Source={x:Static local:World.TheWorld}}">
+				<ListBox ItemsSource="{Binding World.Jobs}">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock>
@@ -223,12 +227,12 @@
 			</GroupBox>
 
 			<GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
-				<ListBox ItemsSource="{Binding Path=Objects, Source={x:Static local:World.TheWorld}}" 
+				<ListBox ItemsSource="{Binding World.Objects}" 
 						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
 			</GroupBox>
 
 			<GroupBox Grid.Column="2" Grid.Row="3" Header="Environments">
-				<ListBox ItemsSource="{Binding Path=Environments, Source={x:Static local:World.TheWorld}}"
+				<ListBox ItemsSource="{Binding World.Environments}"
 						 SelectedItem="{Binding Path=Environment, ElementName=map}" />
 			</GroupBox>
 		</Grid>

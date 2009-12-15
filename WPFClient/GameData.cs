@@ -41,6 +41,14 @@ namespace MyGame
 			set { m_currentObject = value; Notify("CurrentObject"); }
 		}
 
+		World m_world;
+		public World World
+		{
+			get { return m_world; }
+			set { m_world = value; Notify("World"); }
+		}
+
+		public bool IsSeeAll { get; set; }
 		public bool DisableLOS { get; set; }	// debug
 
 		public MyDebugListener MyTraceListener { get; set; }

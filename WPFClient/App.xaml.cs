@@ -21,7 +21,6 @@ namespace MyGame
 		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		Thread m_serverThread;
-		ClientConnection m_connection;
 		EventWaitHandle m_serverStartWaitHandle;
 		EventWaitHandle m_serverStopWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
@@ -51,11 +50,7 @@ namespace MyGame
 
 			MyDebug.WriteLine("Start");
 
-			var areaData = new MyAreaData.AreaData();
-			var world = new World(areaData);
-			World.TheWorld = world;
-
-			m_connection = new ClientConnection();
+			GameData.Data.Connection = new ClientConnection();
 
 			if (m_serverInAppDomain)
 			{
@@ -70,7 +65,7 @@ namespace MyGame
 			}
 			else
 			{
-				m_connection.BeginConnect(ConnectCallback);
+				//m_connection.BeginConnect(ConnectCallback);
 			}
 		}
 
@@ -84,24 +79,30 @@ namespace MyGame
 			m_serverStartWaitHandle.Close();
 			m_serverStartWaitHandle = null;
 
-			m_connection.BeginConnect(ConnectCallback);
+			//m_connection.BeginConnect(ConnectCallback);
 		}
 
 		void ConnectCallback()
 		{
-			GameData.Data.Connection = m_connection;
-			m_connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+			//m_connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
 		}
 
 		protected override void OnExit(ExitEventArgs e)
 		{
 			base.OnExit(e);
 
-			if (m_connection != null)
+			var conn = GameData.Data.Connection;
+
+			if (conn.IsCharConnected)
 			{
-				m_connection.Send(new ClientMsgs.LogOffMessage());
-				m_connection.Disconnect();
-				m_connection = null;
+				conn.Send(new ClientMsgs.LogOffCharRequest());
+			}
+
+			if (conn.IsUserConnected)
+			{
+				conn.Send(new ClientMsgs.LogOffRequest());
+				conn.Disconnect();
+				GameData.Data.Connection = null;
 			}
 
 			if (m_serverInAppDomain && m_serverStopWaitHandle != null)

@@ -23,8 +23,6 @@ namespace MyGame
 	/// </summary>
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		public MiniMap MiniMap { get; private set; }
-
 		ClientGameObject m_followObject;
 
 		public MainWindow()
@@ -42,6 +40,9 @@ namespace MyGame
 			this.PreviewKeyDown += Window_PreKeyDown;
 			this.PreviewTextInput += Window_PreTextInput;
 			map.MouseDown += MapControl_MouseDown;
+
+			GameData.Data.Connection.LogOnEvent += OnLoggedOn;
+			GameData.Data.Connection.LogOffEvent += OnLoggedOff;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -56,13 +57,6 @@ namespace MyGame
 			var p = (WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.LoadWindowPlacement(this, p);
-
-			this.MiniMap = new MiniMap();
-			this.MiniMap.Owner = this;
-			this.MiniMap.ShowActivated = false;
-			this.MiniMap.Left = map.PointToScreen(new Point(0, 0)).X + 2;
-			this.MiniMap.Top = map.PointToScreen(new Point(0, 0)).Y + 2;
-			this.MiniMap.Show();
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -367,10 +361,35 @@ namespace MyGame
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+			GameData.Data.Connection.BeginConnect(ConnectCallback);
+		}
+
+		void ConnectCallback()
+		{
+			GameData.Data.Connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+		}
+
+		void OnLoggedOn()
+		{
+			//GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
+		{
+			GameData.Data.Connection.Send(new LogOffRequest());
+		}
+
+		void OnLoggedOff()
+		{
+			GameData.Data.Connection.Disconnect();
+		}
+
+		private void LogOnChar_Button_Click(object sender, RoutedEventArgs e)
+		{
+			GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+		}
+
+		private void LogOffChar_Button_Click(object sender, RoutedEventArgs e)
 		{
 			GameData.Data.Connection.Send(new LogOffCharRequest());
 		}

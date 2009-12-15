@@ -47,6 +47,9 @@ namespace MyGame
 
 		public ClientNetStatistics Stats { get; private set; }
 
+		public bool IsUserConnected { get; private set; }
+		public bool IsCharConnected { get; private set; }
+
 		public ClientConnection()
 			: base()
 		{
@@ -67,6 +70,21 @@ namespace MyGame
 			this.Stats.SentBytes = base.SentBytes;
 			this.Stats.SentMessages = base.SentMessages;
 			this.Stats.Refresh();
+		}
+
+		protected override void DisconnectOverride()
+		{
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action(ServerDisconnected));
+		}
+
+		void ServerDisconnected()
+		{
+			this.IsCharConnected = false;
+			this.IsUserConnected = false;
+
+			World.TheWorld = null;
+			GameData.Data.World = null;
 		}
 
 		protected override void ReceiveMessage(Message msg)
@@ -104,14 +122,42 @@ namespace MyGame
 				DeliverMessage(msg);
 		}
 
+		public event Action LogOnEvent;
+
 		void HandleMessage(LogOnReply msg)
 		{
+			this.IsUserConnected = true;
+
+			GameData.Data.IsSeeAll = msg.IsSeeAll;
+
+			var areaData = new MyAreaData.AreaData();
+			var world = new World(areaData);
+			World.TheWorld = world;
+			GameData.Data.World = world;
+
 			World.TheWorld.UserID = msg.UserID;
-			GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+
+			if (LogOnEvent != null)
+				LogOnEvent();
+		}
+
+		public event Action LogOffEvent;
+
+		void HandleMessage(LogOffReply msg)
+		{
+			this.IsUserConnected = false;
+
+			if (LogOffEvent != null)
+				LogOffEvent();
+
+			World.TheWorld = null;
+			GameData.Data.World = null;
 		}
 
 		void HandleMessage(LogOnCharReply msg)
 		{
+			this.IsCharConnected = true;
+
 			var player = new Living(World.TheWorld, msg.PlayerID);
 			World.TheWorld.Controllables.Add(player);
 			if (GameData.Data.CurrentObject == null)
@@ -119,16 +165,15 @@ namespace MyGame
 
 			if (App.MainWindow.FollowObject == null)
 				App.MainWindow.FollowObject = player;
-			else if (App.MainWindow.MiniMap.FollowObject == null)
-				App.MainWindow.MiniMap.FollowObject = player;
 		}
 
 		void HandleMessage(LogOffCharReply msg)
 		{
+			this.IsCharConnected = false;
+
 			World.TheWorld.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
 			App.MainWindow.FollowObject = null;
-			App.MainWindow.MiniMap.FollowObject = null;
 		}
 
 		void HandleMessage(TerrainData msg)
@@ -171,6 +216,9 @@ namespace MyGame
 				env = new Environment(world, msg.ObjectID, msg.Bounds);
 				world.AddEnvironment(env);
 				env.Name = "map";
+
+				if (App.MainWindow.map.Environment == null)
+					App.MainWindow.map.Environment = env;
 			}
 
 			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TerrainIDs.Count());
