@@ -13,7 +13,7 @@ namespace MyGame
 {
 	public class Connection
 	{
-		TcpClient m_client;
+		Socket m_socket;
 		NetworkStream m_netStream;
 		byte[] m_recvBuffer = new byte[1024 * 1024];
 		int m_bufferUsed;
@@ -26,7 +26,7 @@ namespace MyGame
 		public int ReceivedMessages { get; private set; }
 		public int ReceivedBytes { get; private set; }
 
-		public bool IsConnected { get { return m_client != null && m_client.Connected; } }
+		public bool IsConnected { get { return m_socket != null && m_socket.Connected; } }
 
 		public event Action DisconnectEvent;
 		public event Action<Message> ReceiveEvent;
@@ -35,33 +35,33 @@ namespace MyGame
 		{
 		}
 
-		public Connection(TcpClient client)
+		public Connection(Socket client)
 		{
 			if (client.Connected == false)
 				throw new Exception();
 
-			m_client = client;
-			m_netStream = m_client.GetStream();
+			m_socket = client;
+			m_netStream = new NetworkStream(m_socket);
 
 			BeginRead();
 		}
 
 		public void BeginConnect(Action callback)
 		{
-			if (m_client != null)
+			if (m_socket != null)
 				throw new Exception();
 
-			m_client = new TcpClient();
+			m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-			m_client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
+			m_socket.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
 		}
 
 		void ConnectCallback(IAsyncResult ar)
 		{
 			var callback = (Action)ar.AsyncState;
-			m_client.EndConnect(ar);
+			m_socket.EndConnect(ar);
 
-			m_netStream = m_client.GetStream();
+			m_netStream = new NetworkStream(m_socket);
 
 			callback.Invoke();
 
@@ -75,7 +75,7 @@ namespace MyGame
 
 		void ReadCallback(IAsyncResult ar)
 		{
-			if (m_client == null || !m_client.Client.Connected)
+			if (m_socket == null || !m_socket.Connected)
 			{
 				MyDebug.WriteLine("Socket not connected");
 				if (DisconnectEvent != null)
@@ -159,10 +159,10 @@ namespace MyGame
 
 		public void Disconnect()
 		{
-			m_client.Client.Shutdown(SocketShutdown.Both);
-			m_client.Close();
 			m_netStream.Close();
-			m_client = null;
+			m_socket.Shutdown(SocketShutdown.Both);
+			m_socket.Close();
+			m_socket = null;
 		}
 
 		public virtual void Send(Message msg)
@@ -194,52 +194,62 @@ namespace MyGame
 		}
 
 		public static event Action<Connection> NewConnectionEvent;
-		static TcpListener s_listener;
+		static Socket s_listenSocket;
 		static ManualResetEvent s_acceptStopEvent;
+		volatile static bool s_stopListen;
 
 		public static void StartListening(int port)
 		{
-			if (s_listener != null)
+			if (s_listenSocket != null)
 				throw new Exception();
 
 			s_acceptStopEvent = new ManualResetEvent(false);
+			s_stopListen = false;
 
-			s_listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
-			s_listener.Start();
-			s_listener.BeginAcceptTcpClient(AcceptTcpClientCallback, s_listener);
+			var ep = new IPEndPoint(IPAddress.Any, port);
+			s_listenSocket = new Socket(ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			s_listenSocket.Bind(ep);
+			s_listenSocket.Listen(100);
+			var ar = s_listenSocket.BeginAccept(AcceptCallback, s_listenSocket);
+			if (ar.CompletedSynchronously == true)
+				throw new Exception();
 		}
 
 		public static void StopListening()
 		{
-			if (s_listener == null)
+			if (s_listenSocket == null)
 				throw new Exception();
 
-			s_listener.Stop();
+			s_stopListen = true;
+			s_listenSocket.Close();
 
 			s_acceptStopEvent.WaitOne();
 
 			s_acceptStopEvent.Close();
 			s_acceptStopEvent = null;
 
-			s_listener = null;
+			s_listenSocket = null;
 		}
 
-		static void AcceptTcpClientCallback(IAsyncResult ar)
+		static void AcceptCallback(IAsyncResult ar)
 		{
-			TcpListener listener = (TcpListener)ar.AsyncState;
+			var listenSocket = (Socket)ar.AsyncState;
 
-			if (!listener.Server.IsBound)
+			if (s_stopListen)
 			{
 				s_acceptStopEvent.Set();
 				return;
 			}
 
-			var client = listener.EndAcceptTcpClient(ar);
-			var conn = new Connection(client);
+			var socket = listenSocket.EndAccept(ar);
+
+			var conn = new Connection(socket);
 			if (NewConnectionEvent != null)
 				NewConnectionEvent(conn);
 
-			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
+			ar = s_listenSocket.BeginAccept(AcceptCallback, listenSocket);
+			if (ar.CompletedSynchronously == true)
+				throw new Exception();
 		}
 	}
 }
