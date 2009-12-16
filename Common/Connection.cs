@@ -15,12 +15,11 @@ namespace MyGame
 	{
 		TcpClient m_client;
 		NetworkStream m_netStream;
-		Serializer m_serializer = new Serializer();
-		byte[] m_buffer = new byte[1024 * 1024];
+		byte[] m_recvBuffer = new byte[1024 * 1024];
 		int m_bufferUsed;
 		int m_expectedLen;
 
-		protected TcpClient Client { get { return m_client; } }
+		byte[] m_sendBuffer = new byte[1024 * 1024];
 
 		public int SentMessages { get; private set; }
 		public int SentBytes { get; private set; }
@@ -54,13 +53,13 @@ namespace MyGame
 
 			m_client = new TcpClient();
 
-			Client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
+			m_client.BeginConnect(IPAddress.Loopback, 9999, ConnectCallback, callback);
 		}
 
 		void ConnectCallback(IAsyncResult ar)
 		{
 			var callback = (Action)ar.AsyncState;
-			Client.EndConnect(ar);
+			m_client.EndConnect(ar);
 
 			m_netStream = m_client.GetStream();
 
@@ -71,7 +70,7 @@ namespace MyGame
 
 		void BeginRead()
 		{
-			m_netStream.BeginRead(m_buffer, m_bufferUsed, m_buffer.Length - m_bufferUsed, ReadCallback, m_netStream);
+			m_netStream.BeginRead(m_recvBuffer, m_bufferUsed, m_recvBuffer.Length - m_bufferUsed, ReadCallback, m_netStream);
 		}
 
 		void ReadCallback(IAsyncResult ar)
@@ -109,7 +108,7 @@ namespace MyGame
 			{
 				if (m_expectedLen == 0)
 				{
-					using (var memstream = new MemoryStream(m_buffer, 0, len))
+					using (var memstream = new MemoryStream(m_recvBuffer, 0, len))
 					{
 						using (var reader = new BinaryReader(memstream))
 						{
@@ -124,7 +123,7 @@ namespace MyGame
 
 					//MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
 
-					if (m_expectedLen > m_buffer.Length)
+					if (m_expectedLen > m_recvBuffer.Length)
 						throw new Exception();
 				}
 
@@ -132,8 +131,8 @@ namespace MyGame
 				{
 					Message msg;
 
-					using (var memstream = new MemoryStream(m_buffer, 8, m_expectedLen - 8))
-						msg = m_serializer.Deserialize(memstream);
+					using (var memstream = new MemoryStream(m_recvBuffer, 8, m_expectedLen - 8))
+						msg = Serializer.Deserialize(memstream);
 
 					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
 					if (ReceiveEvent != null)
@@ -143,7 +142,7 @@ namespace MyGame
 					this.ReceivedBytes += m_expectedLen;
 
 					int copy = m_bufferUsed - m_expectedLen;
-					Array.Copy(m_buffer, m_expectedLen, m_buffer, 0, copy);
+					Array.Copy(m_recvBuffer, m_expectedLen, m_recvBuffer, 0, copy);
 
 					m_bufferUsed -= m_expectedLen;
 					m_expectedLen = 0;
@@ -170,9 +169,28 @@ namespace MyGame
 		{
 			MyDebug.WriteLine("[TX] {0}", msg);
 
-			var bytes = m_serializer.Send(m_client.GetStream(), msg);
+			int len;
+
+			using (var stream = new MemoryStream(m_sendBuffer))
+			{
+				// Write the object starting at byte 8
+				stream.Seek(8, SeekOrigin.Begin);
+				Serializer.Serialize(stream, msg);
+				len = (int)stream.Position;
+
+				// Prepend the object data with magic and object len
+				stream.Seek(0, SeekOrigin.Begin);
+				using (var bw = new BinaryWriter(stream))
+				{
+					bw.Write((int)0x12345678);
+					bw.Write(len);
+				}
+			}
+
+			m_netStream.Write(m_sendBuffer, 0, len);
+
 			this.SentMessages++;
-			this.SentBytes += bytes;
+			this.SentBytes += len;
 		}
 
 		public static event Action<Connection> NewConnectionEvent;
