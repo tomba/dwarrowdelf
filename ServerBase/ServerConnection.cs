@@ -48,11 +48,11 @@ namespace MyGame
 		Connection m_connection;
 		bool m_userLoggedIn;
 
-		public ServerConnection(TcpClient client, World world)
+		public ServerConnection(Connection conn, World world)
 		{
 			m_world = world;
 
-			m_connection = new Connection(client);
+			m_connection = conn;
 			m_connection.ReceiveEvent += OnReceiveMessage;
 			m_connection.DisconnectEvent += OnDisconnect;
 		}

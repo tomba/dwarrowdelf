@@ -40,6 +40,7 @@ namespace MyGame
 			}
 		}
 
+
 		public void RunServer(bool isEmbedded,
 			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
@@ -56,9 +57,8 @@ namespace MyGame
 			world.Start();
 			World.TheWorld = world;
 
-			var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 9999));
-			listener.Start();
-			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
+			Connection.NewConnectionEvent += OnNewConnection;
+			Connection.StartListening(9999);
 
 			MyDebug.WriteLine("The service is ready.");
 
@@ -82,42 +82,20 @@ namespace MyGame
 
 			MyDebug.WriteLine("Server exiting");
 
-			m_acceptStopEvent = new ManualResetEvent(false);
-
-			listener.Stop();
-
-			m_acceptStopEvent.WaitOne();
-			m_acceptStopEvent.Close();
-			m_acceptStopEvent = null;
+			Connection.StopListening();
 
 			MyDebug.WriteLine("Server exit");
 		}
 
-		ManualResetEvent m_acceptStopEvent;
 
-		public void AcceptTcpClientCallback(IAsyncResult ar)
+		void OnNewConnection(Connection conn)
 		{
-			TcpListener listener = (TcpListener)ar.AsyncState;
-			TcpClient client;
-
-			if (!listener.Server.IsBound)
-			{
-				m_acceptStopEvent.Set();
-				return;
-			}
-
-			client = listener.EndAcceptTcpClient(ar);
-
-			new ServerConnection(client, World.TheWorld);
-
-			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
+			new ServerConnection(conn, World.TheWorld);
 		}
-
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			MyDebug.WriteLine("tuli exc");
-
 		}
 
 	}

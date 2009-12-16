@@ -7,6 +7,7 @@ using System.Net;
 using MyGame.ClientMsgs;
 using System.Runtime.Serialization;
 using System.IO;
+using System.Threading;
 
 namespace MyGame
 {
@@ -172,6 +173,55 @@ namespace MyGame
 			var bytes = m_serializer.Send(m_client.GetStream(), msg);
 			this.SentMessages++;
 			this.SentBytes += bytes;
+		}
+
+		public static event Action<Connection> NewConnectionEvent;
+		static TcpListener s_listener;
+		static ManualResetEvent s_acceptStopEvent;
+
+		public static void StartListening(int port)
+		{
+			if (s_listener != null)
+				throw new Exception();
+
+			s_acceptStopEvent = new ManualResetEvent(false);
+
+			s_listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
+			s_listener.Start();
+			s_listener.BeginAcceptTcpClient(AcceptTcpClientCallback, s_listener);
+		}
+
+		public static void StopListening()
+		{
+			if (s_listener == null)
+				throw new Exception();
+
+			s_listener.Stop();
+
+			s_acceptStopEvent.WaitOne();
+
+			s_acceptStopEvent.Close();
+			s_acceptStopEvent = null;
+
+			s_listener = null;
+		}
+
+		static void AcceptTcpClientCallback(IAsyncResult ar)
+		{
+			TcpListener listener = (TcpListener)ar.AsyncState;
+
+			if (!listener.Server.IsBound)
+			{
+				s_acceptStopEvent.Set();
+				return;
+			}
+
+			var client = listener.EndAcceptTcpClient(ar);
+			var conn = new Connection(client);
+			if (NewConnectionEvent != null)
+				NewConnectionEvent(conn);
+
+			listener.BeginAcceptTcpClient(AcceptTcpClientCallback, listener);
 		}
 	}
 }
