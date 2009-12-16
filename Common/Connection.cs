@@ -10,7 +10,7 @@ using System.IO;
 
 namespace MyGame
 {
-	public abstract class Connection
+	public class Connection
 	{
 		TcpClient m_client;
 		NetworkStream m_netStream;
@@ -27,6 +27,9 @@ namespace MyGame
 		public int ReceivedBytes { get; private set; }
 
 		public bool IsConnected { get { return m_client != null && m_client.Connected; } }
+
+		public event Action DisconnectEvent;
+		public event Action<Message> ReceiveEvent;
 
 		public Connection()
 		{
@@ -75,7 +78,8 @@ namespace MyGame
 			if (m_client == null || !m_client.Client.Connected)
 			{
 				MyDebug.WriteLine("Socket not connected");
-				DisconnectOverride();
+				if (DisconnectEvent != null)
+					DisconnectEvent();
 				return;
 			}
 
@@ -87,7 +91,8 @@ namespace MyGame
 			if (len == 0)
 			{
 				MyDebug.WriteLine("socket disconnected");
-				DisconnectOverride();
+				if (DisconnectEvent != null)
+					DisconnectEvent();
 				return;
 			}
 
@@ -130,7 +135,9 @@ namespace MyGame
 						msg = m_serializer.Deserialize(memstream);
 
 					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
-					ReceiveMessage(msg);
+					if (ReceiveEvent != null)
+						ReceiveEvent(msg);
+
 					this.ReceivedMessages++;
 					this.ReceivedBytes += m_expectedLen;
 
@@ -149,10 +156,6 @@ namespace MyGame
 
 			BeginRead();
 		}
-
-		protected abstract void DisconnectOverride();
-
-		protected abstract void ReceiveMessage(Message msg);
 
 		public void Disconnect()
 		{

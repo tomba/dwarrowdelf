@@ -68,14 +68,15 @@ namespace MyGame
 
 		WorldTickMethod m_tickMethod = WorldTickMethod.Sequential;
 
-		// maximum time for one living to make its move
+		// Maximum time for one living to make its move. After this time has passed, the living
+		// will be skipped
 		bool m_useMaxMoveTime = false;
 		TimeSpan m_maxMoveTime = TimeSpan.FromMilliseconds(1000);
 		DateTime m_nextMove = DateTime.MaxValue;
 
-		// minimum time between ticks
+		// Minimum time between ticks. Ticks will never proceed faster than this.
 		bool m_useMinTickTime = true;
-		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(1000);
+		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(500);
 		DateTime m_nextTick = DateTime.MinValue;
 
 		// Timer is used out-of-tick to start the tick after m_minTickTime
@@ -552,6 +553,15 @@ namespace MyGame
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
+			lock (m_removeLivingList)
+			{
+				if (m_removeLivingList.Contains(m_livingEnumerator.Current))
+				{
+					VDbg("WorkAvailable: Current living is to be removed");
+					return true;
+				}
+			}
+
 			if (m_livingEnumerator.Current.HasAction)
 			{
 				VDbg("WorkAvailable: Living.HasAction");
@@ -579,6 +589,10 @@ namespace MyGame
 			while (true)
 			{
 				var living = m_livingEnumerator.Current;
+
+				lock (m_removeLivingList)
+					if (m_removeLivingList.Contains(living))
+						forceMove = true;
 
 				if (!forceMove && !living.HasAction)
 					break;

@@ -40,7 +40,7 @@ namespace MyGame
 		#endregion
 	}
 
-	public class ClientConnection : Connection
+	public class ClientConnection
 	{
 		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
 		int m_transactionNumber;
@@ -50,10 +50,14 @@ namespace MyGame
 		public bool IsUserConnected { get; private set; }
 		public bool IsCharConnected { get; private set; }
 
+		Connection m_connection;
+
 		public ClientConnection()
-			: base()
 		{
 			this.Stats = new ClientNetStatistics();
+			m_connection = new Connection();
+			m_connection.ReceiveEvent += ReceiveMessage;
+			m_connection.DisconnectEvent += DisconnectOverride;
 		}
 
 		public void EnqueueAction(GameAction action)
@@ -63,16 +67,21 @@ namespace MyGame
 			Send(new EnqueueActionMessage() { Action = action });
 		}
 
-		public override void Send(Message msg)
+		public void Send(Message msg)
 		{
-			base.Send(msg);
+			m_connection.Send(msg);
 
-			this.Stats.SentBytes = base.SentBytes;
-			this.Stats.SentMessages = base.SentMessages;
+			this.Stats.SentBytes = m_connection.SentBytes;
+			this.Stats.SentMessages = m_connection.SentMessages;
 			this.Stats.Refresh();
 		}
 
-		protected override void DisconnectOverride()
+		public void Disconnect()
+		{
+			m_connection.Disconnect();
+		}
+
+		protected void DisconnectOverride()
 		{
 			var app = System.Windows.Application.Current;
 			app.Dispatcher.BeginInvoke(new Action(ServerDisconnected));
@@ -87,7 +96,12 @@ namespace MyGame
 			GameData.Data.World = null;
 		}
 
-		protected override void ReceiveMessage(Message msg)
+		public void BeginConnect(Action callback)
+		{
+			m_connection.BeginConnect(callback);
+		}
+
+		protected void ReceiveMessage(Message msg)
 		{
 			var app = System.Windows.Application.Current;
 			app.Dispatcher.BeginInvoke(new Action<Message>(DeliverMessage), msg);
@@ -95,8 +109,8 @@ namespace MyGame
 
 		void DeliverMessage(Message msg)
 		{
-			this.Stats.ReceivedBytes = base.ReceivedBytes;
-			this.Stats.ReceivedMessages = base.ReceivedMessages;
+			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
+			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
 			MyDebug.WriteLine("DeliverMessage {0}", msg);

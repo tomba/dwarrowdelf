@@ -6,7 +6,7 @@ using MyGame.ClientMsgs;
 
 namespace MyGame
 {
-	public class ServerConnection : Connection
+	public class ServerConnection
 	{
 		class WorldInvokeAttribute : Attribute
 		{
@@ -45,11 +45,44 @@ namespace MyGame
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();
 
+		Connection m_connection;
+		bool m_userLoggedIn;
 
 		public ServerConnection(TcpClient client, World world)
-			: base(client)
 		{
 			m_world = world;
+
+			m_connection = new Connection(client);
+			m_connection.ReceiveEvent += OnReceiveMessage;
+			m_connection.DisconnectEvent += OnDisconnect;
+		}
+
+		protected void OnDisconnect()
+		{
+			m_world.BeginInvokeInstant(new Action(ClientDisconnected), null);
+		}
+
+		void ClientDisconnected()
+		{
+			MyDebug.WriteLine("Client Disconnect");
+
+			if (m_userLoggedIn)
+			{
+				m_world.RemoveUser(this);
+				m_world.HandleChangesEvent -= HandleChanges;
+				m_world.HandleEventsEvent -= HandleEvents;
+			}
+
+			m_world = null;
+
+			m_connection.ReceiveEvent -= OnReceiveMessage;
+			m_connection.DisconnectEvent -= OnDisconnect;
+			m_connection = null;
+		}
+
+		public void Send(Message msg)
+		{
+			m_connection.Send(msg);
 		}
 
 		public void Send(IEnumerable<Message> msgs)
@@ -58,22 +91,7 @@ namespace MyGame
 				Send(msg);
 		}
 
-		protected override void DisconnectOverride()
-		{
-			m_world.BeginInvokeInstant(new Action(ClientDisconnected), null);
-		}
-
-		void ClientDisconnected()
-		{
-			m_world.RemoveUser(this);
-
-			m_world.HandleChangesEvent -= HandleChanges;
-			m_world.HandleEventsEvent -= HandleEvents;
-
-			m_world = null;
-		}
-
-		protected override void ReceiveMessage(Message msg)
+		void OnReceiveMessage(Message msg)
 		{
 			InvokeInfo f;
 			Type t = msg.GetType();
@@ -140,11 +158,12 @@ namespace MyGame
 
 			m_world.HandleChangesEvent += HandleChanges;
 			m_world.HandleEventsEvent += HandleEvents;
-
 			m_world.AddUser(this);
+
+			m_userLoggedIn = true;
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Normal)]
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffRequest msg)
 		{
 			MyDebug.WriteLine("Logout");
@@ -153,11 +172,10 @@ namespace MyGame
 				ReceiveMessage(new LogOffCharRequest()); // XXX
 
 			m_world.RemoveUser(this);
-
 			m_world.HandleChangesEvent -= HandleChanges;
 			m_world.HandleEventsEvent -= HandleEvents;
 
-			m_world = null;
+			m_userLoggedIn = false;
 
 			Send(new ClientMsgs.LogOffReply());
 		}
@@ -248,12 +266,6 @@ namespace MyGame
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffCharRequest msg)
-		{
-			m_player.EnqueueAction(new WaitAction(1));
-			m_world.BeginInvoke(new Action(__LogOffChar));
-		}
-
-		void __LogOffChar()
 		{
 			MyDebug.WriteLine("LogOffChar");
 
