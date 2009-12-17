@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFClient", "WPFClient\WPFClient.csproj", "{1A669EF4-303D-40EE-8781-FE0C57A5DD49}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2} = {FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}
