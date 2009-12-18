@@ -11,8 +11,5 @@
     <Setting Name="MainWindowPlacement" Type="Win32.WindowPlacement" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DebugWindowPlacement" Type="Win32.WindowPlacement" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
   </Settings>
 </SettingsFile>

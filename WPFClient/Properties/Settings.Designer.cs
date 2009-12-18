@@ -57,16 +57,5 @@ namespace MyGame.Properties {
                 this["MainWindowPlacement"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::Win32.WindowPlacement DebugWindowPlacement {
-            get {
-                return ((global::Win32.WindowPlacement)(this["DebugWindowPlacement"]));
-            }
-            set {
-                this["DebugWindowPlacement"] = value;
-            }
-        }
     }
 }

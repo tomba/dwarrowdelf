@@ -1,34 +1,38 @@
 ﻿<Window x:Class="LogViewer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LogViewer"
         x:Name="debugWindow"
         Title="MainWindow" Height="350" Width="525">
+    
+    <Window.Resources>
+        <local:IntToDebugFlagConverter x:Key="debugFlagConverter"/>
+    </Window.Resources>
+    
     <Grid>
         <ListView Name="logListView" ItemsSource="{Binding Path=DebugEntries, ElementName=debugWindow}"
                   HorizontalContentAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Visible">
-                  <!--
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Flags}" Value="Server">
+                        <DataTrigger Binding="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Value="Server">
                             <Setter Property="Background" Value="LightGray" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Flags}" Value="Mark">
+                        <DataTrigger Binding="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Value="Mark">
                             <Setter Property="Background" Value="Blue" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>
-            -->
             
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Left" Text="{Binding DateTime,StringFormat=\{0:HH:mm:ss.ffff\}}" Margin="2,0,2,0" VerticalAlignment="Center" />
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding Flags}" Margin="2,0,2,0" VerticalAlignment="Center" />
+                        <TextBlock DockPanel.Dock="Left" Text="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Margin="2,0,2,0" VerticalAlignment="Center" />
                         <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" Margin="10,0,2,0" VerticalAlignment="Center" />
                     </DockPanel>
                 </DataTemplate>

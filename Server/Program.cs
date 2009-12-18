@@ -19,7 +19,6 @@ namespace MyGame
 
 			if (debugServer)
 			{
-				server.TraceListener = new ConsoleDebugListener();
 			}
 
 			server.RunServer(false, null, null);

@@ -14,9 +14,33 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.IO;
 using MemoryMappedLog;
+using System.Globalization;
 
 namespace LogViewer
 {
+	[Flags]
+	public enum DebugFlag : int
+	{
+		None,
+		Mark,
+		Client,
+		Server,
+	}
+
+	[ValueConversion(typeof(int), typeof(DebugFlag))]
+	public class IntToDebugFlagConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (DebugFlag)value;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return (DebugFlag)value;
+		}
+	}
+
 	public partial class MainWindow : Window
 	{
 		ObservableCollection<LogEntry> m_debugCollection = new ObservableCollection<LogEntry>();
@@ -111,10 +135,5 @@ namespace LogViewer
 
 			m_markTimer.Start();
 		}
-	}
-
-	public enum DebugFlag
-	{
-		Mark,
 	}
 }

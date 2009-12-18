@@ -16,7 +16,6 @@ namespace MyGame
 	/// </summary>
 	public partial class App : Application
 	{
-		public static DebugWindow DebugWindow { get; set; }
 		public new static App Current { get { return (App)Application.Current; } }
 		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
@@ -43,8 +42,6 @@ namespace MyGame
 
 			if (debugClient || debugServer)
 			{
-				DebugWindow = new DebugWindow();
-				DebugWindow.Show();
 			}
 #endif
 
@@ -124,7 +121,6 @@ namespace MyGame
 			path = System.IO.Path.Combine(path, "Server.exe");
 
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
-			m_server.TraceListener = GameData.Data.MyTraceListener;
 			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);

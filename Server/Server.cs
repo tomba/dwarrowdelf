@@ -14,32 +14,10 @@ namespace MyGame
 {
 	public class Server : MarshalByRefObject, IServer
 	{
-		MyDebugListener m_traceListener;
-
 		public Server()
 		{
 			MyDebug.DefaultFlags = DebugFlag.Server;
 		}
-
-		public MyDebugListener TraceListener 
-		{ 
-			set 
-			{
-				if (value != null)
-				{
-					Debug.Assert(m_traceListener == null);
-					m_traceListener = value;
-					MyDebug.Listener = value;
-				}
-				else
-				{
-					if (m_traceListener != null)
-						MyDebug.Listener = null;
-					m_traceListener = null;
-				}
-			}
-		}
-
 
 		public void RunServer(bool isEmbedded,
 			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)

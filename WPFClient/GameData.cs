@@ -51,8 +51,6 @@ namespace MyGame
 		public bool IsSeeAll { get; set; }
 		public bool DisableLOS { get; set; }	// debug
 
-		public MyDebugListener MyTraceListener { get; set; }
-
 		public ActionCollection ActionCollection { get; private set; }
 
 
