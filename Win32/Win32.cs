@@ -6,18 +6,26 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-namespace MyGame
+namespace Win32
 {
 	[Serializable]
 	public class WindowPlacement
 	{
-		public IntPoint MinPosition { get; set; }
-		public IntPoint MaxPosition { get; set; }
-		public IntRect NormalPosition { get; set; }
+		public int MinX { get; set; }
+		public int MinY { get; set; }
+
+		public int MaxX { get; set; }
+		public int MaxY { get; set; }
+
+		public int Left { get; set; }
+		public int Top { get; set; }
+		public int Right { get; set; }
+		public int Bottom { get; set; }
+
 		public bool ShowMaximized { get; set; }
 	}
 	
-	static class Win32
+	public static class Helpers
 	{
         #region Win32 API declarations to set and get window placement
         [DllImport("user32.dll")]
@@ -90,10 +98,10 @@ namespace MyGame
 				wp.flags = 0;
 				var p = placement;
 				wp.showCmd = p.ShowMaximized ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL;
-				wp.minPosition = new POINT(p.MinPosition.X, p.MinPosition.Y);
-				wp.maxPosition = new POINT(p.MaxPosition.X, p.MaxPosition.Y);
-				wp.normalPosition = new RECT(p.NormalPosition.Left, p.NormalPosition.Top,
-					p.NormalPosition.Right, p.NormalPosition.Bottom);
+				wp.minPosition = new POINT(p.MinX, p.MinY);
+				wp.maxPosition = new POINT(p.MaxX, p.MaxY);
+				wp.normalPosition = new RECT(p.Left, p.Top,
+					p.Right, p.Bottom);
 				IntPtr hwnd = new WindowInteropHelper(window).Handle;
 				SetWindowPlacement(hwnd, ref wp);
 			}
@@ -106,11 +114,14 @@ namespace MyGame
 			IntPtr hwnd = new WindowInteropHelper(window).Handle;
 			GetWindowPlacement(hwnd, out wp);
 			var p = new WindowPlacement();
-			p.MinPosition = new IntPoint(wp.minPosition.X, wp.minPosition.Y);
-			p.MaxPosition = new IntPoint(wp.maxPosition.X, wp.maxPosition.Y);
-			p.NormalPosition = new IntRect(wp.normalPosition.Left, wp.normalPosition.Top,
-				wp.normalPosition.Right - wp.normalPosition.Left,
-				wp.normalPosition.Bottom - wp.normalPosition.Top);
+			p.MinX = wp.minPosition.X;
+			p.MinY = wp.minPosition.Y;
+			p.MaxX = wp.maxPosition.X;
+			p.MaxY = wp.maxPosition.Y;
+			p.Left = wp.normalPosition.Left;
+			p.Top = wp.normalPosition.Top;
+			p.Right = wp.normalPosition.Right;
+			p.Bottom = wp.normalPosition.Bottom;
 			p.ShowMaximized = wp.showCmd == SW_SHOWMAXIMIZED;
 			return p;
 		}

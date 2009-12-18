@@ -113,9 +113,9 @@ namespace MyGame
 		{
 			base.OnSourceInitialized(e);
 
-			var p = (WindowPlacement)Properties.Settings.Default.DebugWindowPlacement;
+			var p = (Win32.WindowPlacement)Properties.Settings.Default.DebugWindowPlacement;
 			if (p != null)
-				Win32.LoadWindowPlacement(this, p);
+				Win32.Helpers.LoadWindowPlacement(this, p);
 		}
 
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -128,7 +128,7 @@ namespace MyGame
 				App.Current.Server.TraceListener = null;
 			GameData.Data.MyTraceListener = null;
 
-			var p = Win32.SaveWindowPlacement(this);
+			var p = Win32.Helpers.SaveWindowPlacement(this);
 			Properties.Settings.Default.DebugWindowPlacement = p;
 			Properties.Settings.Default.Save();
 		}

@@ -143,7 +143,6 @@
     </Compile>
     <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="SymbolDrawingCache.cs" />
-    <Compile Include="Win32.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -169,6 +168,10 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Win32\Win32.csproj">
+      <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
+      <Name>Win32</Name>
     </ProjectReference>
     <ProjectReference Include="..\WPFClientControls\WPFClientControls.csproj">
       <Project>{994FA20F-F963-4847-BFE7-4EC2A256CE71}</Project>

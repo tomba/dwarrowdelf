@@ -8,10 +8,10 @@
     <Setting Name="DebugServer" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="MainWindowPlacement" Type="MyGame.WindowPlacement" Scope="User">
+    <Setting Name="MainWindowPlacement" Type="Win32.WindowPlacement" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="DebugWindowPlacement" Type="MyGame.WindowPlacement" Scope="User">
+    <Setting Name="DebugWindowPlacement" Type="Win32.WindowPlacement" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

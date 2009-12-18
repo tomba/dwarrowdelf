@@ -54,16 +54,16 @@ namespace MyGame
 		{
 			base.OnSourceInitialized(e);
 
-			var p = (WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
+			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
-				Win32.LoadWindowPlacement(this, p);
+				Win32.Helpers.LoadWindowPlacement(this, p);
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
 
-			var p = Win32.SaveWindowPlacement(this);
+			var p = Win32.Helpers.SaveWindowPlacement(this);
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
 		}
