@@ -142,7 +142,7 @@ namespace MyGame
 					this.ReceivedBytes += m_expectedLen;
 
 					int copy = m_bufferUsed - m_expectedLen;
-					Array.Copy(m_recvBuffer, m_expectedLen, m_recvBuffer, 0, copy);
+					Buffer.BlockCopy(m_recvBuffer, m_expectedLen, m_recvBuffer, 0, copy);
 
 					m_bufferUsed -= m_expectedLen;
 					m_expectedLen = 0;
