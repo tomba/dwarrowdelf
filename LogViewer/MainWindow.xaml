@@ -9,7 +9,16 @@
         <local:IntToDebugFlagConverter x:Key="debugFlagConverter"/>
     </Window.Resources>
     
-    <Grid>
+    <DockPanel>
+
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Click="OnClearClicked">Clear</Button>
+                <Separator />
+                <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
+            </ToolBar>
+        </ToolBarTray>
+        
         <ListView Name="logListView" ItemsSource="{Binding Path=DebugEntries, ElementName=debugWindow}"
                   HorizontalContentAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -38,5 +47,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </Grid>
+    </DockPanel>
 </Window>

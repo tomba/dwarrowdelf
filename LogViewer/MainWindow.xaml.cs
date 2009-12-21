@@ -50,6 +50,8 @@ namespace LogViewer
 		bool m_scrollToEnd = true;
 		int m_logIndex;
 
+		public bool Halt { get; set; }
+
 		public MainWindow()
 		{
 			m_markTimer = new System.Windows.Threading.DispatcherTimer();
@@ -64,6 +66,8 @@ namespace LogViewer
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
+
+			OnNewEntries2();
 
 			MMLog.RegisterChangeCallback(OnNewEntries);
 		}
@@ -94,6 +98,9 @@ namespace LogViewer
 
 		void OnNewEntries2()
 		{
+			if (this.Halt == true)
+				return;
+
 			var entries = MMLog.ReadNewEntries(m_logIndex, out m_logIndex);
 			AddRange(entries);
 		}
@@ -134,6 +141,11 @@ namespace LogViewer
 				logListView.ScrollIntoView(last);
 
 			m_markTimer.Start();
+		}
+
+		void OnClearClicked(object sender, RoutedEventArgs e)
+		{
+			m_debugCollection.Clear();
 		}
 	}
 }
