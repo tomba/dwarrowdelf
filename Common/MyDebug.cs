@@ -34,4 +34,17 @@ namespace MyGame
 			WriteLine(String.Format(format, args));
 		}
 	}
+
+	public static class MyTrace
+	{
+		public static void WriteLine(string str)
+		{
+			MMLog.Append((int)MyDebug.DefaultFlags, str);
+		}
+
+		public static void WriteLine(string format, params object[] args)
+		{
+			WriteLine(String.Format(format, args));
+		}
+	}
 }
