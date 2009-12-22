@@ -98,6 +98,7 @@ namespace MyGame
 			if (conn.IsUserConnected)
 			{
 				conn.Send(new ClientMsgs.LogOffRequest());
+				Thread.Sleep(100);	// XXX wait for LogOffReply.
 				conn.Disconnect();
 				GameData.Data.Connection = null;
 			}

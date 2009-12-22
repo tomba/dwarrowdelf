@@ -40,7 +40,7 @@ namespace MyGame
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();

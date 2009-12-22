@@ -76,7 +76,7 @@ namespace MyGame
 
 		// Minimum time between ticks. Ticks will never proceed faster than this.
 		bool m_useMinTickTime = true;
-		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(500);
+		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(50);
 		DateTime m_nextTick = DateTime.MinValue;
 
 		// Timer is used out-of-tick to start the tick after m_minTickTime

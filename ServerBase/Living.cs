@@ -179,7 +179,7 @@ namespace MyGame
 				}
 				else if (action is MoveAction)
 				{
-					action.TicksLeft = 4;
+					action.TicksLeft = 1;
 				}
 				else
 				{
