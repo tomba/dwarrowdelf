@@ -33,6 +33,8 @@ namespace MyGame
 		int m_state;
 		IntPoint m_from, m_to;
 
+		bool m_removing;
+
 		public MapControl()
 		{
 			this.Focusable = true;
@@ -59,7 +61,7 @@ namespace MyGame
 
 		void ClearMap()
 		{
-			m_nodeMap = null;
+			m_result = null;
 			InvalidateTiles();
 		}
 
@@ -89,11 +91,11 @@ namespace MyGame
 			{
 				tile.Brush = Brushes.Red;
 			}
-			else if (m_nodeMap != null)
+			else if (m_result != null)
 			{
-				if (m_nodeMap.ContainsKey(ml))
+				if (m_result.Nodes.ContainsKey(ml))
 				{
-					var node = m_nodeMap[ml];
+					var node = m_result.Nodes[ml];
 					tile.G = node.G;
 					tile.H = node.H;
 
@@ -102,7 +104,7 @@ namespace MyGame
 					else
 						tile.From = (node.Parent.Loc - node.Loc).ToDirection();
 
-					if (m_path.Contains(ml))
+					if (m_path != null && m_path.Contains(ml))
 						tile.Brush = Brushes.DarkGray;
 				}
 			}
@@ -139,11 +141,34 @@ namespace MyGame
 			else
 			{
 				var s = m_realMap[ml];
+				m_removing = s.Blocked;
 				s.Blocked = !s.Blocked;
 				m_realMap[ml] = s;
 			}
 
 			InvalidateTiles();
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+
+			if (e.RightButton == MouseButtonState.Pressed)
+			{
+				IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
+
+				if (!m_realMap.Bounds.Contains(ml))
+				{
+					Console.Beep();
+					return;
+				}
+
+				var s = m_realMap[ml];
+				s.Blocked = !m_removing;
+				m_realMap[ml] = s;
+
+				InvalidateTiles();
+			}
 		}
 
 		bool LocValid(IntPoint p)
@@ -171,31 +196,30 @@ namespace MyGame
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
-		IDictionary<IntPoint, AStar.Node> m_nodeMap;
 		IEnumerable<IntPoint> m_path;
+		AStarResult m_result;
 
 		void DoAStar(IntPoint src, IntPoint dst)
 		{
 			long startBytes, stopBytes;
-			AStar.Node lastNode;
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_nodeMap = AStar.FindPathNodeMap(src, dst, true, out lastNode, LocValid);
+			m_result = AStar.Find(src, dst, true, LocValid);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
 			this.MemUsed = stopBytes - startBytes;
 			this.TicksUsed = sw.ElapsedTicks;
 
-			if (m_nodeMap == null)
+			if (!m_result.PathFound)
 			{
 				m_path = null;
 				return;
 			}
 
 			List<IntPoint> pathList = new List<IntPoint>();
-			var n = lastNode;
+			var n = m_result.LastNode;
 			while (n.Parent != null)
 			{
 				pathList.Add(n.Loc);

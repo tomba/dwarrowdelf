@@ -39,9 +39,11 @@ namespace MyGame
 			{
 				// ZZZ only 2D
 				int z = m_player.Z;
-				IEnumerable<Direction> dirs = AStar.FindPath(m_object.Location2D, m_player.Location2D, true,
-					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) && 
+				var res = AStar.Find(m_object.Location2D, m_player.Location2D, true,
+					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) &&
 						m_object.Environment.IsWalkable(new IntPoint3D(l, z)));
+
+				var dirs = res.GetPath();
 
 				m_pathDirs = new Queue<Direction>(dirs);
 				m_pathDest = m_player.Location;

@@ -2,111 +2,85 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MyGame;
 using System.Diagnostics;
 
 namespace MyGame
 {
+	public class AStarResult
+	{
+		public IDictionary<IntPoint, AStarNode> Nodes { get; private set; }
+		public AStarNode LastNode { get; private set; }
+		public bool PathFound { get { return this.LastNode != null; } }
+
+		internal AStarResult(IDictionary<IntPoint, AStarNode> nodes, AStarNode lastNode)
+		{
+			if (nodes == null)
+				throw new ArgumentNullException();
+
+			this.Nodes = nodes;
+			this.LastNode = lastNode;
+		}
+
+		public IEnumerable<Direction> GetPathReverse()
+		{
+			if (this.LastNode == null)
+				yield break;
+
+			AStarNode n = this.LastNode;
+			while (n.Parent != null)
+			{
+				yield return (n.Parent.Loc - n.Loc).ToDirection();
+				n = n.Parent;
+			}
+		}
+
+		public IEnumerable<Direction> GetPath()
+		{
+			return GetPathReverse().Reverse().Select(d => IntVector.FromDirection(d).FastRotate(4).ToDirection());
+		}
+	}
+
+	// tries to save some memory by using ushorts.
+	public class AStarNode
+	{
+		public IntPoint Loc { get; private set; }
+		public AStarNode Parent;
+		public ushort G;
+		public ushort H;
+		public ushort F { get { return (ushort)(G + H); } }
+		public bool Closed { get; set; }
+
+		public AStarNode(IntPoint l, AStarNode parent)
+		{
+			Loc = l;
+			Parent = parent;
+		}
+	}
+
 	public static class AStar
 	{
-		// tries to save some memory by using ushorts
-		// public, so that AStarTest can show the internals
-		public class Node
+		public static AStarResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> locValid)
 		{
-			public IntPoint Loc { get; private set; }
-			public Node Parent;
-			public ushort G;
-			public ushort H;
-			public ushort F { get { return (ushort)(G + H); } }
-			public bool Closed { get; set; }
-
-			public Node(IntPoint l, Node parent)
-			{
-				Loc = l;
-				Parent = parent;
-			}
+			AStarNode lastNode;
+			var nodes = FindInternal(src, dst, exactLocation, locValid, out lastNode);
+			return new AStarResult(nodes, lastNode);
 		}
 
-		// public for AStarTest
-		public static IDictionary<IntPoint,Node> FindPathNodeMap(IntPoint src, IntPoint dst, bool exactLocation,
-			out Node lastNode, Func<IntPoint, bool> locValid)
-		{
-			var nodes = FindPathInternal(src, dst, exactLocation, locValid, out lastNode);
-			return nodes;
-		}
-
-		// public for AStarTest
-		public static IEnumerable<Node> FindPathNodes(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
-		{
-			Node lastNode;
-			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
-			if (nodes == null)
-				return null;
-			return nodes.Values;
-		}
-		
-		public static IEnumerable<Direction> FindPathReverse(IntPoint src, IntPoint dst, Func<IntPoint, bool> locValid)
-		{
-			Node lastNode;
-			var nodes = FindPathInternal(src, dst, true, locValid, out lastNode);
-			if(nodes == null)
-				yield break;
-
-			Node n = nodes[dst];
-			while (n.Parent != null)
-			{
-				yield return (n.Parent.Loc - n.Loc).ToDirection();
-				n = n.Parent;
-			}
-		}
-
-		public static IEnumerable<Direction> FindPath(IntPoint src, IntPoint dst, bool exactLocation,
-			Func<IntPoint, bool> locValid)
-		{
-			Node lastNode;
-			var nodes = FindPathInternal(src, dst, exactLocation, locValid, out lastNode);
-			if (nodes == null)
-				yield break;
-
-			Node n1 = null;
-			Node n2 = lastNode;
-			Node n3 = n2.Parent;
-			while (n3 != null)
-			{
-				n2.Parent = n1;
-
-				n1 = n2;
-				n2 = n3;
-				n3 = n3.Parent;
-			}
-			n2.Parent = n1;
-
-			var n = nodes[src];
-			while (n.Parent != null)
-			{
-				yield return (n.Parent.Loc - n.Loc).ToDirection();
-				n = n.Parent;
-			}
-		}
-
-		static IDictionary<IntPoint, Node> FindPathInternal(IntPoint src, IntPoint dst, bool exactLocation,
-			Func<IntPoint, bool> locValid, out Node lastNode)
+		static IDictionary<IntPoint, AStarNode> FindInternal(IntPoint src, IntPoint dst, bool exactLocation,
+			Func<IntPoint, bool> locValid, out AStarNode lastNode)
 		{
 			OpenList.Test();
-			/*
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-			*/
 
 			lastNode = null;
 
+			var nodeMap = new Dictionary<IntPoint, AStarNode>();
+
 			if (exactLocation && !locValid(dst))
-				return null;
+				return nodeMap;
 
 			var openList = new OpenList();
-			var nodeMap = new Dictionary<IntPoint, Node>();
 
-			var node = new Node(src, null);
+			var node = new AStarNode(src, null);
 			openList.Add(node);
 			nodeMap.Add(src, node);
 
@@ -129,20 +103,6 @@ namespace MyGame
 
 				CheckNeighbors(node, dst, openList, nodeMap, locValid);
 			}
-			/*
-			sw.Stop();
-			Console.WriteLine(sw.ElapsedTicks.ToString());
-			 */
-			// 1472794 ticks
-			// 329821
-			// 249457 ticks
-			// 143858
-
-			if (exactLocation && node.Loc != dst)
-				return null;
-
-			if (!exactLocation && !(node.Loc - dst).IsAdjacent)
-				return null;
 
 			return nodeMap;
 		}
@@ -153,8 +113,8 @@ namespace MyGame
 			return cost;
 		}
 
-		static void CheckNeighbors(Node node, IntPoint dst, OpenList openList,
-			IDictionary<IntPoint, Node> nodeMap, Func<IntPoint, bool> locValid)
+		static void CheckNeighbors(AStarNode node, IntPoint dst, OpenList openList,
+			IDictionary<IntPoint, AStarNode> nodeMap, Func<IntPoint, bool> locValid)
 		{
 			foreach (IntVector v in IntVector.GetAllXYDirections())
 			{
@@ -162,7 +122,7 @@ namespace MyGame
 				if (!locValid(newLoc))
 					continue;
 
-				Node oldNode;
+				AStarNode oldNode;
 				nodeMap.TryGetValue(newLoc, out oldNode);
 				if (oldNode != null && oldNode.Closed)
 					continue;
@@ -172,7 +132,7 @@ namespace MyGame
 
 				if (oldNode == null)
 				{
-					var newNode = new Node(newLoc, node);
+					var newNode = new AStarNode(newLoc, node);
 					newNode.G = g;
 					newNode.H = h;
 					openList.Add(newNode);
@@ -188,14 +148,14 @@ namespace MyGame
 			}
 		}
 
-		class OpenList : IEnumerable<Node>
+		class OpenList
 		{
-			Node[] m_openList = new Node[128];
+			AStarNode[] m_openList = new AStarNode[128];
 			int m_count;
 
 			public bool IsEmpty { get { return m_count == 0; } }
 
-			public void Add(Node node)
+			public void Add(AStarNode node)
 			{
 				if (m_count == 0)
 				{
@@ -206,7 +166,7 @@ namespace MyGame
 
 				if (m_count >= m_openList.Length)
 				{
-					Node[] newArray = new Node[m_openList.Length * 2];
+					AStarNode[] newArray = new AStarNode[m_openList.Length * 2];
 					m_openList.CopyTo(newArray, 0);
 					m_openList = newArray;
 				}
@@ -221,7 +181,7 @@ namespace MyGame
 					if (m_openList[m].F > m_openList[(m - 1) / 2].F)
 						break;
 
-					Node n = m_openList[(m - 1) / 2];
+					AStarNode n = m_openList[(m - 1) / 2];
 					m_openList[(m - 1) / 2] = m_openList[m];
 					m_openList[m] = n;
 					m = (m - 1) / 2;
@@ -230,9 +190,9 @@ namespace MyGame
 				m_count++;
 			}
 
-			public Node Pop()
+			public AStarNode Pop()
 			{
-				Node ret = m_openList[0];
+				AStarNode ret = m_openList[0];
 
 				m_count--;
 
@@ -271,7 +231,7 @@ namespace MyGame
 
 					if (u != v)
 					{
-						Node n = m_openList[u];
+						AStarNode n = m_openList[u];
 						m_openList[u] = m_openList[v];
 						m_openList[v] = n;
 					}
@@ -285,28 +245,10 @@ namespace MyGame
 			}
 
 			// F changed
-			public void NodeUpdated(Node node)
+			public void NodeUpdated(AStarNode node)
 			{
 				throw new NotImplementedException();
 			}
-
-			#region IEnumerable<Node> Members
-
-			public IEnumerator<Node> GetEnumerator()
-			{
-				return m_openList.Where(n => n != null).AsEnumerable().GetEnumerator();
-			}
-
-			#endregion
-
-			#region IEnumerable Members
-
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-			{
-				return m_openList.Where(n => n != null).GetEnumerator();
-			}
-
-			#endregion
 
 			[Conditional("DEBUG")]
 			public static void Test()
@@ -318,7 +260,7 @@ namespace MyGame
 				for (int i = 0; i < 100; ++i)
 				{
 					val = (ushort)rand.Next(100);
-					openList.Add(new Node(new IntPoint(), null) { G = val });
+					openList.Add(new AStarNode(new IntPoint(), null) { G = val });
 					testList.Add(val);
 
 					if (i % 20 == 19)

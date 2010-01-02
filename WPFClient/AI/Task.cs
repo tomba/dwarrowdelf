@@ -93,8 +93,9 @@ namespace MyGame
 				var src2d = this.Worker.Location2D;
 				var dest2d = new IntPoint(m_dest.X, m_dest.Y);
 				var env = m_environment;
-				var dirs = AStar.FindPath(src2d, dest2d, !m_adjacent,
+				var res = AStar.Find(src2d, dest2d, !m_adjacent,
 					l => env.IsWalkable(new IntPoint3D(l, z)));
+				var dirs = res.GetPath();
 
 				m_pathDirs = new Queue<Direction>(dirs);
 
