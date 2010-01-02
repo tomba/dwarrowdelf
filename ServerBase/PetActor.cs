@@ -68,7 +68,7 @@ namespace MyGame
 			if (v.ManhattanLength < 3)
 				return new WaitAction(1);
 
-			v.Normalize();
+			v = v.Normalize();
 
 			if (v == new IntVector3D())
 				return new WaitAction(1);

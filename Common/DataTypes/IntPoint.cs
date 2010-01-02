@@ -9,16 +9,18 @@ namespace MyGame
 	[DataContract]
 	public struct IntPoint : IEquatable<IntPoint>
 	{
-		[DataMember]
-		public int X { get; set; }
-		[DataMember]
-		public int Y { get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
 
 		public IntPoint(int x, int y)
-			: this()
 		{
-			X = x;
-			Y = y;
+			m_x = x;
+			m_y = y;
 		}
 
 		#region IEquatable<IntPoint> Members
@@ -39,10 +41,9 @@ namespace MyGame
 			return ((l.X == this.X) && (l.Y == this.Y));
 		}
 
-		public void Offset(int offsetX, int offsetY)
+		public IntPoint Offset(int offsetX, int offsetY)
 		{
-			this.X += offsetX;
-			this.Y += offsetY;
+			return new IntPoint(this.X + offsetX, this.Y + offsetY);
 		}
 
 		public static bool operator ==(IntPoint left, IntPoint right)

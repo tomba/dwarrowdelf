@@ -9,38 +9,39 @@ namespace MyGame
 	[DataContract]
 	public struct IntRect
 	{
-		[DataMember]
-		public int X { get; set; }
-		[DataMember]
-		public int Y { get; set; }
-		[DataMember]
-		public int Width { get; set; }
-		[DataMember]
-		public int Height { get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+		[DataMember(Name = "Width")]
+		readonly int m_width;
+		[DataMember(Name = "Height")]
+		readonly int m_height;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
+		public int Width { get { return m_width; } }
+		public int Height { get { return m_height; } }
 
 		public IntRect(int x, int y, int width, int height)
-			: this()
 		{
-			this.X = x;
-			this.Y = y;
-			this.Width = width;
-			this.Height = height;
+			m_x = x;
+			m_y = y;
+			m_width = width;
+			m_height = height;
 		}
 
-		public IntRect(IntPoint point1, IntPoint point2) : this()
+		public IntRect(IntPoint point1, IntPoint point2)
 		{
-			this.X = Math.Min(point1.X, point2.X);
-			this.Y = Math.Min(point1.Y, point2.Y);
-			this.Width = Math.Max((Math.Max(point1.X, point2.X) - this.X), 0);
-			this.Height = Math.Max((Math.Max(point1.Y, point2.Y) - this.Y), 0);
+			m_x = Math.Min(point1.X, point2.X);
+			m_y = Math.Min(point1.Y, point2.Y);
+			m_width = Math.Max((Math.Max(point1.X, point2.X) - m_x), 0);
+			m_height = Math.Max((Math.Max(point1.Y, point2.Y) - m_y), 0);
 		}
 
-		public IntRect(IntPoint point, IntSize size) : this()
+		public IntRect(IntPoint point, IntSize size)
+			: this(point.X, point.Y, size.Width, size.Height)
 		{
-			this.X = point.X;
-			this.Y = point.Y;
-			this.Width = size.Width;
-			this.Height = size.Height;
 		}
 
 		public int Left
@@ -71,6 +72,26 @@ namespace MyGame
 		public IntPoint BottomRight
 		{
 			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
+		}
+
+		public IntRect Move(int x, int y)
+		{
+			return new IntRect(x, y, this.Width, this.Height);
+		}
+
+		public IntRect Resize(int width, int height)
+		{
+			return new IntRect(this.X, this.Y, width, height);
+		}
+
+		public IntRect Offset(int x, int y)
+		{
+			return new IntRect(this.X + x, this.Y + y, this.Width, this.Height);
+		}
+
+		public IntRect Inflate(int width, int height)
+		{
+			return new IntRect(this.X, this.Y, this.Width + width, this.Height + height);
 		}
 
 		public bool Contains(IntPoint l)

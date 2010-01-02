@@ -16,8 +16,12 @@ namespace MyGame
 	[DataContract]
 	public struct GameColor : IEquatable<GameColor>
 	{
-		[DataMember]
-		byte m_r, m_g, m_b;
+		[DataMember(Name = "R")]
+		readonly byte m_r;
+		[DataMember(Name = "G")]
+		readonly byte m_g;
+		[DataMember(Name = "B")]
+		readonly byte m_b;
 
 		public GameColor(byte r, byte g, byte b)
 		{

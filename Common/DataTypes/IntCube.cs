@@ -2,41 +2,49 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace MyGame
 {
 	/**
 	 * Cube datatype with integer dimensions
 	 */
+	[DataContract]
 	public struct IntCube
 	{
-		public int X { get; set; }
-		public int Y { get; set; }
-		public int Z { get; set; }
-		public int Width { get; set; }
-		public int Height { get; set; }
-		public int Depth{ get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+		[DataMember(Name = "Z")]
+		readonly int m_z;
+		[DataMember(Name = "Width")]
+		readonly int m_width;
+		[DataMember(Name = "Height")]
+		readonly int m_height;
+		[DataMember(Name = "Depth")]
+		readonly int m_depth;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
+		public int Z { get { return m_z; } }
+		public int Width { get { return m_width; } }
+		public int Height { get { return m_height; } }
+		public int Depth { get { return m_depth; } }
 
 		public IntCube(int x, int y, int z, int width, int height, int depth)
-			: this()
 		{
-			this.X = x;
-			this.Y = y;
-			this.Z = z;
-			this.Width = width;
-			this.Height = height;
-			this.Depth = depth;
+			m_x = x;
+			m_y = y;
+			m_z = z;
+			m_width = width;
+			m_height = height;
+			m_depth = depth;
 		}
 
 		public IntCube(IntRect rect, int z)
-			: this()
+			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
 		{
-			this.X = rect.X;
-			this.Y = rect.Y;
-			this.Z = z;
-			this.Width = rect.Width;
-			this.Height = rect.Height;
-			this.Depth = 1;
 		}
 
 		public int Left

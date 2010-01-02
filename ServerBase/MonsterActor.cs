@@ -30,7 +30,7 @@ namespace MyGame
 			else
 			{
 				IntVector v = new IntVector(1, 1);
-				v.Rotate(45 * m_random.Next(8));
+				v = v.Rotate(45 * m_random.Next(8));
 				Direction dir = v.ToDirection();
 
 				if (dir == Direction.None)

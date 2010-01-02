@@ -9,16 +9,18 @@ namespace MyGame
 	[DataContract]
 	public struct IntSize : IEquatable<IntSize>
 	{
-		[DataMember]
-		public int Width { get; set; }
-		[DataMember]
-		public int Height { get; set; }
+		[DataMember(Name = "Width")]
+		readonly int m_width;
+		[DataMember(Name = "Height")]
+		readonly int m_height;
+
+		public int Width { get { return m_width; } }
+		public int Height { get { return m_height; } }
 
 		public IntSize(int width, int height)
-			: this()
 		{
-			Width = width;
-			Height = height;
+			m_width = width;
+			m_height = height;
 		}
 
 		public bool IsEmpty

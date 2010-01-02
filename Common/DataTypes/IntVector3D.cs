@@ -9,19 +9,22 @@ namespace MyGame
 	[DataContract]
 	public struct IntVector3D : IEquatable<IntVector3D>
 	{
-		[DataMember]
-		public int X { get; set; }
-		[DataMember]
-		public int Y { get; set; }
-		[DataMember]
-		public int Z { get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+		[DataMember(Name = "Z")]
+		readonly int m_z;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
+		public int Z { get { return m_z; } }
 
 		public IntVector3D(int x, int y, int z)
-			: this()
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			m_x = x;
+			m_y = y;
+			m_z = z;
 		}
 
 		#region IEquatable<IntVector3D> Members
@@ -52,12 +55,13 @@ namespace MyGame
 			get { return Math.Abs(this.X) + Math.Abs(this.Y) + Math.Abs(this.Z); }
 		}
 
-		public void Normalize()
+		public IntVector3D Normalize()
 		{
 			double len = this.Length;
-			this.X = (int)Math.Round(this.X / len);
-			this.Y = (int)Math.Round(this.Y / len);
-			this.Z = (int)Math.Round(this.Z / len);
+			var x = (int)Math.Round(this.X / len);
+			var y = (int)Math.Round(this.Y / len);
+			var z = (int)Math.Round(this.Z / len);
+			return new IntVector3D(x, y, z);
 		}
 
 		public static bool operator ==(IntVector3D left, IntVector3D right)
@@ -103,8 +107,7 @@ namespace MyGame
 
 		public Direction ToDirection()
 		{
-			IntVector3D v = this;
-			v.Normalize();
+			IntVector3D v = Normalize();
 
 			Direction dir = 0;
 
@@ -181,13 +184,15 @@ namespace MyGame
 		/// Rotate unit vector in 45 degree steps
 		/// </summary>
 		/// <param name="rotate">Rotation units, in 45 degree steps</param>
-		public void FastRotate(int rotate)
+		public IntVector3D FastRotate(int rotate)
 		{
 			int x = FastMul(FastCos(rotate), this.X) - FastMul(FastSin(rotate), this.Y);
 			int y = FastMul(FastSin(rotate), this.X) + FastMul(FastCos(rotate), this.Y);
 
-			this.X = x > 1 ? 1 : (x < -1 ? -1 : x);
-			this.Y = y > 1 ? 1 : (y < -1 ? -1 : y);
+			var ix = x > 1 ? 1 : (x < -1 ? -1 : x);
+			var iy = y > 1 ? 1 : (y < -1 ? -1 : y);
+
+			return new IntVector3D(ix, iy, this.Z);
 		}
 
 		public static Direction RotateDir(Direction dir, int rotate)

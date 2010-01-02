@@ -64,8 +64,7 @@ namespace MyGame
 
 			var block = GetBlock(ref x, ref y, allowResize);
 
-			p.X = x;
-			p.Y = y;
+			p = new IntPoint(x, y);
 
 			return block;
 		}
@@ -120,27 +119,41 @@ namespace MyGame
 
 		void Resize(int blockX, int blockY)
 		{
-			IntRect newRect = m_mainRect;
+			int rx, ry, rw, rh;
 
-			if (blockX < newRect.Left)
+			if (blockX < m_mainRect.Left)
 			{
-				newRect.Width += (newRect.Left - blockX);
-				newRect.X = blockX;
+				rx = blockX;
+				rw = m_mainRect.Width + (m_mainRect.Left - blockX);
 			}
-			else if (blockX > newRect.Right - 1)
+			else if (blockX > m_mainRect.Right - 1)
 			{
-				newRect.Width += (blockX - (newRect.Right - 1));
+				rx = m_mainRect.X;
+				rw = m_mainRect.Width + (blockX - (m_mainRect.Right - 1));
+			}
+			else
+			{
+				rx = m_mainRect.X;
+				rw = m_mainRect.Width;
 			}
 
-			if (blockY < newRect.Top)
+			if (blockY < m_mainRect.Top)
 			{
-				newRect.Height += (newRect.Top - blockY);
-				newRect.Y = blockY;
+				ry = blockY;
+				rh = m_mainRect.Height + (m_mainRect.Top - blockY);
 			}
-			else if (blockY > newRect.Bottom - 1)
+			else if (blockY > m_mainRect.Bottom - 1)
 			{
-				newRect.Height += (blockY - (newRect.Bottom - 1));
+				ry = m_mainRect.Y;
+				rh = m_mainRect.Height + (blockY - (m_mainRect.Bottom - 1));
 			}
+			else
+			{
+				ry = m_mainRect.Y;
+				rh = m_mainRect.Height;
+			}
+
+			IntRect newRect = new IntRect(rx, ry, rw, rh);
 
 			MainGrid newGrid = new MainGrid(newRect.Width, newRect.Height);
 

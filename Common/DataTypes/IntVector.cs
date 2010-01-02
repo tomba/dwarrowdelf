@@ -9,16 +9,18 @@ namespace MyGame
 	[DataContract]
 	public struct IntVector : IEquatable<IntVector>
 	{
-		[DataMember]
-		public int X { get; set; }
-		[DataMember]
-		public int Y { get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
 
 		public IntVector(int x, int y)
-			: this()
 		{
-			X = x;
-			Y = y;
+			m_x = x;
+			m_y = y;
 		}
 
 		#region IEquatable<IntVector> Members
@@ -49,11 +51,12 @@ namespace MyGame
 			get { return Math.Abs(this.X) + Math.Abs(this.Y); }
 		}
 
-		public void Normalize()
+		public IntVector Normalize()
 		{
 			double len = this.Length;
-			this.X = (int)Math.Round(this.X / len);
-			this.Y = (int)Math.Round(this.Y / len);
+			var x = (int)Math.Round(this.X / len);
+			var y = (int)Math.Round(this.Y / len);
+			return new IntVector(x, y);
 		}
 
 		public static bool operator ==(IntVector left, IntVector right)
@@ -104,8 +107,7 @@ namespace MyGame
 
 		public Direction ToDirection()
 		{
-			IntVector v = this;
-			v.Normalize();
+			IntVector v = this.Normalize();
 
 			Direction dir = 0;
 
@@ -137,14 +139,16 @@ namespace MyGame
 			return new IntVector(x, y);
 		}
 
-		public void Rotate(int angle)
+		public IntVector Rotate(int angle)
 		{
 			double rad = Math.PI * angle / 180.0;
 			double x = Math.Cos(rad) * this.X - Math.Sin(rad) * this.Y;
 			double y = Math.Sin(rad) * this.X + Math.Cos(rad) * this.Y;
 
-			this.X = (int)Math.Round(x);
-			this.Y = (int)Math.Round(y);
+			var ix = (int)Math.Round(x);
+			var iy = (int)Math.Round(y);
+
+			return new IntVector(ix, iy);
 		}
 
 		/// <summary>
@@ -164,8 +168,11 @@ namespace MyGame
 		public static IEnumerable<IntVector> GetAllXYDirections(Direction startDir)
 		{
 			var v = FromDirection(startDir);
-			for (int i = 0; i < 8; ++i, v.FastRotate(1))
+			for (int i = 0; i < 8; ++i)
+			{
+				v = v.FastRotate(1);
 				yield return v;
+			}
 		}
 
 
@@ -208,13 +215,15 @@ namespace MyGame
 		/// Rotate unit vector in 45 degree steps
 		/// </summary>
 		/// <param name="rotate">Rotation units, in 45 degree steps</param>
-		public void FastRotate(int rotate)
+		public IntVector FastRotate(int rotate)
 		{
 			int x = FastMul(FastCos(rotate), this.X) - FastMul(FastSin(rotate), this.Y);
 			int y = FastMul(FastSin(rotate), this.X) + FastMul(FastCos(rotate), this.Y);
 
-			this.X = x > 1 ? 1 : (x < -1 ? -1 : x);
-			this.Y = y > 1 ? 1 : (y < -1 ? -1 : y);
+			var ix = x > 1 ? 1 : (x < -1 ? -1 : x);
+			var iy = y > 1 ? 1 : (y < -1 ? -1 : y);
+
+			return new IntVector(ix, iy);
 		}
 
 		public static Direction RotateDir(Direction dir, int rotate)
@@ -229,7 +238,7 @@ namespace MyGame
 				y = -1;
 
 			IntVector v = new IntVector(x, y);
-			v.FastRotate(rotate);
+			v = v.FastRotate(rotate);
 			return v.ToDirection();
 		}
 

@@ -9,27 +9,29 @@ namespace MyGame
 	[DataContract]
 	public struct IntPoint3D : IEquatable<IntPoint3D>
 	{
-		[DataMember]
-		public int X { get; set; }
-		[DataMember]
-		public int Y { get; set; }
-		[DataMember]
-		public int Z { get; set; }
+		[DataMember(Name = "X")]
+		readonly int m_x;
+		[DataMember(Name = "Y")]
+		readonly int m_y;
+		[DataMember(Name = "Z")]
+		readonly int m_z;
+
+		public int X { get { return m_x; } }
+		public int Y { get { return m_y; } }
+		public int Z { get { return m_z; } }
 
 		public IntPoint3D(int x, int y, int z)
-			: this()
 		{
-			X = x;
-			Y = y;
-			Z = z;
+			m_x = x;
+			m_y = y;
+			m_z = z;
 		}
 
 		public IntPoint3D(IntPoint p, int z)
-			: this()
 		{
-			X = p.X;
-			Y = p.Y;
-			Z = z;
+			m_x = p.X;
+			m_y = p.Y;
+			m_z = z;
 		}
 
 		#region IEquatable<Location3D> Members

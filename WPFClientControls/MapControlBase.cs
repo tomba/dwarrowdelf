@@ -59,7 +59,7 @@ namespace MyGame
 
 		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
 			"TileSize", typeof(double), typeof(MapControlBase),
-			new FrameworkPropertyMetadata(32.0,	FrameworkPropertyMetadataOptions.AffectsArrange),
+			new FrameworkPropertyMetadata(32.0, FrameworkPropertyMetadataOptions.AffectsArrange),
 			v => ((double)v) >= 2);
 
 		public double TileSize
@@ -149,12 +149,12 @@ namespace MyGame
 
 			return s;
 		}
-		
+
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			drawingContext.DrawRectangle(Brushes.Black, null, new Rect(this.RenderSize));
 		}
-		
+
 		protected override int VisualChildrenCount
 		{
 			get { return m_tileCollection.Count + 1; }
@@ -181,14 +181,14 @@ namespace MyGame
 		public IntPoint ScreenPointToMapLocation(Point p)
 		{
 			var loc = ScreenPointToScreenLocation(p);
-			loc.Y = -loc.Y;
+			loc = new IntPoint(loc.X, -loc.Y);
 			return loc + (IntVector)this.TopLeftPos;
 		}
 
 		Point MapLocationToScreenPoint(IntPoint loc)
 		{
 			loc -= (IntVector)this.TopLeftPos;
-			loc.Y = -loc.Y;
+			loc = new IntPoint(loc.X, -loc.Y);
 			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 		}
 
@@ -203,10 +203,7 @@ namespace MyGame
 				var p2 = m_selectionEnd;
 
 				IntRect r = new IntRect(p1, p2);
-
-				r.Width += 1;
-				r.Height += 1;
-
+				r = r.Inflate(1, 1);
 				return r;
 			}
 
@@ -287,26 +284,23 @@ namespace MyGame
 			Point pos = e.GetPosition(this);
 
 			int limit = 4;
+			int cx = m_centerPos.X;
+			int cy = m_centerPos.Y;
 
 			if (this.ActualWidth - pos.X < limit)
-			{
-				++m_centerPos.X;
-				InvalidateTiles();
-			}
+				++cx;
 			else if (pos.X < limit)
-			{
-				--m_centerPos.X;
-				InvalidateTiles();
-			}
+				--cx;
 
 			if (this.ActualHeight - pos.Y < limit)
-			{
-				--m_centerPos.Y;
-				InvalidateTiles();
-			}
+				--cy;
 			else if (pos.Y < limit)
+				++cy;
+
+			var p = new IntPoint(cx, cy);
+			if (p != m_centerPos)
 			{
-				++m_centerPos.Y;
+				m_centerPos = p;
 				InvalidateTiles();
 			}
 
@@ -317,7 +311,7 @@ namespace MyGame
 				m_selectionEnd = newEnd;
 				InvalidateArrange();
 			}
-			
+
 			e.Handled = true;
 
 			if (SelectionChanged != null)
