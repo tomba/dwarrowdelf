@@ -168,6 +168,8 @@ namespace MyGame.ClientMsgs
 		public IEnumerable<TileData> TerrainIDs { get; set; }
 		[DataMember]
 		public IEnumerable<Message> ObjectData { get; set; }
+		[DataMember]
+		public IEnumerable<BuildingData> BuildingData { get; set; }
 	}
 
 
@@ -238,6 +240,26 @@ namespace MyGame.ClientMsgs
 		public override string ToString()
 		{
 			return String.Format("EventMessage({0})", this.Event);
+		}
+	}
+
+	[DataContract]
+	public class BuildingData : Message
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+		[DataMember]
+		public BuildingID ID { get; set; }
+		[DataMember]
+		public ObjectID Environment { get; set; }
+		[DataMember]
+		public int Z { get; set; }
+		[DataMember]
+		public IntRect Area { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("BuildingData");
 		}
 	}
 

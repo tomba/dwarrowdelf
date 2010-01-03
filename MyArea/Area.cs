@@ -162,6 +162,9 @@ namespace MyArea
 				item.MoveTo(env, new IntPoint3D(0, 3, 0));
 			}
 
+			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 4, 2, 2), Z = 0 };
+			env.AddBuilding(building);
+
 			return env;
 		}
 

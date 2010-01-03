@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using MyGame.ClientMsgs;
+using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
@@ -228,6 +229,35 @@ namespace MyGame.Client
 				TileData data = iter.Current;
 				m_tileGrid.SetTileData(p, data);
 			}
+		}
+
+		ObservableCollection<BuildingData> m_buildings = new ObservableCollection<BuildingData>();
+
+		public void AddBuilding(BuildingData building)
+		{
+			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+
+			m_buildings.Add(building);
+		}
+
+		public void SetBuildings(IEnumerable<ClientMsgs.BuildingData> buildings)
+		{
+			this.Version += 1;
+
+			var list = buildings.Select(bd => new BuildingData(this.World, bd.ObjectID, bd.ID)
+			{
+				Area = bd.Area,
+				Z = bd.Z,
+				Environment = this,
+			});
+
+			foreach (var b in list)
+				AddBuilding(b);
+		}
+
+		public BuildingData GetBuildingAt(IntPoint3D p)
+		{
+			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.TwoD));
 		}
 
 		public IList<ClientGameObject> GetContents(IntPoint3D l)

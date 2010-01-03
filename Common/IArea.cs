@@ -13,5 +13,6 @@ namespace MyGame
 		Materials Materials { get; }
 		IList<ObjectInfo> Objects { get; }
 		Stream DrawingStream { get; }
+		Buildings Buildings { get; }
 	}
 }

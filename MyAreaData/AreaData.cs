@@ -15,6 +15,7 @@ namespace MyArea.Data
 		Terrains m_terrains; // XXX move somewhere else
 		Materials m_materials;
 		List<ObjectInfo> m_objects;
+		Buildings m_buildings; // XXX somewhere else?
 
 		public AreaData()
 		{
@@ -22,6 +23,7 @@ namespace MyArea.Data
 			ParseObjects();
 			m_terrains = new Terrains();
 			m_materials = new Materials();
+			m_buildings = new Buildings();
 
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
 			m_drawingStream = ass.GetManifestResourceStream("MyArea.Data.PlanetCute.xaml");
@@ -32,6 +34,7 @@ namespace MyArea.Data
 		public Materials Materials { get { return m_materials; } }
 		public IList<ObjectInfo> Objects { get { return m_objects.AsReadOnly(); } }
 		public Stream DrawingStream { get { return m_drawingStream; } }
+		public Buildings Buildings { get { return m_buildings; } }
 
 		void ParseSymbols()
 		{

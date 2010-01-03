@@ -107,6 +107,7 @@
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="BuildingInfo.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>

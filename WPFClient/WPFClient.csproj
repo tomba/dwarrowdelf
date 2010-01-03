@@ -139,6 +139,7 @@
   <ItemGroup>
     <Compile Include="AI\AI.cs" />
     <Compile Include="AI\Task.cs" />
+    <Compile Include="Buildings.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="AI\Job.cs" />
     <Compile Include="Living.cs" />

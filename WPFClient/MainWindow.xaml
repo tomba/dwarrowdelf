@@ -205,7 +205,10 @@
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
-					</StackPanel>
+                        <TextBlock>Building:
+							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />
+						</TextBlock>
+                    </StackPanel>
 					<ListBox ItemsSource="{Binding Objects}" />
 				</DockPanel>
 			</GroupBox>

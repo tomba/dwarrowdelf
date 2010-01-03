@@ -234,6 +234,18 @@ namespace MyGame.Server
 			list.Add(child);
 		}
 
+
+		HashSet<BuildingData> m_buildings = new HashSet<BuildingData>();
+
+		public void AddBuilding(BuildingData building)
+		{
+			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+			Debug.Assert(building.Environment == null);
+			building.Environment = this;
+			m_buildings.Add(building);
+		}
+
+
 		public override ClientMsgs.Message Serialize()
 		{
 			var arr = new TileData[this.Width * this.Height * this.Depth];
@@ -256,6 +268,7 @@ namespace MyGame.Server
 				Bounds = this.Bounds,
 				TerrainIDs = arr,
 				ObjectData = obList,
+				BuildingData = m_buildings.Select(b => (ClientMsgs.BuildingData)b.Serialize()).ToArray(),
 			};
 
 			return msg;
@@ -325,6 +338,5 @@ namespace MyGame.Server
 				return base.Grid[GetIndex(p)].FloorMaterialID;
 			}
 		}
-
 	}
 }

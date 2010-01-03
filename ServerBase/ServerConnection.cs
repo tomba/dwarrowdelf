@@ -40,7 +40,7 @@ namespace MyGame.Server
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = false;
+		bool m_seeAll = true;
 
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();

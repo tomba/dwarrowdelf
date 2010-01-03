@@ -248,6 +248,7 @@ namespace MyGame.Client
 			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TerrainIDs.Count());
 			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
 			env.VisibilityMode = msg.VisibilityMode;
+			env.SetBuildings(msg.BuildingData);
 
 			DeliverMessages(msg.ObjectData);
 		}

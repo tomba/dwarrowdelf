@@ -283,16 +283,20 @@ namespace MyGame.Client
 				m_env.MapChanged -= MapChanged;
 		}
 
+		void NotifyTileChanges()
+		{
+			Notify("Interior");
+			Notify("Floor");
+			Notify("FloorMaterial");
+			Notify("InteriorMaterial");
+			Notify("Objects");
+			Notify("Building");
+		}
+
 		void MapChanged(IntPoint3D l)
 		{
 			if (l == m_location)
-			{
-				Notify("Interior");
-				Notify("Floor");
-				Notify("FloorMaterial");
-				Notify("InteriorMaterial");
-				Notify("Objects");
-			}
+				NotifyTileChanges();
 		}
 
 		public Environment Environment
@@ -309,11 +313,7 @@ namespace MyGame.Client
 					m_env.MapChanged += MapChanged;
 
 				Notify("Environment");
-				Notify("Interior");
-				Notify("Floor");
-				Notify("FloorMaterial");
-				Notify("InteriorMaterial");
-				Notify("Objects");
+				NotifyTileChanges();
 			}
 		}
 
@@ -324,11 +324,7 @@ namespace MyGame.Client
 			{
 				m_location = value;
 				Notify("Location");
-				Notify("Interior");
-				Notify("Floor");
-				Notify("FloorMaterial");
-				Notify("InteriorMaterial");
-				Notify("Objects");
+				NotifyTileChanges();
 			}
 		}
 
@@ -379,6 +375,16 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 				return m_env.GetContents(m_location);
+			}
+		}
+
+		public BuildingData Building
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetBuildingAt(m_location);
 			}
 		}
 
