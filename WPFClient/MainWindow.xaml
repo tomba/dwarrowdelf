@@ -67,8 +67,6 @@
 			<ToolBar>
 				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
 				<Separator />
-				<Button Click="OnClearLogClicked">Clear Log</Button>
-				<Separator />
 				<Button Click="LogOn_Button_Click">LogOn</Button>
 				<Separator />
 				<Button Click="LogOff_Button_Click">LogOff</Button>

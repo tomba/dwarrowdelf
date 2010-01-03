@@ -252,10 +252,6 @@ namespace MyGame
 			}
 		}
 
-		private void OnClearLogClicked(object sender, RoutedEventArgs e)
-		{
-		}
-
 		internal Environment Map
 		{
 			get { return map.Environment; }
