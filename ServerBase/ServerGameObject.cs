@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
 	{

@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	class ObjectCollection : ObservableCollection<ClientGameObject> { }
 

@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using MyGame.ClientMsgs;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	/// <summary>
 	/// Interaction logic for Window1.xaml

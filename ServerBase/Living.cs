@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	public class Living : ServerGameObject
 	{

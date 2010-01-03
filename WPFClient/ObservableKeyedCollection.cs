@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	public class ReadOnlyObservableKeyedCollection<K, T>
 		: ReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged

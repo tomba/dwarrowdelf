@@ -13,7 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+
 using MyGame;
+using MyGame.Client;
 
 namespace WPFMapControlTest
 {

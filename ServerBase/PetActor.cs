@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	public class PetActor : IActor
 	{

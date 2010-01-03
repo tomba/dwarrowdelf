@@ -14,9 +14,12 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.ComponentModel;
 using System.Diagnostics;
+
+using MyGame;
+using MyGame.Client;
 using AStarTest;
 
-namespace MyGame
+namespace AStarTest
 {
 	public class MapControl : MapControlBase, INotifyPropertyChanged
 	{

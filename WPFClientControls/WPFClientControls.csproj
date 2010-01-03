@@ -8,7 +8,7 @@
     <ProjectGuid>{994FA20F-F963-4847-BFE7-4EC2A256CE71}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WPFClientControls</RootNamespace>
+    <RootNamespace>MyGame.Client</RootNamespace>
     <AssemblyName>WPFClientControls</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

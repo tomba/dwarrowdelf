@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	public static class MyExtensions
 	{

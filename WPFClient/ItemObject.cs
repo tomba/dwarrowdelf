@@ -6,7 +6,7 @@ using System.Windows.Media;
 using MyGame.ClientMsgs;
 using System.Diagnostics;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	class ItemObject : ClientGameObject
 	{

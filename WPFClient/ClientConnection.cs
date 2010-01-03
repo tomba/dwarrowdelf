@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.ComponentModel;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	public class ClientNetStatistics : INotifyPropertyChanged
 	{

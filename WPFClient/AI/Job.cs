@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	interface IJob
 	{

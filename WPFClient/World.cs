@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	class World : INotifyPropertyChanged
 	{

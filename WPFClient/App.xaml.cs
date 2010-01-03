@@ -9,7 +9,7 @@ using System.Windows.Resources;
 using System.Threading;
 
 
-namespace MyGame
+namespace MyGame.Client
 {
 	/// <summary>
 	/// Interaction logic for App.xaml
@@ -37,8 +37,8 @@ namespace MyGame
 			base.OnStartup(e);
 
 #if DEBUG
-			bool debugClient = MyGame.Properties.Settings.Default.DebugClient;
-			bool debugServer = m_serverInAppDomain && MyGame.Properties.Settings.Default.DebugServer;
+			bool debugClient = MyGame.Client.Properties.Settings.Default.DebugClient;
+			bool debugServer = m_serverInAppDomain && MyGame.Client.Properties.Settings.Default.DebugServer;
 
 			if (debugClient || debugServer)
 			{
@@ -121,7 +121,7 @@ namespace MyGame
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
-			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server");
+			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server.Server");
 			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);

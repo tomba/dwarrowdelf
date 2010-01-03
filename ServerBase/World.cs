@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Threading;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	// XXX move somewhere else, but inside Server side */
 	public interface IArea

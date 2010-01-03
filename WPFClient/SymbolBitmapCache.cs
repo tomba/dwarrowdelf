@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace MyGame
+namespace MyGame.Client
 {
 	class SymbolBitmapCache
 	{

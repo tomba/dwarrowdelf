@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using MyGame;
 using System.Xml.Linq;
-using System.IO;
+using MyGame;
 
 namespace MyAreaData
 {

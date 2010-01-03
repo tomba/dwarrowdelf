@@ -1,16 +1,7 @@
-﻿#define LOCAL
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System;
 using System.Threading;
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Net;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	public class Server : MarshalByRefObject, IServer
 	{

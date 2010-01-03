@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using MyGame.ClientMsgs;
 
-namespace MyGame
+namespace MyGame.Server
 {
 	public class ServerConnection
 	{

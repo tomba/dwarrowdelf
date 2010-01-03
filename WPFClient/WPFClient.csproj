@@ -8,7 +8,7 @@
     <ProjectGuid>{1A669EF4-303D-40EE-8781-FE0C57A5DD49}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyGame</RootNamespace>
+    <RootNamespace>MyGame.Client</RootNamespace>
     <AssemblyName>WPFClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

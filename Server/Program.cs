@@ -7,7 +7,7 @@ using System.IO;
 using System.Diagnostics;
 
 
-namespace MyGame
+namespace MyGame.Server
 {
 	class ServerLauncher
 	{

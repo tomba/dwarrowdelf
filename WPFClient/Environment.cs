@@ -5,7 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using MyGame.ClientMsgs;
 
-namespace MyGame
+namespace MyGame.Client
 {
 
 	class MyGrowingGrid3D : GrowingGrid3DBase<MyGrowingGrid>

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-
-namespace MyGame
+namespace MyGame.Server
 {
 	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
 
-	public class Environment : ServerGameObject 
+	public class Environment : ServerGameObject
 	{
 		public event MapChanged MapChanged;
 
@@ -324,7 +323,7 @@ namespace MyGame
 			public MaterialID GetFloorMaterialID(IntPoint3D p)
 			{
 				return base.Grid[GetIndex(p)].FloorMaterialID;
-			}		
+			}
 		}
 
 	}
