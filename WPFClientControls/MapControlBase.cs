@@ -85,6 +85,11 @@ namespace MyGame
 		protected override Size MeasureOverride(Size availableSize)
 		{
 			//MyDebug.WriteLine("Measure");
+
+			if (double.IsPositiveInfinity(availableSize.Width) ||
+				double.IsPositiveInfinity(availableSize.Height))
+				return new Size(640, 480);
+
 			return availableSize;
 		}
 
