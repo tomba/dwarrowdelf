@@ -20,6 +20,8 @@ namespace MyGame
 		public int Y { get { return m_y; } }
 		public int Z { get { return m_z; } }
 
+		public IntPoint TwoD { get { return new IntPoint(this.X, this.Y); } }
+
 		public IntPoint3D(int x, int y, int z)
 		{
 			m_x = x;

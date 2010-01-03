@@ -102,6 +102,11 @@ namespace MyGame
 				return true;
 		}
 
+		public bool IntersectsWith(IntRect rect)
+		{
+			return rect.Left <= this.Right && rect.Right >= this.Left && rect.Top <= this.Bottom && rect.Bottom >= this.Top;
+		}
+
 		public IEnumerable<IntPoint> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Height; ++y)
