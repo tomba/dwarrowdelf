@@ -8,8 +8,8 @@
     <ProjectGuid>{73280BF6-102E-4224-B477-BE6AE4875B23}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyAreaData</RootNamespace>
-    <AssemblyName>MyAreaData</AssemblyName>
+    <RootNamespace>MyArea.Data</RootNamespace>
+    <AssemblyName>MyArea.Data</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -107,7 +107,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common</Name>
+      <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

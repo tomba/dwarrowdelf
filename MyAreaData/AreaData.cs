@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml.Linq;
 using MyGame;
 
-namespace MyAreaData
+namespace MyArea.Data
 {
 	public class AreaData : IAreaData
 	{
@@ -24,7 +24,7 @@ namespace MyAreaData
 			m_materials = new Materials();
 
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			m_drawingStream = ass.GetManifestResourceStream("MyAreaData.PlanetCute.xaml");
+			m_drawingStream = ass.GetManifestResourceStream("MyArea.Data.PlanetCute.xaml");
 		}
 
 		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
@@ -36,7 +36,7 @@ namespace MyAreaData
 		void ParseSymbols()
 		{
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyAreaData.Symbols.xml");
+			Stream resStream = ass.GetManifestResourceStream("MyArea.Data.Symbols.xml");
 
 			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement rootElem = root.Element("Symbols");
@@ -79,7 +79,7 @@ namespace MyAreaData
 		void ParseObjects()
 		{
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyAreaData.Objects.xml");
+			Stream resStream = ass.GetManifestResourceStream("MyArea.Data.Objects.xml");
 
 			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement objectInfosElem = root.Element("Objects");

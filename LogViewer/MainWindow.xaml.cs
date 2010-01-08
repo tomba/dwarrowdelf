@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.IO;
-using MemoryMappedLog;
+using MyGame.MemoryMappedLog;
 using System.Globalization;
 
 namespace LogViewer
