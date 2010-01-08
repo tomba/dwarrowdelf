@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MemoryMappedLog;
 
-
 namespace MyGame
 {
 	[Flags]
@@ -45,6 +44,32 @@ namespace MyGame
 		public static void WriteLine(string format, params object[] args)
 		{
 			WriteLine(String.Format(format, args));
+		}
+	}
+
+	public class MyDebugListener : TraceListener
+	{
+		public override void Write(string message)
+		{
+			MyDebug.WriteLine(message);
+		}
+
+		public override void WriteLine(string message)
+		{
+			MyDebug.WriteLine(message);
+		}
+	}
+
+	public class MyTraceListener : TraceListener
+	{
+		public override void Write(string message)
+		{
+			MyTrace.WriteLine(message);
+		}
+
+		public override void WriteLine(string message)
+		{
+			MyTrace.WriteLine(message);
 		}
 	}
 }
