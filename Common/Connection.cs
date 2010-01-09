@@ -135,6 +135,7 @@ namespace MyGame
 						msg = Serializer.Deserialize(memstream);
 
 					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
+					MyDebug.WriteLine("[RX] {0}", msg);
 					if (ReceiveEvent != null)
 						ReceiveEvent(msg);
 

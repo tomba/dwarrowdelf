@@ -168,6 +168,8 @@ namespace MyGame.Client
 			GameData.Data.World = null;
 		}
 
+		public event Action LogOnCharEvent;
+
 		void HandleMessage(LogOnCharReply msg)
 		{
 			this.IsCharConnected = true;
@@ -179,11 +181,19 @@ namespace MyGame.Client
 
 			if (App.MainWindow.FollowObject == null)
 				App.MainWindow.FollowObject = player;
+
+			if (LogOnCharEvent != null)
+				LogOnCharEvent();
 		}
+
+		public event Action LogOffCharEvent;
 
 		void HandleMessage(LogOffCharReply msg)
 		{
 			this.IsCharConnected = false;
+
+			if (LogOffCharEvent != null)
+				LogOffCharEvent();
 
 			World.TheWorld.Controllables.Clear();
 			GameData.Data.CurrentObject = null;

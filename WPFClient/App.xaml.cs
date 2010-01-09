@@ -60,10 +60,6 @@ namespace MyGame.Client
 				m_serverThread = new Thread(ServerThreadStart);
 				m_serverThread.Start();
 			}
-			else
-			{
-				//m_connection.BeginConnect(ConnectCallback);
-			}
 		}
 
 		void ServerStartedCallback(object state, bool timedOut)
@@ -76,32 +72,12 @@ namespace MyGame.Client
 			m_serverStartWaitHandle.Close();
 			m_serverStartWaitHandle = null;
 
-			//m_connection.BeginConnect(ConnectCallback);
-		}
-
-		void ConnectCallback()
-		{
-			//m_connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+			// XXX mainwindow is already open before server is up
 		}
 
 		protected override void OnExit(ExitEventArgs e)
 		{
 			base.OnExit(e);
-
-			var conn = GameData.Data.Connection;
-
-			if (conn.IsCharConnected)
-			{
-				conn.Send(new ClientMsgs.LogOffCharRequest());
-			}
-
-			if (conn.IsUserConnected)
-			{
-				conn.Send(new ClientMsgs.LogOffRequest());
-				Thread.Sleep(100);	// XXX wait for LogOffReply.
-				conn.Disconnect();
-				GameData.Data.Connection = null;
-			}
 
 			if (m_serverInAppDomain && m_serverStopWaitHandle != null)
 			{

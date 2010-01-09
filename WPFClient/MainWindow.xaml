@@ -89,10 +89,10 @@
 
 		<StatusBar DockPanel.Dock="Bottom" >
 			Tick
-			<TextBlock Text="{Binding World.TickNumber}" />
+			<TextBlock Text="{Binding World.TickNumber, FallbackValue=-}" />
 			<Separator />
 			Env
-			<TextBlock Text="{Binding Path=Environment, ElementName=map}" />
+			<TextBlock Text="{Binding Path=Environment, ElementName=map, TargetNullValue=-}" />
 			<Separator />
 			Z
 			<TextBlock Text="{Binding Path=Z, ElementName=map}" />

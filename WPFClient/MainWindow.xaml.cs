@@ -24,6 +24,7 @@ namespace MyGame.Client
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		ClientGameObject m_followObject;
+		bool m_closing;
 
 		public MainWindow()
 		{
@@ -43,11 +44,8 @@ namespace MyGame.Client
 
 			GameData.Data.Connection.LogOnEvent += OnLoggedOn;
 			GameData.Data.Connection.LogOffEvent += OnLoggedOff;
-		}
-
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
+			GameData.Data.Connection.LogOnCharEvent += OnCharLoggedOn;
+			GameData.Data.Connection.LogOffCharEvent += OnCharLoggedOff;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -63,9 +61,37 @@ namespace MyGame.Client
 		{
 			base.OnClosing(e);
 
+			if (m_closing)
+				return;
+
 			var p = Win32.Helpers.SaveWindowPlacement(this);
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
+
+			var conn = GameData.Data.Connection;
+
+			if (conn.IsCharConnected)
+			{
+				e.Cancel = true;
+				m_closing = true;
+				conn.Send(new ClientMsgs.LogOffCharRequest());
+			}
+			else if (conn.IsUserConnected)
+			{
+				e.Cancel = true;
+				m_closing = true;
+				conn.Send(new ClientMsgs.LogOffRequest());
+			}
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			GameData.Data.Connection.LogOnEvent -= OnLoggedOn;
+			GameData.Data.Connection.LogOffEvent -= OnLoggedOff;
+			GameData.Data.Connection.LogOnCharEvent -= OnLoggedOn;
+			GameData.Data.Connection.LogOffCharEvent -= OnLoggedOff;
 		}
 
 		public ClientGameObject FollowObject
@@ -357,7 +383,8 @@ namespace MyGame.Client
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
-			GameData.Data.Connection.BeginConnect(ConnectCallback);
+			if (!GameData.Data.Connection.IsUserConnected)
+				GameData.Data.Connection.BeginConnect(ConnectCallback);
 		}
 
 		void ConnectCallback()
@@ -365,30 +392,51 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
 		}
 
+		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Connection.IsUserConnected)
+				GameData.Data.Connection.Send(new LogOffRequest());
+		}
+
+		private void LogOnChar_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Connection.IsUserConnected && !GameData.Data.Connection.IsCharConnected)
+				GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+		}
+
+		private void LogOffChar_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Connection.IsCharConnected)
+				GameData.Data.Connection.Send(new LogOffCharRequest());
+		}
+
 		void OnLoggedOn()
 		{
 			//GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
 		}
 
-		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
+		void OnCharLoggedOn()
 		{
-			GameData.Data.Connection.Send(new LogOffRequest());
+		}
+
+		void OnCharLoggedOff()
+		{
+			if (m_closing)
+			{
+				var conn = GameData.Data.Connection;
+				conn.Send(new ClientMsgs.LogOffRequest());
+			}
 		}
 
 		void OnLoggedOff()
 		{
 			GameData.Data.Connection.Disconnect();
+
+			if (m_closing)
+				Close();
 		}
 
-		private void LogOnChar_Button_Click(object sender, RoutedEventArgs e)
-		{
-			GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
-		}
 
-		private void LogOffChar_Button_Click(object sender, RoutedEventArgs e)
-		{
-			GameData.Data.Connection.Send(new LogOffCharRequest());
-		}
 
 		#region INotifyPropertyChanged Members
 
