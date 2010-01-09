@@ -7,6 +7,7 @@
     
     <Window.Resources>
         <local:IntToDebugFlagConverter x:Key="debugFlagConverter"/>
+        <local:LogEntryToBgBrushConverter x:Key="bgConverter" />
     </Window.Resources>
     
     <DockPanel>
@@ -14,6 +15,8 @@
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <Button Click="OnClearClicked">Clear</Button>
+                <Separator />
+                <Button Click="OnMarkClicked">Mark</Button>
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
             </ToolBar>
@@ -26,14 +29,11 @@
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Value="Server">
-                            <Setter Property="Background" Value="LightGray" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Value="Mark">
-                            <Setter Property="Background" Value="Blue" />
-                        </DataTrigger>
-                    </Style.Triggers>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <Binding Converter="{StaticResource bgConverter}" />
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
             

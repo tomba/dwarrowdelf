@@ -11,10 +11,10 @@ namespace MyGame
 	[Flags]
 	public enum DebugFlag : int
 	{
-		None,
-		Mark,
-		Client,
-		Server,
+		None = 0,
+		Mark = 1 << 0,
+		Client = 1 << 1,
+		Server = 1 << 2,
 	}
 
 	public static class MyDebug

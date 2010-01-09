@@ -21,10 +21,10 @@ namespace LogViewer
 	[Flags]
 	public enum DebugFlag : int
 	{
-		None,
-		Mark,
-		Client,
-		Server,
+		None = 0,
+		Mark = 1 << 0,
+		Client = 1 << 1,
+		Server = 1 << 2,
 	}
 
 	[ValueConversion(typeof(int), typeof(DebugFlag))]
@@ -37,7 +37,32 @@ namespace LogViewer
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return (DebugFlag)value;
+			throw new NotImplementedException();
+		}
+	}
+
+	[ValueConversion(typeof(LogEntry), typeof(Brush))]
+	public class LogEntryToBgBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var entry = (LogEntry)value;
+
+			if (entry.Message == "Start")
+				return Brushes.LightGreen;
+
+			if ((entry.Flags & (int)DebugFlag.Mark) != 0)
+				return  Brushes.Blue;
+
+			if ((entry.Flags & (int)DebugFlag.Server) != 0)
+				return Brushes.LightGray;
+
+			return null;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
 		}
 	}
 
@@ -45,7 +70,6 @@ namespace LogViewer
 	{
 		ObservableCollection<LogEntry> m_debugCollection = new ObservableCollection<LogEntry>();
 		public ObservableCollection<LogEntry> DebugEntries { get { return m_debugCollection; } }
-		System.Windows.Threading.DispatcherTimer m_markTimer;
 		StreamWriter m_logFile;
 		bool m_scrollToEnd = true;
 		int m_logIndex;
@@ -54,12 +78,8 @@ namespace LogViewer
 
 		public MainWindow()
 		{
-			m_markTimer = new System.Windows.Threading.DispatcherTimer();
-			m_markTimer.Interval = TimeSpan.FromSeconds(4);
-			m_markTimer.Tick += new EventHandler(MarkTimerTick);
-
 			m_logFile = File.CreateText("test.log");
-			
+
 			InitializeComponent();
 		}
 
@@ -105,10 +125,8 @@ namespace LogViewer
 			AddRange(entries);
 		}
 
-		void MarkTimerTick(object sender, EventArgs e)
+		public void Add(LogEntry entry)
 		{
-			m_markTimer.Stop();
-			var entry = new LogEntry() { Message = "", Flags = (int)DebugFlag.Mark };
 			m_debugCollection.Add(entry);
 
 			while (m_debugCollection.Count > 500)
@@ -120,8 +138,6 @@ namespace LogViewer
 
 		public void AddRange(IEnumerable<LogEntry> entries)
 		{
-			m_markTimer.Stop();
-
 			LogEntry last = null;
 
 			foreach (var e in entries)
@@ -139,13 +155,17 @@ namespace LogViewer
 
 			if (m_scrollToEnd && last != null)
 				logListView.ScrollIntoView(last);
-
-			m_markTimer.Start();
 		}
 
 		void OnClearClicked(object sender, RoutedEventArgs e)
 		{
 			m_debugCollection.Clear();
+		}
+
+		void OnMarkClicked(object sender, RoutedEventArgs e)
+		{
+			var entry = new LogEntry() { Message = "", Flags = (int)DebugFlag.Mark };
+			Add(entry);
 		}
 	}
 }
