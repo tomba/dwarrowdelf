@@ -35,7 +35,7 @@ namespace MyGame.Server
 		static int s_userIDs = 1;
 		Dictionary<Type, InvokeInfo> m_handlerMap = new Dictionary<Type, InvokeInfo>();
 		World m_world;
-		Living m_player;
+		bool m_charLoggedIn;
 
 		int m_userID;
 
@@ -168,7 +168,7 @@ namespace MyGame.Server
 		{
 			MyDebug.WriteLine("Logout");
 
-			if (m_player != null)
+			if (m_charLoggedIn)
 				ReceiveMessage(new LogOffCharRequest()); // XXX
 
 			m_world.RemoveUser(this);
@@ -200,7 +200,7 @@ namespace MyGame.Server
 			}
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Normal)]
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(ProceedTickMessage msg)
 		{
 			MyDebug.WriteLine("ProceedTick command");
@@ -216,18 +216,17 @@ namespace MyGame.Server
 			MyDebug.WriteLine("LogOnChar {0}", name);
 
 			var env = m_world.Environments.First(); // XXX entry location
-
 			var obs = m_world.AreaData.Objects;
 
-			m_player = new Living(m_world);
-			m_player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
-			m_player.Name = "player";
-			m_player.Actor = new InteractiveActor();
+#if asd
+			var player = new Living(m_world);
+			player.SymbolID = obs.Single(o => o.Name == "Player").SymbolID; ;
+			player.Name = "player";
+			player.Actor = new InteractiveActor();
 
-			MyDebug.WriteLine("Player ob id {0}", m_player.ObjectID);
+			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
 
-			m_friendlies.Add(m_player);
-			Send(new ClientMsgs.LogOnCharReply() { PlayerID = m_player.ObjectID });
+			m_friendlies.Add(player);
 
 			var diamond = m_world.AreaData.Materials.GetMaterialInfo("Diamond").ID;
 
@@ -237,7 +236,7 @@ namespace MyGame.Server
 				SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
 				MaterialID = diamond,
 			};
-			item.MoveTo(m_player);
+			item.MoveTo(player);
 
 			item = new ItemObject(m_world)
 			{
@@ -246,12 +245,12 @@ namespace MyGame.Server
 				Color = GameColors.Green,
 				MaterialID = diamond,
 			};
-			item.MoveTo(m_player);
+			item.MoveTo(player);
 
-			if (!m_player.MoveTo(env, new IntPoint3D(0, 0, 0)))
+			if (!player.MoveTo(env, new IntPoint3D(0, 0, 0)))
 				throw new Exception("Unable to move player");
 
-			var inv = m_player.SerializeInventory();
+			var inv = player.SerializeInventory();
 			Send(inv);
 
 			var pet = new Living(m_world);
@@ -259,9 +258,33 @@ namespace MyGame.Server
 			pet.Name = "lemmikki";
 			pet.Actor = new InteractiveActor();
 			m_friendlies.Add(pet);
-			Send(new ClientMsgs.LogOnCharReply() { PlayerID = pet.ObjectID });
 
-			pet.MoveTo(m_player.Environment, m_player.Location + new IntVector(1, 0));
+			pet.MoveTo(player.Environment, player.Location + new IntVector(1, 0));
+#else
+			var rand = new Random();
+			for (int i = 0; i < 10; ++i)
+			{
+				IntPoint3D p;
+				do
+				{
+					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
+				} while (env.GetInteriorID(p) != InteriorID.Empty);
+
+				var player = new Living(m_world)
+				{
+					SymbolID = obs.Single(o => o.Name == "Player").SymbolID,
+					Name = String.Format("Dwarf{0}", i),
+					Actor = new InteractiveActor(),
+					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
+				};
+				m_friendlies.Add(player);
+				if (!player.MoveTo(env, p))
+					throw new Exception();
+			}
+#endif
+			m_charLoggedIn = true;
+			Send(new ClientMsgs.LogOnCharReply());
+			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
@@ -269,13 +292,16 @@ namespace MyGame.Server
 		{
 			MyDebug.WriteLine("LogOffChar");
 
-			m_friendlies.Remove(m_player);
+			foreach (var l in m_friendlies)
+			{
+				l.Cleanup();
+			}
 
-			m_player.Actor = null;
-			m_player.Cleanup();
-			m_player = null;
+			m_friendlies.Clear();
 
+			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
 			Send(new ClientMsgs.LogOffCharReply());
+			m_charLoggedIn = false;
 		}
 
 		void ReceiveMessage(EnqueueActionMessage msg)

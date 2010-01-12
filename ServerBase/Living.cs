@@ -29,6 +29,7 @@ namespace MyGame.Server
 
 		public void Cleanup()
 		{
+			this.Actor = null;
 			this.MoveTo(null, new IntPoint3D());
 			World.RemoveLiving(this);
 		}
@@ -161,7 +162,10 @@ namespace MyGame.Server
 			GameAction action = GetCurrentAction();
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
+			{
+				MyDebug.WriteLine("PerformAction {0} : skipping", this);
 				return;
+			}
 
 			Debug.Assert(action.ActorObjectID == this.ObjectID);
 

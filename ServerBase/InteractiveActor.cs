@@ -11,12 +11,8 @@ namespace MyGame.Server
 		{
 		}
 
-		#region IActor Members
-
 		public void DetermineAction()
 		{
 		}
-
-		#endregion
 	}
 }

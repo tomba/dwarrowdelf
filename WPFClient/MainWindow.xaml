@@ -6,202 +6,204 @@
 	x:ClassModifier="internal"
 	x:Name="mainWindow"
     DataContext="{x:Static local:GameData.Data}" >
-	<Window.Resources>
-		<DataTemplate DataType="{x:Type local:ClientGameObject}">
-			<DataTemplate.Resources>
-				<Style TargetType="TextBlock">
-					<Setter Property="Margin" Value="5,3" />
-				</Style>
-			</DataTemplate.Resources>
-			<StackPanel Orientation="Horizontal">
-				<Image Source="{Binding Path=Drawing}" Stretch="Uniform"
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:ClientGameObject}">
+            <DataTemplate.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5,3" />
+                </Style>
+            </DataTemplate.Resources>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding Path=Drawing}" Stretch="Uniform"
 					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}"
 					   HorizontalAlignment="Left" />
-				<TextBlock Name="nameTextBlock" Text="{Binding Path=Name}" />
-				<StackPanel.ToolTip>
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition />
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
-							<RowDefinition />
+                <TextBlock Name="nameTextBlock" Text="{Binding Path=Name}" />
+                <StackPanel.ToolTip>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
 
-						</Grid.RowDefinitions>
-						<Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+                        </Grid.RowDefinitions>
+                        <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
 							   Source="{Binding Path=Drawing}" Stretch="Uniform" />
 
-						<TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="1"
+                        <TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="1"
 								   Text="{Binding Path=Name}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="2"
+                        <TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="2"
 								   Text="{Binding Path=Color}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="3"
+                        <TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="3"
 								   Text="{Binding Path=Material.Name}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="4"
+                        <TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="4"
 								   Text="{Binding Path=ObjectID}" />
 
-						<TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
-						<TextBlock Grid.Column="1" Grid.Row="5"
+                        <TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="5"
 								   Text="{Binding Path=Parent}" />
-					</Grid>
-				</StackPanel.ToolTip>
-			</StackPanel>
-		</DataTemplate>
-	</Window.Resources>
+                    </Grid>
+                </StackPanel.ToolTip>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
 
-	<DockPanel>
-		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
-				<ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
-				<Separator />
-				<Button Click="LogOn_Button_Click">LogOn</Button>
-				<Separator />
-				<Button Click="LogOff_Button_Click">LogOff</Button>
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
+                <Separator />
+                <Button Click="LogOn_Button_Click">LogOn</Button>
+                <Separator />
+                <Button Click="LogOff_Button_Click">LogOff</Button>
                 <Separator />
                 <Button Click="LogOnChar_Button_Click">LogOnChar</Button>
                 <Separator />
                 <Button Click="LogOffChar_Button_Click">LogOffChar</Button>
             </ToolBar>
 
-			<ToolBar>
-				<StackPanel Orientation="Horizontal">
-					<TextBlock VerticalAlignment="Center">CurrentObject</TextBlock>
-					<ComboBox MinWidth="100" ItemsSource="{Binding World.Controllables}"
-                          SelectedItem="{Binding Path=CurrentObject}"
-                          IsReadOnly="True" />
-				</StackPanel>
-			</ToolBar>
+            <ToolBar>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Name="currentObjectCheckBox" VerticalAlignment="Center" Margin="2,0" 
+                              Unchecked="currentObjectCheckBox_Unchecked" Checked="currentObjectCheckBox_Checked">CurrentObject</CheckBox>
+                    <ComboBox Name="currentObjectComboBox" IsEnabled="{Binding ElementName=currentObjectCheckBox, Path=IsChecked}" MinWidth="100"
+                              ItemsSource="{Binding World.Controllables}"
+                              SelectedItem="{Binding Path=CurrentObject}"
+                              IsReadOnly="True" />
+                </StackPanel>
+            </ToolBar>
 
-		</ToolBarTray>
+        </ToolBarTray>
 
-		<StatusBar DockPanel.Dock="Bottom" >
-			Tick
-			<TextBlock Text="{Binding World.TickNumber, FallbackValue=-}" />
-			<Separator />
-			Env
-			<TextBlock Text="{Binding Path=Environment, ElementName=map, TargetNullValue=-}" />
-			<Separator />
-			Z
-			<TextBlock Text="{Binding Path=Z, ElementName=map}" />
-			<Separator />
-			<TextBlock DataContext="{Binding Connection.Stats}">
+        <StatusBar DockPanel.Dock="Bottom" >
+            Tick
+            <TextBlock Text="{Binding World.TickNumber, FallbackValue=-}" />
+            <Separator />
+            Env
+            <TextBlock Text="{Binding Path=Environment, ElementName=map, TargetNullValue=-}" />
+            <Separator />
+            Z
+            <TextBlock Text="{Binding Path=Z, ElementName=map}" />
+            <Separator />
+            <TextBlock DataContext="{Binding Connection.Stats}">
 				<TextBlock.Text>
 					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
 						<Binding Path="SentMessages" FallbackValue="0" />
 						<Binding Path="SentBytes" FallbackValue="0" />
 					</MultiBinding>
 				</TextBlock.Text>
-			</TextBlock>
-			<Separator />
-			<TextBlock DataContext="{Binding Connection.Stats}">
+            </TextBlock>
+            <Separator />
+            <TextBlock DataContext="{Binding Connection.Stats}">
 				<TextBlock.Text>
 					<MultiBinding StringFormat="Recv: {0} / {1:N0}">
 						<Binding Path="ReceivedMessages" FallbackValue="0" />
 						<Binding Path="ReceivedBytes" FallbackValue="0" />
 					</MultiBinding>
 				</TextBlock.Text>
-			</TextBlock>
-			<Separator />
-		</StatusBar>
+            </TextBlock>
+            <Separator />
+        </StatusBar>
 
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="3*"/>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-			</Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
 
-			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
 
-			</Grid.RowDefinitions>
+            </Grid.RowDefinitions>
 
-			<local:MapControl x:Name="map" SelectionEnabled="True"
+            <local:MapControl x:Name="map" SelectionEnabled="True"
 							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
-				<local:MapControl.ContextMenu>
-					<ContextMenu>
-						<MenuItem Header="Change tile">
-							<MenuItem Header="Floor" Click="MenuItem_Click_Floor" />
-							<MenuItem Header="Wall" Click="MenuItem_Click_Wall"/>
-						</MenuItem>
-						<MenuItem Header="Jobs">
-							<MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
-						</MenuItem>
-						<MenuItem Header="File"/>
-						<MenuItem Header="Save"/>
-						<MenuItem Header="SaveAs"/>
-					</ContextMenu>
-				</local:MapControl.ContextMenu>
-			</local:MapControl>
+                <local:MapControl.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Change tile">
+                            <MenuItem Header="Floor" Click="MenuItem_Click_Floor" />
+                            <MenuItem Header="Wall" Click="MenuItem_Click_Wall"/>
+                        </MenuItem>
+                        <MenuItem Header="Jobs">
+                            <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
+                        </MenuItem>
+                        <MenuItem Header="File"/>
+                        <MenuItem Header="Save"/>
+                        <MenuItem Header="SaveAs"/>
+                    </ContextMenu>
+                </local:MapControl.ContextMenu>
+            </local:MapControl>
 
-			<GroupBox Grid.Column="1" Grid.Row="0" Header="Inventory" Focusable="False">
-				<DockPanel>
-					<Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-					<ListBox Name="inventoryListBox"
+            <GroupBox Grid.Column="1" Grid.Row="0" Header="Inventory" Focusable="False">
+                <DockPanel>
+                    <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
+                    <ListBox Name="inventoryListBox"
 							 ItemsSource="{Binding Path=CurrentObject.Inventory}"
 							 SelectionMode="Extended" />
-				</DockPanel>
-			</GroupBox>
+                </DockPanel>
+            </GroupBox>
 
-			<GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
-				<ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock>
+            <GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
+                <ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
 								<TextBlock Text="{Binding ActorObjectID}" />
 								: left <TextBlock Text="{Binding TicksLeft}" />
 							</TextBlock>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</GroupBox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
 
-			<GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
+            <GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
 					  DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
-				<DockPanel>
-					<StackPanel DockPanel.Dock="Top">
-						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-						<TextBlock>Interior:
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                        <TextBlock>Interior:
 							<TextBlock Text="{Binding Interior.Name}" />
 							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
-						<TextBlock>Floor:
+                        <TextBlock>Floor:
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
-					</StackPanel>
-					<Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-					<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
+                    </StackPanel>
+                    <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
+                    <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
 							 SelectionMode="Extended" />
-				</DockPanel>
-			</GroupBox>
+                </DockPanel>
+            </GroupBox>
 
-			<GroupBox Grid.Column="2" Grid.Row="1" Header="Selected Tile Info"
+            <GroupBox Grid.Column="2" Grid.Row="1" Header="Selected Tile Info"
 					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map}">
-				<DockPanel>
-					<StackPanel DockPanel.Dock="Top">
-						<TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-						<TextBlock>Interior:
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                        <TextBlock>Interior:
 							<TextBlock Text="{Binding Interior.Name}" />
 							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
-						<TextBlock>Floor:
+                        <TextBlock>Floor:
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
@@ -209,35 +211,35 @@
 							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />
 						</TextBlock>
                     </StackPanel>
-					<ListBox ItemsSource="{Binding Objects}" />
-				</DockPanel>
-			</GroupBox>
+                    <ListBox ItemsSource="{Binding Objects}" />
+                </DockPanel>
+            </GroupBox>
 
-			<GroupBox Grid.Column="1" Grid.Row="2" Header="Jobs">
-				<ListBox ItemsSource="{Binding World.Jobs}">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock>
+            <GroupBox Grid.Column="1" Grid.Row="2" Header="Jobs">
+                <ListBox ItemsSource="{Binding World.Jobs}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
 								<TextBlock Text="{Binding}" />
 								, worker <TextBlock Text="{Binding Worker}" />
 								: task <TextBlock Text="{Binding CurrentTask}" />
 							</TextBlock>
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-			</GroupBox>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
 
-			<GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
-				<ListBox ItemsSource="{Binding World.Objects}" 
+            <GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
+                <ListBox ItemsSource="{Binding World.Objects}" 
 						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
-			</GroupBox>
+            </GroupBox>
 
-			<GroupBox Grid.Column="2" Grid.Row="3" Header="Environments">
-				<ListBox ItemsSource="{Binding World.Environments}"
+            <GroupBox Grid.Column="2" Grid.Row="3" Header="Environments">
+                <ListBox ItemsSource="{Binding World.Environments}"
 						 SelectedItem="{Binding Path=Environment, ElementName=map}" />
-			</GroupBox>
-		</Grid>
+            </GroupBox>
+        </Grid>
 
-	</DockPanel>
+    </DockPanel>
 
 </Window>

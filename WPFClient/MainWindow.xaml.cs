@@ -212,14 +212,7 @@ namespace MyGame.Client
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				if (currentOb != null)
-				{
-					currentOb.EnqueueAction(new WaitAction(1));
-				}
-				else
-				{
-					GameData.Data.Connection.Send(new ProceedTickMessage());
-				}
+				GameData.Data.Connection.Send(new ProceedTickMessage());
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -295,7 +288,8 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = new IntCube(r, map.Z),
-				TileData = new TileData() {
+				TileData = new TileData()
+				{
 					FloorID = FloorID.NaturalFloor,
 					FloorMaterialID = stone,
 					InteriorID = InteriorID.Empty,
@@ -314,7 +308,8 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = new IntCube(r, map.Z),
-				TileData = new TileData() {
+				TileData = new TileData()
+				{
 					FloorID = FloorID.NaturalFloor,
 					FloorMaterialID = stone,
 					InteriorID = InteriorID.NaturalWall,
@@ -448,6 +443,16 @@ namespace MyGame.Client
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
+		}
+
+		private void currentObjectCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			currentObjectComboBox.SelectedItem = World.TheWorld.Controllables.FirstOrDefault();
+		}
+
+		private void currentObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			currentObjectComboBox.SelectedItem = null;
 		}
 	}
 }

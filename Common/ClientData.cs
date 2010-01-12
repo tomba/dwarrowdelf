@@ -51,8 +51,6 @@ namespace MyGame.ClientMsgs
 	[DataContract]
 	public class LogOnCharReply : Message
 	{
-		[DataMember]
-		public ObjectID PlayerID { get; set; }
 	}
 
 	[DataContract]
@@ -263,5 +261,16 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
+	[DataContract]
+	public class ControllablesData : Message
+	{
+		[DataMember]
+		public IEnumerable<ObjectID> Controllables { get; set; }
+
+		public override string ToString()
+		{
+			return "ControllablesData";
+		}
+	}
 
 }

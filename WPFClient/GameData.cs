@@ -38,7 +38,12 @@ namespace MyGame.Client
 		public Living CurrentObject
 		{
 			get { return m_currentObject; }
-			set { m_currentObject = value; Notify("CurrentObject"); }
+			set
+			{
+				m_currentObject = value;
+				App.MainWindow.FollowObject = value;
+				Notify("CurrentObject");
+			}
 		}
 
 		World m_world;

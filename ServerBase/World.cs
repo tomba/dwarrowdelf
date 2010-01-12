@@ -582,7 +582,7 @@ namespace MyGame.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
+			bool forceMove = (m_useMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
 
 			VDbg("SequentialWork");
 
@@ -597,8 +597,7 @@ namespace MyGame.Server
 				if (!forceMove && !living.HasAction)
 					break;
 
-				if (living.HasAction)
-					living.PerformAction();
+				living.PerformAction();
 
 				var last = GetNextLivingSeq();
 				if (last)

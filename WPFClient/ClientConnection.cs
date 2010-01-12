@@ -174,16 +174,21 @@ namespace MyGame.Client
 		{
 			this.IsCharConnected = true;
 
-			var player = new Living(World.TheWorld, msg.PlayerID);
-			World.TheWorld.Controllables.Add(player);
-			if (GameData.Data.CurrentObject == null)
-				GameData.Data.CurrentObject = player;
-
-			if (App.MainWindow.FollowObject == null)
-				App.MainWindow.FollowObject = player;
-
 			if (LogOnCharEvent != null)
 				LogOnCharEvent();
+		}
+
+		void HandleMessage(ControllablesData msg)
+		{
+			World.TheWorld.Controllables.Clear();
+
+			foreach (var oid in msg.Controllables)
+			{
+				var l = World.TheWorld.FindObject<Living>(oid);
+				if (l == null)
+					l = new Living(World.TheWorld, oid);
+				World.TheWorld.Controllables.Add(l);
+			}
 		}
 
 		public event Action LogOffCharEvent;
@@ -197,7 +202,7 @@ namespace MyGame.Client
 
 			World.TheWorld.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
-			App.MainWindow.FollowObject = null;
+			//App.MainWindow.FollowObject = null;
 		}
 
 		void HandleMessage(TerrainData msg)
