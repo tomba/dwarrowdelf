@@ -15,32 +15,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using MyGame.MemoryMappedLog;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace LogViewer
 {
-	[Flags]
-	public enum DebugFlag : int
-	{
-		None = 0,
-		Mark = 1 << 0,
-		Client = 1 << 1,
-		Server = 1 << 2,
-	}
-
-	[ValueConversion(typeof(int), typeof(DebugFlag))]
-	public class IntToDebugFlagConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			return (DebugFlag)value;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
 	[ValueConversion(typeof(LogEntry), typeof(Brush))]
 	public class LogEntryToBgBrushConverter : IValueConverter
 	{
@@ -51,10 +29,13 @@ namespace LogViewer
 			if (entry.Message == "Start")
 				return Brushes.LightGreen;
 
-			if ((entry.Flags & (int)DebugFlag.Mark) != 0)
-				return  Brushes.Blue;
+			if (Regex.IsMatch(entry.Message, "-- Tick .* started --"))
+				return Brushes.LightGreen;
 
-			if ((entry.Flags & (int)DebugFlag.Server) != 0)
+			if (entry.Component == "Mark")
+				return Brushes.Blue;
+
+			if (entry.Component == "Server")
 				return Brushes.LightGray;
 
 			return null;
@@ -73,12 +54,15 @@ namespace LogViewer
 		StreamWriter m_logFile;
 		bool m_scrollToEnd = true;
 		int m_logIndex;
+		DateTime m_lastDateTime;
 
 		public bool Halt { get; set; }
 
 		public MainWindow()
 		{
 			m_logFile = File.CreateText("test.log");
+
+			m_lastDateTime = new DateTime(0);
 
 			InitializeComponent();
 		}
@@ -99,6 +83,16 @@ namespace LogViewer
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.WindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
+
+			ListView l = logListView;
+			GridView g = l.View as GridView;
+			double total = 0;
+			for (int i = 0; i < g.Columns.Count - 1; i++)
+			{
+				total += g.Columns[i].ActualWidth;
+			}
+
+			g.Columns[g.Columns.Count - 1].Width = l.ActualWidth - total;
 		}
 
 		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -114,6 +108,13 @@ namespace LogViewer
 		{
 			this.Dispatcher.BeginInvoke(new Action(OnNewEntries2));
 			MMLog.RegisterChangeCallback(OnNewEntries);
+		}
+
+		TimeSpan GetTimeSpan(DateTime entryDateTime)
+		{
+			var ldt = m_lastDateTime;
+			m_lastDateTime = entryDateTime;
+			return ldt.Ticks != 0 ? entryDateTime - ldt : TimeSpan.FromTicks(0);
 		}
 
 		void OnNewEntries2()
@@ -145,7 +146,7 @@ namespace LogViewer
 				m_debugCollection.Add(e);
 				last = e;
 
-				m_logFile.WriteLine(String.Format("{0} | {1}: {2}", e.DateTime, e.Flags, e.Message));
+				m_logFile.WriteLine(String.Format("{0} | {1}: {2}", e.DateTime, e.Component, e.Message));
 			}
 
 			m_logFile.Flush();
@@ -164,7 +165,7 @@ namespace LogViewer
 
 		void OnMarkClicked(object sender, RoutedEventArgs e)
 		{
-			var entry = new LogEntry() { Message = "", Flags = (int)DebugFlag.Mark };
+			var entry = new LogEntry(DateTime.Now, component: "Mark");
 			Add(entry);
 		}
 	}

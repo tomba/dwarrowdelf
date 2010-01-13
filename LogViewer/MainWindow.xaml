@@ -3,15 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:LogViewer"
         x:Name="debugWindow"
+        TextOptions.TextFormattingMode="Display"
         Title="MainWindow" Height="350" Width="525">
-    
+
     <Window.Resources>
-        <local:IntToDebugFlagConverter x:Key="debugFlagConverter"/>
         <local:LogEntryToBgBrushConverter x:Key="bgConverter" />
     </Window.Resources>
-    
-    <DockPanel>
 
+    <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <Button Click="OnClearClicked">Clear</Button>
@@ -21,9 +20,8 @@
                 <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
             </ToolBar>
         </ToolBarTray>
-        
+
         <ListView Name="logListView" ItemsSource="{Binding Path=DebugEntries, ElementName=debugWindow}"
-                  HorizontalContentAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   ScrollViewer.VerticalScrollBarVisibility="Visible">
 
@@ -36,16 +34,21 @@
                     </Setter>
                 </Style>
             </ListView.ItemContainerStyle>
-            
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding DateTime,StringFormat=\{0:HH:mm:ss.ffff\}}" Margin="2,0,2,0" VerticalAlignment="Center" />
-                        <TextBlock DockPanel.Dock="Left" Text="{Binding Flags, Converter={StaticResource debugFlagConverter}}" Margin="2,0,2,0" VerticalAlignment="Center" />
-                        <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" Margin="10,0,2,0" VerticalAlignment="Center" />
-                    </DockPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Time" DisplayMemberBinding="{Binding DateTime,StringFormat='HH:mm:ss.ffff'}" />
+                    <GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
+                    <GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
+                    <GridViewColumn Header="Message">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
     </DockPanel>
 </Window>

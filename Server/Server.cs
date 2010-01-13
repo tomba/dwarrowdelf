@@ -7,7 +7,7 @@ namespace MyGame.Server
 	{
 		public Server()
 		{
-			MyDebug.DefaultFlags = DebugFlag.Server;
+			MyDebug.Component = "Server";
 		}
 
 		public void RunServer(bool isEmbedded,

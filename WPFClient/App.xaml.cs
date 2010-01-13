@@ -32,7 +32,8 @@ namespace MyGame.Client
 		{
 			m_serverInAppDomain = true;
 
-			MyDebug.DefaultFlags = DebugFlag.Client;
+			MyDebug.Component = "Client";
+			Thread.CurrentThread.Name = "Main";
 
 			base.OnStartup(e);
 

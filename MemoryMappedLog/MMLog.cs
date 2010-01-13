@@ -5,14 +5,42 @@ using System.Text;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace MyGame.MemoryMappedLog
 {
 	public class LogEntry
 	{
 		public DateTime DateTime { get; set; }
-		public int Flags { get; set; }
+		public string Component { get; set; }
+		public string Thread { get; set; }
 		public string Message { get; set; }
+
+		public LogEntry(DateTime dateTime, string component = "", string thread = "", string message = "")
+		{
+			this.DateTime = dateTime;
+			this.Component = component;
+			this.Thread = thread;
+			this.Message = message;
+		}
+
+		public LogEntry(BinaryReader reader)
+		{
+			this.DateTime = DateTime.FromBinary(reader.ReadInt64());
+			this.Component = reader.ReadString();
+			this.Thread = reader.ReadString();
+			this.Message = reader.ReadString();
+		}
+
+		public static int Write(BinaryWriter writer, DateTime dateTime, string component, string thread, string message)
+		{
+			writer.Write(dateTime.ToBinary());
+			writer.Write(component);
+			writer.Write(thread);
+			writer.Write(message);
+			writer.Flush();
+			return (int)writer.BaseStream.Position;
+		}
 	}
 
 	public static class MMLog
@@ -24,17 +52,15 @@ namespace MyGame.MemoryMappedLog
 
 		struct EntryHeader
 		{
-			public DateTime DateTime;
-			public int Flags;
-			public int TextLength;
+			public int PayloadLength;
 		}
 
 		const int EntrySize = 512;
 		const int EntryCount = 1024;
 
-		static int s_logHeaderSize;
-		static int s_entryHeaderSize;
-		static int s_maxTextSize;
+		static readonly int s_logHeaderSize;
+		static readonly int s_entryHeaderSize;
+		static readonly int s_maxPayloadSize;
 
 		static MemoryMappedFile s_mmf;
 		static MemoryMappedViewAccessor s_view;
@@ -46,7 +72,7 @@ namespace MyGame.MemoryMappedLog
 		{
 			s_logHeaderSize = Marshal.SizeOf(typeof(LogHeader));
 			s_entryHeaderSize = Marshal.SizeOf(typeof(EntryHeader));
-			s_maxTextSize = EntrySize - s_entryHeaderSize;
+			s_maxPayloadSize = EntrySize - s_entryHeaderSize;
 
 			s_mmf = MemoryMappedFile.CreateOrOpen("MMLog.File", s_logHeaderSize + EntryCount * EntrySize);
 			s_view = s_mmf.CreateViewAccessor(0, 0);
@@ -55,10 +81,18 @@ namespace MyGame.MemoryMappedLog
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
 		}
 
-		public static void Append(int flags, string str)
+		public static void Append(string component, string thread, string message)
 		{
+			var buffer = new byte[s_maxPayloadSize];
+			int len;
+
+			using (var w = new BinaryWriter(new MemoryStream(buffer)))
+			{
+				len = LogEntry.Write(w, DateTime.Now, component, thread, message);
+			}
+
 			int idx = IncrementCurrentIndex();
-			WriteEntry(idx, flags, str);
+			WriteArray(idx, buffer, len);
 		}
 
 		public static LogEntry[] ReadNewEntries(int sinceIdx, out int newIdx)
@@ -87,6 +121,18 @@ namespace MyGame.MemoryMappedLog
 			}
 
 			return entries;
+		}
+
+		static LogEntry ReadEntry(int entryIndex)
+		{
+			var buffer = new byte[s_maxPayloadSize];
+			int len = ReadArray(entryIndex, buffer);
+
+			using (var r = new BinaryReader(new MemoryStream(buffer)))
+			{
+				var entry = new LogEntry(r);
+				return entry;
+			}
 		}
 
 		static int GetCurrentIndex()
@@ -118,52 +164,35 @@ namespace MyGame.MemoryMappedLog
 			return s_logHeaderSize + entryIndex * EntrySize;
 		}
 
-		static void WriteArray(int entryIndex, byte[] arr, int len)
+		static void WriteArray(int entryIndex, byte[] array, int len)
 		{
-			if (len > EntrySize)
+			if (len > s_maxPayloadSize)
 				throw new Exception();
 
-			int offset = GetEntryOffset(entryIndex);
-			s_view.WriteArray<byte>(offset, arr, 0, len);
-			s_writeEventHandle.Set();
-		}
-
-		static void WriteEntry(int entryIndex, int flags, string str)
-		{
-			var buf = s_encoding.GetBytes(str);
-			var bufLen = Math.Min(buf.Length, s_maxTextSize);
-
 			EntryHeader header;
-			header.DateTime = DateTime.Now;
-			header.Flags = flags;
-			header.TextLength = bufLen;
+			header.PayloadLength = len;
 
 			int offset = GetEntryOffset(entryIndex);
 			s_view.Write<EntryHeader>(offset, ref header);
-			s_view.WriteArray<byte>(offset + s_entryHeaderSize, buf, 0, bufLen);
+			s_view.WriteArray<byte>(offset + s_entryHeaderSize, array, 0, len);
 			s_writeEventHandle.Set();
 		}
 
-		static LogEntry ReadEntry(int entryIndex)
+		static int ReadArray(int entryIndex, byte[] array)
 		{
-			int offset = GetEntryOffset(entryIndex);
+			if (array.Length < s_maxPayloadSize)
+				throw new Exception();
 
-			var entry = new LogEntry();
+			int offset = GetEntryOffset(entryIndex);
 
 			EntryHeader header;
 			s_view.Read<EntryHeader>(offset, out header);
 
-			byte[] buf = new byte[header.TextLength];
-			int l = s_view.ReadArray<byte>(offset + s_entryHeaderSize, buf, 0, header.TextLength);
-			if (l != header.TextLength)
+			int l = s_view.ReadArray<byte>(offset + s_entryHeaderSize, array, 0, header.PayloadLength);
+			if (l != header.PayloadLength)
 				throw new Exception();
-			var str = s_encoding.GetString(buf);
 
-			entry.DateTime = header.DateTime;
-			entry.Flags = header.Flags;
-			entry.Message = str;
-
-			return entry;
+			return l;
 		}
 
 		public static void RegisterChangeCallback(Action callback)

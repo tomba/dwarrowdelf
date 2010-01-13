@@ -5,26 +5,19 @@ using System.Text;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MyGame.MemoryMappedLog;
+using System.Threading;
 
 namespace MyGame
 {
-	[Flags]
-	public enum DebugFlag : int
-	{
-		None = 0,
-		Mark = 1 << 0,
-		Client = 1 << 1,
-		Server = 1 << 2,
-	}
-
 	public static class MyDebug
 	{
-		public static DebugFlag DefaultFlags { get; set; }
+		public static string Component { get; set; }
 
 		[Conditional("DEBUG")]
 		public static void WriteLine(string str)
 		{
-			MMLog.Append((int)DefaultFlags, str);
+			string thread = Thread.CurrentThread.Name;
+			MMLog.Append(Component, thread != null ? thread : "", str);
 		}
 
 		[Conditional("DEBUG")]
@@ -38,7 +31,8 @@ namespace MyGame
 	{
 		public static void WriteLine(string str)
 		{
-			MMLog.Append((int)MyDebug.DefaultFlags, str);
+			string thread = Thread.CurrentThread.Name;
+			MMLog.Append(MyDebug.Component, thread != null ? thread : "", str);
 		}
 
 		public static void WriteLine(string format, params object[] args)
