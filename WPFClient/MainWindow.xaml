@@ -5,6 +5,7 @@
 	Title="Window1" Height="424" Width="800"
 	x:ClassModifier="internal"
 	x:Name="mainWindow"
+    TextOptions.TextFormattingMode="Display"
     DataContext="{x:Static local:GameData.Data}" >
     <Window.Resources>
         <DataTemplate DataType="{x:Type local:ClientGameObject}">
