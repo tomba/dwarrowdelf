@@ -349,6 +349,12 @@ namespace MyGame.Server
 				return e.UserID == m_userID;
 			}
 
+			if (@event is ActionRequiredEvent)
+			{
+				var e = (ActionRequiredEvent)@event;
+				return m_friendlies.Any(l => l.ObjectID == e.ObjectID);
+			}
+
 			if (@event is TickChangeEvent)
 				return true;
 
