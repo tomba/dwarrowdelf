@@ -66,7 +66,7 @@ namespace MyGame.Server
 
 		int m_tickNumber;
 
-		WorldTickMethod m_tickMethod = WorldTickMethod.Sequential;
+		WorldTickMethod m_tickMethod = WorldTickMethod.Simultaneous;
 
 		// Maximum time for one living to make its move. After this time has passed, the living
 		// will be skipped
@@ -88,6 +88,9 @@ namespace MyGame.Server
 
 		// Require an user to be in game for ticks to proceed
 		bool m_requireUser = true;
+
+		// Require user to request to proceed, before proceeding
+		bool m_requireTickRequest = false;
 
 		class InvokeInfo
 		{
@@ -384,6 +387,9 @@ namespace MyGame.Server
 						return false;
 			}
 
+			if (m_requireTickRequest && m_tickRequested == false)
+				return false;
+
 			return true;
 		}
 
@@ -518,7 +524,7 @@ namespace MyGame.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			bool forceMove = m_useMaxMoveTime && DateTime.Now >= m_nextMove;
+			bool forceMove = IsMoveForced();
 
 			VDbg("SimultaneousWork");
 
@@ -577,12 +583,17 @@ namespace MyGame.Server
 			return false;
 		}
 
+		bool IsMoveForced()
+		{
+			return (m_useMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
+		}
+
 		void SequentialWork()
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			bool forceMove = (m_useMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
+			bool forceMove = IsMoveForced();
 
 			VDbg("SequentialWork");
 
@@ -619,6 +630,7 @@ namespace MyGame.Server
 			AddEvent(new TickChangeEvent(m_tickNumber));
 
 			MyDebug.WriteLine("-- Tick {0} started --", m_tickNumber);
+			m_tickRequested = false;
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -670,7 +682,7 @@ namespace MyGame.Server
 			if (m_tickMethod == WorldTickMethod.Sequential)
 			{
 				var living = m_livingEnumerator.Current;
-				if (!living.HasAction)
+				if (!living.HasAction && !IsMoveForced())
 					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
 			}
 

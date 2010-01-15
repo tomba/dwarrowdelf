@@ -112,8 +112,6 @@ namespace MyGame.Client
 
 		public void ActionRequired()
 		{
-			return;
-
 			if (m_living == GameData.Data.CurrentObject)
 				return;
 

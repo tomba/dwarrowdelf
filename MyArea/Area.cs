@@ -101,7 +101,7 @@ namespace MyArea
 			var obs = world.AreaData.Objects;
 
 			var rand = new Random();
-			for (int i = 0; i < 10; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				// Add a monster
 				var monster = new Living(world);
