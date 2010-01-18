@@ -118,7 +118,6 @@
     <Compile Include="Material.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="SymbolInfo.cs" />
-    <Compile Include="ObjectInfo.cs" />
     <Compile Include="DataTypes\IntCube.cs" />
     <Compile Include="DataTypes\IntVector.cs" />
     <Compile Include="DataTypes\IntSize.cs" />
