@@ -309,6 +309,13 @@ namespace MyGame.Client
 			ob.Deserialize(msg);
 		}
 
+		void HandleMessage(ObjectDestructedMessage msg)
+		{
+			var ob = World.TheWorld.FindObject<ClientGameObject>(msg.ObjectID);
+
+			ob.Destruct();
+		}
+
 		void HandleMessage(EventMessage msg)
 		{
 			HandleEvents(msg.Event);

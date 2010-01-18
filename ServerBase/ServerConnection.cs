@@ -218,7 +218,7 @@ namespace MyGame.Server
 			var env = m_world.Environments.First(); // XXX entry location
 			var syms = m_world.AreaData.Symbols;
 
-#if asd
+#if !asd
 			var player = new Living(m_world);
 			player.SymbolID = syms.Single(o => o.Name == "Player").ID; ;
 			player.Name = "player";
@@ -445,6 +445,10 @@ namespace MyGame.Server
 						new KeyValuePair<IntPoint3D, TileData>(mc.Location, mc.TileData)
 					}
 				};
+			}
+			else if (change is ObjectDestructedChange)
+			{
+				return new ClientMsgs.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
 			}
 
 			throw new Exception();

@@ -59,12 +59,23 @@ namespace MyGame.Client
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public bool IsLiving { get; protected set; }
 
+		public bool Destructed { get; private set; }
+
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			m_inventory = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
 			this.Color = Colors.Black;
+		}
+
+		public void Destruct()
+		{
+			if (this.Destructed)
+				return;
+
+			this.Destructed = true;
+			this.World.RemoveObject(this);
 		}
 
 		string m_name;

@@ -6,11 +6,7 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract,
-	KnownType(typeof(TickChangeEvent)),
-	KnownType(typeof(ActionProgressEvent)),
-	KnownType(typeof(ActionRequiredEvent)),
-	]
+	[DataContract]
 	public abstract class Event
 	{
 	}
@@ -96,9 +92,17 @@ namespace MyGame
 		public IIdentifiable Object { get; private set; }
 		public ObjectID ObjectID { get { return this.Object.ObjectID; } }
 
-		public ObjectChange(IIdentifiable @object)
+		protected ObjectChange(IIdentifiable @object)
 		{
 			this.Object = @object;
+		}
+	}
+
+	public class ObjectDestructedChange : ObjectChange
+	{
+		public ObjectDestructedChange(IIdentifiable ob)
+			: base(ob)
+		{
 		}
 	}
 

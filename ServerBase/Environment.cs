@@ -245,6 +245,11 @@ namespace MyGame.Server
 			m_buildings.Add(building);
 		}
 
+		public BuildingData GetBuildingAt(IntPoint3D p)
+		{
+			return m_buildings.SingleOrDefault(b => b.Contains(p));
+		}
+
 
 		public override ClientMsgs.Message Serialize()
 		{

@@ -16,7 +16,9 @@ namespace MyGame
 
 		static Serializer()
 		{
-			var types = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
+			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
+			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
+			var types = messageTypes.Concat(eventTypes);
 			m_serializer = new DataContractSerializer(typeof(Message), types);
 		}
 

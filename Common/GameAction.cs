@@ -12,6 +12,7 @@ namespace MyGame
 	KnownType(typeof(GetAction)),
 	KnownType(typeof(DropAction)),
 	KnownType(typeof(MineAction)),
+	KnownType(typeof(BuildItemAction)),
 	]
 	public abstract class GameAction
 	{
@@ -114,4 +115,25 @@ namespace MyGame
 			return String.Format("MineAction({0}, turns: {1})", this.Direction, this.TicksLeft);
 		}
 	}
+
+	[DataContract]
+	public class BuildItemAction : GameAction
+	{
+		// [DataMember]
+		// public object type etc
+
+		[DataMember]
+		public IEnumerable<ObjectID> SourceObjectIDs { get; set; }
+
+		public BuildItemAction(IEnumerable<IIdentifiable> sourceItems)
+		{
+			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
+		}
+
+		public override string ToString()
+		{
+			return String.Format("BuildItemAction(turns: {0})", this.TicksLeft);
+		}
+	}
+
 }

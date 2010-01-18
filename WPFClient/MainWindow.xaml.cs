@@ -361,7 +361,7 @@ namespace MyGame.Client
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			plr.EnqueueAction(new GetAction(list.Cast<IIdentifiable>()));
+			plr.EnqueueAction(new GetAction(list));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -373,7 +373,19 @@ namespace MyGame.Client
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.EnqueueAction(new DropAction(list.Cast<IIdentifiable>()));
+			plr.EnqueueAction(new DropAction(list));
+		}
+
+		private void BuildItem_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var list = inventoryListBox.SelectedItems.Cast<ClientGameObject>();
+
+			if (list.Count() != 2)
+				return;
+
+			var plr = GameData.Data.CurrentObject;
+
+			plr.EnqueueAction(new BuildItemAction(list));
 		}
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)

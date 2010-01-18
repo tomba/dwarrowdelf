@@ -30,8 +30,8 @@ namespace MyGame.Server
 		public void Cleanup()
 		{
 			this.Actor = null;
-			this.MoveTo(null, new IntPoint3D());
 			World.RemoveLiving(this);
+			this.Destruct();
 		}
 
 		public IActor Actor
@@ -154,6 +154,26 @@ namespace MyGame.Server
 			success = true;
 		}
 
+		void PerformBuildItem(BuildItemAction action, out bool success)
+		{
+			var building = this.Environment.GetBuildingAt(this.Location);
+
+			if (building == null)
+			{
+				success = false;
+				return;
+			}				
+
+			if (action.TicksLeft != 0)
+			{
+				success = building.VerifyBuildItem(this, action.SourceObjectIDs);
+			}
+			else
+			{
+				success = building.PerformBuildItem(this, action.SourceObjectIDs);
+			}
+		}
+
 		// called during tick processing. the world state is not quite valid.
 		public void PerformAction()
 		{
@@ -184,6 +204,10 @@ namespace MyGame.Server
 				else if (action is MoveAction)
 				{
 					action.TicksLeft = 1;
+				}
+				else if (action is BuildItemAction)
+				{
+					action.TicksLeft = 8;
 				}
 				else
 				{
@@ -229,6 +253,10 @@ namespace MyGame.Server
 				else if (action is MineAction)
 				{
 					PerformMine((MineAction)action, out success);
+				}
+				else if (action is BuildItemAction)
+				{
+					PerformBuildItem((BuildItemAction)action, out success);
 				}
 				else
 				{
@@ -309,6 +337,10 @@ namespace MyGame.Server
 				MapChange mc = (MapChange)change;
 
 				return Sees(mc.Map, mc.Location);
+			}
+			else if (change is ObjectDestructedChange)
+			{
+				return true;
 			}
 
 			throw new Exception();

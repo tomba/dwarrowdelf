@@ -225,6 +225,18 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	public class ObjectDestructedMessage : Message
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ObjectDestructedMessage {0}", this.ObjectID);
+		}
+	}
+
+	[DataContract]
 	public class EventMessage : Message
 	{
 		[DataMember]

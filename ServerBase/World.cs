@@ -751,6 +751,16 @@ namespace MyGame.Server
 				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 		}
 
+		internal void RemoveGameObject(IIdentifiable ob)
+		{
+			if (ob.ObjectID == ObjectID.NullObjectID)
+				throw new ArgumentException("Null ObjectID");
+
+			lock (m_objectMap)
+				if (m_objectMap.Remove(ob.ObjectID) == false)
+					throw new Exception();
+		}
+
 		public IIdentifiable FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)

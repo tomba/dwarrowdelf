@@ -59,6 +59,15 @@ namespace MyGame.Client
 			m_objects.Add(ob);
 		}
 
+		internal void RemoveObject(IIdentifiable ob)
+		{
+			if (ob.ObjectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
+			if (m_objects.Remove(ob) == false)
+				throw new Exception();
+		}
+
 		public IIdentifiable FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)

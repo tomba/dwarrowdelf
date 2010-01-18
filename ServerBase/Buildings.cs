@@ -29,5 +29,53 @@ namespace MyGame.Server
 				Environment = this.Environment.ObjectID,
 			};
 		}
+
+		public bool Contains(IntPoint3D point)
+		{
+			return point.Z == this.Z && this.Area.Contains(point.TwoD);
+		}
+
+		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects)
+		{
+			if (!Contains(builder.Location))
+				return false;
+
+			if (sourceObjects.Count() != 2)
+				return false;
+
+			if (!sourceObjects.
+				Select(oid => this.World.FindObject<ServerGameObject>(oid)).
+				All(o => this.Contains(o.Location) || o.Parent == builder))
+				return false;
+
+			return true;
+		}
+
+		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects)
+		{
+			if (!VerifyBuildItem(builder, sourceObjects))
+				return false;
+
+			var obs = sourceObjects.Select(oid => this.World.FindObject<ServerGameObject>(oid));
+
+			foreach (var ob in obs)
+			{
+				ob.Destruct();
+			}
+
+			var iron = this.World.AreaData.Materials.GetMaterialInfo("Iron").ID;
+
+			ItemObject item = new ItemObject(this.World)
+			{
+				Name = "Key",
+				SymbolID = this.World.AreaData.Symbols.Single(o => o.Name == "Key").ID,
+				MaterialID = iron,
+			};
+
+			if (item.MoveTo(builder.Environment, builder.Location) == false)
+				throw new Exception();
+
+			return true;
+		}
 	}
 }

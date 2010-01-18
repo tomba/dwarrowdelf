@@ -49,11 +49,21 @@ namespace MyGame.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
+		public bool Destructed { get; private set; }
+
 		internal ServerGameObject(World world)
 			: base(world)
 		{
 			m_children = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+		}
+
+		public void Destruct()
+		{
+			this.Destructed = true;
+			this.MoveTo(null);
+			this.World.AddChange(new ObjectDestructedChange(this));
+			this.World.RemoveGameObject(this);
 		}
 
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
