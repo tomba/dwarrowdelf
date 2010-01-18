@@ -98,14 +98,14 @@ namespace MyArea
 			env.SetInterior(pp, InteriorID.Portal, steel);
 			env.SetActionHandler(pp, ActionHandler);
 
-			var obs = world.AreaData.Objects;
+			var syms = world.AreaData.Symbols;
 
 			var rand = new Random();
 			for (int i = 0; i < 1; ++i)
 			{
 				// Add a monster
 				var monster = new Living(world);
-				monster.SymbolID = obs.Single(o => o.Name == "Monster").SymbolID;
+				monster.SymbolID = syms.Single(o => o.Name == "Monster").ID;
 				monster.Name = String.Format("monsu{0}", i);
 				if (monster.MoveTo(env, new IntPoint3D(6, 6, 0)) == false)
 					throw new Exception();
@@ -125,7 +125,7 @@ namespace MyArea
 
 				var item = new ItemObject(world)
 				{
-					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					SymbolID = syms.Single(o => o.Name == "Gem").ID,
 					Name = "gem" + i.ToString(),
 					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
 					MaterialID = diamond,
@@ -138,7 +138,7 @@ namespace MyArea
 				// Add an item
 				var item = new ItemObject(world)
 				{
-					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					SymbolID = syms.Single(o => o.Name == "Gem").ID,
 					Name = "red gem",
 					Color = GameColors.Red,
 					MaterialID = diamond,
@@ -147,7 +147,7 @@ namespace MyArea
 
 				item = new ItemObject(world)
 				{
-					SymbolID = obs.Single(o => o.Name == "Gem").SymbolID,
+					SymbolID = syms.Single(o => o.Name == "Gem").ID,
 					Name = "gem",
 					MaterialID = diamond,
 				};
@@ -155,7 +155,7 @@ namespace MyArea
 
 				item = new ItemObject(world)
 				{
-					SymbolID = obs.Single(o => o.Name == "Tree").SymbolID,
+					SymbolID = syms.Single(o => o.Name == "Tree").ID,
 					Name = "puu",
 					MaterialID = wood,
 				};

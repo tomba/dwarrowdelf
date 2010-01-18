@@ -118,9 +118,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Objects.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Symbols.xml" />
   </ItemGroup>
   <ItemGroup>

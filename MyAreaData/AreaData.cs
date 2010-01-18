@@ -14,13 +14,11 @@ namespace MyArea.Data
 		List<SymbolInfo> m_symbolList;
 		Terrains m_terrains; // XXX move somewhere else
 		Materials m_materials;
-		List<ObjectInfo> m_objects;
 		Buildings m_buildings; // XXX somewhere else?
 
 		public AreaData()
 		{
 			ParseSymbols();
-			ParseObjects();
 			m_terrains = new Terrains();
 			m_materials = new Materials();
 			m_buildings = new Buildings();
@@ -32,7 +30,6 @@ namespace MyArea.Data
 		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
 		public Terrains Terrains { get { return m_terrains; } }
 		public Materials Materials { get { return m_materials; } }
-		public IList<ObjectInfo> Objects { get { return m_objects.AsReadOnly(); } }
 		public Stream DrawingStream { get { return m_drawingStream; } }
 		public Buildings Buildings { get { return m_buildings; } }
 
@@ -76,28 +73,6 @@ namespace MyArea.Data
 					symbol.DrawingName = (string)drawingElem;
 				}
 				m_symbolList.Add(symbol);
-			}
-		}
-
-		void ParseObjects()
-		{
-			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyArea.Data.Objects.xml");
-
-			XDocument root = XDocument.Load(new StreamReader(resStream));
-			XElement objectInfosElem = root.Element("Objects");
-
-			m_objects = new List<ObjectInfo>(objectInfosElem.Elements().Count());
-			int idx = 0;
-			foreach (XElement objectElem in objectInfosElem.Elements())
-			{
-				ObjectInfo ob = new ObjectInfo();
-				ob.SymbolID = idx++;
-				ob.Name = (string)objectElem.Element("Name");
-				string symbolName = (string)objectElem.Element("Symbol");
-				SymbolInfo symbol = m_symbolList.Single(s => s.Name == symbolName);
-				ob.SymbolID = symbol.ID;
-				m_objects.Add(ob);
 			}
 		}
 	}
