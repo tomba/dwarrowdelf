@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Symbols>
-  <Symbol>
-    <Name>Undefined</Name>
-    <CharSymbol>?</CharSymbol>
-  </Symbol>
-  <Symbol>
-    <Name>NaturalFloor</Name>
-    <CharSymbol>.</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="140">Dirt_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>NaturalWall</Name>
-    <CharSymbol>#</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
-  </Symbol>
+	<Symbol>
+		<Name>Undefined</Name>
+		<CharSymbol>?</CharSymbol>
+	</Symbol>
+	<Symbol>
+		<Name>NaturalFloor</Name>
+		<CharSymbol>.</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="140">Dirt_Block</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>NaturalWall</Name>
+		<CharSymbol>#</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
+	</Symbol>
 	<Symbol>
 		<Name>StairsUp</Name>
 		<CharSymbol>&lt;</CharSymbol>
@@ -28,23 +28,23 @@
 	</Symbol>
 
 	<Symbol>
-    <Name>Player</Name>
-    <CharSymbol>@</CharSymbol>
-    <Drawing x="20" y="10" w="60" h="80">Character_Cat_Girl</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Monster</Name>
-    <CharSymbol>b</CharSymbol>
-    <Drawing x="10" y="20" w="80" h="60">Enemy_Bug</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Gem</Name>
-    <CharSymbol>*</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Tree</Name>
-    <CharSymbol>£</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Tree_Tall</Drawing>
-  </Symbol>
+		<Name>Player</Name>
+		<CharSymbol>@</CharSymbol>
+		<Drawing x="20" y="10" w="60" h="80">Character_Cat_Girl</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>Monster</Name>
+		<CharSymbol>b</CharSymbol>
+		<Drawing x="10" y="20" w="80" h="60">Enemy_Bug</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>Gem</Name>
+		<CharSymbol>*</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>Tree</Name>
+		<CharSymbol>£</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="100">Tree_Tall</Drawing>
+	</Symbol>
 </Symbols>
