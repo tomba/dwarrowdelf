@@ -127,6 +127,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="AI\ActionJobs.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -138,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AI.cs" />
-    <Compile Include="AI\Task.cs" />
     <Compile Include="Buildings.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="AI\Job.cs" />

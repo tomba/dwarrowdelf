@@ -218,7 +218,7 @@ namespace MyGame.Server
 			var env = m_world.Environments.First(); // XXX entry location
 			var syms = m_world.AreaData.Symbols;
 
-#if !asd
+#if asd
 			var player = new Living(m_world);
 			player.SymbolID = syms.Single(o => o.Name == "Player").ID; ;
 			player.Name = "player";
@@ -252,7 +252,7 @@ namespace MyGame.Server
 
 			var inv = player.SerializeInventory();
 			Send(inv);
-
+#if !qwe
 			var pet = new Living(m_world);
 			pet.SymbolID = syms.Single(o => o.Name == "Monster").ID;
 			pet.Name = "lemmikki";
@@ -260,6 +260,8 @@ namespace MyGame.Server
 			m_friendlies.Add(pet);
 
 			pet.MoveTo(player.Environment, player.Location + new IntVector(1, 0));
+#endif
+
 #else
 			var rand = new Random();
 			for (int i = 0; i < 10; ++i)

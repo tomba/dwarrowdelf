@@ -61,6 +61,8 @@ namespace MyGame.Client
 
 		public bool Destructed { get; private set; }
 
+		public IIdentifiable Assignment { get; set; }
+
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{

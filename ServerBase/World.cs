@@ -90,7 +90,7 @@ namespace MyGame.Server
 		bool m_requireUser = true;
 
 		// Require user to request to proceed, before proceeding
-		bool m_requireTickRequest = false;
+		bool m_requireTickRequest = true;
 
 		class InvokeInfo
 		{

@@ -334,9 +334,49 @@ namespace MyGame.Client
 					if (env.GetInterior(new IntPoint3D(p, z)).ID != InteriorID.NaturalWall)
 						continue;
 
-					var job = new MineJob(env, new IntPoint3D(p, z));
+					var job = new MoveMineJob(null, env, new IntPoint3D(p, z));
 					this.Map.World.Jobs.Add(job);
 				}
+			}
+			else if (tag == "MineArea")
+			{
+				IntRect r = map.SelectionRect;
+				var env = map.Environment;
+				int z = map.Z;
+
+				var job = new MineAreaJob(env, r, z);
+				this.Map.World.Jobs.Add(job);
+			}
+			else if (tag == "MineAreaParallel")
+			{
+				IntRect r = map.SelectionRect;
+				var env = map.Environment;
+				int z = map.Z;
+
+				var job = new MineAreaParallelJob(env, r, z);
+				this.Map.World.Jobs.Add(job);
+			}
+			else if (tag == "MineAreaSerial")
+			{
+				IntRect r = map.SelectionRect;
+				var env = map.Environment;
+				int z = map.Z;
+
+				var job = new MineAreaSerialJob(env, r, z);
+				this.Map.World.Jobs.Add(job);
+			}
+			else if (tag == "BuildItem")
+			{
+				IntRect r = map.SelectionRect;
+				var env = map.Environment;
+				int z = map.Z;
+
+				var building = env.GetBuildingAt(new IntPoint3D(r.TopLeft, z));
+
+				if (building == null)
+					return;
+
+				building.AddBuildItem();
 			}
 			else
 			{

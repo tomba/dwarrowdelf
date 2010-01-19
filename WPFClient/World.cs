@@ -46,10 +46,21 @@ namespace MyGame.Client
 		public int TickNumber
 		{
 			get { return m_tickNumber; }
-			set { m_tickNumber = value; Notify("TickNumber"); }
+			set
+			{
+				// XXX perhaps this should be IncreaseTick()
+				m_tickNumber = value; Notify("TickNumber");
+
+				var doneJobs = this.Jobs.Where(j => j.Progress == Progress.Done).ToArray();
+				foreach (var job in doneJobs)
+					this.Jobs.Remove(job);
+
+				if (TickIncreased != null)
+					TickIncreased();
+			}
 		}
 
-
+		public event Action TickIncreased;
 
 		internal void AddObject(IIdentifiable ob)
 		{

@@ -145,6 +145,10 @@
                         </MenuItem>
                         <MenuItem Header="Jobs">
                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                         </MenuItem>
                         <MenuItem Header="File"/>
                         <MenuItem Header="Save"/>
@@ -217,29 +221,58 @@
                 </DockPanel>
             </GroupBox>
 
-            <GroupBox Grid.Column="1" Grid.Row="2" Header="Jobs">
-                <ListBox ItemsSource="{Binding World.Jobs}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock>
-								<TextBlock Text="{Binding}" />
-								, worker <TextBlock Text="{Binding Worker}" />
-								: task <TextBlock Text="{Binding CurrentTask}" />
-							</TextBlock>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </GroupBox>
-
             <GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
                 <ListBox ItemsSource="{Binding World.Objects}" 
 						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
             </GroupBox>
 
-            <GroupBox Grid.Column="2" Grid.Row="3" Header="Environments">
+            <GroupBox Grid.Column="1" Grid.Row="2" Header="Environments">
                 <ListBox ItemsSource="{Binding World.Environments}"
 						 SelectedItem="{Binding Path=Environment, ElementName=map}" />
             </GroupBox>
+
+            <GroupBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">
+                <TreeView ItemsSource="{Binding World.Jobs}">
+                    <TreeView.Resources>
+
+                        <HierarchicalDataTemplate DataType="{x:Type local:JobGroup}" ItemsSource="{Binding SubJobs}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding Progress}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding JobGroupType}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+
+                        <HierarchicalDataTemplate DataType="{x:Type local:SerialActionJob}" ItemsSource="{Binding SubJobs}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding Progress}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+
+                        <DataTemplate DataType="{x:Type local:ActionJob}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding Progress}" />
+                                <TextBlock Text=" , " />
+                                <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                <TextBlock Text=", " />
+                                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                            </StackPanel>
+                        </DataTemplate>
+
+                    </TreeView.Resources>
+                </TreeView>
+            </GroupBox>
+
         </Grid>
 
     </DockPanel>

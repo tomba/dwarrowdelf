@@ -122,25 +122,29 @@ namespace MyGame.Client
 
 		MyGrowingGrid3D m_tileGrid;
 		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
+		List<ClientGameObject> m_objectList;
 
 		public uint Version { get; private set; }
 
 		public VisibilityMode VisibilityMode { get; set; }
 
 		public Environment(World world, ObjectID objectID)
-			: base(world, objectID)
+			: this(world, objectID, 16)
 		{
-			this.Version = 1;
-			m_tileGrid = new MyGrowingGrid3D(10);
-			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 		}
 
 		public Environment(World world, ObjectID objectID, IntCube bounds)
+			: this(world, objectID, Math.Max(bounds.Width, bounds.Height))
+		{
+		}
+
+		public Environment(World world, ObjectID objectID, int blockSize)
 			: base(world, objectID)
 		{
 			this.Version = 1;
-			m_tileGrid = new MyGrowingGrid3D(Math.Max(bounds.Width, bounds.Height));
+			m_tileGrid = new MyGrowingGrid3D(blockSize);
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
+			m_objectList = new List<ClientGameObject>();
 		}
 
 		public bool IsWalkable(IntPoint3D l)
@@ -269,6 +273,11 @@ namespace MyGame.Client
 			return obs.AsReadOnly();
 		}
 
+		public IList<ClientGameObject> GetContents()
+		{
+			return m_objectList.AsReadOnly();
+		}
+
 		protected override void ChildAdded(ClientGameObject child)
 		{
 			IntPoint3D l = child.Location;
@@ -285,6 +294,8 @@ namespace MyGame.Client
 			else
 				obs.Add(child);
 
+			m_objectList.Add(child);
+
 			if (MapChanged != null)
 				MapChanged(l);
 		}
@@ -297,7 +308,11 @@ namespace MyGame.Client
 
 			List<ClientGameObject> obs = m_objectMap[l];
 
-			obs.Remove(child);
+			bool removed = obs.Remove(child);
+			Debug.Assert(removed);
+
+			removed = m_objectList.Remove(child);
+			Debug.Assert(removed);
 
 			if (MapChanged != null)
 				MapChanged(l);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -32,43 +33,61 @@ namespace MyGame.Client
 	class AI
 	{
 		Living m_living;
-		IJob m_currentJob;
+		IActionJob m_currentJob;
 
 		public AI(Living living)
 		{
 			m_living = living;
 		}
 
-		void HandleProgress(Progress progress)
+		[System.Diagnostics.Conditional("DEBUG")]
+		void D(string format, params object[] args)
 		{
-			switch (progress)
+			MyDebug.WriteLine("[AI] [{0}]: {1}", m_living, String.Format(format, args));
+		}
+
+		public void ActionRequired()
+		{
+			//if (m_living == GameData.Data.CurrentObject)
+			//	return;
+			while (true)
 			{
-				case Progress.None:
-					break;
+				if (m_currentJob == null)
+				{
+					m_currentJob = FindAndAssignJob(m_living.World.Jobs, m_living);
 
-				case Progress.Ok:
-					MyDebug.WriteLine("[AI] Job progressing");
-					break;
+					if (m_currentJob == null)
+					{
+						D("no job to do");
+						var action = new WaitAction(1);
+						m_living.EnqueueAction(action);
+						return;
+					}
+				}
 
-				case Progress.Done:
-					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					break;
+				var progress = m_currentJob.PrepareNextAction();
 
-				case Progress.Fail:
-					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					break;
+				switch (progress)
+				{
+					case Progress.Ok:
+						var action = m_currentJob.CurrentAction;
+						if (action == null)
+							throw new Exception();
 
-				case Progress.Abort:
-					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
-					m_currentJob = null;
-					break;
+						m_living.EnqueueAction(action);
+						return;
 
-				default:
-					throw new Exception();
+					case Progress.Done:
+					case Progress.Fail:
+					case Progress.Abort:
+						D("ActionRequired: {0} in {1}, looking for new job", progress, m_currentJob);
+						m_currentJob = null;
+						break;
+
+					case Progress.None:
+					default:
+						throw new Exception();
+				}
 			}
 		}
 
@@ -82,26 +101,17 @@ namespace MyGame.Client
 			switch (progress)
 			{
 				case Progress.None:
-					break;
+					throw new Exception();
+				// break;
 
 				case Progress.Ok:
-					MyDebug.WriteLine("[AI] Job progressing");
+					D("Job progressing");
 					break;
 
 				case Progress.Done:
-					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					break;
-
 				case Progress.Fail:
-					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					break;
-
 				case Progress.Abort:
-					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
+					D("ActionProgress: {0} in {1}", progress, m_currentJob);
 					m_currentJob = null;
 					break;
 
@@ -110,96 +120,29 @@ namespace MyGame.Client
 			}
 		}
 
-		public void ActionRequired()
+		static IActionJob FindAndAssignJob(IEnumerable<IJob> jobs, Living living)
 		{
-			if (m_living == GameData.Data.CurrentObject)
-				return;
-
-			if (m_currentJob == null)
+			while (true)
 			{
-				var job = FindJob();
+				var job = FindJob(jobs);
 
 				if (job == null)
-				{
-					DoIdle();
-					return;
-				}
+					return null;
 
-				m_currentJob = job;
-			}
-
-			var progress = m_currentJob.PrepareNextAction();
-
-			switch (progress)
-			{
-				case Progress.Ok:
-					var action = m_currentJob.CurrentAction;
-					if (action == null)
-						throw new Exception();
-
-					m_living.EnqueueAction(action);
-					break;
-
-				case Progress.Done:
-					MyDebug.WriteLine("[AI] JOB DONE ({0})!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					DoIdle();
-					break;
-
-				case Progress.Fail:
-					MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", m_currentJob);
-					World.TheWorld.Jobs.Remove(m_currentJob);
-					m_currentJob = null;
-					DoIdle();
-					break;
-
-				case Progress.Abort:
-					MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", m_currentJob);
-					m_currentJob = null;
-					DoIdle();
-					break;
-
-				case Progress.None:
-				default:
-					throw new Exception();
-			}
-		}
-
-		void DoIdle()
-		{
-			MyDebug.WriteLine("[AI] no job to do");
-			var action = new WaitAction(1);
-			m_living.EnqueueAction(action);
-		}
-
-		IJob FindJob()
-		{
-			// XXX we modify jobs, so as quickfix make a copy
-			IJob[] jobs = m_living.World.Jobs.Where(j => j.Worker == null).ToArray();
-
-			foreach (var job in jobs)
-			{
-				var progress = job.Assign(m_living);
+				var progress = job.Assign(living);
 
 				switch (progress)
 				{
 					case Progress.Ok:
-						MyDebug.WriteLine("[AI] new job {0}", job);
 						return job;
 
 					case Progress.Done:
-						MyDebug.WriteLine("[AI] JOB (already) DONE!");
-						World.TheWorld.Jobs.Remove(job);
 						break;
 
 					case Progress.Fail:
-						MyDebug.WriteLine("[AI] JOB FAIL ({0})!!!", job);
-						World.TheWorld.Jobs.Remove(job);
 						break;
 
 					case Progress.Abort:
-						MyDebug.WriteLine("[AI] JOB ABORT ({0})!!!", job);
 						break;
 
 					case Progress.None:
@@ -207,8 +150,55 @@ namespace MyGame.Client
 						throw new Exception();
 				}
 			}
+		}
+
+		static IActionJob FindJob(IEnumerable<IJob> jobs)
+		{
+			return FindJob(jobs, JobGroupType.Parallel);
+		}
+
+		static IActionJob FindJob(IEnumerable<IJob> jobs, JobGroupType type)
+		{
+			if (type != JobGroupType.Parallel && type != JobGroupType.Serial)
+				throw new Exception();
+
+			foreach (var job in jobs)
+			{
+				if (job.Progress == Progress.Done)
+					continue;
+
+				if (job.Progress == Progress.None || job.Progress == Progress.Abort)
+				{
+					// job can be taken
+
+					if (job is IActionJob)
+					{
+						var ajob = (IActionJob)job;
+						return ajob;
+					}
+					else if (job is IJobGroup)
+					{
+						var gjob = (IJobGroup)job;
+
+						var j = FindJob(gjob.SubJobs, gjob.JobGroupType);
+
+						if (j != null)
+							return j;
+					}
+					else
+					{
+						throw new Exception();
+					}
+				}
+
+				// job cannot be taken
+
+				if (type == JobGroupType.Serial)
+					return null;
+			}
 
 			return null;
+
 		}
 	}
 }
