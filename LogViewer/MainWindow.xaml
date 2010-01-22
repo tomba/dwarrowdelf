@@ -18,6 +18,8 @@
                 <Button Click="OnMarkClicked">Mark</Button>
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
+                <Separator />
+                <Button Click="OnRulesClicked">Rules...</Button>
             </ToolBar>
         </ToolBarTray>
 

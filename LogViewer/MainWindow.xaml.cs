@@ -26,17 +26,16 @@ namespace LogViewer
 		{
 			var entry = (LogEntry)value;
 
-			if (entry.Message == "Start")
-				return Brushes.LightGreen;
+			foreach (var rule in MainWindow.s_logRules)
+			{
+				bool match =
+					(rule.Component == null || rule.Component.IsMatch(entry.Component)) &&
+					(rule.Thread == null || rule.Thread.IsMatch(entry.Thread)) &&
+					(rule.Message == null || rule.Message.IsMatch(entry.Message));
 
-			if (Regex.IsMatch(entry.Message, "-- Tick .* started --"))
-				return Brushes.LightGreen;
-
-			if (entry.Component == "Mark")
-				return Brushes.Blue;
-
-			if (entry.Component == "Server")
-				return Brushes.LightGray;
+				if (match)
+					return rule.Brush;
+			}
 
 			return null;
 		}
@@ -49,6 +48,8 @@ namespace LogViewer
 
 	public partial class MainWindow : Window
 	{
+		public static List<LogRule> s_logRules; // XXX
+
 		ObservableCollection<LogEntry> m_debugCollection = new ObservableCollection<LogEntry>();
 		public ObservableCollection<LogEntry> DebugEntries { get { return m_debugCollection; } }
 		StreamWriter m_logFile;
@@ -60,6 +61,12 @@ namespace LogViewer
 
 		public MainWindow()
 		{
+			s_logRules = new List<LogRule>();
+			s_logRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.LightGreen });
+			s_logRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.LightGreen });
+			s_logRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
+			s_logRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
+
 			m_logFile = File.CreateText("test.log");
 
 			m_lastDateTime = new DateTime(0);
@@ -168,5 +175,27 @@ namespace LogViewer
 			var entry = new LogEntry(DateTime.Now, component: "Mark");
 			Add(entry);
 		}
+
+		void OnRulesClicked(object sender, RoutedEventArgs e)
+		{
+			var wnd = new RulesWindow(s_logRules);
+			wnd.Owner = this;
+			var res = wnd.ShowDialog();
+			if (res == true)
+			{
+				s_logRules = wnd.ResultLogRules;
+
+				var dataView = CollectionViewSource.GetDefaultView(logListView.ItemsSource);
+				dataView.Refresh();
+			}
+		}
+	}
+
+	public class LogRule
+	{
+		public Regex Component { get; set; }
+		public Regex Thread { get; set; }
+		public Regex Message { get; set; }
+		public SolidColorBrush Brush { get; set; }
 	}
 }
