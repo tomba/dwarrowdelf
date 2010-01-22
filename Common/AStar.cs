@@ -102,6 +102,9 @@ namespace MyGame
 				}
 
 				CheckNeighbors(node, dst, openList, nodeMap, locValid);
+
+				if (nodeMap.Count > 200000)
+					throw new Exception();
 			}
 
 			return nodeMap;
