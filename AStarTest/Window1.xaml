@@ -2,25 +2,36 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:AStarTest"
-    Title="Window1" Height="600" Width="800">
+    Title="Window1" Width="1280" Height="1024">
     <DockPanel>
-		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
-				<Button Click="OnBMClicked" Tag="1">Benchmark 1</Button>
-				<Separator />
-			</ToolBar>
-		</ToolBarTray>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Click="OnBMClicked" Tag="1">Benchmark 1</Button>
+                <Separator />
+            </ToolBar>
+        </ToolBarTray>
 
-		<StatusBar DockPanel.Dock="Bottom" >
-			<TextBlock>Memory</TextBlock>
-			<TextBox Width="100" IsReadOnly="True"
+        <StatusBar DockPanel.Dock="Bottom" >
+            <TextBlock>Memory</TextBlock>
+            <TextBox Width="100" IsReadOnly="True"
 					 Text="{Binding ElementName=map, Path=MemUsed, Mode=OneWay}" />
-			<Separator />
-			<TextBlock>Ticks</TextBlock>
-			<TextBox Width="100" IsReadOnly="True"
+            <Separator />
+            <TextBlock>Ticks</TextBlock>
+            <TextBox Width="100" IsReadOnly="True"
 					 Text="{Binding ElementName=map, Path=TicksUsed, Mode=OneWay}" />
-			<Separator />
-		</StatusBar>
-		<local:MapControl x:Name="map" />
+            <Separator />
+            <TextBlock>Coords</TextBlock>
+            <TextBox Width="100" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding ElementName="map" Path="CurrentTileInfo.Location.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="CurrentTileInfo.Location.Y" Mode="OneWay" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+            <Separator />
+        </StatusBar>
+
+        <local:MapControl x:Name="map" />
     </DockPanel>
 </Window>

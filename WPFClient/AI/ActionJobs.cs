@@ -173,7 +173,8 @@ namespace MyGame.Client
 				var dest2d = new IntPoint(m_dest.X, m_dest.Y);
 				var env = m_environment;
 				var res = AStar.Find(src2d, dest2d, !m_adjacent,
-					l => env.IsWalkable(new IntPoint3D(l, z)));
+					l => env.IsWalkable(new IntPoint3D(l, z)),
+					l => 0);
 				var dirs = res.GetPath();
 
 				m_pathDirs = new Queue<Direction>(dirs);

@@ -23,12 +23,18 @@ namespace AStarTest
 {
 	public class MapControl : MapControlBase, INotifyPropertyChanged
 	{
+		public class TileInfo
+		{
+			public IntPoint Location { get; set; }
+		}
+
 		struct MapTile
 		{
+			public int Weight;
 			public bool Blocked;
 		}
 
-		Grid2D<MapTile> m_realMap;
+		Grid2D<MapTile> m_map;
 
 		const int MapWidth = 400;
 		const int MapHeight = 400;
@@ -38,15 +44,25 @@ namespace AStarTest
 
 		bool m_removing;
 
+		public TileInfo CurrentTileInfo { get; private set; } // used to inform the UI
+
 		public MapControl()
 		{
+			this.CurrentTileInfo = new TileInfo();
+
 			this.Focusable = true;
 
 			this.TileSize = 32;
 
-			m_realMap = new Grid2D<MapTile>(MapWidth, MapHeight);
+			m_map = new Grid2D<MapTile>(MapWidth, MapHeight);
 			for (int y = 0; y < 350; ++y)
-				m_realMap[5, y] = new MapTile() { Blocked = true };
+				m_map[5, y] = new MapTile() { Blocked = true };
+
+			for (int y = 4; y < 14; ++y)
+				m_map[15, y] = new MapTile() { Blocked = true };
+
+			for (int y = 6; y < 11; ++y)
+				m_map[10, y] = new MapTile() { Weight = 40 };
 
 			base.CenterPos = new IntPoint(10, 10);
 			ClearMap();
@@ -78,11 +94,12 @@ namespace AStarTest
 			MapControlTile tile = (MapControlTile)_tile;
 
 			tile.ClearTile();
-			if (!m_realMap.Bounds.Contains(ml))
+
+			if (!m_map.Bounds.Contains(ml))
 			{
 				tile.Brush = Brushes.DarkBlue;
 			}
-			else if (m_realMap[ml].Blocked)
+			else if (m_map[ml].Blocked)
 			{
 				tile.Brush = Brushes.Blue;
 			}
@@ -94,21 +111,26 @@ namespace AStarTest
 			{
 				tile.Brush = Brushes.Red;
 			}
-			else if (m_result != null)
+			else
 			{
-				if (m_result.Nodes.ContainsKey(ml))
+				tile.Weight = m_map[ml].Weight;
+
+				if (m_result != null)
 				{
-					var node = m_result.Nodes[ml];
-					tile.G = node.G;
-					tile.H = node.H;
+					if (m_result.Nodes.ContainsKey(ml))
+					{
+						var node = m_result.Nodes[ml];
+						tile.G = node.G;
+						tile.H = node.H;
 
-					if (node.Parent == null)
-						tile.From = Direction.None;
-					else
-						tile.From = (node.Parent.Loc - node.Loc).ToDirection();
+						if (node.Parent == null)
+							tile.From = Direction.None;
+						else
+							tile.From = (node.Parent.Loc - node.Loc).ToDirection();
 
-					if (m_path != null && m_path.Contains(ml))
-						tile.Brush = Brushes.DarkGray;
+						if (m_path != null && m_path.Contains(ml))
+							tile.Brush = Brushes.DarkGray;
+					}
 				}
 			}
 
@@ -119,7 +141,7 @@ namespace AStarTest
 		{
 			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
 
-			if (!m_realMap.Bounds.Contains(ml))
+			if (!m_map.Bounds.Contains(ml))
 			{
 				Console.Beep();
 				return;
@@ -143,10 +165,10 @@ namespace AStarTest
 			}
 			else
 			{
-				var s = m_realMap[ml];
+				var s = m_map[ml];
 				m_removing = s.Blocked;
 				s.Blocked = !s.Blocked;
-				m_realMap[ml] = s;
+				m_map[ml] = s;
 			}
 
 			InvalidateTiles();
@@ -156,19 +178,25 @@ namespace AStarTest
 		{
 			base.OnMouseMove(e);
 
+			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
+
+			if (this.CurrentTileInfo.Location != ml)
+			{
+				this.CurrentTileInfo.Location = ml;
+				Notify("CurrentTileInfo");
+			}
+
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
-				IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
-
-				if (!m_realMap.Bounds.Contains(ml))
+				if (!m_map.Bounds.Contains(ml))
 				{
 					Console.Beep();
 					return;
 				}
 
-				var s = m_realMap[ml];
+				var s = m_map[ml];
 				s.Blocked = !m_removing;
-				m_realMap[ml] = s;
+				m_map[ml] = s;
 
 				InvalidateTiles();
 			}
@@ -176,10 +204,10 @@ namespace AStarTest
 
 		bool LocValid(IntPoint p)
 		{
-			if (!m_realMap.Bounds.Contains(p))
+			if (!m_map.Bounds.Contains(p))
 				return false;
 
-			if (m_realMap[p].Blocked)
+			if (m_map[p].Blocked)
 				return false;
 
 			return true;
@@ -199,6 +227,7 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
+
 		IEnumerable<IntPoint> m_path;
 		AStarResult m_result;
 
@@ -208,7 +237,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_result = AStar.Find(src, dst, true, LocValid);
+			m_result = AStar.Find(src, dst, true, LocValid, l => m_map[l].Weight);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -263,6 +292,7 @@ namespace AStarTest
 		public int G;
 		public int H;
 		public Direction From;
+		public int Weight;
 
 		public void ClearTile()
 		{
@@ -270,6 +300,7 @@ namespace AStarTest
 			this.G = 0;
 			this.H = 0;
 			this.From = Direction.None;
+			this.Weight = 0;
 		}
 
 		protected override void OnRender(DrawingContext dc)
@@ -286,6 +317,13 @@ namespace AStarTest
 				Point mp = new Point(this.RenderSize.Width / 2, this.RenderSize.Height / 2);
 				dc.DrawEllipse(Brushes.White, null, mp, 3, 3);
 				dc.DrawLine(new Pen(Brushes.White, 2), mp, mp + new Vector(iv.X, -iv.Y));
+			}
+
+			if (this.Weight != 0)
+			{
+				var ft = new FormattedText(this.Weight.ToString(), System.Globalization.CultureInfo.CurrentCulture,
+					FlowDirection.LeftToRight, new Typeface("Verdana"), 8, Brushes.White);
+				dc.DrawText(ft, new Point(this.RenderSize.Width - ft.Width - 2, 2));
 			}
 
 			if (G != 0 || H != 0)

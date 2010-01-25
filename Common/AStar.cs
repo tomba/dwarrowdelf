@@ -59,49 +59,68 @@ namespace MyGame
 
 	public static class AStar
 	{
-		public static AStarResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> locValid)
+		class AStarState
 		{
+			public IntPoint Src;
+			public IntPoint Dst;
+			public IOpenList OpenList;
+			public IDictionary<IntPoint, AStarNode> NodeMap;
+			public Func<IntPoint, bool> TileValid;
+			public Func<IntPoint, int> TileWeight;
+		}
+
+		public static AStarResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> tileValid, Func<IntPoint, int> tileWeight)
+		{
+			var state = new AStarState()
+			{
+				Src = src,
+				Dst = dst,
+				TileValid = tileValid,
+				TileWeight = tileWeight,
+				NodeMap = new Dictionary<IntPoint, AStarNode>(),
+				//OpenList = new BinaryHeap(),
+				OpenList = new SimpleOpenList(),
+			};
+
 			AStarNode lastNode;
-			var nodes = FindInternal(src, dst, exactLocation, locValid, out lastNode);
+			var nodes = FindInternal(state, exactLocation, out lastNode);
 			return new AStarResult(nodes, lastNode);
 		}
 
-		static IDictionary<IntPoint, AStarNode> FindInternal(IntPoint src, IntPoint dst, bool exactLocation,
-			Func<IntPoint, bool> locValid, out AStarNode lastNode)
+		static IDictionary<IntPoint, AStarNode> FindInternal(AStarState state, bool exactLocation, out AStarNode lastNode)
 		{
-			OpenList.Test();
-
 			lastNode = null;
 
-			var nodeMap = new Dictionary<IntPoint, AStarNode>();
+			MyTrace.WriteLine("Start");
 
-			if (exactLocation && !locValid(dst))
+			var nodeMap = state.NodeMap;
+			var openList = state.OpenList;
+
+			if (exactLocation && !state.TileValid(state.Dst))
 				return nodeMap;
 
-			var openList = new OpenList();
-
-			var node = new AStarNode(src, null);
+			var node = new AStarNode(state.Src, null);
 			openList.Add(node);
-			nodeMap.Add(src, node);
+			nodeMap.Add(state.Src, node);
 
 			while (!openList.IsEmpty)
 			{
 				node = openList.Pop();
 				node.Closed = true;
 
-				if (exactLocation && node.Loc == dst)
+				if (exactLocation && node.Loc == state.Dst)
 				{
 					lastNode = node;
 					break;
 				}
 
-				if (!exactLocation && (node.Loc - dst).IsAdjacent)
+				if (!exactLocation && (node.Loc - state.Dst).IsAdjacent)
 				{
 					lastNode = node;
 					break;
 				}
 
-				CheckNeighbors(node, dst, openList, nodeMap, locValid);
+				CheckNeighbors(state, node);
 
 				if (nodeMap.Count > 200000)
 					throw new Exception();
@@ -116,43 +135,148 @@ namespace MyGame
 			return cost;
 		}
 
-		static void CheckNeighbors(AStarNode node, IntPoint dst, OpenList openList,
-			IDictionary<IntPoint, AStarNode> nodeMap, Func<IntPoint, bool> locValid)
+		static void CheckNeighbors(AStarState state, AStarNode parent)
 		{
 			foreach (IntVector v in IntVector.GetAllXYDirections())
 			{
-				IntPoint newLoc = node.Loc + v;
-				if (!locValid(newLoc))
+				IntPoint childLoc = parent.Loc + v;
+				if (!state.TileValid(childLoc))
 					continue;
 
-				AStarNode oldNode;
-				nodeMap.TryGetValue(newLoc, out oldNode);
-				if (oldNode != null && oldNode.Closed)
-					continue;
+				AStarNode child;
+				state.NodeMap.TryGetValue(childLoc, out child);
+				//if (child != null && child.Closed)
+				//	continue;
 
-				ushort g = CostBetweenNodes(node.Loc, newLoc);
-				ushort h = (ushort)((dst - newLoc).ManhattanLength * 10);
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+				ushort h = (ushort)((state.Dst - childLoc).ManhattanLength * 10);
 
-				if (oldNode == null)
+				if (child == null)
 				{
-					var newNode = new AStarNode(newLoc, node);
-					newNode.G = g;
-					newNode.H = h;
-					openList.Add(newNode);
-					nodeMap.Add(newLoc, newNode);
+					child = new AStarNode(childLoc, parent);
+					child.G = g;
+					child.H = h;
+					state.OpenList.Add(child);
+					state.NodeMap.Add(childLoc, child);
 				}
-				else if (oldNode.G > g + CostBetweenNodes(oldNode.Loc, newLoc))
+				else if (child.G > g)
 				{
-					oldNode.Parent = node;
-					oldNode.G = g;
-					openList.NodeUpdated(oldNode);
-				}
+					child.Parent = parent;
+					child.G = g;
+					//MyTrace.WriteLine("{0} update", child.Loc);
 
+					if (child.Closed == false)
+						state.OpenList.NodeUpdated(child);
+					else // Closed == true
+						UpdateParents(state, child);
+				}
 			}
 		}
 
-		class OpenList
+		static void UpdateParents(AStarState state, AStarNode parent)
 		{
+			MyTrace.WriteLine("updating closed node {0}", parent.Loc);
+
+			Stack<AStarNode> queue = new Stack<AStarNode>();
+
+			foreach (IntVector v in IntVector.GetAllXYDirections())
+			{
+				IntPoint childLoc = parent.Loc + v;
+				if (!state.TileValid(childLoc))
+					continue;
+
+				AStarNode child;
+				state.NodeMap.TryGetValue(childLoc, out child);
+				if (child == null)
+					continue;
+
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+
+				if (g < child.G)
+				{
+					MyTrace.WriteLine("closed node {0} updated 1", childLoc);
+
+					child.Parent = parent;
+					child.G = g;
+
+					queue.Push(child);
+				}
+			}
+
+			while (queue.Count > 0)
+			{
+				parent = queue.Pop();
+
+				foreach (IntVector v in IntVector.GetAllXYDirections())
+				{
+					IntPoint childLoc = parent.Loc + v;
+					if (!state.TileValid(childLoc))
+						continue;
+
+					AStarNode child;
+					state.NodeMap.TryGetValue(childLoc, out child);
+					if (child == null)
+						continue;
+
+					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+
+					if (g < child.G)
+					{
+						MyTrace.WriteLine("closed node {0} updated 2", childLoc);
+
+						child.Parent = parent;
+						child.G = g;
+
+						queue.Push(child);
+					}
+				}
+			}
+		}
+
+		interface IOpenList
+		{
+			bool IsEmpty { get; }
+			void Add(AStarNode node);
+			AStarNode Pop();
+			void NodeUpdated(AStarNode node);
+		}
+
+		class SimpleOpenList : IOpenList
+		{
+			List<AStarNode> m_list = new List<AStarNode>(128);
+
+			public bool IsEmpty
+			{
+				get { return m_list.Count == 0; }
+			}
+
+			public void Add(AStarNode node)
+			{
+				m_list.Add(node);
+				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
+			}
+
+			public AStarNode Pop()
+			{
+				var node = m_list.First();
+				m_list.RemoveAt(0);
+				return node;
+			}
+
+			public void NodeUpdated(AStarNode node)
+			{
+				Debug.Assert(m_list.Contains(node));
+				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
+			}
+		}
+
+		class BinaryHeap : IOpenList
+		{
+			static BinaryHeap()
+			{
+				BinaryHeap.Test();
+			}
+
 			AStarNode[] m_openList = new AStarNode[128];
 			int m_count;
 
@@ -256,7 +380,7 @@ namespace MyGame
 			[Conditional("DEBUG")]
 			public static void Test()
 			{
-				var openList = new OpenList();
+				IOpenList openList = new BinaryHeap();
 				var testList = new List<int>();
 				Random rand = new Random();
 				ushort val;
