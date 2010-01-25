@@ -11,6 +11,11 @@ namespace MyGame
 {
 	public static class MyDebug
 	{
+		static MyDebug()
+		{
+			Component = "";
+		}
+
 		public static string Component { get; set; }
 
 		[Conditional("DEBUG")]
