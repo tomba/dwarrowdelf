@@ -99,38 +99,36 @@ namespace AStarTest
 			{
 				tile.Brush = Brushes.DarkBlue;
 			}
-			else if (m_map[ml].Blocked)
-			{
-				tile.Brush = Brushes.Blue;
-			}
-			else if (m_state > 0 && ml == m_from)
-			{
-				tile.Brush = Brushes.Green;
-			}
-			else if (m_state > 1 && ml == m_to)
-			{
-				tile.Brush = Brushes.Red;
-			}
 			else
 			{
 				tile.Weight = m_map[ml].Weight;
 
-				if (m_result != null)
+				if (m_result != null && m_result.Nodes.ContainsKey(ml))
 				{
-					if (m_result.Nodes.ContainsKey(ml))
-					{
-						var node = m_result.Nodes[ml];
-						tile.G = node.G;
-						tile.H = node.H;
+					var node = m_result.Nodes[ml];
+					tile.G = node.G;
+					tile.H = node.H;
 
-						if (node.Parent == null)
-							tile.From = Direction.None;
-						else
-							tile.From = (node.Parent.Loc - node.Loc).ToDirection();
+					if (node.Parent == null)
+						tile.From = Direction.None;
+					else
+						tile.From = (node.Parent.Loc - node.Loc).ToDirection();
 
-						if (m_path != null && m_path.Contains(ml))
-							tile.Brush = Brushes.DarkGray;
-					}
+					if (m_path != null && m_path.Contains(ml))
+						tile.Brush = Brushes.DarkGray;
+				}
+
+				if (m_map[ml].Blocked)
+				{
+					tile.Brush = Brushes.Blue;
+				}
+				else if (m_state > 0 && ml == m_from)
+				{
+					tile.Brush = Brushes.Green;
+				}
+				else if (m_state > 1 && ml == m_to)
+				{
+					tile.Brush = Brushes.Red;
 				}
 			}
 
