@@ -25,22 +25,19 @@ namespace AStarTest
 	{
 		public class TileInfo
 		{
-			public IntPoint Location { get; set; }
+			public IntPoint3D Location { get; set; }
 		}
 
-		struct MapTile
-		{
-			public int Weight;
-			public bool Blocked;
-		}
-
-		Grid2D<MapTile> m_map;
+		Map m_map;
 
 		const int MapWidth = 400;
 		const int MapHeight = 400;
+		const int MapDepth = 10;
+
+		int m_z;
 
 		int m_state;
-		IntPoint m_from, m_to;
+		IntPoint3D m_from, m_to;
 
 		bool m_removing;
 
@@ -54,15 +51,7 @@ namespace AStarTest
 
 			this.TileSize = 32;
 
-			m_map = new Grid2D<MapTile>(MapWidth, MapHeight);
-			for (int y = 0; y < 350; ++y)
-				m_map[5, y] = new MapTile() { Blocked = true };
-
-			for (int y = 4; y < 14; ++y)
-				m_map[15, y] = new MapTile() { Blocked = true };
-
-			for (int y = 6; y < 11; ++y)
-				m_map[10, y] = new MapTile() { Weight = 40 };
+			m_map = new Map(MapWidth, MapHeight, MapDepth);
 
 			base.CenterPos = new IntPoint(10, 10);
 			ClearMap();
@@ -89,9 +78,10 @@ namespace AStarTest
 			return new MapControlTile();
 		}
 
-		protected override void UpdateTile(UIElement _tile, IntPoint ml)
+		protected override void UpdateTile(UIElement _tile, IntPoint _ml)
 		{
 			MapControlTile tile = (MapControlTile)_tile;
+			IntPoint3D ml = new IntPoint3D(_ml, m_z);
 
 			tile.ClearTile();
 
@@ -101,7 +91,8 @@ namespace AStarTest
 			}
 			else
 			{
-				tile.Weight = m_map[ml].Weight;
+				tile.Weight = m_map.GetWeight(ml);
+				tile.Stairs = m_map.GetStairs(ml);
 
 				if (m_result != null && m_result.Nodes.ContainsKey(ml))
 				{
@@ -118,7 +109,7 @@ namespace AStarTest
 						tile.Brush = Brushes.DarkGray;
 				}
 
-				if (m_map[ml].Blocked)
+				if (m_map.GetBlocked(ml))
 				{
 					tile.Brush = Brushes.Blue;
 				}
@@ -135,9 +126,27 @@ namespace AStarTest
 			tile.InvalidateVisual();
 		}
 
+		public int Z
+		{
+			get { return m_z; }
+
+			set
+			{
+				if (m_z == value)
+					return;
+
+				m_z = value;
+				InvalidateTiles();
+				var old = this.CurrentTileInfo.Location;
+				this.CurrentTileInfo.Location = new IntPoint3D(old.X, old.Y, m_z);
+				Notify("CurrentTileInfo");
+			}
+		}
+
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint3D ml = new IntPoint3D(_ml, m_z);
 
 			if (!m_map.Bounds.Contains(ml))
 			{
@@ -163,10 +172,8 @@ namespace AStarTest
 			}
 			else
 			{
-				var s = m_map[ml];
-				m_removing = s.Blocked;
-				s.Blocked = !s.Blocked;
-				m_map[ml] = s;
+				m_removing = m_map.GetBlocked(ml);
+				m_map.SetBlocked(ml, !m_removing);
 			}
 
 			InvalidateTiles();
@@ -176,7 +183,8 @@ namespace AStarTest
 		{
 			base.OnMouseMove(e);
 
-			IntPoint ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint3D ml = new IntPoint3D(_ml, m_z);
 
 			if (this.CurrentTileInfo.Location != ml)
 			{
@@ -192,24 +200,12 @@ namespace AStarTest
 					return;
 				}
 
-				var s = m_map[ml];
-				s.Blocked = !m_removing;
-				m_map[ml] = s;
+				m_map.SetBlocked(ml, !m_removing);
 
 				InvalidateTiles();
 			}
 		}
 
-		bool LocValid(IntPoint p)
-		{
-			if (!m_map.Bounds.Contains(p))
-				return false;
-
-			if (m_map[p].Blocked)
-				return false;
-
-			return true;
-		}
 
 		long m_memUsed;
 		public long MemUsed
@@ -226,16 +222,16 @@ namespace AStarTest
 		}
 
 
-		IEnumerable<IntPoint> m_path;
-		AStarResult m_result;
+		IEnumerable<IntPoint3D> m_path;
+		AStar3DResult m_result;
 
-		void DoAStar(IntPoint src, IntPoint dst)
+		void DoAStar(IntPoint3D src, IntPoint3D dst)
 		{
 			long startBytes, stopBytes;
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_result = AStar.Find(src, dst, true, LocValid, l => m_map[l].Weight);
+			m_result = AStar3D.Find(src, dst, true, LocValid, l => m_map.GetWeight(l), TileDirs);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -248,7 +244,7 @@ namespace AStarTest
 				return;
 			}
 
-			List<IntPoint> pathList = new List<IntPoint>();
+			var pathList = new List<IntPoint3D>();
 			var n = m_result.LastNode;
 			while (n.Parent != null)
 			{
@@ -256,6 +252,31 @@ namespace AStarTest
 				n = n.Parent;
 			}
 			m_path = pathList;
+		}
+
+		bool LocValid(IntPoint3D p)
+		{
+			if (!m_map.Bounds.Contains(p))
+				return false;
+
+			if (m_map.GetBlocked(p))
+				return false;
+
+			return true;
+		}
+
+		IEnumerable<Direction> TileDirs(IntPoint3D p)
+		{
+			var stairs = m_map.GetStairs(p);
+
+			var dirs = new List<Direction>();
+			dirs.AddRange(IntVector.GetAllXYDirections().Select(v => v.ToDirection()));
+			if (stairs == Stairs.Up)
+				dirs.Add(Direction.Up);
+			if (stairs == Stairs.Down)
+				dirs.Add(Direction.Down);
+
+			return dirs;
 		}
 
 		void Notify(string propertyName)
@@ -291,6 +312,7 @@ namespace AStarTest
 		public int H;
 		public Direction From;
 		public int Weight;
+		public Stairs Stairs;
 
 		public void ClearTile()
 		{
@@ -299,11 +321,25 @@ namespace AStarTest
 			this.H = 0;
 			this.From = Direction.None;
 			this.Weight = 0;
+			this.Stairs = Stairs.None;
 		}
 
 		protected override void OnRender(DrawingContext dc)
 		{
 			dc.DrawRectangle(this.Brush, s_edgePen, new Rect(this.RenderSize));
+
+			if (this.Stairs == Stairs.Down)
+			{
+				double tri = this.RenderSize.Width / 3;
+				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri, tri), new Point(tri * 2, this.RenderSize.Height / 2));
+				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri * 2, this.RenderSize.Height / 2), new Point(tri, tri * 2));
+			}
+			else if (this.Stairs == Stairs.Up)
+			{
+				double tri = this.RenderSize.Width / 3;
+				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri * 2, tri), new Point(tri, this.RenderSize.Height / 2));
+				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri, this.RenderSize.Height / 2), new Point(tri * 2, tri * 2));
+			}
 
 			if (this.RenderSize.Width < 32)
 				return;

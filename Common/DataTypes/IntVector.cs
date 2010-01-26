@@ -139,6 +139,11 @@ namespace MyGame
 			return new IntVector(x, y);
 		}
 
+		public IntVector Reverse()
+		{
+			return new IntVector(-m_x, -m_y);
+		}
+
 		public IntVector Rotate(int angle)
 		{
 			double rad = Math.PI * angle / 180.0;

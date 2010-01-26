@@ -36,7 +36,7 @@ namespace MyGame
 
 		public IEnumerable<Direction> GetPath()
 		{
-			return GetPathReverse().Reverse().Select(d => IntVector.FromDirection(d).FastRotate(4).ToDirection());
+			return GetPathReverse().Reverse().Select(d => IntVector.FromDirection(d).Reverse().ToDirection());
 		}
 	}
 

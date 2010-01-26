@@ -76,7 +76,7 @@ namespace MyGame
 
 		public static IntVector3D operator +(IntVector3D left, IntVector3D right)
 		{
-			return new IntVector3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);			
+			return new IntVector3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
 		public static IntVector3D operator -(IntVector3D left, IntVector3D right)
@@ -145,6 +145,11 @@ namespace MyGame
 				z = -1;
 
 			return new IntVector3D(x, y, z);
+		}
+
+		public IntVector3D Reverse()
+		{
+			return new IntVector3D(-m_x, -m_y, -m_z);
 		}
 
 		static int FastCos(int rot)
