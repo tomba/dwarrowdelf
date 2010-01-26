@@ -5,6 +5,11 @@
 		<CharSymbol>?</CharSymbol>
 	</Symbol>
 	<Symbol>
+		<Name>FixedWall</Name>
+		<CharSymbol>#</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="140">Stone_Block</Drawing>
+	</Symbol>
+	<Symbol>
 		<Name>NaturalFloor</Name>
 		<CharSymbol>.</CharSymbol>
 		<Drawing x="0" y="0" w="100" h="140">Dirt_Block</Drawing>

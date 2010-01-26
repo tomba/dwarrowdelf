@@ -378,6 +378,15 @@ namespace MyGame.Client
 
 				building.AddBuildItem();
 			}
+			else if (tag == "Goto")
+			{
+				IntPoint p = map.SelectionRect.TopLeft;
+				var env = map.Environment;
+				int z = map.Z;
+
+				var job = new MoveActionJob(null, env, new IntPoint3D(p, z), false);
+				this.Map.World.Jobs.Add(job);
+			}
 			else
 			{
 				throw new Exception();

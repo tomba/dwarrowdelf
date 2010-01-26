@@ -149,6 +149,7 @@
                             <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                         </MenuItem>
                         <MenuItem Header="File"/>
                         <MenuItem Header="Save"/>

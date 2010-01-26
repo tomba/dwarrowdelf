@@ -218,7 +218,7 @@ namespace MyGame.Server
 			var env = m_world.Environments.First(); // XXX entry location
 			var syms = m_world.AreaData.Symbols;
 
-#if asd
+#if !asd
 			var player = new Living(m_world);
 			player.SymbolID = syms.Single(o => o.Name == "Player").ID; ;
 			player.Name = "player";
@@ -247,12 +247,12 @@ namespace MyGame.Server
 			};
 			item.MoveTo(player);
 
-			if (!player.MoveTo(env, new IntPoint3D(0, 0, 0)))
+			if (!player.MoveTo(env, new IntPoint3D(1, 1, 0)))
 				throw new Exception("Unable to move player");
 
 			var inv = player.SerializeInventory();
 			Send(inv);
-#if !qwe
+#if qwe
 			var pet = new Living(m_world);
 			pet.SymbolID = syms.Single(o => o.Name == "Monster").ID;
 			pet.Name = "lemmikki";

@@ -144,6 +144,7 @@ namespace MyGame.Client
 		IntPoint3D m_dest;
 		bool m_adjacent;
 		IntPoint3D m_supposedLocation;
+		int m_numFails;
 
 		public MoveActionJob(IJob parent, Environment environment, IntPoint3D destination, bool adjacent)
 			: base(parent)
@@ -163,29 +164,10 @@ namespace MyGame.Client
 		{
 			if (m_pathDirs == null || m_supposedLocation != this.Worker.Location)
 			{
-				var v = m_dest - this.Worker.Location;
-				if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
-					return Progress.Done;
+				var res = PreparePath();
 
-				// ZZZ only 2D
-				int z = m_dest.Z;
-				var src2d = this.Worker.Location2D;
-				var dest2d = new IntPoint(m_dest.X, m_dest.Y);
-				var env = m_environment;
-				var res = AStar.Find(src2d, dest2d, !m_adjacent,
-					l => env.IsWalkable(new IntPoint3D(l, z)),
-					l => 0);
-				var dirs = res.GetPath();
-
-				m_pathDirs = new Queue<Direction>(dirs);
-
-				if (m_pathDirs.Count == 0)
-				{
-					m_pathDirs = null;
-					return Progress.Fail;
-				}
-
-				m_supposedLocation = this.Worker.Location;
+				if (res != Progress.Ok)
+					return res;
 			}
 
 			Direction dir = m_pathDirs.Dequeue();
@@ -204,12 +186,51 @@ namespace MyGame.Client
 		protected override Progress ActionProgressOverride(ActionProgressEvent e)
 		{
 			if (e.Success == false)
-				return Progress.Fail;
+			{
+				m_numFails++;
+				if (m_numFails > 10)
+					return Progress.Fail;
+
+				var res = PreparePath();
+				return res;
+			}
 
 			if (e.TicksLeft > 0)
 				return Progress.Ok;
 
 			return CheckProgress();
+		}
+
+		Progress PreparePath()
+		{
+			var v = m_dest - this.Worker.Location;
+			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
+			{
+				m_pathDirs = null;
+				return Progress.Done;
+			}
+
+			// ZZZ only 2D
+			int z = m_dest.Z;
+			var src2d = this.Worker.Location2D;
+			var dest2d = new IntPoint(m_dest.X, m_dest.Y);
+			var env = m_environment;
+			var res = AStar.Find(src2d, dest2d, !m_adjacent,
+				l => env.IsWalkable(new IntPoint3D(l, z)),
+				l => 0);
+			var dirs = res.GetPath();
+
+			m_pathDirs = new Queue<Direction>(dirs);
+
+			if (m_pathDirs.Count == 0)
+			{
+				m_pathDirs = null;
+				return Progress.Fail;
+			}
+
+			m_supposedLocation = this.Worker.Location;
+
+			return Progress.Ok;
 		}
 
 		Progress CheckProgress()

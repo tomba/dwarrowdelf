@@ -181,8 +181,7 @@ namespace MyGame.Client
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_bitmapCache = new SymbolBitmapCache(this.TileSize);
-						m_bitmapCache.SymbolDrawings = m_world.SymbolDrawings;
+						m_bitmapCache = new SymbolBitmapCache(m_world.SymbolDrawingCache, this.TileSize);
 					}
 				}
 				else

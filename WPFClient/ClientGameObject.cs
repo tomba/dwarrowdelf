@@ -103,7 +103,7 @@ namespace MyGame.Client
 		{
 			get
 			{
-				return new DrawingImage(this.World.SymbolDrawings.GetDrawing(m_symbolID, this.Color));
+				return new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(m_symbolID, this.Color));
 			}
 		}
 

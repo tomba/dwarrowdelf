@@ -10,6 +10,7 @@ namespace MyGame
 	{
 		Undefined,
 		Empty,
+		FixedWall,
 		NaturalWall,
 		Wall,
 		StairsUp,
@@ -92,6 +93,7 @@ namespace MyGame
 			Add(new InteriorInfo(InteriorID.Undefined, false));
 
 			Add(new InteriorInfo(InteriorID.Empty, false));
+			Add(new InteriorInfo(InteriorID.FixedWall, true));
 			Add(new InteriorInfo(InteriorID.NaturalWall, true));
 			Add(new InteriorInfo(InteriorID.Wall, true));
 			Add(new InteriorInfo(InteriorID.StairsDown, false));

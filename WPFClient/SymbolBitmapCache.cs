@@ -15,16 +15,19 @@ namespace MyGame.Client
 			public BitmapSource BitmapDark;
 		}
 
-		SymbolDrawingCache m_symbolDrawings;
+		SymbolDrawingCache m_symbolDrawingCache;
 
 		Dictionary<int, Dictionary<Color, CacheData>> m_bitmapMap =
 			new Dictionary<int,Dictionary<Color,CacheData>>();
 
 		double m_size = 8;
 
-		public SymbolBitmapCache(double size)
+		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, double size)
 		{
+			m_symbolDrawingCache = symbolDrawingCache;
 			m_size = size;
+
+			m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
 		}
 
 		public double TileSize
@@ -38,17 +41,6 @@ namespace MyGame.Client
 					m_size = value;
 					m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
 				}
-			}
-		}
-
-		public SymbolDrawingCache SymbolDrawings
-		{
-			get { return m_symbolDrawings; }
-
-			set
-			{
-				m_symbolDrawings = value;
-				m_bitmapMap = new Dictionary<int, Dictionary<Color, CacheData>>();
 			}
 		}
 
@@ -96,7 +88,7 @@ namespace MyGame.Client
 			DrawingVisual drawingVisual = new DrawingVisual();
 			DrawingContext drawingContext = drawingVisual.RenderOpen();
 
-			Drawing d = m_symbolDrawings.GetDrawing(symbolID, color);
+			Drawing d = m_symbolDrawingCache.GetDrawing(symbolID, color);
 
 			drawingContext.PushTransform(
 				new ScaleTransform(Math.Floor(m_size) / 100, Math.Floor(m_size) / 100));

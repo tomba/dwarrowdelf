@@ -80,7 +80,9 @@ namespace MyArea
 
 			foreach (var p in env.Bounds.Range())
 			{
-				if (p.X == 2 && p.Y == 2)
+				if (p.X == 0 || p.Y == 0 || p.X == env.Width - 1 || p.Y == env.Height - 1)
+					env.SetInterior(p, InteriorID.FixedWall, stone);
+				else if (p.X == 2 && p.Y == 2)
 					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
 				else if (p.X == 3 && p.Y == 3)
 					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
@@ -143,7 +145,7 @@ namespace MyArea
 					Color = GameColors.Red,
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(3, 0, 0));
+				item.MoveTo(env, new IntPoint3D(3, 1, 0));
 
 				item = new ItemObject(world)
 				{
@@ -151,7 +153,7 @@ namespace MyArea
 					Name = "gem",
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(2, 0, 0));
+				item.MoveTo(env, new IntPoint3D(2, 1, 0));
 
 				item = new ItemObject(world)
 				{
@@ -159,7 +161,7 @@ namespace MyArea
 					Name = "puu",
 					MaterialID = wood,
 				};
-				item.MoveTo(env, new IntPoint3D(0, 3, 0));
+				item.MoveTo(env, new IntPoint3D(1, 3, 0));
 			}
 
 			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 4, 2, 2), Z = 0 };

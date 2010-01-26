@@ -21,7 +21,8 @@ namespace MyGame.Client
 
 		public ObservableCollection<IJob> Jobs { get; private set; }
 
-		public SymbolDrawingCache SymbolDrawings { get; private set; }
+		public DrawingCache DrawingCache { get; private set; }
+		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
@@ -33,7 +34,10 @@ namespace MyGame.Client
 			this.Controllables = new LivingCollection();
 			m_objects = new KeyedObjectCollection();
 			this.Objects = new ReadOnlyKeyedObjectCollection(m_objects);
-			this.SymbolDrawings = new SymbolDrawingCache(areaData);
+
+			this.DrawingCache = new DrawingCache(areaData);
+			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache, areaData.Symbols);
+
 			this.Jobs = new ObservableCollection<IJob>();
 		}
 
