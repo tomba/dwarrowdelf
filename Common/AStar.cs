@@ -91,7 +91,7 @@ namespace MyGame
 		{
 			lastNode = null;
 
-			MyTrace.WriteLine("Start");
+			//MyTrace.WriteLine("Start");
 
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
@@ -175,7 +175,7 @@ namespace MyGame
 
 		static void UpdateParents(AStarState state, AStarNode parent)
 		{
-			MyTrace.WriteLine("updating closed node {0}", parent.Loc);
+			//MyTrace.WriteLine("updating closed node {0}", parent.Loc);
 
 			Stack<AStarNode> queue = new Stack<AStarNode>();
 
@@ -194,7 +194,7 @@ namespace MyGame
 
 				if (g < child.G)
 				{
-					MyTrace.WriteLine("closed node {0} updated 1", childLoc);
+					//MyTrace.WriteLine("closed node {0} updated 1", childLoc);
 
 					child.Parent = parent;
 					child.G = g;
@@ -222,7 +222,7 @@ namespace MyGame
 
 					if (g < child.G)
 					{
-						MyTrace.WriteLine("closed node {0} updated 2", childLoc);
+						//MyTrace.WriteLine("closed node {0} updated 2", childLoc);
 
 						child.Parent = parent;
 						child.G = g;
