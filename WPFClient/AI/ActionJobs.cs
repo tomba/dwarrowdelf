@@ -210,14 +210,7 @@ namespace MyGame.Client
 				return Progress.Done;
 			}
 
-			// ZZZ only 2D
-			int z = m_dest.Z;
-			var src2d = this.Worker.Location2D;
-			var dest2d = new IntPoint(m_dest.X, m_dest.Y);
-			var env = m_environment;
-			var res = AStar2D.Find(src2d, dest2d, !m_adjacent,
-				l => env.IsWalkable(new IntPoint3D(l, z)),
-				l => 0);
+			var res = AStar3D.Find(this.Worker.Location, m_dest, !m_adjacent, l => 0, GetTileDirs);
 			var dirs = res.GetPath();
 
 			m_pathDirs = new Queue<Direction>(dirs);
@@ -231,6 +224,26 @@ namespace MyGame.Client
 			m_supposedLocation = this.Worker.Location;
 
 			return Progress.Ok;
+		}
+
+		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
+		{
+			var env = m_environment;
+
+			foreach (var v in IntVector.GetAllXYDirections())
+			{
+				var l = p + v;
+				if (env.IsWalkable(l) == true) // XXX map.Bounds.Contains(l)
+					yield return v.ToDirection();
+			}
+
+			var iid = env.GetInterior(p).ID;
+
+			if (iid == InteriorID.StairsUp)
+				yield return Direction.Up;
+
+			if (iid == InteriorID.StairsDown)
+				yield return Direction.Down;
 		}
 
 		Progress CheckProgress()

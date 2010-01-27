@@ -82,11 +82,11 @@ namespace MyArea
 			{
 				if (p.X == 0 || p.Y == 0 || p.X == env.Width - 1 || p.Y == env.Height - 1)
 					env.SetInterior(p, InteriorID.FixedWall, stone);
-				else if (p.X == 2 && p.Y == 2)
+				else if (p.X == 2 && p.Y == 2 && p.Z > 0)
 					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
-				else if (p.X == 3 && p.Y == 3)
+				else if (p.X == 8 && p.Y == 8)
 					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
-				else if (p.X < 7 && p.Y < 7)
+				else if (p.X < 10 && p.Y < 10)
 					env.SetInteriorID(p, InteriorID.Empty);
 				else if (r.Next() % 8 == 0)
 					env.SetInterior(p, InteriorID.NaturalWall, stone);
