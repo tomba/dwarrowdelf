@@ -24,6 +24,7 @@ using AStarTest;
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
  * BinaryHeap 3D: mem 12698992, ticks 1289165
+ * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3D)
  * SimpleList 3D: mem 12699376, ticks 88453781
  * 
  */
