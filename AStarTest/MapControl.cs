@@ -94,9 +94,15 @@ namespace AStarTest
 				tile.Weight = m_map.GetWeight(ml);
 				tile.Stairs = m_map.GetStairs(ml);
 
+#if USE3D
 				if (m_result != null && m_result.Nodes.ContainsKey(ml))
 				{
 					var node = m_result.Nodes[ml];
+#else
+				if (m_result != null && m_result.Nodes.ContainsKey(_ml))
+				{
+					var node = m_result.Nodes[_ml];
+#endif
 					tile.G = node.G;
 					tile.H = node.H;
 
@@ -223,7 +229,11 @@ namespace AStarTest
 
 
 		IEnumerable<IntPoint3D> m_path;
+#if USE3D
 		AStar3DResult m_result;
+#else
+		AStar2DResult m_result;
+#endif
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
 		{
@@ -231,12 +241,18 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_result = AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
+#if USE3D
+			var result = AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
+#else
+			var result = AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
+#endif
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
 			this.MemUsed = stopBytes - startBytes;
 			this.TicksUsed = sw.ElapsedTicks;
+
+			m_result = result;
 
 			if (!m_result.PathFound)
 			{
@@ -248,7 +264,11 @@ namespace AStarTest
 			var n = m_result.LastNode;
 			while (n.Parent != null)
 			{
+#if USE3D
 				pathList.Add(n.Loc);
+#else
+				pathList.Add(new IntPoint3D(n.Loc, m_z));
+#endif
 				n = n.Parent;
 			}
 			m_path = pathList;
@@ -272,6 +292,18 @@ namespace AStarTest
 
 			if (stairs == Stairs.Down|| stairs == Stairs.UpDown)
 				yield return Direction.Down;
+		}
+
+		IEnumerable<Direction> GetTileDirs2D(IntPoint p)
+		{
+			var map = m_map;
+
+			foreach (var v in IntVector.GetAllXYDirections())
+			{
+				var l = p + v;
+				if (map.Bounds.Contains(new IntPoint3D(l, m_z)) && map.GetBlocked(new IntPoint3D(l, m_z)) == false)
+					yield return v.ToDirection();
+			}
 		}
 
 		void Notify(string propertyName)

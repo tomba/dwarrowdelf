@@ -65,18 +65,19 @@ namespace MyGame
 			public IntPoint Dst;
 			public IOpenList OpenList;
 			public IDictionary<IntPoint, AStar2DNode> NodeMap;
-			public Func<IntPoint, bool> TileValid;
 			public Func<IntPoint, int> TileWeight;
+			public Func<IntPoint, IEnumerable<Direction>> GetValidDirs;
 		}
 
-		public static AStar2DResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> tileValid, Func<IntPoint, int> tileWeight)
+		public static AStar2DResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, int> tileWeight,
+			Func<IntPoint, IEnumerable<Direction>> validDirs)
 		{
 			var state = new AStarState()
 			{
 				Src = src,
 				Dst = dst,
-				TileValid = tileValid,
 				TileWeight = tileWeight,
+				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint, AStar2DNode>(),
 				//OpenList = new BinaryHeap(),
 				OpenList = new SimpleOpenList(),
@@ -95,9 +96,6 @@ namespace MyGame
 
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
-
-			if (exactLocation && !state.TileValid(state.Dst))
-				return nodeMap;
 
 			var node = new AStar2DNode(state.Src, null);
 			openList.Add(node);
@@ -137,11 +135,9 @@ namespace MyGame
 
 		static void CheckNeighbors(AStarState state, AStar2DNode parent)
 		{
-			foreach (IntVector v in IntVector.GetAllXYDirections())
+			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
-				IntPoint childLoc = parent.Loc + v;
-				if (!state.TileValid(childLoc))
-					continue;
+				IntPoint childLoc = parent.Loc + IntVector.FromDirection(dir);
 
 				AStar2DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -179,11 +175,9 @@ namespace MyGame
 
 			Stack<AStar2DNode> queue = new Stack<AStar2DNode>();
 
-			foreach (IntVector v in IntVector.GetAllXYDirections())
+			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
-				IntPoint childLoc = parent.Loc + v;
-				if (!state.TileValid(childLoc))
-					continue;
+				IntPoint childLoc = parent.Loc + IntVector.FromDirection(dir);
 
 				AStar2DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -207,11 +201,9 @@ namespace MyGame
 			{
 				parent = queue.Pop();
 
-				foreach (IntVector v in IntVector.GetAllXYDirections())
+				foreach (var dir in state.GetValidDirs(parent.Loc))
 				{
-					IntPoint childLoc = parent.Loc + v;
-					if (!state.TileValid(childLoc))
-						continue;
+					IntPoint childLoc = parent.Loc + IntVector.FromDirection(dir);
 
 					AStar2DNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);

@@ -40,9 +40,7 @@ namespace MyGame.Server
 				// ZZZ only 2D
 				int z = m_player.Z;
 				var res = AStar2D.Find(m_object.Location2D, m_player.Location2D, true,
-					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) &&
-						m_object.Environment.IsWalkable(new IntPoint3D(l, z)),
-					l => 0);
+					l => 0, GetValidDirs);
 
 				var dirs = res.GetPath();
 
@@ -60,6 +58,19 @@ namespace MyGame.Server
 			action = new MoveAction(dir);
 
 			return action;
+		}
+
+		IEnumerable<Direction> GetValidDirs(IntPoint p)
+		{
+			var map = m_player.Environment;
+			int z = m_player.Z;
+
+			foreach (var v in IntVector.GetAllXYDirections())
+			{
+				var l = p + v;
+				if (map.Bounds.Contains(new IntPoint3D(l, z)) && map.IsWalkable(new IntPoint3D(l, z)) == true)
+					yield return v.ToDirection();
+			}
 		}
 
 		GameAction GetNewActionNoAstar()
