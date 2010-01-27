@@ -112,7 +112,7 @@ namespace MyGame
 					break;
 				}
 
-				if (!exactLocation && (node.Loc - state.Dst).IsAdjacent)
+				if (!exactLocation && (node.Loc - state.Dst).IsAdjacent2D)
 				{
 					lastNode = node;
 					break;
