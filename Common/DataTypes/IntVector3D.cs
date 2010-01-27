@@ -47,7 +47,7 @@ namespace MyGame
 
 		public double Length
 		{
-			get { return Math.Pow(this.X * this.X + this.Y * this.Y + this.Z * this.Z, 1.0 / 3.0); }
+			get { return Math.Sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z); }
 		}
 
 		public int ManhattanLength
