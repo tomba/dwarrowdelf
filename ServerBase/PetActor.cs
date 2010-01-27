@@ -39,7 +39,7 @@ namespace MyGame.Server
 			{
 				// ZZZ only 2D
 				int z = m_player.Z;
-				var res = AStar2D.Find(m_object.Location2D, m_player.Location2D, true,
+				var res = AStar.AStar2D.Find(m_object.Location2D, m_player.Location2D, true,
 					l => 0, GetValidDirs);
 
 				var dirs = res.GetPath();

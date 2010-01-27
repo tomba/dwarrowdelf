@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame
+namespace MyGame.AStar
 {
 	public class AStar2DResult
 	{
@@ -41,12 +41,12 @@ namespace MyGame
 	}
 
 	// tries to save some memory by using ushorts.
-	public class AStar2DNode
+	public class AStar2DNode : IAStarNode
 	{
 		public IntPoint Loc { get; private set; }
 		public AStar2DNode Parent;
-		public ushort G;
-		public ushort H;
+		public ushort G { get; set; }
+		public ushort H { get; set; }
 		public ushort F { get { return (ushort)(G + H); } }
 		public bool Closed { get; set; }
 
@@ -63,7 +63,7 @@ namespace MyGame
 		{
 			public IntPoint Src;
 			public IntPoint Dst;
-			public IOpenList OpenList;
+			public IOpenList<AStar2DNode> OpenList;
 			public IDictionary<IntPoint, AStar2DNode> NodeMap;
 			public Func<IntPoint, int> TileWeight;
 			public Func<IntPoint, IEnumerable<Direction>> GetValidDirs;
@@ -79,8 +79,8 @@ namespace MyGame
 				TileWeight = tileWeight,
 				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint, AStar2DNode>(),
-				//OpenList = new BinaryHeap(),
-				OpenList = new SimpleOpenList(),
+				OpenList = new BinaryHeap<AStar2DNode>(),
+				//OpenList = new SimpleOpenList<AStar2DNode>(),
 			};
 
 			AStar2DNode lastNode;
@@ -224,194 +224,6 @@ namespace MyGame
 				}
 			}
 		}
-
-		interface IOpenList
-		{
-			bool IsEmpty { get; }
-			void Add(AStar2DNode node);
-			AStar2DNode Pop();
-			void NodeUpdated(AStar2DNode node);
-		}
-
-		class SimpleOpenList : IOpenList
-		{
-			List<AStar2DNode> m_list = new List<AStar2DNode>(128);
-
-			public bool IsEmpty
-			{
-				get { return m_list.Count == 0; }
-			}
-
-			public void Add(AStar2DNode node)
-			{
-				m_list.Add(node);
-				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
-			}
-
-			public AStar2DNode Pop()
-			{
-				var node = m_list.First();
-				m_list.RemoveAt(0);
-				return node;
-			}
-
-			public void NodeUpdated(AStar2DNode node)
-			{
-				Debug.Assert(m_list.Contains(node));
-				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
-			}
-		}
-
-		class BinaryHeap : IOpenList
-		{
-			static BinaryHeap()
-			{
-				BinaryHeap.Test();
-			}
-
-			AStar2DNode[] m_openList = new AStar2DNode[128];
-			int m_count;
-
-			public bool IsEmpty { get { return m_count == 0; } }
-
-			public void Add(AStar2DNode node)
-			{
-				if (m_count == 0)
-				{
-					m_openList[0] = node;
-					m_count++;
-					return;
-				}
-
-				if (m_count >= m_openList.Length)
-				{
-					AStar2DNode[] newArray = new AStar2DNode[m_openList.Length * 2];
-					m_openList.CopyTo(newArray, 0);
-					m_openList = newArray;
-				}
-
-				int m = m_count;
-
-				Debug.Assert(m_openList[m] == null);
-				m_openList[m] = node;
-
-				while (m > 0)
-				{
-					if (m_openList[m].F > m_openList[(m - 1) / 2].F)
-						break;
-
-					AStar2DNode n = m_openList[(m - 1) / 2];
-					m_openList[(m - 1) / 2] = m_openList[m];
-					m_openList[m] = n;
-					m = (m - 1) / 2;
-				}
-
-				m_count++;
-			}
-
-			public AStar2DNode Pop()
-			{
-				AStar2DNode ret = m_openList[0];
-
-				m_count--;
-
-				if (m_count == 0)
-				{
-					m_openList[0] = null;
-					return ret;
-				}
-
-				m_openList[0] = m_openList[m_count];
-				m_openList[m_count] = null;
-
-				int v = 0;
-
-				while (true)
-				{
-					int u = v;
-
-					if (2 * u + 2 < m_count)
-					{
-						// both children exist
-
-						if (m_openList[u].F >= m_openList[2 * u + 1].F)
-							v = 2 * u + 1;
-
-						if (m_openList[v].F >= m_openList[2 * u + 2].F)
-							v = 2 * u + 2;
-					}
-					else if (2 * u + 1 < m_count)
-					{
-						// one child exists
-
-						if (m_openList[u].F >= m_openList[2 * u + 1].F)
-							v = 2 * u + 1;
-					}
-
-					if (u != v)
-					{
-						AStar2DNode n = m_openList[u];
-						m_openList[u] = m_openList[v];
-						m_openList[v] = n;
-					}
-					else
-					{
-						break;
-					}
-				}
-
-				return ret;
-			}
-
-			// F changed
-			public void NodeUpdated(AStar2DNode node)
-			{
-				throw new NotImplementedException();
-			}
-
-			[Conditional("DEBUG")]
-			public static void Test()
-			{
-				IOpenList openList = new BinaryHeap();
-				var testList = new List<int>();
-				Random rand = new Random();
-				ushort val;
-				for (int i = 0; i < 100; ++i)
-				{
-					val = (ushort)rand.Next(100);
-					openList.Add(new AStar2DNode(new IntPoint(), null) { G = val });
-					testList.Add(val);
-
-					if (i % 20 == 19)
-					{
-						testList.Sort();
-						for (int t = 0; t < 5; ++t)
-						{
-							int v1 = openList.Pop().F;
-							int v2 = testList[0];
-							testList.RemoveAt(0);
-
-							if (v1 != v2)
-								throw new Exception();
-
-						}
-					}
-				}
-
-				testList.Sort();
-
-				while (!openList.IsEmpty)
-				{
-					int v1 = openList.Pop().F;
-					int v2 = testList[0];
-					testList.RemoveAt(0);
-
-					if (v1 != v2)
-						throw new Exception();
-
-				}
-			}
-
-		}
 	}
+
 }

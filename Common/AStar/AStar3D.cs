@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame
+namespace MyGame.AStar
 {
 	public class AStar3DResult
 	{
@@ -41,12 +41,12 @@ namespace MyGame
 	}
 
 	// tries to save some memory by using ushorts.
-	public class AStar3DNode
+	public class AStar3DNode : IAStarNode
 	{
 		public IntPoint3D Loc { get; private set; }
 		public AStar3DNode Parent;
-		public ushort G;
-		public ushort H;
+		public ushort G { get; set; }
+		public ushort H { get; set; }
 		public ushort F { get { return (ushort)(G + H); } }
 		public bool Closed { get; set; }
 
@@ -63,7 +63,7 @@ namespace MyGame
 		{
 			public IntPoint3D Src;
 			public IntPoint3D Dst;
-			public IOpenList OpenList;
+			public IOpenList<AStar3DNode> OpenList;
 			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
 			public Func<IntPoint3D, int> GetTileWeight;
 			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
@@ -79,8 +79,8 @@ namespace MyGame
 				GetTileWeight = tileWeight,
 				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint3D, AStar3DNode>(),
-				//OpenList = new BinaryHeap(),
-				OpenList = new SimpleOpenList(),
+				OpenList = new BinaryHeap<AStar3DNode>(),
+				//OpenList = new SimpleOpenList<AStar3DNode>(),
 			};
 
 			AStar3DNode lastNode;
@@ -222,43 +222,6 @@ namespace MyGame
 						queue.Push(child);
 					}
 				}
-			}
-		}
-
-		interface IOpenList
-		{
-			bool IsEmpty { get; }
-			void Add(AStar3DNode node);
-			AStar3DNode Pop();
-			void NodeUpdated(AStar3DNode node);
-		}
-
-		class SimpleOpenList : IOpenList
-		{
-			List<AStar3DNode> m_list = new List<AStar3DNode>(128);
-
-			public bool IsEmpty
-			{
-				get { return m_list.Count == 0; }
-			}
-
-			public void Add(AStar3DNode node)
-			{
-				m_list.Add(node);
-				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
-			}
-
-			public AStar3DNode Pop()
-			{
-				var node = m_list.First();
-				m_list.RemoveAt(0);
-				return node;
-			}
-
-			public void NodeUpdated(AStar3DNode node)
-			{
-				Debug.Assert(m_list.Contains(node));
-				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
 			}
 		}
 	}

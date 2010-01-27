@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define USE3D
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +21,12 @@ using MyGame;
 using MyGame.Client;
 using AStarTest;
 
+/*
+ * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
+ * BinaryHeap 3D: mem 12698992, ticks 1289165
+ * SimpleList 3D: mem 12699376, ticks 88453781
+ * 
+ */
 namespace AStarTest
 {
 	public class MapControl : MapControlBase, INotifyPropertyChanged
@@ -160,7 +168,7 @@ namespace AStarTest
 				return;
 			}
 
-			if (e.LeftButton == MouseButtonState.Pressed)
+			if (e.LeftButton == MouseButtonState.Pressed && !m_map.GetBlocked(ml))
 			{
 				if (m_state == 0 || m_state == 3)
 				{
@@ -176,7 +184,7 @@ namespace AStarTest
 					m_state = 3;
 				}
 			}
-			else
+			else if (e.RightButton == MouseButtonState.Pressed)
 			{
 				m_removing = m_map.GetBlocked(ml);
 				m_map.SetBlocked(ml, !m_removing);
@@ -230,9 +238,9 @@ namespace AStarTest
 
 		IEnumerable<IntPoint3D> m_path;
 #if USE3D
-		AStar3DResult m_result;
+		MyGame.AStar.AStar3DResult m_result;
 #else
-		AStar2DResult m_result;
+		MyGame.AStar.AStar2DResult m_result;
 #endif
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
@@ -242,9 +250,9 @@ namespace AStarTest
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
 #if USE3D
-			var result = AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
+			var result = MyGame.AStar.AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
 #else
-			var result = AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
+			var result = MyGame.AStar.AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
 #endif
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
@@ -290,7 +298,7 @@ namespace AStarTest
 			if (stairs == Stairs.Up || stairs == Stairs.UpDown)
 				yield return Direction.Up;
 
-			if (stairs == Stairs.Down|| stairs == Stairs.UpDown)
+			if (stairs == Stairs.Down || stairs == Stairs.UpDown)
 				yield return Direction.Down;
 		}
 

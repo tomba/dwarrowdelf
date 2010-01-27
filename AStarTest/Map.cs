@@ -26,12 +26,11 @@ namespace AStarTest
 		public Map(int width, int height, int depth)
 			: base(width, height, depth)
 		{
-			/*
 			for (int y = 0; y < 350; ++y)
 				SetBlocked(new IntPoint3D(5, y, 0), true);
 
-			for (int y = 4; y < 14; ++y)
-				SetBlocked(new IntPoint3D(15, y, 0), true);
+			for (int y = 2; y < 22; ++y)
+				SetBlocked(new IntPoint3D(14, y, 0), true);
 
 			for (int y = 6; y < 11; ++y)
 				SetWeight(new IntPoint3D(10, y, 0), 40);
@@ -42,7 +41,7 @@ namespace AStarTest
 
 			for (int y = 6; y < 11; ++y)
 				SetWeight(new IntPoint3D(5, y, 1), 40);
-			*/
+
 
 			SetStairs(new IntPoint3D(10, 10, 0), Stairs.Up);
 			SetStairs(new IntPoint3D(10, 10, 1), Stairs.Down);

@@ -210,7 +210,7 @@ namespace MyGame.Client
 				return Progress.Done;
 			}
 
-			var res = AStar3D.Find(this.Worker.Location, m_dest, !m_adjacent, l => 0, GetTileDirs);
+			var res = AStar.AStar3D.Find(this.Worker.Location, m_dest, !m_adjacent, l => 0, GetTileDirs);
 			var dirs = res.GetPath();
 
 			m_pathDirs = new Queue<Direction>(dirs);

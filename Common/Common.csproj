@@ -103,12 +103,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AStar2D.cs" />
+    <Compile Include="AStar\AStar2D.cs" />
+    <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="ClientData.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />
-    <Compile Include="AStar3D.cs" />
+    <Compile Include="AStar\AStar3D.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>
