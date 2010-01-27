@@ -39,7 +39,7 @@ namespace MyGame.Server
 			{
 				// ZZZ only 2D
 				int z = m_player.Z;
-				var res = AStar.Find(m_object.Location2D, m_player.Location2D, true,
+				var res = AStar2D.Find(m_object.Location2D, m_player.Location2D, true,
 					l => m_object.Environment.Bounds.Contains(new IntPoint3D(l, z)) &&
 						m_object.Environment.IsWalkable(new IntPoint3D(l, z)),
 					l => 0);

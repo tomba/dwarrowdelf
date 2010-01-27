@@ -65,21 +65,19 @@ namespace MyGame
 			public IntPoint3D Dst;
 			public IOpenList OpenList;
 			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
-			public Func<IntPoint3D, bool> TileValid;
-			public Func<IntPoint3D, int> TileWeight;
-			public Func<IntPoint3D, IEnumerable<Direction>> TileDirs;
+			public Func<IntPoint3D, int> GetTileWeight;
+			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
 		}
 
-		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, bool> tileValid, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> tileDirs)
+		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, int> tileWeight,
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
 		{
 			var state = new AStarState()
 			{
 				Src = src,
 				Dst = dst,
-				TileValid = tileValid,
-				TileWeight = tileWeight,
-				TileDirs = tileDirs,
+				GetTileWeight = tileWeight,
+				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint3D, AStar3DNode>(),
 				//OpenList = new BinaryHeap(),
 				OpenList = new SimpleOpenList(),
@@ -98,9 +96,6 @@ namespace MyGame
 
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
-
-			if (exactLocation && !state.TileValid(state.Dst))
-				return nodeMap;
 
 			var node = new AStar3DNode(state.Src, null);
 			openList.Add(node);
@@ -140,18 +135,16 @@ namespace MyGame
 
 		static void CheckNeighbors(AStarState state, AStar3DNode parent)
 		{
-			foreach (var dir in state.TileDirs(parent.Loc))
+			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
 				IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
-				if (!state.TileValid(childLoc))
-					continue;
 
 				AStar3DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				//if (child != null && child.Closed)
 				//	continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
 				ushort h = (ushort)((state.Dst - childLoc).ManhattanLength * 10);
 
 				if (child == null)
@@ -182,18 +175,16 @@ namespace MyGame
 
 			Stack<AStar3DNode> queue = new Stack<AStar3DNode>();
 
-			foreach (IntVector v in IntVector.GetAllXYDirections())
+			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
-				IntPoint3D childLoc = parent.Loc + v;
-				if (!state.TileValid(childLoc))
-					continue;
+				IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
 
 				AStar3DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				if (child == null)
 					continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
 
 				if (g < child.G)
 				{
@@ -210,18 +201,16 @@ namespace MyGame
 			{
 				parent = queue.Pop();
 
-				foreach (IntVector v in IntVector.GetAllXYDirections())
+				foreach (var dir in state.GetValidDirs(parent.Loc))
 				{
-					IntPoint3D childLoc = parent.Loc + v;
-					if (!state.TileValid(childLoc))
-						continue;
+					IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
 
 					AStar3DNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);
 					if (child == null)
 						continue;
 
-					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.TileWeight(childLoc));
+					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
 
 					if (g < child.G)
 					{

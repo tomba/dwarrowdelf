@@ -6,13 +6,13 @@ using System.Diagnostics;
 
 namespace MyGame
 {
-	public class AStarResult
+	public class AStar2DResult
 	{
-		public IDictionary<IntPoint, AStarNode> Nodes { get; private set; }
-		public AStarNode LastNode { get; private set; }
+		public IDictionary<IntPoint, AStar2DNode> Nodes { get; private set; }
+		public AStar2DNode LastNode { get; private set; }
 		public bool PathFound { get { return this.LastNode != null; } }
 
-		internal AStarResult(IDictionary<IntPoint, AStarNode> nodes, AStarNode lastNode)
+		internal AStar2DResult(IDictionary<IntPoint, AStar2DNode> nodes, AStar2DNode lastNode)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
@@ -26,7 +26,7 @@ namespace MyGame
 			if (this.LastNode == null)
 				yield break;
 
-			AStarNode n = this.LastNode;
+			AStar2DNode n = this.LastNode;
 			while (n.Parent != null)
 			{
 				yield return (n.Parent.Loc - n.Loc).ToDirection();
@@ -41,35 +41,35 @@ namespace MyGame
 	}
 
 	// tries to save some memory by using ushorts.
-	public class AStarNode
+	public class AStar2DNode
 	{
 		public IntPoint Loc { get; private set; }
-		public AStarNode Parent;
+		public AStar2DNode Parent;
 		public ushort G;
 		public ushort H;
 		public ushort F { get { return (ushort)(G + H); } }
 		public bool Closed { get; set; }
 
-		public AStarNode(IntPoint l, AStarNode parent)
+		public AStar2DNode(IntPoint l, AStar2DNode parent)
 		{
 			Loc = l;
 			Parent = parent;
 		}
 	}
 
-	public static class AStar
+	public static class AStar2D
 	{
 		class AStarState
 		{
 			public IntPoint Src;
 			public IntPoint Dst;
 			public IOpenList OpenList;
-			public IDictionary<IntPoint, AStarNode> NodeMap;
+			public IDictionary<IntPoint, AStar2DNode> NodeMap;
 			public Func<IntPoint, bool> TileValid;
 			public Func<IntPoint, int> TileWeight;
 		}
 
-		public static AStarResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> tileValid, Func<IntPoint, int> tileWeight)
+		public static AStar2DResult Find(IntPoint src, IntPoint dst, bool exactLocation, Func<IntPoint, bool> tileValid, Func<IntPoint, int> tileWeight)
 		{
 			var state = new AStarState()
 			{
@@ -77,17 +77,17 @@ namespace MyGame
 				Dst = dst,
 				TileValid = tileValid,
 				TileWeight = tileWeight,
-				NodeMap = new Dictionary<IntPoint, AStarNode>(),
+				NodeMap = new Dictionary<IntPoint, AStar2DNode>(),
 				//OpenList = new BinaryHeap(),
 				OpenList = new SimpleOpenList(),
 			};
 
-			AStarNode lastNode;
+			AStar2DNode lastNode;
 			var nodes = FindInternal(state, exactLocation, out lastNode);
-			return new AStarResult(nodes, lastNode);
+			return new AStar2DResult(nodes, lastNode);
 		}
 
-		static IDictionary<IntPoint, AStarNode> FindInternal(AStarState state, bool exactLocation, out AStarNode lastNode)
+		static IDictionary<IntPoint, AStar2DNode> FindInternal(AStarState state, bool exactLocation, out AStar2DNode lastNode)
 		{
 			lastNode = null;
 
@@ -99,7 +99,7 @@ namespace MyGame
 			if (exactLocation && !state.TileValid(state.Dst))
 				return nodeMap;
 
-			var node = new AStarNode(state.Src, null);
+			var node = new AStar2DNode(state.Src, null);
 			openList.Add(node);
 			nodeMap.Add(state.Src, node);
 
@@ -135,7 +135,7 @@ namespace MyGame
 			return cost;
 		}
 
-		static void CheckNeighbors(AStarState state, AStarNode parent)
+		static void CheckNeighbors(AStarState state, AStar2DNode parent)
 		{
 			foreach (IntVector v in IntVector.GetAllXYDirections())
 			{
@@ -143,7 +143,7 @@ namespace MyGame
 				if (!state.TileValid(childLoc))
 					continue;
 
-				AStarNode child;
+				AStar2DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				//if (child != null && child.Closed)
 				//	continue;
@@ -153,7 +153,7 @@ namespace MyGame
 
 				if (child == null)
 				{
-					child = new AStarNode(childLoc, parent);
+					child = new AStar2DNode(childLoc, parent);
 					child.G = g;
 					child.H = h;
 					state.OpenList.Add(child);
@@ -173,11 +173,11 @@ namespace MyGame
 			}
 		}
 
-		static void UpdateParents(AStarState state, AStarNode parent)
+		static void UpdateParents(AStarState state, AStar2DNode parent)
 		{
 			//MyTrace.WriteLine("updating closed node {0}", parent.Loc);
 
-			Stack<AStarNode> queue = new Stack<AStarNode>();
+			Stack<AStar2DNode> queue = new Stack<AStar2DNode>();
 
 			foreach (IntVector v in IntVector.GetAllXYDirections())
 			{
@@ -185,7 +185,7 @@ namespace MyGame
 				if (!state.TileValid(childLoc))
 					continue;
 
-				AStarNode child;
+				AStar2DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				if (child == null)
 					continue;
@@ -213,7 +213,7 @@ namespace MyGame
 					if (!state.TileValid(childLoc))
 						continue;
 
-					AStarNode child;
+					AStar2DNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);
 					if (child == null)
 						continue;
@@ -236,34 +236,34 @@ namespace MyGame
 		interface IOpenList
 		{
 			bool IsEmpty { get; }
-			void Add(AStarNode node);
-			AStarNode Pop();
-			void NodeUpdated(AStarNode node);
+			void Add(AStar2DNode node);
+			AStar2DNode Pop();
+			void NodeUpdated(AStar2DNode node);
 		}
 
 		class SimpleOpenList : IOpenList
 		{
-			List<AStarNode> m_list = new List<AStarNode>(128);
+			List<AStar2DNode> m_list = new List<AStar2DNode>(128);
 
 			public bool IsEmpty
 			{
 				get { return m_list.Count == 0; }
 			}
 
-			public void Add(AStarNode node)
+			public void Add(AStar2DNode node)
 			{
 				m_list.Add(node);
 				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
 			}
 
-			public AStarNode Pop()
+			public AStar2DNode Pop()
 			{
 				var node = m_list.First();
 				m_list.RemoveAt(0);
 				return node;
 			}
 
-			public void NodeUpdated(AStarNode node)
+			public void NodeUpdated(AStar2DNode node)
 			{
 				Debug.Assert(m_list.Contains(node));
 				m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
@@ -277,12 +277,12 @@ namespace MyGame
 				BinaryHeap.Test();
 			}
 
-			AStarNode[] m_openList = new AStarNode[128];
+			AStar2DNode[] m_openList = new AStar2DNode[128];
 			int m_count;
 
 			public bool IsEmpty { get { return m_count == 0; } }
 
-			public void Add(AStarNode node)
+			public void Add(AStar2DNode node)
 			{
 				if (m_count == 0)
 				{
@@ -293,7 +293,7 @@ namespace MyGame
 
 				if (m_count >= m_openList.Length)
 				{
-					AStarNode[] newArray = new AStarNode[m_openList.Length * 2];
+					AStar2DNode[] newArray = new AStar2DNode[m_openList.Length * 2];
 					m_openList.CopyTo(newArray, 0);
 					m_openList = newArray;
 				}
@@ -308,7 +308,7 @@ namespace MyGame
 					if (m_openList[m].F > m_openList[(m - 1) / 2].F)
 						break;
 
-					AStarNode n = m_openList[(m - 1) / 2];
+					AStar2DNode n = m_openList[(m - 1) / 2];
 					m_openList[(m - 1) / 2] = m_openList[m];
 					m_openList[m] = n;
 					m = (m - 1) / 2;
@@ -317,9 +317,9 @@ namespace MyGame
 				m_count++;
 			}
 
-			public AStarNode Pop()
+			public AStar2DNode Pop()
 			{
-				AStarNode ret = m_openList[0];
+				AStar2DNode ret = m_openList[0];
 
 				m_count--;
 
@@ -358,7 +358,7 @@ namespace MyGame
 
 					if (u != v)
 					{
-						AStarNode n = m_openList[u];
+						AStar2DNode n = m_openList[u];
 						m_openList[u] = m_openList[v];
 						m_openList[v] = n;
 					}
@@ -372,7 +372,7 @@ namespace MyGame
 			}
 
 			// F changed
-			public void NodeUpdated(AStarNode node)
+			public void NodeUpdated(AStar2DNode node)
 			{
 				throw new NotImplementedException();
 			}
@@ -387,7 +387,7 @@ namespace MyGame
 				for (int i = 0; i < 100; ++i)
 				{
 					val = (ushort)rand.Next(100);
-					openList.Add(new AStarNode(new IntPoint(), null) { G = val });
+					openList.Add(new AStar2DNode(new IntPoint(), null) { G = val });
 					testList.Add(val);
 
 					if (i % 20 == 19)

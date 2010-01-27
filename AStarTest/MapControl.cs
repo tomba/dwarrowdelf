@@ -231,7 +231,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			m_result = AStar3D.Find(src, dst, true, LocValid, l => m_map.GetWeight(l), TileDirs);
+			m_result = AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -254,29 +254,24 @@ namespace AStarTest
 			m_path = pathList;
 		}
 
-		bool LocValid(IntPoint3D p)
+		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
 		{
-			if (!m_map.Bounds.Contains(p))
-				return false;
+			var map = m_map;
 
-			if (m_map.GetBlocked(p))
-				return false;
+			foreach (var v in IntVector.GetAllXYDirections())
+			{
+				var l = p + v;
+				if (map.Bounds.Contains(l) && map.GetBlocked(l) == false)
+					yield return v.ToDirection();
+			}
 
-			return true;
-		}
-
-		IEnumerable<Direction> TileDirs(IntPoint3D p)
-		{
 			var stairs = m_map.GetStairs(p);
 
-			var dirs = new List<Direction>();
-			dirs.AddRange(IntVector.GetAllXYDirections().Select(v => v.ToDirection()));
-			if (stairs == Stairs.Up)
-				dirs.Add(Direction.Up);
-			if (stairs == Stairs.Down)
-				dirs.Add(Direction.Down);
+			if (stairs == Stairs.Up || stairs == Stairs.UpDown)
+				yield return Direction.Up;
 
-			return dirs;
+			if (stairs == Stairs.Down|| stairs == Stairs.UpDown)
+				yield return Direction.Down;
 		}
 
 		void Notify(string propertyName)
