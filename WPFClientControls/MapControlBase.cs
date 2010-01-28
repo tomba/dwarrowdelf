@@ -13,8 +13,6 @@ namespace MyGame.Client
 		int m_columns;
 		int m_rows;
 
-		IntPoint m_centerPos;
-
 		DispatcherTimer m_updateTimer;
 
 		VisualCollection m_tileCollection;
@@ -55,6 +53,10 @@ namespace MyGame.Client
 			new FrameworkPropertyMetadata(32.0, FrameworkPropertyMetadataOptions.AffectsArrange),
 			v => ((double)v) >= 2);
 
+		public static readonly DependencyProperty CenterPosProperty = DependencyProperty.Register(
+			"CenterPos", typeof(IntPoint), typeof(MapControlBase),
+			new FrameworkPropertyMetadata(new IntPoint(), FrameworkPropertyMetadataOptions.AffectsArrange));
+
 		public double TileSize
 		{
 			get { return (double)GetValue(TileSizeProperty); }
@@ -63,15 +65,11 @@ namespace MyGame.Client
 
 		public IntPoint CenterPos
 		{
-			get { return m_centerPos; }
+			get { return (IntPoint)GetValue(CenterPosProperty); }
 			set
 			{
-				if (m_centerPos != value)
-				{
-					m_centerPos = value;
-					InvalidateArrange();
-					InvalidateTiles();
-				}
+				SetValue(CenterPosProperty, value);
+				InvalidateTiles();
 			}
 		}
 
@@ -282,8 +280,8 @@ namespace MyGame.Client
 			Point pos = e.GetPosition(this);
 
 			int limit = 4;
-			int cx = m_centerPos.X;
-			int cy = m_centerPos.Y;
+			int cx = this.CenterPos.X;
+			int cy = this.CenterPos.Y;
 
 			if (this.ActualWidth - pos.X < limit)
 				++cx;
@@ -296,9 +294,9 @@ namespace MyGame.Client
 				++cy;
 
 			var p = new IntPoint(cx, cy);
-			if (p != m_centerPos)
+			if (p != this.CenterPos)
 			{
-				m_centerPos = p;
+				this.CenterPos = p;
 				InvalidateTiles();
 			}
 
@@ -330,6 +328,7 @@ namespace MyGame.Client
 
 		public void InvalidateTiles()
 		{
+			//MyDebug.WriteLine("InvalidateTiles");
 			if (!m_updateTimer.IsEnabled)
 				m_updateTimer.Start();
 		}
@@ -342,7 +341,7 @@ namespace MyGame.Client
 
 		IntPoint TopLeftPos
 		{
-			get { return m_centerPos + new IntVector(-m_columns / 2, m_rows / 2); }
+			get { return this.CenterPos + new IntVector(-m_columns / 2, m_rows / 2); }
 		}
 
 		void UpdateTiles()

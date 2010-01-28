@@ -18,27 +18,40 @@ namespace MyGame.Client
 {
 	class MapControl : MapControlBase, INotifyPropertyChanged
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		World m_world;
 		SymbolBitmapCache m_bitmapCache;
 
 		Environment m_env;
 		int m_z;
 
+		TileInfo m_selectedTileInfo;
+		public HoverTileInfo HoverTileInfo { get; private set; }
+
+
 		public MapControl()
 		{
+			this.HoverTileInfo = new HoverTileInfo();
+
 			base.SelectionChanged += OnSelectionChanged;
 
 			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
 				typeof(MapControlBase));
 			dpd.AddValueChanged(this, OnTileSizeChanged);
+
+			var dpd2 = DependencyPropertyDescriptor.FromProperty(MapControlBase.CenterPosProperty,
+				typeof(MapControlBase));
+			dpd2.AddValueChanged(this, OnCenterPosChanged);
 		}
 
 		void OnTileSizeChanged(object ob, EventArgs e)
 		{
 			if (m_bitmapCache != null)
 				m_bitmapCache.TileSize = this.TileSize;
+		}
+
+		void OnCenterPosChanged(object ob, EventArgs e)
+		{
+			UpdateHoverTileInfo(Mouse.GetPosition(this));
 		}
 
 		protected override UIElement CreateTile()
@@ -192,8 +205,7 @@ namespace MyGame.Client
 
 				InvalidateTiles();
 
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("Environment"));
+				Notify("Environment");
 			}
 		}
 
@@ -208,8 +220,8 @@ namespace MyGame.Client
 
 				m_z = value;
 				InvalidateTiles();
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("Z"));
+				Notify("Z");
+				UpdateHoverTileInfo(Mouse.GetPosition(this));
 			}
 		}
 
@@ -219,7 +231,6 @@ namespace MyGame.Client
 			InvalidateTiles();
 		}
 
-		TileInfo m_selectedTileInfo;
 		public TileInfo SelectedTileInfo
 		{
 			get { return m_selectedTileInfo; }
@@ -230,8 +241,7 @@ namespace MyGame.Client
 
 				m_selectedTileInfo = value;
 
-				if (PropertyChanged != null)
-					PropertyChanged(this, new PropertyChangedEventArgs("SelectedTileInfo"));
+				Notify("SelectedTileInfo");
 			}
 		}
 
@@ -257,6 +267,51 @@ namespace MyGame.Client
 				this.SelectedTileInfo.Location = new IntPoint3D(sel.TopLeft, this.Z);
 			}
 		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			base.OnMouseMove(e);
+
+			UpdateHoverTileInfo(e.GetPosition(this));
+		}
+
+		void UpdateHoverTileInfo(Point mousePos)
+		{
+			IntPoint ml = ScreenPointToMapLocation(mousePos);
+			var p = new IntPoint3D(ml, m_z);
+
+			if (p != this.HoverTileInfo.Location)
+			{
+				this.HoverTileInfo.Location = p;
+				Notify("HoverTileInfo");
+			}
+		}
+
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+	}
+
+	class HoverTileInfo : INotifyPropertyChanged
+	{
+		public IntPoint3D Location { get; set; }
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
 	}
 
 	class TileInfo : INotifyPropertyChanged

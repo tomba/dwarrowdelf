@@ -118,6 +118,18 @@
 				</TextBlock.Text>
             </TextBlock>
             <Separator />
+
+            <TextBlock>Coords</TextBlock>
+            <TextBox Width="100" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}, {2}">
+                        <Binding ElementName="map" Path="HoverTileInfo.Location.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.Location.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.Location.Z" Mode="OneWay" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
         </StatusBar>
 
         <Grid>
