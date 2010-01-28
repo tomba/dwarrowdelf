@@ -113,9 +113,9 @@ namespace MyGame.AStar
 			return ret;
 		}
 
-		// XXX recursive
 		void HeapifyDown(int i)
 		{
+#if USE_ITERATIVE
 			int li = Left(i);
 			int ri = Right(i);
 			int lowest;
@@ -135,6 +135,30 @@ namespace MyGame.AStar
 				m_openList[i] = n;
 				HeapifyDown(lowest);
 			}
+#else
+			T n = m_openList[i];
+
+			while (i * 2 <= m_count)
+			{
+				int lowest;
+				int li = Left(i);
+				int ri = Right(i);
+
+				if (ri <= m_count && m_openList[ri].F < m_openList[li].F)
+					lowest = ri;
+				else
+					lowest = li;
+
+				if (m_openList[lowest].F < n.F)
+					m_openList[i] = m_openList[lowest];
+				else
+					break;
+
+				i = lowest;
+			}
+
+			m_openList[i] = n;
+#endif
 		}
 
 		// F changed
