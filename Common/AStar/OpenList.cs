@@ -103,7 +103,7 @@ namespace MyGame.AStar
 			T ret = m_openList[1];
 
 			m_openList[1] = m_openList[m_count];
-			
+
 			m_openList[m_count] = null;
 
 			m_count = m_count - 1;
@@ -165,19 +165,31 @@ namespace MyGame.AStar
 			ushort[] arr1 = { 32, 28, 71, 71, 71, 81, 89, 70, 92, 69, 96, 52, 30 };
 			ushort[] arr2 = new ushort[arr1.Length];
 
+			/* Test 1 */
 			foreach (ushort u in arr1)
 				openList.Add(new AStar2DNode(new IntPoint(), null) { G = u });
 
 			{
-				var n = openList.m_openList[5];
+				var n = openList.m_openList.Single(z => z != null && z.G == 69);
 				n.G = 91;
+				var idx = Array.FindIndex<ushort>(arr1, s => s == 69);
+				arr1[idx] = 91;
 				openList.NodeUpdated(n);
 			}
 
 			for (int i = 0; i < arr2.Length; ++i)
 				arr2[i] = openList.Pop().G;
 
+			Array.Sort(arr1);
 
+			for (int i = 0; i < arr1.Length; ++i)
+			{
+				if (arr1[i] != arr2[i])
+					throw new Exception();
+			}
+
+
+			/* test 2 */
 			for (int i = 0; i < 100; ++i)
 			{
 				val = (ushort)rand.Next(100);
