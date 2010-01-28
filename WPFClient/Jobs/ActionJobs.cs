@@ -8,135 +8,6 @@ using System.Diagnostics;
 
 namespace MyGame.Client
 {
-	abstract class ActionJob : IActionJob, INotifyPropertyChanged
-	{
-		protected ActionJob(IJob parent)
-		{
-			this.Parent = parent;
-		}
-
-		public IJob Parent { get; private set; }
-
-		Living m_worker;
-		public Living Worker
-		{
-			get { return m_worker; }
-			protected set { m_worker = value; Notify("Worker"); }
-		}
-
-		GameAction m_action;
-		public virtual GameAction CurrentAction
-		{
-			get { return m_action; }
-			protected set { m_action = value; Notify("CurrentAction"); }
-		}
-
-		Progress m_progress;
-		public Progress Progress
-		{
-			get { return m_progress; }
-			private set { m_progress = value; Notify("Progress"); }
-		}
-
-
-
-		public Progress Assign(Living worker)
-		{
-			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None);
-
-			var progress = AssignOverride(worker);
-			SetProgress(progress);
-			if (progress != Progress.Ok)
-				return progress;
-
-			this.Worker = worker;
-
-			return progress;
-		}
-
-		protected virtual Progress AssignOverride(Living worker)
-		{
-			return Progress.Ok;
-		}
-
-
-
-		public Progress PrepareNextAction()
-		{
-			var progress = PrepareNextActionOverride();
-			SetProgress(progress);
-			return progress;
-		}
-
-		protected abstract Progress PrepareNextActionOverride();
-
-		public Progress ActionProgress(ActionProgressEvent e)
-		{
-			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.Progress == Progress.Ok);
-			Debug.Assert(this.CurrentAction != null);
-			Debug.Assert(e.TransactionID == this.CurrentAction.TransactionID);
-
-			var progress = ActionProgressOverride(e);
-			SetProgress(progress);
-			Notify("CurrentAction");
-			return progress;
-		}
-		
-		protected virtual Progress ActionProgressOverride(ActionProgressEvent e)
-		{
-			return Progress.Ok;
-		}
-
-
-		protected void SetProgress(Progress progress)
-		{
-			switch (progress)
-			{
-				case Progress.None:
-					break;
-
-				case Progress.Ok:
-					break;
-
-				case Progress.Done:
-					Cleanup();
-					this.Worker = null;
-					this.CurrentAction = null;
-					break;
-
-				case Progress.Abort:
-					this.Worker = null;
-					this.CurrentAction = null;
-					break;
-
-				case Progress.Fail:
-					Cleanup();
-					this.Worker = null;
-					this.CurrentAction = null;
-					break;
-			}
-
-			this.Progress = progress;
-		}
-
-		protected virtual void Cleanup()
-		{
-		}
-
-
-		#region INotifyPropertyChanged Members
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
-
-		void Notify(string propertyName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-	}
-
 	class MoveActionJob : ActionJob
 	{
 		Queue<Direction> m_pathDirs;
@@ -158,6 +29,18 @@ namespace MyGame.Client
 		{
 			m_environment = null;
 			m_pathDirs = null;
+		}
+
+		protected override void AbortOverride()
+		{
+			m_pathDirs = null;
+			m_numFails = 0;
+		}
+
+		protected override Progress AssignOverride(Living worker)
+		{
+			m_numFails = 0;
+			return Progress.Ok;
 		}
 
 		protected override Progress PrepareNextActionOverride()

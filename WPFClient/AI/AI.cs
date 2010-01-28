@@ -3,32 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace MyGame.Client
 {
-	public enum Progress
-	{
-		/// <summary>
-		/// None
-		/// </summary>
-		None,
-		/// <summary>
-		/// Everything ok
-		/// </summary>
-		Ok,
-		/// <summary>
-		/// Job failed, and nobody else can do it either
-		/// </summary>
-		Fail,
-		/// <summary>
-		/// Job failed, the worker wasn't able to do it
-		/// </summary>
-		Abort,
-		/// <summary>
-		/// Job has been done successfully
-		/// </summary>
-		Done,
-	}
 
 	class AI
 	{
@@ -50,11 +28,14 @@ namespace MyGame.Client
 		{
 			//if (m_living == GameData.Data.CurrentObject)
 			//	return;
+
+			var jm = m_living.World.JobManager;
+
 			while (true)
 			{
 				if (m_currentJob == null)
 				{
-					m_currentJob = FindAndAssignJob(m_living.World.Jobs, m_living);
+					m_currentJob = jm.FindAndAssignJob(m_living);
 
 					if (m_currentJob == null)
 					{
@@ -62,6 +43,10 @@ namespace MyGame.Client
 						var action = new WaitAction(1);
 						m_living.EnqueueAction(action);
 						return;
+					}
+					else
+					{
+						m_currentJob.PropertyChanged += OnJobPropertyChanged;
 					}
 				}
 
@@ -120,85 +105,19 @@ namespace MyGame.Client
 			}
 		}
 
-		static IActionJob FindAndAssignJob(IEnumerable<IJob> jobs, Living living)
+		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			while (true)
+			Debug.Assert(sender == m_currentJob);
+
+			IJob job = (IJob)sender;
+			if (e.PropertyName == "Progress")
 			{
-				var job = FindJob(jobs);
-
-				if (job == null)
-					return null;
-
-				var progress = job.Assign(living);
-
-				switch (progress)
+				if (job.Progress == Progress.Abort)
 				{
-					case Progress.Ok:
-						return job;
-
-					case Progress.Done:
-						break;
-
-					case Progress.Fail:
-						break;
-
-					case Progress.Abort:
-						break;
-
-					case Progress.None:
-					default:
-						throw new Exception();
+					job.PropertyChanged -= OnJobPropertyChanged;
+					m_currentJob = null;
 				}
 			}
-		}
-
-		static IActionJob FindJob(IEnumerable<IJob> jobs)
-		{
-			return FindJob(jobs, JobGroupType.Parallel);
-		}
-
-		static IActionJob FindJob(IEnumerable<IJob> jobs, JobGroupType type)
-		{
-			if (type != JobGroupType.Parallel && type != JobGroupType.Serial)
-				throw new Exception();
-
-			foreach (var job in jobs)
-			{
-				if (job.Progress == Progress.Done)
-					continue;
-
-				if (job.Progress == Progress.None || job.Progress == Progress.Abort)
-				{
-					// job can be taken
-
-					if (job is IActionJob)
-					{
-						var ajob = (IActionJob)job;
-						return ajob;
-					}
-					else if (job is IJobGroup)
-					{
-						var gjob = (IJobGroup)job;
-
-						var j = FindJob(gjob.SubJobs, gjob.JobGroupType);
-
-						if (j != null)
-							return j;
-					}
-					else
-					{
-						throw new Exception();
-					}
-				}
-
-				// job cannot be taken
-
-				if (type == JobGroupType.Serial)
-					return null;
-			}
-
-			return null;
-
 		}
 	}
 }

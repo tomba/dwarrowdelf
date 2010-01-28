@@ -19,10 +19,10 @@ namespace MyGame.Client
 		KeyedObjectCollection m_objects;
 		public ReadOnlyKeyedObjectCollection Objects { get; private set; }
 
-		public ObservableCollection<IJob> Jobs { get; private set; }
-
 		public DrawingCache DrawingCache { get; private set; }
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
+
+		public JobManager JobManager { get; private set; }
 
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
@@ -38,7 +38,7 @@ namespace MyGame.Client
 			this.DrawingCache = new DrawingCache(areaData);
 			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache, areaData.Symbols);
 
-			this.Jobs = new ObservableCollection<IJob>();
+			this.JobManager = new JobManager(this);
 		}
 
 		public void AddEnvironment(Environment env)
@@ -54,10 +54,6 @@ namespace MyGame.Client
 			{
 				// XXX perhaps this should be IncreaseTick()
 				m_tickNumber = value; Notify("TickNumber");
-
-				var doneJobs = this.Jobs.Where(j => j.Progress == Progress.Done).ToArray();
-				foreach (var job in doneJobs)
-					this.Jobs.Remove(job);
 
 				if (TickIncreased != null)
 					TickIncreased();

@@ -127,12 +127,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="AI\ActionJobs.cs" />
+    <Compile Include="Jobs\ActionJobs.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DrawingCache.cs" />
+    <Compile Include="Jobs\ActionJob.cs" />
+    <Compile Include="Jobs\SerialActionJobs.cs" />
+    <Compile Include="Jobs\IJob.cs" />
+    <Compile Include="Jobs\JobGroup.cs" />
+    <Compile Include="Jobs\JobManager.cs" />
+    <Compile Include="Jobs\SerialActionJob.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -142,7 +148,7 @@
     <Compile Include="AI\AI.cs" />
     <Compile Include="Buildings.cs" />
     <Compile Include="ClientConnection.cs" />
-    <Compile Include="AI\Job.cs" />
+    <Compile Include="Jobs\JobGroups.cs" />
     <Compile Include="Living.cs" />
     <Compile Include="MapControl.cs" />
     <Compile Include="ItemObject.cs" />

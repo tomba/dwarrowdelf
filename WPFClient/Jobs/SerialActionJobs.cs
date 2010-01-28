@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Diagnostics;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+
+namespace MyGame.Client
+{
+	class MoveMineJob : SerialActionJob
+	{
+		Environment m_environment;
+		IntPoint3D m_location;
+
+		public MoveMineJob(IJob parent, Environment environment, IntPoint3D location)
+			: base(parent)
+		{
+			m_environment = environment;
+			m_location = location;
+
+			this.SubJobs.Add(new MoveActionJob(this, m_environment, m_location, true));
+			this.SubJobs.Add(new MineActionJob(this, m_environment, m_location));
+		}
+
+		/*
+		 * XXX checkvalidity tms
+		protected override Progress AssignOverride(Living worker)
+		{
+			if (worker.Environment != m_environment)
+				return Progress.Abort;
+
+			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
+				return Progress.Done;
+
+			return Progress.Ok;
+		}
+		*/
+
+		protected override void Cleanup()
+		{
+			m_environment = null;
+		}
+
+		public override string ToString()
+		{
+			return "MoveMineJob";
+		}
+	}
+
+
+	class MineAreaJob : SerialActionJob
+	{
+		public Environment m_environment;
+		public IEnumerable<IntPoint> m_locs;
+
+		public MineAreaJob(Environment env, IntRect rect, int z)
+			: base(null)
+		{
+			m_environment = env;
+
+			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.NaturalWall);
+
+			foreach (var p in m_locs)
+			{
+				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
+				this.SubJobs.Add(job);
+			}
+		}
+
+		protected override void Cleanup()
+		{
+			m_environment = null;
+			m_locs = null;
+		}
+
+		public override string ToString()
+		{
+			return "MineAreaSerialSameJob";
+		}
+	}
+
+	class FetchMaterial : SerialActionJob
+	{
+		public FetchMaterial(IJob parent, Environment env, IntPoint3D location, ItemObject item)
+			: base(parent)
+		{
+			this.SubJobs.Add(new MoveActionJob(this, item.Environment, item.Location, false));
+			this.SubJobs.Add(new GetItemActionJob(this, item));
+			this.SubJobs.Add(new MoveActionJob(this, env, location, false));
+			this.SubJobs.Add(new DropItemActionJob(this, item));
+		}
+
+		public override string ToString()
+		{
+			return "FetchMaterial";
+		}
+	}
+
+	class BuildItem : SerialActionJob
+	{
+		public BuildItem(IJob parent, BuildingData workplace, ItemObject[] items)
+			: base(parent)
+		{
+			var env = workplace.Environment;
+			var location = new IntPoint3D(workplace.Area.TopLeft, workplace.Z);
+
+			this.SubJobs.Add(new MoveActionJob(this, env, location, false));
+			this.SubJobs.Add(new BuildItemActionJob(this, items));
+		}
+
+		public override string ToString()
+		{
+			return "BuildItem";
+		}
+	}
+
+}

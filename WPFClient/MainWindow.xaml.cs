@@ -335,7 +335,7 @@ namespace MyGame.Client
 						continue;
 
 					var job = new MoveMineJob(null, env, new IntPoint3D(p, z));
-					this.Map.World.Jobs.Add(job);
+					this.Map.World.JobManager.Add(job);
 				}
 			}
 			else if (tag == "MineArea")
@@ -345,7 +345,7 @@ namespace MyGame.Client
 				int z = map.Z;
 
 				var job = new MineAreaJob(env, r, z);
-				this.Map.World.Jobs.Add(job);
+				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
 			{
@@ -354,7 +354,7 @@ namespace MyGame.Client
 				int z = map.Z;
 
 				var job = new MineAreaParallelJob(env, r, z);
-				this.Map.World.Jobs.Add(job);
+				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
 			{
@@ -363,7 +363,7 @@ namespace MyGame.Client
 				int z = map.Z;
 
 				var job = new MineAreaSerialJob(env, r, z);
-				this.Map.World.Jobs.Add(job);
+				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "BuildItem")
 			{
@@ -385,7 +385,7 @@ namespace MyGame.Client
 				int z = map.Z;
 
 				var job = new MoveActionJob(null, env, new IntPoint3D(p, z), false);
-				this.Map.World.Jobs.Add(job);
+				this.Map.World.JobManager.Add(job);
 			}
 			else
 			{
@@ -436,6 +436,30 @@ namespace MyGame.Client
 
 			plr.EnqueueAction(new BuildItemAction(list));
 		}
+
+		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+			IJob job = (IJob)jobTreeView.SelectedValue;
+
+			if (job == null)
+				return;
+
+			if (tag == "Abort")
+			{
+				job.Abort();
+			}
+			else if (tag == "Remove")
+			{
+				if (job.Parent != null)
+					return;
+
+			}
+
+
+		}
+
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{

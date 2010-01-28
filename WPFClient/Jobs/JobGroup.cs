@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+
+namespace MyGame.Client
+{
+	abstract class JobGroup : IJobGroup
+	{
+		ObservableCollection<IJob> m_subJobs = new ObservableCollection<IJob>();
+
+		protected JobGroup(IJob parent)
+		{
+			this.Parent = parent;
+			m_subJobs.CollectionChanged += SubJobsChanged;
+		}
+
+		void SubJobsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+				throw new Exception();
+
+			foreach (INotifyPropertyChanged job in e.NewItems)
+			{
+				job.PropertyChanged += SubJobPropertyChanged;
+			}
+		}
+
+		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Progress")
+				Notify("Progress");
+		}
+
+		public IJob Parent { get; private set; }
+
+		public virtual Progress Progress
+		{
+			get
+			{
+				if (this.SubJobs.All(j => j.Progress == Progress.Done))
+					return Progress.Done;
+
+				if (this.SubJobs.Any(j => j.Progress == Progress.Fail))
+					return Progress.Fail;
+
+				return Progress.None;
+			}
+		}
+
+		public void Abort()
+		{
+			foreach (var job in m_subJobs)
+				job.Abort();
+		}
+
+		public IList<IJob> SubJobs { get { return m_subJobs; } }
+
+		public abstract JobGroupType JobGroupType { get; }
+
+		// XXX not called
+		protected virtual void Cleanup()
+		{
+		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+
+		protected void Notify(string propertyName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
+
+
+	abstract class ParallelJobGroup : JobGroup
+	{
+		protected ParallelJobGroup(IJob parent)
+			: base(parent)
+		{
+		}
+
+		public override Progress Progress
+		{
+			get
+			{
+				var progress = base.Progress;
+
+				if (progress != Progress.None)
+					return progress;
+
+				if (this.SubJobs.All(j => j.Progress == Progress.Ok || j.Progress == Progress.Done))
+					return Progress.Ok;
+
+				return Progress.None;
+			}
+		}
+
+		public override JobGroupType JobGroupType { get { return JobGroupType.Parallel; } }
+	}
+
+
+	abstract class SerialJobGroup : JobGroup
+	{
+		protected SerialJobGroup(IJobGroup parent)
+			: base(parent)
+		{
+		}
+
+		public override Progress Progress
+		{
+			get
+			{
+				if (this.SubJobs.Any(j => j.Progress == Progress.Ok))
+					return Progress.Ok;
+
+				return base.Progress;
+			}
+		}
+
+		public override JobGroupType JobGroupType { get { return JobGroupType.Serial; } }
+	}
+
+
+}

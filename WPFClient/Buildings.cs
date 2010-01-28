@@ -120,7 +120,7 @@ namespace MyGame.Client
 		{
 			var job = new BuildItemJob(this, order.SourceObjects);
 			order.Job = job;
-			this.World.Jobs.Add(job);
+			this.World.JobManager.Add(job);
 		}
 
 		void OnTick()
