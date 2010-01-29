@@ -55,7 +55,7 @@ namespace MyGame.MemoryMappedLog
 			public int PayloadLength;
 		}
 
-		const int EntrySize = 512;
+		const int EntrySize = 2048;
 		const int EntryCount = 1024;
 
 		static readonly int s_logHeaderSize;
