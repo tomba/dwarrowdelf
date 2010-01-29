@@ -446,18 +446,17 @@ namespace MyGame.Client
 			if (job == null)
 				return;
 
+			if (job.Parent != null)
+				return;
+
 			if (tag == "Abort")
 			{
 				job.Abort();
 			}
 			else if (tag == "Remove")
 			{
-				if (job.Parent != null)
-					return;
-
+				GameData.Data.World.JobManager.Remove(job);
 			}
-
-
 		}
 
 

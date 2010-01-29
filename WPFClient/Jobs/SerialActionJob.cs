@@ -68,7 +68,7 @@ namespace MyGame.Client
 		public Progress Assign(Living worker)
 		{
 			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None);
+			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);
@@ -174,7 +174,7 @@ namespace MyGame.Client
 
 		static IActionJob FindAndAssignJob(IEnumerable<IActionJob> jobs, Living worker, out Progress progress)
 		{
-			Debug.Assert(!jobs.Any(j => j.Progress == Progress.Abort || j.Progress == Progress.Fail || j.Progress == Progress.Ok));
+			Debug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
 
 			//D("looking for new job");
 

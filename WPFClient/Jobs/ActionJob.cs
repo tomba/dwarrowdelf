@@ -51,7 +51,7 @@ namespace MyGame.Client
 		public Progress Assign(Living worker)
 		{
 			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None);
+			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);

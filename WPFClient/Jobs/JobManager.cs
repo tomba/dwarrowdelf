@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -32,7 +33,15 @@ namespace MyGame.Client
 
 		public void Add(IJob job)
 		{
+			Debug.Assert(job.Parent == null);
 			m_jobs.Add(job);
+		}
+
+		public void Remove(IJob job)
+		{
+			Debug.Assert(job.Parent == null);
+			job.Abort();
+			m_jobs.Remove(job);
 		}
 
 		public IActionJob FindAndAssignJob(Living living)
