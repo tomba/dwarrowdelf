@@ -23,7 +23,7 @@ namespace MyGame.Client
 			foreach (var p in m_locs)
 			{
 				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
-				this.SubJobs.Add(job);
+				AddSubJob(job);
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace MyGame.Client
 			foreach (var p in m_locs)
 			{
 				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
-				this.SubJobs.Add(job);
+				AddSubJob(job);
 			}
 		}
 
@@ -78,8 +78,8 @@ namespace MyGame.Client
 			var env = workplace.Environment;
 			var location = new IntPoint3D(workplace.Area.TopLeft, workplace.Z);
 
-			this.SubJobs.Add(new FetchMaterials(this, env, location, sourceObjects));
-			this.SubJobs.Add(new BuildItem(this, workplace, sourceObjects));
+			AddSubJob(new FetchMaterials(this, env, location, sourceObjects));
+			AddSubJob(new BuildItem(this, workplace, sourceObjects));
 		}
 
 		public override string ToString()
@@ -95,7 +95,7 @@ namespace MyGame.Client
 		{
 			foreach (var item in objects)
 			{
-				this.SubJobs.Add(new FetchMaterial(this, env, location, item));
+				AddSubJob(new FetchMaterial(this, env, location, item));
 			}
 		}
 

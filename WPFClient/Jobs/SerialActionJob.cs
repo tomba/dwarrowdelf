@@ -11,7 +11,8 @@ namespace MyGame.Client
 	abstract class SerialActionJob : IActionJob
 	{
 		IActionJob m_currentSubJob;
-		ObservableCollection<IActionJob> m_subJobs = new ObservableCollection<IActionJob>();
+		ObservableCollection<IActionJob> m_subJobs;
+		ReadOnlyObservableCollection<IActionJob> m_roSubJobs;
 
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
@@ -22,6 +23,8 @@ namespace MyGame.Client
 		protected SerialActionJob(IJob parent)
 		{
 			this.Parent = parent;
+			m_subJobs = new ObservableCollection<IActionJob>();
+			m_roSubJobs = new ReadOnlyObservableCollection<IActionJob>(m_subJobs);
 		}
 
 		public IJob Parent { get; private set; }
@@ -33,7 +36,12 @@ namespace MyGame.Client
 			private set { m_progress = value; Notify("Progress"); }
 		}
 
-		public IList<IActionJob> SubJobs { get { return m_subJobs; } }
+		public ReadOnlyObservableCollection<IActionJob> SubJobs { get { return m_roSubJobs; } }
+
+		protected void AddSubJob(IActionJob job)
+		{
+			m_subJobs.Add(job);
+		}
 
 		Living m_worker;
 		public Living Worker

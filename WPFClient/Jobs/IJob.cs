@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
@@ -45,7 +46,7 @@ namespace MyGame.Client
 
 	interface IJobGroup : IJob
 	{
-		IList<IJob> SubJobs { get; }
+		ReadOnlyObservableCollection<IJob> SubJobs { get; }
 		JobGroupType JobGroupType { get; }
 	}
 

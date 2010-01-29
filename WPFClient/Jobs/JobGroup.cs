@@ -10,28 +10,13 @@ namespace MyGame.Client
 	abstract class JobGroup : IJobGroup
 	{
 		ObservableCollection<IJob> m_subJobs = new ObservableCollection<IJob>();
+		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
 		protected JobGroup(IJob parent)
 		{
 			this.Parent = parent;
-			m_subJobs.CollectionChanged += SubJobsChanged;
-		}
-
-		void SubJobsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-		{
-			if (e.Action != System.Collections.Specialized.NotifyCollectionChangedAction.Add)
-				throw new Exception();
-
-			foreach (INotifyPropertyChanged job in e.NewItems)
-			{
-				job.PropertyChanged += SubJobPropertyChanged;
-			}
-		}
-
-		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == "Progress")
-				Notify("Progress");
+			m_subJobs = new ObservableCollection<IJob>();
+			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 		}
 
 		public IJob Parent { get; private set; }
@@ -56,9 +41,21 @@ namespace MyGame.Client
 				job.Abort();
 		}
 
-		public IList<IJob> SubJobs { get { return m_subJobs; } }
+		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
 
 		public abstract JobGroupType JobGroupType { get; }
+
+		protected void AddSubJob(IJob job)
+		{
+			m_subJobs.Add(job);
+			job.PropertyChanged += SubJobPropertyChanged;
+		}
+
+		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Progress")
+				Notify("Progress");
+		}
 
 		// XXX not called
 		protected virtual void Cleanup()

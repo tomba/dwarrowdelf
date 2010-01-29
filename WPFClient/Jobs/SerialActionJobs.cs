@@ -19,8 +19,8 @@ namespace MyGame.Client
 			m_environment = environment;
 			m_location = location;
 
-			this.SubJobs.Add(new MoveActionJob(this, m_environment, m_location, true));
-			this.SubJobs.Add(new MineActionJob(this, m_environment, m_location));
+			AddSubJob(new MoveActionJob(this, m_environment, m_location, true));
+			AddSubJob(new MineActionJob(this, m_environment, m_location));
 		}
 
 		/*
@@ -64,7 +64,7 @@ namespace MyGame.Client
 			foreach (var p in m_locs)
 			{
 				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
-				this.SubJobs.Add(job);
+				AddSubJob(job);
 			}
 		}
 
@@ -85,10 +85,10 @@ namespace MyGame.Client
 		public FetchMaterial(IJob parent, Environment env, IntPoint3D location, ItemObject item)
 			: base(parent)
 		{
-			this.SubJobs.Add(new MoveActionJob(this, item.Environment, item.Location, false));
-			this.SubJobs.Add(new GetItemActionJob(this, item));
-			this.SubJobs.Add(new MoveActionJob(this, env, location, false));
-			this.SubJobs.Add(new DropItemActionJob(this, item));
+			AddSubJob(new MoveActionJob(this, item.Environment, item.Location, false));
+			AddSubJob(new GetItemActionJob(this, item));
+			AddSubJob(new MoveActionJob(this, env, location, false));
+			AddSubJob(new DropItemActionJob(this, item));
 		}
 
 		public override string ToString()
@@ -105,8 +105,8 @@ namespace MyGame.Client
 			var env = workplace.Environment;
 			var location = new IntPoint3D(workplace.Area.TopLeft, workplace.Z);
 
-			this.SubJobs.Add(new MoveActionJob(this, env, location, false));
-			this.SubJobs.Add(new BuildItemActionJob(this, items));
+			AddSubJob(new MoveActionJob(this, env, location, false));
+			AddSubJob(new BuildItemActionJob(this, items));
 		}
 
 		public override string ToString()
