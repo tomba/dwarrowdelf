@@ -250,30 +250,18 @@ namespace MyGame.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
+		public void SerializeTo(Connection conn)
+		{
+			var cmsg = (ClientMsgs.CompoundMessage)Serialize();
+
+			foreach (var msg in cmsg.Messages)
+			{
+				conn.Send(msg);
+			}
+		}
 
 		public override ClientMsgs.Message Serialize()
 		{
-			TileData[][] arr = new TileData[this.Depth][];
-			for (int z = 0; z < arr.Length; ++z)
-				arr[z] = new TileData[this.Width * this.Height];
-			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
-
-			for (int z = this.Bounds.Back; z < this.Bounds.Front; ++z)
-			{
-				var plane = this.Bounds2D;
-				foreach (var p2d in plane.Range())
-				{
-					IntPoint3D p = new IntPoint3D(p2d, z);
-
-					var tileData = m_tileGrid.GetTileData(p);
-					arr[z][p.X + p.Y * this.Width] = tileData;
-
-					var obs = GetContents(p);
-					if (obs != null)
-						obList.AddRange(obs.Select(o => o.Serialize()));
-				}
-			}
-
 			var msgs = new List<ClientMsgs.Message>();
 
 			msgs.Add(new ClientMsgs.MapData()
@@ -283,14 +271,31 @@ namespace MyGame.Server
 				Bounds = this.Bounds,
 			});
 
+			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
+
 			for (int z = this.Bounds.Back; z < this.Bounds.Front; ++z)
 			{
-				msgs.Add(new ClientMsgs.MapDataTerrains()
+				for (int y = this.Bounds.Top; y < this.Bounds.Bottom; ++y)
 				{
-					Environment = this.ObjectID,
-					Bounds = new IntCube(this.Bounds.X, this.Bounds.Y, z, this.Bounds.Width, this.Bounds.Height, 1),
-					TerrainIDs = arr[z],
-				});
+					var arr = new TileData[this.Width];
+
+					for (int x = this.Bounds.Left; x < this.Bounds.Right; ++x)
+					{
+						IntPoint3D p = new IntPoint3D(x, y, z);
+						arr[x] = m_tileGrid.GetTileData(p);
+
+						var obs = GetContents(p);
+						if (obs != null)
+							obList.AddRange(obs.Select(o => o.Serialize()));
+					}
+
+					msgs.Add(new ClientMsgs.MapDataTerrains()
+					{
+						Environment = this.ObjectID,
+						Bounds = new IntCube(this.Bounds.Left, y, z, this.Bounds.Width, 1, 1),
+						TerrainIDs = arr,
+					});
+				}
 			}
 
 			msgs.Add(new ClientMsgs.MapDataObjects()

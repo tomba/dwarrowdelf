@@ -233,6 +233,9 @@ namespace MyGame.Client
 				TileData data = iter.Current;
 				m_tileGrid.SetTileData(p, data);
 			}
+
+			if (MapChanged != null)
+				MapChanged(new IntPoint3D(bounds.X, bounds.Y, bounds.Z)); // XXX
 		}
 
 		ObservableCollection<BuildingData> m_buildings = new ObservableCollection<BuildingData>();

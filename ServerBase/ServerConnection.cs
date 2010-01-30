@@ -151,8 +151,7 @@ namespace MyGame.Server
 			{
 				foreach (var env in m_world.Environments)
 				{
-					var m = env.Serialize();
-					Send(m);
+					env.SerializeTo(m_connection);
 				}
 			}
 
