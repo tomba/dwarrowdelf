@@ -253,30 +253,59 @@ namespace MyGame.Server
 
 		public override ClientMsgs.Message Serialize()
 		{
-			var arr = new TileData[this.Width * this.Height * this.Depth];
+			TileData[][] arr = new TileData[this.Depth][];
+			for (int z = 0; z < arr.Length; ++z)
+				arr[z] = new TileData[this.Width * this.Height];
 			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
 
-			foreach (var p in this.Bounds.Range())
+			for (int z = this.Bounds.Back; z < this.Bounds.Front; ++z)
 			{
-				TileData d;
-				d = m_tileGrid.GetTileData(p);
-				arr[p.X + p.Y * this.Width + p.Z * this.Width * this.Height] = d;
-				var obs = GetContents(p);
-				if (obs != null)
-					obList.AddRange(obs.Select(o => o.Serialize()));
+				var plane = this.Bounds2D;
+				foreach (var p2d in plane.Range())
+				{
+					IntPoint3D p = new IntPoint3D(p2d, z);
+
+					var tileData = m_tileGrid.GetTileData(p);
+					arr[z][p.X + p.Y * this.Width] = tileData;
+
+					var obs = GetContents(p);
+					if (obs != null)
+						obList.AddRange(obs.Select(o => o.Serialize()));
+				}
 			}
 
-			var msg = new ClientMsgs.FullMapData()
+			var msgs = new List<ClientMsgs.Message>();
+
+			msgs.Add(new ClientMsgs.MapData()
 			{
-				ObjectID = this.ObjectID,
+				Environment = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
 				Bounds = this.Bounds,
-				TerrainIDs = arr,
-				ObjectData = obList,
-				BuildingData = m_buildings.Select(b => (ClientMsgs.BuildingData)b.Serialize()).ToArray(),
-			};
+			});
 
-			return msg;
+			for (int z = this.Bounds.Back; z < this.Bounds.Front; ++z)
+			{
+				msgs.Add(new ClientMsgs.MapDataTerrains()
+				{
+					Environment = this.ObjectID,
+					Bounds = new IntCube(this.Bounds.X, this.Bounds.Y, z, this.Bounds.Width, this.Bounds.Height, 1),
+					TerrainIDs = arr[z],
+				});
+			}
+
+			msgs.Add(new ClientMsgs.MapDataObjects()
+			{
+				Environment = this.ObjectID,
+				ObjectData = obList,
+			});
+
+			msgs.Add(new ClientMsgs.MapDataBuildings()
+			{
+				Environment = this.ObjectID,
+				BuildingData = m_buildings.Select(b => (ClientMsgs.BuildingData)b.Serialize()).ToArray(),
+			});
+
+			return new ClientMsgs.CompoundMessage() { Messages = msgs.ToArray() };
 		}
 
 		public override string ToString()

@@ -154,31 +154,45 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
-	public class FullMapData : Message
-	{
-		[DataMember]
-		public ObjectID ObjectID { get; set; }
-		[DataMember]
-		public VisibilityMode VisibilityMode { get; set; }
-		[DataMember]
-		public IntCube Bounds { get; set; }
-		[DataMember]
-		public IEnumerable<TileData> TerrainIDs { get; set; }
-		[DataMember]
-		public IEnumerable<Message> ObjectData { get; set; }
-		[DataMember]
-		public IEnumerable<BuildingData> BuildingData { get; set; }
-	}
-
-
-	[DataContract]
 	public class MapData : Message
 	{
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
 		public VisibilityMode VisibilityMode { get; set; }
+		[DataMember]
+		public IntCube Bounds { get; set; }
 	}
+
+	[DataContract]
+	public class MapDataTerrains : Message
+	{
+		[DataMember]
+		public ObjectID Environment { get; set; }
+		[DataMember]
+		public IntCube Bounds { get; set; }
+		[DataMember]
+		public IEnumerable<TileData> TerrainIDs { get; set; }
+	}
+
+	[DataContract]
+	public class MapDataObjects : Message
+	{
+		[DataMember]
+		public ObjectID Environment { get; set; }
+		[DataMember]
+		public IEnumerable<Message> ObjectData { get; set; }
+	}
+
+	[DataContract]
+	public class MapDataBuildings : Message
+	{
+		[DataMember]
+		public ObjectID Environment { get; set; }
+		[DataMember]
+		public IEnumerable<BuildingData> BuildingData { get; set; }
+	}
+
 
 	[DataContract]
 	public class TerrainData : Message

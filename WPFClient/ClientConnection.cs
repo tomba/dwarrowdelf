@@ -205,15 +205,6 @@ namespace MyGame.Client
 			//App.MainWindow.FollowObject = null;
 		}
 
-		void HandleMessage(TerrainData msg)
-		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
-			env.SetTerrains(msg.TileDataList);
-		}
-
 		void HandleMessage(ObjectMove msg)
 		{
 			ClientGameObject ob = World.TheWorld.FindObject<ClientGameObject>(msg.ObjectID);
@@ -234,28 +225,28 @@ namespace MyGame.Client
 			ob.MoveTo(env, msg.TargetLocation);
 		}
 
-		void HandleMessage(FullMapData msg)
+		void HandleMessage(MapDataTerrains msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.ObjectID);
-
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
 			if (env == null)
-			{
-				MyDebug.WriteLine("New map appeared {0}", msg.ObjectID);
-				var world = World.TheWorld;
-				env = new Environment(world, msg.ObjectID, msg.Bounds);
-				world.AddEnvironment(env);
-				env.Name = "map";
-
-				if (App.MainWindow.map.Environment == null)
-					App.MainWindow.map.Environment = env;
-			}
-
-			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TerrainIDs.Count());
+				throw new Exception();
 			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
-			env.VisibilityMode = msg.VisibilityMode;
-			env.SetBuildings(msg.BuildingData);
+		}
 
+		void HandleMessage(MapDataObjects msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
 			DeliverMessages(msg.ObjectData);
+		}
+
+		void HandleMessage(MapDataBuildings msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			env.SetBuildings(msg.BuildingData);
 		}
 
 		void HandleMessage(MapData msg)
@@ -266,12 +257,27 @@ namespace MyGame.Client
 			{
 				MyDebug.WriteLine("New map appeared {0}", msg.Environment);
 				var world = World.TheWorld;
-				env = new Environment(world, msg.Environment);
+				if (msg.Bounds.IsNull)
+					env = new Environment(world, msg.Environment);
+				else
+					env = new Environment(world, msg.Environment, msg.Bounds);
 				world.AddEnvironment(env);
 				env.Name = "map";
+
+				if (App.MainWindow.map.Environment == null)
+					App.MainWindow.map.Environment = env;
 			}
 
 			env.VisibilityMode = msg.VisibilityMode;
+		}
+
+		void HandleMessage(TerrainData msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
+			env.SetTerrains(msg.TileDataList);
 		}
 
 		void HandleMessage(LivingData msg)
