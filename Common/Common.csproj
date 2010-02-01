@@ -110,6 +110,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />
     <Compile Include="AStar\AStar3D.cs" />
+    <Compile Include="DataTypes\IntSize3D.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>
