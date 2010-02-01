@@ -261,16 +261,40 @@ namespace MyGame.Server
 
 			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
 
-			for (int z = this.Bounds.Z1; z < this.Bounds.Z2; ++z)
-			{
-				for (int y = this.Bounds.Y1; y < this.Bounds.Y2; ++y)
-				{
-					var arr = new TileData[this.Width];
+			var bounds = this.Bounds;
 
-					for (int x = this.Bounds.X1; x < this.Bounds.X2; ++x)
+			if (bounds.Volume < 2000)
+			{
+				// Send everything in one message
+				var arr = new TileData[bounds.Volume];
+				foreach (var p in this.Bounds.Range())
+				{
+					int idx = p.X + p.Y * bounds.Width + p.Z * bounds.Width * bounds.Height;
+					arr[idx] = m_tileGrid.GetTileData(p);
+
+					var obs = GetContents(p);
+					if (obs != null)
+						obList.AddRange(obs.Select(o => o.Serialize()));
+				}
+
+				writer(new ClientMsgs.MapDataTerrains()
+				{
+					Environment = this.ObjectID,
+					Bounds = bounds,
+					TerrainIDs = arr,
+				});
+			}
+			else if (bounds.Plane.Area < 2000)
+			{
+				// Send every 2D plane in one message
+				for (int z = bounds.Z1; z < bounds.Z2; ++z)
+				{
+					var arr = new TileData[bounds.Width * bounds.Height];
+					foreach (var p2d in bounds.Plane.Range())
 					{
-						IntPoint3D p = new IntPoint3D(x, y, z);
-						arr[x] = m_tileGrid.GetTileData(p);
+						var p = new IntPoint3D(p2d, z);
+						int idx = p.X + p.Y * bounds.Width;
+						arr[idx] = m_tileGrid.GetTileData(p);
 
 						var obs = GetContents(p);
 						if (obs != null)
@@ -280,9 +304,37 @@ namespace MyGame.Server
 					writer(new ClientMsgs.MapDataTerrains()
 					{
 						Environment = this.ObjectID,
-						Bounds = new IntCuboid(this.Bounds.X1, y, z, this.Bounds.Width, 1, 1),
+						Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1),
 						TerrainIDs = arr,
 					});
+				}
+			}
+			else
+			{
+				// Send every line in one message
+				for (int z = bounds.Z1; z < bounds.Z2; ++z)
+				{
+					for (int y = bounds.Y1; y < bounds.Y2; ++y)
+					{
+						var arr = new TileData[this.Width];
+
+						for (int x = bounds.X1; x < bounds.X2; ++x)
+						{
+							IntPoint3D p = new IntPoint3D(x, y, z);
+							arr[x] = m_tileGrid.GetTileData(p);
+
+							var obs = GetContents(p);
+							if (obs != null)
+								obList.AddRange(obs.Select(o => o.Serialize()));
+						}
+
+						writer(new ClientMsgs.MapDataTerrains()
+						{
+							Environment = this.ObjectID,
+							Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1),
+							TerrainIDs = arr,
+						});
+					}
 				}
 			}
 
