@@ -61,6 +61,16 @@ namespace MyGame
 			get { return new IntPoint3D(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
 		}
 
+		public int Volume
+		{
+			get { return this.Width * this.Height * this.Depth; }
+		}
+
+		public IntRect Plane
+		{
+			get { return new IntRect(this.X, this.Y, this.Width, this.Height); }
+		}
+
 		public bool IsNull
 		{
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }

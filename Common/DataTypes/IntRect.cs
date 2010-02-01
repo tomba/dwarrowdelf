@@ -59,6 +59,16 @@ namespace MyGame
 			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
 		}
 
+		public int Area
+		{
+			get { return this.Width * this.Height; }
+		}
+
+		public bool IsNull
+		{
+			get { return this.Width == 0 && this.Height == 0; }
+		}
+
 		public IntRect Move(int x, int y)
 		{
 			return new IntRect(x, y, this.Width, this.Height);
