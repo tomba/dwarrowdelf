@@ -30,6 +30,7 @@ namespace MyGame.Server
 		}
 
 		public abstract ClientMsgs.Message Serialize();
+		public abstract void SerializeTo(Action<ClientMsgs.Message> writer);
 	}
 
 	abstract public class ServerGameObject : BaseGameObject

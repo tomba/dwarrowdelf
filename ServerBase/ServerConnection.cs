@@ -151,7 +151,7 @@ namespace MyGame.Server
 			{
 				foreach (var env in m_world.Environments)
 				{
-					env.SerializeTo(m_connection);
+					env.SerializeTo(m_connection.Send);
 				}
 			}
 
@@ -482,17 +482,18 @@ namespace MyGame.Server
 					if (!m_knownLocations.ContainsKey(l.Environment))
 					{
 						// new environment for this user, so send map info
-						var md = new ClientMsgs.MapData()
-						{
-							Environment = l.Environment.ObjectID,
-							VisibilityMode = l.Environment.VisibilityMode,
-						};
-						mapMsgs.Add(md);
-
 						if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
 						{
-							var msg = l.Environment.Serialize();
-							mapMsgs.Add(msg);
+							l.Environment.SerializeTo(m_connection.Send);
+						}
+						else
+						{
+							var md = new ClientMsgs.MapData()
+							{
+								Environment = l.Environment.ObjectID,
+								VisibilityMode = l.Environment.VisibilityMode,
+							};
+							mapMsgs.Add(md);
 						}
 					}
 				}

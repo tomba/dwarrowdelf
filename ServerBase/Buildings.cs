@@ -30,6 +30,12 @@ namespace MyGame.Server
 			};
 		}
 
+		public override void SerializeTo(Action<ClientMsgs.Message> writer)
+		{
+			var msg = Serialize();
+			writer(msg);
+		}
+
 		public bool Contains(IntPoint3D point)
 		{
 			return point.Z == this.Z && this.Area.Contains(point.TwoD);

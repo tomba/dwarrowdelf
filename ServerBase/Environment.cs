@@ -250,21 +250,9 @@ namespace MyGame.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public void SerializeTo(Connection conn)
+		public override void SerializeTo(Action<ClientMsgs.Message> writer)
 		{
-			var cmsg = (ClientMsgs.CompoundMessage)Serialize();
-
-			foreach (var msg in cmsg.Messages)
-			{
-				conn.Send(msg);
-			}
-		}
-
-		public override ClientMsgs.Message Serialize()
-		{
-			var msgs = new List<ClientMsgs.Message>();
-
-			msgs.Add(new ClientMsgs.MapData()
+			writer(new ClientMsgs.MapData()
 			{
 				Environment = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
@@ -289,7 +277,7 @@ namespace MyGame.Server
 							obList.AddRange(obs.Select(o => o.Serialize()));
 					}
 
-					msgs.Add(new ClientMsgs.MapDataTerrains()
+					writer(new ClientMsgs.MapDataTerrains()
 					{
 						Environment = this.ObjectID,
 						Bounds = new IntCuboid(this.Bounds.X1, y, z, this.Bounds.Width, 1, 1),
@@ -298,18 +286,25 @@ namespace MyGame.Server
 				}
 			}
 
-			msgs.Add(new ClientMsgs.MapDataObjects()
+			// XXX this probably needs to be divided
+			writer(new ClientMsgs.MapDataObjects()
 			{
 				Environment = this.ObjectID,
 				ObjectData = obList,
 			});
 
-			msgs.Add(new ClientMsgs.MapDataBuildings()
+			// this may not need dividing, perhaps
+			writer(new ClientMsgs.MapDataBuildings()
 			{
 				Environment = this.ObjectID,
 				BuildingData = m_buildings.Select(b => (ClientMsgs.BuildingData)b.Serialize()).ToArray(),
 			});
+		}
 
+		public override ClientMsgs.Message Serialize()
+		{
+			var msgs = new List<ClientMsgs.Message>();
+			SerializeTo(m => msgs.Add(m));
 			return new ClientMsgs.CompoundMessage() { Messages = msgs.ToArray() };
 		}
 

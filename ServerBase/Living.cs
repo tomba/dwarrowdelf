@@ -475,6 +475,12 @@ namespace MyGame.Server
 			return data;
 		}
 
+		public override void SerializeTo(Action<ClientMsgs.Message> writer)
+		{
+			var msg = Serialize();
+			writer(msg);
+		}
+
 		public override string ToString()
 		{
 			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
