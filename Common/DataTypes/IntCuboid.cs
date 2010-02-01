@@ -76,6 +76,11 @@ namespace MyGame
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }
 		}
 
+		public int GetIndex(IntPoint3D p)
+		{
+			return p.X + p.Y * this.Width + p.Z * this.Width * this.Height;
+		}
+
 		public bool Contains(IntPoint3D l)
 		{
 			if (l.X < this.X || l.Y < this.Y || l.Z < this.Z ||

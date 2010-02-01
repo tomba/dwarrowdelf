@@ -269,7 +269,7 @@ namespace MyGame.Server
 				var arr = new TileData[bounds.Volume];
 				foreach (var p in this.Bounds.Range())
 				{
-					int idx = p.X + p.Y * bounds.Width + p.Z * bounds.Width * bounds.Height;
+					int idx = bounds.GetIndex(p);
 					arr[idx] = m_tileGrid.GetTileData(p);
 
 					var obs = GetContents(p);
@@ -286,14 +286,15 @@ namespace MyGame.Server
 			}
 			else if (bounds.Plane.Area < 2000)
 			{
+				var plane = bounds.Plane;
 				// Send every 2D plane in one message
 				for (int z = bounds.Z1; z < bounds.Z2; ++z)
 				{
-					var arr = new TileData[bounds.Width * bounds.Height];
-					foreach (var p2d in bounds.Plane.Range())
+					var arr = new TileData[plane.Area];
+					foreach (var p2d in plane.Range())
 					{
+						int idx = plane.GetIndex(p2d);
 						var p = new IntPoint3D(p2d, z);
-						int idx = p.X + p.Y * bounds.Width;
 						arr[idx] = m_tileGrid.GetTileData(p);
 
 						var obs = GetContents(p);

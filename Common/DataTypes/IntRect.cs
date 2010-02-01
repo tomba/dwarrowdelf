@@ -69,6 +69,11 @@ namespace MyGame
 			get { return this.Width == 0 && this.Height == 0; }
 		}
 
+		public int GetIndex(IntPoint p)
+		{
+			return p.X + p.Y * this.Width;
+		}
+
 		public IntRect Move(int x, int y)
 		{
 			return new IntRect(x, y, this.Width, this.Height);
