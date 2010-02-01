@@ -76,7 +76,7 @@ namespace MyGame.Client
 			: base(null)
 		{
 			var env = workplace.Environment;
-			var location = new IntPoint3D(workplace.Area.TopLeft, workplace.Z);
+			var location = new IntPoint3D(workplace.Area.X1Y1, workplace.Z);
 
 			AddSubJob(new FetchMaterials(this, env, location, sourceObjects));
 			AddSubJob(new BuildItem(this, workplace, sourceObjects));

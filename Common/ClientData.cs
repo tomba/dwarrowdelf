@@ -82,7 +82,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID MapID { get; set; }
 		[DataMember]
-		public IntCube Cube { get; set; }
+		public IntCuboid Cube { get; set; }
 		[DataMember]
 		public TileData TileData { get; set; }
 	}
@@ -161,7 +161,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public VisibilityMode VisibilityMode { get; set; }
 		[DataMember]
-		public IntCube Bounds { get; set; }
+		public IntCuboid Bounds { get; set; }
 	}
 
 	[DataContract]
@@ -170,7 +170,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IntCube Bounds { get; set; }
+		public IntCuboid Bounds { get; set; }
 		[DataMember]
 		public IEnumerable<TileData> TerrainIDs { get; set; }
 	}

@@ -214,8 +214,8 @@ namespace MyGame.Client
 					return;
 				}
 
-				var newStart = value.TopLeft;
-				var newEnd = value.BottomRight - new IntVector(1, 1);
+				var newStart = value.X1Y1;
+				var newEnd = value.X2Y2 - new IntVector(1, 1);
 
 				if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
 				{

@@ -120,7 +120,7 @@
     <Compile Include="Material.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="SymbolInfo.cs" />
-    <Compile Include="DataTypes\IntCube.cs" />
+    <Compile Include="DataTypes\IntCuboid.cs" />
     <Compile Include="DataTypes\IntVector.cs" />
     <Compile Include="DataTypes\IntSize.cs" />
     <Compile Include="DataTypes\Direction.cs" />

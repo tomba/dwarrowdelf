@@ -287,7 +287,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCube(r, map.Z),
+				Cube = new IntCuboid(r, map.Z),
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -307,7 +307,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCube(r, map.Z),
+				Cube = new IntCuboid(r, map.Z),
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -371,7 +371,7 @@ namespace MyGame.Client
 				var env = map.Environment;
 				int z = map.Z;
 
-				var building = env.GetBuildingAt(new IntPoint3D(r.TopLeft, z));
+				var building = env.GetBuildingAt(new IntPoint3D(r.X1Y1, z));
 
 				if (building == null)
 					return;
@@ -380,7 +380,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "Goto")
 			{
-				IntPoint p = map.SelectionRect.TopLeft;
+				IntPoint p = map.SelectionRect.X1Y1;
 				var env = map.Environment;
 				int z = map.Z;
 

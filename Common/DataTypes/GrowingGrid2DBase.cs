@@ -100,8 +100,8 @@ namespace MyGame
 					return null;
 			}
 
-			blockX -= m_mainRect.Left;
-			blockY -= m_mainRect.Top;
+			blockX -= m_mainRect.X1;
+			blockY -= m_mainRect.Y1;
 
 			var block = m_grid[blockX, blockY];
 
@@ -121,15 +121,15 @@ namespace MyGame
 		{
 			int rx, ry, rw, rh;
 
-			if (blockX < m_mainRect.Left)
+			if (blockX < m_mainRect.X1)
 			{
 				rx = blockX;
-				rw = m_mainRect.Width + (m_mainRect.Left - blockX);
+				rw = m_mainRect.Width + (m_mainRect.X1 - blockX);
 			}
-			else if (blockX > m_mainRect.Right - 1)
+			else if (blockX > m_mainRect.X2 - 1)
 			{
 				rx = m_mainRect.X;
-				rw = m_mainRect.Width + (blockX - (m_mainRect.Right - 1));
+				rw = m_mainRect.Width + (blockX - (m_mainRect.X2 - 1));
 			}
 			else
 			{
@@ -137,15 +137,15 @@ namespace MyGame
 				rw = m_mainRect.Width;
 			}
 
-			if (blockY < m_mainRect.Top)
+			if (blockY < m_mainRect.Y1)
 			{
 				ry = blockY;
-				rh = m_mainRect.Height + (m_mainRect.Top - blockY);
+				rh = m_mainRect.Height + (m_mainRect.Y1 - blockY);
 			}
-			else if (blockY > m_mainRect.Bottom - 1)
+			else if (blockY > m_mainRect.Y2 - 1)
 			{
 				ry = m_mainRect.Y;
-				rh = m_mainRect.Height + (blockY - (m_mainRect.Bottom - 1));
+				rh = m_mainRect.Height + (blockY - (m_mainRect.Y2 - 1));
 			}
 			else
 			{

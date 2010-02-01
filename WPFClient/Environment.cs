@@ -133,7 +133,7 @@ namespace MyGame.Client
 		{
 		}
 
-		public Environment(World world, ObjectID objectID, IntCube bounds)
+		public Environment(World world, ObjectID objectID, IntCuboid bounds)
 			: this(world, objectID, Math.Max(bounds.Width, bounds.Height))
 		{
 		}
@@ -222,7 +222,7 @@ namespace MyGame.Client
 			}
 		}
 
-		public void SetTerrains(IntCube bounds, IEnumerable<TileData> tileDataList)
+		public void SetTerrains(IntCuboid bounds, IEnumerable<TileData> tileDataList)
 		{
 			this.Version += 1;
 

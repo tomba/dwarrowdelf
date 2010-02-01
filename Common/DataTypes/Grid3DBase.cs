@@ -26,11 +26,11 @@ namespace MyGame
 			return p.X + p.Y * this.Width + p.Z * this.Width * this.Height;
 		}
 
-		public IntCube Bounds
+		public IntCuboid Bounds
 		{
 			get
 			{
-				return new IntCube(0, 0, 0, this.Width, this.Height, this.Depth);
+				return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth);
 			}
 		}
 	}

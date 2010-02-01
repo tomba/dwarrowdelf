@@ -6,11 +6,8 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	/**
-	 * Cube datatype with integer dimensions
-	 */
 	[DataContract]
-	public struct IntCube
+	public struct IntCuboid
 	{
 		[DataMember(Name = "X")]
 		readonly int m_x;
@@ -32,7 +29,7 @@ namespace MyGame
 		public int Height { get { return m_height; } }
 		public int Depth { get { return m_depth; } }
 
-		public IntCube(int x, int y, int z, int width, int height, int depth)
+		public IntCuboid(int x, int y, int z, int width, int height, int depth)
 		{
 			m_x = x;
 			m_y = y;
@@ -42,39 +39,26 @@ namespace MyGame
 			m_depth = depth;
 		}
 
-		public IntCube(IntRect rect, int z)
+		public IntCuboid(IntRect rect, int z)
 			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
 		{
 		}
 
-		public int Left
+		public int X1 { get { return this.X; } }
+		public int X2 { get { return this.X + this.Width; } }
+		public int Y1 { get { return this.Y; } }
+		public int Y2 { get { return this.Y + this.Height; } }
+		public int Z1 { get { return this.Z; } }
+		public int Z2 { get { return this.Z + this.Depth; } }
+
+		public IntPoint3D Corner1
 		{
-			get { return X; }
+			get { return new IntPoint3D(this.X, this.Y, this.Z); }
 		}
 
-		public int Right
+		public IntPoint3D Corner2
 		{
-			get { return X + Width; }
-		}
-
-		public int Top
-		{
-			get { return Y; }
-		}
-
-		public int Bottom
-		{
-			get { return Y + Height; }
-		}
-
-		public int Front
-		{
-			get { return Z + Depth; }
-		}
-
-		public int Back
-		{
-			get { return Z; }
+			get { return new IntPoint3D(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
 		}
 
 		public bool IsNull
@@ -102,7 +86,7 @@ namespace MyGame
 		public override string ToString()
 		{
 			return String.Format("x={0},y={1},z={2},w={3},h={4},d={5}",
-				X, Y, Z, Width, Height, Depth);
+				this.X, this.Y, this.Z, this.Width, this.Height, this.Depth);
 		}
 	}
 }

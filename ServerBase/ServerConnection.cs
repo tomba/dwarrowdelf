@@ -183,7 +183,7 @@ namespace MyGame.Server
 		void ReceiveMessage(SetTilesMessage msg)
 		{
 			ObjectID mapID = msg.MapID;
-			IntCube r = msg.Cube;
+			IntCuboid r = msg.Cube;
 			TileData data = msg.TileData;
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);

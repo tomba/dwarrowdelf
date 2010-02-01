@@ -45,9 +45,9 @@ namespace MyGame.Server
 			get { return new IntRect(0, 0, this.Width, this.Height); }
 		}
 
-		public IntCube Bounds
+		public IntCuboid Bounds
 		{
-			get { return new IntCube(0, 0, 0, this.Width, this.Height, this.Depth); }
+			get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); }
 		}
 
 		public delegate bool ActionHandlerDelegate(ServerGameObject ob, GameAction action);
@@ -273,13 +273,13 @@ namespace MyGame.Server
 
 			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
 
-			for (int z = this.Bounds.Back; z < this.Bounds.Front; ++z)
+			for (int z = this.Bounds.Z1; z < this.Bounds.Z2; ++z)
 			{
-				for (int y = this.Bounds.Top; y < this.Bounds.Bottom; ++y)
+				for (int y = this.Bounds.Y1; y < this.Bounds.Y2; ++y)
 				{
 					var arr = new TileData[this.Width];
 
-					for (int x = this.Bounds.Left; x < this.Bounds.Right; ++x)
+					for (int x = this.Bounds.X1; x < this.Bounds.X2; ++x)
 					{
 						IntPoint3D p = new IntPoint3D(x, y, z);
 						arr[x] = m_tileGrid.GetTileData(p);
@@ -292,7 +292,7 @@ namespace MyGame.Server
 					msgs.Add(new ClientMsgs.MapDataTerrains()
 					{
 						Environment = this.ObjectID,
-						Bounds = new IntCube(this.Bounds.Left, y, z, this.Bounds.Width, 1, 1),
+						Bounds = new IntCuboid(this.Bounds.X1, y, z, this.Bounds.Width, 1, 1),
 						TerrainIDs = arr,
 					});
 				}

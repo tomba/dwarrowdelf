@@ -44,32 +44,17 @@ namespace MyGame
 		{
 		}
 
-		public int Left
-		{
-			get { return X; }
-		}
+		public int X1 { get { return X; } }
+		public int X2 { get { return X + Width; } }
+		public int Y1 { get { return Y; } }
+		public int Y2 { get { return Y + Height; } }
 
-		public int Right
-		{
-			get { return X + Width; }
-		}
-
-		public int Top
-		{
-			get { return Y; }
-		}
-
-		public int Bottom
-		{
-			get { return Y + Height; }
-		}
-
-		public IntPoint TopLeft
+		public IntPoint X1Y1
 		{
 			get { return new IntPoint(this.X, this.Y); }
 		}
 
-		public IntPoint BottomRight
+		public IntPoint X2Y2
 		{
 			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
 		}
@@ -104,7 +89,7 @@ namespace MyGame
 
 		public bool IntersectsWith(IntRect rect)
 		{
-			return rect.Left <= this.Right && rect.Right >= this.Left && rect.Top <= this.Bottom && rect.Bottom >= this.Top;
+			return rect.X1 <= this.X2 && rect.X2 >= this.X1 && rect.Y1 <= this.Y2 && rect.Y2 >= this.Y1;
 		}
 
 		public IEnumerable<IntPoint> Range()

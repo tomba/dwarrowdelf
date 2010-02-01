@@ -103,7 +103,7 @@ namespace MyGame.Client
 			: base(parent)
 		{
 			var env = workplace.Environment;
-			var location = new IntPoint3D(workplace.Area.TopLeft, workplace.Z);
+			var location = new IntPoint3D(workplace.Area.X1Y1, workplace.Z);
 
 			AddSubJob(new MoveActionJob(this, env, location, false));
 			AddSubJob(new BuildItemActionJob(this, items));

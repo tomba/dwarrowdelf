@@ -259,12 +259,12 @@ namespace MyGame.Client
 
 			if (this.SelectedTileInfo == null)
 			{
-				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.TopLeft, this.Z));
+				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.X1Y1, this.Z));
 			}
 			else
 			{
 				this.SelectedTileInfo.Environment = this.Environment;
-				this.SelectedTileInfo.Location = new IntPoint3D(sel.TopLeft, this.Z);
+				this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
 			}
 		}
 
