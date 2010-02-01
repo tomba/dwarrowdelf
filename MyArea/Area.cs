@@ -80,9 +80,9 @@ namespace MyArea
 
 			foreach (var p in env.Bounds.Range())
 			{
-				if (p.X == 0 || p.Y == 0 || p.X == env.Width - 1 || p.Y == env.Height - 1)
-					env.SetInterior(p, InteriorID.FixedWall, stone);
-				else if (p.X == 2 && p.Y == 2 && p.Z > 0)
+//				if (p.X == 0 || p.Y == 0 || p.X == env.Width - 1 || p.Y == env.Height - 1)
+//					env.SetInterior(p, InteriorID.FixedWall, stone);
+				if (p.X == 2 && p.Y == 2 && p.Z > 0)
 					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
 				else if (p.X == 8 && p.Y == 8)
 					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);

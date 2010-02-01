@@ -116,7 +116,7 @@ namespace MyGame.Client
 			foreach (var v in IntVector.GetAllXYDirections())
 			{
 				var l = p + v;
-				if (env.IsWalkable(l) == true) // XXX map.Bounds.Contains(l)
+				if (env.IsWalkable(l) == true && env.Bounds.Contains(l))
 					yield return v.ToDirection();
 			}
 

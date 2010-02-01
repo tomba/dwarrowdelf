@@ -128,6 +128,8 @@ namespace MyGame.Client
 
 		public VisibilityMode VisibilityMode { get; set; }
 
+		public IntCuboid Bounds { get; private set; }
+
 		public Environment(World world, ObjectID objectID)
 			: this(world, objectID, 16)
 		{
@@ -136,6 +138,7 @@ namespace MyGame.Client
 		public Environment(World world, ObjectID objectID, IntCuboid bounds)
 			: this(world, objectID, Math.Max(bounds.Width, bounds.Height))
 		{
+			this.Bounds = bounds;
 		}
 
 		public Environment(World world, ObjectID objectID, int blockSize)
@@ -210,21 +213,85 @@ namespace MyGame.Client
 		{
 			this.Version += 1;
 
+			int x1; int x2;
+			int y1; int y2;
+			int z1; int z2;
+
+			if (this.Bounds.IsNull)
+			{
+				x1 = y1 = z1 = Int32.MaxValue;
+				x2 = y2 = z2 = Int32.MinValue;
+			}
+			else
+			{
+				x1 = this.Bounds.X1;
+				x2 = this.Bounds.X2;
+				y1 = this.Bounds.Y1;
+				y2 = this.Bounds.Y2;
+				z1 = this.Bounds.Z1;
+				z2 = this.Bounds.Z2;
+			}
+
+			bool setNew = false;
+
 			foreach (var kvp in tileDataList)
 			{
+				setNew = true;
 				IntPoint3D p = kvp.Key;
 				TileData data = kvp.Value;
+
+				x1 = Math.Min(x1, p.X);
+				x2 = Math.Max(x2, p.X + 1);
+				y1 = Math.Min(y1, p.Y);
+				y2 = Math.Max(y2, p.Y + 1);
+				z1 = Math.Min(z1, p.Z);
+				z2 = Math.Max(z2, p.Z + 1);
 
 				m_tileGrid.SetTileData(p, data);
 
 				if (MapChanged != null)
 					MapChanged(p);
 			}
+
+			if (setNew)
+			{
+				this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
+				MyDebug.WriteLine(this.Bounds.ToString());
+			}
 		}
 
 		public void SetTerrains(IntCuboid bounds, IEnumerable<TileData> tileDataList)
 		{
 			this.Version += 1;
+
+			int x1; int x2;
+			int y1; int y2;
+			int z1; int z2;
+
+			if (this.Bounds.IsNull)
+			{
+				x1 = y1 = z1 = Int32.MaxValue;
+				x2 = y2 = z2 = Int32.MinValue;
+			}
+			else
+			{
+				x1 = this.Bounds.X1;
+				x2 = this.Bounds.X2;
+				y1 = this.Bounds.Y1;
+				y2 = this.Bounds.Y2;
+				z1 = this.Bounds.Z1;
+				z2 = this.Bounds.Z2;
+			}
+
+			x1 = Math.Min(x1, bounds.X1);
+			x2 = Math.Max(x2, bounds.X2);
+			y1 = Math.Min(y1, bounds.Y1);
+			y2 = Math.Max(y2, bounds.Y2);
+			z1 = Math.Min(z1, bounds.Z1);
+			z2 = Math.Max(z2, bounds.Z2);
+
+			this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
+			MyDebug.WriteLine(this.Bounds.ToString());
 
 			var iter = tileDataList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())

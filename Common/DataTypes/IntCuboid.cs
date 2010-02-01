@@ -39,6 +39,16 @@ namespace MyGame
 			m_depth = depth;
 		}
 
+		public IntCuboid(IntPoint3D p, IntSize3D size)
+		{
+			m_x = p.X;
+			m_y = p.Y;
+			m_z = p.Z;
+			m_width = size.Width;
+			m_height = size.Height;
+			m_depth = size.Depth;
+		}
+
 		public IntCuboid(IntRect rect, int z)
 			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
 		{

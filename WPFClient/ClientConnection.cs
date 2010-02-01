@@ -225,30 +225,6 @@ namespace MyGame.Client
 			ob.MoveTo(env, msg.TargetLocation);
 		}
 
-		void HandleMessage(MapDataTerrains msg)
-		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
-		}
-
-		void HandleMessage(MapDataObjects msg)
-		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			DeliverMessages(msg.ObjectData);
-		}
-
-		void HandleMessage(MapDataBuildings msg)
-		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			env.SetBuildings(msg.BuildingData);
-		}
-
 		void HandleMessage(MapData msg)
 		{
 			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
@@ -271,13 +247,37 @@ namespace MyGame.Client
 			env.VisibilityMode = msg.VisibilityMode;
 		}
 
-		void HandleMessage(TerrainData msg)
+		void HandleMessage(MapDataTerrains msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
+		}
+
+		void HandleMessage(MapDataTerrainsList msg)
 		{
 			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
 			env.SetTerrains(msg.TileDataList);
+		}
+
+		void HandleMessage(MapDataObjects msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			DeliverMessages(msg.ObjectData);
+		}
+
+		void HandleMessage(MapDataBuildings msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			if (env == null)
+				throw new Exception();
+			env.SetBuildings(msg.BuildingData);
 		}
 
 		void HandleMessage(LivingData msg)

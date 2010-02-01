@@ -176,6 +176,20 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	public class MapDataTerrainsList : Message
+	{
+		[DataMember]
+		public ObjectID Environment { get; set; }
+		[DataMember]
+		public IEnumerable<KeyValuePair<IntPoint3D, TileData>> TileDataList { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("TerrainData({0} tiles)", this.TileDataList.Count());
+		}
+	}
+
+	[DataContract]
 	public class MapDataObjects : Message
 	{
 		[DataMember]
@@ -191,21 +205,6 @@ namespace MyGame.ClientMsgs
 		public ObjectID Environment { get; set; }
 		[DataMember]
 		public IEnumerable<BuildingData> BuildingData { get; set; }
-	}
-
-
-	[DataContract]
-	public class TerrainData : Message
-	{
-		[DataMember]
-		public ObjectID Environment { get; set; }
-		[DataMember]
-		public IEnumerable<KeyValuePair<IntPoint3D, TileData>> TileDataList { get; set; }
-		
-		public override string ToString()
-		{
-			return String.Format("TerrainData({0} tiles)", this.TileDataList.Count());
-		}
 	}
 
 	[DataContract]

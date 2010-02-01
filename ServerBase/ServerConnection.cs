@@ -438,7 +438,7 @@ namespace MyGame.Server
 			else if (change is MapChange)
 			{
 				MapChange mc = (MapChange)change;
-				return new ClientMsgs.TerrainData()
+				return new ClientMsgs.MapDataTerrainsList()
 				{
 					Environment = mc.MapID,
 					TileDataList = new KeyValuePair<IntPoint3D, TileData>[]
@@ -541,7 +541,7 @@ namespace MyGame.Server
 		IEnumerable<ClientMsgs.Message> TilesToMessages(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)
 		{
 			var msgs = revealedLocs.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (ClientMsgs.Message)new ClientMsgs.TerrainData()
+				Select(kvp => (ClientMsgs.Message)new ClientMsgs.MapDataTerrainsList()
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
