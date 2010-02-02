@@ -28,6 +28,16 @@
 		<CharSymbol>&gt;</CharSymbol>
 	</Symbol>
 	<Symbol>
+		<Name>SlopeUp</Name>
+		<CharSymbol>&lt;</CharSymbol>
+		<Rotate>90</Rotate>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeDown</Name>
+		<CharSymbol>&gt;</CharSymbol>
+		<Rotate>90</Rotate>
+	</Symbol>
+	<Symbol>
 		<Name>Portal</Name>
 		<CharSymbol>O</CharSymbol>
 	</Symbol>

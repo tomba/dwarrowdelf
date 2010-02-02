@@ -49,6 +49,8 @@ namespace MyArea.Data
 				symbol.ID = id++;
 				symbol.Name = (string)elem.Element("Name");
 				symbol.CharSymbol = ((string)elem.Element("CharSymbol"))[0];
+				if (elem.Element("Rotate") != null)
+					symbol.Rotation = (double)elem.Element("Rotate");
 				if (elem.Element("Drawing") != null)
 				{
 					var drawingElem = elem.Element("Drawing");

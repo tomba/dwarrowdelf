@@ -44,24 +44,24 @@ namespace MyGame.Client
 		Drawing CreateDrawing(int symbolID, Color color)
 		{
 			var symbol = m_symbolInfoList[symbolID];
+			Drawing drawing;
 
 			if (m_useOnlyChars || symbol.DrawingName == null)
 			{
-				var drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(10, 0), new Size(80, 100));
-				drawing.Freeze();
-				return drawing;
+				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars).Clone();
+				drawing = NormalizeDrawing(drawing, new Point(10, 0), new Size(80, 100), symbol.Rotation);
 			}
 			else
 			{
-				var drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height));
-				drawing.Freeze();
-				return drawing;
+				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation);
 			}
+
+			drawing.Freeze();
+			return drawing;
 		}
 
-		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size)
+		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle)
 		{
 			DrawingGroup dGroup = new DrawingGroup();
 			using (DrawingContext dc = dGroup.Open())
@@ -70,7 +70,11 @@ namespace MyGame.Client
 				dc.PushTransform(new ScaleTransform(size.Width / drawing.Bounds.Width, 
 					size.Height / drawing.Bounds.Height));
 				dc.PushTransform(new TranslateTransform(-drawing.Bounds.Left, -drawing.Bounds.Top));
+				dc.PushTransform(new RotateTransform(angle, drawing.Bounds.Width / 2, drawing.Bounds.Height / 2));
+
 				dc.DrawDrawing(drawing);
+
+				dc.Pop();
 				dc.Pop();
 				dc.Pop();
 				dc.Pop();
