@@ -23,9 +23,12 @@ namespace MyArea
 			environments.Add(m_map2);
 		}
 
+		IntPoint3D m_portalLoc = new IntPoint3D(2, 4, 9);
+		IntPoint3D m_portalLoc2 = new IntPoint3D(1, 1, 0);
+
 		bool ActionHandler(ServerGameObject ob, GameAction action)
 		{
-			if (ob.Environment == m_map1 && ob.Location == new IntPoint3D(2, 3, 0))
+			if (ob.Environment == m_map1 && ob.Location == m_portalLoc)
 			{
 				var a = action as MoveAction;
 
@@ -42,7 +45,7 @@ namespace MyArea
 
 				return ok;
 			}
-			else if (ob.Environment == m_map2 && ob.Location == new IntPoint3D(2, 3, 0))
+			else if (ob.Environment == m_map2 && ob.Location == m_portalLoc2)
 			{
 				var a = action as MoveAction;
 
@@ -65,10 +68,16 @@ namespace MyArea
 			}
 		}
 
+
 		Environment CreateMap1(World world)
 		{
+			int sizeExp = 5;
+			int size = (int)Math.Pow(2, sizeExp);
+			var terrainGen = new TerrainGen(sizeExp, 10, 5, 0.75);
+
+
 			// XXX some size limit with the size in WCF
-			var env = new Environment(world, 50, 50, 3, VisibilityMode.LOS);
+			var env = new Environment(world, size, size, 20, VisibilityMode.LOS);
 			env.Name = "map1";
 
 			Random r = new Random(123);
@@ -80,25 +89,30 @@ namespace MyArea
 
 			foreach (var p in env.Bounds.Range())
 			{
-//				if (p.X == 0 || p.Y == 0 || p.X == env.Width - 1 || p.Y == env.Height - 1)
-//					env.SetInterior(p, InteriorID.FixedWall, stone);
+				double d = terrainGen.Grid[p.TwoD];
+
+				if (d > p.Z)
+				{
+					env.SetInterior(p, InteriorID.NaturalWall, stone);
+					env.SetFloor(p, FloorID.NaturalFloor, stone);
+				}
+				else
+				{
+					env.SetInteriorID(p, InteriorID.Empty);
+					if (env.GetInteriorID(p + new IntVector3D(0, 0, -1)) != InteriorID.Empty)
+						env.SetFloor(p, FloorID.NaturalFloor, stone);
+					else
+						env.SetFloor(p, FloorID.Empty, stone);
+				}
+
 				if (p.X == 2 && p.Y == 2 && p.Z > 0)
 					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
 				else if (p.X == 8 && p.Y == 8)
 					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
-				else if (p.X < 10 && p.Y < 10)
-					env.SetInteriorID(p, InteriorID.Empty);
-				else if (r.Next() % 8 == 0)
-					env.SetInterior(p, InteriorID.NaturalWall, stone);
-				else
-					env.SetInteriorID(p, InteriorID.Empty);
-
-				env.SetFloor(p, FloorID.NaturalFloor, stone);
 			}
 
-			var pp = new IntPoint3D(2, 3, 0);
-			env.SetInterior(pp, InteriorID.Portal, steel);
-			env.SetActionHandler(pp, ActionHandler);
+			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);
+			env.SetActionHandler(m_portalLoc, ActionHandler);
 
 			var syms = world.AreaData.Symbols;
 
@@ -109,7 +123,7 @@ namespace MyArea
 				var monster = new Living(world);
 				monster.SymbolID = syms.Single(o => o.Name == "Monster").ID;
 				monster.Name = String.Format("monsu{0}", i);
-				if (monster.MoveTo(env, new IntPoint3D(6, 6, 0)) == false)
+				if (monster.MoveTo(env, new IntPoint3D(6, 6, 9)) == false)
 					throw new Exception();
 				var monsterAI = new MonsterActor(monster);
 				monster.Actor = monsterAI;
@@ -122,7 +136,7 @@ namespace MyArea
 				IntPoint3D p;
 				do
 				{
-					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
+					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
 				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
 				var item = new ItemObject(world)
@@ -145,7 +159,7 @@ namespace MyArea
 					Color = GameColors.Red,
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(3, 1, 0));
+				item.MoveTo(env, new IntPoint3D(3, 1, 9));
 
 				item = new ItemObject(world)
 				{
@@ -153,7 +167,7 @@ namespace MyArea
 					Name = "gem",
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(2, 1, 0));
+				item.MoveTo(env, new IntPoint3D(2, 1, 9));
 
 				item = new ItemObject(world)
 				{
@@ -161,10 +175,10 @@ namespace MyArea
 					Name = "puu",
 					MaterialID = wood,
 				};
-				item.MoveTo(env, new IntPoint3D(1, 3, 0));
+				item.MoveTo(env, new IntPoint3D(1, 3, 9));
 			}
 
-			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 4, 2, 2), Z = 0 };
+			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 4, 2, 2), Z = 9 };
 			env.AddBuilding(building);
 
 			return env;
@@ -184,9 +198,8 @@ namespace MyArea
 				env.SetFloor(p, FloorID.NaturalFloor, stone);
 			}
 
-			var pp = new IntPoint3D(2, 3, 0);
-			env.SetInterior(pp, InteriorID.Portal, steel);
-			env.SetActionHandler(pp, ActionHandler);
+			env.SetInterior(m_portalLoc2, InteriorID.Portal, steel);
+			env.SetActionHandler(m_portalLoc2, ActionHandler);
 
 			return env;
 		}

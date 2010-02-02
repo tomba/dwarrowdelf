@@ -59,6 +59,7 @@ namespace MyGame.Client
 			var c = map.Columns;
 			var r = map.Rows;
 			map.CenterPos = new IntPoint(c / 2 - 2, r / 2 - 3);
+			map.Z = 9;
 		}
 
 		protected override void OnClosing(CancelEventArgs e)

@@ -152,9 +152,16 @@ namespace MyGame.Client
 			else
 			{
 				var fInfo = this.Environment.GetFloor(ml);
-				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == fInfo.Name);
-				id = symbol.ID;
-				c = Colors.Black;
+				if (fInfo.ID != FloorID.Empty)
+				{
+					var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == fInfo.Name);
+					id = symbol.ID;
+					c = Colors.Black;
+				}
+				else
+				{
+					return null;
+				}
 			}
 
 			return m_bitmapCache.GetBitmap(id, c, !lit);

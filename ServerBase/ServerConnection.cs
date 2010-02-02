@@ -246,7 +246,7 @@ namespace MyGame.Server
 			};
 			item.MoveTo(player);
 
-			if (!player.MoveTo(env, new IntPoint3D(1, 1, 0)))
+			if (!player.MoveTo(env, new IntPoint3D(1, 3, 9)))
 				throw new Exception("Unable to move player");
 
 			var inv = player.SerializeInventory();
@@ -263,12 +263,12 @@ namespace MyGame.Server
 
 #else
 			var rand = new Random();
-			for (int i = 0; i < 10; ++i)
+			for (int i = 0; i < 5; ++i)
 			{
 				IntPoint3D p;
 				do
 				{
-					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 0);
+					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
 				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
 				var player = new Living(m_world)
