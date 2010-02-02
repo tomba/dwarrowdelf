@@ -25,7 +25,6 @@ namespace TerrainGenTest
 			InitializeComponent();
 
 			this.PreviewKeyDown += Window_PreKeyDown;
-			this.PreviewTextInput += Window_PreTextInput;
 		}
 
 		protected override void OnActivated(EventArgs e)
@@ -98,28 +97,6 @@ namespace TerrainGenTest
 					return;
 				map.TileSize -= 8;
 			}
-		}
-
-		void Window_PreTextInput(object sender, TextCompositionEventArgs e)
-		{
-			string text = e.Text;
-			Direction dir;
-
-			if (text == ">")
-			{
-				dir = Direction.Down;
-			}
-			else if (text == "<")
-			{
-				dir = Direction.Up;
-			}
-			else
-			{
-				return;
-			}
-
-			e.Handled = true;
-			//map.Z += IntVector3D.FromDirection(dir).Z;
 		}
 	}
 }

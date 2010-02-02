@@ -13,9 +13,9 @@ namespace MyGame
 		FixedWall,
 		NaturalWall,
 		Wall,
-		StairsUp,
-		StairsDown,
+		Stairs,
 		Portal,
+		Slope,
 	}
 
 	public enum FloorID : byte
@@ -96,9 +96,9 @@ namespace MyGame
 			Add(new InteriorInfo(InteriorID.FixedWall, true));
 			Add(new InteriorInfo(InteriorID.NaturalWall, true));
 			Add(new InteriorInfo(InteriorID.Wall, true));
-			Add(new InteriorInfo(InteriorID.StairsDown, false));
-			Add(new InteriorInfo(InteriorID.StairsUp, false));
+			Add(new InteriorInfo(InteriorID.Stairs, false));
 			Add(new InteriorInfo(InteriorID.Portal, false));
+			Add(new InteriorInfo(InteriorID.Slope, false));
 
 			Add(new FloorInfo(FloorID.Undefined, false));
 

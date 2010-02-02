@@ -27,6 +27,7 @@ namespace MyGame.Client
 		TileInfo m_selectedTileInfo;
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
+		bool m_showVirtualSymbols = true;
 
 		public MapControl()
 		{
@@ -141,28 +142,53 @@ namespace MyGame.Client
 			int id;
 			Color c;
 
-			var iInfo = this.Environment.GetInterior(ml);
+			var intInfo = this.Environment.GetInterior(ml);
+			var intInfo2 = this.Environment.GetInterior(ml + new IntVector3D(0, 0, -1));
+			var flrInfo = this.Environment.GetFloor(ml);
 
-			if (iInfo.ID != InteriorID.Empty)
+			var intID = intInfo.ID;
+			var intID2 = intInfo2.ID;
+			var flrID = flrInfo.ID;
+
+			string symbolName = null;
+
+			if (intID != InteriorID.Empty)
 			{
-				var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == iInfo.Name);
-				id = symbol.ID;
-				c = Colors.Black;
+				symbolName = intInfo.Name;
+
+				if (intID == InteriorID.Stairs)
+					symbolName = "StairsUp";
+				else if (intID == InteriorID.Slope)
+					symbolName = "SlopeUp";
+			}
+			else if (flrID != FloorID.Empty)
+			{
+				symbolName = flrInfo.Name;
 			}
 			else
 			{
-				var fInfo = this.Environment.GetFloor(ml);
-				if (fInfo.ID != FloorID.Empty)
+				symbolName = null;
+			}
+
+			if (m_showVirtualSymbols)
+			{
+				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
+					symbolName = "StairsUpDown";
+				else if (intID == InteriorID.Empty && intID2 == InteriorID.Slope)
+					symbolName = "SlopeDown";
+				else if (intID == InteriorID.Empty && flrID == FloorID.Empty)
 				{
-					var symbol = this.Environment.World.AreaData.Symbols.Single(s => s.Name == fInfo.Name);
-					id = symbol.ID;
-					c = Colors.Black;
-				}
-				else
-				{
-					return null;
+					symbolName = "NaturalFloor";
+					lit = false;
 				}
 			}
+
+			if (symbolName == null)
+				return null;
+
+			var symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symbolName);
+			id = symbolInfo.ID;
+			c = Colors.Black;
 
 			return m_bitmapCache.GetBitmap(id, c, !lit);
 		}
@@ -178,6 +204,21 @@ namespace MyGame.Client
 			}
 			else
 				return null;
+		}
+
+		public bool ShowVirtualSymbols
+		{
+			get { return m_showVirtualSymbols; }
+
+			set
+			{
+				if (m_showVirtualSymbols == value)
+					return;
+
+				m_showVirtualSymbols = value;
+				InvalidateTiles();
+				Notify("ShowVirtualSymbols");
+			}
 		}
 
 		public Environment Environment

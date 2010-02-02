@@ -104,11 +104,39 @@ namespace MyArea
 					else
 						env.SetFloor(p, FloorID.Empty, stone);
 				}
+			}
 
-				if (p.X == 2 && p.Y == 2 && p.Z > 0)
-					env.SetInterior(p, (p.Z % 2) == 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
-				else if (p.X == 8 && p.Y == 8)
-					env.SetInterior(p, (p.Z % 2) != 0 ? InteriorID.StairsDown : InteriorID.StairsUp, stone);
+			foreach (var p in env.Bounds.Range())
+			{
+				if (env.GetInteriorID(p) != InteriorID.Empty)
+					continue;
+
+				if (env.GetInteriorID(p + new IntVector3D(0, 0, -1)) == InteriorID.Empty)
+					continue;
+
+				var v = new IntVector3D(1, 0, 0);
+				for (int i = 0; i < 4; i++)
+				{
+					if (!env.Bounds.Contains(p + v))
+						continue;
+
+					if (env.GetInteriorID(p + v) == InteriorID.NaturalWall)
+					{
+						env.SetInteriorID(p, InteriorID.Slope);
+						break;
+					}
+
+					v = v.FastRotate(2);
+				}
+			}
+
+			foreach (var p in env.Bounds.Range())
+			{
+				if (p.X == 2 && p.Y == 2)
+				{
+					env.SetInterior(p, InteriorID.Stairs, stone);
+					env.SetFloorID(p, FloorID.Empty);
+				}
 			}
 
 			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);

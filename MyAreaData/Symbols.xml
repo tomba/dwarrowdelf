@@ -28,6 +28,10 @@
 		<CharSymbol>&gt;</CharSymbol>
 	</Symbol>
 	<Symbol>
+		<Name>StairsUpDown</Name>
+		<CharSymbol>X</CharSymbol>
+	</Symbol>
+	<Symbol>
 		<Name>SlopeUp</Name>
 		<CharSymbol>&lt;</CharSymbol>
 		<Rotate>90</Rotate>

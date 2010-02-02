@@ -120,12 +120,10 @@ namespace MyGame.Client
 					yield return v.ToDirection();
 			}
 
-			var iid = env.GetInterior(p).ID;
-
-			if (iid == InteriorID.StairsUp)
+			if (env.GetInterior(p).ID == InteriorID.Stairs)
 				yield return Direction.Up;
 
-			if (iid == InteriorID.StairsDown)
+			if (env.GetInterior(p + new IntVector3D(0, 0, -1)).ID == InteriorID.Stairs)
 				yield return Direction.Down;
 		}
 
