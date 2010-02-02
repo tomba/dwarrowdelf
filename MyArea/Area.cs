@@ -122,7 +122,16 @@ namespace MyArea
 
 					if (env.GetInteriorID(p + v) == InteriorID.NaturalWall)
 					{
-						env.SetInteriorID(p, InteriorID.Slope);
+						var d = v.ToDirection();
+						if (d == Direction.East)
+							env.SetInteriorID(p, InteriorID.SlopeEast);
+						else if (d == Direction.North)
+							env.SetInteriorID(p, InteriorID.SlopeNorth);
+						else if (d == Direction.West)
+							env.SetInteriorID(p, InteriorID.SlopeWest);
+						else if (d == Direction.South)
+							env.SetInteriorID(p, InteriorID.SlopeSouth);
+
 						break;
 					}
 

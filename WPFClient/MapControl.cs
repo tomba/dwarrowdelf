@@ -158,7 +158,7 @@ namespace MyGame.Client
 
 				if (intID == InteriorID.Stairs)
 					symbolName = "StairsUp";
-				else if (intID == InteriorID.Slope)
+				else if (intID == InteriorID.SlopeNorth || intID == InteriorID.SlopeSouth || intID == InteriorID.SlopeEast || intID == InteriorID.SlopeWest)
 					symbolName = "SlopeUp";
 			}
 			else if (flrID != FloorID.Empty)
@@ -174,7 +174,8 @@ namespace MyGame.Client
 			{
 				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
 					symbolName = "StairsUpDown";
-				else if (intID == InteriorID.Empty && intID2 == InteriorID.Slope)
+				else if (intID == InteriorID.Empty &&
+					(intID2 == InteriorID.SlopeNorth || intID2 == InteriorID.SlopeSouth || intID2 == InteriorID.SlopeEast || intID2 == InteriorID.SlopeWest))
 					symbolName = "SlopeDown";
 				else if (intID == InteriorID.Empty && flrID == FloorID.Empty)
 				{

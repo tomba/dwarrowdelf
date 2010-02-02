@@ -15,7 +15,10 @@ namespace MyGame
 		Wall,
 		Stairs,
 		Portal,
-		Slope,
+		SlopeNorth,
+		SlopeSouth,
+		SlopeWest,
+		SlopeEast,
 	}
 
 	public enum FloorID : byte
@@ -98,7 +101,10 @@ namespace MyGame
 			Add(new InteriorInfo(InteriorID.Wall, true));
 			Add(new InteriorInfo(InteriorID.Stairs, false));
 			Add(new InteriorInfo(InteriorID.Portal, false));
-			Add(new InteriorInfo(InteriorID.Slope, false));
+			Add(new InteriorInfo(InteriorID.SlopeNorth, false));
+			Add(new InteriorInfo(InteriorID.SlopeSouth, false));
+			Add(new InteriorInfo(InteriorID.SlopeWest, false));
+			Add(new InteriorInfo(InteriorID.SlopeEast, false));
 
 			Add(new FloorInfo(FloorID.Undefined, false));
 
