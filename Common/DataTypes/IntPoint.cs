@@ -72,6 +72,11 @@ namespace MyGame
 			return new IntPoint(left.X - right.X, left.Y - right.Y);
 		}
 
+		public static IntPoint operator *(IntPoint left, int right)
+		{
+			return new IntPoint(left.X * right, left.Y * right);
+		}
+
 		public override int GetHashCode()
 		{
 			return (this.X << 16) | this.Y;
