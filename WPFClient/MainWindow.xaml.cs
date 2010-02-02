@@ -55,6 +55,10 @@ namespace MyGame.Client
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
+
+			var c = map.Columns;
+			var r = map.Rows;
+			map.CenterPos = new IntPoint(c / 2 - 2, r / 2 - 3);
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
