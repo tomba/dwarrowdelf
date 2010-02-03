@@ -4857,4 +4857,111 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="StairsUp" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 190,-220L 170,-220L 170,-200L 150,-200L 150,-180L 130,-180L 130,-160L 190,-160L 190,-220 Z ">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D45B5B5B"/>
+						</GeometryDrawing.Pen>
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="-2.54313e-007,0.500001" EndPoint="1,0.500001">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FFFFFEFE" Offset="0"/>
+									<GradientStop Color="#FFCAC9C9" Offset="0.542676"/>
+									<GradientStop Color="#FF959595" Offset="0.543103"/>
+									<GradientStop Color="#FF9B9B9B" Offset="0.758621"/>
+									<GradientStop Color="#FFA2A2A2" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 180,-170L 180,-200L 190,-190">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 180,-200L 170,-190">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+	<DrawingBrush x:Key="StairsUpDown" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 110,-220L 90,-220L 90,-200L 70,-200L 70,-180L 50,-180L 50,-160L 110,-160L 110,-220 Z ">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D45B5B5B"/>
+						</GeometryDrawing.Pen>
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="-3.17891e-007,0.500001" EndPoint="1,0.500001">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FFFFFEFE" Offset="0"/>
+									<GradientStop Color="#FFCAC9C9" Offset="0.542676"/>
+									<GradientStop Color="#FF959595" Offset="0.543103"/>
+									<GradientStop Color="#FF9B9B9B" Offset="0.758621"/>
+									<GradientStop Color="#FFA2A2A2" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 90,-190L 100,-200L 100,-170L 90,-180">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 100,-170L 110,-180">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 100,-200L 110,-190">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+	<DrawingBrush x:Key="StairsDown" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 270,-220L 250,-220L 250,-200L 230,-200L 230,-180L 210,-180L 210,-160L 270,-160L 270,-220 Z ">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D45B5B5B"/>
+						</GeometryDrawing.Pen>
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="-2.54313e-007,0.500001" EndPoint="0.999999,0.500001">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FFFFFEFE" Offset="0"/>
+									<GradientStop Color="#FFCAC9C9" Offset="0.542676"/>
+									<GradientStop Color="#FF959595" Offset="0.543103"/>
+									<GradientStop Color="#FF9B9B9B" Offset="0.758621"/>
+									<GradientStop Color="#FFA2A2A2" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 260,-200L 260,-170L 250,-180">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+					<GeometryDrawing Geometry="F1 M 260,-170L 270,-180">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#D4C70909"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 </ResourceDictionary>

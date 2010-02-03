@@ -22,14 +22,17 @@
 	<Symbol>
 		<Name>StairsUp</Name>
 		<CharSymbol>&lt;</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="100">StairsUp</Drawing>
 	</Symbol>
 	<Symbol>
 		<Name>StairsDown</Name>
 		<CharSymbol>&gt;</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="100">StairsDown</Drawing>
 	</Symbol>
 	<Symbol>
 		<Name>StairsUpDown</Name>
 		<CharSymbol>X</CharSymbol>
+		<Drawing x="0" y="0" w="100" h="100">StairsUpDown</Drawing>
 	</Symbol>
 	<Symbol>
 		<Name>SlopeUp</Name>

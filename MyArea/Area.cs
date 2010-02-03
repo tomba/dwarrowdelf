@@ -116,11 +116,11 @@ namespace MyArea
 				}
 				else
 				{
-					env.SetInteriorID(p, InteriorID.Empty);
+					env.SetInterior(p, InteriorID.Empty, Materials.Undefined.ID);
 					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
 						env.SetFloor(p, FloorID.NaturalFloor, stone);
 					else
-						env.SetFloor(p, FloorID.Empty, stone);
+						env.SetFloor(p, FloorID.Empty, Materials.Undefined.ID);
 				}
 			}
 
@@ -141,7 +141,7 @@ namespace MyArea
 					if (env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty)
 					{
 						var slope = Interiors.GetSlopeFromDir(dir);
-						env.SetInteriorID(p, slope);
+						env.SetInterior(p, slope, stone);
 					}
 				}
 			}
@@ -152,7 +152,7 @@ namespace MyArea
 				if (p.X == 1 && p.Y == 4)
 				{
 					env.SetInterior(p, InteriorID.Stairs, stone);
-					env.SetFloorID(p, FloorID.Hole);
+					env.SetFloor(p, FloorID.Hole, stone);
 				}
 			}
 
