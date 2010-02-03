@@ -230,7 +230,10 @@ namespace MyGame.Client
 				}
 				else
 				{
-					map.CenterPos += IntVector.FromDirection(dir);
+					var v = IntVector.FromDirection(dir);
+					var m = ((map.Columns + map.Rows) / 2) / 10;
+					v = v * m;
+					map.CenterPos += v;
 				}
 			}
 			else if (e.Key == Key.Space)
