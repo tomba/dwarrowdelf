@@ -518,6 +518,42 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="SlopeUpEast" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M 20,-160L -30,-160L -30,-210L 20,-210L 20,-160 Z ">
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="1.01,0.499999" EndPoint="-0.0100002,0.499999">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FFB05D0D" Offset="0"/>
+									<GradientStop Color="#00FFFFFF" Offset="0.75431"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+	<DrawingBrush x:Key="SlopeDownWest" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Geometry="F1 M -80,-160L -130,-160L -130,-210L -80,-210L -80,-160 Z ">
+						<GeometryDrawing.Brush>
+							<LinearGradientBrush StartPoint="1.01,0.499999" EndPoint="-0.0100003,0.499999">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#CBB05D0D" Offset="0"/>
+									<GradientStop Color="#00FFFFFF" Offset="0.512931"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</GeometryDrawing.Brush>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 	<DrawingBrush x:Key="Stone_Block" Stretch="Uniform">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>

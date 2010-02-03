@@ -42,9 +42,20 @@ namespace MyArea.Data
 				var symbol = new SymbolInfo();
 				symbol.ID = id++;
 				symbol.Name = (string)elem.Element("Name");
-				symbol.CharSymbol = ((string)elem.Element("CharSymbol"))[0];
-				if (elem.Element("Rotate") != null)
-					symbol.Rotation = (double)elem.Element("Rotate");
+
+				if (elem.Element("CharSymbol") != null)
+				{
+					var charElem = elem.Element("CharSymbol");
+
+					XAttribute attr;
+
+					attr = charElem.Attribute("rotate");
+					if (attr != null)
+						symbol.CharRotation = (double)attr;
+
+					symbol.CharSymbol = ((string)charElem)[0];
+				}
+
 				if (elem.Element("Drawing") != null)
 				{
 					var drawingElem = elem.Element("Drawing");
@@ -65,6 +76,10 @@ namespace MyArea.Data
 					attr = drawingElem.Attribute("h");
 					if (attr != null)
 						symbol.Height = (double)attr;
+
+					attr = drawingElem.Attribute("rotate");
+					if (attr != null)
+						symbol.DrawingRotation = (double)attr;
 
 					symbol.DrawingName = (string)drawingElem;
 				}

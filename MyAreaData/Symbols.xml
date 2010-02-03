@@ -35,14 +35,45 @@
 		<Drawing x="0" y="0" w="100" h="100">StairsUpDown</Drawing>
 	</Symbol>
 	<Symbol>
-		<Name>SlopeUp</Name>
-		<CharSymbol>&lt;</CharSymbol>
+		<Name>SlopeUpNorth</Name>
+		<CharSymbol rotate="90">&lt;</CharSymbol>
 		<Rotate>90</Rotate>
+		<Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
 	</Symbol>
 	<Symbol>
-		<Name>SlopeDown</Name>
-		<CharSymbol>&gt;</CharSymbol>
-		<Rotate>90</Rotate>
+		<Name>SlopeUpSouth</Name>
+		<CharSymbol rotate="90">&lt;</CharSymbol>
+		<Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeUpWest</Name>
+		<CharSymbol rotate="90">&lt;</CharSymbol>
+		<Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeUpEast</Name>
+		<CharSymbol rotate="90">&lt;</CharSymbol>
+		<Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeDownNorth</Name>
+		<CharSymbol rotate="90">&gt;</CharSymbol>
+		<Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeDownSouth</Name>
+		<CharSymbol rotate="90">&gt;</CharSymbol>
+		<Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeDownWest</Name>
+		<CharSymbol rotate="90">&gt;</CharSymbol>
+		<Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+	</Symbol>
+	<Symbol>
+		<Name>SlopeDownEast</Name>
+		<CharSymbol rotate="90">&gt;</CharSymbol>
+		<Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
 	</Symbol>
 	<Symbol>
 		<Name>Portal</Name>

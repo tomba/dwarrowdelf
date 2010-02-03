@@ -49,12 +49,12 @@ namespace MyGame.Client
 			if (m_useOnlyChars || symbol.DrawingName == null)
 			{
 				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(10, 0), new Size(80, 100), symbol.Rotation);
+				drawing = NormalizeDrawing(drawing, new Point(10, 0), new Size(80, 100), symbol.CharRotation);
 			}
 			else
 			{
 				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.DrawingRotation);
 			}
 
 			drawing.Freeze();
@@ -66,19 +66,21 @@ namespace MyGame.Client
 			DrawingGroup dGroup = new DrawingGroup();
 			using (DrawingContext dc = dGroup.Open())
 			{
+				dc.DrawRectangle(Brushes.Transparent, null, new Rect(new Size(100, 100)));
+
+				dc.PushTransform(new RotateTransform(angle, 50, 50));
 				dc.PushTransform(new TranslateTransform(location.X, location.Y));
-				dc.PushTransform(new ScaleTransform(size.Width / drawing.Bounds.Width, 
-					size.Height / drawing.Bounds.Height));
+				dc.PushTransform(new ScaleTransform(size.Width / drawing.Bounds.Width, size.Height / drawing.Bounds.Height));
 				dc.PushTransform(new TranslateTransform(-drawing.Bounds.Left, -drawing.Bounds.Top));
-				dc.PushTransform(new RotateTransform(angle, drawing.Bounds.Width / 2, drawing.Bounds.Height / 2));
-
+				
 				dc.DrawDrawing(drawing);
-
+				
 				dc.Pop();
 				dc.Pop();
 				dc.Pop();
 				dc.Pop();
 			}
+
 			return dGroup;
 		}
 	}

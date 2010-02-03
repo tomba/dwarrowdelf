@@ -69,7 +69,8 @@ namespace MyGame.Client
 
 			if (this.Environment == null)
 			{
-				tile.Bitmap = null;
+				tile.FloorBitmap = null;
+				tile.InteriorBitmap = null;
 				tile.ObjectBitmap = null;
 				return;
 			}
@@ -79,8 +80,8 @@ namespace MyGame.Client
 			else
 				lit = TileVisible(ml);
 
-			bmp = GetBitmap(ml, lit);
-			tile.Bitmap = bmp;
+			tile.FloorBitmap = GetFloorBitmap(ml, lit);
+			tile.InteriorBitmap = GetInteriorBitmap(ml, lit);
 
 			if (GameData.Data.DisableLOS)
 				lit = true; // lit always so we see what server sends
@@ -137,50 +138,85 @@ namespace MyGame.Client
 			return false;
 		}
 
-		BitmapSource GetBitmap(IntPoint3D ml, bool lit)
+		BitmapSource GetFloorBitmap(IntPoint3D ml, bool lit)
+		{
+			int id;
+			Color c;
+
+			var flrInfo = this.Environment.GetFloor(ml);
+
+			if (flrInfo == null || flrInfo == Floors.Undefined)
+				return null;
+
+			string symName;
+
+			if (flrInfo == Floors.Hole)
+			{
+				symName = Floors.NaturalFloor.Name;
+			}
+			else if (m_showVirtualSymbols && flrInfo == Floors.Empty)
+			{
+				symName = Floors.NaturalFloor.Name;
+				lit = false;
+			}
+			else if (flrInfo == Floors.Empty)
+			{
+				symName = null;
+			}
+			else
+			{
+				symName = flrInfo.Name;
+			}
+
+			if (symName == null)
+				return null;
+
+			var symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symName);
+			id = symbolInfo.ID;
+			c = Colors.Black;
+
+			return m_bitmapCache.GetBitmap(id, c, !lit);
+		}
+
+		BitmapSource GetInteriorBitmap(IntPoint3D ml, bool lit)
 		{
 			int id;
 			Color c;
 
 			var intInfo = this.Environment.GetInterior(ml);
 			var intInfo2 = this.Environment.GetInterior(ml + Direction.Down);
-			var flrInfo = this.Environment.GetFloor(ml);
 
 			var intID = intInfo.ID;
 			var intID2 = intInfo2.ID;
-			var flrID = flrInfo.ID;
 
-			string symbolName = null;
+			if (intInfo == null || intInfo == Interiors.Undefined)
+				return null;
 
-			if (intID != InteriorID.Empty)
+			string symbolName;
+
+			if (intID == InteriorID.Stairs)
+			{
+				symbolName = "StairsUp";
+			}
+			else if (intID.IsSlope())
+			{
+				symbolName = "SlopeUp" + Interiors.GetDirFromSlope(intID).ToString();
+			}
+			else if (m_showVirtualSymbols && intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
+			{
+				symbolName = "StairsUpDown";
+			}
+			else if (m_showVirtualSymbols && intID == InteriorID.Empty && intID2.IsSlope())
+			{
+				symbolName = "SlopeDown" + Interiors.GetDirFromSlope(intID2).Reverse().ToString();
+			}
+			else if (intInfo != Interiors.Empty)
 			{
 				symbolName = intInfo.Name;
-
-				if (intID == InteriorID.Stairs)
-					symbolName = "StairsUp";
-				else if (intID.IsSlope())
-					symbolName = "SlopeUp";
-			}
-			else if (flrID != FloorID.Empty)
-			{
-				symbolName = flrInfo.Name;
 			}
 			else
 			{
 				symbolName = null;
-			}
-
-			if (m_showVirtualSymbols)
-			{
-				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
-					symbolName = "StairsUpDown";
-				else if (intID == InteriorID.Empty && intID2.IsSlope())
-					symbolName = "SlopeDown";
-				else if (intID == InteriorID.Empty && flrID == FloorID.Empty)
-				{
-					symbolName = "NaturalFloor";
-					lit = false;
-				}
 			}
 
 			if (symbolName == null)
@@ -510,14 +546,24 @@ namespace MyGame.Client
 			this.IsHitTestVisible = false;
 		}
 
-		public static readonly DependencyProperty BitmapProperty = DependencyProperty.Register(
-			"Bitmap", typeof(BitmapSource), typeof(MapControlTile),
+		public static readonly DependencyProperty FloorBitmapProperty = DependencyProperty.Register(
+			"FloorBitmap", typeof(BitmapSource), typeof(MapControlTile),
 			new PropertyMetadata(null, ValueChangedCallback));
 
-		public BitmapSource Bitmap
+		public BitmapSource FloorBitmap
 		{
-			get { return (BitmapSource)GetValue(BitmapProperty); }
-			set { SetValue(BitmapProperty, value); }
+			get { return (BitmapSource)GetValue(FloorBitmapProperty); }
+			set { SetValue(FloorBitmapProperty, value); }
+		}
+
+		public static readonly DependencyProperty InteriorBitmapProperty = DependencyProperty.Register(
+			"InteriorBitmap", typeof(BitmapSource), typeof(MapControlTile),
+			new PropertyMetadata(null, ValueChangedCallback));
+
+		public BitmapSource InteriorBitmap
+		{
+			get { return (BitmapSource)GetValue(InteriorBitmapProperty); }
+			set { SetValue(InteriorBitmapProperty, value); }
 		}
 
 		public static readonly DependencyProperty ObjectBitmapProperty = DependencyProperty.Register(
@@ -537,8 +583,11 @@ namespace MyGame.Client
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			if (this.Bitmap != null)
-				drawingContext.DrawImage(this.Bitmap, new Rect(this.RenderSize));
+			if (this.FloorBitmap != null)
+				drawingContext.DrawImage(this.FloorBitmap, new Rect(this.RenderSize));
+
+			if (this.InteriorBitmap != null)
+				drawingContext.DrawImage(this.InteriorBitmap, new Rect(this.RenderSize));
 
 			if (this.ObjectBitmap != null)
 				drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
