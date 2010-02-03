@@ -129,10 +129,10 @@ namespace MyArea
 
 			foreach (var p in env.Bounds.Range())
 			{
-				if (p.X == 2 && p.Y == 2)
+				if (p.X == 1 && p.Y == 4)
 				{
 					env.SetInterior(p, InteriorID.Stairs, stone);
-					env.SetFloorID(p, FloorID.Empty);
+					env.SetFloorID(p, FloorID.Hole);
 				}
 			}
 

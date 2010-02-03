@@ -67,10 +67,9 @@ namespace MyGame.Server
 			return handler(child, action);
 		}
 
-		public InteriorInfo GetInteriorInfo(IntPoint3D p)
+		public InteriorInfo GetInterior(IntPoint3D p)
 		{
-			var id = GetInteriorID(p);
-			return Interiors.GetInterior(id);
+			return Interiors.GetInterior(GetInteriorID(p));
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
@@ -78,10 +77,9 @@ namespace MyGame.Server
 			return m_tileGrid.GetInteriorID(l);
 		}
 
-		public FloorInfo GetFloorInfo(IntPoint3D p)
+		public FloorInfo GetFloor(IntPoint3D p)
 		{
-			var id = GetFloorID(p);
-			return Floors.GetFloor(id);
+			return Floors.GetFloor(GetFloorID(p));
 		}
 
 		public FloorID GetFloorID(IntPoint3D l)
@@ -205,6 +203,14 @@ namespace MyGame.Server
 			return true;
 		}
 
+		public bool CanEnter(ServerGameObject ob, IntPoint3D location)
+		{
+			var inter = GetInterior(location);
+			var floor = GetFloor(location);
+
+			return inter.Blocker == false && floor.IsCarrying == true;
+		}
+
 		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
@@ -212,7 +218,7 @@ namespace MyGame.Server
 			if (!this.Bounds.Contains(dstLoc))
 				return false;
 
-			if (!this.IsWalkable(dstLoc))
+			if (!this.CanEnter(ob, dstLoc))
 				return false;
 
 			if (dirVec.Z == 0)

@@ -117,20 +117,23 @@ namespace MyGame
 		Empty,
 		NaturalFloor,
 		Floor,
+		Hole,
 	}
 
 	public class FloorInfo
 	{
-		public FloorInfo(FloorID id, bool blocker)
+		public FloorInfo(FloorID id, bool isCarrying, bool isBlocking)
 		{
 			this.ID = id;
 			this.Name = id.ToString();
-			this.Blocker = blocker;
+			this.IsCarrying = isCarrying;
+			this.IsBlocking = isBlocking;
 		}
 
 		public FloorID ID { get; private set; }
 		public string Name { get; private set; }
-		public bool Blocker { get; private set; }
+		public bool IsCarrying { get; private set; }	/* dwarf can stand over it */
+		public bool IsBlocking { get; private set; }	/* dwarf can not go through it */
 	}
 
 	public static class Floors
@@ -156,10 +159,12 @@ namespace MyGame
 			return s_floorMap[id];
 		}
 
-		public static readonly FloorInfo Undefined	= new FloorInfo(FloorID.Undefined, false);
-		public static readonly FloorInfo Empty		= new FloorInfo(FloorID.Empty, false);
-		public static readonly FloorInfo Floor		= new FloorInfo(FloorID.Floor, true);
-		public static readonly FloorInfo NaturalFloor	= new FloorInfo(FloorID.NaturalFloor, true);
+		public static readonly FloorInfo Undefined	= new FloorInfo(FloorID.Undefined, false, false);
+		public static readonly FloorInfo Empty		= new FloorInfo(FloorID.Empty, false, false);
+		public static readonly FloorInfo Floor		= new FloorInfo(FloorID.Floor, true, true);
+		public static readonly FloorInfo NaturalFloor	= new FloorInfo(FloorID.NaturalFloor, true, true);
+
+		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, true, false);
 	}
 
 	[DataContract]
