@@ -82,10 +82,10 @@ namespace MyArea
 
 			Random r = new Random(123);
 
-			var stone = world.AreaData.Materials.GetMaterialInfo("Stone").ID;
-			var steel = world.AreaData.Materials.GetMaterialInfo("Steel").ID;
-			var diamond = world.AreaData.Materials.GetMaterialInfo("Diamond").ID;
-			var wood = world.AreaData.Materials.GetMaterialInfo("Wood").ID;
+			var stone = Materials.Stone.ID;
+			var steel = Materials.Steel.ID;
+			var diamond = Materials.Diamond.ID;
+			var wood = Materials.Wood.ID;
 
 			foreach (var p in env.Bounds.Range())
 			{
@@ -214,8 +214,8 @@ namespace MyArea
 			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
 			env.Name = "map2";
 
-			var stone = world.AreaData.Materials.GetMaterialInfo("Stone").ID;
-			var steel = world.AreaData.Materials.GetMaterialInfo("Steel").ID;
+			var stone = Materials.Stone.ID;
+			var steel = Materials.Steel.ID;
 
 			foreach (var p in env.Bounds.Range())
 			{

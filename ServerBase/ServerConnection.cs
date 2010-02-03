@@ -227,7 +227,7 @@ namespace MyGame.Server
 
 			m_friendlies.Add(player);
 
-			var diamond = m_world.AreaData.Materials.GetMaterialInfo("Diamond").ID;
+			var diamond = Materials.Diamond.ID;
 
 			ItemObject item = new ItemObject(m_world)
 			{

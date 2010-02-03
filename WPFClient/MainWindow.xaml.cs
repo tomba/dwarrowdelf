@@ -310,8 +310,8 @@ namespace MyGame.Client
 		{
 			IntRect r = map.SelectionRect;
 
-			var stone = map.Environment.World.AreaData.Materials.GetMaterialInfo("Stone").ID;
-			var undef = new MaterialID(0);
+			var stone = Materials.Stone.ID;
+			var undef = Materials.Undefined.ID;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
@@ -331,7 +331,7 @@ namespace MyGame.Client
 		{
 			IntRect r = map.SelectionRect;
 
-			var stone = map.Environment.World.AreaData.Materials.GetMaterialInfo("Stone").ID;
+			var stone = Materials.Stone.ID;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{

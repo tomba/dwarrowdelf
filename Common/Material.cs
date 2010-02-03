@@ -6,98 +6,57 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
-	public struct MaterialID : IEquatable<MaterialID>
+	public enum MaterialID : byte
 	{
-		[DataMember]
-		int m_id;
-
-		public MaterialID(int id)
-		{
-			m_id = id;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (!(obj is MaterialID))
-				return false;
-
-			MaterialID id = (MaterialID)obj;
-			return m_id == id.m_id;
-		}
-
-		public static bool operator ==(MaterialID left, MaterialID right)
-		{
-			return left.m_id == right.m_id;
-		}
-
-		public static bool operator !=(MaterialID left, MaterialID right)
-		{
-			return !(left.m_id == right.m_id);
-		}
-
-		public override int GetHashCode()
-		{
-			return m_id;
-		}
-
-
-		#region IEquatable<MaterialID> Members
-
-		public bool Equals(MaterialID other)
-		{
-			return m_id == other.m_id;
-		}
-
-		#endregion
+		Undefined,
+		Stone,
+		Iron,
+		Steel,
+		Diamond,
+		Wood,
 	}
 
 	public class MaterialInfo
 	{
-		MaterialID m_id;
-		string m_name;
-
-		public MaterialInfo(MaterialID id, string name)
+		public MaterialInfo(MaterialID id)
 		{
-			m_id = id;
-			m_name = name;
+			this.ID = id;
+			this.Name = id.ToString();
 		}
 
-		public MaterialID ID { get { return m_id; } }
-		public string Name { get { return m_name; } }
+		public MaterialID ID { get; private set; }
+		public string Name { get; private set; }
 	}
 
-	public class Materials
+	public static class Materials
 	{
-		Dictionary<MaterialID, MaterialInfo> m_materialMap = new Dictionary<MaterialID, MaterialInfo>();
+		static Dictionary<MaterialID, MaterialInfo> s_materialMap;
 
-		public Materials()
+		static Materials()
 		{
-			Add(new MaterialInfo(new MaterialID(0), "Undefined"));
+			s_materialMap = new Dictionary<MaterialID, MaterialInfo>();
 
-			int id = 1;
-			Add(new MaterialInfo(new MaterialID(id++), "Stone"));
-			Add(new MaterialInfo(new MaterialID(id++), "Iron"));
-			Add(new MaterialInfo(new MaterialID(id++), "Steel"));
-			Add(new MaterialInfo(new MaterialID(id++), "Diamond"));
-			Add(new MaterialInfo(new MaterialID(id++), "Wood"));
+			foreach (var field in typeof(Materials).GetFields())
+			{
+				if (field.FieldType != typeof(MaterialInfo))
+					continue;
+
+				var materialInfo = (MaterialInfo)field.GetValue(null);
+				s_materialMap[materialInfo.ID] = materialInfo;
+			}
 		}
 
-		void Add(MaterialInfo info)
+		public static MaterialInfo GetMaterial(MaterialID id)
 		{
-			m_materialMap[info.ID] = info;
-			if (info.ID == info.ID)
-				return;
+			return s_materialMap[id];
 		}
 
-		public MaterialInfo GetMaterialInfo(string name)
-		{
-			return m_materialMap.Values.Single(m => m.Name == name);
-		}
+		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined);
 
-		public MaterialInfo GetMaterialInfo(MaterialID id)
-		{
-			return m_materialMap[id];
-		}
+		public static readonly MaterialInfo Stone = new MaterialInfo(MaterialID.Stone);
+		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron);
+		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel);
+		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond);
+		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood);
 	}
 }

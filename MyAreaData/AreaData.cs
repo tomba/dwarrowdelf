@@ -12,13 +12,11 @@ namespace MyArea.Data
 	{
 		Stream m_drawingStream;
 		List<SymbolInfo> m_symbolList;
-		Materials m_materials;
 		Buildings m_buildings; // XXX somewhere else?
 
 		public AreaData()
 		{
 			ParseSymbols();
-			m_materials = new Materials();
 			m_buildings = new Buildings();
 
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
@@ -26,7 +24,6 @@ namespace MyArea.Data
 		}
 
 		public IList<SymbolInfo> Symbols { get { return m_symbolList.AsReadOnly(); } }
-		public Materials Materials { get { return m_materials; } }
 		public Stream DrawingStream { get { return m_drawingStream; } }
 		public Buildings Buildings { get { return m_buildings; } }
 

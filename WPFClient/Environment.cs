@@ -195,13 +195,13 @@ namespace MyGame.Client
 		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
 		{
 			var id = m_tileGrid.GetTileData(l).InteriorMaterialID;
-			return this.World.AreaData.Materials.GetMaterialInfo(id);
+			return Materials.GetMaterial(id);
 		}
 
 		public MaterialInfo GetFloorMaterial(IntPoint3D l)
 		{
 			var id = m_tileGrid.GetTileData(l).FloorMaterialID;
-			return this.World.AreaData.Materials.GetMaterialInfo(id);
+			return Materials.GetMaterial(id);
 		}
 
 		public TileData GetTileData(IntPoint3D p)

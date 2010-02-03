@@ -69,7 +69,7 @@ namespace MyGame.Server
 				ob.Destruct();
 			}
 
-			var iron = this.World.AreaData.Materials.GetMaterialInfo("Iron").ID;
+			var iron = Materials.Iron.ID;
 
 			ItemObject item = new ItemObject(this.World)
 			{
