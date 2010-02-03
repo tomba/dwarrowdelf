@@ -68,6 +68,23 @@ namespace MyArea
 			}
 		}
 
+		Random m_random = new Random(123);
+
+		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		{
+			IntPoint3D p;
+			int iter = 0;
+
+			do
+			{
+				if (iter++ > 10000)
+					throw new Exception();
+
+				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+			} while (env.GetInteriorID(p) != InteriorID.Empty || env.GetFloorID(p) != FloorID.NaturalFloor);
+
+			return p;
+		}
 
 		Environment CreateMap1(World world)
 		{
@@ -87,6 +104,7 @@ namespace MyArea
 			var diamond = Materials.Diamond.ID;
 			var wood = Materials.Wood.ID;
 
+			/* create terrain */
 			foreach (var p in env.Bounds.Range())
 			{
 				double d = terrainGen.Grid[p.TwoD];
@@ -106,6 +124,7 @@ namespace MyArea
 				}
 			}
 
+			/* create slopes */
 			foreach (var p in env.Bounds.Range())
 			{
 				if (env.GetInteriorID(p) != InteriorID.Empty)
@@ -127,6 +146,7 @@ namespace MyArea
 				}
 			}
 
+			/* create long stairs */
 			foreach (var p in env.Bounds.Range())
 			{
 				if (p.X == 1 && p.Y == 4)
@@ -136,43 +156,56 @@ namespace MyArea
 				}
 			}
 
+			int surfaceLevel = 0;
+			int numSurfaces = 0;
+			/* find the z level with most surface */
+			for (int z = env.Bounds.Z1; z < env.Bounds.Z2; ++z)
+			{
+				var n = 0;
+				foreach (var p in env.Bounds.Plane.Range())
+				{
+					if (env.GetInterior(new IntPoint3D(p, z)).Blocker == false && env.GetFloor(new IntPoint3D(p, z)).IsBlocking == true)
+						n++;
+				}
+
+				if (n > numSurfaces)
+				{
+					surfaceLevel = z;
+					numSurfaces = n;
+				}
+			}
+
+			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
 			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);
 			env.SetActionHandler(m_portalLoc, ActionHandler);
 
 			var syms = world.AreaData.Symbols;
 
-			var rand = new Random();
 			for (int i = 0; i < 1; ++i)
 			{
 				// Add a monster
 				var monster = new Living(world);
 				monster.SymbolID = syms.Single(o => o.Name == "Monster").ID;
 				monster.Name = String.Format("monsu{0}", i);
-				if (monster.MoveTo(env, new IntPoint3D(6, 6, 9)) == false)
+				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
 				var monsterAI = new MonsterActor(monster);
 				monster.Actor = monsterAI;
-				monster.Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256));
+				monster.Color = new GameColor((byte)m_random.Next(256), (byte)m_random.Next(256), (byte)m_random.Next(256));
 			}
 
 			// Add items
 			for (int i = 0; i < 10; ++i)
 			{
-				IntPoint3D p;
-				do
-				{
-					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
-				} while (env.GetInteriorID(p) != InteriorID.Empty);
-
 				var item = new ItemObject(world)
 				{
 					SymbolID = syms.Single(o => o.Name == "Gem").ID,
 					Name = "gem" + i.ToString(),
-					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
+					Color = new GameColor((byte)m_random.Next(256), (byte)m_random.Next(256), (byte)m_random.Next(256)),
 					MaterialID = diamond,
 				};
 
-				item.MoveTo(env, p);
+				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
 			{
@@ -184,7 +217,7 @@ namespace MyArea
 					Color = GameColors.Red,
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(3, 1, 9));
+				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 
 				item = new ItemObject(world)
 				{
@@ -192,7 +225,7 @@ namespace MyArea
 					Name = "gem",
 					MaterialID = diamond,
 				};
-				item.MoveTo(env, new IntPoint3D(2, 1, 9));
+				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 
 				item = new ItemObject(world)
 				{
@@ -200,7 +233,7 @@ namespace MyArea
 					Name = "puu",
 					MaterialID = wood,
 				};
-				item.MoveTo(env, new IntPoint3D(1, 3, 9));
+				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
 			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 4, 2, 2), Z = 9 };
