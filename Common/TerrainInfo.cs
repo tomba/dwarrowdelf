@@ -54,6 +54,14 @@ namespace MyGame
 		Floor,
 	}
 
+	public static class FloorExtensions
+	{
+		public static bool IsPassable(this FloorID id)
+		{
+			return id == FloorID.Empty;
+		}
+	}
+
 	[DataContract]
 	public struct TileData
 	{

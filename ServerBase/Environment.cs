@@ -67,9 +67,21 @@ namespace MyGame.Server
 			return handler(child, action);
 		}
 
+		public InteriorInfo GetInteriorInfo(IntPoint3D p)
+		{
+			var id = GetInteriorID(p);
+			return this.World.AreaData.Terrains.GetInteriorInfo(id);
+		}
+
 		public InteriorID GetInteriorID(IntPoint3D l)
 		{
 			return m_tileGrid.GetInteriorID(l);
+		}
+
+		public FloorInfo GetFloorInfo(IntPoint3D p)
+		{
+			var id = GetFloorID(p);
+			return this.World.AreaData.Terrains.GetFloorInfo(id);
 		}
 
 		public FloorID GetFloorID(IntPoint3D l)
@@ -193,26 +205,36 @@ namespace MyGame.Server
 			return true;
 		}
 
-		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D p)
+		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			if (!this.Bounds.Contains(p))
+			if (!this.Bounds.Contains(dstLoc))
 				return false;
 
-			if (!this.IsWalkable(p))
+			if (!this.IsWalkable(dstLoc))
 				return false;
 
 			if (dirVec.Z == 0)
 				return true;
 
-			if (dirVec.X != 0 || dirVec.Y != 0)
-				return false;
+			Direction dir = dirVec.ToDirection();
 
-			if (m_tileGrid.GetInteriorID(ob.Location) == InteriorID.Stairs && dirVec.Z == 1)
+			var interID = m_tileGrid.GetInteriorID(ob.Location);
+			var destInterID = m_tileGrid.GetInteriorID(ob.Location + dirVec);
+
+			if (dir == Direction.Up && interID == InteriorID.Stairs)
 				return true;
 
-			if (m_tileGrid.GetInteriorID(ob.Location + Direction.Down) == InteriorID.Stairs && dirVec.Z == -1)
+			if (dir == Direction.Down && destInterID == InteriorID.Stairs)
+				return true;
+
+			var d2d = new IntVector(dirVec.X, dirVec.Y).ToDirection();
+
+			if (dir.ContainsUp() && d2d.IsCardinal() && interID.IsSlope() && interID == InteriorExtensions.GetSlopeFromDir(d2d))
+				return true;
+
+			if (dir.ContainsDown() && d2d.IsCardinal() && destInterID.IsSlope() && destInterID == InteriorExtensions.GetSlopeFromDir(d2d.Reverse()))
 				return true;
 
 			return false;
