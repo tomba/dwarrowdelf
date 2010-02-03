@@ -218,9 +218,9 @@ namespace MyGame.Client
 
 						if (dir.IsCardinal())
 						{
-							if (curInterId.IsSlope() && curInterId == InteriorExtensions.GetSlopeFromDir(dir))
+							if (curInterId.IsSlope() && curInterId == Interiors.GetSlopeFromDir(dir))
 								dir |= Direction.Up;
-							else if (destInterId == InteriorID.Empty && destDownInterId.IsSlope() && destDownInterId == InteriorExtensions.GetSlopeFromDir(dir.Reverse()))
+							else if (destInterId == InteriorID.Empty && destDownInterId.IsSlope() && destDownInterId == Interiors.GetSlopeFromDir(dir.Reverse()))
 								dir |= Direction.Down;
 						}
 

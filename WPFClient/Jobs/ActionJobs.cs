@@ -128,7 +128,7 @@ namespace MyGame.Client
 
 			if (env.GetInterior(p).ID.IsSlope())
 			{
-				var dir = InteriorExtensions.GetDirFromSlope(env.GetInterior(p).ID);
+				var dir = Interiors.GetDirFromSlope(env.GetInterior(p).ID);
 				dir |= Direction.Up;
 				yield return dir;
 			}
@@ -137,7 +137,7 @@ namespace MyGame.Client
 			{
 				var d = dir | Direction.Down;
 				var id = env.GetInterior(p + d).ID;
-				if (id.IsSlope() && InteriorExtensions.GetDirFromSlope(id) == dir.Reverse())
+				if (id.IsSlope() && Interiors.GetDirFromSlope(id) == dir.Reverse())
 					yield return d;
 			}
 		}

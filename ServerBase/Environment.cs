@@ -231,10 +231,10 @@ namespace MyGame.Server
 
 			var d2d = new IntVector(dirVec.X, dirVec.Y).ToDirection();
 
-			if (dir.ContainsUp() && d2d.IsCardinal() && interID.IsSlope() && interID == InteriorExtensions.GetSlopeFromDir(d2d))
+			if (dir.ContainsUp() && d2d.IsCardinal() && interID.IsSlope() && interID == Interiors.GetSlopeFromDir(d2d))
 				return true;
 
-			if (dir.ContainsDown() && d2d.IsCardinal() && destInterID.IsSlope() && destInterID == InteriorExtensions.GetSlopeFromDir(d2d.Reverse()))
+			if (dir.ContainsDown() && d2d.IsCardinal() && destInterID.IsSlope() && destInterID == Interiors.GetSlopeFromDir(d2d.Reverse()))
 				return true;
 
 			return false;

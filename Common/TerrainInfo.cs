@@ -70,10 +70,7 @@ namespace MyGame
 		public static readonly InteriorInfo SlopeSouth	= new InteriorInfo(InteriorID.SlopeSouth, false);
 		public static readonly InteriorInfo SlopeWest	= new InteriorInfo(InteriorID.SlopeWest, false);
 		public static readonly InteriorInfo SlopeEast	= new InteriorInfo(InteriorID.SlopeEast, false);
-	}
 
-	public static class InteriorExtensions
-	{
 		public static bool IsSlope(this InteriorID id)
 		{
 			return id == InteriorID.SlopeNorth || id == InteriorID.SlopeSouth || id == InteriorID.SlopeEast || id == InteriorID.SlopeWest;
@@ -163,15 +160,6 @@ namespace MyGame
 		public static readonly FloorInfo Empty		= new FloorInfo(FloorID.Empty, false);
 		public static readonly FloorInfo Floor		= new FloorInfo(FloorID.Floor, true);
 		public static readonly FloorInfo NaturalFloor	= new FloorInfo(FloorID.NaturalFloor, true);
-	}
-
-
-	public static class FloorExtensions
-	{
-		public static bool IsPassable(this FloorID id)
-		{
-			return id == FloorID.Empty;
-		}
 	}
 
 	[DataContract]

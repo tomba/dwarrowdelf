@@ -121,7 +121,7 @@ namespace MyArea
 
 					if (env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty)
 					{
-						var slope = InteriorExtensions.GetSlopeFromDir(dir);
+						var slope = Interiors.GetSlopeFromDir(dir);
 						env.SetInteriorID(p, slope);
 					}
 				}
