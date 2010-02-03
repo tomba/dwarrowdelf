@@ -27,6 +27,26 @@ namespace MyGame
 			m_z = z;
 		}
 
+		public IntVector3D(Direction dir)
+		{
+			int x, y, z;
+
+			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+
+			if (x == DirectionConsts.DirNeg)
+				x = -1;
+			if (y == DirectionConsts.DirNeg)
+				y = -1;
+			if (z == DirectionConsts.DirNeg)
+				z = -1;
+
+			m_x = x;
+			m_y = y;
+			m_z = z;
+		}
+
 		#region IEquatable<IntVector3D> Members
 
 		public bool Equals(IntVector3D other)
@@ -127,24 +147,6 @@ namespace MyGame
 				dir |= Direction.Down;
 
 			return dir;
-		}
-
-		public static IntVector3D FromDirection(Direction dir)
-		{
-			int x, y, z;
-
-			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
-
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
-			if (z == DirectionConsts.DirNeg)
-				z = -1;
-
-			return new IntVector3D(x, y, z);
 		}
 
 		public IntVector3D Reverse()

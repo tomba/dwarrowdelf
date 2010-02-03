@@ -36,7 +36,7 @@ namespace MyGame.AStar
 
 		public IEnumerable<Direction> GetPath()
 		{
-			return GetPathReverse().Reverse().Select(d => IntVector3D.FromDirection(d).Reverse().ToDirection());
+			return GetPathReverse().Reverse().Select(d => d.Reverse());
 		}
 	}
 
@@ -137,7 +137,7 @@ namespace MyGame.AStar
 		{
 			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
-				IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
+				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
 				AStar3DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -177,7 +177,7 @@ namespace MyGame.AStar
 
 			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
-				IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
+				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
 				AStar3DNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -203,7 +203,7 @@ namespace MyGame.AStar
 
 				foreach (var dir in state.GetValidDirs(parent.Loc))
 				{
-					IntPoint3D childLoc = parent.Loc + IntVector3D.FromDirection(dir);
+					IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
 					AStar3DNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);

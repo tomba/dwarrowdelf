@@ -69,6 +69,11 @@ namespace MyGame
 			return new IntPoint3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
+		public static IntPoint3D operator +(IntPoint3D left, Direction right)
+		{
+			return left + new IntVector3D(right);
+		}
+
 		public static IntVector3D operator -(IntPoint3D left, IntPoint3D right)
 		{
 			return new IntVector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);

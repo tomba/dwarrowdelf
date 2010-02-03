@@ -99,7 +99,7 @@ namespace MyArea
 				else
 				{
 					env.SetInteriorID(p, InteriorID.Empty);
-					if (env.GetInteriorID(p + new IntVector3D(0, 0, -1)) != InteriorID.Empty)
+					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
 						env.SetFloor(p, FloorID.NaturalFloor, stone);
 					else
 						env.SetFloor(p, FloorID.Empty, stone);
@@ -111,31 +111,19 @@ namespace MyArea
 				if (env.GetInteriorID(p) != InteriorID.Empty)
 					continue;
 
-				if (env.GetInteriorID(p + new IntVector3D(0, 0, -1)) == InteriorID.Empty)
+				if (env.GetInteriorID(p + Direction.Down) == InteriorID.Empty)
 					continue;
 
-				var v = new IntVector3D(1, 0, 0);
-				for (int i = 0; i < 4; i++)
+				foreach (var dir in DirectionExtensions.GetCardinalDirections())
 				{
-					if (!env.Bounds.Contains(p + v))
+					if (!env.Bounds.Contains(p + dir))
 						continue;
 
-					if (env.GetInteriorID(p + v) == InteriorID.NaturalWall)
+					if (env.GetInteriorID(p + dir) == InteriorID.NaturalWall)
 					{
-						var d = v.ToDirection();
-						if (d == Direction.East)
-							env.SetInteriorID(p, InteriorID.SlopeEast);
-						else if (d == Direction.North)
-							env.SetInteriorID(p, InteriorID.SlopeNorth);
-						else if (d == Direction.West)
-							env.SetInteriorID(p, InteriorID.SlopeWest);
-						else if (d == Direction.South)
-							env.SetInteriorID(p, InteriorID.SlopeSouth);
-
-						break;
+						var slope = InteriorExtensions.GetSlopeFromDir(dir);
+						env.SetInteriorID(p, slope);
 					}
-
-					v = v.FastRotate(2);
 				}
 			}
 

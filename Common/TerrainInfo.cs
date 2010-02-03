@@ -21,6 +21,26 @@ namespace MyGame
 		SlopeEast,
 	}
 
+	public static class InteriorExtensions
+	{
+		public static InteriorID GetSlopeFromDir(Direction dir)
+		{
+			switch (dir)
+			{
+				case Direction.North:
+					return InteriorID.SlopeNorth;
+				case Direction.East:
+					return InteriorID.SlopeEast;
+				case Direction.South:
+					return InteriorID.SlopeSouth;
+				case Direction.West:
+					return InteriorID.SlopeWest;
+				default:
+					throw new Exception();
+			}
+		}
+	}
+
 	public enum FloorID : byte
 	{
 		Undefined,

@@ -133,7 +133,7 @@ namespace MyGame.Server
 
 		void PerformMine(MineAction action, out bool success)
 		{
-			IntPoint3D p = this.Location + IntVector3D.FromDirection(action.Direction);
+			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
 
 			var id = this.Environment.GetInteriorID(p);
 

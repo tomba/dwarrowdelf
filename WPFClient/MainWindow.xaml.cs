@@ -258,7 +258,7 @@ namespace MyGame.Client
 			if (currentOb != null)
 				currentOb.EnqueueAction(new MoveAction(dir));
 			else
-				map.Z += IntVector3D.FromDirection(dir).Z;
+				map.Z += new IntVector3D(dir).Z;
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)

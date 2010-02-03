@@ -115,7 +115,7 @@ namespace AStarTest
 			}
 
 			e.Handled = true;
-			map.Z += IntVector3D.FromDirection(dir).Z;
+			map.Z += new IntVector3D(dir).Z;
 		}
 	}
 }

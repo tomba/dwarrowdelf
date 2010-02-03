@@ -102,7 +102,7 @@ namespace MyGame.Server
 			if (this.Environment == null)
 				throw new Exception();
 
-			var dirVec = IntVector3D.FromDirection(dir);
+			var dirVec = new IntVector3D(dir);
 			var dst = this.Environment;
 			var dstLoc = this.Location + dirVec;
 

@@ -59,7 +59,7 @@ namespace MyGame.Client
 				m_pathDirs = null;
 
 			var action = new MoveAction(dir);
-			m_supposedLocation += IntVector3D.FromDirection(dir);
+			m_supposedLocation += new IntVector3D(dir);
 
 			this.CurrentAction = action;
 

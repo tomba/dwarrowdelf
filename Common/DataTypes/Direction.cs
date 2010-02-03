@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MyGame
 {
@@ -28,5 +29,30 @@ namespace MyGame
 		SouthEast = South | East,
 		Up = DirectionConsts.DirPos << DirectionConsts.ZShift,
 		Down = DirectionConsts.DirNeg << DirectionConsts.ZShift,
+	}
+
+	public static class DirectionExtensions
+	{
+		public static Direction Reverse(this Direction dir)
+		{
+			// XXX optimize
+			return new IntVector3D(dir).Reverse().ToDirection();
+		}
+
+		public static IEnumerable<Direction> GetCardinalDirections()
+		{
+			yield return Direction.North;
+			yield return Direction.East;
+			yield return Direction.South;
+			yield return Direction.West;
+		}
+
+		public static IEnumerable<Direction> GetIntercardinalDirections()
+		{
+			yield return Direction.NorthEast;
+			yield return Direction.SouthEast;
+			yield return Direction.SouthWest;
+			yield return Direction.NorthWest;
+		}
 	}
 }
