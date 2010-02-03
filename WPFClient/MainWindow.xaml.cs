@@ -205,7 +205,10 @@ namespace MyGame.Client
 				if (currentOb != null)
 				{
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
+					{
 						currentOb.EnqueueAction(new MineAction(dir));
+						GameData.Data.Connection.Send(new ProceedTickMessage());
+					}
 					else
 					{
 						var env = currentOb.Environment;
@@ -222,6 +225,7 @@ namespace MyGame.Client
 						}
 
 						currentOb.EnqueueAction(new MoveAction(dir));
+						GameData.Data.Connection.Send(new ProceedTickMessage());
 					}
 				}
 				else
@@ -271,9 +275,14 @@ namespace MyGame.Client
 			e.Handled = true;
 			var currentOb = GameData.Data.CurrentObject;
 			if (currentOb != null)
+			{
 				currentOb.EnqueueAction(new MoveAction(dir));
+				GameData.Data.Connection.Send(new ProceedTickMessage());
+			}
 			else
+			{
 				map.Z += new IntVector3D(dir).Z;
+			}
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)

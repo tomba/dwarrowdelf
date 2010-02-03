@@ -100,14 +100,6 @@ namespace MyGame
 		LOS,		// use LOS algorithm
 	}
 
-	public class TerrainInfo
-	{
-		public int ID { get; set; }
-		public string Name { get; set; }
-		public int SymbolID { get; set; }
-		public bool IsWalkable { get; set; }
-	}
-
 	public class InteriorInfo
 	{
 		public InteriorInfo(InteriorID id, bool blocker)
