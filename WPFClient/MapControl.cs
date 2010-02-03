@@ -143,7 +143,7 @@ namespace MyGame.Client
 			Color c;
 
 			var intInfo = this.Environment.GetInterior(ml);
-			var intInfo2 = this.Environment.GetInterior(ml + new IntVector3D(0, 0, -1));
+			var intInfo2 = this.Environment.GetInterior(ml + Direction.Down);
 			var flrInfo = this.Environment.GetFloor(ml);
 
 			var intID = intInfo.ID;
@@ -158,7 +158,7 @@ namespace MyGame.Client
 
 				if (intID == InteriorID.Stairs)
 					symbolName = "StairsUp";
-				else if (intID == InteriorID.SlopeNorth || intID == InteriorID.SlopeSouth || intID == InteriorID.SlopeEast || intID == InteriorID.SlopeWest)
+				else if (intID.IsSlope())
 					symbolName = "SlopeUp";
 			}
 			else if (flrID != FloorID.Empty)
@@ -174,8 +174,7 @@ namespace MyGame.Client
 			{
 				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
 					symbolName = "StairsUpDown";
-				else if (intID == InteriorID.Empty &&
-					(intID2 == InteriorID.SlopeNorth || intID2 == InteriorID.SlopeSouth || intID2 == InteriorID.SlopeEast || intID2 == InteriorID.SlopeWest))
+				else if (intID == InteriorID.Empty && intID2.IsSlope())
 					symbolName = "SlopeDown";
 				else if (intID == InteriorID.Empty && flrID == FloorID.Empty)
 				{

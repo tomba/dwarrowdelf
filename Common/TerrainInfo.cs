@@ -23,6 +23,11 @@ namespace MyGame
 
 	public static class InteriorExtensions
 	{
+		public static bool IsSlope(this InteriorID id)
+		{
+			return id == InteriorID.SlopeNorth || id == InteriorID.SlopeSouth || id == InteriorID.SlopeEast || id == InteriorID.SlopeWest;
+		}
+
 		public static InteriorID GetSlopeFromDir(Direction dir)
 		{
 			switch (dir)

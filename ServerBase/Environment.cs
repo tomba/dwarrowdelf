@@ -212,7 +212,7 @@ namespace MyGame.Server
 			if (m_tileGrid.GetInteriorID(ob.Location) == InteriorID.Stairs && dirVec.Z == 1)
 				return true;
 
-			if (m_tileGrid.GetInteriorID(ob.Location + new IntVector3D(0, 0, -1)) == InteriorID.Stairs && dirVec.Z == -1)
+			if (m_tileGrid.GetInteriorID(ob.Location + Direction.Down) == InteriorID.Stairs && dirVec.Z == -1)
 				return true;
 
 			return false;
