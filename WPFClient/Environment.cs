@@ -163,7 +163,7 @@ namespace MyGame.Client
 		public InteriorInfo GetInterior(IntPoint3D l)
 		{
 			var id = m_tileGrid.GetInteriorID(l);
-			return this.World.AreaData.Terrains.GetInteriorInfo(id);
+			return Interiors.GetInterior(id);
 		}
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
@@ -179,7 +179,7 @@ namespace MyGame.Client
 		public FloorInfo GetFloor(IntPoint3D l)
 		{
 			var id = m_tileGrid.GetFloorID(l);
-			return this.World.AreaData.Terrains.GetFloorInfo(id);
+			return Floors.GetFloor(id);
 		}
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)

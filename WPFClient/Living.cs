@@ -74,12 +74,11 @@ namespace MyGame.Client
 				m_losMapVersion = 0;
 			}
 
-			var terrains = this.Environment.World.AreaData.Terrains;
 			var level = this.Environment.GetLevel(this.Location.Z);
 
 			s_losAlgo.Calculate(this.Location2D, m_visionRange,
 				m_visionMap, level.Bounds,
-				l => terrains.GetInteriorInfo(level.GetInteriorID(l)).Blocker);
+				l => Interiors.GetInterior(level.GetInteriorID(l)).Blocker);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

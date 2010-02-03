@@ -21,6 +21,57 @@ namespace MyGame
 		SlopeEast,
 	}
 
+	public class InteriorInfo
+	{
+		public InteriorInfo(InteriorID id, bool blocker)
+		{
+			this.ID = id;
+			this.Name = id.ToString();
+			this.Blocker = blocker;
+		}
+
+		public InteriorID ID { get; private set; }
+		public string Name { get; private set; }
+		public bool Blocker { get; private set; }
+	}
+
+	public static class Interiors
+	{
+		static Dictionary<InteriorID, InteriorInfo> s_interiorMap;
+
+		static Interiors()
+		{
+			s_interiorMap = new Dictionary<InteriorID, InteriorInfo>();
+
+			foreach (var field in typeof(Interiors).GetFields())
+			{
+				if (field.FieldType != typeof(InteriorInfo))
+					continue;
+
+				var interInfo = (InteriorInfo)field.GetValue(null);
+				s_interiorMap[interInfo.ID] = interInfo;
+			}
+		}
+
+		public static InteriorInfo GetInterior(InteriorID id)
+		{
+			return s_interiorMap[id];
+		}
+
+		public static readonly InteriorInfo Undefined	= new InteriorInfo(InteriorID.Undefined, false);
+
+		public static readonly InteriorInfo Empty		= new InteriorInfo(InteriorID.Empty, false);
+		public static readonly InteriorInfo FixedWall	= new InteriorInfo(InteriorID.FixedWall, true);
+		public static readonly InteriorInfo NaturalWall	= new InteriorInfo(InteriorID.NaturalWall, true);
+		public static readonly InteriorInfo Wall		= new InteriorInfo(InteriorID.Wall, true);
+		public static readonly InteriorInfo Stairs		= new InteriorInfo(InteriorID.Stairs, false);
+		public static readonly InteriorInfo Portal		= new InteriorInfo(InteriorID.Portal, false);
+		public static readonly InteriorInfo SlopeNorth	= new InteriorInfo(InteriorID.SlopeNorth, false);
+		public static readonly InteriorInfo SlopeSouth	= new InteriorInfo(InteriorID.SlopeSouth, false);
+		public static readonly InteriorInfo SlopeWest	= new InteriorInfo(InteriorID.SlopeWest, false);
+		public static readonly InteriorInfo SlopeEast	= new InteriorInfo(InteriorID.SlopeEast, false);
+	}
+
 	public static class InteriorExtensions
 	{
 		public static bool IsSlope(this InteriorID id)
@@ -71,6 +122,50 @@ namespace MyGame
 		Floor,
 	}
 
+	public class FloorInfo
+	{
+		public FloorInfo(FloorID id, bool blocker)
+		{
+			this.ID = id;
+			this.Name = id.ToString();
+			this.Blocker = blocker;
+		}
+
+		public FloorID ID { get; private set; }
+		public string Name { get; private set; }
+		public bool Blocker { get; private set; }
+	}
+
+	public static class Floors
+	{
+		static Dictionary<FloorID, FloorInfo> s_floorMap;
+
+		static Floors()
+		{
+			s_floorMap = new Dictionary<FloorID, FloorInfo>();
+
+			foreach (var field in typeof(Floors).GetFields())
+			{
+				if (field.FieldType != typeof(FloorInfo))
+					continue;
+
+				var floorInfo = (FloorInfo)field.GetValue(null);
+				s_floorMap[floorInfo.ID] = floorInfo;
+			}
+		}
+
+		public static FloorInfo GetFloor(FloorID id)
+		{
+			return s_floorMap[id];
+		}
+
+		public static readonly FloorInfo Undefined	= new FloorInfo(FloorID.Undefined, false);
+		public static readonly FloorInfo Empty		= new FloorInfo(FloorID.Empty, false);
+		public static readonly FloorInfo Floor		= new FloorInfo(FloorID.Floor, true);
+		public static readonly FloorInfo NaturalFloor	= new FloorInfo(FloorID.NaturalFloor, true);
+	}
+
+
 	public static class FloorExtensions
 	{
 		public static bool IsPassable(this FloorID id)
@@ -98,81 +193,5 @@ namespace MyGame
 		AllVisible,	// everything visible
 		SimpleFOV,	// everything inside VisionRange is visible
 		LOS,		// use LOS algorithm
-	}
-
-	public class InteriorInfo
-	{
-		public InteriorInfo(InteriorID id, bool blocker)
-		{
-			this.ID = id;
-			this.Name = id.ToString();
-			this.Blocker = blocker;
-		}
-
-		public InteriorID ID { get; private set; }
-		public string Name { get; private set; }
-		public bool Blocker { get; private set; }
-	}
-
-	public class FloorInfo
-	{
-		public FloorInfo(FloorID id, bool blocker)
-		{
-			this.ID = id;
-			this.Name = id.ToString();
-			this.Blocker = blocker;
-		}
-
-		public FloorID ID { get; private set; }
-		public string Name { get; private set; }
-		public bool Blocker { get; private set; }
-	}
-
-	public class Terrains
-	{
-		Dictionary<InteriorID, InteriorInfo> m_interiorMap = new Dictionary<InteriorID,InteriorInfo>();
-		Dictionary<FloorID, FloorInfo> m_floorMap = new Dictionary<FloorID, FloorInfo>();
-
-		public Terrains()
-		{
-			Add(new InteriorInfo(InteriorID.Undefined, false));
-
-			Add(new InteriorInfo(InteriorID.Empty, false));
-			Add(new InteriorInfo(InteriorID.FixedWall, true));
-			Add(new InteriorInfo(InteriorID.NaturalWall, true));
-			Add(new InteriorInfo(InteriorID.Wall, true));
-			Add(new InteriorInfo(InteriorID.Stairs, false));
-			Add(new InteriorInfo(InteriorID.Portal, false));
-			Add(new InteriorInfo(InteriorID.SlopeNorth, false));
-			Add(new InteriorInfo(InteriorID.SlopeSouth, false));
-			Add(new InteriorInfo(InteriorID.SlopeWest, false));
-			Add(new InteriorInfo(InteriorID.SlopeEast, false));
-
-			Add(new FloorInfo(FloorID.Undefined, false));
-
-			Add(new FloorInfo(FloorID.Empty, false));
-			Add(new FloorInfo(FloorID.Floor, true));
-			Add(new FloorInfo(FloorID.NaturalFloor, true));
-		}
-
-		void Add(InteriorInfo info)
-		{
-			m_interiorMap[info.ID] = info;
-		}
-
-		void Add(FloorInfo info)
-		{
-			m_floorMap[info.ID] = info;
-		}
-
-		public InteriorInfo GetInteriorInfo(InteriorID id)
-		{
-			return m_interiorMap[id];
-		}
-
-		public FloorInfo GetFloorInfo(FloorID id)
-		{
-			return m_floorMap[id];
-		}
 	}
 }

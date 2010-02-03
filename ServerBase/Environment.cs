@@ -70,7 +70,7 @@ namespace MyGame.Server
 		public InteriorInfo GetInteriorInfo(IntPoint3D p)
 		{
 			var id = GetInteriorID(p);
-			return this.World.AreaData.Terrains.GetInteriorInfo(id);
+			return Interiors.GetInterior(id);
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
@@ -81,7 +81,7 @@ namespace MyGame.Server
 		public FloorInfo GetFloorInfo(IntPoint3D p)
 		{
 			var id = GetFloorID(p);
-			return this.World.AreaData.Terrains.GetFloorInfo(id);
+			return Floors.GetFloor(id);
 		}
 
 		public FloorID GetFloorID(IntPoint3D l)
@@ -168,7 +168,7 @@ namespace MyGame.Server
 
 		public bool IsWalkable(IntPoint3D l)
 		{
-			return !this.World.AreaData.Terrains.GetInteriorInfo(GetInteriorID(l)).Blocker;
+			return !Interiors.GetInterior(GetInteriorID(l)).Blocker;
 		}
 
 		// XXX not a good func. contents can be changed by the caller
