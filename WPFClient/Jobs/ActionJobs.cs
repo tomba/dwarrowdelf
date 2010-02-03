@@ -123,8 +123,23 @@ namespace MyGame.Client
 			if (env.GetInterior(p).ID == InteriorID.Stairs)
 				yield return Direction.Up;
 
-			if (env.GetInterior(p + new IntVector3D(0, 0, -1)).ID == InteriorID.Stairs)
+			if (env.GetInterior(p + Direction.Down).ID == InteriorID.Stairs)
 				yield return Direction.Down;
+
+			if (env.GetInterior(p).ID.IsSlope())
+			{
+				var dir = InteriorExtensions.GetDirFromSlope(env.GetInterior(p).ID);
+				dir |= Direction.Up;
+				yield return dir;
+			}
+
+			foreach (var dir in DirectionExtensions.GetCardinalDirections())
+			{
+				var d = dir | Direction.Down;
+				var id = env.GetInterior(p + d).ID;
+				if (id.IsSlope() && InteriorExtensions.GetDirFromSlope(id) == dir.Reverse())
+					yield return d;
+			}
 		}
 
 		Progress CheckProgress()

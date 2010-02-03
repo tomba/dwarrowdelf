@@ -28,6 +28,23 @@ namespace MyGame
 			return id == InteriorID.SlopeNorth || id == InteriorID.SlopeSouth || id == InteriorID.SlopeEast || id == InteriorID.SlopeWest;
 		}
 
+		public static Direction GetDirFromSlope(InteriorID id)
+		{
+			switch (id)
+			{
+				case InteriorID.SlopeNorth:
+					return Direction.North;
+				case InteriorID.SlopeEast:
+					return Direction.East;
+				case InteriorID.SlopeSouth:
+					return Direction.South;
+				case InteriorID.SlopeWest:
+					return Direction.West;
+				default:
+					throw new Exception();
+			}
+		}
+
 		public static InteriorID GetSlopeFromDir(Direction dir)
 		{
 			switch (dir)
