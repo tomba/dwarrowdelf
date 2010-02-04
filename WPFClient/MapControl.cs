@@ -154,11 +154,6 @@ namespace MyGame.Client
 			{
 				symName = Floors.NaturalFloor.Name;
 			}
-			else if (m_showVirtualSymbols && flrInfo == Floors.Empty)
-			{
-				symName = Floors.NaturalFloor.Name;
-				lit = false;
-			}
 			else if (flrInfo == Floors.Empty)
 			{
 				symName = null;
@@ -166,6 +161,15 @@ namespace MyGame.Client
 			else
 			{
 				symName = flrInfo.Name;
+			}
+
+			if (m_showVirtualSymbols)
+			{
+				if (flrInfo == Floors.Empty)
+				{
+					symName = Floors.NaturalFloor.Name;
+					lit = false;
+				}
 			}
 
 			if (symName == null)
@@ -202,14 +206,6 @@ namespace MyGame.Client
 			{
 				symbolName = "SlopeUp" + Interiors.GetDirFromSlope(intID).ToString();
 			}
-			else if (m_showVirtualSymbols && intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
-			{
-				symbolName = "StairsUpDown";
-			}
-			else if (m_showVirtualSymbols && intID == InteriorID.Empty && intID2.IsSlope())
-			{
-				symbolName = "SlopeDown" + Interiors.GetDirFromSlope(intID2).Reverse().ToString();
-			}
 			else if (intInfo != Interiors.Empty)
 			{
 				symbolName = intInfo.Name;
@@ -217,6 +213,18 @@ namespace MyGame.Client
 			else
 			{
 				symbolName = null;
+			}
+
+			if (m_showVirtualSymbols)
+			{
+				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
+				{
+					symbolName = "StairsUpDown";
+				}
+				else if (intID == InteriorID.Empty && intID2.IsSlope())
+				{
+					symbolName = "SlopeDown" + Interiors.GetDirFromSlope(intID2).Reverse().ToString();
+				}
 			}
 
 			if (symbolName == null)

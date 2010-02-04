@@ -232,6 +232,8 @@ namespace MyGame.Client
 				{
 					var v = IntVector.FromDirection(dir);
 					var m = ((map.Columns + map.Rows) / 2) / 10;
+					if (m < 1)
+						m = 1;
 					v = v * m;
 					map.CenterPos += v;
 				}
