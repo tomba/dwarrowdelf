@@ -265,20 +265,18 @@ namespace MyGame.Server
 			return false;
 		}
 
-		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc)
+		protected override bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
-			Debug.Assert(this.World.IsWritable);
-
 			if (!this.Bounds.Contains(dstLoc))
 				return false;
 
 			return CanMoveTo(ob.Location, dstLoc);
 		}
 
-		protected override void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)
+		protected override void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
 			/* just for testing, check if grass is stomped down */
-			var tileData = GetTileData(newLocation);
+			var tileData = GetTileData(dstLoc);
 			if (tileData.InteriorID == InteriorID.Grass)
 			{
 				if (tileData.InteriorData++ == 5)
@@ -287,17 +285,17 @@ namespace MyGame.Server
 					tileData.InteriorMaterialID = MaterialID.Undefined;
 					tileData.InteriorData = 0;
 				}
-				SetTileData(newLocation, tileData);
+				SetTileData(dstLoc, tileData);
 			}
 
-			if (oldLocation.Z == newLocation.Z)
+			if (srcLoc.Z == dstLoc.Z)
 				return;
 
-			var list = m_contentArray[oldLocation.Z];
+			var list = m_contentArray[srcLoc.Z];
 			Debug.Assert(list.Contains(child));
 			list.Remove(child);
 
-			list = m_contentArray[newLocation.Z];
+			list = m_contentArray[dstLoc.Z];
 			Debug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
@@ -307,6 +305,8 @@ namespace MyGame.Server
 
 		public void AddBuilding(BuildingData building)
 		{
+			Debug.Assert(this.World.IsWritable);
+
 			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
 			Debug.Assert(building.Environment == null);
 			building.Environment = this;

@@ -70,11 +70,11 @@ namespace MyGame.Server
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
 
 		protected virtual bool OkToAddChild(ServerGameObject ob, IntPoint3D dstLoc) { return true; }
-		protected virtual bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc) { return true; }
+		protected virtual bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
 
 		protected virtual void OnChildAdded(ServerGameObject child) { }
 		protected virtual void OnChildRemoved(ServerGameObject child) { }
-		protected virtual void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation) { }
+		protected virtual void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc) { }
 
 		protected virtual void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv) { }
 
@@ -102,11 +102,10 @@ namespace MyGame.Server
 			if (this.Environment == null)
 				throw new Exception();
 
-			var dirVec = new IntVector3D(dir);
 			var dst = this.Environment;
-			var dstLoc = this.Location + dirVec;
+			var dstLoc = this.Location + dir;
 
-			if (!dst.OkToMoveChild(this, dirVec, dstLoc))
+			if (!dst.OkToMoveChild(this, dir, dstLoc))
 				return false;
 
 			MoveToLow(dst, dstLoc);
