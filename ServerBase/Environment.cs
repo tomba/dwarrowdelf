@@ -203,12 +203,48 @@ namespace MyGame.Server
 			return true;
 		}
 
-		public bool CanEnter(ServerGameObject ob, IntPoint3D location)
+		bool CanMoveTo(IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
-			var inter = GetInterior(location);
-			var floor = GetFloor(location);
+			IntVector3D v = dstLoc - srcLoc;
 
-			return inter.Blocker == false && floor.IsCarrying == true;
+			if (!v.IsNormal)
+				throw new Exception();
+
+			var dstInter = GetInterior(dstLoc);
+			var dstFloor = GetFloor(dstLoc);
+
+			if (dstInter.Blocker || !dstFloor.IsCarrying)
+				return false;
+
+			if (v.Z == 0)
+				return true;
+
+			Direction dir = v.ToDirection();
+
+			var srcInter = GetInterior(srcLoc);
+			var srcFloor = GetFloor(srcLoc);
+
+			if (dir == Direction.Up)
+				return srcInter.ID == InteriorID.Stairs && dstFloor.ID == FloorID.Hole;
+
+			if (dir == Direction.Down)
+				return dstInter.ID == InteriorID.Stairs && srcFloor.ID == FloorID.Hole;
+
+			var d2d = v.ToIntVector().ToDirection();
+
+			if (dir.ContainsUp())
+			{
+				var tileAboveSlope = GetTileData(srcLoc + Direction.Up);
+				return d2d.IsCardinal() && srcInter.ID.IsSlope() && srcInter.ID == Interiors.GetSlopeFromDir(d2d) && tileAboveSlope.IsEmpty;
+			}
+
+			if (dir.ContainsDown())
+			{
+				var tileAboveSlope = GetTileData(dstLoc + Direction.Up);
+				return d2d.IsCardinal() && dstInter.ID.IsSlope() && dstInter.ID == Interiors.GetSlopeFromDir(d2d.Reverse()) && tileAboveSlope.IsEmpty;
+			}
+
+			return false;
 		}
 
 		protected override bool OkToMoveChild(ServerGameObject ob, IntVector3D dirVec, IntPoint3D dstLoc)
@@ -218,32 +254,7 @@ namespace MyGame.Server
 			if (!this.Bounds.Contains(dstLoc))
 				return false;
 
-			if (!this.CanEnter(ob, dstLoc))
-				return false;
-
-			if (dirVec.Z == 0)
-				return true;
-
-			Direction dir = dirVec.ToDirection();
-
-			var interID = m_tileGrid.GetInteriorID(ob.Location);
-			var destInterID = m_tileGrid.GetInteriorID(ob.Location + dirVec);
-
-			if (dir == Direction.Up && interID == InteriorID.Stairs)
-				return true;
-
-			if (dir == Direction.Down && destInterID == InteriorID.Stairs)
-				return true;
-
-			var d2d = new IntVector(dirVec.X, dirVec.Y).ToDirection();
-
-			if (dir.ContainsUp() && d2d.IsCardinal() && interID.IsSlope() && interID == Interiors.GetSlopeFromDir(d2d))
-				return true;
-
-			if (dir.ContainsDown() && d2d.IsCardinal() && destInterID.IsSlope() && destInterID == Interiors.GetSlopeFromDir(d2d.Reverse()))
-				return true;
-
-			return false;
+			return CanMoveTo(ob.Location, dstLoc);
 		}
 
 		protected override void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)

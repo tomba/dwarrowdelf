@@ -179,6 +179,8 @@ namespace MyGame
 		public FloorID FloorID { get; set; }
 		[DataMember]
 		public MaterialID FloorMaterialID { get; set; }
+
+		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 	}
 
 	public enum VisibilityMode

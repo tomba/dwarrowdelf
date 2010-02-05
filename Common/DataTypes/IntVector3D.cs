@@ -84,6 +84,11 @@ namespace MyGame
 			return new IntVector3D(x, y, z);
 		}
 
+		public bool IsNormal
+		{
+			get { return Math.Abs(this.X) <= 1 && Math.Abs(this.Y) <= 1 && Math.Abs(this.Z) <= 1; }
+		}
+
 		public static bool operator ==(IntVector3D left, IntVector3D right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
@@ -248,6 +253,11 @@ namespace MyGame
 			{
 				return this.X == 0 && this.Y == 0 && this.Z == 0;
 			}
+		}
+
+		public IntVector ToIntVector()
+		{
+			return new IntVector(this.X, this.Y);
 		}
 	}
 }
