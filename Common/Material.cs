@@ -14,6 +14,7 @@ namespace MyGame
 		Steel,
 		Diamond,
 		Wood,
+		Grass,
 	}
 
 	public class MaterialInfo
@@ -58,5 +59,6 @@ namespace MyGame
 		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel);
 		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond);
 		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood);
+		public static readonly MaterialInfo Grass = new MaterialInfo(MaterialID.Grass);
 	}
 }

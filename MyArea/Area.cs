@@ -81,7 +81,7 @@ namespace MyArea
 					throw new Exception();
 
 				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
-			} while (env.GetInteriorID(p) != InteriorID.Empty || env.GetFloorID(p) != FloorID.NaturalFloor);
+			} while (!env.CanEnter(p));
 
 			return p;
 		}
@@ -152,6 +152,26 @@ namespace MyArea
 				}
 			}
 
+			/* create trees */
+			foreach (var p in env.Bounds.Range())
+			{
+				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor)
+				{
+					if (m_random.Next() % 8 != 0)
+						continue;
+
+					env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
+				}
+			}
+
+			/* create grass */
+			foreach (var p in env.Bounds.Range())
+			{
+				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor)
+					env.SetInterior(p, InteriorID.Grass, MaterialID.Grass);
+			}
+
+
 			/* create long stairs */
 			foreach (var p in env.Bounds.Range())
 			{
@@ -185,13 +205,6 @@ namespace MyArea
 			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
 			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);
 			env.SetActionHandler(m_portalLoc, ActionHandler);
-
-			/* create trees */
-			for (int i = 0; i < 10; ++i)
-			{
-				var l = GetRandomSurfaceLocation(env, surfaceLevel);
-				env.SetInterior(l, i % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
-			}
 
 			var syms = world.AreaData.Symbols;
 

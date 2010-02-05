@@ -213,6 +213,14 @@ namespace MyGame.Server
 			return true;
 		}
 
+		public bool CanEnter(IntPoint3D location)
+		{
+			var dstInter = GetInterior(location);
+			var dstFloor = GetFloor(location);
+
+			return !dstInter.Blocker && dstFloor.IsCarrying;
+		}
+
 		bool CanMoveTo(IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
 			IntVector3D v = dstLoc - srcLoc;
