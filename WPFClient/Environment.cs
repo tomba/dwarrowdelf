@@ -331,7 +331,7 @@ namespace MyGame.Client
 
 		public BuildingData GetBuildingAt(IntPoint3D p)
 		{
-			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.TwoD));
+			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.ToIntPoint()));
 		}
 
 		public IList<ClientGameObject> GetContents(IntPoint3D l)

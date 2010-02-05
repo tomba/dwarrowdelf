@@ -31,7 +31,7 @@ namespace MyGame.Client
 
 		public bool Contains(IntPoint3D point)
 		{
-			return point.Z == this.Z && this.Area.Contains(point.TwoD);
+			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
 		}
 
 		public void AddBuildItem()

@@ -107,7 +107,7 @@ namespace MyArea
 			/* create terrain */
 			foreach (var p in env.Bounds.Range())
 			{
-				double d = terrainGen.Grid[p.TwoD];
+				double d = terrainGen.Grid[p.ToIntPoint()];
 
 				if (d > p.Z)
 				{

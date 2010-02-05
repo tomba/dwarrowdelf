@@ -38,7 +38,7 @@ namespace MyGame.Server
 
 		public bool Contains(IntPoint3D point)
 		{
-			return point.Z == this.Z && this.Area.Contains(point.TwoD);
+			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
 		}
 
 		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects)

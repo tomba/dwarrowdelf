@@ -20,8 +20,6 @@ namespace MyGame
 		public int Y { get { return m_y; } }
 		public int Z { get { return m_z; } }
 
-		public IntPoint TwoD { get { return new IntPoint(this.X, this.Y); } }
-
 		public IntPoint3D(int x, int y, int z)
 		{
 			m_x = x;
@@ -98,6 +96,11 @@ namespace MyGame
 				for (; y < max_y; ++y)
 					for (; x < max_x; ++x)
 						yield return new IntPoint3D(x, y, z);
+		}
+
+		public IntPoint ToIntPoint()
+		{
+			return new IntPoint(this.X, this.Y);
 		}
 
 		public override string ToString()
