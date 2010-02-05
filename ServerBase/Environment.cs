@@ -277,6 +277,19 @@ namespace MyGame.Server
 
 		protected override void OnChildMoved(ServerGameObject child, IntPoint3D oldLocation, IntPoint3D newLocation)
 		{
+			/* just for testing, check if grass is stomped down */
+			var tileData = GetTileData(newLocation);
+			if (tileData.InteriorID == InteriorID.Grass)
+			{
+				if (tileData.InteriorData++ == 5)
+				{
+					tileData.InteriorID = InteriorID.Empty;
+					tileData.InteriorMaterialID = MaterialID.Undefined;
+					tileData.InteriorData = 0;
+				}
+				SetTileData(newLocation, tileData);
+			}
+
 			if (oldLocation.Z == newLocation.Z)
 				return;
 
