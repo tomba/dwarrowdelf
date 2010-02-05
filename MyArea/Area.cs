@@ -127,10 +127,13 @@ namespace MyArea
 			/* create slopes */
 			foreach (var p in env.Bounds.Range())
 			{
-				if (env.GetInteriorID(p) != InteriorID.Empty)
+				if (!env.Bounds.Contains(p + Direction.Up))
 					continue;
 
-				if (env.GetInteriorID(p + Direction.Down) == InteriorID.Empty)
+				bool canHaveSlope = env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor &&
+					env.GetInteriorID(p + Direction.Up) == InteriorID.Empty && env.GetFloorID(p + Direction.Up) == FloorID.Empty;
+
+				if (!canHaveSlope)
 					continue;
 
 				foreach (var dir in DirectionExtensions.GetCardinalDirections())
@@ -138,10 +141,13 @@ namespace MyArea
 					if (!env.Bounds.Contains(p + dir))
 						continue;
 
-					if (env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty)
+					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
+						env.GetFloorID(p + dir + Direction.Up) == FloorID.NaturalFloor;
+
+					if (canHaveSlope)
 					{
 						var slope = Interiors.GetSlopeFromDir(dir);
-						env.SetInterior(p, slope, stone);
+						env.SetInterior(p, slope, env.GetFloorMaterialID(p));
 					}
 				}
 			}
@@ -175,9 +181,17 @@ namespace MyArea
 				}
 			}
 
+			/* create the portal */
 			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
 			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);
 			env.SetActionHandler(m_portalLoc, ActionHandler);
+
+			/* create trees */
+			for (int i = 0; i < 10; ++i)
+			{
+				var l = GetRandomSurfaceLocation(env, surfaceLevel);
+				env.SetInterior(l, i % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
+			}
 
 			var syms = world.AreaData.Symbols;
 
@@ -224,14 +238,6 @@ namespace MyArea
 					SymbolID = syms.Single(o => o.Name == "Gem").ID,
 					Name = "gem",
 					MaterialID = diamond,
-				};
-				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-
-				item = new ItemObject(world)
-				{
-					SymbolID = syms.Single(o => o.Name == "Tree").ID,
-					Name = "puu",
-					MaterialID = wood,
 				};
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}

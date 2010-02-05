@@ -19,6 +19,8 @@ namespace MyGame
 		SlopeSouth,
 		SlopeWest,
 		SlopeEast,
+		Sapling,
+		Tree,
 	}
 
 	public class InteriorInfo
@@ -70,6 +72,9 @@ namespace MyGame
 		public static readonly InteriorInfo SlopeSouth	= new InteriorInfo(InteriorID.SlopeSouth, false);
 		public static readonly InteriorInfo SlopeWest	= new InteriorInfo(InteriorID.SlopeWest, false);
 		public static readonly InteriorInfo SlopeEast	= new InteriorInfo(InteriorID.SlopeEast, false);
+		public static readonly InteriorInfo Sapling		= new InteriorInfo(InteriorID.Sapling, false);
+		public static readonly InteriorInfo Tree		= new InteriorInfo(InteriorID.Tree, true);
+
 
 		public static bool IsSlope(this InteriorID id)
 		{

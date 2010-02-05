@@ -77,6 +77,11 @@ namespace MyGame.Server
 			return m_tileGrid.GetInteriorID(l);
 		}
 
+		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetInteriorMaterialID(l);
+		}
+
 		public FloorInfo GetFloor(IntPoint3D p)
 		{
 			return Floors.GetFloor(GetFloorID(p));
@@ -85,6 +90,11 @@ namespace MyGame.Server
 		public FloorID GetFloorID(IntPoint3D l)
 		{
 			return m_tileGrid.GetFloorID(l);
+		}
+
+		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetFloorMaterialID(l);
 		}
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
