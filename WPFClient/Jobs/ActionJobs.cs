@@ -109,38 +109,80 @@ namespace MyGame.Client
 			return Progress.Ok;
 		}
 
+		/* XXX some room for optimization... */
 		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
 		{
 			var env = m_environment;
 
-			foreach (var v in IntVector.GetAllXYDirections())
+			foreach (var dir in DirectionExtensions.GetPlanarDirections())
 			{
-				var l = p + v;
-				if (env.IsWalkable(l) == true && env.Bounds.Contains(l))
-					yield return v.ToDirection();
+				var l = p + dir;
+				if (CanMoveTo(env, p, l))
+					yield return dir;
 			}
 
-			if (env.GetInterior(p).ID == InteriorID.Stairs)
+			if (CanMoveTo(env, p, p + Direction.Up))
 				yield return Direction.Up;
 
-			if (env.GetInterior(p + Direction.Down).ID == InteriorID.Stairs)
+			if (CanMoveTo(env, p, p + Direction.Down))
 				yield return Direction.Down;
-
-			if (env.GetInterior(p).ID.IsSlope())
-			{
-				var dir = Interiors.GetDirFromSlope(env.GetInterior(p).ID);
-				dir |= Direction.Up;
-				yield return dir;
-			}
 
 			foreach (var dir in DirectionExtensions.GetCardinalDirections())
 			{
 				var d = dir | Direction.Down;
-				var id = env.GetInterior(p + d).ID;
-				if (id.IsSlope() && Interiors.GetDirFromSlope(id) == dir.Reverse())
+				if (CanMoveTo(env, p, p + d))
+					yield return d;
+
+				d = dir | Direction.Up;
+				if (CanMoveTo(env, p, p + d))
 					yield return d;
 			}
 		}
+
+		bool CanMoveTo(Environment env, IntPoint3D srcLoc, IntPoint3D dstLoc)
+		{
+			IntVector3D v = dstLoc - srcLoc;
+
+			if (!v.IsNormal)
+				throw new Exception();
+
+			var dstInter = env.GetInterior(dstLoc);
+			var dstFloor = env.GetFloor(dstLoc);
+
+			if (dstInter.Blocker || !dstFloor.IsCarrying)
+				return false;
+
+			if (v.Z == 0)
+				return true;
+
+			Direction dir = v.ToDirection();
+
+			var srcInter = env.GetInterior(srcLoc);
+			var srcFloor = env.GetFloor(srcLoc);
+
+			if (dir == Direction.Up)
+				return srcInter.ID == InteriorID.Stairs && dstFloor.ID == FloorID.Hole;
+
+			if (dir == Direction.Down)
+				return dstInter.ID == InteriorID.Stairs && srcFloor.ID == FloorID.Hole;
+
+			var d2d = v.ToIntVector().ToDirection();
+
+			if (dir.ContainsUp())
+			{
+				var tileAboveSlope = env.GetTileData(srcLoc + Direction.Up);
+				return d2d.IsCardinal() && srcInter.ID.IsSlope() && srcInter.ID == Interiors.GetSlopeFromDir(d2d) && tileAboveSlope.IsEmpty;
+			}
+
+			if (dir.ContainsDown())
+			{
+				var tileAboveSlope = env.GetTileData(dstLoc + Direction.Up);
+				return d2d.IsCardinal() && dstInter.ID.IsSlope() && dstInter.ID == Interiors.GetSlopeFromDir(d2d.Reverse()) && tileAboveSlope.IsEmpty;
+			}
+
+			return false;
+		}
+
 
 		Progress CheckProgress()
 		{

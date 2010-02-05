@@ -72,5 +72,17 @@ namespace MyGame
 			yield return Direction.SouthWest;
 			yield return Direction.NorthWest;
 		}
+
+		public static IEnumerable<Direction> GetPlanarDirections()
+		{
+			yield return Direction.North;
+			yield return Direction.NorthEast;
+			yield return Direction.East;
+			yield return Direction.SouthEast;
+			yield return Direction.South;
+			yield return Direction.SouthWest;
+			yield return Direction.West;
+			yield return Direction.NorthWest;
+		}
 	}
 }
