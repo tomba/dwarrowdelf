@@ -48,6 +48,55 @@ namespace MyGame.Client
 			GameData.Data.Connection.LogOffCharEvent += OnCharLoggedOff;
 		}
 
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			foreach (var name in Enum.GetNames(typeof(InteriorID)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = name,
+					Header = name,
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInterior));
+				setInteriorMenu.Items.Add(item);
+			}
+
+			foreach (var name in Enum.GetNames(typeof(FloorID)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = name,
+					Header = name,
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloor));
+				setFloorMenu.Items.Add(item);
+			}
+
+			foreach (var name in Enum.GetNames(typeof(MaterialID)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = name,
+					Header = name,
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInteriorMaterial));
+				setInteriorMaterialMenu.Items.Add(item);
+			}
+
+			foreach (var name in Enum.GetNames(typeof(MaterialID)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = name,
+					Header = name,
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloorMaterial));
+				setFloorMaterialMenu.Items.Add(item);
+			}
+		}
+
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
@@ -309,6 +358,106 @@ namespace MyGame.Client
 		{
 			get { return map.Environment; }
 			set { map.Environment = value; }
+		}
+
+		void MenuItem_Click_SetInterior(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			InteriorID inter;
+			if (Enum.TryParse<InteriorID>(tag, out inter) == false)
+				throw new Exception();
+
+			IntRect r = map.SelectionRect;
+
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCuboid(r, map.Z),
+				TileData = new TileData()
+				{
+					FloorID = FloorID.Undefined,
+					FloorMaterialID = MaterialID.Undefined,
+					InteriorID = inter,
+					InteriorMaterialID = MaterialID.Undefined,
+				}
+			});
+		}
+
+		void MenuItem_Click_SetFloor(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			FloorID floor;
+			if (Enum.TryParse<FloorID>(tag, out floor) == false)
+				throw new Exception();
+
+			IntRect r = map.SelectionRect;
+
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCuboid(r, map.Z),
+				TileData = new TileData()
+				{
+					FloorID = floor,
+					FloorMaterialID = MaterialID.Undefined,
+					InteriorID = InteriorID.Undefined,
+					InteriorMaterialID = MaterialID.Undefined,
+				}
+			});
+		}
+
+		void MenuItem_Click_SetInteriorMaterial(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			MaterialID material;
+			if (Enum.TryParse<MaterialID>(tag, out material) == false)
+				throw new Exception();
+
+			IntRect r = map.SelectionRect;
+
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCuboid(r, map.Z),
+				TileData = new TileData()
+				{
+					FloorID = FloorID.Undefined,
+					FloorMaterialID = MaterialID.Undefined,
+					InteriorID = InteriorID.Undefined,
+					InteriorMaterialID = material,
+				}
+			});
+		}
+
+		void MenuItem_Click_SetFloorMaterial(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			MaterialID material;
+			if (Enum.TryParse<MaterialID>(tag, out material) == false)
+				throw new Exception();
+
+			IntRect r = map.SelectionRect;
+
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCuboid(r, map.Z),
+				TileData = new TileData()
+				{
+					FloorID = FloorID.Undefined,
+					FloorMaterialID = material,
+					InteriorID = InteriorID.Undefined,
+					InteriorMaterialID = MaterialID.Undefined,
+				}
+			});
 		}
 
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)

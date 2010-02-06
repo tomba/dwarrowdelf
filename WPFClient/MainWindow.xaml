@@ -153,10 +153,10 @@
 							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
                 <local:MapControl.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Change tile">
-                            <MenuItem Header="Floor" Click="MenuItem_Click_Floor" />
-                            <MenuItem Header="Wall" Click="MenuItem_Click_Wall"/>
-                        </MenuItem>
+                        <MenuItem Name="setInteriorMenu" Header="Set Interior" />
+                        <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
+                        <MenuItem Name="setFloorMenu" Header="Set Floor" />
+                        <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
                         <MenuItem Header="Jobs">
                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
@@ -165,9 +165,6 @@
                             <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                         </MenuItem>
-                        <MenuItem Header="File"/>
-                        <MenuItem Header="Save"/>
-                        <MenuItem Header="SaveAs"/>
                     </ContextMenu>
                 </local:MapControl.ContextMenu>
             </local:MapControl>

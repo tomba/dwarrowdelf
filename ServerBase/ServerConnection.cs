@@ -195,7 +195,17 @@ namespace MyGame.Server
 				if (!env.Bounds.Contains(p))
 					continue;
 
-				env.SetTileData(p, data);
+				var tileData = env.GetTileData(p);
+				if (data.InteriorID != InteriorID.Undefined)
+					tileData.InteriorID = data.InteriorID;
+				if (data.FloorID != FloorID.Undefined)
+					tileData.FloorID = data.FloorID;
+				if (data.InteriorMaterialID != MaterialID.Undefined)
+					tileData.InteriorMaterialID = data.InteriorMaterialID;
+				if (data.FloorMaterialID != MaterialID.Undefined)
+					tileData.FloorMaterialID = data.FloorMaterialID;
+
+				env.SetTileData(p, tileData);
 			}
 		}
 
