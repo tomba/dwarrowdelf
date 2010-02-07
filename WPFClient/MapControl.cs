@@ -62,35 +62,45 @@ namespace MyGame.Client
 
 		protected override void UpdateTile(UIElement _tile, IntPoint _ml)
 		{
-			BitmapSource bmp = null;
-			MapControlTile tile = (MapControlTile)_tile;
+			var tile = (MapControlTile)_tile;
 			bool lit = false;
 			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 
+			BitmapSource floorBitmap;
+			BitmapSource interiorBitmap;
+			BitmapSource objectBitmap;
+
 			if (this.Environment == null)
 			{
-				tile.FloorBitmap = null;
-				tile.InteriorBitmap = null;
-				tile.ObjectBitmap = null;
-				return;
+				floorBitmap = null;
+				interiorBitmap = null;
+				objectBitmap = null;
+			}
+			else
+			{
+				if (GameData.Data.IsSeeAll)
+					lit = true;
+				else
+					lit = TileVisible(ml);
+
+				floorBitmap = GetFloorBitmap(ml, lit);
+				interiorBitmap = GetInteriorBitmap(ml, lit);
+
+				if (GameData.Data.DisableLOS)
+					lit = true; // lit always so we see what server sends
+
+				objectBitmap = lit ? GetObjectBitmap(ml, lit) : null;
 			}
 
-			if (GameData.Data.IsSeeAll)
-				lit = true;
-			else
-				lit = TileVisible(ml);
+			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap;
 
-			tile.FloorBitmap = GetFloorBitmap(ml, lit);
-			tile.InteriorBitmap = GetInteriorBitmap(ml, lit);
-
-			if (GameData.Data.DisableLOS)
-				lit = true; // lit always so we see what server sends
-
-			if (lit)
-				bmp = GetObjectBitmap(ml, lit);
-			else
-				bmp = null;
-			tile.ObjectBitmap = bmp;
+			if (update)
+			{
+				tile.FloorBitmap = floorBitmap;
+				tile.InteriorBitmap = interiorBitmap;
+				tile.ObjectBitmap = objectBitmap;
+				tile.InvalidateVisual();
+			}
 		}
 
 		bool TileVisible(IntPoint3D ml)
@@ -138,6 +148,18 @@ namespace MyGame.Client
 			return false;
 		}
 
+		Dictionary<string, SymbolInfo> m_symbolLookupCache = new Dictionary<string, SymbolInfo>();
+		SymbolInfo GetSymbol(string symbolName)
+		{
+			SymbolInfo symbolInfo;
+			if (!m_symbolLookupCache.TryGetValue(symbolName, out symbolInfo))
+			{
+				symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symbolName);
+				m_symbolLookupCache[symbolInfo.Name] = symbolInfo;
+			}
+			return symbolInfo;
+		}
+
 		BitmapSource GetFloorBitmap(IntPoint3D ml, bool lit)
 		{
 			int id;
@@ -175,7 +197,7 @@ namespace MyGame.Client
 			if (symName == null)
 				return null;
 
-			var symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symName);
+			var symbolInfo = GetSymbol(symName);
 			id = symbolInfo.ID;
 			c = Colors.Black;
 
@@ -204,7 +226,23 @@ namespace MyGame.Client
 			}
 			else if (intID.IsSlope())
 			{
-				symbolName = "SlopeUp" + Interiors.GetDirFromSlope(intID).ToString();
+				switch (Interiors.GetDirFromSlope(intID))
+				{
+					case Direction.North:
+						symbolName = "SlopeUpNorth";
+						break;
+					case Direction.South:
+						symbolName = "SlopeUpSouth";
+						break;
+					case Direction.East:
+						symbolName = "SlopeUpEast";
+						break;
+					case Direction.West:
+						symbolName = "SlopeUpWest";
+						break;
+					default:
+						throw new Exception();
+				}
 			}
 			else if (intInfo != Interiors.Empty)
 			{
@@ -230,7 +268,7 @@ namespace MyGame.Client
 			if (symbolName == null)
 				return null;
 
-			var symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symbolName);
+			var symbolInfo = GetSymbol(symbolName);
 			id = symbolInfo.ID;
 			c = Colors.Black;
 
@@ -389,7 +427,32 @@ namespace MyGame.Client
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
+
+		class MapControlTile : UIElement
+		{
+			public MapControlTile()
+			{
+				this.IsHitTestVisible = false;
+			}
+
+			public BitmapSource FloorBitmap { get; set; }
+			public BitmapSource InteriorBitmap { get; set; }
+			public BitmapSource ObjectBitmap { get; set; }
+
+			protected override void OnRender(DrawingContext drawingContext)
+			{
+				if (this.FloorBitmap != null)
+					drawingContext.DrawImage(this.FloorBitmap, new Rect(this.RenderSize));
+
+				if (this.InteriorBitmap != null)
+					drawingContext.DrawImage(this.InteriorBitmap, new Rect(this.RenderSize));
+
+				if (this.ObjectBitmap != null)
+					drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
+			}
+		}
 	}
+
 
 	class HoverTileInfo : INotifyPropertyChanged
 	{
@@ -547,58 +610,4 @@ namespace MyGame.Client
 		#endregion
 	}
 
-	class MapControlTile : UIElement
-	{
-		public MapControlTile()
-		{
-			this.IsHitTestVisible = false;
-		}
-
-		public static readonly DependencyProperty FloorBitmapProperty = DependencyProperty.Register(
-			"FloorBitmap", typeof(BitmapSource), typeof(MapControlTile),
-			new PropertyMetadata(null, ValueChangedCallback));
-
-		public BitmapSource FloorBitmap
-		{
-			get { return (BitmapSource)GetValue(FloorBitmapProperty); }
-			set { SetValue(FloorBitmapProperty, value); }
-		}
-
-		public static readonly DependencyProperty InteriorBitmapProperty = DependencyProperty.Register(
-			"InteriorBitmap", typeof(BitmapSource), typeof(MapControlTile),
-			new PropertyMetadata(null, ValueChangedCallback));
-
-		public BitmapSource InteriorBitmap
-		{
-			get { return (BitmapSource)GetValue(InteriorBitmapProperty); }
-			set { SetValue(InteriorBitmapProperty, value); }
-		}
-
-		public static readonly DependencyProperty ObjectBitmapProperty = DependencyProperty.Register(
-			"ObjectBitmap", typeof(BitmapSource), typeof(MapControlTile),
-			new PropertyMetadata(null, ValueChangedCallback));
-
-		public BitmapSource ObjectBitmap
-		{
-			get { return (BitmapSource)GetValue(ObjectBitmapProperty); }
-			set { SetValue(ObjectBitmapProperty, value); }
-		}
-
-		static void ValueChangedCallback(DependencyObject ob, DependencyPropertyChangedEventArgs e)
-		{
-			((MapControlTile)ob).InvalidateVisual();
-		}
-
-		protected override void OnRender(DrawingContext drawingContext)
-		{
-			if (this.FloorBitmap != null)
-				drawingContext.DrawImage(this.FloorBitmap, new Rect(this.RenderSize));
-
-			if (this.InteriorBitmap != null)
-				drawingContext.DrawImage(this.InteriorBitmap, new Rect(this.RenderSize));
-
-			if (this.ObjectBitmap != null)
-				drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
-		}
-	}
 }

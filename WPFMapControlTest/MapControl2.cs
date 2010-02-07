@@ -19,11 +19,11 @@ using MyGame.Client;
 
 namespace WPFMapControlTest
 {
-	class MapControl : MapControlBase
+	class MapControl2 : MapControlBase2
 	{
 		Grid2D<byte> m_map;
 
-		public MapControl()
+		public MapControl2()
 		{
 			m_map = new Grid2D<byte>(512, 512);
 			for (int y = 0; y < m_map.Height; ++y)
@@ -35,15 +35,27 @@ namespace WPFMapControlTest
 			}
 		}
 
-		protected override UIElement CreateTile()
+		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			return new MapControlTile();
+			base.OnMouseMove(e);
+
+			var ml = base.ScreenPointToMapLocation(e.GetPosition(this));
+			if (m_map.Bounds.Contains(ml))
+			{
+				m_map[ml] = (byte)(~m_map[ml]);
+				base.InvalidateTiles();
+			}
+		}
+
+		protected override Visual CreateTile(double x, double y)
+		{
+			return new MapControlTile2(this, x, y);
 		}
 
 		// called for each visible tile
-		protected override void UpdateTile(UIElement _tile, IntPoint ml)
+		protected override void UpdateTile(Visual _tile, IntPoint ml)
 		{
-			MapControlTile tile = (MapControlTile)_tile;
+			MapControlTile2 tile = (MapControlTile2)_tile;
 
 			Color c;
 
@@ -61,35 +73,29 @@ namespace WPFMapControlTest
 			if (c != tile.Color)
 			{
 				tile.Color = c;
+				tile.Update();
 			}
 		}
 
-		class MapControlTile : UIElement
+		class MapControlTile2 : DrawingVisual
 		{
-			public MapControlTile()
+			MapControl2 m_parent;
+			public Color Color { get; set; }
+
+			public MapControlTile2(MapControl2 parent, double x, double y)
 			{
-				this.IsHitTestVisible = false;
+				m_parent = parent;
+				this.VisualOffset = new Vector(x, y);
 			}
 
-			public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
-				"Color", typeof(Color), typeof(MapControlTile),
-				new PropertyMetadata(ValueChangedCallback));
-
-			public Color Color
+			public void Update()
 			{
-				get { return (Color)GetValue(ColorProperty); }
-				set { SetValue(ColorProperty, value); }
-			}
-
-			static void ValueChangedCallback(DependencyObject ob, DependencyPropertyChangedEventArgs e)
-			{
-				((MapControlTile)ob).InvalidateVisual();
-			}
-
-			protected override void OnRender(DrawingContext drawingContext)
-			{
-				drawingContext.DrawRectangle(new SolidColorBrush(this.Color), null, new Rect(this.RenderSize));
+				var drawingContext = this.RenderOpen();
+				drawingContext.DrawRectangle(new SolidColorBrush(this.Color), null,
+					new Rect(new Size(m_parent.TileSize, m_parent.TileSize)));
+				drawingContext.Close();
 			}
 		}
 	}
+
 }

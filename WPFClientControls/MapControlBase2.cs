@@ -8,7 +8,7 @@ using System.Windows.Threading;
 
 namespace MyGame.Client
 {
-	public abstract class MapControlBase : Control
+	public abstract class MapControlBase2 : Control
 	{
 		int m_columns;
 		int m_rows;
@@ -21,7 +21,7 @@ namespace MyGame.Client
 		IntPoint m_selectionStart;
 		IntPoint m_selectionEnd;
 
-		protected MapControlBase()
+		protected MapControlBase2()
 		{
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
 			m_updateTimer.Tick += UpdateTimerTick;
@@ -49,12 +49,12 @@ namespace MyGame.Client
 		public bool SelectionEnabled { get; set; }
 
 		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
-			"TileSize", typeof(double), typeof(MapControlBase),
+			"TileSize", typeof(double), typeof(MapControlBase2),
 			new FrameworkPropertyMetadata(32.0, FrameworkPropertyMetadataOptions.AffectsArrange),
 			v => ((double)v) >= 2);
 
 		public static readonly DependencyProperty CenterPosProperty = DependencyProperty.Register(
-			"CenterPos", typeof(IntPoint), typeof(MapControlBase),
+			"CenterPos", typeof(IntPoint), typeof(MapControlBase2),
 			new FrameworkPropertyMetadata(new IntPoint(), FrameworkPropertyMetadataOptions.AffectsArrange));
 
 		public double TileSize
@@ -86,20 +86,16 @@ namespace MyGame.Client
 
 		void ReCreateMapTiles()
 		{
-			int numTiles = m_columns * m_rows;
+			m_tileCollection.Clear();
 
-			if (m_tileCollection.Count > numTiles)
+			int newTiles = m_columns * m_rows;
+			for (int i = 0; i < newTiles; ++i)
 			{
-				m_tileCollection.RemoveRange(numTiles, m_tileCollection.Count - numTiles);
-			}
-			else if (m_tileCollection.Count < numTiles)
-			{
-				int newTiles = numTiles - m_tileCollection.Count;
-				for (int i = 0; i < newTiles; ++i)
-				{
-					var tile = CreateTile();
-					m_tileCollection.Add(tile);
-				}
+				double x = (i % m_columns) * this.TileSize;
+				double y = (i / m_columns) * this.TileSize;
+
+				var tile = CreateTile(x, y);
+				m_tileCollection.Add(tile);
 			}
 
 			UpdateTiles();
@@ -118,15 +114,6 @@ namespace MyGame.Client
 				m_rows = newRows;
 
 				ReCreateMapTiles();
-			}
-
-			int i = 0;
-			foreach (UIElement tile in m_tileCollection)
-			{
-				int y = i / m_columns;
-				int x = i % m_columns;
-				tile.Arrange(new Rect(x * this.TileSize, y * this.TileSize, this.TileSize, this.TileSize));
-				++i;
 			}
 
 			// selection rect
@@ -186,6 +173,12 @@ namespace MyGame.Client
 			loc -= (IntVector)this.TopLeftPos;
 			loc = new IntPoint(loc.X, -loc.Y);
 			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint loc)
+		{
+			loc -= (IntVector)this.TopLeftPos;
+			return new IntPoint(loc.X, -loc.Y);
 		}
 
 		public IntRect SelectionRect
@@ -326,6 +319,13 @@ namespace MyGame.Client
 			base.OnMouseUp(e);
 		}
 
+		public void InvalidateTile(IntPoint sl)
+		{
+			//MyDebug.WriteLine("InvalidateTile {0}", sl);
+			if (!m_updateTimer.IsEnabled)
+				m_updateTimer.Start();
+		}
+
 		public void InvalidateTiles()
 		{
 			//MyDebug.WriteLine("InvalidateTiles");
@@ -347,7 +347,7 @@ namespace MyGame.Client
 		protected void UpdateTiles()
 		{
 			int i = 0;
-			foreach (UIElement tile in m_tileCollection)
+			foreach (Visual tile in m_tileCollection)
 			{
 				int x = i % m_columns;
 				int y = i / m_columns;
@@ -361,8 +361,8 @@ namespace MyGame.Client
 
 		public event Action SelectionChanged;
 
-		protected abstract UIElement CreateTile();
-		protected abstract void UpdateTile(UIElement tile, IntPoint loc);
+		protected abstract Visual CreateTile(double x, double y);
+		protected abstract void UpdateTile(Visual tile, IntPoint loc);
 	}
 
 }

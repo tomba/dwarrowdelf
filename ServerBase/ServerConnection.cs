@@ -216,6 +216,23 @@ namespace MyGame.Server
 			m_world.RequestTick();
 		}
 
+		Random m_random = new Random();
+		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		{
+			IntPoint3D p;
+			int iter = 0;
+
+			do
+			{
+				if (iter++ > 10000)
+					throw new Exception();
+
+				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+			} while (!env.CanEnter(p));
+
+			return p;
+		}
+
 		/* functions for livings */
 		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(LogOnCharRequest msg)
@@ -256,7 +273,8 @@ namespace MyGame.Server
 			};
 			item.MoveTo(player);
 
-			if (!player.MoveTo(env, new IntPoint3D(1, 3, 9)))
+			var pp = GetRandomSurfaceLocation(env, 9);
+			if (!player.MoveTo(env, pp))
 				throw new Exception("Unable to move player");
 
 			var inv = player.SerializeInventory();
