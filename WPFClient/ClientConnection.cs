@@ -144,8 +144,7 @@ namespace MyGame.Client
 
 			GameData.Data.IsSeeAll = msg.IsSeeAll;
 
-			var areaData = new MyArea.Data.AreaData();
-			var world = new World(areaData);
+			var world = new World();
 			World.TheWorld = world;
 			GameData.Data.World = world;
 

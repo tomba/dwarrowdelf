@@ -5,17 +5,12 @@
 		<CharSymbol>?</CharSymbol>
 	</Symbol>
 	<Symbol>
-		<Name>FixedWall</Name>
-		<CharSymbol>#</CharSymbol>
-		<Drawing x="0" y="0" w="100" h="100">Stone_Block</Drawing>
-	</Symbol>
-	<Symbol>
-		<Name>NaturalFloor</Name>
+		<Name>Floor</Name>
 		<CharSymbol>.</CharSymbol>
 		<Drawing x="0" y="0" w="100" h="100">Dirt_Block</Drawing>
 	</Symbol>
 	<Symbol>
-		<Name>NaturalWall</Name>
+		<Name>Wall</Name>
 		<CharSymbol>#</CharSymbol>
 		<Drawing x="0" y="0" w="100" h="100">Stone_Block</Drawing>
 	</Symbol>

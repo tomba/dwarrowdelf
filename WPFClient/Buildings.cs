@@ -25,7 +25,7 @@ namespace MyGame.Client
 		public BuildingData(World world, ObjectID objectID, BuildingID id)
 			: base(world, objectID)
 		{
-			this.BuildingInfo = world.AreaData.Buildings.GetBuildingInfo(id);
+			this.BuildingInfo = Buildings.GetBuildingInfo(id);
 			world.TickIncreased += OnTick;
 		}
 

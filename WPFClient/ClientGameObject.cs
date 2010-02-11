@@ -87,8 +87,8 @@ namespace MyGame.Client
 			set { m_name = value; Notify("Name"); }
 		}
 
-		int m_symbolID;
-		public int SymbolID
+		SymbolID m_symbolID;
+		public SymbolID SymbolID
 		{
 			get { return m_symbolID; }
 			set

@@ -35,7 +35,7 @@ namespace MyGame.Server
 
 	abstract public class ServerGameObject : BaseGameObject
 	{
-		public int SymbolID { get; set; }
+		public SymbolID SymbolID { get; set; }
 
 		public string Name { get; set; }
 

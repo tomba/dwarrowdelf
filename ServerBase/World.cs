@@ -29,7 +29,6 @@ namespace MyGame.Server
 	public class World
 	{
 		public IArea Area { get; private set; }
-		public IAreaData AreaData { get; private set; }
 
 		// the same single world for everybody, for now
 		public static World TheWorld;
@@ -111,10 +110,9 @@ namespace MyGame.Server
 				MyDebug.WriteLine(format, args);
 		}
 
-		public World(IArea area, IAreaData areaData)
+		public World(IArea area)
 		{
 			this.Area = area;
-			this.AreaData = areaData;
 			m_tickTimer = new Timer(this.TickTimerCallback);
 
 			m_worldThread = new Thread(Main);

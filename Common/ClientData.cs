@@ -108,7 +108,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public string Name { get; set; }
 		[DataMember]
-		public int SymbolID { get; set; }
+		public SymbolID SymbolID { get; set; }
 
 		[DataMember]
 		public IntPoint3D Location { get; set; }
@@ -131,7 +131,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 		[DataMember]
-		public int SymbolID { get; set; }
+		public SymbolID SymbolID { get; set; }
 		[DataMember]
 		public int VisionRange { get; set; }
 		[DataMember]

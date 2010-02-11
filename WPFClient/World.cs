@@ -11,7 +11,6 @@ namespace MyGame.Client
 	{
 		public static World TheWorld { get; set; }
 
-		public IAreaData AreaData { get; private set; }
 		public ObservableCollection<Environment> Environments { get; private set; }
 
 		public LivingCollection Controllables { get; private set; }
@@ -27,16 +26,15 @@ namespace MyGame.Client
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
 
-		public World(IAreaData areaData)
+		public World()
 		{
-			this.AreaData = areaData;
 			this.Environments = new ObservableCollection<Environment>();
 			this.Controllables = new LivingCollection();
 			m_objects = new KeyedObjectCollection();
 			this.Objects = new ReadOnlyKeyedObjectCollection(m_objects);
 
-			this.DrawingCache = new DrawingCache(areaData);
-			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache, areaData.Symbols);
+			this.DrawingCache = new DrawingCache();
+			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache);
 
 			this.JobManager = new JobManager(this);
 		}

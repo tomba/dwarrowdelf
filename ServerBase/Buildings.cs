@@ -15,7 +15,7 @@ namespace MyGame.Server
 		public BuildingData(World world, BuildingID id)
 			: base(world)
 		{
-			this.BuildingInfo = world.AreaData.Buildings.GetBuildingInfo(id);
+			this.BuildingInfo = Buildings.GetBuildingInfo(id);
 		}
 
 		public override MyGame.ClientMsgs.Message Serialize()
@@ -74,7 +74,7 @@ namespace MyGame.Server
 			ItemObject item = new ItemObject(this.World)
 			{
 				Name = "Key",
-				SymbolID = this.World.AreaData.Symbols.Single(o => o.Name == "Key").ID,
+				SymbolID = SymbolID.Key,
 				MaterialID = iron,
 			};
 

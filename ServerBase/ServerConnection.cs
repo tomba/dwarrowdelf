@@ -242,11 +242,10 @@ namespace MyGame.Server
 			MyDebug.WriteLine("LogOnChar {0}", name);
 
 			var env = m_world.Environments.First(); // XXX entry location
-			var syms = m_world.AreaData.Symbols;
 
 #if !asd
 			var player = new Living(m_world);
-			player.SymbolID = syms.Single(o => o.Name == "Player").ID; ;
+			player.SymbolID = SymbolID.Player;
 			player.Name = "player";
 			player.Actor = new InteractiveActor();
 
@@ -259,7 +258,7 @@ namespace MyGame.Server
 			ItemObject item = new ItemObject(m_world)
 			{
 				Name = "jalokivi1",
-				SymbolID = syms.Single(o => o.Name == "Gem").ID,
+				SymbolID = SymbolID.Gem,
 				MaterialID = diamond,
 			};
 			item.MoveTo(player);
@@ -267,7 +266,7 @@ namespace MyGame.Server
 			item = new ItemObject(m_world)
 			{
 				Name = "jalokivi2",
-				SymbolID = syms.Single(o => o.Name == "Gem").ID,
+				SymbolID = SymbolID.Gem,
 				Color = GameColors.Green,
 				MaterialID = diamond,
 			};
@@ -281,7 +280,7 @@ namespace MyGame.Server
 			Send(inv);
 #if qwe
 			var pet = new Living(m_world);
-			pet.SymbolID = syms.Single(o => o.Name == "Monster").ID;
+			pet.SymbolID = SymbolID.Monster;
 			pet.Name = "lemmikki";
 			pet.Actor = new InteractiveActor();
 			m_friendlies.Add(pet);
@@ -301,7 +300,7 @@ namespace MyGame.Server
 
 				var player = new Living(m_world)
 				{
-					SymbolID = syms.Single(o => o.Name == "Player").ID,
+					SymbolID = SymbolID.Player,
 					Name = String.Format("Dwarf{0}", i),
 					Actor = new InteractiveActor(),
 					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),

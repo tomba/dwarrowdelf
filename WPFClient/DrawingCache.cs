@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows;
+using System.Resources;
 
 namespace MyGame.Client
 {
@@ -15,9 +16,12 @@ namespace MyGame.Client
 
 		Dictionary<char, Dictionary<Color, Drawing>> m_charDrawingMap;
 
-		public DrawingCache(IAreaData areaData)
+		public DrawingCache()
 		{
-			var symbolResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(areaData.DrawingStream);
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+
+			var uri = new Uri("PlanetCute.xaml", UriKind.Relative);
+			var symbolResources = (ResourceDictionary)Application.LoadComponent(uri);
 			m_drawingMap = new Dictionary<string, Dictionary<Color, Drawing>>(symbolResources.Count);
 			foreach (System.Collections.DictionaryEntry de in symbolResources)
 			{

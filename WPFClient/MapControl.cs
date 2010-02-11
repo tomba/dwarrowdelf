@@ -148,66 +148,50 @@ namespace MyGame.Client
 			return false;
 		}
 
-		Dictionary<string, SymbolInfo> m_symbolLookupCache = new Dictionary<string, SymbolInfo>();
-		SymbolInfo GetSymbol(string symbolName)
-		{
-			SymbolInfo symbolInfo;
-			if (!m_symbolLookupCache.TryGetValue(symbolName, out symbolInfo))
-			{
-				symbolInfo = this.Environment.World.AreaData.Symbols.Single(s => s.Name == symbolName);
-				m_symbolLookupCache[symbolInfo.Name] = symbolInfo;
-			}
-			return symbolInfo;
-		}
-
 		BitmapSource GetFloorBitmap(IntPoint3D ml, bool lit)
 		{
-			int id;
-			Color c;
-
 			var flrInfo = this.Environment.GetFloor(ml);
 
 			if (flrInfo == null || flrInfo == Floors.Undefined)
 				return null;
 
-			string symName;
+			FloorID fid = flrInfo.ID;
+			SymbolID id;
 
-			if (flrInfo == Floors.Hole)
+			switch (fid)
 			{
-				symName = Floors.NaturalFloor.Name;
-			}
-			else if (flrInfo == Floors.Empty)
-			{
-				symName = null;
-			}
-			else
-			{
-				symName = flrInfo.Name;
+				case FloorID.NaturalFloor:
+				case FloorID.Floor:
+				case FloorID.Hole:
+					id = SymbolID.Floor;
+					break;
+
+				case FloorID.Empty:
+					id = SymbolID.Undefined;
+					break;
+
+				default:
+					throw new Exception();
 			}
 
 			if (m_showVirtualSymbols)
 			{
-				if (flrInfo == Floors.Empty)
+				if (fid == FloorID.Empty)
 				{
-					symName = Floors.NaturalFloor.Name;
+					id = SymbolID.Floor;
 					lit = false;
 				}
 			}
 
-			if (symName == null)
+			if (id == SymbolID.Undefined)
 				return null;
 
-			var symbolInfo = GetSymbol(symName);
-			id = symbolInfo.ID;
-			c = Colors.Black;
-
-			return m_bitmapCache.GetBitmap(id, c, !lit);
+			return m_bitmapCache.GetBitmap(id, Colors.Black, !lit);
 		}
 
 		BitmapSource GetInteriorBitmap(IntPoint3D ml, bool lit)
 		{
-			int id;
-			Color c;
+			SymbolID id;
 
 			var intInfo = this.Environment.GetInterior(ml);
 			var intInfo2 = this.Environment.GetInterior(ml + Direction.Down);
@@ -218,61 +202,99 @@ namespace MyGame.Client
 			if (intInfo == null || intInfo == Interiors.Undefined)
 				return null;
 
-			string symbolName;
+			switch (intID)
+			{
+				case InteriorID.Stairs:
+					id = SymbolID.StairsUp;
+					break;
 
-			if (intID == InteriorID.Stairs)
-			{
-				symbolName = "StairsUp";
-			}
-			else if (intID.IsSlope())
-			{
-				switch (Interiors.GetDirFromSlope(intID))
-				{
-					case Direction.North:
-						symbolName = "SlopeUpNorth";
-						break;
-					case Direction.South:
-						symbolName = "SlopeUpSouth";
-						break;
-					case Direction.East:
-						symbolName = "SlopeUpEast";
-						break;
-					case Direction.West:
-						symbolName = "SlopeUpWest";
-						break;
-					default:
-						throw new Exception();
-				}
-			}
-			else if (intInfo != Interiors.Empty)
-			{
-				symbolName = intInfo.Name;
-			}
-			else
-			{
-				symbolName = null;
+				case InteriorID.Empty:
+					id = SymbolID.Undefined;
+					break;
+
+				case InteriorID.NaturalWall:
+				case InteriorID.Wall:
+					id = SymbolID.Wall;
+					break;
+
+				case InteriorID.Grass:
+					id = SymbolID.Grass;
+					break;
+
+				case InteriorID.Portal:
+					id = SymbolID.Portal;
+					break;
+
+				case InteriorID.Sapling:
+					id = SymbolID.Sapling;
+					break;
+
+				case InteriorID.Tree:
+					id = SymbolID.Tree;
+					break;
+
+				case InteriorID.SlopeNorth:
+				case InteriorID.SlopeSouth:
+				case InteriorID.SlopeEast:
+				case InteriorID.SlopeWest:
+					{
+						switch (Interiors.GetDirFromSlope(intID))
+						{
+							case Direction.North:
+								id = SymbolID.SlopeUpNorth;
+								break;
+							case Direction.South:
+								id = SymbolID.SlopeUpSouth;
+								break;
+							case Direction.East:
+								id = SymbolID.SlopeUpEast;
+								break;
+							case Direction.West:
+								id = SymbolID.SlopeUpWest;
+								break;
+							default:
+								throw new Exception();
+						}
+					}
+					break;
+
+				default:
+					throw new Exception();
 			}
 
 			if (m_showVirtualSymbols)
 			{
 				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
 				{
-					symbolName = "StairsUpDown";
+					id = SymbolID.StairsUpDown;
 				}
 				else if (intID == InteriorID.Empty && intID2.IsSlope())
 				{
-					symbolName = "SlopeDown" + Interiors.GetDirFromSlope(intID2).Reverse().ToString();
+					switch (intID2)
+					{
+						case InteriorID.SlopeNorth:
+							id = SymbolID.SlopeDownSouth;
+							break;
+
+						case InteriorID.SlopeSouth:
+							id = SymbolID.SlopeDownNorth;
+							break;
+
+						case InteriorID.SlopeEast:
+							id = SymbolID.SlopeDownWest;
+							break;
+						
+						case InteriorID.SlopeWest:
+							id = SymbolID.SlopeDownEast;
+							break;
+					}
 				}
 			}
 
-			if (symbolName == null)
+			if (id == SymbolID.Undefined)
 				return null;
 
-			var symbolInfo = GetSymbol(symbolName);
-			id = symbolInfo.ID;
-			c = Colors.Black;
-
-			return m_bitmapCache.GetBitmap(id, c, !lit);
+			return m_bitmapCache.GetBitmap(id, Colors.Black, !lit);
 		}
 
 		BitmapSource GetObjectBitmap(IntPoint3D ml, bool lit)
@@ -280,7 +302,7 @@ namespace MyGame.Client
 			IList<ClientGameObject> obs = this.Environment.GetContents(ml);
 			if (obs != null && obs.Count > 0)
 			{
-				int id = obs[0].SymbolID;
+				var id = obs[0].SymbolID;
 				Color c = obs[0].Color;
 				return m_bitmapCache.GetBitmap(id, c, !lit);
 			}

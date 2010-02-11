@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows;
+using System.IO;
+using System.Xml.Linq;
 
 namespace MyGame.Client
 {
@@ -11,17 +13,17 @@ namespace MyGame.Client
 	{
 		IList<SymbolInfo> m_symbolInfoList;
 		DrawingCache m_drawingCache;
-		Dictionary<int, Dictionary<Color, Drawing>> m_drawingMap = new Dictionary<int, Dictionary<Color, Drawing>>();
+		Dictionary<SymbolID, Dictionary<Color, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<Color, Drawing>>();
 
 		bool m_useOnlyChars = false;
 
-		public SymbolDrawingCache(DrawingCache drawingCache, IList<SymbolInfo> symbolInfoList)
+		public SymbolDrawingCache(DrawingCache drawingCache)
 		{
 			m_drawingCache = drawingCache;
-			m_symbolInfoList = symbolInfoList;
+			ParseSymbols();
 		}
 
-		public Drawing GetDrawing(int symbolID, Color color)
+		public Drawing GetDrawing(SymbolID symbolID, Color color)
 		{
 			Dictionary<Color, Drawing> map;
 			Drawing drawing;
@@ -41,9 +43,9 @@ namespace MyGame.Client
 			return drawing;
 		}
 
-		Drawing CreateDrawing(int symbolID, Color color)
+		Drawing CreateDrawing(SymbolID symbolID, Color color)
 		{
-			var symbol = m_symbolInfoList[symbolID];
+			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
 			Drawing drawing;
 
 			if (m_useOnlyChars || symbol.DrawingName == null)
@@ -82,6 +84,70 @@ namespace MyGame.Client
 			}
 
 			return dGroup;
+		}
+
+
+		void ParseSymbols()
+		{
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+			Stream resStream = ass.GetManifestResourceStream("MyGame.Client.Symbols.xml");
+
+			XDocument root = XDocument.Load(new StreamReader(resStream));
+			XElement rootElem = root.Element("Symbols");
+
+			m_symbolInfoList = new List<SymbolInfo>(rootElem.Elements().Count());
+			foreach (XElement elem in rootElem.Elements())
+			{
+				var symbol = new SymbolInfo();
+				symbol.Name = (string)elem.Element("Name");
+
+				SymbolID id;
+				if (Enum.TryParse<SymbolID>(symbol.Name, out id) == false)
+					throw new Exception();
+				symbol.ID = id;
+
+				if (elem.Element("CharSymbol") != null)
+				{
+					var charElem = elem.Element("CharSymbol");
+
+					XAttribute attr;
+
+					attr = charElem.Attribute("rotate");
+					if (attr != null)
+						symbol.CharRotation = (double)attr;
+
+					symbol.CharSymbol = ((string)charElem)[0];
+				}
+
+				if (elem.Element("Drawing") != null)
+				{
+					var drawingElem = elem.Element("Drawing");
+					XAttribute attr;
+
+					attr = drawingElem.Attribute("x");
+					if (attr != null)
+						symbol.X = (double)attr;
+
+					attr = drawingElem.Attribute("y");
+					if (attr != null)
+						symbol.Y = (double)attr;
+
+					attr = drawingElem.Attribute("w");
+					if (attr != null)
+						symbol.Width = (double)attr;
+
+					attr = drawingElem.Attribute("h");
+					if (attr != null)
+						symbol.Height = (double)attr;
+
+					attr = drawingElem.Attribute("rotate");
+					if (attr != null)
+						symbol.DrawingRotation = (double)attr;
+
+					symbol.DrawingName = (string)drawingElem;
+				}
+				m_symbolInfoList.Add(symbol);
+			}
 		}
 	}
 }

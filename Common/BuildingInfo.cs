@@ -24,22 +24,22 @@ namespace MyGame
 		}
 	}
 
-	public class Buildings
+	public static class Buildings
 	{
-		Dictionary<BuildingID, BuildingInfo> m_buildingMap = new Dictionary<BuildingID, BuildingInfo>();
+		static Dictionary<BuildingID, BuildingInfo> m_buildingMap = new Dictionary<BuildingID, BuildingInfo>();
 
-		public Buildings()
+		static Buildings()
 		{
 			Add(new BuildingInfo(BuildingID.Smith));
 			Add(new BuildingInfo(BuildingID.Stockpile));
 		}
 
-		void Add(BuildingInfo info)
+		static void Add(BuildingInfo info)
 		{
 			m_buildingMap[info.ID] = info;
 		}
 
-		public BuildingInfo GetBuildingInfo(BuildingID id)
+		public static BuildingInfo GetBuildingInfo(BuildingID id)
 		{
 			return m_buildingMap[id];
 		}

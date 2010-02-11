@@ -110,7 +110,6 @@
     <Compile Include="DataTypes\IntRect.cs" />
     <Compile Include="DataTypes\IntPoint3D.cs" />
     <Compile Include="DataTypes\Grid3D.cs" />
-    <Compile Include="IArea.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />
     <Compile Include="LOSShadowCast1.cs" />

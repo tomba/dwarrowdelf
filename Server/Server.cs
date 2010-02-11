@@ -19,10 +19,9 @@ namespace MyGame.Server
 
 			/* Load area */
 
-			IAreaData areaData = new MyArea.Data.AreaData();
 			IArea area = new MyArea.Area();
 
-			var world = new World(area, areaData);
+			var world = new World(area);
 			world.Start();
 			World.TheWorld = world;
 
