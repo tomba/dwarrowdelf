@@ -12,7 +12,7 @@ using System.ComponentModel;
 
 namespace MyGame.Client
 {
-	public class ClientNetStatistics : INotifyPropertyChanged
+	class ClientNetStatistics : INotifyPropertyChanged
 	{
 		public int SentMessages { get; set; }
 		public int SentBytes { get; set; }
@@ -40,7 +40,7 @@ namespace MyGame.Client
 		#endregion
 	}
 
-	public class ClientConnection
+	class ClientConnection
 	{
 		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
 		int m_transactionNumber;

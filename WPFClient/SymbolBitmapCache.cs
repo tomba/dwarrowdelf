@@ -89,9 +89,7 @@ namespace MyGame.Client
 
 			Drawing d = m_symbolDrawingCache.GetDrawing(symbolID, color);
 
-			drawingContext.PushTransform(
-				new ScaleTransform(Math.Floor(m_size) / 100, Math.Floor(m_size) / 100));
-
+			drawingContext.PushTransform(new ScaleTransform(Math.Floor(m_size) / 100, Math.Floor(m_size) / 100));
 			drawingContext.DrawDrawing(d);
 			drawingContext.Pop();
 

@@ -20,7 +20,7 @@ namespace MyGame.Client
 		{
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
 
-			var uri = new Uri("PlanetCute.xaml", UriKind.Relative);
+			var uri = new Uri("SymbolDrawings.xaml", UriKind.Relative);
 			var symbolResources = (ResourceDictionary)Application.LoadComponent(uri);
 			m_drawingMap = new Dictionary<string, Dictionary<Color, Drawing>>(symbolResources.Count);
 			foreach (System.Collections.DictionaryEntry de in symbolResources)

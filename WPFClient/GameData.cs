@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
-	public static class MyExtensions
+	static class MyExtensions
 	{
 		public static System.Windows.Media.Color ToColor(this GameColor color)
 		{

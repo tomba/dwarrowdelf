@@ -40,18 +40,4 @@ namespace MyGame
 		Key,
 		Rock,
 	}
-
-	public class SymbolInfo
-	{
-		public SymbolID ID { get; set; }
-		public string Name { get; set; }
-		public char CharSymbol { get; set; }
-		public string DrawingName { get; set; }
-		public double X { get; set; }
-		public double Y { get; set; }
-		public double Width { get; set; }
-		public double Height { get; set; }
-		public double CharRotation { get; set; }
-		public double DrawingRotation { get; set; }
-	}
 }

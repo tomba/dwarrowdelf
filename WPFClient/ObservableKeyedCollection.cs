@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace MyGame.Client
 {
-	public class ReadOnlyObservableKeyedCollection<K, T>
+	class ReadOnlyObservableKeyedCollection<K, T>
 		: ReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
 		ObservableKeyedCollection<K, T> m_collection;
@@ -53,7 +53,7 @@ namespace MyGame.Client
 		#endregion
 	}
 
-	public abstract class ObservableKeyedCollection<K, T> : KeyedCollection<K, T>,
+	abstract class ObservableKeyedCollection<K, T> : KeyedCollection<K, T>,
 		INotifyCollectionChanged, INotifyPropertyChanged
 	{
 		public ObservableKeyedCollection() : base(null, 0)

@@ -11,6 +11,20 @@ namespace MyGame.Client
 {
 	class SymbolDrawingCache
 	{
+		class SymbolInfo
+		{
+			public SymbolID ID { get; set; }
+			public string Name { get; set; }
+			public char CharSymbol { get; set; }
+			public string DrawingName { get; set; }
+			public double X { get; set; }
+			public double Y { get; set; }
+			public double Width { get; set; }
+			public double Height { get; set; }
+			public double CharRotation { get; set; }
+			public double DrawingRotation { get; set; }
+		}
+
 		IList<SymbolInfo> m_symbolInfoList;
 		DrawingCache m_drawingCache;
 		Dictionary<SymbolID, Dictionary<Color, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<Color, Drawing>>();
@@ -90,7 +104,7 @@ namespace MyGame.Client
 		void ParseSymbols()
 		{
 			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyGame.Client.Symbols.xml");
+			Stream resStream = ass.GetManifestResourceStream("MyGame.Client.SymbolInfos.xml");
 
 			XDocument root = XDocument.Load(new StreamReader(resStream));
 			XElement rootElem = root.Element("Symbols");
