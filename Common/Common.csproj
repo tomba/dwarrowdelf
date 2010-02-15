@@ -119,7 +119,7 @@
     <Compile Include="AStar\AStar2D.cs" />
     <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
-    <Compile Include="ClientData.cs" />
+    <Compile Include="ClientMsgs.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />
     <Compile Include="AStar\AStar3D.cs" />
