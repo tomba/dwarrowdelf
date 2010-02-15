@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract]
+	[Serializable]
 	public struct IntPoint3D : IEquatable<IntPoint3D>
 	{
 		[DataMember(Name = "X")]

@@ -14,6 +14,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public struct GameColor : IEquatable<GameColor>
 	{
 		[DataMember(Name = "R")]

@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract]
+	[Serializable]
 	public struct TileData
 	{
 		[DataMember]

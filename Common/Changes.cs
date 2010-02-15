@@ -7,11 +7,13 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract]
+	[Serializable]
 	public abstract class Event
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class TickChangeEvent : Event
 	{
 		[DataMember]
@@ -29,6 +31,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ActionProgressEvent : Event
 	{
 		public int UserID { get; set; }
@@ -47,6 +50,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ActionRequiredEvent : Event
 	{
 		[DataMember]

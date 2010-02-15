@@ -11,11 +11,13 @@ using System.Runtime.Serialization;
 namespace MyGame.ClientMsgs
 {
 	[DataContract]
+	[Serializable]
 	public abstract class Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOnRequest : Message
 	{
 		[DataMember]
@@ -23,6 +25,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOnReply : Message
 	{
 		[DataMember]
@@ -32,16 +35,19 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOffRequest : Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOffReply : Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOnCharRequest : Message
 	{
 		[DataMember]
@@ -49,21 +55,25 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOnCharReply : Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOffCharRequest : Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LogOffCharReply : Message
 	{
 	}
 
 	[DataContract]
+	[Serializable]
 	public class EnqueueActionMessage : Message
 	{
 		[DataMember]
@@ -71,12 +81,14 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ProceedTickMessage : Message
 	{
 	}
 
 
 	[DataContract]
+	[Serializable]
 	public class SetTilesMessage : Message
 	{
 		[DataMember]
@@ -88,6 +100,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class CompoundMessage : Message
 	{
 		[DataMember]
@@ -101,6 +114,7 @@ namespace MyGame.ClientMsgs
 
 	/* Item in inventory or floor */
 	[DataContract]
+	[Serializable]
 	public class ItemData : Message
 	{
 		[DataMember]
@@ -126,6 +140,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class LivingData : Message
 	{
 		[DataMember]
@@ -154,6 +169,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MapData : Message
 	{
 		[DataMember]
@@ -165,6 +181,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MapDataTerrains : Message
 	{
 		[DataMember]
@@ -176,6 +193,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MapDataTerrainsList : Message
 	{
 		[DataMember]
@@ -190,6 +208,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MapDataObjects : Message
 	{
 		[DataMember]
@@ -199,6 +218,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MapDataBuildings : Message
 	{
 		[DataMember]
@@ -208,6 +228,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ObjectMove : Message
 	{
 		[DataMember]
@@ -238,6 +259,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ObjectDestructedMessage : Message
 	{
 		[DataMember]
@@ -250,6 +272,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class EventMessage : Message
 	{
 		[DataMember]
@@ -267,6 +290,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class BuildingData : Message
 	{
 		[DataMember]
@@ -287,6 +311,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[DataContract]
+	[Serializable]
 	public class ControllablesData : Message
 	{
 		[DataMember]

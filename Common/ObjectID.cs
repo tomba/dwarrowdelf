@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[DataContract]
+	[Serializable]
 	public struct ObjectID : IEquatable<ObjectID>
 	{
 		[DataMember]

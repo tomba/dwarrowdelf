@@ -6,14 +6,8 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract,
-	KnownType(typeof(MoveAction)),
-	KnownType(typeof(WaitAction)),
-	KnownType(typeof(GetAction)),
-	KnownType(typeof(DropAction)),
-	KnownType(typeof(MineAction)),
-	KnownType(typeof(BuildItemAction)),
-	]
+	[DataContract]
+	[Serializable]
 	public abstract class GameAction
 	{
 		[DataMember]
@@ -30,7 +24,8 @@ namespace MyGame
 	}
 
 	[DataContract]
-	public class MoveAction: GameAction
+	[Serializable]
+	public class MoveAction : GameAction
 	{
 		[DataMember]
 		public Direction Direction { get; set; }
@@ -47,6 +42,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class WaitAction : GameAction
 	{
 		[DataMember]
@@ -64,15 +60,16 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class DropAction : GameAction
 	{
-        [DataMember]
-        public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
+		[DataMember]
+		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
-        public DropAction(IEnumerable<IIdentifiable> items)
-        {
-            this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
-        }
+		public DropAction(IEnumerable<IIdentifiable> items)
+		{
+			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+		}
 
 		public override string ToString()
 		{
@@ -82,15 +79,16 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class GetAction : GameAction
 	{
 		[DataMember]
 		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
 
 		public GetAction(IEnumerable<IIdentifiable> items)
-        {
-            this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
-        }
+		{
+			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+		}
 
 		public override string ToString()
 		{
@@ -100,6 +98,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class MineAction : GameAction
 	{
 		[DataMember]
@@ -117,6 +116,7 @@ namespace MyGame
 	}
 
 	[DataContract]
+	[Serializable]
 	public class BuildItemAction : GameAction
 	{
 		// [DataMember]
