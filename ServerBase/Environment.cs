@@ -411,7 +411,7 @@ namespace MyGame.Server
 			writer(new ClientMsgs.MapDataObjects()
 			{
 				Environment = this.ObjectID,
-				ObjectData = obList,
+				ObjectData = obList.ToArray(),
 			});
 
 			// this may not need dividing, perhaps

@@ -64,7 +64,7 @@ namespace MyGame
 	public class DropAction : GameAction
 	{
 		[DataMember]
-		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
+		public ObjectID[] ItemObjectIDs { get; set; }
 
 		public DropAction(IEnumerable<IIdentifiable> items)
 		{
@@ -83,7 +83,7 @@ namespace MyGame
 	public class GetAction : GameAction
 	{
 		[DataMember]
-		public IEnumerable<ObjectID> ItemObjectIDs { get; set; }
+		public ObjectID[] ItemObjectIDs { get; set; }
 
 		public GetAction(IEnumerable<IIdentifiable> items)
 		{
@@ -123,7 +123,7 @@ namespace MyGame
 		// public object type etc
 
 		[DataMember]
-		public IEnumerable<ObjectID> SourceObjectIDs { get; set; }
+		public ObjectID[] SourceObjectIDs { get; set; }
 
 		public BuildItemAction(IEnumerable<IIdentifiable> sourceItems)
 		{

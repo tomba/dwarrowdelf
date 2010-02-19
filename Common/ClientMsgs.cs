@@ -104,7 +104,7 @@ namespace MyGame.ClientMsgs
 	public class CompoundMessage : Message
 	{
 		[DataMember]
-		public IEnumerable<Message> Messages { get; set; }
+		public Message[] Messages { get; set; }
 
 		public override string ToString()
 		{
@@ -189,7 +189,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCuboid Bounds { get; set; }
 		[DataMember]
-		public IEnumerable<TileData> TerrainIDs { get; set; }
+		public TileData[] TerrainIDs { get; set; }
 	}
 
 	[DataContract]
@@ -199,7 +199,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IEnumerable<KeyValuePair<IntPoint3D, TileData>> TileDataList { get; set; }
+		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
 
 		public override string ToString()
 		{
@@ -214,7 +214,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IEnumerable<Message> ObjectData { get; set; }
+		public Message[] ObjectData { get; set; }
 	}
 
 	[DataContract]
@@ -224,7 +224,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public ObjectID Environment { get; set; }
 		[DataMember]
-		public IEnumerable<BuildingData> BuildingData { get; set; }
+		public BuildingData[] BuildingData { get; set; }
 	}
 
 	[DataContract]
@@ -315,7 +315,7 @@ namespace MyGame.ClientMsgs
 	public class ControllablesData : Message
 	{
 		[DataMember]
-		public IEnumerable<ObjectID> Controllables { get; set; }
+		public ObjectID[] Controllables { get; set; }
 
 		public override string ToString()
 		{

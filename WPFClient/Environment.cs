@@ -209,7 +209,7 @@ namespace MyGame.Client
 			return m_tileGrid.GetTileData(p);
 		}
 
-		public void SetTerrains(IEnumerable<KeyValuePair<IntPoint3D, TileData>> tileDataList)
+		public void SetTerrains(Tuple<IntPoint3D, TileData>[] tileDataList)
 		{
 			this.Version += 1;
 
@@ -237,8 +237,8 @@ namespace MyGame.Client
 			foreach (var kvp in tileDataList)
 			{
 				setNew = true;
-				IntPoint3D p = kvp.Key;
-				TileData data = kvp.Value;
+				IntPoint3D p = kvp.Item1;
+				TileData data = kvp.Item2;
 
 				x1 = Math.Min(x1, p.X);
 				x2 = Math.Max(x2, p.X + 1);

@@ -1,4 +1,4 @@
-﻿
+﻿#define USE_MY
 //#define USE_BINFMT
 
 using System;
@@ -18,6 +18,9 @@ namespace MyGame
 	{
 #if USE_BINFMT
 		static BinaryFormatter m_bformatter = new BinaryFormatter();
+#elif USE_MY
+		static GameSerializer.Serializer m_serializer;
+
 #else
 		static DataContractSerializer m_serializer;
 #endif
@@ -25,6 +28,12 @@ namespace MyGame
 		static Serializer()
 		{
 #if USE_BINFMT
+#elif USE_MY
+			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
+			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
+			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
+			var types = messageTypes.Concat(eventTypes).Concat(actionTypes);
+			m_serializer = new GameSerializer.Serializer(types.ToArray());
 #else
 			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
@@ -38,6 +47,8 @@ namespace MyGame
 		{
 #if USE_BINFMT
 			m_bformatter.Serialize(stream, msg);
+#elif USE_MY
+			m_serializer.Serialize(stream, msg);
 #else
 			using (var w = XmlDictionaryWriter.CreateBinaryWriter(stream, null, null, false))
 			{
@@ -50,6 +61,9 @@ namespace MyGame
 		{
 #if USE_BINFMT
 			return (Message)m_bformatter.Deserialize(stream);
+#elif USE_MY
+			object ob = m_serializer.Deserialize(stream);
+			return (Message)ob;
 #else
 			using (var r = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
 			{

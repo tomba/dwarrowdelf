@@ -180,6 +180,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameSerializer\GameSerializer.csproj">
+      <Project>{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}</Project>
+      <Name>GameSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MemoryMappedLog\MemoryMappedLog.csproj">
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MemoryMappedLog</Name>

@@ -468,9 +468,9 @@ namespace MyGame.Server
 				return new ClientMsgs.MapDataTerrainsList()
 				{
 					Environment = mc.MapID,
-					TileDataList = new KeyValuePair<IntPoint3D, TileData>[]
+					TileDataList = new Tuple<IntPoint3D, TileData>[]
 					{
-						new KeyValuePair<IntPoint3D, TileData>(mc.Location, mc.TileData)
+						new Tuple<IntPoint3D, TileData>(mc.Location, mc.TileData)
 					}
 				};
 			}
@@ -572,7 +572,7 @@ namespace MyGame.Server
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
-						new KeyValuePair<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
+						new Tuple<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
 						).ToArray(),
 					// XXX there seems to be a problem serializing this.
 					// evaluating it with ToArray() fixes it
