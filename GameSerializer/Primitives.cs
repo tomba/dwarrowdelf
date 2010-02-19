@@ -35,6 +35,64 @@ namespace GameSerializer
 			return mi;
 		}
 
+		static uint EncodeZigZag32(int n)
+		{
+			return (uint)((n << 1) ^ (n >> 31));
+		}
+
+		static ulong EncodeZigZag64(long n)
+		{
+			return (ulong)((n << 1) ^ (n >> 63));
+		}
+
+		static int DecodeZigZag32(uint n)
+		{
+			return (int)(n >> 1) ^ -(int)(n & 1);
+		}
+
+		static long DecodeZigZag64(ulong n)
+		{
+			return (long)(n >> 1) ^ -(long)(n & 1);
+		}
+
+		static uint ReadVarint32(Stream stream)
+		{
+			int result = 0;
+			int offset = 0;
+
+			for (; offset < 32; offset += 7)
+			{
+				int b = stream.ReadByte();
+				if (b == -1)
+					throw new Exception();
+
+				result |= (b & 0x7f) << offset;
+
+				if ((b & 0x80) == 0)
+					return (uint)result;
+			}
+
+			throw new Exception();
+		}
+
+		static void WriteVarint32(Stream stream, uint value)
+		{
+			while (true)
+			{
+				if ((value & ~0x7F) == 0)
+				{
+					stream.WriteByte((byte)value);
+					return;
+				}
+				else
+				{
+					stream.WriteByte((byte)((value & 0x7F) | 0x80));
+					value >>= 7;
+				}
+			}
+		}
+
+
 
 		public static void WritePrimitive(Stream stream, bool value)
 		{
@@ -62,109 +120,52 @@ namespace GameSerializer
 
 		public static void WritePrimitive(Stream stream, char value)
 		{
-			byte b1 = (byte)((value >> 8) & 0xff);
-			byte b2 = (byte)((value >> 0) & 0xff);
-
-			stream.WriteByte(b1);
-			stream.WriteByte(b2);
+			WriteVarint32(stream, value);
 		}
 
 		public static void ReadPrimitive(Stream stream, out char value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 2);
-
-			byte b1 = (byte)stream.ReadByte();
-			byte b2 = (byte)stream.ReadByte();
-
-			value = (char)((b1 << 8) | (b2 << 0));
+			value = (char)ReadVarint32(stream);
 		}
 
 		public static void WritePrimitive(Stream stream, ushort value)
 		{
-			byte b1 = (byte)((value >> 8) & 0xff);
-			byte b2 = (byte)((value >> 0) & 0xff);
-
-			stream.WriteByte(b1);
-			stream.WriteByte(b2);
+			WriteVarint32(stream, value);
 		}
 
 		public static void ReadPrimitive(Stream stream, out ushort value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 2);
-
-			byte b1 = (byte)stream.ReadByte();
-			byte b2 = (byte)stream.ReadByte();
-
-			value = (ushort)((b1 << 8) | (b2 << 0));
+			value = (ushort)ReadVarint32(stream);
 		}
 
 		public static void WritePrimitive(Stream stream, short value)
 		{
-			byte b1 = (byte)((value >> 8) & 0xff);
-			byte b2 = (byte)((value >> 0) & 0xff);
-
-			stream.WriteByte(b1);
-			stream.WriteByte(b2);
+			WriteVarint32(stream, EncodeZigZag32(value));
 		}
 
 		public static void ReadPrimitive(Stream stream, out short value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 2);
-
-			byte b1 = (byte)stream.ReadByte();
-			byte b2 = (byte)stream.ReadByte();
-
-			value = (short)((b1 << 8) | (b2 << 0));
+			value = (short)DecodeZigZag32(ReadVarint32(stream));
 		}
 
 		public static void WritePrimitive(Stream stream, uint value)
 		{
-			byte b1 = (byte)((value >> 24) & 0xff);
-			byte b2 = (byte)((value >> 16) & 0xff);
-			byte b3 = (byte)((value >> 8) & 0xff);
-			byte b4 = (byte)((value >> 0) & 0xff);
-
-			stream.WriteByte(b1);
-			stream.WriteByte(b2);
-			stream.WriteByte(b3);
-			stream.WriteByte(b4);
+			WriteVarint32(stream, value);
 		}
 
 		public static void ReadPrimitive(Stream stream, out uint value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 4);
-
-			byte b1 = (byte)stream.ReadByte();
-			byte b2 = (byte)stream.ReadByte();
-			byte b3 = (byte)stream.ReadByte();
-			byte b4 = (byte)stream.ReadByte();
-
-			value = (uint)((b1 << 24) | (b2 << 16) | (b3 << 8) | (b4 << 0));
+			value = ReadVarint32(stream);
 		}
 
 		public static void WritePrimitive(Stream stream, int value)
 		{
-			byte b1 = (byte)((value >> 24) & 0xff);
-			byte b2 = (byte)((value >> 16) & 0xff);
-			byte b3 = (byte)((value >> 8) & 0xff);
-			byte b4 = (byte)((value >> 0) & 0xff);
-
-			stream.WriteByte(b1);
-			stream.WriteByte(b2);
-			stream.WriteByte(b3);
-			stream.WriteByte(b4);
+			WriteVarint32(stream, EncodeZigZag32(value));
 		}
 
 		public static void ReadPrimitive(Stream stream, out int value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 4);
-
-			byte b1 = (byte)stream.ReadByte();
-			byte b2 = (byte)stream.ReadByte();
-			byte b3 = (byte)stream.ReadByte();
-			byte b4 = (byte)stream.ReadByte();
-
-			value = (b1 << 24) | (b2 << 16) | (b3 << 8) | (b4 << 0);
+			value = DecodeZigZag32(ReadVarint32(stream));
 		}
 
 		public static void WritePrimitive(Stream stream, string value)
