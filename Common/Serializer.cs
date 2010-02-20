@@ -1,4 +1,5 @@
 ﻿#define USE_MY
+#define USE_MY_COMP
 //#define USE_BINFMT
 
 using System;
@@ -49,6 +50,9 @@ namespace MyGame
 			m_bformatter.Serialize(stream, msg);
 #elif USE_MY
 			m_serializer.Serialize(stream, msg);
+#elif USE_MY_COMP
+			using (var s = new System.IO.Compression.DeflateStream(stream, System.IO.Compression.CompressionMode.Compress, true))
+				m_serializer.Serialize(s, msg);
 #else
 			using (var w = XmlDictionaryWriter.CreateBinaryWriter(stream, null, null, false))
 			{
@@ -64,6 +68,13 @@ namespace MyGame
 #elif USE_MY
 			object ob = m_serializer.Deserialize(stream);
 			return (Message)ob;
+#elif USE_MY_COMP
+			using (var s = new System.IO.Compression.DeflateStream(stream, System.IO.Compression.CompressionMode.Decompress, true))
+
+			{
+				object ob = m_serializer.Deserialize(s);
+				return (Message)ob;
+			}
 #else
 			using (var r = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
 			{
