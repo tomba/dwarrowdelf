@@ -6,154 +6,88 @@ using GameSerializer;
 using System.IO;
 using MyGame;
 using System.Reflection;
+using MyGame.ClientMsgs;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
+using System.Xml;
+using System.Runtime.Serialization;
 
 namespace SerializerTest
 {
-	[Serializable]
-	public struct MyPoint
-	{
-		public int m_x;
-		public int m_y;
-
-		public MyPoint(int x, int y)
-		{
-			m_x = x;
-			m_y = y;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("P({0},{1})", m_x, m_y);
-		}
-	}
-
-	[Serializable]
-	public struct MyRect
-	{
-		public MyPoint m_p1;
-		public MyPoint m_p2;
-
-		public MyRect(MyPoint p1, MyPoint p2)
-		{
-			m_p1 = p1;
-			m_p2 = p2;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("R({0}, {1})", m_p1, m_p2);
-		}
-	}
-
-
-	[Serializable]
-	public abstract class BaseMsg
-	{
-	}
-
-	[Serializable]
-	public class Msg : BaseMsg
-	{
-	}
-
-	[Serializable]
-	public class Msg0 : Msg
-	{
-		public int Value;
-		public BaseMsg[] arr;
-
-		public Msg0(int val)
-		{
-			this.Value = val;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("Msg0({0})", Value);
-		}
-	}
-
-	[Serializable]
-	public class Msg1 : Msg
-	{
-		public MyRect Rect;
-
-		public Msg1()
-		{
-			this.Rect = new MyRect();
-		}
-
-		public override string ToString()
-		{
-			return String.Format("Msg1({0})", Rect);
-		}
-	}
-
-	[Serializable]
-	public class Msg2 : Msg
-	{
-		public int[] IntArr;
-		public MyPoint[] PointArr;
-
-		public Msg2()
-		{
-		}
-
-		public override string ToString()
-		{
-			return String.Format("Msg2({0}) ({1})",
-				IntArr == null ? "<null>" : string.Join(", ", IntArr),
-				PointArr == null ? "<null>" : string.Join(", ", PointArr));
-		}
-	}
-
-	[Serializable]
-	public class Msg3 : Msg
-	{
-		public Msg Message;
-
-		public override string ToString()
-		{
-			return String.Format("Msg3( {0} )", Message);
-		}
-	}
-
-
 	class Program
 	{
 		static void Main(string[] args)
 		{
-			Test1();
-			//Test2();
+			Stream stream = new MemoryStream(1024 * 1024);
+			var obs = CreateObjects();
+			const int loops = 50;
+			int maxsize;
+			TimeSpan time;
+
+			Console.WriteLine("Calling my serializer");
+			GC.Collect();
+			TestMySerializer(stream, obs, loops, out maxsize, out time);
+			Console.WriteLine("max size {0}, time {1}", maxsize, time);
+
+
+			Console.WriteLine("Calling my DataContractSerializer");
+			stream.Seek(0, SeekOrigin.Begin);
+			GC.Collect();
+			TestDataContractSerializer(stream, obs, loops, out maxsize, out time);
+			Console.WriteLine("max size {0}, time {1}", maxsize, time);
+
+
+			Console.WriteLine("Calling my BinaryFormatter");
+			stream.Seek(0, SeekOrigin.Begin);
+			GC.Collect();
+			TestBinaryFormatter(stream, obs, loops, out maxsize, out time);
+			Console.WriteLine("max size {0}, time {1}", maxsize, time);
 
 			Console.WriteLine("done, press enter");
 			Console.ReadLine();
 		}
 
-		class A
+		static object[] CreateObjects()
 		{
-			public int a; // { get; set; }
-		}
+			Message[] actions = new EnqueueActionMessage[50];
+			for (int i = 0; i < actions.Length; ++i)
+			{
+				if (i % 2 == 0)
+					actions[i] = new EnqueueActionMessage() { Action = new MoveAction(Direction.NorthEast) { TransactionID = i } };
+				else
+					actions[i] = new EnqueueActionMessage() { Action = new MoveAction(Direction.West) { TransactionID = i } };
+			}
 
-		class B : A
-		{
-			public int b { get; set; }
-		}
+			var tiles = new Tuple<IntPoint3D, TileData>[50];
+			for (int i = 0; i < tiles.Length; ++i)
+				tiles[i] = new Tuple<IntPoint3D, TileData>(new IntPoint3D(i, i + 1, i + 2),
+					new TileData() { FloorID = FloorID.NaturalFloor, InteriorID = InteriorID.NaturalWall });
 
-		static void Test1()
-		{
-			Console.WriteLine("MySerializer");
-
-			var testTypes = new Type[] {
-				typeof(Msg0),
-				typeof(Msg1),
-				typeof(Msg2),
-				typeof(Msg3),
-				typeof(Msg[]),
+			var terrains = new MapDataTerrainsList()
+			{
+				Environment = new ObjectID(123456),
+				TileDataList = tiles,
 			};
 
 
-			IEnumerable<Type> rootTypes = testTypes;
+			return actions.Concat(new Message[] { terrains }).ToArray<object>();
+		}
+
+		static void Test(Stream stream)
+		{
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+				var arr = new byte[stream.Length];
+				stream.Read(arr, 0, (int)stream.Length);
+				for (int i = 0; i < arr.Length; ++i)
+					Console.Write("{0:x2} ", arr[i]);
+				Console.WriteLine();
+			}
+		}
+
+		static void TestMySerializer(Stream stream, object[] obs, int loops, out int maxsize, out TimeSpan time)
+		{
+			IEnumerable<Type> rootTypes = new Type[0];
 
 			var messageTypes = typeof(MyGame.ClientMsgs.Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(MyGame.ClientMsgs.Message)));
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
@@ -165,55 +99,116 @@ namespace SerializerTest
 
 			var ser = new GameSerializer.Serializer(rootTypes.ToArray());
 
-			Stream stream = new MemoryStream(4096);
+			maxsize = 0;
 
+			var sw = Stopwatch.StartNew();
 
-			stream.Seek(0, SeekOrigin.Begin);
-
-			object[] obs = new object[] {
-				//new MyPoint(1, 2),
-				//new MyPoint(3, 4),
-				//new MyRect(new MyPoint(1, 2), new MyPoint(3, 4)),
-				//new Msg1() { Rect = new MyRect(new MyPoint(1, 2), new MyPoint(3, 4)) },
-				//new Msg2() { IntArr = new int[] { 1, 2, 3}, PointArr = new MyPoint[] { new MyPoint(3, 2) } },
-				//new Msg3() { Message = new Msg0(4) },
-				//(Msg)new Msg0(123)  { arr = new Msg[] { new Msg1() { Rect = new MyRect(new MyPoint(12, 13), new MyPoint(14, 15)) } } },
-				//new MyGame.ClientMsgs.MapDataTerrainsList() { Environment = new ObjectID(123456), TileDataList = new Tuple<IntPoint3D,TileData>[] {
-				//	new Tuple<IntPoint3D, TileData>(new IntPoint3D(5, 6, 7), new TileData() { FloorID = FloorID.NaturalFloor })
-				//} },
-
-				new MoveAction(Direction.East) { TransactionID = 99 },
-			};
-
-			foreach (var o in obs)
-			{
-				Console.WriteLine("Serializing {0}", o);
-				ser.Serialize(stream, o);
-			}
-
+			for (int l = 0; l < loops; ++l)
 			{
 				stream.Seek(0, SeekOrigin.Begin);
-				var arr = new byte[stream.Length];
-				stream.Read(arr, 0, (int)stream.Length);
-				for (int i = 0; i < arr.Length; ++i)
-					Console.Write("{0:x2} ", arr[i]);
-				Console.WriteLine();
+
+				foreach (var o in obs)
+					ser.Serialize(stream, o);
+
+				maxsize = (int)stream.Position;
+
+				stream.Seek(0, SeekOrigin.Begin);
+
+				while (stream.Position < stream.Length)
+				{
+					var ob = (Message)ser.Deserialize(stream);
+					if (ob == null)
+						throw new Exception();
+				}
 			}
 
+			sw.Stop();
 
-			stream.Seek(0, SeekOrigin.Begin);
-
-			int idx = 0;
-			while (stream.Position < stream.Length)
-			{
-				object o = ser.Deserialize(stream);
-				Console.WriteLine("Deserialized {0}", o);
-
-				if (obs[idx].ToString() != o.ToString())
-					Console.WriteLine("FAIL!!!");
-				idx++;
-			}
+			time = sw.Elapsed;
 		}
 
+		static void TestBinaryFormatter(Stream stream, object[] obs, int loops, out int maxsize, out TimeSpan time)
+		{
+			var bf = new BinaryFormatter();
+
+			maxsize = 0;
+
+			var sw = Stopwatch.StartNew();
+
+			for (int l = 0; l < loops; ++l)
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+
+				foreach (var o in obs)
+					bf.Serialize(stream, obs);
+
+				maxsize = (int)stream.Position;
+
+				stream.Seek(0, SeekOrigin.Begin);
+
+				while (stream.Position < stream.Length)
+				{
+					var ob = (Message)bf.Deserialize(stream);
+					if (ob == null)
+						throw new Exception();
+				}
+			}
+
+			sw.Stop();
+
+			time = sw.Elapsed;
+		}
+
+		static void TestDataContractSerializer(Stream stream, object[] obs, int loops, out int maxsize, out TimeSpan time)
+		{
+			IEnumerable<Type> rootTypes = new Type[0];
+
+			var messageTypes = typeof(MyGame.ClientMsgs.Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(MyGame.ClientMsgs.Message)));
+			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
+			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
+
+			rootTypes = rootTypes.Concat(messageTypes);
+			rootTypes = rootTypes.Concat(eventTypes);
+			rootTypes = rootTypes.Concat(actionTypes);
+
+			var serializer = new DataContractSerializer(typeof(Message), rootTypes);
+
+			maxsize = 0;
+
+			var sw = Stopwatch.StartNew();
+
+			for (int l = 0; l < loops; ++l)
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+
+				foreach (var o in obs)
+				{
+					using (var w = XmlDictionaryWriter.CreateBinaryWriter(stream, null, null, false))
+					{
+						serializer.WriteObject(w, o);
+					}
+					break;
+				}
+
+				maxsize = (int)stream.Position;
+
+				stream.Seek(0, SeekOrigin.Begin);
+
+				for (int i = 0; i < obs.Length; ++i)
+				{
+					using (var r = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
+					{
+						var ob = (Message)serializer.ReadObject(r);
+						if (ob == null)
+							throw new Exception();
+					}
+					break;
+				}
+			}
+
+			sw.Stop();
+
+			time = sw.Elapsed;
+		}
 	}
 }
