@@ -101,8 +101,6 @@ namespace GameSerializer
 
 		public static void ReadPrimitive(Stream stream, out bool value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 1);
-
 			value = stream.ReadByte() != 0;
 		}
 
@@ -113,8 +111,6 @@ namespace GameSerializer
 
 		public static void ReadPrimitive(Stream stream, out byte value)
 		{
-			Debug.Assert(stream.Length - stream.Position >= 1);
-
 			value = (byte)stream.ReadByte();
 		}
 
