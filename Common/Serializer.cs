@@ -1,5 +1,5 @@
 ﻿//#define USE_MY
-//#define USE_MY_COMP
+#define USE_MY_COMP
 //#define USE_BINFMT
 
 using System;
@@ -19,7 +19,7 @@ namespace MyGame
 	{
 #if USE_BINFMT
 		static BinaryFormatter m_bformatter = new BinaryFormatter();
-#elif USE_MY
+#elif USE_MY || USE_MY_COMP
 		static GameSerializer.Serializer m_serializer;
 
 #else
@@ -29,7 +29,7 @@ namespace MyGame
 		static Serializer()
 		{
 #if USE_BINFMT
-#elif USE_MY
+#elif USE_MY || USE_MY_COMP
 			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
 			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
@@ -70,7 +70,6 @@ namespace MyGame
 			return (Message)ob;
 #elif USE_MY_COMP
 			using (var s = new System.IO.Compression.DeflateStream(stream, System.IO.Compression.CompressionMode.Decompress, true))
-
 			{
 				object ob = m_serializer.Deserialize(s);
 				return (Message)ob;

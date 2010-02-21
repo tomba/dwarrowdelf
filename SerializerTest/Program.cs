@@ -29,14 +29,6 @@ namespace SerializerTest
 			TestMySerializer(stream, obs, loops, out maxsize, out time);
 			Console.WriteLine("max size {0}, time {1}", maxsize, time);
 
-
-			Console.WriteLine("Calling my DataContractSerializer");
-			stream.Seek(0, SeekOrigin.Begin);
-			GC.Collect();
-			TestDataContractSerializer(stream, obs, loops, out maxsize, out time);
-			Console.WriteLine("max size {0}, time {1}", maxsize, time);
-
-
 			Console.WriteLine("Calling my BinaryFormatter");
 			stream.Seek(0, SeekOrigin.Begin);
 			GC.Collect();
@@ -58,7 +50,7 @@ namespace SerializerTest
 					actions[i] = new EnqueueActionMessage() { Action = new MoveAction(Direction.West) { TransactionID = i } };
 			}
 
-			var tiles = new Tuple<IntPoint3D, TileData>[50];
+			var tiles = new Tuple<IntPoint3D, TileData>[1000];
 			for (int i = 0; i < tiles.Length; ++i)
 				tiles[i] = new Tuple<IntPoint3D, TileData>(new IntPoint3D(i, i + 1, i + 2),
 					new TileData() { FloorID = FloorID.NaturalFloor, InteriorID = InteriorID.NaturalWall });
@@ -140,7 +132,7 @@ namespace SerializerTest
 				stream.Seek(0, SeekOrigin.Begin);
 
 				foreach (var o in obs)
-					bf.Serialize(stream, obs);
+					bf.Serialize(stream, o);
 
 				maxsize = (int)stream.Position;
 
@@ -151,58 +143,6 @@ namespace SerializerTest
 					var ob = (Message)bf.Deserialize(stream);
 					if (ob == null)
 						throw new Exception();
-				}
-			}
-
-			sw.Stop();
-
-			time = sw.Elapsed;
-		}
-
-		static void TestDataContractSerializer(Stream stream, object[] obs, int loops, out int maxsize, out TimeSpan time)
-		{
-			IEnumerable<Type> rootTypes = new Type[0];
-
-			var messageTypes = typeof(MyGame.ClientMsgs.Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(MyGame.ClientMsgs.Message)));
-			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
-			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
-
-			rootTypes = rootTypes.Concat(messageTypes);
-			rootTypes = rootTypes.Concat(eventTypes);
-			rootTypes = rootTypes.Concat(actionTypes);
-
-			var serializer = new DataContractSerializer(typeof(Message), rootTypes);
-
-			maxsize = 0;
-
-			var sw = Stopwatch.StartNew();
-
-			for (int l = 0; l < loops; ++l)
-			{
-				stream.Seek(0, SeekOrigin.Begin);
-
-				foreach (var o in obs)
-				{
-					using (var w = XmlDictionaryWriter.CreateBinaryWriter(stream, null, null, false))
-					{
-						serializer.WriteObject(w, o);
-					}
-					break;
-				}
-
-				maxsize = (int)stream.Position;
-
-				stream.Seek(0, SeekOrigin.Begin);
-
-				for (int i = 0; i < obs.Length; ++i)
-				{
-					using (var r = XmlDictionaryReader.CreateBinaryReader(stream, XmlDictionaryReaderQuotas.Max))
-					{
-						var ob = (Message)serializer.ReadObject(r);
-						if (ob == null)
-							throw new Exception();
-					}
-					break;
 				}
 			}
 
