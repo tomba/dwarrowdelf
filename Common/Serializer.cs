@@ -1,5 +1,5 @@
-﻿//#define USE_MY
-#define USE_MY_COMP
+﻿#define USE_MY
+//#define USE_MY_COMP
 //#define USE_BINFMT
 
 using System;

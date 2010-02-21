@@ -232,11 +232,11 @@ namespace MyGame.Client
 				z2 = this.Bounds.Z2;
 			}
 
-			bool setNew = false;
+			bool setNewBounds = false;
 
 			foreach (var kvp in tileDataList)
 			{
-				setNew = true;
+				setNewBounds = true;
 				IntPoint3D p = kvp.Item1;
 				TileData data = kvp.Item2;
 
@@ -253,10 +253,9 @@ namespace MyGame.Client
 					MapChanged(p);
 			}
 
-			if (setNew)
+			if (setNewBounds)
 			{
 				this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
-				MyDebug.WriteLine(this.Bounds.ToString());
 			}
 		}
 
@@ -291,7 +290,6 @@ namespace MyGame.Client
 			z2 = Math.Max(z2, bounds.Z2);
 
 			this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
-			MyDebug.WriteLine(this.Bounds.ToString());
 
 			var iter = tileDataList.GetEnumerator();
 			foreach (IntPoint3D p in bounds.Range())
