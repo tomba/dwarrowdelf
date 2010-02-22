@@ -34,77 +34,76 @@ namespace GameSerializer
 			public ILGenerator ReaderILGen;
 		}
 
-		static Dictionary<Type, TypeData> m_map = new Dictionary<Type, TypeData>();
+		static Dictionary<Type, TypeData> s_map;
 
 		delegate void SerializerSwitch(Stream stream, object ob);
-		MethodInfo m_serializerSwitchMethodInfo;
-		SerializerSwitch m_serializerSwitch;
+		static MethodInfo s_serializerSwitchMethodInfo;
+		static SerializerSwitch s_serializerSwitch;
 
 		delegate void DeserializerSwitch(Stream stream, out object ob);
-		MethodInfo m_deserializerSwitchMethodInfo;
-		DeserializerSwitch m_deserializerSwitch;
+		static MethodInfo s_deserializerSwitchMethodInfo;
+		static DeserializerSwitch s_deserializerSwitch;
 
-		bool m_dynamic = true;
-
-		public Serializer(Type[] rootTypes)
+		public static void Initialize(Type[] rootTypes)
 		{
-			if (m_dynamic)
-				GenerateDynamic(rootTypes);
-			else
-				GenerateStatic(rootTypes);
+			if (s_map != null)
+				throw new Exception();
+
+			s_map = new Dictionary<Type, TypeData>();
+			GenerateDynamic(rootTypes);
 		}
 
-		public void Serialize(Stream stream, object data)
+		public static void Serialize(Stream stream, object data)
 		{
-			if (!m_map.ContainsKey(data.GetType()))
+			if (!s_map.ContainsKey(data.GetType()))
 				throw new ArgumentException("Type is not known");
 
-			var typeID = m_map[data.GetType()].TypeID;
+			var typeID = s_map[data.GetType()].TypeID;
 
 			D("Serializing {0}", data.GetType().Name);
 
-			m_serializerSwitch(stream, data);
+			s_serializerSwitch(stream, data);
 		}
 
-		public object Deserialize(Stream stream)
+		public static object Deserialize(Stream stream)
 		{
 			D("Deserializing");
 
 			object o;
-			m_deserializerSwitch(stream, out o);
+			s_deserializerSwitch(stream, out o);
 			return o;
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
-		void D(string fmt, params object[] args)
+		static void D(string fmt, params object[] args)
 		{
 			//Console.WriteLine("S: " + String.Format(fmt, args));
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
-		void D(ILGenerator ilGen, string fmt, params object[] args)
+		static void D(ILGenerator ilGen, string fmt, params object[] args)
 		{
 			//ilGen.EmitWriteLine("E: " + String.Format(fmt, args));
 		}
 
-		Type[] AddTypes(Type[] rootTypes)
+		static void AddTypes(Type[] rootTypes)
 		{
-			// add types needed by the serializer
-			var typeSet = new HashSet<Type>(new Type[] { typeof(ushort), typeof(uint) });
+			var primitives = new Type[] { typeof(bool), typeof(byte), typeof(char),
+				typeof(ushort), typeof(short), typeof(uint), typeof(int), typeof(string) };
+
+			var typeSet = new HashSet<Type>(primitives);
 
 			foreach (var type in rootTypes)
-				AddTypes(type, typeSet);
-
-			var types = typeSet.ToArray();
+				CollectTypes(type, typeSet);
 
 			ushort typeID = 0;
-			foreach (var type in types)
+			foreach (var type in typeSet)
 			{
 				if (type.IsInterface)
-					throw new NotSupportedException();
+					throw new NotSupportedException("Interfaces not supported");
 
 				if (!type.IsSerializable)
-					throw new NotSupportedException();
+					throw new NotSupportedException(String.Format("Type {0} is not marked as Serializable", type.ToString()));
 
 				var writer = Primitives.GetWritePrimitive(type);
 				var reader = Primitives.GetReadPrimitive(type.MakeByRefType());
@@ -115,15 +114,13 @@ namespace GameSerializer
 				var isStatic = writer != null;
 
 				if (isStatic)
-					m_map[type] = new TypeData(typeID++, writer, reader);
+					s_map[type] = new TypeData(typeID++, writer, reader);
 				else
-					m_map[type] = new TypeData(typeID++);
+					s_map[type] = new TypeData(typeID++);
 			}
-
-			return types;
 		}
 
-		void AddTypes(Type type, HashSet<Type> typeSet)
+		static void CollectTypes(Type type, HashSet<Type> typeSet)
 		{
 			if (typeSet.Contains(type))
 				return;
@@ -132,111 +129,68 @@ namespace GameSerializer
 
 			if (type.IsArray)
 			{
-				AddTypes(type.GetElementType(), typeSet);
+				CollectTypes(type.GetElementType(), typeSet);
 			}
 			else
 			{
 				var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
 				foreach (var field in fields)
-					AddTypes(field.FieldType, typeSet);
+					CollectTypes(field.FieldType, typeSet);
 			}
 		}
 
-		void GenerateStatic(Type[] rootTypes)
-		{
-			AssemblyName aName = null;
-			AssemblyBuilder ab = null;
-			TypeBuilder tb = null;
-
-			aName = new AssemblyName("Serializer");
-			ab = AppDomain.CurrentDomain.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndSave);
-			var modb = ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
-			tb = modb.DefineType("Serializer", TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Abstract);
-
-			AddTypes(rootTypes);
-
-			var types = m_map.Where(kvp => kvp.Value.IsStatic == false).Select(kvp => kvp.Key);
-
-			foreach (var type in types)
-				GenerateStaticSerializerStub(type, tb);
-
-			foreach (var type in types)
-				GenerateStaticDeserializerStub(type, tb);
-
-			foreach (var type in types)
-				GenerateSerializerBody(type);
-
-			foreach (var type in types)
-				GenerateDeserializerBody(type);
-
-
-			MethodBuilder mb = tb.DefineMethod("SerializerSwitch",
-				MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object) });
-			var ilGen = mb.GetILGenerator();
-			GenerateSerializerSwitch(ilGen);
-
-			mb = tb.DefineMethod("DeserializerSwitch",
-				MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object).MakeByRefType() });
-			ilGen = mb.GetILGenerator();
-			GenerateDeserializerSwitch(ilGen);
-
-			var t = tb.CreateType();
-			ab.Save(aName + ".dll");
-
-			var m1 = t.GetMethod("SerializerSwitch");
-			m_serializerSwitchMethodInfo = m1;
-			m_serializerSwitch = (SerializerSwitch)Delegate.CreateDelegate(typeof(SerializerSwitch), m1);
-
-			var m2 = t.GetMethod("DeserializerSwitch");
-			m_deserializerSwitchMethodInfo = m2;
-			m_deserializerSwitch = (DeserializerSwitch)Delegate.CreateDelegate(typeof(DeserializerSwitch), m2);
-		}
-
-
-		void GenerateDynamic(Type[] rootTypes)
+		static void GenerateDynamic(Type[] rootTypes)
 		{
 			AddTypes(rootTypes);
 
-			var types = m_map.Where(kvp => kvp.Value.IsStatic == false).Select(kvp => kvp.Key);
+			var types = s_map.Where(kvp => kvp.Value.IsStatic == false).Select(kvp => kvp.Key);
 
 			/* generate stubs */
 			foreach (var type in types)
-				GenerateDynamicSerializerStub(type);
+			{
+				var dm = GenerateDynamicSerializerStub(type);
+				s_map[type].WriterMethodInfo = dm;
+				s_map[type].WriterILGen = dm.GetILGenerator();
+			}
 
 			foreach (var type in types)
-				GenerateDynamicDeserializerStub(type);
+			{
+				var dm = GenerateDynamicDeserializerStub(type);
+				s_map[type].ReaderMethodInfo = dm;
+				s_map[type].ReaderILGen = dm.GetILGenerator();
+			}
 
 			var serializerSwitchMethod = new DynamicMethod("SerializerSwitch", null,
 				new Type[] { typeof(Stream), typeof(object) },
 				typeof(Serializer), true);
-			m_serializerSwitchMethodInfo = serializerSwitchMethod;
+			s_serializerSwitchMethodInfo = serializerSwitchMethod;
 
 			var deserializerSwitchMethod = new DynamicMethod("DeserializerSwitch", null,
 				new Type[] { typeof(Stream), typeof(object).MakeByRefType() },
 				typeof(Serializer), true);
-			m_deserializerSwitchMethodInfo = deserializerSwitchMethod;
+			s_deserializerSwitchMethodInfo = deserializerSwitchMethod;
 
 
 			/* generate bodies */
 			foreach (var type in types)
-				GenerateSerializerBody(type);
+				GenerateSerializerBody(type, s_map[type].WriterILGen);
 
 			foreach (var type in types)
-				GenerateDeserializerBody(type);
+				GenerateDeserializerBody(type, s_map[type].ReaderILGen);
 
 			var ilGen = serializerSwitchMethod.GetILGenerator();
-			GenerateSerializerSwitch(ilGen);
-			m_serializerSwitch = (SerializerSwitch)serializerSwitchMethod.CreateDelegate(typeof(SerializerSwitch));
+			GenerateSerializerSwitch(ilGen, s_map);
+			s_serializerSwitch = (SerializerSwitch)serializerSwitchMethod.CreateDelegate(typeof(SerializerSwitch));
 
 			ilGen = deserializerSwitchMethod.GetILGenerator();
-			GenerateDeserializerSwitch(ilGen);
-			m_deserializerSwitch = (DeserializerSwitch)deserializerSwitchMethod.CreateDelegate(typeof(DeserializerSwitch));
+			GenerateDeserializerSwitch(ilGen, s_map);
+			s_deserializerSwitch = (DeserializerSwitch)deserializerSwitchMethod.CreateDelegate(typeof(DeserializerSwitch));
 		}
 
 		static ushort GetTypeID(Type type)
 		{
-			return m_map[type].TypeID;
+			return s_map[type].TypeID;
 		}
 
 		static ushort GetTypeID(object ob)
@@ -259,27 +213,27 @@ namespace GameSerializer
 			}
 		}
 
-		MethodInfo GetWriterMethodInfo(Type type)
+		static MethodInfo GetWriterMethodInfo(Type type)
 		{
-			if (!m_map.ContainsKey(type))
+			if (!s_map.ContainsKey(type))
 				throw new Exception(String.Format("Unknown type {0}", type));
 
-			return m_map[type].WriterMethodInfo;
+			return s_map[type].WriterMethodInfo;
 		}
 
-		ILGenerator GetWriterILGen(Type type)
+		static ILGenerator GetWriterILGen(Type type)
 		{
-			return m_map[type].WriterILGen;
+			return s_map[type].WriterILGen;
 		}
 
-		MethodInfo GetReaderMethodInfo(Type type)
+		static MethodInfo GetReaderMethodInfo(Type type)
 		{
-			return m_map[type].ReaderMethodInfo;
+			return s_map[type].ReaderMethodInfo;
 		}
 
-		ILGenerator GetReaderILGen(Type type)
+		static ILGenerator GetReaderILGen(Type type)
 		{
-			return m_map[type].ReaderILGen;
+			return s_map[type].ReaderILGen;
 		}
 	}
 }

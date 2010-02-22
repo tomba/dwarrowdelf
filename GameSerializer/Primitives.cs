@@ -175,9 +175,7 @@ namespace GameSerializer
 			WritePrimitive(stream, (uint)value.Length);
 
 			foreach (char c in value)
-			{
 				WritePrimitive(stream, c);
-			}
 		}
 
 		public static void ReadPrimitive(Stream stream, out string value)

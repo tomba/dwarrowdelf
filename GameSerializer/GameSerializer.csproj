@@ -74,12 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Deserializer.cs" />
-    <Compile Include="DeserializeSwitch.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Primitives.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="SerializeSwitch.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

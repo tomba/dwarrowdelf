@@ -11,40 +11,18 @@ namespace GameSerializer
 {
 	public partial class Serializer
 	{
-		void GenerateDynamicSerializerStub(Type type)
+		static DynamicMethod GenerateDynamicSerializerStub(Type type)
 		{
-			if (!m_map.ContainsKey(type))
-				throw new Exception("asd");
-
 			var dm = new DynamicMethod("Serialize", null,
 				new Type[] { typeof(Stream), type },
 				typeof(Serializer), true);
 
-			m_map[type].WriterMethodInfo = dm;
-			m_map[type].WriterILGen = dm.GetILGenerator();
+			return dm;
 		}
 
-
-		void GenerateStaticSerializerStub(Type type, TypeBuilder tb)
-		{
-			if (!m_map.ContainsKey(type))
-				throw new Exception("asd");
-
-			MethodBuilder mb = tb.DefineMethod("Serialize",
-				MethodAttributes.Public | MethodAttributes.Static,
-				null,
-				new Type[] { typeof(Stream), type });
-
-			m_map[type].WriterMethodInfo = mb;
-			m_map[type].WriterILGen = mb.GetILGenerator();
-		}
-
-		void GenerateSerializerBody(Type type)
+		static void GenerateSerializerBody(Type type, ILGenerator il)
 		{
 			// arg0: Stream, arg1: value
-
-			var dm = GetWriterMethodInfo(type);
-			var il = GetWriterILGen(type);
 
 			D(il, "ser {0}", type.Name);
 
@@ -82,7 +60,7 @@ namespace GameSerializer
 				if (elemType.IsValueType)
 					il.EmitCall(OpCodes.Call, GetWriterMethodInfo(elemType), null);
 				else
-					il.EmitCall(OpCodes.Call, m_serializerSwitchMethodInfo, null);
+					il.EmitCall(OpCodes.Call, s_serializerSwitchMethodInfo, null);
 
 				// i = i + 1
 				il.Emit(OpCodes.Ldloc, idxLocal);
@@ -119,7 +97,7 @@ namespace GameSerializer
 					if (field.FieldType.IsValueType)
 						il.EmitCall(OpCodes.Call, GetWriterMethodInfo(field.FieldType), null);
 					else
-						il.EmitCall(OpCodes.Call, m_serializerSwitchMethodInfo, null);
+						il.EmitCall(OpCodes.Call, s_serializerSwitchMethodInfo, null);
 				}
 			}
 
@@ -127,7 +105,7 @@ namespace GameSerializer
 		}
 
 
-		void GenerateSerializerSwitch(ILGenerator il)
+		static void GenerateSerializerSwitch(ILGenerator il, IDictionary<Type, TypeData> map)
 		{
 			// arg0: Stream, arg1: object
 
@@ -158,8 +136,8 @@ namespace GameSerializer
 			il.Emit(OpCodes.Ldloc, idLocal);
 			il.EmitCall(OpCodes.Call, GetWriterMethodInfo(typeof(ushort)), null);
 
-			var jumpTable = new Label[m_map.Count];
-			foreach (var kvp in m_map)
+			var jumpTable = new Label[map.Count];
+			foreach (var kvp in map)
 				jumpTable[kvp.Value.TypeID] = il.DefineLabel();
 
 			il.Emit(OpCodes.Ldloc, idLocal);
@@ -168,7 +146,7 @@ namespace GameSerializer
 			D(il, "eihx");
 			il.ThrowException(typeof(Exception));
 
-			foreach (var kvp in m_map)
+			foreach (var kvp in map)
 			{
 				var data = kvp.Value;
 

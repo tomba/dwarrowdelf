@@ -11,42 +11,19 @@ namespace GameSerializer
 {
 	public partial class Serializer
 	{
-		void GenerateDynamicDeserializerStub(Type type)
+		static DynamicMethod GenerateDynamicDeserializerStub(Type type)
 		{
-			if (!m_map.ContainsKey(type))
-				throw new Exception();
-
 			var dm = new DynamicMethod("Deserialize", null,
 				new Type[] { typeof(Stream), type.MakeByRefType() },
 				typeof(Serializer), true);
 			dm.DefineParameter(2, ParameterAttributes.Out, "value");
 
-			m_map[type].ReaderMethodInfo = dm;
-			m_map[type].ReaderILGen = dm.GetILGenerator();
+			return dm;
 		}
 
-		void GenerateStaticDeserializerStub(Type type, TypeBuilder tb)
-		{
-			if (!m_map.ContainsKey(type))
-				throw new Exception("asd");
-
-			MethodBuilder mb = tb.DefineMethod("Deserialize",
-				MethodAttributes.Public | MethodAttributes.Static,
-				null,
-				new Type[] { typeof(Stream), type.MakeByRefType() });
-			mb.DefineParameter(2, ParameterAttributes.Out, "value");
-
-			m_map[type].ReaderMethodInfo = mb;
-			m_map[type].ReaderILGen = mb.GetILGenerator();
-		}
-
-
-		void GenerateDeserializerBody(Type type)
+		static void GenerateDeserializerBody(Type type, ILGenerator il)
 		{
 			// arg0: stream, arg1: out value
-
-			var dm = GetReaderMethodInfo(type);
-			var il = GetReaderILGen(type);
 
 			D(il, "deser {0}", type.Name);
 
@@ -91,7 +68,7 @@ namespace GameSerializer
 				if (elemType.IsValueType)
 					il.EmitCall(OpCodes.Call, GetReaderMethodInfo(elemType), null);
 				else
-					il.EmitCall(OpCodes.Call, m_deserializerSwitchMethodInfo, null);
+					il.EmitCall(OpCodes.Call, s_deserializerSwitchMethodInfo, null);
 
 				// i = i + 1
 				il.Emit(OpCodes.Ldloc, idxLocal);
@@ -145,7 +122,7 @@ namespace GameSerializer
 					if (field.FieldType.IsValueType)
 						il.EmitCall(OpCodes.Call, GetReaderMethodInfo(field.FieldType), null);
 					else
-						il.EmitCall(OpCodes.Call, m_deserializerSwitchMethodInfo, null);
+						il.EmitCall(OpCodes.Call, s_deserializerSwitchMethodInfo, null);
 				}
 			}
 
@@ -155,7 +132,7 @@ namespace GameSerializer
 
 
 
-		void GenerateDeserializerSwitch(ILGenerator il)
+		static void GenerateDeserializerSwitch(ILGenerator il, IDictionary<Type, TypeData> map)
 		{
 			// arg0: stream, arg1: out object
 
@@ -186,8 +163,8 @@ namespace GameSerializer
 			// if typeID != 0xffff
 			il.MarkLabel(notNullLabel);
 
-			var jumpTable = new Label[m_map.Count];
-			foreach (var kvp in m_map)
+			var jumpTable = new Label[map.Count];
+			foreach (var kvp in map)
 				jumpTable[kvp.Value.TypeID] = il.DefineLabel();
 
 			il.Emit(OpCodes.Ldloc, idLocal);
@@ -196,7 +173,7 @@ namespace GameSerializer
 			D(il, "eihx");
 			il.ThrowException(typeof(Exception));
 
-			foreach (var kvp in m_map)
+			foreach (var kvp in map)
 			{
 				var data = kvp.Value;
 

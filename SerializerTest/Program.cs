@@ -18,6 +18,41 @@ namespace SerializerTest
 	{
 		static void Main(string[] args)
 		{
+			//Benchmark();
+			Test();
+		}
+
+		[Serializable]
+		class A
+		{
+			public object Ob;
+
+			public override string ToString()
+			{
+				return String.Format("{0}", Ob.ToString());
+			}
+		}
+
+		static void Test()
+		{
+			var rootTypes = new Type[] { typeof(A) };
+
+			GameSerializer.Serializer.Initialize(rootTypes.ToArray());
+
+			Stream stream = new MemoryStream(1024 * 1024);
+			var ob = new A() { Ob = "kala" };
+			GameSerializer.Serializer.Serialize(stream, ob);
+
+			stream.Position = 0;
+
+			var ob2 = GameSerializer.Serializer.Deserialize(stream);
+
+			if (ob.ToString() != ob2.ToString())
+				throw new Exception();
+		}
+
+		static void Benchmark()
+		{
 			Stream stream = new MemoryStream(1024 * 1024);
 			var obs = CreateObjects();
 			const int loops = 50;
@@ -65,18 +100,6 @@ namespace SerializerTest
 			return actions.Concat(new Message[] { terrains }).ToArray<object>();
 		}
 
-		static void Test(Stream stream)
-		{
-			{
-				stream.Seek(0, SeekOrigin.Begin);
-				var arr = new byte[stream.Length];
-				stream.Read(arr, 0, (int)stream.Length);
-				for (int i = 0; i < arr.Length; ++i)
-					Console.Write("{0:x2} ", arr[i]);
-				Console.WriteLine();
-			}
-		}
-
 		static void TestMySerializer(Stream stream, object[] obs, int loops, out int maxsize, out TimeSpan time)
 		{
 			IEnumerable<Type> rootTypes = new Type[0];
@@ -89,7 +112,7 @@ namespace SerializerTest
 			rootTypes = rootTypes.Concat(eventTypes);
 			rootTypes = rootTypes.Concat(actionTypes);
 
-			var ser = new GameSerializer.Serializer(rootTypes.ToArray());
+			GameSerializer.Serializer.Initialize(rootTypes.ToArray());
 
 			maxsize = 0;
 
@@ -100,7 +123,7 @@ namespace SerializerTest
 				stream.Seek(0, SeekOrigin.Begin);
 
 				foreach (var o in obs)
-					ser.Serialize(stream, o);
+					GameSerializer.Serializer.Serialize(stream, o);
 
 				maxsize = (int)stream.Position;
 
@@ -108,7 +131,7 @@ namespace SerializerTest
 
 				while (stream.Position < stream.Length)
 				{
-					var ob = (Message)ser.Deserialize(stream);
+					var ob = (Message)GameSerializer.Serializer.Deserialize(stream);
 					if (ob == null)
 						throw new Exception();
 				}
