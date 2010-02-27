@@ -495,10 +495,10 @@ namespace MyGame.Server
 					}
 				};
 			}
-			else if (change is BuildingChange)
+			else if (change is FullObjectChange)
 			{
-				var bc = (BuildingChange)change;
-				return bc.BuildingData;
+				var c = (FullObjectChange)change;
+				return c.ObjectData;
 			}
 			else if (change is ObjectDestructedChange)
 			{

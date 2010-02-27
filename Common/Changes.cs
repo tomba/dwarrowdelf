@@ -90,14 +90,14 @@ namespace MyGame
 		}
 	}
 
-	public class BuildingChange : ObjectChange
+	public class FullObjectChange : ObjectChange
 	{
-		public BuildingChange(IIdentifiable building)
-			: base(building)
+		public FullObjectChange(IIdentifiable ob)
+			: base(ob)
 		{
 		}
 
-		public ClientMsgs.BuildingData BuildingData { get; set; }
+		public ClientMsgs.Message ObjectData { get; set; }
 	}
 
 }

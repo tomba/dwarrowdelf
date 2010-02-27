@@ -299,7 +299,7 @@ namespace MyGame.Server
 			building.Environment = this;
 			m_buildings.Add(building);
 
-			this.World.AddChange(new BuildingChange(building) { BuildingData = (ClientMsgs.BuildingData)building.Serialize() });
+			this.World.AddChange(new FullObjectChange(building) { ObjectData = building.Serialize() });
 		}
 
 		public BuildingObject GetBuildingAt(IntPoint3D p)
