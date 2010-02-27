@@ -16,6 +16,7 @@ namespace MyGame.Client
 		DispatcherTimer m_updateTimer;
 
 		VisualCollection m_tileCollection;
+		VisualCollection m_childCollection;
 
 		Rectangle m_selectionRect;
 		IntPoint m_selectionStart;
@@ -28,6 +29,7 @@ namespace MyGame.Client
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(15);
 
 			m_tileCollection = new VisualCollection(this);
+			m_childCollection = new VisualCollection(this);
 
 			m_selectionRect = new Rectangle();
 			m_selectionRect.Visibility = Visibility.Hidden;
@@ -53,15 +55,15 @@ namespace MyGame.Client
 			new FrameworkPropertyMetadata(32.0, FrameworkPropertyMetadataOptions.AffectsArrange),
 			v => ((double)v) >= 2);
 
-		public static readonly DependencyProperty CenterPosProperty = DependencyProperty.Register(
-			"CenterPos", typeof(IntPoint), typeof(MapControlBase),
-			new FrameworkPropertyMetadata(new IntPoint(), FrameworkPropertyMetadataOptions.AffectsArrange));
-
 		public double TileSize
 		{
 			get { return (double)GetValue(TileSizeProperty); }
 			set { SetValue(TileSizeProperty, value); }
 		}
+
+		public static readonly DependencyProperty CenterPosProperty = DependencyProperty.Register(
+			"CenterPos", typeof(IntPoint), typeof(MapControlBase),
+			new FrameworkPropertyMetadata(new IntPoint(), FrameworkPropertyMetadataOptions.AffectsArrange));
 
 		public IntPoint CenterPos
 		{
@@ -75,6 +77,33 @@ namespace MyGame.Client
 				UpdateTiles();
 			}
 		}
+
+		public static IntPoint GetCorner1(DependencyObject obj)
+		{
+			return (IntPoint)obj.GetValue(Corner1Property);
+		}
+
+		public static void SetCorner1(DependencyObject obj, IntPoint value)
+		{
+			obj.SetValue(Corner1Property, value);
+		}
+
+		public static readonly DependencyProperty Corner1Property =
+			DependencyProperty.RegisterAttached("Corner1", typeof(IntPoint), typeof(MapControlBase));
+
+
+		public static IntPoint GetCorner2(DependencyObject obj)
+		{
+			return (IntPoint)obj.GetValue(Corner2Property);
+		}
+
+		public static void SetCorner2(DependencyObject obj, IntPoint value)
+		{
+			obj.SetValue(Corner2Property, value);
+		}
+
+		public static readonly DependencyProperty Corner2Property =
+			DependencyProperty.RegisterAttached("Corner2", typeof(IntPoint), typeof(MapControlBase));
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
@@ -133,18 +162,26 @@ namespace MyGame.Client
 			}
 
 			// selection rect
+			{
+				var ir = new IntRect(m_selectionStart, m_selectionEnd);
+				ir = new IntRect(ir.X1Y1, new IntSize(ir.Width + 1, ir.Height + 1));
 
-			var p1 = MapLocationToScreenPoint(m_selectionStart);
-			var p2 = MapLocationToScreenPoint(m_selectionEnd);
+				Rect r = new Rect(MapLocationToScreenPoint(new IntPoint(ir.X1, ir.Y2)),
+					new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
 
-			Rect r = new Rect(p1, p2);
+				m_selectionRect.Width = r.Width;
+				m_selectionRect.Height = r.Height;
+				m_selectionRect.Arrange(r);
+			}
 
-			r.Width += this.TileSize;
-			r.Height += this.TileSize;
+			// children
+			foreach (FrameworkElement elem in m_childCollection)
+			{
+				var p2 = MapLocationToScreenPoint(GetCorner1(elem));
+				var p1 = MapLocationToScreenPoint(GetCorner2(elem));
 
-			m_selectionRect.Width = r.Width;
-			m_selectionRect.Height = r.Height;
-			m_selectionRect.Arrange(r);
+				elem.Arrange(new Rect(p1, p2));
+			}
 
 			return s;
 		}
@@ -156,13 +193,16 @@ namespace MyGame.Client
 
 		protected override int VisualChildrenCount
 		{
-			get { return m_tileCollection.Count + 1; }
+			get { return m_tileCollection.Count + m_childCollection.Count + 1; }
 		}
 
 		protected override Visual GetVisualChild(int index)
 		{
-			if (index == m_tileCollection.Count)
+			if (index == m_tileCollection.Count + m_childCollection.Count)
 				return m_selectionRect;
+
+			if (index >= m_tileCollection.Count)
+				return m_childCollection[index - m_tileCollection.Count];
 
 			return m_tileCollection[index];
 		}
@@ -187,7 +227,7 @@ namespace MyGame.Client
 		Point MapLocationToScreenPoint(IntPoint loc)
 		{
 			loc -= (IntVector)this.TopLeftPos;
-			loc = new IntPoint(loc.X, -loc.Y);
+			loc = new IntPoint(loc.X, -loc.Y + 1);
 			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 		}
 
