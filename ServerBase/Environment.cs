@@ -314,8 +314,6 @@ namespace MyGame.Server
 				Bounds = this.Bounds,
 			});
 
-			List<ClientMsgs.Message> obList = new List<ClientMsgs.Message>();
-
 			var bounds = this.Bounds;
 
 			if (bounds.Volume < 2000)
@@ -326,10 +324,6 @@ namespace MyGame.Server
 				{
 					int idx = bounds.GetIndex(p);
 					arr[idx] = m_tileGrid.GetTileData(p);
-
-					var obs = GetContents(p);
-					if (obs != null)
-						obList.AddRange(obs.Select(o => o.Serialize()));
 				}
 
 				writer(new ClientMsgs.MapDataTerrains()
@@ -343,63 +337,58 @@ namespace MyGame.Server
 			{
 				var plane = bounds.Plane;
 				// Send every 2D plane in one message
+				var arr = new TileData[plane.Area];
+				var msg = new ClientMsgs.MapDataTerrains() { Environment = this.ObjectID };
+
 				for (int z = bounds.Z1; z < bounds.Z2; ++z)
 				{
-					var arr = new TileData[plane.Area];
 					foreach (var p2d in plane.Range())
 					{
 						int idx = plane.GetIndex(p2d);
 						var p = new IntPoint3D(p2d, z);
 						arr[idx] = m_tileGrid.GetTileData(p);
-
-						var obs = GetContents(p);
-						if (obs != null)
-							obList.AddRange(obs.Select(o => o.Serialize()));
 					}
 
-					writer(new ClientMsgs.MapDataTerrains()
-					{
-						Environment = this.ObjectID,
-						Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1),
-						TerrainIDs = arr,
-					});
+					msg.Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1);
+					msg.TerrainIDs = arr;
+
+					writer(msg);
 				}
 			}
 			else
 			{
 				// Send every line in one message
+				var arr = new TileData[this.Width];
+				var msg = new ClientMsgs.MapDataTerrains() { Environment = this.ObjectID };
+
 				for (int z = bounds.Z1; z < bounds.Z2; ++z)
 				{
 					for (int y = bounds.Y1; y < bounds.Y2; ++y)
 					{
-						var arr = new TileData[this.Width];
-
 						for (int x = bounds.X1; x < bounds.X2; ++x)
 						{
 							IntPoint3D p = new IntPoint3D(x, y, z);
 							arr[x] = m_tileGrid.GetTileData(p);
-
-							var obs = GetContents(p);
-							if (obs != null)
-								obList.AddRange(obs.Select(o => o.Serialize()));
 						}
 
-						writer(new ClientMsgs.MapDataTerrains()
-						{
-							Environment = this.ObjectID,
-							Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1),
-							TerrainIDs = arr,
-						});
+						msg.Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1);
+						msg.TerrainIDs = arr;
+
+						writer(msg);
 					}
 				}
 			}
 
-			// XXX this probably needs to be divided
-			writer(new ClientMsgs.MapDataObjects()
+			for (int z = bounds.Z1; z < bounds.Z2; ++z)
 			{
-				Environment = this.ObjectID,
-				ObjectData = obList.ToArray(),
-			});
+				var msg = new ClientMsgs.MapDataObjects()
+				{
+					Environment = this.ObjectID,
+					ObjectData = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
+				};
+
+				writer(msg);
+			}
 
 			// this may not need dividing, perhaps
 			writer(new ClientMsgs.MapDataBuildings()
@@ -411,9 +400,7 @@ namespace MyGame.Server
 
 		public override ClientMsgs.Message Serialize()
 		{
-			var msgs = new List<ClientMsgs.Message>();
-			SerializeTo(m => msgs.Add(m));
-			return new ClientMsgs.CompoundMessage() { Messages = msgs.ToArray() };
+			throw new Exception();
 		}
 
 		public override string ToString()

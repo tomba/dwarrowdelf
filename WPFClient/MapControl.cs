@@ -368,8 +368,6 @@ namespace MyGame.Client
 
 		void asd(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			MyDebug.WriteLine("new building");
-
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
 				foreach (BuildingData b in e.NewItems)
