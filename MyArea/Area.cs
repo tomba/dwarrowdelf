@@ -253,7 +253,7 @@ namespace MyArea
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
-			var building = new BuildingData(world, BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
+			var building = new BuildingObject(world, BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);

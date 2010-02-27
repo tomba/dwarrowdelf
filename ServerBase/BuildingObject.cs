@@ -5,14 +5,14 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	public class BuildingData : BaseGameObject
+	public class BuildingObject : BaseGameObject
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
 		public int Z { get; set; }
 		public IntRect Area { get; set; }
 
-		public BuildingData(World world, BuildingID id)
+		public BuildingObject(World world, BuildingID id)
 			: base(world)
 		{
 			this.BuildingInfo = Buildings.GetBuildingInfo(id);

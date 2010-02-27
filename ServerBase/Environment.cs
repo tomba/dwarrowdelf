@@ -288,9 +288,9 @@ namespace MyGame.Server
 		}
 
 
-		HashSet<BuildingData> m_buildings = new HashSet<BuildingData>();
+		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
 
-		public void AddBuilding(BuildingData building)
+		public void AddBuilding(BuildingObject building)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -298,9 +298,11 @@ namespace MyGame.Server
 			Debug.Assert(building.Environment == null);
 			building.Environment = this;
 			m_buildings.Add(building);
+
+			this.World.AddChange(new BuildingChange(building) { BuildingData = (ClientMsgs.BuildingData)building.Serialize() });
 		}
 
-		public BuildingData GetBuildingAt(IntPoint3D p)
+		public BuildingObject GetBuildingAt(IntPoint3D p)
 		{
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}

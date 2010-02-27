@@ -131,6 +131,7 @@
     <Compile Include="DataTypes\Grid3DBase.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\Grid2DBase.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="Floors.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />

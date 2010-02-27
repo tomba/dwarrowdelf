@@ -370,7 +370,7 @@ namespace MyGame.Client
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				foreach (BuildingData b in e.NewItems)
+				foreach (BuildingObject b in e.NewItems)
 				{
 					var rect = new Rectangle();
 					rect.Stroke = Brushes.DarkGray;
@@ -631,7 +631,7 @@ namespace MyGame.Client
 			}
 		}
 
-		public BuildingData Building
+		public BuildingObject Building
 		{
 			get
 			{

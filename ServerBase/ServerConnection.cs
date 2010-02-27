@@ -221,7 +221,7 @@ namespace MyGame.Server
 			if (env == null)
 				throw new Exception();
 
-			var building = new BuildingData(m_world, id) { Area = r, Z = z };
+			var building = new BuildingObject(m_world, id) { Area = r, Z = z };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
@@ -494,6 +494,11 @@ namespace MyGame.Server
 						new Tuple<IntPoint3D, TileData>(mc.Location, mc.TileData)
 					}
 				};
+			}
+			else if (change is BuildingChange)
+			{
+				var bc = (BuildingChange)change;
+				return bc.BuildingData;
 			}
 			else if (change is ObjectDestructedChange)
 			{

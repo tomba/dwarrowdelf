@@ -279,6 +279,28 @@ namespace MyGame.Client
 			env.SetBuildings(msg.BuildingData);
 		}
 
+		void HandleMessage(BuildingData msg)
+		{
+			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+
+			if (env.Buildings.Contains(msg.ObjectID))
+			{
+				//var building = env.Buildings[msg.ObjectID];
+				throw new Exception();
+			}
+			else
+			{
+				var building = new BuildingObject(env.World, msg.ObjectID, msg.ID)
+				{
+					Area = msg.Area,
+					Z = msg.Z,
+					Environment = env,
+				};
+
+				env.AddBuilding(building);
+			}
+		}
+
 		void HandleMessage(LivingData msg)
 		{
 			var ob = World.TheWorld.FindObject<Living>(msg.ObjectID);

@@ -72,7 +72,7 @@ namespace MyGame.Client
 
 	class BuildItemJob : SerialJobGroup
 	{
-		public BuildItemJob(BuildingData workplace, ItemObject[] sourceObjects)
+		public BuildItemJob(BuildingObject workplace, ItemObject[] sourceObjects)
 			: base(null)
 		{
 			var env = workplace.Environment;

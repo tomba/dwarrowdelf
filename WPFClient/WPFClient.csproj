@@ -163,7 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AI.cs" />
-    <Compile Include="Buildings.cs" />
+    <Compile Include="BuildingObject.cs" />
     <Compile Include="ClientConnection.cs" />
     <Compile Include="Jobs\JobGroups.cs" />
     <Compile Include="Living.cs" />

@@ -8,6 +8,13 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
+	class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
+	{
+		protected override ObjectID GetKeyForItem(BuildingObject building)
+		{
+			return building.ObjectID;
+		}
+	}
 
 	class MyGrowingGrid3D : GrowingGrid3DBase<MyGrowingGrid>
 	{
@@ -303,11 +310,11 @@ namespace MyGame.Client
 				MapChanged(new IntPoint3D(bounds.X, bounds.Y, bounds.Z)); // XXX
 		}
 
-		ObservableCollection<BuildingData> m_buildings = new ObservableCollection<BuildingData>();
+		BuildingCollection m_buildings = new BuildingCollection();
 
-		public ObservableCollection<BuildingData> Buildings { get { return m_buildings; } }
+		public BuildingCollection Buildings { get { return m_buildings; } }
 
-		public void AddBuilding(BuildingData building)
+		public void AddBuilding(BuildingObject building)
 		{
 			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
 
@@ -318,7 +325,7 @@ namespace MyGame.Client
 		{
 			this.Version += 1;
 
-			var list = buildings.Select(bd => new BuildingData(this.World, bd.ObjectID, bd.ID)
+			var list = buildings.Select(bd => new BuildingObject(this.World, bd.ObjectID, bd.ID)
 			{
 				Area = bd.Area,
 				Z = bd.Z,
@@ -329,7 +336,7 @@ namespace MyGame.Client
 				AddBuilding(b);
 		}
 
-		public BuildingData GetBuildingAt(IntPoint3D p)
+		public BuildingObject GetBuildingAt(IntPoint3D p)
 		{
 			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.ToIntPoint()));
 		}

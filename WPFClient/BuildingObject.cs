@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace MyGame.Client
 {
-	class BuildingData : BaseGameObject
+	class BuildingObject : BaseGameObject
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
@@ -22,7 +22,7 @@ namespace MyGame.Client
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
 
-		public BuildingData(World world, ObjectID objectID, BuildingID id)
+		public BuildingObject(World world, ObjectID objectID, BuildingID id)
 			: base(world, objectID)
 		{
 			this.BuildingInfo = Buildings.GetBuildingInfo(id);

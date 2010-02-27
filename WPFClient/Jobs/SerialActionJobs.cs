@@ -99,7 +99,7 @@ namespace MyGame.Client
 
 	class BuildItem : SerialActionJob
 	{
-		public BuildItem(IJob parent, BuildingData workplace, ItemObject[] items)
+		public BuildItem(IJob parent, BuildingObject workplace, ItemObject[] items)
 			: base(parent)
 		{
 			var env = workplace.Environment;
