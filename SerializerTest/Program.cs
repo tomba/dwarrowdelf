@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GameSerializer;
+using NetSerializer;
 using System.IO;
 using MyGame;
 using System.Reflection;
@@ -37,15 +37,15 @@ namespace SerializerTest
 		{
 			var rootTypes = new Type[] { typeof(A) };
 
-			GameSerializer.Serializer.Initialize(rootTypes.ToArray());
+			NetSerializer.Serializer.Initialize(rootTypes.ToArray());
 
 			Stream stream = new MemoryStream(1024 * 1024);
 			var ob = new A() { Ob = "kala" };
-			GameSerializer.Serializer.Serialize(stream, ob);
+			NetSerializer.Serializer.Serialize(stream, ob);
 
 			stream.Position = 0;
 
-			var ob2 = GameSerializer.Serializer.Deserialize(stream);
+			var ob2 = NetSerializer.Serializer.Deserialize(stream);
 
 			if (ob.ToString() != ob2.ToString())
 				throw new Exception();
@@ -112,7 +112,7 @@ namespace SerializerTest
 			rootTypes = rootTypes.Concat(eventTypes);
 			rootTypes = rootTypes.Concat(actionTypes);
 
-			GameSerializer.Serializer.Initialize(rootTypes.ToArray());
+			NetSerializer.Serializer.Initialize(rootTypes.ToArray());
 
 			maxsize = 0;
 
@@ -123,7 +123,7 @@ namespace SerializerTest
 				stream.Seek(0, SeekOrigin.Begin);
 
 				foreach (var o in obs)
-					GameSerializer.Serializer.Serialize(stream, o);
+					NetSerializer.Serializer.Serialize(stream, o);
 
 				maxsize = (int)stream.Position;
 
@@ -131,7 +131,7 @@ namespace SerializerTest
 
 				while (stream.Position < stream.Length)
 				{
-					var ob = (Message)GameSerializer.Serializer.Deserialize(stream);
+					var ob = (Message)NetSerializer.Serializer.Deserialize(stream);
 					if (ob == null)
 						throw new Exception();
 				}

@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace GameSerializer
+namespace NetSerializer
 {
 	public partial class Serializer
 	{

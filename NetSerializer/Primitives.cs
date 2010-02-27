@@ -6,7 +6,7 @@ using System.Reflection;
 using System.IO;
 using System.Diagnostics;
 
-namespace GameSerializer
+namespace NetSerializer
 {
 	public static class Primitives
 	{

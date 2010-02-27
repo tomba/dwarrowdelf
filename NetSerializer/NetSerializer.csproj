@@ -8,8 +8,8 @@
     <ProjectGuid>{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameSerializer</RootNamespace>
-    <AssemblyName>GameSerializer</AssemblyName>
+    <RootNamespace>NetSerializer</RootNamespace>
+    <AssemblyName>NetSerializer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

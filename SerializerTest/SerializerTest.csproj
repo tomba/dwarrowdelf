@@ -84,10 +84,6 @@
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameSerializer\GameSerializer.csproj">
-      <Project>{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}</Project>
-      <Name>GameSerializer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

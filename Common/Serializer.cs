@@ -32,7 +32,7 @@ namespace MyGame
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
 			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
 			var types = messageTypes.Concat(eventTypes).Concat(actionTypes);
-			GameSerializer.Serializer.Initialize(types.ToArray());
+			NetSerializer.Serializer.Initialize(types.ToArray());
 #else
 			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
@@ -47,7 +47,7 @@ namespace MyGame
 #if USE_BINFMT
 			m_bformatter.Serialize(stream, msg);
 #elif USE_MY
-			GameSerializer.Serializer.Serialize(stream, msg);
+			NetSerializer.Serializer.Serialize(stream, msg);
 #elif USE_MY_COMP
 			using (var s = new System.IO.Compression.DeflateStream(stream, System.IO.Compression.CompressionMode.Compress, true))
 				m_serializer.Serialize(s, msg);
@@ -64,7 +64,7 @@ namespace MyGame
 #if USE_BINFMT
 			return (Message)m_bformatter.Deserialize(stream);
 #elif USE_MY
-			object ob = GameSerializer.Serializer.Deserialize(stream);
+			object ob = NetSerializer.Serializer.Deserialize(stream);
 			return (Message)ob;
 #elif USE_MY_COMP
 			using (var s = new System.IO.Compression.DeflateStream(stream, System.IO.Compression.CompressionMode.Decompress, true))
