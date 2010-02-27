@@ -68,8 +68,11 @@ namespace MyGame.Client
 			get { return (IntPoint)GetValue(CenterPosProperty); }
 			set
 			{
+				if (value == this.CenterPos)
+					return;
+
 				SetValue(CenterPosProperty, value);
-				InvalidateTiles();
+				UpdateTiles();
 			}
 		}
 
@@ -294,11 +297,7 @@ namespace MyGame.Client
 				++cy;
 
 			var p = new IntPoint(cx, cy);
-			if (p != this.CenterPos)
-			{
-				this.CenterPos = p;
-				InvalidateTiles();
-			}
+			this.CenterPos = p;
 
 			var newEnd = ScreenPointToMapLocation(pos);
 
