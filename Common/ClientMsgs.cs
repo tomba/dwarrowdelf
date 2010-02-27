@@ -101,6 +101,21 @@ namespace MyGame.ClientMsgs
 
 	[DataContract]
 	[Serializable]
+	public class CreateBuildingMessage : Message
+	{
+		[DataMember]
+		public ObjectID MapID { get; set; }
+		[DataMember]
+		public IntRect Area { get; set; }
+		[DataMember]
+		public int Z { get; set; }
+		[DataMember]
+		public BuildingID ID { get; set; }
+	}
+
+
+	[DataContract]
+	[Serializable]
 	public class CompoundMessage : Message
 	{
 		[DataMember]

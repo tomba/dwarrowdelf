@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Collections.Specialized;
 
 namespace MyGame.Client
 {
@@ -335,13 +336,17 @@ namespace MyGame.Client
 					return;
 
 				if (m_env != null)
+				{
 					m_env.MapChanged -= MapChangedCallback;
+					m_env.Buildings.CollectionChanged -= asd;
+				}
 
 				m_env = value;
 
 				if (m_env != null)
 				{
 					m_env.MapChanged += MapChangedCallback;
+					m_env.Buildings.CollectionChanged += asd;
 
 					if (m_world != m_env.World)
 					{
@@ -359,6 +364,25 @@ namespace MyGame.Client
 
 				Notify("Environment");
 			}
+		}
+
+		void asd(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			MyDebug.WriteLine("new building");
+
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (BuildingData b in e.NewItems)
+				{
+					var rect = new Rectangle();
+					rect.Stroke = Brushes.DarkGray;
+					rect.StrokeThickness = 4;
+					this.Children.Add(rect);
+					SetCorner1(rect, b.Area.X1Y1);
+					SetCorner2(rect, b.Area.X2Y2);
+				}
+			}
+
 		}
 
 		public int Z

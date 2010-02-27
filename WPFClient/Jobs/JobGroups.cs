@@ -76,9 +76,10 @@ namespace MyGame.Client
 			: base(null)
 		{
 			var env = workplace.Environment;
-			var location = new IntPoint3D(workplace.Area.X1Y1, workplace.Z);
+			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
+			var location = new IntPoint3D(p, workplace.Z);
 
-			AddSubJob(new FetchMaterials(this, env, location, sourceObjects));
+			AddSubJob(new FetchItems(this, env, location, sourceObjects));
 			AddSubJob(new BuildItem(this, workplace, sourceObjects));
 		}
 
@@ -88,20 +89,20 @@ namespace MyGame.Client
 		}
 	}
 
-	class FetchMaterials : ParallelJobGroup
+	class FetchItems : ParallelJobGroup
 	{
-		public FetchMaterials(IJob parent, Environment env, IntPoint3D location, ItemObject[] objects)
+		public FetchItems(IJob parent, Environment env, IntPoint3D location, ItemObject[] items)
 			: base(parent)
 		{
-			foreach (var item in objects)
+			foreach (var item in items)
 			{
-				AddSubJob(new FetchMaterial(this, env, location, item));
+				AddSubJob(new FetchItem(this, env, location, item));
 			}
 		}
 
 		public override string ToString()
 		{
-			return "FetchMaterials";
+			return "FetchItems";
 		}
 	}
 }

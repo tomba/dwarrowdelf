@@ -95,6 +95,17 @@ namespace MyGame.Client
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloorMaterial));
 				setFloorMaterialMenu.Items.Add(item);
 			}
+
+			foreach (var name in Enum.GetNames(typeof(BuildingID)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = name,
+					Header = name,
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Build));
+				createBuildingMenu.Items.Add(item);
+			}
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -574,6 +585,28 @@ namespace MyGame.Client
 			{
 				throw new Exception();
 			}
+		}
+
+		private void MenuItem_Click_Build(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			IntRect r = map.SelectionRect;
+			var env = map.Environment;
+			int z = map.Z;
+
+			BuildingID id;
+
+			if (tag == "Smith")
+				id = BuildingID.Smith;
+			else if (tag == "Stockpile")
+				id = BuildingID.Stockpile;
+			else
+				throw new Exception();
+
+			var msg = new ClientMsgs.CreateBuildingMessage() { MapID = env.ObjectID, Area = r, Z = z, ID = id };
+			GameData.Data.Connection.Send(msg);
 		}
 
 		private void Get_Button_Click(object sender, RoutedEventArgs e)

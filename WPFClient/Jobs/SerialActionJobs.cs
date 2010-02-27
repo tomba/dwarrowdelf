@@ -80,9 +80,9 @@ namespace MyGame.Client
 		}
 	}
 
-	class FetchMaterial : SerialActionJob
+	class FetchItem : SerialActionJob
 	{
-		public FetchMaterial(IJob parent, Environment env, IntPoint3D location, ItemObject item)
+		public FetchItem(IJob parent, Environment env, IntPoint3D location, ItemObject item)
 			: base(parent)
 		{
 			AddSubJob(new MoveActionJob(this, item.Environment, item.Location, false));
@@ -93,7 +93,7 @@ namespace MyGame.Client
 
 		public override string ToString()
 		{
-			return "FetchMaterial";
+			return "FetchItem";
 		}
 	}
 
@@ -103,7 +103,8 @@ namespace MyGame.Client
 			: base(parent)
 		{
 			var env = workplace.Environment;
-			var location = new IntPoint3D(workplace.Area.X1Y1, workplace.Z);
+			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
+			var location = new IntPoint3D(p, workplace.Z);
 
 			AddSubJob(new MoveActionJob(this, env, location, false));
 			AddSubJob(new BuildItemActionJob(this, items));

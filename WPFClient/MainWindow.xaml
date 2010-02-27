@@ -165,6 +165,7 @@
                             <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                         </MenuItem>
+                        <MenuItem Name="createBuildingMenu" Header="Create Building" />
                     </ContextMenu>
                 </local:MapControl.ContextMenu>
             </local:MapControl>

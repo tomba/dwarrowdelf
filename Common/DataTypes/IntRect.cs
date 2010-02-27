@@ -124,5 +124,6 @@ namespace MyGame
 		{
 			return ("{X=" + this.X + ",Y=" + this.Y + ",Width=" + this.Width + ",Height=" + this.Height + "}");
 		}
+
 	}
 }

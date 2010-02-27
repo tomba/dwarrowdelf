@@ -305,6 +305,8 @@ namespace MyGame.Client
 
 		ObservableCollection<BuildingData> m_buildings = new ObservableCollection<BuildingData>();
 
+		public ObservableCollection<BuildingData> Buildings { get { return m_buildings; } }
+
 		public void AddBuilding(BuildingData building)
 		{
 			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);

@@ -16,7 +16,7 @@ namespace MyGame.Client
 		DispatcherTimer m_updateTimer;
 
 		VisualCollection m_tileCollection;
-		VisualCollection m_childCollection;
+		UIElementCollection m_childCollection;
 
 		Rectangle m_selectionRect;
 		IntPoint m_selectionStart;
@@ -29,7 +29,7 @@ namespace MyGame.Client
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(15);
 
 			m_tileCollection = new VisualCollection(this);
-			m_childCollection = new VisualCollection(this);
+			m_childCollection = new UIElementCollection(this, this);
 
 			m_selectionRect = new Rectangle();
 			m_selectionRect.Visibility = Visibility.Hidden;
@@ -49,6 +49,8 @@ namespace MyGame.Client
 		public int Rows { get { return m_rows; } }
 
 		public bool SelectionEnabled { get; set; }
+
+		public UIElementCollection Children { get { return m_childCollection; } }
 
 		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
 			"TileSize", typeof(double), typeof(MapControlBase),
@@ -175,7 +177,7 @@ namespace MyGame.Client
 			}
 
 			// children
-			foreach (FrameworkElement elem in m_childCollection)
+			foreach (UIElement elem in m_childCollection)
 			{
 				var p2 = MapLocationToScreenPoint(GetCorner1(elem));
 				var p1 = MapLocationToScreenPoint(GetCorner2(elem));

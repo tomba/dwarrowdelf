@@ -147,4 +147,5 @@ namespace MyGame
 				this.ObjectID, this.SourceMapID, this.SourceLocation, this.DestinationMapID, this.DestinationLocation);
 		}
 	}
+
 }
