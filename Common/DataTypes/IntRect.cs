@@ -65,6 +65,11 @@ namespace MyGame
 			get { return this.Width * this.Height; }
 		}
 
+		public IntSize Size
+		{
+			get { return new IntSize(this.Width, this.Height); }
+		}
+
 		public bool IsNull
 		{
 			get { return this.Width == 0 && this.Height == 0; }
