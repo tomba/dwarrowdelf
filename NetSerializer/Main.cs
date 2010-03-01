@@ -100,7 +100,7 @@ namespace NetSerializer
 			foreach (var type in typeSet)
 			{
 				if (type.IsInterface)
-					throw new NotSupportedException("Interfaces not supported");
+					continue;
 
 				if (!type.IsSerializable)
 					throw new NotSupportedException(String.Format("Type {0} is not marked as Serializable", type.ToString()));
@@ -190,7 +190,12 @@ namespace NetSerializer
 
 		static ushort GetTypeID(Type type)
 		{
-			return s_map[type].TypeID;
+			TypeData data;
+
+			if (s_map.TryGetValue(type, out data) == false)
+				throw new Exception(String.Format("Unknown type {0}", type));
+
+			return data.TypeID;
 		}
 
 		static ushort GetTypeID(object ob)
