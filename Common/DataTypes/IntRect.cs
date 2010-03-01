@@ -110,6 +110,11 @@ namespace MyGame
 
 		public bool IntersectsWith(IntRect rect)
 		{
+			return rect.X1 < this.X2 && rect.X2 > this.X1 && rect.Y1 < this.Y2 && rect.Y2 > this.Y1;
+		}
+
+		public bool IntersectsWithInclusive(IntRect rect)
+		{
 			return rect.X1 <= this.X2 && rect.X2 >= this.X1 && rect.Y1 <= this.Y2 && rect.Y2 >= this.Y1;
 		}
 
