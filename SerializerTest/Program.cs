@@ -22,33 +22,75 @@ namespace SerializerTest
 			Test();
 		}
 
-		[Serializable]
-		class A
+		interface IFoo
 		{
-			public object Ob;
+			void Test();
+		}
+
+		[Serializable]
+		class B : IFoo
+		{
+			public int asd;
+
+			public void Test()
+			{
+				throw new NotImplementedException();
+			}
 
 			public override string ToString()
 			{
-				return String.Format("{0}", Ob.ToString());
+				return String.Format("B({0})", asd);
+			}
+		}
+
+		[Serializable]
+		class A
+		{
+			public int kala;
+			public IFoo Ob;
+			public IList<int> List;
+
+			public override string ToString()
+			{
+				return String.Format("A({0}, {1})", kala, Ob);
 			}
 		}
 
 		static void Test()
 		{
-			var rootTypes = new Type[] { typeof(A) };
-
+			var rootTypes = new Type[] { typeof(A), typeof(B), typeof(List<int>) };
 			NetSerializer.Serializer.Initialize(rootTypes.ToArray());
 
 			Stream stream = new MemoryStream(1024 * 1024);
-			var ob = new A() { Ob = "kala" };
-			NetSerializer.Serializer.Serialize(stream, ob);
 
-			stream.Position = 0;
+			{
+				var ob = new A() { kala = 5, Ob = new B() { asd = 10 }, List = new List<int>() { 1, 2, 3 } };
+				Console.WriteLine("Serializing: {0}", ob.ToString());
+				NetSerializer.Serializer.Serialize(stream, ob);
+			}
 
-			var ob2 = NetSerializer.Serializer.Deserialize(stream);
+			{
+				stream.Position = 0;
+				while (true)
+				{
+					int b = stream.ReadByte();
+					if (b == -1)
+						break;
 
-			if (ob.ToString() != ob2.ToString())
-				throw new Exception();
+					Console.Write("{0:x2} ", (byte)b);
+				}
+				Console.WriteLine();
+			}
+
+			{
+				stream.Position = 0;
+
+				var ob = NetSerializer.Serializer.Deserialize(stream);
+
+				Console.WriteLine("Deserialized: {0}", ob.ToString());
+			}
+
+			Console.ReadLine();
 		}
 
 		static void Benchmark()
