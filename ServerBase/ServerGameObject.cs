@@ -21,12 +21,20 @@ namespace MyGame.Server
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
+		public bool Destructed { get; private set; }
 
 		protected BaseGameObject(World world)
 		{
 			this.ObjectID = world.GetNewObjectID();
 			this.World = world;
 			this.World.AddGameObject(this);
+		}
+
+		public virtual void Destruct()
+		{
+			this.Destructed = true;
+			this.World.AddChange(new ObjectDestructedChange(this));
+			this.World.RemoveGameObject(this);
 		}
 
 		public abstract ClientMsgs.Message Serialize();
@@ -50,8 +58,6 @@ namespace MyGame.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		public bool Destructed { get; private set; }
-
 		internal ServerGameObject(World world)
 			: base(world)
 		{
@@ -59,12 +65,10 @@ namespace MyGame.Server
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
-		public void Destruct()
+		public override void Destruct()
 		{
-			this.Destructed = true;
 			this.MoveTo(null);
-			this.World.AddChange(new ObjectDestructedChange(this));
-			this.World.RemoveGameObject(this);
+			base.Destruct();
 		}
 
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
