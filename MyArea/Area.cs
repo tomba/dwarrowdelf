@@ -95,7 +95,6 @@ namespace MyArea
 
 			// XXX some size limit with the size in WCF
 			var env = new Environment(world, size, size, 20, VisibilityMode.LOS);
-			env.Name = "map1";
 
 			Random r = new Random(123);
 
@@ -267,7 +266,6 @@ namespace MyArea
 		Environment CreateMap2(World world)
 		{
 			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
-			env.Name = "map2";
 
 			var stone = Materials.Stone.ID;
 			var steel = Materials.Steel.ID;

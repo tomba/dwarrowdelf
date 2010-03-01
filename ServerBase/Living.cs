@@ -18,6 +18,9 @@ namespace MyGame.Server
 
 		IActor m_actorImpl;
 
+		public SymbolID SymbolID { get; set; }
+		public string Name { get; set; }
+
 		public GameColor Color { get; set; }
 		public MaterialID MaterialID { get; set; }
 

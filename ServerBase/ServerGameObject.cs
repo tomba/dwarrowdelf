@@ -43,10 +43,6 @@ namespace MyGame.Server
 
 	abstract public class ServerGameObject : BaseGameObject
 	{
-		public SymbolID SymbolID { get; set; }
-
-		public string Name { get; set; }
-
 		public ServerGameObject Parent { get; private set; }
 		public Environment Environment { get { return this.Parent as Environment; } }
 		KeyedObjectCollection m_children;

@@ -27,7 +27,6 @@ namespace MyGame.Server
 			: base(world)
 		{
 			this.Version = 1;
-			base.Name = "unnamed map";
 			this.VisibilityMode = visibilityMode;
 
 			this.Width = width;
