@@ -338,7 +338,7 @@ namespace MyGame.Client
 				if (m_env != null)
 				{
 					m_env.MapChanged -= MapChangedCallback;
-					m_env.Buildings.CollectionChanged -= asd;
+					m_env.Buildings.CollectionChanged -= OnBuildingsChanged;
 				}
 
 				m_env = value;
@@ -346,7 +346,7 @@ namespace MyGame.Client
 				if (m_env != null)
 				{
 					m_env.MapChanged += MapChangedCallback;
-					m_env.Buildings.CollectionChanged += asd;
+					m_env.Buildings.CollectionChanged += OnBuildingsChanged;
 
 					if (m_world != m_env.World)
 					{
@@ -360,13 +360,36 @@ namespace MyGame.Client
 					m_bitmapCache = null;
 				}
 
-				InvalidateTiles();
+				UpdateTiles();
+				UpdateBuildings();
 
 				Notify("Environment");
 			}
 		}
 
-		void asd(object sender, NotifyCollectionChangedEventArgs e)
+		void UpdateBuildings()
+		{
+			this.Children.Clear();
+
+			if (m_env != null)
+			{
+				foreach (var b in m_env.Buildings)
+				{
+					if (b.Environment == m_env && b.Z == m_z)
+					{
+						var rect = new Rectangle();
+						rect.Stroke = Brushes.DarkGray;
+						rect.StrokeThickness = 4;
+						this.Children.Add(rect);
+						SetCorner1(rect, b.Area.X1Y1);
+						SetCorner2(rect, b.Area.X2Y2);
+					}
+				}
+			}
+
+		}
+
+		void OnBuildingsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
@@ -380,7 +403,10 @@ namespace MyGame.Client
 					SetCorner2(rect, b.Area.X2Y2);
 				}
 			}
-
+			else
+			{
+				throw new Exception();
+			}
 		}
 
 		public int Z
@@ -393,7 +419,9 @@ namespace MyGame.Client
 					return;
 
 				m_z = value;
-				InvalidateTiles();
+				UpdateTiles();
+				UpdateBuildings();
+
 				Notify("Z");
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 			}
