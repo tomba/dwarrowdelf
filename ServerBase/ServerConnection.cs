@@ -41,7 +41,7 @@ namespace MyGame.Server
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		// livings used for fov
 		List<Living> m_friendlies = new List<Living>();
@@ -343,9 +343,8 @@ namespace MyGame.Server
 			var env = m_world.Environments.First(); // XXX entry location
 
 #if !asd
-			var player = new Living(m_world);
+			var player = new Living(m_world, "player");
 			player.SymbolID = SymbolID.Player;
-			player.Name = "player";
 			player.Actor = new InteractiveActor();
 
 			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
@@ -414,6 +413,8 @@ namespace MyGame.Server
 			m_charLoggedIn = true;
 			Send(new ClientMsgs.LogOnCharReply());
 			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
+
+			player.HitPoints = 50;
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
@@ -562,7 +563,7 @@ namespace MyGame.Server
 				msgs = msgs.Concat(newObMsgs);
 
 				// filter changes that friendlies see
-				changes = changes.Where(c => friendlies.Any(l => l.ChangeFilter(c)));
+				changes = changes.Where(c => friendlies.Any(l => ChangeFilter(l, c)));
 			}
 
 			var changeMsgs = changes.Select(c => ChangeToMessage(c));
@@ -573,6 +574,67 @@ namespace MyGame.Server
 
 			return msgs;
 		}
+
+		// can living see the change?
+		bool ChangeFilter(Living living, Change change)
+		{
+			// XXX these checks are not totally correct. objects may have changed after
+			// the creation of the change, for example moved. Should changes contain
+			// all the information needed for these checks?
+			if (change is ObjectMoveChange)
+			{
+				var c = (ObjectMoveChange)change;
+
+				if (living == c.Object)
+					return true;
+
+				if (living.Sees(c.Source, c.SourceLocation))
+					return true;
+
+				if (living.Sees(c.Destination, c.DestinationLocation))
+					return true;
+
+				return false;
+			}
+			else if (change is MapChange)
+			{
+				var c = (MapChange)change;
+
+				return living.Sees(c.Map, c.Location);
+			}
+			else if (change is ObjectDestructedChange)
+			{
+				return true;
+			}
+			else if (change is FullObjectChange)
+			{
+				var c = (FullObjectChange)change;
+				return c.Object == living;
+			}
+			else if (change is PropertyChange)
+			{
+				var c = (PropertyChange)change;
+
+				if (c.Object == living)
+					return true;
+
+				if (c.Property.Visibility == PropertyVisibility.Friendly)
+				{
+					// xxx should check if the object is friendly
+					// return false for now, as all friendlies are controllables, thus we will still see it
+					return false;
+				}
+				else if (c.Property.Visibility == PropertyVisibility.Public)
+				{
+					ServerGameObject ob = (ServerGameObject)c.Object;
+
+					return living.Sees(ob.Environment, ob.Location);
+				}
+			}
+
+			throw new Exception();
+		}
+
 
 		public ClientMsgs.Message ChangeToMessage(Change change)
 		{
@@ -603,8 +665,13 @@ namespace MyGame.Server
 			{
 				return new ClientMsgs.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
 			}
+			else if (change is PropertyChange)
+			{
+				var c = (PropertyChange)change;
+				return new ClientMsgs.PropertyData() { ObjectID = c.ObjectID, PropertyID = c.PropertyID, Value = c.Value };
+			}
 
-			throw new Exception();
+			throw new Exception("Unknown Change type");
 		}
 
 

@@ -17,6 +17,7 @@ namespace MyGame.Server
 		}
 	}
 
+	/* Abstract game object, without inventory or conventional location. */
 	abstract public class BaseGameObject : IIdentifiable
 	{
 		public ObjectID ObjectID { get; private set; }
@@ -39,8 +40,26 @@ namespace MyGame.Server
 
 		public abstract ClientMsgs.Message Serialize();
 		public abstract void SerializeTo(Action<ClientMsgs.Message> writer);
+
+		Dictionary<PropertyDefinition, object> m_propertyMap = new Dictionary<PropertyDefinition, object>();
+
+		protected void SetValue(PropertyDefinition property, object value)
+		{
+			m_propertyMap[property] = value;
+			this.World.AddChange(new PropertyChange(this, property, value));
+		}
+
+		protected object GetValue(PropertyDefinition property)
+		{
+			object value;
+			if (m_propertyMap.TryGetValue(property, out value))
+				return value;
+			else
+				return property.DefaultValue;
+		}
 	}
 
+	/* Game object that has inventory, location */
 	abstract public class ServerGameObject : BaseGameObject
 	{
 		public ServerGameObject Parent { get; private set; }

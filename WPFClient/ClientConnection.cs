@@ -121,7 +121,7 @@ namespace MyGame.Client
 				f = WrapperGenerator.CreateHandlerWrapper<Message>("HandleMessage", t, this);
 
 				if (f == null)
-					throw new Exception();
+					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
 
 				m_handlerMap[t] = f;
 			}
@@ -318,6 +318,34 @@ namespace MyGame.Client
 				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
 
 			ob.MoveTo(env, msg.Location);
+		}
+
+		void HandleMessage(PropertyData msg)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			switch (msg.PropertyID)
+			{
+				case PropertyID.HitPoints:
+					break;
+
+				case PropertyID.Strength:
+					break;
+
+				case PropertyID.VisionRange:
+					ob.VisionRange = (int)msg.Value;
+					break;
+
+				case PropertyID.Color:
+					ob.Color = ((GameColor)msg.Value).ToColor();
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		void HandleMessage(ItemData msg)

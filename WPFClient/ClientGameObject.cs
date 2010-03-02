@@ -82,7 +82,6 @@ namespace MyGame.Client
 
 
 
-
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
@@ -131,7 +130,9 @@ namespace MyGame.Client
 		{
 			var ob = (ClientGameObject)d;
 			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.Color));
-		}
+			if (ob.Environment != null)
+				ob.Environment.OnObjectVisualChanged(ob);
+	}
 
 
 

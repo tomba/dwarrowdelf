@@ -8,25 +8,37 @@ namespace MyGame.Server
 {
 	public class Living : ServerGameObject
 	{
-		// XXX note: not re-entrant
-		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
+		#region internal fields that are _not_ visible to clients
+
+		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
 
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
-		int m_visionRange = 10;
 		Grid2D<bool> m_visionMap;
 
 		IActor m_actorImpl;
 
-		public SymbolID SymbolID { get; set; }
-		public string Name { get; set; }
+		#endregion
 
-		public GameColor Color { get; set; }
-		public MaterialID MaterialID { get; set; }
+		#region fields that are visible to clients
 
-		public Living(World world)
+		int m_visionRange = 10;
+		MaterialID m_materialID;
+
+		SymbolID m_symbolID;
+
+		public string Name { get; private set; }
+
+		#endregion
+
+		static readonly PropertyDefinition HitPointsProperty = new PropertyDefinition(PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition ColorProperty = new PropertyDefinition(PropertyID.Color, PropertyVisibility.Public, new GameColor());
+
+
+		public Living(World world, string name)
 			: base(world)
 		{
+			this.Name = name;
 			world.AddLiving(this);
 		}
 
@@ -37,16 +49,57 @@ namespace MyGame.Server
 			this.Destruct();
 		}
 
-		public IActor Actor
+		void AddFullChange()
 		{
-			get { return m_actorImpl; }
-			set { m_actorImpl = value; }
+			this.World.AddChange(new FullObjectChange(this) { ObjectData = Serialize() });
+		}
+
+		public int HitPoints
+		{
+			get { return (int)GetValue(HitPointsProperty); }
+			set { SetValue(HitPointsProperty, value); }
+		}
+
+		public GameColor Color
+		{
+			get { return (GameColor)GetValue(ColorProperty); }
+			set { SetValue(ColorProperty, value); }
+		}
+
+		public string ColorStr
+		{
+			set
+			{
+				var c = uint.Parse(value, System.Globalization.NumberStyles.HexNumber);
+				byte r = (byte)((c >> 16) & 0xff);
+				byte g = (byte)((c >> 8) & 0xff);
+				byte b = (byte)((c >> 0) & 0xff);
+				this.Color = new GameColor(r, g, b);
+			}
+		}
+
+		public MaterialID MaterialID
+		{
+			get { return m_materialID; }
+			set { if (value != m_materialID) { m_materialID = value; AddFullChange(); } }
 		}
 
 		public int VisionRange
 		{
 			get { return m_visionRange; }
-			set { m_visionRange = value; m_visionMap = null; }
+			set { if (value != m_visionRange) { m_visionRange = value; m_visionMap = null; } }
+		}
+
+		public SymbolID SymbolID
+		{
+			get { return m_symbolID; }
+			set { if (value != m_symbolID) { m_symbolID = value; AddFullChange(); } }
+		}
+
+		public IActor Actor
+		{
+			get { return m_actorImpl; }
+			set { m_actorImpl = value; }
 		}
 
 		public Grid2D<bool> VisionMap
@@ -165,7 +218,7 @@ namespace MyGame.Server
 			{
 				success = false;
 				return;
-			}				
+			}
 
 			if (action.TicksLeft != 0)
 			{
@@ -319,36 +372,6 @@ namespace MyGame.Server
 			m_losLocation = this.Location;
 		}
 
-
-		// pass changes that this living sees
-		public bool ChangeFilter(Change change)
-		{
-			if (change is ObjectMoveChange)
-			{
-				ObjectMoveChange ec = (ObjectMoveChange)change;
-
-				if (Sees(ec.Source, ec.SourceLocation))
-					return true;
-
-				if (Sees(ec.Destination, ec.DestinationLocation))
-					return true;
-
-				return false;
-			}
-			else if (change is MapChange)
-			{
-				MapChange mc = (MapChange)change;
-
-				return Sees(mc.Map, mc.Location);
-			}
-			else if (change is ObjectDestructedChange)
-			{
-				return true;
-			}
-
-			throw new Exception();
-		}
-
 		// does this living see location l in object ob
 		public bool Sees(IIdentifiable ob, IntPoint3D l)
 		{
@@ -475,6 +498,7 @@ namespace MyGame.Server
 			data.Location = this.Location;
 			data.Color = this.Color;
 			data.VisionRange = this.VisionRange;
+			data.HitPoints = this.HitPoints;
 			return data;
 		}
 

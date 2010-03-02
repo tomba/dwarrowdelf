@@ -394,5 +394,12 @@ namespace MyGame.Client
 			if (MapChanged != null)
 				MapChanged(l);
 		}
+
+		// called from object when its visual property changes
+		internal void OnObjectVisualChanged(ClientGameObject ob)
+		{
+			if (MapChanged != null)
+				MapChanged(ob.Location);
+		}
 	}
 }

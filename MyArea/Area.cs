@@ -208,9 +208,8 @@ namespace MyArea
 			for (int i = 0; i < 1; ++i)
 			{
 				// Add a monster
-				var monster = new Living(world);
+				var monster = new Living(world, String.Format("monsu{0}", i));
 				monster.SymbolID = SymbolID.Monster;
-				monster.Name = String.Format("monsu{0}", i);
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
 				var monsterAI = new MonsterActor(monster);

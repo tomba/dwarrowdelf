@@ -143,27 +143,32 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	/* Item in inventory or floor */
 	[DataContract]
 	[Serializable]
-	public class ItemData : Message
+	public abstract class BaseObjectData : Message
 	{
 		[DataMember]
 		public ObjectID ObjectID { get; set; }
 		[DataMember]
-		public string Name { get; set; }
-		[DataMember]
-		public SymbolID SymbolID { get; set; }
-
-		[DataMember]
 		public IntPoint3D Location { get; set; }
 		[DataMember]
 		public ObjectID Environment { get; set; }
+
+		[DataMember]
+		public string Name { get; set; }
+		[DataMember]
+		public SymbolID SymbolID { get; set; }
 		[DataMember]
 		public GameColor Color { get; set; }
 		[DataMember]
 		public MaterialID MaterialID { get; set; }
+	}
 
+	/* Item in inventory or floor */
+	[DataContract]
+	[Serializable]
+	public class ItemData : BaseObjectData
+	{
 		public override string ToString()
 		{
 			return String.Format("ItemData {0} {1}", this.ObjectID, this.Name);
@@ -172,30 +177,35 @@ namespace MyGame.ClientMsgs
 
 	[DataContract]
 	[Serializable]
-	public class LivingData : Message
+	public class LivingData : BaseObjectData
 	{
-		[DataMember]
-		public ObjectID ObjectID { get; set; }
-		[DataMember]
-		public SymbolID SymbolID { get; set; }
 		[DataMember]
 		public int VisionRange { get; set; }
 		[DataMember]
-		public string Name { get; set; }
-
+		public int HitPoints { get; set; }
 		[DataMember]
-		public IntPoint3D Location { get; set; }
-		[DataMember]
-		public ObjectID Environment { get; set; }
-		[DataMember]
-		public GameColor Color { get; set; }
-
-		[DataMember]
-		public bool Controllable { get; set; }
+		public int Strength { get; set; }
 
 		public override string ToString()
 		{
 			return String.Format("LivingData {0} {1}", this.ObjectID, this.Name);
+		}
+	}
+
+	[DataContract]
+	[Serializable]
+	public class PropertyData : Message
+	{
+		[DataMember]
+		public ObjectID ObjectID { get; set; }
+		[DataMember]
+		public PropertyID PropertyID { get; set; }
+		[DataMember]
+		public object Value { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("PropertyData {0} {1}: {2}", this.ObjectID, this.PropertyID, this.Value);
 		}
 	}
 

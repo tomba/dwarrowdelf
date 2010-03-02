@@ -100,4 +100,56 @@ namespace MyGame
 		public ClientMsgs.Message ObjectData { get; set; }
 	}
 
+	public enum PropertyID : ushort
+	{
+		None,
+
+		VisionRange,
+		Color,
+
+		HitPoints,
+		SpellPoints,
+
+		Strength,
+		Dexterity,
+		Constitution,
+		Intelligence,
+		Wisdom,
+		Charisma,
+	}
+
+	public class PropertyDefinition
+	{
+		public PropertyDefinition(PropertyID id, PropertyVisibility visibility, object defaultValue)
+		{
+			this.PropertyID = id;
+			this.Visibility = visibility;
+			this.DefaultValue = defaultValue;
+		}
+
+		public PropertyID PropertyID { get; private set; }
+		public PropertyVisibility Visibility { get; private set; }
+		public object DefaultValue { get; private set; }
+	}
+
+	public enum PropertyVisibility
+	{
+		Public,		// everybody see
+		Friendly,	// friendlies see
+	}
+
+	public class PropertyChange : ObjectChange
+	{
+		public PropertyChange(IIdentifiable ob, PropertyDefinition property, object value)
+			: base(ob)
+		{
+			this.Property = property;
+			this.Value = value;
+		}
+
+		public PropertyDefinition Property { get; private set; }
+		public PropertyID PropertyID { get { return Property.PropertyID; } }
+		public object Value { get; private set; }
+	}
+
 }

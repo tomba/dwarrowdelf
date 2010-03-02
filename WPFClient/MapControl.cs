@@ -427,7 +427,6 @@ namespace MyGame.Client
 			}
 		}
 
-
 		void MapChangedCallback(IntPoint3D l)
 		{
 			InvalidateTiles();
