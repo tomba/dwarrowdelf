@@ -129,6 +129,10 @@ namespace MyGame.Server
 
 			m_scriptScope = m_scriptEngine.CreateScope();
 			m_scriptScope.SetVariable("world", m_world);
+
+			m_scriptEngine.Execute("import clr", m_scriptScope);
+			m_scriptEngine.Execute("clr.AddReference('MyGame.Common')", m_scriptScope);
+			m_scriptEngine.Execute("import MyGame", m_scriptScope);
 		}
 
 		protected void OnDisconnect()
