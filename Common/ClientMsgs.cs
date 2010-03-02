@@ -18,6 +18,22 @@ namespace MyGame.ClientMsgs
 
 	[DataContract]
 	[Serializable]
+	public class IronPythonCommand : Message
+	{
+		[DataMember]
+		public string Text { get; set; }
+	}
+
+	[DataContract]
+	[Serializable]
+	public class IronPythonOutput : Message
+	{
+		[DataMember]
+		public string Text { get; set; }
+	}
+
+	[DataContract]
+	[Serializable]
 	public class LogOnRequest : Message
 	{
 		[DataMember]

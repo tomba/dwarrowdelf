@@ -343,6 +343,12 @@ namespace MyGame.Client
 			ob.Destruct();
 		}
 
+		void HandleMessage(IronPythonOutput msg)
+		{
+			App.MainWindow.outputTextBox.AppendText(msg.Text);
+			App.MainWindow.outputTextBox.ScrollToEnd();
+		}
+
 		void HandleMessage(EventMessage msg)
 		{
 			HandleEvents(msg.Event);

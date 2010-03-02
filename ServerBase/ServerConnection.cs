@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using MyGame.ClientMsgs;
+using System.IO;
 
 namespace MyGame.Server
 {
@@ -48,6 +49,70 @@ namespace MyGame.Server
 		Connection m_connection;
 		bool m_userLoggedIn;
 
+		Microsoft.Scripting.Hosting.ScriptEngine m_scriptEngine;
+		Microsoft.Scripting.Hosting.ScriptScope m_scriptScope;
+
+		MyStream m_scriptOutputStream;
+
+		class MyStream : Stream
+		{
+			Action<ClientMsgs.Message> m_sender;
+			MemoryStream m_stream = new MemoryStream();
+
+			public MyStream(Action<ClientMsgs.Message> sender)
+			{
+				m_sender = sender;
+			}
+
+			public override bool CanRead { get { return false; } }
+			public override bool CanSeek { get { return false; } }
+			public override bool CanWrite { get { return true; } }
+
+			public override void Flush()
+			{
+				if (m_stream.Position == 0)
+					return;
+
+				var text = System.Text.Encoding.Unicode.GetString(m_stream.GetBuffer(), 0, (int)m_stream.Position);
+				m_stream.Position = 0;
+				m_stream.SetLength(0);
+				var msg = new ClientMsgs.IronPythonOutput() { Text = text };
+				m_sender(msg);
+			}
+
+			public override long Length { get { throw new NotImplementedException(); } }
+
+			public override long Position
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override int Read(byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override long Seek(long offset, SeekOrigin origin)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void SetLength(long value)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void Write(byte[] buffer, int offset, int count)
+			{
+				if (count == 0)
+					return;
+
+				m_stream.Write(buffer, offset, count);
+			}
+		}
+
+
 		public ServerConnection(Connection conn, World world)
 		{
 			m_world = world;
@@ -55,6 +120,15 @@ namespace MyGame.Server
 			m_connection = conn;
 			m_connection.ReceiveEvent += OnReceiveMessage;
 			m_connection.DisconnectEvent += OnDisconnect;
+
+			m_scriptOutputStream = new MyStream(Send);
+
+			m_scriptEngine = IronPython.Hosting.Python.CreateEngine();
+			m_scriptEngine.Runtime.IO.SetOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
+			m_scriptEngine.Runtime.IO.SetErrorOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
+
+			m_scriptScope = m_scriptEngine.CreateScope();
+			m_scriptScope.SetVariable("world", m_world);
 		}
 
 		protected void OnDisconnect()
@@ -331,6 +405,8 @@ namespace MyGame.Server
 					throw new Exception();
 			}
 #endif
+			m_scriptScope.SetVariable("me", player);
+
 			m_charLoggedIn = true;
 			Send(new ClientMsgs.LogOnCharReply());
 			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
@@ -378,6 +454,25 @@ namespace MyGame.Server
 			}
 		}
 
+		[WorldInvoke(WorldInvokeStyle.Instant)]
+		void ReceiveMessage(IronPythonCommand msg)
+		{
+			MyDebug.WriteLine("IronPythonCommand");
+
+			var script = msg.Text;
+
+			try
+			{
+				var r = m_scriptEngine.ExecuteAndWrap(script, m_scriptScope);
+				m_scriptScope.SetVariable("ret", r);
+				m_scriptEngine.Execute("print ret", m_scriptScope);
+			}
+			catch (Exception e)
+			{
+				var str = e.Message + "\n";
+				Send(new IronPythonOutput() { Text = str });
+			}
+		}
 
 
 

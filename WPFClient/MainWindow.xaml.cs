@@ -256,6 +256,9 @@ namespace MyGame.Client
 			if (GameData.Data.Connection == null)
 				return;
 
+			if (inputTextBox.IsFocused)
+				return;
+
 			var currentOb = GameData.Data.CurrentObject;
 
 			if (KeyIsDir(e.Key))
@@ -321,6 +324,9 @@ namespace MyGame.Client
 
 		void Window_PreTextInput(object sender, TextCompositionEventArgs e)
 		{
+			if (inputTextBox.IsFocused)
+				return;
+
 			string text = e.Text;
 			Direction dir;
 
@@ -753,6 +759,23 @@ namespace MyGame.Client
 		private void currentObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			currentObjectComboBox.SelectedItem = null;
+		}
+
+		private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key != Key.Enter)
+				return;
+
+			if (!GameData.Data.Connection.IsUserConnected)
+			{
+				inputTextBox.Clear();
+				outputTextBox.AppendText("** not connected **\n");
+				return;
+			}
+
+			var msg = new IronPythonCommand() { Text = inputTextBox.Text };
+			inputTextBox.Clear();
+			GameData.Data.Connection.Send(msg);
 		}
 	}
 }
