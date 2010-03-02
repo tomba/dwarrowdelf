@@ -137,7 +137,7 @@
         <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
             <TextBox Name="outputTextBox" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" IsReadOnly="True"
                      Height="100" FontFamily="Lucida Console" />
-            <TextBox Name="inputTextBox" PreviewKeyDown="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
+            <local:HistoryTextBox x:Name="inputTextBox" TextEntered="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
         </StackPanel>
 
         <Grid>

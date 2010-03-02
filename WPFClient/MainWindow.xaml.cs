@@ -761,20 +761,15 @@ namespace MyGame.Client
 			currentObjectComboBox.SelectedItem = null;
 		}
 
-		private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		private void TextBox_PreviewKeyDown(string str)
 		{
-			if (e.Key != Key.Enter)
-				return;
-
 			if (!GameData.Data.Connection.IsUserConnected)
 			{
-				inputTextBox.Clear();
 				outputTextBox.AppendText("** not connected **\n");
 				return;
 			}
 
-			var msg = new IronPythonCommand() { Text = inputTextBox.Text };
-			inputTextBox.Clear();
+			var msg = new IronPythonCommand() { Text = str };
 			GameData.Data.Connection.Send(msg);
 		}
 	}
