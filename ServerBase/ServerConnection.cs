@@ -43,8 +43,7 @@ namespace MyGame.Server
 		// this user sees all
 		bool m_seeAll = false;
 
-		// livings used for fov
-		List<Living> m_friendlies = new List<Living>();
+		List<Living> m_controllables= new List<Living>();
 
 		Connection m_connection;
 		bool m_userLoggedIn;
@@ -349,7 +348,7 @@ namespace MyGame.Server
 
 			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
 
-			m_friendlies.Add(player);
+			m_controllables.Add(player);
 
 			var diamond = Materials.Diamond.ID;
 
@@ -381,7 +380,7 @@ namespace MyGame.Server
 			pet.SymbolID = SymbolID.Monster;
 			pet.Name = "lemmikki";
 			pet.Actor = new InteractiveActor();
-			m_friendlies.Add(pet);
+			m_controllables.Add(pet);
 
 			pet.MoveTo(player.Environment, player.Location + new IntVector(1, 0));
 #endif
@@ -403,7 +402,7 @@ namespace MyGame.Server
 					Actor = new InteractiveActor(),
 					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
 				};
-				m_friendlies.Add(player);
+				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
 					throw new Exception();
 			}
@@ -412,7 +411,7 @@ namespace MyGame.Server
 
 			m_charLoggedIn = true;
 			Send(new ClientMsgs.LogOnCharReply());
-			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
+			Send(new ClientMsgs.ControllablesData() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
 			player.HitPoints = 50;
 		}
@@ -422,14 +421,14 @@ namespace MyGame.Server
 		{
 			MyDebug.WriteLine("LogOffChar");
 
-			foreach (var l in m_friendlies)
+			foreach (var l in m_controllables)
 			{
 				l.Cleanup();
 			}
 
-			m_friendlies.Clear();
+			m_controllables.Clear();
 
-			Send(new ClientMsgs.ControllablesData() { Controllables = m_friendlies.Select(l => l.ObjectID).ToArray() });
+			Send(new ClientMsgs.ControllablesData() { Controllables = new ObjectID[0] });
 			Send(new ClientMsgs.LogOffCharReply());
 			m_charLoggedIn = false;
 		}
@@ -443,7 +442,7 @@ namespace MyGame.Server
 				if (action.TransactionID == 0)
 					throw new Exception();
 
-				var living = m_friendlies.SingleOrDefault(l => l.ObjectID == action.ActorObjectID);
+				var living = m_controllables.SingleOrDefault(l => l.ObjectID == action.ActorObjectID);
 
 				if (living == null)
 					throw new Exception("Illegal ob id");
@@ -480,28 +479,28 @@ namespace MyGame.Server
 		}
 
 
-
+		// Called from the world at the end of turn
 		void HandleEvents(IEnumerable<Event> events)
 		{
-			events = events.Where(e => EventFilter(e));
+			events = events.Where(EventFilter);
 
-			var msgs = events.Select(e => (ClientMsgs.Message)new ClientMsgs.EventMessage(e));
+			var msgs = events.Select(e => new ClientMsgs.EventMessage(e));
 
 			Send(msgs);
 		}
 
-		public bool EventFilter(Event @event)
+		bool EventFilter(Event @event)
 		{
 			if (@event is ActionProgressEvent)
 			{
-				ActionProgressEvent e = (ActionProgressEvent)@event;
+				var e = (ActionProgressEvent)@event;
 				return e.UserID == m_userID;
 			}
 
 			if (@event is ActionRequiredEvent)
 			{
 				var e = (ActionRequiredEvent)@event;
-				return m_friendlies.Any(l => l.ObjectID == e.ObjectID);
+				return m_controllables.Any(l => l.ObjectID == e.ObjectID);
 			}
 
 			if (@event is TickChangeEvent)
@@ -514,6 +513,7 @@ namespace MyGame.Server
 		Dictionary<Environment, HashSet<IntPoint3D>> m_knownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
+		// Called from the world at the end of turn
 		void HandleChanges(IEnumerable<Change> changes)
 		{
 			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
@@ -521,11 +521,11 @@ namespace MyGame.Server
 			// if the user sees all, no need to send new terrains/objects
 			if (!m_seeAll)
 			{
-				var m = CollectNewTerrainsAndObjects(m_friendlies);
+				var m = CollectNewTerrainsAndObjects(m_controllables);
 				msgs = msgs.Concat(m);
 			}
 
-			var changeMsgs = CollectChanges(m_friendlies, changes);
+			var changeMsgs = CollectChanges(m_controllables, changes);
 			msgs = msgs.Concat(changeMsgs);
 
 			if (msgs.Count() > 0)
@@ -566,7 +566,7 @@ namespace MyGame.Server
 				changes = changes.Where(c => friendlies.Any(l => ChangeFilter(l, c)));
 			}
 
-			var changeMsgs = changes.Select(c => ChangeToMessage(c));
+			var changeMsgs = changes.Select(ChangeToMessage);
 
 			// NOTE: send changes last, so that object/map/tile information has already
 			// been received by the client
