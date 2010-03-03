@@ -50,8 +50,7 @@ namespace MyGame.Server
 		List<Living> m_addLivingList = new List<Living>();
 		List<Living> m_removeLivingList = new List<Living>();
 
-		public event Action<IEnumerable<Change>> HandleChangesEvent;
-		public event Action<IEnumerable<Event>> HandleEventsEvent;
+		public event Action<IEnumerable<Change>, IEnumerable<Event>> HandleEndOfTurn;
 
 		List<Change> m_changeList = new List<Change>();
 		List<Event> m_eventList = new List<Event>();
@@ -151,8 +150,10 @@ namespace MyGame.Server
 			ExitWriteLock();
 
 			// process any changes from world initialization
-			ProcessChanges();
-			ProcessEvents();
+			if (HandleEndOfTurn != null)
+				HandleEndOfTurn(m_changeList, m_eventList);
+			m_changeList.Clear();
+			m_eventList.Clear();
 		}
 
 		void Main(object arg)
@@ -436,8 +437,10 @@ namespace MyGame.Server
 			ExitWriteLock();
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
-			ProcessChanges();
-			ProcessEvents();
+			if (HandleEndOfTurn != null)
+				HandleEndOfTurn(m_changeList, m_eventList);
+			m_changeList.Clear();
+			m_eventList.Clear();
 
 			if (m_state == WorldState.TickEnded)
 			{
@@ -708,30 +711,10 @@ namespace MyGame.Server
 			m_changeList.Add(change);
 		}
 
-		void ProcessChanges()
-		{
-			VerifyAccess();
-
-			if (HandleChangesEvent != null)
-				HandleChangesEvent(m_changeList);
-
-			m_changeList.Clear();
-		}
-
 		public void AddEvent(Event @event)
 		{
 			VerifyAccess();
 			m_eventList.Add(@event);
-		}
-
-		void ProcessEvents()
-		{
-			VerifyAccess();
-
-			if (HandleEventsEvent != null)
-				HandleEventsEvent(m_eventList);
-
-			m_eventList.Clear();
 		}
 
 		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)

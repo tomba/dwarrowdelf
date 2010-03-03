@@ -43,7 +43,7 @@ namespace MyGame.Server
 		// this user sees all
 		bool m_seeAll = false;
 
-		List<Living> m_controllables= new List<Living>();
+		List<Living> m_controllables = new List<Living>();
 
 		Connection m_connection;
 		bool m_userLoggedIn;
@@ -146,8 +146,7 @@ namespace MyGame.Server
 			if (m_userLoggedIn)
 			{
 				m_world.RemoveUser(this);
-				m_world.HandleChangesEvent -= HandleChanges;
-				m_world.HandleEventsEvent -= HandleEvents;
+				m_world.HandleEndOfTurn -= HandleEndOfTurn;
 			}
 
 			m_world = null;
@@ -232,8 +231,7 @@ namespace MyGame.Server
 				}
 			}
 
-			m_world.HandleChangesEvent += HandleChanges;
-			m_world.HandleEventsEvent += HandleEvents;
+			m_world.HandleEndOfTurn += HandleEndOfTurn;
 			m_world.AddUser(this);
 
 			m_userLoggedIn = true;
@@ -248,8 +246,7 @@ namespace MyGame.Server
 				ReceiveMessage(new LogOffCharRequest()); // XXX
 
 			m_world.RemoveUser(this);
-			m_world.HandleChangesEvent -= HandleChanges;
-			m_world.HandleEventsEvent -= HandleEvents;
+			m_world.HandleEndOfTurn -= HandleEndOfTurn;
 
 			m_userLoggedIn = false;
 
@@ -479,13 +476,166 @@ namespace MyGame.Server
 		}
 
 
+		// These are used to determine new tiles and objects in sight
+		HashSet<Environment> m_knownEnvironments = new HashSet<Environment>();
+
+		Dictionary<Environment, HashSet<IntPoint3D>> m_oldKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
+		HashSet<ServerGameObject> m_oldKnownObjects = new HashSet<ServerGameObject>();
+
+		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
+		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
+
 		// Called from the world at the end of turn
+		void HandleEndOfTurn(IEnumerable<Change> changes, IEnumerable<Event> events)
+		{
+			// if the user sees all, no need to send new terrains/objects
+			if (!m_seeAll)
+				HandleNewTerrainsAndObjects(m_controllables);
+
+			HandleChanges(changes);
+			HandleEvents(events);
+		}
+
+		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
+		{
+			m_oldKnownLocations = m_newKnownLocations;
+			m_newKnownLocations = CollectLocations(friendlies);
+
+			m_oldKnownObjects = m_newKnownObjects;
+			m_newKnownObjects = CollectObjects(m_newKnownLocations);
+
+			var revealedLocations = CollectRevealedLocations(m_oldKnownLocations, m_newKnownLocations);
+			var revealedObjects = CollectRevealedObjects(m_oldKnownObjects, m_newKnownObjects);
+			var revealedEnvironments = m_newKnownLocations.Keys.Except(m_knownEnvironments).ToArray();
+
+			m_knownEnvironments.UnionWith(revealedEnvironments);
+
+			SendNewEnvironments(revealedEnvironments);
+			SendNewTerrains(revealedLocations);
+			SendNewObjects(revealedObjects);
+		}
+
+		// Collect all environments and locations that friendlies see
+		Dictionary<Environment, HashSet<IntPoint3D>> CollectLocations(IEnumerable<Living> friendlies)
+		{
+			var knownLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
+
+			foreach (var l in friendlies)
+			{
+				if (l.Environment == null)
+					continue;
+
+				IEnumerable<IntPoint3D> locList;
+
+				/* for AllVisible maps we don't track visible locations, but we still
+				 * need to handle newly visible maps */
+				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
+					locList = new List<IntPoint3D>();
+				else
+					locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
+
+				if (!knownLocs.ContainsKey(l.Environment))
+					knownLocs[l.Environment] = new HashSet<IntPoint3D>();
+
+				knownLocs[l.Environment].UnionWith(locList);
+			}
+
+			return knownLocs;
+		}
+
+		// Collect all objects in the given location map
+		HashSet<ServerGameObject> CollectObjects(Dictionary<Environment, HashSet<IntPoint3D>> knownLocs)
+		{
+			var knownObs = new HashSet<ServerGameObject>();
+
+			foreach (var kvp in knownLocs)
+			{
+				var env = kvp.Key;
+				var newLocs = kvp.Value;
+
+				foreach (var p in newLocs)
+				{
+					var obList = env.GetContents(p);
+					if (obList != null)
+						knownObs.UnionWith(obList);
+				}
+			}
+
+			return knownObs;
+		}
+
+		// Collect locations that are newly visible
+		Dictionary<Environment, HashSet<IntPoint3D>> CollectRevealedLocations(Dictionary<Environment, HashSet<IntPoint3D>> oldLocs,
+			Dictionary<Environment, HashSet<IntPoint3D>> newLocs)
+		{
+			var revealedLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
+
+			foreach (var kvp in newLocs)
+			{
+				if (oldLocs.ContainsKey(kvp.Key))
+					revealedLocs[kvp.Key] = new HashSet<IntPoint3D>(kvp.Value.Except(oldLocs[kvp.Key]));
+				else
+					revealedLocs[kvp.Key] = kvp.Value;
+			}
+
+			return revealedLocs;
+		}
+
+		// Collect objects that are newly visible
+		ServerGameObject[] CollectRevealedObjects(HashSet<ServerGameObject> oldObjects, HashSet<ServerGameObject> newObjects)
+		{
+			var revealedObs = newObjects.Except(oldObjects).ToArray();
+			return revealedObs;
+		}
+
+		private void SendNewEnvironments(IEnumerable<Environment> revealedEnvironments)
+		{
+			// send full data for AllVisible envs, and intro for other maps
+			foreach (var env in revealedEnvironments)
+			{
+				if (env.VisibilityMode == VisibilityMode.AllVisible)
+				{
+					env.SerializeTo(Send);
+				}
+				else
+				{
+					var msg = new ClientMsgs.MapData()
+					{
+						Environment = env.ObjectID,
+						VisibilityMode = env.VisibilityMode,
+					};
+					Send(msg);
+				}
+			}
+		}
+
+		void SendNewTerrains(Dictionary<Environment, HashSet<IntPoint3D>> revealedLocations)
+		{
+			var msgs = revealedLocations.Where(kvp => kvp.Value.Count() > 0).
+				Select(kvp => (ClientMsgs.Message)new ClientMsgs.MapDataTerrainsList()
+				{
+					Environment = kvp.Key.ObjectID,
+					TileDataList = kvp.Value.Select(l =>
+						new Tuple<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
+						).ToArray(),
+				});
+
+
+			Send(msgs);
+		}
+
+		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
+		{
+			var msgs = revealedObjects.Select(o => o.Serialize());
+			Send(msgs);
+		}
+
+
+
 		void HandleEvents(IEnumerable<Event> events)
 		{
 			events = events.Where(EventFilter);
-
 			var msgs = events.Select(e => new ClientMsgs.EventMessage(e));
-
 			Send(msgs);
 		}
 
@@ -509,27 +659,12 @@ namespace MyGame.Server
 			return true;
 		}
 
-		// These are used to determine new tiles and objects in sight
-		Dictionary<Environment, HashSet<IntPoint3D>> m_knownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
-		HashSet<ServerGameObject> m_knownObjects = new HashSet<ServerGameObject>();
 
-		// Called from the world at the end of turn
+
 		void HandleChanges(IEnumerable<Change> changes)
 		{
-			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
-
-			// if the user sees all, no need to send new terrains/objects
-			if (!m_seeAll)
-			{
-				var m = CollectNewTerrainsAndObjects(m_controllables);
-				msgs = msgs.Concat(m);
-			}
-
 			var changeMsgs = CollectChanges(m_controllables, changes);
-			msgs = msgs.Concat(changeMsgs);
-
-			if (msgs.Count() > 0)
-				Send(msgs);
+			Send(changeMsgs);
 		}
 
 		IEnumerable<ClientMsgs.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
@@ -675,103 +810,6 @@ namespace MyGame.Server
 		}
 
 
-		IEnumerable<ClientMsgs.Message> CollectNewTerrainsAndObjects(IEnumerable<Living> friendlies)
-		{
-			List<ClientMsgs.Message> mapMsgs = new List<ClientMsgs.Message>();
-			// Collect all locations that friendlies see
-			var newKnownLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
-			foreach (Living l in friendlies)
-			{
-				if (l.Environment == null)
-					continue;
-
-				IEnumerable<IntPoint3D> locList;
-
-				/* for AllVisible maps we don't track visible locations, but we still
-				 * need to handle newly visible maps */
-				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
-					locList = new List<IntPoint3D>();
-				else
-					locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
-
-				if (!newKnownLocs.ContainsKey(l.Environment))
-				{
-					newKnownLocs[l.Environment] = new HashSet<IntPoint3D>();
-
-					if (!m_knownLocations.ContainsKey(l.Environment))
-					{
-						// new environment for this user, so send map info
-						if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
-						{
-							l.Environment.SerializeTo(m_connection.Send);
-						}
-						else
-						{
-							var md = new ClientMsgs.MapData()
-							{
-								Environment = l.Environment.ObjectID,
-								VisibilityMode = l.Environment.VisibilityMode,
-							};
-							mapMsgs.Add(md);
-						}
-					}
-				}
-				newKnownLocs[l.Environment].UnionWith(locList);
-			}
-
-			// Collect objects in visible locations
-			var newKnownObs = new HashSet<ServerGameObject>();
-			foreach (var kvp in newKnownLocs)
-			{
-				var env = kvp.Key;
-				var newLocs = kvp.Value;
-
-				foreach (var p in newLocs)
-				{
-					var obList = env.GetContents(p);
-					if (obList == null)
-						continue;
-					newKnownObs.UnionWith(obList);
-				}
-			}
-
-			// Collect locations that are newly visible
-			var revealedLocs = new Dictionary<Environment, IEnumerable<IntPoint3D>>();
-			foreach (var kvp in newKnownLocs)
-			{
-				if (m_knownLocations.ContainsKey(kvp.Key))
-					revealedLocs[kvp.Key] = kvp.Value.Except(m_knownLocations[kvp.Key]);
-				else
-					revealedLocs[kvp.Key] = kvp.Value;
-			}
-
-			// Collect objects that are newly visible
-			var revealedObs = newKnownObs.Except(m_knownObjects);
-
-			m_knownLocations = newKnownLocs;
-			m_knownObjects = newKnownObs;
-
-			var terrainMsgs = TilesToMessages(revealedLocs);
-			var objectMsgs = ObjectsToMessages(revealedObs);
-
-			return mapMsgs.Concat(terrainMsgs).Concat(objectMsgs);
-		}
-
-		IEnumerable<ClientMsgs.Message> TilesToMessages(Dictionary<Environment, IEnumerable<IntPoint3D>> revealedLocs)
-		{
-			var msgs = revealedLocs.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (ClientMsgs.Message)new ClientMsgs.MapDataTerrainsList()
-				{
-					Environment = kvp.Key.ObjectID,
-					TileDataList = kvp.Value.Select(l =>
-						new Tuple<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
-						).ToArray(),
-					// XXX there seems to be a problem serializing this.
-					// evaluating it with ToArray() fixes it
-				});
-
-			return msgs;
-		}
 
 		IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<ServerGameObject> revealedObs)
 		{
