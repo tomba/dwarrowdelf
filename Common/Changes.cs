@@ -44,6 +44,14 @@ namespace MyGame
 		}
 	}
 
+	public class ObjectCreatedChange : ObjectChange
+	{
+		public ObjectCreatedChange(IIdentifiable ob)
+			: base(ob)
+		{
+		}
+	}
+
 	public class ObjectDestructedChange : ObjectChange
 	{
 		public ObjectDestructedChange(IIdentifiable ob)

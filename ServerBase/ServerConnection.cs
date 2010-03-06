@@ -41,7 +41,7 @@ namespace MyGame.Server
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = false;
+		bool m_seeAll = true;
 
 		List<Living> m_controllables = new List<Living>();
 
@@ -671,19 +671,7 @@ namespace MyGame.Server
 		{
 			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
 
-			if (m_seeAll)
-			{
-				// If the user sees all, we don't collect newly visible objects. However,
-				// we still need to tell about newly created objects.
-				var newObjects = changes.
-					OfType<ObjectMoveChange>().
-					Where(c => c.SourceMapID == ObjectID.NullObjectID).
-					Select(c => (ServerGameObject)c.Object);
-
-				var newObMsgs = ObjectsToMessages(newObjects);
-				msgs = msgs.Concat(newObMsgs);
-			}
-			else
+			if (!m_seeAll)
 			{
 				// We don't collect newly visible terrains/objects on AllVisible maps.
 				// However, we still need to tell about newly created objects that come
@@ -796,6 +784,12 @@ namespace MyGame.Server
 				var c = (FullObjectChange)change;
 				return c.ObjectData;
 			}
+			else if (change is ObjectCreatedChange)
+			{
+				var c = (ObjectCreatedChange)change;
+				var o = (BaseGameObject)c.Object;
+				return o.Serialize();
+			}
 			else if (change is ObjectDestructedChange)
 			{
 				return new ClientMsgs.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
@@ -811,7 +805,7 @@ namespace MyGame.Server
 
 
 
-		IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<ServerGameObject> revealedObs)
+		IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
 		{
 			var msgs = revealedObs.Select(o => o.Serialize());
 			return msgs;

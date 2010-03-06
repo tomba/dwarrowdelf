@@ -29,6 +29,7 @@ namespace MyGame.Server
 			this.ObjectID = world.GetNewObjectID();
 			this.World = world;
 			this.World.AddGameObject(this);
+			this.World.AddChange(new ObjectCreatedChange(this));
 		}
 
 		public virtual void Destruct()
