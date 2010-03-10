@@ -106,6 +106,9 @@ namespace MyGame.Client
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Build));
 				createBuildingMenu.Items.Add(item);
 			}
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -688,9 +691,15 @@ namespace MyGame.Client
 				GameData.Data.Connection.BeginConnect(ConnectCallback);
 		}
 
+		// in NetThread context
 		void ConnectCallback()
 		{
-			GameData.Data.Connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+			var app = System.Windows.Application.Current;
+			app.Dispatcher.BeginInvoke(new Action(delegate
+				{
+					GameData.Data.Connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+				}
+				), null);
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)

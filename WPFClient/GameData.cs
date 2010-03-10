@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MyGame.Client
 {
@@ -13,11 +14,11 @@ namespace MyGame.Client
 		{
 			return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
 		}
-	}   
+	}
 
 	class ActionCollection : ObservableCollection<GameAction> { }
 
-	class GameData : INotifyPropertyChanged
+	class GameData : DependencyObject
 	{
 		public static readonly GameData Data = new GameData();
 
@@ -27,49 +28,59 @@ namespace MyGame.Client
 		}
 
 
-		ClientConnection m_connection;
 		public ClientConnection Connection
 		{
-			get { return m_connection; }
-			set { m_connection = value; Notify("Connection"); }
+			get { return (ClientConnection)GetValue(ConnectionProperty); }
+			set { SetValue(ConnectionProperty, value); }
 		}
 
-		Living m_currentObject;
+		public static readonly DependencyProperty ConnectionProperty =
+			DependencyProperty.Register("Connection", typeof(ClientConnection), typeof(GameData), new UIPropertyMetadata(null));
+
+
 		public Living CurrentObject
 		{
-			get { return m_currentObject; }
-			set
-			{
-				m_currentObject = value;
-				App.MainWindow.FollowObject = value;
-				Notify("CurrentObject");
-			}
+			get { return (Living)GetValue(CurrentObjectProperty); }
+			set { SetValue(CurrentObjectProperty, value); }
 		}
 
-		World m_world;
+		public static readonly DependencyProperty CurrentObjectProperty =
+			DependencyProperty.Register("CurrentObject", typeof(Living), typeof(GameData), new UIPropertyMetadata(null));
+
+
+
 		public World World
 		{
-			get { return m_world; }
-			set { m_world = value; Notify("World"); }
+			get { return (World)GetValue(WorldProperty); }
+			set { SetValue(WorldProperty, value); }
 		}
 
-		public bool IsSeeAll { get; set; }
-		public bool DisableLOS { get; set; }	// debug
+		public static readonly DependencyProperty WorldProperty =
+			DependencyProperty.Register("World", typeof(World), typeof(GameData), new UIPropertyMetadata(null));
+
+
+
+		public bool IsSeeAll
+		{
+			get { return (bool)GetValue(IsSeeAllProperty); }
+			set { SetValue(IsSeeAllProperty, value); }
+		}
+
+		public static readonly DependencyProperty IsSeeAllProperty =
+			DependencyProperty.Register("IsSeeAll", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
+
+
+
+		public bool DisableLOS
+		{
+			get { return (bool)GetValue(DisableLOSProperty); }
+			set { SetValue(DisableLOSProperty, value); }
+		}
+
+		public static readonly DependencyProperty DisableLOSProperty =
+			DependencyProperty.Register("DisableLOS", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
+
 
 		public ActionCollection ActionCollection { get; private set; }
-
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
-
-		void Notify(string info)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(info));
-		}
-
 	}
 }

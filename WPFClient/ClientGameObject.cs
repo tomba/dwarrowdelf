@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MyGame.Client
 {
@@ -28,7 +29,7 @@ namespace MyGame.Client
 
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	abstract class BaseGameObject : IIdentifiable
+	abstract class BaseGameObject : DependencyObject, IIdentifiable
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
@@ -41,7 +42,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class ClientGameObject : BaseGameObject, INotifyPropertyChanged
+	class ClientGameObject : BaseGameObject
 	{
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
@@ -51,7 +52,6 @@ namespace MyGame.Client
 
 		public event ObjectMoved ObjectMoved;
 
-		public Color Color { get; set; }
 		public MaterialInfo Material { get; set; }
 
 		public ClientGameObject Parent { get; private set; }
@@ -80,32 +80,60 @@ namespace MyGame.Client
 			this.World.RemoveObject(this);
 		}
 
-		string m_name;
+
+
+
 		public string Name
 		{
-			get { return m_name; }
-			set { m_name = value; Notify("Name"); }
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
 		}
 
-		SymbolID m_symbolID;
+		public static readonly DependencyProperty NameProperty =
+			DependencyProperty.Register("Name", typeof(string), typeof(ClientGameObject), new UIPropertyMetadata(null));
+
+
+
+
+		public Color Color
+		{
+			get { return (Color)GetValue(ColorProperty); }
+			set { SetValue(ColorProperty, value); }
+		}
+
+		public static readonly DependencyProperty ColorProperty =
+			DependencyProperty.Register("Color", typeof(Color), typeof(ClientGameObject), new UIPropertyMetadata(Colors.Black, UpdateDrawing));
+
+
+
 		public SymbolID SymbolID
 		{
-			get { return m_symbolID; }
-			set
-			{
-				m_symbolID = value;
-				Notify("SymbolID");
-				Notify("Drawing");
-			}
+			get { return (SymbolID)GetValue(SymbolIDProperty); }
+			set { SetValue(SymbolIDProperty, value); }
 		}
+
+		public static readonly DependencyProperty SymbolIDProperty =
+			DependencyProperty.Register("SymbolID", typeof(SymbolID), typeof(ClientGameObject), new UIPropertyMetadata(SymbolID.Undefined, UpdateDrawing));
+
+
+
 
 		public DrawingImage Drawing
 		{
-			get
-			{
-				return new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(m_symbolID, this.Color));
-			}
+			get { return (DrawingImage)GetValue(DrawingProperty); }
+			set { SetValue(DrawingProperty, value); }
 		}
+
+		public static readonly DependencyProperty DrawingProperty =
+			DependencyProperty.Register("Drawing", typeof(DrawingImage), typeof(ClientGameObject), new UIPropertyMetadata(null));
+
+		static void UpdateDrawing(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var ob = (ClientGameObject)d;
+			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.Color));
+		}
+
+
 
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
@@ -137,19 +165,6 @@ namespace MyGame.Client
 		{
 			get { return this.Parent as Environment; }
 		}
-
-
-		void Notify(string name)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
-		}
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
 
 		public override string ToString()
 		{
