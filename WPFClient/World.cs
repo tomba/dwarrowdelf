@@ -9,8 +9,6 @@ namespace MyGame.Client
 {
 	class World : INotifyPropertyChanged
 	{
-		public static World TheWorld { get; set; }
-
 		public ObservableCollection<Environment> Environments { get; private set; }
 
 		public LivingCollection Controllables { get; private set; }

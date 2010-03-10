@@ -753,7 +753,7 @@ namespace MyGame.Client
 
 		private void currentObjectCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
-			currentObjectComboBox.SelectedItem = World.TheWorld.Controllables.FirstOrDefault();
+			currentObjectComboBox.SelectedItem = GameData.Data.World.Controllables.FirstOrDefault();
 		}
 
 		private void currentObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)

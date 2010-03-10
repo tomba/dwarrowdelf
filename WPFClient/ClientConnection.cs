@@ -92,7 +92,6 @@ namespace MyGame.Client
 			this.IsCharConnected = false;
 			this.IsUserConnected = false;
 
-			World.TheWorld = null;
 			GameData.Data.World = null;
 		}
 
@@ -145,10 +144,9 @@ namespace MyGame.Client
 			GameData.Data.IsSeeAll = msg.IsSeeAll;
 
 			var world = new World();
-			World.TheWorld = world;
 			GameData.Data.World = world;
 
-			World.TheWorld.UserID = msg.UserID;
+			GameData.Data.World.UserID = msg.UserID;
 
 			if (LogOnEvent != null)
 				LogOnEvent();
@@ -163,7 +161,6 @@ namespace MyGame.Client
 			if (LogOffEvent != null)
 				LogOffEvent();
 
-			World.TheWorld = null;
 			GameData.Data.World = null;
 		}
 
@@ -179,14 +176,14 @@ namespace MyGame.Client
 
 		void HandleMessage(ControllablesData msg)
 		{
-			World.TheWorld.Controllables.Clear();
+			GameData.Data.World.Controllables.Clear();
 
 			foreach (var oid in msg.Controllables)
 			{
-				var l = World.TheWorld.FindObject<Living>(oid);
+				var l = GameData.Data.World.FindObject<Living>(oid);
 				if (l == null)
-					l = new Living(World.TheWorld, oid);
-				World.TheWorld.Controllables.Add(l);
+					l = new Living(GameData.Data.World, oid);
+				GameData.Data.World.Controllables.Add(l);
 			}
 		}
 
@@ -199,14 +196,14 @@ namespace MyGame.Client
 			if (LogOffCharEvent != null)
 				LogOffCharEvent();
 
-			World.TheWorld.Controllables.Clear();
+			GameData.Data.World.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
 			//App.MainWindow.FollowObject = null;
 		}
 
 		void HandleMessage(ObjectMove msg)
 		{
-			ClientGameObject ob = World.TheWorld.FindObject<ClientGameObject>(msg.ObjectID);
+			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
 
 			if (ob == null)
 			{
@@ -219,19 +216,19 @@ namespace MyGame.Client
 
 			ClientGameObject env = null;
 			if (msg.TargetEnvID != ObjectID.NullObjectID)
-				env = World.TheWorld.FindObject<ClientGameObject>(msg.TargetEnvID);
+				env = GameData.Data.World.FindObject<ClientGameObject>(msg.TargetEnvID);
 
 			ob.MoveTo(env, msg.TargetLocation);
 		}
 
 		void HandleMessage(MapData msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 
 			if (env == null)
 			{
 				MyDebug.WriteLine("New map appeared {0}", msg.Environment);
-				var world = World.TheWorld;
+				var world = GameData.Data.World;
 				if (msg.Bounds.IsNull)
 					env = new Environment(world, msg.Environment);
 				else
@@ -248,7 +245,7 @@ namespace MyGame.Client
 
 		void HandleMessage(MapDataTerrains msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
@@ -256,7 +253,7 @@ namespace MyGame.Client
 
 		void HandleMessage(MapDataTerrainsList msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
@@ -265,7 +262,7 @@ namespace MyGame.Client
 
 		void HandleMessage(MapDataObjects msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			DeliverMessages(msg.ObjectData);
@@ -273,7 +270,7 @@ namespace MyGame.Client
 
 		void HandleMessage(MapDataBuildings msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			env.SetBuildings(msg.BuildingData);
@@ -281,7 +278,7 @@ namespace MyGame.Client
 
 		void HandleMessage(BuildingData msg)
 		{
-			var env = World.TheWorld.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 
 			if (env.Buildings.Contains(msg.ObjectID))
 			{
@@ -303,12 +300,12 @@ namespace MyGame.Client
 
 		void HandleMessage(LivingData msg)
 		{
-			var ob = World.TheWorld.FindObject<Living>(msg.ObjectID);
+			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
 
 			if (ob == null)
 			{
 				MyDebug.WriteLine("New living appeared {0}/{1}", msg.Name, msg.ObjectID);
-				ob = new Living(World.TheWorld, msg.ObjectID);
+				ob = new Living(GameData.Data.World, msg.ObjectID);
 			}
 
 			ob.SymbolID = msg.SymbolID;
@@ -318,19 +315,19 @@ namespace MyGame.Client
 
 			ClientGameObject env = null;
 			if (msg.Environment != ObjectID.NullObjectID)
-				env = World.TheWorld.FindObject<ClientGameObject>(msg.Environment);
+				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
 
 			ob.MoveTo(env, msg.Location);
 		}
 
 		void HandleMessage(ItemData msg)
 		{
-			var ob = World.TheWorld.FindObject<ItemObject>(msg.ObjectID);
+			var ob = GameData.Data.World.FindObject<ItemObject>(msg.ObjectID);
 
 			if (ob == null)
 			{
 				MyDebug.WriteLine("New object appeared {0}/{1}", msg.Name, msg.ObjectID);
-				ob = new ItemObject(World.TheWorld, msg.ObjectID);
+				ob = new ItemObject(GameData.Data.World, msg.ObjectID);
 			}
 
 			ob.Deserialize(msg);
@@ -338,7 +335,7 @@ namespace MyGame.Client
 
 		void HandleMessage(ObjectDestructedMessage msg)
 		{
-			var ob = World.TheWorld.FindObject<ClientGameObject>(msg.ObjectID);
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
 
 			ob.Destruct();
 		}
@@ -364,7 +361,7 @@ namespace MyGame.Client
 			if (@event is TickChangeEvent)
 			{
 				var e = (TickChangeEvent)@event;
-				World.TheWorld.TickNumber = e.TickNumber;
+				GameData.Data.World.TickNumber = e.TickNumber;
 			}
 			else if (@event is ActionProgressEvent)
 			{
@@ -380,7 +377,7 @@ namespace MyGame.Client
 				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
 				itemsView.Refresh();
 
-				var ob = World.TheWorld.FindObject<Living>(action.ActorObjectID);
+				var ob = GameData.Data.World.FindObject<Living>(action.ActorObjectID);
 				if (ob == null)
 					throw new Exception();
 
@@ -395,7 +392,7 @@ namespace MyGame.Client
 
 				//MyDebug.WriteLine("{0}", e);
 
-				var ob = World.TheWorld.FindObject<Living>(e.ObjectID);
+				var ob = GameData.Data.World.FindObject<Living>(e.ObjectID);
 
 				if (ob == null)
 					throw new Exception();
