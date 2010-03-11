@@ -729,6 +729,10 @@ namespace MyGame.Server
 			{
 				return true;
 			}
+			else if (change is ObjectCreatedChange)
+			{
+				return true;
+			}
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
