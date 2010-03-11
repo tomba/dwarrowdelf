@@ -749,6 +749,7 @@ namespace MyGame.Server
 				{
 					// xxx should check if the object is friendly
 					// return false for now, as all friendlies are controllables, thus we will still see it
+					// because the check above will return true to that controllable
 					return false;
 				}
 				else if (c.Property.Visibility == PropertyVisibility.Public)

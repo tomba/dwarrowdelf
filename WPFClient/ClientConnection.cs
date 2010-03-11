@@ -330,6 +330,7 @@ namespace MyGame.Client
 			switch (msg.PropertyID)
 			{
 				case PropertyID.HitPoints:
+					ob.HitPoints = (int)msg.Value;
 					break;
 
 				case PropertyID.Strength:

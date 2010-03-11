@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace MyGame.Client
 {
@@ -33,6 +34,18 @@ namespace MyGame.Client
 			this.AI = new AI(this);
 			this.IsLiving = true;
 		}
+
+
+		public int HitPoints
+		{
+			get { return (int)GetValue(HitPointsProperty); }
+			set { SetValue(HitPointsProperty, value); }
+		}
+
+		public static readonly DependencyProperty HitPointsProperty =
+			DependencyProperty.Register("HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+
+
 
 		public void EnqueueAction(GameAction action)
 		{
