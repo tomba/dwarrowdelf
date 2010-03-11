@@ -46,6 +46,15 @@ namespace MyGame.Client
 			GameData.Data.Connection.LogOffEvent += OnLoggedOff;
 			GameData.Data.Connection.LogOnCharEvent += OnCharLoggedOn;
 			GameData.Data.Connection.LogOffCharEvent += OnCharLoggedOff;
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
+				typeof(MapControlBase));
+			dpd.AddValueChanged(map, OnTileSizeChanged);
+		}
+
+		void OnTileSizeChanged(object ob, EventArgs e)
+		{
+			RecalcCenterPos();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -198,6 +207,20 @@ namespace MyGame.Client
 			Environment env = dst as Environment;
 
 			map.Environment = env;
+			map.Z = loc.Z;
+
+			RecalcCenterPos();
+
+			this.CurrentTileInfo.Environment = env;
+			this.CurrentTileInfo.Location = loc;
+		}
+
+		void RecalcCenterPos()
+		{
+			if (this.FollowObject == null)
+				return;
+
+			var loc = this.FollowObject.Location2D;
 
 			int xd = map.Columns / 2;
 			int yd = map.Rows / 2;
@@ -206,10 +229,6 @@ namespace MyGame.Client
 			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
 			map.CenterPos = newPos;
-			map.Z = loc.Z;
-
-			this.CurrentTileInfo.Environment = env;
-			this.CurrentTileInfo.Location = loc;
 		}
 
 		public TileInfo CurrentTileInfo { get; set; }
