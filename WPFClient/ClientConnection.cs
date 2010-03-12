@@ -327,26 +327,7 @@ namespace MyGame.Client
 			if (ob == null)
 				throw new Exception();
 
-			switch (msg.PropertyID)
-			{
-				case PropertyID.HitPoints:
-					ob.HitPoints = (int)msg.Value;
-					break;
-
-				case PropertyID.Strength:
-					break;
-
-				case PropertyID.VisionRange:
-					ob.VisionRange = (int)msg.Value;
-					break;
-
-				case PropertyID.Color:
-					ob.Color = ((GameColor)msg.Value).ToColor();
-					break;
-
-				default:
-					throw new Exception();
-			}
+			ob.SetProperty(msg.PropertyID, msg.Value);
 		}
 
 		void HandleMessage(ItemData msg)

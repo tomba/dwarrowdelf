@@ -9,7 +9,6 @@ namespace MyGame
 	{
 		None,
 
-		VisionRange,
 		Color,
 
 		HitPoints,

@@ -35,6 +35,63 @@ namespace MyGame.Client
 			this.IsLiving = true;
 		}
 
+		DependencyProperty PropertyIDToDependencyProperty(PropertyID propertyID)
+		{
+			switch (propertyID)
+			{
+				case PropertyID.HitPoints:
+					return HitPointsProperty;
+				case PropertyID.SpellPoints:
+					return SpellPointsProperty;
+
+				case PropertyID.Strength:
+					return StrengthProperty;
+				case PropertyID.Dexterity:
+					return DexterityProperty;
+				case PropertyID.Constitution:
+					return ConstitutionProperty;
+				case PropertyID.Intelligence:
+					return IntelligenceProperty;
+				case PropertyID.Wisdom:
+					return WisdomProperty;
+				case PropertyID.Charisma:
+					return CharismaProperty;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		public void SetProperty(PropertyID propertyID, object value)
+		{
+			if (propertyID == PropertyID.Color)
+			{
+				this.Color = ((GameColor)value).ToColor();
+				return;
+			}
+
+			var prop = PropertyIDToDependencyProperty(propertyID);
+			SetValue(prop, value);
+		}
+
+
+		public static readonly DependencyProperty HitPointsProperty =
+			DependencyProperty.Register("HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty SpellPointsProperty =
+			DependencyProperty.Register("SpellPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+
+		public static readonly DependencyProperty StrengthProperty =
+			DependencyProperty.Register("Strength", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty DexterityProperty =
+			DependencyProperty.Register("Dexterity", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty ConstitutionProperty =
+			DependencyProperty.Register("Constitution", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty IntelligenceProperty =
+			DependencyProperty.Register("Intelligence", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty WisdomProperty =
+			DependencyProperty.Register("Wisdom", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty CharismaProperty =
+			DependencyProperty.Register("Charisma", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 
 		public int HitPoints
 		{
@@ -42,8 +99,47 @@ namespace MyGame.Client
 			set { SetValue(HitPointsProperty, value); }
 		}
 
-		public static readonly DependencyProperty HitPointsProperty =
-			DependencyProperty.Register("HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+		public int SpellPoints
+		{
+			get { return (int)GetValue(SpellPointsProperty); }
+			set { SetValue(SpellPointsProperty, value); }
+		}
+
+		public int Strength
+		{
+			get { return (int)GetValue(StrengthProperty); }
+			set { SetValue(StrengthProperty, value); }
+		}
+
+		public int Dexterity
+		{
+			get { return (int)GetValue(DexterityProperty); }
+			set { SetValue(DexterityProperty, value); }
+		}
+
+		public int Constitution
+		{
+			get { return (int)GetValue(ConstitutionProperty); }
+			set { SetValue(ConstitutionProperty, value); }
+		}
+
+		public int Intelligence
+		{
+			get { return (int)GetValue(IntelligenceProperty); }
+			set { SetValue(IntelligenceProperty, value); }
+		}
+
+		public int Wisdom
+		{
+			get { return (int)GetValue(WisdomProperty); }
+			set { SetValue(WisdomProperty, value); }
+		}
+
+		public int Charisma
+		{
+			get { return (int)GetValue(CharismaProperty); }
+			set { SetValue(CharismaProperty, value); }
+		}
 
 
 

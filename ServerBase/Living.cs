@@ -32,6 +32,15 @@ namespace MyGame.Server
 		#endregion
 
 		static readonly PropertyDefinition HitPointsProperty = new PropertyDefinition(PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition SpellPointsProperty = new PropertyDefinition(PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
+
+		static readonly PropertyDefinition StrengthProperty = new PropertyDefinition(PropertyID.Strength, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition DexterityProperty = new PropertyDefinition(PropertyID.Dexterity, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition ConstitutionProperty = new PropertyDefinition(PropertyID.Constitution, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition IntelligenceProperty = new PropertyDefinition(PropertyID.Intelligence, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition WisdomProperty = new PropertyDefinition(PropertyID.Wisdom, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition CharismaProperty = new PropertyDefinition(PropertyID.Charisma, PropertyVisibility.Friendly, 0);
+
 		static readonly PropertyDefinition ColorProperty = new PropertyDefinition(PropertyID.Color, PropertyVisibility.Public, new GameColor());
 
 
@@ -58,6 +67,48 @@ namespace MyGame.Server
 		{
 			get { return (int)GetValue(HitPointsProperty); }
 			set { SetValue(HitPointsProperty, value); }
+		}
+
+		public int SpellPoints
+		{
+			get { return (int)GetValue(SpellPointsProperty); }
+			set { SetValue(SpellPointsProperty, value); }
+		}
+
+		public int Strength
+		{
+			get { return (int)GetValue(StrengthProperty); }
+			set { SetValue(StrengthProperty, value); }
+		}
+
+		public int Dexterity
+		{
+			get { return (int)GetValue(DexterityProperty); }
+			set { SetValue(DexterityProperty, value); }
+		}
+
+		public int Constitution
+		{
+			get { return (int)GetValue(ConstitutionProperty); }
+			set { SetValue(ConstitutionProperty, value); }
+		}
+
+		public int Intelligence
+		{
+			get { return (int)GetValue(IntelligenceProperty); }
+			set { SetValue(IntelligenceProperty, value); }
+		}
+
+		public int Wisdom
+		{
+			get { return (int)GetValue(WisdomProperty); }
+			set { SetValue(WisdomProperty, value); }
+		}
+
+		public int Charisma
+		{
+			get { return (int)GetValue(CharismaProperty); }
+			set { SetValue(CharismaProperty, value); }
 		}
 
 		public GameColor Color
