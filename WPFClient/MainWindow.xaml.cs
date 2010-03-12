@@ -800,5 +800,15 @@ namespace MyGame.Client
 			var msg = new IronPythonCommand() { Text = str };
 			GameData.Data.Connection.Send(msg);
 		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			var button = (Button)sender;
+
+			var wnd = new ObjectInfoWindow();
+			wnd.Owner = this;
+			wnd.DataContext = button.DataContext;
+			wnd.Show();
+		}
 	}
 }

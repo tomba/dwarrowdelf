@@ -134,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="LivingInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -153,10 +157,21 @@
     <Compile Include="Jobs\JobGroup.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="Jobs\SerialActionJob.cs" />
+    <Compile Include="LivingInfoControl.xaml.cs">
+      <DependentUpon>LivingInfoControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ObjectInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ObjectInfoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SymbolDrawings.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -173,6 +188,12 @@
     <Compile Include="GameData.cs" />
     <Compile Include="ClientGameObject.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="ObjectInfoControl.xaml.cs">
+      <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectInfoWindow.xaml.cs">
+      <DependentUpon>ObjectInfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ObservableKeyedCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -244,6 +265,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SymbolInfos.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\eye.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

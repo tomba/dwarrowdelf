@@ -7,6 +7,7 @@
 	x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
     DataContext="{x:Static local:GameData.Data}" >
+    
     <Window.Resources>
         <DataTemplate DataType="{x:Type local:ClientGameObject}">
             <DataTemplate.Resources>
@@ -14,52 +15,37 @@
                     <Setter Property="Margin" Value="5,3" />
                 </Style>
             </DataTemplate.Resources>
-            <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Path=Drawing}" Stretch="Uniform"
-					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}"
-					   HorizontalAlignment="Left" />
+            
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Click="Button_Click">
+                    <Image Source="Images/eye.png" />
+                </Button>
+                <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
+					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
                 <TextBlock Name="nameTextBlock" Text="{Binding Path=Name}" />
-                <StackPanel.ToolTip>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
+                <DockPanel.ToolTip>
+                    <local:ObjectInfoControl />
+                </DockPanel.ToolTip>
+            </DockPanel>
+        </DataTemplate>
 
-                        </Grid.RowDefinitions>
-                        <Image Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
-							   Source="{Binding Path=Drawing}" Stretch="Uniform" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="1"
-								   Text="{Binding Path=Name}" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="2"
-								   Text="{Binding Path=Color}" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="3"
-								   Text="{Binding Path=Material.Name}" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="4"
-								   Text="{Binding Path=ObjectID}" />
-
-                        <TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
-                        <TextBlock Grid.Column="1" Grid.Row="5"
-								   Text="{Binding Path=Parent}" />
-                    </Grid>
-                </StackPanel.ToolTip>
-            </StackPanel>
+        <DataTemplate DataType="{x:Type local:Living}">
+            <DataTemplate.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="5,3" />
+                </Style>
+            </DataTemplate.Resources>
+            <DockPanel>
+                <Button DockPanel.Dock="Right" Click="Button_Click">
+                    <Image Source="Images/eye.png" />
+                </Button>
+                <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
+					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+                <TextBlock Name="nameTextBlock" Text="{Binding Path=Name}" />
+                <DockPanel.ToolTip>
+                    <local:LivingInfoControl />
+                </DockPanel.ToolTip>
+            </DockPanel>
         </DataTemplate>
     </Window.Resources>
 
@@ -183,7 +169,7 @@
                     <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
                     <ListBox Name="inventoryListBox"
 							 ItemsSource="{Binding Path=CurrentObject.Inventory}"
-							 SelectionMode="Extended" />
+							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
                 </DockPanel>
             </GroupBox>
 
@@ -216,7 +202,7 @@
                     </StackPanel>
                     <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
                     <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
-							 SelectionMode="Extended" />
+							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
                 </DockPanel>
             </GroupBox>
 
@@ -237,18 +223,20 @@
 							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />
 						</TextBlock>
                     </StackPanel>
-                    <ListBox ItemsSource="{Binding Objects}" />
+                    <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
                 </DockPanel>
             </GroupBox>
 
             <GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
                 <ListBox ItemsSource="{Binding World.Objects}" 
-						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" />
+						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
+                         HorizontalContentAlignment="Stretch" />
             </GroupBox>
 
             <GroupBox Grid.Column="1" Grid.Row="2" Header="Environments">
                 <ListBox ItemsSource="{Binding World.Environments}"
-						 SelectedItem="{Binding Path=Environment, ElementName=map}" />
+						 SelectedItem="{Binding Path=Environment, ElementName=map}"
+                         HorizontalContentAlignment="Stretch" />
             </GroupBox>
 
             <GroupBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">

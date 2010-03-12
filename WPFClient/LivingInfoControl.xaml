@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="MyGame.Client.LivingInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+    <StackPanel Orientation="Vertical">
+        
+        <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
+
+        <Separator />
+
+        <UniformGrid Columns="2">
+            <TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
+
+            <TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Color}" />
+
+            <TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Material.Name}" />
+
+            <TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ObjectID}" />
+
+            <TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Parent}" />
+        </UniformGrid>
+
+        <Separator />
+        
+        <UniformGrid Columns="2">
+            <TextBlock Text="HP" />
+            <TextBlock Text="SP" />
+
+            <TextBlock Text="{Binding HitPoints}" />
+            <TextBlock Text="{Binding SpellPoints}" />
+        </UniformGrid>
+
+        <Separator />
+        
+        <UniformGrid Columns="6">
+            <TextBlock Text="Str" />
+            <TextBlock Text="Dex" />
+            <TextBlock Text="Con" />
+            <TextBlock Text="Int" />
+            <TextBlock Text="Wis" />
+            <TextBlock Text="Cha" />
+
+            <TextBlock Text="{Binding Strength}" />
+            <TextBlock Text="{Binding Dexterity}" />
+            <TextBlock Text="{Binding Constitution}" />
+            <TextBlock Text="{Binding Intelligence}" />
+            <TextBlock Text="{Binding Wisdom}" />
+            <TextBlock Text="{Binding Charisma}" />
+        </UniformGrid>
+    </StackPanel>
+</UserControl>

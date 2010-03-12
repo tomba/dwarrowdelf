@@ -1,0 +1,20 @@
+﻿<Window x:Class="MyGame.Client.ObjectInfoWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MyGame.Client"
+    Title="ObjectInfoWindow" ShowInTaskbar="False" WindowStyle="ToolWindow"
+    WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+    mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="300" d:DesignWidth="300">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type local:ClientGameObject}">
+            <local:ObjectInfoControl />
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type local:Living}">
+            <local:LivingInfoControl />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Label Content="{Binding}" />
+</Window>
