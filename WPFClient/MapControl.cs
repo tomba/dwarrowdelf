@@ -435,7 +435,7 @@ namespace MyGame.Client
 		public TileInfo SelectedTileInfo
 		{
 			get { return m_selectedTileInfo; }
-			set
+			private set
 			{
 				if (m_selectedTileInfo == value)
 					return;

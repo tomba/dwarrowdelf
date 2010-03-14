@@ -137,6 +137,8 @@ namespace MyGame.Client
 
 		public IntCuboid Bounds { get; private set; }
 
+		BuildingCollection m_buildings = new BuildingCollection();
+
 		public Environment(World world, ObjectID objectID)
 			: this(world, objectID, 16)
 		{
@@ -309,8 +311,6 @@ namespace MyGame.Client
 			if (MapChanged != null)
 				MapChanged(new IntPoint3D(bounds.X, bounds.Y, bounds.Z)); // XXX
 		}
-
-		BuildingCollection m_buildings = new BuildingCollection();
 
 		public BuildingCollection Buildings { get { return m_buildings; } }
 

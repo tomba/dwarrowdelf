@@ -763,6 +763,14 @@ namespace MyGame.Client
 
 			if (m_closing)
 				Close();
+
+			Action del = delegate()
+			{
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			};
+
+			Dispatcher.BeginInvoke(del, null);
 		}
 
 
