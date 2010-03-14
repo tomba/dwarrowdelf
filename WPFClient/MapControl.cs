@@ -403,6 +403,10 @@ namespace MyGame.Client
 					SetCorner2(rect, b.Area.X2Y2);
 				}
 			}
+			else if (e.Action == NotifyCollectionChangedAction.Reset)
+			{
+				this.Children.Clear();
+			}
 			else
 			{
 				throw new Exception();
