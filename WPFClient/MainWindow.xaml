@@ -211,7 +211,7 @@
             </GroupBox>
 
             <GroupBox Grid.Column="2" Grid.Row="1" Header="Selected Tile Info"
-					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map}">
+					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map, Mode=OneTime}">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top">
                         <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>

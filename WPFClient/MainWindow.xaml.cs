@@ -231,7 +231,7 @@ namespace MyGame.Client
 			map.CenterPos = newPos;
 		}
 
-		public TileInfo CurrentTileInfo { get; set; }
+		public TileInfo CurrentTileInfo { get; private set; }
 
 		Direction KeyToDir(Key key)
 		{

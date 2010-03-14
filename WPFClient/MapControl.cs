@@ -25,7 +25,6 @@ namespace MyGame.Client
 		Environment m_env;
 		int m_z;
 
-		TileInfo m_selectedTileInfo;
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
 		bool m_showVirtualSymbols = true;
@@ -33,6 +32,7 @@ namespace MyGame.Client
 		public MapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
+			this.SelectedTileInfo = new TileInfo();
 
 			base.SelectionChanged += OnSelectionChanged;
 
@@ -360,6 +360,7 @@ namespace MyGame.Client
 					m_bitmapCache = null;
 				}
 
+				this.SelectionRect = new IntRect();
 				UpdateTiles();
 				UpdateBuildings();
 
@@ -436,19 +437,7 @@ namespace MyGame.Client
 			InvalidateTiles();
 		}
 
-		public TileInfo SelectedTileInfo
-		{
-			get { return m_selectedTileInfo; }
-			private set
-			{
-				if (m_selectedTileInfo == value)
-					return;
-
-				m_selectedTileInfo = value;
-
-				Notify("SelectedTileInfo");
-			}
-		}
+		public TileInfo SelectedTileInfo { get; private set; }
 
 		void OnSelectionChanged()
 		{
@@ -456,21 +445,12 @@ namespace MyGame.Client
 
 			if (sel.Width != 1 || sel.Height != 1)
 			{
-				if (this.SelectedTileInfo != null)
-					this.SelectedTileInfo.StopObserve();
-				this.SelectedTileInfo = null;
+				this.SelectedTileInfo.Environment = null;
 				return;
 			}
 
-			if (this.SelectedTileInfo == null)
-			{
-				this.SelectedTileInfo = new TileInfo(this.Environment, new IntPoint3D(sel.X1Y1, this.Z));
-			}
-			else
-			{
-				this.SelectedTileInfo.Environment = this.Environment;
-				this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
-			}
+			this.SelectedTileInfo.Environment = this.Environment;
+			this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
@@ -553,20 +533,6 @@ namespace MyGame.Client
 		{
 		}
 
-		public TileInfo(Environment mapLevel, IntPoint3D location)
-		{
-			m_env = mapLevel;
-			m_location = location;
-			if (m_env != null)
-				m_env.MapChanged += MapChanged;
-		}
-
-		public void StopObserve()
-		{
-			if (m_env != null)
-				m_env.MapChanged -= MapChanged;
-		}
-
 		void NotifyTileChanges()
 		{
 			Notify("Interior");
@@ -592,6 +558,9 @@ namespace MyGame.Client
 					m_env.MapChanged -= MapChanged;
 
 				m_env = value;
+
+				if (m_env == null)
+					m_location = new IntPoint3D();
 
 				if (m_env != null)
 					m_env.MapChanged += MapChanged;
