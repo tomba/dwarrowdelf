@@ -70,6 +70,9 @@ namespace MyGame
 
 		void BeginRead()
 		{
+			if (m_netStream == null)
+				return;
+
 			m_netStream.BeginRead(m_recvBuffer, m_bufferUsed, m_recvBuffer.Length - m_bufferUsed, ReadCallback, m_netStream);
 		}
 
@@ -161,6 +164,7 @@ namespace MyGame
 		public void Disconnect()
 		{
 			m_netStream.Close();
+			m_netStream = null;
 			m_socket.Shutdown(SocketShutdown.Both);
 			m_socket.Close();
 			m_socket = null;
