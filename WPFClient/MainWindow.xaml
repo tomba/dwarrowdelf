@@ -64,7 +64,11 @@
                 <Separator />
                 <Button Click="LogOffChar_Button_Click">LogOffChar</Button>
             </ToolBar>
-
+            <ToolBar>
+                <Button Click="Button_Click_GC">GC</Button>
+                <Separator />
+                <Button Click="Button_Click_Break">Break</Button>
+            </ToolBar>
             <ToolBar>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Name="currentObjectCheckBox" VerticalAlignment="Center" Margin="2,0" 

@@ -818,5 +818,16 @@ namespace MyGame.Client
 			wnd.DataContext = button.DataContext;
 			wnd.Show();
 		}
+
+		private void Button_Click_GC(object sender, RoutedEventArgs e)
+		{
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+		}
+
+		private void Button_Click_Break(object sender, RoutedEventArgs e)
+		{
+			Debugger.Break();
+		}
 	}
 }
