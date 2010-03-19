@@ -256,6 +256,8 @@ namespace MyGame.Client
 				if (value.Width == 0 || value.Height == 0)
 				{
 					m_selectionRect.Visibility = Visibility.Hidden;
+					if (SelectionChanged != null)
+						SelectionChanged();
 					return;
 				}
 
