@@ -11,20 +11,23 @@
         <Separator />
 
         <UniformGrid Columns="2">
-            <TextBlock Grid.Column="0" Grid.Row="1">Name</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
+            <TextBlock>Name</TextBlock>
+            <TextBlock Text="{Binding Name}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="2">Color</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Color}" />
+            <TextBlock>Color</TextBlock>
+            <TextBlock Text="{Binding Color}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="3">Material</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding Material.Name}" />
+            <TextBlock>Material</TextBlock>
+            <TextBlock Text="{Binding Material.Name}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="4">ObjectID</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding ObjectID}" />
+            <TextBlock>ObjectID</TextBlock>
+            <TextBlock Text="{Binding ObjectID}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="5">Parent</TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Parent}" />
+            <TextBlock>Parent</TextBlock>
+            <TextBlock Text="{Binding Parent}" />
+
+            <TextBlock>Location</TextBlock>
+            <TextBlock Text="{Binding Location}" />
         </UniformGrid>
 
         <Separator />

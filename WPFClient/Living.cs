@@ -185,7 +185,7 @@ namespace MyGame.Client
 
 			var level = this.Environment.GetLevel(this.Location.Z);
 
-			s_losAlgo.Calculate(this.Location2D, m_visionRange,
+			s_losAlgo.Calculate(this.Location.ToIntPoint(), m_visionRange,
 				m_visionMap, level.Bounds,
 				l => Interiors.GetInterior(level.GetInteriorID(l)).Blocker);
 

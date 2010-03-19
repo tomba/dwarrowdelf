@@ -47,16 +47,10 @@ namespace MyGame.Client
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
 
-		public int X { get { return this.Location.X; } }
-		public int Y { get { return this.Location.Y; } }
-
 		public event ObjectMoved ObjectMoved;
 
 		public MaterialInfo Material { get; set; }
 
-		public ClientGameObject Parent { get; private set; }
-		public IntPoint3D Location { get; private set; }
-		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public bool IsLiving { get; protected set; }
 
 		public bool Destructed { get; private set; }
@@ -79,6 +73,30 @@ namespace MyGame.Client
 			this.Destructed = true;
 			this.World.RemoveObject(this);
 		}
+
+
+
+
+		public ClientGameObject Parent
+		{
+			get { return (ClientGameObject)GetValue(ParentProperty); }
+			private set { SetValue(ParentProperty, value); }
+		}
+
+		public static readonly DependencyProperty ParentProperty =
+			DependencyProperty.Register("Parent", typeof(ClientGameObject), typeof(ClientGameObject), new UIPropertyMetadata(null));
+
+
+
+		public IntPoint3D Location
+		{
+			get { return (IntPoint3D)GetValue(LocationProperty); }
+			private set { SetValue(LocationProperty, value); }
+		}
+
+		public static readonly DependencyProperty LocationProperty =
+			DependencyProperty.Register("Location", typeof(IntPoint3D), typeof(ClientGameObject), new UIPropertyMetadata(new IntPoint3D()));
+
 
 
 
@@ -132,7 +150,7 @@ namespace MyGame.Client
 			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.Color));
 			if (ob.Environment != null)
 				ob.Environment.OnObjectVisualChanged(ob);
-	}
+		}
 
 
 

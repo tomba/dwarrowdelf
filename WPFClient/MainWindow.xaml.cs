@@ -220,7 +220,7 @@ namespace MyGame.Client
 			if (this.FollowObject == null)
 				return;
 
-			var loc = this.FollowObject.Location2D;
+			var loc = this.FollowObject.Location.ToIntPoint();
 
 			int xd = map.Columns / 2;
 			int yd = map.Rows / 2;
