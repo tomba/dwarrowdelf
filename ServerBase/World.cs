@@ -776,5 +776,17 @@ namespace MyGame.Server
 		{
 			return new ObjectID(Interlocked.Increment(ref m_objectIDcounter));
 		}
+
+
+		/* helpers for ironpython */
+		public ItemObject[] Items
+		{
+			get { return m_objectMap.Values.Select(wr => wr.Target).OfType<ItemObject>().ToArray(); }
+		}
+
+		public Living[] Livings
+		{
+			get { return m_livingList.ToArray(); }
+		}
 	}
 }
