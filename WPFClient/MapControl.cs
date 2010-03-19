@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
@@ -528,13 +529,24 @@ namespace MyGame.Client
 	{
 		Environment m_env;
 		IntPoint3D m_location;
+		ObservableCollection<ClientGameObject> m_obs;
 
 		public TileInfo()
 		{
+			m_obs = new ObservableCollection<ClientGameObject>();
 		}
 
 		void NotifyTileChanges()
 		{
+			m_obs.Clear();
+			if (m_env != null)
+			{
+				var list = m_env.GetContents(m_location);
+				if (list != null)
+					foreach (var o in list)
+						m_obs.Add(o);
+			}
+
 			Notify("Interior");
 			Notify("Floor");
 			Notify("FloorMaterial");
@@ -545,8 +557,10 @@ namespace MyGame.Client
 
 		void MapChanged(IntPoint3D l)
 		{
-			if (l == m_location)
-				NotifyTileChanges();
+			if (l != m_location)
+				return;
+
+			NotifyTileChanges();
 		}
 
 		public Environment Environment
@@ -621,13 +635,11 @@ namespace MyGame.Client
 			}
 		}
 
-		public IList<ClientGameObject> Objects
+		public ObservableCollection<ClientGameObject> Objects
 		{
 			get
 			{
-				if (m_env == null)
-					return null;
-				return m_env.GetContents(m_location);
+				return m_obs;
 			}
 		}
 
