@@ -8,7 +8,7 @@ namespace MyGame
 {
 	[DataContract]
 	[Serializable]
-	public struct IntRect
+	public struct IntRect : IEquatable<IntRect>
 	{
 		[DataMember(Name = "X")]
 		readonly int m_x;
@@ -75,6 +75,21 @@ namespace MyGame
 			get { return this.Width == 0 && this.Height == 0; }
 		}
 
+		public static bool operator ==(IntRect left, IntRect right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(IntRect left, IntRect right)
+		{
+			return !left.Equals(right);
+		}
+
+		public bool Equals(IntRect other)
+		{
+			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_width == other.m_width && this.m_height == other.m_height;
+		}
+
 		public int GetIndex(IntPoint p)
 		{
 			return p.X + p.Y * this.Width;
@@ -129,6 +144,5 @@ namespace MyGame
 		{
 			return ("{X=" + this.X + ",Y=" + this.Y + ",Width=" + this.Width + ",Height=" + this.Height + "}");
 		}
-
 	}
 }

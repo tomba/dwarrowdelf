@@ -282,8 +282,15 @@ namespace MyGame.Client
 
 			if (env.Buildings.Contains(msg.ObjectID))
 			{
-				//var building = env.Buildings[msg.ObjectID];
-				throw new Exception();
+				/* this shouldn't happen, as building's data are currently never modified.
+				 * however, we get this from object creation also. for now, just check if the
+				 * data are the same, and go on. */
+				var building = env.Buildings[msg.ObjectID];
+
+				if (building.Area != msg.Area ||
+					building.Z != msg.Z ||
+					building.Environment != env)
+					throw new Exception();
 			}
 			else
 			{
