@@ -33,12 +33,22 @@ namespace MyGame.Client
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
+		public bool Destructed { get; private set; }
 
 		protected BaseGameObject(World world, ObjectID objectID)
 		{
 			this.ObjectID = objectID;
 			this.World = world;
 			this.World.AddObject(this);
+		}
+
+		public void Destruct()
+		{
+			if (this.Destructed)
+				throw new Exception();
+
+			this.Destructed = true;
+			this.World.RemoveObject(this);
 		}
 	}
 
@@ -53,8 +63,6 @@ namespace MyGame.Client
 
 		public bool IsLiving { get; protected set; }
 
-		public bool Destructed { get; private set; }
-
 		public IIdentifiable Assignment { get; set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
@@ -64,16 +72,6 @@ namespace MyGame.Client
 			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
 			this.Color = Colors.Black;
 		}
-
-		public void Destruct()
-		{
-			if (this.Destructed)
-				return;
-
-			this.Destructed = true;
-			this.World.RemoveObject(this);
-		}
-
 
 
 
