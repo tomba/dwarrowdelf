@@ -38,6 +38,7 @@ namespace LogViewer
 			public string Thread { get; set; }
 			public string Message { get; set; }
 			public string Color { get; set; }
+			public bool Gag { get; set; }
 		}
 
 		public ObservableCollection<StrLogRule> LogRules { get; private set; }
@@ -60,7 +61,8 @@ namespace LogViewer
 					Component = r.Component != null ? r.Component.ToString() : null,
 					Thread = r.Thread != null ? r.Thread.ToString() : null,
 					Message = r.Message != null ? r.Message.ToString() : null,
-					Color = color
+					Color = color,
+					Gag = r.Gag,
 				});
 			}
 
@@ -87,6 +89,7 @@ namespace LogViewer
 						Thread = (rule.Thread != null && rule.Thread.Length > 0) ? new Regex(rule.Thread) : null,
 						Message = (rule.Message != null && rule.Message.Length > 0) ? new Regex(rule.Message) : null,
 						Brush = brush,
+						Gag = rule.Gag,
 					});
 				}
 			}

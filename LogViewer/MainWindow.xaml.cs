@@ -78,9 +78,31 @@ namespace LogViewer
 		{
 			base.OnInitialized(e);
 
-			OnNewEntries2();
+			var dataView = CollectionViewSource.GetDefaultView(logListView.ItemsSource);
 
-			MMLog.RegisterChangeCallback(OnNewEntries);
+			dataView.Filter = DataFilter;
+
+			OnNewEntries();
+
+			MMLog.RegisterChangeCallback(OnNewEntriesSafe);
+		}
+
+		bool DataFilter(object item)
+		{
+			var entry = (LogEntry)item;
+
+			foreach (var rule in MainWindow.s_logRules)
+			{
+				bool match =
+					(rule.Component == null || rule.Component.IsMatch(entry.Component)) &&
+					(rule.Thread == null || rule.Thread.IsMatch(entry.Thread)) &&
+					(rule.Message == null || rule.Message.IsMatch(entry.Message));
+
+				if (match)
+					return !rule.Gag;
+			}
+
+			return true;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -111,10 +133,10 @@ namespace LogViewer
 			Properties.Settings.Default.Save();
 		}
 
-		void OnNewEntries()
+		void OnNewEntriesSafe()
 		{
-			this.Dispatcher.BeginInvoke(new Action(OnNewEntries2));
-			MMLog.RegisterChangeCallback(OnNewEntries);
+			this.Dispatcher.BeginInvoke(new Action(OnNewEntries));
+			MMLog.RegisterChangeCallback(OnNewEntriesSafe);
 		}
 
 		TimeSpan GetTimeSpan(DateTime entryDateTime)
@@ -124,7 +146,7 @@ namespace LogViewer
 			return ldt.Ticks != 0 ? entryDateTime - ldt : TimeSpan.FromTicks(0);
 		}
 
-		void OnNewEntries2()
+		void OnNewEntries()
 		{
 			if (this.Halt == true)
 				return;
@@ -197,5 +219,6 @@ namespace LogViewer
 		public Regex Thread { get; set; }
 		public Regex Message { get; set; }
 		public SolidColorBrush Brush { get; set; }
+		public bool Gag { get; set; }
 	}
 }
