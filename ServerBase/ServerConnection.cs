@@ -245,6 +245,8 @@ namespace MyGame.Server
 			if (m_charLoggedIn)
 				ReceiveMessage(new LogOffCharRequest()); // XXX
 
+			m_scriptScope.RemoveVariable("world");
+
 			m_world.RemoveUser(this);
 			m_world.HandleEndOfTurn -= HandleEndOfTurn;
 
@@ -417,6 +419,8 @@ namespace MyGame.Server
 		void ReceiveMessage(LogOffCharRequest msg)
 		{
 			MyDebug.WriteLine("LogOffChar");
+
+			m_scriptScope.RemoveVariable("me");
 
 			foreach (var l in m_controllables)
 			{
