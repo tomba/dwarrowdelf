@@ -779,14 +779,29 @@ namespace MyGame.Server
 
 
 		/* helpers for ironpython */
-		public ItemObject[] Items
+		public ItemObject[] IPItems
 		{
 			get { return m_objectMap.Values.Select(wr => wr.Target).OfType<ItemObject>().ToArray(); }
 		}
 
-		public Living[] Livings
+		public Living[] IPLivings
 		{
 			get { return m_livingList.ToArray(); }
+		}
+
+		public IIdentifiable IPGet(object target)
+		{
+			IIdentifiable ob = null;
+
+			if (target is int)
+			{
+				ob = FindObject(new ObjectID((int)target));
+			}
+
+			if (ob == null)
+				throw new Exception(String.Format("object {0} not found", target));
+
+			return ob;
 		}
 	}
 }
