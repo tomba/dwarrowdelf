@@ -23,7 +23,7 @@ namespace MyGame.Client
 			this.Name = data.Name;
 			this.SymbolID = data.SymbolID;
 			this.Color = data.Color.ToColor();
-			this.Material = Materials.GetMaterial(data.MaterialID);
+			this.MaterialID = data.MaterialID;
 
 			ClientGameObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)

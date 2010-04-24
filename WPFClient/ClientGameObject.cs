@@ -54,12 +54,23 @@ namespace MyGame.Client
 
 	class ClientGameObject : BaseGameObject
 	{
+		static Dictionary<PropertyID, DependencyProperty> s_propertyMap = new Dictionary<PropertyID, DependencyProperty>();
+		protected static void AddPropertyMapping(PropertyID propertyID, DependencyProperty dependencyProperty)
+		{
+			s_propertyMap[propertyID] = dependencyProperty;
+		}
+
+		static ClientGameObject()
+		{
+			AddPropertyMapping(PropertyID.MaterialID, MaterialIDProperty);
+			AddPropertyMapping(PropertyID.SymbolID, SymbolIDProperty);
+		}
+
+
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
 
 		public event ObjectMoved ObjectMoved;
-
-		public MaterialInfo Material { get; set; }
 
 		public bool IsLiving { get; protected set; }
 
@@ -74,6 +85,11 @@ namespace MyGame.Client
 		}
 
 
+		public void SetProperty(PropertyID propertyID, object value)
+		{
+			var prop = s_propertyMap[propertyID];
+			SetValue(prop, value);
+		}
 
 		public ClientGameObject Parent
 		{
@@ -131,6 +147,30 @@ namespace MyGame.Client
 			DependencyProperty.Register("SymbolID", typeof(SymbolID), typeof(ClientGameObject), new UIPropertyMetadata(SymbolID.Undefined, UpdateDrawing));
 
 
+		public MaterialID MaterialID
+		{
+			get { return (MaterialID)GetValue(MaterialIDProperty); }
+			set { SetValue(MaterialIDProperty, value); }
+		}
+
+		public static readonly DependencyProperty MaterialIDProperty =
+			DependencyProperty.Register("MaterialID", typeof(MaterialID), typeof(ClientGameObject), new UIPropertyMetadata(MaterialID.Undefined, UpdateMaterial));
+
+		static void UpdateMaterial(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var ob = (ClientGameObject)d;
+			MaterialID matID = (MaterialID)e.NewValue;
+			ob.SetValue(MaterialProperty, Materials.GetMaterial(matID));
+		}
+
+		public MaterialInfo Material
+		{
+			get { return (MaterialInfo)GetValue(MaterialProperty); }
+		}
+
+		public static readonly DependencyProperty MaterialProperty =
+			DependencyProperty.Register("Material", typeof(MaterialInfo), typeof(ClientGameObject), new UIPropertyMetadata(null));
+
 
 
 		public DrawingImage Drawing
@@ -149,6 +189,7 @@ namespace MyGame.Client
 			if (ob.Environment != null)
 				ob.Environment.OnObjectVisualChanged(ob);
 		}
+
 
 
 

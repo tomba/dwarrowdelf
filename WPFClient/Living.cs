@@ -35,43 +35,17 @@ namespace MyGame.Client
 			this.IsLiving = true;
 		}
 
-		DependencyProperty PropertyIDToDependencyProperty(PropertyID propertyID)
+		static Living()
 		{
-			switch (propertyID)
-			{
-				case PropertyID.HitPoints:
-					return HitPointsProperty;
-				case PropertyID.SpellPoints:
-					return SpellPointsProperty;
+			AddPropertyMapping(PropertyID.HitPoints, HitPointsProperty);
+			AddPropertyMapping(PropertyID.SpellPoints, SpellPointsProperty);
 
-				case PropertyID.Strength:
-					return StrengthProperty;
-				case PropertyID.Dexterity:
-					return DexterityProperty;
-				case PropertyID.Constitution:
-					return ConstitutionProperty;
-				case PropertyID.Intelligence:
-					return IntelligenceProperty;
-				case PropertyID.Wisdom:
-					return WisdomProperty;
-				case PropertyID.Charisma:
-					return CharismaProperty;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		public void SetProperty(PropertyID propertyID, object value)
-		{
-			if (propertyID == PropertyID.Color)
-			{
-				this.Color = ((GameColor)value).ToColor();
-				return;
-			}
-
-			var prop = PropertyIDToDependencyProperty(propertyID);
-			SetValue(prop, value);
+			AddPropertyMapping(PropertyID.Strength, StrengthProperty);
+			AddPropertyMapping(PropertyID.Dexterity, DexterityProperty);
+			AddPropertyMapping(PropertyID.Constitution, ConstitutionProperty);
+			AddPropertyMapping(PropertyID.Intelligence, IntelligenceProperty);
+			AddPropertyMapping(PropertyID.Wisdom, WisdomProperty);
+			AddPropertyMapping(PropertyID.Charisma, CharismaProperty);
 		}
 
 

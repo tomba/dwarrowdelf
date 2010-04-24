@@ -87,6 +87,20 @@ namespace MyGame.Server
 			base.Destruct();
 		}
 
+		static readonly PropertyDefinition SymbolIDProperty = new PropertyDefinition(PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
+		public SymbolID SymbolID
+		{
+			get { return (SymbolID)GetValue(SymbolIDProperty); }
+			set { SetValue(SymbolIDProperty, value); }
+		}
+
+		static readonly PropertyDefinition MaterialIDProperty = new PropertyDefinition(PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
+		public MaterialID MaterialID
+		{
+			get { return (MaterialID)GetValue(MaterialIDProperty); }
+			set { SetValue(MaterialIDProperty, value); }
+		}
+
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
 
 		protected virtual bool OkToAddChild(ServerGameObject ob, IntPoint3D dstLoc) { return true; }

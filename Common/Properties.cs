@@ -9,6 +9,8 @@ namespace MyGame
 	{
 		None,
 
+		SymbolID,
+		MaterialID,
 		Color,
 
 		HitPoints,

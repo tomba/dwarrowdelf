@@ -329,7 +329,7 @@ namespace MyGame.Client
 
 		void HandleMessage(PropertyData msg)
 		{
-			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
 
 			if (ob == null)
 				throw new Exception();

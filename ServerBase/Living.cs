@@ -23,9 +23,6 @@ namespace MyGame.Server
 		#region fields that are visible to clients
 
 		int m_visionRange = 10;
-		MaterialID m_materialID;
-
-		SymbolID m_symbolID;
 
 		public string Name { get; private set; }
 
@@ -129,22 +126,10 @@ namespace MyGame.Server
 			}
 		}
 
-		public MaterialID MaterialID
-		{
-			get { return m_materialID; }
-			set { if (value != m_materialID) { m_materialID = value; AddFullChange(); } }
-		}
-
 		public int VisionRange
 		{
 			get { return m_visionRange; }
 			set { if (value != m_visionRange) { m_visionRange = value; m_visionMap = null; } }
-		}
-
-		public SymbolID SymbolID
-		{
-			get { return m_symbolID; }
-			set { if (value != m_symbolID) { m_symbolID = value; AddFullChange(); } }
 		}
 
 		public IActor Actor
