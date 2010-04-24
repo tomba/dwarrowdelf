@@ -90,6 +90,14 @@ namespace MyGame
 			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_width == other.m_width && this.m_height == other.m_height;
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (!(obj is IntRect))
+				return false;
+
+			return Equals((IntRect)obj);
+		}
+
 		public int GetIndex(IntPoint p)
 		{
 			return p.X + p.Y * this.Width;
@@ -138,6 +146,11 @@ namespace MyGame
 			for (int y = this.Y; y < this.Y + this.Height; ++y)
 				for (int x = this.X; x < this.X + this.Width; ++x)
 					yield return new IntPoint(x, y);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.X | (this.Y << 8) | (this.Width << 16) | (this.Height << 24);
 		}
 
 		public override string ToString()
