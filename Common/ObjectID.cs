@@ -21,6 +21,7 @@ namespace MyGame
 			m_value = value;
 		}
 
+		public int Value { get { return m_value; } }
 
 		#region IEquatable<Location> Members
 
