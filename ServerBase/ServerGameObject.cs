@@ -46,8 +46,16 @@ namespace MyGame.Server
 
 		protected void SetValue(PropertyDefinition property, object value)
 		{
+			object oldValue = null;
+
+			if (property.PropertyChangedCallback != null)
+				oldValue = GetValue(property);
+
 			m_propertyMap[property] = value;
 			this.World.AddChange(new PropertyChange(this, property, value));
+
+			if (property.PropertyChangedCallback != null)
+				property.PropertyChangedCallback(property, this, oldValue, value);
 		}
 
 		protected object GetValue(PropertyDefinition property)
@@ -85,6 +93,20 @@ namespace MyGame.Server
 		{
 			this.MoveTo(null);
 			base.Destruct();
+		}
+
+		static readonly PropertyDefinition NameProperty = new PropertyDefinition(PropertyID.Name, PropertyVisibility.Public, "");
+		public string Name
+		{
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
+		}
+
+		static readonly PropertyDefinition ColorProperty = new PropertyDefinition(PropertyID.Color, PropertyVisibility.Public, new GameColor());
+		public GameColor Color
+		{
+			get { return (GameColor)GetValue(ColorProperty); }
+			set { SetValue(ColorProperty, value); }
 		}
 
 		static readonly PropertyDefinition SymbolIDProperty = new PropertyDefinition(PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);

@@ -8,6 +8,7 @@ namespace MyGame
 {
 	public static class GameColors
 	{
+		public static readonly GameColor Black = new GameColor(0, 0, 0);
 		public static readonly GameColor Red = new GameColor(255, 0, 0);
 		public static readonly GameColor Blue = new GameColor(0, 255, 0);
 		public static readonly GameColor Green = new GameColor(0, 0, 255);

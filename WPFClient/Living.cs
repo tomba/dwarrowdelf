@@ -17,14 +17,7 @@ namespace MyGame.Client
 
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
-		int m_visionRange;
 		Grid2D<bool> m_visionMap;
-
-		public int VisionRange
-		{
-			get { return m_visionRange; }
-			set { m_visionRange = value; m_visionMap = null; }
-		}
 
 		public AI AI { get; private set; }
 
@@ -46,6 +39,8 @@ namespace MyGame.Client
 			AddPropertyMapping(PropertyID.Intelligence, IntelligenceProperty);
 			AddPropertyMapping(PropertyID.Wisdom, WisdomProperty);
 			AddPropertyMapping(PropertyID.Charisma, CharismaProperty);
+
+			AddPropertyMapping(PropertyID.VisionRange, VisionRangeProperty);
 		}
 
 
@@ -66,6 +61,9 @@ namespace MyGame.Client
 			DependencyProperty.Register("Wisdom", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty CharismaProperty =
 			DependencyProperty.Register("Charisma", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+
+		public static readonly DependencyProperty VisionRangeProperty =
+			DependencyProperty.Register("VisionRange", typeof(int), typeof(Living), new UIPropertyMetadata(VisionRangeChanged));
 
 		public int HitPoints
 		{
@@ -115,6 +113,17 @@ namespace MyGame.Client
 			set { SetValue(CharismaProperty, value); }
 		}
 
+		public int VisionRange
+		{
+			get { return (int)GetValue(VisionRangeProperty); }
+			set { SetValue(VisionRangeProperty, value); }
+		}
+
+		static void VisionRangeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			Living l = (Living)d;
+			l.m_visionMap = null;
+		}
 
 
 		public void EnqueueAction(GameAction action)
@@ -147,19 +156,21 @@ namespace MyGame.Client
 			if (this.Environment == null)
 				return;
 
-			if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version)
+			if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version && m_visionMap != null)
 				return;
+
+			int visionRange = this.VisionRange;
 
 			if (m_visionMap == null)
 			{
-				m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1,
-					m_visionRange, m_visionRange);
+				m_visionMap = new Grid2D<bool>(visionRange * 2 + 1, visionRange * 2 + 1,
+					visionRange, visionRange);
 				m_losMapVersion = 0;
 			}
 
 			var level = this.Environment.GetLevel(this.Location.Z);
 
-			s_losAlgo.Calculate(this.Location.ToIntPoint(), m_visionRange,
+			s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
 				m_visionMap, level.Bounds,
 				l => Interiors.GetInterior(level.GetInteriorID(l)).Blocker);
 

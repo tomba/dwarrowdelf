@@ -22,10 +22,6 @@ namespace MyGame.Server
 
 		#region fields that are visible to clients
 
-		int m_visionRange = 10;
-
-		public string Name { get; private set; }
-
 		#endregion
 
 		static readonly PropertyDefinition HitPointsProperty = new PropertyDefinition(PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
@@ -38,8 +34,13 @@ namespace MyGame.Server
 		static readonly PropertyDefinition WisdomProperty = new PropertyDefinition(PropertyID.Wisdom, PropertyVisibility.Friendly, 0);
 		static readonly PropertyDefinition CharismaProperty = new PropertyDefinition(PropertyID.Charisma, PropertyVisibility.Friendly, 0);
 
-		static readonly PropertyDefinition ColorProperty = new PropertyDefinition(PropertyID.Color, PropertyVisibility.Public, new GameColor());
+		static readonly PropertyDefinition VisionRangeProperty = new PropertyDefinition(PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
 
+		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)
+		{
+			Living l = (Living)ob;
+			l.m_visionMap = null;
+		}
 
 		public Living(World world, string name)
 			: base(world)
@@ -108,12 +109,13 @@ namespace MyGame.Server
 			set { SetValue(CharismaProperty, value); }
 		}
 
-		public GameColor Color
+		public int VisionRange
 		{
-			get { return (GameColor)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
+			get { return (int)GetValue(VisionRangeProperty); }
+			set { SetValue(VisionRangeProperty, value); }
 		}
 
+		/* for debug */
 		public string ColorStr
 		{
 			set
@@ -124,12 +126,6 @@ namespace MyGame.Server
 				byte b = (byte)((c >> 0) & 0xff);
 				this.Color = new GameColor(r, g, b);
 			}
-		}
-
-		public int VisionRange
-		{
-			get { return m_visionRange; }
-			set { if (value != m_visionRange) { m_visionRange = value; m_visionMap = null; } }
 		}
 
 		public IActor Actor
@@ -385,12 +381,13 @@ namespace MyGame.Server
 			if (this.Environment == null)
 				return;
 
-			if (m_losLocation == this.Location &&
-				m_losMapVersion == this.Environment.Version)
-				return;
-
 			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
 				throw new Exception();
+
+			if (m_losLocation == this.Location &&
+				m_losMapVersion == this.Environment.Version &&
+				m_visionMap != null)
+				return;
 
 			if (m_visionMap == null)
 			{

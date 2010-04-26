@@ -41,7 +41,7 @@ namespace MyGame.Server
 		int m_userID;
 
 		// this user sees all
-		bool m_seeAll = true;
+		bool m_seeAll = false;
 
 		List<Living> m_controllables = new List<Living>();
 

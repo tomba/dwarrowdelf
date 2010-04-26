@@ -64,6 +64,8 @@ namespace MyGame.Client
 		{
 			AddPropertyMapping(PropertyID.MaterialID, MaterialIDProperty);
 			AddPropertyMapping(PropertyID.SymbolID, SymbolIDProperty);
+			AddPropertyMapping(PropertyID.Name, NameProperty);
+			AddPropertyMapping(PropertyID.Color, GameColorProperty);
 		}
 
 
@@ -135,6 +137,22 @@ namespace MyGame.Client
 		public static readonly DependencyProperty ColorProperty =
 			DependencyProperty.Register("Color", typeof(Color), typeof(ClientGameObject), new UIPropertyMetadata(Colors.Black, UpdateDrawing));
 
+		public GameColor GameColor
+		{
+			get { return (GameColor)GetValue(GameColorProperty); }
+			set { SetValue(GameColorProperty, value); }
+		}
+
+		public static readonly DependencyProperty GameColorProperty =
+			DependencyProperty.Register("GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColors.Black, UpdateColor));
+
+		static void UpdateColor(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var ob = (ClientGameObject)d;
+			GameColor gc = (GameColor)e.NewValue;
+			Color c = gc.ToColor();
+			ob.SetValue(ColorProperty, c);
+		}
 
 
 		public SymbolID SymbolID

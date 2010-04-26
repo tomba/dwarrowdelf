@@ -9,6 +9,8 @@ namespace MyGame
 	{
 		None,
 
+		Name,
+
 		SymbolID,
 		MaterialID,
 		Color,
@@ -22,20 +24,27 @@ namespace MyGame
 		Intelligence,
 		Wisdom,
 		Charisma,
+
+		VisionRange,
 	}
+
+	public delegate void PropertyChangedCallback(PropertyDefinition property, object ob, object oldValue, object newValue);
 
 	public class PropertyDefinition
 	{
-		public PropertyDefinition(PropertyID id, PropertyVisibility visibility, object defaultValue)
+		public PropertyDefinition(PropertyID id, PropertyVisibility visibility, object defaultValue,
+			PropertyChangedCallback propertyChangedCallback = null)
 		{
 			this.PropertyID = id;
 			this.Visibility = visibility;
 			this.DefaultValue = defaultValue;
+			this.PropertyChangedCallback = propertyChangedCallback;
 		}
 
 		public PropertyID PropertyID { get; private set; }
 		public PropertyVisibility Visibility { get; private set; }
 		public object DefaultValue { get; private set; }
+		public PropertyChangedCallback PropertyChangedCallback { get; private set; }
 	}
 
 	public enum PropertyVisibility
