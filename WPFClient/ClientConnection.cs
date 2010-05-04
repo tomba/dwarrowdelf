@@ -248,7 +248,7 @@ namespace MyGame.Client
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
-			env.SetTerrains(msg.Bounds, msg.TerrainIDs);
+			env.SetTerrains(msg.Bounds, msg.TerrainData);
 		}
 
 		void HandleMessage(MapDataTerrainsList msg)

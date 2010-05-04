@@ -331,7 +331,7 @@ namespace MyGame.Server
 				{
 					Environment = this.ObjectID,
 					Bounds = bounds,
-					TerrainIDs = arr,
+					TerrainData = arr,
 				});
 			}
 			else if (bounds.Plane.Area < 2000)
@@ -351,7 +351,7 @@ namespace MyGame.Server
 					}
 
 					msg.Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1);
-					msg.TerrainIDs = arr;
+					msg.TerrainData = arr;
 
 					writer(msg);
 				}
@@ -373,7 +373,7 @@ namespace MyGame.Server
 						}
 
 						msg.Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1);
-						msg.TerrainIDs = arr;
+						msg.TerrainData = arr;
 
 						writer(msg);
 					}

@@ -230,7 +230,7 @@ namespace MyGame.ClientMsgs
 		[DataMember]
 		public IntCuboid Bounds { get; set; }
 		[DataMember]
-		public TileData[] TerrainIDs { get; set; }
+		public TileData[] TerrainData { get; set; }
 	}
 
 	[DataContract]
