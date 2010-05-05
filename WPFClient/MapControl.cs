@@ -551,6 +551,7 @@ namespace MyGame.Client
 			Notify("Floor");
 			Notify("FloorMaterial");
 			Notify("InteriorMaterial");
+			Notify("WaterLevel");
 			Notify("Objects");
 			Notify("Building");
 		}
@@ -632,6 +633,16 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 				return m_env.GetFloor(m_location);
+			}
+		}
+
+		public byte WaterLevel
+		{
+			get
+			{
+				if (m_env == null)
+					return 0;
+				return m_env.GetWaterLevel(m_location);
 			}
 		}
 

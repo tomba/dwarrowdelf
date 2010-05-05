@@ -20,6 +20,9 @@ namespace MyGame
 		[DataMember]
 		public MaterialID FloorMaterialID { get; set; }
 
+		[DataMember]
+		public byte WaterLevel { get; set; }
+
 		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 	}
 

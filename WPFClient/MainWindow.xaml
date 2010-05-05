@@ -218,6 +218,9 @@
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
+                        <TextBlock>Water:
+							<TextBlock Text="{Binding WaterLevel}" />
+						</TextBlock>
                     </StackPanel>
                     <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
                     <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
@@ -237,6 +240,9 @@
                         <TextBlock>Floor:
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
+						</TextBlock>
+                        <TextBlock>Water:
+							<TextBlock Text="{Binding WaterLevel}" />
 						</TextBlock>
                         <TextBlock>Building:
 							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />

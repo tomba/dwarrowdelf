@@ -644,9 +644,13 @@ namespace MyGame.Server
 					AddEvent(e);
 			}
 
-			m_livingEnumerator = m_livingList.GetEnumerator();
-
 			m_state = WorldState.TickOngoing;
+
+			// XXX
+			foreach (var env in m_objectMap.Values.Select(wr => wr.Target).OfType<Environment>())
+				env.Tick();
+
+			m_livingEnumerator = m_livingList.GetEnumerator();
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{

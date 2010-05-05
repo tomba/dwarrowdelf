@@ -66,6 +66,68 @@ namespace MyGame.Server
 			return handler(child, action);
 		}
 
+		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
+		{
+			foreach (var dir in DirectionExtensions.GetCardinalDirections())
+			{
+				var pp = p + dir;
+				if (!m_tileGrid.Bounds.Contains(pp))
+					continue;
+
+				if (m_tileGrid.GetWaterLevel(p + dir) > 0)
+					yield return dir;
+			}
+		}
+
+		IEnumerable<IntPoint3D> HandleWaterAt(IntPoint3D p)
+		{
+			List<IntPoint3D> posList = new List<IntPoint3D>();
+
+			var td = m_tileGrid.GetTileData(p);
+			int[] levels = new int[4];
+
+			int i = 0;
+			foreach (var d in DirectionExtensions.GetCardinalDirections())
+				levels[i++] = m_tileGrid.GetWaterLevel(p + d);			
+			
+			td.WaterLevel--;
+
+			m_tileGrid.SetWaterLevel(p, td.WaterLevel);
+
+			if (MapChanged != null)
+				MapChanged(this, p, td);
+
+			return posList;
+		}
+
+		public void Tick()
+		{
+			List<IntPoint3D> handledList = new List<IntPoint3D>();
+
+			foreach (var p in this.Bounds.Range())
+			{
+				if (m_tileGrid.GetWaterLevel(p) == 0)
+					continue;
+
+				if (handledList.Contains(p))
+					continue;
+
+				var res = AStar.AStar3D.Find(p, new IntPoint3D(-1, -1, -1), true, pp => 0, GetTileDirs);
+
+				var count = res.Nodes.Count;
+
+				var posList = res.Nodes.Keys;
+
+				handledList.AddRange(posList);
+
+				foreach (var pp in posList)
+				{
+					var newTiles = HandleWaterAt(pp);
+					handledList.AddRange(newTiles);
+				}
+			}
+		}
+
 		public InteriorInfo GetInterior(IntPoint3D p)
 		{
 			return Interiors.GetInterior(GetInteriorID(p));
@@ -466,6 +528,16 @@ namespace MyGame.Server
 			public MaterialID GetFloorMaterialID(IntPoint3D p)
 			{
 				return base.Grid[GetIndex(p)].FloorMaterialID;
+			}
+
+			public void SetWaterLevel(IntPoint3D p, byte waterLevel)
+			{
+				base.Grid[GetIndex(p)].WaterLevel = waterLevel;
+			}
+
+			public byte GetWaterLevel(IntPoint3D p)
+			{
+				return base.Grid[GetIndex(p)].WaterLevel;
 			}
 		}
 	}

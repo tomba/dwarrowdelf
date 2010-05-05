@@ -46,7 +46,7 @@ namespace MyGame.Client
 		{
 			var level = base.GetLevel(p.Z, false);
 			if (level == null)
-				return 0;
+				return InteriorID.Undefined;
 			return level.GetInteriorID(new IntPoint(p.X, p.Y));
 		}
 
@@ -60,7 +60,7 @@ namespace MyGame.Client
 		{
 			var level = base.GetLevel(p.Z, false);
 			if (level == null)
-				return 0;
+				return FloorID.Undefined;
 			return level.GetFloorID(new IntPoint(p.X, p.Y));
 		}
 
@@ -68,6 +68,14 @@ namespace MyGame.Client
 		{
 			var level = base.GetLevel(p.Z, true);
 			level.SetFloorID(new IntPoint(p.X, p.Y), floorID);
+		}
+
+		public byte GetWaterLevel(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return 0;
+			return level.GetWaterLevel(new IntPoint(p.X, p.Y));
 		}
 	}
 
@@ -120,6 +128,14 @@ namespace MyGame.Client
 			var block = base.GetBlock(ref p, true);
 
 			block.Grid[block.GetIndex(p)].FloorID = floorID;
+		}
+
+		public byte GetWaterLevel(IntPoint p)
+		{
+			var block = base.GetBlock(ref p, false);
+			if (block == null)
+				return 0;
+			return block.Grid[block.GetIndex(p)].WaterLevel;
 		}
 	}
 
@@ -211,6 +227,11 @@ namespace MyGame.Client
 		{
 			var id = m_tileGrid.GetTileData(l).FloorMaterialID;
 			return Materials.GetMaterial(id);
+		}
+
+		public byte GetWaterLevel(IntPoint3D l)
+		{
+			return m_tileGrid.GetWaterLevel(l);
 		}
 
 		public TileData GetTileData(IntPoint3D p)

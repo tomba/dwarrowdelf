@@ -259,6 +259,17 @@ namespace MyArea
 			}
 			env.AddBuilding(building);
 
+			for (int x = 3; x < 4; ++x)
+			{
+				for (int y = 12; y < 13; ++y)
+				{
+					var p = new IntPoint3D(x, y, surfaceLevel);
+					var td = env.GetTileData(p);
+					td.WaterLevel = 7;
+					env.SetTileData(p, td);
+				}
+			}
+
 			return env;
 		}
 
