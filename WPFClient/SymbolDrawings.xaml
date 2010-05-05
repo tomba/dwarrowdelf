@@ -6034,7 +6034,7 @@
 						<GeometryDrawing.Pen>
 							<Pen LineJoin="Round">
 								<Pen.Brush>
-									<LinearGradientBrush StartPoint="0.401268,0.995276" EndPoint="0.401268,0.0051771">
+									<LinearGradientBrush StartPoint="0.401267,0.995276" EndPoint="0.401267,0.0051771">
 										<LinearGradientBrush.GradientStops>
 											<GradientStop Color="#67123609" Offset="0.452532"/>
 											<GradientStop Color="#67255D2E" Offset="0.831283"/>
@@ -6093,13 +6093,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 690.854,514.755C 697.225,523.445 681.146,525.029 681.146,525.029C 681.146,525.029 683.784,506.963 690.854,514.755 Z ">
+					<GeometryDrawing Geometry="F1 M 690.854,514.754C 697.225,523.443 681.146,525.028 681.146,525.028C 681.146,525.028 683.784,506.962 690.854,514.754 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.714571,0.174864" EndPoint="1.69538,0.174864">
+							<LinearGradientBrush StartPoint="0.714571,0.174869" EndPoint="1.69538,0.174869">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.714571" CenterY="0.174864" AngleX="6.9954" AngleY="0"/>
-										<RotateTransform CenterX="0.714571" CenterY="0.174864" Angle="150.617"/>
+										<SkewTransform CenterX="0.714571" CenterY="0.174869" AngleX="6.99559" AngleY="0"/>
+										<RotateTransform CenterX="0.714571" CenterY="0.174869" Angle="150.617"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -6365,12 +6365,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 705.641,509.475C 711.947,501.898 718.765,514.973 718.765,514.973C 718.765,514.973 700.543,517.47 705.641,509.475 Z ">
+					<GeometryDrawing Geometry="F1 M 705.641,509.473C 711.947,501.896 718.765,514.97 718.765,514.97C 718.765,514.97 700.543,517.468 705.641,509.473 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.0270529,0.36888" EndPoint="1.14996,0.36888">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.0270529" CenterY="0.36888" AngleX="22.5178" AngleY="0"/>
+										<SkewTransform CenterX="0.0270529" CenterY="0.36888" AngleX="22.5179" AngleY="0"/>
 										<RotateTransform CenterX="0.0270529" CenterY="0.36888" Angle="50.7099"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -6535,13 +6535,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 691.407,507.705C 702.088,511.31 687.696,520.964 687.696,520.964C 687.696,520.964 680.493,505.297 691.407,507.705 Z ">
+					<GeometryDrawing Geometry="F1 M 691.406,507.704C 702.086,511.309 687.695,520.963 687.695,520.963C 687.695,520.963 680.491,505.296 691.406,507.704 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.510951,-0.00244616" EndPoint="1.54306,-0.00244616">
+							<LinearGradientBrush StartPoint="0.510948,-0.0024439" EndPoint="1.54306,-0.0024439">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.510951" CenterY="-0.00244616" AngleX="22.8647" AngleY="0"/>
-										<RotateTransform CenterX="0.510951" CenterY="-0.00244616" Angle="128.72"/>
+										<SkewTransform CenterX="0.510948" CenterY="-0.0024439" AngleX="22.8648" AngleY="0"/>
+										<RotateTransform CenterX="0.510948" CenterY="-0.0024439" Angle="128.719"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -6620,12 +6620,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 695.732,494.25C 684.986,496.868 690.522,482.334 690.522,482.334C 690.522,482.334 705.927,490.608 695.732,494.25 Z ">
+					<GeometryDrawing Geometry="F1 M 695.732,494.25C 684.986,496.868 690.522,482.333 690.522,482.333C 690.522,482.333 705.927,490.607 695.732,494.25 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.746949,0.953364" EndPoint="1.6983,0.953364">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.746949" CenterY="0.953364" AngleX="0.200948" AngleY="0"/>
+										<SkewTransform CenterX="0.746949" CenterY="0.953364" AngleX="0.200928" AngleY="0"/>
 										<RotateTransform CenterX="0.746949" CenterY="0.953364" Angle="260.681"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -6654,12 +6654,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 690.025,496.748C 689.271,505.969 674.668,496.641 674.668,496.641C 674.668,496.641 689.423,487.597 690.025,496.748 Z ">
+					<GeometryDrawing Geometry="F1 M 690.027,496.748C 689.273,505.969 674.67,496.641 674.67,496.641C 674.67,496.641 689.425,487.597 690.027,496.748 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="1.00205,0.402976" EndPoint="1.95067,0.402976">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="1.00205" CenterY="0.402976" AngleX="16.8277" AngleY="0"/>
+										<SkewTransform CenterX="1.00205" CenterY="0.402976" AngleX="16.8278" AngleY="0"/>
 										<RotateTransform CenterX="1.00205" CenterY="0.402976" Angle="201.037"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -6671,13 +6671,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 689.45,499.499C 695.217,507.423 676.771,506.649 676.771,506.649C 676.771,506.649 682.617,492.273 689.45,499.499 Z ">
+					<GeometryDrawing Geometry="F1 M 689.448,499.499C 695.216,507.423 676.77,506.649 676.77,506.649C 676.77,506.649 682.616,492.273 689.448,499.499 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.880515,0.147428" EndPoint="1.9297,0.147428">
+							<LinearGradientBrush StartPoint="0.880516,0.147428" EndPoint="1.9297,0.147428">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.880515" CenterY="0.147428" AngleX="-1.74448" AngleY="0"/>
-										<RotateTransform CenterX="0.880515" CenterY="0.147428" Angle="154.701"/>
+										<SkewTransform CenterX="0.880516" CenterY="0.147428" AngleX="-1.74476" AngleY="0"/>
+										<RotateTransform CenterX="0.880516" CenterY="0.147428" Angle="154.701"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -6773,13 +6773,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 695.213,496.592C 701.891,504.471 685.117,506.49 685.117,506.49C 685.117,506.49 687.706,489.651 695.213,496.592 Z ">
+					<GeometryDrawing Geometry="F1 M 695.211,496.592C 701.889,504.471 685.115,506.49 685.115,506.49C 685.115,506.49 687.704,489.651 695.211,496.592 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.813511,0.0874947" EndPoint="1.91786,0.0874947">
+							<LinearGradientBrush StartPoint="0.813517,0.0874947" EndPoint="1.91786,0.0874947">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.813511" CenterY="0.0874947" AngleX="6.27545" AngleY="0"/>
-										<RotateTransform CenterX="0.813511" CenterY="0.0874947" Angle="148.856"/>
+										<SkewTransform CenterX="0.813517" CenterY="0.0874947" AngleX="6.27478" AngleY="0"/>
+										<RotateTransform CenterX="0.813517" CenterY="0.0874947" Angle="148.856"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -6795,7 +6795,7 @@
 							<LinearGradientBrush StartPoint="0.996815,0.573176" EndPoint="2.10154,0.573176">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.996815" CenterY="0.573176" AngleX="25.4497" AngleY="0"/>
+										<SkewTransform CenterX="0.996815" CenterY="0.573176" AngleX="25.4499" AngleY="0"/>
 										<RotateTransform CenterX="0.996815" CenterY="0.573176" Angle="224.89"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -6841,13 +6841,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 695.654,495.625C 693.44,487.963 701.324,492.278 701.324,492.278C 701.324,492.278 698.347,502.925 695.654,495.625 Z ">
+					<GeometryDrawing Geometry="F1 M 695.654,495.624C 693.44,487.963 701.324,492.278 701.324,492.278C 701.324,492.278 698.347,502.925 695.654,495.624 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.0985985,0.733342" EndPoint="1.05276,0.733342">
+							<LinearGradientBrush StartPoint="0.0985985,0.733346" EndPoint="1.05276,0.733346">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.0985985" CenterY="0.733342" AngleX="10.3635" AngleY="0"/>
-										<RotateTransform CenterX="0.0985985" CenterY="0.733342" Angle="-6.60471"/>
+										<SkewTransform CenterX="0.0985985" CenterY="0.733346" AngleX="10.3634" AngleY="0"/>
+										<RotateTransform CenterX="0.0985985" CenterY="0.733346" Angle="-6.60471"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -12568,12 +12568,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 566.984,508.955C 565.613,522.872 547.829,510.312 547.829,510.312C 547.829,510.312 566.833,495.288 566.984,508.955 Z ">
+					<GeometryDrawing Geometry="F1 M 566.982,508.955C 565.612,522.872 547.827,510.312 547.827,510.312C 547.827,510.312 566.832,495.288 566.982,508.955 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.90071,0.360081" EndPoint="1.71737,0.360081">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.90071" CenterY="0.360081" AngleX="10.6875" AngleY="0"/>
+										<SkewTransform CenterX="0.90071" CenterY="0.360081" AngleX="10.6876" AngleY="0"/>
 										<RotateTransform CenterX="0.90071" CenterY="0.360081" Angle="195.82"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -12585,13 +12585,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 589.549,516.934C 598.423,505.826 606.545,525.49 606.545,525.49C 606.545,525.49 582.103,528.601 589.549,516.934 Z ">
+					<GeometryDrawing Geometry="F1 M 589.549,516.935C 598.423,505.828 606.545,525.492 606.545,525.492C 606.545,525.492 582.103,528.602 589.549,516.935 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.12477,0.444116" EndPoint="1.13674,0.444116">
+							<LinearGradientBrush StartPoint="0.12477,0.444118" EndPoint="1.13675,0.444118">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.12477" CenterY="0.444116" AngleX="22.7485" AngleY="0"/>
-										<RotateTransform CenterX="0.12477" CenterY="0.444116" Angle="52.8622"/>
+										<SkewTransform CenterX="0.12477" CenterY="0.444118" AngleX="22.7487" AngleY="0"/>
+										<RotateTransform CenterX="0.12477" CenterY="0.444118" Angle="52.8623"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -12687,13 +12687,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 564.834,514.725C 563.266,526.767 544.99,516.001 544.99,516.001C 544.99,516.001 564.645,502.899 564.834,514.725 Z ">
+					<GeometryDrawing Geometry="F1 M 564.834,514.725C 563.265,526.767 544.989,516.001 544.989,516.001C 544.989,516.001 564.644,502.899 564.834,514.725 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="1.00465,0.365954" EndPoint="1.90885,0.365954">
+							<LinearGradientBrush StartPoint="1.00466,0.365954" EndPoint="1.90885,0.365954">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="1.00465" CenterY="0.365954" AngleX="8.48399" AngleY="0"/>
-										<RotateTransform CenterX="1.00465" CenterY="0.365954" Angle="194.17"/>
+										<SkewTransform CenterX="1.00466" CenterY="0.365954" AngleX="8.48395" AngleY="0"/>
+										<RotateTransform CenterX="1.00466" CenterY="0.365954" Angle="194.17"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -12891,7 +12891,7 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 581.994,501.933C 566.991,498.536 584.993,484.358 584.993,484.358C 584.993,484.358 597.132,503.755 581.994,501.933 Z ">
+					<GeometryDrawing Geometry="F1 M 581.994,501.934C 566.991,498.537 584.993,484.359 584.993,484.359C 584.993,484.359 597.132,503.756 581.994,501.934 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.536721,1.00769" EndPoint="1.52294,1.00769">
 								<LinearGradientBrush.RelativeTransform>
@@ -12908,13 +12908,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.582,500.517C 563.51,504.954 568.173,484.021 568.173,484.021C 568.173,484.021 590.705,494.669 577.582,500.517 Z ">
+					<GeometryDrawing Geometry="F1 M 577.583,500.517C 563.512,504.954 568.174,484.021 568.174,484.021C 568.174,484.021 590.706,494.669 577.583,500.517 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.796604,0.939169" EndPoint="1.78789,0.939169">
+							<LinearGradientBrush StartPoint="0.796607,0.939169" EndPoint="1.78789,0.939169">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.796604" CenterY="0.939169" AngleX="-5.36432" AngleY="0"/>
-										<RotateTransform CenterX="0.796604" CenterY="0.939169" Angle="251.989"/>
+										<SkewTransform CenterX="0.796607" CenterY="0.939169" AngleX="-5.36441" AngleY="0"/>
+										<RotateTransform CenterX="0.796607" CenterY="0.939169" Angle="251.989"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -12925,13 +12925,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 573.164,501.466C 565.07,512.145 552.563,493.339 552.563,493.339C 552.563,493.339 579.567,490.045 573.164,501.466 Z ">
+					<GeometryDrawing Geometry="F1 M 573.166,501.466C 565.072,512.145 552.565,493.339 552.565,493.339C 552.565,493.339 579.569,490.045 573.166,501.466 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.985295,0.642711" EndPoint="2.16985,0.642711">
+							<LinearGradientBrush StartPoint="0.985292,0.642711" EndPoint="2.16985,0.642711">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.985295" CenterY="0.642711" AngleX="31.3501" AngleY="0"/>
-										<RotateTransform CenterX="0.985295" CenterY="0.642711" Angle="236.16"/>
+										<SkewTransform CenterX="0.985292" CenterY="0.642711" AngleX="31.3503" AngleY="0"/>
+										<RotateTransform CenterX="0.985292" CenterY="0.642711" Angle="236.161"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13130,13 +13130,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 575.817,506.329C 590.886,504.121 580.917,522.196 580.917,522.196C 580.917,522.196 561.327,509.914 575.817,506.329 Z ">
+					<GeometryDrawing Geometry="F1 M 575.817,506.33C 590.886,504.122 580.917,522.198 580.917,522.198C 580.917,522.198 561.327,509.915 575.817,506.33 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.295272,0.0258617" EndPoint="1.22465,0.0258617">
+							<LinearGradientBrush StartPoint="0.295272,0.0258635" EndPoint="1.22465,0.0258635">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.295272" CenterY="0.0258617" AngleX="4.42237" AngleY="0"/>
-										<RotateTransform CenterX="0.295272" CenterY="0.0258617" Angle="89.0911"/>
+										<SkewTransform CenterX="0.295272" CenterY="0.0258635" AngleX="4.42241" AngleY="0"/>
+										<RotateTransform CenterX="0.295272" CenterY="0.0258635" Angle="89.0911"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13402,13 +13402,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 586.75,492.98C 590.635,482.532 601.912,495.449 601.912,495.449C 601.912,495.449 584.098,503.516 586.75,492.98 Z ">
+					<GeometryDrawing Geometry="F1 M 586.75,492.98C 590.635,482.532 601.912,495.449 601.912,495.449C 601.912,495.449 584.097,503.516 586.75,492.98 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.0959977,0.572378" EndPoint="0.981149,0.572378">
+							<LinearGradientBrush StartPoint="0.0959981,0.572378" EndPoint="0.981151,0.572378">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.0959977" CenterY="0.572378" AngleX="20.8747" AngleY="0"/>
-										<RotateTransform CenterX="0.0959977" CenterY="0.572378" Angle="35.3385"/>
+										<SkewTransform CenterX="0.0959981" CenterY="0.572378" AngleX="20.8745" AngleY="0"/>
+										<RotateTransform CenterX="0.0959981" CenterY="0.572378" Angle="35.3384"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13640,13 +13640,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 581.062,495.505C 586.462,486.482 596.569,501.78 596.569,501.78C 596.569,501.78 577.072,505.002 581.062,495.505 Z ">
+					<GeometryDrawing Geometry="F1 M 581.061,495.505C 586.461,486.481 596.569,501.78 596.569,501.78C 596.569,501.78 577.071,505.002 581.061,495.505 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.00636751,0.378196" EndPoint="1.15967,0.378196">
+							<LinearGradientBrush StartPoint="0.00637132,0.378197" EndPoint="1.15967,0.378197">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.00636751" CenterY="0.378196" AngleX="25.9856" AngleY="0"/>
-										<RotateTransform CenterX="0.00636751" CenterY="0.378196" Angle="48.0109"/>
+										<SkewTransform CenterX="0.00637132" CenterY="0.378197" AngleX="25.9858" AngleY="0"/>
+										<RotateTransform CenterX="0.00637132" CenterY="0.378197" Angle="48.0109"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13691,7 +13691,7 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 580.584,487.226C 568.566,484.535 582.986,473.301 582.986,473.301C 582.986,473.301 592.709,488.67 580.584,487.226 Z ">
+					<GeometryDrawing Geometry="F1 M 580.584,487.228C 568.566,484.537 582.986,473.302 582.986,473.302C 582.986,473.302 592.709,488.672 580.584,487.228 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.536721,1.00769" EndPoint="1.52294,1.00769">
 								<LinearGradientBrush.RelativeTransform>
@@ -13742,13 +13742,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 571.237,489.212C 571.866,499.585 554.525,489.923 554.525,489.923C 554.525,489.923 569.145,478.99 571.237,489.212 Z ">
+					<GeometryDrawing Geometry="F1 M 571.236,489.212C 571.865,499.585 554.524,489.923 554.524,489.923C 554.524,489.923 569.144,478.99 571.236,489.212 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.993488,0.377662" EndPoint="1.93953,0.377662">
+							<LinearGradientBrush StartPoint="0.993491,0.377662" EndPoint="1.93954,0.377662">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.993488" CenterY="0.377662" AngleX="16.1104" AngleY="0"/>
-										<RotateTransform CenterX="0.993488" CenterY="0.377662" Angle="195.925"/>
+										<SkewTransform CenterX="0.993491" CenterY="0.377662" AngleX="16.1102" AngleY="0"/>
+										<RotateTransform CenterX="0.993491" CenterY="0.377662" Angle="195.925"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13846,11 +13846,11 @@
 					</GeometryDrawing>
 					<GeometryDrawing Geometry="F1 M 581.123,482.496C 569.467,479.513 585.483,469.978 585.483,469.978C 585.483,469.978 593.061,484.352 581.123,482.496 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.480446,1.00525" EndPoint="1.5366,1.00525">
+							<LinearGradientBrush StartPoint="0.480449,1.00525" EndPoint="1.5366,1.00525">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.480446" CenterY="1.00525" AngleX="24.7309" AngleY="0"/>
-										<RotateTransform CenterX="0.480446" CenterY="1.00525" Angle="-50.8893"/>
+										<SkewTransform CenterX="0.480449" CenterY="1.00525" AngleX="24.7306" AngleY="0"/>
+										<RotateTransform CenterX="0.480449" CenterY="1.00525" Angle="-50.8895"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13861,13 +13861,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.741,481.319C 565.961,483.997 572.029,469.128 572.029,469.128C 572.029,469.128 588.916,477.592 577.741,481.319 Z ">
+					<GeometryDrawing Geometry="F1 M 577.741,481.318C 565.961,483.996 572.029,469.127 572.029,469.127C 572.029,469.127 588.916,477.591 577.741,481.318 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.746949,0.953367" EndPoint="1.6983,0.953367">
+							<LinearGradientBrush StartPoint="0.746949,0.953365" EndPoint="1.6983,0.953365">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.746949" CenterY="0.953367" AngleX="0.20127" AngleY="0"/>
-										<RotateTransform CenterX="0.746949" CenterY="0.953367" Angle="260.682"/>
+										<SkewTransform CenterX="0.746949" CenterY="0.953365" AngleX="0.20116" AngleY="0"/>
+										<RotateTransform CenterX="0.746949" CenterY="0.953365" Angle="260.682"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -13946,13 +13946,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 575.635,490.71C 587.705,488.96 579.72,503.283 579.72,503.283C 579.72,503.283 564.028,493.55 575.635,490.71 Z ">
+					<GeometryDrawing Geometry="F1 M 575.637,490.71C 587.707,488.96 579.721,503.283 579.721,503.283C 579.721,503.283 564.03,493.55 575.637,490.71 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.295271,0.0258619" EndPoint="1.22465,0.0258619">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.295271" CenterY="0.0258619" AngleX="4.42224" AngleY="0"/>
-										<RotateTransform CenterX="0.295271" CenterY="0.0258619" Angle="89.0911"/>
+										<SkewTransform CenterX="0.295271" CenterY="0.0258619" AngleX="4.42189" AngleY="0"/>
+										<RotateTransform CenterX="0.295271" CenterY="0.0258619" Angle="89.0906"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14065,13 +14065,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.531,483.247C 585.528,480.169 581.762,488.75 581.762,488.75C 581.762,488.75 569.976,486.782 577.531,483.247 Z ">
+					<GeometryDrawing Geometry="F1 M 577.53,483.247C 585.527,480.169 581.761,488.75 581.761,488.75C 581.761,488.75 569.974,486.782 577.53,483.247 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.240739,0.153561" EndPoint="1.20799,0.153561">
+							<LinearGradientBrush StartPoint="0.240733,0.153561" EndPoint="1.20799,0.153561">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.240739" CenterY="0.153561" AngleX="12.2231" AngleY="0"/>
-										<RotateTransform CenterX="0.240739" CenterY="0.153561" Angle="78.4663"/>
+										<SkewTransform CenterX="0.240733" CenterY="0.153561" AngleX="12.2229" AngleY="0"/>
+										<RotateTransform CenterX="0.240733" CenterY="0.153561" Angle="78.4663"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14116,13 +14116,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 580.581,480.021C 588.971,477.154 586.302,489.8 586.302,489.8C 586.302,489.8 572.727,483.628 580.581,480.021 Z ">
+					<GeometryDrawing Geometry="F1 M 580.581,480.02C 588.971,477.153 586.302,489.799 586.302,489.799C 586.302,489.799 572.727,483.627 580.581,480.02 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.254104,0.173258" EndPoint="1.14482,0.173258">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.254104" CenterY="0.173258" AngleX="-3.37286" AngleY="0"/>
-										<RotateTransform CenterX="0.254104" CenterY="0.173258" Angle="72.478"/>
+										<SkewTransform CenterX="0.254104" CenterY="0.173258" AngleX="-3.37272" AngleY="0"/>
+										<RotateTransform CenterX="0.254104" CenterY="0.173258" Angle="72.4781"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14218,7 +14218,7 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 583.891,480.141C 592.052,477.155 590.75,488.43 590.75,488.43C 590.75,488.43 576.405,483.83 583.891,480.141 Z ">
+					<GeometryDrawing Geometry="F1 M 583.892,480.141C 592.052,477.155 590.75,488.43 590.75,488.43C 590.75,488.43 576.405,483.83 583.892,480.141 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.161287,0.0889834" EndPoint="1.19613,0.0889834">
 								<LinearGradientBrush.RelativeTransform>
@@ -14235,7 +14235,7 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 580.17,480.903C 589.04,481.697 581.044,492.08 581.044,492.08C 581.044,492.08 571.46,480.997 580.17,480.903 Z ">
+					<GeometryDrawing Geometry="F1 M 580.171,480.903C 589.04,481.697 581.044,492.08 581.044,492.08C 581.044,492.08 571.461,480.997 580.171,480.903 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.359894,0.099348" EndPoint="1.17646,0.099348">
 								<LinearGradientBrush.RelativeTransform>
@@ -14269,13 +14269,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 571.772,480.4C 575.378,487.16 561.767,486.084 561.767,486.084C 561.767,486.084 567.317,474.198 571.772,480.4 Z ">
+					<GeometryDrawing Geometry="F1 M 571.772,480.4C 575.378,487.16 561.768,486.084 561.768,486.084C 561.768,486.084 567.318,474.198 571.772,480.4 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.910951,0.161215" EndPoint="1.94587,0.161215">
+							<LinearGradientBrush StartPoint="0.910946,0.161215" EndPoint="1.94587,0.161215">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.910951" CenterY="0.161215" AngleX="-5.32228" AngleY="0"/>
-										<RotateTransform CenterX="0.910951" CenterY="0.161215" Angle="156.221"/>
+										<SkewTransform CenterX="0.910946" CenterY="0.161215" AngleX="-5.32237" AngleY="0"/>
+										<RotateTransform CenterX="0.910946" CenterY="0.161215" Angle="156.221"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14354,13 +14354,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 579.676,468.342C 572.471,463.983 584.906,459.274 584.906,459.274C 584.906,459.274 587.279,471.865 579.676,468.342 Z ">
+					<GeometryDrawing Geometry="F1 M 579.676,468.341C 572.471,463.982 584.906,459.273 584.906,459.273C 584.906,459.273 587.279,471.865 579.676,468.341 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.368743,0.972916" EndPoint="1.49172,0.972916">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.368743" CenterY="0.972916" AngleX="22.5139" AngleY="0"/>
-										<RotateTransform CenterX="0.368743" CenterY="0.972916" Angle="-39.2813"/>
+										<SkewTransform CenterX="0.368743" CenterY="0.972916" AngleX="22.5137" AngleY="0"/>
+										<RotateTransform CenterX="0.368743" CenterY="0.972916" Angle="-39.2815"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14422,7 +14422,7 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.681,476.647C 585.842,473.196 584.54,486.227 584.54,486.227C 584.54,486.227 570.194,480.911 577.681,476.647 Z ">
+					<GeometryDrawing Geometry="F1 M 577.682,476.647C 585.842,473.196 584.54,486.227 584.54,486.227C 584.54,486.227 570.195,480.911 577.682,476.647 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.161287,0.0889833" EndPoint="1.19613,0.0889833">
 								<LinearGradientBrush.RelativeTransform>
@@ -14439,13 +14439,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 580.275,475.834C 584.384,468.884 592.074,480.666 592.074,480.666C 592.074,480.666 577.239,483.147 580.275,475.834 Z ">
+					<GeometryDrawing Geometry="F1 M 580.275,475.835C 584.384,468.886 592.074,480.667 592.074,480.667C 592.074,480.667 577.239,483.149 580.275,475.835 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.00636904,0.378198" EndPoint="1.15966,0.378198">
+							<LinearGradientBrush StartPoint="0.00636904,0.378195" EndPoint="1.15967,0.378195">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.00636904" CenterY="0.378198" AngleX="25.9855" AngleY="0"/>
-										<RotateTransform CenterX="0.00636904" CenterY="0.378198" Angle="48.0107"/>
+										<SkewTransform CenterX="0.00636904" CenterY="0.378195" AngleX="25.9855" AngleY="0"/>
+										<RotateTransform CenterX="0.00636904" CenterY="0.378195" Angle="48.0109"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14456,13 +14456,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 581.771,473.87C 580.355,465.914 594.28,472.221 594.28,472.221C 594.28,472.221 584.275,481.611 581.771,473.87 Z ">
+					<GeometryDrawing Geometry="F1 M 581.771,473.869C 580.355,465.913 594.28,472.221 594.28,472.221C 594.28,472.221 584.275,481.61 581.771,473.869 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.020033,0.665276" EndPoint="0.952658,0.665276">
+							<LinearGradientBrush StartPoint="0.020033,0.665277" EndPoint="0.952656,0.665277">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.020033" CenterY="0.665276" AngleX="11.2225" AngleY="0"/>
-										<RotateTransform CenterX="0.020033" CenterY="0.665276" Angle="7.24782"/>
+										<SkewTransform CenterX="0.020033" CenterY="0.665277" AngleX="11.222" AngleY="0"/>
+										<RotateTransform CenterX="0.020033" CenterY="0.665277" Angle="7.24726"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14507,12 +14507,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.222,468.595C 568.646,471.302 571.488,458.529 571.488,458.529C 571.488,458.529 585.22,465.027 577.222,468.595 Z ">
+					<GeometryDrawing Geometry="F1 M 577.222,468.595C 568.646,471.302 571.488,458.529 571.488,458.529C 571.488,458.529 585.22,465.026 577.222,468.595 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.796608,0.939168" EndPoint="1.7879,0.939168">
+							<LinearGradientBrush StartPoint="0.796608,0.939168" EndPoint="1.78789,0.939168">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.796608" CenterY="0.939168" AngleX="-5.36461" AngleY="0"/>
+										<SkewTransform CenterX="0.796608" CenterY="0.939168" AngleX="-5.36469" AngleY="0"/>
 										<RotateTransform CenterX="0.796608" CenterY="0.939168" Angle="251.989"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -14558,13 +14558,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 572.653,473.387C 578.371,479.984 563.02,480.085 563.02,480.085C 563.02,480.085 566.137,467.436 572.653,473.387 Z ">
+					<GeometryDrawing Geometry="F1 M 572.651,473.387C 578.37,479.984 563.019,480.085 563.019,480.085C 563.019,480.085 566.136,467.436 572.651,473.387 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.835316,0.124465" EndPoint="1.90403,0.124465">
+							<LinearGradientBrush StartPoint="0.835321,0.124465" EndPoint="1.90404,0.124465">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.835316" CenterY="0.124465" AngleX="3.37103" AngleY="0"/>
-										<RotateTransform CenterX="0.835316" CenterY="0.124465" Angle="152.393"/>
+										<SkewTransform CenterX="0.835321" CenterY="0.124465" AngleX="3.37116" AngleY="0"/>
+										<RotateTransform CenterX="0.835321" CenterY="0.124465" Angle="152.393"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14575,13 +14575,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 574.141,475.51C 583.049,478.35 571.046,485.957 571.046,485.957C 571.046,485.957 565.038,473.613 574.141,475.51 Z ">
+					<GeometryDrawing Geometry="F1 M 574.141,475.511C 583.049,478.351 571.046,485.958 571.046,485.958C 571.046,485.958 565.038,473.614 574.141,475.511 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.51095,-0.00244545" EndPoint="1.54307,-0.00244545">
+							<LinearGradientBrush StartPoint="0.51095,-0.00244544" EndPoint="1.54307,-0.00244544">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.51095" CenterY="-0.00244545" AngleX="22.8648" AngleY="0"/>
-										<RotateTransform CenterX="0.51095" CenterY="-0.00244545" Angle="128.72"/>
+										<SkewTransform CenterX="0.51095" CenterY="-0.00244544" AngleX="22.8649" AngleY="0"/>
+										<RotateTransform CenterX="0.51095" CenterY="-0.00244544" Angle="128.72"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14694,13 +14694,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 572.988,466.877C 572.359,474.142 560.18,466.793 560.18,466.793C 560.18,466.793 572.486,459.668 572.988,466.877 Z ">
+					<GeometryDrawing Geometry="F1 M 572.989,466.877C 572.36,474.142 560.181,466.793 560.181,466.793C 560.181,466.793 572.487,459.668 572.989,466.877 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="1.00204,0.40298" EndPoint="1.95067,0.40298">
+							<LinearGradientBrush StartPoint="1.00205,0.40298" EndPoint="1.95067,0.40298">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="1.00204" CenterY="0.40298" AngleX="16.8278" AngleY="0"/>
-										<RotateTransform CenterX="1.00204" CenterY="0.40298" Angle="201.037"/>
+										<SkewTransform CenterX="1.00205" CenterY="0.40298" AngleX="16.8278" AngleY="0"/>
+										<RotateTransform CenterX="1.00205" CenterY="0.40298" Angle="201.037"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14745,13 +14745,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 576.147,472.142C 585.33,470.794 579.255,481.824 579.255,481.824C 579.255,481.824 567.315,474.329 576.147,472.142 Z ">
+					<GeometryDrawing Geometry="F1 M 576.147,472.144C 585.33,470.796 579.255,481.826 579.255,481.826C 579.255,481.826 567.315,474.331 576.147,472.144 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.295268,0.0258624" EndPoint="1.22465,0.0258624">
+							<LinearGradientBrush StartPoint="0.295268,0.0258621" EndPoint="1.22465,0.0258621">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.295268" CenterY="0.0258624" AngleX="4.42194" AngleY="0"/>
-										<RotateTransform CenterX="0.295268" CenterY="0.0258624" Angle="89.0906"/>
+										<SkewTransform CenterX="0.295268" CenterY="0.0258621" AngleX="4.4218" AngleY="0"/>
+										<RotateTransform CenterX="0.295268" CenterY="0.0258621" Angle="89.0906"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
@@ -14796,12 +14796,12 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.283,466.121C 585.798,465.415 578.979,477.22 578.979,477.22C 578.979,477.22 568.99,467.797 577.283,466.121 Z ">
+					<GeometryDrawing Geometry="F1 M 577.282,466.121C 585.797,465.415 578.978,477.22 578.978,477.22C 578.978,477.22 568.989,467.797 577.282,466.121 Z ">
 						<GeometryDrawing.Brush>
 							<LinearGradientBrush StartPoint="0.337154,0.0105023" EndPoint="1.26146,0.0105023">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.337154" CenterY="0.0105023" AngleX="9.31933" AngleY="0"/>
+										<SkewTransform CenterX="0.337154" CenterY="0.0105023" AngleX="9.31935" AngleY="0"/>
 										<RotateTransform CenterX="0.337154" CenterY="0.0105023" Angle="97.8225"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
@@ -14813,13 +14813,13 @@
 							</LinearGradientBrush>
 						</GeometryDrawing.Brush>
 					</GeometryDrawing>
-					<GeometryDrawing Geometry="F1 M 577.316,466.755C 582.885,472.962 568.894,474.553 568.894,474.553C 568.894,474.553 571.054,461.287 577.316,466.755 Z ">
+					<GeometryDrawing Geometry="F1 M 577.316,466.755C 582.886,472.962 568.895,474.553 568.895,474.553C 568.895,474.553 571.055,461.287 577.316,466.755 Z ">
 						<GeometryDrawing.Brush>
-							<LinearGradientBrush StartPoint="0.813514,0.0874934" EndPoint="1.91786,0.0874934">
+							<LinearGradientBrush StartPoint="0.813518,0.0874934" EndPoint="1.91787,0.0874934">
 								<LinearGradientBrush.RelativeTransform>
 									<TransformGroup>
-										<SkewTransform CenterX="0.813514" CenterY="0.0874934" AngleX="6.27491" AngleY="0"/>
-										<RotateTransform CenterX="0.813514" CenterY="0.0874934" Angle="148.856"/>
+										<SkewTransform CenterX="0.813518" CenterY="0.0874934" AngleX="6.27541" AngleY="0"/>
+										<RotateTransform CenterX="0.813518" CenterY="0.0874934" Angle="148.856"/>
 									</TransformGroup>
 								</LinearGradientBrush.RelativeTransform>
 								<LinearGradientBrush.GradientStops>
