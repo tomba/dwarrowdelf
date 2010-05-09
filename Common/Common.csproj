@@ -123,12 +123,12 @@
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />
     <Compile Include="AStar\AStar3D.cs" />
+    <Compile Include="DataTypes\Grid3DBase.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataTypes\IntVector3D.cs" />
-    <Compile Include="DataTypes\Grid3DBase.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\Grid2DBase.cs" />
     <Compile Include="Events.cs" />
@@ -145,7 +145,6 @@
     <Compile Include="DataTypes\GrowingGrid2DBase.cs" />
     <Compile Include="DataTypes\IntRect.cs" />
     <Compile Include="DataTypes\IntPoint3D.cs" />
-    <Compile Include="DataTypes\Grid3D.cs" />
     <Compile Include="IServer.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />
     <Compile Include="LOSShadowCast1.cs" />

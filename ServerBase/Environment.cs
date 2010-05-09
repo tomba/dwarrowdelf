@@ -83,7 +83,7 @@ namespace MyGame.Server
 			foreach (var dir in DirectionExtensions.GetCardinalDirections())
 			{
 				var pp = p + dir;
-				if (!m_tileGrid.Bounds.Contains(pp))
+				if (!this.Bounds.Contains(pp))
 					continue;
 
 				if (m_tileGrid.GetWaterLevel(p + dir) > 0)
@@ -546,72 +546,74 @@ namespace MyGame.Server
 		}
 
 
-		class TileGrid : Grid3DBase<TileData>
+		class TileGrid
 		{
+			TileData[, ,] m_grid;
+
 			public TileGrid(int width, int height, int depth)
-				: base(width, height, depth)
 			{
+				m_grid = new TileData[depth, height, width];
 			}
 
 			public TileData GetTileData(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)];
+				return m_grid[p.Z, p.Y, p.X];
 			}
 
 			public void SetTileData(IntPoint3D p, TileData data)
 			{
-				base.Grid[GetIndex(p)] = data;
+				m_grid[p.Z, p.Y, p.X] = data;
 			}
 
 			public void SetInteriorID(IntPoint3D p, InteriorID id)
 			{
-				base.Grid[GetIndex(p)].InteriorID = id;
+				m_grid[p.Z, p.Y, p.X].InteriorID = id;
 			}
 
 			public InteriorID GetInteriorID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].InteriorID;
+				return m_grid[p.Z, p.Y, p.X].InteriorID;
 			}
 
 			public void SetFloorID(IntPoint3D p, FloorID id)
 			{
-				base.Grid[GetIndex(p)].FloorID = id;
+				m_grid[p.Z, p.Y, p.X].FloorID = id;
 			}
 
 			public FloorID GetFloorID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].FloorID;
+				return m_grid[p.Z, p.Y, p.X].FloorID;
 			}
 
 
 			public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
 			{
-				base.Grid[GetIndex(p)].InteriorMaterialID = id;
+				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
 			}
 
 			public MaterialID GetInteriorMaterialID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].InteriorMaterialID;
+				return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 			}
 
 			public void SetFloorMaterialID(IntPoint3D p, MaterialID id)
 			{
-				base.Grid[GetIndex(p)].FloorMaterialID = id;
+				m_grid[p.Z, p.Y, p.X].FloorMaterialID = id;
 			}
 
 			public MaterialID GetFloorMaterialID(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].FloorMaterialID;
+				return m_grid[p.Z, p.Y, p.X].FloorMaterialID;
 			}
 
 			public void SetWaterLevel(IntPoint3D p, byte waterLevel)
 			{
-				base.Grid[GetIndex(p)].WaterLevel = waterLevel;
+				m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 			}
 
 			public byte GetWaterLevel(IntPoint3D p)
 			{
-				return base.Grid[GetIndex(p)].WaterLevel;
+				return m_grid[p.Z, p.Y, p.X].WaterLevel;
 			}
 		}
 	}

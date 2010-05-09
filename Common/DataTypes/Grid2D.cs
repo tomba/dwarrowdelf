@@ -29,13 +29,13 @@ namespace MyGame
 			get
 			{
 				l = l + this.Origin;
-				return base.Grid[GetIndex(l)];
+				return base.Grid[l.Y, l.X];
 			}
 
 			set
 			{
 				l = l + this.Origin;
-				base.Grid[GetIndex(l)] = value;
+				base.Grid[l.Y, l.X] = value;
 			}
 		}
 		
@@ -82,7 +82,7 @@ namespace MyGame
 				{
 					yield return new KeyValuePair<IntPoint, T>(
 						new IntPoint(x - Origin.X, y - Origin.Y),
-						base.Grid[GetIndex(new IntPoint(x, y))]
+						base.Grid[y, x]
 						);
 				}
 			}

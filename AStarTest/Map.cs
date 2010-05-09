@@ -53,32 +53,32 @@ namespace AStarTest
 
 		public int GetWeight(IntPoint3D p)
 		{
-			return base.Grid[GetIndex(p)].Weight;
+			return base.Grid[p.Z, p.Y, p.X].Weight;
 		}
 
 		public void SetWeight(IntPoint3D p, int weight)
 		{
-			base.Grid[GetIndex(p)].Weight = weight;
+			base.Grid[p.Z, p.Y, p.X].Weight = weight;
 		}
 
 		public bool GetBlocked(IntPoint3D p)
 		{
-			return base.Grid[GetIndex(p)].Blocked;
+			return base.Grid[p.Z, p.Y, p.X].Blocked;
 		}
 
 		public void SetBlocked(IntPoint3D p, bool blocked)
 		{
-			base.Grid[GetIndex(p)].Blocked = blocked;
+			base.Grid[p.Z, p.Y, p.X].Blocked = blocked;
 		}
 
 		public Stairs GetStairs(IntPoint3D p)
 		{
-			return base.Grid[GetIndex(p)].Stairs;
+			return base.Grid[p.Z, p.Y, p.X].Stairs;
 		}
 
 		public void SetStairs(IntPoint3D p, Stairs stairs)
 		{
-			base.Grid[GetIndex(p)].Stairs = stairs;
+			base.Grid[p.Z, p.Y, p.X].Stairs = stairs;
 		}
 	}
 }

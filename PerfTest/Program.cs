@@ -182,11 +182,11 @@ namespace PerfTest
 		{
 			while (loops-- > 0)
 			{
-				for (int x = 0; x < m_grid.Width; ++x)
+				for (int z = 0; z < m_grid.Depth; ++z)
 				{
 					for (int y = 0; y < m_grid.Height; ++y)
 					{
-						for (int z = 0; z < m_grid.Depth; ++z)
+						for (int x = 0; x < m_grid.Width; ++x)
 						{
 							var p = new IntPoint3D(x, y, z);
 							var wl = m_grid.GetWaterLevel(p);
@@ -227,15 +227,15 @@ namespace PerfTest
 
 			while (loops-- > 0)
 			{
-				for (int x = 0; x < w; ++x)
+				for (int z = 0; z < d; ++z)
 				{
 					for (int y = 0; y < h; ++y)
 					{
-						for (int z = 0; z < d; ++z)
+						for (int x = 0; x < w; ++x)
 						{
-							var wl = grid[x, y, z].WaterLevel;
+							var wl = grid[z, y, x].WaterLevel;
 							wl += 10;
-							grid[x, y, z].WaterLevel = wl;
+							grid[z, y, x].WaterLevel = wl;
 						}
 					}
 				}
@@ -268,22 +268,32 @@ namespace PerfTest
 	}
 
 
-	class TileGrid : Grid3DBase<TileData>
+	class TileGrid
 	{
+		public readonly int Width;
+		public readonly int Height;
+		public readonly int Depth;
+		public readonly TileData[, ,] Grid;
+
 		public TileGrid(int width, int height, int depth)
-			: base(width, height, depth)
 		{
+			this.Width = width;
+			this.Height = height;
+			this.Depth = depth;
+			Grid = new TileData[depth, height, width];
 		}
 
 		public void SetWaterLevel(IntPoint3D p, byte waterLevel)
 		{
-			base.Grid[p.X, p.Y, p.Z].WaterLevel = waterLevel;
+			Grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 		}
 
 		public byte GetWaterLevel(IntPoint3D p)
 		{
-			return base.Grid[p.X, p.Y, p.Z].WaterLevel;
+			return Grid[p.Z, p.Y, p.X].WaterLevel;
 		}
+
+		public IntCuboid Bounds { get { return new IntCuboid(0, 0, 0, Width, Height, Depth); } }
 	}
 
 	class ShortTileGrid : ShortGrid3DBase<TileData>

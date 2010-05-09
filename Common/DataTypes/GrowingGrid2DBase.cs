@@ -13,8 +13,7 @@ namespace MyGame
 		protected class Block : Grid2DBase<T>
 		{
 			public Block(int size) : base(size, size) { }
-			public new T[] Grid { get { return base.Grid; } }
-			public new int GetIndex(IntPoint p) { return base.GetIndex(p); }
+			public new T[,] Grid { get { return base.Grid; } }
 		}
 
 		class MainGrid : Grid2DBase<Block>
@@ -22,8 +21,8 @@ namespace MyGame
 			public MainGrid(int width, int height) : base(width, height) { }
 			public Block this[int x, int y]
 			{
-				get { return base.Grid[base.GetIndex(new IntPoint(x, y))]; }
-				set { base.Grid[base.GetIndex(new IntPoint(x, y))] = value; }
+				get { return base.Grid[y, x]; }
+				set { base.Grid[y, x] = value; }
 			}
 		}
 

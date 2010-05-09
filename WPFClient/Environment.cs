@@ -90,14 +90,14 @@ namespace MyGame.Client
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return new TileData();
-			return block.Grid[block.GetIndex(p)];
+			return block.Grid[p.Y, p.X];
 		}
 
 		public void SetTileData(IntPoint p, TileData data)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)] = data;
+			block.Grid[p.Y, p.X] = data;
 		}
 
 		public InteriorID GetInteriorID(IntPoint p)
@@ -105,14 +105,14 @@ namespace MyGame.Client
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].InteriorID;
+			return block.Grid[p.Y, p.X].InteriorID;
 		}
 
 		public void SetInteriorID(IntPoint p, InteriorID interiorID)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)].InteriorID = interiorID;
+			block.Grid[p.Y, p.X].InteriorID = interiorID;
 		}
 
 		public FloorID GetFloorID(IntPoint p)
@@ -120,14 +120,14 @@ namespace MyGame.Client
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].FloorID;
+			return block.Grid[p.Y, p.X].FloorID;
 		}
 
 		public void SetFloorID(IntPoint p, FloorID floorID)
 		{
 			var block = base.GetBlock(ref p, true);
 
-			block.Grid[block.GetIndex(p)].FloorID = floorID;
+			block.Grid[p.Y, p.X].FloorID = floorID;
 		}
 
 		public byte GetWaterLevel(IntPoint p)
@@ -135,7 +135,7 @@ namespace MyGame.Client
 			var block = base.GetBlock(ref p, false);
 			if (block == null)
 				return 0;
-			return block.Grid[block.GetIndex(p)].WaterLevel;
+			return block.Grid[p.Y, p.X].WaterLevel;
 		}
 	}
 
