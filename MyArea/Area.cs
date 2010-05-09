@@ -261,7 +261,7 @@ namespace MyArea
 
 			for (int x = 3; x < 4; ++x)
 			{
-				for (int y = 12; y < 13; ++y)
+				for (int y = 12; y < 14; ++y)
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
 					var td = env.GetTileData(p);
@@ -269,6 +269,7 @@ namespace MyArea
 					env.SetTileData(p, td);
 				}
 			}
+			env.ScanWaterTiles();
 
 			return env;
 		}

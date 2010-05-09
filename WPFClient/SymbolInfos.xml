@@ -14,7 +14,12 @@
 		<CharSymbol>#</CharSymbol>
 		<Drawing x="0" y="0" w="100" h="100">Stone_Block</Drawing>
 	</Symbol>
-	<Symbol>
+  <Symbol>
+    <Name>Water</Name>
+    <CharSymbol>~</CharSymbol>
+    <Drawing x="0" y="0" w="100" h="100">Water_Block</Drawing>
+  </Symbol>
+  <Symbol>
 		<Name>StairsUp</Name>
 		<CharSymbol>&lt;</CharSymbol>
 		<Drawing x="0" y="0" w="100" h="100">StairsUp</Drawing>

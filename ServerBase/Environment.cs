@@ -66,7 +66,19 @@ namespace MyGame.Server
 			return handler(child, action);
 		}
 
-		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
+
+		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
+
+		public void ScanWaterTiles()
+		{
+			foreach (var p in this.Bounds.Range())
+			{
+				if (m_tileGrid.GetWaterLevel(p) > 0)
+					m_waterTiles.Add(p);
+			}
+	}
+
+		IEnumerable<Direction> GetWaterDirs(IntPoint3D p)
 		{
 			foreach (var dir in DirectionExtensions.GetCardinalDirections())
 			{
@@ -79,53 +91,115 @@ namespace MyGame.Server
 			}
 		}
 
-		IEnumerable<IntPoint3D> HandleWaterAt(IntPoint3D p)
+		void HandleWaterAt(IntPoint3D p, Dictionary<IntPoint3D, int> waterChangeMap)
 		{
-			List<IntPoint3D> posList = new List<IntPoint3D>();
-
-			var td = m_tileGrid.GetTileData(p);
 			int[] levels = new int[4];
+			int[] need = new int[4];
+			int wl;
+
+			if (!waterChangeMap.TryGetValue(p, out wl))
+				wl = m_tileGrid.GetWaterLevel(p);
+			
+			if (wl <= 1)
+				return;
 
 			int i = 0;
+			int flowDirs = 0;
 			foreach (var d in DirectionExtensions.GetCardinalDirections())
-				levels[i++] = m_tileGrid.GetWaterLevel(p + d);			
-			
-			td.WaterLevel--;
+			{
+				var pp = p + d;
+				if (this.IsWalkable(pp))
+				{
+					int level;
+					if (!waterChangeMap.TryGetValue(pp, out level))
+						level = m_tileGrid.GetWaterLevel(pp);
 
-			m_tileGrid.SetWaterLevel(p, td.WaterLevel);
+					if (level < wl)
+					{
+						flowDirs++;
+						levels[i] = level;
+						need[i] = (wl - level) * 10 / 2;
+					}
+				}
 
-			if (MapChanged != null)
-				MapChanged(this, p, td);
+				i++;
+			}
 
-			return posList;
+			bool wlChanged = false;
+			i = 0;
+			foreach (var d in DirectionExtensions.GetCardinalDirections())
+			{
+				var pp = p + d;
+
+				if (need[i] == 0)
+				{
+					i++;
+					continue;
+				}
+
+				var amount = (need[i] / flowDirs + 9) / 10;
+
+				if (wl == 1)
+					amount = 0;
+
+				amount = Math.Min(amount, wl);
+
+				if (amount == 0)
+				{
+					i++;
+					continue;
+				}
+
+				int level = levels[i];
+
+				wl -= amount;
+				level += amount;
+
+				waterChangeMap[pp] = level;
+				wlChanged = true;
+
+				i++;
+			}
+
+			if (wlChanged)
+				waterChangeMap[p] = wl;
+		}
+
+		void HandleWater()
+		{
+			IntPoint3D[] waterTiles = m_waterTiles.ToArray();
+			Dictionary<IntPoint3D, int> waterChangeMap = new Dictionary<IntPoint3D, int>();
+
+			foreach (var p in waterTiles)
+			{
+				if (m_tileGrid.GetWaterLevel(p) == 0)
+					throw new Exception();
+
+				HandleWaterAt(p, waterChangeMap);
+			}
+
+			foreach (var kvp in waterChangeMap)
+			{
+				var p = kvp.Key;
+				int level = kvp.Value;
+
+				var td = m_tileGrid.GetTileData(p);
+				td.WaterLevel = (byte)level;
+				m_tileGrid.SetWaterLevel(p, (byte)level);
+
+				if (MapChanged != null)
+					MapChanged(this, p, td);
+
+				if (level > 0)
+					m_waterTiles.Add(p);
+				else
+					m_waterTiles.Remove(p);
+			}
 		}
 
 		public void Tick()
 		{
-			List<IntPoint3D> handledList = new List<IntPoint3D>();
-
-			foreach (var p in this.Bounds.Range())
-			{
-				if (m_tileGrid.GetWaterLevel(p) == 0)
-					continue;
-
-				if (handledList.Contains(p))
-					continue;
-
-				var res = AStar.AStar3D.Find(p, new IntPoint3D(-1, -1, -1), true, pp => 0, GetTileDirs);
-
-				var count = res.Nodes.Count;
-
-				var posList = res.Nodes.Keys;
-
-				handledList.AddRange(posList);
-
-				foreach (var pp in posList)
-				{
-					var newTiles = HandleWaterAt(pp);
-					handledList.AddRange(newTiles);
-				}
-			}
+			HandleWater();
 		}
 
 		public InteriorInfo GetInterior(IntPoint3D p)

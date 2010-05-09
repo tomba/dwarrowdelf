@@ -204,6 +204,11 @@ namespace MyGame.Client
 			if (intInfo == null || intInfo == Interiors.Undefined)
 				return null;
 
+			if (this.Environment.GetWaterLevel(ml) > 0)
+			{
+				return m_bitmapCache.GetBitmap(SymbolID.Water, Colors.Black, !lit);
+			}
+
 			switch (intID)
 			{
 				case InteriorID.Stairs:

@@ -281,9 +281,12 @@ namespace MyGame.Server
 					tileData.InteriorMaterialID = data.InteriorMaterialID;
 				if (data.FloorMaterialID != MaterialID.Undefined)
 					tileData.FloorMaterialID = data.FloorMaterialID;
+				tileData.WaterLevel = data.WaterLevel;
 
 				env.SetTileData(p, tileData);
 			}
+
+			env.ScanWaterTiles();
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]

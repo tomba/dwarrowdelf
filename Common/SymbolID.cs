@@ -18,6 +18,7 @@ namespace MyGame
 		StairsDown,
 		StairsUpDown,
 		Portal,
+		Water,
 
 		SlopeUpNorth,
 		SlopeUpSouth,

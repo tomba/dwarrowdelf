@@ -540,6 +540,26 @@ namespace MyGame.Client
 			});
 		}
 
+
+		private void MenuItem_Click_SetWater(object sender, RoutedEventArgs e)
+		{
+			IntRect r = map.SelectionRect;
+
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = new IntCuboid(r, map.Z),
+				TileData = new TileData()
+				{
+					FloorID = FloorID.Undefined,
+					FloorMaterialID = MaterialID.Undefined,
+					InteriorID = InteriorID.Undefined,
+					InteriorMaterialID = MaterialID.Undefined,
+					WaterLevel = 7,
+				}
+			});
+		}
+
 		private void MenuItem_Click_Job(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;

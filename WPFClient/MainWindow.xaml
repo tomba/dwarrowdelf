@@ -169,6 +169,7 @@
                         <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
                         <MenuItem Name="setFloorMenu" Header="Set Floor" />
                         <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
+                        <MenuItem Header="Set Water" Click="MenuItem_Click_SetWater" />
                         <MenuItem Header="Jobs">
                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
