@@ -265,7 +265,7 @@ namespace MyArea
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
 					var td = env.GetTileData(p);
-					td.WaterLevel = 7;
+					td.WaterLevel = TileData.MaxWaterLevel;
 					env.SetTileData(p, td);
 				}
 			}

@@ -555,7 +555,7 @@ namespace MyGame.Client
 					FloorMaterialID = MaterialID.Undefined,
 					InteriorID = InteriorID.Undefined,
 					InteriorMaterialID = MaterialID.Undefined,
-					WaterLevel = 7,
+					WaterLevel = TileData.MaxWaterLevel,
 				}
 			});
 		}

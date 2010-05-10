@@ -22,6 +22,7 @@ namespace MyGame
 
 		[DataMember]
 		public byte WaterLevel { get; set; }
+		public const int MaxWaterLevel = 7;
 
 		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 	}

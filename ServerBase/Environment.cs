@@ -76,19 +76,6 @@ namespace MyGame.Server
 				if (m_tileGrid.GetWaterLevel(p) > 0)
 					m_waterTiles.Add(p);
 			}
-	}
-
-		IEnumerable<Direction> GetWaterDirs(IntPoint3D p)
-		{
-			foreach (var dir in DirectionExtensions.GetCardinalDirections())
-			{
-				var pp = p + dir;
-				if (!this.Bounds.Contains(pp))
-					continue;
-
-				if (m_tileGrid.GetWaterLevel(p + dir) > 0)
-					yield return dir;
-			}
 		}
 
 		void HandleWaterAt(IntPoint3D p, Dictionary<IntPoint3D, int> waterChangeMap)
@@ -99,41 +86,40 @@ namespace MyGame.Server
 
 			if (!waterChangeMap.TryGetValue(p, out wl))
 				wl = m_tileGrid.GetWaterLevel(p);
-			
+
 			if (wl <= 1)
 				return;
 
-			int i = 0;
+			int i;
+			Direction[] dirs = DirectionExtensions.GetCardinalDirections().ToArray();
+
 			int flowDirs = 0;
-			foreach (var d in DirectionExtensions.GetCardinalDirections())
+			for (i = 0; i < dirs.Length; ++i)
 			{
-				var pp = p + d;
-				if (this.IsWalkable(pp))
+				var pp = p + dirs[i];
+
+				if (!this.Bounds.Contains(pp) || !this.IsWalkable(pp))
+					continue;
+
+				int level;
+				if (!waterChangeMap.TryGetValue(pp, out level))
+					level = m_tileGrid.GetWaterLevel(pp);
+
+				if (level < wl)
 				{
-					int level;
-					if (!waterChangeMap.TryGetValue(pp, out level))
-						level = m_tileGrid.GetWaterLevel(pp);
-
-					if (level < wl)
-					{
-						flowDirs++;
-						levels[i] = level;
-						need[i] = (wl - level) * 10 / 2;
-					}
+					flowDirs++;
+					levels[i] = level;
+					need[i] = (wl - level) * 10 / 2;
 				}
-
-				i++;
 			}
 
 			bool wlChanged = false;
-			i = 0;
-			foreach (var d in DirectionExtensions.GetCardinalDirections())
+			for (i = 0; i < dirs.Length; ++i)
 			{
-				var pp = p + d;
+				var pp = p + dirs[i];
 
 				if (need[i] == 0)
 				{
-					i++;
 					continue;
 				}
 
@@ -146,7 +132,6 @@ namespace MyGame.Server
 
 				if (amount == 0)
 				{
-					i++;
 					continue;
 				}
 
@@ -157,8 +142,6 @@ namespace MyGame.Server
 
 				waterChangeMap[pp] = level;
 				wlChanged = true;
-
-				i++;
 			}
 
 			if (wlChanged)
