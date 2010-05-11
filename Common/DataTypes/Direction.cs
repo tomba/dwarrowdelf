@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MyGame
 {
@@ -36,6 +37,38 @@ namespace MyGame
 
 	public static class DirectionExtensions
 	{
+		public static readonly ReadOnlyCollection<Direction> CardinalDirections;
+		public static readonly ReadOnlyCollection<Direction> IntercardinalDirections;
+		public static readonly ReadOnlyCollection<Direction> PlanarDirections;
+
+		static DirectionExtensions()
+		{
+			CardinalDirections = Array.AsReadOnly(new Direction[] {
+				Direction.North,
+				Direction.East,
+				Direction.South,
+				Direction.West,
+			});
+
+			IntercardinalDirections = Array.AsReadOnly(new Direction[] {
+				Direction.NorthEast,
+				Direction.SouthEast,
+				Direction.SouthWest,
+				Direction.NorthWest,
+			});
+
+			PlanarDirections = Array.AsReadOnly(new Direction[] {
+				Direction.North,
+				Direction.NorthEast,
+				Direction.East,
+				Direction.SouthEast,
+				Direction.South,
+				Direction.SouthWest,
+				Direction.West,
+				Direction.NorthWest,
+			});
+		}
+
 		public static Direction Reverse(this Direction dir)
 		{
 			// XXX optimize
@@ -55,34 +88,6 @@ namespace MyGame
 		public static bool ContainsDown(this Direction dir)
 		{
 			return (dir & Direction.Down) != 0;
-		}
-
-		public static IEnumerable<Direction> GetCardinalDirections()
-		{
-			yield return Direction.North;
-			yield return Direction.East;
-			yield return Direction.South;
-			yield return Direction.West;
-		}
-
-		public static IEnumerable<Direction> GetIntercardinalDirections()
-		{
-			yield return Direction.NorthEast;
-			yield return Direction.SouthEast;
-			yield return Direction.SouthWest;
-			yield return Direction.NorthWest;
-		}
-
-		public static IEnumerable<Direction> GetPlanarDirections()
-		{
-			yield return Direction.North;
-			yield return Direction.NorthEast;
-			yield return Direction.East;
-			yield return Direction.SouthEast;
-			yield return Direction.South;
-			yield return Direction.SouthWest;
-			yield return Direction.West;
-			yield return Direction.NorthWest;
 		}
 	}
 }

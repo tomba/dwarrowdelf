@@ -114,7 +114,7 @@ namespace MyGame.Client
 		{
 			var env = m_environment;
 
-			foreach (var dir in DirectionExtensions.GetPlanarDirections())
+			foreach (var dir in DirectionExtensions.PlanarDirections)
 			{
 				var l = p + dir;
 				if (CanMoveTo(env, p, l))
@@ -127,7 +127,7 @@ namespace MyGame.Client
 			if (CanMoveTo(env, p, p + Direction.Down))
 				yield return Direction.Down;
 
-			foreach (var dir in DirectionExtensions.GetCardinalDirections())
+			foreach (var dir in DirectionExtensions.CardinalDirections)
 			{
 				var d = dir | Direction.Down;
 				if (CanMoveTo(env, p, p + d))

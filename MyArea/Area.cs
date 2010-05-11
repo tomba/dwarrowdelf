@@ -135,7 +135,7 @@ namespace MyArea
 				if (!canHaveSlope)
 					continue;
 
-				foreach (var dir in DirectionExtensions.GetCardinalDirections())
+				foreach (var dir in DirectionExtensions.CardinalDirections)
 				{
 					if (!env.Bounds.Contains(p + dir))
 						continue;
