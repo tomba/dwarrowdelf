@@ -138,7 +138,7 @@ namespace MyGame.Server
 				 */
 			}
 
-			Direction[] dirs = DirectionExtensions.GetCardinalDirections().ToArray();
+			var dirs = DirectionExtensions.CardinalDirections.ToArray();
 			ShuffleArray(dirs);
 			bool curLevelChanged = false;
 
