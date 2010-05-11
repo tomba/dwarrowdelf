@@ -75,77 +75,100 @@ namespace MyGame.Server
 			{
 				if (m_tileGrid.GetWaterLevel(p) > 0)
 					m_waterTiles.Add(p);
+				else
+					m_waterTiles.Remove(p);
 			}
+		}
+
+		// XXX bad shuffle
+		static Random s_waterRandom = new Random();
+		static void ShuffleArray(Direction[] array)
+		{
+			if (array.Length == 0)
+				return;
+
+			for (int i = array.Length - 1; i >= 0; i--)
+			{
+				var tmp = array[i];
+				int randomIndex = s_waterRandom.Next(i + 1);
+
+				//Swap elements
+				array[i] = array[randomIndex];
+				array[randomIndex] = tmp;
+			}
+		}
+
+		/// <summary>
+		/// Divide signed integer m with positive integer n, rounding up for positive m and and down for negative m
+		/// </summary>
+		/// <param name="m">Dividend</param>
+		/// <param name="n">Divisor</param>
+		/// <returns>Quotient</returns>
+		static int IntDivRound(int m, int n)
+		{
+			return (m + (m >= 0 ? (n - 1) : -(n - 1))) / n;
+		}
+
+		/// <summary>
+		/// Clamp an integer between two values
+		/// </summary>
+		/// <param name="value">Value to be clamped</param>
+		/// <param name="max">Maximum value</param>
+		/// <param name="min">Minimum value</param>
+		/// <returns>Clamped value</returns>
+		static int IntClamp(int value, int max, int min)
+		{
+			return value > max ? max : (value < min ? min : value);
 		}
 
 		void HandleWaterAt(IntPoint3D p, Dictionary<IntPoint3D, int> waterChangeMap)
 		{
-			int[] levels = new int[4];
-			int[] need = new int[4];
-			int wl;
+			int curLevel;
 
-			if (!waterChangeMap.TryGetValue(p, out wl))
-				wl = m_tileGrid.GetWaterLevel(p);
+			if (!waterChangeMap.TryGetValue(p, out curLevel))
+			{
+				curLevel = m_tileGrid.GetWaterLevel(p);
+				/* water evaporates */
+				/*
+				if (curLevel == 1 && s_waterRandom.Next(100) == 0)
+				{
+					waterChangeMap[p] = 0;
+					return;
+				}
+				 */
+			}
 
-			if (wl <= 1)
-				return;
-
-			int i;
 			Direction[] dirs = DirectionExtensions.GetCardinalDirections().ToArray();
+			ShuffleArray(dirs);
+			bool curLevelChanged = false;
 
-			int flowDirs = 0;
-			for (i = 0; i < dirs.Length; ++i)
+			for (int i = 0; i < dirs.Length; ++i)
 			{
 				var pp = p + dirs[i];
 
 				if (!this.Bounds.Contains(pp) || !this.IsWalkable(pp))
 					continue;
 
-				int level;
-				if (!waterChangeMap.TryGetValue(pp, out level))
-					level = m_tileGrid.GetWaterLevel(pp);
+				int neighLevel;
+				if (!waterChangeMap.TryGetValue(pp, out neighLevel))
+					neighLevel = m_tileGrid.GetWaterLevel(pp);
 
-				if (level < wl)
-				{
-					flowDirs++;
-					levels[i] = level;
-					need[i] = (wl - level) * 10 / 2;
-				}
+				int diff = curLevel - neighLevel;
+				int flow = IntDivRound(diff, 6);
+				flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
+
+				if (flow == 0)
+					continue;
+
+				curLevel -= flow;
+				neighLevel += flow;
+
+				waterChangeMap[pp] = neighLevel;
+				curLevelChanged = true;
 			}
 
-			bool wlChanged = false;
-			for (i = 0; i < dirs.Length; ++i)
-			{
-				var pp = p + dirs[i];
-
-				if (need[i] == 0)
-				{
-					continue;
-				}
-
-				var amount = (need[i] / flowDirs + 9) / 10;
-
-				if (wl == 1)
-					amount = 0;
-
-				amount = Math.Min(amount, wl);
-
-				if (amount == 0)
-				{
-					continue;
-				}
-
-				int level = levels[i];
-
-				wl -= amount;
-				level += amount;
-
-				waterChangeMap[pp] = level;
-				wlChanged = true;
-			}
-
-			if (wlChanged)
-				waterChangeMap[p] = wl;
+			if (curLevelChanged)
+				waterChangeMap[p] = curLevel;
 		}
 
 		void HandleWater()
