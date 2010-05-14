@@ -34,9 +34,39 @@ namespace MyGame.Server
 
 		public virtual void Destruct()
 		{
+			// XXX or should we give an error?
+			if (RealTickEvent != null)
+				this.World.TickEvent -= Tick;
+
 			this.Destructed = true;
 			this.World.AddChange(new ObjectDestructedChange(this));
 			this.World.RemoveGameObject(this);
+		}
+
+		event Action RealTickEvent;
+
+		void Tick()
+		{
+			RealTickEvent();
+		}
+
+		public event Action TickEvent
+		{
+			add
+			{
+				if (RealTickEvent == null)
+					this.World.TickEvent += Tick;
+
+				RealTickEvent += value;
+			}
+
+			remove
+			{
+				RealTickEvent -= value;
+
+				if (RealTickEvent == null)
+					this.World.TickEvent -= Tick;
+			}
 		}
 
 		public abstract ClientMsgs.Message Serialize();

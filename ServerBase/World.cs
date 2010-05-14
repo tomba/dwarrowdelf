@@ -102,6 +102,9 @@ namespace MyGame.Server
 		Thread m_worldThread;
 		volatile bool m_exit = false;
 
+		public event Action TickEvent;
+
+
 		[Conditional("DEBUG")]
 		void VDbg(string format, params object[] args)
 		{
@@ -646,9 +649,8 @@ namespace MyGame.Server
 
 			m_state = WorldState.TickOngoing;
 
-			// XXX
-			foreach (var env in m_objectMap.Values.Select(wr => wr.Target).OfType<Environment>())
-				env.Tick();
+			if (TickEvent != null)
+				TickEvent();
 
 			m_livingEnumerator = m_livingList.GetEnumerator();
 

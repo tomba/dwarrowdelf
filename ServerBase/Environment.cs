@@ -37,6 +37,15 @@ namespace MyGame.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
+
+			world.TickEvent += Tick;
+		}
+
+		public override void Destruct()
+		{
+			this.World.TickEvent -= Tick;
+
+			base.Destruct();
 		}
 
 		public IntRect Bounds2D
@@ -203,7 +212,7 @@ namespace MyGame.Server
 			}
 		}
 
-		public void Tick()
+		void Tick()
 		{
 			HandleWater();
 		}
