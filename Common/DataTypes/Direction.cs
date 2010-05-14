@@ -44,6 +44,8 @@ namespace MyGame
 		public static readonly ReadOnlyCollection<Direction> IntercardinalDirections;
 		public static readonly ReadOnlyCollection<Direction> PlanarDirections;
 
+		public static readonly ReadOnlyCollection<Direction> CardinalUpDownDirections;
+
 		static DirectionExtensions()
 		{
 			CardinalDirections = Array.AsReadOnly(new Direction[] {
@@ -69,6 +71,15 @@ namespace MyGame
 				Direction.SouthWest,
 				Direction.West,
 				Direction.NorthWest,
+			});
+
+			CardinalUpDownDirections = Array.AsReadOnly(new Direction[] {
+				Direction.North,
+				Direction.East,
+				Direction.South,
+				Direction.West,
+				Direction.Up,
+				Direction.Down,
 			});
 		}
 
