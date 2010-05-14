@@ -269,9 +269,74 @@ namespace MyArea
 					env.SetTileData(p, td);
 				}
 			}
+
+			for (int x = 2; x <= 4; ++x)
+			{
+				for (int y = 15; y < 21; ++y)
+				{
+					var p = new IntPoint3D(x, y, surfaceLevel);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Stone);
+				}
+			}
+
+			for (int y = 16; y < 20; ++y)
+			{
+				var p = new IntPoint3D(3, y, surfaceLevel);
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+			}
+
+			for (int y = 16; y < 18; ++y)
+			{
+				var p = new IntPoint3D(3, y, surfaceLevel);
+				var td = env.GetTileData(p);
+				td.WaterLevel = TileData.MaxWaterLevel;
+				env.SetTileData(p, td);
+			}
+
+			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 0));
+			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 4));
+			ClearInside(env, new IntPoint3D(3, 16, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(4, 16, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(5, 16, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(6, 16, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(7, 16, surfaceLevel - 5));
+			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 4));
+			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 0));
+
 			env.ScanWaterTiles();
 
+			{
+				// Add a water generator
+				var item = new ItemObject(world)
+				{
+					SymbolID = SymbolID.Key,
+					Name = "water gen",
+					Color = GameColors.Red,
+					MaterialID = diamond,
+				};
+
+				item.TickEvent += () => env.SetWaterLevel(item.Location, TileData.MaxWaterLevel);
+				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
+			}
+
 			return env;
+		}
+
+		void ClearTile(Environment env, IntPoint3D p)
+		{
+			env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
+			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+		}
+
+		void ClearInside(Environment env, IntPoint3D p)
+		{
+			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
 		Environment CreateMap2(World world)
