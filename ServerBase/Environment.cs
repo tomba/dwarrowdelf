@@ -130,6 +130,38 @@ namespace MyGame.Server
 			return value > max ? max : (value < min ? min : value);
 		}
 
+		bool CanWaterFlow(IntPoint3D from, IntPoint3D to)
+		{
+			if (!this.Bounds.Contains(to))
+				return false;
+
+			IntVector3D v = to - from;
+
+			Debug.Assert(v.IsNormal);
+
+			var dstInter = GetInterior(to);
+
+			if (dstInter.Blocker)
+				return false;
+
+			if (v.Z == 0)
+				return true;
+
+			Direction dir = v.ToDirection();
+
+			var dstFloor = GetFloor(to);
+
+			if (dir == Direction.Up)
+				return dstFloor.IsWaterPassable == true;
+
+			var srcFloor = GetFloor(from);
+
+			if (dir == Direction.Down)
+				return srcFloor.IsWaterPassable == true;
+
+			throw new Exception();
+		}
+
 		void HandleWaterAt(IntPoint3D p, Dictionary<IntPoint3D, int> waterChangeMap)
 		{
 			int curLevel;
@@ -322,6 +354,25 @@ namespace MyGame.Server
 
 			if (MapChanged != null)
 				MapChanged(this, l, d);
+		}
+
+		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
+		{
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetWaterLevel(l, waterLevel);
+
+			var d = m_tileGrid.GetTileData(l);
+
+			if (MapChanged != null)
+				MapChanged(this, l, d);
+		}
+
+		public byte GetWaterLevel(IntPoint3D l)
+		{
+			return m_tileGrid.GetWaterLevel(l);
 		}
 
 		public bool IsWalkable(IntPoint3D l)
