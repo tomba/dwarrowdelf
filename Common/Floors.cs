@@ -28,6 +28,8 @@ namespace MyGame
 		public string Name { get; private set; }
 		public bool IsCarrying { get; private set; }	/* dwarf can stand over it */
 		public bool IsBlocking { get; private set; }	/* dwarf can not go through it */
+		public bool IsSeeThrough { get { return IsBlocking; } }
+		public bool IsWaterPassable { get { return !IsBlocking; } }
 	}
 
 	public static class Floors
