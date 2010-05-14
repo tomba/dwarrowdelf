@@ -179,24 +179,60 @@ namespace MyGame.Server
 				 */
 			}
 
-			var dirs = DirectionExtensions.CardinalDirections.ToArray();
+			var dirs = DirectionExtensions.CardinalUpDownDirections.ToArray();
 			ShuffleArray(dirs);
 			bool curLevelChanged = false;
 
 			for (int i = 0; i < dirs.Length; ++i)
 			{
-				var pp = p + dirs[i];
+				var d = dirs[i];
+				var pp = p + d;
 
-				if (!this.Bounds.Contains(pp) || !this.IsWalkable(pp))
+				if (!CanWaterFlow(p, pp))
 					continue;
 
 				int neighLevel;
 				if (!waterChangeMap.TryGetValue(pp, out neighLevel))
 					neighLevel = m_tileGrid.GetWaterLevel(pp);
 
-				int diff = curLevel - neighLevel;
-				int flow = IntDivRound(diff, 6);
-				flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
+				int flow;
+				if (d == Direction.Up)
+				{
+					if (curLevel > TileData.MaxWaterLevel)
+					{
+						flow = curLevel - (neighLevel + TileData.MaxCompress) - 1;
+						flow = IntClamp(flow, curLevel - TileData.MaxWaterLevel, 0);
+					}
+					else
+						flow = 0;
+
+				}
+				else if (d == Direction.Down)
+				{
+					if (neighLevel < TileData.MaxWaterLevel)
+						flow = TileData.MaxWaterLevel - neighLevel;
+					else if (curLevel >= TileData.MaxWaterLevel)
+						flow = curLevel - neighLevel + TileData.MaxCompress;
+					else
+						flow = 0;
+
+					flow = IntClamp(flow, curLevel, 0);
+				}
+				else
+				{
+					if (curLevel > TileData.MinWaterLevel && curLevel > neighLevel)
+					{
+						int diff = curLevel - neighLevel;
+						flow = (diff + 5) / 6;
+						Debug.Assert(flow < curLevel);
+						//flow = Math.Min(flow, curLevel - 1);
+						//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
+					}
+					else
+					{
+						flow = 0;
+					}
+				}
 
 				if (flow == 0)
 					continue;
