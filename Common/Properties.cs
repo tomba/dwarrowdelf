@@ -26,6 +26,8 @@ namespace MyGame
 		Charisma,
 
 		VisionRange,
+		FoodFullness,
+		WaterFullness,
 	}
 
 	public delegate void PropertyChangedCallback(PropertyDefinition property, object ob, object oldValue, object newValue);

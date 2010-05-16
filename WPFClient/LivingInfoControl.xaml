@@ -38,6 +38,11 @@
 
             <TextBlock Text="{Binding HitPoints}" />
             <TextBlock Text="{Binding SpellPoints}" />
+
+            <TextBlock Text="Food Fullness" />
+            <TextBlock Text="Water Fullness" />
+            <TextBlock Text="{Binding FoodFullness}" />
+            <TextBlock Text="{Binding WaterFullness}" />
         </UniformGrid>
 
         <Separator />

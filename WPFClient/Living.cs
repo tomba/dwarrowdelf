@@ -41,6 +41,8 @@ namespace MyGame.Client
 			AddPropertyMapping(PropertyID.Charisma, CharismaProperty);
 
 			AddPropertyMapping(PropertyID.VisionRange, VisionRangeProperty);
+			AddPropertyMapping(PropertyID.FoodFullness, FoodFullnessProperty);
+			AddPropertyMapping(PropertyID.WaterFullness, WaterFullnessProperty);
 		}
 
 
@@ -64,6 +66,10 @@ namespace MyGame.Client
 
 		public static readonly DependencyProperty VisionRangeProperty =
 			DependencyProperty.Register("VisionRange", typeof(int), typeof(Living), new UIPropertyMetadata(VisionRangeChanged));
+		public static readonly DependencyProperty FoodFullnessProperty =
+			DependencyProperty.Register("FoodFullness", typeof(int), typeof(Living));
+		public static readonly DependencyProperty WaterFullnessProperty =
+			DependencyProperty.Register("WaterFullness", typeof(int), typeof(Living));
 
 		public int HitPoints
 		{
@@ -124,7 +130,6 @@ namespace MyGame.Client
 			Living l = (Living)d;
 			l.m_visionMap = null;
 		}
-
 
 		public void EnqueueAction(GameAction action)
 		{
