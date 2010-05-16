@@ -118,6 +118,9 @@ namespace MyGame.Client
 
 			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
 			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
+
+			// xxx autologin
+			LogOn_Button_Click(null, null);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -761,7 +764,8 @@ namespace MyGame.Client
 
 		void OnLoggedOn()
 		{
-			//GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+			// xxx autologin
+			//LogOnChar_Button_Click(null, null);
 		}
 
 		void OnCharLoggedOn()
