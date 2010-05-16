@@ -96,6 +96,14 @@ namespace MyGame.Server
 			else
 				return property.DefaultValue;
 		}
+
+		protected Tuple<PropertyID, object>[] SerializeProperties()
+		{
+			var arr = m_propertyMap.
+				Select(kvp => new Tuple<PropertyID, object>(kvp.Key.PropertyID, kvp.Value)).
+				ToArray();
+			return arr;
+		}
 	}
 
 	/* Game object that has inventory, location */

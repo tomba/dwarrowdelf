@@ -8,8 +8,6 @@ namespace MyGame.Server
 {
 	public class Living : ServerGameObject
 	{
-		#region internal fields that are _not_ visible to clients
-
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
 
 		uint m_losMapVersion;
@@ -17,12 +15,6 @@ namespace MyGame.Server
 		Grid2D<bool> m_visionMap;
 
 		IActor m_actorImpl;
-
-		#endregion
-
-		#region fields that are visible to clients
-
-		#endregion
 
 		static readonly PropertyDefinition HitPointsProperty = new PropertyDefinition(PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
 		static readonly PropertyDefinition SpellPointsProperty = new PropertyDefinition(PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
@@ -47,6 +39,7 @@ namespace MyGame.Server
 		{
 			this.Name = name;
 			world.AddLiving(this);
+			SpellPoints = 44;
 		}
 
 		public void Cleanup()
@@ -54,11 +47,6 @@ namespace MyGame.Server
 			this.Actor = null;
 			World.RemoveLiving(this);
 			this.Destruct();
-		}
-
-		void AddFullChange()
-		{
-			this.World.AddChange(new FullObjectChange(this) { ObjectData = Serialize() });
 		}
 
 		public int HitPoints
@@ -525,13 +513,9 @@ namespace MyGame.Server
 		{
 			var data = new ClientMsgs.LivingData();
 			data.ObjectID = this.ObjectID;
-			data.Name = this.Name;
-			data.SymbolID = this.SymbolID;
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
-			data.Color = this.Color;
-			data.VisionRange = this.VisionRange;
-			data.HitPoints = this.HitPoints;
+			data.Properties = base.SerializeProperties();
 			return data;
 		}
 

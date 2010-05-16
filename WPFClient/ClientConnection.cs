@@ -311,14 +311,11 @@ namespace MyGame.Client
 
 			if (ob == null)
 			{
-				MyDebug.WriteLine("New living appeared {0}/{1}", msg.Name, msg.ObjectID);
+				MyDebug.WriteLine("New living appeared {0}", msg.ObjectID);
 				ob = new Living(GameData.Data.World, msg.ObjectID);
 			}
 
-			ob.SymbolID = msg.SymbolID;
-			ob.VisionRange = msg.VisionRange;
-			ob.Name = msg.Name;
-			ob.Color = msg.Color.ToColor();
+			ob.SetProperties(msg.Properties);
 
 			ClientGameObject env = null;
 			if (msg.Environment != ObjectID.NullObjectID)
@@ -343,11 +340,17 @@ namespace MyGame.Client
 
 			if (ob == null)
 			{
-				MyDebug.WriteLine("New object appeared {0}/{1}", msg.Name, msg.ObjectID);
+				MyDebug.WriteLine("New item appeared {0}", msg.ObjectID);
 				ob = new ItemObject(GameData.Data.World, msg.ObjectID);
 			}
 
-			ob.Deserialize(msg);
+			ob.SetProperties(msg.Properties);
+
+			ClientGameObject env = null;
+			if (msg.Environment != ObjectID.NullObjectID)
+				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
+
+			ob.MoveTo(env, msg.Location);
 		}
 
 		void HandleMessage(ObjectDestructedMessage msg)

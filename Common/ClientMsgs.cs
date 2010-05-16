@@ -155,13 +155,7 @@ namespace MyGame.ClientMsgs
 		public ObjectID Environment { get; set; }
 
 		[DataMember]
-		public string Name { get; set; }
-		[DataMember]
-		public SymbolID SymbolID { get; set; }
-		[DataMember]
-		public GameColor Color { get; set; }
-		[DataMember]
-		public MaterialID MaterialID { get; set; }
+		public Tuple<PropertyID, object>[] Properties { get; set; }
 	}
 
 	/* Item in inventory or floor */
@@ -171,7 +165,7 @@ namespace MyGame.ClientMsgs
 	{
 		public override string ToString()
 		{
-			return String.Format("ItemData {0} {1}", this.ObjectID, this.Name);
+			return String.Format("ItemData {0}", this.ObjectID);
 		}
 	}
 
@@ -179,16 +173,9 @@ namespace MyGame.ClientMsgs
 	[Serializable]
 	public class LivingData : BaseObjectData
 	{
-		[DataMember]
-		public int VisionRange { get; set; }
-		[DataMember]
-		public int HitPoints { get; set; }
-		[DataMember]
-		public int Strength { get; set; }
-
 		public override string ToString()
 		{
-			return String.Format("LivingData {0} {1}", this.ObjectID, this.Name);
+			return String.Format("LivingData {0}", this.ObjectID);
 		}
 	}
 

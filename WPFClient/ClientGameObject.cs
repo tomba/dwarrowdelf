@@ -93,6 +93,12 @@ namespace MyGame.Client
 			SetValue(prop, value);
 		}
 
+		public void SetProperties(Tuple<PropertyID, object>[] properties)
+		{
+			foreach (var tuple in properties)
+				SetProperty(tuple.Item1, tuple.Item2);
+		}
+
 		public ClientGameObject Parent
 		{
 			get { return (ClientGameObject)GetValue(ParentProperty); }

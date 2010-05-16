@@ -31,7 +31,8 @@ namespace MyGame
 			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
 			var eventTypes = typeof(Event).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Event)));
 			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
-			var types = messageTypes.Concat(eventTypes).Concat(actionTypes);
+			var extra = new Type[] { typeof(SymbolID), typeof(GameColor) };
+			var types = messageTypes.Concat(eventTypes).Concat(actionTypes).Concat(extra);
 			NetSerializer.Serializer.Initialize(types.ToArray());
 #else
 			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
