@@ -22,9 +22,9 @@ namespace MyGame
 
 		[DataMember]
 		public byte WaterLevel { get; set; }
-		public const int MinWaterLevel = 8 - 1;
-		public const int MaxWaterLevel = 64 - 1;
-		public const int MaxCompress = 4;
+		public const int MinWaterLevel = 1;
+		public const int MaxWaterLevel = 7;
+		public const int MaxCompress = 1;
 
 		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 	}

@@ -71,12 +71,14 @@ namespace MyGame.Client
 			BitmapSource floorBitmap;
 			BitmapSource interiorBitmap;
 			BitmapSource objectBitmap;
+			BitmapSource topBitmap;
 
 			if (this.Environment == null)
 			{
 				floorBitmap = null;
 				interiorBitmap = null;
 				objectBitmap = null;
+				topBitmap = null;
 			}
 			else
 			{
@@ -92,15 +94,19 @@ namespace MyGame.Client
 					lit = true; // lit always so we see what server sends
 
 				objectBitmap = lit ? GetObjectBitmap(ml, lit) : null;
+
+				topBitmap = GetTopBitmap(ml, lit);
 			}
 
-			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap;
+			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap ||
+				tile.TopBitmap != topBitmap;
 
 			if (update)
 			{
 				tile.FloorBitmap = floorBitmap;
 				tile.InteriorBitmap = interiorBitmap;
 				tile.ObjectBitmap = objectBitmap;
+				tile.TopBitmap = topBitmap;
 				tile.InvalidateVisual();
 			}
 		}
@@ -203,11 +209,6 @@ namespace MyGame.Client
 
 			if (intInfo == null || intInfo == Interiors.Undefined)
 				return null;
-
-			if (this.Environment.GetWaterLevel(ml) > 0)
-			{
-				return m_bitmapCache.GetBitmap(SymbolID.Water, Colors.Black, !lit);
-			}
 
 			switch (intID)
 			{
@@ -315,6 +316,31 @@ namespace MyGame.Client
 			}
 			else
 				return null;
+		}
+
+		BitmapSource GetTopBitmap(IntPoint3D ml, bool lit)
+		{
+			int wl = this.Environment.GetWaterLevel(ml);
+
+			if (wl == 0)
+				return null;
+
+			SymbolID id;
+
+			wl = wl * 100 / TileData.MaxWaterLevel;
+
+			if (wl > 80)
+				id = SymbolID.Water100;
+			else if (wl > 60)
+				id = SymbolID.Water80;
+			else if (wl > 40)
+				id = SymbolID.Water60;
+			else if (wl > 20)
+				id = SymbolID.Water40;
+			else
+				id = SymbolID.Water20;
+
+			return m_bitmapCache.GetBitmap(id, Colors.Black, !lit);
 		}
 
 		public bool ShowVirtualSymbols
@@ -499,6 +525,7 @@ namespace MyGame.Client
 			public BitmapSource FloorBitmap { get; set; }
 			public BitmapSource InteriorBitmap { get; set; }
 			public BitmapSource ObjectBitmap { get; set; }
+			public BitmapSource TopBitmap { get; set; }
 
 			protected override void OnRender(DrawingContext drawingContext)
 			{
@@ -510,6 +537,9 @@ namespace MyGame.Client
 
 				if (this.ObjectBitmap != null)
 					drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
+
+				if (this.TopBitmap != null)
+					drawingContext.DrawImage(this.TopBitmap, new Rect(this.RenderSize));
 			}
 		}
 	}
