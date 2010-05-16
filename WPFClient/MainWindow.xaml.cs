@@ -118,9 +118,6 @@ namespace MyGame.Client
 
 			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
 			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
-
-			// xxx autologin
-			LogOn_Button_Click(null, null);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -135,6 +132,9 @@ namespace MyGame.Client
 			var r = map.Rows;
 			map.CenterPos = new IntPoint(c / 2 - 2, r / 2 - 3);
 			map.Z = 9;
+
+			// xxx autologin
+			LogOn_Button_Click(null, null);
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -726,11 +726,24 @@ namespace MyGame.Client
 			}
 		}
 
+		Window m_loginDialog;
 
 		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (!GameData.Data.Connection.IsUserConnected)
+			{
+				m_loginDialog = new Window();
+				m_loginDialog.Owner = this;
+				m_loginDialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+				m_loginDialog.Width = 200;
+				m_loginDialog.Height = 200;
+				var label = new Label();
+				label.Content = "Logging in";
+				m_loginDialog.Content = label;
+				m_loginDialog.Show();
+
 				GameData.Data.Connection.BeginConnect(ConnectCallback);
+			}
 		}
 
 		// in NetThread context
@@ -764,6 +777,8 @@ namespace MyGame.Client
 
 		void OnLoggedOn()
 		{
+			m_loginDialog.Close();
+			m_loginDialog = null;
 			// xxx autologin
 			//LogOnChar_Button_Click(null, null);
 		}
