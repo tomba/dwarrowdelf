@@ -12,12 +12,8 @@ namespace MyGame
 		public const int YShift = 2;
 		public const int ZShift = 4;
 
-		public const int DirSet = 1 << 0;
-		public const int DirMask = 1 << 1;
-
-		public const int DirNone = (0 << 1) | (0 << 0);
-		public const int DirPos = (0 << 1) | DirSet;
-		public const int DirNeg = (1 << 1) | DirSet;
+		public const int DirPos = 1 << 0;
+		public const int DirNeg = 1 << 1;
 	}
 
 	[Flags]
@@ -87,14 +83,14 @@ namespace MyGame
 		{
 			uint d = (uint)dir;
 
-			if (((DirectionConsts.DirSet << DirectionConsts.XShift) & d) != 0)
-				d ^= DirectionConsts.DirMask << DirectionConsts.XShift;
+			if ((d & (DirectionConsts.Mask << DirectionConsts.XShift)) != 0)
+				d ^= DirectionConsts.Mask << DirectionConsts.XShift;
 
-			if (((DirectionConsts.DirSet << DirectionConsts.YShift) & d) != 0)
-				d ^= DirectionConsts.DirMask << DirectionConsts.YShift;
+			if ((d & (DirectionConsts.Mask << DirectionConsts.YShift)) != 0)
+				d ^= DirectionConsts.Mask << DirectionConsts.YShift;
 
-			if (((DirectionConsts.DirSet << DirectionConsts.ZShift) & d) != 0)
-				d ^= DirectionConsts.DirMask << DirectionConsts.ZShift;
+			if ((d & (DirectionConsts.Mask << DirectionConsts.ZShift)) != 0)
+				d ^= DirectionConsts.Mask << DirectionConsts.ZShift;
 
 			return (Direction)d;
 		}
