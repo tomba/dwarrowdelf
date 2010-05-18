@@ -28,6 +28,10 @@ namespace MyGame
 		VisionRange,
 		FoodFullness,
 		WaterFullness,
+
+		NutritionalValue,
+		RefreshmentValue,
+
 	}
 
 	public delegate void PropertyChangedCallback(PropertyDefinition property, object ob, object oldValue, object newValue);

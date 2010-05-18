@@ -72,14 +72,21 @@ namespace MyGame.Server
 		public abstract ClientMsgs.Message Serialize();
 		public abstract void SerializeTo(Action<ClientMsgs.Message> writer);
 
-		static List<PropertyDefinition> m_propertyDefinitionList = new List<PropertyDefinition>();
+		static Dictionary<Type, List<PropertyDefinition>> m_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
 
-		static protected PropertyDefinition RegisterProperty(PropertyID propertyID, PropertyVisibility visibility, object defaultValue,
+		static protected PropertyDefinition RegisterProperty(Type ownerType, PropertyID propertyID, PropertyVisibility visibility, object defaultValue,
 			PropertyChangedCallback propertyChangedCallback = null)
 		{
-			Debug.Assert(!m_propertyDefinitionList.Any(p => p.PropertyID == propertyID));
+			List<PropertyDefinition> propList;
+
+			if (m_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
+				m_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
+
+			Debug.Assert(!m_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
+
 			var prop = new PropertyDefinition(propertyID, visibility, defaultValue, propertyChangedCallback);
-			m_propertyDefinitionList.Add(prop);
+			m_propertyDefinitionMap[ownerType].Add(prop);
+
 			return prop;
 		}
 
@@ -113,11 +120,23 @@ namespace MyGame.Server
 			var setProps = m_propertyMap.
 				Select(kvp => new Tuple<PropertyID, object>(kvp.Key.PropertyID, kvp.Value));
 
-			var defProps = m_propertyDefinitionList.
-				Where(pd => !setProps.Any(pp => pd.PropertyID == pp.Item1)).
-				Select(pd => new Tuple<PropertyID, object>(pd.PropertyID, pd.DefaultValue));
+			var props = setProps;
 
-			return setProps.Concat(defProps).ToArray();
+			var type = GetType();
+			do
+			{
+				if (!m_propertyDefinitionMap.ContainsKey(type))
+					continue;
+
+				var defProps = m_propertyDefinitionMap[type].
+					Where(pd => !setProps.Any(pp => pd.PropertyID == pp.Item1)).
+					Select(pd => new Tuple<PropertyID, object>(pd.PropertyID, pd.DefaultValue));
+
+				props = props.Concat(defProps);
+
+			} while ((type = type.BaseType) != null);
+
+			return props.ToArray();
 		}
 	}
 
@@ -148,28 +167,28 @@ namespace MyGame.Server
 			base.Destruct();
 		}
 
-		static readonly PropertyDefinition NameProperty = RegisterProperty(PropertyID.Name, PropertyVisibility.Public, "");
+		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Name, PropertyVisibility.Public, "");
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
 			set { SetValue(NameProperty, value); }
 		}
 
-		static readonly PropertyDefinition ColorProperty = RegisterProperty(PropertyID.Color, PropertyVisibility.Public, new GameColor());
+		static readonly PropertyDefinition ColorProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Color, PropertyVisibility.Public, new GameColor());
 		public GameColor Color
 		{
 			get { return (GameColor)GetValue(ColorProperty); }
 			set { SetValue(ColorProperty, value); }
 		}
 
-		static readonly PropertyDefinition SymbolIDProperty = RegisterProperty(PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
+		static readonly PropertyDefinition SymbolIDProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
 		public SymbolID SymbolID
 		{
 			get { return (SymbolID)GetValue(SymbolIDProperty); }
 			set { SetValue(SymbolIDProperty, value); }
 		}
 
-		static readonly PropertyDefinition MaterialIDProperty = RegisterProperty(PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
+		static readonly PropertyDefinition MaterialIDProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
 		public MaterialID MaterialID
 		{
 			get { return (MaterialID)GetValue(MaterialIDProperty); }

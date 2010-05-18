@@ -28,48 +28,30 @@ namespace MyGame.Client
 			this.IsLiving = true;
 		}
 
-		static Living()
-		{
-			AddPropertyMapping(PropertyID.HitPoints, HitPointsProperty);
-			AddPropertyMapping(PropertyID.SpellPoints, SpellPointsProperty);
-
-			AddPropertyMapping(PropertyID.Strength, StrengthProperty);
-			AddPropertyMapping(PropertyID.Dexterity, DexterityProperty);
-			AddPropertyMapping(PropertyID.Constitution, ConstitutionProperty);
-			AddPropertyMapping(PropertyID.Intelligence, IntelligenceProperty);
-			AddPropertyMapping(PropertyID.Wisdom, WisdomProperty);
-			AddPropertyMapping(PropertyID.Charisma, CharismaProperty);
-
-			AddPropertyMapping(PropertyID.VisionRange, VisionRangeProperty);
-			AddPropertyMapping(PropertyID.FoodFullness, FoodFullnessProperty);
-			AddPropertyMapping(PropertyID.WaterFullness, WaterFullnessProperty);
-		}
-
-
 		public static readonly DependencyProperty HitPointsProperty =
-			DependencyProperty.Register("HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.HitPoints, "HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty SpellPointsProperty =
-			DependencyProperty.Register("SpellPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.SpellPoints, "SpellPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 
 		public static readonly DependencyProperty StrengthProperty =
-			DependencyProperty.Register("Strength", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Strength, "Strength", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty DexterityProperty =
-			DependencyProperty.Register("Dexterity", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Dexterity, "Dexterity", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty ConstitutionProperty =
-			DependencyProperty.Register("Constitution", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Constitution, "Constitution", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty IntelligenceProperty =
-			DependencyProperty.Register("Intelligence", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Intelligence, "Intelligence", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty WisdomProperty =
-			DependencyProperty.Register("Wisdom", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Wisdom, "Wisdom", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty CharismaProperty =
-			DependencyProperty.Register("Charisma", typeof(int), typeof(Living), new UIPropertyMetadata(0));
+			RegisterGameProperty(PropertyID.Charisma, "Charisma", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 
 		public static readonly DependencyProperty VisionRangeProperty =
-			DependencyProperty.Register("VisionRange", typeof(int), typeof(Living), new UIPropertyMetadata(VisionRangeChanged));
+			RegisterGameProperty(PropertyID.VisionRange, "VisionRange", typeof(int), typeof(Living), new UIPropertyMetadata(VisionRangeChanged));
 		public static readonly DependencyProperty FoodFullnessProperty =
-			DependencyProperty.Register("FoodFullness", typeof(int), typeof(Living));
+			RegisterGameProperty(PropertyID.FoodFullness, "FoodFullness", typeof(int), typeof(Living));
 		public static readonly DependencyProperty WaterFullnessProperty =
-			DependencyProperty.Register("WaterFullness", typeof(int), typeof(Living));
+			RegisterGameProperty(PropertyID.WaterFullness, "WaterFullness", typeof(int), typeof(Living));
 
 		public int HitPoints
 		{

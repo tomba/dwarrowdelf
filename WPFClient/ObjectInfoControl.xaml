@@ -29,6 +29,12 @@
 
             <TextBlock>Location</TextBlock>
             <TextBlock Text="{Binding Location}" />
+
+            <TextBlock>Nutritional Value</TextBlock>
+            <TextBlock Text="{Binding NutritionalValue}" />
+
+            <TextBlock>Refreshment Value</TextBlock>
+            <TextBlock Text="{Binding RefreshmentValue}" />
         </UniformGrid>
     </StackPanel>
 </UserControl>

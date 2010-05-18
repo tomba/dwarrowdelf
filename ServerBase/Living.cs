@@ -16,20 +16,20 @@ namespace MyGame.Server
 
 		IActor m_actorImpl;
 
-		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
 
-		static readonly PropertyDefinition StrengthProperty = RegisterProperty(PropertyID.Strength, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition DexterityProperty = RegisterProperty(PropertyID.Dexterity, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(PropertyID.Constitution, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(PropertyID.Intelligence, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition WisdomProperty = RegisterProperty(PropertyID.Wisdom, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition CharismaProperty = RegisterProperty(PropertyID.Charisma, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), PropertyID.Strength, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), PropertyID.Dexterity, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), PropertyID.Constitution, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), PropertyID.Intelligence, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), PropertyID.Wisdom, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), PropertyID.Charisma, PropertyVisibility.Friendly, 0);
 
-		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
+		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
 
-		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(PropertyID.FoodFullness, PropertyVisibility.Friendly, 255);
-		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(PropertyID.WaterFullness, PropertyVisibility.Friendly, 255);
+		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), PropertyID.FoodFullness, PropertyVisibility.Friendly, 255);
+		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), PropertyID.WaterFullness, PropertyVisibility.Friendly, 255);
 
 		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)
 		{

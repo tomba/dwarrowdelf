@@ -54,20 +54,51 @@ namespace MyGame.Client
 
 	class ClientGameObject : BaseGameObject
 	{
-		static Dictionary<PropertyID, DependencyProperty> s_propertyMap = new Dictionary<PropertyID, DependencyProperty>();
-		protected static void AddPropertyMapping(PropertyID propertyID, DependencyProperty dependencyProperty)
+		static Dictionary<Tuple<Type, PropertyID>, DependencyProperty> s_propertyMap = new Dictionary<Tuple<Type, PropertyID>, DependencyProperty>();
+
+		static void AddPropertyMapping(Type ownerType, PropertyID propertyID, DependencyProperty dependencyProperty)
 		{
-			s_propertyMap[propertyID] = dependencyProperty;
+			s_propertyMap[Tuple.Create(ownerType, propertyID)] = dependencyProperty;
 		}
 
-		static ClientGameObject()
+		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType)
 		{
-			AddPropertyMapping(PropertyID.MaterialID, MaterialIDProperty);
-			AddPropertyMapping(PropertyID.SymbolID, SymbolIDProperty);
-			AddPropertyMapping(PropertyID.Name, NameProperty);
-			AddPropertyMapping(PropertyID.Color, GameColorProperty);
+			var dprop = DependencyProperty.Register(name, propertyType, ownerType);
+			AddPropertyMapping(ownerType, propertyID, dprop);
+			return dprop;
 		}
 
+		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType,
+			PropertyMetadata typeMetadata)
+		{
+			var dprop = DependencyProperty.Register(name, propertyType, ownerType, typeMetadata);
+			AddPropertyMapping(ownerType, propertyID, dprop);
+			return dprop;
+		}
+
+		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType,
+			PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
+		{
+			var dprop = DependencyProperty.Register(name, propertyType, ownerType, typeMetadata, validateValueCallback);
+			AddPropertyMapping(ownerType, propertyID, dprop);
+			return dprop;
+		}
+
+		protected DependencyProperty GetDependencyProperty(PropertyID propertyID)
+		{
+			var type = GetType();
+
+			do
+			{
+				DependencyProperty dprop;
+
+				if (s_propertyMap.TryGetValue(Tuple.Create(type, propertyID), out dprop))
+					return dprop;
+
+			} while ((type = type.BaseType) != null);
+
+			throw new Exception();
+		}
 
 		KeyedObjectCollection m_inventory;
 		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
@@ -89,7 +120,7 @@ namespace MyGame.Client
 
 		public void SetProperty(PropertyID propertyID, object value)
 		{
-			var prop = s_propertyMap[propertyID];
+			var prop = GetDependencyProperty(propertyID);
 			SetValue(prop, value);
 		}
 
@@ -129,7 +160,7 @@ namespace MyGame.Client
 		}
 
 		public static readonly DependencyProperty NameProperty =
-			DependencyProperty.Register("Name", typeof(string), typeof(ClientGameObject), new UIPropertyMetadata(null));
+			RegisterGameProperty(PropertyID.Name, "Name", typeof(string), typeof(ClientGameObject), new UIPropertyMetadata(null));
 
 
 
@@ -150,7 +181,7 @@ namespace MyGame.Client
 		}
 
 		public static readonly DependencyProperty GameColorProperty =
-			DependencyProperty.Register("GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColors.Black, UpdateColor));
+			RegisterGameProperty(PropertyID.Color, "GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColors.Black, UpdateColor));
 
 		static void UpdateColor(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -168,7 +199,7 @@ namespace MyGame.Client
 		}
 
 		public static readonly DependencyProperty SymbolIDProperty =
-			DependencyProperty.Register("SymbolID", typeof(SymbolID), typeof(ClientGameObject), new UIPropertyMetadata(SymbolID.Undefined, UpdateDrawing));
+			RegisterGameProperty(PropertyID.SymbolID, "SymbolID", typeof(SymbolID), typeof(ClientGameObject), new UIPropertyMetadata(SymbolID.Undefined, UpdateDrawing));
 
 
 		public MaterialID MaterialID
@@ -178,7 +209,7 @@ namespace MyGame.Client
 		}
 
 		public static readonly DependencyProperty MaterialIDProperty =
-			DependencyProperty.Register("MaterialID", typeof(MaterialID), typeof(ClientGameObject), new UIPropertyMetadata(MaterialID.Undefined, UpdateMaterial));
+			RegisterGameProperty(PropertyID.MaterialID, "MaterialID", typeof(MaterialID), typeof(ClientGameObject), new UIPropertyMetadata(MaterialID.Undefined, UpdateMaterial));
 
 		static void UpdateMaterial(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{

@@ -12,6 +12,23 @@ namespace MyGame.Server
 		{
 		}
 
+		static readonly PropertyDefinition NutritionalValueProperty =
+			RegisterProperty(typeof(ItemObject), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
+		static readonly PropertyDefinition RefreshmentValueProperty =
+			RegisterProperty(typeof(ItemObject), PropertyID.RefreshmentValue, PropertyVisibility.Public, 0);
+
+		public int NutritionalValue
+		{
+			get { return (int)GetValue(NutritionalValueProperty); }
+			set { SetValue(NutritionalValueProperty, value); }
+		}
+
+		public int RefreshmentValue
+		{
+			get { return (int)GetValue(RefreshmentValueProperty); }
+			set { SetValue(RefreshmentValueProperty, value); }
+		}
+
 		public override ClientMsgs.Message Serialize()
 		{
 			var data = new ClientMsgs.ItemData();
@@ -31,6 +48,6 @@ namespace MyGame.Server
 		public override string ToString()
 		{
 			return String.Format("ItemObject({0}/{1})", this.Name, this.ObjectID);
-		} 
+		}
 	}
 }

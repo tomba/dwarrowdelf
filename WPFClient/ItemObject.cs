@@ -5,11 +5,17 @@ using System.Text;
 using System.Windows.Media;
 using MyGame.ClientMsgs;
 using System.Diagnostics;
+using System.Windows;
 
 namespace MyGame.Client
 {
 	class ItemObject : ClientGameObject
 	{
+		public static readonly DependencyProperty NutritionalValueProperty =
+			RegisterGameProperty(PropertyID.NutritionalValue, "NutritionalValue", typeof(int), typeof(ItemObject), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty RefreshmentValueProperty =
+			RegisterGameProperty(PropertyID.RefreshmentValue, "RefreshmentValue", typeof(int), typeof(ItemObject), new UIPropertyMetadata(0));
+
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
