@@ -169,11 +169,11 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
+    <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WPFClientControls\WPFClientControls.csproj">
+    <ProjectReference Include="..\..\WPFClientControls\WPFClientControls.csproj">
       <Project>{994FA20F-F963-4847-BFE7-4EC2A256CE71}</Project>
       <Name>WPFClientControls</Name>
     </ProjectReference>
