@@ -101,7 +101,7 @@ namespace MyGame
 
 			m_bufferUsed += len;
 
-			if (len < 8)
+			if (m_bufferUsed < 8)
 			{
 				BeginRead();
 				return;
