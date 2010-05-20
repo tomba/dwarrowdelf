@@ -26,7 +26,7 @@ namespace MyGame.Server
 			World.TheWorld = world;
 
 			Connection.NewConnectionEvent += OnNewConnection;
-			Connection.StartListening(9999);
+			Connection.StartListening();
 
 			MyDebug.WriteLine("The service is ready.");
 

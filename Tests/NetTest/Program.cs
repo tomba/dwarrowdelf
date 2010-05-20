@@ -52,7 +52,7 @@ namespace NetTest
 		public Receiver()
 		{
 			Connection.NewConnectionEvent += new Action<Connection>(Connection_NewConnectionEvent);
-			Connection.StartListening(9999);
+			Connection.StartListening();
 		}
 
 		void Connection_NewConnectionEvent(Connection obj)
