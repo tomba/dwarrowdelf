@@ -32,6 +32,30 @@ namespace LogViewer
 
 		public bool Halt { get; set; }
 
+		string m_showOnlyString;
+		public Regex m_showOnlyRegex;
+		public string ShowOnly
+		{
+			get
+			{
+				return m_showOnlyString;
+			}
+
+			set
+			{
+				m_showOnlyString = value;
+
+				if (m_showOnlyString == null || m_showOnlyString.Length == 0)
+					m_showOnlyRegex = null;
+				else
+					m_showOnlyRegex = new Regex(value, RegexOptions.IgnoreCase);
+				filterTextBox.Tag = m_showOnlyRegex;
+
+				var dataView = CollectionViewSource.GetDefaultView(logListView.ItemsSource);
+				dataView.Refresh();
+			}
+		}
+
 		public MainWindow()
 		{
 			LogRules = new List<LogRule>();
@@ -45,6 +69,18 @@ namespace LogViewer
 			m_lastDateTime = new DateTime(0);
 
 			InitializeComponent();
+
+			var cmd = new RoutedUICommand("filter", "filter", typeof(MainWindow),
+				new InputGestureCollection() { new KeyGesture(Key.F, ModifierKeys.Control) }
+				);
+			var binding = new CommandBinding(cmd);
+			binding.Executed += new ExecutedRoutedEventHandler(binding_Executed);
+			CommandBindings.Add(binding);
+		}
+
+		void binding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			filterTextBox.Focus();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -66,6 +102,11 @@ namespace LogViewer
 		bool DataFilter(object item)
 		{
 			var entry = (LogEntry)item;
+
+			if (m_showOnlyRegex != null)
+			{
+				return m_showOnlyRegex.IsMatch(entry.Message);
+			}
 
 			foreach (var rule in LogRules)
 			{
@@ -187,6 +228,40 @@ namespace LogViewer
 				dataView.Refresh();
 			}
 		}
+
+		void OnClearFilterClicked(object sender, RoutedEventArgs e)
+		{
+			filterTextBox.Text = null;
+		}
+
+		private void filterTextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			var tb = (TextBox)sender;
+
+			if (m_showOnlyString == null)
+				tb.Text = "";
+			else
+				tb.SelectAll();
+		}
+
+		private void filterTextBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			var tb = (TextBox)sender;
+
+			if (m_showOnlyString.Length == 0)
+				tb.Text = null;
+		}
+
+		private void filterTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				logListView.Focus();
+				var last = m_debugCollection.LastOrDefault();
+				if (last != null)
+					logListView.ScrollIntoView(last);
+			}
+		}
 	}
 
 	public class LogRule
@@ -198,8 +273,28 @@ namespace LogViewer
 		public bool Gag { get; set; }
 	}
 
+	class RegexValidationRule : ValidationRule
+	{
+		public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+		{
+			if (value == null)
+				return ValidationResult.ValidResult;
+
+			try
+			{
+				new Regex((string)value, RegexOptions.IgnoreCase);
+			}
+			catch (ArgumentException)
+			{
+				return new ValidationResult(false, "Invalid regexp pattern");
+			}
+
+			return ValidationResult.ValidResult;
+		}
+	}
+
 	[ValueConversion(typeof(LogEntry), typeof(Brush))]
-	public class LogEntryToBgBrushConverter : IValueConverter
+	class LogEntryToBgBrushConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{

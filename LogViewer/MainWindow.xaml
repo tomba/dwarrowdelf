@@ -4,7 +4,8 @@
         xmlns:local="clr-namespace:LogViewer"
         x:Name="debugWindow"
         TextOptions.TextFormattingMode="Display"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="514" Width="739"
+        FocusManager.FocusedElement="{Binding ElementName=logListView}">
 
     <Window.Resources>
         <local:LogEntryToBgBrushConverter x:Key="bgConverter" />
@@ -20,6 +21,34 @@
                 <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
                 <Separator />
                 <Button Click="OnRulesClicked">Rules...</Button>
+            </ToolBar>
+            <ToolBar>
+                <TextBox Name="filterTextBox" MinWidth="100" GotKeyboardFocus="filterTextBox_GotKeyboardFocus" LostKeyboardFocus="filterTextBox_LostKeyboardFocus"
+                         PreviewKeyDown="filterTextBox_PreviewKeyDown">
+                    <TextBox.Text>
+                        <Binding Path="ShowOnly" ElementName="debugWindow" UpdateSourceTrigger="PropertyChanged" TargetNullValue="&lt;enter filter&gt;">
+                            <Binding.ValidationRules>
+                                <local:RegexValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+
+                    <TextBox.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="TextBox.Tag" Value="{x:Null}" />
+                                        <Condition Property="TextBox.IsKeyboardFocused" Value="false" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="TextBox.Foreground" Value="Gray" />
+                                </MultiTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBox.Style>
+
+                </TextBox>
+                <Button Click="OnClearFilterClicked">C</Button>
             </ToolBar>
         </ToolBarTray>
 
