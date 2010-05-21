@@ -19,36 +19,9 @@ using System.Text.RegularExpressions;
 
 namespace LogViewer
 {
-	[ValueConversion(typeof(LogEntry), typeof(Brush))]
-	public class LogEntryToBgBrushConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			var entry = (LogEntry)value;
-
-			foreach (var rule in MainWindow.s_logRules)
-			{
-				bool match =
-					(rule.Component == null || rule.Component.IsMatch(entry.Component)) &&
-					(rule.Thread == null || rule.Thread.IsMatch(entry.Thread)) &&
-					(rule.Message == null || rule.Message.IsMatch(entry.Message));
-
-				if (match)
-					return rule.Brush;
-			}
-
-			return null;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
 	public partial class MainWindow : Window
 	{
-		public static List<LogRule> s_logRules; // XXX
+		public List<LogRule> LogRules { get; private set; }
 
 		ObservableCollection<LogEntry> m_debugCollection = new ObservableCollection<LogEntry>();
 		public ObservableCollection<LogEntry> DebugEntries { get { return m_debugCollection; } }
@@ -61,11 +34,11 @@ namespace LogViewer
 
 		public MainWindow()
 		{
-			s_logRules = new List<LogRule>();
-			s_logRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.LightGreen });
-			s_logRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.LightGreen });
-			s_logRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
-			s_logRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
+			LogRules = new List<LogRule>();
+			LogRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.LightGreen });
+			LogRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.LightGreen });
+			LogRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
+			LogRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
 
 			m_logFile = File.CreateText("test.log");
 
@@ -77,6 +50,9 @@ namespace LogViewer
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
+
+			var conv = (LogEntryToBgBrushConverter)this.Resources["bgConverter"];
+			conv.Wnd = this;
 
 			var dataView = CollectionViewSource.GetDefaultView(logListView.ItemsSource);
 
@@ -91,7 +67,7 @@ namespace LogViewer
 		{
 			var entry = (LogEntry)item;
 
-			foreach (var rule in MainWindow.s_logRules)
+			foreach (var rule in LogRules)
 			{
 				bool match =
 					(rule.Component == null || rule.Component.IsMatch(entry.Component)) &&
@@ -200,12 +176,12 @@ namespace LogViewer
 
 		void OnRulesClicked(object sender, RoutedEventArgs e)
 		{
-			var wnd = new RulesWindow(s_logRules);
+			var wnd = new RulesWindow(LogRules);
 			wnd.Owner = this;
 			var res = wnd.ShowDialog();
 			if (res == true)
 			{
-				s_logRules = wnd.ResultLogRules;
+				LogRules = wnd.ResultLogRules;
 
 				var dataView = CollectionViewSource.GetDefaultView(logListView.ItemsSource);
 				dataView.Refresh();
@@ -220,5 +196,34 @@ namespace LogViewer
 		public Regex Message { get; set; }
 		public SolidColorBrush Brush { get; set; }
 		public bool Gag { get; set; }
+	}
+
+	[ValueConversion(typeof(LogEntry), typeof(Brush))]
+	public class LogEntryToBgBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var entry = (LogEntry)value;
+
+			foreach (var rule in Wnd.LogRules)
+			{
+				bool match =
+					(rule.Component == null || rule.Component.IsMatch(entry.Component)) &&
+					(rule.Thread == null || rule.Thread.IsMatch(entry.Thread)) &&
+					(rule.Message == null || rule.Message.IsMatch(entry.Message));
+
+				if (match)
+					return rule.Brush;
+			}
+
+			return null;
+		}
+
+		public MainWindow Wnd { get; set; }
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
