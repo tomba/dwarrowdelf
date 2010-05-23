@@ -117,7 +117,7 @@ namespace MyGame
 
 					MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
 
-					if (m_expectedLen > m_recvStream.FreeBytes)
+					if (m_recvStream.UsedBytes < m_expectedLen && m_expectedLen > m_recvStream.FreeBytes)
 						throw new Exception("message bigger than the receive buffer");
 				}
 
