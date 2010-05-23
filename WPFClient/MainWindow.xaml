@@ -138,6 +138,10 @@
                 </TextBox.Text>
             </TextBox>
 
+            <Separator />
+            <TextBlock>FPS</TextBlock>
+            <TextBox Name="fpsTextBlock" Width="50" IsReadOnly="True" />
+
         </StatusBar>
 
         <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
@@ -148,17 +152,13 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-
             </Grid.RowDefinitions>
 
             <local:MapControl x:Name="map" SelectionEnabled="True"
@@ -183,136 +183,153 @@
                 </local:MapControl.ContextMenu>
             </local:MapControl>
 
-            <GroupBox Grid.Column="1" Grid.Row="0" Header="Inventory" Focusable="False">
-                <DockPanel>
-                    <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-                    <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
-                    <ListBox Name="inventoryListBox"
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ShowsPreview="True" />
+
+            <Grid Grid.Column="2" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+
+                </Grid.RowDefinitions>
+
+                <GroupBox Grid.Column="0" Grid.Row="0" Header="Inventory" Focusable="False">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
+                        <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
+                        <ListBox Name="inventoryListBox"
 							 ItemsSource="{Binding Path=CurrentObject.Inventory}"
 							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                </DockPanel>
-            </GroupBox>
+                    </DockPanel>
+                </GroupBox>
 
-            <GroupBox Grid.Column="1" Grid.Row="1" Header="Pending Actions">
-                <ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock>
+                <GroupBox Grid.Column="0" Grid.Row="1" Header="Pending Actions">
+                    <ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
 								<TextBlock Text="{Binding ActorObjectID}" />
 								: left <TextBlock Text="{Binding TicksLeft}" />
 							</TextBlock>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </GroupBox>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </GroupBox>
 
-            <GroupBox Grid.Column="2" Grid.Row="0" Header="Current Tile Info"
+                <GroupBox Grid.Column="1" Grid.Row="0" Header="Current Tile Info"
 					  DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top">
-                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-                        <TextBlock>Interior:
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top">
+                            <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                            <TextBlock>Interior:
 							<TextBlock Text="{Binding Interior.Name}" />
 							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
-                        <TextBlock>Floor:
+                            <TextBlock>Floor:
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
-                        <TextBlock>Water:
+                            <TextBlock>Water:
 							<TextBlock Text="{Binding WaterLevel}" />
 						</TextBlock>
-                    </StackPanel>
-                    <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-                    <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
+                        </StackPanel>
+                        <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
+                        <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
 							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                </DockPanel>
-            </GroupBox>
+                    </DockPanel>
+                </GroupBox>
 
-            <GroupBox Grid.Column="2" Grid.Row="1" Header="Selected Tile Info"
+                <GroupBox Grid.Column="1" Grid.Row="1" Header="Selected Tile Info"
 					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map, Mode=OneTime}">
-                <DockPanel>
-                    <StackPanel DockPanel.Dock="Top">
-                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-                        <TextBlock>Interior:
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top">
+                            <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                            <TextBlock>Interior:
 							<TextBlock Text="{Binding Interior.Name}" />
 							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
 						</TextBlock>
-                        <TextBlock>Floor:
+                            <TextBlock>Floor:
 							<TextBlock Text="{Binding Floor.Name}" />
 							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
 						</TextBlock>
-                        <TextBlock>Water:
+                            <TextBlock>Water:
 							<TextBlock Text="{Binding WaterLevel}" />
 						</TextBlock>
-                        <TextBlock>Building:
+                            <TextBlock>Building:
 							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />
 						</TextBlock>
-                    </StackPanel>
-                    <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
-                </DockPanel>
-            </GroupBox>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
+                    </DockPanel>
+                </GroupBox>
 
-            <GroupBox Grid.Column="2" Grid.Row="2" Header="Objects">
-                <ListBox ItemsSource="{Binding World.Objects}" 
+                <GroupBox Grid.Column="1" Grid.Row="2" Header="Objects">
+                    <ListBox ItemsSource="{Binding World.Objects}" 
 						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
                          HorizontalContentAlignment="Stretch" />
-            </GroupBox>
+                </GroupBox>
 
-            <GroupBox Grid.Column="1" Grid.Row="2" Header="Environments">
-                <ListBox ItemsSource="{Binding World.Environments}"
+                <GroupBox Grid.Column="0" Grid.Row="2" Header="Environments">
+                    <ListBox ItemsSource="{Binding World.Environments}"
 						 SelectedItem="{Binding Path=Environment, ElementName=map}"
                          HorizontalContentAlignment="Stretch" />
-            </GroupBox>
+                </GroupBox>
 
-            <GroupBox Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">
-                <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
-                    <TreeView.Resources>
+                <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">
+                    <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
+                        <TreeView.Resources>
 
-                        <HierarchicalDataTemplate DataType="{x:Type local:JobGroup}" ItemsSource="{Binding SubJobs}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding Progress}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding JobGroupType}" />
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type local:JobGroup}" ItemsSource="{Binding SubJobs}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding Progress}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding JobGroupType}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
 
-                        <HierarchicalDataTemplate DataType="{x:Type local:SerialActionJob}" ItemsSource="{Binding SubJobs}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding Progress}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
+                            <HierarchicalDataTemplate DataType="{x:Type local:SerialActionJob}" ItemsSource="{Binding SubJobs}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding Progress}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
 
-                        <DataTemplate DataType="{x:Type local:ActionJob}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding Progress}" />
-                                <TextBlock Text=" , " />
-                                <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
-                                <TextBlock Text=", " />
-                                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                            </StackPanel>
-                        </DataTemplate>
+                            <DataTemplate DataType="{x:Type local:ActionJob}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding Progress}" />
+                                    <TextBlock Text=" , " />
+                                    <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                    <TextBlock Text=", " />
+                                    <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                </StackPanel>
+                            </DataTemplate>
 
-                    </TreeView.Resources>
+                        </TreeView.Resources>
 
-                    <TreeView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
-                            <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
-                        </ContextMenu>
-                    </TreeView.ContextMenu>
-                </TreeView>
-            </GroupBox>
+                        <TreeView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+                                <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
+                            </ContextMenu>
+                        </TreeView.ContextMenu>
+                    </TreeView>
+                </GroupBox>
+            </Grid>
 
         </Grid>
     </DockPanel>

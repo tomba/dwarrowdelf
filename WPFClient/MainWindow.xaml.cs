@@ -25,6 +25,7 @@ namespace MyGame.Client
 	{
 		ClientGameObject m_followObject;
 		bool m_closing;
+		DispatcherTimer m_timer;
 
 		public MainWindow()
 		{
@@ -118,6 +119,9 @@ namespace MyGame.Client
 
 			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
 			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
+
+			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -172,6 +176,18 @@ namespace MyGame.Client
 			GameData.Data.Connection.LogOffEvent -= OnLoggedOff;
 			GameData.Data.Connection.LogOnCharEvent -= OnLoggedOn;
 			GameData.Data.Connection.LogOffCharEvent -= OnLoggedOff;
+		}
+
+		int m_fpsCounter;
+		void CompositionTarget_Rendering(object sender, EventArgs e)
+		{
+			m_fpsCounter++;
+		}
+
+		void OnTimerCallback(object ob, EventArgs args)
+		{
+			fpsTextBlock.Text = ((double)m_fpsCounter).ToString();
+			m_fpsCounter = 0;
 		}
 
 		public ClientGameObject FollowObject
