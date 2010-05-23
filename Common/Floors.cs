@@ -34,11 +34,13 @@ namespace MyGame
 
 	public static class Floors
 	{
-		static Dictionary<FloorID, FloorInfo> s_floorMap;
+		static FloorInfo[] s_floorList;
 
 		static Floors()
 		{
-			s_floorMap = new Dictionary<FloorID, FloorInfo>();
+			var arr = (FloorID[])Enum.GetValues(typeof(FloorID));
+			var max = arr.Max();
+			s_floorList = new FloorInfo[(int)max + 1];
 
 			foreach (var field in typeof(Floors).GetFields())
 			{
@@ -46,13 +48,13 @@ namespace MyGame
 					continue;
 
 				var floorInfo = (FloorInfo)field.GetValue(null);
-				s_floorMap[floorInfo.ID] = floorInfo;
+				s_floorList[(int)floorInfo.ID] = floorInfo;
 			}
 		}
 
 		public static FloorInfo GetFloor(FloorID id)
 		{
-			return s_floorMap[id];
+			return s_floorList[(int)id];
 		}
 
 		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, false, false);

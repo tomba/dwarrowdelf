@@ -40,11 +40,13 @@ namespace MyGame
 
 	public static class Interiors
 	{
-		static Dictionary<InteriorID, InteriorInfo> s_interiorMap;
+		static InteriorInfo[] s_interiorList;
 
 		static Interiors()
 		{
-			s_interiorMap = new Dictionary<InteriorID, InteriorInfo>();
+			var arr = (InteriorID[])Enum.GetValues(typeof(InteriorID));
+			var max = arr.Max();
+			s_interiorList = new InteriorInfo[(int)max + 1];
 
 			foreach (var field in typeof(Interiors).GetFields())
 			{
@@ -52,13 +54,13 @@ namespace MyGame
 					continue;
 
 				var interInfo = (InteriorInfo)field.GetValue(null);
-				s_interiorMap[interInfo.ID] = interInfo;
+				s_interiorList[(int)interInfo.ID] = interInfo;
 			}
 		}
 
 		public static InteriorInfo GetInterior(InteriorID id)
 		{
-			return s_interiorMap[id];
+			return s_interiorList[(int)id];
 		}
 
 		public static readonly InteriorInfo Undefined = new InteriorInfo(InteriorID.Undefined, false);

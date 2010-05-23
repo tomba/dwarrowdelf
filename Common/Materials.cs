@@ -31,11 +31,13 @@ namespace MyGame
 
 	public static class Materials
 	{
-		static Dictionary<MaterialID, MaterialInfo> s_materialMap;
+		static MaterialInfo[] s_materialList;
 
 		static Materials()
 		{
-			s_materialMap = new Dictionary<MaterialID, MaterialInfo>();
+			var arr = (MaterialID[])Enum.GetValues(typeof(MaterialID));
+			var max = arr.Max();
+			s_materialList = new MaterialInfo[(int)max + 1];
 
 			foreach (var field in typeof(Materials).GetFields())
 			{
@@ -43,13 +45,13 @@ namespace MyGame
 					continue;
 
 				var materialInfo = (MaterialInfo)field.GetValue(null);
-				s_materialMap[materialInfo.ID] = materialInfo;
+				s_materialList[(int)materialInfo.ID] = materialInfo;
 			}
 		}
 
 		public static MaterialInfo GetMaterial(MaterialID id)
 		{
-			return s_materialMap[id];
+			return s_materialList[(int)id];
 		}
 
 		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined);

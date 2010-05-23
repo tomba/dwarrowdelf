@@ -17,6 +17,7 @@ namespace MyGame.Client
 
 		SymbolDrawingCache m_symbolDrawingCache;
 
+		CacheData[] m_blackBitmapList;
 		Dictionary<SymbolID, Dictionary<Color, CacheData>> m_bitmapMap;
 
 		double m_size = 8;
@@ -25,6 +26,10 @@ namespace MyGame.Client
 		{
 			m_symbolDrawingCache = symbolDrawingCache;
 			m_size = size;
+
+			var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+			var max = arr.Max();
+			m_blackBitmapList = new CacheData[(int)max + 1];
 
 			m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
 		}
@@ -48,16 +53,29 @@ namespace MyGame.Client
 			Dictionary<Color, CacheData> map;
 			CacheData data;
 
-			if (!m_bitmapMap.TryGetValue(symbolID, out map))
+			if (color == Colors.Black)
 			{
-				map = new Dictionary<Color, CacheData>();
-				m_bitmapMap[symbolID] = map;
-			}
+				data = m_blackBitmapList[(int)symbolID];
 
-			if (!map.TryGetValue(color, out data))
+				if (data == null)
+				{
+					data = new CacheData();
+					m_blackBitmapList[(int)symbolID] = data;
+				}
+			}
+			else
 			{
-				data = new CacheData();
-				map[color] = data;
+				if (!m_bitmapMap.TryGetValue(symbolID, out map))
+				{
+					map = new Dictionary<Color, CacheData>();
+					m_bitmapMap[symbolID] = map;
+				}
+
+				if (!map.TryGetValue(color, out data))
+				{
+					data = new CacheData();
+					map[color] = data;
+				}
 			}
 
 			if (!dark)
