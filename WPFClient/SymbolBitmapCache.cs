@@ -44,6 +44,8 @@ namespace MyGame.Client
 				{
 					m_size = value;
 					m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
+					for (int i = 0; i < m_blackBitmapList.Length; ++i)
+						m_blackBitmapList[i] = null;
 				}
 			}
 		}
