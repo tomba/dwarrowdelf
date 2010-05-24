@@ -136,7 +136,10 @@ namespace MyGame.Client
 			var r = map.Rows;
 			map.CenterPos = new IntPoint(c / 2 - 2, r / 2 - 3);
 			map.Z = 9;
+		}
 
+		public void OnServerStarted()
+		{
 			// xxx autologin
 			LogOn_Button_Click(null, null);
 		}

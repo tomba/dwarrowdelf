@@ -7,6 +7,8 @@ using System.Windows;
 
 using System.Windows.Resources;
 using System.Threading;
+using System.Windows.Threading;
+using System.Windows.Controls;
 
 
 namespace MyGame.Client
@@ -25,6 +27,8 @@ namespace MyGame.Client
 		RegisteredWaitHandle m_registeredWaitHandle;
 		bool m_serverInAppDomain;
 		IServer m_server;
+
+		Window m_serverStartDialog; // Hacky dialog
 
 		public IServer Server { get { return m_server; } }
 
@@ -60,6 +64,16 @@ namespace MyGame.Client
 
 				m_serverThread = new Thread(ServerThreadStart);
 				m_serverThread.Start();
+
+				m_serverStartDialog = new Window();
+				m_serverStartDialog.Topmost = true;
+				m_serverStartDialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+				m_serverStartDialog.Width = 200;
+				m_serverStartDialog.Height = 200;
+				var label = new Label();
+				label.Content = "Starting Server";
+				m_serverStartDialog.Content = label;
+				m_serverStartDialog.Show();
 			}
 		}
 
@@ -74,6 +88,13 @@ namespace MyGame.Client
 			m_serverStartWaitHandle = null;
 
 			// XXX mainwindow is already open before server is up
+			this.Dispatcher.BeginInvoke(new Action(ServerStartedCallback2), DispatcherPriority.Normal, null);
+		}
+
+		void ServerStartedCallback2()
+		{
+			m_serverStartDialog.Close();
+			MainWindow.OnServerStarted();
 		}
 
 		protected override void OnExit(ExitEventArgs e)
