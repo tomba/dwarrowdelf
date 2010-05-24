@@ -15,7 +15,8 @@ namespace MyGame.Client
 
 		DispatcherTimer m_updateTimer;
 
-		VisualCollection m_tileCollection;
+		Visual[] m_tileCollection;
+		Visual[] m_backTileCollection;
 		UIElementCollection m_childCollection;
 
 		Rectangle m_selectionRect;
@@ -28,7 +29,7 @@ namespace MyGame.Client
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(15);
 
-			m_tileCollection = new VisualCollection(this);
+			m_tileCollection = new Visual[0];
 			m_childCollection = new UIElementCollection(this, this);
 
 			m_selectionRect = new Rectangle();
@@ -75,6 +76,31 @@ namespace MyGame.Client
 				if (value == this.CenterPos)
 					return;
 
+				var v = value - this.CenterPos;
+
+				for (int y = 0; y < m_rows; ++y)
+				{
+					for (int x = 0; x < m_columns; ++x)
+					{
+						int toX;
+
+						toX = (x - v.X) % m_columns;
+						if (toX < 0)
+							toX += m_columns;
+
+						int toY;
+						toY = (y + v.Y) % m_rows;
+						if (toY < 0)
+							toY += m_rows;
+
+						m_backTileCollection[toY * m_columns + toX] = m_tileCollection[y * m_columns + x];
+					}
+				}
+
+				var tmp = m_tileCollection;
+				m_tileCollection = m_backTileCollection;
+				m_backTileCollection = tmp;
+
 				SetValue(CenterPosProperty, value);
 				UpdateTiles();
 			}
@@ -120,20 +146,19 @@ namespace MyGame.Client
 
 		void ReCreateMapTiles()
 		{
+			foreach (var tile in m_tileCollection)
+				this.RemoveVisualChild(tile);
+
 			int numTiles = m_columns * m_rows;
 
-			if (m_tileCollection.Count > numTiles)
+			m_tileCollection = new Visual[numTiles];
+			m_backTileCollection = new Visual[numTiles];
+
+			for (int i = 0; i < m_tileCollection.Length; ++i)
 			{
-				m_tileCollection.RemoveRange(numTiles, m_tileCollection.Count - numTiles);
-			}
-			else if (m_tileCollection.Count < numTiles)
-			{
-				int newTiles = numTiles - m_tileCollection.Count;
-				for (int i = 0; i < newTiles; ++i)
-				{
-					var tile = CreateTile();
-					m_tileCollection.Add(tile);
-				}
+				var tile = CreateTile();
+				this.AddVisualChild(tile);
+				m_tileCollection[i] = tile;
 			}
 
 			UpdateTiles();
@@ -141,8 +166,6 @@ namespace MyGame.Client
 
 		protected override Size ArrangeOverride(Size s)
 		{
-			//MyDebug.WriteLine("Arrange");
-
 			int newColumns = (int)Math.Ceiling(s.Width / this.TileSize);
 			int newRows = (int)Math.Ceiling(s.Height / this.TileSize);
 
@@ -195,16 +218,16 @@ namespace MyGame.Client
 
 		protected override int VisualChildrenCount
 		{
-			get { return m_tileCollection.Count + m_childCollection.Count + 1; }
+			get { return m_tileCollection.Length + m_childCollection.Count + 1; }
 		}
 
 		protected override Visual GetVisualChild(int index)
 		{
-			if (index == m_tileCollection.Count + m_childCollection.Count)
+			if (index == m_tileCollection.Length + m_childCollection.Count)
 				return m_selectionRect;
 
-			if (index >= m_tileCollection.Count)
-				return m_childCollection[index - m_tileCollection.Count];
+			if (index >= m_tileCollection.Length)
+				return m_childCollection[index - m_tileCollection.Length];
 
 			return m_tileCollection[index];
 		}
