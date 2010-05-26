@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MyGame;
+using System.Windows.Threading;
 
 namespace WPFMapControlTest
 {
@@ -20,12 +21,28 @@ namespace WPFMapControlTest
 	/// </summary>
 	public partial class Window1 : Window
 	{
+		DispatcherTimer m_timer;
+
 		public Window1()
 		{
 			InitializeComponent();
 
 			this.PreviewKeyDown += Window_PreKeyDown;
 
+			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+		}
+
+		int m_fpsCounter;
+		void CompositionTarget_Rendering(object sender, EventArgs e)
+		{
+			m_fpsCounter++;
+		}
+
+		void OnTimerCallback(object ob, EventArgs args)
+		{
+			fpsTextBlock.Text = ((double)m_fpsCounter).ToString();
+			m_fpsCounter = 0;
 		}
 
 		void Window_PreKeyDown(object sender, KeyEventArgs e)
@@ -54,7 +71,6 @@ namespace WPFMapControlTest
 				e.Handled = true;
 			}
 		}
-
 
 		Direction KeyToDir(Key key)
 		{

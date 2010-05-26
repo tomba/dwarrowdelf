@@ -19,14 +19,14 @@ using MyGame.Client;
 
 namespace WPFMapControlTest
 {
-	class MapControl2 : MapControlBase2
+	class MapControl1 : MapControlBase
 	{
 		Map m_map;
 		DrawingCache m_drawingCache;
 		SymbolDrawingCache m_symbolDrawingCache;
 		SymbolBitmapCache m_symbolBitmapCache;
 
-		public MapControl2()
+		public MapControl1()
 		{
 			m_drawingCache = new DrawingCache();
 			m_symbolDrawingCache = new SymbolDrawingCache(m_drawingCache);
@@ -42,27 +42,16 @@ namespace WPFMapControlTest
 			}
 		}
 
-		protected override void OnMouseMove(MouseEventArgs e)
+		protected override UIElement CreateTile()
 		{
-			base.OnMouseMove(e);
-
-			var ml = base.ScreenPointToMapLocation(e.GetPosition(this));
-			if (m_map.Bounds.Contains(ml))
-			{
-				m_map.MapArray[ml.Y, ml.X] = (byte)(~m_map.MapArray[ml.Y, ml.X]);
-				base.InvalidateTiles();
-			}
-		}
-
-		protected override Visual CreateTile(double x, double y)
-		{
-			return new MapControlTile2(this, x, y);
+			return new MapControlTile();
 		}
 
 		// called for each visible tile
-		protected override void UpdateTile(Visual _tile, IntPoint ml)
+		protected override void UpdateTile(UIElement _tile, IntPoint ml)
 		{
-			MapControlTile2 tile = (MapControlTile2)_tile;
+			MapControlTile tile = (MapControlTile)_tile;
+
 			BitmapSource bmp;
 
 			if (m_map.Bounds.Contains(ml))
@@ -82,28 +71,47 @@ namespace WPFMapControlTest
 			if (bmp != tile.Bitmap)
 			{
 				tile.Bitmap = bmp;
-				tile.Update();
 			}
 		}
 
-		class MapControlTile2 : DrawingVisual
+		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			MapControl2 m_parent;
-			public BitmapSource Bitmap { get; set; }
+			base.OnMouseMove(e);
 
-			public MapControlTile2(MapControl2 parent, double x, double y)
+			var ml = base.ScreenPointToMapLocation(e.GetPosition(this));
+			if (m_map.Bounds.Contains(ml))
 			{
-				m_parent = parent;
-				this.VisualOffset = new Vector(x, y);
+				m_map.MapArray[ml.Y, ml.X] = (byte)(~m_map.MapArray[ml.Y, ml.X]);
+				base.InvalidateTiles();
+			}
+		}
+
+		class MapControlTile : UIElement
+		{
+			public MapControlTile()
+			{
+				this.IsHitTestVisible = false;
 			}
 
-			public void Update()
+			public static readonly DependencyProperty BitmapProperty = DependencyProperty.Register(
+				"Bitmap", typeof(BitmapSource), typeof(MapControlTile),
+				new PropertyMetadata(ValueChangedCallback));
+
+			public BitmapSource Bitmap
 			{
-				var drawingContext = this.RenderOpen();
-				drawingContext.DrawImage(this.Bitmap, new Rect(new Size(m_parent.TileSize, m_parent.TileSize)));
-				drawingContext.Close();
+				get { return (BitmapSource)GetValue(BitmapProperty); }
+				set { SetValue(BitmapProperty, value); }
+			}
+
+			static void ValueChangedCallback(DependencyObject ob, DependencyPropertyChangedEventArgs e)
+			{
+				((MapControlTile)ob).InvalidateVisual();
+			}
+
+			protected override void OnRender(DrawingContext drawingContext)
+			{
+				drawingContext.DrawImage(this.Bitmap, new Rect(this.RenderSize));
 			}
 		}
 	}
-
 }

@@ -2,8 +2,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:WPFMapControlTest"
-    Title="Window1" Height="600" Width="800">
-    <Grid>
-		<local:MapControl2 x:Name="map" />
-	</Grid>
+    Title="Window1" Width="1400" Height="1000">
+    <DockPanel>
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock>FPS</TextBlock>
+            <TextBox Name="fpsTextBlock" Width="50" IsReadOnly="True" />
+        </StatusBar>
+        
+        <local:MapControl1 x:Name="map" />
+    </DockPanel>
+
 </Window>
