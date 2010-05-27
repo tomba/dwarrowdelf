@@ -22,11 +22,15 @@ namespace WPFMapControlTest
 	class MapControl4 : UserControl
 	{
 		Map m_map;
-		int m_tileSize = 16;
 
 		DrawingCache m_drawingCache;
 		SymbolDrawingCache m_symbolDrawingCache;
 		SymbolBitmapCache m_symbolBitmapCache;
+
+		MapControlD2D m_mcd2d;
+		int m_tileSize = 16;
+
+		BitmapSource[] m_bmpArray;
 
 		public MapControl4()
 		{
@@ -43,17 +47,31 @@ namespace WPFMapControlTest
 				}
 			}
 
-			BitmapSource[] bmpArr = new BitmapSource[10];
+			m_bmpArray = new BitmapSource[10];
 			for (int i = 0; i < 10; ++i)
-				bmpArr[i] = m_symbolBitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
+				m_bmpArray[i] = m_symbolBitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
 
-			var mcd2d = new MapControlD2D();
-			mcd2d.TileSize = m_tileSize;
-			mcd2d.BitmapArray = bmpArr;
-			this.AddChild(mcd2d);
+			m_mcd2d = new MapControlD2D();
+			m_mcd2d.SetTiles(m_bmpArray, m_tileSize);
+			this.AddChild(m_mcd2d);
 		}
 
-		public double TileSize { get; set; }
+		public double TileSize
+		{
+			get { return m_tileSize; }
+			set
+			{
+				m_tileSize = (int)value;
+
+				m_symbolBitmapCache.TileSize = value;
+
+				for (int i = 0; i < 10; ++i)
+					m_bmpArray[i] = m_symbolBitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
+
+				m_mcd2d.SetTiles(m_bmpArray, m_tileSize);
+			}
+		}
+
 		public IntPoint CenterPos { get; set; }
 
 	}
