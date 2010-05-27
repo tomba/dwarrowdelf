@@ -51,9 +51,10 @@ namespace WPFMapControlTest
 			for (int i = 0; i < 10; ++i)
 				m_bmpArray[i] = m_symbolBitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
 
+
 			m_mcd2d = new MapControlD2D();
 			m_mcd2d.SetTiles(m_bmpArray, m_tileSize);
-			this.AddChild(m_mcd2d);
+			AddChild(m_mcd2d);
 		}
 
 		public double TileSize

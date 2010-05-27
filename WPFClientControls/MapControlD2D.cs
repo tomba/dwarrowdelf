@@ -40,15 +40,6 @@ namespace MyGame.Client
 		uint m_tileSize;
 		System.Windows.Media.Imaging.BitmapSource[] m_bitmapArray;
 
-		public void SetTiles(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
-		{
-			m_bitmapArray = bitmapArray;
-			m_tileSize = (uint)tileSize;
-			UpdateTileMapSize();
-			CreateAtlas();
-			InteropImage.RequestRender();
-		}
-
 		D2DD3DImage InteropImage;
 
 		public MapControlD2D()
@@ -81,6 +72,15 @@ namespace MyGame.Client
 		{
 			UpdateD2DSize();
 			UpdateTileMapSize();
+		}
+
+		public void SetTiles(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
+		{
+			m_bitmapArray = bitmapArray;
+			m_tileSize = (uint)tileSize;
+			UpdateTileMapSize();
+			CreateAtlas();
+			InteropImage.RequestRender();
 		}
 
 		void UpdateD2DSize()
@@ -121,8 +121,12 @@ namespace MyGame.Client
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
+			MyDebug.WriteLine("DoRender");
+
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
+				MyDebug.WriteLine("Create Render Target");
+
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 
 				// Create the render target
