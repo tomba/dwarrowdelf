@@ -9,7 +9,7 @@
             <TextBox Name="fpsTextBlock" Width="50" IsReadOnly="True" />
         </StatusBar>
         
-        <local:MapControl1 x:Name="map" />
+        <local:MapControl4 x:Name="map" />
     </DockPanel>
 
 </Window>
