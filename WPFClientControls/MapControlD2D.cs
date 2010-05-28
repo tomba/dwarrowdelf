@@ -50,43 +50,41 @@ namespace MyGame.Client
 		uint m_tileSize;
 		System.Windows.Media.Imaging.BitmapSource[] m_bitmapArray;
 
-		D2DD3DImage InteropImage;
+		D2DD3DImage m_interopImage;
 
 		public MapControlD2D()
 		{
-			InteropImage = new D2DD3DImage();
+			m_interopImage = new D2DD3DImage();
 
 			var img = new Image();
-			img.Stretch = System.Windows.Media.Stretch.Fill;
-			img.Source = InteropImage;
+			img.Stretch = System.Windows.Media.Stretch.None;
+			img.Source = m_interopImage;
 			this.Content = img;
 
-			this.Loaded += new RoutedEventHandler(host_Loaded);
-			this.SizeChanged += new SizeChangedEventHandler(host_SizeChanged);
+			this.Loaded += OnLoaded;
+			this.SizeChanged += OnSizeChanged;
 		}
 
-		void host_Loaded(object sender, RoutedEventArgs e)
+		void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			m_d2dFactory = D2DFactory.CreateFactory(D2DFactoryType.SingleThreaded);
 
-			//Window window = Application.Current.MainWindow;
 			Window window = Window.GetWindow(this);
 
-			InteropImage.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
-			InteropImage.OnRender = this.DoRender;
+			m_interopImage.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
+			m_interopImage.OnRender = this.DoRender;
+			m_interopImage.RequestRender();
+		}
 
-			InteropImage.RequestRender();
+		void OnSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			UpdateD2DSize();
+			UpdateTileMapSize();
 		}
 
 		public void Render()
 		{
-			InteropImage.RequestRender();
-		}
-
-		void host_SizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			UpdateD2DSize();
-			UpdateTileMapSize();
+			m_interopImage.RequestRender();
 		}
 
 		public void SetTiles(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
@@ -95,27 +93,37 @@ namespace MyGame.Client
 			m_tileSize = (uint)tileSize;
 			UpdateTileMapSize();
 			CreateAtlas();
-			InteropImage.RequestRender();
+			m_interopImage.RequestRender();
 		}
 
 		void UpdateD2DSize()
 		{
-			// TODO: handle non-96 DPI
-			uint surfWidth = (uint)(this.ActualWidth < 0 ? 0 : Math.Ceiling(this.ActualWidth));
-			uint surfHeight = (uint)(this.ActualHeight < 0 ? 0 : Math.Ceiling(this.ActualHeight));
+			uint surfWidth = (uint)Math.Ceiling(this.ActualWidth);
+			uint surfHeight = (uint)Math.Ceiling(this.ActualHeight);
 
-			InteropImage.SetPixelSize(surfWidth, surfHeight);
+			m_interopImage.SetPixelSize(surfWidth, surfHeight);
 		}
 
 		void UpdateTileMapSize()
 		{
 			if (m_tileSize == 0)
+			{
+				m_tileMap = null;
 				return;
+			}
 
-			m_columns = (int)(this.ActualWidth / m_tileSize);
-			m_rows = (int)(this.ActualHeight / m_tileSize);
+			int width = m_interopImage.PixelWidth;
+			int height = m_interopImage.PixelHeight;
 
-			m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
+			int columns = MyMath.IntDivRound(width, (int)m_tileSize);
+			int rows = MyMath.IntDivRound(height, (int)m_tileSize);
+
+			if (columns != m_columns || rows != m_rows)
+			{
+				m_columns = columns;
+				m_rows = rows;
+				m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
+			}
 		}
 
 		void CreateAtlas()
@@ -130,7 +138,8 @@ namespace MyGame.Client
 			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)m_bitmapArray.Length, tileSize),
 				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
 
-			var arr = new byte[tileSize * tileSize * 4];
+			const int bytesPerPixel = 4;
+			var arr = new byte[tileSize * tileSize * bytesPerPixel];
 
 			for (uint x = 0; x < m_bitmapArray.Length; ++x)
 			{
@@ -201,7 +210,7 @@ namespace MyGame.Client
 							continue;
 
 						uint xx = (uint)(tileNum * tileSize);
-						
+
 						float opacity = dark ? 0.2f : 1.0f;
 
 						m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,

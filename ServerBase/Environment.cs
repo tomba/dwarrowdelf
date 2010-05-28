@@ -107,28 +107,6 @@ namespace MyGame.Server
 			}
 		}
 
-		/// <summary>
-		/// Divide signed integer m with positive integer n, rounding up for positive m and and down for negative m
-		/// </summary>
-		/// <param name="m">Dividend</param>
-		/// <param name="n">Divisor</param>
-		/// <returns>Quotient</returns>
-		static int IntDivRound(int m, int n)
-		{
-			return (m + (m >= 0 ? (n - 1) : -(n - 1))) / n;
-		}
-
-		/// <summary>
-		/// Clamp an integer between two values
-		/// </summary>
-		/// <param name="value">Value to be clamped</param>
-		/// <param name="max">Maximum value</param>
-		/// <param name="min">Minimum value</param>
-		/// <returns>Clamped value</returns>
-		static int IntClamp(int value, int max, int min)
-		{
-			return value > max ? max : (value < min ? min : value);
-		}
 
 		bool CanWaterFlow(IntPoint3D from, IntPoint3D to)
 		{
@@ -201,7 +179,7 @@ namespace MyGame.Server
 					if (curLevel > TileData.MaxWaterLevel)
 					{
 						flow = curLevel - (neighLevel + TileData.MaxCompress) - 1;
-						flow = IntClamp(flow, curLevel - TileData.MaxWaterLevel, 0);
+						flow = MyMath.IntClamp(flow, curLevel - TileData.MaxWaterLevel, 0);
 					}
 					else
 						flow = 0;
@@ -216,7 +194,7 @@ namespace MyGame.Server
 					else
 						flow = 0;
 
-					flow = IntClamp(flow, curLevel, 0);
+					flow = MyMath.IntClamp(flow, curLevel, 0);
 				}
 				else
 				{

@@ -135,6 +135,7 @@
     <Compile Include="Floors.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />
+    <Compile Include="MyMath.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="SymbolID.cs" />

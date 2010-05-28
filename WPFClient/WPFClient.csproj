@@ -144,6 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="MapHelper.cs" />
     <Compile Include="MyMapControlD2D.cs" />
     <Compile Include="HistoryTextBox.cs" />
     <Compile Include="Jobs\ActionJobs.cs" />

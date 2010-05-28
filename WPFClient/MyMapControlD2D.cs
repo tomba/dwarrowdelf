@@ -97,11 +97,14 @@ namespace MyGame.Client
 			int rows = this.Rows;
 			var map = m_mcd2d.TileMap;
 
-			for (int y = 0; y < rows; ++y)
+			if (map != null)
 			{
-				for (int x = 0; x < columns; ++x)
+				for (int y = 0; y < rows; ++y)
 				{
-					UpdateTile(x, y, map);
+					for (int x = 0; x < columns; ++x)
+					{
+						UpdateTile(x, y, map);
+					}
 				}
 			}
 
@@ -138,281 +141,26 @@ namespace MyGame.Client
 
 		public bool SelectionEnabled { get; set; }
 
+		MapHelper m_mapHelper = new MapHelper();
+
 		void UpdateTile(int x, int y, MapD2DData[, ,] map)
 		{
 			//IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 			var ml = new IntPoint3D(x + this.CenterPos.X, y + this.CenterPos.Y, this.Z);
 
-			SymbolID floorBitmap;
-			SymbolID interiorBitmap;
-			SymbolID objectBitmap;
-			SymbolID topBitmap;
+			var data = m_mapHelper;
 
-			bool lit1 = false;
-			bool lit2 = false;
-			bool lit3 = false;
-			bool lit4 = false;
+			data.Resolve(this.Environment, ml, m_showVirtualSymbols);
 
-			if (this.Environment == null)
-			{
-				floorBitmap = SymbolID.Undefined;
-				interiorBitmap = SymbolID.Undefined;
-				objectBitmap = SymbolID.Undefined;
-				topBitmap = SymbolID.Undefined;
-			}
-			else
-			{
-				if (GameData.Data.IsSeeAll)
-					lit1 = lit2 = lit3 = lit4 = true;
-				else
-					lit1 = lit2 = lit3 = lit4 = TileVisible(ml);
+			map[y, x, 0].SymbolID = (byte)data.FloorSymbolID;
+			map[y, x, 1].SymbolID = (byte)data.InteriorSymbolID;
+			map[y, x, 2].SymbolID = (byte)data.ObjectSymbolID;
+			map[y, x, 3].SymbolID = (byte)data.TopSymbolID;
 
-				floorBitmap = GetFloorBitmap(ml, ref lit1);
-				interiorBitmap = GetInteriorBitmap(ml, ref lit2);
-
-				if (GameData.Data.DisableLOS)
-					lit3 = true; // lit always so we see what server sends
-
-				objectBitmap = lit3 ? GetObjectBitmap(ml, ref lit3) : SymbolID.Undefined;
-
-				topBitmap = GetTopBitmap(ml, ref lit4);
-			}
-
-			map[y, x, 0].SymbolID = (byte)floorBitmap;
-			map[y, x, 1].SymbolID = (byte)interiorBitmap;
-			map[y, x, 2].SymbolID = (byte)objectBitmap;
-			map[y, x, 3].SymbolID = (byte)topBitmap;
-
-			map[y, x, 0].Dark = !lit1;
-			map[y, x, 1].Dark = !lit2;
-			map[y, x, 2].Dark = !lit3;
-			map[y, x, 3].Dark = !lit4;
-		}
-
-		bool TileVisible(IntPoint3D ml)
-		{
-			if (this.Environment.VisibilityMode == VisibilityMode.AllVisible)
-				return true;
-
-			if (this.Environment.GetInterior(ml).ID == InteriorID.Undefined)
-				return false;
-
-			var controllables = this.Environment.World.Controllables;
-
-			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
-			{
-				foreach (var l in controllables)
-				{
-					if (l.Environment != this.Environment || l.Location.Z != this.Z)
-						continue;
-
-					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
-
-					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
-						l.VisionMap[vp] == true)
-						return true;
-				}
-			}
-			else if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
-			{
-				foreach (var l in controllables)
-				{
-					if (l.Environment != this.Environment || l.Location.Z != this.Z)
-						continue;
-
-					IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
-
-					if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
-						return true;
-				}
-			}
-			else
-			{
-				throw new Exception();
-			}
-
-			return false;
-		}
-
-		SymbolID GetFloorBitmap(IntPoint3D ml, ref bool lit)
-		{
-			var flrInfo = this.Environment.GetFloor(ml);
-
-			if (flrInfo == null || flrInfo == Floors.Undefined)
-				return SymbolID.Undefined;
-
-			FloorID fid = flrInfo.ID;
-			SymbolID id;
-
-			switch (fid)
-			{
-				case FloorID.NaturalFloor:
-				case FloorID.Floor:
-				case FloorID.Hole:
-					id = SymbolID.Floor;
-					break;
-
-				case FloorID.Empty:
-					id = SymbolID.Undefined;
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			if (m_showVirtualSymbols)
-			{
-				if (fid == FloorID.Empty)
-				{
-					id = SymbolID.Floor;
-					lit = false;
-				}
-			}
-
-			return id;
-		}
-
-		SymbolID GetInteriorBitmap(IntPoint3D ml, ref bool lit)
-		{
-			SymbolID id;
-
-			var intInfo = this.Environment.GetInterior(ml);
-			var intInfo2 = this.Environment.GetInterior(ml + Direction.Down);
-
-			var intID = intInfo.ID;
-			var intID2 = intInfo2.ID;
-
-			if (intInfo == null || intInfo == Interiors.Undefined)
-				return SymbolID.Undefined;
-
-			switch (intID)
-			{
-				case InteriorID.Stairs:
-					id = SymbolID.StairsUp;
-					break;
-
-				case InteriorID.Empty:
-					id = SymbolID.Undefined;
-					break;
-
-				case InteriorID.NaturalWall:
-				case InteriorID.Wall:
-					id = SymbolID.Wall;
-					break;
-
-				case InteriorID.Grass:
-					id = SymbolID.Grass;
-					break;
-
-				case InteriorID.Portal:
-					id = SymbolID.Portal;
-					break;
-
-				case InteriorID.Sapling:
-					id = SymbolID.Sapling;
-					break;
-
-				case InteriorID.Tree:
-					id = SymbolID.Tree;
-					break;
-
-				case InteriorID.SlopeNorth:
-				case InteriorID.SlopeSouth:
-				case InteriorID.SlopeEast:
-				case InteriorID.SlopeWest:
-					{
-						switch (Interiors.GetDirFromSlope(intID))
-						{
-							case Direction.North:
-								id = SymbolID.SlopeUpNorth;
-								break;
-							case Direction.South:
-								id = SymbolID.SlopeUpSouth;
-								break;
-							case Direction.East:
-								id = SymbolID.SlopeUpEast;
-								break;
-							case Direction.West:
-								id = SymbolID.SlopeUpWest;
-								break;
-							default:
-								throw new Exception();
-						}
-					}
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			if (m_showVirtualSymbols)
-			{
-				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
-				{
-					id = SymbolID.StairsUpDown;
-				}
-				else if (intID == InteriorID.Empty && intID2.IsSlope())
-				{
-					switch (intID2)
-					{
-						case InteriorID.SlopeNorth:
-							id = SymbolID.SlopeDownSouth;
-							break;
-
-						case InteriorID.SlopeSouth:
-							id = SymbolID.SlopeDownNorth;
-							break;
-
-						case InteriorID.SlopeEast:
-							id = SymbolID.SlopeDownWest;
-							break;
-						
-						case InteriorID.SlopeWest:
-							id = SymbolID.SlopeDownEast;
-							break;
-					}
-				}
-			}
-
-			return id;
-		}
-
-		SymbolID GetObjectBitmap(IntPoint3D ml, ref bool lit)
-		{
-			IList<ClientGameObject> obs = this.Environment.GetContents(ml);
-			if (obs != null && obs.Count > 0)
-			{
-				var id = obs[0].SymbolID;
-				Color c = obs[0].Color;
-				return id;
-			}
-			else
-				return SymbolID.Undefined;
-		}
-
-		SymbolID GetTopBitmap(IntPoint3D ml, ref bool lit)
-		{
-			int wl = this.Environment.GetWaterLevel(ml);
-
-			if (wl == 0)
-				return SymbolID.Undefined;
-
-			SymbolID id;
-
-			wl = wl * 100 / TileData.MaxWaterLevel;
-
-			if (wl > 80)
-				id = SymbolID.Water100;
-			else if (wl > 60)
-				id = SymbolID.Water80;
-			else if (wl > 40)
-				id = SymbolID.Water60;
-			else if (wl > 20)
-				id = SymbolID.Water40;
-			else
-				id = SymbolID.Water20;
-
-			return id;
+			map[y, x, 0].Dark = data.FloorDark;
+			map[y, x, 1].Dark = data.InteriorDark;
+			map[y, x, 2].Dark = data.ObjectDark;
+			map[y, x, 3].Dark = data.TopDark;
 		}
 
 		public bool ShowVirtualSymbols
