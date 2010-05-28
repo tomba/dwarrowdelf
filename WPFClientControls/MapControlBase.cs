@@ -54,13 +54,13 @@ namespace MyGame.Client
 		public UIElementCollection Children { get { return m_childCollection; } }
 
 		public static readonly DependencyProperty TileSizeProperty = DependencyProperty.Register(
-			"TileSize", typeof(double), typeof(MapControlBase),
-			new FrameworkPropertyMetadata(32.0, FrameworkPropertyMetadataOptions.AffectsArrange),
-			v => ((double)v) >= 2);
+			"TileSize", typeof(int), typeof(MapControlBase),
+			new FrameworkPropertyMetadata(32, FrameworkPropertyMetadataOptions.AffectsArrange),
+			v => ((int)v) >= 2);
 
-		public double TileSize
+		public int TileSize
 		{
-			get { return (double)GetValue(TileSizeProperty); }
+			get { return (int)GetValue(TileSizeProperty); }
 			set { SetValue(TileSizeProperty, value); }
 		}
 

@@ -20,9 +20,9 @@ namespace MyGame.Client
 		CacheData[] m_blackBitmapList;
 		Dictionary<SymbolID, Dictionary<Color, CacheData>> m_bitmapMap;
 
-		double m_size = 8;
+		int m_size = 8;
 
-		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, double size)
+		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, int size)
 		{
 			if (size == 0)
 				throw new Exception();
@@ -37,7 +37,7 @@ namespace MyGame.Client
 			m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
 		}
 
-		public double TileSize
+		public int TileSize
 		{
 			get { return m_size; }
 
@@ -115,7 +115,7 @@ namespace MyGame.Client
 
 			Drawing d = m_symbolDrawingCache.GetDrawing(symbolID, color);
 
-			drawingContext.PushTransform(new ScaleTransform(Math.Floor(m_size) / 100, Math.Floor(m_size) / 100));
+			drawingContext.PushTransform(new ScaleTransform((double)m_size / 100, (double)m_size / 100));
 			drawingContext.DrawDrawing(d);
 			drawingContext.Pop();
 
@@ -124,7 +124,7 @@ namespace MyGame.Client
 			if (dark)
 				drawingVisual.Opacity = 0.2;
 
-			RenderTargetBitmap bmp = new RenderTargetBitmap((int)m_size, (int)m_size, 96, 96, PixelFormats.Default);
+			RenderTargetBitmap bmp = new RenderTargetBitmap(m_size, m_size, 96, 96, PixelFormats.Default);
 			bmp.Render(drawingVisual);
 			bmp.Freeze();
 			return bmp;
