@@ -32,7 +32,7 @@
                 </TextBlock>
 
                 <DockPanel.ToolTip>
-                    <local:ObjectInfoControl />
+                    <local:ItemInfoControl />
                 </DockPanel.ToolTip>
             </DockPanel>
         </DataTemplate>

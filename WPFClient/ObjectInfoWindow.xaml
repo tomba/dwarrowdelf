@@ -6,15 +6,6 @@
     WindowStartupLocation="CenterOwner" ResizeMode="NoResize" SizeToContent="WidthAndHeight"
     mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="300" d:DesignWidth="300">
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type local:ClientGameObject}">
-            <local:ObjectInfoControl />
-        </DataTemplate>
 
-        <DataTemplate DataType="{x:Type local:Living}">
-            <local:LivingInfoControl />
-        </DataTemplate>
-    </Window.Resources>
-
-    <Label Content="{Binding}" />
+    <local:ObjectInfoControl />
 </Window>

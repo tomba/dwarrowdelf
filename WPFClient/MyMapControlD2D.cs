@@ -34,6 +34,7 @@ namespace MyGame.Client
 		BitmapSource[] m_bmpArray;
 
 		DispatcherTimer m_updateTimer;
+		DispatcherTimer m_hoverTimer;
 
 		IntPoint m_centerPos;
 		int m_tileSize = 32;
@@ -44,6 +45,8 @@ namespace MyGame.Client
 
 		Canvas m_canvas;
 
+		ToolTip m_tileToolTip;
+		
 		public MyMapControlD2D()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
@@ -52,6 +55,10 @@ namespace MyGame.Client
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Normal);
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
+
+			m_hoverTimer = new DispatcherTimer(DispatcherPriority.Normal);
+			m_hoverTimer.Tick += HoverTimerTick;
+			m_hoverTimer.Interval = TimeSpan.FromMilliseconds(500);
 
 			var grid = new Grid();
 			AddChild(grid);
@@ -256,6 +263,9 @@ namespace MyGame.Client
 		{
 			UpdateHoverTileInfo(e.GetPosition(this));
 
+			m_hoverTimer.Stop();
+			m_hoverTimer.Start();
+
 			if (this.SelectionEnabled == false)
 				return;
 
@@ -309,6 +319,38 @@ namespace MyGame.Client
 			base.OnMouseUp(e);
 		}
 
+		void HoverTimerTick(object sender, EventArgs e)
+		{
+			MyDebug.WriteLine("hover");
+
+			if (this.Environment == null)
+				return;
+
+			if (m_tileToolTip == null)
+			{
+				m_tileToolTip = new ToolTip();
+				m_tileToolTip.Content = new ObjectInfoControl();
+				this.ToolTip = m_tileToolTip;
+				m_tileToolTip.PlacementTarget = this;
+				m_tileToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
+			}
+
+			var p = Mouse.GetPosition(this);
+
+			var ml = new IntPoint3D(ScreenPointToMapLocation(p), this.Z);
+			var objectList = this.Environment.GetContents(ml);
+			if (objectList == null || objectList.Count == 0)
+			{
+				m_tileToolTip.IsOpen = false;
+				return;
+			}
+
+			m_tileToolTip.DataContext = objectList[0];
+
+			m_tileToolTip.HorizontalOffset = p.X;
+			m_tileToolTip.VerticalOffset = p.Y;
+			m_tileToolTip.IsOpen = true;
+		}
 
 
 		IntPoint TopLeftPos

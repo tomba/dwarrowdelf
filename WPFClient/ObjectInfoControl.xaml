@@ -3,38 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MyGame.Client"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel Orientation="Vertical">
+   
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type local:ClientGameObject}">
+            <local:ItemInfoControl />
+        </DataTemplate>
 
-        <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
+        <DataTemplate DataType="{x:Type local:Living}">
+            <local:LivingInfoControl />
+        </DataTemplate>
+    </UserControl.Resources>
 
-        <Separator />
-
-        <UniformGrid Columns="2">
-            <TextBlock>Name</TextBlock>
-            <TextBlock Text="{Binding Name}" />
-
-            <TextBlock>Color</TextBlock>
-            <TextBlock Text="{Binding Color}" />
-
-            <TextBlock>Material</TextBlock>
-            <TextBlock Text="{Binding Material.Name}" />
-
-            <TextBlock>ObjectID</TextBlock>
-            <TextBlock Text="{Binding ObjectID}" />
-
-            <TextBlock>Parent</TextBlock>
-            <TextBlock Text="{Binding Parent}" />
-
-            <TextBlock>Location</TextBlock>
-            <TextBlock Text="{Binding Location}" />
-
-            <TextBlock>Nutritional Value</TextBlock>
-            <TextBlock Text="{Binding NutritionalValue}" />
-
-            <TextBlock>Refreshment Value</TextBlock>
-            <TextBlock Text="{Binding RefreshmentValue}" />
-        </UniformGrid>
-    </StackPanel>
+    <Label Content="{Binding}" />
 </UserControl>
