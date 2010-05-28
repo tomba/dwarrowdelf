@@ -35,6 +35,15 @@ namespace MyGame.Client
 
 		DispatcherTimer m_updateTimer;
 
+		IntPoint m_centerPos;
+		int m_tileSize = 32;
+
+		Rectangle m_selectionRect;
+		IntPoint m_selectionStart;
+		IntPoint m_selectionEnd;
+
+		Canvas m_canvas;
+
 		public MyMapControlD2D()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
@@ -42,23 +51,38 @@ namespace MyGame.Client
 
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Normal);
 			m_updateTimer.Tick += UpdateTimerTick;
-			m_updateTimer.Interval = TimeSpan.FromMilliseconds(100);
+			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
+
+			var grid = new Grid();
+			AddChild(grid);
 
 			m_mcd2d = new MapControlD2D();
-			AddChild(m_mcd2d);
+			grid.Children.Add(m_mcd2d);
+
+			m_canvas = new Canvas();
+			m_canvas.ClipToBounds = true;
+			grid.Children.Add(m_canvas);
+
+			m_selectionRect = new Rectangle();
+			m_selectionRect.Visibility = Visibility.Hidden;
+			m_selectionRect.Width = this.TileSize;
+			m_selectionRect.Height = this.TileSize;
+			m_selectionRect.Stroke = Brushes.Blue;
+			m_selectionRect.StrokeThickness = 1;
+			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
+			m_selectionRect.Fill.Opacity = 0.2;
+			m_selectionRect.Fill.Freeze();
+			m_canvas.Children.Add(m_selectionRect);
 		}
 
-		void UpdateTimerTick(object sender, EventArgs e)
-		{
-			m_updateTimer.Stop();
-			UpdateTiles();
-		}
+		public int Columns { get { return m_mcd2d.Columns; } }
+		public int Rows { get { return m_mcd2d.Rows; } }
 
-		void Upda()
+		void UpdateTileBitmaps()
 		{
 			if (m_bitmapCache == null)
 			{
-				m_mcd2d.SetTiles(null, 0);
+				m_mcd2d.SetSymbolBitmaps(null, 0);
 			}
 			else
 			{
@@ -67,19 +91,20 @@ namespace MyGame.Client
 				m_bmpArray = new BitmapSource[len];
 				for (int i = 0; i < len; ++i)
 					m_bmpArray[i] = m_bitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
-				m_mcd2d.SetTiles(m_bmpArray, this.TileSize);
+				m_mcd2d.SetSymbolBitmaps(m_bmpArray, this.TileSize);
 			}
-		}
-
-		void OnCenterPosChanged(object ob, EventArgs e)
-		{
-			UpdateHoverTileInfo(Mouse.GetPosition(this));
 		}
 
 		public void InvalidateTiles()
 		{
 			if (!m_updateTimer.IsEnabled)
 				m_updateTimer.Start();
+		}
+
+		void UpdateTimerTick(object sender, EventArgs e)
+		{
+			m_updateTimer.Stop();
+			UpdateTiles();
 		}
 
 		void UpdateTiles()
@@ -102,7 +127,6 @@ namespace MyGame.Client
 			m_mcd2d.Render();
 		}
 
-		int m_tileSize = 32;
 		public int TileSize
 		{
 			get
@@ -115,46 +139,204 @@ namespace MyGame.Client
 				m_tileSize = value;
 				if (m_bitmapCache != null)
 					m_bitmapCache.TileSize = this.TileSize;
-				Upda();
+				UpdateTileBitmaps();
 				UpdateTiles();
+				UpdateSelectionRect();
 			}
 		}
 
-		public int Columns { get { return m_mcd2d.Columns; } }
-		public int Rows { get { return m_mcd2d.Rows; } }
+		public bool SelectionEnabled { get; set; }
 
-		public IntRect SelectionRect { get; set; }
+		void OnSelectionChanged()
+		{
+			IntRect sel = this.SelectionRect;
+
+			if (sel.Width != 1 || sel.Height != 1)
+			{
+				this.SelectedTileInfo.Environment = null;
+				return;
+			}
+
+			this.SelectedTileInfo.Environment = this.Environment;
+			this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
+		}
+
+		public IntRect SelectionRect
+		{
+			get
+			{
+				if (m_selectionRect.Visibility != Visibility.Visible)
+					return new IntRect();
+
+				var p1 = m_selectionStart;
+				var p2 = m_selectionEnd;
+
+				IntRect r = new IntRect(p1, p2);
+				r = r.Inflate(1, 1);
+				return r;
+			}
+
+			set
+			{
+				if (this.SelectionEnabled == false)
+					return;
+
+				if (value.Width == 0 || value.Height == 0)
+				{
+					m_selectionRect.Visibility = Visibility.Hidden;
+					OnSelectionChanged();
+					return;
+				}
+
+				var newStart = value.X1Y1;
+				var newEnd = value.X2Y2 - new IntVector(1, 1);
+
+				if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
+				{
+					m_selectionStart = newStart;
+					m_selectionEnd = newEnd;
+					UpdateSelectionRect();
+				}
+
+				m_selectionRect.Visibility = Visibility.Visible;
+
+				OnSelectionChanged();
+			}
+		}
+
+		void UpdateSelectionRect()
+		{
+			var ir = new IntRect(m_selectionStart, m_selectionEnd);
+			ir = new IntRect(ir.X1Y1, new IntSize(ir.Width + 1, ir.Height + 1));
+
+			Rect r = new Rect(MapLocationToScreenPoint(new IntPoint(ir.X1, ir.Y2)),
+				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
+
+			m_selectionRect.Width = r.Width;
+			m_selectionRect.Height = r.Height;
+			Canvas.SetLeft(m_selectionRect, r.Left);
+			Canvas.SetTop(m_selectionRect, r.Top);
+		}
+
+		protected override void OnMouseDown(MouseButtonEventArgs e)
+		{
+			if (this.SelectionEnabled == false)
+				return;
+
+			if (e.LeftButton != MouseButtonState.Pressed)
+			{
+				base.OnMouseDown(e);
+				return;
+			}
+
+			Point pos = e.GetPosition(this);
+
+			var newStart = ScreenPointToMapLocation(pos);
+			var newEnd = newStart;
+
+			if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
+			{
+				m_selectionStart = newStart;
+				m_selectionEnd = newEnd;
+				UpdateSelectionRect();
+			}
+
+			m_selectionRect.Visibility = Visibility.Visible;
+
+			CaptureMouse();
+
+			e.Handled = true;
+
+			OnSelectionChanged();
+
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e)
+		{
+			UpdateHoverTileInfo(e.GetPosition(this));
+
+			if (this.SelectionEnabled == false)
+				return;
+
+			if (!IsMouseCaptured)
+			{
+				base.OnMouseMove(e);
+				return;
+			}
+
+			Point pos = e.GetPosition(this);
+
+			int limit = 4;
+			int cx = this.CenterPos.X;
+			int cy = this.CenterPos.Y;
+
+			if (this.ActualWidth - pos.X < limit)
+				++cx;
+			else if (pos.X < limit)
+				--cx;
+
+			if (this.ActualHeight - pos.Y < limit)
+				--cy;
+			else if (pos.Y < limit)
+				++cy;
+
+			var p = new IntPoint(cx, cy);
+			this.CenterPos = p;
+
+			var newEnd = ScreenPointToMapLocation(pos);
+
+			if (newEnd != m_selectionEnd)
+			{
+				m_selectionEnd = newEnd;
+				UpdateSelectionRect();
+			}
+
+			e.Handled = true;
+
+			OnSelectionChanged();
+
+			base.OnMouseMove(e);
+		}
+
+		protected override void OnMouseUp(MouseButtonEventArgs e)
+		{
+			if (this.SelectionEnabled == false)
+				return;
+
+			ReleaseMouseCapture();
+
+			base.OnMouseUp(e);
+		}
+
+
 
 		IntPoint TopLeftPos
 		{
 			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
 		}
 
-		public static readonly DependencyProperty CenterPosProperty = DependencyProperty.Register(
-			"CenterPos", typeof(IntPoint), typeof(MapControlD2D),
-			new FrameworkPropertyMetadata(new IntPoint(), FrameworkPropertyMetadataOptions.None));
-
 		public IntPoint CenterPos
 		{
-			get { return (IntPoint)GetValue(CenterPosProperty); }
+			get { return m_centerPos; }
 			set
 			{
 				if (value == this.CenterPos)
 					return;
-
-				SetValue(CenterPosProperty, value);
+				m_centerPos = value;
+				UpdateHoverTileInfo(Mouse.GetPosition(this));
+				UpdateSelectionRect();
 				UpdateTiles();
 			}
 		}
-
-		public bool SelectionEnabled { get; set; }
 
 		MapHelper m_mapHelper = new MapHelper();
 
 		void UpdateTile(int x, int y, MapD2DData[, ,] map)
 		{
-			//IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
-			var ml = new IntPoint3D(x + this.CenterPos.X, y + this.CenterPos.Y, this.Z);
+			// x and y in screen tile coordinates
+			var tlp = this.TopLeftPos;
+			var ml = new IntPoint3D(x + tlp.X, -y + tlp.Y, this.Z);
 
 			var data = m_mapHelper;
 
@@ -212,14 +394,14 @@ namespace MyGame.Client
 					{
 						m_world = m_env.World;
 						m_bitmapCache = new SymbolBitmapCache(m_world.SymbolDrawingCache, this.TileSize);
-						Upda();
+						UpdateTileBitmaps();
 					}
 				}
 				else
 				{
 					m_world = null;
 					m_bitmapCache = null;
-					Upda();
+					UpdateTileBitmaps();
 				}
 
 				this.SelectionRect = new IntRect();
@@ -304,27 +486,6 @@ namespace MyGame.Client
 
 		public TileInfo SelectedTileInfo { get; private set; }
 
-		void OnSelectionChanged()
-		{
-			IntRect sel = this.SelectionRect;
-
-			if (sel.Width != 1 || sel.Height != 1)
-			{
-				this.SelectedTileInfo.Environment = null;
-				return;
-			}
-
-			this.SelectedTileInfo.Environment = this.Environment;
-			this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
-		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			base.OnMouseMove(e);
-
-			UpdateHoverTileInfo(e.GetPosition(this));
-		}
-
 		void UpdateHoverTileInfo(Point mousePos)
 		{
 			IntPoint ml = ScreenPointToMapLocation(mousePos);
@@ -349,6 +510,12 @@ namespace MyGame.Client
 			return loc + (IntVector)this.TopLeftPos;
 		}
 
+		Point MapLocationToScreenPoint(IntPoint loc)
+		{
+			loc -= (IntVector)this.TopLeftPos;
+			loc = new IntPoint(loc.X, -loc.Y + 1);
+			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+		}
 
 		void Notify(string name)
 		{

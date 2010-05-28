@@ -131,11 +131,6 @@ namespace MyGame.Client
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
-
-			var c = map.Columns;
-			var r = map.Rows;
-			map.CenterPos = new IntPoint(c / 2 - 2, r / 2 - 3);
-			map.Z = 9;
 		}
 
 		public void OnServerStarted()
@@ -796,6 +791,9 @@ namespace MyGame.Client
 
 		void OnLoggedOn()
 		{
+			map.CenterPos = new IntPoint(10, 10);
+			map.Z = 9;
+
 			m_loginDialog.Close();
 			m_loginDialog = null;
 			// xxx autologin

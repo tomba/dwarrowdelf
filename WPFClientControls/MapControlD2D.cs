@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define DEBUG_TEXT
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Interop;
 
+using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 using Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using Microsoft.WindowsAPICodePack.DirectX.DXGI;
@@ -30,7 +33,10 @@ namespace MyGame.Client
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
-
+#if DEBUG_TEXT
+		TextFormat textFormat;
+		DWriteFactory dwriteFactory;
+#endif
 		// Maintained simply to detect changes in the interop back buffer
 		IntPtr m_pIDXGISurfacePreviousNoRef;
 
@@ -68,11 +74,15 @@ namespace MyGame.Client
 		void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			m_d2dFactory = D2DFactory.CreateFactory(D2DFactoryType.SingleThreaded);
-
+#if DEBUG_TEXT
+			dwriteFactory = DWriteFactory.CreateFactory();
+			textFormat = dwriteFactory.CreateTextFormat("Bodoni MT", 10, DWrite.FontWeight.Normal, DWrite.FontStyle.Normal, DWrite.FontStretch.Normal);
+#endif
 			Window window = Window.GetWindow(this);
 
 			m_interopImage.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
 			m_interopImage.OnRender = this.DoRender;
+
 			m_interopImage.RequestRender();
 		}
 
@@ -87,7 +97,7 @@ namespace MyGame.Client
 			m_interopImage.RequestRender();
 		}
 
-		public void SetTiles(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
+		public void SetSymbolBitmaps(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
 		{
 			m_bitmapArray = bitmapArray;
 			m_tileSize = (uint)tileSize;
@@ -195,28 +205,34 @@ namespace MyGame.Client
 			}
 
 			var tileSize = m_tileSize;
+			SolidColorBrush blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
+			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
-			// m_renderTarget.PixelSize.Height
 			for (int y = 0; y < m_rows; ++y)
 			{
 				for (int x = 0; x < m_columns; ++x)
 				{
+					var dstRect = new RectF(x * tileSize, y * tileSize, x * tileSize + tileSize, y * tileSize + tileSize);
+
 					for (int z = 0; z < TileZ; ++z)
 					{
 						byte tileNum = m_tileMap[y, x, z].SymbolID;
-						bool dark = m_tileMap[y, x, z].Dark;
 
 						if (tileNum == 0)
 							continue;
+
+						bool dark = m_tileMap[y, x, z].Dark;
 
 						uint xx = (uint)(tileNum * tileSize);
 
 						float opacity = dark ? 0.2f : 1.0f;
 
 						m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
-							new RectF(x * tileSize, y * tileSize, x * tileSize + tileSize, y * tileSize + tileSize),
-							new RectF(xx, 0, xx + tileSize, tileSize));
+							dstRect, new RectF(xx, 0, xx + tileSize, tileSize));
 					}
+#if DEBUG_TEXT
+					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
+#endif
 				}
 			}
 
