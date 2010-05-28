@@ -19,6 +19,13 @@ using Microsoft.WindowsAPICodePack.DirectX.WindowsImagingComponent;
 
 namespace MyGame.Client
 {
+	public struct MapD2DData
+	{
+		public byte SymbolID;
+		public bool Dark;
+		// color?
+	}
+
 	public partial class MapControlD2D : UserControl
 	{
 		D2DFactory m_d2dFactory;
@@ -31,11 +38,14 @@ namespace MyGame.Client
 
 		const int TileZ = 4;
 
-		byte[, ,] m_tileMap;
-		public byte[,,] TileMap { get { return m_tileMap; } }
+		MapD2DData[, ,] m_tileMap;
+		public MapD2DData[, ,] TileMap { get { return m_tileMap; } }
 
 		int m_columns;
 		int m_rows;
+
+		public int Columns { get { return m_columns; } }
+		public int Rows { get { return m_rows; } }
 
 		uint m_tileSize;
 		System.Windows.Media.Imaging.BitmapSource[] m_bitmapArray;
@@ -68,6 +78,11 @@ namespace MyGame.Client
 			InteropImage.RequestRender();
 		}
 
+		public void Render()
+		{
+			InteropImage.RequestRender();
+		}
+
 		void host_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			UpdateD2DSize();
@@ -94,15 +109,21 @@ namespace MyGame.Client
 
 		void UpdateTileMapSize()
 		{
+			if (m_tileSize == 0)
+				return;
+
 			m_columns = (int)(this.ActualWidth / m_tileSize);
 			m_rows = (int)(this.ActualHeight / m_tileSize);
 
-			m_tileMap = new byte[m_rows, m_columns, TileZ];
+			m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
 		}
 
 		void CreateAtlas()
 		{
 			if (m_renderTarget == null)
+				return;
+
+			if (m_bitmapArray == null)
 				return;
 
 			var tileSize = m_tileSize;
@@ -156,7 +177,13 @@ namespace MyGame.Client
 
 			m_renderTarget.BeginDraw();
 
-			m_renderTarget.Clear(new ColorF(1, 1, 1, 0));
+			m_renderTarget.Clear(new ColorF(0, 0, 0, 1));
+
+			if (m_tileSize == 0 || m_atlasBitmap == null)
+			{
+				m_renderTarget.EndDraw();
+				return;
+			}
 
 			var tileSize = m_tileSize;
 
@@ -167,11 +194,17 @@ namespace MyGame.Client
 				{
 					for (int z = 0; z < TileZ; ++z)
 					{
-						byte tileNum = m_tileMap[y, x, z];
+						byte tileNum = m_tileMap[y, x, z].SymbolID;
+						bool dark = m_tileMap[y, x, z].Dark;
+
+						if (tileNum == 0)
+							continue;
 
 						uint xx = (uint)(tileNum * tileSize);
+						
+						float opacity = dark ? 0.2f : 1.0f;
 
-						m_renderTarget.DrawBitmap(m_atlasBitmap, 1, BitmapInterpolationMode.Linear,
+						m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
 							new RectF(x * tileSize, y * tileSize, x * tileSize + tileSize, y * tileSize + tileSize),
 							new RectF(xx, 0, xx + tileSize, tileSize));
 					}
