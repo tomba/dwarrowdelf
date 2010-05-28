@@ -24,6 +24,9 @@ namespace MyGame.Client
 
 		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, double size)
 		{
+			if (size == 0)
+				throw new Exception();
+
 			m_symbolDrawingCache = symbolDrawingCache;
 			m_size = size;
 
@@ -40,6 +43,9 @@ namespace MyGame.Client
 
 			set
 			{
+				if (m_size == 0)
+					throw new Exception();
+
 				if (m_size != value)
 				{
 					m_size = value;

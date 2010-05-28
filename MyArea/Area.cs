@@ -88,7 +88,7 @@ namespace MyArea
 
 		Environment CreateMap1(World world)
 		{
-			int sizeExp = 8;
+			int sizeExp = 5;
 			int size = (int)Math.Pow(2, sizeExp);
 			var terrainGen = new TerrainGen(sizeExp, 10, 5, 0.75);
 

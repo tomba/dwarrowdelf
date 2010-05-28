@@ -44,8 +44,6 @@ namespace MyGame.Client
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(100);
 
-			this.TileSize = 32;
-
 			m_mcd2d = new MapControlD2D();
 			AddChild(m_mcd2d);
 		}
@@ -73,13 +71,6 @@ namespace MyGame.Client
 			}
 		}
 
-		/*
-		void OnTileSizeChanged(object ob, EventArgs e)
-		{
-			if (m_bitmapCache != null)
-				m_bitmapCache.TileSize = this.TileSize;
-		}
-		*/
 		void OnCenterPosChanged(object ob, EventArgs e)
 		{
 			UpdateHoverTileInfo(Mouse.GetPosition(this));
@@ -111,7 +102,24 @@ namespace MyGame.Client
 			m_mcd2d.Render();
 		}
 
-		public int TileSize { get; set; }
+		int m_tileSize = 32;
+		public int TileSize
+		{
+			get
+			{
+				return m_tileSize;
+			}
+
+			set
+			{
+				m_tileSize = value;
+				if (m_bitmapCache != null)
+					m_bitmapCache.TileSize = this.TileSize;
+				Upda();
+				UpdateTiles();
+			}
+		}
+
 		public int Columns { get { return m_mcd2d.Columns; } }
 		public int Rows { get { return m_mcd2d.Rows; } }
 

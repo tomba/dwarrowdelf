@@ -161,9 +161,9 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <local:MapControl x:Name="map" SelectionEnabled="True"
+            <local:MyMapControlD2D x:Name="map" SelectionEnabled="True"
 							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
-                <local:MapControl.ContextMenu>
+                <local:MyMapControlD2D.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
                         <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
@@ -180,8 +180,8 @@
                         </MenuItem>
                         <MenuItem Name="createBuildingMenu" Header="Create Building" />
                     </ContextMenu>
-                </local:MapControl.ContextMenu>
-            </local:MapControl>
+                </local:MyMapControlD2D.ContextMenu>
+            </local:MyMapControlD2D>
 
             <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ShowsPreview="True" />
 
