@@ -747,7 +747,7 @@ namespace MyGame.Client
 			if (!GameData.Data.Connection.IsUserConnected)
 			{
 				m_loginDialog = new Window();
-				m_loginDialog.Owner = this;
+				m_loginDialog.Topmost = true;
 				m_loginDialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
 				m_loginDialog.Width = 200;
 				m_loginDialog.Height = 200;
