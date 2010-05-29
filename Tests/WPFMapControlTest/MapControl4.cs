@@ -27,7 +27,7 @@ namespace WPFMapControlTest
 		SymbolDrawingCache m_symbolDrawingCache;
 		SymbolBitmapCache m_symbolBitmapCache;
 
-		MapControlD2D m_mcd2d;
+		TileControlD2D m_mcd2d;
 		int m_tileSize = 16;
 
 		BitmapSource[] m_bmpArray;
@@ -52,7 +52,7 @@ namespace WPFMapControlTest
 				m_bmpArray[i] = m_symbolBitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
 
 
-			m_mcd2d = new MapControlD2D();
+			m_mcd2d = new TileControlD2D();
 			m_mcd2d.SetSymbolBitmaps(m_bmpArray, m_tileSize);
 			AddChild(m_mcd2d);
 		}

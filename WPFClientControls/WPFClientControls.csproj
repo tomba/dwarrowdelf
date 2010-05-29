@@ -128,7 +128,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapControlD2D.cs" />
+    <Compile Include="TileControlD2D.cs" />
     <Compile Include="D2DD3DImage.cs" />
     <Compile Include="MapControlBase2.cs" />
     <Compile Include="MapControlBase.cs" />

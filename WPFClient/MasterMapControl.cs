@@ -18,22 +18,32 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
-	class MyMapControlD2D : UserControl, INotifyPropertyChanged
+	interface IMapControl
+	{
+		int Columns { get; }
+		int Rows { get; }
+		int TileSize { get; set; }
+		bool ShowVirtualSymbols { get; set; }
+
+		Environment Environment { get; set; }
+		int Z { get; set; }
+		IntPoint CenterPos { get; set; }
+	}
+
+	/// <summary>
+	/// Handles selection rectangles etc. extra stuff
+	/// </summary>
+	class MasterMapControl : UserControl, INotifyPropertyChanged
 	{
 		World m_world;
-		SymbolBitmapCache m_bitmapCache;
 
 		Environment m_env;
 		int m_z;
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
-		bool m_showVirtualSymbols = true;
+		IMapControl m_mcd2d;
 
-		MapControlD2D m_mcd2d;
-		BitmapSource[] m_bmpArray;
-
-		DispatcherTimer m_updateTimer;
 		DispatcherTimer m_hoverTimer;
 
 		IntPoint m_centerPos;
@@ -44,17 +54,14 @@ namespace MyGame.Client
 		IntPoint m_selectionEnd;
 
 		Canvas m_canvas;
+		Canvas m_buildingCanvas;
 
 		ToolTip m_tileToolTip;
-		
-		public MyMapControlD2D()
+
+		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileInfo = new TileInfo();
-
-			m_updateTimer = new DispatcherTimer(DispatcherPriority.Normal);
-			m_updateTimer.Tick += UpdateTimerTick;
-			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
 
 			m_hoverTimer = new DispatcherTimer(DispatcherPriority.Normal);
 			m_hoverTimer.Tick += HoverTimerTick;
@@ -63,8 +70,10 @@ namespace MyGame.Client
 			var grid = new Grid();
 			AddChild(grid);
 
-			m_mcd2d = new MapControlD2D();
-			grid.Children.Add(m_mcd2d);
+			var mc = new MapControlD2D();
+			//var mc = new MapControl();
+			grid.Children.Add(mc);
+			m_mcd2d = mc;
 
 			m_canvas = new Canvas();
 			m_canvas.ClipToBounds = true;
@@ -80,59 +89,14 @@ namespace MyGame.Client
 			m_selectionRect.Fill.Opacity = 0.2;
 			m_selectionRect.Fill.Freeze();
 			m_canvas.Children.Add(m_selectionRect);
+
+			m_buildingCanvas = new Canvas();
+			m_buildingCanvas.ClipToBounds = true;
+			grid.Children.Add(m_buildingCanvas);
 		}
 
 		public int Columns { get { return m_mcd2d.Columns; } }
 		public int Rows { get { return m_mcd2d.Rows; } }
-
-		void UpdateTileBitmaps()
-		{
-			if (m_bitmapCache == null)
-			{
-				m_mcd2d.SetSymbolBitmaps(null, 0);
-			}
-			else
-			{
-				var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-				var len = (int)arr.Max() + 1;
-				m_bmpArray = new BitmapSource[len];
-				for (int i = 0; i < len; ++i)
-					m_bmpArray[i] = m_bitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
-				m_mcd2d.SetSymbolBitmaps(m_bmpArray, this.TileSize);
-			}
-		}
-
-		public void InvalidateTiles()
-		{
-			if (!m_updateTimer.IsEnabled)
-				m_updateTimer.Start();
-		}
-
-		void UpdateTimerTick(object sender, EventArgs e)
-		{
-			m_updateTimer.Stop();
-			UpdateTiles();
-		}
-
-		void UpdateTiles()
-		{
-			int columns = this.Columns;
-			int rows = this.Rows;
-			var map = m_mcd2d.TileMap;
-
-			if (map != null)
-			{
-				for (int y = 0; y < rows; ++y)
-				{
-					for (int x = 0; x < columns; ++x)
-					{
-						UpdateTile(x, y, map);
-					}
-				}
-			}
-
-			m_mcd2d.Render();
-		}
 
 		public int TileSize
 		{
@@ -144,10 +108,7 @@ namespace MyGame.Client
 			set
 			{
 				m_tileSize = value;
-				if (m_bitmapCache != null)
-					m_bitmapCache.TileSize = this.TileSize;
-				UpdateTileBitmaps();
-				UpdateTiles();
+				m_mcd2d.TileSize = value;
 				UpdateSelectionRect();
 			}
 		}
@@ -365,47 +326,29 @@ namespace MyGame.Client
 			{
 				if (value == this.CenterPos)
 					return;
+				IntVector dv = m_centerPos - value;
 				m_centerPos = value;
+				m_mcd2d.CenterPos = value;
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
-				UpdateTiles();
+
+				double dx = dv.X * m_tileSize;
+				double dy = -dv.Y * m_tileSize;
+
+				foreach (Rectangle rect in m_buildingCanvas.Children)
+				{
+					Canvas.SetLeft(rect, Canvas.GetLeft(rect) + dx);
+					Canvas.SetTop(rect, Canvas.GetTop(rect) + dy);
+				}
 			}
-		}
-
-		MapHelper m_mapHelper = new MapHelper();
-
-		void UpdateTile(int x, int y, MapD2DData[, ,] map)
-		{
-			// x and y in screen tile coordinates
-			var tlp = this.TopLeftPos;
-			var ml = new IntPoint3D(x + tlp.X, -y + tlp.Y, this.Z);
-
-			var data = m_mapHelper;
-
-			data.Resolve(this.Environment, ml, m_showVirtualSymbols);
-
-			map[y, x, 0].SymbolID = (byte)data.FloorSymbolID;
-			map[y, x, 1].SymbolID = (byte)data.InteriorSymbolID;
-			map[y, x, 2].SymbolID = (byte)data.ObjectSymbolID;
-			map[y, x, 3].SymbolID = (byte)data.TopSymbolID;
-
-			map[y, x, 0].Dark = data.FloorDark;
-			map[y, x, 1].Dark = data.InteriorDark;
-			map[y, x, 2].Dark = data.ObjectDark;
-			map[y, x, 3].Dark = data.TopDark;
 		}
 
 		public bool ShowVirtualSymbols
 		{
-			get { return m_showVirtualSymbols; }
-
+			get { return m_mcd2d.ShowVirtualSymbols; }
 			set
 			{
-				if (m_showVirtualSymbols == value)
-					return;
-
-				m_showVirtualSymbols = value;
-				InvalidateTiles();
+				m_mcd2d.ShowVirtualSymbols = value;
 				Notify("ShowVirtualSymbols");
 			}
 		}
@@ -419,9 +362,10 @@ namespace MyGame.Client
 				if (m_env == value)
 					return;
 
+				m_mcd2d.Environment = value;
+
 				if (m_env != null)
 				{
-					m_env.MapChanged -= MapChangedCallback;
 					m_env.Buildings.CollectionChanged -= OnBuildingsChanged;
 				}
 
@@ -429,35 +373,37 @@ namespace MyGame.Client
 
 				if (m_env != null)
 				{
-					m_env.MapChanged += MapChangedCallback;
 					m_env.Buildings.CollectionChanged += OnBuildingsChanged;
 
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_bitmapCache = new SymbolBitmapCache(m_world.SymbolDrawingCache, this.TileSize);
-						UpdateTileBitmaps();
 					}
 				}
 				else
 				{
 					m_world = null;
-					m_bitmapCache = null;
-					UpdateTileBitmaps();
 				}
 
 				this.SelectionRect = new IntRect();
-				UpdateTiles();
 				UpdateBuildings();
 
 				Notify("Environment");
 			}
 		}
 
+		void UpdateBuildingRect(BuildingObject b, Rectangle rect)
+		{
+			var sp = MapLocationToScreenPoint(new IntPoint(b.Area.X1, b.Area.Y2));
+			Canvas.SetLeft(rect, sp.X);
+			Canvas.SetTop(rect, sp.Y);
+			rect.Width = b.Area.Width * m_tileSize;
+			rect.Height = b.Area.Height * m_tileSize;
+		}
+
 		void UpdateBuildings()
 		{
-			/*
-			this.Children.Clear();
+			m_buildingCanvas.Children.Clear();
 
 			if (m_env != null)
 			{
@@ -468,18 +414,15 @@ namespace MyGame.Client
 						var rect = new Rectangle();
 						rect.Stroke = Brushes.DarkGray;
 						rect.StrokeThickness = 4;
-						this.Children.Add(rect);
-						SetCorner1(rect, b.Area.X1Y1);
-						SetCorner2(rect, b.Area.X2Y2);
+						m_buildingCanvas.Children.Add(rect);
+						UpdateBuildingRect(b, rect);
 					}
 				}
 			}
-			*/
 		}
 
 		void OnBuildingsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			/*
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
 				foreach (BuildingObject b in e.NewItems)
@@ -487,20 +430,18 @@ namespace MyGame.Client
 					var rect = new Rectangle();
 					rect.Stroke = Brushes.DarkGray;
 					rect.StrokeThickness = 4;
-					this.Children.Add(rect);
-					SetCorner1(rect, b.Area.X1Y1);
-					SetCorner2(rect, b.Area.X2Y2);
+					m_buildingCanvas.Children.Add(rect);
+					UpdateBuildingRect(b, rect);
 				}
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
-				this.Children.Clear();
+				m_buildingCanvas.Children.Clear();
 			}
 			else
 			{
 				throw new Exception();
 			}
-			 */
 		}
 
 		public int Z
@@ -513,17 +454,12 @@ namespace MyGame.Client
 					return;
 
 				m_z = value;
-				UpdateTiles();
+				m_mcd2d.Z = value;
 				UpdateBuildings();
 
 				Notify("Z");
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 			}
-		}
-
-		void MapChangedCallback(IntPoint3D l)
-		{
-			InvalidateTiles();
 		}
 
 		public TileInfo SelectedTileInfo { get; private set; }
@@ -567,6 +503,175 @@ namespace MyGame.Client
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+	}
+
+
+
+	class HoverTileInfo : INotifyPropertyChanged
+	{
+		public IntPoint3D Location { get; set; }
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+	}
+
+	class TileInfo : INotifyPropertyChanged
+	{
+		Environment m_env;
+		IntPoint3D m_location;
+		ObservableCollection<ClientGameObject> m_obs;
+
+		public TileInfo()
+		{
+			m_obs = new ObservableCollection<ClientGameObject>();
+		}
+
+		void NotifyTileChanges()
+		{
+			m_obs.Clear();
+			if (m_env != null)
+			{
+				var list = m_env.GetContents(m_location);
+				if (list != null)
+					foreach (var o in list)
+						m_obs.Add(o);
+			}
+
+			Notify("Interior");
+			Notify("Floor");
+			Notify("FloorMaterial");
+			Notify("InteriorMaterial");
+			Notify("WaterLevel");
+			Notify("Objects");
+			Notify("Building");
+		}
+
+		void MapChanged(IntPoint3D l)
+		{
+			if (l != m_location)
+				return;
+
+			NotifyTileChanges();
+		}
+
+		public Environment Environment
+		{
+			get { return m_env; }
+			set
+			{
+				if (m_env != null)
+					m_env.MapChanged -= MapChanged;
+
+				m_env = value;
+
+				if (m_env == null)
+					m_location = new IntPoint3D();
+
+				if (m_env != null)
+					m_env.MapChanged += MapChanged;
+
+				Notify("Environment");
+				NotifyTileChanges();
+			}
+		}
+
+		public IntPoint3D Location
+		{
+			get { return m_location; }
+			set
+			{
+				m_location = value;
+				Notify("Location");
+				NotifyTileChanges();
+			}
+		}
+
+		public InteriorInfo Interior
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetInterior(m_location);
+			}
+		}
+
+		public MaterialInfo InteriorMaterial
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetInteriorMaterial(m_location);
+			}
+		}
+
+		public MaterialInfo FloorMaterial
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetFloorMaterial(m_location);
+			}
+		}
+
+		public FloorInfo Floor
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetFloor(m_location);
+			}
+		}
+
+		public byte WaterLevel
+		{
+			get
+			{
+				if (m_env == null)
+					return 0;
+				return m_env.GetWaterLevel(m_location);
+			}
+		}
+
+		public ObservableCollection<ClientGameObject> Objects
+		{
+			get
+			{
+				return m_obs;
+			}
+		}
+
+		public BuildingObject Building
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+				return m_env.GetBuildingAt(m_location);
+			}
+		}
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		#endregion
 	}
 }

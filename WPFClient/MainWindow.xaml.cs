@@ -209,7 +209,7 @@ namespace MyGame.Client
 				}
 				else
 				{
-					map.InvalidateTiles();
+					//map.InvalidateTiles(); ??? XXX
 
 					this.CurrentTileInfo.Environment = null;
 					this.CurrentTileInfo.Location = new IntPoint3D();

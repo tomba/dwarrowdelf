@@ -29,7 +29,10 @@ namespace MyGame.Client
 		// color?
 	}
 
-	public partial class MapControlD2D : UserControl
+	/// <summary>
+	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
+	/// </summary>
+	public partial class TileControlD2D : UserControl
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -58,7 +61,7 @@ namespace MyGame.Client
 
 		D2DD3DImage m_interopImage;
 
-		public MapControlD2D()
+		public TileControlD2D()
 		{
 			m_interopImage = new D2DD3DImage();
 
@@ -235,6 +238,8 @@ namespace MyGame.Client
 #endif
 				}
 			}
+
+			m_renderTarget.DrawLine(new Point2F(50, 0), new Point2F(0, 50), blackBrush, 2); 
 
 			m_renderTarget.EndDraw();
 		}
