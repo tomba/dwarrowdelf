@@ -67,6 +67,12 @@ namespace MyGame
 
 		void BeginRead()
 		{
+			if (m_socket == null || !m_socket.Connected)
+			{
+				MyDebug.WriteLine("Socket not connected");
+				return;
+			}
+
 			m_socket.BeginReceive(m_recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, m_socket);
 		}
 
