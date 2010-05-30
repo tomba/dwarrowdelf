@@ -96,6 +96,12 @@ namespace MyGame.Client
 			grid.Children.Add(m_buildingCanvas);
 
 			m_buildingRectMap = new Dictionary<BuildingObject, Rectangle>();
+
+			m_tileToolTip = new ToolTip();
+			m_tileToolTip.Content = new ObjectInfoControl();
+			m_tileToolTip.PlacementTarget = this;
+			m_tileToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
+			m_tileToolTip.IsOpen = false;
 		}
 
 		public int Columns { get { return m_mapControl.Columns; } }
@@ -287,27 +293,23 @@ namespace MyGame.Client
 
 		void HoverTimerTick(object sender, EventArgs e)
 		{
-			MyDebug.WriteLine("hover");
-
-			if (this.Environment == null)
-				return;
-
-			if (m_tileToolTip == null)
-			{
-				m_tileToolTip = new ToolTip();
-				m_tileToolTip.Content = new ObjectInfoControl();
-				this.ToolTip = m_tileToolTip;
-				m_tileToolTip.PlacementTarget = this;
-				m_tileToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
-			}
+			m_hoverTimer.Stop();
 
 			var p = Mouse.GetPosition(this);
+
+			if (this.Environment == null || !new Rect(this.RenderSize).Contains(p))
+			{
+				m_tileToolTip.IsOpen = false;
+				this.ToolTip = null;
+				return;
+			}
 
 			var ml = new IntPoint3D(ScreenPointToMapLocation(p), this.Z);
 			var objectList = this.Environment.GetContents(ml);
 			if (objectList == null || objectList.Count == 0)
 			{
 				m_tileToolTip.IsOpen = false;
+				this.ToolTip = null;
 				return;
 			}
 
@@ -316,6 +318,7 @@ namespace MyGame.Client
 			m_tileToolTip.HorizontalOffset = p.X;
 			m_tileToolTip.VerticalOffset = p.Y;
 			m_tileToolTip.IsOpen = true;
+			this.ToolTip = m_tileToolTip;
 		}
 
 
