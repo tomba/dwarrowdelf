@@ -133,7 +133,6 @@ namespace MyGame.Client
 					m_bitmapCache = null;
 				}
 
-				this.SelectionRect = new IntRect();
 				UpdateTiles();
 
 				Notify("Environment");

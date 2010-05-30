@@ -42,7 +42,7 @@ namespace MyGame.Client
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
-		IMapControl m_mcd2d;
+		IMapControl m_mapControl;
 
 		DispatcherTimer m_hoverTimer;
 
@@ -55,6 +55,7 @@ namespace MyGame.Client
 
 		Canvas m_canvas;
 		Canvas m_buildingCanvas;
+		Dictionary<BuildingObject, Rectangle> m_buildingRectMap;
 
 		ToolTip m_tileToolTip;
 
@@ -70,10 +71,10 @@ namespace MyGame.Client
 			var grid = new Grid();
 			AddChild(grid);
 
-			var mc = new MapControlD2D();
-			//var mc = new MapControl();
+			//var mc = new MapControlD2D();
+			var mc = new MapControl();
 			grid.Children.Add(mc);
-			m_mcd2d = mc;
+			m_mapControl = mc;
 
 			m_canvas = new Canvas();
 			m_canvas.ClipToBounds = true;
@@ -93,10 +94,12 @@ namespace MyGame.Client
 			m_buildingCanvas = new Canvas();
 			m_buildingCanvas.ClipToBounds = true;
 			grid.Children.Add(m_buildingCanvas);
+
+			m_buildingRectMap = new Dictionary<BuildingObject, Rectangle>();
 		}
 
-		public int Columns { get { return m_mcd2d.Columns; } }
-		public int Rows { get { return m_mcd2d.Rows; } }
+		public int Columns { get { return m_mapControl.Columns; } }
+		public int Rows { get { return m_mapControl.Rows; } }
 
 		public int TileSize
 		{
@@ -108,8 +111,10 @@ namespace MyGame.Client
 			set
 			{
 				m_tileSize = value;
-				m_mcd2d.TileSize = value;
+				m_mapControl.TileSize = value;
 				UpdateSelectionRect();
+				foreach (var kvp in m_buildingRectMap)
+					UpdateBuildingRect(kvp.Key, kvp.Value);
 			}
 		}
 
@@ -328,27 +333,24 @@ namespace MyGame.Client
 					return;
 				IntVector dv = m_centerPos - value;
 				m_centerPos = value;
-				m_mcd2d.CenterPos = value;
+				m_mapControl.CenterPos = value;
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
 
 				double dx = dv.X * m_tileSize;
 				double dy = -dv.Y * m_tileSize;
 
-				foreach (Rectangle rect in m_buildingCanvas.Children)
-				{
-					Canvas.SetLeft(rect, Canvas.GetLeft(rect) + dx);
-					Canvas.SetTop(rect, Canvas.GetTop(rect) + dy);
-				}
+				foreach (var kvp in m_buildingRectMap)
+					UpdateBuildingRect(kvp.Key, kvp.Value);
 			}
 		}
 
 		public bool ShowVirtualSymbols
 		{
-			get { return m_mcd2d.ShowVirtualSymbols; }
+			get { return m_mapControl.ShowVirtualSymbols; }
 			set
 			{
-				m_mcd2d.ShowVirtualSymbols = value;
+				m_mapControl.ShowVirtualSymbols = value;
 				Notify("ShowVirtualSymbols");
 			}
 		}
@@ -362,7 +364,7 @@ namespace MyGame.Client
 				if (m_env == value)
 					return;
 
-				m_mcd2d.Environment = value;
+				m_mapControl.Environment = value;
 
 				if (m_env != null)
 				{
@@ -404,6 +406,7 @@ namespace MyGame.Client
 		void UpdateBuildings()
 		{
 			m_buildingCanvas.Children.Clear();
+			m_buildingRectMap.Clear();
 
 			if (m_env != null)
 			{
@@ -415,6 +418,7 @@ namespace MyGame.Client
 						rect.Stroke = Brushes.DarkGray;
 						rect.StrokeThickness = 4;
 						m_buildingCanvas.Children.Add(rect);
+						m_buildingRectMap[b] = rect;
 						UpdateBuildingRect(b, rect);
 					}
 				}
@@ -431,6 +435,7 @@ namespace MyGame.Client
 					rect.Stroke = Brushes.DarkGray;
 					rect.StrokeThickness = 4;
 					m_buildingCanvas.Children.Add(rect);
+					m_buildingRectMap[b] = rect;
 					UpdateBuildingRect(b, rect);
 				}
 			}
@@ -454,7 +459,7 @@ namespace MyGame.Client
 					return;
 
 				m_z = value;
-				m_mcd2d.Z = value;
+				m_mapControl.Z = value;
 				UpdateBuildings();
 
 				Notify("Z");
