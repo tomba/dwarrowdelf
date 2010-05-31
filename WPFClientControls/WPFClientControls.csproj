@@ -102,13 +102,13 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAPICodePack.DirectX, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="Microsoft.WindowsAPICodePack.DirectX, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\D2D\ReleaseWin32\Microsoft.WindowsAPICodePack.DirectX.dll</HintPath>
+      <HintPath>..\D2D\Releasex64\Microsoft.WindowsAPICodePack.DirectX.dll</HintPath>
     </Reference>
-    <Reference Include="SurfaceQueueInteropHelper, Version=1.0.3799.36978, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="SurfaceQueueInteropHelper, Version=1.0.3799.36806, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\D2D\ReleaseWin32\SurfaceQueueInteropHelper.dll</HintPath>
+      <HintPath>..\D2D\Releasex64\SurfaceQueueInteropHelper.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -128,6 +128,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IBitmapGenerator.cs" />
     <Compile Include="TileControlD2D.cs" />
     <Compile Include="D2DD3DImage.cs" />
     <Compile Include="MapControlBase2.cs" />

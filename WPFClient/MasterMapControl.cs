@@ -28,6 +28,8 @@ namespace MyGame.Client
 		Environment Environment { get; set; }
 		int Z { get; set; }
 		IntPoint CenterPos { get; set; }
+
+		event Action MapChanged;
 	}
 
 	/// <summary>
@@ -47,7 +49,7 @@ namespace MyGame.Client
 		DispatcherTimer m_hoverTimer;
 
 		IntPoint m_centerPos;
-		int m_tileSize = 32;
+		int m_tileSize;
 
 		Rectangle m_selectionRect;
 		IntPoint m_selectionStart;
@@ -71,10 +73,11 @@ namespace MyGame.Client
 			var grid = new Grid();
 			AddChild(grid);
 
-			//var mc = new MapControlD2D();
-			var mc = new MapControl();
+			var mc = new MapControlD2D();
+			//var mc = new MapControl();
 			grid.Children.Add(mc);
 			m_mapControl = mc;
+			m_mapControl.MapChanged += OnMapChanged;
 
 			m_canvas = new Canvas();
 			m_canvas.ClipToBounds = true;
@@ -102,6 +105,8 @@ namespace MyGame.Client
 			m_tileToolTip.PlacementTarget = this;
 			m_tileToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
 			m_tileToolTip.IsOpen = false;
+
+			this.TileSize = 32;
 		}
 
 		public int Columns { get { return m_mapControl.Columns; } }
@@ -119,9 +124,15 @@ namespace MyGame.Client
 				m_tileSize = value;
 				m_mapControl.TileSize = value;
 				UpdateSelectionRect();
-				foreach (var kvp in m_buildingRectMap)
-					UpdateBuildingRect(kvp.Key, kvp.Value);
+				UpdateBuildingPositions();
 			}
+		}
+
+		// Called when underlying MapControl changes
+		void OnMapChanged()
+		{
+			UpdateSelectionRect();
+			UpdateBuildingPositions();
 		}
 
 		public bool SelectionEnabled { get; set; }
@@ -404,6 +415,12 @@ namespace MyGame.Client
 			Canvas.SetTop(rect, sp.Y);
 			rect.Width = b.Area.Width * m_tileSize;
 			rect.Height = b.Area.Height * m_tileSize;
+		}
+
+		void UpdateBuildingPositions()
+		{
+			foreach (var kvp in m_buildingRectMap)
+				UpdateBuildingRect(kvp.Key, kvp.Value);
 		}
 
 		void UpdateBuildings()

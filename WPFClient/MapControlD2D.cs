@@ -32,12 +32,13 @@ namespace MyGame.Client
 		bool m_showVirtualSymbols = true;
 
 		TileControlD2D m_tileControlD2D;
-		BitmapSource[] m_bmpArray;
 
 		DispatcherTimer m_updateTimer;
 
 		IntPoint m_centerPos;
-		int m_tileSize = 32;
+		int m_tileSize;
+
+		public event Action MapChanged;
 
 		public MapControlD2D()
 		{
@@ -46,27 +47,20 @@ namespace MyGame.Client
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
 
 			m_tileControlD2D = new TileControlD2D();
+			m_tileControlD2D.TileMapChanged += OnTileMapChanged;
 			AddChild(m_tileControlD2D);
 		}
 
 		public int Columns { get { return m_tileControlD2D.Columns; } }
 		public int Rows { get { return m_tileControlD2D.Rows; } }
 
-		void UpdateTileBitmaps()
+		// Called when underlying TileControl changes
+		void OnTileMapChanged()
 		{
-			if (m_bitmapCache == null)
-			{
-				m_tileControlD2D.SetSymbolBitmaps(null, 0);
-			}
-			else
-			{
-				var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-				var len = (int)arr.Max() + 1;
-				m_bmpArray = new BitmapSource[len];
-				for (int i = 0; i < len; ++i)
-					m_bmpArray[i] = m_bitmapCache.GetBitmap((SymbolID)i, Colors.Black, false);
-				m_tileControlD2D.SetSymbolBitmaps(m_bmpArray, this.TileSize);
-			}
+			UpdateTiles();
+
+			if (MapChanged != null)
+				MapChanged();
 		}
 
 		public void InvalidateTiles()
@@ -83,6 +77,8 @@ namespace MyGame.Client
 
 		void UpdateTiles()
 		{
+			MyDebug.WriteLine("Update TileMap");
+
 			int columns = this.Columns;
 			int rows = this.Rows;
 			var map = m_tileControlD2D.TileMap;
@@ -112,8 +108,8 @@ namespace MyGame.Client
 			{
 				m_tileSize = value;
 				if (m_bitmapCache != null)
-					m_bitmapCache.TileSize = this.TileSize;
-				UpdateTileBitmaps();
+					m_bitmapCache.TileSize = value;
+				m_tileControlD2D.TileSize = value;
 				UpdateTiles();
 			}
 		}
@@ -156,6 +152,11 @@ namespace MyGame.Client
 			map[y, x, 1].Dark = data.InteriorDark;
 			map[y, x, 2].Dark = data.ObjectDark;
 			map[y, x, 3].Dark = data.TopDark;
+
+			map[y, x, 0].Color = Colors.Black;
+			map[y, x, 1].Color = Colors.Black;
+			map[y, x, 2].Color = data.ObjectColor;
+			map[y, x, 3].Color = Colors.Black;
 		}
 
 		public bool ShowVirtualSymbols
@@ -197,14 +198,14 @@ namespace MyGame.Client
 					{
 						m_world = m_env.World;
 						m_bitmapCache = new SymbolBitmapCache(m_world.SymbolDrawingCache, this.TileSize);
-						UpdateTileBitmaps();
+						m_tileControlD2D.BitmapGenerator = m_bitmapCache;
 					}
 				}
 				else
 				{
 					m_world = null;
 					m_bitmapCache = null;
-					UpdateTileBitmaps();
+					m_tileControlD2D.BitmapGenerator = null;
 				}
 
 				UpdateTiles();

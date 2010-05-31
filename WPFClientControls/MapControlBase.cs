@@ -18,6 +18,8 @@ namespace MyGame.Client
 		Visual[] m_tileCollection;
 		Visual[] m_backTileCollection;
 
+		public event Action MapChanged;
+
 		protected MapControlBase()
 		{
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Render);
@@ -140,6 +142,9 @@ namespace MyGame.Client
 				m_rows = newRows;
 
 				ReCreateMapTiles();
+
+				if (MapChanged != null)
+					MapChanged();
 			}
 
 			int i = 0;

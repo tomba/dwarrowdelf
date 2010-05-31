@@ -26,7 +26,7 @@ namespace MyGame.Client
 	{
 		public byte SymbolID;
 		public bool Dark;
-		// color?
+		public System.Windows.Media.Color Color;
 	}
 
 	/// <summary>
@@ -43,10 +43,11 @@ namespace MyGame.Client
 		// Maintained simply to detect changes in the interop back buffer
 		IntPtr m_pIDXGISurfacePreviousNoRef;
 
+		D2DD3DImage m_interopImage;
+
 		D2DBitmap m_atlasBitmap;
 
 		const int TileZ = 4;
-
 		MapD2DData[, ,] m_tileMap;
 		public MapD2DData[, ,] TileMap { get { return m_tileMap; } }
 
@@ -57,9 +58,11 @@ namespace MyGame.Client
 		public int Rows { get { return m_rows; } }
 
 		uint m_tileSize;
-		System.Windows.Media.Imaging.BitmapSource[] m_bitmapArray;
+		IBitmapGenerator m_bitmapGenerator;
 
-		D2DD3DImage m_interopImage;
+		Dictionary<System.Windows.Media.Color, D2DBitmap>[] m_colorTileArray;
+
+		public event Action TileMapChanged;
 
 		public TileControlD2D()
 		{
@@ -91,7 +94,6 @@ namespace MyGame.Client
 
 		void OnSizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			UpdateD2DSize();
 			UpdateTileMapSize();
 		}
 
@@ -100,21 +102,33 @@ namespace MyGame.Client
 			m_interopImage.RequestRender();
 		}
 
-		public void SetSymbolBitmaps(System.Windows.Media.Imaging.BitmapSource[] bitmapArray, int tileSize)
+		public int TileSize
 		{
-			m_bitmapArray = bitmapArray;
-			m_tileSize = (uint)tileSize;
-			UpdateTileMapSize();
-			CreateAtlas();
-			m_interopImage.RequestRender();
+			get { return (int)m_tileSize; }
+			set
+			{
+				m_tileSize = (uint)value;
+
+				m_tileMap = null;
+				m_atlasBitmap = null;
+				m_colorTileArray = null;
+
+				UpdateTileMapSize();
+			}
 		}
 
-		void UpdateD2DSize()
+		public IBitmapGenerator BitmapGenerator
 		{
-			uint surfWidth = (uint)Math.Ceiling(this.ActualWidth);
-			uint surfHeight = (uint)Math.Ceiling(this.ActualHeight);
+			get { return m_bitmapGenerator; }
+			set
+			{
+				m_bitmapGenerator = value;
 
-			m_interopImage.SetPixelSize(surfWidth, surfHeight);
+				m_atlasBitmap = null;
+				m_colorTileArray = null;
+
+				m_interopImage.RequestRender();
+			}
 		}
 
 		void UpdateTileMapSize()
@@ -122,41 +136,42 @@ namespace MyGame.Client
 			if (m_tileSize == 0)
 			{
 				m_tileMap = null;
+				m_interopImage.SetPixelSize(0, 0);
 				return;
 			}
 
-			int width = m_interopImage.PixelWidth;
-			int height = m_interopImage.PixelHeight;
+			int width = (int)Math.Ceiling(this.ActualWidth);
+			int height = (int)Math.Ceiling(this.ActualHeight);
 
 			int columns = MyMath.IntDivRound(width, (int)m_tileSize);
 			int rows = MyMath.IntDivRound(height, (int)m_tileSize);
 
-			if (columns != m_columns || rows != m_rows)
+			if (m_tileMap == null || (columns != m_columns || rows != m_rows))
 			{
 				m_columns = columns;
 				m_rows = rows;
 				m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
+				m_interopImage.SetPixelSize((uint)(m_columns * m_tileSize), (uint)(m_rows * m_tileSize));
+
+				if (TileMapChanged != null)
+					TileMapChanged();
 			}
 		}
 
 		void CreateAtlas()
 		{
-			if (m_renderTarget == null)
-				return;
-
-			if (m_bitmapArray == null)
-				return;
+			var numTiles = m_bitmapGenerator.NumDistinctBitmaps;
 
 			var tileSize = m_tileSize;
-			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)m_bitmapArray.Length, tileSize),
+			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)numTiles, tileSize),
 				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
 
 			const int bytesPerPixel = 4;
 			var arr = new byte[tileSize * tileSize * bytesPerPixel];
 
-			for (uint x = 0; x < m_bitmapArray.Length; ++x)
+			for (uint x = 0; x < numTiles; ++x)
 			{
-				var bmp = m_bitmapArray[x];
+				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, System.Windows.Media.Colors.Black, false);
 				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				m_atlasBitmap.CopyFromMemory(new RectU(x * tileSize, 0, x * tileSize + tileSize, tileSize), arr, tileSize * 4);
 			}
@@ -194,18 +209,22 @@ namespace MyGame.Client
 					return;
 				}
 
-				CreateAtlas();
+				m_atlasBitmap = null;
+				m_colorTileArray = null;
 			}
 
 			m_renderTarget.BeginDraw();
 
 			m_renderTarget.Clear(new ColorF(0, 0, 0, 1));
 
-			if (m_tileSize == 0 || m_atlasBitmap == null)
+			if (m_tileSize == 0 || m_bitmapGenerator == null)
 			{
 				m_renderTarget.EndDraw();
 				return;
 			}
+
+			if (m_atlasBitmap == null)
+				CreateAtlas();
 
 			var tileSize = m_tileSize;
 			SolidColorBrush blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
@@ -219,19 +238,56 @@ namespace MyGame.Client
 
 					for (int z = 0; z < TileZ; ++z)
 					{
-						byte tileNum = m_tileMap[y, x, z].SymbolID;
+						MapD2DData data;
+
+						data = m_tileMap[y, x, z];
+
+						byte tileNum = data.SymbolID;
 
 						if (tileNum == 0)
 							continue;
 
-						bool dark = m_tileMap[y, x, z].Dark;
-
-						uint xx = (uint)(tileNum * tileSize);
-
+						bool dark = data.Dark;
 						float opacity = dark ? 0.2f : 1.0f;
 
-						m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
-							dstRect, new RectF(xx, 0, xx + tileSize, tileSize));
+						if (data.Color != System.Windows.Media.Colors.Black)
+						{
+							Dictionary<System.Windows.Media.Color, D2DBitmap> dict;
+
+							if (m_colorTileArray == null)
+								m_colorTileArray = new Dictionary<System.Windows.Media.Color, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
+
+							dict = m_colorTileArray[data.SymbolID];
+
+							if (dict == null)
+							{
+								dict = new Dictionary<System.Windows.Media.Color, D2DBitmap>();
+								m_colorTileArray[data.SymbolID] = dict;
+							}
+
+							D2DBitmap bitmap;
+							if (dict.TryGetValue(data.Color, out bitmap) == false)
+							{
+								bitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize, tileSize),
+									new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
+
+								const int bytesPerPixel = 4;
+								var arr = new byte[tileSize * tileSize * bytesPerPixel];
+
+								var origBmp = m_bitmapGenerator.GetBitmap((SymbolID)data.SymbolID, data.Color, false);
+								origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
+								bitmap.CopyFromMemory(new RectU(0, 0, tileSize, tileSize), arr, tileSize * 4);
+							}
+
+							m_renderTarget.DrawBitmap(bitmap, opacity, BitmapInterpolationMode.Linear, dstRect);
+						}
+						else
+						{
+							uint xx = (uint)(tileNum * tileSize);
+
+							m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
+								dstRect, new RectF(xx, 0, xx + tileSize, tileSize));
+						}
 					}
 #if DEBUG_TEXT
 					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
@@ -239,7 +295,7 @@ namespace MyGame.Client
 				}
 			}
 
-			m_renderTarget.DrawLine(new Point2F(50, 0), new Point2F(0, 50), blackBrush, 2); 
+			m_renderTarget.DrawLine(new Point2F(50, 0), new Point2F(0, 50), blackBrush, 2);
 
 			m_renderTarget.EndDraw();
 		}

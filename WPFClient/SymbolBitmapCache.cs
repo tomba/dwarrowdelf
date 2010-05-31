@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 
 namespace MyGame.Client
 {
-	class SymbolBitmapCache
+	class SymbolBitmapCache : IBitmapGenerator
 	{
 		class CacheData
 		{
@@ -21,6 +21,7 @@ namespace MyGame.Client
 		Dictionary<SymbolID, Dictionary<Color, CacheData>> m_bitmapMap;
 
 		int m_size = 8;
+		int m_numDistinctBitmaps;
 
 		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, int size)
 		{
@@ -31,8 +32,9 @@ namespace MyGame.Client
 			m_size = size;
 
 			var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-			var max = arr.Max();
-			m_blackBitmapList = new CacheData[(int)max + 1];
+			var max = (int)arr.Max() + 1;
+			m_blackBitmapList = new CacheData[max];
+			m_numDistinctBitmaps = max;
 
 			m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
 		}
@@ -54,6 +56,11 @@ namespace MyGame.Client
 						m_blackBitmapList[i] = null;
 				}
 			}
+		}
+
+		public int NumDistinctBitmaps 
+		{
+			get { return m_numDistinctBitmaps; }
 		}
 
 		public BitmapSource GetBitmap(SymbolID symbolID, Color color, bool dark)
