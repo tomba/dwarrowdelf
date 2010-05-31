@@ -121,11 +121,23 @@ namespace MyGame.Client
 
 			set
 			{
+				if (value < 16)
+					return;
+
 				m_tileSize = value;
 				m_mapControl.TileSize = value;
 				UpdateSelectionRect();
 				UpdateBuildingPositions();
 			}
+		}
+
+		protected override void OnMouseWheel(MouseWheelEventArgs e)
+		{
+			base.OnMouseWheel(e);
+			if (e.Delta > 0)
+				this.TileSize += 8;
+			else
+				this.TileSize -= 8;
 		}
 
 		// Called when underlying MapControl changes

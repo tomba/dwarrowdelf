@@ -354,8 +354,6 @@ namespace MyGame.Client
 			else if (e.Key == Key.Subtract)
 			{
 				e.Handled = true;
-				if (map.TileSize <= 16)
-					return;
 				map.TileSize -= 8;
 			}
 
