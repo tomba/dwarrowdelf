@@ -73,8 +73,8 @@ namespace MyGame.Client
 			var grid = new Grid();
 			AddChild(grid);
 
-			var mc = new MapControlD2D();
-			//var mc = new MapControl();
+			//var mc = new MapControlD2D();
+			var mc = new MapControl();
 			grid.Children.Add(mc);
 			m_mapControl = mc;
 			m_mapControl.MapChanged += OnMapChanged;
