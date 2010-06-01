@@ -51,8 +51,6 @@ namespace MyGame.Client
 
 		IMapControl m_mapControl;
 
-		DispatcherTimer m_hoverTimer;
-
 		IntPoint m_centerPos;
 		int m_tileSize;
 
@@ -64,16 +62,10 @@ namespace MyGame.Client
 		Canvas m_buildingCanvas;
 		Dictionary<BuildingObject, Rectangle> m_buildingRectMap;
 
-		ToolTip m_tileToolTip;
-
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileInfo = new TileInfo();
-
-			m_hoverTimer = new DispatcherTimer(DispatcherPriority.Normal);
-			m_hoverTimer.Tick += HoverTimerTick;
-			m_hoverTimer.Interval = TimeSpan.FromMilliseconds(500);
 
 			var grid = new Grid();
 			AddChild(grid);
@@ -104,12 +96,6 @@ namespace MyGame.Client
 			grid.Children.Add(m_buildingCanvas);
 
 			m_buildingRectMap = new Dictionary<BuildingObject, Rectangle>();
-
-			m_tileToolTip = new ToolTip();
-			m_tileToolTip.Content = new ObjectInfoControl();
-			m_tileToolTip.PlacementTarget = this;
-			m_tileToolTip.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
-			m_tileToolTip.IsOpen = false;
 
 			this.TileSize = 32;
 		}
@@ -281,9 +267,6 @@ namespace MyGame.Client
 		{
 			UpdateHoverTileInfo(e.GetPosition(this));
 
-			m_hoverTimer.Stop();
-			m_hoverTimer.Start();
-
 			if (this.SelectionEnabled == false)
 				return;
 
@@ -335,36 +318,6 @@ namespace MyGame.Client
 			ReleaseMouseCapture();
 
 			base.OnMouseUp(e);
-		}
-
-		void HoverTimerTick(object sender, EventArgs e)
-		{
-			m_hoverTimer.Stop();
-
-			var p = Mouse.GetPosition(this);
-
-			if (this.Environment == null || !new Rect(this.RenderSize).Contains(p))
-			{
-				m_tileToolTip.IsOpen = false;
-				this.ToolTip = null;
-				return;
-			}
-
-			var ml = new IntPoint3D(ScreenPointToMapLocation(p), this.Z);
-			var objectList = this.Environment.GetContents(ml);
-			if (objectList == null || objectList.Count == 0)
-			{
-				m_tileToolTip.IsOpen = false;
-				this.ToolTip = null;
-				return;
-			}
-
-			m_tileToolTip.DataContext = objectList[0];
-
-			m_tileToolTip.HorizontalOffset = p.X;
-			m_tileToolTip.VerticalOffset = p.Y;
-			m_tileToolTip.IsOpen = true;
-			this.ToolTip = m_tileToolTip;
 		}
 
 
