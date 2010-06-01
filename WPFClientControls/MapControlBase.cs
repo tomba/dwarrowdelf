@@ -179,7 +179,7 @@ namespace MyGame.Client
 			return (UIElement)m_tileCollection[l.X + l.Y * m_columns];
 		}
 
-		IntPoint ScreenPointToScreenLocation(Point p)
+		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
 			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
@@ -191,11 +191,16 @@ namespace MyGame.Client
 			return loc + (IntVector)this.TopLeftPos;
 		}
 
-		Point MapLocationToScreenPoint(IntPoint loc)
+		public Point MapLocationToScreenPoint(IntPoint loc)
 		{
 			loc -= (IntVector)this.TopLeftPos;
 			loc = new IntPoint(loc.X, -loc.Y + 1);
 			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+		}
+
+		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		{
+			throw new NotImplementedException();
 		}
 
 		public void InvalidateTiles()

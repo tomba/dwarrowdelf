@@ -30,6 +30,11 @@ namespace MyGame.Client
 		IntPoint CenterPos { get; set; }
 
 		event Action MapChanged;
+
+		IntPoint ScreenPointToScreenLocation(Point p);
+		IntPoint ScreenPointToMapLocation(Point p);
+		Point ScreenLocationToScreenPoint(IntPoint loc);
+		Point MapLocationToScreenPoint(IntPoint loc);
 	}
 
 	/// <summary>
@@ -121,7 +126,7 @@ namespace MyGame.Client
 
 			set
 			{
-				if (value < 16)
+				if (value < 8)
 					return;
 
 				m_tileSize = value;
@@ -133,11 +138,29 @@ namespace MyGame.Client
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
-			base.OnMouseWheel(e);
+			// Zoom so that the tile under the mouse stays under the mouse
+			// XXX this could be improved. Somehow it doesn't feel quite right...
+
+			var p = e.GetPosition(this);
+			var ml1 = m_mapControl.ScreenPointToMapLocation(p);
+
 			if (e.Delta > 0)
 				this.TileSize += 8;
 			else
 				this.TileSize -= 8;
+
+			var ml2 = m_mapControl.ScreenPointToMapLocation(p);
+			var d = ml2 - m_mapControl.CenterPos;
+			var l = ml1 - d;
+
+			m_mapControl.CenterPos = l;
+
+			UpdateSelectionRect();
+			UpdateBuildingPositions();
+
+			e.Handled = true;
+
+			base.OnMouseWheel(e);
 		}
 
 		// Called when underlying MapControl changes
@@ -513,23 +536,14 @@ namespace MyGame.Client
 			}
 		}
 
-		IntPoint ScreenPointToScreenLocation(Point p)
-		{
-			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
-		}
-
 		public IntPoint ScreenPointToMapLocation(Point p)
 		{
-			var loc = ScreenPointToScreenLocation(p);
-			loc = new IntPoint(loc.X, -loc.Y);
-			return loc + (IntVector)this.TopLeftPos;
+			return m_mapControl.ScreenPointToMapLocation(p);
 		}
 
-		Point MapLocationToScreenPoint(IntPoint loc)
+		public Point MapLocationToScreenPoint(IntPoint loc)
 		{
-			loc -= (IntVector)this.TopLeftPos;
-			loc = new IntPoint(loc.X, -loc.Y + 1);
-			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			return m_mapControl.MapLocationToScreenPoint(loc);
 		}
 
 		void Notify(string name)

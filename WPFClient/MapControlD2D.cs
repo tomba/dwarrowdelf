@@ -254,6 +254,12 @@ namespace MyGame.Client
 			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 		}
 
+		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		{
+			throw new NotImplementedException();
+		}
+
+
 		void Notify(string name)
 		{
 			if (PropertyChanged != null)
