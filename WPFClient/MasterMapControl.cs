@@ -232,7 +232,10 @@ namespace MyGame.Client
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			if (this.SelectionEnabled == false)
+			{
+				base.OnMouseDown(e);
 				return;
+			}
 
 			if (e.LeftButton != MouseButtonState.Pressed)
 			{
@@ -241,16 +244,17 @@ namespace MyGame.Client
 			}
 
 			Point pos = e.GetPosition(this);
+			var ml = ScreenPointToMapLocation(pos);
 
-			var newStart = ScreenPointToMapLocation(pos);
-			var newEnd = newStart;
-
-			if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
+			if (this.SelectionRect.Contains(ml))
 			{
-				m_selectionStart = newStart;
-				m_selectionEnd = newEnd;
-				UpdateSelectionRect();
+				this.SelectionRect = new IntRect();
+				return;
 			}
+
+			m_selectionStart = ml;
+			m_selectionEnd = ml;
+			UpdateSelectionRect();
 
 			m_selectionRect.Visibility = Visibility.Visible;
 
@@ -268,7 +272,10 @@ namespace MyGame.Client
 			UpdateHoverTileInfo(e.GetPosition(this));
 
 			if (this.SelectionEnabled == false)
+			{
+				base.OnMouseMove(e);
 				return;
+			}
 
 			if (!IsMouseCaptured)
 			{
@@ -313,7 +320,10 @@ namespace MyGame.Client
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
 			if (this.SelectionEnabled == false)
+			{
+				base.OnMouseUp(e);
 				return;
+			}
 
 			ReleaseMouseCapture();
 
