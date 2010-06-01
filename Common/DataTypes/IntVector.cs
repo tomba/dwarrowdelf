@@ -85,6 +85,11 @@ namespace MyGame
 			return new IntVector(left.X * number, left.Y * number);
 		}
 
+		public static IntVector operator /(IntVector left, int number)
+		{
+			return new IntVector(left.X / number, left.Y / number);
+		}
+
 		public override int GetHashCode()
 		{
 			return (this.X << 16) | this.Y;
