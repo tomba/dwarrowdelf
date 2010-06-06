@@ -8,8 +8,8 @@
     <ProjectGuid>{8D34FF97-3C49-403C-BAAE-B81020947031}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LogViewer</RootNamespace>
-    <AssemblyName>LogViewer</AssemblyName>
+    <RootNamespace>MemoryMappedLog</RootNamespace>
+    <AssemblyName>MMLogViewer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -134,13 +134,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MemoryMappedLog\MemoryMappedLog.csproj">
+    <ProjectReference Include="..\MMLog\MMLog.csproj">
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
-      <Name>MemoryMappedLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Win32\Win32.csproj">
-      <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
-      <Name>Win32</Name>
+      <Name>MMLog</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

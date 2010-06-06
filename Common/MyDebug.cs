@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using MyGame.MemoryMappedLog;
+using MemoryMappedLog;
 using System.Threading;
 
 namespace MyGame

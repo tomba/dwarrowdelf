@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 
-namespace LogViewer
+namespace MemoryMappedLog
 {
 
 	public partial class RulesWindow : Window

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace MyGame.MemoryMappedLog
+namespace MemoryMappedLog
 {
 	public class LogEntry
 	{
