@@ -186,7 +186,7 @@
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MMLog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NetSerializer\NetSerializer.csproj">
+    <ProjectReference Include="..\NetSerializer\NetSerializer\NetSerializer.csproj">
       <Project>{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}</Project>
       <Name>NetSerializer</Name>
     </ProjectReference>

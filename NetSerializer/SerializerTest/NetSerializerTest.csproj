@@ -8,8 +8,8 @@
     <ProjectGuid>{09EA7D9F-F793-4AED-8B94-86995B57E7B0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SerializerTest</RootNamespace>
-    <AssemblyName>SerializerTest</AssemblyName>
+    <RootNamespace>NetSerializer</RootNamespace>
+    <AssemblyName>NetSerializerTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -78,13 +78,10 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
-      <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
-      <Name>Common %28Common\Common%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\NetSerializer\NetSerializer.csproj">
+    <ProjectReference Include="..\NetSerializer\NetSerializer.csproj">
       <Project>{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}</Project>
       <Name>NetSerializer</Name>
     </ProjectReference>
