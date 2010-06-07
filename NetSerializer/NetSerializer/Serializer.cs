@@ -81,6 +81,8 @@ namespace NetSerializer
 			else
 			{
 				var fields = GetFieldInfos(type);
+				// Sort the fields so that they are in the same order, regardless how Type.GetFields works
+				Array.Sort(fields, (a, b) => String.Compare(a.Name, b.Name));
 
 				foreach (var field in fields)
 				{

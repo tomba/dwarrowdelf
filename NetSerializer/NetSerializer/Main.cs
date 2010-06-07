@@ -96,8 +96,12 @@ namespace NetSerializer
 			foreach (var type in rootTypes)
 				CollectTypes(type, typeSet);
 
+			rootTypes = typeSet.ToArray();
+			// Sort the types so that we get the same typeID, regardless of the order in the HashSet
+			Array.Sort(rootTypes, (a, b) => String.Compare(a.FullName, b.FullName));
+
 			ushort typeID = 0;
-			foreach (var type in typeSet)
+			foreach (var type in rootTypes)
 			{
 				if (type.IsInterface)
 					continue;
