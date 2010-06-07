@@ -20,6 +20,12 @@ namespace NetSerializer
 			return dm;
 		}
 
+		static MethodBuilder GenerateStaticSerializerStub(TypeBuilder tb, Type type)
+		{
+			var mb = tb.DefineMethod("Serialize", MethodAttributes.Public | MethodAttributes.Static,  null, new Type[] { typeof(Stream), type });
+			return mb;
+		}
+
 		static void GenerateSerializerBody(Type type, ILGenerator il)
 		{
 			// arg0: Stream, arg1: value

@@ -50,6 +50,7 @@ namespace NetSerializer
 				throw new Exception();
 
 			s_map = new Dictionary<Type, TypeData>();
+			GenerateAssembly(rootTypes);
 			GenerateDynamic(rootTypes);
 		}
 
@@ -190,6 +191,54 @@ namespace NetSerializer
 			ilGen = deserializerSwitchMethod.GetILGenerator();
 			GenerateDeserializerSwitch(ilGen, s_map);
 			s_deserializerSwitch = (DeserializerSwitch)deserializerSwitchMethod.CreateDelegate(typeof(DeserializerSwitch));
+		}
+
+		static void GenerateAssembly(Type[] rootTypes)
+		{
+			AddTypes(rootTypes);
+
+			var types = s_map.Where(kvp => kvp.Value.IsStatic == false).Select(kvp => kvp.Key);
+
+			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("NetSerializerDebug"), AssemblyBuilderAccess.RunAndSave);
+			var modb = ab.DefineDynamicModule("NetSerializerDebug.dll");
+			var tb = modb.DefineType("NetSerializer", TypeAttributes.Public);
+
+			/* generate stubs */
+			foreach (var type in types)
+			{
+				var mb = GenerateStaticSerializerStub(tb, type);
+				s_map[type].WriterMethodInfo = mb;
+				s_map[type].WriterILGen = mb.GetILGenerator();
+			}
+
+			foreach (var type in types)
+			{
+				var dm = GenerateStaticDeserializerStub(tb, type);
+				s_map[type].ReaderMethodInfo = dm;
+				s_map[type].ReaderILGen = dm.GetILGenerator();
+			}
+
+			var serializerSwitchMethod = tb.DefineMethod("SerializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object) });
+			s_serializerSwitchMethodInfo = serializerSwitchMethod;
+
+			var deserializerSwitchMethod = tb.DefineMethod("DeserializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object).MakeByRefType() });
+			s_deserializerSwitchMethodInfo = deserializerSwitchMethod;
+
+			/* generate bodies */
+			foreach (var type in types)
+				GenerateSerializerBody(type, s_map[type].WriterILGen);
+
+			foreach (var type in types)
+				GenerateDeserializerBody(type, s_map[type].ReaderILGen);
+
+			var ilGen = serializerSwitchMethod.GetILGenerator();
+			GenerateSerializerSwitch(ilGen, s_map);
+
+			ilGen = deserializerSwitchMethod.GetILGenerator();
+			GenerateDeserializerSwitch(ilGen, s_map);
+
+			var t = tb.CreateType();
+			ab.Save("NetSerializerDebug.dll");
 		}
 
 		static ushort GetTypeID(Type type)

@@ -21,6 +21,13 @@ namespace NetSerializer
 			return dm;
 		}
 
+		static MethodBuilder GenerateStaticDeserializerStub(TypeBuilder tb, Type type)
+		{
+			var mb = tb.DefineMethod("Deserialize", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), type.MakeByRefType() });
+			mb.DefineParameter(2, ParameterAttributes.Out, "value");
+			return mb;
+		}
+
 		static void GenerateDeserializerBody(Type type, ILGenerator il)
 		{
 			// arg0: stream, arg1: out value
