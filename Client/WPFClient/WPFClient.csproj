@@ -238,6 +238,10 @@
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Server\Server\Server.csproj">
+      <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
+      <Name>Server %28Server\Server%29</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
       <Name>Win32</Name>
