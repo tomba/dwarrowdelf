@@ -20,10 +20,27 @@ namespace MemoryMappedLog
 {
 	public partial class MainWindow : Window
 	{
+		public class ViewableLogEntry
+		{
+			public ViewableLogEntry(LogEntry logEntry)
+			{
+				this.DateTime = logEntry.DateTime;
+				this.Component = logEntry.Component;
+				this.Thread = logEntry.Thread;
+				this.Message = logEntry.Message;
+			}
+
+			public DateTime DateTime { get; set; }
+			public TimeSpan TimeDiff { get; set; }
+			public string Component { get; set; }
+			public string Thread { get; set; }
+			public string Message { get; set; }
+		}
+
 		public List<LogRule> LogRules { get; private set; }
 
-		ObservableCollection<LogEntry> m_debugCollection = new ObservableCollection<LogEntry>();
-		public ObservableCollection<LogEntry> DebugEntries { get { return m_debugCollection; } }
+		ObservableCollection<ViewableLogEntry> m_debugCollection = new ObservableCollection<ViewableLogEntry>();
+		public ObservableCollection<ViewableLogEntry> DebugEntries { get { return m_debugCollection; } }
 		StreamWriter m_logFile;
 		bool m_scrollToEnd = true;
 		int m_logIndex;
@@ -100,7 +117,7 @@ namespace MemoryMappedLog
 
 		bool DataFilter(object item)
 		{
-			var entry = (LogEntry)item;
+			var entry = (ViewableLogEntry)item;
 
 			if (m_showOnlyRegex != null)
 			{
@@ -160,23 +177,43 @@ namespace MemoryMappedLog
 
 		public void Add(LogEntry entry)
 		{
-			m_debugCollection.Add(entry);
+			var ve = new ViewableLogEntry(entry);
+
+			if (m_debugCollection.Count > 0)
+			{
+				var last = m_debugCollection.Last();
+				var td = ve.DateTime - last.DateTime;
+				ve.TimeDiff = td;
+			}
+
+			m_debugCollection.Add(ve);
 
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
 
 			if (m_scrollToEnd)
-				logListView.ScrollIntoView(entry);
+				logListView.ScrollIntoView(ve);
 		}
 
 		public void AddRange(IEnumerable<LogEntry> entries)
 		{
-			LogEntry last = null;
+			ViewableLogEntry last = null;
+
+			if (m_debugCollection.Count > 0)
+				last = m_debugCollection.Last();
 
 			foreach (var e in entries)
 			{
-				m_debugCollection.Add(e);
-				last = e;
+				var ve = new ViewableLogEntry(e);
+
+				if (last != null)
+				{
+					var td = ve.DateTime - last.DateTime;
+					ve.TimeDiff = td;
+				}
+
+				m_debugCollection.Add(ve);
+				last = ve;
 
 				m_logFile.WriteLine(String.Format("{0} | {1}: {2}", e.DateTime, e.Component, e.Message));
 			}
@@ -279,12 +316,12 @@ namespace MemoryMappedLog
 		}
 	}
 
-	[ValueConversion(typeof(LogEntry), typeof(Brush))]
+	[ValueConversion(typeof(MainWindow.ViewableLogEntry), typeof(Brush))]
 	class LogEntryToBgBrushConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			var entry = (LogEntry)value;
+			var entry = (MainWindow.ViewableLogEntry)value;
 
 			foreach (var rule in Wnd.LogRules)
 			{
@@ -301,6 +338,22 @@ namespace MemoryMappedLog
 		}
 
 		public MainWindow Wnd { get; set; }
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	[ValueConversion(typeof(TimeSpan), typeof(String))]
+	class TimeDiffToStringConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var entry = (TimeSpan)value;
+			var num = Math.Round(entry.TotalMilliseconds);
+			return num.ToString();
+		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{

@@ -14,7 +14,7 @@ namespace MemoryMappedLog
             while (true)
             {
                 MMLog.Append("asd", "kala", String.Format("qwe {0}", i++));
-                System.Threading.Thread.Sleep(500);
+                System.Threading.Thread.Sleep(2000);
             }
         }
     }

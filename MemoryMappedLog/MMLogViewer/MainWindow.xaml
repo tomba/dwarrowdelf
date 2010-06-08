@@ -9,6 +9,7 @@
 
     <Window.Resources>
         <local:LogEntryToBgBrushConverter x:Key="bgConverter" />
+        <local:TimeDiffToStringConverter x:Key="timeDiffConverter" />
     </Window.Resources>
 
     <DockPanel>
@@ -69,6 +70,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Time" DisplayMemberBinding="{Binding DateTime,StringFormat='HH:mm:ss.ffff'}" />
+                    <GridViewColumn Header="TimeDiff" DisplayMemberBinding="{Binding TimeDiff, Converter={StaticResource timeDiffConverter}}" />
                     <GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
                     <GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
                     <GridViewColumn Header="Message">
