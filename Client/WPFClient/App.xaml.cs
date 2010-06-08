@@ -113,6 +113,9 @@ namespace MyGame.Client
 
 		void ServerThreadStart()
 		{
+			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+			Thread.CurrentThread.Name = "Main";
+
 			AppDomain domain = AppDomain.CreateDomain("ServerDomain");
 
 			string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
