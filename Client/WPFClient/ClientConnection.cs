@@ -112,7 +112,7 @@ namespace MyGame.Client
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			MyDebug.WriteLine("DeliverMessage {0}", msg);
+			//MyDebug.WriteLine("DeliverMessage {0}", msg);
 
 			Action<Message> f;
 			Type t = msg.GetType();

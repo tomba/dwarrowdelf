@@ -91,7 +91,7 @@ namespace MyGame
 
 			m_recvStream.WriteNotify(len);
 
-			MyDebug.WriteLine("[RX] {0} bytes", len);
+			//MyDebug.WriteLine("[RX] {0} bytes", len);
 
 			if (len == 0)
 			{
@@ -121,7 +121,7 @@ namespace MyGame
 						m_expectedLen = reader.ReadInt32() - 8;
 					}
 
-					MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
+					//MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
 
 					if (m_recvStream.UsedBytes < m_expectedLen && m_expectedLen > m_recvStream.FreeBytes)
 						throw new Exception("message bigger than the receive buffer");
@@ -133,8 +133,7 @@ namespace MyGame
 
 					msg = Serializer.Deserialize(m_recvStream);
 
-					MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
-					//MyDebug.WriteLine("[RX] {0}", msg);
+					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
 					if (ReceiveEvent != null)
 						ReceiveEvent(msg);
 
@@ -145,7 +144,7 @@ namespace MyGame
 				}
 				else
 				{
-					MyDebug.WriteLine("[RX] {0} != {1}", m_expectedLen, m_recvStream.UsedBytes);
+					//MyDebug.WriteLine("[RX] {0} != {1}", m_expectedLen, m_recvStream.UsedBytes);
 					break;
 				}
 			}
@@ -162,7 +161,7 @@ namespace MyGame
 
 		public virtual void Send(Message msg)
 		{
-			MyDebug.WriteLine("[TX] {0}", msg);
+			//MyDebug.WriteLine("[TX] {0}", msg);
 
 			int len;
 
@@ -174,7 +173,7 @@ namespace MyGame
 					stream.Seek(8, SeekOrigin.Begin);
 					Serializer.Serialize(stream, msg);
 					len = (int)stream.Position;
-					MyDebug.WriteLine("[TX] sending {0} bytes", len);
+					//MyDebug.WriteLine("[TX] sending {0} bytes", len);
 
 					// Prepend the object data with magic and object len
 					stream.Seek(0, SeekOrigin.Begin);

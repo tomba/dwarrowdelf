@@ -350,5 +350,4 @@ namespace MyGame.ClientMsgs
 			return "ControllablesData";
 		}
 	}
-
 }
