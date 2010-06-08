@@ -50,7 +50,9 @@ namespace NetSerializer
 				throw new Exception();
 
 			s_map = new Dictionary<Type, TypeData>();
+#if DEBUG
 			GenerateAssembly(rootTypes);
+#endif
 			GenerateDynamic(rootTypes);
 		}
 
