@@ -72,20 +72,20 @@ namespace MyGame.Server
 		public abstract ClientMsgs.Message Serialize();
 		public abstract void SerializeTo(Action<ClientMsgs.Message> writer);
 
-		static Dictionary<Type, List<PropertyDefinition>> m_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
+		static Dictionary<Type, List<PropertyDefinition>> s_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
 
 		static protected PropertyDefinition RegisterProperty(Type ownerType, PropertyID propertyID, PropertyVisibility visibility, object defaultValue,
 			PropertyChangedCallback propertyChangedCallback = null)
 		{
 			List<PropertyDefinition> propList;
 
-			if (m_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
-				m_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
+			if (s_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
+				s_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
 
-			Debug.Assert(!m_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
+			Debug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
 
 			var prop = new PropertyDefinition(propertyID, visibility, defaultValue, propertyChangedCallback);
-			m_propertyDefinitionMap[ownerType].Add(prop);
+			s_propertyDefinitionMap[ownerType].Add(prop);
 
 			return prop;
 		}
@@ -125,10 +125,10 @@ namespace MyGame.Server
 			var type = GetType();
 			do
 			{
-				if (!m_propertyDefinitionMap.ContainsKey(type))
+				if (!s_propertyDefinitionMap.ContainsKey(type))
 					continue;
 
-				var defProps = m_propertyDefinitionMap[type].
+				var defProps = s_propertyDefinitionMap[type].
 					Where(pd => !setProps.Any(pp => pd.PropertyID == pp.Item1)).
 					Select(pd => new Tuple<PropertyID, object>(pd.PropertyID, pd.DefaultValue));
 

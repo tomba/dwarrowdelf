@@ -157,12 +157,12 @@ namespace MyGame.Server
 			m_connection = null;
 		}
 
-		public void Send(Message msg)
+		void Send(Message msg)
 		{
 			m_connection.Send(msg);
 		}
 
-		public void Send(IEnumerable<Message> msgs)
+		void Send(IEnumerable<Message> msgs)
 		{
 			foreach (var msg in msgs)
 				Send(msg);
@@ -228,7 +228,7 @@ namespace MyGame.Server
 			{
 				foreach (var env in m_world.Environments)
 				{
-					env.SerializeTo(m_connection.Send);
+					env.SerializeTo(Send);
 				}
 			}
 
@@ -552,7 +552,7 @@ namespace MyGame.Server
 		}
 
 		// Collect all objects in the given location map
-		HashSet<ServerGameObject> CollectObjects(Dictionary<Environment, HashSet<IntPoint3D>> knownLocs)
+		static HashSet<ServerGameObject> CollectObjects(Dictionary<Environment, HashSet<IntPoint3D>> knownLocs)
 		{
 			var knownObs = new HashSet<ServerGameObject>();
 
@@ -573,7 +573,7 @@ namespace MyGame.Server
 		}
 
 		// Collect locations that are newly visible
-		Dictionary<Environment, HashSet<IntPoint3D>> CollectRevealedLocations(Dictionary<Environment, HashSet<IntPoint3D>> oldLocs,
+		static Dictionary<Environment, HashSet<IntPoint3D>> CollectRevealedLocations(Dictionary<Environment, HashSet<IntPoint3D>> oldLocs,
 			Dictionary<Environment, HashSet<IntPoint3D>> newLocs)
 		{
 			var revealedLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
@@ -590,7 +590,7 @@ namespace MyGame.Server
 		}
 
 		// Collect objects that are newly visible
-		ServerGameObject[] CollectRevealedObjects(HashSet<ServerGameObject> oldObjects, HashSet<ServerGameObject> newObjects)
+		static ServerGameObject[] CollectRevealedObjects(HashSet<ServerGameObject> oldObjects, HashSet<ServerGameObject> newObjects)
 		{
 			var revealedObs = newObjects.Except(oldObjects).ToArray();
 			return revealedObs;
@@ -818,7 +818,7 @@ namespace MyGame.Server
 
 
 
-		IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
+		static IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
 		{
 			var msgs = revealedObs.Select(o => o.Serialize());
 			return msgs;
