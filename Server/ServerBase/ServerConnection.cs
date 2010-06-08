@@ -21,8 +21,17 @@ namespace MyGame.Server
 
 		enum WorldInvokeStyle
 		{
+			/// <summary>
+			/// Call directly
+			/// </summary>
 			None,
+			/// <summary>
+			/// Use world.BeginInvoke()
+			/// </summary>
 			Normal,
+			/// <summary>
+			/// Use world.BeginInvokeInstant()
+			/// </summary>
 			Instant,
 		}
 
@@ -227,9 +236,7 @@ namespace MyGame.Server
 			if (m_seeAll)
 			{
 				foreach (var env in m_world.Environments)
-				{
 					env.SerializeTo(Send);
-				}
 			}
 
 			m_world.HandleEndOfTurn += HandleEndOfTurn;
