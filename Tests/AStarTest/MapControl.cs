@@ -286,12 +286,11 @@ namespace AStarTest
 		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
 		{
 			var map = m_map;
-
-			foreach (var v in IntVector.GetAllXYDirections())
+			foreach (var d in DirectionExtensions.PlanarDirections)
 			{
-				var l = p + v;
+				var l = p + d;
 				if (map.Bounds.Contains(l) && map.GetBlocked(l) == false)
-					yield return v.ToDirection();
+					yield return d;
 			}
 
 			var stairs = m_map.GetStairs(p);
