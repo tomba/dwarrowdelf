@@ -27,6 +27,7 @@ namespace MyGame.Client
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(15);
 
 			m_tileCollection = new Visual[0];
+			m_backTileCollection = new Visual[0];
 
 			ClipToBounds = true; // does this slow down?
 		}
