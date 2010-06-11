@@ -21,7 +21,7 @@ namespace AStarTest
 		public Stairs Stairs;
 	}
 
-	class Map : Grid3DBase<AStarMapTile>
+	class Map : ArrayGrid3D<AStarMapTile>
 	{
 		public Map(int width, int height, int depth)
 			: base(width, height, depth)

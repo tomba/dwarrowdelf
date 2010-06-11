@@ -10,13 +10,13 @@ namespace MyGame
 	 */
 	public abstract class GrowingGrid2DBase<T>
 	{
-		protected class Block : Grid2DBase<T>
+		protected class Block : ArrayGrid2D<T>
 		{
 			public Block(int size) : base(size, size) { }
 			public new T[,] Grid { get { return base.Grid; } }
 		}
 
-		class MainGrid : Grid2DBase<Block>
+		class MainGrid : ArrayGrid2D<Block>
 		{
 			public MainGrid(int width, int height) : base(width, height) { }
 			public Block this[int x, int y]

@@ -123,14 +123,14 @@
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />
     <Compile Include="AStar\AStar3D.cs" />
-    <Compile Include="DataTypes\Grid3DBase.cs" />
+    <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataTypes\IntVector3D.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
-    <Compile Include="DataTypes\Grid2DBase.cs" />
+    <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Floors.cs" />
     <Compile Include="Interiors.cs" />
