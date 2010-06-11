@@ -36,10 +36,21 @@ namespace MyGame
 
 	public static class DirectionExtensions
 	{
+		/// <summary>
+		/// Cardinal Directions (4)
+		/// </summary>
 		public static readonly ReadOnlyCollection<Direction> CardinalDirections;
+		/// <summary>
+		/// Intercardinal Directions (4)
+		/// </summary>
 		public static readonly ReadOnlyCollection<Direction> IntercardinalDirections;
+		/// <summary>
+		/// Planar Directions (8)
+		/// </summary>
 		public static readonly ReadOnlyCollection<Direction> PlanarDirections;
-
+		/// <summary>
+		/// Cardinal + Up & Down (6)
+		/// </summary>
 		public static readonly ReadOnlyCollection<Direction> CardinalUpDownDirections;
 
 		static DirectionExtensions()
