@@ -789,7 +789,7 @@ namespace MyGame.Client
 
 		void OnLoggedOn()
 		{
-			map.CenterPos = new IntPoint(10, 10);
+			//map.CenterPos = new IntPoint(10, 10);
 			map.Z = 9;
 
 			m_loginDialog.Close();

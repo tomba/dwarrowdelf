@@ -136,10 +136,10 @@ namespace MyGame.Client
 				this.TileSize -= 8;
 
 			var ml2 = m_mapControl.ScreenPointToMapLocation(p);
-			var d = ml2 - m_mapControl.CenterPos;
+			var d = ml2 - this.CenterPos;
 			var l = ml1 - d;
 
-			m_mapControl.CenterPos = l;
+			this.CenterPos = l;
 
 			UpdateSelectionRect();
 			UpdateBuildingPositions();
@@ -354,6 +354,8 @@ namespace MyGame.Client
 
 				foreach (var kvp in m_buildingRectMap)
 					UpdateBuildingRect(kvp.Key, kvp.Value);
+
+				Notify("CenterPos");
 			}
 		}
 

@@ -142,6 +142,16 @@
             <TextBlock>FPS</TextBlock>
             <TextBox Name="fpsTextBlock" Width="50" IsReadOnly="True" />
 
+            <Separator />
+            <TextBlock>CenterPos</TextBlock>
+            <TextBox Width="50" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding ElementName="map" Path="CenterPos.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="CenterPos.Y" Mode="OneWay" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
         </StatusBar>
 
         <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">

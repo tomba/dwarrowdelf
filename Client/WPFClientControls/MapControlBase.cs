@@ -47,21 +47,29 @@ namespace MyGame.Client
 			{
 				SetValue(TileSizeProperty, value);
 
-				int newColumns = (int)Math.Ceiling(this.ActualWidth / this.TileSize);
-				int newRows = (int)Math.Ceiling(this.ActualHeight / this.TileSize);
-
-				if (newColumns != m_columns || newRows != m_rows)
-				{
-					m_columns = newColumns;
-					m_rows = newRows;
-
-					ReCreateMapTiles();
-				}
-
+				UpdateColumnsRows(this.RenderSize, value);
+				UpdateOffset(this.RenderSize, value);
 			}
 		}
 
-		public IntPoint TopLeftPos
+		void UpdateColumnsRows(Size size, int tileSize)
+		{
+			int newColumns = (int)Math.Ceiling(size.Width / tileSize) | 1;
+			int newRows = (int)Math.Ceiling(size.Height / tileSize) | 1;
+
+			if (newColumns != m_columns || newRows != m_rows)
+			{
+				m_columns = newColumns;
+				m_rows = newRows;
+
+				ReCreateMapTiles();
+
+				if (MapChanged != null)
+					MapChanged();
+			}
+		}
+
+		protected IntPoint TopLeftPos
 		{
 			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
 		}
@@ -137,28 +145,29 @@ namespace MyGame.Client
 			UpdateTiles();
 		}
 
+		Vector m_offset;
+		void UpdateOffset(Size size, int tileSize)
+		{
+			var dx = ((tileSize * m_columns) - size.Width) / 2;
+			var dy = ((tileSize * m_rows) - size.Height) / 2;
+			m_offset = new Vector(dx, dy);
+		}
+
 		protected override Size ArrangeOverride(Size s)
 		{
-			int newColumns = (int)Math.Ceiling(s.Width / this.TileSize);
-			int newRows = (int)Math.Ceiling(s.Height / this.TileSize);
-
-			if (newColumns != m_columns || newRows != m_rows)
-			{
-				m_columns = newColumns;
-				m_rows = newRows;
-
-				ReCreateMapTiles();
-
-				if (MapChanged != null)
-					MapChanged();
-			}
+			UpdateColumnsRows(s, this.TileSize);
+			UpdateOffset(s, this.TileSize);
 
 			int i = 0;
 			foreach (UIElement tile in m_tileCollection)
 			{
 				int y = i / m_columns;
 				int x = i % m_columns;
-				tile.Arrange(new Rect(x * this.TileSize, y * this.TileSize, this.TileSize, this.TileSize));
+
+				var p = new Point(x * this.TileSize, y * this.TileSize);
+				p -= m_offset;
+				var rect = new Rect(p, new Size(this.TileSize, this.TileSize));
+				tile.Arrange(rect);
 				++i;
 			}
 
@@ -187,6 +196,7 @@ namespace MyGame.Client
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
+			p += m_offset;
 			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
@@ -201,7 +211,9 @@ namespace MyGame.Client
 		{
 			loc -= (IntVector)this.TopLeftPos;
 			loc = new IntPoint(loc.X, -loc.Y + 1);
-			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			p -= m_offset;
+			return p;
 		}
 
 		public Point ScreenLocationToScreenPoint(IntPoint loc)
@@ -224,8 +236,6 @@ namespace MyGame.Client
 
 		protected void UpdateTiles()
 		{
-			MyDebug.WriteLine("{0}x{1}", m_columns, m_rows);
-
 			int i = 0;
 			foreach (UIElement tile in m_tileCollection)
 			{

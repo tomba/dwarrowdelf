@@ -55,6 +55,7 @@ namespace MyGame.Client
 			var size = new IntSize(this.Columns, this.Rows);
 			if (m_renderView.Size != size)
 				m_renderView.Size = size;
+
 			var v = new IntVector(-this.TopLeftPos.X, this.Rows - this.TopLeftPos.Y - 1);
 			if (v != m_renderView.Offset)
 				m_renderView.Offset = v;
