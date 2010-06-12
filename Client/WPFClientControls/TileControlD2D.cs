@@ -74,7 +74,6 @@ namespace MyGame.Client
 			this.Content = img;
 
 			this.Loaded += OnLoaded;
-			this.SizeChanged += OnSizeChanged;
 		}
 
 		void OnLoaded(object sender, RoutedEventArgs e)
@@ -92,8 +91,10 @@ namespace MyGame.Client
 			m_interopImage.RequestRender();
 		}
 
-		void OnSizeChanged(object sender, SizeChangedEventArgs e)
+		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
+			base.OnRenderSizeChanged(sizeInfo);
+
 			UpdateTileMapSize();
 		}
 
