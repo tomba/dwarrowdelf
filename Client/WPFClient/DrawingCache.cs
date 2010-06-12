@@ -11,10 +11,9 @@ namespace MyGame.Client
 	class DrawingCache
 	{
 		/* [ name of the drawing -> [ tile colorization -> drawing ] ] */
-		/* color black == no colorization */
-		Dictionary<string, Dictionary<Color, Drawing>> m_drawingMap;
+		Dictionary<string, Dictionary<GameColor, Drawing>> m_drawingMap;
 
-		Dictionary<char, Dictionary<Color, Drawing>> m_charDrawingMap;
+		Dictionary<char, Dictionary<GameColor, Drawing>> m_charDrawingMap;
 
 		public DrawingCache()
 		{
@@ -22,21 +21,21 @@ namespace MyGame.Client
 
 			var uri = new Uri("SymbolDrawings.xaml", UriKind.Relative);
 			var symbolResources = (ResourceDictionary)Application.LoadComponent(uri);
-			m_drawingMap = new Dictionary<string, Dictionary<Color, Drawing>>(symbolResources.Count);
+			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(symbolResources.Count);
 			foreach (System.Collections.DictionaryEntry de in symbolResources)
 			{
 				Drawing drawing = ((DrawingBrush)de.Value).Drawing;
 				string name = (string)de.Key;
-				m_drawingMap[name] = new Dictionary<Color, Drawing>();
-				m_drawingMap[name][Colors.Black] = drawing;
+				m_drawingMap[name] = new Dictionary<GameColor, Drawing>();
+				m_drawingMap[name][GameColor.None] = drawing;
 			}
 
-			m_charDrawingMap = new Dictionary<char, Dictionary<Color, Drawing>>();
+			m_charDrawingMap = new Dictionary<char, Dictionary<GameColor, Drawing>>();
 		}
 
-		public Drawing GetDrawing(string drawingName, Color color)
+		public Drawing GetDrawing(string drawingName, GameColor color)
 		{
-			Dictionary<Color, Drawing> map;
+			Dictionary<GameColor, Drawing> map;
 			Drawing drawing;
 
 			if (!m_drawingMap.TryGetValue(drawingName, out map))
@@ -44,8 +43,8 @@ namespace MyGame.Client
 
 			if (!map.TryGetValue(color, out drawing))
 			{
-				drawing = m_drawingMap[drawingName][Colors.Black].Clone();
-				ColorizeDrawing(drawing, color);
+				drawing = m_drawingMap[drawingName][GameColor.None].Clone();
+				ColorizeDrawing(drawing, color.ToColor());
 				drawing.Freeze();
 				map[color] = drawing;
 			}
@@ -53,21 +52,20 @@ namespace MyGame.Client
 			return drawing;
 		}
 
-		public Drawing GetCharacterDrawing(char character, Color color, bool fillBg)
+		public Drawing GetCharacterDrawing(char character, GameColor color, bool fillBg)
 		{
-			Dictionary<Color, Drawing> map;
+			Dictionary<GameColor, Drawing> map;
 			Drawing drawing;
 
 			if (!m_charDrawingMap.TryGetValue(character, out map))
 			{
-				map = new Dictionary<Color, Drawing>();
+				map = new Dictionary<GameColor, Drawing>();
 				m_charDrawingMap[character] = map;
 			}
 
 			if (!map.TryGetValue(color, out drawing))
 			{
 				drawing = CreateCharacterDrawing(character, color, fillBg).Clone();
-				ColorizeDrawing(drawing, color);
 				drawing.Freeze();
 				map[color] = drawing;
 			}
@@ -242,13 +240,16 @@ namespace MyGame.Client
 			return Color.FromArgb(c.A, r, g, b);
 		}
 
-		static Drawing CreateCharacterDrawing(char c, Color color, bool fillBg)
+		static Drawing CreateCharacterDrawing(char ch, GameColor color, bool fillBg)
 		{
-			if (color == Colors.Black)
-				color = Colors.White;
+			Color c;
+			if (color == GameColor.None)
+				c = Colors.White;
+			else
+				c = color.ToColor();
 
 			DrawingGroup dGroup = new DrawingGroup();
-			Brush brush = new SolidColorBrush(color);
+			Brush brush = new SolidColorBrush(c);
 			using (DrawingContext dc = dGroup.Open())
 			{
 				var typeFace = new Typeface(new FontFamily("Lucida Console"),
@@ -257,7 +258,7 @@ namespace MyGame.Client
 					FontStretches.Normal);
 
 				var formattedText = new FormattedText(
-						c.ToString(),
+						ch.ToString(),
 						System.Globalization.CultureInfo.GetCultureInfo("en-us"),
 						FlowDirection.LeftToRight,
 						typeFace,

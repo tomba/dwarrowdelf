@@ -15,7 +15,7 @@ namespace MyGame.Client
 		public bool InteriorDark;
 
 		public SymbolID ObjectSymbolID;
-		public Color ObjectColor;
+		public GameColor ObjectColor;
 		public bool ObjectDark;
 
 		public SymbolID TopSymbolID;
@@ -250,18 +250,18 @@ namespace MyGame.Client
 			return id;
 		}
 
-		static SymbolID GetObjectBitmap(IntPoint3D ml, Environment env, out Color color)
+		static SymbolID GetObjectBitmap(IntPoint3D ml, Environment env, out GameColor color)
 		{
 			IList<ClientGameObject> obs = env.GetContents(ml);
 			if (obs != null && obs.Count > 0)
 			{
 				var id = obs[0].SymbolID;
-				color = obs[0].Color;
+				color = obs[0].GameColor;
 				return id;
 			}
 			else
 			{
-				color = Colors.Black;
+				color = GameColor.None;
 				return SymbolID.Undefined;
 			}
 		}

@@ -15,7 +15,7 @@
             <TextBlock Text="{Binding Name}" />
 
             <TextBlock>Color</TextBlock>
-            <TextBlock Text="{Binding Color}" />
+            <TextBlock Text="{Binding GameColor}" />
 
             <TextBlock>Material</TextBlock>
             <TextBlock Text="{Binding Material.Name}" />

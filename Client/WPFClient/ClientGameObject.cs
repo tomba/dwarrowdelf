@@ -114,7 +114,6 @@ namespace MyGame.Client
 		{
 			m_inventory = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
-			this.Color = Colors.Black;
 		}
 
 
@@ -165,15 +164,6 @@ namespace MyGame.Client
 
 
 
-		public Color Color
-		{
-			get { return (Color)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
-		}
-
-		public static readonly DependencyProperty ColorProperty =
-			DependencyProperty.Register("Color", typeof(Color), typeof(ClientGameObject), new UIPropertyMetadata(Colors.Black, UpdateDrawing));
-
 		public GameColor GameColor
 		{
 			get { return (GameColor)GetValue(GameColorProperty); }
@@ -181,15 +171,8 @@ namespace MyGame.Client
 		}
 
 		public static readonly DependencyProperty GameColorProperty =
-			RegisterGameProperty(PropertyID.Color, "GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColors.Black, UpdateColor));
+			RegisterGameProperty(PropertyID.Color, "GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColor.None, UpdateDrawing));
 
-		static void UpdateColor(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var ob = (ClientGameObject)d;
-			GameColor gc = (GameColor)e.NewValue;
-			Color c = gc.ToColor();
-			ob.SetValue(ColorProperty, c);
-		}
 
 
 		public SymbolID SymbolID
@@ -240,7 +223,7 @@ namespace MyGame.Client
 		static void UpdateDrawing(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var ob = (ClientGameObject)d;
-			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.Color));
+			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.GameColor));
 			if (ob.Environment != null)
 				ob.Environment.OnObjectVisualChanged(ob);
 		}

@@ -27,7 +27,7 @@ namespace MyGame.Client
 
 		IList<SymbolInfo> m_symbolInfoList;
 		DrawingCache m_drawingCache;
-		Dictionary<SymbolID, Dictionary<Color, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<Color, Drawing>>();
+		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
 		bool m_useOnlyChars = false;
 
@@ -37,14 +37,14 @@ namespace MyGame.Client
 			ParseSymbols();
 		}
 
-		public Drawing GetDrawing(SymbolID symbolID, Color color)
+		public Drawing GetDrawing(SymbolID symbolID, GameColor color)
 		{
-			Dictionary<Color, Drawing> map;
+			Dictionary<GameColor, Drawing> map;
 			Drawing drawing;
 			
 			if (!m_drawingMap.TryGetValue(symbolID, out map))
 			{
-				map = new Dictionary<Color, Drawing>();
+				map = new Dictionary<GameColor, Drawing>();
 				m_drawingMap[symbolID] = map;
 			}
 
@@ -57,7 +57,7 @@ namespace MyGame.Client
 			return drawing;
 		}
 
-		Drawing CreateDrawing(SymbolID symbolID, Color color)
+		Drawing CreateDrawing(SymbolID symbolID, GameColor color)
 		{
 			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
 			Drawing drawing;

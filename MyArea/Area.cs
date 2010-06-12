@@ -208,13 +208,16 @@ namespace MyArea
 			for (int i = 0; i < 1; ++i)
 			{
 				// Add a monster
-				var monster = new Living(world, String.Format("monsu{0}", i));
-				monster.SymbolID = SymbolID.Monster;
+				var monster = new Living(world, String.Format("monsu{0}", i))
+				{
+					SymbolID = SymbolID.Monster,
+					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
+				};
+
+				monster.Actor = new MonsterActor(monster);
+				
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
-				var monsterAI = new MonsterActor(monster);
-				monster.Actor = monsterAI;
-				monster.Color = new GameColor((byte)m_random.Next(256), (byte)m_random.Next(256), (byte)m_random.Next(256));
 			}
 
 			// Add items
@@ -224,7 +227,7 @@ namespace MyArea
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),
-					Color = new GameColor((byte)m_random.Next(256), (byte)m_random.Next(256), (byte)m_random.Next(256)),
+					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 					MaterialID = diamond,
 				};
 
@@ -237,7 +240,7 @@ namespace MyArea
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "red gem",
-					Color = GameColors.Red,
+					Color = GameColor.Red,
 					MaterialID = diamond,
 				};
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
@@ -317,7 +320,7 @@ namespace MyArea
 				{
 					SymbolID = SymbolID.Key,
 					Name = "water gen",
-					Color = GameColors.Red,
+					Color = GameColor.Red,
 					MaterialID = diamond,
 				};
 

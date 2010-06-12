@@ -26,7 +26,7 @@ namespace MyGame.Client
 	{
 		public byte SymbolID;
 		public bool Dark;
-		public System.Windows.Media.Color Color;
+		public GameColor Color;
 	}
 
 	/// <summary>
@@ -60,7 +60,7 @@ namespace MyGame.Client
 		uint m_tileSize;
 		IBitmapGenerator m_bitmapGenerator;
 
-		Dictionary<System.Windows.Media.Color, D2DBitmap>[] m_colorTileArray;
+		Dictionary<GameColor, D2DBitmap>[] m_colorTileArray;
 
 		public event Action TileMapChanged;
 
@@ -172,7 +172,7 @@ namespace MyGame.Client
 
 			for (uint x = 0; x < numTiles; ++x)
 			{
-				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, System.Windows.Media.Colors.Black, false);
+				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, GameColor.None, false);
 				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				m_atlasBitmap.CopyFromMemory(new RectU(x * tileSize, 0, x * tileSize + tileSize, tileSize), arr, tileSize * 4);
 			}
@@ -251,18 +251,18 @@ namespace MyGame.Client
 						bool dark = data.Dark;
 						float opacity = dark ? 0.2f : 1.0f;
 
-						if (data.Color != System.Windows.Media.Colors.Black)
+						if (data.Color != GameColor.None)
 						{
-							Dictionary<System.Windows.Media.Color, D2DBitmap> dict;
+							Dictionary<GameColor, D2DBitmap> dict;
 
 							if (m_colorTileArray == null)
-								m_colorTileArray = new Dictionary<System.Windows.Media.Color, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
+								m_colorTileArray = new Dictionary<GameColor, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
 
 							dict = m_colorTileArray[data.SymbolID];
 
 							if (dict == null)
 							{
-								dict = new Dictionary<System.Windows.Media.Color, D2DBitmap>();
+								dict = new Dictionary<GameColor, D2DBitmap>();
 								m_colorTileArray[data.SymbolID] = dict;
 							}
 

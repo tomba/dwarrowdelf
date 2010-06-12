@@ -12,7 +12,8 @@ namespace MyGame.Client
 	{
 		public static System.Windows.Media.Color ToColor(this GameColor color)
 		{
-			return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
+			var rgb = new GameColorRGB(color);
+			return System.Windows.Media.Color.FromRgb(rgb.R, rgb.G, rgb.B);
 		}
 	}
 

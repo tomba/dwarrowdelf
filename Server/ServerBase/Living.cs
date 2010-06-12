@@ -117,19 +117,6 @@ namespace MyGame.Server
 			set { SetValue(WaterFullnessProperty, value); }
 		}
 
-		/* for debug */
-		public string ColorStr
-		{
-			set
-			{
-				var c = uint.Parse(value, System.Globalization.NumberStyles.HexNumber);
-				byte r = (byte)((c >> 16) & 0xff);
-				byte g = (byte)((c >> 8) & 0xff);
-				byte b = (byte)((c >> 0) & 0xff);
-				this.Color = new GameColor(r, g, b);
-			}
-		}
-
 		public IActor Actor
 		{
 			get { return m_actorImpl; }

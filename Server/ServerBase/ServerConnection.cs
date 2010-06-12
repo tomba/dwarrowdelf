@@ -374,7 +374,7 @@ namespace MyGame.Server
 			{
 				Name = "jalokivi2",
 				SymbolID = SymbolID.Gem,
-				Color = GameColors.Green,
+				Color = GameColor.Green,
 				MaterialID = diamond,
 			};
 			item.MoveTo(player);

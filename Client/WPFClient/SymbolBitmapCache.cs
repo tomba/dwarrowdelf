@@ -18,7 +18,7 @@ namespace MyGame.Client
 		SymbolDrawingCache m_symbolDrawingCache;
 
 		CacheData[] m_blackBitmapList;
-		Dictionary<SymbolID, Dictionary<Color, CacheData>> m_bitmapMap;
+		Dictionary<SymbolID, Dictionary<GameColor, CacheData>> m_bitmapMap;
 
 		int m_size = 8;
 		int m_numDistinctBitmaps;
@@ -36,7 +36,7 @@ namespace MyGame.Client
 			m_blackBitmapList = new CacheData[max];
 			m_numDistinctBitmaps = max;
 
-			m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
+			m_bitmapMap = new Dictionary<SymbolID, Dictionary<GameColor, CacheData>>();
 		}
 
 		public int TileSize
@@ -51,7 +51,7 @@ namespace MyGame.Client
 				if (m_size != value)
 				{
 					m_size = value;
-					m_bitmapMap = new Dictionary<SymbolID, Dictionary<Color, CacheData>>();
+					m_bitmapMap = new Dictionary<SymbolID, Dictionary<GameColor, CacheData>>();
 					for (int i = 0; i < m_blackBitmapList.Length; ++i)
 						m_blackBitmapList[i] = null;
 				}
@@ -63,12 +63,12 @@ namespace MyGame.Client
 			get { return m_numDistinctBitmaps; }
 		}
 
-		public BitmapSource GetBitmap(SymbolID symbolID, Color color, bool dark)
+		public BitmapSource GetBitmap(SymbolID symbolID, GameColor color, bool dark)
 		{
-			Dictionary<Color, CacheData> map;
+			Dictionary<GameColor, CacheData> map;
 			CacheData data;
 
-			if (color == Colors.Black)
+			if (color == GameColor.None)
 			{
 				data = m_blackBitmapList[(int)symbolID];
 
@@ -82,7 +82,7 @@ namespace MyGame.Client
 			{
 				if (!m_bitmapMap.TryGetValue(symbolID, out map))
 				{
-					map = new Dictionary<Color, CacheData>();
+					map = new Dictionary<GameColor, CacheData>();
 					m_bitmapMap[symbolID] = map;
 				}
 
@@ -115,7 +115,7 @@ namespace MyGame.Client
 			}
 		}
 
-		BitmapSource CreateSymbolBitmap(SymbolID symbolID, Color color, bool dark)
+		BitmapSource CreateSymbolBitmap(SymbolID symbolID, GameColor color, bool dark)
 		{
 			DrawingVisual drawingVisual = new DrawingVisual();
 			DrawingContext drawingContext = drawingVisual.RenderOpen();

@@ -153,10 +153,10 @@ namespace MyGame.Client
 			map[y, x, 2].Dark = data.ObjectDark;
 			map[y, x, 3].Dark = data.TopDark;
 
-			map[y, x, 0].Color = Colors.Black;
-			map[y, x, 1].Color = Colors.Black;
+			map[y, x, 0].Color = GameColor.None;
+			map[y, x, 1].Color = GameColor.None;
 			map[y, x, 2].Color = data.ObjectColor;
-			map[y, x, 3].Color = Colors.Black;
+			map[y, x, 3].Color = GameColor.None;
 		}
 
 		public bool ShowVirtualSymbols
