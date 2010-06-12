@@ -61,6 +61,11 @@ namespace MyGame.Client
 			}
 		}
 
+		public IntPoint TopLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
+		}
+
 		IntPoint m_centerPos;
 		public IntPoint CenterPos
 		{
@@ -217,13 +222,10 @@ namespace MyGame.Client
 			UpdateTiles();
 		}
 
-		IntPoint TopLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-m_columns / 2, m_rows / 2); }
-		}
-
 		protected void UpdateTiles()
 		{
+			MyDebug.WriteLine("{0}x{1}", m_columns, m_rows);
+
 			int i = 0;
 			foreach (UIElement tile in m_tileCollection)
 			{
@@ -231,14 +233,14 @@ namespace MyGame.Client
 				int y = i / m_columns;
 				IntPoint loc = this.TopLeftPos + new IntVector(x, -y);
 
-				UpdateTile(tile, loc);
+				UpdateTile(tile, loc, new IntPoint(x, y));
 
 				++i;
 			}
 		}
 
 		protected abstract UIElement CreateTile();
-		protected abstract void UpdateTile(UIElement tile, IntPoint loc);
+		protected abstract void UpdateTile(UIElement tile, IntPoint loc, IntPoint sl);
 	}
 
 }

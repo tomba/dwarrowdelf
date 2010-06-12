@@ -28,8 +28,12 @@ namespace MyGame.Client
 
 		bool m_showVirtualSymbols = true;
 
+		RenderView m_renderView;
+
 		public MapControl()
 		{
+			m_renderView = new RenderView();
+
 			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
 				typeof(MapControlBase));
 			dpd.AddValueChanged(this, OnTileSizeChanged);
@@ -46,15 +50,19 @@ namespace MyGame.Client
 			return new MapControlTile();
 		}
 
-		MapHelper m_mapHelper = new MapHelper();
-
-		protected override void UpdateTile(UIElement _tile, IntPoint _ml)
+		protected override void UpdateTile(UIElement _tile, IntPoint _ml, IntPoint sl)
 		{
+			var size = new IntSize(this.Columns, this.Rows);
+			if (m_renderView.Size != size)
+				m_renderView.Size = size;
+			var v = new IntVector(-this.TopLeftPos.X, this.Rows - this.TopLeftPos.Y - 1);
+			if (v != m_renderView.Offset)
+				m_renderView.Offset = v;
+
 			var tile = (MapControlTile)_tile;
 			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 
-			var data = m_mapHelper;
-			data.Resolve(this.Environment, ml, m_showVirtualSymbols);
+			var data = m_renderView.GetRenderTile(_ml);
 
 			BitmapSource floorBitmap = null;
 			BitmapSource interiorBitmap = null;
@@ -112,14 +120,15 @@ namespace MyGame.Client
 
 				if (m_env != null)
 				{
-					m_env.MapChanged -= MapChangedCallback;
+					m_env.MapTileChanged -= MapChangedCallback;
 				}
 
 				m_env = value;
+				m_renderView.Environment = value;
 
 				if (m_env != null)
 				{
-					m_env.MapChanged += MapChangedCallback;
+					m_env.MapTileChanged += MapChangedCallback;
 
 					if (m_world != m_env.World)
 					{
@@ -149,6 +158,8 @@ namespace MyGame.Client
 					return;
 
 				m_z = value;
+				m_renderView.Z = value;
+
 				UpdateTiles();
 
 				Notify("Z");

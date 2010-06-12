@@ -141,7 +141,7 @@ namespace MyGame.Client
 
 	class Environment : ClientGameObject
 	{
-		public event Action<IntPoint3D> MapChanged;
+		public event Action<IntPoint3D> MapTileChanged;
 
 		MyGrowingGrid3D m_tileGrid;
 		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
@@ -197,8 +197,8 @@ namespace MyGame.Client
 
 			m_tileGrid.SetInteriorID(l, interiorID);
 
-			if (MapChanged != null)
-				MapChanged(l);
+			if (MapTileChanged != null)
+				MapTileChanged(l);
 		}
 
 		public FloorInfo GetFloor(IntPoint3D l)
@@ -213,8 +213,8 @@ namespace MyGame.Client
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			if (MapChanged != null)
-				MapChanged(l);
+			if (MapTileChanged != null)
+				MapTileChanged(l);
 		}
 
 		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
@@ -279,8 +279,8 @@ namespace MyGame.Client
 
 				m_tileGrid.SetTileData(p, data);
 
-				if (MapChanged != null)
-					MapChanged(p);
+				if (MapTileChanged != null)
+					MapTileChanged(p);
 			}
 
 			if (setNewBounds)
@@ -327,10 +327,10 @@ namespace MyGame.Client
 				iter.MoveNext();
 				TileData data = iter.Current;
 				m_tileGrid.SetTileData(p, data);
-			}
 
-			if (MapChanged != null)
-				MapChanged(new IntPoint3D(bounds.X, bounds.Y, bounds.Z)); // XXX
+				if (MapTileChanged != null)
+					MapTileChanged(p);
+			}
 		}
 
 		public BuildingCollection Buildings { get { return m_buildings; } }
@@ -394,8 +394,8 @@ namespace MyGame.Client
 
 			m_objectList.Add(child);
 
-			if (MapChanged != null)
-				MapChanged(l);
+			if (MapTileChanged != null)
+				MapTileChanged(l);
 		}
 
 		protected override void ChildRemoved(ClientGameObject child)
@@ -412,15 +412,15 @@ namespace MyGame.Client
 			removed = m_objectList.Remove(child);
 			Debug.Assert(removed);
 
-			if (MapChanged != null)
-				MapChanged(l);
+			if (MapTileChanged != null)
+				MapTileChanged(l);
 		}
 
 		// called from object when its visual property changes
 		internal void OnObjectVisualChanged(ClientGameObject ob)
 		{
-			if (MapChanged != null)
-				MapChanged(ob.Location);
+			if (MapTileChanged != null)
+				MapTileChanged(ob.Location);
 		}
 	}
 }

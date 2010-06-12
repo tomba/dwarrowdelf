@@ -185,14 +185,14 @@ namespace MyGame.Client
 
 				if (m_env != null)
 				{
-					m_env.MapChanged -= MapChangedCallback;
+					m_env.MapTileChanged -= MapChangedCallback;
 				}
 
 				m_env = value;
 
 				if (m_env != null)
 				{
-					m_env.MapChanged += MapChangedCallback;
+					m_env.MapTileChanged += MapChangedCallback;
 
 					if (m_world != m_env.World)
 					{

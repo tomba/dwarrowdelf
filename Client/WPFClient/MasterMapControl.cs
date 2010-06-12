@@ -582,7 +582,7 @@ namespace MyGame.Client
 			set
 			{
 				if (m_env != null)
-					m_env.MapChanged -= MapChanged;
+					m_env.MapTileChanged -= MapChanged;
 
 				m_env = value;
 
@@ -590,7 +590,7 @@ namespace MyGame.Client
 					m_location = new IntPoint3D();
 
 				if (m_env != null)
-					m_env.MapChanged += MapChanged;
+					m_env.MapTileChanged += MapChanged;
 
 				Notify("Environment");
 				NotifyTileChanges();
