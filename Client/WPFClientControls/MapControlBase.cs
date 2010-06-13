@@ -197,32 +197,44 @@ namespace MyGame.Client
 			return m_tileArray[l.Y, l.X];
 		}
 
+
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
 			p += m_offset;
 			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
-		public IntPoint ScreenPointToMapLocation(Point p)
+		public Point ScreenLocationToScreenPoint(IntPoint loc)
 		{
-			var loc = ScreenPointToScreenLocation(p);
-			loc = new IntPoint(loc.X, -loc.Y);
-			return loc + (IntVector)this.TopLeftPos;
-		}
-
-		public Point MapLocationToScreenPoint(IntPoint loc)
-		{
-			loc -= (IntVector)this.TopLeftPos;
-			loc = new IntPoint(loc.X, -loc.Y + 1);
 			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 			p -= m_offset;
 			return p;
 		}
 
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
+
+		public IntPoint ScreenPointToMapLocation(Point p)
 		{
-			throw new NotImplementedException();
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
 		}
+
+		public Point MapLocationToScreenPoint(IntPoint ml)
+		{
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		{
+			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
+		}
+
+		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		{
+			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
+		}
+
+
 
 		public void InvalidateTiles()
 		{

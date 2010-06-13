@@ -215,18 +215,24 @@ namespace MyGame.Client
 			}
 		}
 
+		Rect MapRectToScreenPointRect(IntRect ir)
+		{
+			Rect r = new Rect(MapLocationToScreenPoint(new IntPoint(ir.X1, ir.Y2 - 1)),
+				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
+			return r;
+		}
+
 		void UpdateSelectionRect()
 		{
 			var ir = new IntRect(m_selectionStart, m_selectionEnd);
 			ir = new IntRect(ir.X1Y1, new IntSize(ir.Width + 1, ir.Height + 1));
 
-			Rect r = new Rect(MapLocationToScreenPoint(new IntPoint(ir.X1, ir.Y2)),
-				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
+			var r = MapRectToScreenPointRect(ir);
 
-			m_selectionRect.Width = r.Width;
-			m_selectionRect.Height = r.Height;
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);
+			m_selectionRect.Width = r.Width;
+			m_selectionRect.Height = r.Height;
 		}
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -410,11 +416,12 @@ namespace MyGame.Client
 
 		void UpdateBuildingRect(BuildingObject b, Rectangle rect)
 		{
-			var sp = MapLocationToScreenPoint(new IntPoint(b.Area.X1, b.Area.Y2));
-			Canvas.SetLeft(rect, sp.X);
-			Canvas.SetTop(rect, sp.Y);
-			rect.Width = b.Area.Width * m_tileSize;
-			rect.Height = b.Area.Height * m_tileSize;
+			var r = MapRectToScreenPointRect(b.Area);
+
+			Canvas.SetLeft(rect, r.Left);
+			Canvas.SetTop(rect, r.Top);
+			rect.Width = r.Width;
+			rect.Height = r.Height;
 		}
 
 		void UpdateBuildingPositions()
