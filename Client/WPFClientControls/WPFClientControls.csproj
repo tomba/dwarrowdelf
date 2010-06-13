@@ -128,11 +128,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TileControl.cs" />
     <Compile Include="IBitmapGenerator.cs" />
     <Compile Include="TileControlD2D.cs" />
     <Compile Include="D2DD3DImage.cs" />
-    <Compile Include="MapControlBase2.cs" />
-    <Compile Include="MapControlBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

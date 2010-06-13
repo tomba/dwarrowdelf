@@ -11,6 +11,9 @@ namespace MyGame.Client
 		RenderMap m_renderMap;
 		bool m_showVirtualSymbols = true;
 		bool m_invalid;
+		IntVector m_offset;
+		int m_z;
+		Environment m_environment;
 
 		public RenderView()
 		{
@@ -42,7 +45,6 @@ namespace MyGame.Client
 			return tile;
 		}
 
-		IntVector m_offset;
 		public IntVector Offset
 		{
 			get { return m_offset; }
@@ -53,7 +55,6 @@ namespace MyGame.Client
 			}
 		}
 
-		int m_z;
 		public int Z
 		{
 			get { return m_z; }
@@ -74,7 +75,17 @@ namespace MyGame.Client
 			}
 		}
 
-		Environment m_environment;
+		public bool ShowVirtualSymbols
+		{
+			get { return m_showVirtualSymbols; }
+
+			set
+			{
+				m_showVirtualSymbols = value;
+				m_invalid = true;
+			}
+		}
+
 		public Environment Environment
 		{
 			get { return m_environment; }

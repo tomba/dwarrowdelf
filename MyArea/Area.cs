@@ -92,8 +92,6 @@ namespace MyArea
 			int size = (int)Math.Pow(2, sizeExp);
 			var terrainGen = new TerrainGen(sizeExp, 10, 5, 0.75);
 
-
-			// XXX some size limit with the size in WCF
 			var env = new Environment(world, size, size, 20, VisibilityMode.LOS);
 
 			Random r = new Random(123);

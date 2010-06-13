@@ -38,7 +38,7 @@ namespace MyGame.Client
 		IntPoint m_centerPos;
 		int m_tileSize;
 
-		public event Action MapChanged;
+		public event Action TileArrangementChanged;
 
 		public MapControlD2D()
 		{
@@ -59,8 +59,8 @@ namespace MyGame.Client
 		{
 			UpdateTiles();
 
-			if (MapChanged != null)
-				MapChanged();
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
 		}
 
 		public void InvalidateTiles()

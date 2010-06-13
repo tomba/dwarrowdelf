@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
-	class MapControl : MapControlBase, IMapControl, INotifyPropertyChanged
+	class MapControl : TileControl<MapControlTileNew>, IMapControl, INotifyPropertyChanged
 	{
 		World m_world;
 		SymbolBitmapCache m_bitmapCache;
@@ -26,31 +26,37 @@ namespace MyGame.Client
 		Environment m_env;
 		int m_z;
 
-		bool m_showVirtualSymbols = true;
-
 		RenderView m_renderView;
 
+		public event Action TileArrangementChanged;
+		
 		public MapControl()
 		{
 			m_renderView = new RenderView();
-
-			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
-				typeof(MapControlBase));
-			dpd.AddValueChanged(this, OnTileSizeChanged);
 		}
 
-		void OnTileSizeChanged(object ob, EventArgs e)
+		protected override void OnTileSizeChanged(int newSize)
 		{
 			if (m_bitmapCache != null)
-				m_bitmapCache.TileSize = this.TileSize;
+				m_bitmapCache.TileSize = newSize;
+
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
 		}
 
-		protected override UIElement CreateTile()
+		protected override void OnGridSizeChanged(int newColumns, int newRows)
 		{
-			return new MapControlTile();
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
 		}
 
-		protected override void UpdateTile(UIElement _tile, IntPoint _ml, IntPoint sl)
+		protected override void OnSizeChanged()
+		{
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
+		}
+
+		protected override void UpdateTilesOverride()
 		{
 			var size = new IntSize(this.Columns, this.Rows);
 			if (m_renderView.Size != size)
@@ -60,7 +66,23 @@ namespace MyGame.Client
 			if (v != m_renderView.Offset)
 				m_renderView.Offset = v;
 
-			var tile = (MapControlTile)_tile;
+			var arr = this.GetTileArray();
+
+			for (int y = 0; y < this.Rows; ++y)
+			{
+				for (int x = 0; x < this.Columns; ++x)
+				{
+					var tile = arr[y, x];
+
+					var ml = ScreenLocationToMapLocation(new IntPoint(x, y));
+
+					UpdateTile(tile, ml, new IntPoint(x, y));
+				}
+			}
+		}
+
+		void UpdateTile(MapControlTileNew tile, IntPoint _ml, IntPoint sl)
+		{
 			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 
 			var data = m_renderView.GetRenderTile(_ml);
@@ -85,6 +107,12 @@ namespace MyGame.Client
 			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap ||
 				tile.TopBitmap != topBitmap;
 
+			if (objectBitmap != null)
+			{
+				if (objectBitmap.PixelWidth != this.TileSize || objectBitmap.PixelHeight != this.TileSize)
+					throw new Exception();
+			}
+
 			if (update)
 			{
 				tile.FloorBitmap = floorBitmap;
@@ -97,17 +125,59 @@ namespace MyGame.Client
 
 		public bool ShowVirtualSymbols
 		{
-			get { return m_showVirtualSymbols; }
+			get { return m_renderView.ShowVirtualSymbols; }
 
 			set
 			{
-				if (m_showVirtualSymbols == value)
-					return;
-
-				m_showVirtualSymbols = value;
+				m_renderView.ShowVirtualSymbols = value;
 				InvalidateTiles();
 				Notify("ShowVirtualSymbols");
 			}
+		}
+
+		protected IntPoint TopLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
+		}
+
+		IntPoint m_centerPos;
+		public IntPoint CenterPos
+		{
+			get { return m_centerPos; }
+			set
+			{
+				if (value == this.CenterPos)
+					return;
+
+				var v = value - this.CenterPos;
+				ScrollTiles(v);
+
+				m_centerPos = value;
+
+				InvalidateTiles();
+			}
+		}
+
+		public IntPoint ScreenPointToMapLocation(Point p)
+		{
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
+		}
+
+		public Point MapLocationToScreenPoint(IntPoint ml)
+		{
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		{
+			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
+		}
+
+		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		{
+			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
 		}
 
 		public Environment Environment
@@ -143,7 +213,7 @@ namespace MyGame.Client
 					m_bitmapCache = null;
 				}
 
-				UpdateTiles();
+				InvalidateTiles();
 
 				Notify("Environment");
 			}
@@ -161,7 +231,7 @@ namespace MyGame.Client
 				m_z = value;
 				m_renderView.Z = value;
 
-				UpdateTiles();
+				InvalidateTiles();
 
 				Notify("Z");
 			}
@@ -182,32 +252,33 @@ namespace MyGame.Client
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
 
-		class MapControlTile : UIElement
+	}
+
+	class MapControlTileNew : UIElement
+	{
+		public MapControlTileNew()
 		{
-			public MapControlTile()
-			{
-				this.IsHitTestVisible = false;
-			}
+			this.IsHitTestVisible = false;
+		}
 
-			public BitmapSource FloorBitmap { get; set; }
-			public BitmapSource InteriorBitmap { get; set; }
-			public BitmapSource ObjectBitmap { get; set; }
-			public BitmapSource TopBitmap { get; set; }
+		public BitmapSource FloorBitmap { get; set; }
+		public BitmapSource InteriorBitmap { get; set; }
+		public BitmapSource ObjectBitmap { get; set; }
+		public BitmapSource TopBitmap { get; set; }
 
-			protected override void OnRender(DrawingContext drawingContext)
-			{
-				if (this.FloorBitmap != null)
-					drawingContext.DrawImage(this.FloorBitmap, new Rect(this.RenderSize));
+		protected override void OnRender(DrawingContext drawingContext)
+		{
+			if (this.FloorBitmap != null)
+				drawingContext.DrawImage(this.FloorBitmap, new Rect(this.RenderSize));
 
-				if (this.InteriorBitmap != null)
-					drawingContext.DrawImage(this.InteriorBitmap, new Rect(this.RenderSize));
+			if (this.InteriorBitmap != null)
+				drawingContext.DrawImage(this.InteriorBitmap, new Rect(this.RenderSize));
 
-				if (this.ObjectBitmap != null)
-					drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
+			if (this.ObjectBitmap != null)
+				drawingContext.DrawImage(this.ObjectBitmap, new Rect(this.RenderSize));
 
-				if (this.TopBitmap != null)
-					drawingContext.DrawImage(this.TopBitmap, new Rect(this.RenderSize));
-			}
+			if (this.TopBitmap != null)
+				drawingContext.DrawImage(this.TopBitmap, new Rect(this.RenderSize));
 		}
 	}
 

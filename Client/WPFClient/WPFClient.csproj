@@ -144,6 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="MapControl.cs" />
     <Compile Include="MasterMapControl.cs" />
     <Compile Include="MapHelper.cs" />
     <Compile Include="MapControlD2D.cs" />
@@ -190,7 +191,6 @@
     <Compile Include="ClientConnection.cs" />
     <Compile Include="Jobs\JobGroups.cs" />
     <Compile Include="Living.cs" />
-    <Compile Include="MapControl.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="ClientGameObject.cs" />

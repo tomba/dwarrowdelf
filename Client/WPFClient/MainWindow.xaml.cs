@@ -47,10 +47,6 @@ namespace MyGame.Client
 			GameData.Data.Connection.LogOffEvent += OnLoggedOff;
 			GameData.Data.Connection.LogOnCharEvent += OnCharLoggedOn;
 			GameData.Data.Connection.LogOffCharEvent += OnCharLoggedOff;
-
-			var dpd = DependencyPropertyDescriptor.FromProperty(MapControlBase.TileSizeProperty,
-				typeof(MapControlBase));
-			dpd.AddValueChanged(map, OnTileSizeChanged);
 		}
 
 		void OnTileSizeChanged(object ob, EventArgs e)

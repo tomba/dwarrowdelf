@@ -29,7 +29,7 @@ namespace MyGame.Client
 		int Z { get; set; }
 		IntPoint CenterPos { get; set; }
 
-		event Action MapChanged;
+		event Action TileArrangementChanged;
 
 		IntPoint ScreenPointToScreenLocation(Point p);
 		IntPoint ScreenPointToMapLocation(Point p);
@@ -52,7 +52,6 @@ namespace MyGame.Client
 		IMapControl m_mapControl;
 
 		IntPoint m_centerPos;
-		int m_tileSize;
 
 		Rectangle m_selectionRect;
 		IntPoint m_selectionStart;
@@ -72,9 +71,10 @@ namespace MyGame.Client
 
 			//var mc = new MapControlD2D();
 			var mc = new MapControl();
+
 			grid.Children.Add(mc);
 			m_mapControl = mc;
-			m_mapControl.MapChanged += OnMapChanged;
+			m_mapControl.TileArrangementChanged += OnTileArrangementChanged;
 
 			m_canvas = new Canvas();
 			m_canvas.ClipToBounds = true;
@@ -107,15 +107,11 @@ namespace MyGame.Client
 		{
 			get
 			{
-				return m_tileSize;
+				return m_mapControl.TileSize;
 			}
 
 			set
 			{
-				if (value < 8)
-					return;
-
-				m_tileSize = value;
 				m_mapControl.TileSize = value;
 				UpdateSelectionRect();
 				UpdateBuildingPositions();
@@ -150,7 +146,7 @@ namespace MyGame.Client
 		}
 
 		// Called when underlying MapControl changes
-		void OnMapChanged()
+		void OnTileArrangementChanged()
 		{
 			UpdateSelectionRect();
 			UpdateBuildingPositions();
@@ -355,8 +351,8 @@ namespace MyGame.Client
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
 
-				double dx = dv.X * m_tileSize;
-				double dy = -dv.Y * m_tileSize;
+				double dx = dv.X * this.TileSize;
+				double dy = -dv.Y * this.TileSize;
 
 				foreach (var kvp in m_buildingRectMap)
 					UpdateBuildingRect(kvp.Key, kvp.Value);
