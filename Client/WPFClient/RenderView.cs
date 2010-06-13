@@ -45,13 +45,50 @@ namespace MyGame.Client
 			return tile;
 		}
 
+		void ScrollTiles(IntVector v)
+		{
+			var columns = m_renderMap.Size.Width;
+			var rows = m_renderMap.Size.Height;
+			var grid = m_renderMap.ArrayGrid.Grid;
+
+			var ax = Math.Abs(v.X);
+			var ay = Math.Abs(v.Y);
+
+			int srcIdx = 0;
+			int dstIdx = 0;
+
+			if (v.X >= 0)
+				srcIdx += ax;
+			else
+				dstIdx += ax;
+
+			if (v.Y >= 0)
+				srcIdx += columns * ay;
+			else
+				dstIdx += columns * ay;
+
+			var xClrIdx = v.X >= 0 ? columns - ax : 0;
+			var yClrIdx = v.Y >= 0 ? rows - ay : 0;
+
+			Array.Copy(grid, srcIdx, grid, dstIdx, columns * rows - ax - columns * ay);
+
+			for (int y = 0; y < rows; ++y)
+				Array.Clear(grid, y * columns + xClrIdx, ax);
+
+			Array.Clear(grid, yClrIdx * columns, columns * ay);
+		}
+
 		public IntVector Offset
 		{
 			get { return m_offset; }
 			set
 			{
+				var v = m_offset - value;
+
 				m_offset = value;
-				m_invalid = true;
+
+				if (!m_invalid)
+					ScrollTiles(v);
 			}
 		}
 
