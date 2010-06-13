@@ -106,6 +106,7 @@ namespace MyGame.Client
 
 			set
 			{
+				value = MyMath.IntClamp(value, 64, 8);
 				m_tileSize = value;
 				if (m_bitmapCache != null)
 					m_bitmapCache.TileSize = value;
@@ -235,30 +236,40 @@ namespace MyGame.Client
 			InvalidateTiles();
 		}
 
-		public IntPoint ScreenPointToScreenLocation(Point p)
-		{
-			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
-		}
-
 		public IntPoint ScreenPointToMapLocation(Point p)
 		{
-			var loc = ScreenPointToScreenLocation(p);
-			loc = new IntPoint(loc.X, -loc.Y);
-			return loc + (IntVector)this.TopLeftPos;
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
 		}
 
-		public Point MapLocationToScreenPoint(IntPoint loc)
+		public Point MapLocationToScreenPoint(IntPoint ml)
 		{
-			loc -= (IntVector)this.TopLeftPos;
-			loc = new IntPoint(loc.X, -loc.Y + 1);
-			return new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		{
+			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
+		}
+
+		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		{
+			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
+		}
+
+		public IntPoint ScreenPointToScreenLocation(Point p)
+		{
+			//p += m_offset;
+			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
 		public Point ScreenLocationToScreenPoint(IntPoint loc)
 		{
-			throw new NotImplementedException();
+			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			//p -= m_offset;
+			return p;
 		}
-
 
 		void Notify(string name)
 		{
