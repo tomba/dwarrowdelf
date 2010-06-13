@@ -496,14 +496,18 @@ namespace MyGame.Client
 
 		public TileInfo SelectedTileInfo { get; private set; }
 
-		void UpdateHoverTileInfo(Point mousePos)
+		void UpdateHoverTileInfo(Point p)
 		{
-			IntPoint ml = ScreenPointToMapLocation(mousePos);
-			var p = new IntPoint3D(ml, m_z);
+			var sl = m_mapControl.ScreenPointToScreenLocation(p);
+			var ml = new IntPoint3D(m_mapControl.ScreenPointToMapLocation(p), m_z);
 
-			if (p != this.HoverTileInfo.Location)
+			if (p != this.HoverTileInfo.MousePos ||
+				sl != this.HoverTileInfo.ScreenLocation ||
+				ml != this.HoverTileInfo.MapLocation)
 			{
-				this.HoverTileInfo.Location = p;
+				this.HoverTileInfo.MousePos = p;
+				this.HoverTileInfo.ScreenLocation = sl;
+				this.HoverTileInfo.MapLocation = ml;
 				Notify("HoverTileInfo");
 			}
 		}
@@ -531,19 +535,11 @@ namespace MyGame.Client
 
 
 
-	class HoverTileInfo : INotifyPropertyChanged
+	class HoverTileInfo
 	{
-		public IntPoint3D Location { get; set; }
-
-		void Notify(string name)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
-		}
-
-		#region INotifyPropertyChanged Members
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
+		public Point MousePos { get; set; }
+		public IntPoint3D MapLocation { get; set; }
+		public IntPoint ScreenLocation { get; set; }
 	}
 
 	class TileInfo : INotifyPropertyChanged

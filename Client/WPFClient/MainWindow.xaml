@@ -127,13 +127,33 @@
             </TextBlock>
             <Separator />
 
-            <TextBlock>Coords</TextBlock>
-            <TextBox Width="100" IsReadOnly="True">
+            <TextBlock>ML</TextBlock>
+            <TextBox Width="75" IsReadOnly="True">
                 <TextBox.Text>
                     <MultiBinding StringFormat="{}{0}, {1}, {2}">
-                        <Binding ElementName="map" Path="HoverTileInfo.Location.X" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.Location.Y" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.Location.Z" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.Z" Mode="OneWay" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock>SL</TextBlock>
+            <TextBox Width="50" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding ElementName="map" Path="HoverTileInfo.ScreenLocation.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.ScreenLocation.Y" Mode="OneWay" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock>MousePos</TextBlock>
+            <TextBox Width="50" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding ElementName="map" Path="HoverTileInfo.MousePos.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="HoverTileInfo.MousePos.Y" Mode="OneWay" />
                     </MultiBinding>
                 </TextBox.Text>
             </TextBox>
