@@ -15,8 +15,8 @@ namespace MyGame.Client
 
 		DispatcherTimer m_updateTimer;
 
-		Visual[] m_tileCollection;
-		Visual[] m_backTileCollection;
+		UIElement[,] m_tileArray;
+		UIElement[,] m_backTileArray;
 
 		public event Action MapChanged;
 
@@ -26,8 +26,8 @@ namespace MyGame.Client
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(15);
 
-			m_tileCollection = new Visual[0];
-			m_backTileCollection = new Visual[0];
+			m_tileArray = new UIElement[0, 0];
+			m_backTileArray = new UIElement[0, 0];
 
 			ClipToBounds = true; // does this slow down?
 		}
@@ -54,6 +54,7 @@ namespace MyGame.Client
 
 		void UpdateColumnsRows(Size size, int tileSize)
 		{
+			// odd number of columns and rows, so that the center tile is in the center
 			int newColumns = (int)Math.Ceiling(size.Width / tileSize) | 1;
 			int newRows = (int)Math.Ceiling(size.Height / tileSize) | 1;
 
@@ -89,24 +90,21 @@ namespace MyGame.Client
 				{
 					for (int x = 0; x < m_columns; ++x)
 					{
-						int toX;
-
-						toX = (x - v.X) % m_columns;
+						int toX = (x - v.X) % m_columns;
 						if (toX < 0)
 							toX += m_columns;
 
-						int toY;
-						toY = (y + v.Y) % m_rows;
+						int toY = (y + v.Y) % m_rows;
 						if (toY < 0)
 							toY += m_rows;
 
-						m_backTileCollection[toY * m_columns + toX] = m_tileCollection[y * m_columns + x];
+						m_backTileArray[toY, toX] = m_tileArray[y, x];
 					}
 				}
 
-				var tmp = m_tileCollection;
-				m_tileCollection = m_backTileCollection;
-				m_backTileCollection = tmp;
+				var tmp = m_tileArray;
+				m_tileArray = m_backTileArray;
+				m_backTileArray = tmp;
 
 				m_centerPos = value;
 				UpdateTiles();
@@ -127,19 +125,22 @@ namespace MyGame.Client
 
 		void ReCreateMapTiles()
 		{
-			foreach (var tile in m_tileCollection)
+			foreach (var tile in m_tileArray)
 				this.RemoveVisualChild(tile);
 
 			int numTiles = m_columns * m_rows;
 
-			m_tileCollection = new Visual[numTiles];
-			m_backTileCollection = new Visual[numTiles];
+			m_tileArray = new UIElement[m_rows, m_columns];
+			m_backTileArray = new UIElement[m_rows, m_columns];
 
-			for (int i = 0; i < m_tileCollection.Length; ++i)
+			for (int y = 0; y < m_rows; ++y)
 			{
-				var tile = CreateTile();
-				this.AddVisualChild(tile);
-				m_tileCollection[i] = tile;
+				for (int x = 0; x < m_columns; ++x)
+				{
+					var tile = CreateTile();
+					this.AddVisualChild(tile);
+					m_tileArray[y, x] = tile;
+				}
 			}
 
 			UpdateTiles();
@@ -158,17 +159,17 @@ namespace MyGame.Client
 			UpdateColumnsRows(s, this.TileSize);
 			UpdateOffset(s, this.TileSize);
 
-			int i = 0;
-			foreach (UIElement tile in m_tileCollection)
+			for (int y = 0; y < m_rows; ++y)
 			{
-				int y = i / m_columns;
-				int x = i % m_columns;
+				for (int x = 0; x < m_columns; ++x)
+				{
+					var tile = m_tileArray[y, x];
 
-				var p = new Point(x * this.TileSize, y * this.TileSize);
-				p -= m_offset;
-				var rect = new Rect(p, new Size(this.TileSize, this.TileSize));
-				tile.Arrange(rect);
-				++i;
+					var p = new Point(x * this.TileSize, y * this.TileSize);
+					p -= m_offset;
+					var rect = new Rect(p, new Size(this.TileSize, this.TileSize));
+					tile.Arrange(rect);
+				}
 			}
 
 			return s;
@@ -181,17 +182,19 @@ namespace MyGame.Client
 
 		protected override int VisualChildrenCount
 		{
-			get { return m_tileCollection.Length; }
+			get { return m_columns * m_rows; }
 		}
 
 		protected override Visual GetVisualChild(int index)
 		{
-			return m_tileCollection[index];
+			int x = index % m_columns;
+			int y = index / m_columns;
+			return m_tileArray[y, x];
 		}
 
 		public UIElement GetTile(IntPoint l)
 		{
-			return (UIElement)m_tileCollection[l.X + l.Y * m_columns];
+			return m_tileArray[l.Y, l.X];
 		}
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
@@ -236,16 +239,16 @@ namespace MyGame.Client
 
 		protected void UpdateTiles()
 		{
-			int i = 0;
-			foreach (UIElement tile in m_tileCollection)
+			for (int y = 0; y < m_rows; ++y)
 			{
-				int x = i % m_columns;
-				int y = i / m_columns;
-				IntPoint loc = this.TopLeftPos + new IntVector(x, -y);
+				for (int x = 0; x < m_columns; ++x)
+				{
+					var tile = m_tileArray[y, x];
 
-				UpdateTile(tile, loc, new IntPoint(x, y));
+					IntPoint loc = this.TopLeftPos + new IntVector(x, -y);
 
-				++i;
+					UpdateTile(tile, loc, new IntPoint(x, y));
+				}
 			}
 		}
 
