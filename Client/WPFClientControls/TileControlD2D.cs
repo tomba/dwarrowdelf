@@ -64,6 +64,8 @@ namespace MyGame.Client
 
 		public event Action TileMapChanged;
 
+		IntVector m_offset;
+
 		public TileControlD2D()
 		{
 			m_interopImage = new D2DD3DImage();
@@ -90,6 +92,8 @@ namespace MyGame.Client
 
 			m_interopImage.RequestRender();
 		}
+
+		public IntVector Offset { get { return m_offset; } }
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
@@ -132,6 +136,13 @@ namespace MyGame.Client
 			}
 		}
 
+		void UpdateOffset(Size size, int tileSize)
+		{
+			var dx = ((tileSize * m_columns) - (int)Math.Ceiling(size.Width)) / 2;
+			var dy = ((tileSize * m_rows) - (int)Math.Ceiling(size.Height)) / 2;
+			m_offset = new IntVector(dx, dy);
+		}
+
 		void UpdateTileMapSize()
 		{
 			if (m_tileSize == 0)
@@ -141,22 +152,23 @@ namespace MyGame.Client
 				return;
 			}
 
-			int width = (int)Math.Ceiling(this.ActualWidth);
-			int height = (int)Math.Ceiling(this.ActualHeight);
+			int newColumns = MyMath.IntDivRound((int)Math.Ceiling(this.ActualWidth), (int)m_tileSize) | 1;
+			int newRows = MyMath.IntDivRound((int)Math.Ceiling(this.ActualHeight), (int)m_tileSize) | 1;
 
-			int columns = MyMath.IntDivRound(width, (int)m_tileSize);
-			int rows = MyMath.IntDivRound(height, (int)m_tileSize);
-
-			if (m_tileMap == null || (columns != m_columns || rows != m_rows))
+			if (m_tileMap == null || (newColumns != m_columns || newRows != m_rows))
 			{
-				m_columns = columns;
-				m_rows = rows;
+				m_columns = newColumns;
+				m_rows = newRows;
 				m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
 				m_interopImage.SetPixelSize((uint)(m_columns * m_tileSize), (uint)(m_rows * m_tileSize));
-
-				if (TileMapChanged != null)
-					TileMapChanged();
 			}
+
+			UpdateOffset(this.RenderSize, (int)m_tileSize);
+
+			if (TileMapChanged != null)
+				TileMapChanged();
+
+			m_interopImage.RequestRender();
 		}
 
 		void CreateAtlas()
@@ -235,7 +247,9 @@ namespace MyGame.Client
 			{
 				for (int x = 0; x < m_columns; ++x)
 				{
-					var dstRect = new RectF(x * tileSize, y * tileSize, x * tileSize + tileSize, y * tileSize + tileSize);
+					var x1 = x * tileSize - m_offset.X;
+					var y1 = y * tileSize - m_offset.Y;
+					var dstRect = new RectF(x1, y1, x1 + tileSize, y1 + tileSize);
 
 					for (int z = 0; z < TileZ; ++z)
 					{

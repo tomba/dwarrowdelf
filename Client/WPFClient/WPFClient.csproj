@@ -146,7 +146,6 @@
     </Page>
     <Compile Include="MapControl.cs" />
     <Compile Include="MasterMapControl.cs" />
-    <Compile Include="MapHelper.cs" />
     <Compile Include="MapControlD2D.cs" />
     <Compile Include="HistoryTextBox.cs" />
     <Compile Include="Jobs\ActionJobs.cs" />

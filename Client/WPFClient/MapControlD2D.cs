@@ -29,8 +29,6 @@ namespace MyGame.Client
 		Environment m_env;
 		int m_z;
 
-		bool m_showVirtualSymbols = true;
-
 		TileControlD2D m_tileControlD2D;
 
 		DispatcherTimer m_updateTimer;
@@ -40,11 +38,15 @@ namespace MyGame.Client
 
 		public event Action TileArrangementChanged;
 
+		RenderView m_renderView;
+
 		public MapControlD2D()
 		{
 			m_updateTimer = new DispatcherTimer(DispatcherPriority.Normal);
 			m_updateTimer.Tick += UpdateTimerTick;
 			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
+
+			m_renderView = new RenderView();
 
 			m_tileControlD2D = new TileControlD2D();
 			m_tileControlD2D.TileMapChanged += OnTileMapChanged;
@@ -83,6 +85,9 @@ namespace MyGame.Client
 			int rows = this.Rows;
 			var map = m_tileControlD2D.TileMap;
 
+			m_renderView.Size = new IntSize(this.Columns, this.Rows);
+			m_renderView.Offset = new IntVector(this.BottomLeftPos.X, this.BottomLeftPos.Y);
+
 			if (map != null)
 			{
 				for (int y = 0; y < rows; ++y)
@@ -95,6 +100,30 @@ namespace MyGame.Client
 			}
 
 			m_tileControlD2D.Render();
+		}
+
+		void UpdateTile(int x, int y, MapD2DData[, ,] map)
+		{
+			// x and y in screen tile coordinates
+			var tlp = this.TopLeftPos;
+			var ml = new IntPoint3D(x + tlp.X, -y + tlp.Y, this.Z);
+
+			var data = m_renderView.GetRenderTile(ml.ToIntPoint());
+
+			map[y, x, 0].SymbolID = (byte)data.FloorSymbolID;
+			map[y, x, 1].SymbolID = (byte)data.InteriorSymbolID;
+			map[y, x, 2].SymbolID = (byte)data.ObjectSymbolID;
+			map[y, x, 3].SymbolID = (byte)data.TopSymbolID;
+
+			map[y, x, 0].Dark = data.FloorDark;
+			map[y, x, 1].Dark = data.InteriorDark;
+			map[y, x, 2].Dark = data.ObjectDark;
+			map[y, x, 3].Dark = data.TopDark;
+
+			map[y, x, 0].Color = GameColor.None;
+			map[y, x, 1].Color = GameColor.None;
+			map[y, x, 2].Color = data.ObjectColor;
+			map[y, x, 3].Color = GameColor.None;
 		}
 
 		public int TileSize
@@ -120,6 +149,11 @@ namespace MyGame.Client
 			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
 		}
 
+		IntPoint BottomLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
+		}
+
 		public IntPoint CenterPos
 		{
 			get { return m_centerPos; }
@@ -132,44 +166,13 @@ namespace MyGame.Client
 			}
 		}
 
-		MapHelper m_mapHelper = new MapHelper();
-
-		void UpdateTile(int x, int y, MapD2DData[, ,] map)
-		{
-			// x and y in screen tile coordinates
-			var tlp = this.TopLeftPos;
-			var ml = new IntPoint3D(x + tlp.X, -y + tlp.Y, this.Z);
-
-			var data = m_mapHelper;
-
-			data.Resolve(this.Environment, ml, m_showVirtualSymbols);
-
-			map[y, x, 0].SymbolID = (byte)data.FloorSymbolID;
-			map[y, x, 1].SymbolID = (byte)data.InteriorSymbolID;
-			map[y, x, 2].SymbolID = (byte)data.ObjectSymbolID;
-			map[y, x, 3].SymbolID = (byte)data.TopSymbolID;
-
-			map[y, x, 0].Dark = data.FloorDark;
-			map[y, x, 1].Dark = data.InteriorDark;
-			map[y, x, 2].Dark = data.ObjectDark;
-			map[y, x, 3].Dark = data.TopDark;
-
-			map[y, x, 0].Color = GameColor.None;
-			map[y, x, 1].Color = GameColor.None;
-			map[y, x, 2].Color = data.ObjectColor;
-			map[y, x, 3].Color = GameColor.None;
-		}
-
 		public bool ShowVirtualSymbols
 		{
-			get { return m_showVirtualSymbols; }
+			get { return m_renderView.ShowVirtualSymbols; }
 
 			set
 			{
-				if (m_showVirtualSymbols == value)
-					return;
-
-				m_showVirtualSymbols = value;
+				m_renderView.ShowVirtualSymbols = value;
 				InvalidateTiles();
 				Notify("ShowVirtualSymbols");
 			}
@@ -190,6 +193,7 @@ namespace MyGame.Client
 				}
 
 				m_env = value;
+				m_renderView.Environment = value;
 
 				if (m_env != null)
 				{
@@ -225,6 +229,8 @@ namespace MyGame.Client
 					return;
 
 				m_z = value;
+				m_renderView.Z = value;
+
 				UpdateTiles();
 
 				Notify("Z");
@@ -260,14 +266,14 @@ namespace MyGame.Client
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
-			//p += m_offset;
+			p += new Vector(m_tileControlD2D.Offset.X, m_tileControlD2D.Offset.Y);
 			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
 		}
 
 		public Point ScreenLocationToScreenPoint(IntPoint loc)
 		{
 			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			//p -= m_offset;
+			p -= new Vector(m_tileControlD2D.Offset.X, m_tileControlD2D.Offset.Y);
 			return p;
 		}
 
