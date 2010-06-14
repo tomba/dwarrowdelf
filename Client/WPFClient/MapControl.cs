@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
-	class MapControl : TileControl<MapControlTileNew>, IMapControl, INotifyPropertyChanged
+	class MapControl : TileControl<MapControlTile>, IMapControl, INotifyPropertyChanged
 	{
 		World m_world;
 		SymbolBitmapCache m_bitmapCache;
@@ -56,7 +56,7 @@ namespace MyGame.Client
 				TileArrangementChanged();
 		}
 
-		protected override void UpdateTilesOverride()
+		protected override void UpdateTilesOverride(MapControlTile[,] tileArray)
 		{
 			var size = new IntSize(this.Columns, this.Rows);
 			if (m_renderView.Size != size)
@@ -66,13 +66,11 @@ namespace MyGame.Client
 			if (v != m_renderView.Offset)
 				m_renderView.Offset = v;
 
-			var arr = this.GetTileArray();
-
 			for (int y = 0; y < this.Rows; ++y)
 			{
 				for (int x = 0; x < this.Columns; ++x)
 				{
-					var tile = arr[y, x];
+					var tile = tileArray[y, x];
 
 					var ml = ScreenLocationToMapLocation(new IntPoint(x, y));
 
@@ -81,7 +79,7 @@ namespace MyGame.Client
 			}
 		}
 
-		void UpdateTile(MapControlTileNew tile, IntPoint _ml, IntPoint sl)
+		void UpdateTile(MapControlTile tile, IntPoint _ml, IntPoint sl)
 		{
 			IntPoint3D ml = new IntPoint3D(_ml.X, _ml.Y, this.Z);
 
@@ -254,9 +252,9 @@ namespace MyGame.Client
 
 	}
 
-	class MapControlTileNew : UIElement
+	class MapControlTile : UIElement
 	{
-		public MapControlTileNew()
+		public MapControlTile()
 		{
 			this.IsHitTestVisible = false;
 		}

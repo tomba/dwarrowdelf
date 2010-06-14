@@ -123,7 +123,7 @@ namespace MyGame.Client
 			if (m_updateNeeded)
 			{
 				m_updateNeeded = false;
-				UpdateTilesOverride();
+				UpdateTilesOverride(m_tileArray);
 			}
 
 			for (int y = 0; y < m_rows; ++y)
@@ -143,7 +143,7 @@ namespace MyGame.Client
 		}
 
 		protected virtual void OnSizeChanged() { }
-		protected abstract void UpdateTilesOverride();
+		protected abstract void UpdateTilesOverride(T[,] tileArray);
 
 		// Tells TileControl to scroll and wrap the tiles. This optimizes drawing, as most of the contents of the tiles stay the same
 		protected void ScrollTiles(IntVector v)
@@ -184,11 +184,6 @@ namespace MyGame.Client
 			int x = index % m_columns;
 			int y = index / m_columns;
 			return m_tileArray[y, x];
-		}
-
-		protected T[,] GetTileArray()
-		{
-			return m_tileArray;
 		}
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
