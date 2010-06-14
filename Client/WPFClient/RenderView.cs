@@ -28,9 +28,9 @@ namespace MyGame.Client
 				m_invalid = false;
 			}
 
-			//MyDebug.WriteLine("GET {0}", ml + this.Offset);
+			//MyDebug.WriteLine("GET {0}", ml - this.Offset);
 
-			IntPoint p = ml + this.Offset;
+			IntPoint p = ml - this.Offset;
 			var tile = m_renderMap.ArrayGrid.Grid[p.Y, p.X];
 
 			if (!tile.IsValid)
@@ -45,30 +45,30 @@ namespace MyGame.Client
 			return tile;
 		}
 
-		void ScrollTiles(IntVector v)
+		void ScrollTiles(IntVector scrollVector)
 		{
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
 			var grid = m_renderMap.ArrayGrid.Grid;
 
-			var ax = Math.Abs(v.X);
-			var ay = Math.Abs(v.Y);
+			var ax = Math.Abs(scrollVector.X);
+			var ay = Math.Abs(scrollVector.Y);
 
 			int srcIdx = 0;
 			int dstIdx = 0;
 
-			if (v.X >= 0)
+			if (scrollVector.X >= 0)
 				srcIdx += ax;
 			else
 				dstIdx += ax;
 
-			if (v.Y >= 0)
+			if (scrollVector.Y >= 0)
 				srcIdx += columns * ay;
 			else
 				dstIdx += columns * ay;
 
-			var xClrIdx = v.X >= 0 ? columns - ax : 0;
-			var yClrIdx = v.Y >= 0 ? rows - ay : 0;
+			var xClrIdx = scrollVector.X >= 0 ? columns - ax : 0;
+			var yClrIdx = scrollVector.Y >= 0 ? rows - ay : 0;
 
 			Array.Copy(grid, srcIdx, grid, dstIdx, columns * rows - ax - columns * ay);
 
@@ -83,12 +83,15 @@ namespace MyGame.Client
 			get { return m_offset; }
 			set
 			{
-				var v = m_offset - value;
+				if (value == m_offset)
+					return;
+
+				var diff = value - m_offset;
 
 				m_offset = value;
 
 				if (!m_invalid)
-					ScrollTiles(v);
+					ScrollTiles(diff);
 			}
 		}
 
@@ -107,6 +110,9 @@ namespace MyGame.Client
 			get { return m_renderMap.Size; }
 			set
 			{
+				if (value == m_renderMap.Size)
+					return;
+
 				m_renderMap.Size = value;
 				m_invalid = true;
 			}
@@ -149,7 +155,7 @@ namespace MyGame.Client
 
 		void MapChangedCallback(IntPoint3D ml)
 		{
-			IntPoint p = ml.ToIntPoint() + this.Offset;
+			IntPoint p = ml.ToIntPoint() - this.Offset;
 			if (m_renderMap.ArrayGrid.Bounds.Contains(p))
 				m_renderMap.ArrayGrid.Grid[p.Y, p.X].IsValid = false;
 		}

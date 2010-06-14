@@ -58,13 +58,8 @@ namespace MyGame.Client
 
 		protected override void UpdateTilesOverride(MapControlTile[,] tileArray)
 		{
-			var size = new IntSize(this.Columns, this.Rows);
-			if (m_renderView.Size != size)
-				m_renderView.Size = size;
-
-			var v = new IntVector(-this.TopLeftPos.X, this.Rows - this.TopLeftPos.Y - 1);
-			if (v != m_renderView.Offset)
-				m_renderView.Offset = v;
+			m_renderView.Size = new IntSize(this.Columns, this.Rows);
+			m_renderView.Offset = new IntVector(this.BottomLeftPos.X, this.BottomLeftPos.Y);
 
 			for (int y = 0; y < this.Rows; ++y)
 			{
@@ -133,9 +128,14 @@ namespace MyGame.Client
 			}
 		}
 
-		protected IntPoint TopLeftPos
+		IntPoint TopLeftPos
 		{
 			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
+		}
+
+		IntPoint BottomLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
 		}
 
 		IntPoint m_centerPos;
