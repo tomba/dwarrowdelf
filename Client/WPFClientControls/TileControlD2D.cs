@@ -90,21 +90,48 @@ namespace MyGame.Client
 			m_interopImage.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
 			m_interopImage.OnRender = this.DoRender;
 
+			// Need an explicit render first?
 			m_interopImage.RequestRender();
 		}
 
-		public IntVector Offset { get { return m_offset; } }
+		public IntPoint ScreenPointToScreenLocation(Point p)
+		{
+			p += new Vector(m_offset.X, m_offset.Y);
+			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
+		}
+
+		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		{
+			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			p -= new Vector(m_offset.X, m_offset.Y);
+			return p;
+		}
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
-			base.OnRenderSizeChanged(sizeInfo);
+			var pw = (uint)Math.Ceiling(sizeInfo.NewSize.Width);
+			var ph = (uint)Math.Ceiling(sizeInfo.NewSize.Height);
+			/* Allocate some extra, so that we don't need to re-allocate the surface for every tilesize change */
+			pw = (pw | 0xff) + 1;
+			ph = (ph | 0xff) + 1;
+
+			if (m_interopImage.PixelWidth != pw || m_interopImage.PixelHeight != ph)
+			{
+				// Locking seems to remove a deadlock when changing tilesize quickly
+				m_interopImage.Lock();
+				// implicit render
+				m_interopImage.SetPixelSize(pw, ph);
+				m_interopImage.Unlock();
+			}
 
 			UpdateTileMapSize();
+
+			base.OnRenderSizeChanged(sizeInfo);
 		}
 
 		public void Render()
 		{
-			m_interopImage.RequestRender();
+			InvalidateArrange();
 		}
 
 		public int TileSize
@@ -132,7 +159,7 @@ namespace MyGame.Client
 				m_atlasBitmap = null;
 				m_colorTileArray = null;
 
-				m_interopImage.RequestRender();
+				InvalidateArrange();
 			}
 		}
 
@@ -160,7 +187,6 @@ namespace MyGame.Client
 				m_columns = newColumns;
 				m_rows = newRows;
 				m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
-				m_interopImage.SetPixelSize((uint)(m_columns * m_tileSize), (uint)(m_rows * m_tileSize));
 			}
 
 			UpdateOffset(this.RenderSize, (int)m_tileSize);
@@ -168,7 +194,7 @@ namespace MyGame.Client
 			if (TileMapChanged != null)
 				TileMapChanged();
 
-			m_interopImage.RequestRender();
+			this.InvalidateArrange();
 		}
 
 		void CreateAtlas()
@@ -188,6 +214,15 @@ namespace MyGame.Client
 				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				m_atlasBitmap.CopyFromMemory(new RectU(x * tileSize, 0, x * tileSize + tileSize, tileSize), arr, tileSize * 4);
 			}
+		}
+
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+			MyDebug.WriteLine("Arrange");
+
+			m_interopImage.RequestRender();
+
+			return base.ArrangeOverride(arrangeBounds);
 		}
 
 		void DoRender(IntPtr pIDXGISurface)

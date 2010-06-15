@@ -266,15 +266,12 @@ namespace MyGame.Client
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
-			p += new Vector(m_tileControlD2D.Offset.X, m_tileControlD2D.Offset.Y);
-			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
+			return m_tileControlD2D.ScreenPointToScreenLocation(p);
 		}
 
 		public Point ScreenLocationToScreenPoint(IntPoint loc)
 		{
-			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			p -= new Vector(m_tileControlD2D.Offset.X, m_tileControlD2D.Offset.Y);
-			return p;
+			return m_tileControlD2D.ScreenLocationToScreenPoint(loc);
 		}
 
 		void Notify(string name)
