@@ -9,8 +9,9 @@ namespace MyGame.Client
 	public struct RenderTile
 	{
 		public bool IsValid;
+
 		// Tile color for minimap
-		//public GameColor Color;
+		public GameColor Color;
 
 		public SymbolID FloorSymbolID;
 		public bool FloorDark;

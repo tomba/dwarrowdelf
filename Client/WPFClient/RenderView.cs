@@ -73,8 +73,7 @@ namespace MyGame.Client
 					var ml = p + this.Offset;
 					var ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
 
-					var tile = Resolve(this.Environment, ml3d, m_showVirtualSymbols);
-					m_renderMap.ArrayGrid.Grid[p.Y, p.X] = tile;
+					Resolve(out m_renderMap.ArrayGrid.Grid[p.Y, p.X], this.Environment, ml3d, m_showVirtualSymbols);
 				}
 			}
 		}
@@ -199,22 +198,21 @@ namespace MyGame.Client
 
 
 
-
 		static RenderTile Resolve(Environment env, IntPoint3D ml, bool showVirtualSymbols)
 		{
-			RenderTile tile = new RenderTile();
+			RenderTile tile;
+			Resolve(out tile, env, ml, showVirtualSymbols);
+			return tile;
+		}
 
-			var visible = false;
+		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols)
+		{
+			tile = new RenderTile();
 
-			if (env == null)
+			if (env != null)
 			{
-				tile.FloorSymbolID = SymbolID.Undefined;
-				tile.InteriorSymbolID = SymbolID.Undefined;
-				tile.ObjectSymbolID = SymbolID.Undefined;
-				tile.TopSymbolID = SymbolID.Undefined;
-			}
-			else
-			{
+				var visible = false;
+
 				if (GameData.Data.IsSeeAll)
 					visible = true;
 				else
@@ -238,8 +236,6 @@ namespace MyGame.Client
 			}
 
 			tile.IsValid = true;
-
-			return tile;
 		}
 
 		static bool TileVisible(IntPoint3D ml, Environment env)
