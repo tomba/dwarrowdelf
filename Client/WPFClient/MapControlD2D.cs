@@ -31,8 +31,6 @@ namespace MyGame.Client
 
 		TileControlD2D m_tileControlD2D;
 
-		DispatcherTimer m_updateTimer;
-
 		IntPoint m_centerPos;
 		int m_tileSize;
 
@@ -42,88 +40,37 @@ namespace MyGame.Client
 
 		public MapControlD2D()
 		{
-			m_updateTimer = new DispatcherTimer(DispatcherPriority.Normal);
-			m_updateTimer.Tick += UpdateTimerTick;
-			m_updateTimer.Interval = TimeSpan.FromMilliseconds(20);
+			m_tileControlD2D = new TileControlD2D();
+			m_tileControlD2D.AboutToRender += OnAboutToRender;
+			AddChild(m_tileControlD2D);
 
 			m_renderView = new RenderView();
-
-			m_tileControlD2D = new TileControlD2D();
-			m_tileControlD2D.TileMapChanged += OnTileMapChanged;
-			AddChild(m_tileControlD2D);
+			m_tileControlD2D.RenderMap = m_renderView.RenderMap;
 		}
 
 		public int Columns { get { return m_tileControlD2D.Columns; } }
 		public int Rows { get { return m_tileControlD2D.Rows; } }
 
-		// Called when underlying TileControl changes
-		void OnTileMapChanged()
-		{
-			UpdateTiles();
-
-			if (TileArrangementChanged != null)
-				TileArrangementChanged();
-		}
-
 		public void InvalidateTiles()
 		{
-			if (!m_updateTimer.IsEnabled)
-				m_updateTimer.Start();
+			m_tileControlD2D.InvalidateArrange();
 		}
 
-		void UpdateTimerTick(object sender, EventArgs e)
+		void OnAboutToRender(bool arrangementChanged)
 		{
-			m_updateTimer.Stop();
+			if (arrangementChanged && TileArrangementChanged != null)
+				TileArrangementChanged();
+
 			UpdateTiles();
 		}
 
 		void UpdateTiles()
 		{
-			MyDebug.WriteLine("Update TileMap");
-
-			int columns = this.Columns;
-			int rows = this.Rows;
-			var map = m_tileControlD2D.TileMap;
+			//MyDebug.WriteLine("Update TileMap");
 
 			m_renderView.Size = new IntSize(this.Columns, this.Rows);
 			m_renderView.Offset = new IntVector(this.BottomLeftPos.X, this.BottomLeftPos.Y);
-
-			if (map != null)
-			{
-				for (int y = 0; y < rows; ++y)
-				{
-					for (int x = 0; x < columns; ++x)
-					{
-						UpdateTile(x, y, map);
-					}
-				}
-			}
-
-			m_tileControlD2D.Render();
-		}
-
-		void UpdateTile(int x, int y, MapD2DData[, ,] map)
-		{
-			// x and y in screen tile coordinates
-			var tlp = this.TopLeftPos;
-			var ml = new IntPoint3D(x + tlp.X, -y + tlp.Y, this.Z);
-
-			var data = m_renderView.GetRenderTile(ml.ToIntPoint());
-
-			map[y, x, 0].SymbolID = (byte)data.FloorSymbolID;
-			map[y, x, 1].SymbolID = (byte)data.InteriorSymbolID;
-			map[y, x, 2].SymbolID = (byte)data.ObjectSymbolID;
-			map[y, x, 3].SymbolID = (byte)data.TopSymbolID;
-
-			map[y, x, 0].Dark = data.FloorDark;
-			map[y, x, 1].Dark = data.InteriorDark;
-			map[y, x, 2].Dark = data.ObjectDark;
-			map[y, x, 3].Dark = data.TopDark;
-
-			map[y, x, 0].Color = GameColor.None;
-			map[y, x, 1].Color = GameColor.None;
-			map[y, x, 2].Color = data.ObjectColor;
-			map[y, x, 3].Color = GameColor.None;
+			m_renderView.ResolveAll();
 		}
 
 		public int TileSize
@@ -136,11 +83,14 @@ namespace MyGame.Client
 			set
 			{
 				value = MyMath.IntClamp(value, 64, 8);
+
+				if (value == m_tileSize)
+					return;
+
 				m_tileSize = value;
 				if (m_bitmapCache != null)
 					m_bitmapCache.TileSize = value;
 				m_tileControlD2D.TileSize = value;
-				UpdateTiles();
 			}
 		}
 
@@ -161,8 +111,10 @@ namespace MyGame.Client
 			{
 				if (value == this.CenterPos)
 					return;
+
 				m_centerPos = value;
-				UpdateTiles();
+
+				InvalidateTiles();
 			}
 		}
 
@@ -213,7 +165,7 @@ namespace MyGame.Client
 					m_tileControlD2D.BitmapGenerator = null;
 				}
 
-				UpdateTiles();
+				InvalidateTiles();
 
 				Notify("Environment");
 			}
@@ -231,7 +183,7 @@ namespace MyGame.Client
 				m_z = value;
 				m_renderView.Z = value;
 
-				UpdateTiles();
+				InvalidateTiles();
 
 				Notify("Z");
 			}

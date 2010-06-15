@@ -22,13 +22,6 @@ using Microsoft.WindowsAPICodePack.DirectX.WindowsImagingComponent;
 
 namespace MyGame.Client
 {
-	public struct MapD2DData
-	{
-		public byte SymbolID;
-		public bool Dark;
-		public GameColor Color;
-	}
-
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
@@ -47,9 +40,11 @@ namespace MyGame.Client
 
 		D2DBitmap m_atlasBitmap;
 
-		const int TileZ = 4;
-		MapD2DData[, ,] m_tileMap;
-		public MapD2DData[, ,] TileMap { get { return m_tileMap; } }
+		IBitmapGenerator m_bitmapGenerator;
+		Dictionary<GameColor, D2DBitmap>[] m_colorTileArray;
+
+		RenderMap m_renderMap;
+		public RenderMap RenderMap { set { m_renderMap = value; } }
 
 		int m_columns;
 		int m_rows;
@@ -57,14 +52,13 @@ namespace MyGame.Client
 		public int Columns { get { return m_columns; } }
 		public int Rows { get { return m_rows; } }
 
-		uint m_tileSize;
-		IBitmapGenerator m_bitmapGenerator;
+		int m_tileSize;
 
-		Dictionary<GameColor, D2DBitmap>[] m_colorTileArray;
-
-		public event Action TileMapChanged;
+		public delegate void AboutToRenderDelegate(bool arrangementChanged);
+		public event AboutToRenderDelegate AboutToRender;
 
 		IntVector m_offset;
+		bool m_arrangementChanged;
 
 		public TileControlD2D()
 		{
@@ -117,7 +111,6 @@ namespace MyGame.Client
 
 			if (m_interopImage.PixelWidth != pw || m_interopImage.PixelHeight != ph)
 			{
-				// Locking seems to remove a deadlock when changing tilesize quickly
 				m_interopImage.Lock();
 				// implicit render
 				m_interopImage.SetPixelSize(pw, ph);
@@ -129,19 +122,13 @@ namespace MyGame.Client
 			base.OnRenderSizeChanged(sizeInfo);
 		}
 
-		public void Render()
-		{
-			InvalidateArrange();
-		}
-
 		public int TileSize
 		{
-			get { return (int)m_tileSize; }
+			get { return m_tileSize; }
 			set
 			{
-				m_tileSize = (uint)value;
+				m_tileSize = value;
 
-				m_tileMap = null;
 				m_atlasBitmap = null;
 				m_colorTileArray = null;
 
@@ -172,36 +159,37 @@ namespace MyGame.Client
 
 		void UpdateTileMapSize()
 		{
+			//MyDebug.WriteLine("UpdateTileMapSize");
+
 			if (m_tileSize == 0)
 			{
-				m_tileMap = null;
 				m_interopImage.SetPixelSize(0, 0);
 				return;
 			}
 
-			int newColumns = MyMath.IntDivRound((int)Math.Ceiling(this.ActualWidth), (int)m_tileSize) | 1;
-			int newRows = MyMath.IntDivRound((int)Math.Ceiling(this.ActualHeight), (int)m_tileSize) | 1;
+			int newColumns = MyMath.IntDivRound((int)Math.Ceiling(this.ActualWidth), m_tileSize) | 1;
+			int newRows = MyMath.IntDivRound((int)Math.Ceiling(this.ActualHeight), m_tileSize) | 1;
 
-			if (m_tileMap == null || (newColumns != m_columns || newRows != m_rows))
+			if (newColumns != m_columns || newRows != m_rows)
 			{
 				m_columns = newColumns;
 				m_rows = newRows;
-				m_tileMap = new MapD2DData[m_rows, m_columns, TileZ];
 			}
 
-			UpdateOffset(this.RenderSize, (int)m_tileSize);
+			UpdateOffset(this.RenderSize, m_tileSize);
 
-			if (TileMapChanged != null)
-				TileMapChanged();
+			m_arrangementChanged = true;
 
-			this.InvalidateArrange();
+			InvalidateArrange();
 		}
 
 		void CreateAtlas()
 		{
+			//MyDebug.WriteLine("CreateAtlas");
+
 			var numTiles = m_bitmapGenerator.NumDistinctBitmaps;
 
-			var tileSize = m_tileSize;
+			var tileSize = (uint)m_tileSize;
 			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)numTiles, tileSize),
 				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
 
@@ -218,7 +206,12 @@ namespace MyGame.Client
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			MyDebug.WriteLine("Arrange");
+			//MyDebug.WriteLine("Arrange");
+
+			if (AboutToRender != null)
+				AboutToRender(m_arrangementChanged);
+
+			m_arrangementChanged = false;
 
 			m_interopImage.RequestRender();
 
@@ -227,11 +220,11 @@ namespace MyGame.Client
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
-			MyDebug.WriteLine("DoRender");
+			//MyDebug.WriteLine("DoRender");
 
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
-				MyDebug.WriteLine("Create Render Target");
+				//MyDebug.WriteLine("Create Render Target");
 
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 
@@ -261,6 +254,11 @@ namespace MyGame.Client
 				m_colorTileArray = null;
 			}
 
+			DoRenderTiles();
+		}
+
+		void DoRenderTiles()
+		{
 			m_renderTarget.BeginDraw();
 
 			m_renderTarget.Clear(new ColorF(0, 0, 0, 1));
@@ -283,62 +281,23 @@ namespace MyGame.Client
 				for (int x = 0; x < m_columns; ++x)
 				{
 					var x1 = x * tileSize - m_offset.X;
-					var y1 = y * tileSize - m_offset.Y;
+					var y1 = (m_rows - y - 1) * tileSize - m_offset.Y;
 					var dstRect = new RectF(x1, y1, x1 + tileSize, y1 + tileSize);
 
-					for (int z = 0; z < TileZ; ++z)
-					{
-						MapD2DData data;
+					RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 
-						data = m_tileMap[y, x, z];
+					if (data.FloorSymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, data.FloorSymbolID, GameColor.None, data.FloorDark);
 
-						byte tileNum = data.SymbolID;
+					if (data.InteriorSymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, data.InteriorSymbolID, GameColor.None, data.InteriorDark);
 
-						if (tileNum == 0)
-							continue;
+					if (data.ObjectSymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, data.ObjectSymbolID, data.ObjectColor, data.ObjectDark);
 
-						bool dark = data.Dark;
-						float opacity = dark ? 0.2f : 1.0f;
+					if (data.TopSymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, data.TopSymbolID, GameColor.None, data.TopDark);
 
-						if (data.Color != GameColor.None)
-						{
-							Dictionary<GameColor, D2DBitmap> dict;
-
-							if (m_colorTileArray == null)
-								m_colorTileArray = new Dictionary<GameColor, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
-
-							dict = m_colorTileArray[data.SymbolID];
-
-							if (dict == null)
-							{
-								dict = new Dictionary<GameColor, D2DBitmap>();
-								m_colorTileArray[data.SymbolID] = dict;
-							}
-
-							D2DBitmap bitmap;
-							if (dict.TryGetValue(data.Color, out bitmap) == false)
-							{
-								bitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize, tileSize),
-									new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
-
-								const int bytesPerPixel = 4;
-								var arr = new byte[tileSize * tileSize * bytesPerPixel];
-
-								var origBmp = m_bitmapGenerator.GetBitmap((SymbolID)data.SymbolID, data.Color, false);
-								origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
-								bitmap.CopyFromMemory(new RectU(0, 0, tileSize, tileSize), arr, tileSize * 4);
-							}
-
-							m_renderTarget.DrawBitmap(bitmap, opacity, BitmapInterpolationMode.Linear, dstRect);
-						}
-						else
-						{
-							uint xx = (uint)(tileNum * tileSize);
-
-							m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
-								dstRect, new RectF(xx, 0, xx + tileSize, tileSize));
-						}
-					}
 #if DEBUG_TEXT
 					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif
@@ -348,6 +307,56 @@ namespace MyGame.Client
 			m_renderTarget.DrawLine(new Point2F(50, 0), new Point2F(0, 50), blackBrush, 2);
 
 			m_renderTarget.EndDraw();
+		}
+
+		void DrawTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, bool dark)
+		{
+			float opacity = dark ? 0.2f : 1.0f;
+
+			if (color != GameColor.None)
+				DrawColoredTile(tileSize, ref dstRect, symbolID, color, opacity);
+			else
+				DrawUncoloredTile(tileSize, ref dstRect, symbolID, opacity);
+		}
+
+		void DrawColoredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, float opacity)
+		{
+			Dictionary<GameColor, D2DBitmap> dict;
+
+			if (m_colorTileArray == null)
+				m_colorTileArray = new Dictionary<GameColor, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
+
+			dict = m_colorTileArray[(int)symbolID];
+
+			if (dict == null)
+			{
+				dict = new Dictionary<GameColor, D2DBitmap>();
+				m_colorTileArray[(int)symbolID] = dict;
+			}
+
+			D2DBitmap bitmap;
+			if (dict.TryGetValue(color, out bitmap) == false)
+			{
+				bitmap = m_renderTarget.CreateBitmap(new SizeU((uint)tileSize, (uint)tileSize),
+					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
+
+				const int bytesPerPixel = 4;
+				var arr = new byte[tileSize * tileSize * bytesPerPixel];
+
+				var origBmp = m_bitmapGenerator.GetBitmap(symbolID, color, false);
+				origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
+				bitmap.CopyFromMemory(new RectU(0, 0, (uint)tileSize, (uint)tileSize), arr, (uint)tileSize * 4);
+			}
+
+			m_renderTarget.DrawBitmap(bitmap, opacity, BitmapInterpolationMode.Linear, dstRect);
+		}
+
+		private void DrawUncoloredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, float opacity)
+		{
+			var srcX = (int)symbolID * tileSize;
+
+			m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
+				dstRect, new RectF(srcX, 0, srcX + tileSize, tileSize));
 		}
 	}
 }

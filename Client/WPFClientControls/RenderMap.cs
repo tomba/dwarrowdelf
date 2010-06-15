@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace MyGame.Client
 {
-	struct RenderTile
+	public struct RenderTile
 	{
 		public bool IsValid;
 		// Tile color for minimap
@@ -26,7 +26,7 @@ namespace MyGame.Client
 		public bool TopDark;
 	}
 
-	class RenderMap
+	public class RenderMap
 	{
 		ArrayGrid2D<RenderTile> m_grid;
 

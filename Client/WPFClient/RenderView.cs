@@ -20,6 +20,8 @@ namespace MyGame.Client
 			m_renderMap = new RenderMap();
 		}
 
+		public RenderMap RenderMap { get { return m_renderMap; } }
+
 		public RenderTile GetRenderTile(IntPoint ml)
 		{
 			if (m_invalid)
@@ -35,7 +37,7 @@ namespace MyGame.Client
 
 			if (!tile.IsValid)
 			{
-				IntPoint3D ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
+				var ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
 
 				tile = Resolve(this.Environment, ml3d, m_showVirtualSymbols);
 
@@ -45,8 +47,43 @@ namespace MyGame.Client
 			return tile;
 		}
 
+		public void ResolveAll()
+		{
+			//MyDebug.WriteLine("RenderView.ResolveAll");
+
+			var columns = m_renderMap.Size.Width;
+			var rows = m_renderMap.Size.Height;
+			var grid = m_renderMap.ArrayGrid.Grid;
+
+			if (m_invalid)
+			{
+				m_renderMap.Clear();
+				m_invalid = false;
+			}
+
+			for (int y = 0; y < rows; ++y)
+			{
+				for (int x = 0; x < columns; ++x)
+				{
+					var p = new IntPoint(x, y);
+
+					if (m_renderMap.ArrayGrid.Grid[p.Y, p.X].IsValid)
+						continue;
+
+					var ml = p + this.Offset;
+					var ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
+
+					var tile = Resolve(this.Environment, ml3d, m_showVirtualSymbols);
+					m_renderMap.ArrayGrid.Grid[p.Y, p.X] = tile;
+				}
+			}
+		}
+
+
 		void ScrollTiles(IntVector scrollVector)
 		{
+			//MyDebug.WriteLine("RenderView.ScrollTiles");
+
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
 			var grid = m_renderMap.ArrayGrid.Grid;

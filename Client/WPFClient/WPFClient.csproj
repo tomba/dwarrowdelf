@@ -217,7 +217,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="RenderMap.cs" />
     <Compile Include="RenderView.cs" />
     <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="SymbolDrawingCache.cs" />
