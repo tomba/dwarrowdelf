@@ -60,6 +60,8 @@ namespace MyGame.Client
 		IntVector m_offset;
 		bool m_arrangementChanged;
 
+		uint[] m_simpleBitmapArray;
+
 		public TileControlD2D()
 		{
 			m_interopImage = new D2DD3DImage();
@@ -111,6 +113,7 @@ namespace MyGame.Client
 
 			if (m_interopImage.PixelWidth != pw || m_interopImage.PixelHeight != ph)
 			{
+				m_simpleBitmapArray = null;
 				m_interopImage.Lock();
 				// implicit render
 				m_interopImage.SetPixelSize(pw, ph);
@@ -163,6 +166,7 @@ namespace MyGame.Client
 
 			if (m_tileSize == 0)
 			{
+				m_simpleBitmapArray = null;
 				m_interopImage.SetPixelSize(0, 0);
 				return;
 			}
@@ -272,9 +276,50 @@ namespace MyGame.Client
 			if (m_atlasBitmap == null)
 				CreateAtlas();
 
-			var tileSize = m_tileSize;
-			SolidColorBrush blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
+
+			if (m_tileSize > 8)
+				RenderDetailedTiles(m_tileSize);
+			else
+				RenderSimpleTiles(m_tileSize);
+
+			m_renderTarget.EndDraw();
+		}
+
+		unsafe void RenderSimpleTiles(int tileSize)
+		{
+			uint bytespp = 4;
+			uint w = (uint)(m_interopImage.PixelWidth);
+			uint h = (uint)(m_interopImage.PixelHeight);
+
+			if (m_simpleBitmapArray == null)
+				m_simpleBitmapArray = new uint[w * h];
+
+			fixed (uint* a = m_simpleBitmapArray)
+			{
+				for (int y = 0; y < m_rows; ++y)
+				{
+					for (int x = 0; x < m_columns; ++x)
+					{
+						RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
+						var rgb = new GameColorRGB(data.Color);
+						uint c = (uint)((rgb.B << 16) | (rgb.G << 8) | (rgb.R << 0));
+
+						for (int ty = 0; ty < tileSize; ++ty)
+							for (int tx = 0; tx < tileSize; ++tx)
+								a[((m_rows - y - 1) * tileSize + ty) * w + (x * tileSize + tx)] = c;
+					}
+				}
+
+				var bmp = m_renderTarget.CreateBitmap(new SizeU(w, h), (IntPtr)a, w * bytespp,
+					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
+				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.Linear, new RectF(-m_offset.X, -m_offset.Y, w - m_offset.X, h - m_offset.Y));
+			}
+		}
+
+		void RenderDetailedTiles(int tileSize)
+		{
+			var blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
 			for (int y = 0; y < m_rows; ++y)
 			{
@@ -297,16 +342,11 @@ namespace MyGame.Client
 
 					if (data.TopSymbolID != SymbolID.Undefined)
 						DrawTile(tileSize, ref dstRect, data.TopSymbolID, GameColor.None, data.TopDark);
-
 #if DEBUG_TEXT
-					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
+						m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif
 				}
 			}
-
-			m_renderTarget.DrawLine(new Point2F(50, 0), new Point2F(0, 50), blackBrush, 2);
-
-			m_renderTarget.EndDraw();
 		}
 
 		void DrawTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, bool dark)

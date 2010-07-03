@@ -344,13 +344,13 @@ namespace MyGame.Client
 			else if (e.Key == Key.Add)
 			{
 				e.Handled = true;
-				map.TileSize += 8;
+				map.TileSize *= 2;
 			}
 
 			else if (e.Key == Key.Subtract)
 			{
 				e.Handled = true;
-				map.TileSize -= 8;
+				map.TileSize /= 2;
 			}
 
 		}

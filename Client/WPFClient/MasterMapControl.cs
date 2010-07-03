@@ -127,9 +127,9 @@ namespace MyGame.Client
 			var ml1 = m_mapControl.ScreenPointToMapLocation(p);
 
 			if (e.Delta > 0)
-				this.TileSize += 8;
+				this.TileSize *= 2;
 			else
-				this.TileSize -= 8;
+				this.TileSize /= 2;
 
 			var ml2 = m_mapControl.ScreenPointToMapLocation(p);
 			var d = ml2 - this.CenterPos;

@@ -233,6 +233,13 @@ namespace MyGame.Client
 
 				tile.TopSymbolID = GetTopBitmap(ml, env);
 				tile.TopDark = !visible;
+
+
+				// XXX resolve the colors using some logic
+				if (tile.InteriorSymbolID == SymbolID.Grass)
+					tile.Color = GameColor.Green;
+				else if (tile.InteriorSymbolID == SymbolID.Wall)
+					tile.Color = GameColor.Gray;
 			}
 
 			tile.IsValid = true;
