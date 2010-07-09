@@ -234,12 +234,7 @@ namespace MyGame.Client
 				tile.TopSymbolID = GetTopBitmap(ml, env);
 				tile.TopDark = !visible;
 
-
-				// XXX resolve the colors using some logic
-				if (tile.InteriorSymbolID == SymbolID.Grass)
-					tile.Color = GameColor.Green;
-				else if (tile.InteriorSymbolID == SymbolID.Wall)
-					tile.Color = GameColor.Gray;
+				tile.Color = GetTileColor(ml, env);
 			}
 
 			tile.IsValid = true;
@@ -477,6 +472,59 @@ namespace MyGame.Client
 				id = SymbolID.Water20;
 
 			return id;
+		}
+
+		static GameColor GetTileColor(IntPoint3D ml, Environment env)
+		{
+			var waterLevel = env.GetWaterLevel(ml);
+
+			if (waterLevel > TileData.MaxWaterLevel / 4 * 3)
+				return GameColor.DarkBlue;
+			else if (waterLevel > TileData.MaxWaterLevel / 4 * 2)
+				return GameColor.MediumBlue;
+			else if (waterLevel > TileData.MaxWaterLevel / 4 * 1)
+				return GameColor.Blue;
+			else if (waterLevel > 1)
+				return GameColor.DodgerBlue;
+
+			var interID = env.GetInterior(ml).ID;
+
+			switch (interID)
+			{
+				case InteriorID.Grass:
+					return GameColor.Green;
+
+				case InteriorID.Wall:
+				case InteriorID.NaturalWall:
+					return GameColor.Gray;
+
+				case InteriorID.SlopeNorth:
+				case InteriorID.SlopeEast:
+				case InteriorID.SlopeSouth:
+				case InteriorID.SlopeWest:
+					return GameColor.DimGray;
+
+				case InteriorID.Sapling:
+				case InteriorID.Tree:
+					return GameColor.DarkGreen;
+
+				default:
+					break;
+			}
+
+			var floorID = env.GetFloor(ml).ID;
+
+			switch (floorID)
+			{
+				case FloorID.Floor:
+				case FloorID.NaturalFloor:
+					return GameColor.SaddleBrown;
+
+				default:
+					break;
+			}
+
+			return GameColor.Black;
 		}
 
 	}
