@@ -303,7 +303,7 @@ namespace MyGame.Client
 					{
 						RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 						var rgb = new GameColorRGB(data.Color);
-						uint c = (uint)((rgb.B << 16) | (rgb.G << 8) | (rgb.R << 0));
+						uint c = (uint)((rgb.R << 16) | (rgb.G << 8) | (rgb.B << 0));
 
 						for (int ty = 0; ty < tileSize; ++ty)
 							for (int tx = 0; tx < tileSize; ++tx)
@@ -312,7 +312,7 @@ namespace MyGame.Client
 				}
 
 				var bmp = m_renderTarget.CreateBitmap(new SizeU(w, h), (IntPtr)a, w * bytespp,
-					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
+					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Ignore), 96, 96));
 				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.Linear, new RectF(-m_offset.X, -m_offset.Y, w - m_offset.X, h - m_offset.Y));
 			}
 		}
@@ -343,7 +343,7 @@ namespace MyGame.Client
 					if (data.TopSymbolID != SymbolID.Undefined)
 						DrawTile(tileSize, ref dstRect, data.TopSymbolID, GameColor.None, data.TopDark);
 #if DEBUG_TEXT
-						m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
+					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif
 				}
 			}
