@@ -414,6 +414,7 @@ namespace MyGame.Client
 		{
 			var r = MapRectToScreenPointRect(b.Area);
 
+			rect.StrokeThickness = Math.Max(1, this.TileSize / 8);
 			Canvas.SetLeft(rect, r.Left);
 			Canvas.SetTop(rect, r.Top);
 			rect.Width = r.Width;
@@ -426,6 +427,15 @@ namespace MyGame.Client
 				UpdateBuildingRect(kvp.Key, kvp.Value);
 		}
 
+		void AddBuildingRect(BuildingObject b)
+		{
+			var rect = new Rectangle();
+			rect.Stroke = Brushes.DarkGray;
+			m_buildingCanvas.Children.Add(rect);
+			m_buildingRectMap[b] = rect;
+			UpdateBuildingRect(b, rect);
+		}
+
 		void UpdateBuildings()
 		{
 			m_buildingCanvas.Children.Clear();
@@ -436,14 +446,7 @@ namespace MyGame.Client
 				foreach (var b in m_env.Buildings)
 				{
 					if (b.Environment == m_env && b.Z == m_z)
-					{
-						var rect = new Rectangle();
-						rect.Stroke = Brushes.DarkGray;
-						rect.StrokeThickness = 4;
-						m_buildingCanvas.Children.Add(rect);
-						m_buildingRectMap[b] = rect;
-						UpdateBuildingRect(b, rect);
-					}
+						AddBuildingRect(b);
 				}
 			}
 		}
@@ -453,14 +456,8 @@ namespace MyGame.Client
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
 				foreach (BuildingObject b in e.NewItems)
-				{
-					var rect = new Rectangle();
-					rect.Stroke = Brushes.DarkGray;
-					rect.StrokeThickness = 4;
-					m_buildingCanvas.Children.Add(rect);
-					m_buildingRectMap[b] = rect;
-					UpdateBuildingRect(b, rect);
-				}
+					if (b.Environment == m_env && b.Z == m_z)
+						AddBuildingRect(b);
 			}
 			else if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
