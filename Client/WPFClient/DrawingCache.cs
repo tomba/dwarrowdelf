@@ -123,121 +123,148 @@ namespace MyGame.Client
 			}
 		}
 
-		// r,g,b values are from 0 to 1
-		// h = [0,360], s = [0,1], v = [0,1]
-		//		if s == 0, then h = -1 (undefined)
-		static void RGBtoHSV(float r, float g, float b, out float h, out float s, out float v)
-		{
-			float min, max, delta;
-
-			min = Math.Min(r, Math.Min(g, b));
-			max = Math.Max(r, Math.Max(g, b));
-			v = max;				// v
-
-			delta = max - min;
-
-			if (max != 0)
-				s = delta / max;		// s
-			else
-			{
-				// r = g = b = 0		// s = 0, v is undefined
-				s = 0;
-				h = -1;
-				return;
-			}
-
-			if (r == max)
-				h = (g - b) / delta;		// between yellow & magenta
-			else if (g == max)
-				h = 2 + (b - r) / delta;	// between cyan & yellow
-			else
-				h = 4 + (r - g) / delta;	// between magenta & cyan
-
-			h *= 60;				// degrees
-			if (h < 0)
-				h += 360;
-
-		}
-
-		static void HSVtoRGB(out float r, out float g, out float b, float h, float s, float v)
-		{
-			int i;
-			float f, p, q, t;
-
-			if (s == 0)
-			{
-				// achromatic (grey)
-				r = g = b = v;
-				return;
-			}
-
-			h /= 60;			// sector 0 to 5
-			i = (int)Math.Floor(h);
-			f = h - i;			// factorial part of h
-			p = v * (1 - s);
-			q = v * (1 - s * f);
-			t = v * (1 - s * (1 - f));
-
-			switch (i)
-			{
-				case 0:
-					r = v;
-					g = t;
-					b = p;
-					break;
-				case 1:
-					r = q;
-					g = v;
-					b = p;
-					break;
-				case 2:
-					r = p;
-					g = v;
-					b = t;
-					break;
-				case 3:
-					r = p;
-					g = q;
-					b = v;
-					break;
-				case 4:
-					r = t;
-					g = p;
-					b = v;
-					break;
-				default:		// case 5:
-					r = v;
-					g = p;
-					b = q;
-					break;
-			}
-
-		}
-
 		static Color TintColor(Color c, Color tint)
 		{
-			byte r = c.R;
-			byte g = c.G;
-			byte b = c.B;
+			double th, ts, tl;
+			RGB2HSL(tint, out th, out ts, out tl);
 
-			float tint_hue;
-			float h, s, v;
-			float fr, fg, fb;
+			double ch, cs, cl;
+			RGB2HSL(c, out ch, out cs, out cl);
 
-			byte rr = tint.R;
-			byte gg = tint.G;
-			byte bb = tint.B;
-			RGBtoHSV((float)rr / 255.0f, (float)gg / 255.0f, (float)bb / 255.0f, out h, out s, out v);
+			Color color = HSL2RGB(th, ts, cl);
+			color.A = c.A;
 
-			tint_hue = h;
+			return color;
+		}
 
-			RGBtoHSV((float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, out h, out s, out v);
-			HSVtoRGB(out fr, out fg, out fb, tint_hue, s, v);
-			r = (byte)(fr * 255.0f);
-			g = (byte)(fg * 255.0f);
-			b = (byte)(fb * 255.0f);
+		// Given H,S,L in range of 0-1
+		// Returns a Color (RGB struct) in range of 0-255
+		public static Color HSL2RGB(double h, double s, double l)
+		{
+			double v;
+			double r, g, b;
 
-			return Color.FromArgb(c.A, r, g, b);
+			r = l;   // default to gray
+			g = l;
+			b = l;
+			v = (l <= 0.5) ? (l * (1.0 + s)) : (l + s - l * s);
+			if (v > 0)
+			{
+				double m;
+				double sv;
+				int sextant;
+				double fract, vsf, mid1, mid2;
+
+				m = l + l - v;
+				sv = (v - m) / v;
+				h *= 6.0;
+				if (h >= 6.0)
+					h -= 6.0;
+				sextant = (int)h;
+				fract = h - sextant;
+				vsf = v * sv * fract;
+				mid1 = m + vsf;
+				mid2 = v - vsf;
+
+				switch (sextant)
+				{
+					case 0:
+						r = v;
+						g = mid1;
+						b = m;
+						break;
+
+					case 1:
+						r = mid2;
+						g = v;
+						b = m;
+						break;
+
+					case 2:
+						r = m;
+						g = v;
+						b = mid1;
+						break;
+
+					case 3:
+						r = m;
+						g = mid2;
+						b = v;
+						break;
+
+					case 4:
+						r = mid1;
+						g = m;
+						b = v;
+						break;
+
+					case 5:
+						r = v;
+						g = m;
+						b = mid2;
+						break;
+
+					default:
+						throw new Exception();
+
+				}
+
+			}
+
+			Color rgb = new Color();
+			rgb.R = Convert.ToByte(r * 255.0f);
+			rgb.G = Convert.ToByte(g * 255.0f);
+			rgb.B = Convert.ToByte(b * 255.0f);
+			rgb.A = 255;
+
+			return rgb;
+
+		}
+
+
+		// Given a Color (RGB Struct) in range of 0-255
+		// Return H,S,L in range of 0-1
+		public static void RGB2HSL(Color rgb, out double h, out double s, out double l)
+		{
+			double r = rgb.R / 255.0;
+			double g = rgb.G / 255.0;
+			double b = rgb.B / 255.0;
+			double v;
+			double m;
+			double vm;
+			double r2, g2, b2;
+
+			h = 0; // default to black
+			s = 0;
+			l = 0;
+			v = Math.Max(r, g);
+			v = Math.Max(v, b);
+			m = Math.Min(r, g);
+			m = Math.Min(m, b);
+			l = (m + v) / 2.0;
+
+			if (l <= 0.0)
+				return;
+
+			vm = v - m;
+			s = vm;
+			if (s > 0.0)
+				s /= (l <= 0.5) ? (v + m) : (2.0 - v - m);
+			else
+				return;
+
+			r2 = (v - r) / vm;
+			g2 = (v - g) / vm;
+			b2 = (v - b) / vm;
+
+			if (r == v)
+				h = (g == m ? 5.0 + b2 : 1.0 - g2);
+			else if (g == v)
+				h = (b == m ? 1.0 + r2 : 3.0 - b2);
+			else
+				h = (r == m ? 3.0 + g2 : 5.0 - r2);
+
+			h /= 6.0;
 		}
 
 		static Drawing CreateCharacterDrawing(char ch, GameColor color, bool fillBg)
@@ -262,7 +289,7 @@ namespace MyGame.Client
 						System.Globalization.CultureInfo.GetCultureInfo("en-us"),
 						FlowDirection.LeftToRight,
 						typeFace,
-						16,	Brushes.Black);
+						16, Brushes.Black);
 
 				var geometry = formattedText.BuildGeometry(new System.Windows.Point(0, 0));
 
