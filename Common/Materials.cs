@@ -19,14 +19,16 @@ namespace MyGame
 
 	public class MaterialInfo
 	{
-		public MaterialInfo(MaterialID id)
+		public MaterialInfo(MaterialID id, GameColor color)
 		{
 			this.ID = id;
 			this.Name = id.ToString();
+			this.Color = color;
 		}
 
 		public MaterialID ID { get; private set; }
 		public string Name { get; private set; }
+		public GameColor Color { get; private set; }
 	}
 
 	public static class Materials
@@ -54,13 +56,13 @@ namespace MyGame
 			return s_materialList[(int)id];
 		}
 
-		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined);
+		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined, GameColor.None);
 
-		public static readonly MaterialInfo Stone = new MaterialInfo(MaterialID.Stone);
-		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron);
-		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel);
-		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond);
-		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood);
-		public static readonly MaterialInfo Grass = new MaterialInfo(MaterialID.Grass);
+		public static readonly MaterialInfo Stone = new MaterialInfo(MaterialID.Stone, GameColor.Gray);
+		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron, GameColor.SteelBlue);
+		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, GameColor.LightSteelBlue);
+		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, GameColor.LightCyan);
+		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, GameColor.Sienna);
+		public static readonly MaterialInfo Grass = new MaterialInfo(MaterialID.Grass, GameColor.Green);
 	}
 }
