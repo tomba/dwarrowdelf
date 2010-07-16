@@ -144,6 +144,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Collections.cs" />
     <Compile Include="MapControl.cs" />
     <Compile Include="MasterMapControl.cs" />
     <Compile Include="MapControlD2D.cs" />

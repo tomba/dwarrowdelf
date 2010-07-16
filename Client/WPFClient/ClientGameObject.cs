@@ -9,24 +9,6 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class ObjectCollection : ObservableCollection<ClientGameObject> { }
-
-	class KeyedObjectCollection : ObservableKeyedCollection<ObjectID, IIdentifiable>
-	{
-		protected override ObjectID GetKeyForItem(IIdentifiable item)
-		{
-			return item.ObjectID;
-		}
-	}
-
-	class ReadOnlyKeyedObjectCollection : ReadOnlyObservableKeyedCollection<ObjectID, IIdentifiable>
-	{
-		public ReadOnlyKeyedObjectCollection(KeyedObjectCollection collection)
-			: base(collection)
-		{
-		}
-	}
-
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
 	abstract class BaseGameObject : DependencyObject, IIdentifiable
@@ -100,8 +82,8 @@ namespace MyGame.Client
 			throw new Exception();
 		}
 
-		KeyedObjectCollection m_inventory;
-		public ReadOnlyKeyedObjectCollection Inventory { get; private set; }
+		IdentifiableCollection m_inventory;
+		public ReadOnlyIdentifiableCollection Inventory { get; private set; }
 
 		public event ObjectMoved ObjectMoved;
 
@@ -112,8 +94,8 @@ namespace MyGame.Client
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_inventory = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyKeyedObjectCollection(m_inventory);
+			m_inventory = new IdentifiableCollection();
+			this.Inventory = new ReadOnlyIdentifiableCollection(m_inventory);
 		}
 
 

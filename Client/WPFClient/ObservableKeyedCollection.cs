@@ -5,62 +5,14 @@ using System.Collections.Generic;
 
 namespace MyGame.Client
 {
-	class ReadOnlyObservableKeyedCollection<K, T>
-		: ReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged
+	abstract class ObservableKeyedCollection<TKey, TValue> : KeyedCollection<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
-		ObservableKeyedCollection<K, T> m_collection;
-
-		public ReadOnlyObservableKeyedCollection(ObservableKeyedCollection<K, T> collection)
-			: base(collection)
-		{
-			m_collection = collection;
-			m_collection.CollectionChanged += new NotifyCollectionChangedEventHandler(m_collection_CollectionChanged);
-			m_collection.PropertyChanged += new PropertyChangedEventHandler(m_collection_PropertyChanged);
-		}
-
-		void m_collection_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(sender, e);
-		}
-
-		void m_collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (this.CollectionChanged != null)
-				this.CollectionChanged(sender, e);
-		}
-
-		public T this[K key]
-		{
-			get { return m_collection[key]; }
-		}
-
-		public bool Contains(K key)
-		{
-			return m_collection.Contains(key);
-		}
-
-		#region INotifyCollectionChanged Members
-
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-		#endregion
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
-	}
-
-	abstract class ObservableKeyedCollection<K, T> : KeyedCollection<K, T>,
-		INotifyCollectionChanged, INotifyPropertyChanged
-	{
-		public ObservableKeyedCollection() : base(null, 0)
+		public ObservableKeyedCollection()
+			: base(null, 20)
 		{
 		}
 
-		protected override void InsertItem(int index, T item)
+		protected override void InsertItem(int index, TValue item)
 		{
 			base.InsertItem(index, item);
 			this.OnPropertyChanged("Count");
@@ -68,9 +20,9 @@ namespace MyGame.Client
 			this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
 		}
 
-		protected override void SetItem(int index, T item)
+		protected override void SetItem(int index, TValue item)
 		{
-			T oldItem = base[index];
+			TValue oldItem = base[index];
 			base.SetItem(index, item);
 			this.OnPropertyChanged("Item[]");
 			this.OnCollectionChanged(NotifyCollectionChangedAction.Replace, oldItem, item, index);
@@ -78,7 +30,7 @@ namespace MyGame.Client
 
 		protected override void RemoveItem(int index)
 		{
-			T item = base[index];
+			TValue item = base[index];
 			base.RemoveItem(index);
 			this.OnPropertyChanged("Count");
 			this.OnPropertyChanged("Item[]");
@@ -128,6 +80,53 @@ namespace MyGame.Client
 		void OnCollectionReset()
 		{
 			this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+		}
+
+		#region INotifyCollectionChanged Members
+
+		public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		#endregion
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+	}
+
+	class ReadOnlyObservableKeyedCollection<TKey, TValue> : ReadOnlyCollection<TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+	{
+		ObservableKeyedCollection<TKey, TValue> m_collection;
+
+		public ReadOnlyObservableKeyedCollection(ObservableKeyedCollection<TKey, TValue> collection)
+			: base(collection)
+		{
+			m_collection = collection;
+			m_collection.CollectionChanged += new NotifyCollectionChangedEventHandler(m_collection_CollectionChanged);
+			m_collection.PropertyChanged += new PropertyChangedEventHandler(m_collection_PropertyChanged);
+		}
+
+		void m_collection_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(sender, e);
+		}
+
+		void m_collection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (this.CollectionChanged != null)
+				this.CollectionChanged(sender, e);
+		}
+
+		public TValue this[TKey key]
+		{
+			get { return m_collection[key]; }
+		}
+
+		public bool Contains(TKey key)
+		{
+			return m_collection.Contains(key);
 		}
 
 		#region INotifyCollectionChanged Members

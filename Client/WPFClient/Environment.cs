@@ -173,6 +173,8 @@ namespace MyGame.Client
 			m_tileGrid = new MyGrowingGrid3D(blockSize);
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 			m_objectList = new List<ClientGameObject>();
+
+			this.World.AddEnvironment(this);
 		}
 
 		public bool IsWalkable(IntPoint3D l)

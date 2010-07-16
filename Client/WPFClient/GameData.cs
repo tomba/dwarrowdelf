@@ -17,8 +17,6 @@ namespace MyGame.Client
 		}
 	}
 
-	class ActionCollection : ObservableCollection<GameAction> { }
-
 	class GameData : DependencyObject
 	{
 		public static readonly GameData Data = new GameData();

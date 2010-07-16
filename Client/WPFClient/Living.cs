@@ -8,8 +8,6 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class LivingCollection : ObservableCollection<Living> { }
-
 	class Living : ClientGameObject
 	{
 		// XXX not re-entrant

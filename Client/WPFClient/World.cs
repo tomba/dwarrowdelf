@@ -9,12 +9,13 @@ namespace MyGame.Client
 {
 	class World : INotifyPropertyChanged
 	{
-		public ObservableCollection<Environment> Environments { get; private set; }
+		IdentifiableCollection m_objects;
+		public ReadOnlyIdentifiableCollection Objects { get; private set; }
 
+		EnvironmentCollection m_environments;
+		public ReadOnlyEnvironmentCollection Environments { get; private set; }
+		
 		public LivingCollection Controllables { get; private set; }
-
-		KeyedObjectCollection m_objects;
-		public ReadOnlyKeyedObjectCollection Objects { get; private set; }
 
 		public DrawingCache DrawingCache { get; private set; }
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
@@ -26,10 +27,13 @@ namespace MyGame.Client
 
 		public World()
 		{
-			this.Environments = new ObservableCollection<Environment>();
+			m_objects = new IdentifiableCollection();
+			this.Objects = new ReadOnlyIdentifiableCollection(m_objects);
+
+			m_environments = new EnvironmentCollection();
+			this.Environments = new ReadOnlyEnvironmentCollection(m_environments);
+
 			this.Controllables = new LivingCollection();
-			m_objects = new KeyedObjectCollection();
-			this.Objects = new ReadOnlyKeyedObjectCollection(m_objects);
 
 			this.DrawingCache = new DrawingCache();
 			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache);
@@ -37,9 +41,9 @@ namespace MyGame.Client
 			this.JobManager = new JobManager(this);
 		}
 
-		public void AddEnvironment(Environment env)
+		internal void AddEnvironment(Environment env)
 		{
-			this.Environments.Add(env);
+			m_environments.Add(env);
 		}
 
 		int m_tickNumber;
@@ -86,7 +90,7 @@ namespace MyGame.Client
 				return null;
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : ClientGameObject
+		public T FindObject<T>(ObjectID objectID) where T : class, IIdentifiable
 		{
 			var ob = FindObject(objectID);
 

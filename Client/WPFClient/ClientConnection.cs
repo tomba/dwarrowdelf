@@ -233,7 +233,6 @@ namespace MyGame.Client
 					env = new Environment(world, msg.Environment);
 				else
 					env = new Environment(world, msg.Environment, msg.Bounds);
-				world.AddEnvironment(env);
 				env.Name = "map";
 
 				if (App.MainWindow.map.Environment == null)
