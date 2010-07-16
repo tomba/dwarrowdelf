@@ -386,6 +386,7 @@ namespace MyGame.Client
 				var origBmp = m_bitmapGenerator.GetBitmap(symbolID, color, false);
 				origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				bitmap.CopyFromMemory(new RectU(0, 0, (uint)tileSize, (uint)tileSize), arr, (uint)tileSize * 4);
+				dict[color] = bitmap;
 			}
 
 			m_renderTarget.DrawBitmap(bitmap, opacity, BitmapInterpolationMode.Linear, dstRect);
