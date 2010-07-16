@@ -15,14 +15,20 @@ namespace MyGame.Client
 		{
 			public SymbolID ID { get; set; }
 			public string Name { get; set; }
-			public char CharSymbol { get; set; }
+
 			public string DrawingName { get; set; }
 			public double X { get; set; }
 			public double Y { get; set; }
 			public double Width { get; set; }
 			public double Height { get; set; }
-			public double CharRotation { get; set; }
 			public double DrawingRotation { get; set; }
+
+			public char CharSymbol { get; set; }
+			public double CharX { get; set; }
+			public double CharY { get; set; }
+			public double CharWidth { get; set; }
+			public double CharHeight { get; set; }
+			public double CharRotation { get; set; }
 		}
 
 		IList<SymbolInfo> m_symbolInfoList;
@@ -65,24 +71,24 @@ namespace MyGame.Client
 			if (m_useOnlyChars || symbol.DrawingName == null)
 			{
 				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(10, 0), new Size(80, 100), symbol.CharRotation);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, !m_useOnlyChars);
 			}
 			else
 			{
 				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.DrawingRotation);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.DrawingRotation, true);
 			}
 
 			drawing.Freeze();
 			return drawing;
 		}
 
-		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle)
+		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle, bool bgTransparent)
 		{
 			DrawingGroup dGroup = new DrawingGroup();
 			using (DrawingContext dc = dGroup.Open())
 			{
-				dc.DrawRectangle(Brushes.Transparent, null, new Rect(new Size(100, 100)));
+				dc.DrawRectangle(bgTransparent ? Brushes.Transparent : Brushes.Black, null, new Rect(new Size(100, 100)));
 
 				dc.PushTransform(new RotateTransform(angle, 50, 50));
 				dc.PushTransform(new TranslateTransform(location.X, location.Y));
@@ -113,6 +119,16 @@ namespace MyGame.Client
 			foreach (XElement elem in rootElem.Elements())
 			{
 				var symbol = new SymbolInfo();
+
+				symbol.CharX = 0;
+				symbol.CharY = 0;
+				symbol.CharWidth = 100;
+				symbol.CharHeight = 100;
+
+				symbol.X = 0;
+				symbol.Y = 0;
+				symbol.Width = 100;
+				symbol.Height = 100;
 				symbol.Name = (string)elem.Element("Name");
 
 				SymbolID id;
@@ -125,6 +141,22 @@ namespace MyGame.Client
 					var charElem = elem.Element("CharSymbol");
 
 					XAttribute attr;
+
+					attr = charElem.Attribute("x");
+					if (attr != null)
+						symbol.CharX = (double)attr;
+
+					attr = charElem.Attribute("y");
+					if (attr != null)
+						symbol.CharY = (double)attr;
+
+					attr = charElem.Attribute("w");
+					if (attr != null)
+						symbol.CharWidth = (double)attr;
+
+					attr = charElem.Attribute("h");
+					if (attr != null)
+						symbol.CharHeight = (double)attr;
 
 					attr = charElem.Attribute("rotate");
 					if (attr != null)

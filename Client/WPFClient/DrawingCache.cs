@@ -281,7 +281,7 @@ namespace MyGame.Client
 			{
 				var typeFace = new Typeface(new FontFamily("Lucida Console"),
 					FontStyles.Normal,
-					FontWeights.Bold,
+					FontWeights.Normal,
 					FontStretches.Normal);
 
 				var formattedText = new FormattedText(
@@ -295,7 +295,6 @@ namespace MyGame.Client
 
 				var bg = fillBg ? Brushes.Black : Brushes.Transparent;
 				var pen = fillBg ? null : new Pen(Brushes.Black, 0.5);
-				dc.DrawRectangle(bg, null, new Rect(new Size(formattedText.Width, formattedText.Height)));
 				dc.DrawGeometry(brush, pen, geometry);
 			}
 
