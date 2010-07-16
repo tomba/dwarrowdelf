@@ -90,6 +90,12 @@ namespace MyGame.Client
 			var ax = Math.Abs(scrollVector.X);
 			var ay = Math.Abs(scrollVector.Y);
 
+			if (ax > columns || ay > rows)
+			{
+				m_invalid = true;
+				return;
+			}
+
 			int srcIdx = 0;
 			int dstIdx = 0;
 
