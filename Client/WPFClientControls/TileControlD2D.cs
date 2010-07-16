@@ -62,6 +62,8 @@ namespace MyGame.Client
 
 		uint[] m_simpleBitmapArray;
 
+		const int MINDETAILEDTILESIZE = 8;
+
 		public TileControlD2D()
 		{
 			m_interopImage = new D2DD3DImage();
@@ -125,6 +127,31 @@ namespace MyGame.Client
 			base.OnRenderSizeChanged(sizeInfo);
 		}
 
+		void ClearAtlasBitmap()
+		{
+			if (m_atlasBitmap != null)
+				m_atlasBitmap.Dispose();
+
+			m_atlasBitmap = null;
+		}
+
+		void ClearColorTileArray()
+		{
+			if (m_colorTileArray != null)
+			{
+				foreach (var entry in m_colorTileArray)
+				{
+					if (entry == null)
+						continue;
+
+					foreach (var kvp in entry)
+						kvp.Value.Dispose();
+				}
+			}
+
+			m_colorTileArray = null;
+		}
+
 		public int TileSize
 		{
 			get { return m_tileSize; }
@@ -132,8 +159,8 @@ namespace MyGame.Client
 			{
 				m_tileSize = value;
 
-				m_atlasBitmap = null;
-				m_colorTileArray = null;
+				ClearAtlasBitmap();
+				ClearColorTileArray();
 
 				UpdateTileMapSize();
 			}
@@ -146,8 +173,8 @@ namespace MyGame.Client
 			{
 				m_bitmapGenerator = value;
 
-				m_atlasBitmap = null;
-				m_colorTileArray = null;
+				ClearAtlasBitmap();
+				ClearColorTileArray();
 
 				InvalidateArrange();
 			}
@@ -254,8 +281,8 @@ namespace MyGame.Client
 					return;
 				}
 
-				m_atlasBitmap = null;
-				m_colorTileArray = null;
+				ClearAtlasBitmap();
+				ClearColorTileArray();
 			}
 
 			DoRenderTiles();
@@ -278,7 +305,7 @@ namespace MyGame.Client
 
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
-			if (m_tileSize > 8)
+			if (m_tileSize > MINDETAILEDTILESIZE)
 				RenderDetailedTiles(m_tileSize);
 			else
 				RenderSimpleTiles(m_tileSize);
@@ -314,12 +341,15 @@ namespace MyGame.Client
 				var bmp = m_renderTarget.CreateBitmap(new SizeU(w, h), (IntPtr)a, w * bytespp,
 					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Ignore), 96, 96));
 				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.Linear, new RectF(-m_offset.X, -m_offset.Y, w - m_offset.X, h - m_offset.Y));
+				bmp.Dispose();
 			}
 		}
 
 		void RenderDetailedTiles(int tileSize)
 		{
+#if DEBUG_TEXT
 			var blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
+#endif
 
 			for (int y = 0; y < m_rows; ++y)
 			{
