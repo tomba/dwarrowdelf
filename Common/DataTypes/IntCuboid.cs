@@ -50,6 +50,16 @@ namespace MyGame
 			m_depth = size.Depth;
 		}
 
+		public IntCuboid(IntPoint3D point1, IntPoint3D point2)
+		{
+			m_x = Math.Min(point1.X, point2.X);
+			m_y = Math.Min(point1.Y, point2.Y);
+			m_z = Math.Min(point1.Z, point2.Z);
+			m_width = Math.Max((Math.Max(point1.X, point2.X) - m_x), 0);
+			m_height = Math.Max((Math.Max(point1.Y, point2.Y) - m_y), 0);
+			m_depth = Math.Max((Math.Max(point1.Z, point2.Z) - m_z), 0);
+		}
+
 		public IntCuboid(IntRect rect, int z)
 			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
 		{
@@ -101,12 +111,22 @@ namespace MyGame
 				return true;
 		}
 
+		public IntCuboid Inflate(int width, int height, int depth)
+		{
+			return new IntCuboid(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);
+		}
+
 		public IEnumerable<IntPoint3D> Range()
 		{
 			for (int z = this.Z; z < this.Z + this.Depth; ++z)
 				for (int y = this.Y; y < this.Y + this.Height; ++y)
 					for (int x = this.X; x < this.X + this.Width; ++x)
 						yield return new IntPoint3D(x, y, z);
+		}
+
+		public IntRect ToIntRect()
+		{
+			return new IntRect(this.X, this.Y, this.Width, this.Height);
 		}
 
 		public override string ToString()
