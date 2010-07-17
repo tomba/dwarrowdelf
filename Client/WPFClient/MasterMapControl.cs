@@ -64,7 +64,7 @@ namespace MyGame.Client
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
-			this.SelectedTileInfo = new TileInfo();
+			this.SelectedTileAreaInfo = new TileAreaInfo();
 
 			var grid = new Grid();
 			AddChild(grid);
@@ -158,14 +158,14 @@ namespace MyGame.Client
 		{
 			IntRect sel = this.SelectionRect;
 
-			if (sel.Width != 1 || sel.Height != 1)
+			if (sel.Width == 0 || sel.Height == 0)
 			{
-				this.SelectedTileInfo.Environment = null;
+				this.SelectedTileAreaInfo.Environment = null;
 				return;
 			}
 
-			this.SelectedTileInfo.Environment = this.Environment;
-			this.SelectedTileInfo.Location = new IntPoint3D(sel.X1Y1, this.Z);
+			this.SelectedTileAreaInfo.Environment = this.Environment;
+			this.SelectedTileAreaInfo.Area = new IntCuboid(sel, this.Z);
 		}
 
 		public IntRect SelectionRect
@@ -487,7 +487,7 @@ namespace MyGame.Client
 			}
 		}
 
-		public TileInfo SelectedTileInfo { get; private set; }
+		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 
 		void UpdateHoverTileInfo(Point p)
 		{
@@ -686,4 +686,179 @@ namespace MyGame.Client
 
 		#endregion
 	}
+
+	class TileAreaInfo : INotifyPropertyChanged
+	{
+		Environment m_env;
+		ObjectCollection m_obs;
+		IntCuboid m_area;
+
+		public TileAreaInfo()
+		{
+			m_obs = new ObjectCollection();
+		}
+
+		void NotifyTileChanges()
+		{
+			m_obs.Clear();
+			if (m_env != null)
+			{
+				var obs = m_area.Range().
+					Select(p => m_env.GetContents(p)).
+					Where(l => l != null).
+					SelectMany(l => l);
+
+				foreach (var ob in obs)
+					m_obs.Add(ob);
+			}
+
+			Notify("Interiors");
+			Notify("Floors");
+			Notify("WaterLevels");
+			Notify("Objects");
+			Notify("Buildings");
+		}
+
+		void MapChanged(IntPoint3D l)
+		{
+			if (!m_area.Contains(l))
+				return;
+
+			NotifyTileChanges();
+		}
+
+		public Environment Environment
+		{
+			get { return m_env; }
+			set
+			{
+				if (m_env != null)
+					m_env.MapTileChanged -= MapChanged;
+
+				m_env = value;
+
+				if (m_env == null)
+				{
+					m_area = new IntCuboid();
+					Notify("Area");
+				}
+
+				if (m_env != null)
+					m_env.MapTileChanged += MapChanged;
+
+				Notify("Environment");
+				NotifyTileChanges();
+			}
+		}
+
+		public IntCuboid Area
+		{
+			get { return m_area; }
+			set
+			{
+				m_area = value;
+				Notify("Area");
+				NotifyTileChanges();
+			}
+		}
+
+		public IEnumerable<Tuple<InteriorInfo, MaterialInfo>> Interiors
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+
+				return m_area.Range().
+					Select(p => Tuple.Create(m_env.GetInterior(p), m_env.GetInteriorMaterial(p))).
+					Distinct();
+			}
+		}
+
+		public IEnumerable<Tuple<FloorInfo, MaterialInfo>> Floors
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+
+				return m_area.Range().
+					Select(p => Tuple.Create(m_env.GetFloor(p), m_env.GetFloorMaterial(p))).
+					Distinct();
+			}
+		}
+
+		public IEnumerable<byte> WaterLevels
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+
+				return m_area.Range().
+					Select(p => m_env.GetWaterLevel(p)).
+					Distinct();
+			}
+		}
+
+		public ObjectCollection Objects
+		{
+			get
+			{
+				return m_obs;
+			}
+		}
+
+		public IEnumerable<BuildingObject> Buildings
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+
+				return m_area.Range().
+					Select(p => m_env.GetBuildingAt(p)).
+					Where(b => b != null).
+					Distinct();
+			}
+		}
+
+		void Notify(string name)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(name));
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+	}
+
+	public class ListConverter<T> : IValueConverter
+	{
+		Func<T, string> m_converter;
+
+		public ListConverter(Func<T, string> itemConverter)
+		{
+			m_converter = itemConverter;
+		}
+
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (value == null)
+				return "";
+
+			var list = (IEnumerable<T>)value;
+
+			return String.Join(", ", list.Select(item => m_converter(item)));
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 }

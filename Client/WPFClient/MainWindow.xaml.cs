@@ -34,6 +34,11 @@ namespace MyGame.Client
 
 			this.CurrentTileInfo = new TileInfo();
 
+			this.Resources["myInteriorsConverter"] = new ListConverter<Tuple<InteriorInfo, MaterialInfo>>(item => item.Item1.Name + " (" + item.Item2.Name + ")");
+			this.Resources["myFloorsConverter"] = new ListConverter<Tuple<FloorInfo, MaterialInfo>>(item => item.Item1.Name + " (" + item.Item2.Name + ")");
+			this.Resources["myWatersConverter"] = new ListConverter<byte>(item => item.ToString());
+			this.Resources["myBuildingsConverter"] = new ListConverter<BuildingObject>(item => item.BuildingInfo.Name);
+
 			InitializeComponent();
 
 			//this.Width = 1024;

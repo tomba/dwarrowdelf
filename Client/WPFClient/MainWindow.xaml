@@ -1,12 +1,12 @@
 ﻿<Window x:Class="MyGame.Client.MainWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="clr-namespace:MyGame.Client"
-	Title="Window1" Height="541" Width="892"
-	x:ClassModifier="internal"
-	x:Name="mainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MyGame.Client"
+    Title="Window1" Height="541" Width="892"
+    x:ClassModifier="internal"
+    x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
-    DataContext="{x:Static local:GameData.Data}" >
+    DataContext="{x:Static local:GameData.Data}">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type local:ClientGameObject}">
@@ -21,7 +21,7 @@
                     <Image Source="Images/eye.png" />
                 </Button>
                 <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
                 <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} (#{1})">
@@ -48,7 +48,7 @@
                     <Image Source="Images/eye.png" />
                 </Button>
                 <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-					   Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
                 <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} (#{1})">
@@ -109,21 +109,21 @@
             <TextBlock Text="{Binding Path=Z, ElementName=map}" />
             <Separator />
             <TextBlock DataContext="{Binding Connection.Stats}">
-				<TextBlock.Text>
-					<MultiBinding StringFormat="Sent: {0} / {1:N0}">
-						<Binding Path="SentMessages" FallbackValue="0" />
-						<Binding Path="SentBytes" FallbackValue="0" />
-					</MultiBinding>
-				</TextBlock.Text>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Sent: {0} / {1:N0}">
+                        <Binding Path="SentMessages" FallbackValue="0" />
+                        <Binding Path="SentBytes" FallbackValue="0" />
+                    </MultiBinding>
+                </TextBlock.Text>
             </TextBlock>
             <Separator />
             <TextBlock DataContext="{Binding Connection.Stats}">
-				<TextBlock.Text>
-					<MultiBinding StringFormat="Recv: {0} / {1:N0}">
-						<Binding Path="ReceivedMessages" FallbackValue="0" />
-						<Binding Path="ReceivedBytes" FallbackValue="0" />
-					</MultiBinding>
-				</TextBlock.Text>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Recv: {0} / {1:N0}">
+                        <Binding Path="ReceivedMessages" FallbackValue="0" />
+                        <Binding Path="ReceivedBytes" FallbackValue="0" />
+                    </MultiBinding>
+                </TextBlock.Text>
             </TextBlock>
             <Separator />
 
@@ -192,7 +192,7 @@
             </Grid.RowDefinitions>
 
             <local:MasterMapControl x:Name="map" SelectionEnabled="True"
-							  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
+                              Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
                 <local:MasterMapControl.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
@@ -234,8 +234,8 @@
                         <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
                         <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
                         <ListBox Name="inventoryListBox"
-							 ItemsSource="{Binding Path=CurrentObject.Inventory}"
-							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                             ItemsSource="{Binding Path=CurrentObject.Inventory}"
+                             SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
                     </DockPanel>
                 </GroupBox>
 
@@ -244,56 +244,71 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
-								<TextBlock Text="{Binding ActorObjectID}" />
-								: left <TextBlock Text="{Binding TicksLeft}" />
-							</TextBlock>
+                                <TextBlock Text="{Binding ActorObjectID}" />
+                                : left <TextBlock Text="{Binding TicksLeft}" />
+                            </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </GroupBox>
 
                 <GroupBox Grid.Column="1" Grid.Row="0" Header="Current Tile Info"
-					  DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
+                      DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top">
                             <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
                             <TextBlock>Interior:
-							<TextBlock Text="{Binding Interior.Name}" />
-							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
-						</TextBlock>
+                            <TextBlock Text="{Binding Interior.Name}" />
+                            (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
+                        </TextBlock>
                             <TextBlock>Floor:
-							<TextBlock Text="{Binding Floor.Name}" />
-							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
-						</TextBlock>
+                            <TextBlock Text="{Binding Floor.Name}" />
+                            (<TextBlock Text="{Binding FloorMaterial.Name}" />)
+                        </TextBlock>
                             <TextBlock>Water:
-							<TextBlock Text="{Binding WaterLevel}" />
-						</TextBlock>
+                            <TextBlock Text="{Binding WaterLevel}" />
+                        </TextBlock>
                         </StackPanel>
                         <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
                         <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
-							 SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                             SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
                     </DockPanel>
                 </GroupBox>
 
                 <GroupBox Grid.Column="1" Grid.Row="1" Header="Selected Tile Info"
-					  DataContext="{Binding Path=SelectedTileInfo, ElementName=map, Mode=OneTime}">
+                      DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top">
-                            <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                            <TextBlock>Area:
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
+                                            <Binding Path="Area.X1" Mode="OneWay" />
+                                            <Binding Path="Area.Y1" Mode="OneWay" />
+                                            <Binding Path="Area.Z1" Mode="OneWay" />
+                                            <Binding Path="Area.X2" Mode="OneWay" />
+                                            <Binding Path="Area.Y2" Mode="OneWay" />
+                                            <Binding Path="Area.Z2" Mode="OneWay" />
+                                            <Binding Path="Area.Width" Mode="OneWay" />
+                                            <Binding Path="Area.Height" Mode="OneWay" />
+                                            <Binding Path="Area.Depth" Mode="OneWay" />
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </TextBlock>
+
                             <TextBlock>Interior:
-							<TextBlock Text="{Binding Interior.Name}" />
-							(<TextBlock Text="{Binding InteriorMaterial.Name}" />)
-						</TextBlock>
+                                <TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
+                            </TextBlock>
                             <TextBlock>Floor:
-							<TextBlock Text="{Binding Floor.Name}" />
-							(<TextBlock Text="{Binding FloorMaterial.Name}" />)
-						</TextBlock>
+                                <TextBlock Text="{Binding Floors, Converter={StaticResource myFloorsConverter}}" />
+                            </TextBlock>
                             <TextBlock>Water:
-							<TextBlock Text="{Binding WaterLevel}" />
-						</TextBlock>
+                                <TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
+                            </TextBlock>
                             <TextBlock>Building:
-							<TextBlock Text="{Binding Building.BuildingInfo.Name}" />
-						</TextBlock>
+                                <TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
+                            </TextBlock>
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
                     </DockPanel>
@@ -301,13 +316,13 @@
 
                 <GroupBox Grid.Column="1" Grid.Row="2" Header="Objects">
                     <ListBox ItemsSource="{Binding World.Objects}" 
-						 SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
+                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
                          HorizontalContentAlignment="Stretch" />
                 </GroupBox>
 
                 <GroupBox Grid.Column="0" Grid.Row="2" Header="Environments">
                     <ListBox ItemsSource="{Binding World.Environments}"
-						 SelectedItem="{Binding Path=Environment, ElementName=map}"
+                         SelectedItem="{Binding Path=Environment, ElementName=map}"
                          HorizontalContentAlignment="Stretch" />
                 </GroupBox>
 
