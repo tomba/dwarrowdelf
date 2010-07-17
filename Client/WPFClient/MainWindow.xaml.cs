@@ -398,14 +398,14 @@ namespace MyGame.Client
 		{
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
-				IntRect r = map.SelectionRect;
+				var r = map.SelectionRect;
 
-				if (r.Width > 1 || r.Height > 1)
+				var ml = new IntPoint3D(map.ScreenPointToMapLocation(e.GetPosition(map)), map.Z);
+
+				if (r.Contains(ml))
 					return;
 
-				IntPoint ml = map.ScreenPointToMapLocation(e.GetPosition(map));
-
-				map.SelectionRect = new IntRect(ml, new IntSize(1, 1));
+				map.SelectionRect = new IntCuboid(ml, new IntSize3D(1, 1, 1));
 			}
 		}
 
@@ -424,12 +424,10 @@ namespace MyGame.Client
 			if (Enum.TryParse<InteriorID>(tag, out inter) == false)
 				throw new Exception();
 
-			IntRect r = map.SelectionRect;
-
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -449,12 +447,10 @@ namespace MyGame.Client
 			if (Enum.TryParse<FloorID>(tag, out floor) == false)
 				throw new Exception();
 
-			IntRect r = map.SelectionRect;
-
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = floor,
@@ -474,12 +470,10 @@ namespace MyGame.Client
 			if (Enum.TryParse<MaterialID>(tag, out material) == false)
 				throw new Exception();
 
-			IntRect r = map.SelectionRect;
-
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -499,12 +493,10 @@ namespace MyGame.Client
 			if (Enum.TryParse<MaterialID>(tag, out material) == false)
 				throw new Exception();
 
-			IntRect r = map.SelectionRect;
-
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -517,15 +509,13 @@ namespace MyGame.Client
 
 		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
 		{
-			IntRect r = map.SelectionRect;
-
 			var stone = Materials.Stone.ID;
 			var undef = Materials.Undefined.ID;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -538,14 +528,12 @@ namespace MyGame.Client
 
 		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
 		{
-			IntRect r = map.SelectionRect;
-
 			var stone = Materials.Stone.ID;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -559,12 +547,10 @@ namespace MyGame.Client
 
 		private void MenuItem_Click_SetWater(object sender, RoutedEventArgs e)
 		{
-			IntRect r = map.SelectionRect;
-
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = new IntCuboid(r, map.Z),
+				Cube = map.SelectionRect,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -583,22 +569,20 @@ namespace MyGame.Client
 
 			if (tag == "Mine")
 			{
-				IntRect r = map.SelectionRect;
 				var env = map.Environment;
-				int z = map.Z;
 
-				foreach (var p in r.Range())
+				foreach (var p in map.SelectionRect.Range())
 				{
-					if (env.GetInterior(new IntPoint3D(p, z)).ID != InteriorID.NaturalWall)
+					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
 						continue;
 
-					var job = new MoveMineJob(null, env, new IntPoint3D(p, z));
+					var job = new MoveMineJob(null, env, p);
 					this.Map.World.JobManager.Add(job);
 				}
 			}
 			else if (tag == "MineArea")
 			{
-				IntRect r = map.SelectionRect;
+				IntRect r = map.SelectionRect.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -607,7 +591,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "MineAreaParallel")
 			{
-				IntRect r = map.SelectionRect;
+				IntRect r = map.SelectionRect.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -616,7 +600,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "MineAreaSerial")
 			{
-				IntRect r = map.SelectionRect;
+				IntRect r = map.SelectionRect.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -625,11 +609,10 @@ namespace MyGame.Client
 			}
 			else if (tag == "BuildItem")
 			{
-				IntRect r = map.SelectionRect;
+				var p = map.SelectionRect.Corner1;
 				var env = map.Environment;
-				int z = map.Z;
 
-				var building = env.GetBuildingAt(new IntPoint3D(r.X1Y1, z));
+				var building = env.GetBuildingAt(p);
 
 				if (building == null)
 					return;
@@ -638,11 +621,10 @@ namespace MyGame.Client
 			}
 			else if (tag == "Goto")
 			{
-				IntPoint p = map.SelectionRect.X1Y1;
+				var p = map.SelectionRect.Corner1;
 				var env = map.Environment;
-				int z = map.Z;
 
-				var job = new MoveActionJob(null, env, new IntPoint3D(p, z), false);
+				var job = new MoveActionJob(null, env, p, false);
 				this.Map.World.JobManager.Add(job);
 			}
 			else
@@ -656,7 +638,7 @@ namespace MyGame.Client
 			MenuItem item = (MenuItem)e.Source;
 			string tag = (string)item.Tag;
 
-			IntRect r = map.SelectionRect;
+			var r = map.SelectionRect.ToIntRect();
 			var env = map.Environment;
 			int z = map.Z;
 

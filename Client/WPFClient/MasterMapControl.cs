@@ -53,9 +53,10 @@ namespace MyGame.Client
 
 		IntPoint m_centerPos;
 
+		bool m_selectionValid;
+		IntPoint3D m_selectionStart;
+		IntPoint3D m_selectionEnd;
 		Rectangle m_selectionRect;
-		IntPoint m_selectionStart;
-		IntPoint m_selectionEnd;
 
 		Canvas m_canvas;
 		Canvas m_buildingCanvas;
@@ -120,6 +121,18 @@ namespace MyGame.Client
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
+			if (this.IsMouseCaptured)
+			{
+				if (e.Delta > 0)
+					this.Z--;
+				else
+					this.Z++;
+
+				e.Handled = true;
+
+				return;
+			}
+
 			// Zoom so that the tile under the mouse stays under the mouse
 			// XXX this could be improved. Somehow it doesn't feel quite right...
 
@@ -156,30 +169,30 @@ namespace MyGame.Client
 
 		void OnSelectionChanged()
 		{
-			IntRect sel = this.SelectionRect;
+			var sel = this.SelectionRect;
 
-			if (sel.Width == 0 || sel.Height == 0)
+			if (sel.Width == 0 || sel.Height == 0 || sel.Depth == 0)
 			{
 				this.SelectedTileAreaInfo.Environment = null;
 				return;
 			}
 
 			this.SelectedTileAreaInfo.Environment = this.Environment;
-			this.SelectedTileAreaInfo.Area = new IntCuboid(sel, this.Z);
+			this.SelectedTileAreaInfo.Area = sel;
 		}
 
-		public IntRect SelectionRect
+		public IntCuboid SelectionRect
 		{
 			get
 			{
-				if (m_selectionRect.Visibility != Visibility.Visible)
-					return new IntRect();
+				if (!m_selectionValid)
+					return new IntCuboid();
 
 				var p1 = m_selectionStart;
 				var p2 = m_selectionEnd;
 
-				IntRect r = new IntRect(p1, p2);
-				r = r.Inflate(1, 1);
+				var r = new IntCuboid(p1, p2);
+				r = r.Inflate(1, 1, 1);
 				return r;
 			}
 
@@ -188,25 +201,18 @@ namespace MyGame.Client
 				if (this.SelectionEnabled == false)
 					return;
 
-				if (value.Width == 0 || value.Height == 0)
+				if (value.Width == 0 || value.Height == 0 || value.Depth == 0)
 				{
-					m_selectionRect.Visibility = Visibility.Hidden;
-					OnSelectionChanged();
-					return;
+					m_selectionValid = false;
+				}
+				else
+				{
+					m_selectionStart = value.Corner1;
+					m_selectionEnd = value.Corner2 - new IntVector3D(1, 1, 1);
+					m_selectionValid = true;
 				}
 
-				var newStart = value.X1Y1;
-				var newEnd = value.X2Y2 - new IntVector(1, 1);
-
-				if ((newStart != m_selectionStart) || (newEnd != m_selectionEnd))
-				{
-					m_selectionStart = newStart;
-					m_selectionEnd = newEnd;
-					UpdateSelectionRect();
-				}
-
-				m_selectionRect.Visibility = Visibility.Visible;
-
+				UpdateSelectionRect();
 				OnSelectionChanged();
 			}
 		}
@@ -220,8 +226,20 @@ namespace MyGame.Client
 
 		void UpdateSelectionRect()
 		{
-			var ir = new IntRect(m_selectionStart, m_selectionEnd);
-			ir = new IntRect(ir.X1Y1, new IntSize(ir.Width + 1, ir.Height + 1));
+			if (!m_selectionValid)
+			{
+				m_selectionRect.Visibility = Visibility.Hidden;
+				return;
+			}
+
+			if (this.SelectionRect.Z1 > this.Z || this.SelectionRect.Z2 < this.Z)
+			{
+				m_selectionRect.Visibility = Visibility.Hidden;
+				return;
+			}
+
+			var ir = new IntRect(m_selectionStart.ToIntPoint(), m_selectionEnd.ToIntPoint());
+			ir = ir.Inflate(1, 1);
 
 			var r = MapRectToScreenPointRect(ir);
 
@@ -229,6 +247,8 @@ namespace MyGame.Client
 			Canvas.SetTop(m_selectionRect, r.Top);
 			m_selectionRect.Width = r.Width;
 			m_selectionRect.Height = r.Height;
+
+			m_selectionRect.Visibility = Visibility.Visible;
 		}
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -246,19 +266,18 @@ namespace MyGame.Client
 			}
 
 			Point pos = e.GetPosition(this);
-			var ml = ScreenPointToMapLocation(pos);
+			var ml = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 
 			if (this.SelectionRect.Contains(ml))
 			{
-				this.SelectionRect = new IntRect();
+				this.SelectionRect = new IntCuboid();
 				return;
 			}
 
 			m_selectionStart = ml;
 			m_selectionEnd = ml;
+			m_selectionValid = true;
 			UpdateSelectionRect();
-
-			m_selectionRect.Visibility = Visibility.Visible;
 
 			CaptureMouse();
 
@@ -304,7 +323,7 @@ namespace MyGame.Client
 			var p = new IntPoint(cx, cy);
 			this.CenterPos = p;
 
-			var newEnd = ScreenPointToMapLocation(pos);
+			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 
 			if (newEnd != m_selectionEnd)
 			{
@@ -403,7 +422,7 @@ namespace MyGame.Client
 					m_world = null;
 				}
 
-				this.SelectionRect = new IntRect();
+				this.SelectionRect = new IntCuboid();
 				UpdateBuildings();
 
 				Notify("Environment");
@@ -481,6 +500,14 @@ namespace MyGame.Client
 				m_z = value;
 				m_mapControl.Z = value;
 				UpdateBuildings();
+
+				if (IsMouseCaptured)
+				{
+					Point pos = Mouse.GetPosition(this);
+					m_selectionEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
+					OnSelectionChanged();
+				}
+				UpdateSelectionRect();
 
 				Notify("Z");
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
