@@ -37,6 +37,47 @@ namespace MyGame.Client
 		Point MapLocationToScreenPoint(IntPoint loc);
 	}
 
+	struct MapSelection
+	{
+		public MapSelection(IntPoint3D start, IntPoint3D end)
+			: this()
+		{
+			this.SelectionStart = start;
+			this.SelectionEnd = end;
+			this.IsSelectionValid = true;
+		}
+
+		public MapSelection(IntCuboid cuboid)
+			: this()
+		{
+			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
+			{
+				this.IsSelectionValid = false;
+			}
+			else
+			{
+				this.SelectionStart = cuboid.Corner1;
+				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
+				this.IsSelectionValid = true;
+			}
+		}
+
+		public bool IsSelectionValid { get; set; }
+		public IntPoint3D SelectionStart { get; set; }
+		public IntPoint3D SelectionEnd { get; set; }
+
+		public IntCuboid SelectionCuboid
+		{
+			get
+			{
+				if (!this.IsSelectionValid)
+					return new IntCuboid();
+
+				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
+			}
+		}
+	}
+
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
@@ -53,9 +94,7 @@ namespace MyGame.Client
 
 		IntPoint m_centerPos;
 
-		bool m_selectionValid;
-		IntPoint3D m_selectionStart;
-		IntPoint3D m_selectionEnd;
+		MapSelection m_selection;
 		Rectangle m_selectionRect;
 
 		Canvas m_canvas;
@@ -165,55 +204,35 @@ namespace MyGame.Client
 			UpdateBuildingPositions();
 		}
 
-		public bool SelectionEnabled { get; set; }
-
-		void OnSelectionChanged()
-		{
-			var sel = this.SelectionRect;
-
-			if (sel.Width == 0 || sel.Height == 0 || sel.Depth == 0)
-			{
-				this.SelectedTileAreaInfo.Environment = null;
-				return;
-			}
-
-			this.SelectedTileAreaInfo.Environment = this.Environment;
-			this.SelectedTileAreaInfo.Area = sel;
-		}
-
-		public IntCuboid SelectionRect
+		public MapSelection Selection
 		{
 			get
 			{
-				if (!m_selectionValid)
-					return new IntCuboid();
-
-				var p1 = m_selectionStart;
-				var p2 = m_selectionEnd;
-
-				var r = new IntCuboid(p1, p2);
-				r = r.Inflate(1, 1, 1);
-				return r;
+				return m_selection;
 			}
 
 			set
 			{
-				if (this.SelectionEnabled == false)
+				if (m_selection.IsSelectionValid == value.IsSelectionValid &&
+					m_selection.SelectionStart == value.SelectionStart &&
+					m_selection.SelectionEnd == value.SelectionEnd)
 					return;
 
-				if (value.Width == 0 || value.Height == 0 || value.Depth == 0)
+				m_selection = value;
+
+				if (!m_selection.IsSelectionValid)
 				{
-					m_selectionValid = false;
+					this.SelectedTileAreaInfo.Environment = null;
 				}
 				else
 				{
-					m_selectionStart = value.Corner1;
-					m_selectionEnd = value.Corner2 - new IntVector3D(1, 1, 1);
-					m_selectionValid = true;
+					this.SelectedTileAreaInfo.Environment = this.Environment;
+					this.SelectedTileAreaInfo.Selection = this.Selection;
 				}
 
 				UpdateSelectionRect();
-				OnSelectionChanged();
+
+				Notify("Selection");
 			}
 		}
 
@@ -226,19 +245,19 @@ namespace MyGame.Client
 
 		void UpdateSelectionRect()
 		{
-			if (!m_selectionValid)
+			if (!this.Selection.IsSelectionValid)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
 			}
 
-			if (this.SelectionRect.Z1 > this.Z || this.SelectionRect.Z2 < this.Z)
+			if (this.Selection.SelectionCuboid.Z1 > this.Z || this.Selection.SelectionCuboid.Z2 < this.Z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
 			}
 
-			var ir = new IntRect(m_selectionStart.ToIntPoint(), m_selectionEnd.ToIntPoint());
+			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
 			ir = ir.Inflate(1, 1);
 
 			var r = MapRectToScreenPointRect(ir);
@@ -253,12 +272,6 @@ namespace MyGame.Client
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			if (this.SelectionEnabled == false)
-			{
-				base.OnMouseDown(e);
-				return;
-			}
-
 			if (e.LeftButton != MouseButtonState.Pressed)
 			{
 				base.OnMouseDown(e);
@@ -268,22 +281,17 @@ namespace MyGame.Client
 			Point pos = e.GetPosition(this);
 			var ml = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 
-			if (this.SelectionRect.Contains(ml))
+			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
 			{
-				this.SelectionRect = new IntCuboid();
+				this.Selection = new MapSelection();
 				return;
 			}
 
-			m_selectionStart = ml;
-			m_selectionEnd = ml;
-			m_selectionValid = true;
-			UpdateSelectionRect();
+			this.Selection = new MapSelection(ml, ml);
 
 			CaptureMouse();
 
 			e.Handled = true;
-
-			OnSelectionChanged();
 
 			base.OnMouseDown(e);
 		}
@@ -291,12 +299,6 @@ namespace MyGame.Client
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			UpdateHoverTileInfo(e.GetPosition(this));
-
-			if (this.SelectionEnabled == false)
-			{
-				base.OnMouseMove(e);
-				return;
-			}
 
 			if (!IsMouseCaptured)
 			{
@@ -324,28 +326,15 @@ namespace MyGame.Client
 			this.CenterPos = p;
 
 			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
-
-			if (newEnd != m_selectionEnd)
-			{
-				m_selectionEnd = newEnd;
-				UpdateSelectionRect();
-			}
+			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
 
 			e.Handled = true;
-
-			OnSelectionChanged();
 
 			base.OnMouseMove(e);
 		}
 
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
-			if (this.SelectionEnabled == false)
-			{
-				base.OnMouseUp(e);
-				return;
-			}
-
 			ReleaseMouseCapture();
 
 			base.OnMouseUp(e);
@@ -422,7 +411,7 @@ namespace MyGame.Client
 					m_world = null;
 				}
 
-				this.SelectionRect = new IntCuboid();
+				this.Selection = new MapSelection();
 				UpdateBuildings();
 
 				Notify("Environment");
@@ -504,8 +493,8 @@ namespace MyGame.Client
 				if (IsMouseCaptured)
 				{
 					Point pos = Mouse.GetPosition(this);
-					m_selectionEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
-					OnSelectionChanged();
+					var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
+					this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
 				}
 				UpdateSelectionRect();
 
@@ -717,38 +706,42 @@ namespace MyGame.Client
 	class TileAreaInfo : INotifyPropertyChanged
 	{
 		Environment m_env;
-		ObjectCollection m_obs;
-		IntCuboid m_area;
+		IEnumerable<ClientGameObject> m_obs;
+		MapSelection m_selection;
 
 		public TileAreaInfo()
 		{
-			m_obs = new ObjectCollection();
 		}
 
 		void NotifyTileChanges()
 		{
-			m_obs.Clear();
-			if (m_env != null)
-			{
-				var obs = m_area.Range().
-					Select(p => m_env.GetContents(p)).
-					Where(l => l != null).
-					SelectMany(l => l);
-
-				foreach (var ob in obs)
-					m_obs.Add(ob);
-			}
+			m_obs = null;
 
 			Notify("Interiors");
 			Notify("Floors");
 			Notify("WaterLevels");
-			Notify("Objects");
 			Notify("Buildings");
+			Notify("Objects");
+		}
+
+		void UpdateObjectList()
+		{
+			if (m_env != null)
+			{
+				m_obs = m_selection.SelectionCuboid.Range().
+					Select(p => m_env.GetContents(p)).
+					Where(l => l != null).
+					SelectMany(l => l);
+			}
+			else
+			{
+				m_obs = null;
+			}
 		}
 
 		void MapChanged(IntPoint3D l)
 		{
-			if (!m_area.Contains(l))
+			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
 
 			NotifyTileChanges();
@@ -766,8 +759,8 @@ namespace MyGame.Client
 
 				if (m_env == null)
 				{
-					m_area = new IntCuboid();
-					Notify("Area");
+					m_selection = new MapSelection();
+					Notify("Selection");
 				}
 
 				if (m_env != null)
@@ -778,13 +771,13 @@ namespace MyGame.Client
 			}
 		}
 
-		public IntCuboid Area
+		public MapSelection Selection
 		{
-			get { return m_area; }
+			get { return m_selection; }
 			set
 			{
-				m_area = value;
-				Notify("Area");
+				m_selection = value;
+				Notify("Selection");
 				NotifyTileChanges();
 			}
 		}
@@ -796,7 +789,7 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 
-				return m_area.Range().
+				return m_selection.SelectionCuboid.Range().
 					Select(p => Tuple.Create(m_env.GetInterior(p), m_env.GetInteriorMaterial(p))).
 					Distinct();
 			}
@@ -809,7 +802,7 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 
-				return m_area.Range().
+				return m_selection.SelectionCuboid.Range().
 					Select(p => Tuple.Create(m_env.GetFloor(p), m_env.GetFloorMaterial(p))).
 					Distinct();
 			}
@@ -822,16 +815,19 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 
-				return m_area.Range().
+				return m_selection.SelectionCuboid.Range().
 					Select(p => m_env.GetWaterLevel(p)).
 					Distinct();
 			}
 		}
 
-		public ObjectCollection Objects
+		public IEnumerable<ClientGameObject> Objects
 		{
 			get
 			{
+				if (m_obs == null)
+					UpdateObjectList();
+
 				return m_obs;
 			}
 		}
@@ -843,7 +839,7 @@ namespace MyGame.Client
 				if (m_env == null)
 					return null;
 
-				return m_area.Range().
+				return m_selection.SelectionCuboid.Range().
 					Select(p => m_env.GetBuildingAt(p)).
 					Where(b => b != null).
 					Distinct();

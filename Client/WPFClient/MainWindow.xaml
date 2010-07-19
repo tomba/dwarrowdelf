@@ -191,8 +191,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <local:MasterMapControl x:Name="map" SelectionEnabled="True"
-                              Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
+            <local:MasterMapControl x:Name="map" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
                 <local:MasterMapControl.ContextMenu>
                     <ContextMenu>
                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
@@ -275,7 +274,7 @@
                     </DockPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Column="1" Grid.Row="1" Header="Selected Tile Info"
+                <GroupBox Grid.Column="1" Grid.Row="1" Header="Selection"
                       DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Top">
@@ -283,15 +282,15 @@
                                 <TextBlock>
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
-                                            <Binding Path="Area.X1" Mode="OneWay" />
-                                            <Binding Path="Area.Y1" Mode="OneWay" />
-                                            <Binding Path="Area.Z1" Mode="OneWay" />
-                                            <Binding Path="Area.X2" Mode="OneWay" />
-                                            <Binding Path="Area.Y2" Mode="OneWay" />
-                                            <Binding Path="Area.Z2" Mode="OneWay" />
-                                            <Binding Path="Area.Width" Mode="OneWay" />
-                                            <Binding Path="Area.Height" Mode="OneWay" />
-                                            <Binding Path="Area.Depth" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
+                                            <Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>

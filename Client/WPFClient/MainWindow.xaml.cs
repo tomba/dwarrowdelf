@@ -398,14 +398,12 @@ namespace MyGame.Client
 		{
 			if (e.RightButton == MouseButtonState.Pressed)
 			{
-				var r = map.SelectionRect;
-
 				var ml = new IntPoint3D(map.ScreenPointToMapLocation(e.GetPosition(map)), map.Z);
 
-				if (r.Contains(ml))
+				if (map.Selection.SelectionCuboid.Contains(ml))
 					return;
 
-				map.SelectionRect = new IntCuboid(ml, new IntSize3D(1, 1, 1));
+				map.Selection = new MapSelection(ml, ml);
 			}
 		}
 
@@ -427,7 +425,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -450,7 +448,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = floor,
@@ -473,7 +471,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -496,7 +494,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -515,7 +513,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -533,7 +531,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.NaturalFloor,
@@ -550,7 +548,7 @@ namespace MyGame.Client
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
-				Cube = map.SelectionRect,
+				Cube = map.Selection.SelectionCuboid,
 				TileData = new TileData()
 				{
 					FloorID = FloorID.Undefined,
@@ -571,7 +569,7 @@ namespace MyGame.Client
 			{
 				var env = map.Environment;
 
-				foreach (var p in map.SelectionRect.Range())
+				foreach (var p in map.Selection.SelectionCuboid.Range())
 				{
 					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
 						continue;
@@ -582,7 +580,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "MineArea")
 			{
-				IntRect r = map.SelectionRect.ToIntRect();
+				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -591,7 +589,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "MineAreaParallel")
 			{
-				IntRect r = map.SelectionRect.ToIntRect();
+				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -600,7 +598,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "MineAreaSerial")
 			{
-				IntRect r = map.SelectionRect.ToIntRect();
+				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
 				var env = map.Environment;
 				int z = map.Z;
 
@@ -609,7 +607,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "BuildItem")
 			{
-				var p = map.SelectionRect.Corner1;
+				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
 				var building = env.GetBuildingAt(p);
@@ -621,7 +619,7 @@ namespace MyGame.Client
 			}
 			else if (tag == "Goto")
 			{
-				var p = map.SelectionRect.Corner1;
+				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
 				var job = new MoveActionJob(null, env, p, false);
@@ -638,7 +636,7 @@ namespace MyGame.Client
 			MenuItem item = (MenuItem)e.Source;
 			string tag = (string)item.Tag;
 
-			var r = map.SelectionRect.ToIntRect();
+			var r = map.Selection.SelectionCuboid.ToIntRect();
 			var env = map.Environment;
 			int z = map.Z;
 
