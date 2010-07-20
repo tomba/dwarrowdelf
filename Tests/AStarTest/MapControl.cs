@@ -30,7 +30,7 @@ using AStarTest;
  */
 namespace AStarTest
 {
-	public class MapControl : MapControlBase, INotifyPropertyChanged
+	class MapControl : MapControlBase<MapControlTile>, INotifyPropertyChanged
 	{
 		public class TileInfo
 		{
@@ -82,12 +82,22 @@ namespace AStarTest
 			InvalidateTiles();
 		}
 
-		protected override UIElement CreateTile()
+		protected override void UpdateTilesOverride(MapControlTile[,] tileArray)
 		{
-			return new MapControlTile();
+			for (int y = 0; y < this.Rows; ++y)
+			{
+				for (int x = 0; x < this.Columns; ++x)
+				{
+					var tile = tileArray[y, x];
+
+					var ml = ScreenLocationToMapLocation(new IntPoint(x, y));
+
+					UpdateTile(tile, ml);
+				}
+			}
 		}
 
-		protected override void UpdateTile(UIElement _tile, IntPoint _ml)
+		protected void UpdateTile(UIElement _tile, IntPoint _ml)
 		{
 			MapControlTile tile = (MapControlTile)_tile;
 			IntPoint3D ml = new IntPoint3D(_ml, m_z);
