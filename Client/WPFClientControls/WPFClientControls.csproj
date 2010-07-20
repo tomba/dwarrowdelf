@@ -130,6 +130,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapControlBase.cs" />
     <Compile Include="RenderMap.cs" />
     <Compile Include="TileControl.cs" />
     <Compile Include="IBitmapGenerator.cs" />

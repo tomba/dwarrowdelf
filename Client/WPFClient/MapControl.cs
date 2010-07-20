@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 
 namespace MyGame.Client
 {
-	class MapControl : TileControl<MapControlTile>, IMapControl, INotifyPropertyChanged
+	class MapControl : MapControlBase<MapControlTile>, IMapControl, INotifyPropertyChanged
 	{
 		World m_world;
 		SymbolBitmapCache m_bitmapCache;
@@ -126,56 +126,6 @@ namespace MyGame.Client
 				InvalidateTiles();
 				Notify("ShowVirtualSymbols");
 			}
-		}
-
-		IntPoint TopLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
-		}
-
-		IntPoint BottomLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
-		}
-
-		IntPoint m_centerPos;
-		public IntPoint CenterPos
-		{
-			get { return m_centerPos; }
-			set
-			{
-				if (value == this.CenterPos)
-					return;
-
-				var v = value - this.CenterPos;
-				ScrollTiles(v);
-
-				m_centerPos = value;
-
-				InvalidateTiles();
-			}
-		}
-
-		public IntPoint ScreenPointToMapLocation(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
-		}
-
-		public Point MapLocationToScreenPoint(IntPoint ml)
-		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
-		}
-
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
-		{
-			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
-		}
-
-		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
-		{
-			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
 		}
 
 		public Environment Environment
