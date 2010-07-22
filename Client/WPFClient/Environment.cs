@@ -426,5 +426,79 @@ namespace MyGame.Client
 			if (MapTileChanged != null)
 				MapTileChanged(ob.Location);
 		}
+
+		/* XXX some room for optimization... */
+		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
+		{
+			var env = this;
+
+			foreach (var dir in DirectionExtensions.PlanarDirections)
+			{
+				var l = p + dir;
+				if (CanMoveTo(p, l))
+					yield return dir;
+			}
+
+			if (CanMoveTo(p, p + Direction.Up))
+				yield return Direction.Up;
+
+			if (CanMoveTo(p, p + Direction.Down))
+				yield return Direction.Down;
+
+			foreach (var dir in DirectionExtensions.CardinalDirections)
+			{
+				var d = dir | Direction.Down;
+				if (CanMoveTo(p, p + d))
+					yield return d;
+
+				d = dir | Direction.Up;
+				if (CanMoveTo(p, p + d))
+					yield return d;
+			}
+		}
+
+		bool CanMoveTo(IntPoint3D srcLoc, IntPoint3D dstLoc)
+		{
+			IntVector3D v = dstLoc - srcLoc;
+
+			if (!v.IsNormal)
+				throw new Exception();
+
+			var dstInter = GetInterior(dstLoc);
+			var dstFloor = GetFloor(dstLoc);
+
+			if (dstInter.Blocker || !dstFloor.IsCarrying)
+				return false;
+
+			if (v.Z == 0)
+				return true;
+
+			Direction dir = v.ToDirection();
+
+			var srcInter = GetInterior(srcLoc);
+			var srcFloor = GetFloor(srcLoc);
+
+			if (dir == Direction.Up)
+				return srcInter.ID == InteriorID.Stairs && dstFloor.ID == FloorID.Hole;
+
+			if (dir == Direction.Down)
+				return dstInter.ID == InteriorID.Stairs && srcFloor.ID == FloorID.Hole;
+
+			var d2d = v.ToIntVector().ToDirection();
+
+			if (dir.ContainsUp())
+			{
+				var tileAboveSlope = GetTileData(srcLoc + Direction.Up);
+				return d2d.IsCardinal() && srcInter.ID.IsSlope() && srcInter.ID == Interiors.GetSlopeFromDir(d2d) && tileAboveSlope.IsEmpty;
+			}
+
+			if (dir.ContainsDown())
+			{
+				var tileAboveSlope = GetTileData(dstLoc + Direction.Up);
+				return d2d.IsCardinal() && dstInter.ID.IsSlope() && dstInter.ID == Interiors.GetSlopeFromDir(d2d.Reverse()) && tileAboveSlope.IsEmpty;
+			}
+
+			return false;
+		}
 	}
 }
