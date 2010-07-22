@@ -89,14 +89,34 @@ namespace MyGame.Client
 				m_buildOrderQueue.Remove(order);
 		}
 
+		/* find the materials closest to this building.
+		 * XXX path should be saved, or path should be determined later */
 		IEnumerable<ItemObject> FindMaterials(BuildOrder order)
 		{
 			var numItems = order.SourceObjects.Length;
 
-			var items = this.Environment.GetContents().
-				OfType<ItemObject>().
-				Where(o => o.Assignment == null).
-				Take(numItems);
+			var items = new ItemObject[numItems];
+
+			for (int i = 0; i < numItems; ++i)
+			{
+				ItemObject ob = null;
+
+				Func<IntPoint3D, bool> func = delegate(IntPoint3D l)
+				{
+					ob = this.Environment.GetContents(l).OfType<ItemObject>().Where(o => o.Assignment == null && !items.Contains(o)).FirstOrDefault();
+
+					if (ob != null)
+						return true;
+					else
+						return false;
+				};
+
+				var res = AStar.AStar3D.FindNearest(new IntPoint3D(this.Area.Center, this.Z), func,
+					l => 0,
+					this.Environment.GetDirectionsFrom);
+
+				items[i] = ob;
+			}
 
 			if (items.Count() != numItems)
 				return null;
