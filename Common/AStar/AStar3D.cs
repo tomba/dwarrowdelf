@@ -57,25 +57,109 @@ namespace MyGame.AStar
 		}
 	}
 
+	public interface IAStarTarget
+	{
+		bool GetIsTarget(IntPoint3D location);
+		ushort GetHeuristic(IntPoint3D location);
+	}
+
+	public class AStarDefaultTarget : IAStarTarget
+	{
+		IntPoint3D m_destination;
+		bool m_exactLocation;
+
+		public AStarDefaultTarget(IntPoint3D destination, bool exactLocation)
+		{
+			m_destination = destination;
+			m_exactLocation = exactLocation;
+		}
+
+		public bool GetIsTarget(IntPoint3D location)
+		{
+			if (m_exactLocation)
+				return location == m_destination;
+			else
+				return (location - m_destination).IsAdjacent2D;
+		}
+
+		public ushort GetHeuristic(IntPoint3D location)
+		{
+			return (ushort)((m_destination - location).ManhattanLength * 10);
+		}
+	}
+
+	public class AStarAreaTarget : IAStarTarget
+	{
+		IntCuboid m_destination;
+
+		public AStarAreaTarget(IntCuboid destination)
+		{
+			m_destination = destination;
+		}
+
+		public bool GetIsTarget(IntPoint3D location)
+		{
+			return m_destination.Contains(location);
+		}
+
+		public ushort GetHeuristic(IntPoint3D location)
+		{
+			var dst = new IntPoint3D((m_destination.X1 + m_destination.X2) / 2, (m_destination.Y1 + m_destination.Y2) / 2, (m_destination.Z1 + m_destination.Z2) / 2);
+			return (ushort)((dst - location).ManhattanLength * 10);
+		}
+	}
+
+	public class AStarDelegateTarget : MyGame.AStar.IAStarTarget
+	{
+		Func<IntPoint3D, bool> m_func;
+
+		public AStarDelegateTarget(Func<IntPoint3D, bool> func)
+		{
+			m_func = func;
+		}
+
+		public bool GetIsTarget(IntPoint3D location)
+		{
+			return m_func(location);
+		}
+
+		public ushort GetHeuristic(IntPoint3D location)
+		{
+			return 0;
+		}
+	}
+
 	public static class AStar3D
 	{
 		class AStarState
 		{
+			public IAStarTarget Target;
 			public IntPoint3D Src;
-			public IntPoint3D Dst;
 			public IOpenList<AStar3DNode> OpenList;
 			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
 			public Func<IntPoint3D, int> GetTileWeight;
 			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
 		}
 
+		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
+		{
+			return Find(src, new AStarDelegateTarget(func), tileWeight, validDirs);
+		}
+
 		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, int> tileWeight,
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
+		{
+			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs);
+		}
+
+		public static AStar3DResult Find(IntPoint3D src, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
 		{
 			var state = new AStarState()
 			{
 				Src = src,
-				Dst = dst,
+				Target = target,
 				GetTileWeight = tileWeight,
 				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint3D, AStar3DNode>(),
@@ -84,11 +168,11 @@ namespace MyGame.AStar
 			};
 
 			AStar3DNode lastNode;
-			var nodes = FindInternal(state, exactLocation, out lastNode);
+			var nodes = FindInternal(state, out lastNode);
 			return new AStar3DResult(nodes, lastNode);
 		}
 
-		static IDictionary<IntPoint3D, AStar3DNode> FindInternal(AStarState state, bool exactLocation, out AStar3DNode lastNode)
+		static IDictionary<IntPoint3D, AStar3DNode> FindInternal(AStarState state, out AStar3DNode lastNode)
 		{
 			lastNode = null;
 
@@ -106,13 +190,7 @@ namespace MyGame.AStar
 				node = openList.Pop();
 				node.Closed = true;
 
-				if (exactLocation && node.Loc == state.Dst)
-				{
-					lastNode = node;
-					break;
-				}
-
-				if (!exactLocation && (node.Loc - state.Dst).IsAdjacent2D)
+				if (state.Target.GetIsTarget(node.Loc))
 				{
 					lastNode = node;
 					break;
@@ -145,7 +223,7 @@ namespace MyGame.AStar
 				//	continue;
 
 				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
-				ushort h = (ushort)((state.Dst - childLoc).ManhattanLength * 10);
+				ushort h = state.Target.GetHeuristic(childLoc);
 
 				if (child == null)
 				{
