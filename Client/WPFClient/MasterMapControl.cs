@@ -109,10 +109,13 @@ namespace MyGame.Client
 			var grid = new Grid();
 			AddChild(grid);
 
-			var mc = new MapControlD2D();
-			//var mc = new MapControl();
+			IMapControl mc;
+			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
+				mc = new MapControl();
+			else
+				mc = new MapControlD2D();
 
-			grid.Children.Add(mc);
+			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;
 			m_mapControl.TileArrangementChanged += OnTileArrangementChanged;
 
