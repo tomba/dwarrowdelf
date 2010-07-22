@@ -82,6 +82,11 @@ namespace MyGame
 			get { return new IntPoint3D(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
 		}
 
+		public IntPoint3D Center
+		{
+			get { return new IntPoint3D((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2, (this.Z1 + this.Z2) / 2); }
+		}
+
 		public int Volume
 		{
 			get { return this.Width * this.Height * this.Depth; }

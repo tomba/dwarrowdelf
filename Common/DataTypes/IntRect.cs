@@ -60,6 +60,11 @@ namespace MyGame
 			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
 		}
 
+		public IntPoint Center
+		{
+			get { return new IntPoint((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2); }
+		}
+
 		public int Area
 		{
 			get { return this.Width * this.Height; }
