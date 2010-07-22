@@ -441,11 +441,12 @@ namespace MyGame.Client
 
 		static SymbolID GetObjectBitmap(IntPoint3D ml, Environment env, out GameColor color)
 		{
-			IList<ClientGameObject> obs = env.GetContents(ml);
-			if (obs != null && obs.Count > 0)
+			var ob = env.GetContents(ml).FirstOrDefault();
+
+			if (ob != null)
 			{
-				var id = obs[0].SymbolID;
-				color = obs[0].GameColor;
+				var id = ob.SymbolID;
+				color = ob.GameColor;
 				return id;
 			}
 			else

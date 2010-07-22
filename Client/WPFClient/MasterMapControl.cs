@@ -568,9 +568,8 @@ namespace MyGame.Client
 			if (m_env != null)
 			{
 				var list = m_env.GetContents(m_location);
-				if (list != null)
-					foreach (var o in list)
-						m_obs.Add(o);
+				foreach (var o in list)
+					m_obs.Add(o);
 			}
 
 			Notify("Interior");
@@ -727,16 +726,9 @@ namespace MyGame.Client
 		void UpdateObjectList()
 		{
 			if (m_env != null)
-			{
-				m_obs = m_selection.SelectionCuboid.Range().
-					Select(p => m_env.GetContents(p)).
-					Where(l => l != null).
-					SelectMany(l => l);
-			}
+				m_obs = m_selection.SelectionCuboid.Range().SelectMany(p => m_env.GetContents(p));
 			else
-			{
 				m_obs = null;
-			}
 		}
 
 		void MapChanged(IntPoint3D l)

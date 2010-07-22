@@ -364,11 +364,13 @@ namespace MyGame.Client
 			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.ToIntPoint()));
 		}
 
+		static IList<ClientGameObject> EmptyObjectList = new ClientGameObject[0];
+
 		public IList<ClientGameObject> GetContents(IntPoint3D l)
 		{
 			List<ClientGameObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
-				return null;
+				return EmptyObjectList;
 
 			return obs.AsReadOnly();
 		}
