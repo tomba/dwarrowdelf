@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 
 namespace MyGame.Client
 {
@@ -35,7 +36,10 @@ namespace MyGame.Client
 
 			this.Controllables = new LivingCollection();
 
-			this.DrawingCache = new DrawingCache();
+			var uri = new Uri("SymbolDrawings.xaml", UriKind.Relative);
+			var symbolResources = (ResourceDictionary)Application.LoadComponent(uri);
+			this.DrawingCache = new DrawingCache(symbolResources);
+
 			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache);
 
 			this.JobManager = new JobManager(this);

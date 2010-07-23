@@ -10,7 +10,7 @@ namespace MyGame.Client
 {
 	static class MyExtensions
 	{
-		public static System.Windows.Media.Color ToColor(this GameColor color)
+		public static System.Windows.Media.Color ToWindowsColor(this GameColor color)
 		{
 			var rgb = new GameColorRGB(color);
 			return System.Windows.Media.Color.FromRgb(rgb.R, rgb.G, rgb.B);
