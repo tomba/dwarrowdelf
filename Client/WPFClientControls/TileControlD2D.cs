@@ -166,6 +166,12 @@ namespace MyGame.Client
 			}
 		}
 
+		public void InvalidateBitmaps()
+		{
+			ClearAtlasBitmap();
+			ClearColorTileArray();
+		}
+
 		public IBitmapGenerator BitmapGenerator
 		{
 			get { return m_bitmapGenerator; }

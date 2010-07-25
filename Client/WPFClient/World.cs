@@ -37,10 +37,12 @@ namespace MyGame.Client
 			this.Controllables = new LivingCollection();
 
 			var uri = new Uri("SymbolDrawings.xaml", UriKind.Relative);
-			var symbolResources = (ResourceDictionary)Application.LoadComponent(uri);
-			this.DrawingCache = new DrawingCache(symbolResources);
+			var drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
+			this.DrawingCache = new DrawingCache(drawingResources);
 
-			this.SymbolDrawingCache = new SymbolDrawingCache(this.DrawingCache);
+			var ass = System.Reflection.Assembly.GetExecutingAssembly();
+			var symbolsXmlStream = ass.GetManifestResourceStream("MyGame.Client.SymbolInfos.xml");
+			this.SymbolDrawingCache = new SymbolDrawingCache(symbolsXmlStream, this.DrawingCache);
 
 			this.JobManager = new JobManager(this);
 		}

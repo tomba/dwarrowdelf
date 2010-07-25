@@ -16,11 +16,11 @@ namespace MyGame.Client
 		/* [ character -> [ color -> drawing ] ] */
 		Dictionary<char, Dictionary<GameColor, Drawing>> m_charDrawingMap;
 
-		public DrawingCache(ResourceDictionary symbolResources)
+		public DrawingCache(ResourceDictionary drawingResources)
 		{
-			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(symbolResources.Count);
+			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(drawingResources.Count);
 
-			foreach (System.Collections.DictionaryEntry de in symbolResources)
+			foreach (System.Collections.DictionaryEntry de in drawingResources)
 			{
 				Drawing drawing = ((DrawingBrush)de.Value).Drawing;
 				string name = (string)de.Key;

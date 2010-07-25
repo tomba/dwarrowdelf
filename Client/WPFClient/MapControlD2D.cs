@@ -130,6 +130,22 @@ namespace MyGame.Client
 			}
 		}
 
+		public bool UseOnlyChars
+		{
+			get { return m_bitmapCache != null ? m_bitmapCache.UseOnlyChars : false; }
+
+			set
+			{
+				if (m_bitmapCache == null)
+					return;
+
+				m_bitmapCache.UseOnlyChars = value;
+				m_tileControlD2D.InvalidateBitmaps();
+				InvalidateTiles();
+				Notify("UseOnlyChars");
+			}
+		}
+
 		public Environment Environment
 		{
 			get { return m_env; }

@@ -24,6 +24,7 @@ namespace MyGame.Client
 		int Rows { get; }
 		int TileSize { get; set; }
 		bool ShowVirtualSymbols { get; set; }
+		bool UseOnlyChars { get; set; }
 
 		Environment Environment { get; set; }
 		int Z { get; set; }
@@ -379,6 +380,17 @@ namespace MyGame.Client
 			{
 				m_mapControl.ShowVirtualSymbols = value;
 				Notify("ShowVirtualSymbols");
+			}
+		}
+
+		public bool UseOnlyChars
+		{
+			get { return m_mapControl.UseOnlyChars; }
+
+			set
+			{
+				m_mapControl.UseOnlyChars = value;
+				Notify("UseOnlyChars");
 			}
 		}
 

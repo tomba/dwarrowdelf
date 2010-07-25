@@ -17,11 +17,12 @@ namespace MyGame.Client
 
 		SymbolDrawingCache m_symbolDrawingCache;
 
-		CacheData[] m_blackBitmapList;
-		Dictionary<SymbolID, Dictionary<GameColor, CacheData>> m_bitmapMap;
+		CacheData[] m_nonColoredBitmapList;
+		Dictionary<GameColor, CacheData>[] m_coloredBitmapMap;
 
-		int m_size = 8;
+		int m_size;
 		int m_numDistinctBitmaps;
+		bool m_useOnlyChars;
 
 		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, int size)
 		{
@@ -33,10 +34,10 @@ namespace MyGame.Client
 
 			var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
 			var max = (int)arr.Max() + 1;
-			m_blackBitmapList = new CacheData[max];
 			m_numDistinctBitmaps = max;
 
-			m_bitmapMap = new Dictionary<SymbolID, Dictionary<GameColor, CacheData>>();
+			m_nonColoredBitmapList = new CacheData[m_numDistinctBitmaps];
+			m_coloredBitmapMap = new Dictionary<GameColor, CacheData>[m_numDistinctBitmaps];
 		}
 
 		public int TileSize
@@ -51,39 +52,53 @@ namespace MyGame.Client
 				if (m_size != value)
 				{
 					m_size = value;
-					m_bitmapMap = new Dictionary<SymbolID, Dictionary<GameColor, CacheData>>();
-					for (int i = 0; i < m_blackBitmapList.Length; ++i)
-						m_blackBitmapList[i] = null;
+
+					Array.Clear(m_nonColoredBitmapList, 0, m_nonColoredBitmapList.Length);
+					Array.Clear(m_coloredBitmapMap, 0, m_nonColoredBitmapList.Length);
 				}
 			}
 		}
 
-		public int NumDistinctBitmaps 
+		public bool UseOnlyChars
+		{
+			get { return m_useOnlyChars; }
+
+			set
+			{
+				m_useOnlyChars = value;
+
+				Array.Clear(m_nonColoredBitmapList, 0, m_nonColoredBitmapList.Length);
+				Array.Clear(m_coloredBitmapMap, 0, m_nonColoredBitmapList.Length);
+			}
+		}
+
+		public int NumDistinctBitmaps
 		{
 			get { return m_numDistinctBitmaps; }
 		}
 
 		public BitmapSource GetBitmap(SymbolID symbolID, GameColor color, bool dark)
 		{
-			Dictionary<GameColor, CacheData> map;
 			CacheData data;
 
 			if (color == GameColor.None)
 			{
-				data = m_blackBitmapList[(int)symbolID];
+				data = m_nonColoredBitmapList[(int)symbolID];
 
 				if (data == null)
 				{
 					data = new CacheData();
-					m_blackBitmapList[(int)symbolID] = data;
+					m_nonColoredBitmapList[(int)symbolID] = data;
 				}
 			}
 			else
 			{
-				if (!m_bitmapMap.TryGetValue(symbolID, out map))
+				var map = m_coloredBitmapMap[(int)symbolID];
+
+				if (map == null)
 				{
 					map = new Dictionary<GameColor, CacheData>();
-					m_bitmapMap[symbolID] = map;
+					m_coloredBitmapMap[(int)symbolID] = map;
 				}
 
 				if (!map.TryGetValue(color, out data))
@@ -120,7 +135,12 @@ namespace MyGame.Client
 			DrawingVisual drawingVisual = new DrawingVisual();
 			DrawingContext drawingContext = drawingVisual.RenderOpen();
 
-			Drawing d = m_symbolDrawingCache.GetDrawing(symbolID, color);
+			Drawing d;
+
+			if (m_useOnlyChars)
+				d = m_symbolDrawingCache.GetCharDrawing(symbolID, color);
+			else
+				d = m_symbolDrawingCache.GetDrawing(symbolID, color);
 
 			drawingContext.PushTransform(new ScaleTransform((double)m_size / 100, (double)m_size / 100));
 			drawingContext.DrawDrawing(d);

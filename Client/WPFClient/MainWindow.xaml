@@ -71,6 +71,8 @@
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
                 <Separator />
+                <ToggleButton IsChecked="{Binding Path=UseOnlyChars, ElementName=map}">Char Mode</ToggleButton>
+                <Separator />
                 <Button Click="LogOn_Button_Click">LogOn</Button>
                 <Separator />
                 <Button Click="LogOff_Button_Click">LogOff</Button>

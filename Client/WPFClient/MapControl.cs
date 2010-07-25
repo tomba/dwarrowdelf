@@ -128,6 +128,18 @@ namespace MyGame.Client
 			}
 		}
 
+		public bool UseOnlyChars
+		{
+			get { return m_bitmapCache.UseOnlyChars; }
+
+			set
+			{
+				m_bitmapCache.UseOnlyChars = value;
+				InvalidateTiles();
+				Notify("UseOnlyChars");
+			}
+		}
+
 		public Environment Environment
 		{
 			get { return m_env; }

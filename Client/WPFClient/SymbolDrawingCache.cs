@@ -34,20 +34,19 @@ namespace MyGame.Client
 		IList<SymbolInfo> m_symbolInfoList;
 		DrawingCache m_drawingCache;
 		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
+		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_charDrawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
-		bool m_useOnlyChars = false;
-
-		public SymbolDrawingCache(DrawingCache drawingCache)
+		public SymbolDrawingCache(Stream symbolsXmlStream, DrawingCache drawingCache)
 		{
 			m_drawingCache = drawingCache;
-			ParseSymbols();
+			ParseSymbols(symbolsXmlStream);
 		}
 
 		public Drawing GetDrawing(SymbolID symbolID, GameColor color)
 		{
 			Dictionary<GameColor, Drawing> map;
 			Drawing drawing;
-			
+
 			if (!m_drawingMap.TryGetValue(symbolID, out map))
 			{
 				map = new Dictionary<GameColor, Drawing>();
@@ -63,21 +62,52 @@ namespace MyGame.Client
 			return drawing;
 		}
 
+		public Drawing GetCharDrawing(SymbolID symbolID, GameColor color)
+		{
+			Dictionary<GameColor, Drawing> map;
+			Drawing drawing;
+
+			if (!m_charDrawingMap.TryGetValue(symbolID, out map))
+			{
+				map = new Dictionary<GameColor, Drawing>();
+				m_charDrawingMap[symbolID] = map;
+			}
+
+			if (!map.TryGetValue(color, out drawing))
+			{
+				drawing = CreateCharDrawing(symbolID, color);
+				map[color] = drawing;
+			}
+
+			return drawing;
+		}
+
 		Drawing CreateDrawing(SymbolID symbolID, GameColor color)
 		{
 			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
 			Drawing drawing;
 
-			if (m_useOnlyChars || symbol.DrawingName == null)
+			if (symbol.DrawingName == null)
 			{
-				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, m_useOnlyChars).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, !m_useOnlyChars);
+				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, false).Clone();
+				drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, true);
 			}
 			else
 			{
 				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
 				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.DrawingRotation, true);
 			}
+
+			drawing.Freeze();
+			return drawing;
+		}
+
+		Drawing CreateCharDrawing(SymbolID symbolID, GameColor color)
+		{
+			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
+
+			var drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, true).Clone();
+			drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, false);
 
 			drawing.Freeze();
 			return drawing;
@@ -94,9 +124,9 @@ namespace MyGame.Client
 				dc.PushTransform(new TranslateTransform(location.X, location.Y));
 				dc.PushTransform(new ScaleTransform(size.Width / drawing.Bounds.Width, size.Height / drawing.Bounds.Height));
 				dc.PushTransform(new TranslateTransform(-drawing.Bounds.Left, -drawing.Bounds.Top));
-				
+
 				dc.DrawDrawing(drawing);
-				
+
 				dc.Pop();
 				dc.Pop();
 				dc.Pop();
@@ -107,12 +137,9 @@ namespace MyGame.Client
 		}
 
 
-		void ParseSymbols()
+		void ParseSymbols(Stream symbolsXmlStream)
 		{
-			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			Stream resStream = ass.GetManifestResourceStream("MyGame.Client.SymbolInfos.xml");
-
-			XDocument root = XDocument.Load(new StreamReader(resStream));
+			XDocument root = XDocument.Load(new StreamReader(symbolsXmlStream));
 			XElement rootElem = root.Element("Symbols");
 
 			m_symbolInfoList = new List<SymbolInfo>(rootElem.Elements().Count());
