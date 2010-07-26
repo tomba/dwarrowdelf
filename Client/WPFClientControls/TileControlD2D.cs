@@ -368,16 +368,16 @@ namespace MyGame.Client
 					RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 
 					if (data.FloorSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.FloorSymbolID, GameColor.None, data.FloorDark);
+						DrawTile(tileSize, ref dstRect, data.FloorSymbolID, data.FloorColor, data.FloorDark);
 
 					if (data.InteriorSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.InteriorSymbolID, GameColor.None, data.InteriorDark);
+						DrawTile(tileSize, ref dstRect, data.InteriorSymbolID, data.InteriorColor, data.InteriorDark);
 
 					if (data.ObjectSymbolID != SymbolID.Undefined)
 						DrawTile(tileSize, ref dstRect, data.ObjectSymbolID, data.ObjectColor, data.ObjectDark);
 
 					if (data.TopSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.TopSymbolID, GameColor.None, data.TopDark);
+						DrawTile(tileSize, ref dstRect, data.TopSymbolID, data.TopColor, data.TopDark);
 #if DEBUG_TEXT
 					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif

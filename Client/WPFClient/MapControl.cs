@@ -86,16 +86,16 @@ namespace MyGame.Client
 			BitmapSource topBitmap = null;
 
 			if (data.FloorSymbolID != SymbolID.Undefined)
-				floorBitmap = m_bitmapCache.GetBitmap(data.FloorSymbolID, GameColor.None, data.FloorDark);
+				floorBitmap = m_bitmapCache.GetBitmap(data.FloorSymbolID, data.FloorColor, data.FloorDark);
 
 			if (data.InteriorSymbolID != SymbolID.Undefined)
-				interiorBitmap = m_bitmapCache.GetBitmap(data.InteriorSymbolID, GameColor.None, data.InteriorDark);
+				interiorBitmap = m_bitmapCache.GetBitmap(data.InteriorSymbolID, data.InteriorColor, data.InteriorDark);
 
 			if (data.ObjectSymbolID != SymbolID.Undefined)
 				objectBitmap = m_bitmapCache.GetBitmap(data.ObjectSymbolID, data.ObjectColor, data.ObjectDark);
 
 			if (data.TopSymbolID != SymbolID.Undefined)
-				topBitmap = m_bitmapCache.GetBitmap(data.TopSymbolID, GameColor.None, data.TopDark);
+				topBitmap = m_bitmapCache.GetBitmap(data.TopSymbolID, data.TopColor, data.TopDark);
 
 			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap ||
 				tile.TopBitmap != topBitmap;
