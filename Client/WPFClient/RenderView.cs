@@ -483,27 +483,43 @@ namespace MyGame.Client
 
 		static SymbolID GetTopBitmap(IntPoint3D ml, Environment env, out GameColor color)
 		{
-			color = GameColor.None;
-
 			int wl = env.GetWaterLevel(ml);
 
 			if (wl == 0)
+			{
+				color = GameColor.None;
 				return SymbolID.Undefined;
+			}
 
 			SymbolID id;
 
 			wl = wl * 100 / TileData.MaxWaterLevel;
 
 			if (wl > 80)
+			{
+				color = GameColor.DarkBlue;
 				id = SymbolID.Water100;
+			}
 			else if (wl > 60)
+			{
+				color = GameColor.MediumBlue;
 				id = SymbolID.Water80;
+			}
 			else if (wl > 40)
+			{
+				color = GameColor.MediumBlue;
 				id = SymbolID.Water60;
+			}
 			else if (wl > 20)
+			{
+				color = GameColor.Blue;
 				id = SymbolID.Water40;
+			}
 			else
+			{
+				color = GameColor.DodgerBlue;
 				id = SymbolID.Water20;
+			}
 
 			return id;
 		}

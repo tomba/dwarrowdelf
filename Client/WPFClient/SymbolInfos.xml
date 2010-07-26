@@ -1,145 +1,150 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Symbols>
-  <Symbol>
-    <Name>Undefined</Name>
-    <CharSymbol>?</CharSymbol>
-  </Symbol>
-  <Symbol>
-    <Name>Floor</Name>
-    <CharSymbol x="40" y="70" w="20" h="20">.</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Dirt_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Wall</Name>
-    <CharSymbol>#</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Stone_Block</Drawing>
-  </Symbol>
+<SymbolDefinitions>
 
-  <Symbol>
-    <Name>Water100</Name>
-    <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Water_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Water80</Name>
-    <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
-    <Drawing x="0" y="20" w="100" h="80">Water_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Water60</Name>
-    <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
-    <Drawing x="0" y="40" w="100" h="60">Water_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Water40</Name>
-    <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
-    <Drawing x="0" y="60" w="100" h="40">Water_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Water20</Name>
-    <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
-    <Drawing x="0" y="80" w="100" h="20">Water_Block</Drawing>
-  </Symbol>
+  <Font>Lucida Console</Font>
 
-  <Symbol>
-    <Name>StairsUp</Name>
-    <CharSymbol>&lt;</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">StairsUp</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>StairsDown</Name>
-    <CharSymbol>&gt;</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">StairsDown</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>StairsUpDown</Name>
-    <CharSymbol>X</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">StairsUpDown</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeUpNorth</Name>
-    <CharSymbol rotate="0">▲</CharSymbol>
-    <Rotate>90</Rotate>
-    <Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeUpSouth</Name>
-    <CharSymbol rotate="0">▲</CharSymbol>
-    <Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeUpWest</Name>
-    <CharSymbol rotate="0">▲</CharSymbol>
-    <Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeUpEast</Name>
-    <CharSymbol rotate="0">▲</CharSymbol>
-    <Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeDownNorth</Name>
-    <CharSymbol rotate="0">▼</CharSymbol>
-    <Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeDownSouth</Name>
-    <CharSymbol rotate="0">▼</CharSymbol>
-    <Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeDownWest</Name>
-    <CharSymbol rotate="0">▼</CharSymbol>
-    <Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>SlopeDownEast</Name>
-    <CharSymbol rotate="0">▼</CharSymbol>
-    <Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Portal</Name>
-    <CharSymbol>O</CharSymbol>
-  </Symbol>
+  <Symbols>
+    <Symbol>
+      <Name>Undefined</Name>
+      <CharSymbol>?</CharSymbol>
+    </Symbol>
+    <Symbol>
+      <Name>Floor</Name>
+      <CharSymbol x="40" y="70" w="20" h="20">.</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Dirt_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Wall</Name>
+      <CharSymbol>▒</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Stone_Block</Drawing>
+    </Symbol>
 
-  <Symbol>
-    <Name>Player</Name>
-    <CharSymbol>☺</CharSymbol>
-    <Drawing x="20" y="10" w="60" h="80">Character_Cat_Girl</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Monster</Name>
-    <CharSymbol>b</CharSymbol>
-    <Drawing x="10" y="20" w="80" h="60">Enemy_Bug</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Gem</Name>
-    <CharSymbol x="30" y="50" w="40" h="40">♦</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Sapling</Name>
-    <CharSymbol x="20" y="30" w="60" h="70">♠</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Tree_Short</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Tree</Name>
-    <CharSymbol>♣</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Tree_Tall</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Grass</Name>
-    <CharSymbol x="40" y="10" w="30" h="30" rotate="180">,</CharSymbol>
-    <Drawing x="0" y="0" w="100" h="100">Grass_Block</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Key</Name>
-    <CharSymbol>Ⱡ</CharSymbol>
-    <Drawing x="20" y="10" w="60" h="80">Key</Drawing>
-  </Symbol>
-  <Symbol>
-    <Name>Rock</Name>
-    <CharSymbol>●</CharSymbol>
-    <Drawing x="10" y="10" w="80" h="80">Rock</Drawing>
-  </Symbol>
-</Symbols>
+    <Symbol>
+      <Name>Water100</Name>
+      <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Water_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Water80</Name>
+      <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
+      <Drawing x="0" y="20" w="100" h="80">Water_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Water60</Name>
+      <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
+      <Drawing x="0" y="40" w="100" h="60">Water_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Water40</Name>
+      <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
+      <Drawing x="0" y="60" w="100" h="40">Water_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Water20</Name>
+      <CharSymbol x="10" y="30" w="80" h="40">~</CharSymbol>
+      <Drawing x="0" y="80" w="100" h="20">Water_Block</Drawing>
+    </Symbol>
+
+    <Symbol>
+      <Name>StairsUp</Name>
+      <CharSymbol>&lt;</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">StairsUp</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>StairsDown</Name>
+      <CharSymbol>&gt;</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">StairsDown</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>StairsUpDown</Name>
+      <CharSymbol>X</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">StairsUpDown</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeUpNorth</Name>
+      <CharSymbol rotate="0">▲</CharSymbol>
+      <Rotate>90</Rotate>
+      <Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeUpSouth</Name>
+      <CharSymbol rotate="0">▲</CharSymbol>
+      <Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeUpWest</Name>
+      <CharSymbol rotate="0">▲</CharSymbol>
+      <Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeUpEast</Name>
+      <CharSymbol rotate="0">▲</CharSymbol>
+      <Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeUpEast</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeDownNorth</Name>
+      <CharSymbol rotate="0">▼</CharSymbol>
+      <Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeDownSouth</Name>
+      <CharSymbol rotate="0">▼</CharSymbol>
+      <Drawing rotate="270" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeDownWest</Name>
+      <CharSymbol rotate="0">▼</CharSymbol>
+      <Drawing rotate="0" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>SlopeDownEast</Name>
+      <CharSymbol rotate="0">▼</CharSymbol>
+      <Drawing rotate="180" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Portal</Name>
+      <CharSymbol>○</CharSymbol>
+    </Symbol>
+
+    <Symbol>
+      <Name>Player</Name>
+      <CharSymbol>☺</CharSymbol>
+      <Drawing x="20" y="10" w="60" h="80">Character_Cat_Girl</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Monster</Name>
+      <CharSymbol>b</CharSymbol>
+      <Drawing x="10" y="20" w="80" h="60">Enemy_Bug</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Gem</Name>
+      <CharSymbol x="30" y="50" w="40" h="40">♦</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Gem_Blue</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Sapling</Name>
+      <CharSymbol x="20" y="30" w="60" h="70">♠</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Tree_Short</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Tree</Name>
+      <CharSymbol>♣</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Tree_Tall</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Grass</Name>
+      <CharSymbol x="40" y="10" w="30" h="30" rotate="180">,</CharSymbol>
+      <Drawing x="0" y="0" w="100" h="100">Grass_Block</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Key</Name>
+      <CharSymbol>Ⱡ</CharSymbol>
+      <Drawing x="20" y="10" w="60" h="80">Key</Drawing>
+    </Symbol>
+    <Symbol>
+      <Name>Rock</Name>
+      <CharSymbol>●</CharSymbol>
+      <Drawing x="10" y="10" w="80" h="80">Rock</Drawing>
+    </Symbol>
+  </Symbols>
+</SymbolDefinitions>

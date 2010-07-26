@@ -29,6 +29,7 @@ namespace MyGame.Client
 			public double CharWidth { get; set; }
 			public double CharHeight { get; set; }
 			public double CharRotation { get; set; }
+			public Typeface CharTypeface { get; set; }
 		}
 
 		IList<SymbolInfo> m_symbolInfoList;
@@ -89,7 +90,7 @@ namespace MyGame.Client
 
 			if (symbol.DrawingName == null)
 			{
-				drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, false).Clone();
+				drawing = DrawCharacter(symbol.CharSymbol, symbol.CharTypeface, color, true);
 				drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, true);
 			}
 			else
@@ -106,11 +107,39 @@ namespace MyGame.Client
 		{
 			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
 
-			var drawing = m_drawingCache.GetCharacterDrawing(symbol.CharSymbol, color, true).Clone();
+			var drawing = DrawCharacter(symbol.CharSymbol, symbol.CharTypeface, color, false);
 			drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, false);
 
 			drawing.Freeze();
 			return drawing;
+		}
+
+		static Drawing DrawCharacter(char ch, Typeface typeFace, GameColor color, bool drawOutline)
+		{
+			Color c;
+			if (color == GameColor.None)
+				c = Colors.White;
+			else
+				c = color.ToWindowsColor();
+
+			DrawingGroup dGroup = new DrawingGroup();
+			Brush brush = new SolidColorBrush(c);
+			using (DrawingContext dc = dGroup.Open())
+			{
+				var formattedText = new FormattedText(
+						ch.ToString(),
+						System.Globalization.CultureInfo.InvariantCulture,
+						FlowDirection.LeftToRight,
+						typeFace,
+						16, Brushes.Black);
+
+				var geometry = formattedText.BuildGeometry(new System.Windows.Point(0, 0));
+
+				var pen = drawOutline ? new Pen(Brushes.Black, 0.5) : null;
+				dc.DrawGeometry(brush, pen, geometry);
+			}
+
+			return dGroup;
 		}
 
 		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle, bool bgTransparent)
@@ -139,11 +168,17 @@ namespace MyGame.Client
 
 		void ParseSymbols(Stream symbolsXmlStream)
 		{
-			XDocument root = XDocument.Load(new StreamReader(symbolsXmlStream));
-			XElement rootElem = root.Element("Symbols");
+			XDocument doc = XDocument.Load(new StreamReader(symbolsXmlStream));
+			var symbolDefs = doc.Element("SymbolDefinitions");
 
-			m_symbolInfoList = new List<SymbolInfo>(rootElem.Elements().Count());
-			foreach (XElement elem in rootElem.Elements())
+			var fontName = (string)symbolDefs.Element("Font");
+
+			var defaultTypeFace = new Typeface(new FontFamily(fontName), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
+			var symbols = symbolDefs.Element("Symbols");
+
+			m_symbolInfoList = new List<SymbolInfo>(symbols.Elements().Count());
+			foreach (XElement elem in symbols.Elements())
 			{
 				var symbol = new SymbolInfo();
 
@@ -190,6 +225,12 @@ namespace MyGame.Client
 						symbol.CharRotation = (double)attr;
 
 					symbol.CharSymbol = ((string)charElem)[0];
+
+					attr = charElem.Attribute("font");
+					if (attr != null)
+						symbol.CharTypeface = new Typeface(new FontFamily((string)attr), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+					else
+						symbol.CharTypeface = defaultTypeFace;
 				}
 
 				if (elem.Element("Drawing") != null)
