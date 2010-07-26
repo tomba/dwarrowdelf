@@ -14,9 +14,11 @@ namespace MyGame.Client
 		public GameColor Color;
 
 		public SymbolID FloorSymbolID;
+		public GameColor FloorColor;
 		public bool FloorDark;
 
 		public SymbolID InteriorSymbolID;
+		public GameColor InteriorColor;
 		public bool InteriorDark;
 
 		public SymbolID ObjectSymbolID;
@@ -24,6 +26,7 @@ namespace MyGame.Client
 		public bool ObjectDark;
 
 		public SymbolID TopSymbolID;
+		public GameColor TopColor;
 		public bool TopDark;
 	}
 

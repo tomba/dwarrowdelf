@@ -213,35 +213,50 @@ namespace MyGame.Client
 
 		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols)
 		{
-			tile = new RenderTile();
-
-			if (env != null)
+			if (env == null)
 			{
-				var visible = false;
-
-				if (GameData.Data.IsSeeAll)
-					visible = true;
-				else
-					visible = TileVisible(ml, env);
-
-				bool floorLit;
-				tile.FloorSymbolID = GetFloorBitmap(ml, out floorLit, env, showVirtualSymbols);
-				tile.FloorDark = visible ? !floorLit : true;
-
-				tile.InteriorSymbolID = GetInteriorBitmap(ml, env, showVirtualSymbols);
-				tile.InteriorDark = !visible;
-
-				if (GameData.Data.DisableLOS)
-					visible = true; // lit always so we see what server sends
-
-				tile.ObjectSymbolID = visible ? GetObjectBitmap(ml, env, out tile.ObjectColor) : SymbolID.Undefined;
-				tile.ObjectDark = !visible;
-
-				tile.TopSymbolID = GetTopBitmap(ml, env);
-				tile.TopDark = !visible;
-
-				tile.Color = GetTileColor(ml, env);
+				tile = new RenderTile();
+				tile.IsValid = true;
+				return;
 			}
+
+			var visible = false;
+
+			if (GameData.Data.IsSeeAll)
+				visible = true;
+			else
+				visible = TileVisible(ml, env);
+
+			/* FLOOR */
+			bool floorLit;
+			tile.FloorSymbolID = GetFloorBitmap(ml, out floorLit, env, showVirtualSymbols, out tile.FloorColor);
+			tile.FloorDark = visible ? !floorLit : true;
+
+			/* INTERIOR */
+			tile.InteriorSymbolID = GetInteriorBitmap(ml, env, showVirtualSymbols, out tile.InteriorColor);
+			tile.InteriorDark = !visible;
+
+			if (GameData.Data.DisableLOS)
+				visible = true; // lit always so we see what server sends
+
+			/* OBJECT */
+			if (visible)
+			{
+				tile.ObjectSymbolID = GetObjectBitmap(ml, env, out tile.ObjectColor);
+			}
+			else
+			{
+				tile.ObjectColor = GameColor.None;
+				tile.ObjectSymbolID = SymbolID.Undefined;
+			}
+			tile.ObjectDark = !visible;
+
+			/* TOP */
+			tile.TopSymbolID = GetTopBitmap(ml, env, out tile.TopColor);
+			tile.TopDark = !visible;
+
+			/* GENERAL */
+			tile.Color = GetTileColor(ml, env);
 
 			tile.IsValid = true;
 		}
@@ -291,15 +306,19 @@ namespace MyGame.Client
 			return false;
 		}
 
-		static SymbolID GetFloorBitmap(IntPoint3D ml, out bool lit, Environment env, bool showVirtualSymbols)
+		static SymbolID GetFloorBitmap(IntPoint3D ml, out bool lit, Environment env, bool showVirtualSymbols, out GameColor color)
 		{
 			var flrInfo = env.GetFloor(ml);
 
 			if (flrInfo == null || flrInfo == Floors.Undefined)
 			{
 				lit = false;
+				color = GameColor.None;
 				return SymbolID.Undefined;
 			}
+
+			var matInfo = env.GetFloorMaterial(ml);
+			color = matInfo.Color;
 
 			FloorID fid = flrInfo.ID;
 			SymbolID id;
@@ -334,7 +353,7 @@ namespace MyGame.Client
 			return id;
 		}
 
-		static SymbolID GetInteriorBitmap(IntPoint3D ml, Environment env, bool showVirtualSymbols)
+		static SymbolID GetInteriorBitmap(IntPoint3D ml, Environment env, bool showVirtualSymbols, out GameColor color)
 		{
 			SymbolID id;
 
@@ -345,7 +364,13 @@ namespace MyGame.Client
 			var intID2 = intInfo2.ID;
 
 			if (intInfo == null || intInfo == Interiors.Undefined)
+			{
+				color = GameColor.None;
 				return SymbolID.Undefined;
+			}
+
+			var matInfo = env.GetInteriorMaterial(ml);
+			color = matInfo.Color;
 
 			switch (intID)
 			{
@@ -456,8 +481,10 @@ namespace MyGame.Client
 			}
 		}
 
-		static SymbolID GetTopBitmap(IntPoint3D ml, Environment env)
+		static SymbolID GetTopBitmap(IntPoint3D ml, Environment env, out GameColor color)
 		{
+			color = GameColor.None;
+
 			int wl = env.GetWaterLevel(ml);
 
 			if (wl == 0)
@@ -495,40 +522,17 @@ namespace MyGame.Client
 				return GameColor.DodgerBlue;
 
 			var interID = env.GetInterior(ml).ID;
-
-			switch (interID)
+			if (interID != InteriorID.Empty && interID != InteriorID.Undefined)
 			{
-				case InteriorID.Grass:
-					return GameColor.Green;
-
-				case InteriorID.Wall:
-				case InteriorID.NaturalWall:
-					return GameColor.Gray;
-
-				case InteriorID.SlopeNorth:
-				case InteriorID.SlopeEast:
-				case InteriorID.SlopeSouth:
-				case InteriorID.SlopeWest:
-					return GameColor.DimGray;
-
-				case InteriorID.Sapling:
-				case InteriorID.Tree:
-					return GameColor.DarkGreen;
-
-				default:
-					break;
+				var mat = env.GetInteriorMaterial(ml);
+				return mat.Color;
 			}
 
 			var floorID = env.GetFloor(ml).ID;
-
-			switch (floorID)
+			if (floorID != FloorID.Empty && floorID != FloorID.Undefined)
 			{
-				case FloorID.Floor:
-				case FloorID.NaturalFloor:
-					return GameColor.SaddleBrown;
-
-				default:
-					break;
+				var mat = env.GetFloorMaterial(ml);
+				return mat.Color;
 			}
 
 			return GameColor.Black;
