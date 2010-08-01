@@ -156,9 +156,9 @@ namespace MyGame.Client
 
 			var fontName = (string)symbolDefs.Element("Font");
 
-			bool outline = false;
+			bool defaultOutline = false;
 			if (symbolDefs.Element("Outline") != null)
-				outline = (bool)symbolDefs.Element("Outline");
+				defaultOutline = (bool)symbolDefs.Element("Outline");
 
 			var defaultTypeFace = new Typeface(new FontFamily(fontName), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 
@@ -194,7 +194,11 @@ namespace MyGame.Client
 					else
 						symbol.Typeface = defaultTypeFace;
 
-					symbol.Outline = outline;
+					attr = e.Attribute("outline");
+					if (attr != null)
+						symbol.Outline = (bool)attr;
+					else
+						symbol.Outline = defaultOutline;
 				}
 				else
 				{
