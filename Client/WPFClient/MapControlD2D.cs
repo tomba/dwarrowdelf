@@ -118,6 +118,13 @@ namespace MyGame.Client
 			}
 		}
 
+		public void InvalidateDrawings()
+		{
+			m_bitmapCache.Invalidate();
+			m_tileControlD2D.InvalidateBitmaps();
+			InvalidateTiles();
+		}
+
 		public bool ShowVirtualSymbols
 		{
 			get { return m_renderView.ShowVirtualSymbols; }
@@ -127,22 +134,6 @@ namespace MyGame.Client
 				m_renderView.ShowVirtualSymbols = value;
 				InvalidateTiles();
 				Notify("ShowVirtualSymbols");
-			}
-		}
-
-		public bool UseOnlyChars
-		{
-			get { return m_bitmapCache != null ? m_bitmapCache.UseOnlyChars : false; }
-
-			set
-			{
-				if (m_bitmapCache == null)
-					return;
-
-				m_bitmapCache.UseOnlyChars = value;
-				m_tileControlD2D.InvalidateBitmaps();
-				InvalidateTiles();
-				Notify("UseOnlyChars");
 			}
 		}
 

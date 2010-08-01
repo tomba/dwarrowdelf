@@ -13,8 +13,12 @@ namespace MyGame.Client
 		/* [ name of the drawing -> [ color -> drawing ] ] */
 		Dictionary<string, Dictionary<GameColor, Drawing>> m_drawingMap;
 
-		public DrawingCache(ResourceDictionary drawingResources)
+		public DrawingCache(Uri uri)
 		{
+			var resInfo = Application.GetRemoteStream(uri);
+			var reader = new System.Windows.Markup.XamlReader();
+			var drawingResources = (ResourceDictionary)reader.LoadAsync(resInfo.Stream);
+
 			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(drawingResources.Count);
 
 			foreach (System.Collections.DictionaryEntry de in drawingResources)

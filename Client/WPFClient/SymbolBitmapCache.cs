@@ -22,7 +22,6 @@ namespace MyGame.Client
 
 		int m_size;
 		int m_numDistinctBitmaps;
-		bool m_useOnlyChars;
 
 		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, int size)
 		{
@@ -36,6 +35,12 @@ namespace MyGame.Client
 			var max = (int)arr.Max() + 1;
 			m_numDistinctBitmaps = max;
 
+			m_nonColoredBitmapList = new CacheData[m_numDistinctBitmaps];
+			m_coloredBitmapMap = new Dictionary<GameColor, CacheData>[m_numDistinctBitmaps];
+		}
+
+		public void Invalidate()
+		{
 			m_nonColoredBitmapList = new CacheData[m_numDistinctBitmaps];
 			m_coloredBitmapMap = new Dictionary<GameColor, CacheData>[m_numDistinctBitmaps];
 		}
@@ -56,19 +61,6 @@ namespace MyGame.Client
 					Array.Clear(m_nonColoredBitmapList, 0, m_nonColoredBitmapList.Length);
 					Array.Clear(m_coloredBitmapMap, 0, m_nonColoredBitmapList.Length);
 				}
-			}
-		}
-
-		public bool UseOnlyChars
-		{
-			get { return m_useOnlyChars; }
-
-			set
-			{
-				m_useOnlyChars = value;
-
-				Array.Clear(m_nonColoredBitmapList, 0, m_nonColoredBitmapList.Length);
-				Array.Clear(m_coloredBitmapMap, 0, m_nonColoredBitmapList.Length);
 			}
 		}
 
@@ -135,12 +127,7 @@ namespace MyGame.Client
 			DrawingVisual drawingVisual = new DrawingVisual();
 			DrawingContext drawingContext = drawingVisual.RenderOpen();
 
-			Drawing d;
-
-			if (m_useOnlyChars)
-				d = m_symbolDrawingCache.GetCharDrawing(symbolID, color);
-			else
-				d = m_symbolDrawingCache.GetDrawing(symbolID, color);
+			var d = m_symbolDrawingCache.GetDrawing(symbolID, color);
 
 			drawingContext.PushTransform(new ScaleTransform((double)m_size / 100, (double)m_size / 100));
 			drawingContext.DrawDrawing(d);

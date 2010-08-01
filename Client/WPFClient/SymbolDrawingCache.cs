@@ -17,30 +17,36 @@ namespace MyGame.Client
 			public string Name { get; set; }
 
 			public string DrawingName { get; set; }
+			public char CharSymbol { get; set; }
+
 			public double X { get; set; }
 			public double Y { get; set; }
 			public double Width { get; set; }
 			public double Height { get; set; }
-			public double DrawingRotation { get; set; }
-
-			public char CharSymbol { get; set; }
-			public double CharX { get; set; }
-			public double CharY { get; set; }
-			public double CharWidth { get; set; }
-			public double CharHeight { get; set; }
-			public double CharRotation { get; set; }
-			public Typeface CharTypeface { get; set; }
+			public double Rotation { get; set; }
+			public Typeface Typeface { get; set; }
+			public bool Outline { get; set; }
 		}
 
 		IList<SymbolInfo> m_symbolInfoList;
 		DrawingCache m_drawingCache;
-		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
-		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_charDrawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
+		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap;
 
-		public SymbolDrawingCache(Stream symbolsXmlStream, DrawingCache drawingCache)
+		public SymbolDrawingCache(Uri symbolInfoUri)
 		{
-			m_drawingCache = drawingCache;
-			ParseSymbols(symbolsXmlStream);
+			Load(symbolInfoUri);
+		}
+
+		public void Load(Uri symbolInfoUri)
+		{
+			string drawingsName;
+
+			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
+
+			ParseSymbols(symbolInfoUri, out drawingsName);
+
+			if (drawingsName != null)
+				m_drawingCache = new DrawingCache(new Uri(drawingsName, UriKind.Relative));
 		}
 
 		public Drawing GetDrawing(SymbolID symbolID, GameColor color)
@@ -63,26 +69,6 @@ namespace MyGame.Client
 			return drawing;
 		}
 
-		public Drawing GetCharDrawing(SymbolID symbolID, GameColor color)
-		{
-			Dictionary<GameColor, Drawing> map;
-			Drawing drawing;
-
-			if (!m_charDrawingMap.TryGetValue(symbolID, out map))
-			{
-				map = new Dictionary<GameColor, Drawing>();
-				m_charDrawingMap[symbolID] = map;
-			}
-
-			if (!map.TryGetValue(color, out drawing))
-			{
-				drawing = CreateCharDrawing(symbolID, color);
-				map[color] = drawing;
-			}
-
-			return drawing;
-		}
-
 		Drawing CreateDrawing(SymbolID symbolID, GameColor color)
 		{
 			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
@@ -90,25 +76,14 @@ namespace MyGame.Client
 
 			if (symbol.DrawingName == null)
 			{
-				drawing = DrawCharacter(symbol.CharSymbol, symbol.CharTypeface, color, true);
-				drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, true);
+				drawing = DrawCharacter(symbol.CharSymbol, symbol.Typeface, color, symbol.Outline);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, true);
 			}
 			else
 			{
 				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.DrawingRotation, true);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, true);
 			}
-
-			drawing.Freeze();
-			return drawing;
-		}
-
-		Drawing CreateCharDrawing(SymbolID symbolID, GameColor color)
-		{
-			var symbol = m_symbolInfoList.Single(si => si.ID == symbolID);
-
-			var drawing = DrawCharacter(symbol.CharSymbol, symbol.CharTypeface, color, false);
-			drawing = NormalizeDrawing(drawing, new Point(symbol.CharX, symbol.CharY), new Size(symbol.CharWidth, symbol.CharHeight), symbol.CharRotation, false);
 
 			drawing.Freeze();
 			return drawing;
@@ -165,13 +140,25 @@ namespace MyGame.Client
 			return dGroup;
 		}
 
-
-		void ParseSymbols(Stream symbolsXmlStream)
+		void ParseSymbols(Uri uri, out string drawingsName)
 		{
+			var resInfo = Application.GetRemoteStream(uri);
+
+			Stream symbolsXmlStream = resInfo.Stream;
+
 			XDocument doc = XDocument.Load(new StreamReader(symbolsXmlStream));
-			var symbolDefs = doc.Element("SymbolDefinitions");
+			var symbolDefs = doc.Element("SymbolSet");
+
+			if (symbolDefs.Element("Drawings") != null)
+				drawingsName = (string)symbolDefs.Element("Drawings");
+			else
+				drawingsName = null;
 
 			var fontName = (string)symbolDefs.Element("Font");
+
+			bool outline = false;
+			if (symbolDefs.Element("Outline") != null)
+				outline = (bool)symbolDefs.Element("Outline");
 
 			var defaultTypeFace = new Typeface(new FontFamily(fontName), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 
@@ -181,11 +168,6 @@ namespace MyGame.Client
 			foreach (XElement elem in symbols.Elements())
 			{
 				var symbol = new SymbolInfo();
-
-				symbol.CharX = 0;
-				symbol.CharY = 0;
-				symbol.CharWidth = 100;
-				symbol.CharHeight = 100;
 
 				symbol.X = 0;
 				symbol.Y = 0;
@@ -198,68 +180,48 @@ namespace MyGame.Client
 					throw new Exception();
 				symbol.ID = id;
 
-				if (elem.Element("CharSymbol") != null)
+				XElement e;
+				XAttribute attr;
+
+				if (elem.Element("Char") != null)
 				{
-					var charElem = elem.Element("CharSymbol");
+					e = elem.Element("Char");
+					symbol.CharSymbol = ((string)e)[0];
 
-					XAttribute attr;
-
-					attr = charElem.Attribute("x");
+					attr = e.Attribute("font");
 					if (attr != null)
-						symbol.CharX = (double)attr;
-
-					attr = charElem.Attribute("y");
-					if (attr != null)
-						symbol.CharY = (double)attr;
-
-					attr = charElem.Attribute("w");
-					if (attr != null)
-						symbol.CharWidth = (double)attr;
-
-					attr = charElem.Attribute("h");
-					if (attr != null)
-						symbol.CharHeight = (double)attr;
-
-					attr = charElem.Attribute("rotate");
-					if (attr != null)
-						symbol.CharRotation = (double)attr;
-
-					symbol.CharSymbol = ((string)charElem)[0];
-
-					attr = charElem.Attribute("font");
-					if (attr != null)
-						symbol.CharTypeface = new Typeface(new FontFamily((string)attr), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+						symbol.Typeface = new Typeface(new FontFamily((string)attr), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 					else
-						symbol.CharTypeface = defaultTypeFace;
-				}
+						symbol.Typeface = defaultTypeFace;
 
-				if (elem.Element("Drawing") != null)
+					symbol.Outline = outline;
+				}
+				else
 				{
-					var drawingElem = elem.Element("Drawing");
-					XAttribute attr;
-
-					attr = drawingElem.Attribute("x");
-					if (attr != null)
-						symbol.X = (double)attr;
-
-					attr = drawingElem.Attribute("y");
-					if (attr != null)
-						symbol.Y = (double)attr;
-
-					attr = drawingElem.Attribute("w");
-					if (attr != null)
-						symbol.Width = (double)attr;
-
-					attr = drawingElem.Attribute("h");
-					if (attr != null)
-						symbol.Height = (double)attr;
-
-					attr = drawingElem.Attribute("rotate");
-					if (attr != null)
-						symbol.DrawingRotation = (double)attr;
-
-					symbol.DrawingName = (string)drawingElem;
+					e = elem.Element("Drawing");
+					symbol.DrawingName = (string)e;
 				}
+
+				attr = e.Attribute("x");
+				if (attr != null)
+					symbol.X = (double)attr;
+
+				attr = e.Attribute("y");
+				if (attr != null)
+					symbol.Y = (double)attr;
+
+				attr = e.Attribute("w");
+				if (attr != null)
+					symbol.Width = (double)attr;
+
+				attr = e.Attribute("h");
+				if (attr != null)
+					symbol.Height = (double)attr;
+
+				attr = e.Attribute("rotate");
+				if (attr != null)
+					symbol.Rotation = (double)attr;
+
 				m_symbolInfoList.Add(symbol);
 			}
 		}

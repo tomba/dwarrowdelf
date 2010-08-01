@@ -116,6 +116,12 @@ namespace MyGame.Client
 			}
 		}
 
+		public void InvalidateDrawings()
+		{
+			m_bitmapCache.Invalidate();
+			InvalidateTiles();
+		}
+
 		public bool ShowVirtualSymbols
 		{
 			get { return m_renderView.ShowVirtualSymbols; }
@@ -125,18 +131,6 @@ namespace MyGame.Client
 				m_renderView.ShowVirtualSymbols = value;
 				InvalidateTiles();
 				Notify("ShowVirtualSymbols");
-			}
-		}
-
-		public bool UseOnlyChars
-		{
-			get { return m_bitmapCache.UseOnlyChars; }
-
-			set
-			{
-				m_bitmapCache.UseOnlyChars = value;
-				InvalidateTiles();
-				Notify("UseOnlyChars");
 			}
 		}
 

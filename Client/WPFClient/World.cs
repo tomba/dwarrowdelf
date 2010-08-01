@@ -18,7 +18,6 @@ namespace MyGame.Client
 		
 		public LivingCollection Controllables { get; private set; }
 
-		public DrawingCache DrawingCache { get; private set; }
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
 		public JobManager JobManager { get; private set; }
@@ -36,13 +35,7 @@ namespace MyGame.Client
 
 			this.Controllables = new LivingCollection();
 
-			var uri = new Uri("SymbolDrawings.xaml", UriKind.Relative);
-			var drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
-			this.DrawingCache = new DrawingCache(drawingResources);
-
-			var ass = System.Reflection.Assembly.GetExecutingAssembly();
-			var symbolsXmlStream = ass.GetManifestResourceStream("MyGame.Client.SymbolInfos.xml");
-			this.SymbolDrawingCache = new SymbolDrawingCache(symbolsXmlStream, this.DrawingCache);
+			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("SymbolInfosGfx.xml", UriKind.Relative));
 
 			this.JobManager = new JobManager(this);
 		}

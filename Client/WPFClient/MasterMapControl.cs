@@ -24,13 +24,14 @@ namespace MyGame.Client
 		int Rows { get; }
 		int TileSize { get; set; }
 		bool ShowVirtualSymbols { get; set; }
-		bool UseOnlyChars { get; set; }
 
 		Environment Environment { get; set; }
 		int Z { get; set; }
 		IntPoint CenterPos { get; set; }
 
 		event Action TileArrangementChanged;
+
+		void InvalidateDrawings();
 
 		IntPoint ScreenPointToScreenLocation(Point p);
 		IntPoint ScreenPointToMapLocation(Point p);
@@ -383,14 +384,23 @@ namespace MyGame.Client
 			}
 		}
 
-		public bool UseOnlyChars
+		bool m_tileSetHack;
+		public bool TileSetHack
 		{
-			get { return m_mapControl.UseOnlyChars; }
+			get { return m_tileSetHack; }
 
 			set
 			{
-				m_mapControl.UseOnlyChars = value;
-				Notify("UseOnlyChars");
+				m_tileSetHack = value;
+
+				if (m_tileSetHack)
+					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosChar.xml", UriKind.Relative));
+				else
+					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosGfx.xml", UriKind.Relative));
+
+				m_mapControl.InvalidateDrawings();
+
+				Notify("TileSetHack");
 			}
 		}
 
