@@ -35,7 +35,7 @@ namespace MyGame.Client
 
 			this.Controllables = new LivingCollection();
 
-			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("SymbolInfosGfx.xml", UriKind.Relative));
+			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("SymbolInfosChar.xml", UriKind.Relative));
 
 			this.JobManager = new JobManager(this);
 		}

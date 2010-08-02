@@ -109,13 +109,13 @@ namespace MyArea
 
 				if (d > p.Z)
 				{
-					FillTile(env, p, MaterialID.Stone);
+					FillTile(env, p, MaterialID.Granite);
 				}
 				else
 				{
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
-						env.SetFloor(p, FloorID.Grass, MaterialID.Stone);
+						env.SetFloor(p, FloorID.Grass, MaterialID.Granite);
 					else
 						env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
 				}
@@ -126,8 +126,8 @@ namespace MyArea
 			{
 				if (p.X == 1 && p.Y == 4)
 				{
-					env.SetInterior(p, InteriorID.Stairs, MaterialID.Stone);
-					env.SetFloor(p, FloorID.Hole, MaterialID.Stone);
+					env.SetInterior(p, InteriorID.Stairs, MaterialID.Granite);
+					env.SetFloor(p, FloorID.Hole, MaterialID.Granite);
 				}
 			}
 
@@ -208,7 +208,7 @@ namespace MyArea
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Stone);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 			env.AddBuilding(building);
@@ -229,7 +229,7 @@ namespace MyArea
 				for (int y = 15; y < 21; ++y)
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
-					FillTile(env, p, MaterialID.Stone);
+					FillTile(env, p, MaterialID.Granite);
 				}
 			}
 
@@ -350,7 +350,7 @@ namespace MyArea
 			foreach (var p in env.Bounds.Range())
 			{
 				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Stone);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 			}
 
 			env.SetInterior(m_portalLoc2, InteriorID.Portal, MaterialID.Steel);

@@ -9,11 +9,12 @@ namespace MyGame
 	public enum MaterialID : byte
 	{
 		Undefined,
-		Stone,
+		Granite,
 		Iron,
 		Steel,
 		Diamond,
 		Wood,
+		Gold,
 	}
 
 	public class MaterialInfo
@@ -57,10 +58,11 @@ namespace MyGame
 
 		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined, GameColor.None);
 
-		public static readonly MaterialInfo Stone = new MaterialInfo(MaterialID.Stone, GameColor.Gray);
 		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron, GameColor.SteelBlue);
 		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, GameColor.LightSteelBlue);
 		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, GameColor.LightCyan);
 		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, GameColor.Sienna);
+		public static readonly MaterialInfo Granite = new MaterialInfo(MaterialID.Granite, GameColor.Gray);
+		public static readonly MaterialInfo Gold = new MaterialInfo(MaterialID.Gold, GameColor.Gold);
 	}
 }
