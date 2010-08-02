@@ -87,15 +87,15 @@
     </Symbol>
     <Symbol>
       <Name>Sapling</Name>
-      <Char x="20" y="30" w="60" h="70">♠</Char>
+      <Char outline="true" x="20" y="30" w="60" h="70">♠</Char>
     </Symbol>
     <Symbol>
       <Name>Tree</Name>
-      <Char>♣</Char>
+      <Char outline="true">♣</Char>
     </Symbol>
     <Symbol>
       <Name>Grass</Name>
-      <Char x="40" y="10" w="30" h="30" rotate="180">,</Char>
+      <Char x="0" y="0" w="100" h="100" rotate="0">░</Char>
     </Symbol>
     <Symbol>
       <Name>Key</Name>

@@ -53,7 +53,6 @@
     </Symbol>
     <Symbol>
       <Name>SlopeDownNorth</Name>
-      <Char rotate="0">▼</Char>
       <Drawing rotate="90" x="0" y="0" w="100" h="100">SlopeDownWest</Drawing>
     </Symbol>
     <Symbol>
