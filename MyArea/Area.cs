@@ -86,6 +86,12 @@ namespace MyArea
 			return p;
 		}
 
+		void FillTile(Environment env, IntPoint3D p, MaterialID material)
+		{
+			env.SetInterior(p, InteriorID.NaturalWall, material);
+			env.SetFloor(p, FloorID.NaturalFloor, material);
+		}
+
 		Environment CreateMap1(World world)
 		{
 			int sizeExp = 6;
@@ -96,11 +102,6 @@ namespace MyArea
 
 			Random r = new Random(123);
 
-			var stone = Materials.Stone.ID;
-			var steel = Materials.Steel.ID;
-			var diamond = Materials.Diamond.ID;
-			var wood = Materials.Wood.ID;
-
 			/* create terrain */
 			foreach (var p in env.Bounds.Range())
 			{
@@ -108,74 +109,25 @@ namespace MyArea
 
 				if (d > p.Z)
 				{
-					env.SetInterior(p, InteriorID.NaturalWall, stone);
-					env.SetFloor(p, FloorID.NaturalFloor, stone);
+					FillTile(env, p, MaterialID.Stone);
 				}
 				else
 				{
-					env.SetInterior(p, InteriorID.Empty, Materials.Undefined.ID);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
-						env.SetFloor(p, FloorID.NaturalFloor, stone);
+						env.SetFloor(p, FloorID.Grass, MaterialID.Stone);
 					else
-						env.SetFloor(p, FloorID.Empty, Materials.Undefined.ID);
+						env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
 				}
 			}
-
-			/* create slopes */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (!env.Bounds.Contains(p + Direction.Up))
-					continue;
-
-				bool canHaveSlope = env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor &&
-					env.GetInteriorID(p + Direction.Up) == InteriorID.Empty && env.GetFloorID(p + Direction.Up) == FloorID.Empty;
-
-				if (!canHaveSlope)
-					continue;
-
-				foreach (var dir in DirectionExtensions.CardinalDirections)
-				{
-					if (!env.Bounds.Contains(p + dir))
-						continue;
-
-					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
-						env.GetFloorID(p + dir + Direction.Up) == FloorID.NaturalFloor;
-
-					if (canHaveSlope)
-					{
-						var slope = Interiors.GetSlopeFromDir(dir);
-						env.SetInterior(p, slope, env.GetFloorMaterialID(p));
-					}
-				}
-			}
-
-			/* create trees */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor)
-				{
-					if (m_random.Next() % 8 != 0)
-						continue;
-
-					env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
-				}
-			}
-
-			/* create grass */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.NaturalFloor)
-					env.SetInterior(p, InteriorID.Grass, MaterialID.Grass);
-			}
-
 
 			/* create long stairs */
 			foreach (var p in env.Bounds.Range())
 			{
 				if (p.X == 1 && p.Y == 4)
 				{
-					env.SetInterior(p, InteriorID.Stairs, stone);
-					env.SetFloor(p, FloorID.Hole, stone);
+					env.SetInterior(p, InteriorID.Stairs, MaterialID.Stone);
+					env.SetFloor(p, FloorID.Hole, MaterialID.Stone);
 				}
 			}
 
@@ -200,7 +152,7 @@ namespace MyArea
 
 			/* create the portal */
 			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
-			env.SetInterior(m_portalLoc, InteriorID.Portal, steel);
+			env.SetInterior(m_portalLoc, InteriorID.Portal, MaterialID.Steel);
 			env.SetActionHandler(m_portalLoc, ActionHandler);
 
 			for (int i = 0; i < 1; ++i)
@@ -226,7 +178,7 @@ namespace MyArea
 					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
-					MaterialID = diamond,
+					MaterialID = MaterialID.Diamond,
 				};
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
@@ -239,7 +191,7 @@ namespace MyArea
 					SymbolID = SymbolID.Gem,
 					Name = "red gem",
 					Color = GameColor.Red,
-					MaterialID = diamond,
+					MaterialID = MaterialID.Diamond,
 				};
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 
@@ -247,7 +199,7 @@ namespace MyArea
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem",
-					MaterialID = diamond,
+					MaterialID = MaterialID.Diamond,
 				};
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
@@ -256,6 +208,7 @@ namespace MyArea
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Stone);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 			env.AddBuilding(building);
@@ -276,7 +229,7 @@ namespace MyArea
 				for (int y = 15; y < 21; ++y)
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Stone);
+					FillTile(env, p, MaterialID.Stone);
 				}
 			}
 
@@ -319,14 +272,64 @@ namespace MyArea
 					SymbolID = SymbolID.Key,
 					Name = "water gen",
 					Color = GameColor.Red,
-					MaterialID = diamond,
+					MaterialID = MaterialID.Diamond,
 				};
 
 				item.TickEvent += () => env.SetWaterLevel(item.Location, TileData.MaxWaterLevel);
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 
+			CreateTrees(env);
+
+			CreateSlopes(env);
+
 			return env;
+		}
+
+		private void CreateTrees(Environment env)
+		{
+			/* create trees */
+			foreach (var p in env.Bounds.Range())
+			{
+				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.Grass)
+				{
+					if (m_random.Next() % 8 != 0)
+						continue;
+
+					env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
+				}
+			}
+		}
+
+		private static void CreateSlopes(Environment env)
+		{
+			/* create slopes */
+			foreach (var p in env.Bounds.Range())
+			{
+				if (!env.Bounds.Contains(p + Direction.Up))
+					continue;
+
+				bool canHaveSlope = env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) != FloorID.Empty &&
+					env.GetInteriorID(p + Direction.Up) == InteriorID.Empty && env.GetFloorID(p + Direction.Up) == FloorID.Empty;
+
+				if (!canHaveSlope)
+					continue;
+
+				foreach (var dir in DirectionExtensions.CardinalDirections)
+				{
+					if (!env.Bounds.Contains(p + dir))
+						continue;
+
+					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
+						env.GetFloorID(p + dir + Direction.Up) != FloorID.Empty;
+
+					if (canHaveSlope)
+					{
+						var slope = Interiors.GetSlopeFromDir(dir);
+						env.SetInterior(p, slope, env.GetFloorMaterialID(p));
+					}
+				}
+			}
 		}
 
 		void ClearTile(Environment env, IntPoint3D p)
@@ -344,16 +347,13 @@ namespace MyArea
 		{
 			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
 
-			var stone = Materials.Stone.ID;
-			var steel = Materials.Steel.ID;
-
 			foreach (var p in env.Bounds.Range())
 			{
 				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloor(p, FloorID.NaturalFloor, stone);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Stone);
 			}
 
-			env.SetInterior(m_portalLoc2, InteriorID.Portal, steel);
+			env.SetInterior(m_portalLoc2, InteriorID.Portal, MaterialID.Steel);
 			env.SetActionHandler(m_portalLoc2, ActionHandler);
 
 			return env;

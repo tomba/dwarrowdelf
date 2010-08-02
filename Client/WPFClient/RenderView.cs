@@ -331,6 +331,12 @@ namespace MyGame.Client
 					id = SymbolID.Floor;
 					break;
 
+				case FloorID.Grass:
+					id = SymbolID.Grass;
+					// override the material color
+					color = GameColor.DarkGreen;
+					break;
+
 				case FloorID.Empty:
 					id = SymbolID.Undefined;
 					break;
@@ -385,10 +391,6 @@ namespace MyGame.Client
 				case InteriorID.NaturalWall:
 				case InteriorID.Wall:
 					id = SymbolID.Wall;
-					break;
-
-				case InteriorID.Grass:
-					id = SymbolID.Grass;
 					break;
 
 				case InteriorID.Portal:

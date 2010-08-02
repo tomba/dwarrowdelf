@@ -14,7 +14,6 @@ namespace MyGame
 		Steel,
 		Diamond,
 		Wood,
-		Grass,
 	}
 
 	public class MaterialInfo
@@ -63,6 +62,5 @@ namespace MyGame
 		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, GameColor.LightSteelBlue);
 		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, GameColor.LightCyan);
 		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, GameColor.Sienna);
-		public static readonly MaterialInfo Grass = new MaterialInfo(MaterialID.Grass, GameColor.Green);
 	}
 }
