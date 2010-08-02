@@ -505,44 +505,6 @@ namespace MyGame.Client
 			});
 		}
 
-		private void MenuItem_Click_Floor(object sender, RoutedEventArgs e)
-		{
-			var stone = Materials.Stone.ID;
-			var undef = Materials.Undefined.ID;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.NaturalFloor,
-					FloorMaterialID = stone,
-					InteriorID = InteriorID.Empty,
-					InteriorMaterialID = undef,
-				}
-			});
-		}
-
-		private void MenuItem_Click_Wall(object sender, RoutedEventArgs e)
-		{
-			var stone = Materials.Stone.ID;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.NaturalFloor,
-					FloorMaterialID = stone,
-					InteriorID = InteriorID.NaturalWall,
-					InteriorMaterialID = stone,
-				}
-			});
-		}
-
-
 		private void MenuItem_Click_SetWater(object sender, RoutedEventArgs e)
 		{
 			GameData.Data.Connection.Send(new SetTilesMessage()
