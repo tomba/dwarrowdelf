@@ -26,6 +26,7 @@ namespace MyGame.Client
 			public double Rotation { get; set; }
 			public Typeface Typeface { get; set; }
 			public bool Outline { get; set; }
+			public bool Opaque { get; set; }
 		}
 
 		IList<SymbolInfo> m_symbolInfoList;
@@ -77,12 +78,12 @@ namespace MyGame.Client
 			if (symbol.DrawingName == null)
 			{
 				drawing = DrawCharacter(symbol.CharSymbol, symbol.Typeface, color, symbol.Outline);
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, true);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, !symbol.Opaque);
 			}
 			else
 			{
 				drawing = m_drawingCache.GetDrawing(symbol.DrawingName, color).Clone();
-				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, true);
+				drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.Width, symbol.Height), symbol.Rotation, !symbol.Opaque);
 			}
 
 			drawing.Freeze();
@@ -225,6 +226,10 @@ namespace MyGame.Client
 				attr = e.Attribute("rotate");
 				if (attr != null)
 					symbol.Rotation = (double)attr;
+
+				attr = e.Attribute("opaque");
+				if (attr != null)
+					symbol.Opaque = (bool)attr;
 
 				m_symbolInfoList.Add(symbol);
 			}
