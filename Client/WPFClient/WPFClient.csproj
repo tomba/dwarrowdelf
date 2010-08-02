@@ -223,6 +223,7 @@
     <Compile Include="RenderView.cs" />
     <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="SymbolDrawingCache.cs" />
+    <Compile Include="Symbols.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -277,16 +278,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SymbolInfosGfx.xml">
+    <None Include="SymbolInfosGfx.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\eye.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SymbolInfosChar.xml">
+    <None Include="SymbolInfosChar.xaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

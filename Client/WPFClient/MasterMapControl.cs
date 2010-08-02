@@ -394,9 +394,9 @@ namespace MyGame.Client
 				m_tileSetHack = value;
 
 				if (m_tileSetHack)
-					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosChar.xml", UriKind.Relative));
+					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosChar.xaml", UriKind.Relative));
 				else
-					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosGfx.xml", UriKind.Relative));
+					m_world.SymbolDrawingCache.Load(new Uri("SymbolInfosGfx.xaml", UriKind.Relative));
 
 				m_mapControl.InvalidateDrawings();
 

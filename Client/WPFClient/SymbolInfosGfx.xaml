@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SymbolSet xmlns="clr-namespace:MyGame.Client.Symbols;assembly=MyGame"
+           Font="Arial" Outline="False" Drawings="SymbolDrawings.xaml">
+
+    <CharSymbol Name="Undefined">?</CharSymbol>
+    <DrawingSymbol Name="Floor">Dirt_Block</DrawingSymbol>
+
+    <DrawingSymbol Name="Grass">Grass_Block</DrawingSymbol>
+    <DrawingSymbol Name="Wall">Stone_Block</DrawingSymbol>
+    <DrawingSymbol Name="Water">Water_Block</DrawingSymbol>
+
+    <DrawingSymbol Name="StairsUp">StairsUp</DrawingSymbol>
+    <DrawingSymbol Name="StairsDown">StairsDown</DrawingSymbol>
+    <DrawingSymbol Name="StairsUpDown">StairsUpDown</DrawingSymbol>
+
+    <DrawingSymbol Name="SlopeUpNorth" Rotate="270">SlopeUpEast</DrawingSymbol>
+    <DrawingSymbol Name="SlopeUpSouth" Rotate="90">SlopeUpEast</DrawingSymbol>
+    <DrawingSymbol Name="SlopeUpWest" Rotate="180">SlopeUpEast</DrawingSymbol>
+    <DrawingSymbol Name="SlopeUpEast" Rotate="0">SlopeUpEast</DrawingSymbol>
+
+    <DrawingSymbol Name="SlopeDownNorth" Rotate="270">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol Name="SlopeDownSouth" Rotate="90">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol Name="SlopeDownWest" Rotate="180">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol Name="SlopeDownEast" Rotate="0">SlopeDownWest</DrawingSymbol>
+
+    <CharSymbol Name="Portal">○</CharSymbol>
+    <DrawingSymbol Name="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
+    <DrawingSymbol Name="Monster" X="10" Y="20" W="80" H="60">Enemy_Bug</DrawingSymbol>
+    <DrawingSymbol Name="Gem">Gem_Blue</DrawingSymbol>
+    <DrawingSymbol Name="Sapling">Tree_Short</DrawingSymbol>
+    <DrawingSymbol Name="Tree">Tree_Tall</DrawingSymbol>
+    <DrawingSymbol Name="Key"  X="20" Y="10" W="60" H="80">Key</DrawingSymbol>
+    <DrawingSymbol Name="Rock" X="10" Y="10" W="80" H="80">Rock</DrawingSymbol>
+
+</SymbolSet>
