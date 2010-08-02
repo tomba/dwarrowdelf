@@ -19,23 +19,7 @@
     </Symbol>
 
     <Symbol>
-      <Name>Water100</Name>
-      <Char x="10" y="30" w="80" h="40">~</Char>
-    </Symbol>
-    <Symbol>
-      <Name>Water80</Name>
-      <Char x="10" y="30" w="80" h="40">~</Char>
-    </Symbol>
-    <Symbol>
-      <Name>Water60</Name>
-      <Char x="10" y="30" w="80" h="40">~</Char>
-    </Symbol>
-    <Symbol>
-      <Name>Water40</Name>
-      <Char x="10" y="30" w="80" h="40">~</Char>
-    </Symbol>
-    <Symbol>
-      <Name>Water20</Name>
+      <Name>Water</Name>
       <Char x="10" y="30" w="80" h="40">~</Char>
     </Symbol>
 

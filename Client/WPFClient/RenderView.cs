@@ -497,30 +497,27 @@ namespace MyGame.Client
 
 			wl = wl * 100 / TileData.MaxWaterLevel;
 
+			id = SymbolID.Water;
+
 			if (wl > 80)
 			{
-				color = GameColor.DarkBlue;
-				id = SymbolID.Water100;
+				color = GameColor.Aqua;
 			}
 			else if (wl > 60)
 			{
-				color = GameColor.MediumBlue;
-				id = SymbolID.Water80;
+				color = GameColor.DodgerBlue;
 			}
 			else if (wl > 40)
 			{
-				color = GameColor.MediumBlue;
-				id = SymbolID.Water60;
+				color = GameColor.Blue;
 			}
 			else if (wl > 20)
 			{
 				color = GameColor.Blue;
-				id = SymbolID.Water40;
 			}
 			else
 			{
-				color = GameColor.DodgerBlue;
-				id = SymbolID.Water20;
+				color = GameColor.MediumBlue;
 			}
 
 			return id;

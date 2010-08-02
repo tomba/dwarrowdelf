@@ -19,24 +19,8 @@
     </Symbol>
 
     <Symbol>
-      <Name>Water100</Name>
+      <Name>Water</Name>
       <Drawing x="0" y="0" w="100" h="100">Water_Block</Drawing>
-    </Symbol>
-    <Symbol>
-      <Name>Water80</Name>
-      <Drawing x="0" y="20" w="100" h="80">Water_Block</Drawing>
-    </Symbol>
-    <Symbol>
-      <Name>Water60</Name>
-      <Drawing x="0" y="40" w="100" h="60">Water_Block</Drawing>
-    </Symbol>
-    <Symbol>
-      <Name>Water40</Name>
-      <Drawing x="0" y="60" w="100" h="40">Water_Block</Drawing>
-    </Symbol>
-    <Symbol>
-      <Name>Water20</Name>
-      <Drawing x="0" y="80" w="100" h="20">Water_Block</Drawing>
     </Symbol>
 
     <Symbol>

@@ -41,10 +41,6 @@ namespace MyGame
 		Rock,
 
 		/* top */
-		Water100,
-		Water80,
-		Water60,
-		Water40,
-		Water20,
+		Water,
 	}
 }
