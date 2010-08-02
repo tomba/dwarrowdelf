@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet>
 
-  <Font>Lucida Console</Font>
+  <Font>Arial</Font>
   <Outline>False</Outline>
 
   <Symbols>
@@ -11,11 +11,15 @@
     </Symbol>
     <Symbol>
       <Name>Floor</Name>
-      <Char x="40" y="70" w="20" h="20">.</Char>
+      <Char outline="true">▒</Char>
+    </Symbol>
+    <Symbol>
+      <Name>Grass</Name>
+      <Char>▒</Char>
     </Symbol>
     <Symbol>
       <Name>Wall</Name>
-      <Char>▒</Char>
+      <Char opaque="true" outline="false" >▓</Char>
     </Symbol>
 
     <Symbol>
@@ -93,10 +97,7 @@
       <Name>Tree</Name>
       <Char outline="true">♣</Char>
     </Symbol>
-    <Symbol>
-      <Name>Grass</Name>
-      <Char x="0" y="0" w="100" h="100" rotate="0">░</Char>
-    </Symbol>
+
     <Symbol>
       <Name>Key</Name>
       <Char>Ⱡ</Char>
