@@ -82,7 +82,7 @@ namespace MyGame.Client
 
 			set
 			{
-				value = MyMath.IntClamp(value, 64, 2);
+				value = MyMath.IntClamp(value, 256, 2);
 
 				if (value == m_tileSize)
 					return;
