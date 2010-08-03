@@ -11,6 +11,7 @@ namespace MyGame
 		Empty,
 		NaturalWall,
 		Wall,
+		Ore,
 		Stairs,
 		Portal,
 		SlopeNorth,
@@ -67,6 +68,7 @@ namespace MyGame
 		public static readonly InteriorInfo Empty = new InteriorInfo(InteriorID.Empty, false);
 		public static readonly InteriorInfo NaturalWall = new InteriorInfo(InteriorID.NaturalWall, true);
 		public static readonly InteriorInfo Wall = new InteriorInfo(InteriorID.Wall, true);
+		public static readonly InteriorInfo Ore = new InteriorInfo(InteriorID.Ore, true);
 		public static readonly InteriorInfo Stairs = new InteriorInfo(InteriorID.Stairs, false);
 		public static readonly InteriorInfo Portal = new InteriorInfo(InteriorID.Portal, false);
 		public static readonly InteriorInfo SlopeNorth = new InteriorInfo(InteriorID.SlopeNorth, false);

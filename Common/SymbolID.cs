@@ -14,6 +14,7 @@ namespace MyGame
 
 		/* interiors */
 		Wall,
+		Ore,
 		StairsUp,
 		StairsDown,
 		StairsUpDown,

@@ -26,7 +26,9 @@ namespace MyGame.Client.Symbols
 		}
 
 		public string Font { get; set; }
+		public double FontSize { get; set; }
 		public bool Outline { get; set; }
+		public double OutlineThickness { get; set; }
 		public string Drawings { get; set; }
 
 		public SymbolCollection Symbols { get; set; }
@@ -85,7 +87,11 @@ namespace MyGame.Client.Symbols
 	{
 		public char Char { get; set; }
 		public bool? Outline { get; set; }
+		public double? OutlineThickness { get; set; }
 		public string Font { get; set; }
+		public double? FontSize { get; set; }
+		public string Color { get; set; }
+		public bool Reverse { get; set; }
 
 		Typeface m_typeface;
 		public Typeface Typeface
@@ -108,13 +114,13 @@ namespace MyGame.Client.Symbols
 	}
 
 	[ContentProperty("Symbols")]
-	public class CombineSymbol : BaseSymbol
+	public class CombinedSymbol : BaseSymbol
 	{
-		public CombineSymbol()
+		public CombinedSymbol()
 		{
-			Symbols = new SymbolCollection();
+			Symbols = new List<BaseSymbol>();
 		}
 
-		public SymbolCollection Symbols { get; set; }
+		public List<BaseSymbol> Symbols { get; set; }
 	}
 }

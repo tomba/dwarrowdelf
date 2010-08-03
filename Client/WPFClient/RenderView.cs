@@ -382,6 +382,7 @@ namespace MyGame.Client
 
 			var matInfo = env.GetInteriorMaterial(ml);
 			color = matInfo.Color;
+			bgColor = GameColor.None;
 
 			switch (intID)
 			{
@@ -396,6 +397,12 @@ namespace MyGame.Client
 				case InteriorID.NaturalWall:
 				case InteriorID.Wall:
 					id = SymbolID.Wall;
+					break;
+
+				case InteriorID.Ore:
+					id = SymbolID.Ore;
+					// use floor material as background color
+					bgColor = env.GetFloorMaterial(ml).Color;
 					break;
 
 				case InteriorID.Portal:
@@ -469,8 +476,6 @@ namespace MyGame.Client
 					}
 				}
 			}
-
-			bgColor = GameColor.None;
 
 			return id;
 		}

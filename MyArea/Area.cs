@@ -283,6 +283,15 @@ namespace MyArea
 
 			CreateSlopes(env);
 
+			for (int x = 24; x < 27; ++x)
+			{
+				for (int y = 12; y < 15; ++y)
+				{
+					var p = new IntPoint3D(x, y, surfaceLevel);
+					env.SetInterior(p, InteriorID.Ore, MaterialID.Gold);
+				}
+			}
+
 			return env;
 		}
 

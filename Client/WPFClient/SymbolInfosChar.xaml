@@ -1,12 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:MyGame.Client.Symbols;assembly=MyGame"
-           Font="Arial" Outline="False">
+           Font="Arial" FontSize="64" Outline="False" OutlineThickness="0.5">
 
     <CharSymbol Name="Undefined">?</CharSymbol>
-    <CharSymbol Name="Floor" Outline="True">▒</CharSymbol>
+    <CharSymbol Name="Floor" Outline="false">▒</CharSymbol>
 
     <CharSymbol Name="Grass">▒</CharSymbol>
     <CharSymbol Name="Wall" Opaque="True" Outline="False">▓</CharSymbol>
+
+    <CombinedSymbol Name="Ore" Opaque="False">
+        <CharSymbol Opaque="False" Outline="False" Color="Black" Reverse="True">▓</CharSymbol>
+        <CharSymbol Opaque="False" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
+    </CombinedSymbol>
+
     <CharSymbol Name="Water" X="10" Y="30" W="80" H="40">~</CharSymbol>
 
     <CharSymbol Name="StairsUp">&lt;</CharSymbol>

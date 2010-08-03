@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:MyGame.Client.Symbols;assembly=MyGame"
-           Font="Arial" Outline="False" Drawings="SymbolDrawings.xaml">
+           Font="Arial" FontSize="64"  Outline="False" OutlineThickness="0.5"
+           Drawings="SymbolDrawings.xaml">
 
     <CharSymbol Name="Undefined">?</CharSymbol>
     <DrawingSymbol Name="Floor">Dirt_Block</DrawingSymbol>
 
     <DrawingSymbol Name="Grass">Grass_Block</DrawingSymbol>
     <DrawingSymbol Name="Wall">Stone_Block</DrawingSymbol>
+    <CombinedSymbol Name="Ore" Opaque="False">
+        <DrawingSymbol Name="Wall">Stone_Block</DrawingSymbol>
+        <CharSymbol Opaque="False" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
+    </CombinedSymbol>
     <DrawingSymbol Name="Water">Water_Block</DrawingSymbol>
 
     <DrawingSymbol Name="StairsUp">StairsUp</DrawingSymbol>
