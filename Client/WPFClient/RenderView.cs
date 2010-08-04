@@ -456,6 +456,8 @@ namespace MyGame.Client
 				}
 				else if (intID == InteriorID.Empty && intID2.IsSlope())
 				{
+					color = env.GetInteriorMaterial(ml + Direction.Down).Color;
+
 					switch (intID2)
 					{
 						case InteriorID.SlopeNorth:

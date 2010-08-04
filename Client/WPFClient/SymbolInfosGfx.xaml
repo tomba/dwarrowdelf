@@ -23,10 +23,10 @@
     <DrawingSymbol ID="SlopeUpWest" Rotate="180">SlopeUpEast</DrawingSymbol>
     <DrawingSymbol ID="SlopeUpEast" Rotate="0">SlopeUpEast</DrawingSymbol>
 
-    <DrawingSymbol ID="SlopeDownNorth" Rotate="270">SlopeDownWest</DrawingSymbol>
-    <DrawingSymbol ID="SlopeDownSouth" Rotate="90">SlopeDownWest</DrawingSymbol>
-    <DrawingSymbol ID="SlopeDownWest" Rotate="180">SlopeDownWest</DrawingSymbol>
-    <DrawingSymbol ID="SlopeDownEast" Rotate="0">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol ID="SlopeDownNorth" Rotate="90">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol ID="SlopeDownSouth" Rotate="270">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol ID="SlopeDownWest" Rotate="0">SlopeDownWest</DrawingSymbol>
+    <DrawingSymbol ID="SlopeDownEast" Rotate="180">SlopeDownWest</DrawingSymbol>
 
     <CharSymbol ID="Portal">○</CharSymbol>
     <DrawingSymbol ID="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
