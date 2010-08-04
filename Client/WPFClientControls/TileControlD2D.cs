@@ -229,11 +229,11 @@ namespace MyGame.Client
 			var numTiles = m_bitmapGenerator.NumDistinctBitmaps;
 
 			var tileSize = (uint)m_tileSize;
-			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)numTiles, tileSize),
-				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
-
 			const int bytesPerPixel = 4;
 			var arr = new byte[tileSize * tileSize * bytesPerPixel];
+
+			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)numTiles, tileSize),
+				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
 
 			for (uint x = 0; x < numTiles; ++x)
 			{
@@ -389,23 +389,27 @@ namespace MyGame.Client
 
 		void DrawTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, GameColor bgColor, bool dark)
 		{
-			float opacity = dark ? 0.2f : 1.0f;
-
 			// XXX should this be cleared when renderTarget changes?
 			if (m_bgBrush == null)
-				 m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
+				m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
 			if (bgColor != GameColor.None)
 			{
 				var rgb = new GameColorRGB(bgColor);
-				m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, opacity);
+				m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
 				m_renderTarget.FillRectangle(dstRect, m_bgBrush);
 			}
 
 			if (color != GameColor.None)
-				DrawColoredTile(tileSize, ref dstRect, symbolID, color, opacity);
+				DrawColoredTile(tileSize, ref dstRect, symbolID, color, 1.0f);
 			else
-				DrawUncoloredTile(tileSize, ref dstRect, symbolID, opacity);
+				DrawUncoloredTile(tileSize, ref dstRect, symbolID, 1.0f);
+
+			if (dark)
+			{
+				m_bgBrush.Color = new ColorF(0, 0, 0, 0.8f);
+				m_renderTarget.FillRectangle(dstRect, m_bgBrush);
+			}
 		}
 
 		void DrawColoredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, float opacity)

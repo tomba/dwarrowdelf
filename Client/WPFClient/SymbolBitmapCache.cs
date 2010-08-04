@@ -128,20 +128,76 @@ namespace MyGame.Client
 			DrawingContext drawingContext = drawingVisual.RenderOpen();
 
 			var d = m_symbolDrawingCache.GetDrawing(symbolID, color);
+			if (dark)
+			{
+				d = d.Clone();
+				DarkenDrawing(d);
+			}
 
 			drawingContext.PushTransform(new ScaleTransform((double)m_size / 100, (double)m_size / 100));
 			drawingContext.DrawDrawing(d);
 			drawingContext.Pop();
-
 			drawingContext.Close();
-
-			if (dark)
-				drawingVisual.Opacity = 0.2;
 
 			RenderTargetBitmap bmp = new RenderTargetBitmap(m_size, m_size, 96, 96, PixelFormats.Default);
 			bmp.Render(drawingVisual);
 			bmp.Freeze();
+
 			return bmp;
+		}
+
+		static void DarkenDrawing(Drawing drawing)
+		{
+			if (drawing is DrawingGroup)
+			{
+				var dg = (DrawingGroup)drawing;
+				foreach (var d in dg.Children)
+				{
+					DarkenDrawing(d);
+				}
+			}
+			else if (drawing is GeometryDrawing)
+			{
+				var gd = (GeometryDrawing)drawing;
+				if (gd.Brush != null)
+					DarkenBrush(gd.Brush);
+				if (gd.Pen != null)
+					DarkenBrush(gd.Pen.Brush);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		static void DarkenBrush(Brush brush)
+		{
+			if (brush is SolidColorBrush)
+			{
+				var b = (SolidColorBrush)brush;
+				b.Color = DarkenColor(b.Color);
+			}
+			else if (brush is LinearGradientBrush)
+			{
+				var b = (LinearGradientBrush)brush;
+				foreach (var stop in b.GradientStops)
+					stop.Color = DarkenColor(stop.Color);
+			}
+			else if (brush is RadialGradientBrush)
+			{
+				var b = (RadialGradientBrush)brush;
+				foreach (var stop in b.GradientStops)
+					stop.Color = DarkenColor(stop.Color);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		static Color DarkenColor(Color color)
+		{
+			return Color.FromArgb(color.A, (byte)(color.R / 5), (byte)(color.G / 5), (byte)(color.B / 5));
 		}
 	}
 }
