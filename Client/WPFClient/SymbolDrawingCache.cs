@@ -67,7 +67,8 @@ namespace MyGame.Client
 			if (symbol is Symbols.CharSymbol)
 			{
 				var s = (Symbols.CharSymbol)symbol;
-				var typeface = s.Typeface != null ? s.Typeface : m_symbolSet.Typeface;
+				var fontFamily = s.FontFamily != null ? s.FontFamily : m_symbolSet.FontFamily;
+				var typeface = new Typeface(fontFamily, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
 				var fontSize = s.FontSize.HasValue ? s.FontSize.Value : m_symbolSet.FontSize;
 				var outline = s.Outline.HasValue ? s.Outline.Value : m_symbolSet.Outline;
 				var outlineThickness = s.OutlineThickness.HasValue ? s.OutlineThickness.Value : m_symbolSet.OutlineThickness;

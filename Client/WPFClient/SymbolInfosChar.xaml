@@ -1,41 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:MyGame.Client.Symbols;assembly=MyGame"
-           Font="Arial" FontSize="64" Outline="False" OutlineThickness="0.5">
+           FontFamily="Arial" FontSize="64" Outline="False" OutlineThickness="0.5">
 
-    <CharSymbol Name="Undefined">?</CharSymbol>
-    <CharSymbol Name="Floor" Outline="false">▒</CharSymbol>
+    <CharSymbol ID="Undefined">?</CharSymbol>
+    <CharSymbol ID="Floor" Outline="false">▒</CharSymbol>
 
-    <CharSymbol Name="Grass">▒</CharSymbol>
-    <CharSymbol Name="Wall" Opaque="True" Outline="False">▓</CharSymbol>
+    <CharSymbol ID="Grass">▒</CharSymbol>
+    <CharSymbol ID="Wall" Opaque="True" Outline="False">▓</CharSymbol>
 
-    <CombinedSymbol Name="Ore" Opaque="False">
+    <CombinedSymbol ID="Ore" Opaque="False">
         <CharSymbol Opaque="False" Outline="False" Color="Black" Reverse="True">▓</CharSymbol>
         <CharSymbol Opaque="False" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
     </CombinedSymbol>
 
-    <CharSymbol Name="Water" X="10" Y="30" W="80" H="40">~</CharSymbol>
+    <CharSymbol ID="Water" X="10" Y="30" W="80" H="40">~</CharSymbol>
 
-    <CharSymbol Name="StairsUp">&lt;</CharSymbol>
-    <CharSymbol Name="StairsDown">&gt;</CharSymbol>
-    <CharSymbol Name="StairsUpDown">X</CharSymbol>
+    <CharSymbol ID="StairsUp">&lt;</CharSymbol>
+    <CharSymbol ID="StairsDown">&gt;</CharSymbol>
+    <CharSymbol ID="StairsUpDown">X</CharSymbol>
 
-    <CharSymbol Name="SlopeUpNorth">▲</CharSymbol>
-    <CharSymbol Name="SlopeUpSouth">▲</CharSymbol>
-    <CharSymbol Name="SlopeUpWest">▲</CharSymbol>
-    <CharSymbol Name="SlopeUpEast">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpNorth">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouth">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpWest">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpEast">▲</CharSymbol>
 
-    <CharSymbol Name="SlopeDownNorth">▼</CharSymbol>
-    <CharSymbol Name="SlopeDownSouth">▼</CharSymbol>
-    <CharSymbol Name="SlopeDownWest">▼</CharSymbol>
-    <CharSymbol Name="SlopeDownEast">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownNorth">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouth">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownWest">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownEast">▼</CharSymbol>
 
-    <CharSymbol Name="Portal">○</CharSymbol>
-    <CharSymbol Name="Player">☺</CharSymbol>
-    <CharSymbol Name="Monster">b</CharSymbol>
-    <CharSymbol Name="Gem" X="30" Y="50" W="40" H="40">♦</CharSymbol>
-    <CharSymbol Name="Sapling" Outline="True" X="20" Y="30" W="60" H="70">♠</CharSymbol>
-    <CharSymbol Name="Tree" Outline="True">♣</CharSymbol>
-    <CharSymbol Name="Key">Ⱡ</CharSymbol>
-    <CharSymbol Name="Rock">●</CharSymbol>
+    <CharSymbol ID="Portal">○</CharSymbol>
+    <CharSymbol ID="Player">☺</CharSymbol>
+    <CharSymbol ID="Monster">b</CharSymbol>
+    <CharSymbol ID="Gem" X="30" Y="50" W="40" H="40">♦</CharSymbol>
+    <CharSymbol ID="Sapling" Outline="True" X="20" Y="30" W="60" H="70">♠</CharSymbol>
+    <CharSymbol ID="Tree" Outline="True">♣</CharSymbol>
+    <CharSymbol ID="Key">Ⱡ</CharSymbol>
+    <CharSymbol ID="Rock">●</CharSymbol>
 
 </SymbolSet>

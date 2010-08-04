@@ -25,25 +25,13 @@ namespace MyGame.Client.Symbols
 			Symbols = new SymbolCollection();
 		}
 
-		public string Font { get; set; }
+		public FontFamily FontFamily { get; set; }
 		public double FontSize { get; set; }
 		public bool Outline { get; set; }
 		public double OutlineThickness { get; set; }
 		public string Drawings { get; set; }
 
 		public SymbolCollection Symbols { get; set; }
-
-		Typeface m_typeface;
-		public Typeface Typeface
-		{
-			get
-			{
-				if (m_typeface == null)
-					m_typeface = new Typeface(new FontFamily(this.Font), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-
-				return m_typeface;
-			}
-		}
 	}
 
 	public abstract class BaseSymbol
@@ -54,22 +42,6 @@ namespace MyGame.Client.Symbols
 			this.Y = 0;
 			this.W = 100;
 			this.H = 100;
-		}
-
-		string m_name;
-		public string Name
-		{
-			get { return m_name; }
-
-			set
-			{
-				m_name = value;
-
-				SymbolID id;
-				if (Enum.TryParse<SymbolID>(value, out id) == false)
-					throw new Exception();
-				this.ID = id;
-			}
 		}
 
 		public SymbolID ID { get; set; }
@@ -88,23 +60,10 @@ namespace MyGame.Client.Symbols
 		public char Char { get; set; }
 		public bool? Outline { get; set; }
 		public double? OutlineThickness { get; set; }
-		public string Font { get; set; }
+		public FontFamily FontFamily { get; set; }
 		public double? FontSize { get; set; }
 		public string Color { get; set; }
 		public bool Reverse { get; set; }
-
-		Typeface m_typeface;
-		public Typeface Typeface
-		{
-			get
-			{
-				if (m_typeface == null && this.Font != null)
-					m_typeface = new Typeface(new FontFamily(this.Font), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-
-				return m_typeface;
-			}
-		}
-
 	}
 
 	[ContentProperty("DrawingName")]
