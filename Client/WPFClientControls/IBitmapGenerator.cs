@@ -9,7 +9,7 @@ namespace MyGame.Client
 {
 	public interface IBitmapGenerator
 	{
-		BitmapSource GetBitmap(SymbolID symbolID, GameColor color, bool dark);
+		BitmapSource GetBitmap(SymbolID symbolID, GameColor color);
 		int NumDistinctBitmaps { get; }
 		int TileSize { get; set; }
 	}

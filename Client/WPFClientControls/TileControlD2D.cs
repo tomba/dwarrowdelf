@@ -237,7 +237,7 @@ namespace MyGame.Client
 
 			for (uint x = 0; x < numTiles; ++x)
 			{
-				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, GameColor.None, false);
+				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, GameColor.None);
 				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				m_atlasBitmap.CopyFromMemory(new RectU(x * tileSize, 0, x * tileSize + tileSize, tileSize), arr, tileSize * 4);
 			}
@@ -436,7 +436,7 @@ namespace MyGame.Client
 				const int bytesPerPixel = 4;
 				var arr = new byte[tileSize * tileSize * bytesPerPixel];
 
-				var origBmp = m_bitmapGenerator.GetBitmap(symbolID, color, false);
+				var origBmp = m_bitmapGenerator.GetBitmap(symbolID, color);
 				origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
 				bitmap.CopyFromMemory(new RectU(0, 0, (uint)tileSize, (uint)tileSize), arr, (uint)tileSize * 4);
 				dict[color] = bitmap;
