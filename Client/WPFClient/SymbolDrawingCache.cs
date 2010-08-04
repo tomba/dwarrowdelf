@@ -73,11 +73,10 @@ namespace MyGame.Client
 				var outline = s.Outline.HasValue ? s.Outline.Value : m_symbolSet.Outline;
 				var outlineThickness = s.OutlineThickness.HasValue ? s.OutlineThickness.Value : m_symbolSet.OutlineThickness;
 
-				GameColor fgColor = color;
-				if (s.Color != null)
-					fgColor = (GameColor)Enum.Parse(typeof(GameColor), s.Color, true);
+				var fgColor = s.Color.HasValue ? s.Color.Value : color;
+				var bgColor = s.Background.HasValue ? s.Background.Value : GameColor.None;
 
-				drawing = DrawCharacter(s.Char, typeface, fontSize, fgColor, outline, outlineThickness, s.Reverse);
+				drawing = DrawCharacter(s.Char, typeface, fontSize, fgColor, bgColor, outline, outlineThickness, s.Reverse);
 			}
 			else if (symbol is Symbols.DrawingSymbol)
 			{
@@ -111,7 +110,8 @@ namespace MyGame.Client
 			return drawing;
 		}
 
-		static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, GameColor color, bool drawOutline, double outlineThickness, bool reverse)
+		static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, GameColor color, GameColor bgColor,
+			bool drawOutline, double outlineThickness, bool reverse)
 		{
 			Color c;
 			if (color == GameColor.None)
@@ -120,7 +120,8 @@ namespace MyGame.Client
 				c = color.ToWindowsColor();
 
 			DrawingGroup dGroup = new DrawingGroup();
-			Brush brush = new SolidColorBrush(c);
+			var brush = new SolidColorBrush(c);
+			var bgBrush = bgColor != GameColor.None ? new SolidColorBrush(bgColor.ToWindowsColor()) : Brushes.Transparent;
 			using (DrawingContext dc = dGroup.Open())
 			{
 				var formattedText = new FormattedText(
@@ -138,7 +139,7 @@ namespace MyGame.Client
 				if (reverse)
 					geometry = new CombinedGeometry(GeometryCombineMode.Exclude, boundingGeometry, geometry);
 
-				dc.DrawGeometry(Brushes.Transparent, null, boundingGeometry);
+				dc.DrawGeometry(bgBrush, null, boundingGeometry);
 				dc.DrawGeometry(brush, pen, geometry);
 			}
 

@@ -62,7 +62,8 @@ namespace MyGame.Client.Symbols
 		public double? OutlineThickness { get; set; }
 		public FontFamily FontFamily { get; set; }
 		public double? FontSize { get; set; }
-		public string Color { get; set; }
+		public GameColor? Color { get; set; }
+		public GameColor? Background { get; set; }
 		public bool Reverse { get; set; }
 	}
 

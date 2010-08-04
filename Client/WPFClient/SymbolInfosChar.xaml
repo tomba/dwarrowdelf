@@ -3,7 +3,7 @@
            FontFamily="Arial" FontSize="64" Outline="False" OutlineThickness="0.5">
 
     <CharSymbol ID="Undefined">?</CharSymbol>
-    <CharSymbol ID="Floor" Outline="false">▒</CharSymbol>
+    <CharSymbol ID="Floor" Reverse="True">▓</CharSymbol>
 
     <CharSymbol ID="Grass">▒</CharSymbol>
     <CharSymbol ID="Wall" Opaque="True" Outline="False">▓</CharSymbol>
