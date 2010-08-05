@@ -6,6 +6,14 @@ using System.Windows.Media.Imaging;
 
 namespace MyGame.Client
 {
+	public struct RenderTileLayer
+	{
+		public SymbolID SymbolID;
+		public GameColor Color;
+		public GameColor BgColor;
+		public bool Dark;
+	}
+
 	public struct RenderTile
 	{
 		public bool IsValid;
@@ -13,25 +21,10 @@ namespace MyGame.Client
 		// Tile color for minimap
 		public GameColor Color;
 
-		public SymbolID FloorSymbolID;
-		public GameColor FloorColor;
-		public GameColor FloorBgColor;
-		public bool FloorDark;
-
-		public SymbolID InteriorSymbolID;
-		public GameColor InteriorColor;
-		public GameColor InteriorBgColor;
-		public bool InteriorDark;
-
-		public SymbolID ObjectSymbolID;
-		public GameColor ObjectColor;
-		public GameColor ObjectBgColor;
-		public bool ObjectDark;
-
-		public SymbolID TopSymbolID;
-		public GameColor TopColor;
-		public GameColor TopBgColor;
-		public bool TopDark;
+		public RenderTileLayer Floor;
+		public RenderTileLayer Interior;
+		public RenderTileLayer Object;
+		public RenderTileLayer Top;
 	}
 
 	public class RenderMap

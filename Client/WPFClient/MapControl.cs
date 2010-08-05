@@ -85,17 +85,17 @@ namespace MyGame.Client
 			BitmapSource objectBitmap = null;
 			BitmapSource topBitmap = null;
 
-			if (data.FloorSymbolID != SymbolID.Undefined)
-				floorBitmap = m_bitmapCache.GetBitmap(data.FloorSymbolID, data.FloorColor);
+			if (data.Floor.SymbolID != SymbolID.Undefined)
+				floorBitmap = m_bitmapCache.GetBitmap(data.Floor.SymbolID, data.Floor.Color);
 
-			if (data.InteriorSymbolID != SymbolID.Undefined)
-				interiorBitmap = m_bitmapCache.GetBitmap(data.InteriorSymbolID, data.InteriorColor);
+			if (data.Interior.SymbolID != SymbolID.Undefined)
+				interiorBitmap = m_bitmapCache.GetBitmap(data.Interior.SymbolID, data.Interior.Color);
 
-			if (data.ObjectSymbolID != SymbolID.Undefined)
-				objectBitmap = m_bitmapCache.GetBitmap(data.ObjectSymbolID, data.ObjectColor);
+			if (data.Object.SymbolID != SymbolID.Undefined)
+				objectBitmap = m_bitmapCache.GetBitmap(data.Object.SymbolID, data.Object.Color);
 
-			if (data.TopSymbolID != SymbolID.Undefined)
-				topBitmap = m_bitmapCache.GetBitmap(data.TopSymbolID, data.TopColor);
+			if (data.Top.SymbolID != SymbolID.Undefined)
+				topBitmap = m_bitmapCache.GetBitmap(data.Top.SymbolID, data.Top.Color);
 
 			bool update = tile.FloorBitmap != floorBitmap || tile.InteriorBitmap != interiorBitmap || tile.ObjectBitmap != objectBitmap ||
 				tile.TopBitmap != topBitmap;

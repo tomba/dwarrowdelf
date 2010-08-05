@@ -233,33 +233,19 @@ namespace MyGame.Client
 				visible = TileVisible(ml, env);
 
 			/* FLOOR */
-			bool floorLit;
-			tile.FloorSymbolID = GetFloorBitmap(ml, out floorLit, env, showVirtualSymbols, out tile.FloorColor, out tile.FloorBgColor);
-			tile.FloorDark = visible ? !floorLit : true;
+			GetFloorBitmap(ml, visible, env, showVirtualSymbols, out tile.Floor);
 
 			/* INTERIOR */
-			tile.InteriorSymbolID = GetInteriorBitmap(ml, env, showVirtualSymbols, out tile.InteriorColor, out tile.InteriorBgColor);
-			tile.InteriorDark = !visible;
+			GetInteriorBitmap(ml, visible, env, showVirtualSymbols, out tile.Interior);
 
 			if (GameData.Data.DisableLOS)
 				visible = true; // lit always so we see what server sends
 
 			/* OBJECT */
-			if (visible)
-			{
-				tile.ObjectSymbolID = GetObjectBitmap(ml, env, out tile.ObjectColor, out tile.ObjectBgColor);
-			}
-			else
-			{
-				tile.ObjectColor = GameColor.None;
-				tile.ObjectBgColor = GameColor.None;
-				tile.ObjectSymbolID = SymbolID.Undefined;
-			}
-			tile.ObjectDark = !visible;
+			GetObjectBitmap(ml, visible, env, out tile.Object);
 
 			/* TOP */
-			tile.TopSymbolID = GetTopBitmap(ml, env, out tile.TopColor, out tile.TopBgColor);
-			tile.TopDark = !visible;
+			GetTopBitmap(ml, visible, env, out tile.Top);
 
 			/* GENERAL */
 			tile.Color = GetTileColor(ml, env);
@@ -312,21 +298,22 @@ namespace MyGame.Client
 			return false;
 		}
 
-		static SymbolID GetFloorBitmap(IntPoint3D ml, out bool lit, Environment env, bool showVirtualSymbols, out GameColor color, out GameColor bgColor)
+		static void GetFloorBitmap(IntPoint3D ml, bool visible, Environment env, bool showVirtualSymbols, out RenderTileLayer tile)
 		{
 			var flrInfo = env.GetFloor(ml);
 
 			if (flrInfo == null || flrInfo == Floors.Undefined)
 			{
-				lit = false;
-				color = GameColor.None;
-				bgColor = GameColor.None;
-				return SymbolID.Undefined;
+				tile.Color = GameColor.None;
+				tile.BgColor = GameColor.None;
+				tile.Dark = false;
+				tile.SymbolID = SymbolID.Undefined;
+				return;
 			}
 
 			var matInfo = env.GetFloorMaterial(ml);
-			color = matInfo.Color;
-			bgColor = GameColor.None;
+			tile.Color = matInfo.Color;
+			tile.BgColor = GameColor.None;
 
 			FloorID fid = flrInfo.ID;
 			SymbolID id;
@@ -342,8 +329,8 @@ namespace MyGame.Client
 				case FloorID.Grass:
 					id = SymbolID.Grass;
 					// override the material color
-					color = GameColor.DarkGreen;
-					bgColor = GameColor.Green;
+					tile.Color = GameColor.DarkGreen;
+					tile.BgColor = GameColor.Green;
 					break;
 
 				case FloorID.Empty:
@@ -354,21 +341,21 @@ namespace MyGame.Client
 					throw new Exception();
 			}
 
-			lit = true;
+			tile.Dark = visible ? false : true;
 
 			if (showVirtualSymbols)
 			{
 				if (fid == FloorID.Empty)
 				{
 					id = SymbolID.Floor;
-					lit = false;
+					tile.Dark = true;
 				}
 			}
 
-			return id;
+			tile.SymbolID = id;
 		}
 
-		static SymbolID GetInteriorBitmap(IntPoint3D ml, Environment env, bool showVirtualSymbols, out GameColor color, out GameColor bgColor)
+		static void GetInteriorBitmap(IntPoint3D ml, bool visible, Environment env, bool showVirtualSymbols, out RenderTileLayer tile)
 		{
 			SymbolID id;
 
@@ -380,14 +367,16 @@ namespace MyGame.Client
 
 			if (intInfo == null || intInfo == Interiors.Undefined)
 			{
-				color = GameColor.None;
-				bgColor = GameColor.None;
-				return SymbolID.Undefined;
+				tile.Color = GameColor.None;
+				tile.BgColor = GameColor.None;
+				tile.SymbolID = SymbolID.Undefined;
+				tile.Dark = false;
+				return;
 			}
 
 			var matInfo = env.GetInteriorMaterial(ml);
-			color = matInfo.Color;
-			bgColor = GameColor.None;
+			tile.Color = matInfo.Color;
+			tile.BgColor = GameColor.None;
 
 			switch (intID)
 			{
@@ -407,7 +396,7 @@ namespace MyGame.Client
 				case InteriorID.Ore:
 					id = SymbolID.Ore;
 					// use floor material as background color
-					bgColor = env.GetFloorMaterial(ml).Color;
+					tile.BgColor = env.GetFloorMaterial(ml).Color;
 					break;
 
 				case InteriorID.Portal:
@@ -416,12 +405,12 @@ namespace MyGame.Client
 
 				case InteriorID.Sapling:
 					id = SymbolID.Sapling;
-					color = GameColor.ForestGreen;
+					tile.Color = GameColor.ForestGreen;
 					break;
 
 				case InteriorID.Tree:
 					id = SymbolID.Tree;
-					color = GameColor.ForestGreen;
+					tile.Color = GameColor.ForestGreen;
 					break;
 
 				case InteriorID.SlopeNorth:
@@ -461,7 +450,7 @@ namespace MyGame.Client
 				}
 				else if (intID == InteriorID.Empty && intID2.IsSlope())
 				{
-					color = env.GetInteriorMaterial(ml + Direction.Down).Color;
+					tile.Color = env.GetInteriorMaterial(ml + Direction.Down).Color;
 
 					switch (intID2)
 					{
@@ -484,37 +473,43 @@ namespace MyGame.Client
 				}
 			}
 
-			return id;
+			tile.Dark = visible ? false : true;
+
+			tile.SymbolID = id;
 		}
 
-		static SymbolID GetObjectBitmap(IntPoint3D ml, Environment env, out GameColor color, out GameColor bgColor)
+		static void GetObjectBitmap(IntPoint3D ml, bool visible, Environment env, out RenderTileLayer tile)
 		{
 			var ob = env.GetContents(ml).FirstOrDefault();
 
-			if (ob != null)
+			if (visible && ob != null)
 			{
 				var id = ob.SymbolID;
-				color = ob.GameColor;
-				bgColor = GameColor.None;
-				return id;
+				tile.Color = ob.GameColor;
+				tile.BgColor = GameColor.None;
+				tile.Dark = false;
+				tile.SymbolID = id;
 			}
 			else
 			{
-				color = GameColor.None;
-				bgColor = GameColor.None;
-				return SymbolID.Undefined;
+				tile.Color = GameColor.None;
+				tile.BgColor = GameColor.None;
+				tile.Dark = false;
+				tile.SymbolID = SymbolID.Undefined;
 			}
 		}
 
-		static SymbolID GetTopBitmap(IntPoint3D ml, Environment env, out GameColor color, out GameColor bgColor)
+		static void GetTopBitmap(IntPoint3D ml, bool visible, Environment env, out RenderTileLayer tile)
 		{
 			int wl = env.GetWaterLevel(ml);
 
-			if (wl == 0)
+			if (!visible || wl == 0)
 			{
-				color = GameColor.None;
-				bgColor = GameColor.None;
-				return SymbolID.Undefined;
+				tile.Color = GameColor.None;
+				tile.BgColor = GameColor.None;
+				tile.SymbolID = SymbolID.Undefined;
+				tile.Dark = false;
+				return;
 			}
 
 			SymbolID id;
@@ -525,28 +520,29 @@ namespace MyGame.Client
 
 			if (wl > 80)
 			{
-				color = GameColor.Aqua;
+				tile.Color = GameColor.Aqua;
 			}
 			else if (wl > 60)
 			{
-				color = GameColor.DodgerBlue;
+				tile.Color = GameColor.DodgerBlue;
 			}
 			else if (wl > 40)
 			{
-				color = GameColor.Blue;
+				tile.Color = GameColor.Blue;
 			}
 			else if (wl > 20)
 			{
-				color = GameColor.Blue;
+				tile.Color = GameColor.Blue;
 			}
 			else
 			{
-				color = GameColor.MediumBlue;
+				tile.Color = GameColor.MediumBlue;
 			}
 
-			bgColor = GameColor.DarkBlue;
+			tile.BgColor = GameColor.DarkBlue;
 
-			return id;
+			tile.Dark = false;
+			tile.SymbolID = id;
 		}
 
 		static GameColor GetTileColor(IntPoint3D ml, Environment env)

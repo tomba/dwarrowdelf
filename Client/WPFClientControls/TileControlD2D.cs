@@ -373,17 +373,17 @@ namespace MyGame.Client
 
 					RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 
-					if (data.FloorSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.FloorSymbolID, data.FloorColor, data.FloorBgColor, data.FloorDark);
+					if (data.Floor.SymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, ref data.Floor);
 
-					if (data.InteriorSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.InteriorSymbolID, data.InteriorColor, data.InteriorBgColor, data.InteriorDark);
+					if (data.Interior.SymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, ref data.Interior);
 
-					if (data.ObjectSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.ObjectSymbolID, data.ObjectColor, data.ObjectBgColor, data.ObjectDark);
+					if (data.Object.SymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, ref data.Object);
 
-					if (data.TopSymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, data.TopSymbolID, data.TopColor, data.TopBgColor, data.TopDark);
+					if (data.Top.SymbolID != SymbolID.Undefined)
+						DrawTile(tileSize, ref dstRect, ref data.Top);
 #if DEBUG_TEXT
 					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif
@@ -391,24 +391,24 @@ namespace MyGame.Client
 			}
 		}
 
-		void DrawTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, GameColor bgColor, bool dark)
+		void DrawTile(int tileSize, ref RectF dstRect, ref RenderTileLayer tile)
 		{
 			if (m_bgBrush == null)
 				m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
-			if (bgColor != GameColor.None)
+			if (tile.BgColor != GameColor.None)
 			{
-				var rgb = new GameColorRGB(bgColor);
+				var rgb = new GameColorRGB(tile.BgColor);
 				m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
 				m_renderTarget.FillRectangle(dstRect, m_bgBrush);
 			}
 
-			if (color != GameColor.None)
-				DrawColoredTile(tileSize, ref dstRect, symbolID, color, 1.0f);
+			if (tile.Color != GameColor.None)
+				DrawColoredTile(tileSize, ref dstRect, tile.SymbolID, tile.Color, 1.0f);
 			else
-				DrawUncoloredTile(tileSize, ref dstRect, symbolID, 1.0f);
+				DrawUncoloredTile(tileSize, ref dstRect, tile.SymbolID, 1.0f);
 
-			if (dark)
+			if (tile.Dark)
 			{
 				m_bgBrush.Color = new ColorF(0, 0, 0, 0.8f);
 				m_renderTarget.FillRectangle(dstRect, m_bgBrush);
