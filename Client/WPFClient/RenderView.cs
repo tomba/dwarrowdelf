@@ -250,6 +250,8 @@ namespace MyGame.Client
 			/* GENERAL */
 			tile.Color = GetTileColor(ml, env);
 
+			tile.Dark = !visible;
+
 			tile.IsValid = true;
 		}
 
@@ -306,7 +308,6 @@ namespace MyGame.Client
 			{
 				tile.Color = GameColor.None;
 				tile.BgColor = GameColor.None;
-				tile.Dark = false;
 				tile.SymbolID = SymbolID.Undefined;
 				return;
 			}
@@ -341,14 +342,13 @@ namespace MyGame.Client
 					throw new Exception();
 			}
 
-			tile.Dark = visible ? false : true;
-
 			if (showVirtualSymbols)
 			{
 				if (fid == FloorID.Empty)
 				{
 					id = SymbolID.Floor;
-					tile.Dark = true;
+					tile.Color = GameColor.DimGray;
+					tile.BgColor = GameColor.Black;
 				}
 			}
 
@@ -370,7 +370,6 @@ namespace MyGame.Client
 				tile.Color = GameColor.None;
 				tile.BgColor = GameColor.None;
 				tile.SymbolID = SymbolID.Undefined;
-				tile.Dark = false;
 				return;
 			}
 
@@ -473,8 +472,6 @@ namespace MyGame.Client
 				}
 			}
 
-			tile.Dark = visible ? false : true;
-
 			tile.SymbolID = id;
 		}
 
@@ -487,14 +484,12 @@ namespace MyGame.Client
 				var id = ob.SymbolID;
 				tile.Color = ob.GameColor;
 				tile.BgColor = GameColor.None;
-				tile.Dark = false;
 				tile.SymbolID = id;
 			}
 			else
 			{
 				tile.Color = GameColor.None;
 				tile.BgColor = GameColor.None;
-				tile.Dark = false;
 				tile.SymbolID = SymbolID.Undefined;
 			}
 		}
@@ -508,7 +503,6 @@ namespace MyGame.Client
 				tile.Color = GameColor.None;
 				tile.BgColor = GameColor.None;
 				tile.SymbolID = SymbolID.Undefined;
-				tile.Dark = false;
 				return;
 			}
 
@@ -541,7 +535,6 @@ namespace MyGame.Client
 
 			tile.BgColor = GameColor.DarkBlue;
 
-			tile.Dark = false;
 			tile.SymbolID = id;
 		}
 

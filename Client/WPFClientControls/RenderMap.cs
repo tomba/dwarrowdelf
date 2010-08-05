@@ -11,7 +11,6 @@ namespace MyGame.Client
 		public SymbolID SymbolID;
 		public GameColor Color;
 		public GameColor BgColor;
-		public bool Dark;
 	}
 
 	public struct RenderTile
@@ -25,6 +24,8 @@ namespace MyGame.Client
 		public RenderTileLayer Interior;
 		public RenderTileLayer Object;
 		public RenderTileLayer Top;
+
+		public bool Dark;
 	}
 
 	public class RenderMap
