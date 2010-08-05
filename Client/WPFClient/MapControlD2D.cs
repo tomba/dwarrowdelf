@@ -68,6 +68,10 @@ namespace MyGame.Client
 		{
 			//MyDebug.WriteLine("Update TileMap");
 
+			/* if we are using LOS, we need to update even the non-changed tiles */
+			if (m_env != null && m_env.VisibilityMode != VisibilityMode.AllVisible)
+				m_renderView.Invalidate();
+
 			m_renderView.Size = new IntSize(this.Columns, this.Rows);
 			m_renderView.Offset = new IntVector(this.BottomLeftPos.X, this.BottomLeftPos.Y);
 			m_renderView.ResolveAll();

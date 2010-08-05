@@ -195,6 +195,11 @@ namespace MyGame.Client
 			}
 		}
 
+		public void Invalidate()
+		{
+			m_invalid = true;
+		}
+
 		void MapChangedCallback(IntPoint3D ml)
 		{
 			IntPoint p = ml.ToIntPoint() - this.Offset;
