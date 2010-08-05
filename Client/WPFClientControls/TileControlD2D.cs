@@ -291,6 +291,10 @@ namespace MyGame.Client
 
 				ClearAtlasBitmap();
 				ClearColorTileArray();
+
+				if (m_bgBrush != null)
+					m_bgBrush.Dispose();
+				m_bgBrush = null;
 			}
 
 			DoRenderTiles();
@@ -389,7 +393,6 @@ namespace MyGame.Client
 
 		void DrawTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, GameColor bgColor, bool dark)
 		{
-			// XXX should this be cleared when renderTarget changes?
 			if (m_bgBrush == null)
 				m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
