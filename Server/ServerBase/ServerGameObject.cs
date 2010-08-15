@@ -223,6 +223,12 @@ namespace MyGame.Server
 			return true;
 		}
 
+		public bool MoveTo(int x, int y, int z)
+		{
+			var p = new IntPoint3D(x, y, z);
+			return MoveTo(this.Environment, p);
+		}
+
 		public bool MoveDir(Direction dir)
 		{
 			Debug.Assert(this.World.IsWritable);
