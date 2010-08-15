@@ -63,6 +63,7 @@ namespace MyGame.Client
 		uint[] m_simpleBitmapArray;
 
 		SolidColorBrush m_bgBrush;
+		SolidColorBrush m_darkBrush;
 
 		const int MINDETAILEDTILESIZE = 8;
 
@@ -295,6 +296,10 @@ namespace MyGame.Client
 				if (m_bgBrush != null)
 					m_bgBrush.Dispose();
 				m_bgBrush = null;
+
+				if (m_darkBrush != null)
+					m_darkBrush.Dispose();
+				m_darkBrush = null;
 			}
 
 			DoRenderTiles();
@@ -365,6 +370,9 @@ namespace MyGame.Client
 			if (m_bgBrush == null)
 				m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
+			if (m_darkBrush == null)
+				m_darkBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
+
 			for (int y = 0; y < m_rows; ++y)
 			{
 				for (int x = 0; x < m_columns; ++x)
@@ -375,23 +383,20 @@ namespace MyGame.Client
 
 					RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 
-					if (data.Floor.SymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, ref data.Floor);
+					var d1 = (data.Floor.DarknessLevel - data.Interior.DarknessLevel) / 255f;
+					var d2 = (data.Interior.DarknessLevel - data.Object.DarknessLevel) / 255f;
+					var d3 = (data.Object.DarknessLevel - data.Top.DarknessLevel) / 255f;
+					var d4 = (data.Top.DarknessLevel) / 255f;
 
-					if (data.Interior.SymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, ref data.Interior);
+					var o4 = d4;
+					var o3 = d3 / (1f - d4);
+					var o2 = d2 / (1f - (d3 + d4));
+					var o1 = d1 / (1f - (d2 + d3 + d4));
 
-					if (data.Object.SymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, ref data.Object);
-
-					if (data.Top.SymbolID != SymbolID.Undefined)
-						DrawTile(tileSize, ref dstRect, ref data.Top);
-
-					if (data.Dark)
-					{
-						m_bgBrush.Color = new ColorF(0, 0, 0, 0.6f);
-						m_renderTarget.FillRectangle(dstRect, m_bgBrush);
-					}
+					DrawTile(tileSize, ref dstRect, ref data.Floor, o1);
+					DrawTile(tileSize, ref dstRect, ref data.Interior, o2);
+					DrawTile(tileSize, ref dstRect, ref data.Object, o3);
+					DrawTile(tileSize, ref dstRect, ref data.Top, o4);
 #if DEBUG_TEXT
 					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
 #endif
@@ -399,19 +404,28 @@ namespace MyGame.Client
 			}
 		}
 
-		void DrawTile(int tileSize, ref RectF dstRect, ref RenderTileLayer tile)
+		void DrawTile(int tileSize, ref RectF dstRect, ref RenderTileLayer tile, float darkOpacity)
 		{
-			if (tile.BgColor != GameColor.None)
+			if (tile.SymbolID != SymbolID.Undefined && darkOpacity < 0.99f)
 			{
-				var rgb = new GameColorRGB(tile.BgColor);
-				m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
-				m_renderTarget.FillRectangle(dstRect, m_bgBrush);
+				if (tile.BgColor != GameColor.None)
+				{
+					var rgb = new GameColorRGB(tile.BgColor);
+					m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
+					m_renderTarget.FillRectangle(dstRect, m_bgBrush);
+				}
+
+				if (tile.Color != GameColor.None)
+					DrawColoredTile(tileSize, ref dstRect, tile.SymbolID, tile.Color, 1.0f);
+				else
+					DrawUncoloredTile(tileSize, ref dstRect, tile.SymbolID, 1.0f);
 			}
 
-			if (tile.Color != GameColor.None)
-				DrawColoredTile(tileSize, ref dstRect, tile.SymbolID, tile.Color, 1.0f);
-			else
-				DrawUncoloredTile(tileSize, ref dstRect, tile.SymbolID, 1.0f);
+			if (darkOpacity > 0.01f)
+			{
+				m_darkBrush.Color = new ColorF(0, 0, 0, darkOpacity);
+				m_renderTarget.FillRectangle(dstRect, m_darkBrush);
+			}
 		}
 
 		void DrawColoredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, float opacity)
