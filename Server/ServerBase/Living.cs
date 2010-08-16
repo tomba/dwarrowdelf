@@ -214,7 +214,7 @@ namespace MyGame.Server
 
 			var id = this.Environment.GetInteriorID(p);
 
-			if (id == InteriorID.NaturalWall)
+			if (id == InteriorID.Wall)
 			{
 				if (action.TicksLeft == 0)
 					this.Environment.SetInteriorID(p, InteriorID.Empty);

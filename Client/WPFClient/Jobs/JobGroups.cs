@@ -18,7 +18,7 @@ namespace MyGame.Client
 		{
 			m_environment = env;
 
-			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.NaturalWall);
+			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
 
 			foreach (var p in m_locs)
 			{
@@ -49,7 +49,7 @@ namespace MyGame.Client
 		{
 			m_environment = env;
 
-			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.NaturalWall);
+			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
 
 			foreach (var p in m_locs)
 			{

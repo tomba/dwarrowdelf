@@ -391,7 +391,6 @@ namespace MyGame.Client
 
 			switch (flrInfo.ID)
 			{
-				case FloorID.NaturalFloor:
 				case FloorID.Floor:
 					if (env.GetGrass(ml))
 					{
@@ -472,7 +471,6 @@ namespace MyGame.Client
 					tile.SymbolID = SymbolID.Undefined;
 					break;
 
-				case InteriorID.NaturalWall:
 				case InteriorID.Wall:
 					tile.SymbolID = SymbolID.Wall;
 					break;

@@ -533,7 +533,7 @@ namespace MyGame.Client
 
 				foreach (var p in map.Selection.SelectionCuboid.Range())
 				{
-					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
+					if (env.GetInterior(p).ID != InteriorID.Wall)
 						continue;
 
 					var job = new MoveMineJob(null, env, p);

@@ -9,7 +9,6 @@ namespace MyGame
 	{
 		Undefined,
 		Empty,
-		NaturalFloor,
 		Floor,
 		Hole,
 		SlopeNorth,
@@ -103,7 +102,6 @@ namespace MyGame
 		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, false, false);
 		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, false, false);
 		public static readonly FloorInfo Floor = new FloorInfo(FloorID.Floor, true, true);
-		public static readonly FloorInfo NaturalFloor = new FloorInfo(FloorID.NaturalFloor, true, true);
 		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, true, true);
 		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, true, true);
 		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, true, true);

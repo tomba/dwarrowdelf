@@ -9,7 +9,6 @@ namespace MyGame
 	{
 		Undefined,
 		Empty,
-		NaturalWall,
 		Wall,
 		Ore,
 		Stairs,
@@ -62,7 +61,6 @@ namespace MyGame
 		public static readonly InteriorInfo Undefined = new InteriorInfo(InteriorID.Undefined, false);
 
 		public static readonly InteriorInfo Empty = new InteriorInfo(InteriorID.Empty, false);
-		public static readonly InteriorInfo NaturalWall = new InteriorInfo(InteriorID.NaturalWall, true);
 		public static readonly InteriorInfo Wall = new InteriorInfo(InteriorID.Wall, true);
 		public static readonly InteriorInfo Ore = new InteriorInfo(InteriorID.Ore, true);
 		public static readonly InteriorInfo Stairs = new InteriorInfo(InteriorID.Stairs, false);

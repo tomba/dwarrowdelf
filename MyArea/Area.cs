@@ -88,8 +88,8 @@ namespace MyArea
 
 		void FillTile(Environment env, IntPoint3D p, MaterialID material)
 		{
-			env.SetInterior(p, InteriorID.NaturalWall, material);
-			env.SetFloor(p, FloorID.NaturalFloor, material);
+			env.SetInterior(p, InteriorID.Wall, material);
+			env.SetFloor(p, FloorID.Floor, material);
 		}
 
 		Environment CreateMap1(World world)
@@ -213,7 +213,7 @@ namespace MyArea
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 			env.AddBuilding(building);
@@ -304,7 +304,7 @@ namespace MyArea
 		{
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
-				.Where(p => env.GetFloorID(p) == FloorID.Floor || env.GetFloorID(p) == FloorID.NaturalFloor || env.GetFloorID(p).IsSlope())
+				.Where(p => env.GetFloorID(p) == FloorID.Floor || env.GetFloorID(p).IsSlope())
 				.Where(p => m_random.Next() % 8 == 0);
 
 			foreach (var p in locations)
@@ -330,7 +330,7 @@ namespace MyArea
 					if (!env.Bounds.Contains(p + dir))
 						continue;
 
-					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.NaturalWall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
+					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.Wall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
 						env.GetFloorID(p + dir + Direction.Up) != FloorID.Empty;
 
 					if (canHaveSlope)
@@ -360,7 +360,7 @@ namespace MyArea
 			foreach (var p in env.Bounds.Range())
 			{
 				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
 			}
 
 			env.SetInterior(m_portalLoc2, InteriorID.Portal, MaterialID.Steel);
