@@ -389,6 +389,25 @@ namespace MyGame.Server
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
+		public void SetGrass(IntPoint3D l, bool grass)
+		{
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetGrass(l, grass);
+
+			var d = m_tileGrid.GetTileData(l);
+
+			if (MapChanged != null)
+				MapChanged(this, l, d);
+		}
+
+		public bool GetGrass(IntPoint3D l)
+		{
+			return m_tileGrid.GetGrass(l);
+		}
+
 		public bool IsWalkable(IntPoint3D l)
 		{
 			return !Interiors.GetInterior(GetInteriorID(l)).Blocker;
@@ -695,6 +714,17 @@ namespace MyGame.Server
 			{
 				return m_grid[p.Z, p.Y, p.X].WaterLevel;
 			}
+
+			public void SetGrass(IntPoint3D p, bool grass)
+			{
+				m_grid[p.Z, p.Y, p.X].Grass = grass;
+			}
+
+			public bool GetGrass(IntPoint3D p)
+			{
+				return m_grid[p.Z, p.Y, p.X].Grass;
+			}
+
 		}
 	}
 }

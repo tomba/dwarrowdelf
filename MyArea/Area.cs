@@ -115,9 +115,14 @@ namespace MyArea
 				{
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
-						env.SetFloor(p, FloorID.Grass, MaterialID.Granite);
+					{
+						env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+						env.SetGrass(p, true);
+					}
 					else
+					{
 						env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
+					}
 				}
 			}
 
@@ -300,7 +305,7 @@ namespace MyArea
 			/* create trees */
 			foreach (var p in env.Bounds.Range())
 			{
-				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.Grass)
+				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.Floor)
 				{
 					if (m_random.Next() % 8 != 0)
 						continue;

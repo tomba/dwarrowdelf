@@ -77,6 +77,14 @@ namespace MyGame.Client
 				return 0;
 			return level.GetWaterLevel(new IntPoint(p.X, p.Y));
 		}
+
+		public bool GetGrass(IntPoint3D p)
+		{
+			var level = base.GetLevel(p.Z, false);
+			if (level == null)
+				return false;
+			return level.GetGrass(new IntPoint(p.X, p.Y));
+		}
 	}
 
 	class MyGrowingGrid : GrowingGrid2DBase<TileData>
@@ -136,6 +144,14 @@ namespace MyGame.Client
 			if (block == null)
 				return 0;
 			return block.Grid[p.Y, p.X].WaterLevel;
+		}
+
+		public bool GetGrass(IntPoint p)
+		{
+			var block = base.GetBlock(ref p, false);
+			if (block == null)
+				return false;
+			return block.Grid[p.Y, p.X].HasGrass;
 		}
 	}
 
@@ -234,6 +250,11 @@ namespace MyGame.Client
 		public byte GetWaterLevel(IntPoint3D l)
 		{
 			return m_tileGrid.GetWaterLevel(l);
+		}
+
+		public bool GetGrass(IntPoint3D ml)
+		{
+			return m_tileGrid.GetGrass(ml);
 		}
 
 		public TileData GetTileData(IntPoint3D p)

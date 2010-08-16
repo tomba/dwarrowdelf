@@ -355,15 +355,21 @@ namespace MyGame.Client
 			{
 				case FloorID.NaturalFloor:
 				case FloorID.Floor:
-				case FloorID.Hole:
-					tile.SymbolID = SymbolID.Floor;
+					if (env.GetGrass(ml))
+					{
+						tile.SymbolID = SymbolID.Grass;
+						// override the material color
+						tile.Color = GameColor.DarkGreen;
+						tile.BgColor = GameColor.Green;
+					}
+					else
+					{
+						tile.SymbolID = SymbolID.Floor;
+					}
 					break;
 
-				case FloorID.Grass:
-					tile.SymbolID = SymbolID.Grass;
-					// override the material color
-					tile.Color = GameColor.DarkGreen;
-					tile.BgColor = GameColor.Green;
+				case FloorID.Hole:
+					tile.SymbolID = SymbolID.Floor;
 					break;
 
 				default:

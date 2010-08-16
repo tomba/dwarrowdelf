@@ -12,7 +12,6 @@ namespace MyGame
 		NaturalFloor,
 		Floor,
 		Hole,
-		Grass,
 	}
 
 	public class FloorInfo
@@ -62,7 +61,6 @@ namespace MyGame
 		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, false, false);
 		public static readonly FloorInfo Floor = new FloorInfo(FloorID.Floor, true, true);
 		public static readonly FloorInfo NaturalFloor = new FloorInfo(FloorID.NaturalFloor, true, true);
-		public static readonly FloorInfo Grass = new FloorInfo(FloorID.Grass, true, true);
 
 		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, true, false);
 	}

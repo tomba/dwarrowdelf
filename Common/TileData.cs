@@ -26,6 +26,10 @@ namespace MyGame
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
 
+		[DataMember]
+		public bool Grass { get; set; }
+
+		public bool HasGrass { get { return this.Grass; } }
 		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 	}
 
