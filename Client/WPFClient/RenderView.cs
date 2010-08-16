@@ -262,7 +262,7 @@ namespace MyGame.Client
 						tile.Interior.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 				}
 
-				GetFloorTile(p, env, ref tile.Floor);
+				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols);
 
 				if (tile.Floor.SymbolID != SymbolID.Undefined)
 				{
@@ -337,7 +337,7 @@ namespace MyGame.Client
 				return (byte)((level + 2) * 255 / (MAXLEVEL + 2));
 		}
 
-		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile)
+		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
 			var flrInfo = env.GetFloor(ml);
 
@@ -345,7 +345,45 @@ namespace MyGame.Client
 				return;
 
 			if (flrInfo.ID == FloorID.Empty)
+			{
+				if (showVirtualSymbols)
+				{
+					var flrId2 = env.GetFloor(ml + Direction.Down).ID;
+
+					if (flrId2.IsSlope())
+					{
+						tile.Color = env.GetFloorMaterial(ml + Direction.Down).Color;
+
+						switch (flrId2)
+						{
+							case FloorID.SlopeNorth:
+								tile.SymbolID = SymbolID.SlopeDownSouth;
+								break;
+
+							case FloorID.SlopeSouth:
+								tile.SymbolID = SymbolID.SlopeDownNorth;
+								break;
+
+							case FloorID.SlopeEast:
+								tile.SymbolID = SymbolID.SlopeDownWest;
+								break;
+
+							case FloorID.SlopeWest:
+								tile.SymbolID = SymbolID.SlopeDownEast;
+								break;
+						}
+
+						if (env.GetGrass(ml + Direction.Down))
+						{
+							// override the material color
+							tile.Color = GameColor.Green;
+							tile.BgColor = GameColor.DarkGreen;
+						}
+					}
+				}
+
 				return;
+			}
 
 			var matInfo = env.GetFloorMaterial(ml);
 			tile.Color = matInfo.Color;
@@ -372,11 +410,41 @@ namespace MyGame.Client
 					tile.SymbolID = SymbolID.Floor;
 					break;
 
+
+				case FloorID.SlopeNorth:
+				case FloorID.SlopeSouth:
+				case FloorID.SlopeEast:
+				case FloorID.SlopeWest:
+					switch (flrInfo.ID.ToDir())
+					{
+						case Direction.North:
+							tile.SymbolID = SymbolID.SlopeUpNorth;
+							break;
+						case Direction.South:
+							tile.SymbolID = SymbolID.SlopeUpSouth;
+							break;
+						case Direction.East:
+							tile.SymbolID = SymbolID.SlopeUpEast;
+							break;
+						case Direction.West:
+							tile.SymbolID = SymbolID.SlopeUpWest;
+							break;
+						default:
+							throw new Exception();
+					}
+
+					if (env.GetGrass(ml))
+					{
+						// override the material color
+						tile.Color = GameColor.DarkGreen;
+						tile.BgColor = GameColor.Green;
+					}
+
+					break;
+
 				default:
 					throw new Exception();
 			}
-
-			return;
 		}
 
 		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
@@ -429,31 +497,6 @@ namespace MyGame.Client
 					tile.Color = GameColor.ForestGreen;
 					break;
 
-				case InteriorID.SlopeNorth:
-				case InteriorID.SlopeSouth:
-				case InteriorID.SlopeEast:
-				case InteriorID.SlopeWest:
-					{
-						switch (intID.ToDir())
-						{
-							case Direction.North:
-								tile.SymbolID = SymbolID.SlopeUpNorth;
-								break;
-							case Direction.South:
-								tile.SymbolID = SymbolID.SlopeUpSouth;
-								break;
-							case Direction.East:
-								tile.SymbolID = SymbolID.SlopeUpEast;
-								break;
-							case Direction.West:
-								tile.SymbolID = SymbolID.SlopeUpWest;
-								break;
-							default:
-								throw new Exception();
-						}
-					}
-					break;
-
 				default:
 					throw new Exception();
 			}
@@ -464,32 +507,7 @@ namespace MyGame.Client
 				{
 					tile.SymbolID = SymbolID.StairsUpDown;
 				}
-				else if (intID == InteriorID.Empty && intID2.IsSlope())
-				{
-					tile.Color = env.GetInteriorMaterial(ml + Direction.Down).Color;
-
-					switch (intID2)
-					{
-						case InteriorID.SlopeNorth:
-							tile.SymbolID = SymbolID.SlopeDownSouth;
-							break;
-
-						case InteriorID.SlopeSouth:
-							tile.SymbolID = SymbolID.SlopeDownNorth;
-							break;
-
-						case InteriorID.SlopeEast:
-							tile.SymbolID = SymbolID.SlopeDownWest;
-							break;
-
-						case InteriorID.SlopeWest:
-							tile.SymbolID = SymbolID.SlopeDownEast;
-							break;
-					}
-				}
 			}
-
-			return;
 		}
 
 		static void GetObjectTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)

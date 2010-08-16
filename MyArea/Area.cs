@@ -284,9 +284,9 @@ namespace MyArea
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 
-			CreateTrees(env);
-
 			CreateSlopes(env);
+
+			CreateTrees(env);
 
 			for (int x = 24; x < 27; ++x)
 			{
@@ -302,17 +302,13 @@ namespace MyArea
 
 		private void CreateTrees(Environment env)
 		{
-			/* create trees */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) == FloorID.Floor)
-				{
-					if (m_random.Next() % 8 != 0)
-						continue;
+			var locations = env.Bounds.Range()
+				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
+				.Where(p => env.GetFloorID(p) == FloorID.Floor || env.GetFloorID(p) == FloorID.NaturalFloor || env.GetFloorID(p).IsSlope())
+				.Where(p => m_random.Next() % 8 == 0);
 
-					env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
-				}
-			}
+			foreach (var p in locations)
+				env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
 		}
 
 		private static void CreateSlopes(Environment env)
@@ -340,7 +336,7 @@ namespace MyArea
 					if (canHaveSlope)
 					{
 						var slope = dir.ToSlope();
-						env.SetInterior(p, slope, env.GetFloorMaterialID(p));
+						env.SetFloor(p, slope, env.GetFloorMaterialID(p));
 					}
 				}
 			}

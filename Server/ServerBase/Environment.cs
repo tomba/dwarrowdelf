@@ -487,13 +487,13 @@ namespace MyGame.Server
 			if (dir.ContainsUp())
 			{
 				var tileAboveSlope = GetTileData(srcLoc + Direction.Up);
-				return d2d.IsCardinal() && srcInter.ID.IsSlope() && srcInter.ID == d2d.ToSlope() && tileAboveSlope.IsEmpty;
+				return d2d.IsCardinal() && srcFloor.ID.IsSlope() && srcFloor.ID == d2d.ToSlope() && tileAboveSlope.IsEmpty;
 			}
 
 			if (dir.ContainsDown())
 			{
 				var tileAboveSlope = GetTileData(dstLoc + Direction.Up);
-				return d2d.IsCardinal() && dstInter.ID.IsSlope() && dstInter.ID == d2d.Reverse().ToSlope() && tileAboveSlope.IsEmpty;
+				return d2d.IsCardinal() && dstFloor.ID.IsSlope() && dstFloor.ID == d2d.Reverse().ToSlope() && tileAboveSlope.IsEmpty;
 			}
 
 			return false;

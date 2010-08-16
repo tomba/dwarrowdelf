@@ -315,15 +315,15 @@ namespace MyGame.Client
 					else
 					{
 						var env = currentOb.Environment;
-						var curInterId = env.GetInterior(currentOb.Location).ID;
+						var curFloorId = env.GetFloor(currentOb.Location).ID;
 						var destInterId = env.GetInterior(currentOb.Location + dir).ID;
-						var destDownInterId = env.GetInterior(currentOb.Location + dir + Direction.Down).ID;
+						var destDownFloorId = env.GetFloor(currentOb.Location + dir + Direction.Down).ID;
 
 						if (dir.IsCardinal())
 						{
-							if (curInterId.IsSlope() && curInterId == dir.ToSlope())
+							if (curFloorId.IsSlope() && curFloorId == dir.ToSlope())
 								dir |= Direction.Up;
-							else if (destInterId == InteriorID.Empty && destDownInterId.IsSlope() && destDownInterId == dir.Reverse().ToSlope())
+							else if (destInterId == InteriorID.Empty && destDownFloorId.IsSlope() && destDownFloorId == dir.Reverse().ToSlope())
 								dir |= Direction.Down;
 						}
 

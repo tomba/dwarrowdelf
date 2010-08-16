@@ -12,6 +12,10 @@ namespace MyGame
 		NaturalFloor,
 		Floor,
 		Hole,
+		SlopeNorth,
+		SlopeSouth,
+		SlopeWest,
+		SlopeEast,
 	}
 
 	public class FloorInfo
@@ -52,6 +56,45 @@ namespace MyGame
 			}
 		}
 
+		public static bool IsSlope(this FloorID id)
+		{
+			return id == FloorID.SlopeNorth || id == FloorID.SlopeSouth || id == FloorID.SlopeEast || id == FloorID.SlopeWest;
+		}
+
+		public static FloorID ToSlope(this Direction dir)
+		{
+			switch (dir)
+			{
+				case Direction.North:
+					return FloorID.SlopeNorth;
+				case Direction.East:
+					return FloorID.SlopeEast;
+				case Direction.South:
+					return FloorID.SlopeSouth;
+				case Direction.West:
+					return FloorID.SlopeWest;
+				default:
+					throw new Exception();
+			}
+		}
+
+		public static Direction ToDir(this FloorID id)
+		{
+			switch (id)
+			{
+				case FloorID.SlopeNorth:
+					return Direction.North;
+				case FloorID.SlopeEast:
+					return Direction.East;
+				case FloorID.SlopeSouth:
+					return Direction.South;
+				case FloorID.SlopeWest:
+					return Direction.West;
+				default:
+					throw new Exception();
+			}
+		}
+
 		public static FloorInfo GetFloor(FloorID id)
 		{
 			return s_floorList[(int)id];
@@ -61,6 +104,10 @@ namespace MyGame
 		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, false, false);
 		public static readonly FloorInfo Floor = new FloorInfo(FloorID.Floor, true, true);
 		public static readonly FloorInfo NaturalFloor = new FloorInfo(FloorID.NaturalFloor, true, true);
+		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, true, true);
+		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, true, true);
+		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, true, true);
+		public static readonly FloorInfo SlopeEast = new FloorInfo(FloorID.SlopeEast, true, true);
 
 		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, true, false);
 	}
