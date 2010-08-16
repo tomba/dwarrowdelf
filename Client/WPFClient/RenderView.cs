@@ -337,15 +337,15 @@ namespace MyGame.Client
 				return (byte)((level + 2) * 255 / (MAXLEVEL + 2));
 		}
 
-		static bool GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile)
+		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile)
 		{
 			var flrInfo = env.GetFloor(ml);
 
 			if (flrInfo == null || flrInfo == Floors.Undefined)
-				return false;
+				return;
 
 			if (flrInfo.ID == FloorID.Empty)
-				return false;
+				return;
 
 			var matInfo = env.GetFloorMaterial(ml);
 			tile.Color = matInfo.Color;
@@ -370,10 +370,10 @@ namespace MyGame.Client
 					throw new Exception();
 			}
 
-			return true;
+			return;
 		}
 
-		static bool GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
 			var intInfo = env.GetInterior(ml);
 			var intInfo2 = env.GetInterior(ml + Direction.Down);
@@ -382,7 +382,7 @@ namespace MyGame.Client
 			var intID2 = intInfo2.ID;
 
 			if (intInfo == null || intInfo == Interiors.Undefined)
-				return false;
+				return;
 
 			var matInfo = env.GetInteriorMaterial(ml);
 			tile.Color = matInfo.Color;
@@ -483,7 +483,7 @@ namespace MyGame.Client
 				}
 			}
 
-			return true;
+			return;
 		}
 
 		static void GetObjectTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
