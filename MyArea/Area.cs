@@ -337,7 +337,14 @@ namespace MyArea
 					   select new { Location = s, Direction = d };
 
 			foreach (var loc in locs)
+			{
+				if (DirectionExtensions.CardinalDirections
+					.Where(d => env.Bounds.Contains(loc.Location + d))
+					.All(d => env.GetInteriorID(loc.Location + d) != InteriorID.Empty))
+					continue;
+
 				env.SetFloor(loc.Location, loc.Direction.ToSlope(), env.GetFloorMaterialID(loc.Location));
+			}
 		}
 
 		void ClearTile(Environment env, IntPoint3D p)
