@@ -170,7 +170,7 @@ namespace MyArea
 				};
 
 				monster.Actor = new MonsterActor(monster);
-				
+
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
 			}
@@ -313,33 +313,31 @@ namespace MyArea
 
 		private static void CreateSlopes(Environment env)
 		{
-			/* create slopes */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (!env.Bounds.Contains(p + Direction.Up))
-					continue;
+			/*
+			 * su t
+			 * s  td
+			 *
+			 *    ___
+			 *    |
+			 * ___|
+			 *
+			 */
 
-				bool canHaveSlope = env.GetInteriorID(p) == InteriorID.Empty && env.GetFloorID(p) != FloorID.Empty &&
-					env.GetInteriorID(p + Direction.Up) == InteriorID.Empty && env.GetFloorID(p + Direction.Up) == FloorID.Empty;
+			var locs = from s in env.Bounds.Range()
+					   let su = s + Direction.Up
+					   where env.Bounds.Contains(su)
+					   where env.GetInteriorID(s) == InteriorID.Empty && env.GetFloorID(s) != FloorID.Empty
+					   where env.GetInteriorID(su) == InteriorID.Empty && env.GetFloorID(su) == FloorID.Empty
+					   from d in DirectionExtensions.CardinalDirections
+					   let td = s + d
+					   let t = s + d + Direction.Up
+					   where env.Bounds.Contains(t)
+					   where env.GetInteriorID(td) == InteriorID.Wall
+					   where env.GetInteriorID(t) == InteriorID.Empty && env.GetFloorID(t) != FloorID.Empty
+					   select new { Location = s, Direction = d };
 
-				if (!canHaveSlope)
-					continue;
-
-				foreach (var dir in DirectionExtensions.CardinalDirections)
-				{
-					if (!env.Bounds.Contains(p + dir))
-						continue;
-
-					canHaveSlope = env.GetInteriorID(p + dir) == InteriorID.Wall && env.GetInteriorID(p + dir + Direction.Up) == InteriorID.Empty &&
-						env.GetFloorID(p + dir + Direction.Up) != FloorID.Empty;
-
-					if (canHaveSlope)
-					{
-						var slope = dir.ToSlope();
-						env.SetFloor(p, slope, env.GetFloorMaterialID(p));
-					}
-				}
-			}
+			foreach (var loc in locs)
+				env.SetFloor(loc.Location, loc.Direction.ToSlope(), env.GetFloorMaterialID(loc.Location));
 		}
 
 		void ClearTile(Environment env, IntPoint3D p)
