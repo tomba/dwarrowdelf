@@ -428,7 +428,7 @@ namespace MyGame.Client
 				case InteriorID.SlopeEast:
 				case InteriorID.SlopeWest:
 					{
-						switch (Interiors.GetDirFromSlope(intID))
+						switch (intID.ToDir())
 						{
 							case Direction.North:
 								tile.SymbolID = SymbolID.SlopeUpNorth;

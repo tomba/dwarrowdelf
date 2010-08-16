@@ -334,7 +334,7 @@ namespace MyArea
 
 					if (canHaveSlope)
 					{
-						var slope = Interiors.GetSlopeFromDir(dir);
+						var slope = dir.ToSlope();
 						env.SetInterior(p, slope, env.GetFloorMaterialID(p));
 					}
 				}
