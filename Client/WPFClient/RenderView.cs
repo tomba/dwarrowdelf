@@ -339,12 +339,12 @@ namespace MyGame.Client
 
 		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
-			var flrInfo = env.GetFloor(ml);
+			var flrID = env.GetFloorID(ml);
 
-			if (flrInfo == null || flrInfo == Floors.Undefined)
+			if (flrID == FloorID.Undefined)
 				return;
 
-			if (flrInfo.ID == FloorID.Empty)
+			if (flrID == FloorID.Empty)
 			{
 				if (showVirtualSymbols)
 				{
@@ -389,7 +389,7 @@ namespace MyGame.Client
 			tile.Color = matInfo.Color;
 			tile.BgColor = GameColor.None;
 
-			switch (flrInfo.ID)
+			switch (flrID)
 			{
 				case FloorID.Floor:
 					if (env.GetGrass(ml))
@@ -414,7 +414,7 @@ namespace MyGame.Client
 				case FloorID.SlopeSouth:
 				case FloorID.SlopeEast:
 				case FloorID.SlopeWest:
-					switch (flrInfo.ID.ToDir())
+					switch (flrID.ToDir())
 					{
 						case Direction.North:
 							tile.SymbolID = SymbolID.SlopeUpNorth;
@@ -448,13 +448,10 @@ namespace MyGame.Client
 
 		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
-			var intInfo = env.GetInterior(ml);
-			var intInfo2 = env.GetInterior(ml + Direction.Down);
+			var intID = env.GetInteriorID(ml);
+			var intID2 = env.GetInteriorID(ml + Direction.Down);
 
-			var intID = intInfo.ID;
-			var intID2 = intInfo2.ID;
-
-			if (intInfo == null || intInfo == Interiors.Undefined)
+			if (intID == InteriorID.Undefined)
 				return;
 
 			var matInfo = env.GetInteriorMaterial(ml);
