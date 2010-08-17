@@ -572,6 +572,9 @@ namespace MyGame.Client
 			else if (waterLevel > 1)
 				return GameColor.DodgerBlue;
 
+			if (env.GetGrass(ml))
+				return GameColor.Green;
+
 			var interID = env.GetInterior(ml).ID;
 			if (interID != InteriorID.Empty && interID != InteriorID.Undefined)
 			{
