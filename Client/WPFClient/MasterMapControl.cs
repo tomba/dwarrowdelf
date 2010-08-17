@@ -746,6 +746,7 @@ namespace MyGame.Client
 			Notify("WaterLevels");
 			Notify("Buildings");
 			Notify("Objects");
+			Notify("Grasses");
 		}
 
 		void UpdateObjectList()
@@ -859,6 +860,19 @@ namespace MyGame.Client
 				return m_selection.SelectionCuboid.Range().
 					Select(p => m_env.GetBuildingAt(p)).
 					Where(b => b != null).
+					Distinct();
+			}
+		}
+
+		public IEnumerable<bool> Grasses
+		{
+			get
+			{
+				if (m_env == null)
+					return null;
+
+				return m_selection.SelectionCuboid.Range().
+					Select(p => m_env.GetGrass(p)).
 					Distinct();
 			}
 		}

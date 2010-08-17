@@ -310,6 +310,9 @@
                             <TextBlock>Building:
                                 <TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
                             </TextBlock>
+                            <TextBlock>Grass:
+                                <TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
+                            </TextBlock>
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
                     </DockPanel>
