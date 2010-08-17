@@ -118,7 +118,6 @@ namespace MyGame.Client
 
 			if (m_interopImage.PixelWidth != pw || m_interopImage.PixelHeight != ph)
 			{
-				m_simpleBitmapArray = null;
 				m_interopImage.Lock();
 				// implicit render
 				m_interopImage.SetPixelSize(pw, ph);
@@ -202,7 +201,6 @@ namespace MyGame.Client
 
 			if (m_tileSize == 0)
 			{
-				m_simpleBitmapArray = null;
 				m_interopImage.SetPixelSize(0, 0);
 				return;
 			}
@@ -214,6 +212,7 @@ namespace MyGame.Client
 			{
 				m_columns = newColumns;
 				m_rows = newRows;
+				m_simpleBitmapArray = null;
 			}
 
 			UpdateOffset(this.RenderSize, m_tileSize);
@@ -333,8 +332,8 @@ namespace MyGame.Client
 		unsafe void RenderSimpleTiles(int tileSize)
 		{
 			uint bytespp = 4;
-			uint w = (uint)(m_interopImage.PixelWidth);
-			uint h = (uint)(m_interopImage.PixelHeight);
+			uint w = (uint)m_columns;
+			uint h = (uint)m_rows;
 
 			if (m_simpleBitmapArray == null)
 				m_simpleBitmapArray = new uint[w * h];
@@ -349,15 +348,14 @@ namespace MyGame.Client
 						var rgb = new GameColorRGB(data.Color);
 						uint c = (uint)((rgb.R << 16) | (rgb.G << 8) | (rgb.B << 0));
 
-						for (int ty = 0; ty < tileSize; ++ty)
-							for (int tx = 0; tx < tileSize; ++tx)
-								a[((m_rows - y - 1) * tileSize + ty) * w + (x * tileSize + tx)] = c;
+						a[(m_rows - y - 1) * w + x] = c;
 					}
 				}
 
 				var bmp = m_renderTarget.CreateBitmap(new SizeU(w, h), (IntPtr)a, w * bytespp,
 					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Ignore), 96, 96));
-				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.Linear, new RectF(-m_offset.X, -m_offset.Y, w - m_offset.X, h - m_offset.Y));
+				var destRect = new RectF(-m_offset.X, -m_offset.Y, w * tileSize - m_offset.X, h * tileSize - m_offset.Y);
+				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.NearestNeighbor, destRect);
 				bmp.Dispose();
 			}
 		}
