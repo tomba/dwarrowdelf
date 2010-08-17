@@ -401,6 +401,15 @@ namespace MyGame.Client
 			return m_objectList.AsReadOnly();
 		}
 
+		public ClientGameObject GetFirstObject(IntPoint3D l)
+		{
+			List<ClientGameObject> obs;
+			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
+				return null;
+
+			return obs.FirstOrDefault();
+		}
+
 		protected override void ChildAdded(ClientGameObject child)
 		{
 			IntPoint3D l = child.Location;

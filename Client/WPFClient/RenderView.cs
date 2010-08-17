@@ -510,7 +510,7 @@ namespace MyGame.Client
 
 		static void GetObjectTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
-			var ob = env.GetContents(ml).FirstOrDefault();
+			var ob = env.GetFirstObject(ml);
 
 			if (ob == null)
 				return;
