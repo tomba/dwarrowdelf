@@ -16,150 +16,11 @@ namespace MyGame.Client
 		}
 	}
 
-	class MyGrowingGrid3D : GrowingGrid3DBase<MyGrowingGrid>
-	{
-		public MyGrowingGrid3D(int blockSize)
-			: base(blockSize)
-		{
-		}
-
-		protected override MyGrowingGrid CreateLevel(int blockSize)
-		{
-			return new MyGrowingGrid(blockSize);
-		}
-
-		public TileData GetTileData(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return new TileData();
-			return level.GetTileData(new IntPoint(p.X, p.Y));
-		}
-
-		public void SetTileData(IntPoint3D p, TileData data)
-		{
-			var level = base.GetLevel(p.Z, true);
-			level.SetTileData(new IntPoint(p.X, p.Y), data);
-		}
-
-		public InteriorID GetInteriorID(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return InteriorID.Undefined;
-			return level.GetInteriorID(new IntPoint(p.X, p.Y));
-		}
-
-		public void SetInteriorID(IntPoint3D p, InteriorID interiorID)
-		{
-			var level = base.GetLevel(p.Z, true);
-			level.SetInteriorID(new IntPoint(p.X, p.Y), interiorID);
-		}
-
-		public FloorID GetFloorID(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return FloorID.Undefined;
-			return level.GetFloorID(new IntPoint(p.X, p.Y));
-		}
-
-		public void SetFloorID(IntPoint3D p, FloorID floorID)
-		{
-			var level = base.GetLevel(p.Z, true);
-			level.SetFloorID(new IntPoint(p.X, p.Y), floorID);
-		}
-
-		public byte GetWaterLevel(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return 0;
-			return level.GetWaterLevel(new IntPoint(p.X, p.Y));
-		}
-
-		public bool GetGrass(IntPoint3D p)
-		{
-			var level = base.GetLevel(p.Z, false);
-			if (level == null)
-				return false;
-			return level.GetGrass(new IntPoint(p.X, p.Y));
-		}
-	}
-
-	class MyGrowingGrid : GrowingGrid2DBase<TileData>
-	{
-		public MyGrowingGrid(int blockSize) : base(blockSize)
-		{
-		}
-
-		public TileData GetTileData(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-			if (block == null)
-				return new TileData();
-			return block.Grid[p.Y, p.X];
-		}
-
-		public void SetTileData(IntPoint p, TileData data)
-		{
-			var block = base.GetBlock(ref p, true);
-
-			block.Grid[p.Y, p.X] = data;
-		}
-
-		public InteriorID GetInteriorID(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-			if (block == null)
-				return 0;
-			return block.Grid[p.Y, p.X].InteriorID;
-		}
-
-		public void SetInteriorID(IntPoint p, InteriorID interiorID)
-		{
-			var block = base.GetBlock(ref p, true);
-
-			block.Grid[p.Y, p.X].InteriorID = interiorID;
-		}
-
-		public FloorID GetFloorID(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-			if (block == null)
-				return 0;
-			return block.Grid[p.Y, p.X].FloorID;
-		}
-
-		public void SetFloorID(IntPoint p, FloorID floorID)
-		{
-			var block = base.GetBlock(ref p, true);
-
-			block.Grid[p.Y, p.X].FloorID = floorID;
-		}
-
-		public byte GetWaterLevel(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-			if (block == null)
-				return 0;
-			return block.Grid[p.Y, p.X].WaterLevel;
-		}
-
-		public bool GetGrass(IntPoint p)
-		{
-			var block = base.GetBlock(ref p, false);
-			if (block == null)
-				return false;
-			return block.Grid[p.Y, p.X].HasGrass;
-		}
-	}
-
 	class Environment : ClientGameObject
 	{
 		public event Action<IntPoint3D> MapTileChanged;
 
-		MyGrowingGrid3D m_tileGrid;
+		GrowingTileGrid m_tileGrid;
 		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
 		List<ClientGameObject> m_objectList;
 
@@ -186,7 +47,7 @@ namespace MyGame.Client
 			: base(world, objectID)
 		{
 			this.Version = 1;
-			m_tileGrid = new MyGrowingGrid3D(blockSize);
+			m_tileGrid = new GrowingTileGrid();
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 			m_objectList = new List<ClientGameObject>();
 
@@ -196,11 +57,6 @@ namespace MyGame.Client
 		public bool IsWalkable(IntPoint3D l)
 		{
 			return GetInterior(l).Blocker == false;
-		}
-
-		public MyGrowingGrid GetLevel(int z)
-		{
-			return m_tileGrid.GetLevel(z, false);
 		}
 
 		public InteriorInfo GetInterior(IntPoint3D l)
@@ -247,13 +103,13 @@ namespace MyGame.Client
 
 		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
 		{
-			var id = m_tileGrid.GetTileData(l).InteriorMaterialID;
+			var id = m_tileGrid.GetInteriorMaterialID(l);
 			return Materials.GetMaterial(id);
 		}
 
 		public MaterialInfo GetFloorMaterial(IntPoint3D l)
 		{
-			var id = m_tileGrid.GetTileData(l).FloorMaterialID;
+			var id = m_tileGrid.GetFloorMaterialID(l);
 			return Materials.GetMaterial(id);
 		}
 

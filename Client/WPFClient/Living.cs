@@ -153,15 +153,15 @@ namespace MyGame.Client
 				m_losMapVersion = 0;
 			}
 
-			var level = this.Environment.GetLevel(this.Location.Z);
+			var env = this.Environment;
+			var z = this.Location.Z;
 
 			s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
-				m_visionMap, level.Bounds,
-				l => Interiors.GetInterior(level.GetInteriorID(l)).Blocker);
+				m_visionMap, env.Bounds.Plane,
+				l => env.GetInterior(new IntPoint3D(l, z)).Blocker);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
 		}
-
 	}
 }
