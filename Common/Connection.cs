@@ -133,12 +133,12 @@ namespace MyGame
 
 					msg = Serializer.Deserialize(m_recvStream);
 
+					this.ReceivedMessages++;
+					this.ReceivedBytes += m_expectedLen + 8;
+
 					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
 					if (ReceiveEvent != null)
 						ReceiveEvent(msg);
-
-					this.ReceivedMessages++;
-					this.ReceivedBytes += m_expectedLen;
 
 					m_expectedLen = 0;
 				}
