@@ -356,10 +356,12 @@ namespace MyGame.Server
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-#if !asd
-			var player = new Living(m_world, "player");
-			player.SymbolID = SymbolID.Player;
-			player.Actor = new InteractiveActor();
+#if asd
+			var player = new Living(m_world, "player")
+			{
+				SymbolID = SymbolID.Player,
+				Actor = new InteractiveActor(),
+			};
 
 			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
 
@@ -390,6 +392,8 @@ namespace MyGame.Server
 
 			var inv = player.SerializeInventory();
 			Send(inv);
+
+			m_scriptScope.SetVariable("me", player);
 #if qwe
 			var pet = new Living(m_world);
 			pet.SymbolID = SymbolID.Monster;
@@ -410,25 +414,21 @@ namespace MyGame.Server
 					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
 				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
-				var player = new Living(m_world)
+				var player = new Living(m_world, String.Format("Dwarf{0}", i))
 				{
 					SymbolID = SymbolID.Player,
-					Name = String.Format("Dwarf{0}", i),
 					Actor = new InteractiveActor(),
-					Color = new GameColor((byte)rand.Next(256), (byte)rand.Next(256), (byte)rand.Next(256)),
+					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
 					throw new Exception();
 			}
 #endif
-			m_scriptScope.SetVariable("me", player);
 
 			m_charLoggedIn = true;
 			Send(new ClientMsgs.LogOnCharReply());
 			Send(new ClientMsgs.ControllablesData() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
-
-			player.HitPoints = 50;
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
