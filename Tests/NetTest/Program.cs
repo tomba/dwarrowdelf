@@ -4,23 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+using System.Threading;
+using System.Diagnostics;
+
 using MyGame;
+
+/*
+ * x64-release
+ * 
+ * Size 201326592
+ * Sent 201369600 bytes
+ * Received 2048 msgs, 201369600 bytes, in 2335 ms
+ */
 
 namespace NetTest
 {
-	class Program
+	static class Program
 	{
+		static public ManualResetEvent Event = new ManualResetEvent(false);
+		public const int NUM_MSGS = 1024 * 2;
+
 		static void Main(string[] args)
 		{
-			MyDebug.WriteLine("**********************");
-
 			var sender = new Sender();
 			var receiver = new Receiver();
 
 			sender.Connect();
 
-			Console.WriteLine("waiting");
-			Console.ReadLine();
+			Event.WaitOne();
 		}
 	}
 
@@ -40,14 +51,31 @@ namespace NetTest
 
 		void ConnectCallback()
 		{
-			var msg = new MyGame.ClientMsgs.IronPythonCommand() { Text = "asdas" };
-			m_conn.Send(msg);
+			var msg = new MyGame.ClientMsgs.MapDataTerrains()
+			{
+				Environment = new ObjectID(123),
+				Bounds = new IntCuboid(),
+				TerrainData = new TileData[0],
+			};
+
+			unsafe
+			{
+				Console.WriteLine("Size {0}", msg.TerrainData.Length * sizeof(TileData) * Program.NUM_MSGS);
+			}
+
+			for (int i = 0; i < Program.NUM_MSGS; ++i)
+			{
+				m_conn.Send(msg);
+			}
+
+			Console.WriteLine("Sent {0} bytes", m_conn.SentBytes);
 		}
 	}
 
 	class Receiver
 	{
 		Connection m_conn;
+		Stopwatch m_sw;
 
 		public Receiver()
 		{
@@ -59,11 +87,24 @@ namespace NetTest
 		{
 			m_conn = obj;
 			m_conn.ReceiveEvent += new Action<MyGame.ClientMsgs.Message>(m_conn_ReceiveEvent);
+			m_sw = Stopwatch.StartNew();
 		}
+
+		int m_msgsReceived;
 
 		void m_conn_ReceiveEvent(MyGame.ClientMsgs.Message obj)
 		{
-			Console.WriteLine("received {0}", obj);
+			m_msgsReceived++;
+			if (m_msgsReceived < Program.NUM_MSGS)
+				return;
+
+			m_sw.Stop();
+
+			Console.WriteLine("Received {0} msgs, {1} bytes, in {2} ms",
+				m_conn.ReceivedMessages, m_conn.ReceivedBytes,
+				m_sw.ElapsedMilliseconds);
+
+			Program.Event.Set();
 		}
 	}
 }
