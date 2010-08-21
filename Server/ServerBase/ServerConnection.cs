@@ -268,7 +268,6 @@ namespace MyGame.Server
 		{
 			ObjectID mapID = msg.MapID;
 			IntCuboid r = msg.Cube;
-			TileData data = msg.TileData;
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
 			if (env == null)
@@ -280,15 +279,21 @@ namespace MyGame.Server
 					continue;
 
 				var tileData = env.GetTileData(p);
-				if (data.InteriorID != InteriorID.Undefined)
-					tileData.InteriorID = data.InteriorID;
-				if (data.FloorID != FloorID.Undefined)
-					tileData.FloorID = data.FloorID;
-				if (data.InteriorMaterialID != MaterialID.Undefined)
-					tileData.InteriorMaterialID = data.InteriorMaterialID;
-				if (data.FloorMaterialID != MaterialID.Undefined)
-					tileData.FloorMaterialID = data.FloorMaterialID;
-				tileData.WaterLevel = data.WaterLevel;
+
+				if (msg.InteriorID.HasValue)
+					tileData.InteriorID = msg.InteriorID.Value;
+				if (msg.InteriorMaterialID.HasValue)
+					tileData.InteriorMaterialID = msg.InteriorMaterialID.Value;
+
+				if (msg.FloorID.HasValue)
+					tileData.FloorID = msg.FloorID.Value;
+				if (msg.FloorMaterialID.HasValue)
+					tileData.FloorMaterialID = msg.FloorMaterialID.Value;
+
+				if (msg.WaterLevel.HasValue)
+					tileData.WaterLevel = msg.WaterLevel.Value;
+				if (msg.Grass.HasValue)
+					tileData.Grass = msg.Grass.Value;
 
 				env.SetTileData(p, tileData);
 			}

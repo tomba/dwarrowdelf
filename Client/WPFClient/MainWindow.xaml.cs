@@ -427,13 +427,7 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.Undefined,
-					FloorMaterialID = MaterialID.Undefined,
-					InteriorID = inter,
-					InteriorMaterialID = MaterialID.Undefined,
-				}
+				InteriorID = inter,
 			});
 		}
 
@@ -450,13 +444,7 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = floor,
-					FloorMaterialID = MaterialID.Undefined,
-					InteriorID = InteriorID.Undefined,
-					InteriorMaterialID = MaterialID.Undefined,
-				}
+				FloorID = floor,
 			});
 		}
 
@@ -473,13 +461,7 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.Undefined,
-					FloorMaterialID = MaterialID.Undefined,
-					InteriorID = InteriorID.Undefined,
-					InteriorMaterialID = material,
-				}
+				InteriorMaterialID = material,
 			});
 		}
 
@@ -496,13 +478,7 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.Undefined,
-					FloorMaterialID = material,
-					InteriorID = InteriorID.Undefined,
-					InteriorMaterialID = MaterialID.Undefined,
-				}
+				FloorMaterialID = material,
 			});
 		}
 
@@ -512,14 +488,18 @@ namespace MyGame.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				TileData = new TileData()
-				{
-					FloorID = FloorID.Undefined,
-					FloorMaterialID = MaterialID.Undefined,
-					InteriorID = InteriorID.Undefined,
-					InteriorMaterialID = MaterialID.Undefined,
-					WaterLevel = TileData.MaxWaterLevel,
-				}
+				WaterLevel = TileData.MaxWaterLevel,
+			});
+		}
+
+		private void MenuItem_Click_SetGrass(object sender, RoutedEventArgs e)
+		{
+			bool g = bool.Parse((string)((MenuItem)e.Source).Tag);
+			GameData.Data.Connection.Send(new SetTilesMessage()
+			{
+				MapID = map.Environment.ObjectID,
+				Cube = map.Selection.SelectionCuboid,
+				Grass = g,
 			});
 		}
 
@@ -739,7 +719,7 @@ namespace MyGame.Client
 			m_loginDialog.Close();
 			m_loginDialog = null;
 			// xxx autologin
-			//LogOnChar_Button_Click(null, null);
+			LogOnChar_Button_Click(null, null);
 		}
 
 		void OnCharLoggedOn()

@@ -111,8 +111,22 @@ namespace MyGame.ClientMsgs
 		public ObjectID MapID { get; set; }
 		[DataMember]
 		public IntCuboid Cube { get; set; }
+
 		[DataMember]
-		public TileData TileData { get; set; }
+		public InteriorID? InteriorID { get; set; }
+		[DataMember]
+		public MaterialID? InteriorMaterialID { get; set; }
+
+		[DataMember]
+		public FloorID? FloorID { get; set; }
+		[DataMember]
+		public MaterialID? FloorMaterialID { get; set; }
+
+		[DataMember]
+		public byte? WaterLevel { get; set; }
+
+		[DataMember]
+		public bool? Grass { get; set; }
 	}
 
 	[DataContract]
