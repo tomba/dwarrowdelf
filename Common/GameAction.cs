@@ -25,6 +25,20 @@ namespace MyGame
 
 	[DataContract]
 	[Serializable]
+	public class NopAction : GameAction
+	{
+		public NopAction()
+		{
+		}
+
+		public override string ToString()
+		{
+			return String.Format("NopAction()");
+		}
+	}
+
+	[DataContract]
+	[Serializable]
 	public class MoveAction : GameAction
 	{
 		[DataMember]

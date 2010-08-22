@@ -311,7 +311,11 @@ namespace MyGame.Server
 
 			if (!done)
 			{
-				if (action is MoveAction)
+				if (action is NopAction)
+				{
+					success = true;
+				}
+				else if (action is MoveAction)
 				{
 					PerformMove((MoveAction)action, out success);
 				}

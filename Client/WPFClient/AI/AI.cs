@@ -40,7 +40,7 @@ namespace MyGame.Client
 					if (m_currentJob == null)
 					{
 						D("no job to do");
-						var action = new WaitAction(1);
+						var action = new NopAction();
 						m_living.EnqueueAction(action);
 						return;
 					}
