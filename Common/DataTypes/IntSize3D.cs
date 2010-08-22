@@ -6,15 +6,11 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public struct IntSize3D : IEquatable<IntSize3D>
 	{
-		[DataMember(Name = "Width")]
 		readonly int m_width;
-		[DataMember(Name = "Height")]
 		readonly int m_height;
-		[DataMember(Name = "Depth")]
 		readonly int m_depth;
 
 		public int Width { get { return m_width; } }

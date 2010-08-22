@@ -10,145 +10,109 @@ using System.Runtime.Serialization;
 
 namespace MyGame.ClientMsgs
 {
-	[DataContract]
 	[Serializable]
 	public abstract class Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class IronPythonCommand : Message
 	{
-		[DataMember]
 		public string Text { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class IronPythonOutput : Message
 	{
-		[DataMember]
 		public string Text { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOnRequest : Message
 	{
-		[DataMember]
 		public string Name { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOnReply : Message
 	{
-		[DataMember]
 		public int UserID { get; set; }
-		[DataMember]
 		public bool IsSeeAll { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOffRequest : Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOffReply : Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOnCharRequest : Message
 	{
-		[DataMember]
 		public string Name { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOnCharReply : Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOffCharRequest : Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LogOffCharReply : Message
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class EnqueueActionMessage : Message
 	{
-		[DataMember]
 		public GameAction Action { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ProceedTickMessage : Message
 	{
 	}
 
 
-	[DataContract]
 	[Serializable]
 	public class SetTilesMessage : Message
 	{
-		[DataMember]
 		public ObjectID MapID { get; set; }
-		[DataMember]
 		public IntCuboid Cube { get; set; }
 
-		[DataMember]
 		public InteriorID? InteriorID { get; set; }
-		[DataMember]
 		public MaterialID? InteriorMaterialID { get; set; }
 
-		[DataMember]
 		public FloorID? FloorID { get; set; }
-		[DataMember]
 		public MaterialID? FloorMaterialID { get; set; }
 
-		[DataMember]
 		public byte? WaterLevel { get; set; }
 
-		[DataMember]
 		public bool? Grass { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class CreateBuildingMessage : Message
 	{
-		[DataMember]
 		public ObjectID MapID { get; set; }
-		[DataMember]
 		public IntRect Area { get; set; }
-		[DataMember]
 		public int Z { get; set; }
-		[DataMember]
 		public BuildingID ID { get; set; }
 	}
 
 
-	[DataContract]
 	[Serializable]
 	public class CompoundMessage : Message
 	{
-		[DataMember]
 		public Message[] Messages { get; set; }
 
 		public override string ToString()
@@ -157,23 +121,17 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public abstract class BaseObjectData : Message
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
-		[DataMember]
 		public IntPoint3D Location { get; set; }
-		[DataMember]
 		public ObjectID Environment { get; set; }
 
-		[DataMember]
 		public Tuple<PropertyID, object>[] Properties { get; set; }
 	}
 
 	/* Item in inventory or floor */
-	[DataContract]
 	[Serializable]
 	public class ItemData : BaseObjectData
 	{
@@ -183,7 +141,6 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class LivingData : BaseObjectData
 	{
@@ -193,15 +150,11 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class PropertyData : Message
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
-		[DataMember]
 		public PropertyID PropertyID { get; set; }
-		[DataMember]
 		public object Value { get; set; }
 
 		public override string ToString()
@@ -210,37 +163,26 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MapData : Message
 	{
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public VisibilityMode VisibilityMode { get; set; }
-		[DataMember]
 		public IntCuboid Bounds { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MapDataTerrains : Message
 	{
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public IntCuboid Bounds { get; set; }
-		[DataMember]
 		public TileData[] TerrainData { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MapDataTerrainsList : Message
 	{
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
 
 		public override string ToString()
@@ -249,39 +191,27 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MapDataObjects : Message
 	{
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public Message[] ObjectData { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MapDataBuildings : Message
 	{
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public BuildingData[] BuildingData { get; set; }
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ObjectMove : Message
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
-		[DataMember]
 		public ObjectID TargetEnvID { get; set; }
-		[DataMember]
 		public IntPoint3D TargetLocation { get; set; }
-		[DataMember]
 		public ObjectID SourceEnvID { get; set; }
-		[DataMember]
 		public IntPoint3D SourceLocation { get; set; }
 
 		public ObjectMove(IIdentifiable target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
@@ -300,11 +230,9 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ObjectDestructedMessage : Message
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
 
 		public override string ToString()
@@ -313,11 +241,9 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class EventMessage : Message
 	{
-		[DataMember]
 		public Event Event { get; set; }
 
 		public EventMessage(Event @event)
@@ -331,19 +257,13 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class BuildingData : Message
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
-		[DataMember]
 		public BuildingID ID { get; set; }
-		[DataMember]
 		public ObjectID Environment { get; set; }
-		[DataMember]
 		public int Z { get; set; }
-		[DataMember]
 		public IntRect Area { get; set; }
 
 		public override string ToString()
@@ -352,11 +272,9 @@ namespace MyGame.ClientMsgs
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ControllablesData : Message
 	{
-		[DataMember]
 		public ObjectID[] Controllables { get; set; }
 
 		public override string ToString()

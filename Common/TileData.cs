@@ -6,27 +6,20 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public struct TileData
 	{
-		[DataMember]
 		public InteriorID InteriorID { get; set; }
-		[DataMember]
 		public MaterialID InteriorMaterialID { get; set; }
 
-		[DataMember]
 		public FloorID FloorID { get; set; }
-		[DataMember]
 		public MaterialID FloorMaterialID { get; set; }
 
-		[DataMember]
 		public byte WaterLevel { get; set; }
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
 
-		[DataMember]
 		public bool Grass { get; set; }
 
 		public bool HasGrass { get { return this.Grass; } }

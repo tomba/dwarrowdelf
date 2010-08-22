@@ -6,17 +6,14 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public abstract class Event
 	{
 	}
 
-	[DataContract]
 	[Serializable]
 	public class TickChangeEvent : Event
 	{
-		[DataMember]
 		public int TickNumber { get; set; }
 
 		public TickChangeEvent(int tickNumber)
@@ -30,16 +27,12 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ActionProgressEvent : Event
 	{
 		public int UserID { get; set; }
-		[DataMember]
 		public int TransactionID { get; set; }
-		[DataMember]
 		public int TicksLeft { get; set; }
-		[DataMember]
 		public bool Success { get; set; }
 
 		public override string ToString()
@@ -49,11 +42,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class ActionRequiredEvent : Event
 	{
-		[DataMember]
 		public ObjectID ObjectID { get; set; }
 
 		public override string ToString()

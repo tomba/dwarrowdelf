@@ -6,11 +6,9 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public struct ObjectID : IEquatable<ObjectID>
 	{
-		[DataMember]
 		readonly int m_value;
 
 		public static readonly ObjectID NullObjectID = new ObjectID(0);

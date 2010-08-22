@@ -193,15 +193,11 @@ namespace MyGame
 		NumColors,
 	}
 
-	[DataContract]
 	[Serializable]
 	public struct GameColorRGB : IEquatable<GameColorRGB>
 	{
-		[DataMember(Name = "R")]
 		readonly byte m_r;
-		[DataMember(Name = "G")]
 		readonly byte m_g;
-		[DataMember(Name = "B")]
 		readonly byte m_b;
 
 		static GameColorRGB[] s_rgbArray;

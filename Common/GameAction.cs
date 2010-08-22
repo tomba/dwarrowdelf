@@ -6,24 +6,26 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public abstract class GameAction
 	{
-		[DataMember]
 		public ObjectID ActorObjectID { get; set; }
-		[DataMember]
 		public int TransactionID { get; set; }
 
-		public int UserID { get; set; }
-		public int TicksLeft { get; set; }
+		[NonSerialized]
+		int m_userId;
+
+		[NonSerialized]
+		int m_ticksLeft;
+
+		public int UserID { get { return m_userId; } set { m_userId = value; } }
+		public int TicksLeft { get { return m_ticksLeft; } set { m_ticksLeft = value; } }
 
 		public GameAction()
 		{
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class NopAction : GameAction
 	{
@@ -37,11 +39,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MoveAction : GameAction
 	{
-		[DataMember]
 		public Direction Direction { get; set; }
 
 		public MoveAction(Direction direction)
@@ -55,11 +55,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class WaitAction : GameAction
 	{
-		[DataMember]
 		public int WaitTicks { get; set; }
 
 		public WaitAction(int ticks)
@@ -73,11 +71,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class DropAction : GameAction
 	{
-		[DataMember]
 		public ObjectID[] ItemObjectIDs { get; set; }
 
 		public DropAction(IEnumerable<IIdentifiable> items)
@@ -92,11 +88,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class GetAction : GameAction
 	{
-		[DataMember]
 		public ObjectID[] ItemObjectIDs { get; set; }
 
 		public GetAction(IEnumerable<IIdentifiable> items)
@@ -111,11 +105,9 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class MineAction : GameAction
 	{
-		[DataMember]
 		public Direction Direction { get; set; }
 
 		public MineAction(Direction dir)
@@ -129,14 +121,11 @@ namespace MyGame
 		}
 	}
 
-	[DataContract]
 	[Serializable]
 	public class BuildItemAction : GameAction
 	{
-		// [DataMember]
 		// public object type etc
 
-		[DataMember]
 		public ObjectID[] SourceObjectIDs { get; set; }
 
 		public BuildItemAction(IEnumerable<IIdentifiable> sourceItems)

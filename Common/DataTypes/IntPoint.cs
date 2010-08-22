@@ -6,13 +6,10 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public struct IntPoint : IEquatable<IntPoint>
 	{
-		[DataMember(Name = "X")]
 		readonly int m_x;
-		[DataMember(Name = "Y")]
 		readonly int m_y;
 
 		public int X { get { return m_x; } }

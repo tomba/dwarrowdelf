@@ -6,21 +6,14 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
-	[DataContract]
 	[Serializable]
 	public struct IntCuboid
 	{
-		[DataMember(Name = "X")]
 		readonly int m_x;
-		[DataMember(Name = "Y")]
 		readonly int m_y;
-		[DataMember(Name = "Z")]
 		readonly int m_z;
-		[DataMember(Name = "Width")]
 		readonly int m_width;
-		[DataMember(Name = "Height")]
 		readonly int m_height;
-		[DataMember(Name = "Depth")]
 		readonly int m_depth;
 
 		public int X { get { return m_x; } }
