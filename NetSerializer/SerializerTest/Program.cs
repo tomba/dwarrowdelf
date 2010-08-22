@@ -32,10 +32,25 @@ namespace NetSerializer
 			Console.ReadLine();
 		}
 
-		const int NUMITEMS = 1000;
+		const int NUMITEMS = 100;
 		static object[] CreateObjects()
 		{
 			List<Message> list = new List<Message>();
+
+			{
+				const int m = 4;
+				var arr = new Message[NUMITEMS];
+				for (int i = 0; i < arr.Length; ++i)
+					arr[i] = new NonSerMessage()
+					{
+						Byte = (byte)(i * m),
+						Short = (short)(i * m + 1),
+						Int = i * m + 2,
+						Bool = i % 2 == 0,
+						String = (i * m + 3).ToString()
+					};
+				list.Add(new ArrayMessage() { Array = arr });
+			}
 
 			{
 				const int m = 4;
@@ -74,33 +89,60 @@ namespace NetSerializer
 		{
 			const int m = 4;
 
-			if (obs.Length != 2)
+			if (obs.Length != 3)
 				throw new Exception();
 
-			var msg1 = (ArrayMessage)obs[0];
-			if (msg1.Array.Length != NUMITEMS)
-				throw new Exception();
-			for (int i = 0; i < NUMITEMS; ++i)
 			{
-				var msg = (BasicMessage)msg1.Array[i];
-
-				if (msg.Byte != (byte)(i * m))
+				var msg1 = (ArrayMessage)obs[0];
+				if (msg1.Array.Length != NUMITEMS)
 					throw new Exception();
+				for (int i = 0; i < NUMITEMS; ++i)
+				{
+					var msg = (NonSerMessage)msg1.Array[i];
 
-				if (msg.Short != (short)(i * m + 1))
-					throw new Exception();
+					if (msg.Byte != 0)
+						throw new Exception();
 
-				if (msg.Int != i * m + 2)
-					throw new Exception();
+					if (msg.Short != 0)
+						throw new Exception();
 
-				if (msg.Bool != (i % 2 == 0))
-					throw new Exception();
+					if (msg.Int != 0)
+						throw new Exception();
 
-				if (msg.String != (i * m + 3).ToString())
-					throw new Exception();
+					if (msg.Bool != false)
+						throw new Exception();
+
+					if (msg.String != null)
+						throw new Exception();
+				}
 			}
 
-			var msg2 = (StructMessage)obs[1];
+			{
+				var msg1 = (ArrayMessage)obs[1];
+				if (msg1.Array.Length != NUMITEMS)
+					throw new Exception();
+				for (int i = 0; i < NUMITEMS; ++i)
+				{
+					var msg = (BasicMessage)msg1.Array[i];
+
+					if (msg.Byte != (byte)(i * m))
+						throw new Exception();
+
+					if (msg.Short != (short)(i * m + 1))
+						throw new Exception();
+
+					if (msg.Int != i * m + 2)
+						throw new Exception();
+
+					if (msg.Bool != (i % 2 == 0))
+						throw new Exception();
+
+					if (msg.String != (i * m + 3).ToString())
+						throw new Exception();
+				}
+			}
+
+			var msg2 = (StructMessage)obs[2];
 			if (msg2.Array.Length != NUMITEMS)
 				throw new Exception();
 			for (int i = 0; i < NUMITEMS; ++i)
@@ -129,6 +171,22 @@ namespace NetSerializer
 	class Message
 	{
 	}
+
+	[Serializable]
+	class NonSerMessage : Message
+	{
+		[NonSerialized]
+		public byte Byte;
+		[NonSerialized]
+		public short Short;
+		[NonSerialized]
+		public int Int;
+		[NonSerialized]
+		public bool Bool;
+		[NonSerialized]
+		public string String;
+	}
+
 
 	[Serializable]
 	class BasicMessage : Message

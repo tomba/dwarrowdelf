@@ -260,7 +260,15 @@ namespace NetSerializer
 
 		static FieldInfo[] GetFieldInfos(Type type)
 		{
-			var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			if ((type.Attributes & TypeAttributes.Serializable) == 0)
+				throw new Exception();
+
+			var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+				.Where(fi => (fi.Attributes & FieldAttributes.NotSerialized) == 0)
+				.ToArray();
+
+			// Sort the fields so that they are in the same order, regardless how Type.GetFields works
+			Array.Sort(fields, (a, b) => String.Compare(a.Name, b.Name));
 
 			if (type.BaseType == null)
 			{
