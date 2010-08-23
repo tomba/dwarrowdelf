@@ -541,7 +541,7 @@ namespace MyGame.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public override void SerializeTo(Action<Messages.Message> writer)
+		public override void SerializeTo(Action<Messages.ServerMessage> writer)
 		{
 			writer(new Messages.MapDataMessage()
 			{

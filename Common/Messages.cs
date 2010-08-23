@@ -12,17 +12,6 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class CompoundMessage : Message
-	{
-		public Message[] Messages { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("CompoundMessage");
-		}
-	}
-
-	[Serializable]
 	public abstract class ServerMessage : Message
 	{
 	}

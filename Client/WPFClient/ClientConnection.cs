@@ -44,7 +44,7 @@ namespace MyGame.Client
 
 	class ClientConnection
 	{
-		Dictionary<Type, Action<Message>> m_handlerMap = new Dictionary<Type, Action<Message>>();
+		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
 		int m_transactionNumber;
 
 		public ClientNetStatistics Stats { get; private set; }
@@ -69,7 +69,7 @@ namespace MyGame.Client
 			Send(new EnqueueActionMessage() { Action = action });
 		}
 
-		public void Send(Message msg)
+		public void Send(ClientMessage msg)
 		{
 			m_connection.Send(msg);
 
@@ -105,10 +105,10 @@ namespace MyGame.Client
 		protected void ReceiveMessage(Message msg)
 		{
 			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<Message>(DeliverMessage), msg);
+			app.Dispatcher.BeginInvoke(new Action<ServerMessage>(DeliverMessage), msg);
 		}
 
-		void DeliverMessage(Message msg)
+		void DeliverMessage(ServerMessage msg)
 		{
 			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
@@ -116,11 +116,11 @@ namespace MyGame.Client
 
 			//MyDebug.WriteLine("DeliverMessage {0}", msg);
 
-			Action<Message> f;
+			Action<ServerMessage> f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
-				f = WrapperGenerator.CreateHandlerWrapper<Message>("HandleMessage", t, this);
+				f = WrapperGenerator.CreateHandlerWrapper<ServerMessage>("HandleMessage", t, this);
 
 				if (f == null)
 					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
@@ -129,12 +129,6 @@ namespace MyGame.Client
 			}
 
 			f(msg);
-		}
-
-		void DeliverMessages(IEnumerable<Message> messages)
-		{
-			foreach (Message msg in messages)
-				DeliverMessage(msg);
 		}
 
 		public event Action LogOnEvent;
@@ -337,11 +331,6 @@ namespace MyGame.Client
 		void HandleMessage(EventMessage msg)
 		{
 			HandleEvents(msg.Event);
-		}
-
-		void HandleMessage(CompoundMessage msg)
-		{
-			DeliverMessages(msg.Messages);
 		}
 
 		void HandleEvents(Event @event)

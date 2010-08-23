@@ -70,7 +70,7 @@ namespace MyGame.Server
 		}
 
 		public abstract BaseGameObjectData Serialize();
-		public abstract void SerializeTo(Action<Messages.Message> writer);
+		public abstract void SerializeTo(Action<Messages.ServerMessage> writer);
 
 		static Dictionary<Type, List<PropertyDefinition>> s_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
 

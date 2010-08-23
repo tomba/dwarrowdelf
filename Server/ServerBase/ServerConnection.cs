@@ -37,7 +37,7 @@ namespace MyGame.Server
 
 		class InvokeInfo
 		{
-			public Action<Message> Action;
+			public Action<ClientMessage> Action;
 			public WorldInvokeStyle Style;
 		}
 
@@ -64,10 +64,10 @@ namespace MyGame.Server
 
 		class MyStream : Stream
 		{
-			Action<Messages.Message> m_sender;
+			Action<Messages.ServerMessage> m_sender;
 			MemoryStream m_stream = new MemoryStream();
 
-			public MyStream(Action<Messages.Message> sender)
+			public MyStream(Action<Messages.ServerMessage> sender)
 			{
 				m_sender = sender;
 			}
@@ -166,26 +166,28 @@ namespace MyGame.Server
 			m_connection = null;
 		}
 
-		void Send(Message msg)
+		void Send(ServerMessage msg)
 		{
 			m_connection.Send(msg);
 		}
 
-		void Send(IEnumerable<Message> msgs)
+		void Send(IEnumerable<ServerMessage> msgs)
 		{
 			foreach (var msg in msgs)
 				Send(msg);
 		}
 
-		void OnReceiveMessage(Message msg)
+		void OnReceiveMessage(Message m)
 		{
+			var msg = (ClientMessage)m;
+
 			InvokeInfo f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
 				System.Reflection.MethodInfo mi;
 				f = new InvokeInfo();
-				f.Action = WrapperGenerator.CreateHandlerWrapper<Message>("ReceiveMessage", t, this, out mi);
+				f.Action = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("ReceiveMessage", t, this, out mi);
 
 				if (f == null)
 					throw new Exception("Unknown Message");
@@ -633,7 +635,7 @@ namespace MyGame.Server
 		void SendNewTerrains(Dictionary<Environment, HashSet<IntPoint3D>> revealedLocations)
 		{
 			var msgs = revealedLocations.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (Messages.Message)new Messages.MapDataTerrainsListMessage()
+				Select(kvp => (Messages.ServerMessage)new Messages.MapDataTerrainsListMessage()
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
@@ -688,9 +690,9 @@ namespace MyGame.Server
 			Send(changeMsgs);
 		}
 
-		IEnumerable<Messages.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
+		IEnumerable<Messages.ServerMessage> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
 		{
-			IEnumerable<Messages.Message> msgs = new List<Messages.Message>();
+			IEnumerable<Messages.ServerMessage> msgs = new List<Messages.ServerMessage>();
 
 			if (!m_seeAll)
 			{
@@ -785,7 +787,7 @@ namespace MyGame.Server
 		}
 
 
-		public Messages.Message ChangeToMessage(Change change)
+		public Messages.ServerMessage ChangeToMessage(Change change)
 		{
 			if (change is ObjectMoveChange)
 			{
@@ -831,7 +833,7 @@ namespace MyGame.Server
 
 
 
-		static IEnumerable<Messages.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
+		static IEnumerable<Messages.ServerMessage> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
 		{
 			var msgs = revealedObs.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
 			return msgs;

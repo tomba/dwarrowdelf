@@ -518,7 +518,7 @@ namespace MyGame.Server
 			return data;
 		}
 
-		public override void SerializeTo(Action<Messages.Message> writer)
+		public override void SerializeTo(Action<Messages.ServerMessage> writer)
 		{
 			var msg = new Messages.ObjectDataMessage() { Object = Serialize() };
 			writer(msg);
