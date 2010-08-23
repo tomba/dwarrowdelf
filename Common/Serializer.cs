@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using MyGame.ClientMsgs;
+using MyGame.Messages;
 
 namespace MyGame
 {

@@ -51,7 +51,7 @@ namespace NetTest
 
 		void ConnectCallback()
 		{
-			var msg = new MyGame.ClientMsgs.MapDataTerrains()
+			var msg = new MyGame.Messages.MapDataTerrainsMessage()
 			{
 				Environment = new ObjectID(123),
 				Bounds = new IntCuboid(),
@@ -86,13 +86,13 @@ namespace NetTest
 		void Connection_NewConnectionEvent(Connection obj)
 		{
 			m_conn = obj;
-			m_conn.ReceiveEvent += new Action<MyGame.ClientMsgs.Message>(m_conn_ReceiveEvent);
+			m_conn.ReceiveEvent += new Action<MyGame.Messages.Message>(m_conn_ReceiveEvent);
 			m_sw = Stopwatch.StartNew();
 		}
 
 		int m_msgsReceived;
 
-		void m_conn_ReceiveEvent(MyGame.ClientMsgs.Message obj)
+		void m_conn_ReceiveEvent(MyGame.Messages.Message obj)
 		{
 			m_msgsReceived++;
 			if (m_msgsReceived < Program.NUM_MSGS)

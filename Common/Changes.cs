@@ -105,7 +105,7 @@ namespace MyGame
 		{
 		}
 
-		public ClientMsgs.Message ObjectData { get; set; }
+		public Messages.Message ObjectData { get; set; }
 	}
 
 	public class PropertyChange : ObjectChange

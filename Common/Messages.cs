@@ -4,11 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-/*
- * Classes to deliver data to client
- */
-
-namespace MyGame.ClientMsgs
+namespace MyGame.Messages
 {
 	[Serializable]
 	public abstract class Message
@@ -16,58 +12,58 @@ namespace MyGame.ClientMsgs
 	}
 
 	[Serializable]
-	public class IronPythonCommand : Message
+	public class IPCommandMessage : Message
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class IronPythonOutput : Message
+	public class IPOutputMessage : Message
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnRequest : Message
+	public class LogOnRequestMessage : Message
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnReply : Message
+	public class LogOnReplyMessage : Message
 	{
 		public int UserID { get; set; }
 		public bool IsSeeAll { get; set; }
 	}
 
 	[Serializable]
-	public class LogOffRequest : Message
+	public class LogOffRequestMessage : Message
 	{
 	}
 
 	[Serializable]
-	public class LogOffReply : Message
+	public class LogOffReplyMessage : Message
 	{
 	}
 
 	[Serializable]
-	public class LogOnCharRequest : Message
+	public class LogOnCharRequestMessage : Message
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnCharReply : Message
+	public class LogOnCharReplyMessage : Message
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharRequest : Message
+	public class LogOffCharRequestMessage : Message
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharReply : Message
+	public class LogOffCharReplyMessage : Message
 	{
 	}
 
@@ -122,7 +118,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[Serializable]
-	public abstract class BaseObjectData : Message
+	public abstract class BaseObjectDataMessage : Message
 	{
 		public ObjectID ObjectID { get; set; }
 		public IntPoint3D Location { get; set; }
@@ -133,25 +129,25 @@ namespace MyGame.ClientMsgs
 
 	/* Item in inventory or floor */
 	[Serializable]
-	public class ItemData : BaseObjectData
+	public class ItemDataMessage : BaseObjectDataMessage
 	{
 		public override string ToString()
 		{
-			return String.Format("ItemData {0}", this.ObjectID);
+			return String.Format("ItemDataMessage {0}", this.ObjectID);
 		}
 	}
 
 	[Serializable]
-	public class LivingData : BaseObjectData
+	public class LivingDataMessage : BaseObjectDataMessage
 	{
 		public override string ToString()
 		{
-			return String.Format("LivingData {0}", this.ObjectID);
+			return String.Format("LivingDataMessage {0}", this.ObjectID);
 		}
 	}
 
 	[Serializable]
-	public class PropertyData : Message
+	public class PropertyDataMessage : Message
 	{
 		public ObjectID ObjectID { get; set; }
 		public PropertyID PropertyID { get; set; }
@@ -159,12 +155,12 @@ namespace MyGame.ClientMsgs
 
 		public override string ToString()
 		{
-			return String.Format("PropertyData {0} {1}: {2}", this.ObjectID, this.PropertyID, this.Value);
+			return String.Format("PropertyDataMessage {0} {1}: {2}", this.ObjectID, this.PropertyID, this.Value);
 		}
 	}
 
 	[Serializable]
-	public class MapData : Message
+	public class MapDataMessage : Message
 	{
 		public ObjectID Environment { get; set; }
 		public VisibilityMode VisibilityMode { get; set; }
@@ -172,7 +168,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[Serializable]
-	public class MapDataTerrains : Message
+	public class MapDataTerrainsMessage : Message
 	{
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
@@ -180,33 +176,33 @@ namespace MyGame.ClientMsgs
 	}
 
 	[Serializable]
-	public class MapDataTerrainsList : Message
+	public class MapDataTerrainsListMessage : Message
 	{
 		public ObjectID Environment { get; set; }
 		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("TerrainData({0} tiles)", this.TileDataList.Count());
+			return String.Format("MapDataTerrainsListMessage({0} tiles)", this.TileDataList.Count());
 		}
 	}
 
 	[Serializable]
-	public class MapDataObjects : Message
+	public class MapDataObjectsMessage : Message
 	{
 		public ObjectID Environment { get; set; }
 		public Message[] ObjectData { get; set; }
 	}
 
 	[Serializable]
-	public class MapDataBuildings : Message
+	public class MapDataBuildingsMessage : Message
 	{
 		public ObjectID Environment { get; set; }
-		public BuildingData[] BuildingData { get; set; }
+		public BuildingDataMessage[] BuildingData { get; set; }
 	}
 
 	[Serializable]
-	public class ObjectMove : Message
+	public class ObjectMoveMessage : Message
 	{
 		public ObjectID ObjectID { get; set; }
 		public ObjectID TargetEnvID { get; set; }
@@ -214,7 +210,7 @@ namespace MyGame.ClientMsgs
 		public ObjectID SourceEnvID { get; set; }
 		public IntPoint3D SourceLocation { get; set; }
 
-		public ObjectMove(IIdentifiable target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
+		public ObjectMoveMessage(IIdentifiable target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
 		{
 			this.ObjectID = target.ObjectID;
 			this.SourceEnvID = fromID;
@@ -225,7 +221,7 @@ namespace MyGame.ClientMsgs
 
 		public override string ToString()
 		{
-			return String.Format("ObjectMove {0} {1}/{2}->{3}/{4}", this.ObjectID,
+			return String.Format("ObjectMoveMessage {0} {1}/{2}->{3}/{4}", this.ObjectID,
 				this.SourceEnvID, this.SourceLocation, this.TargetEnvID, this.TargetLocation);
 		}
 	}
@@ -258,7 +254,7 @@ namespace MyGame.ClientMsgs
 	}
 
 	[Serializable]
-	public class BuildingData : Message
+	public class BuildingDataMessage : Message
 	{
 		public ObjectID ObjectID { get; set; }
 		public BuildingID ID { get; set; }
@@ -268,18 +264,18 @@ namespace MyGame.ClientMsgs
 
 		public override string ToString()
 		{
-			return String.Format("BuildingData");
+			return String.Format("BuildingDataMessage");
 		}
 	}
 
 	[Serializable]
-	public class ControllablesData : Message
+	public class ControllablesDataMessage : Message
 	{
 		public ObjectID[] Controllables { get; set; }
 
 		public override string ToString()
 		{
-			return "ControllablesData";
+			return "ControllablesDataMessage";
 		}
 	}
 }

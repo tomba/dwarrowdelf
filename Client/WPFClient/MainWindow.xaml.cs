@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Diagnostics;
 using System.ComponentModel;
-using MyGame.ClientMsgs;
+using MyGame.Messages;
 
 namespace MyGame.Client
 {
@@ -158,13 +158,13 @@ namespace MyGame.Client
 			{
 				e.Cancel = true;
 				m_closing = true;
-				conn.Send(new ClientMsgs.LogOffCharRequest());
+				conn.Send(new Messages.LogOffCharRequestMessage());
 			}
 			else if (conn.IsUserConnected)
 			{
 				e.Cancel = true;
 				m_closing = true;
-				conn.Send(new ClientMsgs.LogOffRequest());
+				conn.Send(new Messages.LogOffRequestMessage());
 			}
 		}
 
@@ -592,7 +592,7 @@ namespace MyGame.Client
 			else
 				throw new Exception();
 
-			var msg = new ClientMsgs.CreateBuildingMessage() { MapID = env.ObjectID, Area = r, Z = z, ID = id };
+			var msg = new Messages.CreateBuildingMessage() { MapID = env.ObjectID, Area = r, Z = z, ID = id };
 			GameData.Data.Connection.Send(msg);
 		}
 
@@ -688,7 +688,7 @@ namespace MyGame.Client
 			var app = System.Windows.Application.Current;
 			app.Dispatcher.BeginInvoke(new Action(delegate
 				{
-					GameData.Data.Connection.Send(new ClientMsgs.LogOnRequest() { Name = "tomba" });
+					GameData.Data.Connection.Send(new Messages.LogOnRequestMessage() { Name = "tomba" });
 				}
 				), null);
 		}
@@ -696,19 +696,19 @@ namespace MyGame.Client
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.Connection.IsUserConnected)
-				GameData.Data.Connection.Send(new LogOffRequest());
+				GameData.Data.Connection.Send(new LogOffRequestMessage());
 		}
 
 		private void LogOnChar_Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.Connection.IsUserConnected && !GameData.Data.Connection.IsCharConnected)
-				GameData.Data.Connection.Send(new LogOnCharRequest() { Name = "tomba" });
+				GameData.Data.Connection.Send(new LogOnCharRequestMessage() { Name = "tomba" });
 		}
 
 		private void LogOffChar_Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.Connection.IsCharConnected)
-				GameData.Data.Connection.Send(new LogOffCharRequest());
+				GameData.Data.Connection.Send(new LogOffCharRequestMessage());
 		}
 
 		void OnLoggedOn()
@@ -731,7 +731,7 @@ namespace MyGame.Client
 			if (m_closing)
 			{
 				var conn = GameData.Data.Connection;
-				conn.Send(new ClientMsgs.LogOffRequest());
+				conn.Send(new Messages.LogOffRequestMessage());
 			}
 		}
 
@@ -783,7 +783,7 @@ namespace MyGame.Client
 				return;
 			}
 
-			var msg = new IronPythonCommand() { Text = str };
+			var msg = new IPCommandMessage() { Text = str };
 			GameData.Data.Connection.Send(msg);
 		}
 

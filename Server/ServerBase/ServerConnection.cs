@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using MyGame.ClientMsgs;
+using MyGame.Messages;
 using System.IO;
 
 namespace MyGame.Server
@@ -64,10 +64,10 @@ namespace MyGame.Server
 
 		class MyStream : Stream
 		{
-			Action<ClientMsgs.Message> m_sender;
+			Action<Messages.Message> m_sender;
 			MemoryStream m_stream = new MemoryStream();
 
-			public MyStream(Action<ClientMsgs.Message> sender)
+			public MyStream(Action<Messages.Message> sender)
 			{
 				m_sender = sender;
 			}
@@ -84,7 +84,7 @@ namespace MyGame.Server
 				var text = System.Text.Encoding.Unicode.GetString(m_stream.GetBuffer(), 0, (int)m_stream.Position);
 				m_stream.Position = 0;
 				m_stream.SetLength(0);
-				var msg = new ClientMsgs.IronPythonOutput() { Text = text };
+				var msg = new Messages.IPOutputMessage() { Text = text };
 				m_sender(msg);
 			}
 
@@ -223,7 +223,7 @@ namespace MyGame.Server
 
 
 		[WorldInvoke(WorldInvokeStyle.Normal)]
-		void ReceiveMessage(LogOnRequest msg)
+		void ReceiveMessage(LogOnRequestMessage msg)
 		{
 			string name = msg.Name;
 
@@ -231,7 +231,7 @@ namespace MyGame.Server
 
 			m_userID = s_userIDs++;
 
-			Send(new ClientMsgs.LogOnReply() { UserID = m_userID, IsSeeAll = m_seeAll });
+			Send(new Messages.LogOnReplyMessage() { UserID = m_userID, IsSeeAll = m_seeAll });
 
 			if (m_seeAll)
 			{
@@ -246,12 +246,12 @@ namespace MyGame.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(LogOffRequest msg)
+		void ReceiveMessage(LogOffRequestMessage msg)
 		{
 			MyDebug.WriteLine("Logout");
 
 			if (m_charLoggedIn)
-				ReceiveMessage(new LogOffCharRequest()); // XXX
+				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
 
 			m_scriptScope.RemoveVariable("world");
 
@@ -260,7 +260,7 @@ namespace MyGame.Server
 
 			m_userLoggedIn = false;
 
-			Send(new ClientMsgs.LogOffReply());
+			Send(new Messages.LogOffReplyMessage());
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
@@ -348,7 +348,7 @@ namespace MyGame.Server
 
 		/* functions for livings */
 		[WorldInvoke(WorldInvokeStyle.Normal)]
-		void ReceiveMessage(LogOnCharRequest msg)
+		void ReceiveMessage(LogOnCharRequestMessage msg)
 		{
 			string name = msg.Name;
 
@@ -428,12 +428,12 @@ namespace MyGame.Server
 #endif
 
 			m_charLoggedIn = true;
-			Send(new ClientMsgs.LogOnCharReply());
-			Send(new ClientMsgs.ControllablesData() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			Send(new Messages.LogOnCharReplyMessage());
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(LogOffCharRequest msg)
+		void ReceiveMessage(LogOffCharRequestMessage msg)
 		{
 			MyDebug.WriteLine("LogOffChar");
 
@@ -446,8 +446,8 @@ namespace MyGame.Server
 
 			m_controllables.Clear();
 
-			Send(new ClientMsgs.ControllablesData() { Controllables = new ObjectID[0] });
-			Send(new ClientMsgs.LogOffCharReply());
+			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
+			Send(new Messages.LogOffCharReplyMessage());
 			m_charLoggedIn = false;
 		}
 
@@ -477,7 +477,7 @@ namespace MyGame.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(IronPythonCommand msg)
+		void ReceiveMessage(IPCommandMessage msg)
 		{
 			MyDebug.WriteLine("IronPythonCommand");
 
@@ -492,7 +492,7 @@ namespace MyGame.Server
 			catch (Exception e)
 			{
 				var str = "IP error:\n" + e.Message + "\n";
-				Send(new IronPythonOutput() { Text = str });
+				Send(new IPOutputMessage() { Text = str });
 			}
 		}
 
@@ -620,7 +620,7 @@ namespace MyGame.Server
 				}
 				else
 				{
-					var msg = new ClientMsgs.MapData()
+					var msg = new Messages.MapDataMessage()
 					{
 						Environment = env.ObjectID,
 						VisibilityMode = env.VisibilityMode,
@@ -633,7 +633,7 @@ namespace MyGame.Server
 		void SendNewTerrains(Dictionary<Environment, HashSet<IntPoint3D>> revealedLocations)
 		{
 			var msgs = revealedLocations.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (ClientMsgs.Message)new ClientMsgs.MapDataTerrainsList()
+				Select(kvp => (Messages.Message)new Messages.MapDataTerrainsListMessage()
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
@@ -656,7 +656,7 @@ namespace MyGame.Server
 		void HandleEvents(IEnumerable<Event> events)
 		{
 			events = events.Where(EventFilter);
-			var msgs = events.Select(e => new ClientMsgs.EventMessage(e));
+			var msgs = events.Select(e => new Messages.EventMessage(e));
 			Send(msgs);
 		}
 
@@ -688,9 +688,9 @@ namespace MyGame.Server
 			Send(changeMsgs);
 		}
 
-		IEnumerable<ClientMsgs.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
+		IEnumerable<Messages.Message> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
 		{
-			IEnumerable<ClientMsgs.Message> msgs = new List<ClientMsgs.Message>();
+			IEnumerable<Messages.Message> msgs = new List<Messages.Message>();
 
 			if (!m_seeAll)
 			{
@@ -785,18 +785,18 @@ namespace MyGame.Server
 		}
 
 
-		public ClientMsgs.Message ChangeToMessage(Change change)
+		public Messages.Message ChangeToMessage(Change change)
 		{
 			if (change is ObjectMoveChange)
 			{
 				ObjectMoveChange mc = (ObjectMoveChange)change;
-				return new ClientMsgs.ObjectMove(mc.Object, mc.SourceMapID, mc.SourceLocation,
+				return new Messages.ObjectMoveMessage(mc.Object, mc.SourceMapID, mc.SourceLocation,
 					mc.DestinationMapID, mc.DestinationLocation);
 			}
 			else if (change is MapChange)
 			{
 				MapChange mc = (MapChange)change;
-				return new ClientMsgs.MapDataTerrainsList()
+				return new Messages.MapDataTerrainsListMessage()
 				{
 					Environment = mc.MapID,
 					TileDataList = new Tuple<IntPoint3D, TileData>[]
@@ -818,12 +818,12 @@ namespace MyGame.Server
 			}
 			else if (change is ObjectDestructedChange)
 			{
-				return new ClientMsgs.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
+				return new Messages.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
 			}
 			else if (change is PropertyChange)
 			{
 				var c = (PropertyChange)change;
-				return new ClientMsgs.PropertyData() { ObjectID = c.ObjectID, PropertyID = c.PropertyID, Value = c.Value };
+				return new Messages.PropertyDataMessage() { ObjectID = c.ObjectID, PropertyID = c.PropertyID, Value = c.Value };
 			}
 
 			throw new Exception("Unknown Change type");
@@ -831,7 +831,7 @@ namespace MyGame.Server
 
 
 
-		static IEnumerable<ClientMsgs.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
+		static IEnumerable<Messages.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
 		{
 			var msgs = revealedObs.Select(o => o.Serialize());
 			return msgs;

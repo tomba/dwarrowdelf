@@ -69,8 +69,8 @@ namespace MyGame.Server
 			}
 		}
 
-		public abstract ClientMsgs.Message Serialize();
-		public abstract void SerializeTo(Action<ClientMsgs.Message> writer);
+		public abstract Messages.Message Serialize();
+		public abstract void SerializeTo(Action<Messages.Message> writer);
 
 		static Dictionary<Type, List<PropertyDefinition>> s_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
 

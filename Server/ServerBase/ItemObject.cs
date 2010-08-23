@@ -29,9 +29,9 @@ namespace MyGame.Server
 			set { SetValue(RefreshmentValueProperty, value); }
 		}
 
-		public override ClientMsgs.Message Serialize()
+		public override Messages.Message Serialize()
 		{
-			var data = new ClientMsgs.ItemData();
+			var data = new Messages.ItemDataMessage();
 			data.ObjectID = this.ObjectID;
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
@@ -39,7 +39,7 @@ namespace MyGame.Server
 			return data;
 		}
 
-		public override void SerializeTo(Action<ClientMsgs.Message> writer)
+		public override void SerializeTo(Action<Messages.Message> writer)
 		{
 			var msg = Serialize();
 			writer(msg);

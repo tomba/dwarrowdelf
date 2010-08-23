@@ -541,9 +541,9 @@ namespace MyGame.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public override void SerializeTo(Action<ClientMsgs.Message> writer)
+		public override void SerializeTo(Action<Messages.Message> writer)
 		{
-			writer(new ClientMsgs.MapData()
+			writer(new Messages.MapDataMessage()
 			{
 				Environment = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
@@ -562,7 +562,7 @@ namespace MyGame.Server
 					arr[idx] = m_tileGrid.GetTileData(p);
 				}
 
-				writer(new ClientMsgs.MapDataTerrains()
+				writer(new Messages.MapDataTerrainsMessage()
 				{
 					Environment = this.ObjectID,
 					Bounds = bounds,
@@ -574,7 +574,7 @@ namespace MyGame.Server
 				var plane = bounds.Plane;
 				// Send every 2D plane in one message
 				var arr = new TileData[plane.Area];
-				var msg = new ClientMsgs.MapDataTerrains() { Environment = this.ObjectID };
+				var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
 
 				for (int z = bounds.Z1; z < bounds.Z2; ++z)
 				{
@@ -595,7 +595,7 @@ namespace MyGame.Server
 			{
 				// Send every line in one message
 				var arr = new TileData[this.Width];
-				var msg = new ClientMsgs.MapDataTerrains() { Environment = this.ObjectID };
+				var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
 
 				for (int z = bounds.Z1; z < bounds.Z2; ++z)
 				{
@@ -617,7 +617,7 @@ namespace MyGame.Server
 
 			for (int z = bounds.Z1; z < bounds.Z2; ++z)
 			{
-				var msg = new ClientMsgs.MapDataObjects()
+				var msg = new Messages.MapDataObjectsMessage()
 				{
 					Environment = this.ObjectID,
 					ObjectData = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
@@ -627,14 +627,14 @@ namespace MyGame.Server
 			}
 
 			// this may not need dividing, perhaps
-			writer(new ClientMsgs.MapDataBuildings()
+			writer(new Messages.MapDataBuildingsMessage()
 			{
 				Environment = this.ObjectID,
-				BuildingData = m_buildings.Select(b => (ClientMsgs.BuildingData)b.Serialize()).ToArray(),
+				BuildingData = m_buildings.Select(b => (Messages.BuildingDataMessage)b.Serialize()).ToArray(),
 			});
 		}
 
-		public override ClientMsgs.Message Serialize()
+		public override Messages.Message Serialize()
 		{
 			throw new Exception();
 		}

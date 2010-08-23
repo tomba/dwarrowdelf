@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using MyGame.ClientMsgs;
+using MyGame.Messages;
 using System.Collections.ObjectModel;
 
 namespace MyGame.Client
@@ -231,7 +231,7 @@ namespace MyGame.Client
 			m_buildings.Add(building);
 		}
 
-		public void SetBuildings(IEnumerable<ClientMsgs.BuildingData> buildings)
+		public void SetBuildings(IEnumerable<Messages.BuildingDataMessage> buildings)
 		{
 			this.Version += 1;
 

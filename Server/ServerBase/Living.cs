@@ -434,10 +434,10 @@ namespace MyGame.Server
 		}
 
 
-		public ClientMsgs.Message SerializeInventory()
+		public Messages.Message SerializeInventory()
 		{
 			var items = this.Inventory.Select(o => o.Serialize()).ToArray();
-			return new ClientMsgs.CompoundMessage() { Messages = items };
+			return new Messages.CompoundMessage() { Messages = items };
 		}
 
 		// Actor stuff
@@ -514,9 +514,9 @@ namespace MyGame.Server
 				return GetVisibleLocationsSimpleFOV();
 		}
 
-		public override ClientMsgs.Message Serialize()
+		public override Messages.Message Serialize()
 		{
-			var data = new ClientMsgs.LivingData();
+			var data = new Messages.LivingDataMessage();
 			data.ObjectID = this.ObjectID;
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
@@ -524,7 +524,7 @@ namespace MyGame.Server
 			return data;
 		}
 
-		public override void SerializeTo(Action<ClientMsgs.Message> writer)
+		public override void SerializeTo(Action<Messages.Message> writer)
 		{
 			var msg = Serialize();
 			writer(msg);

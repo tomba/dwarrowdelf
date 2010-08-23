@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
-using MyGame.ClientMsgs;
+using MyGame.Messages;
 using System.Runtime.Serialization;
 using System.IO;
 using System.ComponentModel;
@@ -137,7 +137,7 @@ namespace MyGame.Client
 
 		public event Action LogOnEvent;
 
-		void HandleMessage(LogOnReply msg)
+		void HandleMessage(LogOnReplyMessage msg)
 		{
 			this.IsUserConnected = true;
 
@@ -154,7 +154,7 @@ namespace MyGame.Client
 
 		public event Action LogOffEvent;
 
-		void HandleMessage(LogOffReply msg)
+		void HandleMessage(LogOffReplyMessage msg)
 		{
 			this.IsUserConnected = false;
 
@@ -166,7 +166,7 @@ namespace MyGame.Client
 
 		public event Action LogOnCharEvent;
 
-		void HandleMessage(LogOnCharReply msg)
+		void HandleMessage(LogOnCharReplyMessage msg)
 		{
 			this.IsCharConnected = true;
 
@@ -174,7 +174,7 @@ namespace MyGame.Client
 				LogOnCharEvent();
 		}
 
-		void HandleMessage(ControllablesData msg)
+		void HandleMessage(ControllablesDataMessage msg)
 		{
 			GameData.Data.World.Controllables.Clear();
 
@@ -189,7 +189,7 @@ namespace MyGame.Client
 
 		public event Action LogOffCharEvent;
 
-		void HandleMessage(LogOffCharReply msg)
+		void HandleMessage(LogOffCharReplyMessage msg)
 		{
 			this.IsCharConnected = false;
 
@@ -201,7 +201,7 @@ namespace MyGame.Client
 			//App.MainWindow.FollowObject = null;
 		}
 
-		void HandleMessage(ObjectMove msg)
+		void HandleMessage(ObjectMoveMessage msg)
 		{
 			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
 
@@ -221,7 +221,7 @@ namespace MyGame.Client
 			ob.MoveTo(env, msg.TargetLocation);
 		}
 
-		void HandleMessage(MapData msg)
+		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 
@@ -242,7 +242,7 @@ namespace MyGame.Client
 			env.VisibilityMode = msg.VisibilityMode;
 		}
 
-		void HandleMessage(MapDataTerrains msg)
+		void HandleMessage(MapDataTerrainsMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
@@ -250,7 +250,7 @@ namespace MyGame.Client
 			env.SetTerrains(msg.Bounds, msg.TerrainData);
 		}
 
-		void HandleMessage(MapDataTerrainsList msg)
+		void HandleMessage(MapDataTerrainsListMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
@@ -259,7 +259,7 @@ namespace MyGame.Client
 			env.SetTerrains(msg.TileDataList);
 		}
 
-		void HandleMessage(MapDataObjects msg)
+		void HandleMessage(MapDataObjectsMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
@@ -267,7 +267,7 @@ namespace MyGame.Client
 			DeliverMessages(msg.ObjectData);
 		}
 
-		void HandleMessage(MapDataBuildings msg)
+		void HandleMessage(MapDataBuildingsMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
@@ -275,7 +275,7 @@ namespace MyGame.Client
 			env.SetBuildings(msg.BuildingData);
 		}
 
-		void HandleMessage(BuildingData msg)
+		void HandleMessage(BuildingDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 
@@ -304,7 +304,7 @@ namespace MyGame.Client
 			}
 		}
 
-		void HandleMessage(LivingData msg)
+		void HandleMessage(LivingDataMessage msg)
 		{
 			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
 
@@ -323,7 +323,7 @@ namespace MyGame.Client
 			ob.MoveTo(env, msg.Location);
 		}
 
-		void HandleMessage(PropertyData msg)
+		void HandleMessage(PropertyDataMessage msg)
 		{
 			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
 
@@ -333,7 +333,7 @@ namespace MyGame.Client
 			ob.SetProperty(msg.PropertyID, msg.Value);
 		}
 
-		void HandleMessage(ItemData msg)
+		void HandleMessage(ItemDataMessage msg)
 		{
 			var ob = GameData.Data.World.FindObject<ItemObject>(msg.ObjectID);
 
@@ -359,7 +359,7 @@ namespace MyGame.Client
 			ob.Destruct();
 		}
 
-		void HandleMessage(IronPythonOutput msg)
+		void HandleMessage(IPOutputMessage msg)
 		{
 			App.MainWindow.outputTextBox.AppendText(msg.Text);
 			App.MainWindow.outputTextBox.ScrollToEnd();
