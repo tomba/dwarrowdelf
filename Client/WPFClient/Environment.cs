@@ -228,22 +228,9 @@ namespace MyGame.Client
 		{
 			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
 
-			m_buildings.Add(building);
-		}
-
-		public void SetBuildings(IEnumerable<BuildingData> buildings)
-		{
 			this.Version += 1;
 
-			var list = buildings.Select(bd => new BuildingObject(this.World, bd.ObjectID, bd.ID)
-			{
-				Area = bd.Area,
-				Z = bd.Z,
-				Environment = this,
-			});
-
-			foreach (var b in list)
-				AddBuilding(b);
+			m_buildings.Add(building);
 		}
 
 		public BuildingObject GetBuildingAt(IntPoint3D p)

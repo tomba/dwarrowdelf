@@ -32,6 +32,8 @@ namespace MyGame.Client
 			this.Destructed = true;
 			this.World.RemoveObject(this);
 		}
+
+		public abstract void Deserialize(BaseGameObjectData data);
 	}
 
 	class ClientGameObject : BaseGameObject
@@ -242,6 +244,19 @@ namespace MyGame.Client
 		public Environment Environment
 		{
 			get { return this.Parent as Environment; }
+		}
+
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (GameObjectData)_data;
+
+			SetProperties(data.Properties);
+
+			ClientGameObject env = null;
+			if (data.Environment != ObjectID.NullObjectID)
+				env = this.World.FindObject<ClientGameObject>(data.Environment);
+
+			MoveTo(env, data.Location);
 		}
 
 		public override string ToString()

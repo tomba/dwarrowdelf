@@ -127,6 +127,12 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
+	public class ObjectDataArrayMessage : ServerMessage
+	{
+		public BaseGameObjectData[] ObjectData { get; set; }
+	}
+
+	[Serializable]
 	public class PropertyDataMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
@@ -165,20 +171,6 @@ namespace MyGame.Messages
 		{
 			return String.Format("MapDataTerrainsListMessage({0} tiles)", this.TileDataList.Count());
 		}
-	}
-
-	[Serializable]
-	public class MapDataObjectsMessage : ServerMessage
-	{
-		public ObjectID Environment { get; set; }
-		public BaseGameObjectData[] ObjectData { get; set; }
-	}
-
-	[Serializable]
-	public class MapDataBuildingsMessage : ServerMessage
-	{
-		public ObjectID Environment { get; set; }
-		public BuildingData[] BuildingData { get; set; }
 	}
 
 	[Serializable]

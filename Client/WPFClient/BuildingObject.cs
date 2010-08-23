@@ -22,11 +22,39 @@ namespace MyGame.Client
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
 
-		public BuildingObject(World world, ObjectID objectID, BuildingID id)
+		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			this.BuildingInfo = Buildings.GetBuildingInfo(id);
 			world.TickIncreased += OnTick;
+		}
+
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (BuildingData)_data;
+
+			var env = this.World.FindObject<Environment>(data.Environment);
+
+			if (env.Buildings.Contains(this.ObjectID))
+			{
+				/* this shouldn't happen, as building's data are currently never modified.
+				 * however, we get this from object creation also. for now, just check if the
+				 * data are the same, and go on. */
+				var building = env.Buildings[data.ObjectID];
+
+				if (building.Area != data.Area ||
+					building.Z != data.Z ||
+					building.Environment != env)
+					throw new Exception();
+
+				return;
+			}
+
+			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
+			this.Area = data.Area;
+			this.Z = data.Z;
+			this.Environment = env;
+
+			env.AddBuilding(this);
 		}
 
 		public bool Contains(IntPoint3D point)

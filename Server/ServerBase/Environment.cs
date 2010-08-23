@@ -617,9 +617,8 @@ namespace MyGame.Server
 
 			for (int z = bounds.Z1; z < bounds.Z2; ++z)
 			{
-				var msg = new Messages.MapDataObjectsMessage()
+				var msg = new Messages.ObjectDataArrayMessage()
 				{
-					Environment = this.ObjectID,
 					ObjectData = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
 				};
 
@@ -627,10 +626,9 @@ namespace MyGame.Server
 			}
 
 			// this may not need dividing, perhaps
-			writer(new Messages.MapDataBuildingsMessage()
+			writer(new Messages.ObjectDataArrayMessage()
 			{
-				Environment = this.ObjectID,
-				BuildingData = m_buildings.Select(b => (BuildingData)b.Serialize()).ToArray(),
+				ObjectData = m_buildings.Select(b => b.Serialize()).ToArray(),
 			});
 		}
 

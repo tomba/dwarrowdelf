@@ -222,6 +222,11 @@ namespace MyGame.Client
 			HandleObject(msg.Object);
 		}
 
+		void HandleMessage(ObjectDataArrayMessage msg)
+		{
+			HandleObjects(msg.ObjectData);
+		}
+
 		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
@@ -258,51 +263,6 @@ namespace MyGame.Client
 				throw new Exception();
 			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
 			env.SetTerrains(msg.TileDataList);
-		}
-
-		void HandleMessage(MapDataObjectsMessage msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			HandleObjects(msg.ObjectData);
-		}
-
-		void HandleMessage(MapDataBuildingsMessage msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			env.SetBuildings(msg.BuildingData);
-		}
-
-		void HandleMessage(BuildingData msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-
-			if (env.Buildings.Contains(msg.ObjectID))
-			{
-				/* this shouldn't happen, as building's data are currently never modified.
-				 * however, we get this from object creation also. for now, just check if the
-				 * data are the same, and go on. */
-				var building = env.Buildings[msg.ObjectID];
-
-				if (building.Area != msg.Area ||
-					building.Z != msg.Z ||
-					building.Environment != env)
-					throw new Exception();
-			}
-			else
-			{
-				var building = new BuildingObject(env.World, msg.ObjectID, msg.ID)
-				{
-					Area = msg.Area,
-					Z = msg.Z,
-					Environment = env,
-				};
-
-				env.AddBuilding(building);
-			}
 		}
 
 		void HandleMessage(PropertyDataMessage msg)
@@ -386,50 +346,23 @@ namespace MyGame.Client
 
 		void HandleObject(BaseGameObjectData data)
 		{
-			if (data is LivingData)
-				HandleObject((LivingData)data);
-			else if (data is ItemData)
-				HandleObject((ItemData)data);
-			else
-				throw new Exception();
-		}
-
-		void HandleObject(LivingData msg)
-		{
-			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(data.ObjectID);
 
 			if (ob == null)
 			{
-				MyDebug.WriteLine("New living appeared {0}", msg.ObjectID);
-				ob = new Living(GameData.Data.World, msg.ObjectID);
+				MyDebug.WriteLine("New gameobject appeared {0}", data.ObjectID);
+
+				if (data is LivingData)
+					ob = new Living(GameData.Data.World, data.ObjectID);
+				else if (data is ItemData)
+					ob = new ItemObject(GameData.Data.World, data.ObjectID);
+				else if (data is BuildingData)
+					ob = new BuildingObject(GameData.Data.World, data.ObjectID);
+				else
+					throw new Exception();
 			}
 
-			ob.SetProperties(msg.Properties);
-
-			ClientGameObject env = null;
-			if (msg.Environment != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
-
-			ob.MoveTo(env, msg.Location);
-		}
-
-		void HandleObject(ItemData msg)
-		{
-			var ob = GameData.Data.World.FindObject<ItemObject>(msg.ObjectID);
-
-			if (ob == null)
-			{
-				MyDebug.WriteLine("New item appeared {0}", msg.ObjectID);
-				ob = new ItemObject(GameData.Data.World, msg.ObjectID);
-			}
-
-			ob.SetProperties(msg.Properties);
-
-			ClientGameObject env = null;
-			if (msg.Environment != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
-
-			ob.MoveTo(env, msg.Location);
+			ob.Deserialize(data);
 		}
 	}
 }
