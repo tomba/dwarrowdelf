@@ -12,75 +12,96 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class IPCommandMessage : Message
+	public class CompoundMessage : Message
+	{
+		public Message[] Messages { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("CompoundMessage");
+		}
+	}
+
+	[Serializable]
+	public abstract class ServerMessage : Message
+	{
+	}
+
+	[Serializable]
+	public abstract class ClientMessage : Message
+	{
+	}
+
+	[Serializable]
+	public class IPCommandMessage : ClientMessage
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class IPOutputMessage : Message
+	public class IPOutputMessage : ServerMessage
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnRequestMessage : Message
+	public class LogOnRequestMessage : ClientMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnReplyMessage : Message
+	public class LogOnReplyMessage : ServerMessage
 	{
 		public int UserID { get; set; }
 		public bool IsSeeAll { get; set; }
 	}
 
 	[Serializable]
-	public class LogOffRequestMessage : Message
+	public class LogOffRequestMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffReplyMessage : Message
+	public class LogOffReplyMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOnCharRequestMessage : Message
+	public class LogOnCharRequestMessage : ClientMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnCharReplyMessage : Message
+	public class LogOnCharReplyMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharRequestMessage : Message
+	public class LogOffCharRequestMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharReplyMessage : Message
+	public class LogOffCharReplyMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class EnqueueActionMessage : Message
+	public class EnqueueActionMessage : ClientMessage
 	{
 		public GameAction Action { get; set; }
 	}
 
 	[Serializable]
-	public class ProceedTickMessage : Message
+	public class ProceedTickMessage : ClientMessage
 	{
 	}
 
 
 	[Serializable]
-	public class SetTilesMessage : Message
+	public class SetTilesMessage : ClientMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntCuboid Cube { get; set; }
@@ -97,7 +118,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class CreateBuildingMessage : Message
+	public class CreateBuildingMessage : ClientMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntRect Area { get; set; }
@@ -107,18 +128,7 @@ namespace MyGame.Messages
 
 
 	[Serializable]
-	public class CompoundMessage : Message
-	{
-		public Message[] Messages { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("CompoundMessage");
-		}
-	}
-
-	[Serializable]
-	public abstract class BaseObjectDataMessage : Message
+	public abstract class BaseObjectDataMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public IntPoint3D Location { get; set; }
@@ -147,7 +157,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class PropertyDataMessage : Message
+	public class PropertyDataMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public PropertyID PropertyID { get; set; }
@@ -160,7 +170,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataMessage : Message
+	public class MapDataMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
 		public VisibilityMode VisibilityMode { get; set; }
@@ -168,7 +178,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsMessage : Message
+	public class MapDataTerrainsMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
@@ -176,7 +186,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsListMessage : Message
+	public class MapDataTerrainsListMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
 		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
@@ -188,21 +198,21 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataObjectsMessage : Message
+	public class MapDataObjectsMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
 		public Message[] ObjectData { get; set; }
 	}
 
 	[Serializable]
-	public class MapDataBuildingsMessage : Message
+	public class MapDataBuildingsMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
 		public BuildingDataMessage[] BuildingData { get; set; }
 	}
 
 	[Serializable]
-	public class ObjectMoveMessage : Message
+	public class ObjectMoveMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public ObjectID TargetEnvID { get; set; }
@@ -227,7 +237,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ObjectDestructedMessage : Message
+	public class ObjectDestructedMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
 
@@ -238,7 +248,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class EventMessage : Message
+	public class EventMessage : ServerMessage
 	{
 		public Event Event { get; set; }
 
@@ -254,7 +264,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class BuildingDataMessage : Message
+	public class BuildingDataMessage : ServerMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public BuildingID ID { get; set; }
@@ -269,7 +279,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ControllablesDataMessage : Message
+	public class ControllablesDataMessage : ServerMessage
 	{
 		public ObjectID[] Controllables { get; set; }
 
