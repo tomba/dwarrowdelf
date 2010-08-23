@@ -231,7 +231,7 @@ namespace MyGame.Client
 			m_buildings.Add(building);
 		}
 
-		public void SetBuildings(IEnumerable<Messages.BuildingDataMessage> buildings)
+		public void SetBuildings(IEnumerable<BuildingData> buildings)
 		{
 			this.Version += 1;
 

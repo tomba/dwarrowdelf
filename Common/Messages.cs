@@ -126,33 +126,14 @@ namespace MyGame.Messages
 		public BuildingID ID { get; set; }
 	}
 
-
 	[Serializable]
-	public abstract class BaseObjectDataMessage : ServerMessage
+	public class ObjectDataMessage : ServerMessage
 	{
-		public ObjectID ObjectID { get; set; }
-		public IntPoint3D Location { get; set; }
-		public ObjectID Environment { get; set; }
+		public BaseGameObjectData Object { get; set; }
 
-		public Tuple<PropertyID, object>[] Properties { get; set; }
-	}
-
-	/* Item in inventory or floor */
-	[Serializable]
-	public class ItemDataMessage : BaseObjectDataMessage
-	{
 		public override string ToString()
 		{
-			return String.Format("ItemDataMessage {0}", this.ObjectID);
-		}
-	}
-
-	[Serializable]
-	public class LivingDataMessage : BaseObjectDataMessage
-	{
-		public override string ToString()
-		{
-			return String.Format("LivingDataMessage {0}", this.ObjectID);
+			return String.Format("ObjectDataMessage {0}", Object.ObjectID);
 		}
 	}
 
@@ -201,14 +182,14 @@ namespace MyGame.Messages
 	public class MapDataObjectsMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
-		public Message[] ObjectData { get; set; }
+		public BaseGameObjectData[] ObjectData { get; set; }
 	}
 
 	[Serializable]
 	public class MapDataBuildingsMessage : ServerMessage
 	{
 		public ObjectID Environment { get; set; }
-		public BuildingDataMessage[] BuildingData { get; set; }
+		public BuildingData[] BuildingData { get; set; }
 	}
 
 	[Serializable]
@@ -260,21 +241,6 @@ namespace MyGame.Messages
 		public override string ToString()
 		{
 			return String.Format("EventMessage({0})", this.Event);
-		}
-	}
-
-	[Serializable]
-	public class BuildingDataMessage : ServerMessage
-	{
-		public ObjectID ObjectID { get; set; }
-		public BuildingID ID { get; set; }
-		public ObjectID Environment { get; set; }
-		public int Z { get; set; }
-		public IntRect Area { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("BuildingDataMessage");
 		}
 	}
 

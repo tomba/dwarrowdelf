@@ -647,7 +647,7 @@ namespace MyGame.Server
 
 		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
 		{
-			var msgs = revealedObjects.Select(o => o.Serialize());
+			var msgs = revealedObjects.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
 			Send(msgs);
 		}
 
@@ -808,13 +808,13 @@ namespace MyGame.Server
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
-				return c.ObjectData;
+				return new ObjectDataMessage() { Object = c.ObjectData };
 			}
 			else if (change is ObjectCreatedChange)
 			{
 				var c = (ObjectCreatedChange)change;
 				var o = (BaseGameObject)c.Object;
-				return o.Serialize();
+				return new ObjectDataMessage() { Object = o.Serialize() };
 			}
 			else if (change is ObjectDestructedChange)
 			{
@@ -833,7 +833,7 @@ namespace MyGame.Server
 
 		static IEnumerable<Messages.Message> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
 		{
-			var msgs = revealedObs.Select(o => o.Serialize());
+			var msgs = revealedObs.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
 			return msgs;
 		}
 	}

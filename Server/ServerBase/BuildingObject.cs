@@ -18,9 +18,9 @@ namespace MyGame.Server
 			this.BuildingInfo = Buildings.GetBuildingInfo(id);
 		}
 
-		public override MyGame.Messages.Message Serialize()
+		public override BaseGameObjectData Serialize()
 		{
-			return new Messages.BuildingDataMessage()
+			return new BuildingData()
 			{
 				ObjectID = this.ObjectID,
 				ID = this.BuildingInfo.ID,
@@ -32,7 +32,7 @@ namespace MyGame.Server
 
 		public override void SerializeTo(Action<Messages.Message> writer)
 		{
-			var msg = Serialize();
+			var msg = new Messages.ObjectDataMessage() { Object = Serialize() };
 			writer(msg);
 		}
 

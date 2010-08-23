@@ -434,12 +434,6 @@ namespace MyGame.Server
 		}
 
 
-		public Messages.Message SerializeInventory()
-		{
-			var items = this.Inventory.Select(o => o.Serialize()).ToArray();
-			return new Messages.CompoundMessage() { Messages = items };
-		}
-
 		// Actor stuff
 		Queue<GameAction> m_actionQueue = new Queue<GameAction>();
 
@@ -514,9 +508,9 @@ namespace MyGame.Server
 				return GetVisibleLocationsSimpleFOV();
 		}
 
-		public override Messages.Message Serialize()
+		public override BaseGameObjectData Serialize()
 		{
-			var data = new Messages.LivingDataMessage();
+			var data = new LivingData();
 			data.ObjectID = this.ObjectID;
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
@@ -526,7 +520,7 @@ namespace MyGame.Server
 
 		public override void SerializeTo(Action<Messages.Message> writer)
 		{
-			var msg = Serialize();
+			var msg = new Messages.ObjectDataMessage() { Object = Serialize() };
 			writer(msg);
 		}
 

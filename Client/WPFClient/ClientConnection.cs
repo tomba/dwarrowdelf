@@ -10,6 +10,8 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.ComponentModel;
 
+using MyGame;
+
 namespace MyGame.Client
 {
 	class ClientNetStatistics : INotifyPropertyChanged
@@ -221,6 +223,11 @@ namespace MyGame.Client
 			ob.MoveTo(env, msg.TargetLocation);
 		}
 
+		void HandleMessage(ObjectDataMessage msg)
+		{
+			HandleObject(msg.Object);
+		}
+
 		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
@@ -264,7 +271,7 @@ namespace MyGame.Client
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
-			DeliverMessages(msg.ObjectData);
+			HandleObjects(msg.ObjectData);
 		}
 
 		void HandleMessage(MapDataBuildingsMessage msg)
@@ -275,7 +282,7 @@ namespace MyGame.Client
 			env.SetBuildings(msg.BuildingData);
 		}
 
-		void HandleMessage(BuildingDataMessage msg)
+		void HandleMessage(BuildingData msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 
@@ -304,25 +311,6 @@ namespace MyGame.Client
 			}
 		}
 
-		void HandleMessage(LivingDataMessage msg)
-		{
-			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
-
-			if (ob == null)
-			{
-				MyDebug.WriteLine("New living appeared {0}", msg.ObjectID);
-				ob = new Living(GameData.Data.World, msg.ObjectID);
-			}
-
-			ob.SetProperties(msg.Properties);
-
-			ClientGameObject env = null;
-			if (msg.Environment != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
-
-			ob.MoveTo(env, msg.Location);
-		}
-
 		void HandleMessage(PropertyDataMessage msg)
 		{
 			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
@@ -331,25 +319,6 @@ namespace MyGame.Client
 				throw new Exception();
 
 			ob.SetProperty(msg.PropertyID, msg.Value);
-		}
-
-		void HandleMessage(ItemDataMessage msg)
-		{
-			var ob = GameData.Data.World.FindObject<ItemObject>(msg.ObjectID);
-
-			if (ob == null)
-			{
-				MyDebug.WriteLine("New item appeared {0}", msg.ObjectID);
-				ob = new ItemObject(GameData.Data.World, msg.ObjectID);
-			}
-
-			ob.SetProperties(msg.Properties);
-
-			ClientGameObject env = null;
-			if (msg.Environment != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
-
-			ob.MoveTo(env, msg.Location);
 		}
 
 		void HandleMessage(ObjectDestructedMessage msg)
@@ -418,6 +387,60 @@ namespace MyGame.Client
 
 				ob.AI.ActionRequired();
 			}
+		}
+
+		void HandleObjects(BaseGameObjectData[] datas)
+		{
+			foreach (var data in datas)
+				HandleObject(data);
+		}
+
+		void HandleObject(BaseGameObjectData data)
+		{
+			if (data is LivingData)
+				HandleObject((LivingData)data);
+			else if (data is ItemData)
+				HandleObject((ItemData)data);
+			else
+				throw new Exception();
+		}
+
+		void HandleObject(LivingData msg)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
+
+			if (ob == null)
+			{
+				MyDebug.WriteLine("New living appeared {0}", msg.ObjectID);
+				ob = new Living(GameData.Data.World, msg.ObjectID);
+			}
+
+			ob.SetProperties(msg.Properties);
+
+			ClientGameObject env = null;
+			if (msg.Environment != ObjectID.NullObjectID)
+				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
+
+			ob.MoveTo(env, msg.Location);
+		}
+
+		void HandleObject(ItemData msg)
+		{
+			var ob = GameData.Data.World.FindObject<ItemObject>(msg.ObjectID);
+
+			if (ob == null)
+			{
+				MyDebug.WriteLine("New item appeared {0}", msg.ObjectID);
+				ob = new ItemObject(GameData.Data.World, msg.ObjectID);
+			}
+
+			ob.SetProperties(msg.Properties);
+
+			ClientGameObject env = null;
+			if (msg.Environment != ObjectID.NullObjectID)
+				env = GameData.Data.World.FindObject<ClientGameObject>(msg.Environment);
+
+			ob.MoveTo(env, msg.Location);
 		}
 	}
 }

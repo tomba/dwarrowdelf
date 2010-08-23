@@ -630,11 +630,11 @@ namespace MyGame.Server
 			writer(new Messages.MapDataBuildingsMessage()
 			{
 				Environment = this.ObjectID,
-				BuildingData = m_buildings.Select(b => (Messages.BuildingDataMessage)b.Serialize()).ToArray(),
+				BuildingData = m_buildings.Select(b => (BuildingData)b.Serialize()).ToArray(),
 			});
 		}
 
-		public override Messages.Message Serialize()
+		public override BaseGameObjectData Serialize()
 		{
 			throw new Exception();
 		}
