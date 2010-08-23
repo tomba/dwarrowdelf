@@ -414,17 +414,7 @@ namespace MyGame.Server
 				//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
 
 				if (IsTimeToStartTick())
-				{
-					// XXX making decision here is ok for Simultaneous mode, but not quite
-					// for sequential...
-					// note: write lock is off, actors can take read-lock and process in the
-					// background
-					// perhaps here we should also send ActionRequestEvents?
-					foreach (Living l in m_livingList)
-						l.Actor.DetermineAction();
-
 					StartTick();
-				}
 			}
 
 			if (m_state == WorldState.TickOngoing)
@@ -635,6 +625,14 @@ namespace MyGame.Server
 
 			MyDebug.WriteLine("-- Tick {0} started --", m_tickNumber);
 			m_tickRequested = false;
+
+			// XXX making decision here is ok for Simultaneous mode, but not quite
+			// for sequential...
+			// note: write lock is off, actors can take read-lock and process in the
+			// background
+			// perhaps here we should also send ActionRequestEvents?
+			foreach (Living l in m_livingList)
+				l.Actor.DeterminePriorityAction();
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{

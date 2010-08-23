@@ -77,7 +77,6 @@
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
     <Compile Include="ServerConnection.cs" />
-    <Compile Include="PetActor.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />

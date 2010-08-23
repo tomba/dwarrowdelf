@@ -417,9 +417,10 @@ namespace MyGame.Server
 				var player = new Living(m_world, String.Format("Dwarf{0}", i))
 				{
 					SymbolID = SymbolID.Player,
-					Actor = new InteractiveActor(),
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
+				player.Actor = new InteractiveActor(player);
+
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
 					throw new Exception();

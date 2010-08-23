@@ -45,12 +45,16 @@ namespace MyGame.Server
 
 		#region IActor Members
 
-		public void DetermineAction()
+		public void DeterminePriorityAction()
 		{
 			if (m_object.HasAction)
 				return;
 			var a = GetNewAction();
 			m_object.EnqueueAction(a);
+		}
+
+		public void DetermineIdleAction()
+		{
 		}
 
 		#endregion

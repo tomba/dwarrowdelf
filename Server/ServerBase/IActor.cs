@@ -7,6 +7,7 @@ namespace MyGame.Server
 {
 	public interface IActor
 	{
-		void DetermineAction();
+		void DeterminePriorityAction();
+		void DetermineIdleAction();
 	}
 }
