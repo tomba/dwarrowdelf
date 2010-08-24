@@ -30,9 +30,6 @@ namespace MyGame.Server
 	{
 		public IArea Area { get; private set; }
 
-		// the same single world for everybody, for now
-		public static World TheWorld;
-
 		// only for debugging
 		public bool IsWritable { get; private set; }
 	

@@ -5,6 +5,8 @@ namespace MyGame.Server
 {
 	public class Server : MarshalByRefObject, IServer
 	{
+		World m_world;
+
 		public Server()
 		{
 			MyDebug.Component = "Server";
@@ -21,9 +23,8 @@ namespace MyGame.Server
 
 			IArea area = new MyArea.Area();
 
-			var world = new World(area);
-			world.Start();
-			World.TheWorld = world;
+			m_world = new World(area);
+			m_world.Start();
 
 			Connection.NewConnectionEvent += OnNewConnection;
 			Connection.StartListening();
@@ -43,10 +44,10 @@ namespace MyGame.Server
 			{
 				Console.WriteLine("Press enter to exit");
 				while (Console.ReadKey().Key != ConsoleKey.Enter)
-					world.SignalWorld();
+					m_world.SignalWorld();
 			}
 
-			world.Stop();
+			m_world.Stop();
 
 			MyDebug.WriteLine("Server exiting");
 
@@ -58,7 +59,7 @@ namespace MyGame.Server
 
 		void OnNewConnection(Connection conn)
 		{
-			new ServerConnection(conn, World.TheWorld);
+			new ServerConnection(conn, m_world);
 		}
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
