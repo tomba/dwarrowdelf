@@ -14,13 +14,10 @@ namespace MyArea
 		Environment m_map1;
 		Environment m_map2;
 
-		public void InitializeWorld(World world, IList<Environment> environments)
+		public void InitializeWorld(World world)
 		{
 			m_map1 = CreateMap1(world);
-			environments.Add(m_map1);
-
 			m_map2 = CreateMap2(world);
-			environments.Add(m_map2);
 		}
 
 		IntPoint3D m_portalLoc = new IntPoint3D(2, 4, 9);

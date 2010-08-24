@@ -10,7 +10,7 @@ namespace MyGame.Server
 	// XXX move somewhere else, but inside Server side */
 	public interface IArea
 	{
-		void InitializeWorld(World world, IList<Environment> environments);
+		void InitializeWorld(World world);
 	}
 
 	enum WorldTickMethod
@@ -32,7 +32,7 @@ namespace MyGame.Server
 
 		// only for debugging
 		public bool IsWritable { get; private set; }
-	
+
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		bool m_verbose = false;
@@ -54,8 +54,17 @@ namespace MyGame.Server
 
 		List<ServerConnection> m_userList = new List<ServerConnection>();
 
-		List<Environment> m_environments = new List<Environment>();
-		public IEnumerable<Environment> Environments { get { return m_environments; } }
+		// XXX slow & bad
+		public IEnumerable<Environment> Environments
+		{
+			get
+			{
+				Environment[] envs;
+				lock (m_objectMap)
+					envs = m_objectMap.Values.Select(wr => wr.Target).OfType<Environment>().ToArray();
+				return envs;
+			}
+		}
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -149,9 +158,10 @@ namespace MyGame.Server
 		{
 			EnterWriteLock();
 
-			this.Area.InitializeWorld(this, m_environments);
+			this.Area.InitializeWorld(this);
 
-			foreach (var env in m_environments)
+			var envs = this.Environments;
+			foreach (var env in envs)
 				env.MapChanged += this.MapChangedCallback;
 
 			ExitWriteLock();
@@ -306,7 +316,7 @@ namespace MyGame.Server
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			lock (m_preTickInvokeList)
-				m_preTickInvokeList.Add(new InvokeInfo() { Action = callback, Args = args});
+				m_preTickInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
 
 			SignalWorld();
 		}
