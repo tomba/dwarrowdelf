@@ -453,6 +453,7 @@ namespace MyGame.Server
 			m_charLoggedIn = false;
 		}
 
+		[WorldInvoke(WorldInvokeStyle.None)]
 		void ReceiveMessage(EnqueueActionMessage msg)
 		{
 			var action = msg.Action;
@@ -470,6 +471,28 @@ namespace MyGame.Server
 				action.UserID = m_userID;
 
 				living.EnqueueAction(action);
+			}
+			catch (Exception e)
+			{
+				MyDebug.WriteLine("Uncaught exception");
+				MyDebug.WriteLine(e.ToString());
+			}
+		}
+
+		[WorldInvoke(WorldInvokeStyle.None)]
+		void ReceiveMessage(EnqueueSkipMessage msg)
+		{
+			try
+			{
+				var living = m_controllables.SingleOrDefault(l => l.ObjectID == msg.ActorObjectID);
+
+				if (living == null)
+					throw new Exception("Illegal ob id");
+
+				living.Actor.DetermineIdleAction();
+
+				if (!living.HasAction)
+					living.EnqueueAction(new NopAction());
 			}
 			catch (Exception e)
 			{

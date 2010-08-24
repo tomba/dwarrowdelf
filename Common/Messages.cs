@@ -84,6 +84,12 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
+	public class EnqueueSkipMessage : ClientMessage
+	{
+		public ObjectID ActorObjectID { get; set; }
+	}
+
+	[Serializable]
 	public class ProceedTickMessage : ClientMessage
 	{
 	}

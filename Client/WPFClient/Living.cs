@@ -119,6 +119,13 @@ namespace MyGame.Client
 			GameData.Data.Connection.EnqueueAction(action);
 		}
 
+		public void EnqueueSkipAction()
+		{
+			MyDebug.WriteLine("SkipAction({0})", this);
+			var msg = new Messages.EnqueueSkipMessage() { ActorObjectID = this.ObjectID };
+			GameData.Data.Connection.Send(msg);
+		}
+
 		public void ActionDone(GameAction action)
 		{
 			MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
