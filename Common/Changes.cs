@@ -8,9 +8,6 @@ namespace MyGame
 {
 	public abstract class Change
 	{
-		protected Change()
-		{
-		}
 	}
 
 	public class MapChange : Change
@@ -50,6 +47,11 @@ namespace MyGame
 			: base(ob)
 		{
 		}
+
+		public override string ToString()
+		{
+			return String.Format("ObjectCreatedChange({0})", this.ObjectID);
+		}
 	}
 
 	public class ObjectDestructedChange : ObjectChange
@@ -57,6 +59,11 @@ namespace MyGame
 		public ObjectDestructedChange(IIdentifiable ob)
 			: base(ob)
 		{
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ObjectDestructedChange({0})", this.ObjectID);
 		}
 	}
 
@@ -93,7 +100,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("MoveChange {0} ({1}, {2}) -> ({3}, {4})",
+			return String.Format("ObjectMoveChange {0} ({1}, {2}) -> ({3}, {4})",
 				this.ObjectID, this.SourceMapID, this.SourceLocation, this.DestinationMapID, this.DestinationLocation);
 		}
 	}
@@ -106,6 +113,11 @@ namespace MyGame
 		}
 
 		public BaseGameObjectData ObjectData { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("FullObjectChange({0})", this.ObjectID);
+		}
 	}
 
 	public class PropertyChange : ObjectChange
@@ -120,6 +132,10 @@ namespace MyGame
 		public PropertyDefinition Property { get; private set; }
 		public PropertyID PropertyID { get { return Property.PropertyID; } }
 		public object Value { get; private set; }
-	}
 
+		public override string ToString()
+		{
+			return String.Format("PropertyChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
+		}
+	}
 }

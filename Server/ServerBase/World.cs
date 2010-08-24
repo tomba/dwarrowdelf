@@ -101,6 +101,7 @@ namespace MyGame.Server
 
 		public event Action TickEvent;
 
+		WorldLogger m_worldLogger;
 
 		[Conditional("DEBUG")]
 		void VDbg(string format, params object[] args)
@@ -116,11 +117,15 @@ namespace MyGame.Server
 
 			m_worldThread = new Thread(Main);
 			m_worldThread.Name = "World";
+
+			m_worldLogger = new WorldLogger(this);
 		}
 
 		public void Start()
 		{
 			Debug.Assert(!m_worldThread.IsAlive);
+
+			m_worldLogger.Start();
 
 			using (var initEvent = new ManualResetEvent(false))
 			{
@@ -136,6 +141,8 @@ namespace MyGame.Server
 			m_exit = true;
 			SignalWorld();
 			m_worldThread.Join();
+
+			m_worldLogger.Stop();
 		}
 
 		void Init()

@@ -56,7 +56,7 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("ObjectID({0})", m_value);
+			return String.Format("OID({0})", m_value);
 		}
 
 	}

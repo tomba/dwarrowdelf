@@ -86,6 +86,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGameObject.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="WorldLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
