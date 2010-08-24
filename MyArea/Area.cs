@@ -215,6 +215,7 @@ namespace MyArea
 			}
 			env.AddBuilding(building);
 
+#if asd
 			for (int x = 3; x < 4; ++x)
 			{
 				for (int y = 12; y < 14; ++y)
@@ -280,6 +281,7 @@ namespace MyArea
 				item.TickEvent += () => env.SetWaterLevel(item.Location, TileData.MaxWaterLevel);
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
+#endif
 
 			CreateSlopes(env);
 
