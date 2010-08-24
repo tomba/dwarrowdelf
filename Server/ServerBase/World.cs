@@ -765,19 +765,22 @@ namespace MyGame.Server
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
 
+			IIdentifiable ob = null;
+
 			lock (m_objectMap)
 			{
-				if (m_objectMap.ContainsKey(objectID))
+				WeakReference weakref;
+
+				if (m_objectMap.TryGetValue(objectID, out weakref))
 				{
-					WeakReference weakref = m_objectMap[objectID];
-					if (weakref.IsAlive)
-						return (IIdentifiable)m_objectMap[objectID].Target;
-					else
+					ob = weakref.Target as IIdentifiable;
+
+					if (ob == null)
 						m_objectMap.Remove(objectID);
 				}
 			}
 
-			return null;
+			return ob;
 		}
 
 		public T FindObject<T>(ObjectID objectID) where T : class, IIdentifiable
