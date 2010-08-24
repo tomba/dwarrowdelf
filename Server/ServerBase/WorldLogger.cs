@@ -34,6 +34,7 @@ namespace MyGame.Server
 		public void LogFullState()
 		{
 			m_world.EnterReadLock();
+			m_writer.WriteLine("XXX full world state");
 			m_world.ExitReadLock();
 		}
 

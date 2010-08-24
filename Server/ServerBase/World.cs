@@ -134,8 +134,6 @@ namespace MyGame.Server
 		{
 			Debug.Assert(!m_worldThread.IsAlive);
 
-			m_worldLogger.Start();
-
 			using (var initEvent = new ManualResetEvent(false))
 			{
 				m_worldThread.Start(initEvent);
@@ -150,8 +148,6 @@ namespace MyGame.Server
 			m_exit = true;
 			SignalWorld();
 			m_worldThread.Join();
-
-			m_worldLogger.Stop();
 		}
 
 		void Init()
@@ -181,6 +177,9 @@ namespace MyGame.Server
 
 			Init();
 
+			m_worldLogger.Start();
+			m_worldLogger.LogFullState();
+
 			EventWaitHandle initEvent = (EventWaitHandle)arg;
 			initEvent.Set();
 
@@ -193,6 +192,8 @@ namespace MyGame.Server
 					Work();
 				} while (WorkAvailable());
 			}
+
+			m_worldLogger.Stop();
 
 			MyDebug.WriteLine("WorldMain end");
 		}
