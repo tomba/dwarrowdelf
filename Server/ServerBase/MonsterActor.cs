@@ -50,7 +50,7 @@ namespace MyGame.Server
 			if (m_object.HasAction)
 				return;
 			var a = GetNewAction();
-			m_object.EnqueueAction(a);
+			m_object.SetAction(a);
 		}
 
 		public void DetermineIdleAction()

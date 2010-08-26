@@ -256,7 +256,7 @@ namespace MyGame.Server
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			GameAction action = GetCurrentAction();
+			GameAction action = GetAction();
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 			{
@@ -349,7 +349,7 @@ namespace MyGame.Server
 				action.TicksLeft = 0;
 
 			if (action.TicksLeft == 0)
-				RemoveAction(action);
+				CancelAction();
 
 			// is the action originator an user?
 			if (action.UserID != 0)
@@ -435,46 +435,33 @@ namespace MyGame.Server
 
 
 		// Actor stuff
-		Queue<GameAction> m_actionQueue = new Queue<GameAction>();
+		GameAction m_action;
 
-		public void EnqueueAction(GameAction action)
+		public void SetAction(GameAction action)
 		{
+			if (m_action != null)
+				throw new Exception();
+
 			action.ActorObjectID = this.ObjectID;
-
-			lock (m_actionQueue)
-				m_actionQueue.Enqueue(action);
-
+			m_action = action;
 			this.World.SignalWorld();
 		}
 
-		public void RemoveAction(GameAction action)
+		public void CancelAction()
 		{
-			lock (m_actionQueue)
-			{
-				GameAction topAction = m_actionQueue.Peek();
-
-				if (topAction == action)
-					m_actionQueue.Dequeue();
-			}
+			m_action = null;
 		}
 
-		public GameAction GetCurrentAction()
+		public GameAction GetAction()
 		{
-			lock (m_actionQueue)
-			{
-				if (m_actionQueue.Count == 0)
-					return null;
-
-				return m_actionQueue.Peek();
-			}
+			return m_action;
 		}
 
 		public bool HasAction
 		{
 			get
 			{
-				lock (m_actionQueue)
-					return m_actionQueue.Count > 0;
+				return m_action != null;
 			}
 		}
 

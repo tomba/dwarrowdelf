@@ -62,11 +62,11 @@ namespace MyGame.Client
 			m_connection.DisconnectEvent += DisconnectOverride;
 		}
 
-		public void EnqueueAction(GameAction action)
+		public void DoAction(GameAction action)
 		{
 			int tid = System.Threading.Interlocked.Increment(ref m_transactionNumber);
 			action.TransactionID = tid;
-			Send(new EnqueueActionMessage() { Action = action });
+			Send(new DoActionMessage() { Action = action });
 		}
 
 		public void Send(ClientMessage msg)

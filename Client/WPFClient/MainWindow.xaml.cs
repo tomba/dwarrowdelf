@@ -310,7 +310,7 @@ namespace MyGame.Client
 				{
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
 					{
-						currentOb.EnqueueAction(new MineAction(dir));
+						currentOb.DoAction(new MineAction(dir));
 						GameData.Data.Connection.Send(new ProceedTickMessage());
 					}
 					else
@@ -328,7 +328,7 @@ namespace MyGame.Client
 								dir |= Direction.Down;
 						}
 
-						currentOb.EnqueueAction(new MoveAction(dir));
+						currentOb.DoAction(new MoveAction(dir));
 						GameData.Data.Connection.Send(new ProceedTickMessage());
 					}
 				}
@@ -386,7 +386,7 @@ namespace MyGame.Client
 			var currentOb = GameData.Data.CurrentObject;
 			if (currentOb != null)
 			{
-				currentOb.EnqueueAction(new MoveAction(dir));
+				currentOb.DoAction(new MoveAction(dir));
 				GameData.Data.Connection.Send(new ProceedTickMessage());
 			}
 			else
@@ -613,7 +613,7 @@ namespace MyGame.Client
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			plr.EnqueueAction(new GetAction(list));
+			plr.DoAction(new GetAction(list));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -625,7 +625,7 @@ namespace MyGame.Client
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.EnqueueAction(new DropAction(list));
+			plr.DoAction(new DropAction(list));
 		}
 
 		private void BuildItem_Button_Click(object sender, RoutedEventArgs e)
@@ -637,7 +637,7 @@ namespace MyGame.Client
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.EnqueueAction(new BuildItemAction(list));
+			plr.DoAction(new BuildItemAction(list));
 		}
 
 		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)

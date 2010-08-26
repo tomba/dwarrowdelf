@@ -78,13 +78,13 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class EnqueueActionMessage : ClientMessage
+	public class DoActionMessage : ClientMessage
 	{
 		public GameAction Action { get; set; }
 	}
 
 	[Serializable]
-	public class EnqueueSkipMessage : ClientMessage
+	public class DoSkipMessage : ClientMessage
 	{
 		public ObjectID ActorObjectID { get; set; }
 	}

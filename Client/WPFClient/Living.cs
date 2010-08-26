@@ -17,6 +17,8 @@ namespace MyGame.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
+		public GameAction CurrentAction { get; private set; }
+
 		public AI AI { get; private set; }
 
 		public Living(World world, ObjectID objectID)
@@ -111,24 +113,37 @@ namespace MyGame.Client
 			l.m_visionMap = null;
 		}
 
-		public void EnqueueAction(GameAction action)
+		public void DoAction(GameAction action)
 		{
+			if (this.CurrentAction != null)
+				throw new Exception();
+
 			action.ActorObjectID = this.ObjectID;
+
 			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
+
+			this.CurrentAction = action;
 			GameData.Data.ActionCollection.Add(action);
-			GameData.Data.Connection.EnqueueAction(action);
+
+			GameData.Data.Connection.DoAction(action);
 		}
 
-		public void EnqueueSkipAction()
+		public void DoSkipAction()
 		{
 			MyDebug.WriteLine("SkipAction({0})", this);
-			var msg = new Messages.EnqueueSkipMessage() { ActorObjectID = this.ObjectID };
+
+			var msg = new Messages.DoSkipMessage() { ActorObjectID = this.ObjectID };
 			GameData.Data.Connection.Send(msg);
 		}
 
 		public void ActionDone(GameAction action)
 		{
 			MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+
+			if (this.CurrentAction != action)
+				throw new Exception();
+
+			this.CurrentAction = null;
 			GameData.Data.ActionCollection.Remove(action);
 		}
 

@@ -40,7 +40,7 @@ namespace MyGame.Client
 					if (m_currentJob == null)
 					{
 						D("no job to do");
-						m_living.EnqueueSkipAction();
+						m_living.DoSkipAction();
 						return;
 					}
 					else
@@ -58,7 +58,7 @@ namespace MyGame.Client
 						if (action == null)
 							throw new Exception();
 
-						m_living.EnqueueAction(action);
+						m_living.DoAction(action);
 						return;
 
 					case Progress.Done:

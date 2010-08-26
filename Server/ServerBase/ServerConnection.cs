@@ -454,7 +454,7 @@ namespace MyGame.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.None)]
-		void ReceiveMessage(EnqueueActionMessage msg)
+		void ReceiveMessage(DoActionMessage msg)
 		{
 			var action = msg.Action;
 
@@ -468,19 +468,25 @@ namespace MyGame.Server
 				if (living == null)
 					throw new Exception("Illegal ob id");
 
+				if (living.HasAction)
+					throw new Exception("already has an action");
+
 				action.UserID = m_userID;
 
-				living.EnqueueAction(action);
+				living.SetAction(action);
 			}
 			catch (Exception e)
 			{
 				MyDebug.WriteLine("Uncaught exception");
 				MyDebug.WriteLine(e.ToString());
+
+				var reply = new EventMessage(new ActionProgressEvent() { UserID = m_userID, TransactionID = msg.Action.TransactionID, Success = false, TicksLeft = 0 });
+				Send(reply);
 			}
 		}
 
 		[WorldInvoke(WorldInvokeStyle.None)]
-		void ReceiveMessage(EnqueueSkipMessage msg)
+		void ReceiveMessage(DoSkipMessage msg)
 		{
 			try
 			{
@@ -492,7 +498,7 @@ namespace MyGame.Server
 				living.Actor.DetermineIdleAction();
 
 				if (!living.HasAction)
-					living.EnqueueAction(new NopAction());
+					living.SetAction(new NopAction());
 			}
 			catch (Exception e)
 			{
