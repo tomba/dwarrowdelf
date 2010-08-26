@@ -57,7 +57,7 @@ namespace MyGame.Server
 		}
 
 
-		void OnNewConnection(Connection conn)
+		void OnNewConnection(IConnection conn)
 		{
 			new ServerConnection(conn, m_world);
 		}

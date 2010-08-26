@@ -11,7 +11,24 @@ using System.Threading;
 
 namespace MyGame
 {
-	public class Connection
+	public interface IConnection
+	{
+		int SentMessages { get; }
+		int SentBytes { get; }
+		int ReceivedMessages { get; }
+		int ReceivedBytes { get; }
+
+		bool IsConnected { get; }
+
+		event Action DisconnectEvent;
+		event Action<Message> ReceiveEvent;
+
+		void BeginConnect(Action callback);
+		void Send(Message msg);
+		void Disconnect();
+	}
+
+	public class Connection : IConnection
 	{
 		Socket m_socket;
 		RecvStream m_recvStream = new RecvStream(1024 * 128);

@@ -52,7 +52,7 @@ namespace MyGame.Client
 		public bool IsUserConnected { get; private set; }
 		public bool IsCharConnected { get; private set; }
 
-		Connection m_connection;
+		IConnection m_connection;
 
 		public ClientConnection()
 		{

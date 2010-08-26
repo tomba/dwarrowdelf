@@ -54,7 +54,7 @@ namespace MyGame.Server
 
 		List<Living> m_controllables = new List<Living>();
 
-		Connection m_connection;
+		IConnection m_connection;
 		bool m_userLoggedIn;
 
 		Microsoft.Scripting.Hosting.ScriptEngine m_scriptEngine;
@@ -121,7 +121,7 @@ namespace MyGame.Server
 		}
 
 
-		public ServerConnection(Connection conn, World world)
+		public ServerConnection(IConnection conn, World world)
 		{
 			m_world = world;
 
