@@ -159,7 +159,7 @@ namespace MyGame
 			m_socket = null;
 		}
 
-		public virtual void Send(Message msg)
+		public void Send(Message msg)
 		{
 			//MyDebug.WriteLine("[TX] {0}", msg);
 
