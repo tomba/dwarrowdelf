@@ -263,9 +263,14 @@ namespace MyGame.Server
 			HandleWater();
 		}
 
-		public InteriorInfo GetInterior(IntPoint3D p)
+		public FloorID GetFloorID(IntPoint3D l)
 		{
-			return Interiors.GetInterior(GetInteriorID(p));
+			return m_tileGrid.GetFloorID(l);
+		}
+
+		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetFloorMaterialID(l);
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
@@ -278,19 +283,24 @@ namespace MyGame.Server
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public FloorInfo GetFloor(IntPoint3D p)
+		public FloorInfo GetFloor(IntPoint3D l)
 		{
-			return Floors.GetFloor(GetFloorID(p));
+			return Floors.GetFloor(GetFloorID(l));
 		}
 
-		public FloorID GetFloorID(IntPoint3D l)
+		public MaterialInfo GetFloorMaterial(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorID(l);
+			return Materials.GetMaterial(m_tileGrid.GetFloorMaterialID(l));
 		}
 
-		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		public InteriorInfo GetInterior(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorMaterialID(l);
+			return Interiors.GetInterior(GetInteriorID(l));
+		}
+
+		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)

@@ -437,7 +437,7 @@ namespace MyGame.Server
 		// Actor stuff
 		GameAction m_action;
 
-		public void SetAction(GameAction action)
+		public void DoAction(GameAction action)
 		{
 			if (m_action != null)
 				throw new Exception();
@@ -445,6 +445,14 @@ namespace MyGame.Server
 			action.ActorObjectID = this.ObjectID;
 			m_action = action;
 			this.World.SignalWorld();
+		}
+
+		public void DoSkipAction()
+		{
+			this.Actor.DetermineIdleAction();
+
+			if (!this.HasAction)
+				this.DoAction(new NopAction());
 		}
 
 		public void CancelAction()
@@ -463,16 +471,6 @@ namespace MyGame.Server
 			{
 				return m_action != null;
 			}
-		}
-
-		public void DoAction(GameAction action)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void DoSkipAction()
-		{
-			throw new NotImplementedException();
 		}
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()

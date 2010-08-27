@@ -44,7 +44,7 @@ namespace MyGame.Server
 			if (m_object.HasAction)
 				return;
 			var a = GetNewAction();
-			m_object.SetAction(a);
+			m_object.DoAction(a);
 		}
 
 		public void DeterminePriorityAction()

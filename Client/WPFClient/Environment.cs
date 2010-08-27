@@ -59,15 +59,44 @@ namespace MyGame.Client
 			return GetInterior(l).Blocker == false;
 		}
 
-		public InteriorInfo GetInterior(IntPoint3D l)
+		public FloorID GetFloorID(IntPoint3D l)
 		{
-			var id = GetInteriorID(l);
-			return Interiors.GetInterior(id);
+			return m_tileGrid.GetFloorID(l);
+		}
+
+		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetFloorMaterialID(l);
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
 		{
 			return m_tileGrid.GetInteriorID(l);
+		}
+
+		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetInteriorMaterialID(l);
+		}
+
+		public FloorInfo GetFloor(IntPoint3D l)
+		{
+			return Floors.GetFloor(GetFloorID(l));
+		}
+
+		public MaterialInfo GetFloorMaterial(IntPoint3D l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetFloorMaterialID(l));
+		}
+
+		public InteriorInfo GetInterior(IntPoint3D l)
+		{
+			return Interiors.GetInterior(GetInteriorID(l));
+		}
+
+		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
@@ -80,17 +109,6 @@ namespace MyGame.Client
 				MapTileChanged(l);
 		}
 
-		public FloorInfo GetFloor(IntPoint3D l)
-		{
-			var id = GetFloorID(l);
-			return Floors.GetFloor(id);
-		}
-
-		public FloorID GetFloorID(IntPoint3D l)
-		{
-			return m_tileGrid.GetFloorID(l);
-		}
-
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
 		{
 			this.Version += 1;
@@ -99,18 +117,6 @@ namespace MyGame.Client
 
 			if (MapTileChanged != null)
 				MapTileChanged(l);
-		}
-
-		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
-		{
-			var id = m_tileGrid.GetInteriorMaterialID(l);
-			return Materials.GetMaterial(id);
-		}
-
-		public MaterialInfo GetFloorMaterial(IntPoint3D l)
-		{
-			var id = m_tileGrid.GetFloorMaterialID(l);
-			return Materials.GetMaterial(id);
 		}
 
 		public byte GetWaterLevel(IntPoint3D l)

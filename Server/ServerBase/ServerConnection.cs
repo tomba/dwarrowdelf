@@ -473,7 +473,7 @@ namespace MyGame.Server
 
 				action.UserID = m_userID;
 
-				living.SetAction(action);
+				living.DoAction(action);
 			}
 			catch (Exception e)
 			{
@@ -495,10 +495,7 @@ namespace MyGame.Server
 				if (living == null)
 					throw new Exception("Illegal ob id");
 
-				living.Actor.DetermineIdleAction();
-
-				if (!living.HasAction)
-					living.SetAction(new NopAction());
+				living.DoSkipAction();
 			}
 			catch (Exception e)
 			{

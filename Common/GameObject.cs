@@ -12,6 +12,7 @@ namespace MyGame
 
 	public interface IBuildingObject : IIdentifiable
 	{
+		BuildingInfo BuildingInfo { get; }
 		IEnvironment Environment { get; }
 		int Z { get; }
 		IntRect Area { get; }
@@ -25,8 +26,19 @@ namespace MyGame
 
 	public interface IEnvironment : IGameObject
 	{
-		IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p);
+		FloorID GetFloorID(IntPoint3D l);
+		MaterialID GetFloorMaterialID(IntPoint3D l);
+
+		InteriorID GetInteriorID(IntPoint3D l);
+		MaterialID GetInteriorMaterialID(IntPoint3D l);
+
+		FloorInfo GetFloor(IntPoint3D l);
+		MaterialInfo GetFloorMaterial(IntPoint3D l);
+
 		InteriorInfo GetInterior(IntPoint3D l);
+		MaterialInfo GetInteriorMaterial(IntPoint3D l);
+
+		IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p);
 	}
 
 	public interface ILiving : IGameObject
