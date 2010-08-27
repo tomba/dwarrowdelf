@@ -5,10 +5,11 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	public class BuildingObject : BaseGameObject
+	public class BuildingObject : BaseGameObject, IBuildingObject
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
+		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		public int Z { get; set; }
 		public IntRect Area { get; set; }
 

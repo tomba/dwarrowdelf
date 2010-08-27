@@ -6,10 +6,11 @@ using System.Diagnostics;
 
 namespace MyGame.Client
 {
-	class BuildingObject : BaseGameObject
+	class BuildingObject : BaseGameObject, IBuildingObject
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
+		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		public int Z { get; set; }
 		public IntRect Area { get; set; }
 

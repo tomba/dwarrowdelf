@@ -16,7 +16,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class Environment : ClientGameObject
+	class Environment : ClientGameObject, IEnvironment
 	{
 		public event Action<IntPoint3D> MapTileChanged;
 

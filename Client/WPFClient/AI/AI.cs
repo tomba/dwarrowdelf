@@ -9,11 +9,11 @@ namespace MyGame.Client
 {
 	class AI
 	{
-		IWorker m_worker;
+		ILiving m_worker;
 		JobManager m_jobManager;
 		IActionJob m_currentJob;
 
-		public AI(IWorker worker, JobManager jobManager)
+		public AI(ILiving worker, JobManager jobManager)
 		{
 			m_worker = worker;
 			m_jobManager = jobManager;

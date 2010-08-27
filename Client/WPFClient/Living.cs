@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class Living : ClientGameObject, IWorker
+	class Living : ClientGameObject, ILiving
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();

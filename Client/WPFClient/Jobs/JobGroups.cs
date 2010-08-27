@@ -10,10 +10,10 @@ namespace MyGame.Client
 {
 	class MineAreaParallelJob : ParallelJobGroup
 	{
-		public Environment m_environment;
+		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
 
-		public MineAreaParallelJob(Environment env, IntRect rect, int z)
+		public MineAreaParallelJob(IEnvironment env, IntRect rect, int z)
 			: base(null)
 		{
 			m_environment = env;
@@ -41,10 +41,10 @@ namespace MyGame.Client
 
 	class MineAreaSerialJob : SerialJobGroup
 	{
-		public Environment m_environment;
+		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
 
-		public MineAreaSerialJob(Environment env, IntRect rect, int z)
+		public MineAreaSerialJob(IEnvironment env, IntRect rect, int z)
 			: base(null)
 		{
 			m_environment = env;
@@ -72,7 +72,7 @@ namespace MyGame.Client
 
 	class BuildItemJob : SerialJobGroup
 	{
-		public BuildItemJob(BuildingObject workplace, ItemObject[] sourceObjects)
+		public BuildItemJob(IBuildingObject workplace, IItemObject[] sourceObjects)
 			: base(null)
 		{
 			var env = workplace.Environment;
@@ -91,7 +91,7 @@ namespace MyGame.Client
 
 	class FetchItems : ParallelJobGroup
 	{
-		public FetchItems(IJob parent, Environment env, IntPoint3D location, ItemObject[] items)
+		public FetchItems(IJob parent, IEnvironment env, IntPoint3D location, IItemObject[] items)
 			: base(parent)
 		{
 			foreach (var item in items)

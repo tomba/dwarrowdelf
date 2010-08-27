@@ -11,13 +11,13 @@ namespace MyGame.Client
 	class MoveActionJob : ActionJob
 	{
 		Queue<Direction> m_pathDirs;
-		Environment m_environment;
+		IEnvironment m_environment;
 		IntPoint3D m_dest;
 		bool m_adjacent;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
-		public MoveActionJob(IJob parent, Environment environment, IntPoint3D destination, bool adjacent)
+		public MoveActionJob(IJob parent, IEnvironment environment, IntPoint3D destination, bool adjacent)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -37,7 +37,7 @@ namespace MyGame.Client
 			m_numFails = 0;
 		}
 
-		protected override Progress AssignOverride(IWorker worker)
+		protected override Progress AssignOverride(ILiving worker)
 		{
 			m_numFails = 0;
 			return Progress.Ok;
@@ -128,9 +128,9 @@ namespace MyGame.Client
 	class MineActionJob : ActionJob
 	{
 		IntPoint3D m_location;
-		Environment m_environment;
+		IEnvironment m_environment;
 
-		public MineActionJob(IJob job, Environment environment, IntPoint3D location)
+		public MineActionJob(IJob job, IEnvironment environment, IntPoint3D location)
 			: base(job)
 		{
 			m_environment = environment;
@@ -186,9 +186,9 @@ namespace MyGame.Client
 
 	class BuildItemActionJob : ActionJob
 	{
-		ItemObject[] m_items;
+		IItemObject[] m_items;
 
-		public BuildItemActionJob(IJob parent, ItemObject[] items)
+		public BuildItemActionJob(IJob parent, IItemObject[] items)
 			: base(parent)
 		{
 			m_items = items;
@@ -225,9 +225,9 @@ namespace MyGame.Client
 
 	class GetItemActionJob : ActionJob
 	{
-		ItemObject m_item;
+		IItemObject m_item;
 
-		public GetItemActionJob(IJob parent, ItemObject item)
+		public GetItemActionJob(IJob parent, IItemObject item)
 			: base(parent)
 		{
 			m_item = item;
@@ -235,7 +235,7 @@ namespace MyGame.Client
 
 		protected override Progress PrepareNextActionOverride()
 		{
-			var action = new GetAction(new ItemObject[] { m_item });
+			var action = new GetAction(new IItemObject[] { m_item });
 			this.CurrentAction = action;
 			return Progress.Ok;
 		}
@@ -259,9 +259,9 @@ namespace MyGame.Client
 
 	class DropItemActionJob : ActionJob
 	{
-		ItemObject m_item;
+		IItemObject m_item;
 
-		public DropItemActionJob(IJob parent, ItemObject item)
+		public DropItemActionJob(IJob parent, IItemObject item)
 			: base(parent)
 		{
 			m_item = item;
@@ -269,7 +269,7 @@ namespace MyGame.Client
 
 		protected override Progress PrepareNextActionOverride()
 		{
-			var action = new DropAction(new ItemObject[] { m_item });
+			var action = new DropAction(new IItemObject[] { m_item });
 			this.CurrentAction = action;
 			return Progress.Ok;
 		}

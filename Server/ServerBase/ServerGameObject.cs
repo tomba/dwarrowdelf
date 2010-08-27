@@ -141,10 +141,11 @@ namespace MyGame.Server
 	}
 
 	/* Game object that has inventory, location */
-	abstract public class ServerGameObject : BaseGameObject
+	abstract public class ServerGameObject : BaseGameObject, IGameObject
 	{
 		public ServerGameObject Parent { get; private set; }
 		public Environment Environment { get { return this.Parent as Environment; } }
+		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
 		KeyedObjectCollection m_children;
 		public ReadOnlyCollection<ServerGameObject> Inventory { get; private set; }
 

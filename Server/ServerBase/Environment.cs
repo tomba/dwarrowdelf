@@ -8,7 +8,7 @@ namespace MyGame.Server
 {
 	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
 
-	public class Environment : ServerGameObject
+	public class Environment : ServerGameObject, IEnvironment
 	{
 		public event MapChanged MapChanged;
 
@@ -521,6 +521,10 @@ namespace MyGame.Server
 			list.Add(child);
 		}
 
+		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
+		{
+			throw new NotImplementedException();
+		}
 
 		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
 

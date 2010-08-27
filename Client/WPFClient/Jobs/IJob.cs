@@ -31,13 +31,6 @@ namespace MyGame.Client
 		Done,
 	}
 
-	interface IWorker
-	{
-		IntPoint3D Location { get; }
-		void DoAction(GameAction action);
-		void DoSkipAction();
-	}
-
 	enum JobGroupType
 	{
 		Parallel,
@@ -59,10 +52,10 @@ namespace MyGame.Client
 
 	interface IActionJob : IJob
 	{
-		IWorker Worker { get; }
+		ILiving Worker { get; }
 		GameAction CurrentAction { get; }
 
-		Progress Assign(IWorker worker);
+		Progress Assign(ILiving worker);
 		Progress PrepareNextAction();
 		Progress ActionProgress(ActionProgressEvent e);
 	}

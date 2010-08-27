@@ -10,10 +10,10 @@ namespace MyGame.Client
 {
 	class MoveMineJob : SerialActionJob
 	{
-		Environment m_environment;
+		IEnvironment m_environment;
 		IntPoint3D m_location;
 
-		public MoveMineJob(IJob parent, Environment environment, IntPoint3D location)
+		public MoveMineJob(IJob parent, IEnvironment environment, IntPoint3D location)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -51,10 +51,10 @@ namespace MyGame.Client
 
 	class MineAreaJob : SerialActionJob
 	{
-		public Environment m_environment;
+		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
 
-		public MineAreaJob(Environment env, IntRect rect, int z)
+		public MineAreaJob(IEnvironment env, IntRect rect, int z)
 			: base(null)
 		{
 			m_environment = env;
@@ -82,7 +82,7 @@ namespace MyGame.Client
 
 	class FetchItem : SerialActionJob
 	{
-		public FetchItem(IJob parent, Environment env, IntPoint3D location, ItemObject item)
+		public FetchItem(IJob parent, IEnvironment env, IntPoint3D location, IItemObject item)
 			: base(parent)
 		{
 			AddSubJob(new MoveActionJob(this, item.Environment, item.Location, false));
@@ -99,7 +99,7 @@ namespace MyGame.Client
 
 	class BuildItem : SerialActionJob
 	{
-		public BuildItem(IJob parent, BuildingObject workplace, ItemObject[] items)
+		public BuildItem(IJob parent, IBuildingObject workplace, IItemObject[] items)
 			: base(parent)
 		{
 			var env = workplace.Environment;

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace MyGame.Server
 {
-	public class Living : ServerGameObject
+	public class Living : ServerGameObject, ILiving
 	{
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
 
@@ -463,6 +463,16 @@ namespace MyGame.Server
 			{
 				return m_action != null;
 			}
+		}
+
+		public void DoAction(GameAction action)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void DoSkipAction()
+		{
+			throw new NotImplementedException();
 		}
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()

@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class ItemObject : ClientGameObject
+	class ItemObject : ClientGameObject, IItemObject
 	{
 		public static readonly DependencyProperty NutritionalValueProperty =
 			RegisterGameProperty(PropertyID.NutritionalValue, "NutritionalValue", typeof(int), typeof(ItemObject), new UIPropertyMetadata(0));

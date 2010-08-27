@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	public class ItemObject : ServerGameObject
+	public class ItemObject : ServerGameObject, IItemObject
 	{
 		public ItemObject(World world)
 			: base(world)

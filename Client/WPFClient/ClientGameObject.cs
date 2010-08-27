@@ -36,7 +36,7 @@ namespace MyGame.Client
 		public abstract void Deserialize(BaseGameObjectData data);
 	}
 
-	class ClientGameObject : BaseGameObject
+	class ClientGameObject : BaseGameObject, IGameObject
 	{
 		static Dictionary<Tuple<Type, PropertyID>, DependencyProperty> s_propertyMap = new Dictionary<Tuple<Type, PropertyID>, DependencyProperty>();
 
@@ -244,6 +244,11 @@ namespace MyGame.Client
 		public Environment Environment
 		{
 			get { return this.Parent as Environment; }
+		}
+
+		IEnvironment IGameObject.Environment
+		{
+			get { return this.Parent as IEnvironment; }
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)
