@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class Living : ClientGameObject
+	class Living : ClientGameObject, IWorker
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
@@ -24,7 +24,7 @@ namespace MyGame.Client
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			this.AI = new AI(this);
+			this.AI = new AI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 

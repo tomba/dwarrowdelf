@@ -37,7 +37,7 @@ namespace MyGame.Client
 			m_numFails = 0;
 		}
 
-		protected override Progress AssignOverride(Living worker)
+		protected override Progress AssignOverride(IWorker worker)
 		{
 			m_numFails = 0;
 			return Progress.Ok;

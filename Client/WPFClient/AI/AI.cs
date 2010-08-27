@@ -7,40 +7,38 @@ using System.ComponentModel;
 
 namespace MyGame.Client
 {
-
 	class AI
 	{
-		Living m_living;
+		IWorker m_worker;
+		JobManager m_jobManager;
 		IActionJob m_currentJob;
 
-		public AI(Living living)
+		public AI(IWorker worker, JobManager jobManager)
 		{
-			m_living = living;
+			m_worker = worker;
+			m_jobManager = jobManager;
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
 		{
-			MyDebug.WriteLine("[AI] [{0}]: {1}", m_living, String.Format(format, args));
+			MyDebug.WriteLine("[AI] [{0}]: {1}", m_worker, String.Format(format, args));
 		}
 
 		public void ActionRequired()
 		{
-			//if (m_living == GameData.Data.CurrentObject)
-			//	return;
-
-			var jm = m_living.World.JobManager;
+			var jm = m_jobManager;
 
 			while (true)
 			{
 				if (m_currentJob == null)
 				{
-					m_currentJob = jm.FindAndAssignJob(m_living);
+					m_currentJob = jm.FindAndAssignJob(m_worker);
 
 					if (m_currentJob == null)
 					{
 						D("no job to do");
-						m_living.DoSkipAction();
+						m_worker.DoSkipAction();
 						return;
 					}
 					else
@@ -58,7 +56,7 @@ namespace MyGame.Client
 						if (action == null)
 							throw new Exception();
 
-						m_living.DoAction(action);
+						m_worker.DoAction(action);
 						return;
 
 					case Progress.Done:
@@ -86,7 +84,6 @@ namespace MyGame.Client
 			{
 				case Progress.None:
 					throw new Exception();
-				// break;
 
 				case Progress.Ok:
 					D("Job progressing");

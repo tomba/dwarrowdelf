@@ -354,7 +354,7 @@
                                     <TextBlock Text=", " />
                                     <TextBlock Text="{Binding Progress}" />
                                     <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                    <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
                                     <TextBlock Text=", " />
                                     <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                 </StackPanel>
@@ -366,7 +366,7 @@
                                     <TextBlock Text=", " />
                                     <TextBlock Text="{Binding Progress}" />
                                     <TextBlock Text=" , " />
-                                    <TextBlock Text="{Binding Worker, TargetNullValue=Nobody}" />
+                                    <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
                                     <TextBlock Text=", " />
                                     <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                 </StackPanel>

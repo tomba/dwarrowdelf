@@ -44,12 +44,12 @@ namespace MyGame.Client
 			m_jobs.Remove(job);
 		}
 
-		public IActionJob FindAndAssignJob(Living living)
+		public IActionJob FindAndAssignJob(IWorker living)
 		{
 			return FindAndAssignJob(m_jobs, living);
 		}
 
-		static IActionJob FindAndAssignJob(IEnumerable<IJob> jobs, Living living)
+		static IActionJob FindAndAssignJob(IEnumerable<IJob> jobs, IWorker living)
 		{
 			while (true)
 			{

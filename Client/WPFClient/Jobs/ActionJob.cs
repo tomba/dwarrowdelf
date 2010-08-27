@@ -17,8 +17,8 @@ namespace MyGame.Client
 
 		public IJob Parent { get; private set; }
 
-		Living m_worker;
-		public Living Worker
+		IWorker m_worker;
+		public IWorker Worker
 		{
 			get { return m_worker; }
 			private set { m_worker = value; Notify("Worker"); }
@@ -48,7 +48,7 @@ namespace MyGame.Client
 		{
 		}
 
-		public Progress Assign(Living worker)
+		public Progress Assign(IWorker worker)
 		{
 			Debug.Assert(this.Worker == null);
 			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
@@ -63,7 +63,7 @@ namespace MyGame.Client
 			return progress;
 		}
 
-		protected virtual Progress AssignOverride(Living worker)
+		protected virtual Progress AssignOverride(IWorker worker)
 		{
 			return Progress.Ok;
 		}
