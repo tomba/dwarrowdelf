@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	class MineAreaParallelJob : ParallelJobGroup
+	public class MineAreaParallelJob : ParallelJobGroup
 	{
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
@@ -39,7 +39,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class MineAreaSerialJob : SerialJobGroup
+	public class MineAreaSerialJob : SerialJobGroup
 	{
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
@@ -70,7 +70,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class BuildItemJob : SerialJobGroup
+	public class BuildItemJob : SerialJobGroup
 	{
 		public BuildItemJob(IBuildingObject workplace, IItemObject[] sourceObjects)
 			: base(null)
@@ -89,7 +89,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class FetchItems : ParallelJobGroup
+	public class FetchItems : ParallelJobGroup
 	{
 		public FetchItems(IJob parent, IEnvironment env, IntPoint3D location, IItemObject[] items)
 			: base(parent)

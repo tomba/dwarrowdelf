@@ -5,9 +5,9 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	abstract class JobGroup : IJobGroup
+	public abstract class JobGroup : IJobGroup
 	{
 		ObservableCollection<IJob> m_subJobs = new ObservableCollection<IJob>();
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
@@ -74,7 +74,7 @@ namespace MyGame.Client
 	}
 
 
-	abstract class ParallelJobGroup : JobGroup
+	public abstract class ParallelJobGroup : JobGroup
 	{
 		protected ParallelJobGroup(IJob parent)
 			: base(parent)
@@ -101,7 +101,7 @@ namespace MyGame.Client
 	}
 
 
-	abstract class SerialJobGroup : JobGroup
+	public abstract class SerialJobGroup : JobGroup
 	{
 		protected SerialJobGroup(IJobGroup parent)
 			: base(parent)

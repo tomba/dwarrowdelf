@@ -20,7 +20,7 @@ namespace MyGame.Client
 
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
-		public JobManager JobManager { get; private set; }
+		public MyGame.Jobs.JobManager JobManager { get; private set; }
 
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
@@ -37,7 +37,8 @@ namespace MyGame.Client
 
 			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("SymbolInfosChar.xaml", UriKind.Relative));
 
-			this.JobManager = new JobManager(this);
+			this.JobManager = new MyGame.Jobs.JobManager();
+			this.TickIncreased += this.JobManager.DoHouseKeeping;
 		}
 
 		internal void AddEnvironment(Environment env)

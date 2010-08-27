@@ -5,26 +5,20 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	class JobManager
+	public class JobManager
 	{
 		ObservableCollection<IJob> m_jobs;
 		public ReadOnlyObservableCollection<IJob> Jobs { get; private set; }
 
-		World m_world;
-
-		public JobManager(World world)
+		public JobManager()
 		{
-			m_world = world;
-
 			m_jobs = new ObservableCollection<IJob>();
 			this.Jobs = new ReadOnlyObservableCollection<IJob>(m_jobs);
-
-			m_world.TickIncreased += OnTickIncreased;
 		}
 
-		void OnTickIncreased()
+		public void DoHouseKeeping()
 		{
 			var doneJobs = m_jobs.Where(j => j.Progress == Progress.Done).ToArray();
 			foreach (var job in doneJobs)

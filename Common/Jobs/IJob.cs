@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
 	public enum Progress
 	{
@@ -31,26 +31,26 @@ namespace MyGame.Client
 		Done,
 	}
 
-	enum JobGroupType
+	public enum JobGroupType
 	{
 		Parallel,
 		Serial,
 	}
 
-	interface IJob : INotifyPropertyChanged
+	public interface IJob : INotifyPropertyChanged
 	{
 		IJob Parent { get; }
 		Progress Progress { get; }
 		void Abort();
 	}
 
-	interface IJobGroup : IJob
+	public interface IJobGroup : IJob
 	{
 		ReadOnlyObservableCollection<IJob> SubJobs { get; }
 		JobGroupType JobGroupType { get; }
 	}
 
-	interface IActionJob : IJob
+	public interface IActionJob : IJob
 	{
 		ILiving Worker { get; }
 		GameAction CurrentAction { get; }

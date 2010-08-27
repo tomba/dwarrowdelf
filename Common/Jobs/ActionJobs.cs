@@ -6,9 +6,9 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	class MoveActionJob : ActionJob
+	public class MoveActionJob : ActionJob
 	{
 		Queue<Direction> m_pathDirs;
 		IEnvironment m_environment;
@@ -125,7 +125,7 @@ namespace MyGame.Client
 
 	}
 
-	class MineActionJob : ActionJob
+	public class MineActionJob : ActionJob
 	{
 		IntPoint3D m_location;
 		IEnvironment m_environment;
@@ -184,7 +184,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class BuildItemActionJob : ActionJob
+	public class BuildItemActionJob : ActionJob
 	{
 		IItemObject[] m_items;
 
@@ -223,7 +223,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class GetItemActionJob : ActionJob
+	public class GetItemActionJob : ActionJob
 	{
 		IItemObject m_item;
 
@@ -257,7 +257,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class DropItemActionJob : ActionJob
+	public class DropItemActionJob : ActionJob
 	{
 		IItemObject m_item;
 

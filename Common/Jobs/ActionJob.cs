@@ -6,9 +6,9 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	abstract class ActionJob : IActionJob
+	public abstract class ActionJob : IActionJob
 	{
 		protected ActionJob(IJob parent)
 		{

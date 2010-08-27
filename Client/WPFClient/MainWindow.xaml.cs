@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using System.ComponentModel;
 using MyGame.Messages;
+using MyGame.Jobs;
 
 namespace MyGame.Client
 {

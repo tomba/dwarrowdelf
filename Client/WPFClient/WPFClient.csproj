@@ -116,18 +116,11 @@
     <Compile Include="MasterMapControl.cs" />
     <Compile Include="MapControlD2D.cs" />
     <Compile Include="HistoryTextBox.cs" />
-    <Compile Include="Jobs\ActionJobs.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DrawingCache.cs" />
-    <Compile Include="Jobs\ActionJob.cs" />
-    <Compile Include="Jobs\SerialActionJobs.cs" />
-    <Compile Include="Jobs\IJob.cs" />
-    <Compile Include="Jobs\JobGroup.cs" />
-    <Compile Include="Jobs\JobManager.cs" />
-    <Compile Include="Jobs\SerialActionJob.cs" />
     <Compile Include="LivingInfoControl.xaml.cs">
       <DependentUpon>LivingInfoControl.xaml</DependentUpon>
     </Compile>
@@ -154,10 +147,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\AI.cs" />
     <Compile Include="BuildingObject.cs" />
     <Compile Include="ClientConnection.cs" />
-    <Compile Include="Jobs\JobGroups.cs" />
     <Compile Include="Living.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />

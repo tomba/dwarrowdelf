@@ -79,9 +79,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\AI.cs" />
     <Compile Include="AStar\AStar2D.cs" />
     <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
+    <Compile Include="Jobs\ActionJob.cs" />
+    <Compile Include="Jobs\ActionJobs.cs" />
+    <Compile Include="Jobs\IJob.cs" />
+    <Compile Include="Jobs\JobGroup.cs" />
+    <Compile Include="Jobs\JobGroups.cs" />
+    <Compile Include="Jobs\JobManager.cs" />
+    <Compile Include="Jobs\SerialActionJob.cs" />
+    <Compile Include="Jobs\SerialActionJobs.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
+using MyGame.Jobs;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	class AI
+	public class AI
 	{
 		ILiving m_worker;
 		JobManager m_jobManager;

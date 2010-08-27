@@ -18,7 +18,7 @@ namespace MyGame.Client
 		{
 			public ItemObject[] SourceObjects { get; set; }
 
-			public IJob Job { get; set; }
+			public MyGame.Jobs.IJob Job { get; set; }
 		}
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
@@ -96,13 +96,13 @@ namespace MyGame.Client
 
 			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
 			{
-				if (order.Job.Progress == Progress.Done)
+				if (order.Job.Progress == MyGame.Jobs.Progress.Done)
 				{
 					MyDebug.WriteLine("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
-				else if (order.Job.Progress == Progress.Fail)
+				else if (order.Job.Progress == MyGame.Jobs.Progress.Fail)
 				{
 					MyDebug.WriteLine("BuildOrder FAILED");
 					order.Job = null;
@@ -167,7 +167,7 @@ namespace MyGame.Client
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new BuildItemJob(this, order.SourceObjects);
+			var job = new MyGame.Jobs.BuildItemJob(this, order.SourceObjects);
 			order.Job = job;
 			this.World.JobManager.Add(job);
 		}

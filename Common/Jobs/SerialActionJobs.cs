@@ -6,9 +6,9 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	class MoveMineJob : SerialActionJob
+	public class MoveMineJob : SerialActionJob
 	{
 		IEnvironment m_environment;
 		IntPoint3D m_location;
@@ -49,7 +49,7 @@ namespace MyGame.Client
 	}
 
 
-	class MineAreaJob : SerialActionJob
+	public class MineAreaJob : SerialActionJob
 	{
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
@@ -80,7 +80,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class FetchItem : SerialActionJob
+	public class FetchItem : SerialActionJob
 	{
 		public FetchItem(IJob parent, IEnvironment env, IntPoint3D location, IItemObject item)
 			: base(parent)
@@ -97,7 +97,7 @@ namespace MyGame.Client
 		}
 	}
 
-	class BuildItem : SerialActionJob
+	public class BuildItem : SerialActionJob
 	{
 		public BuildItem(IJob parent, IBuildingObject workplace, IItemObject[] items)
 			: base(parent)

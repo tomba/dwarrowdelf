@@ -6,9 +6,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.ComponentModel;
 
-namespace MyGame.Client
+namespace MyGame.Jobs
 {
-	abstract class SerialActionJob : IActionJob
+	public abstract class SerialActionJob : IActionJob
 	{
 		IActionJob m_currentSubJob;
 		ObservableCollection<IActionJob> m_subJobs;
