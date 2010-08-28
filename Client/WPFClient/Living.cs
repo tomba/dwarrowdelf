@@ -19,12 +19,12 @@ namespace MyGame.Client
 
 		public GameAction CurrentAction { get; private set; }
 
-		public Jobs.AI AI { get; private set; }
+		public Jobs.IAI AI { get; private set; }
 
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			this.AI = new Jobs.AI(this, this.World.JobManager);
+			this.AI = new Jobs.ClientAI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 

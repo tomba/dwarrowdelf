@@ -19,13 +19,6 @@ namespace MyGame.Jobs
 			world.TickEvent += DoHouseKeeping;
 		}
 
-		public void DoHouseKeeping()
-		{
-			var doneJobs = m_jobs.Where(j => j.Progress == Progress.Done).ToArray();
-			foreach (var job in doneJobs)
-				m_jobs.Remove(job);
-		}
-
 		public void Add(IJob job)
 		{
 			Debug.Assert(job.Parent == null);
@@ -39,49 +32,17 @@ namespace MyGame.Jobs
 			m_jobs.Remove(job);
 		}
 
-		public IActionJob FindAndAssignJob(ILiving living)
+		public IActionJob FindJob(ILiving living)
 		{
-			return FindAndAssignJob(m_jobs, living);
+			return FindJob(m_jobs, living);
 		}
 
-		static IActionJob FindAndAssignJob(IEnumerable<IJob> jobs, ILiving living)
+		static IActionJob FindJob(IEnumerable<IJob> jobs, ILiving living)
 		{
-			while (true)
-			{
-				var job = FindJob(jobs);
-
-				if (job == null)
-					return null;
-
-				var progress = job.Assign(living);
-
-				switch (progress)
-				{
-					case Progress.Ok:
-						return job;
-
-					case Progress.Done:
-						break;
-
-					case Progress.Fail:
-						break;
-
-					case Progress.Abort:
-						break;
-
-					case Progress.None:
-					default:
-						throw new Exception();
-				}
-			}
+			return FindJob(jobs, JobGroupType.Parallel, living);
 		}
 
-		static IActionJob FindJob(IEnumerable<IJob> jobs)
-		{
-			return FindJob(jobs, JobGroupType.Parallel);
-		}
-
-		static IActionJob FindJob(IEnumerable<IJob> jobs, JobGroupType type)
+		static IActionJob FindJob(IEnumerable<IJob> jobs, JobGroupType type, ILiving living)
 		{
 			if (type != JobGroupType.Parallel && type != JobGroupType.Serial)
 				throw new Exception();
@@ -104,7 +65,7 @@ namespace MyGame.Jobs
 					{
 						var gjob = (IJobGroup)job;
 
-						var j = FindJob(gjob.SubJobs, gjob.JobGroupType);
+						var j = FindJob(gjob.SubJobs, gjob.JobGroupType, living);
 
 						if (j != null)
 							return j;
@@ -125,5 +86,11 @@ namespace MyGame.Jobs
 
 		}
 
+		void DoHouseKeeping()
+		{
+			var doneJobs = m_jobs.Where(j => j.Progress == Progress.Done).ToArray();
+			foreach (var job in doneJobs)
+				m_jobs.Remove(job);
+		}
 	}
 }

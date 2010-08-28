@@ -8,38 +8,40 @@ using MyGame.Jobs;
 
 namespace MyGame.Jobs
 {
-	public class AI
+	public interface IAI
 	{
-		ILiving m_worker;
-		JobManager m_jobManager;
+		void ActionRequired();
+		void ActionProgress(ActionProgressEvent e);
+	}
+
+	public abstract class AI : IAI
+	{
+		public ILiving Worker { get; private set; }
 		IActionJob m_currentJob;
 
-		public AI(ILiving worker, JobManager jobManager)
+		protected AI(ILiving worker)
 		{
-			m_worker = worker;
-			m_jobManager = jobManager;
+			this.Worker = worker;
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
-		void D(string format, params object[] args)
+		protected void D(string format, params object[] args)
 		{
-			MyDebug.WriteLine("[AI] [{0}]: {1}", m_worker, String.Format(format, args));
+			MyDebug.WriteLine("[AI] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
 		public void ActionRequired()
 		{
-			var jm = m_jobManager;
-
 			while (true)
 			{
 				if (m_currentJob == null)
 				{
-					m_currentJob = jm.FindAndAssignJob(m_worker);
+					m_currentJob = FindAndAssignJob(this.Worker);
 
 					if (m_currentJob == null)
 					{
 						D("no job to do");
-						m_worker.DoSkipAction();
+						this.Worker.DoSkipAction();
 						return;
 					}
 					else
@@ -57,7 +59,7 @@ namespace MyGame.Jobs
 						if (action == null)
 							throw new Exception();
 
-						m_worker.DoAction(action);
+						this.Worker.DoAction(action);
 						return;
 
 					case Progress.Done:
@@ -102,6 +104,40 @@ namespace MyGame.Jobs
 			}
 		}
 
+		protected abstract IActionJob GetJob(ILiving worker);
+
+		IActionJob FindAndAssignJob(ILiving worker)
+		{
+			while (true)
+			{
+				var job = GetJob(worker);
+
+				if (job == null)
+					return null;
+
+				var progress = job.Assign(worker);
+
+				switch (progress)
+				{
+					case Progress.Ok:
+						return job;
+
+					case Progress.Done:
+						break;
+
+					case Progress.Fail:
+						break;
+
+					case Progress.Abort:
+						break;
+
+					case Progress.None:
+					default:
+						throw new Exception();
+				}
+			}
+		}
+
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			Debug.Assert(sender == m_currentJob);
@@ -115,6 +151,22 @@ namespace MyGame.Jobs
 					m_currentJob = null;
 				}
 			}
+		}
+	}
+
+	public class ClientAI : AI
+	{
+		JobManager m_jobManager;
+
+		public ClientAI(ILiving worker, JobManager jobManager)
+			: base(worker)
+		{
+			m_jobManager = jobManager;
+		}
+
+		protected override IActionJob GetJob(ILiving worker)
+		{
+			return m_jobManager.FindJob(this.Worker);
 		}
 	}
 }
