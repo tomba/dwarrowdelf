@@ -14,21 +14,14 @@ namespace MyGame
 		public static readonly ObjectID NullObjectID = new ObjectID(0);
 
 		public ObjectID(int value)
-			: this()
 		{
 			m_value = value;
 		}
-
-		public int Value { get { return m_value; } }
-
-		#region IEquatable<Location> Members
 
 		public bool Equals(ObjectID objectID)
 		{
 			return objectID.m_value == m_value;
 		}
-
-		#endregion
 
 		public override bool Equals(object obj)
 		{
