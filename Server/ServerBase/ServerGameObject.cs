@@ -18,10 +18,11 @@ namespace MyGame.Server
 	}
 
 	/* Abstract game object, without inventory or conventional location. */
-	abstract public class BaseGameObject : IIdentifiable
+	abstract public class BaseGameObject : IBaseGameObject
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
+		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
 		public bool Destructed { get; private set; }
 
 		protected BaseGameObject(World world)

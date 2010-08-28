@@ -5,12 +5,22 @@ using System.Text;
 
 namespace MyGame
 {
+	public interface IWorld
+	{
+		event Action TickEvent;
+	}
+
 	public interface IIdentifiable
 	{
 		ObjectID ObjectID { get; }
 	}
 
-	public interface IBuildingObject : IIdentifiable
+	public interface IBaseGameObject : IIdentifiable
+	{
+		IWorld World { get; }
+	}
+
+	public interface IBuildingObject : IBaseGameObject
 	{
 		BuildingInfo BuildingInfo { get; }
 		IEnvironment Environment { get; }
@@ -18,7 +28,7 @@ namespace MyGame
 		IntRect Area { get; }
 	}
 
-	public interface IGameObject : IIdentifiable
+	public interface IGameObject : IBaseGameObject
 	{
 		IEnvironment Environment { get; }
 		IntPoint3D Location { get; }

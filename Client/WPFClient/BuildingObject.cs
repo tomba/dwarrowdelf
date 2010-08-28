@@ -26,7 +26,7 @@ namespace MyGame.Client
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			world.TickIncreased += OnTick;
+			world.TickEvent += OnTick;
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)

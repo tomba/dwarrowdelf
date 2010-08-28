@@ -12,10 +12,11 @@ namespace MyGame.Jobs
 		ObservableCollection<IJob> m_jobs;
 		public ReadOnlyObservableCollection<IJob> Jobs { get; private set; }
 
-		public JobManager()
+		public JobManager(IWorld world)
 		{
 			m_jobs = new ObservableCollection<IJob>();
 			this.Jobs = new ReadOnlyObservableCollection<IJob>(m_jobs);
+			world.TickEvent += DoHouseKeeping;
 		}
 
 		public void DoHouseKeeping()

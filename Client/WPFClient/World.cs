@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace MyGame.Client
 {
-	class World : INotifyPropertyChanged
+	class World : IWorld, INotifyPropertyChanged
 	{
 		IdentifiableCollection m_objects;
 		public ReadOnlyIdentifiableCollection Objects { get; private set; }
@@ -37,8 +37,7 @@ namespace MyGame.Client
 
 			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("SymbolInfosChar.xaml", UriKind.Relative));
 
-			this.JobManager = new MyGame.Jobs.JobManager();
-			this.TickIncreased += this.JobManager.DoHouseKeeping;
+			this.JobManager = new MyGame.Jobs.JobManager(this);
 		}
 
 		internal void AddEnvironment(Environment env)
@@ -55,12 +54,12 @@ namespace MyGame.Client
 				// XXX perhaps this should be IncreaseTick()
 				m_tickNumber = value; Notify("TickNumber");
 
-				if (TickIncreased != null)
-					TickIncreased();
+				if (TickEvent != null)
+					TickEvent();
 			}
 		}
 
-		public event Action TickIncreased;
+		public event Action TickEvent;
 
 		internal void AddObject(IIdentifiable ob)
 		{

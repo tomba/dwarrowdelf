@@ -11,10 +11,11 @@ namespace MyGame.Client
 {
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	abstract class BaseGameObject : DependencyObject, IIdentifiable
+	abstract class BaseGameObject : DependencyObject, IBaseGameObject
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
+		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
 		public bool Destructed { get; private set; }
 
 		protected BaseGameObject(World world, ObjectID objectID)

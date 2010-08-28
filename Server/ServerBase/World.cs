@@ -26,7 +26,7 @@ namespace MyGame.Server
 		TickEnded,
 	}
 
-	public class World
+	public class World: IWorld
 	{
 		public IArea Area { get; private set; }
 
