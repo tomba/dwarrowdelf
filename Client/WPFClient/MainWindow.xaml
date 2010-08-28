@@ -25,9 +25,9 @@
                        Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
                 <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} (#{1})">
+                        <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Name" />
-                            <Binding Path="ObjectID.Value" />
+                            <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
@@ -52,9 +52,9 @@
                        Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
                 <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} (#{1})">
+                        <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Name" />
-                            <Binding Path="ObjectID.Value" />
+                            <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
