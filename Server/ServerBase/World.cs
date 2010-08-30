@@ -543,9 +543,15 @@ namespace MyGame.Server
 			if (!forceMove)
 				Debug.Assert(m_livingList.All(l => l.HasAction));
 
+			foreach (Living l in m_livingList)
+				l.AI.ActionRequired(ActionPriority.Idle);
+
 			while (true)
 			{
 				Living living = m_livingEnumerator.Current;
+
+				if (living == null)
+					break;
 
 				if (living.HasAction)
 					living.PerformAction();
@@ -643,11 +649,8 @@ namespace MyGame.Server
 
 			// XXX making decision here is ok for Simultaneous mode, but not quite
 			// for sequential...
-			// note: write lock is off, actors can take read-lock and process in the
-			// background
-			// perhaps here we should also send ActionRequestEvents?
 			foreach (Living l in m_livingList)
-				l.Actor.DeterminePriorityAction();
+				l.AI.ActionRequired(ActionPriority.High);
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -669,7 +672,8 @@ namespace MyGame.Server
 
 			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
-				if (!m_livingEnumerator.MoveNext())
+				var ok = m_livingEnumerator.MoveNext();
+				if (!ok)
 					throw new Exception("no livings");
 
 				if (m_useMaxMoveTime)

@@ -6,11 +6,21 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
+	public enum ActionPriority
+	{
+		Undefined = 0,
+		Lowest,
+		Idle,
+		User,
+		High,
+	}
+
 	[Serializable]
 	public abstract class GameAction
 	{
 		public ObjectID ActorObjectID { get; set; }
 		public int TransactionID { get; set; }
+		public ActionPriority Priority { get; set; }
 
 		[NonSerialized]
 		int m_userId;
@@ -23,19 +33,6 @@ namespace MyGame
 
 		public GameAction()
 		{
-		}
-	}
-
-	[Serializable]
-	public class NopAction : GameAction
-	{
-		public NopAction()
-		{
-		}
-
-		public override string ToString()
-		{
-			return String.Format("NopAction()");
 		}
 	}
 

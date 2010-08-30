@@ -157,7 +157,7 @@ namespace MyArea
 			env.SetInterior(m_portalLoc, InteriorID.Portal, MaterialID.Steel);
 			env.SetActionHandler(m_portalLoc, ActionHandler);
 
-			for (int i = 0; i < 1; ++i)
+			for (int i = 0; i < 0; ++i)
 			{
 				// Add a monster
 				var monster = new Living(world, String.Format("monsu{0}", i))
@@ -166,7 +166,7 @@ namespace MyArea
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 				};
 
-				monster.Actor = new MonsterActor(monster);
+				monster.AI = new MonsterActor(monster);
 
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();

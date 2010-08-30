@@ -113,38 +113,56 @@ namespace MyGame.Client
 			l.m_visionMap = null;
 		}
 
+		public bool HasAction { get { return this.CurrentAction != null; } }
+		static int s_transactionNumber;
+
 		public void DoAction(GameAction action)
 		{
-			if (this.CurrentAction != null)
+			if (this.HasAction)
 				throw new Exception();
 
 			action.ActorObjectID = this.ObjectID;
+			if (action.Priority == ActionPriority.Undefined)
+				action.Priority = ActionPriority.User;
 
 			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
 
 			this.CurrentAction = action;
 			GameData.Data.ActionCollection.Add(action);
 
-			GameData.Data.Connection.DoAction(action);
+			int tid = System.Threading.Interlocked.Increment(ref s_transactionNumber);
+			action.TransactionID = tid;
+			GameData.Data.Connection.Send(new Messages.DoActionMessage() { Action = action });
 		}
 
-		public void DoSkipAction()
+		public void CancelAction()
 		{
-			MyDebug.WriteLine("SkipAction({0})", this);
-
-			var msg = new Messages.DoSkipMessage() { ActorObjectID = this.ObjectID };
-			GameData.Data.Connection.Send(msg);
-		}
-
-		public void ActionDone(GameAction action)
-		{
-			MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
-
-			if (this.CurrentAction != action)
+			if (!this.HasAction)
 				throw new Exception();
 
 			this.CurrentAction = null;
-			GameData.Data.ActionCollection.Remove(action);
+		}
+
+		public void ActionProgress(ActionProgressEvent e)
+		{
+			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
+				throw new Exception();
+
+			var action = this.CurrentAction;
+
+			action.TicksLeft = e.TicksLeft;
+
+			if (e.TicksLeft == 0)
+			{
+				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+
+				GameData.Data.ActionCollection.Remove(action);
+				this.CurrentAction = null;
+			}
+
+			// XXX GameAction doesn't have INotifyProperty changed, so we have to update manually
+			var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
+			itemsView.Refresh();
 		}
 
 		public Grid2D<bool> VisionMap

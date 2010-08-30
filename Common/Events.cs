@@ -31,14 +31,15 @@ namespace MyGame
 	public class ActionProgressEvent : Event
 	{
 		public int UserID { get; set; }
+		public ObjectID Actor { get; set; }
 		public int TransactionID { get; set; }
 		public int TicksLeft { get; set; }
 		public bool Success { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("ActionProgressEvent({0}, trid: {1}, left: {2}, ok: {3})",
-				this.UserID, this.TransactionID, this.TicksLeft, this.Success);
+			return String.Format("ActionProgressEvent(UID({0}), {1}, TRID({2}), left: {2}, ok: {3})",
+				this.UserID, this.Actor, this.TransactionID, this.TicksLeft, this.Success);
 		}
 	}
 

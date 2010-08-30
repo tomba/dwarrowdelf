@@ -45,8 +45,6 @@ namespace MyGame.Client
 	class ClientConnection
 	{
 		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
-		int m_transactionNumber;
-
 		public ClientNetStatistics Stats { get; private set; }
 
 		public bool IsUserConnected { get; private set; }
@@ -60,13 +58,6 @@ namespace MyGame.Client
 			m_connection = new Connection();
 			m_connection.ReceiveEvent += ReceiveMessage;
 			m_connection.DisconnectEvent += DisconnectOverride;
-		}
-
-		public void DoAction(GameAction action)
-		{
-			int tid = System.Threading.Interlocked.Increment(ref m_transactionNumber);
-			action.TransactionID = tid;
-			Send(new DoActionMessage() { Action = action });
 		}
 
 		public void Send(ClientMessage msg)
@@ -306,20 +297,11 @@ namespace MyGame.Client
 
 				//MyDebug.WriteLine("ActionProgressEvent({0})", e.TransactionID);
 
-				var list = GameData.Data.ActionCollection;
-				GameAction action = list.SingleOrDefault(a => a.TransactionID == e.TransactionID);
-				action.TicksLeft = e.TicksLeft;
-
-				// XXX GameAction doesn't have INotifyProperty changed, so we have to update manually
-				var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
-				itemsView.Refresh();
-
-				var ob = GameData.Data.World.FindObject<Living>(action.ActorObjectID);
+				var ob = GameData.Data.World.FindObject<Living>(e.Actor);
 				if (ob == null)
 					throw new Exception();
 
-				if (e.TicksLeft == 0)
-					ob.ActionDone(action);
+				ob.ActionProgress(e);
 
 				ob.AI.ActionProgress(e);
 			}
@@ -330,11 +312,10 @@ namespace MyGame.Client
 				//MyDebug.WriteLine("{0}", e);
 
 				var ob = GameData.Data.World.FindObject<Living>(e.ObjectID);
-
 				if (ob == null)
 					throw new Exception();
 
-				ob.AI.ActionRequired();
+				ob.AI.ActionRequired(ActionPriority.High);
 			}
 		}
 

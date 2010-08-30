@@ -358,12 +358,12 @@ namespace MyGame.Server
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-#if asd
+#if !asd
 			var player = new Living(m_world, "player")
 			{
 				SymbolID = SymbolID.Player,
-				Actor = new InteractiveActor(),
 			};
+			player.AI = new InteractiveActor(player);
 
 			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
 
@@ -388,12 +388,17 @@ namespace MyGame.Server
 			};
 			item.MoveTo(player);
 
+			/*
 			var pp = GetRandomSurfaceLocation(env, 9);
 			if (!player.MoveTo(env, pp))
 				throw new Exception("Unable to move player");
+			*/
 
-			var inv = player.SerializeInventory();
-			Send(inv);
+			if (!player.MoveTo(env, new IntPoint3D(10, 10, 9)))
+				throw new Exception("Unable to move player");
+
+			// XXX does not work, player object has not been created in client yet...
+			player.SerializeInventoryTo(Send);
 
 			m_scriptScope.SetVariable("me", player);
 #if qwe
@@ -421,7 +426,7 @@ namespace MyGame.Server
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
-				player.Actor = new InteractiveActor(player);
+				player.AI = new InteractiveActor(player);
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
@@ -472,6 +477,8 @@ namespace MyGame.Server
 					throw new Exception("already has an action");
 
 				action.UserID = m_userID;
+				if (action.Priority > ActionPriority.User)
+					action.Priority = ActionPriority.User;
 
 				living.DoAction(action);
 			}
@@ -482,25 +489,6 @@ namespace MyGame.Server
 
 				var reply = new EventMessage(new ActionProgressEvent() { UserID = m_userID, TransactionID = msg.Action.TransactionID, Success = false, TicksLeft = 0 });
 				Send(reply);
-			}
-		}
-
-		[WorldInvoke(WorldInvokeStyle.None)]
-		void ReceiveMessage(DoSkipMessage msg)
-		{
-			try
-			{
-				var living = m_controllables.SingleOrDefault(l => l.ObjectID == msg.ActorObjectID);
-
-				if (living == null)
-					throw new Exception("Illegal ob id");
-
-				living.DoSkipAction();
-			}
-			catch (Exception e)
-			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
 			}
 		}
 

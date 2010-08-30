@@ -5,15 +5,34 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	class InteractiveActor : IActor
+	class InteractiveActor : Jobs.IAI
 	{
-		Living m_object;
+		Living Worker { get; set; }
 		Random m_random;
 
 		public InteractiveActor(Living ob)
 		{
 			m_random = new Random(GetHashCode());
-			m_object = ob;
+			this.Worker = ob;
+		}
+
+		public void ActionRequired(ActionPriority priority)
+		{
+			if (priority == ActionPriority.Idle)
+			{
+				if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
+					return;
+
+				if (this.Worker.HasAction)
+					this.Worker.CancelAction();
+				var a = GetNewAction();
+				a.Priority = priority;
+				this.Worker.DoAction(a);
+			}
+		}
+
+		public void ActionProgress(ActionProgressEvent e)
+		{
 		}
 
 		GameAction GetNewAction()
@@ -36,21 +55,5 @@ namespace MyGame.Server
 
 			return action;
 		}
-
-		#region IActor Members
-
-		public void DetermineIdleAction()
-		{
-			if (m_object.HasAction)
-				return;
-			var a = GetNewAction();
-			m_object.DoAction(a);
-		}
-
-		public void DeterminePriorityAction()
-		{
-		}
-
-		#endregion
 	}
 }

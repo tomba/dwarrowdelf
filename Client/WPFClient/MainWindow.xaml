@@ -250,9 +250,12 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                <TextBlock Text="{Binding ActorObjectID}" />
-                                : left <TextBlock Text="{Binding TicksLeft}" />
-                            </TextBlock>
+                                    <TextBlock Text="{Binding ActorObjectID}" />
+                                    :
+                                    <TextBlock Text="{Binding}" />
+                                    : left
+                                    <TextBlock Text="{Binding TicksLeft}" />
+                                </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

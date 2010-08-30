@@ -84,12 +84,6 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class DoSkipMessage : ClientMessage
-	{
-		public ObjectID ActorObjectID { get; set; }
-	}
-
-	[Serializable]
 	public class ProceedTickMessage : ClientMessage
 	{
 	}

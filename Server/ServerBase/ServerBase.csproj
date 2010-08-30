@@ -78,7 +78,6 @@
     <Compile Include="BuildingObject.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="ItemObject.cs" />
-    <Compile Include="IActor.cs" />
     <Compile Include="InteractiveActor.cs" />
     <Compile Include="Living.cs" />
     <Compile Include="Environment.cs" />

@@ -10,7 +10,7 @@ namespace MyGame.Jobs
 {
 	public interface IAI
 	{
-		void ActionRequired();
+		void ActionRequired(ActionPriority priority);
 		void ActionProgress(ActionProgressEvent e);
 	}
 
@@ -30,8 +30,11 @@ namespace MyGame.Jobs
 			MyDebug.WriteLine("[AI] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		public void ActionRequired()
+		public virtual void ActionRequired(ActionPriority priority)
 		{
+			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
+				return;
+
 			while (true)
 			{
 				if (m_currentJob == null)
@@ -40,12 +43,14 @@ namespace MyGame.Jobs
 
 					if (m_currentJob == null)
 					{
-						D("no job to do");
-						this.Worker.DoSkipAction();
+						D("ActionRequired: no job to do");
+						if (!this.Worker.HasAction)
+							this.Worker.DoAction(new WaitAction(1) { Priority = ActionPriority.Lowest });
 						return;
 					}
 					else
 					{
+						D("ActionRequired: new {0}", m_currentJob);
 						m_currentJob.PropertyChanged += OnJobPropertyChanged;
 					}
 				}
@@ -59,6 +64,15 @@ namespace MyGame.Jobs
 						if (action == null)
 							throw new Exception();
 
+						action.Priority = priority;
+
+						if (this.Worker.HasAction)
+						{
+							D("ActionRequired: overriding old {0}", this.Worker.CurrentAction);
+							this.Worker.CancelAction();
+						}
+
+						D("ActionRequired: new {0}", action);
 						this.Worker.DoAction(action);
 						return;
 
@@ -76,7 +90,7 @@ namespace MyGame.Jobs
 			}
 		}
 
-		public void ActionProgress(ActionProgressEvent e)
+		public virtual void ActionProgress(ActionProgressEvent e)
 		{
 			if (m_currentJob == null)
 				return;

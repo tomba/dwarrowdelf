@@ -467,6 +467,9 @@ namespace MyGame.Server
 
 		bool CanMoveTo(IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
+			if (!this.Bounds.Contains(dstLoc))
+				return false;
+
 			IntVector3D v = dstLoc - srcLoc;
 
 			if (!v.IsNormal)
@@ -531,9 +534,34 @@ namespace MyGame.Server
 			list.Add(child);
 		}
 
+		/* XXX some room for optimization... */
 		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
 		{
-			throw new NotImplementedException();
+			var env = this;
+
+			foreach (var dir in DirectionExtensions.PlanarDirections)
+			{
+				var l = p + dir;
+				if (CanMoveTo(p, l))
+					yield return dir;
+			}
+
+			if (CanMoveTo(p, p + Direction.Up))
+				yield return Direction.Up;
+
+			if (CanMoveTo(p, p + Direction.Down))
+				yield return Direction.Down;
+
+			foreach (var dir in DirectionExtensions.CardinalDirections)
+			{
+				var d = dir | Direction.Down;
+				if (CanMoveTo(p, p + d))
+					yield return d;
+
+				d = dir | Direction.Up;
+				if (CanMoveTo(p, p + d))
+					yield return d;
+			}
 		}
 
 		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();

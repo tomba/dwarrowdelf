@@ -14,8 +14,6 @@ namespace MyGame.Server
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		IActor m_actorImpl;
-
 		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
 		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
 
@@ -46,7 +44,7 @@ namespace MyGame.Server
 
 		public void Cleanup()
 		{
-			this.Actor = null;
+			this.AI = null;
 			World.RemoveLiving(this);
 			this.Destruct();
 		}
@@ -117,11 +115,7 @@ namespace MyGame.Server
 			set { SetValue(WaterFullnessProperty, value); }
 		}
 
-		public IActor Actor
-		{
-			get { return m_actorImpl; }
-			set { m_actorImpl = value; }
-		}
+		public Jobs.IAI AI { get; set; }
 
 		public Grid2D<bool> VisionMap
 		{
@@ -256,7 +250,7 @@ namespace MyGame.Server
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			GameAction action = GetAction();
+			GameAction action = this.CurrentAction;
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 			{
@@ -311,11 +305,7 @@ namespace MyGame.Server
 
 			if (!done)
 			{
-				if (action is NopAction)
-				{
-					success = true;
-				}
-				else if (action is MoveAction)
+				if (action is MoveAction)
 				{
 					PerformMove((MoveAction)action, out success);
 				}
@@ -348,20 +338,21 @@ namespace MyGame.Server
 			if (success == false)
 				action.TicksLeft = 0;
 
-			if (action.TicksLeft == 0)
-				CancelAction();
-
-			// is the action originator an user?
-			if (action.UserID != 0)
-			{
-				this.World.AddEvent(new ActionProgressEvent()
+			var e = new ActionProgressEvent()
 				{
 					UserID = action.UserID,
+					Actor = this.ObjectID,
 					TransactionID = action.TransactionID,
 					TicksLeft = action.TicksLeft,
 					Success = success,
-				});
-			}
+				};
+
+			this.ActionProgress(e);
+			this.AI.ActionProgress(e);
+
+			// is the action originator an user?
+			if (e.UserID != 0)
+				this.World.AddEvent(e);
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
@@ -435,41 +426,63 @@ namespace MyGame.Server
 
 
 		// Actor stuff
-		GameAction m_action;
+		public GameAction CurrentAction { get; private set; }
+		public bool HasAction { get { return this.CurrentAction != null; } }
 
 		public void DoAction(GameAction action)
 		{
-			if (m_action != null)
+			if (this.HasAction)
+				throw new Exception();
+
+			if (action.Priority == ActionPriority.Undefined)
 				throw new Exception();
 
 			action.ActorObjectID = this.ObjectID;
-			m_action = action;
+			this.CurrentAction = action;
 			this.World.SignalWorld();
-		}
-
-		public void DoSkipAction()
-		{
-			this.Actor.DetermineIdleAction();
-
-			if (!this.HasAction)
-				this.DoAction(new NopAction());
 		}
 
 		public void CancelAction()
 		{
-			m_action = null;
-		}
+			if (!this.HasAction)
+				throw new Exception();
 
-		public GameAction GetAction()
-		{
-			return m_action;
-		}
+			MyDebug.WriteLine("{0}: CancelAction({1})", this, this.CurrentAction);
 
-		public bool HasAction
-		{
-			get
+			var action = this.CurrentAction;
+
+			var e = new ActionProgressEvent()
 			{
-				return m_action != null;
+				UserID = action.UserID,
+				Actor = this.ObjectID,
+				TransactionID = action.TransactionID,
+				TicksLeft = action.TicksLeft,
+				Success = false,
+			};
+
+			this.ActionProgress(e);
+			this.AI.ActionProgress(e);
+
+			// is the action originator an user?
+			if (e.UserID != 0)
+				this.World.AddEvent(e);
+
+			this.CurrentAction = null;
+		}
+
+		void ActionProgress(ActionProgressEvent e)
+		{
+			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
+				throw new Exception();
+
+			var action = this.CurrentAction;
+
+			action.TicksLeft = e.TicksLeft;
+
+			if (e.TicksLeft == 0)
+			{
+				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+				this.CurrentAction = null;
 			}
 		}
 
@@ -517,6 +530,12 @@ namespace MyGame.Server
 		{
 			var msg = new Messages.ObjectDataMessage() { Object = Serialize() };
 			writer(msg);
+		}
+
+		public void SerializeInventoryTo(Action<Messages.ServerMessage> writer)
+		{
+			foreach (var item in this.Inventory)
+				item.SerializeTo(writer);
 		}
 
 		public override string ToString()

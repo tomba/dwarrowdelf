@@ -53,8 +53,10 @@ namespace MyGame
 
 	public interface ILiving : IGameObject
 	{
+		GameAction CurrentAction { get; }
+		bool HasAction { get; }
 		void DoAction(GameAction action);
-		void DoSkipAction();
+		void CancelAction();
 	}
 
 	public interface IItemObject : IGameObject

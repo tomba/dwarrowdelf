@@ -1,5 +1,4 @@
-﻿//#define STAYSTILL
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,27 +6,55 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	public class MonsterActor : IActor
+	public class MonsterActor : Jobs.AI
 	{
-		Living m_object;
 		Random m_random;
 
-		public MonsterActor(Living ob)
+		public MonsterActor(Living living) : base(living)
 		{
 			m_random = new Random(GetHashCode());
-			m_object = ob;
+		}
+		/*
+		public override void ActionRequired(ActionPriority priority)
+		{
+			if (priority != ActionPriority.High || this.Worker.HasAction)
+				return;
+
+			var a = GetNewRandomMoveAction();
+			a.Priority = priority;
+			this.Worker.DoAction(a);
 		}
 
-		GameAction GetNewAction()
+		public override void ActionProgress(ActionProgressEvent e)
 		{
-#if STAYSTILL
-			return null;
-#else
-			GameAction action;
+		}
+		*/
+		protected override Jobs.IActionJob GetJob(ILiving worker)
+		{
+			var env = worker.Environment;
+			var l = worker.Location;
 
+			for (int i = 0; i < 20; i++)
+			{
+				l += Direction.North;
+
+				if (env.GetInteriorID(l) == InteriorID.Wall)
+				{
+					var job = new Jobs.MoveMineJob(null, env, l);
+					return job;
+				}
+			}
+
+			return null;
+		}
+
+		GameAction GetNewRandomMoveAction()
+		{
+			GameAction action;
+			/*
 			if (m_random.Next(4) == 0)
 				action = new WaitAction(m_random.Next(3) + 1);
-			else
+			else*/
 			{
 				IntVector v = new IntVector(1, 1);
 				v = v.Rotate(45 * m_random.Next(8));
@@ -40,23 +67,6 @@ namespace MyGame.Server
 			}
 
 			return action;
-#endif
 		}
-
-		#region IActor Members
-
-		public void DeterminePriorityAction()
-		{
-			if (m_object.HasAction)
-				return;
-			var a = GetNewAction();
-			m_object.DoAction(a);
-		}
-
-		public void DetermineIdleAction()
-		{
-		}
-
-		#endregion
 	}
 }

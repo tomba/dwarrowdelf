@@ -720,7 +720,7 @@ namespace MyGame.Client
 			m_loginDialog.Close();
 			m_loginDialog = null;
 			// xxx autologin
-			LogOnChar_Button_Click(null, null);
+			//LogOnChar_Button_Click(null, null);
 		}
 
 		void OnCharLoggedOn()
