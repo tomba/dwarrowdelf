@@ -88,6 +88,7 @@
     <Compile Include="WorldInvoke.cs" />
     <Compile Include="WorldLivings.cs" />
     <Compile Include="WorldLogger.cs" />
+    <Compile Include="WorldTick.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

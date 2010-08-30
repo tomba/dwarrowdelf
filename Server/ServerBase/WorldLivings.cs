@@ -11,6 +11,7 @@ namespace MyGame.Server
 		List<ServerConnection> m_userList = new List<ServerConnection>();
 
 		List<Living> m_livingList = new List<Living>();
+
 		List<Living> m_addLivingList = new List<Living>();
 		List<Living> m_removeLivingList = new List<Living>();
 
