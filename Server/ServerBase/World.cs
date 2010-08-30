@@ -26,8 +26,38 @@ namespace MyGame.Server
 		TickEnded,
 	}
 
-	public class World: IWorld
+	public partial class World : IWorld
 	{
+		class WorldConfig
+		{
+			public WorldTickMethod TickMethod { get; set; }
+
+			// Require an user to be in game for ticks to proceed
+			public bool RequireUser { get; set; }
+
+			// Require user to request to proceed, before proceeding
+			public bool RequireTickRequest { get; set; }
+
+			// Maximum time for one living to make its move. After this time has passed, the living
+			// will be skipped
+			public TimeSpan MaxMoveTime { get; set; }
+
+			// Minimum time between ticks. Ticks will never proceed faster than this.
+			public TimeSpan MinTickTime { get; set; }
+		}
+
+		WorldConfig m_config = new WorldConfig
+		{
+			TickMethod = WorldTickMethod.Simultaneous,
+			RequireUser = true,
+			RequireTickRequest = true,
+			MaxMoveTime = TimeSpan.FromMilliseconds(1000),
+			MinTickTime = TimeSpan.FromMilliseconds(50),
+		};
+
+		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
+		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
+
 		public IArea Area { get; private set; }
 
 		// only for debugging
@@ -42,17 +72,12 @@ namespace MyGame.Server
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 		int m_objectIDcounter;
 
-		List<Living> m_livingList = new List<Living>();
 		List<Living>.Enumerator m_livingEnumerator;
-		List<Living> m_addLivingList = new List<Living>();
-		List<Living> m_removeLivingList = new List<Living>();
 
 		public event Action<IEnumerable<Change>, IEnumerable<Event>> HandleEndOfTurn;
 
 		List<Change> m_changeList = new List<Change>();
 		List<Event> m_eventList = new List<Event>();
-
-		List<ServerConnection> m_userList = new List<ServerConnection>();
 
 		// XXX slow & bad
 		public IEnumerable<Environment> Environments
@@ -70,17 +95,10 @@ namespace MyGame.Server
 
 		int m_tickNumber;
 
-		WorldTickMethod m_tickMethod = WorldTickMethod.Simultaneous;
-
-		// Maximum time for one living to make its move. After this time has passed, the living
-		// will be skipped
-		bool m_useMaxMoveTime = false;
-		TimeSpan m_maxMoveTime = TimeSpan.FromMilliseconds(1000);
+		// time when next move has to happen
 		DateTime m_nextMove = DateTime.MaxValue;
 
-		// Minimum time between ticks. Ticks will never proceed faster than this.
-		bool m_useMinTickTime = true;
-		TimeSpan m_minTickTime = TimeSpan.FromMilliseconds(50);
+		// time when next tick will happen
 		DateTime m_nextTick = DateTime.MinValue;
 
 		// Timer is used out-of-tick to start the tick after m_minTickTime
@@ -89,21 +107,6 @@ namespace MyGame.Server
 
 		// If the user has requested to proceed
 		bool m_tickRequested;
-
-		// Require an user to be in game for ticks to proceed
-		bool m_requireUser = true;
-
-		// Require user to request to proceed, before proceeding
-		bool m_requireTickRequest = true;
-
-		class InvokeInfo
-		{
-			public Delegate Action;
-			public object[] Args;
-		}
-
-		List<InvokeInfo> m_preTickInvokeList = new List<InvokeInfo>();
-		List<InvokeInfo> m_instantInvokeList = new List<InvokeInfo>();
 
 		Thread m_worldThread;
 		volatile bool m_exit = false;
@@ -235,138 +238,6 @@ namespace MyGame.Server
 			get { return m_tickNumber; }
 		}
 
-		// thread safe
-		internal void AddUser(ServerConnection user)
-		{
-			lock (m_userList)
-				m_userList.Add(user);
-
-			SignalWorld();
-		}
-
-		// thread safe
-		internal void RemoveUser(ServerConnection user)
-		{
-			lock (m_userList)
-				m_userList.Remove(user);
-
-			SignalWorld();
-		}
-
-		// thread safe
-		internal void AddLiving(Living living)
-		{
-			lock (m_addLivingList)
-				m_addLivingList.Add(living);
-
-			SignalWorld();
-		}
-
-		void ProcessAddLivingList()
-		{
-			VerifyAccess();
-
-			lock (m_addLivingList)
-			{
-				if (m_addLivingList.Count > 0)
-					MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
-				foreach (var living in m_addLivingList)
-				{
-					Debug.Assert(!m_livingList.Contains(living));
-					m_livingList.Add(living);
-				}
-
-				m_addLivingList.Clear();
-			}
-		}
-
-		// thread safe
-		internal void RemoveLiving(Living living)
-		{
-			lock (m_removeLivingList)
-				m_removeLivingList.Add(living);
-
-			SignalWorld();
-		}
-
-		void ProcessRemoveLivingList()
-		{
-			VerifyAccess();
-
-			lock (m_removeLivingList)
-			{
-				if (m_removeLivingList.Count > 0)
-					MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
-				foreach (var living in m_removeLivingList)
-				{
-					bool removed = m_livingList.Remove(living);
-					Debug.Assert(removed);
-				}
-
-				m_removeLivingList.Clear();
-			}
-		}
-
-		// thread safe
-		public void BeginInvoke(Action<object> callback)
-		{
-			BeginInvoke(callback, null);
-		}
-
-		// thread safe
-		public void BeginInvoke(Delegate callback, params object[] args)
-		{
-			lock (m_preTickInvokeList)
-				m_preTickInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
-
-			SignalWorld();
-		}
-
-		void ProcessInvokeList()
-		{
-			VerifyAccess();
-
-			lock (m_preTickInvokeList)
-			{
-				if (m_preTickInvokeList.Count > 0)
-					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTickInvokeList.Count);
-				foreach (InvokeInfo a in m_preTickInvokeList)
-					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
-				m_preTickInvokeList.Clear();
-			}
-		}
-
-
-		// thread safe
-		public void BeginInvokeInstant(Action<object> callback)
-		{
-			BeginInvokeInstant(callback, null);
-		}
-
-		// thread safe
-		public void BeginInvokeInstant(Delegate callback, params object[] args)
-		{
-			lock (m_instantInvokeList)
-				m_instantInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
-
-			SignalWorld();
-		}
-
-		void ProcessInstantInvokeList()
-		{
-			VerifyAccess();
-
-			lock (m_instantInvokeList)
-			{
-				if (m_instantInvokeList.Count > 0)
-					MyDebug.WriteLine("Processing {0} instant invoke callbacks", m_instantInvokeList.Count);
-				foreach (InvokeInfo a in m_instantInvokeList)
-					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
-				m_instantInvokeList.Clear();
-			}
-		}
-
-
 
 		// thread safe
 		public void SignalWorld()
@@ -394,17 +265,16 @@ namespace MyGame.Server
 			if (m_state != WorldState.Idle)
 				return false;
 
-			if (m_useMinTickTime && DateTime.Now < m_nextTick)
+			if (this.UseMinTickTime && DateTime.Now < m_nextTick)
 				return false;
 
-			if (m_requireUser && m_tickRequested == false)
+			if (m_config.RequireUser && m_tickRequested == false)
 			{
-				lock (m_userList)
-					if (m_userList.Count == 0)
-						return false;
+				if (!this.HasUsers)
+					return false;
 			}
 
-			if (m_requireTickRequest && m_tickRequested == false)
+			if (m_config.RequireTickRequest && m_tickRequested == false)
 				return false;
 
 			return true;
@@ -434,9 +304,9 @@ namespace MyGame.Server
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				if (m_tickMethod == WorldTickMethod.Simultaneous)
+				if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 					SimultaneousWork();
-				else if (m_tickMethod == WorldTickMethod.Sequential)
+				else if (m_config.TickMethod == WorldTickMethod.Sequential)
 					SequentialWork();
 				else
 					throw new NotImplementedException();
@@ -461,35 +331,31 @@ namespace MyGame.Server
 		{
 			VerifyAccess();
 
-			lock (m_instantInvokeList)
-				if (m_instantInvokeList.Count > 0)
-				{
-					VDbg("WorkAvailable: InstantInvoke");
-					return true;
-				}
+			if (this.HasInstantInvokeWork)
+			{
+				VDbg("WorkAvailable: InstantInvoke");
+				return true;
+			}
 
 			if (m_state == WorldState.Idle)
 			{
-				lock (m_preTickInvokeList)
-					if (m_preTickInvokeList.Count > 0)
-					{
-						VDbg("WorkAvailable: PreTickInvoke");
-						return true;
-					}
+				if (this.HasPreTickInvokeWork)
+				{
+					VDbg("WorkAvailable: PreTickInvoke");
+					return true;
+				}
 
-				lock (m_addLivingList)
-					if (m_addLivingList.Count > 0)
-					{
-						VDbg("WorkAvailable: AddLiving");
-						return true;
-					}
+				if (this.HasAddLivings)
+				{
+					VDbg("WorkAvailable: AddLiving");
+					return true;
+				}
 
-				lock (m_removeLivingList)
-					if (m_removeLivingList.Count > 0)
-					{
-						VDbg("WorkAvailable: RemoveLiving");
-						return true;
-					}
+				if (this.HasRemoveLivings)
+				{
+					VDbg("WorkAvailable: RemoveLiving");
+					return true;
+				}
 
 				if (IsTimeToStartTick())
 				{
@@ -501,9 +367,9 @@ namespace MyGame.Server
 			}
 			else if (m_state == WorldState.TickOngoing)
 			{
-				if (m_tickMethod == WorldTickMethod.Simultaneous)
+				if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 					return SimultaneousWorkAvailable();
-				else if (m_tickMethod == WorldTickMethod.Sequential)
+				else if (m_config.TickMethod == WorldTickMethod.Sequential)
 					return SequentialWorkAvailable();
 				else
 					throw new NotImplementedException();
@@ -522,7 +388,7 @@ namespace MyGame.Server
 			if (m_livingList.All(l => l.HasAction))
 				return true;
 
-			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
+			if (this.UseMaxMoveTime && DateTime.Now >= m_nextMove)
 				return true;
 
 			return false;
@@ -574,13 +440,10 @@ namespace MyGame.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			lock (m_removeLivingList)
+			if (RemoveLivingListContains(m_livingEnumerator.Current))
 			{
-				if (m_removeLivingList.Contains(m_livingEnumerator.Current))
-				{
-					VDbg("WorkAvailable: Current living is to be removed");
-					return true;
-				}
+				VDbg("WorkAvailable: Current living is to be removed");
+				return true;
 			}
 
 			if (m_livingEnumerator.Current.HasAction)
@@ -589,7 +452,7 @@ namespace MyGame.Server
 				return true;
 			}
 
-			if (m_useMaxMoveTime && DateTime.Now >= m_nextMove)
+			if (this.UseMaxMoveTime && DateTime.Now >= m_nextMove)
 			{
 				VDbg("WorkAvailable: NextMoveTime");
 				return true;
@@ -600,7 +463,7 @@ namespace MyGame.Server
 
 		bool IsMoveForced()
 		{
-			return (m_useMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
+			return (this.UseMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
 		}
 
 		void SequentialWork()
@@ -616,9 +479,8 @@ namespace MyGame.Server
 			{
 				var living = m_livingEnumerator.Current;
 
-				lock (m_removeLivingList)
-					if (m_removeLivingList.Contains(living))
-						forceMove = true;
+				if (RemoveLivingListContains(living))
+					forceMove = true;
 
 				if (!forceMove && !living.HasAction)
 					break;
@@ -652,7 +514,7 @@ namespace MyGame.Server
 			foreach (Living l in m_livingList)
 				l.AI.ActionRequired(ActionPriority.High);
 
-			if (m_tickMethod == WorldTickMethod.Simultaneous)
+			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
 				// This presumes that non-user controlled livings already have actions
 				var events = m_livingList.
@@ -670,19 +532,17 @@ namespace MyGame.Server
 
 			m_livingEnumerator = m_livingList.GetEnumerator();
 
-			if (m_tickMethod == WorldTickMethod.Simultaneous)
+			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
-				var ok = m_livingEnumerator.MoveNext();
-				if (!ok)
-					throw new Exception("no livings");
+				m_livingEnumerator.MoveNext();
 
-				if (m_useMaxMoveTime)
+				if (this.UseMaxMoveTime)
 				{
-					m_nextMove = DateTime.Now + m_maxMoveTime;
-					m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
+					m_nextMove = DateTime.Now + m_config.MaxMoveTime;
+					m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
 				}
 			}
-			else if (m_tickMethod == WorldTickMethod.Sequential)
+			else if (m_config.TickMethod == WorldTickMethod.Sequential)
 			{
 				bool last = GetNextLivingSeq();
 				if (last)
@@ -697,13 +557,13 @@ namespace MyGame.Server
 			if (last)
 				return true;
 
-			if (m_useMaxMoveTime)
+			if (this.UseMaxMoveTime)
 			{
-				m_nextMove = DateTime.Now + m_maxMoveTime;
-				m_tickTimer.Change(m_maxMoveTime, TimeSpan.FromTicks(-1));
+				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
+				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
 			}
 
-			if (m_tickMethod == WorldTickMethod.Sequential)
+			if (m_config.TickMethod == WorldTickMethod.Sequential)
 			{
 				var living = m_livingEnumerator.Current;
 				if (!living.HasAction && !IsMoveForced())
@@ -717,10 +577,10 @@ namespace MyGame.Server
 		{
 			VerifyAccess();
 
-			if (m_useMinTickTime)
+			if (this.UseMinTickTime)
 			{
-				m_nextTick = DateTime.Now + m_minTickTime;
-				m_tickTimer.Change(m_minTickTime, TimeSpan.FromTicks(-1));
+				m_nextTick = DateTime.Now + m_config.MinTickTime;
+				m_tickTimer.Change(m_config.MinTickTime, TimeSpan.FromTicks(-1));
 			}
 
 			MyDebug.WriteLine("-- Tick {0} ended --", m_tickNumber);

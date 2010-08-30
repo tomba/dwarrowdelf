@@ -85,6 +85,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGameObject.cs" />
     <Compile Include="World.cs" />
+    <Compile Include="WorldInvoke.cs" />
+    <Compile Include="WorldLivings.cs" />
     <Compile Include="WorldLogger.cs" />
   </ItemGroup>
   <ItemGroup>
