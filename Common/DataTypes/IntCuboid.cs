@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace MyGame
 {
 	[Serializable]
-	public struct IntCuboid
+	public struct IntCuboid : IEquatable<IntCuboid>
 	{
 		readonly int m_x;
 		readonly int m_y;
@@ -125,6 +125,20 @@ namespace MyGame
 		public IntRect ToIntRect()
 		{
 			return new IntRect(this.X, this.Y, this.Width, this.Height);
+		}
+
+		public bool Equals(IntCuboid other)
+		{
+			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_z == other.m_x &&
+				this.m_width == other.m_width && this.m_height == other.m_height && this.m_width == other.m_width;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is IntCuboid))
+				return false;
+
+			return Equals((IntCuboid)obj);
 		}
 
 		public override string ToString()
