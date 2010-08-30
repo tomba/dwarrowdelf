@@ -45,7 +45,7 @@ namespace MyGame.Server
 		public void Cleanup()
 		{
 			this.AI = null;
-			World.RemoveLiving(this);
+			this.World.RemoveLiving(this);
 			this.Destruct();
 		}
 
