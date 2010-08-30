@@ -72,6 +72,9 @@ namespace MyGame.Server
 
 		WorldLogger m_worldLogger;
 
+		InvokeList m_preTickInvokeList;
+		InvokeList m_instantInvokeList;
+
 		[Conditional("DEBUG")]
 		void VDbg(string format, params object[] args)
 		{
@@ -86,6 +89,9 @@ namespace MyGame.Server
 			m_worldThread.Name = "World";
 
 			m_worldLogger = new WorldLogger(this);
+
+			m_preTickInvokeList = new InvokeList(this);
+			m_instantInvokeList = new InvokeList(this);
 
 			InitializeWorldTick();
 		}

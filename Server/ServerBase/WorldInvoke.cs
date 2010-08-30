@@ -7,89 +7,63 @@ namespace MyGame.Server
 {
 	public partial class World
 	{
-		class InvokeInfo
-		{
-			public Delegate Action;
-			public object[] Args;
-		}
-
-		List<InvokeInfo> m_preTickInvokeList = new List<InvokeInfo>();
-		List<InvokeInfo> m_instantInvokeList = new List<InvokeInfo>();
-
-		// thread safe
-		public void BeginInvoke(Action<object> callback)
-		{
-			BeginInvoke(callback, null);
-		}
-
-		// thread safe
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
-			lock (m_preTickInvokeList)
-				m_preTickInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
-
-			SignalWorld();
+			m_preTickInvokeList.BeginInvoke(callback, args);
 		}
 
-		bool HasPreTickInvokeWork
-		{
-			get
-			{
-				lock (m_preTickInvokeList)
-					return m_preTickInvokeList.Count > 0;
-			}
-		}
-
-		void ProcessInvokeList()
-		{
-			VerifyAccess();
-
-			lock (m_preTickInvokeList)
-			{
-				if (m_preTickInvokeList.Count > 0)
-					MyDebug.WriteLine("Processing {0} invoke callbacks", m_preTickInvokeList.Count);
-				foreach (InvokeInfo a in m_preTickInvokeList)
-					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
-				m_preTickInvokeList.Clear();
-			}
-		}
-
-
-		// thread safe
-		public void BeginInvokeInstant(Action<object> callback)
-		{
-			BeginInvokeInstant(callback, null);
-		}
-
-		// thread safe
 		public void BeginInvokeInstant(Delegate callback, params object[] args)
 		{
-			lock (m_instantInvokeList)
-				m_instantInvokeList.Add(new InvokeInfo() { Action = callback, Args = args });
-
-			SignalWorld();
+			m_instantInvokeList.BeginInvoke(callback, args);
 		}
 
-		bool HasInstantInvokeWork
+		class InvokeList
 		{
-			get
+			class InvokeInfo
 			{
-				lock (m_instantInvokeList)
-					return m_instantInvokeList.Count > 0;
+				public Delegate Action;
+				public object[] Args;
 			}
-		}
 
-		void ProcessInstantInvokeList()
-		{
-			VerifyAccess();
+			List<InvokeInfo> m_invokeList = new List<InvokeInfo>();
 
-			lock (m_instantInvokeList)
+			World m_world;
+
+			public InvokeList(World world)
 			{
-				if (m_instantInvokeList.Count > 0)
-					MyDebug.WriteLine("Processing {0} instant invoke callbacks", m_instantInvokeList.Count);
-				foreach (InvokeInfo a in m_instantInvokeList)
-					a.Action.DynamicInvoke(a.Args); // XXX dynamicinvoke
-				m_instantInvokeList.Clear();
+				m_world = world;
+			}
+
+			// thread safe
+			public void BeginInvoke(Delegate callback, params object[] args)
+			{
+				lock (m_invokeList)
+					m_invokeList.Add(new InvokeInfo() { Action = callback, Args = args });
+
+				m_world.SignalWorld();
+			}
+
+			public bool HasInvokeWork
+			{
+				get
+				{
+					lock (m_invokeList)
+						return m_invokeList.Count > 0;
+				}
+			}
+
+			public void ProcessInvokeList()
+			{
+				m_world.VerifyAccess();
+
+				lock (m_invokeList)
+				{
+					if (m_invokeList.Count > 0)
+						MyDebug.WriteLine("Processing {0} invoke callbacks", m_invokeList.Count);
+					foreach (InvokeInfo a in m_invokeList)
+						a.Action.DynamicInvoke(a.Args); // XXX DynamicInvoke
+					m_invokeList.Clear();
+				}
 			}
 		}
 	}

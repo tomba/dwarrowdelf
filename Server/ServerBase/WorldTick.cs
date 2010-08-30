@@ -97,13 +97,13 @@ namespace MyGame.Server
 
 			EnterWriteLock();
 
-			ProcessInstantInvokeList();
+			m_instantInvokeList.ProcessInvokeList();
 
 			if (m_state == WorldState.Idle)
 			{
 				//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
 
-				ProcessInvokeList();
+				m_preTickInvokeList.ProcessInvokeList();
 				ProcessAddLivingList();
 				ProcessRemoveLivingList();
 
@@ -142,7 +142,7 @@ namespace MyGame.Server
 		{
 			VerifyAccess();
 
-			if (this.HasInstantInvokeWork)
+			if (m_instantInvokeList.HasInvokeWork)
 			{
 				VDbg("WorkAvailable: InstantInvoke");
 				return true;
@@ -150,7 +150,7 @@ namespace MyGame.Server
 
 			if (m_state == WorldState.Idle)
 			{
-				if (this.HasPreTickInvokeWork)
+				if (m_preTickInvokeList.HasInvokeWork)
 				{
 					VDbg("WorkAvailable: PreTickInvoke");
 					return true;
