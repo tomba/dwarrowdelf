@@ -238,6 +238,14 @@ namespace MyGame.Client
 			{
 				var p = new IntPoint3D(ml.X, ml.Y, z);
 
+				if (tile.Color == GameColor.None)
+				{
+					tile.Color = GetTileColor(p, env);
+
+					if (tile.Color != GameColor.None)
+						tile.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+				}
+
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
 					GetTopTile(p, env, ref tile.Top, showVirtualSymbols);
@@ -279,9 +287,6 @@ namespace MyGame.Client
 
 			if (tile.Floor.DarknessLevel == 0)
 				tile.Floor.DarknessLevel = tile.Interior.DarknessLevel;
-
-			/* GENERAL */
-			tile.Color = GetTileColor(ml, env);
 		}
 
 		static bool TileVisible(IntPoint3D ml, Environment env)
@@ -586,7 +591,7 @@ namespace MyGame.Client
 				return mat.Color;
 			}
 
-			return GameColor.Black;
+			return GameColor.None;
 		}
 	}
 }

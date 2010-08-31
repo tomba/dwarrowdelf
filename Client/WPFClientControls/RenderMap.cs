@@ -20,6 +20,7 @@ namespace MyGame.Client
 
 		// Tile color for minimap
 		public GameColor Color;
+		public byte DarknessLevel;
 
 		public RenderTileLayer Floor;
 		public RenderTileLayer Interior;

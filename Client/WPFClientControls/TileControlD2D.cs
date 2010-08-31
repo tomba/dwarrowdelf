@@ -346,7 +346,11 @@ namespace MyGame.Client
 					{
 						RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
 						var rgb = new GameColorRGB(data.Color);
-						uint c = (uint)((rgb.R << 16) | (rgb.G << 8) | (rgb.B << 0));
+						var m = 1.0 - data.DarknessLevel / 255.0;
+						var r = (byte)(rgb.R * m);
+						var g = (byte)(rgb.G * m);
+						var b = (byte)(rgb.B * m);
+						uint c = (uint)((r << 16) | (g << 8) | (b << 0));
 
 						a[(m_rows - y - 1) * w + x] = c;
 					}
