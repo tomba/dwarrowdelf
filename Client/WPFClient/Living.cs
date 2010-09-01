@@ -17,8 +17,6 @@ namespace MyGame.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		public GameAction CurrentAction { get; private set; }
-
 		public Jobs.IAI AI { get; private set; }
 
 		public Living(World world, ObjectID objectID)
@@ -113,6 +111,13 @@ namespace MyGame.Client
 			l.m_visionMap = null;
 		}
 
+		public static readonly DependencyProperty CurrentActionProperty = DependencyProperty.Register("CurrentAction", typeof(GameAction), typeof(Living));
+		public GameAction CurrentAction
+		{
+			get { return (GameAction)this.GetValue(CurrentActionProperty); }
+			private set { this.SetValue(CurrentActionProperty, value); }
+		}
+
 		public bool HasAction { get { return this.CurrentAction != null; } }
 		static int s_transactionNumber;
 
@@ -128,7 +133,6 @@ namespace MyGame.Client
 			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
 
 			this.CurrentAction = action;
-			GameData.Data.ActionCollection.Add(action);
 
 			int tid = System.Threading.Interlocked.Increment(ref s_transactionNumber);
 			action.TransactionID = tid;
@@ -156,13 +160,14 @@ namespace MyGame.Client
 			{
 				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
 
-				GameData.Data.ActionCollection.Remove(action);
 				this.CurrentAction = null;
 			}
-
-			// XXX GameAction doesn't have INotifyProperty changed, so we have to update manually
-			var itemsView = System.Windows.Data.CollectionViewSource.GetDefaultView(App.MainWindow.actionList.ItemsSource);
-			itemsView.Refresh();
+			else
+			{
+				// XXX refresh action list
+				this.CurrentAction = null;
+				this.CurrentAction = action;
+			}
 		}
 
 		public Grid2D<bool> VisionMap

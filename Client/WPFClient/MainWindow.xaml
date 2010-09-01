@@ -246,15 +246,13 @@
                 </GroupBox>
 
                 <GroupBox Grid.Column="0" Grid.Row="1" Header="Pending Actions">
-                    <ListBox x:Name="actionList" ItemsSource="{Binding Path=ActionCollection}">
+                    <ListBox ItemsSource="{Binding Path=World.Controllables}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                    <TextBlock Text="{Binding ActorObjectID}" />
-                                    :
                                     <TextBlock Text="{Binding}" />
-                                    : left
-                                    <TextBlock Text="{Binding TicksLeft}" />
+                                    :
+                                    <TextBlock Text="{Binding CurrentAction}" />
                                 </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

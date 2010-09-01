@@ -23,7 +23,6 @@ namespace MyGame.Client
 
 		public GameData()
 		{
-			this.ActionCollection = new ActionCollection();
 		}
 
 
@@ -80,6 +79,5 @@ namespace MyGame.Client
 			DependencyProperty.Register("DisableLOS", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
 
 
-		public ActionCollection ActionCollection { get; private set; }
 	}
 }
