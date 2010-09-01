@@ -458,7 +458,7 @@ namespace MyGame.Server
 			m_charLoggedIn = false;
 		}
 
-		[WorldInvoke(WorldInvokeStyle.None)]
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(DoActionMessage msg)
 		{
 			var action = msg.Action;
@@ -473,12 +473,17 @@ namespace MyGame.Server
 				if (living == null)
 					throw new Exception("Illegal ob id");
 
-				if (living.HasAction)
-					throw new Exception("already has an action");
-
 				action.UserID = m_userID;
 				if (action.Priority > ActionPriority.User)
 					action.Priority = ActionPriority.User;
+
+				if (living.HasAction)
+				{
+					if (living.CurrentAction.Priority >= action.Priority)
+						living.CancelAction();
+					else
+						throw new Exception("already has an action");
+				}
 
 				living.DoAction(action);
 			}
