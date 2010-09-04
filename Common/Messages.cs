@@ -115,8 +115,16 @@ namespace MyGame.Messages
 		public BuildingID ID { get; set; }
 	}
 
+	/// <summary>
+	/// StateMessages change the world state
+	/// </summary>
 	[Serializable]
-	public class ObjectDataMessage : ServerMessage
+	public abstract class StateMessage : ServerMessage
+	{
+	}
+
+	[Serializable]
+	public class ObjectDataMessage : StateMessage
 	{
 		public BaseGameObjectData Object { get; set; }
 
@@ -127,13 +135,13 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ObjectDataArrayMessage : ServerMessage
+	public class ObjectDataArrayMessage : StateMessage
 	{
 		public BaseGameObjectData[] ObjectData { get; set; }
 	}
 
 	[Serializable]
-	public class PropertyDataMessage : ServerMessage
+	public class PropertyDataMessage : StateMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public PropertyID PropertyID { get; set; }
@@ -146,7 +154,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataMessage : ServerMessage
+	public class MapDataMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
 		public VisibilityMode VisibilityMode { get; set; }
@@ -154,7 +162,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsMessage : ServerMessage
+	public class MapDataTerrainsMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
@@ -162,7 +170,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsListMessage : ServerMessage
+	public class MapDataTerrainsListMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
 		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
@@ -174,7 +182,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ObjectMoveMessage : ServerMessage
+	public class ObjectMoveMessage : StateMessage
 	{
 		public ObjectID ObjectID { get; set; }
 		public ObjectID TargetEnvID { get; set; }
@@ -199,7 +207,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ObjectDestructedMessage : ServerMessage
+	public class ObjectDestructedMessage : StateMessage
 	{
 		public ObjectID ObjectID { get; set; }
 
