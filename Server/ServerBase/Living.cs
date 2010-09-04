@@ -14,6 +14,8 @@ namespace MyGame.Server
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
+		public ServerConnection Controller { get; set; }
+
 		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
 		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
 
@@ -352,7 +354,7 @@ namespace MyGame.Server
 
 			// is the action originator an user?
 			if (e.UserID != 0)
-				this.World.AddEvent(e);
+				this.World.SendEvent(this, e);
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
@@ -465,7 +467,7 @@ namespace MyGame.Server
 
 			// is the action originator an user?
 			if (e.UserID != 0)
-				this.World.AddEvent(e);
+				this.World.SendEvent(this, e);
 
 			this.CurrentAction = null;
 		}

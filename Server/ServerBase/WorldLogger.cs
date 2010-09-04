@@ -38,13 +38,10 @@ namespace MyGame.Server
 			m_world.ExitReadLock();
 		}
 
-		void HandleEndOfTurn(IEnumerable<Change> changes, IEnumerable<Event> events)
+		void HandleEndOfTurn(IEnumerable<Change> changes)
 		{
 			foreach (var c in changes)
 				m_writer.WriteLine(c);
-
-			foreach (var e in events)
-				m_writer.WriteLine(e);
 
 			m_writer.Flush();
 		}

@@ -12,18 +12,18 @@ namespace MyGame
 	}
 
 	[Serializable]
-	public class TickChangeEvent : Event
+	public class TickStartEvent : Event
 	{
 		public int TickNumber { get; set; }
 
-		public TickChangeEvent(int tickNumber)
+		public TickStartEvent(int tickNumber)
 		{
 			this.TickNumber = tickNumber;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("TickChangeEvent({0})", this.TickNumber);
+			return String.Format("TickStartEvent({0})", this.TickNumber);
 		}
 	}
 

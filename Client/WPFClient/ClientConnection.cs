@@ -286,9 +286,9 @@ namespace MyGame.Client
 
 		void HandleEvents(Event @event)
 		{
-			if (@event is TickChangeEvent)
+			if (@event is TickStartEvent)
 			{
-				var e = (TickChangeEvent)@event;
+				var e = (TickStartEvent)@event;
 				GameData.Data.World.TickNumber = e.TickNumber;
 			}
 			else if (@event is ActionProgressEvent)

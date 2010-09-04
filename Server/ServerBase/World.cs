@@ -60,10 +60,9 @@ namespace MyGame.Server
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 		int m_objectIDcounter;
 
-		public event Action<IEnumerable<Change>, IEnumerable<Event>> HandleEndOfTurn;
+		public event Action<IEnumerable<Change>> HandleEndOfTurn;
 
 		List<Change> m_changeList = new List<Change>();
-		List<Event> m_eventList = new List<Event>();
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -130,9 +129,8 @@ namespace MyGame.Server
 
 			// process any changes from world initialization
 			if (HandleEndOfTurn != null)
-				HandleEndOfTurn(m_changeList, m_eventList);
+				HandleEndOfTurn(m_changeList);
 			m_changeList.Clear();
-			m_eventList.Clear();
 		}
 
 		void Main(object arg)
@@ -210,10 +208,15 @@ namespace MyGame.Server
 			m_changeList.Add(change);
 		}
 
-		public void AddEvent(Event @event)
+		public void SendGlobalEvent(Event @event)
 		{
-			VerifyAccess();
-			m_eventList.Add(@event);
+			foreach (var u in m_userList)
+				u.SendEvent(@event);
+		}
+
+		public void SendEvent(Living living, Event @event)
+		{
+			living.Controller.SendEvent(@event);
 		}
 
 		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)

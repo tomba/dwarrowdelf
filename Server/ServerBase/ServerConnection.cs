@@ -166,6 +166,12 @@ namespace MyGame.Server
 			m_connection = null;
 		}
 
+		public void SendEvent(Event @event)
+		{
+			var msg = new EventMessage(@event);
+			Send(msg);
+		}
+
 		void Send(ServerMessage msg)
 		{
 			m_connection.Send(msg);
@@ -434,6 +440,9 @@ namespace MyGame.Server
 			}
 #endif
 
+			foreach (var l in m_controllables)
+				l.Controller = this;
+
 			m_charLoggedIn = true;
 			Send(new Messages.LogOnCharReplyMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
@@ -451,6 +460,8 @@ namespace MyGame.Server
 				l.Cleanup();
 			}
 
+			foreach (var l in m_controllables)
+				l.Controller = null;
 			m_controllables.Clear();
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
@@ -528,14 +539,13 @@ namespace MyGame.Server
 		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
 
 		// Called from the world at the end of turn
-		void HandleEndOfTurn(IEnumerable<Change> changes, IEnumerable<Event> events)
+		void HandleEndOfTurn(IEnumerable<Change> changes)
 		{
 			// if the user sees all, no need to send new terrains/objects
 			if (!m_seeAll)
 				HandleNewTerrainsAndObjects(m_controllables);
 
 			HandleChanges(changes);
-			HandleEvents(events);
 		}
 
 		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
@@ -670,35 +680,6 @@ namespace MyGame.Server
 		{
 			var msgs = revealedObjects.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
 			Send(msgs);
-		}
-
-
-
-		void HandleEvents(IEnumerable<Event> events)
-		{
-			events = events.Where(EventFilter);
-			var msgs = events.Select(e => new Messages.EventMessage(e));
-			Send(msgs);
-		}
-
-		bool EventFilter(Event @event)
-		{
-			if (@event is ActionProgressEvent)
-			{
-				var e = (ActionProgressEvent)@event;
-				return e.UserID == m_userID;
-			}
-
-			if (@event is ActionRequiredEvent)
-			{
-				var e = (ActionRequiredEvent)@event;
-				return m_controllables.Any(l => l.ObjectID == e.ObjectID);
-			}
-
-			if (@event is TickChangeEvent)
-				return true;
-
-			return true;
 		}
 
 

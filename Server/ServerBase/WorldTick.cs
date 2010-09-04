@@ -127,9 +127,8 @@ namespace MyGame.Server
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
 			if (HandleEndOfTurn != null)
-				HandleEndOfTurn(m_changeList, m_eventList);
+				HandleEndOfTurn(m_changeList);
 			m_changeList.Clear();
-			m_eventList.Clear();
 
 			if (m_state == WorldState.TickEnded)
 			{
@@ -310,7 +309,7 @@ namespace MyGame.Server
 			VerifyAccess();
 
 			this.TickNumber++;
-			AddEvent(new TickChangeEvent(this.TickNumber));
+			SendGlobalEvent(new TickStartEvent(this.TickNumber));
 
 			MyDebug.WriteLine("-- Tick {0} started --", this.TickNumber);
 			m_tickRequested = false;
@@ -322,13 +321,12 @@ namespace MyGame.Server
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
-				// This presumes that non-user controlled livings already have actions
-				var events = m_livingList.
-					Where(l => !l.HasAction).
-					Select(l => new ActionRequiredEvent() { ObjectID = l.ObjectID });
+				var livings = m_livingList.
+					Where(l => l.Controller != null).
+					Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.CurrentAction.UserID == 0));
 
-				foreach (var e in events)
-					AddEvent(e);
+				foreach (var l in livings)
+					SendEvent(l, new ActionRequiredEvent() { ObjectID = l.ObjectID });
 			}
 
 			m_state = WorldState.TickOngoing;
@@ -373,7 +371,7 @@ namespace MyGame.Server
 			{
 				var living = m_livingEnumerator.Current;
 				if (!living.HasAction && !IsMoveForced())
-					this.AddEvent(new ActionRequiredEvent() { ObjectID = living.ObjectID });
+					SendEvent(living, new ActionRequiredEvent() { ObjectID = living.ObjectID });
 			}
 
 			return false;
