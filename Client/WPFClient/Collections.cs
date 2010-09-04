@@ -38,10 +38,19 @@ namespace MyGame.Client
 		}
 	}
 
-	class ObjectCollection : IdentifiableCollection<ClientGameObject> { }
-	class ReadOnlyObjectCollection : ReadOnlyIdentifiableCollection<ClientGameObject>
+	class BaseGameObjectCollection : IdentifiableCollection<IBaseGameObject> { }
+	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<IBaseGameObject>
 	{
-		public ReadOnlyObjectCollection(ObjectCollection collection)
+		public ReadOnlyBaseGameObjectCollection(BaseGameObjectCollection collection)
+			: base(collection)
+		{
+		}
+	}
+
+	class GameObjectCollection : IdentifiableCollection<ClientGameObject> { }
+	class ReadOnlyGameObjectCollection : ReadOnlyIdentifiableCollection<ClientGameObject>
+	{
+		public ReadOnlyGameObjectCollection(GameObjectCollection collection)
 			: base(collection)
 		{
 		}

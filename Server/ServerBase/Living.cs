@@ -392,7 +392,7 @@ namespace MyGame.Server
 		}
 
 		// does this living see location l in object ob
-		public bool Sees(IIdentifiable ob, IntPoint3D l)
+		public bool Sees(IGameObject ob, IntPoint3D l)
 		{
 			if (ob != this.Environment)
 				return false;

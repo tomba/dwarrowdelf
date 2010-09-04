@@ -73,7 +73,7 @@ namespace MyGame
 	{
 		public ObjectID[] ItemObjectIDs { get; set; }
 
-		public DropAction(IEnumerable<IIdentifiable> items)
+		public DropAction(IEnumerable<IGameObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -90,7 +90,7 @@ namespace MyGame
 	{
 		public ObjectID[] ItemObjectIDs { get; set; }
 
-		public GetAction(IEnumerable<IIdentifiable> items)
+		public GetAction(IEnumerable<IGameObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -125,7 +125,7 @@ namespace MyGame
 
 		public ObjectID[] SourceObjectIDs { get; set; }
 
-		public BuildItemAction(IEnumerable<IIdentifiable> sourceItems)
+		public BuildItemAction(IEnumerable<IGameObject> sourceItems)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 		}

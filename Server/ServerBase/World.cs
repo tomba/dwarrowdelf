@@ -225,7 +225,7 @@ namespace MyGame.Server
 			AddChange(new MapChange(map, l, tileData));
 		}
 
-		internal void AddGameObject(IIdentifiable ob)
+		internal void AddGameObject(IBaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -234,7 +234,7 @@ namespace MyGame.Server
 				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
 		}
 
-		internal void RemoveGameObject(IIdentifiable ob)
+		internal void RemoveGameObject(IBaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -244,12 +244,12 @@ namespace MyGame.Server
 					throw new Exception();
 		}
 
-		public IIdentifiable FindObject(ObjectID objectID)
+		public IBaseGameObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
 
-			IIdentifiable ob = null;
+			IBaseGameObject ob = null;
 
 			lock (m_objectMap)
 			{
@@ -257,7 +257,7 @@ namespace MyGame.Server
 
 				if (m_objectMap.TryGetValue(objectID, out weakref))
 				{
-					ob = weakref.Target as IIdentifiable;
+					ob = weakref.Target as IBaseGameObject;
 
 					if (ob == null)
 						m_objectMap.Remove(objectID);
@@ -267,7 +267,7 @@ namespace MyGame.Server
 			return ob;
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : class, IIdentifiable
+		public T FindObject<T>(ObjectID objectID) where T : class, IBaseGameObject
 		{
 			var ob = FindObject(objectID);
 
@@ -306,9 +306,9 @@ namespace MyGame.Server
 			get { return m_livingList.ToArray(); }
 		}
 
-		public IIdentifiable IPGet(object target)
+		public IBaseGameObject IPGet(object target)
 		{
-			IIdentifiable ob = null;
+			IBaseGameObject ob = null;
 
 			if (target is int)
 			{

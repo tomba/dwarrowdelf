@@ -137,7 +137,7 @@ namespace MyGame.Server
 
 			m_scriptScope = m_scriptEngine.CreateScope();
 			m_scriptScope.SetVariable("world", m_world);
-			m_scriptScope.SetVariable("get", new Func<object, IIdentifiable>(m_world.IPGet));
+			m_scriptScope.SetVariable("get", new Func<object, IBaseGameObject>(m_world.IPGet));
 
 			m_scriptEngine.Execute("import clr", m_scriptScope);
 			m_scriptEngine.Execute("clr.AddReference('MyGame.Common')", m_scriptScope);

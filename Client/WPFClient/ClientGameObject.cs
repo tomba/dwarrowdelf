@@ -85,20 +85,20 @@ namespace MyGame.Client
 			throw new Exception();
 		}
 
-		IdentifiableCollection m_inventory;
-		public ReadOnlyIdentifiableCollection Inventory { get; private set; }
+		GameObjectCollection m_inventory;
+		public ReadOnlyGameObjectCollection Inventory { get; private set; }
 
 		public event ObjectMoved ObjectMoved;
 
 		public bool IsLiving { get; protected set; }
 
-		public IIdentifiable Assignment { get; set; }
+		public IBaseGameObject Assignment { get; set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_inventory = new IdentifiableCollection();
-			this.Inventory = new ReadOnlyIdentifiableCollection(m_inventory);
+			m_inventory = new GameObjectCollection();
+			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
 
 

@@ -10,8 +10,8 @@ namespace MyGame.Client
 {
 	class World : IWorld, INotifyPropertyChanged
 	{
-		IdentifiableCollection m_objects;
-		public ReadOnlyIdentifiableCollection Objects { get; private set; }
+		BaseGameObjectCollection m_objects;
+		public ReadOnlyBaseGameObjectCollection Objects { get; private set; }
 
 		EnvironmentCollection m_environments;
 		public ReadOnlyEnvironmentCollection Environments { get; private set; }
@@ -27,8 +27,8 @@ namespace MyGame.Client
 
 		public World()
 		{
-			m_objects = new IdentifiableCollection();
-			this.Objects = new ReadOnlyIdentifiableCollection(m_objects);
+			m_objects = new BaseGameObjectCollection();
+			this.Objects = new ReadOnlyBaseGameObjectCollection(m_objects);
 
 			m_environments = new EnvironmentCollection();
 			this.Environments = new ReadOnlyEnvironmentCollection(m_environments);
@@ -61,7 +61,7 @@ namespace MyGame.Client
 
 		public event Action TickEvent;
 
-		internal void AddObject(IIdentifiable ob)
+		internal void AddObject(IBaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -69,7 +69,7 @@ namespace MyGame.Client
 			m_objects.Add(ob);
 		}
 
-		internal void RemoveObject(IIdentifiable ob)
+		internal void RemoveObject(IBaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -78,7 +78,7 @@ namespace MyGame.Client
 				throw new Exception();
 		}
 
-		public IIdentifiable FindObject(ObjectID objectID)
+		public IBaseGameObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -89,7 +89,7 @@ namespace MyGame.Client
 				return null;
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : class, IIdentifiable
+		public T FindObject<T>(ObjectID objectID) where T : class, IBaseGameObject
 		{
 			var ob = FindObject(objectID);
 

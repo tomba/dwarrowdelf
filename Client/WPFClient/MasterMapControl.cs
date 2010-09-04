@@ -580,11 +580,11 @@ namespace MyGame.Client
 	{
 		Environment m_env;
 		IntPoint3D m_location;
-		ObjectCollection m_obs;
+		GameObjectCollection m_obs;
 
 		public TileInfo()
 		{
-			m_obs = new ObjectCollection();
+			m_obs = new GameObjectCollection();
 		}
 
 		void NotifyTileChanges()
@@ -696,7 +696,7 @@ namespace MyGame.Client
 			}
 		}
 
-		public ObjectCollection Objects
+		public GameObjectCollection Objects
 		{
 			get
 			{
