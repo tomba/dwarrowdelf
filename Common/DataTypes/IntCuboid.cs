@@ -141,6 +141,11 @@ namespace MyGame
 			return Equals((IntCuboid)obj);
 		}
 
+		public override int GetHashCode()
+		{
+			return ((this.Width ^ this.Height ^ this.Depth) << 16) | (this.X ^ this.Y ^ this.Z);
+		}
+
 		public override string ToString()
 		{
 			return String.Format("x={0},y={1},z={2},w={3},h={4},d={5}",
