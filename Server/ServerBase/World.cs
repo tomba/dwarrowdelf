@@ -60,9 +60,8 @@ namespace MyGame.Server
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 		int m_objectIDcounter;
 
-		public event Action<IEnumerable<Change>> HandleEndOfTurn;
-
-		List<Change> m_changeList = new List<Change>();
+		public event Action WorkEnded;
+		public event Action<Change> WorldChanged;
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -126,11 +125,6 @@ namespace MyGame.Server
 				env.MapChanged += this.MapChangedCallback;
 
 			ExitWriteLock();
-
-			// process any changes from world initialization
-			if (HandleEndOfTurn != null)
-				HandleEndOfTurn(m_changeList);
-			m_changeList.Clear();
 		}
 
 		void Main(object arg)
@@ -205,7 +199,8 @@ namespace MyGame.Server
 		public void AddChange(Change change)
 		{
 			VerifyAccess();
-			m_changeList.Add(change);
+			if (WorldChanged != null)
+				WorldChanged(change);
 		}
 
 		public void SendGlobalEvent(Event @event)

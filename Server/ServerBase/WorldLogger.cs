@@ -21,12 +21,12 @@ namespace MyGame.Server
 			var stream = File.Open("world.log", FileMode.Create, FileAccess.Write, FileShare.Read);
 			m_writer = new StreamWriter(stream);
 
-			m_world.HandleEndOfTurn += HandleEndOfTurn;
+			m_world.WorldChanged += HandleChanges;
 		}
 
 		public void Stop()
 		{
-			m_world.HandleEndOfTurn -= HandleEndOfTurn;
+			m_world.WorldChanged -= HandleChanges;
 
 			m_writer.Close();
 		}
@@ -38,11 +38,9 @@ namespace MyGame.Server
 			m_world.ExitReadLock();
 		}
 
-		void HandleEndOfTurn(IEnumerable<Change> changes)
+		void HandleChanges(Change change)
 		{
-			foreach (var c in changes)
-				m_writer.WriteLine(c);
-
+			m_writer.WriteLine(change);
 			m_writer.Flush();
 		}
 	}

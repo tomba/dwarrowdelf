@@ -156,7 +156,8 @@ namespace MyGame.Server
 			if (m_userLoggedIn)
 			{
 				m_world.RemoveUser(this);
-				m_world.HandleEndOfTurn -= HandleEndOfTurn;
+				m_world.WorkEnded -= HandleEndOfWork;
+				m_world.WorldChanged -= HandleWorldChange;
 			}
 
 			m_world = null;
@@ -247,7 +248,8 @@ namespace MyGame.Server
 					env.SerializeTo(Send);
 			}
 
-			m_world.HandleEndOfTurn += HandleEndOfTurn;
+			m_world.WorkEnded += HandleEndOfWork;
+			m_world.WorldChanged += HandleWorldChange;
 			m_world.AddUser(this);
 
 			m_userLoggedIn = true;
@@ -264,7 +266,8 @@ namespace MyGame.Server
 			m_scriptScope.RemoveVariable("world");
 
 			m_world.RemoveUser(this);
-			m_world.HandleEndOfTurn -= HandleEndOfTurn;
+			m_world.WorkEnded -= HandleEndOfWork;
+			m_world.WorldChanged -= HandleWorldChange;
 
 			m_userLoggedIn = false;
 
@@ -403,7 +406,6 @@ namespace MyGame.Server
 			if (!player.MoveTo(env, new IntPoint3D(10, 10, 9)))
 				throw new Exception("Unable to move player");
 
-			// XXX does not work, player object has not been created in client yet...
 			player.SerializeInventoryTo(Send);
 
 			m_scriptScope.SetVariable("me", player);
@@ -538,14 +540,12 @@ namespace MyGame.Server
 		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
 
-		// Called from the world at the end of turn
-		void HandleEndOfTurn(IEnumerable<Change> changes)
+		// Called from the world at the end of work
+		void HandleEndOfWork()
 		{
 			// if the user sees all, no need to send new terrains/objects
 			if (!m_seeAll)
 				HandleNewTerrainsAndObjects(m_controllables);
-
-			HandleChanges(changes);
 		}
 
 		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
@@ -684,41 +684,29 @@ namespace MyGame.Server
 
 
 
-		void HandleChanges(IEnumerable<Change> changes)
+		void HandleWorldChange(Change change)
 		{
-			var changeMsgs = CollectChanges(m_controllables, changes);
-			Send(changeMsgs);
-		}
-
-		IEnumerable<Messages.ServerMessage> CollectChanges(IEnumerable<Living> friendlies, IEnumerable<Change> changes)
-		{
-			IEnumerable<Messages.ServerMessage> msgs = new List<Messages.ServerMessage>();
+			// can any friendly see the change?
+			if (!m_seeAll && !m_controllables.Any(l => ChangeFilter(l, change)))
+				return;
 
 			if (!m_seeAll)
 			{
 				// We don't collect newly visible terrains/objects on AllVisible maps.
 				// However, we still need to tell about newly created objects that come
 				// to AllVisible maps.
-				var newObjects = changes.OfType<ObjectMoveChange>().
-					Where(c => c.Source != c.Destination &&
-						c.Destination is Environment &&
-						((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible).
-					Select(c => (ServerGameObject)c.Object);
-
-				var newObMsgs = ObjectsToMessages(newObjects);
-				msgs = msgs.Concat(newObMsgs);
-
-				// filter changes that friendlies see
-				changes = changes.Where(c => friendlies.Any(l => ChangeFilter(l, c)));
+				var c = change as ObjectMoveChange;
+				if (c != null && c.Source != c.Destination && c.Destination is Environment &&
+						((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible)
+				{
+					var newObject = (ServerGameObject)c.Object;
+					var newObMsg = ObjectToMessage(newObject);
+					Send(newObMsg);
+				}
 			}
 
-			var changeMsgs = changes.Select(ChangeToMessage);
-
-			// NOTE: send changes last, so that object/map/tile information has already
-			// been received by the client
-			msgs = msgs.Concat(changeMsgs);
-
-			return msgs;
+			var changeMsg = ChangeToMessage(change);
+			Send(changeMsg);
 		}
 
 		// can living see the change?
@@ -833,10 +821,10 @@ namespace MyGame.Server
 
 
 
-		static IEnumerable<Messages.ServerMessage> ObjectsToMessages(IEnumerable<BaseGameObject> revealedObs)
+		static ServerMessage ObjectToMessage(BaseGameObject revealedOb)
 		{
-			var msgs = revealedObs.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
-			return msgs;
+			var msg = new ObjectDataMessage() { Object = revealedOb.Serialize() };
+			return msg;
 		}
 	}
 }
