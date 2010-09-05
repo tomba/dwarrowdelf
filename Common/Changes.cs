@@ -59,9 +59,30 @@ namespace MyGame
 	[Serializable]
 	public class ObjectCreatedChange : ObjectChange
 	{
+		// XXX hack
+		public enum ObjectTypes
+		{
+			Environment,
+			Living,
+			Item,
+			Building,
+		}
+
+		public ObjectTypes ObjectType { get; set; }
+
 		public ObjectCreatedChange(IBaseGameObject ob)
 			: base(ob)
 		{
+			if (ob is ILiving)
+				this.ObjectType = ObjectTypes.Living;
+			else if (ob is IEnvironment)
+				this.ObjectType = ObjectTypes.Environment;
+			else if (ob is IItemObject)
+				this.ObjectType = ObjectTypes.Item;
+			else if (ob is IBuildingObject)
+				this.ObjectType = ObjectTypes.Building;
+			else
+				throw new Exception();
 		}
 
 		public override string ToString()

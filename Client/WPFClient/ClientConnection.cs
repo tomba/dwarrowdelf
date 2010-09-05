@@ -45,6 +45,7 @@ namespace MyGame.Client
 	class ClientConnection
 	{
 		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
+		Dictionary<Type, Action<Change>> m_changeHandlerMap = new Dictionary<Type, Action<Change>>();
 		public ClientNetStatistics Stats { get; private set; }
 
 		public bool IsUserConnected { get; private set; }
@@ -188,25 +189,6 @@ namespace MyGame.Client
 			//App.MainWindow.FollowObject = null;
 		}
 
-		void HandleMessage(ObjectMoveMessage msg)
-		{
-			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
-
-			if (ob == null)
-			{
-				/* There's a special case where we don't get objectinfo, but we do get
-				 * ObjectMove: If the object move from tile, that just case visible to us, 
-				 * to a tile that we cannot see. So let's not throw exception, but exit
-				 * silently */
-				return;
-			}
-
-			ClientGameObject env = null;
-			if (msg.TargetEnvID != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(msg.TargetEnvID);
-
-			ob.MoveTo(env, msg.TargetLocation);
-		}
 
 		void HandleMessage(ObjectDataMessage msg)
 		{
@@ -256,28 +238,113 @@ namespace MyGame.Client
 			env.SetTerrains(msg.TileDataList);
 		}
 
-		void HandleMessage(PropertyDataMessage msg)
-		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
-
-			ob.SetProperty(msg.PropertyID, msg.Value);
-		}
-
-		void HandleMessage(ObjectDestructedMessage msg)
-		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(msg.ObjectID);
-
-			ob.Destruct();
-		}
 
 		void HandleMessage(IPOutputMessage msg)
 		{
 			App.MainWindow.outputTextBox.AppendText(msg.Text);
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
+
+		void HandleMessage(ChangeMessage msg)
+		{
+			var change = msg.Change;
+
+			Action<Change> f;
+			Type t = change.GetType();
+			if (!m_changeHandlerMap.TryGetValue(t, out f))
+			{
+				f = WrapperGenerator.CreateHandlerWrapper<Change>("HandleChange", t, this);
+
+				if (f == null)
+					throw new Exception(String.Format("No change handler for {0}", change.GetType()));
+
+				m_changeHandlerMap[t] = f;
+			}
+
+			//MyDebug.WriteLine("Change: {0}", msg);
+
+			f(change);
+		}
+
+
+		void HandleChange(ObjectCreatedChange change)
+		{
+			var world = GameData.Data.World;
+
+			switch (change.ObjectType)
+			{
+				case ObjectCreatedChange.ObjectTypes.Environment:
+					new Environment(world, change.ObjectID);
+					break;
+
+				case ObjectCreatedChange.ObjectTypes.Living:
+					new Living(world, change.ObjectID);
+					break;
+
+				case ObjectCreatedChange.ObjectTypes.Item:
+					new ItemObject(world, change.ObjectID);
+					break;
+
+				case ObjectCreatedChange.ObjectTypes.Building:
+					new BuildingObject(world, change.ObjectID);
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		void HandleChange(ObjectMoveChange change)
+		{
+			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+
+			if (ob == null)
+			{
+				/* There's a special case where we don't get objectinfo, but we do get
+				 * ObjectMove: If the object move from tile, that just case visible to us, 
+				 * to a tile that we cannot see. So let's not throw exception, but exit
+				 * silently */
+				// XXX is this still valid?
+				return;
+			}
+
+			ClientGameObject env = null;
+			if (change.DestinationMapID != ObjectID.NullObjectID)
+				env = GameData.Data.World.FindObject<ClientGameObject>(change.DestinationMapID);
+
+			ob.MoveTo(env, change.DestinationLocation);
+		}
+
+		void HandleChange(PropertyChange change)
+		{
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			ob.SetProperty(change.PropertyID, change.Value);
+		}
+
+		void HandleChange(ObjectDestructedChange change)
+		{
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+
+			ob.Destruct();
+		}
+
+		void HandleChange(MapChange change)
+		{
+			var env = GameData.Data.World.FindObject<Environment>(change.MapID);
+			if (env == null)
+				throw new Exception();
+			env.SetTileData(change.Location, change.TileData);
+		}
+
+
+
+
+
+
 
 		void HandleMessage(EventMessage msg)
 		{

@@ -701,7 +701,8 @@ namespace MyGame.Server
 				}
 			}
 
-			var changeMsg = ChangeToMessage(change);
+			var changeMsg = new ChangeMessage { Change = change };
+
 			Send(changeMsg);
 		}
 
@@ -769,53 +770,6 @@ namespace MyGame.Server
 
 			throw new Exception();
 		}
-
-
-		public Messages.ServerMessage ChangeToMessage(Change change)
-		{
-			if (change is ObjectMoveChange)
-			{
-				ObjectMoveChange mc = (ObjectMoveChange)change;
-				return new Messages.ObjectMoveMessage(mc.Object, mc.SourceMapID, mc.SourceLocation,
-					mc.DestinationMapID, mc.DestinationLocation);
-			}
-			else if (change is MapChange)
-			{
-				MapChange mc = (MapChange)change;
-				return new Messages.MapDataTerrainsListMessage()
-				{
-					Environment = mc.MapID,
-					TileDataList = new Tuple<IntPoint3D, TileData>[]
-					{
-						new Tuple<IntPoint3D, TileData>(mc.Location, mc.TileData)
-					}
-				};
-			}
-			else if (change is FullObjectChange)
-			{
-				var c = (FullObjectChange)change;
-				return new ObjectDataMessage() { Object = c.ObjectData };
-			}
-			else if (change is ObjectCreatedChange)
-			{
-				var c = (ObjectCreatedChange)change;
-				var o = (BaseGameObject)c.Object;
-				return new ObjectDataMessage() { Object = o.Serialize() };
-			}
-			else if (change is ObjectDestructedChange)
-			{
-				return new Messages.ObjectDestructedMessage() { ObjectID = ((ObjectDestructedChange)change).ObjectID };
-			}
-			else if (change is PropertyChange)
-			{
-				var c = (PropertyChange)change;
-				return new Messages.PropertyDataMessage() { ObjectID = c.ObjectID, PropertyID = c.PropertyID, Value = c.Value };
-			}
-
-			throw new Exception("Unknown Change type");
-		}
-
-
 
 		static ServerMessage ObjectToMessage(BaseGameObject revealedOb)
 		{

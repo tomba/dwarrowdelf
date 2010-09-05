@@ -124,6 +124,17 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
+	public class ChangeMessage : StateMessage
+	{
+		public Change Change { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ChangeMessage {0}", this.Change);
+		}
+	}
+
+	[Serializable]
 	public class ObjectDataMessage : StateMessage
 	{
 		public BaseGameObjectData Object { get; set; }
@@ -138,19 +149,6 @@ namespace MyGame.Messages
 	public class ObjectDataArrayMessage : StateMessage
 	{
 		public BaseGameObjectData[] ObjectData { get; set; }
-	}
-
-	[Serializable]
-	public class PropertyDataMessage : StateMessage
-	{
-		public ObjectID ObjectID { get; set; }
-		public PropertyID PropertyID { get; set; }
-		public object Value { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("PropertyDataMessage {0} {1}: {2}", this.ObjectID, this.PropertyID, this.Value);
-		}
 	}
 
 	[Serializable]
@@ -178,42 +176,6 @@ namespace MyGame.Messages
 		public override string ToString()
 		{
 			return String.Format("MapDataTerrainsListMessage({0} tiles)", this.TileDataList.Count());
-		}
-	}
-
-	[Serializable]
-	public class ObjectMoveMessage : StateMessage
-	{
-		public ObjectID ObjectID { get; set; }
-		public ObjectID TargetEnvID { get; set; }
-		public IntPoint3D TargetLocation { get; set; }
-		public ObjectID SourceEnvID { get; set; }
-		public IntPoint3D SourceLocation { get; set; }
-
-		public ObjectMoveMessage(IBaseGameObject target, ObjectID fromID, IntPoint3D from, ObjectID toID, IntPoint3D to)
-		{
-			this.ObjectID = target.ObjectID;
-			this.SourceEnvID = fromID;
-			this.SourceLocation = from;
-			this.TargetEnvID = toID;
-			this.TargetLocation = to;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("ObjectMoveMessage {0} {1}/{2}->{3}/{4}", this.ObjectID,
-				this.SourceEnvID, this.SourceLocation, this.TargetEnvID, this.TargetLocation);
-		}
-	}
-
-	[Serializable]
-	public class ObjectDestructedMessage : StateMessage
-	{
-		public ObjectID ObjectID { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("ObjectDestructedMessage {0}", this.ObjectID);
 		}
 	}
 

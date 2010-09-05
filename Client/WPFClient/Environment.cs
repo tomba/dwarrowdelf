@@ -134,6 +134,16 @@ namespace MyGame.Client
 			return m_tileGrid.GetTileData(p);
 		}
 
+		public void SetTileData(IntPoint3D l, TileData tileData)
+		{
+			this.Version += 1;
+
+			m_tileGrid.SetTileData(l, tileData);
+
+			if (MapTileChanged != null)
+				MapTileChanged(l);
+		}
+
 		public void SetTerrains(Tuple<IntPoint3D, TileData>[] tileDataList)
 		{
 			this.Version += 1;
