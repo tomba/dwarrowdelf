@@ -203,17 +203,6 @@ namespace MyGame.Server
 				WorldChanged(change);
 		}
 
-		public void SendGlobalEvent(Event @event)
-		{
-			foreach (var u in m_userList)
-				u.SendEvent(@event);
-		}
-
-		public void SendEvent(Living living, Event @event)
-		{
-			living.Controller.SendEvent(@event);
-		}
-
 		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)
 		{
 			VerifyAccess();

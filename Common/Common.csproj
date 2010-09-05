@@ -103,7 +103,6 @@
     <Compile Include="DataTypes\IntVector3D.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
-    <Compile Include="Events.cs" />
     <Compile Include="Floors.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />

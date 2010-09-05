@@ -66,7 +66,7 @@ namespace MyGame.Jobs
 			return Progress.Ok;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressEvent e)
+		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			if (e.Success == false)
 			{
@@ -159,7 +159,7 @@ namespace MyGame.Jobs
 			return Progress.Ok;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressEvent e)
+		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			if (e.Success == false)
 				return Progress.Fail;
@@ -206,7 +206,7 @@ namespace MyGame.Jobs
 			return Progress.Ok;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressEvent e)
+		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			if (e.Success == false)
 				return Progress.Fail;
@@ -240,7 +240,7 @@ namespace MyGame.Jobs
 			return Progress.Ok;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressEvent e)
+		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			if (e.Success == false)
 				return Progress.Fail;
@@ -274,7 +274,7 @@ namespace MyGame.Jobs
 			return Progress.Ok;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressEvent e)
+		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			if (e.Success == false)
 				return Progress.Fail;

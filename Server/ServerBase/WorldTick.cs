@@ -308,7 +308,7 @@ namespace MyGame.Server
 			VerifyAccess();
 
 			this.TickNumber++;
-			SendGlobalEvent(new TickStartEvent(this.TickNumber));
+			AddChange(new TickStartChange(this.TickNumber));
 
 			MyDebug.WriteLine("-- Tick {0} started --", this.TickNumber);
 			m_tickRequested = false;
@@ -325,7 +325,7 @@ namespace MyGame.Server
 					Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.CurrentAction.UserID == 0));
 
 				foreach (var l in livings)
-					SendEvent(l, new ActionRequiredEvent() { ObjectID = l.ObjectID });
+					l.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = l.ObjectID });
 			}
 
 			m_state = WorldState.TickOngoing;
@@ -370,7 +370,7 @@ namespace MyGame.Server
 			{
 				var living = m_livingEnumerator.Current;
 				if (!living.HasAction && !IsMoveForced())
-					SendEvent(living, new ActionRequiredEvent() { ObjectID = living.ObjectID });
+					living.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = living.ObjectID });
 			}
 
 			return false;

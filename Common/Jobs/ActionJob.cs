@@ -79,7 +79,7 @@ namespace MyGame.Jobs
 
 		protected abstract Progress PrepareNextActionOverride();
 
-		public Progress ActionProgress(ActionProgressEvent e)
+		public Progress ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.Progress == Progress.Ok);
@@ -91,8 +91,8 @@ namespace MyGame.Jobs
 			Notify("CurrentAction");
 			return progress;
 		}
-		
-		protected virtual Progress ActionProgressOverride(ActionProgressEvent e)
+
+		protected virtual Progress ActionProgressOverride(ActionProgressChange e)
 		{
 			return Progress.Ok;
 		}

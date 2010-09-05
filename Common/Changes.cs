@@ -12,6 +12,22 @@ namespace MyGame
 	}
 
 	[Serializable]
+	public class TickStartChange : Change
+	{
+		public int TickNumber { get; set; }
+
+		public TickStartChange(int tickNumber)
+		{
+			this.TickNumber = tickNumber;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("TickStartChange({0})", this.TickNumber);
+		}
+	}
+
+	[Serializable]
 	public class MapChange : Change
 	{
 		[NonSerialized]
@@ -185,6 +201,27 @@ namespace MyGame
 		public override string ToString()
 		{
 			return String.Format("PropertyChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
+		}
+	}
+
+
+	[Serializable]
+	public class ActionProgressChange : ObjectChange
+	{
+		public int UserID { get; set; }
+		public int TransactionID { get; set; }
+		public int TicksLeft { get; set; }
+		public bool Success { get; set; }
+
+		public ActionProgressChange(IBaseGameObject ob)
+			: base(ob)
+		{
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ActionProgressChange(UID({0}), {1}, TRID({2}), left: {2}, ok: {3})",
+				this.UserID, this.ObjectID, this.TransactionID, this.TicksLeft, this.Success);
 		}
 	}
 }

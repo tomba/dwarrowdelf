@@ -31,7 +31,7 @@ namespace MyGame.Server
 			}
 		}
 
-		public void ActionProgress(ActionProgressEvent e)
+		public void ActionProgress(ActionProgressChange e)
 		{
 		}
 

@@ -11,7 +11,7 @@ namespace MyGame.Jobs
 	public interface IAI
 	{
 		void ActionRequired(ActionPriority priority);
-		void ActionProgress(ActionProgressEvent e);
+		void ActionProgress(ActionProgressChange e);
 	}
 
 	public abstract class AI : IAI
@@ -90,7 +90,7 @@ namespace MyGame.Jobs
 			}
 		}
 
-		public virtual void ActionProgress(ActionProgressEvent e)
+		public virtual void ActionProgress(ActionProgressChange e)
 		{
 			if (m_currentJob == null)
 				return;

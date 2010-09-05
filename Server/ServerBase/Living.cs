@@ -340,10 +340,9 @@ namespace MyGame.Server
 			if (success == false)
 				action.TicksLeft = 0;
 
-			var e = new ActionProgressEvent()
+			var e = new ActionProgressChange(this)
 				{
 					UserID = action.UserID,
-					Actor = this.ObjectID,
 					TransactionID = action.TransactionID,
 					TicksLeft = action.TicksLeft,
 					Success = success,
@@ -352,9 +351,11 @@ namespace MyGame.Server
 			this.ActionProgress(e);
 			this.AI.ActionProgress(e);
 
+			this.World.AddChange(e);
+
 			// is the action originator an user?
-			if (e.UserID != 0)
-				this.World.SendEvent(this, e);
+			//if (e.UserID != 0)
+			//	this.World.SendEvent(this, e);
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
@@ -453,10 +454,9 @@ namespace MyGame.Server
 
 			var action = this.CurrentAction;
 
-			var e = new ActionProgressEvent()
+			var e = new ActionProgressChange(this)
 			{
 				UserID = action.UserID,
-				Actor = this.ObjectID,
 				TransactionID = action.TransactionID,
 				TicksLeft = action.TicksLeft,
 				Success = false,
@@ -465,14 +465,16 @@ namespace MyGame.Server
 			this.ActionProgress(e);
 			this.AI.ActionProgress(e);
 
+			this.World.AddChange(e);
+
 			// is the action originator an user?
-			if (e.UserID != 0)
-				this.World.SendEvent(this, e);
+			//if (e.UserID != 0)
+			//	this.World.SendEvent(this, e);
 
 			this.CurrentAction = null;
 		}
 
-		void ActionProgress(ActionProgressEvent e)
+		void ActionProgress(ActionProgressChange e)
 		{
 			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
 				throw new Exception();

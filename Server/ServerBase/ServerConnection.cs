@@ -167,13 +167,7 @@ namespace MyGame.Server
 			m_connection = null;
 		}
 
-		public void SendEvent(Event @event)
-		{
-			var msg = new EventMessage(@event);
-			Send(msg);
-		}
-
-		void Send(ServerMessage msg)
+		public void Send(ServerMessage msg)
 		{
 			m_connection.Send(msg);
 		}
@@ -500,9 +494,6 @@ namespace MyGame.Server
 			{
 				MyDebug.WriteLine("Uncaught exception");
 				MyDebug.WriteLine(e.ToString());
-
-				var reply = new EventMessage(new ActionProgressEvent() { UserID = m_userID, TransactionID = msg.Action.TransactionID, Success = false, TicksLeft = 0 });
-				Send(reply);
 			}
 		}
 
@@ -732,6 +723,10 @@ namespace MyGame.Server
 				var c = (MapChange)change;
 
 				return living.Sees(c.Map, c.Location);
+			}
+			else if (change is TickStartChange)
+			{
+				return true;
 			}
 			else if (change is ObjectDestructedChange)
 			{

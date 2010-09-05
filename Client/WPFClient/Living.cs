@@ -147,10 +147,10 @@ namespace MyGame.Client
 			this.CurrentAction = null;
 		}
 
-		public void ActionProgress(ActionProgressEvent e)
+		public void ActionProgress(ActionProgressChange e)
 		{
 			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
-				throw new Exception();
+				return;
 
 			var action = this.CurrentAction;
 

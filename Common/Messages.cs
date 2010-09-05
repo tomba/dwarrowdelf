@@ -180,18 +180,13 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class EventMessage : ServerMessage
+	public class ActionRequiredMessage : ServerMessage
 	{
-		public Event Event { get; set; }
-
-		public EventMessage(Event @event)
-		{
-			this.Event = @event;
-		}
+		public ObjectID ObjectID { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("EventMessage({0})", this.Event);
+			return String.Format("ActionRequiredMessage({0})", this.ObjectID);
 		}
 	}
 

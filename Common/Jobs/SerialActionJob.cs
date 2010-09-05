@@ -134,7 +134,7 @@ namespace MyGame.Jobs
 
 
 
-		public Progress ActionProgress(ActionProgressEvent e)
+		public Progress ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.Progress == Progress.Ok);
@@ -145,7 +145,7 @@ namespace MyGame.Jobs
 			return progress;
 		}
 
-		Progress DoActionProgress(ActionProgressEvent e)
+		Progress DoActionProgress(ActionProgressChange e)
 		{
 			var progress = m_currentSubJob.ActionProgress(e);
 			Notify("CurrentAction");

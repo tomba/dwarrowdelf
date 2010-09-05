@@ -245,6 +245,15 @@ namespace MyGame.Client
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
 
+		void HandleMessage(ActionRequiredMessage msg)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
+			if (ob == null)
+				throw new Exception();
+
+			ob.AI.ActionRequired(ActionPriority.High);
+		}
+
 		void HandleMessage(ChangeMessage msg)
 		{
 			var change = msg.Change;
@@ -340,51 +349,24 @@ namespace MyGame.Client
 			env.SetTileData(change.Location, change.TileData);
 		}
 
-
-
-
-
-
-
-		void HandleMessage(EventMessage msg)
+		void HandleChange(TickStartChange change)
 		{
-			HandleEvents(msg.Event);
+			GameData.Data.World.TickNumber = change.TickNumber;
 		}
 
-		void HandleEvents(Event @event)
+		void HandleChange(ActionProgressChange change)
 		{
-			if (@event is TickStartEvent)
-			{
-				var e = (TickStartEvent)@event;
-				GameData.Data.World.TickNumber = e.TickNumber;
-			}
-			else if (@event is ActionProgressEvent)
-			{
-				var e = (ActionProgressEvent)@event;
+			//MyDebug.WriteLine("ActionProgressChange({0})", e.TransactionID);
 
-				//MyDebug.WriteLine("ActionProgressEvent({0})", e.TransactionID);
+			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
+			if (ob == null)
+				throw new Exception();
 
-				var ob = GameData.Data.World.FindObject<Living>(e.Actor);
-				if (ob == null)
-					throw new Exception();
+			ob.ActionProgress(change);
 
-				ob.ActionProgress(e);
-
-				ob.AI.ActionProgress(e);
-			}
-			else if (@event is ActionRequiredEvent)
-			{
-				var e = (ActionRequiredEvent)@event;
-
-				//MyDebug.WriteLine("{0}", e);
-
-				var ob = GameData.Data.World.FindObject<Living>(e.ObjectID);
-				if (ob == null)
-					throw new Exception();
-
-				ob.AI.ActionRequired(ActionPriority.High);
-			}
+			ob.AI.ActionProgress(change);
 		}
+
 
 		void HandleObjects(BaseGameObjectData[] datas)
 		{

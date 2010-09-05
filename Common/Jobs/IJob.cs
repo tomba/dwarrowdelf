@@ -57,6 +57,6 @@ namespace MyGame.Jobs
 
 		Progress Assign(ILiving worker);
 		Progress PrepareNextAction();
-		Progress ActionProgress(ActionProgressEvent e);
+		Progress ActionProgress(ActionProgressChange e);
 	}
 }
