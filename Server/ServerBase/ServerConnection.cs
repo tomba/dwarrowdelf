@@ -378,13 +378,11 @@ namespace MyGame.Server
 
 			m_controllables.Add(player);
 
-			var diamond = Materials.Diamond.ID;
-
 			ItemObject item = new ItemObject(m_world)
 			{
 				Name = "jalokivi1",
 				SymbolID = SymbolID.Gem,
-				MaterialID = diamond,
+				MaterialID = MaterialID.Diamond,
 			};
 			item.MoveTo(player);
 
@@ -393,7 +391,7 @@ namespace MyGame.Server
 				Name = "jalokivi2",
 				SymbolID = SymbolID.Gem,
 				Color = GameColor.Green,
-				MaterialID = diamond,
+				MaterialID = MaterialID.Diamond,
 			};
 			item.MoveTo(player);
 
@@ -405,8 +403,6 @@ namespace MyGame.Server
 
 			if (!player.MoveTo(env, new IntPoint3D(10, 10, 9)))
 				throw new Exception("Unable to move player");
-
-			player.SerializeInventoryTo(Send);
 
 			m_scriptScope.SetVariable("me", player);
 #if qwe
