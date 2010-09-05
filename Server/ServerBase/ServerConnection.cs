@@ -665,7 +665,7 @@ namespace MyGame.Server
 
 		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
 		{
-			var msgs = revealedObjects.Select(o => new ObjectDataMessage() { Object = o.Serialize() });
+			var msgs = revealedObjects.Select(o => new ObjectDataMessage() { ObjectData = o.Serialize() });
 			Send(msgs);
 		}
 
@@ -768,7 +768,7 @@ namespace MyGame.Server
 
 		static ServerMessage ObjectToMessage(BaseGameObject revealedOb)
 		{
-			var msg = new ObjectDataMessage() { Object = revealedOb.Serialize() };
+			var msg = new ObjectDataMessage() { ObjectData = revealedOb.Serialize() };
 			return msg;
 		}
 	}

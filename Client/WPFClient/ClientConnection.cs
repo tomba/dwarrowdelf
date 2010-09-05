@@ -192,14 +192,35 @@ namespace MyGame.Client
 
 		void HandleMessage(ObjectDataMessage msg)
 		{
-			HandleObject(msg.Object);
+			HandleObject(msg.ObjectData);
 		}
 
 		void HandleMessage(ObjectDataArrayMessage msg)
 		{
-			HandleObjects(msg.ObjectData);
+			foreach (var data in msg.ObjectDatas)
+				HandleObject(data);
 		}
 
+		void HandleObject(BaseGameObjectData data)
+		{
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(data.ObjectID);
+
+			if (ob == null)
+			{
+				MyDebug.WriteLine("New gameobject appeared {0}", data.ObjectID);
+
+				if (data is LivingData)
+					ob = new Living(GameData.Data.World, data.ObjectID);
+				else if (data is ItemData)
+					ob = new ItemObject(GameData.Data.World, data.ObjectID);
+				else if (data is BuildingData)
+					ob = new BuildingObject(GameData.Data.World, data.ObjectID);
+				else
+					throw new Exception();
+			}
+
+			ob.Deserialize(data);
+		}
 		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
@@ -365,34 +386,6 @@ namespace MyGame.Client
 			ob.ActionProgress(change);
 
 			ob.AI.ActionProgress(change);
-		}
-
-
-		void HandleObjects(BaseGameObjectData[] datas)
-		{
-			foreach (var data in datas)
-				HandleObject(data);
-		}
-
-		void HandleObject(BaseGameObjectData data)
-		{
-			var ob = GameData.Data.World.FindObject<BaseGameObject>(data.ObjectID);
-
-			if (ob == null)
-			{
-				MyDebug.WriteLine("New gameobject appeared {0}", data.ObjectID);
-
-				if (data is LivingData)
-					ob = new Living(GameData.Data.World, data.ObjectID);
-				else if (data is ItemData)
-					ob = new ItemObject(GameData.Data.World, data.ObjectID);
-				else if (data is BuildingData)
-					ob = new BuildingObject(GameData.Data.World, data.ObjectID);
-				else
-					throw new Exception();
-			}
-
-			ob.Deserialize(data);
 		}
 	}
 }

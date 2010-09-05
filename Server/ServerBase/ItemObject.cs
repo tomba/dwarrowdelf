@@ -41,7 +41,7 @@ namespace MyGame.Server
 
 		public override void SerializeTo(Action<Messages.ServerMessage> writer)
 		{
-			var msg = new Messages.ObjectDataMessage() { Object = Serialize() };
+			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
 			writer(msg);
 		}
 

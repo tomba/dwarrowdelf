@@ -661,7 +661,7 @@ namespace MyGame.Server
 			{
 				var msg = new Messages.ObjectDataArrayMessage()
 				{
-					ObjectData = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
+					ObjectDatas = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
 				};
 
 				writer(msg);
@@ -670,7 +670,7 @@ namespace MyGame.Server
 			// this may not need dividing, perhaps
 			writer(new Messages.ObjectDataArrayMessage()
 			{
-				ObjectData = m_buildings.Select(b => b.Serialize()).ToArray(),
+				ObjectDatas = m_buildings.Select(b => b.Serialize()).ToArray(),
 			});
 		}
 

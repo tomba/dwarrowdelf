@@ -137,18 +137,18 @@ namespace MyGame.Messages
 	[Serializable]
 	public class ObjectDataMessage : StateMessage
 	{
-		public BaseGameObjectData Object { get; set; }
+		public BaseGameObjectData ObjectData { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("ObjectDataMessage {0}", Object.ObjectID);
+			return String.Format("ObjectDataMessage {0}", ObjectData.ObjectID);
 		}
 	}
 
 	[Serializable]
 	public class ObjectDataArrayMessage : StateMessage
 	{
-		public BaseGameObjectData[] ObjectData { get; set; }
+		public BaseGameObjectData[] ObjectDatas { get; set; }
 	}
 
 	[Serializable]
