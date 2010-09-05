@@ -6,22 +6,31 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
+	[Serializable]
 	public abstract class Change
 	{
 	}
 
+	[Serializable]
 	public class MapChange : Change
 	{
-		public IEnvironment Map { get; private set; }
-		public ObjectID MapID { get { return this.Map.ObjectID; } }
-		public IntPoint3D Location { get; set; }
-		public TileData TileData { get; set; }
+		[NonSerialized]
+		IEnvironment m_map;
+		ObjectID m_mapID;
+		IntPoint3D m_location;
+		TileData m_tileData;
+
+		public IEnvironment Map { get { return m_map; } }
+		public ObjectID MapID { get { return m_mapID; } }
+		public IntPoint3D Location { get { return m_location; } }
+		public TileData TileData { get { return m_tileData; } }
 
 		public MapChange(IEnvironment map, IntPoint3D l, TileData tileData)
 		{
-			this.Map = map;
-			this.Location = l;
-			this.TileData = tileData;
+			m_map = map;
+			m_mapID = m_map.ObjectID;
+			m_location = l;
+			m_tileData = tileData;
 		}
 
 		public override string ToString()
@@ -30,17 +39,24 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
 	public abstract class ObjectChange : Change
 	{
-		public IBaseGameObject Object { get; private set; }
-		public ObjectID ObjectID { get { return this.Object.ObjectID; } }
+		[NonSerialized]
+		IBaseGameObject m_object;
+		ObjectID m_objectID;
+
+		public IBaseGameObject Object { get { return m_object; } }
+		public ObjectID ObjectID { get { return m_objectID; } }
 
 		protected ObjectChange(IBaseGameObject @object)
 		{
-			this.Object = @object;
+			m_object = @object;
+			m_objectID = m_object.ObjectID;
 		}
 	}
 
+	[Serializable]
 	public class ObjectCreatedChange : ObjectChange
 	{
 		public ObjectCreatedChange(IBaseGameObject ob)
@@ -54,6 +70,7 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
 	public class ObjectDestructedChange : ObjectChange
 	{
 		public ObjectDestructedChange(IBaseGameObject ob)
@@ -67,35 +84,38 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
 	public class ObjectMoveChange : ObjectChange
 	{
-		public IGameObject Source { get; private set; }
-		public ObjectID SourceMapID
-		{
-			get
-			{
-				return this.Source == null ? ObjectID.NullObjectID : this.Source.ObjectID;
-			}
-		}
-		public IntPoint3D SourceLocation { get; private set; }
-		public IGameObject Destination { get; private set; }
-		public ObjectID DestinationMapID
-		{
-			get
-			{
-				return this.Destination == null ? ObjectID.NullObjectID : this.Destination.ObjectID;
-			}
-		}
-		public IntPoint3D DestinationLocation { get; private set; }
+		[NonSerialized]
+		IGameObject m_source;
+		ObjectID m_sourceID;
+		IntPoint3D m_sourceLocation;
+		[NonSerialized]
+		IGameObject m_destination;
+		ObjectID m_destinationID;
+		IntPoint3D m_destinationLocation;
+
+		public IGameObject Source { get { return m_source; } }
+		public ObjectID SourceMapID { get { return m_sourceID; } }
+		public IntPoint3D SourceLocation { get { return m_sourceLocation; } }
+
+		public IGameObject Destination { get { return m_destination; } }
+		public ObjectID DestinationMapID { get { return m_destinationID; } }
+		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
 
 		public ObjectMoveChange(IGameObject mover, IGameObject sourceEnv, IntPoint3D sourceLocation,
 			IGameObject destinationEnv, IntPoint3D destinationLocation)
 			: base(mover)
 		{
-			this.Source = sourceEnv;
-			this.SourceLocation = sourceLocation;
-			this.Destination = destinationEnv;
-			this.DestinationLocation = destinationLocation;
+			m_source = sourceEnv;
+			if (m_source != null)
+				m_sourceID = m_source.ObjectID;
+			m_sourceLocation = sourceLocation;
+			m_destination = destinationEnv;
+			if (m_destination != null)
+				m_destinationID = m_destination.ObjectID;
+			m_destinationLocation = destinationLocation;
 		}
 
 		public override string ToString()
@@ -105,6 +125,7 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
 	public class FullObjectChange : ObjectChange
 	{
 		public FullObjectChange(IBaseGameObject ob)
@@ -120,18 +141,25 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
 	public class PropertyChange : ObjectChange
 	{
+		[NonSerialized]
+		PropertyDefinition m_property;
+		PropertyID m_propertyID;
+		object m_value;
+
+		public PropertyDefinition Property { get { return m_property; } }
+		public PropertyID PropertyID { get { return m_propertyID; } }
+		public object Value { get { return m_value; } }
+
 		public PropertyChange(IBaseGameObject ob, PropertyDefinition property, object value)
 			: base(ob)
 		{
-			this.Property = property;
-			this.Value = value;
+			m_property = property;
+			m_propertyID = property.PropertyID;
+			m_value = value;
 		}
-
-		public PropertyDefinition Property { get; private set; }
-		public PropertyID PropertyID { get { return Property.PropertyID; } }
-		public object Value { get; private set; }
 
 		public override string ToString()
 		{
