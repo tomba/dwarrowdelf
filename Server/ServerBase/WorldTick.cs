@@ -16,6 +16,7 @@ namespace MyGame.Server
 		{
 			Idle,
 			TickOngoing,
+			TickDone,
 			TickEnded,
 		}
 
@@ -101,13 +102,7 @@ namespace MyGame.Server
 
 			if (m_state == WorldState.Idle)
 			{
-				//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
-
-				m_preTickInvokeList.ProcessInvokeList();
-				ProcessAddLivingList();
-				ProcessRemoveLivingList();
-
-				//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
+				PreTickWork();
 
 				if (IsTimeToStartTick())
 					StartTick();
@@ -123,6 +118,9 @@ namespace MyGame.Server
 					throw new NotImplementedException();
 			}
 
+			if (m_state == WorldState.TickDone)
+				EndTick();
+
 			ExitWriteLock();
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
@@ -130,10 +128,18 @@ namespace MyGame.Server
 				WorkEnded();
 
 			if (m_state == WorldState.TickEnded)
-			{
-				// perhaps this is not needed for anything
 				m_state = WorldState.Idle;
-			}
+		}
+
+		void PreTickWork()
+		{
+			//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
+
+			m_preTickInvokeList.ProcessInvokeList();
+			ProcessAddLivingList();
+			ProcessRemoveLivingList();
+
+			//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
 		}
 
 		bool WorkAvailable()
@@ -237,7 +243,7 @@ namespace MyGame.Server
 					break;
 			}
 
-			EndTick();
+			m_state = WorldState.TickDone;
 
 			VDbg("SimultaneousWork Done");
 		}
@@ -295,7 +301,7 @@ namespace MyGame.Server
 				if (last)
 				{
 					VDbg("last living handled");
-					EndTick();
+					m_state = WorldState.TickDone;
 					break;
 				}
 			}
@@ -366,12 +372,9 @@ namespace MyGame.Server
 				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
 			}
 
-			if (m_config.TickMethod == WorldTickMethod.Sequential)
-			{
-				var living = m_livingEnumerator.Current;
-				if (!living.HasAction && !IsMoveForced())
-					living.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = living.ObjectID });
-			}
+			var living = m_livingEnumerator.Current;
+			if (!living.HasAction && !IsMoveForced())
+				living.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = living.ObjectID });
 
 			return false;
 		}
