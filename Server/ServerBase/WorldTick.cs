@@ -224,23 +224,15 @@ namespace MyGame.Server
 			if (!forceMove)
 				Debug.Assert(m_livingList.All(l => l.HasAction));
 
-			foreach (Living l in m_livingList)
-				l.AI.ActionRequired(ActionPriority.Idle);
+			foreach (var living in m_livingList)
+				living.AI.ActionRequired(ActionPriority.Idle);
 
-			while (true)
+			foreach (var living in m_livingList)
 			{
-				Living living = m_livingEnumerator.Current;
-
-				if (living == null)
-					break;
-
 				if (living.HasAction)
 					living.PerformAction();
 				else if (!forceMove)
 					throw new Exception();
-
-				if (m_livingEnumerator.MoveNext() == false)
-					break;
 			}
 
 			m_state = WorldState.TickDone;
@@ -319,13 +311,11 @@ namespace MyGame.Server
 			MyDebug.WriteLine("-- Tick {0} started --", this.TickNumber);
 			m_tickRequested = false;
 
-			// XXX making decision here is ok for Simultaneous mode, but not quite
-			// for sequential...
-			foreach (Living l in m_livingList)
-				l.AI.ActionRequired(ActionPriority.High);
-
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
+				foreach (var l in m_livingList)
+					l.AI.ActionRequired(ActionPriority.High);
+
 				var livings = m_livingList.
 					Where(l => l.Controller != null).
 					Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.CurrentAction.UserID == 0));
@@ -339,12 +329,8 @@ namespace MyGame.Server
 			if (TickEvent != null)
 				TickEvent();
 
-			m_livingEnumerator = m_livingList.GetEnumerator();
-
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
-				m_livingEnumerator.MoveNext();
-
 				if (this.UseMaxMoveTime)
 				{
 					m_nextMove = DateTime.Now + m_config.MaxMoveTime;
@@ -353,6 +339,8 @@ namespace MyGame.Server
 			}
 			else if (m_config.TickMethod == WorldTickMethod.Sequential)
 			{
+				m_livingEnumerator = m_livingList.GetEnumerator();
+
 				bool last = GetNextLivingSeq();
 				if (last)
 					throw new Exception("no livings");
