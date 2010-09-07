@@ -89,7 +89,7 @@ namespace MyGame.Server
 
 		bool IsMoveForced()
 		{
-			return (this.UseMaxMoveTime && DateTime.Now >= m_nextMove) || m_tickRequested;
+			return this.UseMaxMoveTime && DateTime.Now >= m_nextMove;
 		}
 
 		void Work()
@@ -225,7 +225,11 @@ namespace MyGame.Server
 				Debug.Assert(m_livingList.All(l => l.HasAction));
 
 			foreach (var living in m_livingList)
-				living.AI.ActionRequired(ActionPriority.Idle);
+			{
+				var a = living.AI.ActionRequired(ActionPriority.Idle);
+				if (a != null)
+					living.DoAction(a);
+			}
 
 			foreach (var living in m_livingList)
 			{
@@ -314,14 +318,24 @@ namespace MyGame.Server
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
 				foreach (var l in m_livingList)
-					l.AI.ActionRequired(ActionPriority.High);
+				{
+					var a = l.AI.ActionRequired(ActionPriority.High);
+					if (a != null)
+						l.DoAction(a);
+				}
 
-				var livings = m_livingList.
-					Where(l => l.Controller != null).
-					Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.CurrentAction.UserID == 0));
+				var livingGroups = m_livingList
+					.Where(l => l.Controller != null)
+					.Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.ActionUserID == 0))
+					.GroupBy(l => l.Controller);
 
-				foreach (var l in livings)
-					l.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = l.ObjectID });
+				foreach (var group in livingGroups)
+				{
+					var oids = group.Select(l => l.ObjectID).ToArray();
+					var user = group.Key;
+
+					user.Send(new Messages.StartTurnMessage() { RequiredActors = oids });
+				}
 			}
 
 			m_state = WorldState.TickOngoing;
@@ -362,7 +376,7 @@ namespace MyGame.Server
 
 			var living = m_livingEnumerator.Current;
 			if (!living.HasAction && !IsMoveForced())
-				living.Controller.Send(new Messages.ActionRequiredMessage() { ObjectID = living.ObjectID });
+				living.Controller.Send(new Messages.StartTurnMessage() { RequiredActors = new ObjectID[] { living.ObjectID } });
 
 			return false;
 		}

@@ -327,13 +327,6 @@ namespace MyGame.Server
 			env.AddBuilding(building);
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(ProceedTickMessage msg)
-		{
-			MyDebug.WriteLine("ProceedTick command");
-			m_world.RequestTick();
-		}
-
 		Random m_random = new Random();
 		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
 		{
@@ -361,7 +354,7 @@ namespace MyGame.Server
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-#if !asd
+#if asd
 			var player = new Living(m_world, "player")
 			{
 				SymbolID = SymbolID.Player,
@@ -462,39 +455,46 @@ namespace MyGame.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(DoActionMessage msg)
+		void ReceiveMessage(DoTurnMessage msg)
 		{
-			var action = msg.Action;
-
 			try
 			{
-				if (action.TransactionID == 0)
-					throw new Exception();
-
-				var living = m_controllables.SingleOrDefault(l => l.ObjectID == action.ActorObjectID);
-
-				if (living == null)
-					throw new Exception("Illegal ob id");
-
-				action.UserID = m_userID;
-				if (action.Priority > ActionPriority.User)
-					action.Priority = ActionPriority.User;
-
-				if (living.HasAction)
+				foreach (var tuple in msg.Actions)
 				{
-					if (living.CurrentAction.Priority >= action.Priority)
-						living.CancelAction();
-					else
-						throw new Exception("already has an action");
-				}
+					var actorOid = tuple.Item1;
+					var action = tuple.Item2;
 
-				living.DoAction(action);
+					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
+
+					if (living == null)
+						throw new Exception("Illegal ob id");
+
+					if (action.Priority > ActionPriority.User)
+						throw new Exception();
+
+					if (living.HasAction)
+					{
+						if (living.CurrentAction.Priority <= action.Priority)
+							living.CancelAction();
+						else
+							throw new Exception("already has an action");
+					}
+
+					living.DoAction(action, m_userID);
+				}
 			}
 			catch (Exception e)
 			{
 				MyDebug.WriteLine("Uncaught exception");
 				MyDebug.WriteLine(e.ToString());
 			}
+		}
+
+		[WorldInvoke(WorldInvokeStyle.Instant)]
+		void ReceiveMessage(ProceedTickMessage msg)
+		{
+			MyDebug.WriteLine("ProceedTick command");
+			m_world.RequestTick();
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]

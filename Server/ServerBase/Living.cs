@@ -136,7 +136,7 @@ namespace MyGame.Server
 			if (this.Environment == null)
 				return;
 
-			if (action.TicksLeft > 0)
+			if (this.ActionTicksLeft > 0)
 			{
 				success = true;
 				return;
@@ -169,7 +169,7 @@ namespace MyGame.Server
 			if (this.Environment == null)
 				return;
 
-			if (action.TicksLeft > 0)
+			if (this.ActionTicksLeft > 0)
 			{
 				success = true;
 				return;
@@ -198,7 +198,7 @@ namespace MyGame.Server
 		void PerformMove(MoveAction action, out bool success)
 		{
 			// this should check if movement is blocked, even when TicksLeft > 0
-			if (action.TicksLeft == 0)
+			if (this.ActionTicksLeft == 0)
 				success = MoveDir(action.Direction);
 			else
 				success = true;
@@ -212,7 +212,7 @@ namespace MyGame.Server
 
 			if (id == InteriorID.Wall)
 			{
-				if (action.TicksLeft == 0)
+				if (this.ActionTicksLeft == 0)
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
 				success = true;
 			}
@@ -237,7 +237,7 @@ namespace MyGame.Server
 				return;
 			}
 
-			if (action.TicksLeft != 0)
+			if (this.ActionTicksLeft != 0)
 			{
 				success = building.VerifyBuildItem(this, action.SourceObjectIDs);
 			}
@@ -260,37 +260,12 @@ namespace MyGame.Server
 				return;
 			}
 
-			Debug.Assert(action.ActorObjectID == this.ObjectID);
-
-			// new action?
-			if (action.TicksLeft == 0)
-			{
-				// The action should be initialized somewhere
-				if (action is WaitAction)
-				{
-					action.TicksLeft = ((WaitAction)action).WaitTicks;
-				}
-				else if (action is MineAction)
-				{
-					action.TicksLeft = 3;
-				}
-				else if (action is MoveAction)
-				{
-					action.TicksLeft = 1;
-				}
-				else if (action is BuildItemAction)
-				{
-					action.TicksLeft = 8;
-				}
-				else
-				{
-					action.TicksLeft = 1;
-				}
-			}
+			if (this.ActionTicksLeft == 0)
+				throw new Exception();
 
 			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
 
-			action.TicksLeft -= 1;
+			this.ActionTicksLeft -= 1;
 
 			bool success = false;
 			bool done = false;
@@ -338,13 +313,11 @@ namespace MyGame.Server
 			}
 
 			if (success == false)
-				action.TicksLeft = 0;
+				this.ActionTicksLeft = 0;
 
 			var e = new ActionProgressChange(this)
 				{
-					UserID = action.UserID,
-					TransactionID = action.TransactionID,
-					TicksLeft = action.TicksLeft,
+					TicksLeft = this.ActionTicksLeft,
 					Success = success,
 				};
 
@@ -356,6 +329,109 @@ namespace MyGame.Server
 			// is the action originator an user?
 			//if (e.UserID != 0)
 			//	this.World.SendEvent(this, e);
+		}
+
+
+		// Actor stuff
+		public GameAction CurrentAction { get; private set; }
+		public bool HasAction { get { return this.CurrentAction != null; } }
+
+		public int ActionTicksLeft { get; private set; }
+		public int ActionUserID { get; private set; }
+
+		public void DoAction(GameAction action)
+		{
+			DoAction(action, 0);
+		}
+
+		public void DoAction(GameAction action, int userID)
+		{
+			MyDebug.WriteLine("DoAction {0}, uid: {1}", action, userID);
+			if (this.HasAction)
+				throw new Exception();
+
+			if (action.Priority == ActionPriority.Undefined)
+				throw new Exception();
+
+			this.CurrentAction = action;
+			this.ActionUserID = userID;
+
+			// The action should be initialized somewhere
+			if (action is WaitAction)
+			{
+				this.ActionTicksLeft = ((WaitAction)action).WaitTicks;
+			}
+			else if (action is MineAction)
+			{
+				this.ActionTicksLeft = 3;
+			}
+			else if (action is MoveAction)
+			{
+				this.ActionTicksLeft = 1;
+			}
+			else if (action is BuildItemAction)
+			{
+				this.ActionTicksLeft = 8;
+			}
+			else
+			{
+				this.ActionTicksLeft = 1;
+			}
+
+			var c = new ActionStartedChange(this)
+			{
+				Action = action,
+				UserID = userID,
+				TicksLeft = this.ActionTicksLeft,
+			};
+
+			this.World.AddChange(c);
+
+			this.World.SignalWorld();
+		}
+
+		public void CancelAction()
+		{
+			if (!this.HasAction)
+				throw new Exception();
+
+			MyDebug.WriteLine("{0}: CancelAction({1}, uid: {2})", this, this.CurrentAction, this.ActionUserID);
+
+			var action = this.CurrentAction;
+
+			var e = new ActionProgressChange(this)
+			{
+				UserID = this.ActionUserID,
+				TicksLeft = 0,
+				Success = false,
+			};
+
+			this.ActionProgress(e);
+			this.AI.ActionProgress(e);
+
+			this.World.AddChange(e);
+
+			this.CurrentAction = null;
+			this.ActionTicksLeft = 0;
+			this.ActionUserID = 0;
+		}
+
+		void ActionProgress(ActionProgressChange e)
+		{
+			if (!this.HasAction)
+				throw new Exception();
+
+			var action = this.CurrentAction;
+
+			this.ActionTicksLeft = e.TicksLeft;
+
+			if (e.TicksLeft == 0)
+			{
+				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+				this.CurrentAction = null;
+				this.ActionTicksLeft = 0;
+				this.ActionUserID = 0;
+			}
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
@@ -425,69 +501,6 @@ namespace MyGame.Server
 				return false;
 
 			return true;
-		}
-
-
-		// Actor stuff
-		public GameAction CurrentAction { get; private set; }
-		public bool HasAction { get { return this.CurrentAction != null; } }
-
-		public void DoAction(GameAction action)
-		{
-			if (this.HasAction)
-				throw new Exception();
-
-			if (action.Priority == ActionPriority.Undefined)
-				throw new Exception();
-
-			action.ActorObjectID = this.ObjectID;
-			this.CurrentAction = action;
-			this.World.SignalWorld();
-		}
-
-		public void CancelAction()
-		{
-			if (!this.HasAction)
-				throw new Exception();
-
-			MyDebug.WriteLine("{0}: CancelAction({1})", this, this.CurrentAction);
-
-			var action = this.CurrentAction;
-
-			var e = new ActionProgressChange(this)
-			{
-				UserID = action.UserID,
-				TransactionID = action.TransactionID,
-				TicksLeft = action.TicksLeft,
-				Success = false,
-			};
-
-			this.ActionProgress(e);
-			this.AI.ActionProgress(e);
-
-			this.World.AddChange(e);
-
-			// is the action originator an user?
-			//if (e.UserID != 0)
-			//	this.World.SendEvent(this, e);
-
-			this.CurrentAction = null;
-		}
-
-		void ActionProgress(ActionProgressChange e)
-		{
-			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
-				throw new Exception();
-
-			var action = this.CurrentAction;
-
-			action.TicksLeft = e.TicksLeft;
-
-			if (e.TicksLeft == 0)
-			{
-				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
-				this.CurrentAction = null;
-			}
 		}
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()

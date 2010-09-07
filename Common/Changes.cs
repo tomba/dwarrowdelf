@@ -204,12 +204,29 @@ namespace MyGame
 		}
 	}
 
+	[Serializable]
+	public class ActionStartedChange : ObjectChange
+	{
+		public GameAction Action { get; set; }
+		public int TicksLeft { get; set; }
+		public int UserID { get; set; }
+
+		public ActionStartedChange(IBaseGameObject ob)
+			: base(ob)
+		{
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ActionStartedChange({0}, {1}, left: {2}, uid: {3})",
+				this.ObjectID, this.Action, this.TicksLeft, this.UserID);
+		}
+	}
 
 	[Serializable]
 	public class ActionProgressChange : ObjectChange
 	{
 		public int UserID { get; set; }
-		public int TransactionID { get; set; }
 		public int TicksLeft { get; set; }
 		public bool Success { get; set; }
 
@@ -220,8 +237,8 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("ActionProgressChange(UID({0}), {1}, TRID({2}), left: {2}, ok: {3})",
-				this.UserID, this.ObjectID, this.TransactionID, this.TicksLeft, this.Success);
+			return String.Format("ActionProgressChange(UID({0}), {1}, left: {2}, ok: {3})",
+				this.UserID, this.ObjectID, this.TicksLeft, this.Success);
 		}
 	}
 }

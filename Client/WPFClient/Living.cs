@@ -119,54 +119,54 @@ namespace MyGame.Client
 		}
 
 		public bool HasAction { get { return this.CurrentAction != null; } }
-		static int s_transactionNumber;
 
-		public void DoAction(GameAction action)
+		public static readonly DependencyProperty ActionTicksLeftProperty = DependencyProperty.Register("ActionTicksLeft", typeof(int), typeof(Living));
+		public int ActionTicksLeft
+		{
+			get { return (int)this.GetValue(ActionTicksLeftProperty); }
+			private set { this.SetValue(ActionTicksLeftProperty, value); }
+		}
+
+		public void HandleActionStarted(ActionStartedChange change)
 		{
 			if (this.HasAction)
 				throw new Exception();
 
-			action.ActorObjectID = this.ObjectID;
-			if (action.Priority == ActionPriority.Undefined)
-				action.Priority = ActionPriority.User;
+			this.CurrentAction = change.Action;
+			this.ActionTicksLeft = change.TicksLeft;
+		}
+
+		public void DoAction(GameAction action)
+		{
+			throw new Exception();
+			if (this.HasAction)
+				throw new Exception();
 
 			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
 
 			this.CurrentAction = action;
 
-			int tid = System.Threading.Interlocked.Increment(ref s_transactionNumber);
-			action.TransactionID = tid;
-			GameData.Data.Connection.Send(new Messages.DoActionMessage() { Action = action });
+			//GameData.Data.Connection.Send(new Messages.DoActionMessage() { Action = action });
 		}
 
 		public void CancelAction()
 		{
-			if (!this.HasAction)
-				throw new Exception();
-
-			this.CurrentAction = null;
+			//throw new Exception();
 		}
 
 		public void ActionProgress(ActionProgressChange e)
 		{
-			if (!this.HasAction || e.TransactionID != this.CurrentAction.TransactionID)
+			if (!this.HasAction)
 				return;
 
 			var action = this.CurrentAction;
 
-			action.TicksLeft = e.TicksLeft;
+			this.ActionTicksLeft = e.TicksLeft;
 
 			if (e.TicksLeft == 0)
 			{
 				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
-
 				this.CurrentAction = null;
-			}
-			else
-			{
-				// XXX refresh action list
-				this.CurrentAction = null;
-				this.CurrentAction = action;
 			}
 		}
 
@@ -208,5 +208,6 @@ namespace MyGame.Client
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
 		}
+
 	}
 }

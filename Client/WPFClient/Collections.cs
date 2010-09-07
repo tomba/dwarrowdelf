@@ -73,12 +73,4 @@ namespace MyGame.Client
 		{
 		}
 	}
-
-	class ActionCollection : ObservableKeyedCollection<int, GameAction>
-	{
-		protected override int GetKeyForItem(GameAction item)
-		{
-			return item.TransactionID;
-		}
-	}
 }

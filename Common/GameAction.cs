@@ -18,46 +18,38 @@ namespace MyGame
 	[Serializable]
 	public abstract class GameAction
 	{
-		public ObjectID ActorObjectID { get; set; }
-		public int TransactionID { get; set; }
-		public ActionPriority Priority { get; set; }
+		public ActionPriority Priority { get; private set; }
 
-		[NonSerialized]
-		int m_userId;
-
-		[NonSerialized]
-		int m_ticksLeft;
-
-		public int UserID { get { return m_userId; } set { m_userId = value; } }
-		public int TicksLeft { get { return m_ticksLeft; } set { m_ticksLeft = value; } }
-
-		public GameAction()
+		protected GameAction(ActionPriority priority)
 		{
+			this.Priority = priority;
 		}
 	}
 
 	[Serializable]
 	public class MoveAction : GameAction
 	{
-		public Direction Direction { get; set; }
+		public Direction Direction { get; private set; }
 
-		public MoveAction(Direction direction)
+		public MoveAction(Direction direction, ActionPriority priority)
+			: base(priority)
 		{
 			this.Direction = direction;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("MoveAction({0}, left {1})", this.Direction, this.TicksLeft);
+			return String.Format("MoveAction({0})", this.Direction);
 		}
 	}
 
 	[Serializable]
 	public class WaitAction : GameAction
 	{
-		public int WaitTicks { get; set; }
+		public int WaitTicks { get; private set; }
 
-		public WaitAction(int ticks)
+		public WaitAction(int ticks, ActionPriority priority)
+			: base(priority)
 		{
 			this.WaitTicks = ticks;
 		}
@@ -71,9 +63,10 @@ namespace MyGame
 	[Serializable]
 	public class DropAction : GameAction
 	{
-		public ObjectID[] ItemObjectIDs { get; set; }
+		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public DropAction(IEnumerable<IGameObject> items)
+		public DropAction(IEnumerable<IGameObject> items, ActionPriority priority)
+			: base(priority)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -88,9 +81,10 @@ namespace MyGame
 	[Serializable]
 	public class GetAction : GameAction
 	{
-		public ObjectID[] ItemObjectIDs { get; set; }
+		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public GetAction(IEnumerable<IGameObject> items)
+		public GetAction(IEnumerable<IGameObject> items, ActionPriority priority)
+			: base(priority)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -105,16 +99,17 @@ namespace MyGame
 	[Serializable]
 	public class MineAction : GameAction
 	{
-		public Direction Direction { get; set; }
+		public Direction Direction { get; private set; }
 
-		public MineAction(Direction dir)
+		public MineAction(Direction dir, ActionPriority priority)
+			: base(priority)
 		{
 			this.Direction = dir;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("MineAction({0}, turns: {1})", this.Direction, this.TicksLeft);
+			return String.Format("MineAction({0})", this.Direction);
 		}
 	}
 
@@ -123,16 +118,17 @@ namespace MyGame
 	{
 		// public object type etc
 
-		public ObjectID[] SourceObjectIDs { get; set; }
+		public ObjectID[] SourceObjectIDs { get; private set; }
 
-		public BuildItemAction(IEnumerable<IGameObject> sourceItems)
+		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ActionPriority priority)
+			: base(priority)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 		}
 
 		public override string ToString()
 		{
-			return String.Format("BuildItemAction(turns: {0})", this.TicksLeft);
+			return String.Format("BuildItemAction()");
 		}
 	}
 

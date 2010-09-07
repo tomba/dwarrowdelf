@@ -91,6 +91,8 @@ namespace MyGame.Jobs
 
 		public Progress PrepareNextAction()
 		{
+			Debug.Assert(this.CurrentAction == null);
+
 			var progress = DoPrepareNextAction();
 			SetProgress(progress);
 			return progress;
@@ -138,6 +140,7 @@ namespace MyGame.Jobs
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.Progress == Progress.Ok);
+			Debug.Assert(this.CurrentAction != null);
 			Debug.Assert(m_currentSubJob != null);
 
 			var progress = DoActionProgress(e);

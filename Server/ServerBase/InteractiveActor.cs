@@ -16,31 +16,33 @@ namespace MyGame.Server
 			this.Worker = ob;
 		}
 
-		public void ActionRequired(ActionPriority priority)
+		public GameAction ActionRequired(ActionPriority priority)
 		{
 			if (priority == ActionPriority.Idle)
 			{
 				if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
-					return;
+					return null;
 
 				if (this.Worker.HasAction)
 					this.Worker.CancelAction();
-				var a = GetNewAction();
-				a.Priority = priority;
-				this.Worker.DoAction(a);
+				var a = GetNewAction(priority);
+
+				return a;
 			}
+			else
+				return null;
 		}
 
 		public void ActionProgress(ActionProgressChange e)
 		{
 		}
 
-		GameAction GetNewAction()
+		GameAction GetNewAction(ActionPriority priority)
 		{
 			GameAction action;
 
 			if (m_random.Next(4) == 0)
-				action = new WaitAction(m_random.Next(3) + 1);
+				action = new WaitAction(m_random.Next(3) + 1, priority);
 			else
 			{
 				IntVector v = new IntVector(1, 1);
@@ -50,7 +52,7 @@ namespace MyGame.Server
 				if (dir == Direction.None)
 					throw new Exception();
 
-				action = new MoveAction(dir);
+				action = new MoveAction(dir, priority);
 			}
 
 			return action;

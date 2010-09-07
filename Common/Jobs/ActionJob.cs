@@ -16,6 +16,7 @@ namespace MyGame.Jobs
 		}
 
 		public IJob Parent { get; private set; }
+		protected ActionPriority Priority = ActionPriority.User; // XXX
 
 		ILiving m_worker;
 		public ILiving Worker
@@ -72,6 +73,8 @@ namespace MyGame.Jobs
 
 		public Progress PrepareNextAction()
 		{
+			Debug.Assert(this.CurrentAction == null);
+
 			var progress = PrepareNextActionOverride();
 			SetProgress(progress);
 			return progress;
@@ -84,11 +87,13 @@ namespace MyGame.Jobs
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.Progress == Progress.Ok);
 			Debug.Assert(this.CurrentAction != null);
-			Debug.Assert(e.TransactionID == this.CurrentAction.TransactionID);
 
 			var progress = ActionProgressOverride(e);
 			SetProgress(progress);
-			Notify("CurrentAction");
+
+			if (e.TicksLeft == 0)
+				this.CurrentAction = null;
+
 			return progress;
 		}
 

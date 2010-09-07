@@ -253,6 +253,8 @@
                                     <TextBlock Text="{Binding}" />
                                     :
                                     <TextBlock Text="{Binding CurrentAction}" />
+                                    left
+                                    <TextBlock Text="{Binding ActionTicksLeft}" />
                                 </TextBlock>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

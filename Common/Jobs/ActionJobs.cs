@@ -58,7 +58,7 @@ namespace MyGame.Jobs
 			if (m_pathDirs.Count == 0)
 				m_pathDirs = null;
 
-			var action = new MoveAction(dir);
+			var action = new MoveAction(dir, this.Priority);
 			m_supposedLocation += new IntVector3D(dir);
 
 			this.CurrentAction = action;
@@ -152,7 +152,7 @@ namespace MyGame.Jobs
 			if (CheckProgress() == Progress.Done)
 				return Progress.Done;
 
-			var action = new MineAction(v.ToDirection());
+			var action = new MineAction(v.ToDirection(), this.Priority);
 
 			this.CurrentAction = action;
 
@@ -201,7 +201,7 @@ namespace MyGame.Jobs
 
 		protected override Progress PrepareNextActionOverride()
 		{
-			var action = new BuildItemAction(m_items);
+			var action = new BuildItemAction(m_items, this.Priority);
 			this.CurrentAction = action;
 			return Progress.Ok;
 		}
@@ -235,7 +235,7 @@ namespace MyGame.Jobs
 
 		protected override Progress PrepareNextActionOverride()
 		{
-			var action = new GetAction(new IItemObject[] { m_item });
+			var action = new GetAction(new IItemObject[] { m_item }, this.Priority);
 			this.CurrentAction = action;
 			return Progress.Ok;
 		}
@@ -269,7 +269,7 @@ namespace MyGame.Jobs
 
 		protected override Progress PrepareNextActionOverride()
 		{
-			var action = new DropAction(new IItemObject[] { m_item });
+			var action = new DropAction(new IItemObject[] { m_item }, this.Priority);
 			this.CurrentAction = action;
 			return Progress.Ok;
 		}

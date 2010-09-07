@@ -43,7 +43,7 @@ namespace MyGame.Server
 		{
 			TickMethod = WorldTickMethod.Simultaneous,
 			RequireUser = true,
-			RequireTickRequest = true,
+			RequireTickRequest = false,
 			MaxMoveTime = TimeSpan.FromMilliseconds(1000),
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};

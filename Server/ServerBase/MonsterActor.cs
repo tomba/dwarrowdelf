@@ -48,7 +48,7 @@ namespace MyGame.Server
 			return null;
 		}
 
-		GameAction GetNewRandomMoveAction()
+		GameAction GetNewRandomMoveAction(ActionPriority priority)
 		{
 			GameAction action;
 			/*
@@ -63,7 +63,7 @@ namespace MyGame.Server
 				if (dir == Direction.None)
 					throw new Exception();
 
-				action = new MoveAction(dir);
+				action = new MoveAction(dir, priority);
 			}
 
 			return action;

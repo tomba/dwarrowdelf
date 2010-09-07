@@ -78,18 +78,6 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class DoActionMessage : ClientMessage
-	{
-		public GameAction Action { get; set; }
-	}
-
-	[Serializable]
-	public class ProceedTickMessage : ClientMessage
-	{
-	}
-
-
-	[Serializable]
 	public class SetTilesMessage : ClientMessage
 	{
 		public ObjectID MapID { get; set; }
@@ -180,17 +168,6 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class ActionRequiredMessage : ServerMessage
-	{
-		public ObjectID ObjectID { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("ActionRequiredMessage({0})", this.ObjectID);
-		}
-	}
-
-	[Serializable]
 	public class ControllablesDataMessage : ServerMessage
 	{
 		public ObjectID[] Controllables { get; set; }
@@ -199,5 +176,23 @@ namespace MyGame.Messages
 		{
 			return "ControllablesDataMessage";
 		}
+	}
+
+
+	[Serializable]
+	public class ProceedTickMessage : ClientMessage
+	{
+	}
+
+	[Serializable]
+	public class StartTurnMessage : ServerMessage
+	{
+		public ObjectID[] RequiredActors { get; set; }
+	}
+
+	[Serializable]
+	public class DoTurnMessage : ClientMessage
+	{
+		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}
 }

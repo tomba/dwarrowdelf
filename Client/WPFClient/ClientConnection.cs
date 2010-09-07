@@ -106,7 +106,7 @@ namespace MyGame.Client
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			//MyDebug.WriteLine("DeliverMessage {0}", msg);
+			MyDebug.WriteLine("Received Message {0}", msg);
 
 			Action<ServerMessage> f;
 			Type t = msg.GetType();
@@ -266,13 +266,23 @@ namespace MyGame.Client
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
 
-		void HandleMessage(ActionRequiredMessage msg)
+		void HandleMessage(StartTurnMessage msg)
 		{
-			var ob = GameData.Data.World.FindObject<Living>(msg.ObjectID);
-			if (ob == null)
-				throw new Exception();
+			var world = GameData.Data.World;
 
-			ob.AI.ActionRequired(ActionPriority.High);
+			List<Tuple<ObjectID, GameAction>> actions = new List<Tuple<ObjectID, GameAction>>(msg.RequiredActors.Length);
+
+			var livings = msg.RequiredActors.Select(oid => world.FindObject<Living>(oid));
+
+			foreach (var living in livings)
+			{
+				var a = living.AI.ActionRequired(ActionPriority.High);
+				if (a == null)
+					continue;
+				actions.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, a));
+			}
+
+			Send(new DoTurnMessage() { Actions = actions.ToArray() });
 		}
 
 		void HandleMessage(ChangeMessage msg)
@@ -373,6 +383,15 @@ namespace MyGame.Client
 		void HandleChange(TickStartChange change)
 		{
 			GameData.Data.World.TickNumber = change.TickNumber;
+		}
+
+		void HandleChange(ActionStartedChange change)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
+			if (ob == null)
+				throw new Exception();
+
+			ob.HandleActionStarted(change);
 		}
 
 		void HandleChange(ActionProgressChange change)
