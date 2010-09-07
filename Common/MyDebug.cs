@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using MemoryMappedLog;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -29,6 +29,13 @@ namespace MyGame
 		public static void WriteLine(string format, params object[] args)
 		{
 			WriteLine(String.Format(format, args));
+		}
+
+		[Conditional("DEBUG")]
+		public static void Assert(bool p)
+		{
+			if (!p)
+				Debugger.Break();
 		}
 	}
 

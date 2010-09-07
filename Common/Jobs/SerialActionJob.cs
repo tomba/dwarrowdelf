@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.ComponentModel;
 
 namespace MyGame.Jobs
@@ -67,8 +66,8 @@ namespace MyGame.Jobs
 
 		public Progress Assign(ILiving worker)
 		{
-			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
+			MyDebug.Assert(this.Worker == null);
+			MyDebug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);
@@ -91,7 +90,7 @@ namespace MyGame.Jobs
 
 		public Progress PrepareNextAction()
 		{
-			Debug.Assert(this.CurrentAction == null);
+			MyDebug.Assert(this.CurrentAction == null);
 
 			var progress = DoPrepareNextAction();
 			SetProgress(progress);
@@ -138,10 +137,10 @@ namespace MyGame.Jobs
 
 		public Progress ActionProgress(ActionProgressChange e)
 		{
-			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.Progress == Progress.Ok);
-			Debug.Assert(this.CurrentAction != null);
-			Debug.Assert(m_currentSubJob != null);
+			MyDebug.Assert(this.Worker != null);
+			MyDebug.Assert(this.Progress == Progress.Ok);
+			MyDebug.Assert(this.CurrentAction != null);
+			MyDebug.Assert(m_currentSubJob != null);
 
 			var progress = DoActionProgress(e);
 			SetProgress(progress);
@@ -177,7 +176,7 @@ namespace MyGame.Jobs
 
 		static IActionJob FindAndAssignJob(IEnumerable<IActionJob> jobs, ILiving worker, out Progress progress)
 		{
-			Debug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
+			MyDebug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
 
 			//D("looking for new job");
 

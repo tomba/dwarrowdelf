@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -123,7 +122,7 @@ namespace MyGame.Server
 		{
 			get
 			{
-				Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+				MyDebug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
@@ -250,7 +249,7 @@ namespace MyGame.Server
 		// called during tick processing. the world state is not quite valid.
 		public void PerformAction()
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			GameAction action = this.CurrentAction;
 			// if action was cancelled just now, the actor misses the turn

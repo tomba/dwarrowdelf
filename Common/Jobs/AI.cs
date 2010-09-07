@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.ComponentModel;
 using MyGame.Jobs;
 
@@ -56,8 +55,7 @@ namespace MyGame.Jobs
 					}
 				}
 
-				if (m_currentJob.CurrentAction != null)
-					throw new Exception();
+				MyDebug.Assert(m_currentJob.CurrentAction == null);
 
 				var progress = m_currentJob.PrepareNextAction();
 
@@ -95,6 +93,8 @@ namespace MyGame.Jobs
 		{
 			if (m_currentJob == null)
 				return;
+
+			MyDebug.Assert(e.ObjectID == this.Worker.ObjectID);
 
 			var progress = m_currentJob.ActionProgress(e);
 
@@ -155,7 +155,7 @@ namespace MyGame.Jobs
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Debug.Assert(sender == m_currentJob);
+			MyDebug.Assert(sender == m_currentJob);
 
 			IJob job = (IJob)sender;
 			if (e.PropertyName == "Progress")

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -181,7 +180,7 @@ namespace MyGame.Client
 
 		void UpdateLOS()
 		{
-			Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+			MyDebug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 
 			if (this.Environment == null)
 				return;

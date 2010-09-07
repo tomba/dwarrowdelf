@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -72,7 +71,7 @@ namespace MyGame.Server
 					MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
 				foreach (var living in m_addLivingList)
 				{
-					Debug.Assert(!m_livingList.Contains(living));
+					MyDebug.Assert(!m_livingList.Contains(living));
 					m_livingList.Add(living);
 				}
 
@@ -117,7 +116,7 @@ namespace MyGame.Server
 				foreach (var living in m_removeLivingList)
 				{
 					bool removed = m_livingList.Remove(living);
-					Debug.Assert(removed);
+					MyDebug.Assert(removed);
 				}
 
 				m_removeLivingList.Clear();

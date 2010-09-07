@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace MyGame.Jobs
 {
@@ -51,8 +50,8 @@ namespace MyGame.Jobs
 
 		public Progress Assign(ILiving worker)
 		{
-			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
+			MyDebug.Assert(this.Worker == null);
+			MyDebug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);
@@ -73,7 +72,7 @@ namespace MyGame.Jobs
 
 		public Progress PrepareNextAction()
 		{
-			Debug.Assert(this.CurrentAction == null);
+			MyDebug.Assert(this.CurrentAction == null);
 
 			var progress = PrepareNextActionOverride();
 			SetProgress(progress);
@@ -84,9 +83,9 @@ namespace MyGame.Jobs
 
 		public Progress ActionProgress(ActionProgressChange e)
 		{
-			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.Progress == Progress.Ok);
-			Debug.Assert(this.CurrentAction != null);
+			MyDebug.Assert(this.Worker != null);
+			MyDebug.Assert(this.Progress == Progress.Ok);
+			MyDebug.Assert(this.CurrentAction != null);
 
 			var progress = ActionProgressOverride(e);
 			SetProgress(progress);

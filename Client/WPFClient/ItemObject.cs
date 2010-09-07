@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using MyGame.Messages;
-using System.Diagnostics;
 using System.Windows;
 
 namespace MyGame.Client

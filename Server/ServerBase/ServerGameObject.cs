@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
 
 namespace MyGame.Server
@@ -83,7 +82,7 @@ namespace MyGame.Server
 			if (s_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
 				s_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
 
-			Debug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
+			MyDebug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
 
 			var prop = new PropertyDefinition(propertyID, visibility, defaultValue, propertyChangedCallback);
 			s_propertyDefinitionMap[ownerType].Add(prop);
@@ -215,7 +214,7 @@ namespace MyGame.Server
 
 		public bool MoveTo(ServerGameObject dst, IntPoint3D dstLoc)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
@@ -233,7 +232,7 @@ namespace MyGame.Server
 
 		public bool MoveDir(Direction dir)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			if (this.Environment == null)
 				throw new Exception();

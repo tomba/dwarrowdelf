@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Threading;
 
 namespace MyGame.Server
@@ -198,7 +197,7 @@ namespace MyGame.Server
 		bool SimultaneousWorkAvailable()
 		{
 			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
+			MyDebug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingList.All(l => l.HasAction))
 				return true;
@@ -212,7 +211,7 @@ namespace MyGame.Server
 		void SimultaneousWork()
 		{
 			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
+			MyDebug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = IsMoveForced();
 
@@ -222,7 +221,7 @@ namespace MyGame.Server
 				return;
 
 			if (!forceMove)
-				Debug.Assert(m_livingList.All(l => l.HasAction));
+				MyDebug.Assert(m_livingList.All(l => l.HasAction));
 
 			foreach (var living in m_livingList)
 			{
@@ -249,7 +248,7 @@ namespace MyGame.Server
 		bool SequentialWorkAvailable()
 		{
 			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
+			MyDebug.Assert(m_state == WorldState.TickOngoing);
 
 			if (RemoveLivingListContains(m_livingEnumerator.Current))
 			{
@@ -275,7 +274,7 @@ namespace MyGame.Server
 		void SequentialWork()
 		{
 			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
+			MyDebug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = IsMoveForced();
 

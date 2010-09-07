@@ -5,9 +5,9 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-using System.Diagnostics;
 
 using MyGame;
+using System.Diagnostics;
 
 /*
  * x64-release

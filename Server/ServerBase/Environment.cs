@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -115,7 +114,7 @@ namespace MyGame.Server
 
 			IntVector3D v = to - from;
 
-			Debug.Assert(v.IsNormal);
+			MyDebug.Assert(v.IsNormal);
 
 			var dstInter = GetInterior(to);
 
@@ -202,7 +201,7 @@ namespace MyGame.Server
 					{
 						int diff = curLevel - neighLevel;
 						flow = (diff + 5) / 6;
-						Debug.Assert(flow < curLevel);
+						MyDebug.Assert(flow < curLevel);
 						//flow = Math.Min(flow, curLevel - 1);
 						//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
 					}
@@ -305,7 +304,7 @@ namespace MyGame.Server
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -320,7 +319,7 @@ namespace MyGame.Server
 
 		public void SetFloor(IntPoint3D p, FloorID floorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -335,7 +334,7 @@ namespace MyGame.Server
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -349,7 +348,7 @@ namespace MyGame.Server
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -368,7 +367,7 @@ namespace MyGame.Server
 
 		public void SetTileData(IntPoint3D l, TileData data)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -382,7 +381,7 @@ namespace MyGame.Server
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -401,7 +400,7 @@ namespace MyGame.Server
 
 		public void SetGrass(IntPoint3D l, bool grass)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
@@ -433,20 +432,20 @@ namespace MyGame.Server
 		protected override void OnChildAdded(ServerGameObject child)
 		{
 			var list = m_contentArray[child.Z];
-			Debug.Assert(!list.Contains(child));
+			MyDebug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
 
 		protected override void OnChildRemoved(ServerGameObject child)
 		{
 			var list = m_contentArray[child.Z];
-			Debug.Assert(list.Contains(child));
+			MyDebug.Assert(list.Contains(child));
 			list.Remove(child);
 		}
 
 		protected override bool OkToAddChild(ServerGameObject ob, IntPoint3D p)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
 			if (!this.Bounds.Contains(p))
 				return false;
@@ -526,11 +525,11 @@ namespace MyGame.Server
 				return;
 
 			var list = m_contentArray[srcLoc.Z];
-			Debug.Assert(list.Contains(child));
+			MyDebug.Assert(list.Contains(child));
 			list.Remove(child);
 
 			list = m_contentArray[dstLoc.Z];
-			Debug.Assert(!list.Contains(child));
+			MyDebug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
 
@@ -568,10 +567,10 @@ namespace MyGame.Server
 
 		public void AddBuilding(BuildingObject building)
 		{
-			Debug.Assert(this.World.IsWritable);
+			MyDebug.Assert(this.World.IsWritable);
 
-			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
-			Debug.Assert(building.Environment == null);
+			MyDebug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+			MyDebug.Assert(building.Environment == null);
 			building.Environment = this;
 			m_buildings.Add(building);
 

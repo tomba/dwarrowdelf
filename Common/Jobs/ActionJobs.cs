@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace MyGame.Jobs
 {

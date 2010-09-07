@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -155,7 +154,7 @@ namespace MyGame.Client
 
 		void AssignMaterials(BuildOrder order, IEnumerable<ItemObject> items)
 		{
-			Debug.Assert(items.Count() == order.SourceObjects.Length);
+			MyDebug.Assert(items.Count() == order.SourceObjects.Length);
 
 			int i = 0;
 			foreach (var item in items)

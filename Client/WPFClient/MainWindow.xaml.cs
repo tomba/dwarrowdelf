@@ -12,7 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using System.Diagnostics;
 using System.ComponentModel;
 using MyGame.Messages;
 using MyGame.Jobs;
@@ -611,8 +610,8 @@ namespace MyGame.Client
 			if (list.Contains(plr))
 				return;
 
-			Debug.Assert(list.All(o => o.Environment == plr.Environment));
-			Debug.Assert(list.All(o => o.Location == plr.Location));
+			MyDebug.Assert(list.All(o => o.Environment == plr.Environment));
+			MyDebug.Assert(list.All(o => o.Location == plr.Location));
 
 			plr.DoAction(new GetAction(list, ActionPriority.User));
 		}
@@ -806,7 +805,7 @@ namespace MyGame.Client
 
 		private void Button_Click_Break(object sender, RoutedEventArgs e)
 		{
-			Debugger.Break();
+			System.Diagnostics.Debugger.Break();
 		}
 	}
 }

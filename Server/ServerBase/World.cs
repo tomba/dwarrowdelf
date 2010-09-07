@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
 using System.Threading;
 
 namespace MyGame.Server
@@ -73,7 +72,7 @@ namespace MyGame.Server
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
-		[Conditional("DEBUG")]
+		[System.Diagnostics.Conditional("DEBUG")]
 		void VDbg(string format, params object[] args)
 		{
 			if (m_verbose)
@@ -96,7 +95,7 @@ namespace MyGame.Server
 
 		public void Start()
 		{
-			Debug.Assert(!m_worldThread.IsAlive);
+			MyDebug.Assert(!m_worldThread.IsAlive);
 
 			using (var initEvent = new ManualResetEvent(false))
 			{
@@ -107,7 +106,7 @@ namespace MyGame.Server
 
 		public void Stop()
 		{
-			Debug.Assert(m_worldThread.IsAlive);
+			MyDebug.Assert(m_worldThread.IsAlive);
 
 			m_exit = true;
 			SignalWorld();
