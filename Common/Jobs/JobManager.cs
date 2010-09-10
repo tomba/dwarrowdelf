@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MyGame.Jobs
 {
@@ -20,13 +21,13 @@ namespace MyGame.Jobs
 
 		public void Add(IJob job)
 		{
-			MyDebug.Assert(job.Parent == null);
+			Debug.Assert(job.Parent == null);
 			m_jobs.Add(job);
 		}
 
 		public void Remove(IJob job)
 		{
-			MyDebug.Assert(job.Parent == null);
+			Debug.Assert(job.Parent == null);
 			job.Abort();
 			m_jobs.Remove(job);
 		}

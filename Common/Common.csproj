@@ -121,7 +121,7 @@
     <Compile Include="IServer.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />
     <Compile Include="LOSShadowCast1.cs" />
-    <Compile Include="MyDebug.cs" />
+    <Compile Include="MMLogTraceListener.cs" />
     <Compile Include="ObjectID.cs" />
     <Compile Include="GameAction.cs" />
     <Compile Include="GameObject.cs" />

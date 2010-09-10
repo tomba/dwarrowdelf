@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -9,13 +10,19 @@ namespace MyGame.Server
 
 		public Server()
 		{
-			MyDebug.Component = "Server";
 		}
 
-		public void RunServer(bool isEmbedded,
+		public void RunServer(bool isEmbedded, bool enableDebugPrint,
 			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
-			MyDebug.WriteLine("Start");
+			if (enableDebugPrint)
+			{
+				var debugListener = new MMLogTraceListener("Server");
+				Debug.Listeners.Clear();
+				Debug.Listeners.Add(debugListener);
+			}
+
+			Debug.Print("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
@@ -29,11 +36,11 @@ namespace MyGame.Server
 			Connection.NewConnectionEvent += OnNewConnection;
 			Connection.StartListening();
 
-			MyDebug.WriteLine("The service is ready.");
+			Debug.Print("The service is ready.");
 
 			if (isEmbedded)
 			{
-				MyDebug.WriteLine("Server signaling client for start.");
+				Debug.Print("Server signaling client for start.");
 				if (serverStartWaitHandle != null)
 				{
 					serverStartWaitHandle.Set();
@@ -49,11 +56,11 @@ namespace MyGame.Server
 
 			m_world.Stop();
 
-			MyDebug.WriteLine("Server exiting");
+			Debug.Print("Server exiting");
 
 			Connection.StopListening();
 
-			MyDebug.WriteLine("Server exit");
+			Debug.Print("Server exit");
 		}
 
 
@@ -64,7 +71,7 @@ namespace MyGame.Server
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			MyDebug.WriteLine("tuli exc");
+			Debug.Print("tuli exc");
 		}
 
 	}

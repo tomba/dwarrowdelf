@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace MyGame.Jobs
 {
@@ -16,7 +17,7 @@ namespace MyGame.Jobs
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
 		{
-			MyDebug.WriteLine("[AI S] [{0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI S] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
 		protected SerialActionJob(IJob parent)
@@ -66,8 +67,8 @@ namespace MyGame.Jobs
 
 		public Progress Assign(ILiving worker)
 		{
-			MyDebug.Assert(this.Worker == null);
-			MyDebug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
+			Debug.Assert(this.Worker == null);
+			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);
@@ -90,7 +91,7 @@ namespace MyGame.Jobs
 
 		public Progress PrepareNextAction()
 		{
-			MyDebug.Assert(this.CurrentAction == null);
+			Debug.Assert(this.CurrentAction == null);
 
 			var progress = DoPrepareNextAction();
 			SetProgress(progress);
@@ -137,10 +138,10 @@ namespace MyGame.Jobs
 
 		public Progress ActionProgress(ActionProgressChange e)
 		{
-			MyDebug.Assert(this.Worker != null);
-			MyDebug.Assert(this.Progress == Progress.Ok);
-			MyDebug.Assert(this.CurrentAction != null);
-			MyDebug.Assert(m_currentSubJob != null);
+			Debug.Assert(this.Worker != null);
+			Debug.Assert(this.Progress == Progress.Ok);
+			Debug.Assert(this.CurrentAction != null);
+			Debug.Assert(m_currentSubJob != null);
 
 			var progress = DoActionProgress(e);
 			SetProgress(progress);
@@ -176,7 +177,7 @@ namespace MyGame.Jobs
 
 		static IActionJob FindAndAssignJob(IEnumerable<IActionJob> jobs, ILiving worker, out Progress progress)
 		{
-			MyDebug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
+			Debug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
 
 			//D("looking for new job");
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
@@ -9,6 +8,7 @@ using System.Windows.Resources;
 using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Controls;
+using System.Diagnostics;
 
 
 namespace MyGame.Client
@@ -36,21 +36,22 @@ namespace MyGame.Client
 		{
 			m_serverInAppDomain = true;
 
-			MyDebug.Component = "Client";
 			Thread.CurrentThread.Name = "Main";
 
 			base.OnStartup(e);
 
 #if DEBUG
 			bool debugClient = MyGame.Client.Properties.Settings.Default.DebugClient;
-			bool debugServer = m_serverInAppDomain && MyGame.Client.Properties.Settings.Default.DebugServer;
 
-			if (debugClient || debugServer)
+			if (debugClient)
 			{
+				var debugListener = new MMLogTraceListener("Client");
+				Debug.Listeners.Clear();
+				Debug.Listeners.Add(debugListener);
 			}
 #endif
 
-			MyDebug.WriteLine("Start");
+			Debug.Print("Start");
 
 			GameData.Data.Connection = new ClientConnection();
 
@@ -107,7 +108,7 @@ namespace MyGame.Client
 				m_serverThread.Join();
 			}
 
-			MyDebug.WriteLine("Exiting");
+			Debug.Print("Exiting");
 		}
 
 
@@ -122,8 +123,10 @@ namespace MyGame.Client
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
+			bool debugServer = MyGame.Client.Properties.Settings.Default.DebugServer;
+
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server.Server");
-			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
+			m_server.RunServer(true, debugServer, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);
 		}

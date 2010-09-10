@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -141,7 +142,7 @@ namespace MyGame.Client
 			if (this.HasAction)
 				throw new Exception();
 
-			MyDebug.WriteLine("DoAction({0}: {1})", this, action);
+			Debug.Print("DoAction({0}: {1})", this, action);
 
 			this.CurrentAction = action;
 
@@ -164,7 +165,7 @@ namespace MyGame.Client
 
 			if (e.TicksLeft == 0)
 			{
-				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+				Debug.Print("ActionDone({0}: {1})", this, action);
 				this.CurrentAction = null;
 			}
 		}
@@ -180,7 +181,7 @@ namespace MyGame.Client
 
 		void UpdateLOS()
 		{
-			MyDebug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+			Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 
 			if (this.Environment == null)
 				return;

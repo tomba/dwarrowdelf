@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -97,13 +98,13 @@ namespace MyGame.Client
 			{
 				if (order.Job.Progress == MyGame.Jobs.Progress.Done)
 				{
-					MyDebug.WriteLine("BuildOrder done");
+					Debug.Print("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
 				else if (order.Job.Progress == MyGame.Jobs.Progress.Fail)
 				{
-					MyDebug.WriteLine("BuildOrder FAILED");
+					Debug.Print("BuildOrder FAILED");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
@@ -154,7 +155,7 @@ namespace MyGame.Client
 
 		void AssignMaterials(BuildOrder order, IEnumerable<ItemObject> items)
 		{
-			MyDebug.Assert(items.Count() == order.SourceObjects.Length);
+			Debug.Assert(items.Count() == order.SourceObjects.Length);
 
 			int i = 0;
 			foreach (var item in items)

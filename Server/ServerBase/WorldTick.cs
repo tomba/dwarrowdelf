@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -197,7 +198,7 @@ namespace MyGame.Server
 		bool SimultaneousWorkAvailable()
 		{
 			VerifyAccess();
-			MyDebug.Assert(m_state == WorldState.TickOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (m_livingList.All(l => l.HasAction))
 				return true;
@@ -211,7 +212,7 @@ namespace MyGame.Server
 		void SimultaneousWork()
 		{
 			VerifyAccess();
-			MyDebug.Assert(m_state == WorldState.TickOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = IsMoveForced();
 
@@ -221,7 +222,7 @@ namespace MyGame.Server
 				return;
 
 			if (!forceMove)
-				MyDebug.Assert(m_livingList.All(l => l.HasAction));
+				Debug.Assert(m_livingList.All(l => l.HasAction));
 
 			foreach (var living in m_livingList)
 			{
@@ -248,7 +249,7 @@ namespace MyGame.Server
 		bool SequentialWorkAvailable()
 		{
 			VerifyAccess();
-			MyDebug.Assert(m_state == WorldState.TickOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			if (RemoveLivingListContains(m_livingEnumerator.Current))
 			{
@@ -274,7 +275,7 @@ namespace MyGame.Server
 		void SequentialWork()
 		{
 			VerifyAccess();
-			MyDebug.Assert(m_state == WorldState.TickOngoing);
+			Debug.Assert(m_state == WorldState.TickOngoing);
 
 			bool forceMove = IsMoveForced();
 
@@ -311,7 +312,7 @@ namespace MyGame.Server
 			this.TickNumber++;
 			AddChange(new TickStartChange(this.TickNumber));
 
-			MyDebug.WriteLine("-- Tick {0} started --", this.TickNumber);
+			Debug.Print("-- Tick {0} started --", this.TickNumber);
 			m_tickRequested = false;
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
@@ -390,7 +391,7 @@ namespace MyGame.Server
 				m_tickTimer.Change(m_config.MinTickTime, TimeSpan.FromTicks(-1));
 			}
 
-			MyDebug.WriteLine("-- Tick {0} ended --", this.TickNumber);
+			Debug.Print("-- Tick {0} ended --", this.TickNumber);
 			m_tickRequested = false;
 			m_state = WorldState.TickEnded;
 		}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -122,7 +123,7 @@ namespace MyGame.Server
 		{
 			get
 			{
-				MyDebug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+				Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
@@ -249,20 +250,20 @@ namespace MyGame.Server
 		// called during tick processing. the world state is not quite valid.
 		public void PerformAction()
 		{
-			MyDebug.Assert(this.World.IsWritable);
+			Debug.Assert(this.World.IsWritable);
 
 			GameAction action = this.CurrentAction;
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 			{
-				MyDebug.WriteLine("PerformAction {0} : skipping", this);
+				Debug.Print("PerformAction {0} : skipping", this);
 				return;
 			}
 
 			if (this.ActionTicksLeft == 0)
 				throw new Exception();
 
-			MyDebug.WriteLine("PerformAction {0} : {1}", this, action);
+			Debug.Print("PerformAction {0} : {1}", this, action);
 
 			this.ActionTicksLeft -= 1;
 
@@ -345,7 +346,7 @@ namespace MyGame.Server
 
 		public void DoAction(GameAction action, int userID)
 		{
-			MyDebug.WriteLine("DoAction {0}, uid: {1}", action, userID);
+			Debug.Print("DoAction {0}, uid: {1}", action, userID);
 			if (this.HasAction)
 				throw new Exception();
 
@@ -394,7 +395,7 @@ namespace MyGame.Server
 			if (!this.HasAction)
 				throw new Exception();
 
-			MyDebug.WriteLine("{0}: CancelAction({1}, uid: {2})", this, this.CurrentAction, this.ActionUserID);
+			Debug.Print("{0}: CancelAction({1}, uid: {2})", this, this.CurrentAction, this.ActionUserID);
 
 			var action = this.CurrentAction;
 
@@ -426,7 +427,7 @@ namespace MyGame.Server
 
 			if (e.TicksLeft == 0)
 			{
-				MyDebug.WriteLine("ActionDone({0}: {1})", this, action);
+				Debug.Print("ActionDone({0}: {1})", this, action);
 				this.CurrentAction = null;
 				this.ActionTicksLeft = 0;
 				this.ActionUserID = 0;

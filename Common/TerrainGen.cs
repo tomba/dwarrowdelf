@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MyGame;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -70,7 +71,7 @@ namespace MyGame
 
 		void HeightMap(Grid2D<double> grid, IntRect rect, double randomCoef)
 		{
-			MyDebug.Assert(rect.Width == rect.Height);
+			Debug.Assert(rect.Width == rect.Height);
 
 			int r = rect.Width / 2;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.AStar
 {
@@ -44,7 +45,7 @@ namespace MyGame.AStar
 
 		public void NodeUpdated(T node)
 		{
-			MyDebug.Assert(m_list.Contains(node));
+			Debug.Assert(m_list.Contains(node));
 			m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
 		}
 	}

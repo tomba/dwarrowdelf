@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -68,10 +69,10 @@ namespace MyGame.Server
 			lock (m_addLivingList)
 			{
 				if (m_addLivingList.Count > 0)
-					MyDebug.WriteLine("Processing {0} add livings", m_addLivingList.Count);
+					Debug.Print("Processing {0} add livings", m_addLivingList.Count);
 				foreach (var living in m_addLivingList)
 				{
-					MyDebug.Assert(!m_livingList.Contains(living));
+					Debug.Assert(!m_livingList.Contains(living));
 					m_livingList.Add(living);
 				}
 
@@ -112,11 +113,11 @@ namespace MyGame.Server
 			lock (m_removeLivingList)
 			{
 				if (m_removeLivingList.Count > 0)
-					MyDebug.WriteLine("Processing {0} remove livings", m_removeLivingList.Count);
+					Debug.Print("Processing {0} remove livings", m_removeLivingList.Count);
 				foreach (var living in m_removeLivingList)
 				{
 					bool removed = m_livingList.Remove(living);
-					MyDebug.Assert(removed);
+					Debug.Assert(removed);
 				}
 
 				m_removeLivingList.Clear();

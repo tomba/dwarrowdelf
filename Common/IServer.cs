@@ -8,7 +8,7 @@ namespace MyGame
 {
 	public interface IServer
 	{
-		void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle,
+		void RunServer(bool isEmbedded, bool enableDebugPrint, EventWaitHandle serverStartWaitHandle,
 			EventWaitHandle serverStopWaitHandle);
 	}
 }

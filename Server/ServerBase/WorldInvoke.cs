@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -59,7 +60,7 @@ namespace MyGame.Server
 				lock (m_invokeList)
 				{
 					if (m_invokeList.Count > 0)
-						MyDebug.WriteLine("Processing {0} invoke callbacks", m_invokeList.Count);
+						Debug.Print("Processing {0} invoke callbacks", m_invokeList.Count);
 					foreach (InvokeInfo a in m_invokeList)
 						a.Action.DynamicInvoke(a.Args); // XXX DynamicInvoke
 					m_invokeList.Clear();

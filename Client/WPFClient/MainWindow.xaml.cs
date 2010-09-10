@@ -15,6 +15,7 @@ using System.Windows.Threading;
 using System.ComponentModel;
 using MyGame.Messages;
 using MyGame.Jobs;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -610,8 +611,8 @@ namespace MyGame.Client
 			if (list.Contains(plr))
 				return;
 
-			MyDebug.Assert(list.All(o => o.Environment == plr.Environment));
-			MyDebug.Assert(list.All(o => o.Location == plr.Location));
+			Debug.Assert(list.All(o => o.Environment == plr.Environment));
+			Debug.Assert(list.All(o => o.Location == plr.Location));
 
 			plr.DoAction(new GetAction(list, ActionPriority.User));
 		}

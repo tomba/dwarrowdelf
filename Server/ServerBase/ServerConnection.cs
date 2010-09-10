@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using MyGame.Messages;
 using System.IO;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -151,7 +152,7 @@ namespace MyGame.Server
 
 		void ClientDisconnected()
 		{
-			MyDebug.WriteLine("Client Disconnect");
+			Debug.Print("Client Disconnect");
 
 			if (m_userLoggedIn)
 			{
@@ -230,7 +231,7 @@ namespace MyGame.Server
 		{
 			string name = msg.Name;
 
-			MyDebug.WriteLine("LogOn {0}", name);
+			Debug.Print("LogOn {0}", name);
 
 			m_userID = s_userIDs++;
 
@@ -252,7 +253,7 @@ namespace MyGame.Server
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffRequestMessage msg)
 		{
-			MyDebug.WriteLine("Logout");
+			Debug.Print("Logout");
 
 			if (m_charLoggedIn)
 				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
@@ -350,7 +351,7 @@ namespace MyGame.Server
 		{
 			string name = msg.Name;
 
-			MyDebug.WriteLine("LogOnChar {0}", name);
+			Debug.Print("LogOnChar {0}", name);
 
 			var env = m_world.Environments.First(); // XXX entry location
 
@@ -436,7 +437,7 @@ namespace MyGame.Server
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffCharRequestMessage msg)
 		{
-			MyDebug.WriteLine("LogOffChar");
+			Debug.Print("LogOffChar");
 
 			m_scriptScope.RemoveVariable("me");
 
@@ -485,22 +486,22 @@ namespace MyGame.Server
 			}
 			catch (Exception e)
 			{
-				MyDebug.WriteLine("Uncaught exception");
-				MyDebug.WriteLine(e.ToString());
+				Debug.Print("Uncaught exception");
+				Debug.Print(e.ToString());
 			}
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(ProceedTickMessage msg)
 		{
-			MyDebug.WriteLine("ProceedTick command");
+			Debug.Print("ProceedTick command");
 			m_world.RequestTick();
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(IPCommandMessage msg)
 		{
-			MyDebug.WriteLine("IronPythonCommand");
+			Debug.Print("IronPythonCommand");
 
 			var script = msg.Text;
 

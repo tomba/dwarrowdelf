@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MyGame.Messages;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -241,7 +242,7 @@ namespace MyGame.Client
 
 		public void AddBuilding(BuildingObject building)
 		{
-			MyDebug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
 
 			this.Version += 1;
 
@@ -304,15 +305,15 @@ namespace MyGame.Client
 		{
 			IntPoint3D l = child.Location;
 
-			MyDebug.Assert(m_objectMap.ContainsKey(l));
+			Debug.Assert(m_objectMap.ContainsKey(l));
 
 			List<ClientGameObject> obs = m_objectMap[l];
 
 			bool removed = obs.Remove(child);
-			MyDebug.Assert(removed);
+			Debug.Assert(removed);
 
 			removed = m_objectList.Remove(child);
-			MyDebug.Assert(removed);
+			Debug.Assert(removed);
 
 			if (MapTileChanged != null)
 				MapTileChanged(l);

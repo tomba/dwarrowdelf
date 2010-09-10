@@ -8,6 +8,7 @@ using MyGame.Messages;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame
 {
@@ -86,7 +87,7 @@ namespace MyGame
 		{
 			if (m_socket == null || !m_socket.Connected)
 			{
-				MyDebug.WriteLine("Socket not connected");
+				Debug.Print("Socket not connected");
 				return;
 			}
 
@@ -97,7 +98,7 @@ namespace MyGame
 		{
 			if (m_socket == null || !m_socket.Connected)
 			{
-				MyDebug.WriteLine("Socket not connected");
+				Debug.Print("Socket not connected");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
 				return;
@@ -112,7 +113,7 @@ namespace MyGame
 
 			if (len == 0)
 			{
-				MyDebug.WriteLine("socket disconnected");
+				Debug.Print("socket disconnected");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
 				return;

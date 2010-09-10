@@ -11,6 +11,7 @@ using System.IO;
 using System.ComponentModel;
 
 using MyGame;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -106,7 +107,7 @@ namespace MyGame.Client
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			MyDebug.WriteLine("Received Message {0}", msg);
+			Debug.Print("Received Message {0}", msg);
 
 			Action<ServerMessage> f;
 			Type t = msg.GetType();
@@ -207,7 +208,7 @@ namespace MyGame.Client
 
 			if (ob == null)
 			{
-				MyDebug.WriteLine("New gameobject appeared {0}", data.ObjectID);
+				Debug.Print("New gameobject appeared {0}", data.ObjectID);
 
 				if (data is LivingData)
 					ob = new Living(GameData.Data.World, data.ObjectID);
@@ -227,7 +228,7 @@ namespace MyGame.Client
 
 			if (env == null)
 			{
-				MyDebug.WriteLine("New map appeared {0}", msg.Environment);
+				Debug.Print("New map appeared {0}", msg.Environment);
 				var world = GameData.Data.World;
 				if (msg.Bounds.IsNull)
 					env = new Environment(world, msg.Environment);
@@ -255,7 +256,7 @@ namespace MyGame.Client
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
-			MyDebug.WriteLine("Received TerrainData for {0} tiles", msg.TileDataList.Count());
+			Debug.Print("Received TerrainData for {0} tiles", msg.TileDataList.Count());
 			env.SetTerrains(msg.TileDataList);
 		}
 

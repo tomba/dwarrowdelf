@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyGame.Server
 {
@@ -76,7 +77,7 @@ namespace MyGame.Server
 		void VDbg(string format, params object[] args)
 		{
 			if (m_verbose)
-				MyDebug.WriteLine(format, args);
+				Debug.Print(format, args);
 		}
 
 		public World(IArea area)
@@ -95,7 +96,7 @@ namespace MyGame.Server
 
 		public void Start()
 		{
-			MyDebug.Assert(!m_worldThread.IsAlive);
+			Debug.Assert(!m_worldThread.IsAlive);
 
 			using (var initEvent = new ManualResetEvent(false))
 			{
@@ -106,7 +107,7 @@ namespace MyGame.Server
 
 		public void Stop()
 		{
-			MyDebug.Assert(m_worldThread.IsAlive);
+			Debug.Assert(m_worldThread.IsAlive);
 
 			m_exit = true;
 			SignalWorld();
@@ -130,7 +131,7 @@ namespace MyGame.Server
 		{
 			VerifyAccess();
 
-			MyDebug.WriteLine("WorldMain");
+			Debug.Print("WorldMain");
 
 			Init();
 
@@ -152,7 +153,7 @@ namespace MyGame.Server
 
 			m_worldLogger.Stop();
 
-			MyDebug.WriteLine("WorldMain end");
+			Debug.Print("WorldMain end");
 		}
 
 		void VerifyAccess()

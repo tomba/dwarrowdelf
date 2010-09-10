@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.IO;
 using System.Xml.Linq;
+using System.Diagnostics;
 
 namespace MyGame.Client
 {
@@ -186,10 +187,10 @@ namespace MyGame.Client
 			t.Freeze();
 
 			b = t.TransformBounds(bounds);
-			MyDebug.Assert(Math.Abs(b.X - location.X) < 0.0001);
-			MyDebug.Assert(Math.Abs(b.Y - location.Y) < 0.0001);
-			MyDebug.Assert(Math.Abs(b.Width - size.Width) < 0.0001);
-			MyDebug.Assert(Math.Abs(b.Height - size.Height) < 0.0001);
+			Debug.Assert(Math.Abs(b.X - location.X) < 0.0001);
+			Debug.Assert(Math.Abs(b.Y - location.Y) < 0.0001);
+			Debug.Assert(Math.Abs(b.Width - size.Width) < 0.0001);
+			Debug.Assert(Math.Abs(b.Height - size.Height) < 0.0001);
 
 			return t;
 		}

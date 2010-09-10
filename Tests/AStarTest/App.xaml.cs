@@ -15,8 +15,6 @@ namespace AStarTest
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
-
-			MyGame.MyDebug.Component = "A*";
 		}
 	}
 }

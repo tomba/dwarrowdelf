@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using MyGame.Jobs;
+using System.Diagnostics;
 
 namespace MyGame.Jobs
 {
@@ -26,7 +27,7 @@ namespace MyGame.Jobs
 		[System.Diagnostics.Conditional("DEBUG")]
 		protected void D(string format, params object[] args)
 		{
-			MyDebug.WriteLine("[AI] [{0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
 		public virtual GameAction ActionRequired(ActionPriority priority)
@@ -55,7 +56,7 @@ namespace MyGame.Jobs
 					}
 				}
 
-				MyDebug.Assert(m_currentJob.CurrentAction == null);
+				Debug.Assert(m_currentJob.CurrentAction == null);
 
 				var progress = m_currentJob.PrepareNextAction();
 
@@ -94,7 +95,7 @@ namespace MyGame.Jobs
 			if (m_currentJob == null)
 				return;
 
-			MyDebug.Assert(e.ObjectID == this.Worker.ObjectID);
+			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
 			var progress = m_currentJob.ActionProgress(e);
 
@@ -155,7 +156,7 @@ namespace MyGame.Jobs
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			MyDebug.Assert(sender == m_currentJob);
+			Debug.Assert(sender == m_currentJob);
 
 			IJob job = (IJob)sender;
 			if (e.PropertyName == "Progress")

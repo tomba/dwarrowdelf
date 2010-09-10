@@ -52,14 +52,14 @@ namespace WPFMapControlTest
 
 		protected override Size MeasureOverride(Size constraint)
 		{
-			MyDebug.WriteLine("Measure");
+			Debug.Print("Measure");
 
 			return base.MeasureOverride(constraint);
 		}
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			MyDebug.WriteLine("Arrange");
+			Debug.Print("Arrange");
 
 			var columns = (int)(arrangeBounds.Width / m_tileSize);
 			var rows = (int)(arrangeBounds.Height / m_tileSize);
