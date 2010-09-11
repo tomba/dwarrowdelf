@@ -286,6 +286,13 @@ namespace MyGame.Server
 
 			while (true)
 			{
+				if (m_livingList.Count == 0)
+				{
+					VDbg("no livings to handled");
+					m_state = WorldState.TickDone;
+					break;
+				}
+
 				var living = m_livingEnumerator.Current;
 
 				if (RemoveLivingListContains(living))
@@ -361,9 +368,7 @@ namespace MyGame.Server
 			{
 				m_livingEnumerator = m_livingList.GetEnumerator();
 
-				bool last = GetNextLivingSeq();
-				if (last)
-					throw new Exception("no livings");
+				GetNextLivingSeq();
 			}
 		}
 

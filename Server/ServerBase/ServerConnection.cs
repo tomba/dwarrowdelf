@@ -355,7 +355,7 @@ namespace MyGame.Server
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-#if !asd
+#if asd
 			var player = new Living(m_world, "player")
 			{
 				SymbolID = SymbolID.Player,
@@ -418,7 +418,7 @@ namespace MyGame.Server
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
-				player.AI = new InteractiveActor(player);
+				//player.AI = new InteractiveActor(player);
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))

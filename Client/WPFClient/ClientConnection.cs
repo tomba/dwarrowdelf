@@ -284,6 +284,9 @@ namespace MyGame.Client
 				if (living.AI != null)
 					action = living.AI.ActionRequired(ActionPriority.High);
 
+				if (action == null)
+					GameData.Data.CurrentObject = living;
+
 				m_actionMap[living] = action;
 			}
 
