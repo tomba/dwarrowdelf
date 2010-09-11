@@ -322,7 +322,8 @@ namespace MyGame.Server
 				};
 
 			this.ActionProgress(e);
-			this.AI.ActionProgress(e);
+			if (this.AI != null)
+				this.AI.ActionProgress(e);
 
 			this.World.AddChange(e);
 
@@ -407,7 +408,8 @@ namespace MyGame.Server
 			};
 
 			this.ActionProgress(e);
-			this.AI.ActionProgress(e);
+			if (this.AI != null)
+				this.AI.ActionProgress(e);
 
 			this.World.AddChange(e);
 

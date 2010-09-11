@@ -22,7 +22,7 @@ namespace MyGame.Client
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			this.AI = new Jobs.ClientAI(this, this.World.JobManager);
+			//this.AI = new Jobs.ClientAI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 
@@ -136,38 +136,25 @@ namespace MyGame.Client
 			this.ActionTicksLeft = change.TicksLeft;
 		}
 
-		public void DoAction(GameAction action)
-		{
-			throw new Exception();
-			if (this.HasAction)
-				throw new Exception();
-
-			Debug.Print("DoAction({0}: {1})", this, action);
-
-			this.CurrentAction = action;
-
-			//GameData.Data.Connection.Send(new Messages.DoActionMessage() { Action = action });
-		}
-
-		public void CancelAction()
-		{
-			//throw new Exception();
-		}
-
 		public void ActionProgress(ActionProgressChange e)
 		{
 			if (!this.HasAction)
 				return;
 
-			var action = this.CurrentAction;
-
 			this.ActionTicksLeft = e.TicksLeft;
 
 			if (e.TicksLeft == 0)
 			{
-				Debug.Print("ActionDone({0}: {1})", this, action);
+				Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
 				this.CurrentAction = null;
 			}
+		}
+
+		public void RequestAction(GameAction action)
+		{
+			Debug.Print("RequestAction({0}: {1})", this, action);
+
+			GameData.Data.Connection.SignalLivingHasAction(this, action);
 		}
 
 		public Grid2D<bool> VisionMap

@@ -168,7 +168,7 @@ namespace MyGame.Server
 			m_connection = null;
 		}
 
-		public void Send(ServerMessage msg)
+		void Send(ServerMessage msg)
 		{
 			m_connection.Send(msg);
 		}
@@ -355,14 +355,14 @@ namespace MyGame.Server
 
 			var env = m_world.Environments.First(); // XXX entry location
 
-#if asd
+#if !asd
 			var player = new Living(m_world, "player")
 			{
 				SymbolID = SymbolID.Player,
 			};
-			player.AI = new InteractiveActor(player);
+			//player.AI = new InteractiveActor(player);
 
-			MyDebug.WriteLine("Player ob id {0}", player.ObjectID);
+			Debug.Print("Player ob id {0}", player.ObjectID);
 
 			m_controllables.Add(player);
 
@@ -455,11 +455,22 @@ namespace MyGame.Server
 			m_charLoggedIn = false;
 		}
 
+		bool m_startTurnSent;
+
+		public void SendStartTurn(IEnumerable<ObjectID> requiredActors)
+		{
+			m_startTurnSent = true;
+			Send(new Messages.StartTurnMessage() { RequiredActors = requiredActors.ToArray() });
+		}
+
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(DoTurnMessage msg)
 		{
 			try
 			{
+				if (m_startTurnSent == false)
+					throw new Exception();
+
 				foreach (var tuple in msg.Actions)
 				{
 					var actorOid = tuple.Item1;
@@ -482,6 +493,8 @@ namespace MyGame.Server
 					}
 
 					living.DoAction(action, m_userID);
+
+					m_startTurnSent = false;
 				}
 			}
 			catch (Exception e)

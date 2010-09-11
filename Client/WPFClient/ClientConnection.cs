@@ -267,23 +267,47 @@ namespace MyGame.Client
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
 
+		Dictionary<Living, GameAction> m_actionMap;
+
 		void HandleMessage(StartTurnMessage msg)
 		{
 			var world = GameData.Data.World;
 
-			List<Tuple<ObjectID, GameAction>> actions = new List<Tuple<ObjectID, GameAction>>(msg.RequiredActors.Length);
+			m_actionMap = new Dictionary<Living, GameAction>(msg.RequiredActors.Length);
 
 			var livings = msg.RequiredActors.Select(oid => world.FindObject<Living>(oid));
 
 			foreach (var living in livings)
 			{
-				var a = living.AI.ActionRequired(ActionPriority.High);
-				if (a == null)
-					continue;
-				actions.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, a));
+				GameAction action = null;
+
+				if (living.AI != null)
+					action = living.AI.ActionRequired(ActionPriority.High);
+
+				m_actionMap[living] = action;
 			}
 
-			Send(new DoTurnMessage() { Actions = actions.ToArray() });
+			SendDoTurnMessage();
+		}
+
+		public void SignalLivingHasAction(Living living, GameAction action)
+		{
+			if (m_actionMap == null)
+				return;
+
+			m_actionMap[living] = action;
+
+			SendDoTurnMessage();
+		}
+
+		void SendDoTurnMessage()
+		{
+			if (m_actionMap.All(kvp => kvp.Value != null))
+			{
+				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
+				Send(new DoTurnMessage() { Actions = actions });
+				m_actionMap = null;
+			}
 		}
 
 		void HandleMessage(ChangeMessage msg)
@@ -405,7 +429,8 @@ namespace MyGame.Client
 
 			ob.ActionProgress(change);
 
-			ob.AI.ActionProgress(change);
+			if (ob.AI != null)
+				ob.AI.ActionProgress(change);
 		}
 	}
 }

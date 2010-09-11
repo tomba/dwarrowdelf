@@ -226,9 +226,12 @@ namespace MyGame.Server
 
 			foreach (var living in m_livingList)
 			{
-				var a = living.AI.ActionRequired(ActionPriority.Idle);
-				if (a != null)
-					living.DoAction(a);
+				if (living.AI != null)
+				{
+					var action = living.AI.ActionRequired(ActionPriority.Idle);
+					if (action != null)
+						living.DoAction(action);
+				}
 			}
 
 			foreach (var living in m_livingList)
@@ -317,11 +320,14 @@ namespace MyGame.Server
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
-				foreach (var l in m_livingList)
+				foreach (var living in m_livingList)
 				{
-					var a = l.AI.ActionRequired(ActionPriority.High);
-					if (a != null)
-						l.DoAction(a);
+					if (living.AI != null)
+					{
+						var action = living.AI.ActionRequired(ActionPriority.High);
+						if (action != null)
+							living.DoAction(action);
+					}
 				}
 
 				var livingGroups = m_livingList
@@ -331,10 +337,10 @@ namespace MyGame.Server
 
 				foreach (var group in livingGroups)
 				{
-					var oids = group.Select(l => l.ObjectID).ToArray();
+					var oids = group.Select(l => l.ObjectID);
 					var user = group.Key;
 
-					user.Send(new Messages.StartTurnMessage() { RequiredActors = oids });
+					user.SendStartTurn(oids);
 				}
 			}
 
@@ -376,7 +382,7 @@ namespace MyGame.Server
 
 			var living = m_livingEnumerator.Current;
 			if (!living.HasAction && !IsMoveForced())
-				living.Controller.Send(new Messages.StartTurnMessage() { RequiredActors = new ObjectID[] { living.ObjectID } });
+				living.Controller.SendStartTurn(new ObjectID[] { living.ObjectID });
 
 			return false;
 		}

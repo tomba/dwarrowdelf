@@ -55,8 +55,6 @@ namespace MyGame
 	{
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
-		void DoAction(GameAction action);
-		void CancelAction();
 	}
 
 	public interface IItemObject : IGameObject

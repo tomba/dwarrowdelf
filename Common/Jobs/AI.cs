@@ -67,12 +67,6 @@ namespace MyGame.Jobs
 						if (action == null)
 							throw new Exception();
 
-						if (this.Worker.HasAction)
-						{
-							D("ActionRequired: overriding old {0}", this.Worker.CurrentAction);
-							this.Worker.CancelAction();
-						}
-
 						D("ActionRequired: new {0}", action);
 						return action;
 
