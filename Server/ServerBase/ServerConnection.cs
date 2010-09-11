@@ -360,7 +360,7 @@ namespace MyGame.Server
 			{
 				SymbolID = SymbolID.Player,
 			};
-			//player.AI = new InteractiveActor(player);
+			player.AI = new InteractiveActor(player);
 
 			Debug.Print("Player ob id {0}", player.ObjectID);
 
@@ -418,7 +418,7 @@ namespace MyGame.Server
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
-				//player.AI = new InteractiveActor(player);
+				player.AI = new InteractiveActor(player);
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
@@ -476,6 +476,9 @@ namespace MyGame.Server
 					var actorOid = tuple.Item1;
 					var action = tuple.Item2;
 
+					if (action == null)
+						continue;
+
 					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
@@ -493,9 +496,9 @@ namespace MyGame.Server
 					}
 
 					living.DoAction(action, m_userID);
-
-					m_startTurnSent = false;
 				}
+
+				m_startTurnSent = false;
 			}
 			catch (Exception e)
 			{

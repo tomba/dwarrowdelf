@@ -317,6 +317,8 @@ namespace MyGame.Server
 
 			var e = new ActionProgressChange(this)
 				{
+					ActionXXX = action,
+					UserID = this.ActionUserID,
 					TicksLeft = this.ActionTicksLeft,
 					Success = success,
 				};
@@ -402,6 +404,7 @@ namespace MyGame.Server
 
 			var e = new ActionProgressChange(this)
 			{
+				ActionXXX = action,
 				UserID = this.ActionUserID,
 				TicksLeft = 0,
 				Success = false,

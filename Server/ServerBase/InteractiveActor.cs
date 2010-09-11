@@ -41,7 +41,7 @@ namespace MyGame.Server
 		{
 			GameAction action;
 
-			if (m_random.Next(4) == 0)
+			if (true || m_random.Next(4) == 0)
 				action = new WaitAction(m_random.Next(3) + 1, priority);
 			else
 			{

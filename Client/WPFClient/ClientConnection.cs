@@ -267,6 +267,7 @@ namespace MyGame.Client
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
 
+		int m_numActionsRequired;
 		Dictionary<Living, GameAction> m_actionMap;
 
 		void HandleMessage(StartTurnMessage msg)
@@ -276,18 +277,22 @@ namespace MyGame.Client
 			m_actionMap = new Dictionary<Living, GameAction>(msg.RequiredActors.Length);
 
 			var livings = msg.RequiredActors.Select(oid => world.FindObject<Living>(oid));
+			m_numActionsRequired = 0;
 
 			foreach (var living in livings)
 			{
 				GameAction action = null;
 
 				if (living.AI != null)
+				{
 					action = living.AI.ActionRequired(ActionPriority.High);
-
-				if (action == null)
+					m_actionMap[living] = action;
+					m_numActionsRequired++;
+				}
+				else
+				{
 					GameData.Data.CurrentObject = living;
-
-				m_actionMap[living] = action;
+				}
 			}
 
 			SendDoTurnMessage();
@@ -299,13 +304,14 @@ namespace MyGame.Client
 				return;
 
 			m_actionMap[living] = action;
+			m_numActionsRequired++;
 
 			SendDoTurnMessage();
 		}
 
 		void SendDoTurnMessage()
 		{
-			if (m_actionMap.All(kvp => kvp.Value != null))
+			if (m_actionMap.Count == m_numActionsRequired)
 			{
 				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
 				Send(new DoTurnMessage() { Actions = actions });

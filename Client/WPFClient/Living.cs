@@ -22,7 +22,7 @@ namespace MyGame.Client
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			//this.AI = new Jobs.ClientAI(this, this.World.JobManager);
+			this.AI = new Jobs.ClientAI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 

@@ -226,6 +226,8 @@ namespace MyGame
 	[Serializable]
 	public class ActionProgressChange : ObjectChange
 	{
+		// just for debug
+		public GameAction ActionXXX { get; set; }
 		public int UserID { get; set; }
 		public int TicksLeft { get; set; }
 		public bool Success { get; set; }

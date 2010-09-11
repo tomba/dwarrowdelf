@@ -89,6 +89,10 @@ namespace MyGame.Jobs
 			if (m_currentJob == null)
 				return;
 
+			/* progress change for action started by the server */
+			if (e.UserID == 0)
+				return;
+
 			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
 			var progress = m_currentJob.ActionProgress(e);
