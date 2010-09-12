@@ -36,11 +36,6 @@ namespace MyGame.Server
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
 
 		/// <summary>
-		/// If the user has requested to proceed
-		/// </summary>
-		bool m_tickRequested;
-
-		/// <summary>
 		/// Timer is used out-of-tick to start the tick after m_minTickTime and inside-tick to timeout player movements after m_maxMoveTime
 		/// </summary>
 		Timer m_tickTimer;
@@ -59,12 +54,6 @@ namespace MyGame.Server
 		}
 
 
-		internal void RequestTick()
-		{
-			m_tickRequested = true;
-			SignalWorld();
-		}
-
 		bool IsTimeToStartTick()
 		{
 			VerifyAccess();
@@ -75,13 +64,7 @@ namespace MyGame.Server
 			if (this.UseMinTickTime && DateTime.Now < m_nextTick)
 				return false;
 
-			if (m_config.RequireUser && m_tickRequested == false)
-			{
-				if (!this.HasUsers)
-					return false;
-			}
-
-			if (m_config.RequireTickRequest && m_tickRequested == false)
+			if (m_config.RequireUser && !this.HasUsers)
 				return false;
 
 			return true;
@@ -323,7 +306,6 @@ namespace MyGame.Server
 			AddChange(new TickStartChange(this.TickNumber));
 
 			Debug.Print("-- Tick {0} started --", this.TickNumber);
-			m_tickRequested = false;
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -403,7 +385,6 @@ namespace MyGame.Server
 			}
 
 			Debug.Print("-- Tick {0} ended --", this.TickNumber);
-			m_tickRequested = false;
 			m_state = WorldState.TickEnded;
 		}
 	}

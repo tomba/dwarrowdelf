@@ -180,11 +180,6 @@ namespace MyGame.Messages
 
 
 	[Serializable]
-	public class ProceedTickMessage : ClientMessage
-	{
-	}
-
-	[Serializable]
 	public class StartTurnMessage : ServerMessage
 	{
 		public ObjectID[] RequiredActors { get; set; }

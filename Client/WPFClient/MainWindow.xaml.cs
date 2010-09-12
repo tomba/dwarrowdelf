@@ -312,7 +312,6 @@ namespace MyGame.Client
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
 					{
 						currentOb.RequestAction(new MineAction(dir, ActionPriority.User));
-						GameData.Data.Connection.Send(new ProceedTickMessage());
 					}
 					else
 					{
@@ -330,7 +329,6 @@ namespace MyGame.Client
 						}
 
 						currentOb.RequestAction(new MoveAction(dir, ActionPriority.User));
-						GameData.Data.Connection.Send(new ProceedTickMessage());
 					}
 				}
 				else
@@ -388,7 +386,6 @@ namespace MyGame.Client
 			if (currentOb != null)
 			{
 				currentOb.RequestAction(new MoveAction(dir, ActionPriority.User));
-				GameData.Data.Connection.Send(new ProceedTickMessage());
 			}
 			else
 			{

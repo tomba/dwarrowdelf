@@ -508,13 +508,6 @@ namespace MyGame.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(ProceedTickMessage msg)
-		{
-			Debug.Print("ProceedTick command");
-			m_world.RequestTick();
-		}
-
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(IPCommandMessage msg)
 		{
 			Debug.Print("IronPythonCommand");
