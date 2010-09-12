@@ -74,6 +74,8 @@
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=TileSetHack, ElementName=map}">TileSetHack</ToggleButton>
                 <Separator />
+                <ToggleButton IsChecked="{Binding Path=IsAutoAdvanceTurn}">AutoAdvanceTurn</ToggleButton>
+                <Separator />
                 <Button Click="LogOn_Button_Click">LogOn</Button>
                 <Separator />
                 <Button Click="LogOff_Button_Click">LogOff</Button>

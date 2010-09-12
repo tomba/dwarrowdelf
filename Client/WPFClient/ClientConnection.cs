@@ -295,7 +295,8 @@ namespace MyGame.Client
 				}
 			}
 
-			SendDoTurnMessage();
+			if (GameData.Data.IsAutoAdvanceTurn)
+				SendDoTurnMessage();
 		}
 
 		public void SignalLivingHasAction(Living living, GameAction action)
@@ -306,12 +307,16 @@ namespace MyGame.Client
 			m_actionMap[living] = action;
 			m_numActionsRequired++;
 
-			SendDoTurnMessage();
+			if (GameData.Data.IsAutoAdvanceTurn)
+				SendDoTurnMessage();
 		}
 
-		void SendDoTurnMessage()
+		public void SendDoTurnMessage(bool force = false)
 		{
-			if (m_actionMap.Count == m_numActionsRequired)
+			if (m_actionMap == null)
+				return;
+
+			if (force || m_actionMap.Count == m_numActionsRequired)
 			{
 				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
 				Send(new DoTurnMessage() { Actions = actions });
