@@ -1,0 +1,15 @@
+﻿
+TickStart
+
+	AI(high)
+	TurnStart
+
+	...
+
+	AI(low)
+
+	Run
+
+	TurnEnd
+
+TickEnd
