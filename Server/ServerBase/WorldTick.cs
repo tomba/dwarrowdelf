@@ -40,7 +40,15 @@ namespace MyGame.Server
 		/// </summary>
 		Timer m_tickTimer;
 
-		List<Living>.Enumerator m_livingEnumerator;
+		int m_currentLivingIndex;
+		Living CurrentLiving { get { return m_livingList[m_currentLivingIndex]; } }
+		void ResetLivingIndex() { m_currentLivingIndex = 0; }
+		bool MoveToNextLiving()
+		{
+			Debug.Assert(m_currentLivingIndex < m_livingList.Count);
+			++m_currentLivingIndex;
+			return m_currentLivingIndex < m_livingList.Count;
+		}
 
 		void InitializeWorldTick()
 		{
@@ -225,6 +233,8 @@ namespace MyGame.Server
 					throw new Exception();
 			}
 
+			EndTurn();
+
 			m_state = WorldState.TickDone;
 
 			VDbg("SimultaneousWork Done");
@@ -237,13 +247,13 @@ namespace MyGame.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			if (RemoveLivingListContains(m_livingEnumerator.Current))
+			if (RemoveLivingListContains(this.CurrentLiving))
 			{
 				VDbg("WorkAvailable: Current living is to be removed");
 				return true;
 			}
 
-			if (m_livingEnumerator.Current.HasAction)
+			if (this.CurrentLiving.HasAction)
 			{
 				VDbg("WorkAvailable: Living.HasAction");
 				return true;
@@ -276,7 +286,7 @@ namespace MyGame.Server
 					break;
 				}
 
-				var living = m_livingEnumerator.Current;
+				var living = this.CurrentLiving;
 
 				if (RemoveLivingListContains(living))
 					forceMove = true;
@@ -286,8 +296,14 @@ namespace MyGame.Server
 
 				living.PerformAction();
 
-				var last = GetNextLivingSeq();
-				if (last)
+				EndTurn(living);
+
+				bool ok = MoveToNextLiving();
+				if (ok)
+				{
+					StartTurnSequential(this.CurrentLiving);
+				}
+				else
 				{
 					VDbg("last living handled");
 					m_state = WorldState.TickDone;
@@ -307,32 +323,6 @@ namespace MyGame.Server
 
 			Debug.Print("-- Tick {0} started --", this.TickNumber);
 
-			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
-			{
-				foreach (var living in m_livingList)
-				{
-					if (living.AI != null)
-					{
-						var action = living.AI.ActionRequired(ActionPriority.High);
-						if (action != null)
-							living.DoAction(action);
-					}
-				}
-
-				var livingGroups = m_livingList
-					.Where(l => l.Controller != null)
-					.Where(l => !l.HasAction || (l.CurrentAction.Priority < ActionPriority.High && l.ActionUserID == 0))
-					.GroupBy(l => l.Controller);
-
-				foreach (var group in livingGroups)
-				{
-					var oids = group.Select(l => l.ObjectID);
-					var user = group.Key;
-
-					user.SendStartTurn(oids);
-				}
-			}
-
 			m_state = WorldState.TickOngoing;
 
 			if (TickEvent != null)
@@ -340,38 +330,60 @@ namespace MyGame.Server
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{
-				if (this.UseMaxMoveTime)
-				{
-					m_nextMove = DateTime.Now + m_config.MaxMoveTime;
-					m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
-				}
+				StartTurnSimultaneous();
 			}
 			else if (m_config.TickMethod == WorldTickMethod.Sequential)
 			{
-				m_livingEnumerator = m_livingList.GetEnumerator();
+				ResetLivingIndex();
 
-				GetNextLivingSeq();
+				bool ok = MoveToNextLiving();
+				if (ok)
+					StartTurnSequential(this.CurrentLiving);
 			}
 		}
 
-		bool GetNextLivingSeq()
+		void StartTurnSimultaneous()
 		{
-			bool last = !m_livingEnumerator.MoveNext();
+			foreach (var living in m_livingList)
+			{
+				if (living.AI != null)
+				{
+					var action = living.AI.ActionRequired(ActionPriority.High);
+					if (action != null)
+						living.DoAction(action);
+				}
+			}
 
-			if (last)
-				return true;
+			AddChange(new TurnStartChange());
 
 			if (this.UseMaxMoveTime)
 			{
 				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
 				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
 			}
+		}
 
-			var living = m_livingEnumerator.Current;
-			if (!living.HasAction && !IsMoveForced())
-				living.Controller.SendStartTurn(new ObjectID[] { living.ObjectID });
+		void StartTurnSequential(Living living)
+		{
+			if (living.AI != null)
+			{
+				var action = living.AI.ActionRequired(ActionPriority.High);
+				if (action != null)
+					living.DoAction(action);
+			}
 
-			return false;
+			AddChange(new TurnStartChange(living));
+
+			if (this.UseMaxMoveTime)
+			{
+				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
+				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
+			}
+		}
+
+		void EndTurn(Living living = null)
+		{
+			AddChange(new TurnEndChange(living));
 		}
 
 		void EndTick()

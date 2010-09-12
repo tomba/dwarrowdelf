@@ -267,63 +267,6 @@ namespace MyGame.Client
 			App.MainWindow.outputTextBox.ScrollToEnd();
 		}
 
-		int m_numActionsRequired;
-		Dictionary<Living, GameAction> m_actionMap;
-
-		void HandleMessage(StartTurnMessage msg)
-		{
-			var world = GameData.Data.World;
-
-			m_actionMap = new Dictionary<Living, GameAction>(msg.RequiredActors.Length);
-
-			var livings = msg.RequiredActors.Select(oid => world.FindObject<Living>(oid));
-			m_numActionsRequired = 0;
-
-			foreach (var living in livings)
-			{
-				GameAction action = null;
-
-				if (living.AI != null)
-				{
-					action = living.AI.ActionRequired(ActionPriority.High);
-					m_actionMap[living] = action;
-					m_numActionsRequired++;
-				}
-				else
-				{
-					GameData.Data.CurrentObject = living;
-				}
-			}
-
-			if (GameData.Data.IsAutoAdvanceTurn)
-				SendDoTurnMessage();
-		}
-
-		public void SignalLivingHasAction(Living living, GameAction action)
-		{
-			if (m_actionMap == null)
-				return;
-
-			m_actionMap[living] = action;
-			m_numActionsRequired++;
-
-			if (GameData.Data.IsAutoAdvanceTurn)
-				SendDoTurnMessage();
-		}
-
-		public void SendDoTurnMessage(bool force = false)
-		{
-			if (m_actionMap == null)
-				return;
-
-			if (force || m_actionMap.Count == m_numActionsRequired)
-			{
-				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
-				Send(new DoTurnMessage() { Actions = actions });
-				m_actionMap = null;
-			}
-		}
-
 		void HandleMessage(ChangeMessage msg)
 		{
 			var change = msg.Change;
@@ -422,6 +365,84 @@ namespace MyGame.Client
 		void HandleChange(TickStartChange change)
 		{
 			GameData.Data.World.TickNumber = change.TickNumber;
+		}
+
+		void HandleChange(TurnStartChange change)
+		{
+			Debug.Assert(m_turnActionRequested == false);
+
+			m_turnActionRequested = true;
+
+			if (change.LivingID == ObjectID.NullObjectID)
+			{
+				var livings = GameData.Data.World.Controllables
+					.Where(l => l.UserActionPossible());
+
+				m_actionMap = new Dictionary<Living, GameAction>(livings.Count());
+
+				m_numActionsRequired = 0;
+
+				foreach (var living in livings)
+				{
+					GameAction action = null;
+
+					if (living.AI != null)
+					{
+						action = living.AI.ActionRequired(ActionPriority.High);
+						m_actionMap[living] = action;
+						m_numActionsRequired++;
+					}
+					else
+					{
+						GameData.Data.CurrentObject = living;
+					}
+				}
+
+				if (GameData.Data.IsAutoAdvanceTurn)
+					SendTurnActionRequest();
+
+			}
+			else
+			{
+				var living = GameData.Data.World.FindObject<Living>(change.LivingID);
+				if (living == null)
+					throw new Exception();
+				throw new Exception();
+			}
+		}
+
+		bool m_turnActionRequested;
+		int m_numActionsRequired;
+		Dictionary<Living, GameAction> m_actionMap;
+
+		public void SignalLivingHasAction(Living living, GameAction action)
+		{
+			if (m_actionMap == null)
+				return;
+
+			m_actionMap[living] = action;
+			m_numActionsRequired++;
+
+			if (GameData.Data.IsAutoAdvanceTurn)
+				SendTurnActionRequest();
+		}
+
+		public void SendTurnActionRequest(bool force = false)
+		{
+			if (m_actionMap == null)
+				return;
+
+			if (force || m_actionMap.Count == m_numActionsRequired)
+			{
+				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
+				Send(new TurnActionRequestMessage() { Actions = actions });
+				m_actionMap = null;
+			}
+		}
+
+		void HandleChange(TurnEndChange change)
+		{
+			m_turnActionRequested = false;
 		}
 
 		void HandleChange(ActionStartedChange change)

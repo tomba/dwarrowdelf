@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using MyGame.Messages;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace MyGame.Server
 {
@@ -53,7 +54,8 @@ namespace MyGame.Server
 		// this user sees all
 		bool m_seeAll = true;
 
-		List<Living> m_controllables = new List<Living>();
+		List<Living> m_controllables;
+		public ReadOnlyCollection<Living> Controllables { get; private set; }
 
 		IConnection m_connection;
 		bool m_userLoggedIn;
@@ -125,6 +127,9 @@ namespace MyGame.Server
 		public ServerConnection(IConnection conn, World world)
 		{
 			m_world = world;
+
+			m_controllables = new List<Living>();
+			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 
 			m_connection = conn;
 			m_connection.ReceiveEvent += OnReceiveMessage;
@@ -457,14 +462,8 @@ namespace MyGame.Server
 
 		bool m_startTurnSent;
 
-		public void SendStartTurn(IEnumerable<ObjectID> requiredActors)
-		{
-			m_startTurnSent = true;
-			Send(new Messages.StartTurnMessage() { RequiredActors = requiredActors.ToArray() });
-		}
-
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(DoTurnMessage msg)
+		void ReceiveMessage(TurnActionRequestMessage msg)
 		{
 			try
 			{
@@ -702,6 +701,9 @@ namespace MyGame.Server
 				}
 			}
 
+			if (change is TurnStartChange)
+				m_startTurnSent = true;
+
 			var changeMsg = new ChangeMessage { Change = change };
 
 			Send(changeMsg);
@@ -738,6 +740,16 @@ namespace MyGame.Server
 			{
 				return true;
 			}
+			else if (change is TurnStartChange)
+			{
+				var c = (TurnStartChange)change;
+				return c.Living == null || m_controllables.Contains(c.Living);
+			}
+			else if (change is TurnEndChange)
+			{
+				var c = (TurnEndChange)change;
+				return c.Living == null || m_controllables.Contains(c.Living);
+			}
 			else if (change is ObjectDestructedChange)
 			{
 				return true;
@@ -771,9 +783,15 @@ namespace MyGame.Server
 
 					return living.Sees(ob.Environment, ob.Location);
 				}
+				else
+				{
+					throw new Exception();
+				}
 			}
-
-			throw new Exception();
+			else
+			{
+				throw new Exception();
+			}
 		}
 
 		static ServerMessage ObjectToMessage(BaseGameObject revealedOb)

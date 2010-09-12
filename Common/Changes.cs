@@ -28,6 +28,42 @@ namespace MyGame
 	}
 
 	[Serializable]
+	public class TurnStartChange : Change
+	{
+		[NonSerialized]
+		ILiving m_living;
+		ObjectID m_livingID;
+
+		public ILiving Living { get { return m_living; } }
+		public ObjectID LivingID { get { return m_livingID; } }
+
+		public TurnStartChange(ILiving living = null)
+		{
+			m_living = living;
+			if (living != null)
+				m_livingID = living.ObjectID;
+		}
+	}
+
+	[Serializable]
+	public class TurnEndChange : Change
+	{
+		[NonSerialized]
+		ILiving m_living;
+		ObjectID m_livingID;
+
+		public ILiving Living { get { return m_living; } }
+		public ObjectID LivingID { get { return m_livingID; } }
+
+		public TurnEndChange(ILiving living = null)
+		{
+			m_living = living;
+			if (living != null)
+				m_livingID = living.ObjectID;
+		}
+}
+
+	[Serializable]
 	public class MapChange : Change
 	{
 		[NonSerialized]

@@ -178,16 +178,10 @@ namespace MyGame.Messages
 		}
 	}
 
-
 	[Serializable]
-	public class StartTurnMessage : ServerMessage
-	{
-		public ObjectID[] RequiredActors { get; set; }
-	}
-
-	[Serializable]
-	public class DoTurnMessage : ClientMessage
+	public class TurnActionRequestMessage : ClientMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}
+
 }

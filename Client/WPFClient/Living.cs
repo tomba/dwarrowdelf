@@ -119,6 +119,7 @@ namespace MyGame.Client
 		}
 
 		public bool HasAction { get { return this.CurrentAction != null; } }
+		public int ActionUserID { get; private set; }
 
 		public static readonly DependencyProperty ActionTicksLeftProperty = DependencyProperty.Register("ActionTicksLeft", typeof(int), typeof(Living));
 		public int ActionTicksLeft
@@ -134,6 +135,7 @@ namespace MyGame.Client
 
 			this.CurrentAction = change.Action;
 			this.ActionTicksLeft = change.TicksLeft;
+			this.ActionUserID = change.UserID;
 		}
 
 		public void ActionProgress(ActionProgressChange e)
@@ -155,6 +157,11 @@ namespace MyGame.Client
 			Debug.Print("RequestAction({0}: {1})", this, action);
 
 			GameData.Data.Connection.SignalLivingHasAction(this, action);
+		}
+
+		public bool UserActionPossible()
+		{
+			return !this.HasAction || (this.CurrentAction.Priority < ActionPriority.High && this.ActionUserID == 0);
 		}
 
 		public Grid2D<bool> VisionMap
