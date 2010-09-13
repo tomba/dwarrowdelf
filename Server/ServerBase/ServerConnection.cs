@@ -470,6 +470,12 @@ namespace MyGame.Server
 				if (m_startTurnSent == false)
 					throw new Exception();
 
+				if (m_charLoggedIn == false)
+				{
+					m_startTurnSent = false;
+					return;
+				}
+
 				foreach (var tuple in msg.Actions)
 				{
 					var actorOid = tuple.Item1;
