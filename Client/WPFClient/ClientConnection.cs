@@ -378,29 +378,25 @@ namespace MyGame.Client
 				var livings = GameData.Data.World.Controllables
 					.Where(l => l.UserActionPossible());
 
-				m_actionMap = new Dictionary<Living, GameAction>(livings.Count());
-
-				m_numActionsRequired = 0;
+				m_actionMap.Clear();
+				m_numActionsGot = 0;
 
 				foreach (var living in livings)
 				{
-					GameAction action = null;
-
 					if (living.AI != null)
 					{
-						action = living.AI.ActionRequired(ActionPriority.High);
+						var action = living.AI.ActionRequired(ActionPriority.High);
 						m_actionMap[living] = action;
-						m_numActionsRequired++;
+						m_numActionsGot++;
 					}
 					else
 					{
-						GameData.Data.CurrentObject = living;
+						m_actionMap[living] = null;
 					}
 				}
 
 				if (GameData.Data.IsAutoAdvanceTurn)
-					SendTurnActionRequest();
-
+					SendProceedTurn();
 			}
 			else
 			{
@@ -412,31 +408,35 @@ namespace MyGame.Client
 		}
 
 		bool m_turnActionRequested;
-		int m_numActionsRequired;
-		Dictionary<Living, GameAction> m_actionMap;
+		int m_numActionsGot;
+		Dictionary<Living, GameAction> m_actionMap = new Dictionary<Living, GameAction>();
 
 		public void SignalLivingHasAction(Living living, GameAction action)
 		{
-			if (m_actionMap == null)
+			if (m_turnActionRequested == false)
 				return;
+
+			if (!m_actionMap.ContainsKey(living))
+				throw new Exception();
 
 			m_actionMap[living] = action;
-			m_numActionsRequired++;
+			m_numActionsGot++;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
-				SendTurnActionRequest();
+				SendProceedTurn();
 		}
 
-		public void SendTurnActionRequest(bool force = false)
+		public void SendProceedTurn(bool force = false)
 		{
-			if (m_actionMap == null)
+			if (m_turnActionRequested == false)
 				return;
 
-			if (force || m_actionMap.Count == m_numActionsRequired)
+			if (force || m_actionMap.Count == m_numActionsGot)
 			{
 				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
-				Send(new TurnActionRequestMessage() { Actions = actions });
-				m_actionMap = null;
+				Send(new ProceedTurnMessage() { Actions = actions });
+				m_actionMap.Clear();
+				m_numActionsGot = 0;
 			}
 		}
 

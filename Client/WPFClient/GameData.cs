@@ -91,8 +91,8 @@ namespace MyGame.Client
 
 		static void IsAutoAdvanceTurnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if (GameData.Data.Connection != null && GameData.Data.Connection.IsCharConnected)
-				GameData.Data.Connection.SendTurnActionRequest(true);
+			if (GameData.Data.Connection != null && (bool)e.NewValue == true)
+				GameData.Data.Connection.SendProceedTurn(true);
 		}
 
 	}

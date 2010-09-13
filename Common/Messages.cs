@@ -179,7 +179,7 @@ namespace MyGame.Messages
 	}
 
 	[Serializable]
-	public class TurnActionRequestMessage : ClientMessage
+	public class ProceedTurnMessage : ClientMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}

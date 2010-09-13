@@ -344,7 +344,7 @@ namespace MyGame.Client
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				GameData.Data.Connection.SendTurnActionRequest(true);
+				GameData.Data.Connection.SendProceedTurn(true);
 			}
 			else if (e.Key == Key.Add)
 			{

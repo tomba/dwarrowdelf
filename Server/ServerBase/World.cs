@@ -28,6 +28,9 @@ namespace MyGame.Server
 			// Require an user to be in game for ticks to proceed
 			public bool RequireUser { get; set; }
 
+			// Require an controllables to be in game for ticks to proceed
+			public bool RequireControllables { get; set; }
+
 			// Maximum time for one living to make its move. After this time has passed, the living
 			// will be skipped
 			public TimeSpan MaxMoveTime { get; set; }
@@ -40,6 +43,7 @@ namespace MyGame.Server
 		{
 			TickMethod = WorldTickMethod.Simultaneous,
 			RequireUser = true,
+			RequireControllables = false,
 			MaxMoveTime = TimeSpan.FromMilliseconds(0),
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};

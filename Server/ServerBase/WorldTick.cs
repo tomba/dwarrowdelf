@@ -75,6 +75,9 @@ namespace MyGame.Server
 			if (m_config.RequireUser && !this.HasUsers)
 				return false;
 
+			if (m_config.RequireControllables && !m_userList.Any(u => u.Controllables.Count > 0))
+				return false;
+
 			return true;
 		}
 
@@ -191,7 +194,7 @@ namespace MyGame.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			if (m_livingList.All(l => l.HasAction))
+			if (m_userList.All(u => u.ProceedTurnReceived))
 				return true;
 
 			if (this.UseMaxMoveTime && DateTime.Now >= m_nextMove)
@@ -204,34 +207,24 @@ namespace MyGame.Server
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
-
-			bool forceMove = IsMoveForced();
+			Debug.Assert(m_userList.All(u => u.StartTurnSent));
 
 			VDbg("SimultaneousWork");
 
-			if (!forceMove && !m_livingList.All(l => l.HasAction))
+			bool forceMove = IsMoveForced();
+
+			if (!forceMove && !m_userList.All(u => u.ProceedTurnReceived))
 				return;
 
-			if (!forceMove)
-				Debug.Assert(m_livingList.All(l => l.HasAction));
-
-			foreach (var living in m_livingList)
+			foreach (var living in m_livingList.Where(l => l.AI != null))
 			{
-				if (living.AI != null)
-				{
-					var action = living.AI.ActionRequired(ActionPriority.Idle);
-					if (action != null)
-						living.DoAction(action);
-				}
+				var action = living.AI.ActionRequired(ActionPriority.Idle);
+				if (action != null)
+					living.DoAction(action);
 			}
 
-			foreach (var living in m_livingList)
-			{
-				if (living.HasAction)
-					living.PerformAction();
-				else if (!forceMove)
-					throw new Exception();
-			}
+			foreach (var living in m_livingList.Where(l => l.HasAction))
+				living.PerformAction();
 
 			EndTurn();
 

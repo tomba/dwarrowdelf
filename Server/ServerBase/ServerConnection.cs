@@ -460,21 +460,16 @@ namespace MyGame.Server
 			m_charLoggedIn = false;
 		}
 
-		bool m_startTurnSent;
+		public bool StartTurnSent { get; private set; }
+		public bool ProceedTurnReceived { get; private set; }
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
-		void ReceiveMessage(TurnActionRequestMessage msg)
+		void ReceiveMessage(ProceedTurnMessage msg)
 		{
 			try
 			{
-				if (m_startTurnSent == false)
+				if (this.StartTurnSent == false || this.ProceedTurnReceived == true)
 					throw new Exception();
-
-				if (m_charLoggedIn == false)
-				{
-					m_startTurnSent = false;
-					return;
-				}
 
 				foreach (var tuple in msg.Actions)
 				{
@@ -487,7 +482,7 @@ namespace MyGame.Server
 					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
-						throw new Exception("Illegal ob id");
+						continue;
 
 					if (action.Priority > ActionPriority.User)
 						throw new Exception();
@@ -503,7 +498,7 @@ namespace MyGame.Server
 					living.DoAction(action, m_userID);
 				}
 
-				m_startTurnSent = false;
+				this.ProceedTurnReceived = true;
 			}
 			catch (Exception e)
 			{
@@ -708,7 +703,12 @@ namespace MyGame.Server
 			}
 
 			if (change is TurnStartChange)
-				m_startTurnSent = true;
+				this.StartTurnSent = true;
+			else if (change is TickStartChange)
+			{
+				this.StartTurnSent = false;
+				this.ProceedTurnReceived = false;
+			}
 
 			var changeMsg = new ChangeMessage { Change = change };
 
