@@ -21,7 +21,7 @@ namespace MyGame
 
 		public override void Write(string message)
 		{
-			throw new NotImplementedException();
+			WriteLine(message);
 		}
 
 		public override void WriteLine(string message)
