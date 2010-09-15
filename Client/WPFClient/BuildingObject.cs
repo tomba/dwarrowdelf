@@ -167,7 +167,7 @@ namespace MyGame.Client
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new MyGame.Jobs.BuildItemJob(this, order.SourceObjects);
+			var job = new MyGame.Jobs.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
 			order.Job = job;
 			this.World.JobManager.Add(job);
 		}

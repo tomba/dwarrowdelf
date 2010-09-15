@@ -410,7 +410,7 @@ namespace MyGame.Server
 
 #else
 			var rand = new Random();
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				IntPoint3D p;
 				do
@@ -484,7 +484,7 @@ namespace MyGame.Server
 					if (living == null)
 						continue;
 
-					if (action.Priority > ActionPriority.User)
+					if (action.Priority > ActionPriority.Normal)
 						throw new Exception();
 
 					if (living.HasAction)

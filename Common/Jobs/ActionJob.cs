@@ -10,13 +10,14 @@ namespace MyGame.Jobs
 {
 	public abstract class ActionJob : IActionJob
 	{
-		protected ActionJob(IJob parent)
+		protected ActionJob(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
+			this.Priority = priority;
 		}
 
 		public IJob Parent { get; private set; }
-		protected ActionPriority Priority = ActionPriority.User; // XXX
+		public ActionPriority Priority { get; private set; }
 
 		ILiving m_worker;
 		public ILiving Worker

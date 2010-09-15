@@ -385,7 +385,7 @@ namespace MyGame.Client
 				{
 					if (living.AI != null)
 					{
-						var action = living.AI.ActionRequired(ActionPriority.High);
+						var action = living.AI.ActionRequired(ActionPriority.Normal);
 						m_actionMap[living] = action;
 						m_numActionsGot++;
 					}

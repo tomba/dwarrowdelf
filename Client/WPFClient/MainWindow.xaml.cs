@@ -311,7 +311,7 @@ namespace MyGame.Client
 				{
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
 					{
-						currentOb.RequestAction(new MineAction(dir, ActionPriority.User));
+						currentOb.RequestAction(new MineAction(dir, ActionPriority.Normal));
 					}
 					else
 					{
@@ -328,7 +328,7 @@ namespace MyGame.Client
 								dir |= Direction.Down;
 						}
 
-						currentOb.RequestAction(new MoveAction(dir, ActionPriority.User));
+						currentOb.RequestAction(new MoveAction(dir, ActionPriority.Normal));
 					}
 				}
 				else
@@ -385,7 +385,7 @@ namespace MyGame.Client
 			var currentOb = GameData.Data.CurrentObject;
 			if (currentOb != null)
 			{
-				currentOb.RequestAction(new MoveAction(dir, ActionPriority.User));
+				currentOb.RequestAction(new MoveAction(dir, ActionPriority.Normal));
 			}
 			else
 			{
@@ -515,7 +515,7 @@ namespace MyGame.Client
 					if (env.GetInterior(p).ID != InteriorID.Wall)
 						continue;
 
-					var job = new MoveMineJob(null, env, p);
+					var job = new MoveMineJob(null, ActionPriority.Normal, env, p);
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -525,7 +525,7 @@ namespace MyGame.Client
 				var env = map.Environment;
 				int z = map.Z;
 
-				var job = new MineAreaJob(env, r, z);
+				var job = new MineAreaJob(env, ActionPriority.Normal, r, z);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
@@ -534,7 +534,7 @@ namespace MyGame.Client
 				var env = map.Environment;
 				int z = map.Z;
 
-				var job = new MineAreaParallelJob(env, r, z);
+				var job = new MineAreaParallelJob(env, ActionPriority.Normal, r, z);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
@@ -543,7 +543,7 @@ namespace MyGame.Client
 				var env = map.Environment;
 				int z = map.Z;
 
-				var job = new MineAreaSerialJob(env, r, z);
+				var job = new MineAreaSerialJob(env, ActionPriority.Normal, r, z);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "BuildItem")
@@ -563,7 +563,12 @@ namespace MyGame.Client
 				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
-				var job = new MoveActionJob(null, env, p, false);
+				var job = new MoveActionJob(null, ActionPriority.Normal, env, p, false);
+				this.Map.World.JobManager.Add(job);
+			}
+			else if (tag == "RunInCircles")
+			{
+				var job = new RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
 				this.Map.World.JobManager.Add(job);
 			}
 			else
@@ -611,7 +616,7 @@ namespace MyGame.Client
 			Debug.Assert(list.All(o => o.Environment == plr.Environment));
 			Debug.Assert(list.All(o => o.Location == plr.Location));
 
-			plr.RequestAction(new GetAction(list, ActionPriority.User));
+			plr.RequestAction(new GetAction(list, ActionPriority.Normal));
 		}
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
@@ -623,7 +628,7 @@ namespace MyGame.Client
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.RequestAction(new DropAction(list, ActionPriority.User));
+			plr.RequestAction(new DropAction(list, ActionPriority.Normal));
 		}
 
 		private void BuildItem_Button_Click(object sender, RoutedEventArgs e)
@@ -635,7 +640,7 @@ namespace MyGame.Client
 
 			var plr = GameData.Data.CurrentObject;
 
-			plr.RequestAction(new BuildItemAction(list, ActionPriority.User));
+			plr.RequestAction(new BuildItemAction(list, ActionPriority.Normal));
 		}
 
 		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)

@@ -47,6 +47,9 @@ namespace MyGame.Server
 		public void Cleanup()
 		{
 			this.AI = null;
+			this.CurrentAction = null;
+			this.ActionTicksLeft = 0;
+			this.ActionUserID = 0;
 			this.World.RemoveLiving(this);
 			this.Destruct();
 		}
@@ -356,7 +359,8 @@ namespace MyGame.Server
 
 		public void DoAction(GameAction action, int userID)
 		{
-			Debug.Print("DoAction {0}, uid: {1}", action, userID);
+			Debug.Print("DoAction {0}: {1}, uid: {2}", this, action, userID);
+
 			if (this.HasAction)
 				throw new Exception();
 
@@ -436,6 +440,8 @@ namespace MyGame.Server
 			var action = this.CurrentAction;
 
 			this.ActionTicksLeft = e.TicksLeft;
+
+			Debug.Print("ActionProgress({0}: {1}, {2})", this, action, e.State);
 
 			if (e.TicksLeft == 0)
 			{

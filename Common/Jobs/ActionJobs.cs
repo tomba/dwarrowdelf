@@ -16,8 +16,8 @@ namespace MyGame.Jobs
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
-		public MoveActionJob(IJob parent, IEnvironment environment, IntPoint3D destination, bool adjacent)
-			: base(parent)
+		public MoveActionJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, bool adjacent)
+			: base(parent, priority)
 		{
 			m_environment = environment;
 			m_dest = destination;
@@ -137,8 +137,8 @@ namespace MyGame.Jobs
 		IntPoint3D m_location;
 		IEnvironment m_environment;
 
-		public MineActionJob(IJob job, IEnvironment environment, IntPoint3D location)
-			: base(job)
+		public MineActionJob(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location)
+			: base(job, priority)
 		{
 			m_environment = environment;
 			m_location = location;
@@ -205,8 +205,8 @@ namespace MyGame.Jobs
 	{
 		IItemObject[] m_items;
 
-		public BuildItemActionJob(IJob parent, IItemObject[] items)
-			: base(parent)
+		public BuildItemActionJob(IJob parent, ActionPriority priority, IItemObject[] items)
+			: base(parent, priority)
 		{
 			m_items = items;
 		}
@@ -254,8 +254,8 @@ namespace MyGame.Jobs
 	{
 		IItemObject m_item;
 
-		public GetItemActionJob(IJob parent, IItemObject item)
-			: base(parent)
+		public GetItemActionJob(IJob parent, ActionPriority priority, IItemObject item)
+			: base(parent, priority)
 		{
 			m_item = item;
 		}
@@ -298,8 +298,8 @@ namespace MyGame.Jobs
 	{
 		IItemObject m_item;
 
-		public DropItemActionJob(IJob parent, IItemObject item)
-			: base(parent)
+		public DropItemActionJob(IJob parent, ActionPriority priority, IItemObject item)
+			: base(parent, priority)
 		{
 			m_item = item;
 		}

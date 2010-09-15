@@ -5,17 +5,26 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	class InteractiveActor : Jobs.IAI
+	class InteractiveActor : Jobs.AI
 	{
-		Living Worker { get; set; }
-		Random m_random;
+		//Living Worker { get; set; }
+		//Random m_random;
 
-		public InteractiveActor(Living ob)
+		public InteractiveActor(Living ob) : base(ob, true)
 		{
-			m_random = new Random(GetHashCode());
-			this.Worker = ob;
+			//m_random = new Random(GetHashCode());
+			//this.Worker = ob;
 		}
 
+		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
+		{
+			if (priority >= ActionPriority.Normal)
+				return null;
+
+			return new Jobs.RunInCirclesJob(null, priority, worker.Environment);
+		}
+
+#if asd
 		public GameAction ActionRequired(ActionPriority priority)
 		{
 			if (priority == ActionPriority.Idle)
@@ -57,5 +66,7 @@ namespace MyGame.Server
 
 			return action;
 		}
+#endif
+
 	}
 }

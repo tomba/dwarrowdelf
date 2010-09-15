@@ -40,6 +40,7 @@ namespace MyGame.Jobs
 	public interface IJob : INotifyPropertyChanged
 	{
 		IJob Parent { get; }
+		ActionPriority Priority { get; }
 		Progress Progress { get; }
 		void Abort();
 	}

@@ -20,14 +20,16 @@ namespace MyGame.Jobs
 			Debug.Print("[AI S] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		protected SerialActionJob(IJob parent)
+		protected SerialActionJob(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
+			this.Priority = priority;
 			m_subJobs = new ObservableCollection<IActionJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IActionJob>(m_subJobs);
 		}
 
 		public IJob Parent { get; private set; }
+		public ActionPriority Priority { get; private set; }
 
 		Progress m_progress;
 		public Progress Progress

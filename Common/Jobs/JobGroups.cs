@@ -12,8 +12,8 @@ namespace MyGame.Jobs
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
 
-		public MineAreaParallelJob(IEnvironment env, IntRect rect, int z)
-			: base(null)
+		public MineAreaParallelJob(IEnvironment env, ActionPriority priority, IntRect rect, int z)
+			: base(null, priority)
 		{
 			m_environment = env;
 
@@ -21,7 +21,7 @@ namespace MyGame.Jobs
 
 			foreach (var p in m_locs)
 			{
-				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
+				var job = new MoveMineJob(this, priority, env, new IntPoint3D(p, z));
 				AddSubJob(job);
 			}
 		}
@@ -43,8 +43,8 @@ namespace MyGame.Jobs
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
 
-		public MineAreaSerialJob(IEnvironment env, IntRect rect, int z)
-			: base(null)
+		public MineAreaSerialJob(IEnvironment env, ActionPriority priority, IntRect rect, int z)
+			: base(null, priority)
 		{
 			m_environment = env;
 
@@ -52,7 +52,7 @@ namespace MyGame.Jobs
 
 			foreach (var p in m_locs)
 			{
-				var job = new MoveMineJob(this, env, new IntPoint3D(p, z));
+				var job = new MoveMineJob(this, priority, env, new IntPoint3D(p, z));
 				AddSubJob(job);
 			}
 		}
@@ -71,15 +71,15 @@ namespace MyGame.Jobs
 
 	public class BuildItemJob : SerialJobGroup
 	{
-		public BuildItemJob(IBuildingObject workplace, IItemObject[] sourceObjects)
-			: base(null)
+		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects)
+			: base(null, priority)
 		{
 			var env = workplace.Environment;
 			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
 			var location = new IntPoint3D(p, workplace.Z);
 
-			AddSubJob(new FetchItems(this, env, location, sourceObjects));
-			AddSubJob(new BuildItem(this, workplace, sourceObjects));
+			AddSubJob(new FetchItems(this, priority, env, location, sourceObjects));
+			AddSubJob(new BuildItem(this, priority, workplace, sourceObjects));
 		}
 
 		public override string ToString()
@@ -90,12 +90,12 @@ namespace MyGame.Jobs
 
 	public class FetchItems : ParallelJobGroup
 	{
-		public FetchItems(IJob parent, IEnvironment env, IntPoint3D location, IItemObject[] items)
-			: base(parent)
+		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject[] items)
+			: base(parent, priority)
 		{
 			foreach (var item in items)
 			{
-				AddSubJob(new FetchItem(this, env, location, item));
+				AddSubJob(new FetchItem(this, priority, env, location, item));
 			}
 		}
 

@@ -12,14 +12,16 @@ namespace MyGame.Jobs
 		ObservableCollection<IJob> m_subJobs = new ObservableCollection<IJob>();
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
-		protected JobGroup(IJob parent)
+		protected JobGroup(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
+			this.Priority = priority;
 			m_subJobs = new ObservableCollection<IJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 		}
 
 		public IJob Parent { get; private set; }
+		public ActionPriority Priority { get; private set; }
 
 		public virtual Progress Progress
 		{
@@ -76,8 +78,8 @@ namespace MyGame.Jobs
 
 	public abstract class ParallelJobGroup : JobGroup
 	{
-		protected ParallelJobGroup(IJob parent)
-			: base(parent)
+		protected ParallelJobGroup(IJob parent, ActionPriority priority)
+			: base(parent, priority)
 		{
 		}
 
@@ -103,8 +105,8 @@ namespace MyGame.Jobs
 
 	public abstract class SerialJobGroup : JobGroup
 	{
-		protected SerialJobGroup(IJobGroup parent)
-			: base(parent)
+		protected SerialJobGroup(IJobGroup parent, ActionPriority priority)
+			: base(parent, priority)
 		{
 		}
 

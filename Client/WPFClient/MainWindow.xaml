@@ -215,6 +215,7 @@
                             <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
                         </MenuItem>
                         <MenuItem Name="createBuildingMenu" Header="Create Building" />
                     </ContextMenu>
@@ -247,20 +248,10 @@
                     </DockPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Column="0" Grid.Row="1" Header="Pending Actions">
-                    <ListBox ItemsSource="{Binding Path=World.Controllables}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock Text="{Binding}" />
-                                    :
-                                    <TextBlock Text="{Binding CurrentAction}" />
-                                    left
-                                    <TextBlock Text="{Binding ActionTicksLeft}" />
-                                </TextBlock>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                <GroupBox Grid.Column="0" Grid.Row="1" Header="Objects">
+                    <ListBox ItemsSource="{Binding World.Objects}" 
+                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
+                         HorizontalContentAlignment="Stretch" />
                 </GroupBox>
 
                 <GroupBox Grid.Column="1" Grid.Row="0" Header="Current Tile Info"
@@ -328,16 +319,20 @@
                     </DockPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Column="1" Grid.Row="2" Header="Objects">
-                    <ListBox ItemsSource="{Binding World.Objects}" 
-                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
-                         HorizontalContentAlignment="Stretch" />
-                </GroupBox>
-
-                <GroupBox Grid.Column="0" Grid.Row="2" Header="Environments">
-                    <ListBox ItemsSource="{Binding World.Environments}"
-                         SelectedItem="{Binding Path=Environment, ElementName=map}"
-                         HorizontalContentAlignment="Stretch" />
+                <GroupBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Header="Actions">
+                    <ListBox ItemsSource="{Binding Path=World.Controllables}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock Text="{Binding}" />
+                                    :
+                                    <TextBlock Text="{Binding CurrentAction}" />
+                                    left
+                                    <TextBlock Text="{Binding ActionTicksLeft}" />
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </GroupBox>
 
                 <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">

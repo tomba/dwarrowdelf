@@ -39,19 +39,27 @@ namespace MyGame
 		Undefined = 0,
 		Lowest,
 		Idle,
-		User,
+		Normal,
 		High,
 	}
 
 	[Serializable]
 	public abstract class GameAction
 	{
+		public int MagicNumber { get; set; }
 		public ActionPriority Priority { get; private set; }
 
 		protected GameAction(ActionPriority priority)
 		{
 			this.Priority = priority;
 		}
+
+		public sealed override string ToString()
+		{
+			return String.Format("{0} [{1}, {3}] ({2})", GetType().Name, this.Priority, this.GetParams(), this.MagicNumber);
+		}
+
+		protected abstract string GetParams();
 	}
 
 	[Serializable]
@@ -65,9 +73,9 @@ namespace MyGame
 			this.Direction = direction;
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("MoveAction({0})", this.Direction);
+			return this.Direction.ToString();
 		}
 	}
 
@@ -82,9 +90,9 @@ namespace MyGame
 			this.WaitTicks = ticks;
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("WaitAction({0})", this.WaitTicks);
+			return this.WaitTicks.ToString();
 		}
 	}
 
@@ -99,10 +107,9 @@ namespace MyGame
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("DropAction({0})",
-				String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray()));
+			return String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray());
 		}
 	}
 
@@ -117,10 +124,9 @@ namespace MyGame
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("GetAction({0})",
-				String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray()));
+			return String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray());
 		}
 	}
 
@@ -135,9 +141,9 @@ namespace MyGame
 			this.Direction = dir;
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("MineAction({0})", this.Direction);
+			return this.Direction.ToString();
 		}
 	}
 
@@ -154,9 +160,9 @@ namespace MyGame
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 		}
 
-		public override string ToString()
+		protected override string GetParams()
 		{
-			return String.Format("BuildItemAction()");
+			return String.Join(", ", this.SourceObjectIDs.Select(i => i.ToString()).ToArray());
 		}
 	}
 

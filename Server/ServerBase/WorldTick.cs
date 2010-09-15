@@ -220,7 +220,17 @@ namespace MyGame.Server
 			{
 				var action = living.AI.ActionRequired(ActionPriority.Idle);
 				if (action != null)
+				{
+					if (living.HasAction)
+					{
+						if (living.CurrentAction.Priority <= action.Priority)
+							living.CancelAction();
+						else
+							throw new Exception();
+					}
+
 					living.DoAction(action);
+				}
 			}
 
 			foreach (var living in m_livingList.Where(l => l.HasAction))
@@ -343,7 +353,16 @@ namespace MyGame.Server
 				{
 					var action = living.AI.ActionRequired(ActionPriority.High);
 					if (action != null)
+					{
+						if (living.HasAction)
+						{
+							if (living.CurrentAction.Priority <= action.Priority)
+								living.CancelAction();
+							else
+								throw new Exception();
+						}
 						living.DoAction(action);
+					}
 				}
 			}
 
@@ -362,7 +381,16 @@ namespace MyGame.Server
 			{
 				var action = living.AI.ActionRequired(ActionPriority.High);
 				if (action != null)
+				{
+					if (living.HasAction)
+					{
+						if (living.CurrentAction.Priority <= action.Priority)
+							living.CancelAction();
+						else
+							throw new Exception();
+					}
 					living.DoAction(action);
+				}
 			}
 
 			AddChange(new TurnStartChange(living));

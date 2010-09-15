@@ -10,7 +10,7 @@ namespace MyGame.Server
 	{
 		Random m_random;
 
-		public MonsterActor(Living living) : base(living)
+		public MonsterActor(Living living) : base(living, true)
 		{
 			m_random = new Random(GetHashCode());
 		}
@@ -29,7 +29,7 @@ namespace MyGame.Server
 		{
 		}
 		*/
-		protected override Jobs.IActionJob GetJob(ILiving worker)
+		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
 		{
 			var env = worker.Environment;
 			var l = worker.Location;
@@ -40,7 +40,7 @@ namespace MyGame.Server
 
 				if (env.GetInteriorID(l) == InteriorID.Wall)
 				{
-					var job = new Jobs.MoveMineJob(null, env, l);
+					var job = new Jobs.MoveMineJob(null, priority, env, l);
 					return job;
 				}
 			}

@@ -18,10 +18,12 @@ namespace MyGame.Jobs
 	{
 		public ILiving Worker { get; private set; }
 		IActionJob m_currentJob;
+		bool m_isServer;
 
-		protected AI(ILiving worker)
+		protected AI(ILiving worker, bool isServer)
 		{
 			this.Worker = worker;
+			m_isServer = isServer;
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
@@ -32,22 +34,36 @@ namespace MyGame.Jobs
 
 		public virtual GameAction ActionRequired(ActionPriority priority)
 		{
+			var action = DoActionRequired(priority);
+
+			if (action != null)
+			{
+				// XXX
+				action.MagicNumber = Math.Abs((int)DateTime.Now.Ticks);
+				if (m_isServer)
+					action.MagicNumber = -action.MagicNumber;
+			}
+
+			return action;
+		}
+
+		GameAction DoActionRequired(ActionPriority priority)
+		{
 			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
 				return null;
+
+			D("ActionRequired({0}): CurrentJob {1}, Worker.Action = {2}", priority, m_currentJob, this.Worker.CurrentAction);
 
 			while (true)
 			{
 				if (m_currentJob == null)
 				{
-					m_currentJob = FindAndAssignJob(this.Worker);
+					m_currentJob = FindAndAssignJob(this.Worker, priority);
 
 					if (m_currentJob == null)
 					{
 						D("ActionRequired: no job to do");
-						if (!this.Worker.HasAction)
-							return new WaitAction(1, ActionPriority.Lowest);
-						else
-							return null;
+						return null;
 					}
 					else
 					{
@@ -55,6 +71,16 @@ namespace MyGame.Jobs
 						m_currentJob.PropertyChanged += OnJobPropertyChanged;
 					}
 				}
+				/*
+				if (m_currentJob.CurrentAction != null)
+				{
+					D("ActionRequired: Already have an action");
+					return null;
+				}
+				*/
+
+				if (m_currentJob.Priority != priority)
+					return null;
 
 				Debug.Assert(m_currentJob.CurrentAction == null);
 
@@ -86,12 +112,26 @@ namespace MyGame.Jobs
 
 		public virtual void ActionProgress(ActionProgressChange e)
 		{
-			if (m_currentJob == null)
-				return;
+			D("ActionProgress: {0}, state: {1}", e.ActionXXX, e.State);
 
-			/* progress change for action started by the server */
-			if (e.UserID == 0)
+			if (m_currentJob == null)
+			{
+				D("ActionProgress: no job, so not for me");
 				return;
+			}
+
+			if (m_currentJob.CurrentAction == null)
+			{
+				D("ActionProgress: no current action, so not for me");
+				return;
+			}
+
+			// does the action originate from us?
+			if (m_currentJob.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			{
+				D("ActionProgress: wrong magic, so not for me");
+				return;
+			}
 
 			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
@@ -118,13 +158,13 @@ namespace MyGame.Jobs
 			}
 		}
 
-		protected abstract IActionJob GetJob(ILiving worker);
+		protected abstract IActionJob GetJob(ILiving worker, ActionPriority priority);
 
-		IActionJob FindAndAssignJob(ILiving worker)
+		IActionJob FindAndAssignJob(ILiving worker, ActionPriority priority)
 		{
 			while (true)
 			{
-				var job = GetJob(worker);
+				var job = GetJob(worker, priority);
 
 				if (job == null)
 					return null;
@@ -173,12 +213,12 @@ namespace MyGame.Jobs
 		JobManager m_jobManager;
 
 		public ClientAI(ILiving worker, JobManager jobManager)
-			: base(worker)
+			: base(worker, false)
 		{
 			m_jobManager = jobManager;
 		}
 
-		protected override IActionJob GetJob(ILiving worker)
+		protected override IActionJob GetJob(ILiving worker, ActionPriority priority)
 		{
 			return m_jobManager.FindJob(this.Worker);
 		}
