@@ -266,7 +266,7 @@ namespace MyGame
 		public GameAction ActionXXX { get; set; }
 		public int UserID { get; set; }
 		public int TicksLeft { get; set; }
-		public bool Success { get; set; }
+		public ActionState State { get; set; }
 
 		public ActionProgressChange(IBaseGameObject ob)
 			: base(ob)
@@ -275,8 +275,8 @@ namespace MyGame
 
 		public override string ToString()
 		{
-			return String.Format("ActionProgressChange(UID({0}), {1}, left: {2}, ok: {3})",
-				this.UserID, this.ObjectID, this.TicksLeft, this.Success);
+			return String.Format("ActionProgressChange(UID({0}), {1}, left: {2}, state: {3})",
+				this.UserID, this.ObjectID, this.TicksLeft, this.State);
 		}
 	}
 }

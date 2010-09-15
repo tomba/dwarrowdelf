@@ -67,20 +67,28 @@ namespace MyGame.Jobs
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
-			if (e.Success == false)
+			switch (e.State)
 			{
-				m_numFails++;
-				if (m_numFails > 10)
-					return Progress.Fail;
+				case ActionState.Ok:
+					return Progress.Ok;
 
-				var res = PreparePath();
-				return res;
+				case ActionState.Done:
+					return CheckProgress();
+
+				case ActionState.Fail:
+					m_numFails++;
+					if (m_numFails > 10)
+						return Progress.Fail;
+
+					var res = PreparePath();
+					return res;
+
+				case ActionState.Abort:
+					return Progress.Abort;
+
+				default:
+					throw new Exception();
 			}
-
-			if (e.TicksLeft > 0)
-				return Progress.Ok;
-
-			return CheckProgress();
 		}
 
 		Progress PreparePath()
@@ -160,13 +168,23 @@ namespace MyGame.Jobs
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
-			if (e.Success == false)
-				return Progress.Fail;
+			switch (e.State)
+			{
+				case ActionState.Ok:
+					return Progress.Ok;
 
-			if (e.TicksLeft > 0)
-				return Progress.Ok;
+				case ActionState.Done:
+					return CheckProgress();
 
-			return CheckProgress();
+				case ActionState.Fail:
+					return Progress.Fail;
+
+				case ActionState.Abort:
+					return Progress.Abort;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		Progress CheckProgress()
@@ -207,13 +225,23 @@ namespace MyGame.Jobs
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
-			if (e.Success == false)
-				return Progress.Fail;
+			switch (e.State)
+			{
+				case ActionState.Ok:
+					return Progress.Ok;
 
-			if (e.TicksLeft > 0)
-				return Progress.Ok;
+				case ActionState.Done:
+					return Progress.Done;
 
-			return Progress.Done;
+				case ActionState.Fail:
+					return Progress.Fail;
+
+				case ActionState.Abort:
+					return Progress.Abort;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public override string ToString()
@@ -241,13 +269,23 @@ namespace MyGame.Jobs
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
-			if (e.Success == false)
-				return Progress.Fail;
+			switch (e.State)
+			{
+				case ActionState.Ok:
+					return Progress.Ok;
 
-			if (e.TicksLeft > 0)
-				return Progress.Ok;
+				case ActionState.Done:
+					return Progress.Done;
 
-			return Progress.Done;
+				case ActionState.Fail:
+					return Progress.Fail;
+
+				case ActionState.Abort:
+					return Progress.Abort;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public override string ToString()
@@ -275,13 +313,23 @@ namespace MyGame.Jobs
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)
 		{
-			if (e.Success == false)
-				return Progress.Fail;
+			switch (e.State)
+			{
+				case ActionState.Ok:
+					return Progress.Ok;
 
-			if (e.TicksLeft > 0)
-				return Progress.Ok;
+				case ActionState.Done:
+					return Progress.Done;
 
-			return Progress.Done;
+				case ActionState.Fail:
+					return Progress.Fail;
+
+				case ActionState.Abort:
+					return Progress.Abort;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public override string ToString()

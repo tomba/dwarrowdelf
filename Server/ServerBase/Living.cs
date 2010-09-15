@@ -312,6 +312,13 @@ namespace MyGame.Server
 				}
 			}
 
+			ActionState state;
+
+			if (success)
+				state = this.ActionTicksLeft > 0 ? ActionState.Ok : ActionState.Done;
+			else
+				state = ActionState.Fail;
+
 			if (success == false)
 				this.ActionTicksLeft = 0;
 
@@ -320,7 +327,7 @@ namespace MyGame.Server
 					ActionXXX = action,
 					UserID = this.ActionUserID,
 					TicksLeft = this.ActionTicksLeft,
-					Success = success,
+					State = state,
 				};
 
 			this.ActionProgress(e);
@@ -407,7 +414,7 @@ namespace MyGame.Server
 				ActionXXX = action,
 				UserID = this.ActionUserID,
 				TicksLeft = 0,
-				Success = false,
+				State = ActionState.Abort,
 			};
 
 			this.ActionProgress(e);

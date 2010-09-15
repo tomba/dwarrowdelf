@@ -6,6 +6,34 @@ using System.Runtime.Serialization;
 
 namespace MyGame
 {
+	public enum ActionState
+	{
+		/// <summary>
+		/// None
+		/// </summary>
+		None,
+
+		/// <summary>
+		/// Action progressing ok
+		/// </summary>
+		Ok,
+
+		/// <summary>
+		/// Action failed
+		/// </summary>
+		Fail,
+
+		/// <summary>
+		/// Action aborted by somebody
+		/// </summary>
+		Abort,
+
+		/// <summary>
+		/// Action done successfully
+		/// </summary>
+		Done,
+	}
+
 	public enum ActionPriority
 	{
 		Undefined = 0,
