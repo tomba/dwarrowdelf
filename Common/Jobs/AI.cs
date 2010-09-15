@@ -18,12 +18,10 @@ namespace MyGame.Jobs
 	{
 		public ILiving Worker { get; private set; }
 		IActionJob m_currentJob;
-		bool m_isServer;
 
-		protected AI(ILiving worker, bool isServer)
+		protected AI(ILiving worker)
 		{
 			this.Worker = worker;
-			m_isServer = isServer;
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
@@ -33,21 +31,6 @@ namespace MyGame.Jobs
 		}
 
 		public virtual GameAction ActionRequired(ActionPriority priority)
-		{
-			var action = DoActionRequired(priority);
-
-			if (action != null)
-			{
-				// XXX
-				action.MagicNumber = Math.Abs((int)DateTime.Now.Ticks);
-				if (m_isServer)
-					action.MagicNumber = -action.MagicNumber;
-			}
-
-			return action;
-		}
-
-		GameAction DoActionRequired(ActionPriority priority)
 		{
 			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
 				return null;
@@ -213,7 +196,7 @@ namespace MyGame.Jobs
 		JobManager m_jobManager;
 
 		public ClientAI(ILiving worker, JobManager jobManager)
-			: base(worker, false)
+			: base(worker)
 		{
 			m_jobManager = jobManager;
 		}

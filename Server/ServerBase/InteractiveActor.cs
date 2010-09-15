@@ -10,7 +10,7 @@ namespace MyGame.Server
 		//Living Worker { get; set; }
 		//Random m_random;
 
-		public InteractiveActor(Living ob) : base(ob, true)
+		public InteractiveActor(Living ob) : base(ob)
 		{
 			//m_random = new Random(GetHashCode());
 			//this.Worker = ob;

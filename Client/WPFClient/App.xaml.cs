@@ -53,6 +53,8 @@ namespace MyGame.Client
 
 			Debug.Print("Start");
 
+			GameAction.MagicNumberGenerator = () => Math.Abs((int)DateTime.Now.Ticks);
+
 			GameData.Data.Connection = new ClientConnection();
 
 			if (m_serverInAppDomain)

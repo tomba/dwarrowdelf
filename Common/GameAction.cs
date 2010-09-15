@@ -46,12 +46,16 @@ namespace MyGame
 	[Serializable]
 	public abstract class GameAction
 	{
-		public int MagicNumber { get; set; }
+		// XXX. Server gen creates negative numbers, client positive
+		public static Func<int> MagicNumberGenerator;
+
+		public int MagicNumber { get; private set; }
 		public ActionPriority Priority { get; private set; }
 
 		protected GameAction(ActionPriority priority)
 		{
 			this.Priority = priority;
+			this.MagicNumber = MagicNumberGenerator();
 		}
 
 		public sealed override string ToString()

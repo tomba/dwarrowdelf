@@ -10,7 +10,7 @@ namespace MyGame.Server
 	{
 		Random m_random;
 
-		public MonsterActor(Living living) : base(living, true)
+		public MonsterActor(Living living) : base(living)
 		{
 			m_random = new Random(GetHashCode());
 		}

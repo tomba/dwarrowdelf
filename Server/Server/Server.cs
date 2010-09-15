@@ -28,6 +28,8 @@ namespace MyGame.Server
 
 			/* Load area */
 
+			GameAction.MagicNumberGenerator = () => -Math.Abs((int)DateTime.Now.Ticks);
+
 			IArea area = new MyArea.Area();
 
 			m_world = new World(area);
