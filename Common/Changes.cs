@@ -34,6 +34,8 @@ namespace MyGame
 		ILiving m_living;
 		ObjectID m_livingID;
 
+		// In sequential mode, the living who's turn it is
+		// In simultaneous mode, null
 		public ILiving Living { get { return m_living; } }
 		public ObjectID LivingID { get { return m_livingID; } }
 

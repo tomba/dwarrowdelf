@@ -375,25 +375,14 @@ namespace MyGame.Client
 
 			if (change.LivingID == ObjectID.NullObjectID)
 			{
+				m_numActionsGot = 0;
+
 				var livings = GameData.Data.World.Controllables
 					.Where(l => l.UserActionPossible());
 
 				m_actionMap.Clear();
-				m_numActionsGot = 0;
-
 				foreach (var living in livings)
-				{
-					if (living.AI != null)
-					{
-						var action = living.AI.ActionRequired(ActionPriority.Normal);
-						m_actionMap[living] = action;
-						m_numActionsGot++;
-					}
-					else
-					{
-						m_actionMap[living] = null;
-					}
-				}
+					m_actionMap[living] = null;
 
 				if (GameData.Data.IsAutoAdvanceTurn)
 					SendProceedTurn();
@@ -423,21 +412,39 @@ namespace MyGame.Client
 			m_numActionsGot++;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
-				SendProceedTurn();
+				CheckProceedTurn();
 		}
 
-		public void SendProceedTurn(bool force = false)
+		void CheckProceedTurn()
 		{
 			if (m_turnActionRequested == false)
 				return;
 
-			if (force || m_actionMap.Count == m_numActionsGot)
+			if (m_numActionsGot < m_actionMap.Count)
+				return;
+
+			SendProceedTurn();
+		}
+
+		public void SendProceedTurn()
+		{
+			if (m_turnActionRequested == false)
+				return;
+
+			foreach (var living in m_actionMap.Keys.ToArray())
 			{
-				var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
-				Send(new ProceedTurnMessage() { Actions = actions });
-				m_actionMap.Clear();
-				m_numActionsGot = 0;
+				if (living.AI != null)
+				{
+					var action = living.AI.ActionRequired(ActionPriority.Normal);
+					m_actionMap[living] = action;
+					m_numActionsGot++;
+				}
 			}
+
+			var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
+			Send(new ProceedTurnMessage() { Actions = actions });
+			m_actionMap.Clear();
+			m_numActionsGot = 0;
 		}
 
 		void HandleChange(TurnEndChange change)
