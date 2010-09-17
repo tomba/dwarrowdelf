@@ -17,12 +17,12 @@ namespace MyGame.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		public Jobs.IAI AI { get; private set; }
+		Jobs.IAI m_ai;
 
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			this.AI = new Jobs.ClientAI(this, this.World.JobManager);
+			m_ai = new Jobs.ClientAI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 
@@ -128,24 +128,36 @@ namespace MyGame.Client
 			private set { this.SetValue(ActionTicksLeftProperty, value); }
 		}
 
+		public GameAction DecideAction(ActionPriority priority)
+		{
+			if (m_ai != null)
+				return m_ai.DecideAction(priority);
+			else
+				return null;
+		}
+
 		public void HandleActionStarted(ActionStartedChange change)
 		{
-			if (this.HasAction)
-				throw new Exception();
+			Debug.Assert(!this.HasAction);
 
 			this.CurrentAction = change.Action;
 			this.ActionTicksLeft = change.TicksLeft;
 			this.ActionUserID = change.UserID;
+
+			if (m_ai != null)
+				m_ai.ActionStarted(change);
 		}
 
-		public void ActionProgress(ActionProgressChange e)
+		public void ActionProgress(ActionProgressChange change)
 		{
-			if (!this.HasAction)
-				return;
+			Debug.Assert(this.HasAction);
 
-			this.ActionTicksLeft = e.TicksLeft;
+			this.ActionTicksLeft = change.TicksLeft;
 
-			if (e.TicksLeft == 0)
+			if (m_ai != null)
+				m_ai.ActionProgress(change);
+
+			if (change.TicksLeft == 0)
 			{
 				Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
 				this.CurrentAction = null;

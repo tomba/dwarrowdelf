@@ -166,7 +166,7 @@ namespace MyArea
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 				};
 
-				monster.AI = new MonsterActor(monster);
+				monster.SetAI(new MonsterActor(monster));
 
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();

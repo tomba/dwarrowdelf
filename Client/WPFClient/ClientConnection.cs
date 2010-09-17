@@ -107,7 +107,7 @@ namespace MyGame.Client
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			Debug.Print("Received Message {0}", msg);
+			//Debug.Print("Received Message {0}", msg);
 
 			Action<ServerMessage> f;
 			Type t = msg.GetType();
@@ -433,12 +433,8 @@ namespace MyGame.Client
 
 			foreach (var living in m_actionMap.Keys.ToArray())
 			{
-				if (living.AI != null)
-				{
-					var action = living.AI.ActionRequired(ActionPriority.Normal);
-					m_actionMap[living] = action;
-					m_numActionsGot++;
-				}
+				var action = living.DecideAction(ActionPriority.Normal);
+				m_actionMap[living] = action;
 			}
 
 			var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
@@ -470,9 +466,6 @@ namespace MyGame.Client
 				throw new Exception();
 
 			ob.ActionProgress(change);
-
-			if (ob.AI != null)
-				ob.AI.ActionProgress(change);
 		}
 	}
 }

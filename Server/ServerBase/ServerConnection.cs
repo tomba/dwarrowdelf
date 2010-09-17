@@ -423,7 +423,7 @@ namespace MyGame.Server
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
-				player.AI = new InteractiveActor(player);
+				player.SetAI(new InteractiveActor(player));
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))

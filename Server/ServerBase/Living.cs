@@ -13,6 +13,7 @@ namespace MyGame.Server
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
+		Jobs.IAI m_ai;
 
 		public ServerConnection Controller { get; set; }
 
@@ -46,7 +47,7 @@ namespace MyGame.Server
 
 		public void Cleanup()
 		{
-			this.AI = null;
+			m_ai = null;
 			this.CurrentAction = null;
 			this.ActionTicksLeft = 0;
 			this.ActionUserID = 0;
@@ -120,7 +121,10 @@ namespace MyGame.Server
 			set { SetValue(WaterFullnessProperty, value); }
 		}
 
-		public Jobs.IAI AI { get; set; }
+		public void SetAI(Jobs.IAI ai)
+		{
+			m_ai = ai;
+		}
 
 		public Grid2D<bool> VisionMap
 		{
@@ -334,8 +338,6 @@ namespace MyGame.Server
 				};
 
 			this.ActionProgress(e);
-			if (this.AI != null)
-				this.AI.ActionProgress(e);
 
 			this.World.AddChange(e);
 
@@ -361,43 +363,41 @@ namespace MyGame.Server
 		{
 			Debug.Print("DoAction {0}: {1}, uid: {2}", this, action, userID);
 
-			if (this.HasAction)
-				throw new Exception();
+			Debug.Assert(!this.HasAction);
+			Debug.Assert(action.Priority != ActionPriority.Undefined);
 
-			if (action.Priority == ActionPriority.Undefined)
-				throw new Exception();
-
-			this.CurrentAction = action;
-			this.ActionUserID = userID;
+			int ticks;
 
 			// The action should be initialized somewhere
 			if (action is WaitAction)
 			{
-				this.ActionTicksLeft = ((WaitAction)action).WaitTicks;
+				ticks = ((WaitAction)action).WaitTicks;
 			}
 			else if (action is MineAction)
 			{
-				this.ActionTicksLeft = 3;
+				ticks = 3;
 			}
 			else if (action is MoveAction)
 			{
-				this.ActionTicksLeft = 1;
+				ticks = 1;
 			}
 			else if (action is BuildItemAction)
 			{
-				this.ActionTicksLeft = 8;
+				ticks = 8;
 			}
 			else
 			{
-				this.ActionTicksLeft = 1;
+				ticks = 1;
 			}
 
 			var c = new ActionStartedChange(this)
 			{
 				Action = action,
 				UserID = userID,
-				TicksLeft = this.ActionTicksLeft,
+				TicksLeft = ticks,
 			};
+
+			HandleActionStarted(c);
 
 			this.World.AddChange(c);
 
@@ -422,14 +422,49 @@ namespace MyGame.Server
 			};
 
 			this.ActionProgress(e);
-			if (this.AI != null)
-				this.AI.ActionProgress(e);
 
 			this.World.AddChange(e);
+		}
 
-			this.CurrentAction = null;
-			this.ActionTicksLeft = 0;
-			this.ActionUserID = 0;
+		public void TurnStarted()
+		{
+			if (m_ai != null)
+				DecideAction(ActionPriority.High);
+		}
+
+		public void TurnPreRun()
+		{
+			if (m_ai != null)
+				DecideAction(ActionPriority.Idle);
+		}
+
+		void DecideAction(ActionPriority priority)
+		{
+			var action = m_ai.DecideAction(priority);
+			if (action != null)
+			{
+				if (this.HasAction)
+				{
+					if (this.CurrentAction.Priority <= action.Priority)
+						CancelAction();
+					else
+						throw new Exception();
+				}
+
+				DoAction(action);
+			}
+		}
+
+		void HandleActionStarted(ActionStartedChange change)
+		{
+			Debug.Assert(!this.HasAction);
+
+			this.CurrentAction = change.Action;
+			this.ActionTicksLeft = change.TicksLeft;
+			this.ActionUserID = change.UserID;
+
+			if (m_ai != null)
+				m_ai.ActionStarted(change);
 		}
 
 		void ActionProgress(ActionProgressChange e)
@@ -442,6 +477,9 @@ namespace MyGame.Server
 			this.ActionTicksLeft = e.TicksLeft;
 
 			Debug.Print("ActionProgress({0}: {1}, {2})", this, action, e.State);
+
+			if (m_ai != null)
+				m_ai.ActionProgress(e);
 
 			if (e.TicksLeft == 0)
 			{

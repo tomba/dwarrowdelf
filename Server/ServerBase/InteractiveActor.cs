@@ -5,22 +5,31 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	class InteractiveActor : Jobs.AI
+	class InteractiveActor : Jobs.JobAI
 	{
 		//Living Worker { get; set; }
-		//Random m_random;
+		Random m_random;
 
 		public InteractiveActor(Living ob) : base(ob)
 		{
-			//m_random = new Random(GetHashCode());
+			m_random = new Random(GetHashCode());
 			//this.Worker = ob;
 		}
 
 		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
 		{
+			/// TODO: this is called only at the end of work. should be some kind of check if
+			/// current work needs to be cancelled
 			if (priority >= ActionPriority.Normal)
-				return null;
-
+			{
+				if (m_random.Next() % 8 == 0)
+					return new Jobs.WaitActionJob(null, priority, 8);
+				else
+					return null;
+			}
+			/*
+			return new Jobs.WaitActionJob(null, priority, 4);
+			*/
 			return new Jobs.RunInCirclesJob(null, priority, worker.Environment);
 		}
 

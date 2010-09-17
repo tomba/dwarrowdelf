@@ -216,22 +216,8 @@ namespace MyGame.Server
 			if (!forceMove && !m_userList.All(u => u.ProceedTurnReceived))
 				return;
 
-			foreach (var living in m_livingList.Where(l => l.AI != null))
-			{
-				var action = living.AI.ActionRequired(ActionPriority.Idle);
-				if (action != null)
-				{
-					if (living.HasAction)
-					{
-						if (living.CurrentAction.Priority <= action.Priority)
-							living.CancelAction();
-						else
-							throw new Exception();
-					}
-
-					living.DoAction(action);
-				}
-			}
+			foreach (var living in m_livingList)
+				living.TurnPreRun();
 
 			foreach (var living in m_livingList.Where(l => l.HasAction))
 				living.PerformAction();
@@ -297,6 +283,8 @@ namespace MyGame.Server
 				if (!forceMove && !living.HasAction)
 					break;
 
+				living.TurnPreRun();
+
 				living.PerformAction();
 
 				EndTurn(living);
@@ -348,23 +336,7 @@ namespace MyGame.Server
 		void StartTurnSimultaneous()
 		{
 			foreach (var living in m_livingList)
-			{
-				if (living.AI != null)
-				{
-					var action = living.AI.ActionRequired(ActionPriority.High);
-					if (action != null)
-					{
-						if (living.HasAction)
-						{
-							if (living.CurrentAction.Priority <= action.Priority)
-								living.CancelAction();
-							else
-								throw new Exception();
-						}
-						living.DoAction(action);
-					}
-				}
-			}
+				living.TurnStarted();
 
 			AddChange(new TurnStartChange());
 
@@ -377,21 +349,7 @@ namespace MyGame.Server
 
 		void StartTurnSequential(Living living)
 		{
-			if (living.AI != null)
-			{
-				var action = living.AI.ActionRequired(ActionPriority.High);
-				if (action != null)
-				{
-					if (living.HasAction)
-					{
-						if (living.CurrentAction.Priority <= action.Priority)
-							living.CancelAction();
-						else
-							throw new Exception();
-					}
-					living.DoAction(action);
-				}
-			}
+			living.TurnStarted();
 
 			AddChange(new TurnStartChange(living));
 

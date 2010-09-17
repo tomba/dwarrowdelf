@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MyGame.Server
 {
-	public class MonsterActor : Jobs.AI
+	public class MonsterActor : Jobs.JobAI
 	{
 		Random m_random;
 
