@@ -167,7 +167,7 @@ namespace Dwarrowdelf.Client
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new Dwarrowdelf.Jobs.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
+			var job = new Dwarrowdelf.Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
 			order.Job = job;
 			this.World.JobManager.Add(job);
 		}

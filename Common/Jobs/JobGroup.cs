@@ -123,6 +123,4 @@ namespace Dwarrowdelf.Jobs
 
 		public override JobGroupType JobGroupType { get { return JobGroupType.Serial; } }
 	}
-
-
 }

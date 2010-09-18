@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Server
 			if (priority == ActionPriority.High)
 				return null;
 
-			return new Jobs.RunInCirclesJob(null, priority, worker.Environment);
+			return new Jobs.SerialActionJobs.RunInCirclesJob(null, priority, worker.Environment);
 		}
 
 #if asd

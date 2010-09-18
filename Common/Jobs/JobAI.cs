@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs
 {
 	/// <summary>
-	/// AI that handles Jobs
+	/// abstract AI that handles Jobs
 	/// </summary>
 	public abstract class JobAI : IAI
 	{
@@ -267,22 +267,6 @@ namespace Dwarrowdelf.Jobs
 					m_currentJob = null;
 					break;
 			}
-		}
-	}
-
-	public class ClientAI : JobAI
-	{
-		JobManager m_jobManager;
-
-		public ClientAI(ILiving worker, JobManager jobManager)
-			: base(worker)
-		{
-			m_jobManager = jobManager;
-		}
-
-		protected override IActionJob GetJob(ILiving worker, ActionPriority priority)
-		{
-			return m_jobManager.FindJob(this.Worker);
 		}
 	}
 }

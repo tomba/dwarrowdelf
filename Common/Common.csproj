@@ -79,19 +79,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\ActionJobs\WaitActionJob.cs" />
+    <Compile Include="Jobs\ActionJobs\MoveActionJob.cs" />
+    <Compile Include="Jobs\ActionJobs\GetItemActionJob.cs" />
+    <Compile Include="Jobs\ActionJobs\BuildItemActionJob.cs" />
+    <Compile Include="Jobs\ActionJobs\MineActionJob.cs" />
     <Compile Include="Jobs\IAI.cs" />
     <Compile Include="Jobs\JobAI.cs" />
     <Compile Include="AStar\AStar2D.cs" />
     <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="Jobs\ActionJob.cs" />
-    <Compile Include="Jobs\ActionJobs.cs" />
+    <Compile Include="Jobs\ActionJobs\DropItemActionJob.cs" />
     <Compile Include="Jobs\IJob.cs" />
     <Compile Include="Jobs\JobGroup.cs" />
-    <Compile Include="Jobs\JobGroups.cs" />
+    <Compile Include="Jobs\JobGroups\FetchItems.cs" />
+    <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />
+    <Compile Include="Jobs\JobGroups\MineAreaSerialJob.cs" />
+    <Compile Include="Jobs\JobGroups\MineAreaParallelJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
+    <Compile Include="Jobs\JobManagerAI.cs" />
     <Compile Include="Jobs\SerialActionJob.cs" />
-    <Compile Include="Jobs\SerialActionJobs.cs" />
+    <Compile Include="Jobs\SerialActionJobs\BuildItem.cs" />
+    <Compile Include="Jobs\SerialActionJobs\FetchItem.cs" />
+    <Compile Include="Jobs\SerialActionJobs\MineAreaJob.cs" />
+    <Compile Include="Jobs\SerialActionJobs\MoveMineJob.cs" />
+    <Compile Include="Jobs\SerialActionJobs\RunInCirclesJob.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="BuildingInfo.cs" />

@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 
 				if (env.GetInteriorID(l) == InteriorID.Wall)
 				{
-					var job = new Jobs.MoveMineJob(null, priority, env, l);
+					var job = new Jobs.SerialActionJobs.MoveMineJob(null, priority, env, l);
 					return job;
 				}
 			}

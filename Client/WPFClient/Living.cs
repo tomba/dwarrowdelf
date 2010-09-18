@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_ai = new Jobs.ClientAI(this, this.World.JobManager);
+			m_ai = new Jobs.JobManagerAI(this, this.World.JobManager);
 			this.IsLiving = true;
 		}
 
