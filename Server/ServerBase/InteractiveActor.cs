@@ -16,20 +16,48 @@ namespace Dwarrowdelf.Server
 			//this.Worker = ob;
 		}
 
+		protected override bool CheckForAbortOtherAction(ActionPriority priority)
+		{
+			/*
+			if (priority < ActionPriority.High)
+				return false;
+
+			if (this.Worker.World.TickNumber % 20 == 0)
+				return true;
+			*/
+			return false;
+		}
+
+		protected override bool CheckForAbortOurJob(ActionPriority priority)
+		{
+			/*
+			if (priority < ActionPriority.High)
+				return false;
+
+			if (this.Worker.World.TickNumber % 20 == 0)
+				return true;
+			*/
+			return false;
+		}
+
 		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
 		{
-			/// TODO: this is called only at the end of work. should be some kind of check if
-			/// current work needs to be cancelled
-			if (priority >= ActionPriority.Normal)
+			/*
+			if (priority == ActionPriority.High)
 			{
-				if (m_random.Next() % 8 == 0)
+				if (this.Worker.World.TickNumber % 20 == 0)
 					return new Jobs.WaitActionJob(null, priority, 8);
 				else
 					return null;
 			}
+			 */
 			/*
 			return new Jobs.WaitActionJob(null, priority, 4);
 			*/
+
+			if (priority == ActionPriority.High)
+				return null;
+
 			return new Jobs.RunInCirclesJob(null, priority, worker.Environment);
 		}
 

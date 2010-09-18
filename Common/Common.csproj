@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\IAI.cs" />
     <Compile Include="Jobs\JobAI.cs" />
     <Compile Include="AStar\AStar2D.cs" />
     <Compile Include="AStar\OpenList.cs" />

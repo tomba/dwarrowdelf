@@ -8,30 +8,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs
 {
-	public interface IAI
-	{
-		/// <summary>
-		/// In server this is called two times per turn, once for high priority and once for idle priority.
-		/// In client this is called once per turn, if the living doesn't have an action or the action is lower than high priority.
-		/// </summary>
-		/// <param name="priority"></param>
-		/// <returns>Action to do, possibly overriding the current action, or null to continue doing the current action</returns>
-		GameAction DecideAction(ActionPriority priority);
-
-		/// <summary>
-		/// Called when worker starts a new action
-		/// Note: can be an action started by something else than this AI
-		/// </summary>
-		void ActionStarted(ActionStartedChange change);
-
-		/// <summary>
-		/// Called when worker's current action's state changes.
-		/// Note: can be an action started by something else than this AI
-		/// </summary>
-		/// <param name="e"></param>
-		void ActionProgress(ActionProgressChange change);
-	}
-
 	/// <summary>
 	/// AI that handles Jobs
 	/// </summary>
@@ -51,9 +27,10 @@ namespace Dwarrowdelf.Jobs
 			Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		protected virtual bool CheckForCancel(ActionPriority priority) { return false; }
+		protected virtual bool CheckForAbortOurJob(ActionPriority priority) { return false; }
+		protected virtual bool CheckForAbortOtherAction(ActionPriority priority) { return false; }
 
-		public virtual GameAction DecideAction(ActionPriority priority)
+		public GameAction DecideAction(ActionPriority priority)
 		{
 			D("DecideAction({0}): Worker.Action = {1}, CurrentJob {2}, CurrentJob.Action = {3}",
 				priority,
@@ -70,19 +47,39 @@ namespace Dwarrowdelf.Jobs
 					Debug.Assert(m_currentJob.CurrentAction.MagicNumber == this.Worker.CurrentAction.MagicNumber);
 			}
 
-			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
+			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority > priority)
 			{
-				D("DecideAction: worker already doing equal or higher priority action");
+				D("DecideAction: worker already doing higher priority action");
 				return null;
 			}
 
-			bool cancelCurrent = false;
-
-			if (this.Worker.HasAction)
+			if (m_currentJob != null)
 			{
-				cancelCurrent = CheckForCancel(priority);
-				if (cancelCurrent)
-					D("DecideAction: will override current action");
+				var abort = CheckForAbortOurJob(priority);
+				if (abort)
+				{
+					D("DecideAction: will abort current job");
+					m_currentJob.Abort();
+					m_currentJob = null;
+				}
+				else if(this.Worker.HasAction)
+				{
+					D("DecideAction: doing our action, proceed doing it");
+					return null;
+				}
+			}
+			else if(this.Worker.HasAction)
+			{
+				var abort = CheckForAbortOtherAction(priority);
+				if (abort)
+				{
+					D("DecideAction: will abort other action");
+				}
+				else
+				{
+					D("DecideAction: worker already doing other action");
+					return null;
+				}
 			}
 
 			while (true)
