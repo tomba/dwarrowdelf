@@ -3,11 +3,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Dwarrowdelf.Client"
     xmlns:jobs="clr-namespace:Dwarrowdelf.Jobs;assembly=Dwarrowdelf.Common"
-    Title="Window1" Height="541" Width="892"
+    Title="Dwarrowdelf" Height="541" Width="892"
     x:ClassModifier="internal"
     x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
-    DataContext="{x:Static local:GameData.Data}">
+    DataContext="{x:Static local:GameData.Data}"
+    Icon="/Dwarrowdelf;component/Images/MainWindow.png">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type local:ClientGameObject}">
