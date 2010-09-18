@@ -8,8 +8,8 @@
     <ProjectGuid>{0C31C7C2-586F-4F67-8225-1C09E816695B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyGame.Server</RootNamespace>
-    <AssemblyName>MyGame.ServerBase</AssemblyName>
+    <RootNamespace>Dwarrowdelf.Server</RootNamespace>
+    <AssemblyName>Dwarrowdelf.ServerBase</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

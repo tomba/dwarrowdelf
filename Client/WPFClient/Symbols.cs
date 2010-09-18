@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
 
-namespace MyGame.Client.Symbols
+namespace Dwarrowdelf.Client.Symbols
 {
 	public class SymbolCollection : KeyedCollection<SymbolID, BaseSymbol>
 	{

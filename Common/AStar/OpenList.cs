@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame.AStar
+namespace Dwarrowdelf.AStar
 {
 	interface IAStarNode
 	{

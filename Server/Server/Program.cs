@@ -7,7 +7,7 @@ using System.IO;
 using System.Diagnostics;
 
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	class ServerLauncher
 	{

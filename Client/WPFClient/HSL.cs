@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Media;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	static class HSL
 	{

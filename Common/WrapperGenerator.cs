@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection.Emit;
 using System.Reflection;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public static class WrapperGenerator
 	{

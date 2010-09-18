@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 using System.Windows;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class ItemObject : ClientGameObject, IItemObject
 	{

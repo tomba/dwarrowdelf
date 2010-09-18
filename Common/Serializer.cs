@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public static class Serializer
 	{

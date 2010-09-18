@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	public class HistoryTextBox : TextBox
 	{

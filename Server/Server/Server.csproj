@@ -8,7 +8,7 @@
     <ProjectGuid>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyGame.Server</RootNamespace>
+    <RootNamespace>Dwarrowdelf.Server</RootNamespace>
     <AssemblyName>Server</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using Microsoft.Windows.Media;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
     class D2DD3DImage: D3DImage, IDisposable
     {

@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MyGame;
 using System.Diagnostics;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public class TerrainGen
 	{

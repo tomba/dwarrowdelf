@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	/**
 	 * 2D grid, made of smaller blocks, allowing the grid to grow

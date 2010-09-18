@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Jobs
+namespace Dwarrowdelf.Jobs
 {
 	public class JobManager
 	{

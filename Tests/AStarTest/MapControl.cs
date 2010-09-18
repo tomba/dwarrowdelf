@@ -16,8 +16,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.ComponentModel;
 
-using MyGame;
-using MyGame.Client;
+using Dwarrowdelf;
+using Dwarrowdelf.Client;
 using AStarTest;
 using System.Diagnostics;
 
@@ -249,9 +249,9 @@ namespace AStarTest
 
 		IEnumerable<IntPoint3D> m_path;
 #if USE3D
-		MyGame.AStar.AStar3DResult m_result;
+		Dwarrowdelf.AStar.AStar3DResult m_result;
 #else
-		MyGame.AStar.AStar2DResult m_result;
+		Dwarrowdelf.AStar.AStar2DResult m_result;
 #endif
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
@@ -261,9 +261,9 @@ namespace AStarTest
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
 #if USE3D
-			var result = MyGame.AStar.AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
+			var result = Dwarrowdelf.AStar.AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
 #else
-			var result = MyGame.AStar.AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
+			var result = Dwarrowdelf.AStar.AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
 #endif
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);

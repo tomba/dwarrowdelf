@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Diagnostics;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	public class Server : MarshalByRefObject, IServer
 	{

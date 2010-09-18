@@ -13,11 +13,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.ComponentModel;
-using MyGame.Messages;
-using MyGame.Jobs;
+using Dwarrowdelf.Messages;
+using Dwarrowdelf.Jobs;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Interaction logic for Window1.xaml

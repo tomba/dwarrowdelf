@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Resources;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class DrawingCache
 	{

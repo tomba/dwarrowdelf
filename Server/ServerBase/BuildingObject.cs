@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	public class BuildingObject : BaseGameObject, IBuildingObject
 	{

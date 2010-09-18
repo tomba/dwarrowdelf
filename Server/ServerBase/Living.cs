@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	public class Living : ServerGameObject, ILiving
 	{

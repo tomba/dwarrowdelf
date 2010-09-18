@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
 	{

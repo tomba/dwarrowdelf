@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 using System.IO;
 using System.Diagnostics;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	public class ServerConnection
 	{
@@ -146,8 +146,8 @@ namespace MyGame.Server
 			m_scriptScope.SetVariable("get", new Func<object, IBaseGameObject>(m_world.IPGet));
 
 			m_scriptEngine.Execute("import clr", m_scriptScope);
-			m_scriptEngine.Execute("clr.AddReference('MyGame.Common')", m_scriptScope);
-			m_scriptEngine.Execute("import MyGame", m_scriptScope);
+			m_scriptEngine.Execute("clr.AddReference('Dwarrowdelf.Common')", m_scriptScope);
+			m_scriptEngine.Execute("import Dwarrowdelf", m_scriptScope);
 		}
 
 		protected void OnDisconnect()

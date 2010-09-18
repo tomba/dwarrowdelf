@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
 	{

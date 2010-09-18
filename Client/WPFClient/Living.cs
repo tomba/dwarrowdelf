@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class Living : ClientGameObject, ILiving
 	{

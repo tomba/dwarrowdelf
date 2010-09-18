@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	/**
 	 * 2D grid made of <T>s

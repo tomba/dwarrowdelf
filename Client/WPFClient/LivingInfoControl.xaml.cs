@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Interaction logic for LivingInfoControl.xaml

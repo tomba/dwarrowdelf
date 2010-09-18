@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	public struct RenderTileLayer
 	{

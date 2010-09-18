@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	static class MyExtensions
 	{

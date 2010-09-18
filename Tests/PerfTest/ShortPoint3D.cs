@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public struct ShortPoint3D : IEquatable<ShortPoint3D>
 	{

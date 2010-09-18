@@ -8,8 +8,8 @@
     <ProjectGuid>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MyGame</RootNamespace>
-    <AssemblyName>MyGame.Common</AssemblyName>
+    <RootNamespace>Dwarrowdelf</RootNamespace>
+    <AssemblyName>Dwarrowdelf.Common</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>

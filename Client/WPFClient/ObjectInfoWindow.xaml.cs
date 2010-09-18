@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Interaction logic for ObjectInfoWindow.xaml

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 using System.Runtime.Serialization;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public interface IConnection
 	{

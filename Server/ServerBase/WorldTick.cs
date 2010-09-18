@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 
-namespace MyGame.Server
+namespace Dwarrowdelf.Server
 {
 	public partial class World
 	{

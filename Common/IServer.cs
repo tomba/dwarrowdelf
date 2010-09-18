@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public interface IServer
 	{

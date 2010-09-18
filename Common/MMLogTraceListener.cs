@@ -4,7 +4,7 @@ using System.Threading;
 
 using MemoryMappedLog;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public class MMLogTraceListener : TraceListener
 	{

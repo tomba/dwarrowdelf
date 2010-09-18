@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using MyGame;
-using MyGame.Server;
-using Environment = MyGame.Server.Environment;
+using Dwarrowdelf;
+using Dwarrowdelf.Server;
+using Environment = Dwarrowdelf.Server.Environment;
 
 namespace MyArea
 {

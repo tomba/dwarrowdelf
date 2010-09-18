@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace MyGame.Jobs
+namespace Dwarrowdelf.Jobs
 {
 	public abstract class SerialActionJob : IActionJob
 	{

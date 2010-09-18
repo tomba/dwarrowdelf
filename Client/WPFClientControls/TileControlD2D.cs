@@ -20,7 +20,7 @@ using Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using Microsoft.WindowsAPICodePack.DirectX.DXGI;
 using Microsoft.WindowsAPICodePack.DirectX.WindowsImagingComponent;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.

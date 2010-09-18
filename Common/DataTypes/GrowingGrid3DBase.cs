@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public abstract class GrowingGrid3DBase<T> where T :class
 	{

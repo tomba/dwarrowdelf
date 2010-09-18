@@ -5,7 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Jobs
+namespace Dwarrowdelf.Jobs
 {
 	public class MineAreaParallelJob : ParallelJobGroup
 	{

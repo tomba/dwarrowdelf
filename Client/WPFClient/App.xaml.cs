@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Diagnostics;
 
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Interaction logic for App.xaml
@@ -41,7 +41,7 @@ namespace MyGame.Client
 			base.OnStartup(e);
 
 #if DEBUG
-			bool debugClient = MyGame.Client.Properties.Settings.Default.DebugClient;
+			bool debugClient = Dwarrowdelf.Client.Properties.Settings.Default.DebugClient;
 
 			if (debugClient)
 			{
@@ -126,9 +126,9 @@ namespace MyGame.Client
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
-			bool debugServer = MyGame.Client.Properties.Settings.Default.DebugServer;
+			bool debugServer = Dwarrowdelf.Client.Properties.Settings.Default.DebugServer;
 
-			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "MyGame.Server.Server");
+			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "Dwarrowdelf.Server.Server");
 			m_server.RunServer(true, debugServer, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);

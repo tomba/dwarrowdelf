@@ -16,7 +16,7 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class MapControl : MapControlBase<MapControlTile>, IMapControl, INotifyPropertyChanged
 	{

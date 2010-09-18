@@ -14,8 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-using MyGame;
-using MyGame.Client;
+using Dwarrowdelf;
+using Dwarrowdelf.Client;
 
 namespace WPFMapControlTest
 {

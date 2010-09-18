@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class BuildingObject : BaseGameObject, IBuildingObject
 	{
@@ -18,7 +18,7 @@ namespace MyGame.Client
 		{
 			public ItemObject[] SourceObjects { get; set; }
 
-			public MyGame.Jobs.IJob Job { get; set; }
+			public Dwarrowdelf.Jobs.IJob Job { get; set; }
 		}
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
@@ -96,13 +96,13 @@ namespace MyGame.Client
 
 			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
 			{
-				if (order.Job.Progress == MyGame.Jobs.Progress.Done)
+				if (order.Job.Progress == Dwarrowdelf.Jobs.Progress.Done)
 				{
 					Debug.Print("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
-				else if (order.Job.Progress == MyGame.Jobs.Progress.Fail)
+				else if (order.Job.Progress == Dwarrowdelf.Jobs.Progress.Fail)
 				{
 					Debug.Print("BuildOrder FAILED");
 					order.Job = null;
@@ -167,7 +167,7 @@ namespace MyGame.Client
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new MyGame.Jobs.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
+			var job = new Dwarrowdelf.Jobs.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
 			order.Job = job;
 			this.World.JobManager.Add(job);
 		}

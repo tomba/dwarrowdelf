@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MyGame.AStar
+namespace Dwarrowdelf.AStar
 {
 	public class AStar3DResult
 	{
@@ -108,7 +108,7 @@ namespace MyGame.AStar
 		}
 	}
 
-	public class AStarDelegateTarget : MyGame.AStar.IAStarTarget
+	public class AStarDelegateTarget : Dwarrowdelf.AStar.IAStarTarget
 	{
 		Func<IntPoint3D, bool> m_func;
 

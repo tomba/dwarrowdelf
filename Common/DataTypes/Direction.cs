@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public static class DirectionConsts
 	{

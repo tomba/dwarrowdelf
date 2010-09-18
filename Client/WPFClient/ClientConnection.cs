@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
-using MyGame.Messages;
+using Dwarrowdelf.Messages;
 using System.Runtime.Serialization;
 using System.IO;
 using System.ComponentModel;
 
-using MyGame;
+using Dwarrowdelf;
 using System.Diagnostics;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class ClientNetStatistics : INotifyPropertyChanged
 	{

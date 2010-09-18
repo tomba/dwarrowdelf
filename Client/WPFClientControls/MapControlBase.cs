@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	public abstract class MapControlBase<T> : TileControl<T> where T : UIElement, new()
 	{

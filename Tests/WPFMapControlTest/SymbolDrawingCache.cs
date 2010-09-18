@@ -7,7 +7,7 @@ using System.Windows;
 using System.IO;
 using System.Xml.Linq;
 
-namespace MyGame.Client
+namespace Dwarrowdelf.Client
 {
 	class SymbolDrawingCache
 	{

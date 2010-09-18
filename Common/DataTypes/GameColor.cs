@@ -45,7 +45,7 @@ using System.Runtime.Serialization;
 			return;
 */
 
-namespace MyGame
+namespace Dwarrowdelf
 {
 	public enum GameColor : byte
 	{

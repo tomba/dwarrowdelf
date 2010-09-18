@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
-using MyGame.Jobs;
+using Dwarrowdelf.Jobs;
 using System.Diagnostics;
 
-namespace MyGame.Jobs
+namespace Dwarrowdelf.Jobs
 {
 	public interface IAI
 	{
