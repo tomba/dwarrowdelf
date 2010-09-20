@@ -10,8 +10,8 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
 	public class MoveMineJob : StaticSerialActionJob
 	{
-		IEnvironment m_environment;
-		IntPoint3D m_location;
+		readonly IEnvironment m_environment;
+		readonly IntPoint3D m_location;
 
 		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
 			: base(parent, priority)
@@ -38,11 +38,6 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			return Progress.Ok;
 		}
 		*/
-
-		protected override void Cleanup()
-		{
-			m_environment = null;
-		}
 
 		public override string ToString()
 		{

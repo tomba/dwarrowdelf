@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class GetItemActionJob : ActionJob
 	{
-		IItemObject m_item;
+		readonly IItemObject m_item;
 
 		public GetItemActionJob(IJob parent, ActionPriority priority, IItemObject item)
 			: base(parent, priority)

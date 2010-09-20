@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class DropItemActionJob : ActionJob
 	{
-		IItemObject m_item;
+		readonly IItemObject m_item;
 
 		public DropItemActionJob(IJob parent, ActionPriority priority, IItemObject item)
 			: base(parent, priority)

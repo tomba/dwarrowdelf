@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class WaitActionJob : ActionJob
 	{
-		int m_turns;
+		readonly int m_turns;
 
 		public WaitActionJob(IJob parent, ActionPriority priority, int turns)
 			: base(parent, priority)

@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
 	public class RunInCirclesJob : StaticSerialActionJob
 	{
-		IEnvironment m_environment;
+		readonly IEnvironment m_environment;
 
 		public RunInCirclesJob(IJob parent, ActionPriority priority, IEnvironment environment)
 			: base(parent, priority)
@@ -26,11 +26,6 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			};
 
 			SetSubJobs(jobs);
-		}
-
-		protected override void Cleanup()
-		{
-			m_environment = null;
 		}
 
 		public override string ToString()

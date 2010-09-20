@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 		IntPoint3D m_src; // just for ToString()
 
 		Queue<Direction> m_pathDirs;
-		IEnvironment m_environment;
-		IntPoint3D m_dest;
-		bool m_adjacent;
+		readonly IEnvironment m_environment;
+		readonly IntPoint3D m_dest;
+		readonly bool m_adjacent;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
@@ -28,7 +28,6 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		protected override void Cleanup()
 		{
-			m_environment = null;
 			m_pathDirs = null;
 		}
 

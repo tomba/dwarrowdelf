@@ -10,13 +10,16 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
 	public class MineAreaJob : StaticSerialActionJob
 	{
-		public IEnvironment m_environment;
-		public IEnumerable<IntPoint> m_locs;
+		readonly IEnvironment m_environment;
+		readonly IntRect m_rect;
+
+		IEnumerable<IntPoint> m_locs;
 
 		public MineAreaJob(IEnvironment env, ActionPriority priority, IntRect rect, int z)
 			: base(null, priority)
 		{
 			m_environment = env;
+			m_rect = rect;
 
 			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
 
@@ -32,7 +35,6 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 
 		protected override void Cleanup()
 		{
-			m_environment = null;
 			m_locs = null;
 		}
 

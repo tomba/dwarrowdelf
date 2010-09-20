@@ -173,7 +173,7 @@ namespace Dwarrowdelf.Jobs
 			IJob job = (IJob)sender;
 			if (e.PropertyName == "Progress")
 			{
-				if (job.Progress == Progress.Abort)
+				if (job.Progress == Progress.Abort || job.Progress == Progress.Fail)
 				{
 					job.PropertyChanged -= OnJobPropertyChanged;
 					m_currentJob = null;

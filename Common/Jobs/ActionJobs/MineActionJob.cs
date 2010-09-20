@@ -9,19 +9,14 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class MineActionJob : ActionJob
 	{
-		IntPoint3D m_location;
-		IEnvironment m_environment;
+		readonly IntPoint3D m_location;
+		readonly IEnvironment m_environment;
 
 		public MineActionJob(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location)
 			: base(job, priority)
 		{
 			m_environment = environment;
 			m_location = location;
-		}
-
-		protected override void Cleanup()
-		{
-			m_environment = null;
 		}
 
 		protected override Progress PrepareNextActionOverride()

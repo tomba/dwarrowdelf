@@ -9,17 +9,12 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class BuildItemActionJob : ActionJob
 	{
-		IItemObject[] m_items;
+		readonly IItemObject[] m_items;
 
 		public BuildItemActionJob(IJob parent, ActionPriority priority, IItemObject[] items)
 			: base(parent, priority)
 		{
 			m_items = items;
-		}
-
-		protected override void Cleanup()
-		{
-			m_items = null;
 		}
 
 		protected override Progress PrepareNextActionOverride()

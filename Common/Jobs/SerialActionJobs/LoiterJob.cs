@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
 	public class LoiterJob : DynamicSerialActionJob
 	{
-		IEnvironment m_environment;
+		readonly IEnvironment m_environment;
 
 		public LoiterJob(IJob parent, ActionPriority priority, IEnvironment environment)
 			: base(parent, priority)
@@ -33,11 +33,6 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 		protected override Progress CheckProgress()
 		{
 			return Jobs.Progress.Ok;
-		}
-
-		protected override void Cleanup()
-		{
-			m_environment = null;
 		}
 
 		public override string ToString()
