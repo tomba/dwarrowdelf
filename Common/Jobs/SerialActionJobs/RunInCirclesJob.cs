@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.ActionJobs;
 
 namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
-	public class RunInCirclesJob : SerialActionJob
+	public class RunInCirclesJob : StaticSerialActionJob
 	{
 		IEnvironment m_environment;
 
@@ -17,11 +17,15 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 		{
 			m_environment = environment;
 
-			AddSubJob(new MoveActionJob(this, priority, m_environment, new IntPoint3D(2, 18, 9), false));
-			AddSubJob(new MoveActionJob(this, priority, m_environment, new IntPoint3D(14, 18, 9), false));
-			AddSubJob(new MoveActionJob(this, priority, m_environment, new IntPoint3D(14, 28, 9), false));
-			AddSubJob(new MoveActionJob(this, priority, m_environment, new IntPoint3D(2, 28, 9), false));
-			AddSubJob(new MoveActionJob(this, priority, m_environment, new IntPoint3D(2, 18, 9), false));
+			var jobs = new IActionJob[] {
+				new MoveActionJob(this, priority, environment, new IntPoint3D(2, 18, 9), false),
+				new MoveActionJob(this, priority, environment, new IntPoint3D(14, 18, 9), false),
+				new MoveActionJob(this, priority, environment, new IntPoint3D(14, 28, 9), false),
+				new MoveActionJob(this, priority, environment, new IntPoint3D(2, 28, 9), false),
+				new MoveActionJob(this, priority, environment, new IntPoint3D(2, 18, 9), false),
+			};
+
+			SetSubJobs(jobs);
 		}
 
 		protected override void Cleanup()

@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.ActionJobs;
 
 namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
-	public class BuildItem : SerialActionJob
+	public class BuildItem : StaticSerialActionJob
 	{
 		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items)
 			: base(parent, priority)
@@ -17,8 +17,10 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
 			var location = new IntPoint3D(p, workplace.Z);
 
-			AddSubJob(new MoveActionJob(this, priority, env, location, false));
-			AddSubJob(new BuildItemActionJob(this, priority, items));
+			SetSubJobs(new IActionJob[] {
+				new MoveActionJob(this, priority, env, location, false),
+				new BuildItemActionJob(this, priority, items),
+			});
 		}
 
 		public override string ToString()

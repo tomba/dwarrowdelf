@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.ActionJobs;
 
 namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
-	public class MineAreaJob : SerialActionJob
+	public class MineAreaJob : StaticSerialActionJob
 	{
 		public IEnvironment m_environment;
 		public IEnumerable<IntPoint> m_locs;
@@ -20,11 +20,14 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 
 			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
 
+			List<IActionJob> jobs = new List<IActionJob>();
 			foreach (var p in m_locs)
 			{
 				var job = new MoveMineJob(this, priority, env, new IntPoint3D(p, z));
-				AddSubJob(job);
+				jobs.Add(job);
 			}
+
+			SetSubJobs(jobs);
 		}
 
 		protected override void Cleanup()

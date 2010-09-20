@@ -410,7 +410,7 @@ namespace Dwarrowdelf.Server
 
 #else
 			var rand = new Random();
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i < 1; ++i)
 			{
 				IntPoint3D p;
 				do

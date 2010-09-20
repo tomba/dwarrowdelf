@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.Jobs.JobGroups
 {
 	public abstract class JobGroup : IJobGroup
 	{

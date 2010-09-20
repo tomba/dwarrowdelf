@@ -217,6 +217,7 @@
                             <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                             <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
+                            <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
                         </MenuItem>
                         <MenuItem Name="createBuildingMenu" Header="Create Building" />
                     </ContextMenu>
@@ -340,7 +341,7 @@
                     <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
                         <TreeView.Resources>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroup}" ItemsSource="{Binding SubJobs}">
+                            <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                     <TextBlock Text=", " />
@@ -350,7 +351,7 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:SerialActionJob}" ItemsSource="{Binding SubJobs}">
+                            <HierarchicalDataTemplate DataType="{x:Type jobs:SerialActionJobs.StaticSerialActionJob}" ItemsSource="{Binding SubJobs}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                     <TextBlock Text=", " />
@@ -362,7 +363,26 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
-                            <DataTemplate DataType="{x:Type jobs:ActionJob}">
+                            <HierarchicalDataTemplate DataType="{x:Type jobs:SerialActionJobs.DynamicSerialActionJob}">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding}" />
+                                        <TextBlock Text=", " />
+                                        <TextBlock Text="{Binding Progress}" />
+                                        <TextBlock Text=", " />
+                                        <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                        <TextBlock Text=", " />
+                                        <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                    </StackPanel>
+
+                                    <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentSubJob}">
+                                        <TextBlock Text=" - " />
+                                        <TextBlock Text="{Binding}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+
+                            <DataTemplate DataType="{x:Type jobs:ActionJobs.ActionJob}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                     <TextBlock Text=", " />

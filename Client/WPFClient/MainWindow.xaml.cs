@@ -571,6 +571,11 @@ namespace Dwarrowdelf.Client
 				var job = new Jobs.SerialActionJobs.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
 				this.Map.World.JobManager.Add(job);
 			}
+			else if (tag == "Loiter")
+			{
+				var job = new Jobs.SerialActionJobs.LoiterJob(null, ActionPriority.Normal, map.Environment);
+				this.Map.World.JobManager.Add(job);
+			}
 			else
 			{
 				throw new Exception();

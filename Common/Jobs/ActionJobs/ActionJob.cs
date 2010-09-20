@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public abstract class ActionJob : IActionJob
 	{

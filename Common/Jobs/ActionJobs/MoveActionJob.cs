@@ -9,6 +9,8 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 {
 	public class MoveActionJob : ActionJob
 	{
+		IntPoint3D m_src; // just for ToString()
+
 		Queue<Direction> m_pathDirs;
 		IEnvironment m_environment;
 		IntPoint3D m_dest;
@@ -38,6 +40,8 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		protected override Progress AssignOverride(ILiving worker)
 		{
+			m_src = worker.Location;
+
 			m_numFails = 0;
 			return Progress.Ok;
 		}
@@ -127,7 +131,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		public override string ToString()
 		{
-			return "Move";
+			return String.Format("Move({0} -> {1})", m_src, m_dest);
 		}
 
 	}

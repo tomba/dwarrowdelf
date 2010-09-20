@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.ActionJobs;
 
 namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
-	public class MoveMineJob : SerialActionJob
+	public class MoveMineJob : StaticSerialActionJob
 	{
 		IEnvironment m_environment;
 		IntPoint3D m_location;
@@ -19,8 +19,10 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			m_environment = environment;
 			m_location = location;
 
-			AddSubJob(new MoveActionJob(this, priority, m_environment, m_location, true));
-			AddSubJob(new MineActionJob(this, priority, m_environment, m_location));
+			SetSubJobs(new IActionJob[] {
+				new MoveActionJob(this, priority, m_environment, m_location, true),
+				new MineActionJob(this, priority, m_environment, m_location),
+			});
 		}
 
 		/*

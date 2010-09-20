@@ -6,26 +6,22 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.Jobs.SerialActionJobs
 {
-	public abstract class SerialActionJob : IActionJob
+	public abstract class DynamicSerialActionJob : IActionJob
 	{
-		IActionJob m_currentSubJob;
-		ObservableCollection<IActionJob> m_subJobs;
-		ReadOnlyObservableCollection<IActionJob> m_roSubJobs;
-
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
 		{
-			Debug.Print("[AI S] [{0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		protected SerialActionJob(IJob parent, ActionPriority priority)
+		IEnumerator<IActionJob> m_enumerator;
+
+		protected DynamicSerialActionJob(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
 			this.Priority = priority;
-			m_subJobs = new ObservableCollection<IActionJob>();
-			m_roSubJobs = new ReadOnlyObservableCollection<IActionJob>(m_subJobs);
 		}
 
 		public IJob Parent { get; private set; }
@@ -38,13 +34,6 @@ namespace Dwarrowdelf.Jobs
 			private set { m_progress = value; Notify("Progress"); }
 		}
 
-		public ReadOnlyObservableCollection<IActionJob> SubJobs { get { return m_roSubJobs; } }
-
-		protected void AddSubJob(IActionJob job)
-		{
-			m_subJobs.Add(job);
-		}
-
 		ILiving m_worker;
 		public ILiving Worker
 		{
@@ -52,25 +41,37 @@ namespace Dwarrowdelf.Jobs
 			private set { m_worker = value; Notify("Worker"); }
 		}
 
+		IActionJob m_currentSubJob;
+		public IActionJob CurrentSubJob
+		{
+			get { return m_currentSubJob; }
+			private set { m_currentSubJob = value; Notify("CurrentSubJob"); }
+		}
+
 		public GameAction CurrentAction
 		{
-			get { return m_currentSubJob != null ? m_currentSubJob.CurrentAction : null; }
+			get { return this.CurrentSubJob != null ? this.CurrentSubJob.CurrentAction : null; }
 		}
 
 
 		public void Abort()
 		{
-			foreach (var job in m_subJobs)
-				job.Abort();
+			if (this.CurrentSubJob != null)
+				this.CurrentSubJob.Abort();
+
+			AbortOverride();
 
 			SetProgress(Progress.Abort);
 		}
 
+		protected virtual void AbortOverride() { }
 
 		public Progress Assign(ILiving worker)
 		{
 			Debug.Assert(this.Worker == null);
 			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
+
+			D("Assign {0}", worker);
 
 			var progress = AssignOverride(worker);
 			SetProgress(progress);
@@ -79,10 +80,14 @@ namespace Dwarrowdelf.Jobs
 
 			this.Worker = worker;
 
-			m_currentSubJob = FindAndAssignJob(this.SubJobs, this.Worker, out progress);
+			m_enumerator = GetJobEnumerator();
+
+			this.CurrentSubJob = FindAndAssignJob(out progress);
 			SetProgress(progress);
 			return progress;
 		}
+
+		protected abstract IEnumerator<IActionJob> GetJobEnumerator();
 
 		protected virtual Progress AssignOverride(ILiving worker)
 		{
@@ -90,10 +95,11 @@ namespace Dwarrowdelf.Jobs
 		}
 
 
-
 		public Progress PrepareNextAction()
 		{
 			Debug.Assert(this.CurrentAction == null);
+
+			D("PrepareNextAction");
 
 			var progress = DoPrepareNextAction();
 			SetProgress(progress);
@@ -106,14 +112,14 @@ namespace Dwarrowdelf.Jobs
 			{
 				Progress progress;
 
-				if (m_currentSubJob == null)
+				if (this.CurrentSubJob == null)
 				{
-					m_currentSubJob = FindAndAssignJob(this.SubJobs, this.Worker, out progress);
+					this.CurrentSubJob = FindAndAssignJob(out progress);
 					if (progress != Progress.Ok)
 						return progress;
 				}
 
-				progress = m_currentSubJob.PrepareNextAction();
+				progress = this.CurrentSubJob.PrepareNextAction();
 				Notify("CurrentAction");
 
 				switch (progress)
@@ -122,7 +128,7 @@ namespace Dwarrowdelf.Jobs
 						return Progress.Ok;
 
 					case Progress.Done:
-						m_currentSubJob = null;
+						this.CurrentSubJob = null;
 						continue;
 
 					case Progress.Abort:
@@ -143,7 +149,9 @@ namespace Dwarrowdelf.Jobs
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.Progress == Progress.Ok);
 			Debug.Assert(this.CurrentAction != null);
-			Debug.Assert(m_currentSubJob != null);
+			Debug.Assert(this.CurrentSubJob != null);
+
+			D("ActionProgress");
 
 			var progress = DoActionProgress(e);
 			SetProgress(progress);
@@ -152,7 +160,7 @@ namespace Dwarrowdelf.Jobs
 
 		Progress DoActionProgress(ActionProgressChange e)
 		{
-			var progress = m_currentSubJob.ActionProgress(e);
+			var progress = this.CurrentSubJob.ActionProgress(e);
 			Notify("CurrentAction");
 
 			switch (progress)
@@ -165,11 +173,8 @@ namespace Dwarrowdelf.Jobs
 					return progress;
 
 				case Progress.Done:
-					m_currentSubJob = null;
-					if (this.SubJobs.All(j => j.Progress == Progress.Done))
-						return Progress.Done;
-					else
-						return Progress.Ok;
+					this.CurrentSubJob = null;
+					return CheckProgress();
 
 				case Progress.None:
 				default:
@@ -177,18 +182,26 @@ namespace Dwarrowdelf.Jobs
 			}
 		}
 
-		static IActionJob FindAndAssignJob(IEnumerable<IActionJob> jobs, ILiving worker, out Progress progress)
+		protected abstract Progress CheckProgress();
+
+		IActionJob FindAndAssignJob(out Progress progress)
 		{
-			Debug.Assert(!jobs.Any(j => j.Progress == Progress.Fail || j.Progress == Progress.Ok));
+			D("looking for new job");
 
-			//D("looking for new job");
-
-			foreach (var job in jobs)
+			while (true)
 			{
-				if (job.Progress == Progress.Done)
-					continue;
+				var ok = m_enumerator.MoveNext();
 
-				var subProgress = job.Assign(worker);
+				if (!ok)
+				{
+					D("all subjobs done");
+					progress = Progress.Done;
+					return null;
+				}
+
+				var job = m_enumerator.Current;
+
+				var subProgress = job.Assign(this.Worker);
 
 				switch (subProgress)
 				{
@@ -210,18 +223,13 @@ namespace Dwarrowdelf.Jobs
 						throw new Exception();
 				}
 			}
-
-			// All subjobs are done
-
-			//D("all subjobs done");
-
-			progress = Progress.Done;
-			return null;
 		}
 
 
 		protected void SetProgress(Progress progress)
 		{
+			D("SetProgress({0})", progress);
+
 			switch (progress)
 			{
 				case Progress.None:
@@ -233,18 +241,18 @@ namespace Dwarrowdelf.Jobs
 				case Progress.Done:
 					Cleanup();
 					this.Worker = null;
-					m_currentSubJob = null;
+					this.CurrentSubJob = null;
 					break;
 
 				case Progress.Abort:
 					this.Worker = null;
-					m_currentSubJob = null;
+					this.CurrentSubJob = null;
 					break;
 
 				case Progress.Fail:
 					Cleanup();
 					this.Worker = null;
-					m_currentSubJob = null;
+					this.CurrentSubJob = null;
 					break;
 			}
 
