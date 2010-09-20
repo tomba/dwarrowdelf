@@ -5,19 +5,27 @@ using System.Text;
 
 namespace Dwarrowdelf.AStar
 {
+	public enum AStarStatus
+	{
+		Found,
+		NotFound,
+		LimitExceeded,
+	}
+
 	public class AStar3DResult
 	{
 		public IDictionary<IntPoint3D, AStar3DNode> Nodes { get; private set; }
 		public AStar3DNode LastNode { get; private set; }
-		public bool PathFound { get { return this.LastNode != null; } }
+		public AStarStatus Status { get; private set; }
 
-		internal AStar3DResult(IDictionary<IntPoint3D, AStar3DNode> nodes, AStar3DNode lastNode)
+		internal AStar3DResult(IDictionary<IntPoint3D, AStar3DNode> nodes, AStar3DNode lastNode, AStarStatus status)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
 
 			this.Nodes = nodes;
 			this.LastNode = lastNode;
+			this.Status = status;
 		}
 
 		public IEnumerable<Direction> GetPathReverse()
@@ -141,19 +149,19 @@ namespace Dwarrowdelf.AStar
 		}
 
 		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
-			return Find(src, new AStarDelegateTarget(func), tileWeight, validDirs);
+			return Find(src, new AStarDelegateTarget(func), tileWeight, validDirs, maxNodeCount);
 		}
 
 		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
-			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs);
+			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs, maxNodeCount);
 		}
 
 		public static AStar3DResult Find(IntPoint3D src, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs)
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
 			var state = new AStarState()
 			{
@@ -166,16 +174,15 @@ namespace Dwarrowdelf.AStar
 				//OpenList = new SimpleOpenList<AStar3DNode>(),
 			};
 
-			AStar3DNode lastNode;
-			var nodes = FindInternal(state, out lastNode);
-			return new AStar3DResult(nodes, lastNode);
+			return FindInternal(state, maxNodeCount);
 		}
 
-		static IDictionary<IntPoint3D, AStar3DNode> FindInternal(AStarState state, out AStar3DNode lastNode)
+		static AStar3DResult FindInternal(AStarState state, int maxNodeCount)
 		{
-			lastNode = null;
-
 			//MyTrace.WriteLine("Start");
+
+			AStar3DNode lastNode = null;
+			AStarStatus status = AStarStatus.NotFound;
 
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
@@ -192,16 +199,20 @@ namespace Dwarrowdelf.AStar
 				if (state.Target.GetIsTarget(node.Loc))
 				{
 					lastNode = node;
+					status = AStarStatus.Found;
 					break;
 				}
 
 				CheckNeighbors(state, node);
 
-				if (nodeMap.Count > 200000)
-					throw new Exception();
+				if (nodeMap.Count > maxNodeCount)
+				{
+					status = AStarStatus.LimitExceeded;
+					break;
+				}
 			}
 
-			return nodeMap;
+			return new AStar3DResult(nodeMap, lastNode, status);
 		}
 
 		static ushort CostBetweenNodes(IntPoint3D from, IntPoint3D to)

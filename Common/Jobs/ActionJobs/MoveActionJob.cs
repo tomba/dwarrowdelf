@@ -103,16 +103,21 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 				return Progress.Done;
 			}
 
+			// First try pathfinding from the destination to source with small limit. We expect it to fail with LimitExceeded,
+			// but if it fails with NotFound, it means that the destination is surrounded by non-passable tiles
+			// (what about one-way tiles, if such exist?)
+			var backwardRes = AStar.AStar3D.Find(m_dest, this.Worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
+			if (backwardRes.Status == AStar.AStarStatus.NotFound)
+				return Jobs.Progress.Fail;
+
 			var res = AStar.AStar3D.Find(this.Worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
+
+			if (res.Status != AStar.AStarStatus.Found)
+				return Jobs.Progress.Fail;
+
 			var dirs = res.GetPath();
 
 			m_pathDirs = new Queue<Direction>(dirs);
-
-			if (m_pathDirs.Count == 0)
-			{
-				m_pathDirs = null;
-				return Progress.Fail;
-			}
 
 			m_supposedLocation = this.Worker.Location;
 

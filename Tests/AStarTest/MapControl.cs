@@ -273,7 +273,7 @@ namespace AStarTest
 
 			m_result = result;
 
-			if (!m_result.PathFound)
+			if (m_result.Status != Dwarrowdelf.AStar.AStarStatus.Found)
 			{
 				m_path = null;
 				return;
