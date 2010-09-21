@@ -515,7 +515,7 @@ namespace Dwarrowdelf.Client
 					if (env.GetInterior(p).ID != InteriorID.Wall)
 						continue;
 
-					var job = new Jobs.SerialActionJobs.MoveMineJob(null, ActionPriority.Normal, env, p);
+					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p);
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -525,7 +525,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 				int z = map.Z;
 
-				var job = new Jobs.SerialActionJobs.MineAreaJob(env, ActionPriority.Normal, r, z);
+				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, r, z);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
@@ -563,17 +563,17 @@ namespace Dwarrowdelf.Client
 				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
-				var job = new Jobs.ActionJobs.MoveActionJob(null, ActionPriority.Normal, env, p, false);
+				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, false);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "RunInCircles")
 			{
-				var job = new Jobs.SerialActionJobs.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
+				var job = new Jobs.AssignmentGroups.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "Loiter")
 			{
-				var job = new Jobs.SerialActionJobs.LoiterJob(null, ActionPriority.Normal, map.Environment);
+				var job = new Jobs.AssignmentGroups.LoiterJob(null, ActionPriority.Normal, map.Environment);
 				this.Map.World.JobManager.Add(job);
 			}
 			else

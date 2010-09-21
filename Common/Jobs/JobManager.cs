@@ -32,17 +32,17 @@ namespace Dwarrowdelf.Jobs
 			m_jobs.Remove(job);
 		}
 
-		public IActionJob FindJob(ILiving living)
+		public IAssignment FindJob(ILiving living)
 		{
 			return FindJob(m_jobs, living);
 		}
 
-		static IActionJob FindJob(IEnumerable<IJob> jobs, ILiving living)
+		static IAssignment FindJob(IEnumerable<IJob> jobs, ILiving living)
 		{
 			return FindJob(jobs, JobGroupType.Parallel, living);
 		}
 
-		static IActionJob FindJob(IEnumerable<IJob> jobs, JobGroupType type, ILiving living)
+		static IAssignment FindJob(IEnumerable<IJob> jobs, JobGroupType type, ILiving living)
 		{
 			if (type != JobGroupType.Parallel && type != JobGroupType.Serial)
 				throw new Exception();
@@ -56,9 +56,9 @@ namespace Dwarrowdelf.Jobs
 				{
 					// job can be taken
 
-					if (job is IActionJob)
+					if (job is IAssignment)
 					{
-						var ajob = (IActionJob)job;
+						var ajob = (IAssignment)job;
 						return ajob;
 					}
 					else if (job is IJobGroup)

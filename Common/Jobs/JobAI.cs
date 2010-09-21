@@ -14,7 +14,8 @@ namespace Dwarrowdelf.Jobs
 	public abstract class JobAI : IAI
 	{
 		public ILiving Worker { get; private set; }
-		IActionJob m_currentJob;
+		IAssignment m_currentJob;
+		public IAssignment CurrentJob { get { return m_currentJob; } }
 
 		protected JobAI(ILiving worker)
 		{
@@ -133,9 +134,9 @@ namespace Dwarrowdelf.Jobs
 		}
 
 
-		protected abstract IActionJob GetJob(ILiving worker, ActionPriority priority);
+		protected abstract IAssignment GetJob(ILiving worker, ActionPriority priority);
 
-		IActionJob FindAndAssignJob(ILiving worker, ActionPriority priority)
+		IAssignment FindAndAssignJob(ILiving worker, ActionPriority priority)
 		{
 			while (true)
 			{

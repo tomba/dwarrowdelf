@@ -6,9 +6,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Jobs.SerialActionJobs
+namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public abstract class DynamicSerialActionJob : IActionJob
+	public abstract class AssignmentGroup : IAssignment
 	{
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
@@ -16,9 +16,9 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		IEnumerator<IActionJob> m_enumerator;
+		IEnumerator<IAssignment> m_enumerator;
 
-		protected DynamicSerialActionJob(IJob parent, ActionPriority priority)
+		protected AssignmentGroup(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
 			this.Priority = priority;
@@ -41,8 +41,8 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			private set { m_worker = value; Notify("Worker"); }
 		}
 
-		IActionJob m_currentSubJob;
-		public IActionJob CurrentSubJob
+		IAssignment m_currentSubJob;
+		public IAssignment CurrentSubJob
 		{
 			get { return m_currentSubJob; }
 			private set { m_currentSubJob = value; Notify("CurrentSubJob"); }
@@ -80,14 +80,14 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 
 			this.Worker = worker;
 
-			m_enumerator = GetJobEnumerator();
+			m_enumerator = GetAssignmentEnumerator();
 
 			this.CurrentSubJob = FindAndAssignJob(out progress);
 			SetProgress(progress);
 			return progress;
 		}
 
-		protected abstract IEnumerator<IActionJob> GetJobEnumerator();
+		protected abstract IEnumerator<IAssignment> GetAssignmentEnumerator();
 
 		protected virtual Progress AssignOverride(ILiving worker)
 		{
@@ -184,7 +184,7 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 
 		protected abstract Progress CheckProgress();
 
-		IActionJob FindAndAssignJob(out Progress progress)
+		IAssignment FindAndAssignJob(out Progress progress)
 		{
 			D("looking for new job");
 

@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs
 			m_jobManager = jobManager;
 		}
 
-		protected override IActionJob GetJob(ILiving worker, ActionPriority priority)
+		protected override IAssignment GetJob(ILiving worker, ActionPriority priority)
 		{
 			return m_jobManager.FindJob(this.Worker);
 		}

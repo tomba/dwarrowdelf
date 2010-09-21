@@ -351,7 +351,7 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:SerialActionJobs.StaticSerialActionJob}" ItemsSource="{Binding SubJobs}">
+                            <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding SubJobs}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                     <TextBlock Text=", " />
@@ -363,7 +363,7 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:SerialActionJobs.DynamicSerialActionJob}">
+                            <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="{Binding}" />
@@ -382,7 +382,7 @@
                                 </StackPanel>
                             </HierarchicalDataTemplate>
 
-                            <DataTemplate DataType="{x:Type jobs:ActionJobs.ActionJob}">
+                            <DataTemplate DataType="{x:Type jobs:Assignments.Assignment}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding}" />
                                     <TextBlock Text=", " />

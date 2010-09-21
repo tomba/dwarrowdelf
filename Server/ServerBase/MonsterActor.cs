@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 		*/
-		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
+		protected override Jobs.IAssignment GetJob(ILiving worker, ActionPriority priority)
 		{
 			var env = worker.Environment;
 			var l = worker.Location;
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 
 				if (env.GetInteriorID(l) == InteriorID.Wall)
 				{
-					var job = new Jobs.SerialActionJobs.MoveMineJob(null, priority, env, l);
+					var job = new Jobs.AssignmentGroups.MoveMineJob(null, priority, env, l);
 					return job;
 				}
 			}

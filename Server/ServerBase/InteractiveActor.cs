@@ -40,25 +40,25 @@ namespace Dwarrowdelf.Server
 			return false;
 		}
 
-		protected override Jobs.IActionJob GetJob(ILiving worker, ActionPriority priority)
+		protected override Jobs.IAssignment GetJob(ILiving worker, ActionPriority priority)
 		{
 			/*
 			if (priority == ActionPriority.High)
 			{
 				if (this.Worker.World.TickNumber % 20 == 0)
-					return new Jobs.WaitActionJob(null, priority, 8);
+					return new Jobs.WaitAssignment(null, priority, 8);
 				else
 					return null;
 			}
 			 */
 			/*
-			return new Jobs.WaitActionJob(null, priority, 4);
+			return new Jobs.WaitAssignment(null, priority, 4);
 			*/
 
 			if (priority == ActionPriority.High)
 				return null;
 
-			return new Jobs.SerialActionJobs.LoiterJob(null, priority, worker.Environment);
+			return new Jobs.AssignmentGroups.LoiterJob(null, priority, worker.Environment);
 		}
 
 #if asd

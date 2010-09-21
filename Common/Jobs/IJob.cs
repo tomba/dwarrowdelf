@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Jobs
 		JobGroupType JobGroupType { get; }
 	}
 
-	public interface IActionJob : IJob
+	public interface IAssignment : IJob
 	{
 		ILiving Worker { get; }
 		GameAction CurrentAction { get; }

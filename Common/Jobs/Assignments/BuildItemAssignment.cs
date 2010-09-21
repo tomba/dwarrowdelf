@@ -5,13 +5,13 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class BuildItemActionJob : ActionJob
+	public class BuildItemAssignment : Assignment
 	{
 		readonly IItemObject[] m_items;
 
-		public BuildItemActionJob(IJob parent, ActionPriority priority, IItemObject[] items)
+		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items)
 			: base(parent, priority)
 		{
 			m_items = items;
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		public override string ToString()
 		{
-			return "BuildItemActionJob";
+			return "BuildItemAssignment";
 		}
 	}
 }

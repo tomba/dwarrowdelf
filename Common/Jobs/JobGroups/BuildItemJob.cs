@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			var location = new IntPoint3D(p, workplace.Z);
 
 			AddSubJob(new FetchItems(this, priority, env, location, sourceObjects));
-			AddSubJob(new SerialActionJobs.BuildItem(this, priority, workplace, sourceObjects));
+			AddSubJob(new AssignmentGroups.BuildItem(this, priority, workplace, sourceObjects));
 		}
 
 		public override string ToString()

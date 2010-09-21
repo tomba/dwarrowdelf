@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			foreach (var p in m_locs)
 			{
-				var job = new SerialActionJobs.MoveMineJob(this, priority, env, new IntPoint3D(p, z));
+				var job = new AssignmentGroups.MoveMineJob(this, priority, env, new IntPoint3D(p, z));
 				AddSubJob(job);
 			}
 		}

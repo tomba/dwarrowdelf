@@ -6,11 +6,11 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public abstract class ActionJob : IActionJob
+	public abstract class Assignment : IAssignment
 	{
-		protected ActionJob(IJob parent, ActionPriority priority)
+		protected Assignment(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
 			this.Priority = priority;

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Dwarrowdelf.Jobs.ActionJobs;
+using Dwarrowdelf.Jobs.Assignments;
 
-namespace Dwarrowdelf.Jobs.SerialActionJobs
+namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public class MoveMineJob : StaticSerialActionJob
+	public class MoveMineJob : StaticAssignmentGroup
 	{
 		readonly IEnvironment m_environment;
 		readonly IntPoint3D m_location;
@@ -19,9 +19,9 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			m_environment = environment;
 			m_location = location;
 
-			SetSubJobs(new IActionJob[] {
-				new MoveActionJob(this, priority, m_environment, m_location, true),
-				new MineActionJob(this, priority, m_environment, m_location),
+			SetAssignments(new IAssignment[] {
+				new MoveAssignment(this, priority, m_environment, m_location, true),
+				new MineAssignment(this, priority, m_environment, m_location),
 			});
 		}
 

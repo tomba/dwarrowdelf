@@ -5,13 +5,13 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class GetItemActionJob : ActionJob
+	public class DropItemAssignment : Assignment
 	{
 		readonly IItemObject m_item;
 
-		public GetItemActionJob(IJob parent, ActionPriority priority, IItemObject item)
+		public DropItemAssignment(IJob parent, ActionPriority priority, IItemObject item)
 			: base(parent, priority)
 		{
 			m_item = item;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		protected override GameAction PrepareNextActionOverride(out Progress progress)
 		{
-			var action = new GetAction(new IItemObject[] { m_item }, this.Priority);
+			var action = new DropAction(new IItemObject[] { m_item }, this.Priority);
 			progress = Progress.Ok;
 			return action;
 		}
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		public override string ToString()
 		{
-			return "GetItemActionJob";
+			return "DropItemAssignment";
 		}
 	}
 }

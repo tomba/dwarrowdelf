@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			foreach (var item in items)
 			{
-				AddSubJob(new SerialActionJobs.FetchItem(this, priority, env, location, item));
+				AddSubJob(new AssignmentGroups.FetchItem(this, priority, env, location, item));
 			}
 		}
 

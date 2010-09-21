@@ -5,9 +5,9 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class MoveActionJob : ActionJob
+	public class MoveAssignment : Assignment
 	{
 		IntPoint3D m_src; // just for ToString()
 
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
-		public MoveActionJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, bool adjacent)
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, bool adjacent)
 			: base(parent, priority)
 		{
 			m_environment = environment;

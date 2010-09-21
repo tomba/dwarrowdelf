@@ -5,14 +5,14 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class MineActionJob : ActionJob
+	public class MineAssignment : Assignment
 	{
 		readonly IntPoint3D m_location;
 		readonly IEnvironment m_environment;
 
-		public MineActionJob(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location)
+		public MineAssignment(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location)
 			: base(job, priority)
 		{
 			m_environment = environment;

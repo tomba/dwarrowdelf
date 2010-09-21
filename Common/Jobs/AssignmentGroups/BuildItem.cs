@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Dwarrowdelf.Jobs.ActionJobs;
+using Dwarrowdelf.Jobs.Assignments;
 
-namespace Dwarrowdelf.Jobs.SerialActionJobs
+namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public class BuildItem : StaticSerialActionJob
+	public class BuildItem : StaticAssignmentGroup
 	{
 		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items)
 			: base(parent, priority)
@@ -17,9 +17,9 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
 			var location = new IntPoint3D(p, workplace.Z);
 
-			SetSubJobs(new IActionJob[] {
-				new MoveActionJob(this, priority, env, location, false),
-				new BuildItemActionJob(this, priority, items),
+			SetAssignments(new IAssignment[] {
+				new MoveAssignment(this, priority, env, location, false),
+				new BuildItemAssignment(this, priority, items),
 			});
 		}
 

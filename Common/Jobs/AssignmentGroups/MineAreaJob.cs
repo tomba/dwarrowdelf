@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Dwarrowdelf.Jobs.ActionJobs;
+using Dwarrowdelf.Jobs.Assignments;
 
-namespace Dwarrowdelf.Jobs.SerialActionJobs
+namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public class MineAreaJob : StaticSerialActionJob
+	public class MineAreaJob : StaticAssignmentGroup
 	{
 		readonly IEnvironment m_environment;
 		readonly IntRect m_rect;
@@ -23,14 +23,14 @@ namespace Dwarrowdelf.Jobs.SerialActionJobs
 
 			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
 
-			List<IActionJob> jobs = new List<IActionJob>();
+			List<IAssignment> jobs = new List<IAssignment>();
 			foreach (var p in m_locs)
 			{
 				var job = new MoveMineJob(this, priority, env, new IntPoint3D(p, z));
 				jobs.Add(job);
 			}
 
-			SetSubJobs(jobs);
+			SetAssignments(jobs);
 		}
 
 		protected override void Cleanup()

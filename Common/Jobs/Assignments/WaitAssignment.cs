@@ -5,13 +5,13 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Jobs.ActionJobs
+namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class WaitActionJob : ActionJob
+	public class WaitAssignment : Assignment
 	{
 		readonly int m_turns;
 
-		public WaitActionJob(IJob parent, ActionPriority priority, int turns)
+		public WaitAssignment(IJob parent, ActionPriority priority, int turns)
 			: base(parent, priority)
 		{
 			m_turns = turns;
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 
 		public override string ToString()
 		{
-			return "WaitActionJob";
+			return "WaitAssignment";
 		}
 	}
 }
