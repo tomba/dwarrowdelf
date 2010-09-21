@@ -240,48 +240,68 @@
 
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Column="0" Grid.Row="0" Header="Inventory" Focusable="False">
-                    <DockPanel>
-                        <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-                        <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
-                        <ListBox Name="inventoryListBox"
-                             ItemsSource="{Binding Path=CurrentObject.Inventory}"
-                             SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                    </DockPanel>
-                </GroupBox>
+                <TabControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
 
-                <GroupBox Grid.Column="0" Grid.Row="1" Header="Objects">
-                    <ListBox ItemsSource="{Binding World.Objects}" 
+                    <TabItem Header="Controllables">
+                        <GroupBox Header="Controllables">
+                            <ListBox ItemsSource="{Binding World.Controllables}" 
                          SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
                          HorizontalContentAlignment="Stretch" />
-                </GroupBox>
+                        </GroupBox>
+                    </TabItem>
 
-                <GroupBox Grid.Column="1" Grid.Row="0" Header="Current Tile Info"
-                      DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
-                    <DockPanel>
-                        <StackPanel DockPanel.Dock="Top">
-                            <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-                            <TextBlock>Interior:
-                            <TextBlock Text="{Binding Interior.Name}" />
-                            (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
-                        </TextBlock>
-                            <TextBlock>Floor:
-                            <TextBlock Text="{Binding Floor.Name}" />
-                            (<TextBlock Text="{Binding FloorMaterial.Name}" />)
-                        </TextBlock>
-                            <TextBlock>Water:
-                            <TextBlock Text="{Binding WaterLevel}" />
-                        </TextBlock>
-                        </StackPanel>
-                        <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-                        <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
+                    <TabItem Header="Objects">
+                        <GroupBox Header="Objects">
+                            <ListBox ItemsSource="{Binding World.Objects}" 
+                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
+                         HorizontalContentAlignment="Stretch" />
+                        </GroupBox>
+                    </TabItem>
+
+                    <TabItem Header="Single Player">
+                        <UniformGrid Columns="2" Rows="1">
+
+                            <GroupBox Header="Inventory" Focusable="False">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
+                                    <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
+                                    <ListBox Name="inventoryListBox"
+                                          ItemsSource="{Binding Path=CurrentObject.Inventory}"
+                                          SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                                </DockPanel>
+                            </GroupBox>
+
+                            <GroupBox Header="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
+                                <DockPanel>
+                                    <StackPanel DockPanel.Dock="Top">
+                                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                                        <TextBlock>Interior:
+                                          <TextBlock Text="{Binding Interior.Name}" />
+                                         (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
+                                          </TextBlock>
+                                        <TextBlock>Floor:
+                                             <TextBlock Text="{Binding Floor.Name}" />
+                                            (<TextBlock Text="{Binding FloorMaterial.Name}" />)
+                                             </TextBlock>
+                                        <TextBlock>Water:
+                                      <TextBlock Text="{Binding WaterLevel}" />
+                                       </TextBlock>
+                                    </StackPanel>
+                                    <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
+                                    <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
                              SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                    </DockPanel>
-                </GroupBox>
+                                </DockPanel>
+                            </GroupBox>
 
-                <GroupBox Grid.Column="1" Grid.Row="1" Header="Selection"
+                        </UniformGrid>
+                    </TabItem>
+
+                </TabControl>
+
+                <GroupBox Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Header="Selection"
                       DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
-                    <DockPanel>
+                    <UniformGrid Columns="2" Rows="1">
+
                         <StackPanel DockPanel.Dock="Top">
                             <TextBlock>Area:
                                 <TextBlock>
@@ -318,7 +338,7 @@
                             </TextBlock>
                         </StackPanel>
                         <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
-                    </DockPanel>
+                    </UniformGrid>
                 </GroupBox>
 
                 <GroupBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Header="Controllables">
