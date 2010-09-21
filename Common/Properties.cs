@@ -32,6 +32,7 @@ namespace Dwarrowdelf
 		NutritionalValue,
 		RefreshmentValue,
 
+		Assignment,
 	}
 
 	public delegate void PropertyChangedCallback(PropertyDefinition property, object ob, object oldValue, object newValue);

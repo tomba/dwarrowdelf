@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Client
 
 			} while ((type = type.BaseType) != null);
 
-			throw new Exception();
+			throw new Exception("property not found");
 		}
 
 		GameObjectCollection m_inventory;

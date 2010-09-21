@@ -32,6 +32,8 @@ namespace Dwarrowdelf.Server
 		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), PropertyID.FoodFullness, PropertyVisibility.Friendly, 255);
 		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), PropertyID.WaterFullness, PropertyVisibility.Friendly, 255);
 
+		static readonly PropertyDefinition AssignmentProperty = RegisterProperty(typeof(Living), PropertyID.Assignment, PropertyVisibility.Friendly, "");
+
 		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)
 		{
 			Living l = (Living)ob;
@@ -47,6 +49,10 @@ namespace Dwarrowdelf.Server
 
 		public void Cleanup()
 		{
+			var aai = m_ai as Jobs.AssignmentAI;
+			if (aai != null)
+				aai.AssignmentChanged -= OnAIAssignmentChanged;
+
 			m_ai = null;
 			this.CurrentAction = null;
 			this.ActionTicksLeft = 0;
@@ -121,9 +127,19 @@ namespace Dwarrowdelf.Server
 			set { SetValue(WaterFullnessProperty, value); }
 		}
 
+		public string Assignment
+		{
+			get { return (string)GetValue(AssignmentProperty); }
+			set { SetValue(AssignmentProperty, value); }
+		}
+
 		public void SetAI(Jobs.IAI ai)
 		{
 			m_ai = ai;
+
+			var aai = m_ai as Jobs.AssignmentAI;
+			if (aai != null)
+				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
 		public Grid2D<bool> VisionMap
@@ -488,6 +504,14 @@ namespace Dwarrowdelf.Server
 				this.ActionTicksLeft = 0;
 				this.ActionUserID = 0;
 			}
+		}
+
+		void OnAIAssignmentChanged(Jobs.IAssignment assignment)
+		{
+			if (assignment != null)
+				this.Assignment = assignment.GetType().Name;
+			else
+				this.Assignment = "";
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)

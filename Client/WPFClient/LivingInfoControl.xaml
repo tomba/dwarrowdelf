@@ -28,6 +28,12 @@
 
             <TextBlock>Location</TextBlock>
             <TextBlock Text="{Binding Location}" />
+
+            <TextBlock>ServerAssignment</TextBlock>
+            <TextBlock Text="{Binding ServerAssignment}" />
+
+            <TextBlock>ClientAssignment</TextBlock>
+            <TextBlock Text="{Binding ClientAssignment}" />
         </UniformGrid>
 
         <Separator />

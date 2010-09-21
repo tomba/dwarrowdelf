@@ -23,6 +23,10 @@ namespace Dwarrowdelf.Client
 			: base(world, objectID)
 		{
 			m_ai = new Jobs.JobManagerAI(this, this.World.JobManager);
+			var aai = m_ai as Jobs.AssignmentAI;
+			if (aai != null)
+				aai.AssignmentChanged += OnAIAssignmentChanged;
+
 			this.IsLiving = true;
 		}
 
@@ -50,6 +54,11 @@ namespace Dwarrowdelf.Client
 			RegisterGameProperty(PropertyID.FoodFullness, "FoodFullness", typeof(int), typeof(Living));
 		public static readonly DependencyProperty WaterFullnessProperty =
 			RegisterGameProperty(PropertyID.WaterFullness, "WaterFullness", typeof(int), typeof(Living));
+
+		public static readonly DependencyProperty ServerAssignmentProperty =
+			RegisterGameProperty(PropertyID.Assignment, "ServerAssignment", typeof(string), typeof(Living));
+		public static readonly DependencyProperty ClientAssignmentProperty =
+			DependencyProperty.Register("ClientAssignment", typeof(string), typeof(Living));
 
 		public int HitPoints
 		{
@@ -130,10 +139,20 @@ namespace Dwarrowdelf.Client
 
 		public GameAction DecideAction(ActionPriority priority)
 		{
+			GameAction action = null;
+
 			if (m_ai != null)
-				return m_ai.DecideAction(priority);
+				action = m_ai.DecideAction(priority);
+
+			return action;
+		}
+
+		void OnAIAssignmentChanged(Jobs.IAssignment assignment)
+		{
+			if (assignment != null)
+				SetValue(ClientAssignmentProperty, assignment.GetType().Name);
 			else
-				return null;
+				SetValue(ClientAssignmentProperty, "");
 		}
 
 		public void HandleActionStarted(ActionStartedChange change)
