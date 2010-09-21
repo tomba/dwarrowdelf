@@ -19,21 +19,25 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 			m_location = location;
 		}
 
-		protected override Progress PrepareNextActionOverride()
+		protected override GameAction PrepareNextActionOverride(out Progress progress)
 		{
 			var v = m_location - this.Worker.Location;
 
 			if (!v.IsAdjacent2D)
-				return Progress.Fail;
+			{
+				progress = Progress.Fail;
+				return null;
+			}
 
 			if (CheckProgress() == Progress.Done)
-				return Progress.Done;
+			{
+				progress = Progress.Done;
+				return null;
+			}
 
 			var action = new MineAction(v.ToDirection(), this.Priority);
-
-			this.CurrentAction = action;
-
-			return Progress.Ok;
+			progress = Progress.Ok;
+			return action;
 		}
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)

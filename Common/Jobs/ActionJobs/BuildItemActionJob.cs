@@ -17,11 +17,11 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 			m_items = items;
 		}
 
-		protected override Progress PrepareNextActionOverride()
+		protected override GameAction PrepareNextActionOverride(out Progress progress)
 		{
 			var action = new BuildItemAction(m_items, this.Priority);
-			this.CurrentAction = action;
-			return Progress.Ok;
+			progress = Progress.Ok;
+			return action;
 		}
 
 		protected override Progress ActionProgressOverride(ActionProgressChange e)

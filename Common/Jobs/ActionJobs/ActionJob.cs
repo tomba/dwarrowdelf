@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 		public virtual GameAction CurrentAction
 		{
 			get { return m_action; }
-			protected set { m_action = value; Notify("CurrentAction"); }
+			private set { m_action = value; Notify("CurrentAction"); }
 		}
 
 		Progress m_progress;
@@ -76,12 +76,15 @@ namespace Dwarrowdelf.Jobs.ActionJobs
 		{
 			Debug.Assert(this.CurrentAction == null);
 
-			var progress = PrepareNextActionOverride();
+			Progress progress;
+			var action = PrepareNextActionOverride(out progress);
+			Debug.Assert((action == null && progress != Jobs.Progress.Ok) || (action != null && progress == Jobs.Progress.Ok));
+			this.CurrentAction = action;
 			SetProgress(progress);
 			return progress;
 		}
 
-		protected abstract Progress PrepareNextActionOverride();
+		protected abstract GameAction PrepareNextActionOverride(out Progress progress);
 
 		public Progress ActionProgress(ActionProgressChange e)
 		{
