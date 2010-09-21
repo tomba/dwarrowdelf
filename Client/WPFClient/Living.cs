@@ -152,7 +152,7 @@ namespace Dwarrowdelf.Client
 			if (assignment != null)
 				SetValue(ClientAssignmentProperty, assignment.GetType().Name);
 			else
-				SetValue(ClientAssignmentProperty, "");
+				SetValue(ClientAssignmentProperty, null);
 		}
 
 		public void HandleActionStarted(ActionStartedChange change)

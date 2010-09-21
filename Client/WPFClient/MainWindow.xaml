@@ -321,17 +321,25 @@
                     </DockPanel>
                 </GroupBox>
 
-                <GroupBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Header="Actions">
+                <GroupBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Header="Controllables">
                     <ListBox ItemsSource="{Binding Path=World.Controllables}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock>
-                                    <TextBlock Text="{Binding}" />
-                                    :
-                                    <TextBlock Text="{Binding CurrentAction}" />
-                                    left
-                                    <TextBlock Text="{Binding ActionTicksLeft}" />
-                                </TextBlock>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock>
+                                        <TextBlock Text="{Binding}" />
+                                        :
+                                        <TextBlock Text="{Binding CurrentAction}" />
+                                        left
+                                        <TextBlock Text="{Binding ActionTicksLeft}" />
+                                    </TextBlock>
+
+                                    <TextBlock Margin="20,0,0,0">
+                                        Client: <TextBlock Text="{Binding ClientAssignment, TargetNullValue=none}" />
+                                        /
+                                        Server: <TextBlock Text="{Binding ServerAssignment, TargetNullValue=none}" />
+                                    </TextBlock>
+                                </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

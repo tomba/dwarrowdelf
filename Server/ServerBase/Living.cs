@@ -511,7 +511,7 @@ namespace Dwarrowdelf.Server
 			if (assignment != null)
 				this.Assignment = assignment.GetType().Name;
 			else
-				this.Assignment = "";
+				this.Assignment = null;
 		}
 
 		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
