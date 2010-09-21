@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	public class MonsterActor : Jobs.JobAI
+	public class MonsterActor : Jobs.AssignmentAI
 	{
 		Random m_random;
 
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 		*/
-		protected override Jobs.IAssignment GetJob(ILiving worker, ActionPriority priority)
+		protected override Jobs.IAssignment GetAssignment(ILiving worker, ActionPriority priority)
 		{
 			var env = worker.Environment;
 			var l = worker.Location;

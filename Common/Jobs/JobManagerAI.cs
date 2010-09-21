@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Jobs
 	/// <summary>
 	/// AI that takes jobs from a JobManager
 	/// </summary>
-	public class JobManagerAI : JobAI
+	public class JobManagerAI : AssignmentAI
 	{
 		JobManager m_jobManager;
 
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs
 			m_jobManager = jobManager;
 		}
 
-		protected override IAssignment GetJob(ILiving worker, ActionPriority priority)
+		protected override IAssignment GetAssignment(ILiving worker, ActionPriority priority)
 		{
 			return m_jobManager.FindJob(this.Worker);
 		}

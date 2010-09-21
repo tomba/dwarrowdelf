@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	class InteractiveActor : Jobs.JobAI
+	class InteractiveActor : Jobs.AssignmentAI
 	{
 		//Living Worker { get; set; }
 		Random m_random;
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Server
 			return false;
 		}
 
-		protected override bool CheckForAbortOurJob(ActionPriority priority)
+		protected override bool CheckForAbortOurAssignment(ActionPriority priority)
 		{
 			/*
 			if (priority < ActionPriority.High)
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 			return false;
 		}
 
-		protected override Jobs.IAssignment GetJob(ILiving worker, ActionPriority priority)
+		protected override Jobs.IAssignment GetAssignment(ILiving worker, ActionPriority priority)
 		{
 			/*
 			if (priority == ActionPriority.High)

@@ -86,7 +86,7 @@
     <Compile Include="Jobs\Assignments\MineAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\IAI.cs" />
-    <Compile Include="Jobs\JobAI.cs" />
+    <Compile Include="Jobs\AssignmentAI.cs" />
     <Compile Include="AStar\AStar2D.cs" />
     <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
