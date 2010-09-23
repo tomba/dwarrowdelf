@@ -136,6 +136,8 @@ namespace Dwarrowdelf.Client
 				Win32.Helpers.LoadWindowPlacement(this, p);
 		}
 
+		public AvalonDock.DockingManager Dock { get { return dockingManager; } }
+
 		public MasterMapControl MapControl { get { return map; } }
 
 		public void OnServerStarted()

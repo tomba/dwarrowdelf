@@ -130,7 +130,7 @@
         </StatusBar>
 
 
-        <ad:DockingManager>
+        <ad:DockingManager x:Name="dockingManager">
             <ad:ResizingPanel Orientation="Vertical">
                 <ad:ResizingPanel Orientation="Horizontal">
 
