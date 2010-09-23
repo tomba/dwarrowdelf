@@ -136,10 +136,12 @@ namespace Dwarrowdelf.Client
 				Win32.Helpers.LoadWindowPlacement(this, p);
 		}
 
+		public MasterMapControl MapControl { get { return map; } }
+
 		public void OnServerStarted()
 		{
 			// xxx autologin
-			LogOn_Button_Click(null, null);
+			//LogOn_Button_Click(null, null);
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -253,7 +255,7 @@ namespace Dwarrowdelf.Client
 
 		public TileInfo CurrentTileInfo { get; private set; }
 
-		Direction KeyToDir(Key key)
+		static Direction KeyToDir(Key key)
 		{
 			Direction dir;
 
@@ -274,7 +276,7 @@ namespace Dwarrowdelf.Client
 			return dir;
 		}
 
-		bool KeyIsDir(Key key)
+		static bool KeyIsDir(Key key)
 		{
 			switch (key)
 			{
@@ -793,16 +795,6 @@ namespace Dwarrowdelf.Client
 
 			var msg = new IPCommandMessage() { Text = str };
 			GameData.Data.Connection.Send(msg);
-		}
-
-		private void Button_Click(object sender, RoutedEventArgs e)
-		{
-			var button = (Button)sender;
-
-			var wnd = new ObjectInfoWindow();
-			wnd.Owner = this;
-			wnd.DataContext = button.DataContext;
-			wnd.Show();
 		}
 
 		private void Button_Click_GC(object sender, RoutedEventArgs e)

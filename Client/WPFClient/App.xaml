@@ -5,6 +5,5 @@
     ShutdownMode="OnMainWindowClose">
 
     <Application.Resources>
-        
-	</Application.Resources>
+    </Application.Resources>
 </Application>

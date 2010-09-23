@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Dwarrowdelf.Client"
+                    x:Class="Dwarrowdelf.Client.UIDictionary">
+
+    <DataTemplate DataType="{x:Type local:ClientGameObject}">
+        <DataTemplate.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="5,3" />
+            </Style>
+        </DataTemplate.Resources>
+
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Click="Button_Click">
+                <Image Source="Images/eye.png" />
+            </Button>
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
+                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+            <TextBlock Name="nameTextBlock">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding Path="Name" />
+                            <Binding Path="ObjectID" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+            </TextBlock>
+
+            <DockPanel.ToolTip>
+                <local:ItemInfoControl />
+            </DockPanel.ToolTip>
+        </DockPanel>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type local:Living}">
+        <DataTemplate.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="5,3" />
+            </Style>
+        </DataTemplate.Resources>
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Click="Button_Click">
+                <Image Source="Images/eye.png" />
+            </Button>
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
+                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+            <TextBlock Name="nameTextBlock">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding Path="Name" />
+                            <Binding Path="ObjectID" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+            </TextBlock>
+            <DockPanel.ToolTip>
+                <local:LivingInfoControl />
+            </DockPanel.ToolTip>
+        </DockPanel>
+    </DataTemplate>
+
+</ResourceDictionary>

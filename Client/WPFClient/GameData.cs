@@ -25,6 +25,7 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
+		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		public ClientConnection Connection
 		{

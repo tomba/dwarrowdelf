@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:Dwarrowdelf.Client"
     xmlns:jobs="clr-namespace:Dwarrowdelf.Jobs;assembly=Dwarrowdelf.Common"
-    Title="Dwarrowdelf" Height="541" Width="892"
+    xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+    Title="Dwarrowdelf" Height="785" Width="1173"
     x:ClassModifier="internal"
     x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
@@ -11,60 +12,8 @@
     Icon="/Dwarrowdelf;component/Images/MainWindow.png">
 
     <Window.Resources>
-        <DataTemplate DataType="{x:Type local:ClientGameObject}">
-            <DataTemplate.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="5,3" />
-                </Style>
-            </DataTemplate.Resources>
-
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Click="Button_Click">
-                    <Image Source="Images/eye.png" />
-                </Button>
-                <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
-                <TextBlock Name="nameTextBlock">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Name" />
-                            <Binding Path="ObjectID" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-
-                <DockPanel.ToolTip>
-                    <local:ItemInfoControl />
-                </DockPanel.ToolTip>
-            </DockPanel>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type local:Living}">
-            <DataTemplate.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="5,3" />
-                </Style>
-            </DataTemplate.Resources>
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Click="Button_Click">
-                    <Image Source="Images/eye.png" />
-                </Button>
-                <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
-                <TextBlock Name="nameTextBlock">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Name" />
-                            <Binding Path="ObjectID" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <DockPanel.ToolTip>
-                    <local:LivingInfoControl />
-                </DockPanel.ToolTip>
-            </DockPanel>
-        </DataTemplate>
     </Window.Resources>
+
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
@@ -180,173 +129,117 @@
             </TextBox>
         </StatusBar>
 
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
-            <TextBox Name="outputTextBox" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" IsReadOnly="True"
-                     Height="100" FontFamily="Lucida Console" />
-            <local:HistoryTextBox x:Name="inputTextBox" TextEntered="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
-        </StackPanel>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+        <ad:DockingManager>
+            <ad:ResizingPanel Orientation="Vertical">
+                <ad:ResizingPanel Orientation="Horizontal">
 
-            <Grid.RowDefinitions>
-                <RowDefinition />
-            </Grid.RowDefinitions>
+                    <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
+                        <!-- Controllables -->
+                        <ad:DockableContent Title="Controllables" DataContext="{x:Static local:GameData.Data}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
 
-            <local:MasterMapControl x:Name="map" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4">
-                <local:MasterMapControl.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Name="setFloorMenu" Header="Set Floor" />
-                        <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
-                        <MenuItem Name="setInteriorMenu" Header="Set Interior" />
-                        <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
-                        <MenuItem Header="Set Water" Click="MenuItem_Click_SetWater" />
-                        <MenuItem Header="Set Grass">
-                            <MenuItem Tag="True" Header="True" Click="MenuItem_Click_SetGrass" />
-                            <MenuItem Tag="False" Header="False" Click="MenuItem_Click_SetGrass" />
-                        </MenuItem>
-                        <MenuItem Header="Jobs">
-                            <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
-                            <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
-                        </MenuItem>
-                        <MenuItem Name="createBuildingMenu" Header="Create Building" />
-                    </ContextMenu>
-                </local:MasterMapControl.ContextMenu>
-            </local:MasterMapControl>
+                            <ListBox ItemsSource="{Binding World.Controllables}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
+                        </ad:DockableContent>
 
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="5" ShowsPreview="True" />
+                        <!-- All objects-->
+                        <ad:DockableContent Title="Objects" DataContext="{x:Static local:GameData.Data}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
 
-            <Grid Grid.Column="2" Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
+                            <ListBox ItemsSource="{Binding World.Objects}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
+                                     HorizontalContentAlignment="Stretch" />
+                        </ad:DockableContent>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-
-                </Grid.RowDefinitions>
-
-                <TabControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
-
-                    <TabItem Header="Controllables">
-                        <GroupBox Header="Controllables">
-                            <ListBox ItemsSource="{Binding World.Controllables}" 
-                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
-                         HorizontalContentAlignment="Stretch" />
-                        </GroupBox>
-                    </TabItem>
-
-                    <TabItem Header="Objects">
-                        <GroupBox Header="Objects">
-                            <ListBox ItemsSource="{Binding World.Objects}" 
-                         SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
-                         HorizontalContentAlignment="Stretch" />
-                        </GroupBox>
-                    </TabItem>
-
-                    <TabItem Header="Single Player">
-                        <UniformGrid Columns="2" Rows="1">
-
-                            <GroupBox Header="Inventory" Focusable="False">
-                                <DockPanel>
-                                    <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-                                    <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
-                                    <ListBox Name="inventoryListBox"
+                        <!-- Inventory -->
+                        <ad:DockableContent Title="Inventory" DataContext="{x:Static local:GameData.Data}">
+                            <DockPanel>
+                                <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
+                                <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
+                                <ListBox Name="inventoryListBox"
                                           ItemsSource="{Binding Path=CurrentObject.Inventory}"
                                           SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                                </DockPanel>
-                            </GroupBox>
+                            </DockPanel>
+                        </ad:DockableContent>
 
-                            <GroupBox Header="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
-                                <DockPanel>
-                                    <StackPanel DockPanel.Dock="Top">
-                                        <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-                                        <TextBlock>Interior:
+                        <!-- Current tile info-->
+                        <ad:DockableContent Title="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Top">
+                                    <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                                    <TextBlock>Interior:
                                           <TextBlock Text="{Binding Interior.Name}" />
                                          (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
                                           </TextBlock>
-                                        <TextBlock>Floor:
+                                    <TextBlock>Floor:
                                              <TextBlock Text="{Binding Floor.Name}" />
                                             (<TextBlock Text="{Binding FloorMaterial.Name}" />)
                                              </TextBlock>
-                                        <TextBlock>Water:
+                                    <TextBlock>Water:
                                       <TextBlock Text="{Binding WaterLevel}" />
                                        </TextBlock>
-                                    </StackPanel>
-                                    <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-                                    <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" 
-                             SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
-                                </DockPanel>
-                            </GroupBox>
+                                </StackPanel>
+                                <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
+                                <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                            </DockPanel>
+                        </ad:DockableContent>
 
-                        </UniformGrid>
-                    </TabItem>
+                        <!-- Selection -->
+                        <ad:DockableContent Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
+                            <DockPanel>
 
-                </TabControl>
-
-                <GroupBox Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Header="Selection"
-                      DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
-                    <UniformGrid Columns="2" Rows="1">
-
-                        <StackPanel DockPanel.Dock="Top">
-                            <TextBlock>Area:
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
-                                            <Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
-                                            <Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                </TextBlock>
-                            </TextBlock>
-
-                            <TextBlock>Interior:
-                                <TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
-                            </TextBlock>
-                            <TextBlock>Floor:
-                                <TextBlock Text="{Binding Floors, Converter={StaticResource myFloorsConverter}}" />
-                            </TextBlock>
-                            <TextBlock>Water:
-                                <TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
-                            </TextBlock>
-                            <TextBlock>Building:
-                                <TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
-                            </TextBlock>
-                            <TextBlock>Grass:
-                                <TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
-                            </TextBlock>
-                        </StackPanel>
-                        <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
-                    </UniformGrid>
-                </GroupBox>
-
-                <GroupBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Header="Controllables">
-                    <ListBox ItemsSource="{Binding Path=World.Controllables}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
+                                <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>
+                                        Area:
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
+                                                    <Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
+                                                    <Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </TextBlock>
+
+                                    <TextBlock>Interior:
+                                        <TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
+                                    </TextBlock>
+                                    <TextBlock>Floor:
+                                        <TextBlock Text="{Binding Floors, Converter={StaticResource myFloorsConverter}}" />
+                                    </TextBlock>
+                                    <TextBlock>Water:
+                                        <TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
+                                    </TextBlock>
+                                    <TextBlock>Building:
+                                        <TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
+                                    </TextBlock>
+                                    <TextBlock>Grass:
+                                        <TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
+                            </DockPanel>
+
+                        </ad:DockableContent>
+
+                        <!-- Controllables' actions -->
+                        <ad:DockableContent Title="Controllables" DataContext="{x:Static local:GameData.Data}">
+                            <ListBox ItemsSource="{Binding Path=World.Controllables}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock>
                                         <TextBlock Text="{Binding}" />
                                         :
                                         <TextBlock Text="{Binding CurrentAction}" />
@@ -354,87 +247,134 @@
                                         <TextBlock Text="{Binding ActionTicksLeft}" />
                                     </TextBlock>
 
-                                    <TextBlock Margin="20,0,0,0">
+                                            <TextBlock Margin="20,0,0,0">
                                         Client: <TextBlock Text="{Binding ClientAssignment, TargetNullValue=none}" />
                                         /
                                         Server: <TextBlock Text="{Binding ServerAssignment, TargetNullValue=none}" />
                                     </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </GroupBox>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ad:DockableContent>
 
-                <GroupBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Header="Jobs">
-                    <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
-                        <TreeView.Resources>
+                        <!-- Jobs -->
+                        <ad:DockableContent Title="Jobs" DataContext="{x:Static local:GameData.Data}">
+                            <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
+                                <TreeView.Resources>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding Progress}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding JobGroupType}" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding JobGroupType}" />
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding SubJobs}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding Progress}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding SubJobs}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
 
-                            <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding}" />
-                                        <TextBlock Text=", " />
-                                        <TextBlock Text="{Binding Progress}" />
-                                        <TextBlock Text=", " />
-                                        <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
-                                        <TextBlock Text=", " />
-                                        <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                                    </StackPanel>
+                                    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
+                                        <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding}" />
+                                                <TextBlock Text=", " />
+                                                <TextBlock Text="{Binding Progress}" />
+                                                <TextBlock Text=", " />
+                                                <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                                <TextBlock Text=", " />
+                                                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                            </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentSubJob}">
-                                        <TextBlock Text=" - " />
-                                        <TextBlock Text="{Binding}" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </HierarchicalDataTemplate>
+                                            <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentSubJob}">
+                                                <TextBlock Text=" - " />
+                                                <TextBlock Text="{Binding}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
 
-                            <DataTemplate DataType="{x:Type jobs:Assignments.Assignment}">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding Progress}" />
-                                    <TextBlock Text=" , " />
-                                    <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
-                                    <TextBlock Text=", " />
-                                    <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                                </StackPanel>
-                            </DataTemplate>
+                                    <DataTemplate DataType="{x:Type jobs:Assignments.Assignment}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text=" , " />
+                                            <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                            <TextBlock Text=", " />
+                                            <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+                                        </StackPanel>
+                                    </DataTemplate>
 
-                        </TreeView.Resources>
+                                </TreeView.Resources>
 
-                        <TreeView.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
-                                <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
-                            </ContextMenu>
-                        </TreeView.ContextMenu>
-                    </TreeView>
-                </GroupBox>
-            </Grid>
+                                <TreeView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+                                        <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
+                                    </ContextMenu>
+                                </TreeView.ContextMenu>
+                            </TreeView>
+                        </ad:DockableContent>
 
-        </Grid>
+                    </ad:DockablePane>
+
+                    <ad:DocumentPane>
+                        <ad:DocumentContent Title="Map">
+
+                            <local:MasterMapControl x:Name="map">
+                                <local:MasterMapControl.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Name="setFloorMenu" Header="Set Floor" />
+                                        <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
+                                        <MenuItem Name="setInteriorMenu" Header="Set Interior" />
+                                        <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
+                                        <MenuItem Header="Set Water" Click="MenuItem_Click_SetWater" />
+                                        <MenuItem Header="Set Grass">
+                                            <MenuItem Tag="True" Header="True" Click="MenuItem_Click_SetGrass" />
+                                            <MenuItem Tag="False" Header="False" Click="MenuItem_Click_SetGrass" />
+                                        </MenuItem>
+                                        <MenuItem Header="Jobs">
+                                            <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
+                                        </MenuItem>
+                                        <MenuItem Name="createBuildingMenu" Header="Create Building" />
+                                    </ContextMenu>
+                                </local:MasterMapControl.ContextMenu>
+                            </local:MasterMapControl>
+
+                        </ad:DocumentContent>
+                    </ad:DocumentPane>
+                </ad:ResizingPanel>
+
+                <ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
+                    <ad:DockableContent Title="Console">
+                        <DockPanel>
+                            <local:HistoryTextBox DockPanel.Dock="Bottom" x:Name="inputTextBox" TextEntered="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
+                            <TextBox Name="outputTextBox" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Lucida Console" />
+                        </DockPanel>
+                    </ad:DockableContent>
+                </ad:DockablePane>
+
+            </ad:ResizingPanel>
+        </ad:DockingManager>
+
     </DockPanel>
 
 </Window>
