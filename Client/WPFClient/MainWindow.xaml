@@ -12,8 +12,12 @@
     Icon="/Dwarrowdelf;component/Images/MainWindow.png">
 
     <Window.Resources>
+        <local:MyInteriorsConverter x:Key="myInteriorsConverter" />
+        <local:MyFloorsConverter x:Key="myFloorsConverter" />
+        <local:MyWatersConverter x:Key="myWatersConverter" />
+        <local:MyBuildingsConverter x:Key="myBuildingsConverter" />
+        <local:MyGrassesConverter x:Key="myGrassesConverter" />
     </Window.Resources>
-
 
     <DockPanel>
         <Menu DockPanel.Dock="Top">

@@ -19,9 +19,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	/// <summary>
-	/// Interaction logic for Window1.xaml
-	/// </summary>
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		ClientGameObject m_followObject;
@@ -34,12 +31,6 @@ namespace Dwarrowdelf.Client
 			//this.WindowState = WindowState.Maximized;
 
 			this.CurrentTileInfo = new TileInfo();
-
-			this.Resources["myInteriorsConverter"] = new ListConverter<Tuple<InteriorInfo, MaterialInfo>>(item => item.Item1.Name + " (" + item.Item2.Name + ")");
-			this.Resources["myFloorsConverter"] = new ListConverter<Tuple<FloorInfo, MaterialInfo>>(item => item.Item1.Name + " (" + item.Item2.Name + ")");
-			this.Resources["myWatersConverter"] = new ListConverter<byte>(item => item.ToString());
-			this.Resources["myBuildingsConverter"] = new ListConverter<BuildingObject>(item => item.BuildingInfo.Name);
-			this.Resources["myGrassesConverter"] = new ListConverter<bool>(item => item.ToString());
 
 			InitializeComponent();
 
@@ -822,5 +813,30 @@ namespace Dwarrowdelf.Client
 			if (System.IO.File.Exists(LayoutFileName))
 				dockingManager.RestoreLayout(LayoutFileName);
 		}
+	}
+
+	class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>
+	{
+		public MyInteriorsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
+	}
+
+	class MyFloorsConverter : ListConverter<Tuple<FloorInfo, MaterialInfo>>
+	{
+		public MyFloorsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
+	}
+
+	class MyWatersConverter : ListConverter<byte>
+	{
+		public MyWatersConverter() : base(item => item.ToString()) { }
+	}
+
+	class MyBuildingsConverter : ListConverter<BuildingObject>
+	{
+		public MyBuildingsConverter() : base(item => item.BuildingInfo.Name) { }
+	}
+
+	class MyGrassesConverter : ListConverter<bool>
+	{
+		public MyGrassesConverter() : base(item => item.ToString()) { }
 	}
 }
