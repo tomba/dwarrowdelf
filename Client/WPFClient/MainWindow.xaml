@@ -16,6 +16,13 @@
 
 
     <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Windows">
+                <MenuItem Header="Save Layout" Click="MenuItem_Click_SaveLayout" />
+                <MenuItem Header="Restore Layout" Click="MenuItem_Click_RestoreLayout" />
+            </MenuItem>
+        </Menu>
+
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
@@ -136,7 +143,7 @@
 
                     <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
                         <!-- Controllables -->
-                        <ad:DockableContent Title="Controllables" DataContext="{x:Static local:GameData.Data}">
+                        <ad:DockableContent Name="controllablesContent" Title="Controllables" DataContext="{x:Static local:GameData.Data}">
                             <ad:DockableContent.Resources>
                                 <ResourceDictionary Source="UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
@@ -145,7 +152,7 @@
                         </ad:DockableContent>
 
                         <!-- All objects-->
-                        <ad:DockableContent Title="Objects" DataContext="{x:Static local:GameData.Data}">
+                        <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
                             <ad:DockableContent.Resources>
                                 <ResourceDictionary Source="UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
@@ -155,7 +162,7 @@
                         </ad:DockableContent>
 
                         <!-- Inventory -->
-                        <ad:DockableContent Title="Inventory" DataContext="{x:Static local:GameData.Data}">
+                        <ad:DockableContent Name="inventoryContent" Title="Inventory" DataContext="{x:Static local:GameData.Data}">
                             <DockPanel>
                                 <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
                                 <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
@@ -166,7 +173,7 @@
                         </ad:DockableContent>
 
                         <!-- Current tile info-->
-                        <ad:DockableContent Title="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
+                        <ad:DockableContent Name="currentTileContent" Title="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
@@ -188,7 +195,7 @@
                         </ad:DockableContent>
 
                         <!-- Selection -->
-                        <ad:DockableContent Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
+                        <ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
                             <DockPanel>
 
                                 <StackPanel DockPanel.Dock="Top">
@@ -234,7 +241,7 @@
                         </ad:DockableContent>
 
                         <!-- Controllables' actions -->
-                        <ad:DockableContent Title="Controllables" DataContext="{x:Static local:GameData.Data}">
+                        <ad:DockableContent Name="actionsContent" Title="Actions" DataContext="{x:Static local:GameData.Data}">
                             <ListBox ItemsSource="{Binding Path=World.Controllables}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
@@ -259,7 +266,7 @@
                         </ad:DockableContent>
 
                         <!-- Jobs -->
-                        <ad:DockableContent Title="Jobs" DataContext="{x:Static local:GameData.Data}">
+                        <ad:DockableContent Name="jobsContent" Title="Jobs" DataContext="{x:Static local:GameData.Data}">
                             <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
                                 <TreeView.Resources>
 
@@ -363,8 +370,9 @@
                     </ad:DocumentPane>
                 </ad:ResizingPanel>
 
+                <!-- Console -->
                 <ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
-                    <ad:DockableContent Title="Console">
+                    <ad:DockableContent Name="consoleContent" Title="Console">
                         <DockPanel>
                             <local:HistoryTextBox DockPanel.Dock="Bottom" x:Name="inputTextBox" TextEntered="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
                             <TextBox Name="outputTextBox" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Lucida Console" />

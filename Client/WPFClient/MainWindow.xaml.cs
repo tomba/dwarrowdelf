@@ -809,5 +809,18 @@ namespace Dwarrowdelf.Client
 		{
 			System.Diagnostics.Debugger.Break();
 		}
+
+		const string LayoutFileName = "SampleLayout.xml";
+
+		private void MenuItem_Click_SaveLayout(object sender, RoutedEventArgs e)
+		{
+			dockingManager.SaveLayout(LayoutFileName);
+		}
+
+		private void MenuItem_Click_RestoreLayout(object sender, RoutedEventArgs e)
+		{
+			if (System.IO.File.Exists(LayoutFileName))
+				dockingManager.RestoreLayout(LayoutFileName);
+		}
 	}
 }
