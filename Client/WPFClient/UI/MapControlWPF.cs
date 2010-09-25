@@ -18,7 +18,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
-	class MapControl : MapControlBase<MapControlTile>, IMapControl, INotifyPropertyChanged
+	class MapControlWPF : MapControlBase<MapControlTile>, IMapControl, INotifyPropertyChanged
 	{
 		World m_world;
 		SymbolBitmapCache m_bitmapCache;
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action TileArrangementChanged;
 		
-		public MapControl()
+		public MapControlWPF()
 		{
 			m_renderView = new RenderView();
 		}

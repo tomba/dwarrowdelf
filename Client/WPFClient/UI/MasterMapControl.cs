@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Client
 
 			IMapControl mc;
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				mc = new MapControl();
+				mc = new MapControlWPF();
 			else
 				mc = new MapControlD2D();
 
