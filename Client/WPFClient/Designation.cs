@@ -15,19 +15,17 @@ namespace Dwarrowdelf.Client
 	class Designation : IDrawableArea
 	{
 		public DesignationType Type { get; private set; }
-		public IntRect Area { get; private set; }
+		public IntCuboid Area { get; private set; }
 		public Environment Environment { get; private set; }
-		public int Z { get; private set; }
 
 		public Brush Fill { get { return Brushes.DimGray; } }
 		public double Opacity { get { return 0.5; } }
 
-		public Designation(Environment env, DesignationType type, IntRect area, int z)
+		public Designation(Environment env, DesignationType type, IntCuboid area)
 		{
 			this.Environment = env;
 			this.Type = type;
 			this.Area = area;
-			this.Z = z;
 		}
 	}
 }

@@ -905,14 +905,31 @@ namespace Dwarrowdelf.Client
 			MenuItem item = (MenuItem)e.Source;
 			string tag = (string)item.Tag;
 
-			var r = map.Selection.SelectionCuboid.ToIntRect();
+			var area = map.Selection.SelectionCuboid;
 			var env = map.Environment;
-			int z = map.Z;
 
 			switch (tag)
 			{
 				case "mine":
-					env.AddDesignation(new Designation(env, DesignationType.Mine, r, z));
+					env.AddDesignation(new Designation(env, DesignationType.Mine, area));
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		private void MenuItem_Click_Designations(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			Designation designation = (Designation)designationsListBox.SelectedValue;
+
+			switch (tag)
+			{
+				case "remove":
+					map.Environment.RemoveDesignation(designation);
 					break;
 
 				default:

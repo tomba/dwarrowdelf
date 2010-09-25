@@ -447,7 +447,7 @@ namespace Dwarrowdelf.Client
 
 		void UpdateAreaRectangle(IDrawableArea b, Rectangle rect)
 		{
-			var r = MapRectToScreenPointRect(b.Area);
+			var r = MapRectToScreenPointRect(b.Area.ToIntRect());
 
 			rect.StrokeThickness = Math.Max(1, this.TileSize / 8);
 			Canvas.SetLeft(rect, r.Left);
@@ -473,6 +473,13 @@ namespace Dwarrowdelf.Client
 			UpdateAreaRectangle(b, rect);
 		}
 
+		void RemoveAreaRectangle(IDrawableArea b)
+		{
+			var rect = m_buildingRectMap[b];
+			m_buildingCanvas.Children.Remove(rect);
+			m_buildingRectMap.Remove(b);
+		}
+
 		void UpdateAreas()
 		{
 			m_buildingCanvas.Children.Clear();
@@ -484,7 +491,7 @@ namespace Dwarrowdelf.Client
 
 				foreach (IDrawableArea area in areas)
 				{
-					if (area.Environment == m_env && area.Z == m_z)
+					if (area.Environment == m_env && area.Area.ContainsZ(m_z))
 						AddAreaRectangle(area);
 				}
 			}
@@ -492,15 +499,23 @@ namespace Dwarrowdelf.Client
 
 		void OnAreaCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Add)
+			switch (e.Action)
 			{
-				foreach (IDrawableArea b in e.NewItems)
-					if (b.Environment == m_env && b.Z == m_z)
-						AddAreaRectangle(b);
-			}
-			else
-			{
-				throw new Exception();
+				case NotifyCollectionChangedAction.Add:
+					foreach (IDrawableArea b in e.NewItems)
+						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
+							AddAreaRectangle(b);
+					break;
+
+				case NotifyCollectionChangedAction.Remove:
+					foreach (IDrawableArea b in e.OldItems)
+						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
+							RemoveAreaRectangle(b);
+
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 

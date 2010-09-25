@@ -9,8 +9,7 @@ namespace Dwarrowdelf.Client
 	interface IDrawableArea
 	{
 		Environment Environment { get; }
-		int Z { get; }
-		IntRect Area { get; }
+		IntCuboid Area { get; }
 		Brush Fill { get; }
 		double Opacity { get; }
 	}

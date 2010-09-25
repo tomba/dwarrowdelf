@@ -147,6 +147,17 @@
                 <ad:ResizingPanel Orientation="Horizontal">
 
                     <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
+                        <!-- Designations-->
+                        <ad:DockableContent Name="designationsContent" Title="Designations">
+                            <ListBox Name="designationsListBox" ItemsSource="{Binding Path=Environment.Designations, ElementName=map}">
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Remove" Tag="remove" Click="MenuItem_Click_Designations" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </ad:DockableContent>
+
                         <!-- All objects-->
                         <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
                             <ListBox ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" />

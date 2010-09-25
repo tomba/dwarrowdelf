@@ -15,6 +15,8 @@ namespace Dwarrowdelf.Client
 		public int Z { get; set; }
 		public IntRect Area { get; set; }
 
+		IntCuboid IDrawableArea.Area { get { return new IntCuboid(this.Area, this.Z); } }
+
 		public Brush Fill { get { return null; } }
 		public double Opacity { get { return 1.0; } }
 

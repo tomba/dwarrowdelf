@@ -109,6 +109,14 @@ namespace Dwarrowdelf
 				return true;
 		}
 
+		public bool ContainsZ(int z)
+		{
+			if (z < this.Z1 || z >= this.Z2)
+				return false;
+			else
+				return true;
+		}
+
 		public IntCuboid Inflate(int width, int height, int depth)
 		{
 			return new IntCuboid(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);

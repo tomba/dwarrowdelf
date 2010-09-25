@@ -260,6 +260,11 @@ namespace Dwarrowdelf.Client
 			m_designations.Add(designation);
 		}
 
+		public void RemoveDesignation(Designation designation)
+		{
+			m_designations.Remove(designation);
+		}
+
 		static IList<ClientGameObject> EmptyObjectList = new ClientGameObject[0];
 
 		public IList<ClientGameObject> GetContents(IntPoint3D l)
