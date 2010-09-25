@@ -43,6 +43,8 @@
                 <Button Click="Button_Click_GC">GC</Button>
                 <Separator />
                 <Button Click="Button_Click_Break">Break</Button>
+                <Separator />
+                <ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
             </ToolBar>
             <ToolBar>
                 <StackPanel Orientation="Horizontal">

@@ -881,6 +881,24 @@ namespace Dwarrowdelf.Client
 			var content = (AvalonDock.DockableContent)item.Tag;
 			content.Show();
 		}
+
+		private void Button_Click_FullScreen(object sender, RoutedEventArgs e)
+		{
+			var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
+
+			if (button.IsChecked.Value)
+			{
+				this.WindowStyle = System.Windows.WindowStyle.None;
+				this.Topmost = true;
+				this.WindowState = System.Windows.WindowState.Maximized;
+			}
+			else
+			{
+				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
+				this.Topmost = false;
+				this.WindowState = System.Windows.WindowState.Normal;
+			}
+		}
 	}
 
 	class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>
