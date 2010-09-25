@@ -85,7 +85,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				case ActionState.Fail:
 					m_numFails++;
 					if (m_numFails > 10)
-						return Progress.Fail;
+						return Progress.Abort;
 
 					var res = PreparePath(this.Worker);
 					return res;
@@ -112,12 +112,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// (what about one-way tiles, if such exist?)
 			var backwardRes = AStar.AStar3D.Find(m_dest, worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
 			if (backwardRes.Status == AStar.AStarStatus.NotFound)
-				return Jobs.Progress.Fail;
+				return Jobs.Progress.Abort;
 
 			var res = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
 
 			if (res.Status != AStar.AStarStatus.Found)
-				return Jobs.Progress.Fail;
+				return Jobs.Progress.Abort;
 
 			var dirs = res.GetPath();
 

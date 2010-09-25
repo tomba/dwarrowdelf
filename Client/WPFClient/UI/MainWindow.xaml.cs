@@ -707,13 +707,22 @@ namespace Dwarrowdelf.Client
 			if (job.Parent != null)
 				return;
 
-			if (tag == "Abort")
+			switch (tag)
 			{
-				job.Abort();
-			}
-			else if (tag == "Remove")
-			{
-				GameData.Data.World.JobManager.Remove(job);
+				case "Retry":
+					job.Retry();
+					break;
+
+				case "Abort":
+					job.Abort();
+					break;
+
+				case "Remove":
+					GameData.Data.World.JobManager.Remove(job);
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 

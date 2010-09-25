@@ -334,6 +334,7 @@
 
                                 <TreeView.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Tag="Retry" Header="Retry" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
                                     </ContextMenu>

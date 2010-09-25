@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Jobs
 				if (job.Progress == Progress.Done)
 					continue;
 
-				if (job.Progress == Progress.None || job.Progress == Progress.Abort)
+				if (job.Progress == Progress.None)
 				{
 					// job can be taken
 

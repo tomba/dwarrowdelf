@@ -40,6 +40,10 @@ namespace Dwarrowdelf.Jobs.Assignments
 			private set { m_progress = value; Notify("Progress"); }
 		}
 
+		public void Retry()
+		{
+			SetProgress(Progress.None);
+		}
 
 		public void Abort()
 		{

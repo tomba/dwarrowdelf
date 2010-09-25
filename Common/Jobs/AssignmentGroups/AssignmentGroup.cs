@@ -54,6 +54,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 
+		public void Retry()
+		{
+			Debug.Assert(this.Progress == Jobs.Progress.Abort);
+			Debug.Assert(this.CurrentSubJob == null);
+
+			SetProgress(Progress.None);
+		}
+
 		public void Abort()
 		{
 			if (this.CurrentSubJob != null)

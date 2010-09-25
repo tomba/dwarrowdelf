@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
@@ -35,6 +36,12 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 				return Progress.None;
 			}
+		}
+
+		public void Retry()
+		{
+			foreach (var job in m_subJobs.Where(j => j.Progress == Jobs.Progress.Abort))
+				job.Retry();
 		}
 
 		public void Abort()

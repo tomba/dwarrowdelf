@@ -42,6 +42,7 @@ namespace Dwarrowdelf.Jobs
 		IJob Parent { get; }
 		ActionPriority Priority { get; }
 		Progress Progress { get; }
+		void Retry();
 		void Abort();
 	}
 
