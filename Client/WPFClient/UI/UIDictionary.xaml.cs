@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AvalonDock;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	partial class UIDictionary
 	{

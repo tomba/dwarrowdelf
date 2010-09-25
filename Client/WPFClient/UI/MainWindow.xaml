@@ -149,7 +149,7 @@
                         <!-- Controllables -->
                         <ad:DockableContent Name="controllablesContent" Title="Controllables" DataContext="{x:Static local:GameData.Data}">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding World.Controllables}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
@@ -158,7 +158,7 @@
                         <!-- All objects-->
                         <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding World.Objects}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
