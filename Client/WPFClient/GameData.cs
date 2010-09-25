@@ -58,7 +58,6 @@ namespace Dwarrowdelf.Client
 			DependencyProperty.Register("World", typeof(World), typeof(GameData), new UIPropertyMetadata(null));
 
 
-
 		public bool IsSeeAll
 		{
 			get { return (bool)GetValue(IsSeeAllProperty); }

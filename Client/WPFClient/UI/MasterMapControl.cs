@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Client
 
 		Canvas m_canvas;
 		Canvas m_buildingCanvas;
-		Dictionary<BuildingObject, Rectangle> m_buildingRectMap;
+		Dictionary<IDrawableArea, Rectangle> m_buildingRectMap;
 
 		public MasterMapControl()
 		{
@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Client
 			m_buildingCanvas.ClipToBounds = true;
 			grid.Children.Add(m_buildingCanvas);
 
-			m_buildingRectMap = new Dictionary<BuildingObject, Rectangle>();
+			m_buildingRectMap = new Dictionary<IDrawableArea, Rectangle>();
 
 			this.TileSize = 32;
 		}
@@ -159,7 +159,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_mapControl.TileSize = value;
 				UpdateSelectionRect();
-				UpdateBuildingPositions();
+				UpdateAreaPositions();
 			}
 		}
 
@@ -195,7 +195,7 @@ namespace Dwarrowdelf.Client
 			this.CenterPos = l;
 
 			UpdateSelectionRect();
-			UpdateBuildingPositions();
+			UpdateAreaPositions();
 
 			e.Handled = true;
 
@@ -206,7 +206,7 @@ namespace Dwarrowdelf.Client
 		void OnTileArrangementChanged()
 		{
 			UpdateSelectionRect();
-			UpdateBuildingPositions();
+			UpdateAreaPositions();
 		}
 
 		public MapSelection Selection
@@ -368,7 +368,7 @@ namespace Dwarrowdelf.Client
 				double dy = -dv.Y * this.TileSize;
 
 				foreach (var kvp in m_buildingRectMap)
-					UpdateBuildingRect(kvp.Key, kvp.Value);
+					UpdateAreaRectangle(kvp.Key, kvp.Value);
 
 				Notify("CenterPos");
 			}
@@ -417,14 +417,16 @@ namespace Dwarrowdelf.Client
 
 				if (m_env != null)
 				{
-					m_env.Buildings.CollectionChanged -= OnBuildingsChanged;
+					m_env.Buildings.CollectionChanged -= OnAreaCollectionChanged;
+					((INotifyCollectionChanged)m_env.Designations).CollectionChanged -= OnAreaCollectionChanged;
 				}
 
 				m_env = value;
 
 				if (m_env != null)
 				{
-					m_env.Buildings.CollectionChanged += OnBuildingsChanged;
+					m_env.Buildings.CollectionChanged += OnAreaCollectionChanged;
+					((INotifyCollectionChanged)m_env.Designations).CollectionChanged += OnAreaCollectionChanged;
 
 					if (m_world != m_env.World)
 					{
@@ -437,13 +439,13 @@ namespace Dwarrowdelf.Client
 				}
 
 				this.Selection = new MapSelection();
-				UpdateBuildings();
+				UpdateAreas();
 
 				Notify("Environment");
 			}
 		}
 
-		void UpdateBuildingRect(BuildingObject b, Rectangle rect)
+		void UpdateAreaRectangle(IDrawableArea b, Rectangle rect)
 		{
 			var r = MapRectToScreenPointRect(b.Area);
 
@@ -454,47 +456,47 @@ namespace Dwarrowdelf.Client
 			rect.Height = r.Height;
 		}
 
-		void UpdateBuildingPositions()
+		void UpdateAreaPositions()
 		{
 			foreach (var kvp in m_buildingRectMap)
-				UpdateBuildingRect(kvp.Key, kvp.Value);
+				UpdateAreaRectangle(kvp.Key, kvp.Value);
 		}
 
-		void AddBuildingRect(BuildingObject b)
+		void AddAreaRectangle(IDrawableArea b)
 		{
 			var rect = new Rectangle();
 			rect.Stroke = Brushes.DarkGray;
+			rect.Fill = b.Fill;
+			rect.Opacity = b.Opacity;
 			m_buildingCanvas.Children.Add(rect);
 			m_buildingRectMap[b] = rect;
-			UpdateBuildingRect(b, rect);
+			UpdateAreaRectangle(b, rect);
 		}
 
-		void UpdateBuildings()
+		void UpdateAreas()
 		{
 			m_buildingCanvas.Children.Clear();
 			m_buildingRectMap.Clear();
 
 			if (m_env != null)
 			{
-				foreach (var b in m_env.Buildings)
+				var areas = m_env.Buildings.Cast<IDrawableArea>().Concat(m_env.Designations);
+
+				foreach (IDrawableArea area in areas)
 				{
-					if (b.Environment == m_env && b.Z == m_z)
-						AddBuildingRect(b);
+					if (area.Environment == m_env && area.Z == m_z)
+						AddAreaRectangle(area);
 				}
 			}
 		}
 
-		void OnBuildingsChanged(object sender, NotifyCollectionChangedEventArgs e)
+		void OnAreaCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (e.Action == NotifyCollectionChangedAction.Add)
 			{
-				foreach (BuildingObject b in e.NewItems)
+				foreach (IDrawableArea b in e.NewItems)
 					if (b.Environment == m_env && b.Z == m_z)
-						AddBuildingRect(b);
-			}
-			else if (e.Action == NotifyCollectionChangedAction.Reset)
-			{
-				m_buildingCanvas.Children.Clear();
+						AddAreaRectangle(b);
 			}
 			else
 			{
@@ -513,7 +515,7 @@ namespace Dwarrowdelf.Client
 
 				m_z = value;
 				m_mapControl.Z = value;
-				UpdateBuildings();
+				UpdateAreas();
 
 				if (IsMouseCaptured)
 				{

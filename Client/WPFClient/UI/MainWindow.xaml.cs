@@ -783,7 +783,7 @@ namespace Dwarrowdelf.Client
 			m_loginDialog.Close();
 			m_loginDialog = null;
 			// xxx autologin
-			LogOnChar_Button_Click(null, null);
+			//LogOnChar_Button_Click(null, null);
 		}
 
 		void OnCharLoggedOn()
@@ -897,6 +897,26 @@ namespace Dwarrowdelf.Client
 				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
 				this.Topmost = false;
 				this.WindowState = System.Windows.WindowState.Normal;
+			}
+		}
+
+		private void MenuItem_Click_Designate(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			var r = map.Selection.SelectionCuboid.ToIntRect();
+			var env = map.Environment;
+			int z = map.Z;
+
+			switch (tag)
+			{
+				case "mine":
+					env.AddDesignation(new Designation(env, DesignationType.Mine, r, z));
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 	}

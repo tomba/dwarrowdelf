@@ -352,6 +352,9 @@
                             <local:MasterMapControl x:Name="map">
                                 <local:MasterMapControl.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Header="Designate">
+                                            <MenuItem Header="Mine" Tag="mine" Click="MenuItem_Click_Designate" />
+                                        </MenuItem>
                                         <MenuItem Name="setFloorMenu" Header="Set Floor" />
                                         <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />

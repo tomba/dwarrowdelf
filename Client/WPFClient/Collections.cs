@@ -73,4 +73,20 @@ namespace Dwarrowdelf.Client
 		{
 		}
 	}
+
+	class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
+	{
+		protected override ObjectID GetKeyForItem(BuildingObject building)
+		{
+			return building.ObjectID;
+		}
+	}
+
+	class ReadOnlyBuildingCollection : ReadOnlyObservableKeyedCollection<ObjectID, BuildingObject>
+	{
+		public ReadOnlyBuildingCollection(BuildingCollection collection)
+			: base(collection)
+		{
+		}
+	}
 }

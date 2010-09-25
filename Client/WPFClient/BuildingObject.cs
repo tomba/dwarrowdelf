@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Media;
 
 namespace Dwarrowdelf.Client
 {
-	class BuildingObject : BaseGameObject, IBuildingObject
+	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableArea
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		public int Z { get; set; }
 		public IntRect Area { get; set; }
+
+		public Brush Fill { get { return null; } }
+		public double Opacity { get { return 1.0; } }
 
 		class BuildOrder
 		{
