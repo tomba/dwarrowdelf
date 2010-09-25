@@ -40,16 +40,18 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected override Progress AssignOverride(ILiving worker)
 		{
 			m_src = worker.Location;
-
 			m_numFails = 0;
-			return Progress.Ok;
+
+			var res = PreparePath(worker);
+
+			return res;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out Progress progress)
 		{
 			if (m_pathDirs == null || m_supposedLocation != this.Worker.Location)
 			{
-				var res = PreparePath();
+				var res = PreparePath(this.Worker);
 
 				if (res != Progress.Ok)
 				{
@@ -85,7 +87,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 					if (m_numFails > 10)
 						return Progress.Fail;
 
-					var res = PreparePath();
+					var res = PreparePath(this.Worker);
 					return res;
 
 				case ActionState.Abort:
@@ -96,9 +98,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
-		Progress PreparePath()
+		Progress PreparePath(ILiving worker)
 		{
-			var v = m_dest - this.Worker.Location;
+			var v = m_dest - worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
 			{
 				m_pathDirs = null;
@@ -108,11 +110,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// First try pathfinding from the destination to source with small limit. We expect it to fail with LimitExceeded,
 			// but if it fails with NotFound, it means that the destination is surrounded by non-passable tiles
 			// (what about one-way tiles, if such exist?)
-			var backwardRes = AStar.AStar3D.Find(m_dest, this.Worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
+			var backwardRes = AStar.AStar3D.Find(m_dest, worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
 			if (backwardRes.Status == AStar.AStarStatus.NotFound)
 				return Jobs.Progress.Fail;
 
-			var res = AStar.AStar3D.Find(this.Worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
+			var res = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
 
 			if (res.Status != AStar.AStarStatus.Found)
 				return Jobs.Progress.Fail;
@@ -121,7 +123,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			m_pathDirs = new Queue<Direction>(dirs);
 
-			m_supposedLocation = this.Worker.Location;
+			m_supposedLocation = worker.Location;
 
 			return Progress.Ok;
 		}
