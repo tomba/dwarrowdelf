@@ -16,12 +16,16 @@ namespace Dwarrowdelf.Client.UI
 
 			var ob = (ClientGameObject)button.DataContext;
 
-			var dockableContent = new DockableContent() { Title = ob.ToString() };
-
-			var content = new ObjectInfoControl();
-			content.DataContext = ob;
-
-			dockableContent.Content = content;
+			var dockableContent = new DockableContent()
+			{
+				Title = ob.ToString(),
+				HideOnClose = false,
+				IsCloseable = true,
+				Content = new ObjectInfoControl()
+				{
+					DataContext = ob,
+				},
+			};
 
 			dockableContent.ShowAsFloatingWindow(GameData.Data.MainWindow.Dock, true);
 		}
