@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Item({0})", this.ObjectID);
+			return String.Format("Item({0})", this.ObjectID.Value);
 		}
 	}
 }

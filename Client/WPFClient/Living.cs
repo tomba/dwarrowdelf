@@ -234,5 +234,9 @@ namespace Dwarrowdelf.Client
 			m_losLocation = this.Location;
 		}
 
+		public override string ToString()
+		{
+			return String.Format("Living({0})", this.ObjectID.Value);
+		}
 	}
 }

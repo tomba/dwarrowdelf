@@ -399,5 +399,10 @@ namespace Dwarrowdelf.Client
 
 			return false;
 		}
+
+		public override string ToString()
+		{
+			return String.Format("Env({0})", this.ObjectID.Value);
+		}
 	}
 }

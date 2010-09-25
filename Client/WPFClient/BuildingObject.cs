@@ -176,5 +176,10 @@ namespace Dwarrowdelf.Client
 		{
 			CheckStatus();
 		}
+
+		public override string ToString()
+		{
+			return String.Format("Building({0})", this.ObjectID.Value);
+		}
 	}
 }

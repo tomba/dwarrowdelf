@@ -17,16 +17,10 @@
         <local:MyWatersConverter x:Key="myWatersConverter" />
         <local:MyBuildingsConverter x:Key="myBuildingsConverter" />
         <local:MyGrassesConverter x:Key="myGrassesConverter" />
+        <CollectionViewSource Source="{Binding World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
     </Window.Resources>
 
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Windows">
-                <MenuItem Header="Save Layout" Click="MenuItem_Click_SaveLayout" />
-                <MenuItem Header="Restore Layout" Click="MenuItem_Click_RestoreLayout" />
-            </MenuItem>
-        </Menu>
-
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <ToggleButton IsChecked="{Binding Path=DisableLOS}">Disable Client LOS</ToggleButton>
@@ -141,11 +135,25 @@
         </StatusBar>
 
 
-        <ad:DockingManager x:Name="dockingManager">
+        <ad:DockingManager x:Name="dockingManager" Loaded="dockingManager_Loaded">
             <ad:ResizingPanel Orientation="Vertical">
                 <ad:ResizingPanel Orientation="Horizontal">
 
                     <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
+                        <!-- All objects-->
+                        <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
+                            <ListBox ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" />
+                        </ad:DockableContent>
+
+                        <!-- Items -->
+                        <ad:DockableContent Name="itemsContent" Title="Items" DataContext="{x:Static local:GameData.Data}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
+
+                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
+                        </ad:DockableContent>
+
                         <!-- Controllables -->
                         <ad:DockableContent Name="controllablesContent" Title="Controllables" DataContext="{x:Static local:GameData.Data}">
                             <ad:DockableContent.Resources>
@@ -153,16 +161,6 @@
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding World.Controllables}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
-                        </ad:DockableContent>
-
-                        <!-- All objects-->
-                        <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
-                            </ad:DockableContent.Resources>
-
-                            <ListBox ItemsSource="{Binding World.Objects}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}"
-                                     HorizontalContentAlignment="Stretch" />
                         </ad:DockableContent>
 
                         <!-- Inventory -->

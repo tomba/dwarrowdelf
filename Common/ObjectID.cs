@@ -18,6 +18,8 @@ namespace Dwarrowdelf
 			m_value = value;
 		}
 
+		public int Value { get { return m_value; } }
+
 		public bool Equals(ObjectID objectID)
 		{
 			return objectID.m_value == m_value;

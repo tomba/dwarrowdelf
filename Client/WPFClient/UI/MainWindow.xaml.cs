@@ -127,6 +127,11 @@ namespace Dwarrowdelf.Client
 				Win32.Helpers.LoadWindowPlacement(this, p);
 		}
 
+		private void dockingManager_Loaded(object sender, RoutedEventArgs e)
+		{
+			RestoreLayout();
+		}
+
 		public AvalonDock.DockingManager Dock { get { return dockingManager; } }
 
 		public MasterMapControl MapControl { get { return map; } }
@@ -147,6 +152,8 @@ namespace Dwarrowdelf.Client
 			var p = Win32.Helpers.SaveWindowPlacement(this);
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
+
+			SaveLayout();
 
 			var conn = GameData.Data.Connection;
 
@@ -184,6 +191,14 @@ namespace Dwarrowdelf.Client
 		{
 			fpsTextBlock.Text = ((double)m_fpsCounter).ToString();
 			m_fpsCounter = 0;
+		}
+
+		private void FilterItems(object sender, FilterEventArgs e)
+		{
+			if (e.Item is ItemObject)
+				e.Accepted = true;
+			else
+				e.Accepted = false;
 		}
 
 		public ClientGameObject FollowObject
@@ -801,14 +816,14 @@ namespace Dwarrowdelf.Client
 			System.Diagnostics.Debugger.Break();
 		}
 
-		const string LayoutFileName = "SampleLayout.xml";
+		const string LayoutFileName = "WindowLayout.xml";
 
-		private void MenuItem_Click_SaveLayout(object sender, RoutedEventArgs e)
+		void SaveLayout()
 		{
 			dockingManager.SaveLayout(LayoutFileName);
 		}
 
-		private void MenuItem_Click_RestoreLayout(object sender, RoutedEventArgs e)
+		void RestoreLayout()
 		{
 			if (System.IO.File.Exists(LayoutFileName))
 				dockingManager.RestoreLayout(LayoutFileName);
