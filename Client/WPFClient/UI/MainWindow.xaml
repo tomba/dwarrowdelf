@@ -56,6 +56,11 @@
                 </StackPanel>
             </ToolBar>
 
+            <ToolBarTray.ContextMenu>
+                <ContextMenu Name="contentMenu">
+                    <!-- Filled programmatically -->
+                </ContextMenu>
+            </ToolBarTray.ContextMenu>
         </ToolBarTray>
 
         <StatusBar DockPanel.Dock="Bottom" >

@@ -56,6 +56,21 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnInitialized(e);
 
+			foreach (var content in dockingManager.DockableContents)
+			{
+				var item = new MenuItem()
+				{
+					Tag = content,
+					Header = content.Title,
+					IsChecked = true,
+				};
+
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_ShowWindow));
+				contentMenu.Items.Add(item);
+
+				content.StateChanged += new RoutedEventHandler(dockableContent_StateChanged);
+			}
+
 			foreach (var name in Enum.GetNames(typeof(InteriorID)))
 			{
 				var item = new MenuItem()
@@ -116,6 +131,28 @@ namespace Dwarrowdelf.Client
 
 			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+		}
+
+		void dockableContent_StateChanged(object sender, RoutedEventArgs e)
+		{
+			var content = (AvalonDock.DockableContent)e.Source;
+			MenuItem item = null;
+			foreach (MenuItem i in contentMenu.Items)
+			{
+				if (i.Tag == content)
+				{
+					item = i;
+					break;
+				}
+			}
+
+			if (item == null)
+				throw new Exception();
+
+			if (content.State == AvalonDock.DockableContentState.Hidden)
+				item.IsChecked = false;
+			else
+				item.IsChecked = true;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -827,6 +864,13 @@ namespace Dwarrowdelf.Client
 		{
 			if (System.IO.File.Exists(LayoutFileName))
 				dockingManager.RestoreLayout(LayoutFileName);
+		}
+
+		private void MenuItem_Click_ShowWindow(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			var content = (AvalonDock.DockableContent)item.Tag;
+			content.Show();
 		}
 	}
 
