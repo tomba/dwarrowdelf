@@ -63,10 +63,14 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "Progress")
+			{
 				Notify("Progress");
+
+				if (this.Progress == Jobs.Progress.Done || this.Progress == Jobs.Progress.Fail)
+					Cleanup();
+			}
 		}
 
-		// XXX not called
 		protected virtual void Cleanup()
 		{
 		}

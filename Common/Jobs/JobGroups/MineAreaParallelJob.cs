@@ -27,10 +27,19 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				var job = new AssignmentGroups.MoveMineJob(this, priority, env, new IntPoint3D(p, z));
 				AddSubJob(job);
 			}
+
+			env.World.TickEvent += World_TickEvent;
+		}
+
+		void World_TickEvent()
+		{
+			foreach (var job in this.SubJobs.Where(j => j.Progress == Jobs.Progress.Abort))
+				job.Retry();
 		}
 
 		protected override void Cleanup()
 		{
+			m_environment.World.TickEvent -= World_TickEvent;
 			m_locs = null;
 		}
 
