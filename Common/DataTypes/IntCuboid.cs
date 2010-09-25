@@ -127,6 +127,16 @@ namespace Dwarrowdelf
 			return new IntRect(this.X, this.Y, this.Width, this.Height);
 		}
 
+		public static bool operator ==(IntCuboid left, IntCuboid right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(IntCuboid left, IntCuboid right)
+		{
+			return !left.Equals(right);
+		}
+
 		public bool Equals(IntCuboid other)
 		{
 			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_z == other.m_x &&
