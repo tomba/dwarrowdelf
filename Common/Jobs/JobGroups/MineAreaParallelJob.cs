@@ -10,21 +10,21 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	public class MineAreaParallelJob : ParallelJobGroup
 	{
 		readonly IEnvironment m_environment;
-		readonly IntRect m_rect;
+		readonly IntCuboid m_area;
 
-		IEnumerable<IntPoint> m_locs;
+		IEnumerable<IntPoint3D> m_locs;
 
-		public MineAreaParallelJob(IEnvironment env, ActionPriority priority, IntRect rect, int z)
+		public MineAreaParallelJob(IEnvironment env, ActionPriority priority, IntCuboid area)
 			: base(null, priority)
 		{
 			m_environment = env;
-			m_rect = rect;
+			m_area = area;
 
-			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
+			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.Wall);
 
 			foreach (var p in m_locs)
 			{
-				var job = new AssignmentGroups.MoveMineJob(this, priority, env, new IntPoint3D(p, z));
+				var job = new AssignmentGroups.MoveMineJob(this, priority, env, p);
 				AddSubJob(job);
 			}
 

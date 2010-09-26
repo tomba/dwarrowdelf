@@ -11,22 +11,22 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	public class MineAreaJob : StaticAssignmentGroup
 	{
 		readonly IEnvironment m_environment;
-		readonly IntRect m_rect;
+		readonly IntCuboid m_area;
 
-		IEnumerable<IntPoint> m_locs;
+		IEnumerable<IntPoint3D> m_locs;
 
-		public MineAreaJob(IEnvironment env, ActionPriority priority, IntRect rect, int z)
+		public MineAreaJob(IEnvironment env, ActionPriority priority, IntCuboid area)
 			: base(null, priority)
 		{
 			m_environment = env;
-			m_rect = rect;
+			m_area = area;
 
-			m_locs = rect.Range().Where(p => env.GetInterior(new IntPoint3D(p, z)).ID == InteriorID.Wall);
+			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.Wall);
 
 			List<IAssignment> jobs = new List<IAssignment>();
 			foreach (var p in m_locs)
 			{
-				var job = new MoveMineJob(this, priority, env, new IntPoint3D(p, z));
+				var job = new MoveMineJob(this, priority, env, p);
 				jobs.Add(job);
 			}
 

@@ -568,29 +568,26 @@ namespace Dwarrowdelf.Client
 			}
 			else if (tag == "MineArea")
 			{
-				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
+				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
-				int z = map.Z;
 
-				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, r, z);
+				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
 			{
-				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
+				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
-				int z = map.Z;
 
-				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, r, z);
+				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
 			{
-				IntRect r = map.Selection.SelectionCuboid.ToIntRect();
+				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
-				int z = map.Z;
 
-				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, r, z);
+				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area);
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "BuildItem")
