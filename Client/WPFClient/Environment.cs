@@ -26,9 +26,6 @@ namespace Dwarrowdelf.Client
 		BuildingCollection m_buildings = new BuildingCollection();
 		public ReadOnlyBuildingCollection Buildings { get; private set; }
 
-		ObservableCollection<Designation> m_designations;
-		public ReadOnlyObservableCollection<Designation> Designations { get; private set; }
-
 		public Environment(World world, ObjectID objectID)
 			: this(world, objectID, 16)
 		{
@@ -47,9 +44,6 @@ namespace Dwarrowdelf.Client
 			m_tileGrid = new GrowingTileGrid();
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 			m_objectList = new List<ClientGameObject>();
-
-			m_designations = new ObservableCollection<Designation>();
-			this.Designations = new ReadOnlyObservableCollection<Designation>(m_designations);
 
 			m_buildings = new BuildingCollection();
 			this.Buildings = new ReadOnlyBuildingCollection(m_buildings);
@@ -253,16 +247,6 @@ namespace Dwarrowdelf.Client
 		public BuildingObject GetBuildingAt(IntPoint3D p)
 		{
 			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.ToIntPoint()));
-		}
-
-		public void AddDesignation(Designation designation)
-		{
-			m_designations.Add(designation);
-		}
-
-		public void RemoveDesignation(Designation designation)
-		{
-			m_designations.Remove(designation);
 		}
 
 		static IList<ClientGameObject> EmptyObjectList = new ClientGameObject[0];

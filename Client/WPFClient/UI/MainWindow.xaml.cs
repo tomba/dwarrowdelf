@@ -908,7 +908,7 @@ namespace Dwarrowdelf.Client
 			switch (tag)
 			{
 				case "mine":
-					env.AddDesignation(new Designation(env, DesignationType.Mine, area));
+					var desig = new Designation(env, DesignationType.Mine, area);
 					break;
 
 				default:
@@ -926,7 +926,7 @@ namespace Dwarrowdelf.Client
 			switch (tag)
 			{
 				case "remove":
-					map.Environment.RemoveDesignation(designation);
+					designation.Remove();
 					break;
 
 				default:

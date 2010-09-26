@@ -149,7 +149,7 @@
                     <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
                         <!-- Designations-->
                         <ad:DockableContent Name="designationsContent" Title="Designations">
-                            <ListBox Name="designationsListBox" ItemsSource="{Binding Path=Environment.Designations, ElementName=map}">
+                            <ListBox Name="designationsListBox" ItemsSource="{x:Static local:Designation.Designations}">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Remove" Tag="remove" Click="MenuItem_Click_Designations" />
