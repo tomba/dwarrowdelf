@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public void Abort()
 		{
-			foreach (var job in m_subJobs)
+			foreach (var job in m_subJobs.Where(j => j.Progress == Jobs.Progress.Ok))
 				job.Abort();
 		}
 

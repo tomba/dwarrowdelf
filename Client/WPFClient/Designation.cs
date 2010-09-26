@@ -35,11 +35,11 @@ namespace Dwarrowdelf.Client
 			s_designations.Add(this);
 
 			m_job = new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area);
-			m_job.PropertyChanged += job_PropertyChanged;
+			m_job.PropertyChanged += OnJobPropertyChanged;
 			this.Environment.World.JobManager.Add(m_job);
 		}
 
-		void job_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != "Progress")
 				return;

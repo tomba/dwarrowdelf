@@ -563,6 +563,7 @@ namespace Dwarrowdelf.Client
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p);
+					job.PropertyChanged += OnJobPropertyChanged;
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -572,6 +573,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
@@ -580,6 +582,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
@@ -588,6 +591,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "BuildItem")
@@ -608,22 +612,35 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, false);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "RunInCircles")
 			{
 				var job = new Jobs.AssignmentGroups.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "Loiter")
 			{
 				var job = new Jobs.AssignmentGroups.LoiterJob(null, ActionPriority.Normal, map.Environment);
+				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else
 			{
 				throw new Exception();
 			}
+		}
+
+		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != "Progress")
+				return;
+
+			var job = (IJob)sender;
+			if (job.Progress == Progress.Done)
+				this.Map.World.JobManager.Remove(job);
 		}
 
 		private void MenuItem_Click_Build(object sender, RoutedEventArgs e)

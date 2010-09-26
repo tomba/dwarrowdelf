@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace Dwarrowdelf.Jobs
 {
@@ -16,7 +17,6 @@ namespace Dwarrowdelf.Jobs
 		{
 			m_jobs = new ObservableCollection<IJob>();
 			this.Jobs = new ReadOnlyObservableCollection<IJob>(m_jobs);
-			world.TickEvent += DoHouseKeeping;
 		}
 
 		public void Add(IJob job)
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Jobs
 
 			foreach (var job in jobs)
 			{
-				if (job.Progress == Progress.Done)
+				if (job.Progress == Progress.Done || job.Progress == Progress.Fail)
 					continue;
 
 				if (job.Progress == Progress.None)
@@ -84,13 +84,6 @@ namespace Dwarrowdelf.Jobs
 
 			return null;
 
-		}
-
-		void DoHouseKeeping()
-		{
-			var doneJobs = m_jobs.Where(j => j.Progress == Progress.Done).ToArray();
-			foreach (var job in doneJobs)
-				m_jobs.Remove(job);
 		}
 	}
 }

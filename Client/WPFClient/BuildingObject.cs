@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Windows.Media;
+using System.ComponentModel;
+using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
@@ -81,8 +83,6 @@ namespace Dwarrowdelf.Client
 
 		void CheckStatus()
 		{
-			CheckFinishedOrders();
-
 			var order = m_buildOrderQueue.FirstOrDefault();
 			if (order == null || order.Job != null)
 				return;
@@ -102,13 +102,13 @@ namespace Dwarrowdelf.Client
 
 			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
 			{
-				if (order.Job.Progress == Dwarrowdelf.Jobs.Progress.Done)
+				if (order.Job.Progress == Jobs.Progress.Done)
 				{
 					Debug.Print("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
-				else if (order.Job.Progress == Dwarrowdelf.Jobs.Progress.Fail)
+				else if (order.Job.Progress == Jobs.Progress.Fail)
 				{
 					Debug.Print("BuildOrder FAILED");
 					order.Job = null;
@@ -173,9 +173,23 @@ namespace Dwarrowdelf.Client
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new Dwarrowdelf.Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
+			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
+			job.PropertyChanged += OnJobPropertyChanged;
 			order.Job = job;
 			this.World.JobManager.Add(job);
+		}
+
+		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != "Progress")
+				return;
+
+			var job = (IJob)sender;
+			if (job.Progress == Progress.Done)
+			{
+				this.World.JobManager.Remove(job);
+				CheckFinishedOrders();
+			}
 		}
 
 		void OnTick()

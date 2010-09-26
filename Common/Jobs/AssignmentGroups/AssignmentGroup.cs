@@ -31,21 +31,21 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public Progress Progress
 		{
 			get { return m_progress; }
-			private set { m_progress = value; Notify("Progress"); }
+			private set { if (m_progress == value) return; m_progress = value; Notify("Progress"); }
 		}
 
 		ILiving m_worker;
 		public ILiving Worker
 		{
 			get { return m_worker; }
-			private set { m_worker = value; Notify("Worker"); }
+			private set { if (m_worker == value) return; m_worker = value; Notify("Worker"); }
 		}
 
 		IAssignment m_currentSubJob;
 		public IAssignment CurrentSubJob
 		{
 			get { return m_currentSubJob; }
-			private set { m_currentSubJob = value; Notify("CurrentSubJob"); }
+			private set { if (m_currentSubJob == value) return; m_currentSubJob = value; Notify("CurrentSubJob"); }
 		}
 
 		public GameAction CurrentAction
@@ -64,6 +64,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public void Abort()
 		{
+			if (this.Progress != Jobs.Progress.Ok)
+				return;
+
 			if (this.CurrentSubJob != null)
 				this.CurrentSubJob.Abort();
 

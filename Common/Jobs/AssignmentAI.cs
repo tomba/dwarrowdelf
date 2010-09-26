@@ -22,7 +22,14 @@ namespace Dwarrowdelf.Jobs
 
 			private set
 			{
+				if (m_currentAssignment != null)
+					this.CurrentAssignment.PropertyChanged -= OnAssignmentPropertyChanged;
+
 				m_currentAssignment = value;
+
+				if (m_currentAssignment != null)
+					this.CurrentAssignment.PropertyChanged += OnAssignmentPropertyChanged;
+
 				if (AssignmentChanged != null)
 					AssignmentChanged(value);
 			}
@@ -112,7 +119,6 @@ namespace Dwarrowdelf.Jobs
 					else
 					{
 						D("DecideAction: new assignment: {0}", this.CurrentAssignment);
-						this.CurrentAssignment.PropertyChanged += OnAssignmentPropertyChanged;
 					}
 				}
 
@@ -189,7 +195,6 @@ namespace Dwarrowdelf.Jobs
 			{
 				if (assignment.Progress == Progress.Abort || assignment.Progress == Progress.Fail)
 				{
-					assignment.PropertyChanged -= OnAssignmentPropertyChanged;
 					this.CurrentAssignment = null;
 				}
 			}

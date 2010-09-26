@@ -23,21 +23,21 @@ namespace Dwarrowdelf.Jobs.Assignments
 		public ILiving Worker
 		{
 			get { return m_worker; }
-			private set { m_worker = value; Notify("Worker"); }
+			private set { if (m_worker == value) return; m_worker = value; Notify("Worker"); }
 		}
 
 		GameAction m_action;
 		public virtual GameAction CurrentAction
 		{
 			get { return m_action; }
-			private set { m_action = value; Notify("CurrentAction"); }
+			private set { if (m_action == value) return; m_action = value; Notify("CurrentAction"); }
 		}
 
 		Progress m_progress;
 		public Progress Progress
 		{
 			get { return m_progress; }
-			private set { m_progress = value; Notify("Progress"); }
+			private set { if (m_progress == value) return; m_progress = value; Notify("Progress"); }
 		}
 
 		public void Retry()
@@ -47,6 +47,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		public void Abort()
 		{
+			if (this.Progress != Jobs.Progress.Ok)
+				return;
+
 			SetProgress(Progress.Abort);
 		}
 
