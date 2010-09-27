@@ -6,6 +6,7 @@ using System.Text;
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
 using Environment = Dwarrowdelf.Server.Environment;
+using System.IO;
 
 namespace MyArea
 {
@@ -18,6 +19,49 @@ namespace MyArea
 		{
 			m_map1 = CreateMap1(world);
 			m_map2 = CreateMap2(world);
+
+			//SerializeMap(m_map1);
+		}
+
+		void SerializeMap(Environment env)
+		{
+			using (var txtFile = File.CreateText("map.txt"))
+			{
+				txtFile.WriteLine("{0}x{1}x{2}", env.Width, env.Height, env.Depth);
+
+				SerializeEnum<FloorID>(txtFile);
+				SerializeEnum<InteriorID>(txtFile);
+				SerializeEnum<MaterialID>(txtFile);
+
+				txtFile.WriteLine("first: {0}", env.Bounds.Range().First());
+				txtFile.WriteLine("last: {0}", env.Bounds.Range().Last());
+
+				txtFile.Close();
+			}
+
+			using (var binFile = File.Create("map.bin"))
+			using (var bw = new BinaryWriter(binFile))
+			{
+				foreach (var p in env.Bounds.Range())
+				{
+					var t = env.GetTileData(p);
+
+					bw.Write((int)t.FloorID);
+					bw.Write((int)t.FloorMaterialID);
+					bw.Write((int)t.InteriorID);
+					bw.Write((int)t.InteriorMaterialID);
+					bw.Write((int)(t.Grass ? 1 : 0));
+					bw.Write((int)t.WaterLevel);
+				}
+			}
+		}
+
+		void SerializeEnum<T>(StreamWriter writer)
+		{
+			writer.WriteLine(typeof(T).Name);
+			var values = Enum.GetValues(typeof(T));
+			foreach (T val in values)
+				writer.WriteLine("\t{0}: {1}", val.ToString(), Enum.Format(typeof(T), val, "d"));
 		}
 
 		IntPoint3D m_portalLoc = new IntPoint3D(2, 4, 9);
