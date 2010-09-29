@@ -105,17 +105,15 @@ namespace Dwarrowdelf.Client
 
 		public MasterMapControl()
 		{
+			this.UseLayoutRounding = true;
+
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 
 			var grid = new Grid();
 			AddChild(grid);
 
-			IMapControl mc;
-			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				mc = new MapControlWPF();
-			else
-				mc = new MapControlD2D();
+			IMapControl mc = new MapControlD2D();
 
 			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;

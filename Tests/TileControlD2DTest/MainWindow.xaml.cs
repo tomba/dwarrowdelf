@@ -133,13 +133,12 @@ namespace TileControlD2DTest
 
 		private void MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			tc.RequestRender();
+			tc.InvalidateArrange();
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			tc.RequestRender();
-			ResetBox();
+			tc.InvalidateRender();
 		}
 
 		#region IRenderViewRenderer Members

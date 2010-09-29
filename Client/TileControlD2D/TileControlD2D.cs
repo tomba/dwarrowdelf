@@ -1,4 +1,4 @@
-﻿#define DEBUG_TEXT
+﻿//#define DEBUG_TEXT
 
 using System;
 using System.Collections.Generic;
@@ -47,6 +47,10 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		int m_columns;
 		int m_rows;
 
+		// XXX REMVOE??
+		public int Columns { get { return m_columns; } }
+		public int Rows { get { return m_rows; } }
+
 		int m_tileSize;
 
 		RenderMap m_renderMap;
@@ -57,6 +61,8 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		SolidColorBrush m_bgBrush;
 		SolidColorBrush m_darkBrush;
+
+		bool m_invalidateRender;
 
 		const int MINDETAILEDTILESIZE = 8;
 
@@ -80,7 +86,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			Debug.WriteLine("OnLoaded");
+			//Debug.WriteLine("OnLoaded");
 
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
 				return;
@@ -96,12 +102,12 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			m_interopImageSource.OnRender = this.DoRender;
 
 			// Need an explicit render first?
-			RequestRender();
+			m_interopImageSource.RequestRender();
 		}
 
 		void OnSizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			Debug.WriteLine("OnSizeChanged({0})", e.NewSize);
+			//Debug.WriteLine("OnSizeChanged({0})", e.NewSize);
 
 			UpdateSizes();
 
@@ -118,6 +124,22 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			}
 		}
 
+		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
+		{
+			//Debug.WriteLine("OnRender");
+
+			if (m_invalidateRender)
+			{
+				m_interopImageSource.RequestRender();
+				m_invalidateRender = false;
+			}
+		}
+
+		public void InvalidateRender()
+		{
+			m_invalidateRender = true;
+			InvalidateVisual();
+		}
 
 		public int TileSize
 		{
@@ -127,7 +149,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				if (value == m_tileSize)
 					return;
 
-				Debug.WriteLine("TileSize = {0}", value);
+				//Debug.WriteLine("TileSize = {0}", value);
 
 				m_tileSize = value;
 
@@ -166,7 +188,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			UpdateOffset();
 
 			if (b)
-				RequestRender();
+				InvalidateRender();
 		}
 
 		bool UpdateOffset()
@@ -176,7 +198,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			
 			var newOffset = new Point(dx, dy);
 
-			Debug.WriteLine("UpdateOffset({0}, {1}) = {2}", this.RenderSize, m_tileSize, newOffset);
+			//Debug.WriteLine("UpdateOffset({0}, {1}) = {2}", this.RenderSize, m_tileSize, newOffset);
 
 			if (m_offset != newOffset)
 			{
@@ -194,7 +216,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			var newColumns = (int)Math.Ceiling(this.RenderSize.Width / m_tileSize) | 1;
 			var newRows = (int)Math.Ceiling(this.RenderSize.Height / m_tileSize) | 1;
 
-			Debug.WriteLine("UpdateColumnsAndRows({0}) = {1}, {2}", this.RenderSize, newColumns, newRows);
+			//Debug.WriteLine("UpdateColumnsAndRows({0}) = {1}, {2}", this.RenderSize, newColumns, newRows);
 
 			if (newColumns != m_columns || newRows != m_rows)
 			{
@@ -241,7 +263,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		public void InvalidateBitmaps()
 		{
-			Debug.WriteLine("InvalidateBitmaps");
+			//Debug.WriteLine("InvalidateBitmaps");
 
 			ClearAtlasBitmap();
 			ClearColorTileArray();
@@ -257,13 +279,13 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				ClearAtlasBitmap();
 				ClearColorTileArray();
 
-				InvalidateArrange();
+				InvalidateRender();
 			}
 		}
 		
 		void CreateAtlas()
 		{
-			//MyDebug.WriteLine("CreateAtlas");
+			//My//Debug.WriteLine("CreateAtlas");
 
 			var numTiles = m_bitmapGenerator.NumDistinctBitmaps;
 
@@ -288,7 +310,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void SetPixelSize(uint width, uint height)
 		{
-			Debug.WriteLine("SetPixelSize({0},{1})", width, height);
+			//Debug.WriteLine("SetPixelSize({0},{1})", width, height);
 
 			m_interopImageSource.Lock();
 			// implicit render
@@ -296,12 +318,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			m_interopImageSource.Unlock();
 		}
 
-		public void RequestRender()
-		{
-			Debug.WriteLine("RequestRender");
-
-			m_interopImageSource.RequestRender();
-		}
 
 		IRenderViewRenderer m_renderView;
 		public IRenderViewRenderer RenderView
@@ -311,11 +327,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
-			Debug.WriteLine("DoRender");
+			//Debug.WriteLine("DoRender");
 
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
-				//MyDebug.WriteLine("Create Render Target");
+				//My//Debug.WriteLine("Create Render Target");
 
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 
@@ -394,17 +410,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				RenderSimpleTiles(m_tileSize);
 
 			m_renderTarget.Transform = Matrix3x2F.Identity;
-
-
-			{
-				var myBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 255, 255, 1));
-				var w = m_renderTarget.PixelSize.Width;
-				var h = m_renderTarget.PixelSize.Height;
-				m_renderTarget.DrawLine(new Point2F(0, 0), new Point2F(w, h), myBrush, 4);
-				m_renderTarget.DrawLine(new Point2F(0, h), new Point2F(w, 0), myBrush, 4);
-				m_renderTarget.DrawRectangle(new RectF(0, 0, w, h), myBrush, 4);
-				myBrush.Dispose();
-			}
 
 			m_renderTarget.EndDraw();
 		}

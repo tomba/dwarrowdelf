@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client
 {
-	class SymbolBitmapCache : IBitmapGenerator
+	class SymbolBitmapCache : Dwarrowdelf.Client.TileControlD2D.IBitmapGenerator
 	{
 		SymbolDrawingCache m_symbolDrawingCache;
 

@@ -16,6 +16,8 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
+using Dwarrowdelf.Client.TileControlD2D;
+
 namespace Dwarrowdelf.Client
 {
 	/// <summary>
@@ -29,7 +31,7 @@ namespace Dwarrowdelf.Client
 		Environment m_env;
 		int m_z;
 
-		TileControlD2D m_tileControlD2D;
+		TileControlD2D.TileControlD2D m_tileControlD2D;
 
 		IntPoint m_centerPos;
 		int m_tileSize;
@@ -40,12 +42,18 @@ namespace Dwarrowdelf.Client
 
 		public MapControlD2D()
 		{
-			m_tileControlD2D = new TileControlD2D();
-			m_tileControlD2D.AboutToRender += OnAboutToRender;
+			m_tileControlD2D = new TileControlD2D.TileControlD2D();
+			m_tileControlD2D.SizeChanged += OnTileControlSizeChanged;
 			AddChild(m_tileControlD2D);
 
 			m_renderView = new RenderView();
-			m_tileControlD2D.RenderMap = m_renderView.RenderMap;
+			m_tileControlD2D.RenderView = m_renderView;
+		}
+
+		void OnTileControlSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
 		}
 
 		public int Columns { get { return m_tileControlD2D.Columns; } }
@@ -53,36 +61,12 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateTiles()
 		{
-			m_tileControlD2D.InvalidateArrange();
-		}
-
-		void OnAboutToRender(bool arrangementChanged)
-		{
-			if (arrangementChanged && TileArrangementChanged != null)
-				TileArrangementChanged();
-
-			UpdateTiles();
-		}
-
-		void UpdateTiles()
-		{
-			//MyDebug.WriteLine("Update TileMap");
-
-			/* if we are using LOS, we need to update even the non-changed tiles */
-			if (m_env != null && m_env.VisibilityMode != VisibilityMode.AllVisible)
-				m_renderView.Invalidate();
-
-			m_renderView.Size = new IntSize(this.Columns, this.Rows);
-			m_renderView.Offset = new IntVector(this.BottomLeftPos.X, this.BottomLeftPos.Y);
-			m_renderView.ResolveAll();
+			m_tileControlD2D.InvalidateRender();
 		}
 
 		public int TileSize
 		{
-			get
-			{
-				return m_tileSize;
-			}
+			get { return m_tileSize; }
 
 			set
 			{
@@ -117,6 +101,8 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_centerPos = value;
+
+				m_renderView.CenterPos = new IntPoint3D(value, this.Z);
 
 				InvalidateTiles();
 			}
@@ -192,7 +178,8 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_z = value;
-				m_renderView.Z = value;
+
+				m_renderView.CenterPos = new IntPoint3D(m_centerPos, value);
 
 				InvalidateTiles();
 

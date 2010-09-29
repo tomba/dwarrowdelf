@@ -3,31 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Dwarrowdelf.Client.TileControlD2D;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	interface IRenderView
-	{
-		Environment Environment { get; set; }
 
-		int Z { get; set; }
-		IntSize Size { get; set; }
-		IntVector Offset { get; set; }
-	
-		void Invalidate();
-		void ResolveAll();
-
-		bool ShowVirtualSymbols { get; set; }
-	}
-
-	class RenderView : IRenderView
+	class RenderView : IRenderViewRenderer
 	{
 		RenderMap m_renderMap;
 		bool m_showVirtualSymbols = true;
-		bool m_invalid;
-		IntVector m_offset;
-		int m_z;
 		Environment m_environment;
+		IntPoint3D m_centerPos;
+
+		bool m_invalid;
 
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
@@ -37,36 +26,87 @@ namespace Dwarrowdelf.Client
 			m_renderMap = new RenderMap();
 		}
 
-		public RenderMap RenderMap { get { return m_renderMap; } }
+		#region IRenderViewRenderer Members
 
-		public RenderTile GetRenderTile(IntPoint ml)
+		public RenderMap GetRenderMap(int columns, int rows)
 		{
-			if (m_invalid)
-			{
-				m_renderMap.Clear();
-				m_invalid = false;
-			}
+			Debug.WriteLine("GetRenderMap({0}, {1})", columns, rows);
 
-			//MyDebug.WriteLine("GET {0}", ml - this.Offset);
+			m_renderMap.Size = new IntSize(columns, rows);
 
-			IntPoint p = ml - this.Offset;
-			var tile = m_renderMap.ArrayGrid.Grid[p.Y, p.X];
+			Resolve();
 
-			if (!tile.IsValid)
-			{
-				var ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
-
-				tile = Resolve(this.Environment, ml3d, m_showVirtualSymbols);
-
-				m_renderMap.ArrayGrid.Grid[p.Y, p.X] = tile;
-			}
-
-			return tile;
+			return m_renderMap;
 		}
 
-		public void ResolveAll()
+		#endregion
+
+
+		public IntPoint3D CenterPos
 		{
-			//MyDebug.WriteLine("RenderView.ResolveAll");
+			get { return m_centerPos; }
+			set
+			{
+				if (value == m_centerPos)
+					return;
+
+				var diff = value - m_centerPos;
+
+				m_centerPos = value;
+
+				if (!m_invalid)
+				{
+					if (diff.Z != 0)
+						m_invalid = true;
+					else
+						ScrollTiles(diff.ToIntVector());
+				}
+			}
+		}
+
+		public bool ShowVirtualSymbols
+		{
+			get { return m_showVirtualSymbols; }
+
+			set
+			{
+				m_showVirtualSymbols = value;
+				m_invalid = true;
+			}
+		}
+
+		public Environment Environment
+		{
+			get { return m_environment; }
+
+			set
+			{
+				if (m_environment == value)
+					return;
+
+				// XXX need to render all when LOS?
+				if (m_environment != null && m_environment.VisibilityMode == VisibilityMode.LOS)
+					throw new NotImplementedException();
+
+				if (m_environment != null)
+					m_environment.MapTileChanged -= MapChangedCallback;
+
+				m_environment = value;
+				m_invalid = true;
+
+				if (m_environment != null)
+					m_environment.MapTileChanged += MapChangedCallback;
+			}
+		}
+
+		public void Invalidate()
+		{
+			m_invalid = true;
+		}
+
+		void Resolve()
+		{
+			Debug.WriteLine("RenderView.Resolve");
 
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
@@ -74,6 +114,7 @@ namespace Dwarrowdelf.Client
 
 			if (m_invalid)
 			{
+				Debug.WriteLine("RenderView.Resolve All");
 				m_renderMap.Clear();
 				m_invalid = false;
 			}
@@ -84,21 +125,19 @@ namespace Dwarrowdelf.Client
 				{
 					var p = new IntPoint(x, y);
 
-					if (m_renderMap.ArrayGrid.Grid[p.Y, p.X].IsValid)
+					if (m_renderMap.ArrayGrid.Grid[y, x].IsValid)
 						continue;
 
-					var ml = p + this.Offset;
-					var ml3d = new IntPoint3D(ml.X, ml.Y, this.Z);
+					var ml = new IntPoint3D(m_centerPos.X - columns / 2 + x, m_centerPos.Y - rows / 2 + y, m_centerPos.Z);
 
-					Resolve(out m_renderMap.ArrayGrid.Grid[p.Y, p.X], this.Environment, ml3d, m_showVirtualSymbols);
+					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols);
 				}
 			}
 		}
 
-
 		void ScrollTiles(IntVector scrollVector)
 		{
-			//MyDebug.WriteLine("RenderView.ScrollTiles");
+			Debug.WriteLine("RenderView.ScrollTiles");
 
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
@@ -137,102 +176,22 @@ namespace Dwarrowdelf.Client
 			Array.Clear(grid, yClrIdx * columns, columns * ay);
 		}
 
-		public IntVector Offset
-		{
-			get { return m_offset; }
-			set
-			{
-				if (value == m_offset)
-					return;
-
-				var diff = value - m_offset;
-
-				m_offset = value;
-
-				if (!m_invalid)
-					ScrollTiles(diff);
-			}
-		}
-
-		public int Z
-		{
-			get { return m_z; }
-			set
-			{
-				m_z = value;
-				m_invalid = true;
-			}
-		}
-
-		public IntSize Size
-		{
-			get { return m_renderMap.Size; }
-			set
-			{
-				if (value == m_renderMap.Size)
-					return;
-
-				m_renderMap.Size = value;
-				m_invalid = true;
-			}
-		}
-
-		public bool ShowVirtualSymbols
-		{
-			get { return m_showVirtualSymbols; }
-
-			set
-			{
-				m_showVirtualSymbols = value;
-				m_invalid = true;
-			}
-		}
-
-		public Environment Environment
-		{
-			get { return m_environment; }
-
-			set
-			{
-				if (m_environment == value)
-					return;
-
-				if (m_environment != null)
-				{
-					m_environment.MapTileChanged -= MapChangedCallback;
-				}
-
-				m_environment = value;
-				m_invalid = true;
-
-				if (m_environment != null)
-				{
-					m_environment.MapTileChanged += MapChangedCallback;
-				}
-			}
-		}
-
-		public void Invalidate()
-		{
-			m_invalid = true;
-		}
 
 		void MapChangedCallback(IntPoint3D ml)
 		{
 			// Note: invalidates the rendertile regardless of ml.Z
-			IntPoint p = ml.ToIntPoint() - this.Offset;
+			// invalidate only if the change is within resolve limits (MAXLEVEL?)
+
+			var x = ml.X - m_centerPos.X + m_renderMap.Size.Width / 2;
+			var y = ml.Y - m_centerPos.Y + m_renderMap.Size.Height / 2;
+
+			var p = new IntPoint(x, y);
+
 			if (m_renderMap.ArrayGrid.Bounds.Contains(p))
 				m_renderMap.ArrayGrid.Grid[p.Y, p.X].IsValid = false;
 		}
 
 
-
-		static RenderTile Resolve(Environment env, IntPoint3D ml, bool showVirtualSymbols)
-		{
-			RenderTile tile;
-			Resolve(out tile, env, ml, showVirtualSymbols);
-			return tile;
-		}
 
 		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols)
 		{
@@ -608,5 +567,6 @@ namespace Dwarrowdelf.Client
 
 			return GameColor.None;
 		}
+
 	}
 }
