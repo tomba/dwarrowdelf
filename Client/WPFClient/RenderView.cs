@@ -6,7 +6,21 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client
 {
-	class RenderView
+	interface IRenderView
+	{
+		Environment Environment { get; set; }
+
+		int Z { get; set; }
+		IntSize Size { get; set; }
+		IntVector Offset { get; set; }
+	
+		void Invalidate();
+		void ResolveAll();
+
+		bool ShowVirtualSymbols { get; set; }
+	}
+
+	class RenderView : IRenderView
 	{
 		RenderMap m_renderMap;
 		bool m_showVirtualSymbols = true;
@@ -205,6 +219,7 @@ namespace Dwarrowdelf.Client
 
 		void MapChangedCallback(IntPoint3D ml)
 		{
+			// Note: invalidates the rendertile regardless of ml.Z
 			IntPoint p = ml.ToIntPoint() - this.Offset;
 			if (m_renderMap.ArrayGrid.Bounds.Contains(p))
 				m_renderMap.ArrayGrid.Grid[p.Y, p.X].IsValid = false;

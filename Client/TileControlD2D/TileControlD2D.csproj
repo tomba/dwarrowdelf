@@ -8,8 +8,8 @@
     <ProjectGuid>{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TileControlD2D</RootNamespace>
-    <AssemblyName>TileControlD2D</AssemblyName>
+    <RootNamespace>Dwarrowdelf.Client.TileControlD2D</RootNamespace>
+    <AssemblyName>Dwarrowdelf.Client.TileControlD2D</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -121,17 +121,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="TileControlD2D.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Compile Include="IRenderViewRenderer.cs" />
+    <Compile Include="TileControlD2D.cs" />
     <Compile Include="D2DD3DImage.cs" />
     <Compile Include="IBitmapGenerator.cs" />
     <Compile Include="RenderMap.cs" />
-    <Compile Include="TileControlD2D.xaml.cs">
-      <DependentUpon>TileControlD2D.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -1,12 +1,56 @@
 ﻿<Window x:Class="TileControlD2DTest.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:tc="clr-namespace:Dwarrowdelf.Client.TileControlD2D;assembly=TileControlD2D"
+        xmlns:tc="clr-namespace:Dwarrowdelf.Client.TileControlD2D;assembly=Dwarrowdelf.Client.TileControlD2D"
+        x:Name="mainWindow"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <tc:TileControlD2D Name="tc">
-            
-        </tc:TileControlD2D>
-        
-    </Grid>
+    <DockPanel>
+
+        <StatusBar DockPanel.Dock="Bottom">
+
+            <TextBlock>SL</TextBlock>
+            <TextBox Width="50" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding Path="ScreenLoc.X" Mode="OneWay" ElementName="mainWindow" />
+                        <Binding Path="ScreenLoc.Y" Mode="OneWay" ElementName="mainWindow" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock>MousePos</TextBlock>
+            <TextBox Width="75" IsReadOnly="True">
+                <TextBox.Text>
+                    <MultiBinding StringFormat="{}{0}, {1}">
+                        <Binding Path="MousePos.X" Mode="OneWay" ElementName="mainWindow" />
+                        <Binding Path="MousePos.Y" Mode="OneWay" ElementName="mainWindow" />
+                    </MultiBinding>
+                </TextBox.Text>
+            </TextBox>
+
+            <TextBlock>FPS</TextBlock>
+            <TextBox Width="75" IsReadOnly="True" Name="fpsTextBlock" />
+        </StatusBar>
+
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Content="Render" Click="Button_Click" />
+            </ToolBar>
+        </ToolBarTray>
+
+        <Grid UseLayoutRounding="True">
+            <Border BorderBrush="Red" BorderThickness="8">
+                <tc:TileControlD2D Name="tc">
+                    <tc:TileControlD2D.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Render" Click="MenuItem_Click" />
+                        </ContextMenu>
+                    </tc:TileControlD2D.ContextMenu>
+                </tc:TileControlD2D>
+            </Border>
+
+            <Canvas x:Name="canvas" />
+        </Grid>
+
+    </DockPanel>
 </Window>

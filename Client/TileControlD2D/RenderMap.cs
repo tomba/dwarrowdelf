@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		public IntSize Size
 		{
 			get { return m_grid.Size; }
-			set { m_grid = new ArrayGrid2D<RenderTile>(value); }
+			set { if (m_grid.Size != value) m_grid = new ArrayGrid2D<RenderTile>(value); }
 		}
 
 		public ArrayGrid2D<RenderTile> ArrayGrid { get { return m_grid; } }
