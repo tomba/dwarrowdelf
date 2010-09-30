@@ -684,7 +684,7 @@ namespace Dwarrowdelf.Server
 		void HandleWorldChange(Change change)
 		{
 			// can any friendly see the change?
-			if (!m_seeAll && !m_controllables.Any(l => ChangeFilter(l, change)))
+			if (!m_seeAll && !CanSeeChange(change))
 				return;
 
 			if (!m_seeAll)
@@ -715,6 +715,96 @@ namespace Dwarrowdelf.Server
 			Send(changeMsg);
 		}
 
+		bool CanSeeChange(Change change)
+		{
+			// XXX these checks are not totally correct. objects may have changed after
+			// the creation of the change, for example moved. Should changes contain
+			// all the information needed for these checks?
+			if (change is ObjectMoveChange)
+			{
+				var c = (ObjectMoveChange)change;
+
+				return m_controllables.Any(l =>
+				{
+					if (l == c.Object)
+						return true;
+
+					if (l.Sees(c.Source, c.SourceLocation))
+						return true;
+
+					if (l.Sees(c.Destination, c.DestinationLocation))
+						return true;
+
+					return false;
+				});
+			}
+			else if (change is MapChange)
+			{
+				var c = (MapChange)change;
+				return m_controllables.Any(l => l.Sees(c.Map, c.Location));
+			}
+			else if (change is TurnStartChange)
+			{
+				var c = (TurnStartChange)change;
+				return c.Living == null || m_controllables.Contains(c.Living);
+			}
+			else if (change is TurnEndChange)
+			{
+				var c = (TurnEndChange)change;
+				return c.Living == null || m_controllables.Contains(c.Living);
+			}
+
+			else if (change is FullObjectChange)
+			{
+				var c = (FullObjectChange)change;
+				return m_controllables.Contains(c.Object);
+			}
+			else if (change is PropertyChange)
+			{
+				var c = (PropertyChange)change;
+
+				if (m_controllables.Contains(c.Object))
+				{
+					return true;
+				}
+				else if (c.Property.Visibility == PropertyVisibility.Friendly)
+				{
+					// xxx should check if the object is friendly
+					// return false for now, as all friendlies are controllables, thus we will still see it
+					// because the check above will return true to that controllable
+					return false;
+				}
+				else if (c.Property.Visibility == PropertyVisibility.Public)
+				{
+					ServerGameObject ob = (ServerGameObject)c.Object;
+
+					return m_controllables.Any(l => l.Sees(ob.Environment, ob.Location));
+				}
+				else
+				{
+					throw new Exception();
+				}
+			}
+			else if (change is ActionStartedChange)
+			{
+				var c = (ActionStartedChange)change;
+				return m_controllables.Contains(c.Object);
+			}
+			else if (change is ActionProgressChange)
+			{
+				var c = (ActionProgressChange)change;
+				return m_controllables.Contains(c.Object);
+			}
+			else if (change is TickStartChange || change is ObjectDestructedChange || change is ObjectCreatedChange)
+			{
+				return true;
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
 		// can living see the change?
 		bool ChangeFilter(Living living, Change change)
 		{
@@ -742,10 +832,6 @@ namespace Dwarrowdelf.Server
 
 				return living.Sees(c.Map, c.Location);
 			}
-			else if (change is TickStartChange)
-			{
-				return true;
-			}
 			else if (change is TurnStartChange)
 			{
 				var c = (TurnStartChange)change;
@@ -756,14 +842,7 @@ namespace Dwarrowdelf.Server
 				var c = (TurnEndChange)change;
 				return c.Living == null || m_controllables.Contains(c.Living);
 			}
-			else if (change is ObjectDestructedChange)
-			{
-				return true;
-			}
-			else if (change is ObjectCreatedChange)
-			{
-				return true;
-			}
+
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
@@ -793,6 +872,16 @@ namespace Dwarrowdelf.Server
 				{
 					throw new Exception();
 				}
+			}
+			else if (change is ActionStartedChange)
+			{
+				var c = (ActionStartedChange)change;
+				return m_controllables.Contains(c.Object);
+			}
+			else if (change is ActionProgressChange)
+			{
+				var c = (ActionProgressChange)change;
+				return m_controllables.Contains(c.Object);
 			}
 			else
 			{
