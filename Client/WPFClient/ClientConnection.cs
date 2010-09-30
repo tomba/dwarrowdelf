@@ -235,12 +235,13 @@ namespace Dwarrowdelf.Client
 				else
 					env = new Environment(world, msg.Environment, msg.Bounds);
 				env.Name = "map";
-
-				if (App.MainWindow.map.Environment == null)
-					App.MainWindow.map.Environment = env;
 			}
 
 			env.VisibilityMode = msg.VisibilityMode;
+
+			// XXX
+			if (App.MainWindow.map.Environment == null)
+				App.MainWindow.map.Environment = env;
 		}
 
 		void HandleMessage(MapDataTerrainsMessage msg)

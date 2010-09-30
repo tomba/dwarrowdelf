@@ -53,8 +53,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		int m_tileSize;
 
-		RenderMap m_renderMap;
-
 		Point m_offset;
 
 		uint[] m_simpleBitmapArray;
@@ -99,7 +97,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			Window window = Window.GetWindow(this);
 
 			m_interopImageSource.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
-			m_interopImageSource.OnRender = this.DoRender;
+			m_interopImageSource.OnRender = this.DoRenderCallback;
 
 			// Need an explicit render first?
 			m_interopImageSource.RequestRender();
@@ -325,6 +323,19 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			set { m_renderView = value; }
 		}
 
+		void DoRenderCallback(IntPtr pIDXGISurface)
+		{
+			try
+			{
+				DoRender(pIDXGISurface);
+			}
+			catch (Exception e)
+			{
+				Trace.WriteLine(e.ToString());
+				Trace.Assert(false);
+			}
+		}
+
 		void DoRender(IntPtr pIDXGISurface)
 		{
 			//Debug.WriteLine("DoRender");
@@ -369,21 +380,12 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				m_darkBrush = null;
 			}
 
-			m_renderMap = m_renderView.GetRenderMap(m_columns, m_rows);
+			var renderMap = m_renderView.GetRenderMap(m_columns, m_rows);
 
-			try
-			{
-				DoRenderTiles();
-			}
-			catch(Exception e)
-			{
-				Debug.WriteLine(e.ToString());
-			}
-
-			m_renderMap = null;
+			DoRenderTiles(renderMap);
 		}
 
-		void DoRenderTiles()
+		void DoRenderTiles(RenderMap renderMap)
 		{
 			m_renderTarget.BeginDraw();
 
@@ -405,16 +407,16 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			m_renderTarget.Transform = Matrix3x2F.Translation(dx, dy);
 
 			if (m_tileSize > MINDETAILEDTILESIZE)
-				RenderDetailedTiles(m_tileSize);
+				RenderDetailedTiles(renderMap, m_tileSize);
 			else
-				RenderSimpleTiles(m_tileSize);
+				RenderSimpleTiles(renderMap, m_tileSize);
 
 			m_renderTarget.Transform = Matrix3x2F.Identity;
 
 			m_renderTarget.EndDraw();
 		}
 
-		unsafe void RenderSimpleTiles(int tileSize)
+		unsafe void RenderSimpleTiles(RenderMap renderMap, int tileSize)
 		{
 			uint bytespp = 4;
 			uint w = (uint)m_columns;
@@ -425,11 +427,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 			fixed (uint* a = m_simpleBitmapArray)
 			{
-				for (int y = 0; y < m_rows && y < m_renderMap.Size.Height; ++y)
+				for (int y = 0; y < m_rows && y < renderMap.Size.Height; ++y)
 				{
-					for (int x = 0; x < m_columns && x < m_renderMap.Size.Width; ++x)
+					for (int x = 0; x < m_columns && x < renderMap.Size.Width; ++x)
 					{
-						RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
+						RenderTile data = renderMap.ArrayGrid.Grid[y, x];
 						var rgb = new GameColorRGB(data.Color);
 						var m = 1.0 - data.DarknessLevel / 255.0;
 						var r = (byte)(rgb.R * m);
@@ -449,7 +451,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			}
 		}
 
-		void RenderDetailedTiles(int tileSize)
+		void RenderDetailedTiles(RenderMap renderMap, int tileSize)
 		{
 #if DEBUG_TEXT
 			var blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(255, 255, 255, 1));
@@ -460,15 +462,15 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			if (m_darkBrush == null)
 				m_darkBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
 
-			for (int y = 0; y < m_rows && y < m_renderMap.Size.Height; ++y)
+			for (int y = 0; y < m_rows && y < renderMap.Size.Height; ++y)
 			{
-				for (int x = 0; x < m_columns && x < m_renderMap.Size.Width; ++x)
+				for (int x = 0; x < m_columns && x < renderMap.Size.Width; ++x)
 				{
 					var x1 = x * tileSize;
 					var y1 = (m_rows - y - 1) * tileSize;
 					var dstRect = new RectF(x1, y1, x1 + tileSize, y1 + tileSize);
 
-					RenderTile data = m_renderMap.ArrayGrid.Grid[y, x];
+					RenderTile data = renderMap.ArrayGrid.Grid[y, x];
 
 					var d1 = (data.Floor.DarknessLevel - data.Interior.DarknessLevel) / 255f;
 					var d2 = (data.Interior.DarknessLevel - data.Object.DarknessLevel) / 255f;

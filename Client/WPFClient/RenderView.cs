@@ -84,10 +84,6 @@ namespace Dwarrowdelf.Client
 				if (m_environment == value)
 					return;
 
-				// XXX need to render all when LOS?
-				if (m_environment != null && m_environment.VisibilityMode == VisibilityMode.LOS)
-					throw new NotImplementedException();
-
 				if (m_environment != null)
 					m_environment.MapTileChanged -= MapChangedCallback;
 
@@ -112,7 +108,7 @@ namespace Dwarrowdelf.Client
 			var rows = m_renderMap.Size.Height;
 			var grid = m_renderMap.ArrayGrid.Grid;
 
-			if (m_invalid)
+			if (m_invalid || (m_environment != null && m_environment.VisibilityMode != VisibilityMode.AllVisible))
 			{
 				Debug.WriteLine("RenderView.Resolve All");
 				m_renderMap.Clear();
@@ -134,6 +130,8 @@ namespace Dwarrowdelf.Client
 				}
 			}
 		}
+
+		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
 
 		void ScrollTiles(IntVector scrollVector)
 		{
