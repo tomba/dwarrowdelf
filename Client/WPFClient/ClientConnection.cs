@@ -317,6 +317,16 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		// XXX check if this is needed
+		void HandleChange(FullObjectChange change)
+		{
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);
+			if (ob == null)
+				throw new Exception();
+
+			ob.Deserialize(change.ObjectData);
+		}
+
 		void HandleChange(ObjectMoveChange change)
 		{
 			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
