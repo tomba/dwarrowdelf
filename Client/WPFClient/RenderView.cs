@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 
 		public RenderMap GetRenderMap(int columns, int rows)
 		{
-			Debug.WriteLine("GetRenderMap({0}, {1})", columns, rows);
+			//Debug.WriteLine("GetRenderMap({0}, {1})", columns, rows);
 
 			m_renderMap.Size = new IntSize(columns, rows);
 
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client
 
 		void Resolve()
 		{
-			Debug.WriteLine("RenderView.Resolve");
+			//Debug.WriteLine("RenderView.Resolve");
 
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Client
 
 			if (m_invalid || (m_environment != null && m_environment.VisibilityMode != VisibilityMode.AllVisible))
 			{
-				Debug.WriteLine("RenderView.Resolve All");
+				//Debug.WriteLine("RenderView.Resolve All");
 				m_renderMap.Clear();
 				m_invalid = false;
 			}
@@ -135,7 +135,7 @@ namespace Dwarrowdelf.Client
 
 		void ScrollTiles(IntVector scrollVector)
 		{
-			Debug.WriteLine("RenderView.ScrollTiles");
+			//Debug.WriteLine("RenderView.ScrollTiles");
 
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;

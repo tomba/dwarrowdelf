@@ -8,6 +8,12 @@ namespace Dwarrowdelf.Server
 {
 	public class Living : ServerGameObject, ILiving
 	{
+		[System.Diagnostics.Conditional("DEBUG")]
+		void D(string format, params object[] args)
+		{
+			//Debug.Print("[{0}]: {1}", this, String.Format(format, args));
+		}
+
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
 
 		uint m_losMapVersion;
@@ -309,14 +315,14 @@ namespace Dwarrowdelf.Server
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 			{
-				Debug.Print("PerformAction {0} : skipping", this);
+				D("PerformAction: skipping");
 				return;
 			}
 
 			if (this.ActionTicksLeft == 0)
 				throw new Exception();
 
-			Debug.Print("PerformAction {0} : {1}", this, action);
+			D("PerformAction: {0}", action);
 
 			this.ActionTicksLeft -= 1;
 
@@ -411,7 +417,7 @@ namespace Dwarrowdelf.Server
 
 		public void DoAction(GameAction action, int userID)
 		{
-			Debug.Print("DoAction {0}: {1}, uid: {2}", this, action, userID);
+			D("DoAction: {0}, uid: {1}", action, userID);
 
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(action.Priority != ActionPriority.Undefined);
@@ -459,7 +465,7 @@ namespace Dwarrowdelf.Server
 			if (!this.HasAction)
 				throw new Exception();
 
-			Debug.Print("{0}: CancelAction({1}, uid: {2})", this, this.CurrentAction, this.ActionUserID);
+			D("CancelAction({0}, uid: {1})", this.CurrentAction, this.ActionUserID);
 
 			var action = this.CurrentAction;
 
@@ -526,14 +532,14 @@ namespace Dwarrowdelf.Server
 
 			this.ActionTicksLeft = e.TicksLeft;
 
-			Debug.Print("ActionProgress({0}: {1}, {2})", this, action, e.State);
+			D("ActionProgress({0}, {1})", action, e.State);
 
 			if (m_ai != null)
 				m_ai.ActionProgress(e);
 
 			if (e.TicksLeft == 0)
 			{
-				Debug.Print("ActionDone({0}: {1})", this, action);
+				D("ActionDone({0})", action);
 				this.CurrentAction = null;
 				this.ActionTicksLeft = 0;
 				this.ActionUserID = 0;
