@@ -71,56 +71,56 @@ namespace Dwarrowdelf.Client
 				content.StateChanged += new RoutedEventHandler(dockableContent_StateChanged);
 			}
 
-			foreach (var name in Enum.GetNames(typeof(InteriorID)))
+			foreach (var id in Enum.GetValues(typeof(InteriorID)))
 			{
 				var item = new MenuItem()
 				{
-					Tag = name,
-					Header = name,
+					Tag = id,
+					Header = id.ToString(),
 				};
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInterior));
 				setInteriorMenu.Items.Add(item);
 			}
 
-			foreach (var name in Enum.GetNames(typeof(FloorID)))
+			foreach (var id in Enum.GetValues(typeof(FloorID)))
 			{
 				var item = new MenuItem()
 				{
-					Tag = name,
-					Header = name,
+					Tag = id,
+					Header = id.ToString(),
 				};
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloor));
 				setFloorMenu.Items.Add(item);
 			}
 
-			foreach (var name in Enum.GetNames(typeof(MaterialID)))
+			foreach (var id in Enum.GetValues(typeof(MaterialID)))
 			{
 				var item = new MenuItem()
 				{
-					Tag = name,
-					Header = name,
+					Tag = id,
+					Header = id.ToString(),
 				};
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInteriorMaterial));
 				setInteriorMaterialMenu.Items.Add(item);
 			}
 
-			foreach (var name in Enum.GetNames(typeof(MaterialID)))
+			foreach (var id in Enum.GetValues(typeof(MaterialID)))
 			{
 				var item = new MenuItem()
 				{
-					Tag = name,
-					Header = name,
+					Tag = id,
+					Header = id.ToString(),
 				};
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloorMaterial));
 				setFloorMaterialMenu.Items.Add(item);
 			}
 
-			foreach (var name in Enum.GetNames(typeof(BuildingID)))
+			foreach (var id in Enum.GetValues(typeof(BuildingID)))
 			{
 				var item = new MenuItem()
 				{
-					Tag = name,
-					Header = name,
+					Tag = id,
+					Header = id.ToString(),
 				};
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Build));
 				createBuildingMenu.Items.Add(item);
@@ -462,11 +462,7 @@ namespace Dwarrowdelf.Client
 		void MenuItem_Click_SetInterior(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			InteriorID inter;
-			if (Enum.TryParse<InteriorID>(tag, out inter) == false)
-				throw new Exception();
+			var inter = (InteriorID)item.Tag;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
@@ -479,11 +475,7 @@ namespace Dwarrowdelf.Client
 		void MenuItem_Click_SetFloor(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			FloorID floor;
-			if (Enum.TryParse<FloorID>(tag, out floor) == false)
-				throw new Exception();
+			var floor = (FloorID)item.Tag;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
@@ -496,11 +488,7 @@ namespace Dwarrowdelf.Client
 		void MenuItem_Click_SetInteriorMaterial(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			MaterialID material;
-			if (Enum.TryParse<MaterialID>(tag, out material) == false)
-				throw new Exception();
+			var material = (MaterialID)item.Tag;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
@@ -513,11 +501,7 @@ namespace Dwarrowdelf.Client
 		void MenuItem_Click_SetFloorMaterial(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			MaterialID material;
-			if (Enum.TryParse<MaterialID>(tag, out material) == false)
-				throw new Exception();
+			var material = (MaterialID)item.Tag;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
@@ -660,20 +644,11 @@ namespace Dwarrowdelf.Client
 		private void MenuItem_Click_Build(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
+			var id = (BuildingID)item.Tag;
 
 			var r = map.Selection.SelectionCuboid.ToIntRect();
 			var env = map.Environment;
 			int z = map.Z;
-
-			BuildingID id;
-
-			if (tag == "Smith")
-				id = BuildingID.Smith;
-			else if (tag == "Stockpile")
-				id = BuildingID.Stockpile;
-			else
-				throw new Exception();
 
 			var msg = new Messages.CreateBuildingMessage() { MapID = env.ObjectID, Area = r, Z = z, ID = id };
 			GameData.Data.Connection.Send(msg);

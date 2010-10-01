@@ -8,6 +8,8 @@ namespace Dwarrowdelf
 	public enum BuildingID : byte
 	{
 		Undefined,
+		Carpenter,
+		Mason,
 		Smith,
 		Stockpile,
 	}
@@ -30,6 +32,8 @@ namespace Dwarrowdelf
 
 		static Buildings()
 		{
+			Add(new BuildingInfo(BuildingID.Carpenter));
+			Add(new BuildingInfo(BuildingID.Mason));
 			Add(new BuildingInfo(BuildingID.Smith));
 			Add(new BuildingInfo(BuildingID.Stockpile));
 		}

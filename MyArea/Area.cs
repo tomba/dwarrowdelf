@@ -250,14 +250,6 @@ namespace MyArea
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
-			var building = new BuildingObject(world, BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
-			foreach (var p2d in building.Area.Range())
-			{
-				var p = new IntPoint3D(p2d, building.Z);
-				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-			}
-			env.AddBuilding(building);
 
 #if asd
 			for (int x = 3; x < 4; ++x)
@@ -339,6 +331,28 @@ namespace MyArea
 					env.SetInterior(p, InteriorID.Ore, MaterialID.Gold);
 				}
 			}
+
+
+			var building = new BuildingObject(world, BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
+			foreach (var p2d in building.Area.Range())
+			{
+				var p = new IntPoint3D(p2d, building.Z);
+				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				env.SetGrass(p, false);
+			}
+			env.AddBuilding(building);
+
+			building = new BuildingObject(world, BuildingID.Carpenter) { Area = new IntRect(6, 6, 3, 3), Z = 9 };
+			foreach (var p2d in building.Area.Range())
+			{
+				var p = new IntPoint3D(p2d, building.Z);
+				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				env.SetGrass(p, false);
+			}
+			env.AddBuilding(building);
+
 
 			return env;
 		}
