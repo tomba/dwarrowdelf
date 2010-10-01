@@ -567,6 +567,20 @@ namespace Dwarrowdelf.Client
 					this.Map.World.JobManager.Add(job);
 				}
 			}
+			if (tag == "FellTree")
+			{
+				var env = map.Environment;
+
+				foreach (var p in map.Selection.SelectionCuboid.Range())
+				{
+					if (env.GetInterior(p).ID != InteriorID.Tree)
+						continue;
+
+					var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, env, p);
+					job.PropertyChanged += OnJobPropertyChanged;
+					this.Map.World.JobManager.Add(job);
+				}
+			}
 			else if (tag == "MineArea")
 			{
 				var area = map.Selection.SelectionCuboid;

@@ -152,6 +152,23 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public class FellTreeAction : GameAction
+	{
+		public Direction Direction { get; private set; }
+
+		public FellTreeAction(Direction dir, ActionPriority priority)
+			: base(priority)
+		{
+			this.Direction = dir;
+		}
+
+		protected override string GetParams()
+		{
+			return this.Direction.ToString();
+		}
+	}
+
+	[Serializable]
 	public class BuildItemAction : GameAction
 	{
 		// public object type etc

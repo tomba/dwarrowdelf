@@ -37,5 +37,6 @@
     <CharSymbol ID="Tree" Outline="True">♣</CharSymbol>
     <CharSymbol ID="Key">Ⱡ</CharSymbol>
     <CharSymbol ID="Rock">●</CharSymbol>
+    <CharSymbol ID="Log" X="5" Y="60" W="90" H="20">▬</CharSymbol>
 
 </SymbolSet>

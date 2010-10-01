@@ -40,6 +40,7 @@ namespace Dwarrowdelf
 		Gem,
 		Key,
 		Rock,
+		Log,
 
 		/* top */
 		Water,

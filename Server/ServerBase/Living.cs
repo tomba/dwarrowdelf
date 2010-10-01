@@ -245,6 +245,36 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		void PerformFellTree(FellTreeAction action, out bool success)
+		{
+			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
+
+			var id = this.Environment.GetInteriorID(p);
+
+			if (id == InteriorID.Tree)
+			{
+				if (this.ActionTicksLeft == 0)
+				{
+					var material = this.Environment.GetInteriorMaterialID(p);
+					this.Environment.SetInteriorID(p, InteriorID.Empty);
+					var log = new ItemObject(this.World)
+					{
+						Name = "Log",
+						MaterialID = material,
+						SymbolID = Dwarrowdelf.SymbolID.Log,
+						Color = GameColor.SaddleBrown,
+					};
+					var ok = log.MoveTo(this.Environment, p);
+					Debug.Assert(ok);
+				}
+				success = true;
+			}
+			else
+			{
+				success = false;
+			}
+		}
+
 		void PerformWait(WaitAction action, out bool success)
 		{
 			success = true;
@@ -324,6 +354,10 @@ namespace Dwarrowdelf.Server
 				else if (action is MineAction)
 				{
 					PerformMine((MineAction)action, out success);
+				}
+				else if (action is FellTreeAction)
+				{
+					PerformFellTree((FellTreeAction)action, out success);
 				}
 				else if (action is BuildItemAction)
 				{

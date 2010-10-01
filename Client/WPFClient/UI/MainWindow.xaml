@@ -194,6 +194,10 @@
 
                         <!-- Current tile info-->
                         <ad:DockableContent Name="currentTileContent" Title="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
+                            
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
@@ -216,6 +220,10 @@
 
                         <!-- Selection -->
                         <ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
+                            
                             <DockPanel>
 
                                 <StackPanel DockPanel.Dock="Top">
@@ -377,6 +385,7 @@
                                         </MenuItem>
                                         <MenuItem Header="Jobs">
                                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="FellTree" Header="Fell Tree" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
