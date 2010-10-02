@@ -51,6 +51,12 @@ namespace Dwarrowdelf.Client
 			}
 #endif
 
+#if TRACE
+			var traceListener = new MMLogTraceListener("Client");
+			Trace.Listeners.Clear();
+			Trace.Listeners.Add(traceListener);
+#endif
+
 			Debug.Print("Start");
 
 			int magic = 0;
