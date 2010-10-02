@@ -120,6 +120,10 @@ namespace Dwarrowdelf.Client
 
 			bool isSeeAll = GameData.Data.IsSeeAll;
 
+			int offsetX = m_centerPos.X - columns / 2;
+			int offsetY = m_centerPos.Y - rows / 2;
+			int offsetZ = m_centerPos.Z;
+
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
 			{
@@ -130,7 +134,7 @@ namespace Dwarrowdelf.Client
 					if (m_renderMap.ArrayGrid.Grid[y, x].IsValid)
 						continue;
 
-					var ml = new IntPoint3D(m_centerPos.X - columns / 2 + x, m_centerPos.Y - rows / 2 + y, m_centerPos.Z);
+					var ml = new IntPoint3D(offsetX + x, offsetY + y, offsetZ);
 
 					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
