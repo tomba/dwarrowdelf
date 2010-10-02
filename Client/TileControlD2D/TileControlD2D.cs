@@ -193,7 +193,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		{
 			var dx = ((m_tileSize * m_columns) - this.RenderSize.Width) / 2;
 			var dy = ((m_tileSize * m_rows) - this.RenderSize.Height) / 2;
-			
+
 			var newOffset = new Point(dx, dy);
 
 			//Debug.WriteLine("UpdateOffset({0}, {1}) = {2}", this.RenderSize, m_tileSize, newOffset);
@@ -280,7 +280,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				InvalidateRender();
 			}
 		}
-		
+
 		void CreateAtlas()
 		{
 			//My//Debug.WriteLine("CreateAtlas");
@@ -422,16 +422,26 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			uint w = (uint)m_columns;
 			uint h = (uint)m_rows;
 
+			//var sw = Stopwatch.StartNew();
+
 			if (m_simpleBitmapArray == null)
 				m_simpleBitmapArray = new uint[w * h];
 
 			fixed (uint* a = m_simpleBitmapArray)
 			{
-				for (int y = 0; y < m_rows && y < renderMap.Size.Height; ++y)
+				for (int y = 0; y < m_rows; ++y)
 				{
-					for (int x = 0; x < m_columns && x < renderMap.Size.Width; ++x)
+					for (int x = 0; x < m_columns; ++x)
 					{
 						RenderTile data = renderMap.ArrayGrid.Grid[y, x];
+
+						// fast path for black
+						if (data.Color == GameColor.None || data.Color == GameColor.Black)
+						{
+							a[(m_rows - y - 1) * w + x] = 0;
+							continue;
+						}
+
 						var rgb = new GameColorRGB(data.Color);
 						var m = 1.0 - data.DarknessLevel / 255.0;
 						var r = (byte)(rgb.R * m);
@@ -449,6 +459,9 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.NearestNeighbor, destRect);
 				bmp.Dispose();
 			}
+
+			//sw.Stop();
+			//Trace.WriteLine(String.Format("RenderSimpleTiles {0} ms", sw.ElapsedMilliseconds));
 		}
 
 		void RenderDetailedTiles(RenderMap renderMap, int tileSize)

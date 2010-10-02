@@ -105,6 +105,8 @@ namespace Dwarrowdelf.Client
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
+			//var sw = Stopwatch.StartNew();
+
 			var columns = m_renderMap.Size.Width;
 			var rows = m_renderMap.Size.Height;
 			var grid = m_renderMap.ArrayGrid.Grid;
@@ -117,8 +119,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			bool isSeeAll = GameData.Data.IsSeeAll;
-
-			//var sw = Stopwatch.StartNew();
 
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
@@ -204,7 +204,7 @@ namespace Dwarrowdelf.Client
 			tile = new RenderTile();
 			tile.IsValid = true;
 
-			if (env == null)
+			if (env == null || !env.Bounds.Contains(ml))
 				return;
 
 			bool visible;

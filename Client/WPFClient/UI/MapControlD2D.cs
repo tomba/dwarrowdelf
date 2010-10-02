@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Client
 
 			set
 			{
-				value = MyMath.IntClamp(value, 256, 2);
+				value = MyMath.IntClamp(value, 256, 1);
 
 				if (value == m_tileSize)
 					return;
