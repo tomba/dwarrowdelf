@@ -105,34 +105,38 @@ namespace Dwarrowdelf.Jobs
 
 			while (true)
 			{
-				if (this.CurrentAssignment == null)
+				var assignment = this.CurrentAssignment;
+
+				if (assignment == null)
 				{
 					D("DecideAction: trying to find a new assignment");
 
-					this.CurrentAssignment = FindAndAssignJob(this.Worker, priority);
+					assignment = FindAndAssignJob(this.Worker, priority);
 
-					if (this.CurrentAssignment == null)
+					if (assignment == null)
 					{
 						D("DecideAction: no assignment to do");
 						return null;
 					}
 					else
 					{
-						D("DecideAction: new assignment: {0}", this.CurrentAssignment);
+						D("DecideAction: new assignment: {0}", assignment);
 					}
 				}
 
-				if (this.CurrentAssignment.Priority != priority)
+				this.CurrentAssignment = assignment;
+
+				if (assignment.Priority != priority)
 					return null;
 
-				Debug.Assert(this.CurrentAssignment.CurrentAction == null);
+				Debug.Assert(assignment.CurrentAction == null);
 
-				var progress = this.CurrentAssignment.PrepareNextAction();
+				var progress = assignment.PrepareNextAction();
 
 				switch (progress)
 				{
 					case Progress.Ok:
-						var action = this.CurrentAssignment.CurrentAction;
+						var action = assignment.CurrentAction;
 						if (action == null)
 							throw new Exception();
 
@@ -142,8 +146,8 @@ namespace Dwarrowdelf.Jobs
 					case Progress.Done:
 					case Progress.Fail:
 					case Progress.Abort:
-						D("DecideAction: {0} in {1}, looking for new assignment", progress, this.CurrentAssignment);
-						this.CurrentAssignment = null;
+						D("DecideAction: {0} in {1}, looking for new assignment", progress, assignment);
+						this.CurrentAssignment = assignment = null;
 						break;
 
 					case Progress.None:
