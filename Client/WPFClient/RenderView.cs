@@ -124,6 +124,23 @@ namespace Dwarrowdelf.Client
 			int offsetY = m_centerPos.Y - rows / 2;
 			int offsetZ = m_centerPos.Z;
 
+#if asd
+			for (int y = 0; y < rows; ++y)
+			{
+
+				for (int x = 0; x < columns; ++x)
+				{
+					var p = new IntPoint(x, y);
+
+					if (m_renderMap.ArrayGrid.Grid[y, x].IsValid)
+						continue;
+
+					var ml = new IntPoint3D(offsetX + x, offsetY + y, offsetZ);
+
+					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+				}
+			}
+#else
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
 			{
@@ -139,7 +156,7 @@ namespace Dwarrowdelf.Client
 					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
 			});
-
+#endif
 			//sw.Stop();
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
