@@ -146,11 +146,11 @@ namespace Dwarrowdelf.Client
 			RegisterGameProperty(PropertyID.Name, "Name", typeof(string), typeof(ClientGameObject), new UIPropertyMetadata(null));
 
 
-
-
+		// XXX Needs to be accessed from another thread, so we store the value in UpdateDrawing
+		GameColor m_gameColor;
 		public GameColor GameColor
 		{
-			get { return (GameColor)GetValue(GameColorProperty); }
+			get { return m_gameColor; }
 			set { SetValue(GameColorProperty, value); }
 		}
 
@@ -158,10 +158,11 @@ namespace Dwarrowdelf.Client
 			RegisterGameProperty(PropertyID.Color, "GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColor.None, UpdateDrawing));
 
 
-
+		// XXX needs to be accessed from another thread, so we store the value in UpdateDrawing
+		SymbolID m_symbolID;
 		public SymbolID SymbolID
 		{
-			get { return (SymbolID)GetValue(SymbolIDProperty); }
+			get { return m_symbolID; }
 			set { SetValue(SymbolIDProperty, value); }
 		}
 
@@ -207,6 +208,10 @@ namespace Dwarrowdelf.Client
 		static void UpdateDrawing(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var ob = (ClientGameObject)d;
+
+			ob.m_gameColor = (GameColor)ob.GetValue(GameColorProperty);
+			ob.m_symbolID = (SymbolID)ob.GetValue(SymbolIDProperty);
+
 			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.GameColor));
 			if (ob.Environment != null)
 				ob.Environment.OnObjectVisualChanged(ob);

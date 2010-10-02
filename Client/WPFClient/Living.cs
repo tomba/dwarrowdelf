@@ -30,6 +30,11 @@ namespace Dwarrowdelf.Client
 			this.IsLiving = true;
 		}
 
+		// XXX does this force the static dependencyproperties to be loaded, and thus the game properties are registered?
+		static Living()
+		{
+		}
+
 		public static readonly DependencyProperty HitPointsProperty =
 			RegisterGameProperty(PropertyID.HitPoints, "HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
 		public static readonly DependencyProperty SpellPointsProperty =

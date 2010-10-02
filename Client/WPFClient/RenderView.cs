@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using Dwarrowdelf.Client.TileControlD2D;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -115,7 +116,12 @@ namespace Dwarrowdelf.Client
 				m_invalid = false;
 			}
 
-			for (int y = 0; y < rows; ++y)
+			bool isSeeAll = GameData.Data.IsSeeAll;
+
+			//var sw = Stopwatch.StartNew();
+
+			// Note: we cannot access WPF stuff from different threads
+			Parallel.For(0, rows, y =>
 			{
 				for (int x = 0; x < columns; ++x)
 				{
@@ -126,9 +132,12 @@ namespace Dwarrowdelf.Client
 
 					var ml = new IntPoint3D(m_centerPos.X - columns / 2 + x, m_centerPos.Y - rows / 2 + y, m_centerPos.Z);
 
-					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols);
+					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
-			}
+			});
+
+			//sw.Stop();
+			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
@@ -190,8 +199,7 @@ namespace Dwarrowdelf.Client
 		}
 
 
-
-		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols)
+		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTile();
 			tile.IsValid = true;
@@ -201,7 +209,7 @@ namespace Dwarrowdelf.Client
 
 			bool visible;
 
-			if (GameData.Data.IsSeeAll)
+			if (isSeeAll)
 				visible = true;
 			else
 				visible = TileVisible(ml, env);
