@@ -308,7 +308,7 @@
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
 
-                                    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding SubJobs}">
+                                    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding Assignments}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
