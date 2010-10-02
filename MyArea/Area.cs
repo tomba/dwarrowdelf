@@ -109,7 +109,7 @@ namespace MyArea
 			}
 		}
 
-		Random m_random = new Random(123);
+		Random m_random = new Random(1234);
 
 		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
 		{
