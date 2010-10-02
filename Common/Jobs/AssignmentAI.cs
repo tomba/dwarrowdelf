@@ -161,8 +161,16 @@ namespace Dwarrowdelf.Jobs
 
 		IAssignment FindAndAssignJob(ILiving worker, ActionPriority priority)
 		{
+			int tries = 0;
+
 			while (true)
 			{
+				if (tries++ > 10)
+				{
+					Trace.TraceWarning("Cannot find job for {0} after {1} tries", worker, tries);
+					return null;
+				}
+
 				var assignment = GetAssignment(worker, priority);
 
 				if (assignment == null)
