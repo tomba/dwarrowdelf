@@ -109,6 +109,11 @@ namespace Dwarrowdelf.Client
 
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
 
 			var grid = new Grid();
 			AddChild(grid);
