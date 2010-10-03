@@ -234,7 +234,6 @@ namespace Dwarrowdelf.Client
 					env = new Environment(world, msg.Environment);
 				else
 					env = new Environment(world, msg.Environment, msg.Bounds);
-				env.Name = "map";
 			}
 
 			env.VisibilityMode = msg.VisibilityMode;

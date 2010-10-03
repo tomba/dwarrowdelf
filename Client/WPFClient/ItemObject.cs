@@ -10,20 +10,47 @@ namespace Dwarrowdelf.Client
 {
 	class ItemObject : ClientGameObject, IItemObject
 	{
-		public static readonly DependencyProperty NutritionalValueProperty =
-			RegisterGameProperty(PropertyID.NutritionalValue, "NutritionalValue", typeof(int), typeof(ItemObject), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty RefreshmentValueProperty =
-			RegisterGameProperty(PropertyID.RefreshmentValue, "RefreshmentValue", typeof(int), typeof(ItemObject), new UIPropertyMetadata(0));
-
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			
+
 		}
 
 		public override string ToString()
 		{
 			return String.Format("Item({0})", this.ObjectID.Value);
+		}
+
+		int m_nutritionalValue;
+		public int NutritionalValue
+		{
+			get { return m_nutritionalValue; }
+			private set { m_nutritionalValue = value; Notify("NutritionalValue"); }
+		}
+
+		int m_refreshmentValue;
+		public int RefreshmentValue
+		{
+			get { return m_refreshmentValue; }
+			private set { m_refreshmentValue = value; Notify("RefreshmentValue"); }
+		}
+
+		public override void SetProperty(PropertyID propertyID, object value)
+		{
+			switch (propertyID)
+			{
+				case PropertyID.NutritionalValue:
+					this.NutritionalValue = (int)value;
+					break;
+
+				case PropertyID.RefreshmentValue:
+					this.RefreshmentValue = (int)value;
+					break;
+
+				default:
+					base.SetProperty(propertyID, value);
+					break;
+			}
 		}
 	}
 }

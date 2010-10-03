@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Client
 {
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	abstract class BaseGameObject : DependencyObject, IBaseGameObject
+	abstract class BaseGameObject : IBaseGameObject
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
@@ -36,54 +36,8 @@ namespace Dwarrowdelf.Client
 		public abstract void Deserialize(BaseGameObjectData data);
 	}
 
-	class ClientGameObject : BaseGameObject, IGameObject
+	class ClientGameObject : BaseGameObject, IGameObject, INotifyPropertyChanged
 	{
-		static Dictionary<Tuple<Type, PropertyID>, DependencyProperty> s_propertyMap = new Dictionary<Tuple<Type, PropertyID>, DependencyProperty>();
-
-		static void AddPropertyMapping(Type ownerType, PropertyID propertyID, DependencyProperty dependencyProperty)
-		{
-			s_propertyMap[Tuple.Create(ownerType, propertyID)] = dependencyProperty;
-		}
-
-		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType)
-		{
-			var dprop = DependencyProperty.Register(name, propertyType, ownerType);
-			AddPropertyMapping(ownerType, propertyID, dprop);
-			return dprop;
-		}
-
-		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType,
-			PropertyMetadata typeMetadata)
-		{
-			var dprop = DependencyProperty.Register(name, propertyType, ownerType, typeMetadata);
-			AddPropertyMapping(ownerType, propertyID, dprop);
-			return dprop;
-		}
-
-		protected static DependencyProperty RegisterGameProperty(PropertyID propertyID, string name, Type propertyType, Type ownerType,
-			PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
-		{
-			var dprop = DependencyProperty.Register(name, propertyType, ownerType, typeMetadata, validateValueCallback);
-			AddPropertyMapping(ownerType, propertyID, dprop);
-			return dprop;
-		}
-
-		protected DependencyProperty GetDependencyProperty(PropertyID propertyID)
-		{
-			var type = GetType();
-
-			do
-			{
-				DependencyProperty dprop;
-
-				if (s_propertyMap.TryGetValue(Tuple.Create(type, propertyID), out dprop))
-					return dprop;
-
-			} while ((type = type.BaseType) != null);
-
-			throw new Exception("property not found");
-		}
-
 		GameObjectCollection m_inventory;
 		public ReadOnlyGameObjectCollection Inventory { get; private set; }
 
@@ -99,126 +53,6 @@ namespace Dwarrowdelf.Client
 			m_inventory = new GameObjectCollection();
 			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
-
-
-		public void SetProperty(PropertyID propertyID, object value)
-		{
-			var prop = GetDependencyProperty(propertyID);
-			SetValue(prop, value);
-		}
-
-		public void SetProperties(Tuple<PropertyID, object>[] properties)
-		{
-			foreach (var tuple in properties)
-				SetProperty(tuple.Item1, tuple.Item2);
-		}
-
-		public ClientGameObject Parent
-		{
-			get { return (ClientGameObject)GetValue(ParentProperty); }
-			private set { SetValue(ParentProperty, value); }
-		}
-
-		public static readonly DependencyProperty ParentProperty =
-			DependencyProperty.Register("Parent", typeof(ClientGameObject), typeof(ClientGameObject), new UIPropertyMetadata(null));
-
-
-
-		public IntPoint3D Location
-		{
-			get { return (IntPoint3D)GetValue(LocationProperty); }
-			private set { SetValue(LocationProperty, value); }
-		}
-
-		public static readonly DependencyProperty LocationProperty =
-			DependencyProperty.Register("Location", typeof(IntPoint3D), typeof(ClientGameObject), new UIPropertyMetadata(new IntPoint3D()));
-
-
-
-
-		public string Name
-		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
-
-		public static readonly DependencyProperty NameProperty =
-			RegisterGameProperty(PropertyID.Name, "Name", typeof(string), typeof(ClientGameObject), new UIPropertyMetadata(null));
-
-
-		// XXX Needs to be accessed from another thread, so we store the value in UpdateDrawing
-		GameColor m_gameColor;
-		public GameColor GameColor
-		{
-			get { return m_gameColor; }
-			set { SetValue(GameColorProperty, value); }
-		}
-
-		public static readonly DependencyProperty GameColorProperty =
-			RegisterGameProperty(PropertyID.Color, "GameColor", typeof(GameColor), typeof(ClientGameObject), new UIPropertyMetadata(GameColor.None, UpdateDrawing));
-
-
-		// XXX needs to be accessed from another thread, so we store the value in UpdateDrawing
-		SymbolID m_symbolID;
-		public SymbolID SymbolID
-		{
-			get { return m_symbolID; }
-			set { SetValue(SymbolIDProperty, value); }
-		}
-
-		public static readonly DependencyProperty SymbolIDProperty =
-			RegisterGameProperty(PropertyID.SymbolID, "SymbolID", typeof(SymbolID), typeof(ClientGameObject), new UIPropertyMetadata(SymbolID.Undefined, UpdateDrawing));
-
-
-		public MaterialID MaterialID
-		{
-			get { return (MaterialID)GetValue(MaterialIDProperty); }
-			set { SetValue(MaterialIDProperty, value); }
-		}
-
-		public static readonly DependencyProperty MaterialIDProperty =
-			RegisterGameProperty(PropertyID.MaterialID, "MaterialID", typeof(MaterialID), typeof(ClientGameObject), new UIPropertyMetadata(MaterialID.Undefined, UpdateMaterial));
-
-		static void UpdateMaterial(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var ob = (ClientGameObject)d;
-			MaterialID matID = (MaterialID)e.NewValue;
-			ob.SetValue(MaterialProperty, Materials.GetMaterial(matID));
-		}
-
-		public MaterialInfo Material
-		{
-			get { return (MaterialInfo)GetValue(MaterialProperty); }
-		}
-
-		public static readonly DependencyProperty MaterialProperty =
-			DependencyProperty.Register("Material", typeof(MaterialInfo), typeof(ClientGameObject), new UIPropertyMetadata(null));
-
-
-
-		public DrawingImage Drawing
-		{
-			get { return (DrawingImage)GetValue(DrawingProperty); }
-			set { SetValue(DrawingProperty, value); }
-		}
-
-		public static readonly DependencyProperty DrawingProperty =
-			DependencyProperty.Register("Drawing", typeof(DrawingImage), typeof(ClientGameObject), new UIPropertyMetadata(null));
-
-		static void UpdateDrawing(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var ob = (ClientGameObject)d;
-
-			ob.m_gameColor = (GameColor)ob.GetValue(GameColorProperty);
-			ob.m_symbolID = (SymbolID)ob.GetValue(SymbolIDProperty);
-
-			ob.Drawing = new DrawingImage(ob.World.SymbolDrawingCache.GetDrawing(ob.SymbolID, ob.GameColor));
-			if (ob.Environment != null)
-				ob.Environment.OnObjectVisualChanged(ob);
-		}
-
-
-
 
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
@@ -260,7 +94,8 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (GameObjectData)_data;
 
-			SetProperties(data.Properties);
+			foreach (var tuple in data.Properties)
+				SetProperty(tuple.Item1, tuple.Item2);
 
 			ClientGameObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)
@@ -272,6 +107,126 @@ namespace Dwarrowdelf.Client
 		public override string ToString()
 		{
 			return String.Format("Object({0}/{1})", this.Name, this.ObjectID);
+		}
+
+
+
+		public virtual void SetProperty(PropertyID propertyID, object value)
+		{
+			switch (propertyID)
+			{
+				case PropertyID.Name:
+					this.Name = (string)value;
+					break;
+
+				case PropertyID.Color:
+					this.GameColor = (GameColor)value;
+					break;
+
+				case PropertyID.SymbolID:
+					this.SymbolID = (SymbolID)value;
+					break;
+
+				case PropertyID.MaterialID:
+					this.MaterialID = (MaterialID)value;
+					break;
+
+				default:
+					throw new Exception(String.Format("Unknown property {0} in {1}", propertyID, this.GetType().FullName));
+			}
+		}
+
+		ClientGameObject m_parent;
+		public ClientGameObject Parent
+		{
+			get { return m_parent; }
+			private set { m_parent = value; Notify("Parent"); }
+		}
+
+		IntPoint3D m_location;
+		public IntPoint3D Location
+		{
+			get { return m_location; }
+			private set { m_location = value; Notify("Location"); }
+		}
+
+		string m_name;
+		public string Name
+		{
+			get { return m_name; }
+			private set { m_name = value; Notify("Name"); }
+		}
+
+		GameColor m_gameColor;
+		public GameColor GameColor
+		{
+			get { return m_gameColor; }
+			private set
+			{
+				m_gameColor = value;
+
+				m_drawing = new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
+				if (this.Environment != null)
+					this.Environment.OnObjectVisualChanged(this);
+
+				Notify("GameColor");
+				Notify("Drawing");
+			}
+		}
+
+		SymbolID m_symbolID;
+		public SymbolID SymbolID
+		{
+			get { return m_symbolID; }
+			private set
+			{
+				m_symbolID = value;
+
+				m_drawing = new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
+				if (this.Environment != null)
+					this.Environment.OnObjectVisualChanged(this);
+
+				Notify("SymbolID");
+				Notify("Drawing");
+			}
+		}
+
+		DrawingImage m_drawing;
+		public DrawingImage Drawing
+		{
+			get { return m_drawing; }
+		}
+
+
+		MaterialID m_materialID;
+		public MaterialID MaterialID
+		{
+			get { return m_materialID; }
+			private set
+			{
+				m_materialID = value;
+				m_materialInfo = Materials.GetMaterial(this.MaterialID);
+				Notify("MaterialID");
+				Notify("Material");
+			}
+		}
+
+		MaterialInfo m_materialInfo;
+		public MaterialInfo Material
+		{
+			get { return m_materialInfo; }
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		protected void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 	}
 }

@@ -30,117 +30,22 @@ namespace Dwarrowdelf.Client
 			this.IsLiving = true;
 		}
 
-		// XXX does this force the static dependencyproperties to be loaded, and thus the game properties are registered?
-		static Living()
-		{
-		}
-
-		public static readonly DependencyProperty HitPointsProperty =
-			RegisterGameProperty(PropertyID.HitPoints, "HitPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty SpellPointsProperty =
-			RegisterGameProperty(PropertyID.SpellPoints, "SpellPoints", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-
-		public static readonly DependencyProperty StrengthProperty =
-			RegisterGameProperty(PropertyID.Strength, "Strength", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty DexterityProperty =
-			RegisterGameProperty(PropertyID.Dexterity, "Dexterity", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty ConstitutionProperty =
-			RegisterGameProperty(PropertyID.Constitution, "Constitution", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty IntelligenceProperty =
-			RegisterGameProperty(PropertyID.Intelligence, "Intelligence", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty WisdomProperty =
-			RegisterGameProperty(PropertyID.Wisdom, "Wisdom", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-		public static readonly DependencyProperty CharismaProperty =
-			RegisterGameProperty(PropertyID.Charisma, "Charisma", typeof(int), typeof(Living), new UIPropertyMetadata(0));
-
-		public static readonly DependencyProperty VisionRangeProperty =
-			RegisterGameProperty(PropertyID.VisionRange, "VisionRange", typeof(int), typeof(Living), new UIPropertyMetadata(VisionRangeChanged));
-		public static readonly DependencyProperty FoodFullnessProperty =
-			RegisterGameProperty(PropertyID.FoodFullness, "FoodFullness", typeof(int), typeof(Living));
-		public static readonly DependencyProperty WaterFullnessProperty =
-			RegisterGameProperty(PropertyID.WaterFullness, "WaterFullness", typeof(int), typeof(Living));
-
-		public static readonly DependencyProperty ServerAssignmentProperty =
-			RegisterGameProperty(PropertyID.Assignment, "ServerAssignment", typeof(string), typeof(Living));
-		public static readonly DependencyProperty ClientAssignmentProperty =
-			DependencyProperty.Register("ClientAssignment", typeof(string), typeof(Living));
-
-		public int HitPoints
-		{
-			get { return (int)GetValue(HitPointsProperty); }
-			set { SetValue(HitPointsProperty, value); }
-		}
-
-		public int SpellPoints
-		{
-			get { return (int)GetValue(SpellPointsProperty); }
-			set { SetValue(SpellPointsProperty, value); }
-		}
-
-		public int Strength
-		{
-			get { return (int)GetValue(StrengthProperty); }
-			set { SetValue(StrengthProperty, value); }
-		}
-
-		public int Dexterity
-		{
-			get { return (int)GetValue(DexterityProperty); }
-			set { SetValue(DexterityProperty, value); }
-		}
-
-		public int Constitution
-		{
-			get { return (int)GetValue(ConstitutionProperty); }
-			set { SetValue(ConstitutionProperty, value); }
-		}
-
-		public int Intelligence
-		{
-			get { return (int)GetValue(IntelligenceProperty); }
-			set { SetValue(IntelligenceProperty, value); }
-		}
-
-		public int Wisdom
-		{
-			get { return (int)GetValue(WisdomProperty); }
-			set { SetValue(WisdomProperty, value); }
-		}
-
-		public int Charisma
-		{
-			get { return (int)GetValue(CharismaProperty); }
-			set { SetValue(CharismaProperty, value); }
-		}
-
-		public int VisionRange
-		{
-			get { return (int)GetValue(VisionRangeProperty); }
-			set { SetValue(VisionRangeProperty, value); }
-		}
-
-		static void VisionRangeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			Living l = (Living)d;
-			l.m_visionMap = null;
-		}
-
-		public static readonly DependencyProperty CurrentActionProperty = DependencyProperty.Register("CurrentAction", typeof(GameAction), typeof(Living));
+		GameAction m_currentAction;
 		public GameAction CurrentAction
 		{
-			get { return (GameAction)this.GetValue(CurrentActionProperty); }
-			private set { this.SetValue(CurrentActionProperty, value); }
+			get { return m_currentAction; }
+			private set { m_currentAction = value; Notify("CurrentAction"); }
+		}
+
+		int m_actionTicksLeft;
+		public int ActionTicksLeft
+		{
+			get { return m_actionTicksLeft; }
+			private set { m_actionTicksLeft = value; Notify("ActionTicksLeft"); }
 		}
 
 		public bool HasAction { get { return this.CurrentAction != null; } }
 		public int ActionUserID { get; private set; }
-
-		public static readonly DependencyProperty ActionTicksLeftProperty = DependencyProperty.Register("ActionTicksLeft", typeof(int), typeof(Living));
-		public int ActionTicksLeft
-		{
-			get { return (int)this.GetValue(ActionTicksLeftProperty); }
-			private set { this.SetValue(ActionTicksLeftProperty, value); }
-		}
 
 		public GameAction DecideAction(ActionPriority priority)
 		{
@@ -155,9 +60,9 @@ namespace Dwarrowdelf.Client
 		void OnAIAssignmentChanged(Jobs.IAssignment assignment)
 		{
 			if (assignment != null)
-				SetValue(ClientAssignmentProperty, assignment.GetType().Name);
+				this.ClientAssignment = assignment.GetType().Name;
 			else
-				SetValue(ClientAssignmentProperty, null);
+				this.ClientAssignment = null;
 		}
 
 		public void HandleActionStarted(ActionStartedChange change)
@@ -242,6 +147,162 @@ namespace Dwarrowdelf.Client
 		public override string ToString()
 		{
 			return String.Format("Living({0})", this.ObjectID.Value);
+		}
+
+
+
+		public override void SetProperty(PropertyID propertyID, object value)
+		{
+			switch (propertyID)
+			{
+				case PropertyID.HitPoints:
+					this.HitPoints = (int)value;
+					break;
+
+				case PropertyID.SpellPoints:
+					this.SpellPoints = (int)value;
+					break;
+
+				case PropertyID.Strength:
+					this.Strength = (int)value;
+					break;
+
+				case PropertyID.Dexterity:
+					this.Dexterity = (int)value;
+					break;
+
+				case PropertyID.Constitution:
+					this.Constitution = (int)value;
+					break;
+
+				case PropertyID.Intelligence:
+					this.Intelligence = (int)value;
+					break;
+
+				case PropertyID.Wisdom:
+					this.Wisdom = (int)value;
+					break;
+
+				case PropertyID.Charisma:
+					this.Charisma = (int)value;
+					break;
+
+				case PropertyID.VisionRange:
+					this.VisionRange = (int)value;
+					break;
+
+				case PropertyID.FoodFullness:
+					this.FoodFullness = (int)value;
+					break;
+
+				case PropertyID.WaterFullness:
+					this.WaterFullness = (int)value;
+					break;
+
+				case PropertyID.Assignment:
+					this.ServerAssignment = (string)value;
+					break;
+
+				default:
+					base.SetProperty(propertyID, value);
+					break;
+			}
+		}
+
+		int m_hitPoints;
+		public int HitPoints
+		{
+			get { return m_hitPoints; }
+			private set { m_hitPoints = value; Notify("HitPoints"); }
+		}
+
+		int m_spellPoints;
+		public int SpellPoints
+		{
+			get { return m_spellPoints; }
+			private set { m_spellPoints = value; Notify("SpellPoints"); }
+		}
+
+		int m_strength;
+		public int Strength
+		{
+			get { return m_strength; }
+			private set { m_strength = value; Notify("Strength"); }
+		}
+
+		int m_dexterity;
+		public int Dexterity
+		{
+			get { return m_dexterity; }
+			private set { m_dexterity = value; Notify("Dexterity"); }
+		}
+
+		int m_constitution;
+		public int Constitution
+		{
+			get { return m_constitution; }
+			private set { m_constitution = value; Notify("Constitution"); }
+		}
+
+		int m_intelligence;
+		public int Intelligence
+		{
+			get { return m_intelligence; }
+			private set { m_intelligence = value; Notify("Intelligence"); }
+		}
+
+		int m_wisdom;
+		public int Wisdom
+		{
+			get { return m_wisdom; }
+			private set { m_wisdom = value; Notify("Wisdom"); }
+		}
+
+		int m_charisma;
+		public int Charisma
+		{
+			get { return m_charisma; }
+			private set { m_charisma = value; Notify("Charisma"); }
+		}
+
+		int m_visionRange;
+		public int VisionRange
+		{
+			get { return m_visionRange; }
+			private set
+			{
+				m_visionRange = value;
+				m_visionMap = null;
+				Notify("VisionRange");
+			}
+		}
+
+		int m_foodFullness;
+		public int FoodFullness
+		{
+			get { return m_foodFullness; }
+			private set { m_foodFullness = value; Notify("FoodFullness"); }
+		}
+
+		int m_waterFullness;
+		public int WaterFullness
+		{
+			get { return m_waterFullness; }
+			private set { m_waterFullness = value; Notify("WaterFullness"); }
+		}
+
+		string m_serverAssignment;
+		public string ServerAssignment
+		{
+			get { return m_serverAssignment; }
+			private set { m_serverAssignment = value; Notify("ServerAssignment"); }
+		}
+
+		string m_clientAssignment;
+		public string ClientAssignment
+		{
+			get { return m_clientAssignment; }
+			private set { m_clientAssignment = value; Notify("ClientAssignment"); }
 		}
 	}
 }
