@@ -36,5 +36,8 @@
     <DrawingSymbol ID="Tree">Tree_Tall</DrawingSymbol>
     <DrawingSymbol ID="Key"  X="20" Y="10" W="60" H="80">Key</DrawingSymbol>
     <DrawingSymbol ID="Rock" X="10" Y="10" W="80" H="80">Rock</DrawingSymbol>
+    <CharSymbol ID="Log" X="5" Y="60" W="90" H="20">▬</CharSymbol>
+    <CharSymbol ID="Contraption">۩</CharSymbol>
+    <CharSymbol ID="Consumable">%</CharSymbol>
 
 </SymbolSet>

@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Server
 		{
 			world.TickStartEvent += OnTickStart;
 			this.Name = "Food Generator";
-			this.SymbolID = SymbolID.Key;
+			this.SymbolID = SymbolID.Contraption;
 			this.Color = GameColor.Gold;
 		}
 
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 			var food = new ItemObject(this.World)
 			{
 				Name = "Food",
-				SymbolID = SymbolID.Key,
+				SymbolID = SymbolID.Consumable,
 				Color = GameColor.Green,
 				NutritionalValue = 50,
 				RefreshmentValue = 50,

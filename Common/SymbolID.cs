@@ -41,6 +41,8 @@ namespace Dwarrowdelf
 		Key,
 		Rock,
 		Log,
+		Contraption,
+		Consumable,
 
 		/* top */
 		Water,
