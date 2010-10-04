@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server
 		{
 			// XXX or should we give an error?
 			if (RealTickEvent != null)
-				this.World.TickEvent -= Tick;
+				this.World.TickStartEvent -= Tick;
 
 			this.Destructed = true;
 			this.World.AddChange(new ObjectDestructedChange(this));
@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Server
 			add
 			{
 				if (RealTickEvent == null)
-					this.World.TickEvent += Tick;
+					this.World.TickStartEvent += Tick;
 
 				RealTickEvent += value;
 			}
@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Server
 				RealTickEvent -= value;
 
 				if (RealTickEvent == null)
-					this.World.TickEvent -= Tick;
+					this.World.TickStartEvent -= Tick;
 			}
 		}
 

@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			world.TickEvent += OnTick;
+			world.TickStartEvent += OnTick;
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)

@@ -374,7 +374,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(TickStartChange change)
 		{
-			GameData.Data.World.TickNumber = change.TickNumber;
+			GameData.Data.World.HandleChange(change);
 		}
 
 		void HandleChange(TurnStartChange change)

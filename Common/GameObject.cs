@@ -8,7 +8,7 @@ namespace Dwarrowdelf
 	public interface IWorld
 	{
 		int TickNumber { get; }
-		event Action TickEvent;
+		event Action TickStartEvent;
 	}
 
 	public interface IIdentifiable

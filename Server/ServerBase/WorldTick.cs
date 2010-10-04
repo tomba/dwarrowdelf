@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Server
 {
 	public partial class World
 	{
-		public event Action TickEvent;
+		public event Action TickStartEvent;
 		public int TickNumber { get; private set; }
 
 		enum WorldState
@@ -316,8 +316,8 @@ namespace Dwarrowdelf.Server
 
 			m_state = WorldState.TickOngoing;
 
-			if (TickEvent != null)
-				TickEvent();
+			if (TickStartEvent != null)
+				TickStartEvent();
 
 			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
 			{

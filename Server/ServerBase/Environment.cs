@@ -38,12 +38,12 @@ namespace Dwarrowdelf.Server
 			for (int i = 0; i < depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
-			world.TickEvent += Tick;
+			world.TickStartEvent += Tick;
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickEvent -= Tick;
+			this.World.TickStartEvent -= Tick;
 
 			base.Destruct();
 		}

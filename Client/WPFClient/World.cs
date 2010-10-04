@@ -49,17 +49,18 @@ namespace Dwarrowdelf.Client
 		public int TickNumber
 		{
 			get { return m_tickNumber; }
-			set
-			{
-				// XXX perhaps this should be IncreaseTick()
-				m_tickNumber = value; Notify("TickNumber");
-
-				if (TickEvent != null)
-					TickEvent();
-			}
+			private set { m_tickNumber = value; Notify("TickNumber"); }
 		}
 
-		public event Action TickEvent;
+		public void HandleChange(TickStartChange change)
+		{
+			this.TickNumber = change.TickNumber;
+
+			if (TickStartEvent != null)
+				TickStartEvent();
+		}
+
+		public event Action TickStartEvent;
 
 		internal void AddObject(IBaseGameObject ob)
 		{
