@@ -713,6 +713,15 @@ namespace Dwarrowdelf.Server
 			var changeMsg = new ChangeMessage { Change = change };
 
 			Send(changeMsg);
+
+			// XXX this is getting confusing...
+			if (m_seeAll && change is ObjectCreatedChange)
+			{
+				var c = (ObjectCreatedChange)change;
+				var newObject = (BaseGameObject)c.Object;
+				var newObMsg = ObjectToMessage(newObject);
+				Send(newObMsg);
+			}
 		}
 
 		bool CanSeeChange(Change change)
