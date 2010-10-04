@@ -13,9 +13,10 @@ namespace Dwarrowdelf.Client
 	enum DesignationType
 	{
 		Mine,
+		FellTree,
 	}
 
-	class Designation : IDrawableArea
+	abstract class Designation : IDrawableArea
 	{
 		public DesignationType Type { get; private set; }
 		public IntCuboid Area { get; private set; }
@@ -31,13 +32,24 @@ namespace Dwarrowdelf.Client
 			this.Environment = env;
 			this.Type = type;
 			this.Area = area;
+		}
 
-			s_designations.Add(this);
+		public void Start()
+		{
+			m_job = CreateJob();
 
-			m_job = new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area);
+			if (m_job == null)
+			{
+				if (this.DesignationDone != null)
+					this.DesignationDone(this);
+				return;
+			}
+
 			m_job.PropertyChanged += OnJobPropertyChanged;
 			this.Environment.World.JobManager.Add(m_job);
 		}
+
+		protected abstract IJob CreateJob();
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -48,27 +60,85 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(job == m_job);
 
 			if (job.Progress == Progress.Done)
-				Remove();
+				Abort();
 		}
 
-		public void Remove()
+		public void Abort()
 		{
-			s_designations.Remove(this);
-
 			if (m_job == null)
 				return;
 
 			m_job.Abort();
 			this.Environment.World.JobManager.Remove(m_job);
+			m_job.PropertyChanged -= OnJobPropertyChanged;
+
+			m_job = null;
+
+			if (this.DesignationDone != null)
+				this.DesignationDone(this);
 		}
 
-		static ObservableCollection<Designation> s_designations;
-		public static ReadOnlyObservableCollection<Designation> Designations { get; private set; }
+		public event Action<Designation> DesignationDone;
+	}
 
-		static Designation()
+
+	class MineDesignation : Designation
+	{
+		public MineDesignation(Environment env, IntCuboid area)
+			: base(env, DesignationType.Mine, area)
+		{
+		}
+
+		protected override IJob CreateJob()
+		{
+			var anyWalls = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.Wall);
+
+			if (!anyWalls)
+				return null;
+
+			return new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area);
+		}
+	}
+
+	class FellTreeDesignation : Designation
+	{
+		public FellTreeDesignation(Environment env, IntCuboid area)
+			: base(env, DesignationType.FellTree, area)
+		{
+		}
+
+		protected override IJob CreateJob()
+		{
+			var anyTrees = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
+
+			if (!anyTrees)
+				return null;
+
+			return new Jobs.JobGroups.FellTreeParallelJob(this.Environment, ActionPriority.Normal, this.Area);
+		}
+	}
+
+	class DesignationManager
+	{
+		ObservableCollection<Designation> s_designations;
+		public ReadOnlyObservableCollection<Designation> Designations { get; private set; }
+
+		public DesignationManager()
 		{
 			s_designations = new ObservableCollection<Designation>();
 			Designations = new ReadOnlyObservableCollection<Designation>(s_designations);
+		}
+
+		public void AddDesignation(Designation designation)
+		{
+			s_designations.Add(designation);
+			designation.Start();
+		}
+
+		public void RemoveDesignation(Designation designation)
+		{
+			designation.Abort();
+			s_designations.Remove(designation);
 		}
 	}
 }

@@ -95,6 +95,7 @@
     <Compile Include="Jobs\Assignments\Assignment.cs" />
     <Compile Include="Jobs\Assignments\DropItemAssignment.cs" />
     <Compile Include="Jobs\IJob.cs" />
+    <Compile Include="Jobs\JobGroups\FellTreeParallelJob.cs" />
     <Compile Include="Jobs\JobGroups\JobGroup.cs" />
     <Compile Include="Jobs\JobGroups\FetchItems.cs" />
     <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />

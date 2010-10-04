@@ -126,6 +126,17 @@ namespace Dwarrowdelf.Client
 				createBuildingMenu.Items.Add(item);
 			}
 
+			foreach (var id in Enum.GetValues(typeof(DesignationType)))
+			{
+				var item = new MenuItem()
+				{
+					Tag = id,
+					Header = id.ToString(),
+				};
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Designate));
+				designateMenu.Items.Add(item);
+			}
+
 			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
 			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
 
@@ -638,7 +649,10 @@ namespace Dwarrowdelf.Client
 
 			var job = (IJob)sender;
 			if (job.Progress == Progress.Done)
+			{
+				job.PropertyChanged -= OnJobPropertyChanged;
 				this.Map.World.JobManager.Remove(job);
+			}
 		}
 
 		private void MenuItem_Click_Build(object sender, RoutedEventArgs e)
@@ -906,20 +920,35 @@ namespace Dwarrowdelf.Client
 		private void MenuItem_Click_Designate(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
+			var id = (DesignationType)item.Tag;
 
 			var area = map.Selection.SelectionCuboid;
 			var env = map.Environment;
 
-			switch (tag)
+			Designation designation;
+
+			switch (id)
 			{
-				case "mine":
-					var desig = new Designation(env, DesignationType.Mine, area);
+				case DesignationType.Mine:
+					designation = new MineDesignation(env, area);
+					break;
+
+				case DesignationType.FellTree:
+					designation = new FellTreeDesignation(env, area);
 					break;
 
 				default:
 					throw new Exception();
 			}
+
+			designation.DesignationDone += OnDesignationDone;
+			env.World.DesignationManager.AddDesignation(designation);
+		}
+
+		void OnDesignationDone(Designation designation)
+		{
+			designation.DesignationDone -= OnDesignationDone;
+			this.Map.World.DesignationManager.RemoveDesignation(designation);
 		}
 
 		private void MenuItem_Click_Designations(object sender, RoutedEventArgs e)
@@ -931,8 +960,8 @@ namespace Dwarrowdelf.Client
 
 			switch (tag)
 			{
-				case "remove":
-					designation.Remove();
+				case "abort":
+					designation.Abort();
 					break;
 
 				default:

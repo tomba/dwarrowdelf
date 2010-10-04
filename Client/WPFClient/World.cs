@@ -21,6 +21,7 @@ namespace Dwarrowdelf.Client
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
 		public Dwarrowdelf.Jobs.JobManager JobManager { get; private set; }
+		public DesignationManager DesignationManager { get; private set; }
 
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
@@ -38,6 +39,7 @@ namespace Dwarrowdelf.Client
 			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosChar.xaml", UriKind.Relative));
 
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
+			this.DesignationManager = new DesignationManager();
 		}
 
 		internal void AddEnvironment(Environment env)

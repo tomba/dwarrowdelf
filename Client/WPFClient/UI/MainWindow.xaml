@@ -149,10 +149,10 @@
                     <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
                         <!-- Designations-->
                         <ad:DockableContent Name="designationsContent" Title="Designations">
-                            <ListBox Name="designationsListBox" ItemsSource="{x:Static local:Designation.Designations}">
+                            <ListBox Name="designationsListBox" ItemsSource="{Binding World.DesignationManager.Designations}">
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Remove" Tag="remove" Click="MenuItem_Click_Designations" />
+                                        <MenuItem Header="Abort" Tag="abort" Click="MenuItem_Click_Designations" />
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
@@ -371,9 +371,7 @@
                             <local:MasterMapControl x:Name="map">
                                 <local:MasterMapControl.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Designate">
-                                            <MenuItem Header="Mine" Tag="mine" Click="MenuItem_Click_Designate" />
-                                        </MenuItem>
+                                        <MenuItem Name="designateMenu" Header="Designate" />
                                         <MenuItem Name="setFloorMenu" Header="Set Floor" />
                                         <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
