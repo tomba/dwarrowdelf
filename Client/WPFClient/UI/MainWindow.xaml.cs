@@ -636,6 +636,21 @@ namespace Dwarrowdelf.Client
 				job.PropertyChanged += OnJobPropertyChanged;
 				this.Map.World.JobManager.Add(job);
 			}
+			else if (tag == "Consume")
+			{
+				var env = map.Environment;
+				var consumables = map.Selection.SelectionCuboid.Range()
+					.SelectMany(l =>
+						env.GetContents(l).OfType<ItemObject>().Where(o => o.RefreshmentValue > 0 || o.NutritionalValue > 0)
+					);
+
+				foreach (var c in consumables)
+				{
+					var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, ActionPriority.Normal, c);
+					job.PropertyChanged += OnJobPropertyChanged;
+					this.Map.World.JobManager.Add(job);
+				}
+			}
 			else
 			{
 				throw new Exception();

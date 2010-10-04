@@ -79,7 +79,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveFellTreeJob.cs" />
+    <Compile Include="Jobs\Assignments\ConsumeItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\FellTreeAssignment.cs" />
     <Compile Include="Jobs\Assignments\WaitAssignment.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignment.cs" />

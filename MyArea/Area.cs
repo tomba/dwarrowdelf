@@ -353,6 +353,10 @@ namespace MyArea
 			}
 			env.AddBuilding(building);
 
+			{
+				var gen = new FoodGenerator(env.World);
+				gen.MoveTo(env, new IntPoint3D(10, 10, 9));
+			}
 
 			return env;
 		}

@@ -134,6 +134,24 @@ namespace Dwarrowdelf
 		}
 	}
 
+
+	[Serializable]
+	public class ConsumeAction : GameAction
+	{
+		public ObjectID ItemObjectID { get; private set; }
+
+		public ConsumeAction(IGameObject consumable, ActionPriority priority)
+			: base(priority)
+		{
+			this.ItemObjectID = consumable.ObjectID;
+		}
+
+		protected override string GetParams()
+		{
+			return this.ItemObjectID.ToString();
+		}
+	}
+
 	[Serializable]
 	public class MineAction : GameAction
 	{

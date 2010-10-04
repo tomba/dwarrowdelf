@@ -23,15 +23,15 @@ namespace Dwarrowdelf.Server
 
 		public ServerConnection Controller { get; set; }
 
-		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 1);
 
-		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), PropertyID.Strength, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), PropertyID.Dexterity, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), PropertyID.Constitution, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), PropertyID.Intelligence, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), PropertyID.Wisdom, PropertyVisibility.Friendly, 0);
-		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), PropertyID.Charisma, PropertyVisibility.Friendly, 0);
+		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), PropertyID.Strength, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), PropertyID.Dexterity, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), PropertyID.Constitution, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), PropertyID.Intelligence, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), PropertyID.Wisdom, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), PropertyID.Charisma, PropertyVisibility.Friendly, 1);
 
 		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
 
@@ -224,6 +224,47 @@ namespace Dwarrowdelf.Server
 			success = true;
 		}
 
+		void PerformConsume(ConsumeAction action, out bool success)
+		{
+			success = false;
+
+			if (this.ActionTicksLeft > 0)
+			{
+				success = true;
+				return;
+			}
+
+			var inv = this.Inventory;
+			if (inv == null)
+				throw new Exception();
+
+			var ob = inv.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
+
+			var item = ob as ItemObject;
+
+			if (item == null)
+			{
+				success = false;
+				return;
+			}
+
+			var refreshment = item.RefreshmentValue;
+			var nutrition = item.NutritionalValue;
+
+			if (refreshment == 0 || nutrition == 0)
+			{
+				success = false;
+				return;
+			}
+
+			ob.Destruct();
+
+			this.WaterFullness += refreshment;
+			this.FoodFullness += nutrition;
+
+			success = true;
+		}
+
 		void PerformMove(MoveAction action, out bool success)
 		{
 			// this should check if movement is blocked, even when TicksLeft > 0
@@ -357,6 +398,10 @@ namespace Dwarrowdelf.Server
 				{
 					PerformDrop((DropAction)action, out success);
 				}
+				else if (action is ConsumeAction)
+				{
+					PerformConsume((ConsumeAction)action, out success);
+				}
 				else if (action is MineAction)
 				{
 					PerformMine((MineAction)action, out success);
@@ -440,6 +485,10 @@ namespace Dwarrowdelf.Server
 			else if (action is BuildItemAction)
 			{
 				ticks = 8;
+			}
+			else if (action is ConsumeAction)
+			{
+				ticks = 6;
 			}
 			else
 			{
