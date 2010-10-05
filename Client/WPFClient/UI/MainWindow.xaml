@@ -50,12 +50,16 @@
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Name="currentObjectCheckBox" VerticalAlignment="Center" Margin="2,0" 
                               Unchecked="currentObjectCheckBox_Unchecked" Checked="currentObjectCheckBox_Checked">CurrentObject</CheckBox>
-                    <!-- XXX for unknown reason this combobox refuses to show game obs after they were changed to inherit from DependencyObject -->
                     <ComboBox Name="currentObjectComboBox" IsEnabled="{Binding ElementName=currentObjectCheckBox, Path=IsChecked}" MinWidth="100"
                               ItemsSource="{Binding World.Controllables}"
                               SelectedItem="{Binding CurrentObject}"
                               IsReadOnly="True" />
                 </StackPanel>
+            </ToolBar>
+            <ToolBar>
+                <Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
+                        ValueChanged="slider_ValueChanged"/>
+                <TextBox Text="{Binding Path=Value, ElementName=slider}" />
             </ToolBar>
 
             <ToolBarTray.ContextMenu>
@@ -197,7 +201,7 @@
                             <ad:DockableContent.Resources>
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
-                            
+
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
@@ -223,7 +227,7 @@
                             <ad:DockableContent.Resources>
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
-                            
+
                             <DockPanel>
 
                                 <StackPanel DockPanel.Dock="Top">

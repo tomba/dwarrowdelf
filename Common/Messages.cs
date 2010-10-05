@@ -95,6 +95,12 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
+	public class SetWorldConfigMessage : ClientMessage
+	{
+		public TimeSpan? MinTickTime { get; set; }
+	}
+
+	[Serializable]
 	public class CreateBuildingMessage : ClientMessage
 	{
 		public ObjectID MapID { get; set; }

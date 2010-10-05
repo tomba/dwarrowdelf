@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Server
 			TickMethod = WorldTickMethod.Simultaneous,
 			RequireUser = true,
 			RequireControllables = false,
-			MaxMoveTime = TimeSpan.FromMilliseconds(0),
+			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
 
@@ -125,6 +125,11 @@ namespace Dwarrowdelf.Server
 				env.MapChanged += this.MapChangedCallback;
 
 			ExitWriteLock();
+		}
+
+		public void SetMinTickTime(TimeSpan minTickTime)
+		{
+			m_config.MinTickTime = minTickTime;
 		}
 
 		void Main(object arg)

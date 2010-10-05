@@ -562,7 +562,7 @@ namespace Dwarrowdelf.Client
 					this.Map.World.JobManager.Add(job);
 				}
 			}
-			if (tag == "FellTree")
+			else if (tag == "FellTree")
 			{
 				var env = map.Environment;
 
@@ -981,6 +981,17 @@ namespace Dwarrowdelf.Client
 
 				default:
 					throw new Exception();
+			}
+		}
+
+		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (GameData.Data.Connection.IsUserConnected)
+			{
+				GameData.Data.Connection.Send(new SetWorldConfigMessage()
+				{
+					MinTickTime = TimeSpan.FromMilliseconds(slider.Value),
+				});
 			}
 		}
 	}

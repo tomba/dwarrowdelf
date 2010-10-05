@@ -313,6 +313,13 @@ namespace Dwarrowdelf.Server
 		}
 
 		[WorldInvoke(WorldInvokeStyle.Instant)]
+		void ReceiveMessage(SetWorldConfigMessage msg)
+		{
+			if (msg.MinTickTime.HasValue)
+				m_world.SetMinTickTime(msg.MinTickTime.Value);
+		}
+
+		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(CreateBuildingMessage msg)
 		{
 			ObjectID mapID = msg.MapID;
