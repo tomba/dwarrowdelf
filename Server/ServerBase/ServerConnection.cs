@@ -331,13 +331,13 @@ namespace Dwarrowdelf.Server
 			if (env == null)
 				throw new Exception();
 
-			var building = new BuildingObject(m_world, id) { Area = r, Z = z };
+			var building = new BuildingObject(id) { Area = r, Z = z };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
-			env.AddBuilding(building);
+			building.Initialize(m_world, env);
 		}
 
 		Random m_random = new Random();
@@ -425,12 +425,13 @@ namespace Dwarrowdelf.Server
 					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
 				} while (env.GetInteriorID(p) != InteriorID.Empty);
 
-				var player = new Living(m_world, String.Format("Dwarf{0}", i))
+				var player = new Living(String.Format("Dwarf{0}", i))
 				{
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
 				player.SetAI(new InteractiveActor(player));
+				player.Initialize(m_world);
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))

@@ -139,7 +139,8 @@ namespace MyArea
 			int size = (int)Math.Pow(2, sizeExp);
 			var terrainGen = new TerrainGen(sizeExp, 10, 5, 0.75);
 
-			var env = new Environment(world, size, size, 20, VisibilityMode.LOS);
+			var env = new Environment(size, size, 20, VisibilityMode.LOS);
+			env.Initialize(world);
 
 			Random r = new Random(123);
 
@@ -204,13 +205,13 @@ namespace MyArea
 			for (int i = 0; i < 0; ++i)
 			{
 				// Add a monster
-				var monster = new Living(world, String.Format("monsu{0}", i))
+				var monster = new Living(String.Format("monsu{0}", i))
 				{
 					SymbolID = SymbolID.Monster,
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 				};
-
 				monster.SetAI(new MonsterActor(monster));
+				monster.Initialize(world);
 
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
@@ -219,34 +220,37 @@ namespace MyArea
 			// Add items
 			for (int i = 0; i < 10; ++i)
 			{
-				var item = new ItemObject(world)
+				var item = new ItemObject()
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 					MaterialID = MaterialID.Diamond,
 				};
+				item.Initialize(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
 			{
 				// Add an item
-				var item = new ItemObject(world)
+				var item = new ItemObject()
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "red gem",
 					Color = GameColor.Red,
 					MaterialID = MaterialID.Diamond,
 				};
+				item.Initialize(world);
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 
-				item = new ItemObject(world)
+				item = new ItemObject()
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem",
 					MaterialID = MaterialID.Diamond,
 				};
+				item.Initialize(world);
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
@@ -333,7 +337,7 @@ namespace MyArea
 			}
 
 
-			var building = new BuildingObject(world, BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
+			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
@@ -341,9 +345,9 @@ namespace MyArea
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
-			env.AddBuilding(building);
+			building.Initialize(world, env);
 
-			building = new BuildingObject(world, BuildingID.Carpenter) { Area = new IntRect(6, 6, 3, 3), Z = 9 };
+			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect(6, 6, 3, 3), Z = 9 };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
@@ -351,10 +355,11 @@ namespace MyArea
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
-			env.AddBuilding(building);
+			building.Initialize(world, env);
 
 			{
-				var gen = new FoodGenerator(env.World);
+				var gen = new FoodGenerator();
+				gen.Initialize(env.World);
 				gen.MoveTo(env, new IntPoint3D(10, 10, 9));
 			}
 
@@ -421,7 +426,8 @@ namespace MyArea
 
 		Environment CreateMap2(World world)
 		{
-			var env = new Environment(world, 20, 20, 1, VisibilityMode.SimpleFOV);
+			var env = new Environment(20, 20, 1, VisibilityMode.SimpleFOV);
+			env.Initialize(world);
 
 			foreach (var p in env.Bounds.Range())
 			{

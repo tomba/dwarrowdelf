@@ -7,8 +7,7 @@ namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject(World world)
-			: base(world)
+		public ItemObject()
 		{
 		}
 

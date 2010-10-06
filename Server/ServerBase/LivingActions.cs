@@ -224,13 +224,14 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
-					var log = new ItemObject(this.World)
+					var log = new ItemObject()
 					{
 						Name = "Log",
 						MaterialID = material,
 						SymbolID = Dwarrowdelf.SymbolID.Log,
 						Color = GameColor.SaddleBrown,
 					};
+					log.Initialize(this.World);
 					var ok = log.MoveTo(this.Environment, p);
 					Debug.Assert(ok);
 				}

@@ -46,10 +46,14 @@ namespace Dwarrowdelf.Server
 			l.m_visionMap = null;
 		}
 
-		public Living(World world, string name)
-			: base(world)
+		public Living(string name)
 		{
 			this.Name = name;
+		}
+
+		public override void Initialize(World world)
+		{
+			base.Initialize(world);
 			world.AddLiving(this);
 		}
 

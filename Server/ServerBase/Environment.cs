@@ -23,8 +23,7 @@ namespace Dwarrowdelf.Server
 		public int Height { get; private set; }
 		public int Depth { get; private set; }
 
-		public Environment(World world, int width, int height, int depth, VisibilityMode visibilityMode)
-			: base(world)
+		public Environment(int width, int height, int depth, VisibilityMode visibilityMode)
 		{
 			this.Version = 1;
 			this.VisibilityMode = visibilityMode;
@@ -37,6 +36,11 @@ namespace Dwarrowdelf.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
+		}
+
+		public override void Initialize(World world)
+		{
+			base.Initialize(world);
 
 			world.TickStartEvent += Tick;
 		}
@@ -571,11 +575,17 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(this.World.IsWritable);
 
 			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
-			Debug.Assert(building.Environment == null);
-			building.Environment = this;
-			m_buildings.Add(building);
+			Debug.Assert(building.IsInitialized == false);
 
-			this.World.AddChange(new FullObjectChange(building) { ObjectData = building.Serialize() });
+			m_buildings.Add(building);
+		}
+
+		public void RemoveBuilding(BuildingObject building)
+		{
+			Debug.Assert(this.World.IsWritable);
+			Debug.Assert(m_buildings.Contains(building));
+
+			m_buildings.Remove(building);
 		}
 
 		public BuildingObject GetBuildingAt(IntPoint3D p)

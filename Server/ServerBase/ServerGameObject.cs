@@ -23,20 +23,34 @@ namespace Dwarrowdelf.Server
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
-		public bool Destructed { get; private set; }
 
-		protected BaseGameObject(World world)
+		public bool IsInitialized { get; private set; }
+		public bool IsDestructed { get; private set; }
+
+		protected BaseGameObject()
 		{
-			this.ObjectID = world.GetNewObjectID();
+		}
+
+		public virtual void Initialize(World world)
+		{
+			if (this.IsInitialized)
+				throw new Exception();
+
 			this.World = world;
+			this.ObjectID = world.GetNewObjectID();
+
 			this.World.AddGameObject(this);
+			this.IsInitialized = true;
 			this.World.AddChange(new ObjectCreatedChange(this));
 		}
 
 		public virtual void Destruct()
 		{
-			this.Destructed = true;
+			if (!this.IsInitialized)
+				throw new Exception();
+
 			this.World.AddChange(new ObjectDestructedChange(this));
+			this.IsDestructed = true;
 			this.World.RemoveGameObject(this);
 		}
 
@@ -71,7 +85,8 @@ namespace Dwarrowdelf.Server
 				oldValue = GetValue(property);
 
 			m_propertyMap[property] = value;
-			this.World.AddChange(new PropertyChange(this, property, value));
+			if (this.IsInitialized)
+				this.World.AddChange(new PropertyChange(this, property, value));
 
 			if (property.PropertyChangedCallback != null)
 				property.PropertyChangedCallback(property, this, oldValue, value);
@@ -126,8 +141,7 @@ namespace Dwarrowdelf.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		internal ServerGameObject(World world)
-			: base(world)
+		protected ServerGameObject()
 		{
 			m_children = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
@@ -221,6 +235,8 @@ namespace Dwarrowdelf.Server
 
 		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
 		{
+			Debug.Assert(this.IsInitialized);
+
 			var src = this.Parent;
 			var srcLoc = this.Location;
 
