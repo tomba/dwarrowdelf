@@ -439,9 +439,6 @@ namespace Dwarrowdelf.Server
 			}
 #endif
 
-			foreach (var l in m_controllables)
-				l.Controller = this;
-
 			m_charLoggedIn = true;
 			Send(new Messages.LogOnCharReplyMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
@@ -455,12 +452,8 @@ namespace Dwarrowdelf.Server
 			m_scriptScope.RemoveVariable("me");
 
 			foreach (var l in m_controllables)
-			{
-				l.Cleanup();
-			}
+				l.Destruct();
 
-			foreach (var l in m_controllables)
-				l.Controller = null;
 			m_controllables.Clear();
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });

@@ -21,8 +21,6 @@ namespace Dwarrowdelf.Server
 		Grid2D<bool> m_visionMap;
 		Jobs.IAI m_ai;
 
-		public ServerConnection Controller { get; set; }
-
 		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
 		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 1);
 
@@ -57,7 +55,7 @@ namespace Dwarrowdelf.Server
 			world.AddLiving(this);
 		}
 
-		public void Cleanup()
+		public override void Destruct()
 		{
 			var aai = m_ai as Jobs.AssignmentAI;
 			if (aai != null)
@@ -68,7 +66,7 @@ namespace Dwarrowdelf.Server
 			this.ActionTicksLeft = 0;
 			this.ActionUserID = 0;
 			this.World.RemoveLiving(this);
-			this.Destruct();
+			base.Destruct();
 		}
 
 		public int HitPoints
