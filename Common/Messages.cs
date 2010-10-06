@@ -143,6 +143,12 @@ namespace Dwarrowdelf.Messages
 	public class ObjectDataArrayMessage : StateMessage
 	{
 		public BaseGameObjectData[] ObjectDatas { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ObjectDataArrayMessage for {0}",
+				String.Join(", ", this.ObjectDatas.Select(d => d.ObjectID.ToString())));
+		}
 	}
 
 	[Serializable]
@@ -151,6 +157,11 @@ namespace Dwarrowdelf.Messages
 		public ObjectID Environment { get; set; }
 		public VisibilityMode VisibilityMode { get; set; }
 		public IntCuboid Bounds { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("MapDataMessage {0}, bounds {1}", this.Environment, this.Bounds);
+		}
 	}
 
 	[Serializable]
@@ -159,6 +170,11 @@ namespace Dwarrowdelf.Messages
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
 		public TileData[] TerrainData { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("MapDataTerrainsMessage {0}, bounds {1}", this.Environment, this.Bounds);
+		}
 	}
 
 	[Serializable]

@@ -669,19 +669,25 @@ namespace Dwarrowdelf.Server
 
 			for (int z = bounds.Z1; z < bounds.Z2; ++z)
 			{
-				var msg = new Messages.ObjectDataArrayMessage()
+				if (m_contentArray[z].Count > 0)
 				{
-					ObjectDatas = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
-				};
+					var msg = new Messages.ObjectDataArrayMessage()
+					{
+						ObjectDatas = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
+					};
 
-				writer(msg);
+					writer(msg);
+				}
 			}
 
-			// this may not need dividing, perhaps
-			writer(new Messages.ObjectDataArrayMessage()
+			if (m_buildings.Count > 0)
 			{
-				ObjectDatas = m_buildings.Select(b => b.Serialize()).ToArray(),
-			});
+				// this may not need dividing, perhaps
+				writer(new Messages.ObjectDataArrayMessage()
+				{
+					ObjectDatas = m_buildings.Select(b => b.Serialize()).ToArray(),
+				});
+			}
 		}
 
 		public override BaseGameObjectData Serialize()

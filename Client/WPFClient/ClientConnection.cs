@@ -208,7 +208,7 @@ namespace Dwarrowdelf.Client
 
 			if (ob == null)
 			{
-				Debug.Print("New gameobject appeared {0}", data.ObjectID);
+				Debug.Print("New object {0} of type {1} appeared", data.ObjectID, data.GetType().Name);
 
 				if (data is LivingData)
 					ob = new Living(GameData.Data.World, data.ObjectID);
