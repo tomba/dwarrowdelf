@@ -80,7 +80,7 @@
     <Compile Include="LivingActions.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="ItemObject.cs" />
-    <Compile Include="InteractiveActor.cs" />
+    <Compile Include="DwarfAI.cs" />
     <Compile Include="Living.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="MonsterActor.cs" />

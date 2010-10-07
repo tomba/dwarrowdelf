@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	class InteractiveActor : Jobs.AssignmentAI
+	class DwarfAI : Jobs.AssignmentAI
 	{
 		//Living Worker { get; set; }
 		Random m_random;
 
-		public InteractiveActor(Living ob) : base(ob)
+		public DwarfAI(Living ob) : base(ob)
 		{
 			m_random = new Random(GetHashCode());
 			//this.Worker = ob;
@@ -18,39 +18,38 @@ namespace Dwarrowdelf.Server
 
 		protected override bool CheckForAbortOtherAction(ActionPriority priority)
 		{
-			/*
+			
 			if (priority < ActionPriority.High)
 				return false;
 
 			if (this.Worker.World.TickNumber % 20 == 0)
 				return true;
-			*/
+			
 			return false;
 		}
 
 		protected override bool CheckForAbortOurAssignment(ActionPriority priority)
 		{
-			/*
+			
 			if (priority < ActionPriority.High)
 				return false;
 
 			if (this.Worker.World.TickNumber % 20 == 0)
 				return true;
-			*/
+			
 			return false;
 		}
 
 		protected override Jobs.IAssignment GetAssignment(ILiving worker, ActionPriority priority)
 		{
-			/*
 			if (priority == ActionPriority.High)
 			{
 				if (this.Worker.World.TickNumber % 20 == 0)
-					return new Jobs.WaitAssignment(null, priority, 8);
+					return new Jobs.Assignments.WaitAssignment(null, priority, 8);
 				else
 					return null;
 			}
-			 */
+			 
 			/*
 			return new Jobs.WaitAssignment(null, priority, 4);
 			*/

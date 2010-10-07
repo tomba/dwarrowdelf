@@ -430,7 +430,7 @@ namespace Dwarrowdelf.Server
 					SymbolID = SymbolID.Player,
 					Color = (GameColor)rand.Next((int)GameColor.NumColors),
 				};
-				player.SetAI(new InteractiveActor(player));
+				player.SetAI(new DwarfAI(player));
 				player.Initialize(m_world);
 
 				m_controllables.Add(player);
