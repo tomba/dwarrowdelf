@@ -18,6 +18,10 @@ namespace Dwarrowdelf.Server
 			{
 				ticks = 3;
 			}
+			else if (action is FellTreeAction)
+			{
+				ticks = 5;
+			}
 			else if (action is MoveAction)
 			{
 				ticks = 1;

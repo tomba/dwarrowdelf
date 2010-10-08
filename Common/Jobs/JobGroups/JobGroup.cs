@@ -21,33 +21,40 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 		}
 
+		public JobType JobType { get { return JobType.JobGroup; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
 
-		public virtual Progress Progress
+		public virtual JobState JobState
 		{
 			get
 			{
-				if (this.SubJobs.All(j => j.Progress == Progress.Done))
-					return Progress.Done;
+				if (this.SubJobs.All(j => j.JobState == JobState.Done))
+					return JobState.Done;
 
-				if (this.SubJobs.Any(j => j.Progress == Progress.Fail))
-					return Progress.Fail;
+				if (this.SubJobs.Any(j => j.JobState == JobState.Fail))
+					return JobState.Fail;
 
-				return Progress.None;
+				return JobState.Ok;
 			}
 		}
 
 		public void Retry()
 		{
-			foreach (var job in m_subJobs.Where(j => j.Progress == Jobs.Progress.Abort))
+			foreach (var job in m_subJobs.Where(j => j.JobState == Jobs.JobState.Abort))
 				job.Retry();
 		}
 
 		public void Abort()
 		{
-			foreach (var job in m_subJobs.Where(j => j.Progress == Jobs.Progress.Ok))
+			foreach (var job in m_subJobs.Where(j => j.JobState == Jobs.JobState.Ok))
 				job.Abort();
+		}
+
+		public void Fail()
+		{
+			foreach (var job in m_subJobs)
+				job.Fail();
 		}
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
@@ -62,11 +69,11 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "Progress")
+			if (e.PropertyName == "JobState")
 			{
-				Notify("Progress");
+				Notify("JobState");
 
-				if (this.Progress == Jobs.Progress.Done || this.Progress == Jobs.Progress.Fail)
+				if (this.JobState == Jobs.JobState.Done || this.JobState == Jobs.JobState.Fail)
 					Cleanup();
 			}
 		}
@@ -94,19 +101,13 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		public override Progress Progress
+		public override JobState JobState
 		{
 			get
 			{
-				var progress = base.Progress;
+				var progress = base.JobState;
 
-				if (progress != Progress.None)
-					return progress;
-
-				if (this.SubJobs.All(j => j.Progress == Progress.Ok || j.Progress == Progress.Done))
-					return Progress.Ok;
-
-				return Progress.None;
+				return progress;
 			}
 		}
 
@@ -121,14 +122,19 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		public override Progress Progress
+		public override JobState JobState
 		{
 			get
 			{
-				if (this.SubJobs.Any(j => j.Progress == Progress.Ok))
-					return Progress.Ok;
+				var progress = base.JobState;
 
-				return base.Progress;
+				if (progress != JobState.Ok)
+					return progress;
+
+				if (this.SubJobs.Any(j => j.JobState == JobState.Abort))
+					return JobState.Abort;
+
+				return JobState.Ok;
 			}
 		}
 

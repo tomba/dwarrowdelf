@@ -24,14 +24,42 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Priority = priority;
 		}
 
+		public JobType JobType { get { return JobType.Assignment; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
 
-		Progress m_progress;
-		public Progress Progress
+		JobState m_state;
+		public JobState JobState
 		{
-			get { return m_progress; }
-			private set { if (m_progress == value) return; m_progress = value; Notify("Progress"); }
+			get { return m_state; }
+			private set { if (m_state == value) return; m_state = value; Notify("JobState"); }
+		}
+
+		public void Retry()
+		{
+			Debug.Assert(this.JobState != JobState.Ok);
+			Debug.Assert(this.CurrentSubJob == null);
+
+			SetState(JobState.Ok);
+		}
+
+		public void Abort()
+		{
+			SetState(JobState.Abort);
+		}
+
+		public void Fail()
+		{
+			SetState(JobState.Fail);
+		}
+
+		public bool IsAssigned
+		{
+			get
+			{
+				Debug.Assert(m_worker == null || this.JobState == Jobs.JobState.Ok);
+				return m_worker != null;
+			}
 		}
 
 		ILiving m_worker;
@@ -53,149 +81,120 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			get { return this.CurrentSubJob != null ? this.CurrentSubJob.CurrentAction : null; }
 		}
 
-
-		public void Retry()
+		public JobState Assign(ILiving worker)
 		{
-			Debug.Assert(this.Progress == Jobs.Progress.Abort);
-			Debug.Assert(this.CurrentSubJob == null);
-
-			SetProgress(Progress.None);
-		}
-
-		public void Abort()
-		{
-			if (this.Progress != Jobs.Progress.Ok)
-				return;
-
-			if (this.CurrentSubJob != null)
-				this.CurrentSubJob.Abort();
-
-			AbortOverride();
-
-			SetProgress(Progress.Abort);
-		}
-
-		protected virtual void AbortOverride() { }
-
-		public Progress Assign(ILiving worker)
-		{
-			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
+			Debug.Assert(this.IsAssigned == false);
+			Debug.Assert(this.JobState == JobState.Ok);
 
 			D("Assign {0}", worker);
 
-			var progress = AssignOverride(worker);
-			SetProgress(progress);
-			if (progress != Progress.Ok)
-				return progress;
+			var state = AssignOverride(worker);
+			SetState(state);
+			if (state != JobState.Ok)
+				return state;
 
 			this.Worker = worker;
 
 			m_enumerator = GetAssignmentEnumerator();
 
-			this.CurrentSubJob = FindAndAssignJob(out progress);
-			SetProgress(progress);
-			return progress;
+			this.CurrentSubJob = FindAndAssignJob(out state);
+			SetState(state);
+			return state;
 		}
 
 		protected abstract IEnumerator<IAssignment> GetAssignmentEnumerator();
 
-		protected virtual Progress AssignOverride(ILiving worker)
+		protected virtual JobState AssignOverride(ILiving worker)
 		{
-			return Progress.Ok;
+			return JobState.Ok;
 		}
 
 
-		public Progress PrepareNextAction()
+		public JobState PrepareNextAction()
 		{
 			Debug.Assert(this.CurrentAction == null);
 
 			D("PrepareNextAction");
 
-			var progress = DoPrepareNextAction();
-			SetProgress(progress);
-			return progress;
+			var state = DoPrepareNextAction();
+			SetState(state);
+			return state;
 		}
 
-		Progress DoPrepareNextAction()
+		JobState DoPrepareNextAction()
 		{
 			while (true)
 			{
-				Progress progress;
+				JobState state;
 
 				if (this.CurrentSubJob == null)
 				{
-					this.CurrentSubJob = FindAndAssignJob(out progress);
-					if (progress != Progress.Ok)
-						return progress;
+					this.CurrentSubJob = FindAndAssignJob(out state);
+					if (state != JobState.Ok)
+						return state;
 				}
 
-				progress = this.CurrentSubJob.PrepareNextAction();
+				state = this.CurrentSubJob.PrepareNextAction();
 				Notify("CurrentAction");
 
-				switch (progress)
+				switch (state)
 				{
-					case Progress.Ok:
-						return Progress.Ok;
+					case JobState.Ok:
+						return JobState.Ok;
 
-					case Progress.Done:
+					case JobState.Done:
 						this.CurrentSubJob = null;
 						continue;
 
-					case Progress.Abort:
-					case Progress.Fail:
-						return progress;
-
-					case Progress.None:
-					default:
-						throw new Exception();
+					case JobState.Abort:
+					case JobState.Fail:
+						return state;
 				}
 			}
 		}
 
 
 
-		public Progress ActionProgress(ActionProgressChange e)
+		public JobState ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.Progress == Progress.Ok);
+			Debug.Assert(this.JobState == JobState.Ok);
 			Debug.Assert(this.CurrentAction != null);
 			Debug.Assert(this.CurrentSubJob != null);
 
 			D("ActionProgress");
 
-			var progress = DoActionProgress(e);
-			SetProgress(progress);
-			return progress;
+			var state = DoActionProgress(e);
+			SetState(state);
+			return state;
 		}
 
-		Progress DoActionProgress(ActionProgressChange e)
+		JobState DoActionProgress(ActionProgressChange e)
 		{
-			var progress = this.CurrentSubJob.ActionProgress(e);
+			var state = this.CurrentSubJob.ActionProgress(e);
 			Notify("CurrentAction");
 
-			switch (progress)
+			switch (state)
 			{
-				case Progress.Ok:
-					return Progress.Ok;
+				case JobState.Ok:
+					return JobState.Ok;
 
-				case Progress.Abort:
-				case Progress.Fail:
-					return progress;
+				case JobState.Abort:
+				case JobState.Fail:
+					return state;
 
-				case Progress.Done:
+				case JobState.Done:
 					this.CurrentSubJob = null;
 					return CheckProgress();
 
-				case Progress.None:
 				default:
 					throw new Exception();
 			}
 		}
 
-		protected abstract Progress CheckProgress();
+		protected abstract JobState CheckProgress();
 
-		IAssignment FindAndAssignJob(out Progress progress)
+		IAssignment FindAndAssignJob(out JobState state)
 		{
 			D("looking for new job");
 
@@ -206,30 +205,29 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				if (!ok)
 				{
 					D("all subjobs done");
-					progress = Progress.Done;
+					state = JobState.Done;
 					return null;
 				}
 
 				var job = m_enumerator.Current;
 
-				var subProgress = job.Assign(this.Worker);
+				var subState = job.Assign(this.Worker);
 
-				switch (subProgress)
+				switch (subState)
 				{
-					case Progress.Ok:
+					case JobState.Ok:
 						//D("new job found");
-						progress = subProgress;
+						state = subState;
 						return job;
 
-					case Progress.Done:
+					case JobState.Done:
 						continue;
 
-					case Progress.Abort:
-					case Progress.Fail:
-						progress = subProgress;
+					case JobState.Abort:
+					case JobState.Fail:
+						state = subState;
 						return null;
 
-					case Progress.None:
 					default:
 						throw new Exception();
 				}
@@ -237,42 +235,61 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 
-		protected void SetProgress(Progress progress)
+		protected void SetState(JobState state)
 		{
-			D("SetProgress({0})", progress);
+			if (this.JobState == state)
+				return;
 
-			switch (progress)
+			D("SetState({0})", state);
+
+			switch (state)
 			{
-				case Progress.None:
+				case JobState.Ok:
 					break;
 
-				case Progress.Ok:
+				case JobState.Done:
+					Debug.Assert(this.JobState == JobState.Ok);
 					break;
 
-				case Progress.Done:
-					Cleanup();
+				case JobState.Abort:
+					Debug.Assert(this.JobState == JobState.Ok || this.JobState == JobState.Done);
+					break;
+
+				case JobState.Fail:
+					Debug.Assert(this.JobState == JobState.Ok);
+					break;
+			}
+
+			OnStateChanging(state);
+
+			switch (state)
+			{
+				case JobState.Ok:
+					break;
+
+				case JobState.Done:
 					this.Worker = null;
 					this.CurrentSubJob = null;
 					break;
 
-				case Progress.Abort:
+				case JobState.Abort:
+					if (this.CurrentSubJob != null)
+						this.CurrentSubJob.Abort();
+
 					this.Worker = null;
 					this.CurrentSubJob = null;
 					break;
 
-				case Progress.Fail:
-					Cleanup();
+				case JobState.Fail:
 					this.Worker = null;
 					this.CurrentSubJob = null;
 					break;
 			}
 
-			this.Progress = progress;
+			this.JobState = state;
 		}
 
-		protected virtual void Cleanup()
-		{
-		}
+		protected virtual void OnStateChanging(JobState state) { }
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

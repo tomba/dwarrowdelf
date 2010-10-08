@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Jobs
 		[System.Diagnostics.Conditional("DEBUG")]
 		protected void D(string format, params object[] args)
 		{
-			//Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
 		protected virtual bool CheckForAbortOurAssignment(ActionPriority priority) { return false; }
@@ -122,20 +122,20 @@ namespace Dwarrowdelf.Jobs
 					{
 						D("DecideAction: new assignment: {0}", assignment);
 					}
-				}
 
-				this.CurrentAssignment = assignment;
+					this.CurrentAssignment = assignment;
+				}
 
 				if (assignment.Priority != priority)
 					return null;
 
 				Debug.Assert(assignment.CurrentAction == null);
 
-				var progress = assignment.PrepareNextAction();
+				var state = assignment.PrepareNextAction();
 
-				switch (progress)
+				switch (state)
 				{
-					case Progress.Ok:
+					case JobState.Ok:
 						var action = assignment.CurrentAction;
 						if (action == null)
 							throw new Exception();
@@ -143,15 +143,12 @@ namespace Dwarrowdelf.Jobs
 						D("DecideAction: new {0}", action);
 						return action;
 
-					case Progress.Done:
-					case Progress.Fail:
-					case Progress.Abort:
-						D("DecideAction: {0} in {1}, looking for new assignment", progress, assignment);
+					case JobState.Done:
+					case JobState.Fail:
+					case JobState.Abort:
+						D("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
 						this.CurrentAssignment = assignment = null;
 						break;
-
-					case Progress.None:
-						throw new Exception();
 				}
 			}
 		}
@@ -176,24 +173,21 @@ namespace Dwarrowdelf.Jobs
 				if (assignment == null)
 					return null;
 
-				var progress = assignment.Assign(worker);
+				var state = assignment.Assign(worker);
 
-				switch (progress)
+				switch (state)
 				{
-					case Progress.Ok:
+					case JobState.Ok:
 						return assignment;
 
-					case Progress.Done:
+					case JobState.Done:
 						break;
 
-					case Progress.Fail:
+					case JobState.Fail:
 						break;
 
-					case Progress.Abort:
+					case JobState.Abort:
 						break;
-
-					case Progress.None:
-						throw new Exception();
 				}
 			}
 		}
@@ -203,12 +197,10 @@ namespace Dwarrowdelf.Jobs
 			Debug.Assert(sender == this.CurrentAssignment);
 
 			var assignment = (IAssignment)sender;
-			if (e.PropertyName == "Progress")
+			if (e.PropertyName == "JobState")
 			{
-				if (assignment.Progress == Progress.Abort || assignment.Progress == Progress.Fail)
-				{
-					this.CurrentAssignment = null;
-				}
+				Debug.Assert(assignment.JobState != JobState.Ok);
+				this.CurrentAssignment = null;
 			}
 		}
 
@@ -245,59 +237,47 @@ namespace Dwarrowdelf.Jobs
 
 		public void ActionProgress(ActionProgressChange e)
 		{
+			var assignment = this.CurrentAssignment;
+
 			D("ActionProgress({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
 				e.ActionXXX, e.State,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
-				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
-				this.CurrentAssignment != null && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
+				assignment != null ? assignment.ToString() : "<none>",
+				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
 			Debug.Assert(this.Worker.HasAction);
 			Debug.Assert(e.ActionXXX.MagicNumber == this.Worker.CurrentAction.MagicNumber);
 
-			if (this.CurrentAssignment == null)
+			if (assignment == null)
 			{
 				D("ActionProgress: no assignment, so not for me");
 				return;
 			}
 
-			if (e.State == ActionState.Abort && this.CurrentAssignment.CurrentAction != null &&
-				this.CurrentAssignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
+				assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
 			{
 				D("ActionProgress: cancel event for action not started by us, ignore");
 				return;
 			}
 
-			if (this.CurrentAssignment.CurrentAction == null)
+			if (assignment.CurrentAction == null)
 			{
+				// XXX this can happen when doing a multi-turn action, and the user aborts the action. 
 				throw new NotImplementedException("implement cancel work");
 			}
 
 			// does the action originate from us?
-			if (this.CurrentAssignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			if (assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
 			{
 				throw new NotImplementedException("implement cancel work");
 			}
 
 			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
-			var progress = this.CurrentAssignment.ActionProgress(e);
+			var state = assignment.ActionProgress(e);
 
-			switch (progress)
-			{
-				case Progress.None:
-					throw new Exception();
-
-				case Progress.Ok:
-					D("Assignment progressing");
-					break;
-
-				case Progress.Done:
-				case Progress.Fail:
-				case Progress.Abort:
-					D("ActionProgress: {0} in {1}", progress, this.CurrentAssignment);
-					this.CurrentAssignment = null;
-					break;
-			}
+			D("ActionProgress: {0} in {1}", state, assignment);
 		}
 	}
 }

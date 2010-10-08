@@ -28,7 +28,8 @@ namespace Dwarrowdelf.Jobs
 		public void Remove(IJob job)
 		{
 			Debug.Assert(job.Parent == null);
-			job.Abort();
+			if (job.JobState == JobState.Ok)
+				job.Abort();
 			m_jobs.Remove(job);
 		}
 
@@ -39,51 +40,71 @@ namespace Dwarrowdelf.Jobs
 
 		static IAssignment FindJob(IEnumerable<IJob> jobs, ILiving living)
 		{
-			return FindJob(jobs, JobGroupType.Parallel, living);
+			return FindJobParallel(jobs, living);
 		}
 
-		static IAssignment FindJob(IEnumerable<IJob> jobs, JobGroupType type, ILiving living)
+		static IAssignment FindJobParallel(IEnumerable<IJob> jobs, ILiving living)
 		{
-			if (type != JobGroupType.Parallel && type != JobGroupType.Serial)
-				throw new Exception();
-
-			foreach (var job in jobs)
+			foreach (var job in jobs.Where(j => j.JobState == JobState.Ok))
 			{
-				if (job.Progress == Progress.Done || job.Progress == Progress.Fail)
-					continue;
+				var assignment = FindAssignment(job, living);
 
-				if (job.Progress == Progress.None)
-				{
-					// job can be taken
-
-					if (job is IAssignment)
-					{
-						var ajob = (IAssignment)job;
-						return ajob;
-					}
-					else if (job is IJobGroup)
-					{
-						var gjob = (IJobGroup)job;
-
-						var j = FindJob(gjob.SubJobs, gjob.JobGroupType, living);
-
-						if (j != null)
-							return j;
-					}
-					else
-					{
-						throw new Exception();
-					}
-				}
-
-				// job cannot be taken
-
-				if (type == JobGroupType.Serial)
-					return null;
+				if (assignment != null)
+					return assignment;
 			}
 
 			return null;
+		}
 
+		static IAssignment FindJobSerial(IEnumerable<IJob> jobs, ILiving living)
+		{
+			Debug.Assert(jobs.All(j => j.JobState == JobState.Ok || j.JobState == JobState.Done));
+
+			var job = jobs.First(j => j.JobState == JobState.Ok);
+
+			var assigment = FindAssignment(job, living);
+
+			return assigment;
+		}
+
+		static IAssignment FindAssignment(IJob job, ILiving living)
+		{
+			Debug.Assert(job.JobState == JobState.Ok);
+
+			IAssignment assignment;
+
+			switch (job.JobType)
+			{
+				case JobType.Assignment:
+					assignment = (IAssignment)job;
+					break;
+
+				case JobType.JobGroup:
+					var jobGroup = (IJobGroup)job;
+
+					switch (jobGroup.JobGroupType)
+					{
+						case JobGroupType.Parallel:
+							assignment = FindJobParallel(jobGroup.SubJobs, living);
+							break;
+
+						case JobGroupType.Serial:
+							assignment = FindJobSerial(jobGroup.SubJobs, living);
+							break;
+
+						default:
+							throw new Exception();
+					}
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			if (assignment != null && assignment.IsAssigned == false)
+				return assignment;
+			else
+				return null;
 		}
 	}
 }

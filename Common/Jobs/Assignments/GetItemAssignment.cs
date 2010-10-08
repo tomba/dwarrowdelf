@@ -17,28 +17,28 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_item = item;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out Progress progress)
+		protected override GameAction PrepareNextActionOverride(out JobState progress)
 		{
 			var action = new GetAction(new IItemObject[] { m_item }, this.Priority);
-			progress = Progress.Ok;
+			progress = JobState.Ok;
 			return action;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressChange e)
+		protected override JobState ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return Progress.Ok;
+					return JobState.Ok;
 
 				case ActionState.Done:
-					return Progress.Done;
+					return JobState.Done;
 
 				case ActionState.Fail:
-					return Progress.Fail;
+					return JobState.Fail;
 
 				case ActionState.Abort:
-					return Progress.Abort;
+					return JobState.Abort;
 
 				default:
 					throw new Exception();

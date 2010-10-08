@@ -102,13 +102,13 @@ namespace Dwarrowdelf.Client
 
 			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
 			{
-				if (order.Job.Progress == Jobs.Progress.Done)
+				if (order.Job.JobState == Jobs.JobState.Done)
 				{
 					Debug.Print("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
-				else if (order.Job.Progress == Jobs.Progress.Fail)
+				else if (order.Job.JobState == Jobs.JobState.Fail)
 				{
 					Debug.Print("BuildOrder FAILED");
 					order.Job = null;
@@ -181,11 +181,11 @@ namespace Dwarrowdelf.Client
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "Progress")
+			if (e.PropertyName != "JobState")
 				return;
 
 			var job = (IJob)sender;
-			if (job.Progress == Progress.Done)
+			if (job.JobState == JobState.Done)
 			{
 				this.World.JobManager.Remove(job);
 				CheckFinishedOrders();

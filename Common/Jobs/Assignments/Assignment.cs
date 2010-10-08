@@ -16,8 +16,43 @@ namespace Dwarrowdelf.Jobs.Assignments
 			this.Priority = priority;
 		}
 
+		public JobType JobType { get { return JobType.Assignment; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
+
+		public bool IsAssigned
+		{
+			get
+			{
+				Debug.Assert(m_worker == null || this.JobState == Jobs.JobState.Ok);
+				return m_worker != null;
+			}
+		}
+
+		JobState m_state;
+		public JobState JobState
+		{
+			get { return m_state; }
+			private set { if (m_state == value) return; m_state = value; Notify("JobState"); }
+		}
+
+		public void Retry()
+		{
+			Debug.Assert(this.JobState != JobState.Ok);
+			Debug.Assert(this.IsAssigned == false);
+
+			SetState(JobState.Ok);
+		}
+
+		public void Abort()
+		{
+			SetState(JobState.Abort);
+		}
+
+		public void Fail()
+		{
+			SetState(JobState.Fail);
+		}
 
 		ILiving m_worker;
 		public ILiving Worker
@@ -33,122 +68,106 @@ namespace Dwarrowdelf.Jobs.Assignments
 			private set { if (m_action == value) return; m_action = value; Notify("CurrentAction"); }
 		}
 
-		Progress m_progress;
-		public Progress Progress
+		public JobState Assign(ILiving worker)
 		{
-			get { return m_progress; }
-			private set { if (m_progress == value) return; m_progress = value; Notify("Progress"); }
-		}
+			Debug.Assert(this.IsAssigned == false);
+			Debug.Assert(this.JobState == JobState.Ok);
 
-		public void Retry()
-		{
-			SetProgress(Progress.None);
-		}
-
-		public void Abort()
-		{
-			if (this.Progress != Jobs.Progress.Ok)
-				return;
-
-			SetProgress(Progress.Abort);
-		}
-
-		protected virtual void AbortOverride()
-		{
-		}
-
-		public Progress Assign(ILiving worker)
-		{
-			Debug.Assert(this.Worker == null);
-			Debug.Assert(this.Progress == Progress.None || this.Progress == Progress.Abort);
-
-			var progress = AssignOverride(worker);
-			SetProgress(progress);
-			if (progress != Progress.Ok)
-				return progress;
+			var state = AssignOverride(worker);
+			SetState(state);
+			if (state != JobState.Ok)
+				return state;
 
 			this.Worker = worker;
 
-			return progress;
+			return state;
 		}
 
-		protected virtual Progress AssignOverride(ILiving worker)
+		protected virtual JobState AssignOverride(ILiving worker)
 		{
-			return Progress.Ok;
+			return JobState.Ok;
 		}
 
 
 
-		public Progress PrepareNextAction()
+		public JobState PrepareNextAction()
 		{
 			Debug.Assert(this.CurrentAction == null);
 
-			Progress progress;
-			var action = PrepareNextActionOverride(out progress);
-			Debug.Assert((action == null && progress != Jobs.Progress.Ok) || (action != null && progress == Jobs.Progress.Ok));
+			JobState state;
+			var action = PrepareNextActionOverride(out state);
+			Debug.Assert((action == null && state != Jobs.JobState.Ok) || (action != null && state == Jobs.JobState.Ok));
 			this.CurrentAction = action;
-			SetProgress(progress);
-			return progress;
+			SetState(state);
+			return state;
 		}
 
-		protected abstract GameAction PrepareNextActionOverride(out Progress progress);
+		protected abstract GameAction PrepareNextActionOverride(out JobState state);
 
-		public Progress ActionProgress(ActionProgressChange e)
+		public JobState ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.Progress == Progress.Ok);
+			Debug.Assert(this.JobState == JobState.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
-			var progress = ActionProgressOverride(e);
-			SetProgress(progress);
+			var state = ActionProgressOverride(e);
+			SetState(state);
 
 			if (e.TicksLeft == 0)
 				this.CurrentAction = null;
 
-			return progress;
+			return state;
 		}
 
-		protected virtual Progress ActionProgressOverride(ActionProgressChange e)
+		protected virtual JobState ActionProgressOverride(ActionProgressChange e)
 		{
-			return Progress.Ok;
+			return JobState.Ok;
 		}
 
-
-		protected void SetProgress(Progress progress)
+		protected void SetState(JobState state)
 		{
-			switch (progress)
+			if (this.JobState == state)
+				return;
+
+			switch (state)
 			{
-				case Progress.None:
+				case JobState.Ok:
 					break;
 
-				case Progress.Ok:
+				case JobState.Done:
+					Debug.Assert(this.JobState == JobState.Ok);
 					break;
 
-				case Progress.Done:
-					Cleanup();
-					this.Worker = null;
-					this.CurrentAction = null;
+				case JobState.Abort:
+					Debug.Assert(this.JobState == JobState.Ok || this.JobState == JobState.Done);
 					break;
 
-				case Progress.Abort:
-					this.Worker = null;
-					this.CurrentAction = null;
+				case JobState.Fail:
+					Debug.Assert(this.JobState == JobState.Ok);
+					break;
+			}
+
+			OnStateChanging(state);
+
+			switch (state)
+			{
+				case JobState.Ok:
 					break;
 
-				case Progress.Fail:
-					Cleanup();
+				case JobState.Done:
+				case JobState.Abort:
+				case JobState.Fail:
 					this.Worker = null;
 					this.CurrentAction = null;
 					break;
 			}
 
-			this.Progress = progress;
+			this.JobState = state;
 		}
 
-		protected virtual void Cleanup()
+		protected virtual void OnStateChanging(JobState state)
 		{
 		}
-
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

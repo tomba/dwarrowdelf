@@ -306,7 +306,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text="{Binding JobState}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding JobGroupType}" />
                                         </StackPanel>
@@ -316,9 +316,9 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text="{Binding JobState}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                            <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                         </StackPanel>
@@ -329,9 +329,9 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="{Binding}" />
                                                 <TextBlock Text=", " />
-                                                <TextBlock Text="{Binding Progress}" />
+                                                <TextBlock Text="{Binding JobState}" />
                                                 <TextBlock Text=", " />
-                                                <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                                <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
                                                 <TextBlock Text=", " />
                                                 <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                             </StackPanel>
@@ -347,9 +347,9 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding Progress}" />
+                                            <TextBlock Text="{Binding JobState}" />
                                             <TextBlock Text=" , " />
-                                            <TextBlock Text="{Binding Worker.Name, TargetNullValue=Nobody}" />
+                                            <TextBlock Text="{Binding Worker.Name, FallbackValue=NoBody}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                         </StackPanel>
@@ -361,6 +361,7 @@
                                     <ContextMenu>
                                         <MenuItem Tag="Retry" Header="Retry" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+                                        <MenuItem Tag="Fail" Header="Fail" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
                                     </ContextMenu>
                                 </TreeView.ContextMenu>

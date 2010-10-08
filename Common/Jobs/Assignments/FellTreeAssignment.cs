@@ -19,54 +19,54 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_location = location;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out Progress progress)
+		protected override GameAction PrepareNextActionOverride(out JobState progress)
 		{
 			var v = m_location - this.Worker.Location;
 
 			if (!v.IsAdjacent2D)
 			{
-				progress = Progress.Fail;
+				progress = JobState.Fail;
 				return null;
 			}
 
-			if (CheckProgress() == Progress.Done)
+			if (CheckProgress() == JobState.Done)
 			{
-				progress = Progress.Done;
+				progress = JobState.Done;
 				return null;
 			}
 
 			var action = new FellTreeAction(v.ToDirection(), this.Priority);
-			progress = Progress.Ok;
+			progress = JobState.Ok;
 			return action;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressChange e)
+		protected override JobState ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return Progress.Ok;
+					return JobState.Ok;
 
 				case ActionState.Done:
 					return CheckProgress();
 
 				case ActionState.Fail:
-					return Progress.Fail;
+					return JobState.Fail;
 
 				case ActionState.Abort:
-					return Progress.Abort;
+					return JobState.Abort;
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		Progress CheckProgress()
+		JobState CheckProgress()
 		{
 			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
-				return Progress.Done;
+				return JobState.Done;
 			else
-				return Progress.Ok;
+				return JobState.Ok;
 		}
 
 		public override string ToString()

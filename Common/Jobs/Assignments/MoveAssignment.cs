@@ -26,18 +26,17 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_adjacent = adjacent;
 		}
 
-		protected override void Cleanup()
+		protected override void OnStateChanging(JobState state)
 		{
-			m_pathDirs = null;
-		}
+			if (state == JobState.Ok)
+				return;
 
-		protected override void AbortOverride()
-		{
+			// else Abort, Done or Fail
 			m_pathDirs = null;
 			m_numFails = 0;
 		}
 
-		protected override Progress AssignOverride(ILiving worker)
+		protected override JobState AssignOverride(ILiving worker)
 		{
 			m_src = worker.Location;
 			m_numFails = 0;
@@ -47,13 +46,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return res;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out Progress progress)
+		protected override GameAction PrepareNextActionOverride(out JobState progress)
 		{
 			if (m_pathDirs == null || m_supposedLocation != this.Worker.Location)
 			{
 				var res = PreparePath(this.Worker);
 
-				if (res != Progress.Ok)
+				if (res != JobState.Ok)
 				{
 					progress = res;
 					return null;
@@ -68,16 +67,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_supposedLocation += new IntVector3D(dir);
 
 			var action = new MoveAction(dir, this.Priority);
-			progress = Progress.Ok;
+			progress = JobState.Ok;
 			return action;
 		}
 
-		protected override Progress ActionProgressOverride(ActionProgressChange e)
+		protected override JobState ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return Progress.Ok;
+					return JobState.Ok;
 
 				case ActionState.Done:
 					return CheckProgress();
@@ -85,26 +84,26 @@ namespace Dwarrowdelf.Jobs.Assignments
 				case ActionState.Fail:
 					m_numFails++;
 					if (m_numFails > 10)
-						return Progress.Abort;
+						return JobState.Abort;
 
 					var res = PreparePath(this.Worker);
 					return res;
 
 				case ActionState.Abort:
-					return Progress.Abort;
+					return JobState.Abort;
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		Progress PreparePath(ILiving worker)
+		JobState PreparePath(ILiving worker)
 		{
 			var v = m_dest - worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
 			{
 				m_pathDirs = null;
-				return Progress.Done;
+				return JobState.Done;
 			}
 
 			// First try pathfinding from the destination to source with small limit. We expect it to fail with LimitExceeded,
@@ -112,12 +111,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// (what about one-way tiles, if such exist?)
 			var backwardRes = AStar.AStar3D.Find(m_dest, worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
 			if (backwardRes.Status == AStar.AStarStatus.NotFound)
-				return Jobs.Progress.Abort;
+				return Jobs.JobState.Abort;
 
 			var res = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
 
 			if (res.Status != AStar.AStarStatus.Found)
-				return Jobs.Progress.Abort;
+				return Jobs.JobState.Abort;
 
 			var dirs = res.GetPath();
 
@@ -125,16 +124,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			m_supposedLocation = worker.Location;
 
-			return Progress.Ok;
+			return JobState.Ok;
 		}
 
-		Progress CheckProgress()
+		JobState CheckProgress()
 		{
 			var v = m_dest - this.Worker.Location;
 			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
-				return Progress.Done;
+				return JobState.Done;
 			else
-				return Progress.Ok;
+				return JobState.Ok;
 		}
 
 		public override string ToString()

@@ -30,9 +30,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			}
 		}
 
-		protected override Progress CheckProgress()
+		protected override JobState CheckProgress()
 		{
-			return Jobs.Progress.Ok;
+			return Jobs.JobState.Ok;
 		}
 
 		public override string ToString()

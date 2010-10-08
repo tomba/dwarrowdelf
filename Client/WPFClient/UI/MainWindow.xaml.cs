@@ -659,11 +659,11 @@ namespace Dwarrowdelf.Client
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "Progress")
+			if (e.PropertyName != "JobState")
 				return;
 
 			var job = (IJob)sender;
-			if (job.Progress == Progress.Done)
+			if (job.JobState == JobState.Done)
 			{
 				job.PropertyChanged -= OnJobPropertyChanged;
 				this.Map.World.JobManager.Remove(job);
@@ -736,12 +736,12 @@ namespace Dwarrowdelf.Client
 			if (job == null)
 				return;
 
-			if (job.Parent != null)
-				return;
-
 			switch (tag)
 			{
 				case "Retry":
+					if (job.Parent != null)
+						return;
+
 					job.Retry();
 					break;
 
@@ -749,7 +749,14 @@ namespace Dwarrowdelf.Client
 					job.Abort();
 					break;
 
+				case "Fail":
+					job.Fail();
+					break;
+
 				case "Remove":
+					if (job.Parent != null)
+						return;
+
 					GameData.Data.World.JobManager.Remove(job);
 					break;
 

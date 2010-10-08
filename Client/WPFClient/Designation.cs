@@ -53,13 +53,13 @@ namespace Dwarrowdelf.Client
 
 		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName != "Progress")
+			if (e.PropertyName != "JobState")
 				return;
 
 			var job = (IJob)sender;
 			Debug.Assert(job == m_job);
 
-			if (job.Progress == Progress.Done)
+			if (job.JobState == JobState.Done)
 				Abort();
 		}
 
