@@ -67,7 +67,20 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public IAssignment CurrentSubJob
 		{
 			get { return m_currentSubJob; }
-			private set { if (m_currentSubJob == value) return; m_currentSubJob = value; Notify("CurrentSubJob"); }
+			private set
+			{
+				if (m_currentSubJob == value) return;
+
+				if (m_currentSubJob != null)
+					m_currentSubJob.StateChanged -= OnSubJobStateChanged;
+
+				m_currentSubJob = value;
+
+				if (m_currentSubJob != null)
+					m_currentSubJob.StateChanged += OnSubJobStateChanged;
+
+				Notify("CurrentSubJob");
+			}
 		}
 
 		public GameAction CurrentAction
@@ -229,7 +242,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 
-		protected void SetState(JobState state)
+		void SetState(JobState state)
 		{
 			if (this.JobState == state)
 				return;
@@ -254,8 +267,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 			}
 
-			OnStateChanging(state);
-
 			switch (state)
 			{
 				case JobState.Ok:
@@ -267,7 +278,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case JobState.Abort:
-					if (this.CurrentSubJob != null)
+					if (this.CurrentSubJob != null && this.CurrentSubJob.JobState == JobState.Ok)
 						this.CurrentSubJob.Abort();
 
 					this.Worker = null;
@@ -275,12 +286,16 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case JobState.Fail:
+					if (this.CurrentSubJob != null && this.CurrentSubJob.JobState == JobState.Ok)
+						this.CurrentSubJob.Fail();
+
 					this.Worker = null;
 					this.CurrentSubJob = null;
 					break;
 			}
 
 			this.JobState = state;
+			OnStateChanged(state);
 			if (this.StateChanged != null)
 				StateChanged(this, state);
 			Notify("JobState");
@@ -288,7 +303,21 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public event Action<IJob, JobState> StateChanged;
 
-		protected virtual void OnStateChanging(JobState state) { }
+		protected virtual void OnStateChanged(JobState state) { }
+
+		void OnSubJobStateChanged(IJob job, JobState state)
+		{
+			Debug.Assert(job == this.CurrentSubJob);
+
+			if (state == JobState.Ok || state == JobState.Done)
+				return;
+
+			// else Abort or Fail
+			this.Worker = null;
+			this.CurrentSubJob = null;
+
+			SetState(state);
+		}
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

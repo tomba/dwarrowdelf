@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			SetAssignments(jobs);
 		}
 
-		protected override void OnStateChanging(JobState state)
+		protected override void OnStateChanged(JobState state)
 		{
 			m_locs = null;
 		}

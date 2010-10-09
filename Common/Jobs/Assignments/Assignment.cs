@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return JobState.Ok;
 		}
 
-		protected void SetState(JobState state)
+		void SetState(JobState state)
 		{
 			if (this.JobState == state)
 				return;
@@ -142,8 +142,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 					break;
 			}
 
-			OnStateChanging(state);
-
 			switch (state)
 			{
 				case JobState.Ok:
@@ -158,6 +156,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 
 			this.JobState = state;
+			OnStateChanged(state);
 			if (this.StateChanged != null)
 				StateChanged(this, state);
 			Notify("JobState");
@@ -165,7 +164,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		public event Action<IJob, JobState> StateChanged;
 
-		protected virtual void OnStateChanging(JobState state) { }
+		protected virtual void OnStateChanged(JobState state) { }
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

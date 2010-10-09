@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_adjacent = adjacent;
 		}
 
-		protected override void OnStateChanging(JobState state)
+		protected override void OnStateChanged(JobState state)
 		{
 			if (state == JobState.Ok)
 				return;

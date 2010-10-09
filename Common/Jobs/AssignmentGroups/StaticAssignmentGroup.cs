@@ -32,27 +32,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			return m_assignments.GetEnumerator();
 		}
 
-		protected override void OnStateChanging(JobState state)
+		protected override void OnStateChanged(JobState state)
 		{
-			switch (state)
+			if (state == JobState.Ok)
 			{
-				case JobState.Ok:
-					foreach (var job in m_assignments)
-						job.Retry();
-					break;
-
-				case JobState.Done:
-					break;
-
-				case JobState.Abort:
-					foreach (var job in m_assignments)
-						job.Abort();
-					break;
-
-				case JobState.Fail:
-					foreach (var job in m_assignments)
-						job.Fail();
-					break;
+				foreach (var job in m_assignments.Where(j => j.JobState != JobState.Ok))
+					job.Retry();
 			}
 		}
 
