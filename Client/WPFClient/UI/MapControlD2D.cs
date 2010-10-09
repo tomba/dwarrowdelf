@@ -42,6 +42,12 @@ namespace Dwarrowdelf.Client
 
 		public MapControlD2D()
 		{
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
 			m_tileControlD2D = new TileControlD2D.TileControlD2D();
 			m_tileControlD2D.SizeChanged += OnTileControlSizeChanged;
 			AddChild(m_tileControlD2D);

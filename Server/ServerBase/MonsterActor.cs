@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Server
 
 		public MonsterActor(Living living) : base(living)
 		{
-			m_random = new Random(GetHashCode());
+			m_random = new Random();
 		}
 		/*
 		public override void ActionRequired(ActionPriority priority)

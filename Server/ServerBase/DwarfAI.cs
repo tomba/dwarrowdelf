@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Server
 
 		public DwarfAI(Living ob) : base(ob)
 		{
-			m_random = new Random(GetHashCode());
+			m_random = new Random();
 			//this.Worker = ob;
 		}
 

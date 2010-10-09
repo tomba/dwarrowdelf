@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Server
 			m_world.WorldChanged -= HandleChanges;
 
 			m_writer.Close();
+			m_writer = null;
 		}
 
 		public void LogFullState()
