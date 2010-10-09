@@ -27,13 +27,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public JobType JobType { get { return JobType.Assignment; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
-
-		JobState m_state;
-		public JobState JobState
-		{
-			get { return m_state; }
-			private set { if (m_state == value) return; m_state = value; Notify("JobState"); }
-		}
+		public JobState JobState { get; private set; }
 
 		public void Retry()
 		{
@@ -287,7 +281,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			}
 
 			this.JobState = state;
+			if (this.StateChanged != null)
+				StateChanged(this, state);
+			Notify("JobState");
 		}
+
+		public event Action<IJob, JobState> StateChanged;
 
 		protected virtual void OnStateChanging(JobState state) { }
 

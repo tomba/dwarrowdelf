@@ -558,7 +558,7 @@ namespace Dwarrowdelf.Client
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p);
-					job.PropertyChanged += OnJobPropertyChanged;
+					job.StateChanged += OnJobStateChanged;
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -572,7 +572,7 @@ namespace Dwarrowdelf.Client
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, env, p);
-					job.PropertyChanged += OnJobPropertyChanged;
+					job.StateChanged += OnJobStateChanged;
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -582,7 +582,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
@@ -591,7 +591,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
@@ -600,7 +600,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "BuildItem")
@@ -621,19 +621,19 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, false);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "RunInCircles")
 			{
 				var job = new Jobs.AssignmentGroups.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "Loiter")
 			{
 				var job = new Jobs.AssignmentGroups.LoiterJob(null, ActionPriority.Normal, map.Environment);
-				job.PropertyChanged += OnJobPropertyChanged;
+				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
 			else if (tag == "Consume")
@@ -647,7 +647,7 @@ namespace Dwarrowdelf.Client
 				foreach (var c in consumables)
 				{
 					var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, ActionPriority.Normal, c);
-					job.PropertyChanged += OnJobPropertyChanged;
+					job.StateChanged += OnJobStateChanged;
 					this.Map.World.JobManager.Add(job);
 				}
 			}
@@ -657,15 +657,11 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnJobStateChanged(IJob job, JobState state)
 		{
-			if (e.PropertyName != "JobState")
-				return;
-
-			var job = (IJob)sender;
-			if (job.JobState == JobState.Done)
+			if (state == JobState.Done)
 			{
-				job.PropertyChanged -= OnJobPropertyChanged;
+				job.StateChanged -= OnJobStateChanged;
 				this.Map.World.JobManager.Remove(job);
 			}
 		}
@@ -739,9 +735,6 @@ namespace Dwarrowdelf.Client
 			switch (tag)
 			{
 				case "Retry":
-					if (job.Parent != null)
-						return;
-
 					job.Retry();
 					break;
 

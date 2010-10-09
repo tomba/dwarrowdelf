@@ -23,12 +23,12 @@ namespace Dwarrowdelf.Jobs
 			private set
 			{
 				if (m_currentAssignment != null)
-					this.CurrentAssignment.PropertyChanged -= OnAssignmentPropertyChanged;
+					m_currentAssignment.StateChanged -= OnJobStateChanged;
 
 				m_currentAssignment = value;
 
 				if (m_currentAssignment != null)
-					this.CurrentAssignment.PropertyChanged += OnAssignmentPropertyChanged;
+					m_currentAssignment.StateChanged += OnJobStateChanged;
 
 				if (AssignmentChanged != null)
 					AssignmentChanged(value);
@@ -192,16 +192,12 @@ namespace Dwarrowdelf.Jobs
 			}
 		}
 
-		void OnAssignmentPropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnJobStateChanged(IJob job, JobState state)
 		{
-			Debug.Assert(sender == this.CurrentAssignment);
+			Debug.Assert(job == this.CurrentAssignment);
 
-			var assignment = (IAssignment)sender;
-			if (e.PropertyName == "JobState")
-			{
-				Debug.Assert(assignment.JobState != JobState.Ok);
-				this.CurrentAssignment = null;
-			}
+			Debug.Assert(job.JobState != JobState.Ok);
+			this.CurrentAssignment = null;
 		}
 
 		public void ActionStarted(ActionStartedChange change)

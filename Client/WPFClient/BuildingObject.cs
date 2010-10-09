@@ -174,19 +174,16 @@ namespace Dwarrowdelf.Client
 		void CreateJob(BuildOrder order)
 		{
 			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
-			job.PropertyChanged += OnJobPropertyChanged;
+			job.StateChanged += OnJobStateChanged;
 			order.Job = job;
 			this.World.JobManager.Add(job);
 		}
 
-		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnJobStateChanged(IJob job, JobState state)
 		{
-			if (e.PropertyName != "JobState")
-				return;
-
-			var job = (IJob)sender;
-			if (job.JobState == JobState.Done)
+			if (state == JobState.Done)
 			{
+				job.StateChanged -= OnJobStateChanged;
 				this.World.JobManager.Remove(job);
 				CheckFinishedOrders();
 			}

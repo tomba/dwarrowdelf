@@ -48,6 +48,8 @@ namespace Dwarrowdelf.Jobs
 		void Retry();
 		void Abort();
 		void Fail();
+
+		event Action<IJob, JobState> StateChanged;
 	}
 
 	public interface IJobGroup : IJob

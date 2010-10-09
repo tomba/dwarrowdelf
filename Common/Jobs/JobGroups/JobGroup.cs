@@ -39,6 +39,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			}
 		}
 
+		public event Action<IJob, JobState> StateChanged;
+
 		public void Retry()
 		{
 			foreach (var job in m_subJobs.Where(j => j.JobState == Jobs.JobState.Abort))
@@ -64,18 +66,18 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		protected void AddSubJob(IJob job)
 		{
 			m_subJobs.Add(job);
-			job.PropertyChanged += SubJobPropertyChanged;
+			job.StateChanged += OnJobStateChanged;
 		}
 
-		void SubJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		void OnJobStateChanged(IJob job, JobState state)
 		{
-			if (e.PropertyName == "JobState")
-			{
-				Notify("JobState");
+			if (this.StateChanged != null)
+				StateChanged(this, this.JobState);
 
-				if (this.JobState == Jobs.JobState.Done || this.JobState == Jobs.JobState.Fail)
-					Cleanup();
-			}
+			Notify("JobState");
+
+			if (this.JobState == Jobs.JobState.Done || this.JobState == Jobs.JobState.Fail)
+				Cleanup();
 		}
 
 		protected virtual void Cleanup()
