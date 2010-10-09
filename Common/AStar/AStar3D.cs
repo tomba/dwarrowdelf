@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Dwarrowdelf.AStar
 {
@@ -10,6 +11,7 @@ namespace Dwarrowdelf.AStar
 		Found,
 		NotFound,
 		LimitExceeded,
+		Cancelled,
 	}
 
 	public class AStar3DResult
@@ -146,6 +148,7 @@ namespace Dwarrowdelf.AStar
 			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
 			public Func<IntPoint3D, int> GetTileWeight;
 			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
+			public CancellationToken CancellationToken;
 		}
 
 		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
@@ -155,13 +158,13 @@ namespace Dwarrowdelf.AStar
 		}
 
 		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs, maxNodeCount);
+			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs, maxNodeCount, cancellationToken);
 		}
 
 		public static AStar3DResult Find(IntPoint3D src, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
+			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
 			{
@@ -172,6 +175,7 @@ namespace Dwarrowdelf.AStar
 				NodeMap = new Dictionary<IntPoint3D, AStar3DNode>(),
 				OpenList = new BinaryHeap<AStar3DNode>(),
 				//OpenList = new SimpleOpenList<AStar3DNode>(),
+				CancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None,
 			};
 
 			return FindInternal(state, maxNodeCount);
@@ -193,6 +197,12 @@ namespace Dwarrowdelf.AStar
 
 			while (!openList.IsEmpty)
 			{
+				if (state.CancellationToken.IsCancellationRequested)
+				{
+					status = AStarStatus.Cancelled;
+					break;
+				}
+
 				node = openList.Pop();
 				node.Closed = true;
 

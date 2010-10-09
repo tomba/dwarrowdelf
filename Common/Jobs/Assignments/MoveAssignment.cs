@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
@@ -106,19 +109,50 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return JobState.Done;
 			}
 
-			// First try pathfinding from the destination to source with small limit. We expect it to fail with LimitExceeded,
-			// but if it fails with NotFound, it means that the destination is surrounded by non-passable tiles
-			// (what about one-way tiles, if such exist?)
-			var backwardRes = AStar.AStar3D.Find(m_dest, worker.Location, false, l => 0, m_environment.GetDirectionsFrom, 64);
-			if (backwardRes.Status == AStar.AStarStatus.NotFound)
+			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
+
+			CancellationTokenSource cts = new CancellationTokenSource();
+
+			AStar.AStar3DResult res1 = null;
+			AStar.AStar3DResult res2 = null;
+
+			var task1 = new Task(delegate
+			{
+				res1 = AStar.AStar3D.Find(m_dest, worker.Location, true, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+			});
+			task1.Start();
+
+			var task2 = new Task(delegate
+			{
+				res2 = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+			}
+			);
+			task2.Start();
+
+			Task.WaitAny(task1, task2);
+
+			cts.Cancel();
+
+			Task.WaitAll(task1, task2);
+
+			IEnumerable<Direction> dirs;
+
+			if (res1.Status == AStar.AStarStatus.Found)
+			{
+				dirs = res1.GetPathReverse();
+
+				if (m_adjacent)
+					dirs = dirs.Take(dirs.Count() - 1);
+			}
+			else if (res2.Status == AStar.AStarStatus.Found)
+			{
+				dirs = res2.GetPath();
+			}
+			else
+				dirs = null;
+
+			if (dirs == null)
 				return Jobs.JobState.Abort;
-
-			var res = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom);
-
-			if (res.Status != AStar.AStarStatus.Found)
-				return Jobs.JobState.Abort;
-
-			var dirs = res.GetPath();
 
 			m_pathDirs = new Queue<Direction>(dirs);
 
