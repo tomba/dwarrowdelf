@@ -10,15 +10,25 @@ namespace Dwarrowdelf.Jobs.JobGroups
 {
 	public abstract class JobGroup : IJobGroup
 	{
-		ObservableCollection<IJob> m_subJobs = new ObservableCollection<IJob>();
+		ObservableCollection<IJob> m_subJobs;
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
 		protected JobGroup(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
 			this.Priority = priority;
-			m_subJobs = new ObservableCollection<IJob>();
+		}
+
+		protected void SetSubJobs(IEnumerable<IJob> jobs)
+		{
+			if (m_subJobs != null)
+				throw new Exception();
+
+			m_subJobs = new ObservableCollection<IJob>(jobs);
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
+
+			foreach (var job in jobs)
+				job.StateChanged += OnJobStateChanged;
 		}
 
 		public JobType JobType { get { return JobType.JobGroup; } }
@@ -60,12 +70,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
 
 		public abstract JobGroupType JobGroupType { get; }
-
-		protected void AddSubJob(IJob job)
-		{
-			m_subJobs.Add(job);
-			job.StateChanged += OnJobStateChanged;
-		}
 
 		void OnJobStateChanged(IJob job, JobState state)
 		{

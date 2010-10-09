@@ -12,10 +12,13 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject[] items)
 			: base(parent, priority)
 		{
+			var jobs = new List<IJob>();
 			foreach (var item in items)
 			{
-				AddSubJob(new AssignmentGroups.FetchItem(this, priority, env, location, item));
+				var job = new AssignmentGroups.FetchItem(this, priority, env, location, item);
+				jobs.Add(job);
 			}
+			SetSubJobs(jobs);
 		}
 
 		public override string ToString()

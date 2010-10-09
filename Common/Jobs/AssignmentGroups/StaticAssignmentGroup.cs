@@ -20,6 +20,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected void SetAssignments(IEnumerable<IAssignment> assignments)
 		{
+			if (m_assignments != null)
+				throw new Exception();
+
 			m_assignments = new ObservableCollection<IAssignment>(assignments);
 			this.Assignments = new ReadOnlyObservableCollection<IAssignment>(m_assignments);
 		}
