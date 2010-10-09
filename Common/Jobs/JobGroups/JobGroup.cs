@@ -24,19 +24,17 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		public JobType JobType { get { return JobType.JobGroup; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
+		public JobState JobState { get; private set; }
 
-		public virtual JobState JobState
+		protected virtual JobState GetJobState()
 		{
-			get
-			{
-				if (this.SubJobs.All(j => j.JobState == JobState.Done))
-					return JobState.Done;
+			if (this.SubJobs.All(j => j.JobState == JobState.Done))
+				return JobState.Done;
 
-				if (this.SubJobs.Any(j => j.JobState == JobState.Fail))
-					return JobState.Fail;
+			if (this.SubJobs.Any(j => j.JobState == JobState.Fail))
+				return JobState.Fail;
 
-				return JobState.Ok;
-			}
+			return JobState.Ok;
 		}
 
 		public event Action<IJob, JobState> StateChanged;
@@ -71,6 +69,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		void OnJobStateChanged(IJob job, JobState state)
 		{
+			this.JobState = GetJobState();
+
 			if (this.StateChanged != null)
 				StateChanged(this, this.JobState);
 
@@ -103,14 +103,11 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		public override JobState JobState
+		protected override JobState GetJobState()
 		{
-			get
-			{
-				var progress = base.JobState;
+			var progress = base.GetJobState();
 
-				return progress;
-			}
+			return progress;
 		}
 
 		public override JobGroupType JobGroupType { get { return JobGroupType.Parallel; } }
@@ -124,20 +121,17 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		public override JobState JobState
+		protected override JobState GetJobState()
 		{
-			get
-			{
-				var progress = base.JobState;
+			var progress = base.GetJobState();
 
-				if (progress != JobState.Ok)
-					return progress;
+			if (progress != JobState.Ok)
+				return progress;
 
-				if (this.SubJobs.Any(j => j.JobState == JobState.Abort))
-					return JobState.Abort;
+			if (this.SubJobs.Any(j => j.JobState == JobState.Abort))
+				return JobState.Abort;
 
-				return JobState.Ok;
-			}
+			return JobState.Ok;
 		}
 
 		public override JobGroupType JobGroupType { get { return JobGroupType.Serial; } }
