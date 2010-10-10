@@ -210,7 +210,7 @@ namespace MyArea
 					SymbolID = SymbolID.Monster,
 					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
 				};
-				monster.SetAI(new MonsterActor(monster));
+				//monster.SetAI(new MonsterActor(monster));
 				monster.Initialize(world);
 
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)

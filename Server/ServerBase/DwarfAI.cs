@@ -2,159 +2,99 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
+using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Server
 {
-	class DwarfAI : Jobs.AssignmentAI
+	class DwarfAI : AssignmentAI
 	{
-		//Living Worker { get; set; }
-		Random m_random;
 		bool m_priorityAction;
 
 		public DwarfAI(Living ob)
 			: base(ob)
 		{
-			m_random = new Random();
-			//this.Worker = ob;
 		}
 
-		protected override bool CheckForAbortOtherAction(ActionPriority priority)
+		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
+		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
 			var worker = (Living)this.Worker;
 
+			bool hasAssignment = this.CurrentAssignment != null;
+			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
+
 			if (priority == ActionPriority.High)
-			{
-				return false;
-			}
-			else
 			{
 				if (m_priorityAction)
-					return false;
+					return this.CurrentAssignment;
 
-				if (worker.FoodFullness < 200)
-					return true;
+				if (worker.FoodFullness < 50)
+				{
+					var assignment = CreateFoodAssignment(worker, priority);
+					if (assignment != null)
+						return assignment;
+				}
 
-				return false;
+				return this.CurrentAssignment;
 			}
-		}
-
-		protected override bool CheckForAbortOurAssignment(ActionPriority priority)
-		{
-			var worker = (Living)this.Worker;
-
-			if (priority == ActionPriority.High)
+			else if (priority == ActionPriority.Idle)
 			{
-				return false;
-			}
-			else
-			{
-				if (m_priorityAction)
-					return false;
-
-				if (worker.FoodFullness < 200)
-					return true;
-
-				return false;
-			}
-		}
-
-		protected override Jobs.IAssignment GetAssignment(ILiving _worker, ActionPriority priority)
-		{
-			var worker = (Living)_worker;
-
-			/*
-			if (priority == ActionPriority.High)
-			{
-				if (this.Worker.World.TickNumber % 20 == 0)
-					return new Jobs.Assignments.WaitAssignment(null, priority, 8);
-				else
+				if (hasOtherAssignment)
 					return null;
-			}
-			 */
-			/*
-			return new Jobs.WaitAssignment(null, priority, 4);
-			*/
 
-			if (priority == ActionPriority.High)
-			{
-				return null;
-			}
-			else
-			{
+				if (m_priorityAction)
+					return this.CurrentAssignment;
+
 				if (worker.FoodFullness < 200)
 				{
-					ItemObject ob = null;
-					var env = worker.Environment;
-
-					ob = env.Objects()
-						.OfType<ItemObject>()
-						.Where(o => o.ReservedBy == null && o.NutritionalValue > 0)
-						.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
-						.FirstOrDefault();
-
-					if (ob != null)
-					{
-						m_priorityAction = true;
-						ob.ReservedBy = worker;
-						var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
-						job.StateChanged += OnJobStateChanged;
-						return job;
-					}
+					var assignment = CreateFoodAssignment(worker, priority);
+					if (assignment != null)
+						return assignment;
 				}
+
+				if (hasAssignment)
+					return this.CurrentAssignment;
 
 				return new Jobs.AssignmentGroups.LoiterJob(null, priority, worker.Environment);
 			}
+			else
+			{
+				throw new Exception();
+			}
 		}
 
-		void OnJobStateChanged(Jobs.IJob job, Jobs.JobState state)
+		IAssignment CreateFoodAssignment(Living worker, ActionPriority priority)
 		{
-			job.StateChanged -= OnJobStateChanged;
+			ItemObject ob = null;
+			var env = worker.Environment;
+
+			ob = env.Objects()
+				.OfType<ItemObject>()
+				.Where(o => o.ReservedBy == null && o.NutritionalValue > 0)
+				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.FirstOrDefault();
+
+			if (ob != null)
+			{
+				m_priorityAction = true;
+				ob.ReservedBy = worker;
+				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				job.StateChanged += OnConsumeJobStateChanged;
+				m_consumeObject = ob;
+				return job;
+			}
+
+			return null;
+		}
+
+		ItemObject m_consumeObject;
+		void OnConsumeJobStateChanged(IJob job, JobState state)
+		{
+			// XXX ob's ReservedBy should probably be cleared elsewhere
+			m_consumeObject.ReservedBy = null;
+			job.StateChanged -= OnConsumeJobStateChanged;
 			m_priorityAction = false;
 		}
-
-#if asd
-		public GameAction ActionRequired(ActionPriority priority)
-		{
-			if (priority == ActionPriority.Idle)
-			{
-				if (this.Worker.HasAction && this.Worker.CurrentAction.Priority >= priority)
-					return null;
-
-				if (this.Worker.HasAction)
-					this.Worker.CancelAction();
-				var a = GetNewAction(priority);
-
-				return a;
-			}
-			else
-				return null;
-		}
-
-		public void ActionProgress(ActionProgressChange e)
-		{
-		}
-
-		GameAction GetNewAction(ActionPriority priority)
-		{
-			GameAction action;
-
-			if (m_random.Next(4) == 0)
-				action = new WaitAction(m_random.Next(3) + 1, priority);
-			else
-			{
-				IntVector v = new IntVector(1, 1);
-				v = v.Rotate(45 * m_random.Next(8));
-				Direction dir = v.ToDirection();
-
-				if (dir == Direction.None)
-					throw new Exception();
-
-				action = new MoveAction(dir, priority);
-			}
-
-			return action;
-		}
-#endif
-
 	}
 }

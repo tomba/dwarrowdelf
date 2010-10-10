@@ -18,8 +18,11 @@ namespace Dwarrowdelf.Jobs
 			m_jobManager = jobManager;
 		}
 
-		protected override IAssignment GetAssignment(ILiving worker, ActionPriority priority)
+		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
+			if (this.CurrentAssignment != null)
+				return this.CurrentAssignment;
+
 			return m_jobManager.FindJob(this.Worker);
 		}
 	}

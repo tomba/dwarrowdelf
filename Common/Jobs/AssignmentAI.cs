@@ -43,13 +43,10 @@ namespace Dwarrowdelf.Jobs
 		}
 
 		[System.Diagnostics.Conditional("DEBUG")]
-		protected void D(string format, params object[] args)
+		void D(string format, params object[] args)
 		{
-			//Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
 		}
-
-		protected virtual bool CheckForAbortOurAssignment(ActionPriority priority) { return false; }
-		protected virtual bool CheckForAbortOtherAction(ActionPriority priority) { return false; }
 
 		public GameAction DecideAction(ActionPriority priority)
 		{
@@ -74,123 +71,84 @@ namespace Dwarrowdelf.Jobs
 				return null;
 			}
 
-			if (this.CurrentAssignment != null)
-			{
-				var abort = CheckForAbortOurAssignment(priority);
-				if (abort)
-				{
-					D("DecideAction: will abort current assignment");
-					this.CurrentAssignment.Abort();
-					this.CurrentAssignment = null;
-				}
-				else if (this.Worker.HasAction)
-				{
-					D("DecideAction: doing our action, proceed doing it");
-					return null;
-				}
-			}
-			else if (this.Worker.HasAction)
-			{
-				var abort = CheckForAbortOtherAction(priority);
-				if (abort)
-				{
-					D("DecideAction: will abort other action");
-				}
-				else
-				{
-					D("DecideAction: worker already doing other action");
-					return null;
-				}
-			}
-
 			while (true)
 			{
-				var assignment = this.CurrentAssignment;
+				var assignment = GetNewOrCurrentAssignment(priority);
+				var oldAssignment = this.CurrentAssignment;
 
-				if (assignment == null)
+				if (assignment != oldAssignment)
 				{
-					D("DecideAction: trying to find a new assignment");
-
-					assignment = FindAndAssignJob(this.Worker, priority);
-
-					if (assignment == null)
+					if (oldAssignment != null)
 					{
-						D("DecideAction: no assignment to do");
-						return null;
-					}
-					else
-					{
-						D("DecideAction: new assignment: {0}", assignment);
+						D("DecideAction: Aborting current assignment {0}", oldAssignment);
+						oldAssignment.Abort();
 					}
 
 					this.CurrentAssignment = assignment;
 				}
 
-				if (assignment.Priority != priority)
+				// TODO: if the assignment was just aborted, we should abort possibly ongoing action too.
+				// no assignment, no action
+				if (assignment == null)
+				{
+					D("DecideAction: No assignment");
 					return null;
+				}
 
-				Debug.Assert(assignment.CurrentAction == null);
+
+				// are we doing an assignment for another priority level?
+				if (assignment.Priority != priority)
+				{
+					Debug.Assert(assignment.Worker == this.Worker);
+					D("DecideAction: Already doing an assignment for different priority level");
+					return null;
+				}
+
+
+				// new assignment?
+				if (assignment.Worker == null)
+				{
+					D("DecideAction: New assignment {0}", assignment);
+
+					var assignState = assignment.Assign(this.Worker);
+
+					if (assignState != JobState.Ok)
+						continue;
+				}
+				// are we already doing an action for this assignment?
+				else if (assignment.CurrentAction != null)
+				{
+					D("DecideAction: already doing an action");
+					return null;
+				}
+
+
 
 				var state = assignment.PrepareNextAction();
 
-				switch (state)
+				if (state == JobState.Ok)
 				{
-					case JobState.Ok:
-						var action = assignment.CurrentAction;
-						if (action == null)
-							throw new Exception();
+					var action = assignment.CurrentAction;
+					if (action == null)
+						throw new Exception();
 
-						D("DecideAction: new {0}", action);
-						return action;
-
-					case JobState.Done:
-					case JobState.Fail:
-					case JobState.Abort:
-						D("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
-						this.CurrentAssignment = assignment = null;
-						break;
+					D("DecideAction: new action {0}", action);
+					return action;
 				}
+
+				D("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
+
+				// loop again
 			}
 		}
 
+		/// <summary>
+		/// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
+		/// </summary>
+		/// <param name="priority"></param>
+		/// <returns></returns>
+		protected abstract IAssignment GetNewOrCurrentAssignment(ActionPriority priority);
 
-		protected abstract IAssignment GetAssignment(ILiving worker, ActionPriority priority);
-
-		IAssignment FindAndAssignJob(ILiving worker, ActionPriority priority)
-		{
-			int tries = 0;
-
-			while (true)
-			{
-				if (tries++ > 10)
-				{
-					Trace.TraceWarning("Cannot find job for {0} after {1} tries", worker, tries);
-					return null;
-				}
-
-				var assignment = GetAssignment(worker, priority);
-
-				if (assignment == null)
-					return null;
-
-				var state = assignment.Assign(worker);
-
-				switch (state)
-				{
-					case JobState.Ok:
-						return assignment;
-
-					case JobState.Done:
-						break;
-
-					case JobState.Fail:
-						break;
-
-					case JobState.Abort:
-						break;
-				}
-			}
-		}
 
 		void OnJobStateChanged(IJob job, JobState state)
 		{
@@ -199,6 +157,7 @@ namespace Dwarrowdelf.Jobs
 			Debug.Assert(job.JobState != JobState.Ok);
 			this.CurrentAssignment = null;
 		}
+
 
 		public void ActionStarted(ActionStartedChange change)
 		{
