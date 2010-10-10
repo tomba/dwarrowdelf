@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Client
 				m_ai.ActionStarted(change);
 		}
 
-		public void ActionProgress(ActionProgressChange change)
+		public void HandleActionProgress(ActionProgressChange change)
 		{
 			Debug.Assert(this.HasAction);
 

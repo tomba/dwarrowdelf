@@ -385,20 +385,12 @@ namespace Dwarrowdelf.Client
 
 			if (change.LivingID == ObjectID.NullObjectID)
 			{
-				m_numActionsGot = 0;
-
-				var livings = GameData.Data.World.Controllables
-					.Where(l => l.UserActionPossible());
-
-				m_actionMap.Clear();
-				foreach (var living in livings)
-					m_actionMap[living] = null;
-
 				if (GameData.Data.IsAutoAdvanceTurn)
 					SendProceedTurn();
 			}
 			else
 			{
+				throw new NotImplementedException();
 				var living = GameData.Data.World.FindObject<Living>(change.LivingID);
 				if (living == null)
 					throw new Exception();
@@ -412,6 +404,8 @@ namespace Dwarrowdelf.Client
 
 		public void SignalLivingHasAction(Living living, GameAction action)
 		{
+			throw new NotImplementedException();
+
 			if (m_turnActionRequested == false)
 				return;
 
@@ -427,6 +421,8 @@ namespace Dwarrowdelf.Client
 
 		void CheckProceedTurn()
 		{
+			throw new NotImplementedException();
+
 			if (m_turnActionRequested == false)
 				return;
 
@@ -441,16 +437,16 @@ namespace Dwarrowdelf.Client
 			if (m_turnActionRequested == false)
 				return;
 
-			foreach (var living in m_actionMap.Keys.ToArray())
+			// livings which the user can control (ie. server not doing high priority action)
+			var livings = GameData.Data.World.Controllables.Where(l => l.UserActionPossible());
+			var list = new List<Tuple<ObjectID, GameAction>>();
+			foreach (var living in livings)
 			{
 				var action = living.DecideAction(ActionPriority.Normal);
-				m_actionMap[living] = action;
+				list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 			}
 
-			var actions = m_actionMap.Select(kvp => new Tuple<ObjectID, GameAction>(kvp.Key.ObjectID, kvp.Value)).ToArray();
-			Send(new ProceedTurnMessage() { Actions = actions });
-			m_actionMap.Clear();
-			m_numActionsGot = 0;
+			Send(new ProceedTurnMessage() { Actions = list.ToArray() });
 		}
 
 		void HandleChange(TurnEndChange change)
@@ -475,7 +471,7 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 				throw new Exception();
 
-			ob.ActionProgress(change);
+			ob.HandleActionProgress(change);
 		}
 	}
 }
