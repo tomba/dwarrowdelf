@@ -434,6 +434,13 @@ namespace Dwarrowdelf.Server
 			return list.Where(o => o.Location == l);
 		}
 
+		public IEnumerable<ServerGameObject> Objects()
+		{
+			for (int z = 0; z < this.Depth; ++z)
+				foreach (var ob in m_contentArray[z].AsEnumerable())
+					yield return ob;
+		}
+
 		protected override void OnChildAdded(ServerGameObject child)
 		{
 			var list = m_contentArray[child.Z];

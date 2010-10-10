@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client
 
 			if (change.TicksLeft == 0)
 			{
-				Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
+				//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
 				this.CurrentAction = null;
 			}
 		}

@@ -53,6 +53,7 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 			world.AddLiving(this);
+			world.TickStartEvent += OnTickStart;
 		}
 
 		public override void Destruct()
@@ -67,6 +68,15 @@ namespace Dwarrowdelf.Server
 			this.ActionUserID = 0;
 			this.World.RemoveLiving(this);
 			base.Destruct();
+		}
+
+		void OnTickStart()
+		{
+			if (this.FoodFullness > 0)
+				this.FoodFullness--;
+
+			if (this.WaterFullness > 0)
+				this.WaterFullness--;
 		}
 
 		public int HitPoints

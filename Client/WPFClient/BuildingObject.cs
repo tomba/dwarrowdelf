@@ -138,7 +138,7 @@ namespace Dwarrowdelf.Client
 
 				Func<IntPoint3D, bool> func = delegate(IntPoint3D l)
 				{
-					ob = this.Environment.GetContents(l).OfType<ItemObject>().Where(o => o.Assignment == null && !items.Contains(o)).FirstOrDefault();
+					ob = this.Environment.GetContents(l).OfType<ItemObject>().Where(o => o.ReservedBy == null && !items.Contains(o)).FirstOrDefault();
 
 					if (ob != null)
 						return true;
@@ -166,7 +166,7 @@ namespace Dwarrowdelf.Client
 			int i = 0;
 			foreach (var item in items)
 			{
-				item.Assignment = this;
+				item.ReservedBy = this;
 				order.SourceObjects[i++] = item;
 			}
 		}

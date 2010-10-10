@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client
 
 		public bool IsLiving { get; protected set; }
 
-		public IBaseGameObject Assignment { get; set; }
+		public IBaseGameObject ReservedBy { get; set; }
 
 		public ClientGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
