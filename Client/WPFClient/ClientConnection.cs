@@ -390,46 +390,32 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				throw new NotImplementedException();
 				var living = GameData.Data.World.FindObject<Living>(change.LivingID);
 				if (living == null)
 					throw new Exception();
-				throw new Exception();
+				m_activeLiving = living;
 			}
 		}
 
 		bool m_turnActionRequested;
-		int m_numActionsGot;
+		Living m_activeLiving;
 		Dictionary<Living, GameAction> m_actionMap = new Dictionary<Living, GameAction>();
 
 		public void SignalLivingHasAction(Living living, GameAction action)
 		{
-			throw new NotImplementedException();
-
 			if (m_turnActionRequested == false)
 				return;
 
-			if (!m_actionMap.ContainsKey(living))
+			if (m_activeLiving == null)
+				throw new Exception();
+
+			if (m_activeLiving != living)
 				throw new Exception();
 
 			m_actionMap[living] = action;
-			m_numActionsGot++;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
-				CheckProceedTurn();
-		}
-
-		void CheckProceedTurn()
-		{
-			throw new NotImplementedException();
-
-			if (m_turnActionRequested == false)
-				return;
-
-			if (m_numActionsGot < m_actionMap.Count)
-				return;
-
-			SendProceedTurn();
+				SendProceedTurn();
 		}
 
 		public void SendProceedTurn()
@@ -442,11 +428,20 @@ namespace Dwarrowdelf.Client
 			var list = new List<Tuple<ObjectID, GameAction>>();
 			foreach (var living in livings)
 			{
-				var action = living.DecideAction(ActionPriority.Normal);
+				GameAction action;
+
+				if (m_actionMap.ContainsKey(living))
+					action = m_actionMap[living];
+				else
+					action = living.DecideAction(ActionPriority.Normal);
+
 				list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 			}
 
 			Send(new ProceedTurnMessage() { Actions = list.ToArray() });
+
+			m_activeLiving = null;
+			m_actionMap.Clear();
 		}
 
 		void HandleChange(TurnEndChange change)
