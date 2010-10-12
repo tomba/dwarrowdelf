@@ -179,7 +179,7 @@ namespace Dwarrowdelf.Server
 			var refreshment = item.RefreshmentValue;
 			var nutrition = item.NutritionalValue;
 
-			if (refreshment == 0 || nutrition == 0)
+			if (refreshment == 0 && nutrition == 0)
 			{
 				success = false;
 				return;

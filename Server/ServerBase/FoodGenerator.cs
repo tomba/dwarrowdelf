@@ -33,23 +33,40 @@ namespace Dwarrowdelf.Server
 			if (this.Environment == null)
 				return;
 
-			if (this.Environment.GetContents(this.Location).Any(o => o.Name == "Food"))
-				return;
-
-			var food = new ItemObject()
+			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Food"))
 			{
-				Name = "Food",
-				SymbolID = SymbolID.Consumable,
-				Color = GameColor.Green,
-				NutritionalValue = 50,
-				RefreshmentValue = 50,
-				MaterialID = MaterialID.Undefined,
-			};
-			food.Initialize(this.World);
+				var ob = new ItemObject()
+				{
+					Name = "Food",
+					SymbolID = SymbolID.Consumable,
+					Color = GameColor.Green,
+					NutritionalValue = 200,
+					MaterialID = MaterialID.Undefined,
+				};
+				ob.Initialize(this.World);
 
-			var ok = food.MoveTo(this.Parent, this.Location);
-			if (!ok)
-				food.Destruct();
+				var ok = ob.MoveTo(this.Parent, this.Location);
+				if (!ok)
+					ob.Destruct();
+			}
+
+			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Drink"))
+			{
+				var ob = new ItemObject()
+				{
+					Name = "Drink",
+					SymbolID = SymbolID.Consumable,
+					Color = GameColor.Aquamarine,
+					RefreshmentValue = 200,
+					MaterialID = MaterialID.Undefined,
+				};
+				ob.Initialize(this.World);
+
+				var ok = ob.MoveTo(this.Parent, this.Location);
+				if (!ok)
+					ob.Destruct();
+			}
+
 		}
 	}
 }

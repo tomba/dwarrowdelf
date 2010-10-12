@@ -29,12 +29,13 @@ namespace Dwarrowdelf.Server
 				if (m_priorityAction)
 					return this.CurrentAssignment;
 
-				if (worker.FoodFullness < 50)
-				{
-					var assignment = CreateFoodAssignment(worker, priority);
-					if (assignment != null)
-						return assignment;
-				}
+				var assignment = CreateFoodAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
+
+				assignment = CreateDrinkAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
 
 				return this.CurrentAssignment;
 			}
@@ -46,12 +47,13 @@ namespace Dwarrowdelf.Server
 				if (m_priorityAction)
 					return this.CurrentAssignment;
 
-				if (worker.FoodFullness < 200)
-				{
-					var assignment = CreateFoodAssignment(worker, priority);
-					if (assignment != null)
-						return assignment;
-				}
+				var assignment = CreateFoodAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
+
+				assignment = CreateDrinkAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
 
 				if (hasAssignment)
 					return this.CurrentAssignment;
@@ -64,8 +66,16 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		IAssignment CreateFoodAssignment(Living worker, ActionPriority priority)
+		IAssignment CreateFoodAssignmentIfNeeded(Living worker, ActionPriority priority)
 		{
+			if (priority == ActionPriority.High && worker.FoodFullness > 50)
+				return null;
+
+			if (priority == ActionPriority.Idle && worker.FoodFullness > 300)
+				return null;
+
+			Debug.Assert(m_consumeObject == null);
+
 			ItemObject ob = null;
 			var env = worker.Environment;
 
@@ -88,11 +98,44 @@ namespace Dwarrowdelf.Server
 			return null;
 		}
 
+		IAssignment CreateDrinkAssignmentIfNeeded(Living worker, ActionPriority priority)
+		{
+			if (priority == ActionPriority.High && worker.WaterFullness > 50)
+				return null;
+
+			if (priority == ActionPriority.Idle && worker.WaterFullness > 300)
+				return null;
+
+			Debug.Assert(m_consumeObject == null);
+
+			ItemObject ob = null;
+			var env = worker.Environment;
+
+			ob = env.Objects()
+				.OfType<ItemObject>()
+				.Where(o => o.ReservedBy == null && o.RefreshmentValue > 0)
+				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.FirstOrDefault();
+
+			if (ob != null)
+			{
+				m_priorityAction = true;
+				ob.ReservedBy = worker;
+				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				job.StateChanged += OnConsumeJobStateChanged;
+				m_consumeObject = ob;
+				return job;
+			}
+
+			return null;
+		}
+
 		ItemObject m_consumeObject;
 		void OnConsumeJobStateChanged(IJob job, JobState state)
 		{
 			// XXX ob's ReservedBy should probably be cleared elsewhere
 			m_consumeObject.ReservedBy = null;
+			m_consumeObject = null;
 			job.StateChanged -= OnConsumeJobStateChanged;
 			m_priorityAction = false;
 		}
