@@ -166,16 +166,12 @@ namespace Dwarrowdelf.Server
 				return;
 			}
 
-			var inv = this.Inventory;
-			if (inv == null)
-				throw new Exception();
-
-			var ob = inv.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
-
+			var ob = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
 			var item = ob as ItemObject;
 
 			if (item == null)
 			{
+				Trace.TraceWarning("{0} tried to eat {1}, but it't not in inventory", this, action.ItemObjectID);
 				success = false;
 				return;
 			}
@@ -220,6 +216,7 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
+				Trace.TraceWarning("{0} tried to mine {1}, but it't a wall", this, p);
 				success = false;
 			}
 		}
@@ -251,6 +248,7 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
+				Trace.TraceWarning("{0} tried to fell tree {1}, but it't a tree", this, p);
 				success = false;
 			}
 		}
