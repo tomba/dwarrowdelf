@@ -477,13 +477,20 @@ namespace Dwarrowdelf.Server
 					var actorOid = tuple.Item1;
 					var action = tuple.Item2;
 
-					if (action == null)
-						continue;
-
 					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
 						continue;
+
+					if (action == null)
+					{
+						if (living.CurrentAction.Priority == ActionPriority.High)
+							throw new Exception();
+
+						living.CancelAction();
+
+						continue;
+					}
 
 					if (action.Priority > ActionPriority.Normal)
 						throw new Exception();

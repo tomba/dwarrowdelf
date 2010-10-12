@@ -435,7 +435,8 @@ namespace Dwarrowdelf.Client
 				else
 					action = living.DecideAction(ActionPriority.Normal);
 
-				list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
+				if (action != living.CurrentAction)
+					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 			}
 
 			Send(new ProceedTurnMessage() { Actions = list.ToArray() });

@@ -9,10 +9,10 @@ namespace Dwarrowdelf.Jobs
 	{
 		/// <summary>
 		/// In server this is called two times per turn, once for high priority and once for idle priority.
-		/// In client this is called once per turn, if the living doesn't have an action or the action is lower than high priority.
+		/// In client this is called once per turn, if the living doesn't have an action or the current action is lower than high priority.
 		/// </summary>
 		/// <param name="priority"></param>
-		/// <returns>Action to do, possibly overriding the current action, or null to continue doing the current action</returns>
+		/// <returns>New or current GameAction, possibly overriding the current action, or null to abort the current action</returns>
 		GameAction DecideAction(ActionPriority priority);
 
 		/// <summary>

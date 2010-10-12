@@ -15,6 +15,8 @@ namespace Dwarrowdelf.Jobs
 	{
 		public ILiving Worker { get; private set; }
 
+		bool m_needToAbort;
+
 		IAssignment m_currentAssignment;
 		public IAssignment CurrentAssignment
 		{
@@ -23,7 +25,11 @@ namespace Dwarrowdelf.Jobs
 			private set
 			{
 				if (m_currentAssignment != null)
+				{
+					if (this.Worker.HasAction)
+						m_needToAbort = true;	// XXX what if worker has high priority server action?
 					m_currentAssignment.StateChanged -= OnJobStateChanged;
+				}
 
 				m_currentAssignment = value;
 
@@ -48,6 +54,11 @@ namespace Dwarrowdelf.Jobs
 			Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
+		/// <summary>
+		/// return New or current GameAction, possibly overriding the current action, or null to abort the current action
+		/// </summary>
+		/// <param name="priority"></param>
+		/// <returns></returns>
 		public GameAction DecideAction(ActionPriority priority)
 		{
 			D("DecideAction({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
@@ -68,8 +79,11 @@ namespace Dwarrowdelf.Jobs
 			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority > priority)
 			{
 				D("DecideAction: worker already doing higher priority action");
-				return null;
+				return this.Worker.CurrentAction;
 			}
+
+			var needToAbort = m_needToAbort;
+			m_needToAbort = false;
 
 			while (true)
 			{
@@ -92,7 +106,7 @@ namespace Dwarrowdelf.Jobs
 				if (assignment == null)
 				{
 					D("DecideAction: No assignment");
-					return null;
+					return needToAbort ? null : this.Worker.CurrentAction;
 				}
 
 
@@ -101,7 +115,7 @@ namespace Dwarrowdelf.Jobs
 				{
 					Debug.Assert(assignment.Worker == this.Worker);
 					D("DecideAction: Already doing an assignment for different priority level");
-					return null;
+					return this.Worker.CurrentAction;
 				}
 
 
@@ -119,7 +133,8 @@ namespace Dwarrowdelf.Jobs
 				else if (assignment.CurrentAction != null)
 				{
 					D("DecideAction: already doing an action");
-					return null;
+					//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
+					return this.Worker.CurrentAction;
 				}
 
 
@@ -143,7 +158,7 @@ namespace Dwarrowdelf.Jobs
 		}
 
 		/// <summary>
-		/// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
+		/// return new or current assignment, or null to cancel current assignment, or do nothing if no current assignment
 		/// </summary>
 		/// <param name="priority"></param>
 		/// <returns></returns>

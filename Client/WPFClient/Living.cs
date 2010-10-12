@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client
 
 		public bool UserActionPossible()
 		{
-			return !this.HasAction || (this.CurrentAction.Priority < ActionPriority.High && this.ActionUserID == 0);
+			return !this.HasAction || this.CurrentAction.Priority < ActionPriority.High;
 		}
 
 		public Grid2D<bool> VisionMap

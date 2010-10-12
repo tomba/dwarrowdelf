@@ -310,17 +310,19 @@ namespace Dwarrowdelf.Server
 		void DecideAction(ActionPriority priority)
 		{
 			var action = m_ai.DecideAction(priority);
-			if (action != null)
+
+			if (action != this.CurrentAction)
 			{
 				if (this.HasAction)
 				{
-					if (this.CurrentAction.Priority <= action.Priority)
-						CancelAction();
-					else
+					if (action != null && this.CurrentAction.Priority > action.Priority)
 						throw new Exception();
+
+					CancelAction();
 				}
 
-				DoAction(action);
+				if (action != null)
+					DoAction(action);
 			}
 		}
 
