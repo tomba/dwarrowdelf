@@ -96,8 +96,6 @@ namespace Dwarrowdelf.Server
 			}
 
 			var list = this.Environment.GetContents(this.Location);
-			if (list == null)
-				return;
 
 			foreach (var itemID in action.ItemObjectIDs)
 			{
@@ -106,10 +104,16 @@ namespace Dwarrowdelf.Server
 
 				var item = list.FirstOrDefault(o => o.ObjectID == itemID);
 				if (item == null)
-					throw new Exception();
+				{
+					Trace.TraceWarning("{0} tried to pick up {1}, but it's not there", this, itemID);
+					return;
+				}
 
 				if (item.MoveTo(this) == false)
-					throw new Exception();
+				{
+					Trace.TraceWarning("{0} tried to pick up {1}, but it doesn't move", this, itemID);
+					return;
+				}
 			}
 
 			success = true;
@@ -129,8 +133,6 @@ namespace Dwarrowdelf.Server
 			}
 
 			var list = this.Inventory;
-			if (list == null)
-				throw new Exception();
 
 			foreach (var itemID in action.ItemObjectIDs)
 			{
@@ -139,10 +141,16 @@ namespace Dwarrowdelf.Server
 
 				var ob = list.FirstOrDefault(o => o.ObjectID == itemID);
 				if (ob == null)
-					throw new Exception();
+				{
+					Trace.TraceWarning("{0} tried to drop {1}, but it's not in inventory", this, itemID);
+					return;
+				}
 
 				if (ob.MoveTo(this.Environment, this.Location) == false)
-					throw new Exception();
+				{
+					Trace.TraceWarning("{0} tried to drop {1}, but it doesn't move", this, itemID);
+					return;
+				}
 			}
 
 			success = true;
