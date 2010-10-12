@@ -4,69 +4,78 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel Orientation="Vertical">
-        
-        <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
 
-        <Separator />
+            <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
 
-        <UniformGrid Columns="2">
-            <TextBlock>Name</TextBlock>
-            <TextBlock Text="{Binding Name}" />
+            <Separator />
 
-            <TextBlock>Color</TextBlock>
-            <TextBlock Text="{Binding GameColor}" />
+            <UniformGrid Columns="2">
+                <TextBlock>Name</TextBlock>
+                <TextBlock Text="{Binding Name}" />
 
-            <TextBlock>Material</TextBlock>
-            <TextBlock Text="{Binding Material.Name}" />
+                <TextBlock>Color</TextBlock>
+                <TextBlock Text="{Binding GameColor}" />
 
-            <TextBlock>ObjectID</TextBlock>
-            <TextBlock Text="{Binding ObjectID}" />
+                <TextBlock>Material</TextBlock>
+                <TextBlock Text="{Binding Material.Name}" />
 
-            <TextBlock>Parent</TextBlock>
-            <TextBlock Text="{Binding Parent}" />
+                <TextBlock>ObjectID</TextBlock>
+                <TextBlock Text="{Binding ObjectID}" />
 
-            <TextBlock>Location</TextBlock>
-            <TextBlock Text="{Binding Location}" />
+                <TextBlock>Parent</TextBlock>
+                <TextBlock Text="{Binding Parent}" />
 
-            <TextBlock>ServerAssignment</TextBlock>
-            <TextBlock Text="{Binding ServerAssignment}" />
+                <TextBlock>Location</TextBlock>
+                <TextBlock Text="{Binding Location}" />
 
-            <TextBlock>ClientAssignment</TextBlock>
-            <TextBlock Text="{Binding ClientAssignment}" />
-        </UniformGrid>
+                <TextBlock>ServerAssignment</TextBlock>
+                <TextBlock Text="{Binding ServerAssignment}" />
 
-        <Separator />
-        
-        <UniformGrid Columns="2">
-            <TextBlock Text="HP" />
-            <TextBlock Text="SP" />
+                <TextBlock>ClientAssignment</TextBlock>
+                <TextBlock Text="{Binding ClientAssignment}" />
+            </UniformGrid>
 
-            <TextBlock Text="{Binding HitPoints}" />
-            <TextBlock Text="{Binding SpellPoints}" />
+            <Separator />
 
-            <TextBlock Text="Food Fullness" />
-            <TextBlock Text="Water Fullness" />
-            <TextBlock Text="{Binding FoodFullness}" />
-            <TextBlock Text="{Binding WaterFullness}" />
-        </UniformGrid>
+            <UniformGrid Columns="2">
+                <TextBlock Text="HP" />
+                <TextBlock Text="SP" />
 
-        <Separator />
-        
-        <UniformGrid Columns="6">
-            <TextBlock Text="Str" />
-            <TextBlock Text="Dex" />
-            <TextBlock Text="Con" />
-            <TextBlock Text="Int" />
-            <TextBlock Text="Wis" />
-            <TextBlock Text="Cha" />
+                <TextBlock Text="{Binding HitPoints}" />
+                <TextBlock Text="{Binding SpellPoints}" />
 
-            <TextBlock Text="{Binding Strength}" />
-            <TextBlock Text="{Binding Dexterity}" />
-            <TextBlock Text="{Binding Constitution}" />
-            <TextBlock Text="{Binding Intelligence}" />
-            <TextBlock Text="{Binding Wisdom}" />
-            <TextBlock Text="{Binding Charisma}" />
-        </UniformGrid>
-    </StackPanel>
+                <TextBlock Text="Food Fullness" />
+                <TextBlock Text="Water Fullness" />
+                <TextBlock Text="{Binding FoodFullness}" />
+                <TextBlock Text="{Binding WaterFullness}" />
+            </UniformGrid>
+
+            <Separator />
+
+            <UniformGrid Columns="6">
+                <TextBlock Text="Str" />
+                <TextBlock Text="Dex" />
+                <TextBlock Text="Con" />
+                <TextBlock Text="Int" />
+                <TextBlock Text="Wis" />
+                <TextBlock Text="Cha" />
+
+                <TextBlock Text="{Binding Strength}" />
+                <TextBlock Text="{Binding Dexterity}" />
+                <TextBlock Text="{Binding Constitution}" />
+                <TextBlock Text="{Binding Intelligence}" />
+                <TextBlock Text="{Binding Wisdom}" />
+                <TextBlock Text="{Binding Charisma}" />
+            </UniformGrid>
+        </StackPanel>
+
+        <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+            <ListBox.Resources>
+                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+            </ListBox.Resources>
+        </ListBox>
+
+    </DockPanel>
 </UserControl>
