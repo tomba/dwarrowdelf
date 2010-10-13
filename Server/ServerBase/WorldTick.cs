@@ -343,7 +343,7 @@ namespace Dwarrowdelf.Server
 			if (this.UseMaxMoveTime)
 			{
 				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
-				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
+				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
 			}
 		}
 
@@ -356,7 +356,7 @@ namespace Dwarrowdelf.Server
 			if (this.UseMaxMoveTime)
 			{
 				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
-				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromTicks(-1));
+				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace Dwarrowdelf.Server
 			if (this.UseMinTickTime)
 			{
 				m_nextTick = DateTime.Now + m_config.MinTickTime;
-				m_tickTimer.Change(m_config.MinTickTime, TimeSpan.FromTicks(-1));
+				m_tickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
 			}
 
 			Debug.Print("-- Tick {0} ended --", this.TickNumber);
