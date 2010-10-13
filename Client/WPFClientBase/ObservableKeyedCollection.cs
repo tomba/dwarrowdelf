@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Dwarrowdelf.Client
 {
-	abstract class ObservableKeyedCollection<TKey, TValue> : KeyedCollection<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+	public abstract class ObservableKeyedCollection<TKey, TValue> : KeyedCollection<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
 		public ObservableKeyedCollection()
 			: base(null, 20)
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 		#endregion
 	}
 
-	class ReadOnlyObservableKeyedCollection<TKey, TValue> : ReadOnlyCollection<TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+	public class ReadOnlyObservableKeyedCollection<TKey, TValue> : ReadOnlyCollection<TValue>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
 		ObservableKeyedCollection<TKey, TValue> m_collection;
 

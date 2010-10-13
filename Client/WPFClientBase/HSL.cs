@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client
 {
-	static class HSL
+	public static class HSL
 	{
 		// Given H,S,L in range of 0-1
 		// Returns a Color (RGB struct) in range of 0-255
