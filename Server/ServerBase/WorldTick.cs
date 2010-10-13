@@ -22,23 +22,20 @@ namespace Dwarrowdelf.Server
 
 		WorldState m_state = WorldState.Idle;
 
-		/// <summary>
-		/// time when next move has to happen
-		/// </summary>
-		DateTime m_nextMove = DateTime.MaxValue;
-
-		/// <summary>
-		/// time when next tick will happen
-		/// </summary>
-		DateTime m_nextTick = DateTime.MinValue;
-
 		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
 
 		/// <summary>
-		/// Timer is used out-of-tick to start the tick after m_minTickTime and inside-tick to timeout player movements after m_maxMoveTime
+		/// Timer is used to start the tick after MinTickTime
 		/// </summary>
-		Timer m_tickTimer;
+		Timer m_minTickTimer;
+		bool m_minTickTimerTriggered = true; // initialize to true to trigger the first tick
+
+		/// <summary>
+		/// Timer is used to timeout player turn after MaxMoveTime
+		/// </summary>
+		Timer m_maxMoveTimer;
+		bool m_maxMoveTimerTriggered;
 
 		int m_currentLivingIndex;
 		Living CurrentLiving { get { return m_livingList[m_currentLivingIndex]; } }
@@ -52,12 +49,23 @@ namespace Dwarrowdelf.Server
 
 		void InitializeWorldTick()
 		{
-			m_tickTimer = new Timer(this.TickTimerCallback);
+			m_minTickTimer = new Timer(this.MinTickTimerCallback);
+			m_maxMoveTimer = new Timer(this.MaxMoveTimerCallback);
 		}
 
-		void TickTimerCallback(object stateInfo)
+		void MinTickTimerCallback(object stateInfo)
 		{
-			VDbg("TickTimerCallback");
+			VDbg("MinTickTimerCallback");
+			m_minTickTimerTriggered = true;
+			Thread.MemoryBarrier();
+			SignalWorld();
+		}
+
+		void MaxMoveTimerCallback(object stateInfo)
+		{
+			VDbg("MaxMoveTimerCallback");
+			m_maxMoveTimerTriggered = true;
+			Thread.MemoryBarrier();
 			SignalWorld();
 		}
 
@@ -69,7 +77,7 @@ namespace Dwarrowdelf.Server
 			if (m_state != WorldState.Idle)
 				return false;
 
-			if (this.UseMinTickTime && DateTime.Now < m_nextTick)
+			if (this.UseMinTickTime && !m_minTickTimerTriggered)
 				return false;
 
 			if (m_config.RequireUser && !this.HasUsers)
@@ -83,7 +91,7 @@ namespace Dwarrowdelf.Server
 
 		bool IsMoveForced()
 		{
-			return this.UseMaxMoveTime && DateTime.Now >= m_nextMove;
+			return this.UseMaxMoveTime && m_maxMoveTimerTriggered;
 		}
 
 		void Work()
@@ -197,7 +205,7 @@ namespace Dwarrowdelf.Server
 			if (m_userList.All(u => u.ProceedTurnReceived))
 				return true;
 
-			if (this.UseMaxMoveTime && DateTime.Now >= m_nextMove)
+			if (this.UseMaxMoveTime && m_maxMoveTimerTriggered)
 				return true;
 
 			return false;
@@ -248,7 +256,7 @@ namespace Dwarrowdelf.Server
 				return true;
 			}
 
-			if (this.UseMaxMoveTime && DateTime.Now >= m_nextMove)
+			if (this.UseMaxMoveTime && m_maxMoveTimerTriggered)
 			{
 				VDbg("WorkAvailable: NextMoveTime");
 				return true;
@@ -342,8 +350,9 @@ namespace Dwarrowdelf.Server
 
 			if (this.UseMaxMoveTime)
 			{
-				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
-				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
+				m_maxMoveTimerTriggered = false;
+				Thread.MemoryBarrier();
+				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
 			}
 		}
 
@@ -355,8 +364,9 @@ namespace Dwarrowdelf.Server
 
 			if (this.UseMaxMoveTime)
 			{
-				m_nextMove = DateTime.Now + m_config.MaxMoveTime;
-				m_tickTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
+				m_maxMoveTimerTriggered = false;
+				Thread.MemoryBarrier();
+				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
 			}
 		}
 
@@ -371,8 +381,9 @@ namespace Dwarrowdelf.Server
 
 			if (this.UseMinTickTime)
 			{
-				m_nextTick = DateTime.Now + m_config.MinTickTime;
-				m_tickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
+				m_minTickTimerTriggered = false;
+				Thread.MemoryBarrier();
+				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
 			}
 
 			Debug.Print("-- Tick {0} ended --", this.TickNumber);
