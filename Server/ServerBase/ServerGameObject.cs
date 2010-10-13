@@ -81,6 +81,8 @@ namespace Dwarrowdelf.Server
 
 		protected void SetValue(PropertyDefinition property, object value)
 		{
+			Debug.Assert(!this.IsDestructed);
+
 			object oldValue = null;
 
 			if (property.PropertyChangedCallback != null)
@@ -96,6 +98,8 @@ namespace Dwarrowdelf.Server
 
 		protected object GetValue(PropertyDefinition property)
 		{
+			Debug.Assert(!this.IsDestructed);
+
 			object value;
 			if (m_propertyMap.TryGetValue(property, out value))
 				return value;
@@ -238,6 +242,7 @@ namespace Dwarrowdelf.Server
 		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.IsInitialized);
+			Debug.Assert(!this.IsDestructed);
 
 			var src = this.Parent;
 			var srcLoc = this.Location;

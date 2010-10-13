@@ -66,6 +66,8 @@ namespace Dwarrowdelf.Server
 			this.CurrentAction = null;
 			this.ActionTicksLeft = 0;
 			this.ActionUserID = 0;
+
+			this.World.TickStartEvent -= OnTickStart;
 			this.World.RemoveLiving(this);
 			base.Destruct();
 		}
