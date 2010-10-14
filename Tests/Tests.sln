@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGenTest", "TerrainGenTest\TerrainGenTest.csproj", "{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "..\..\NetSerializer\NetSerializer\NetSerializer.csproj", "{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLog", "..\MemoryMappedLog\MMLog\MMLog.csproj", "{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Debug|x64.ActiveCfg = Debug|x64
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Debug|x64.Build.0 = Debug|x64
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Debug|x86.ActiveCfg = Debug|x86
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Debug|x86.Build.0 = Debug|x86
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|x64.ActiveCfg = Release|x64
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|x64.Build.0 = Release|x64
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|x86.ActiveCfg = Release|x86
+		{D5D4817A-C9B6-4B4A-ADAD-70D653B87EDC}.Release|x86.Build.0 = Release|x86
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Debug|x64.ActiveCfg = Debug|x64
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Debug|x64.Build.0 = Debug|x64
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Debug|x86.ActiveCfg = Debug|x86
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Debug|x86.Build.0 = Debug|x86
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x64.ActiveCfg = Release|x64
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x64.Build.0 = Release|x64
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x86.ActiveCfg = Release|x86
+		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x86.Build.0 = Release|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.ActiveCfg = Debug|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.Build.0 = Debug|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.ActiveCfg = Debug|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.Build.0 = Debug|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.ActiveCfg = Release|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.Build.0 = Release|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.ActiveCfg = Release|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.Build.0 = Release|x86
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x64.ActiveCfg = Debug|x64
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x64.Build.0 = Debug|x64
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x86.ActiveCfg = Debug|x86
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x86.Build.0 = Debug|x86
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x64.ActiveCfg = Release|x64
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x64.Build.0 = Release|x64
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x86.ActiveCfg = Release|x86
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

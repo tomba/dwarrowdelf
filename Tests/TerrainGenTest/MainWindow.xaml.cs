@@ -20,20 +20,29 @@ namespace TerrainGenTest
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		WriteableBitmap m_bmp;
+
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			this.PreviewKeyDown += Window_PreKeyDown;
 		}
 
-		protected override void OnActivated(EventArgs e)
+		protected override void OnInitialized(EventArgs e)
 		{
-			base.OnActivated(e);
+			base.OnInitialized(e);
 
-			var c = map.Columns;
-			var r = map.Rows;
-			map.CenterPos = new IntPoint(c / 2 - 3, r / 2 - 3);
+			m_bmp = TerrainWriter.Do();
+
+			image.Source = m_bmp;
+			image.Width = m_bmp.PixelWidth;
+			image.Height = m_bmp.PixelHeight;
+
+			RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+
+			Canvas.SetLeft(image, this.Width / 2 - image.Width / 2);
+			Canvas.SetTop(image, this.Height / 2 - image.Height / 2);
+
+			this.PreviewKeyDown += Window_PreKeyDown;
 		}
 
 		Direction KeyToDir(Key key)
@@ -82,21 +91,41 @@ namespace TerrainGenTest
 			{
 				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				map.CenterPos += IntVector.FromDirection(dir);
+
+				var v = IntVector.FromDirection(dir);
+
+				Canvas.SetLeft(image, Canvas.GetLeft(image) - v.X * 128);
+				Canvas.SetTop(image, Canvas.GetTop(image) + v.Y * 128);
+
+				//map.CenterPos += IntVector.FromDirection(dir);
 			}
 			else if (e.Key == Key.Add)
 			{
 				e.Handled = true;
-				map.TileSize += 8;
+				slider1.Value *= 2;
+				//map.TileSize += 8;
 			}
 
 			else if (e.Key == Key.Subtract)
 			{
 				e.Handled = true;
-				if (map.TileSize <= 16)
-					return;
-				map.TileSize -= 8;
+				slider1.Value /= 2;
+				//if (map.TileSize <= 16)
+				//	return;
+				//map.TileSize -= 8;
 			}
+		}
+
+		private void slider1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (m_bmp == null)
+				return;
+
+			var v = slider1.Value;
+
+			image.Width = m_bmp.PixelWidth * v;
+			image.Height = m_bmp.PixelHeight * v;
+
 		}
 	}
 }
