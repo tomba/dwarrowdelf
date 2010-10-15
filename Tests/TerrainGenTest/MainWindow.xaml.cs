@@ -20,10 +20,12 @@ namespace TerrainGenTest
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		WriteableBitmap m_bmp;
+		TerrainWriter m_terrain;
 
 		public MainWindow()
 		{
+			m_terrain = new TerrainWriter();
+
 			InitializeComponent();
 		}
 
@@ -31,18 +33,32 @@ namespace TerrainGenTest
 		{
 			base.OnInitialized(e);
 
-			m_bmp = TerrainWriter.Do();
-
-			image.Source = m_bmp;
-			image.Width = m_bmp.PixelWidth;
-			image.Height = m_bmp.PixelHeight;
+			image.Source = m_terrain.Bmp;
+			image.Width = m_terrain.Bmp.PixelWidth;
+			image.Height = m_terrain.Bmp.PixelHeight;
 
 			RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.NearestNeighbor);
+
+			this.PreviewKeyDown += Window_PreKeyDown;
+
+			//slider1.Value = 16;
+		}
+
+		void Render()
+		{
+			m_terrain.Do(slider3.Value, slider2.Value);
+			if (timeTextBox != null)
+				timeTextBox.Text = m_terrain.Time.TotalMilliseconds.ToString();
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
 
 			Canvas.SetLeft(image, this.Width / 2 - image.Width / 2);
 			Canvas.SetTop(image, this.Height / 2 - image.Height / 2);
 
-			this.PreviewKeyDown += Window_PreKeyDown;
+			Render();
 		}
 
 		Direction KeyToDir(Key key)
@@ -87,6 +103,7 @@ namespace TerrainGenTest
 
 		void Window_PreKeyDown(object sender, KeyEventArgs e)
 		{
+#if asd
 			if (KeyIsDir(e.Key))
 			{
 				e.Handled = true;
@@ -114,18 +131,28 @@ namespace TerrainGenTest
 				//	return;
 				//map.TileSize -= 8;
 			}
+			else if (e.Key == Key.Space)
+			{
+				Render();
+			}
+#endif
 		}
 
 		private void slider1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (m_bmp == null)
+			if (m_terrain.Bmp == null)
 				return;
 
 			var v = slider1.Value;
 
-			image.Width = m_bmp.PixelWidth * v;
-			image.Height = m_bmp.PixelHeight * v;
+			image.Width = m_terrain.Bmp.PixelWidth * v;
+			image.Height = m_terrain.Bmp.PixelHeight * v;
 
+		}
+
+		private void slider2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			Render();
 		}
 	}
 }

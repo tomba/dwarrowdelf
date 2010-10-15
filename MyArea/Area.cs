@@ -8,6 +8,8 @@ using Dwarrowdelf.Server;
 using Environment = Dwarrowdelf.Server.Environment;
 using System.IO;
 
+using Dwarrowdelf.TerrainGen;
+
 namespace MyArea
 {
 	public class Area : IArea
@@ -137,7 +139,11 @@ namespace MyArea
 		{
 			int sizeExp = 6;
 			int size = (int)Math.Pow(2, sizeExp);
-			var terrainGen = new TerrainGen(sizeExp, 10, 5, 0.75);
+
+			Grid2D<double> grid = new Grid2D<double>(size + 1, size + 1);
+
+			DiamondSquare.Render(grid, 10, 5, 0.75);
+			Clamper.Clamp(grid, 10);
 
 			var env = new Environment(size, size, 20, VisibilityMode.LOS);
 			env.Initialize(world);
@@ -147,7 +153,7 @@ namespace MyArea
 			/* create terrain */
 			foreach (var p in env.Bounds.Range())
 			{
-				double d = terrainGen.Grid[p.ToIntPoint()];
+				double d = grid[p.ToIntPoint()];
 
 				if (d > p.Z)
 				{

@@ -79,6 +79,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TerrainGen\Clamper.cs" />
+    <Compile Include="TerrainGen\DiamondSquare.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveFellTreeJob.cs" />
     <Compile Include="Jobs\Assignments\ConsumeItemAssignment.cs" />
@@ -148,7 +150,6 @@
     <Compile Include="GameObject.cs" />
     <Compile Include="DataTypes\IntPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TerrainGen.cs" />
     <Compile Include="TileData.cs" />
     <Compile Include="WrapperGenerator.cs" />
   </ItemGroup>
