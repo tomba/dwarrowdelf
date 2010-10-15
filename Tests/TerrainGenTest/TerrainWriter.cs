@@ -28,6 +28,8 @@ namespace TerrainGenTest
 		}
 
 		public TimeSpan Time { get; private set; }
+		public double Min { get; private set; }
+		public double Max { get; private set; }
 
 		public void Do(double range = 5, double h = 0.75)
 		{
@@ -44,7 +46,9 @@ namespace TerrainGenTest
 			double min, max;
 			Clamper.MinMax(m_grid, out min, out max);
 
-			
+			this.Min = min;
+			this.Max = max;
+
 			var diff = max - min;
 			var mul = 255 / diff;
 

@@ -46,9 +46,13 @@ namespace TerrainGenTest
 
 		void Render()
 		{
+			if (!this.IsInitialized)
+				return;
+
 			m_terrain.Do(slider3.Value, slider2.Value);
-			if (timeTextBox != null)
-				timeTextBox.Text = m_terrain.Time.TotalMilliseconds.ToString();
+			timeTextBox.Text = m_terrain.Time.TotalMilliseconds.ToString();
+			minTextBox.Text = m_terrain.Min.ToString();
+			maxTextBox.Text = m_terrain.Max.ToString();
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)

@@ -5,7 +5,7 @@
     <Canvas>
         <Image Name="image" Stretch="Uniform" SnapsToDevicePixels="True" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center"
                Canvas.Left="0" Canvas.Top="0"/>
-        <UniformGrid>
+        <UniformGrid Columns="2">
             <GroupBox Header="Zoom" Background="White">
                 <StackPanel Orientation="Horizontal">
                     <Slider Name="slider1" Width="100"
@@ -18,7 +18,7 @@
             <GroupBox Header="H" Background="White">
                 <StackPanel Orientation="Horizontal">
                     <Slider Name="slider2" Width="300"
-                            Minimum="0" Maximum="2" ValueChanged="slider2_ValueChanged" />
+                            Minimum="0" Maximum="2" ValueChanged="slider2_ValueChanged" Value="1.0" />
                     <TextBox Width="50" Text="{Binding Value, ElementName=slider2}" />
                 </StackPanel>
             </GroupBox>
@@ -26,12 +26,20 @@
             <GroupBox Header="Range" Background="White">
                 <StackPanel Orientation="Horizontal">
                     <Slider Name="slider3" Width="300"
-                            Minimum="0" Maximum="20" ValueChanged="slider2_ValueChanged" Value="1.0" />
+                            Minimum="0" Maximum="20" ValueChanged="slider2_ValueChanged" Value="5.0" />
                     <TextBox Width="50" Text="{Binding Value, ElementName=slider3}" />
                 </StackPanel>
             </GroupBox>
-            
+
             <TextBox IsReadOnly="True" Name="timeTextBox" />
+
+            <GroupBox Header="Min">
+                <TextBox IsReadOnly="True" Name="minTextBox" />
+            </GroupBox>
+
+            <GroupBox Header="Max">
+                <TextBox IsReadOnly="True" Name="maxTextBox" />
+            </GroupBox>
 
         </UniformGrid>
     </Canvas>

@@ -21,15 +21,13 @@ namespace Dwarrowdelf.TerrainGen
 			HeightMap(grid, average, range, h);
 		}
 
-		static double GetRandom(double randomCoef, double range)
+		static double GetRandom(double range)
 		{
-			return (s_random.NextDouble() * range * 2 - range) * randomCoef;
+			return s_random.NextDouble() * range * 2 - range;
 		}
 
 		static void HeightMap(Grid2D<double> grid, double average, double range, double h)
 		{
-			double randomCoef = 1.0;
-
 			for (int pass = 0; pass < (int)Math.Log(grid.Width, 2); ++pass)
 			{
 				var parts = (int)Math.Pow(2, pass);
@@ -50,25 +48,25 @@ namespace Dwarrowdelf.TerrainGen
 
 						var middle = rect.X1Y1 + new IntVector(radius, radius);
 
-						Rectangle(grid, middle, radius, randomCoef, range);
+						Rectangle(grid, middle, radius, range);
 
 						var mxy1 = new IntPoint(middle.X, rect.Y1);
 						var mxy2 = new IntPoint(middle.X, rect.Y2);
 						var x1my = new IntPoint(rect.X1, middle.Y);
 						var x2my = new IntPoint(rect.X2, middle.Y);
 
-						Diamond(grid, x1my, radius, randomCoef, range, average);
-						Diamond(grid, x2my, radius, randomCoef, range, average);
-						Diamond(grid, mxy1, radius, randomCoef, range, average);
-						Diamond(grid, mxy2, radius, randomCoef, range, average);
+						Diamond(grid, x1my, radius, range, average);
+						Diamond(grid, x2my, radius, range, average);
+						Diamond(grid, mxy1, radius, range, average);
+						Diamond(grid, mxy2, radius, range, average);
 					}
 				}
 
-				randomCoef = randomCoef * Math.Pow(2, -h);
+				range *= Math.Pow(2, -h);
 			}
 		}
 
-		static void Rectangle(Grid2D<double> grid, IntPoint middle, int radius, double randomCoef, double range)
+		static void Rectangle(Grid2D<double> grid, IntPoint middle, int radius, double range)
 		{
 			double v1, v2, v3, v4;
 			IntPoint p1, p2, p3, p4;
@@ -85,10 +83,10 @@ namespace Dwarrowdelf.TerrainGen
 			p4 = middle.Offset(-radius, -radius);
 			v4 = grid[p4];
 
-			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(randomCoef, range);
+			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(range);
 		}
 
-		static void Diamond(Grid2D<double> grid, IntPoint middle, int radius, double randomCoef, double range, double average)
+		static void Diamond(Grid2D<double> grid, IntPoint middle, int radius, double range, double average)
 		{
 			double v1, v2, v3, v4;
 			IntPoint p1, p2, p3, p4;
@@ -105,7 +103,7 @@ namespace Dwarrowdelf.TerrainGen
 			p4 = middle.Offset(radius, 0);
 			v4 = grid.Bounds.Contains(p4) ? grid[p4] : average;
 
-			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(randomCoef, range);
+			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(range);
 		}
 	}
 }
