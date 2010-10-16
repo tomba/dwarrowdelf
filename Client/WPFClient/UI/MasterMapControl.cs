@@ -168,7 +168,7 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
-			if (this.IsMouseCaptured)
+			if (this.IsMouseCaptured || (Keyboard.Modifiers & ModifierKeys.Control) != 0)
 			{
 				if (e.Delta > 0)
 					this.Z--;
