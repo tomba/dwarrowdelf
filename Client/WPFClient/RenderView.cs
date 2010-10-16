@@ -222,11 +222,11 @@ namespace Dwarrowdelf.Client
 			{
 				var p = new IntPoint3D(ml.X, ml.Y, z);
 
-				if (tile.Color == GameColor.None)
+				if (tile.Color.IsEmpty)
 				{
 					tile.Color = GetTileColor(p, env);
 
-					if (tile.Color != GameColor.None)
+					if (!tile.Color.IsEmpty)
 						tile.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 				}
 
@@ -545,38 +545,52 @@ namespace Dwarrowdelf.Client
 			tile.SymbolID = id;
 		}
 
-		static GameColor GetTileColor(IntPoint3D ml, Environment env)
+		static GameColorRGB GetTileColor(IntPoint3D ml, Environment env)
 		{
 			var waterLevel = env.GetWaterLevel(ml);
 
 			if (waterLevel > TileData.MaxWaterLevel / 4 * 3)
-				return GameColor.DarkBlue;
+				return GameColor.DarkBlue.ToGameColorRGB();
 			else if (waterLevel > TileData.MaxWaterLevel / 4 * 2)
-				return GameColor.MediumBlue;
+				return GameColor.MediumBlue.ToGameColorRGB();
 			else if (waterLevel > TileData.MaxWaterLevel / 4 * 1)
-				return GameColor.Blue;
+				return GameColor.Blue.ToGameColorRGB();
 			else if (waterLevel > 1)
-				return GameColor.DodgerBlue;
+				return GameColor.DodgerBlue.ToGameColorRGB();
 
-			if (env.GetGrass(ml))
-				return GameColor.Green;
+
+			var ob = env.GetFirstObject(ml);
+			if (ob != null)
+			{
+				return ob.GameColor.ToGameColorRGB();
+			}
 
 			var interID = env.GetInterior(ml).ID;
 			if (interID != InteriorID.Empty && interID != InteriorID.Undefined)
 			{
+				if (interID == InteriorID.Tree || interID == InteriorID.Sapling)
+					return GameColor.ForestGreen.ToGameColorRGB();
+
 				var mat = env.GetInteriorMaterial(ml);
-				return mat.Color;
+				return mat.Color.ToGameColorRGB();
 			}
+
+			if (env.GetGrass(ml))
+				return GameColor.Green.ToGameColorRGB();
 
 			var floorID = env.GetFloor(ml).ID;
 			if (floorID != FloorID.Empty && floorID != FloorID.Undefined)
 			{
 				var mat = env.GetFloorMaterial(ml);
-				return mat.Color;
+				var rgb = mat.Color.ToGameColorRGB();
+				// use a bit dimmer color for floor
+				var r = rgb.R * 2 / 3;
+				var g = rgb.G * 2 / 3;
+				var b = rgb.B * 2 / 3;
+				return new GameColorRGB((byte)r, (byte)g, (byte)b);
 			}
 
-			return GameColor.None;
+			return GameColorRGB.Empty;
 		}
-
 	}
 }

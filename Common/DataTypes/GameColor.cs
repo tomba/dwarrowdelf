@@ -196,11 +196,12 @@ namespace Dwarrowdelf
 	[Serializable]
 	public struct GameColorRGB : IEquatable<GameColorRGB>
 	{
+		readonly byte m_state;
 		readonly byte m_r;
 		readonly byte m_g;
 		readonly byte m_b;
 
-		static GameColorRGB[] s_rgbArray = new GameColorRGB[]
+		static readonly GameColorRGB[] s_rgbArray = new GameColorRGB[]
 		{
 			new GameColorRGB(0,0,0),
 			new GameColorRGB(240,248,255),
@@ -345,24 +346,21 @@ namespace Dwarrowdelf
 			new GameColorRGB(154,205,50),
 		};
 
+		public static readonly GameColorRGB Empty = new GameColorRGB();
+
 		public GameColorRGB(byte r, byte g, byte b)
 		{
+			m_state = 1;
 			m_r = r;
 			m_g = g;
 			m_b = b;
 		}
 
-		public GameColorRGB(GameColor color)
-		{
-			var rgb = s_rgbArray[(int)color];
-			m_r = rgb.R;
-			m_g = rgb.G;
-			m_b = rgb.B;
-		}
-
 		public byte R { get { return m_r; } }
 		public byte G { get { return m_g; } }
 		public byte B { get { return m_b; } }
+
+		public bool IsEmpty { get { return m_state == 0; } }
 
 		public override string ToString()
 		{
@@ -374,7 +372,7 @@ namespace Dwarrowdelf
 
 		public bool Equals(GameColorRGB other)
 		{
-			return ((other.m_r == this.m_r) && (other.m_g == this.m_g) && (other.m_b == this.m_b));
+			return ((other.m_r == this.m_r) && (other.m_g == this.m_g) && (other.m_b == this.m_b) && (other.m_state == this.m_state));
 		}
 
 		#endregion
@@ -400,6 +398,19 @@ namespace Dwarrowdelf
 		public static bool operator !=(GameColorRGB left, GameColorRGB right)
 		{
 			return !left.Equals(right);
+		}
+
+		public static GameColorRGB FromGameColor(GameColor color)
+		{
+			return s_rgbArray[(int)color];
+		}
+	}
+
+	public static class GameColorExtensions
+	{
+		public static GameColorRGB ToGameColorRGB(this GameColor color)
+		{
+			return GameColorRGB.FromGameColor(color);
 		}
 	}
 }

@@ -438,13 +438,13 @@ namespace Dwarrowdelf.Client.TileControlD2D
 						RenderTile data = renderMap.ArrayGrid.Grid[y, x];
 
 						// fast path for black
-						if (data.Color == GameColor.None || data.Color == GameColor.Black)
+						if (data.Color.IsEmpty || data.Color == GameColor.Black.ToGameColorRGB())
 						{
 							a[(m_rows - y - 1) * w + x] = 0;
 							continue;
 						}
 
-						var rgb = new GameColorRGB(data.Color);
+						var rgb = data.Color;
 						var m = 1.0 - data.DarknessLevel / 255.0;
 						var r = (byte)(rgb.R * m);
 						var g = (byte)(rgb.G * m);
@@ -515,7 +515,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			{
 				if (tile.BgColor != GameColor.None)
 				{
-					var rgb = new GameColorRGB(tile.BgColor);
+					var rgb = tile.BgColor.ToGameColorRGB();
 					m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
 					m_renderTarget.FillRectangle(dstRect, m_bgBrush);
 				}

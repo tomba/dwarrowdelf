@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Client.TileControlD2D
 	{
 		public bool IsValid;
 
-		// Tile color for minimap
-		public GameColor Color;
+		// Tile color for simple tiles
+		public GameColorRGB Color;
 		public byte DarknessLevel;
 
 		public RenderTileLayer Floor;
