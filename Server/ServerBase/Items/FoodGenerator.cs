@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Dwarrowdelf.Server
+namespace Dwarrowdelf.Server.Items
 {
 	public class FoodGenerator : ItemObject
 	{

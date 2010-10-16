@@ -294,15 +294,8 @@ namespace MyArea
 
 			{
 				// Add a water generator
-				var item = new ItemObject(world)
-				{
-					SymbolID = SymbolID.Key,
-					Name = "water gen",
-					Color = GameColor.Red,
-					MaterialID = MaterialID.Diamond,
-				};
-
-				item.TickEvent += () => env.SetWaterLevel(item.Location, TileData.MaxWaterLevel);
+				var item = new Dwarrowdelf.Server.Items.WaterGenerator();
+				item.Initialize(world);
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 #endif
@@ -342,7 +335,7 @@ namespace MyArea
 			building.Initialize(world, env);
 
 			{
-				var gen = new FoodGenerator();
+				var gen = new Dwarrowdelf.Server.Items.FoodGenerator();
 				gen.Initialize(env.World);
 				gen.MoveTo(env, new IntPoint3D(10, 10, 9));
 			}

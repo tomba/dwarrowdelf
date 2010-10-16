@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
-    <Compile Include="FoodGenerator.cs" />
+    <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="LivingActions.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="ItemObject.cs" />
@@ -85,6 +85,7 @@
     <Compile Include="Environment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGameObject.cs" />
+    <Compile Include="Items\WaterGenerator.cs" />
     <Compile Include="World.cs" />
     <Compile Include="WorldInvoke.cs" />
     <Compile Include="WorldLivings.cs" />
