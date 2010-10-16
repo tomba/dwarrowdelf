@@ -128,7 +128,9 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 			if (m_invalidateRender)
 			{
+				m_interopImageSource.Lock();
 				m_interopImageSource.RequestRender();
+				m_interopImageSource.Unlock();
 				m_invalidateRender = false;
 			}
 		}
