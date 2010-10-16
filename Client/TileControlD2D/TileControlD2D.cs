@@ -62,8 +62,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		bool m_invalidateRender;
 
-		const int MINDETAILEDTILESIZE = 8;
-
 		public TileControlD2D()
 		{
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
@@ -164,6 +162,21 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				}
 
 				UpdateSizes();
+			}
+		}
+
+		bool m_useSimpleTiles;
+		public bool UseSimpleTiles
+		{
+			get { return m_useSimpleTiles; }
+
+			set
+			{
+				if (m_useSimpleTiles == value)
+					return;
+
+				m_useSimpleTiles = value;
+				InvalidateRender();
 			}
 		}
 
@@ -382,7 +395,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				m_darkBrush = null;
 			}
 
-			var renderMap = m_renderView.GetRenderMap(m_columns, m_rows);
+			var renderMap = m_renderView.GetRenderMap(m_columns, m_rows, m_useSimpleTiles);
 
 			DoRenderTiles(renderMap);
 		}
@@ -408,7 +421,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			var dy = (float)(m_renderTarget.PixelSize.Height - m_tileSize * m_rows) / 2;
 			m_renderTarget.Transform = Matrix3x2F.Translation(dx, dy);
 
-			if (m_tileSize > MINDETAILEDTILESIZE)
+			if (!m_useSimpleTiles)
 				RenderDetailedTiles(renderMap, m_tileSize);
 			else
 				RenderSimpleTiles(renderMap, m_tileSize);

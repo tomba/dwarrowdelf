@@ -29,13 +29,13 @@ namespace Dwarrowdelf.Client
 
 		#region IRenderViewRenderer Members
 
-		public RenderMap GetRenderMap(int columns, int rows)
+		public RenderMap GetRenderMap(int columns, int rows, bool useSimpleTiles)
 		{
 			//Debug.WriteLine("GetRenderMap({0}, {1})", columns, rows);
 
 			m_renderMap.Size = new IntSize(columns, rows);
 
-			Resolve();
+			Resolve(useSimpleTiles);
 
 			return m_renderMap;
 		}
@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Client
 			m_invalid = true;
 		}
 
-		void Resolve()
+		void Resolve(bool useSimpleTiles)
 		{
 			//Debug.WriteLine("RenderView.Resolve");
 
@@ -136,7 +136,10 @@ namespace Dwarrowdelf.Client
 
 					var ml = new IntPoint3D(offsetX + x, offsetY + y, offsetZ);
 
-					Resolve(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					if (useSimpleTiles)
+						ResolveSimple(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					else
+						ResolveDetailed(out m_renderMap.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
 			});
 
@@ -203,7 +206,7 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		static void Resolve(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		static void ResolveSimple(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTile();
 			tile.IsValid = true;
@@ -222,13 +225,34 @@ namespace Dwarrowdelf.Client
 			{
 				var p = new IntPoint3D(ml.X, ml.Y, z);
 
-				if (tile.Color.IsEmpty)
-				{
-					tile.Color = GetTileColor(p, env);
+				tile.Color = GetTileColor(p, env);
 
-					if (!tile.Color.IsEmpty)
-						tile.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+				if (!tile.Color.IsEmpty)
+				{
+					tile.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+					break;
 				}
+			}
+		}
+
+		static void ResolveDetailed(out RenderTile tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		{
+			tile = new RenderTile();
+			tile.IsValid = true;
+
+			if (env == null || !env.Bounds.Contains(ml))
+				return;
+
+			bool visible;
+
+			if (isSeeAll)
+				visible = true;
+			else
+				visible = TileVisible(ml, env);
+
+			for (int z = ml.Z; z > ml.Z - MAXLEVEL; --z)
+			{
+				var p = new IntPoint3D(ml.X, ml.Y, z);
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{

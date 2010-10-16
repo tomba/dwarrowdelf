@@ -7,6 +7,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 {
 	public interface IRenderViewRenderer
 	{
-		RenderMap GetRenderMap(int columns, int rows);
+		RenderMap GetRenderMap(int columns, int rows, bool useSimpleTiles);
 	}
 }

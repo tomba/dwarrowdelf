@@ -85,6 +85,7 @@ namespace Dwarrowdelf.Client
 				if (m_bitmapCache != null)
 					m_bitmapCache.TileSize = value;
 				m_tileControlD2D.TileSize = value;
+				m_tileControlD2D.UseSimpleTiles = m_tileSize <= 8;
 			}
 		}
 
