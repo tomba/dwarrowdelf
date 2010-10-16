@@ -85,8 +85,16 @@ namespace Dwarrowdelf.Jobs
 			var needToAbort = m_needToAbort;
 			m_needToAbort = false;
 
+			int loops = 0;
+
 			while (true)
 			{
+				if (loops++ > 10)
+				{
+					Trace.TraceWarning("Failed to assign job in 10 tries, aborting");
+					return this.Worker.CurrentAction;
+				}
+
 				var assignment = GetNewOrCurrentAssignment(priority);
 				var oldAssignment = this.CurrentAssignment;
 
