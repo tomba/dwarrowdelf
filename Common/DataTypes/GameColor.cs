@@ -190,6 +190,7 @@ namespace Dwarrowdelf
 		WhiteSmoke,
 		Yellow,
 		YellowGreen,
+
 		NumColors,
 	}
 

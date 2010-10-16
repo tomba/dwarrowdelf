@@ -428,7 +428,7 @@ namespace Dwarrowdelf.Server
 				var player = new Living(String.Format("Dwarf{0}", i))
 				{
 					SymbolID = SymbolID.Player,
-					Color = (GameColor)rand.Next((int)GameColor.NumColors),
+					Color = (GameColor)rand.Next((int)GameColor.NumColors - 1) + 1,
 				};
 				player.SetAI(new DwarfAI(player));
 				player.Initialize(m_world);

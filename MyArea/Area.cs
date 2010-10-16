@@ -214,7 +214,7 @@ namespace MyArea
 				var monster = new Living(String.Format("monsu{0}", i))
 				{
 					SymbolID = SymbolID.Monster,
-					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
+					Color = GetRandomColor(),
 				};
 				//monster.SetAI(new MonsterActor(monster));
 				monster.Initialize(world);
@@ -230,33 +230,11 @@ namespace MyArea
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),
-					Color = (GameColor)m_random.Next((int)GameColor.NumColors),
+					Color = GetRandomColor(),
 					MaterialID = MaterialID.Diamond,
 				};
 				item.Initialize(world);
 
-				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-			}
-
-			{
-				// Add an item
-				var item = new ItemObject()
-				{
-					SymbolID = SymbolID.Gem,
-					Name = "red gem",
-					Color = GameColor.Red,
-					MaterialID = MaterialID.Diamond,
-				};
-				item.Initialize(world);
-				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-
-				item = new ItemObject()
-				{
-					SymbolID = SymbolID.Gem,
-					Name = "gem",
-					MaterialID = MaterialID.Diamond,
-				};
-				item.Initialize(world);
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
@@ -445,6 +423,11 @@ namespace MyArea
 			env.SetActionHandler(m_portalLoc2, ActionHandler);
 
 			return env;
+		}
+
+		GameColor GetRandomColor()
+		{
+			return (GameColor)m_random.Next((int)GameColor.NumColors - 1) + 1;
 		}
 	}
 }
