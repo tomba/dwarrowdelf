@@ -39,11 +39,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		D2DD3DImage m_interopImageSource;
 
-		D2DBitmap m_atlasBitmap;
-
-		IBitmapGenerator m_bitmapGenerator;
-		Dictionary<GameColor, D2DBitmap>[] m_colorTileArray;
-
 		int m_columns;
 		int m_rows;
 
@@ -54,11 +49,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		int m_tileSize;
 
 		Point m_offset;
-
-		uint[] m_simpleBitmapArray;
-
-		SolidColorBrush m_bgBrush;
-		SolidColorBrush m_darkBrush;
 
 		bool m_invalidateRender;
 
@@ -151,8 +141,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 				m_tileSize = value;
 
-				ClearAtlasBitmap();
-				ClearColorTileArray();
+				m_renderer.TileSizeChanged();
 
 				if (m_tileSize == 0)
 				{
@@ -162,21 +151,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				}
 
 				UpdateSizes();
-			}
-		}
-
-		bool m_useSimpleTiles;
-		public bool UseSimpleTiles
-		{
-			get { return m_useSimpleTiles; }
-
-			set
-			{
-				if (m_useSimpleTiles == value)
-					return;
-
-				m_useSimpleTiles = value;
-				InvalidateRender();
 			}
 		}
 
@@ -235,7 +209,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			{
 				m_columns = newColumns;
 				m_rows = newRows;
-				m_simpleBitmapArray = null;
+				m_renderer.SizeChanged();
 				return true;
 			}
 			else
@@ -248,74 +222,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 
 
-
-		void ClearAtlasBitmap()
-		{
-			if (m_atlasBitmap != null)
-				m_atlasBitmap.Dispose();
-
-			m_atlasBitmap = null;
-		}
-
-		void ClearColorTileArray()
-		{
-			if (m_colorTileArray != null)
-			{
-				foreach (var entry in m_colorTileArray)
-				{
-					if (entry == null)
-						continue;
-
-					foreach (var kvp in entry)
-						kvp.Value.Dispose();
-				}
-			}
-
-			m_colorTileArray = null;
-		}
-
-		public void InvalidateBitmaps()
-		{
-			//Debug.WriteLine("InvalidateBitmaps");
-
-			ClearAtlasBitmap();
-			ClearColorTileArray();
-		}
-
-		public IBitmapGenerator BitmapGenerator
-		{
-			get { return m_bitmapGenerator; }
-			set
-			{
-				m_bitmapGenerator = value;
-
-				ClearAtlasBitmap();
-				ClearColorTileArray();
-
-				InvalidateRender();
-			}
-		}
-
-		void CreateAtlas()
-		{
-			//My//Debug.WriteLine("CreateAtlas");
-
-			var numTiles = m_bitmapGenerator.NumDistinctBitmaps;
-
-			var tileSize = (uint)m_tileSize;
-			const int bytesPerPixel = 4;
-			var arr = new byte[tileSize * tileSize * bytesPerPixel];
-
-			m_atlasBitmap = m_renderTarget.CreateBitmap(new SizeU(tileSize * (uint)numTiles, tileSize),
-				new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
-
-			for (uint x = 0; x < numTiles; ++x)
-			{
-				var bmp = m_bitmapGenerator.GetBitmap((SymbolID)x, GameColor.None);
-				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
-				m_atlasBitmap.CopyFromMemory(new RectU(x * tileSize, 0, x * tileSize + tileSize, tileSize), arr, tileSize * 4);
-			}
-		}
 
 
 
@@ -332,10 +238,17 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		}
 
 
-		IRenderViewRenderer m_renderView;
-		public IRenderViewRenderer RenderView
+		IRenderer m_renderer;
+		public IRenderer Renderer
 		{
-			set { m_renderView = value; }
+			set
+			{
+				if (m_renderer == value)
+					return;
+
+				m_renderer = value;
+				InvalidateRender();
+			}
 		}
 
 		void DoRenderCallback(IntPtr pIDXGISurface)
@@ -353,11 +266,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
-			//Debug.WriteLine("DoRender");
+			Debug.WriteLine("DoRender");
 
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
-				//My//Debug.WriteLine("Create Render Target");
+				Debug.WriteLine("Create Render Target");
 
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 
@@ -383,37 +296,18 @@ namespace Dwarrowdelf.Client.TileControlD2D
 					return;
 				}
 
-				ClearAtlasBitmap();
-				ClearColorTileArray();
-
-				if (m_bgBrush != null)
-					m_bgBrush.Dispose();
-				m_bgBrush = null;
-
-				if (m_darkBrush != null)
-					m_darkBrush.Dispose();
-				m_darkBrush = null;
+				m_renderer.RenderTargetChanged();
 			}
 
-			var renderMap = m_renderView.GetRenderMap(m_columns, m_rows, m_useSimpleTiles);
-
-			DoRenderTiles(renderMap);
-		}
-
-		void DoRenderTiles(RenderMap renderMap)
-		{
 			m_renderTarget.BeginDraw();
 
 			m_renderTarget.Clear(new ColorF(0, 0, 0, 1));
 
-			if (m_tileSize == 0 || m_bitmapGenerator == null)
+			if (m_tileSize == 0)
 			{
 				m_renderTarget.EndDraw();
 				return;
 			}
-
-			if (m_atlasBitmap == null)
-				CreateAtlas();
 
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
@@ -421,171 +315,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			var dy = (float)(m_renderTarget.PixelSize.Height - m_tileSize * m_rows) / 2;
 			m_renderTarget.Transform = Matrix3x2F.Translation(dx, dy);
 
-			if (!m_useSimpleTiles)
-				RenderDetailedTiles(renderMap, m_tileSize);
-			else
-				RenderSimpleTiles(renderMap, m_tileSize);
+			m_renderer.Render(m_renderTarget, m_columns, m_rows, m_tileSize);
 
 			m_renderTarget.Transform = Matrix3x2F.Identity;
 
 			m_renderTarget.EndDraw();
 		}
-
-		unsafe void RenderSimpleTiles(RenderMap renderMap, int tileSize)
-		{
-			uint bytespp = 4;
-			uint w = (uint)m_columns;
-			uint h = (uint)m_rows;
-
-			//var sw = Stopwatch.StartNew();
-
-			if (m_simpleBitmapArray == null)
-				m_simpleBitmapArray = new uint[w * h];
-
-			fixed (uint* a = m_simpleBitmapArray)
-			{
-				for (int y = 0; y < m_rows; ++y)
-				{
-					for (int x = 0; x < m_columns; ++x)
-					{
-						RenderTile data = renderMap.ArrayGrid.Grid[y, x];
-
-						// fast path for black
-						if (data.Color.IsEmpty || data.Color == GameColor.Black.ToGameColorRGB())
-						{
-							a[(m_rows - y - 1) * w + x] = 0;
-							continue;
-						}
-
-						var rgb = data.Color;
-						var m = 1.0 - data.DarknessLevel / 255.0;
-						var r = (byte)(rgb.R * m);
-						var g = (byte)(rgb.G * m);
-						var b = (byte)(rgb.B * m);
-						uint c = (uint)((r << 16) | (g << 8) | (b << 0));
-
-						a[(m_rows - y - 1) * w + x] = c;
-					}
-				}
-
-				var bmp = m_renderTarget.CreateBitmap(new SizeU(w, h), (IntPtr)a, w * bytespp,
-					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Ignore), 96, 96));
-				var destRect = new RectF(0, 0, w * tileSize, h * tileSize);
-				m_renderTarget.DrawBitmap(bmp, 1.0f, BitmapInterpolationMode.NearestNeighbor, destRect);
-				bmp.Dispose();
-			}
-
-			//sw.Stop();
-			//Trace.WriteLine(String.Format("RenderSimpleTiles {0} ms", sw.ElapsedMilliseconds));
-		}
-
-		void RenderDetailedTiles(RenderMap renderMap, int tileSize)
-		{
-#if DEBUG_TEXT
-			var blackBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(255, 255, 255, 1));
-#endif
-			if (m_bgBrush == null)
-				m_bgBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
-
-			if (m_darkBrush == null)
-				m_darkBrush = m_renderTarget.CreateSolidColorBrush(new ColorF(0, 0, 0, 1));
-
-			for (int y = 0; y < m_rows && y < renderMap.Size.Height; ++y)
-			{
-				for (int x = 0; x < m_columns && x < renderMap.Size.Width; ++x)
-				{
-					var x1 = x * tileSize;
-					var y1 = (m_rows - y - 1) * tileSize;
-					var dstRect = new RectF(x1, y1, x1 + tileSize, y1 + tileSize);
-
-					RenderTile data = renderMap.ArrayGrid.Grid[y, x];
-
-					var d1 = (data.Floor.DarknessLevel - data.Interior.DarknessLevel) / 255f;
-					var d2 = (data.Interior.DarknessLevel - data.Object.DarknessLevel) / 255f;
-					var d3 = (data.Object.DarknessLevel - data.Top.DarknessLevel) / 255f;
-					var d4 = (data.Top.DarknessLevel) / 255f;
-
-					var o4 = d4;
-					var o3 = d3 / (1f - d4);
-					var o2 = d2 / (1f - (d3 + d4));
-					var o1 = d1 / (1f - (d2 + d3 + d4));
-
-					DrawTile(tileSize, ref dstRect, ref data.Floor, o1);
-					DrawTile(tileSize, ref dstRect, ref data.Interior, o2);
-					DrawTile(tileSize, ref dstRect, ref data.Object, o3);
-					DrawTile(tileSize, ref dstRect, ref data.Top, o4);
-#if DEBUG_TEXT
-					m_renderTarget.DrawRectangle(dstRect, blackBrush, 1);
-					m_renderTarget.DrawText(String.Format("{0},{1}", x, y), textFormat, dstRect, blackBrush);
-#endif
-				}
-			}
-		}
-
-		void DrawTile(int tileSize, ref RectF dstRect, ref RenderTileLayer tile, float darkOpacity)
-		{
-			if (tile.SymbolID != SymbolID.Undefined && darkOpacity < 0.99f)
-			{
-				if (tile.BgColor != GameColor.None)
-				{
-					var rgb = tile.BgColor.ToGameColorRGB();
-					m_bgBrush.Color = new ColorF((float)rgb.R / 255, (float)rgb.G / 255, (float)rgb.B / 255, 1.0f);
-					m_renderTarget.FillRectangle(dstRect, m_bgBrush);
-				}
-
-				if (tile.Color != GameColor.None)
-					DrawColoredTile(tileSize, ref dstRect, tile.SymbolID, tile.Color, 1.0f);
-				else
-					DrawUncoloredTile(tileSize, ref dstRect, tile.SymbolID, 1.0f);
-			}
-
-			if (darkOpacity > 0.01f)
-			{
-				m_darkBrush.Color = new ColorF(0, 0, 0, darkOpacity);
-				m_renderTarget.FillRectangle(dstRect, m_darkBrush);
-			}
-		}
-
-		void DrawColoredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, GameColor color, float opacity)
-		{
-			Dictionary<GameColor, D2DBitmap> dict;
-
-			if (m_colorTileArray == null)
-				m_colorTileArray = new Dictionary<GameColor, D2DBitmap>[m_bitmapGenerator.NumDistinctBitmaps];
-
-			dict = m_colorTileArray[(int)symbolID];
-
-			if (dict == null)
-			{
-				dict = new Dictionary<GameColor, D2DBitmap>();
-				m_colorTileArray[(int)symbolID] = dict;
-			}
-
-			D2DBitmap bitmap;
-			if (dict.TryGetValue(color, out bitmap) == false)
-			{
-				bitmap = m_renderTarget.CreateBitmap(new SizeU((uint)tileSize, (uint)tileSize),
-					new BitmapProperties(new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied), 96, 96));
-
-				const int bytesPerPixel = 4;
-				var arr = new byte[tileSize * tileSize * bytesPerPixel];
-
-				var origBmp = m_bitmapGenerator.GetBitmap(symbolID, color);
-				origBmp.CopyPixels(arr, (int)tileSize * 4, 0);
-				bitmap.CopyFromMemory(new RectU(0, 0, (uint)tileSize, (uint)tileSize), arr, (uint)tileSize * 4);
-				dict[color] = bitmap;
-			}
-
-			m_renderTarget.DrawBitmap(bitmap, opacity, BitmapInterpolationMode.Linear, dstRect);
-		}
-
-		private void DrawUncoloredTile(int tileSize, ref RectF dstRect, SymbolID symbolID, float opacity)
-		{
-			var srcX = (int)symbolID * tileSize;
-
-			m_renderTarget.DrawBitmap(m_atlasBitmap, opacity, BitmapInterpolationMode.Linear,
-				dstRect, new RectF(srcX, 0, srcX + tileSize, tileSize));
-		}
-
 	}
 }

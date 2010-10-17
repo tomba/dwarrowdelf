@@ -5,11 +5,16 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.TileControlD2D
 {
+	public interface ISymbolDrawingCache
+	{
+		Drawing GetDrawing(SymbolID symbolID, GameColor color);
+	}
+
 	class SymbolBitmapCache : Dwarrowdelf.Client.TileControlD2D.IBitmapGenerator
 	{
-		SymbolDrawingCache m_symbolDrawingCache;
+		ISymbolDrawingCache m_symbolDrawingCache;
 
 		BitmapSource[] m_nonColoredBitmapList;
 		Dictionary<GameColor, BitmapSource>[] m_coloredBitmapMap;
@@ -17,7 +22,7 @@ namespace Dwarrowdelf.Client
 		int m_size;
 		int m_numDistinctBitmaps;
 
-		public SymbolBitmapCache(SymbolDrawingCache symbolDrawingCache, int size)
+		public SymbolBitmapCache(ISymbolDrawingCache symbolDrawingCache, int size)
 		{
 			if (size == 0)
 				throw new Exception();

@@ -5,8 +5,9 @@ using System.Text;
 
 namespace Dwarrowdelf.Client.TileControlD2D
 {
-	public interface IRenderViewRenderer
+	public interface IRenderResolver
 	{
-		RenderMap GetRenderMap(int columns, int rows, bool useSimpleTiles);
+		void Resolve();
 	}
+
 }

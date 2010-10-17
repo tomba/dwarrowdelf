@@ -121,6 +121,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Collections.cs" />
+    <Compile Include="RenderViewDetailed.cs" />
+    <Compile Include="RenderViewBase.cs" />
+    <Compile Include="RenderViewSimple.cs" />
     <Compile Include="Designation.cs" />
     <Compile Include="IDrawableArea.cs" />
     <Compile Include="UI\UIDictionary.xaml.cs">
@@ -184,8 +187,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="RenderView.cs" />
-    <Compile Include="Symbols\SymbolBitmapCache.cs" />
     <Compile Include="Symbols\SymbolDrawingCache.cs" />
     <Compile Include="Symbols\Symbols.cs" />
     <Compile Include="World.cs" />

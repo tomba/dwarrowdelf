@@ -26,7 +26,6 @@ namespace Dwarrowdelf.Client
 	class MapControlD2D : UserControl, IMapControl, INotifyPropertyChanged
 	{
 		World m_world;
-		SymbolBitmapCache m_bitmapCache;
 
 		Environment m_env;
 		int m_z;
@@ -38,7 +37,9 @@ namespace Dwarrowdelf.Client
 
 		public event Action TileArrangementChanged;
 
-		RenderView m_renderView;
+		IRenderView m_renderView;
+		RenderViewSimple m_renderViewSimple;
+		RenderViewDetailed m_renderViewDetailed;
 
 		public MapControlD2D()
 		{
@@ -52,8 +53,12 @@ namespace Dwarrowdelf.Client
 			m_tileControlD2D.SizeChanged += OnTileControlSizeChanged;
 			AddChild(m_tileControlD2D);
 
-			m_renderView = new RenderView();
-			m_tileControlD2D.RenderView = m_renderView;
+			m_renderViewSimple = new RenderViewSimple();
+			m_renderViewDetailed = new RenderViewDetailed();
+
+			m_renderView = m_renderViewDetailed;
+			//m_renderView = m_renderViewSimple;
+			m_tileControlD2D.Renderer = m_renderView.Renderer;
 		}
 
 		void OnTileControlSizeChanged(object sender, SizeChangedEventArgs e)
@@ -82,10 +87,16 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_tileSize = value;
-				if (m_bitmapCache != null)
-					m_bitmapCache.TileSize = value;
 				m_tileControlD2D.TileSize = value;
-				m_tileControlD2D.UseSimpleTiles = m_tileSize <= 8;
+				if (m_tileSize <= 8)
+					m_renderView = m_renderViewSimple;
+				else
+					m_renderView = m_renderViewDetailed;
+
+				m_renderView.CenterPos = new IntPoint3D(m_centerPos, this.Z);
+				m_renderView.Environment = m_env;
+
+				m_tileControlD2D.Renderer = m_renderView.Renderer;
 			}
 		}
 
@@ -117,8 +128,8 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateDrawings()
 		{
-			m_bitmapCache.Invalidate();
-			m_tileControlD2D.InvalidateBitmaps();
+			//m_bitmapCache.Invalidate();
+			//m_tileControlD2D.InvalidateBitmaps();
 			InvalidateTiles();
 		}
 
@@ -158,15 +169,12 @@ namespace Dwarrowdelf.Client
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_bitmapCache = new SymbolBitmapCache(m_world.SymbolDrawingCache, this.TileSize);
-						m_tileControlD2D.BitmapGenerator = m_bitmapCache;
+						m_renderViewDetailed.SymbolDrawingCache = m_world.SymbolDrawingCache;
 					}
 				}
 				else
 				{
 					m_world = null;
-					m_bitmapCache = null;
-					m_tileControlD2D.BitmapGenerator = null;
 				}
 
 				InvalidateTiles();
