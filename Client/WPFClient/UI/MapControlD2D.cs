@@ -88,6 +88,7 @@ namespace Dwarrowdelf.Client
 
 				m_tileSize = value;
 				m_tileControlD2D.TileSize = value;
+
 				if (m_tileSize <= 8)
 					m_renderView = m_renderViewSimple;
 				else

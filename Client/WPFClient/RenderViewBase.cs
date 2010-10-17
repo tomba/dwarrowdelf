@@ -50,13 +50,15 @@ namespace Dwarrowdelf.Client
 
 				if (!m_invalid)
 				{
-					//if (diff.Z != 0)
+					if (diff.Z != 0)
 						m_invalid = true;
-					//else
-						//ScrollTiles(diff.ToIntVector());
+					else
+						ScrollTiles(diff.ToIntVector());
 				}
 			}
 		}
+
+		protected abstract void ScrollTiles(IntVector scrollVector);
 
 		public bool ShowVirtualSymbols
 		{
@@ -94,15 +96,14 @@ namespace Dwarrowdelf.Client
 			m_invalid = true;
 		}
 
-#if asd
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
-		void ScrollTiles(IntVector scrollVector)
+		protected void ScrollTiles(IntVector scrollVector, int columns, int rows, Array grid)
 		{
 			//Debug.WriteLine("RenderView.ScrollTiles");
 
-			var columns = m_renderMap.Size.Width;
-			var rows = m_renderMap.Size.Height;
-			var grid = m_renderMap.ArrayGrid.Grid;
+			//var columns = m_renderMap.Size.Width;
+			//var rows = m_renderMap.Size.Height;
+			//var grid = m_renderMap.ArrayGrid.Grid;
 
 			var ax = Math.Abs(scrollVector.X);
 			var ay = Math.Abs(scrollVector.Y);
@@ -136,7 +137,6 @@ namespace Dwarrowdelf.Client
 
 			Array.Clear(grid, yClrIdx * columns, columns * ay);
 		}
-#endif
 
 
 		void MapChangedCallback(IntPoint3D ml)
