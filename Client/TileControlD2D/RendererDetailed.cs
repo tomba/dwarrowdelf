@@ -73,6 +73,12 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			ClearColorTileArray();
 		}
 
+		public void InvalidateSymbols()
+		{
+			InvalidateBitmaps();
+			m_bitmapCache.Invalidate();
+		}
+
 		public void RenderTargetChanged()
 		{
 			InvalidateBitmaps();
@@ -86,9 +92,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			m_darkBrush = null;
 		}
 
-		public void TileSizeChanged()
+		public void TileSizeChanged(int tileSize)
 		{
 			InvalidateBitmaps();
+			if (m_bitmapCache != null)
+				m_bitmapCache.TileSize = tileSize;
 		}
 
 		public void SizeChanged()
@@ -123,7 +131,8 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			if (m_symbolDrawingCache == null)
 				return;
 
-			m_bitmapCache = new SymbolBitmapCache(m_symbolDrawingCache, tileSize);
+			if (m_bitmapCache == null)
+				m_bitmapCache = new SymbolBitmapCache(m_symbolDrawingCache, tileSize);
 
 			m_renderData.Size = new IntSize(columns, rows);
 

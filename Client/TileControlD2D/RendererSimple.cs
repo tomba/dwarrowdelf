@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		{
 		}
 
-		public void TileSizeChanged()
+		public void TileSizeChanged(int tileSize)
 		{
 		}
 

@@ -129,8 +129,7 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateDrawings()
 		{
-			//m_bitmapCache.Invalidate();
-			//m_tileControlD2D.InvalidateBitmaps();
+			m_renderViewDetailed.InvalidateSymbols();
 			InvalidateTiles();
 		}
 

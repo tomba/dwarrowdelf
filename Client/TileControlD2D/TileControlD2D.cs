@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 				m_tileSize = value;
 
-				m_renderer.TileSizeChanged();
+				m_renderer.TileSizeChanged(value);
 
 				if (m_tileSize == 0)
 				{

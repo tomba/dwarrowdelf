@@ -32,6 +32,11 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public void InvalidateSymbols()
+		{
+			m_renderer.InvalidateSymbols();
+		}
+
 		public override IRenderer Renderer { get { return m_renderer; } }
 
 		protected override void MapChangedOverride(IntPoint3D ml)
