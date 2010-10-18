@@ -17,8 +17,10 @@ namespace Dwarrowdelf.Client
 		Environment Environment { get; set; }
 	}
 
-	abstract class RenderViewBase : IRenderView, IRenderResolver
+	abstract class RenderViewBase<T> : IRenderView, IRenderResolver where T : struct
 	{
+		protected readonly RenderData<T> m_renderData;
+
 		protected bool m_showVirtualSymbols = true;
 		protected Environment m_environment;
 		protected IntPoint3D m_centerPos;
@@ -28,8 +30,9 @@ namespace Dwarrowdelf.Client
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 
-		public RenderViewBase()
+		protected RenderViewBase()
 		{
+			m_renderData = new RenderData<T>();
 		}
 
 		public abstract IRenderer Renderer { get; }
@@ -57,8 +60,6 @@ namespace Dwarrowdelf.Client
 				}
 			}
 		}
-
-		protected abstract void ScrollTiles(IntVector scrollVector);
 
 		public bool ShowVirtualSymbols
 		{
@@ -97,13 +98,13 @@ namespace Dwarrowdelf.Client
 		}
 
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
-		protected void ScrollTiles(IntVector scrollVector, int columns, int rows, Array grid)
+		void ScrollTiles(IntVector scrollVector)
 		{
 			//Debug.WriteLine("RenderView.ScrollTiles");
 
-			//var columns = m_renderMap.Size.Width;
-			//var rows = m_renderMap.Size.Height;
-			//var grid = m_renderMap.ArrayGrid.Grid;
+			var columns = m_renderData.Size.Width;
+			var rows = m_renderData.Size.Height;
+			var grid = m_renderData.ArrayGrid.Grid;
 
 			var ax = Math.Abs(scrollVector.X);
 			var ay = Math.Abs(scrollVector.Y);

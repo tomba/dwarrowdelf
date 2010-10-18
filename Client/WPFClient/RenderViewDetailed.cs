@@ -9,17 +9,15 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	class RenderViewDetailed : RenderViewBase
+	class RenderViewDetailed : RenderViewBase<RenderTileDetailed>
 	{
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 
-		RenderData<RenderTileDetailed> m_renderData;
 		RendererDetailed m_renderer;
 
 		public RenderViewDetailed()
 		{
-			m_renderData = new RenderData<RenderTileDetailed>();
 			m_renderer = new RendererDetailed(this, m_renderData);
 		}
 
@@ -35,14 +33,6 @@ namespace Dwarrowdelf.Client
 		}
 
 		public override IRenderer Renderer { get { return m_renderer; } }
-
-		protected override void ScrollTiles(IntVector scrollVector)
-		{
-			var columns = m_renderData.Size.Width;
-			var rows = m_renderData.Size.Height;
-			var grid = m_renderData.ArrayGrid.Grid;
-			ScrollTiles(scrollVector, columns, rows, grid);
-		}
 
 		protected override void MapChangedOverride(IntPoint3D ml)
 		{
