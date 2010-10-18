@@ -233,7 +233,7 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
-					var log = new ItemObject()
+					var log = new ItemObject(ItemClass.Log)
 					{
 						Name = "Log",
 						MaterialID = material,

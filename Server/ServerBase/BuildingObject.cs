@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Server
 
 			var iron = Materials.Iron.ID;
 
-			ItemObject item = new ItemObject()
+			ItemObject item = new ItemObject(ItemClass.Other)
 			{
 				Name = "Key",
 				SymbolID = SymbolID.Key,

@@ -226,7 +226,7 @@ namespace MyArea
 			// Add items
 			for (int i = 0; i < 10; ++i)
 			{
-				var item = new ItemObject()
+				var item = new ItemObject(ItemClass.Gem)
 				{
 					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),

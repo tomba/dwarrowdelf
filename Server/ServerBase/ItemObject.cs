@@ -7,9 +7,12 @@ namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject()
+		public ItemObject(ItemClass itemClass)
 		{
+			this.ItemClass = itemClass;
 		}
+
+		public ItemClass ItemClass { get; private set; }
 
 		static readonly PropertyDefinition NutritionalValueProperty =
 			RegisterProperty(typeof(ItemObject), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
@@ -30,11 +33,15 @@ namespace Dwarrowdelf.Server
 
 		public override BaseGameObjectData Serialize()
 		{
-			var data = new ItemData();
-			data.ObjectID = this.ObjectID;
-			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
-			data.Location = this.Location;
-			data.Properties = base.SerializeProperties();
+			var data = new ItemData()
+			{
+				ObjectID = this.ObjectID,
+				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
+				Location = this.Location,
+				ItemClass = this.ItemClass,
+				Properties = base.SerializeProperties(),
+			};
+
 			return data;
 		}
 

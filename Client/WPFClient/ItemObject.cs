@@ -21,6 +21,8 @@ namespace Dwarrowdelf.Client
 			return String.Format("Item({0})", this.ObjectID.Value);
 		}
 
+		public ItemClass ItemClass { get; private set; }
+
 		int m_nutritionalValue;
 		public int NutritionalValue
 		{
@@ -51,6 +53,15 @@ namespace Dwarrowdelf.Client
 					base.SetProperty(propertyID, value);
 					break;
 			}
+		}
+
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (ItemData)_data;
+
+			this.ItemClass = data.ItemClass;
+
+			base.Deserialize(_data);
 		}
 	}
 }
