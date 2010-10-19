@@ -8,7 +8,6 @@ namespace Dwarrowdelf.Server.Items
 	public class WaterGenerator : ItemObject
 	{
 		public WaterGenerator()
-			: base(ItemClass.Other)
 		{
 			this.Name = "Water Generator";
 			this.SymbolID = SymbolID.Contraption;

@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	public class BuildItem : StaticAssignmentGroup
 	{
-		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items)
+		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items, ItemType dstItemID)
 			: base(parent, priority)
 		{
 			var env = workplace.Environment;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			SetAssignments(new IAssignment[] {
 				new MoveAssignment(this, priority, env, location, false),
-				new BuildItemAssignment(this, priority, items),
+				new BuildItemAssignment(this, priority, items, dstItemID),
 			});
 		}
 

@@ -233,11 +233,10 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
-					var log = new ItemObject(ItemClass.Log)
+					var log = new ItemObject(ItemType.Log)
 					{
 						Name = "Log",
 						MaterialID = material,
-						SymbolID = Dwarrowdelf.SymbolID.Log,
 						Color = GameColor.SaddleBrown,
 					};
 					log.Initialize(this.World);
@@ -270,11 +269,11 @@ namespace Dwarrowdelf.Server
 
 			if (this.ActionTicksLeft != 0)
 			{
-				success = building.VerifyBuildItem(this, action.SourceObjectIDs);
+				success = building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 			}
 			else
 			{
-				success = building.PerformBuildItem(this, action.SourceObjectIDs);
+				success = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 			}
 		}
 	}

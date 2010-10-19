@@ -17,16 +17,27 @@ namespace Dwarrowdelf
 		Gold,
 	}
 
+	public enum MaterialClass : byte
+	{
+		Undefined,
+		Wood,
+		Rock,
+		Metal,
+		Gem,
+	}
+
 	public class MaterialInfo
 	{
-		public MaterialInfo(MaterialID id, GameColor color)
+		public MaterialInfo(MaterialID id, MaterialClass materialClass, GameColor color)
 		{
 			this.ID = id;
+			this.MaterialClass = materialClass;
 			this.Name = id.ToString();
 			this.Color = color;
 		}
 
 		public MaterialID ID { get; private set; }
+		public MaterialClass MaterialClass { get; private set; }
 		public string Name { get; private set; }
 		public GameColor Color { get; private set; }
 	}
@@ -56,13 +67,13 @@ namespace Dwarrowdelf
 			return s_materialList[(int)id];
 		}
 
-		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined, GameColor.None);
+		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined, MaterialClass.Undefined, GameColor.None);
 
-		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron, GameColor.SteelBlue);
-		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, GameColor.LightSteelBlue);
-		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, GameColor.LightCyan);
-		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, GameColor.Sienna);
-		public static readonly MaterialInfo Granite = new MaterialInfo(MaterialID.Granite, GameColor.Gray);
-		public static readonly MaterialInfo Gold = new MaterialInfo(MaterialID.Gold, GameColor.Gold);
+		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron, MaterialClass.Metal, GameColor.SteelBlue);
+		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, MaterialClass.Metal, GameColor.LightSteelBlue);
+		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, MaterialClass.Gem, GameColor.LightCyan);
+		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, MaterialClass.Wood, GameColor.Sienna);
+		public static readonly MaterialInfo Granite = new MaterialInfo(MaterialID.Granite, MaterialClass.Rock, GameColor.Gray);
+		public static readonly MaterialInfo Gold = new MaterialInfo(MaterialID.Gold, MaterialClass.Metal, GameColor.Gold);
 	}
 }

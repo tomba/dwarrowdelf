@@ -59,43 +59,79 @@ namespace Dwarrowdelf.Server
 			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
 		}
 
-		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects)
+		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemType dstItemID)
 		{
 			if (!Contains(builder.Location))
 				return false;
 
-			if (sourceObjects.Count() != 2)
+			var srcArray = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid)).ToArray();
+
+			if (srcArray.Any(o => o == null || !this.Contains(o.Location)))
 				return false;
 
-			if (!sourceObjects.
-				Select(oid => this.World.FindObject<ServerGameObject>(oid)).
-				All(o => this.Contains(o.Location) || o.Parent == builder))
-				return false;
-
-			return true;
-		}
-
-		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects)
-		{
-			if (!VerifyBuildItem(builder, sourceObjects))
-				return false;
-
-			var obs = sourceObjects.Select(oid => this.World.FindObject<ServerGameObject>(oid));
-
-			foreach (var ob in obs)
+			switch (this.BuildingInfo.ID)
 			{
-				ob.Destruct();
+				case BuildingID.Carpenter:
+					if (srcArray[0].MaterialClass != MaterialClass.Wood)
+						return false;
+					break;
+
+				case BuildingID.Mason:
+					if (srcArray[0].MaterialClass != MaterialClass.Rock)
+						return false;
+					break;
+
+				default:
+					return false;
 			}
 
-			var iron = Materials.Iron.ID;
+			var sourceItemPossibilities = Dwarrowdelf.Items.GetItem(dstItemID).SourceItemPossibilities;
 
-			ItemObject item = new ItemObject(ItemClass.Other)
+			if (sourceItemPossibilities == null)
+				return false;
+
+			foreach (var choice in sourceItemPossibilities)
 			{
-				Name = "Key",
-				SymbolID = SymbolID.Key,
-				MaterialID = iron,
+				if (srcArray.Length != choice.Length)
+					continue;
+
+				bool ok = true;
+
+				for (int i = 0; i < choice.Length; ++i)
+				{
+					var ob = srcArray[i];
+
+					if (!choice[i].MatchItem(ob))
+					{
+						ok = false;
+						break;
+					}
+				}
+
+				if (ok)
+					return true;
+			}
+
+			return false;
+		}
+
+
+		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemType dstItemID)
+		{
+			if (!VerifyBuildItem(builder, sourceObjects, dstItemID))
+				return false;
+
+			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
+
+			ItemObject item = new ItemObject(dstItemID)
+			{
+				Name = dstItemID.ToString(),
+				MaterialID = obs.First().MaterialID,
 			};
 			item.Initialize(this.World);
+
+			foreach (var ob in obs)
+				ob.Destruct();
 
 			if (item.MoveTo(builder.Environment, builder.Location) == false)
 				throw new Exception();

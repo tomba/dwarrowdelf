@@ -7,12 +7,21 @@ namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject(ItemClass itemClass)
+		public ItemObject()
+			: this(ItemType.Custom)
 		{
-			this.ItemClass = itemClass;
 		}
 
-		public ItemClass ItemClass { get; private set; }
+		public ItemObject(ItemType itemID)
+		{
+			var info = Dwarrowdelf.Items.GetItem(itemID);
+			this.ItemInfo = info;
+			this.SymbolID = info.Symbol;
+		}
+
+		public ItemInfo ItemInfo { get; private set; }
+		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
+		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }
 
 		static readonly PropertyDefinition NutritionalValueProperty =
 			RegisterProperty(typeof(ItemObject), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
@@ -38,7 +47,7 @@ namespace Dwarrowdelf.Server
 				ObjectID = this.ObjectID,
 				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
 				Location = this.Location,
-				ItemClass = this.ItemClass,
+				ItemID = this.ItemID,
 				Properties = base.SerializeProperties(),
 			};
 

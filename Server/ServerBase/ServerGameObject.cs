@@ -184,8 +184,10 @@ namespace Dwarrowdelf.Server
 		public MaterialID MaterialID
 		{
 			get { return (MaterialID)GetValue(MaterialIDProperty); }
-			set { SetValue(MaterialIDProperty, value); }
+			set { SetValue(MaterialIDProperty, value); this.Color = Materials.GetMaterial(value).Color; }
 		}
+
+		public MaterialClass MaterialClass { get { return Materials.GetMaterial(this.MaterialID).MaterialClass; } } // XXX
 
 		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
 

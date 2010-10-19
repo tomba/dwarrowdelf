@@ -24,7 +24,17 @@ namespace Dwarrowdelf.Client
 
 		class BuildOrder
 		{
-			public ItemObject[] SourceObjects { get; set; }
+			public BuildOrder(ItemMaterialInfo[] sourceItems, ItemType destItemType)
+			{
+				this.SourceItemDefs = sourceItems;
+				this.SourceItems = new ItemObject[sourceItems.Length];
+				this.DestionationItemType = destItemType;
+			}
+
+			public ItemMaterialInfo[] SourceItemDefs { get; private set; }
+			public ItemObject[] SourceItems { get; private set; }
+
+			public ItemType DestionationItemType { get; private set; }
 
 			public Dwarrowdelf.Jobs.IJob Job { get; set; }
 		}
@@ -71,10 +81,32 @@ namespace Dwarrowdelf.Client
 			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
 		}
 
-		public void AddBuildItem()
+		public void AddBuildOrder(ItemType itemID, MaterialID materialID)
 		{
-			var bo = new BuildOrder();
-			bo.SourceObjects = new ItemObject[2];
+			throw new NotImplementedException();
+		}
+
+		public void AddBuildOrder(ItemType itemID, MaterialClass materialClass)
+		{
+			var srcItemPossibilities = Items.GetItem(itemID).SourceItemPossibilities;
+
+			if (srcItemPossibilities == null)
+				throw new Exception();
+
+			ItemMaterialInfo[] srcItemDefs = null;
+			foreach (var defs in srcItemPossibilities)
+			{
+				if (defs[0].MaterialClass == materialClass)
+				{
+					srcItemDefs = defs;
+					break;
+				}
+			}
+
+			if (srcItemDefs == null)
+				throw new Exception();
+
+			var bo = new BuildOrder(srcItemDefs, itemID);
 
 			m_buildOrderQueue.Add(bo);
 
@@ -87,12 +119,11 @@ namespace Dwarrowdelf.Client
 			if (order == null || order.Job != null)
 				return;
 
-			var materials = FindMaterials(order);
+			var ok = FindMaterials(order);
 
-			if (materials == null)
+			if (!ok)
 				return;
 
-			AssignMaterials(order, materials);
 			CreateJob(order);
 		}
 
@@ -126,54 +157,68 @@ namespace Dwarrowdelf.Client
 
 		/* find the materials closest to this building.
 		 * XXX path should be saved, or path should be determined later */
-		IEnumerable<ItemObject> FindMaterials(BuildOrder order)
+		bool FindMaterials(BuildOrder order)
 		{
-			var numItems = order.SourceObjects.Length;
+			var numItems = order.SourceItemDefs.Length;
 
-			var items = new ItemObject[numItems];
+			int numFound = 0;
 
-			for (int i = 0; i < numItems; ++i)
+			for (int i = 0; i < order.SourceItemDefs.Length; ++i)
 			{
-				ItemObject ob = null;
+				var ob = FindItem(order.SourceItemDefs[i]);
 
-				Func<IntPoint3D, bool> func = delegate(IntPoint3D l)
-				{
-					ob = this.Environment.GetContents(l).OfType<ItemObject>().Where(o => o.ReservedBy == null && !items.Contains(o)).FirstOrDefault();
+				if (ob == null)
+					break;
 
-					if (ob != null)
-						return true;
-					else
-						return false;
-				};
-
-				var res = AStar.AStar3D.FindNearest(new IntPoint3D(this.Area.Center, this.Z), func,
-					l => 0,
-					this.Environment.GetDirectionsFrom);
-
-				items[i] = ob;
+				ob.ReservedBy = this;
+				order.SourceItems[i] = ob;
+				numFound++;
 			}
 
-			if (items.Count() != numItems)
-				return null;
-
-			return items;
+			if (numFound < numItems)
+			{
+				Trace.TraceInformation("Failed to find materials");
+				for (int i = 0; i < numFound; ++i)
+				{
+					order.SourceItems[i].ReservedBy = null;
+					order.SourceItems[i] = null;
+				}
+				return false;
+			}
+			else
+			{
+				return true;
+			}
 		}
 
-		void AssignMaterials(BuildOrder order, IEnumerable<ItemObject> items)
+		ItemObject FindItem(ItemMaterialInfo itemDef)
 		{
-			Debug.Assert(items.Count() == order.SourceObjects.Length);
+			ItemObject ob = null;
 
-			int i = 0;
-			foreach (var item in items)
+			Func<IntPoint3D, bool> func = delegate(IntPoint3D l)
 			{
-				item.ReservedBy = this;
-				order.SourceObjects[i++] = item;
-			}
+				ob = this.Environment.GetContents(l)
+					.OfType<ItemObject>()
+					.Where(o => o.ReservedBy == null && itemDef.MatchItem(o))
+					.FirstOrDefault();
+
+				if (ob != null)
+					return true;
+				else
+					return false;
+			};
+
+			var res = AStar.AStar3D.FindNearest(new IntPoint3D(this.Area.Center, this.Z), func,
+				l => 0,
+				this.Environment.GetDirectionsFrom);
+
+			return ob;
 		}
 
 		void CreateJob(BuildOrder order)
 		{
-			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceObjects);
+			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
+				order.SourceItems, order.DestionationItemType);
 			job.StateChanged += OnJobStateChanged;
 			order.Job = job;
 			this.World.JobManager.Add(job);

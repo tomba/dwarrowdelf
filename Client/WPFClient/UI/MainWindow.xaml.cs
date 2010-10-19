@@ -603,18 +603,6 @@ namespace Dwarrowdelf.Client
 				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
-			else if (tag == "BuildItem")
-			{
-				var p = map.Selection.SelectionCuboid.Corner1;
-				var env = map.Environment;
-
-				var building = env.GetBuildingAt(p);
-
-				if (building == null)
-					return;
-
-				building.AddBuildItem();
-			}
 			else if (tag == "Goto")
 			{
 				var p = map.Selection.SelectionCuboid.Corner1;
@@ -709,18 +697,6 @@ namespace Dwarrowdelf.Client
 			var plr = GameData.Data.CurrentObject;
 
 			plr.RequestAction(new DropAction(list, ActionPriority.Normal));
-		}
-
-		private void BuildItem_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var list = inventoryListBox.SelectedItems.Cast<ClientGameObject>();
-
-			if (list.Count() != 2)
-				return;
-
-			var plr = GameData.Data.CurrentObject;
-
-			plr.RequestAction(new BuildItemAction(list, ActionPriority.Normal));
 		}
 
 		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)
@@ -984,6 +960,50 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		private void MenuItem_Click_Construct(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			var p = map.Selection.SelectionCuboid.Corner1;
+			var env = map.Environment;
+
+			var building = env.GetBuildingAt(p);
+
+			if (building == null)
+				return;
+
+			MaterialClass materialClass;
+
+			switch (building.BuildingInfo.ID)
+			{
+				case BuildingID.Mason:
+					materialClass = MaterialClass.Rock;
+					break;
+
+				case BuildingID.Carpenter:
+					materialClass = MaterialClass.Wood;
+					break;
+
+				default:
+					return;
+			}
+
+			switch (tag)
+			{
+				case "Chair":
+					building.AddBuildOrder(ItemType.Chair, materialClass);
+					break;
+
+				case "Table":
+					building.AddBuildOrder(ItemType.Table, materialClass);
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
 		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (GameData.Data.Connection.IsUserConnected)
@@ -994,6 +1014,7 @@ namespace Dwarrowdelf.Client
 				});
 			}
 		}
+
 	}
 
 	class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>

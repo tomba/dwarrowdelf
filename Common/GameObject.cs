@@ -33,6 +33,9 @@ namespace Dwarrowdelf
 	{
 		IEnvironment Environment { get; }
 		IntPoint3D Location { get; }
+
+		MaterialClass MaterialClass { get; }
+		MaterialID MaterialID { get; }
 	}
 
 	public interface IEnvironment : IGameObject
@@ -60,5 +63,7 @@ namespace Dwarrowdelf
 
 	public interface IItemObject : IGameObject
 	{
+		ItemClass ItemClass { get; }
+		ItemType ItemID { get; }
 	}
 }

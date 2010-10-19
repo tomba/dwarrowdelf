@@ -8,7 +8,6 @@ namespace Dwarrowdelf.Server.Items
 	public class FoodGenerator : ItemObject
 	{
 		public FoodGenerator()
-			: base(ItemClass.Other)
 		{
 			this.Name = "Food Generator";
 			this.SymbolID = SymbolID.Contraption;
@@ -36,10 +35,9 @@ namespace Dwarrowdelf.Server.Items
 
 			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Food"))
 			{
-				var ob = new ItemObject(ItemClass.Food)
+				var ob = new ItemObject(ItemType.Food)
 				{
 					Name = "Food",
-					SymbolID = SymbolID.Consumable,
 					Color = GameColor.Green,
 					NutritionalValue = 200,
 					MaterialID = MaterialID.Undefined,
@@ -53,10 +51,9 @@ namespace Dwarrowdelf.Server.Items
 
 			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Drink"))
 			{
-				var ob = new ItemObject(ItemClass.Drink)
+				var ob = new ItemObject(ItemType.Drink)
 				{
 					Name = "Drink",
-					SymbolID = SymbolID.Consumable,
 					Color = GameColor.Aquamarine,
 					RefreshmentValue = 200,
 					MaterialID = MaterialID.Undefined,

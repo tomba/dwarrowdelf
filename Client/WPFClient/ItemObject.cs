@@ -22,6 +22,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		public ItemClass ItemClass { get; private set; }
+		public ItemType ItemID { get; private set; }
 
 		int m_nutritionalValue;
 		public int NutritionalValue
@@ -59,7 +60,10 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (ItemData)_data;
 
-			this.ItemClass = data.ItemClass;
+			var info = Dwarrowdelf.Items.GetItem(data.ItemID);
+
+			this.ItemClass = info.ItemClass;
+			this.ItemID = data.ItemID;
 
 			base.Deserialize(_data);
 		}

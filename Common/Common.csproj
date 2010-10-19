@@ -79,7 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemClasses.cs" />
+    <Compile Include="Items.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />

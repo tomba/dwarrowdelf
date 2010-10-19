@@ -189,7 +189,6 @@
                         <ad:DockableContent Name="inventoryContent" Title="Inventory" DataContext="{x:Static local:GameData.Data}">
                             <DockPanel>
                                 <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-                                <Button DockPanel.Dock="Bottom" Click="BuildItem_Button_Click">BuildItem</Button>
                                 <ListBox Name="inventoryListBox"
                                           ItemsSource="{Binding Path=CurrentObject.Inventory}"
                                           SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
@@ -377,6 +376,10 @@
                                 <local:MasterMapControl.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Name="designateMenu" Header="Designate" />
+                                        <MenuItem Header="Construct">
+                                            <MenuItem Header="Chair" Tag="Chair" Click="MenuItem_Click_Construct" />
+                                            <MenuItem Header="Table" Tag="Table" Click="MenuItem_Click_Construct" />
+                                        </MenuItem>
                                         <MenuItem Name="setFloorMenu" Header="Set Floor" />
                                         <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
@@ -392,7 +395,6 @@
                                             <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="BuildItem" Header="Build Item" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />

@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 {
 	public class BuildItemJob : SerialJobGroup
 	{
-		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects)
+		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects, ItemType dstItemID)
 			: base(null, priority)
 		{
 			var env = workplace.Environment;
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			var jobs = new IJob[] {
 				new FetchItems(this, priority, env, location, sourceObjects),
-				new AssignmentGroups.BuildItem(this, priority, workplace, sourceObjects),
+				new AssignmentGroups.BuildItem(this, priority, workplace, sourceObjects, dstItemID),
 			};
 
 			SetSubJobs(jobs);

@@ -10,16 +10,18 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public class BuildItemAssignment : Assignment
 	{
 		readonly IItemObject[] m_items;
+		readonly ItemType m_dstItemID;
 
-		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items)
+		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items, ItemType dstItemID)
 			: base(parent, priority)
 		{
 			m_items = items;
+			m_dstItemID = dstItemID;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobState progress)
 		{
-			var action = new BuildItemAction(m_items, this.Priority);
+			var action = new BuildItemAction(m_items, m_dstItemID, this.Priority);
 			progress = JobState.Ok;
 			return action;
 		}

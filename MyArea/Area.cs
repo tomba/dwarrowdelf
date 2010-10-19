@@ -224,11 +224,10 @@ namespace MyArea
 			}
 
 			// Add items
-			for (int i = 0; i < 10; ++i)
+			for (int i = 0; i < 6; ++i)
 			{
-				var item = new ItemObject(ItemClass.Gem)
+				var item = new ItemObject(ItemType.Diamond)
 				{
-					SymbolID = SymbolID.Gem,
 					Name = "gem" + i.ToString(),
 					Color = GetRandomColor(),
 					MaterialID = MaterialID.Diamond,
@@ -238,6 +237,18 @@ namespace MyArea
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
+			for (int i = 0; i < 6; ++i)
+			{
+				var item = new ItemObject(ItemType.Rock)
+				{
+					Name = "rock" + i.ToString(),
+					Color = GetRandomColor(),
+					MaterialID = MaterialID.Granite,
+				};
+				item.Initialize(world);
+
+				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
 
 #if asd
 			for (int x = 3; x < 4; ++x)
@@ -325,6 +336,16 @@ namespace MyArea
 			building.Initialize(world, env);
 
 			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect(6, 6, 3, 3), Z = 9 };
+			foreach (var p2d in building.Area.Range())
+			{
+				var p = new IntPoint3D(p2d, building.Z);
+				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				env.SetGrass(p, false);
+			}
+			building.Initialize(world, env);
+
+			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect(10, 6, 3, 3), Z = 9 };
 			foreach (var p2d in building.Area.Range())
 			{
 				var p = new IntPoint3D(p2d, building.Z);
