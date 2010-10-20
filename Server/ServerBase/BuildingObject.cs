@@ -85,34 +85,7 @@ namespace Dwarrowdelf.Server
 					return false;
 			}
 
-			var sourceItemPossibilities = Dwarrowdelf.Items.GetItem(dstItemID).SourceItemPossibilities;
-
-			if (sourceItemPossibilities == null)
-				return false;
-
-			foreach (var choice in sourceItemPossibilities)
-			{
-				if (srcArray.Length != choice.Length)
-					continue;
-
-				bool ok = true;
-
-				for (int i = 0; i < choice.Length; ++i)
-				{
-					var ob = srcArray[i];
-
-					if (!choice[i].MatchItem(ob))
-					{
-						ok = false;
-						break;
-					}
-				}
-
-				if (ok)
-					return true;
-			}
-
-			return false;
+			return Dwarrowdelf.ItemMaterials.Materials.ItemBuildableFrom(dstItemID, srcArray);
 		}
 
 

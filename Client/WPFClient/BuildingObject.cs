@@ -24,14 +24,14 @@ namespace Dwarrowdelf.Client
 
 		class BuildOrder
 		{
-			public BuildOrder(ItemMaterialInfo[] sourceItems, ItemType destItemType)
+			public BuildOrder(Dwarrowdelf.ItemMaterials.ItemMaterialInfo[] sourceItems, ItemType destItemType)
 			{
 				this.SourceItemDefs = sourceItems;
 				this.SourceItems = new ItemObject[sourceItems.Length];
 				this.DestionationItemType = destItemType;
 			}
 
-			public ItemMaterialInfo[] SourceItemDefs { get; private set; }
+			public Dwarrowdelf.ItemMaterials.ItemMaterialInfo[] SourceItemDefs { get; private set; }
 			public ItemObject[] SourceItems { get; private set; }
 
 			public ItemType DestionationItemType { get; private set; }
@@ -88,25 +88,25 @@ namespace Dwarrowdelf.Client
 
 		public void AddBuildOrder(ItemType itemID, MaterialClass materialClass)
 		{
-			var srcItemPossibilities = Items.GetItem(itemID).SourceItemPossibilities;
+			var materialOptions = Dwarrowdelf.ItemMaterials.Materials.GetOptions(itemID);
 
-			if (srcItemPossibilities == null)
+			if (materialOptions == null)
 				throw new Exception();
 
-			ItemMaterialInfo[] srcItemDefs = null;
-			foreach (var defs in srcItemPossibilities)
+			List<Dwarrowdelf.ItemMaterials.ItemMaterialInfo> materialOption = null;
+			foreach (var opt in materialOptions)
 			{
-				if (defs[0].MaterialClass == materialClass)
+				if (opt[0].MaterialClass == materialClass)
 				{
-					srcItemDefs = defs;
+					materialOption = opt;
 					break;
 				}
 			}
 
-			if (srcItemDefs == null)
+			if (materialOption == null)
 				throw new Exception();
 
-			var bo = new BuildOrder(srcItemDefs, itemID);
+			var bo = new BuildOrder(materialOption.ToArray(), itemID);
 
 			m_buildOrderQueue.Add(bo);
 
@@ -191,7 +191,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		ItemObject FindItem(ItemMaterialInfo itemDef)
+		ItemObject FindItem(Dwarrowdelf.ItemMaterials.ItemMaterialInfo itemDef)
 		{
 			ItemObject ob = null;
 

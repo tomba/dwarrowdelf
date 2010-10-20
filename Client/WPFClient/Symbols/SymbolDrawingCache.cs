@@ -26,8 +26,7 @@ namespace Dwarrowdelf.Client
 			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
 			var resInfo = Application.GetRemoteStream(symbolInfoUri);
-			var reader = new System.Windows.Markup.XamlReader();
-			m_symbolSet = (Symbols.SymbolSet)reader.LoadAsync(resInfo.Stream);
+			m_symbolSet = (Symbols.SymbolSet)System.Windows.Markup.XamlReader.Load(resInfo.Stream);
 
 			if (m_symbolSet.Drawings != null)
 				m_drawingCache = new DrawingCache(new Uri(m_symbolSet.Drawings, UriKind.Relative));
