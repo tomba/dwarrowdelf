@@ -41,4 +41,6 @@
     <CharSymbol ID="Contraption">۩</CharSymbol>
     <CharSymbol ID="Consumable">%</CharSymbol>
 
+    <CharSymbol ID="Chair" X="20" Y="40" W="60" H="60">╥</CharSymbol>
+    <CharSymbol ID="Table">╤</CharSymbol>
 </SymbolSet>

@@ -43,6 +43,8 @@ namespace Dwarrowdelf
 		Log,
 		Contraption,
 		Consumable,
+		Chair,
+		Table,
 
 		/* top */
 		Water,

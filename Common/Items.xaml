@@ -2,8 +2,8 @@
 <ItemCollection xmlns="clr-namespace:Dwarrowdelf">
 
     <ItemInfo ItemType="Log" ItemClass="Material" Symbol="Log"/>
-    <ItemInfo ItemType="Chair" ItemClass="Furniture" Symbol="Key"/>
-    <ItemInfo ItemType="Table" ItemClass="Furniture" Symbol="Key"/>
+    <ItemInfo ItemType="Chair" ItemClass="Furniture" Symbol="Chair"/>
+    <ItemInfo ItemType="Table" ItemClass="Furniture" Symbol="Table"/>
     <ItemInfo ItemType="Food" ItemClass="Food" Symbol="Consumable"/>
     <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
     <ItemInfo ItemType="Diamond" ItemClass="Gem" Symbol="Gem"/>
