@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ItemCollection xmlns="clr-namespace:Dwarrowdelf.ItemMaterials;assembly=Dwarrowdelf.Common">
+<ItemCollection xmlns="clr-namespace:Dwarrowdelf.ItemMaterials">
 
     <Item ItemType="Chair">
         <MaterialCollection>

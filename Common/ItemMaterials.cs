@@ -12,7 +12,14 @@ namespace Dwarrowdelf.ItemMaterials
 		static Materials()
 		{
 			using (var stream = System.IO.File.OpenRead("ItemMaterials.xaml"))
-				s_itemSet = (ItemCollection)XamlReader.Load(stream);
+			{
+				var settings = new System.Xaml.XamlXmlReaderSettings()
+				{
+					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+				};
+				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
+					s_itemSet = (ItemCollection)System.Xaml.XamlServices.Load(reader);
+			}
 		}
 
 		static ItemCollection s_itemSet;

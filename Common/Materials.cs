@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Runtime.Serialization;
+using System.Windows.Markup;
 
 namespace Dwarrowdelf
 {
@@ -26,20 +26,24 @@ namespace Dwarrowdelf
 		Gem,
 	}
 
+	public class MaterialCollection : Dictionary<MaterialID, MaterialInfo>
+	{
+	}
+
+	[DictionaryKeyProperty("ID")]
 	public class MaterialInfo
 	{
-		public MaterialInfo(MaterialID id, MaterialClass materialClass, GameColor color)
-		{
-			this.ID = id;
-			this.MaterialClass = materialClass;
-			this.Name = id.ToString();
-			this.Color = color;
-		}
+		string m_name;
 
-		public MaterialID ID { get; private set; }
-		public MaterialClass MaterialClass { get; private set; }
-		public string Name { get; private set; }
-		public GameColor Color { get; private set; }
+		public MaterialID ID { get; set; }
+		public MaterialClass MaterialClass { get; set; }
+		public string Name
+		{
+			// XXX
+			get { if (m_name == null) m_name = this.ID.ToString(); return m_name; }
+			set { m_name = value; }
+		}
+		public GameColor Color { get; set; }
 	}
 
 	public static class Materials
@@ -48,32 +52,36 @@ namespace Dwarrowdelf
 
 		static Materials()
 		{
-			var arr = (MaterialID[])Enum.GetValues(typeof(MaterialID));
-			var max = arr.Max();
+			MaterialCollection materials;
+
+			using (var stream = System.IO.File.OpenRead("Materials.xaml"))
+			{
+				var settings = new System.Xaml.XamlXmlReaderSettings()
+				{
+					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+				};
+				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
+					materials = (MaterialCollection)System.Xaml.XamlServices.Load(reader);
+			}
+
+			var max = (int)materials.Keys.Max();
 			s_materialList = new MaterialInfo[(int)max + 1];
 
-			foreach (var field in typeof(Materials).GetFields())
-			{
-				if (field.FieldType != typeof(MaterialInfo))
-					continue;
+			foreach (var material in materials)
+				s_materialList[(int)material.Key] = material.Value;
 
-				var materialInfo = (MaterialInfo)field.GetValue(null);
-				s_materialList[(int)materialInfo.ID] = materialInfo;
-			}
+			s_materialList[0] = new MaterialInfo()
+			{
+				ID = MaterialID.Undefined,
+				Name = "<undefined>",
+				MaterialClass = MaterialClass.Undefined,
+				Color = GameColor.None,
+			};
 		}
 
 		public static MaterialInfo GetMaterial(MaterialID id)
 		{
 			return s_materialList[(int)id];
 		}
-
-		public static readonly MaterialInfo Undefined = new MaterialInfo(MaterialID.Undefined, MaterialClass.Undefined, GameColor.None);
-
-		public static readonly MaterialInfo Iron = new MaterialInfo(MaterialID.Iron, MaterialClass.Metal, GameColor.SteelBlue);
-		public static readonly MaterialInfo Steel = new MaterialInfo(MaterialID.Steel, MaterialClass.Metal, GameColor.LightSteelBlue);
-		public static readonly MaterialInfo Diamond = new MaterialInfo(MaterialID.Diamond, MaterialClass.Gem, GameColor.LightCyan);
-		public static readonly MaterialInfo Wood = new MaterialInfo(MaterialID.Wood, MaterialClass.Wood, GameColor.Sienna);
-		public static readonly MaterialInfo Granite = new MaterialInfo(MaterialID.Granite, MaterialClass.Rock, GameColor.Gray);
-		public static readonly MaterialInfo Gold = new MaterialInfo(MaterialID.Gold, MaterialClass.Metal, GameColor.Gold);
 	}
 }

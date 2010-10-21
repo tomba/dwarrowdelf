@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MaterialCollection xmlns="clr-namespace:Dwarrowdelf">
+
+    <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
+    <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
+    <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />
+    <MaterialInfo ID="Wood" MaterialClass="Wood" Color="Sienna" />
+    <MaterialInfo ID="Granite" MaterialClass="Rock" Color="Gray" />
+    <MaterialInfo ID="Gold" MaterialClass="Metal" Color="Gold" />
+
+    <!-- custom test material -->
+    <MaterialInfo ID="10" Name="MyMaterial" MaterialClass="Gem" Color="LightCyan" />
+
+</MaterialCollection>

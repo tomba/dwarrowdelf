@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ItemCollection xmlns="clr-namespace:Dwarrowdelf">
+
+    <ItemInfo ItemType="Log" ItemClass="Material" Symbol="Log"/>
+    <ItemInfo ItemType="Chair" ItemClass="Furniture" Symbol="Key"/>
+    <ItemInfo ItemType="Table" ItemClass="Furniture" Symbol="Key"/>
+    <ItemInfo ItemType="Food" ItemClass="Food" Symbol="Consumable"/>
+    <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
+    <ItemInfo ItemType="Diamond" ItemClass="Gem" Symbol="Gem"/>
+    <ItemInfo ItemType="Rock" ItemClass="Material" Symbol="Rock"/>
+
+    <ItemInfo ItemType="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
+
+</ItemCollection>

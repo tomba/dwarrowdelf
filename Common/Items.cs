@@ -17,6 +17,9 @@ namespace Dwarrowdelf
 		Diamond,
 		Rock,
 
+		/// <summary>
+		/// Used for dynamically initialized items
+		/// </summary>
 		Custom,
 	}
 
@@ -32,20 +35,24 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
+	public class ItemCollection : Dictionary<ItemType, ItemInfo>
+	{
+	}
+
+	[DictionaryKeyProperty("ItemType")]
 	public class ItemInfo
 	{
-		public ItemInfo(ItemType itemID, ItemClass itemClass, SymbolID symbol)
-		{
-			this.ItemType = itemID;
-			this.Name = itemID.ToString();
-			this.ItemClass = itemClass;
-			this.Symbol = symbol;
-		}
+		string m_name;
 
-		public ItemType ItemType { get; private set; }
-		public string Name { get; private set; }
-		public ItemClass ItemClass { get; private set; }
-		public SymbolID Symbol { get; private set; }
+		public ItemType ItemType { get; set; }
+		public string Name
+		{
+			// XXX
+			get { if (m_name == null) m_name = this.ItemType.ToString(); return m_name; }
+			set { m_name = value; }
+		}
+		public ItemClass ItemClass { get; set; }
+		public SymbolID Symbol { get; set; }
 	}
 
 	public static class Items
@@ -54,35 +61,44 @@ namespace Dwarrowdelf
 
 		static Items()
 		{
-			var arr = (ItemType[])Enum.GetValues(typeof(ItemType));
-			var max = arr.Max();
+			ItemCollection items;
+
+			using (var stream = System.IO.File.OpenRead("Items.xaml"))
+			{
+				var settings = new System.Xaml.XamlXmlReaderSettings()
+				{
+					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+				};
+				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
+					items = (ItemCollection)System.Xaml.XamlServices.Load(reader);
+			}
+
+			var max = (int)items.Keys.Max();
 			s_itemList = new ItemInfo[(int)max + 1];
 
-			foreach (var field in typeof(Items).GetFields())
-			{
-				if (field.FieldType != typeof(ItemInfo))
-					continue;
+			foreach (var item in items)
+				s_itemList[(int)item.Key] = item.Value;
 
-				var info = (ItemInfo)field.GetValue(null);
-				s_itemList[(int)info.ItemType] = info;
-			}
+			s_itemList[0] = new ItemInfo()
+			{
+				ItemType = ItemType.Undefined,
+				Name = "<undefined>",
+				ItemClass = ItemClass.Undefined,
+				Symbol = SymbolID.Undefined,
+			};
+
+			s_itemList[(int)ItemType.Custom] = new ItemInfo()
+			{
+				ItemType = ItemType.Custom,
+				Name = "<undefined>",
+				ItemClass = ItemClass.Custom,
+				Symbol = SymbolID.Undefined,
+			};
 		}
 
 		public static ItemInfo GetItem(ItemType id)
 		{
 			return s_itemList[(int)id];
 		}
-
-		public static readonly ItemInfo Undefined = new ItemInfo(ItemType.Undefined, ItemClass.Undefined, SymbolID.Undefined);
-
-		public static readonly ItemInfo Log = new ItemInfo(ItemType.Log, ItemClass.Material, SymbolID.Log);
-		public static readonly ItemInfo Chair = new ItemInfo(ItemType.Chair, ItemClass.Furniture, SymbolID.Key);
-		public static readonly ItemInfo Table = new ItemInfo(ItemType.Table, ItemClass.Furniture, SymbolID.Key);
-		public static readonly ItemInfo Food = new ItemInfo(ItemType.Food, ItemClass.Food, SymbolID.Consumable);
-		public static readonly ItemInfo Drink = new ItemInfo(ItemType.Drink, ItemClass.Drink, SymbolID.Consumable);
-		public static readonly ItemInfo Diamond = new ItemInfo(ItemType.Diamond, ItemClass.Gem, SymbolID.Gem);
-		public static readonly ItemInfo Rock = new ItemInfo(ItemType.Rock, ItemClass.Material, SymbolID.Rock);
-
-		public static readonly ItemInfo Custom = new ItemInfo(ItemType.Custom, ItemClass.Custom, SymbolID.Undefined);
 	}
 }
