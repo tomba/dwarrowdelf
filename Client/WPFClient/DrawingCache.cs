@@ -16,8 +16,7 @@ namespace Dwarrowdelf.Client
 		public DrawingCache(Uri uri)
 		{
 			var resInfo = Application.GetRemoteStream(uri);
-			var reader = new System.Windows.Markup.XamlReader();
-			var drawingResources = (ResourceDictionary)reader.LoadAsync(resInfo.Stream);
+			var drawingResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(resInfo.Stream);
 
 			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(drawingResources.Count);
 
