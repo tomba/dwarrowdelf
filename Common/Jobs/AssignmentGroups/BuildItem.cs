@@ -14,8 +14,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			: base(parent, priority)
 		{
 			var env = workplace.Environment;
-			var p = workplace.Area.X1Y1 + new IntVector(workplace.Area.Width / 2, workplace.Area.Height / 2);
-			var location = new IntPoint3D(p, workplace.Z);
+			var location = workplace.Area.Center;
 
 			SetAssignments(new IAssignment[] {
 				new MoveAssignment(this, priority, env, location, false),

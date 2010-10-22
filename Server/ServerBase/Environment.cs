@@ -581,7 +581,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+			Debug.Assert(m_buildings.Any(b => b.Area.IntersectsWith(building.Area)) == false);
 			Debug.Assert(building.IsInitialized == false);
 
 			m_buildings.Add(building);

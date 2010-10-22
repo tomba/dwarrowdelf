@@ -58,6 +58,11 @@ namespace Dwarrowdelf
 		{
 		}
 
+		public IntCuboid(IntRect3D rect)
+			: this(rect.X, rect.Y, rect.Z, rect.Width, rect.Height, 1)
+		{
+		}
+
 		public int X1 { get { return this.X; } }
 		public int X2 { get { return this.X + this.Width; } }
 		public int Y1 { get { return this.Y; } }

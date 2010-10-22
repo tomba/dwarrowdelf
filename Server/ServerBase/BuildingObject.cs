@@ -10,8 +10,7 @@ namespace Dwarrowdelf.Server
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; private set; }
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
-		public int Z { get; set; }
-		public IntRect Area { get; set; }
+		public IntRect3D Area { get; set; }
 
 		public BuildingObject(BuildingID id)
 		{
@@ -43,7 +42,6 @@ namespace Dwarrowdelf.Server
 				ObjectID = this.ObjectID,
 				ID = this.BuildingInfo.ID,
 				Area = this.Area,
-				Z = this.Z,
 				Environment = this.Environment.ObjectID,
 			};
 		}
@@ -56,7 +54,7 @@ namespace Dwarrowdelf.Server
 
 		public bool Contains(IntPoint3D point)
 		{
-			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
+			return this.Area.Contains(point);
 		}
 
 		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemType dstItemID)

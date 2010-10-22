@@ -19,17 +19,17 @@ namespace Dwarrowdelf.Client
 	class Stockpile : IDrawableArea
 	{
 		public Environment Environment { get; private set; }
-		public IntCuboid Area { get; private set; }
-		public int Z { get { return this.Area.Z1; } }
-
+		IntCuboid IDrawableArea.Area { get { return this.Area.ToCuboid(); } }
 		public System.Windows.Media.Brush Fill { get { return null; } }
 		public double Opacity { get { return 1.0; } }
+
+		public IntRect3D Area { get; private set; }
 
 		public StockpileType StockpileType { get; private set; }
 
 		List<Jobs.AssignmentGroups.FetchItem> m_jobs = new List<Jobs.AssignmentGroups.FetchItem>();
 
-		public Stockpile(Environment environment, IntCuboid area, StockpileType stockpileType)
+		public Stockpile(Environment environment, IntRect3D area, StockpileType stockpileType)
 		{
 			this.Environment = environment;
 			this.Area = area;

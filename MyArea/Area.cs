@@ -325,30 +325,27 @@ namespace MyArea
 			}
 
 
-			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect(2, 6, 3, 3), Z = 9 };
-			foreach (var p2d in building.Area.Range())
+			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(2, 6, 3, 3, 9) };
+			foreach (var p in building.Area.Range())
 			{
-				var p = new IntPoint3D(p2d, building.Z);
 				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
 			building.Initialize(world, env);
 
-			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect(6, 6, 3, 3), Z = 9 };
-			foreach (var p2d in building.Area.Range())
+			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect3D(6, 6, 3, 3, 9) };
+			foreach (var p in building.Area.Range())
 			{
-				var p = new IntPoint3D(p2d, building.Z);
 				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
 			building.Initialize(world, env);
 
-			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect(10, 6, 3, 3), Z = 9 };
-			foreach (var p2d in building.Area.Range())
+			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect3D(10, 6, 3, 3, 9) };
+			foreach (var p in building.Area.Range())
 			{
-				var p = new IntPoint3D(p2d, building.Z);
 				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);

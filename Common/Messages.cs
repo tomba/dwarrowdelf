@@ -104,8 +104,7 @@ namespace Dwarrowdelf.Messages
 	public class CreateBuildingMessage : ClientMessage
 	{
 		public ObjectID MapID { get; set; }
-		public IntRect Area { get; set; }
-		public int Z { get; set; }
+		public IntRect3D Area { get; set; }
 		public BuildingID ID { get; set; }
 	}
 

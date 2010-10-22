@@ -663,7 +663,7 @@ namespace Dwarrowdelf.Client
 			var env = map.Environment;
 			int z = map.Z;
 
-			var msg = new Messages.CreateBuildingMessage() { MapID = env.ObjectID, Area = r, Z = z, ID = id };
+			var msg = new Messages.CreateBuildingMessage() { MapID = env.ObjectID, Area = new IntRect3D(r, z), ID = id };
 			GameData.Data.Connection.Send(msg);
 		}
 
@@ -1045,7 +1045,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				var stockpile = new Stockpile(env, area, type);
+				var stockpile = new Stockpile(env, new IntRect3D(area.ToIntRect(), area.Z), type);
 				env.AddStockpile(stockpile);
 			}
 		}

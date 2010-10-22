@@ -13,14 +13,13 @@ namespace Dwarrowdelf.Client
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
+	
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
-		public int Z { get; set; }
-		public IntRect Area { get; set; }
-
-		IntCuboid IDrawableArea.Area { get { return new IntCuboid(this.Area, this.Z); } }
-
+		IntCuboid IDrawableArea.Area { get { return new IntCuboid(this.Area); } }
 		public Brush Fill { get { return null; } }
 		public double Opacity { get { return 1.0; } }
+	
+		public IntRect3D Area { get; set; }
 
 		class BuildOrder
 		{
@@ -61,7 +60,6 @@ namespace Dwarrowdelf.Client
 				var building = env.Buildings[data.ObjectID];
 
 				if (building.Area != data.Area ||
-					building.Z != data.Z ||
 					building.Environment != env)
 					throw new Exception();
 
@@ -70,7 +68,6 @@ namespace Dwarrowdelf.Client
 
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
-			this.Z = data.Z;
 			this.Environment = env;
 
 			env.AddBuilding(this);
@@ -78,7 +75,7 @@ namespace Dwarrowdelf.Client
 
 		public bool Contains(IntPoint3D point)
 		{
-			return point.Z == this.Z && this.Area.Contains(point.ToIntPoint());
+			return this.Area.Contains(point);
 		}
 
 		public void AddBuildOrder(ItemType itemID, MaterialID materialID)
@@ -208,7 +205,7 @@ namespace Dwarrowdelf.Client
 					return false;
 			};
 
-			var res = AStar.AStar3D.FindNearest(new IntPoint3D(this.Area.Center, this.Z), func,
+			var res = AStar.AStar3D.FindNearest(this.Area.Center, func,
 				l => 0,
 				this.Environment.GetDirectionsFrom);
 

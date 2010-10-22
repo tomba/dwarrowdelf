@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\IntRect3D.cs" />
     <Compile Include="ItemMaterials.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />

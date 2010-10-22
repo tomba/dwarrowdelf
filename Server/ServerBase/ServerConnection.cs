@@ -324,17 +324,15 @@ namespace Dwarrowdelf.Server
 		{
 			ObjectID mapID = msg.MapID;
 			var r = msg.Area;
-			var z = msg.Z;
 			var id = msg.ID;
 
 			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
 			if (env == null)
 				throw new Exception();
 
-			var building = new BuildingObject(id) { Area = r, Z = z };
-			foreach (var p2d in building.Area.Range())
+			var building = new BuildingObject(id) { Area = r };
+			foreach (var p in building.Area.Range())
 			{
-				var p = new IntPoint3D(p2d, building.Z);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 			building.Initialize(m_world, env);

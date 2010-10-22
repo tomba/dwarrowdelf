@@ -244,7 +244,7 @@ namespace Dwarrowdelf.Client
 
 		public void AddStockpile(Stockpile stockpile)
 		{
-			Debug.Assert(m_stockpiles.All(s => (s.Z == stockpile.Z && s.Area.IntersectsWith(stockpile.Area)) == false));
+			Debug.Assert(m_stockpiles.All(s => (s.Area.IntersectsWith(stockpile.Area)) == false));
 
 			this.Version++;
 
@@ -259,13 +259,13 @@ namespace Dwarrowdelf.Client
 
 		public Stockpile GetStockpileAt(IntPoint3D p)
 		{
-			return m_stockpiles.SingleOrDefault(s => s.Z == p.Z && s.Area.Contains(p));
+			return m_stockpiles.SingleOrDefault(s => s.Area.Contains(p));
 		}
 
 
 		public void AddBuilding(BuildingObject building)
 		{
-			Debug.Assert(m_buildings.All(b => (b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false));
+			Debug.Assert(m_buildings.All(b => (b.Area.IntersectsWith(building.Area)) == false));
 
 			this.Version += 1;
 
@@ -274,7 +274,7 @@ namespace Dwarrowdelf.Client
 
 		public BuildingObject GetBuildingAt(IntPoint3D p)
 		{
-			return m_buildings.SingleOrDefault(b => b.Z == p.Z && b.Area.Contains(p.ToIntPoint()));
+			return m_buildings.SingleOrDefault(b => b.Area.Contains(p));
 		}
 
 		static IList<ClientGameObject> EmptyObjectList = new ClientGameObject[0];
