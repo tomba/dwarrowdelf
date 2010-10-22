@@ -23,6 +23,8 @@ namespace Dwarrowdelf.Server
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
 		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }
 
+		public object ReservedBy { get; set; }
+
 		static readonly PropertyDefinition NutritionalValueProperty =
 			RegisterProperty(typeof(ItemObject), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
 		static readonly PropertyDefinition RefreshmentValueProperty =

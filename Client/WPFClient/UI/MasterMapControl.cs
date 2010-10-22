@@ -422,6 +422,7 @@ namespace Dwarrowdelf.Client
 				{
 					m_env.Buildings.CollectionChanged -= OnAreaCollectionChanged;
 					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged -= OnAreaCollectionChanged;
+					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnAreaCollectionChanged;
 				}
 
 				m_env = value;
@@ -433,6 +434,7 @@ namespace Dwarrowdelf.Client
 
 					m_env.Buildings.CollectionChanged += OnAreaCollectionChanged;
 					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged += OnAreaCollectionChanged;
+					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnAreaCollectionChanged;
 				}
 				else
 				{
@@ -488,7 +490,9 @@ namespace Dwarrowdelf.Client
 
 			if (m_env != null)
 			{
-				var areas = m_env.Buildings.Cast<IDrawableArea>().Concat(m_world.DesignationManager.Designations);
+				var areas = m_env.Buildings.Cast<IDrawableArea>()
+					.Concat(m_world.DesignationManager.Designations)
+					.Concat(m_env.Stockpiles);
 
 				foreach (IDrawableArea area in areas)
 				{

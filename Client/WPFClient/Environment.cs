@@ -23,8 +23,11 @@ namespace Dwarrowdelf.Client
 
 		public IntCuboid Bounds { get; private set; }
 
-		BuildingCollection m_buildings = new BuildingCollection();
+		BuildingCollection m_buildings;
 		public ReadOnlyBuildingCollection Buildings { get; private set; }
+
+		ObservableCollection<Stockpile> m_stockpiles;
+		public ReadOnlyObservableCollection<Stockpile> Stockpiles { get; private set; }
 
 		public Environment(World world, ObjectID objectID)
 			: this(world, objectID, 16)
@@ -47,6 +50,9 @@ namespace Dwarrowdelf.Client
 
 			m_buildings = new BuildingCollection();
 			this.Buildings = new ReadOnlyBuildingCollection(m_buildings);
+
+			m_stockpiles = new ObservableCollection<Stockpile>();
+			this.Stockpiles = new ReadOnlyObservableCollection<Stockpile>(m_stockpiles);
 
 			this.World.AddEnvironment(this);
 		}
@@ -235,9 +241,31 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+
+		public void AddStockpile(Stockpile stockpile)
+		{
+			Debug.Assert(m_stockpiles.All(s => (s.Z == stockpile.Z && s.Area.IntersectsWith(stockpile.Area)) == false));
+
+			this.Version++;
+
+			m_stockpiles.Add(stockpile);
+		}
+
+		public void RemoveStockpile(Stockpile stockpile)
+		{
+			this.Version++;
+			m_stockpiles.Remove(stockpile);
+		}
+
+		public Stockpile GetStockpileAt(IntPoint3D p)
+		{
+			return m_stockpiles.SingleOrDefault(s => s.Z == p.Z && s.Area.Contains(p));
+		}
+
+
 		public void AddBuilding(BuildingObject building)
 		{
-			Debug.Assert(m_buildings.Any(b => b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false);
+			Debug.Assert(m_buildings.All(b => (b.Z == building.Z && b.Area.IntersectsWith(building.Area)) == false));
 
 			this.Version += 1;
 

@@ -65,5 +65,6 @@ namespace Dwarrowdelf
 	{
 		ItemClass ItemClass { get; }
 		ItemType ItemID { get; }
+		object ReservedBy { get; set; }
 	}
 }

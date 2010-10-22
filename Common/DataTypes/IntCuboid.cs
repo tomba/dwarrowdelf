@@ -117,6 +117,20 @@ namespace Dwarrowdelf
 				return true;
 		}
 
+		public bool IntersectsWith(IntCuboid rect)
+		{
+			return rect.X1 < this.X2 && rect.X2 > this.X1 &&
+				rect.Y1 < this.Y2 && rect.Y2 > this.Y1 &&
+				rect.Z1 < this.Z1 && rect.Z2 > this.Z1;
+		}
+
+		public bool IntersectsWithInclusive(IntCuboid rect)
+		{
+			return rect.X1 <= this.X2 && rect.X2 >= this.X1 &&
+				rect.Y1 <= this.Y2 && rect.Y2 >= this.Y1 &&
+				rect.Z1 <= this.Z1 && rect.Z2 >= this.Z1;
+		}
+
 		public IntCuboid Inflate(int width, int height, int depth)
 		{
 			return new IntCuboid(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);

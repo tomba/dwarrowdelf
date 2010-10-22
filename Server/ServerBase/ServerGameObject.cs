@@ -54,8 +54,6 @@ namespace Dwarrowdelf.Server
 			this.World.RemoveGameObject(this);
 		}
 
-		public IBaseGameObject ReservedBy { get; set; }
-
 		public abstract BaseGameObjectData Serialize();
 		public abstract void SerializeTo(Action<Messages.ServerMessage> writer);
 

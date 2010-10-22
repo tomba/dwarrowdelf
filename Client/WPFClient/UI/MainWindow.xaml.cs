@@ -1004,6 +1004,52 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		private void MenuItem_Click_Stockpile(object sender, RoutedEventArgs e)
+		{
+			MenuItem item = (MenuItem)e.Source;
+			string tag = (string)item.Tag;
+
+			var area = map.Selection.SelectionCuboid;
+			var env = map.Environment;
+
+			StockpileType type;
+			switch (tag)
+			{
+				case "Logs":
+					type = StockpileType.Logs;
+					break;
+
+				case "Gems":
+					type = StockpileType.Gems;
+					break;
+
+				case "Remove":
+					type = StockpileType.None;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			if (type == StockpileType.None)
+			{
+				foreach (var p in area.Range())
+				{
+					var sp = env.GetStockpileAt(p);
+					if (sp != null)
+					{
+						env.RemoveStockpile(sp);
+						sp.Destruct();
+					}
+				}
+			}
+			else
+			{
+				var stockpile = new Stockpile(env, area, type);
+				env.AddStockpile(stockpile);
+			}
+		}
+
 		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (GameData.Data.Connection.IsUserConnected)

@@ -10,9 +10,13 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	public class FetchItem : StaticAssignmentGroup
 	{
+		public IItemObject Item { get; private set; }
+
 		public FetchItem(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject item)
 			: base(parent, priority)
 		{
+			this.Item = item;
+
 			var jobs = new IAssignment[] {
 				new MoveAssignment(this, priority, item.Environment, item.Location, false),
 				new GetItemAssignment(this, priority, item),

@@ -380,6 +380,12 @@
                                             <MenuItem Header="Chair" Tag="Chair" Click="MenuItem_Click_Construct" />
                                             <MenuItem Header="Table" Tag="Table" Click="MenuItem_Click_Construct" />
                                         </MenuItem>
+                                        <MenuItem Header="Stockpile">
+                                            <MenuItem Header="Logs" Tag="Logs" Click="MenuItem_Click_Stockpile" />
+                                            <MenuItem Header="Gems" Tag="Gems" Click="MenuItem_Click_Stockpile" />
+                                            <Separator />
+                                            <MenuItem Header="Remove" Tag="Remove" Click="MenuItem_Click_Stockpile" />
+                                        </MenuItem>
                                         <MenuItem Name="setFloorMenu" Header="Set Floor" />
                                         <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
