@@ -87,7 +87,6 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_tileSize = value;
-				m_tileControlD2D.TileSize = value;
 
 				if (m_tileSize <= 8)
 					m_renderView = m_renderViewSimple;
@@ -98,6 +97,8 @@ namespace Dwarrowdelf.Client
 				m_renderView.Environment = m_env;
 
 				m_tileControlD2D.Renderer = m_renderView.Renderer;
+
+				m_tileControlD2D.TileSize = value;
 			}
 		}
 
