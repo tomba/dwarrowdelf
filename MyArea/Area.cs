@@ -203,6 +203,10 @@ namespace MyArea
 				}
 			}
 
+			CreateSlopes(env);
+
+			CreateTrees(env);
+
 			/* create the portal */
 			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
 			env.SetInterior(m_portalLoc, InteriorID.Portal, MaterialID.Steel);
@@ -310,10 +314,6 @@ namespace MyArea
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 #endif
-
-			CreateSlopes(env);
-
-			CreateTrees(env);
 
 			for (int x = 24; x < 27; ++x)
 			{
