@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="308" d:DesignWidth="356">
     <StackPanel Orientation="Vertical">
 
         <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
@@ -12,6 +12,12 @@
         <Separator />
 
         <UniformGrid Columns="2">
+            <TextBlock>Type</TextBlock>
+            <TextBlock Text="{Binding ItemID}" />
+
+            <TextBlock>Class</TextBlock>
+            <TextBlock Text="{Binding ItemClass}" />
+
             <TextBlock>Name</TextBlock>
             <TextBlock Text="{Binding Name}" />
 
@@ -20,6 +26,9 @@
 
             <TextBlock>Material</TextBlock>
             <TextBlock Text="{Binding Material.Name}" />
+
+            <TextBlock>MaterialClass</TextBlock>
+            <TextBlock Text="{Binding MaterialClass}" />
 
             <TextBlock>ObjectID</TextBlock>
             <TextBlock Text="{Binding ObjectID}" />

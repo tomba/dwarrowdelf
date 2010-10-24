@@ -152,10 +152,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\ObjectInfoControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <None Include="Symbols\SymbolDrawings.design" />
     <None Include="Symbols\SymbolDrawings.xaml">
       <SubType>Designer</SubType>
@@ -172,9 +168,6 @@
     <Compile Include="Environment.cs" />
     <Compile Include="UI\ItemInfoControl.xaml.cs">
       <DependentUpon>ItemInfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ObjectInfoControl.xaml.cs">
-      <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
