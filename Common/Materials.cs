@@ -20,6 +20,9 @@ namespace Dwarrowdelf
 		Sapphire,
 		Emerald,
 
+		// Native Metals
+		NativeGold,
+
 		// Pure Metals
 		Iron,
 		Gold,
@@ -44,6 +47,7 @@ namespace Dwarrowdelf
 		Undefined,
 		Wood,
 		Rock,
+		NativeMetal,
 		Metal,
 		Gem,
 		Custom,

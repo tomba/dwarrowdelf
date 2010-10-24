@@ -291,14 +291,19 @@ namespace Dwarrowdelf.Client
 					tile.SymbolID = SymbolID.Undefined;
 					break;
 
-				case InteriorID.Wall:
-					tile.SymbolID = SymbolID.Wall;
-					break;
+				case InteriorID.NaturalWall:
 
-				case InteriorID.Ore:
-					tile.SymbolID = SymbolID.Ore;
-					// use floor material as background color
-					tile.BgColor = env.GetFloorMaterial(ml).Color;
+					if (matInfo.MaterialClass == MaterialClass.NativeMetal)
+					{
+						tile.SymbolID = SymbolID.Ore;
+						// use floor material as background color
+						tile.BgColor = env.GetFloorMaterial(ml).Color;
+					}
+					else
+					{
+						tile.SymbolID = SymbolID.Wall;
+					}
+
 					break;
 
 				case InteriorID.Portal:

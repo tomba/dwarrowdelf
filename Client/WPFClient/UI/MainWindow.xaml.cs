@@ -554,7 +554,7 @@ namespace Dwarrowdelf.Client
 
 				foreach (var p in map.Selection.SelectionCuboid.Range())
 				{
-					if (env.GetInterior(p).ID != InteriorID.Wall)
+					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p);

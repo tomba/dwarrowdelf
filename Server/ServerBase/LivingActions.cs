@@ -208,10 +208,40 @@ namespace Dwarrowdelf.Server
 
 			var id = this.Environment.GetInteriorID(p);
 
-			if (id == InteriorID.Wall)
+			if (id == InteriorID.NaturalWall)
 			{
 				if (this.ActionTicksLeft == 0)
-					this.Environment.SetInteriorID(p, InteriorID.Empty);
+				{
+					var material = this.Environment.GetInteriorMaterial(p);
+
+					ItemObject item = null;
+					if (material.MaterialClass == MaterialClass.Rock)
+					{
+						item = new ItemObject(ItemType.Rock)
+						{
+							MaterialID = material.ID,
+						};
+					}
+					else if (material.MaterialClass == MaterialClass.NativeMetal)
+					{
+						item = new ItemObject(ItemType.Nugget)
+						{
+							MaterialID = material.ID,
+						};
+					}
+
+					if (item != null)
+						item.Initialize(this.World);
+
+					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+					if (item != null)
+					{
+						var ok = item.MoveTo(this.Environment, p);
+						if (!ok)
+							throw new Exception();
+					}
+				}
 				success = true;
 			}
 			else

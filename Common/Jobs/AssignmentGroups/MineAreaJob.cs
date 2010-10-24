@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = env;
 			m_area = area;
 
-			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.Wall);
+			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.NaturalWall);
 
 			List<IAssignment> jobs = new List<IAssignment>();
 			foreach (var p in m_locs)

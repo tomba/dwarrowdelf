@@ -10,6 +10,7 @@
     <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
     <ItemInfo ItemType="Diamond" ItemClass="Gem" Symbol="Gem"/>
     <ItemInfo ItemType="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ItemType="Nugget" ItemClass="RawMaterial" Symbol="Rock"/>
 
     <ItemInfo ItemType="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
 

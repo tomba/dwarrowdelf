@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_area = area;
 
 			var jobs = new List<IJob>();
-			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.Wall);
+			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.NaturalWall);
 			foreach (var p in m_locs)
 			{
 				var job = new AssignmentGroups.MoveMineJob(this, priority, env, p);

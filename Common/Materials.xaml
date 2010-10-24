@@ -12,6 +12,9 @@
     <MaterialInfo ID="Sapphire" MaterialClass="Gem" Color="Cyan" />
     <MaterialInfo ID="Emerald" MaterialClass="Gem" Color="SpringGreen" />
 
+    <!-- Native Metals -->
+    <MaterialInfo ID="NativeGold" Name="Native Gold" MaterialClass="NativeMetal" Color="Gold" />
+
     <!-- Pure Metals -->
     <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
     <MaterialInfo ID="Gold" MaterialClass="Metal" Color="Gold" />

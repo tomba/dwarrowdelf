@@ -131,7 +131,7 @@ namespace MyArea
 
 		void FillTile(Environment env, IntPoint3D p, MaterialID material)
 		{
-			env.SetInterior(p, InteriorID.Wall, material);
+			env.SetInterior(p, InteriorID.NaturalWall, material);
 			env.SetFloor(p, FloorID.Floor, material);
 		}
 
@@ -322,7 +322,7 @@ namespace MyArea
 				for (int y = 12; y < 15; ++y)
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
-					env.SetInterior(p, InteriorID.Ore, MaterialID.Gold);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
 				}
 			}
 
@@ -400,7 +400,7 @@ namespace MyArea
 					   let td = s + d
 					   let t = s + d + Direction.Up
 					   where env.Bounds.Contains(t)
-					   where env.GetInteriorID(td) == InteriorID.Wall
+					   where env.GetInteriorID(td) == InteriorID.NaturalWall
 					   where env.GetInteriorID(t) == InteriorID.Empty && env.GetFloorID(t) != FloorID.Empty
 					   select new { Location = s, Direction = d };
 

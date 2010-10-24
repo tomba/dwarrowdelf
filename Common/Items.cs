@@ -17,6 +17,7 @@ namespace Dwarrowdelf
 		Drink,
 		Diamond,
 		Rock,
+		Nugget,
 
 		/// <summary>
 		/// Used for dynamically initialized items

@@ -17,6 +17,7 @@ namespace Dwarrowdelf.Server
 			var info = Dwarrowdelf.Items.GetItem(itemID);
 			this.ItemInfo = info;
 			this.SymbolID = info.Symbol;
+			this.Name = info.Name;
 		}
 
 		public ItemInfo ItemInfo { get; private set; }

@@ -9,8 +9,7 @@ namespace Dwarrowdelf
 	{
 		Undefined,
 		Empty,
-		Wall,
-		Ore,
+		NaturalWall,
 		Stairs,
 		Portal,
 		Sapling,
@@ -61,8 +60,7 @@ namespace Dwarrowdelf
 		public static readonly InteriorInfo Undefined = new InteriorInfo(InteriorID.Undefined, false);
 
 		public static readonly InteriorInfo Empty = new InteriorInfo(InteriorID.Empty, false);
-		public static readonly InteriorInfo Wall = new InteriorInfo(InteriorID.Wall, true);
-		public static readonly InteriorInfo Ore = new InteriorInfo(InteriorID.Ore, true);
+		public static readonly InteriorInfo Wall = new InteriorInfo(InteriorID.NaturalWall, true);
 		public static readonly InteriorInfo Stairs = new InteriorInfo(InteriorID.Stairs, false);
 		public static readonly InteriorInfo Portal = new InteriorInfo(InteriorID.Portal, false);
 		public static readonly InteriorInfo Sapling = new InteriorInfo(InteriorID.Sapling, false);

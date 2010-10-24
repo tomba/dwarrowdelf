@@ -91,7 +91,7 @@ namespace Dwarrowdelf.Client
 
 		protected override IJob CreateJob()
 		{
-			var anyWalls = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.Wall);
+			var anyWalls = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
 
 			if (!anyWalls)
 				return null;
