@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client
 
 		public StockpileType StockpileType { get; private set; }
 
-		List<Jobs.AssignmentGroups.FetchItem> m_jobs = new List<Jobs.AssignmentGroups.FetchItem>();
+		List<StoreToStockpileJob> m_jobs = new List<StoreToStockpileJob>();
 
 		public Stockpile(Environment environment, IntRect3D area, StockpileType stockpileType)
 		{
@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var ob in obs)
 			{
-				var job = new Jobs.AssignmentGroups.FetchItem(null, ActionPriority.Normal, this.Environment, this.Area.Center, ob);
+				var job = new StoreToStockpileJob(this, ob);
 
 				ob.ReservedBy = this;
 				job.StateChanged += OnJobStateChanged;
@@ -81,9 +81,29 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public IntPoint3D FindEmptyLocation(out bool ok)
+		{
+			var env = this.Environment;
+			
+
+			for (int i = 0; i < 10; ++i)
+			{
+				var loc = this.Area.Range().FirstOrDefault(p => env.GetContents(p).OfType<ItemObject>().Count() == i);
+
+				if (loc != new IntPoint3D())
+				{
+					ok = true;
+					return loc;
+				}
+			}
+
+			ok = false;
+			return new IntPoint3D();
+		}
+
 		void OnJobStateChanged(IJob job, JobState state)
 		{
-			var j = (Jobs.AssignmentGroups.FetchItem)job;
+			var j = (StoreToStockpileJob)job;
 
 			if (state == JobState.Done)
 			{

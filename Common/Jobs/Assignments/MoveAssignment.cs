@@ -10,13 +10,16 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
+	public delegate IntPoint3D GetMoveTarget(out bool ok);
+
 	public class MoveAssignment : Assignment
 	{
 		IntPoint3D m_src; // just for ToString()
 
 		Queue<Direction> m_pathDirs;
 		readonly IEnvironment m_environment;
-		readonly IntPoint3D m_dest;
+		IntPoint3D m_dest;
+		readonly GetMoveTarget m_destFunc;
 		readonly bool m_adjacent;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
@@ -26,6 +29,14 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			m_environment = environment;
 			m_dest = destination;
+			m_adjacent = adjacent;
+		}
+
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, GetMoveTarget destination, bool adjacent)
+			: base(parent, priority)
+		{
+			m_environment = environment;
+			m_destFunc = destination;
 			m_adjacent = adjacent;
 		}
 
@@ -43,6 +54,14 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			m_src = worker.Location;
 			m_numFails = 0;
+
+			if (m_destFunc != null)
+			{
+				bool ok;
+				m_dest = m_destFunc(out ok);
+				if (!ok)
+					return Jobs.JobState.Abort;
+			}
 
 			var res = PreparePath(worker);
 
