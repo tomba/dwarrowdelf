@@ -383,6 +383,8 @@
                                         <MenuItem Header="Stockpile">
                                             <MenuItem Header="Logs" Tag="Logs" Click="MenuItem_Click_Stockpile" />
                                             <MenuItem Header="Gems" Tag="Gems" Click="MenuItem_Click_Stockpile" />
+                                            <MenuItem Header="Rocks" Tag="Rocks" Click="MenuItem_Click_Stockpile" />
+                                            <MenuItem Header="Metals" Tag="Metals" Click="MenuItem_Click_Stockpile" />
                                             <Separator />
                                             <MenuItem Header="Remove" Tag="Remove" Click="MenuItem_Click_Stockpile" />
                                         </MenuItem>

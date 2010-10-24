@@ -36,7 +36,7 @@
     <CharSymbol ID="Sapling" Outline="True" X="20" Y="30" W="60" H="70">♠</CharSymbol>
     <CharSymbol ID="Tree" Outline="True">♣</CharSymbol>
     <CharSymbol ID="Key">Ⱡ</CharSymbol>
-    <CharSymbol ID="Rock">●</CharSymbol>
+    <CharSymbol ID="Rock" X="20" Y="40" W="60" H="60">●</CharSymbol>
     <CharSymbol ID="Log" X="5" Y="60" W="90" H="20">▬</CharSymbol>
     <CharSymbol ID="Contraption">۩</CharSymbol>
     <CharSymbol ID="Consumable">%</CharSymbol>

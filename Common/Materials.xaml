@@ -3,14 +3,34 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
+    <!-- Alloys -->
     <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
+
+    <!-- Gems -->
     <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />
-    <MaterialInfo ID="Wood" MaterialClass="Wood" Color="Sienna" />
-    <MaterialInfo ID="Granite" MaterialClass="Rock" Color="Gray" />
+    <MaterialInfo ID="Ruby" MaterialClass="Gem" Color="Red" />
+    <MaterialInfo ID="Sapphire" MaterialClass="Gem" Color="Cyan" />
+    <MaterialInfo ID="Emerald" MaterialClass="Gem" Color="SpringGreen" />
+
+    <!-- Pure Metals -->
+    <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
     <MaterialInfo ID="Gold" MaterialClass="Metal" Color="Gold" />
+    <MaterialInfo ID="Copper" MaterialClass="Metal" Color="DarkGoldenrod" />
+    <MaterialInfo ID="Zinc" MaterialClass="Metal" Color="DarkSlateGray" />
+
+    <!-- Rocks -->
+    <MaterialInfo ID="Granite" MaterialClass="Rock" Color="DarkGray" />
+    <MaterialInfo ID="Quartzite" MaterialClass="Rock" Color="Gray" />
+    <MaterialInfo ID="Sandstone" MaterialClass="Rock" Color="DimGray" />
+    <MaterialInfo ID="Diorite" MaterialClass="Rock" Color="LightGray" />
+
+    <!-- Woods -->
+    <MaterialInfo ID="Oak" MaterialClass="Wood" Color="Sienna" />
+    <MaterialInfo ID="Birch" MaterialClass="Wood" Color="Sienna" />
+    <MaterialInfo ID="Fir" MaterialClass="Wood" Color="Sienna" />
+    <MaterialInfo ID="Pine" MaterialClass="Wood" Color="Sienna" />
 
     <!-- custom test material -->
-    <MaterialInfo ID="10" Name="MyMaterial" MaterialClass="Gem" Color="LightCyan" />
+    <MaterialInfo ID="99" Name="MyMaterial" MaterialClass="Custom" Color="LightCyan" />
 
 </x:Array>

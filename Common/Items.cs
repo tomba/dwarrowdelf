@@ -31,7 +31,7 @@ namespace Dwarrowdelf
 		Food,
 		Drink,
 		Gem,
-		Material,
+		RawMaterial,
 
 		Custom,
 	}

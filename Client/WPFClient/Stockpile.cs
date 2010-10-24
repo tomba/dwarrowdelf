@@ -12,6 +12,8 @@ namespace Dwarrowdelf.Client
 		None = 0,
 		Logs = 1 << 0,
 		Gems = 1 << 1,
+		Rocks = 1 << 2,
+		Metals = 1 << 3,
 	}
 
 	// XXX should be configurable for classes, subclasses and certain items...
@@ -96,10 +98,16 @@ namespace Dwarrowdelf.Client
 		{
 			StockpileType types = this.StockpileType;
 
-			if ((types & StockpileType.Logs) != 0 && item.ItemClass == ItemClass.Material && item.MaterialClass == MaterialClass.Wood)
+			if ((types & StockpileType.Logs) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Wood)
 				return true;
 
 			if ((types & StockpileType.Gems) != 0 && item.ItemClass == ItemClass.Gem && item.MaterialClass == MaterialClass.Gem)
+				return true;
+
+			if ((types & StockpileType.Rocks) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Rock)
+				return true;
+
+			if ((types & StockpileType.Metals) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Metal)
 				return true;
 
 			return false;

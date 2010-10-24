@@ -10,12 +10,33 @@ namespace Dwarrowdelf
 	public enum MaterialID : byte
 	{
 		Undefined,
-		Granite,
-		Iron,
+
+		// Alloys
 		Steel,
+
+		// Gems
 		Diamond,
-		Wood,
+		Ruby,
+		Sapphire,
+		Emerald,
+
+		// Pure Metals
+		Iron,
 		Gold,
+		Copper,
+		Zinc,
+
+		// Rocks
+		Granite,
+		Quartzite,
+		Sandstone,
+		Diorite,
+
+		// Woods
+		Oak,
+		Birch,
+		Fir,
+		Pine,
 	}
 
 	public enum MaterialClass : byte
@@ -25,6 +46,7 @@ namespace Dwarrowdelf
 		Rock,
 		Metal,
 		Gem,
+		Custom,
 	}
 
 	public class MaterialInfo
@@ -59,7 +81,7 @@ namespace Dwarrowdelf
 			foreach (var item in materials)
 			{
 				if (s_materials[(int)item.ID] != null)
-					throw new Exception();
+					throw new Exception("Duplicate entry");
 
 				if (item.Name == null)
 					item.Name = item.ID.ToString();
@@ -81,6 +103,11 @@ namespace Dwarrowdelf
 			Debug.Assert(s_materials[(int)id] != null);
 
 			return s_materials[(int)id];
+		}
+
+		public static IEnumerable<MaterialInfo> GetMaterials(MaterialClass materialClass)
+		{
+			return s_materials.Where(m => m != null && m.MaterialClass == materialClass);
 		}
 	}
 }

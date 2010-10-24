@@ -228,26 +228,28 @@ namespace MyArea
 			}
 
 			// Add items
+			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
+				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
 				var item = new ItemObject(ItemType.Diamond)
 				{
-					Name = "gem" + i.ToString(),
-					Color = GetRandomColor(),
-					MaterialID = MaterialID.Diamond,
+					Name = material.ToString() + i.ToString(),
+					MaterialID = material,
 				};
 				item.Initialize(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
+			var rockMaterials = Materials.GetMaterials(MaterialClass.Rock).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
+				var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
 				var item = new ItemObject(ItemType.Rock)
 				{
 					Name = "rock" + i.ToString(),
-					Color = GetRandomColor(),
-					MaterialID = MaterialID.Granite,
+					MaterialID = material,
 				};
 				item.Initialize(world);
 
@@ -363,13 +365,18 @@ namespace MyArea
 
 		private void CreateTrees(Environment env)
 		{
+			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
+
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
 				.Where(p => env.GetFloorID(p) == FloorID.Floor || env.GetFloorID(p).IsSlope())
 				.Where(p => m_random.Next() % 8 == 0);
 
 			foreach (var p in locations)
-				env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, MaterialID.Wood);
+			{
+				var material = materials[m_random.Next(materials.Length)].ID;
+				env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
+			}
 		}
 
 		private static void CreateSlopes(Environment env)

@@ -1023,6 +1023,14 @@ namespace Dwarrowdelf.Client
 					type = StockpileType.Gems;
 					break;
 
+				case "Metals":
+					type = StockpileType.Metals;
+					break;
+
+				case "Rocks":
+					type = StockpileType.Rocks;
+					break;
+
 				case "Remove":
 					type = StockpileType.None;
 					break;
