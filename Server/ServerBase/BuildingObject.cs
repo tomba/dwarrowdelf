@@ -83,7 +83,7 @@ namespace Dwarrowdelf.Server
 					return false;
 			}
 
-			return Dwarrowdelf.ItemMaterials.Materials.ItemBuildableFrom(dstItemID, srcArray);
+			return this.BuildingInfo.ItemBuildableFrom(dstItemID, srcArray);
 		}
 
 

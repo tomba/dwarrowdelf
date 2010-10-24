@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<x:Array Type="BuildingInfo"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns="clr-namespace:Dwarrowdelf">
+
+    <BuildingInfo ID="Carpenter">
+
+        <BuildableItem ItemType="Chair">
+            <BuildableItemMaterialInfo ItemType="Log" MaterialClass="Wood" />
+        </BuildableItem>
+
+        <BuildableItem ItemType="Table">
+            <BuildableItemMaterialInfo ItemType="Log" MaterialClass="Wood" />
+            <BuildableItemMaterialInfo MaterialClass="Gem" />
+        </BuildableItem>
+
+    </BuildingInfo>
+
+    <BuildingInfo ID="Mason">
+        <BuildableItem ItemType="Chair">
+            <BuildableItemMaterialInfo ItemType="Rock" MaterialClass="Rock" />
+        </BuildableItem>
+
+        <BuildableItem ItemType="Table">
+            <BuildableItemMaterialInfo ItemType="Rock" MaterialClass="Rock" />
+            <BuildableItemMaterialInfo MaterialClass="Gem" />
+        </BuildableItem>
+    </BuildingInfo>
+
+    <BuildingInfo ID="Smith">
+
+    </BuildingInfo>
+
+</x:Array>

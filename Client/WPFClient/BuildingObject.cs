@@ -23,17 +23,14 @@ namespace Dwarrowdelf.Client
 
 		class BuildOrder
 		{
-			public BuildOrder(Dwarrowdelf.ItemMaterials.ItemMaterialInfo[] sourceItems, ItemType destItemType)
+			public BuildOrder(BuildableItem buildableItem)
 			{
-				this.SourceItemDefs = sourceItems;
-				this.SourceItems = new ItemObject[sourceItems.Length];
-				this.DestionationItemType = destItemType;
+				this.BuildableItem = buildableItem;
+				this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
 			}
 
-			public Dwarrowdelf.ItemMaterials.ItemMaterialInfo[] SourceItemDefs { get; private set; }
+			public BuildableItem BuildableItem { get; private set; }
 			public ItemObject[] SourceItems { get; private set; }
-
-			public ItemType DestionationItemType { get; private set; }
 
 			public Dwarrowdelf.Jobs.IJob Job { get; set; }
 		}
@@ -85,25 +82,12 @@ namespace Dwarrowdelf.Client
 
 		public void AddBuildOrder(ItemType itemID, MaterialClass materialClass)
 		{
-			var materialOptions = Dwarrowdelf.ItemMaterials.Materials.GetOptions(itemID);
+			var buildableItem = this.BuildingInfo.FindBuildableItem(itemID);
 
-			if (materialOptions == null)
+			if (buildableItem == null)
 				throw new Exception();
 
-			List<Dwarrowdelf.ItemMaterials.ItemMaterialInfo> materialOption = null;
-			foreach (var opt in materialOptions)
-			{
-				if (opt[0].MaterialClass == materialClass)
-				{
-					materialOption = opt;
-					break;
-				}
-			}
-
-			if (materialOption == null)
-				throw new Exception();
-
-			var bo = new BuildOrder(materialOption.ToArray(), itemID);
+			var bo = new BuildOrder(buildableItem);
 
 			m_buildOrderQueue.Add(bo);
 
@@ -156,13 +140,13 @@ namespace Dwarrowdelf.Client
 		 * XXX path should be saved, or path should be determined later */
 		bool FindMaterials(BuildOrder order)
 		{
-			var numItems = order.SourceItemDefs.Length;
+			var numItems = order.BuildableItem.BuildMaterials.Count;
 
 			int numFound = 0;
 
-			for (int i = 0; i < order.SourceItemDefs.Length; ++i)
+			for (int i = 0; i < order.BuildableItem.BuildMaterials.Count; ++i)
 			{
-				var ob = FindItem(order.SourceItemDefs[i]);
+				var ob = FindItem(order.BuildableItem.BuildMaterials[i]);
 
 				if (ob == null)
 					break;
@@ -188,7 +172,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		ItemObject FindItem(Dwarrowdelf.ItemMaterials.ItemMaterialInfo itemDef)
+		ItemObject FindItem(BuildableItemMaterialInfo itemDef)
 		{
 			ItemObject ob = null;
 
@@ -215,7 +199,7 @@ namespace Dwarrowdelf.Client
 		void CreateJob(BuildOrder order)
 		{
 			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
-				order.SourceItems, order.DestionationItemType);
+				order.SourceItems, order.BuildableItem.ItemType);
 			job.StateChanged += OnJobStateChanged;
 			order.Job = job;
 			this.World.JobManager.Add(job);

@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypes\IntRect3D.cs" />
-    <Compile Include="ItemMaterials.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
@@ -120,7 +119,7 @@
     <Compile Include="Jobs\AssignmentGroups\RunInCirclesJob.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
-    <Compile Include="BuildingInfo.cs" />
+    <Compile Include="Buildings.cs" />
     <Compile Include="AStar\AStar3D.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
@@ -188,12 +187,6 @@
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MMLog</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ItemMaterials.xaml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Materials.xaml">
