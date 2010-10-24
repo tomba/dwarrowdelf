@@ -385,6 +385,7 @@
                                             <MenuItem Header="Gems" Tag="Gems" Click="MenuItem_Click_Stockpile" />
                                             <MenuItem Header="Rocks" Tag="Rocks" Click="MenuItem_Click_Stockpile" />
                                             <MenuItem Header="Metals" Tag="Metals" Click="MenuItem_Click_Stockpile" />
+                                            <MenuItem Header="Furniture" Tag="Furniture" Click="MenuItem_Click_Stockpile" />
                                             <Separator />
                                             <MenuItem Header="Remove" Tag="Remove" Click="MenuItem_Click_Stockpile" />
                                         </MenuItem>

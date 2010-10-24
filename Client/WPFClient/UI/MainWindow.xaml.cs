@@ -1031,6 +1031,10 @@ namespace Dwarrowdelf.Client
 					type = StockpileType.Rocks;
 					break;
 
+				case "Furniture":
+					type = StockpileType.Furniture;
+					break;
+
 				case "Remove":
 					type = StockpileType.None;
 					break;
