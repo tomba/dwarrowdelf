@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Markup;
+using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
@@ -35,33 +36,21 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public class ItemCollection : Dictionary<ItemType, ItemInfo>
-	{
-	}
-
-	[DictionaryKeyProperty("ItemType")]
 	public class ItemInfo
 	{
-		string m_name;
-
 		public ItemType ItemType { get; set; }
-		public string Name
-		{
-			// XXX
-			get { if (m_name == null) m_name = this.ItemType.ToString(); return m_name; }
-			set { m_name = value; }
-		}
+		public string Name { get; set; }
 		public ItemClass ItemClass { get; set; }
 		public SymbolID Symbol { get; set; }
 	}
 
 	public static class Items
 	{
-		static ItemInfo[] s_itemList;
+		static ItemInfo[] s_items;
 
 		static Items()
 		{
-			ItemCollection items;
+			ItemInfo[] items;
 
 			using (var stream = System.IO.File.OpenRead("Items.xaml"))
 			{
@@ -70,24 +59,24 @@ namespace Dwarrowdelf
 					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
-					items = (ItemCollection)System.Xaml.XamlServices.Load(reader);
+					items = (ItemInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = (int)items.Keys.Max();
-			s_itemList = new ItemInfo[(int)max + 1];
+			var max = items.Max(i => (int)i.ItemType);
+			s_items = new ItemInfo[max + 1];
 
 			foreach (var item in items)
-				s_itemList[(int)item.Key] = item.Value;
-
-			s_itemList[0] = new ItemInfo()
 			{
-				ItemType = ItemType.Undefined,
-				Name = "<undefined>",
-				ItemClass = ItemClass.Undefined,
-				Symbol = SymbolID.Undefined,
-			};
+				if (s_items[(int)item.ItemType] != null)
+					throw new Exception();
 
-			s_itemList[(int)ItemType.Custom] = new ItemInfo()
+				if (item.Name == null)
+					item.Name = item.ItemType.ToString();
+
+				s_items[(int)item.ItemType] = item;
+			}
+
+			s_items[(int)ItemType.Custom] = new ItemInfo()
 			{
 				ItemType = ItemType.Custom,
 				Name = "<undefined>",
@@ -98,7 +87,10 @@ namespace Dwarrowdelf
 
 		public static ItemInfo GetItem(ItemType id)
 		{
-			return s_itemList[(int)id];
+			Debug.Assert(id != ItemType.Undefined);
+			Debug.Assert(s_items[(int)id] != null);
+
+			return s_items[(int)id];
 		}
 	}
 }

@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<MaterialCollection xmlns="clr-namespace:Dwarrowdelf">
+<x:Array Type="MaterialInfo"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns="clr-namespace:Dwarrowdelf">
 
     <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
     <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
@@ -11,4 +13,4 @@
     <!-- custom test material -->
     <MaterialInfo ID="10" Name="MyMaterial" MaterialClass="Gem" Color="LightCyan" />
 
-</MaterialCollection>
+</x:Array>
