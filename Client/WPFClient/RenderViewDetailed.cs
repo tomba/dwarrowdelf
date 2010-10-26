@@ -135,10 +135,15 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Interior.SymbolID == SymbolID.Undefined)
 				{
-					GetInteriorTile(p, env, ref tile.Interior, showVirtualSymbols);
+					bool seeThrough;
+					GetInteriorTile(p, env, ref tile.Interior, showVirtualSymbols, out seeThrough);
 
 					if (tile.Interior.SymbolID != SymbolID.Undefined)
+					{
 						tile.Interior.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						if (!seeThrough)
+							break;
+					}
 				}
 
 				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols);
@@ -162,6 +167,18 @@ namespace Dwarrowdelf.Client
 
 		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
+			var intID = env.GetInteriorID(ml);
+
+			if (intID == InteriorID.NaturalWall)
+			{
+				var flrMatInfo = env.GetFloorMaterial(ml);
+				tile.SymbolID = SymbolID.Wall;
+				tile.Color = flrMatInfo.Color;
+				tile.BgColor = GameColor.None;
+				return;
+			}
+
+
 			var flrID = env.GetFloorID(ml);
 
 			if (flrID == FloorID.Undefined)
@@ -269,10 +286,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			var intID = env.GetInteriorID(ml);
 			var intID2 = env.GetInteriorID(ml + Direction.Down);
+
+			seeThrough = true;
 
 			if (intID == InteriorID.Undefined)
 				return;
@@ -293,15 +312,21 @@ namespace Dwarrowdelf.Client
 
 				case InteriorID.NaturalWall:
 
-					if (matInfo.MaterialClass == MaterialClass.NativeMetal)
+					switch (matInfo.MaterialClass)
 					{
-						tile.SymbolID = SymbolID.Ore;
-						// use floor material as background color
-						tile.BgColor = env.GetFloorMaterial(ml).Color;
-					}
-					else
-					{
-						tile.SymbolID = SymbolID.Wall;
+						// these are see through, and GetFloorTile uses Wall symbol
+						case MaterialClass.NativeMetal:
+							tile.SymbolID = SymbolID.ValuableOre;
+							break;
+
+						case MaterialClass.Gem:
+							tile.SymbolID = SymbolID.GemOre;
+							break;
+
+						default:
+							tile.SymbolID = SymbolID.Wall;
+							seeThrough = false;
+							break;
 					}
 
 					break;

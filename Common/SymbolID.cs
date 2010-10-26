@@ -14,7 +14,8 @@ namespace Dwarrowdelf
 
 		/* interiors */
 		Wall,
-		Ore,
+		ValuableOre,
+		GemOre,
 		StairsUp,
 		StairsDown,
 		StairsUpDown,
@@ -37,6 +38,7 @@ namespace Dwarrowdelf
 		/* objects */
 		Player,
 		Monster,
+		UncutGem,
 		Gem,
 		Key,
 		Rock,

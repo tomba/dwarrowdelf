@@ -6,14 +6,8 @@
     <!-- Alloys -->
     <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
 
-    <!-- Gems -->
-    <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />
-    <MaterialInfo ID="Ruby" MaterialClass="Gem" Color="Red" />
-    <MaterialInfo ID="Sapphire" MaterialClass="Gem" Color="Cyan" />
-    <MaterialInfo ID="Emerald" MaterialClass="Gem" Color="SpringGreen" />
-
     <!-- Native Metals -->
-    <MaterialInfo ID="NativeGold" Name="Native Gold" MaterialClass="NativeMetal" Color="Gold" />
+    <MaterialInfo ID="NativeGold" Name="Native gold" MaterialClass="NativeMetal" Color="Gold" />
 
     <!-- Pure Metals -->
     <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
@@ -30,6 +24,13 @@
 
     <!-- Minerals -->
     <MaterialInfo ID="Magnetite" MaterialClass="Mineral" Color="LightGray" />
+
+    <!-- Gems (minerals) -->
+    <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />
+    <MaterialInfo ID="Ruby" MaterialClass="Gem" Color="Red" />
+    <MaterialInfo ID="Sapphire" MaterialClass="Gem" Color="Cyan" />
+    <MaterialInfo ID="Emerald" MaterialClass="Gem" Color="SpringGreen" />
+    <MaterialInfo ID="Chrysoprase" MaterialClass="Gem" Color="SpringGreen" />
 
     <!-- Woods -->
     <MaterialInfo ID="Oak" MaterialClass="Wood" Color="Sienna" />

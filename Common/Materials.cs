@@ -14,12 +14,6 @@ namespace Dwarrowdelf
 		// Alloys
 		Steel,
 
-		// Gems
-		Diamond,
-		Ruby,
-		Sapphire,
-		Emerald,
-
 		// Native Metals
 		NativeGold,
 
@@ -38,6 +32,13 @@ namespace Dwarrowdelf
 
 		// Minerals
 		Magnetite,
+
+		// Gems (minerals)
+		Diamond,
+		Ruby,
+		Sapphire,
+		Emerald,
+		Chrysoprase,
 
 		// Woods
 		Oak,

@@ -319,27 +319,32 @@ namespace MyArea
 
 			for (int x = 24; x < 27; ++x)
 			{
-				for (int y = 12; y < 15; ++y)
+				int y = 12;
+				IntPoint3D p;
+
 				{
-					var p = new IntPoint3D(x, y, surfaceLevel);
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
+					env.SetFloorID(p, FloorID.NaturalFloor);
+				}
 
-					if (y % 2 == 0)
+				{
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					TileData td = new TileData()
 					{
-						env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
-					}
-					else
-					{
-						TileData td = new TileData()
-						{
-							FloorID = FloorID.NaturalFloor,
-							FloorMaterialID = MaterialID.Magnetite,
-							InteriorID = InteriorID.NaturalWall,
-							InteriorMaterialID = MaterialID.Magnetite,
-						};
+						FloorID = FloorID.NaturalFloor,
+						FloorMaterialID = MaterialID.Magnetite,
+						InteriorID = InteriorID.NaturalWall,
+						InteriorMaterialID = MaterialID.Magnetite,
+					};
 
-						env.SetTileData(p, td);
-					}
+					env.SetTileData(p, td);
+				}
 
+				{
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Chrysoprase);
+					env.SetFloorID(p, FloorID.NaturalFloor);
 				}
 			}
 

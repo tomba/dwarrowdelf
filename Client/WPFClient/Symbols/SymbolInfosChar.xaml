@@ -8,10 +8,14 @@
     <CharSymbol ID="Grass" Outline="False">▒</CharSymbol>
     <CharSymbol ID="Wall" Opaque="True" Outline="False">▓</CharSymbol>
 
+    <!--
     <CombinedSymbol ID="Ore" Opaque="False">
         <CharSymbol Opaque="False" Outline="False" Color="Black" Reverse="True">▓</CharSymbol>
         <CharSymbol Opaque="False" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
     </CombinedSymbol>
+    -->
+    <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
+    <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60">☼</CharSymbol>
 
     <CharSymbol ID="Water" X="10" Y="30" W="80" H="40">~</CharSymbol>
 
@@ -32,6 +36,8 @@
     <CharSymbol ID="Portal">○</CharSymbol>
     <CharSymbol ID="Player">☺</CharSymbol>
     <CharSymbol ID="Monster">b</CharSymbol>
+
+    <CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40">☼</CharSymbol>
     <CharSymbol ID="Gem" X="30" Y="50" W="40" H="40">♦</CharSymbol>
     <CharSymbol ID="Sapling" X="20" Y="30" W="60" H="70">♠</CharSymbol>
     <CharSymbol ID="Tree">♣</CharSymbol>

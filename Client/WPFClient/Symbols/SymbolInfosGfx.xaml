@@ -32,6 +32,7 @@
     <DrawingSymbol ID="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
     <DrawingSymbol ID="Monster" X="10" Y="20" W="80" H="60">Enemy_Bug</DrawingSymbol>
     <DrawingSymbol ID="Gem">Gem_Blue</DrawingSymbol>
+    <CharSymbol ID="Gemstone" X="30" Y="50" W="40" H="40">☼</CharSymbol>
     <DrawingSymbol ID="Sapling">Tree_Short</DrawingSymbol>
     <DrawingSymbol ID="Tree">Tree_Tall</DrawingSymbol>
     <DrawingSymbol ID="Key"  X="20" Y="10" W="60" H="80">Key</DrawingSymbol>

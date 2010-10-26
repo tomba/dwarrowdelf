@@ -8,16 +8,37 @@ namespace Dwarrowdelf.Server
 	public class ItemObject : ServerGameObject, IItemObject
 	{
 		public ItemObject()
-			: this(ItemType.Custom)
+			: this(ItemType.Custom, MaterialID.Undefined)
 		{
 		}
 
-		public ItemObject(ItemType itemID)
+		public ItemObject(ItemType itemID, MaterialID material = Dwarrowdelf.MaterialID.Undefined)
 		{
 			var info = Dwarrowdelf.Items.GetItem(itemID);
 			this.ItemInfo = info;
 			this.SymbolID = info.Symbol;
-			this.Name = info.Name;
+
+			var matInfo = Dwarrowdelf.Materials.GetMaterial(material);
+			this.MaterialID = material;
+
+			switch (itemID)
+			{
+				case ItemType.UncutGem:
+					this.Name = "Uncut " + matInfo.Name.ToLowerInvariant();
+					break;
+
+				case ItemType.Nugget:
+					this.Name = matInfo.Name + " nugget";
+					break;
+
+				case ItemType.Rock:
+					this.Name = matInfo.Name + " rock";
+					break;
+
+				default:
+					this.Name = info.Name;
+					break;
+			}
 		}
 
 		public ItemInfo ItemInfo { get; private set; }

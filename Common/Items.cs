@@ -19,6 +19,7 @@ namespace Dwarrowdelf
 		Rock,
 		Nugget,
 		Ore,
+		UncutGem,
 
 		/// <summary>
 		/// Used for dynamically initialized items

@@ -224,33 +224,31 @@ namespace Dwarrowdelf.Server
 
 			this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
-			ItemObject item;
+			ItemType itemType;
 
-			if (material.MaterialClass == MaterialClass.Rock)
+			switch (material.MaterialClass)
 			{
-				item = new ItemObject(ItemType.Rock)
-				{
-					MaterialID = material.ID,
-				};
+				case MaterialClass.Rock:
+					itemType = ItemType.Rock;
+					break;
+
+				case MaterialClass.Mineral:
+					itemType = ItemType.Ore;
+					break;
+
+				case MaterialClass.NativeMetal:
+					itemType = ItemType.Nugget;
+					break;
+
+				case MaterialClass.Gem:
+					itemType = ItemType.UncutGem;
+					break;
+
+				default:
+					throw new Exception();
 			}
-			else if (material.MaterialClass == MaterialClass.Mineral)
-			{
-				item = new ItemObject(ItemType.Ore)
-				{
-					MaterialID = material.ID,
-				};
-			}
-			else if (material.MaterialClass == MaterialClass.NativeMetal)
-			{
-				item = new ItemObject(ItemType.Nugget)
-				{
-					MaterialID = material.ID,
-				};
-			}
-			else
-			{
-				throw new Exception();
-			}
+
+			var item = new ItemObject(itemType, material.ID);
 
 			item.Initialize(this.World);
 
