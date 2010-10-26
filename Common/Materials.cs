@@ -64,6 +64,7 @@ namespace Dwarrowdelf
 		public MaterialID ID { get; set; }
 		public MaterialClass MaterialClass { get; set; }
 		public string Name { get; set; }
+		public string Adjective { get; set; }
 		public GameColor Color { get; set; }
 	}
 
@@ -94,7 +95,10 @@ namespace Dwarrowdelf
 					throw new Exception("Duplicate entry");
 
 				if (item.Name == null)
-					item.Name = item.ID.ToString();
+					item.Name = item.ID.ToString().ToLowerInvariant();
+
+				if (item.Adjective == null)
+					item.Adjective = item.Name;
 
 				s_materials[(int)item.ID] = item;
 			}

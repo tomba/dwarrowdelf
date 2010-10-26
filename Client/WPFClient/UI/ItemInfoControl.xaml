@@ -21,6 +21,9 @@
             <TextBlock>Name</TextBlock>
             <TextBlock Text="{Binding Name}" />
 
+            <TextBlock>Desc</TextBlock>
+            <TextBlock Text="{Binding Description}" />
+
             <TextBlock>Color</TextBlock>
             <TextBlock Text="{Binding GameColor}" />
 

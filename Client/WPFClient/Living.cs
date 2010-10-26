@@ -30,6 +30,15 @@ namespace Dwarrowdelf.Client
 			this.IsLiving = true;
 		}
 
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (LivingData)_data;
+
+			base.Deserialize(_data);
+
+			this.Description = this.Name;
+		}
+
 		GameAction m_currentAction;
 		public GameAction CurrentAction
 		{

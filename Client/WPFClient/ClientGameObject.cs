@@ -219,6 +219,18 @@ namespace Dwarrowdelf.Client
 
 		public MaterialClass MaterialClass { get { return m_materialInfo.MaterialClass; } } // XXX
 
+
+		string m_desc;
+		public string Description
+		{
+			get { return m_desc; }
+			protected set
+			{
+				m_desc = value;
+				Notify("Description");
+			}
+		}
+
 		#region INotifyPropertyChanged Members
 
 		public event PropertyChangedEventHandler PropertyChanged;

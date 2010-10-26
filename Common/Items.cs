@@ -74,7 +74,7 @@ namespace Dwarrowdelf
 					throw new Exception();
 
 				if (item.Name == null)
-					item.Name = item.ItemType.ToString();
+					item.Name = item.ItemType.ToString().ToLowerInvariant();
 
 				s_items[(int)item.ItemType] = item;
 			}

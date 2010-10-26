@@ -19,7 +19,7 @@
             <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Name" />
+                            <Binding Path="Description" />
                             <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
@@ -46,7 +46,7 @@
             <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Name" />
+                            <Binding Path="Description" />
                             <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>

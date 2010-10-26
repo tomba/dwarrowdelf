@@ -21,8 +21,9 @@ namespace Dwarrowdelf.Client
 			return String.Format("Item({0})", this.ObjectID.Value);
 		}
 
-		public ItemClass ItemClass { get; private set; }
-		public ItemType ItemID { get; private set; }
+		public ItemInfo ItemInfo { get; private set; }
+		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
+		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }
 
 		int m_nutritionalValue;
 		public int NutritionalValue
@@ -60,12 +61,34 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (ItemData)_data;
 
-			var info = Dwarrowdelf.Items.GetItem(data.ItemID);
-
-			this.ItemClass = info.ItemClass;
-			this.ItemID = data.ItemID;
+			this.ItemInfo = Dwarrowdelf.Items.GetItem(data.ItemID);
 
 			base.Deserialize(_data);
+
+			var matInfo = this.Material;
+			switch (this.ItemID)
+			{
+				case ItemType.UncutGem:
+					this.Description = "Uncut " + matInfo.Name.ToLowerInvariant();
+					break;
+
+				case ItemType.Nugget:
+					this.Description = matInfo.Adjective.Capitalize() + " nugget";
+					break;
+
+				case ItemType.Rock:
+				case ItemType.Ore:
+					this.Description = matInfo.Adjective.Capitalize() + " rock";
+					break;
+
+				case ItemType.Gem:
+					this.Description = matInfo.Name.Capitalize();
+					break;
+
+				default:
+					this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
+					break;
+			}
 		}
 	}
 }

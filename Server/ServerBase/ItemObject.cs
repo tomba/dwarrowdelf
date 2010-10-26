@@ -12,32 +12,6 @@ namespace Dwarrowdelf.Server
 			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
 			this.SymbolID = this.ItemInfo.Symbol;
 			this.MaterialID = material;
-
-			var matInfo = Dwarrowdelf.Materials.GetMaterial(material);
-
-			switch (itemID)
-			{
-				case ItemType.UncutGem:
-					this.Name = "Uncut " + matInfo.Name.ToLowerInvariant();
-					break;
-
-				case ItemType.Nugget:
-					this.Name = matInfo.Name + " nugget";
-					break;
-
-				case ItemType.Rock:
-				case ItemType.Ore:
-					this.Name = matInfo.Name + " rock";
-					break;
-
-				case ItemType.Gem:
-					this.Name = matInfo.Name;
-					break;
-
-				default:
-					this.Name = matInfo.Name + " " + this.ItemInfo.Name.ToLowerInvariant();
-					break;
-			}
 		}
 
 		public ItemInfo ItemInfo { get; private set; }

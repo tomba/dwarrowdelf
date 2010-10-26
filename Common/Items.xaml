@@ -12,7 +12,7 @@
     <ItemInfo ItemType="Nugget" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Gem" ItemClass="Gem" Symbol="Gem"/>
-    <ItemInfo ItemType="UncutGem" ItemClass="RawMaterial" Symbol="UncutGem"/>
+    <ItemInfo ItemType="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>
 
     <ItemInfo ItemType="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
 
