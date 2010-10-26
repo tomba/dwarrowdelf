@@ -8,11 +8,11 @@ namespace Dwarrowdelf.Server.Items
 	public class WaterGenerator : ItemObject
 	{
 		public WaterGenerator()
+			: base(ItemType.Custom, MaterialID.Diamond)
 		{
 			this.Name = "Water Generator";
 			this.SymbolID = SymbolID.Contraption;
 			this.Color = GameColor.Blue;
-			this.MaterialID = MaterialID.Diamond;
 		}
 
 		public override void Initialize(World world)

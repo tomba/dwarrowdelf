@@ -8,10 +8,10 @@
     <ItemInfo ItemType="Table" ItemClass="Furniture" Symbol="Table"/>
     <ItemInfo ItemType="Food" ItemClass="Food" Symbol="Consumable"/>
     <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
-    <ItemInfo ItemType="Diamond" ItemClass="Gem" Symbol="Gem"/>
     <ItemInfo ItemType="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Nugget" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ItemType="Gem" ItemClass="Gem" Symbol="Gem"/>
     <ItemInfo ItemType="UncutGem" ItemClass="RawMaterial" Symbol="UncutGem"/>
 
     <ItemInfo ItemType="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />

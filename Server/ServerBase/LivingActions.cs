@@ -269,10 +269,9 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInteriorID(p, InteriorID.Empty);
-					var log = new ItemObject(ItemType.Log)
+					var log = new ItemObject(ItemType.Log, material)
 					{
 						Name = "Log",
-						MaterialID = material,
 						Color = GameColor.SaddleBrown,
 					};
 					log.Initialize(this.World);

@@ -7,19 +7,13 @@ namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject()
-			: this(ItemType.Custom, MaterialID.Undefined)
+		public ItemObject(ItemType itemID, MaterialID material)
 		{
-		}
-
-		public ItemObject(ItemType itemID, MaterialID material = Dwarrowdelf.MaterialID.Undefined)
-		{
-			var info = Dwarrowdelf.Items.GetItem(itemID);
-			this.ItemInfo = info;
-			this.SymbolID = info.Symbol;
+			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
+			this.SymbolID = this.ItemInfo.Symbol;
+			this.MaterialID = material;
 
 			var matInfo = Dwarrowdelf.Materials.GetMaterial(material);
-			this.MaterialID = material;
 
 			switch (itemID)
 			{
@@ -32,11 +26,16 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case ItemType.Rock:
+				case ItemType.Ore:
 					this.Name = matInfo.Name + " rock";
 					break;
 
+				case ItemType.Gem:
+					this.Name = matInfo.Name;
+					break;
+
 				default:
-					this.Name = info.Name;
+					this.Name = matInfo.Name + " " + this.ItemInfo.Name.ToLowerInvariant();
 					break;
 			}
 		}

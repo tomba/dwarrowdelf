@@ -15,10 +15,10 @@ namespace Dwarrowdelf
 		Table,
 		Food,
 		Drink,
-		Diamond,
 		Rock,
 		Nugget,
 		Ore,
+		Gem,
 		UncutGem,
 
 		/// <summary>

@@ -472,11 +472,14 @@ namespace Dwarrowdelf.Server
 
 		public override BaseGameObjectData Serialize()
 		{
-			var data = new LivingData();
-			data.ObjectID = this.ObjectID;
-			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
-			data.Location = this.Location;
-			data.Properties = base.SerializeProperties();
+			var data = new LivingData()
+			{
+				ObjectID = this.ObjectID,
+				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
+				Location = this.Location,
+				Properties = base.SerializeProperties(),
+			};
+
 			return data;
 		}
 

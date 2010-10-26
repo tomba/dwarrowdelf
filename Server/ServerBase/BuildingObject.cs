@@ -94,11 +94,7 @@ namespace Dwarrowdelf.Server
 
 			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
 
-			ItemObject item = new ItemObject(dstItemID)
-			{
-				Name = dstItemID.ToString(),
-				MaterialID = obs.First().MaterialID,
-			};
+			ItemObject item = new ItemObject(dstItemID, obs.First().MaterialID);
 			item.Initialize(this.World);
 
 			foreach (var ob in obs)
