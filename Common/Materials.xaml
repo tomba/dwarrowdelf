@@ -26,6 +26,10 @@
     <MaterialInfo ID="Quartzite" MaterialClass="Rock" Color="Gray" />
     <MaterialInfo ID="Sandstone" MaterialClass="Rock" Color="DimGray" />
     <MaterialInfo ID="Diorite" MaterialClass="Rock" Color="LightGray" />
+    <MaterialInfo ID="Dolostone" MaterialClass="Rock" Color="LightGray" />
+
+    <!-- Minerals -->
+    <MaterialInfo ID="Magnetite" MaterialClass="Mineral" Color="LightGray" />
 
     <!-- Woods -->
     <MaterialInfo ID="Oak" MaterialClass="Wood" Color="Sienna" />

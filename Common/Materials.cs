@@ -34,6 +34,10 @@ namespace Dwarrowdelf
 		Quartzite,
 		Sandstone,
 		Diorite,
+		Dolostone,	// mostly Dolomite
+
+		// Minerals
+		Magnetite,
 
 		// Woods
 		Oak,
@@ -50,6 +54,7 @@ namespace Dwarrowdelf
 		NativeMetal,
 		Metal,
 		Gem,
+		Mineral,
 		Custom,
 	}
 

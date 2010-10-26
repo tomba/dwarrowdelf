@@ -132,7 +132,7 @@ namespace MyArea
 		void FillTile(Environment env, IntPoint3D p, MaterialID material)
 		{
 			env.SetInterior(p, InteriorID.NaturalWall, material);
-			env.SetFloor(p, FloorID.Floor, material);
+			env.SetFloor(p, FloorID.NaturalFloor, material);
 		}
 
 		Environment CreateMap1(World world)
@@ -164,7 +164,7 @@ namespace MyArea
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
 					{
-						env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+						env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 						env.SetGrass(p, true);
 					}
 					else
@@ -322,7 +322,24 @@ namespace MyArea
 				for (int y = 12; y < 15; ++y)
 				{
 					var p = new IntPoint3D(x, y, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
+
+					if (y % 2 == 0)
+					{
+						env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
+					}
+					else
+					{
+						TileData td = new TileData()
+						{
+							FloorID = FloorID.NaturalFloor,
+							FloorMaterialID = MaterialID.Magnetite,
+							InteriorID = InteriorID.NaturalWall,
+							InteriorMaterialID = MaterialID.Magnetite,
+						};
+
+						env.SetTileData(p, td);
+					}
+
 				}
 			}
 
@@ -330,7 +347,7 @@ namespace MyArea
 			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(2, 6, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -339,7 +356,7 @@ namespace MyArea
 			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect3D(6, 6, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -348,7 +365,7 @@ namespace MyArea
 			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect3D(10, 6, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -369,7 +386,7 @@ namespace MyArea
 
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
-				.Where(p => env.GetFloorID(p) == FloorID.Floor || env.GetFloorID(p).IsSlope())
+				.Where(p => env.GetFloorID(p) == FloorID.NaturalFloor || env.GetFloorID(p).IsSlope())
 				.Where(p => m_random.Next() % 8 == 0);
 
 			foreach (var p in locations)
@@ -434,7 +451,7 @@ namespace MyArea
 			foreach (var p in env.Bounds.Range())
 			{
 				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloor(p, FloorID.Floor, MaterialID.Granite);
+				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
 			}
 
 			env.SetInterior(m_portalLoc2, InteriorID.Portal, MaterialID.Steel);

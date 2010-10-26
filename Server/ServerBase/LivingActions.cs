@@ -208,47 +208,55 @@ namespace Dwarrowdelf.Server
 
 			var id = this.Environment.GetInteriorID(p);
 
-			if (id == InteriorID.NaturalWall)
-			{
-				if (this.ActionTicksLeft == 0)
-				{
-					var material = this.Environment.GetInteriorMaterial(p);
-
-					ItemObject item = null;
-					if (material.MaterialClass == MaterialClass.Rock)
-					{
-						item = new ItemObject(ItemType.Rock)
-						{
-							MaterialID = material.ID,
-						};
-					}
-					else if (material.MaterialClass == MaterialClass.NativeMetal)
-					{
-						item = new ItemObject(ItemType.Nugget)
-						{
-							MaterialID = material.ID,
-						};
-					}
-
-					if (item != null)
-						item.Initialize(this.World);
-
-					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-					if (item != null)
-					{
-						var ok = item.MoveTo(this.Environment, p);
-						if (!ok)
-							throw new Exception();
-					}
-				}
-				success = true;
-			}
-			else
+			if (id != InteriorID.NaturalWall)
 			{
 				Trace.TraceWarning("{0} tried to mine {1}, but it't a wall", this, p);
 				success = false;
+				return;
 			}
+
+			success = true;
+
+			if (this.ActionTicksLeft > 0)
+				return;
+
+			var material = this.Environment.GetInteriorMaterial(p);
+
+			this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+			ItemObject item;
+
+			if (material.MaterialClass == MaterialClass.Rock)
+			{
+				item = new ItemObject(ItemType.Rock)
+				{
+					MaterialID = material.ID,
+				};
+			}
+			else if (material.MaterialClass == MaterialClass.Mineral)
+			{
+				item = new ItemObject(ItemType.Ore)
+				{
+					MaterialID = material.ID,
+				};
+			}
+			else if (material.MaterialClass == MaterialClass.NativeMetal)
+			{
+				item = new ItemObject(ItemType.Nugget)
+				{
+					MaterialID = material.ID,
+				};
+			}
+			else
+			{
+				throw new Exception();
+			}
+
+			item.Initialize(this.World);
+
+			var ok = item.MoveTo(this.Environment, p);
+			if (!ok)
+				throw new Exception();
 		}
 
 		void PerformFellTree(FellTreeAction action, out bool success)

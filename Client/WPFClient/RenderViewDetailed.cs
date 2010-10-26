@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Client
 
 			switch (flrID)
 			{
-				case FloorID.Floor:
+				case FloorID.NaturalFloor:
 					if (env.GetGrass(ml))
 					{
 						tile.SymbolID = SymbolID.Grass;
