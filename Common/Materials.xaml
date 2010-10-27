@@ -6,9 +6,6 @@
     <!-- Alloys -->
     <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
 
-    <!-- Native Metals -->
-    <MaterialInfo ID="NativeGold" Name="native gold" MaterialClass="NativeMetal" Color="Gold" />
-
     <!-- Pure Metals -->
     <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
     <MaterialInfo ID="Gold" MaterialClass="Metal" Color="Gold" />
@@ -24,6 +21,7 @@
 
     <!-- Minerals -->
     <MaterialInfo ID="Magnetite" MaterialClass="Mineral" Color="LightGray" />
+    <MaterialInfo ID="NativeGold" Name="native gold" MaterialClass="Mineral" Color="Gold" />
 
     <!-- Gems (minerals) -->
     <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />

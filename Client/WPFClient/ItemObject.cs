@@ -72,13 +72,16 @@ namespace Dwarrowdelf.Client
 					this.Description = "Uncut " + matInfo.Name.ToLowerInvariant();
 					break;
 
-				case ItemType.Nugget:
-					this.Description = matInfo.Adjective.Capitalize() + " nugget";
-					break;
-
 				case ItemType.Rock:
 				case ItemType.Ore:
-					this.Description = matInfo.Adjective.Capitalize() + " rock";
+					if (matInfo.ID == MaterialID.NativeGold)
+					{
+						this.Description = matInfo.Adjective.Capitalize() + " nugget";
+					}
+					else
+					{
+						this.Description = matInfo.Adjective.Capitalize() + " rock";
+					}
 					break;
 
 				case ItemType.Gem:

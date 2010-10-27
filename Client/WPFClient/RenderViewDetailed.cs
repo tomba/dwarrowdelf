@@ -315,12 +315,12 @@ namespace Dwarrowdelf.Client
 					switch (matInfo.MaterialClass)
 					{
 						// these are see through, and GetFloorTile uses Wall symbol
-						case MaterialClass.NativeMetal:
-							tile.SymbolID = SymbolID.ValuableOre;
-							break;
-
 						case MaterialClass.Gem:
 							tile.SymbolID = SymbolID.GemOre;
+							break;
+
+						case MaterialClass.Mineral:
+							tile.SymbolID = SymbolID.ValuableOre;
 							break;
 
 						default:

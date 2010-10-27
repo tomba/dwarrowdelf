@@ -9,7 +9,6 @@
     <ItemInfo ItemType="Food" ItemClass="Food" Symbol="Consumable"/>
     <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
     <ItemInfo ItemType="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
-    <ItemInfo ItemType="Nugget" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
     <ItemInfo ItemType="Gem" ItemClass="Gem" Symbol="Gem"/>
     <ItemInfo ItemType="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>

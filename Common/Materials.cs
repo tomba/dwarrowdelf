@@ -14,9 +14,6 @@ namespace Dwarrowdelf
 		// Alloys
 		Steel,
 
-		// Native Metals
-		NativeGold,
-
 		// Pure Metals
 		Iron,
 		Gold,
@@ -32,6 +29,7 @@ namespace Dwarrowdelf
 
 		// Minerals
 		Magnetite,
+		NativeGold,
 
 		// Gems (minerals)
 		Diamond,
@@ -52,7 +50,6 @@ namespace Dwarrowdelf
 		Undefined,
 		Wood,
 		Rock,
-		NativeMetal,
 		Metal,
 		Gem,
 		Mineral,

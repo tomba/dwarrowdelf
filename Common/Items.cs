@@ -16,7 +16,6 @@ namespace Dwarrowdelf
 		Food,
 		Drink,
 		Rock,
-		Nugget,
 		Ore,
 		Gem,
 		UncutGem,

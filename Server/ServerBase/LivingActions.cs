@@ -236,10 +236,6 @@ namespace Dwarrowdelf.Server
 					itemType = ItemType.Ore;
 					break;
 
-				case MaterialClass.NativeMetal:
-					itemType = ItemType.Nugget;
-					break;
-
 				case MaterialClass.Gem:
 					itemType = ItemType.UncutGem;
 					break;
