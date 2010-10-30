@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 
 		void MinTickTimerCallback(object stateInfo)
 		{
-			VDbg("MinTickTimerCallback");
+			trace.TraceVerbose("MinTickTimerCallback");
 			m_minTickTimerTriggered = true;
 			Thread.MemoryBarrier();
 			SignalWorld();
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 
 		void MaxMoveTimerCallback(object stateInfo)
 		{
-			VDbg("MaxMoveTimerCallback");
+			trace.TraceVerbose("MaxMoveTimerCallback");
 			m_maxMoveTimerTriggered = true;
 			Thread.MemoryBarrier();
 			SignalWorld();
@@ -135,13 +135,9 @@ namespace Dwarrowdelf.Server
 
 		void PreTickWork()
 		{
-			//MyDebug.WriteLine("-- Pretick {0} events --", m_tickNumber + 1);
-
 			m_preTickInvokeList.ProcessInvokeList();
 			ProcessAddLivingList();
 			ProcessRemoveLivingList();
-
-			//MyDebug.WriteLine("-- Pretick {0} events done --", m_tickNumber + 1);
 		}
 
 		bool WorkAvailable()
@@ -150,7 +146,7 @@ namespace Dwarrowdelf.Server
 
 			if (m_instantInvokeList.HasInvokeWork)
 			{
-				VDbg("WorkAvailable: InstantInvoke");
+				trace.TraceVerbose("WorkAvailable: InstantInvoke");
 				return true;
 			}
 
@@ -158,25 +154,25 @@ namespace Dwarrowdelf.Server
 			{
 				if (m_preTickInvokeList.HasInvokeWork)
 				{
-					VDbg("WorkAvailable: PreTickInvoke");
+					trace.TraceVerbose("WorkAvailable: PreTickInvoke");
 					return true;
 				}
 
 				if (this.HasAddLivings)
 				{
-					VDbg("WorkAvailable: AddLiving");
+					trace.TraceVerbose("WorkAvailable: AddLiving");
 					return true;
 				}
 
 				if (this.HasRemoveLivings)
 				{
-					VDbg("WorkAvailable: RemoveLiving");
+					trace.TraceVerbose("WorkAvailable: RemoveLiving");
 					return true;
 				}
 
 				if (IsTimeToStartTick())
 				{
-					VDbg("WorkAvailable: IsTimeToStartTick");
+					trace.TraceVerbose("WorkAvailable: IsTimeToStartTick");
 					return true;
 				}
 
@@ -217,7 +213,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(m_state == WorldState.TickOngoing);
 			Debug.Assert(m_userList.All(u => u.StartTurnSent));
 
-			VDbg("SimultaneousWork");
+			trace.TraceVerbose("SimultaneousWork");
 
 			bool forceMove = IsMoveForced();
 
@@ -234,7 +230,7 @@ namespace Dwarrowdelf.Server
 
 			m_state = WorldState.TickDone;
 
-			VDbg("SimultaneousWork Done");
+			trace.TraceVerbose("SimultaneousWork Done");
 		}
 
 
@@ -246,19 +242,19 @@ namespace Dwarrowdelf.Server
 
 			if (RemoveLivingListContains(this.CurrentLiving))
 			{
-				VDbg("WorkAvailable: Current living is to be removed");
+				trace.TraceVerbose("WorkAvailable: Current living is to be removed");
 				return true;
 			}
 
 			if (this.CurrentLiving.HasAction)
 			{
-				VDbg("WorkAvailable: Living.HasAction");
+				trace.TraceVerbose("WorkAvailable: Living.HasAction");
 				return true;
 			}
 
 			if (this.UseMaxMoveTime && m_maxMoveTimerTriggered)
 			{
-				VDbg("WorkAvailable: NextMoveTime");
+				trace.TraceVerbose("WorkAvailable: NextMoveTime");
 				return true;
 			}
 
@@ -272,13 +268,13 @@ namespace Dwarrowdelf.Server
 
 			bool forceMove = IsMoveForced();
 
-			VDbg("SequentialWork");
+			trace.TraceVerbose("SequentialWork");
 
 			while (true)
 			{
 				if (m_livingList.Count == 0)
 				{
-					VDbg("no livings to handled");
+					trace.TraceVerbose("no livings to handled");
 					m_state = WorldState.TickDone;
 					break;
 				}
@@ -304,13 +300,13 @@ namespace Dwarrowdelf.Server
 				}
 				else
 				{
-					VDbg("last living handled");
+					trace.TraceVerbose("last living handled");
 					m_state = WorldState.TickDone;
 					break;
 				}
 			}
 
-			VDbg("SequentialWork Done");
+			trace.TraceVerbose("SequentialWork Done");
 		}
 
 		void StartTick()
@@ -320,7 +316,7 @@ namespace Dwarrowdelf.Server
 			this.TickNumber++;
 			AddChange(new TickStartChange(this.TickNumber));
 
-			Debug.Print("-- Tick {0} started --", this.TickNumber);
+			trace.TraceInformation("-- Tick {0} started --", this.TickNumber);
 
 			m_state = WorldState.TickOngoing;
 
@@ -386,7 +382,7 @@ namespace Dwarrowdelf.Server
 				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
 			}
 
-			Debug.Print("-- Tick {0} ended --", this.TickNumber);
+			trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;
 		}
 	}

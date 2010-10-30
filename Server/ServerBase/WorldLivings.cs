@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Server
 			lock (m_addLivingList)
 			{
 				if (m_addLivingList.Count > 0)
-					Debug.Print("Processing {0} add livings", m_addLivingList.Count);
+					trace.TraceInformation("Processing {0} add livings", m_addLivingList.Count);
 				foreach (var living in m_addLivingList)
 				{
 					Debug.Assert(!m_livingList.Contains(living));
@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Server
 			lock (m_removeLivingList)
 			{
 				if (m_removeLivingList.Count > 0)
-					Debug.Print("Processing {0} remove livings", m_removeLivingList.Count);
+					trace.TraceInformation("Processing {0} remove livings", m_removeLivingList.Count);
 				foreach (var living in m_removeLivingList)
 				{
 					bool removed = m_livingList.Remove(living);

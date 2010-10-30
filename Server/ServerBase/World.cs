@@ -50,12 +50,12 @@ namespace Dwarrowdelf.Server
 
 		public IArea Area { get; private set; }
 
+		TraceSource trace = new TraceSource("Dwarrowdelf.Server.World");
+
 		// only for debugging
 		public bool IsWritable { get; private set; }
 
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
-
-		bool m_verbose = false;
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
 		int m_objectIDcounter;
@@ -72,13 +72,6 @@ namespace Dwarrowdelf.Server
 
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
-
-		[System.Diagnostics.Conditional("DEBUG")]
-		void VDbg(string format, params object[] args)
-		{
-			if (m_verbose)
-				Debug.Print(format, args);
-		}
 
 		public World(IArea area)
 		{
@@ -136,7 +129,7 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
-			Debug.Print("WorldMain");
+			trace.TraceInformation("WorldMain");
 
 			Init();
 
@@ -158,7 +151,7 @@ namespace Dwarrowdelf.Server
 
 			m_worldLogger.Stop();
 
-			Debug.Print("WorldMain end");
+			trace.TraceInformation("WorldMain end");
 		}
 
 		void VerifyAccess()
@@ -196,7 +189,7 @@ namespace Dwarrowdelf.Server
 		// thread safe
 		public void SignalWorld()
 		{
-			VDbg("SignalWorld");
+			trace.TraceVerbose("SignalWorld");
 			m_worldSignal.Set();
 		}
 
