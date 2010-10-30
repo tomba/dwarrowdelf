@@ -39,6 +39,8 @@ namespace Dwarrowdelf
 
 	public interface IEnvironment : IGameObject
 	{
+		IntCuboid Bounds { get; }
+
 		FloorID GetFloorID(IntPoint3D l);
 		MaterialID GetFloorMaterialID(IntPoint3D l);
 
@@ -51,7 +53,7 @@ namespace Dwarrowdelf
 		InteriorInfo GetInterior(IntPoint3D l);
 		MaterialInfo GetInteriorMaterial(IntPoint3D l);
 
-		IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p);
+		TileData GetTileData(IntPoint3D l);
 	}
 
 	public interface ILiving : IGameObject

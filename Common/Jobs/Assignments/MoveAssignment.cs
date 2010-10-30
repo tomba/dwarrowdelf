@@ -136,13 +136,15 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			var task1 = new Task(delegate
 			{
-				res1 = AStar.AStar3D.Find(m_dest, m_positioning, worker.Location, Positioning.Exact, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+				res1 = AStar.AStar3D.Find(m_dest, m_positioning, worker.Location, Positioning.Exact, l => 0,
+					l => EnvironmentHelpers.GetDirectionsFrom(m_environment, l), 200000, cts.Token);
 			});
 			task1.Start();
 
 			var task2 = new Task(delegate
 			{
-				res2 = AStar.AStar3D.Find(worker.Location, Positioning.Exact, m_dest, m_positioning, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+				res2 = AStar.AStar3D.Find(worker.Location, Positioning.Exact, m_dest, m_positioning, l => 0,
+					l => EnvironmentHelpers.GetDirectionsFrom(m_environment, l), 200000, cts.Token);
 			}
 			);
 			task2.Start();

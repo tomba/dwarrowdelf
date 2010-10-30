@@ -476,59 +476,13 @@ namespace Dwarrowdelf.Server
 			return !dstInter.Blocker && dstFloor.IsCarrying;
 		}
 
-		bool CanMoveTo(IntPoint3D srcLoc, IntPoint3D dstLoc)
-		{
-			if (!this.Bounds.Contains(dstLoc))
-				return false;
-
-			IntVector3D v = dstLoc - srcLoc;
-
-			if (!v.IsNormal)
-				throw new Exception();
-
-			var dstInter = GetInterior(dstLoc);
-			var dstFloor = GetFloor(dstLoc);
-
-			if (dstInter.Blocker || !dstFloor.IsCarrying)
-				return false;
-
-			if (v.Z == 0)
-				return true;
-
-			Direction dir = v.ToDirection();
-
-			var srcInter = GetInterior(srcLoc);
-			var srcFloor = GetFloor(srcLoc);
-
-			if (dir == Direction.Up)
-				return srcInter.ID == InteriorID.Stairs && dstFloor.ID == FloorID.Hole;
-
-			if (dir == Direction.Down)
-				return dstInter.ID == InteriorID.Stairs && srcFloor.ID == FloorID.Hole;
-
-			var d2d = v.ToIntVector().ToDirection();
-
-			if (dir.ContainsUp())
-			{
-				var tileAboveSlope = GetTileData(srcLoc + Direction.Up);
-				return d2d.IsCardinal() && srcFloor.ID.IsSlope() && srcFloor.ID == d2d.ToSlope() && tileAboveSlope.IsEmpty;
-			}
-
-			if (dir.ContainsDown())
-			{
-				var tileAboveSlope = GetTileData(dstLoc + Direction.Up);
-				return d2d.IsCardinal() && dstFloor.ID.IsSlope() && dstFloor.ID == d2d.Reverse().ToSlope() && tileAboveSlope.IsEmpty;
-			}
-
-			return false;
-		}
 
 		protected override bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
 			if (!this.Bounds.Contains(dstLoc))
 				return false;
 
-			return CanMoveTo(ob.Location, dstLoc);
+			return EnvironmentHelpers.CanMoveTo(this, ob.Location, dstLoc);
 		}
 
 		protected override void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
@@ -545,40 +499,9 @@ namespace Dwarrowdelf.Server
 			list.Add(child);
 		}
 
-		/* XXX some room for optimization... */
 		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
 		{
-			var env = this;
-
-			var inter = GetInterior(p);
-			var floor = GetFloor(p);
-
-			if (inter.Blocker || !floor.IsCarrying)
-				yield break;
-
-			foreach (var dir in DirectionExtensions.PlanarDirections)
-			{
-				var l = p + dir;
-				if (CanMoveTo(p, l))
-					yield return dir;
-			}
-
-			if (CanMoveTo(p, p + Direction.Up))
-				yield return Direction.Up;
-
-			if (CanMoveTo(p, p + Direction.Down))
-				yield return Direction.Down;
-
-			foreach (var dir in DirectionExtensions.CardinalDirections)
-			{
-				var d = dir | Direction.Down;
-				if (CanMoveTo(p, p + d))
-					yield return d;
-
-				d = dir | Direction.Up;
-				if (CanMoveTo(p, p + d))
-					yield return d;
-			}
+			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
 		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
