@@ -266,11 +266,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
-			Debug.WriteLine("DoRender");
+			//Debug.WriteLine("DoRender");
 
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
-				Debug.WriteLine("Create Render Target");
+				//Debug.WriteLine("Create Render Target");
 
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 
