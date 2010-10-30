@@ -42,8 +42,18 @@ namespace Dwarrowdelf
 		{
 			if (Debugger.IsAttached)
 				Debugger.Break();
-			
+
 			throw new Exception();
+		}
+
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
+		{
+			WriteLine(message);
+		}
+
+		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
+		{
+			WriteLine(String.Format(format, args));
 		}
 	}
 }
