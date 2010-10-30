@@ -28,7 +28,6 @@
     <DrawingSymbol ID="SlopeDownWest" Rotate="0">SlopeDownWest</DrawingSymbol>
     <DrawingSymbol ID="SlopeDownEast" Rotate="180">SlopeDownWest</DrawingSymbol>
 
-    <CharSymbol ID="Portal">○</CharSymbol>
     <DrawingSymbol ID="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
     <DrawingSymbol ID="Monster" X="10" Y="20" W="80" H="60">Enemy_Bug</DrawingSymbol>
     <DrawingSymbol ID="Gem">Gem_Blue</DrawingSymbol>

@@ -331,10 +331,6 @@ namespace Dwarrowdelf.Client
 
 					break;
 
-				case InteriorID.Portal:
-					tile.SymbolID = SymbolID.Portal;
-					break;
-
 				case InteriorID.Sapling:
 					tile.SymbolID = SymbolID.Sapling;
 					tile.Color = GameColor.ForestGreen;

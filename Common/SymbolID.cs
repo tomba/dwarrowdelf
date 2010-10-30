@@ -19,7 +19,6 @@ namespace Dwarrowdelf
 		StairsUp,
 		StairsDown,
 		StairsUpDown,
-		Portal,
 
 		SlopeUpNorth,
 		SlopeUpSouth,

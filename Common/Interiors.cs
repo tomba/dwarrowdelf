@@ -11,7 +11,6 @@ namespace Dwarrowdelf
 		Empty,
 		NaturalWall,
 		Stairs,
-		Portal,
 		Sapling,
 		Tree,
 	}
@@ -62,7 +61,6 @@ namespace Dwarrowdelf
 		public static readonly InteriorInfo Empty = new InteriorInfo(InteriorID.Empty, false);
 		public static readonly InteriorInfo Wall = new InteriorInfo(InteriorID.NaturalWall, true);
 		public static readonly InteriorInfo Stairs = new InteriorInfo(InteriorID.Stairs, false);
-		public static readonly InteriorInfo Portal = new InteriorInfo(InteriorID.Portal, false);
 		public static readonly InteriorInfo Sapling = new InteriorInfo(InteriorID.Sapling, false);
 		public static readonly InteriorInfo Tree = new InteriorInfo(InteriorID.Tree, true);
 	}

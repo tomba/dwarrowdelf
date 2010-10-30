@@ -27,7 +27,6 @@
     <CharSymbol ID="SlopeDownWest" Outline="False">▼</CharSymbol>
     <CharSymbol ID="SlopeDownEast" Outline="False">▼</CharSymbol>
 
-    <CharSymbol ID="Portal">○</CharSymbol>
     <CharSymbol ID="Player">☺</CharSymbol>
     <CharSymbol ID="Monster">b</CharSymbol>
 

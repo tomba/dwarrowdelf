@@ -15,14 +15,10 @@ namespace MyArea
 	public class Area : IArea
 	{
 		Environment m_map1;
-		Environment m_map2;
 
 		public void InitializeWorld(World world)
 		{
 			m_map1 = CreateMap1(world);
-			m_map2 = CreateMap2(world);
-
-			//SerializeMap(m_map1);
 		}
 
 		void SerializeMap(Environment env)
@@ -64,51 +60,6 @@ namespace MyArea
 			var values = Enum.GetValues(typeof(T));
 			foreach (T val in values)
 				writer.WriteLine("\t{0}: {1}", val.ToString(), Enum.Format(typeof(T), val, "d"));
-		}
-
-		IntPoint3D m_portalLoc = new IntPoint3D(2, 4, 9);
-		IntPoint3D m_portalLoc2 = new IntPoint3D(1, 1, 0);
-
-		bool ActionHandler(ServerGameObject ob, GameAction action)
-		{
-			if (ob.Environment == m_map1 && ob.Location == m_portalLoc)
-			{
-				var a = action as MoveAction;
-
-				if (a == null)
-					return false;
-
-				if (a.Direction != Direction.Up && a.Direction != Direction.Down)
-					return false;
-
-				var dst = m_map2;
-				var dstPos = new IntPoint3D(0, 0, 0);
-
-				var ok = ob.MoveTo(dst, dstPos);
-
-				return ok;
-			}
-			else if (ob.Environment == m_map2 && ob.Location == m_portalLoc2)
-			{
-				var a = action as MoveAction;
-
-				if (a == null)
-					return false;
-
-				if (a.Direction != Direction.Up && a.Direction != Direction.Down)
-					return false;
-
-				var dst = m_map1;
-				var dstPos = new IntPoint3D(0, 0, 0);
-
-				var ok = ob.MoveTo(dst, dstPos);
-
-				return ok;
-			}
-			else
-			{
-				throw new Exception();
-			}
 		}
 
 		Random m_random = new Random(1234);
@@ -222,11 +173,6 @@ namespace MyArea
 			CreateSlopes(env);
 
 			CreateTrees(env);
-
-			/* create the portal */
-			m_portalLoc = GetRandomSurfaceLocation(env, surfaceLevel);
-			env.SetInterior(m_portalLoc, InteriorID.Portal, MaterialID.Steel);
-			env.SetActionHandler(m_portalLoc, ActionHandler);
 
 			for (int i = 0; i < 0; ++i)
 			{
@@ -488,23 +434,6 @@ namespace MyArea
 				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
 					CreateOreCluster(env, p + d, oreMaterialID, count - 1);
 			}
-		}
-
-		Environment CreateMap2(World world)
-		{
-			var env = new Environment(20, 20, 1, VisibilityMode.SimpleFOV);
-			env.Initialize(world);
-
-			foreach (var p in env.Bounds.Range())
-			{
-				env.SetInteriorID(p, InteriorID.Empty);
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
-			}
-
-			env.SetInterior(m_portalLoc2, InteriorID.Portal, MaterialID.Steel);
-			env.SetActionHandler(m_portalLoc2, ActionHandler);
-
-			return env;
 		}
 
 		GameColor GetRandomColor()
