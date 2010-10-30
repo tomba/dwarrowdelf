@@ -8,7 +8,7 @@ namespace Dwarrowdelf
 {
 	public interface IServer
 	{
-		void RunServer(bool isEmbedded, bool enableDebugPrint, EventWaitHandle serverStartWaitHandle,
+		void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle,
 			EventWaitHandle serverStopWaitHandle);
 	}
 }

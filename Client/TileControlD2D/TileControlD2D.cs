@@ -52,6 +52,8 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		bool m_invalidateRender;
 
+		TraceSource trace = new TraceSource("Dwarrowdelf.Render");
+
 		public TileControlD2D()
 		{
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
@@ -72,7 +74,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			//Debug.WriteLine("OnLoaded");
+			trace.TraceInformation("OnLoaded");
 
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
 				return;
@@ -93,7 +95,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void OnSizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			//Debug.WriteLine("OnSizeChanged({0})", e.NewSize);
+			trace.TraceInformation("OnSizeChanged({0})", e.NewSize);
 
 			UpdateSizes();
 
@@ -112,7 +114,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
-			//Debug.WriteLine("OnRender");
+			trace.TraceInformation("OnRender");
 
 			if (m_invalidateRender)
 			{
@@ -137,7 +139,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				if (value == m_tileSize)
 					return;
 
-				//Debug.WriteLine("TileSize = {0}", value);
+				trace.TraceInformation("TileSize = {0}", value);
 
 				m_tileSize = value;
 
@@ -185,7 +187,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 			var newOffset = new Point(dx, dy);
 
-			//Debug.WriteLine("UpdateOffset({0}, {1}) = {2}", this.RenderSize, m_tileSize, newOffset);
+			trace.TraceInformation("UpdateOffset({0}, {1}) = {2}", this.RenderSize, m_tileSize, newOffset);
 
 			if (m_offset != newOffset)
 			{
@@ -203,7 +205,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 			var newColumns = (int)Math.Ceiling(this.RenderSize.Width / m_tileSize) | 1;
 			var newRows = (int)Math.Ceiling(this.RenderSize.Height / m_tileSize) | 1;
 
-			//Debug.WriteLine("UpdateColumnsAndRows({0}) = {1}, {2}", this.RenderSize, newColumns, newRows);
+			trace.TraceInformation("UpdateColumnsAndRows({0}) = {1}, {2}", this.RenderSize, newColumns, newRows);
 
 			if (newColumns != m_columns || newRows != m_rows)
 			{
@@ -229,7 +231,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void SetPixelSize(uint width, uint height)
 		{
-			//Debug.WriteLine("SetPixelSize({0},{1})", width, height);
+			trace.TraceInformation("SetPixelSize({0},{1})", width, height);
 
 			m_interopImageSource.Lock();
 			// implicit render
@@ -266,11 +268,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		void DoRender(IntPtr pIDXGISurface)
 		{
-			//Debug.WriteLine("DoRender");
+			trace.TraceInformation("DoRender");
 
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
-				//Debug.WriteLine("Create Render Target");
+				trace.TraceInformation("Create Render Target");
 
 				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
 

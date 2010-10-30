@@ -12,16 +12,8 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public void RunServer(bool isEmbedded, bool enableDebugPrint,
-			EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
+		public void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
 		{
-			if (enableDebugPrint)
-			{
-				var debugListener = new MMLogTraceListener("Server");
-				Debug.Listeners.Clear();
-				Debug.Listeners.Add(debugListener);
-			}
-
 			Debug.Print("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);

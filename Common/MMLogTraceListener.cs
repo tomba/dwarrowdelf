@@ -63,11 +63,13 @@ namespace Dwarrowdelf
 
 	public static class TraceExtensions
 	{
+		[Conditional("TRACE")]
 		public static void TraceError(this TraceSource traceSource, string format, params object[] args)
 		{
 			traceSource.TraceEvent(TraceEventType.Error, 0, format, args);
 		}
 
+		[Conditional("TRACE")]
 		public static void TraceVerbose(this TraceSource traceSource, string format, params object[] args)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, format, args);

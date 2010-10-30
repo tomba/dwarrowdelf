@@ -40,24 +40,7 @@ namespace Dwarrowdelf.Client
 
 			base.OnStartup(e);
 
-#if DEBUG
-			bool debugClient = Dwarrowdelf.Client.Properties.Settings.Default.DebugClient;
-
-			if (debugClient)
-			{
-				var debugListener = new MMLogTraceListener("Client");
-				Debug.Listeners.Clear();
-				Debug.Listeners.Add(debugListener);
-			}
-#endif
-
-#if TRACE
-			var traceListener = new MMLogTraceListener("Client");
-			Trace.Listeners.Clear();
-			Trace.Listeners.Add(traceListener);
-#endif
-
-			Debug.Print("Start");
+			Trace.TraceInformation("Start");
 
 			int magic = 0;
 			GameAction.MagicNumberGenerator = () => Math.Abs(Interlocked.Increment(ref magic));
@@ -126,16 +109,24 @@ namespace Dwarrowdelf.Client
 			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 			Thread.CurrentThread.Name = "Main";
 
-			AppDomain domain = AppDomain.CreateDomain("ServerDomain");
+			var di = AppDomain.CurrentDomain.SetupInformation;
+
+			var domainSetup = new AppDomainSetup()
+			{
+				ApplicationBase = di.ApplicationBase,
+				ConfigurationFile = di.ApplicationBase + "Server.exe.config",
+			};
+
+			AppDomain domain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
+
+			var das = domain.SetupInformation;
 
 			string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			path = System.IO.Path.GetDirectoryName(path);
 			path = System.IO.Path.Combine(path, "Server.exe");
 
-			bool debugServer = Dwarrowdelf.Client.Properties.Settings.Default.DebugServer;
-
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "Dwarrowdelf.Server.Server");
-			m_server.RunServer(true, debugServer, m_serverStartWaitHandle, m_serverStopWaitHandle);
+			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);
 		}
