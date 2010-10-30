@@ -129,6 +129,22 @@ namespace MyArea
 			return p;
 		}
 
+		IntPoint3D GetRandomSubterraneanLocation(Environment env)
+		{
+			IntPoint3D p;
+			int iter = 0;
+
+			do
+			{
+				if (iter++ > 10000)
+					throw new Exception();
+
+				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), m_random.Next(env.Depth));
+			} while (env.GetInteriorID(p) != InteriorID.NaturalWall);
+
+			return p;
+		}
+
 		void FillTile(Environment env, IntPoint3D p, MaterialID material)
 		{
 			env.SetInterior(p, InteriorID.NaturalWall, material);
@@ -340,6 +356,13 @@ namespace MyArea
 				}
 			}
 
+			var oreMaterials = Materials.GetMaterials(MaterialClass.Gem).Concat(Materials.GetMaterials(MaterialClass.Mineral)).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 30; ++i)
+			{
+				var p = GetRandomSubterraneanLocation(env);
+				var idx = m_random.Next(oreMaterials.Length);
+				CreateOreCluster(env, p, oreMaterials[idx]);
+			}
 
 			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(2, 6, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
@@ -377,7 +400,7 @@ namespace MyArea
 			return env;
 		}
 
-		private void CreateTrees(Environment env)
+		void CreateTrees(Environment env)
 		{
 			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
 
@@ -393,7 +416,7 @@ namespace MyArea
 			}
 		}
 
-		private static void CreateSlopes(Environment env)
+		static void CreateSlopes(Environment env)
 		{
 			/*
 			 * su t
@@ -429,15 +452,42 @@ namespace MyArea
 			}
 		}
 
-		void ClearTile(Environment env, IntPoint3D p)
+		static void ClearTile(Environment env, IntPoint3D p)
 		{
 			env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
-		void ClearInside(Environment env, IntPoint3D p)
+		static void ClearInside(Environment env, IntPoint3D p)
 		{
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+		}
+
+		void CreateOreCluster(Environment env, IntPoint3D p, MaterialID oreMaterialID)
+		{
+			CreateOreCluster(env, p, oreMaterialID, m_random.Next(6) + 1);
+		}
+
+		static void CreateOreCluster(Environment env, IntPoint3D p, MaterialID oreMaterialID, int count)
+		{
+			if (!env.Bounds.Contains(p))
+				return;
+
+			var interID = env.GetInteriorID(p);
+			if (interID != InteriorID.NaturalWall)
+				return;
+
+			var interMat = env.GetInteriorMaterialID(p);
+			if (interMat == oreMaterialID)
+				return;
+
+			env.SetInterior(p, InteriorID.NaturalWall, oreMaterialID);
+
+			if (count > 0)
+			{
+				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
+					CreateOreCluster(env, p + d, oreMaterialID, count - 1);
+			}
 		}
 
 		Environment CreateMap2(World world)
