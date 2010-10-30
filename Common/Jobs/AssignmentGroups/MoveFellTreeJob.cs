@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_location = location;
 
 			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, m_environment, m_location, true),
+				new MoveAssignment(this, priority, m_environment, m_location, Positioning.AdjacentPlanar),
 				new FellTreeAssignment(this, priority, m_environment, m_location),
 			});
 		}

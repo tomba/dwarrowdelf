@@ -21,6 +21,13 @@ namespace Dwarrowdelf.Client
 			return String.Format("Item({0})", this.ObjectID.Value);
 		}
 
+		object m_reservedBy;
+		public object ReservedBy
+		{
+			get { return m_reservedBy; }
+			set { m_reservedBy = value; Notify("ReservedBy"); }
+		}
+
 		public ItemInfo ItemInfo { get; private set; }
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
 		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }

@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 		Undefined,
 		Empty,
 		NaturalFloor,
-		Hole,
+		Hole,	// used for stairs down
 		SlopeNorth,
 		SlopeSouth,
 		SlopeWest,

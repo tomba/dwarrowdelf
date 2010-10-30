@@ -136,5 +136,10 @@ namespace Dwarrowdelf.Client
 
 			return false;
 		}
+
+		public override string ToString()
+		{
+			return String.Format("Stockpile({0})", this.StockpileType);
+		}
 	}
 }

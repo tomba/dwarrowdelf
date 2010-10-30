@@ -34,6 +34,16 @@ namespace Dwarrowdelf
 		SouthEast = South | East,
 	}
 
+	public enum Positioning
+	{
+		Exact,
+		AdjacentCardinal,
+		AdjacentPlanar,
+		AdjacentCardinalUpDown,
+		AdjacentPlanarUpDown,
+		Adjacent,
+	}
+
 	public static class DirectionExtensions
 	{
 		/// <summary>
@@ -52,6 +62,10 @@ namespace Dwarrowdelf
 		/// Cardinal + Up & Down (6)
 		/// </summary>
 		public static readonly ReadOnlyCollection<Direction> CardinalUpDownDirections;
+		/// <summary>
+		/// Planar Directions + Up & Down (10)
+		/// </summary>
+		public static readonly ReadOnlyCollection<Direction> PlanarUpDownDirections;
 
 		static DirectionExtensions()
 		{
@@ -88,6 +102,19 @@ namespace Dwarrowdelf
 				Direction.Up,
 				Direction.Down,
 			});
+
+			PlanarUpDownDirections = Array.AsReadOnly(new Direction[] {
+				Direction.North,
+				Direction.NorthEast,
+				Direction.East,
+				Direction.SouthEast,
+				Direction.South,
+				Direction.SouthWest,
+				Direction.West,
+				Direction.NorthWest,
+				Direction.Up,
+				Direction.Down,
+	});
 		}
 
 		public static Direction Reverse(this Direction dir)
@@ -109,6 +136,26 @@ namespace Dwarrowdelf
 		public static bool IsCardinal(this Direction dir)
 		{
 			return dir == Direction.North || dir == Direction.East || dir == Direction.South || dir == Direction.West;
+		}
+
+		public static bool IsIntercardinal(this Direction dir)
+		{
+			return dir == Direction.NorthEast || dir == Direction.SouthEast || dir == Direction.SouthWest || dir == Direction.NorthWest;
+		}
+
+		public static bool IsPlanar(this Direction dir)
+		{
+			return IsCardinal(dir) || IsIntercardinal(dir);
+		}
+
+		public static bool IsCardinalUpDown(this Direction dir)
+		{
+			return IsCardinal(dir) || dir == Direction.Up || dir == Direction.Down;
+		}
+
+		public static bool IsPlanarUpDown(this Direction dir)
+		{
+			return IsPlanar(dir) || dir == Direction.Up || dir == Direction.Down;
 		}
 
 		public static bool ContainsUp(this Direction dir)

@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		IEnumerable<IntPoint3D> m_locs;
 
-		public MineAreaJob(IEnvironment env, ActionPriority priority, IntCuboid area)
+		public MineAreaJob(IEnvironment env, ActionPriority priority, IntCuboid area, MineActionType mineActionType)
 			: base(null, priority)
 		{
 			m_environment = env;
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			List<IAssignment> jobs = new List<IAssignment>();
 			foreach (var p in m_locs)
 			{
-				var job = new MoveMineJob(this, priority, env, p);
+				var job = new MoveMineJob(this, priority, env, p, mineActionType);
 				jobs.Add(job);
 			}
 

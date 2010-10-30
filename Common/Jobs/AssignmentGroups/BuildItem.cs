@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			var location = workplace.Area.Center;
 
 			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, env, location, false),
+				new MoveAssignment(this, priority, env, location, Positioning.Exact),
 				new BuildItemAssignment(this, priority, items, dstItemID),
 			});
 		}

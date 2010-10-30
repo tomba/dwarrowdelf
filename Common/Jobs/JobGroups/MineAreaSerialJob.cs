@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		IEnumerable<IntPoint3D> m_locs;
 
-		public MineAreaSerialJob(IEnvironment env, ActionPriority priority, IntCuboid area)
+		public MineAreaSerialJob(IEnvironment env, ActionPriority priority, IntCuboid area, MineActionType mineActionType)
 			: base(null, priority)
 		{
 			m_environment = env;
@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.NaturalWall);
 			foreach (var p in m_locs)
 			{
-				var job = new AssignmentGroups.MoveMineJob(this, priority, env, p);
+				var job = new AssignmentGroups.MoveMineJob(this, priority, env, p, mineActionType);
 				jobs.Add(job);
 			}
 			SetSubJobs(jobs);

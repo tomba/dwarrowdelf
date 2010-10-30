@@ -152,15 +152,23 @@ namespace Dwarrowdelf
 		}
 	}
 
+	public enum MineActionType
+	{
+		Mine,
+		Stairs,
+	}
+
 	[Serializable]
 	public class MineAction : GameAction
 	{
 		public Direction Direction { get; private set; }
+		public MineActionType MineActionType { get; private set; }
 
-		public MineAction(Direction dir, ActionPriority priority)
+		public MineAction(Direction dir, MineActionType mineActionType, ActionPriority priority)
 			: base(priority)
 		{
 			this.Direction = dir;
+			this.MineActionType = mineActionType;
 		}
 
 		protected override string GetParams()

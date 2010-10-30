@@ -10,20 +10,22 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public class MineAssignment : Assignment
 	{
 		readonly IntPoint3D m_location;
+		readonly MineActionType m_mineActionType;
 		readonly IEnvironment m_environment;
 
-		public MineAssignment(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location)
+		public MineAssignment(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
 			: base(job, priority)
 		{
 			m_environment = environment;
 			m_location = location;
+			m_mineActionType = mineActionType;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobState progress)
 		{
 			var v = m_location - this.Worker.Location;
 
-			if (!v.IsAdjacent2D)
+			if (!this.Worker.Location.IsAdjacentTo(m_location, Positioning.AdjacentPlanarUpDown))
 			{
 				progress = JobState.Fail;
 				return null;
@@ -35,7 +37,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return null;
 			}
 
-			var action = new MineAction(v.ToDirection(), this.Priority);
+			var action = new MineAction(v.ToDirection(), m_mineActionType, this.Priority);
 			progress = JobState.Ok;
 			return action;
 		}
@@ -63,7 +65,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobState CheckProgress()
 		{
-			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
+			if (m_environment.GetInterior(m_location).ID != InteriorID.NaturalWall) // XXX
 				return JobState.Done;
 			else
 				return JobState.Ok;

@@ -20,24 +20,24 @@ namespace Dwarrowdelf.Jobs.Assignments
 		readonly IEnvironment m_environment;
 		IntPoint3D m_dest;
 		readonly GetMoveTarget m_destFunc;
-		readonly bool m_adjacent;
+		readonly Positioning m_positioning;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, bool adjacent)
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, Positioning positioning)
 			: base(parent, priority)
 		{
 			m_environment = environment;
 			m_dest = destination;
-			m_adjacent = adjacent;
+			m_positioning = positioning;
 		}
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, GetMoveTarget destination, bool adjacent)
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, GetMoveTarget destination, Positioning positioning)
 			: base(parent, priority)
 		{
 			m_environment = environment;
 			m_destFunc = destination;
-			m_adjacent = adjacent;
+			m_positioning = positioning;
 		}
 
 		protected override void OnStateChanged(JobState state)
@@ -121,8 +121,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobState PreparePath(ILiving worker)
 		{
-			var v = m_dest - worker.Location;
-			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
+			if (worker.Location.IsAdjacentTo(m_dest, m_positioning))
 			{
 				m_pathDirs = null;
 				return JobState.Done;
@@ -137,13 +136,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			var task1 = new Task(delegate
 			{
-				res1 = AStar.AStar3D.Find(m_dest, worker.Location, true, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+				res1 = AStar.AStar3D.Find(m_dest, m_positioning, worker.Location, Positioning.Exact, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
 			});
 			task1.Start();
 
 			var task2 = new Task(delegate
 			{
-				res2 = AStar.AStar3D.Find(worker.Location, m_dest, !m_adjacent, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
+				res2 = AStar.AStar3D.Find(worker.Location, Positioning.Exact, m_dest, m_positioning, l => 0, m_environment.GetDirectionsFrom, 200000, cts.Token);
 			}
 			);
 			task2.Start();
@@ -157,16 +156,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			IEnumerable<Direction> dirs;
 
 			if (res1.Status == AStar.AStarStatus.Found)
-			{
 				dirs = res1.GetPathReverse();
-
-				if (m_adjacent)
-					dirs = dirs.Take(dirs.Count() - 1);
-			}
 			else if (res2.Status == AStar.AStarStatus.Found)
-			{
 				dirs = res2.GetPath();
-			}
 			else
 				dirs = null;
 
@@ -182,8 +174,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobState CheckProgress()
 		{
-			var v = m_dest - this.Worker.Location;
-			if ((m_adjacent && v.IsAdjacent2D) || (!m_adjacent && v.IsNull))
+			if (this.Worker.Location.IsAdjacentTo(m_dest, m_positioning))
 				return JobState.Done;
 			else
 				return JobState.Ok;

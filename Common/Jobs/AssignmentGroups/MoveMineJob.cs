@@ -13,15 +13,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		readonly IEnvironment m_environment;
 		readonly IntPoint3D m_location;
 
-		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
+		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
 			: base(parent, priority)
 		{
 			m_environment = environment;
 			m_location = location;
 
 			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, m_environment, m_location, true),
-				new MineAssignment(this, priority, m_environment, m_location),
+				new MoveAssignment(this, priority, m_environment, m_location, Positioning.AdjacentPlanarUpDown),
+				new MineAssignment(this, priority, m_environment, m_location, mineActionType),
 			});
 		}
 

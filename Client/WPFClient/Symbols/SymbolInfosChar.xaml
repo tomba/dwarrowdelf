@@ -8,12 +8,6 @@
     <CharSymbol ID="Grass" Outline="False">▒</CharSymbol>
     <CharSymbol ID="Wall" Opaque="True" Outline="False">▓</CharSymbol>
 
-    <!--
-    <CombinedSymbol ID="Ore" Opaque="False">
-        <CharSymbol Opaque="False" Outline="False" Color="Black" Reverse="True">▓</CharSymbol>
-        <CharSymbol Opaque="False" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
-    </CombinedSymbol>
-    -->
     <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
     <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60">☼</CharSymbol>
 

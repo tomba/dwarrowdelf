@@ -354,6 +354,12 @@ namespace Dwarrowdelf.Client
 		{
 			var env = this;
 
+			var inter = GetInterior(p);
+			var floor = GetFloor(p);
+
+			if (inter.Blocker || !floor.IsCarrying)
+				yield break;
+
 			foreach (var dir in DirectionExtensions.PlanarDirections)
 			{
 				var l = p + dir;

@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
 		{
-			//Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
+			Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
 		IEnumerator<IAssignment> m_enumerator;

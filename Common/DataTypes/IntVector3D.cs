@@ -74,6 +74,9 @@ namespace Dwarrowdelf
 
 		public IntVector3D Normalize()
 		{
+			if (this.IsNull)
+				return new IntVector3D();
+
 			double len = this.Length;
 			var x = (int)Math.Round(this.X / len);
 			var y = (int)Math.Round(this.Y / len);
@@ -218,30 +221,6 @@ namespace Dwarrowdelf
 			var v = new IntVector3D(x, y, 0);
 			v.FastRotate(rotate);
 			return v.ToDirection();
-		}
-
-		// XXX needs better name
-		public bool IsAdjacent
-		{
-			get
-			{
-				if (this.X <= 1 && this.X >= -1 && this.Y <= 1 && this.Y >= -1 && this.Z <= 1 && this.Z >= -1)
-					return true;
-				else
-					return false;
-			}
-		}
-
-		// XXX needs better name
-		public bool IsAdjacent2D
-		{
-			get
-			{
-				if (this.X <= 1 && this.X >= -1 && this.Y <= 1 && this.Y >= -1 && this.Z == 0)
-					return true;
-				else
-					return false;
-			}
 		}
 
 		public bool IsNull

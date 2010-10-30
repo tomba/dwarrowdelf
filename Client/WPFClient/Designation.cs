@@ -14,6 +14,7 @@ namespace Dwarrowdelf.Client
 	{
 		Mine,
 		FellTree,
+		CreateStairs,
 	}
 
 	abstract class Designation : IDrawableArea
@@ -84,9 +85,12 @@ namespace Dwarrowdelf.Client
 
 	class MineDesignation : Designation
 	{
-		public MineDesignation(Environment env, IntCuboid area)
+		MineActionType m_mineActionType;
+
+		public MineDesignation(Environment env, IntCuboid area, MineActionType mineActionType)
 			: base(env, DesignationType.Mine, area)
 		{
+			m_mineActionType = mineActionType;
 		}
 
 		protected override IJob CreateJob()
@@ -96,7 +100,7 @@ namespace Dwarrowdelf.Client
 			if (!anyWalls)
 				return null;
 
-			return new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area);
+			return new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area, m_mineActionType);
 		}
 	}
 

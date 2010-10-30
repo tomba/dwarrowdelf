@@ -220,37 +220,51 @@ namespace Dwarrowdelf.Server
 			if (this.ActionTicksLeft > 0)
 				return;
 
-			var material = this.Environment.GetInteriorMaterial(p);
-
-			this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-			ItemType itemType;
-
-			switch (material.MaterialClass)
+			switch (action.MineActionType)
 			{
-				case MaterialClass.Rock:
-					itemType = ItemType.Rock;
+				case MineActionType.Mine:
+					var material = this.Environment.GetInteriorMaterial(p);
+
+					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+					ItemType itemType;
+
+					switch (material.MaterialClass)
+					{
+						case MaterialClass.Rock:
+							itemType = ItemType.Rock;
+							break;
+
+						case MaterialClass.Mineral:
+							itemType = ItemType.Ore;
+							break;
+
+						case MaterialClass.Gem:
+							itemType = ItemType.UncutGem;
+							break;
+
+						default:
+							throw new Exception();
+					}
+
+					var item = new ItemObject(itemType, material.ID);
+
+					item.Initialize(this.World);
+
+					var ok = item.MoveTo(this.Environment, p);
+					if (!ok)
+						throw new Exception();
 					break;
 
-				case MaterialClass.Mineral:
-					itemType = ItemType.Ore;
-					break;
-
-				case MaterialClass.Gem:
-					itemType = ItemType.UncutGem;
+				case MineActionType.Stairs:
+					this.Environment.SetInteriorID(p, InteriorID.Stairs);
+					if (this.Environment.GetFloorID(p + Direction.Up) == FloorID.NaturalFloor)
+						this.Environment.SetFloorID(p + Direction.Up, FloorID.Hole);
 					break;
 
 				default:
 					throw new Exception();
 			}
-
-			var item = new ItemObject(itemType, material.ID);
-
-			item.Initialize(this.World);
-
-			var ok = item.MoveTo(this.Environment, p);
-			if (!ok)
-				throw new Exception();
 		}
 
 		void PerformFellTree(FellTreeAction action, out bool success)
@@ -264,7 +278,7 @@ namespace Dwarrowdelf.Server
 				if (this.ActionTicksLeft == 0)
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
-					this.Environment.SetInteriorID(p, InteriorID.Empty);
+					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 					var log = new ItemObject(ItemType.Log, material)
 					{
 						Name = "Log",

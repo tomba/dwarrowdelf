@@ -75,20 +75,17 @@ namespace Dwarrowdelf.AStar
 	public class AStarDefaultTarget : IAStarTarget
 	{
 		IntPoint3D m_destination;
-		bool m_exactLocation;
+		Positioning m_positioning;
 
-		public AStarDefaultTarget(IntPoint3D destination, bool exactLocation)
+		public AStarDefaultTarget(IntPoint3D destination, Positioning positioning)
 		{
 			m_destination = destination;
-			m_exactLocation = exactLocation;
+			m_positioning = positioning;
 		}
 
 		public bool GetIsTarget(IntPoint3D location)
 		{
-			if (m_exactLocation)
-				return location == m_destination;
-			else
-				return (location - m_destination).IsAdjacent2D;
+			return location.IsAdjacentTo(m_destination, m_positioning);
 		}
 
 		public ushort GetHeuristic(IntPoint3D location)
@@ -144,6 +141,7 @@ namespace Dwarrowdelf.AStar
 		{
 			public IAStarTarget Target;
 			public IntPoint3D Src;
+			public Positioning SrcPositioning;
 			public IOpenList<AStar3DNode> OpenList;
 			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
 			public Func<IntPoint3D, int> GetTileWeight;
@@ -154,21 +152,22 @@ namespace Dwarrowdelf.AStar
 		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
-			return Find(src, new AStarDelegateTarget(func), tileWeight, validDirs, maxNodeCount);
+			return Find(src, Positioning.Exact, new AStarDelegateTarget(func), tileWeight, validDirs, maxNodeCount);
 		}
 
-		public static AStar3DResult Find(IntPoint3D src, IntPoint3D dst, bool exactLocation, Func<IntPoint3D, int> tileWeight,
+		public static AStar3DResult Find(IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return Find(src, new AStarDefaultTarget(dst, exactLocation), tileWeight, validDirs, maxNodeCount, cancellationToken);
+			return Find(src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), tileWeight, validDirs, maxNodeCount, cancellationToken);
 		}
 
-		public static AStar3DResult Find(IntPoint3D src, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
+		public static AStar3DResult Find(IntPoint3D src, Positioning srcPositioning, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
 			{
 				Src = src,
+				SrcPositioning = srcPositioning,
 				Target = target,
 				GetTileWeight = tileWeight,
 				GetValidDirs = validDirs,
@@ -191,9 +190,43 @@ namespace Dwarrowdelf.AStar
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
 
-			var node = new AStar3DNode(state.Src, null);
-			openList.Add(node);
-			nodeMap.Add(state.Src, node);
+			IEnumerable<IntPoint3D> startLocations;
+
+			switch (state.SrcPositioning)
+			{
+				case Positioning.Exact:
+					startLocations = new IntPoint3D[] { state.Src };
+					break;
+
+				case Positioning.AdjacentCardinal:
+					startLocations = DirectionExtensions.CardinalDirections.Select(d => state.Src + d);
+					break;
+
+				case Positioning.AdjacentPlanar:
+					startLocations = DirectionExtensions.PlanarDirections.Select(d => state.Src + d);
+					break;
+
+				case Positioning.AdjacentCardinalUpDown:
+					startLocations = DirectionExtensions.CardinalUpDownDirections.Select(d => state.Src + d);
+					break;
+
+				case Positioning.AdjacentPlanarUpDown:
+					startLocations = DirectionExtensions.PlanarUpDownDirections.Select(d => state.Src + d);
+					break;
+
+				case Positioning.Adjacent:
+					throw new NotImplementedException();
+
+				default:
+					throw new Exception();
+			}
+
+			foreach (var p in startLocations)
+			{
+				var node = new AStar3DNode(p, null);
+				openList.Add(node);
+				nodeMap.Add(p, node);
+			}
 
 			while (!openList.IsEmpty)
 			{
@@ -203,7 +236,7 @@ namespace Dwarrowdelf.AStar
 					break;
 				}
 
-				node = openList.Pop();
+				var node = openList.Pop();
 				node.Closed = true;
 
 				if (state.Target.GetIsTarget(node.Loc))

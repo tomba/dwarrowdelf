@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_item = item;
 
 			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, item.Environment, item.Location, false),
+				new MoveAssignment(this, priority, item.Environment, item.Location, Positioning.Exact),
 				new GetItemAssignment(this, priority, item),
 				new ConsumeItemAssignment(this, priority, item),
 			});

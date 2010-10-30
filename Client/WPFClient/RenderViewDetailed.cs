@@ -351,9 +351,18 @@ namespace Dwarrowdelf.Client
 
 			if (showVirtualSymbols)
 			{
-				if (intID == InteriorID.Stairs && intID2 == InteriorID.Stairs)
+				if (intID2 == InteriorID.Stairs)
 				{
-					tile.SymbolID = SymbolID.StairsUpDown;
+					if (intID == InteriorID.Stairs)
+					{
+						tile.SymbolID = SymbolID.StairsUpDown;
+					}
+					else
+					{
+						tile.SymbolID = SymbolID.StairsDown;
+						var downMatInfo = env.GetInteriorMaterial(ml + Direction.Down);
+						tile.Color = downMatInfo.Color;
+					}
 				}
 			}
 		}

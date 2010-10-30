@@ -369,7 +369,7 @@ namespace Dwarrowdelf.Client
 				{
 					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
 					{
-						currentOb.RequestAction(new MineAction(dir, ActionPriority.Normal));
+						currentOb.RequestAction(new MineAction(dir, MineActionType.Mine, ActionPriority.Normal));
 					}
 					else
 					{
@@ -557,7 +557,7 @@ namespace Dwarrowdelf.Client
 					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
 						continue;
 
-					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p);
+					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p, MineActionType.Mine);
 					job.StateChanged += OnJobStateChanged;
 					this.Map.World.JobManager.Add(job);
 				}
@@ -581,7 +581,7 @@ namespace Dwarrowdelf.Client
 				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
 
-				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area);
+				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area, MineActionType.Mine);
 				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
@@ -590,7 +590,7 @@ namespace Dwarrowdelf.Client
 				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
 
-				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area);
+				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area, MineActionType.Mine);
 				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
@@ -599,7 +599,7 @@ namespace Dwarrowdelf.Client
 				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
 
-				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area);
+				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area, MineActionType.Mine);
 				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
@@ -608,7 +608,7 @@ namespace Dwarrowdelf.Client
 				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
-				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, false);
+				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, Positioning.Exact);
 				job.StateChanged += OnJobStateChanged;
 				this.Map.World.JobManager.Add(job);
 			}
@@ -921,11 +921,15 @@ namespace Dwarrowdelf.Client
 			switch (id)
 			{
 				case DesignationType.Mine:
-					designation = new MineDesignation(env, area);
+					designation = new MineDesignation(env, area, MineActionType.Mine);
 					break;
 
 				case DesignationType.FellTree:
 					designation = new FellTreeDesignation(env, area);
+					break;
+
+				case DesignationType.CreateStairs:
+					designation = new MineDesignation(env, area, MineActionType.Stairs);
 					break;
 
 				default:

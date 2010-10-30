@@ -20,10 +20,10 @@ namespace Dwarrowdelf.Client
 			this.Item = item;
 
 			var jobs = new IAssignment[] {
-				new MoveAssignment(this, ActionPriority.Normal, item.Environment, item.Location, false),
+				new MoveAssignment(this, ActionPriority.Normal, item.Environment, item.Location, Positioning.Exact),
 				new GetItemAssignment(this, ActionPriority.Normal, item),
-				new MoveAssignment(this, ActionPriority.Normal, stockpile.Environment, stockpile.Area.Center, false),
-				new MoveAssignment(this, ActionPriority.Normal, stockpile.Environment, stockpile.FindEmptyLocation, false),
+				new MoveAssignment(this, ActionPriority.Normal, stockpile.Environment, stockpile.Area.Center, Positioning.Exact),
+				new MoveAssignment(this, ActionPriority.Normal, stockpile.Environment, stockpile.FindEmptyLocation, Positioning.Exact),
 				new DropItemAssignment(this, ActionPriority.Normal, item),
 			};
 
