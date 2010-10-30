@@ -111,7 +111,11 @@ namespace Dwarrowdelf.Server
 		{
 			EnterWriteLock();
 
+			trace.TraceInformation("Initializing area");
+			var sw = Stopwatch.StartNew();
 			this.Area.InitializeWorld(this);
+			sw.Stop();
+			trace.TraceInformation("Initializing area took {0}", sw.Elapsed);
 
 			var envs = this.Environments;
 			foreach (var env in envs)

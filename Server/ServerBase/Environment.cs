@@ -531,6 +531,11 @@ namespace Dwarrowdelf.Server
 
 		public override void SerializeTo(Action<Messages.ServerMessage> writer)
 		{
+			writer(new Messages.MapDataStart()
+			{
+				Environment = this.ObjectID,
+			});
+
 			writer(new Messages.MapDataMessage()
 			{
 				Environment = this.ObjectID,
@@ -624,6 +629,11 @@ namespace Dwarrowdelf.Server
 					ObjectDatas = m_buildings.Select(b => b.Serialize()).ToArray(),
 				});
 			}
+
+			writer(new Messages.MapDataEnd()
+			{
+				Environment = this.ObjectID,
+			});
 		}
 
 		public override BaseGameObjectData Serialize()

@@ -11,7 +11,21 @@ namespace Dwarrowdelf.Client
 		IntCuboid m_bounds;
 
 		public GrowingTileGrid()
+			: this(new IntCuboid())
 		{
+		}
+
+		public GrowingTileGrid(IntCuboid bounds)
+		{
+			int nx = bounds.X;
+			int ny = bounds.Y;
+			int nz = bounds.Z;
+			int nw = bounds.Width;
+			int nh = bounds.Height;
+			int nd = bounds.Depth;
+
+			m_grid = new TileData[nd, nh, nw];
+			m_bounds = new IntCuboid(nx, ny, nz, nw, nh, nd);
 		}
 
 		int Align256(int x)

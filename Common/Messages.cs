@@ -17,6 +17,11 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
+	public abstract class InformativeMessage : ServerMessage
+	{
+	}
+
+	[Serializable]
 	public abstract class ClientMessage : Message
 	{
 	}
@@ -148,6 +153,18 @@ namespace Dwarrowdelf.Messages
 			return String.Format("ObjectDataArrayMessage for {0}",
 				String.Join(", ", this.ObjectDatas.Select(d => d.ObjectID.ToString())));
 		}
+	}
+
+	[Serializable]
+	public class MapDataStart : InformativeMessage
+	{
+		public ObjectID Environment { get; set; }
+	}
+
+	[Serializable]
+	public class MapDataEnd : InformativeMessage
+	{
+		public ObjectID Environment { get; set; }
 	}
 
 	[Serializable]

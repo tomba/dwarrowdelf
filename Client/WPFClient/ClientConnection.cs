@@ -222,6 +222,21 @@ namespace Dwarrowdelf.Client
 
 			ob.Deserialize(data);
 		}
+
+		DateTime m_mapDataStartTime;
+		void HandleMessage(MapDataStart msg)
+		{
+			m_mapDataStartTime = DateTime.Now;
+			Trace.TraceInformation("Map transfer start");
+		}
+
+		void HandleMessage(MapDataEnd msg)
+		{
+			var time = DateTime.Now - m_mapDataStartTime;
+
+			Trace.TraceInformation("Map transfer took {0}", time);
+		}
+
 		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
