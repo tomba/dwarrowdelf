@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.AStar
 {
@@ -254,6 +255,11 @@ namespace Dwarrowdelf.AStar
 					break;
 				}
 			}
+
+			if (status == AStarStatus.LimitExceeded)
+				Trace.TraceWarning("AStar3D: Limit Exceeded");
+			else if (status == AStarStatus.NotFound)
+				Trace.TraceWarning("AStar3D: Not Found");
 
 			return new AStar3DResult(nodeMap, lastNode, status);
 		}
