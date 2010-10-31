@@ -104,7 +104,7 @@ namespace MyArea
 
 		Environment CreateMap1(World world)
 		{
-			int sizeExp = 6;
+			int sizeExp = 7;
 			int size = (int)Math.Pow(2, sizeExp);
 
 			Grid2D<double> grid = new Grid2D<double>(size + 1, size + 1);
@@ -374,27 +374,31 @@ namespace MyArea
 			 *
 			 */
 
-			var locs = from s in env.Bounds.Range()
+			var bounds = env.Bounds;
+			var grid = env.TileGrid;
+
+			var locs = from s in bounds.Range()
 					   let su = s + Direction.Up
-					   where env.Bounds.Contains(su)
-					   where env.GetInteriorID(s) == InteriorID.Empty && env.GetFloorID(s) != FloorID.Empty
-					   where env.GetInteriorID(su) == InteriorID.Empty && env.GetFloorID(su) == FloorID.Empty
+					   where bounds.Contains(su)
+					   where grid.GetInteriorID(s) == InteriorID.Empty && grid.GetFloorID(s) != FloorID.Empty
+					   where grid.GetInteriorID(su) == InteriorID.Empty && grid.GetFloorID(su) == FloorID.Empty
 					   from d in DirectionExtensions.CardinalDirections
 					   let td = s + d
 					   let t = s + d + Direction.Up
-					   where env.Bounds.Contains(t)
-					   where env.GetInteriorID(td) == InteriorID.NaturalWall
-					   where env.GetInteriorID(t) == InteriorID.Empty && env.GetFloorID(t) != FloorID.Empty
+					   where bounds.Contains(t)
+					   where grid.GetInteriorID(td) == InteriorID.NaturalWall
+					   where grid.GetInteriorID(t) == InteriorID.Empty && grid.GetFloorID(t) != FloorID.Empty
 					   select new { Location = s, Direction = d };
 
 			foreach (var loc in locs)
 			{
 				if (DirectionExtensions.CardinalDirections
-					.Where(d => env.Bounds.Contains(loc.Location + d))
-					.All(d => env.GetInteriorID(loc.Location + d) != InteriorID.Empty))
+					.Where(d => bounds.Contains(loc.Location + d))
+					.All(d => grid.GetInteriorID(loc.Location + d) != InteriorID.Empty))
 					continue;
 
-				env.SetFloor(loc.Location, loc.Direction.ToSlope(), env.GetFloorMaterialID(loc.Location));
+				grid.SetFloorID(loc.Location, loc.Direction.ToSlope());
+				grid.SetFloorMaterialID(loc.Location, grid.GetFloorMaterialID(loc.Location));
 			}
 		}
 
