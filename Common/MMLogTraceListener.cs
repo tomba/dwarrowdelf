@@ -14,6 +14,8 @@ namespace Dwarrowdelf
 		{
 		}
 
+		public override bool IsThreadSafe { get { return true; } }
+
 		public MMLogTraceListener(string component)
 		{
 			m_component = component;
@@ -26,8 +28,8 @@ namespace Dwarrowdelf
 
 		public override void WriteLine(string message)
 		{
-			string thread = Thread.CurrentThread.Name;
-			MMLog.Append(m_component ?? "", thread ?? "", message);
+			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
+			MMLog.Append(m_component ?? "", thread, message);
 		}
 
 		public override void Fail(string message)

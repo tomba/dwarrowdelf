@@ -29,6 +29,50 @@ namespace Dwarrowdelf
 		void Disconnect();
 	}
 
+	class MyTraceSource : TraceSource
+	{
+		public string Header { get; set; }
+
+		public MyTraceSource(string name, string header = null)
+			: base(name)
+		{
+			this.Header = header;
+		}
+
+		[Conditional("TRACE")]
+		public void TraceError(string format, params object[] args)
+		{
+			Trace(TraceEventType.Error, format, args);
+		}
+
+		[Conditional("TRACE")]
+		public void TraceWarning(string format, params object[] args)
+		{
+			Trace(TraceEventType.Warning, format, args);
+		}
+
+		[Conditional("TRACE")]
+		public new void TraceInformation(string format, params object[] args)
+		{
+			Trace(TraceEventType.Information, format, args);
+		}
+
+		[Conditional("TRACE")]
+		public void TraceVerbose(string format, params object[] args)
+		{
+			Trace(TraceEventType.Verbose, format, args);
+		}
+
+		[Conditional("TRACE")]
+		void Trace(TraceEventType eventType, string format, params object[] args)
+		{
+			var sb = new StringBuilder(this.Header);
+			sb.Append(": ");
+			sb.AppendFormat(format, args);
+			TraceEvent(eventType, 0, sb.ToString());
+		}
+	}
+
 	public class Connection : IConnection
 	{
 		Socket m_socket;
@@ -47,12 +91,18 @@ namespace Dwarrowdelf
 		public event Action DisconnectEvent;
 		public event Action<Message> ReceiveEvent;
 
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+
 		public Connection()
 		{
 		}
 
 		public Connection(Socket client)
 		{
+			trace.Header = client.RemoteEndPoint.ToString();
+
+			trace.TraceInformation("New Connection");
+
 			if (client.Connected == false)
 				throw new Exception();
 
@@ -70,11 +120,21 @@ namespace Dwarrowdelf
 
 			m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-			m_socket.BeginConnect(IPAddress.Loopback, port, ConnectCallback, callback);
+			var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
+			m_socket.Bind(localEndPoint);
+
+			var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+			trace.Header = m_socket.LocalEndPoint.ToString();
+			trace.TraceInformation("BeginConnect to {0}", remoteEndPoint);
+
+			m_socket.BeginConnect(remoteEndPoint, ConnectCallback, callback);
 		}
 
 		void ConnectCallback(IAsyncResult ar)
 		{
+			trace.TraceInformation("ConnectCallback");
+
 			var callback = (Action)ar.AsyncState;
 			m_socket.EndConnect(ar);
 
@@ -87,7 +147,7 @@ namespace Dwarrowdelf
 		{
 			if (m_socket == null || !m_socket.Connected)
 			{
-				Debug.Print("Socket not connected");
+				trace.TraceWarning("BeginRead: Socket not connected");
 				return;
 			}
 
@@ -98,7 +158,7 @@ namespace Dwarrowdelf
 		{
 			if (m_socket == null || !m_socket.Connected)
 			{
-				Debug.Print("Socket not connected");
+				trace.TraceWarning("ReadCallback: Socket not connected");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
 				return;
@@ -109,11 +169,11 @@ namespace Dwarrowdelf
 
 			m_recvStream.WriteNotify(len);
 
-			//MyDebug.WriteLine("[RX] {0} bytes", len);
+			trace.TraceVerbose("[RX] {0} bytes", len);
 
 			if (len == 0)
 			{
-				Debug.Print("socket disconnected");
+				trace.TraceWarning("ReadCallback: empty read");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
 				return;
@@ -139,7 +199,7 @@ namespace Dwarrowdelf
 						m_expectedLen = reader.ReadInt32() - 8;
 					}
 
-					//MyDebug.WriteLine("[RX] Expecting msg of {0} bytes", m_expectedLen);
+					trace.TraceVerbose("[RX] Expecting msg of {0} bytes", m_expectedLen);
 
 					if (m_recvStream.UsedBytes < m_expectedLen && m_expectedLen > m_recvStream.FreeBytes)
 						throw new Exception("message bigger than the receive buffer");
@@ -154,7 +214,7 @@ namespace Dwarrowdelf
 					this.ReceivedMessages++;
 					this.ReceivedBytes += m_expectedLen + 8;
 
-					//MyDebug.WriteLine("[RX] {0} bytes, {1}", m_expectedLen, msg);
+					trace.TraceVerbose("[RX] {0} bytes, {1}", m_expectedLen, msg);
 					if (ReceiveEvent != null)
 						ReceiveEvent(msg);
 
@@ -162,7 +222,7 @@ namespace Dwarrowdelf
 				}
 				else
 				{
-					//MyDebug.WriteLine("[RX] {0} != {1}", m_expectedLen, m_recvStream.UsedBytes);
+					trace.TraceVerbose("[RX] {0} != {1}", m_expectedLen, m_recvStream.UsedBytes);
 					break;
 				}
 			}
@@ -172,6 +232,8 @@ namespace Dwarrowdelf
 
 		public void Disconnect()
 		{
+			trace.TraceInformation("Disconnect");
+
 			m_socket.Shutdown(SocketShutdown.Both);
 			m_socket.Close();
 			m_socket = null;
@@ -179,7 +241,7 @@ namespace Dwarrowdelf
 
 		public void Send(Message msg)
 		{
-			//MyDebug.WriteLine("[TX] {0}", msg);
+			trace.TraceVerbose("[TX] {0}", msg);
 
 			int len;
 
@@ -191,7 +253,6 @@ namespace Dwarrowdelf
 					stream.Seek(8, SeekOrigin.Begin);
 					Serializer.Serialize(stream, msg);
 					len = (int)stream.Position;
-					//MyDebug.WriteLine("[TX] sending {0} bytes", len);
 
 					// Prepend the object data with magic and object len
 					stream.Seek(0, SeekOrigin.Begin);
@@ -202,6 +263,7 @@ namespace Dwarrowdelf
 					}
 				}
 
+				trace.TraceVerbose("[TX] sending {0} bytes", len);
 				m_socket.Send(m_sendBuffer, 0, len, SocketFlags.None);
 
 				this.SentMessages++;
@@ -213,9 +275,12 @@ namespace Dwarrowdelf
 		static Socket s_listenSocket;
 		static ManualResetEvent s_acceptStopEvent;
 		volatile static bool s_stopListen;
+		static MyTraceSource s_trace = new MyTraceSource("Dwarrowdelf.Connection", "Connection");
 
 		public static void StartListening()
 		{
+			s_trace.TraceInformation("StartListening");
+
 			int port = 9999;
 
 			if (s_listenSocket != null)
@@ -235,6 +300,8 @@ namespace Dwarrowdelf
 
 		public static void StopListening()
 		{
+			s_trace.TraceInformation("StopListening");
+
 			if (s_listenSocket == null)
 				throw new Exception();
 
@@ -251,6 +318,8 @@ namespace Dwarrowdelf
 
 		static void AcceptCallback(IAsyncResult ar)
 		{
+			s_trace.TraceInformation("AcceptCallback");
+
 			var listenSocket = (Socket)ar.AsyncState;
 
 			if (s_stopListen)
