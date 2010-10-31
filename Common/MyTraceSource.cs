@@ -43,8 +43,8 @@ namespace Dwarrowdelf
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string format, params object[] args)
 		{
-			var sb = new StringBuilder(this.Header);
-			sb.Append(": ");
+			var sb = new StringBuilder();
+			sb.AppendFormat("[{0}] ", this.Header);
 			sb.AppendFormat(format, args);
 			TraceEvent(eventType, 0, sb.ToString());
 		}
