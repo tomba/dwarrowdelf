@@ -154,6 +154,10 @@ namespace Dwarrowdelf
 
 	public enum MineActionType
 	{
+		/// <summary>
+		/// Mine can be done for planar directions, and the roof of the mined tile stays,
+		/// or up, if the current tile has stairs
+		/// </summary>
 		Mine,
 		Stairs,
 	}

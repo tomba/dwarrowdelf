@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Client
 
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
-			if (m_job != null)
+			if (m_job != null && m_job.JobState == JobState.Ok)
 				yield return m_job;
 		}
 
@@ -79,14 +79,18 @@ namespace Dwarrowdelf.Client
 			switch (state)
 			{
 				case JobState.Ok:
-					return;
+					break;
 
 				case JobState.Done:
 					Abort();
-					return;
+					break;
 
 				case JobState.Abort:
+					job.Retry();
+					break;
+
 				case JobState.Fail:
+					Abort();
 					break;
 
 				default:
@@ -101,8 +105,8 @@ namespace Dwarrowdelf.Client
 
 			GameData.Data.Jobs.Remove(m_job);
 
-			m_job.Abort();
 			m_job.StateChanged -= OnJobStateChanged;
+			m_job.Abort();
 			m_job = null;
 
 			if (this.DesignationDone != null)

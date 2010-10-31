@@ -167,5 +167,12 @@ namespace Dwarrowdelf
 		{
 			return (dir & Direction.Down) != 0;
 		}
+
+		public static Direction ToPlanarDirection(this Direction dir)
+		{
+			int d = (int)dir;
+			d &= ~(DirectionConsts.Mask << DirectionConsts.ZShift);
+			return (Direction)d;
+		}
 	}
 }

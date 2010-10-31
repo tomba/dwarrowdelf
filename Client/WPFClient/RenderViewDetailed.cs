@@ -353,7 +353,7 @@ namespace Dwarrowdelf.Client
 					{
 						tile.SymbolID = SymbolID.StairsUpDown;
 					}
-					else
+					else if (intID == InteriorID.Empty)
 					{
 						tile.SymbolID = SymbolID.StairsDown;
 						var downMatInfo = env.GetInteriorMaterial(ml + Direction.Down);

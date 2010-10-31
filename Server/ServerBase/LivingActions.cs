@@ -223,6 +223,20 @@ namespace Dwarrowdelf.Server
 			switch (action.MineActionType)
 			{
 				case MineActionType.Mine:
+					if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
+					{
+						success = false;
+						Trace.TraceWarning("Mine: not Planar or Up direction");
+						return;
+					}
+
+					if (!EnvironmentHelpers.CanMoveFrom(this.Environment, this.Location, action.Direction))
+					{
+						success = false;
+						Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
+						return;
+					}
+
 					var material = this.Environment.GetInteriorMaterial(p);
 
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
@@ -257,6 +271,22 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case MineActionType.Stairs:
+					if (!action.Direction.IsPlanarUpDown())
+					{
+						success = false;
+						Trace.TraceWarning("MineStairs: not PlanarUpDown direction");
+						return;
+					}
+
+					// We can always create stairs down, but for other dirs we need access there
+					if (action.Direction != Direction.Down &&
+						!EnvironmentHelpers.CanMoveFrom(this.Environment, this.Location, action.Direction))
+					{
+						success = false;
+						Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
+						return;
+					}
+
 					this.Environment.SetInteriorID(p, InteriorID.Stairs);
 					if (this.Environment.GetFloorID(p + Direction.Up) == FloorID.NaturalFloor)
 						this.Environment.SetFloorID(p + Direction.Up, FloorID.Hole);

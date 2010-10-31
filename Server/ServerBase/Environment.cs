@@ -483,10 +483,7 @@ namespace Dwarrowdelf.Server
 
 		protected override bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
-			if (!this.Bounds.Contains(dstLoc))
-				return false;
-
-			return EnvironmentHelpers.CanMoveTo(this, ob.Location, dstLoc);
+			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
 		}
 
 		protected override void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
