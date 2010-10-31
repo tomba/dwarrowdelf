@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client
 			GameData.Data.World = null;
 		}
 
-		public void BeginConnect(Action callback)
+		public void BeginConnect(Action<string> callback)
 		{
 			m_connection.BeginConnect(callback);
 		}

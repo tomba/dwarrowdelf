@@ -353,7 +353,7 @@ namespace Dwarrowdelf.Client
 		void Window_PreKeyDown(object sender, KeyEventArgs e)
 		{
 			//MyDebug.WriteLine("OnMyKeyDown");
-			if (GameData.Data.Connection == null)
+			if (!GameData.Data.Connection.IsUserConnected)
 				return;
 
 			if (inputTextBox.IsFocused)
@@ -755,14 +755,27 @@ namespace Dwarrowdelf.Client
 		}
 
 		// in NetThread context
-		void ConnectCallback()
+		void ConnectCallback(string error)
 		{
 			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action(delegate
+
+			if (error != null)
+			{
+				app.Dispatcher.BeginInvoke(new Action(delegate
 				{
-					GameData.Data.Connection.Send(new Messages.LogOnRequestMessage() { Name = "tomba" });
-				}
+					m_loginDialog.Close();
+					m_loginDialog = null;
+					MessageBox.Show(error, "Connection Failed");
+				}), null);
+			}
+			else
+			{
+				app.Dispatcher.BeginInvoke(new Action(delegate
+					{
+						GameData.Data.Connection.Send(new Messages.LogOnRequestMessage() { Name = "tomba" });
+					}
 				), null);
+			}
 		}
 
 		private void LogOff_Button_Click(object sender, RoutedEventArgs e)

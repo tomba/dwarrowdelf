@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 		event Action DisconnectEvent;
 		event Action<Message> ReceiveEvent;
 
-		void BeginConnect(Action callback);
+		void BeginConnect(Action<string> callback);
 		void Send(Message msg);
 		void Disconnect();
 	}
@@ -111,7 +111,7 @@ namespace Dwarrowdelf
 			BeginRead();
 		}
 
-		public void BeginConnect(Action callback)
+		public void BeginConnect(Action<string> callback)
 		{
 			int port = 9999;
 
@@ -135,18 +135,35 @@ namespace Dwarrowdelf
 		{
 			trace.TraceInformation("ConnectCallback");
 
-			var callback = (Action)ar.AsyncState;
-			m_socket.EndConnect(ar);
+			var callback = (Action<string>)ar.AsyncState;
+			try
+			{
+				m_socket.EndConnect(ar);
+			}
+			catch (Exception e)
+			{
+				m_socket = null;
+				trace.TraceWarning("Connect failed: {0}", e.Message);
+				callback.Invoke(e.Message);
+				return;
+			}
 
-			callback.Invoke();
+			callback.Invoke(null);
 
 			BeginRead();
 		}
 
 		void BeginRead()
 		{
-			if (m_socket == null || !m_socket.Connected)
+			if (m_socket == null)
 			{
+				trace.TraceWarning("BeginRead: No socket");
+				return;
+			}
+
+			if (!m_socket.Connected)
+			{
+				m_socket = null;
 				trace.TraceWarning("BeginRead: Socket not connected");
 				return;
 			}
@@ -156,8 +173,17 @@ namespace Dwarrowdelf
 
 		void ReadCallback(IAsyncResult ar)
 		{
-			if (m_socket == null || !m_socket.Connected)
+			if (m_socket == null)
 			{
+				trace.TraceWarning("ReadCallback: No socket");
+				if (DisconnectEvent != null)
+					DisconnectEvent();
+				return;
+			}
+
+			if (!m_socket.Connected)
+			{
+				m_socket = null;
 				trace.TraceWarning("ReadCallback: Socket not connected");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
@@ -165,7 +191,17 @@ namespace Dwarrowdelf
 			}
 
 			var socket = (Socket)ar.AsyncState;
-			int len = socket.EndReceive(ar);
+			SocketError error;
+			int len = socket.EndReceive(ar, out error);
+
+			if (error != SocketError.Success)
+			{
+				m_socket = null;
+				trace.TraceWarning("ReadCallback: Socket error: {0}", error.ToString());
+				if (DisconnectEvent != null)
+					DisconnectEvent();
+				return;
+			}
 
 			m_recvStream.WriteNotify(len);
 
@@ -173,6 +209,8 @@ namespace Dwarrowdelf
 
 			if (len == 0)
 			{
+				m_socket.Close();
+				m_socket = null;
 				trace.TraceWarning("ReadCallback: empty read");
 				if (DisconnectEvent != null)
 					DisconnectEvent();
@@ -264,7 +302,21 @@ namespace Dwarrowdelf
 				}
 
 				trace.TraceVerbose("[TX] sending {0} bytes", len);
-				m_socket.Send(m_sendBuffer, 0, len, SocketFlags.None);
+				SocketError error;
+				int sent = m_socket.Send(m_sendBuffer, 0, len, SocketFlags.None, out error);
+
+				if (sent != len)
+				{
+					trace.TraceError("[TX]: Short send {0} != {1}", sent, len);
+					Disconnect();
+					return;
+				}
+				else if (error != SocketError.Success)
+				{
+					trace.TraceError("[TX]: error {0}", error);
+					Disconnect();
+					return;
+				}
 
 				this.SentMessages++;
 				this.SentBytes += len;
