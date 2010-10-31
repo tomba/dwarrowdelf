@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Client
 		ClientGameObject m_followObject;
 		bool m_closing;
 		DispatcherTimer m_timer;
+		ManualJobSource m_manualJobSource;
 
 		public MainWindow()
 		{
@@ -558,8 +559,7 @@ namespace Dwarrowdelf.Client
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p, MineActionType.Mine);
-					job.StateChanged += OnJobStateChanged;
-					this.Map.World.JobManager.Add(job);
+					m_manualJobSource.Add(job);
 				}
 			}
 			else if (tag == "FellTree")
@@ -572,8 +572,7 @@ namespace Dwarrowdelf.Client
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, env, p);
-					job.StateChanged += OnJobStateChanged;
-					this.Map.World.JobManager.Add(job);
+					m_manualJobSource.Add(job);
 				}
 			}
 			else if (tag == "MineArea")
@@ -582,8 +581,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area, MineActionType.Mine);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "MineAreaParallel")
 			{
@@ -591,8 +589,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area, MineActionType.Mine);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "MineAreaSerial")
 			{
@@ -600,8 +597,7 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area, MineActionType.Mine);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Goto")
 			{
@@ -609,20 +605,17 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, Positioning.Exact);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "RunInCircles")
 			{
 				var job = new Jobs.AssignmentGroups.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Loiter")
 			{
 				var job = new Jobs.AssignmentGroups.LoiterJob(null, ActionPriority.Normal, map.Environment);
-				job.StateChanged += OnJobStateChanged;
-				this.Map.World.JobManager.Add(job);
+				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Consume")
 			{
@@ -635,22 +628,12 @@ namespace Dwarrowdelf.Client
 				foreach (var c in consumables)
 				{
 					var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, ActionPriority.Normal, c);
-					job.StateChanged += OnJobStateChanged;
-					this.Map.World.JobManager.Add(job);
+					m_manualJobSource.Add(job);
 				}
 			}
 			else
 			{
 				throw new Exception();
-			}
-		}
-
-		void OnJobStateChanged(IJob job, JobState state)
-		{
-			if (state == JobState.Done)
-			{
-				job.StateChanged -= OnJobStateChanged;
-				this.Map.World.JobManager.Remove(job);
 			}
 		}
 
@@ -720,13 +703,6 @@ namespace Dwarrowdelf.Client
 
 				case "Fail":
 					job.Fail();
-					break;
-
-				case "Remove":
-					if (job.Parent != null)
-						return;
-
-					GameData.Data.World.JobManager.Remove(job);
 					break;
 
 				default:
@@ -800,6 +776,9 @@ namespace Dwarrowdelf.Client
 		{
 			m_loginDialog.Close();
 			m_loginDialog = null;
+
+			m_manualJobSource = new ManualJobSource(GameData.Data.World.JobManager);
+
 			// xxx autologin
 			//LogOnChar_Button_Click(null, null);
 		}

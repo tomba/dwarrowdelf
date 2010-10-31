@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 		CreateStairs,
 	}
 
-	abstract class Designation : IDrawableArea
+	abstract class Designation : IDrawableArea, IJobSource
 	{
 		public DesignationType Type { get; private set; }
 		public IntCuboid Area { get; private set; }
@@ -46,22 +46,52 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			m_job.PropertyChanged += OnJobPropertyChanged;
-			this.Environment.World.JobManager.Add(m_job);
+			m_job.StateChanged += OnJobStateChanged;
+
+			this.Environment.World.JobManager.AddJobSource(this);
+			GameData.Data.Jobs.Add(m_job);
 		}
 
 		protected abstract IJob CreateJob();
 
-		void OnJobPropertyChanged(object sender, PropertyChangedEventArgs e)
+		bool IJobSource.HasWork
 		{
-			if (e.PropertyName != "JobState")
-				return;
+			get
+			{
+				return m_job != null;
+			}
+		}
 
-			var job = (IJob)sender;
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		{
+			if (m_job != null)
+				yield return m_job;
+		}
+
+		void IJobSource.JobTaken(ILiving living, IJob job)
+		{
+		}
+
+		void OnJobStateChanged(IJob job, JobState state)
+		{
 			Debug.Assert(job == m_job);
 
-			if (job.JobState == JobState.Done)
-				Abort();
+			switch (state)
+			{
+				case JobState.Ok:
+					return;
+
+				case JobState.Done:
+					Abort();
+					return;
+
+				case JobState.Abort:
+				case JobState.Fail:
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public void Abort()
@@ -69,14 +99,16 @@ namespace Dwarrowdelf.Client
 			if (m_job == null)
 				return;
 
-			m_job.Abort();
-			this.Environment.World.JobManager.Remove(m_job);
-			m_job.PropertyChanged -= OnJobPropertyChanged;
+			GameData.Data.Jobs.Remove(m_job);
 
+			m_job.Abort();
+			m_job.StateChanged -= OnJobStateChanged;
 			m_job = null;
 
 			if (this.DesignationDone != null)
 				this.DesignationDone(this);
+
+			this.Environment.World.JobManager.RemoveJobSource(this);
 		}
 
 		public event Action<Designation> DesignationDone;

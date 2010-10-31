@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client
 
 	// XXX should be configurable for classes, subclasses and certain items...
 
-	class Stockpile : IDrawableArea
+	class Stockpile : IDrawableArea, IJobSource
 	{
 		public Environment Environment { get; private set; }
 		IntCuboid IDrawableArea.Area { get { return this.Area.ToCuboid(); } }
@@ -38,54 +38,77 @@ namespace Dwarrowdelf.Client
 			this.Area = area;
 			this.StockpileType = stockpileType;
 
-			this.Environment.World.TickStartEvent += World_TickStartEvent;
+			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
 		public void Destruct()
 		{
-			this.Environment.World.TickStartEvent -= World_TickStartEvent;
+			this.Environment.World.JobManager.RemoveJobSource(this);
 
 			foreach (var job in m_jobs)
 			{
 				job.Item.ReservedBy = null;
 				job.StateChanged -= OnJobStateChanged;
-				this.Environment.World.JobManager.Remove(job);
+				GameData.Data.Jobs.Remove(job);
 			}
 
 			m_jobs = null;
 		}
 
-		void World_TickStartEvent()
+		bool IJobSource.HasWork
 		{
-			Check();
+			get
+			{
+				return true; // XXX
+			}
 		}
 
-		void Check()
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
-			int numOfHaulersFree = 1;
-
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
 				.Where(o => o.ReservedBy == null)
 				.Where(o => Match(o))
-				.Where(o => { var sp = this.Environment.GetStockpileAt(o.Location); return !(sp != null && sp.Match(o)); }) // XXX
-				.Take(numOfHaulersFree);
+				.Where(o => { var sp = this.Environment.GetStockpileAt(o.Location); return !(sp != null && sp.Match(o)); }); // XXX
 
 			foreach (var ob in obs)
 			{
 				var job = new StoreToStockpileJob(this, ob);
-
-				ob.ReservedBy = this;
-				job.StateChanged += OnJobStateChanged;
-				this.Environment.World.JobManager.Add(job);
-				m_jobs.Add(job);
+				yield return job;
 			}
+		}
+
+		void IJobSource.JobTaken(ILiving living, IJob job)
+		{
+			var j = (StoreToStockpileJob)job;
+
+			j.Item.ReservedBy = this;
+			j.StateChanged += OnJobStateChanged;
+			m_jobs.Add(j);
+
+			GameData.Data.Jobs.Add(j);
+		}
+
+		void OnJobStateChanged(IJob job, JobState state)
+		{
+			var j = (StoreToStockpileJob)job;
+
+			if (state == JobState.Ok)
+			{
+				throw new Exception();
+			}
+
+			j.Item.ReservedBy = null;
+			job.StateChanged -= OnJobStateChanged;
+			m_jobs.Remove(j);
+
+			GameData.Data.Jobs.Remove(j);
 		}
 
 		public IntPoint3D FindEmptyLocation(out bool ok)
 		{
 			var env = this.Environment;
-			
+
 
 			for (int i = 0; i < 10; ++i)
 			{
@@ -100,19 +123,6 @@ namespace Dwarrowdelf.Client
 
 			ok = false;
 			return new IntPoint3D();
-		}
-
-		void OnJobStateChanged(IJob job, JobState state)
-		{
-			var j = (StoreToStockpileJob)job;
-
-			if (state == JobState.Done)
-			{
-				j.Item.ReservedBy = null;
-				job.StateChanged -= OnJobStateChanged;
-				this.Environment.World.JobManager.Remove(job);
-				m_jobs.Remove(j);
-			}
 		}
 
 		bool Match(ItemObject item)

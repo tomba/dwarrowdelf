@@ -8,34 +8,49 @@ using System.ComponentModel;
 
 namespace Dwarrowdelf.Jobs
 {
+	public interface IJobSource
+	{
+		bool HasWork { get; }
+		IEnumerable<IJob> GetJobs(ILiving living);
+		void JobTaken(ILiving living, IJob job);
+	}
+
 	public class JobManager
 	{
-		ObservableCollection<IJob> m_jobs;
-		public ReadOnlyObservableCollection<IJob> Jobs { get; private set; }
+		List<IJobSource> m_jobSources = new List<IJobSource>();
 
 		public JobManager(IWorld world)
 		{
-			m_jobs = new ObservableCollection<IJob>();
-			this.Jobs = new ReadOnlyObservableCollection<IJob>(m_jobs);
 		}
 
-		public void Add(IJob job)
+		public void AddJobSource(IJobSource jobSource)
 		{
-			Debug.Assert(job.Parent == null);
-			m_jobs.Add(job);
+			m_jobSources.Add(jobSource);
 		}
 
-		public void Remove(IJob job)
+		public void RemoveJobSource(IJobSource jobSource)
 		{
-			Debug.Assert(job.Parent == null);
-			if (job.JobState == JobState.Ok)
-				job.Abort();
-			m_jobs.Remove(job);
+			Debug.Assert(m_jobSources.Contains(jobSource));
+			m_jobSources.Remove(jobSource);
 		}
 
 		public IAssignment FindJob(ILiving living)
 		{
-			return FindJob(m_jobs, living);
+			foreach (var jobSource in m_jobSources.Where(js => js.HasWork))
+			{
+				var jobs = jobSource.GetJobs(living);
+				foreach (var job in jobs)
+				{
+					var assignment = FindAssignment(job, living);
+					if (assignment != null)
+					{
+						jobSource.JobTaken(living, job);
+						return assignment;
+					}
+				}
+			}
+
+			return null;
 		}
 
 		static IAssignment FindJob(IEnumerable<IJob> jobs, ILiving living)

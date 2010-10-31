@@ -298,7 +298,7 @@
 
                         <!-- Jobs -->
                         <ad:DockableContent Name="jobsContent" Title="Jobs" DataContext="{x:Static local:GameData.Data}">
-                            <TreeView Name="jobTreeView" ItemsSource="{Binding World.JobManager.Jobs}">
+                            <TreeView Name="jobTreeView" ItemsSource="{Binding Jobs}">
                                 <TreeView.Resources>
 
                                     <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
@@ -361,7 +361,6 @@
                                         <MenuItem Tag="Retry" Header="Retry" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
                                         <MenuItem Tag="Fail" Header="Fail" Click="MenuItem_Click_JobTreeView" />
-                                        <MenuItem Tag="Remove" Header="Remove" Click="MenuItem_Click_JobTreeView" />
                                     </ContextMenu>
                                 </TreeView.ContextMenu>
                             </TreeView>

@@ -23,6 +23,7 @@ namespace Dwarrowdelf.Client
 
 		public GameData()
 		{
+			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
@@ -94,6 +95,8 @@ namespace Dwarrowdelf.Client
 			if (GameData.Data.Connection.IsUserConnected && (bool)e.NewValue == true)
 				GameData.Data.Connection.SendProceedTurn();
 		}
+
+		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
 
 	}
 }

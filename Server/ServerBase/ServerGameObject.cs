@@ -49,6 +49,9 @@ namespace Dwarrowdelf.Server
 			if (!this.IsInitialized)
 				throw new Exception();
 
+			if (this.IsDestructed)
+				throw new Exception();
+
 			this.World.AddChange(new ObjectDestructedChange(this));
 			this.IsDestructed = true;
 			this.World.RemoveGameObject(this);

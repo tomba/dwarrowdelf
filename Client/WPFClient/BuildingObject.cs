@@ -9,16 +9,16 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableArea
+	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableArea, IJobSource
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
-	
+
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		IntCuboid IDrawableArea.Area { get { return new IntCuboid(this.Area); } }
 		public Brush Fill { get { return null; } }
 		public double Opacity { get { return 1.0; } }
-	
+
 		public IntRect3D Area { get; set; }
 
 		class BuildOrder
@@ -40,7 +40,6 @@ namespace Dwarrowdelf.Client
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			world.TickStartEvent += OnTick;
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)
@@ -68,6 +67,18 @@ namespace Dwarrowdelf.Client
 			this.Environment = env;
 
 			env.AddBuilding(this);
+
+			this.World.TickStartEvent += OnTick;
+			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		public override void Destruct()
+		{
+			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			this.World.TickStartEvent -= OnTick;
+
+			base.Destruct();
 		}
 
 		public bool Contains(IntPoint3D point)
@@ -196,21 +207,40 @@ namespace Dwarrowdelf.Client
 			return ob;
 		}
 
+		bool IJobSource.HasWork
+		{
+			get
+			{
+				return m_buildOrderQueue.Count > 0;
+			}
+		}
+
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		{
+			var order = m_buildOrderQueue.FirstOrDefault();
+			if (order != null)
+				yield return order.Job;
+		}
+
+		void IJobSource.JobTaken(ILiving living, IJob job)
+		{
+		}
+
 		void CreateJob(BuildOrder order)
 		{
 			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
 				order.SourceItems, order.BuildableItem.ItemType);
 			job.StateChanged += OnJobStateChanged;
 			order.Job = job;
-			this.World.JobManager.Add(job);
+			GameData.Data.Jobs.Add(job);
 		}
 
 		void OnJobStateChanged(IJob job, JobState state)
 		{
 			if (state == JobState.Done)
 			{
+				GameData.Data.Jobs.Remove(job);
 				job.StateChanged -= OnJobStateChanged;
-				this.World.JobManager.Remove(job);
 				CheckFinishedOrders();
 			}
 		}
