@@ -141,16 +141,6 @@ namespace MyArea
 				}
 			}
 
-			/* create long stairs */
-			foreach (var p in env.Bounds.Range())
-			{
-				if (p.X == 1 && p.Y == 4)
-				{
-					env.SetInterior(p, InteriorID.Stairs, MaterialID.Granite);
-					env.SetFloor(p, FloorID.Hole, MaterialID.Granite);
-				}
-			}
-
 			int surfaceLevel = 0;
 			int numSurfaces = 0;
 			/* find the z level with most surface */
@@ -169,6 +159,8 @@ namespace MyArea
 					numSurfaces = n;
 				}
 			}
+
+			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
 
 			CreateSlopes(env);
 
@@ -270,10 +262,13 @@ namespace MyArea
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 #endif
+			int posx = env.Bounds.Width / 10;
+			int posy = 1;
 
-			for (int x = 24; x < 27; ++x)
+			for (int x = posx; x < posx + 4; ++x)
 			{
-				int y = 12;
+				int y = posy;
+
 				IntPoint3D p;
 
 				{
@@ -310,7 +305,10 @@ namespace MyArea
 				CreateOreCluster(env, p, oreMaterials[idx]);
 			}
 
-			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(2, 6, 3, 3, 9) };
+			posx = env.Bounds.Width / 10;
+			posy = env.Bounds.Height / 10;
+
+			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(posx, posy, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
@@ -319,7 +317,9 @@ namespace MyArea
 			}
 			building.Initialize(world, env);
 
-			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect3D(6, 6, 3, 3, 9) };
+			posx += 4;
+
+			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRect3D(posx, posy, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
@@ -328,7 +328,9 @@ namespace MyArea
 			}
 			building.Initialize(world, env);
 
-			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect3D(10, 6, 3, 3, 9) };
+			posx += 4;
+
+			building = new BuildingObject(BuildingID.Mason) { Area = new IntRect3D(posx, posy, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
@@ -340,7 +342,7 @@ namespace MyArea
 			{
 				var gen = new Dwarrowdelf.Server.Items.FoodGenerator();
 				gen.Initialize(env.World);
-				gen.MoveTo(env, new IntPoint3D(10, 10, 9));
+				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
 			}
 
 			return env;

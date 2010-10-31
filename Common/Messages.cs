@@ -173,6 +173,7 @@ namespace Dwarrowdelf.Messages
 		public ObjectID Environment { get; set; }
 		public VisibilityMode VisibilityMode { get; set; }
 		public IntCuboid Bounds { get; set; }
+		public IntPoint3D HomeLocation { get; set; }
 
 		public override string ToString()
 		{

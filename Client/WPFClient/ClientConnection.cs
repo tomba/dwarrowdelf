@@ -246,9 +246,9 @@ namespace Dwarrowdelf.Client
 				Debug.Print("New map appeared {0}", msg.Environment);
 				var world = GameData.Data.World;
 				if (msg.Bounds.IsNull)
-					env = new Environment(world, msg.Environment);
+					env = new Environment(world, msg.Environment, msg.HomeLocation);
 				else
-					env = new Environment(world, msg.Environment, msg.Bounds);
+					env = new Environment(world, msg.Environment, msg.Bounds, msg.HomeLocation);
 			}
 
 			env.VisibilityMode = msg.VisibilityMode;
@@ -311,7 +311,7 @@ namespace Dwarrowdelf.Client
 			switch (change.ObjectType)
 			{
 				case ObjectCreatedChange.ObjectTypes.Environment:
-					new Environment(world, change.ObjectID);
+					new Environment(world, change.ObjectID, new IntPoint3D());
 					break;
 
 				case ObjectCreatedChange.ObjectTypes.Living:

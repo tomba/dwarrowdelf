@@ -798,9 +798,6 @@ namespace Dwarrowdelf.Client
 
 		void OnLoggedOn()
 		{
-			map.CenterPos = new IntPoint(15, 15); // XXX
-			map.Z = 9;
-
 			m_loginDialog.Close();
 			m_loginDialog = null;
 			// xxx autologin

@@ -29,17 +29,20 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<Stockpile> m_stockpiles;
 		public ReadOnlyObservableCollection<Stockpile> Stockpiles { get; private set; }
 
-		public Environment(World world, ObjectID objectID)
-			: this(world, objectID, new IntCuboid())
+		public IntPoint3D HomeLocation { get; private set; }
+
+		public Environment(World world, ObjectID objectID, IntPoint3D homeLocation)
+			: this(world, objectID, new IntCuboid(), homeLocation)
 		{
 		}
 
-		public Environment(World world, ObjectID objectID, IntCuboid bounds)
+		public Environment(World world, ObjectID objectID, IntCuboid bounds, IntPoint3D homeLocation)
 			: base(world, objectID)
 		{
 			this.Version = 1;
 
 			this.Bounds = bounds;
+			this.HomeLocation = homeLocation;
 
 			m_tileGrid = new GrowingTileGrid(bounds);
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();

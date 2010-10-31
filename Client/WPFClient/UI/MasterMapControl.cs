@@ -435,6 +435,9 @@ namespace Dwarrowdelf.Client
 					m_env.Buildings.CollectionChanged += OnAreaCollectionChanged;
 					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged += OnAreaCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnAreaCollectionChanged;
+
+					this.CenterPos = m_env.HomeLocation.ToIntPoint();
+					this.Z = m_env.HomeLocation.Z;
 				}
 				else
 				{

@@ -25,6 +25,8 @@ namespace Dwarrowdelf.Server
 		public int Height { get; private set; }
 		public int Depth { get; private set; }
 
+		public IntPoint3D HomeLocation { get; set; }
+
 		public Environment(int width, int height, int depth, VisibilityMode visibilityMode)
 		{
 			this.Version = 1;
@@ -543,6 +545,7 @@ namespace Dwarrowdelf.Server
 				Environment = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
 				Bounds = this.Bounds,
+				HomeLocation = this.HomeLocation,
 			});
 
 			var bounds = this.Bounds;
