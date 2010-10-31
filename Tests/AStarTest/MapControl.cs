@@ -261,7 +261,7 @@ namespace AStarTest
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
 #if USE3D
-			var result = Dwarrowdelf.AStar.AStar3D.Find(src, dst, true, l => m_map.GetWeight(l), GetTileDirs);
+			var result = Dwarrowdelf.AStar.AStar3D.Find(src, Positioning.Exact, dst, Positioning.Exact, l => m_map.GetWeight(l), GetTileDirs);
 #else
 			var result = Dwarrowdelf.AStar.AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
 #endif
