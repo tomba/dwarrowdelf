@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		bool m_invalidateRender;
 
-		TraceSource trace = new TraceSource("Dwarrowdelf.Render");
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
 
 		public TileControlD2D()
 		{

@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Server
 
 		public IArea Area { get; private set; }
 
-		TraceSource trace = new TraceSource("Dwarrowdelf.Server.World");
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
 
 		// only for debugging
 		public bool IsWritable { get; private set; }
