@@ -14,25 +14,25 @@
         <StatusBar DockPanel.Dock="Bottom" >
             <TextBlock>Memory</TextBlock>
             <TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=MemUsed, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=TileControl.MemUsed, Mode=OneWay}" />
             <Separator />
             <TextBlock>Ticks</TextBlock>
             <TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=TicksUsed, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=TileControl.TicksUsed, Mode=OneWay}" />
             <Separator />
             <TextBlock>Coords</TextBlock>
             <TextBox Width="100" IsReadOnly="True">
                 <TextBox.Text>
                     <MultiBinding StringFormat="{}{0}, {1}, {2}">
-                        <Binding ElementName="map" Path="CurrentTileInfo.Location.X" Mode="OneWay" />
-                        <Binding ElementName="map" Path="CurrentTileInfo.Location.Y" Mode="OneWay" />
-                        <Binding ElementName="map" Path="CurrentTileInfo.Location.Z" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.Z" Mode="OneWay" />
                     </MultiBinding>
                 </TextBox.Text>
             </TextBox>
             <Separator />
         </StatusBar>
 
-        <local:MapControl x:Name="map" />
+        <local:MasterMapControl x:Name="map" />
     </DockPanel>
 </Window>

@@ -1,6 +1,4 @@
-﻿#define USE3D
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,8 +50,12 @@ namespace AStarTest
 
 		public TileInfo CurrentTileInfo { get; private set; } // used to inform the UI
 
+		public event Action SomethingChanged;
+
 		public MapControl()
 		{
+			this.UseLayoutRounding = false;
+
 			this.CurrentTileInfo = new TileInfo();
 
 			this.Focusable = true;
@@ -84,6 +86,9 @@ namespace AStarTest
 
 		protected override void UpdateTilesOverride(MapControlTile[,] tileArray)
 		{
+			if (SomethingChanged != null)
+				SomethingChanged();
+
 			for (int y = 0; y < this.Rows; ++y)
 			{
 				for (int x = 0; x < this.Columns; ++x)
@@ -113,15 +118,9 @@ namespace AStarTest
 				tile.Weight = m_map.GetWeight(ml);
 				tile.Stairs = m_map.GetStairs(ml);
 
-#if USE3D
 				if (m_result != null && m_result.Nodes.ContainsKey(ml))
 				{
 					var node = m_result.Nodes[ml];
-#else
-				if (m_result != null && m_result.Nodes.ContainsKey(_ml))
-				{
-					var node = m_result.Nodes[_ml];
-#endif
 					tile.G = node.G;
 					tile.H = node.H;
 
@@ -246,13 +245,9 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
-
+		public event Action<Dwarrowdelf.AStar.AStar3DResult> AStarDone;
 		IEnumerable<IntPoint3D> m_path;
-#if USE3D
 		Dwarrowdelf.AStar.AStar3DResult m_result;
-#else
-		Dwarrowdelf.AStar.AStar2DResult m_result;
-#endif
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
 		{
@@ -260,11 +255,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-#if USE3D
 			var result = Dwarrowdelf.AStar.AStar3D.Find(src, Positioning.Exact, dst, Positioning.Exact, l => m_map.GetWeight(l), GetTileDirs);
-#else
-			var result = Dwarrowdelf.AStar.AStar2D.Find(src.TwoD, dst.TwoD, true, l => m_map.GetWeight(new IntPoint3D(l, m_z)), GetTileDirs2D);
-#endif
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -283,14 +274,13 @@ namespace AStarTest
 			var n = m_result.LastNode;
 			while (n.Parent != null)
 			{
-#if USE3D
 				pathList.Add(n.Loc);
-#else
-				pathList.Add(new IntPoint3D(n.Loc, m_z));
-#endif
 				n = n.Parent;
 			}
 			m_path = pathList;
+
+			if (AStarDone != null)
+				AStarDone(m_result);
 		}
 
 		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
