@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 
 		public override void Resolve()
 		{
-			Debug.WriteLine("RenderViewSimple.Resolve");
+			//Debug.WriteLine("RenderViewSimple.Resolve");
 
 			//var sw = Stopwatch.StartNew();
 

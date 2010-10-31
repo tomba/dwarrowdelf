@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		unsafe void RenderTiles(RenderTarget renderTarget, int columns, int rows, int tileSize)
 		{
-			Debug.Print("RendererSimple.RenderTiles");
+			//Debug.Print("RendererSimple.RenderTiles");
 
 			uint bytespp = 4;
 			uint w = (uint)columns;
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 			if (m_simpleBitmapArray == null)
 			{
-				Debug.Print("Create SimpleBitmapArray");
+				//Debug.Print("Create SimpleBitmapArray");
 				m_simpleBitmapArray = new uint[w * h];
 			}
 
