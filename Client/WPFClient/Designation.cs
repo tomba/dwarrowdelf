@@ -26,47 +26,97 @@ namespace Dwarrowdelf.Client
 		public Brush Fill { get { return Brushes.DimGray; } }
 		public double Opacity { get { return 0.5; } }
 
-		IJob m_job;
+		class PositionInfo
+		{
+			public bool Failed;
+			public IAssignment Job;
+		}
+
+		Dictionary<IntPoint3D, PositionInfo> m_map;
 
 		public Designation(Environment env, DesignationType type, IntCuboid area)
 		{
 			this.Environment = env;
 			this.Type = type;
 			this.Area = area;
+
+			this.Environment.World.TickStartEvent += OnTickStartEvent;
+
+			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		void OnTickStartEvent()
+		{
+			foreach (var kvp in m_map)
+				kvp.Value.Failed = false;
+
+			Check();
 		}
 
 		public void Start()
 		{
-			m_job = CreateJob();
+			var positions = InitializeOverride();
+			m_map = positions.ToDictionary(p => p, p => new PositionInfo());
 
-			if (m_job == null)
+			CheckOverride(positions);
+		}
+
+		protected abstract IntPoint3D[] InitializeOverride();
+
+		void Check()
+		{
+			var positions = m_map.Keys.ToArray();
+
+			CheckOverride(positions);
+
+			if (m_map.Count == 0)
 			{
 				if (this.DesignationDone != null)
 					this.DesignationDone(this);
-				return;
+
+				Abort();
 			}
-
-			m_job.StateChanged += OnJobStateChanged;
-
-			this.Environment.World.JobManager.AddJobSource(this);
-			GameData.Data.Jobs.Add(m_job);
 		}
 
-		protected abstract IJob CreateJob();
+		protected abstract void CheckOverride(IntPoint3D[] positions);
 
 		bool IJobSource.HasWork
 		{
 			get
 			{
-				return m_job != null;
+				return m_map != null && m_map.Count > 0;
 			}
 		}
 
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
-			if (m_job != null && m_job.JobState == JobState.Ok)
-				yield return m_job;
+			foreach (var kvp in m_map)
+			{
+				var p = kvp.Key;
+				var info = kvp.Value;
+
+				if (info.Failed)
+					continue;
+
+				var job = info.Job;
+
+				if (job != null)
+					continue;
+
+				job = GetJob(living, p);
+
+				if (job == null)
+				{
+					info.Failed = true;
+					continue;
+				}
+
+				Add(p, job);
+				yield return job;
+			}
 		}
+
+		protected abstract IAssignment GetJob(ILiving living, IntPoint3D pos);
 
 		void IJobSource.JobTaken(ILiving living, IJob job)
 		{
@@ -74,23 +124,18 @@ namespace Dwarrowdelf.Client
 
 		void OnJobStateChanged(IJob job, JobState state)
 		{
-			Debug.Assert(job == m_job);
-
 			switch (state)
 			{
 				case JobState.Ok:
 					break;
 
 				case JobState.Done:
-					Abort();
+					RemoveJob(job);
 					break;
 
 				case JobState.Abort:
-					job.Retry();
-					break;
-
 				case JobState.Fail:
-					Abort();
+					RestartJob(job);
 					break;
 
 				default:
@@ -100,19 +145,64 @@ namespace Dwarrowdelf.Client
 
 		public void Abort()
 		{
-			if (m_job == null)
+			if (m_map == null)
 				return;
 
-			GameData.Data.Jobs.Remove(m_job);
+			var map = m_map;
+			m_map = null;
 
-			m_job.StateChanged -= OnJobStateChanged;
-			m_job.Abort();
-			m_job = null;
+			this.Environment.World.TickStartEvent -= OnTickStartEvent;
+			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			foreach (var kvp in map)
+				Remove(kvp.Key);
 
 			if (this.DesignationDone != null)
 				this.DesignationDone(this);
+		}
 
-			this.Environment.World.JobManager.RemoveJobSource(this);
+		protected IAssignment Get(IntPoint3D p)
+		{
+			return m_map[p].Job;
+		}
+
+		protected void Add(IntPoint3D p, IAssignment job)
+		{
+			Debug.Assert(job != null);
+			Debug.Assert(m_map[p].Job == null);
+
+			m_map[p].Job = job;
+			GameData.Data.Jobs.Add(job);
+			job.StateChanged += OnJobStateChanged;
+		}
+
+		protected void Remove(IntPoint3D p)
+		{
+			var job = m_map[p].Job;
+
+			m_map.Remove(p);
+
+			GameData.Data.Jobs.Remove(job);
+			job.StateChanged -= OnJobStateChanged;
+			if (job.JobState == JobState.Ok)
+				job.Abort();
+		}
+
+		void RemoveJob(IJob job)
+		{
+			var kvp = m_map.First(e => e.Value.Job == job);
+			Remove(kvp.Key);
+		}
+
+		void RestartJob(IJob job)
+		{
+			var kvp = m_map.First(e => e.Value.Job == job);
+			m_map[kvp.Key].Job = null;
+
+			GameData.Data.Jobs.Remove(job);
+			job.StateChanged -= OnJobStateChanged;
+			if (job.JobState == JobState.Ok)
+				job.Abort();
 		}
 
 		public event Action<Designation> DesignationDone;
@@ -129,17 +219,67 @@ namespace Dwarrowdelf.Client
 			m_mineActionType = mineActionType;
 		}
 
-		protected override IJob CreateJob()
+		protected override IntPoint3D[] InitializeOverride()
 		{
-			var anyWalls = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
+			var walls = this.Area.Range().Where(p => this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
+			return walls.ToArray();
+		}
 
-			if (!anyWalls)
+		protected override void CheckOverride(IntPoint3D[] positions)
+		{
+			return;
+			foreach (var p in positions)
+			{
+				if (this.Environment.GetInterior(p).ID != InteriorID.NaturalWall)
+				{
+					Remove(p);
+					continue;
+				}
+
+				var job = Get(p);
+
+				if (job == null)
+				{
+					var pos = GetPossiblePositioning(p);
+
+					if (pos == Positioning.Exact)
+						continue;
+
+					job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, m_mineActionType, pos);
+					Add(p, job);
+				}
+				else
+				{
+					Debug.Assert(job.JobState == JobState.Ok);
+				}
+			}
+		}
+
+		protected override IAssignment GetJob(ILiving living, IntPoint3D p)
+		{
+			var pos = GetPossiblePositioning(p);
+			IntPoint3D finalPos;
+
+			var path = AStar.AStar3D.Find(this.Environment, living.Location, p, pos, out finalPos);
+
+			if (path == null)
 				return null;
 
-			return new Jobs.JobGroups.MineAreaParallelJob(this.Environment, ActionPriority.Normal, this.Area, m_mineActionType);
+			var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, m_mineActionType, finalPos);
+
+			return job;
+		}
+
+		Positioning GetPossiblePositioning(IntPoint3D p)
+		{
+			var env = this.Environment;
+
+
+
+			return Positioning.AdjacentPlanar;
 		}
 	}
-
+	/*
 	class FellTreeDesignation : Designation
 	{
 		public FellTreeDesignation(Environment env, IntCuboid area)
@@ -147,17 +287,16 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		protected override IJob CreateJob()
+		protected override List<IJob> CreateJobs()
 		{
-			var anyTrees = this.Area.Range().Any(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
+			var trees = this.Area.Range().Where(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
 
-			if (!anyTrees)
-				return null;
+			var jobs = trees.Select(p => (IJob)new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p));
 
-			return new Jobs.JobGroups.FellTreeParallelJob(this.Environment, ActionPriority.Normal, this.Area);
+			return jobs.ToList();
 		}
 	}
-
+	*/
 	class DesignationManager
 	{
 		ObservableCollection<Designation> s_designations;

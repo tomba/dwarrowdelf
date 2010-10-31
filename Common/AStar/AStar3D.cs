@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.AStar
 {
@@ -150,6 +151,63 @@ namespace Dwarrowdelf.AStar
 			public CancellationToken CancellationToken;
 		}
 
+
+		public static IEnumerable<Direction> Find(IEnvironment env, IntPoint3D src, IntPoint3D dest, Positioning positioning, out IntPoint3D finalLocation)
+		{
+			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
+			CancellationTokenSource cts = new CancellationTokenSource();
+
+			AStar.AStar3DResult res1 = null;
+			AStar.AStar3DResult res2 = null;
+
+			var task1 = new Task(delegate
+			{
+				// backwards
+				res1 = AStar.AStar3D.Find(dest, positioning, src, Positioning.Exact, l => 0,
+					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
+			});
+			task1.Start();
+
+			var task2 = new Task(delegate
+			{
+				res2 = AStar.AStar3D.Find(src, Positioning.Exact, dest, positioning, l => 0,
+					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
+			}
+			);
+			task2.Start();
+
+			task1.Wait();
+			//Task.WaitAny(task1, task2);
+
+			cts.Cancel();
+
+			Task.WaitAll(task1, task2);
+
+			IEnumerable<Direction> dirs;
+			
+			if (res1.Status == AStar.AStarStatus.Found)
+			{
+				dirs = res1.GetPathReverse();
+				finalLocation = dest + dirs.First().Reverse();
+			}
+			else if (res2.Status == AStar.AStarStatus.Found)
+			{
+				dirs = res2.GetPath();
+				finalLocation = res2.LastNode.Loc;
+			}
+			else
+			{
+				dirs = null;
+				finalLocation = new IntPoint3D();
+			}
+
+			return dirs;
+		}
+
+
+
+
+
 		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
@@ -243,6 +301,7 @@ namespace Dwarrowdelf.AStar
 				if (state.Target.GetIsTarget(node.Loc))
 				{
 					lastNode = node;
+					Debug.Assert(node.Parent != null);
 					status = AStarStatus.Found;
 					break;
 				}
