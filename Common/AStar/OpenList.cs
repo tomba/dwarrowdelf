@@ -6,14 +6,12 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.AStar
 {
-	interface IAStarNode
+	interface IOpenListNode
 	{
-		ushort G { get; }
-		ushort H { get; }
-		ushort F { get; }
+		int F { get; }
 	}
 
-	interface IOpenList<T>
+	interface IOpenList<T> where T : class, IOpenListNode
 	{
 		bool IsEmpty { get; }
 		void Add(T node);
@@ -21,7 +19,7 @@ namespace Dwarrowdelf.AStar
 		void NodeUpdated(T node);
 	}
 
-	class SimpleOpenList<T> : IOpenList<T> where T : IAStarNode
+	class SimpleOpenList<T> : IOpenList<T> where T : class, IOpenListNode
 	{
 		List<T> m_list = new List<T>(128);
 
@@ -50,7 +48,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	class BinaryHeap<T> : IOpenList<T> where T : class, IAStarNode
+	class BinaryHeap<T> : IOpenList<T> where T : class, IOpenListNode
 	{
 		static BinaryHeap()
 		{

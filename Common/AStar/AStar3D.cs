@@ -52,14 +52,15 @@ namespace Dwarrowdelf.AStar
 	}
 
 	// tries to save some memory by using ushorts.
-	public class AStarNode : IAStarNode
+	public class AStarNode : IOpenListNode
 	{
 		public IntPoint3D Loc { get; private set; }
 		public AStarNode Parent;
 		public ushort G { get; set; }
 		public ushort H { get; set; }
-		public ushort F { get { return (ushort)(G + H); } }
 		public bool Closed { get; set; }
+
+		public int F { get { return G + H; } }
 
 		public AStarNode(IntPoint3D l, AStarNode parent)
 		{
