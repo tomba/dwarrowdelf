@@ -64,7 +64,7 @@ namespace AStarTest
 
 			m_map = new MapControl();
 			m_map.SomethingChanged += new Action(m_map_SomethingChanged);
-			m_map.AStarDone += new Action<Dwarrowdelf.AStar.AStar3DResult>(m_map_AStarDone);
+			m_map.AStarDone += new Action<Dwarrowdelf.AStar.AStarResult>(m_map_AStarDone);
 			grid.Children.Add((UIElement)m_map);
 
 			m_canvas = new Canvas();
@@ -86,7 +86,7 @@ namespace AStarTest
 			Canvas.SetTop(m_path1, 0.5);
 		}
 
-		void m_map_AStarDone(Dwarrowdelf.AStar.AStar3DResult res)
+		void m_map_AStarDone(Dwarrowdelf.AStar.AStarResult res)
 		{
 			var l = res.LastNode.Loc;
 			var dirs = res.GetPathReverse();
@@ -142,7 +142,6 @@ namespace AStarTest
 
 		void CheckCanvas()
 		{
-			return;
 			var p = m_map.MapLocationToScreenPoint(new IntPoint(0, -1));
 
 			((ScaleTransform)m_canvasTransform.Children[0]).ScaleX = m_map.TileSize;

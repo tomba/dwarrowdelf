@@ -260,7 +260,7 @@ namespace Dwarrowdelf.Client
 			var pos = GetPossiblePositioning(p);
 			IntPoint3D finalPos;
 
-			var path = AStar.AStar3D.Find(this.Environment, living.Location, p, pos, out finalPos);
+			var path = AStar.AStar.Find(this.Environment, living.Location, p, pos, out finalPos);
 
 			if (path == null)
 				return null;

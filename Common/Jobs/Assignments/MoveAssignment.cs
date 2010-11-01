@@ -131,19 +131,19 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			CancellationTokenSource cts = new CancellationTokenSource();
 
-			AStar.AStar3DResult res1 = null;
-			AStar.AStar3DResult res2 = null;
+			AStar.AStarResult res1 = null;
+			AStar.AStarResult res2 = null;
 
 			var task1 = new Task(delegate
 			{
-				res1 = AStar.AStar3D.Find(m_dest, m_positioning, worker.Location, Positioning.Exact, l => 0,
+				res1 = AStar.AStar.Find(m_dest, m_positioning, worker.Location, Positioning.Exact, l => 0,
 					l => EnvironmentHelpers.GetDirectionsFrom(m_environment, l), 200000, cts.Token);
 			});
 			task1.Start();
 
 			var task2 = new Task(delegate
 			{
-				res2 = AStar.AStar3D.Find(worker.Location, Positioning.Exact, m_dest, m_positioning, l => 0,
+				res2 = AStar.AStar.Find(worker.Location, Positioning.Exact, m_dest, m_positioning, l => 0,
 					l => EnvironmentHelpers.GetDirectionsFrom(m_environment, l), 200000, cts.Token);
 			}
 			);

@@ -21,10 +21,11 @@ using System.Diagnostics;
 
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
- * BinaryHeap 3D: mem 12698992, ticks 1289165
+ * BinaryHeap 3D: mem 12698760, ticks 962670
  * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3D)
  * SimpleList 3D: mem 12699376, ticks 88453781
  * 
+ * 1.1.2010		mem 12698760, ticks 962670
  */
 namespace AStarTest
 {
@@ -248,9 +249,9 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
-		public event Action<Dwarrowdelf.AStar.AStar3DResult> AStarDone;
+		public event Action<Dwarrowdelf.AStar.AStarResult> AStarDone;
 		IEnumerable<IntPoint3D> m_path;
-		Dwarrowdelf.AStar.AStar3DResult m_result;
+		Dwarrowdelf.AStar.AStarResult m_result;
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
 		{
@@ -258,7 +259,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			var result = Dwarrowdelf.AStar.AStar3D.Find(src, this.SrcPos, dst, this.DstPos, l => m_map.GetWeight(l), GetTileDirs);
+			var result = Dwarrowdelf.AStar.AStar.Find(src, this.SrcPos, dst, this.DstPos, l => m_map.GetWeight(l), GetTileDirs);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 

@@ -16,13 +16,13 @@ namespace Dwarrowdelf.AStar
 		Cancelled,
 	}
 
-	public class AStar3DResult
+	public class AStarResult
 	{
-		public IDictionary<IntPoint3D, AStar3DNode> Nodes { get; private set; }
-		public AStar3DNode LastNode { get; private set; }
+		public IDictionary<IntPoint3D, AStarNode> Nodes { get; private set; }
+		public AStarNode LastNode { get; private set; }
 		public AStarStatus Status { get; private set; }
 
-		internal AStar3DResult(IDictionary<IntPoint3D, AStar3DNode> nodes, AStar3DNode lastNode, AStarStatus status)
+		internal AStarResult(IDictionary<IntPoint3D, AStarNode> nodes, AStarNode lastNode, AStarStatus status)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
@@ -37,7 +37,7 @@ namespace Dwarrowdelf.AStar
 			if (this.LastNode == null)
 				yield break;
 
-			AStar3DNode n = this.LastNode;
+			AStarNode n = this.LastNode;
 			while (n.Parent != null)
 			{
 				yield return (n.Parent.Loc - n.Loc).ToDirection();
@@ -52,16 +52,16 @@ namespace Dwarrowdelf.AStar
 	}
 
 	// tries to save some memory by using ushorts.
-	public class AStar3DNode : IAStarNode
+	public class AStarNode : IAStarNode
 	{
 		public IntPoint3D Loc { get; private set; }
-		public AStar3DNode Parent;
+		public AStarNode Parent;
 		public ushort G { get; set; }
 		public ushort H { get; set; }
 		public ushort F { get { return (ushort)(G + H); } }
 		public bool Closed { get; set; }
 
-		public AStar3DNode(IntPoint3D l, AStar3DNode parent)
+		public AStarNode(IntPoint3D l, AStarNode parent)
 		{
 			Loc = l;
 			Parent = parent;
@@ -137,15 +137,15 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	public static class AStar3D
+	public static class AStar
 	{
 		class AStarState
 		{
 			public IAStarTarget Target;
 			public IntPoint3D Src;
 			public Positioning SrcPositioning;
-			public IOpenList<AStar3DNode> OpenList;
-			public IDictionary<IntPoint3D, AStar3DNode> NodeMap;
+			public IOpenList<AStarNode> OpenList;
+			public IDictionary<IntPoint3D, AStarNode> NodeMap;
 			public Func<IntPoint3D, int> GetTileWeight;
 			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
 			public CancellationToken CancellationToken;
@@ -157,20 +157,20 @@ namespace Dwarrowdelf.AStar
 			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
 			CancellationTokenSource cts = new CancellationTokenSource();
 
-			AStar.AStar3DResult res1 = null;
-			AStar.AStar3DResult res2 = null;
+			AStarResult res1 = null;
+			AStarResult res2 = null;
 
 			var task1 = new Task(delegate
 			{
 				// backwards
-				res1 = AStar.AStar3D.Find(dest, positioning, src, Positioning.Exact, l => 0,
+				res1 = Find(dest, positioning, src, Positioning.Exact, l => 0,
 					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
 			});
 			task1.Start();
 
 			var task2 = new Task(delegate
 			{
-				res2 = AStar.AStar3D.Find(src, Positioning.Exact, dest, positioning, l => 0,
+				res2 = Find(src, Positioning.Exact, dest, positioning, l => 0,
 					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
 			}
 			);
@@ -185,12 +185,12 @@ namespace Dwarrowdelf.AStar
 
 			IEnumerable<Direction> dirs;
 			
-			if (res1.Status == AStar.AStarStatus.Found)
+			if (res1.Status == AStarStatus.Found)
 			{
 				dirs = res1.GetPathReverse();
 				finalLocation = dest + dirs.First().Reverse();
 			}
-			else if (res2.Status == AStar.AStarStatus.Found)
+			else if (res2.Status == AStarStatus.Found)
 			{
 				dirs = res2.GetPath();
 				finalLocation = res2.LastNode.Loc;
@@ -208,19 +208,19 @@ namespace Dwarrowdelf.AStar
 
 
 
-		public static AStar3DResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
+		public static AStarResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
 		{
 			return Find(src, Positioning.Exact, new AStarDelegateTarget(func), tileWeight, validDirs, maxNodeCount);
 		}
 
-		public static AStar3DResult Find(IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning, Func<IntPoint3D, int> tileWeight,
+		public static AStarResult Find(IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			return Find(src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), tileWeight, validDirs, maxNodeCount, cancellationToken);
 		}
 
-		public static AStar3DResult Find(IntPoint3D src, Positioning srcPositioning, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
+		public static AStarResult Find(IntPoint3D src, Positioning srcPositioning, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
 			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
@@ -230,8 +230,8 @@ namespace Dwarrowdelf.AStar
 				Target = target,
 				GetTileWeight = tileWeight,
 				GetValidDirs = validDirs,
-				NodeMap = new Dictionary<IntPoint3D, AStar3DNode>(),
-				OpenList = new BinaryHeap<AStar3DNode>(),
+				NodeMap = new Dictionary<IntPoint3D, AStarNode>(),
+				OpenList = new BinaryHeap<AStarNode>(),
 				//OpenList = new SimpleOpenList<AStar3DNode>(),
 				CancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None,
 			};
@@ -239,11 +239,11 @@ namespace Dwarrowdelf.AStar
 			return FindInternal(state, maxNodeCount);
 		}
 
-		static AStar3DResult FindInternal(AStarState state, int maxNodeCount)
+		static AStarResult FindInternal(AStarState state, int maxNodeCount)
 		{
 			//MyTrace.WriteLine("Start");
 
-			AStar3DNode lastNode = null;
+			AStarNode lastNode = null;
 			AStarStatus status = AStarStatus.NotFound;
 
 			var nodeMap = state.NodeMap;
@@ -282,7 +282,7 @@ namespace Dwarrowdelf.AStar
 
 			foreach (var p in startLocations)
 			{
-				var node = new AStar3DNode(p, null);
+				var node = new AStarNode(p, null);
 				openList.Add(node);
 				nodeMap.Add(p, node);
 			}
@@ -320,7 +320,7 @@ namespace Dwarrowdelf.AStar
 			else if (status == AStarStatus.NotFound)
 				Trace.TraceWarning("AStar3D: Not Found");
 
-			return new AStar3DResult(nodeMap, lastNode, status);
+			return new AStarResult(nodeMap, lastNode, status);
 		}
 
 		static ushort CostBetweenNodes(IntPoint3D from, IntPoint3D to)
@@ -329,13 +329,13 @@ namespace Dwarrowdelf.AStar
 			return cost;
 		}
 
-		static void CheckNeighbors(AStarState state, AStar3DNode parent)
+		static void CheckNeighbors(AStarState state, AStarNode parent)
 		{
 			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
 				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
-				AStar3DNode child;
+				AStarNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				//if (child != null && child.Closed)
 				//	continue;
@@ -345,7 +345,7 @@ namespace Dwarrowdelf.AStar
 
 				if (child == null)
 				{
-					child = new AStar3DNode(childLoc, parent);
+					child = new AStarNode(childLoc, parent);
 					child.G = g;
 					child.H = h;
 					state.OpenList.Add(child);
@@ -365,17 +365,17 @@ namespace Dwarrowdelf.AStar
 			}
 		}
 
-		static void UpdateParents(AStarState state, AStar3DNode parent)
+		static void UpdateParents(AStarState state, AStarNode parent)
 		{
 			//MyTrace.WriteLine("updating closed node {0}", parent.Loc);
 
-			Stack<AStar3DNode> queue = new Stack<AStar3DNode>();
+			Stack<AStarNode> queue = new Stack<AStarNode>();
 
 			foreach (var dir in state.GetValidDirs(parent.Loc))
 			{
 				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
-				AStar3DNode child;
+				AStarNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
 				if (child == null)
 					continue;
@@ -401,7 +401,7 @@ namespace Dwarrowdelf.AStar
 				{
 					IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
-					AStar3DNode child;
+					AStarNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);
 					if (child == null)
 						continue;

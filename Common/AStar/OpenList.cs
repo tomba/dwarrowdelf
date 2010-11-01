@@ -54,7 +54,7 @@ namespace Dwarrowdelf.AStar
 	{
 		static BinaryHeap()
 		{
-			BinaryHeap<T>.Test();
+			//BinaryHeap<T>.Test();
 		}
 
 		T[] m_openList = new T[128];
@@ -177,7 +177,7 @@ namespace Dwarrowdelf.AStar
 
 			HeapifyUp(i, node);
 		}
-
+#if notworking
 		[System.Diagnostics.Conditional("DEBUG")]
 		public static void Test()
 		{
@@ -249,5 +249,6 @@ namespace Dwarrowdelf.AStar
 
 			}
 		}
+#endif
 	}
 }
