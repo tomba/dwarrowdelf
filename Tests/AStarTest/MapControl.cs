@@ -50,6 +50,9 @@ namespace AStarTest
 
 		public TileInfo CurrentTileInfo { get; private set; } // used to inform the UI
 
+		public Positioning SrcPos { get; set; }
+		public Positioning DstPos { get; set; }
+
 		public event Action SomethingChanged;
 
 		public MapControl()
@@ -255,7 +258,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			var result = Dwarrowdelf.AStar.AStar3D.Find(src, Positioning.Exact, dst, Positioning.Exact, l => m_map.GetWeight(l), GetTileDirs);
+			var result = Dwarrowdelf.AStar.AStar3D.Find(src, this.SrcPos, dst, this.DstPos, l => m_map.GetWeight(l), GetTileDirs);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 

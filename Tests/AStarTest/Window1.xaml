@@ -2,13 +2,36 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:AStarTest"
-    Title="Window1" Width="1280" Height="1024">
+    xmlns:dd="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
+ xmlns:sys="clr-namespace:System;assembly=mscorlib"
+   Title="Window1" Width="1280" Height="1024">
+
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetValues"
+                        ObjectType="{x:Type sys:Enum}"
+                        x:Key="AlignmentValues">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="dd:Positioning" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
+
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <Button Click="OnBMClicked" Tag="1">Benchmark 1</Button>
                 <Separator />
             </ToolBar>
+
+            <ToolBar>
+                <TextBlock>Src:</TextBlock>
+                <ComboBox ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.SrcPos}" />
+                <Separator />
+                <TextBlock>Dst:</TextBlock>
+                <ComboBox ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.DstPos}" />
+            </ToolBar>
+
+
         </ToolBarTray>
 
         <StatusBar DockPanel.Dock="Bottom" >
