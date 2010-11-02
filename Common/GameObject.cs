@@ -37,7 +37,7 @@ namespace Dwarrowdelf
 		MaterialID MaterialID { get; }
 	}
 
-	public interface IEnvironment : IGameObject
+	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
 	{
 		IntCuboid Bounds { get; }
 

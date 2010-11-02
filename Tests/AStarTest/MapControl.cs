@@ -29,7 +29,7 @@ using System.Diagnostics;
  */
 namespace AStarTest
 {
-	class MapControl : MapControlBase<MapControlTile>, INotifyPropertyChanged
+	class MapControl : MapControlBase<MapControlTile>, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
 	{
 		public class TileInfo
 		{
@@ -259,7 +259,7 @@ namespace AStarTest
 			Stopwatch sw = new Stopwatch();
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
-			var result = Dwarrowdelf.AStar.AStar.Find(src, this.SrcPos, dst, this.DstPos, l => m_map.GetWeight(l), GetTileDirs);
+			var result = Dwarrowdelf.AStar.AStar.Find(this, src, this.SrcPos, dst, this.DstPos);
 			sw.Stop();
 			stopBytes = GC.GetTotalMemory(true);
 
@@ -286,6 +286,17 @@ namespace AStarTest
 			if (AStarDone != null)
 				AStarDone(m_result);
 		}
+
+		IEnumerable<Direction> Dwarrowdelf.AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
+		{
+			return GetTileDirs(p);
+		}
+
+		int Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
+		{
+			return m_map.GetWeight(p);
+		}
+
 
 		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
 		{

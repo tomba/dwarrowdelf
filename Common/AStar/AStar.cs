@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.AStar
 {
+	public interface IAStarEnvironment
+	{
+		int GetTileWeight(IntPoint3D p);
+		IEnumerable<Direction> GetValidDirs(IntPoint3D p);
+	}
+
 	// tries to save some memory by using ushorts.
 	public class AStarNode : IOpenListNode
 	{
@@ -30,18 +36,17 @@ namespace Dwarrowdelf.AStar
 	{
 		class AStarState
 		{
+			public IAStarEnvironment Environment;
 			public IAStarTarget Target;
 			public IntPoint3D Src;
 			public Positioning SrcPositioning;
 			public IOpenList<AStarNode> OpenList;
 			public IDictionary<IntPoint3D, AStarNode> NodeMap;
-			public Func<IntPoint3D, int> GetTileWeight;
-			public Func<IntPoint3D, IEnumerable<Direction>> GetValidDirs;
 			public CancellationToken CancellationToken;
 		}
 
 
-		public static IEnumerable<Direction> Find(IEnvironment env, IntPoint3D src, IntPoint3D dest, Positioning positioning, out IntPoint3D finalLocation)
+		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3D src, IntPoint3D dest, Positioning positioning, out IntPoint3D finalLocation)
 		{
 			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
 			CancellationTokenSource cts = new CancellationTokenSource();
@@ -52,15 +57,13 @@ namespace Dwarrowdelf.AStar
 			var task1 = new Task(delegate
 			{
 				// backwards
-				res1 = Find(dest, positioning, src, Positioning.Exact, l => 0,
-					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
+				res1 = Find(environment, dest, positioning, src, Positioning.Exact, 200000, cts.Token);
 			});
 			task1.Start();
 
 			var task2 = new Task(delegate
 			{
-				res2 = Find(src, Positioning.Exact, dest, positioning, l => 0,
-					l => EnvironmentHelpers.GetDirectionsFrom(env, l), 200000, cts.Token);
+				res2 = Find(environment, src, Positioning.Exact, dest, positioning, 200000, cts.Token);
 			}
 			);
 			task2.Start();
@@ -73,7 +76,7 @@ namespace Dwarrowdelf.AStar
 			Task.WaitAll(task1, task2);
 
 			IEnumerable<Direction> dirs;
-			
+
 			if (res1.Status == AStarStatus.Found)
 			{
 				dirs = res1.GetPathReverse();
@@ -97,31 +100,28 @@ namespace Dwarrowdelf.AStar
 
 
 
-		public static AStarResult FindNearest(IntPoint3D src, Func<IntPoint3D, bool> func, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000)
+		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3D src, Func<IntPoint3D, bool> func, int maxNodeCount = 200000)
 		{
-			return Find(src, Positioning.Exact, new AStarDelegateTarget(func), tileWeight, validDirs, maxNodeCount);
+			return Find(environment, src, Positioning.Exact, new AStarDelegateTarget(func), maxNodeCount);
 		}
 
-		public static AStarResult Find(IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning,
+			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return Find(src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), tileWeight, validDirs, maxNodeCount, cancellationToken);
+			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), maxNodeCount, cancellationToken);
 		}
 
-		public static AStarResult Find(IntPoint3D src, Positioning srcPositioning, IAStarTarget target, Func<IntPoint3D, int> tileWeight,
-			Func<IntPoint3D, IEnumerable<Direction>> validDirs, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, Positioning srcPositioning, IAStarTarget target,
+			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
 			{
+				Environment = environment,
 				Src = src,
 				SrcPositioning = srcPositioning,
 				Target = target,
-				GetTileWeight = tileWeight,
-				GetValidDirs = validDirs,
 				NodeMap = new Dictionary<IntPoint3D, AStarNode>(),
 				OpenList = new BinaryHeap<AStarNode>(),
-				//OpenList = new SimpleOpenList<AStar3DNode>(),
 				CancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None,
 			};
 
@@ -220,7 +220,7 @@ namespace Dwarrowdelf.AStar
 
 		static void CheckNeighbors(AStarState state, AStarNode parent)
 		{
-			foreach (var dir in state.GetValidDirs(parent.Loc))
+			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 			{
 				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
@@ -229,7 +229,7 @@ namespace Dwarrowdelf.AStar
 				//if (child != null && child.Closed)
 				//	continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
 				ushort h = state.Target.GetHeuristic(childLoc);
 
 				if (child == null)
@@ -260,7 +260,7 @@ namespace Dwarrowdelf.AStar
 
 			Stack<AStarNode> queue = new Stack<AStarNode>();
 
-			foreach (var dir in state.GetValidDirs(parent.Loc))
+			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 			{
 				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
@@ -269,7 +269,7 @@ namespace Dwarrowdelf.AStar
 				if (child == null)
 					continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
+				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
 
 				if (g < child.G)
 				{
@@ -286,7 +286,7 @@ namespace Dwarrowdelf.AStar
 			{
 				parent = queue.Pop();
 
-				foreach (var dir in state.GetValidDirs(parent.Loc))
+				foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 				{
 					IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
 
@@ -295,7 +295,7 @@ namespace Dwarrowdelf.AStar
 					if (child == null)
 						continue;
 
-					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.GetTileWeight(childLoc));
+					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
 
 					if (g < child.G)
 					{

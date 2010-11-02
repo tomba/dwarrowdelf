@@ -647,6 +647,16 @@ namespace Dwarrowdelf.Server
 		{
 			return String.Format("Environment({0})", this.ObjectID);
 		}
+
+		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
+		{
+			return 0;
+		}
+
+		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
+		{
+			return EnvironmentHelpers.GetDirectionsFrom(this, p);
+		}
 	}
 
 

@@ -200,9 +200,7 @@ namespace Dwarrowdelf.Client
 					return false;
 			};
 
-			var res = AStar.AStar.FindNearest(this.Area.Center, func,
-				l => 0,
-				l => EnvironmentHelpers.GetDirectionsFrom(this.Environment, l));
+			var res = AStar.AStar.FindNearest(this.Environment, this.Area.Center, func);
 
 			return ob;
 		}
