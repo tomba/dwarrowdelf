@@ -54,41 +54,43 @@ namespace Dwarrowdelf.AStar
 			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
 			CancellationTokenSource cts = new CancellationTokenSource();
 
-			AStarResult res1 = null;
-			AStarResult res2 = null;
+			AStarResult resBackward = null;
+			AStarResult resForward = null;
 
-			var task1 = new Task(delegate
+			var taskForward = new Task(delegate
 			{
-				// backwards
-				res1 = Find(environment, dest, positioning, src, Positioning.Exact, 200000, cts.Token);
+				resForward = Find(environment, src, Positioning.Exact, dest, positioning, 200000, cts.Token);
 			});
-			task1.Start();
+			taskForward.Start();
 
-			var task2 = new Task(delegate
+			var taskBackward = new Task(delegate
 			{
-				res2 = Find(environment, src, Positioning.Exact, dest, positioning, 200000, cts.Token);
-			}
-			);
-			task2.Start();
+				resBackward = Find(environment, dest, positioning, src, Positioning.Exact, 200000, cts.Token);
+			});
+			taskBackward.Start();
 
-			task1.Wait();
-			//Task.WaitAny(task1, task2);
+			Task.WaitAny(taskBackward, taskForward);
 
 			cts.Cancel();
 
-			Task.WaitAll(task1, task2);
+			Task.WaitAll(taskBackward, taskForward);
 
 			IEnumerable<Direction> dirs;
 
-			if (res1.Status == AStarStatus.Found)
+			if (resForward.Status == AStarStatus.Found)
 			{
-				dirs = res1.GetPathReverse();
-				finalLocation = dest + dirs.First().Reverse();
+				dirs = resForward.GetPath();
+				finalLocation = resForward.LastNode.Loc;
 			}
-			else if (res2.Status == AStarStatus.Found)
+			else if (resBackward.Status == AStarStatus.Found)
 			{
-				dirs = res2.GetPath();
-				finalLocation = res2.LastNode.Loc;
+				dirs = resBackward.GetPathReverse();
+
+				AStarNode n = resBackward.LastNode;
+				while (n.Parent != null)
+					n = n.Parent;
+
+				finalLocation = n.Loc;
 			}
 			else
 			{
@@ -98,9 +100,6 @@ namespace Dwarrowdelf.AStar
 
 			return dirs;
 		}
-
-
-
 
 
 		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3D src, Func<IntPoint3D, bool> func, int maxNodeCount = 200000)
@@ -207,7 +206,6 @@ namespace Dwarrowdelf.AStar
 				if (state.Target.GetIsTarget(node.Loc))
 				{
 					lastNode = node;
-					Debug.Assert(node.Parent != null);
 					status = AStarStatus.Found;
 					break;
 				}

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
@@ -127,45 +125,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return JobState.Done;
 			}
 
-			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
+			IntPoint3D finalPos;
+			var path = AStar.AStar.Find(m_environment, worker.Location, m_dest, m_positioning, out finalPos);
 
-			CancellationTokenSource cts = new CancellationTokenSource();
-
-			AStar.AStarResult res1 = null;
-			AStar.AStarResult res2 = null;
-
-			var task1 = new Task(delegate
-			{
-				res1 = AStar.AStar.Find(m_environment, m_dest, m_positioning, worker.Location, Positioning.Exact, 200000, cts.Token);
-			});
-			task1.Start();
-
-			var task2 = new Task(delegate
-			{
-				res2 = AStar.AStar.Find(m_environment, worker.Location, Positioning.Exact, m_dest, m_positioning, 200000, cts.Token);
-			}
-			);
-			task2.Start();
-
-			Task.WaitAny(task1, task2);
-
-			cts.Cancel();
-
-			Task.WaitAll(task1, task2);
-
-			IEnumerable<Direction> dirs;
-
-			if (res1.Status == AStar.AStarStatus.Found)
-				dirs = res1.GetPathReverse();
-			else if (res2.Status == AStar.AStarStatus.Found)
-				dirs = res2.GetPath();
-			else
-				dirs = null;
-
-			if (dirs == null)
+			if (path == null)
 				return Jobs.JobState.Abort;
 
-			m_pathDirs = new Queue<Direction>(dirs);
+			m_pathDirs = new Queue<Direction>(path);
+
+			if (m_pathDirs.Count == 0)
+				return Jobs.JobState.Done;
 
 			m_supposedLocation = worker.Location;
 
