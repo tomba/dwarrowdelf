@@ -12,6 +12,7 @@ namespace Dwarrowdelf.AStar
 	{
 		int GetTileWeight(IntPoint3D p);
 		IEnumerable<Direction> GetValidDirs(IntPoint3D p);
+		bool CanEnter(IntPoint3D p);
 	}
 
 	// tries to save some memory by using ushorts.
@@ -128,38 +129,33 @@ namespace Dwarrowdelf.AStar
 			return FindInternal(state, maxNodeCount);
 		}
 
-		static AStarResult FindInternal(AStarState state, int maxNodeCount)
+		static void AddInitialNodes(AStarState state)
 		{
-			//MyTrace.WriteLine("Start");
-
-			AStarNode lastNode = null;
-			AStarStatus status = AStarStatus.NotFound;
-
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
 
-			IEnumerable<IntPoint3D> startLocations;
+			List<IntPoint3D> nodeList = new List<IntPoint3D>();
 
 			switch (state.SrcPositioning)
 			{
 				case Positioning.Exact:
-					startLocations = new IntPoint3D[] { state.Src };
+					nodeList.Add(state.Src);
 					break;
 
 				case Positioning.AdjacentCardinal:
-					startLocations = DirectionExtensions.CardinalDirections.Select(d => state.Src + d);
+					nodeList.AddRange(DirectionExtensions.CardinalDirections.Select(d => state.Src + d));
 					break;
 
 				case Positioning.AdjacentPlanar:
-					startLocations = DirectionExtensions.PlanarDirections.Select(d => state.Src + d);
+					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
 					break;
 
 				case Positioning.AdjacentCardinalUpDown:
-					startLocations = DirectionExtensions.CardinalUpDownDirections.Select(d => state.Src + d);
+					nodeList.AddRange(DirectionExtensions.CardinalUpDownDirections.Select(d => state.Src + d));
 					break;
 
 				case Positioning.AdjacentPlanarUpDown:
-					startLocations = DirectionExtensions.PlanarUpDownDirections.Select(d => state.Src + d);
+					nodeList.AddRange(DirectionExtensions.PlanarUpDownDirections.Select(d => state.Src + d));
 					break;
 
 				case Positioning.Adjacent:
@@ -169,12 +165,29 @@ namespace Dwarrowdelf.AStar
 					throw new Exception();
 			}
 
-			foreach (var p in startLocations)
+			foreach (var p in nodeList.Where(p => state.Environment.CanEnter(p)))
 			{
+				ushort g = 0;
+				ushort h = state.Target.GetHeuristic(p);
+
 				var node = new AStarNode(p, null);
+				node.G = g;
+				node.H = h;
 				openList.Add(node);
 				nodeMap.Add(p, node);
 			}
+		}
+
+		static AStarResult FindInternal(AStarState state, int maxNodeCount)
+		{
+			//MyTrace.WriteLine("Start");
+
+			AddInitialNodes(state);
+
+			AStarNode lastNode = null;
+			var status = AStarStatus.NotFound;
+			var nodeMap = state.NodeMap;
+			var openList = state.OpenList;
 
 			while (!openList.IsEmpty)
 			{

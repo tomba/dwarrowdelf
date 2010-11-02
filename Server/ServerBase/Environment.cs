@@ -474,6 +474,9 @@ namespace Dwarrowdelf.Server
 
 		public bool CanEnter(IntPoint3D location)
 		{
+			if (!this.Bounds.Contains(location))
+				return false;
+
 			var dstInter = GetInterior(location);
 			var dstFloor = GetFloor(location);
 
@@ -656,6 +659,11 @@ namespace Dwarrowdelf.Server
 		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
 		{
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
+		}
+
+		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		{
+			return CanEnter(p);
 		}
 	}
 

@@ -182,7 +182,7 @@ namespace AStarTest
 				return;
 			}
 
-			if (e.LeftButton == MouseButtonState.Pressed && !m_map.GetBlocked(ml))
+			if (e.LeftButton == MouseButtonState.Pressed)
 			{
 				if (m_state == 0 || m_state == 3)
 				{
@@ -249,6 +249,20 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
+		Dwarrowdelf.AStar.AStarStatus m_astarStatus;
+		public Dwarrowdelf.AStar.AStarStatus Status
+		{
+			get { return m_astarStatus; }
+			set { m_astarStatus = value; Notify("Status"); }
+		}
+
+		int m_pathLength;
+		public int PathLength
+		{
+			get { return m_pathLength; }
+			set { m_pathLength = value; Notify("PathLength"); }
+		}
+
 		public event Action<Dwarrowdelf.AStar.AStarResult> AStarDone;
 		IEnumerable<IntPoint3D> m_path;
 		Dwarrowdelf.AStar.AStarResult m_result;
@@ -268,9 +282,12 @@ namespace AStarTest
 
 			m_result = result;
 
+			this.Status = m_result.Status;
+
 			if (m_result.Status != Dwarrowdelf.AStar.AStarStatus.Found)
 			{
 				m_path = null;
+				this.PathLength = 0;
 				return;
 			}
 
@@ -282,6 +299,8 @@ namespace AStarTest
 				n = n.Parent;
 			}
 			m_path = pathList;
+
+			this.PathLength = m_result.GetPathReverse().Count();
 
 			if (AStarDone != null)
 				AStarDone(m_result);
@@ -295,6 +314,11 @@ namespace AStarTest
 		int Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
 		{
 			return m_map.GetWeight(p);
+		}
+
+		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		{
+			return m_map.Bounds.Contains(p) && !m_map.GetBlocked(p);
 		}
 
 
@@ -315,18 +339,6 @@ namespace AStarTest
 
 			if (stairs == Stairs.Down || stairs == Stairs.UpDown)
 				yield return Direction.Down;
-		}
-
-		IEnumerable<Direction> GetTileDirs2D(IntPoint p)
-		{
-			var map = m_map;
-
-			foreach (var v in IntVector.GetAllXYDirections())
-			{
-				var l = p + v;
-				if (map.Bounds.Contains(new IntPoint3D(l, m_z)) && map.GetBlocked(new IntPoint3D(l, m_z)) == false)
-					yield return v.ToDirection();
-			}
 		}
 
 		void Notify(string propertyName)

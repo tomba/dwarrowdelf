@@ -363,5 +363,16 @@ namespace Dwarrowdelf.Client
 		{
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
+
+		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		{
+			if (!this.Bounds.Contains(p))
+				return false;
+
+			var dstInter = GetInterior(p);
+			var dstFloor = GetFloor(p);
+
+			return !dstInter.Blocker && dstFloor.IsCarrying;
+		}
 	}
 }

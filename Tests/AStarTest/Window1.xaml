@@ -43,6 +43,14 @@
             <TextBox Width="100" IsReadOnly="True"
 					 Text="{Binding ElementName=map, Path=TileControl.TicksUsed, Mode=OneWay}" />
             <Separator />
+            <TextBlock>Found</TextBlock>
+            <TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=TileControl.Status, Mode=OneWay}" />
+            <Separator />
+            <TextBlock>Len</TextBlock>
+            <TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=TileControl.PathLength, Mode=OneWay}" />
+            <Separator />
             <TextBlock>Coords</TextBlock>
             <TextBox Width="100" IsReadOnly="True">
                 <TextBox.Text>
