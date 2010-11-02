@@ -374,5 +374,9 @@ namespace Dwarrowdelf.Client
 
 			return !dstInter.Blocker && dstFloor.IsCarrying;
 		}
+
+		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
+		{
+		}
 	}
 }

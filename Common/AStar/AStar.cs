@@ -13,6 +13,8 @@ namespace Dwarrowdelf.AStar
 		int GetTileWeight(IntPoint3D p);
 		IEnumerable<Direction> GetValidDirs(IntPoint3D p);
 		bool CanEnter(IntPoint3D p);
+		// XXX Callback for single-stepping. Remove at some point.
+		void Callback(IDictionary<IntPoint3D, AStarNode> nodes);
 	}
 
 	// tries to save some memory by using ushorts.
@@ -197,6 +199,8 @@ namespace Dwarrowdelf.AStar
 					break;
 				}
 
+				state.Environment.Callback(nodeMap);
+
 				var node = openList.Pop();
 				node.Closed = true;
 
@@ -225,9 +229,12 @@ namespace Dwarrowdelf.AStar
 			return new AStarResult(nodeMap, lastNode, status);
 		}
 
+		public const int COST_DIAGONAL = 14;
+		public const int COST_STRAIGHT = 10;
+
 		static ushort CostBetweenNodes(IntPoint3D from, IntPoint3D to)
 		{
-			ushort cost = (from - to).ManhattanLength == 1 ? (ushort)10 : (ushort)14;
+			ushort cost = (from - to).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
 			return cost;
 		}
 

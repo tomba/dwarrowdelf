@@ -665,6 +665,10 @@ namespace Dwarrowdelf.Server
 		{
 			return CanEnter(p);
 		}
+
+		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
+		{
+		}
 	}
 
 

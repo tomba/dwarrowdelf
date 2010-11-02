@@ -19,16 +19,16 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Click="OnBMClicked" Tag="1">Benchmark 1</Button>
+                <ToggleButton IsChecked="{Binding ElementName=map, Path=TileControl.Step}">Step</ToggleButton>
                 <Separator />
             </ToolBar>
 
             <ToolBar>
                 <TextBlock>Src:</TextBlock>
-                <ComboBox ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.SrcPos}" />
+                <ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.SrcPos}" />
                 <Separator />
                 <TextBlock>Dst:</TextBlock>
-                <ComboBox ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.DstPos}" />
+                <ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.DstPos}" />
             </ToolBar>
 
 

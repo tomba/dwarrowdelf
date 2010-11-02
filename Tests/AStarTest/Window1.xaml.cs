@@ -28,11 +28,6 @@ namespace AStarTest
 			this.PreviewTextInput += Window_PreTextInput;
 		}
 
-		private void OnBMClicked(object sender, RoutedEventArgs e)
-		{
-
-		}
-
 		Direction KeyToDir(Key key)
 		{
 			Direction dir;
@@ -93,6 +88,10 @@ namespace AStarTest
 				if (map.TileSize <= 16)
 					return;
 				map.TileSize -= 8;
+			}
+			else
+			{
+				map.TileControl.Signal();
 			}
 		}
 
