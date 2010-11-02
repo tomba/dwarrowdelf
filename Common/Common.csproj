@@ -80,6 +80,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStar\AStarResult.cs" />
+    <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="DataTypes\IntRect3D.cs" />
     <Compile Include="EnvironmentHelpers.cs" />
     <Compile Include="Extensions.cs" />
@@ -122,7 +124,7 @@
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Buildings.cs" />
-    <Compile Include="AStar\AStar3D.cs" />
+    <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
     <Compile Include="DataTypes\GrowingGrid3DBase.cs">

@@ -8,49 +8,6 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.AStar
 {
-	public enum AStarStatus
-	{
-		Found,
-		NotFound,
-		LimitExceeded,
-		Cancelled,
-	}
-
-	public class AStarResult
-	{
-		public IDictionary<IntPoint3D, AStarNode> Nodes { get; private set; }
-		public AStarNode LastNode { get; private set; }
-		public AStarStatus Status { get; private set; }
-
-		internal AStarResult(IDictionary<IntPoint3D, AStarNode> nodes, AStarNode lastNode, AStarStatus status)
-		{
-			if (nodes == null)
-				throw new ArgumentNullException();
-
-			this.Nodes = nodes;
-			this.LastNode = lastNode;
-			this.Status = status;
-		}
-
-		public IEnumerable<Direction> GetPathReverse()
-		{
-			if (this.LastNode == null)
-				yield break;
-
-			AStarNode n = this.LastNode;
-			while (n.Parent != null)
-			{
-				yield return (n.Parent.Loc - n.Loc).ToDirection();
-				n = n.Parent;
-			}
-		}
-
-		public IEnumerable<Direction> GetPath()
-		{
-			return GetPathReverse().Reverse().Select(d => d.Reverse());
-		}
-	}
-
 	// tries to save some memory by using ushorts.
 	public class AStarNode : IOpenListNode
 	{
@@ -66,75 +23,6 @@ namespace Dwarrowdelf.AStar
 		{
 			Loc = l;
 			Parent = parent;
-		}
-	}
-
-	public interface IAStarTarget
-	{
-		bool GetIsTarget(IntPoint3D location);
-		ushort GetHeuristic(IntPoint3D location);
-	}
-
-	public class AStarDefaultTarget : IAStarTarget
-	{
-		IntPoint3D m_destination;
-		Positioning m_positioning;
-
-		public AStarDefaultTarget(IntPoint3D destination, Positioning positioning)
-		{
-			m_destination = destination;
-			m_positioning = positioning;
-		}
-
-		public bool GetIsTarget(IntPoint3D location)
-		{
-			return location.IsAdjacentTo(m_destination, m_positioning);
-		}
-
-		public ushort GetHeuristic(IntPoint3D location)
-		{
-			return (ushort)((m_destination - location).ManhattanLength * 10);
-		}
-	}
-
-	public class AStarAreaTarget : IAStarTarget
-	{
-		IntCuboid m_destination;
-
-		public AStarAreaTarget(IntCuboid destination)
-		{
-			m_destination = destination;
-		}
-
-		public bool GetIsTarget(IntPoint3D location)
-		{
-			return m_destination.Contains(location);
-		}
-
-		public ushort GetHeuristic(IntPoint3D location)
-		{
-			var dst = new IntPoint3D((m_destination.X1 + m_destination.X2) / 2, (m_destination.Y1 + m_destination.Y2) / 2, (m_destination.Z1 + m_destination.Z2) / 2);
-			return (ushort)((dst - location).ManhattanLength * 10);
-		}
-	}
-
-	public class AStarDelegateTarget : Dwarrowdelf.AStar.IAStarTarget
-	{
-		Func<IntPoint3D, bool> m_func;
-
-		public AStarDelegateTarget(Func<IntPoint3D, bool> func)
-		{
-			m_func = func;
-		}
-
-		public bool GetIsTarget(IntPoint3D location)
-		{
-			return m_func(location);
-		}
-
-		public ushort GetHeuristic(IntPoint3D location)
-		{
-			return 0;
 		}
 	}
 
