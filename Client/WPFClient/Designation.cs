@@ -55,6 +55,8 @@ namespace Dwarrowdelf.Client
 
 		public void Start()
 		{
+			Debug.Assert(m_map == null);
+
 			var positions = InitializeOverride();
 			m_map = positions.ToDictionary(p => p, p => new PositionInfo());
 
@@ -275,6 +277,7 @@ namespace Dwarrowdelf.Client
 			var env = this.Environment;
 
 
+			// TODO 
 
 			return Positioning.AdjacentPlanar;
 		}

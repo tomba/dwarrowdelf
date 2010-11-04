@@ -53,35 +53,6 @@ namespace Dwarrowdelf.Jobs
 			return null;
 		}
 
-		static IAssignment FindJob(IEnumerable<IJob> jobs, ILiving living)
-		{
-			return FindJobParallel(jobs, living);
-		}
-
-		static IAssignment FindJobParallel(IEnumerable<IJob> jobs, ILiving living)
-		{
-			foreach (var job in jobs.Where(j => j.JobState == JobState.Ok))
-			{
-				var assignment = FindAssignment(job, living);
-
-				if (assignment != null)
-					return assignment;
-			}
-
-			return null;
-		}
-
-		static IAssignment FindJobSerial(IEnumerable<IJob> jobs, ILiving living)
-		{
-			Debug.Assert(jobs.All(j => j.JobState == JobState.Ok || j.JobState == JobState.Done));
-
-			var job = jobs.First(j => j.JobState == JobState.Ok);
-
-			var assigment = FindAssignment(job, living);
-
-			return assigment;
-		}
-
 		static IAssignment FindAssignment(IJob job, ILiving living)
 		{
 			Debug.Assert(job.JobState == JobState.Ok);
@@ -100,11 +71,11 @@ namespace Dwarrowdelf.Jobs
 					switch (jobGroup.JobGroupType)
 					{
 						case JobGroupType.Parallel:
-							assignment = FindJobParallel(jobGroup.SubJobs, living);
+							assignment = FindAssignmentParallel(jobGroup.SubJobs, living);
 							break;
 
 						case JobGroupType.Serial:
-							assignment = FindJobSerial(jobGroup.SubJobs, living);
+							assignment = FindAssignmentSerial(jobGroup.SubJobs, living);
 							break;
 
 						default:
@@ -121,5 +92,30 @@ namespace Dwarrowdelf.Jobs
 			else
 				return null;
 		}
+
+		static IAssignment FindAssignmentParallel(IEnumerable<IJob> jobs, ILiving living)
+		{
+			foreach (var job in jobs.Where(j => j.JobState == JobState.Ok))
+			{
+				var assignment = FindAssignment(job, living);
+
+				if (assignment != null)
+					return assignment;
+			}
+
+			return null;
+		}
+
+		static IAssignment FindAssignmentSerial(IEnumerable<IJob> jobs, ILiving living)
+		{
+			Debug.Assert(jobs.All(j => j.JobState == JobState.Ok || j.JobState == JobState.Done));
+
+			var job = jobs.First(j => j.JobState == JobState.Ok);
+
+			var assigment = FindAssignment(job, living);
+
+			return assigment;
+		}
+
 	}
 }
