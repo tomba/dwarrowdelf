@@ -105,8 +105,6 @@ namespace Dwarrowdelf.Client
 
 		public MasterMapControl()
 		{
-			this.UseLayoutRounding = true;
-
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 		}

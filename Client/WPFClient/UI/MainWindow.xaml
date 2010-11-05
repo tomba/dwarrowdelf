@@ -9,7 +9,8 @@
     x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
     DataContext="{x:Static local:GameData.Data}"
-    Icon="/Dwarrowdelf;component/Images/MainWindow.png">
+    Icon="/Dwarrowdelf;component/Images/MainWindow.png"
+    UseLayoutRounding="True">
 
     <Window.Resources>
         <local:MyInteriorsConverter x:Key="myInteriorsConverter" />
