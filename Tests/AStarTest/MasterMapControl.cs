@@ -32,8 +32,10 @@ namespace AStarTest
 	{
 		MapControl m_map;
 		Canvas m_canvas;
-		TransformGroup m_canvasTransform;
 		Polyline m_path1;
+
+		ScaleTransform m_scaleTransform;
+		TranslateTransform m_translateTransform;
 
 
 
@@ -50,9 +52,9 @@ namespace AStarTest
 		public static readonly DependencyProperty ZProperty =
 			DependencyProperty.RegisterAttached("Z", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
 
-
 		public MasterMapControl()
 		{
+			this.UseLayoutRounding = true;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -62,19 +64,26 @@ namespace AStarTest
 			var grid = new Grid();
 			AddChild(grid);
 
+			grid.ClipToBounds = true;
+
 			m_map = new MapControl();
 			m_map.SomethingChanged += new Action(m_map_SomethingChanged);
 			m_map.AStarDone += new Action<Dwarrowdelf.AStar.AStarResult>(m_map_AStarDone);
 			grid.Children.Add((UIElement)m_map);
 
 			m_canvas = new Canvas();
-			//m_canvas.ClipToBounds = true;
+			m_canvas.UseLayoutRounding = false;
+			m_canvas.SnapsToDevicePixels = true;
+
+			m_canvas.ClipToBounds = true;
 			grid.Children.Add(m_canvas);
 
-			m_canvasTransform = new TransformGroup();
-			m_canvasTransform.Children.Add(new ScaleTransform());
-			m_canvasTransform.Children.Add(new TranslateTransform());
-			m_canvas.RenderTransform = m_canvasTransform;
+			m_scaleTransform = new ScaleTransform();
+			m_translateTransform = new TranslateTransform();
+			var canvasTransform = new TransformGroup();
+			canvasTransform.Children.Add(m_scaleTransform);
+			canvasTransform.Children.Add(m_translateTransform);
+			m_canvas.RenderTransform = canvasTransform;
 
 			m_path1 = new Polyline();
 			m_path1.Stroke = System.Windows.Media.Brushes.SlateGray;
@@ -84,6 +93,14 @@ namespace AStarTest
 
 			Canvas.SetLeft(m_path1, 0.5);
 			Canvas.SetTop(m_path1, 0.5);
+
+			var pl = new Polyline();
+			pl.Stroke = System.Windows.Media.Brushes.SlateGray;
+			pl.StrokeThickness = 0.1;
+			pl.Points.Add(new Point(3.5, 3.5));
+			pl.Points.Add(new Point(4.6, 4.5));
+			pl.Points.Add(new Point(5.5, 3.5));
+			m_canvas.Children.Add(pl);
 		}
 
 		void m_map_AStarDone(Dwarrowdelf.AStar.AStarResult res)
@@ -144,11 +161,11 @@ namespace AStarTest
 		{
 			var p = m_map.MapLocationToScreenPoint(new IntPoint(0, -1));
 
-			((ScaleTransform)m_canvasTransform.Children[0]).ScaleX = m_map.TileSize;
-			((ScaleTransform)m_canvasTransform.Children[0]).ScaleY = -m_map.TileSize;
+			m_scaleTransform.ScaleX = m_map.TileSize;
+			m_scaleTransform.ScaleY = -m_map.TileSize;
 
-			((TranslateTransform)m_canvasTransform.Children[1]).X = p.X;
-			((TranslateTransform)m_canvasTransform.Children[1]).Y = p.Y;
+			m_translateTransform.X = p.X;
+			m_translateTransform.Y = p.Y;
 
 			foreach (FrameworkElement child in m_canvas.Children)
 			{

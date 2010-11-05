@@ -60,7 +60,7 @@ namespace AStarTest
 
 		public MapControl()
 		{
-			this.UseLayoutRounding = false;
+			//this.UseLayoutRounding = false;
 
 			this.CurrentTileInfo = new TileInfo();
 
