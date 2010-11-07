@@ -13,6 +13,7 @@ namespace Dwarrowdelf.Client.TileControlD2D
 		IRenderResolver m_resolver;
 		RenderData<RenderTileSimple> m_renderData;
 
+		IntSize m_simpleBitmapArraySize;
 		uint[] m_simpleBitmapArray;
 
 		public RendererSimple(IRenderResolver resolver, RenderData<RenderTileSimple> renderMap)
@@ -27,11 +28,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 		public void TileSizeChanged(int tileSize)
 		{
-		}
-
-		public void SizeChanged()
-		{
-			m_simpleBitmapArray = null;
 		}
 
 		public void Render(RenderTarget renderTarget, int columns, int rows, int tileSize)
@@ -53,10 +49,11 @@ namespace Dwarrowdelf.Client.TileControlD2D
 
 			//var sw = Stopwatch.StartNew();
 
-			if (m_simpleBitmapArray == null)
+			if (m_simpleBitmapArraySize != new IntSize(columns, rows))
 			{
 				//Debug.Print("Create SimpleBitmapArray");
-				m_simpleBitmapArray = new uint[w * h];
+				m_simpleBitmapArraySize = new IntSize(columns, rows);
+				m_simpleBitmapArray = new uint[columns * rows];
 			}
 
 			fixed (uint* a = m_simpleBitmapArray)

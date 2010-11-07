@@ -99,10 +99,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 				m_bitmapCache.TileSize = tileSize;
 		}
 
-		public void SizeChanged()
-		{
-		}
-
 		void CreateAtlas(RenderTarget renderTarget, int itileSize)
 		{
 			//Debug.WriteLine("CreateAtlas");

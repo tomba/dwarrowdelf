@@ -10,7 +10,6 @@ namespace Dwarrowdelf.Client.TileControlD2D
 	{
 		void RenderTargetChanged();
 		void TileSizeChanged(int tileSize);
-		void SizeChanged();
 		void Render(RenderTarget renderTarget, int columns, int rows, int tileSize);
 	}
 }

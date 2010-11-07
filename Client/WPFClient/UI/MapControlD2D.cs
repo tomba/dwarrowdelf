@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client
 			base.OnInitialized(e);
 
 			m_tileControlD2D = new TileControlD2D.TileControlD2D();
-			m_tileControlD2D.SizeChanged += OnTileControlSizeChanged;
+			m_tileControlD2D.TileArrangementChanged += OnTileArrangementChanged;
 			AddChild(m_tileControlD2D);
 
 			m_renderViewSimple = new RenderViewSimple();
@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 			m_tileControlD2D.Renderer = m_renderView.Renderer;
 		}
 
-		void OnTileControlSizeChanged(object sender, SizeChangedEventArgs e)
+		void OnTileArrangementChanged()
 		{
 			if (TileArrangementChanged != null)
 				TileArrangementChanged();
