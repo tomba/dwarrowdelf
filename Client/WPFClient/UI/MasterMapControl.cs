@@ -284,7 +284,7 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			if (this.Selection.SelectionCuboid.Z1 > this.Z || this.Selection.SelectionCuboid.Z2 < this.Z)
+			if (this.Selection.SelectionCuboid.Z1 > this.Z || this.Selection.SelectionCuboid.Z2 - 1 < this.Z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
