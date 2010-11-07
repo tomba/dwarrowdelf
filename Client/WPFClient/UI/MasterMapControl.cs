@@ -103,6 +103,9 @@ namespace Dwarrowdelf.Client
 		Canvas m_buildingCanvas;
 		Dictionary<IDrawableArea, Rectangle> m_buildingRectMap;
 
+		ScaleTransform m_scaleTransform;
+		TranslateTransform m_translateTransform;
+
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
@@ -114,6 +117,7 @@ namespace Dwarrowdelf.Client
 			base.OnInitialized(e);
 
 			var grid = new Grid();
+			grid.ClipToBounds = true;
 			AddChild(grid);
 
 			IMapControl mc = new MapControlD2D();
@@ -123,7 +127,6 @@ namespace Dwarrowdelf.Client
 			m_mapControl.TileArrangementChanged += OnTileArrangementChanged;
 
 			m_canvas = new Canvas();
-			m_canvas.ClipToBounds = true;
 			grid.Children.Add(m_canvas);
 
 			m_selectionRect = new Rectangle();
@@ -138,8 +141,14 @@ namespace Dwarrowdelf.Client
 			m_canvas.Children.Add(m_selectionRect);
 
 			m_buildingCanvas = new Canvas();
-			m_buildingCanvas.ClipToBounds = true;
 			grid.Children.Add(m_buildingCanvas);
+
+			var group = new TransformGroup();
+			m_scaleTransform = new ScaleTransform();
+			m_translateTransform = new TranslateTransform();
+			group.Children.Add(m_scaleTransform);
+			group.Children.Add(m_translateTransform);
+			m_buildingCanvas.RenderTransform = group;
 
 			m_buildingRectMap = new Dictionary<IDrawableArea, Rectangle>();
 
@@ -451,11 +460,19 @@ namespace Dwarrowdelf.Client
 
 		void UpdateAreaRectangle(IDrawableArea b, Rectangle rect)
 		{
-			var r = MapRectToScreenPointRect(b.Area.ToIntRect());
+			m_scaleTransform.ScaleX = this.TileSize;
+			m_scaleTransform.ScaleY = -this.TileSize;
 
-			rect.StrokeThickness = Math.Max(1, this.TileSize / 8);
-			Canvas.SetLeft(rect, r.Left);
-			Canvas.SetTop(rect, r.Top);
+			var p = m_mapControl.MapLocationToScreenPoint(new IntPoint(0, -1));
+			m_translateTransform.X = p.X;
+			m_translateTransform.Y = p.Y;
+
+			//var r = MapRectToScreenPointRect(b.Area.ToIntRect());
+			var r = b.Area;
+
+			rect.StrokeThickness = 0.1; // Math.Max(1, this.TileSize / 8);
+			Canvas.SetLeft(rect, r.X);
+			Canvas.SetTop(rect, r.Y);
 			rect.Width = r.Width;
 			rect.Height = r.Height;
 		}
