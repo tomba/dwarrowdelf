@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dwarrowdelf.Jobs;
+using System.Windows;
+using System.Windows.Shapes;
+using System.Windows.Media;
 
 namespace Dwarrowdelf.Client
 {
@@ -19,12 +22,10 @@ namespace Dwarrowdelf.Client
 
 	// XXX should be configurable for classes, subclasses and certain items...
 
-	class Stockpile : IDrawableArea, IJobSource
+	class Stockpile : IDrawableElement, IJobSource
 	{
 		public Environment Environment { get; private set; }
-		IntCuboid IDrawableArea.Area { get { return this.Area.ToCuboid(); } }
-		public System.Windows.Media.Brush Fill { get { return null; } }
-		public double Opacity { get { return 1.0; } }
+		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
 
 		public IntRect3D Area { get; private set; }
 
@@ -32,11 +33,22 @@ namespace Dwarrowdelf.Client
 
 		List<StoreToStockpileJob> m_jobs = new List<StoreToStockpileJob>();
 
+		FrameworkElement m_element;
+		public FrameworkElement Element { get { return m_element; } }
+
+
 		public Stockpile(Environment environment, IntRect3D area, StockpileType stockpileType)
 		{
 			this.Environment = environment;
 			this.Area = area;
 			this.StockpileType = stockpileType;
+
+			var rect = new Rectangle();
+			rect.Stroke = Brushes.Gray;
+			rect.StrokeThickness = 0.1;
+			rect.Width = area.Width;
+			rect.Height = area.Height;
+			m_element = rect;
 
 			this.Environment.World.JobManager.AddJobSource(this);
 		}

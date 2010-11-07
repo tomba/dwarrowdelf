@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	interface IDrawableArea
+	interface IDrawableElement
 	{
 		Environment Environment { get; }
 		IntCuboid Area { get; }
-		Brush Fill { get; }
-		double Opacity { get; }
+		FrameworkElement Element { get; }
 	}
 }

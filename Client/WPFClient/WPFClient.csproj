@@ -130,7 +130,7 @@
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="Designation.cs" />
-    <Compile Include="IDrawableArea.cs" />
+    <Compile Include="IDrawableElement.cs" />
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\UIDictionary.xaml.cs">
       <DependentUpon>UIDictionary.xaml</DependentUpon>

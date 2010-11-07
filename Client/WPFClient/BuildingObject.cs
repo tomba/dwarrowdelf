@@ -6,20 +6,23 @@ using System.Diagnostics;
 using System.Windows.Media;
 using System.ComponentModel;
 using Dwarrowdelf.Jobs;
+using System.Windows;
+using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
-	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableArea, IJobSource
+	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableElement, IJobSource
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
 
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
-		IntCuboid IDrawableArea.Area { get { return new IntCuboid(this.Area); } }
-		public Brush Fill { get { return null; } }
-		public double Opacity { get { return 1.0; } }
+		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRect3D Area { get; set; }
+
+		FrameworkElement m_element;
+		public FrameworkElement Element { get { return m_element; } }
 
 		class BuildOrder
 		{
@@ -40,6 +43,10 @@ namespace Dwarrowdelf.Client
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
+			var ellipse = new Rectangle();
+			ellipse.Stroke = Brushes.DarkGray;
+			ellipse.StrokeThickness = 0.1;
+			m_element = ellipse;
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)
@@ -65,6 +72,9 @@ namespace Dwarrowdelf.Client
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
 			this.Environment = env;
+
+			m_element.Width = this.Area.Width;
+			m_element.Height = this.Area.Height;
 
 			env.AddBuilding(this);
 

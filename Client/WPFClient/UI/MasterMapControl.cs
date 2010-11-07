@@ -100,8 +100,8 @@ namespace Dwarrowdelf.Client
 		Rectangle m_selectionRect;
 
 		Canvas m_canvas;
-		Canvas m_buildingCanvas;
-		Dictionary<IDrawableArea, Rectangle> m_buildingRectMap;
+		Canvas m_elementCanvas;
+		Dictionary<IDrawableElement, FrameworkElement> m_elementMap;
 
 		ScaleTransform m_scaleTransform;
 		TranslateTransform m_translateTransform;
@@ -126,6 +126,21 @@ namespace Dwarrowdelf.Client
 			m_mapControl = mc;
 			m_mapControl.TileArrangementChanged += OnTileArrangementChanged;
 
+
+			m_elementCanvas = new Canvas();
+			grid.Children.Add(m_elementCanvas);
+
+			var group = new TransformGroup();
+			m_scaleTransform = new ScaleTransform();
+			m_translateTransform = new TranslateTransform();
+			group.Children.Add(m_scaleTransform);
+			group.Children.Add(m_translateTransform);
+			m_elementCanvas.RenderTransform = group;
+
+			m_elementMap = new Dictionary<IDrawableElement, FrameworkElement>();
+
+
+
 			m_canvas = new Canvas();
 			grid.Children.Add(m_canvas);
 
@@ -140,17 +155,6 @@ namespace Dwarrowdelf.Client
 			m_selectionRect.Fill.Freeze();
 			m_canvas.Children.Add(m_selectionRect);
 
-			m_buildingCanvas = new Canvas();
-			grid.Children.Add(m_buildingCanvas);
-
-			var group = new TransformGroup();
-			m_scaleTransform = new ScaleTransform();
-			m_translateTransform = new TranslateTransform();
-			group.Children.Add(m_scaleTransform);
-			group.Children.Add(m_translateTransform);
-			m_buildingCanvas.RenderTransform = group;
-
-			m_buildingRectMap = new Dictionary<IDrawableArea, Rectangle>();
 
 			this.TileSize = 32;
 		}
@@ -168,8 +172,10 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				m_mapControl.TileSize = value;
+
+				UpdateScaleTransform();
+
 				UpdateSelectionRect();
-				UpdateAreaPositions();
 			}
 		}
 
@@ -205,7 +211,6 @@ namespace Dwarrowdelf.Client
 			this.CenterPos = l;
 
 			UpdateSelectionRect();
-			UpdateAreaPositions();
 
 			e.Handled = true;
 
@@ -215,8 +220,21 @@ namespace Dwarrowdelf.Client
 		// Called when underlying MapControl changes
 		void OnTileArrangementChanged()
 		{
+			UpdateTranslateTransform();
 			UpdateSelectionRect();
-			UpdateAreaPositions();
+		}
+
+		void UpdateTranslateTransform()
+		{
+			var p = m_mapControl.MapLocationToScreenPoint(new IntPoint(0, -1));
+			m_translateTransform.X = p.X;
+			m_translateTransform.Y = p.Y;
+		}
+
+		void UpdateScaleTransform()
+		{
+			m_scaleTransform.ScaleX = this.TileSize;
+			m_scaleTransform.ScaleY = -this.TileSize;
 		}
 
 		public MapSelection Selection
@@ -374,11 +392,7 @@ namespace Dwarrowdelf.Client
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
 
-				double dx = dv.X * this.TileSize;
-				double dy = -dv.Y * this.TileSize;
-
-				foreach (var kvp in m_buildingRectMap)
-					UpdateAreaRectangle(kvp.Key, kvp.Value);
+				UpdateTranslateTransform();
 
 				Notify("CenterPos");
 			}
@@ -427,9 +441,9 @@ namespace Dwarrowdelf.Client
 
 				if (m_env != null)
 				{
-					m_env.Buildings.CollectionChanged -= OnAreaCollectionChanged;
-					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged -= OnAreaCollectionChanged;
-					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnAreaCollectionChanged;
+					m_env.Buildings.CollectionChanged -= OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged -= OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnElementCollectionChanged;
 				}
 
 				m_env = value;
@@ -439,9 +453,9 @@ namespace Dwarrowdelf.Client
 					if (m_world != m_env.World)
 						m_world = m_env.World;
 
-					m_env.Buildings.CollectionChanged += OnAreaCollectionChanged;
-					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged += OnAreaCollectionChanged;
-					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnAreaCollectionChanged;
+					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged += OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
 
 					this.CenterPos = m_env.HomeLocation.ToIntPoint();
 					this.Z = m_env.HomeLocation.Z;
@@ -452,88 +466,68 @@ namespace Dwarrowdelf.Client
 				}
 
 				this.Selection = new MapSelection();
-				UpdateAreas();
+				UpdateElements();
 
 				Notify("Environment");
 			}
 		}
 
-		void UpdateAreaRectangle(IDrawableArea b, Rectangle rect)
+		void AddElement(IDrawableElement element)
 		{
-			m_scaleTransform.ScaleX = this.TileSize;
-			m_scaleTransform.ScaleY = -this.TileSize;
+			var e = element.Element;
 
-			var p = m_mapControl.MapLocationToScreenPoint(new IntPoint(0, -1));
-			m_translateTransform.X = p.X;
-			m_translateTransform.Y = p.Y;
+			if (e != null)
+			{
+				var r = element.Area;
+				Canvas.SetLeft(e, r.X);
+				Canvas.SetTop(e, r.Y);
+				SetZ(e, r.Z);
 
-			//var r = MapRectToScreenPointRect(b.Area.ToIntRect());
-			var r = b.Area;
-
-			rect.StrokeThickness = 0.1; // Math.Max(1, this.TileSize / 8);
-			Canvas.SetLeft(rect, r.X);
-			Canvas.SetTop(rect, r.Y);
-			rect.Width = r.Width;
-			rect.Height = r.Height;
+				m_elementCanvas.Children.Add(e);
+				m_elementMap[element] = e;
+			}
 		}
 
-		void UpdateAreaPositions()
+		void RemoveElement(IDrawableElement element)
 		{
-			foreach (var kvp in m_buildingRectMap)
-				UpdateAreaRectangle(kvp.Key, kvp.Value);
+			var e = m_elementMap[element];
+			m_elementCanvas.Children.Remove(e);
+			m_elementMap.Remove(element);
 		}
 
-		void AddAreaRectangle(IDrawableArea b)
+		void UpdateElements()
 		{
-			var rect = new Rectangle();
-			rect.Stroke = Brushes.DarkGray;
-			rect.Fill = b.Fill;
-			rect.Opacity = b.Opacity;
-			m_buildingCanvas.Children.Add(rect);
-			m_buildingRectMap[b] = rect;
-			UpdateAreaRectangle(b, rect);
-		}
-
-		void RemoveAreaRectangle(IDrawableArea b)
-		{
-			var rect = m_buildingRectMap[b];
-			m_buildingCanvas.Children.Remove(rect);
-			m_buildingRectMap.Remove(b);
-		}
-
-		void UpdateAreas()
-		{
-			m_buildingCanvas.Children.Clear();
-			m_buildingRectMap.Clear();
+			m_elementCanvas.Children.Clear();
+			m_elementMap.Clear();
 
 			if (m_env != null)
 			{
-				var areas = m_env.Buildings.Cast<IDrawableArea>()
+				var elements = m_env.Buildings.Cast<IDrawableElement>()
 					.Concat(m_world.DesignationManager.Designations)
 					.Concat(m_env.Stockpiles);
 
-				foreach (IDrawableArea area in areas)
+				foreach (IDrawableElement element in elements)
 				{
-					if (area.Environment == m_env && area.Area.ContainsZ(m_z))
-						AddAreaRectangle(area);
+					if (element.Environment == m_env)
+						AddElement(element);
 				}
 			}
 		}
 
-		void OnAreaCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		void OnElementCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					foreach (IDrawableArea b in e.NewItems)
+					foreach (IDrawableElement b in e.NewItems)
 						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
-							AddAreaRectangle(b);
+							AddElement(b);
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					foreach (IDrawableArea b in e.OldItems)
+					foreach (IDrawableElement b in e.OldItems)
 						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
-							RemoveAreaRectangle(b);
+							RemoveElement(b);
 
 					break;
 
@@ -541,6 +535,20 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 			}
 		}
+
+
+		public static int GetZ(DependencyObject obj)
+		{
+			return (int)obj.GetValue(ZProperty);
+		}
+
+		public static void SetZ(DependencyObject obj, int value)
+		{
+			obj.SetValue(ZProperty, value);
+		}
+
+		public static readonly DependencyProperty ZProperty =
+			DependencyProperty.RegisterAttached("Z", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
 
 		public int Z
 		{
@@ -553,7 +561,14 @@ namespace Dwarrowdelf.Client
 
 				m_z = value;
 				m_mapControl.Z = value;
-				UpdateAreas();
+
+				foreach (FrameworkElement child in m_elementCanvas.Children)
+				{
+					if (GetZ(child) != m_z)
+						child.Visibility = System.Windows.Visibility.Hidden;
+					else
+						child.Visibility = System.Windows.Visibility.Visible;
+				}
 
 				if (IsMouseCaptured)
 				{

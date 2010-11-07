@@ -7,6 +7,8 @@ using System.Windows.Media;
 using System.ComponentModel;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
+using System.Windows;
+using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
@@ -17,14 +19,14 @@ namespace Dwarrowdelf.Client
 		CreateStairs,
 	}
 
-	abstract class Designation : IDrawableArea, IJobSource
+	abstract class Designation : IDrawableElement, IJobSource
 	{
 		public DesignationType Type { get; private set; }
 		public IntCuboid Area { get; private set; }
 		public Environment Environment { get; private set; }
 
-		public Brush Fill { get { return Brushes.DimGray; } }
-		public double Opacity { get { return 0.5; } }
+		FrameworkElement m_element;
+		public FrameworkElement Element { get { return m_element; } }
 
 		class PositionInfo
 		{
@@ -39,6 +41,15 @@ namespace Dwarrowdelf.Client
 			this.Environment = env;
 			this.Type = type;
 			this.Area = area;
+
+			var rect = new Rectangle();
+			rect.Fill = Brushes.DimGray;
+			rect.Opacity = 0.5;
+			rect.Stroke = Brushes.DarkGray;
+			rect.StrokeThickness = 0.1;
+			rect.Width = area.Width;
+			rect.Height = area.Height;
+			m_element = rect;
 
 			this.Environment.World.TickStartEvent += OnTickStartEvent;
 
