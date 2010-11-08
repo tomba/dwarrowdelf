@@ -913,9 +913,9 @@ namespace Dwarrowdelf.Client
 					designation = new MineDesignation(env, area, MineActionType.Mine);
 					break;
 
-				//case DesignationType.FellTree:
-					//designation = new FellTreeDesignation(env, area);
-					//break;
+				case DesignationType.FellTree:
+					designation = new FellTreeDesignation(env, area);
+					break;
 
 				case DesignationType.CreateStairs:
 					designation = new MineDesignation(env, area, MineActionType.Stairs);

@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		readonly IEnvironment m_environment;
 		IntPoint3D m_dest;
 		readonly GetMoveTarget m_destFunc;
-		readonly Positioning m_positioning;
+		Positioning m_positioning;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
@@ -36,6 +36,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_environment = environment;
 			m_destFunc = destination;
 			m_positioning = positioning;
+		}
+
+		public Positioning Positioning
+		{
+			get { return m_positioning; }
+			set
+			{
+				m_positioning = value;
+				m_pathDirs = null;
+			}
 		}
 
 		protected override void OnStateChanged(JobState state)

@@ -12,34 +12,41 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	{
 		readonly IEnvironment m_environment;
 		readonly IntPoint3D m_location;
+		readonly MineActionType m_mineActionType;
+		MoveAssignment m_moveAssignment;
 
 		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
-			: this(parent, priority, environment, location, mineActionType, Positioning.AdjacentPlanarUpDown)
-		{
-		}
-
-		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType, Positioning positioning)
 			: base(parent, priority)
 		{
 			m_environment = environment;
 			m_location = location;
+			m_mineActionType = mineActionType;
+
+			var positioning = GetPossiblePositioning(environment, location, mineActionType);
+
+			m_moveAssignment = new MoveAssignment(this, priority, m_environment, m_location, positioning);
 
 			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, m_environment, m_location, positioning),
+				m_moveAssignment,
 				new MineAssignment(this, priority, m_environment, m_location, mineActionType),
 			});
 		}
 
-		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType, IntPoint3D miningLocation)
-			: base(parent, priority)
+		protected override JobState AssignOverride(ILiving worker)
 		{
-			m_environment = environment;
-			m_location = location;
+			var positioning = GetPossiblePositioning(m_environment, m_location, m_mineActionType);
 
-			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, m_environment, miningLocation, Positioning.Exact),
-				new MineAssignment(this, priority, m_environment, m_location, mineActionType),
-			});
+			m_moveAssignment.Positioning = positioning;
+
+			return JobState.Ok;
+		}
+
+		static Positioning GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)
+		{
+
+			// TODO 
+
+			return Positioning.AdjacentPlanar;
 		}
 
 		/*
