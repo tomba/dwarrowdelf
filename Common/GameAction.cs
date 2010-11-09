@@ -159,6 +159,9 @@ namespace Dwarrowdelf
 		/// or up, if the current tile has stairs
 		/// </summary>
 		Mine,
+		/// <summary>
+		/// Stairs can be created for planar directions or down. To create stairs up, we need stairs already in the current tile.
+		/// </summary>
 		Stairs,
 	}
 

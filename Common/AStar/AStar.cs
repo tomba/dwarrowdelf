@@ -159,6 +159,16 @@ namespace Dwarrowdelf.AStar
 					nodeList.AddRange(DirectionExtensions.PlanarUpDownDirections.Select(d => state.Src + d));
 					break;
 
+				case Positioning.AdjacentPlanarUp:
+					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
+					nodeList.Add(state.Src + Direction.Up);
+					break;
+
+				case Positioning.AdjacentPlanarDown:
+					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
+					nodeList.Add(state.Src + Direction.Down);
+					break;
+
 				case Positioning.Adjacent:
 					throw new NotImplementedException();
 

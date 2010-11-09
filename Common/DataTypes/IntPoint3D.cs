@@ -105,6 +105,10 @@ namespace Dwarrowdelf
 					return d.IsCardinalUpDown();
 				case Positioning.AdjacentPlanarUpDown:
 					return d.IsPlanarUpDown();
+				case Positioning.AdjacentPlanarUp:
+					return d.IsPlanar() || d == Direction.Down;
+				case Positioning.AdjacentPlanarDown:
+					return d.IsPlanar() || d == Direction.Up;
 				case Positioning.Adjacent:
 					return true;
 				default:

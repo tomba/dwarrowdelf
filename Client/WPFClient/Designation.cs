@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var p in walls)
 			{
-				var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, MineActionType.Mine);
+				var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, m_mineActionType);
 				AddJob(p, job);
 			}
 		}

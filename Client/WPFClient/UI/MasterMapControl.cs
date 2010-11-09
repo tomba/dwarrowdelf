@@ -520,13 +520,13 @@ namespace Dwarrowdelf.Client
 			{
 				case NotifyCollectionChangedAction.Add:
 					foreach (IDrawableElement b in e.NewItems)
-						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
+						if (b.Environment == m_env)
 							AddElement(b);
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
 					foreach (IDrawableElement b in e.OldItems)
-						if (b.Environment == m_env && b.Area.ContainsZ(m_z))
+						if (b.Environment == m_env)
 							RemoveElement(b);
 
 					break;

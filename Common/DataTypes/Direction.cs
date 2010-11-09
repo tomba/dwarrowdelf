@@ -41,6 +41,8 @@ namespace Dwarrowdelf
 		AdjacentPlanar,
 		AdjacentCardinalUpDown,
 		AdjacentPlanarUpDown,
+		AdjacentPlanarUp,
+		AdjacentPlanarDown,
 		Adjacent,
 	}
 
