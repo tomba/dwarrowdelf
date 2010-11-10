@@ -18,11 +18,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 		readonly IEnvironment m_environment;
 		IntPoint3D m_dest;
 		readonly GetMoveTarget m_destFunc;
-		Positioning m_positioning;
+		DirectionSet m_positioning;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, Positioning positioning)
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
 			: base(parent, priority)
 		{
 			m_environment = environment;
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_positioning = positioning;
 		}
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, GetMoveTarget destination, Positioning positioning)
+		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, GetMoveTarget destination, DirectionSet positioning)
 			: base(parent, priority)
 		{
 			m_environment = environment;
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_positioning = positioning;
 		}
 
-		public Positioning Positioning
+		public DirectionSet Positioning
 		{
 			get { return m_positioning; }
 			set

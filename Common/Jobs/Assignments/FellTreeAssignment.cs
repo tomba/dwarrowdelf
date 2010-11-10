@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			var v = m_location - this.Worker.Location;
 
-			if (!this.Worker.Location.IsAdjacentTo(m_location, Positioning.AdjacentPlanar))
+			if (!this.Worker.Location.IsAdjacentTo(m_location, DirectionSet.Planar))
 			{
 				progress = JobState.Fail;
 				return null;

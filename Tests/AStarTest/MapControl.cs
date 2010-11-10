@@ -53,8 +53,8 @@ namespace AStarTest
 
 		public TileInfo CurrentTileInfo { get; private set; } // used to inform the UI
 
-		public Positioning SrcPos { get; set; }
-		public Positioning DstPos { get; set; }
+		public DirectionSet SrcPos { get; set; }
+		public DirectionSet DstPos { get; set; }
 
 		public event Action SomethingChanged;
 

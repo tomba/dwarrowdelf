@@ -84,7 +84,7 @@ namespace Dwarrowdelf
 			return new IntPoint3D(left.X + right.X, left.Y + right.Y, left.Z);
 		}
 
-		public bool IsAdjacentTo(IntPoint3D p, Positioning positioning)
+		public bool IsAdjacentTo(IntPoint3D p, DirectionSet positioning)
 		{
 			var v = p - this;
 
@@ -93,27 +93,7 @@ namespace Dwarrowdelf
 
 			var d = v.ToDirection();
 
-			switch (positioning)
-			{
-				case Positioning.Exact:
-					return d == Direction.None;
-				case Positioning.AdjacentCardinal:
-					return d.IsCardinal();
-				case Positioning.AdjacentPlanar:
-					return d.IsPlanar();
-				case Positioning.AdjacentCardinalUpDown:
-					return d.IsCardinalUpDown();
-				case Positioning.AdjacentPlanarUpDown:
-					return d.IsPlanarUpDown();
-				case Positioning.AdjacentPlanarUp:
-					return d.IsPlanar() || d == Direction.Down;
-				case Positioning.AdjacentPlanarDown:
-					return d.IsPlanar() || d == Direction.Up;
-				case Positioning.Adjacent:
-					return true;
-				default:
-					throw new Exception();
-			}
+			return positioning.Contains(d);
 		}
 
 		public override int GetHashCode()

@@ -22,11 +22,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			while (true)
 			{
-				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), Positioning.Exact);
-				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 18, 9), Positioning.Exact);
-				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 28, 9), Positioning.Exact);
-				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 28, 9), Positioning.Exact);
-				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), Positioning.Exact);
+				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact);
+				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 18, 9), DirectionSet.Exact);
+				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 28, 9), DirectionSet.Exact);
+				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 28, 9), DirectionSet.Exact);
+				yield return new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact);
 			}
 		}
 

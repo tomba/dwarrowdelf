@@ -41,27 +41,27 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			return JobState.Ok;
 		}
 
-		static Positioning GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)
+		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)
 		{
-			Positioning pos;
+			DirectionSet pos;
 
 			var down = p + Direction.Down;
 
 			switch (mineActionType)
 			{
 				case MineActionType.Mine:
+					pos = DirectionSet.Planar;
+
 					if (EnvironmentHelpers.CanMoveFrom(env, down, Direction.Up))
-						pos = Positioning.AdjacentPlanarDown;
-					else
-						pos = Positioning.AdjacentPlanar;
+						pos |= DirectionSet.Down;
 
 					break;
 
 				case MineActionType.Stairs:
+					pos = DirectionSet.Planar | DirectionSet.Up;
+
 					if (EnvironmentHelpers.CanMoveFrom(env, down, Direction.Up))
-						pos = Positioning.AdjacentPlanarUpDown;
-					else
-						pos = Positioning.AdjacentPlanarUp;
+						pos |= DirectionSet.Down;
 
 					break;
 

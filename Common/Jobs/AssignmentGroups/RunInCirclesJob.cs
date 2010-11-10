@@ -18,11 +18,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = environment;
 
 			var jobs = new IAssignment[] {
-				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 18, 9), Positioning.Exact),
-				new MoveAssignment(this, priority, environment, new IntPoint3D(14, 18, 9), Positioning.Exact),
-				new MoveAssignment(this, priority, environment, new IntPoint3D(14, 28, 9), Positioning.Exact),
-				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 28, 9), Positioning.Exact),
-				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 18, 9), Positioning.Exact),
+				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact),
+				new MoveAssignment(this, priority, environment, new IntPoint3D(14, 18, 9), DirectionSet.Exact),
+				new MoveAssignment(this, priority, environment, new IntPoint3D(14, 28, 9), DirectionSet.Exact),
+				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 28, 9), DirectionSet.Exact),
+				new MoveAssignment(this, priority, environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact),
 			};
 
 			SetAssignments(jobs);

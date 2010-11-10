@@ -604,7 +604,7 @@ namespace Dwarrowdelf.Client
 				var p = map.Selection.SelectionCuboid.Corner1;
 				var env = map.Environment;
 
-				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, Positioning.Exact);
+				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, DirectionSet.Exact);
 				m_manualJobSource.Add(job);
 			}
 			else if (tag == "RunInCircles")

@@ -14,9 +14,9 @@ namespace Dwarrowdelf.AStar
 	public class AStarDefaultTarget : IAStarTarget
 	{
 		IntPoint3D m_destination;
-		Positioning m_positioning;
+		DirectionSet m_positioning;
 
-		public AStarDefaultTarget(IntPoint3D destination, Positioning positioning)
+		public AStarDefaultTarget(IntPoint3D destination, DirectionSet positioning)
 		{
 			m_destination = destination;
 			m_positioning = positioning;

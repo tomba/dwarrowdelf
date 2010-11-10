@@ -42,14 +42,14 @@ namespace Dwarrowdelf.AStar
 			public IAStarEnvironment Environment;
 			public IAStarTarget Target;
 			public IntPoint3D Src;
-			public Positioning SrcPositioning;
+			public DirectionSet SrcPositioning;
 			public IOpenList<AStarNode> OpenList;
 			public IDictionary<IntPoint3D, AStarNode> NodeMap;
 			public CancellationToken CancellationToken;
 		}
 
 
-		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3D src, IntPoint3D dest, Positioning positioning, out IntPoint3D finalLocation)
+		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3D src, IntPoint3D dest, DirectionSet positioning, out IntPoint3D finalLocation)
 		{
 			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
 			CancellationTokenSource cts = new CancellationTokenSource();
@@ -59,13 +59,13 @@ namespace Dwarrowdelf.AStar
 
 			var taskForward = new Task(delegate
 			{
-				resForward = Find(environment, src, Positioning.Exact, dest, positioning, 200000, cts.Token);
+				resForward = Find(environment, src, DirectionSet.Exact, dest, positioning, 200000, cts.Token);
 			});
 			taskForward.Start();
 
 			var taskBackward = new Task(delegate
 			{
-				resBackward = Find(environment, dest, positioning, src, Positioning.Exact, 200000, cts.Token);
+				resBackward = Find(environment, dest, positioning, src, DirectionSet.Exact, 200000, cts.Token);
 			});
 			taskBackward.Start();
 
@@ -104,16 +104,16 @@ namespace Dwarrowdelf.AStar
 
 		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3D src, Func<IntPoint3D, bool> func, int maxNodeCount = 200000)
 		{
-			return Find(environment, src, Positioning.Exact, new AStarDelegateTarget(func), maxNodeCount);
+			return Find(environment, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
 		}
 
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, Positioning srcPositioning, IntPoint3D dst, Positioning dstPositioning,
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, DirectionSet srcPositioning, IntPoint3D dst, DirectionSet dstPositioning,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), maxNodeCount, cancellationToken);
 		}
 
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, Positioning srcPositioning, IAStarTarget target,
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
@@ -135,46 +135,9 @@ namespace Dwarrowdelf.AStar
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
 
-			List<IntPoint3D> nodeList = new List<IntPoint3D>();
+			IEnumerable<IntPoint3D> nodeList;
 
-			switch (state.SrcPositioning)
-			{
-				case Positioning.Exact:
-					nodeList.Add(state.Src);
-					break;
-
-				case Positioning.AdjacentCardinal:
-					nodeList.AddRange(DirectionExtensions.CardinalDirections.Select(d => state.Src + d));
-					break;
-
-				case Positioning.AdjacentPlanar:
-					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
-					break;
-
-				case Positioning.AdjacentCardinalUpDown:
-					nodeList.AddRange(DirectionExtensions.CardinalUpDownDirections.Select(d => state.Src + d));
-					break;
-
-				case Positioning.AdjacentPlanarUpDown:
-					nodeList.AddRange(DirectionExtensions.PlanarUpDownDirections.Select(d => state.Src + d));
-					break;
-
-				case Positioning.AdjacentPlanarUp:
-					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
-					nodeList.Add(state.Src + Direction.Up);
-					break;
-
-				case Positioning.AdjacentPlanarDown:
-					nodeList.AddRange(DirectionExtensions.PlanarDirections.Select(d => state.Src + d));
-					nodeList.Add(state.Src + Direction.Down);
-					break;
-
-				case Positioning.Adjacent:
-					throw new NotImplementedException();
-
-				default:
-					throw new Exception();
-			}
+			nodeList = state.SrcPositioning.ToDirections().Select(d => state.Src + d);
 
 			foreach (var p in nodeList.Where(p => state.Environment.CanEnter(p)))
 			{
