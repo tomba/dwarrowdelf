@@ -98,25 +98,20 @@ namespace Dwarrowdelf.Jobs
 				var assignment = GetNewOrCurrentAssignment(priority);
 				var oldAssignment = this.CurrentAssignment;
 
-				if (assignment != oldAssignment)
+				if (assignment == null)
 				{
+					D("DecideAction: No assignment");
+
 					if (oldAssignment != null)
 					{
 						D("DecideAction: Aborting current assignment {0}", oldAssignment);
 						oldAssignment.Abort();
 					}
 
-					this.CurrentAssignment = assignment;
-				}
+					this.CurrentAssignment = null;
 
-				// TODO: if the assignment was just aborted, we should abort possibly ongoing action too.
-				// no assignment, no action
-				if (assignment == null)
-				{
-					D("DecideAction: No assignment");
 					return needToAbort ? null : this.Worker.CurrentAction;
 				}
-
 
 				// are we doing an assignment for another priority level?
 				if (assignment.Priority != priority)
@@ -126,25 +121,39 @@ namespace Dwarrowdelf.Jobs
 					return this.Worker.CurrentAction;
 				}
 
-
 				// new assignment?
 				if (assignment.Worker == null)
 				{
+					Debug.Assert(assignment != oldAssignment);
+
 					D("DecideAction: New assignment {0}", assignment);
 
 					var assignState = assignment.Assign(this.Worker);
 
 					if (assignState != JobState.Ok)
 						continue;
+
+					if (oldAssignment != null)
+					{
+						D("DecideAction: Aborting current assignment {0}", oldAssignment);
+						oldAssignment.Abort();
+					}
+
+					this.CurrentAssignment = assignment;
 				}
 				// are we already doing an action for this assignment?
 				else if (assignment.CurrentAction != null)
 				{
+					Debug.Assert(this.CurrentAssignment == assignment);
 					D("DecideAction: already doing an action");
 					//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
 					return this.Worker.CurrentAction;
 				}
-
+				// old action, but we're not doing an action yet
+				else
+				{
+					Debug.Assert(this.CurrentAssignment == assignment);
+				}
 
 
 				var state = assignment.PrepareNextAction();
