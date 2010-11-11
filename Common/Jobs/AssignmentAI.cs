@@ -43,15 +43,13 @@ namespace Dwarrowdelf.Jobs
 
 		public event Action<IAssignment> AssignmentChanged;
 
+		MyTraceSource trace;
+
+
 		protected AssignmentAI(ILiving worker)
 		{
 			this.Worker = worker;
-		}
-
-		[System.Diagnostics.Conditional("DEBUG")]
-		void D(string format, params object[] args)
-		{
-			//Debug.Print("[AI {0}]: {1}", this.Worker, String.Format(format, args));
+			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
 		}
 
 		/// <summary>
@@ -61,7 +59,7 @@ namespace Dwarrowdelf.Jobs
 		/// <returns></returns>
 		public GameAction DecideAction(ActionPriority priority)
 		{
-			D("DecideAction({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
+			trace.TraceVerbose("DecideAction({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
 				priority,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
@@ -78,7 +76,7 @@ namespace Dwarrowdelf.Jobs
 
 			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority > priority)
 			{
-				D("DecideAction: worker already doing higher priority action");
+				trace.TraceVerbose("DecideAction: worker already doing higher priority action");
 				return this.Worker.CurrentAction;
 			}
 
@@ -91,7 +89,7 @@ namespace Dwarrowdelf.Jobs
 			{
 				if (loops++ > 10)
 				{
-					Trace.TraceWarning("Failed to assign job in 10 tries, aborting");
+					trace.TraceWarning("Failed to assign job in 10 tries, aborting");
 					return this.Worker.CurrentAction;
 				}
 
@@ -100,11 +98,11 @@ namespace Dwarrowdelf.Jobs
 
 				if (assignment == null)
 				{
-					D("DecideAction: No assignment");
+					trace.TraceVerbose("DecideAction: No assignment");
 
 					if (oldAssignment != null)
 					{
-						D("DecideAction: Aborting current assignment {0}", oldAssignment);
+						trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
 						oldAssignment.Abort();
 					}
 
@@ -117,7 +115,7 @@ namespace Dwarrowdelf.Jobs
 				if (assignment.Priority != priority)
 				{
 					Debug.Assert(assignment.Worker == this.Worker);
-					D("DecideAction: Already doing an assignment for different priority level");
+					trace.TraceVerbose("DecideAction: Already doing an assignment for different priority level");
 					return this.Worker.CurrentAction;
 				}
 
@@ -126,7 +124,7 @@ namespace Dwarrowdelf.Jobs
 				{
 					Debug.Assert(assignment != oldAssignment);
 
-					D("DecideAction: New assignment {0}", assignment);
+					trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
 
 					var assignState = assignment.Assign(this.Worker);
 
@@ -135,7 +133,7 @@ namespace Dwarrowdelf.Jobs
 
 					if (oldAssignment != null)
 					{
-						D("DecideAction: Aborting current assignment {0}", oldAssignment);
+						trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
 						oldAssignment.Abort();
 					}
 
@@ -145,7 +143,7 @@ namespace Dwarrowdelf.Jobs
 				else if (assignment.CurrentAction != null)
 				{
 					Debug.Assert(this.CurrentAssignment == assignment);
-					D("DecideAction: already doing an action");
+					trace.TraceVerbose("DecideAction: already doing an action");
 					//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
 					return this.Worker.CurrentAction;
 				}
@@ -164,11 +162,11 @@ namespace Dwarrowdelf.Jobs
 					if (action == null)
 						throw new Exception();
 
-					D("DecideAction: new action {0}", action);
+					trace.TraceVerbose("DecideAction: new action {0}", action);
 					return action;
 				}
 
-				D("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
+				trace.TraceVerbose("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
 
 				// loop again
 			}
@@ -193,7 +191,7 @@ namespace Dwarrowdelf.Jobs
 
 		public void ActionStarted(ActionStartedChange change)
 		{
-			D("ActionStarted({0}, left {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
+			trace.TraceVerbose("ActionStarted({0}, left {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
 				change.Action, change.TicksLeft,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
@@ -201,13 +199,13 @@ namespace Dwarrowdelf.Jobs
 
 			if (this.CurrentAssignment == null)
 			{
-				D("ActionStarted: no assignment, so not for me");
+				trace.TraceVerbose("ActionStarted: no assignment, so not for me");
 				return;
 			}
 
 			if (this.CurrentAssignment.CurrentAction == null)
 			{
-				D("ActionStarted: action started by someone else, cancel our current assignment");
+				trace.TraceVerbose("ActionStarted: action started by someone else, cancel our current assignment");
 				this.CurrentAssignment.Abort();
 				this.CurrentAssignment = null;
 				return;
@@ -215,7 +213,7 @@ namespace Dwarrowdelf.Jobs
 
 			if (this.CurrentAssignment.CurrentAction.MagicNumber != change.Action.MagicNumber)
 			{
-				D("ActionStarted: action started by someone else, cancel our current assignment");
+				trace.TraceVerbose("ActionStarted: action started by someone else, cancel our current assignment");
 				throw new Exception();
 			}
 
@@ -226,7 +224,7 @@ namespace Dwarrowdelf.Jobs
 		{
 			var assignment = this.CurrentAssignment;
 
-			D("ActionProgress({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
+			trace.TraceVerbose("ActionProgress({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
 				e.ActionXXX, e.State,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
@@ -237,14 +235,14 @@ namespace Dwarrowdelf.Jobs
 
 			if (assignment == null)
 			{
-				D("ActionProgress: no assignment, so not for me");
+				trace.TraceVerbose("ActionProgress: no assignment, so not for me");
 				return;
 			}
 
 			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
 				assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
 			{
-				D("ActionProgress: cancel event for action not started by us, ignore");
+				trace.TraceVerbose("ActionProgress: cancel event for action not started by us, ignore");
 				return;
 			}
 
@@ -264,7 +262,7 @@ namespace Dwarrowdelf.Jobs
 
 			var state = assignment.ActionProgress(e);
 
-			D("ActionProgress: {0} in {1}", state, assignment);
+			trace.TraceVerbose("ActionProgress: {0} in {1}", state, assignment);
 		}
 	}
 }
