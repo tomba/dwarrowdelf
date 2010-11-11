@@ -36,7 +36,6 @@ namespace Dwarrowdelf.Client
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }
 
-
 		public Stockpile(Environment environment, IntRect3D area, StockpileType stockpileType)
 		{
 			this.Environment = environment;
@@ -75,7 +74,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.GetJob(ILiving living)
 		{
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
@@ -86,19 +85,33 @@ namespace Dwarrowdelf.Client
 			foreach (var ob in obs)
 			{
 				var job = new StoreToStockpileJob(this, ob);
-				yield return job;
+
+				var jobState = job.Assign(living);
+
+				switch (jobState)
+				{
+					case JobState.Ok:
+						job.Item.ReservedBy = this;
+						job.StateChanged += OnJobStateChanged;
+						m_jobs.Add(job);
+
+						GameData.Data.Jobs.Add(job);
+
+						return job;
+
+					case JobState.Done:
+						throw new Exception();
+
+					case JobState.Abort:
+					case JobState.Fail:
+						break;
+
+					default:
+						throw new Exception();
+				}
 			}
-		}
 
-		void IJobSource.JobTaken(ILiving living, IJob job)
-		{
-			var j = (StoreToStockpileJob)job;
-
-			j.Item.ReservedBy = this;
-			j.StateChanged += OnJobStateChanged;
-			m_jobs.Add(j);
-
-			GameData.Data.Jobs.Add(j);
+			return null;
 		}
 
 		void OnJobStateChanged(IJob job, JobState state)

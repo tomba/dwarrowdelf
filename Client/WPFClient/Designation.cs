@@ -61,6 +61,9 @@ namespace Dwarrowdelf.Client
 
 		public void Start()
 		{
+			this.Environment.World.TickStartEvent += OnTickStartEvent;
+			this.Environment.World.JobManager.AddJobSource(this);
+
 			m_map = new Dictionary<IntPoint3D, IAssignment>();
 
 			CreateJobs();
@@ -70,9 +73,6 @@ namespace Dwarrowdelf.Client
 				Cleanup();
 				return;
 			}
-
-			this.Environment.World.TickStartEvent += OnTickStartEvent;
-			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
 		public void Abort()
@@ -106,13 +106,32 @@ namespace Dwarrowdelf.Client
 			get { return m_map != null && m_map.Count > 0; }
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			return m_map.Select(kvp => kvp.Value).Where(j => !j.IsAssigned && j.JobState == JobState.Ok);
-		}
+			var jobs = m_map.Select(kvp => kvp.Value).Where(j => !j.IsAssigned && j.JobState == JobState.Ok);
 
-		void IJobSource.JobTaken(ILiving living, IJob job)
-		{
+			foreach (var assignment in jobs)
+			{
+				var jobState = assignment.Assign(living);
+
+				switch (jobState)
+				{
+					case JobState.Ok:
+						return assignment;
+
+					case JobState.Done:
+						throw new Exception();
+
+					case JobState.Abort:
+					case JobState.Fail:
+						break;
+
+					default:
+						throw new Exception();
+				}
+			}
+
+			return null;
 		}
 
 		void OnJobStateChanged(IJob job, JobState state)

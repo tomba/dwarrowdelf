@@ -124,10 +124,18 @@ namespace Dwarrowdelf.Jobs
 				{
 					trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
 
-					var assignState = assignment.Assign(this.Worker);
+					if (assignment.IsAssigned)
+					{
+						// already assigned
+						Debug.Assert(assignment.Worker == this.Worker);
+					}
+					else
+					{
+						var assignState = assignment.Assign(this.Worker);
 
-					if (assignState != JobState.Ok)
-						continue;
+						if (assignState != JobState.Ok)
+							continue;
+					}
 
 					if (oldAssignment != null)
 					{

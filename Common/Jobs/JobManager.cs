@@ -11,8 +11,7 @@ namespace Dwarrowdelf.Jobs
 	public interface IJobSource
 	{
 		bool HasWork { get; }
-		IEnumerable<IJob> GetJobs(ILiving living);
-		void JobTaken(ILiving living, IJob job);
+		IAssignment GetJob(ILiving living);
 	}
 
 	public class JobManager
@@ -38,22 +37,15 @@ namespace Dwarrowdelf.Jobs
 		{
 			foreach (var jobSource in m_jobSources.Where(js => js.HasWork))
 			{
-				var jobs = jobSource.GetJobs(living);
-				foreach (var job in jobs)
-				{
-					var assignment = FindAssignment(job, living);
-					if (assignment != null)
-					{
-						jobSource.JobTaken(living, job);
-						return assignment;
-					}
-				}
+				var assignment = jobSource.GetJob(living);
+				if (assignment != null)
+					return assignment;
 			}
 
 			return null;
 		}
 
-		static IAssignment FindAssignment(IJob job, ILiving living)
+		public static IAssignment FindAssignment(IJob job, ILiving living)
 		{
 			Debug.Assert(job.JobState == JobState.Ok);
 

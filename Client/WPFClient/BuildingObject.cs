@@ -223,15 +223,38 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.GetJob(ILiving living)
 		{
 			var order = m_buildOrderQueue.FirstOrDefault();
 			if (order != null)
-				yield return order.Job;
-		}
+			{
+				var job = order.Job;
 
-		void IJobSource.JobTaken(ILiving living, IJob job)
-		{
+				var assignment = JobManager.FindAssignment(job, living);
+
+				if (assignment == null)
+					return null;
+
+				var jobState = assignment.Assign(living);
+
+				switch (jobState)
+				{
+					case JobState.Ok:
+						return assignment;
+
+					case JobState.Done:
+						throw new Exception();
+
+					case JobState.Abort:
+					case JobState.Fail:
+						break;
+
+					default:
+						throw new Exception();
+				}
+			}
+
+			return null;
 		}
 
 		void CreateJob(BuildOrder order)
