@@ -120,10 +120,8 @@ namespace Dwarrowdelf.Jobs
 				}
 
 				// new assignment?
-				if (assignment.Worker == null)
+				if (assignment != oldAssignment)
 				{
-					Debug.Assert(assignment != oldAssignment);
-
 					trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
 
 					var assignState = assignment.Assign(this.Worker);
@@ -139,18 +137,15 @@ namespace Dwarrowdelf.Jobs
 
 					this.CurrentAssignment = assignment;
 				}
+
+				Debug.Assert(this.CurrentAssignment == assignment);
+
 				// are we already doing an action for this assignment?
-				else if (assignment.CurrentAction != null)
+				if (assignment.CurrentAction != null)
 				{
-					Debug.Assert(this.CurrentAssignment == assignment);
 					trace.TraceVerbose("DecideAction: already doing an action");
 					//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
 					return this.Worker.CurrentAction;
-				}
-				// old action, but we're not doing an action yet
-				else
-				{
-					Debug.Assert(this.CurrentAssignment == assignment);
 				}
 
 
