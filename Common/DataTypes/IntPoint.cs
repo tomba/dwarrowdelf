@@ -77,7 +77,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return (this.X << 16) | this.Y;
+			return (this.Y << 16) | this.X;
 		}
 
 		public override string ToString()
