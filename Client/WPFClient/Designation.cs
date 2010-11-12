@@ -7,51 +7,60 @@ using System.Windows.Media;
 using System.ComponentModel;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
-using System.Windows;
-using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
 	enum DesignationType
 	{
+		None,
 		Mine,
 		FellTree,
 		CreateStairs,
 	}
 
-	abstract class Designation : IDrawableElement, IJobSource
+	static class Designations
 	{
-		public DesignationType Type { get; private set; }
-		public IntCuboid Area { get; private set; }
+
+		static Designations()
+		{
+		}
+	}
+
+	class Designation : IJobSource
+	{
 		public Environment Environment { get; private set; }
 
-		FrameworkElement m_element;
-		public FrameworkElement Element { get { return m_element; } }
+		Dictionary<IntPoint3D, DesignationData> m_map;
 
-		Dictionary<IntPoint3D, IAssignment> m_map;
+		class DesignationData
+		{
+			public DesignationType Type;
+			public IAssignment Assignment;
+		}
 
-		public Designation(Environment env, IntCuboid area, DesignationType designationType)
+		public Designation(Environment env)
 		{
 			this.Environment = env;
-			this.Type = designationType;
-			this.Area = area;
 
-			var rect = new Rectangle();
-			rect.Fill = Brushes.DimGray;
-			rect.Opacity = 0.5;
-			rect.Stroke = Brushes.DarkGray;
-			rect.StrokeThickness = 0.1;
-			rect.Width = area.Width;
-			rect.Height = area.Height;
-			m_element = rect;
+			m_map = new Dictionary<IntPoint3D, DesignationData>();
+
+			this.Environment.World.TickStartEvent += OnTickStartEvent;
+			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		public DesignationType ContainsPoint(IntPoint3D p)
+		{
+			DesignationData data;
+			if (m_map.TryGetValue(p, out data))
+				return data.Type;
+			else
+				return DesignationType.None;
 		}
 
 		void OnTickStartEvent()
 		{
-			foreach (var kvp in m_map)
+			foreach (var job in m_map.Select(kvp => kvp.Value.Assignment))
 			{
-				var job = kvp.Value;
-
 				Debug.Assert(job.JobState != JobState.Done);
 
 				if (job.JobState != JobState.Ok)
@@ -59,47 +68,46 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void Start()
+		public void AddArea(IntCuboid area, DesignationType type)
 		{
-			this.Environment.World.TickStartEvent += OnTickStartEvent;
-			this.Environment.World.JobManager.AddJobSource(this);
-
-			m_map = new Dictionary<IntPoint3D, IAssignment>();
-
-			CreateJobs();
-
-			if (m_map.Count == 0)
+			switch (type)
 			{
-				Cleanup();
-				return;
+				case DesignationType.Mine:
+				case DesignationType.CreateStairs:
+
+					MineActionType mat;
+
+					if (type == DesignationType.Mine)
+						mat = MineActionType.Mine;
+					else
+						mat = MineActionType.Stairs;
+
+					var walls = area.Range().Where(p => !m_map.ContainsKey(p) && this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
+
+					foreach (var p in walls)
+					{
+						var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, mat);
+						AddJob(p, type, job);
+					}
+
+					break;
+
+				case DesignationType.FellTree:
+					var trees = area.Range().Where(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
+
+					var jobs = trees.Select(p => (IJob)new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p));
+
+					foreach (var p in trees)
+					{
+						var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
+						AddJob(p, type, job);
+					}
+					break;
 			}
+
+			// XXX
+			GameData.Data.MainWindow.MapControl.InvalidateTiles();
 		}
-
-		public void Abort()
-		{
-			Cleanup();
-		}
-
-		void Cleanup()
-		{
-			if (m_map == null)
-				return;
-
-			this.Environment.World.TickStartEvent -= OnTickStartEvent;
-			this.Environment.World.JobManager.RemoveJobSource(this);
-
-			var locs = m_map.Keys.ToArray();
-
-			foreach (var p in locs)
-				RemoveJob(p);
-
-			m_map = null;
-
-			if (this.DesignationDone != null)
-				this.DesignationDone(this);
-		}
-
-		protected abstract void CreateJobs();
 
 		bool IJobSource.HasWork
 		{
@@ -108,7 +116,7 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			var jobs = m_map.Select(kvp => kvp.Value).Where(j => !j.IsAssigned && j.JobState == JobState.Ok);
+			var jobs = m_map.Select(kvp => kvp.Value.Assignment).Where(j => !j.IsAssigned && j.JobState == JobState.Ok);
 
 			foreach (var assignment in jobs)
 			{
@@ -143,10 +151,6 @@ namespace Dwarrowdelf.Client
 
 				case JobState.Done:
 					RemoveJob(job);
-
-					if (m_map.Count == 0)
-						Cleanup();
-
 					break;
 
 				case JobState.Abort:
@@ -159,20 +163,21 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-
-		protected void AddJob(IntPoint3D p, IAssignment job)
+		protected void AddJob(IntPoint3D p, DesignationType type, IAssignment job)
 		{
 			Debug.Assert(job != null);
 			Debug.Assert(!m_map.ContainsKey(p));
 
-			m_map[p] = job;
+			m_map[p] = new DesignationData();
+			m_map[p].Type = type;
+			m_map[p].Assignment = job;
 			GameData.Data.Jobs.Add(job);
 			job.StateChanged += OnJobStateChanged;
 		}
 
 		void RemoveJob(IntPoint3D p)
 		{
-			var job = m_map[p];
+			var job = m_map[p].Assignment;
 
 			m_map.Remove(p);
 
@@ -180,81 +185,15 @@ namespace Dwarrowdelf.Client
 			job.StateChanged -= OnJobStateChanged;
 			if (job.JobState == JobState.Ok)
 				job.Abort();
+
+			// XXX
+			GameData.Data.MainWindow.MapControl.InvalidateTiles();
 		}
 
 		void RemoveJob(IJob job)
 		{
-			var kvp = m_map.First(e => e.Value == job);
+			var kvp = m_map.First(e => e.Value.Assignment == job);
 			RemoveJob(kvp.Key);
-		}
-
-		public event Action<Designation> DesignationDone;
-	}
-
-	class MineDesignation : Designation
-	{
-		MineActionType m_mineActionType;
-
-		public MineDesignation(Environment env, IntCuboid area, MineActionType mineActionType)
-			: base(env, area, DesignationType.Mine)
-		{
-			m_mineActionType = mineActionType;
-		}
-
-		protected override void CreateJobs()
-		{
-			var walls = this.Area.Range().Where(p => this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
-
-			foreach (var p in walls)
-			{
-				var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, m_mineActionType);
-				AddJob(p, job);
-			}
-		}
-	}
-
-	class FellTreeDesignation : Designation
-	{
-		public FellTreeDesignation(Environment env, IntCuboid area)
-			: base(env, area, DesignationType.FellTree)
-		{
-		}
-
-		protected override void CreateJobs()
-		{
-			var trees = this.Area.Range().Where(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
-
-			var jobs = trees.Select(p => (IJob)new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p));
-
-			foreach (var p in trees)
-			{
-				var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
-				AddJob(p, job);
-			}
-		}
-	}
-
-	class DesignationManager
-	{
-		ObservableCollection<Designation> s_designations;
-		public ReadOnlyObservableCollection<Designation> Designations { get; private set; }
-
-		public DesignationManager()
-		{
-			s_designations = new ObservableCollection<Designation>();
-			Designations = new ReadOnlyObservableCollection<Designation>(s_designations);
-		}
-
-		public void AddDesignation(Designation designation)
-		{
-			s_designations.Add(designation);
-			designation.Start();
-		}
-
-		public void RemoveDesignation(Designation designation)
-		{
-			designation.Abort();
-			s_designations.Remove(designation);
 		}
 	}
 }

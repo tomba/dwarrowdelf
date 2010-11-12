@@ -31,6 +31,8 @@ namespace Dwarrowdelf.Client
 
 		public IntPoint3D HomeLocation { get; private set; }
 
+		public Designation Designations { get; private set; }
+
 		public Environment(World world, ObjectID objectID, IntPoint3D homeLocation)
 			: this(world, objectID, new IntCuboid(), homeLocation)
 		{
@@ -53,6 +55,8 @@ namespace Dwarrowdelf.Client
 
 			m_stockpiles = new ObservableCollection<Stockpile>();
 			this.Stockpiles = new ReadOnlyObservableCollection<Stockpile>(m_stockpiles);
+
+			this.Designations = new Designation(this);
 
 			this.World.AddEnvironment(this);
 		}

@@ -905,52 +905,30 @@ namespace Dwarrowdelf.Client
 			var area = map.Selection.SelectionCuboid;
 			var env = map.Environment;
 
-			Designation designation;
+			DesignationType type;
 
 			switch (id)
 			{
+				case DesignationType.None:
+					return;
+
 				case DesignationType.Mine:
-					designation = new MineDesignation(env, area, MineActionType.Mine);
+					type = DesignationType.Mine;
 					break;
 
 				case DesignationType.FellTree:
-					designation = new FellTreeDesignation(env, area);
+					type = DesignationType.FellTree;
 					break;
 
 				case DesignationType.CreateStairs:
-					designation = new MineDesignation(env, area, MineActionType.Stairs);
+					type = DesignationType.CreateStairs;
 					break;
 
 				default:
 					throw new Exception();
 			}
 
-			designation.DesignationDone += OnDesignationDone;
-			env.World.DesignationManager.AddDesignation(designation);
-		}
-
-		void OnDesignationDone(Designation designation)
-		{
-			designation.DesignationDone -= OnDesignationDone;
-			this.Map.World.DesignationManager.RemoveDesignation(designation);
-		}
-
-		private void MenuItem_Click_Designations(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			Designation designation = (Designation)designationsListBox.SelectedValue;
-
-			switch (tag)
-			{
-				case "abort":
-					designation.Abort();
-					break;
-
-				default:
-					throw new Exception();
-			}
+			env.Designations.AddArea(area, type);
 		}
 
 		private void MenuItem_Click_Construct(object sender, RoutedEventArgs e)

@@ -18,27 +18,6 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
-	interface IMapControl
-	{
-		int Columns { get; }
-		int Rows { get; }
-		int TileSize { get; set; }
-		bool ShowVirtualSymbols { get; set; }
-
-		Environment Environment { get; set; }
-		int Z { get; set; }
-		IntPoint CenterPos { get; set; }
-
-		event Action TileArrangementChanged;
-
-		void InvalidateDrawings();
-
-		IntPoint ScreenPointToScreenLocation(Point p);
-		IntPoint ScreenPointToMapLocation(Point p);
-		Point ScreenLocationToScreenPoint(IntPoint loc);
-		Point MapLocationToScreenPoint(IntPoint loc);
-	}
-
 	struct MapSelection
 	{
 		public MapSelection(IntPoint3D start, IntPoint3D end)
@@ -92,7 +71,7 @@ namespace Dwarrowdelf.Client
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
-		IMapControl m_mapControl;
+		MapControlD2D m_mapControl;
 
 		IntPoint m_centerPos;
 
@@ -120,7 +99,7 @@ namespace Dwarrowdelf.Client
 			grid.ClipToBounds = true;
 			AddChild(grid);
 
-			IMapControl mc = new MapControlD2D();
+			MapControlD2D mc = new MapControlD2D();
 
 			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;
@@ -157,6 +136,11 @@ namespace Dwarrowdelf.Client
 
 
 			this.TileSize = 32;
+		}
+
+		public void InvalidateTiles()
+		{
+			m_mapControl.InvalidateTiles();
 		}
 
 		public int Columns { get { return m_mapControl.Columns; } }
@@ -442,7 +426,6 @@ namespace Dwarrowdelf.Client
 				if (m_env != null)
 				{
 					m_env.Buildings.CollectionChanged -= OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged -= OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnElementCollectionChanged;
 				}
 
@@ -454,7 +437,6 @@ namespace Dwarrowdelf.Client
 						m_world = m_env.World;
 
 					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_world.DesignationManager.Designations).CollectionChanged += OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
 
 					this.CenterPos = m_env.HomeLocation.ToIntPoint();
@@ -503,7 +485,6 @@ namespace Dwarrowdelf.Client
 			if (m_env != null)
 			{
 				var elements = m_env.Buildings.Cast<IDrawableElement>()
-					.Concat(m_world.DesignationManager.Designations)
 					.Concat(m_env.Stockpiles);
 
 				foreach (IDrawableElement element in elements)

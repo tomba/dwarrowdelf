@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControlD2D : UserControl, IMapControl, INotifyPropertyChanged
+	class MapControlD2D : UserControl, INotifyPropertyChanged
 	{
 		World m_world;
 

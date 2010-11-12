@@ -377,12 +377,37 @@ namespace Dwarrowdelf.Client
 
 		static void GetTopTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
+			SymbolID id;
+
+			DesignationType dt = env.Designations.ContainsPoint(ml);
+
+			if (dt != DesignationType.None)
+			{
+				switch (dt)
+				{
+					case DesignationType.Mine:
+						id = SymbolID.Rock;
+						break;
+
+					case DesignationType.CreateStairs:
+						id = SymbolID.StairsUp;
+						break;
+
+					case DesignationType.FellTree:
+						id = SymbolID.Log;
+						break;
+
+					default:
+						throw new Exception();
+				}
+				tile.SymbolID = id;
+				return;
+			}
+
 			int wl = env.GetWaterLevel(ml);
 
 			if (wl == 0)
 				return;
-
-			SymbolID id;
 
 			wl = wl * 100 / TileData.MaxWaterLevel;
 
