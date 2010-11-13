@@ -8,10 +8,15 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	enum MapTileObjectChangeType
+	{
+		Add,
+		Remove,
+	}
 
 	class Environment : ClientGameObject, IEnvironment
 	{
-		public event Action<IntPoint3D> MapTileObjectChanged;
+		public event Action<ClientGameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
 		public event Action<IntPoint3D> MapTileTerrainChanged;
 
 		GrowingTileGrid m_tileGrid;
@@ -326,7 +331,7 @@ namespace Dwarrowdelf.Client
 			m_objectList.Add(child);
 
 			if (MapTileObjectChanged != null)
-				MapTileObjectChanged(l);
+				MapTileObjectChanged(child, l, MapTileObjectChangeType.Add);
 		}
 
 		protected override void ChildRemoved(ClientGameObject child)
@@ -344,14 +349,18 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(removed);
 
 			if (MapTileObjectChanged != null)
-				MapTileObjectChanged(l);
+				MapTileObjectChanged(child, l, MapTileObjectChangeType.Remove);
 		}
 
 		// called from object when its visual property changes
 		internal void OnObjectVisualChanged(ClientGameObject ob)
 		{
 			if (MapTileObjectChanged != null)
-				MapTileObjectChanged(ob.Location);
+			{
+				// XXX
+				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Remove);
+				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Add);
+			}
 		}
 
 		public override string ToString()

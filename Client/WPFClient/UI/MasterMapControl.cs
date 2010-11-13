@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
@@ -660,7 +661,7 @@ namespace Dwarrowdelf.Client
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(IntPoint3D l)
+		void MapObjectChanged(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
 		{
 			if (l != m_location)
 				return;
@@ -790,17 +791,18 @@ namespace Dwarrowdelf.Client
 	class TileAreaInfo : INotifyPropertyChanged
 	{
 		Environment m_env;
-		IEnumerable<ClientGameObject> m_obs;
 		MapSelection m_selection;
+
+		GameObjectCollection m_objects;
 
 		public TileAreaInfo()
 		{
+			m_objects = new GameObjectCollection();
 		}
 
 		void NotifyTileChanges()
 		{
 			NotifyTileTerrainChanges();
-			NotifyTileObjectChanges();
 		}
 
 		void NotifyTileTerrainChanges()
@@ -812,20 +814,6 @@ namespace Dwarrowdelf.Client
 			Notify("Grasses");
 		}
 
-		void NotifyTileObjectChanges()
-		{
-			m_obs = null;
-			Notify("Objects");
-		}
-
-		void UpdateObjectList()
-		{
-			if (m_env != null)
-				m_obs = m_selection.SelectionCuboid.Range().SelectMany(p => m_env.GetContents(p));
-			else
-				m_obs = null;
-		}
-
 		void MapTerrainChanged(IntPoint3D l)
 		{
 			if (!m_selection.SelectionCuboid.Contains(l))
@@ -834,12 +822,21 @@ namespace Dwarrowdelf.Client
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(IntPoint3D l)
+		void MapObjectChanged(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
 
-			NotifyTileObjectChanges();
+			if (changetype == MapTileObjectChangeType.Add)
+			{
+				Debug.Assert(!m_objects.Contains(ob));
+				m_objects.Add(ob);
+			}
+			else
+			{
+				bool ok = m_objects.Remove(ob);
+				Debug.Assert(ok);
+			}
 		}
 
 		public Environment Environment
@@ -854,6 +851,7 @@ namespace Dwarrowdelf.Client
 				}
 
 				m_env = value;
+				m_objects.Clear();
 
 				if (m_env == null)
 				{
@@ -880,6 +878,10 @@ namespace Dwarrowdelf.Client
 				m_selection = value;
 				Notify("Selection");
 				NotifyTileChanges();
+				m_objects.Clear();
+				var obs = m_selection.SelectionCuboid.Range().SelectMany(p => m_env.GetContents(p));
+				foreach (var ob in obs)
+					m_objects.Add(ob);
 			}
 		}
 
@@ -926,10 +928,7 @@ namespace Dwarrowdelf.Client
 		{
 			get
 			{
-				if (m_obs == null)
-					UpdateObjectList();
-
-				return m_obs;
+				return m_objects;
 			}
 		}
 

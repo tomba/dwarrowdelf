@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client
 				if (m_environment != null)
 				{
 					m_environment.MapTileTerrainChanged -= MapChangedCallback;
-					m_environment.MapTileObjectChanged -= MapChangedCallback;
+					m_environment.MapTileObjectChanged -= MapObjectChangedCallback;
 				}
 
 				m_environment = value;
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client
 				if (m_environment != null)
 				{
 					m_environment.MapTileTerrainChanged += MapChangedCallback;
-					m_environment.MapTileObjectChanged += MapChangedCallback;
+					m_environment.MapTileObjectChanged += MapObjectChangedCallback;
 				}
 			}
 		}
@@ -147,6 +147,11 @@ namespace Dwarrowdelf.Client
 
 
 		void MapChangedCallback(IntPoint3D ml)
+		{
+			MapChangedOverride(ml);
+		}
+
+		void MapObjectChangedCallback(ClientGameObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
 		{
 			MapChangedOverride(ml);
 		}
