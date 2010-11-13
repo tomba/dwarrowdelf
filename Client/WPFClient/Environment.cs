@@ -11,7 +11,8 @@ namespace Dwarrowdelf.Client
 
 	class Environment : ClientGameObject, IEnvironment
 	{
-		public event Action<IntPoint3D> MapTileChanged;
+		public event Action<IntPoint3D> MapTileObjectChanged;
+		public event Action<IntPoint3D> MapTileTerrainChanged;
 
 		GrowingTileGrid m_tileGrid;
 		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
@@ -112,8 +113,8 @@ namespace Dwarrowdelf.Client
 
 			m_tileGrid.SetInteriorID(l, interiorID);
 
-			if (MapTileChanged != null)
-				MapTileChanged(l);
+			if (MapTileTerrainChanged != null)
+				MapTileTerrainChanged(l);
 		}
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
@@ -122,8 +123,8 @@ namespace Dwarrowdelf.Client
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			if (MapTileChanged != null)
-				MapTileChanged(l);
+			if (MapTileTerrainChanged != null)
+				MapTileTerrainChanged(l);
 		}
 
 		public byte GetWaterLevel(IntPoint3D l)
@@ -147,8 +148,8 @@ namespace Dwarrowdelf.Client
 
 			m_tileGrid.SetTileData(l, tileData);
 
-			if (MapTileChanged != null)
-				MapTileChanged(l);
+			if (MapTileTerrainChanged != null)
+				MapTileTerrainChanged(l);
 		}
 
 		public void SetTerrains(Tuple<IntPoint3D, TileData>[] tileDataList)
@@ -191,8 +192,8 @@ namespace Dwarrowdelf.Client
 
 				m_tileGrid.SetTileData(p, data);
 
-				if (MapTileChanged != null)
-					MapTileChanged(p);
+				if (MapTileTerrainChanged != null)
+					MapTileTerrainChanged(p);
 			}
 
 			if (setNewBounds)
@@ -240,8 +241,8 @@ namespace Dwarrowdelf.Client
 				TileData data = iter.Current;
 				m_tileGrid.SetTileData(p, data);
 
-				if (MapTileChanged != null)
-					MapTileChanged(p);
+				if (MapTileTerrainChanged != null)
+					MapTileTerrainChanged(p);
 			}
 		}
 
@@ -324,8 +325,8 @@ namespace Dwarrowdelf.Client
 
 			m_objectList.Add(child);
 
-			if (MapTileChanged != null)
-				MapTileChanged(l);
+			if (MapTileObjectChanged != null)
+				MapTileObjectChanged(l);
 		}
 
 		protected override void ChildRemoved(ClientGameObject child)
@@ -342,15 +343,15 @@ namespace Dwarrowdelf.Client
 			removed = m_objectList.Remove(child);
 			Debug.Assert(removed);
 
-			if (MapTileChanged != null)
-				MapTileChanged(l);
+			if (MapTileObjectChanged != null)
+				MapTileObjectChanged(l);
 		}
 
 		// called from object when its visual property changes
 		internal void OnObjectVisualChanged(ClientGameObject ob)
 		{
-			if (MapTileChanged != null)
-				MapTileChanged(ob.Location);
+			if (MapTileObjectChanged != null)
+				MapTileObjectChanged(ob.Location);
 		}
 
 		public override string ToString()

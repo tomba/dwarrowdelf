@@ -82,13 +82,19 @@ namespace Dwarrowdelf.Client
 					return;
 
 				if (m_environment != null)
-					m_environment.MapTileChanged -= MapChangedCallback;
+				{
+					m_environment.MapTileTerrainChanged -= MapChangedCallback;
+					m_environment.MapTileObjectChanged -= MapChangedCallback;
+				}
 
 				m_environment = value;
 				m_invalid = true;
 
 				if (m_environment != null)
-					m_environment.MapTileChanged += MapChangedCallback;
+				{
+					m_environment.MapTileTerrainChanged += MapChangedCallback;
+					m_environment.MapTileObjectChanged += MapChangedCallback;
+				}
 			}
 		}
 

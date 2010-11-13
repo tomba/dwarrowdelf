@@ -625,6 +625,22 @@ namespace Dwarrowdelf.Client
 
 		void NotifyTileChanges()
 		{
+			NotifyTileTerrainChanges();
+			NotifyTileObjectChanges();
+		}
+
+		void NotifyTileTerrainChanges()
+		{
+			Notify("Interior");
+			Notify("Floor");
+			Notify("FloorMaterial");
+			Notify("InteriorMaterial");
+			Notify("WaterLevel");
+			Notify("Building");
+		}
+
+		void NotifyTileObjectChanges()
+		{
 			m_obs.Clear();
 			if (m_env != null)
 			{
@@ -633,21 +649,23 @@ namespace Dwarrowdelf.Client
 					m_obs.Add(o);
 			}
 
-			Notify("Interior");
-			Notify("Floor");
-			Notify("FloorMaterial");
-			Notify("InteriorMaterial");
-			Notify("WaterLevel");
 			Notify("Objects");
-			Notify("Building");
 		}
 
-		void MapChanged(IntPoint3D l)
+		void MapTerrainChanged(IntPoint3D l)
 		{
 			if (l != m_location)
 				return;
 
-			NotifyTileChanges();
+			NotifyTileTerrainChanges();
+		}
+
+		void MapObjectChanged(IntPoint3D l)
+		{
+			if (l != m_location)
+				return;
+
+			NotifyTileObjectChanges();
 		}
 
 		public Environment Environment
@@ -656,7 +674,10 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				if (m_env != null)
-					m_env.MapTileChanged -= MapChanged;
+				{
+					m_env.MapTileTerrainChanged -= MapTerrainChanged;
+					m_env.MapTileObjectChanged -= MapObjectChanged;
+				}
 
 				m_env = value;
 
@@ -664,7 +685,10 @@ namespace Dwarrowdelf.Client
 					m_location = new IntPoint3D();
 
 				if (m_env != null)
-					m_env.MapTileChanged += MapChanged;
+				{
+					m_env.MapTileTerrainChanged += MapTerrainChanged;
+					m_env.MapTileObjectChanged += MapObjectChanged;
+				}
 
 				Notify("Environment");
 				NotifyTileChanges();
@@ -775,14 +799,23 @@ namespace Dwarrowdelf.Client
 
 		void NotifyTileChanges()
 		{
-			m_obs = null;
+			NotifyTileTerrainChanges();
+			NotifyTileObjectChanges();
+		}
 
+		void NotifyTileTerrainChanges()
+		{
 			Notify("Interiors");
 			Notify("Floors");
 			Notify("WaterLevels");
 			Notify("Buildings");
-			Notify("Objects");
 			Notify("Grasses");
+		}
+
+		void NotifyTileObjectChanges()
+		{
+			m_obs = null;
+			Notify("Objects");
 		}
 
 		void UpdateObjectList()
@@ -793,12 +826,20 @@ namespace Dwarrowdelf.Client
 				m_obs = null;
 		}
 
-		void MapChanged(IntPoint3D l)
+		void MapTerrainChanged(IntPoint3D l)
 		{
 			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
 
-			NotifyTileChanges();
+			NotifyTileTerrainChanges();
+		}
+
+		void MapObjectChanged(IntPoint3D l)
+		{
+			if (!m_selection.SelectionCuboid.Contains(l))
+				return;
+
+			NotifyTileObjectChanges();
 		}
 
 		public Environment Environment
@@ -807,7 +848,10 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				if (m_env != null)
-					m_env.MapTileChanged -= MapChanged;
+				{
+					m_env.MapTileTerrainChanged -= MapTerrainChanged;
+					m_env.MapTileObjectChanged -= MapObjectChanged;
+				}
 
 				m_env = value;
 
@@ -818,7 +862,10 @@ namespace Dwarrowdelf.Client
 				}
 
 				if (m_env != null)
-					m_env.MapTileChanged += MapChanged;
+				{
+					m_env.MapTileTerrainChanged += MapTerrainChanged;
+					m_env.MapTileObjectChanged += MapObjectChanged;
+				}
 
 				Notify("Environment");
 				NotifyTileChanges();

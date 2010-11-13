@@ -31,11 +31,13 @@ namespace Dwarrowdelf.Client
 		public Environment Environment { get; private set; }
 
 		Dictionary<IntPoint3D, DesignationData> m_map;
+		bool m_checkStatus;
 
 		class DesignationData
 		{
 			public DesignationType Type;
 			public IAssignment Assignment;
+			public bool IsPossible;
 		}
 
 		public Designation(Environment env)
@@ -44,8 +46,14 @@ namespace Dwarrowdelf.Client
 
 			m_map = new Dictionary<IntPoint3D, DesignationData>();
 
+			this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
 			this.Environment.World.TickStartEvent += OnTickStartEvent;
 			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		void OnEnvironmentMapTileTerrainChanged(IntPoint3D obj)
+		{
+			m_checkStatus = true;
 		}
 
 		public DesignationType ContainsPoint(IntPoint3D p)
@@ -59,6 +67,13 @@ namespace Dwarrowdelf.Client
 
 		void OnTickStartEvent()
 		{
+			if (m_checkStatus)
+			{
+				foreach (var kvp in m_map)
+					CheckTile(kvp.Key);
+				m_checkStatus = false;
+			}
+
 			foreach (var job in m_map.Select(kvp => kvp.Value.Assignment))
 			{
 				Debug.Assert(job.JobState != JobState.Done);
@@ -116,7 +131,10 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			var jobs = m_map.Select(kvp => kvp.Value.Assignment).Where(j => !j.IsAssigned && j.JobState == JobState.Ok);
+			var jobs = m_map
+				.Where(kvp => kvp.Value.IsPossible && !kvp.Value.Assignment.IsAssigned && kvp.Value.Assignment.JobState == JobState.Ok)
+				.OrderBy(kvp => (kvp.Key - living.Location).Length)
+				.Select(kvp => kvp.Value.Assignment);
 
 			foreach (var assignment in jobs)
 			{
@@ -173,6 +191,8 @@ namespace Dwarrowdelf.Client
 			m_map[p].Assignment = job;
 			GameData.Data.Jobs.Add(job);
 			job.StateChanged += OnJobStateChanged;
+
+			CheckTile(p);
 		}
 
 		void RemoveJob(IntPoint3D p)
@@ -194,6 +214,44 @@ namespace Dwarrowdelf.Client
 		{
 			var kvp = m_map.First(e => e.Value.Assignment == job);
 			RemoveJob(kvp.Key);
+		}
+
+		void CheckTile(IntPoint3D p)
+		{
+			var data = m_map[p];
+
+			DirectionSet dirs;
+
+			// trivial validity check to remove AStar process for totally blocked tiles
+
+			switch (data.Type)
+			{
+				case DesignationType.Mine:
+					dirs = DirectionSet.Planar | DirectionSet.Up;
+					break;
+
+				case DesignationType.CreateStairs:
+					dirs = DirectionSet.Planar | DirectionSet.Up | DirectionSet.Down;
+					break;
+
+				case DesignationType.FellTree:
+					dirs = DirectionSet.Planar;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			foreach (var d in dirs.ToDirections())
+			{
+				if (!this.Environment.GetInterior(p + d).Blocker)
+				{
+					data.IsPossible = true;
+					return;
+				}
+			}
+
+			data.IsPossible = false;
 		}
 	}
 }

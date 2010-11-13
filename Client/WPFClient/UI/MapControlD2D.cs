@@ -157,7 +157,8 @@ namespace Dwarrowdelf.Client
 
 				if (m_env != null)
 				{
-					m_env.MapTileChanged -= MapChangedCallback;
+					m_env.MapTileTerrainChanged -= MapChangedCallback;
+					m_env.MapTileObjectChanged -= MapChangedCallback;
 				}
 
 				m_env = value;
@@ -165,7 +166,8 @@ namespace Dwarrowdelf.Client
 
 				if (m_env != null)
 				{
-					m_env.MapTileChanged += MapChangedCallback;
+					m_env.MapTileTerrainChanged += MapChangedCallback;
+					m_env.MapTileObjectChanged += MapChangedCallback;
 
 					if (m_world != m_env.World)
 					{
