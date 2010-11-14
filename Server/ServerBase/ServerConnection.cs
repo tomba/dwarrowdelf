@@ -430,6 +430,7 @@ namespace Dwarrowdelf.Server
 				};
 				player.SetAI(new DwarfAI(player));
 				player.Initialize(m_world);
+				player.Destructed += OnPlayerDestructed;
 
 				m_controllables.Add(player);
 				if (!player.MoveTo(env, p))
@@ -442,6 +443,13 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
+		void OnPlayerDestructed(BaseGameObject ob)
+		{
+			var living = (Living)ob;
+			m_controllables.Remove(living);
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+		}
+
 		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffCharRequestMessage msg)
 		{
@@ -450,7 +458,10 @@ namespace Dwarrowdelf.Server
 			m_scriptScope.RemoveVariable("me");
 
 			foreach (var l in m_controllables)
+			{
+				l.Destructed -= OnPlayerDestructed;
 				l.Destruct();
+			}
 
 			m_controllables.Clear();
 

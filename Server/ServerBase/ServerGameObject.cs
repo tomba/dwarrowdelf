@@ -27,6 +27,8 @@ namespace Dwarrowdelf.Server
 		public bool IsInitialized { get; private set; }
 		public bool IsDestructed { get; private set; }
 
+		public event Action<BaseGameObject> Destructed;
+
 		protected BaseGameObject()
 		{
 		}
@@ -52,8 +54,12 @@ namespace Dwarrowdelf.Server
 			if (this.IsDestructed)
 				throw new Exception();
 
-			this.World.AddChange(new ObjectDestructedChange(this));
 			this.IsDestructed = true;
+
+			if (this.Destructed != null)
+				this.Destructed(this);
+
+			this.World.AddChange(new ObjectDestructedChange(this));
 			this.World.RemoveGameObject(this);
 		}
 
