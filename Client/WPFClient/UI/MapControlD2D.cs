@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client
 
 				m_tileSize = value;
 
-				if (m_tileSize <= 8)
+				if (m_tileSize < 8)
 					m_renderView = m_renderViewSimple;
 				else
 					m_renderView = m_renderViewDetailed;

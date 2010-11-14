@@ -921,6 +921,7 @@ namespace Dwarrowdelf.Client
 			switch (id)
 			{
 				case DesignationType.None:
+					env.Designations.RemoveArea(area);
 					return;
 
 				case DesignationType.Mine:

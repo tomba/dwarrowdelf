@@ -136,7 +136,7 @@ namespace Dwarrowdelf.Client
 			m_canvas.Children.Add(m_selectionRect);
 
 
-			this.TileSize = 32;
+			this.TileSize = 16;
 		}
 
 		public void InvalidateTiles()

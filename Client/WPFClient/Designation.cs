@@ -124,6 +124,13 @@ namespace Dwarrowdelf.Client
 			GameData.Data.MainWindow.MapControl.InvalidateTiles();
 		}
 
+		public void RemoveArea(IntCuboid area)
+		{
+			var removes = m_map.Where(kvp => area.Contains(kvp.Key)).ToArray();
+			foreach (var kvp in removes)
+				RemoveJob(kvp.Value.Assignment);
+		}
+
 		bool IJobSource.HasWork
 		{
 			get { return m_map != null && m_map.Count > 0; }
