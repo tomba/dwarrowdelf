@@ -177,7 +177,7 @@ namespace MyArea
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
 					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
-					env.SetFloorID(p, FloorID.NaturalFloor);
+					env.SetFloor(p, FloorID.NaturalFloor, env.GetFloorMaterialID(p));
 				}
 
 				{
@@ -196,7 +196,7 @@ namespace MyArea
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
 					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Chrysoprase);
-					env.SetFloorID(p, FloorID.NaturalFloor);
+					env.SetFloor(p, FloorID.NaturalFloor, env.GetFloorMaterialID(p));
 				}
 			}
 

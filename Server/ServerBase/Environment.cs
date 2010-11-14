@@ -317,11 +317,15 @@ namespace Dwarrowdelf.Server
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
+			bool wasSeeThrough = false;
+
 			if (this.IsInitialized)
 			{
 				Debug.Assert(this.World.IsWritable);
 
 				this.Version += 1;
+
+				wasSeeThrough = GetInterior(p).IsSeeThrough;
 			}
 
 			m_tileGrid.SetInteriorID(p, interiorID);
@@ -333,6 +337,25 @@ namespace Dwarrowdelf.Server
 
 				if (MapChanged != null)
 					MapChanged(this, p, d);
+
+				if (!wasSeeThrough && GetInterior(p).IsSeeThrough)
+				{
+					foreach (var dir in DirectionExtensions.PlanarDirections)
+					{
+						var pp = p + dir;
+
+						if (!this.Bounds.Contains(pp))
+							continue;
+
+						if (m_tileGrid.GetHidden(pp))
+						{
+							m_tileGrid.SetHidden(pp, false);
+
+							if (MapChanged != null)
+								MapChanged(this, pp, m_tileGrid.GetTileData(pp));
+						}
+					}
+				}
 			}
 		}
 
@@ -354,46 +377,6 @@ namespace Dwarrowdelf.Server
 
 				if (MapChanged != null)
 					MapChanged(this, p, d);
-			}
-		}
-
-		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
-		{
-			if (this.IsInitialized)
-			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
-			}
-
-			m_tileGrid.SetInteriorID(l, interiorID);
-
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(l);
-
-				if (MapChanged != null)
-					MapChanged(this, l, d);
-			}
-		}
-
-		public void SetFloorID(IntPoint3D l, FloorID floorID)
-		{
-			if (this.IsInitialized)
-			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
-			}
-
-			m_tileGrid.SetFloorID(l, floorID);
-
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(l);
-
-				if (MapChanged != null)
-					MapChanged(this, l, d);
 			}
 		}
 
@@ -472,26 +455,6 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetGrass(l);
 		}
 
-		public void SetHidden(IntPoint3D l, bool hidden)
-		{
-			if (this.IsInitialized)
-			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
-			}
-
-			m_tileGrid.SetHidden(l, hidden);
-
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(l);
-
-				if (MapChanged != null)
-					MapChanged(this, l, d);
-			}
-		}
-
 		public bool GetHidden(IntPoint3D l)
 		{
 			return m_tileGrid.GetHidden(l);
@@ -502,11 +465,11 @@ namespace Dwarrowdelf.Server
 			return !Interiors.GetInterior(GetInteriorID(l)).Blocker;
 		}
 
-		public void UpdateHiddenStatus(IntPoint3D p)
+		void UpdateHiddenStatus(IntPoint3D p)
 		{
 			if (!GetInterior(p).Blocker)
 			{
-				SetHidden(p, false);
+				m_tileGrid.SetHidden(p, false);
 				return;
 			}
 
@@ -526,7 +489,7 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			SetHidden(p, hidden);
+			m_tileGrid.SetHidden(p, hidden);
 		}
 
 		// XXX not a good func. contents can be changed by the caller

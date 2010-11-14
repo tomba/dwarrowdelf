@@ -291,23 +291,13 @@ namespace Dwarrowdelf.Server
 						return;
 					}
 
-					this.Environment.SetInteriorID(p, InteriorID.Stairs);
+					this.Environment.SetInterior(p, InteriorID.Stairs, this.Environment.GetInteriorMaterialID(p));
 					if (this.Environment.GetFloorID(p + Direction.Up) == FloorID.NaturalFloor)
-						this.Environment.SetFloorID(p + Direction.Up, FloorID.Hole);
+						this.Environment.SetFloor(p + Direction.Up, FloorID.Hole, this.Environment.GetFloorMaterialID(p));
 					break;
 
 				default:
 					throw new Exception();
-			}
-
-			foreach (var dir in DirectionExtensions.PlanarDirections)
-			{
-				var pp = p + dir;
-
-				if (!this.Environment.Bounds.Contains(pp))
-					continue;
-
-				this.Environment.UpdateHiddenStatus(pp);
 			}
 		}
 

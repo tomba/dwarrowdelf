@@ -27,7 +27,7 @@ namespace Dwarrowdelf
 		public InteriorID ID { get; private set; }
 		public string Name { get; private set; }
 		public bool Blocker { get; private set; }
-		public bool IsSeeThrough { get { return Blocker; } }
+		public bool IsSeeThrough { get { return !this.Blocker; } }
 		public bool IsWaterPassable { get { return !Blocker; } }
 	}
 
