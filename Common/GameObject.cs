@@ -60,6 +60,7 @@ namespace Dwarrowdelf
 	{
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
+		bool IsDestructed { get; }
 	}
 
 	public interface IItemObject : IGameObject

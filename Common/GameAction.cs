@@ -222,4 +222,20 @@ namespace Dwarrowdelf
 		}
 	}
 
+	[Serializable]
+	public class AttackAction : GameAction
+	{
+		public ObjectID Target { get; private set; }
+
+		public AttackAction(ILiving target, ActionPriority priority)
+			: base(priority)
+		{
+			this.Target = target.ObjectID;
+		}
+
+		protected override string GetParams()
+		{
+			return this.Target.ToString();
+		}
+	}
 }

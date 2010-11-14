@@ -31,6 +31,8 @@ namespace Dwarrowdelf.Server
 		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), PropertyID.Wisdom, PropertyVisibility.Friendly, 1);
 		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), PropertyID.Charisma, PropertyVisibility.Friendly, 1);
 
+		static readonly PropertyDefinition ArmorClassProperty = RegisterProperty(typeof(Living), PropertyID.ArmorClass, PropertyVisibility.Friendly, 10);
+
 		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
 
 		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), PropertyID.FoodFullness, PropertyVisibility.Friendly, 500);
@@ -129,6 +131,12 @@ namespace Dwarrowdelf.Server
 			set { SetValue(CharismaProperty, value); }
 		}
 
+		public int ArmorClass
+		{
+			get { return (int)GetValue(ArmorClassProperty); }
+			set { SetValue(ArmorClassProperty, value); }
+		}
+
 		public int VisionRange
 		{
 			get { return (int)GetValue(VisionRangeProperty); }
@@ -169,6 +177,16 @@ namespace Dwarrowdelf.Server
 				Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
+			}
+		}
+
+		void ReceiveDamage(int damage)
+		{
+			this.HitPoints -= damage;
+			if (this.HitPoints <= 0)
+			{
+				Trace.TraceInformation("{0} dies", this);
+				this.Destruct();
 			}
 		}
 

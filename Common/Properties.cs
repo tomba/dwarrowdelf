@@ -25,6 +25,8 @@ namespace Dwarrowdelf
 		Wisdom,
 		Charisma,
 
+		ArmorClass,
+
 		VisionRange,
 		FoodFullness,
 		WaterFullness,

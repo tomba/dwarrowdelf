@@ -397,6 +397,7 @@
                                             <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Consume" Header="Consume" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="Attack" Header="Attack" Click="MenuItem_Click_Job" />
                                         </MenuItem>
                                         <MenuItem Name="createBuildingMenu" Header="Create Building" />
                                     </ContextMenu>

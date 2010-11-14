@@ -75,6 +75,10 @@ namespace Dwarrowdelf.Server
 			{
 				PerformBuildItem((BuildItemAction)action, out success);
 			}
+			else if (action is AttackAction)
+			{
+				PerformAttack((AttackAction)action, out success);
+			}
 			else
 			{
 				throw new NotImplementedException();
@@ -350,6 +354,64 @@ namespace Dwarrowdelf.Server
 			{
 				success = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 			}
+		}
+
+		Random m_random = new Random();
+
+		void PerformAttack(AttackAction action, out bool success)
+		{
+			if (this.ActionTicksLeft != 0)
+			{
+				success = true;
+				return;
+			}
+
+			var attacker = this;
+			var attackee = this.World.FindObject<Living>(action.Target);
+
+			if (attackee == null)
+			{
+				Trace.TraceWarning("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
+				success = false;
+				return;
+			}
+
+			if (!attacker.Location.IsAdjacentTo(attackee.Location, DirectionSet.Planar))
+			{
+				Trace.TraceWarning("{0} tried to attack {1}, but it wasn't near", attacker, attackee);
+				success = false;
+				return;
+			}
+
+			success = true;
+
+			var roll = m_random.Next(20) + 1;
+			bool hit;
+
+			if (roll == 1)
+			{
+				hit = false;
+			}
+			else if (roll == 20)
+			{
+				hit = true;
+			}
+			else
+			{
+				var ac = attackee.ArmorClass;
+				hit = roll >= ac;
+			}
+
+			if (!hit)
+			{
+				Trace.TraceInformation("{0} misses {1}", attacker, attackee);
+				return;
+			}
+
+			var damage = m_random.Next(3) + 1;
+			Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, attackee, damage);
+
+			attackee.ReceiveDamage(damage);
 		}
 	}
 }

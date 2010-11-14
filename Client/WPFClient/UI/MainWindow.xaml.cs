@@ -631,6 +631,17 @@ namespace Dwarrowdelf.Client
 					m_manualJobSource.Add(job);
 				}
 			}
+			else if (tag == "Attack")
+			{
+				var p = map.Selection.SelectionCuboid.Corner1;
+				var env = map.Environment;
+				var ob = env.GetFirstObject(p);
+				if (ob is Living)
+				{
+					var job = new Jobs.Assignments.AttackAssignment(null, ActionPriority.Normal, env, (ILiving)ob);
+					m_manualJobSource.Add(job);
+				}
+			}
 			else
 			{
 				throw new Exception();

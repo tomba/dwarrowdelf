@@ -196,6 +196,10 @@ namespace Dwarrowdelf.Client
 					this.Charisma = (int)value;
 					break;
 
+				case PropertyID.ArmorClass:
+					this.ArmorClass = (int)value;
+					break;
+
 				case PropertyID.VisionRange:
 					this.VisionRange = (int)value;
 					break;
@@ -272,6 +276,13 @@ namespace Dwarrowdelf.Client
 		{
 			get { return m_charisma; }
 			private set { m_charisma = value; Notify("Charisma"); }
+		}
+
+		int m_armorClass;
+		public int ArmorClass
+		{
+			get { return m_armorClass; }
+			private set { m_armorClass = value; Notify("ArmorClass"); }
 		}
 
 		int m_visionRange;
