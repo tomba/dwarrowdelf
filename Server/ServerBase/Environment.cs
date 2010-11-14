@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 		public event MapChanged MapChanged;
 
 		TileGrid m_tileGrid;
-		public TileGrid TileGrid { get { Debug.Assert(this.World.IsWritable); return m_tileGrid; } }
+		public TileGrid TileGrid { get { return m_tileGrid; } }
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
@@ -44,6 +44,10 @@ namespace Dwarrowdelf.Server
 
 		public override void Initialize(World world)
 		{
+			// Set IsHidden flags
+			foreach (var p in this.Bounds.Range())
+				UpdateHiddenStatus(p);
+
 			base.Initialize(world);
 
 			world.TickStartEvent += Tick;
@@ -313,60 +317,84 @@ namespace Dwarrowdelf.Server
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetInteriorID(p, interiorID);
 			m_tileGrid.SetInteriorMaterialID(p, materialID);
 
-			var d = m_tileGrid.GetTileData(p);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(p);
 
-			if (MapChanged != null)
-				MapChanged(this, p, d);
+				if (MapChanged != null)
+					MapChanged(this, p, d);
+			}
 		}
 
 		public void SetFloor(IntPoint3D p, FloorID floorID, MaterialID materialID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetFloorID(p, floorID);
 			m_tileGrid.SetFloorMaterialID(p, materialID);
 
-			var d = m_tileGrid.GetTileData(p);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(p);
 
-			if (MapChanged != null)
-				MapChanged(this, p, d);
+				if (MapChanged != null)
+					MapChanged(this, p, d);
+			}
 		}
 
 		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetInteriorID(l, interiorID);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public void SetFloorID(IntPoint3D l, FloorID floorID)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetFloorID(l, floorID);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public TileData GetTileData(IntPoint3D l)
@@ -376,30 +404,42 @@ namespace Dwarrowdelf.Server
 
 		public void SetTileData(IntPoint3D l, TileData data)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetTileData(l, data);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetWaterLevel(l, waterLevel);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public byte GetWaterLevel(IntPoint3D l)
@@ -409,16 +449,22 @@ namespace Dwarrowdelf.Server
 
 		public void SetGrass(IntPoint3D l, bool grass)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetGrass(l, grass);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public bool GetGrass(IntPoint3D l)
@@ -428,16 +474,22 @@ namespace Dwarrowdelf.Server
 
 		public void SetHidden(IntPoint3D l, bool hidden)
 		{
-			Debug.Assert(this.World.IsWritable);
+			if (this.IsInitialized)
+			{
+				Debug.Assert(this.World.IsWritable);
 
-			this.Version += 1;
+				this.Version += 1;
+			}
 
 			m_tileGrid.SetHidden(l, hidden);
 
-			var d = m_tileGrid.GetTileData(l);
+			if (this.IsInitialized)
+			{
+				var d = m_tileGrid.GetTileData(l);
 
-			if (MapChanged != null)
-				MapChanged(this, l, d);
+				if (MapChanged != null)
+					MapChanged(this, l, d);
+			}
 		}
 
 		public bool GetHidden(IntPoint3D l)

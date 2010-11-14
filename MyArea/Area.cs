@@ -113,7 +113,6 @@ namespace MyArea
 			Clamper.Clamp(grid, 10);
 
 			var env = new Environment(size, size, 20, VisibilityMode.GlobalFOV);
-			env.Initialize(world);
 
 			Random r = new Random(123);
 
@@ -165,6 +164,57 @@ namespace MyArea
 			CreateSlopes(env);
 
 			CreateTrees(env);
+
+			int posx = env.Bounds.Width / 10;
+			int posy = 1;
+
+			for (int x = posx; x < posx + 4; ++x)
+			{
+				int y = posy;
+
+				IntPoint3D p;
+
+				{
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
+					env.SetFloorID(p, FloorID.NaturalFloor);
+				}
+
+				{
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					TileData td = new TileData()
+					{
+						FloorID = FloorID.NaturalFloor,
+						FloorMaterialID = MaterialID.Magnetite,
+						InteriorID = InteriorID.NaturalWall,
+						InteriorMaterialID = MaterialID.Magnetite,
+					};
+
+					env.SetTileData(p, td);
+				}
+
+				{
+					p = new IntPoint3D(x, y++, surfaceLevel);
+					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Chrysoprase);
+					env.SetFloorID(p, FloorID.NaturalFloor);
+				}
+			}
+
+			var oreMaterials = Materials.GetMaterials(MaterialClass.Gem).Concat(Materials.GetMaterials(MaterialClass.Mineral)).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 30; ++i)
+			{
+				var p = GetRandomSubterraneanLocation(env);
+				var idx = m_random.Next(oreMaterials.Length);
+				CreateOreCluster(env, p, oreMaterials[idx]);
+			}
+
+			env.Initialize(world);
+
+
+
+
+
+
 
 			for (int i = 0; i < 0; ++i)
 			{
@@ -262,59 +312,11 @@ namespace MyArea
 				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
 			}
 #endif
-			int posx = env.Bounds.Width / 10;
-			int posy = 1;
-
-			for (int x = posx; x < posx + 4; ++x)
-			{
-				int y = posy;
-
-				IntPoint3D p;
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
-					env.SetFloorID(p, FloorID.NaturalFloor);
-				}
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					TileData td = new TileData()
-					{
-						FloorID = FloorID.NaturalFloor,
-						FloorMaterialID = MaterialID.Magnetite,
-						InteriorID = InteriorID.NaturalWall,
-						InteriorMaterialID = MaterialID.Magnetite,
-					};
-
-					env.SetTileData(p, td);
-				}
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Chrysoprase);
-					env.SetFloorID(p, FloorID.NaturalFloor);
-				}
-			}
-
-			var oreMaterials = Materials.GetMaterials(MaterialClass.Gem).Concat(Materials.GetMaterials(MaterialClass.Mineral)).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 30; ++i)
-			{
-				var p = GetRandomSubterraneanLocation(env);
-				var idx = m_random.Next(oreMaterials.Length);
-				CreateOreCluster(env, p, oreMaterials[idx]);
-			}
-
-			// Set IsHidden flags
-			foreach (var p in env.Bounds.Range())
-			{
-				env.UpdateHiddenStatus(p);
-			}
 
 			posx = env.Bounds.Width / 10;
 			posy = env.Bounds.Height / 10;
 
-			var building = new BuildingObject( BuildingID.Smith) { Area = new IntRect3D(posx, posy, 3, 3, 9) };
+			var building = new BuildingObject(BuildingID.Smith) { Area = new IntRect3D(posx, posy, 3, 3, 9) };
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
