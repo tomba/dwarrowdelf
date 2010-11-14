@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ItemData : GameObjectData
 	{
-		public ItemType ItemID { get; set; }
+		public ItemID ItemID { get; set; }
 
 		public override string ToString()
 		{

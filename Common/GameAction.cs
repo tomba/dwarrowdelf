@@ -207,9 +207,9 @@ namespace Dwarrowdelf
 		// public object type etc
 
 		public ObjectID[] SourceObjectIDs { get; private set; }
-		public ItemType DstItemID { get; private set; }
+		public ItemID DstItemID { get; private set; }
 
-		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemType dstItemID, ActionPriority priority)
+		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemID dstItemID, ActionPriority priority)
 			: base(priority)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();

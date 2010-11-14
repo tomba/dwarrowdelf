@@ -7,7 +7,7 @@ namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject(ItemType itemID, MaterialID material)
+		public ItemObject(ItemID itemID, MaterialID material)
 		{
 			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
 			this.SymbolID = this.ItemInfo.Symbol;
@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 
 		public ItemInfo ItemInfo { get; private set; }
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
-		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }
+		public ItemID ItemID { get { return this.ItemInfo.ItemID; } }
 
 		public object ReservedBy { get; set; }
 

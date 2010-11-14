@@ -10,9 +10,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public class BuildItemAssignment : Assignment
 	{
 		readonly IItemObject[] m_items;
-		readonly ItemType m_dstItemID;
+		readonly ItemID m_dstItemID;
 
-		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items, ItemType dstItemID)
+		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items, ItemID dstItemID)
 			: base(parent, priority)
 		{
 			m_items = items;

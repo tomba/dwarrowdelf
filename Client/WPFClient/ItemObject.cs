@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 
 		public ItemInfo ItemInfo { get; private set; }
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
-		public ItemType ItemID { get { return this.ItemInfo.ItemType; } }
+		public ItemID ItemID { get { return this.ItemInfo.ItemID; } }
 
 		int m_nutritionalValue;
 		public int NutritionalValue
@@ -75,12 +75,12 @@ namespace Dwarrowdelf.Client
 			var matInfo = this.Material;
 			switch (this.ItemID)
 			{
-				case ItemType.UncutGem:
+				case ItemID.UncutGem:
 					this.Description = "Uncut " + matInfo.Name.ToLowerInvariant();
 					break;
 
-				case ItemType.Rock:
-				case ItemType.Ore:
+				case ItemID.Rock:
+				case ItemID.Ore:
 					if (matInfo.ID == MaterialID.NativeGold)
 					{
 						this.Description = matInfo.Adjective.Capitalize() + " nugget";
@@ -91,7 +91,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case ItemType.Gem:
+				case ItemID.Gem:
 					this.Description = matInfo.Name.Capitalize();
 					break;
 

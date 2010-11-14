@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Server
 			return this.Area.Contains(point);
 		}
 
-		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemType dstItemID)
+		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
 		{
 			if (!Contains(builder.Location))
 				return false;
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemType dstItemID)
+		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
 		{
 			if (!VerifyBuildItem(builder, sourceObjects, dstItemID))
 				return false;

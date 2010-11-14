@@ -186,7 +186,7 @@ namespace MyArea
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
-				var item = new ItemObject(ItemType.Gem, material);
+				var item = new ItemObject(ItemID.Gem, material);
 				item.Initialize(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
@@ -196,7 +196,7 @@ namespace MyArea
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-				var item = new ItemObject(ItemType.Rock, material);
+				var item = new ItemObject(ItemID.Rock, material);
 				item.Initialize(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));

@@ -66,7 +66,7 @@ namespace Dwarrowdelf
 	public interface IItemObject : IGameObject
 	{
 		ItemClass ItemClass { get; }
-		ItemType ItemID { get; }
+		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
 	}
 }

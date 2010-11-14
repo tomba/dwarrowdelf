@@ -975,11 +975,11 @@ namespace Dwarrowdelf.Client
 			switch (tag)
 			{
 				case "Chair":
-					building.AddBuildOrder(ItemType.Chair, materialClass);
+					building.AddBuildOrder(ItemID.Chair, materialClass);
 					break;
 
 				case "Table":
-					building.AddBuildOrder(ItemType.Table, materialClass);
+					building.AddBuildOrder(ItemID.Table, materialClass);
 					break;
 
 				default:

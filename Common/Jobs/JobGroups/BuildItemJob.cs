@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 {
 	public class BuildItemJob : SerialJobGroup
 	{
-		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects, ItemType dstItemID)
+		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects, ItemID dstItemID)
 			: base(null, priority)
 		{
 			var env = workplace.Environment;

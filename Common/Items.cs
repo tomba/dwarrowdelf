@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public enum ItemType : byte
+	public enum ItemID : byte
 	{
 		Undefined = 0,
 		Log,
@@ -40,7 +40,7 @@ namespace Dwarrowdelf
 
 	public class ItemInfo
 	{
-		public ItemType ItemType { get; set; }
+		public ItemID ItemID { get; set; }
 		public string Name { get; set; }
 		public ItemClass ItemClass { get; set; }
 		public SymbolID Symbol { get; set; }
@@ -64,32 +64,32 @@ namespace Dwarrowdelf
 					items = (ItemInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = items.Max(i => (int)i.ItemType);
+			var max = items.Max(i => (int)i.ItemID);
 			s_items = new ItemInfo[max + 1];
 
 			foreach (var item in items)
 			{
-				if (s_items[(int)item.ItemType] != null)
+				if (s_items[(int)item.ItemID] != null)
 					throw new Exception();
 
 				if (item.Name == null)
-					item.Name = item.ItemType.ToString().ToLowerInvariant();
+					item.Name = item.ItemID.ToString().ToLowerInvariant();
 
-				s_items[(int)item.ItemType] = item;
+				s_items[(int)item.ItemID] = item;
 			}
 
-			s_items[(int)ItemType.Custom] = new ItemInfo()
+			s_items[(int)ItemID.Custom] = new ItemInfo()
 			{
-				ItemType = ItemType.Custom,
+				ItemID = ItemID.Custom,
 				Name = "<undefined>",
 				ItemClass = ItemClass.Custom,
 				Symbol = SymbolID.Undefined,
 			};
 		}
 
-		public static ItemInfo GetItem(ItemType id)
+		public static ItemInfo GetItem(ItemID id)
 		{
-			Debug.Assert(id != ItemType.Undefined);
+			Debug.Assert(id != ItemID.Undefined);
 			Debug.Assert(s_items[(int)id] != null);
 
 			return s_items[(int)id];

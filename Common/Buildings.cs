@@ -27,14 +27,14 @@ namespace Dwarrowdelf
 			this.BuildableItems = new List<BuildableItem>();
 		}
 
-		public BuildableItem FindBuildableItem(ItemType itemType)
+		public BuildableItem FindBuildableItem(ItemID itemID)
 		{
-			return this.BuildableItems.SingleOrDefault(i => i.ItemType == itemType);
+			return this.BuildableItems.SingleOrDefault(i => i.ItemID == itemID);
 		}
 
-		public bool ItemBuildableFrom(ItemType itemType, IItemObject[] obs)
+		public bool ItemBuildableFrom(ItemID itemID, IItemObject[] obs)
 		{
-			var item = FindBuildableItem(itemType);
+			var item = FindBuildableItem(itemID);
 
 			if (item == null)
 				throw new Exception();
@@ -46,7 +46,7 @@ namespace Dwarrowdelf
 	[ContentProperty("BuildMaterials")]
 	public class BuildableItem
 	{
-		public ItemType ItemType { get; set; }
+		public ItemID ItemID { get; set; }
 		public List<BuildableItemMaterialInfo> BuildMaterials { get; set; }
 
 		public BuildableItem()
@@ -73,7 +73,7 @@ namespace Dwarrowdelf
 
 	public class BuildableItemMaterialInfo
 	{
-		public ItemType? ItemType { get; set; }
+		public ItemID? ItemID { get; set; }
 		public ItemClass? ItemClass { get; set; }
 
 		public MaterialClass? MaterialClass { get; set; }
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 
 		public bool MatchItem(IItemObject ob)
 		{
-			if (this.ItemType.HasValue && this.ItemType.Value != ob.ItemID)
+			if (this.ItemID.HasValue && this.ItemID.Value != ob.ItemID)
 				return false;
 
 			if (this.ItemClass.HasValue && this.ItemClass.Value != ob.ItemClass)

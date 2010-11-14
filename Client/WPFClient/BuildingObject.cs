@@ -96,12 +96,12 @@ namespace Dwarrowdelf.Client
 			return this.Area.Contains(point);
 		}
 
-		public void AddBuildOrder(ItemType itemID, MaterialID materialID)
+		public void AddBuildOrder(ItemID itemID, MaterialID materialID)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void AddBuildOrder(ItemType itemID, MaterialClass materialClass)
+		public void AddBuildOrder(ItemID itemID, MaterialClass materialClass)
 		{
 			var buildableItem = this.BuildingInfo.FindBuildableItem(itemID);
 
@@ -260,7 +260,7 @@ namespace Dwarrowdelf.Client
 		void CreateJob(BuildOrder order)
 		{
 			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
-				order.SourceItems, order.BuildableItem.ItemType);
+				order.SourceItems, order.BuildableItem.ItemID);
 			job.StateChanged += OnJobStateChanged;
 			order.Job = job;
 			GameData.Data.Jobs.Add(job);

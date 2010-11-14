@@ -245,27 +245,27 @@ namespace Dwarrowdelf.Server
 
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
-					ItemType itemType;
+					ItemID itemID;
 
 					switch (material.MaterialClass)
 					{
 						case MaterialClass.Rock:
-							itemType = ItemType.Rock;
+							itemID = ItemID.Rock;
 							break;
 
 						case MaterialClass.Mineral:
-							itemType = ItemType.Ore;
+							itemID = ItemID.Ore;
 							break;
 
 						case MaterialClass.Gem:
-							itemType = ItemType.UncutGem;
+							itemID = ItemID.UncutGem;
 							break;
 
 						default:
 							throw new Exception();
 					}
 
-					var item = new ItemObject(itemType, material.ID);
+					var item = new ItemObject(itemID, material.ID);
 
 					item.Initialize(this.World);
 
@@ -313,7 +313,7 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					var log = new ItemObject(ItemType.Log, material)
+					var log = new ItemObject(ItemID.Log, material)
 					{
 						Name = "Log",
 						Color = GameColor.SaddleBrown,

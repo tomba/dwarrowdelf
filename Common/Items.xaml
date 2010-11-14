@@ -3,16 +3,16 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <ItemInfo ItemType="Log" ItemClass="RawMaterial" Symbol="Log"/>
-    <ItemInfo ItemType="Chair" ItemClass="Furniture" Symbol="Chair"/>
-    <ItemInfo ItemType="Table" ItemClass="Furniture" Symbol="Table"/>
-    <ItemInfo ItemType="Food" ItemClass="Food" Symbol="Consumable"/>
-    <ItemInfo ItemType="Drink" ItemClass="Drink" Symbol="Consumable"/>
-    <ItemInfo ItemType="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
-    <ItemInfo ItemType="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
-    <ItemInfo ItemType="Gem" ItemClass="Gem" Symbol="Gem"/>
-    <ItemInfo ItemType="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>
+    <ItemInfo ItemID="Log" ItemClass="RawMaterial" Symbol="Log"/>
+    <ItemInfo ItemID="Chair" ItemClass="Furniture" Symbol="Chair"/>
+    <ItemInfo ItemID="Table" ItemClass="Furniture" Symbol="Table"/>
+    <ItemInfo ItemID="Food" ItemClass="Food" Symbol="Consumable"/>
+    <ItemInfo ItemID="Drink" ItemClass="Drink" Symbol="Consumable"/>
+    <ItemInfo ItemID="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ItemID="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ItemID="Gem" ItemClass="Gem" Symbol="Gem"/>
+    <ItemInfo ItemID="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>
 
-    <ItemInfo ItemType="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
+    <ItemInfo ItemID="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
 
 </x:Array>
