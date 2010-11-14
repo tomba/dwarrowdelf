@@ -142,6 +142,11 @@ namespace Dwarrowdelf.Client
 			return m_tileGrid.GetGrass(ml);
 		}
 
+		public bool GetHidden(IntPoint3D ml)
+		{
+			return m_tileGrid.GetHidden(ml);
+		}
+
 		public TileData GetTileData(IntPoint3D p)
 		{
 			return m_tileGrid.GetTileData(p);

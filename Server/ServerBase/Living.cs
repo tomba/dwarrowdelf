@@ -438,6 +438,9 @@ namespace Dwarrowdelf.Server
 			if (env.VisibilityMode == VisibilityMode.AllVisible)
 				return true;
 
+			if (env.VisibilityMode == VisibilityMode.GlobalFOV)
+				return !env.GetHidden(l);
+
 			IntVector3D dl = l - this.Location;
 
 			if (dl.Z != 0)
@@ -484,8 +487,10 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
 				return GetVisibleLocationsLOS();
-			else
+			else if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
 				return GetVisibleLocationsSimpleFOV();
+			else
+				throw new Exception();
 		}
 
 		public override BaseGameObjectData Serialize()

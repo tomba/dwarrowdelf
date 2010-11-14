@@ -426,9 +426,55 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetGrass(l);
 		}
 
+		public void SetHidden(IntPoint3D l, bool hidden)
+		{
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetHidden(l, hidden);
+
+			var d = m_tileGrid.GetTileData(l);
+
+			if (MapChanged != null)
+				MapChanged(this, l, d);
+		}
+
+		public bool GetHidden(IntPoint3D l)
+		{
+			return m_tileGrid.GetHidden(l);
+		}
+
 		public bool IsWalkable(IntPoint3D l)
 		{
 			return !Interiors.GetInterior(GetInteriorID(l)).Blocker;
+		}
+
+		public void UpdateHiddenStatus(IntPoint3D p)
+		{
+			if (!GetInterior(p).Blocker)
+			{
+				SetHidden(p, false);
+				return;
+			}
+
+			bool hidden = true;
+
+			foreach (var dir in DirectionExtensions.PlanarDirections)
+			{
+				var pp = p + dir;
+
+				if (!this.Bounds.Contains(pp))
+					continue;
+
+				if (!GetInterior(pp).Blocker)
+				{
+					hidden = false;
+					break;
+				}
+			}
+
+			SetHidden(p, hidden);
 		}
 
 		// XXX not a good func. contents can be changed by the caller
@@ -557,7 +603,10 @@ namespace Dwarrowdelf.Server
 				foreach (var p in this.Bounds.Range())
 				{
 					int idx = bounds.GetIndex(p);
-					arr[idx] = m_tileGrid.GetTileData(p);
+					if (m_tileGrid.GetHidden(p))
+						arr[idx] = new TileData() { IsHidden = true };
+					else
+						arr[idx] = m_tileGrid.GetTileData(p);
 				}
 
 				writer(new Messages.MapDataTerrainsMessage()
@@ -580,7 +629,10 @@ namespace Dwarrowdelf.Server
 					{
 						int idx = plane.GetIndex(p2d);
 						var p = new IntPoint3D(p2d, z);
-						arr[idx] = m_tileGrid.GetTileData(p);
+						if (m_tileGrid.GetHidden(p))
+							arr[idx] = new TileData() { IsHidden = true };
+						else
+							arr[idx] = m_tileGrid.GetTileData(p);
 					}
 
 					msg.Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1);
@@ -602,7 +654,10 @@ namespace Dwarrowdelf.Server
 						for (int x = bounds.X1; x < bounds.X2; ++x)
 						{
 							IntPoint3D p = new IntPoint3D(x, y, z);
-							arr[x] = m_tileGrid.GetTileData(p);
+							if (m_tileGrid.GetHidden(p))
+								arr[x] = new TileData() { IsHidden = true };
+							else
+								arr[x] = m_tileGrid.GetTileData(p);
 						}
 
 						msg.Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1);
@@ -752,6 +807,16 @@ namespace Dwarrowdelf.Server
 		public bool GetGrass(IntPoint3D p)
 		{
 			return m_grid[p.Z, p.Y, p.X].Grass;
+		}
+
+		public void SetHidden(IntPoint3D p, bool hidden)
+		{
+			m_grid[p.Z, p.Y, p.X].IsHidden = hidden;
+		}
+
+		public bool GetHidden(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].IsHidden;
 		}
 	}
 }

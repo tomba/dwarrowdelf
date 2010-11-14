@@ -299,6 +299,16 @@ namespace Dwarrowdelf.Server
 				default:
 					throw new Exception();
 			}
+
+			foreach (var dir in DirectionExtensions.PlanarDirections)
+			{
+				var pp = p + dir;
+
+				if (!this.Environment.Bounds.Contains(pp))
+					continue;
+
+				this.Environment.UpdateHiddenStatus(pp);
+			}
 		}
 
 		void PerformFellTree(FellTreeAction action, out bool success)

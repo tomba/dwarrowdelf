@@ -160,7 +160,7 @@ namespace Dwarrowdelf.Client
 
 		protected static bool TileVisible(IntPoint3D ml, Environment env)
 		{
-			if (env.VisibilityMode == VisibilityMode.AllVisible)
+			if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
 				return true;
 
 			if (env.GetInterior(ml).ID == InteriorID.Undefined)

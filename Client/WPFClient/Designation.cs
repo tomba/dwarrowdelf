@@ -97,7 +97,8 @@ namespace Dwarrowdelf.Client
 					else
 						mat = MineActionType.Stairs;
 
-					var walls = area.Range().Where(p => !m_map.ContainsKey(p) && this.Environment.GetInterior(p).ID == InteriorID.NaturalWall);
+					var walls = area.Range().Where(p => !m_map.ContainsKey(p) &&
+						(this.Environment.GetInterior(p).ID == InteriorID.NaturalWall || this.Environment.GetHidden(p)));
 
 					foreach (var p in walls)
 					{

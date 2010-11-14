@@ -595,7 +595,7 @@ namespace Dwarrowdelf.Server
 
 				/* for AllVisible maps we don't track visible locations, but we still
 				 * need to handle newly visible maps */
-				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible)
+				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible || l.Environment.VisibilityMode == VisibilityMode.GlobalFOV)
 					locList = new List<IntPoint3D>();
 				else
 					locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
@@ -659,7 +659,7 @@ namespace Dwarrowdelf.Server
 			// send full data for AllVisible envs, and intro for other maps
 			foreach (var env in revealedEnvironments)
 			{
-				if (env.VisibilityMode == VisibilityMode.AllVisible)
+				if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
 				{
 					env.SerializeTo(Send);
 				}
@@ -711,7 +711,8 @@ namespace Dwarrowdelf.Server
 				// to AllVisible maps.
 				var c = change as ObjectMoveChange;
 				if (c != null && c.Source != c.Destination && c.Destination is Environment &&
-						((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible)
+					(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
+						
 				{
 					var newObject = (ServerGameObject)c.Object;
 					var newObMsg = ObjectToMessage(newObject);

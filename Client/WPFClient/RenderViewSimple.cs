@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 			var rows = m_renderData.Size.Height;
 			var grid = m_renderData.ArrayGrid.Grid;
 
-			if (m_invalid || (m_environment != null && m_environment.VisibilityMode != VisibilityMode.AllVisible))
+			if (m_invalid || (m_environment != null && (m_environment.VisibilityMode != VisibilityMode.AllVisible || m_environment.VisibilityMode != VisibilityMode.GlobalFOV)))
 			{
 				//Debug.WriteLine("RenderView.Resolve All");
 				m_renderData.Clear();

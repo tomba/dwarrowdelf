@@ -112,7 +112,7 @@ namespace MyArea
 			DiamondSquare.Render(grid, 10, 5, 0.75);
 			Clamper.Clamp(grid, 10);
 
-			var env = new Environment(size, size, 20, VisibilityMode.LOS);
+			var env = new Environment(size, size, 20, VisibilityMode.GlobalFOV);
 			env.Initialize(world);
 
 			Random r = new Random(123);
@@ -303,6 +303,12 @@ namespace MyArea
 				var p = GetRandomSubterraneanLocation(env);
 				var idx = m_random.Next(oreMaterials.Length);
 				CreateOreCluster(env, p, oreMaterials[idx]);
+			}
+
+			// Set IsHidden flags
+			foreach (var p in env.Bounds.Range())
+			{
+				env.UpdateHiddenStatus(p);
 			}
 
 			posx = env.Bounds.Width / 10;
