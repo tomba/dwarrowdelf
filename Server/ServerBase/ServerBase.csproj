@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
+    <Compile Include="AnimalAI.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="LivingActions.cs" />
     <Compile Include="ServerConnection.cs" />

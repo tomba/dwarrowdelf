@@ -345,6 +345,21 @@ namespace MyArea
 				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
 			}
 
+
+			/* Add Monsters */
+
+			for (int i = 0; i < 5; ++i)
+			{
+				var sheep = new Living(String.Format("Sheep{0}", i))
+				{
+					SymbolID = SymbolID.Monster,
+					Color = this.GetRandomColor(),
+				};
+				sheep.SetAI(new AnimalAI(sheep));
+				sheep.Initialize(env.World);
+				sheep.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
+
 			return env;
 		}
 
