@@ -697,7 +697,6 @@ namespace Dwarrowdelf.Server
 		}
 
 
-
 		void HandleWorldChange(Change change)
 		{
 			// can any friendly see the change?
@@ -712,7 +711,6 @@ namespace Dwarrowdelf.Server
 				var c = change as ObjectMoveChange;
 				if (c != null && c.Source != c.Destination && c.Destination is Environment &&
 					(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
-						
 				{
 					var newObject = (ServerGameObject)c.Object;
 					var newObMsg = ObjectToMessage(newObject);
@@ -825,90 +823,6 @@ namespace Dwarrowdelf.Server
 			else if (change is TickStartChange || change is ObjectDestructedChange || change is ObjectCreatedChange)
 			{
 				return true;
-			}
-			else
-			{
-				throw new Exception();
-			}
-		}
-
-		// can living see the change?
-		bool ChangeFilter(Living living, Change change)
-		{
-			// XXX these checks are not totally correct. objects may have changed after
-			// the creation of the change, for example moved. Should changes contain
-			// all the information needed for these checks?
-			if (change is ObjectMoveChange)
-			{
-				var c = (ObjectMoveChange)change;
-
-				if (living == c.Object)
-					return true;
-
-				if (living.Sees(c.Source, c.SourceLocation))
-					return true;
-
-				if (living.Sees(c.Destination, c.DestinationLocation))
-					return true;
-
-				return false;
-			}
-			else if (change is MapChange)
-			{
-				var c = (MapChange)change;
-
-				return living.Sees(c.Map, c.Location);
-			}
-			else if (change is TurnStartChange)
-			{
-				var c = (TurnStartChange)change;
-				return c.Living == null || m_controllables.Contains(c.Living);
-			}
-			else if (change is TurnEndChange)
-			{
-				var c = (TurnEndChange)change;
-				return c.Living == null || m_controllables.Contains(c.Living);
-			}
-
-			else if (change is FullObjectChange)
-			{
-				var c = (FullObjectChange)change;
-				return c.Object == living;
-			}
-			else if (change is PropertyChange)
-			{
-				var c = (PropertyChange)change;
-
-				if (c.Object == living)
-					return true;
-
-				if (c.Property.Visibility == PropertyVisibility.Friendly)
-				{
-					// xxx should check if the object is friendly
-					// return false for now, as all friendlies are controllables, thus we will still see it
-					// because the check above will return true to that controllable
-					return false;
-				}
-				else if (c.Property.Visibility == PropertyVisibility.Public)
-				{
-					ServerGameObject ob = (ServerGameObject)c.Object;
-
-					return living.Sees(ob.Environment, ob.Location);
-				}
-				else
-				{
-					throw new Exception();
-				}
-			}
-			else if (change is ActionStartedChange)
-			{
-				var c = (ActionStartedChange)change;
-				return m_controllables.Contains(c.Object);
-			}
-			else if (change is ActionProgressChange)
-			{
-				var c = (ActionProgressChange)change;
-				return m_controllables.Contains(c.Object);
 			}
 			else
 			{
