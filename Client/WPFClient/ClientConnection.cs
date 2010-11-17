@@ -92,7 +92,15 @@ namespace Dwarrowdelf.Client
 
 		public void BeginConnect(Action<string> callback)
 		{
-			m_connection.BeginConnect(callback);
+			m_connection.BeginConnect((s) => OnConnect(s, callback));
+		}
+
+		void OnConnect(string error, Action<string> callback)
+		{
+			callback(error);
+
+			if (error == null)
+				m_connection.BeginRead();
 		}
 
 		protected void ReceiveMessage(Message msg)

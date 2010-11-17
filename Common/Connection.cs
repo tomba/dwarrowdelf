@@ -25,6 +25,7 @@ namespace Dwarrowdelf
 		event Action<Message> ReceiveEvent;
 
 		void BeginConnect(Action<string> callback);
+		void BeginRead();
 		void Send(Message msg);
 		void Disconnect();
 	}
@@ -63,8 +64,6 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = client;
-
-			BeginRead();
 		}
 
 		public void BeginConnect(Action<string> callback)
@@ -105,11 +104,9 @@ namespace Dwarrowdelf
 			}
 
 			callback.Invoke(null);
-
-			BeginRead();
 		}
 
-		void BeginRead()
+		public void BeginRead()
 		{
 			if (m_socket == null)
 			{

@@ -69,11 +69,12 @@ namespace Dwarrowdelf.Server
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 
+			m_ipRunner = new IPRunner(world, Send);
+
 			m_connection = conn;
 			m_connection.ReceiveEvent += OnReceiveMessage;
 			m_connection.DisconnectEvent += OnDisconnect;
-
-			m_ipRunner = new IPRunner(world, Send);
+			m_connection.BeginRead();
 		}
 
 		protected void OnDisconnect()
