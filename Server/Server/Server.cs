@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Server
 
 		void OnNewConnection(IConnection conn)
 		{
-			new ServerConnection(conn, m_world);
+			new User(conn, m_world);
 		}
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

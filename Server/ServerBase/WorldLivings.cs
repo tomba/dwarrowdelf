@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 {
 	public partial class World
 	{
-		List<ServerConnection> m_userList = new List<ServerConnection>();
+		List<User> m_userList = new List<User>();
 
 		List<Living> m_livingList = new List<Living>();
 
@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 		List<Living> m_removeLivingList = new List<Living>();
 
 		// thread safe
-		internal void AddUser(ServerConnection user)
+		internal void AddUser(User user)
 		{
 			lock (m_userList)
 				m_userList.Add(user);
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// thread safe
-		internal void RemoveUser(ServerConnection user)
+		internal void RemoveUser(User user)
 		{
 			lock (m_userList)
 				m_userList.Remove(user);

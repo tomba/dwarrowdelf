@@ -9,7 +9,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Server
 {
-	public class ServerConnection
+	public class User
 	{
 		class WorldInvokeAttribute : Attribute
 		{
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Server
 
 		IPRunner m_ipRunner;
 
-		public ServerConnection(IConnection conn, World world)
+		public User(IConnection conn, World world)
 		{
 			m_world = world;
 

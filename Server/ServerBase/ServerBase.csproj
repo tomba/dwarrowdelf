@@ -80,7 +80,7 @@
     <Compile Include="IPRunner.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="LivingActions.cs" />
-    <Compile Include="ServerConnection.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="Living.cs" />
