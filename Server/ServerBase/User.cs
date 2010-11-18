@@ -62,6 +62,8 @@ namespace Dwarrowdelf.Server
 
 		IPRunner m_ipRunner;
 
+		ChangeHandler m_changeHandler;
+
 		public User(IConnection conn, World world)
 		{
 			m_world = world;
@@ -70,6 +72,8 @@ namespace Dwarrowdelf.Server
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 
 			m_ipRunner = new IPRunner(world, Send);
+
+			m_changeHandler = new ChangeHandler(this);
 
 			m_connection = conn;
 			m_connection.ReceiveEvent += OnReceiveMessage;
@@ -100,12 +104,12 @@ namespace Dwarrowdelf.Server
 			m_connection = null;
 		}
 
-		void Send(ServerMessage msg)
+		public void Send(ServerMessage msg)
 		{
 			m_connection.Send(msg);
 		}
 
-		void Send(IEnumerable<ServerMessage> msgs)
+		public void Send(IEnumerable<ServerMessage> msgs)
 		{
 			foreach (var msg in msgs)
 				Send(msg);
@@ -455,6 +459,49 @@ namespace Dwarrowdelf.Server
 		}
 
 
+		void HandleWorldChange(Change change)
+		{
+			if (change is TickStartChange)
+			{
+				this.StartTurnSent = false;
+				this.ProceedTurnReceived = false;
+			}
+			else if (change is TurnStartChange)
+			{
+				var c = (TurnStartChange)change;
+				if (c.Living != null && m_controllables.Contains(c.Living))
+					return;
+
+				this.StartTurnSent = true;
+			}
+			else if (change is TurnEndChange)
+			{
+				var c = (TurnEndChange)change;
+				if (c.Living != null && m_controllables.Contains(c.Living))
+					return;
+			}
+			else
+			{
+				m_changeHandler.HandleWorldChange(change);
+				return;
+			}
+
+			Send(new ChangeMessage { Change = change });
+		}
+
+
+		void HandleEndOfWork()
+		{
+			m_changeHandler.HandleEndOfWork();
+		}
+	}
+
+
+
+	class ChangeHandler
+	{
+		bool m_seeAll;
+
 		// These are used to determine new tiles and objects in sight
 		HashSet<Environment> m_knownEnvironments = new HashSet<Environment>();
 
@@ -464,12 +511,29 @@ namespace Dwarrowdelf.Server
 		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
 
+		User m_user;
+
+		public ChangeHandler(User user)
+		{
+			m_user = user;
+		}
+
+		void Send(ServerMessage msg)
+		{
+			m_user.Send(msg);
+		}
+
+		void Send(IEnumerable<ServerMessage> msgs)
+		{
+			m_user.Send(msgs);
+		}
+
 		// Called from the world at the end of work
-		void HandleEndOfWork()
+		public void HandleEndOfWork()
 		{
 			// if the user sees all, no need to send new terrains/objects
 			if (!m_seeAll)
-				HandleNewTerrainsAndObjects(m_controllables);
+				HandleNewTerrainsAndObjects(m_user.Controllables);
 		}
 
 		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
@@ -607,10 +671,10 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		void HandleWorldChange(Change change)
+		public void HandleWorldChange(Change change)
 		{
 			// can any friendly see the change?
-			if (!m_seeAll && !CanSeeChange(change))
+			if (!m_seeAll && !CanSeeChange(change, m_user.Controllables))
 				return;
 
 			if (!m_seeAll)
@@ -628,14 +692,6 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			if (change is TurnStartChange)
-				this.StartTurnSent = true;
-			else if (change is TickStartChange)
-			{
-				this.StartTurnSent = false;
-				this.ProceedTurnReceived = false;
-			}
-
 			var changeMsg = new ChangeMessage { Change = change };
 
 			Send(changeMsg);
@@ -650,7 +706,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		bool CanSeeChange(Change change)
+		bool CanSeeChange(Change change, IList<Living> controllables)
 		{
 			// XXX these checks are not totally correct. objects may have changed after
 			// the creation of the change, for example moved. Should changes contain
@@ -659,7 +715,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (ObjectMoveChange)change;
 
-				return m_controllables.Any(l =>
+				return controllables.Any(l =>
 				{
 					if (l == c.Object)
 						return true;
@@ -676,29 +732,29 @@ namespace Dwarrowdelf.Server
 			else if (change is MapChange)
 			{
 				var c = (MapChange)change;
-				return m_controllables.Any(l => l.Sees(c.Map, c.Location));
+				return controllables.Any(l => l.Sees(c.Map, c.Location));
 			}
 			else if (change is TurnStartChange)
 			{
 				var c = (TurnStartChange)change;
-				return c.Living == null || m_controllables.Contains(c.Living);
+				return c.Living == null || controllables.Contains(c.Living);
 			}
 			else if (change is TurnEndChange)
 			{
 				var c = (TurnEndChange)change;
-				return c.Living == null || m_controllables.Contains(c.Living);
+				return c.Living == null || controllables.Contains(c.Living);
 			}
 
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
-				return m_controllables.Contains(c.Object);
+				return controllables.Contains(c.Object);
 			}
 			else if (change is PropertyChange)
 			{
 				var c = (PropertyChange)change;
 
-				if (m_controllables.Contains(c.Object))
+				if (controllables.Contains(c.Object))
 				{
 					return true;
 				}
@@ -713,7 +769,7 @@ namespace Dwarrowdelf.Server
 				{
 					ServerGameObject ob = (ServerGameObject)c.Object;
 
-					return m_controllables.Any(l => l.Sees(ob.Environment, ob.Location));
+					return controllables.Any(l => l.Sees(ob.Environment, ob.Location));
 				}
 				else
 				{
@@ -723,12 +779,12 @@ namespace Dwarrowdelf.Server
 			else if (change is ActionStartedChange)
 			{
 				var c = (ActionStartedChange)change;
-				return m_controllables.Contains(c.Object);
+				return controllables.Contains(c.Object);
 			}
 			else if (change is ActionProgressChange)
 			{
 				var c = (ActionProgressChange)change;
-				return m_controllables.Contains(c.Object);
+				return controllables.Contains(c.Object);
 			}
 			else if (change is TickStartChange || change is ObjectDestructedChange || change is ObjectCreatedChange)
 			{
