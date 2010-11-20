@@ -59,15 +59,15 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		void OnNewConnection(IConnection conn)
+		void OnNewConnection(IConnection connection)
 		{
-			new User(conn, m_world);
+			var sconn = new ServerConnection(connection);
+			sconn.Init(m_world);
 		}
 
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			Debug.Print("tuli exc");
 		}
-
 	}
 }

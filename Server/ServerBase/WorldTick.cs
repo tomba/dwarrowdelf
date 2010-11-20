@@ -38,13 +38,13 @@ namespace Dwarrowdelf.Server
 		bool m_maxMoveTimerTriggered;
 
 		int m_currentLivingIndex;
-		Living CurrentLiving { get { return m_livingList[m_currentLivingIndex]; } }
+		Living CurrentLiving { get { return m_livings.List[m_currentLivingIndex]; } }
 		void ResetLivingIndex() { m_currentLivingIndex = 0; }
 		bool MoveToNextLiving()
 		{
-			Debug.Assert(m_currentLivingIndex < m_livingList.Count);
+			Debug.Assert(m_currentLivingIndex < m_livings.List.Count);
 			++m_currentLivingIndex;
-			return m_currentLivingIndex < m_livingList.Count;
+			return m_currentLivingIndex < m_livings.List.Count;
 		}
 
 		void InitializeWorldTick()
@@ -80,10 +80,10 @@ namespace Dwarrowdelf.Server
 			if (this.UseMinTickTime && !m_minTickTimerTriggered)
 				return false;
 
-			if (m_config.RequireUser && !this.HasUsers)
+			if (m_config.RequireUser && m_users.List.Count == 0)
 				return false;
 
-			if (m_config.RequireControllables && !m_userList.Any(u => u.Controllables.Count > 0))
+			if (m_config.RequireControllables && !m_users.List.Any(u => u.Controllables.Count > 0))
 				return false;
 
 			return true;
@@ -101,6 +101,13 @@ namespace Dwarrowdelf.Server
 			EnterWriteLock();
 
 			m_instantInvokeList.ProcessInvokeList();
+
+			ProcessConnectionAdds();
+
+			foreach (var conn in m_connections.List)
+				conn.HandleNewMessages();
+
+			ProcessConnectionRemoves();
 
 			if (m_state == WorldState.Idle)
 			{
@@ -136,94 +143,27 @@ namespace Dwarrowdelf.Server
 		void PreTickWork()
 		{
 			m_preTickInvokeList.ProcessInvokeList();
-			ProcessAddLivingList();
-			ProcessRemoveLivingList();
-		}
-
-		bool WorkAvailable()
-		{
-			VerifyAccess();
-
-			if (m_instantInvokeList.HasInvokeWork)
-			{
-				trace.TraceVerbose("WorkAvailable: InstantInvoke");
-				return true;
-			}
-
-			if (m_state == WorldState.Idle)
-			{
-				if (m_preTickInvokeList.HasInvokeWork)
-				{
-					trace.TraceVerbose("WorkAvailable: PreTickInvoke");
-					return true;
-				}
-
-				if (this.HasAddLivings)
-				{
-					trace.TraceVerbose("WorkAvailable: AddLiving");
-					return true;
-				}
-
-				if (this.HasRemoveLivings)
-				{
-					trace.TraceVerbose("WorkAvailable: RemoveLiving");
-					return true;
-				}
-
-				if (IsTimeToStartTick())
-				{
-					trace.TraceVerbose("WorkAvailable: IsTimeToStartTick");
-					return true;
-				}
-
-				return false;
-			}
-			else if (m_state == WorldState.TickOngoing)
-			{
-				if (m_config.TickMethod == WorldTickMethod.Simultaneous)
-					return SimultaneousWorkAvailable();
-				else if (m_config.TickMethod == WorldTickMethod.Sequential)
-					return SequentialWorkAvailable();
-				else
-					throw new NotImplementedException();
-			}
-			else
-			{
-				throw new Exception();
-			}
-		}
-
-		bool SimultaneousWorkAvailable()
-		{
-			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
-
-			if (m_userList.All(u => u.ProceedTurnReceived))
-				return true;
-
-			if (this.UseMaxMoveTime && m_maxMoveTimerTriggered)
-				return true;
-
-			return false;
+			m_users.Process();
+			m_livings.Process();
 		}
 
 		void SimultaneousWork()
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
-			Debug.Assert(m_userList.All(u => u.StartTurnSent));
+			Debug.Assert(m_users.List.All(u => u.StartTurnSent));
 
 			trace.TraceVerbose("SimultaneousWork");
 
 			bool forceMove = IsMoveForced();
 
-			if (!forceMove && !m_userList.All(u => u.ProceedTurnReceived))
+			if (!forceMove && !m_users.List.All(u => u.ProceedTurnReceived))
 				return;
 
-			foreach (var living in m_livingList)
+			foreach (var living in m_livings.List)
 				living.TurnPreRun();
 
-			foreach (var living in m_livingList.Where(l => l.HasAction))
+			foreach (var living in m_livings.List.Where(l => l.HasAction))
 				living.PerformAction();
 
 			EndTurn();
@@ -233,33 +173,6 @@ namespace Dwarrowdelf.Server
 			trace.TraceVerbose("SimultaneousWork Done");
 		}
 
-
-
-		bool SequentialWorkAvailable()
-		{
-			VerifyAccess();
-			Debug.Assert(m_state == WorldState.TickOngoing);
-
-			if (RemoveLivingListContains(this.CurrentLiving))
-			{
-				trace.TraceVerbose("WorkAvailable: Current living is to be removed");
-				return true;
-			}
-
-			if (this.CurrentLiving.HasAction)
-			{
-				trace.TraceVerbose("WorkAvailable: Living.HasAction");
-				return true;
-			}
-
-			if (this.UseMaxMoveTime && m_maxMoveTimerTriggered)
-			{
-				trace.TraceVerbose("WorkAvailable: NextMoveTime");
-				return true;
-			}
-
-			return false;
-		}
 
 		void SequentialWork()
 		{
@@ -272,7 +185,7 @@ namespace Dwarrowdelf.Server
 
 			while (true)
 			{
-				if (m_livingList.Count == 0)
+				if (m_livings.List.Count == 0)
 				{
 					trace.TraceVerbose("no livings to handled");
 					m_state = WorldState.TickDone;
@@ -281,7 +194,7 @@ namespace Dwarrowdelf.Server
 
 				var living = this.CurrentLiving;
 
-				if (RemoveLivingListContains(living))
+				if (m_livings.RemoveList.Contains(living))
 					forceMove = true;
 
 				if (!forceMove && !living.HasAction)
@@ -339,7 +252,7 @@ namespace Dwarrowdelf.Server
 
 		void StartTurnSimultaneous()
 		{
-			foreach (var living in m_livingList)
+			foreach (var living in m_livings.List)
 				living.TurnStarted();
 
 			AddChange(new TurnStartChange());

@@ -11,41 +11,7 @@ namespace Dwarrowdelf.Server
 {
 	public class User
 	{
-		class WorldInvokeAttribute : Attribute
-		{
-			public WorldInvokeStyle Style { get; set; }
-
-			public WorldInvokeAttribute(WorldInvokeStyle style)
-			{
-				this.Style = style;
-			}
-		}
-
-		enum WorldInvokeStyle
-		{
-			/// <summary>
-			/// Call directly
-			/// </summary>
-			None,
-			/// <summary>
-			/// Use world.BeginInvoke()
-			/// </summary>
-			Normal,
-			/// <summary>
-			/// Use world.BeginInvokeInstant()
-			/// </summary>
-			Instant,
-		}
-
-		class InvokeInfo
-		{
-			public Action<ClientMessage> Action;
-			public WorldInvokeStyle Style;
-		}
-
-
-		static int s_userIDs = 1;
-		Dictionary<Type, InvokeInfo> m_handlerMap = new Dictionary<Type, InvokeInfo>();
+		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;
 		bool m_charLoggedIn;
 
@@ -53,54 +19,62 @@ namespace Dwarrowdelf.Server
 
 		// this user sees all
 		bool m_seeAll = true;
+		public bool IsSeeAll { get { return m_seeAll; } }
 
 		List<Living> m_controllables;
 		public ReadOnlyCollection<Living> Controllables { get; private set; }
 
-		IConnection m_connection;
-		bool m_userLoggedIn;
+		ServerConnection m_connection;
 
 		IPRunner m_ipRunner;
 
 		ChangeHandler m_changeHandler;
 
-		public User(IConnection conn, World world)
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+
+		public User(int userID)
 		{
-			m_world = world;
+			m_userID = userID;
+
+			trace.Header = String.Format("User({0})", m_userID);
+			trace.TraceInformation("New User");
 
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
+			m_changeHandler = new ChangeHandler(this);
+		}
+
+		public void Init(ServerConnection connection, World world)
+		{
+			m_connection = connection;
+			m_world = world;
 
 			m_ipRunner = new IPRunner(world, Send);
 
-			m_changeHandler = new ChangeHandler(this);
+			m_world.WorkEnded += HandleEndOfWork;
+			m_world.WorldChanged += HandleWorldChange;
+			m_world.AddUser(this);
 
-			m_connection = conn;
-			m_connection.ReceiveEvent += OnReceiveMessage;
-			m_connection.DisconnectEvent += OnDisconnect;
-			m_connection.BeginRead();
-		}
-
-		protected void OnDisconnect()
-		{
-			m_world.BeginInvokeInstant(new Action(ClientDisconnected), null);
-		}
-
-		void ClientDisconnected()
-		{
-			Debug.Print("Client Disconnect");
-
-			if (m_userLoggedIn)
+			if (m_seeAll)
 			{
-				m_world.RemoveUser(this);
-				m_world.WorkEnded -= HandleEndOfWork;
-				m_world.WorldChanged -= HandleWorldChange;
+				foreach (var env in m_world.Environments)
+					env.SerializeTo(Send);
 			}
+		}
 
+		public void OnDisconnected()
+		{
+			trace.TraceInformation("OnDisconnected");
+
+			if (m_charLoggedIn)
+				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
+
+			m_world.RemoveUser(this);
+			m_world.WorkEnded -= HandleEndOfWork;
+			m_world.WorldChanged -= HandleWorldChange;
+
+			m_ipRunner = null;
 			m_world = null;
-
-			m_connection.ReceiveEvent -= OnReceiveMessage;
-			m_connection.DisconnectEvent -= OnDisconnect;
 			m_connection = null;
 		}
 
@@ -115,95 +89,40 @@ namespace Dwarrowdelf.Server
 				Send(msg);
 		}
 
-		void OnReceiveMessage(Message m)
+		public void OnReceiveMessage(Message m)
 		{
+			trace.TraceVerbose("OnReceiveMessage({0})", m);
+
 			var msg = (ClientMessage)m;
 
-			InvokeInfo f;
+			Action<ClientMessage> f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
 				System.Reflection.MethodInfo mi;
-				f = new InvokeInfo();
-				f.Action = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("ReceiveMessage", t, this, out mi);
+				f = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("ReceiveMessage", t, this, out mi);
 
 				if (f == null)
-					throw new Exception("Unknown Message");
-
-				var attr = (WorldInvokeAttribute)Attribute.GetCustomAttribute(mi, typeof(WorldInvokeAttribute));
-
-				if (attr == null || attr.Style == WorldInvokeStyle.None)
-					f.Style = WorldInvokeStyle.None;
-				else if (attr.Style == WorldInvokeStyle.Normal)
-					f.Style = WorldInvokeStyle.Normal;
-				else if (attr.Style == WorldInvokeStyle.Instant)
-					f.Style = WorldInvokeStyle.Instant;
-				else
-					throw new Exception();
+					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
 
 				m_handlerMap[t] = f;
 			}
 
-			switch (f.Style)
-			{
-				case WorldInvokeStyle.None:
-					f.Action(msg);
-					break;
-				case WorldInvokeStyle.Normal:
-					m_world.BeginInvoke(f.Action, msg);
-					break;
-				case WorldInvokeStyle.Instant:
-					m_world.BeginInvokeInstant(f.Action, msg);
-					break;
-				default:
-					throw new Exception();
-			}
+			f(msg);
 		}
 
-
-
-		[WorldInvoke(WorldInvokeStyle.Normal)]
-		void ReceiveMessage(LogOnRequestMessage msg)
-		{
-			string name = msg.Name;
-
-			Debug.Print("LogOn {0}", name);
-
-			m_userID = s_userIDs++;
-
-			Send(new Messages.LogOnReplyMessage() { UserID = m_userID, IsSeeAll = m_seeAll });
-
-			if (m_seeAll)
-			{
-				foreach (var env in m_world.Environments)
-					env.SerializeTo(Send);
-			}
-
-			m_world.WorkEnded += HandleEndOfWork;
-			m_world.WorldChanged += HandleWorldChange;
-			m_world.AddUser(this);
-
-			m_userLoggedIn = true;
-		}
-
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffRequestMessage msg)
 		{
-			Debug.Print("Logout");
+			trace.TraceInformation("Logout");
 
 			if (m_charLoggedIn)
 				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
 
-			m_world.RemoveUser(this);
-			m_world.WorkEnded -= HandleEndOfWork;
-			m_world.WorldChanged -= HandleWorldChange;
-
-			m_userLoggedIn = false;
-
 			Send(new Messages.LogOffReplyMessage());
+
+			m_connection.Disconnect();
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(SetTilesMessage msg)
 		{
 			ObjectID mapID = msg.MapID;
@@ -241,14 +160,12 @@ namespace Dwarrowdelf.Server
 			env.ScanWaterTiles();
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(SetWorldConfigMessage msg)
 		{
 			if (msg.MinTickTime.HasValue)
 				m_world.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(CreateBuildingMessage msg)
 		{
 			ObjectID mapID = msg.MapID;
@@ -285,12 +202,16 @@ namespace Dwarrowdelf.Server
 		}
 
 		/* functions for livings */
-		[WorldInvoke(WorldInvokeStyle.Normal)]
 		void ReceiveMessage(LogOnCharRequestMessage msg)
+		{
+			m_world.BeginInvoke(new Action<LogOnCharRequestMessage>(LogOnChar), msg);
+		}
+
+		void LogOnChar(LogOnCharRequestMessage msg)
 		{
 			string name = msg.Name;
 
-			Debug.Print("LogOnChar {0}", name);
+			trace.TraceInformation("LogOnChar {0}", name);
 
 			var env = m_world.Environments.First(); // XXX entry location
 
@@ -378,10 +299,9 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(LogOffCharRequestMessage msg)
 		{
-			Debug.Print("LogOffChar");
+			trace.TraceInformation("LogOffChar");
 
 			foreach (var l in m_controllables)
 			{
@@ -399,7 +319,6 @@ namespace Dwarrowdelf.Server
 		public bool StartTurnSent { get; private set; }
 		public bool ProceedTurnReceived { get; private set; }
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(ProceedTurnMessage msg)
 		{
 			try
@@ -445,15 +364,14 @@ namespace Dwarrowdelf.Server
 			}
 			catch (Exception e)
 			{
-				Debug.Print("Uncaught exception");
-				Debug.Print(e.ToString());
+				trace.TraceError("Uncaught exception");
+				trace.TraceError(e.ToString());
 			}
 		}
 
-		[WorldInvoke(WorldInvokeStyle.Instant)]
 		void ReceiveMessage(IPCommandMessage msg)
 		{
-			Debug.Print("IronPythonCommand");
+			trace.TraceInformation("IronPythonCommand");
 
 			m_ipRunner.Exec(msg.Text);
 		}

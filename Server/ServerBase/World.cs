@@ -146,11 +146,7 @@ namespace Dwarrowdelf.Server
 			while (m_exit == false)
 			{
 				m_worldSignal.WaitOne();
-
-				do
-				{
-					Work();
-				} while (WorkAvailable());
+				Work();
 			}
 
 			m_worldLogger.Stop();
@@ -289,7 +285,7 @@ namespace Dwarrowdelf.Server
 
 		public Living[] IPLivings
 		{
-			get { return m_livingList.ToArray(); }
+			get { return m_livings.List.ToArray(); }
 		}
 
 		public IBaseGameObject IPGet(object target)
