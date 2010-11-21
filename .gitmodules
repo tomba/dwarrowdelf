@@ -1,0 +1,3 @@
+[submodule "NetSerializer"]
+	path = NetSerializer
+	url = git://gitorious.org/netserializer/netserializer.git
