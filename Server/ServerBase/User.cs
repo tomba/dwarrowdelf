@@ -418,8 +418,6 @@ namespace Dwarrowdelf.Server
 
 	class ChangeHandler
 	{
-		bool m_seeAll;
-
 		// These are used to determine new tiles and objects in sight
 		HashSet<Environment> m_knownEnvironments = new HashSet<Environment>();
 
@@ -450,7 +448,7 @@ namespace Dwarrowdelf.Server
 		public void HandleEndOfWork()
 		{
 			// if the user sees all, no need to send new terrains/objects
-			if (!m_seeAll)
+			if (!m_user.IsSeeAll)
 				HandleNewTerrainsAndObjects(m_user.Controllables);
 		}
 
@@ -592,10 +590,10 @@ namespace Dwarrowdelf.Server
 		public void HandleWorldChange(Change change)
 		{
 			// can any friendly see the change?
-			if (!m_seeAll && !CanSeeChange(change, m_user.Controllables))
+			if (!m_user.IsSeeAll && !CanSeeChange(change, m_user.Controllables))
 				return;
 
-			if (!m_seeAll)
+			if (!m_user.IsSeeAll)
 			{
 				// We don't collect newly visible terrains/objects on AllVisible maps.
 				// However, we still need to tell about newly created objects that come
@@ -615,7 +613,7 @@ namespace Dwarrowdelf.Server
 			Send(changeMsg);
 
 			// XXX this is getting confusing...
-			if (m_seeAll && change is ObjectCreatedChange)
+			if (m_user.IsSeeAll && change is ObjectCreatedChange)
 			{
 				var c = (ObjectCreatedChange)change;
 				var newObject = (BaseGameObject)c.Object;
