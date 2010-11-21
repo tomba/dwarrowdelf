@@ -21,11 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerBase", "Server\Server
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server\Server.csproj", "{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "..\NetSerializer\NetSerializer\NetSerializer.csproj", "{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlD2D", "Client\TileControlD2D\TileControlD2D.csproj", "{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFClientBase", "Client\WPFClientBase\WPFClientBase.csproj", "{1794F5B1-762E-40D2-A314-040487DEEFE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "NetSerializer\NetSerializer\NetSerializer.csproj", "{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,14 +91,6 @@ Global
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Release|x64.Build.0 = Release|x64
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Release|x86.ActiveCfg = Release|x86
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Release|x86.Build.0 = Release|x86
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.ActiveCfg = Debug|x64
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.Build.0 = Debug|x64
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.ActiveCfg = Debug|x86
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.Build.0 = Debug|x86
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.ActiveCfg = Release|x64
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.Build.0 = Release|x64
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.ActiveCfg = Release|x86
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.Build.0 = Release|x86
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x64.ActiveCfg = Debug|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x64.Build.0 = Debug|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x86.ActiveCfg = Debug|x86
@@ -115,6 +107,14 @@ Global
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|x64.Build.0 = Release|x64
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|x86.ActiveCfg = Release|x86
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|x86.Build.0 = Release|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.ActiveCfg = Debug|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x64.Build.0 = Debug|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.ActiveCfg = Debug|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|x86.Build.0 = Debug|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.ActiveCfg = Release|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x64.Build.0 = Release|x64
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.ActiveCfg = Release|x86
+		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
