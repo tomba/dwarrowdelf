@@ -32,8 +32,12 @@ namespace Dwarrowdelf.Server
 
 		public void Remove(T item)
 		{
-			Debug.Assert(m_list.Contains(item));
-			m_removeList.Add(item);
+			Debug.Assert(m_list.Contains(item) || m_addList.Contains(item));
+
+			if (m_addList.Contains(item))
+				m_addList.Remove(item);
+			else
+				m_removeList.Add(item);
 		}
 
 		public void Process()

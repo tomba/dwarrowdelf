@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 			trace.TraceInformation("New ServerConnection");
 
 			m_connection.ReceiveEvent += OnReceiveMessage;
-			m_connection.DisconnectEvent += _OnDisconnect;
+			m_connection.DisconnectEvent += OnDisconnect;
 			m_connection.BeginRead();
 		}
 
@@ -53,14 +53,16 @@ namespace Dwarrowdelf.Server
 			m_world = null;
 
 			m_connection.ReceiveEvent -= OnReceiveMessage;
-			m_connection.DisconnectEvent -= _OnDisconnect;
+			m_connection.DisconnectEvent -= OnDisconnect;
 			m_connection = null;
 		}
 
-		void _OnDisconnect()
+		void OnDisconnect()
 		{
-			trace.TraceInformation("_OnDisconnect");
-			m_world.BeginInvokeInstant(new Action(Disconnect), null);
+			trace.TraceInformation("OnDisconnect");
+
+			m_msgQueue.Enqueue(new LogOffRequestMessage());
+			m_world.SignalWorld();
 		}
 
 		void OnReceiveMessage(Message m)
@@ -118,6 +120,18 @@ namespace Dwarrowdelf.Server
 
 		public void Send(ServerMessage msg)
 		{
+			if (m_connection == null)
+			{
+				trace.TraceWarning("Send: m_connection == null");
+				return;
+			}
+
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceWarning("Send: m_connection.IsConnected == false");
+				return;
+			}
+
 			m_connection.Send(msg);
 		}
 
