@@ -45,8 +45,6 @@ namespace Dwarrowdelf.Client
 			int magic = 0;
 			GameAction.MagicNumberGenerator = () => Math.Abs(Interlocked.Increment(ref magic));
 
-			GameData.Data.Connection = new ClientConnection();
-
 			if (m_serverInAppDomain)
 			{
 				m_serverStartWaitHandle = new AutoResetEvent(false);

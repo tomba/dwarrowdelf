@@ -82,7 +82,7 @@
     <Compile Include="LivingActions.cs" />
     <Compile Include="ProcessableList.cs" />
     <Compile Include="ServerConnection.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="ServerUser.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="Living.cs" />

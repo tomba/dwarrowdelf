@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client
 		{
 			Debug.Print("RequestAction({0}: {1})", this, action);
 
-			GameData.Data.Connection.SignalLivingHasAction(this, action);
+			GameData.Data.User.SignalLivingHasAction(this, action);
 		}
 
 		public bool UserActionPossible()

@@ -9,7 +9,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Server
 {
-	public class User
+	public class ServerUser
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		public User(int userID)
+		public ServerUser(int userID)
 		{
 			m_userID = userID;
 
@@ -62,12 +62,12 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void OnDisconnected()
+		public void UnInit()
 		{
-			trace.TraceInformation("OnDisconnected");
+			trace.TraceInformation("UnInit");
 
 			if (m_charLoggedIn)
-				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
+				ReceiveMessage(new ExitGameRequestMessage()); // XXX
 
 			m_world.RemoveUser(this);
 			m_world.WorkEnded -= HandleEndOfWork;
@@ -76,6 +76,10 @@ namespace Dwarrowdelf.Server
 			m_ipRunner = null;
 			m_world = null;
 			m_connection = null;
+
+			m_controllables = null;
+			this.Controllables = null;
+			m_changeHandler = null;
 		}
 
 		public void Send(ServerMessage msg)
@@ -109,18 +113,6 @@ namespace Dwarrowdelf.Server
 			}
 
 			f(msg);
-		}
-
-		void ReceiveMessage(LogOffRequestMessage msg)
-		{
-			trace.TraceInformation("Logout");
-
-			if (m_charLoggedIn)
-				ReceiveMessage(new LogOffCharRequestMessage()); // XXX
-
-			Send(new Messages.LogOffReplyMessage());
-
-			m_connection.Disconnect();
 		}
 
 		void ReceiveMessage(SetTilesMessage msg)
@@ -202,12 +194,12 @@ namespace Dwarrowdelf.Server
 		}
 
 		/* functions for livings */
-		void ReceiveMessage(LogOnCharRequestMessage msg)
+		void ReceiveMessage(EnterGameRequestMessage msg)
 		{
-			m_world.BeginInvoke(new Action<LogOnCharRequestMessage>(LogOnChar), msg);
+			m_world.BeginInvoke(new Action<EnterGameRequestMessage>(LogOnChar), msg);
 		}
 
-		void LogOnChar(LogOnCharRequestMessage msg)
+		void LogOnChar(EnterGameRequestMessage msg)
 		{
 			string name = msg.Name;
 
@@ -288,7 +280,7 @@ namespace Dwarrowdelf.Server
 #endif
 
 			m_charLoggedIn = true;
-			Send(new Messages.LogOnCharReplyMessage());
+			Send(new Messages.EnterGameReplyMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
@@ -299,7 +291,7 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
-		void ReceiveMessage(LogOffCharRequestMessage msg)
+		void ReceiveMessage(ExitGameRequestMessage msg)
 		{
 			trace.TraceInformation("LogOffChar");
 
@@ -312,7 +304,7 @@ namespace Dwarrowdelf.Server
 			m_controllables.Clear();
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
-			Send(new Messages.LogOffCharReplyMessage());
+			Send(new Messages.ExitGameReplyMessage());
 			m_charLoggedIn = false;
 		}
 
@@ -427,9 +419,9 @@ namespace Dwarrowdelf.Server
 		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
 
-		User m_user;
+		ServerUser m_user;
 
-		public ChangeHandler(User user)
+		public ChangeHandler(ServerUser user)
 		{
 			m_user = user;
 		}

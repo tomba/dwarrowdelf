@@ -11,11 +11,13 @@ namespace Dwarrowdelf.Server
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			m_preTickInvokeList.BeginInvoke(callback, args);
+			SignalWorld();
 		}
 
 		public void BeginInvokeInstant(Delegate callback, params object[] args)
 		{
 			m_instantInvokeList.BeginInvoke(callback, args);
+			SignalWorld();
 		}
 
 		class InvokeList

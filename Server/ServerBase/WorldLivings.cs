@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		ProcessableList<ServerConnection> m_connections = new ProcessableList<ServerConnection>();
-		ProcessableList<User> m_users = new ProcessableList<User>();
+		ProcessableList<ServerUser> m_users = new ProcessableList<ServerUser>();
 		ProcessableList<Living> m_livings = new ProcessableList<Living>();
 
 		// thread safe
@@ -42,14 +42,14 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		internal void AddUser(User user)
+		internal void AddUser(ServerUser user)
 		{
 			VerifyAccess();
 			m_users.Add(user);
 			SignalWorld();
 		}
 
-		internal void RemoveUser(User user)
+		internal void RemoveUser(ServerUser user)
 		{
 			VerifyAccess();
 			m_users.Remove(user);

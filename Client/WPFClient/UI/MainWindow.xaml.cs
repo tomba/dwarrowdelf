@@ -26,6 +26,9 @@ namespace Dwarrowdelf.Client
 		DispatcherTimer m_timer;
 		ManualJobSource m_manualJobSource;
 
+		bool m_autoConnect = true;
+		bool m_autoEnterGame = true;
+
 		public MainWindow()
 		{
 			Application.Current.MainWindow = this;
@@ -41,11 +44,6 @@ namespace Dwarrowdelf.Client
 			this.PreviewKeyDown += Window_PreKeyDown;
 			this.PreviewTextInput += Window_PreTextInput;
 			map.MouseDown += MapControl_MouseDown;
-
-			GameData.Data.Connection.LogOnEvent += OnLoggedOn;
-			GameData.Data.Connection.LogOffEvent += OnLoggedOff;
-			GameData.Data.Connection.LogOnCharEvent += OnCharLoggedOn;
-			GameData.Data.Connection.LogOffCharEvent += OnCharLoggedOff;
 		}
 
 		void OnTileSizeChanged(object ob, EventArgs e)
@@ -187,8 +185,8 @@ namespace Dwarrowdelf.Client
 
 		public void OnServerStarted()
 		{
-			// xxx autologin
-			LogOn_Button_Click(null, null);
+			if (m_autoConnect)
+				Connect();
 		}
 
 		protected override void OnClosing(CancelEventArgs e)
@@ -204,30 +202,13 @@ namespace Dwarrowdelf.Client
 
 			SaveLayout();
 
-			var conn = GameData.Data.Connection;
-
-			if (conn.IsCharConnected)
+			if (GameData.Data.Connection != null)
 			{
 				e.Cancel = true;
 				m_closing = true;
-				conn.Send(new Messages.LogOffCharRequestMessage());
-			}
-			else if (conn.IsUserConnected)
-			{
-				e.Cancel = true;
-				m_closing = true;
-				conn.Send(new Messages.LogOffRequestMessage());
-			}
-		}
 
-		protected override void OnClosed(EventArgs e)
-		{
-			base.OnClosed(e);
-
-			GameData.Data.Connection.LogOnEvent -= OnLoggedOn;
-			GameData.Data.Connection.LogOffEvent -= OnLoggedOff;
-			GameData.Data.Connection.LogOnCharEvent -= OnLoggedOn;
-			GameData.Data.Connection.LogOffCharEvent -= OnLoggedOff;
+				Disconnect();
+			}
 		}
 
 		int m_fpsCounter;
@@ -354,7 +335,7 @@ namespace Dwarrowdelf.Client
 		void Window_PreKeyDown(object sender, KeyEventArgs e)
 		{
 			//MyDebug.WriteLine("OnMyKeyDown");
-			if (!GameData.Data.Connection.IsUserConnected)
+			if (GameData.Data.User == null)
 				return;
 
 			if (inputTextBox.IsFocused)
@@ -403,7 +384,7 @@ namespace Dwarrowdelf.Client
 			else if (e.Key == Key.Space)
 			{
 				e.Handled = true;
-				GameData.Data.Connection.SendProceedTurn();
+				GameData.Data.User.SendProceedTurn();
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -721,107 +702,152 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		Window m_loginDialog;
+		LogOnDialog m_logOnDialog;
 
-		private void LogOn_Button_Click(object sender, RoutedEventArgs e)
+		void SetLogOnText(string text)
 		{
-			if (!GameData.Data.Connection.IsUserConnected)
+			if (m_logOnDialog == null)
 			{
-				m_loginDialog = new Window();
-				m_loginDialog.Topmost = true;
-				m_loginDialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
-				m_loginDialog.Width = 200;
-				m_loginDialog.Height = 200;
-				var label = new Label();
-				label.Content = "Logging in";
-				m_loginDialog.Content = label;
-				m_loginDialog.Show();
-
-				GameData.Data.Connection.BeginConnect(ConnectCallback);
-			}
-		}
-
-		// in NetThread context
-		void ConnectCallback(string error)
-		{
-			var app = System.Windows.Application.Current;
-
-			if (error != null)
-			{
-				app.Dispatcher.BeginInvoke(new Action(delegate
-				{
-					m_loginDialog.Close();
-					m_loginDialog = null;
-					MessageBox.Show(error, "Connection Failed");
-				}), null);
+				m_logOnDialog = new LogOnDialog();
+				m_logOnDialog.SetText(text);
+				m_logOnDialog.Show();
 			}
 			else
 			{
-				app.Dispatcher.BeginInvoke(new Action(delegate
-					{
-						GameData.Data.Connection.Send(new Messages.LogOnRequestMessage() { Name = "tomba" });
-					}
-				), null);
+				m_logOnDialog.SetText(text);
 			}
 		}
 
-		private void LogOff_Button_Click(object sender, RoutedEventArgs e)
+		void CloseLoginDialog()
 		{
-			if (GameData.Data.Connection.IsUserConnected)
-				GameData.Data.Connection.Send(new LogOffRequestMessage());
+			if (m_logOnDialog != null)
+			{
+				m_logOnDialog.Close();
+				m_logOnDialog = null;
+			}
 		}
 
-		private void LogOnChar_Button_Click(object sender, RoutedEventArgs e)
+		private void Connect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection.IsUserConnected && !GameData.Data.Connection.IsCharConnected)
-				GameData.Data.Connection.Send(new LogOnCharRequestMessage() { Name = "tomba" });
+			if (GameData.Data.Connection != null)
+				return;
+
+			Connect();
 		}
 
-		private void LogOffChar_Button_Click(object sender, RoutedEventArgs e)
+		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection.IsCharConnected)
-				GameData.Data.Connection.Send(new LogOffCharRequestMessage());
+			if (GameData.Data.Connection == null)
+				return;
+
+			Disconnect();
 		}
 
-		void OnLoggedOn()
+
+		private void EnterGame_Button_Click(object sender, RoutedEventArgs e)
 		{
-			m_loginDialog.Close();
-			m_loginDialog = null;
+			if (GameData.Data.User == null || GameData.Data.User.IsCharConnected)
+				return;
+
+			EnterGame();
+		}
+
+		private void ExitGame_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.User == null || !GameData.Data.User.IsCharConnected)
+				return;
+
+			ExitGame();
+		}
+
+
+
+
+
+		void Connect()
+		{
+			var world = new World();
+			GameData.Data.World = world;
+
+			GameData.Data.Connection = new ClientConnection(world);
+			GameData.Data.Connection.DisconnectEvent += OnDisconnected;
+
+			SetLogOnText("Connecting");
+
+			GameData.Data.Connection.BeginLogOn("tomba", OnConnected);
+		}
+
+		void OnConnected(ClientUser user, string error)
+		{
+			if (error != null)
+			{
+				CloseLoginDialog();
+				MessageBox.Show(error, "Connection Failed");
+				return;
+			}
+
+			GameData.Data.User = user;
+
+			if (!m_autoEnterGame)
+			{
+				CloseLoginDialog();
+				return;
+			}
+
+			EnterGame();
+		}
+
+
+
+		void Disconnect()
+		{
+			SetLogOnText("Logging Out");
+			GameData.Data.Connection.BeginLogOut(OnLoggedOut);
+		}
+
+		void OnLoggedOut()
+		{
+			CloseLoginDialog();
+			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
+			GameData.Data.Connection = null;
+		}
+
+		void OnDisconnected()
+		{
+			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
+			GameData.Data.Connection = null;
+		}
+
+
+
+
+
+
+
+
+		void EnterGame()
+		{
+			SetLogOnText("Entering Game");
 
 			m_manualJobSource = new ManualJobSource(GameData.Data.World.JobManager);
 
-			// xxx autologin
-			//LogOnChar_Button_Click(null, null);
+			GameData.Data.User.EnterGame(OnEnteredGame);
 		}
 
-		void OnCharLoggedOn()
+		void OnEnteredGame()
+		{
+			CloseLoginDialog();
+		}
+
+		void ExitGame()
+		{
+			GameData.Data.User.ExitGame(OnExitedGame);
+		}
+
+		void OnExitedGame()
 		{
 		}
 
-		void OnCharLoggedOff()
-		{
-			if (m_closing)
-			{
-				var conn = GameData.Data.Connection;
-				conn.Send(new Messages.LogOffRequestMessage());
-			}
-		}
-
-		void OnLoggedOff()
-		{
-			GameData.Data.Connection.Disconnect();
-
-			if (m_closing)
-				Close();
-
-			Action del = delegate()
-			{
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-			};
-
-			Dispatcher.BeginInvoke(del, null);
-		}
 
 
 
@@ -849,7 +875,7 @@ namespace Dwarrowdelf.Client
 
 		private void TextBox_PreviewKeyDown(string str)
 		{
-			if (!GameData.Data.Connection.IsUserConnected)
+			if (GameData.Data.User == null)
 			{
 				outputTextBox.AppendText("** not connected **\n");
 				return;
@@ -1047,7 +1073,7 @@ namespace Dwarrowdelf.Client
 
 		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (GameData.Data.Connection.IsUserConnected)
+			if (GameData.Data.User != null)
 			{
 				GameData.Data.Connection.Send(new SetWorldConfigMessage()
 				{

@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client
 				m_invalid = false;
 			}
 
-			bool isSeeAll = GameData.Data.IsSeeAll;
+			bool isSeeAll = GameData.Data.User.IsSeeAll;
 
 			int offsetX = m_centerPos.X - columns / 2;
 			int offsetY = m_centerPos.Y - rows / 2;

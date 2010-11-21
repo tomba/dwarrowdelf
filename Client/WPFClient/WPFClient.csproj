@@ -109,6 +109,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="UI\LogOnDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\UIDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,6 +136,9 @@
     <Compile Include="Designation.cs" />
     <Compile Include="IDrawableElement.cs" />
     <Compile Include="Stockpile.cs" />
+    <Compile Include="UI\LogOnDialog.xaml.cs">
+      <DependentUpon>LogOnDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UIDictionary.xaml.cs">
       <DependentUpon>UIDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -188,6 +195,7 @@
     </Compile>
     <Compile Include="Symbols\SymbolDrawingCache.cs" />
     <Compile Include="Symbols\Symbols.cs" />
+    <Compile Include="ClientUser.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

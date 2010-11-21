@@ -38,6 +38,17 @@ namespace Dwarrowdelf.Client
 			DependencyProperty.Register("Connection", typeof(ClientConnection), typeof(GameData), new UIPropertyMetadata(null));
 
 
+		public ClientUser User
+		{
+			get { return (ClientUser)GetValue(UserProperty); }
+			set { SetValue(UserProperty, value); }
+		}
+
+		public static readonly DependencyProperty UserProperty =
+			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null));
+
+
+
 		public Living CurrentObject
 		{
 			get { return (Living)GetValue(CurrentObjectProperty); }
@@ -57,16 +68,6 @@ namespace Dwarrowdelf.Client
 
 		public static readonly DependencyProperty WorldProperty =
 			DependencyProperty.Register("World", typeof(World), typeof(GameData), new UIPropertyMetadata(null));
-
-
-		public bool IsSeeAll
-		{
-			get { return (bool)GetValue(IsSeeAllProperty); }
-			set { SetValue(IsSeeAllProperty, value); }
-		}
-
-		public static readonly DependencyProperty IsSeeAllProperty =
-			DependencyProperty.Register("IsSeeAll", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
 
 
 
@@ -92,8 +93,8 @@ namespace Dwarrowdelf.Client
 
 		static void IsAutoAdvanceTurnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if (GameData.Data.Connection.IsUserConnected && (bool)e.NewValue == true)
-				GameData.Data.Connection.SendProceedTurn();
+			if (GameData.Data.User != null && (bool)e.NewValue == true)
+				GameData.Data.User.SendProceedTurn();
 		}
 
 		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }

@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 		World m_world;
 		bool m_userLoggedIn;
 		static int s_userIDs = 1;
-		User m_user;
+		ServerUser m_user;
 
 		System.Collections.Concurrent.ConcurrentQueue<Message> m_msgQueue = new System.Collections.Concurrent.ConcurrentQueue<Message>();
 
@@ -41,27 +41,13 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("Disconnect");
 
-			if (m_userLoggedIn)
-			{
-				m_user.OnDisconnected();
-				m_user = null;
-				m_userLoggedIn = false;
-			}
-
-			m_world.RemoveConnection(this);
-
-			m_world = null;
-
-			m_connection.ReceiveEvent -= OnReceiveMessage;
-			m_connection.DisconnectEvent -= OnDisconnect;
-			m_connection = null;
+			m_connection.Disconnect();
 		}
 
 		void OnDisconnect()
 		{
 			trace.TraceInformation("OnDisconnect");
 
-			m_msgQueue.Enqueue(new LogOffRequestMessage());
 			m_world.SignalWorld();
 		}
 
@@ -75,33 +61,42 @@ namespace Dwarrowdelf.Server
 
 		public void HandleNewMessages()
 		{
-			var count = m_msgQueue.Count;
-
-			trace.TraceVerbose("HandleNewMessages, count = {0}", count);
-
-			if (count == 0)
-				return;
-
-			if (m_userLoggedIn == false)
-				HandleLoginMessage();
+			trace.TraceVerbose("HandleNewMessages, count = {0}", m_msgQueue.Count);
 
 			Message msg;
 			while (m_msgQueue.TryDequeue(out msg))
-				m_user.OnReceiveMessage(msg);
+			{
+				if (msg is LogOnRequestMessage)
+					HandleLoginMessage((LogOnRequestMessage)msg);
+				else if (msg is LogOutRequestMessage)
+					HandleLogOutMessage((LogOutRequestMessage)msg);
+				else
+					m_user.OnReceiveMessage(msg);
+			}
+
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceInformation("HandleNewMessages, disconnected");
+
+				if (m_userLoggedIn)
+				{
+					m_user.UnInit();
+					m_user = null;
+					m_userLoggedIn = false;
+				}
+
+				m_world.RemoveConnection(this);
+				m_world = null;
+
+				m_connection.ReceiveEvent -= OnReceiveMessage;
+				m_connection.DisconnectEvent -= OnDisconnect;
+				m_connection = null;
+			}
 		}
 
-		void HandleLoginMessage()
+		void HandleLoginMessage(LogOnRequestMessage msg)
 		{
 			trace.TraceInformation("HandleLoginMessage");
-
-			Message m;
-			bool ok = m_msgQueue.TryDequeue(out m);
-
-			Debug.Assert(ok);
-
-			LogOnRequestMessage msg = m as LogOnRequestMessage;
-			if (msg == null)
-				throw new Exception();
 
 			string name = msg.Name;
 
@@ -111,11 +106,24 @@ namespace Dwarrowdelf.Server
 			var userID = s_userIDs++;
 			m_userLoggedIn = true;
 
-			m_user = new User(userID);
+			m_user = new ServerUser(userID);
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { UserID = userID, IsSeeAll = m_user.IsSeeAll });
 
 			m_user.Init(this, m_world);
+		}
+
+		void HandleLogOutMessage(LogOutRequestMessage msg)
+		{
+			trace.TraceInformation("HandleLogOutMessage");
+
+			Send(new Messages.LogOutReplyMessage());
+
+			m_user.UnInit();
+			m_user = null;
+			m_userLoggedIn = false;
+
+			m_connection.Disconnect();
 		}
 
 		public void Send(ServerMessage msg)

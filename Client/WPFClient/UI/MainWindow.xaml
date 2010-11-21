@@ -31,13 +31,13 @@
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=IsAutoAdvanceTurn}">AutoAdvanceTurn</ToggleButton>
                 <Separator />
-                <Button Click="LogOn_Button_Click">LogOn</Button>
+                <Button Click="Connect_Button_Click">Connect</Button>
                 <Separator />
-                <Button Click="LogOff_Button_Click">LogOff</Button>
+                <Button Click="Disconnect_Button_Click">Disconnect</Button>
                 <Separator />
-                <Button Click="LogOnChar_Button_Click">LogOnChar</Button>
+                <Button Click="EnterGame_Button_Click">Enter Game</Button>
                 <Separator />
-                <Button Click="LogOffChar_Button_Click">LogOffChar</Button>
+                <Button Click="ExitGame_Button_Click">Exit Game</Button>
             </ToolBar>
             <ToolBar>
                 <Button Click="Button_Click_GC">GC</Button>

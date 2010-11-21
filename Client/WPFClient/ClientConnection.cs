@@ -45,452 +45,156 @@ namespace Dwarrowdelf.Client
 
 	class ClientConnection
 	{
-		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
-		Dictionary<Type, Action<Change>> m_changeHandlerMap = new Dictionary<Type, Action<Change>>();
 		public ClientNetStatistics Stats { get; private set; }
 
-		public bool IsUserConnected { get; private set; }
-		public bool IsCharConnected { get; private set; }
-
 		IConnection m_connection;
+		ClientUser m_user;
 
-		public ClientConnection()
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+
+		public event Action DisconnectEvent;
+
+		World m_world;
+ 
+		string m_logOnName;
+		Action<ClientUser, string> m_logOnCallback;
+		Action m_logOutCallback;
+
+		public ClientConnection(World world)
 		{
+			m_world = world;
+
+			trace.Header = "ClientConnection";
+
 			this.Stats = new ClientNetStatistics();
+		}
+
+		void Cleanup()
+		{
+			m_logOnCallback = null;
+			m_logOnName = null;
+			m_logOutCallback = null;
+
+			if (m_connection != null)
+			{
+				m_connection.ReceiveEvent -= _OnReceiveMessage;
+				m_connection.DisconnectEvent -= _OnDisconnected;
+				m_connection = null;
+			}
+		}
+
+		public void BeginLogOn(string name, Action<ClientUser, string> callback)
+		{
 			m_connection = new Connection();
-			m_connection.ReceiveEvent += ReceiveMessage;
-			m_connection.DisconnectEvent += DisconnectOverride;
+			m_connection.ReceiveEvent += _OnReceiveMessage;
+			m_connection.DisconnectEvent += _OnDisconnected;
+
+			m_logOnCallback = callback;
+			m_logOnName = name;
+			m_connection.BeginConnect(OnConnect);
 		}
 
-		public void Send(ClientMessage msg)
+		void OnConnect(string error)
 		{
-			m_connection.Send(msg);
-
-			this.Stats.SentBytes = m_connection.SentBytes;
-			this.Stats.SentMessages = m_connection.SentMessages;
-			this.Stats.Refresh();
-		}
-
-		public void Disconnect()
-		{
-			m_connection.Disconnect();
-		}
-
-		protected void DisconnectOverride()
-		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action(ServerDisconnected));
-		}
-
-		void ServerDisconnected()
-		{
-			this.IsCharConnected = false;
-			this.IsUserConnected = false;
-
-			GameData.Data.World = null;
-		}
-
-		public void BeginConnect(Action<string> callback)
-		{
-			m_connection.BeginConnect((s) => OnConnect(s, callback));
-		}
-
-		void OnConnect(string error, Action<string> callback)
-		{
-			callback(error);
-
-			if (error == null)
+			if (error != null)
+			{
+				m_logOnCallback(null, error);
+				Cleanup();
+			}
+			else
+			{
 				m_connection.BeginRead();
+				Send(new Messages.LogOnRequestMessage() { Name = m_logOnName });
+			}
 		}
 
-		protected void ReceiveMessage(Message msg)
+		public void BeginLogOut(Action callback)
 		{
-			var app = System.Windows.Application.Current;
-			app.Dispatcher.BeginInvoke(new Action<ServerMessage>(DeliverMessage), msg);
+			if (m_user != null)
+			{
+				m_logOutCallback = callback;
+				m_connection.Send(new Messages.LogOutRequestMessage());
+			}
+			else
+			{
+				m_connection.Disconnect();
+				callback();
+				Cleanup();
+			}
 		}
 
-		void DeliverMessage(ServerMessage msg)
+		void _OnDisconnected()
+		{
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(OnDisconnected));
+		}
+
+		void OnDisconnected()
+		{
+			trace.TraceInformation("OnDisconnect");
+
+			if (DisconnectEvent != null)
+				DisconnectEvent();
+
+			Cleanup();
+		}
+
+		void _OnReceiveMessage(Message msg)
+		{
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ServerMessage>(OnReceiveMessage), msg);
+		}
+
+		void OnReceiveMessage(ServerMessage msg)
 		{
 			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			//Debug.Print("Received Message {0}", msg);
-
-			Action<ServerMessage> f;
-			Type t = msg.GetType();
-			if (!m_handlerMap.TryGetValue(t, out f))
-			{
-				f = WrapperGenerator.CreateHandlerWrapper<ServerMessage>("HandleMessage", t, this);
-
-				if (f == null)
-					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
-
-				m_handlerMap[t] = f;
-			}
-
-			f(msg);
-		}
-
-		public event Action LogOnEvent;
-
-		void HandleMessage(LogOnReplyMessage msg)
-		{
-			this.IsUserConnected = true;
-
-			GameData.Data.IsSeeAll = msg.IsSeeAll;
-
-			var world = new World();
-			GameData.Data.World = world;
-
-			GameData.Data.World.UserID = msg.UserID;
-
-			if (LogOnEvent != null)
-				LogOnEvent();
-		}
-
-		public event Action LogOffEvent;
-
-		void HandleMessage(LogOffReplyMessage msg)
-		{
-			this.IsUserConnected = false;
-
-			if (LogOffEvent != null)
-				LogOffEvent();
-
-			GameData.Data.World = null;
-		}
-
-		public event Action LogOnCharEvent;
-
-		void HandleMessage(LogOnCharReplyMessage msg)
-		{
-			this.IsCharConnected = true;
-
-			if (LogOnCharEvent != null)
-				LogOnCharEvent();
-		}
-
-		void HandleMessage(ControllablesDataMessage msg)
-		{
-			GameData.Data.World.Controllables.Clear();
-
-			foreach (var oid in msg.Controllables)
-			{
-				var l = GameData.Data.World.FindObject<Living>(oid);
-				if (l == null)
-					l = new Living(GameData.Data.World, oid);
-				GameData.Data.World.Controllables.Add(l);
-			}
-		}
-
-		public event Action LogOffCharEvent;
-
-		void HandleMessage(LogOffCharReplyMessage msg)
-		{
-			this.IsCharConnected = false;
-
-			if (LogOffCharEvent != null)
-				LogOffCharEvent();
-
-			GameData.Data.World.Controllables.Clear();
-			GameData.Data.CurrentObject = null;
-			//App.MainWindow.FollowObject = null;
-		}
-
-
-		void HandleMessage(ObjectDataMessage msg)
-		{
-			HandleObjectData(msg.ObjectData);
-		}
-
-		void HandleMessage(ObjectDataArrayMessage msg)
-		{
-			foreach (var data in msg.ObjectDatas)
-				HandleObjectData(data);
-		}
-
-		void HandleObjectData(BaseGameObjectData data)
-		{
-			var ob = GameData.Data.World.FindObject<BaseGameObject>(data.ObjectID);
-
-			if (ob == null)
-			{
-				Debug.Print("New object {0} of type {1} appeared", data.ObjectID, data.GetType().Name);
-
-				if (data is LivingData)
-					ob = new Living(GameData.Data.World, data.ObjectID);
-				else if (data is ItemData)
-					ob = new ItemObject(GameData.Data.World, data.ObjectID);
-				else if (data is BuildingData)
-					ob = new BuildingObject(GameData.Data.World, data.ObjectID);
-				else
-					throw new Exception();
-			}
-
-			ob.Deserialize(data);
-		}
-
-		DateTime m_mapDataStartTime;
-		void HandleMessage(MapDataStart msg)
-		{
-			m_mapDataStartTime = DateTime.Now;
-			Trace.TraceInformation("Map transfer start");
-		}
-
-		void HandleMessage(MapDataEnd msg)
-		{
-			var time = DateTime.Now - m_mapDataStartTime;
-
-			Trace.TraceInformation("Map transfer took {0}", time);
-		}
-
-		void HandleMessage(MapDataMessage msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-
-			if (env == null)
-			{
-				Debug.Print("New map appeared {0}", msg.Environment);
-				var world = GameData.Data.World;
-				if (msg.Bounds.IsNull)
-					env = new Environment(world, msg.Environment, msg.HomeLocation);
-				else
-					env = new Environment(world, msg.Environment, msg.Bounds, msg.HomeLocation);
-			}
-
-			env.VisibilityMode = msg.VisibilityMode;
-
-			// XXX
-			if (App.MainWindow.map.Environment == null)
-				App.MainWindow.map.Environment = env;
-		}
-
-		void HandleMessage(MapDataTerrainsMessage msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			env.SetTerrains(msg.Bounds, msg.TerrainData);
-		}
-
-		void HandleMessage(MapDataTerrainsListMessage msg)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
-			if (env == null)
-				throw new Exception();
-			Debug.Print("Received TerrainData for {0} tiles", msg.TileDataList.Count());
-			env.SetTerrains(msg.TileDataList);
-		}
-
-
-		void HandleMessage(IPOutputMessage msg)
-		{
-			App.MainWindow.outputTextBox.AppendText(msg.Text);
-			App.MainWindow.outputTextBox.ScrollToEnd();
-		}
-
-		void HandleMessage(ChangeMessage msg)
-		{
-			var change = msg.Change;
-
-			Action<Change> f;
-			Type t = change.GetType();
-			if (!m_changeHandlerMap.TryGetValue(t, out f))
-			{
-				f = WrapperGenerator.CreateHandlerWrapper<Change>("HandleChange", t, this);
-
-				if (f == null)
-					throw new Exception(String.Format("No change handler for {0}", change.GetType()));
-
-				m_changeHandlerMap[t] = f;
-			}
-
-			//MyDebug.WriteLine("Change: {0}", msg);
-
-			f(change);
-		}
-
-
-		void HandleChange(ObjectCreatedChange change)
-		{
-			var world = GameData.Data.World;
-
-			switch (change.ObjectType)
-			{
-				case ObjectCreatedChange.ObjectTypes.Environment:
-					new Environment(world, change.ObjectID, new IntPoint3D());
-					break;
-
-				case ObjectCreatedChange.ObjectTypes.Living:
-					new Living(world, change.ObjectID);
-					break;
-
-				case ObjectCreatedChange.ObjectTypes.Item:
-					new ItemObject(world, change.ObjectID);
-					break;
-
-				case ObjectCreatedChange.ObjectTypes.Building:
-					new BuildingObject(world, change.ObjectID);
-					break;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		// XXX check if this is needed
-		void HandleChange(FullObjectChange change)
-		{
-			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
-
-			ob.Deserialize(change.ObjectData);
-		}
-
-		void HandleChange(ObjectMoveChange change)
-		{
-			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
-
-			if (ob == null)
-			{
-				/* There's a special case where we don't get objectinfo, but we do get
-				 * ObjectMove: If the object moves from tile, that just came visible to us, 
-				 * to a tile that we cannot see. So let's not throw exception, but exit
-				 * silently */
-				// XXX is this still valid?
-				return;
-			}
-
-			ClientGameObject env = null;
-			if (change.DestinationMapID != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(change.DestinationMapID);
-
-			ob.MoveTo(env, change.DestinationLocation);
-		}
-
-		void HandleChange(PropertyChange change)
-		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
-
-			ob.SetProperty(change.PropertyID, change.Value);
-		}
-
-		void HandleChange(ObjectDestructedChange change)
-		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
-
-			ob.Destruct();
-		}
-
-		void HandleChange(MapChange change)
-		{
-			var env = GameData.Data.World.FindObject<Environment>(change.MapID);
-			if (env == null)
-				throw new Exception();
-			env.SetTileData(change.Location, change.TileData);
-		}
-
-		void HandleChange(TickStartChange change)
-		{
-			GameData.Data.World.HandleChange(change);
-		}
-
-		void HandleChange(TurnStartChange change)
-		{
-			Debug.Assert(m_turnActionRequested == false);
-
-			m_turnActionRequested = true;
-
-			if (change.LivingID == ObjectID.NullObjectID)
-			{
-				if (GameData.Data.IsAutoAdvanceTurn)
-					SendProceedTurn();
-			}
+			if (msg is LogOnReplyMessage)
+				HandleLoginReplyMessage((LogOnReplyMessage)msg);
+			else if (msg is LogOutReplyMessage)
+				HandleLogOutReplyMessage((LogOutReplyMessage)msg);
 			else
-			{
-				var living = GameData.Data.World.FindObject<Living>(change.LivingID);
-				if (living == null)
-					throw new Exception();
-				m_activeLiving = living;
-			}
+				m_user.OnReceiveMessage(msg);
 		}
 
-		bool m_turnActionRequested;
-		Living m_activeLiving;
-		Dictionary<Living, GameAction> m_actionMap = new Dictionary<Living, GameAction>();
-
-		public void SignalLivingHasAction(Living living, GameAction action)
+		void HandleLoginReplyMessage(LogOnReplyMessage msg)
 		{
-			if (m_turnActionRequested == false)
-				return;
+			trace.Header = String.Format("ClientConnection({0})", msg.UserID);
+			trace.TraceInformation("HandleLoginReplyMessage");
 
-			if (m_activeLiving == null)
-				throw new Exception();
+			m_user = new ClientUser(this, m_world, msg.UserID, msg.IsSeeAll);
 
-			if (m_activeLiving != living)
-				throw new Exception();
+			m_logOnCallback(m_user, null);
 
-			m_actionMap[living] = action;
-
-			if (GameData.Data.IsAutoAdvanceTurn)
-				SendProceedTurn();
+			m_logOnCallback = null;
+			m_logOnName = null;
 		}
 
-		public void SendProceedTurn()
+		void HandleLogOutReplyMessage(ServerMessage msg)
 		{
-			if (m_turnActionRequested == false)
-				return;
+			trace.TraceInformation("HandleLogOutReplyMessage");
+			m_logOutCallback();
+		}
 
-			// livings which the user can control (ie. server not doing high priority action)
-			var livings = GameData.Data.World.Controllables.Where(l => l.UserActionPossible());
-			var list = new List<Tuple<ObjectID, GameAction>>();
-			foreach (var living in livings)
+		public void Send(ClientMessage msg)
+		{
+			if (m_connection == null)
 			{
-				GameAction action;
-
-				if (m_actionMap.ContainsKey(living))
-					action = m_actionMap[living];
-				else
-					action = living.DecideAction(ActionPriority.Normal);
-
-				if (action != living.CurrentAction)
-					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
+				trace.TraceWarning("Send: m_connection == null");
+				return;
 			}
 
-			Send(new ProceedTurnMessage() { Actions = list.ToArray() });
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceWarning("Send: m_connection.IsConnected == false");
+				return;
+			}
 
-			m_activeLiving = null;
-			m_actionMap.Clear();
-		}
+			m_connection.Send(msg);
 
-		void HandleChange(TurnEndChange change)
-		{
-			m_turnActionRequested = false;
-		}
-
-		void HandleChange(ActionStartedChange change)
-		{
-			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
-
-			ob.HandleActionStarted(change);
-		}
-
-		void HandleChange(ActionProgressChange change)
-		{
-			//MyDebug.WriteLine("ActionProgressChange({0})", e.TransactionID);
-
-			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
-
-			ob.HandleActionProgress(change);
+			this.Stats.SentBytes = m_connection.SentBytes;
+			this.Stats.SentMessages = m_connection.SentMessages;
+			this.Stats.Refresh();
 		}
 	}
 }

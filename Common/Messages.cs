@@ -52,33 +52,33 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class LogOffRequestMessage : ClientMessage
+	public class LogOutRequestMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffReplyMessage : ServerMessage
+	public class LogOutReplyMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOnCharRequestMessage : ClientMessage
+	public class EnterGameRequestMessage : ClientMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnCharReplyMessage : ServerMessage
+	public class EnterGameReplyMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharRequestMessage : ClientMessage
+	public class ExitGameRequestMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOffCharReplyMessage : ServerMessage
+	public class ExitGameReplyMessage : ServerMessage
 	{
 	}
 
