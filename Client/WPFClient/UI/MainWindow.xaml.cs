@@ -779,6 +779,8 @@ namespace Dwarrowdelf.Client
 
 		void OnConnected(ClientUser user, string error)
 		{
+			GameData.Data.Connection.LogOutEvent += OnLoggedOut;
+
 			if (error != null)
 			{
 				CloseLoginDialog();
@@ -802,18 +804,23 @@ namespace Dwarrowdelf.Client
 		void Disconnect()
 		{
 			SetLogOnText("Logging Out");
-			GameData.Data.Connection.BeginLogOut(OnLoggedOut);
+			GameData.Data.Connection.SendLogOut();
 		}
 
 		void OnLoggedOut()
 		{
 			CloseLoginDialog();
+			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
+
+			if (m_closing)
+				Close();
 		}
 
 		void OnDisconnected()
 		{
+			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
 		}
@@ -831,21 +838,23 @@ namespace Dwarrowdelf.Client
 
 			m_manualJobSource = new ManualJobSource(GameData.Data.World.JobManager);
 
-			GameData.Data.User.EnterGame(OnEnteredGame);
+			GameData.Data.User.SendEnterGame(OnEnteredGame);
 		}
 
 		void OnEnteredGame()
 		{
 			CloseLoginDialog();
+			GameData.Data.User.ExitedGameEvent += OnExitedGame;
 		}
 
 		void ExitGame()
 		{
-			GameData.Data.User.ExitGame(OnExitedGame);
+			GameData.Data.User.SendExitGame();
 		}
 
 		void OnExitedGame()
 		{
+			GameData.Data.User.ExitedGameEvent -= OnExitedGame;
 		}
 
 

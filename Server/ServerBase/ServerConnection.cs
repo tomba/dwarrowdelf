@@ -117,9 +117,10 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("HandleLogOutMessage");
 
+			m_user.UnInit();
+
 			Send(new Messages.LogOutReplyMessage());
 
-			m_user.UnInit();
 			m_user = null;
 			m_userLoggedIn = false;
 

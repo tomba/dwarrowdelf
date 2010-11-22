@@ -53,12 +53,12 @@ namespace Dwarrowdelf.Client
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
 		public event Action DisconnectEvent;
+		public event Action LogOutEvent;
 
 		World m_world;
  
 		string m_logOnName;
 		Action<ClientUser, string> m_logOnCallback;
-		Action m_logOutCallback;
 
 		public ClientConnection(World world)
 		{
@@ -73,7 +73,6 @@ namespace Dwarrowdelf.Client
 		{
 			m_logOnCallback = null;
 			m_logOnName = null;
-			m_logOutCallback = null;
 
 			if (m_connection != null)
 			{
@@ -108,17 +107,17 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void BeginLogOut(Action callback)
+		public void SendLogOut()
 		{
 			if (m_user != null)
 			{
-				m_logOutCallback = callback;
 				m_connection.Send(new Messages.LogOutRequestMessage());
 			}
 			else
 			{
 				m_connection.Disconnect();
-				callback();
+				if (this.LogOutEvent != null)
+					this.LogOutEvent();
 				Cleanup();
 			}
 		}
@@ -173,7 +172,8 @@ namespace Dwarrowdelf.Client
 		void HandleLogOutReplyMessage(ServerMessage msg)
 		{
 			trace.TraceInformation("HandleLogOutReplyMessage");
-			m_logOutCallback();
+			if (this.LogOutEvent != null)
+				this.LogOutEvent();
 		}
 
 		public void Send(ClientMessage msg)

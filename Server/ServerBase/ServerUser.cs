@@ -13,7 +13,8 @@ namespace Dwarrowdelf.Server
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;
-		bool m_charLoggedIn;
+
+		public bool IsCharLoggedIn { get; private set; }
 
 		int m_userID;
 
@@ -66,8 +67,8 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("UnInit");
 
-			if (m_charLoggedIn)
-				ReceiveMessage(new ExitGameRequestMessage()); // XXX
+			if (this.IsCharLoggedIn)
+				ExitGame();
 
 			m_world.RemoveUser(this);
 			m_world.WorkEnded -= HandleEndOfWork;
@@ -80,6 +81,115 @@ namespace Dwarrowdelf.Server
 			m_controllables = null;
 			this.Controllables = null;
 			m_changeHandler = null;
+		}
+
+		void EnterGame()
+		{
+			Debug.Assert(!this.IsCharLoggedIn);
+
+			var env = m_world.Environments.First(); // XXX entry location
+
+#if asd
+			var player = new Living(m_world, "player")
+			{
+				SymbolID = SymbolID.Player,
+			};
+			player.AI = new InteractiveActor(player);
+
+			Debug.Print("Player ob id {0}", player.ObjectID);
+
+			m_controllables.Add(player);
+
+			ItemObject item = new ItemObject(m_world)
+			{
+				Name = "jalokivi1",
+				SymbolID = SymbolID.Gem,
+				MaterialID = MaterialID.Diamond,
+			};
+			item.MoveTo(player);
+
+			item = new ItemObject(m_world)
+			{
+				Name = "jalokivi2",
+				SymbolID = SymbolID.Gem,
+				Color = GameColor.Green,
+				MaterialID = MaterialID.Diamond,
+			};
+			item.MoveTo(player);
+
+			/*
+			var pp = GetRandomSurfaceLocation(env, 9);
+			if (!player.MoveTo(env, pp))
+				throw new Exception("Unable to move player");
+			*/
+
+			if (!player.MoveTo(env, new IntPoint3D(10, 10, 9)))
+				throw new Exception("Unable to move player");
+
+#if qwe
+			var pet = new Living(m_world);
+			pet.SymbolID = SymbolID.Monster;
+			pet.Name = "lemmikki";
+			pet.Actor = new InteractiveActor();
+			m_controllables.Add(pet);
+
+			pet.MoveTo(player.Environment, player.Location + new IntVector(1, 0));
+#endif
+
+#else
+			var rand = new Random();
+			for (int i = 0; i < 5; ++i)
+			{
+				IntPoint3D p;
+				do
+				{
+					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
+				} while (env.GetInteriorID(p) != InteriorID.Empty);
+
+				var player = new Living(String.Format("Dwarf{0}", i))
+				{
+					SymbolID = SymbolID.Player,
+					Color = (GameColor)rand.Next((int)GameColor.NumColors - 1) + 1,
+				};
+				player.SetAI(new DwarfAI(player));
+				player.Initialize(m_world);
+				player.Destructed += OnPlayerDestructed;
+
+				m_controllables.Add(player);
+				if (!player.MoveTo(env, p))
+					throw new Exception();
+			}
+#endif
+
+			this.IsCharLoggedIn = true;
+			Send(new Messages.EnterGameReplyMessage());
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+		}
+
+		void OnPlayerDestructed(BaseGameObject ob)
+		{
+			var living = (Living)ob;
+			m_controllables.Remove(living);
+			living.Destructed -= OnPlayerDestructed;
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+		}
+
+		void ExitGame()
+		{
+			Debug.Assert(this.IsCharLoggedIn);
+
+			foreach (var l in m_controllables)
+			{
+				l.Destructed -= OnPlayerDestructed;
+				l.Destruct();
+			}
+
+			m_controllables.Clear();
+
+			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
+			Send(new Messages.ExitGameReplyMessage());
+
+			this.IsCharLoggedIn = false;
 		}
 
 		public void Send(ServerMessage msg)
@@ -205,107 +315,14 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("LogOnChar {0}", name);
 
-			var env = m_world.Environments.First(); // XXX entry location
-
-#if asd
-			var player = new Living(m_world, "player")
-			{
-				SymbolID = SymbolID.Player,
-			};
-			player.AI = new InteractiveActor(player);
-
-			Debug.Print("Player ob id {0}", player.ObjectID);
-
-			m_controllables.Add(player);
-
-			ItemObject item = new ItemObject(m_world)
-			{
-				Name = "jalokivi1",
-				SymbolID = SymbolID.Gem,
-				MaterialID = MaterialID.Diamond,
-			};
-			item.MoveTo(player);
-
-			item = new ItemObject(m_world)
-			{
-				Name = "jalokivi2",
-				SymbolID = SymbolID.Gem,
-				Color = GameColor.Green,
-				MaterialID = MaterialID.Diamond,
-			};
-			item.MoveTo(player);
-
-			/*
-			var pp = GetRandomSurfaceLocation(env, 9);
-			if (!player.MoveTo(env, pp))
-				throw new Exception("Unable to move player");
-			*/
-
-			if (!player.MoveTo(env, new IntPoint3D(10, 10, 9)))
-				throw new Exception("Unable to move player");
-
-#if qwe
-			var pet = new Living(m_world);
-			pet.SymbolID = SymbolID.Monster;
-			pet.Name = "lemmikki";
-			pet.Actor = new InteractiveActor();
-			m_controllables.Add(pet);
-
-			pet.MoveTo(player.Environment, player.Location + new IntVector(1, 0));
-#endif
-
-#else
-			var rand = new Random();
-			for (int i = 0; i < 5; ++i)
-			{
-				IntPoint3D p;
-				do
-				{
-					p = new IntPoint3D(rand.Next(env.Width), rand.Next(env.Height), 9);
-				} while (env.GetInteriorID(p) != InteriorID.Empty);
-
-				var player = new Living(String.Format("Dwarf{0}", i))
-				{
-					SymbolID = SymbolID.Player,
-					Color = (GameColor)rand.Next((int)GameColor.NumColors - 1) + 1,
-				};
-				player.SetAI(new DwarfAI(player));
-				player.Initialize(m_world);
-				player.Destructed += OnPlayerDestructed;
-
-				m_controllables.Add(player);
-				if (!player.MoveTo(env, p))
-					throw new Exception();
-			}
-#endif
-
-			m_charLoggedIn = true;
-			Send(new Messages.EnterGameReplyMessage());
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
-		}
-
-		void OnPlayerDestructed(BaseGameObject ob)
-		{
-			var living = (Living)ob;
-			m_controllables.Remove(living);
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			EnterGame();
 		}
 
 		void ReceiveMessage(ExitGameRequestMessage msg)
 		{
 			trace.TraceInformation("LogOffChar");
 
-			foreach (var l in m_controllables)
-			{
-				l.Destructed -= OnPlayerDestructed;
-				l.Destruct();
-			}
-
-			m_controllables.Clear();
-
-			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
-			Send(new Messages.ExitGameReplyMessage());
-			m_charLoggedIn = false;
+			ExitGame();
 		}
 
 		public bool StartTurnSent { get; private set; }

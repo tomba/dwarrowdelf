@@ -22,7 +22,8 @@ namespace Dwarrowdelf.Client
 		World m_world;
 
 		Action m_enterGameCallback;
-		Action m_exitGameCallback;
+
+		public event Action ExitedGameEvent;
 
 		public ClientUser(ClientConnection connection, World world, int userID, bool isSeeAll)
 		{
@@ -32,15 +33,14 @@ namespace Dwarrowdelf.Client
 			this.IsSeeAll = isSeeAll;
 		}
 
-		public void EnterGame(Action callback)
+		public void SendEnterGame(Action callback)
 		{
 			m_enterGameCallback = callback;
 			m_connection.Send(new Messages.EnterGameRequestMessage() { Name = "tomba" });
 		}
 
-		public void ExitGame(Action callback)
+		public void SendExitGame()
 		{
-			m_exitGameCallback = callback;
 			m_connection.Send(new Messages.ExitGameRequestMessage());
 		}
 
@@ -65,6 +65,8 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(EnterGameReplyMessage msg)
 		{
+			Debug.Assert(!this.IsCharConnected);
+
 			this.IsCharConnected = true;
 
 			m_enterGameCallback();
@@ -85,9 +87,12 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(ExitGameReplyMessage msg)
 		{
+			Debug.Assert(this.IsCharConnected);
+
 			this.IsCharConnected = false;
 
-			m_exitGameCallback();
+			if (ExitedGameEvent != null)
+				ExitedGameEvent();
 
 			GameData.Data.World.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
