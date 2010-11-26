@@ -71,7 +71,12 @@ namespace Dwarrowdelf.Server
 				else if (msg is LogOutRequestMessage)
 					HandleLogOutMessage((LogOutRequestMessage)msg);
 				else
-					m_user.OnReceiveMessage(msg);
+				{
+					if (m_user != null)
+						m_user.OnReceiveMessage(msg);
+					else
+						trace.TraceWarning("HandleNewMessages: m_user == null");
+				}
 			}
 
 			if (!m_connection.IsConnected)
