@@ -290,7 +290,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(MapChange change)
 		{
-			var env = GameData.Data.World.FindObject<Environment>(change.MapID);
+			var env = GameData.Data.World.FindObject<Environment>(change.EnvironmentID);
 			if (env == null)
 				throw new Exception();
 			env.SetTileData(change.Location, change.TileData);

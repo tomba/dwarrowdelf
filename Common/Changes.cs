@@ -63,33 +63,44 @@ namespace Dwarrowdelf
 			if (living != null)
 				m_livingID = living.ObjectID;
 		}
-}
+	}
 
 	[Serializable]
-	public class MapChange : Change
+	public abstract class EnvironmentChange : Change
 	{
 		[NonSerialized]
-		IEnvironment m_map;
-		ObjectID m_mapID;
+		IEnvironment m_environment;
+		ObjectID m_environmentID;
+
+		public IEnvironment Environment { get { return m_environment; } }
+		public ObjectID EnvironmentID { get { return m_environmentID; } }
+
+		public EnvironmentChange(IEnvironment env)
+		{
+			m_environment = env;
+			m_environmentID = env.ObjectID;
+		}
+	}
+
+	[Serializable]
+	public class MapChange : EnvironmentChange
+	{
 		IntPoint3D m_location;
 		TileData m_tileData;
 
-		public IEnvironment Map { get { return m_map; } }
-		public ObjectID MapID { get { return m_mapID; } }
 		public IntPoint3D Location { get { return m_location; } }
 		public TileData TileData { get { return m_tileData; } }
 
 		public MapChange(IEnvironment map, IntPoint3D l, TileData tileData)
+			: base(map)
 		{
-			m_map = map;
-			m_mapID = m_map.ObjectID;
 			m_location = l;
 			m_tileData = tileData;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("MapChange {0}, {1}, {2}", this.MapID, this.Location, this.TileData);
+			return String.Format("MapChange {0}, {1}, {2}", this.EnvironmentID, this.Location, this.TileData);
 		}
 	}
 

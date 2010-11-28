@@ -657,7 +657,7 @@ namespace Dwarrowdelf.Server
 			else if (change is MapChange)
 			{
 				var c = (MapChange)change;
-				return controllables.Any(l => l.Sees(c.Map, c.Location));
+				return controllables.Any(l => l.Sees(c.Environment, c.Location));
 			}
 			else if (change is TurnStartChange)
 			{
