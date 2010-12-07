@@ -14,8 +14,7 @@
             <Button DockPanel.Dock="Right" Click="Button_Click">
                 <Image Source="/Images/eye.png" />
             </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="16" />
             <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
@@ -41,8 +40,7 @@
             <Button DockPanel.Dock="Right" Click="Button_Click">
                 <Image Source="/Images/eye.png" />
             </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform"
-                       Height="{Binding ElementName=nameTextBlock, Path=ActualHeight, Mode=OneWay}" />
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="16" />
             <TextBlock Name="nameTextBlock">
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
