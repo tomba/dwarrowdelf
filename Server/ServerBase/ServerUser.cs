@@ -711,9 +711,13 @@ namespace Dwarrowdelf.Server
 				var c = (ActionProgressChange)change;
 				return controllables.Contains(c.Object);
 			}
-			else if (change is TickStartChange || change is ObjectDestructedChange || change is ObjectCreatedChange)
+			else if (change is TickStartChange || change is ObjectDestructedChange)
 			{
 				return true;
+			}
+			else if (change is ObjectCreatedChange)
+			{
+				return false;
 			}
 			else
 			{
