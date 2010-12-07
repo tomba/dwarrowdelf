@@ -100,6 +100,38 @@ namespace Dwarrowdelf.Client
 			return (T)ob;
 		}
 
+		public IBaseGameObject GetObject(ObjectID objectID)
+		{
+			if (objectID == ObjectID.NullObjectID)
+				throw new ArgumentException();
+
+			if (m_objects.Contains(objectID))
+				return m_objects[objectID];
+
+			switch (objectID.ObjectType)
+			{
+				case ObjectType.Environment:
+					return new Environment(this, objectID);
+
+				case ObjectType.Living:
+					return new Living(this, objectID);
+
+				case ObjectType.Item:
+					return new ItemObject(this, objectID);
+
+				case ObjectType.Building:
+					return new BuildingObject(this, objectID);
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		public T GetObject<T>(ObjectID objectID) where T : class, IBaseGameObject
+		{
+			return (T)GetObject(objectID);
+		}
+
 		#region INotifyPropertyChanged Members
 
 		public event PropertyChangedEventHandler PropertyChanged;

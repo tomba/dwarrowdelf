@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 
 		public VisibilityMode VisibilityMode { get; set; }
 
-		public IntCuboid Bounds { get; private set; }
+		public IntCuboid Bounds { get; set; }
 
 		BuildingCollection m_buildings;
 		public ReadOnlyBuildingCollection Buildings { get; private set; }
@@ -35,24 +35,16 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<Stockpile> m_stockpiles;
 		public ReadOnlyObservableCollection<Stockpile> Stockpiles { get; private set; }
 
-		public IntPoint3D HomeLocation { get; private set; }
+		public IntPoint3D HomeLocation { get; set; }
 
 		public Designation Designations { get; private set; }
 
-		public Environment(World world, ObjectID objectID, IntPoint3D homeLocation)
-			: this(world, objectID, new IntCuboid(), homeLocation)
-		{
-		}
-
-		public Environment(World world, ObjectID objectID, IntCuboid bounds, IntPoint3D homeLocation)
+		public Environment(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			this.Version = 1;
 
-			this.Bounds = bounds;
-			this.HomeLocation = homeLocation;
-
-			m_tileGrid = new GrowingTileGrid(bounds);
+			m_tileGrid = new GrowingTileGrid();
 			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
 			m_objectList = new List<ClientGameObject>();
 

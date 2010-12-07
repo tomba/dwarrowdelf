@@ -78,9 +78,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var oid in msg.Controllables)
 			{
-				var l = GameData.Data.World.FindObject<Living>(oid);
-				if (l == null)
-					l = new Living(GameData.Data.World, oid);
+				var l = GameData.Data.World.GetObject<Living>(oid);
 				GameData.Data.World.Controllables.Add(l);
 			}
 		}
@@ -113,22 +111,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleObjectData(BaseGameObjectData data)
 		{
-			var ob = GameData.Data.World.FindObject<BaseGameObject>(data.ObjectID);
-
-			if (ob == null)
-			{
-				Debug.Print("New object {0} of type {1} appeared", data.ObjectID, data.GetType().Name);
-
-				if (data is LivingData)
-					ob = new Living(GameData.Data.World, data.ObjectID);
-				else if (data is ItemData)
-					ob = new ItemObject(GameData.Data.World, data.ObjectID);
-				else if (data is BuildingData)
-					ob = new BuildingObject(GameData.Data.World, data.ObjectID);
-				else
-					throw new Exception();
-			}
-
+			var ob = GameData.Data.World.GetObject<BaseGameObject>(data.ObjectID);
 			ob.Deserialize(data);
 		}
 
@@ -148,18 +131,11 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(MapDataMessage msg)
 		{
-			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
+			var env = GameData.Data.World.GetObject<Environment>(msg.Environment);
 
-			if (env == null)
-			{
-				Debug.Print("New map appeared {0}", msg.Environment);
-				var world = GameData.Data.World;
-				if (msg.Bounds.IsNull)
-					env = new Environment(world, msg.Environment, msg.HomeLocation);
-				else
-					env = new Environment(world, msg.Environment, msg.Bounds, msg.HomeLocation);
-			}
-
+			if (!msg.Bounds.IsNull)
+				env.Bounds = msg.Bounds;
+			env.HomeLocation = msg.HomeLocation;
 			env.VisibilityMode = msg.VisibilityMode;
 
 			// XXX
@@ -216,28 +192,8 @@ namespace Dwarrowdelf.Client
 		void HandleChange(ObjectCreatedChange change)
 		{
 			var world = GameData.Data.World;
-
-			switch (change.ObjectID.ObjectType)
-			{
-				case ObjectType.Environment:
-					new Environment(world, change.ObjectID, new IntPoint3D());
-					break;
-
-				case ObjectType.Living:
-					new Living(world, change.ObjectID);
-					break;
-
-				case ObjectType.Item:
-					new ItemObject(world, change.ObjectID);
-					break;
-
-				case ObjectType.Building:
-					new BuildingObject(world, change.ObjectID);
-					break;
-
-				default:
-					throw new Exception();
-			}
+			// just create the object
+			var ob = world.GetObject(change.ObjectID);
 		}
 
 		// XXX check if this is needed
