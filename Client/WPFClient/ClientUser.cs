@@ -217,21 +217,21 @@ namespace Dwarrowdelf.Client
 		{
 			var world = GameData.Data.World;
 
-			switch (change.ObjectType)
+			switch (change.ObjectID.ObjectType)
 			{
-				case ObjectCreatedChange.ObjectTypes.Environment:
+				case ObjectType.Environment:
 					new Environment(world, change.ObjectID, new IntPoint3D());
 					break;
 
-				case ObjectCreatedChange.ObjectTypes.Living:
+				case ObjectType.Living:
 					new Living(world, change.ObjectID);
 					break;
 
-				case ObjectCreatedChange.ObjectTypes.Item:
+				case ObjectType.Item:
 					new ItemObject(world, change.ObjectID);
 					break;
 
-				case ObjectCreatedChange.ObjectTypes.Building:
+				case ObjectType.Building:
 					new BuildingObject(world, change.ObjectID);
 					break;
 

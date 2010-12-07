@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Living({0})", this.ObjectID.Value);
+			return String.Format("Living({0:x})", this.ObjectID.Value);
 		}
 
 

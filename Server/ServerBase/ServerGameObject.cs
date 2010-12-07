@@ -29,8 +29,11 @@ namespace Dwarrowdelf.Server
 
 		public event Action<BaseGameObject> Destructed;
 
-		protected BaseGameObject()
+		ObjectType m_objectType;
+
+		protected BaseGameObject(ObjectType objectType)
 		{
+			m_objectType = objectType;
 		}
 
 		public virtual void Initialize(World world)
@@ -38,8 +41,11 @@ namespace Dwarrowdelf.Server
 			if (this.IsInitialized)
 				throw new Exception();
 
+			if (m_objectType == ObjectType.None)
+				throw new Exception();
+
 			this.World = world;
-			this.ObjectID = world.GetNewObjectID();
+			this.ObjectID = world.GetNewObjectID(m_objectType);
 
 			this.World.AddGameObject(this);
 			this.IsInitialized = true;
@@ -154,7 +160,8 @@ namespace Dwarrowdelf.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		protected ServerGameObject()
+		protected ServerGameObject(ObjectType objectType)
+			: base(objectType)
 		{
 			m_children = new KeyedObjectCollection();
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);

@@ -13,6 +13,7 @@ namespace Dwarrowdelf.Server
 		public IntRect3D Area { get; set; }
 
 		public BuildingObject(BuildingID id)
+			: base(ObjectType.Building)
 		{
 			this.BuildingInfo = Buildings.GetBuildingInfo(id);
 		}

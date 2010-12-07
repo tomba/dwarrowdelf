@@ -47,6 +47,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		public Living(string name)
+			: base(ObjectType.Living)
 		{
 			this.Name = name;
 		}

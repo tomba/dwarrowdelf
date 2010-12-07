@@ -8,6 +8,7 @@ namespace Dwarrowdelf.Server
 	public class ItemObject : ServerGameObject, IItemObject
 	{
 		public ItemObject(ItemID itemID, MaterialID material)
+			: base(ObjectType.Item)
 		{
 			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
 			this.SymbolID = this.ItemInfo.Symbol;

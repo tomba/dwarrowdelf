@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Server
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
-		int m_objectIDcounter;
+		int[] m_objectIDcounterArray;
 
 		public event Action WorkEnded;
 		public event Action<Change> WorldChanged;
@@ -75,6 +75,9 @@ namespace Dwarrowdelf.Server
 
 		public World(IArea area)
 		{
+			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
+			m_objectIDcounterArray = new int[maxType + 1];
+
 			this.Area = area;
 			m_worldThread = new Thread(Main);
 			m_worldThread.Name = "World";
@@ -259,9 +262,12 @@ namespace Dwarrowdelf.Server
 			return (T)ob;
 		}
 
-		internal ObjectID GetNewObjectID()
+		internal ObjectID GetNewObjectID(ObjectType objectType)
 		{
-			return new ObjectID(Interlocked.Increment(ref m_objectIDcounter));
+			// XXX overflows
+			//return new ObjectID(objectType, Interlocked.Increment(ref m_objectIDcounterArray[(int)objectType]));
+			// XXX use a common counter to make debugging simpler
+			return new ObjectID(objectType, Interlocked.Increment(ref m_objectIDcounterArray[0]));
 		}
 
 		// XXX slow & bad

@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Item({0})", this.ObjectID.Value);
+			return String.Format("Item({0:x})", this.ObjectID.Value);
 		}
 
 		object m_reservedBy;

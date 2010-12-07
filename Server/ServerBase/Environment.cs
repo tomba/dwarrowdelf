@@ -28,6 +28,7 @@ namespace Dwarrowdelf.Server
 		public IntPoint3D HomeLocation { get; set; }
 
 		public Environment(int width, int height, int depth, VisibilityMode visibilityMode)
+			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
 			this.VisibilityMode = visibilityMode;

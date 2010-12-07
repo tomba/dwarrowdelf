@@ -370,7 +370,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Env({0})", this.ObjectID.Value);
+			return String.Format("Env({0:x})", this.ObjectID.Value);
 		}
 
 		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)

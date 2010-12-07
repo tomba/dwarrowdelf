@@ -89,6 +89,7 @@
     <Compile Include="Jobs\Assignments\AttackAssignment.cs" />
     <Compile Include="Jobs\Assignments\RandomMoveAssignment.cs" />
     <Compile Include="MyTraceSource.cs" />
+    <Compile Include="ObjectType.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />
