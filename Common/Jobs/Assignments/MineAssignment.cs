@@ -65,7 +65,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobState CheckProgress()
 		{
-			if (m_environment.GetInterior(m_location).ID != InteriorID.NaturalWall) // XXX
+			var intID = m_environment.GetInterior(m_location).ID;
+
+			if (intID != InteriorID.NaturalWall && intID != InteriorID.Undefined) // XXX
 				return JobState.Done;
 			else
 				return JobState.Ok;
