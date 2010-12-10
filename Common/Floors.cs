@@ -17,20 +17,30 @@ namespace Dwarrowdelf
 		SlopeEast,
 	}
 
+	[Flags]
+	public enum FloorFlags
+	{
+		None = 0,
+		Blocking = 1 << 0,	/* dwarf can not go through it */
+		Carrying = 1 << 1,	/* dwarf can stand over it */
+	}
+
 	public class FloorInfo
 	{
-		public FloorInfo(FloorID id, bool isCarrying, bool isBlocking)
+		public FloorInfo(FloorID id, FloorFlags flags)
 		{
 			this.ID = id;
 			this.Name = id.ToString();
-			this.IsCarrying = isCarrying;
-			this.IsBlocking = isBlocking;
+			this.Flags = flags;
 		}
 
 		public FloorID ID { get; private set; }
 		public string Name { get; private set; }
-		public bool IsCarrying { get; private set; }	/* dwarf can stand over it */
-		public bool IsBlocking { get; private set; }	/* dwarf can not go through it */
+		public FloorFlags Flags { get; private set; }
+
+		public bool IsCarrying { get { return (this.Flags & FloorFlags.Carrying) != 0; } }
+		public bool IsBlocking { get { return (this.Flags & FloorFlags.Blocking) != 0; } }
+
 		public bool IsSeeThrough { get { return IsBlocking; } }
 		public bool IsWaterPassable { get { return !IsBlocking; } }
 	}
@@ -99,14 +109,14 @@ namespace Dwarrowdelf
 			return s_floorList[(int)id];
 		}
 
-		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, false, false);
-		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, false, false);
-		public static readonly FloorInfo Floor = new FloorInfo(FloorID.NaturalFloor, true, true);
-		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, true, true);
-		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, true, true);
-		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, true, true);
-		public static readonly FloorInfo SlopeEast = new FloorInfo(FloorID.SlopeEast, true, true);
+		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, 0);
+		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, 0);
+		public static readonly FloorInfo Floor = new FloorInfo(FloorID.NaturalFloor, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeEast = new FloorInfo(FloorID.SlopeEast, FloorFlags.Blocking | FloorFlags.Carrying);
 
-		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, true, false);
+		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, FloorFlags.Carrying);
 	}
 }
