@@ -92,6 +92,7 @@
     <Compile Include="Items\WaterGenerator.cs" />
     <Compile Include="World.cs" />
     <Compile Include="WorldInvoke.cs" />
+    <Compile Include="WorldIronPython.cs" />
     <Compile Include="WorldLivings.cs" />
     <Compile Include="WorldLogger.cs" />
     <Compile Include="WorldTick.cs" />
