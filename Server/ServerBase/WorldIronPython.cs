@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Server
 		/* helpers for ironpython */
 		public ItemObject[] IPItems
 		{
-			get { return m_objectMap.Values.Select(wr => wr.Target).OfType<ItemObject>().ToArray(); }
+			get { return m_objectMap.Values.OfType<ItemObject>().ToArray(); }
 		}
 
 		public Living[] IPLivings

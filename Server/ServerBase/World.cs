@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Server
 
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
-		Dictionary<ObjectID, WeakReference> m_objectMap = new Dictionary<ObjectID, WeakReference>();
+		Dictionary<ObjectID, IBaseGameObject> m_objectMap = new Dictionary<ObjectID, IBaseGameObject>();
 		int[] m_objectIDcounterArray;
 
 		public event Action WorkEnded;
@@ -206,7 +206,7 @@ namespace Dwarrowdelf.Server
 				throw new ArgumentException("Null ObjectID");
 
 			lock (m_objectMap)
-				m_objectMap.Add(ob.ObjectID, new WeakReference(ob));
+				m_objectMap.Add(ob.ObjectID, ob);
 		}
 
 		internal void RemoveGameObject(IBaseGameObject ob)
@@ -224,22 +224,16 @@ namespace Dwarrowdelf.Server
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
 
-			IBaseGameObject ob = null;
 
 			lock (m_objectMap)
 			{
-				WeakReference weakref;
+				IBaseGameObject ob = null;
 
-				if (m_objectMap.TryGetValue(objectID, out weakref))
-				{
-					ob = weakref.Target as IBaseGameObject;
-
-					if (ob == null)
-						m_objectMap.Remove(objectID);
-				}
+				if (m_objectMap.TryGetValue(objectID, out ob))
+					return ob;
+				else
+					return null;
 			}
-
-			return ob;
 		}
 
 		public T FindObject<T>(ObjectID objectID) where T : class, IBaseGameObject
@@ -267,11 +261,9 @@ namespace Dwarrowdelf.Server
 			{
 				Environment[] envs;
 				lock (m_objectMap)
-					envs = m_objectMap.Values.Select(wr => wr.Target).OfType<Environment>().ToArray();
+					envs = m_objectMap.Values.OfType<Environment>().ToArray();
 				return envs;
 			}
 		}
-
-
 	}
 }
