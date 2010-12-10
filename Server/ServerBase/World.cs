@@ -120,10 +120,6 @@ namespace Dwarrowdelf.Server
 			sw.Stop();
 			trace.TraceInformation("Initializing area took {0}", sw.Elapsed);
 
-			var envs = this.Environments;
-			foreach (var env in envs)
-				env.MapChanged += this.MapChangedCallback;
-
 			ExitWriteLock();
 		}
 
@@ -202,12 +198,6 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			if (WorldChanged != null)
 				WorldChanged(change);
-		}
-
-		void MapChangedCallback(Environment map, IntPoint3D l, TileData tileData)
-		{
-			VerifyAccess();
-			AddChange(new MapChange(map, l, tileData));
 		}
 
 		internal void AddGameObject(IBaseGameObject ob)

@@ -10,8 +10,6 @@ namespace Dwarrowdelf.Server
 
 	public class Environment : ServerGameObject, IEnvironment
 	{
-		public event MapChanged MapChanged;
-
 		TileGrid m_tileGrid;
 		public TileGrid TileGrid { get { return m_tileGrid; } }
 
@@ -59,6 +57,11 @@ namespace Dwarrowdelf.Server
 			this.World.TickStartEvent -= Tick;
 
 			base.Destruct();
+		}
+
+		void MapChanged(IntPoint3D l, TileData tileData)
+		{
+			this.World.AddChange(new MapChange(this, l, tileData));
 		}
 
 		public IntRect Bounds2D
@@ -261,8 +264,7 @@ namespace Dwarrowdelf.Server
 				td.WaterLevel = (byte)level;
 				m_tileGrid.SetWaterLevel(p, (byte)level);
 
-				if (MapChanged != null)
-					MapChanged(this, p, td);
+				MapChanged(p, td);
 
 				if (level > 0)
 					m_waterTiles.Add(p);
@@ -336,8 +338,7 @@ namespace Dwarrowdelf.Server
 			{
 				var d = m_tileGrid.GetTileData(p);
 
-				if (MapChanged != null)
-					MapChanged(this, p, d);
+				MapChanged(p, d);
 
 				if (!wasSeeThrough && GetInterior(p).IsSeeThrough)
 				{
@@ -352,8 +353,7 @@ namespace Dwarrowdelf.Server
 						{
 							m_tileGrid.SetHidden(pp, false);
 
-							if (MapChanged != null)
-								MapChanged(this, pp, m_tileGrid.GetTileData(pp));
+							MapChanged(pp, m_tileGrid.GetTileData(pp));
 						}
 					}
 				}
@@ -376,8 +376,7 @@ namespace Dwarrowdelf.Server
 			{
 				var d = m_tileGrid.GetTileData(p);
 
-				if (MapChanged != null)
-					MapChanged(this, p, d);
+				MapChanged(p, d);
 			}
 		}
 
@@ -401,8 +400,7 @@ namespace Dwarrowdelf.Server
 			{
 				var d = m_tileGrid.GetTileData(l);
 
-				if (MapChanged != null)
-					MapChanged(this, l, d);
+				MapChanged(l, d);
 			}
 		}
 
@@ -421,8 +419,7 @@ namespace Dwarrowdelf.Server
 			{
 				var d = m_tileGrid.GetTileData(l);
 
-				if (MapChanged != null)
-					MapChanged(this, l, d);
+				MapChanged(l, d);
 			}
 		}
 
@@ -446,8 +443,7 @@ namespace Dwarrowdelf.Server
 			{
 				var d = m_tileGrid.GetTileData(l);
 
-				if (MapChanged != null)
-					MapChanged(this, l, d);
+				MapChanged(l, d);
 			}
 		}
 
