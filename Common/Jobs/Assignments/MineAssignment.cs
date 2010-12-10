@@ -65,12 +65,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobState CheckProgress()
 		{
-			var intID = m_environment.GetInterior(m_location).ID;
+			var inter = m_environment.GetInterior(m_location);
 
-			if (intID != InteriorID.NaturalWall && intID != InteriorID.Undefined) // XXX
-				return JobState.Done;
-			else
+			if (inter.ID == InteriorID.Undefined || inter.IsMineable)
 				return JobState.Ok;
+			else
+				return JobState.Done;
 		}
 
 		public override string ToString()

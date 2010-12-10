@@ -210,9 +210,10 @@ namespace Dwarrowdelf.Server
 		{
 			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
 
-			var id = this.Environment.GetInteriorID(p);
+			var inter = this.Environment.GetInterior(p);
+			var id = inter.ID;
 
-			if (id != InteriorID.NaturalWall)
+			if (!inter.IsMineable)
 			{
 				Trace.TraceWarning("{0} tried to mine {1}, but it't a wall", this, p);
 				success = false;

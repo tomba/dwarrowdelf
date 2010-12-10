@@ -29,6 +29,20 @@ namespace Dwarrowdelf
 		public bool Blocker { get; private set; }
 		public bool IsSeeThrough { get { return !this.Blocker; } }
 		public bool IsWaterPassable { get { return !Blocker; } }
+
+		public bool IsMineable
+		{
+			get
+			{
+				switch (this.ID)
+				{
+					case InteriorID.NaturalWall:
+						return true;
+				}
+
+				return false;
+			}
+		}
 	}
 
 	public static class Interiors
