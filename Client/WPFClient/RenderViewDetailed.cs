@@ -115,6 +115,8 @@ namespace Dwarrowdelf.Client
 
 			for (int z = ml.Z; z > ml.Z - MAXLEVEL; --z)
 			{
+				bool seeThrough;
+
 				var p = new IntPoint3D(ml.X, ml.Y, z);
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
@@ -135,24 +137,22 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Interior.SymbolID == SymbolID.Undefined)
 				{
-					bool seeThrough;
 					GetInteriorTile(p, env, ref tile.Interior, showVirtualSymbols, out seeThrough);
 
 					if (tile.Interior.SymbolID != SymbolID.Undefined)
-					{
 						tile.Interior.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
-						if (!seeThrough)
-							break;
-					}
+
+					if (!seeThrough)
+						break;
 				}
 
-				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols);
+				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols, out seeThrough);
 
 				if (tile.Floor.SymbolID != SymbolID.Undefined)
-				{
 					tile.Floor.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+
+				if (!seeThrough)
 					break;
-				}
 			}
 
 			if (tile.Object.DarknessLevel == 0)
@@ -165,8 +165,10 @@ namespace Dwarrowdelf.Client
 				tile.Floor.DarknessLevel = tile.Interior.DarknessLevel;
 		}
 
-		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
+			seeThrough = false;
+
 			var intID = env.GetInteriorID(ml);
 
 			if (intID == InteriorID.NaturalWall)
@@ -220,6 +222,14 @@ namespace Dwarrowdelf.Client
 							tile.BgColor = GameColor.DarkGreen;
 						}
 					}
+					else
+					{
+						seeThrough = true;
+					}
+				}
+				else
+				{
+					seeThrough = true;
 				}
 
 				return;
