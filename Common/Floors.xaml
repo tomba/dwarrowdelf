@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<x:Array Type="FloorInfo"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns="clr-namespace:Dwarrowdelf">
+
+    <FloorInfo ID="Empty" />
+
+    <FloorInfo ID="NaturalFloor" Flags="Blocking,Carrying" />
+    <FloorInfo ID="Hole" Flags="Carrying" />
+
+    <FloorInfo ID="SlopeNorth" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeNorthEast" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeEast" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeSouthEast" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeSouth" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeSouthWest" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeWest" Flags="Blocking,Carrying" />
+    <FloorInfo ID="SlopeNorthWest" Flags="Blocking,Carrying" />
+
+</x:Array>

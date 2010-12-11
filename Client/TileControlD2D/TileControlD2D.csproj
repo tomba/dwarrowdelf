@@ -85,11 +85,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAPICodePack.DirectX, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Microsoft.WindowsAPICodePack.DirectX, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\D2D\Releasex64\Microsoft.WindowsAPICodePack.DirectX.dll</HintPath>
     </Reference>
-    <Reference Include="SurfaceQueueInteropHelper, Version=1.0.3799.36806, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="SurfaceQueueInteropHelper, Version=1.0.3799.36978, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\D2D\Releasex64\SurfaceQueueInteropHelper.dll</HintPath>
     </Reference>

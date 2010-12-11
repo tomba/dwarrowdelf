@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	enum FloorIDConsts
+	class FloorIDConsts
 	{
-		SlopeBit = 1 << 7,
-		SlopeDirMask = (1 << 7) - 1,
+		public const int SlopeBit = 1 << 7;
+		public const int SlopeDirMask = (1 << 7) - 1;
 	}
 
 	public enum FloorID : byte
@@ -38,16 +38,9 @@ namespace Dwarrowdelf
 
 	public class FloorInfo
 	{
-		public FloorInfo(FloorID id, FloorFlags flags)
-		{
-			this.ID = id;
-			this.Name = id.ToString();
-			this.Flags = flags;
-		}
-
-		public FloorID ID { get; private set; }
-		public string Name { get; private set; }
-		public FloorFlags Flags { get; private set; }
+		public FloorID ID { get; set; }
+		public string Name { get; set; }
+		public FloorFlags Flags { get; set; }
 
 		public bool IsCarrying { get { return (this.Flags & FloorFlags.Carrying) != 0; } }
 		public bool IsBlocking { get { return (this.Flags & FloorFlags.Blocking) != 0; } }
@@ -58,57 +51,61 @@ namespace Dwarrowdelf
 
 	public static class Floors
 	{
-		static FloorInfo[] s_floorList;
+		static FloorInfo[] s_floors;
 
 		static Floors()
 		{
-			var arr = (FloorID[])Enum.GetValues(typeof(FloorID));
-			var max = arr.Max();
-			s_floorList = new FloorInfo[(int)max + 1];
+			FloorInfo[] floors;
 
-			foreach (var field in typeof(Floors).GetFields())
+			using (var stream = System.IO.File.OpenRead("Floors.xaml"))
 			{
-				if (field.FieldType != typeof(FloorInfo))
-					continue;
-
-				var floorInfo = (FloorInfo)field.GetValue(null);
-				s_floorList[(int)floorInfo.ID] = floorInfo;
+				var settings = new System.Xaml.XamlXmlReaderSettings()
+				{
+					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+				};
+				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
+					floors = (FloorInfo[])System.Xaml.XamlServices.Load(reader);
 			}
+
+			var max = floors.Max(m => (int)m.ID);
+			s_floors = new FloorInfo[max + 1];
+
+			foreach (var item in floors)
+			{
+				if (s_floors[(int)item.ID] != null)
+					throw new Exception("Duplicate entry");
+
+				if (item.Name == null)
+					item.Name = item.ID.ToString().ToLowerInvariant();
+
+				s_floors[(int)item.ID] = item;
+			}
+
+			s_floors[0] = new FloorInfo()
+			{
+				ID = FloorID.Undefined,
+				Name = "<undefined>",
+			};
 		}
 
 		public static bool IsSlope(this FloorID id)
 		{
-			return ((int)id & (int)FloorIDConsts.SlopeBit) != 0;
+			return ((int)id & FloorIDConsts.SlopeBit) != 0;
 		}
 
 		public static FloorID ToSlope(this Direction dir)
 		{
-			return (FloorID)((int)FloorIDConsts.SlopeBit | (int)dir);
+			return (FloorID)(FloorIDConsts.SlopeBit | (int)dir);
 		}
 
 		public static Direction ToDir(this FloorID id)
 		{
-			return (Direction)((int)id & (int)FloorIDConsts.SlopeDirMask);
+			return (Direction)((int)id & FloorIDConsts.SlopeDirMask);
 		}
 
 		public static FloorInfo GetFloor(FloorID id)
 		{
-			return s_floorList[(int)id];
+			return s_floors[(int)id];
 		}
-
-		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, 0);
-		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, 0);
-		public static readonly FloorInfo Floor = new FloorInfo(FloorID.NaturalFloor, FloorFlags.Blocking | FloorFlags.Carrying);
-
-		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeNorthEast = new FloorInfo(FloorID.SlopeNorthEast, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeEast = new FloorInfo(FloorID.SlopeEast, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeSouthEast = new FloorInfo(FloorID.SlopeSouthEast, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeSouthWest = new FloorInfo(FloorID.SlopeSouthWest, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeNorthWest = new FloorInfo(FloorID.SlopeNorthWest, FloorFlags.Blocking | FloorFlags.Carrying);
-
-		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, FloorFlags.Carrying);
 	}
 }
