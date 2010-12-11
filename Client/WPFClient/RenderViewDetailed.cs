@@ -296,7 +296,7 @@ namespace Dwarrowdelf.Client
 							tile.SymbolID = SymbolID.SlopeUpSouth;
 							break;
 						case Direction.SouthWest:
-							tile.SymbolID = SymbolID.SlopeUpSouthEast;
+							tile.SymbolID = SymbolID.SlopeUpSouthWest;
 							break;
 						case Direction.West:
 							tile.SymbolID = SymbolID.SlopeUpWest;
