@@ -489,6 +489,24 @@ namespace Dwarrowdelf.Server
 			m_tileGrid.SetHidden(p, hidden);
 		}
 
+		public void MineTile(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		{
+			SetInterior(p, interiorID, materialID);
+
+			foreach (var dir in DirectionExtensions.PlanarDirections)
+			{
+				var pp = p + dir;
+
+				if (!this.Bounds.Contains(pp))
+					continue;
+
+				var flr = GetFloor(pp);
+
+				if (flr.ID.IsSlope() && flr.ID.ToDir() == dir.Reverse())
+					SetFloor(pp, FloorID.NaturalFloor, GetFloorMaterialID(pp));
+			}
+		}
+
 		// XXX not a good func. contents can be changed by the caller
 		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
 		{

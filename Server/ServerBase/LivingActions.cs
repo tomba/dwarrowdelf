@@ -244,7 +244,7 @@ namespace Dwarrowdelf.Server
 
 					var material = this.Environment.GetInteriorMaterial(p);
 
-					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					this.Environment.MineTile(p, InteriorID.Empty, MaterialID.Undefined);
 
 					ItemID itemID;
 
@@ -292,7 +292,7 @@ namespace Dwarrowdelf.Server
 						return;
 					}
 
-					this.Environment.SetInterior(p, InteriorID.Stairs, this.Environment.GetInteriorMaterialID(p));
+					this.Environment.MineTile(p, InteriorID.Stairs, this.Environment.GetInteriorMaterialID(p));
 					if (this.Environment.GetFloorID(p + Direction.Up) == FloorID.NaturalFloor)
 						this.Environment.SetFloor(p + Direction.Up, FloorID.Hole, this.Environment.GetFloorMaterialID(p));
 					break;
