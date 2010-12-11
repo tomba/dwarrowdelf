@@ -5,16 +5,23 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
+	enum FloorIDConsts
+	{
+		SlopeBit = 1 << 7,
+		SlopeDirMask = (1 << 7) - 1,
+	}
+
 	public enum FloorID : byte
 	{
 		Undefined,
 		Empty,
 		NaturalFloor,
 		Hole,	// used for stairs down
-		SlopeNorth,
-		SlopeSouth,
-		SlopeWest,
-		SlopeEast,
+
+		SlopeNorth = FloorIDConsts.SlopeBit | Direction.North,
+		SlopeEast = FloorIDConsts.SlopeBit | Direction.East,
+		SlopeSouth = FloorIDConsts.SlopeBit | Direction.South,
+		SlopeWest = FloorIDConsts.SlopeBit | Direction.West,
 	}
 
 	[Flags]
@@ -67,41 +74,17 @@ namespace Dwarrowdelf
 
 		public static bool IsSlope(this FloorID id)
 		{
-			return id == FloorID.SlopeNorth || id == FloorID.SlopeSouth || id == FloorID.SlopeEast || id == FloorID.SlopeWest;
+			return ((int)id & (int)FloorIDConsts.SlopeBit) != 0;
 		}
 
 		public static FloorID ToSlope(this Direction dir)
 		{
-			switch (dir)
-			{
-				case Direction.North:
-					return FloorID.SlopeNorth;
-				case Direction.East:
-					return FloorID.SlopeEast;
-				case Direction.South:
-					return FloorID.SlopeSouth;
-				case Direction.West:
-					return FloorID.SlopeWest;
-				default:
-					throw new Exception();
-			}
+			return (FloorID)((int)FloorIDConsts.SlopeBit | (int)dir);
 		}
 
 		public static Direction ToDir(this FloorID id)
 		{
-			switch (id)
-			{
-				case FloorID.SlopeNorth:
-					return Direction.North;
-				case FloorID.SlopeEast:
-					return Direction.East;
-				case FloorID.SlopeSouth:
-					return Direction.South;
-				case FloorID.SlopeWest:
-					return Direction.West;
-				default:
-					throw new Exception();
-			}
+			return (Direction)((int)id & (int)FloorIDConsts.SlopeDirMask);
 		}
 
 		public static FloorInfo GetFloor(FloorID id)
