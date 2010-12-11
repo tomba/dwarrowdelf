@@ -407,7 +407,7 @@ namespace MyArea
 					   where bounds.Contains(su)
 					   where grid.GetInteriorID(s) == InteriorID.Empty && grid.GetFloorID(s) != FloorID.Empty
 					   where grid.GetInteriorID(su) == InteriorID.Empty && grid.GetFloorID(su) == FloorID.Empty
-					   from d in DirectionExtensions.CardinalDirections
+					   from d in DirectionExtensions.PlanarDirections
 					   let td = s + d
 					   let t = s + d + Direction.Up
 					   where bounds.Contains(t)
@@ -417,7 +417,7 @@ namespace MyArea
 
 			foreach (var loc in locs)
 			{
-				if (DirectionExtensions.CardinalDirections
+				if (DirectionExtensions.PlanarDirections
 					.Where(d => bounds.Contains(loc.Location + d))
 					.All(d => grid.GetInteriorID(loc.Location + d) != InteriorID.Empty))
 					continue;

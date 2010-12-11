@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 			if (CanMoveFromTo(env, p, Direction.Down))
 				yield return Direction.Down;
 
-			foreach (var dir in DirectionExtensions.CardinalDirections)
+			foreach (var dir in DirectionExtensions.PlanarDirections)
 			{
 				var d = dir | Direction.Down;
 				if (CanMoveFromTo(env, p, d))
@@ -70,20 +70,21 @@ namespace Dwarrowdelf
 			if (dir == Direction.Down)
 				return srcFloor.ID == FloorID.Hole;
 
-			var d2d = dir.ToPlanarDirection();
-
-			if (d2d.IsCardinal())
+			if (dir.ContainsDown())
 			{
-				if (dir.ContainsUp())
-				{
-					var tileAboveSlope = env.GetTileData(srcLoc + Direction.Up);
-					return srcFloor.ID.IsSlope() && srcFloor.ID == d2d.ToSlope() && tileAboveSlope.IsEmpty;
-				}
+				return true;
+			}
 
-				if (dir.ContainsDown())
-				{
-					return true;
-				}
+			if (dir.ContainsUp())
+			{
+				if (!srcFloor.ID.IsSlope())
+					return false;
+
+				var tileAboveSlope = env.GetTileData(srcLoc + Direction.Up);
+				if (!tileAboveSlope.IsEmpty)
+					return false;
+
+				return true;
 			}
 
 			return false;
@@ -112,20 +113,21 @@ namespace Dwarrowdelf
 			if (dir == Direction.Down)
 				return dstInter.ID == InteriorID.Stairs;
 
-			var d2d = dir.ToPlanarDirection();
-
-			if (d2d.IsCardinal())
+			if (dir.ContainsUp())
 			{
-				if (dir.ContainsUp())
-				{
-					return true;
-				}
+				return true;
+			}
 
-				if (dir.ContainsDown())
-				{
-					var tileAboveSlope = env.GetTileData(dstLoc + Direction.Up);
-					return dstFloor.ID.IsSlope() && dstFloor.ID == d2d.Reverse().ToSlope() && tileAboveSlope.IsEmpty;
-				}
+			if (dir.ContainsDown())
+			{
+				if (!dstFloor.ID.IsSlope())
+					return false;
+
+				var tileAboveSlope = env.GetTileData(dstLoc + Direction.Up);
+				if (!tileAboveSlope.IsEmpty)
+					return false;
+
+				return true;
 			}
 
 			return false;

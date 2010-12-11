@@ -196,23 +196,34 @@ namespace Dwarrowdelf.Client
 					{
 						tile.Color = env.GetFloorMaterial(ml + Direction.Down).Color;
 
-						switch (flrId2)
+						switch (flrId2.ToDir().Reverse())
 						{
-							case FloorID.SlopeNorth:
-								tile.SymbolID = SymbolID.SlopeDownSouth;
-								break;
-
-							case FloorID.SlopeSouth:
+							case Direction.North:
 								tile.SymbolID = SymbolID.SlopeDownNorth;
 								break;
-
-							case FloorID.SlopeEast:
-								tile.SymbolID = SymbolID.SlopeDownWest;
+							case Direction.NorthEast:
+								tile.SymbolID = SymbolID.SlopeDownNorthEast;
 								break;
-
-							case FloorID.SlopeWest:
+							case Direction.East:
 								tile.SymbolID = SymbolID.SlopeDownEast;
 								break;
+							case Direction.SouthEast:
+								tile.SymbolID = SymbolID.SlopeDownSouthEast;
+								break;
+							case Direction.South:
+								tile.SymbolID = SymbolID.SlopeDownSouth;
+								break;
+							case Direction.SouthWest:
+								tile.SymbolID = SymbolID.SlopeDownSouthWest;
+								break;
+							case Direction.West:
+								tile.SymbolID = SymbolID.SlopeDownWest;
+								break;
+							case Direction.NorthWest:
+								tile.SymbolID = SymbolID.SlopeDownNorthWest;
+								break;
+							default:
+								throw new Exception();
 						}
 
 						if (env.GetGrass(ml + Direction.Down))
@@ -259,24 +270,39 @@ namespace Dwarrowdelf.Client
 					tile.SymbolID = SymbolID.Floor;
 					break;
 
-
 				case FloorID.SlopeNorth:
-				case FloorID.SlopeSouth:
+				case FloorID.SlopeNorthEast:
 				case FloorID.SlopeEast:
+				case FloorID.SlopeSouthEast:
+				case FloorID.SlopeSouth:
+				case FloorID.SlopeSouthWest:
 				case FloorID.SlopeWest:
+				case FloorID.SlopeNorthWest:
 					switch (flrID.ToDir())
 					{
 						case Direction.North:
 							tile.SymbolID = SymbolID.SlopeUpNorth;
 							break;
-						case Direction.South:
-							tile.SymbolID = SymbolID.SlopeUpSouth;
+						case Direction.NorthEast:
+							tile.SymbolID = SymbolID.SlopeUpNorthEast;
 							break;
 						case Direction.East:
 							tile.SymbolID = SymbolID.SlopeUpEast;
 							break;
+						case Direction.SouthEast:
+							tile.SymbolID = SymbolID.SlopeUpSouthEast;
+							break;
+						case Direction.South:
+							tile.SymbolID = SymbolID.SlopeUpSouth;
+							break;
+						case Direction.SouthWest:
+							tile.SymbolID = SymbolID.SlopeUpSouthEast;
+							break;
 						case Direction.West:
 							tile.SymbolID = SymbolID.SlopeUpWest;
+							break;
+						case Direction.NorthWest:
+							tile.SymbolID = SymbolID.SlopeUpNorthWest;
 							break;
 						default:
 							throw new Exception();

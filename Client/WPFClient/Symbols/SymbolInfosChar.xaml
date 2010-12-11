@@ -18,14 +18,22 @@
     <CharSymbol ID="StairsUpDown">X</CharSymbol>
 
     <CharSymbol ID="SlopeUpNorth" Outline="False">▲</CharSymbol>
-    <CharSymbol ID="SlopeUpSouth" Outline="False">▲</CharSymbol>
-    <CharSymbol ID="SlopeUpWest" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpNorthEast" Outline="False">▲</CharSymbol>
     <CharSymbol ID="SlopeUpEast" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouthEast" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouth" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouthWest" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpWest" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpNorthWest" Outline="False">▲</CharSymbol>
 
     <CharSymbol ID="SlopeDownNorth" Outline="False">▼</CharSymbol>
-    <CharSymbol ID="SlopeDownSouth" Outline="False">▼</CharSymbol>
-    <CharSymbol ID="SlopeDownWest" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownNorthEast" Outline="False">▼</CharSymbol>
     <CharSymbol ID="SlopeDownEast" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouthEast" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouth" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouthWest" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownWest" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownNorthWest" Outline="False">▼</CharSymbol>
 
     <CharSymbol ID="Player">☺</CharSymbol>
     <CharSymbol ID="Monster">b</CharSymbol>

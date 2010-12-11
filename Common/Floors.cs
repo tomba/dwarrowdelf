@@ -19,9 +19,13 @@ namespace Dwarrowdelf
 		Hole,	// used for stairs down
 
 		SlopeNorth = FloorIDConsts.SlopeBit | Direction.North,
+		SlopeNorthEast = FloorIDConsts.SlopeBit | Direction.NorthEast,
 		SlopeEast = FloorIDConsts.SlopeBit | Direction.East,
+		SlopeSouthEast = FloorIDConsts.SlopeBit | Direction.SouthEast,
 		SlopeSouth = FloorIDConsts.SlopeBit | Direction.South,
+		SlopeSouthWest = FloorIDConsts.SlopeBit | Direction.SouthWest,
 		SlopeWest = FloorIDConsts.SlopeBit | Direction.West,
+		SlopeNorthWest = FloorIDConsts.SlopeBit | Direction.NorthWest,
 	}
 
 	[Flags]
@@ -95,10 +99,15 @@ namespace Dwarrowdelf
 		public static readonly FloorInfo Undefined = new FloorInfo(FloorID.Undefined, 0);
 		public static readonly FloorInfo Empty = new FloorInfo(FloorID.Empty, 0);
 		public static readonly FloorInfo Floor = new FloorInfo(FloorID.NaturalFloor, FloorFlags.Blocking | FloorFlags.Carrying);
+
 		public static readonly FloorInfo SlopeNorth = new FloorInfo(FloorID.SlopeNorth, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, FloorFlags.Blocking | FloorFlags.Carrying);
-		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeNorthEast = new FloorInfo(FloorID.SlopeNorthEast, FloorFlags.Blocking | FloorFlags.Carrying);
 		public static readonly FloorInfo SlopeEast = new FloorInfo(FloorID.SlopeEast, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeSouthEast = new FloorInfo(FloorID.SlopeSouthEast, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeSouth = new FloorInfo(FloorID.SlopeSouth, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeSouthWest = new FloorInfo(FloorID.SlopeSouthWest, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeWest = new FloorInfo(FloorID.SlopeWest, FloorFlags.Blocking | FloorFlags.Carrying);
+		public static readonly FloorInfo SlopeNorthWest = new FloorInfo(FloorID.SlopeNorthWest, FloorFlags.Blocking | FloorFlags.Carrying);
 
 		public static readonly FloorInfo Hole = new FloorInfo(FloorID.Hole, FloorFlags.Carrying);
 	}
