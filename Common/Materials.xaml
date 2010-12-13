@@ -36,6 +36,9 @@
     <MaterialInfo ID="Fir" MaterialClass="Wood" Color="Sienna" />
     <MaterialInfo ID="Pine" MaterialClass="Wood" Color="Sienna" />
 
+    <MaterialInfo ID="Flesh" MaterialClass="Consumable" Color="Green" />
+    <MaterialInfo ID="Water" MaterialClass="Consumable" Color="Blue" />
+
     <!-- custom test material -->
     <MaterialInfo ID="99" Name="MyMaterial" MaterialClass="Custom" Color="LightCyan" />
 

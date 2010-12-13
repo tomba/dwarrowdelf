@@ -12,10 +12,10 @@
         <Separator />
 
         <UniformGrid Columns="2">
-            <TextBlock>Type</TextBlock>
+            <TextBlock>ItemID</TextBlock>
             <TextBlock Text="{Binding ItemID}" />
 
-            <TextBlock>Class</TextBlock>
+            <TextBlock>ItemClass</TextBlock>
             <TextBlock Text="{Binding ItemClass}" />
 
             <TextBlock>Name</TextBlock>
@@ -27,8 +27,8 @@
             <TextBlock>Color</TextBlock>
             <TextBlock Text="{Binding GameColor}" />
 
-            <TextBlock>Material</TextBlock>
-            <TextBlock Text="{Binding Material.Name}" />
+            <TextBlock>MaterialID</TextBlock>
+            <TextBlock Text="{Binding Material.ID}" />
 
             <TextBlock>MaterialClass</TextBlock>
             <TextBlock Text="{Binding MaterialClass}" />

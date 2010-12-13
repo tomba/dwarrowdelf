@@ -19,6 +19,7 @@ namespace Dwarrowdelf
 		Ore,
 		Gem,
 		UncutGem,
+		Corpse,
 
 		/// <summary>
 		/// Used for dynamically initialized items
@@ -34,6 +35,7 @@ namespace Dwarrowdelf
 		Drink,
 		Gem,
 		RawMaterial,
+		Corpse,
 
 		Custom,
 	}

@@ -43,6 +43,9 @@ namespace Dwarrowdelf
 		Birch,
 		Fir,
 		Pine,
+
+		Flesh,
+		Water,
 	}
 
 	public enum MaterialClass : byte
@@ -53,6 +56,7 @@ namespace Dwarrowdelf
 		Metal,
 		Gem,
 		Mineral,
+		Consumable,
 		Custom,
 	}
 

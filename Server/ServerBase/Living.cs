@@ -50,6 +50,7 @@ namespace Dwarrowdelf.Server
 			: base(ObjectType.Living)
 		{
 			this.Name = name;
+			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
 		}
 
 		public override void Initialize(World world)
@@ -187,6 +188,14 @@ namespace Dwarrowdelf.Server
 			if (this.HitPoints <= 0)
 			{
 				Trace.TraceInformation("{0} dies", this);
+
+				var corpse = new ItemObject(ItemID.Corpse, this.MaterialID);
+				corpse.Name = this.Name;
+				corpse.Initialize(this.World);
+				bool ok = corpse.MoveTo(this.Environment, this.Location);
+				if (!ok)
+					Trace.TraceWarning("Failed to move corpse");
+
 				this.Destruct();
 			}
 		}

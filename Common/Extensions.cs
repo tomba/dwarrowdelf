@@ -9,7 +9,7 @@ namespace Dwarrowdelf
 	{
 		public static string Capitalize(this string str)
 		{
-			if (String.IsNullOrEmpty(str))
+			if (str.Length == 0)
 				return String.Empty;
 
 			char[] arr = str.ToCharArray();

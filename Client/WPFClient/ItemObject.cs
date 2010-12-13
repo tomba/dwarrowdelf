@@ -95,8 +95,15 @@ namespace Dwarrowdelf.Client
 					this.Description = matInfo.Name.Capitalize();
 					break;
 
+				case ItemID.Corpse:
+					this.Description = String.Format("Corpse of {0}", this.Name);
+					break;
+
 				default:
-					this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
+					if (this.Name != null)
+						this.Description = matInfo.Adjective.Capitalize() + " " + this.Name;
+					else
+						this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
 					break;
 			}
 		}

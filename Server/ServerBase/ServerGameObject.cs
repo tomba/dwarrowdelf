@@ -173,7 +173,7 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Name, PropertyVisibility.Public, "");
+		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Name, PropertyVisibility.Public, null);
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }

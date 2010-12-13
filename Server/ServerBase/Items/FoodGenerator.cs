@@ -34,11 +34,10 @@ namespace Dwarrowdelf.Server.Items
 			if (this.Environment == null)
 				return;
 
-			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Food"))
+			if (!this.Environment.GetContents(this.Location).OfType<ItemObject>().Any(o => o.ItemID == Dwarrowdelf.ItemID.Food))
 			{
-				var ob = new ItemObject(ItemID.Food, Dwarrowdelf.MaterialID.Undefined)
+				var ob = new ItemObject(ItemID.Food, Dwarrowdelf.MaterialID.Flesh)
 				{
-					Name = "Food",
 					Color = GameColor.Green,
 					NutritionalValue = 200,
 				};
@@ -49,11 +48,10 @@ namespace Dwarrowdelf.Server.Items
 					ob.Destruct();
 			}
 
-			if (!this.Environment.GetContents(this.Location).Any(o => o.Name == "Drink"))
+			if (!this.Environment.GetContents(this.Location).OfType<ItemObject>().Any(o => o.ItemID == Dwarrowdelf.ItemID.Drink))
 			{
-				var ob = new ItemObject(ItemID.Drink, Dwarrowdelf.MaterialID.Undefined)
+				var ob = new ItemObject(ItemID.Drink, Dwarrowdelf.MaterialID.Water)
 				{
-					Name = "Drink",
 					Color = GameColor.Aquamarine,
 					RefreshmentValue = 200,
 				};

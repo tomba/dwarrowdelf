@@ -21,8 +21,8 @@
                 <TextBlock>Color</TextBlock>
                 <TextBlock Text="{Binding GameColor}" />
 
-                <TextBlock>Material</TextBlock>
-                <TextBlock Text="{Binding Material.Name}" />
+                <TextBlock>MaterialID</TextBlock>
+                <TextBlock Text="{Binding Material.ID}" />
 
                 <TextBlock>ObjectID</TextBlock>
                 <TextBlock Text="{Binding ObjectID}" />

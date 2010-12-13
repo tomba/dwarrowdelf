@@ -13,6 +13,8 @@
     <ItemInfo ItemID="Gem" ItemClass="Gem" Symbol="Gem"/>
     <ItemInfo ItemID="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>
 
+    <ItemInfo ItemID="Corpse" ItemClass="Corpse" Symbol="Consumable"/>
+
     <ItemInfo ItemID="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
 
 </x:Array>

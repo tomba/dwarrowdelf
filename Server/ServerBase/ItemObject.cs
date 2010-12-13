@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		public ItemObject(ItemID itemID, MaterialID material)
+		public ItemObject(ItemID itemID, MaterialID materialID)
 			: base(ObjectType.Item)
 		{
+			Debug.Assert(itemID != Dwarrowdelf.ItemID.Undefined);
+			Debug.Assert(materialID != Dwarrowdelf.MaterialID.Undefined);
+
 			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
 			this.SymbolID = this.ItemInfo.Symbol;
-			this.MaterialID = material;
+			this.MaterialID = materialID;
 		}
 
 		public ItemInfo ItemInfo { get; private set; }
