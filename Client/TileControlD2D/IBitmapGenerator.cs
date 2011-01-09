@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
 	public interface IBitmapGenerator
 	{

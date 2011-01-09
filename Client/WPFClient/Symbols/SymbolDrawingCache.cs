@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	class SymbolDrawingCache : Dwarrowdelf.Client.TileControlD2D.ISymbolDrawingCache
+	class SymbolDrawingCache : Dwarrowdelf.Client.TileControl.ISymbolDrawingCache
 	{
 		Symbols.SymbolSet m_symbolSet;
 		DrawingCache m_drawingCache;

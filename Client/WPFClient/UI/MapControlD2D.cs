@@ -16,7 +16,7 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
-using Dwarrowdelf.Client.TileControlD2D;
+using Dwarrowdelf.Client.TileControl;
 
 namespace Dwarrowdelf.Client
 {
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		Environment m_env;
 		int m_z;
 
-		TileControlD2D.TileControlD2D m_tileControlD2D;
+		TileControl.TileControlD2D m_tileControlD2D;
 
 		IntPoint m_centerPos;
 		int m_tileSize;
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnInitialized(e);
 
-			m_tileControlD2D = new TileControlD2D.TileControlD2D();
+			m_tileControlD2D = new TileControl.TileControlD2D();
 			m_tileControlD2D.TileArrangementChanged += OnTileArrangementChanged;
 			AddChild(m_tileControlD2D);
 

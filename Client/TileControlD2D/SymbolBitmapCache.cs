@@ -5,14 +5,14 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ISymbolDrawingCache
 	{
 		Drawing GetDrawing(SymbolID symbolID, GameColor color);
 	}
 
-	class SymbolBitmapCache : Dwarrowdelf.Client.TileControlD2D.IBitmapGenerator
+	class SymbolBitmapCache : IBitmapGenerator
 	{
 		ISymbolDrawingCache m_symbolDrawingCache;
 

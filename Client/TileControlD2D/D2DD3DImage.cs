@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using Microsoft.Windows.Media;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
     class D2DD3DImage: D3DImage, IDisposable
     {

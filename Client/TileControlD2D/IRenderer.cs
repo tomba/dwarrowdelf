@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
 	public interface IRenderer
 	{

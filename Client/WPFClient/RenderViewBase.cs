@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
-using Dwarrowdelf.Client.TileControlD2D;
+using Dwarrowdelf.Client.TileControl;
 using System.Diagnostics;
 using System.Threading.Tasks;
 

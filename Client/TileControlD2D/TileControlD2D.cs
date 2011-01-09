@@ -21,7 +21,7 @@ using Microsoft.WindowsAPICodePack.DirectX.DXGI;
 using Microsoft.WindowsAPICodePack.DirectX.WindowsImagingComponent;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.

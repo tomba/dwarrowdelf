@@ -6,7 +6,7 @@ using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 using Microsoft.WindowsAPICodePack.DirectX.DXGI;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Client.TileControlD2D
+namespace Dwarrowdelf.Client.TileControl
 {
 	public class RendererSimple : IRenderer
 	{

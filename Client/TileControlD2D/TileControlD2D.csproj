@@ -8,7 +8,7 @@
     <ProjectGuid>{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dwarrowdelf.Client.TileControlD2D</RootNamespace>
+    <RootNamespace>Dwarrowdelf.Client.TileControl</RootNamespace>
     <AssemblyName>Dwarrowdelf.Client.TileControlD2D</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -108,13 +108,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRenderData.cs" />
     <Compile Include="IRenderer.cs" />
-    <Compile Include="RenderData.cs" />
-    <Compile Include="RenderDataDetailed.cs" />
     <Compile Include="RendererDetailed.cs" />
     <Compile Include="RendererSimple.cs" />
-    <Compile Include="RenderDataSimple.cs" />
     <Compile Include="IRenderResolver.cs" />
     <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="TileControlD2D.cs" />
@@ -149,6 +145,10 @@
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TileControlBase\TileControlBase.csproj">
+      <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
+      <Name>TileControlBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
