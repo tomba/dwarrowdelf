@@ -14,13 +14,11 @@ namespace Dwarrowdelf.Client
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 
-		RendererDetailed m_renderer;
-
 		public RenderViewDetailed()
 		{
-			m_renderer = new RendererDetailed(this, m_renderData);
 		}
 
+		/*
 		ISymbolDrawingCache m_symbolDrawingCache;
 		public ISymbolDrawingCache SymbolDrawingCache
 		{
@@ -36,8 +34,7 @@ namespace Dwarrowdelf.Client
 		{
 			m_renderer.InvalidateSymbols();
 		}
-
-		public override IRenderer Renderer { get { return m_renderer; } }
+		*/
 
 		protected override void MapChangedOverride(IntPoint3D ml)
 		{

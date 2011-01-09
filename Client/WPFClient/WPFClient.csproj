@@ -132,7 +132,6 @@
     <Compile Include="ManualJobSource.cs" />
     <Compile Include="RenderViewDetailed.cs" />
     <Compile Include="RenderViewBase.cs" />
-    <Compile Include="RenderViewSimple.cs" />
     <Compile Include="Designation.cs" />
     <Compile Include="IDrawableElement.cs" />
     <Compile Include="Stockpile.cs" />

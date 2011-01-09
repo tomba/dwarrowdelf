@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		Environment m_env;
 		int m_z;
 
-		TileControl.TileControlD2D m_tileControlD2D;
+		TileControl.ITileControl m_tileControlD2D;
 
 		IntPoint m_centerPos;
 		int m_tileSize;
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Client
 		public event Action TileArrangementChanged;
 
 		IRenderView m_renderView;
-		RenderViewSimple m_renderViewSimple;
+		//RenderViewSimple m_renderViewSimple;
 		RenderViewDetailed m_renderViewDetailed;
 
 		public MapControlD2D()
@@ -51,14 +51,24 @@ namespace Dwarrowdelf.Client
 
 			m_tileControlD2D = new TileControl.TileControlD2D();
 			m_tileControlD2D.TileArrangementChanged += OnTileArrangementChanged;
+			m_tileControlD2D.AboutToRender += OnAboutToRender;
 			AddChild(m_tileControlD2D);
 
-			m_renderViewSimple = new RenderViewSimple();
+
+			//m_renderViewSimple = new RenderViewSimple();
 			m_renderViewDetailed = new RenderViewDetailed();
 
 			m_renderView = m_renderViewDetailed;
 			//m_renderView = m_renderViewSimple;
-			m_tileControlD2D.Renderer = m_renderView.Renderer;
+			m_tileControlD2D.SetRenderData(m_renderView.RenderData);
+		}
+
+		void OnAboutToRender()
+		{
+			if (m_env == null)
+				return;
+
+			m_renderViewDetailed.Resolve();
 		}
 
 		void OnTileArrangementChanged()
@@ -87,17 +97,16 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_tileSize = value;
-
+				/*
 				if (m_tileSize < 8)
 					m_renderView = m_renderViewSimple;
-				else
+				else*/
 					m_renderView = m_renderViewDetailed;
 
 				m_renderView.CenterPos = new IntPoint3D(m_centerPos, this.Z);
 				m_renderView.Environment = m_env;
 
-				m_tileControlD2D.Renderer = m_renderView.Renderer;
-
+				//m_tileControlD2D.SetRenderData(m_renderView.RenderData);
 				m_tileControlD2D.TileSize = value;
 			}
 		}
@@ -130,7 +139,7 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateDrawings()
 		{
-			m_renderViewDetailed.InvalidateSymbols();
+			//m_renderViewDetailed.InvalidateSymbols();
 			InvalidateTiles();
 		}
 
@@ -172,7 +181,7 @@ namespace Dwarrowdelf.Client
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_renderViewDetailed.SymbolDrawingCache = m_world.SymbolDrawingCache;
+						m_tileControlD2D.SymbolDrawingCache = m_world.SymbolDrawingCache;
 					}
 				}
 				else

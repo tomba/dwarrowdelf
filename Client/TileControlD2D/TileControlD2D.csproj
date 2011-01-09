@@ -110,12 +110,8 @@
   <ItemGroup>
     <Compile Include="IRenderer.cs" />
     <Compile Include="RendererDetailed.cs" />
-    <Compile Include="RendererSimple.cs" />
-    <Compile Include="IRenderResolver.cs" />
-    <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="TileControlD2D.cs" />
     <Compile Include="D2DD3DImage.cs" />
-    <Compile Include="IBitmapGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

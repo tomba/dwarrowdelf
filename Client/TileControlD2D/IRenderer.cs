@@ -6,10 +6,11 @@ using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public interface IRenderer
+	interface IRenderer
 	{
 		void RenderTargetChanged();
 		void TileSizeChanged(int tileSize);
 		void Render(RenderTarget renderTarget, int columns, int rows, int tileSize);
+		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 	}
 }

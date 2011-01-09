@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : UserControl
+	public class TileControlD2D : UserControl, ITileControl
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -55,6 +55,7 @@ namespace Dwarrowdelf.Client.TileControl
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
 
 		public event Action TileArrangementChanged;
+		public event Action AboutToRender;
 
 		public TileControlD2D()
 		{
@@ -210,16 +211,31 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource.Unlock();
 		}
 
-
 		IRenderer m_renderer;
-		public IRenderer Renderer
+
+		public void SetRenderData(IRenderData renderData)
 		{
+			IRenderer renderer;
+
+			if (renderData is RenderData<RenderTileDetailed>)
+				renderer = new RendererDetailed((RenderData<RenderTileDetailed>)renderData);
+			else
+				throw new NotSupportedException();
+
+			m_renderer = renderer;
+			InvalidateRender();
+		}
+
+		ISymbolDrawingCache m_symbolDrawingCache;
+
+		public ISymbolDrawingCache SymbolDrawingCache
+		{
+			get { return m_symbolDrawingCache; }
+
 			set
 			{
-				if (m_renderer == value)
-					return;
-
-				m_renderer = value;
+				m_symbolDrawingCache = value;
+				m_renderer.SymbolDrawingCache = value;
 				InvalidateRender();
 			}
 		}
@@ -283,6 +299,9 @@ namespace Dwarrowdelf.Client.TileControl
 				m_renderTarget.EndDraw();
 				return;
 			}
+
+			if (AboutToRender != null)
+				AboutToRender();
 
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 

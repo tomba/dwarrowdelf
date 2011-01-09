@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client.TileControl
 		Drawing GetDrawing(SymbolID symbolID, GameColor color);
 	}
 
-	class SymbolBitmapCache : IBitmapGenerator
+	public class SymbolBitmapCache : IBitmapGenerator
 	{
 		ISymbolDrawingCache m_symbolDrawingCache;
 

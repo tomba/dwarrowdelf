@@ -12,7 +12,6 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public class RendererDetailed : IRenderer
 	{
-		IRenderResolver m_resolver;
 		RenderData<RenderTileDetailed> m_renderData;
 
 		D2DBitmap m_atlasBitmap;
@@ -25,9 +24,8 @@ namespace Dwarrowdelf.Client.TileControl
 		ISymbolDrawingCache m_symbolDrawingCache;
 		SymbolBitmapCache m_bitmapCache;
 
-		public RendererDetailed(IRenderResolver resolver, RenderData<RenderTileDetailed> renderMap)
+		public RendererDetailed(RenderData<RenderTileDetailed> renderMap)
 		{
-			m_resolver = resolver;
 			m_renderData = renderMap;
 		}
 
@@ -134,8 +132,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			if (m_atlasBitmap == null)
 				CreateAtlas(renderTarget, tileSize);
-
-			m_resolver.Resolve();
 
 			RenderTiles(renderTarget, columns, rows, tileSize);
 		}

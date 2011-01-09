@@ -11,13 +11,13 @@ namespace Dwarrowdelf.Client
 {
 	interface IRenderView
 	{
-		IRenderer Renderer { get; }
 		IntPoint3D CenterPos { get; set; }
 		bool ShowVirtualSymbols { get; set; }
 		Environment Environment { get; set; }
+		IRenderData RenderData { get; }
 	}
 
-	abstract class RenderViewBase<T> : IRenderView, IRenderResolver where T : struct
+	abstract class RenderViewBase<T> : IRenderView where T : struct
 	{
 		protected readonly RenderData<T> m_renderData;
 
@@ -35,7 +35,8 @@ namespace Dwarrowdelf.Client
 			m_renderData = new RenderData<T>();
 		}
 
-		public abstract IRenderer Renderer { get; }
+		IRenderData IRenderView.RenderData { get { return m_renderData; } }
+		public RenderData<T> RenderData { get { return m_renderData; } }
 
 		public abstract void Resolve();
 
