@@ -391,6 +391,11 @@ namespace Dwarrowdelf
 			return (m_r << 16) | (m_g << 8) | m_b;
 		}
 
+		public int ToInt32()
+		{
+			return (m_r << 16) | (m_g << 8) | m_b;
+		}
+
 		public static bool operator ==(GameColorRGB left, GameColorRGB right)
 		{
 			return left.Equals(right);
@@ -413,5 +418,6 @@ namespace Dwarrowdelf
 		{
 			return GameColorRGB.FromGameColor(color);
 		}
+
 	}
 }
