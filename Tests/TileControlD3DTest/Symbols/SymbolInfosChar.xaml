@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<SymbolSet xmlns="clr-namespace:Dwarrowdelf.Client.Symbols"
+           FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5">
+
+    <CharSymbol ID="Undefined">?</CharSymbol>
+    <CharSymbol ID="Floor" Reverse="True" Outline="False">▓</CharSymbol>
+
+    <CharSymbol ID="Grass" Outline="False">▒</CharSymbol>
+    <CharSymbol ID="Wall" Opaque="True" Outline="False">▓</CharSymbol>
+
+    <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
+    <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60">☼</CharSymbol>
+
+    <CharSymbol ID="Water" X="10" Y="30" W="80" H="40">~</CharSymbol>
+
+    <CharSymbol ID="StairsUp">&lt;</CharSymbol>
+    <CharSymbol ID="StairsDown">&gt;</CharSymbol>
+    <CharSymbol ID="StairsUpDown">X</CharSymbol>
+
+    <CharSymbol ID="SlopeUpNorth" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpNorthEast" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpEast" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouthEast" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouth" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpSouthWest" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpWest" Outline="False">▲</CharSymbol>
+    <CharSymbol ID="SlopeUpNorthWest" Outline="False">▲</CharSymbol>
+
+    <CharSymbol ID="SlopeDownNorth" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownNorthEast" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownEast" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouthEast" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouth" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownSouthWest" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownWest" Outline="False">▼</CharSymbol>
+    <CharSymbol ID="SlopeDownNorthWest" Outline="False">▼</CharSymbol>
+
+    <CharSymbol ID="Player">☺</CharSymbol>
+    <CharSymbol ID="Monster">b</CharSymbol>
+
+    <CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40">☼</CharSymbol>
+    <CharSymbol ID="Gem" X="30" Y="50" W="40" H="40">♦</CharSymbol>
+    <CharSymbol ID="Sapling" X="20" Y="30" W="60" H="70">♠</CharSymbol>
+    <CharSymbol ID="Tree">♣</CharSymbol>
+    <CharSymbol ID="Key">Ⱡ</CharSymbol>
+    <CharSymbol ID="Rock" X="20" Y="40" W="60" H="60">●</CharSymbol>
+    <CharSymbol ID="Log" X="5" Y="60" W="90" H="20">▬</CharSymbol>
+    <CharSymbol ID="Contraption" Outline="False">۩</CharSymbol>
+    <CharSymbol ID="Consumable">%</CharSymbol>
+
+    <CharSymbol ID="Chair" X="20" Y="40" W="60" H="60">╥</CharSymbol>
+    <CharSymbol ID="Table">╤</CharSymbol>
+</SymbolSet>
