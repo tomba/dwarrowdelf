@@ -21,8 +21,6 @@ namespace Dwarrowdelf.Client.TileControl
 			public Vector3 pos;
 		}
 
-		public Texture2D SharedTexture { get { return m_renderTexture; } }
-
 		Device m_device;
 		Texture2D m_renderTexture;
 		RenderTargetView m_renderTargetView;
@@ -38,8 +36,8 @@ namespace Dwarrowdelf.Client.TileControl
 		EffectMatrixVariable m_worldMatrixEffectVariable;
 
 		EffectScalarVariable m_tileSizeVariable;
-		EffectScalarVariable m_columnsVariable;
-		EffectScalarVariable m_rowsVariable;
+		EffectVectorVariable m_colrowVariable;
+		EffectVectorVariable m_sizeVariable;
 
 		int m_tileSize = 32;
 		int m_columns;
@@ -125,8 +123,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
-			m_columnsVariable = m_effect.GetVariableByName("g_columns").AsScalar();
-			m_rowsVariable = m_effect.GetVariableByName("g_rows").AsScalar();
+			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
+			m_sizeVariable = m_effect.GetVariableByName("g_size").AsVector();
+
 
 			m_worldMatrixEffectVariable = m_effect.GetVariableByName("g_world").AsMatrix();
 
@@ -135,6 +134,23 @@ namespace Dwarrowdelf.Client.TileControl
 			w *= Matrix.Scaling(2.0f, 2.0f, 0);
 			w *= Matrix.Translation(-1.0f, -1.0f, 0);
 			m_worldMatrixEffectVariable.SetMatrix(w);
+		}
+
+		public int TileSize
+		{
+			set
+			{
+				m_tileSize = value;
+
+				if (m_tileSize < 2)
+					m_tileSize = 2;
+				else if (m_tileSize > 512)
+					m_tileSize = 512;
+
+				m_invalid = true;
+			}
+
+			get { return m_tileSize; }
 		}
 
 		public void SetRenderData(RenderData<RenderTileDetailed> renderData)
@@ -263,15 +279,13 @@ namespace Dwarrowdelf.Client.TileControl
 				m_columns = (int)Math.Ceiling((double)m_width / m_tileSize) | 1;
 				m_rows = (int)Math.Ceiling((double)m_height / m_tileSize) | 1;
 
-				m_effect.GetVariableByName("g_width").AsScalar().Set(m_width);
-				m_effect.GetVariableByName("g_height").AsScalar().Set(m_height);
+				m_sizeVariable.Set(new Vector2(m_width, m_height));
 
 				m_tileSizeVariable.Set(m_tileSize);
 
-				m_columnsVariable.Set(m_columns);
-				m_rowsVariable.Set(m_rows);
+				m_colrowVariable.Set(new Vector2(m_columns, m_rows));
 
-				System.Diagnostics.Debug.WriteLine("{0}x{1} {2}x{3}  {4}", m_columns, m_rows, m_width, m_height, m_tileSize);
+				//System.Diagnostics.Debug.WriteLine("{0}x{1} {2}x{3}  {4}", m_columns, m_rows, m_width, m_height, m_tileSize);
 
 				m_invalid = false;
 
@@ -318,25 +332,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			context.Flush();
 		}
-
-		public int TileSize
-		{
-			set
-			{
-				m_tileSize = value;
-
-				if (m_tileSize < 2)
-					m_tileSize = 2;
-				else if (m_tileSize > 512)
-					m_tileSize = 512;
-
-				m_invalid = true;
-			}
-
-			get { return m_tileSize; }
-		}
-
-
 
 		#region IDisposable
 		bool m_disposed;
