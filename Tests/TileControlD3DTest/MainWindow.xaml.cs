@@ -96,7 +96,7 @@ namespace TileControlD3DTest
 
 		void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-#if old
+#if !old
 			var ts = m_targetTileSize;
 
 			if (e.Delta > 0)
@@ -112,7 +112,7 @@ namespace TileControlD3DTest
 			var anim = new Int32Animation(ts, new Duration(TimeSpan.FromMilliseconds(200)));
 			tileControl.BeginAnimation(TileControlD3D.TileSizeProperty, anim);
 			//	tileControl.TileSize = ts;
-#endif
+#else
 
 			var p = e.GetPosition(tileControl);
 			var ml1 = ScreenPointToMapLocation(p);
@@ -134,6 +134,7 @@ namespace TileControlD3DTest
 			var l = ml1 - d;
 
 			this.CenterPos = l;
+#endif
 		}
 
 		IntPoint CenterPos

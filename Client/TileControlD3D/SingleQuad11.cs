@@ -22,8 +22,9 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 		Device m_device;
-		Texture2D m_renderTexture;
+		Texture2D m_renderTarget;
 		RenderTargetView m_renderTargetView;
+		IntSize m_renderTargetSize;
 		RasterizerState m_rasterizerState;
 
 		InputLayout m_layout;
@@ -33,8 +34,6 @@ namespace Dwarrowdelf.Client.TileControl
 		EffectTechnique m_technique;
 		EffectPass m_pass;
 
-		EffectMatrixVariable m_worldMatrixEffectVariable;
-
 		EffectScalarVariable m_tileSizeVariable;
 		EffectVectorVariable m_colrowVariable;
 		EffectVectorVariable m_sizeVariable;
@@ -43,32 +42,17 @@ namespace Dwarrowdelf.Client.TileControl
 		int m_columns;
 		int m_rows;
 
-		int m_numTiles;
-
 		SlimDX.Direct3D11.Buffer m_tileBuffer;
 		ShaderResourceView m_tileBufferView;
-		int m_tileBufferWidth;
-		int m_tileBufferHeight;
 
 		ShaderResourceView m_tileTextureView;
+		ShaderResourceView m_colorBufferView;
 
 		RenderData<RenderTileDetailed> m_map;
 
-		int m_width;
-		int m_height;
-
-		bool m_invalid = true;
-
-		ShaderResourceView m_colorBufferView;
-
 		public SingleQuad11(Device device, SlimDX.Direct3D11.Buffer colorBuffer)
 		{
-			m_tileBufferWidth = (1024 / 2) | 1;
-			m_tileBufferHeight = (1024 / 2) | 1;
-
 			m_device = device;
-
-			/* Create render target */
 
 			var context = m_device.ImmediateContext;
 
@@ -83,6 +67,10 @@ namespace Dwarrowdelf.Client.TileControl
 				new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
 			});
 
+			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
+			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
+			m_sizeVariable = m_effect.GetVariableByName("g_renderSize").AsVector();
+
 
 			/* color buffer view */
 			m_colorBufferView = new ShaderResourceView(device, colorBuffer, new ShaderResourceViewDescription()
@@ -94,7 +82,6 @@ namespace Dwarrowdelf.Client.TileControl
 			});
 
 			m_effect.GetVariableByName("g_colorBuffer").AsResource().SetResource(m_colorBufferView);
-
 
 
 			/* Create vertices */
@@ -121,19 +108,11 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 
 
-
-			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
-			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
-			m_sizeVariable = m_effect.GetVariableByName("g_size").AsVector();
-
-
-			m_worldMatrixEffectVariable = m_effect.GetVariableByName("g_world").AsMatrix();
-
 			//create world matrix
 			Matrix w = Matrix.Identity;
 			w *= Matrix.Scaling(2.0f, 2.0f, 0);
 			w *= Matrix.Translation(-1.0f, -1.0f, 0);
-			m_worldMatrixEffectVariable.SetMatrix(w);
+			m_effect.GetVariableByName("g_world").AsMatrix().SetMatrix(w);
 		}
 
 		public int TileSize
@@ -147,7 +126,8 @@ namespace Dwarrowdelf.Client.TileControl
 				else if (m_tileSize > 512)
 					m_tileSize = 512;
 
-				m_invalid = true;
+				m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize) | 1;
+				m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize) | 1;
 			}
 
 			get { return m_tileSize; }
@@ -160,12 +140,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetRenderTarget(Texture2D renderTexture)
 		{
-			m_renderTexture = renderTexture;
+			SetupRenderTarget(renderTexture);
 
-			var width = renderTexture.Description.Width;
-			var height = renderTexture.Description.Height;
-			var device = renderTexture.Device;
+			SetupTileBuffer();
 
+			m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize) | 1;
+			m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize) | 1;
+		}
+
+		void SetupRenderTarget(Texture2D renderTexture)
+		{
 			if (m_renderTargetView != null)
 			{
 				m_renderTargetView.Dispose();
@@ -178,6 +162,16 @@ namespace Dwarrowdelf.Client.TileControl
 				m_rasterizerState = null;
 			}
 
+			var renderWidth = renderTexture.Description.Width;
+			var renderHeight = renderTexture.Description.Height;
+			var device = renderTexture.Device;
+			var context = device.ImmediateContext;
+
+			/* Setup render target */
+
+			m_renderTarget = renderTexture;
+			m_renderTargetSize = new IntSize(renderWidth, renderHeight);
+
 			m_renderTargetView = new RenderTargetView(device, renderTexture);
 
 			m_rasterizerState = RasterizerState.FromDescription(device, new RasterizerStateDescription()
@@ -187,18 +181,13 @@ namespace Dwarrowdelf.Client.TileControl
 				IsDepthClipEnabled = true
 			});
 
-			var context = device.ImmediateContext;
-
 			context.OutputMerger.SetTargets(m_renderTargetView);
-			context.Rasterizer.SetViewports(new Viewport(0, 0, width, height, 0.0f, 1.0f));
+			context.Rasterizer.SetViewports(new Viewport(0, 0, renderWidth, renderHeight, 0.0f, 1.0f));
 			context.Rasterizer.State = m_rasterizerState;
+		}
 
-			m_width = width;
-			m_height = height;
-			m_tileBufferWidth = (width / 2) | 1;
-			m_tileBufferHeight = (height / 2) | 1;
-
-
+		void SetupTileBuffer()
+		{
 			if (m_tileBuffer != null)
 			{
 				m_tileBuffer.Dispose();
@@ -211,40 +200,30 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileBufferView = null;
 			}
 
-			AllocateTileBuffer(m_device, m_tileBufferWidth, m_tileBufferHeight, out m_tileBuffer, out m_tileBufferView);
+			var tileBufferWidth = (int)Math.Ceiling((double)m_renderTargetSize.Width / 2) | 1;
+			var tileBufferHeight = (int)Math.Ceiling((double)m_renderTargetSize.Height / 2) | 1;
 
-			m_effect.GetVariableByName("g_tileBuffer").AsResource().SetResource(m_tileBufferView);
-
-			var renderWidth = width;
-			var renderHeight = height;
-
-			m_columns = (int)Math.Ceiling((double)m_width / m_tileSize) | 1;
-			m_rows = (int)Math.Ceiling((double)m_height / m_tileSize) | 1;
-
-			m_invalid = true;
-		}
-
-		static void AllocateTileBuffer(Device device, int width, int height, out SlimDX.Direct3D11.Buffer tileBuffer, out ShaderResourceView tileBufferView)
-		{
 			// uint = packed tilenum
 			// uint = packed tile color
 
-			tileBuffer = new SlimDX.Direct3D11.Buffer(device, new BufferDescription()
+			m_tileBuffer = new SlimDX.Direct3D11.Buffer(m_device, new BufferDescription()
 			{
 				BindFlags = BindFlags.ShaderResource,
 				CpuAccessFlags = CpuAccessFlags.Write,
 				OptionFlags = ResourceOptionFlags.None,
-				SizeInBytes = sizeof(int) * width * height * 2,
+				SizeInBytes = sizeof(int) * tileBufferWidth * tileBufferHeight * 2,
 				Usage = ResourceUsage.Dynamic,
 			});
 
-			tileBufferView = new ShaderResourceView(device, tileBuffer, new ShaderResourceViewDescription()
+			m_tileBufferView = new ShaderResourceView(m_device, m_tileBuffer, new ShaderResourceViewDescription()
 			{
 				Format = SlimDX.DXGI.Format.R32G32_UInt,
 				Dimension = ShaderResourceViewDimension.Buffer,
-				ElementWidth = width * height,
+				ElementWidth = tileBufferWidth * tileBufferHeight,
 				ElementOffset = 0,
 			});
+
+			m_effect.GetVariableByName("g_tileBuffer").AsResource().SetResource(m_tileBufferView);
 		}
 
 		public void SetTileTextures(Texture2D textureArray)
@@ -258,68 +237,50 @@ namespace Dwarrowdelf.Client.TileControl
 				ArraySize = textureArray.Description.ArraySize,
 			});
 
-			m_numTiles = textureArray.Description.ArraySize;
-
 			m_effect.GetVariableByName("g_tileTextures").AsResource().SetResource(m_tileTextureView);
 		}
 
 		public void Render()
 		{
-			if (m_renderTargetView == null)
+			if (m_renderTargetView == null || m_tileTextureView == null || m_map == null)
 				return;
 
-			if (m_tileTextureView == null)
-				return;
+			m_sizeVariable.Set(new Vector2(m_renderTargetSize.Width, m_renderTargetSize.Height));
+			m_tileSizeVariable.Set(m_tileSize);
+			m_colrowVariable.Set(new Vector2(m_columns, m_rows));
 
-			var context = m_device.ImmediateContext;
-			m_invalid = true;
+			/* map only the required area, not the whole tilebuffer */
+			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, sizeof(int) * m_columns * m_rows * 2,
+				MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+			var stream = box.Data;
 
-			if (m_invalid)
+			for (int y = 0; y < m_rows; ++y)
 			{
-				m_columns = (int)Math.Ceiling((double)m_width / m_tileSize) | 1;
-				m_rows = (int)Math.Ceiling((double)m_height / m_tileSize) | 1;
-
-				m_sizeVariable.Set(new Vector2(m_width, m_height));
-
-				m_tileSizeVariable.Set(m_tileSize);
-
-				m_colrowVariable.Set(new Vector2(m_columns, m_rows));
-
-				//System.Diagnostics.Debug.WriteLine("{0}x{1} {2}x{3}  {4}", m_columns, m_rows, m_width, m_height, m_tileSize);
-
-				m_invalid = false;
-
-				var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, sizeof(int) * m_columns * m_rows * 2,
-					MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
-				var stream = box.Data;
-
-				for (int y = 0; y < m_rows; ++y)
+				for (int x = 0; x < m_columns; ++x)
 				{
-					for (int x = 0; x < m_columns; ++x)
-					{
-						SymbolID t1 = m_map.ArrayGrid.Grid[y, x].Floor.SymbolID;
-						SymbolID t2 = m_map.ArrayGrid.Grid[y, x].Interior.SymbolID;
-						SymbolID t3 = m_map.ArrayGrid.Grid[y, x].Object.SymbolID;
-						SymbolID t4 = m_map.ArrayGrid.Grid[y, x].Top.SymbolID;
+					SymbolID t1 = m_map.ArrayGrid.Grid[y, x].Floor.SymbolID;
+					SymbolID t2 = m_map.ArrayGrid.Grid[y, x].Interior.SymbolID;
+					SymbolID t3 = m_map.ArrayGrid.Grid[y, x].Object.SymbolID;
+					SymbolID t4 = m_map.ArrayGrid.Grid[y, x].Top.SymbolID;
 
-						GameColor c1 = m_map.ArrayGrid.Grid[y, x].Floor.Color;
-						GameColor c2 = m_map.ArrayGrid.Grid[y, x].Interior.Color;
-						GameColor c3 = m_map.ArrayGrid.Grid[y, x].Object.Color;
-						GameColor c4 = m_map.ArrayGrid.Grid[y, x].Top.Color;
+					GameColor c1 = m_map.ArrayGrid.Grid[y, x].Floor.Color;
+					GameColor c2 = m_map.ArrayGrid.Grid[y, x].Interior.Color;
+					GameColor c3 = m_map.ArrayGrid.Grid[y, x].Object.Color;
+					GameColor c4 = m_map.ArrayGrid.Grid[y, x].Top.Color;
 
-						stream.Write<int>((byte)t1 | ((byte)t2 << 8) | ((byte)t3 << 16) | ((byte)t4 << 24));	// tilenum
-						stream.Write<int>((byte)c1 | ((byte)c2 << 8) | ((byte)c3 << 16) | ((byte)c4 << 24));	// color
-					}
+					stream.Write<int>((byte)t1 | ((byte)t2 << 8) | ((byte)t3 << 16) | ((byte)t4 << 24));	// tilenum
+					stream.Write<int>((byte)c1 | ((byte)c2 << 8) | ((byte)c3 << 16) | ((byte)c4 << 24));	// color
 				}
-
-				m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
 			}
+
+			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
 
 			// XXX not needed?
 			//context.ClearRenderTargetView(m_renderTargetView, new Color4(1.0f, 0.5f, 0.5f, 0.5f));
 
 			var vertexSize = Marshal.SizeOf(typeof(MyVertex));
 
+			var context = m_device.ImmediateContext;
 			context.InputAssembler.InputLayout = m_layout;
 			context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleStrip;
 			context.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(m_vertexBuffer, vertexSize, 0));
@@ -367,7 +328,7 @@ namespace Dwarrowdelf.Client.TileControl
 				if (m_tileTextureView != null) { m_tileTextureView.Dispose(); m_tileTextureView = null; }
 				if (m_rasterizerState != null) { m_rasterizerState.Dispose(); m_rasterizerState = null; }
 				if (m_colorBufferView != null) { m_colorBufferView.Dispose(); m_colorBufferView = null; }
-				
+
 				m_disposed = true;
 			}
 		}
