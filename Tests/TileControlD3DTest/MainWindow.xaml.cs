@@ -16,6 +16,7 @@ using Dwarrowdelf.Client.TileControl;
 using Dwarrowdelf;
 using System.Windows.Media.Animation;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace TileControlD3DTest
 {
@@ -27,6 +28,7 @@ namespace TileControlD3DTest
 		RenderData<RenderTileDetailed> m_renderData;
 		int m_targetTileSize;
 		IntPoint m_centerPos;
+		DispatcherTimer m_timer;
 
 		public MainWindow()
 		{
@@ -50,6 +52,9 @@ namespace TileControlD3DTest
 
 			this.MouseWheel += new MouseWheelEventHandler(MainWindow_MouseWheel);
 			this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+
+			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
 		}
 
 		static Direction KeyToDir(Key key)
@@ -212,7 +217,9 @@ namespace TileControlD3DTest
 			var sp = e.GetPosition(tileControl);
 			var sl = ScreenPointToScreenLocation(sp);
 			var ml = ScreenLocationToMapLocation(sl);
-			//Debug.Print("{0}    scr {1}     map {2}", sp, sl, ml);
+
+			mapLocationTextBox.Text = String.Format("{0}, {1}", ml.X, ml.Y);
+			screenLocationTextBox.Text = String.Format("{0}, {1}", sl.X, sl.Y);
 
 			base.OnMouseMove(e);
 		}
@@ -258,6 +265,18 @@ namespace TileControlD3DTest
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
+		}
+
+		int m_fpsCounter;
+		void CompositionTarget_Rendering(object sender, EventArgs e)
+		{
+			m_fpsCounter++;
+		}
+
+		void OnTimerCallback(object ob, EventArgs args)
+		{
+			fpsTextBlock.Text = ((double)m_fpsCounter).ToString();
+			m_fpsCounter = 0;
 		}
 	}
 }

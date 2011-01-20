@@ -6,8 +6,22 @@
     <DockPanel>
         <ToolBar DockPanel.Dock="Top">
             <Button Content="Render" Click="Button_Click" />
-            <TextBlock Text="FPS" />
-            <TextBox Name="fpsTextBlock" />
+            
+            <Separator />
+
+            <TextBlock Text="FPS" VerticalAlignment="Center" />
+            <TextBox Width="75" Name="fpsTextBlock" IsReadOnly="True" />
+
+            <Separator />
+
+            <TextBlock VerticalAlignment="Center">ML</TextBlock>
+            <TextBox Width="75" Name="mapLocationTextBox" IsReadOnly="True" />
+
+            <Separator />
+
+            <TextBlock VerticalAlignment="Center">SL</TextBlock>
+            <TextBox Width="75" Name="screenLocationTextBox" IsReadOnly="True" />
+
         </ToolBar>
 
         <Grid>
