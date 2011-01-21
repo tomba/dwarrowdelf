@@ -32,6 +32,13 @@ namespace TileControlD3DWinFormsTest
 			InitializeComponent();
 		}
 
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed(e);
+
+			m_scene.Dispose();
+		}
+
 		protected override void OnResize(EventArgs e)
 		{
 			m_scene.Resize(this.ClientSize.Width, this.ClientSize.Height);

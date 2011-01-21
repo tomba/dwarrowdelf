@@ -25,14 +25,19 @@ namespace TileControlD3DWinFormsTest
 			SlimDX.Windows.MessagePump.Run(form, () =>
 			{
 				frames++;
-				/*
-				if (DateTime.Now >= time.AddSeconds(1))
+
+				var now = DateTime.Now;
+
+				if (now >= time.AddSeconds(1))
 				{
-					form.SetFPS(frames);
+					var td = now - time;
+
+					var fps = (int)(frames * (1000.0 / td.TotalMilliseconds));
+					//System.Diagnostics.Debug.Print("fps {0}", fps);
+
 					frames = 0;
-					time = DateTime.Now;
+					time = now;
 				}
-				*/
 
 				form.Render();
 			});

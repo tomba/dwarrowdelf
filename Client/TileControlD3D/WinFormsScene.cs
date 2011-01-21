@@ -8,7 +8,7 @@ using DXGI = SlimDX.DXGI;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class WinFormsScene
+	public class WinFormsScene : IDisposable
 	{
 		IntPtr m_handle;
 		Texture2D m_renderTarget;
@@ -50,6 +50,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Resize(int width, int height)
 		{
+			if (m_renderTarget != null) { m_renderTarget.Dispose(); m_renderTarget = null; }
+			if (m_swapChain != null) { m_swapChain.Dispose(); m_swapChain = null; }
+
 			Helpers11.CreateHwndRenderSurface(m_handle, m_device, width, height, out m_renderTarget, out m_swapChain);
 			m_scene.SetRenderTarget(m_renderTarget);
 
@@ -107,5 +110,42 @@ namespace Dwarrowdelf.Client.TileControl
 				//InvalidateRender();
 			}
 		}
+
+		#region IDisposable
+		bool m_disposed;
+
+		~WinFormsScene()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!m_disposed)
+			{
+				if (disposing)
+				{
+					// Dispose managed resources.
+				}
+
+				// Dispose unmanaged resources
+
+				if (m_scene != null) { m_scene.Dispose(); m_scene = null; }
+				if (m_renderTarget != null) { m_renderTarget.Dispose(); m_renderTarget = null; }
+				if (m_swapChain != null) { m_swapChain.Dispose(); m_swapChain = null; }
+				if (m_colorBuffer != null) { m_colorBuffer.Dispose(); m_colorBuffer = null; }
+				if (m_tileTextureArray != null) { m_tileTextureArray.Dispose(); m_tileTextureArray = null; }
+				if (m_device != null) { m_device.Dispose(); m_device = null; }
+
+				m_disposed = true;
+			}
+		}
+		#endregion
 	}
 }
