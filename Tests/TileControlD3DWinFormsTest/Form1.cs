@@ -72,6 +72,7 @@ namespace TileControlD3DWinFormsTest
 
 			Array.Clear(arr, 0, arr.Length);
 
+#if SLOW
 			foreach (var sp in m_renderData.Bounds.Range())
 			{
 				var x = sp.X;
@@ -90,6 +91,29 @@ namespace TileControlD3DWinFormsTest
 					arr[y, x].Floor.Color = GameColor.None;
 				}
 			}
+#else
+			var w = m_renderData.Bounds.Width;
+			var h = m_renderData.Bounds.Height;
+
+			for (int y = 0; y < h; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					if (x == y)
+					{
+						arr[y, x].Floor.SymbolID = SymbolID.Grass;
+						arr[y, x].Floor.Color = GameColor.None;
+						arr[y, x].Interior.SymbolID = (SymbolID)((x % 10) + 1);
+						arr[y, x].Interior.Color = (GameColor)((x % ((int)GameColor.NumColors - 1)) + 1);
+					}
+					else
+					{
+						arr[y, x].Floor.SymbolID = SymbolID.Grass;
+						arr[y, x].Floor.Color = GameColor.None;
+					}
+				}
+			}
+#endif
 
 			m_scene.Render();
 

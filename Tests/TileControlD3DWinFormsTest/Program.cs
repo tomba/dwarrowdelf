@@ -16,7 +16,7 @@ namespace TileControlD3DWinFormsTest
 			var form = new Form1();
 			form.Width = 1024;
 			form.Height = 1024;
-			//form.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+			form.WindowState = System.Windows.Forms.FormWindowState.Maximized;
 			form.Show();
 
 			int frames = 0;
@@ -33,7 +33,7 @@ namespace TileControlD3DWinFormsTest
 					var td = now - time;
 
 					var fps = (int)(frames * (1000.0 / td.TotalMilliseconds));
-					//System.Diagnostics.Debug.Print("fps {0}", fps);
+					System.Diagnostics.Trace.TraceInformation("fps {0}", fps);
 
 					frames = 0;
 					time = now;
