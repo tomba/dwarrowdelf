@@ -102,9 +102,7 @@
     <Compile Include="WinFormsScene.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SingleQuad11.fx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="SingleQuad11.fx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

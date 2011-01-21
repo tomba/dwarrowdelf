@@ -50,6 +50,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		RenderData<RenderTileDetailed> m_map;
 
+
 		public SingleQuad11(Device device, SlimDX.Direct3D11.Buffer colorBuffer)
 		{
 			m_device = device;
@@ -57,9 +58,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var context = m_device.ImmediateContext;
 
 			/* Create shader */
-
-			using (var byteCode = ShaderBytecode.CompileFromFile("SingleQuad11.fx", "fx_5_0", ShaderFlags.EnableStrictness, EffectFlags.None))
-				m_effect = new Effect(m_device, byteCode);
+			m_effect = LoadEffect(device);
 
 			m_technique = m_effect.GetTechniqueByName("full");
 			m_pass = m_technique.GetPassByIndex(0);
@@ -113,6 +112,24 @@ namespace Dwarrowdelf.Client.TileControl
 			w *= Matrix.Scaling(2.0f, 2.0f, 0);
 			w *= Matrix.Translation(-1.0f, -1.0f, 0);
 			m_effect.GetVariableByName("g_world").AsMatrix().SetMatrix(w);
+		}
+
+		static Effect LoadEffect(Device device)
+		{
+			Effect effect;
+
+			var ass = System.Reflection.Assembly.GetCallingAssembly();
+
+			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.fx"))
+			using (var reader = new System.IO.StreamReader(stream))
+			{
+				var str = reader.ReadToEnd();
+
+				using (var byteCode = ShaderBytecode.Compile(str, "fx_5_0", ShaderFlags.EnableStrictness, EffectFlags.None))
+					effect = new Effect(device, byteCode);
+			}
+
+			return effect;
 		}
 
 		public int TileSize
