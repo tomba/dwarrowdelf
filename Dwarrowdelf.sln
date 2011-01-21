@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlD3D", "Client\Ti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlD3DTest", "Tests\TileControlD3DTest\TileControlD3DTest.csproj", "{95A54C35-EE8F-4F0A-9001-48BE46165F8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlD3DWinFormsTest", "Tests\TileControlD3DWinFormsTest\TileControlD3DWinFormsTest.csproj", "{7CE7477D-9556-49EE-B552-2E63215D24E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -100,7 +102,6 @@ Global
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x64.ActiveCfg = Debug|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x64.Build.0 = Debug|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x86.ActiveCfg = Debug|x86
-		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Debug|x86.Build.0 = Debug|x86
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Release|x64.ActiveCfg = Release|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Release|x64.Build.0 = Release|x64
 		{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}.Release|x86.ActiveCfg = Release|x86
@@ -123,13 +124,15 @@ Global
 		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|x86.Build.0 = Release|x86
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|x64.ActiveCfg = Debug|x64
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|x64.Build.0 = Debug|x64
-		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|x86.ActiveCfg = Debug|x64
+		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|x86.ActiveCfg = Debug|x86
+		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|x86.Build.0 = Debug|x86
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|x64.ActiveCfg = Release|x64
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|x64.Build.0 = Release|x64
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|x86.ActiveCfg = Release|x64
 		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Debug|x64.ActiveCfg = Debug|x64
 		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Debug|x64.Build.0 = Debug|x64
-		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Debug|x86.ActiveCfg = Debug|x64
+		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Debug|x86.ActiveCfg = Debug|x86
+		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Debug|x86.Build.0 = Debug|x86
 		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Release|x64.ActiveCfg = Release|x64
 		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Release|x64.Build.0 = Release|x64
 		{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}.Release|x86.ActiveCfg = Release|x64
@@ -140,6 +143,13 @@ Global
 		{95A54C35-EE8F-4F0A-9001-48BE46165F8C}.Release|x64.ActiveCfg = Release|x86
 		{95A54C35-EE8F-4F0A-9001-48BE46165F8C}.Release|x86.ActiveCfg = Release|x86
 		{95A54C35-EE8F-4F0A-9001-48BE46165F8C}.Release|x86.Build.0 = Release|x86
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Debug|x64.ActiveCfg = Debug|x64
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Debug|x64.Build.0 = Debug|x64
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Debug|x86.ActiveCfg = Debug|x86
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Debug|x86.Build.0 = Debug|x86
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Release|x64.ActiveCfg = Release|x86
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Release|x86.ActiveCfg = Release|x86
+		{7CE7477D-9556-49EE-B552-2E63215D24E9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

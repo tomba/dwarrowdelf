@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Client.TileControl
 			this.Loaded += new RoutedEventHandler(OnLoaded);
 			this.SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
 
-			m_device = CreateDevice();
+			m_device = Helpers11.CreateDevice();
 			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
 			m_scene = new SingleQuad11(m_device, m_colorBuffer);
 
@@ -91,7 +91,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 
 			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
-			m_renderTexture = CreateTextureRenderSurface(m_device, width, height);
+			m_renderTexture = Helpers11.CreateTextureRenderSurface(m_device, width, height);
 			m_scene.SetRenderTarget(m_renderTexture);
 			m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
 		}
@@ -302,31 +302,6 @@ namespace Dwarrowdelf.Client.TileControl
 					InvalidateRender();
 				}
 			}
-		}
-
-
-		static Device CreateDevice()
-		{
-			return new Device(DriverType.Hardware, DeviceCreationFlags.Debug | DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_1);
-		}
-
-		static Texture2D CreateTextureRenderSurface(Device device, int width, int height)
-		{
-			var texDesc = new Texture2DDescription()
-			{
-				BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-				Format = DXGI.Format.B8G8R8A8_UNorm,
-				Width = width,
-				Height = height,
-				MipLevels = 1,
-				SampleDescription = new DXGI.SampleDescription(1, 0),
-				Usage = ResourceUsage.Default,
-				OptionFlags = ResourceOptionFlags.Shared,
-				CpuAccessFlags = CpuAccessFlags.None,
-				ArraySize = 1,
-			};
-
-			return new Texture2D(device, texDesc);
 		}
 
 		#region IDisposable
