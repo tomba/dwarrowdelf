@@ -110,8 +110,9 @@ namespace TileControlD3DWinFormsTest
 					}
 					else
 					{
-						arr[yoff + x].FloorSymbolID = SymbolID.Grass;
+						arr[yoff + x].FloorSymbolID = SymbolID.StairsDown;
 						arr[yoff + x].FloorColor = GameColor.None;
+						//arr[yoff + x].FloorBgColor = GameColor.Blue;
 					}
 				}
 			}

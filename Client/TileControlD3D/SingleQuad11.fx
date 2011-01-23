@@ -112,19 +112,34 @@ float3 tint(in float3 input, in uint coloridx)
 	return input;
 }
 
-float4 get(in uint tileNum, in uint colorNum, in float2 texpos)
+float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float2 texpos)
 {
 	if (tileNum == 0)
 		return float4(0, 0, 0, 0.0f);
 
 	float4 c = g_tileTextures.Sample(linearSampler, float3(texpos, tileNum));
 
-	if (colorNum == 0)
-		return c;
+	if (colorNum != 0)
+	{
+		float3 rgb = tint(c.rgb, colorNum);
 
-	float3 rgb = tint(c.rgb, colorNum);
+		c = float4(rgb, c.a);
+	}
+	
+	if (bgColorNum != 0)
+	{
+		int bgi = g_colorBuffer.Load(bgColorNum);
 
-	return float4(rgb, c.a);
+		float3 bg;
+		bg.r = (bgi >> 16) & 0xff;
+		bg.g = (bgi >> 8) & 0xff;
+		bg.b = (bgi >> 0) & 0xff;
+		bg /= 255.0f;
+
+		c = float4(c.rgb * c.a + bg.rgb * (1.0f - c.a), 1.0f);
+	}
+
+	return c;
 }
 
 float4 PS( PS_IN input ) : SV_Target
@@ -152,21 +167,28 @@ float4 PS( PS_IN input ) : SV_Target
 	int t3 = (tileNum34 >> 0) & 0xffff;
 	int t4 = (tileNum34 >> 16) & 0xffff;
 
-	//int colorNum = td.colornum;
+	int colorNum = td.colornum;
 
-	int ci1 = 0; //(colorNum >> 0) & 0xff;
-	int ci2 = 0; //(colorNum >> 8) & 0xff;
-	int ci3 = 0; //(colorNum >> 16) & 0xff;
-	int ci4 = 0; //(colorNum >> 24) & 0xff;
+	int ci1 = (colorNum >> 0) & 0xff;
+	int ci2 = (colorNum >> 8) & 0xff;
+	int ci3 = (colorNum >> 16) & 0xff;
+	int ci4 = (colorNum >> 24) & 0xff;
+
+	int bgColorNum = td.bgcolornum;
+
+	int bi1 = (bgColorNum >> 0) & 0xff;
+	int bi2 = (bgColorNum >> 8) & 0xff;
+	int bi3 = (bgColorNum >> 16) & 0xff;
+	int bi4 = (bgColorNum >> 24) & 0xff;
 
 	float2 texpos = xy / g_tileSize;
 
 	float4 c1, c2, c3, c4;
 
-	c1 = get(t1, ci1, texpos);
-	c2 = get(t2, ci2, texpos);
-	c3 = get(t3, ci3, texpos);
-	c4 = get(t4, ci4, texpos);
+	c1 = get(t1, ci1, bi1, texpos);
+	c2 = get(t2, ci2, bi2, texpos);
+	c3 = get(t3, ci3, bi3, texpos);
+	c4 = get(t4, ci4, bi4, texpos);
 
 	float3 c;
 	c = c1.rgb;
