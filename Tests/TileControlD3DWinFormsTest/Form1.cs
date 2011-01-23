@@ -17,7 +17,7 @@ namespace TileControlD3DWinFormsTest
 		WinFormsScene m_scene;
 
 		SymbolDrawingCache m_symbolDrawingCache;
-		RenderData<RenderTileDetailed> m_renderData;
+		RenderDataD3D<RenderTileDetailedD3D> m_renderData;
 
 		public Form1()
 		{
@@ -26,7 +26,7 @@ namespace TileControlD3DWinFormsTest
 			m_symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			m_scene.SymbolDrawingCache = m_symbolDrawingCache;
 
-			m_renderData = new RenderData<RenderTileDetailed>();
+			m_renderData = new RenderDataD3D<RenderTileDetailedD3D>();
 			m_scene.SetRenderData(m_renderData);
 
 			InitializeComponent();
@@ -68,9 +68,9 @@ namespace TileControlD3DWinFormsTest
 
 		public void Render()
 		{
-			var arr = m_renderData.ArrayGrid.Grid;
+			m_renderData.Clear();
 
-			Array.Clear(arr, 0, arr.Length);
+			var arr = m_renderData.ArrayGrid;
 
 #if SLOW
 			foreach (var sp in m_renderData.Bounds.Range())
@@ -92,24 +92,26 @@ namespace TileControlD3DWinFormsTest
 				}
 			}
 #else
-			var w = m_renderData.Bounds.Width;
-			var h = m_renderData.Bounds.Height;
+			var w = m_renderData.Size.Width;
+			var h = m_renderData.Size.Height;
 
 			for (int y = 0; y < h; ++y)
 			{
+				int yoff = y * w;
+
 				for (int x = 0; x < w; ++x)
 				{
 					if (x == y)
 					{
-						arr[y, x].Floor.SymbolID = SymbolID.Grass;
-						arr[y, x].Floor.Color = GameColor.None;
-						arr[y, x].Interior.SymbolID = (SymbolID)((x % 10) + 1);
-						arr[y, x].Interior.Color = (GameColor)((x % ((int)GameColor.NumColors - 1)) + 1);
+						arr[yoff + x].FloorSymbolID = SymbolID.Grass;
+						arr[yoff + x].FloorColor = GameColor.None;
+						arr[yoff + x].InteriorSymbolID = (SymbolID)((x % 10) + 1);
+						arr[yoff + x].InteriorColor = (GameColor)((x % ((int)GameColor.NumColors - 1)) + 1);
 					}
 					else
 					{
-						arr[y, x].Floor.SymbolID = SymbolID.Grass;
-						arr[y, x].Floor.Color = GameColor.None;
+						arr[yoff + x].FloorSymbolID = SymbolID.Grass;
+						arr[yoff + x].FloorColor = GameColor.None;
 					}
 				}
 			}

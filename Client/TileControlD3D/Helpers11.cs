@@ -199,10 +199,10 @@ namespace Dwarrowdelf.Client.TileControl
 				colorBuffer = new SlimDX.Direct3D11.Buffer(device, stream, new BufferDescription()
 				{
 					BindFlags = BindFlags.ShaderResource,
-					CpuAccessFlags = CpuAccessFlags.Write,
+					CpuAccessFlags = CpuAccessFlags.None,
 					OptionFlags = ResourceOptionFlags.None,
 					SizeInBytes = sizeof(int) * arr.Length,
-					Usage = ResourceUsage.Dynamic,
+					Usage = ResourceUsage.Immutable,
 				});
 			}
 

@@ -7,8 +7,10 @@ int g_tileSize;
 
 struct TileData
 {
-	int tilenum;
+	int tilenum12;
+	int tilenum34;
 	int colornum;
+	int bgcolornum;
 };
 
 Texture2DArray g_tileTextures;
@@ -139,22 +141,23 @@ float4 PS( PS_IN input ) : SV_Target
 	TileData td;
 
 	td = g_tileBuffer.Load(tilepos.y * g_colrow.x + tilepos.x);
-	int tileNum = td.tilenum;
+	int tileNum12 = td.tilenum12;
+	int tileNum34 = td.tilenum34;
 
-	if (tileNum == 0)
+	if (tileNum12 == 0 && tileNum34 == 0)
 		return float4(0, 1.0f, 0, 1.0f);
 
-	int t1 = (tileNum >> 0) & 0xff;
-	int t2 = (tileNum >> 8) & 0xff;
-	int t3 = (tileNum >> 16) & 0xff;
-	int t4 = (tileNum >> 24) & 0xff;
+	int t1 = (tileNum12 >> 0) & 0xffff;
+	int t2 = (tileNum12 >> 16) & 0xffff;
+	int t3 = (tileNum34 >> 0) & 0xffff;
+	int t4 = (tileNum34 >> 16) & 0xffff;
 
-	int colorNum = td.colornum;
+	//int colorNum = td.colornum;
 
-	int ci1 = (colorNum >> 0) & 0xff;
-	int ci2 = (colorNum >> 8) & 0xff;
-	int ci3 = (colorNum >> 16) & 0xff;
-	int ci4 = (colorNum >> 24) & 0xff;
+	int ci1 = 0; //(colorNum >> 0) & 0xff;
+	int ci2 = 0; //(colorNum >> 8) & 0xff;
+	int ci3 = 0; //(colorNum >> 16) & 0xff;
+	int ci4 = 0; //(colorNum >> 24) & 0xff;
 
 	float2 texpos = xy / g_tileSize;
 
