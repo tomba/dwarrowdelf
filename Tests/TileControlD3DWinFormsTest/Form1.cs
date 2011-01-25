@@ -17,7 +17,7 @@ namespace TileControlD3DWinFormsTest
 		WinFormsScene m_scene;
 
 		SymbolDrawingCache m_symbolDrawingCache;
-		RenderDataD3D<RenderTileDetailedD3D> m_renderData;
+		RenderData<RenderTileDetailedD3D> m_renderData;
 
 		public Form1()
 		{
@@ -26,7 +26,7 @@ namespace TileControlD3DWinFormsTest
 			m_symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			m_scene.SymbolDrawingCache = m_symbolDrawingCache;
 
-			m_renderData = new RenderDataD3D<RenderTileDetailedD3D>();
+			m_renderData = new RenderData<RenderTileDetailedD3D>();
 			m_scene.SetRenderData(m_renderData);
 
 			InitializeComponent();
@@ -70,7 +70,7 @@ namespace TileControlD3DWinFormsTest
 		{
 			m_renderData.Clear();
 
-			var arr = m_renderData.ArrayGrid;
+			var arr = m_renderData.ArrayGrid.Grid;
 
 #if SLOW
 			foreach (var sp in m_renderData.Bounds.Range())
@@ -97,22 +97,20 @@ namespace TileControlD3DWinFormsTest
 
 			for (int y = 0; y < h; ++y)
 			{
-				int yoff = y * w;
-
 				for (int x = 0; x < w; ++x)
 				{
 					if (x == y)
 					{
-						arr[yoff + x].FloorSymbolID = SymbolID.Grass;
-						arr[yoff + x].FloorColor = GameColor.None;
-						arr[yoff + x].InteriorSymbolID = (SymbolID)((x % 10) + 1);
-						arr[yoff + x].InteriorColor = (GameColor)((x % ((int)GameColor.NumColors - 1)) + 1);
+						arr[y, x].FloorSymbolID = SymbolID.Grass;
+						arr[y, x].FloorColor = GameColor.None;
+						arr[y, x].InteriorSymbolID = (SymbolID)((x % 10) + 1);
+						arr[y, x].InteriorColor = (GameColor)((x % ((int)GameColor.NumColors - 1)) + 1);
 					}
 					else
 					{
-						arr[yoff + x].FloorSymbolID = SymbolID.StairsDown;
-						arr[yoff + x].FloorColor = GameColor.None;
-						//arr[yoff + x].FloorBgColor = GameColor.Blue;
+						arr[y, x].FloorSymbolID = SymbolID.StairsDown;
+						arr[y, x].FloorColor = GameColor.None;
+						//arr[y, x].FloorBgColor = GameColor.Blue;
 					}
 				}
 			}

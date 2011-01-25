@@ -13,41 +13,6 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class RenderDataD3D<T> : IRenderData where T : struct
-	{
-		IntSize m_size;
-		T[] m_grid;
-
-		public RenderDataD3D()
-		{
-			m_size = new IntSize();
-			m_grid = new T[0];
-		}
-
-		public IntSize Size
-		{
-			get { return m_size; }
-
-			set
-			{
-				if (m_size == value)
-					return;
-
-				m_grid = new T[value.Width * value.Height];
-				m_size = value;
-			}
-		}
-
-		public IntRect Bounds { get { return new IntRect(new IntPoint(0, 0), m_size); } }
-
-		public T[] ArrayGrid { get { return m_grid; } }
-
-		public void Clear()
-		{
-			Array.Clear(m_grid, 0, m_grid.Length);
-		}
-	}
-
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RenderTileDetailedD3D
 	{
@@ -107,7 +72,7 @@ namespace Dwarrowdelf.Client.TileControl
 		ShaderResourceView m_tileTextureView;
 		ShaderResourceView m_colorBufferView;
 
-		RenderDataD3D<RenderTileDetailedD3D> m_map;
+		RenderData<RenderTileDetailedD3D> m_map;
 
 
 		public SingleQuad11(Device device, SlimDX.Direct3D11.Buffer colorBuffer)
@@ -209,7 +174,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public void SetRenderData(RenderDataD3D<RenderTileDetailedD3D> renderData)
+		public void SetRenderData(RenderData<RenderTileDetailedD3D> renderData)
 		{
 			m_map = renderData;
 		}
@@ -323,23 +288,36 @@ namespace Dwarrowdelf.Client.TileControl
 			m_tileSizeVariable.Set(m_tileSize);
 			m_colrowVariable.Set(new Vector2(m_columns, m_rows));
 
+			var arr = m_map.ArrayGrid.Grid;
+			var arrLen = arr.Length;
+			var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
+
 #if asd
-			using (var stream = new DataStream(m_map.ArrayGrid, true, false))
+			unsafe
 			{
-				var dataBox = new DataBox(0, //m_map.Size.Width * Marshal.SizeOf(typeof(RenderTileDetailedD3D)), 
-					0, stream);
-				var region = new ResourceRegion(0, 0, 0, Marshal.SizeOf(typeof(RenderTileDetailedD3D)) * m_columns * m_rows, 1, 1);
-				m_device.ImmediateContext.UpdateSubresource(dataBox, m_tileBuffer, 0, region);
+				fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+				{
+					using (var stream = new DataStream((IntPtr)p, arrLen * elemSize, true, false))
+					{
+						var dataBox = new DataBox(elemSize * arrLen, elemSize * arrLen, stream);
+						var region = new ResourceRegion(0, 0, 0, arrLen * elemSize, 1, 1);
+						m_device.ImmediateContext.UpdateSubresource(dataBox, m_tileBuffer, 0, region);
+					}
+				}
 			}
 #else
 
 			/* map only the required area, not the whole tilebuffer */
-			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0,
-				m_columns * m_rows * Marshal.SizeOf(typeof(RenderTileDetailedD3D)),
-				MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, m_columns * m_rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
 			var stream = box.Data;
 
-			stream.WriteRange(m_map.ArrayGrid);
+			unsafe
+			{
+				fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+				{
+					stream.WriteRange((IntPtr)p, arrLen * elemSize);
+				}
+			}
 
 			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
 #endif

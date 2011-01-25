@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.TileControl
 		Device m_device;
 		Texture2D m_renderTexture;
 
-		RenderDataD3D<RenderTileDetailedD3D> m_map;
+		RenderData<RenderTileDetailedD3D> m_map;
 		ISymbolDrawingCache m_symbolDrawingCache;
 		Texture2D m_tileTextureArray;
 
@@ -267,10 +267,10 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetRenderData(IRenderData renderData)
 		{
-			if (!(renderData is RenderDataD3D<RenderTileDetailedD3D>))
+			if (!(renderData is RenderData<RenderTileDetailedD3D>))
 				throw new NotSupportedException();
 
-			m_map = (RenderDataD3D<RenderTileDetailedD3D>)renderData;
+			m_map = (RenderData<RenderTileDetailedD3D>)renderData;
 			m_map.Size = new IntSize(m_columns, m_rows);
 
 			if (m_scene != null)
