@@ -11,10 +11,11 @@ struct TileData
 	int tilenum34;
 	int colornum;
 	int bgcolornum;
+	int darkness;
 };
 
 Texture2DArray g_tileTextures;
-Buffer<TileData> g_tileBuffer;
+StructuredBuffer<TileData> g_tileBuffer;
 Buffer<int> g_colorBuffer;		// GameColor -> RGB
 
 SamplerState linearSampler
@@ -112,7 +113,7 @@ float3 tint(in float3 input, in uint coloridx)
 	return input;
 }
 
-float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float2 texpos)
+float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkness, in float2 texpos)
 {
 	if (tileNum == 0)
 		return float4(0, 0, 0, 0.0f);
@@ -139,6 +140,8 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float2 texp
 		c = float4(c.rgb * c.a + bg.rgb * (1.0f - c.a), 1.0f);
 	}
 
+	c.rgb = (1.0f - darkness) * c.rgb;
+
 	return c;
 }
 
@@ -155,7 +158,7 @@ float4 PS( PS_IN input ) : SV_Target
 	
 	TileData td;
 
-	td = g_tileBuffer.Load(tilepos.y * g_colrow.x + tilepos.x);
+	td = g_tileBuffer[tilepos.y * g_colrow.x + tilepos.x];
 	int tileNum12 = td.tilenum12;
 	int tileNum34 = td.tilenum34;
 
@@ -168,27 +171,31 @@ float4 PS( PS_IN input ) : SV_Target
 	int t4 = (tileNum34 >> 16) & 0xffff;
 
 	int colorNum = td.colornum;
-
 	int ci1 = (colorNum >> 0) & 0xff;
 	int ci2 = (colorNum >> 8) & 0xff;
 	int ci3 = (colorNum >> 16) & 0xff;
 	int ci4 = (colorNum >> 24) & 0xff;
 
 	int bgColorNum = td.bgcolornum;
-
 	int bi1 = (bgColorNum >> 0) & 0xff;
 	int bi2 = (bgColorNum >> 8) & 0xff;
 	int bi3 = (bgColorNum >> 16) & 0xff;
 	int bi4 = (bgColorNum >> 24) & 0xff;
 
+	int darkness = td.darkness;
+	float d1 = ((darkness >> 0) & 0xff) / 255.0f;
+	float d2 = ((darkness >> 8) & 0xff) / 255.0f;
+	float d3 = ((darkness >> 16) & 0xff) / 255.0f;
+	float d4 = ((darkness >> 24) & 0xff) / 255.0f;
+
 	float2 texpos = xy / g_tileSize;
 
 	float4 c1, c2, c3, c4;
 
-	c1 = get(t1, ci1, bi1, texpos);
-	c2 = get(t2, ci2, bi2, texpos);
-	c3 = get(t3, ci3, bi3, texpos);
-	c4 = get(t4, ci4, bi4, texpos);
+	c1 = get(t1, ci1, bi1, d1, texpos);
+	c2 = get(t2, ci2, bi2, d2, texpos);
+	c3 = get(t3, ci3, bi3, d3, texpos);
+	c4 = get(t4, ci4, bi4, d4, texpos);
 
 	float3 c;
 	c = c1.rgb;
@@ -196,7 +203,6 @@ float4 PS( PS_IN input ) : SV_Target
 	c = c3.rgb * c3.a + c.rgb * (1.0f - c3.a);
 	c = c4.rgb * c4.a + c.rgb * (1.0f - c4.a);
 
-	//c1.a = 1.0f; return c1;
 	return float4(c, 1.0f);
 }
 

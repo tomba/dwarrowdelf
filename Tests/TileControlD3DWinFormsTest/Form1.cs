@@ -112,6 +112,8 @@ namespace TileControlD3DWinFormsTest
 						arr[y, x].FloorColor = GameColor.None;
 						//arr[y, x].FloorBgColor = GameColor.Blue;
 					}
+
+					//arr[y, x].FloorDarkness = (byte)x;
 				}
 			}
 #endif

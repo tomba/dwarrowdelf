@@ -30,11 +30,11 @@ namespace Dwarrowdelf.Client.TileControl
 		public GameColor InteriorBgColor;
 		public GameColor ObjectBgColor;
 		public GameColor TopBgColor;
-		/*
+
 		public byte FloorDarkness;
 		public byte InteriorDarkness;
 		public byte ObjectDarkness;
-		public byte TopDarkness;*/
+		public byte TopDarkness;
 	}
 
 	class SingleQuad11 : IDisposable
@@ -249,14 +249,15 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				BindFlags = BindFlags.ShaderResource,
 				CpuAccessFlags = CpuAccessFlags.Write,
-				OptionFlags = ResourceOptionFlags.None,
+				OptionFlags = ResourceOptionFlags.StructuredBuffer,
 				SizeInBytes = tileBufferWidth * tileBufferHeight * Marshal.SizeOf(typeof(RenderTileDetailedD3D)),
+				StructureByteStride = Marshal.SizeOf(typeof(RenderTileDetailedD3D)),
 				Usage = ResourceUsage.Dynamic,
 			});
 
 			m_tileBufferView = new ShaderResourceView(m_device, m_tileBuffer, new ShaderResourceViewDescription()
 			{
-				Format = SlimDX.DXGI.Format.R32G32B32A32_UInt,
+				Format = SlimDX.DXGI.Format.Unknown,
 				Dimension = ShaderResourceViewDimension.Buffer,
 				ElementWidth = tileBufferWidth * tileBufferHeight,
 				ElementOffset = 0,
