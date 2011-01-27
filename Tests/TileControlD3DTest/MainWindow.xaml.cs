@@ -25,7 +25,7 @@ namespace TileControlD3DTest
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		RenderData<RenderTileDetailed> m_renderData;
+		RenderData<RenderTileDetailedD3D> m_renderData;
 		int m_targetTileSize;
 		IntPoint m_centerPos;
 		DispatcherTimer m_timer;
@@ -45,7 +45,7 @@ namespace TileControlD3DTest
 			var symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			tileControl.SymbolDrawingCache = symbolDrawingCache;
 
-			m_renderData = new RenderData<RenderTileDetailed>();
+			m_renderData = new RenderData<RenderTileDetailedD3D>();
 			tileControl.SetRenderData(m_renderData);
 			tileControl.TileSize = 32;
 			m_targetTileSize = tileControl.TileSize;
@@ -243,15 +243,15 @@ namespace TileControlD3DTest
 
 				if (mp.X == mp.Y)
 				{
-					arr[y, x].Floor.SymbolID = SymbolID.Grass;
-					arr[y, x].Floor.Color = GameColor.None;
-					arr[y, x].Interior.SymbolID = (SymbolID)((mp.X % 10) + 1);
-					arr[y, x].Interior.Color = (GameColor)((mp.X % ((int)GameColor.NumColors - 1)) + 1);
+					arr[y, x].FloorSymbolID = SymbolID.Grass;
+					arr[y, x].FloorColor = GameColor.None;
+					arr[y, x].InteriorSymbolID = (SymbolID)((mp.X % 10) + 1);
+					arr[y, x].InteriorColor = (GameColor)((mp.X % ((int)GameColor.NumColors - 1)) + 1);
 				}
 				else
 				{
-					arr[y, x].Floor.SymbolID = SymbolID.Grass;
-					arr[y, x].Floor.Color = GameColor.None;
+					arr[y, x].FloorSymbolID = SymbolID.Grass;
+					arr[y, x].FloorColor = GameColor.None;
 				}
 				//arr[y, x].Interior.SymbolID = (SymbolID)(id + 1);
 			}
