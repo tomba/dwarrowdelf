@@ -3,20 +3,20 @@ matrix g_world;
 float2 g_colrow;	/* columns, rows */
 float2 g_renderSize;		/* width, height */
 
-int g_tileSize;
+uint g_tileSize;
 
 struct TileData
 {
-	int tilenum12;
-	int tilenum34;
-	int colornum;
-	int bgcolornum;
-	int darkness;
+	uint tilenum12;
+	uint tilenum34;
+	uint colornum;
+	uint bgcolornum;
+	uint darkness;
 };
 
 Texture2DArray g_tileTextures;
 StructuredBuffer<TileData> g_tileBuffer;
-Buffer<int> g_colorBuffer;		// GameColor -> RGB
+Buffer<uint> g_colorBuffer;		// GameColor -> RGB
 
 SamplerState linearSampler
 {
@@ -93,7 +93,7 @@ float3 RGBtoHSV(in float3 RGB)
 
 float3 tint(in float3 input, in uint coloridx)
 {
-	int tinti = g_colorBuffer.Load(coloridx);
+	uint tinti = g_colorBuffer.Load(coloridx);
 	
 	float3 tint;
 
@@ -129,7 +129,7 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 	
 	if (bgColorNum != 0)
 	{
-		int bgi = g_colorBuffer.Load(bgColorNum);
+		uint bgi = g_colorBuffer.Load(bgColorNum);
 
 		float3 bg;
 		bg.r = (bgi >> 16) & 0xff;
@@ -159,30 +159,30 @@ float4 PS( PS_IN input ) : SV_Target
 	TileData td;
 
 	td = g_tileBuffer[tilepos.y * g_colrow.x + tilepos.x];
-	int tileNum12 = td.tilenum12;
-	int tileNum34 = td.tilenum34;
+	uint tileNum12 = td.tilenum12;
+	uint tileNum34 = td.tilenum34;
 
 	if (tileNum12 == 0 && tileNum34 == 0)
 		return float4(0, 1.0f, 0, 1.0f);
 
-	int t1 = (tileNum12 >> 0) & 0xffff;
-	int t2 = (tileNum12 >> 16) & 0xffff;
-	int t3 = (tileNum34 >> 0) & 0xffff;
-	int t4 = (tileNum34 >> 16) & 0xffff;
+	uint t1 = (tileNum12 >> 0) & 0xffff;
+	uint t2 = (tileNum12 >> 16) & 0xffff;
+	uint t3 = (tileNum34 >> 0) & 0xffff;
+	uint t4 = (tileNum34 >> 16) & 0xffff;
 
-	int colorNum = td.colornum;
-	int ci1 = (colorNum >> 0) & 0xff;
-	int ci2 = (colorNum >> 8) & 0xff;
-	int ci3 = (colorNum >> 16) & 0xff;
-	int ci4 = (colorNum >> 24) & 0xff;
+	uint colorNum = td.colornum;
+	uint ci1 = (colorNum >> 0) & 0xff;
+	uint ci2 = (colorNum >> 8) & 0xff;
+	uint ci3 = (colorNum >> 16) & 0xff;
+	uint ci4 = (colorNum >> 24) & 0xff;
 
-	int bgColorNum = td.bgcolornum;
-	int bi1 = (bgColorNum >> 0) & 0xff;
-	int bi2 = (bgColorNum >> 8) & 0xff;
-	int bi3 = (bgColorNum >> 16) & 0xff;
-	int bi4 = (bgColorNum >> 24) & 0xff;
+	uint bgColorNum = td.bgcolornum;
+	uint bi1 = (bgColorNum >> 0) & 0xff;
+	uint bi2 = (bgColorNum >> 8) & 0xff;
+	uint bi3 = (bgColorNum >> 16) & 0xff;
+	uint bi4 = (bgColorNum >> 24) & 0xff;
 
-	int darkness = td.darkness;
+	uint darkness = td.darkness;
 	float d1 = ((darkness >> 0) & 0xff) / 255.0f;
 	float d2 = ((darkness >> 8) & 0xff) / 255.0f;
 	float d3 = ((darkness >> 16) & 0xff) / 255.0f;
