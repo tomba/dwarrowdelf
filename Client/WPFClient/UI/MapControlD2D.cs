@@ -50,35 +50,40 @@ namespace Dwarrowdelf.Client
 			base.OnInitialized(e);
 
 			m_tileControlD2D = new TileControl.TileControlD2D();
-			m_tileControlD2D.TileArrangementChanged += OnTileArrangementChanged;
+			m_tileControlD2D.TileLayoutChanged += OnTileArrangementChanged;
 			m_tileControlD2D.AboutToRender += OnAboutToRender;
 			AddChild(m_tileControlD2D);
 
-
-			//m_renderViewSimple = new RenderViewSimple();
 			m_renderViewDetailed = new RenderViewDetailed();
 
 			m_renderView = m_renderViewDetailed;
-			//m_renderView = m_renderViewSimple;
 			m_tileControlD2D.SetRenderData(m_renderView.RenderData);
 		}
 
-		void OnAboutToRender()
+		void OnTileArrangementChanged(IntSize gridSize)
 		{
+			System.Diagnostics.Debug.Print("OnTileArrangementChanged({0})", gridSize);
+
+			var renderData = m_renderViewDetailed.RenderData;
+			if (renderData.Size != gridSize)
+				renderData.Size = gridSize;
+
+			if (TileArrangementChanged != null)
+				TileArrangementChanged();
+		}
+
+		void OnAboutToRender(Size newSize)
+		{
+			System.Diagnostics.Debug.Print("OnAboutToRender({0})", newSize);
+
 			if (m_env == null)
 				return;
 
 			m_renderViewDetailed.Resolve();
 		}
 
-		void OnTileArrangementChanged()
-		{
-			if (TileArrangementChanged != null)
-				TileArrangementChanged();
-		}
-
-		public int Columns { get { return m_tileControlD2D.Columns; } }
-		public int Rows { get { return m_tileControlD2D.Rows; } }
+		public int Columns { get { return m_tileControlD2D.GridSize.Width; } }
+		public int Rows { get { return m_tileControlD2D.GridSize.Height; } }
 
 		public void InvalidateTiles()
 		{
@@ -97,16 +102,12 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_tileSize = value;
-				/*
-				if (m_tileSize < 8)
-					m_renderView = m_renderViewSimple;
-				else*/
-					m_renderView = m_renderViewDetailed;
+
+				m_renderView = m_renderViewDetailed;
 
 				m_renderView.CenterPos = new IntPoint3D(m_centerPos, this.Z);
 				m_renderView.Environment = m_env;
 
-				//m_tileControlD2D.SetRenderData(m_renderView.RenderData);
 				m_tileControlD2D.TileSize = value;
 			}
 		}

@@ -1,22 +1,22 @@
 ﻿using System;
+using System.Windows;
 
 namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ITileControl
 	{
-		int Columns { get; }
-		int Rows { get; }
+		double TileSize { get; set; }
+		IntSize GridSize { get; }
 
 		void SetRenderData(IRenderData renderData);
-		int TileSize { get; set; }
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 
 		void InvalidateRender();
 
-		System.Windows.Point ScreenLocationToScreenPoint(Dwarrowdelf.IntPoint loc);
-		Dwarrowdelf.IntPoint ScreenPointToScreenLocation(System.Windows.Point p);
+		Point ScreenLocationToScreenPoint(IntPoint loc);
+		IntPoint ScreenPointToScreenLocation(Point p);
 
-		event Action TileArrangementChanged;
-		event Action AboutToRender;
+		event Action<IntSize> TileLayoutChanged;
+		event Action<Size> AboutToRender;
 	}
 }

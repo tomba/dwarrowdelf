@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : UserControl, ITileControl
+	public class TileControlD2D : FrameworkElement, ITileControl
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -39,23 +39,18 @@ namespace Dwarrowdelf.Client.TileControl
 
 		D2DD3DImage m_interopImageSource;
 
-		int m_columns;
-		int m_rows;
-
-		// XXX REMVOE??
-		public int Columns { get { return m_columns; } }
-		public int Rows { get { return m_rows; } }
-
+		IntSize m_gridSize;
 		int m_tileSize;
 
 		IntPoint m_renderOffset;
 
-		bool m_invalidateRender;
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
 
-		public event Action TileArrangementChanged;
-		public event Action AboutToRender;
+		bool m_tileLayoutInvalid;
+		bool m_tileRenderInvalid;
+
+		public event Action<IntSize> TileLayoutChanged;
+		public event Action<Size> AboutToRender;
 
 		public TileControlD2D()
 		{
@@ -64,15 +59,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_interopImageSource = new D2DD3DImage();
 
-			var image = new Image();
-			image.Source = m_interopImageSource;
-			image.Stretch = System.Windows.Media.Stretch.None;
-			image.HorizontalAlignment = HorizontalAlignment.Left;
-			image.VerticalAlignment = VerticalAlignment.Top;
-			this.Content = image;
-
 			this.Loaded += new RoutedEventHandler(OnLoaded);
-			this.SizeChanged += new SizeChangedEventHandler(OnSizeChanged);
 		}
 
 		void OnLoaded(object sender, RoutedEventArgs e)
@@ -96,51 +83,103 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
 			m_interopImageSource.OnRender = this.DoRenderCallback;
 
-			m_invalidateRender = true;
+			m_tileLayoutInvalid = true;
+			m_tileRenderInvalid = true;
+
+			// This seems to initialize the imagesource...
+			m_interopImageSource.SetPixelSize(0, 0);
 		}
 
-		void OnSizeChanged(object sender, SizeChangedEventArgs e)
-		{
-			trace.TraceInformation("OnSizeChanged({0})", e.NewSize);
 
-			UpdateSizes(e.NewSize, m_tileSize);
+
+		public double TileSize
+		{
+			get { return m_tileSize; }
+			set
+			{
+				var ts = (int)value;
+
+				if (ts == m_tileSize)
+					return;
+
+				trace.TraceInformation("TileSize = {0}", ts);
+
+				m_tileSize = ts;
+
+				if (m_renderer != null)
+					m_renderer.TileSizeChanged(ts);
+
+				UpdateTileLayout(this.RenderSize);
+			}
+		}
+
+		public IntSize GridSize
+		{
+			get { return m_gridSize; }
+		}
+
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+			trace.TraceInformation("ArrangeOverride({0})", arrangeBounds);
+
+			var renderSize = arrangeBounds;
+			var renderWidth = (int)Math.Ceiling(renderSize.Width);
+			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+
+			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+				UpdateTileLayout(renderSize);
+
+			return base.ArrangeOverride(arrangeBounds);
 		}
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
 			trace.TraceInformation("OnRender");
 
-			if (m_invalidateRender)
+			var renderSize = this.RenderSize;
+			var renderWidth = (int)Math.Ceiling(renderSize.Width);
+			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+
+			if (m_tileLayoutInvalid)
 			{
-				m_interopImageSource.Lock();
-				m_interopImageSource.RequestRender();
-				m_interopImageSource.Unlock();
+				if (TileLayoutChanged != null)
+					TileLayoutChanged(m_gridSize);
+
+				m_tileLayoutInvalid = false;
 			}
+
+			if (m_tileRenderInvalid)
+			{
+				if (this.AboutToRender != null)
+					this.AboutToRender(renderSize);
+
+				m_interopImageSource.Lock();
+
+				if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+					m_interopImageSource.SetPixelSize((uint)renderWidth, (uint)renderHeight); // implicit render
+				else
+					m_interopImageSource.RequestRender();
+
+				m_interopImageSource.Unlock();
+
+				m_tileRenderInvalid = false;
+			}
+
+			drawingContext.DrawImage(m_interopImageSource, new System.Windows.Rect(renderSize));
+
+			trace.TraceInformation("OnRender End");
 		}
 
 		public void InvalidateRender()
 		{
-			m_invalidateRender = true;
-			InvalidateVisual();
-		}
-
-		public int TileSize
-		{
-			get { return m_tileSize; }
-			set
+			if (m_tileRenderInvalid == false)
 			{
-				if (value == m_tileSize)
-					return;
-
-				trace.TraceInformation("TileSize = {0}", value);
-
-				m_tileSize = value;
-
-				m_renderer.TileSizeChanged(value);
-
-				UpdateSizes(this.RenderSize, m_tileSize);
+				trace.TraceInformation("InvalidateRender");
+				m_tileRenderInvalid = true;
+				InvalidateVisual();
 			}
 		}
+
 
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
@@ -156,59 +195,25 @@ namespace Dwarrowdelf.Client.TileControl
 			return p;
 		}
 
-		/// <summary>
-		/// When TileControl size changes or TileSize changes
-		/// </summary>
-		void UpdateSizes(Size viewSize, int tileSize)
+		void UpdateTileLayout(Size renderSize)
 		{
-			var columns = (int)Math.Ceiling(viewSize.Width / tileSize) | 1;
-			var rows = (int)Math.Ceiling(viewSize.Height / tileSize) | 1;
+			var renderWidth = (int)Math.Ceiling(renderSize.Width);
+			var renderHeight = (int)Math.Ceiling(renderSize.Height);
 
-			bool invalidate = false;
+			var columns = (int)Math.Ceiling(renderSize.Width / m_tileSize) | 1;
+			var rows = (int)Math.Ceiling(renderSize.Height / m_tileSize) | 1;
+			m_gridSize = new IntSize(columns, rows);
 
-			if (columns != m_columns || rows != m_rows)
-			{
-				trace.TraceInformation("Columns x Rows = {0}x{1}", columns, rows);
+			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
+			var renderOffsetY = (int)(renderHeight - m_tileSize * m_gridSize.Height) / 2;
+			m_renderOffset = new IntPoint(renderOffsetX, renderOffsetY);
 
-				m_columns = columns;
-				m_rows = rows;
+			m_tileLayoutInvalid = true;
 
-				invalidate = true;
-			}
+			trace.TraceInformation("UpdateTileLayout({0}, {1}, {2}) -> Off {3}, Grid {4}", renderSize, m_gridSize, m_tileSize,
+				m_renderOffset, m_gridSize);
 
-			var renderWidth = (int)Math.Ceiling(viewSize.Width);
-			var renderHeight = (int)Math.Ceiling(viewSize.Height);
-
-			var renderOffsetX = (int)(renderWidth - tileSize * columns) / 2;
-			var renderOffsetY = (int)(renderHeight - tileSize * rows) / 2;
-			var renderOffset = new IntPoint(renderOffsetX, renderOffsetY);
-
-			if (renderOffset != m_renderOffset)
-			{
-				trace.TraceInformation("RenderOffset {0}", m_renderOffset);
-
-				m_renderOffset = renderOffset;
-
-				invalidate = true;
-			}
-
-			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-				SetPixelSize(renderWidth, renderHeight);
-			else if (invalidate)
-				InvalidateRender();
-
-			if (TileArrangementChanged != null)
-				TileArrangementChanged();
-		}
-
-		void SetPixelSize(int width, int height)
-		{
-			trace.TraceInformation("SetPixelSize({0}, {1})", width, height);
-
-			m_interopImageSource.Lock();
-			// implicit render
-			m_interopImageSource.SetPixelSize((uint)width, (uint)height);
-			m_interopImageSource.Unlock();
+			InvalidateRender();
 		}
 
 		IRenderer m_renderer;
@@ -257,8 +262,6 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceInformation("DoRender");
 
-			m_invalidateRender = false;
-
 			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
 			{
 				trace.TraceInformation("Create Render Target");
@@ -300,14 +303,11 @@ namespace Dwarrowdelf.Client.TileControl
 				return;
 			}
 
-			if (AboutToRender != null)
-				AboutToRender();
-
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
 			m_renderTarget.Transform = Matrix3x2F.Translation(m_renderOffset.X, m_renderOffset.Y);
 
-			m_renderer.Render(m_renderTarget, m_columns, m_rows, m_tileSize);
+			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, m_tileSize);
 
 			m_renderTarget.Transform = Matrix3x2F.Identity;
 

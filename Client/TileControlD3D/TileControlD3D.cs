@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD3D");
 
-		public event Action TileArrangementChanged;
+		public event Action TileLayoutChanged;
 		public event Action AboutToRender;
 
 		Device m_device;
@@ -247,8 +247,8 @@ namespace Dwarrowdelf.Client.TileControl
 			else if (invalidate)
 				InvalidateRender();
 			
-			if (TileArrangementChanged != null)
-				TileArrangementChanged();
+			if (TileLayoutChanged != null)
+				TileLayoutChanged();
 		}
 
 		void SetPixelSize(int width, int height)

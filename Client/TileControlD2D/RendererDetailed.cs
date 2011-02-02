@@ -128,8 +128,6 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_bitmapCache == null)
 				m_bitmapCache = new SymbolBitmapCache(m_symbolDrawingCache, tileSize);
 
-			m_renderData.Size = new IntSize(columns, rows);
-
 			if (m_atlasBitmap == null)
 				CreateAtlas(renderTarget, tileSize);
 
