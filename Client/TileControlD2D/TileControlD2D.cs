@@ -52,6 +52,9 @@ namespace Dwarrowdelf.Client.TileControl
 		public event Action<IntSize> TileLayoutChanged;
 		public event Action<Size> AboutToRender;
 
+		IRenderer m_renderer;
+		ISymbolDrawingCache m_symbolDrawingCache;
+
 		public TileControlD2D()
 		{
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
@@ -92,22 +95,20 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		public double TileSize
+		public int TileSize
 		{
 			get { return m_tileSize; }
 			set
 			{
-				var ts = (int)value;
-
-				if (ts == m_tileSize)
+				if (value == m_tileSize)
 					return;
 
-				trace.TraceInformation("TileSize = {0}", ts);
+				trace.TraceInformation("TileSize = {0}", value);
 
-				m_tileSize = ts;
+				m_tileSize = value;
 
 				if (m_renderer != null)
-					m_renderer.TileSizeChanged(ts);
+					m_renderer.TileSizeChanged(value);
 
 				UpdateTileLayout(this.RenderSize);
 			}
@@ -216,8 +217,6 @@ namespace Dwarrowdelf.Client.TileControl
 			InvalidateRender();
 		}
 
-		IRenderer m_renderer;
-
 		public void SetRenderData(IRenderData renderData)
 		{
 			IRenderer renderer;
@@ -230,8 +229,6 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderer = renderer;
 			InvalidateRender();
 		}
-
-		ISymbolDrawingCache m_symbolDrawingCache;
 
 		public ISymbolDrawingCache SymbolDrawingCache
 		{

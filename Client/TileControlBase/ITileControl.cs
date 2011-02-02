@@ -5,7 +5,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ITileControl
 	{
-		double TileSize { get; set; }
+		int TileSize { get; set; }
 		IntSize GridSize { get; }
 
 		void SetRenderData(IRenderData renderData);

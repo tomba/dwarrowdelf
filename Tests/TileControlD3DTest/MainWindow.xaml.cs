@@ -39,8 +39,8 @@ namespace TileControlD3DTest
 		{
 			base.OnInitialized(e);
 
-			tileControl.AboutToRender += new Action(tileControl_AboutToRender);
-			tileControl.TileArrangementChanged += new Action(tileControl_TileArrangementChanged);
+			tileControl.AboutToRender += tileControl_AboutToRender;
+			tileControl.TileLayoutChanged += tileControl_TileArrangementChanged;
 
 			var symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			tileControl.SymbolDrawingCache = symbolDrawingCache;
@@ -96,7 +96,7 @@ namespace TileControlD3DTest
 
 		void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-#if !old
+#if old
 			var ts = m_targetTileSize;
 
 			if (e.Delta > 0)
@@ -148,22 +148,12 @@ namespace TileControlD3DTest
 			{
 				m_centerPos = value;
 				tileControl.InvalidateRender();
-				tileControl_TileArrangementChanged();
+				tileControl_TileArrangementChanged(tileControl.GridSize); // XXX
 			}
 		}
 
-		void tileControl_TileArrangementChanged()
-		{
-			rect.Width = tileControl.TileSize;
-			rect.Height = tileControl.TileSize;
-			var mp = MapLocationToScreenLocation(new IntPoint(5, 5));
-			var p = tileControl.ScreenLocationToScreenPoint(mp);
-			Canvas.SetLeft(rect, p.X);
-			Canvas.SetTop(rect, p.Y);
-		}
-
-		int Columns { get { return tileControl.Columns; } }
-		int Rows { get { return tileControl.Rows; } }
+		int Columns { get { return tileControl.GridSize.Width; } }
+		int Rows { get { return tileControl.GridSize.Height; } }
 
 		IntPoint TopLeftPos
 		{
@@ -225,7 +215,19 @@ namespace TileControlD3DTest
 			base.OnMouseMove(e);
 		}
 
-		void tileControl_AboutToRender()
+		void tileControl_TileArrangementChanged(IntSize gridSize)
+		{
+			m_renderData.Size = gridSize;
+
+			rect.Width = tileControl.TileSize;
+			rect.Height = tileControl.TileSize;
+			var mp = MapLocationToScreenLocation(new IntPoint(5, 5));
+			var p = tileControl.ScreenLocationToScreenPoint(mp);
+			Canvas.SetLeft(rect, p.X);
+			Canvas.SetTop(rect, p.Y);
+		}
+
+		void tileControl_AboutToRender(Size renderSize)
 		{
 			var arr = m_renderData.ArrayGrid.Grid;
 
