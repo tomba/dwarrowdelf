@@ -171,9 +171,14 @@ namespace Dwarrowdelf.Client.TileControl
 				else if (m_tileSize > 512)
 					m_tileSize = 512;
 
-				m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize) | 1;
-				m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize) | 1;
+				UpdateRowsColumns();
 			}
+		}
+
+		void UpdateRowsColumns()
+		{
+			m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize + 1) | 1;
+			m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize + 1) | 1;
 		}
 
 		public System.Windows.Vector RenderOffset { get; set; }
@@ -189,8 +194,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			SetupTileBuffer();
 
-			m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize) | 1;
-			m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize) | 1;
+			UpdateRowsColumns();
 		}
 
 		void SetupRenderTarget(Texture2D renderTexture)
@@ -246,8 +250,8 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 
 			int minTileSize = 2;
-			var tileBufferWidth = (int)Math.Ceiling((double)m_renderTargetSize.Width / minTileSize) | 1;
-			var tileBufferHeight = (int)Math.Ceiling((double)m_renderTargetSize.Height / minTileSize) | 1;
+			var tileBufferWidth = (int)Math.Ceiling((double)m_renderTargetSize.Width / minTileSize + 1) | 1;
+			var tileBufferHeight = (int)Math.Ceiling((double)m_renderTargetSize.Height / minTileSize + 1) | 1;
 
 			m_tileBuffer = new SlimDX.Direct3D11.Buffer(m_device, new BufferDescription()
 			{

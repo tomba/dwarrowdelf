@@ -237,8 +237,8 @@ namespace Dwarrowdelf.Client.TileControl
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
 
-			var columns = (int)Math.Ceiling(renderSize.Width / m_tileSize) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / m_tileSize) | 1;
+			var columns = (int)Math.Ceiling(renderSize.Width / m_tileSize + 1) | 1;
+			var rows = (int)Math.Ceiling(renderSize.Height / m_tileSize + 1) | 1;
 			m_gridSize = new IntSize(columns, rows);
 
 			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
