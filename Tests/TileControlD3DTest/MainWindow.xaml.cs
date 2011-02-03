@@ -117,14 +117,14 @@ namespace TileControlD3DTest
 				default:
 					var diff = new IntVector(-10, -10);
 
-					var anim2 = new PointAnimation(this.CenterPos - new Vector(diff.X, diff.Y), new Duration(TimeSpan.FromMilliseconds(2000)));
-					this.BeginAnimation(MainWindow.CenterPosProperty, anim2);
+					var anim2 = new PointAnimation(tileControl.CenterPos - new Vector(diff.X, diff.Y), new Duration(TimeSpan.FromMilliseconds(2000)));
+					this.BeginAnimation(TileControlD3D.CenterPosProperty, anim2);
 
 					return;
 			}
 
 			//this.CenterPos += (v * 4);
-			this.CenterPos += new Vector(v.X, v.Y) / 10;
+			tileControl.CenterPos += new Vector(v.X, v.Y) / 10;
 		}
 
 		void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -148,7 +148,7 @@ namespace TileControlD3DTest
 			m_targetTileSize = targetTileSize;
 
 
-			var origCenter = this.CenterPos;
+			var origCenter = tileControl.CenterPos;
 
 			var p = e.GetPosition(tileControl);
 
@@ -156,7 +156,7 @@ namespace TileControlD3DTest
 			v /= targetTileSize;
 			v = new Vector(Math.Round(v.X), -Math.Round(v.Y));
 
-			var ml = ScreenPointToMapLocation(p);
+			var ml = tileControl.ScreenPointToMapLocation(p);
 			ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
 			var targetCenter = ml - v;
 
@@ -171,7 +171,7 @@ namespace TileControlD3DTest
 			else
 				anim2.AccelerationRatio = 1.0;
 
-			this.BeginAnimation(MainWindow.CenterPosProperty, anim2);
+			tileControl.BeginAnimation(TileControlD3D.CenterPosProperty, anim2);
 
 			Debug.Print("Anim Size {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 
@@ -205,95 +205,11 @@ namespace TileControlD3DTest
 
 
 
-		public Point CenterPos
-		{
-			get { return (Point)GetValue(CenterPosProperty); }
-			set { SetValue(CenterPosProperty, value); }
-		}
-
-		// Using a DependencyProperty as the backing store for CenterPosProperty.  This enables animation, styling, binding, etc...
-		public static readonly DependencyProperty CenterPosProperty =
-			DependencyProperty.Register("CenterPos", typeof(Point), typeof(MainWindow), new UIPropertyMetadata(new Point(), OnCenterPosChanged));
-
-		bool m_mapDataInvalid;
-
-		static void OnCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			MainWindow tc = (MainWindow)d;
-
-			Point p = (Point)e.NewValue;
-			Point po = (Point)e.OldValue;
-
-			var x = Math.Round(p.X);
-			var y = Math.Round(p.Y);
-			var ox = (p.X - x) * tc.tileControl.TileSize;
-			var oy = (p.Y - y) * tc.tileControl.TileSize;
-			Debug.Print("CenterPos {0:F2}    {1},{2}   {3:F2},{4:F2}", p, x, y, ox, oy);
-
-			// XXX
-			//if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
-			{
-				tc.tileControl.InvalidateMapData();
-				tc.m_mapDataInvalid = true;
-			}
-
-			tc.tileControl.RequestedOffset = new Vector(-ox, oy);
-
-			tc.tileControl.InvalidateRender();
-			tc.tileControl_TileArrangementChanged(tc.tileControl.GridSize); // XXX
-		}
-
-		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
-
-		public Point MapLocationToScreenLocation(Point ml)
-		{
-			var gridSize = tileControl.GridSize;
-
-			var p = ml - this.ScreenMapDiff;
-			p = new Point(p.X, -p.Y);
-			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
-
-			return p;
-		}
-
-		public Point ScreenLocationToMapLocation(Point sl)
-		{
-			var gridSize = tileControl.GridSize;
-
-			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
-			v = new Point(v.X, -v.Y);
-			v += this.ScreenMapDiff;
-
-			return v;
-		}
-
-		public Point ScreenPointToMapLocation(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
-		}
-
-		public Point MapLocationToScreenPoint(Point ml)
-		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
-		}
-
-		public Point ScreenPointToScreenLocation(Point p)
-		{
-			return tileControl.ScreenPointToScreenLocation(p);
-		}
-
-		public Point ScreenLocationToScreenPoint(Point loc)
-		{
-			return tileControl.ScreenLocationToScreenPoint(loc);
-		}
-
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			var sp = e.GetPosition(tileControl);
-			var sl = ScreenPointToScreenLocation(sp);
-			var ml = ScreenLocationToMapLocation(sl);
+			var sl = tileControl.ScreenPointToScreenLocation(sp);
+			var ml = tileControl.ScreenLocationToMapLocation(sl);
 
 			mapLocationTextBox.Text = String.Format("{0:F2}, {1:F2}", ml.X, ml.Y);
 			screenLocationTextBox.Text = String.Format("{0:F2}, {1:F2}", sl.X, sl.Y);
@@ -303,6 +219,8 @@ namespace TileControlD3DTest
 
 			base.OnMouseMove(e);
 		}
+
+		bool m_mapDataInvalid; // XXX trigger from centerpos?
 
 		void tileControl_TileArrangementChanged(IntSize gridSize)
 		{
@@ -315,7 +233,7 @@ namespace TileControlD3DTest
 
 			rect.Width = tileControl.TileSize;
 			rect.Height = tileControl.TileSize;
-			var mp = MapLocationToScreenLocation(new Point(5, 5));
+			var mp = tileControl.MapLocationToScreenLocation(new Point(5, 5));
 			var p = tileControl.ScreenLocationToScreenPoint(mp);
 			Canvas.SetLeft(rect, p.X);
 			Canvas.SetTop(rect, p.Y);
@@ -324,8 +242,8 @@ namespace TileControlD3DTest
 
 		void tileControl_AboutToRender(Size renderSize)
 		{
-			if (!m_mapDataInvalid)
-				return;
+			//if (!m_mapDataInvalid)
+			//	return;
 
 			m_mapDataInvalid = false;
 
@@ -335,7 +253,7 @@ namespace TileControlD3DTest
 
 			foreach (var sp in m_renderData.Bounds.Range())
 			{
-				var mp = ScreenLocationToMapLocation(new Point(sp.X, sp.Y));
+				var mp = tileControl.ScreenLocationToMapLocation(new Point(sp.X, sp.Y));
 
 				var x = sp.X;
 				var y = sp.Y;

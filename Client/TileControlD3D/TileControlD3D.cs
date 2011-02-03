@@ -20,10 +20,8 @@ namespace Dwarrowdelf.Client.TileControl
 		SingleQuad11 m_scene;
 
 		IntSize m_gridSize;
-		double m_tileSize;
 
 		Point m_renderOffset;
-		Vector m_requestedOffset;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD3D");
 
@@ -100,51 +98,100 @@ namespace Dwarrowdelf.Client.TileControl
 
 			tc.trace.TraceInformation("TileSize = {0}", ts);
 
-			tc.m_tileSize = ts;
+			tc.UpdateTileLayout(tc.RenderSize);
+		}
 
-			if (tc.m_scene != null)
-				tc.m_scene.TileSize = (float)ts;
+
+
+
+
+
+		public Point CenterPos
+		{
+			get { return (Point)GetValue(CenterPosProperty); }
+			set { SetValue(CenterPosProperty, value); }
+		}
+
+		public static readonly DependencyProperty CenterPosProperty =
+			DependencyProperty.Register("CenterPos", typeof(Point), typeof(TileControlD3D), new UIPropertyMetadata(new Point(), OnCenterPosChanged));
+
+
+		static void OnCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var tc = (TileControlD3D)d;
+
+			var p = (Point)e.NewValue;
+			var po = (Point)e.OldValue;
+
+			var x = Math.Round(p.X);
+			var y = Math.Round(p.Y);
+			tc.trace.TraceVerbose("CenterPos {0:F2}    {1},{2}", p, x, y);
+
+			// XXX
+			//if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
+			{
+				tc.InvalidateMapData();
+				//tc.m_mapDataInvalid = true;
+			}
+
+			//tc.tileControl_TileArrangementChanged(tc.tileControl.GridSize); // XXX
 
 			tc.UpdateTileLayout(tc.RenderSize);
 		}
 
-		/*
-		public int TileSize
+
+
+
+		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
+
+		public Point MapLocationToScreenLocation(Point ml)
 		{
-			get { return m_tileSize; }
-			set
-			{
-				if (value == m_tileSize)
-					return;
+			var gridSize = this.GridSize;
 
-				trace.TraceInformation("TileSize = {0}", value);
+			var p = ml - this.ScreenMapDiff;
+			p = new Point(p.X, -p.Y);
+			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
 
-				m_tileSize = value;
-
-				if (m_scene != null)
-					m_scene.TileSize = value;
-
-				UpdateTileLayout(this.RenderSize);
-			}
+			return p;
 		}
-		*/
 
-		public Vector RequestedOffset
+		public Point ScreenLocationToMapLocation(Point sl)
 		{
-			get { return m_requestedOffset; }
+			var gridSize = this.GridSize;
 
-			set
-			{
-				m_requestedOffset = value;
+			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
+			v = new Point(v.X, -v.Y);
+			v += this.ScreenMapDiff;
 
-				trace.TraceInformation("RequestedOffset = {0}", value);
-
-				if (m_scene != null)
-					m_scene.RenderOffset = value;
-
-				UpdateTileLayout(this.RenderSize);
-			}
+			return v;
 		}
+
+		public Point ScreenPointToMapLocation(Point p)
+		{
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
+		}
+
+		public Point MapLocationToScreenPoint(Point ml)
+		{
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public Point ScreenPointToScreenLocation(Point p)
+		{
+			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
+		}
+
+		public Point ScreenLocationToScreenPoint(Point loc)
+		{
+			loc.Offset(0.5, 0.5);
+			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return p;
+		}
+
 
 
 		public IntSize GridSize
@@ -218,36 +265,35 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 
-		public Point ScreenPointToScreenLocation(Point p)
-		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
-		}
-
-		public Point ScreenLocationToScreenPoint(Point loc)
-		{
-			loc.Offset(0.5, 0.5);
-			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return p;
-		}
-
 		void UpdateTileLayout(Size renderSize)
 		{
+			var tileSize = this.TileSize;
+
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
 
-			var columns = (int)Math.Ceiling(renderSize.Width / m_tileSize + 1) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / m_tileSize + 1) | 1;
+			var columns = (int)Math.Ceiling(renderSize.Width / tileSize + 1) | 1;
+			var rows = (int)Math.Ceiling(renderSize.Height / tileSize + 1) | 1;
 			m_gridSize = new IntSize(columns, rows);
 
-			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
-			var renderOffsetY = (int)(renderHeight - m_tileSize * m_gridSize.Height) / 2;
-			m_renderOffset = new Point(renderOffsetX, renderOffsetY) + m_requestedOffset;
+			var renderOffsetX = (int)(renderWidth - tileSize * m_gridSize.Width) / 2;
+			var renderOffsetY = (int)(renderHeight - tileSize * m_gridSize.Height) / 2;
+
+			var cx = -(this.CenterPos.X - Math.Round(this.CenterPos.X)) * this.TileSize;
+			var cy = (this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
+
+			m_renderOffset = new Point(renderOffsetX + cx, renderOffsetY + cy);
+
+			if (m_scene != null)
+			{
+				m_scene.RenderOffset = new Vector(m_renderOffset.X, m_renderOffset.Y);
+				m_scene.TileSize = (float)tileSize;
+			}
+
 
 			m_tileLayoutInvalid = true;
 
-			trace.TraceInformation("UpdateTileLayout({0}, {1}, {2}) -> Off {3}, Grid {4}", renderSize, m_gridSize, m_tileSize,
+			trace.TraceInformation("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, m_gridSize, tileSize,
 				m_renderOffset, m_gridSize);
 
 			InvalidateRender();

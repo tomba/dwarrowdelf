@@ -60,7 +60,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		EffectScalarVariable m_tileSizeVariable;
 		EffectVectorVariable m_colrowVariable;
-		EffectVectorVariable m_sizeVariable;
 		EffectVectorVariable m_renderOffsetVariable;
 
 		float m_tileSize = 32;
@@ -93,7 +92,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
 			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
-			m_sizeVariable = m_effect.GetVariableByName("g_renderSize").AsVector();
 			m_renderOffsetVariable = m_effect.GetVariableByName("g_renderOffset").AsVector();
 
 
@@ -300,7 +298,6 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_renderTargetView == null || m_tileTextureView == null || m_map == null)
 				return;
 
-			m_sizeVariable.Set(new Vector2(m_renderTargetSize.Width, m_renderTargetSize.Height));
 			m_tileSizeVariable.Set(m_tileSize);
 			m_colrowVariable.Set(new Vector2(m_columns, m_rows));
 			m_renderOffsetVariable.Set(new Vector2((float)this.RenderOffset.X, (float)this.RenderOffset.Y));
