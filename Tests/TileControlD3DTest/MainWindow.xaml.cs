@@ -26,8 +26,7 @@ namespace TileControlD3DTest
 	public partial class MainWindow : Window
 	{
 		RenderData<RenderTileDetailedD3D> m_renderData;
-		int m_targetTileSize;
-		IntPoint m_centerPos;
+		double m_targetTileSize;
 		DispatcherTimer m_timer;
 
 		public MainWindow()
@@ -55,6 +54,25 @@ namespace TileControlD3DTest
 
 			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+
+			line1.X1 = 0;
+			line1.X2 = 0;
+			line1.Y1 = 0;
+			line1.Y2 = tileControl.ActualHeight;
+			Canvas.SetTop(line1, 0);
+			Canvas.SetLeft(line1, tileControl.ActualWidth / 2);
+
+			line2.X1 = 0;
+			line2.X2 = tileControl.ActualWidth;
+			line2.Y1 = 0;
+			line2.Y2 = 0;
+			Canvas.SetLeft(line2, 0);
+			Canvas.SetBottom(line2, tileControl.ActualHeight / 2);
 		}
 
 		static Direction KeyToDir(Key key)
@@ -88,117 +106,185 @@ namespace TileControlD3DTest
 				case Key.Down: v = new IntVector(0, -1); break;
 				case Key.Left: v = new IntVector(-1, 0); break;
 				case Key.Right: v = new IntVector(1, 0); break;
-				default: return;
+				case Key.Add:
+					tileControl.TileSize += 1;
+					return;
+
+				case Key.Subtract:
+					tileControl.TileSize -= 1;
+					return;
+
+				default:
+					var diff = new IntVector(-10, -10);
+
+					var anim2 = new PointAnimation(this.CenterPos - new Vector(diff.X, diff.Y), new Duration(TimeSpan.FromMilliseconds(2000)));
+					this.BeginAnimation(MainWindow.CenterPosProperty, anim2);
+
+					return;
 			}
 
-			this.CenterPos += (v * 4);
+			//this.CenterPos += (v * 4);
+			this.CenterPos += new Vector(v.X, v.Y) / 10;
 		}
 
 		void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
 		{
-#if old
-			var ts = m_targetTileSize;
+#if !old
+			var origTileSize = m_targetTileSize;
+
+			var targetTileSize = origTileSize;
 
 			if (e.Delta > 0)
-				ts *= 2;
+				targetTileSize *= 2;
 			else
-				ts /= 2;
+				targetTileSize /= 2;
 
-			if (ts < 2)
-				ts = 2;
+			if (targetTileSize < 2)
+				targetTileSize = 2;
 
-			m_targetTileSize = ts;
+			if (origTileSize == targetTileSize)
+				return;
 
-			var anim = new Int32Animation(ts, new Duration(TimeSpan.FromMilliseconds(200)));
-			tileControl.BeginAnimation(TileControlD3D.TileSizeProperty, anim);
-			//	tileControl.TileSize = ts;
-#else
+			m_targetTileSize = targetTileSize;
+
+
+			var origCenter = this.CenterPos;
 
 			var p = e.GetPosition(tileControl);
-			var ml1 = ScreenPointToMapLocation(p);
 
-			var ts = tileControl.TileSize;
+			Vector v = p - new Point(tileControl.ActualWidth / 2, tileControl.ActualHeight / 2);
+			v /= targetTileSize;
+			v = new Vector(Math.Round(v.X), -Math.Round(v.Y));
+
+			var ml = ScreenPointToMapLocation(p);
+			ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
+			var targetCenter = ml - v;
+
+			targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
+
+			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)));
+			tileControl.BeginAnimation(TileControlD3D.TileSizeProperty, anim);
+
+			var anim2 = new PointAnimation(targetCenter, new Duration(TimeSpan.FromMilliseconds(200)));
+			if (e.Delta > 0)
+				anim2.DecelerationRatio = 1.0;
+			else
+				anim2.AccelerationRatio = 1.0;
+
+			this.BeginAnimation(MainWindow.CenterPosProperty, anim2);
+
+			Debug.Print("Anim Size {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
+
+#else
+			var targetTileSize = tileControl.TileSize;
 
 			if (e.Delta > 0)
-				ts *= 2;
+				targetTileSize *= 2;
 			else
-				ts /= 2;
+				targetTileSize /= 2;
 
-			if (ts < 2)
-				ts = 2;
+			if (targetTileSize < 2)
+				targetTileSize = 2;
 
-			tileControl.TileSize = ts;
 
-			var ml2 = ScreenPointToMapLocation(p);
-			var d = ml2 - this.CenterPos;
-			var l = ml1 - d;
+			var p = e.GetPosition(tileControl);
 
-			this.CenterPos = l;
+			Vector v = p - new Point(tileControl.ActualWidth / 2, tileControl.ActualHeight / 2);
+			v /= targetTileSize;
+			v = new Vector(Math.Round(v.X), -Math.Round(v.Y));
+
+			var ml = ScreenPointToMapLocation(p);
+			ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
+			var targetCenter = ml - v;
+			targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
+
+			this.CenterPos = targetCenter;
+			tileControl.TileSize = targetTileSize;
 #endif
 		}
 
-		IntPoint CenterPos
+
+
+		public Point CenterPos
 		{
-			get
+			get { return (Point)GetValue(CenterPosProperty); }
+			set { SetValue(CenterPosProperty, value); }
+		}
+
+		// Using a DependencyProperty as the backing store for CenterPosProperty.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty CenterPosProperty =
+			DependencyProperty.Register("CenterPos", typeof(Point), typeof(MainWindow), new UIPropertyMetadata(new Point(), OnCenterPosChanged));
+
+		bool m_mapDataInvalid;
+
+		static void OnCenterPosChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			MainWindow tc = (MainWindow)d;
+
+			Point p = (Point)e.NewValue;
+			Point po = (Point)e.OldValue;
+
+			var x = Math.Round(p.X);
+			var y = Math.Round(p.Y);
+			var ox = (p.X - x) * tc.tileControl.TileSize;
+			var oy = (p.Y - y) * tc.tileControl.TileSize;
+			Debug.Print("CenterPos {0:F2}    {1},{2}   {3:F2},{4:F2}", p, x, y, ox, oy);
+
+			// XXX
+			//if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
 			{
-				return m_centerPos;
+				tc.tileControl.InvalidateMapData();
+				tc.m_mapDataInvalid = true;
 			}
 
-			set
-			{
-				m_centerPos = value;
-				tileControl.InvalidateRender();
-				tileControl_TileArrangementChanged(tileControl.GridSize); // XXX
-			}
+			tc.tileControl.RequestedOffset = new Vector(-ox, oy);
+
+			tc.tileControl.InvalidateRender();
+			tc.tileControl_TileArrangementChanged(tc.tileControl.GridSize); // XXX
 		}
 
-		int Columns { get { return tileControl.GridSize.Width; } }
-		int Rows { get { return tileControl.GridSize.Height; } }
+		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
 
-		IntPoint TopLeftPos
+		public Point MapLocationToScreenLocation(Point ml)
 		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
+			var gridSize = tileControl.GridSize;
+
+			var p = ml - this.ScreenMapDiff;
+			p = new Point(p.X, -p.Y);
+			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
+
+			return p;
 		}
 
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		public Point ScreenLocationToMapLocation(Point sl)
 		{
-			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
+			var gridSize = tileControl.GridSize;
+
+			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
+			v = new Point(v.X, -v.Y);
+			v += this.ScreenMapDiff;
+
+			return v;
 		}
 
-		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
-		{
-			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
-		}
-		/*
-
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
-		{
-			return new IntPoint(ml.X, -ml.Y) - new IntVector(m_centerPos.X, -m_centerPos.Y) + new IntVector(m_renderData.Size.Width / 2, m_renderData.Size.Height / 2);
-		}
-
-		public IntPoint ScreenLocationToMapLocation(IntPoint sp)
-		{
-			return sp + new IntVector(m_centerPos.X, m_centerPos.Y) - new IntVector(m_renderData.Size.Width / 2, m_renderData.Size.Height / 2);
-		}
-		*/
-		public IntPoint ScreenPointToMapLocation(Point p)
+		public Point ScreenPointToMapLocation(Point p)
 		{
 			var sl = ScreenPointToScreenLocation(p);
 			return ScreenLocationToMapLocation(sl);
 		}
 
-		public Point MapLocationToScreenPoint(IntPoint ml)
+		public Point MapLocationToScreenPoint(Point ml)
 		{
 			var sl = MapLocationToScreenLocation(ml);
 			return ScreenLocationToScreenPoint(sl);
 		}
 
-		public IntPoint ScreenPointToScreenLocation(Point p)
+		public Point ScreenPointToScreenLocation(Point p)
 		{
 			return tileControl.ScreenPointToScreenLocation(p);
 		}
 
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		public Point ScreenLocationToScreenPoint(Point loc)
 		{
 			return tileControl.ScreenLocationToScreenPoint(loc);
 		}
@@ -209,46 +295,62 @@ namespace TileControlD3DTest
 			var sl = ScreenPointToScreenLocation(sp);
 			var ml = ScreenLocationToMapLocation(sl);
 
-			mapLocationTextBox.Text = String.Format("{0}, {1}", ml.X, ml.Y);
-			screenLocationTextBox.Text = String.Format("{0}, {1}", sl.X, sl.Y);
+			mapLocationTextBox.Text = String.Format("{0:F2}, {1:F2}", ml.X, ml.Y);
+			screenLocationTextBox.Text = String.Format("{0:F2}, {1:F2}", sl.X, sl.Y);
+
+			mapLocationITextBox.Text = String.Format("{0:F0}, {1:F0}", ml.X, ml.Y);
+			screenLocationITextBox.Text = String.Format("{0:F0}, {1:F0}", sl.X, sl.Y);
 
 			base.OnMouseMove(e);
 		}
 
 		void tileControl_TileArrangementChanged(IntSize gridSize)
 		{
-			m_renderData.Size = gridSize;
+			if (m_renderData.Size != gridSize)
+			{
+				m_renderData.Size = gridSize;
+				tileControl.InvalidateMapData();
+				m_mapDataInvalid = true;
+			}
 
 			rect.Width = tileControl.TileSize;
 			rect.Height = tileControl.TileSize;
-			var mp = MapLocationToScreenLocation(new IntPoint(5, 5));
+			var mp = MapLocationToScreenLocation(new Point(5, 5));
 			var p = tileControl.ScreenLocationToScreenPoint(mp);
 			Canvas.SetLeft(rect, p.X);
 			Canvas.SetTop(rect, p.Y);
+
 		}
 
 		void tileControl_AboutToRender(Size renderSize)
 		{
+			if (!m_mapDataInvalid)
+				return;
+
+			m_mapDataInvalid = false;
+
 			var arr = m_renderData.ArrayGrid.Grid;
 
 			Array.Clear(arr, 0, arr.Length);
 
 			foreach (var sp in m_renderData.Bounds.Range())
 			{
-				var mp = ScreenLocationToMapLocation(sp);
+				var mp = ScreenLocationToMapLocation(new Point(sp.X, sp.Y));
 
 				var x = sp.X;
 				var y = sp.Y;
+				int mx = (int)Math.Round(mp.X);
+				int my = (int)Math.Round(mp.Y);
 
-				if (mp.X < 0 || mp.Y < 0 || mp.X >= 128 || mp.Y >= 128)
+				if (mx < 0 || my < 0 || mx >= 128 || my >= 128)
 					continue;
 
-				if (mp.X == mp.Y)
+				if (mx == my)
 				{
 					arr[y, x].FloorSymbolID = SymbolID.Grass;
 					arr[y, x].FloorColor = GameColor.None;
-					arr[y, x].InteriorSymbolID = (SymbolID)((mp.X % 10) + 1);
-					arr[y, x].InteriorColor = (GameColor)((mp.X % ((int)GameColor.NumColors - 1)) + 1);
+					arr[y, x].InteriorSymbolID = (SymbolID)((mx % 10) + 1);
+					arr[y, x].InteriorColor = (GameColor)((mx % ((int)GameColor.NumColors - 1)) + 1);
 				}
 				else
 				{

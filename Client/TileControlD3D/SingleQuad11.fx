@@ -2,8 +2,9 @@ matrix g_world;
 
 float2 g_colrow;	/* columns, rows */
 float2 g_renderSize;		/* width, height */
+float2 g_renderOffset;
 
-uint g_tileSize;
+float g_tileSize;
 
 struct TileData
 {
@@ -149,7 +150,7 @@ float4 PS( PS_IN input ) : SV_Target
 {
 	float2 pos = input.pos.xy;
 
-	float2 xy = pos - (g_renderSize - g_colrow * g_tileSize) / 2;
+	float2 xy = pos - (g_renderSize - g_colrow * g_tileSize) / 2 - g_renderOffset;
 
 	if (xy.x < 0 || xy.y < 0 || xy.x >= g_colrow.x * g_tileSize || xy.y >= g_colrow.y * g_tileSize)
 		return float4(1.0f, 0, 0, 1.0f);

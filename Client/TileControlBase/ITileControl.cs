@@ -5,7 +5,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ITileControl
 	{
-		int TileSize { get; set; }
+		double TileSize { get; set; }
 		IntSize GridSize { get; }
 
 		void SetRenderData(IRenderData renderData);
@@ -13,8 +13,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void InvalidateRender();
 
-		Point ScreenLocationToScreenPoint(IntPoint loc);
-		IntPoint ScreenPointToScreenLocation(Point p);
+		Point ScreenLocationToScreenPoint(Point loc);
+		Point ScreenPointToScreenLocation(Point p);
 
 		event Action<IntSize> TileLayoutChanged;
 		event Action<Size> AboutToRender;

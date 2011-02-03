@@ -61,8 +61,9 @@ namespace Dwarrowdelf.Client.TileControl
 		EffectScalarVariable m_tileSizeVariable;
 		EffectVectorVariable m_colrowVariable;
 		EffectVectorVariable m_sizeVariable;
+		EffectVectorVariable m_renderOffsetVariable;
 
-		int m_tileSize = 32;
+		float m_tileSize = 32;
 		int m_columns;
 		int m_rows;
 
@@ -93,6 +94,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
 			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
 			m_sizeVariable = m_effect.GetVariableByName("g_renderSize").AsVector();
+			m_renderOffsetVariable = m_effect.GetVariableByName("g_renderOffset").AsVector();
 
 
 			/* color buffer view */
@@ -156,7 +158,7 @@ namespace Dwarrowdelf.Client.TileControl
 			return effect;
 		}
 
-		public int TileSize
+		public float TileSize
 		{
 			get { return m_tileSize; }
 
@@ -173,6 +175,8 @@ namespace Dwarrowdelf.Client.TileControl
 				m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize) | 1;
 			}
 		}
+
+		public System.Windows.Vector RenderOffset { get; set; }
 
 		public void SetRenderData(RenderData<RenderTileDetailedD3D> renderData)
 		{
@@ -280,6 +284,13 @@ namespace Dwarrowdelf.Client.TileControl
 			m_effect.GetVariableByName("g_tileTextures").AsResource().SetResource(m_tileTextureView);
 		}
 
+		bool m_mapDataChanged;
+
+		public void InvalidateMapData()
+		{
+			m_mapDataChanged = true;
+		}
+
 		public void Render()
 		{
 			if (m_renderTargetView == null || m_tileTextureView == null || m_map == null)
@@ -288,40 +299,44 @@ namespace Dwarrowdelf.Client.TileControl
 			m_sizeVariable.Set(new Vector2(m_renderTargetSize.Width, m_renderTargetSize.Height));
 			m_tileSizeVariable.Set(m_tileSize);
 			m_colrowVariable.Set(new Vector2(m_columns, m_rows));
+			m_renderOffsetVariable.Set(new Vector2((float)this.RenderOffset.X, (float)this.RenderOffset.Y));
 
-			var arr = m_map.ArrayGrid.Grid;
-			var arrLen = arr.Length;
-			var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
+			if (m_mapDataChanged)
+			{
+				var arr = m_map.ArrayGrid.Grid;
+				var arrLen = arr.Length;
+				var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
 
 #if asd
-			unsafe
-			{
-				fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+				unsafe
 				{
-					using (var stream = new DataStream((IntPtr)p, arrLen * elemSize, true, false))
+					fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
 					{
-						var dataBox = new DataBox(elemSize * arrLen, elemSize * arrLen, stream);
-						var region = new ResourceRegion(0, 0, 0, arrLen * elemSize, 1, 1);
-						m_device.ImmediateContext.UpdateSubresource(dataBox, m_tileBuffer, 0, region);
+						using (var stream = new DataStream((IntPtr)p, arrLen * elemSize, true, false))
+						{
+							var dataBox = new DataBox(elemSize * arrLen, elemSize * arrLen, stream);
+							var region = new ResourceRegion(0, 0, 0, arrLen * elemSize, 1, 1);
+							m_device.ImmediateContext.UpdateSubresource(dataBox, m_tileBuffer, 0, region);
+						}
 					}
 				}
-			}
 #else
+				/* map only the required area, not the whole tilebuffer */
+				var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, m_columns * m_rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+				var stream = box.Data;
 
-			/* map only the required area, not the whole tilebuffer */
-			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, m_columns * m_rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
-			var stream = box.Data;
-
-			unsafe
-			{
-				fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+				unsafe
 				{
-					stream.WriteRange((IntPtr)p, arrLen * elemSize);
+					fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+					{
+						stream.WriteRange((IntPtr)p, arrLen * elemSize);
+					}
 				}
-			}
 
-			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
+				m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
 #endif
+				m_mapDataChanged = false;
+			}
 
 			var vertexSize = Marshal.SizeOf(typeof(MyVertex));
 

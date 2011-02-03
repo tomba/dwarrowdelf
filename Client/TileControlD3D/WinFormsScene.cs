@@ -64,6 +64,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Render()
 		{
+			m_scene.InvalidateMapData();
 			m_scene.Render();
 		}
 

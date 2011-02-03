@@ -20,9 +20,10 @@ namespace Dwarrowdelf.Client.TileControl
 		SingleQuad11 m_scene;
 
 		IntSize m_gridSize;
-		int m_tileSize;
+		double m_tileSize;
 
-		IntPoint m_renderOffset;
+		Point m_renderOffset;
+		Vector m_requestedOffset;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD3D");
 
@@ -81,6 +82,33 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
 		}
 
+		public double TileSize
+		{
+			get { return (double)GetValue(TileSizeProperty); }
+			set { SetValue(TileSizeProperty, value); }
+		}
+
+
+		// Using a DependencyProperty as the backing store for TileSize.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty TileSizeProperty =
+				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlD3D), new UIPropertyMetadata(16.0, OnTileSizeChanged));
+
+		static void OnTileSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			TileControlD3D tc = (TileControlD3D)d;
+			var ts = (double)e.NewValue;
+
+			tc.trace.TraceInformation("TileSize = {0}", ts);
+
+			tc.m_tileSize = ts;
+
+			if (tc.m_scene != null)
+				tc.m_scene.TileSize = (float)ts;
+
+			tc.UpdateTileLayout(tc.RenderSize);
+		}
+
+		/*
 		public int TileSize
 		{
 			get { return m_tileSize; }
@@ -99,6 +127,25 @@ namespace Dwarrowdelf.Client.TileControl
 				UpdateTileLayout(this.RenderSize);
 			}
 		}
+		*/
+
+		public Vector RequestedOffset
+		{
+			get { return m_requestedOffset; }
+
+			set
+			{
+				m_requestedOffset = value;
+
+				trace.TraceInformation("RequestedOffset = {0}", value);
+
+				if (m_scene != null)
+					m_scene.RenderOffset = value;
+
+				UpdateTileLayout(this.RenderSize);
+			}
+		}
+
 
 		public IntSize GridSize
 		{
@@ -165,16 +212,21 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-
-
-		public IntPoint ScreenPointToScreenLocation(Point p)
+		public void InvalidateMapData()
 		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
+			m_scene.InvalidateMapData();
 		}
 
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
+
+		public Point ScreenPointToScreenLocation(Point p)
 		{
+			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
+		}
+
+		public Point ScreenLocationToScreenPoint(Point loc)
+		{
+			loc.Offset(0.5, 0.5);
 			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
 			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
 			return p;
@@ -191,7 +243,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
 			var renderOffsetY = (int)(renderHeight - m_tileSize * m_gridSize.Height) / 2;
-			m_renderOffset = new IntPoint(renderOffsetX, renderOffsetY);
+			m_renderOffset = new Point(renderOffsetX, renderOffsetY) + m_requestedOffset;
 
 			m_tileLayoutInvalid = true;
 
