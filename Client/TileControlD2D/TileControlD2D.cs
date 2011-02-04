@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : FrameworkElement /*, ITileControl*/
+	public class TileControlD2D : FrameworkElement, ITileControl
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -39,11 +39,11 @@ namespace Dwarrowdelf.Client.TileControl
 
 		D2DD3DImage m_interopImageSource;
 
-		IntPoint m_centerPos;
+		Point m_centerPos;
 		IntSize m_gridSize;
-		int m_tileSize;
+		double m_tileSize;
 
-		IntPoint m_renderOffset;
+		Point m_renderOffset;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
 
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		public int TileSize
+		public double TileSize
 		{
 			get { return m_tileSize; }
 			set
@@ -109,7 +109,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileSize = value;
 
 				if (m_renderer != null)
-					m_renderer.TileSizeChanged(value);
+					m_renderer.TileSizeChanged((int)value);
 
 				UpdateTileLayout(this.RenderSize);
 			}
@@ -186,21 +186,23 @@ namespace Dwarrowdelf.Client.TileControl
 		public int Columns { get { return this.GridSize.Width; } }
 		public int Rows { get { return this.GridSize.Height; } }
 
-		IntPoint TopLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
-		}
-
-		IntPoint BottomLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
-		}
-
-		public IntPoint CenterPos
+		public Point CenterPos
 		{
 			get { return m_centerPos; }
 			set { m_centerPos = value; }
 		}
+
+		/*
+		Point TopLeftPos
+		{
+			get { return this.CenterPos + new Vector(-this.Columns / 2, this.Rows / 2); }
+		}
+
+		Point BottomLeftPos
+		{
+			get { return this.CenterPos + new Vector(-this.Columns / 2, -this.Rows / 2); }
+		}
+
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
@@ -236,6 +238,58 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
 		}
+		*/
+
+
+		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
+
+		public Point MapLocationToScreenLocation(Point ml)
+		{
+			var gridSize = this.GridSize;
+
+			var p = ml - this.ScreenMapDiff;
+			p = new Point(p.X, -p.Y);
+			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
+
+			return p;
+		}
+
+		public Point ScreenLocationToMapLocation(Point sl)
+		{
+			var gridSize = this.GridSize;
+
+			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
+			v = new Point(v.X, -v.Y);
+			v += this.ScreenMapDiff;
+
+			return v;
+		}
+
+		public Point ScreenPointToMapLocation(Point p)
+		{
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
+		}
+
+		public Point MapLocationToScreenPoint(Point ml)
+		{
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public Point ScreenPointToScreenLocation(Point p)
+		{
+			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
+		}
+
+		public Point ScreenLocationToScreenPoint(Point loc)
+		{
+			loc.Offset(0.5, 0.5);
+			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
+			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return p;
+		}
 
 
 
@@ -252,7 +306,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
 			var renderOffsetY = (int)(renderHeight - m_tileSize * m_gridSize.Height) / 2;
-			m_renderOffset = new IntPoint(renderOffsetX, renderOffsetY);
+			m_renderOffset = new Point(renderOffsetX, renderOffsetY);
 
 			m_tileLayoutInvalid = true;
 
@@ -347,9 +401,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
-			m_renderTarget.Transform = Matrix3x2F.Translation(m_renderOffset.X, m_renderOffset.Y);
+			m_renderTarget.Transform = Matrix3x2F.Translation((float)m_renderOffset.X, (float)m_renderOffset.Y);
 
-			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, m_tileSize);
+			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, (int)m_tileSize);
 
 			m_renderTarget.Transform = Matrix3x2F.Identity;
 

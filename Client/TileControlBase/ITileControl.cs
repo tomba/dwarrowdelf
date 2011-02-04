@@ -13,8 +13,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void InvalidateTileRender();
 
-		Point ScreenLocationToScreenPoint(Point loc);
+		Point MapLocationToScreenLocation(Point ml);
+		Point ScreenLocationToMapLocation(Point sl);
+		Point ScreenPointToMapLocation(Point p);
+		Point MapLocationToScreenPoint(Point ml);
 		Point ScreenPointToScreenLocation(Point p);
+		Point ScreenLocationToScreenPoint(Point loc);
 
 		event Action<IntSize> TileLayoutChanged;
 		event Action<Size> AboutToRender;

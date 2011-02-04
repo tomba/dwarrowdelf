@@ -147,7 +147,7 @@ namespace Dwarrowdelf.Client
 		public int Columns { get { return m_mapControl.Columns; } }
 		public int Rows { get { return m_mapControl.Rows; } }
 
-		public int TileSize
+		public double TileSize
 		{
 			get
 			{
@@ -182,14 +182,14 @@ namespace Dwarrowdelf.Client
 			// XXX this could be improved. Somehow it doesn't feel quite right...
 
 			var p = e.GetPosition(this);
-			var ml1 = m_mapControl.ScreenPointToMapLocation(p);
+			var ml1 = ScreenPointToMapLocation(p);
 
 			if (e.Delta > 0)
 				this.TileSize *= 2;
 			else
 				this.TileSize /= 2;
 
-			var ml2 = m_mapControl.ScreenPointToMapLocation(p);
+			var ml2 = ScreenPointToMapLocation(p);
 			var d = ml2 - this.CenterPos;
 			var l = ml1 - d;
 
@@ -211,7 +211,7 @@ namespace Dwarrowdelf.Client
 
 		void UpdateTranslateTransform()
 		{
-			var p = m_mapControl.MapLocationToScreenPoint(new IntPoint(0, -1));
+			var p = m_mapControl.MapLocationToScreenPoint(new Point(-0.5, -0.5));
 			m_translateTransform.X = p.X;
 			m_translateTransform.Y = p.Y;
 		}
@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Client
 
 		Rect MapRectToScreenPointRect(IntRect ir)
 		{
-			Rect r = new Rect(MapLocationToScreenPoint(new IntPoint(ir.X1, ir.Y2 - 1)),
+			Rect r = new Rect(MapLocationToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
 				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
 			return r;
 		}
@@ -359,11 +359,6 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		IntPoint TopLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
-		}
-
 		public IntPoint CenterPos
 		{
 			get { return m_centerPos; }
@@ -373,7 +368,7 @@ namespace Dwarrowdelf.Client
 					return;
 				IntVector dv = m_centerPos - value;
 				m_centerPos = value;
-				m_mapControl.CenterPos = value;
+				m_mapControl.CenterPos = new Point(value.X, value.Y);
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
 
@@ -569,8 +564,8 @@ namespace Dwarrowdelf.Client
 
 		void UpdateHoverTileInfo(Point p)
 		{
-			var sl = m_mapControl.ScreenPointToScreenLocation(p);
-			var ml = new IntPoint3D(m_mapControl.ScreenPointToMapLocation(p), m_z);
+			var sl = ScreenPointToScreenLocation(p);
+			var ml = new IntPoint3D(ScreenPointToMapLocation(p), m_z);
 
 			if (p != this.HoverTileInfo.MousePos ||
 				sl != this.HoverTileInfo.ScreenLocation ||
@@ -585,12 +580,19 @@ namespace Dwarrowdelf.Client
 
 		public IntPoint ScreenPointToMapLocation(Point p)
 		{
-			return m_mapControl.ScreenPointToMapLocation(p);
+			p = m_mapControl.ScreenPointToMapLocation(p);
+			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
 		}
 
-		public Point MapLocationToScreenPoint(IntPoint loc)
+		Point MapLocationToScreenPoint(Point loc)
 		{
 			return m_mapControl.MapLocationToScreenPoint(loc);
+		}
+
+		IntPoint ScreenPointToScreenLocation(Point p)
+		{
+			p = m_mapControl.ScreenPointToScreenLocation(p);
+			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
 		}
 
 		void Notify(string name)

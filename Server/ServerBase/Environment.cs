@@ -195,7 +195,7 @@ namespace Dwarrowdelf.Server
 					if (curLevel > TileData.MaxWaterLevel)
 					{
 						flow = curLevel - (neighLevel + TileData.MaxCompress) - 1;
-						flow = MyMath.IntClamp(flow, curLevel - TileData.MaxWaterLevel, 0);
+						flow = MyMath.Clamp(flow, curLevel - TileData.MaxWaterLevel, 0);
 					}
 					else
 						flow = 0;
@@ -210,7 +210,7 @@ namespace Dwarrowdelf.Server
 					else
 						flow = 0;
 
-					flow = MyMath.IntClamp(flow, curLevel, 0);
+					flow = MyMath.Clamp(flow, curLevel, 0);
 				}
 				else
 				{

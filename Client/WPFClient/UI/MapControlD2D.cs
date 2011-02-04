@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client
 
 		TileControl.TileControlD2D m_tileControlD2D;
 
-		int m_tileSize;
+		double m_tileSize;
 
 		public event Action TileArrangementChanged;
 
@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client
 		public int Columns { get { return m_tileControlD2D.GridSize.Width; } }
 		public int Rows { get { return m_tileControlD2D.GridSize.Height; } }
 
-		public IntPoint CenterPos
+		public Point CenterPos
 		{
 			get { return m_tileControlD2D.CenterPos; }
 			set
@@ -92,40 +92,42 @@ namespace Dwarrowdelf.Client
 				if (value == this.CenterPos)
 					return;
 
+				value = new Point(Math.Round(value.X), Math.Round(value.Y));
+
 				m_tileControlD2D.CenterPos = value;
 
-				m_renderView.CenterPos = new IntPoint3D(value, this.Z);
+				m_renderView.CenterPos = new IntPoint3D((int)value.X, (int)value.Y, this.Z);
 
 				InvalidateTiles();
 			}
 		}
 
-		public IntPoint ScreenPointToScreenLocation(Point p)
+		public Point ScreenPointToScreenLocation(Point p)
 		{
 			return m_tileControlD2D.ScreenPointToScreenLocation(p);
 		}
 
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		public Point ScreenLocationToScreenPoint(Point loc)
 		{
 			return m_tileControlD2D.ScreenLocationToScreenPoint(loc);
 		}
 
-		public IntPoint ScreenPointToMapLocation(Point p)
+		public Point ScreenPointToMapLocation(Point p)
 		{
 			return m_tileControlD2D.ScreenPointToMapLocation(p);
 		}
 
-		public Point MapLocationToScreenPoint(IntPoint ml)
+		public Point MapLocationToScreenPoint(Point ml)
 		{
 			return m_tileControlD2D.MapLocationToScreenPoint(ml);
 		}
 
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		public Point MapLocationToScreenLocation(Point ml)
 		{
 			return m_tileControlD2D.MapLocationToScreenLocation(ml);
 		}
 
-		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		public Point ScreenLocationToMapLocation(Point sl)
 		{
 			return m_tileControlD2D.ScreenLocationToMapLocation(sl);
 		}
@@ -135,13 +137,14 @@ namespace Dwarrowdelf.Client
 			m_tileControlD2D.InvalidateTileRender();
 		}
 
-		public int TileSize
+		public double TileSize
 		{
 			get { return m_tileSize; }
 
 			set
 			{
-				value = MyMath.IntClamp(value, 256, 1);
+
+				value = MyMath.Clamp(value, 256, 1);
 
 				if (value == m_tileSize)
 					return;
@@ -150,7 +153,7 @@ namespace Dwarrowdelf.Client
 
 				m_renderView = m_renderViewDetailed;
 
-				m_renderView.CenterPos = new IntPoint3D(this.CenterPos, this.Z);
+				m_renderView.CenterPos = new IntPoint3D((int)this.CenterPos.X, (int)this.CenterPos.Y, this.Z);
 				m_renderView.Environment = m_env;
 
 				m_tileControlD2D.TileSize = value;
@@ -226,7 +229,7 @@ namespace Dwarrowdelf.Client
 
 				m_z = value;
 
-				m_renderView.CenterPos = new IntPoint3D(this.CenterPos, value);
+				m_renderView.CenterPos = new IntPoint3D((int)this.CenterPos.X, (int)this.CenterPos.Y, value);
 
 				InvalidateTiles();
 

@@ -13,7 +13,7 @@ namespace Dwarrowdelf
 		/// <param name="m">Dividend</param>
 		/// <param name="n">Divisor</param>
 		/// <returns>Quotient</returns>
-		public static int IntDivRound(int m, int n)
+		public static int DivRound(int m, int n)
 		{
 			return (m + (m >= 0 ? (n - 1) : -(n - 1))) / n;
 		}
@@ -25,7 +25,19 @@ namespace Dwarrowdelf
 		/// <param name="max">Maximum value</param>
 		/// <param name="min">Minimum value</param>
 		/// <returns>Clamped value</returns>
-		public static int IntClamp(int value, int max, int min)
+		public static int Clamp(int value, int max, int min)
+		{
+			return value > max ? max : (value < min ? min : value);
+		}
+
+		/// <summary>
+		/// Clamp a double between two values
+		/// </summary>
+		/// <param name="value">Value to be clamped</param>
+		/// <param name="max">Maximum value</param>
+		/// <param name="min">Minimum value</param>
+		/// <returns>Clamped value</returns>
+		public static double Clamp(double value, double max, double min)
 		{
 			return value > max ? max : (value < min ? min : value);
 		}
