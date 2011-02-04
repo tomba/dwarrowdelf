@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Client
 					GetTopTile(p, env, ref tile.Top, showVirtualSymbols);
 
 					if (tile.Top.SymbolID != SymbolID.Undefined)
-						tile.Top.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.TopDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 				}
 
 				if (tile.Object.SymbolID == SymbolID.Undefined)
@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Client
 					GetObjectTile(p, env, ref tile.Object, showVirtualSymbols);
 
 					if (tile.Object.SymbolID != SymbolID.Undefined)
-						tile.Object.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.ObjectDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 				}
 
 				if (tile.Interior.SymbolID == SymbolID.Undefined)
@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Client
 					GetInteriorTile(p, env, ref tile.Interior, showVirtualSymbols, out seeThrough);
 
 					if (tile.Interior.SymbolID != SymbolID.Undefined)
-						tile.Interior.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+						tile.InteriorDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 
 					if (!seeThrough)
 						break;
@@ -146,20 +146,20 @@ namespace Dwarrowdelf.Client
 				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols, out seeThrough);
 
 				if (tile.Floor.SymbolID != SymbolID.Undefined)
-					tile.Floor.DarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+					tile.FloorDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 
 				if (!seeThrough)
 					break;
 			}
 
-			if (tile.Object.DarknessLevel == 0)
-				tile.Object.DarknessLevel = tile.Top.DarknessLevel;
+			if (tile.ObjectDarknessLevel == 0)
+				tile.ObjectDarknessLevel = tile.TopDarknessLevel;
 
-			if (tile.Interior.DarknessLevel == 0)
-				tile.Interior.DarknessLevel = tile.Object.DarknessLevel;
+			if (tile.InteriorDarknessLevel == 0)
+				tile.InteriorDarknessLevel = tile.ObjectDarknessLevel;
 
-			if (tile.Floor.DarknessLevel == 0)
-				tile.Floor.DarknessLevel = tile.Interior.DarknessLevel;
+			if (tile.FloorDarknessLevel == 0)
+				tile.FloorDarknessLevel = tile.InteriorDarknessLevel;
 		}
 
 		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)

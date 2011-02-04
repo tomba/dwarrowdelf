@@ -155,10 +155,10 @@ namespace Dwarrowdelf.Client.TileControl
 
 					var data = m_renderData.ArrayGrid.Grid[y, x];
 
-					var d1 = (data.Floor.DarknessLevel - data.Interior.DarknessLevel) / 255f;
-					var d2 = (data.Interior.DarknessLevel - data.Object.DarknessLevel) / 255f;
-					var d3 = (data.Object.DarknessLevel - data.Top.DarknessLevel) / 255f;
-					var d4 = (data.Top.DarknessLevel) / 255f;
+					var d1 = (data.FloorDarknessLevel - data.InteriorDarknessLevel) / 127f;
+					var d2 = (data.InteriorDarknessLevel - data.ObjectDarknessLevel) / 127f;
+					var d3 = (data.ObjectDarknessLevel - data.TopDarknessLevel) / 127f;
+					var d4 = (data.TopDarknessLevel) / 127f;
 
 					var o4 = d4;
 					var o3 = d3 / (1f - d4);

@@ -13,26 +13,6 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	[StructLayout(LayoutKind.Sequential)]
-	public struct RenderTileLayerD3D
-	{
-		public SymbolID SymbolID;
-		public GameColor Color;
-		public GameColor BgColor;
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	public struct RenderTileDetailedD3D
-	{
-		public RenderTileLayerD3D Floor;
-		public RenderTileLayerD3D Interior;
-		public RenderTileLayerD3D Object;
-		public RenderTileLayerD3D Top;
-
-		// 7 bits for each darkness, and 4 extra bits
-		public uint PackedValidAndDarkness;
-	}
-
 	class SingleQuad11 : IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
@@ -213,8 +193,8 @@ namespace Dwarrowdelf.Client.TileControl
 				BindFlags = BindFlags.ShaderResource,
 				CpuAccessFlags = CpuAccessFlags.Write,
 				OptionFlags = ResourceOptionFlags.StructuredBuffer,
-				SizeInBytes = tileBufferWidth * tileBufferHeight * Marshal.SizeOf(typeof(RenderTileDetailedD3D)),
-				StructureByteStride = Marshal.SizeOf(typeof(RenderTileDetailedD3D)),
+				SizeInBytes = tileBufferWidth * tileBufferHeight * Marshal.SizeOf(typeof(RenderTileDetailed)),
+				StructureByteStride = Marshal.SizeOf(typeof(RenderTileDetailed)),
 				Usage = ResourceUsage.Dynamic,
 			});
 
@@ -243,7 +223,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_effect.GetVariableByName("g_tileTextures").AsResource().SetResource(m_tileTextureView);
 		}
 
-		public void SendMapData(RenderData<RenderTileDetailedD3D> mapData, int columns, int rows)
+		public void SendMapData(RenderData<RenderTileDetailed> mapData, int columns, int rows)
 		{
 			m_colrowVariable.Set(new Vector2(columns, rows));
 
@@ -271,7 +251,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			unsafe
 			{
-				fixed (RenderTileDetailedD3D* p = mapData.ArrayGrid.Grid)
+				fixed (RenderTileDetailed* p = mapData.ArrayGrid.Grid)
 				{
 					stream.WriteRange((IntPtr)p, arrLen * elemSize);
 				}

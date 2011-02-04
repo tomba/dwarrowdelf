@@ -209,7 +209,7 @@ namespace Dwarrowdelf.Client
 			if (level == 0)
 				return 0;
 			else
-				return (byte)((level + 2) * 255 / (MAXLEVEL + 2));
+				return (byte)((level + 2) * 127 / (MAXLEVEL + 2));
 		}
 	}
 }

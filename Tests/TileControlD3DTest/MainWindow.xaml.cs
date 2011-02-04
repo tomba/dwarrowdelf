@@ -25,7 +25,7 @@ namespace TileControlD3DTest
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		RenderData<RenderTileDetailedD3D> m_renderData;
+		RenderData<RenderTileDetailed> m_renderData;
 		double m_targetTileSize;
 		DispatcherTimer m_timer;
 
@@ -44,7 +44,7 @@ namespace TileControlD3DTest
 			var symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			tileControl.SymbolDrawingCache = symbolDrawingCache;
 
-			m_renderData = new RenderData<RenderTileDetailedD3D>();
+			m_renderData = new RenderData<RenderTileDetailed>();
 			tileControl.SetRenderData(m_renderData);
 			tileControl.TileSize = 32;
 			m_targetTileSize = tileControl.TileSize;

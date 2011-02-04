@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		SlimDX.Direct3D11.Buffer m_colorBuffer;
 
-		RenderData<RenderTileDetailedD3D> m_map;
+		RenderData<RenderTileDetailed> m_map;
 		ISymbolDrawingCache m_symbolDrawingCache;
 
 		public TileControlD3D()
@@ -311,10 +311,10 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetRenderData(IRenderData renderData)
 		{
-			if (!(renderData is RenderData<RenderTileDetailedD3D>))
+			if (!(renderData is RenderData<RenderTileDetailed>))
 				throw new NotSupportedException();
 
-			m_map = (RenderData<RenderTileDetailedD3D>)renderData;
+			m_map = (RenderData<RenderTileDetailed>)renderData;
 
 			InvalidateTileData();
 		}

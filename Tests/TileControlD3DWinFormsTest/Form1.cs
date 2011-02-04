@@ -17,7 +17,7 @@ namespace TileControlD3DWinFormsTest
 		WinFormsScene m_scene;
 
 		SymbolDrawingCache m_symbolDrawingCache;
-		RenderData<RenderTileDetailedD3D> m_renderData;
+		RenderData<RenderTileDetailed> m_renderData;
 
 		public Form1()
 		{
@@ -26,7 +26,7 @@ namespace TileControlD3DWinFormsTest
 			m_symbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 			m_scene.SymbolDrawingCache = m_symbolDrawingCache;
 
-			m_renderData = new RenderData<RenderTileDetailedD3D>();
+			m_renderData = new RenderData<RenderTileDetailed>();
 			m_scene.SetRenderData(m_renderData);
 
 			InitializeComponent();
