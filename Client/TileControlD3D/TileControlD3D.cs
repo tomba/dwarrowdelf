@@ -319,6 +319,22 @@ namespace Dwarrowdelf.Client.TileControl
 			InvalidateTileData();
 		}
 
+		public void InvalidateSymbols()
+		{
+			if (m_tileTextureArray != null)
+			{
+				m_tileTextureArray.Dispose();
+				m_tileTextureArray = null;
+			}
+
+			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
+
+			if (m_scene != null)
+			{
+				m_scene.SetTileTextures(m_tileTextureArray);
+				InvalidateTileRender();
+			}
+		}
 
 		public ISymbolDrawingCache SymbolDrawingCache
 		{

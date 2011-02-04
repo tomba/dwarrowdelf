@@ -85,7 +85,7 @@ namespace Dwarrowdelf.Client
 					if (m_renderData.ArrayGrid.Grid[y, x].IsValid)
 						continue;
 
-					var ml = new IntPoint3D(offsetX + x, offsetY + y, offsetZ);
+					var ml = new IntPoint3D(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
 					ResolveDetailed(out m_renderData.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}

@@ -150,7 +150,7 @@ namespace Dwarrowdelf.Client.TileControl
 				for (int x = 0; x < columns && x < m_renderData.Size.Width; ++x)
 				{
 					var x1 = x * tileSize;
-					var y1 = (rows - y - 1) * tileSize;
+					var y1 = y * tileSize;
 					var dstRect = new RectF(x1, y1, x1 + tileSize, y1 + tileSize);
 
 					var data = m_renderData.ArrayGrid.Grid[y, x];

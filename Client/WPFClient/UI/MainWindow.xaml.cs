@@ -209,6 +209,9 @@ namespace Dwarrowdelf.Client
 
 				Disconnect();
 			}
+
+			map.Environment = null;
+			map.Dispose();
 		}
 
 		int m_fpsCounter;

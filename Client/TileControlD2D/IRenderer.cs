@@ -12,5 +12,6 @@ namespace Dwarrowdelf.Client.TileControl
 		void TileSizeChanged(int tileSize);
 		void Render(RenderTarget renderTarget, int columns, int rows, int tileSize);
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
+		void InvalidateSymbols();
 	}
 }

@@ -98,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="D3DImageSlimDX.cs" />
-    <Compile Include="Drawings.cs" />
     <Compile Include="Helpers11.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleQuad11.cs" />

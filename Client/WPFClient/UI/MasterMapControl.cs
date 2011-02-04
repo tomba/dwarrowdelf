@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
-	class MasterMapControl : UserControl, INotifyPropertyChanged
+	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
 		World m_world;
 
@@ -603,6 +603,17 @@ namespace Dwarrowdelf.Client
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+
+		#region IDispobable
+		public void Dispose()
+		{
+			if (m_mapControl != null)
+			{
+				m_mapControl.Dispose();
+				m_mapControl = null;
+			}
+		}
 		#endregion
 	}
 

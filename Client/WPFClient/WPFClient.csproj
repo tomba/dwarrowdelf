@@ -227,6 +227,10 @@
       <Project>{FCF2DEE3-2DC4-4197-AB3F-8035DCEA26F1}</Project>
       <Name>TileControlD2D</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TileControlD3D\TileControlD3D.csproj">
+      <Project>{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}</Project>
+      <Name>TileControlD3D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Win32\Win32.csproj">
       <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
       <Name>Win32</Name>

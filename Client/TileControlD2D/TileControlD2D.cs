@@ -175,7 +175,12 @@ namespace Dwarrowdelf.Client.TileControl
 		public Point CenterPos
 		{
 			get { return m_centerPos; }
-			set { m_centerPos = value; }
+
+			set
+			{
+				m_centerPos = value;
+				InvalidateTileData();
+			}
 		}
 
 		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
@@ -266,6 +271,17 @@ namespace Dwarrowdelf.Client.TileControl
 			InvalidateTileRender();
 		}
 
+		public void InvalidateTileData()
+		{
+			InvalidateTileRender();
+		}
+
+		public void InvalidateSymbols()
+		{
+			m_renderer.InvalidateSymbols();
+			InvalidateTileRender();
+		}
+
 		public ISymbolDrawingCache SymbolDrawingCache
 		{
 			get { return m_symbolDrawingCache; }
@@ -346,5 +362,11 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_renderTarget.EndDraw();
 		}
+
+		#region IDispobable
+		public void Dispose()
+		{
+		}
+		#endregion
 	}
 }

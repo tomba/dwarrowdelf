@@ -23,21 +23,20 @@ namespace Dwarrowdelf.Client
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControlD2D : UserControl, INotifyPropertyChanged
+	class MapControlD2D : UserControl, INotifyPropertyChanged, IDisposable
 	{
 		World m_world;
 
 		Environment m_env;
 		int m_z;
 
-		TileControl.TileControlD2D m_tileControlD2D;
+		ITileControl m_tileControlD2D;
 
 		double m_tileSize;
 
 		public event Action TileArrangementChanged;
 
 		IRenderView m_renderView;
-		//RenderViewSimple m_renderViewSimple;
 		RenderViewDetailed m_renderViewDetailed;
 
 		public MapControlD2D()
@@ -97,8 +96,6 @@ namespace Dwarrowdelf.Client
 				m_tileControlD2D.CenterPos = value;
 
 				m_renderView.CenterPos = new IntPoint3D((int)value.X, (int)value.Y, this.Z);
-
-				InvalidateTiles();
 			}
 		}
 
@@ -134,7 +131,7 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateTiles()
 		{
-			m_tileControlD2D.InvalidateTileRender();
+			m_tileControlD2D.InvalidateTileData();
 		}
 
 		public double TileSize
@@ -143,8 +140,7 @@ namespace Dwarrowdelf.Client
 
 			set
 			{
-
-				value = MyMath.Clamp(value, 256, 1);
+				value = MyMath.Clamp(value, 64, 2);
 
 				if (value == m_tileSize)
 					return;
@@ -162,7 +158,7 @@ namespace Dwarrowdelf.Client
 
 		public void InvalidateDrawings()
 		{
-			//m_renderViewDetailed.InvalidateSymbols();
+			m_tileControlD2D.InvalidateSymbols();
 			InvalidateTiles();
 		}
 
@@ -255,6 +251,17 @@ namespace Dwarrowdelf.Client
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+
+		#region IDispobable
+		public void Dispose()
+		{
+			if (m_tileControlD2D != null)
+			{
+				m_tileControlD2D.Dispose();
+				m_tileControlD2D = null;
+			}
+		}
 		#endregion
 	}
 }

@@ -85,7 +85,6 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				int tileSize = maxTileSize >> mipLevel;
 
-				var bitmaps = Drawings.GetBitmaps(symbolDrawingCache, tileSize);
 				sbc = new SymbolBitmapCache(symbolDrawingCache, tileSize);
 
 				var pixelArray = new byte[tileSize * tileSize * 4];

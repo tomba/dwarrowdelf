@@ -3,15 +3,18 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public interface ITileControl
+	public interface ITileControl : IDisposable
 	{
 		double TileSize { get; set; }
 		IntSize GridSize { get; }
+		Point CenterPos { get; set; }
 
 		void SetRenderData(IRenderData renderData);
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 
+		void InvalidateTileData();
 		void InvalidateTileRender();
+		void InvalidateSymbols();
 
 		Point MapLocationToScreenLocation(Point ml);
 		Point ScreenLocationToMapLocation(Point sl);
