@@ -7,10 +7,10 @@ float g_tileSize;
 
 struct TileData
 {
-	uint tilenum12;
-	uint tilenum34;
-	uint colornum;
-	uint bgcolornum;
+	uint tile1;
+	uint tile2;
+	uint tile3;
+	uint tile4;
 	uint darkness;
 };
 
@@ -156,37 +156,28 @@ float4 PS( PS_IN input ) : SV_Target
 
 	float2 tilepos = floor(xy / g_tileSize);
 	
-	TileData td;
+	TileData td = g_tileBuffer[tilepos.y * g_colrow.x + tilepos.x];
 
-	td = g_tileBuffer[tilepos.y * g_colrow.x + tilepos.x];
-	uint tileNum12 = td.tilenum12;
-	uint tileNum34 = td.tilenum34;
+	uint t1 = (td.tile1 >> 0) & 0xffff;
+	uint t2 = (td.tile2 >> 0) & 0xffff;
+	uint t3 = (td.tile3 >> 0) & 0xffff;
+	uint t4 = (td.tile4 >> 0) & 0xffff;
 
-	if (tileNum12 == 0 && tileNum34 == 0)
-		return float4(0, 1.0f, 0, 1.0f);
+	uint ci1 = (td.tile1 >> 16) & 0xff;
+	uint ci2 = (td.tile2 >> 16) & 0xff;
+	uint ci3 = (td.tile3 >> 16) & 0xff;
+	uint ci4 = (td.tile4 >> 16) & 0xff;
 
-	uint t1 = (tileNum12 >> 0) & 0xffff;
-	uint t2 = (tileNum12 >> 16) & 0xffff;
-	uint t3 = (tileNum34 >> 0) & 0xffff;
-	uint t4 = (tileNum34 >> 16) & 0xffff;
-
-	uint colorNum = td.colornum;
-	uint ci1 = (colorNum >> 0) & 0xff;
-	uint ci2 = (colorNum >> 8) & 0xff;
-	uint ci3 = (colorNum >> 16) & 0xff;
-	uint ci4 = (colorNum >> 24) & 0xff;
-
-	uint bgColorNum = td.bgcolornum;
-	uint bi1 = (bgColorNum >> 0) & 0xff;
-	uint bi2 = (bgColorNum >> 8) & 0xff;
-	uint bi3 = (bgColorNum >> 16) & 0xff;
-	uint bi4 = (bgColorNum >> 24) & 0xff;
+	uint bi1 = (td.tile1 >> 24) & 0xff;
+	uint bi2 = (td.tile2 >> 24) & 0xff;
+	uint bi3 = (td.tile3 >> 24) & 0xff;
+	uint bi4 = (td.tile4 >> 24) & 0xff;
 
 	uint darkness = td.darkness;
-	float d1 = ((darkness >> 0) & 0xff) / 255.0f;
-	float d2 = ((darkness >> 8) & 0xff) / 255.0f;
-	float d3 = ((darkness >> 16) & 0xff) / 255.0f;
-	float d4 = ((darkness >> 24) & 0xff) / 255.0f;
+	float d1 = ((darkness >> 0) & 0x7f) / 127.0f;
+	float d2 = ((darkness >> 7) & 0x7f) / 127.0f;
+	float d3 = ((darkness >> 14) & 0x7f) / 127.0f;
+	float d4 = ((darkness >> 21) & 0x7f) / 127.0f;
 
 	float2 texpos = xy / g_tileSize;
 

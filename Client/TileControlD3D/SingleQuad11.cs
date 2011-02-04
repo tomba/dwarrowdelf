@@ -14,27 +14,23 @@ using Dwarrowdelf;
 namespace Dwarrowdelf.Client.TileControl
 {
 	[StructLayout(LayoutKind.Sequential)]
+	public struct RenderTileLayerD3D
+	{
+		public SymbolID SymbolID;
+		public GameColor Color;
+		public GameColor BgColor;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	public struct RenderTileDetailedD3D
 	{
-		public SymbolID FloorSymbolID;
-		public SymbolID InteriorSymbolID;
-		public SymbolID ObjectSymbolID;
-		public SymbolID TopSymbolID;
+		public RenderTileLayerD3D Floor;
+		public RenderTileLayerD3D Interior;
+		public RenderTileLayerD3D Object;
+		public RenderTileLayerD3D Top;
 
-		public GameColor FloorColor;
-		public GameColor InteriorColor;
-		public GameColor ObjectColor;
-		public GameColor TopColor;
-
-		public GameColor FloorBgColor;
-		public GameColor InteriorBgColor;
-		public GameColor ObjectBgColor;
-		public GameColor TopBgColor;
-
-		public byte FloorDarkness;
-		public byte InteriorDarkness;
-		public byte ObjectDarkness;
-		public byte TopDarkness;
+		// 7 bits for each darkness, and 4 extra bits
+		public uint PackedValidAndDarkness;
 	}
 
 	class SingleQuad11 : IDisposable

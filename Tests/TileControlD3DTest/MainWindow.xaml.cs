@@ -253,15 +253,15 @@ namespace TileControlD3DTest
 
 				if (mx == my)
 				{
-					arr[y, x].FloorSymbolID = SymbolID.Grass;
-					arr[y, x].FloorColor = GameColor.None;
-					arr[y, x].InteriorSymbolID = (SymbolID)((mx % 10) + 1);
-					arr[y, x].InteriorColor = (GameColor)((mx % ((int)GameColor.NumColors - 1)) + 1);
+					arr[y, x].Floor.SymbolID = SymbolID.Grass;
+					arr[y, x].Floor.Color = GameColor.None;
+					arr[y, x].Interior.SymbolID = (SymbolID)((mx % 10) + 1);
+					arr[y, x].Interior.Color = (GameColor)((mx % ((int)GameColor.NumColors - 1)) + 1);
 				}
 				else
 				{
-					arr[y, x].FloorSymbolID = SymbolID.Grass;
-					arr[y, x].FloorColor = GameColor.None;
+					arr[y, x].Floor.SymbolID = SymbolID.Grass;
+					arr[y, x].Floor.Color = GameColor.None;
 				}
 				//arr[y, x].Interior.SymbolID = (SymbolID)(id + 1);
 			}
