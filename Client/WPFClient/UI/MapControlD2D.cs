@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnInitialized(e);
 
-			m_tileControlD2D = new TileControl.TileControlD2D();
+			m_tileControlD2D = new TileControl.TileControlD3D();
 			m_tileControlD2D.TileLayoutChanged += OnTileArrangementChanged;
 			m_tileControlD2D.AboutToRender += OnAboutToRender;
 			AddChild(m_tileControlD2D);

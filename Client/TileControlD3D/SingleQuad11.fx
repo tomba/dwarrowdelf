@@ -190,9 +190,9 @@ float4 PS( PS_IN input ) : SV_Target
 
 	float3 c;
 	c = c1.rgb;
-	c = c2.rgb * c2.a + c.rgb * (1.0f - c2.a);
-	c = c3.rgb * c3.a + c.rgb * (1.0f - c3.a);
-	c = c4.rgb * c4.a + c.rgb * (1.0f - c4.a);
+	c = c2.rgb + (1.0f - c2.a) * c.rgb;
+	c = c3.rgb + (1.0f - c3.a) * c.rgb;
+	c = c4.rgb + (1.0f - c4.a) * c.rgb;
 
 	return float4(c, 1.0f);
 }
