@@ -26,6 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD3D");
 
 		bool m_tileLayoutInvalid;
+		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
 		public event Action<IntSize> TileLayoutChanged;
@@ -128,11 +129,8 @@ namespace Dwarrowdelf.Client.TileControl
 			tc.trace.TraceVerbose("CenterPos {0:F2}    {1},{2}", p, x, y);
 
 			// XXX
-			//if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
-			{
-				tc.InvalidateMapData();
-				//tc.m_mapDataInvalid = true;
-			}
+			if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
+				tc.InvalidateTileData();
 
 			//tc.tileControl_TileArrangementChanged(tc.tileControl.GridSize); // XXX
 
@@ -217,6 +215,12 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceInformation("OnRender");
 
+			if (m_scene == null || this.TileSize == 0)
+			{
+				base.OnRender(drawingContext);
+				return;
+			}
+
 			var renderSize = this.RenderSize;
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
@@ -225,31 +229,39 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				if (TileLayoutChanged != null)
 					TileLayoutChanged(m_gridSize);
-
-				m_tileLayoutInvalid = false;
 			}
 
-			if (m_tileRenderInvalid)
+			if (m_tileDataInvalid)
 			{
 				if (this.AboutToRender != null)
 					this.AboutToRender(renderSize);
-
-				m_interopImageSource.Lock();
-				if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-					InitTextureRenderSurface(renderWidth, renderHeight);
-				DoRender();
-				m_interopImageSource.InvalidateD3DImage();
-				m_interopImageSource.Unlock();
-
-				m_tileRenderInvalid = false;
 			}
 
+			m_interopImageSource.Lock();
+
+			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+				InitTextureRenderSurface(renderWidth, renderHeight);
+
+			if (m_tileDataInvalid)
+				m_scene.SendMapData(m_map, m_gridSize.Width, m_gridSize.Height);
+
+			if (m_tileRenderInvalid)
+				m_scene.Render((float)this.TileSize, m_renderOffset);
+
+			m_interopImageSource.InvalidateD3DImage();
+
+			m_interopImageSource.Unlock();
+
 			drawingContext.DrawImage(m_interopImageSource, new System.Windows.Rect(renderSize));
+
+			m_tileLayoutInvalid = false;
+			m_tileDataInvalid = false;
+			m_tileRenderInvalid = false;
 
 			trace.TraceInformation("OnRender End");
 		}
 
-		public void InvalidateRender()
+		public void InvalidateTileRender()
 		{
 			if (m_tileRenderInvalid == false)
 			{
@@ -259,9 +271,13 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public void InvalidateMapData()
+		public void InvalidateTileData()
 		{
-			m_scene.InvalidateMapData();
+			if (m_tileDataInvalid == false)
+			{
+				m_tileDataInvalid = true;
+				InvalidateTileRender();
+			}
 		}
 
 
@@ -274,7 +290,13 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var columns = (int)Math.Ceiling(renderSize.Width / tileSize + 1) | 1;
 			var rows = (int)Math.Ceiling(renderSize.Height / tileSize + 1) | 1;
-			m_gridSize = new IntSize(columns, rows);
+
+			var gridSize = new IntSize(columns, rows);
+
+			if (gridSize != m_gridSize)
+				InvalidateTileData();
+
+			m_gridSize = gridSize;
 
 			var renderOffsetX = (int)(renderWidth - tileSize * m_gridSize.Width) / 2;
 			var renderOffsetY = (int)(renderHeight - tileSize * m_gridSize.Height) / 2;
@@ -284,19 +306,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_renderOffset = new Point(renderOffsetX + cx, renderOffsetY + cy);
 
-			if (m_scene != null)
-			{
-				m_scene.RenderOffset = new Vector(m_renderOffset.X, m_renderOffset.Y);
-				m_scene.TileSize = (float)tileSize;
-			}
-
-
 			m_tileLayoutInvalid = true;
 
 			trace.TraceInformation("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, m_gridSize, tileSize,
 				m_renderOffset, m_gridSize);
 
-			InvalidateRender();
+			InvalidateTileRender();
 		}
 
 
@@ -307,11 +322,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_map = (RenderData<RenderTileDetailedD3D>)renderData;
 
-			if (m_scene != null)
-			{
-				m_scene.SetRenderData(m_map);
-				InvalidateRender();
-			}
+			InvalidateTileData();
 		}
 
 
@@ -334,23 +345,11 @@ namespace Dwarrowdelf.Client.TileControl
 				if (m_scene != null)
 				{
 					m_scene.SetTileTextures(m_tileTextureArray);
-					InvalidateRender();
+					InvalidateTileRender();
 				}
 			}
 		}
 
-		void DoRender()
-		{
-			trace.TraceInformation("DoRender");
-
-			if (m_scene == null)
-				return;
-
-			if (this.TileSize == 0)
-				return;
-
-			m_scene.Render();
-		}
 
 		#region IDisposable
 		bool m_disposed;

@@ -103,7 +103,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleQuad11.cs" />
     <Compile Include="TileControlD3D.cs" />
-    <Compile Include="WinFormsScene.cs" />
+    <Compile Include="WinFormsScene.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleQuad11.fx" />

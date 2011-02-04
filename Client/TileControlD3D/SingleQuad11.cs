@@ -62,18 +62,11 @@ namespace Dwarrowdelf.Client.TileControl
 		EffectVectorVariable m_colrowVariable;
 		EffectVectorVariable m_renderOffsetVariable;
 
-		float m_tileSize = 32;
-		int m_columns;
-		int m_rows;
-
 		SlimDX.Direct3D11.Buffer m_tileBuffer;
 		ShaderResourceView m_tileBufferView;
 
 		ShaderResourceView m_tileTextureView;
 		ShaderResourceView m_colorBufferView;
-
-		RenderData<RenderTileDetailedD3D> m_map;
-
 
 		public SingleQuad11(Device device, SlimDX.Direct3D11.Buffer colorBuffer)
 		{
@@ -156,43 +149,11 @@ namespace Dwarrowdelf.Client.TileControl
 			return effect;
 		}
 
-		public float TileSize
-		{
-			get { return m_tileSize; }
-
-			set
-			{
-				m_tileSize = value;
-
-				if (m_tileSize < 2)
-					m_tileSize = 2;
-				else if (m_tileSize > 512)
-					m_tileSize = 512;
-
-				UpdateRowsColumns();
-			}
-		}
-
-		void UpdateRowsColumns()
-		{
-			m_columns = (int)Math.Ceiling((double)m_renderTargetSize.Width / m_tileSize + 1) | 1;
-			m_rows = (int)Math.Ceiling((double)m_renderTargetSize.Height / m_tileSize + 1) | 1;
-		}
-
-		public System.Windows.Vector RenderOffset { get; set; }
-
-		public void SetRenderData(RenderData<RenderTileDetailedD3D> renderData)
-		{
-			m_map = renderData;
-		}
-
 		public void SetRenderTarget(Texture2D renderTexture)
 		{
 			SetupRenderTarget(renderTexture);
 
 			SetupTileBuffer();
-
-			UpdateRowsColumns();
 		}
 
 		void SetupRenderTarget(Texture2D renderTexture)
@@ -247,7 +208,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileBufferView = null;
 			}
 
-			int minTileSize = 2;
+			const int minTileSize = 2;
 			var tileBufferWidth = (int)Math.Ceiling((double)m_renderTargetSize.Width / minTileSize + 1) | 1;
 			var tileBufferHeight = (int)Math.Ceiling((double)m_renderTargetSize.Height / minTileSize + 1) | 1;
 
@@ -286,32 +247,18 @@ namespace Dwarrowdelf.Client.TileControl
 			m_effect.GetVariableByName("g_tileTextures").AsResource().SetResource(m_tileTextureView);
 		}
 
-		bool m_mapDataChanged;
-
-		public void InvalidateMapData()
+		public void SendMapData(RenderData<RenderTileDetailedD3D> mapData, int columns, int rows)
 		{
-			m_mapDataChanged = true;
-		}
+			m_colrowVariable.Set(new Vector2(columns, rows));
 
-		public void Render()
-		{
-			if (m_renderTargetView == null || m_tileTextureView == null || m_map == null)
-				return;
-
-			m_tileSizeVariable.Set(m_tileSize);
-			m_colrowVariable.Set(new Vector2(m_columns, m_rows));
-			m_renderOffsetVariable.Set(new Vector2((float)this.RenderOffset.X, (float)this.RenderOffset.Y));
-
-			if (m_mapDataChanged)
-			{
-				var arr = m_map.ArrayGrid.Grid;
-				var arrLen = arr.Length;
-				var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
+			var arr = mapData.ArrayGrid.Grid;
+			var arrLen = arr.Length;
+			var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
 
 #if asd
 				unsafe
 				{
-					fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
+					fixed (RenderTileDetailedD3D* p = mapData.ArrayGrid.Grid)
 					{
 						using (var stream = new DataStream((IntPtr)p, arrLen * elemSize, true, false))
 						{
@@ -322,22 +269,29 @@ namespace Dwarrowdelf.Client.TileControl
 					}
 				}
 #else
-				/* map only the required area, not the whole tilebuffer */
-				var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, m_columns * m_rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
-				var stream = box.Data;
+			/* map only the required area, not the whole tilebuffer */
+			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, columns * rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+			var stream = box.Data;
 
-				unsafe
+			unsafe
+			{
+				fixed (RenderTileDetailedD3D* p = mapData.ArrayGrid.Grid)
 				{
-					fixed (RenderTileDetailedD3D* p = m_map.ArrayGrid.Grid)
-					{
-						stream.WriteRange((IntPtr)p, arrLen * elemSize);
-					}
+					stream.WriteRange((IntPtr)p, arrLen * elemSize);
 				}
-
-				m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
-#endif
-				m_mapDataChanged = false;
 			}
+
+			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
+#endif
+		}
+
+		public void Render(float tileSize, System.Windows.Point renderOffset)
+		{
+			if (m_renderTargetView == null || m_tileTextureView == null)
+				return;
+
+			m_tileSizeVariable.Set(tileSize);
+			m_renderOffsetVariable.Set(new Vector2((float)renderOffset.X, (float)renderOffset.Y));
 
 			var vertexSize = Marshal.SizeOf(typeof(MyVertex));
 

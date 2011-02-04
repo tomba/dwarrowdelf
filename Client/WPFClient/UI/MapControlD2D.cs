@@ -30,9 +30,8 @@ namespace Dwarrowdelf.Client
 		Environment m_env;
 		int m_z;
 
-		TileControl.ITileControl m_tileControlD2D;
+		TileControl.TileControlD2D m_tileControlD2D;
 
-		IntPoint m_centerPos;
 		int m_tileSize;
 
 		public event Action TileArrangementChanged;
@@ -85,9 +84,55 @@ namespace Dwarrowdelf.Client
 		public int Columns { get { return m_tileControlD2D.GridSize.Width; } }
 		public int Rows { get { return m_tileControlD2D.GridSize.Height; } }
 
+		public IntPoint CenterPos
+		{
+			get { return m_tileControlD2D.CenterPos; }
+			set
+			{
+				if (value == this.CenterPos)
+					return;
+
+				m_tileControlD2D.CenterPos = value;
+
+				m_renderView.CenterPos = new IntPoint3D(value, this.Z);
+
+				InvalidateTiles();
+			}
+		}
+
+		public IntPoint ScreenPointToScreenLocation(Point p)
+		{
+			return m_tileControlD2D.ScreenPointToScreenLocation(p);
+		}
+
+		public Point ScreenLocationToScreenPoint(IntPoint loc)
+		{
+			return m_tileControlD2D.ScreenLocationToScreenPoint(loc);
+		}
+
+		public IntPoint ScreenPointToMapLocation(Point p)
+		{
+			return m_tileControlD2D.ScreenPointToMapLocation(p);
+		}
+
+		public Point MapLocationToScreenPoint(IntPoint ml)
+		{
+			return m_tileControlD2D.MapLocationToScreenPoint(ml);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		{
+			return m_tileControlD2D.MapLocationToScreenLocation(ml);
+		}
+
+		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		{
+			return m_tileControlD2D.ScreenLocationToMapLocation(sl);
+		}
+
 		public void InvalidateTiles()
 		{
-			m_tileControlD2D.InvalidateRender();
+			m_tileControlD2D.InvalidateTileRender();
 		}
 
 		public int TileSize
@@ -105,36 +150,10 @@ namespace Dwarrowdelf.Client
 
 				m_renderView = m_renderViewDetailed;
 
-				m_renderView.CenterPos = new IntPoint3D(m_centerPos, this.Z);
+				m_renderView.CenterPos = new IntPoint3D(this.CenterPos, this.Z);
 				m_renderView.Environment = m_env;
 
 				m_tileControlD2D.TileSize = value;
-			}
-		}
-
-		IntPoint TopLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
-		}
-
-		IntPoint BottomLeftPos
-		{
-			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
-		}
-
-		public IntPoint CenterPos
-		{
-			get { return m_centerPos; }
-			set
-			{
-				if (value == this.CenterPos)
-					return;
-
-				m_centerPos = value;
-
-				m_renderView.CenterPos = new IntPoint3D(value, this.Z);
-
-				InvalidateTiles();
 			}
 		}
 
@@ -207,7 +226,7 @@ namespace Dwarrowdelf.Client
 
 				m_z = value;
 
-				m_renderView.CenterPos = new IntPoint3D(m_centerPos, value);
+				m_renderView.CenterPos = new IntPoint3D(this.CenterPos, value);
 
 				InvalidateTiles();
 
@@ -223,38 +242,6 @@ namespace Dwarrowdelf.Client
 		void MapObjectChangedCallback(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			InvalidateTiles();
-		}
-
-		public IntPoint ScreenPointToMapLocation(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
-		}
-
-		public Point MapLocationToScreenPoint(IntPoint ml)
-		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
-		}
-
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
-		{
-			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
-		}
-
-		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
-		{
-			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
-		}
-
-		public IntPoint ScreenPointToScreenLocation(Point p)
-		{
-			return m_tileControlD2D.ScreenPointToScreenLocation(p);
-		}
-
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
-		{
-			return m_tileControlD2D.ScreenLocationToScreenPoint(loc);
 		}
 
 		void Notify(string name)

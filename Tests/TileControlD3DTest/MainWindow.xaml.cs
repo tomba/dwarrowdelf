@@ -220,16 +220,9 @@ namespace TileControlD3DTest
 			base.OnMouseMove(e);
 		}
 
-		bool m_mapDataInvalid; // XXX trigger from centerpos?
-
 		void tileControl_TileArrangementChanged(IntSize gridSize)
 		{
-			if (m_renderData.Size != gridSize)
-			{
-				m_renderData.Size = gridSize;
-				tileControl.InvalidateMapData();
-				m_mapDataInvalid = true;
-			}
+			m_renderData.Size = gridSize;
 
 			rect.Width = tileControl.TileSize;
 			rect.Height = tileControl.TileSize;
@@ -242,11 +235,6 @@ namespace TileControlD3DTest
 
 		void tileControl_AboutToRender(Size renderSize)
 		{
-			//if (!m_mapDataInvalid)
-			//	return;
-
-			m_mapDataInvalid = false;
-
 			var arr = m_renderData.ArrayGrid.Grid;
 
 			Array.Clear(arr, 0, arr.Length);

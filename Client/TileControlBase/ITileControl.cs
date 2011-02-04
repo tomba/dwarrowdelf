@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client.TileControl
 		void SetRenderData(IRenderData renderData);
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 
-		void InvalidateRender();
+		void InvalidateTileRender();
 
 		Point ScreenLocationToScreenPoint(Point loc);
 		Point ScreenPointToScreenLocation(Point p);

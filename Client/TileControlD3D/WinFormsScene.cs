@@ -21,7 +21,9 @@ namespace Dwarrowdelf.Client.TileControl
 		Texture2D m_tileTextureArray;
 		ISymbolDrawingCache m_symbolDrawingCache;
 		RenderData<RenderTileDetailedD3D> m_map;
+
 		int m_tileSize = 32;
+		IntSize m_gridSize;
 
 		public WinFormsScene(IntPtr handle)
 		{
@@ -30,7 +32,6 @@ namespace Dwarrowdelf.Client.TileControl
 			m_device = Helpers11.CreateDevice();
 			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
 			m_scene = new SingleQuad11(m_device, m_colorBuffer);
-
 		}
 
 		public int TileSize
@@ -39,12 +40,12 @@ namespace Dwarrowdelf.Client.TileControl
 			set
 			{
 				m_tileSize = value;
-				m_scene.TileSize = value;
 
 				var columns = (int)Math.Ceiling((double)m_renderTarget.Description.Width / m_tileSize) | 1;
 				var rows = (int)Math.Ceiling((double)m_renderTarget.Description.Height / m_tileSize) | 1;
 
-				m_map.Size = new IntSize(columns, rows);
+				m_gridSize = new IntSize(columns, rows);
+				m_map.Size = m_gridSize;
 			}
 		}
 
@@ -59,13 +60,14 @@ namespace Dwarrowdelf.Client.TileControl
 			var columns = (int)Math.Ceiling((double)width / m_tileSize) | 1;
 			var rows = (int)Math.Ceiling((double)height / m_tileSize) | 1;
 
-			m_map.Size = new IntSize(columns, rows);
+			m_gridSize = new IntSize(columns, rows);
+			m_map.Size = m_gridSize;
 		}
 
 		public void Render()
 		{
-			m_scene.InvalidateMapData();
-			m_scene.Render();
+			m_scene.SendMapData(m_map, m_gridSize.Width, m_gridSize.Height);
+			m_scene.Render(m_tileSize, new System.Windows.Point(0, 0));
 		}
 
 		public void Present()
@@ -103,13 +105,6 @@ namespace Dwarrowdelf.Client.TileControl
 				throw new NotSupportedException();
 
 			m_map = (RenderData<RenderTileDetailedD3D>)renderData;
-			//m_map.Size = new IntSize(m_columns, m_rows);
-
-			if (m_scene != null)
-			{
-				m_scene.SetRenderData(m_map);
-				//InvalidateRender();
-			}
 		}
 
 		#region IDisposable

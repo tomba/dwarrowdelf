@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : FrameworkElement, ITileControl
+	public class TileControlD2D : FrameworkElement /*, ITileControl*/
 	{
 		D2DFactory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -39,6 +39,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		D2DD3DImage m_interopImageSource;
 
+		IntPoint m_centerPos;
 		IntSize m_gridSize;
 		int m_tileSize;
 
@@ -171,7 +172,7 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceInformation("OnRender End");
 		}
 
-		public void InvalidateRender()
+		public void InvalidateTileRender()
 		{
 			if (m_tileRenderInvalid == false)
 			{
@@ -182,6 +183,24 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 
+		public int Columns { get { return this.GridSize.Width; } }
+		public int Rows { get { return this.GridSize.Height; } }
+
+		IntPoint TopLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, this.Rows / 2); }
+		}
+
+		IntPoint BottomLeftPos
+		{
+			get { return this.CenterPos + new IntVector(-this.Columns / 2, -this.Rows / 2); }
+		}
+
+		public IntPoint CenterPos
+		{
+			get { return m_centerPos; }
+			set { m_centerPos = value; }
+		}
 
 		public IntPoint ScreenPointToScreenLocation(Point p)
 		{
@@ -195,6 +214,32 @@ namespace Dwarrowdelf.Client.TileControl
 			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
 			return p;
 		}
+
+		public IntPoint ScreenPointToMapLocation(Point p)
+		{
+			var sl = ScreenPointToScreenLocation(p);
+			return ScreenLocationToMapLocation(sl);
+		}
+
+		public Point MapLocationToScreenPoint(IntPoint ml)
+		{
+			var sl = MapLocationToScreenLocation(ml);
+			return ScreenLocationToScreenPoint(sl);
+		}
+
+		public IntPoint MapLocationToScreenLocation(IntPoint ml)
+		{
+			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
+		}
+
+		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
+		{
+			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
+		}
+
+
+
+
 
 		void UpdateTileLayout(Size renderSize)
 		{
@@ -214,7 +259,7 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceInformation("UpdateTileLayout({0}, {1}, {2}) -> Off {3}, Grid {4}", renderSize, m_gridSize, m_tileSize,
 				m_renderOffset, m_gridSize);
 
-			InvalidateRender();
+			InvalidateTileRender();
 		}
 
 		public void SetRenderData(IRenderData renderData)
@@ -227,7 +272,7 @@ namespace Dwarrowdelf.Client.TileControl
 				throw new NotSupportedException();
 
 			m_renderer = renderer;
-			InvalidateRender();
+			InvalidateTileRender();
 		}
 
 		public ISymbolDrawingCache SymbolDrawingCache
@@ -238,7 +283,7 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				m_symbolDrawingCache = value;
 				m_renderer.SymbolDrawingCache = value;
-				InvalidateRender();
+				InvalidateTileRender();
 			}
 		}
 
