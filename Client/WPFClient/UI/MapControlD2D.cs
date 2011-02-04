@@ -71,9 +71,9 @@ namespace Dwarrowdelf.Client
 				TileArrangementChanged();
 		}
 
-		void OnAboutToRender(Size newSize)
+		void OnAboutToRender()
 		{
-			System.Diagnostics.Debug.Print("OnAboutToRender({0})", newSize);
+			System.Diagnostics.Debug.Print("OnAboutToRender");
 
 			if (m_env == null)
 				return;

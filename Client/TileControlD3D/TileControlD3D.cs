@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
+
 using SlimDX.Direct3D11;
-using DXGI = SlimDX.DXGI;
-using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -30,7 +24,7 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileRenderInvalid;
 
 		public event Action<IntSize> TileLayoutChanged;
-		public event Action<Size> AboutToRender;
+		public event Action AboutToRender;
 
 		Device m_device;
 		Texture2D m_renderTexture;
@@ -234,7 +228,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_tileDataInvalid)
 			{
 				if (this.AboutToRender != null)
-					this.AboutToRender(renderSize);
+					this.AboutToRender();
 			}
 
 			m_interopImageSource.Lock();

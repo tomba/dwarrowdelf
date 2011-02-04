@@ -233,7 +233,7 @@ namespace TileControlD3DTest
 
 		}
 
-		void tileControl_AboutToRender(Size renderSize)
+		void tileControl_AboutToRender()
 		{
 			var arr = m_renderData.ArrayGrid.Grid;
 

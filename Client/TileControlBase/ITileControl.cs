@@ -21,6 +21,6 @@ namespace Dwarrowdelf.Client.TileControl
 		Point ScreenLocationToScreenPoint(Point loc);
 
 		event Action<IntSize> TileLayoutChanged;
-		event Action<Size> AboutToRender;
+		event Action AboutToRender;
 	}
 }

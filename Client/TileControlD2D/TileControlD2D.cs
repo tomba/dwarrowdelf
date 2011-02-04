@@ -1,25 +1,12 @@
 ﻿//#define DEBUG_TEXT
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Interop;
 
-using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
 using Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 using Microsoft.WindowsAPICodePack.DirectX.DXGI;
-using Microsoft.WindowsAPICodePack.DirectX.WindowsImagingComponent;
-using System.Diagnostics;
+using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -42,7 +29,6 @@ namespace Dwarrowdelf.Client.TileControl
 		Point m_centerPos;
 		IntSize m_gridSize;
 		double m_tileSize;
-
 		Point m_renderOffset;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
@@ -51,7 +37,7 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileRenderInvalid;
 
 		public event Action<IntSize> TileLayoutChanged;
-		public event Action<Size> AboutToRender;
+		public event Action AboutToRender;
 
 		IRenderer m_renderer;
 		ISymbolDrawingCache m_symbolDrawingCache;
@@ -153,7 +139,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_tileRenderInvalid)
 			{
 				if (this.AboutToRender != null)
-					this.AboutToRender(renderSize);
+					this.AboutToRender();
 
 				m_interopImageSource.Lock();
 
@@ -191,55 +177,6 @@ namespace Dwarrowdelf.Client.TileControl
 			get { return m_centerPos; }
 			set { m_centerPos = value; }
 		}
-
-		/*
-		Point TopLeftPos
-		{
-			get { return this.CenterPos + new Vector(-this.Columns / 2, this.Rows / 2); }
-		}
-
-		Point BottomLeftPos
-		{
-			get { return this.CenterPos + new Vector(-this.Columns / 2, -this.Rows / 2); }
-		}
-
-
-		public IntPoint ScreenPointToScreenLocation(Point p)
-		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new IntPoint((int)(p.X / this.TileSize), (int)(p.Y / this.TileSize));
-		}
-
-		public Point ScreenLocationToScreenPoint(IntPoint loc)
-		{
-			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return p;
-		}
-
-		public IntPoint ScreenPointToMapLocation(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
-		}
-
-		public Point MapLocationToScreenPoint(IntPoint ml)
-		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
-		}
-
-		public IntPoint MapLocationToScreenLocation(IntPoint ml)
-		{
-			return new IntPoint(ml.X - this.TopLeftPos.X, -(ml.Y - this.TopLeftPos.Y));
-		}
-
-		public IntPoint ScreenLocationToMapLocation(IntPoint sl)
-		{
-			return new IntPoint(sl.X + this.TopLeftPos.X, -(sl.Y - this.TopLeftPos.Y));
-		}
-		*/
-
 
 		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
 
@@ -349,8 +286,8 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 			catch (Exception e)
 			{
-				Trace.WriteLine(e.ToString());
-				Trace.Assert(false);
+				System.Diagnostics.Trace.WriteLine(e.ToString());
+				System.Diagnostics.Trace.Assert(false);
 			}
 		}
 
