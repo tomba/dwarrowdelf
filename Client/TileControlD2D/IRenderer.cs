@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
+using SlimDX.Direct2D;
 
 namespace Dwarrowdelf.Client.TileControl
 {

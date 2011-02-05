@@ -54,9 +54,6 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceInformation("OnLoaded");
 
-			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				return;
-
 			InvalidateVisual();
 		}
 

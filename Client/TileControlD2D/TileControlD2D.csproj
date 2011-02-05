@@ -85,16 +85,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.WindowsAPICodePack.DirectX, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\D2D\Releasex64\Microsoft.WindowsAPICodePack.DirectX.dll</HintPath>
-    </Reference>
-    <Reference Include="SurfaceQueueInteropHelper, Version=1.0.3799.36978, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\D2D\Releasex64\SurfaceQueueInteropHelper.dll</HintPath>
-    </Reference>
+    <Reference Include="SlimDX, Version=4.0.10.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=AMD64" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -108,10 +102,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="D3D10ImageSlimDX.cs" />
+    <Compile Include="Helpers10.cs" />
     <Compile Include="IRenderer.cs" />
     <Compile Include="RendererDetailed.cs" />
     <Compile Include="TileControlD2D.cs" />
-    <Compile Include="D2DD3DImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

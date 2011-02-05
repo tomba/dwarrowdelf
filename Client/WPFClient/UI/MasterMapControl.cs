@@ -559,6 +559,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_mapControl != null)
 			{
+				m_mapControl.TileArrangementChanged -= OnTileArrangementChanged;
 				m_mapControl.Dispose();
 				m_mapControl = null;
 			}

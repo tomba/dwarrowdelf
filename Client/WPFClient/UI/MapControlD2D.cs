@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 	/// </summary>
 	class MapControlD2D : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		TileControl.TileControlD3D m_tileControlD2D;
+		TileControl.TileControlD2D m_tileControlD2D;
 		RenderViewDetailed m_renderView;
 
 		World m_world;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client
 
 			m_renderView = new RenderViewDetailed();
 
-			m_tileControlD2D = new TileControl.TileControlD3D();
+			m_tileControlD2D = new TileControl.TileControlD2D();
 			m_tileControlD2D.SetRenderData(m_renderView.RenderData);
 			m_tileControlD2D.TileLayoutChanged += OnTileArrangementChanged;
 			m_tileControlD2D.AboutToRender += OnAboutToRender;

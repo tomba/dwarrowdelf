@@ -3,10 +3,11 @@
 using System;
 using System.Windows;
 
-using Microsoft.WindowsAPICodePack.DirectX.Direct2D1;
-using Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
-using Microsoft.WindowsAPICodePack.DirectX.DXGI;
-using DWrite = Microsoft.WindowsAPICodePack.DirectX.DirectWrite;
+using SlimDX;
+using SlimDX.Direct2D;
+using D3D10 = SlimDX.Direct3D10;
+using Device = SlimDX.Direct3D10_1.Device1;
+using DXGI = SlimDX.DXGI;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -15,16 +16,13 @@ namespace Dwarrowdelf.Client.TileControl
 	/// </summary>
 	public class TileControlD2D : FrameworkElement, ITileControl
 	{
-		D2DFactory m_d2dFactory;
+		Factory m_d2dFactory;
 		RenderTarget m_renderTarget;
 #if DEBUG_TEXT
 		TextFormat textFormat;
 		DWriteFactory dwriteFactory;
 #endif
-		// Maintained simply to detect changes in the interop back buffer
-		IntPtr m_pIDXGISurfacePreviousNoRef;
-
-		D2DD3DImage m_interopImageSource;
+		D3D10ImageSlimDX m_interopImageSource;
 
 		Point m_centerPos;
 		IntSize m_gridSize;
@@ -34,53 +32,75 @@ namespace Dwarrowdelf.Client.TileControl
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
 
 		bool m_tileLayoutInvalid;
+		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
 		public event Action<IntSize, Point> TileLayoutChanged;
 		public event Action AboutToRender;
 
-		IRenderer m_renderer;
+		RendererDetailed m_renderer;
 		ISymbolDrawingCache m_symbolDrawingCache;
+
+		Device m_device;
+		D3D10.Texture2D m_renderTexture;
 
 		public TileControlD2D()
 		{
 			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			m_interopImageSource = new D2DD3DImage();
+			m_interopImageSource = new D3D10ImageSlimDX();
 
 			this.Loaded += new RoutedEventHandler(OnLoaded);
+
+			m_device = Helpers10.CreateDevice();
+			m_d2dFactory = new Factory(FactoryType.SingleThreaded);
 		}
 
 		void OnLoaded(object sender, RoutedEventArgs e)
 		{
 			trace.TraceInformation("OnLoaded");
 
-			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				return;
-
-			// for some reason OnLoaded is called twice
-			if (m_d2dFactory != null)
-				return;
-
-			m_d2dFactory = D2DFactory.CreateFactory(D2DFactoryType.SingleThreaded);
 #if DEBUG_TEXT
 			dwriteFactory = DWriteFactory.CreateFactory();
 			textFormat = dwriteFactory.CreateTextFormat("Bodoni MT", 10, DWrite.FontWeight.Normal, DWrite.FontStyle.Normal, DWrite.FontStretch.Normal);
 #endif
-			Window window = Window.GetWindow(this);
 
-			m_interopImageSource.HWNDOwner = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
-			m_interopImageSource.OnRender = this.DoRenderCallback;
-
-			m_tileLayoutInvalid = true;
-			m_tileRenderInvalid = true;
-
-			// This seems to initialize the imagesource...
-			m_interopImageSource.SetPixelSize(0, 0);
 		}
 
+		void InitTextureRenderSurface(int width, int height)
+		{
+			if (m_renderTexture != null)
+			{
+				m_interopImageSource.SetBackBufferSlimDX(null);
+				m_renderTexture.Dispose();
+				m_renderTexture = null;
+			}
 
+			if (m_renderTarget != null)
+			{
+				m_renderTarget.Dispose();
+				m_renderTarget = null;
+			}
+
+			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
+			m_renderTexture = Helpers10.CreateTextureRenderSurface(m_device, width, height);
+
+			m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
+
+			RenderTargetProperties rtProperties = new RenderTargetProperties()
+			{
+				Type = RenderTargetType.Default,
+				PixelFormat = new PixelFormat(DXGI.Format.B8G8R8A8_UNorm, AlphaMode.Premultiplied),
+				HorizontalDpi = m_d2dFactory.DesktopDpi.Width,
+				VerticalDpi = m_d2dFactory.DesktopDpi.Height,
+			};
+
+			using (var surface = m_renderTexture.AsSurface())
+				m_renderTarget = RenderTarget.FromDXGI(m_d2dFactory, surface, rtProperties);
+
+			m_renderer.RenderTargetChanged();
+		}
 
 		public double TileSize
 		{
@@ -101,6 +121,20 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
+		public Point CenterPos
+		{
+			get { return m_centerPos; }
+
+			set
+			{
+				m_centerPos = value;
+
+				InvalidateTileData();
+
+				UpdateTileLayout(this.RenderSize);
+			}
+		}
+
 		public IntSize GridSize
 		{
 			get { return m_gridSize; }
@@ -108,6 +142,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
+			if (m_disposed)
+				return base.ArrangeOverride(arrangeBounds);
+
 			trace.TraceInformation("ArrangeOverride({0})", arrangeBounds);
 
 			var renderSize = arrangeBounds;
@@ -122,6 +159,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
+			if (m_disposed)
+				return;
+			
 			trace.TraceInformation("OnRender");
 
 			var renderSize = this.RenderSize;
@@ -132,28 +172,34 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				if (TileLayoutChanged != null)
 					TileLayoutChanged(m_gridSize, m_centerPos);
-
-				m_tileLayoutInvalid = false;
 			}
 
-			if (m_tileRenderInvalid)
+			if (m_tileDataInvalid)
 			{
 				if (this.AboutToRender != null)
 					this.AboutToRender();
-
-				m_interopImageSource.Lock();
-
-				if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-					m_interopImageSource.SetPixelSize((uint)renderWidth, (uint)renderHeight); // implicit render
-				else
-					m_interopImageSource.RequestRender();
-
-				m_interopImageSource.Unlock();
-
-				m_tileRenderInvalid = false;
 			}
 
+			m_interopImageSource.Lock();
+
+			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+				InitTextureRenderSurface(renderWidth, renderHeight);
+
+			if (m_tileRenderInvalid)
+			{
+				DoRender();
+				m_device.Flush();
+			}
+
+			m_interopImageSource.InvalidateD3DImage();
+
+			m_interopImageSource.Unlock();
+
 			drawingContext.DrawImage(m_interopImageSource, new System.Windows.Rect(renderSize));
+
+			m_tileLayoutInvalid = false;
+			m_tileDataInvalid = false;
+			m_tileRenderInvalid = false;
 
 			trace.TraceInformation("OnRender End");
 		}
@@ -169,19 +215,6 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 
-		public int Columns { get { return this.GridSize.Width; } }
-		public int Rows { get { return this.GridSize.Height; } }
-
-		public Point CenterPos
-		{
-			get { return m_centerPos; }
-
-			set
-			{
-				m_centerPos = value;
-				InvalidateTileData();
-			}
-		}
 
 		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
 
@@ -260,20 +293,21 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetRenderData(IRenderData renderData)
 		{
-			IRenderer renderer;
-
 			if (renderData is RenderData<RenderTileDetailed>)
-				renderer = new RendererDetailed((RenderData<RenderTileDetailed>)renderData);
+				m_renderer = new RendererDetailed((RenderData<RenderTileDetailed>)renderData);
 			else
 				throw new NotSupportedException();
 
-			m_renderer = renderer;
-			InvalidateTileRender();
+			InvalidateTileData();
 		}
 
 		public void InvalidateTileData()
 		{
-			InvalidateTileRender();
+			if (m_tileDataInvalid == false)
+			{
+				m_tileDataInvalid = true;
+				InvalidateTileRender();
+			}
 		}
 
 		public void InvalidateSymbols()
@@ -294,57 +328,16 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		void DoRenderCallback(IntPtr pIDXGISurface)
+		void DoRender()
 		{
-			try
-			{
-				DoRender(pIDXGISurface);
-			}
-			catch (Exception e)
-			{
-				System.Diagnostics.Trace.WriteLine(e.ToString());
-				System.Diagnostics.Trace.Assert(false);
-			}
-		}
+			if (m_renderTarget == null)
+				return;
 
-		void DoRender(IntPtr pIDXGISurface)
-		{
 			trace.TraceInformation("DoRender");
-
-			if (pIDXGISurface != m_pIDXGISurfacePreviousNoRef)
-			{
-				trace.TraceInformation("Create Render Target");
-
-				m_pIDXGISurfacePreviousNoRef = pIDXGISurface;
-
-				// Create the render target
-				Surface dxgiSurface = Surface.FromNativeSurface(pIDXGISurface);
-				SurfaceDescription sd = dxgiSurface.Description;
-
-				RenderTargetProperties rtp =
-					new RenderTargetProperties(
-						RenderTargetType.Default,
-						new PixelFormat(Format.B8G8R8A8_UNORM, AlphaMode.Premultiplied),
-						96,
-						96,
-						RenderTargetUsage.None,
-						Microsoft.WindowsAPICodePack.DirectX.Direct3D.FeatureLevel.Default);
-
-				try
-				{
-					m_renderTarget = m_d2dFactory.CreateDxgiSurfaceRenderTarget(dxgiSurface, rtp);
-				}
-				catch (Exception)
-				{
-					return;
-				}
-
-				m_renderer.RenderTargetChanged();
-			}
 
 			m_renderTarget.BeginDraw();
 
-			m_renderTarget.Clear(new ColorF(0, 0, 0, 1));
+			m_renderTarget.Clear(new Color4(1.0f, 0, 0, 0));
 
 			if (m_tileSize == 0)
 			{
@@ -354,18 +347,81 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
-			m_renderTarget.Transform = Matrix3x2F.Translation((float)m_renderOffset.X, (float)m_renderOffset.Y);
+			var m = Matrix3x2.Identity;
+			m.M31 = (float)m_renderOffset.X;
+			m.M32 = (float)m_renderOffset.Y;
+			m_renderTarget.Transform = m;
 
 			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, (int)m_tileSize);
 
-			m_renderTarget.Transform = Matrix3x2F.Identity;
+			m_renderTarget.Transform = Matrix3x2.Identity;
 
 			m_renderTarget.EndDraw();
 		}
 
 		#region IDispobable
+		bool m_disposed;
+
+		~TileControlD2D()
+		{
+			Dispose(false);
+		}
+
 		public void Dispose()
 		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!m_disposed)
+			{
+				if (disposing)
+				{
+					// Dispose managed resources.
+				}
+
+				// Dispose unmanaged resources
+
+				if (m_interopImageSource != null)
+				{
+					m_interopImageSource.Dispose();
+					m_interopImageSource = null;
+				}
+
+				if (m_renderTexture != null)
+				{
+					m_renderTexture.Dispose();
+					m_renderTexture = null;
+				}
+
+				if (m_renderTarget != null)
+				{
+					m_renderTarget.Dispose();
+					m_renderTarget = null;
+				}
+
+				if (m_renderer != null)
+				{
+					m_renderer.Dispose();
+					m_renderer = null;
+				}
+
+				if (m_d2dFactory != null)
+				{
+					m_d2dFactory.Dispose();
+					m_d2dFactory = null;
+				}
+
+				if (m_device != null)
+				{
+					m_device.Dispose();
+					m_device = null;
+				}
+
+				m_disposed = true;
+			}
 		}
 		#endregion
 	}
