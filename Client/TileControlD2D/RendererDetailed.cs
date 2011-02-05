@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client.TileControl
 			for (int x = 0; x < numTiles; ++x)
 			{
 				var bmp = m_bitmapCache.GetBitmap((SymbolID)x, GameColor.None);
-				bmp.CopyPixels(arr, (int)tileSize * 4, 0);
+				bmp.CopyPixels(arr, tileSize * 4, 0);
 				m_atlasBitmap.FromMemory(arr, tileSize * 4, new System.Drawing.Rectangle(x * tileSize, 0, tileSize, tileSize));
 			}
 		}
