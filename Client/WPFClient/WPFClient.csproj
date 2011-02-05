@@ -144,7 +144,7 @@
     </Compile>
     <Compile Include="GrowingTileGrid.cs" />
     <Compile Include="UI\MasterMapControl.cs" />
-    <Compile Include="UI\MapControlD2D.cs" />
+    <Compile Include="UI\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : FrameworkElement, ITileControl
+	public class TileControlD2D : TileControlBase, IDisposable
 	{
 		Factory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -23,20 +23,6 @@ namespace Dwarrowdelf.Client.TileControl
 		DWriteFactory dwriteFactory;
 #endif
 		D3D10ImageSlimDX m_interopImageSource;
-
-		Point m_centerPos;
-		IntSize m_gridSize;
-		double m_tileSize;
-		Point m_renderOffset;
-
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControlD2D");
-
-		bool m_tileLayoutInvalid;
-		bool m_tileDataInvalid;
-		bool m_tileRenderInvalid;
-
-		public event Action<IntSize, Point> TileLayoutChanged;
-		public event Action AboutToRender;
 
 		RendererDetailed m_renderer;
 		ISymbolDrawingCache m_symbolDrawingCache;
@@ -102,44 +88,6 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderer.RenderTargetChanged();
 		}
 
-		public double TileSize
-		{
-			get { return m_tileSize; }
-			set
-			{
-				if (value == m_tileSize)
-					return;
-
-				trace.TraceInformation("TileSize = {0}", value);
-
-				m_tileSize = value;
-
-				if (m_renderer != null)
-					m_renderer.TileSizeChanged((int)value);
-
-				UpdateTileLayout(this.RenderSize);
-			}
-		}
-
-		public Point CenterPos
-		{
-			get { return m_centerPos; }
-
-			set
-			{
-				m_centerPos = value;
-
-				InvalidateTileData();
-
-				UpdateTileLayout(this.RenderSize);
-			}
-		}
-
-		public IntSize GridSize
-		{
-			get { return m_gridSize; }
-		}
-
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
 			if (m_disposed)
@@ -157,28 +105,10 @@ namespace Dwarrowdelf.Client.TileControl
 			return base.ArrangeOverride(arrangeBounds);
 		}
 
-		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
+		protected override void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize)
 		{
-			if (m_disposed)
-				return;
-			
-			trace.TraceInformation("OnRender");
-
-			var renderSize = this.RenderSize;
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
-
-			if (m_tileLayoutInvalid)
-			{
-				if (TileLayoutChanged != null)
-					TileLayoutChanged(m_gridSize, m_centerPos);
-			}
-
-			if (m_tileDataInvalid)
-			{
-				if (this.AboutToRender != null)
-					this.AboutToRender();
-			}
 
 			m_interopImageSource.Lock();
 
@@ -187,6 +117,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 			if (m_tileRenderInvalid)
 			{
+				m_renderer.TileSizeChanged((int)this.TileSize); // XXX
+
 				DoRender();
 				m_device.Flush();
 			}
@@ -195,100 +127,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_interopImageSource.Unlock();
 
-			drawingContext.DrawImage(m_interopImageSource, new System.Windows.Rect(renderSize));
-
-			m_tileLayoutInvalid = false;
-			m_tileDataInvalid = false;
-			m_tileRenderInvalid = false;
-
-			trace.TraceInformation("OnRender End");
-		}
-
-		public void InvalidateTileRender()
-		{
-			if (m_tileRenderInvalid == false)
-			{
-				trace.TraceInformation("InvalidateRender");
-				m_tileRenderInvalid = true;
-				InvalidateVisual();
-			}
-		}
-
-
-
-		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
-
-		public Point MapLocationToScreenLocation(Point ml)
-		{
-			var gridSize = this.GridSize;
-
-			var p = ml - this.ScreenMapDiff;
-			p = new Point(p.X, -p.Y);
-			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
-
-			return p;
-		}
-
-		public Point ScreenLocationToMapLocation(Point sl)
-		{
-			var gridSize = this.GridSize;
-
-			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
-			v = new Point(v.X, -v.Y);
-			v += this.ScreenMapDiff;
-
-			return v;
-		}
-
-		public Point ScreenPointToMapLocation(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
-		}
-
-		public Point MapLocationToScreenPoint(Point ml)
-		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
-		}
-
-		public Point ScreenPointToScreenLocation(Point p)
-		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
-		}
-
-		public Point ScreenLocationToScreenPoint(Point loc)
-		{
-			loc.Offset(0.5, 0.5);
-			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return p;
-		}
-
-
-
-
-
-		void UpdateTileLayout(Size renderSize)
-		{
-			var renderWidth = (int)Math.Ceiling(renderSize.Width);
-			var renderHeight = (int)Math.Ceiling(renderSize.Height);
-
-			var columns = (int)Math.Ceiling(renderSize.Width / m_tileSize) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / m_tileSize) | 1;
-			m_gridSize = new IntSize(columns, rows);
-
-			var renderOffsetX = (int)(renderWidth - m_tileSize * m_gridSize.Width) / 2;
-			var renderOffsetY = (int)(renderHeight - m_tileSize * m_gridSize.Height) / 2;
-			m_renderOffset = new Point(renderOffsetX, renderOffsetY);
-
-			m_tileLayoutInvalid = true;
-
-			trace.TraceInformation("UpdateTileLayout({0}, {1}, {2}) -> Off {3}, Grid {4}", renderSize, m_gridSize, m_tileSize,
-				m_renderOffset, m_gridSize);
-
-			InvalidateTileRender();
+			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
 		public void SetRenderData(IRenderData renderData)
@@ -299,15 +138,6 @@ namespace Dwarrowdelf.Client.TileControl
 				throw new NotSupportedException();
 
 			InvalidateTileData();
-		}
-
-		public void InvalidateTileData()
-		{
-			if (m_tileDataInvalid == false)
-			{
-				m_tileDataInvalid = true;
-				InvalidateTileRender();
-			}
 		}
 
 		public void InvalidateSymbols()
@@ -339,7 +169,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_renderTarget.Clear(new Color4(1.0f, 0, 0, 0));
 
-			if (m_tileSize == 0)
+			if (this.TileSize == 0)
 			{
 				m_renderTarget.EndDraw();
 				return;
@@ -352,7 +182,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m.M32 = (float)m_renderOffset.Y;
 			m_renderTarget.Transform = m;
 
-			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, (int)m_tileSize);
+			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, (int)this.TileSize);
 
 			m_renderTarget.Transform = Matrix3x2.Identity;
 

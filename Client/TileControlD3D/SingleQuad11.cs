@@ -281,8 +281,6 @@ namespace Dwarrowdelf.Client.TileControl
 				m_pass.Apply(context);
 				context.Draw(4, 0);
 			}
-
-			context.Flush();
 		}
 
 		#region IDisposable

@@ -23,9 +23,9 @@ namespace Dwarrowdelf.Client
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControlD2D : UserControl, INotifyPropertyChanged, IDisposable
+	class MapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		TileControl.TileControlD2D m_tileControlD2D;
+		TileControl.TileControlD3D m_tileControl;
 		RenderViewDetailed m_renderView;
 
 		World m_world;
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action TileArrangementChanged;
 
-		public MapControlD2D()
+		public MapControl()
 		{
 		}
 
@@ -44,11 +44,11 @@ namespace Dwarrowdelf.Client
 
 			m_renderView = new RenderViewDetailed();
 
-			m_tileControlD2D = new TileControl.TileControlD2D();
-			m_tileControlD2D.SetRenderData(m_renderView.RenderData);
-			m_tileControlD2D.TileLayoutChanged += OnTileArrangementChanged;
-			m_tileControlD2D.AboutToRender += OnAboutToRender;
-			AddChild(m_tileControlD2D);
+			m_tileControl = new TileControl.TileControlD3D();
+			m_tileControl.SetRenderData(m_renderView.RenderData);
+			m_tileControl.TileLayoutChanged += OnTileArrangementChanged;
+			m_tileControl.AboutToRender += OnAboutToRender;
+			AddChild(m_tileControl);
 		}
 
 		void OnTileArrangementChanged(IntSize gridSize, Point centerPos)
@@ -73,64 +73,64 @@ namespace Dwarrowdelf.Client
 			m_renderView.Resolve();
 		}
 
-		public IntSize GridSize { get { return m_tileControlD2D.GridSize; } }
+		public IntSize GridSize { get { return m_tileControl.GridSize; } }
 
 		public Point CenterPos
 		{
-			get { return m_tileControlD2D.CenterPos; }
-			set { m_tileControlD2D.CenterPos = value; }
+			get { return m_tileControl.CenterPos; }
+			set { m_tileControl.CenterPos = value; }
 		}
 
 		public Point ScreenPointToScreenLocation(Point p)
 		{
-			return m_tileControlD2D.ScreenPointToScreenLocation(p);
+			return m_tileControl.ScreenPointToScreenLocation(p);
 		}
 
 		public Point ScreenLocationToScreenPoint(Point loc)
 		{
-			return m_tileControlD2D.ScreenLocationToScreenPoint(loc);
+			return m_tileControl.ScreenLocationToScreenPoint(loc);
 		}
 
 		public Point ScreenPointToMapLocation(Point p)
 		{
-			return m_tileControlD2D.ScreenPointToMapLocation(p);
+			return m_tileControl.ScreenPointToMapLocation(p);
 		}
 
 		public Point MapLocationToScreenPoint(Point ml)
 		{
-			return m_tileControlD2D.MapLocationToScreenPoint(ml);
+			return m_tileControl.MapLocationToScreenPoint(ml);
 		}
 
 		public Point MapLocationToScreenLocation(Point ml)
 		{
-			return m_tileControlD2D.MapLocationToScreenLocation(ml);
+			return m_tileControl.MapLocationToScreenLocation(ml);
 		}
 
 		public Point ScreenLocationToMapLocation(Point sl)
 		{
-			return m_tileControlD2D.ScreenLocationToMapLocation(sl);
+			return m_tileControl.ScreenLocationToMapLocation(sl);
 		}
 
 		public void InvalidateTiles()
 		{
-			m_tileControlD2D.InvalidateTileData();
+			m_tileControl.InvalidateTileData();
 		}
 
 		public double TileSize
 		{
-			get { return m_tileControlD2D.TileSize; }
+			get { return m_tileControl.TileSize; }
 
 			set
 			{
 				value = MyMath.Clamp(value, 64, 2);
 
-				m_tileControlD2D.TileSize = value;
+				m_tileControl.TileSize = value;
 			}
 		}
 
 		public void InvalidateSymbols()
 		{
-			m_tileControlD2D.InvalidateSymbols();
+			m_tileControl.InvalidateSymbols();
 			InvalidateTiles();
 		}
 
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Client
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_tileControlD2D.SymbolDrawingCache = m_world.SymbolDrawingCache;
+						m_tileControl.SymbolDrawingCache = m_world.SymbolDrawingCache;
 					}
 				}
 				else
@@ -228,10 +228,10 @@ namespace Dwarrowdelf.Client
 		#region IDispobable
 		public void Dispose()
 		{
-			if (m_tileControlD2D != null)
+			if (m_tileControl != null)
 			{
-				m_tileControlD2D.Dispose();
-				m_tileControlD2D = null;
+				m_tileControl.Dispose();
+				m_tileControl = null;
 			}
 		}
 		#endregion

@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
-		MapControlD2D m_mapControl;
+		MapControl m_mapControl;
 
 		MapSelection m_selection;
 		Rectangle m_selectionRect;
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 			grid.ClipToBounds = true;
 			AddChild(grid);
 
-			MapControlD2D mc = new MapControlD2D();
+			MapControl mc = new MapControl();
 
 			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;
