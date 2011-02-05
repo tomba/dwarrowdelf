@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileLayoutInvalid;
 		bool m_tileRenderInvalid;
 
-		public event Action<IntSize> TileLayoutChanged;
+		public event Action<IntSize, Point> TileLayoutChanged;
 		public event Action AboutToRender;
 
 		IRenderer m_renderer;
@@ -131,7 +131,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_tileLayoutInvalid)
 			{
 				if (TileLayoutChanged != null)
-					TileLayoutChanged(m_gridSize);
+					TileLayoutChanged(m_gridSize, m_centerPos);
 
 				m_tileLayoutInvalid = false;
 			}

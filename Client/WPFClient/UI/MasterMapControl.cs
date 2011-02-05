@@ -19,62 +19,17 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	struct MapSelection
-	{
-		public MapSelection(IntPoint3D start, IntPoint3D end)
-			: this()
-		{
-			this.SelectionStart = start;
-			this.SelectionEnd = end;
-			this.IsSelectionValid = true;
-		}
-
-		public MapSelection(IntCuboid cuboid)
-			: this()
-		{
-			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
-			{
-				this.IsSelectionValid = false;
-			}
-			else
-			{
-				this.SelectionStart = cuboid.Corner1;
-				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
-				this.IsSelectionValid = true;
-			}
-		}
-
-		public bool IsSelectionValid { get; set; }
-		public IntPoint3D SelectionStart { get; set; }
-		public IntPoint3D SelectionEnd { get; set; }
-
-		public IntCuboid SelectionCuboid
-		{
-			get
-			{
-				if (!this.IsSelectionValid)
-					return new IntCuboid();
-
-				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
-			}
-		}
-	}
-
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
 	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
 		World m_world;
-
 		Environment m_env;
-		int m_z;
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
 
 		MapControlD2D m_mapControl;
-
-		IntPoint m_centerPos;
 
 		MapSelection m_selection;
 		Rectangle m_selectionRect;
@@ -144,8 +99,8 @@ namespace Dwarrowdelf.Client
 			m_mapControl.InvalidateTiles();
 		}
 
-		public int Columns { get { return m_mapControl.Columns; } }
-		public int Rows { get { return m_mapControl.Rows; } }
+		public int Columns { get { return m_mapControl.GridSize.Width; } }
+		public int Rows { get { return m_mapControl.GridSize.Height; } }
 
 		public double TileSize
 		{
@@ -198,8 +153,6 @@ namespace Dwarrowdelf.Client
 			UpdateSelectionRect();
 
 			e.Handled = true;
-
-			base.OnMouseWheel(e);
 		}
 
 		// Called when underlying MapControl changes
@@ -361,14 +314,11 @@ namespace Dwarrowdelf.Client
 
 		public IntPoint CenterPos
 		{
-			get { return m_centerPos; }
+			get { return new IntPoint((int)Math.Round(m_mapControl.CenterPos.X), (int)Math.Round(m_mapControl.CenterPos.Y)); }
 			set
 			{
-				if (value == this.CenterPos)
-					return;
-				IntVector dv = m_centerPos - value;
-				m_centerPos = value;
 				m_mapControl.CenterPos = new Point(value.X, value.Y);
+
 				UpdateHoverTileInfo(Mouse.GetPosition(this));
 				UpdateSelectionRect();
 
@@ -402,7 +352,7 @@ namespace Dwarrowdelf.Client
 				else
 					m_world.SymbolDrawingCache.Load(new Uri("/Symbols/SymbolInfosGfx.xaml", UriKind.Relative));
 
-				m_mapControl.InvalidateDrawings();
+				m_mapControl.InvalidateSymbols();
 
 				Notify("TileSetHack");
 			}
@@ -529,19 +479,18 @@ namespace Dwarrowdelf.Client
 
 		public int Z
 		{
-			get { return m_z; }
+			get { return m_mapControl.Z; }
 
 			set
 			{
-				if (m_z == value)
+				if (m_mapControl.Z == value)
 					return;
 
-				m_z = value;
 				m_mapControl.Z = value;
 
 				foreach (FrameworkElement child in m_elementCanvas.Children)
 				{
-					if (GetZ(child) != m_z)
+					if (GetZ(child) != value)
 						child.Visibility = System.Windows.Visibility.Hidden;
 					else
 						child.Visibility = System.Windows.Visibility.Visible;
@@ -565,7 +514,7 @@ namespace Dwarrowdelf.Client
 		void UpdateHoverTileInfo(Point p)
 		{
 			var sl = ScreenPointToScreenLocation(p);
-			var ml = new IntPoint3D(ScreenPointToMapLocation(p), m_z);
+			var ml = new IntPoint3D(ScreenPointToMapLocation(p), m_mapControl.Z);
 
 			if (p != this.HoverTileInfo.MousePos ||
 				sl != this.HoverTileInfo.ScreenLocation ||
@@ -616,6 +565,53 @@ namespace Dwarrowdelf.Client
 		}
 		#endregion
 	}
+
+
+
+
+	struct MapSelection
+	{
+		public MapSelection(IntPoint3D start, IntPoint3D end)
+			: this()
+		{
+			this.SelectionStart = start;
+			this.SelectionEnd = end;
+			this.IsSelectionValid = true;
+		}
+
+		public MapSelection(IntCuboid cuboid)
+			: this()
+		{
+			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
+			{
+				this.IsSelectionValid = false;
+			}
+			else
+			{
+				this.SelectionStart = cuboid.Corner1;
+				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
+				this.IsSelectionValid = true;
+			}
+		}
+
+		public bool IsSelectionValid { get; set; }
+		public IntPoint3D SelectionStart { get; set; }
+		public IntPoint3D SelectionEnd { get; set; }
+
+		public IntCuboid SelectionCuboid
+		{
+			get
+			{
+				if (!this.IsSelectionValid)
+					return new IntCuboid();
+
+				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
+			}
+		}
+	}
+
+
+
 
 
 

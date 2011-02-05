@@ -220,7 +220,7 @@ namespace TileControlD3DTest
 			base.OnMouseMove(e);
 		}
 
-		void tileControl_TileArrangementChanged(IntSize gridSize)
+		void tileControl_TileArrangementChanged(IntSize gridSize, Point centerPos)
 		{
 			m_renderData.Size = gridSize;
 
@@ -230,7 +230,6 @@ namespace TileControlD3DTest
 			var p = tileControl.ScreenLocationToScreenPoint(mp);
 			Canvas.SetLeft(rect, p.X);
 			Canvas.SetTop(rect, p.Y);
-
 		}
 
 		void tileControl_AboutToRender()
