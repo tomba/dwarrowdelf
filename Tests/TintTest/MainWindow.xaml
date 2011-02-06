@@ -1,0 +1,10 @@
+﻿<Window x:Class="TintTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="353" Width="984">
+    <UniformGrid Columns="3">
+        <Image Name="srcImage" Stretch="None" />
+        <Image Name="tintImage" Stretch="None" />
+        <Image Name="dstImage" Stretch="None" />
+    </UniformGrid>
+</Window>
