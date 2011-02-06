@@ -18,6 +18,8 @@ Texture2DArray g_tileTextures;
 StructuredBuffer<TileData> g_tileBuffer;
 Buffer<uint> g_colorBuffer;		// GameColor -> RGB
 
+bool g_simpleTint;
+
 SamplerState linearSampler
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -58,7 +60,7 @@ float3 load_color(in uint coloridx)
 	return color;
 }
 
-float3 RGBToHSL(float3 color)
+float3 RGBToHSL(in float3 color)
 {
 	float3 hsl; // init to 0 to avoid warnings ? (and reverse if + remove first part)
 	
@@ -100,7 +102,7 @@ float3 RGBToHSL(float3 color)
 	return hsl;
 }
 
-float HueToRGB(float f1, float f2, float hue)
+float HueToRGB(in float f1, in float f2, in float hue)
 {
 	if (hue < 0.0)
 		hue += 1.0;
@@ -118,7 +120,7 @@ float HueToRGB(float f1, float f2, float hue)
 	return res;
 }
 
-float3 HSLToRGB(float3 hsl)
+float3 HSLToRGB(in float3 hsl)
 {
 	float3 rgb;
 	
@@ -149,15 +151,22 @@ float3 tint(in float3 input, in uint coloridx)
 {
 	float3 tint = load_color(coloridx);
 
-	input = RGBToHSL(input);
-	tint = RGBToHSL(tint);
+	if (g_simpleTint)
+	{
+		return tint * input;
+	}
+	else
+	{
+		input = RGBToHSL(input);
+		tint = RGBToHSL(tint);
 
-	input.r = tint.r;
-	input.g = tint.g;
+		input.r = tint.r;
+		input.g = tint.g;
 	
-	input = HSLToRGB(input);
+		input = HSLToRGB(input);
 
-	return input;
+		return input;
+	}
 }
 
 float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkness, in float2 texpos)
@@ -178,7 +187,7 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 	{
 		float3 bg = load_color(bgColorNum);
 
-		c = float4(c.rgb * c.a + bg.rgb * (1.0f - c.a), 1.0f);
+		c = float4(c.rgb + bg.rgb * (1.0f - c.a), 1.0f);
 	}
 
 	c.rgb = (1.0f - darkness) * c.rgb;

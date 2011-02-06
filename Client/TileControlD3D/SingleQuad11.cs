@@ -34,6 +34,7 @@ namespace Dwarrowdelf.Client.TileControl
 		EffectTechnique m_technique;
 		EffectPass m_pass;
 
+		EffectScalarVariable m_simpleTint;
 		EffectScalarVariable m_tileSizeVariable;
 		EffectVectorVariable m_colrowVariable;
 		EffectVectorVariable m_renderOffsetVariable;
@@ -62,6 +63,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_tileSizeVariable = m_effect.GetVariableByName("g_tileSize").AsScalar();
 			m_colrowVariable = m_effect.GetVariableByName("g_colrow").AsVector();
 			m_renderOffsetVariable = m_effect.GetVariableByName("g_renderOffset").AsVector();
+			m_simpleTint = m_effect.GetVariableByName("g_simpleTint").AsScalar();
 
 
 			/* color buffer view */
@@ -268,6 +270,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_tileSizeVariable.Set(tileSize);
 			m_renderOffsetVariable.Set(new Vector2((float)renderOffset.X, (float)renderOffset.Y));
+			m_simpleTint.Set(true);
 
 			var vertexSize = Marshal.SizeOf(typeof(MyVertex));
 
