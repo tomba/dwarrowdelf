@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 
 			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;
-			m_mapControl.TileArrangementChanged += OnTileArrangementChanged;
+			m_mapControl.TileLayoutChanged += OnTileArrangementChanged;
 
 
 			m_elementCanvas = new Canvas();
@@ -156,7 +156,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// Called when underlying MapControl changes
-		void OnTileArrangementChanged()
+		void OnTileArrangementChanged(IntSize gridSize, Point centerPos)
 		{
 			UpdateTranslateTransform();
 			UpdateSelectionRect();
@@ -559,7 +559,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_mapControl != null)
 			{
-				m_mapControl.TileArrangementChanged -= OnTileArrangementChanged;
+				m_mapControl.TileLayoutChanged -= OnTileArrangementChanged;
 				m_mapControl.Dispose();
 				m_mapControl = null;
 			}

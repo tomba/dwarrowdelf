@@ -20,12 +20,11 @@ namespace Dwarrowdelf.Client.TileControl
 		public event Action<IntSize, Point> TileLayoutChanged;
 		public event Action AboutToRender;
 
+
 		public IntSize GridSize
 		{
 			get { return m_gridSize; }
 		}
-
-
 
 
 		public double TileSize
@@ -35,7 +34,7 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 		public static readonly DependencyProperty TileSizeProperty =
-				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlBase), new UIPropertyMetadata(16.0, OnTileSizeChanged));
+				DependencyProperty.Register("TileSize", typeof(double), typeof(TileControlBase), new UIPropertyMetadata(16.0, OnTileSizeChanged, OnCoerceTileSize));
 
 		static void OnTileSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -47,7 +46,14 @@ namespace Dwarrowdelf.Client.TileControl
 			tc.UpdateTileLayout(tc.RenderSize);
 		}
 
+		static object OnCoerceTileSize(DependencyObject d, Object baseValue)
+		{
+			var ts = (double)baseValue;
 
+			ts = MyMath.Clamp(ts, 64, 2);
+
+			return ts;
+		}
 
 		public Point CenterPos
 		{
@@ -70,11 +76,8 @@ namespace Dwarrowdelf.Client.TileControl
 			var y = Math.Round(p.Y);
 			tc.trace.TraceVerbose("CenterPos {0:F2}    {1},{2}", p, x, y);
 
-			// XXX
 			if (Math.Round(p.X) != Math.Round(po.X) || Math.Round(p.Y) != Math.Round(po.Y))
 				tc.InvalidateTileData();
-
-			//tc.tileControl_TileArrangementChanged(tc.tileControl.GridSize); // XXX
 
 			tc.UpdateTileLayout(tc.RenderSize);
 		}
@@ -124,19 +127,6 @@ namespace Dwarrowdelf.Client.TileControl
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
 			trace.TraceInformation("OnRender");
-
-			/*
-			if (m_scene == null || this.TileSize == 0)
-			{
-				base.OnRender(drawingContext);
-				return;
-			}
-			*/
-
-			/*
-			 * 			if (m_disposed)
-				return;
-			*/
 
 			var renderSize = this.RenderSize;
 

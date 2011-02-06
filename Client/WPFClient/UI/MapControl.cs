@@ -16,23 +16,18 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
-using Dwarrowdelf.Client.TileControl;
-
 namespace Dwarrowdelf.Client
 {
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : UserControl, INotifyPropertyChanged, IDisposable
+	class MapControl : TileControl.TileControlD3D, INotifyPropertyChanged
 	{
-		TileControl.TileControlD3D m_tileControl;
 		RenderViewDetailed m_renderView;
 
 		World m_world;
 		Environment m_env;
 		int m_z;
-
-		public event Action TileArrangementChanged;
 
 		public MapControl()
 		{
@@ -40,15 +35,13 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			base.OnInitialized(e);
-
 			m_renderView = new RenderViewDetailed();
 
-			m_tileControl = new TileControl.TileControlD3D();
-			m_tileControl.SetRenderData(m_renderView.RenderData);
-			m_tileControl.TileLayoutChanged += OnTileArrangementChanged;
-			m_tileControl.AboutToRender += OnAboutToRender;
-			AddChild(m_tileControl);
+			this.SetRenderData(m_renderView.RenderData);
+			this.TileLayoutChanged += OnTileArrangementChanged;
+			this.AboutToRender += OnAboutToRender;
+
+			base.OnInitialized(e);
 		}
 
 		void OnTileArrangementChanged(IntSize gridSize, Point centerPos)
@@ -58,9 +51,6 @@ namespace Dwarrowdelf.Client
 			m_renderView.RenderData.Size = gridSize;
 
 			m_renderView.CenterPos = new IntPoint3D((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
-
-			if (TileArrangementChanged != null)
-				TileArrangementChanged();
 		}
 
 		void OnAboutToRender()
@@ -73,65 +63,9 @@ namespace Dwarrowdelf.Client
 			m_renderView.Resolve();
 		}
 
-		public IntSize GridSize { get { return m_tileControl.GridSize; } }
-
-		public Point CenterPos
-		{
-			get { return m_tileControl.CenterPos; }
-			set { m_tileControl.CenterPos = value; }
-		}
-
-		public Point ScreenPointToScreenLocation(Point p)
-		{
-			return m_tileControl.ScreenPointToScreenLocation(p);
-		}
-
-		public Point ScreenLocationToScreenPoint(Point loc)
-		{
-			return m_tileControl.ScreenLocationToScreenPoint(loc);
-		}
-
-		public Point ScreenPointToMapLocation(Point p)
-		{
-			return m_tileControl.ScreenPointToMapLocation(p);
-		}
-
-		public Point MapLocationToScreenPoint(Point ml)
-		{
-			return m_tileControl.MapLocationToScreenPoint(ml);
-		}
-
-		public Point MapLocationToScreenLocation(Point ml)
-		{
-			return m_tileControl.MapLocationToScreenLocation(ml);
-		}
-
-		public Point ScreenLocationToMapLocation(Point sl)
-		{
-			return m_tileControl.ScreenLocationToMapLocation(sl);
-		}
-
 		public void InvalidateTiles()
 		{
-			m_tileControl.InvalidateTileData();
-		}
-
-		public double TileSize
-		{
-			get { return m_tileControl.TileSize; }
-
-			set
-			{
-				value = MyMath.Clamp(value, 64, 2);
-
-				m_tileControl.TileSize = value;
-			}
-		}
-
-		public void InvalidateSymbols()
-		{
-			m_tileControl.InvalidateSymbols();
-			InvalidateTiles();
+			this.InvalidateTileData();
 		}
 
 		public bool ShowVirtualSymbols
@@ -172,7 +106,7 @@ namespace Dwarrowdelf.Client
 					if (m_world != m_env.World)
 					{
 						m_world = m_env.World;
-						m_tileControl.SymbolDrawingCache = m_world.SymbolDrawingCache;
+						this.SymbolDrawingCache = m_world.SymbolDrawingCache;
 					}
 				}
 				else
@@ -223,17 +157,6 @@ namespace Dwarrowdelf.Client
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
-
-		#region IDispobable
-		public void Dispose()
-		{
-			if (m_tileControl != null)
-			{
-				m_tileControl.Dispose();
-				m_tileControl = null;
-			}
-		}
 		#endregion
 	}
 }
