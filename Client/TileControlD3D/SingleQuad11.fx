@@ -90,17 +90,23 @@ float3 RGBtoHSV(in float3 RGB)
     return HSV;
 }
 
+float3 load_color(in uint coloridx)
+{
+	uint c = g_colorBuffer.Load(coloridx);
+	
+	float3 color;
+
+	color.r = (c >> 16) & 0xff;
+	color.g = (c >> 8) & 0xff;
+	color.b = (c >> 0) & 0xff;
+	color /= 255.0f;
+
+	return color;
+}
 
 float3 tint(in float3 input, in uint coloridx)
 {
-	uint tinti = g_colorBuffer.Load(coloridx);
-	
-	float3 tint;
-
-	tint.r = (tinti >> 16) & 0xff;
-	tint.g = (tinti >> 8) & 0xff;
-	tint.b = (tinti >> 0) & 0xff;
-	tint /= 255.0f;
+	float3 tint = load_color(coloridx);
 
 	input = RGBtoHSV(input);
 	tint = RGBtoHSV(tint);
@@ -129,13 +135,7 @@ float4 get(in uint tileNum, in uint colorNum, in uint bgColorNum, in float darkn
 	
 	if (bgColorNum != 0)
 	{
-		uint bgi = g_colorBuffer.Load(bgColorNum);
-
-		float3 bg;
-		bg.r = (bgi >> 16) & 0xff;
-		bg.g = (bgi >> 8) & 0xff;
-		bg.b = (bgi >> 0) & 0xff;
-		bg /= 255.0f;
+		float3 bg = load_color(bgColorNum);
 
 		c = float4(c.rgb * c.a + bg.rgb * (1.0f - c.a), 1.0f);
 	}
