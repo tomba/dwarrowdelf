@@ -32,7 +32,7 @@ namespace ColorTest
 			for (int i = 1; i < (int)GameColor.NumColors; ++i)
 			{
 				GameColor gc = (GameColor)i;
-				GameColorRGB gcrgb = new GameColorRGB(gc);
+				GameColorRGB gcrgb = GameColorRGB.FromGameColor(gc);
 				var brush = new SolidColorBrush(Color.FromRgb(gcrgb.R, gcrgb.G, gcrgb.B));
 				var fgbrush = new SolidColorBrush(Color.FromRgb((byte)(255 - gcrgb.R), (byte)(255 - gcrgb.G), (byte)(255 - gcrgb.B)));
 
