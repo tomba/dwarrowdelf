@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 	{
 		public static Device CreateDevice()
 		{
-			return new Device(DriverType.Hardware, DeviceCreationFlags.Debug | DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_1);
+			return new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 		}
 
 		public static Texture2D CreateTextureRenderSurface(Device device, int width, int height)
