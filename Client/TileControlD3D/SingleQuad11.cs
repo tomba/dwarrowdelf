@@ -115,7 +115,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var ass = System.Reflection.Assembly.GetCallingAssembly();
 
-			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.fx"))
+			var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.fx");
+
 			using (var reader = new System.IO.StreamReader(stream))
 			{
 				var str = reader.ReadToEnd();

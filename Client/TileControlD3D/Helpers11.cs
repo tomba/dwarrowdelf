@@ -52,15 +52,12 @@ namespace Dwarrowdelf.Client.TileControl
 				Usage = Usage.RenderTargetOutput
 			};
 
-			var dxgiDevice = new SlimDX.DXGI.Device1(device);
-			var adapter = dxgiDevice.GetParent<SlimDX.DXGI.Adapter1>();
-			var factory = adapter.GetParent<Factory>();
-
-			swapChain = new SwapChain(factory, device, swapChainDesc);
-
-			factory.Dispose();
-			adapter.Dispose();
-			dxgiDevice.Dispose();
+			using (var dxgiDevice = new SlimDX.DXGI.Device1(device))
+			using (var adapter = dxgiDevice.GetParent<SlimDX.DXGI.Adapter1>())
+			using (var factory = adapter.GetParent<Factory>())
+			{
+				swapChain = new SwapChain(factory, device, swapChainDesc);
+			}
 
 			// prevent DXGI handling of alt+enter, which doesn't work properly with Winforms
 			using (var f = swapChain.GetParent<Factory>())
@@ -88,7 +85,6 @@ namespace Dwarrowdelf.Client.TileControl
 				sbc = new SymbolBitmapCache(symbolDrawingCache, tileSize);
 
 				var pixelArray = new byte[tileSize * tileSize * 4];
-				var dataRectangle = new DataRectangle(tileSize * 4, new DataStream(pixelArray, true, true));
 
 				var texDesc = new Texture2DDescription()
 				{
@@ -107,7 +103,6 @@ namespace Dwarrowdelf.Client.TileControl
 				{
 					var bmp = sbc.GetBitmap((SymbolID)i, GameColor.None);
 					bmp.CopyPixels(pixelArray, tileSize * 4, 0);
-					//bitmaps[i].CopyPixels(pixelArray, tileSize * 4, 0);
 #if COLORMIPMAPS
 					byte r, g, b;
 					switch (mipLevel)
@@ -150,29 +145,32 @@ namespace Dwarrowdelf.Client.TileControl
 					}
 #endif
 
-
-					dataRectangle.Data.Position = 0;
-
-					using (var tileTex = new Texture2D(device, texDesc, dataRectangle))
-					using (var tileSurface = tileTex.AsSurface())
+					using (var dataStream = new DataStream(pixelArray, true, true))
 					{
-						var tileDataRect = tileSurface.Map(SlimDX.DXGI.MapFlags.Read);
+						var dataRectangle = new DataRectangle(tileSize * 4, dataStream);
+						dataRectangle.Data.Position = 0;
 
-						if (atlasTexture == null)
+						using (var tileTex = new Texture2D(device, texDesc, dataRectangle))
+						using (var tileSurface = tileTex.AsSurface())
 						{
-							Texture2DDescription desc = tileTex.Description;
-							desc.ArraySize = numDistinctBitmaps;
-							desc.Usage = ResourceUsage.Default;
-							desc.BindFlags = BindFlags.ShaderResource;
-							desc.CpuAccessFlags = CpuAccessFlags.None;
-							desc.MipLevels = mipLevels;
-							atlasTexture = new Texture2D(device, desc);
+							var tileDataRect = tileSurface.Map(SlimDX.DXGI.MapFlags.Read);
+
+							if (atlasTexture == null)
+							{
+								Texture2DDescription desc = tileTex.Description;
+								desc.ArraySize = numDistinctBitmaps;
+								desc.Usage = ResourceUsage.Default;
+								desc.BindFlags = BindFlags.ShaderResource;
+								desc.CpuAccessFlags = CpuAccessFlags.None;
+								desc.MipLevels = mipLevels;
+								atlasTexture = new Texture2D(device, desc);
+							}
+
+							var dataBox = new DataBox(tileDataRect.Pitch, 0, tileDataRect.Data);
+							device.ImmediateContext.UpdateSubresource(dataBox, atlasTexture, Texture2D.CalculateSubresourceIndex(mipLevel, i, mipLevels));
+
+							tileSurface.Unmap();
 						}
-
-						var dataBox = new DataBox(tileDataRect.Pitch, 0, tileDataRect.Data);
-						device.ImmediateContext.UpdateSubresource(dataBox, atlasTexture, Texture2D.CalculateSubresourceIndex(mipLevel, i, mipLevels));
-
-						tileSurface.Unmap();
 					}
 				}
 			}
