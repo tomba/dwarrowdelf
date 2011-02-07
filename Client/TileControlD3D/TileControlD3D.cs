@@ -25,9 +25,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public TileControlD3D()
 		{
-			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				return;
-
 			m_interopImageSource = new D3DImageSlimDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
@@ -117,7 +114,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
-			
+
 			m_interopImageSource.Lock();
 
 			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)

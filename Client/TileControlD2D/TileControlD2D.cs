@@ -32,9 +32,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public TileControlD2D()
 		{
-			if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(this))
-				return;
-
 			m_interopImageSource = new D3D10ImageSlimDX();
 
 			this.Loaded += new RoutedEventHandler(OnLoaded);
