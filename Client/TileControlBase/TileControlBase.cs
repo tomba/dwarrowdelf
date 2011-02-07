@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var tc = (TileControlBase)d;
 			var ts = (double)e.NewValue;
 
-			tc.trace.TraceInformation("TileSize = {0}", ts);
+			tc.trace.TraceVerbose("TileSize = {0}", ts);
 
 			tc.UpdateTileLayout(tc.RenderSize);
 		}
@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_tileLayoutInvalid = true;
 
-			trace.TraceInformation("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, m_gridSize, tileSize,
+			trace.TraceVerbose("UpdateTileLayout(rs {0}, gs {1}, ts {2}) -> Off {3:F2}, Grid {4}", renderSize, m_gridSize, tileSize,
 				m_renderOffset, m_gridSize);
 
 			InvalidateTileRender();
@@ -133,7 +133,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
-			trace.TraceInformation("OnRender");
+			trace.TraceVerbose("OnRender");
 
 			var renderSize = this.RenderSize;
 
@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_tileDataInvalid = false;
 			m_tileRenderInvalid = false;
 
-			trace.TraceInformation("OnRender End");
+			trace.TraceVerbose("OnRender End");
 		}
 
 		protected abstract void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize);
@@ -165,7 +165,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			if (m_tileRenderInvalid == false)
 			{
-				trace.TraceInformation("InvalidateRender");
+				trace.TraceVerbose("InvalidateRender");
 				m_tileRenderInvalid = true;
 				InvalidateVisual();
 			}

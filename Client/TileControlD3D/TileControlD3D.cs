@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Client.TileControl
 				return;
 
 			m_interopImageSource = new D3DImageSlimDX();
+			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
 			this.Loaded += new RoutedEventHandler(OnLoaded);
 
@@ -43,6 +44,42 @@ namespace Dwarrowdelf.Client.TileControl
 
 			InvalidateVisual();
 		}
+
+
+		void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			// This fires when the screensaver kicks in, the machine goes into sleep or hibernate
+			// and any other catastrophic losses of the d3d device from WPF's point of view
+
+			if (m_interopImageSource.IsFrontBufferAvailable)
+			{
+				trace.TraceInformation("Frontbuffer available");
+
+				var renderWidth = (int)Math.Ceiling(this.RenderSize.Width);
+				var renderHeight = (int)Math.Ceiling(this.RenderSize.Height);
+
+				m_interopImageSource.Lock();
+
+				InitTextureRenderSurface(renderWidth, renderHeight);
+
+				m_interopImageSource.Unlock();
+
+				InvalidateTileRender();
+			}
+			else
+			{
+				trace.TraceInformation("Frontbuffer not available");
+
+				if (m_renderTexture != null)
+				{
+					m_interopImageSource.SetBackBufferSlimDX(null);
+					m_renderTexture.Dispose();
+					m_renderTexture = null;
+				}
+			}
+		}
+
+
 
 		void InitTextureRenderSurface(int width, int height)
 		{
@@ -63,7 +100,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			trace.TraceInformation("ArrangeOverride({0})", arrangeBounds);
+			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
 
 			var renderSize = arrangeBounds;
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
