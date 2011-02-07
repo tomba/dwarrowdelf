@@ -27,7 +27,6 @@ namespace Dwarrowdelf.Client
 
 		World m_world;
 		Environment m_env;
-		int m_z;
 
 		public MapControl()
 		{
@@ -44,9 +43,9 @@ namespace Dwarrowdelf.Client
 			base.OnInitialized(e);
 		}
 
-		void OnTileArrangementChanged(IntSize gridSize, Point centerPos)
+		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
-			System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, cp {1:F2} )", gridSize, centerPos);
+			System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
 			m_renderView.RenderData.Size = gridSize;
 
@@ -120,24 +119,27 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+
+
 		public int Z
 		{
-			get { return m_z; }
-
-			set
-			{
-				if (m_z == value)
-					return;
-
-				m_z = value;
-
-				m_renderView.CenterPos = new IntPoint3D((int)this.CenterPos.X, (int)this.CenterPos.Y, value);
-
-				InvalidateTiles();
-
-				Notify("Z");
-			}
+			get { return (int)GetValue(ZProperty); }
+			set { SetValue(ZProperty, value); }
 		}
+
+		public static readonly DependencyProperty ZProperty =
+			DependencyProperty.Register("Z", typeof(int), typeof(MapControl), new UIPropertyMetadata(0, OnZChanged));
+
+		static void OnZChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var mc = (MapControl)d;
+			var val = (int)e.NewValue;
+
+			mc.m_renderView.CenterPos = new IntPoint3D((int)mc.CenterPos.X, (int)mc.CenterPos.Y, val);
+
+			mc.InvalidateTiles();
+		}
+
 
 		void MapChangedCallback(IntPoint3D l)
 		{

@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Windows.Media.Animation;
 
 namespace Dwarrowdelf.Client
 {
@@ -90,9 +91,20 @@ namespace Dwarrowdelf.Client
 			m_selectionRect.Fill.Freeze();
 			m_canvas.Children.Add(m_selectionRect);
 
-
 			this.TileSize = 16;
+
+			{
+				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.CenterPosProperty, typeof(MapControl));
+				propDesc.AddValueChanged(m_mapControl, delegate { Notify("CenterPos"); });
+			}
+
+			{
+				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
+				propDesc.AddValueChanged(m_mapControl, OnZChanged);
+			}
+
 		}
+
 
 		public void InvalidateTiles()
 		{
@@ -104,18 +116,16 @@ namespace Dwarrowdelf.Client
 
 		public double TileSize
 		{
-			get
-			{
-				return m_mapControl.TileSize;
-			}
+			get { return m_mapControl.TileSize; }
 
 			set
 			{
-				m_mapControl.TileSize = value;
+				var v = value;
+				v = Math.Log(v, 2);
+				v = Math.Round(v);
+				v = Math.Pow(2, v);
 
-				UpdateScaleTransform();
-
-				UpdateSelectionRect();
+				m_mapControl.TileSize = v;
 			}
 		}
 
@@ -136,30 +146,60 @@ namespace Dwarrowdelf.Client
 			// Zoom so that the tile under the mouse stays under the mouse
 			// XXX this could be improved. Somehow it doesn't feel quite right...
 
-			var p = e.GetPosition(this);
-			var ml1 = ScreenPointToMapLocation(p);
+			e.Handled = true;
+
+			var origTileSize = m_mapControl.TileSize;
+			var origCenter = m_mapControl.CenterPos;
+
+
+			double targetTileSize = origTileSize;
 
 			if (e.Delta > 0)
-				this.TileSize *= 2;
+			{
+				if (origTileSize == m_mapControl.MaxTileSize)
+					return;
+
+				targetTileSize *= 2;
+			}
 			else
-				this.TileSize /= 2;
+			{
+				if (origTileSize == m_mapControl.MinTileSize)
+					return;
 
-			var ml2 = ScreenPointToMapLocation(p);
-			var d = ml2 - this.CenterPos;
-			var l = ml1 - d;
+				targetTileSize /= 2;
+			}
 
-			this.CenterPos = l;
+			targetTileSize = MyMath.Clamp(targetTileSize, m_mapControl.MaxTileSize, m_mapControl.MinTileSize);
 
-			UpdateSelectionRect();
 
-			e.Handled = true;
+			var p = e.GetPosition(this);
+
+			Vector v = p - new Point(m_mapControl.ActualWidth / 2, m_mapControl.ActualHeight / 2);
+			v /= targetTileSize;
+			v = new Vector(Math.Round(v.X), -Math.Round(v.Y));
+
+			var ml = m_mapControl.ScreenPointToMapLocation(p);
+			ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
+			var targetCenter = ml - v;
+
+			targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
+
+
+			m_mapControl.TileSize = targetTileSize;
+			m_mapControl.CenterPos = targetCenter;
+
+			Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
 
-		// Called when underlying MapControl changes
-		void OnTileArrangementChanged(IntSize gridSize, Point centerPos)
+
+
+		// Called when underlying MapControl changes (tile positioning, tile size)
+		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
 			UpdateTranslateTransform();
+			UpdateScaleTransform();
 			UpdateSelectionRect();
+			UpdateHoverTileInfo(Mouse.GetPosition(this));
 		}
 
 		void UpdateTranslateTransform()
@@ -317,14 +357,8 @@ namespace Dwarrowdelf.Client
 			get { return new IntPoint((int)Math.Round(m_mapControl.CenterPos.X), (int)Math.Round(m_mapControl.CenterPos.Y)); }
 			set
 			{
-				m_mapControl.CenterPos = new Point(value.X, value.Y);
-
-				UpdateHoverTileInfo(Mouse.GetPosition(this));
-				UpdateSelectionRect();
-
-				UpdateTranslateTransform();
-
-				Notify("CenterPos");
+				var center = new Point(value.X, value.Y);
+				m_mapControl.CenterPos = center;
 			}
 		}
 
@@ -398,6 +432,37 @@ namespace Dwarrowdelf.Client
 
 				Notify("Environment");
 			}
+		}
+
+		public int Z
+		{
+			get { return m_mapControl.Z; }
+
+			set { m_mapControl.Z = value; }
+		}
+
+		void OnZChanged(object sender, EventArgs e)
+		{
+			var z = this.Z;
+
+			foreach (FrameworkElement child in m_elementCanvas.Children)
+			{
+				if (GetZ(child) != z)
+					child.Visibility = System.Windows.Visibility.Hidden;
+				else
+					child.Visibility = System.Windows.Visibility.Visible;
+			}
+
+			if (this.IsMouseCaptured)
+			{
+				Point pos = Mouse.GetPosition(this);
+				var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), z);
+				Selection = new MapSelection(Selection.SelectionStart, newEnd);
+			}
+			UpdateSelectionRect();
+
+			Notify("Z");
+			UpdateHoverTileInfo(Mouse.GetPosition(this));
 		}
 
 		void AddElement(IDrawableElement element)
@@ -477,37 +542,6 @@ namespace Dwarrowdelf.Client
 		public static readonly DependencyProperty ZProperty =
 			DependencyProperty.RegisterAttached("Z", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
 
-		public int Z
-		{
-			get { return m_mapControl.Z; }
-
-			set
-			{
-				if (m_mapControl.Z == value)
-					return;
-
-				m_mapControl.Z = value;
-
-				foreach (FrameworkElement child in m_elementCanvas.Children)
-				{
-					if (GetZ(child) != value)
-						child.Visibility = System.Windows.Visibility.Hidden;
-					else
-						child.Visibility = System.Windows.Visibility.Visible;
-				}
-
-				if (IsMouseCaptured)
-				{
-					Point pos = Mouse.GetPosition(this);
-					var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
-					this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
-				}
-				UpdateSelectionRect();
-
-				Notify("Z");
-				UpdateHoverTileInfo(Mouse.GetPosition(this));
-			}
-		}
 
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 

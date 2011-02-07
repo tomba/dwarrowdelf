@@ -220,7 +220,7 @@ namespace TileControlD3DTest
 			base.OnMouseMove(e);
 		}
 
-		void tileControl_TileArrangementChanged(IntSize gridSize, Point centerPos)
+		void tileControl_TileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
 			m_renderData.Size = gridSize;
 

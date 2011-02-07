@@ -377,7 +377,7 @@ namespace Dwarrowdelf.Client
 				else
 				{
 					var v = IntVector.FromDirection(dir);
-					var m = ((map.Columns + map.Rows) / 2) / 10;
+					var m = ((map.Columns + map.Rows) / 2) / 4;
 					if (m < 1)
 						m = 1;
 					v = v * m;

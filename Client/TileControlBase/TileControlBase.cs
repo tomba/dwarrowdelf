@@ -6,6 +6,8 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client.TileControl
 {
+	public delegate void TileLayoutChangedDelegate(IntSize gridSize, double tileSize, Point centerPos);
+
 	public abstract class TileControlBase : FrameworkElement
 	{
 		protected IntSize m_gridSize;
@@ -17,7 +19,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
-		public event Action<IntSize, Point> TileLayoutChanged;
+		public event TileLayoutChangedDelegate TileLayoutChanged;
 		public event Action AboutToRender;
 
 
@@ -26,6 +28,11 @@ namespace Dwarrowdelf.Client.TileControl
 			get { return m_gridSize; }
 		}
 
+		const double MAXTILESIZE = 64;
+		const double MINTILESIZE = 2;
+
+		public double MaxTileSize { get { return MAXTILESIZE; } }
+		public double MinTileSize { get { return MINTILESIZE; } }
 
 		public double TileSize
 		{
@@ -50,7 +57,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var ts = (double)baseValue;
 
-			ts = MyMath.Clamp(ts, 64, 2);
+			ts = MyMath.Clamp(ts, MAXTILESIZE, MINTILESIZE);
 
 			return ts;
 		}
@@ -133,7 +140,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_tileLayoutInvalid)
 			{
 				if (TileLayoutChanged != null)
-					TileLayoutChanged(m_gridSize, this.CenterPos);
+					TileLayoutChanged(m_gridSize, this.TileSize, this.CenterPos);
 			}
 
 			if (m_tileDataInvalid)
