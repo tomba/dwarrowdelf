@@ -77,7 +77,7 @@
             <TextBlock Text="{Binding Path=Environment, ElementName=map, TargetNullValue=-}" />
             <Separator />
             Z
-            <TextBlock Text="{Binding Path=Z, ElementName=map}" />
+            <TextBlock Text="{Binding Path=Z, ElementName=map, TargetNullValue=x, FallbackValue=y}" />
             <Separator />
             <TextBlock DataContext="{Binding Connection.Stats}">
                 <TextBlock.Text>

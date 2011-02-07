@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client
 			m_mapControl.TileSize = targetTileSize;
 			m_mapControl.CenterPos = targetCenter;
 
-			Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
+			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
 
 
@@ -447,7 +447,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (FrameworkElement child in m_elementCanvas.Children)
 			{
-				if (GetZ(child) != z)
+				if (GetElementZ(child) != z)
 					child.Visibility = System.Windows.Visibility.Hidden;
 				else
 					child.Visibility = System.Windows.Visibility.Visible;
@@ -474,7 +474,7 @@ namespace Dwarrowdelf.Client
 				var r = element.Area;
 				Canvas.SetLeft(e, r.X);
 				Canvas.SetTop(e, r.Y);
-				SetZ(e, r.Z);
+				SetElementZ(e, r.Z);
 
 				m_elementCanvas.Children.Add(e);
 				m_elementMap[element] = e;
@@ -529,18 +529,20 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		public static int GetZ(DependencyObject obj)
+
+
+		public static int GetElementZ(DependencyObject obj)
 		{
-			return (int)obj.GetValue(ZProperty);
+			return (int)obj.GetValue(ElementZProperty);
 		}
 
-		public static void SetZ(DependencyObject obj, int value)
+		public static void SetElementZ(DependencyObject obj, int value)
 		{
-			obj.SetValue(ZProperty, value);
+			obj.SetValue(ElementZProperty, value);
 		}
 
-		public static readonly DependencyProperty ZProperty =
-			DependencyProperty.RegisterAttached("Z", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
+		public static readonly DependencyProperty ElementZProperty =
+			DependencyProperty.RegisterAttached("ElementZ", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
 
 
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }

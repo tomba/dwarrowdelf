@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client
 
 		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
-			System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
+			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
 			m_renderView.RenderData.Size = gridSize;
 
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 
 		void OnAboutToRender()
 		{
-			System.Diagnostics.Debug.Print("OnAboutToRender");
+			//System.Diagnostics.Debug.Print("OnAboutToRender");
 
 			if (m_env == null)
 				return;
