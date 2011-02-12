@@ -291,7 +291,7 @@ namespace Dwarrowdelf.Client
 			int y = loc.Y;
 			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
 
-			map.CenterPos = newPos;
+			map.BeginCenterPosAnim(newPos);
 		}
 
 		public TileInfo CurrentTileInfo { get; private set; }
@@ -381,7 +381,7 @@ namespace Dwarrowdelf.Client
 					if (m < 1)
 						m = 1;
 					v = v * m;
-					map.CenterPos += v;
+					map.BeginCenterPosAnim(v);
 				}
 			}
 			else if (e.Key == Key.Space)
@@ -392,13 +392,13 @@ namespace Dwarrowdelf.Client
 			else if (e.Key == Key.Add)
 			{
 				e.Handled = true;
-				map.TileSize *= 2;
+				map.BeginTileSizeAnim(map.TileSize * 2);
 			}
 
 			else if (e.Key == Key.Subtract)
 			{
 				e.Handled = true;
-				map.TileSize /= 2;
+				map.BeginTileSizeAnim(map.TileSize / 2);
 			}
 
 		}

@@ -111,13 +111,13 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_gridSize = gridSize;
 
-			var renderOffsetX = (int)(renderWidth - tileSize * m_gridSize.Width) / 2;
-			var renderOffsetY = (int)(renderHeight - tileSize * m_gridSize.Height) / 2;
+			var renderOffsetX = (renderWidth - tileSize * m_gridSize.Width) / 2;
+			var renderOffsetY = (renderHeight - tileSize * m_gridSize.Height) / 2;
 
 			var cx = -(this.CenterPos.X - Math.Round(this.CenterPos.X)) * this.TileSize;
 			var cy = (this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
 
-			m_renderOffset = new Point(renderOffsetX + cx, renderOffsetY + cy);
+			m_renderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
 
 			m_tileLayoutInvalid = true;
 

@@ -102,9 +102,7 @@ namespace Dwarrowdelf.Client
 				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
 				propDesc.AddValueChanged(m_mapControl, OnZChanged);
 			}
-
 		}
-
 
 		public void InvalidateTiles()
 		{
@@ -113,6 +111,12 @@ namespace Dwarrowdelf.Client
 
 		public int Columns { get { return m_mapControl.GridSize.Width; } }
 		public int Rows { get { return m_mapControl.GridSize.Height; } }
+
+		public void BeginTileSizeAnim(double targetTileSize)
+		{
+			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)));
+			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim);
+		}
 
 		public double TileSize
 		{
@@ -129,6 +133,8 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		double m_animTargetTileSize;
+
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
 			if (this.IsMouseCaptured || (Keyboard.Modifiers & ModifierKeys.Control) != 0)
@@ -143,12 +149,14 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			// Zoom so that the tile under the mouse stays under the mouse
-			// XXX this could be improved. Somehow it doesn't feel quite right...
+			// Zoom so that the position under the mouse stays under the mouse
 
 			e.Handled = true;
 
-			var origTileSize = m_mapControl.TileSize;
+			if (m_animTargetTileSize == 0)
+				m_animTargetTileSize = m_mapControl.TileSize;
+
+			var origTileSize = m_animTargetTileSize;
 			var origCenter = m_mapControl.CenterPos;
 
 
@@ -171,26 +179,69 @@ namespace Dwarrowdelf.Client
 
 			targetTileSize = MyMath.Clamp(targetTileSize, m_mapControl.MaxTileSize, m_mapControl.MinTileSize);
 
+			m_animTargetTileSize = targetTileSize;
+
+
 
 			var p = e.GetPosition(this);
 
 			Vector v = p - new Point(m_mapControl.ActualWidth / 2, m_mapControl.ActualHeight / 2);
 			v /= targetTileSize;
-			v = new Vector(Math.Round(v.X), -Math.Round(v.Y));
+			v.Y = -v.Y;
+			//v = new Vector(Math.Round(v.X), Math.Round(v.Y));
 
 			var ml = m_mapControl.ScreenPointToMapLocation(p);
-			ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
+			//ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
 			var targetCenter = ml - v;
 
-			targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
+			//targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
 
-
+#if NOANIM
 			m_mapControl.TileSize = targetTileSize;
 			m_mapControl.CenterPos = targetCenter;
+#else
+			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)));
+			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim);
+
+			var anim2 = new PointAnimation(targetCenter, new Duration(TimeSpan.FromMilliseconds(200)));
+			anim2.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim2);
+#endif
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
 
+		/// <summary>
+		/// Easing function to adjust map centerpos according to the tilesize change
+		/// </summary>
+		class MyEase : EasingFunctionBase
+		{
+			double t0;
+			double tn;
+
+			public MyEase(double tileSizeStart, double tileSizeEnd)
+			{
+				t0 = tileSizeStart;
+				tn = tileSizeEnd;
+			}
+
+			protected override double EaseInCore(double normalizedTime)
+			{
+				normalizedTime = 1.0 - normalizedTime;
+
+				double left = 1.0 / t0 - 1.0 / tn;
+				double right = 1.0 / t0 - 1.0 / (t0 + (tn - t0) * normalizedTime);
+
+				double res = right / left;
+
+				return 1.0 - res;
+			}
+
+			protected override Freezable CreateInstanceCore()
+			{
+				return new MyEase(t0, tn);
+			}
+		}
 
 
 		// Called when underlying MapControl changes (tile positioning, tile size)
@@ -323,18 +374,20 @@ namespace Dwarrowdelf.Client
 			int cx = this.CenterPos.X;
 			int cy = this.CenterPos.Y;
 
+			const int inc = 4;
+
 			if (this.ActualWidth - pos.X < limit)
-				++cx;
+				cx += inc;
 			else if (pos.X < limit)
-				--cx;
+				cx -= inc;
 
 			if (this.ActualHeight - pos.Y < limit)
-				--cy;
+				cy -= inc;
 			else if (pos.Y < limit)
-				++cy;
+				cy += inc;
 
 			var p = new IntPoint(cx, cy);
-			this.CenterPos = p;
+			this.BeginCenterPosAnim(p);
 
 			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
@@ -351,6 +404,20 @@ namespace Dwarrowdelf.Client
 			base.OnMouseUp(e);
 		}
 
+		public void BeginCenterPosAnim(IntPoint targetCenterPos)
+		{
+			var center = new Point(targetCenterPos.X, targetCenterPos.Y);
+			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)));
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim);
+		}
+
+		public void BeginCenterPosAnim(IntVector centerPosDiff)
+		{
+			var v = new Vector(centerPosDiff.X, centerPosDiff.Y);
+			var center = m_mapControl.CenterPos + v;
+			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)));
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim);
+		}
 
 		public IntPoint CenterPos
 		{
