@@ -121,6 +121,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Client\Win32\Win32.csproj">
+      <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
+      <Name>Win32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MMLog\MMLog.csproj">
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MMLog</Name>

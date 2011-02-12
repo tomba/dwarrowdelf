@@ -142,6 +142,10 @@ namespace MemoryMappedLog
 		{
 			base.OnSourceInitialized(e);
 
+			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
+			if (p != null)
+				Win32.Helpers.LoadWindowPlacement(this, p);
+
 			ListView l = logListView;
 			GridView g = l.View as GridView;
 			double total = 0;
@@ -151,6 +155,15 @@ namespace MemoryMappedLog
 			}
 
 			g.Columns[g.Columns.Count - 1].Width = l.ActualWidth - total;
+		}
+
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			var p = Win32.Helpers.SaveWindowPlacement(this);
+			Properties.Settings.Default.MainWindowPlacement = p;
+			Properties.Settings.Default.Save();
 		}
 
 		void OnNewEntriesSafe()

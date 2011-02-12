@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLogViewer", "MMLogViewer\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLogTest", "MMLogTest\MMLogTest.csproj", "{6CDDA285-7FD7-41E9-8530-687510134641}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win32", "..\Client\Win32\Win32.csproj", "{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{6CDDA285-7FD7-41E9-8530-687510134641}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CDDA285-7FD7-41E9-8530-687510134641}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CDDA285-7FD7-41E9-8530-687510134641}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
