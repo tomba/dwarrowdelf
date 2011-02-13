@@ -163,7 +163,15 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
+                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+                                        <EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
+
                         </ad:DockableContent>
 
                         <!-- Controllables -->
@@ -172,7 +180,14 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding World.Controllables}" SelectedItem="{Binding Path=FollowObject, ElementName=mainWindow}" HorizontalContentAlignment="Stretch" />
+                            <ListBox ItemsSource="{Binding World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}">
+                                        <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+                                        <EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                            </ListBox>
                         </ad:DockableContent>
 
                         <!-- Inventory -->

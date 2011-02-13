@@ -97,6 +97,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
+			if (m_disposed)
+				return base.ArrangeOverride(arrangeBounds);
+
 			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
 
 			var renderSize = arrangeBounds;
@@ -112,6 +115,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize)
 		{
+			if (m_disposed)
+				return;
+
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
 

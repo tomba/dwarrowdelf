@@ -46,11 +46,6 @@ namespace Dwarrowdelf.Client
 			map.MouseDown += MapControl_MouseDown;
 		}
 
-		void OnTileSizeChanged(object ob, EventArgs e)
-		{
-			RecalcCenterPos();
-		}
-
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
@@ -210,6 +205,7 @@ namespace Dwarrowdelf.Client
 				Disconnect();
 			}
 
+			this.FollowObject = null;
 			map.Environment = null;
 			map.Dispose();
 		}
@@ -271,27 +267,10 @@ namespace Dwarrowdelf.Client
 
 			map.Environment = env;
 			map.Z = loc.Z;
-
-			RecalcCenterPos();
+			map.BeginCenterPosAnim(this.FollowObject.Location.ToIntPoint());
 
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = loc;
-		}
-
-		void RecalcCenterPos()
-		{
-			if (this.FollowObject == null)
-				return;
-
-			var loc = this.FollowObject.Location.ToIntPoint();
-
-			int xd = map.Columns / 2;
-			int yd = map.Rows / 2;
-			int x = loc.X;
-			int y = loc.Y;
-			IntPoint newPos = new IntPoint(((x + xd / 2) / xd) * xd, ((y + yd / 2) / yd) * yd);
-
-			map.BeginCenterPosAnim(newPos);
 		}
 
 		public TileInfo CurrentTileInfo { get; private set; }
@@ -1094,6 +1073,39 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		private void ObjectsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count == 0)
+				return;
+
+			var ob = (ClientGameObject)e.AddedItems[0];
+
+			this.FollowObject = null;
+
+			map.Environment = ob.Environment;
+			map.Z = ob.Location.Z;
+			map.BeginCenterPosAnim(ob.Location.ToIntPoint());
+		}
+
+		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var item = (ListBoxItem)sender;
+			var ob = (ClientGameObject)item.Content;
+
+			this.FollowObject = null;
+
+			map.Environment = ob.Environment;
+			map.Z = ob.Location.Z;
+			map.BeginCenterPosAnim(ob.Location.ToIntPoint());
+		}
+
+		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			var item = (ListBoxItem)sender;
+			var ob = (ClientGameObject)item.Content;
+
+			this.FollowObject = ob;
+		}
 	}
 
 	class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>
