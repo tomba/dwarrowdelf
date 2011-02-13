@@ -76,6 +76,7 @@ namespace Dwarrowdelf.Client
 
 			if (m_connection != null)
 			{
+				m_connection.ConnectEvent -= OnConnect;
 				m_connection.ReceiveEvent -= _OnReceiveMessage;
 				m_connection.DisconnectEvent -= _OnDisconnected;
 				m_connection = null;
@@ -85,12 +86,13 @@ namespace Dwarrowdelf.Client
 		public void BeginLogOn(string name, Action<ClientUser, string> callback)
 		{
 			m_connection = new Connection();
+			m_connection.ConnectEvent += OnConnect;
 			m_connection.ReceiveEvent += _OnReceiveMessage;
 			m_connection.DisconnectEvent += _OnDisconnected;
 
 			m_logOnCallback = callback;
 			m_logOnName = name;
-			m_connection.BeginConnect(OnConnect);
+			m_connection.BeginConnect();
 		}
 
 		void OnConnect(string error)

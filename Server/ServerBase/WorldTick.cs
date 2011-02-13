@@ -109,6 +109,8 @@ namespace Dwarrowdelf.Server
 
 			ProcessConnectionRemoves();
 
+			m_users.Process();
+
 			if (m_state == WorldState.Idle)
 			{
 				PreTickWork();
@@ -143,7 +145,6 @@ namespace Dwarrowdelf.Server
 		void PreTickWork()
 		{
 			m_preTickInvokeList.ProcessInvokeList();
-			m_users.Process();
 			m_livings.Process();
 		}
 

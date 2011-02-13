@@ -21,10 +21,11 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
+		event Action<string> ConnectEvent;
 		event Action DisconnectEvent;
 		event Action<Message> ReceiveEvent;
 
-		void BeginConnect(Action<string> callback);
+		void BeginConnect();
 		void BeginRead();
 		void Send(Message msg);
 		void Disconnect();
@@ -33,8 +34,6 @@ namespace Dwarrowdelf
 	public class Connection : IConnection
 	{
 		Socket m_socket;
-		RecvStream m_recvStream = new RecvStream(1024 * 128);
-		int m_expectedLen;
 
 		byte[] m_sendBuffer = new byte[1024 * 128];
 
@@ -45,13 +44,30 @@ namespace Dwarrowdelf
 
 		public bool IsConnected { get { return m_socket != null && m_socket.Connected; } }
 
+		public event Action<string> ConnectEvent;
 		public event Action DisconnectEvent;
 		public event Action<Message> ReceiveEvent;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
+		object m_lock = new object();
+
+		const int PORT = 9999;
+
+		enum State
+		{
+			Uninitialized,
+			Connecting,
+			Connected,
+			Receiving,
+			Disconnected,
+		}
+
+		State m_state;
+
 		public Connection()
 		{
+			m_state = State.Uninitialized;
 		}
 
 		public Connection(Socket client)
@@ -64,170 +80,235 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = client;
+
+			m_state = State.Connected;
 		}
 
-		public void BeginConnect(Action<string> callback)
+		/// <summary>
+		/// m_lock has to be held when calling this
+		/// </summary>
+		void Cleanup()
 		{
-			int port = 9999;
-
 			if (m_socket != null)
-				throw new Exception();
+			{
+				m_socket.Shutdown(SocketShutdown.Both);
+				m_socket.Close();
+			}
 
-			m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			m_socket = null;
 
-			var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
-			m_socket.Bind(localEndPoint);
+			m_state = State.Disconnected;
+		}
 
-			var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+		public void BeginConnect()
+		{
+			lock (m_lock)
+			{
+				if (m_state != State.Uninitialized)
+					throw new Exception();
 
-			trace.Header = m_socket.LocalEndPoint.ToString();
-			trace.TraceInformation("BeginConnect to {0}", remoteEndPoint);
+				Debug.Assert(m_socket == null);
 
-			m_socket.BeginConnect(remoteEndPoint, ConnectCallback, callback);
+				m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+				var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
+				m_socket.Bind(localEndPoint);
+
+				var port = PORT;
+
+				var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+				trace.Header = m_socket.LocalEndPoint.ToString();
+				trace.TraceInformation("BeginConnect to {0}", remoteEndPoint);
+
+				m_state = State.Connecting;
+
+				try
+				{
+					m_socket.BeginConnect(remoteEndPoint, ConnectCallback, m_socket);
+				}
+				catch
+				{
+					Cleanup();
+					throw;
+				}
+			}
 		}
 
 		void ConnectCallback(IAsyncResult ar)
 		{
 			trace.TraceInformation("ConnectCallback");
 
-			var callback = (Action<string>)ar.AsyncState;
+			var socket = (Socket)ar.AsyncState;
+
+			string err = null;
+
 			try
 			{
-				m_socket.EndConnect(ar);
+				lock (m_lock)
+				{
+					socket.EndConnect(ar);
+
+					m_state = State.Connected;
+				}
 			}
 			catch (Exception e)
 			{
-				m_socket = null;
+				lock (m_lock)
+					Cleanup();
+
 				trace.TraceWarning("Connect failed: {0}", e.Message);
-				callback.Invoke(e.Message);
-				return;
+
+				err = e.Message;
 			}
 
-			callback.Invoke(null);
+			if (this.ConnectEvent != null)
+				this.ConnectEvent(err);
+		}
+
+		class ReadState
+		{
+			public Socket Socket;
+			public RecvStream RecvStream;
+			public int ExpectedLen;
 		}
 
 		public void BeginRead()
 		{
-			if (m_socket == null)
+			lock (m_lock)
 			{
-				trace.TraceWarning("BeginRead: No socket");
-				return;
-			}
+				if (m_state != State.Connected)
+					throw new Exception();
 
-			if (!m_socket.Connected)
-			{
-				m_socket = null;
-				trace.TraceWarning("BeginRead: Socket not connected");
-				return;
-			}
+				Debug.Assert(m_socket != null);
 
-			m_socket.BeginReceive(m_recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, m_socket);
+				m_state = State.Receiving;
+
+				var recvStream = new RecvStream(1024 * 128);
+
+				var state = new ReadState()
+				{
+					Socket = m_socket,
+					RecvStream = recvStream,
+				};
+
+				m_socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
+			}
 		}
 
 		void ReadCallback(IAsyncResult ar)
 		{
-			if (m_socket == null)
+			try
 			{
-				trace.TraceWarning("ReadCallback: No socket");
+				DoRead(ar);
+			}
+			catch (Exception e)
+			{
+				lock (m_lock)
+					Cleanup();
+
+				trace.TraceWarning("ReadCallback: {0}", e.Message);
+
 				if (DisconnectEvent != null)
 					DisconnectEvent();
-				return;
 			}
+		}
 
-			if (!m_socket.Connected)
-			{
-				m_socket = null;
-				trace.TraceWarning("ReadCallback: Socket not connected");
-				if (DisconnectEvent != null)
-					DisconnectEvent();
-				return;
-			}
+		void DoRead(IAsyncResult ar)
+		{
+			var state = (ReadState)ar.AsyncState;
 
-			var socket = (Socket)ar.AsyncState;
-			SocketError error;
-			int len = socket.EndReceive(ar, out error);
+			var socket = state.Socket;
+			var recvStream = state.RecvStream;
 
-			if (error != SocketError.Success)
-			{
-				m_socket = null;
-				trace.TraceWarning("ReadCallback: Socket error: {0}", error.ToString());
-				if (DisconnectEvent != null)
-					DisconnectEvent();
-				return;
-			}
-
-			m_recvStream.WriteNotify(len);
-
-			trace.TraceVerbose("[RX] {0} bytes", len);
+			int len = socket.EndReceive(ar);
 
 			if (len == 0)
 			{
-				m_socket.Close();
-				m_socket = null;
+				lock (m_lock)
+					Cleanup();
+
 				trace.TraceWarning("ReadCallback: empty read");
+
 				if (DisconnectEvent != null)
 					DisconnectEvent();
+
 				return;
 			}
 
-			if (m_recvStream.UsedBytes < 8)
+			trace.TraceVerbose("[RX] {0} bytes", len);
+
+			recvStream.WriteNotify(len);
+
+			if (recvStream.UsedBytes < 8)
 			{
-				BeginRead();
+				socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
 				return;
 			}
 
-			while (m_recvStream.UsedBytes > 8)
+			while (recvStream.UsedBytes > 8)
 			{
-				if (m_expectedLen == 0)
+				if (state.ExpectedLen == 0)
 				{
-					using (var reader = new BinaryReader(m_recvStream))
+					using (var reader = new BinaryReader(recvStream))
 					{
 						var magic = reader.ReadInt32();
 
 						if (magic != 0x12345678)
 							throw new Exception();
 
-						m_expectedLen = reader.ReadInt32() - 8;
+						state.ExpectedLen = reader.ReadInt32() - 8;
 					}
 
-					trace.TraceVerbose("[RX] Expecting msg of {0} bytes", m_expectedLen);
+					trace.TraceVerbose("[RX] Expecting msg of {0} bytes", state.ExpectedLen);
 
-					if (m_recvStream.UsedBytes < m_expectedLen && m_expectedLen > m_recvStream.FreeBytes)
+					if (recvStream.UsedBytes < state.ExpectedLen && state.ExpectedLen > recvStream.FreeBytes)
 						throw new Exception("message bigger than the receive buffer");
 				}
 
-				if (m_recvStream.UsedBytes >= m_expectedLen)
+				if (recvStream.UsedBytes >= state.ExpectedLen)
 				{
 					Message msg;
 
-					msg = Serializer.Deserialize(m_recvStream);
+					msg = Serializer.Deserialize(recvStream);
 
 					this.ReceivedMessages++;
-					this.ReceivedBytes += m_expectedLen + 8;
+					this.ReceivedBytes += state.ExpectedLen + 8;
 
-					trace.TraceVerbose("[RX] {0} bytes, {1}", m_expectedLen, msg);
+					trace.TraceVerbose("[RX] {0} bytes, {1}", state.ExpectedLen, msg);
 					if (ReceiveEvent != null)
 						ReceiveEvent(msg);
 
-					m_expectedLen = 0;
+					state.ExpectedLen = 0;
 				}
 				else
 				{
-					trace.TraceVerbose("[RX] {0} != {1}", m_expectedLen, m_recvStream.UsedBytes);
+					trace.TraceVerbose("[RX] {0} != {1}", state.ExpectedLen, recvStream.UsedBytes);
 					break;
 				}
 			}
 
-			BeginRead();
+			socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
 		}
 
 		public void Disconnect()
 		{
 			trace.TraceInformation("Disconnect");
 
-			m_socket.Shutdown(SocketShutdown.Both);
-			m_socket.Close();
-			m_socket = null;
+			lock (m_lock)
+			{
+				if (m_state == State.Uninitialized)
+					return;
+
+				if (m_state == State.Disconnected)
+					return;
+
+				m_socket.Shutdown(SocketShutdown.Both);
+			}
+
+			SpinWait.SpinUntil(delegate { Thread.MemoryBarrier(); return m_state == State.Disconnected; });
+
+			trace.TraceInformation("Disconnect done");
 		}
 
 		public void Send(Message msg)
@@ -235,6 +316,16 @@ namespace Dwarrowdelf
 			trace.TraceVerbose("[TX] {0}", msg);
 
 			int len;
+
+			Socket socket;
+
+			lock (m_lock)
+			{
+				if (m_state != State.Receiving)
+					throw new Exception();
+
+				socket = m_socket;
+			}
 
 			lock (m_sendBuffer)
 			{
@@ -256,18 +347,18 @@ namespace Dwarrowdelf
 
 				trace.TraceVerbose("[TX] sending {0} bytes", len);
 				SocketError error;
-				int sent = m_socket.Send(m_sendBuffer, 0, len, SocketFlags.None, out error);
+				int sent = socket.Send(m_sendBuffer, 0, len, SocketFlags.None, out error);
 
 				if (sent != len)
 				{
 					trace.TraceError("[TX]: Short send {0} != {1}", sent, len);
-					Disconnect();
+					Cleanup();
 					return;
 				}
 				else if (error != SocketError.Success)
 				{
 					trace.TraceError("[TX]: error {0}", error);
-					Disconnect();
+					Cleanup();
 					return;
 				}
 
@@ -286,7 +377,7 @@ namespace Dwarrowdelf
 		{
 			s_trace.TraceInformation("StartListening");
 
-			int port = 9999;
+			int port = PORT;
 
 			if (s_listenSocket != null)
 				throw new Exception();
