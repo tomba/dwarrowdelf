@@ -114,8 +114,9 @@ namespace Dwarrowdelf.Client
 
 		public void BeginTileSizeAnim(double targetTileSize)
 		{
-			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)));
-			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim);
+			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
+			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; };
+			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public double TileSize
@@ -200,12 +201,14 @@ namespace Dwarrowdelf.Client
 			m_mapControl.TileSize = targetTileSize;
 			m_mapControl.CenterPos = targetCenter;
 #else
-			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)));
-			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim);
+			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
+			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; };
+			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
 
-			var anim2 = new PointAnimation(targetCenter, new Duration(TimeSpan.FromMilliseconds(200)));
+			var anim2 = new PointAnimation(targetCenter, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
 			anim2.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim2);
+			anim2.Completed += delegate { m_mapControl.CenterPos = targetCenter; };
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim2, HandoffBehavior.SnapshotAndReplace);
 #endif
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
@@ -371,23 +374,27 @@ namespace Dwarrowdelf.Client
 			Point pos = e.GetPosition(this);
 
 			int limit = 4;
-			int cx = this.CenterPos.X;
-			int cy = this.CenterPos.Y;
+			var cx = m_mapControl.CenterPos.X;
+			var cy = m_mapControl.CenterPos.Y;
 
-			const int inc = 4;
+			int incX = 4;
+			int incY = 4;
 
 			if (this.ActualWidth - pos.X < limit)
-				cx += inc;
+				cx += incX;
 			else if (pos.X < limit)
-				cx -= inc;
+				cx -= incX;
 
 			if (this.ActualHeight - pos.Y < limit)
-				cy -= inc;
+				cy -= incY;
 			else if (pos.Y < limit)
-				cy += inc;
+				cy += incY;
 
-			var p = new IntPoint(cx, cy);
-			this.BeginCenterPosAnim(p);
+			if (cx != m_mapControl.CenterPos.X || cy != m_mapControl.CenterPos.Y)
+			{
+				var p = new IntPoint((int)Math.Round(cx), (int)Math.Round(cy));
+				this.CenterPos = p;
+			}
 
 			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
@@ -407,16 +414,18 @@ namespace Dwarrowdelf.Client
 		public void BeginCenterPosAnim(IntPoint targetCenterPos)
 		{
 			var center = new Point(targetCenterPos.X, targetCenterPos.Y);
-			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)));
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim);
+			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
+			anim.Completed += delegate { m_mapControl.CenterPos = center; };
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public void BeginCenterPosAnim(IntVector centerPosDiff)
 		{
 			var v = new Vector(centerPosDiff.X, centerPosDiff.Y);
 			var center = m_mapControl.CenterPos + v;
-			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)));
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim);
+			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
+			anim.Completed += delegate { m_mapControl.CenterPos = center; };
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public IntPoint CenterPos
