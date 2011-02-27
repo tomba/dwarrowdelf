@@ -7,10 +7,14 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject]
 	class ProcessableList<T>
 	{
+		[GameProperty]
 		List<T> m_list = new List<T>();
+		[GameProperty]
 		List<T> m_addList = new List<T>();
+		[GameProperty]
 		List<T> m_removeList = new List<T>();
 
 		public ReadOnlyCollection<T> List { get; private set; }
@@ -18,6 +22,14 @@ namespace Dwarrowdelf.Server
 		public ReadOnlyCollection<T> RemoveList { get; private set; }
 
 		public ProcessableList()
+		{
+			this.List = m_list.AsReadOnly();
+			this.AddList = m_addList.AsReadOnly();
+			this.RemoveList = m_removeList.AsReadOnly();
+		}
+
+		[OnGameDeserialized]
+		void OnDeserialized()
 		{
 			this.List = m_list.AsReadOnly();
 			this.AddList = m_addList.AsReadOnly();

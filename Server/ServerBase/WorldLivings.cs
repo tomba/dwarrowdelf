@@ -9,6 +9,7 @@ namespace Dwarrowdelf.Server
 	{
 		ProcessableList<ServerConnection> m_connections = new ProcessableList<ServerConnection>();
 		ProcessableList<ServerUser> m_users = new ProcessableList<ServerUser>();
+		[GameProperty]
 		ProcessableList<Living> m_livings = new ProcessableList<Living>();
 
 		// thread safe

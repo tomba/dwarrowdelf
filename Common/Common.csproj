@@ -48,6 +48,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Json\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -68,12 +71,16 @@
   <ItemGroup>
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Json\Attributes.cs" />
+    <Compile Include="Json\JsonDeserializer.cs" />
+    <Compile Include="Json\JsonSerializer.cs" />
     <Compile Include="DataTypes\IntRect3D.cs" />
     <Compile Include="EnvironmentHelpers.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Items.cs" />
     <Compile Include="Jobs\Assignments\AttackAssignment.cs" />
     <Compile Include="Jobs\Assignments\RandomMoveAssignment.cs" />
+    <Compile Include="Json\JsonServices.cs" />
     <Compile Include="MyTraceSource.cs" />
     <Compile Include="ObjectType.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />

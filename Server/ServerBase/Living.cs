@@ -6,6 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject(UseRef = true)]
 	public partial class Living : ServerGameObject, ILiving
 	{
 		[System.Diagnostics.Conditional("DEBUG")]
@@ -19,6 +20,7 @@ namespace Dwarrowdelf.Server
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
+		[GameProperty]
 		Jobs.IAI m_ai;
 
 		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
@@ -44,6 +46,11 @@ namespace Dwarrowdelf.Server
 		{
 			Living l = (Living)ob;
 			l.m_visionMap = null;
+		}
+
+		Living()
+			: base(ObjectType.Living)
+		{
 		}
 
 		public Living(string name)
@@ -74,6 +81,14 @@ namespace Dwarrowdelf.Server
 			this.World.TickStartEvent -= OnTickStart;
 			this.World.RemoveLiving(this);
 			base.Destruct();
+		}
+
+		[OnGameDeserialized]
+		void OnDeserialized()
+		{
+			var aai = m_ai as Jobs.AssignmentAI;
+			if (aai != null)
+				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
 		void OnTickStart()

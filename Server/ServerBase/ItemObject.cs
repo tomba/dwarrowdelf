@@ -6,22 +6,29 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject(UseRef = true)]
 	public class ItemObject : ServerGameObject, IItemObject
 	{
+		ItemObject()
+			: base(ObjectType.Item)
+		{
+		}
+
 		public ItemObject(ItemID itemID, MaterialID materialID)
 			: base(ObjectType.Item)
 		{
 			Debug.Assert(itemID != Dwarrowdelf.ItemID.Undefined);
 			Debug.Assert(materialID != Dwarrowdelf.MaterialID.Undefined);
 
-			this.ItemInfo = Dwarrowdelf.Items.GetItem(itemID);
+			this.ItemID = itemID;
 			this.SymbolID = this.ItemInfo.Symbol;
 			this.MaterialID = materialID;
 		}
 
-		public ItemInfo ItemInfo { get; private set; }
+		[GameProperty]
+		public ItemID ItemID { get; private set; }
+		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
-		public ItemID ItemID { get { return this.ItemInfo.ItemID; } }
 
 		public object ReservedBy { get; set; }
 

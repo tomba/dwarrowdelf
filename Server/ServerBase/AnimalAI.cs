@@ -7,9 +7,15 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject]
 	public class AnimalAI : AssignmentAI
 	{
+		[GameProperty]
 		bool m_priorityAction;
+
+		AnimalAI()
+		{
+		}
 
 		public AnimalAI(Living ob)
 			: base(ob)

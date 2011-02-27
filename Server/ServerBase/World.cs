@@ -19,26 +19,29 @@ namespace Dwarrowdelf.Server
 		Sequential,
 	}
 
+	[GameObject(UseRef = true)]
 	public partial class World : IWorld
 	{
+		[Serializable]
 		class WorldConfig
 		{
-			public WorldTickMethod TickMethod { get; set; }
+			public WorldTickMethod TickMethod;
 
 			// Require an user to be in game for ticks to proceed
-			public bool RequireUser { get; set; }
+			public bool RequireUser;
 
 			// Require an controllables to be in game for ticks to proceed
-			public bool RequireControllables { get; set; }
+			public bool RequireControllables;
 
 			// Maximum time for one living to make its move. After this time has passed, the living
 			// will be skipped
-			public TimeSpan MaxMoveTime { get; set; }
+			public TimeSpan MaxMoveTime;
 
 			// Minimum time between ticks. Ticks will never proceed faster than this.
-			public TimeSpan MinTickTime { get; set; }
+			public TimeSpan MinTickTime;
 		}
 
+		[GameProperty]
 		WorldConfig m_config = new WorldConfig
 		{
 			TickMethod = WorldTickMethod.Simultaneous,
@@ -48,8 +51,6 @@ namespace Dwarrowdelf.Server
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
 
-		public IArea Area { get; private set; }
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
 
 		// only for debugging
@@ -57,7 +58,9 @@ namespace Dwarrowdelf.Server
 
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
+		[GameProperty]
 		Dictionary<ObjectID, IBaseGameObject> m_objectMap = new Dictionary<ObjectID, IBaseGameObject>();
+		[GameProperty]
 		int[] m_objectIDcounterArray;
 
 		public event Action WorkEnded;
@@ -73,14 +76,10 @@ namespace Dwarrowdelf.Server
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
-		public World(IArea area)
+		public World()
 		{
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];
-
-			this.Area = area;
-			m_worldThread = new Thread(Main);
-			m_worldThread.Name = "World";
 
 			m_worldLogger = new WorldLogger(this);
 
@@ -90,9 +89,25 @@ namespace Dwarrowdelf.Server
 			InitializeWorldTick();
 		}
 
+		public void Initialize(IArea area)
+		{
+			EnterWriteLock();
+
+			trace.TraceInformation("Initializing area");
+			var sw = Stopwatch.StartNew();
+			area.InitializeWorld(this);
+			sw.Stop();
+			trace.TraceInformation("Initializing area took {0}", sw.Elapsed);
+
+			ExitWriteLock();
+		}
+
 		public void Start()
 		{
-			Debug.Assert(!m_worldThread.IsAlive);
+			Debug.Assert(m_worldThread == null);
+
+			m_worldThread = new Thread(Main);
+			m_worldThread.Name = "World";
 
 			using (var initEvent = new ManualResetEvent(false))
 			{
@@ -110,19 +125,6 @@ namespace Dwarrowdelf.Server
 			m_worldThread.Join();
 		}
 
-		void Init()
-		{
-			EnterWriteLock();
-
-			trace.TraceInformation("Initializing area");
-			var sw = Stopwatch.StartNew();
-			this.Area.InitializeWorld(this);
-			sw.Stop();
-			trace.TraceInformation("Initializing area took {0}", sw.Elapsed);
-
-			ExitWriteLock();
-		}
-
 		public void SetMinTickTime(TimeSpan minTickTime)
 		{
 			m_config.MinTickTime = minTickTime;
@@ -133,8 +135,6 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 
 			trace.TraceInformation("WorldMain");
-
-			Init();
 
 			m_worldLogger.Start();
 			m_worldLogger.LogFullState();
@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Server
 
 		void VerifyAccess()
 		{
-			if (Thread.CurrentThread != m_worldThread)
+			if (m_worldThread != null && Thread.CurrentThread != m_worldThread)
 				throw new Exception();
 		}
 

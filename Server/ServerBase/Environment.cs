@@ -8,22 +8,40 @@ namespace Dwarrowdelf.Server
 {
 	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
 
+	[GameObject(UseRef = true)]
 	public class Environment : ServerGameObject, IEnvironment
 	{
+		[GameProperty("Grid", Converter = typeof(TileGridConv))]
 		TileGrid m_tileGrid;
 		public TileGrid TileGrid { get { return m_tileGrid; } }
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
 
+		[GameProperty]
 		public uint Version { get; private set; }
 
+		[GameProperty]
 		public VisibilityMode VisibilityMode { get; private set; }
+		[GameProperty]
 		public int Width { get; private set; }
+		[GameProperty]
 		public int Height { get; private set; }
+		[GameProperty]
 		public int Depth { get; private set; }
 
+		[GameProperty]
 		public IntPoint3D HomeLocation { get; set; }
+
+		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
+		[GameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
+		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
+		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
+
+		Environment()
+			: base(ObjectType.Environment)
+		{
+		}
 
 		public Environment(int width, int height, int depth, VisibilityMode visibilityMode)
 			: base(ObjectType.Environment)
@@ -39,6 +57,19 @@ namespace Dwarrowdelf.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
+		}
+
+		[OnGamePostDeserialization]
+		void OnDeserialized()
+		{
+			m_contentArray = new KeyedObjectCollection[this.Depth];
+			for (int i = 0; i < this.Depth; ++i)
+				m_contentArray[i] = new KeyedObjectCollection();
+
+			foreach (var ob in this.Inventory)
+				m_contentArray[ob.Z].Add(ob);
+
+			ScanWaterTiles();
 		}
 
 		public override void Initialize(World world)
@@ -76,7 +107,6 @@ namespace Dwarrowdelf.Server
 
 		public delegate bool ActionHandlerDelegate(ServerGameObject ob, GameAction action);
 
-		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
 		public void SetActionHandler(IntPoint3D p, ActionHandlerDelegate handler)
 		{
 			m_actionHandlers[p] = handler;
@@ -91,8 +121,6 @@ namespace Dwarrowdelf.Server
 			return handler(child, action);
 		}
 
-
-		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
 		public void ScanWaterTiles()
 		{
@@ -584,8 +612,6 @@ namespace Dwarrowdelf.Server
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
-
 		public void AddBuilding(BuildingObject building)
 		{
 			Debug.Assert(this.World.IsWritable);
@@ -754,12 +780,90 @@ namespace Dwarrowdelf.Server
 		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
 		{
 		}
-	}
 
+		class BuildingsSetConv : Dwarrowdelf.Json.IGameConverter
+		{
+			public object ConvertToSerializable(object value)
+			{
+				var set = (HashSet<BuildingObject>)value;
+				return set.ToArray();
+			}
+
+			public object ConvertFromSerializable(object value)
+			{
+				var arr = (BuildingObject[])value;
+				return new HashSet<BuildingObject>(arr);
+			}
+
+			public Type OutputType
+			{
+				get { return typeof(BuildingObject[]); }
+			}
+		}
+
+		class TileGridConv : Dwarrowdelf.Json.IGameConverter
+		{
+			public object ConvertToSerializable(object value)
+			{
+				var grid = (TileGrid)value;
+				var srcArr = grid.Grid;
+
+				var size = new IntSize3D(grid.Grid.GetLength(2), grid.Grid.GetLength(1), grid.Grid.GetLength(0));
+
+				var dstArr = new TileData[grid.Grid.Length];
+
+				int p = 0;
+				for (int z = 0; z < size.Depth; ++z)
+					for (int y = 0; y < size.Height; ++y)
+						for (int x = 0; x < size.Width; ++x)
+							dstArr[p++] = srcArr[z, y, x];
+
+				var ser = new SerializableGrid();
+				ser.Size = size;
+				ser.TileDataArray = dstArr;
+
+				return ser;
+			}
+
+			public object ConvertFromSerializable(object value)
+			{
+				var ser = (SerializableGrid)value;
+				var size = ser.Size;
+				var srcArr = ser.TileDataArray;
+				var grid =  new TileGrid(size.Width, size.Height, size.Depth);
+				var dstArr = grid.Grid;
+
+				int p = 0;
+				for (int z = 0; z < size.Depth; ++z)
+					for (int y = 0; y < size.Height; ++y)
+						for (int x = 0; x < size.Width; ++x)
+							dstArr[z, y, x] = srcArr[p++];
+
+				return grid;
+			}
+
+			public Type OutputType
+			{
+				get { return typeof(SerializableGrid); }
+			}
+
+			[Serializable]
+			public class SerializableGrid
+			{
+				public IntSize3D Size;
+				public TileData[] TileDataArray;
+			}
+
+		}
+	}
 
 	public class TileGrid
 	{
 		TileData[, ,] m_grid;
+
+		TileGrid()
+		{
+		}
 
 		public TileGrid(int width, int height, int depth)
 		{

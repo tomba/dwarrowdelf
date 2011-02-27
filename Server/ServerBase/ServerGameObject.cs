@@ -33,21 +33,30 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
 
 			var prop = new PropertyDefinition(propertyID, propertyType, visibility, defaultValue, propertyChangedCallback);
+
 			s_propertyDefinitionMap[ownerType].Add(prop);
 
 			return prop;
 		}
 
+		[GameProperty]
 		public ObjectID ObjectID { get; private set; }
+		[GameProperty]
 		public World World { get; private set; }
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
 
+		[GameProperty]
 		public bool IsInitialized { get; private set; }
+		[GameProperty]
 		public bool IsDestructed { get; private set; }
 
 		public event Action<BaseGameObject> Destructed;
 
 		ObjectType m_objectType;
+
+		Dictionary<PropertyDefinition, object> m_propertyMap = new Dictionary<PropertyDefinition, object>();
+		[GameProperty("PropertyMap")]
+		Dictionary<PropertyID, object> m_serializablePropertyMap;
 
 		protected BaseGameObject(ObjectType objectType)
 		{
@@ -87,10 +96,58 @@ namespace Dwarrowdelf.Server
 			this.World.RemoveGameObject(this);
 		}
 
+		[OnGameSerializing]
+		void OnSerializing()
+		{
+			m_serializablePropertyMap = new Dictionary<PropertyID, object>();
+
+			foreach (var kvp in m_propertyMap)
+				m_serializablePropertyMap[kvp.Key.PropertyID] = kvp.Value;
+		}
+
+		[OnGameSerialized]
+		void OnSerialized()
+		{
+			m_serializablePropertyMap = null;
+		}
+
+		[OnGameDeserialized]
+		void OnDeserialized()
+		{
+			foreach (var kvp in m_serializablePropertyMap)
+			{
+				var type = this.GetType();
+
+				do
+				{
+					if (!s_propertyDefinitionMap.ContainsKey(type))
+						continue;
+
+					var propDef = s_propertyDefinitionMap[type].Find(pd => pd.PropertyID == kvp.Key);
+					if (propDef != null)
+					{
+						var value = kvp.Value;
+						if (propDef.PropertyType.IsEnum && value.GetType() == typeof(string))
+						{
+							var conv = System.ComponentModel.TypeDescriptor.GetConverter(propDef.PropertyType);
+							value = conv.ConvertFrom(value);
+						}
+
+						m_propertyMap[propDef] = value;
+						break;
+					}
+
+				} while ((type = type.BaseType) != null);
+
+				if (type == null)
+					throw new Exception("Type owning the property not found");
+			}
+
+			m_serializablePropertyMap = null;
+		}
+
 		public abstract BaseGameObjectData Serialize();
 		public abstract void SerializeTo(Action<Messages.ServerMessage> writer);
-
-		Dictionary<PropertyDefinition, object> m_propertyMap = new Dictionary<PropertyDefinition, object>();
 
 		protected void SetValue(PropertyDefinition property, object value)
 		{
@@ -148,12 +205,15 @@ namespace Dwarrowdelf.Server
 	/* Game object that has inventory, location */
 	abstract public class ServerGameObject : BaseGameObject, IGameObject
 	{
+		[GameProperty]
 		public ServerGameObject Parent { get; private set; }
 		public Environment Environment { get { return this.Parent as Environment; } }
 		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
+		[GameProperty("Inventory")]
 		KeyedObjectCollection m_children;
 		public ReadOnlyCollection<ServerGameObject> Inventory { get; private set; }
 
+		[GameProperty]
 		public IntPoint3D Location { get; private set; }
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public int X { get { return this.Location.X; } }
@@ -164,6 +224,12 @@ namespace Dwarrowdelf.Server
 			: base(objectType)
 		{
 			m_children = new KeyedObjectCollection();
+			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+		}
+
+		[OnGameDeserialized]
+		void OnDeserialized()
+		{
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
