@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntRectConverter))]
 	public struct IntRect : IEquatable<IntRect>
 	{
 		readonly int m_x;
@@ -156,6 +157,19 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return ("{X=" + this.X + ",Y=" + this.Y + ",Width=" + this.Width + ",Height=" + this.Height + "}");
+		}
+
+		internal string ConvertToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1},{2},{3}", m_x, m_y, m_width, m_height);
+		}
+
+		public static IntRect Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntRect(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info), Convert.ToInt32(arr[3], info));
 		}
 	}
 }

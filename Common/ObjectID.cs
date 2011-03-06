@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(ObjectIDConverter))]
 	public struct ObjectID : IEquatable<ObjectID>
 	{
 		readonly int m_value;

@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntPointConverter))]
 	public struct IntPoint : IEquatable<IntPoint>
 	{
 		readonly int m_x;
@@ -54,10 +55,10 @@ namespace Dwarrowdelf
 			return !(left == right);
 		}
 
-		
+
 		public static IntPoint operator +(IntPoint left, IntVector right)
 		{
-			return new IntPoint(left.X + right.X, left.Y + right.Y);			
+			return new IntPoint(left.X + right.X, left.Y + right.Y);
 		}
 
 		public static IntVector operator -(IntPoint left, IntPoint right)
@@ -90,6 +91,17 @@ namespace Dwarrowdelf
 			return new IntPoint(vector.X, vector.Y);
 		}
 
-	}
+		internal string ConvertToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1}", m_x, m_y);
+		}
 
+		public static IntPoint Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntPoint(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info));
+		}
+	}
 }

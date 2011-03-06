@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntCuboidConverter))]
 	public struct IntCuboid : IEquatable<IntCuboid>
 	{
 		readonly int m_x;
@@ -187,6 +188,21 @@ namespace Dwarrowdelf
 		{
 			return String.Format("x={0},y={1},z={2},w={3},h={4},d={5}",
 				this.X, this.Y, this.Z, this.Width, this.Height, this.Depth);
+		}
+
+
+		internal string ConvertToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1},{2},{3},{4},{5}", m_x, m_y, m_z, m_width, m_height, m_depth);
+		}
+
+		public static IntCuboid Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntCuboid(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info),
+				Convert.ToInt32(arr[3], info), Convert.ToInt32(arr[4], info), Convert.ToInt32(arr[5], info));
 		}
 	}
 }

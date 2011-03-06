@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntSize3DConverter))]
 	public struct IntSize3D : IEquatable<IntSize3D>
 	{
 		readonly int m_width;
@@ -65,6 +66,19 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return String.Format("IntSize3D({0}, {1}, {2})", Width, Height, Depth);
+		}
+
+		internal string ConvertToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1},{2}", m_width, m_height, m_depth);
+		}
+
+		public static IntSize3D Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntSize3D(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info));
 		}
 	}
 }

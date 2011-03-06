@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	[System.ComponentModel.TypeConverter(typeof(IntPoint3DConverter))]
 	public struct IntPoint3D : IEquatable<IntPoint3D>
 	{
 		readonly int m_x;
@@ -122,6 +123,19 @@ namespace Dwarrowdelf
 		{
 			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
 				"IntPoint3D({0}, {1}, {2})", X, Y, Z);
+		}
+
+		internal string ConvertToString()
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1},{2}", m_x, m_y, m_z);
+		}
+
+		public static IntPoint3D Parse(string str)
+		{
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			var arr = str.Split(',');
+			return new IntPoint3D(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info));
 		}
 	}
 }
