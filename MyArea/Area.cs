@@ -104,7 +104,7 @@ namespace MyArea
 
 		Environment CreateMap1(World world)
 		{
-			int sizeExp = 7;
+			int sizeExp = 5;
 			int size = (int)Math.Pow(2, sizeExp);
 
 			Grid2D<double> grid = new Grid2D<double>(size + 1, size + 1);
@@ -347,12 +347,13 @@ namespace MyArea
 			}
 			building.Initialize(world, env);
 
+			/*
 			{
 				var gen = new Dwarrowdelf.Server.Items.FoodGenerator();
 				gen.Initialize(env.World);
 				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
 			}
-
+			*/
 
 			/* Add Monsters */
 
