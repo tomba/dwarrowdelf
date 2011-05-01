@@ -41,16 +41,18 @@ namespace Dwarrowdelf
 
 	public class PropertyDefinition
 	{
-		public PropertyDefinition(PropertyID id, PropertyVisibility visibility, object defaultValue,
+		public PropertyDefinition(PropertyID id, Type propertyType, PropertyVisibility visibility, object defaultValue,
 			PropertyChangedCallback propertyChangedCallback = null)
 		{
 			this.PropertyID = id;
+			this.PropertyType = propertyType;
 			this.Visibility = visibility;
 			this.DefaultValue = defaultValue;
 			this.PropertyChangedCallback = propertyChangedCallback;
 		}
 
 		public PropertyID PropertyID { get; private set; }
+		public Type PropertyType { get; private set; }
 		public PropertyVisibility Visibility { get; private set; }
 		public object DefaultValue { get; private set; }
 		public PropertyChangedCallback PropertyChangedCallback { get; private set; }

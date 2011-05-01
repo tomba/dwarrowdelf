@@ -26,9 +26,9 @@ namespace Dwarrowdelf.Server
 		public object ReservedBy { get; set; }
 
 		static readonly PropertyDefinition NutritionalValueProperty =
-			RegisterProperty(typeof(ItemObject), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
+			RegisterProperty(typeof(ItemObject), typeof(int), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
 		static readonly PropertyDefinition RefreshmentValueProperty =
-			RegisterProperty(typeof(ItemObject), PropertyID.RefreshmentValue, PropertyVisibility.Public, 0);
+			RegisterProperty(typeof(ItemObject), typeof(int), PropertyID.RefreshmentValue, PropertyVisibility.Public, 0);
 
 		public int NutritionalValue
 		{

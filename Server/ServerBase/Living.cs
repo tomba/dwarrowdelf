@@ -21,24 +21,24 @@ namespace Dwarrowdelf.Server
 		Grid2D<bool> m_visionMap;
 		Jobs.IAI m_ai;
 
-		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), PropertyID.SpellPoints, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.SpellPoints, PropertyVisibility.Friendly, 1);
 
-		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), PropertyID.Strength, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), PropertyID.Dexterity, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), PropertyID.Constitution, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), PropertyID.Intelligence, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), PropertyID.Wisdom, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), PropertyID.Charisma, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Strength, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Dexterity, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Constitution, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Intelligence, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Wisdom, PropertyVisibility.Friendly, 1);
+		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Charisma, PropertyVisibility.Friendly, 1);
 
-		static readonly PropertyDefinition ArmorClassProperty = RegisterProperty(typeof(Living), PropertyID.ArmorClass, PropertyVisibility.Friendly, 10);
+		static readonly PropertyDefinition ArmorClassProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.ArmorClass, PropertyVisibility.Friendly, 10);
 
-		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
+		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
 
-		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), PropertyID.FoodFullness, PropertyVisibility.Friendly, 500);
-		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), PropertyID.WaterFullness, PropertyVisibility.Friendly, 500);
+		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.FoodFullness, PropertyVisibility.Friendly, 500);
+		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.WaterFullness, PropertyVisibility.Friendly, 500);
 
-		static readonly PropertyDefinition AssignmentProperty = RegisterProperty(typeof(Living), PropertyID.Assignment, PropertyVisibility.Friendly, "");
+		static readonly PropertyDefinition AssignmentProperty = RegisterProperty(typeof(Living), typeof(string), PropertyID.Assignment, PropertyVisibility.Friendly, "");
 
 		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)
 		{

@@ -20,6 +20,24 @@ namespace Dwarrowdelf.Server
 	/* Abstract game object, without inventory or conventional location. */
 	abstract public class BaseGameObject : IBaseGameObject
 	{
+		static Dictionary<Type, List<PropertyDefinition>> s_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
+
+		static protected PropertyDefinition RegisterProperty(Type ownerType, Type propertyType, PropertyID propertyID, PropertyVisibility visibility, object defaultValue,
+			PropertyChangedCallback propertyChangedCallback = null)
+		{
+			List<PropertyDefinition> propList;
+
+			if (s_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
+				s_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
+
+			Debug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
+
+			var prop = new PropertyDefinition(propertyID, propertyType, visibility, defaultValue, propertyChangedCallback);
+			s_propertyDefinitionMap[ownerType].Add(prop);
+
+			return prop;
+		}
+
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
@@ -71,24 +89,6 @@ namespace Dwarrowdelf.Server
 
 		public abstract BaseGameObjectData Serialize();
 		public abstract void SerializeTo(Action<Messages.ServerMessage> writer);
-
-		static Dictionary<Type, List<PropertyDefinition>> s_propertyDefinitionMap = new Dictionary<Type, List<PropertyDefinition>>();
-
-		static protected PropertyDefinition RegisterProperty(Type ownerType, PropertyID propertyID, PropertyVisibility visibility, object defaultValue,
-			PropertyChangedCallback propertyChangedCallback = null)
-		{
-			List<PropertyDefinition> propList;
-
-			if (s_propertyDefinitionMap.TryGetValue(ownerType, out propList) == false)
-				s_propertyDefinitionMap[ownerType] = new List<PropertyDefinition>();
-
-			Debug.Assert(!s_propertyDefinitionMap[ownerType].Any(p => p.PropertyID == propertyID));
-
-			var prop = new PropertyDefinition(propertyID, visibility, defaultValue, propertyChangedCallback);
-			s_propertyDefinitionMap[ownerType].Add(prop);
-
-			return prop;
-		}
 
 		Dictionary<PropertyDefinition, object> m_propertyMap = new Dictionary<PropertyDefinition, object>();
 
@@ -173,28 +173,28 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Name, PropertyVisibility.Public, null);
+		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), typeof(string), PropertyID.Name, PropertyVisibility.Public, null);
 		public string Name
 		{
 			get { return (string)GetValue(NameProperty); }
 			set { SetValue(NameProperty, value); }
 		}
 
-		static readonly PropertyDefinition ColorProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.Color, PropertyVisibility.Public, new GameColor());
+		static readonly PropertyDefinition ColorProperty = RegisterProperty(typeof(ServerGameObject), typeof(GameColor), PropertyID.Color, PropertyVisibility.Public, new GameColor());
 		public GameColor Color
 		{
 			get { return (GameColor)GetValue(ColorProperty); }
 			set { SetValue(ColorProperty, value); }
 		}
 
-		static readonly PropertyDefinition SymbolIDProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
+		static readonly PropertyDefinition SymbolIDProperty = RegisterProperty(typeof(ServerGameObject), typeof(SymbolID), PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
 		public SymbolID SymbolID
 		{
 			get { return (SymbolID)GetValue(SymbolIDProperty); }
 			set { SetValue(SymbolIDProperty, value); }
 		}
 
-		static readonly PropertyDefinition MaterialIDProperty = RegisterProperty(typeof(ServerGameObject), PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
+		static readonly PropertyDefinition MaterialIDProperty = RegisterProperty(typeof(ServerGameObject), typeof(MaterialID), PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
 		public MaterialID MaterialID
 		{
 			get { return (MaterialID)GetValue(MaterialIDProperty); }
