@@ -373,7 +373,14 @@ namespace Dwarrowdelf.Json
 		{
 			var type = typeInfo.Type;
 
-			var ob = Activator.CreateInstance(type, true);
+			var defConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[0], null);
+
+			object ob;
+
+			if (defConstructor != null)
+				ob = Activator.CreateInstance(type, true);
+			else
+				ob = FormatterServices.GetUninitializedObject(type);
 
 			var deserializingMethods = typeInfo.OnDeserializingMethods;
 			foreach (var method in deserializingMethods)
@@ -431,7 +438,14 @@ namespace Dwarrowdelf.Json
 		{
 			var type = typeInfo.Type;
 
-			var ob = Activator.CreateInstance(type, true);
+			var defConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[0], null);
+
+			object ob;
+
+			if (defConstructor != null)
+				ob = Activator.CreateInstance(type, true);
+			else
+				ob = FormatterServices.GetUninitializedObject(type);
 
 			if (id != -1)
 				this.ReferenceResolver.Add(id, ob);
