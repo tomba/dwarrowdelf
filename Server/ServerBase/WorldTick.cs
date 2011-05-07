@@ -10,6 +10,7 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		public event Action TickStartEvent;
+		[GameProperty]
 		public int TickNumber { get; private set; }
 
 		enum WorldState
@@ -24,6 +25,9 @@ namespace Dwarrowdelf.Server
 
 		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
+
+		// For SingleStep mode
+		bool m_step;
 
 		/// <summary>
 		/// Timer is used to start the tick after MinTickTime
@@ -73,6 +77,9 @@ namespace Dwarrowdelf.Server
 		bool IsTimeToStartTick()
 		{
 			VerifyAccess();
+
+			if (m_config.SingleStep && m_step == false)
+				return false;
 
 			if (m_state != WorldState.Idle)
 				return false;
@@ -227,6 +234,8 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
+			m_step = false;
+
 			this.TickNumber++;
 			AddChange(new TickStartChange(this.TickNumber));
 
@@ -298,6 +307,9 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;
+
+			if (TickEnded != null)
+				TickEnded();
 		}
 	}
 }

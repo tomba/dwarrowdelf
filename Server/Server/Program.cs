@@ -17,7 +17,9 @@ namespace Dwarrowdelf.Server
 
 			Server server = new Server();
 
-			server.RunServer(false, null, null);
+			server.RunServer(false, null, null,
+				null);
+				//"save-5.json");
 		}
 	}
 }

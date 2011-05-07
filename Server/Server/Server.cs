@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
+		public void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle, string saveFile)
 		{
 			Debug.Print("Start");
 
@@ -26,12 +26,23 @@ namespace Dwarrowdelf.Server
 
 			IArea area = new MyArea.Area();
 
-			m_world = new World();
-			m_world.Initialize(area);
-			Save(m_world);
+			if (saveFile != null)
+			{
+				m_world = Load(saveFile);
+			}
+			else
+			{
+				if (Directory.Exists("save"))
+					Directory.Delete("save", true);
 
-			// XXX test the serialization and deserialization
-			m_world = Load();
+				m_world = new World();
+				m_world.Initialize(area);
+				Save(m_world, "save-0.json");
+
+				m_world = Load("save-0.json");
+			}
+
+			m_world.TickEnded += OnWorldTickEnded;
 
 			m_world.Start();
 
@@ -51,12 +62,12 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				Console.WriteLine("Press enter to exit");
-				while (Console.ReadKey().Key != ConsoleKey.Enter)
-					m_world.SignalWorld();
+				KeyLoop();
 			}
 
 			m_world.Stop();
+
+			m_world.TickEnded -= OnWorldTickEnded;
 
 			Debug.Print("Server exiting");
 
@@ -65,6 +76,44 @@ namespace Dwarrowdelf.Server
 			Debug.Print("Server exit");
 		}
 
+		void KeyLoop()
+		{
+			bool exit = false;
+
+			Console.WriteLine("q - quit, s - signal, p - enable singlestep, r - disable singlestep, . - step");
+
+			while (exit == false)
+			{
+				var key = Console.ReadKey(true).Key;
+
+				switch (key)
+				{
+					case ConsoleKey.Q:
+						exit = true;
+						break;
+
+					case ConsoleKey.S:
+						m_world.SignalWorld();
+						break;
+
+					case ConsoleKey.P:
+						m_world.EnableSingleStep();
+						break;
+
+					case ConsoleKey.R:
+						m_world.DisableSingleStep();
+						break;
+
+					case ConsoleKey.OemPeriod:
+						m_world.SingleStep();
+						break;
+
+					default:
+						Console.WriteLine("Unknown key");
+						break;
+				}
+			}
+		}
 
 		void OnNewConnection(IConnection connection)
 		{
@@ -77,11 +126,21 @@ namespace Dwarrowdelf.Server
 			Debug.Print("tuli exc");
 		}
 
-		void Save(World world)
+		void OnWorldTickEnded()
 		{
-			Trace.TraceInformation("Saving world");
-			var watch = Stopwatch.StartNew();
+			Console.WriteLine("Tick {0}", m_world.TickNumber);
 
+			int tick = m_world.TickNumber;
+			string name = String.Format("save-{0}.json", tick);
+			Save(m_world, name);
+
+			var w = Load(name);
+		}
+
+		void Save(World world, string name)
+		{
+			Trace.TraceInformation("Saving world {0}", name);
+			var watch = Stopwatch.StartNew();
 
 
 			var stream = new System.IO.MemoryStream();
@@ -92,22 +151,25 @@ namespace Dwarrowdelf.Server
 			stream.Position = 0;
 			//stream.CopyTo(Console.OpenStandardOutput());
 
+			if (!Directory.Exists("save"))
+				Directory.CreateDirectory("save");
+
 			stream.Position = 0;
-			using (var file = File.Create("json.txt"))
+			using (var file = File.Create("save" + "\\" + name))
 				stream.WriteTo(file);
 
 			watch.Stop();
 			Trace.TraceInformation("Saving world took {0}", watch.Elapsed);
 		}
 
-		World Load()
+		World Load(string name)
 		{
-			Trace.TraceInformation("Loading world");
+			Trace.TraceInformation("Loading world {0}", name);
 			var watch = Stopwatch.StartNew();
 
 			World world;
 
-			var stream = File.OpenRead("json.txt");
+			var stream = File.OpenRead("save" + "\\" + name);
 			var deserializer = new Dwarrowdelf.Json.JsonDeserializer(stream);
 			world = (World)deserializer.Deserialize<World>();
 

@@ -9,6 +9,6 @@ namespace Dwarrowdelf
 	public interface IServer
 	{
 		void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle,
-			EventWaitHandle serverStopWaitHandle);
+			EventWaitHandle serverStopWaitHandle, string saveFile);
 	}
 }

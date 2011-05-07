@@ -124,7 +124,7 @@ namespace Dwarrowdelf.Client
 			path = System.IO.Path.Combine(path, "Server.exe");
 
 			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "Dwarrowdelf.Server.Server");
-			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle);
+			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle, null);
 
 			AppDomain.Unload(domain);
 		}

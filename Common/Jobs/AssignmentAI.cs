@@ -17,9 +17,11 @@ namespace Dwarrowdelf.Jobs
 		[GameProperty]
 		public ILiving Worker { get; private set; }
 
+		[GameProperty("NeedToAbort")]
 		bool m_needToAbort;
 
 		IAssignment m_currentAssignment;
+		[GameProperty]
 		public IAssignment CurrentAssignment
 		{
 			get { return m_currentAssignment; }

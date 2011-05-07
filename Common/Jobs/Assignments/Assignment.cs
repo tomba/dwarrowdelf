@@ -17,7 +17,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 		}
 
 		public JobType JobType { get { return JobType.Assignment; } }
+		[GameProperty]
 		public IJob Parent { get; private set; }
+		[GameProperty]
 		public ActionPriority Priority { get; private set; }
 
 		public bool IsAssigned
@@ -29,6 +31,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
+		[GameProperty]
 		public JobState JobState { get; private set; }
 
 		public void Retry()
@@ -50,6 +53,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		}
 
 		ILiving m_worker;
+		[GameProperty]
 		public ILiving Worker
 		{
 			get { return m_worker; }
@@ -57,6 +61,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		}
 
 		GameAction m_action;
+		[GameProperty]
 		public virtual GameAction CurrentAction
 		{
 			get { return m_action; }

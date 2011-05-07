@@ -39,16 +39,19 @@ namespace Dwarrowdelf.Server
 
 			// Minimum time between ticks. Ticks will never proceed faster than this.
 			public TimeSpan MinTickTime;
+
+			public bool SingleStep;
 		}
 
 		[GameProperty]
 		WorldConfig m_config = new WorldConfig
 		{
 			TickMethod = WorldTickMethod.Simultaneous,
-			RequireUser = true,
+			RequireUser = false,
 			RequireControllables = false,
 			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
+			SingleStep = true,
 		};
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
@@ -65,6 +68,7 @@ namespace Dwarrowdelf.Server
 
 		public event Action WorkEnded;
 		public event Action<Change> WorldChanged;
+		public event Action TickEnded;
 
 		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
 
@@ -123,6 +127,25 @@ namespace Dwarrowdelf.Server
 			m_exit = true;
 			SignalWorld();
 			m_worldThread.Join();
+		}
+
+		public void EnableSingleStep()
+		{
+			m_step = false;
+			Thread.MemoryBarrier();
+			m_config.SingleStep = true;
+		}
+
+		public void DisableSingleStep()
+		{
+			m_config.SingleStep = false;
+			SignalWorld();
+		}
+
+		public void SingleStep()
+		{
+			m_step = true;
+			SignalWorld();
 		}
 
 		public void SetMinTickTime(TimeSpan minTickTime)

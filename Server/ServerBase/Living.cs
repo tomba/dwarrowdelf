@@ -282,10 +282,13 @@ namespace Dwarrowdelf.Server
 
 
 		// Actor stuff
+		[GameProperty]
 		public GameAction CurrentAction { get; private set; }
 		public bool HasAction { get { return this.CurrentAction != null; } }
 
+		[GameProperty]
 		public int ActionTicksLeft { get; private set; }
+		[GameProperty]
 		public int ActionUserID { get; private set; }
 
 		public void DoAction(GameAction action)

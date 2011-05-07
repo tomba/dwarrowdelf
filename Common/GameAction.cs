@@ -44,12 +44,15 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public abstract class GameAction
 	{
 		// XXX. Server gen creates negative numbers, client positive
 		public static Func<int> MagicNumberGenerator;
 
+		[GameProperty]
 		public int MagicNumber { get; private set; }
+		[GameProperty]
 		public ActionPriority Priority { get; private set; }
 
 		protected GameAction(ActionPriority priority)
@@ -67,8 +70,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class MoveAction : GameAction
 	{
+		[GameProperty]
 		public Direction Direction { get; private set; }
 
 		public MoveAction(Direction direction, ActionPriority priority)
@@ -84,8 +89,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class WaitAction : GameAction
 	{
+		[GameProperty]
 		public int WaitTicks { get; private set; }
 
 		public WaitAction(int ticks, ActionPriority priority)
@@ -101,8 +108,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class DropAction : GameAction
 	{
+		[GameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
 		public DropAction(IEnumerable<IGameObject> items, ActionPriority priority)
@@ -118,8 +127,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class GetAction : GameAction
 	{
+		[GameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
 		public GetAction(IEnumerable<IGameObject> items, ActionPriority priority)
@@ -136,8 +147,10 @@ namespace Dwarrowdelf
 
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class ConsumeAction : GameAction
 	{
+		[GameProperty]
 		public ObjectID ItemObjectID { get; private set; }
 
 		public ConsumeAction(IGameObject consumable, ActionPriority priority)
@@ -166,9 +179,12 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class MineAction : GameAction
 	{
+		[GameProperty]
 		public Direction Direction { get; private set; }
+		[GameProperty]
 		public MineActionType MineActionType { get; private set; }
 
 		public MineAction(Direction dir, MineActionType mineActionType, ActionPriority priority)
@@ -185,8 +201,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class FellTreeAction : GameAction
 	{
+		[GameProperty]
 		public Direction Direction { get; private set; }
 
 		public FellTreeAction(Direction dir, ActionPriority priority)
@@ -202,11 +220,14 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class BuildItemAction : GameAction
 	{
 		// public object type etc
 
+		[GameProperty]
 		public ObjectID[] SourceObjectIDs { get; private set; }
+		[GameProperty]
 		public ItemID DstItemID { get; private set; }
 
 		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemID dstItemID, ActionPriority priority)
@@ -223,8 +244,10 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	[GameObject(UseRef = true)]
 	public class AttackAction : GameAction
 	{
+		[GameProperty]
 		public ObjectID Target { get; private set; }
 
 		public AttackAction(ILiving target, ActionPriority priority)

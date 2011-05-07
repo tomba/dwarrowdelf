@@ -7,8 +7,10 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
+	[GameObject(UseRef = true)]
 	public class WaitAssignment : Assignment
 	{
+		[GameProperty("Turns")]
 		readonly int m_turns;
 
 		public WaitAssignment(IJob parent, ActionPriority priority, int turns)

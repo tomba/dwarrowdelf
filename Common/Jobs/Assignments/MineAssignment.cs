@@ -7,10 +7,14 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
+	[GameObject(UseRef = true)]
 	public class MineAssignment : Assignment
 	{
+		[GameProperty]
 		readonly IntPoint3D m_location;
+		[GameProperty]
 		readonly MineActionType m_mineActionType;
+		[GameProperty]
 		readonly IEnvironment m_environment;
 
 		public MineAssignment(IJob job, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)

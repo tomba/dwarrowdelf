@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		Queue<Direction> m_pathDirs;
 		readonly IEnvironment m_environment;
 		IntPoint3D m_dest;
-		readonly GetMoveTarget m_destFunc;
+		readonly GetMoveTarget m_destFunc;	// XXXX cannot be saved
 		DirectionSet m_positioning;
 		IntPoint3D m_supposedLocation;
 		int m_numFails;

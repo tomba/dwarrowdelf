@@ -137,6 +137,8 @@ namespace Dwarrowdelf.Json
 			{
 				m_writer.WritePropertyName("$ref");
 				m_writer.WriteValue(id);
+				m_writer.WriteWhitespace(" ");
+				m_writer.WriteComment(ob.ToString());
 			}
 			else
 			{

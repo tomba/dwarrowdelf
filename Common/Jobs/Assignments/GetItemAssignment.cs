@@ -7,8 +7,10 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
+	[GameObject(UseRef = true)]
 	public class GetItemAssignment : Assignment
 	{
+		[GameProperty]
 		readonly IItemObject m_item;
 
 		public GetItemAssignment(IJob parent, ActionPriority priority, IItemObject item)
