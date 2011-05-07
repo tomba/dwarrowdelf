@@ -43,9 +43,8 @@ namespace Dwarrowdelf.Server
 
 		ObjectType m_objectType;
 
+		[GameProperty("PropertyMap", Converter = typeof(PropertyMapConverter))]
 		Dictionary<PropertyDefinition, object> m_propertyMap = new Dictionary<PropertyDefinition, object>();
-		[GameProperty("PropertyMap")]
-		Dictionary<PropertyID, object> m_serializablePropertyMap;
 
 		protected BaseGameObject(ObjectType objectType)
 		{
@@ -83,56 +82,6 @@ namespace Dwarrowdelf.Server
 
 			this.World.AddChange(new ObjectDestructedChange(this));
 			this.World.RemoveGameObject(this);
-		}
-
-		[OnGameSerializing]
-		void OnSerializing()
-		{
-			m_serializablePropertyMap = new Dictionary<PropertyID, object>();
-
-			foreach (var kvp in m_propertyMap)
-				m_serializablePropertyMap[kvp.Key.PropertyID] = kvp.Value;
-		}
-
-		[OnGameSerialized]
-		void OnSerialized()
-		{
-			m_serializablePropertyMap = null;
-		}
-
-		[OnGameDeserialized]
-		void OnDeserialized()
-		{
-			foreach (var kvp in m_serializablePropertyMap)
-			{
-				var type = this.GetType();
-
-				do
-				{
-					if (!s_propertyDefinitionMap.ContainsKey(type))
-						continue;
-
-					var propDef = s_propertyDefinitionMap[type].Find(pd => pd.PropertyID == kvp.Key);
-					if (propDef != null)
-					{
-						var value = kvp.Value;
-						if (propDef.PropertyType.IsEnum && value.GetType() == typeof(string))
-						{
-							var conv = System.ComponentModel.TypeDescriptor.GetConverter(propDef.PropertyType);
-							value = conv.ConvertFrom(value);
-						}
-
-						m_propertyMap[propDef] = value;
-						break;
-					}
-
-				} while ((type = type.BaseType) != null);
-
-				if (type == null)
-					throw new Exception("Type owning the property not found");
-			}
-
-			m_serializablePropertyMap = null;
 		}
 
 		public abstract BaseGameObjectData Serialize();
@@ -188,6 +137,66 @@ namespace Dwarrowdelf.Server
 			} while ((type = type.BaseType) != null);
 
 			return props.ToArray();
+		}
+
+
+		class PropertyMapConverter : Dwarrowdelf.Json.IGameConverter
+		{
+			public object ConvertToSerializable(object parent, object value)
+			{
+				var propMap = (Dictionary<PropertyDefinition, object>)value;
+
+				var serializablePropMap = new Dictionary<PropertyID, object>(propMap.Count);
+
+				foreach (var kvp in propMap)
+					serializablePropMap[kvp.Key.PropertyID] = kvp.Value;
+
+				return serializablePropMap;
+			}
+
+			public object ConvertFromSerializable(object parent, object value)
+			{
+				BaseGameObject bgo = (BaseGameObject)parent;
+
+				var serializablePropMap = (Dictionary<PropertyID, object>)value;
+				var propMap = new Dictionary<PropertyDefinition, object>(serializablePropMap.Count);
+
+				foreach (var kvp in serializablePropMap)
+				{
+					var type = bgo.GetType();
+
+					do
+					{
+						if (!s_propertyDefinitionMap.ContainsKey(type))
+							continue;
+
+						var propDef = s_propertyDefinitionMap[type].Find(pd => pd.PropertyID == kvp.Key);
+						if (propDef != null)
+						{
+							var v = kvp.Value;
+							if (propDef.PropertyType.IsEnum && v.GetType() == typeof(string))
+							{
+								var conv = System.ComponentModel.TypeDescriptor.GetConverter(propDef.PropertyType);
+								v = conv.ConvertFrom(v);
+							}
+
+							propMap[propDef] = v;
+							break;
+						}
+
+					} while ((type = type.BaseType) != null);
+
+					if (type == null)
+						throw new Exception("Type owning the property not found");
+				}
+
+				return propMap;
+			}
+
+			public Type OutputType
+			{
+				get { return typeof(Dictionary<PropertyID, object>); }
+			}
 		}
 	}
 }

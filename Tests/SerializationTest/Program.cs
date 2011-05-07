@@ -18,12 +18,12 @@ namespace SerializationTest
 {
 	class MyConv : IGameConverter
 	{
-		public object ConvertToSerializable(object value)
+		public object ConvertToSerializable(object parent, object value)
 		{
 			return String.Format("X{0}X", value);
 		}
 
-		public object ConvertFromSerializable(object value)
+		public object ConvertFromSerializable(object parent, object value)
 		{
 			string str = (string)value;
 			str = str.Substring(1, str.Length - 2);

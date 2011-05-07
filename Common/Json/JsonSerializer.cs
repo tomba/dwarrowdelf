@@ -233,7 +233,7 @@ namespace Dwarrowdelf.Json
 				var memberType = entry.MemberType;
 
 				if (entry.Converter != null)
-					value = entry.Converter.ConvertToSerializable(value);
+					value = entry.Converter.ConvertToSerializable(ob, value);
 
 				SerializeObject(value, memberType);
 			}

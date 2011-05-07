@@ -404,7 +404,7 @@ namespace Dwarrowdelf.Json
 				object value = DeserializeObject(memberType);
 
 				if (entry.Converter != null)
-					value = entry.Converter.ConvertFromSerializable(value);
+					value = entry.Converter.ConvertFromSerializable(ob, value);
 
 				values[idx] = value;
 

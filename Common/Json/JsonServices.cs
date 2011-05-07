@@ -11,8 +11,8 @@ namespace Dwarrowdelf.Json
 {
 	public interface IGameConverter
 	{
-		object ConvertToSerializable(object value);
-		object ConvertFromSerializable(object value);
+		object ConvertToSerializable(object parent, object value);
+		object ConvertFromSerializable(object parent, object value);
 		Type OutputType { get; }
 	}
 

@@ -783,13 +783,13 @@ namespace Dwarrowdelf.Server
 
 		class BuildingsSetConv : Dwarrowdelf.Json.IGameConverter
 		{
-			public object ConvertToSerializable(object value)
+			public object ConvertToSerializable(object parent, object value)
 			{
 				var set = (HashSet<BuildingObject>)value;
 				return set.ToArray();
 			}
 
-			public object ConvertFromSerializable(object value)
+			public object ConvertFromSerializable(object parent, object value)
 			{
 				var arr = (BuildingObject[])value;
 				return new HashSet<BuildingObject>(arr);
@@ -803,7 +803,7 @@ namespace Dwarrowdelf.Server
 
 		class TileGridConv : Dwarrowdelf.Json.IGameConverter
 		{
-			public object ConvertToSerializable(object value)
+			public object ConvertToSerializable(object parent, object value)
 			{
 				var grid = (TileGrid)value;
 				var srcArr = grid.Grid;
@@ -825,7 +825,7 @@ namespace Dwarrowdelf.Server
 				return ser;
 			}
 
-			public object ConvertFromSerializable(object value)
+			public object ConvertFromSerializable(object parent, object value)
 			{
 				var ser = (SerializableGrid)value;
 				var size = ser.Size;
