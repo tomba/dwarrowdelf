@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			m_moveAssignment.Positioning = positioning;
 
-			return JobState.Ok;
+			return base.AssignOverride(worker);
 		}
 
 		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)

@@ -16,8 +16,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			//Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		IEnumerator<IAssignment> m_enumerator;
-
 		protected AssignmentGroup(IJob parent, ActionPriority priority)
 		{
 			this.Parent = parent;
@@ -102,14 +100,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			this.Worker = worker;
 
-			m_enumerator = GetAssignmentEnumerator();
-
 			this.CurrentSubJob = FindAndAssignJob(out state);
 			SetState(state);
 			return state;
 		}
 
-		protected abstract IEnumerator<IAssignment> GetAssignmentEnumerator();
+		protected abstract IAssignment GetNextAssignment();
 
 		protected virtual JobState AssignOverride(ILiving worker)
 		{
@@ -207,16 +203,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			while (true)
 			{
-				var ok = m_enumerator.MoveNext();
+				var job = GetNextAssignment();
 
-				if (!ok)
+				if (job == null)
 				{
 					D("all subjobs done");
 					state = JobState.Done;
 					return null;
 				}
-
-				var job = m_enumerator.Current;
 
 				var subState = job.Assign(this.Worker);
 

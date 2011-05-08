@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Server
 				m_world.Initialize(area);
 				Save(m_world, "save-0.json");
 
-				m_world = Load("save-0.json");
+				//m_world = Load("save-0.json");
 			}
 
 			m_world.TickEnded += OnWorldTickEnded;
@@ -128,6 +128,7 @@ namespace Dwarrowdelf.Server
 
 		void OnWorldTickEnded()
 		{
+#if asd
 			Console.WriteLine("Tick {0}", m_world.TickNumber);
 
 			int tick = m_world.TickNumber;
@@ -135,6 +136,7 @@ namespace Dwarrowdelf.Server
 			Save(m_world, name);
 
 			var w = Load(name);
+#endif
 		}
 
 		void Save(World world, string name)

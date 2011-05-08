@@ -47,11 +47,11 @@ namespace Dwarrowdelf.Server
 		WorldConfig m_config = new WorldConfig
 		{
 			TickMethod = WorldTickMethod.Simultaneous,
-			RequireUser = false,
+			RequireUser = true,
 			RequireControllables = false,
 			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
-			SingleStep = true,
+			SingleStep = false,
 		};
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");

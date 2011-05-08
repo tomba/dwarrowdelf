@@ -332,6 +332,8 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionStartedChange change)
 		{
+			//Debug.WriteLine("ActionStartedChange({0})", change.ObjectID);
+
 			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
 			if (ob == null)
 				throw new Exception();
@@ -341,7 +343,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionProgressChange change)
 		{
-			//MyDebug.WriteLine("ActionProgressChange({0})", e.TransactionID);
+			//Debug.WriteLine("ActionProgressChange({0})", change.ObjectID);
 
 			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
 			if (ob == null)

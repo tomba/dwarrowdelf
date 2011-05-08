@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	{
 		ObservableCollection<IAssignment> m_assignments;
 		public ReadOnlyObservableCollection<IAssignment> Assignments { get; private set; }
+		int m_state;
 
 		protected StaticAssignmentGroup(IJob parent, ActionPriority priority)
 			: base(parent, priority)
@@ -27,9 +28,20 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Assignments = new ReadOnlyObservableCollection<IAssignment>(m_assignments);
 		}
 
-		protected override IEnumerator<IAssignment> GetAssignmentEnumerator()
+		protected override JobState AssignOverride(ILiving worker)
 		{
-			return m_assignments.GetEnumerator();
+			m_state = 0;
+			return JobState.Ok;
+		}
+
+		protected override IAssignment GetNextAssignment()
+		{
+			int state = m_state++;
+
+			if (state >= m_assignments.Count)
+				return null;
+
+			return m_assignments[state];
 		}
 
 		protected override void OnStateChanged(JobState state)
