@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			int state = m_state++;
 
 			if (state >= m_assignments.Count)
-				return null;
+				throw new Exception();
 
 			return m_assignments[state];
 		}

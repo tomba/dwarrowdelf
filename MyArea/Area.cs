@@ -14,6 +14,8 @@ namespace MyArea
 {
 	public class Area : IArea
 	{
+		const int NUM_SHEEP = 0;
+
 		Environment m_map1;
 
 		public void InitializeWorld(World world)
@@ -357,7 +359,7 @@ namespace MyArea
 
 			/* Add Monsters */
 
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
 				var sheep = new Living(String.Format("Sheep{0}", i))
 				{

@@ -11,6 +11,8 @@ namespace Dwarrowdelf.Server
 {
 	public class ServerUser
 	{
+		const int NUM_DWARVES = 1;
+
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;
 
@@ -138,7 +140,7 @@ namespace Dwarrowdelf.Server
 
 #else
 			var rand = new Random();
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i < NUM_DWARVES; ++i)
 			{
 				IntPoint3D p;
 				do
