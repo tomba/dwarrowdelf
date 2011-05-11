@@ -32,13 +32,13 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			});
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
 			var positioning = GetPossiblePositioning(m_environment, m_location, m_mineActionType);
 
 			m_moveAssignment.Positioning = positioning;
 
-			return base.AssignOverride(worker);
+			base.AssignOverride(worker);
 		}
 
 		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)

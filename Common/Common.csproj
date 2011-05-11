@@ -71,6 +71,9 @@
   <ItemGroup>
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
+    <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
+    <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
     <Compile Include="Json\Attributes.cs" />
     <Compile Include="Json\JsonDeserializer.cs" />
     <Compile Include="Json\JsonSerializer.cs" />
@@ -94,7 +97,6 @@
     <Compile Include="Jobs\Assignments\GetItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\BuildItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\MineAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\IAI.cs" />
     <Compile Include="Jobs\AssignmentAI.cs" />
     <Compile Include="AStar\OpenList.cs" />
@@ -123,9 +125,7 @@
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
-    <Compile Include="DataTypes\GrowingGrid3DBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="DataTypes\GrowingGrid3DBase.cs" />
     <Compile Include="DataTypes\IntVector3D.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />

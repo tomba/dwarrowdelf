@@ -33,11 +33,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			SetAssignments(jobs);
 		}
 
-		protected override void OnStateChanged(JobState state)
-		{
-			m_locs = null;
-		}
-
 		public override string ToString()
 		{
 			return "MineAreaSerialSameJob";

@@ -28,37 +28,50 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Assignments = new ReadOnlyObservableCollection<IAssignment>(m_assignments);
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
 			m_state = 0;
-			return JobState.Ok;
+			SetStatus(JobState.Ok);
+			SetState();
 		}
 
-		protected override IAssignment GetNextAssignment()
+		protected override void OnAssignmentStateChanged(JobState jobState)
 		{
-			int state = m_state++;
+			if (jobState == Jobs.JobState.Ok)
+				return;
 
-			if (state >= m_assignments.Count)
+			if (jobState == Jobs.JobState.Fail)
+			{
+				SetStatus(JobState.Fail);
+				return;
+			}
+
+			if (jobState == Jobs.JobState.Abort)
+			{
+				SetStatus(Jobs.JobState.Abort); // XXX check why the job aborted, and possibly retry
+				return;
+			}
+
+			// else Done
+
+			m_state++;
+
+			if (m_state == m_assignments.Count)
+			{
+				SetStatus(JobState.Done);
+				return;
+			}
+
+			SetState();
+		}
+
+		void SetState()
+		{
+			if (m_state >= m_assignments.Count)
 				throw new Exception();
 
-			return m_assignments[state];
-		}
-
-		protected override void OnStateChanged(JobState state)
-		{
-			if (state == JobState.Ok)
-			{
-				foreach (var job in m_assignments.Where(j => j.JobState != JobState.Ok))
-					job.Retry();
-			}
-		}
-
-		protected override JobState CheckProgress()
-		{
-			if (this.Assignments.All(j => j.JobState == JobState.Done))
-				return JobState.Done;
-			else
-				return JobState.Ok;
+			var assignment = m_assignments[m_state];
+			SetAssignment(assignment);
 		}
 	}
 }

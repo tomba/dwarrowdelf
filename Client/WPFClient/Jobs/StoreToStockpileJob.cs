@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using Dwarrowdelf.Jobs;
 using Dwarrowdelf.Jobs.Assignments;
 using Dwarrowdelf.Jobs.AssignmentGroups;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
@@ -18,14 +19,12 @@ namespace Dwarrowdelf.Client
 			MoveToItem,
 			GetItem,
 			MoveToStockpile,
-			MoveToDropLocation,
 			DropItem,
 			Done,
 		}
 
 		public IItemObject Item { get; private set; }
 		Stockpile m_stockpile;
-
 		State m_state;
 
 		public StoreToStockpileJob(Stockpile stockpile, IItemObject item)
@@ -35,69 +34,105 @@ namespace Dwarrowdelf.Client
 			m_stockpile = stockpile;
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
-			m_state = State.MoveToItem;
+			SetStatus(JobState.Ok);
 
-			return base.AssignOverride(worker);
+			SetState(State.MoveToItem);
 		}
 
-		protected override IAssignment GetNextAssignment()
+		void SetState(State state)
 		{
-			switch (m_state)
+			IAssignment assignment;
+
+			switch (state)
 			{
 				case State.MoveToItem:
-					return new MoveAssignment(this, ActionPriority.Normal, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
-
-				case State.GetItem:
-					return new GetItemAssignment(this, ActionPriority.Normal, this.Item);
-
-				case State.MoveToStockpile:
-					return new MoveAssignment(this, ActionPriority.Normal, m_stockpile.Environment, m_stockpile.Area.Center, DirectionSet.Exact);
-
-				case State.MoveToDropLocation:
-					return new MoveAssignment(this, ActionPriority.Normal, m_stockpile.Environment, m_stockpile.FindEmptyLocation, DirectionSet.Exact);
-
-				case State.DropItem:
-					return new DropItemAssignment(this, ActionPriority.Normal, this.Item);
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		protected override JobState CheckProgress()
-		{
-			switch (m_state)
-			{
-				case State.MoveToItem:
-					m_state = State.GetItem;
+					assignment = new MoveAssignment(this, ActionPriority.Normal, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
 				case State.GetItem:
-					m_state = State.MoveToStockpile;
+					assignment = new GetItemAssignment(this, ActionPriority.Normal, this.Item);
 					break;
 
 				case State.MoveToStockpile:
-					m_state = State.MoveToDropLocation;
-					break;
+					if (!m_stockpile.Area.Contains(this.Worker.Location))
+					{
+						assignment = new MoveToAreaAssignment(this, ActionPriority.Normal, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact);
+					}
+					else
+					{
+						bool ok;
+						var l = m_stockpile.FindEmptyLocation(out ok);
+						if (!ok)
+							throw new Exception();
 
-				case State.MoveToDropLocation:
-					m_state = State.DropItem;
+						assignment = new MoveAssignment(this, ActionPriority.Normal, m_stockpile.Environment, l, DirectionSet.Exact);
+					}
 					break;
 
 				case State.DropItem:
-					m_state = State.Done;
+					assignment = new DropItemAssignment(this, ActionPriority.Normal, this.Item);
+					break;
+
+				case State.Done:
+					assignment = null;
+					SetStatus(JobState.Done);
 					break;
 
 				default:
 					throw new Exception();
 			}
 
-			if (m_state == State.Done)
-				return Jobs.JobState.Done;
+			m_state = state;
 
-			return Jobs.JobState.Ok;
+			SetAssignment(assignment);
+		}
+
+		protected override void OnAssignmentStateChanged(JobState jobState)
+		{
+			if (jobState == Jobs.JobState.Ok)
+				return;
+
+			if (jobState == Jobs.JobState.Fail)
+			{
+				SetStatus(JobState.Fail);
+				return;
+			}
+
+			if (jobState == Jobs.JobState.Abort)
+			{
+				SetStatus(Jobs.JobState.Abort); // XXX check why the job aborted, and possibly retry
+				return;
+			}
+
+			// else Done
+
+			switch (m_state)
+			{
+				case State.MoveToItem:
+					Debug.Assert(this.Item.Location == this.Worker.Location);
+
+					SetState(State.GetItem);
+					break;
+
+				case State.GetItem:
+					Debug.Assert(this.Item.Parent == this.Worker);
+
+					SetState(State.MoveToStockpile);
+					break;
+
+				case State.MoveToStockpile:
+					SetState(State.DropItem);
+					break;
+
+				case State.DropItem:
+					SetState(State.Done);
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public override string ToString()

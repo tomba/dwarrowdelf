@@ -8,11 +8,11 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class MoveAssignment : MoveAssignmentBase
+	public class MoveToAreaAssignment : MoveAssignmentBase
 	{
-		readonly IntPoint3D m_dest;
+		readonly IntCuboid m_dest;
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
+		public MoveToAreaAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntCuboid destination, DirectionSet positioning)
 			: base(parent, priority, environment, positioning)
 		{
 			m_dest = destination;
@@ -20,18 +20,19 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override Queue<Direction> GetPath(ILiving worker)
 		{
-			IntPoint3D finalPos;
-			var path = AStar.AStar.Find(m_environment, worker.Location, m_dest, this.Positioning, out finalPos);
+			var res = AStar.AStar.Find(m_environment, worker.Location, DirectionSet.Exact, new AStar.AStarAreaTarget(m_dest));
 
-			if (path == null)
+			if (res.Status != AStar.AStarStatus.Found)
 				return null;
+
+			var path = res.GetPath();
 
 			return new Queue<Direction>(path);
 		}
 
 		protected override JobState CheckProgress(ILiving worker)
 		{
-			if (worker.Location.IsAdjacentTo(m_dest, this.Positioning))
+			if (m_dest.Contains(worker.Location))
 				return JobState.Done;
 			else
 				return JobState.Ok;
@@ -41,5 +42,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			return String.Format("Move({0} -> {1})", this.Src, m_dest);
 		}
+
 	}
 }
