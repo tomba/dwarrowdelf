@@ -87,7 +87,9 @@ namespace Dwarrowdelf.Json
 					if (writeType)
 						throw new Exception();
 
-					m_writer.WriteValue(Enum.GetName(type, ob));
+					var value = typeInfo.TypeConverter.ConvertToInvariantString(ob);
+					m_writer.WriteValue(value);
+
 					break;
 
 				case TypeClass.Convertable:
