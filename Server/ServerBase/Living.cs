@@ -548,6 +548,9 @@ namespace Dwarrowdelf.Server
 
 		public override string ToString()
 		{
+			if (this.IsDestructed)
+				return "<DestructedObject>";
+
 			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
 		}
 	}

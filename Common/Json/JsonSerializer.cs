@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using System.Collections;
 
-namespace Dwarrowdelf.Json
+namespace Dwarrowdelf
 {
 	public interface IJsonReferenceResolver
 	{

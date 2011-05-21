@@ -23,8 +23,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 		public JobType JobType { get { return JobType.Assignment; } }
+		[GameProperty]
 		public IJob Parent { get; private set; }
+		[GameProperty]
 		public ActionPriority Priority { get; private set; }
+		[GameProperty]
 		public JobStatus JobStatus { get; private set; }
 
 		public void Retry()
@@ -55,6 +58,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 		ILiving m_worker;
+		[GameProperty]
 		public ILiving Worker
 		{
 			get { return m_worker; }
@@ -62,6 +66,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 		IAssignment m_assignment;
+		[GameProperty]
 		public IAssignment CurrentAssignment
 		{
 			get { return m_assignment; }

@@ -12,7 +12,6 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Reflection;
-using Dwarrowdelf.Json;
 
 namespace SerializationTest
 {

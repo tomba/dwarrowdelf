@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Server
 
 			var stream = new System.IO.MemoryStream();
 
-			var serializer = new Dwarrowdelf.Json.JsonSerializer(stream);
+			var serializer = new Dwarrowdelf.JsonSerializer(stream);
 			serializer.Serialize(world);
 
 			stream.Position = 0;
@@ -176,7 +176,7 @@ namespace Dwarrowdelf.Server
 			World world;
 
 			var stream = File.OpenRead("save" + "\\" + name);
-			var deserializer = new Dwarrowdelf.Json.JsonDeserializer(stream);
+			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
 			world = (World)deserializer.Deserialize<World>();
 
 			watch.Stop();

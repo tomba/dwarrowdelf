@@ -14,7 +14,7 @@ namespace MyArea
 {
 	public class Area : IArea
 	{
-		const int NUM_SHEEP = 0;
+		const int NUM_SHEEP = 3;
 
 		Environment m_map1;
 

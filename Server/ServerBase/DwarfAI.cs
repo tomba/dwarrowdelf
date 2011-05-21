@@ -7,9 +7,14 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject(UseRef = true)]
 	class DwarfAI : AssignmentAI
 	{
+		[GameProperty]
 		bool m_priorityAction;
+
+		[GameProperty]
+		ItemObject m_consumeObject;
 
 		public DwarfAI(Living ob)
 			: base(ob)
@@ -130,7 +135,6 @@ namespace Dwarrowdelf.Server
 			return null;
 		}
 
-		ItemObject m_consumeObject;
 		void OnConsumeJobStatusChanged(IJob job, JobStatus status)
 		{
 			// XXX ob's ReservedBy should probably be cleared elsewhere

@@ -10,13 +10,45 @@ namespace Dwarrowdelf.Jobs.Assignments
 {
 	public abstract class MoveAssignmentBase : Assignment
 	{
+		[GameProperty]
 		protected IntPoint3D Src { get; private set; } // just for ToString()
 
+		[GameProperty]
 		protected readonly IEnvironment m_environment;
+		[GameProperty]
 		DirectionSet m_positioning;
+		[GameProperty]
 		IntPoint3D m_supposedLocation;
+		[GameProperty]
 		int m_numFails;
+		[GameProperty(Converter = typeof(QueueConverter))]
 		Queue<Direction> m_pathDirs;
+
+		class QueueConverter : IGameConverter
+		{
+			public object ConvertToSerializable(object parent, object value)
+			{
+				if (value == null)
+					return null;
+
+				var q = (Queue<Direction>)value;
+				return q.ToArray();
+			}
+
+			public object ConvertFromSerializable(object parent, object value)
+			{
+				if (value == null)
+					return null;
+
+				var a = (Direction[])value;
+				return new Queue<Direction>(a);
+			}
+
+			public Type OutputType
+			{
+				get { return typeof(Direction[]); }
+			}
+		}
 
 		public MoveAssignmentBase(IJob parent, ActionPriority priority, IEnvironment environment, DirectionSet positioning)
 			: base(parent, priority)

@@ -781,7 +781,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		class BuildingsSetConv : Dwarrowdelf.Json.IGameConverter
+		class BuildingsSetConv : Dwarrowdelf.IGameConverter
 		{
 			public object ConvertToSerializable(object parent, object value)
 			{
@@ -801,7 +801,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		class TileGridConv : Dwarrowdelf.Json.IGameConverter
+		class TileGridConv : Dwarrowdelf.IGameConverter
 		{
 			public object ConvertToSerializable(object parent, object value)
 			{

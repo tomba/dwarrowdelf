@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		class PropertyMapConverter : Dwarrowdelf.Json.IGameConverter
+		class PropertyMapConverter : Dwarrowdelf.IGameConverter
 		{
 			public object ConvertToSerializable(object parent, object value)
 			{

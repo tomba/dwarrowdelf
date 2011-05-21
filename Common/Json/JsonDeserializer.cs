@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace Dwarrowdelf.Json
+namespace Dwarrowdelf
 {
 	public interface IDeserializerRefResolver
 	{

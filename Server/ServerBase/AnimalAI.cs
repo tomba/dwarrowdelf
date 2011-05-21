@@ -7,7 +7,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject]
+	[GameObject(UseRef = true)]
 	public class AnimalAI : AssignmentAI
 	{
 		[GameProperty]

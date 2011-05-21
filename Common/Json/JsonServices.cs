@@ -7,7 +7,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace Dwarrowdelf.Json
+namespace Dwarrowdelf
 {
 	public interface IGameConverter
 	{
