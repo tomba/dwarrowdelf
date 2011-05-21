@@ -219,13 +219,13 @@ namespace Dwarrowdelf.Client
 		{
 			get
 			{
-				return m_buildOrderQueue.Count > 0;
+				return m_buildOrderQueue.Where(bo => bo.Job != null).Count() > 0;
 			}
 		}
 
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			var order = m_buildOrderQueue.FirstOrDefault();
+			var order = m_buildOrderQueue.Where(bo => bo.Job != null).FirstOrDefault();
 			if (order != null)
 			{
 				var job = order.Job;
