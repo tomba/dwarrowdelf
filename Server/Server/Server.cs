@@ -33,7 +33,11 @@ namespace Dwarrowdelf.Server
 			else
 			{
 				if (Directory.Exists("save"))
-					Directory.Delete("save", true);
+				{
+					var files = Directory.EnumerateFiles("save");
+					foreach (var file in files)
+						File.Delete(file);
+				}
 
 				m_world = new World();
 				m_world.Initialize(area);
