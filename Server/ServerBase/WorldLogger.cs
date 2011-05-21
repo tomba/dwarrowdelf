@@ -18,6 +18,9 @@ namespace Dwarrowdelf.Server
 		public void Start(World world, string path)
 		{
 			m_world = world;
+			var dir = Path.GetDirectoryName(path);
+			if (!Directory.Exists(dir))
+				Directory.CreateDirectory(dir);
 
 			var stream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
 			m_writer = new StreamWriter(stream);
@@ -36,8 +39,8 @@ namespace Dwarrowdelf.Server
 
 		void HandleChanges(Change change)
 		{
-			m_writer.WriteLine(change);
-			m_writer.Flush();
+			//m_writer.WriteLine(change);
+			//m_writer.Flush();
 		}
 	}
 }

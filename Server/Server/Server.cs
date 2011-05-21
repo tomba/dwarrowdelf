@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define SAVE_EVERY_TURN
+
+using System;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
@@ -42,15 +44,15 @@ namespace Dwarrowdelf.Server
 
 				m_world = new World();
 				m_world.Initialize(area);
-				Save(m_world, "save-0.json");
+				//Save(m_world, "save-0.json");
 
 				//m_world = Load("save-0.json");
 			}
 
 			m_world.TickEnded += OnWorldTickEnded;
 
-			//m_logger = new WorldLogger();
-			//m_logger.Start(m_world, "save/changes.log");
+			m_logger = new WorldLogger();
+			m_logger.Start(m_world, "save/changes.log");
 
 			m_world.Start();
 
@@ -75,7 +77,7 @@ namespace Dwarrowdelf.Server
 
 			m_world.Stop();
 
-			//m_logger.Stop();
+			m_logger.Stop();
 			m_world.TickEnded -= OnWorldTickEnded;
 
 			Debug.Print("Server exiting");
@@ -137,7 +139,7 @@ namespace Dwarrowdelf.Server
 
 		void OnWorldTickEnded()
 		{
-#if asd
+#if SAVE_EVERY_TURN
 			Console.WriteLine("Tick {0}", m_world.TickNumber);
 
 			int tick = m_world.TickNumber;
