@@ -13,8 +13,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 	{
 		[GameProperty("Environment")]
 		readonly IEnvironment m_environment;
-		[GameProperty("Random")]
-		Random m_random = new Random();
 		[GameProperty("Dir")]
 		Direction m_dir;
 
@@ -34,14 +32,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
-			int i = m_random.Next(8);
+			int i = worker.World.Random.Next(8);
 			m_dir = DirectionExtensions.PlanarDirections[i];
 			return Jobs.JobStatus.Ok;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			int i = m_random.Next(100);
+			var random = this.Worker.World.Random;
+
+			int i = random.Next(100);
 
 			GameAction action;
 
@@ -57,19 +57,19 @@ namespace Dwarrowdelf.Jobs.Assignments
 			else if (i < 75)
 			{
 				var v = new IntVector3D(dir);
-				v = v.FastRotate(m_random.Next() % 2 == 0 ? 1 : -1);
+				v = v.FastRotate(random.Next() % 2 == 0 ? 1 : -1);
 				dir = v.ToDirection();
 			}
 			else
 			{
 				var v = new IntVector3D(dir);
-				v = v.FastRotate(m_random.Next() % 2 == 0 ? 2 : -2);
+				v = v.FastRotate(random.Next() % 2 == 0 ? 2 : -2);
 				dir = v.ToDirection();
 			}
 
 			if (dir == Direction.None)
 			{
-				action = new WaitAction(m_random.Next(4) + 1, this.Priority);
+				action = new WaitAction(random.Next(4) + 1, this.Priority);
 			}
 			else
 			{

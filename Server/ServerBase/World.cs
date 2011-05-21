@@ -80,6 +80,9 @@ namespace Dwarrowdelf.Server
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
+		[GameProperty]
+		Random m_random = new Random();
+
 		public World()
 		{
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
@@ -128,6 +131,8 @@ namespace Dwarrowdelf.Server
 			SignalWorld();
 			m_worldThread.Join();
 		}
+
+		public Random Random { get { return m_random; } }
 
 		public void EnableSingleStep()
 		{

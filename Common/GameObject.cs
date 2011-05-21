@@ -9,6 +9,7 @@ namespace Dwarrowdelf
 	{
 		int TickNumber { get; }
 		event Action TickStartEvent;
+		Random Random { get; }
 	}
 
 	public interface IIdentifiable
