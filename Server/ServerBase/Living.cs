@@ -40,6 +40,7 @@ namespace Dwarrowdelf.Server
 		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.FoodFullness, PropertyVisibility.Friendly, 500);
 		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.WaterFullness, PropertyVisibility.Friendly, 500);
 
+		// String representation of assignment, for client use
 		static readonly PropertyDefinition AssignmentProperty = RegisterProperty(typeof(Living), typeof(string), PropertyID.Assignment, PropertyVisibility.Friendly, "");
 
 		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)

@@ -8,6 +8,7 @@ namespace Dwarrowdelf.Server
 	public class Server : MarshalByRefObject, IServer
 	{
 		World m_world;
+		WorldLogger m_logger;
 
 		public Server()
 		{
@@ -48,6 +49,9 @@ namespace Dwarrowdelf.Server
 
 			m_world.TickEnded += OnWorldTickEnded;
 
+			//m_logger = new WorldLogger();
+			//m_logger.Start(m_world, "save/changes.log");
+
 			m_world.Start();
 
 			Connection.NewConnectionEvent += OnNewConnection;
@@ -71,6 +75,7 @@ namespace Dwarrowdelf.Server
 
 			m_world.Stop();
 
+			//m_logger.Stop();
 			m_world.TickEnded -= OnWorldTickEnded;
 
 			Debug.Print("Server exiting");

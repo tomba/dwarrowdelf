@@ -6,19 +6,20 @@ using System.IO;
 
 namespace Dwarrowdelf.Server
 {
-	class WorldLogger
+	public class WorldLogger
 	{
 		World m_world;
 		TextWriter m_writer;
 
-		public WorldLogger(World world)
+		public WorldLogger()
 		{
-			m_world = world;
 		}
 
-		public void Start()
+		public void Start(World world, string path)
 		{
-			var stream = File.Open("world.log", FileMode.Create, FileAccess.Write, FileShare.Read);
+			m_world = world;
+
+			var stream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.Read);
 			m_writer = new StreamWriter(stream);
 
 			m_world.WorldChanged += HandleChanges;
@@ -30,13 +31,7 @@ namespace Dwarrowdelf.Server
 
 			m_writer.Close();
 			m_writer = null;
-		}
-
-		public void LogFullState()
-		{
-			m_world.EnterReadLock();
-			m_writer.WriteLine("XXX full world state");
-			m_world.ExitReadLock();
+			m_world = null;
 		}
 
 		void HandleChanges(Change change)

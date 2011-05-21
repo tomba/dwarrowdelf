@@ -75,8 +75,6 @@ namespace Dwarrowdelf.Server
 		Thread m_worldThread;
 		volatile bool m_exit = false;
 
-		WorldLogger m_worldLogger;
-
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
@@ -87,8 +85,6 @@ namespace Dwarrowdelf.Server
 		{
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];
-
-			m_worldLogger = new WorldLogger(this);
 
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
@@ -164,9 +160,6 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("WorldMain");
 
-			m_worldLogger.Start();
-			m_worldLogger.LogFullState();
-
 			EventWaitHandle initEvent = (EventWaitHandle)arg;
 			initEvent.Set();
 
@@ -175,8 +168,6 @@ namespace Dwarrowdelf.Server
 				m_worldSignal.WaitOne();
 				Work();
 			}
-
-			m_worldLogger.Stop();
 
 			trace.TraceInformation("WorldMain end");
 		}
