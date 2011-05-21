@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Server
 		public event Action<Change> WorldChanged;
 		public event Action TickEnded;
 
-		AutoResetEvent m_worldSignal = new AutoResetEvent(false);
+		AutoResetEvent m_worldSignal = new AutoResetEvent(true);
 
 		Thread m_worldThread;
 		volatile bool m_exit = false;
