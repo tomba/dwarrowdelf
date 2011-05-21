@@ -35,9 +35,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
-		protected override void OnStateChanged(JobState state)
+		protected override void OnStateChanged(JobStatus status)
 		{
-			if (state == JobState.Ok)
+			if (status == JobStatus.Ok)
 				return;
 
 			// else Abort, Done or Fail
@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_numFails = 0;
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
 			this.Src = worker.Location;
 			m_numFails = 0;
@@ -55,13 +55,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return res;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out JobState progress)
+		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			if (m_pathDirs == null || m_supposedLocation != this.Worker.Location)
 			{
 				var res = PreparePath(this.Worker);
 
-				if (res != JobState.Ok)
+				if (res != JobStatus.Ok)
 				{
 					progress = res;
 					return null;
@@ -76,16 +76,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_supposedLocation += new IntVector3D(dir);
 
 			var action = new MoveAction(dir, this.Priority);
-			progress = JobState.Ok;
+			progress = JobStatus.Ok;
 			return action;
 		}
 
-		protected override JobState ActionProgressOverride(ActionProgressChange e)
+		protected override JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return JobState.Ok;
+					return JobStatus.Ok;
 
 				case ActionState.Done:
 					return CheckProgress(this.Worker);
@@ -93,42 +93,42 @@ namespace Dwarrowdelf.Jobs.Assignments
 				case ActionState.Fail:
 					m_numFails++;
 					if (m_numFails > 10)
-						return JobState.Abort;
+						return JobStatus.Abort;
 
 					var res = PreparePath(this.Worker);
 					return res;
 
 				case ActionState.Abort:
-					return JobState.Abort;
+					return JobStatus.Abort;
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		JobState PreparePath(ILiving worker)
+		JobStatus PreparePath(ILiving worker)
 		{
 			var progress = CheckProgress(worker);
 			
-			if (progress != Jobs.JobState.Ok)
+			if (progress != Jobs.JobStatus.Ok)
 				return progress;
 
 			var path = GetPath(worker);
 
 			if (path == null)
-				return Jobs.JobState.Abort;
+				return Jobs.JobStatus.Abort;
 
 			if (path.Count == 0)
-				return Jobs.JobState.Done;
+				return Jobs.JobStatus.Done;
 
 			m_pathDirs = path;
 			m_supposedLocation = worker.Location;
 
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
 		protected abstract Queue<Direction> GetPath(ILiving worker);
 
-		protected abstract JobState CheckProgress(ILiving worker);
+		protected abstract JobStatus CheckProgress(ILiving worker);
 	}
 }

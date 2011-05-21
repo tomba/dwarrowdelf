@@ -25,31 +25,31 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public JobType JobType { get { return JobType.Assignment; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
-		public JobState JobState { get; private set; }
+		public JobStatus JobStatus { get; private set; }
 
 		public void Retry()
 		{
-			Debug.Assert(this.JobState != JobState.Ok);
-			Debug.Assert(this.CurrentSubJob == null);
+			Debug.Assert(this.JobStatus != JobStatus.Ok);
+			Debug.Assert(this.CurrentAssignment == null);
 
-			SetStatus(JobState.Ok);
+			SetStatus(JobStatus.Ok);
 		}
 
 		public void Abort()
 		{
-			SetStatus(JobState.Abort);
+			SetStatus(JobStatus.Abort);
 		}
 
 		public void Fail()
 		{
-			SetStatus(JobState.Fail);
+			SetStatus(JobStatus.Fail);
 		}
 
 		public bool IsAssigned
 		{
 			get
 			{
-				Debug.Assert(m_worker == null || this.JobState == Jobs.JobState.Ok);
+				Debug.Assert(m_worker == null || this.JobStatus == Jobs.JobStatus.Ok);
 				return m_worker != null;
 			}
 		}
@@ -61,52 +61,56 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			private set { if (m_worker == value) return; m_worker = value; Notify("Worker"); }
 		}
 
-		public IAssignment CurrentSubJob { get; private set; }
-
-		protected void SetAssignment(IAssignment assignment)
+		IAssignment m_assignment;
+		public IAssignment CurrentAssignment
 		{
-			if (this.CurrentSubJob == assignment)
-				return;
+			get { return m_assignment; }
 
-			if (this.CurrentSubJob != null)
+			private set
 			{
-				this.CurrentSubJob.StateChanged -= OnSubJobStateChanged;
-				if (this.CurrentSubJob.JobState == Jobs.JobState.Ok)
-					this.CurrentSubJob.Abort();
-			}
+				if (m_assignment == value)
+					return;
 
-			this.CurrentSubJob = assignment;
-			Notify("CurrentSubJob");
+				if (m_assignment != null)
+				{
+					Debug.Assert(m_assignment.JobStatus != Jobs.JobStatus.Ok);
+					m_assignment.StatusChanged -= OnCurrentAssignmentStatusChanged;
+				}
 
-			if (this.CurrentSubJob != null)
-			{
-				this.CurrentSubJob.StateChanged += OnSubJobStateChanged;
-				this.CurrentSubJob.Assign(this.Worker);
+				m_assignment = value;
+				Notify("CurrentAssignment");
+
+				if (m_assignment != null)
+				{
+					m_assignment.StatusChanged += OnCurrentAssignmentStatusChanged;
+				}
 			}
 		}
 
 		public GameAction CurrentAction
 		{
-			get { return this.CurrentSubJob != null ? this.CurrentSubJob.CurrentAction : null; }
+			get { return this.CurrentAssignment != null ? this.CurrentAssignment.CurrentAction : null; }
 		}
 
-		public JobState Assign(ILiving worker)
+		public JobStatus Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
-			Debug.Assert(this.JobState == JobState.Ok);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 
 			D("Assign {0}", worker);
 
 			this.Worker = worker;
 
-			AssignOverride(worker);
+			var status = AssignOverride(worker);
 
-			return this.JobState;
+			SetStatus(status);
+
+			return this.JobStatus;
 		}
 
-		protected abstract void AssignOverride(ILiving worker);
+		protected abstract JobStatus AssignOverride(ILiving worker);
 
-		public JobState PrepareNextAction()
+		public JobStatus PrepareNextAction()
 		{
 			Debug.Assert(this.CurrentAction == null);
 
@@ -114,113 +118,140 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			while (true)
 			{
-				Debug.Assert(this.CurrentSubJob != null);
-
-				this.CurrentSubJob.PrepareNextAction();
-				Notify("CurrentAction");
-
-				var state = this.JobState;
-
-				switch (state)
+				while (this.CurrentAssignment == null || this.CurrentAssignment.JobStatus != Jobs.JobStatus.Ok)
 				{
-					case JobState.Ok:
-						Debug.Assert(this.CurrentAction != null);
-						return JobState.Ok;
+					var assignment = PrepareNextAssignment();
 
-					case JobState.Done:
+					if (this.JobStatus != Jobs.JobStatus.Ok)
+						return this.JobStatus;
+
+					Debug.Assert(assignment.JobStatus == Jobs.JobStatus.Ok);
+
+					this.CurrentAssignment = assignment;
+
+					var status = this.CurrentAssignment.Assign(this.Worker);
+
+					if (this.JobStatus != Jobs.JobStatus.Ok)
+						return this.JobStatus;
+
+					if (status != Jobs.JobStatus.Ok)
 						continue;
+				}
 
-					case JobState.Abort:
-					case JobState.Fail:
-						Debug.Assert(this.CurrentAction == null);
-						return state;
+				Debug.Assert(this.CurrentAssignment != null);
+				Debug.Assert(this.CurrentAssignment.JobStatus == Jobs.JobStatus.Ok);
+
+				{
+					var status = this.CurrentAssignment.PrepareNextAction();
+					Notify("CurrentAction");
+
+					if (this.JobStatus != Jobs.JobStatus.Ok)
+						return this.JobStatus;
+
+					switch (status)
+					{
+						case JobStatus.Ok:
+							Debug.Assert(this.CurrentAction != null);
+							return JobStatus.Ok;
+
+						case JobStatus.Done:
+							continue;
+
+						case JobStatus.Abort:
+						case JobStatus.Fail:
+							Debug.Assert(this.CurrentAction == null);
+							continue;
+					}
 				}
 			}
 		}
 
-		public JobState ActionProgress(ActionProgressChange e)
+		protected abstract IAssignment PrepareNextAssignment();
+
+		public JobStatus ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobState == JobState.Ok);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
-			Debug.Assert(this.CurrentSubJob != null);
+			Debug.Assert(this.CurrentAssignment != null);
 
 			D("ActionProgress");
 
-			this.CurrentSubJob.ActionProgress(e);
+			this.CurrentAssignment.ActionProgress(e);
 			Notify("CurrentAction");
 
-			return this.JobState;
+			return this.JobStatus;
 		}
 
-		protected void SetStatus(JobState state)
+		protected void SetStatus(JobStatus status)
 		{
-			if (this.JobState == state)
+			if (this.JobStatus == status)
 				return;
 
-			D("SetState({0})", state);
+			D("SetState({0})", status);
 
-			switch (state)
+			switch (status)
 			{
-				case JobState.Ok:
+				case JobStatus.Ok:
 					break;
 
-				case JobState.Done:
-					Debug.Assert(this.JobState == JobState.Ok);
+				case JobStatus.Done:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
 					break;
 
-				case JobState.Abort:
-					Debug.Assert(this.JobState == JobState.Ok || this.JobState == JobState.Done);
+				case JobStatus.Abort:
+					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
 					break;
 
-				case JobState.Fail:
-					Debug.Assert(this.JobState == JobState.Ok);
+				case JobStatus.Fail:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
 					break;
 			}
 
-			switch (state)
+			this.JobStatus = status;
+
+			switch (status)
 			{
-				case JobState.Ok:
+				case JobStatus.Ok:
 					break;
 
-				case JobState.Done:
+				case JobStatus.Done:
 					this.Worker = null;
-					this.CurrentSubJob = null;
+					this.CurrentAssignment = null;
 					break;
 
-				case JobState.Abort:
-					if (this.CurrentSubJob != null && this.CurrentSubJob.JobState == JobState.Ok)
-						this.CurrentSubJob.Abort();
+				case JobStatus.Abort:
+					if (this.CurrentAssignment != null && this.CurrentAssignment.JobStatus == JobStatus.Ok)
+						this.CurrentAssignment.Abort();
 
 					this.Worker = null;
-					this.CurrentSubJob = null;
+					this.CurrentAssignment = null;
 					break;
 
-				case JobState.Fail:
-					if (this.CurrentSubJob != null && this.CurrentSubJob.JobState == JobState.Ok)
-						this.CurrentSubJob.Fail();
+				case JobStatus.Fail:
+					if (this.CurrentAssignment != null && this.CurrentAssignment.JobStatus == JobStatus.Ok)
+						this.CurrentAssignment.Fail();
 
 					this.Worker = null;
-					this.CurrentSubJob = null;
+					this.CurrentAssignment = null;
 					break;
 			}
 
-			this.JobState = state;
-			if (this.StateChanged != null)
-				StateChanged(this, state);
-			Notify("JobState");
+			if (this.StatusChanged != null)
+				StatusChanged(this, status);
+			Notify("JobStatus");
 		}
 
-		public event Action<IJob, JobState> StateChanged;
+		public event Action<IJob, JobStatus> StatusChanged;
 
-		void OnSubJobStateChanged(IJob job, JobState state)
+		void OnCurrentAssignmentStatusChanged(IJob job, JobStatus status)
 		{
-			Debug.Assert(job == this.CurrentSubJob);
+			Debug.Assert(job == this.CurrentAssignment);
 
-			OnAssignmentStateChanged(state);
+			OnAssignmentStateChanged(status);
 		}
 
-		protected abstract void OnAssignmentStateChanged(JobState jobState);
+		protected abstract void OnAssignmentStateChanged(JobStatus jobState);
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

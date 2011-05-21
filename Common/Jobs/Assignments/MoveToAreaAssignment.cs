@@ -30,12 +30,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return new Queue<Direction>(path);
 		}
 
-		protected override JobState CheckProgress(ILiving worker)
+		protected override JobStatus CheckProgress(ILiving worker)
 		{
 			if (m_dest.Contains(worker.Location))
-				return JobState.Done;
+				return JobStatus.Done;
 			else
-				return JobState.Ok;
+				return JobStatus.Ok;
 		}
 
 		public override string ToString()

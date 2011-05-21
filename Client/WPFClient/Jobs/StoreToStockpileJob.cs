@@ -23,29 +23,80 @@ namespace Dwarrowdelf.Client
 			Done,
 		}
 
-		public IItemObject Item { get; private set; }
+		public ItemObject Item { get; private set; }
 		Stockpile m_stockpile;
 		State m_state;
 
-		public StoreToStockpileJob(Stockpile stockpile, IItemObject item)
+		public StoreToStockpileJob(Stockpile stockpile, ItemObject item)
 			: base(null, ActionPriority.Normal)
 		{
 			this.Item = item;
 			m_stockpile = stockpile;
 		}
 
-		protected override void AssignOverride(ILiving worker)
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
-			SetStatus(JobState.Ok);
-
-			SetState(State.MoveToItem);
+			m_state = State.MoveToItem;
+			return JobStatus.Ok;
 		}
 
-		void SetState(State state)
+		protected override void OnAssignmentStateChanged(JobStatus jobState)
+		{
+			switch (jobState)
+			{
+				case Jobs.JobStatus.Ok:
+					break;
+
+				case Jobs.JobStatus.Fail:
+					SetStatus(JobStatus.Fail);
+					break;
+
+				case Jobs.JobStatus.Abort:
+					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
+					break;
+
+				case Jobs.JobStatus.Done:
+
+					switch (m_state)
+					{
+						case State.MoveToItem:
+							Debug.Assert(this.Item.Location == this.Worker.Location);
+
+							m_state = State.GetItem;
+							break;
+
+						case State.GetItem:
+							Debug.Assert(this.Item.Parent == this.Worker);
+
+							m_state = State.MoveToStockpile;
+							break;
+
+						case State.MoveToStockpile:
+							if (m_stockpile.Area.Contains(this.Worker.Location) && m_stockpile.LocationOk(this.Worker.Location, this.Item))
+								m_state = State.DropItem;
+							break;
+
+						case State.DropItem:
+							m_state = State.Done;
+							SetStatus(JobStatus.Done);
+							break;
+
+						default:
+							throw new Exception();
+					}
+
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		protected override IAssignment PrepareNextAssignment()
 		{
 			IAssignment assignment;
 
-			switch (state)
+			switch (m_state)
 			{
 				case State.MoveToItem:
 					assignment = new MoveAssignment(this, ActionPriority.Normal, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
@@ -75,64 +126,11 @@ namespace Dwarrowdelf.Client
 					assignment = new DropItemAssignment(this, ActionPriority.Normal, this.Item);
 					break;
 
-				case State.Done:
-					assignment = null;
-					SetStatus(JobState.Done);
-					break;
-
 				default:
 					throw new Exception();
 			}
 
-			m_state = state;
-
-			SetAssignment(assignment);
-		}
-
-		protected override void OnAssignmentStateChanged(JobState jobState)
-		{
-			if (jobState == Jobs.JobState.Ok)
-				return;
-
-			if (jobState == Jobs.JobState.Fail)
-			{
-				SetStatus(JobState.Fail);
-				return;
-			}
-
-			if (jobState == Jobs.JobState.Abort)
-			{
-				SetStatus(Jobs.JobState.Abort); // XXX check why the job aborted, and possibly retry
-				return;
-			}
-
-			// else Done
-
-			switch (m_state)
-			{
-				case State.MoveToItem:
-					Debug.Assert(this.Item.Location == this.Worker.Location);
-
-					SetState(State.GetItem);
-					break;
-
-				case State.GetItem:
-					Debug.Assert(this.Item.Parent == this.Worker);
-
-					SetState(State.MoveToStockpile);
-					break;
-
-				case State.MoveToStockpile:
-					SetState(State.DropItem);
-					break;
-
-				case State.DropItem:
-					SetState(State.Done);
-					break;
-
-				default:
-					throw new Exception();
-			}
+			return assignment;
 		}
 
 		public override string ToString()

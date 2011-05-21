@@ -30,29 +30,29 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_target = target;
 		}
 
-		protected override void OnStateChanged(JobState state)
+		protected override void OnStateChanged(JobStatus status)
 		{
-			if (state == JobState.Ok)
+			if (status == JobStatus.Ok)
 				return;
 
 			// else Abort, Done or Fail
 			m_pathDirs = null;
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
 			var res = PreparePath(worker);
-			if (res == Jobs.JobState.Done)
-				res = Jobs.JobState.Ok;
+			if (res == Jobs.JobStatus.Done)
+				res = Jobs.JobStatus.Ok;
 			return res;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out JobState progress)
+		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			if (this.Worker.Location.IsAdjacentTo(m_target.Location, DirectionSet.Planar))
 			{
 				var action = new AttackAction(m_target, this.Priority);
-				progress = JobState.Ok;
+				progress = JobStatus.Ok;
 				return action;
 			}
 			else
@@ -61,9 +61,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 				{
 					var res = PreparePath(this.Worker);
 
-					if (res != JobState.Ok)
+					if (res != JobStatus.Ok)
 					{
-						Debug.Assert(res != Jobs.JobState.Done);
+						Debug.Assert(res != Jobs.JobStatus.Done);
 						progress = res;
 						return null;
 					}
@@ -77,17 +77,17 @@ namespace Dwarrowdelf.Jobs.Assignments
 				m_supposedLocation += new IntVector3D(dir);
 
 				var action = new MoveAction(dir, this.Priority);
-				progress = JobState.Ok;
+				progress = JobStatus.Ok;
 				return action;
 			}
 		}
 
-		protected override JobState ActionProgressOverride(ActionProgressChange e)
+		protected override JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return JobState.Ok;
+					return JobStatus.Ok;
 
 				case ActionState.Done:
 					return CheckProgress();
@@ -97,45 +97,45 @@ namespace Dwarrowdelf.Jobs.Assignments
 					return res;
 
 				case ActionState.Abort:
-					return JobState.Abort;
+					return JobStatus.Abort;
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		JobState PreparePath(ILiving worker)
+		JobStatus PreparePath(ILiving worker)
 		{
 			m_dest = m_target.Location;
 
 			if (worker.Location.IsAdjacentTo(m_dest, DirectionSet.Planar))
 			{
 				m_pathDirs = null;
-				return JobState.Done;
+				return JobStatus.Done;
 			}
 
 			IntPoint3D finalPos;
 			var path = AStar.AStar.Find(m_environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
 
 			if (path == null)
-				return Jobs.JobState.Abort;
+				return Jobs.JobStatus.Abort;
 
 			m_pathDirs = new Queue<Direction>(path);
 
 			if (m_pathDirs.Count == 0)
-				return Jobs.JobState.Done;
+				return Jobs.JobStatus.Done;
 
 			m_supposedLocation = worker.Location;
 
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
-		JobState CheckProgress()
+		JobStatus CheckProgress()
 		{
 			if (m_target.IsDestructed)
-				return JobState.Done;
+				return JobStatus.Done;
 			else
-				return JobState.Ok;
+				return JobStatus.Ok;
 		}
 
 		public override string ToString()

@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 			foreach (var job in m_jobs)
 			{
 				job.Item.ReservedBy = null;
-				job.StateChanged -= OnJobStateChanged;
+				job.StatusChanged -= OnJobStatusChanged;
 				GameData.Data.Jobs.Remove(job);
 			}
 
@@ -90,20 +90,20 @@ namespace Dwarrowdelf.Client
 
 				switch (jobState)
 				{
-					case JobState.Ok:
+					case JobStatus.Ok:
 						job.Item.ReservedBy = this;
-						job.StateChanged += OnJobStateChanged;
+						job.StatusChanged += OnJobStatusChanged;
 						m_jobs.Add(job);
 
 						GameData.Data.Jobs.Add(job);
 
 						return job;
 
-					case JobState.Done:
+					case JobStatus.Done:
 						throw new Exception();
 
-					case JobState.Abort:
-					case JobState.Fail:
+					case JobStatus.Abort:
+					case JobStatus.Fail:
 						break;
 
 					default:
@@ -114,40 +114,59 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
 			var j = (StoreToStockpileJob)job;
 
-			if (state == JobState.Ok)
+			if (status == JobStatus.Ok)
 			{
 				throw new Exception();
 			}
 
 			j.Item.ReservedBy = null;
-			job.StateChanged -= OnJobStateChanged;
+			job.StatusChanged -= OnJobStatusChanged;
 			m_jobs.Remove(j);
 
 			GameData.Data.Jobs.Remove(j);
 		}
 
+		// XXX Silly algorithm. Fill the stockpile evenly.
 		public IntPoint3D FindEmptyLocation(out bool ok)
 		{
 			var env = this.Environment;
 
+			int min = GetMinStack();
 
-			for (int i = 0; i < 10; ++i)
+			var loc = this.Area.Range().FirstOrDefault(p => GetStack(p) == min);
+
+			if (loc != new IntPoint3D())
 			{
-				var loc = this.Area.Range().FirstOrDefault(p => env.GetContents(p).OfType<ItemObject>().Count() == i);
-
-				if (loc != new IntPoint3D())
-				{
-					ok = true;
-					return loc;
-				}
+				ok = true;
+				return loc;
 			}
 
 			ok = false;
 			return new IntPoint3D();
+		}
+
+		public bool LocationOk(IntPoint3D p, ItemObject ob)
+		{
+			if (!this.Area.Contains(p))
+				throw new Exception();
+
+			int min = GetMinStack();
+
+			return GetStack(p) == GetMinStack();
+		}
+
+		int GetMinStack()
+		{
+			return this.Area.Range().Min(p => GetStack(p));
+		}
+
+		int GetStack(IntPoint3D p)
+		{
+			return this.Environment.GetContents(p).OfType<ItemObject>().Count();
 		}
 
 		bool Match(ItemObject item)

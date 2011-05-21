@@ -19,39 +19,34 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = environment;
 		}
 
-		protected override void AssignOverride(ILiving worker)
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
-			SetStatus(JobState.Ok);
-
 			m_state = 0;
-			SetState();
+			return JobStatus.Ok;
 		}
 
-		protected override void OnAssignmentStateChanged(JobState jobState)
+		protected override void OnAssignmentStateChanged(JobStatus jobState)
 		{
-			if (jobState == Jobs.JobState.Ok)
-				return;
-
-			if (jobState == Jobs.JobState.Fail)
+			switch (jobState)
 			{
-				SetStatus(JobState.Fail);
-				return;
+				case Jobs.JobStatus.Ok:
+					break;
+
+				case Jobs.JobStatus.Fail:
+					SetStatus(JobStatus.Fail);
+					break;
+
+				case Jobs.JobStatus.Abort:
+					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
+					break;
+
+				case Jobs.JobStatus.Done:
+					m_state = (m_state + 1) % 5;
+					break;
 			}
-
-			if (jobState == Jobs.JobState.Abort)
-			{
-				SetStatus(Jobs.JobState.Abort); // XXX check why the job aborted, and possibly retry
-				return;
-			}
-
-			// else Done
-
-			m_state++;
-
-			SetState();
 		}
 
-		void SetState()
+		protected override IAssignment PrepareNextAssignment()
 		{
 			IAssignment assignment;
 
@@ -77,16 +72,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact);
 					break;
 
-				case 5:
-					m_state = 0;
-					SetState();
-					return;
-
 				default:
 					throw new Exception();
 			}
 
-			SetAssignment(assignment);
+			return assignment;
 		}
 
 		public override string ToString()

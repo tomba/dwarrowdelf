@@ -28,36 +28,36 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 
 			foreach (var job in jobs)
-				job.StateChanged += OnJobStateChanged;
+				job.StatusChanged += OnJobStatusChanged;
 		}
 
 		public JobType JobType { get { return JobType.JobGroup; } }
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
-		public JobState JobState { get; private set; }
+		public JobStatus JobStatus { get; private set; }
 
-		protected virtual JobState GetJobState()
+		protected virtual JobStatus GetJobStatus()
 		{
-			if (this.SubJobs.All(j => j.JobState == JobState.Done))
-				return JobState.Done;
+			if (this.SubJobs.All(j => j.JobStatus == JobStatus.Done))
+				return JobStatus.Done;
 
-			if (this.SubJobs.Any(j => j.JobState == JobState.Fail))
-				return JobState.Fail;
+			if (this.SubJobs.Any(j => j.JobStatus == JobStatus.Fail))
+				return JobStatus.Fail;
 
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
-		public event Action<IJob, JobState> StateChanged;
+		public event Action<IJob, JobStatus> StatusChanged;
 
 		public void Retry()
 		{
-			foreach (var job in m_subJobs.Where(j => j.JobState == Jobs.JobState.Abort))
+			foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
 				job.Retry();
 		}
 
 		public void Abort()
 		{
-			foreach (var job in m_subJobs.Where(j => j.JobState == Jobs.JobState.Ok))
+			foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Ok))
 				job.Abort();
 		}
 
@@ -71,16 +71,16 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public abstract JobGroupType JobGroupType { get; }
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			this.JobState = GetJobState();
+			this.JobStatus = GetJobStatus();
 
-			if (this.StateChanged != null)
-				StateChanged(this, this.JobState);
+			if (this.StatusChanged != null)
+				StatusChanged(this, this.JobStatus);
 
-			Notify("JobState");
+			Notify("JobStatus");
 
-			if (this.JobState == Jobs.JobState.Done || this.JobState == Jobs.JobState.Fail)
+			if (this.JobStatus == Jobs.JobStatus.Done || this.JobStatus == Jobs.JobStatus.Fail)
 				Cleanup();
 		}
 
@@ -107,9 +107,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		protected override JobState GetJobState()
+		protected override JobStatus GetJobStatus()
 		{
-			var progress = base.GetJobState();
+			var progress = base.GetJobStatus();
 
 			return progress;
 		}
@@ -125,17 +125,17 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 		}
 
-		protected override JobState GetJobState()
+		protected override JobStatus GetJobStatus()
 		{
-			var progress = base.GetJobState();
+			var progress = base.GetJobStatus();
 
-			if (progress != JobState.Ok)
+			if (progress != JobStatus.Ok)
 				return progress;
 
-			if (this.SubJobs.Any(j => j.JobState == JobState.Abort))
-				return JobState.Abort;
+			if (this.SubJobs.Any(j => j.JobStatus == JobStatus.Abort))
+				return JobStatus.Abort;
 
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
 		public override JobGroupType JobGroupType { get { return JobGroupType.Serial; } }

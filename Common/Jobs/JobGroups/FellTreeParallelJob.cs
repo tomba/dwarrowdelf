@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		void World_TickEvent()
 		{
-			foreach (var job in this.SubJobs.Where(j => j.JobState == Jobs.JobState.Abort))
+			foreach (var job in this.SubJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
 				job.Retry();
 		}
 

@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Jobs
 
 		public static IAssignment FindAssignment(IJob job, ILiving living)
 		{
-			Debug.Assert(job.JobState == JobState.Ok);
+			Debug.Assert(job.JobStatus == JobStatus.Ok);
 
 			IAssignment assignment;
 
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Jobs
 
 		static IAssignment FindAssignmentParallel(IEnumerable<IJob> jobs, ILiving living)
 		{
-			foreach (var job in jobs.Where(j => j.JobState == JobState.Ok))
+			foreach (var job in jobs.Where(j => j.JobStatus == JobStatus.Ok))
 			{
 				var assignment = FindAssignment(job, living);
 
@@ -100,9 +100,9 @@ namespace Dwarrowdelf.Jobs
 
 		static IAssignment FindAssignmentSerial(IEnumerable<IJob> jobs, ILiving living)
 		{
-			Debug.Assert(jobs.All(j => j.JobState == JobState.Ok || j.JobState == JobState.Done));
+			Debug.Assert(jobs.All(j => j.JobStatus == JobStatus.Ok || j.JobStatus == JobStatus.Done));
 
-			var job = jobs.First(j => j.JobState == JobState.Ok);
+			var job = jobs.First(j => j.JobStatus == JobStatus.Ok);
 
 			var assigment = FindAssignment(job, living);
 

@@ -310,7 +310,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding JobState}" />
+                                            <TextBlock Text="{Binding JobStatus}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding JobGroupType}" />
                                         </StackPanel>
@@ -320,7 +320,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding JobState}" />
+                                            <TextBlock Text="{Binding JobStatus}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
                                             <TextBlock Text=", " />
@@ -333,14 +333,14 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="{Binding}" />
                                                 <TextBlock Text=", " />
-                                                <TextBlock Text="{Binding JobState}" />
+                                                <TextBlock Text="{Binding JobStatus}" />
                                                 <TextBlock Text=", " />
                                                 <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
                                                 <TextBlock Text=", " />
                                                 <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
                                             </StackPanel>
 
-                                            <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentSubJob}">
+                                            <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentAssignment}">
                                                 <TextBlock Text=" - " />
                                                 <TextBlock Text="{Binding}" />
                                             </StackPanel>
@@ -351,7 +351,7 @@
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding JobState}" />
+                                            <TextBlock Text="{Binding JobStatus}" />
                                             <TextBlock Text=" , " />
                                             <TextBlock Text="{Binding Worker.Name, FallbackValue=NoBody}" />
                                             <TextBlock Text=", " />

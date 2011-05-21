@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 {
 	public class ServerUser
 	{
-		const int NUM_DWARVES = 1;
+		const int NUM_DWARVES = 5;
 
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;

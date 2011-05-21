@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Server
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
 				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
-				job.StateChanged += OnConsumeJobStateChanged;
+				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;
 			}
@@ -122,7 +122,7 @@ namespace Dwarrowdelf.Server
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
 				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
-				job.StateChanged += OnConsumeJobStateChanged;
+				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;
 			}
@@ -131,12 +131,12 @@ namespace Dwarrowdelf.Server
 		}
 
 		ItemObject m_consumeObject;
-		void OnConsumeJobStateChanged(IJob job, JobState state)
+		void OnConsumeJobStatusChanged(IJob job, JobStatus status)
 		{
 			// XXX ob's ReservedBy should probably be cleared elsewhere
 			m_consumeObject.ReservedBy = null;
 			m_consumeObject = null;
-			job.StateChanged -= OnConsumeJobStateChanged;
+			job.StatusChanged -= OnConsumeJobStatusChanged;
 			m_priorityAction = false;
 		}
 	}

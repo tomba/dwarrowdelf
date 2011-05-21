@@ -29,12 +29,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return new Queue<Direction>(path);
 		}
 
-		protected override JobState CheckProgress(ILiving worker)
+		protected override JobStatus CheckProgress(ILiving worker)
 		{
 			if (worker.Location.IsAdjacentTo(m_dest, this.Positioning))
-				return JobState.Done;
+				return JobStatus.Done;
 			else
-				return JobState.Ok;
+				return JobStatus.Ok;
 		}
 
 		public override string ToString()

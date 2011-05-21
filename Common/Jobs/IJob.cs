@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs
 {
-	public enum JobState
+	public enum JobStatus
 	{
 		/// <summary>
 		/// Everything ok
@@ -44,12 +44,12 @@ namespace Dwarrowdelf.Jobs
 		JobType JobType { get; }
 		IJob Parent { get; }
 		ActionPriority Priority { get; }
-		JobState JobState { get; }
+		JobStatus JobStatus { get; }
 		void Retry();
 		void Abort();
 		void Fail();
 
-		event Action<IJob, JobState> StateChanged;
+		event Action<IJob, JobStatus> StatusChanged;
 	}
 
 	public interface IJobGroup : IJob
@@ -64,8 +64,8 @@ namespace Dwarrowdelf.Jobs
 		ILiving Worker { get; }
 		GameAction CurrentAction { get; }
 
-		JobState Assign(ILiving worker);
-		JobState PrepareNextAction();
-		JobState ActionProgress(ActionProgressChange e);
+		JobStatus Assign(ILiving worker);
+		JobStatus PrepareNextAction();
+		JobStatus ActionProgress(ActionProgressChange e);
 	}
 }

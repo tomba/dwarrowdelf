@@ -25,56 +25,56 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_mineActionType = mineActionType;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out JobState progress)
+		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var v = m_location - this.Worker.Location;
 
 			if (!this.Worker.Location.IsAdjacentTo(m_location, DirectionSet.PlanarUpDown))
 			{
-				progress = JobState.Fail;
+				progress = JobStatus.Fail;
 				return null;
 			}
 
-			if (CheckProgress() == JobState.Done)
+			if (CheckProgress() == JobStatus.Done)
 			{
-				progress = JobState.Done;
+				progress = JobStatus.Done;
 				return null;
 			}
 
 			var action = new MineAction(v.ToDirection(), m_mineActionType, this.Priority);
-			progress = JobState.Ok;
+			progress = JobStatus.Ok;
 			return action;
 		}
 
-		protected override JobState ActionProgressOverride(ActionProgressChange e)
+		protected override JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
 				case ActionState.Ok:
-					return JobState.Ok;
+					return JobStatus.Ok;
 
 				case ActionState.Done:
 					return CheckProgress();
 
 				case ActionState.Fail:
-					return JobState.Fail;
+					return JobStatus.Fail;
 
 				case ActionState.Abort:
-					return JobState.Abort;
+					return JobStatus.Abort;
 
 				default:
 					throw new Exception();
 			}
 		}
 
-		JobState CheckProgress()
+		JobStatus CheckProgress()
 		{
 			var inter = m_environment.GetInterior(m_location);
 
 			if (inter.ID == InteriorID.Undefined || inter.IsMineable)
-				return JobState.Ok;
+				return JobStatus.Ok;
 			else
-				return JobState.Done;
+				return JobStatus.Done;
 		}
 
 		public override string ToString()

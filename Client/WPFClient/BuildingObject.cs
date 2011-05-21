@@ -135,13 +135,13 @@ namespace Dwarrowdelf.Client
 
 			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
 			{
-				if (order.Job.JobState == Jobs.JobState.Done)
+				if (order.Job.JobStatus == Jobs.JobStatus.Done)
 				{
 					Debug.Print("BuildOrder done");
 					order.Job = null;
 					doneOrders.Add(order);
 				}
-				else if (order.Job.JobState == Jobs.JobState.Fail)
+				else if (order.Job.JobStatus == Jobs.JobStatus.Fail)
 				{
 					Debug.Print("BuildOrder FAILED");
 					order.Job = null;
@@ -239,14 +239,14 @@ namespace Dwarrowdelf.Client
 
 				switch (jobState)
 				{
-					case JobState.Ok:
+					case JobStatus.Ok:
 						return assignment;
 
-					case JobState.Done:
+					case JobStatus.Done:
 						throw new Exception();
 
-					case JobState.Abort:
-					case JobState.Fail:
+					case JobStatus.Abort:
+					case JobStatus.Fail:
 						break;
 
 					default:
@@ -261,17 +261,17 @@ namespace Dwarrowdelf.Client
 		{
 			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
 				order.SourceItems, order.BuildableItem.ItemID);
-			job.StateChanged += OnJobStateChanged;
+			job.StatusChanged += OnJobStatusChanged;
 			order.Job = job;
 			GameData.Data.Jobs.Add(job);
 		}
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			if (state == JobState.Done)
+			if (status == JobStatus.Done)
 			{
 				GameData.Data.Jobs.Remove(job);
-				job.StateChanged -= OnJobStateChanged;
+				job.StatusChanged -= OnJobStatusChanged;
 				CheckFinishedOrders();
 			}
 		}

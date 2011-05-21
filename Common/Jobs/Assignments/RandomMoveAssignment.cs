@@ -24,22 +24,22 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_environment = environment;
 		}
 
-		protected override void OnStateChanged(JobState state)
+		protected override void OnStateChanged(JobStatus status)
 		{
-			if (state == JobState.Ok)
+			if (status == JobStatus.Ok)
 				return;
 
 			// else Abort, Done or Fail
 		}
 
-		protected override JobState AssignOverride(ILiving worker)
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
 			int i = m_random.Next(8);
 			m_dir = DirectionExtensions.PlanarDirections[i];
-			return Jobs.JobState.Ok;
+			return Jobs.JobStatus.Ok;
 		}
 
-		protected override GameAction PrepareNextActionOverride(out JobState progress)
+		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			int i = m_random.Next(100);
 
@@ -93,11 +93,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 				action = new MoveAction(dir, this.Priority);
 			}
 
-			progress = Jobs.JobState.Ok;
+			progress = Jobs.JobStatus.Ok;
 			return action;
 		}
 
-		protected override JobState ActionProgressOverride(ActionProgressChange e)
+		protected override JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
 			switch (e.State)
 			{
@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				case ActionState.Done:
 				case ActionState.Fail:
 				case ActionState.Abort:
-					return JobState.Ok;
+					return JobStatus.Ok;
 
 				default:
 					throw new Exception();

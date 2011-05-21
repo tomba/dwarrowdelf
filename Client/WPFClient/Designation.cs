@@ -76,9 +76,9 @@ namespace Dwarrowdelf.Client
 
 			foreach (var job in m_map.Select(kvp => kvp.Value.Assignment))
 			{
-				Debug.Assert(job.JobState != JobState.Done);
+				Debug.Assert(job.JobStatus != JobStatus.Done);
 
-				if (job.JobState != JobState.Ok)
+				if (job.JobStatus != JobStatus.Ok)
 					job.Retry();
 			}
 		}
@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Client
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
 			var jobs = m_map
-				.Where(kvp => kvp.Value.IsPossible && !kvp.Value.Assignment.IsAssigned && kvp.Value.Assignment.JobState == JobState.Ok)
+				.Where(kvp => kvp.Value.IsPossible && !kvp.Value.Assignment.IsAssigned && kvp.Value.Assignment.JobStatus == JobStatus.Ok)
 				.OrderBy(kvp => (kvp.Key - living.Location).Length)
 				.Select(kvp => kvp.Value.Assignment);
 
@@ -150,14 +150,14 @@ namespace Dwarrowdelf.Client
 
 				switch (jobState)
 				{
-					case JobState.Ok:
+					case JobStatus.Ok:
 						return assignment;
 
-					case JobState.Done:
+					case JobStatus.Done:
 						throw new Exception();
 
-					case JobState.Abort:
-					case JobState.Fail:
+					case JobStatus.Abort:
+					case JobStatus.Fail:
 						break;
 
 					default:
@@ -168,19 +168,19 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			switch (state)
+			switch (status)
 			{
-				case JobState.Ok:
+				case JobStatus.Ok:
 					break;
 
-				case JobState.Done:
+				case JobStatus.Done:
 					RemoveJob(job);
 					break;
 
-				case JobState.Abort:
-				case JobState.Fail:
+				case JobStatus.Abort:
+				case JobStatus.Fail:
 					// Retry at next tick
 					break;
 
@@ -198,7 +198,7 @@ namespace Dwarrowdelf.Client
 			m_map[p].Type = type;
 			m_map[p].Assignment = job;
 			GameData.Data.Jobs.Add(job);
-			job.StateChanged += OnJobStateChanged;
+			job.StatusChanged += OnJobStatusChanged;
 
 			CheckTile(p);
 		}
@@ -210,8 +210,8 @@ namespace Dwarrowdelf.Client
 			m_map.Remove(p);
 
 			GameData.Data.Jobs.Remove(job);
-			job.StateChanged -= OnJobStateChanged;
-			if (job.JobState == JobState.Ok)
+			job.StatusChanged -= OnJobStatusChanged;
+			if (job.JobStatus == JobStatus.Ok)
 				job.Abort();
 
 			// XXX

@@ -19,23 +19,23 @@ namespace Dwarrowdelf.Client
 		public void Add(IJob job)
 		{
 			m_jobList.Add(job);
-			job.StateChanged += OnJobStateChanged;
+			job.StatusChanged += OnJobStatusChanged;
 			GameData.Data.Jobs.Add(job);
 		}
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			switch (state)
+			switch (status)
 			{
-				case JobState.Done:
-					job.StateChanged -= OnJobStateChanged;
+				case JobStatus.Done:
+					job.StatusChanged -= OnJobStatusChanged;
 					m_jobList.Remove(job);
 					GameData.Data.Jobs.Remove(job);
 					break;
 
-				case JobState.Fail:
-				case JobState.Abort:
-				case JobState.Ok:
+				case JobStatus.Fail:
+				case JobStatus.Abort:
+				case JobStatus.Ok:
 					break;
 			}
 		}
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			var jobs = m_jobList.Where(j => j.JobState == JobState.Ok);
+			var jobs = m_jobList.Where(j => j.JobStatus == JobStatus.Ok);
 
 			foreach (var job in jobs)
 			{
@@ -60,14 +60,14 @@ namespace Dwarrowdelf.Client
 
 				switch (jobState)
 				{
-					case JobState.Ok:
+					case JobStatus.Ok:
 						return assignment;
 
-					case JobState.Done:
+					case JobStatus.Done:
 						throw new Exception();
 
-					case JobState.Abort:
-					case JobState.Fail:
+					case JobStatus.Abort:
+					case JobStatus.Fail:
 						break;
 
 					default:

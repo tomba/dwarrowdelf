@@ -26,30 +26,30 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			get
 			{
-				Debug.Assert(m_worker == null || this.JobState == Jobs.JobState.Ok);
+				Debug.Assert(m_worker == null || this.JobStatus == Jobs.JobStatus.Ok);
 				return m_worker != null;
 			}
 		}
 
 		[GameProperty]
-		public JobState JobState { get; private set; }
+		public JobStatus JobStatus { get; private set; }
 
 		public void Retry()
 		{
-			Debug.Assert(this.JobState != JobState.Ok);
+			Debug.Assert(this.JobStatus != JobStatus.Ok);
 			Debug.Assert(this.IsAssigned == false);
 
-			SetState(JobState.Ok);
+			SetState(JobStatus.Ok);
 		}
 
 		public void Abort()
 		{
-			SetState(JobState.Abort);
+			SetState(JobStatus.Abort);
 		}
 
 		public void Fail()
 		{
-			SetState(JobState.Fail);
+			SetState(JobStatus.Fail);
 		}
 
 		ILiving m_worker;
@@ -68,14 +68,14 @@ namespace Dwarrowdelf.Jobs.Assignments
 			private set { if (m_action == value) return; m_action = value; Notify("CurrentAction"); }
 		}
 
-		public JobState Assign(ILiving worker)
+		public JobStatus Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
-			Debug.Assert(this.JobState == JobState.Ok);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 
 			var state = AssignOverride(worker);
 			SetState(state);
-			if (state != JobState.Ok)
+			if (state != JobStatus.Ok)
 				return state;
 
 			this.Worker = worker;
@@ -83,31 +83,31 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return state;
 		}
 
-		protected virtual JobState AssignOverride(ILiving worker)
+		protected virtual JobStatus AssignOverride(ILiving worker)
 		{
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
 
 
-		public JobState PrepareNextAction()
+		public JobStatus PrepareNextAction()
 		{
 			Debug.Assert(this.CurrentAction == null);
 
-			JobState state;
-			var action = PrepareNextActionOverride(out state);
-			Debug.Assert((action == null && state != Jobs.JobState.Ok) || (action != null && state == Jobs.JobState.Ok));
+			JobStatus status;
+			var action = PrepareNextActionOverride(out status);
+			Debug.Assert((action == null && status != Jobs.JobStatus.Ok) || (action != null && status == Jobs.JobStatus.Ok));
 			this.CurrentAction = action;
-			SetState(state);
-			return state;
+			SetState(status);
+			return status;
 		}
 
-		protected abstract GameAction PrepareNextActionOverride(out JobState state);
+		protected abstract GameAction PrepareNextActionOverride(out JobStatus status);
 
-		public JobState ActionProgress(ActionProgressChange e)
+		public JobStatus ActionProgress(ActionProgressChange e)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobState == JobState.Ok);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
 			var state = ActionProgressOverride(e);
@@ -119,57 +119,57 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return state;
 		}
 
-		protected virtual JobState ActionProgressOverride(ActionProgressChange e)
+		protected virtual JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
-			return JobState.Ok;
+			return JobStatus.Ok;
 		}
 
-		void SetState(JobState state)
+		void SetState(JobStatus status)
 		{
-			if (this.JobState == state)
+			if (this.JobStatus == status)
 				return;
 
-			switch (state)
+			switch (status)
 			{
-				case JobState.Ok:
+				case JobStatus.Ok:
 					break;
 
-				case JobState.Done:
-					Debug.Assert(this.JobState == JobState.Ok);
+				case JobStatus.Done:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
 					break;
 
-				case JobState.Abort:
-					Debug.Assert(this.JobState == JobState.Ok || this.JobState == JobState.Done);
+				case JobStatus.Abort:
+					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
 					break;
 
-				case JobState.Fail:
-					Debug.Assert(this.JobState == JobState.Ok);
+				case JobStatus.Fail:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
 					break;
 			}
 
-			switch (state)
+			switch (status)
 			{
-				case JobState.Ok:
+				case JobStatus.Ok:
 					break;
 
-				case JobState.Done:
-				case JobState.Abort:
-				case JobState.Fail:
+				case JobStatus.Done:
+				case JobStatus.Abort:
+				case JobStatus.Fail:
 					this.Worker = null;
 					this.CurrentAction = null;
 					break;
 			}
 
-			this.JobState = state;
-			OnStateChanged(state);
-			if (this.StateChanged != null)
-				StateChanged(this, state);
-			Notify("JobState");
+			this.JobStatus = status;
+			OnStateChanged(status);
+			if (this.StatusChanged != null)
+				StatusChanged(this, status);
+			Notify("JobStatus");
 		}
 
-		public event Action<IJob, JobState> StateChanged;
+		public event Action<IJob, JobStatus> StatusChanged;
 
-		protected virtual void OnStateChanged(JobState state) { }
+		protected virtual void OnStateChanged(JobStatus status) { }
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

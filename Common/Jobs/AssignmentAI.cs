@@ -32,13 +32,13 @@ namespace Dwarrowdelf.Jobs
 				{
 					if (this.Worker.HasAction)
 						m_needToAbort = true;	// XXX what if worker has high priority server action?
-					m_currentAssignment.StateChanged -= OnJobStateChanged;
+					m_currentAssignment.StatusChanged -= OnJobStatusChanged;
 				}
 
 				m_currentAssignment = value;
 
 				if (m_currentAssignment != null)
-					m_currentAssignment.StateChanged += OnJobStateChanged;
+					m_currentAssignment.StatusChanged += OnJobStatusChanged;
 
 				if (AssignmentChanged != null)
 					AssignmentChanged(value);
@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Jobs
 					{
 						var assignState = assignment.Assign(this.Worker);
 
-						if (assignState != JobState.Ok)
+						if (assignState != JobStatus.Ok)
 							continue;
 					}
 
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Jobs
 
 				var state = assignment.PrepareNextAction();
 
-				if (state == JobState.Ok)
+				if (state == JobStatus.Ok)
 				{
 					var action = assignment.CurrentAction;
 					if (action == null)
@@ -196,11 +196,11 @@ namespace Dwarrowdelf.Jobs
 		protected abstract IAssignment GetNewOrCurrentAssignment(ActionPriority priority);
 
 
-		void OnJobStateChanged(IJob job, JobState state)
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
 			Debug.Assert(job == this.CurrentAssignment);
 
-			Debug.Assert(job.JobState != JobState.Ok);
+			Debug.Assert(job.JobStatus != JobStatus.Ok);
 			this.CurrentAssignment = null;
 		}
 
