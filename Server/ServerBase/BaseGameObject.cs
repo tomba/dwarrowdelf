@@ -174,10 +174,18 @@ namespace Dwarrowdelf.Server
 						if (propDef != null)
 						{
 							var v = kvp.Value;
-							if (propDef.PropertyType.IsEnum && v.GetType() == typeof(string))
+
+							if (propDef.PropertyType != v.GetType())
 							{
-								var conv = System.ComponentModel.TypeDescriptor.GetConverter(propDef.PropertyType);
-								v = conv.ConvertFrom(v);
+								if (propDef.PropertyType.IsPrimitive)
+								{
+									v = Convert.ChangeType(v, propDef.PropertyType);
+								}
+								else
+								{
+									var conv = System.ComponentModel.TypeDescriptor.GetConverter(propDef.PropertyType);
+									v = conv.ConvertFrom(v);
+								}
 							}
 
 							propMap[propDef] = v;
