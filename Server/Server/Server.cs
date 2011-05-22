@@ -9,6 +9,8 @@ namespace Dwarrowdelf.Server
 {
 	public class Server : MarshalByRefObject, IServer
 	{
+		static string s_saveDir = "save";
+
 		World m_world;
 		WorldLogger m_logger;
 
@@ -18,6 +20,8 @@ namespace Dwarrowdelf.Server
 
 		public void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle, string saveFile)
 		{
+			bool cleanSaves = false;
+
 			Debug.Print("Start");
 
 			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
@@ -29,22 +33,31 @@ namespace Dwarrowdelf.Server
 
 			IArea area = new MyArea.Area();
 
+			if (!Directory.Exists(s_saveDir))
+				Directory.CreateDirectory(s_saveDir);
+
+			if (cleanSaves)
+			{
+				var files = Directory.EnumerateFiles(s_saveDir);
+				foreach (var file in files)
+					File.Delete(file);
+			}
+
+			if (!cleanSaves)
+			{
+				saveFile = GetLatestSaveFile();
+			}
+
 			if (saveFile != null)
 			{
 				m_world = Load(saveFile);
 			}
 			else
 			{
-				if (Directory.Exists("save"))
-				{
-					var files = Directory.EnumerateFiles("save");
-					foreach (var file in files)
-						File.Delete(file);
-				}
-
 				m_world = new World();
 				m_world.Initialize(area);
-				//Save(m_world, "save-0.json");
+
+				//Save();
 
 				//m_world = Load("save-0.json");
 			}
@@ -52,7 +65,7 @@ namespace Dwarrowdelf.Server
 			m_world.TickEnded += OnWorldTickEnded;
 
 			m_logger = new WorldLogger();
-			m_logger.Start(m_world, "save/changes.log");
+			m_logger.Start(m_world, Path.Combine(s_saveDir, "changes.log"));
 
 			m_world.Start();
 
@@ -74,6 +87,8 @@ namespace Dwarrowdelf.Server
 			{
 				KeyLoop();
 			}
+
+			//Save();
 
 			m_world.Stop();
 
@@ -150,7 +165,14 @@ namespace Dwarrowdelf.Server
 #endif
 		}
 
-		void Save(World world, string name)
+		void Save()
+		{
+			int tick = m_world.TickNumber;
+			string name = String.Format("save-{0}.json", tick);
+			Save(m_world, name);
+		}
+
+		static void Save(World world, string name)
 		{
 			Trace.TraceInformation("Saving world {0}", name);
 			var watch = Stopwatch.StartNew();
@@ -164,25 +186,31 @@ namespace Dwarrowdelf.Server
 			stream.Position = 0;
 			//stream.CopyTo(Console.OpenStandardOutput());
 
-			if (!Directory.Exists("save"))
-				Directory.CreateDirectory("save");
-
 			stream.Position = 0;
-			using (var file = File.Create("save" + "\\" + name))
+			using (var file = File.Create(Path.Combine(s_saveDir, name)))
 				stream.WriteTo(file);
 
 			watch.Stop();
 			Trace.TraceInformation("Saving world took {0}", watch.Elapsed);
 		}
 
-		World Load(string name)
+		static string GetLatestSaveFile()
+		{
+			var files = Directory.EnumerateFiles(s_saveDir);
+			var list = new System.Collections.Generic.List<string>(files);
+			list.Sort();
+			var last = list[list.Count - 1];
+			return Path.GetFileName(last);
+		}
+
+		static World Load(string name)
 		{
 			Trace.TraceInformation("Loading world {0}", name);
 			var watch = Stopwatch.StartNew();
 
 			World world;
 
-			var stream = File.OpenRead("save" + "\\" + name);
+			var stream = File.OpenRead(Path.Combine(s_saveDir, name));
 			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
 			world = (World)deserializer.Deserialize<World>();
 
