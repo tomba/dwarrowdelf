@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 		ManualJobSource m_manualJobSource;
 
 		bool m_autoConnect = true;
-		bool m_autoEnterGame = true;
+		bool m_autoEnterGame = false;
 
 		public MainWindow()
 		{

@@ -92,15 +92,19 @@ namespace Dwarrowdelf.Server
 			InitializeWorldTick();
 		}
 
-		public void Initialize(IArea area)
+		Stopwatch m_initSw;
+		public void BeginInitialize()
 		{
 			EnterWriteLock();
 
 			trace.TraceInformation("Initializing area");
-			var sw = Stopwatch.StartNew();
-			area.InitializeWorld(this);
-			sw.Stop();
-			trace.TraceInformation("Initializing area took {0}", sw.Elapsed);
+			m_initSw = Stopwatch.StartNew();
+		}
+
+		public void EndInitialize()
+		{
+			m_initSw.Stop();
+			trace.TraceInformation("Initializing area took {0}", m_initSw.Elapsed);
 
 			ExitWriteLock();
 		}

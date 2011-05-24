@@ -64,6 +64,7 @@
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="BuildingObject.cs" />
     <Compile Include="AnimalAI.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="LivingActions.cs" />
