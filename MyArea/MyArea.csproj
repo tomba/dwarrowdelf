@@ -62,7 +62,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimalAI.cs" />
     <Compile Include="Area.cs" />
+    <Compile Include="DwarfAI.cs" />
+    <Compile Include="Items\FoodGenerator.cs" />
+    <Compile Include="Items\WaterGenerator.cs" />
+    <Compile Include="Jobs.cs" />
+    <Compile Include="MyGame.cs" />
+    <Compile Include="MyUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

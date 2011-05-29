@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dwarrowdelf;
+using Dwarrowdelf.Server;
 
-namespace Dwarrowdelf.Server.Items
+namespace MyArea
 {
+	[GameObject(UseRef = true)]
 	public class FoodGenerator : ItemObject
 	{
 		public FoodGenerator()

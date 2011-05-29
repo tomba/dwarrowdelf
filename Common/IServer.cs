@@ -8,7 +8,19 @@ namespace Dwarrowdelf
 {
 	public interface IServer
 	{
-		void RunServer(bool isEmbedded, EventWaitHandle serverStartWaitHandle,
-			EventWaitHandle serverStopWaitHandle, string saveFile);
+		void RunServer(EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle);
+	}
+
+	public interface IServerFactory
+	{
+		IServer CreateGameAndServer(string gameDll, string gameDir);
+	}
+
+
+	public interface IGame
+	{
+		void Start();
+		void Stop();
+		void Save();
 	}
 }

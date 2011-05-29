@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using Dwarrowdelf;
+using Dwarrowdelf.Server;
 using Dwarrowdelf.Jobs;
 
-namespace Dwarrowdelf.Server
+namespace MyArea
 {
 	[GameObject(UseRef = true)]
 	public class AnimalAI : AssignmentAI
@@ -49,7 +51,7 @@ namespace Dwarrowdelf.Server
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Jobs.Assignments.RandomMoveAssignment(null, priority, worker.Environment);
+				return new Dwarrowdelf.Jobs.Assignments.RandomMoveAssignment(null, priority, worker.Environment);
 			}
 			else
 			{

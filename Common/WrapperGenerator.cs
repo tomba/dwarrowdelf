@@ -23,12 +23,23 @@ namespace Dwarrowdelf
 			out MethodInfo method)
 		{
 			Type bindType = bindOb.GetType();
-			method = bindType.GetMethod(methodName,
-				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding, null,
-				new Type[] { argType }, null);
+
+			method = null;
+
+			while (bindType.BaseType != null)
+			{
+				method = bindType.GetMethod(methodName,
+					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding, null,
+					new Type[] { argType }, null);
+
+				if (method != null)
+					break;
+
+				bindType = bindType.BaseType;
+			}
 
 			if (method == null)
-				return null;
+				throw new Exception();
 
 			DynamicMethod dm = new DynamicMethod(methodName + "Wrapper", null,
 				new Type[] { bindType, typeof(T) },

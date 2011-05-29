@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using Dwarrowdelf.Jobs;
+using Dwarrowdelf;
+using Dwarrowdelf.Server;
 
-namespace Dwarrowdelf.Server
+namespace MyArea
 {
 	[GameObject(UseRef = true)]
 	class DwarfAI : AssignmentAI
@@ -63,7 +65,7 @@ namespace Dwarrowdelf.Server
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Jobs.AssignmentGroups.LoiterJob(null, priority, worker.Environment);
+				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterJob(null, priority, worker.Environment);
 			}
 			else
 			{
@@ -94,7 +96,7 @@ namespace Dwarrowdelf.Server
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
 				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;
@@ -126,7 +128,7 @@ namespace Dwarrowdelf.Server
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
 				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;

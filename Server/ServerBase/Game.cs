@@ -7,44 +7,23 @@ using System.IO;
 
 namespace Dwarrowdelf.Server
 {
-	public class Game
+	public abstract class Game
 	{
-		public static Game CreateNewGame(IArea area, string gameDir)
-		{
-			var game = new Game(area, gameDir);
-			return game;
-		}
-
-		public static Game LoadGame(IArea area, string gameDir, string saveFile)
-		{
-			var game = new Game(area, gameDir, saveFile);
-			return game;
-		}
-
-
 		string m_gameDir;
 		World m_world;
 		WorldLogger m_logger;
 
 		public World World { get { return m_world; } }
 
-		Game(IArea area, string gameDir)
+		protected Game(string gameDir)
 		{
 			m_gameDir = gameDir;
-
 			m_world = new World();
-
-			m_world.BeginInitialize();
-
-			area.InitializeWorld(m_world);
-
-			m_world.EndInitialize();
 		}
 
-		Game(IArea area, string gameDir, string saveFile)
+		protected Game(string gameDir, string saveFile)
 		{
 			m_gameDir = gameDir;
-
 			m_world = LoadWorld(Path.Combine(m_gameDir, saveFile));
 		}
 
@@ -71,6 +50,8 @@ namespace Dwarrowdelf.Server
 		{
 			sConn.Init(m_world);
 		}
+
+		public abstract ServerUser CreateUser(int userID);
 
 		void OnWorldTickEnded()
 		{

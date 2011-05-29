@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Windows.Controls;
 using System.Diagnostics;
+using System.IO;
 
 
 namespace Dwarrowdelf.Client
@@ -47,6 +48,25 @@ namespace Dwarrowdelf.Client
 
 			if (m_serverInAppDomain)
 			{
+				string gameDir = "save";
+				bool cleanSaves = true;
+				string saveFile = null;
+
+				if (!Directory.Exists(gameDir))
+					Directory.CreateDirectory(gameDir);
+
+				if (cleanSaves)
+				{
+					var files = Directory.EnumerateFiles(gameDir);
+					foreach (var file in files)
+						File.Delete(file);
+				}
+
+				if (!cleanSaves)
+				{
+					saveFile = GetLatestSaveFile(gameDir);
+				}
+
 				m_serverStartWaitHandle = new AutoResetEvent(false);
 				m_serverStopWaitHandle = new AutoResetEvent(false);
 
@@ -66,6 +86,15 @@ namespace Dwarrowdelf.Client
 				m_serverStartDialog.Content = label;
 				m_serverStartDialog.Show();
 			}
+		}
+
+		static string GetLatestSaveFile(string gameDir)
+		{
+			var files = Directory.EnumerateFiles(gameDir);
+			var list = new System.Collections.Generic.List<string>(files);
+			list.Sort();
+			var last = list[list.Count - 1];
+			return Path.GetFileName(last);
 		}
 
 		void ServerStartedCallback(object state, bool timedOut)
@@ -117,14 +146,15 @@ namespace Dwarrowdelf.Client
 
 			AppDomain domain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
 
-			var das = domain.SetupInformation;
+			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			var baseDir = System.IO.Path.GetDirectoryName(exePath);
 
-			string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
-			path = System.IO.Path.GetDirectoryName(path);
-			path = System.IO.Path.Combine(path, "Server.exe");
+			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.ServerBase.dll");
 
-			m_server = (IServer)domain.CreateInstanceFromAndUnwrap(path, "Dwarrowdelf.Server.Server");
-			m_server.RunServer(true, m_serverStartWaitHandle, m_serverStopWaitHandle, null);
+			var serverFactory = (IServerFactory)domain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.ServerFactory");
+			m_server = serverFactory.CreateGameAndServer("MyArea.dll", "save");
+
+			m_server.RunServer(m_serverStartWaitHandle, m_serverStopWaitHandle);
 
 			AppDomain.Unload(domain);
 		}

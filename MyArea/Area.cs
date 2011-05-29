@@ -14,7 +14,7 @@ namespace MyArea
 {
 	public class Area : IArea
 	{
-		const int AREA_SIZE = 5;
+		const int AREA_SIZE = 6;
 		const int NUM_SHEEP = 3;
 
 		Environment m_map1;
@@ -309,13 +309,13 @@ namespace MyArea
 			}
 			building.Initialize(world, env);
 
-			/*
+
 			{
-				var gen = new Dwarrowdelf.Server.Items.FoodGenerator();
+				var gen = new FoodGenerator();
 				gen.Initialize(env.World);
 				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
 			}
-			*/
+
 
 			/* Add Monsters */
 

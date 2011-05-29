@@ -19,8 +19,11 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		public ServerConnection(IConnection connection)
+		Game m_game;
+
+		public ServerConnection(Game game, IConnection connection)
 		{
+			m_game = game;
 			m_connection = connection;
 
 			trace.Header = "ServerConnection";
@@ -116,7 +119,7 @@ namespace Dwarrowdelf.Server
 			var userID = s_userIDs++;
 			m_userLoggedIn = true;
 
-			m_user = new ServerUser(userID);
+			m_user = m_game.CreateUser(userID);
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { UserID = userID, IsSeeAll = m_user.IsSeeAll });
 
