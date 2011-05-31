@@ -7,12 +7,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	// XXX move somewhere else, but inside Server side */
-	public interface IArea
-	{
-		void InitializeWorld(World world);
-	}
-
 	enum WorldTickMethod
 	{
 		Simultaneous,

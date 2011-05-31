@@ -12,7 +12,7 @@ using Dwarrowdelf.TerrainGen;
 
 namespace MyArea
 {
-	public class Area : IArea
+	public class Area
 	{
 		const int AREA_SIZE = 6;
 		const int NUM_SHEEP = 3;
