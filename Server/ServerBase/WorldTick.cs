@@ -13,6 +13,8 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		public int TickNumber { get; private set; }
 
+		public event Action HandleMessagesEvent;
+
 		enum WorldState
 		{
 			Idle,
@@ -109,12 +111,8 @@ namespace Dwarrowdelf.Server
 
 			m_instantInvokeList.ProcessInvokeList();
 
-			ProcessConnectionAdds();
-
-			foreach (var conn in m_connections.List)
-				conn.HandleNewMessages();
-
-			ProcessConnectionRemoves();
+			if (HandleMessagesEvent != null)
+				HandleMessagesEvent();
 
 			m_users.Process();
 

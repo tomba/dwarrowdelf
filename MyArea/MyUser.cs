@@ -11,8 +11,8 @@ namespace MyArea
 	{
 		const int NUM_DWARVES = 5;
 
-		public MyUser(int userID)
-			: base(userID)
+		public MyUser(int userID, World world)
+			: base(userID, world)
 		{
 		}
 

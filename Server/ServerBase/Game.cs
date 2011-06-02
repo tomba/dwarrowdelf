@@ -36,9 +36,9 @@ namespace Dwarrowdelf.Server
 			m_world.Stop();
 		}
 
-		public void AddNewConnection(ServerConnection sConn)
+		public void SignalWorld()
 		{
-			sConn.Init(m_world);
+			m_world.SignalWorld();
 		}
 
 		public abstract ServerUser CreateUser(int userID);

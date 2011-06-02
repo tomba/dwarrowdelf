@@ -35,9 +35,10 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		public ServerUser(int userID)
+		public ServerUser(int userID, World world)
 		{
 			m_userID = userID;
+			m_world = world;
 
 			trace.Header = String.Format("User({0})", m_userID);
 			trace.TraceInformation("New User");
@@ -47,12 +48,11 @@ namespace Dwarrowdelf.Server
 			m_changeHandler = new ChangeHandler(this);
 		}
 
-		public void Init(ServerConnection connection, World world)
+		public void Init(ServerConnection connection)
 		{
 			m_connection = connection;
-			m_world = world;
 
-			m_ipRunner = new IPRunner(world, Send);
+			m_ipRunner = new IPRunner(m_world, Send);
 
 			m_world.WorkEnded += HandleEndOfWork;
 			m_world.WorldChanged += HandleWorldChange;

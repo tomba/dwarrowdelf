@@ -10,7 +10,6 @@ namespace Dwarrowdelf.Server
 	public class ServerConnection
 	{
 		IConnection m_connection;
-		World m_world;
 		bool m_userLoggedIn;
 		static int s_userIDs = 1;
 		ServerUser m_user;
@@ -31,20 +30,15 @@ namespace Dwarrowdelf.Server
 
 			m_connection.ReceiveEvent += OnReceiveMessage;
 			m_connection.DisconnectEvent += OnDisconnect;
-			m_connection.BeginRead();
 		}
 
-		public void Init(World world)
+		public void Start()
 		{
-			m_world = world;
-			m_world.AddConnection(this);
+			m_connection.BeginRead();
 		}
 
 		void Cleanup()
 		{
-			m_world.RemoveConnection(this);
-			m_world = null;
-
 			m_connection.ReceiveEvent -= OnReceiveMessage;
 			m_connection.DisconnectEvent -= OnDisconnect;
 			m_connection = null;
@@ -61,7 +55,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("OnDisconnect");
 
-			m_world.SignalWorld();
+			m_game.SignalWorld();
 		}
 
 		void OnReceiveMessage(Message m)
@@ -69,7 +63,12 @@ namespace Dwarrowdelf.Server
 			trace.TraceVerbose("OnReceiveMessage");
 
 			m_msgQueue.Enqueue(m);
-			m_world.SignalWorld();
+			m_game.SignalWorld();
+		}
+
+		public bool IsConnected
+		{
+			get { return m_connection != null && m_connection.IsConnected; }
 		}
 
 		public void HandleNewMessages()
@@ -123,7 +122,7 @@ namespace Dwarrowdelf.Server
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { UserID = userID, IsSeeAll = m_user.IsSeeAll });
 
-			m_user.Init(this, m_world);
+			m_user.Init(this);
 		}
 
 		void HandleLogOutMessage(LogOutRequestMessage msg)
