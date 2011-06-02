@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Server
 	{
 		string m_gameDir;
 		World m_world;
-		WorldLogger m_logger;
 
 		public World World { get { return m_world; } }
 
@@ -29,21 +28,12 @@ namespace Dwarrowdelf.Server
 
 		public void Start()
 		{
-			m_world.TickEnded += OnWorldTickEnded;
-
-			m_logger = new WorldLogger();
-			m_logger.Start(m_world, Path.Combine(m_gameDir, "changes.log"));
-
 			m_world.Start();
 		}
 
 		public void Stop()
 		{
 			m_world.Stop();
-
-			m_logger.Stop();
-
-			m_world.TickEnded -= OnWorldTickEnded;
 		}
 
 		public void AddNewConnection(ServerConnection sConn)
@@ -52,19 +42,6 @@ namespace Dwarrowdelf.Server
 		}
 
 		public abstract ServerUser CreateUser(int userID);
-
-		void OnWorldTickEnded()
-		{
-#if SAVE_EVERY_TURN
-			Console.WriteLine("Tick {0}", m_world.TickNumber);
-
-			int tick = m_world.TickNumber;
-			string name = String.Format("save-{0}.json", tick);
-			Save(m_world, name);
-
-			var w = Load(name);
-#endif
-		}
 
 		public void Save()
 		{
