@@ -16,11 +16,4 @@ namespace Dwarrowdelf
 		IServer CreateGameAndServer(string gameDll, string gameDir);
 	}
 
-
-	public interface IGame
-	{
-		void Start();
-		void Stop();
-		void Save();
-	}
 }

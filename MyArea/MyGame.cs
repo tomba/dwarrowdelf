@@ -9,7 +9,7 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	public class MyGame : Game, IGame
+	public class MyGame : Game
 	{
 		Area m_area;
 
