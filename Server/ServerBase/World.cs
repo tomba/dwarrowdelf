@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	enum WorldTickMethod
+	public enum WorldTickMethod
 	{
 		Simultaneous,
 		Sequential,
@@ -19,33 +19,18 @@ namespace Dwarrowdelf.Server
 		[Serializable]
 		class WorldConfig
 		{
-			public WorldTickMethod TickMethod;
-
 			// Require an user to be in game for ticks to proceed
 			public bool RequireUser;
 
 			// Require an controllables to be in game for ticks to proceed
 			public bool RequireControllables;
-
-			// Maximum time for one living to make its move. After this time has passed, the living
-			// will be skipped
-			public TimeSpan MaxMoveTime;
-
-			// Minimum time between ticks. Ticks will never proceed faster than this.
-			public TimeSpan MinTickTime;
-
-			public bool SingleStep;
 		}
 
 		[GameProperty]
 		WorldConfig m_config = new WorldConfig
 		{
-			TickMethod = WorldTickMethod.Simultaneous,
 			RequireUser = true,
 			RequireControllables = false,
-			MaxMoveTime = TimeSpan.Zero,
-			MinTickTime = TimeSpan.FromMilliseconds(50),
-			SingleStep = false,
 		};
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
@@ -64,115 +49,48 @@ namespace Dwarrowdelf.Server
 		public event Action<Change> WorldChanged;
 		public event Action TickEnded;
 
-		AutoResetEvent m_worldSignal = new AutoResetEvent(true);
-
-		Thread m_worldThread;
-		volatile bool m_exit = false;
-
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
 		[GameProperty]
 		Random m_random = new Random();
 
-		public World()
+		Thread m_worldThread;
+
+		WorldTickMethod m_tickMethod;
+
+		public World(WorldTickMethod tickMethod)
 		{
+			m_tickMethod = tickMethod;
+
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];
 
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
-
-			InitializeWorldTick();
 		}
 
-		Stopwatch m_initSw;
-		public void BeginInitialize()
+		public void Initialize(Action initializer)
 		{
 			EnterWriteLock();
 
 			trace.TraceInformation("Initializing area");
-			m_initSw = Stopwatch.StartNew();
-		}
+			var m_initSw = Stopwatch.StartNew();
 
-		public void EndInitialize()
-		{
+			initializer();
+
 			m_initSw.Stop();
 			trace.TraceInformation("Initializing area took {0}", m_initSw.Elapsed);
 
 			ExitWriteLock();
 		}
 
-		public void Start()
-		{
-			Debug.Assert(m_worldThread == null);
-
-			m_worldThread = new Thread(Main);
-			m_worldThread.Name = "World";
-
-			using (var initEvent = new ManualResetEvent(false))
-			{
-				m_worldThread.Start(initEvent);
-				initEvent.WaitOne();
-			}
-		}
-
-		public void Stop()
-		{
-			Debug.Assert(m_worldThread.IsAlive);
-
-			m_exit = true;
-			SignalWorld();
-			m_worldThread.Join();
-		}
-
 		public Random Random { get { return m_random; } }
 
-		public void EnableSingleStep()
-		{
-			m_step = false;
-			Thread.MemoryBarrier();
-			m_config.SingleStep = true;
-		}
-
-		public void DisableSingleStep()
-		{
-			m_config.SingleStep = false;
-			SignalWorld();
-		}
-
-		public void SingleStep()
-		{
-			m_step = true;
-			SignalWorld();
-		}
-
-		public void SetMinTickTime(TimeSpan minTickTime)
-		{
-			m_config.MinTickTime = minTickTime;
-		}
-
-		void Main(object arg)
-		{
-			VerifyAccess();
-
-			trace.TraceInformation("WorldMain");
-
-			EventWaitHandle initEvent = (EventWaitHandle)arg;
-			initEvent.Set();
-
-			while (m_exit == false)
-			{
-				m_worldSignal.WaitOne();
-				Work();
-			}
-
-			trace.TraceInformation("WorldMain end");
-		}
-
+		// Hack to do some verifying that all calls come from the same thread (world is not multithread safe)
 		void VerifyAccess()
 		{
-			if (m_worldThread != null && Thread.CurrentThread != m_worldThread)
+			if (m_worldThread != null && m_worldThread != Thread.CurrentThread)
 				throw new Exception();
 		}
 
@@ -206,7 +124,7 @@ namespace Dwarrowdelf.Server
 		public void SignalWorld()
 		{
 			trace.TraceVerbose("SignalWorld");
-			m_worldSignal.Set();
+			//m_worldSignal.Set(); // QQQ
 		}
 
 

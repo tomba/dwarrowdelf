@@ -24,14 +24,11 @@ namespace Dwarrowdelf.Client
 
 		Thread m_serverThread;
 		EventWaitHandle m_serverStartWaitHandle;
-		EventWaitHandle m_serverStopWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
 		bool m_serverInAppDomain;
-		IServer m_server;
+		IGame m_game;
 
 		Window m_serverStartDialog; // Hacky dialog
-
-		public IServer Server { get { return m_server; } }
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -68,7 +65,6 @@ namespace Dwarrowdelf.Client
 				}
 
 				m_serverStartWaitHandle = new AutoResetEvent(false);
-				m_serverStopWaitHandle = new AutoResetEvent(false);
 
 				m_registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(m_serverStartWaitHandle,
 					ServerStartedCallback, null, TimeSpan.FromMinutes(1), true);
@@ -121,9 +117,9 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnExit(e);
 
-			if (m_serverInAppDomain && m_serverStopWaitHandle != null)
+			if (m_serverInAppDomain)
 			{
-				m_serverStopWaitHandle.Set();
+				m_game.Stop();
 				m_serverThread.Join();
 			}
 
@@ -151,10 +147,10 @@ namespace Dwarrowdelf.Client
 
 			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.ServerBase.dll");
 
-			var serverFactory = (IServerFactory)domain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.ServerFactory");
-			m_server = serverFactory.CreateGameAndServer("MyArea.dll", "save");
+			var gameFactory = (IGameFactory)domain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
+			m_game = gameFactory.CreateGameAndServer("MyArea.dll", "save");
 
-			m_server.RunServer(m_serverStartWaitHandle, m_serverStopWaitHandle);
+			m_game.Run(m_serverStartWaitHandle);
 
 			AppDomain.Unload(domain);
 		}

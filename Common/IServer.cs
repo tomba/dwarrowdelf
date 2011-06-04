@@ -6,14 +6,15 @@ using System.Threading;
 
 namespace Dwarrowdelf
 {
-	public interface IServer
+	public interface IGameFactory
 	{
-		void RunServer(EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle);
+		IGame CreateGameAndServer(string gameDll, string gameDir);
 	}
 
-	public interface IServerFactory
+	public interface IGame
 	{
-		IServer CreateGameAndServer(string gameDll, string gameDir);
+		void Run(EventWaitHandle serverStartWaitHandle);
+		void Stop();
 	}
 
 }

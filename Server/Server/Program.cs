@@ -34,21 +34,21 @@ namespace Dwarrowdelf.Server
 				saveFile = GetLatestSaveFile(gameDir);
 			}
 
-			Game game;
+			GameEngine game;
 
 			if (saveFile == null)
 			{
-				game = new MyArea.MyGame(gameDir);
+				game = new MyArea.MyEngine(gameDir);
 			}
 			else
 			{
-				game = new MyArea.MyGame(gameDir, saveFile);
+				game = new MyArea.MyEngine(gameDir, saveFile);
 			}
 
-			Server server;
+			GameServer server;
 
-			server = new Server(game);
-			server.RunServer(null, null);
+			server = new GameServer(game);
+			server.RunServer(null);
 
 			KeyLoop(game);
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 			return Path.GetFileName(last);
 		}
 
-		static void KeyLoop(Game game)
+		static void KeyLoop(GameEngine game)
 		{
 			Console.WriteLine("q - quit, s - signal, p - enable singlestep, r - disable singlestep, . - step");
 
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Server
 				switch (key)
 				{
 					case ConsoleKey.Q:
-						game.Stop();
+						//game.Stop();
 						return;
 
 					case ConsoleKey.S:

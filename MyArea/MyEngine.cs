@@ -9,30 +9,29 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	public class MyGame : Game
+	public class MyEngine : GameEngine
 	{
 		Area m_area;
 
-		public MyGame(string gameDir)
+		public MyEngine(string gameDir)
 			: base(gameDir)
 		{
 			m_area = new Area();
 
-			this.World.BeginInitialize();
-
-			m_area.InitializeWorld(this.World);
-
-			this.World.EndInitialize();
+			this.World.Initialize(delegate
+			{
+				m_area.InitializeWorld(this.World);
+			});
 		}
 
-		public MyGame(string gameDir, string saveFile)
+		public MyEngine(string gameDir, string saveFile)
 			: base(gameDir, saveFile)
 		{
 		}
 
 		public override ServerUser CreateUser(int userID)
 		{
-			return new MyUser(userID, this.World);
+			return new MyUser(userID, this, this.World);
 		}
 	}
 }

@@ -318,8 +318,6 @@ namespace Dwarrowdelf.Server
 			HandleActionStarted(c);
 
 			this.World.AddChange(c);
-
-			this.World.SignalWorld();
 		}
 
 		public void CancelAction()

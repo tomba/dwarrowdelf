@@ -18,11 +18,11 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		Game m_game;
+		GameEngine m_engine;
 
-		public ServerConnection(Game game, IConnection connection)
+		public ServerConnection(GameEngine engine, IConnection connection)
 		{
-			m_game = game;
+			m_engine = engine;
 			m_connection = connection;
 
 			trace.Header = "ServerConnection";
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("OnDisconnect");
 
-			m_game.SignalWorld();
+			m_engine.SignalWorld();
 		}
 
 		void OnReceiveMessage(Message m)
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 			trace.TraceVerbose("OnReceiveMessage");
 
 			m_msgQueue.Enqueue(m);
-			m_game.SignalWorld();
+			m_engine.SignalWorld();
 		}
 
 		public bool IsConnected
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 			var userID = s_userIDs++;
 			m_userLoggedIn = true;
 
-			m_user = m_game.CreateUser(userID);
+			m_user = m_engine.CreateUser(userID);
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { UserID = userID, IsSeeAll = m_user.IsSeeAll });
 

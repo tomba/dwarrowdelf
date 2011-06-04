@@ -10,6 +10,9 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		public event Action TickStartEvent;
+
+		public event Action<Living> TurnStartEvent;
+
 		[GameProperty]
 		public int TickNumber { get; private set; }
 
@@ -25,24 +28,6 @@ namespace Dwarrowdelf.Server
 
 		WorldState m_state = WorldState.Idle;
 
-		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
-		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
-
-		// For SingleStep mode
-		bool m_step;
-
-		/// <summary>
-		/// Timer is used to start the tick after MinTickTime
-		/// </summary>
-		Timer m_minTickTimer;
-		bool m_minTickTimerTriggered = true; // initialize to true to trigger the first tick
-
-		/// <summary>
-		/// Timer is used to timeout player turn after MaxMoveTime
-		/// </summary>
-		Timer m_maxMoveTimer;
-		bool m_maxMoveTimerTriggered;
-
 		int m_currentLivingIndex;
 		Living CurrentLiving { get { return m_livings.List[m_currentLivingIndex]; } }
 		void ResetLivingIndex() { m_currentLivingIndex = 0; }
@@ -53,40 +38,20 @@ namespace Dwarrowdelf.Server
 			return m_currentLivingIndex < m_livings.List.Count;
 		}
 
-		void InitializeWorldTick()
+		bool m_okToStartTick = true;
+		public void SetOkToStartTick()
 		{
-			m_minTickTimer = new Timer(this.MinTickTimerCallback);
-			m_maxMoveTimer = new Timer(this.MaxMoveTimerCallback);
-		}
-
-		void MinTickTimerCallback(object stateInfo)
-		{
-			trace.TraceVerbose("MinTickTimerCallback");
-			m_minTickTimerTriggered = true;
+			m_okToStartTick = true;
 			Thread.MemoryBarrier();
-			SignalWorld();
 		}
-
-		void MaxMoveTimerCallback(object stateInfo)
-		{
-			trace.TraceVerbose("MaxMoveTimerCallback");
-			m_maxMoveTimerTriggered = true;
-			Thread.MemoryBarrier();
-			SignalWorld();
-		}
-
 
 		bool IsTimeToStartTick()
 		{
 			VerifyAccess();
 
-			if (m_config.SingleStep && m_step == false)
-				return false;
+			Debug.Assert(m_state == WorldState.Idle);
 
-			if (m_state != WorldState.Idle)
-				return false;
-
-			if (this.UseMinTickTime && !m_minTickTimerTriggered)
+			if (!m_okToStartTick)
 				return false;
 
 			if (m_config.RequireUser && m_users.List.Count == 0)
@@ -98,13 +63,25 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		bool IsMoveForced()
+		bool m_forceMove = false;
+		public void SetForceMove()
 		{
-			return this.UseMaxMoveTime && m_maxMoveTimerTriggered;
+			m_forceMove = true;
+			Thread.MemoryBarrier();
 		}
 
-		void Work()
+		bool IsMoveForced()
 		{
+			// Race condition. The living may have done its move when this is called.
+			return m_forceMove;
+		}
+
+		public bool Work()
+		{
+			// Hack
+			if (m_worldThread == null)
+				m_worldThread = Thread.CurrentThread;
+
 			VerifyAccess();
 
 			EnterWriteLock();
@@ -116,20 +93,24 @@ namespace Dwarrowdelf.Server
 
 			m_users.Process();
 
+			bool again = true;
+
 			if (m_state == WorldState.Idle)
 			{
 				PreTickWork();
 
 				if (IsTimeToStartTick())
 					StartTick();
+				else
+					again = false;
 			}
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				if (m_config.TickMethod == WorldTickMethod.Simultaneous)
-					SimultaneousWork();
-				else if (m_config.TickMethod == WorldTickMethod.Sequential)
-					SequentialWork();
+				if (m_tickMethod == WorldTickMethod.Simultaneous)
+					again = SimultaneousWork();
+				else if (m_tickMethod == WorldTickMethod.Sequential)
+					again = SequentialWork();
 				else
 					throw new NotImplementedException();
 			}
@@ -145,6 +126,8 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.TickEnded)
 				m_state = WorldState.Idle;
+
+			return again;
 		}
 
 		void PreTickWork()
@@ -153,7 +136,7 @@ namespace Dwarrowdelf.Server
 			m_livings.Process();
 		}
 
-		void SimultaneousWork()
+		bool SimultaneousWork()
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
@@ -164,7 +147,9 @@ namespace Dwarrowdelf.Server
 			bool forceMove = IsMoveForced();
 
 			if (!forceMove && !m_users.List.All(u => u.ProceedTurnReceived))
-				return;
+				return false;
+
+			m_forceMove = false;
 
 			foreach (var living in m_livings.List)
 				living.TurnPreRun();
@@ -177,10 +162,12 @@ namespace Dwarrowdelf.Server
 			m_state = WorldState.TickDone;
 
 			trace.TraceVerbose("SimultaneousWork Done");
+
+			return true;
 		}
 
 
-		void SequentialWork()
+		bool SequentialWork()
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
@@ -188,6 +175,8 @@ namespace Dwarrowdelf.Server
 			bool forceMove = IsMoveForced();
 
 			trace.TraceVerbose("SequentialWork");
+
+			bool again = true;
 
 			while (true)
 			{
@@ -204,7 +193,12 @@ namespace Dwarrowdelf.Server
 					forceMove = true;
 
 				if (!forceMove && !living.HasAction)
+				{
+					again = false;
 					break;
+				}
+
+				m_forceMove = false;
 
 				living.TurnPreRun();
 
@@ -226,13 +220,13 @@ namespace Dwarrowdelf.Server
 			}
 
 			trace.TraceVerbose("SequentialWork Done");
+
+			return again;
 		}
 
 		void StartTick()
 		{
 			VerifyAccess();
-
-			m_step = false;
 
 			this.TickNumber++;
 			AddChange(new TickStartChange(this.TickNumber));
@@ -244,11 +238,11 @@ namespace Dwarrowdelf.Server
 			if (TickStartEvent != null)
 				TickStartEvent();
 
-			if (m_config.TickMethod == WorldTickMethod.Simultaneous)
+			if (m_tickMethod == WorldTickMethod.Simultaneous)
 			{
 				StartTurnSimultaneous();
 			}
-			else if (m_config.TickMethod == WorldTickMethod.Sequential)
+			else if (m_tickMethod == WorldTickMethod.Sequential)
 			{
 				ResetLivingIndex();
 
@@ -265,12 +259,7 @@ namespace Dwarrowdelf.Server
 
 			AddChange(new TurnStartChange());
 
-			if (this.UseMaxMoveTime)
-			{
-				m_maxMoveTimerTriggered = false;
-				Thread.MemoryBarrier();
-				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
-			}
+			TurnStartEvent(null);
 		}
 
 		void StartTurnSequential(Living living)
@@ -279,12 +268,7 @@ namespace Dwarrowdelf.Server
 
 			AddChange(new TurnStartChange(living));
 
-			if (this.UseMaxMoveTime)
-			{
-				m_maxMoveTimerTriggered = false;
-				Thread.MemoryBarrier();
-				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
-			}
+			TurnStartEvent(living);
 		}
 
 		void EndTurn(Living living = null)
@@ -296,15 +280,10 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
-			if (this.UseMinTickTime)
-			{
-				m_minTickTimerTriggered = false;
-				Thread.MemoryBarrier();
-				m_minTickTimer.Change(m_config.MinTickTime, TimeSpan.FromMilliseconds(-1));
-			}
-
 			trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;
+
+			m_okToStartTick = false;
 
 			if (TickEnded != null)
 				TickEnded();

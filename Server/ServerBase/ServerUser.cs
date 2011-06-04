@@ -35,9 +35,12 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		public ServerUser(int userID, World world)
+		GameEngine m_engine;
+
+		public ServerUser(int userID, GameEngine engine, World world)
 		{
 			m_userID = userID;
+			m_engine = engine;
 			m_world = world;
 
 			trace.Header = String.Format("User({0})", m_userID);
@@ -202,7 +205,7 @@ namespace Dwarrowdelf.Server
 		void ReceiveMessage(SetWorldConfigMessage msg)
 		{
 			if (msg.MinTickTime.HasValue)
-				m_world.SetMinTickTime(msg.MinTickTime.Value);
+				m_engine.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
 		void ReceiveMessage(CreateBuildingMessage msg)

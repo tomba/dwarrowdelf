@@ -3,40 +3,21 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
 
 namespace Dwarrowdelf.Server
 {
-	public class ServerFactory : MarshalByRefObject, IServerFactory
+	public class GameServer
 	{
-		public IServer CreateGameAndServer(string gameDll, string gameDir)
-		{
-			var basePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-
-			var path = Path.Combine(basePath, gameDll);
-
-			var assembly = Assembly.LoadFile(path);
-			var game = (Game)assembly.CreateInstance("MyArea.MyGame", false, BindingFlags.Public | BindingFlags.Instance, null, new object[] { gameDir }, null, null);
-
-			var server = new Server(game);
-
-			return server;
-		}
-	}
-
-	public class Server : MarshalByRefObject, IServer
-	{
-		Game m_game;
+		GameEngine m_engine;
 		List<ServerConnection> m_connections = new List<ServerConnection>();
 
-		public Server(Game game)
+		public GameServer(GameEngine engine)
 		{
-			m_game = game;
+			m_engine = engine;
 		}
 
-		public void RunServer(EventWaitHandle serverStartWaitHandle, EventWaitHandle serverStopWaitHandle)
+		public void RunServer(EventWaitHandle serverStartWaitHandle)
 		{
 			Debug.Print("Start");
 
@@ -45,27 +26,20 @@ namespace Dwarrowdelf.Server
 			int magic = 0;
 			GameAction.MagicNumberGenerator = () => -Math.Abs(Interlocked.Increment(ref magic));
 
-			m_game.Start();
-
-			m_game.World.HandleMessagesEvent += OnHandleMessages; // XXX
+			m_engine.World.HandleMessagesEvent += OnHandleMessages; // XXX
 
 			Connection.NewConnectionEvent += OnNewConnection;
 			Connection.StartListening();
 
 			Debug.Print("The server is ready.");
 
-			Debug.Print("Server signaling client for start.");
-			if (serverStartWaitHandle != null)
-			{
-				serverStartWaitHandle.Set();
-				serverStopWaitHandle.WaitOne();
-			}
+			serverStartWaitHandle.Set();
 
-			m_game.World.HandleMessagesEvent -= OnHandleMessages; // XXX
+			m_engine.Run();
 
-			m_game.Save();
+			m_engine.World.HandleMessagesEvent -= OnHandleMessages; // XXX
 
-			m_game.Stop();
+			m_engine.Save();
 
 			Debug.Print("Server exiting");
 
@@ -74,15 +48,21 @@ namespace Dwarrowdelf.Server
 			Debug.Print("Server exit");
 		}
 
+		public void Stop()
+		{
+			m_engine.Stop();
+		}
+
 		void OnNewConnection(IConnection connection)
 		{
-			var serverConnection = new ServerConnection(m_game, connection);
+			var serverConnection = new ServerConnection(m_engine, connection);
 
 			lock (m_connections)
 				m_connections.Add(serverConnection);
 
 			serverConnection.Start();
 
+			m_engine.SignalWorld();
 			// XXX remove connection from list
 		}
 

@@ -63,11 +63,12 @@
   <ItemGroup>
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="BuildingObject.cs" />
+    <Compile Include="GameEngine.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="LivingActions.cs" />
     <Compile Include="ProcessableList.cs" />
-    <Compile Include="Server.cs" />
+    <Compile Include="GameServer.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="ServerUser.cs" />
     <Compile Include="ItemObject.cs" />
