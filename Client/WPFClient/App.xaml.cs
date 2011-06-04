@@ -145,7 +145,7 @@ namespace Dwarrowdelf.Client
 			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			var baseDir = System.IO.Path.GetDirectoryName(exePath);
 
-			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.ServerBase.dll");
+			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
 
 			var gameFactory = (IGameFactory)domain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
 			m_game = gameFactory.CreateGameAndServer("MyArea.dll", "save");

@@ -75,9 +75,9 @@
       <Project>{EDBAD6B6-CDF0-4227-A7AF-63F91A3A7321}</Project>
       <Name>MyArea</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ServerBase\ServerBase.csproj">
-      <Project>{0C31C7C2-586F-4F67-8225-1C09E816695B}</Project>
-      <Name>ServerBase</Name>
+    <ProjectReference Include="..\Engine\Engine.csproj">
+      <Project>{BCAE564B-8D06-4D7F-866E-EF9E10B27FE0}</Project>
+      <Name>Engine</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

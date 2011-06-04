@@ -16,23 +16,6 @@ namespace Dwarrowdelf.Server
 	[GameObject(UseRef = true)]
 	public partial class World : IWorld
 	{
-		[Serializable]
-		class WorldConfig
-		{
-			// Require an user to be in game for ticks to proceed
-			public bool RequireUser;
-
-			// Require an controllables to be in game for ticks to proceed
-			public bool RequireControllables;
-		}
-
-		[GameProperty]
-		WorldConfig m_config = new WorldConfig
-		{
-			RequireUser = true,
-			RequireControllables = false,
-		};
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
 
 		// only for debugging
@@ -57,11 +40,11 @@ namespace Dwarrowdelf.Server
 
 		Thread m_worldThread;
 
-		WorldTickMethod m_tickMethod;
+		public WorldTickMethod TickMethod { get; private set; }
 
 		public World(WorldTickMethod tickMethod)
 		{
-			m_tickMethod = tickMethod;
+			this.TickMethod = tickMethod;
 
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];

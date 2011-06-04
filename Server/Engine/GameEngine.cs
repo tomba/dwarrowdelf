@@ -16,6 +16,10 @@ namespace Dwarrowdelf.Server
 		volatile bool m_exit = false;
 		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
 
+		List<ServerUser> m_users = new List<ServerUser>();
+
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
+
 		[Serializable]
 		class GameConfig
 		{
@@ -59,6 +63,8 @@ namespace Dwarrowdelf.Server
 
 		public World World { get { return m_world; } }
 
+		Thread m_gameThread;
+
 		protected GameEngine(string gameDir)
 		{
 			m_gameDir = gameDir;
@@ -88,22 +94,59 @@ namespace Dwarrowdelf.Server
 			SignalWorld();
 		}
 
+		void VerifyAccess()
+		{
+			if (Thread.CurrentThread != m_gameThread)
+				throw new Exception();
+		}
+
 		public void Run()
 		{
+			m_gameThread = Thread.CurrentThread;
+
 			bool again = true;
 
 			this.World.TurnStartEvent += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
+			this.World.TickOngoingEvent += OnTickOnGoing;
 
 			while (m_exit == false)
 			{
 				if (!again)
 					m_gameSignal.WaitOne();
+
 				again = this.World.Work();
 			}
 
+			this.World.TickOngoingEvent -= OnTickOnGoing;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStartEvent -= OnTurnStart;
+		}
+
+		void OnTickOnGoing()
+		{
+			// XXX We should catch ProceedTurnReceived directly, and do this there
+			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_users.Count > 0 && m_users.All(u => u.ProceedTurnReceived))
+				this.World.SetForceMove();
+		}
+
+		bool _IsTimeToStartTick()
+		{
+			if (m_config.RequireUser && m_users.Count == 0)
+				return false;
+
+			if (m_config.RequireControllables && !m_users.Any(u => u.Controllables.Count > 0))
+				return false;
+
+			return true;
+		}
+
+		bool IsTimeToStartTick()
+		{
+			bool r = _IsTimeToStartTick();
+			trace.TraceVerbose("IsTimeToStartTick = {0}", r);
+			return r;
+
 		}
 
 		void OnTickEnded()
@@ -114,15 +157,19 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				this.World.SetOkToStartTick();
+				if (IsTimeToStartTick())
+					this.World.SetOkToStartTick();
 			}
 		}
 
 		void MinTickTimerCallback(object stateInfo)
 		{
-			//trace.TraceVerbose("MinTickTimerCallback");
-			this.World.SetOkToStartTick();
-			SignalWorld();
+			trace.TraceVerbose("MinTickTimerCallback");
+			if (IsTimeToStartTick())
+			{
+				this.World.SetOkToStartTick();
+				SignalWorld();
+			}
 		}
 
 		void OnTurnStart(Living living)
@@ -133,7 +180,7 @@ namespace Dwarrowdelf.Server
 
 		void MaxMoveTimerCallback(object stateInfo)
 		{
-			//trace.TraceVerbose("MaxMoveTimerCallback");
+			trace.TraceVerbose("MaxMoveTimerCallback");
 			this.World.SetForceMove();
 			SignalWorld();
 		}
@@ -145,9 +192,26 @@ namespace Dwarrowdelf.Server
 
 		public void SetMinTickTime(TimeSpan minTickTime)
 		{
+			VerifyAccess();
 			m_config.MinTickTime = minTickTime;
 		}
 
+
+		public void AddUser(ServerUser user)
+		{
+			VerifyAccess();
+			m_users.Add(user);
+
+			if (IsTimeToStartTick())
+				this.World.SetOkToStartTick();
+		}
+
+		public void RemoveUser(ServerUser user)
+		{
+			VerifyAccess();
+			bool ok = m_users.Remove(user);
+			Debug.Assert(ok);
+		}
 
 		public abstract ServerUser CreateUser(int userID);
 

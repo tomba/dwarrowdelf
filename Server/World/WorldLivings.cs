@@ -7,24 +7,8 @@ namespace Dwarrowdelf.Server
 {
 	public partial class World
 	{
-		ProcessableList<ServerUser> m_users = new ProcessableList<ServerUser>();
 		[GameProperty]
 		ProcessableList<Living> m_livings = new ProcessableList<Living>();
-
-		internal void AddUser(ServerUser user)
-		{
-			VerifyAccess();
-			m_users.Add(user);
-			SignalWorld();
-		}
-
-		internal void RemoveUser(ServerUser user)
-		{
-			VerifyAccess();
-			m_users.Remove(user);
-			SignalWorld();
-		}
-
 
 		internal void AddLiving(Living living)
 		{

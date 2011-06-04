@@ -10,8 +10,8 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		public event Action TickStartEvent;
-
 		public event Action<Living> TurnStartEvent;
+		public event Action TickOngoingEvent;
 
 		[GameProperty]
 		public int TickNumber { get; private set; }
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Server
 			return m_currentLivingIndex < m_livings.List.Count;
 		}
 
-		bool m_okToStartTick = true;
+		bool m_okToStartTick = false;
 		public void SetOkToStartTick()
 		{
 			m_okToStartTick = true;
@@ -54,26 +54,16 @@ namespace Dwarrowdelf.Server
 			if (!m_okToStartTick)
 				return false;
 
-			if (m_config.RequireUser && m_users.List.Count == 0)
-				return false;
-
-			if (m_config.RequireControllables && !m_users.List.Any(u => u.Controllables.Count > 0))
-				return false;
-
 			return true;
 		}
 
 		bool m_forceMove = false;
 		public void SetForceMove()
 		{
+			trace.TraceVerbose("SetForceMove");
 			m_forceMove = true;
 			Thread.MemoryBarrier();
-		}
-
-		bool IsMoveForced()
-		{
-			// Race condition. The living may have done its move when this is called.
-			return m_forceMove;
+			// Race condition. The living may have done its move when m_forceMove is used.
 		}
 
 		public bool Work()
@@ -91,8 +81,6 @@ namespace Dwarrowdelf.Server
 			if (HandleMessagesEvent != null)
 				HandleMessagesEvent();
 
-			m_users.Process();
-
 			bool again = true;
 
 			if (m_state == WorldState.Idle)
@@ -107,9 +95,12 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				if (m_tickMethod == WorldTickMethod.Simultaneous)
+				if (TickOngoingEvent != null)
+					TickOngoingEvent();
+
+				if (this.TickMethod == WorldTickMethod.Simultaneous)
 					again = SimultaneousWork();
-				else if (m_tickMethod == WorldTickMethod.Sequential)
+				else if (this.TickMethod == WorldTickMethod.Sequential)
 					again = SequentialWork();
 				else
 					throw new NotImplementedException();
@@ -140,13 +131,13 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
-			Debug.Assert(m_users.List.All(u => u.StartTurnSent));
+			//Debug.Assert(m_users.All(u => u.StartTurnSent));
 
 			trace.TraceVerbose("SimultaneousWork");
 
-			bool forceMove = IsMoveForced();
+			bool forceMove = m_forceMove;
 
-			if (!forceMove && !m_users.List.All(u => u.ProceedTurnReceived))
+			if (!forceMove) // && !m_users.List.All(u => u.ProceedTurnReceived))
 				return false;
 
 			m_forceMove = false;
@@ -172,7 +163,7 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			bool forceMove = IsMoveForced();
+			bool forceMove = m_forceMove;
 
 			trace.TraceVerbose("SequentialWork");
 
@@ -238,11 +229,11 @@ namespace Dwarrowdelf.Server
 			if (TickStartEvent != null)
 				TickStartEvent();
 
-			if (m_tickMethod == WorldTickMethod.Simultaneous)
+			if (this.TickMethod == WorldTickMethod.Simultaneous)
 			{
 				StartTurnSimultaneous();
 			}
-			else if (m_tickMethod == WorldTickMethod.Sequential)
+			else if (this.TickMethod == WorldTickMethod.Sequential)
 			{
 				ResetLivingIndex();
 

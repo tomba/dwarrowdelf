@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Server
 
 			m_world.WorkEnded += HandleEndOfWork;
 			m_world.WorldChanged += HandleWorldChange;
-			m_world.AddUser(this);
+			m_engine.AddUser(this);
 
 			if (m_seeAll)
 			{
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Server
 			if (this.IsCharLoggedIn)
 				ExitGame();
 
-			m_world.RemoveUser(this);
+			m_engine.RemoveUser(this);
 			m_world.WorkEnded -= HandleEndOfWork;
 			m_world.WorldChanged -= HandleWorldChange;
 
@@ -310,6 +310,8 @@ namespace Dwarrowdelf.Server
 				}
 
 				this.ProceedTurnReceived = true;
+
+				m_engine.SignalWorld();
 			}
 			catch (Exception e)
 			{
