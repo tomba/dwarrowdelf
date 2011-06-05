@@ -90,7 +90,10 @@ namespace Dwarrowdelf.Server
 			if (m_world != null)
 				throw new Exception();
 
-			m_world = LoadWorld(Path.Combine(m_gameDir, saveFile));
+			var saveData = LoadWorld(Path.Combine(m_gameDir, saveFile));
+
+			m_world = saveData.World;
+			m_users = saveData.Users;
 		}
 
 		void VerifyAccess()
@@ -203,7 +206,8 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public void AddUser(ServerUser user)
+		// XXX
+		void AddUser(ServerUser user)
 		{
 			VerifyAccess();
 			m_users.Add(user);
@@ -212,11 +216,33 @@ namespace Dwarrowdelf.Server
 				this.World.SetOkToStartTick();
 		}
 
-		public void RemoveUser(ServerUser user)
+		void RemoveUser(ServerUser user)
 		{
 			VerifyAccess();
 			bool ok = m_users.Remove(user);
 			Debug.Assert(ok);
+		}
+
+		public ServerUser GetUser(int userID)
+		{
+			ServerUser user;
+
+			user = m_users.SingleOrDefault(u => u.UserID == userID);
+
+			if (user == null)
+			{
+				trace.TraceInformation("Creating new user {0}", userID);
+				user = CreateUser(userID);
+				AddUser(user);
+			}
+			else
+			{
+				trace.TraceInformation("Found existing user {0}", userID);
+			}
+
+			user.Init(this);
+
+			return user;
 		}
 
 		public abstract ServerUser CreateUser(int userID);
@@ -230,10 +256,16 @@ namespace Dwarrowdelf.Server
 
 		public void Save(string saveFile)
 		{
-			SaveWorld(m_world, Path.Combine(m_gameDir, saveFile));
+			var saveData = new SaveData()
+			{
+				World = this.World,
+				Users = m_users,
+			};
+
+			SaveWorld(saveData, Path.Combine(m_gameDir, saveFile));
 		}
 
-		static void SaveWorld(World world, string savePath)
+		static void SaveWorld(SaveData saveData, string savePath)
 		{
 			Trace.TraceInformation("Saving game {0}", savePath);
 			var watch = Stopwatch.StartNew();
@@ -242,7 +274,7 @@ namespace Dwarrowdelf.Server
 			var stream = new System.IO.MemoryStream();
 
 			var serializer = new Dwarrowdelf.JsonSerializer(stream);
-			serializer.Serialize(world);
+			serializer.Serialize(saveData);
 
 			stream.Position = 0;
 			//stream.CopyTo(Console.OpenStandardOutput());
@@ -255,21 +287,28 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
 		}
 
-		static World LoadWorld(string savePath)
+		static SaveData LoadWorld(string savePath)
 		{
 			Trace.TraceInformation("Loading game {0}", savePath);
 			var watch = Stopwatch.StartNew();
 
-			World world;
+			SaveData world;
 
 			var stream = File.OpenRead(savePath);
 			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
-			world = (World)deserializer.Deserialize<World>();
+			world = deserializer.Deserialize<SaveData>();
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 
 			return world;
+		}
+
+		[Serializable]
+		class SaveData
+		{
+			public World World;
+			public List<ServerUser> Users;
 		}
 	}
 }

@@ -160,10 +160,10 @@ namespace Dwarrowdelf.Client
 
 		void HandleLoginReplyMessage(LogOnReplyMessage msg)
 		{
-			trace.Header = String.Format("ClientConnection({0})", msg.UserID);
+			trace.Header = String.Format("ClientConnection({0})", m_logOnName);
 			trace.TraceInformation("HandleLoginReplyMessage");
 
-			m_user = new ClientUser(this, m_world, msg.UserID, msg.IsSeeAll);
+			m_user = new ClientUser(this, m_world, msg.IsSeeAll);
 
 			m_logOnCallback(m_user, null);
 

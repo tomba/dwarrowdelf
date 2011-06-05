@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Server
 	{
 		IConnection m_connection;
 		bool m_userLoggedIn;
-		static int s_userIDs = 1;
 		ServerUser m_user;
 
 		System.Collections.Concurrent.ConcurrentQueue<Message> m_msgQueue = new System.Collections.Concurrent.ConcurrentQueue<Message>();
@@ -97,7 +96,7 @@ namespace Dwarrowdelf.Server
 
 				if (m_userLoggedIn)
 				{
-					m_user.UnInit();
+					m_user.UnsetConnection();
 					m_user = null;
 					m_userLoggedIn = false;
 				}
@@ -115,21 +114,27 @@ namespace Dwarrowdelf.Server
 			trace.Header = String.Format("ServerConnection({0})", name);
 			trace.TraceInformation("LogOnRequestMessage");
 
-			var userID = s_userIDs++;
 			m_userLoggedIn = true;
 
-			m_user = m_engine.CreateUser(userID);
+			int userID; // from universal user object
 
-			m_connection.Send(new Messages.LogOnReplyMessage() { UserID = userID, IsSeeAll = m_user.IsSeeAll });
+			if (name == "tomba")
+				userID = 1;
+			else
+				throw new Exception();
 
-			m_user.Init(this);
+			m_user = m_engine.GetUser(userID);
+
+			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll });
+
+			m_user.SetConnection(this);
 		}
 
 		void HandleLogOutMessage(LogOutRequestMessage msg)
 		{
 			trace.TraceInformation("HandleLogOutMessage");
 
-			m_user.UnInit();
+			m_user.UnsetConnection();
 
 			Send(new Messages.LogOutReplyMessage());
 

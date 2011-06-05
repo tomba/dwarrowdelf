@@ -7,12 +7,18 @@ using Dwarrowdelf;
 
 namespace MyArea
 {
+	[GameObject]
 	class MyUser : ServerUser
 	{
 		const int NUM_DWARVES = 5;
 
-		public MyUser(int userID, GameEngine engine, World world)
-			: base(userID, engine, world)
+		// XXX for deserialize
+		MyUser()
+		{
+		}
+
+		public MyUser(int userID)
+			: base(userID)
 		{
 		}
 

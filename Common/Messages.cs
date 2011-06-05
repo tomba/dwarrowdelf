@@ -47,7 +47,6 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public class LogOnReplyMessage : ServerMessage
 	{
-		public int UserID { get; set; }
 		public bool IsSeeAll { get; set; }
 	}
 

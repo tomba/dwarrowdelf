@@ -9,6 +9,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Server
 {
+	[GameObject]
 	public abstract class ServerUser
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
@@ -18,13 +19,16 @@ namespace Dwarrowdelf.Server
 
 		public bool IsCharLoggedIn { get; private set; }
 
+		[GameProperty("UserID")]
 		int m_userID;
 		public int UserID { get { return m_userID; } }
 
-		// this user sees all
+		// does this user sees all
+		[GameProperty("SeeAll")]
 		bool m_seeAll = true;
 		public bool IsSeeAll { get { return m_seeAll; } }
 
+		[GameProperty("Controllables")]
 		List<Living> m_controllables;
 		public ReadOnlyCollection<Living> Controllables { get; private set; }
 
@@ -38,29 +42,45 @@ namespace Dwarrowdelf.Server
 
 		GameEngine m_engine;
 
-		public ServerUser(int userID, GameEngine engine, World world)
+		protected ServerUser()
+		{
+		}
+
+		public ServerUser(int userID)
 		{
 			m_userID = userID;
-			m_engine = engine;
-			m_world = world;
-
-			trace.Header = String.Format("User({0})", m_userID);
-			trace.TraceInformation("New User");
 
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 			m_changeHandler = new ChangeHandler(this);
 		}
 
-		public void Init(ServerConnection connection)
+		[OnGameDeserialized]
+		void OnDeserialized()
 		{
+			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
+			m_changeHandler = new ChangeHandler(this);
+		}
+
+		public void Init(GameEngine engine)
+		{
+			m_engine = engine;
+			m_world = m_engine.World;
+
+			trace.Header = String.Format("User({0})", m_userID);
+			trace.TraceInformation("New User");
+		}
+
+		public void SetConnection(ServerConnection connection)
+		{
+			trace.TraceInformation("SetConnection");
+
 			m_connection = connection;
 
 			m_ipRunner = new IPRunner(m_world, Send);
 
 			m_world.WorkEnded += HandleEndOfWork;
 			m_world.WorldChanged += HandleWorldChange;
-			m_engine.AddUser(this);
 
 			if (m_seeAll)
 			{
@@ -69,24 +89,18 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void UnInit()
+		public void UnsetConnection()
 		{
-			trace.TraceInformation("UnInit");
+			trace.TraceInformation("UnsetConnection");
 
 			if (this.IsCharLoggedIn)
 				ExitGame();
 
-			m_engine.RemoveUser(this);
 			m_world.WorkEnded -= HandleEndOfWork;
 			m_world.WorldChanged -= HandleWorldChange;
 
 			m_ipRunner = null;
-			m_world = null;
 			m_connection = null;
-
-			m_controllables = null;
-			this.Controllables = null;
-			m_changeHandler = null;
 		}
 
 		void EnterGame()
@@ -118,14 +132,6 @@ namespace Dwarrowdelf.Server
 		void ExitGame()
 		{
 			Debug.Assert(this.IsCharLoggedIn);
-
-			foreach (var l in m_controllables)
-			{
-				l.Destructed -= OnPlayerDestructed;
-				l.Destruct();
-			}
-
-			m_controllables.Clear();
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
 			Send(new Messages.ExitGameReplyMessage());

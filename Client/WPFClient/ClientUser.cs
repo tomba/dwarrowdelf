@@ -16,7 +16,6 @@ namespace Dwarrowdelf.Client
 
 		ClientConnection m_connection;
 
-		public int UserID { get; private set; }
 		public bool IsSeeAll { get; private set; }
 
 		World m_world;
@@ -25,11 +24,10 @@ namespace Dwarrowdelf.Client
 
 		public event Action ExitedGameEvent;
 
-		public ClientUser(ClientConnection connection, World world, int userID, bool isSeeAll)
+		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
 		{
 			m_connection = connection;
 			m_world = world;
-			this.UserID = userID;
 			this.IsSeeAll = isSeeAll;
 		}
 

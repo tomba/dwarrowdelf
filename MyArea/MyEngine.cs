@@ -25,7 +25,7 @@ namespace MyArea
 
 		public override ServerUser CreateUser(int userID)
 		{
-			return new MyUser(userID, this, this.World);
+			return new MyUser(userID);
 		}
 	}
 }
