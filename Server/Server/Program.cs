@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server
 
 			var gf = new GameFactory();
 			// Typecast to Game to allow direct manipulation
-			var game = (Game)gf.CreateGameAndServer("MyArea.dll", "save");
+			var game = (Game)gf.CreateGame("MyArea.dll", "save");
 
 			var keyThread = new Thread(KeyMain);
 			keyThread.Start(game);

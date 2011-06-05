@@ -8,7 +8,8 @@ namespace Dwarrowdelf
 {
 	public interface IGameFactory
 	{
-		IGame CreateGameAndServer(string gameDll, string gameDir);
+		IGame CreateGame(string gameDll, string gameDir);
+		IGame LoadGame(string gameDll, string gameDir, string saveFile);
 	}
 
 	public interface IGame
@@ -16,5 +17,4 @@ namespace Dwarrowdelf
 		void Run(EventWaitHandle serverStartWaitHandle);
 		void Stop();
 	}
-
 }

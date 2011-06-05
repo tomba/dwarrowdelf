@@ -22,11 +22,11 @@ namespace Dwarrowdelf.Client
 		public new static App Current { get { return (App)Application.Current; } }
 		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
-		Thread m_serverThread;
 		EventWaitHandle m_serverStartWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
 		bool m_serverInAppDomain;
-		IGame m_game;
+
+		EmbeddedServer m_embeddedServer;
 
 		Window m_serverStartDialog; // Hacky dialog
 
@@ -69,8 +69,8 @@ namespace Dwarrowdelf.Client
 				m_registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(m_serverStartWaitHandle,
 					ServerStartedCallback, null, TimeSpan.FromMinutes(1), true);
 
-				m_serverThread = new Thread(ServerThreadStart);
-				m_serverThread.Start();
+				m_embeddedServer = new EmbeddedServer();
+				m_embeddedServer.Start(m_serverStartWaitHandle);
 
 				m_serverStartDialog = new Window();
 				m_serverStartDialog.Topmost = true;
@@ -118,41 +118,62 @@ namespace Dwarrowdelf.Client
 			base.OnExit(e);
 
 			if (m_serverInAppDomain)
+				m_embeddedServer.Stop();
+
+			Debug.Print("Exiting");
+		}
+
+		class EmbeddedServer
+		{
+			IGame m_game;
+			Thread m_serverThread;
+			EventWaitHandle m_serverStartWaitHandle;
+			AppDomain m_serverDomain;
+
+			public EmbeddedServer()
+			{
+				var di = AppDomain.CurrentDomain.SetupInformation;
+
+				var domainSetup = new AppDomainSetup()
+				{
+					ApplicationBase = di.ApplicationBase,
+					ConfigurationFile = di.ApplicationBase + "Server.exe.config",
+				};
+
+				m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
+
+				string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+				var baseDir = System.IO.Path.GetDirectoryName(exePath);
+
+				var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
+
+				var gameFactory = (IGameFactory)m_serverDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
+				m_game = gameFactory.CreateGame("MyArea.dll", "save");
+			}
+
+			public void Start(EventWaitHandle serverStartWaitHandle)
+			{
+				m_serverStartWaitHandle = serverStartWaitHandle;
+
+				m_serverThread = new Thread(Main);
+				m_serverThread.Start();
+			}
+
+			public void Stop()
 			{
 				m_game.Stop();
 				m_serverThread.Join();
 			}
 
-			Debug.Print("Exiting");
-		}
-
-
-		void ServerThreadStart()
-		{
-			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-			Thread.CurrentThread.Name = "Main";
-
-			var di = AppDomain.CurrentDomain.SetupInformation;
-
-			var domainSetup = new AppDomainSetup()
+			void Main()
 			{
-				ApplicationBase = di.ApplicationBase,
-				ConfigurationFile = di.ApplicationBase + "Server.exe.config",
-			};
+				Thread.CurrentThread.Priority = ThreadPriority.Lowest;
+				Thread.CurrentThread.Name = "Main";
 
-			AppDomain domain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
+				m_game.Run(m_serverStartWaitHandle);
 
-			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-			var baseDir = System.IO.Path.GetDirectoryName(exePath);
-
-			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
-
-			var gameFactory = (IGameFactory)domain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
-			m_game = gameFactory.CreateGameAndServer("MyArea.dll", "save");
-
-			m_game.Run(m_serverStartWaitHandle);
-
-			AppDomain.Unload(domain);
+				AppDomain.Unload(m_serverDomain);
+			}
 		}
 	}
 }

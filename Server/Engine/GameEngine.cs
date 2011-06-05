@@ -68,23 +68,29 @@ namespace Dwarrowdelf.Server
 		protected GameEngine(string gameDir)
 		{
 			m_gameDir = gameDir;
-			m_world = new World(WorldTickMethod.Simultaneous);
 
-			Init();
-		}
-
-		protected GameEngine(string gameDir, string saveFile)
-		{
-			m_gameDir = gameDir;
-			m_world = LoadWorld(Path.Combine(m_gameDir, saveFile));
-
-			Init();
-		}
-
-		void Init()
-		{
 			m_minTickTimer = new Timer(this.MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this.MaxMoveTimerCallback);
+		}
+
+		public void Create()
+		{
+			if (m_world != null)
+				throw new Exception();
+
+			m_world = new World(WorldTickMethod.Simultaneous);
+
+			this.World.Initialize(InitializeWorld);
+		}
+
+		protected abstract void InitializeWorld();
+
+		public void Load(string saveFile)
+		{
+			if (m_world != null)
+				throw new Exception();
+
+			m_world = LoadWorld(Path.Combine(m_gameDir, saveFile));
 		}
 
 		void VerifyAccess()
