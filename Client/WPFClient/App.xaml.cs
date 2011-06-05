@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Client
 		EmbeddedServer m_embeddedServer;
 
 		Window m_serverStartDialog; // Hacky dialog
+		Label m_serverDialogLabel;
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -69,18 +70,19 @@ namespace Dwarrowdelf.Client
 				m_registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(m_serverStartWaitHandle,
 					ServerStartedCallback, null, TimeSpan.FromMinutes(1), true);
 
-				m_embeddedServer = new EmbeddedServer();
-				m_embeddedServer.Start(m_serverStartWaitHandle);
-
 				m_serverStartDialog = new Window();
 				m_serverStartDialog.Topmost = true;
 				m_serverStartDialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
 				m_serverStartDialog.Width = 200;
 				m_serverStartDialog.Height = 200;
-				var label = new Label();
-				label.Content = "Starting Server";
-				m_serverStartDialog.Content = label;
+				m_serverDialogLabel = new Label();
+				m_serverDialogLabel.Content = "Starting Server";
+				m_serverStartDialog.Content = m_serverDialogLabel;
 				m_serverStartDialog.Show();
+
+				m_embeddedServer = new EmbeddedServer(saveFile);
+				m_embeddedServer.ServerStatusChangeEvent += OnServerStatusChange;
+				m_embeddedServer.Start(m_serverStartWaitHandle);
 			}
 		}
 
@@ -91,6 +93,11 @@ namespace Dwarrowdelf.Client
 			list.Sort();
 			var last = list[list.Count - 1];
 			return Path.GetFileName(last);
+		}
+
+		void OnServerStatusChange(string status)
+		{
+			this.Dispatcher.BeginInvoke(new Action(delegate { m_serverDialogLabel.Content = status; }));
 		}
 
 		void ServerStartedCallback(object state, bool timedOut)
@@ -104,13 +111,11 @@ namespace Dwarrowdelf.Client
 			m_serverStartWaitHandle = null;
 
 			// XXX mainwindow is already open before server is up
-			this.Dispatcher.BeginInvoke(new Action(ServerStartedCallback2), DispatcherPriority.Normal, null);
-		}
-
-		void ServerStartedCallback2()
-		{
-			m_serverStartDialog.Close();
-			MainWindow.OnServerStarted();
+			this.Dispatcher.BeginInvoke(new Action(delegate
+			{
+				m_serverStartDialog.Close();
+				MainWindow.OnServerStarted();
+			}));
 		}
 
 		protected override void OnExit(ExitEventArgs e)
@@ -129,9 +134,14 @@ namespace Dwarrowdelf.Client
 			Thread m_serverThread;
 			EventWaitHandle m_serverStartWaitHandle;
 			AppDomain m_serverDomain;
+			string m_saveFile;
 
-			public EmbeddedServer()
+			public Action<string> ServerStatusChangeEvent;
+
+			public EmbeddedServer(string saveFile)
 			{
+				m_saveFile = saveFile;
+
 				var di = AppDomain.CurrentDomain.SetupInformation;
 
 				var domainSetup = new AppDomainSetup()
@@ -147,8 +157,19 @@ namespace Dwarrowdelf.Client
 
 				var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
 
+				UpdateStatus("Creating Game");
+
 				var gameFactory = (IGameFactory)m_serverDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
+
 				m_game = gameFactory.CreateGame("MyArea.dll", "save");
+
+				UpdateStatus("Game Created");
+			}
+
+			void UpdateStatus(string status)
+			{
+				if (ServerStatusChangeEvent != null)
+					ServerStatusChangeEvent(status);
 			}
 
 			public void Start(EventWaitHandle serverStartWaitHandle)
@@ -169,6 +190,21 @@ namespace Dwarrowdelf.Client
 			{
 				Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 				Thread.CurrentThread.Name = "Main";
+
+				if (m_saveFile == null)
+				{
+					UpdateStatus("Creating World");
+					m_game.CreateWorld();
+					UpdateStatus("World Created");
+				}
+				else
+				{
+					UpdateStatus("Loading World");
+					m_game.LoadWorld(m_saveFile);
+					UpdateStatus("World Loaded");
+				}
+
+				UpdateStatus("Starting Game");
 
 				m_game.Run(m_serverStartWaitHandle);
 

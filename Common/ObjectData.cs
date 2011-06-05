@@ -35,6 +35,10 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class LivingData : GameObjectData
 	{
+		public GameAction CurrentAction { get; set; }
+		public int ActionTicksLeft { get; set; }
+		public int ActionUserID { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("LivingData {0}", this.ObjectID);

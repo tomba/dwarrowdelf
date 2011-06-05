@@ -19,6 +19,16 @@ namespace Dwarrowdelf.Server
 			this.Engine = engine;
 		}
 
+		public void CreateWorld()
+		{
+			this.Engine.Create();
+		}
+
+		public void LoadWorld(string saveFile)
+		{
+			this.Engine.Load(saveFile);
+		}
+
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
 			this.Server.Run(serverStartWaitHandle);
@@ -37,23 +47,6 @@ namespace Dwarrowdelf.Server
 			var assembly = LoadGameAssembly(gameDll);
 
 			var engine = (GameEngine)assembly.CreateInstance("MyArea.MyEngine", false, BindingFlags.Public | BindingFlags.Instance, null, new object[] { gameDir }, null, null);
-
-			engine.Create();
-
-			var server = new GameServer(engine);
-
-			var game = new Game(server, engine);
-
-			return game;
-		}
-
-		public IGame LoadGame(string gameDll, string gameDir, string saveFile)
-		{
-			var assembly = LoadGameAssembly(gameDll);
-
-			var engine = (GameEngine)assembly.CreateInstance("MyArea.MyEngine", false, BindingFlags.Public | BindingFlags.Instance, null, new object[] { gameDir }, null, null);
-
-			engine.Load(saveFile);
 
 			var server = new GameServer(engine);
 

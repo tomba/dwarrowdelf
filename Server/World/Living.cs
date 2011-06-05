@@ -527,6 +527,11 @@ namespace Dwarrowdelf.Server
 				ObjectID = this.ObjectID,
 				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
 				Location = this.Location,
+
+				CurrentAction = this.CurrentAction,
+				ActionTicksLeft = this.ActionTicksLeft,
+				ActionUserID = this.ActionUserID,
+
 				Properties = base.SerializeProperties(),
 			};
 

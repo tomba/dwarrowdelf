@@ -36,6 +36,10 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
+			this.CurrentAction = data.CurrentAction;
+			this.ActionTicksLeft = data.ActionTicksLeft;
+			this.ActionUserID = data.ActionUserID;
+
 			this.Description = this.Name;
 		}
 

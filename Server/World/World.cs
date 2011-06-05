@@ -40,17 +40,22 @@ namespace Dwarrowdelf.Server
 
 		Thread m_worldThread;
 
+		[GameProperty]
 		public WorldTickMethod TickMethod { get; private set; }
 
-		public World(WorldTickMethod tickMethod)
+		World()
 		{
-			this.TickMethod = tickMethod;
-
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];
 
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
+		}
+
+		public World(WorldTickMethod tickMethod)
+			: this()
+		{
+			this.TickMethod = tickMethod;
 		}
 
 		public void Initialize(Action initializer)

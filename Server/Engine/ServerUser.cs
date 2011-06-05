@@ -19,6 +19,7 @@ namespace Dwarrowdelf.Server
 		public bool IsCharLoggedIn { get; private set; }
 
 		int m_userID;
+		public int UserID { get { return m_userID; } }
 
 		// this user sees all
 		bool m_seeAll = true;
