@@ -8,7 +8,7 @@ using Dwarrowdelf;
 namespace MyArea
 {
 	[GameObject]
-	class MyUser : ServerUser
+	class MyUser : Player
 	{
 		const int NUM_DWARVES = 5;
 

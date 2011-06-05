@@ -10,7 +10,7 @@ using Dwarrowdelf.Messages;
 namespace Dwarrowdelf.Server
 {
 	[GameObject]
-	public abstract class ServerUser
+	public abstract class Player
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		World m_world;
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 		int m_userID;
 		public int UserID { get { return m_userID; } }
 
-		// does this user sees all
+		// does this player sees all
 		[GameProperty("SeeAll")]
 		bool m_seeAll = true;
 		public bool IsSeeAll { get { return m_seeAll; } }
@@ -42,11 +42,11 @@ namespace Dwarrowdelf.Server
 
 		GameEngine m_engine;
 
-		protected ServerUser()
+		protected Player()
 		{
 		}
 
-		public ServerUser(int userID)
+		public Player(int userID)
 		{
 			m_userID = userID;
 
@@ -67,8 +67,8 @@ namespace Dwarrowdelf.Server
 			m_engine = engine;
 			m_world = m_engine.World;
 
-			trace.Header = String.Format("User({0})", m_userID);
-			trace.TraceInformation("New User");
+			trace.Header = String.Format("Player({0})", m_userID);
+			trace.TraceInformation("New player");
 		}
 
 		public void SetConnection(ServerConnection connection)
@@ -388,29 +388,29 @@ namespace Dwarrowdelf.Server
 		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
 		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
 
-		ServerUser m_user;
+		Player m_player;
 
-		public ChangeHandler(ServerUser user)
+		public ChangeHandler(Player player)
 		{
-			m_user = user;
+			m_player = player;
 		}
 
 		void Send(ServerMessage msg)
 		{
-			m_user.Send(msg);
+			m_player.Send(msg);
 		}
 
 		void Send(IEnumerable<ServerMessage> msgs)
 		{
-			m_user.Send(msgs);
+			m_player.Send(msgs);
 		}
 
 		// Called from the world at the end of work
 		public void HandleEndOfWork()
 		{
-			// if the user sees all, no need to send new terrains/objects
-			if (!m_user.IsSeeAll)
-				HandleNewTerrainsAndObjects(m_user.Controllables);
+			// if the player sees all, no need to send new terrains/objects
+			if (!m_player.IsSeeAll)
+				HandleNewTerrainsAndObjects(m_player.Controllables);
 		}
 
 		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
@@ -551,10 +551,10 @@ namespace Dwarrowdelf.Server
 		public void HandleWorldChange(Change change)
 		{
 			// can any friendly see the change?
-			if (!m_user.IsSeeAll && !CanSeeChange(change, m_user.Controllables))
+			if (!m_player.IsSeeAll && !CanSeeChange(change, m_player.Controllables))
 				return;
 
-			if (!m_user.IsSeeAll)
+			if (!m_player.IsSeeAll)
 			{
 				// We don't collect newly visible terrains/objects on AllVisible maps.
 				// However, we still need to tell about newly created objects that come
@@ -574,7 +574,7 @@ namespace Dwarrowdelf.Server
 			Send(changeMsg);
 
 			// XXX this is getting confusing...
-			if (m_user.IsSeeAll && change is ObjectCreatedChange)
+			if (m_player.IsSeeAll && change is ObjectCreatedChange)
 			{
 				var c = (ObjectCreatedChange)change;
 				var newObject = (BaseGameObject)c.Object;

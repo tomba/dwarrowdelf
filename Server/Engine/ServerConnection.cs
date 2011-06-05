@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 	{
 		IConnection m_connection;
 		bool m_userLoggedIn;
-		ServerUser m_user;
+		Player m_user;
 
 		System.Collections.Concurrent.ConcurrentQueue<Message> m_msgQueue = new System.Collections.Concurrent.ConcurrentQueue<Message>();
 
@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Server
 			else
 				throw new Exception();
 
-			m_user = m_engine.GetUser(userID);
+			m_user = m_engine.GetPlayer(userID);
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll });
 

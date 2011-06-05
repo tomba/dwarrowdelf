@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server
 		volatile bool m_exit = false;
 		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
 
-		List<ServerUser> m_users = new List<ServerUser>();
+		List<Player> m_players = new List<Player>();
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
 
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Server
 			var saveData = LoadWorld(Path.Combine(m_gameDir, saveFile));
 
 			m_world = saveData.World;
-			m_users = saveData.Users;
+			m_players = saveData.Players;
 		}
 
 		void VerifyAccess()
@@ -135,16 +135,16 @@ namespace Dwarrowdelf.Server
 		void OnTickOnGoing()
 		{
 			// XXX We should catch ProceedTurnReceived directly, and do this there
-			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_users.Count > 0 && m_users.All(u => u.ProceedTurnReceived))
+			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_players.Count > 0 && m_players.All(u => u.ProceedTurnReceived))
 				this.World.SetForceMove();
 		}
 
 		bool _IsTimeToStartTick()
 		{
-			if (m_config.RequireUser && m_users.Count == 0)
+			if (m_config.RequireUser && m_players.Count == 0)
 				return false;
 
-			if (m_config.RequireControllables && !m_users.Any(u => u.Controllables.Count > 0))
+			if (m_config.RequireControllables && !m_players.Any(u => u.Controllables.Count > 0))
 				return false;
 
 			return true;
@@ -207,45 +207,45 @@ namespace Dwarrowdelf.Server
 
 
 		// XXX
-		void AddUser(ServerUser user)
+		void AddPlayer(Player player)
 		{
 			VerifyAccess();
-			m_users.Add(user);
+			m_players.Add(player);
 
 			if (IsTimeToStartTick())
 				this.World.SetOkToStartTick();
 		}
 
-		void RemoveUser(ServerUser user)
+		void RemovePlayer(Player player)
 		{
 			VerifyAccess();
-			bool ok = m_users.Remove(user);
+			bool ok = m_players.Remove(player);
 			Debug.Assert(ok);
 		}
 
-		public ServerUser GetUser(int userID)
+		public Player GetPlayer(int userID)
 		{
-			ServerUser user;
+			Player player;
 
-			user = m_users.SingleOrDefault(u => u.UserID == userID);
+			player = m_players.SingleOrDefault(u => u.UserID == userID);
 
-			if (user == null)
+			if (player == null)
 			{
-				trace.TraceInformation("Creating new user {0}", userID);
-				user = CreateUser(userID);
-				AddUser(user);
+				trace.TraceInformation("Creating new player {0}", userID);
+				player = CreatePlayer(userID);
+				AddPlayer(player);
 			}
 			else
 			{
-				trace.TraceInformation("Found existing user {0}", userID);
+				trace.TraceInformation("Found existing player {0}", userID);
 			}
 
-			user.Init(this);
+			player.Init(this);
 
-			return user;
+			return player;
 		}
 
-		public abstract ServerUser CreateUser(int userID);
+		public abstract Player CreatePlayer(int userID);
 
 		public void Save()
 		{
@@ -259,7 +259,7 @@ namespace Dwarrowdelf.Server
 			var saveData = new SaveData()
 			{
 				World = this.World,
-				Users = m_users,
+				Players = m_players,
 			};
 
 			SaveWorld(saveData, Path.Combine(m_gameDir, saveFile));
@@ -308,7 +308,7 @@ namespace Dwarrowdelf.Server
 		class SaveData
 		{
 			public World World;
-			public List<ServerUser> Users;
+			public List<Player> Players;
 		}
 	}
 }

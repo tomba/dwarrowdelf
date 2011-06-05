@@ -23,7 +23,7 @@ namespace MyArea
 		}
 
 
-		public override ServerUser CreateUser(int userID)
+		public override Player CreatePlayer(int userID)
 		{
 			return new MyUser(userID);
 		}
