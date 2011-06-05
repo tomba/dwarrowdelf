@@ -728,7 +728,7 @@ namespace Dwarrowdelf.Client
 
 		private void EnterGame_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.User == null || GameData.Data.User.IsCharConnected)
+			if (GameData.Data.User == null || GameData.Data.User.IsPlayerInGame)
 				return;
 
 			EnterGame();
@@ -736,7 +736,7 @@ namespace Dwarrowdelf.Client
 
 		private void ExitGame_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.User == null || !GameData.Data.User.IsCharConnected)
+			if (GameData.Data.User == null || !GameData.Data.User.IsPlayerInGame)
 				return;
 
 			ExitGame();
@@ -772,7 +772,7 @@ namespace Dwarrowdelf.Client
 
 			GameData.Data.User = user;
 
-			if (!m_autoEnterGame)
+			if (user.IsPlayerInGame || !m_autoEnterGame)
 			{
 				CloseLoginDialog();
 				return;

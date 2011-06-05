@@ -55,6 +55,11 @@ namespace Dwarrowdelf.Client
 		Random m_random = new Random();
 		public Random Random { get { return m_random; } }
 
+		public void SetTick(int tick)
+		{
+			this.TickNumber = tick;
+		}
+
 		public void HandleChange(TickStartChange change)
 		{
 			this.TickNumber = change.TickNumber;

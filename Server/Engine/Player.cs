@@ -13,11 +13,16 @@ namespace Dwarrowdelf.Server
 	public abstract class Player
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
+
+		GameEngine m_engine;
 		World m_world;
+
+		ServerConnection m_connection;
 
 		public World World { get { return m_world; } }
 
-		public bool IsCharLoggedIn { get; private set; }
+		[GameProperty]
+		public bool IsPlayerInGame { get; private set; }
 
 		[GameProperty("UserID")]
 		int m_userID;
@@ -32,15 +37,11 @@ namespace Dwarrowdelf.Server
 		List<Living> m_controllables;
 		public ReadOnlyCollection<Living> Controllables { get; private set; }
 
-		ServerConnection m_connection;
-
 		IPRunner m_ipRunner;
 
 		ChangeHandler m_changeHandler;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
-
-		GameEngine m_engine;
 
 		protected Player()
 		{
@@ -82,10 +83,17 @@ namespace Dwarrowdelf.Server
 			m_world.WorkEnded += HandleEndOfWork;
 			m_world.WorldChanged += HandleWorldChange;
 
+			Send(new Messages.GameStatusMessage() { Tick = this.World.TickNumber });
+
 			if (m_seeAll)
 			{
 				foreach (var env in m_world.Environments)
 					env.SerializeTo(Send);
+			}
+
+			if (IsPlayerInGame)
+			{
+				EnterGame();
 			}
 		}
 
@@ -93,7 +101,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("UnsetConnection");
 
-			if (this.IsCharLoggedIn)
+			if (this.IsPlayerInGame)
 				ExitGame();
 
 			m_world.WorkEnded -= HandleEndOfWork;
@@ -105,17 +113,13 @@ namespace Dwarrowdelf.Server
 
 		void EnterGame()
 		{
-			Debug.Assert(!this.IsCharLoggedIn);
+			Debug.Assert(this.IsPlayerInGame);
 
-			var controllables = CreateControllables();
-			foreach (var l in controllables)
+			foreach (var l in m_controllables)
 			{
 				l.Destructed += OnPlayerDestructed;
-				m_controllables.Add(l);
 			}
 
-			this.IsCharLoggedIn = true;
-			Send(new Messages.EnterGameReplyMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
@@ -131,12 +135,15 @@ namespace Dwarrowdelf.Server
 
 		void ExitGame()
 		{
-			Debug.Assert(this.IsCharLoggedIn);
+			Debug.Assert(this.IsPlayerInGame);
+
+			foreach (var l in m_controllables)
+			{
+				l.Destructed -= OnPlayerDestructed;
+			}
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
 			Send(new Messages.ExitGameReplyMessage());
-
-			this.IsCharLoggedIn = false;
 		}
 
 		public void Send(ServerMessage msg)
@@ -258,9 +265,19 @@ namespace Dwarrowdelf.Server
 
 		void LogOnChar(EnterGameRequestMessage msg)
 		{
+			if (this.IsPlayerInGame)
+				throw new Exception();
+
 			string name = msg.Name;
 
 			trace.TraceInformation("LogOnChar {0}", name);
+
+			var controllables = CreateControllables();
+			m_controllables.AddRange(controllables);
+
+			this.IsPlayerInGame = true;
+
+			Send(new Messages.EnterGameReplyMessage());
 
 			EnterGame();
 		}
@@ -268,8 +285,9 @@ namespace Dwarrowdelf.Server
 		void ReceiveMessage(ExitGameRequestMessage msg)
 		{
 			trace.TraceInformation("LogOffChar");
+			trace.TraceInformation("XXX logoffchar doesn't do anything");
 
-			ExitGame();
+			//ExitGame();
 		}
 
 		public bool StartTurnSent { get; private set; }

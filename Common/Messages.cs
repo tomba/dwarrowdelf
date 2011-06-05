@@ -48,6 +48,7 @@ namespace Dwarrowdelf.Messages
 	public class LogOnReplyMessage : ServerMessage
 	{
 		public bool IsSeeAll { get; set; }
+		public bool IsPlayerInGame { get; set; }
 	}
 
 	[Serializable]
@@ -222,4 +223,14 @@ namespace Dwarrowdelf.Messages
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}
 
+	[Serializable]
+	public class GameStatusMessage : ServerMessage
+	{
+		public int Tick;
+
+		public override string ToString()
+		{
+			return "GameStatusMessage";
+		}
+	}
 }

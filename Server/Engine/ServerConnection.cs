@@ -125,7 +125,7 @@ namespace Dwarrowdelf.Server
 
 			m_user = m_engine.GetPlayer(userID);
 
-			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll });
+			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll, IsPlayerInGame = m_user.IsPlayerInGame });
 
 			m_user.SetConnection(this);
 		}

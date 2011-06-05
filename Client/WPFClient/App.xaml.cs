@@ -90,6 +90,8 @@ namespace Dwarrowdelf.Client
 		{
 			var files = Directory.EnumerateFiles(gameDir);
 			var list = new System.Collections.Generic.List<string>(files);
+			if (list.Count == 0)
+				return null;
 			list.Sort();
 			var last = list[list.Count - 1];
 			return Path.GetFileName(last);

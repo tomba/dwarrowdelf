@@ -12,11 +12,10 @@ namespace Dwarrowdelf.Client
 		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
 		Dictionary<Type, Action<Change>> m_changeHandlerMap = new Dictionary<Type, Action<Change>>();
 
-		public bool IsCharConnected { get; private set; }
-
 		ClientConnection m_connection;
 
 		public bool IsSeeAll { get; private set; }
+		public bool IsPlayerInGame { get; private set; }
 
 		World m_world;
 
@@ -24,11 +23,12 @@ namespace Dwarrowdelf.Client
 
 		public event Action ExitedGameEvent;
 
-		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
+		public ClientUser(ClientConnection connection, World world, bool isSeeAll, bool isPlayerInGame)
 		{
 			m_connection = connection;
 			m_world = world;
 			this.IsSeeAll = isSeeAll;
+			this.IsPlayerInGame = isPlayerInGame;
 		}
 
 		public void SendEnterGame(Action callback)
@@ -63,9 +63,9 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(EnterGameReplyMessage msg)
 		{
-			Debug.Assert(!this.IsCharConnected);
+			Debug.Assert(!this.IsPlayerInGame);
 
-			this.IsCharConnected = true;
+			this.IsPlayerInGame = true;
 
 			m_enterGameCallback();
 		}
@@ -83,9 +83,9 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(ExitGameReplyMessage msg)
 		{
-			Debug.Assert(this.IsCharConnected);
+			Debug.Assert(this.IsPlayerInGame);
 
-			this.IsCharConnected = false;
+			this.IsPlayerInGame = false;
 
 			if (ExitedGameEvent != null)
 				ExitedGameEvent();
@@ -95,6 +95,10 @@ namespace Dwarrowdelf.Client
 			//App.MainWindow.FollowObject = null;
 		}
 
+		void HandleMessage(GameStatusMessage msg)
+		{
+			m_world.SetTick(msg.Tick);
+		}
 
 		void HandleMessage(ObjectDataMessage msg)
 		{
