@@ -272,7 +272,10 @@ namespace Dwarrowdelf.Server
 		{
 			try
 			{
-				if (this.StartTurnSent == false || this.ProceedTurnReceived == true)
+				if (this.StartTurnSent == false)
+					throw new Exception();
+
+				if (this.ProceedTurnReceived == true)
 					throw new Exception();
 
 				foreach (var tuple in msg.Actions)
