@@ -103,14 +103,6 @@ namespace Dwarrowdelf.Server
 			m_rwLock.ExitReadLock();
 		}
 
-		// thread safe
-		public void SignalWorld()
-		{
-			trace.TraceVerbose("SignalWorld");
-			//m_worldSignal.Set(); // QQQ
-		}
-
-
 		public void AddChange(Change change)
 		{
 			VerifyAccess();

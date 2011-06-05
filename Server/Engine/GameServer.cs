@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Server
 			m_engine = engine;
 		}
 
-		public void RunServer(EventWaitHandle serverStartWaitHandle)
+		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
 			Debug.Print("Start");
 
@@ -95,6 +95,7 @@ namespace Dwarrowdelf.Server
 		static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			Debug.Print("tuli exc");
+			Debugger.Break();
 		}
 	}
 }

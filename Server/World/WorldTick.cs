@@ -38,31 +38,24 @@ namespace Dwarrowdelf.Server
 			return m_currentLivingIndex < m_livings.List.Count;
 		}
 
-		bool m_okToStartTick = false;
+		volatile bool m_okToStartTick = false;
+		volatile bool m_forceMove = false;
+
+		/// <summary>
+		/// Thread safe
+		/// </summary>
 		public void SetOkToStartTick()
 		{
 			m_okToStartTick = true;
-			Thread.MemoryBarrier();
 		}
 
-		bool IsTimeToStartTick()
-		{
-			VerifyAccess();
-
-			Debug.Assert(m_state == WorldState.Idle);
-
-			if (!m_okToStartTick)
-				return false;
-
-			return true;
-		}
-
-		bool m_forceMove = false;
+		/// <summary>
+		/// Thread safe
+		/// </summary>
 		public void SetForceMove()
 		{
 			trace.TraceVerbose("SetForceMove");
 			m_forceMove = true;
-			Thread.MemoryBarrier();
 			// Race condition. The living may have done its move when m_forceMove is used.
 		}
 
@@ -87,7 +80,7 @@ namespace Dwarrowdelf.Server
 			{
 				PreTickWork();
 
-				if (IsTimeToStartTick())
+				if (m_okToStartTick)
 					StartTick();
 				else
 					again = false;

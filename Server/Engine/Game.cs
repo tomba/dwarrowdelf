@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Server
 
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
-			m_server.RunServer(serverStartWaitHandle);
+			m_server.Run(serverStartWaitHandle);
 		}
 
 		public void Stop()

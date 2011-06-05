@@ -1,14 +1,43 @@
 ﻿
+Sequential:
+
 TickStart
 
 	AI(high)
+
+	foreach (l in livings)
+	{
+		TurnStart(l)
+
+		WaitAction
+
+		AI(low)
+
+		Run(l)
+
+		TurnEnd(l)
+	}
+
+TickEnd
+
+
+
+Simultaneous:
+
+TickStart
+
+	AI(high)
+
 	TurnStart
 
-	...
+	WaitActions
 
-	AI(low)
+	foreach (l in livings)
+	{
+		AI(low)
 
-	Run
+		Run(l)
+	}
 
 	TurnEnd
 

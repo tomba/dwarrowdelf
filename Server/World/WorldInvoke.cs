@@ -11,13 +11,13 @@ namespace Dwarrowdelf.Server
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			m_preTickInvokeList.BeginInvoke(callback, args);
-			SignalWorld();
+			//SignalWorld(); // XXX
 		}
 
 		public void BeginInvokeInstant(Delegate callback, params object[] args)
 		{
 			m_instantInvokeList.BeginInvoke(callback, args);
-			SignalWorld();
+			//SignalWorld(); // XXX
 		}
 
 		class InvokeList
@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Server
 				lock (m_invokeList)
 					m_invokeList.Add(new InvokeInfo() { Action = callback, Args = args });
 
-				m_world.SignalWorld();
+				//m_world.SignalWorld(); // XXX
 			}
 
 			public bool HasInvokeWork

@@ -8,6 +8,23 @@ using System.Threading;
 
 namespace Dwarrowdelf.Server
 {
+	[Serializable]
+	class GameConfig
+	{
+		// Require an user to be in game for ticks to proceed
+		public bool RequireUser;
+
+		// Require an controllables to be in game for ticks to proceed
+		public bool RequireControllables;
+
+		// Maximum time for one living to make its move. After this time has passed, the living
+		// will be skipped
+		public TimeSpan MaxMoveTime;
+
+		// Minimum time between ticks. Ticks will never proceed faster than this.
+		public TimeSpan MinTickTime;
+	}
+
 	public abstract class GameEngine
 	{
 		string m_gameDir;
@@ -20,23 +37,6 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
 
-		[Serializable]
-		class GameConfig
-		{
-			// Require an user to be in game for ticks to proceed
-			public bool RequireUser;
-
-			// Require an controllables to be in game for ticks to proceed
-			public bool RequireControllables;
-
-			// Maximum time for one living to make its move. After this time has passed, the living
-			// will be skipped
-			public TimeSpan MaxMoveTime;
-
-			// Minimum time between ticks. Ticks will never proceed faster than this.
-			public TimeSpan MinTickTime;
-		}
-
 		[GameProperty]
 		GameConfig m_config = new GameConfig
 		{
@@ -46,15 +46,10 @@ namespace Dwarrowdelf.Server
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
 
-		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
-
 		/// <summary>
 		/// Timer is used to start the tick after MinTickTime
 		/// </summary>
 		Timer m_minTickTimer;
-
-
-		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 
 		/// <summary>
 		/// Timer is used to timeout player turn after MaxMoveTime
@@ -62,7 +57,12 @@ namespace Dwarrowdelf.Server
 		Timer m_maxMoveTimer;
 
 		public World World { get { return m_world; } }
+		bool UseMinTickTime { get { return m_config.MinTickTime != TimeSpan.Zero; } }
+		bool UseMaxMoveTime { get { return m_config.MaxMoveTime != TimeSpan.Zero; } }
 
+		/// <summary>
+		/// Used for VerifyAccess
+		/// </summary>
 		Thread m_gameThread;
 
 		protected GameEngine(string gameDir)
@@ -85,13 +85,6 @@ namespace Dwarrowdelf.Server
 		{
 			m_minTickTimer = new Timer(this.MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this.MaxMoveTimerCallback);
-		}
-
-		public void Stop()
-		{
-			m_exit = true;
-			Thread.MemoryBarrier();
-			SignalWorld();
 		}
 
 		void VerifyAccess()
@@ -121,6 +114,13 @@ namespace Dwarrowdelf.Server
 			this.World.TickOngoingEvent -= OnTickOnGoing;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStartEvent -= OnTurnStart;
+		}
+
+		public void Stop()
+		{
+			m_exit = true;
+			Thread.MemoryBarrier();
+			SignalWorld();
 		}
 
 		void OnTickOnGoing()

@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Server
 			GameServer server;
 
 			server = new GameServer(game);
-			server.RunServer(null);
+			server.Run(null);
 
 			KeyLoop(game);
 

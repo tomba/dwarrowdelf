@@ -14,14 +14,12 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 			m_livings.Add(living);
-			SignalWorld();
 		}
 
 		internal void RemoveLiving(Living living)
 		{
 			VerifyAccess();
 			m_livings.Remove(living);
-			SignalWorld();
 		}
 	}
 }
