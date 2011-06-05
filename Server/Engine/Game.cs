@@ -8,25 +8,25 @@ using System.Reflection;
 
 namespace Dwarrowdelf.Server
 {
-	class Game : MarshalByRefObject, IGame
+	public class Game : MarshalByRefObject, IGame
 	{
-		GameServer m_server;
-		GameEngine m_engine;
+		public GameServer Server { get; private set; }
+		public GameEngine Engine { get; private set; }
 
 		public Game(GameServer server, GameEngine engine)
 		{
-			m_server = server;
-			m_engine = engine;
+			this.Server = server;
+			this.Engine = engine;
 		}
 
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
-			m_server.Run(serverStartWaitHandle);
+			this.Server.Run(serverStartWaitHandle);
 		}
 
 		public void Stop()
 		{
-			m_server.Stop();
+			this.Server.Stop();
 		}
 	}
 

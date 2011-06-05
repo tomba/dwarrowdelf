@@ -34,24 +34,15 @@ namespace Dwarrowdelf.Server
 				saveFile = GetLatestSaveFile(gameDir);
 			}
 
-			GameEngine game;
 
-			if (saveFile == null)
-			{
-				game = new MyArea.MyEngine(gameDir);
-			}
-			else
-			{
-				game = new MyArea.MyEngine(gameDir, saveFile);
-			}
+			var gf = new GameFactory();
+			// Typecast to Game to allow direct manipulation
+			var game = (Game)gf.CreateGameAndServer("MyArea.dll", "save");
 
-			GameServer server;
+			var keyThread = new Thread(KeyMain);
+			keyThread.Start(game);
 
-			server = new GameServer(game);
-			server.Run(null);
-
-			KeyLoop(game);
-
+			game.Run(null);
 		}
 
 		static string GetLatestSaveFile(string gameDir)
@@ -63,8 +54,10 @@ namespace Dwarrowdelf.Server
 			return Path.GetFileName(last);
 		}
 
-		static void KeyLoop(GameEngine game)
+		static void KeyMain(object _game)
 		{
+			var game = (Game)_game;
+
 			Console.WriteLine("q - quit, s - signal, p - enable singlestep, r - disable singlestep, . - step");
 
 			while (true)
@@ -74,11 +67,13 @@ namespace Dwarrowdelf.Server
 				switch (key)
 				{
 					case ConsoleKey.Q:
-						//game.Stop();
+						Console.WriteLine("Quit");
+						game.Stop();
 						return;
 
 					case ConsoleKey.S:
-						//game.World.SignalWorld();
+						Console.WriteLine("Signal");
+						game.Engine.SignalWorld();
 						break;
 
 					case ConsoleKey.P:

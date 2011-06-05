@@ -33,7 +33,8 @@ namespace Dwarrowdelf.Server
 
 			Debug.Print("The server is ready.");
 
-			serverStartWaitHandle.Set();
+			if (serverStartWaitHandle != null)
+				serverStartWaitHandle.Set();
 
 			m_engine.Run();
 
