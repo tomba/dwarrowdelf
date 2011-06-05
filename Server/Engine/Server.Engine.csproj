@@ -60,7 +60,7 @@
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\World\World.csproj">
+    <ProjectReference Include="..\World\Server.World.csproj">
       <Project>{0C31C7C2-586F-4F67-8225-1C09E816695B}</Project>
       <Name>World</Name>
     </ProjectReference>
