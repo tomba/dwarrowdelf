@@ -123,7 +123,12 @@ namespace Dwarrowdelf.Server
 			else
 				throw new Exception();
 
-			m_user = m_engine.GetPlayer(userID);
+			var player = m_engine.FindPlayer(userID);
+
+			if (player == null)
+				player = m_engine.CreatePlayer(userID);
+
+			m_user = player;
 
 			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll, IsPlayerInGame = m_user.IsPlayerInGame });
 

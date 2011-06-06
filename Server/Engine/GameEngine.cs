@@ -94,6 +94,8 @@ namespace Dwarrowdelf.Server
 
 			m_world = saveData.World;
 			m_players = saveData.Players;
+			foreach (var p in m_players)
+				p.Init(this);
 		}
 
 		void VerifyAccess()
@@ -223,29 +225,28 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(ok);
 		}
 
-		public Player GetPlayer(int userID)
+		public Player FindPlayer(int userID)
 		{
-			Player player;
+			return m_players.SingleOrDefault(u => u.UserID == userID);
+		}
 
-			player = m_players.SingleOrDefault(u => u.UserID == userID);
+		public Player CreatePlayer(int userID)
+		{
+			var player = FindPlayer(userID);
 
-			if (player == null)
-			{
-				trace.TraceInformation("Creating new player {0}", userID);
-				player = CreatePlayer(userID);
-				AddPlayer(player);
-			}
-			else
-			{
-				trace.TraceInformation("Found existing player {0}", userID);
-			}
+			if (player != null)
+				throw new Exception();
 
+			trace.TraceInformation("Creating new player {0}", userID);
+			player = new Player(userID);
 			player.Init(this);
+
+			AddPlayer(player);
 
 			return player;
 		}
 
-		public abstract Player CreatePlayer(int userID);
+		public abstract Living[] CreateControllables(Player player);
 
 		public void Save()
 		{

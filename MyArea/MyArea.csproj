@@ -68,7 +68,6 @@
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />
     <Compile Include="MyEngine.cs" />
-    <Compile Include="MyUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

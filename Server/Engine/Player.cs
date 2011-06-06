@@ -10,7 +10,7 @@ using Dwarrowdelf.Messages;
 namespace Dwarrowdelf.Server
 {
 	[GameObject]
-	public abstract class Player
+	public class Player
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 
@@ -69,7 +69,6 @@ namespace Dwarrowdelf.Server
 			m_world = m_engine.World;
 
 			trace.Header = String.Format("Player({0})", m_userID);
-			trace.TraceInformation("New player");
 		}
 
 		public void SetConnection(ServerConnection connection)
@@ -122,8 +121,6 @@ namespace Dwarrowdelf.Server
 
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
-
-		protected abstract Living[] CreateControllables();
 
 		void OnPlayerDestructed(BaseGameObject ob)
 		{
@@ -272,7 +269,7 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("LogOnChar {0}", name);
 
-			var controllables = CreateControllables();
+			var controllables = m_engine.CreateControllables(this);
 			m_controllables.AddRange(controllables);
 
 			this.IsPlayerInGame = true;
