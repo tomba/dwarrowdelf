@@ -23,12 +23,11 @@ namespace Dwarrowdelf.Client
 
 		public event Action ExitedGameEvent;
 
-		public ClientUser(ClientConnection connection, World world, bool isSeeAll, bool isPlayerInGame)
+		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
 		{
 			m_connection = connection;
 			m_world = world;
 			this.IsSeeAll = isSeeAll;
-			this.IsPlayerInGame = isPlayerInGame;
 		}
 
 		public void SendEnterGame(Action callback)
@@ -93,11 +92,6 @@ namespace Dwarrowdelf.Client
 			GameData.Data.World.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
 			//App.MainWindow.FollowObject = null;
-		}
-
-		void HandleMessage(GameStatusMessage msg)
-		{
-			m_world.SetTick(msg.Tick);
 		}
 
 		void HandleMessage(ObjectDataMessage msg)

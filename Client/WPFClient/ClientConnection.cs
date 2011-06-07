@@ -163,7 +163,8 @@ namespace Dwarrowdelf.Client
 			trace.Header = String.Format("ClientConnection({0})", m_logOnName);
 			trace.TraceInformation("HandleLoginReplyMessage");
 
-			m_user = new ClientUser(this, m_world, msg.IsSeeAll, msg.IsPlayerInGame);
+			m_user = new ClientUser(this, m_world, msg.IsSeeAll);
+			GameData.Data.World.SetTick(msg.Tick);
 
 			m_logOnCallback(m_user, null);
 

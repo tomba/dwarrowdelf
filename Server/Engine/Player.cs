@@ -22,7 +22,11 @@ namespace Dwarrowdelf.Server
 		public World World { get { return m_world; } }
 
 		[GameProperty]
+		public bool HasControllablesBeenCreated { get; private set; }
+
 		public bool IsPlayerInGame { get; private set; }
+
+		public bool IsConnected { get { return m_connection != null; } }
 
 		[GameProperty("UserID")]
 		int m_userID;
@@ -60,6 +64,10 @@ namespace Dwarrowdelf.Server
 		void OnDeserialized()
 		{
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
+
+			foreach (var l in this.Controllables)
+				l.Destructed += OnPlayerDestructed; // XXX remove if player deleted
+
 			m_changeHandler = new ChangeHandler(this);
 		}
 
@@ -71,55 +79,28 @@ namespace Dwarrowdelf.Server
 			trace.Header = String.Format("Player({0})", m_userID);
 		}
 
-		public void SetConnection(ServerConnection connection)
+		public ServerConnection Connection
 		{
-			trace.TraceInformation("SetConnection");
-
-			m_connection = connection;
-
-			m_ipRunner = new IPRunner(m_world, Send);
-
-			m_world.WorkEnded += HandleEndOfWork;
-			m_world.WorldChanged += HandleWorldChange;
-
-			Send(new Messages.GameStatusMessage() { Tick = this.World.TickNumber });
-
-			if (m_seeAll)
+			get { return m_connection; }
+			set
 			{
-				foreach (var env in m_world.Environments)
-					env.SerializeTo(Send);
+				m_connection = value;
+
+				if (m_connection != null)
+				{
+					m_world.WorkEnded += HandleEndOfWork;
+					m_world.WorldChanged += HandleWorldChange;
+					m_ipRunner = new IPRunner(m_world, Send);
+				}
+				else
+				{
+					m_world.WorkEnded -= HandleEndOfWork;
+					m_world.WorldChanged -= HandleWorldChange;
+					m_ipRunner = null;
+
+					this.IsPlayerInGame = false;
+				}
 			}
-
-			if (IsPlayerInGame)
-			{
-				EnterGame();
-			}
-		}
-
-		public void UnsetConnection()
-		{
-			trace.TraceInformation("UnsetConnection");
-
-			if (this.IsPlayerInGame)
-				ExitGame();
-
-			m_world.WorkEnded -= HandleEndOfWork;
-			m_world.WorldChanged -= HandleWorldChange;
-
-			m_ipRunner = null;
-			m_connection = null;
-		}
-
-		void EnterGame()
-		{
-			Debug.Assert(this.IsPlayerInGame);
-
-			foreach (var l in m_controllables)
-			{
-				l.Destructed += OnPlayerDestructed;
-			}
-
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
 		void OnPlayerDestructed(BaseGameObject ob)
@@ -128,19 +109,6 @@ namespace Dwarrowdelf.Server
 			m_controllables.Remove(living);
 			living.Destructed -= OnPlayerDestructed;
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
-		}
-
-		void ExitGame()
-		{
-			Debug.Assert(this.IsPlayerInGame);
-
-			foreach (var l in m_controllables)
-			{
-				l.Destructed -= OnPlayerDestructed;
-			}
-
-			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
-			Send(new Messages.ExitGameReplyMessage());
 		}
 
 		public void Send(ServerMessage msg)
@@ -257,34 +225,54 @@ namespace Dwarrowdelf.Server
 		/* functions for livings */
 		void ReceiveMessage(EnterGameRequestMessage msg)
 		{
-			m_world.BeginInvoke(new Action<EnterGameRequestMessage>(LogOnChar), msg);
+			if (this.HasControllablesBeenCreated)
+			{
+				Send(new Messages.EnterGameReplyMessage());
+				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+
+				this.IsPlayerInGame = true;
+				m_engine.CheckForStartTick();
+			}
+			else
+			{
+				m_world.BeginInvoke(new Action<EnterGameRequestMessage>(HandleEnterGame), msg);
+			}
 		}
 
-		void LogOnChar(EnterGameRequestMessage msg)
+		void HandleEnterGame(EnterGameRequestMessage msg)
 		{
-			if (this.IsPlayerInGame)
-				throw new Exception();
-
 			string name = msg.Name;
 
-			trace.TraceInformation("LogOnChar {0}", name);
+			trace.TraceInformation("EnterGameRequestMessage {0}", name);
 
-			var controllables = m_engine.CreateControllables(this);
-			m_controllables.AddRange(controllables);
+			if (!this.HasControllablesBeenCreated)
+			{
+				trace.TraceInformation("Creating controllables");
+				var controllables = m_engine.CreateControllables(this);
+				m_controllables.AddRange(controllables);
+
+				foreach (var l in m_controllables)
+					l.Destructed += OnPlayerDestructed;
+
+				this.HasControllablesBeenCreated = true;
+			}
+
+			Send(new Messages.EnterGameReplyMessage());
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
 			this.IsPlayerInGame = true;
 
-			Send(new Messages.EnterGameReplyMessage());
-
-			EnterGame();
+			m_engine.CheckForStartTick();
 		}
 
 		void ReceiveMessage(ExitGameRequestMessage msg)
 		{
-			trace.TraceInformation("LogOffChar");
-			trace.TraceInformation("XXX logoffchar doesn't do anything");
+			trace.TraceInformation("ExitGameRequestMessage");
 
-			//ExitGame();
+			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
+			Send(new Messages.ExitGameReplyMessage());
+
+			this.IsPlayerInGame = false;
 		}
 
 		public bool StartTurnSent { get; private set; }

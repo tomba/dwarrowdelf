@@ -11,11 +11,11 @@ namespace Dwarrowdelf.Server
 	[Serializable]
 	class GameConfig
 	{
-		// Require an user to be in game for ticks to proceed
-		public bool RequireUser;
+		// Require a player to be connected for ticks to proceed
+		public bool RequirePlayer;
 
-		// Require an controllables to be in game for ticks to proceed
-		public bool RequireControllables;
+		// Require a player to be in game for ticks to proceed
+		public bool RequirePlayerInGame;
 
 		// Maximum time for one living to make its move. After this time has passed, the living
 		// will be skipped
@@ -40,8 +40,8 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		GameConfig m_config = new GameConfig
 		{
-			RequireUser = true,
-			RequireControllables = false,
+			RequirePlayer = true,
+			RequirePlayerInGame = false,
 			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
@@ -143,11 +143,17 @@ namespace Dwarrowdelf.Server
 
 		bool _IsTimeToStartTick()
 		{
-			if (m_config.RequireUser && m_players.Count == 0)
-				return false;
+			if (m_config.RequirePlayer)
+			{
+				if (m_players.Count == 0 || m_players.All(p => p.IsConnected == false))
+					return false;
+			}
 
-			if (m_config.RequireControllables && !m_players.Any(u => u.Controllables.Count > 0))
-				return false;
+			if (m_config.RequirePlayerInGame)
+			{
+				if (!m_players.Any(u => u.IsPlayerInGame))
+					return false;
+			}
 
 			return true;
 		}
@@ -157,7 +163,13 @@ namespace Dwarrowdelf.Server
 			bool r = _IsTimeToStartTick();
 			trace.TraceVerbose("IsTimeToStartTick = {0}", r);
 			return r;
+		}
 
+		public void CheckForStartTick()
+		{
+			// XXX feels like a hack
+			if (IsTimeToStartTick())
+				this.World.SetOkToStartTick();
 		}
 
 		void OnTickEnded()
@@ -168,8 +180,7 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				if (IsTimeToStartTick())
-					this.World.SetOkToStartTick();
+				CheckForStartTick();
 			}
 		}
 
@@ -213,9 +224,6 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 			m_players.Add(player);
-
-			if (IsTimeToStartTick())
-				this.World.SetOkToStartTick();
 		}
 
 		void RemovePlayer(Player player)

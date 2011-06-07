@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Server
 
 				if (m_userLoggedIn)
 				{
-					m_user.UnsetConnection();
+					m_user.Connection = null;
 					m_user = null;
 					m_userLoggedIn = false;
 				}
@@ -116,6 +116,22 @@ namespace Dwarrowdelf.Server
 
 			m_userLoggedIn = true;
 
+			m_user = GetPlayer(name);
+			m_user.Connection = this;
+
+			Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll, Tick = m_engine.World.TickNumber });
+
+			if (m_user.IsSeeAll)
+			{
+				foreach (var env in m_engine.World.Environments)
+					env.SerializeTo(Send);
+			}
+
+			m_engine.CheckForStartTick(); // XXX
+		}
+
+		Player GetPlayer(string name)
+		{
 			int userID; // from universal user object
 
 			if (name == "tomba")
@@ -128,21 +144,16 @@ namespace Dwarrowdelf.Server
 			if (player == null)
 				player = m_engine.CreatePlayer(userID);
 
-			m_user = player;
-
-			m_connection.Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll, IsPlayerInGame = m_user.IsPlayerInGame });
-
-			m_user.SetConnection(this);
+			return player;
 		}
 
 		void HandleLogOutMessage(LogOutRequestMessage msg)
 		{
 			trace.TraceInformation("HandleLogOutMessage");
 
-			m_user.UnsetConnection();
-
 			Send(new Messages.LogOutReplyMessage());
 
+			m_user.Connection = null;
 			m_user = null;
 			m_userLoggedIn = false;
 
