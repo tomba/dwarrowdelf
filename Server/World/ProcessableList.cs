@@ -34,6 +34,10 @@ namespace Dwarrowdelf.Server
 			this.List = m_list.AsReadOnly();
 			this.AddList = m_addList.AsReadOnly();
 			this.RemoveList = m_removeList.AsReadOnly();
+
+			// I believe removelist should always be empty when game was saved
+			if (this.RemoveList.Count > 0)
+				throw new Exception();
 		}
 
 		public void Add(T item)
