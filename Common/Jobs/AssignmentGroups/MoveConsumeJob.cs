@@ -8,8 +8,10 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
+	[GameObject(UseRef = true)]
 	public class MoveConsumeJob : StaticAssignmentGroup
 	{
+		[GameProperty("Item")]
 		readonly IItemObject m_item;
 
 		public MoveConsumeJob(IJob parent, ActionPriority priority, IItemObject item)

@@ -10,13 +10,21 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	public abstract class StaticAssignmentGroup : AssignmentGroup
 	{
+		[GameProperty]
 		ObservableCollection<IAssignment> m_assignments;
 		public ReadOnlyObservableCollection<IAssignment> Assignments { get; private set; }
+		[GameProperty]
 		int m_state;
 
 		protected StaticAssignmentGroup(IJob parent, ActionPriority priority)
 			: base(parent, priority)
 		{
+		}
+
+		[OnGameDeserialized]
+		void OnDeserialized()
+		{
+			this.Assignments = new ReadOnlyObservableCollection<IAssignment>(m_assignments);
 		}
 
 		protected void SetAssignments(IEnumerable<IAssignment> assignments)

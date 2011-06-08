@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Priority = priority;
 		}
 
-		public JobType JobType { get { return JobType.Assignment; } }
+		public JobType JobType { get { return Dwarrowdelf.Jobs.JobType.Assignment; } }
 		[GameProperty]
 		public IJob Parent { get; private set; }
 		[GameProperty]

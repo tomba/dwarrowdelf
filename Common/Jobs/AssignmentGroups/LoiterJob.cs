@@ -11,9 +11,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	[GameObject(UseRef = true)]
 	public class LoiterJob : AssignmentGroup
 	{
-		[GameProperty]
+		[GameProperty("Environment")]
 		readonly IEnvironment m_environment;
-		[GameProperty]
+		[GameProperty("State")]
 		int m_state;
 
 		public LoiterJob(IJob parent, ActionPriority priority, IEnvironment environment)

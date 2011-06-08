@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 	[GameObject(UseRef = true)]
 	public class MoveAssignment : MoveAssignmentBase
 	{
-		[GameProperty]
+		[GameProperty("Dest")]
 		readonly IntPoint3D m_dest;
 
 		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
