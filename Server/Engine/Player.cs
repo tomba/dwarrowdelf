@@ -6,11 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using Dwarrowdelf.Messages;
+using System.ComponentModel;
 
 namespace Dwarrowdelf.Server
 {
 	[GameObject]
-	public class Player
+	public class Player : INotifyPropertyChanged
 	{
 		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 
@@ -21,12 +22,23 @@ namespace Dwarrowdelf.Server
 
 		public World World { get { return m_world; } }
 
-		[GameProperty]
-		public bool HasControllablesBeenCreated { get; private set; }
+		[GameProperty("HasControllablesBeenCreated")]
+		bool m_hasControllablesBeenCreated;
 
-		public bool IsPlayerInGame { get; private set; }
+		bool m_isPlayerInGame;
+		public bool IsPlayerInGame
+		{
+			get { return m_isPlayerInGame; }
 
-		public bool IsConnected { get { return m_connection != null; } }
+			private set
+			{
+				if (m_isPlayerInGame == value)
+					return;
+
+				m_isPlayerInGame = value;
+				Notify("IsPlayerInGame");
+			}
+		}
 
 		[GameProperty("UserID")]
 		int m_userID;
@@ -79,11 +91,16 @@ namespace Dwarrowdelf.Server
 			trace.Header = String.Format("Player({0})", m_userID);
 		}
 
+		public bool IsConnected { get { return m_connection != null; } }
+
 		public ServerConnection Connection
 		{
 			get { return m_connection; }
 			set
 			{
+				if (m_connection == value)
+					return;
+
 				m_connection = value;
 
 				if (m_connection != null)
@@ -100,6 +117,8 @@ namespace Dwarrowdelf.Server
 
 					this.IsPlayerInGame = false;
 				}
+
+				Notify("IsConnected");
 			}
 		}
 
@@ -225,13 +244,12 @@ namespace Dwarrowdelf.Server
 		/* functions for livings */
 		void ReceiveMessage(EnterGameRequestMessage msg)
 		{
-			if (this.HasControllablesBeenCreated)
+			if (m_hasControllablesBeenCreated)
 			{
 				Send(new Messages.EnterGameReplyMessage());
 				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
 				this.IsPlayerInGame = true;
-				m_engine.CheckForStartTick();
 			}
 			else
 			{
@@ -245,7 +263,7 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("EnterGameRequestMessage {0}", name);
 
-			if (!this.HasControllablesBeenCreated)
+			if (!m_hasControllablesBeenCreated)
 			{
 				trace.TraceInformation("Creating controllables");
 				var controllables = m_engine.CreateControllables(this);
@@ -254,15 +272,13 @@ namespace Dwarrowdelf.Server
 				foreach (var l in m_controllables)
 					l.Destructed += OnPlayerDestructed;
 
-				this.HasControllablesBeenCreated = true;
+				m_hasControllablesBeenCreated = true;
 			}
 
 			Send(new Messages.EnterGameReplyMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
 			this.IsPlayerInGame = true;
-
-			m_engine.CheckForStartTick();
 		}
 
 		void ReceiveMessage(ExitGameRequestMessage msg)
@@ -376,6 +392,17 @@ namespace Dwarrowdelf.Server
 		{
 			m_changeHandler.HandleEndOfWork();
 		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+
+		void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
+
 	}
 
 

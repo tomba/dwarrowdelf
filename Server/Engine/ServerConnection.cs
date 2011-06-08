@@ -126,8 +126,6 @@ namespace Dwarrowdelf.Server
 				foreach (var env in m_engine.World.Environments)
 					env.SerializeTo(Send);
 			}
-
-			m_engine.CheckForStartTick(); // XXX
 		}
 
 		Player GetPlayer(string name)

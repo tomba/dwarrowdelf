@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.ComponentModel;
 
 namespace Dwarrowdelf.Server
 {
@@ -32,6 +33,9 @@ namespace Dwarrowdelf.Server
 
 		volatile bool m_exit = false;
 		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
+
+		int m_playersConnected;
+		int m_playersInGame;
 
 		List<Player> m_players = new List<Player>();
 
@@ -93,14 +97,14 @@ namespace Dwarrowdelf.Server
 			var saveData = LoadWorld(Path.Combine(m_gameDir, saveFile));
 
 			m_world = saveData.World;
-			m_players = saveData.Players;
-			foreach (var p in m_players)
-				p.Init(this);
+
+			foreach (var p in saveData.Players)
+				AddPlayer(p);
 		}
 
 		void VerifyAccess()
 		{
-			if (Thread.CurrentThread != m_gameThread)
+			if (m_gameThread != null && Thread.CurrentThread != m_gameThread)
 				throw new Exception();
 		}
 
@@ -143,17 +147,11 @@ namespace Dwarrowdelf.Server
 
 		bool _IsTimeToStartTick()
 		{
-			if (m_config.RequirePlayer)
-			{
-				if (m_players.Count == 0 || m_players.All(p => p.IsConnected == false))
-					return false;
-			}
+			if (m_config.RequirePlayer && m_playersConnected == 0)
+				return false;
 
-			if (m_config.RequirePlayerInGame)
-			{
-				if (!m_players.Any(u => u.IsPlayerInGame))
-					return false;
-			}
+			if (m_config.RequirePlayerInGame && m_playersInGame == 0)
+				return false;
 
 			return true;
 		}
@@ -165,9 +163,8 @@ namespace Dwarrowdelf.Server
 			return r;
 		}
 
-		public void CheckForStartTick()
+		void CheckForStartTick()
 		{
-			// XXX feels like a hack
 			if (IsTimeToStartTick())
 				this.World.SetOkToStartTick();
 		}
@@ -219,11 +216,17 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		// XXX
 		void AddPlayer(Player player)
 		{
 			VerifyAccess();
 			m_players.Add(player);
+			player.Init(this);
+			player.PropertyChanged += OnPlayerPropertyChanged;
+
+			if (player.IsConnected)
+				++m_playersConnected;
+			if (player.IsPlayerInGame)
+				++m_playersInGame;
 		}
 
 		void RemovePlayer(Player player)
@@ -231,6 +234,51 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			bool ok = m_players.Remove(player);
 			Debug.Assert(ok);
+
+			player.PropertyChanged -= OnPlayerPropertyChanged;
+
+			if (player.IsConnected)
+				--m_playersConnected;
+			if (player.IsPlayerInGame)
+				--m_playersInGame;
+		}
+
+		void OnPlayerPropertyChanged(object ob, PropertyChangedEventArgs args)
+		{
+			var player = (Player)ob;
+
+			if (args.PropertyName == "IsConnected")
+			{
+				if (player.IsConnected)
+				{
+					++m_playersConnected;
+					CheckForStartTick();
+				}
+				else
+				{
+					--m_playersConnected;
+				}
+
+				Debug.Assert(m_playersConnected >= 0);
+			}
+			else if (args.PropertyName == "IsPlayerInGame")
+			{
+				if (player.IsPlayerInGame)
+				{
+					++m_playersInGame;
+					CheckForStartTick();
+				}
+				else
+				{
+					--m_playersInGame;
+				}
+
+				Debug.Assert(m_playersInGame >= 0);
+			}
+			else
+			{
+				throw new Exception();
+			}
 		}
 
 		public Player FindPlayer(int userID)
@@ -247,7 +295,6 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("Creating new player {0}", userID);
 			player = new Player(userID);
-			player.Init(this);
 
 			AddPlayer(player);
 
