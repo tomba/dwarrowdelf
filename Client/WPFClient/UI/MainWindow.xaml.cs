@@ -230,6 +230,14 @@ namespace Dwarrowdelf.Client
 				e.Accepted = false;
 		}
 
+		private void FilterLivings(object sender, FilterEventArgs e)
+		{
+			if (e.Item is Living)
+				e.Accepted = true;
+			else
+				e.Accepted = false;
+		}
+
 		public ClientGameObject FollowObject
 		{
 			get { return m_followObject; }
