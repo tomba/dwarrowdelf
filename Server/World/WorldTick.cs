@@ -28,16 +28,6 @@ namespace Dwarrowdelf.Server
 
 		WorldState m_state = WorldState.Idle;
 
-		int m_currentLivingIndex;
-		Living CurrentLiving { get { return m_livings.List[m_currentLivingIndex]; } }
-		void ResetLivingIndex() { m_currentLivingIndex = 0; }
-		bool MoveToNextLiving()
-		{
-			Debug.Assert(m_currentLivingIndex < m_livings.List.Count);
-			++m_currentLivingIndex;
-			return m_currentLivingIndex < m_livings.List.Count;
-		}
-
 		volatile bool m_okToStartTick = false;
 		volatile bool m_forceMove = false;
 
@@ -171,7 +161,7 @@ namespace Dwarrowdelf.Server
 					break;
 				}
 
-				var living = this.CurrentLiving;
+				var living = m_livingEnumerator.Current;
 
 				if (m_livings.RemoveList.Contains(living))
 					forceMove = true;
@@ -190,10 +180,10 @@ namespace Dwarrowdelf.Server
 
 				EndTurn(living);
 
-				bool ok = MoveToNextLiving();
+				bool ok = m_livingEnumerator.MoveNext();
 				if (ok)
 				{
-					StartTurnSequential(this.CurrentLiving);
+					StartTurnSequential(m_livingEnumerator.Current);
 				}
 				else
 				{
@@ -228,11 +218,11 @@ namespace Dwarrowdelf.Server
 			}
 			else if (this.TickMethod == WorldTickMethod.Sequential)
 			{
-				ResetLivingIndex();
+				m_livingEnumerator.Reset();
 
-				bool ok = MoveToNextLiving();
+				bool ok = m_livingEnumerator.MoveNext();
 				if (ok)
-					StartTurnSequential(this.CurrentLiving);
+					StartTurnSequential(m_livingEnumerator.Current);
 			}
 		}
 

@@ -50,6 +50,9 @@ namespace Dwarrowdelf.Server
 
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
+
+			if (this.TickMethod == WorldTickMethod.Sequential)
+				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
 		public World(WorldTickMethod tickMethod)
