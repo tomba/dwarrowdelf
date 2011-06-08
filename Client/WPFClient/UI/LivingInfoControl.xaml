@@ -38,6 +38,9 @@
 
                 <TextBlock>ClientAssignment</TextBlock>
                 <TextBlock Text="{Binding ClientAssignment}" />
+
+                <TextBlock>Action</TextBlock>
+                <TextBlock Text="{Binding CurrentAction}" />
             </UniformGrid>
 
             <Separator />
