@@ -85,7 +85,12 @@ namespace Dwarrowdelf.Server
 		}
 
 		public abstract BaseGameObjectData Serialize();
-		public abstract void SerializeTo(Action<Messages.ServerMessage> writer);
+
+		public virtual void SerializeTo(Action<Messages.ServerMessage> writer)
+		{
+			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
+			writer(msg);
+		}
 
 		protected void SetValue(PropertyDefinition property, object value)
 		{

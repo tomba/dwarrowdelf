@@ -635,6 +635,12 @@ namespace Dwarrowdelf.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
+		public override BaseGameObjectData Serialize()
+		{
+			// never called
+			throw new Exception();
+		}
+
 		public override void SerializeTo(Action<Messages.ServerMessage> writer)
 		{
 			writer(new Messages.MapDataStart()
@@ -726,35 +732,21 @@ namespace Dwarrowdelf.Server
 
 			for (int z = bounds.Z1; z < bounds.Z2; ++z)
 			{
-				if (m_contentArray[z].Count > 0)
+				foreach (var o in m_contentArray[z])
 				{
-					var msg = new Messages.ObjectDataArrayMessage()
-					{
-						ObjectDatas = m_contentArray[z].Select(o => o.Serialize()).ToArray(),
-					};
-
-					writer(msg);
+					o.SerializeTo(writer);
 				}
 			}
 
-			if (m_buildings.Count > 0)
+			foreach (var o in m_buildings)
 			{
-				// this may not need dividing, perhaps
-				writer(new Messages.ObjectDataArrayMessage()
-				{
-					ObjectDatas = m_buildings.Select(b => b.Serialize()).ToArray(),
-				});
+				o.SerializeTo(writer);
 			}
 
 			writer(new Messages.MapDataEnd()
 			{
 				Environment = this.ObjectID,
 			});
-		}
-
-		public override BaseGameObjectData Serialize()
-		{
-			throw new Exception();
 		}
 
 		public override string ToString()
@@ -830,7 +822,7 @@ namespace Dwarrowdelf.Server
 				var ser = (SerializableGrid)value;
 				var size = ser.Size;
 				var srcArr = ser.TileDataArray;
-				var grid =  new TileGrid(size.Width, size.Height, size.Depth);
+				var grid = new TileGrid(size.Width, size.Height, size.Depth);
 				var dstArr = grid.Grid;
 
 				int p = 0;

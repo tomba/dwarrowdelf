@@ -16,6 +16,9 @@ namespace Dwarrowdelf.Messages
 	{
 	}
 
+	/// <summary>
+	/// Used only to give some extra information to the user
+	/// </summary>
 	[Serializable]
 	public abstract class InformativeMessage : ServerMessage
 	{
@@ -140,18 +143,6 @@ namespace Dwarrowdelf.Messages
 		public override string ToString()
 		{
 			return String.Format("ObjectDataMessage {0}", ObjectData.ObjectID);
-		}
-	}
-
-	[Serializable]
-	public class ObjectDataArrayMessage : StateMessage
-	{
-		public BaseGameObjectData[] ObjectDatas { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("ObjectDataArrayMessage for {0}",
-				String.Join(", ", this.ObjectDatas.Select(d => d.ObjectID.ToString())));
 		}
 	}
 

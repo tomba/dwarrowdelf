@@ -97,7 +97,6 @@ namespace MyArea
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
 				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
-				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;
 			}
@@ -129,7 +128,6 @@ namespace MyArea
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
 				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
-				job.StatusChanged += OnConsumeJobStatusChanged;
 				m_consumeObject = ob;
 				return job;
 			}
@@ -137,13 +135,20 @@ namespace MyArea
 			return null;
 		}
 
-		void OnConsumeJobStatusChanged(IJob job, JobStatus status)
+		protected override void JobStatusChangedOverride(IJob job, JobStatus status)
 		{
-			// XXX ob's ReservedBy should probably be cleared elsewhere
-			m_consumeObject.ReservedBy = null;
-			m_consumeObject = null;
-			job.StatusChanged -= OnConsumeJobStatusChanged;
-			m_priorityAction = false;
+			// XXX hacksor. Will get called when loiterjob is aborted, because we're gonne add a eating job. and at that point we've marked the consumeobject and priorityaction
+
+			if (!(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob))
+				return;
+
+			if (m_priorityAction)
+			{
+				// XXX ob's ReservedBy should probably be cleared elsewhere
+				m_consumeObject.ReservedBy = null;
+				m_consumeObject = null;
+				m_priorityAction = false;
+			}
 		}
 	}
 }

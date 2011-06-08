@@ -328,6 +328,15 @@ namespace MyArea
 				};
 				sheep.SetAI(new AnimalAI(sheep));
 				sheep.Initialize(env.World);
+
+				for (int j = 0; j < i; ++j)
+				{
+					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
+					var item = new ItemObject(ItemID.Rock, material);
+					item.Initialize(world);
+					item.MoveTo(sheep);
+				}
+
 				sheep.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 

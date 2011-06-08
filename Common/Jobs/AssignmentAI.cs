@@ -200,10 +200,13 @@ namespace Dwarrowdelf.Jobs
 		{
 			Debug.Assert(job == this.CurrentAssignment);
 
+			JobStatusChangedOverride(job, status);
+
 			Debug.Assert(job.JobStatus != JobStatus.Ok);
 			this.CurrentAssignment = null;
 		}
 
+		protected virtual void JobStatusChangedOverride(IJob job, JobStatus status) { }
 
 		public void ActionStarted(ActionStartedChange change)
 		{

@@ -57,12 +57,6 @@ namespace Dwarrowdelf.Server
 			};
 		}
 
-		public override void SerializeTo(Action<Messages.ServerMessage> writer)
-		{
-			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
-			writer(msg);
-		}
-
 		public bool Contains(IntPoint3D point)
 		{
 			return this.Area.Contains(point);

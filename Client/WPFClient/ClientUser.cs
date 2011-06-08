@@ -99,12 +99,6 @@ namespace Dwarrowdelf.Client
 			HandleObjectData(msg.ObjectData);
 		}
 
-		void HandleMessage(ObjectDataArrayMessage msg)
-		{
-			foreach (var data in msg.ObjectDatas)
-				HandleObjectData(data);
-		}
-
 		void HandleObjectData(BaseGameObjectData data)
 		{
 			var ob = GameData.Data.World.GetObject<BaseGameObject>(data.ObjectID);

@@ -55,6 +55,13 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
+		public override void SerializeTo(Action<Messages.ServerMessage> writer)
+		{
+			base.SerializeTo(writer);
+			foreach (var o in this.Inventory)
+				o.SerializeTo(writer);
+		}
+
 		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), typeof(string), PropertyID.Name, PropertyVisibility.Public, null);
 		public string Name
 		{

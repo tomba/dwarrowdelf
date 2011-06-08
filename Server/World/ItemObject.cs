@@ -63,12 +63,6 @@ namespace Dwarrowdelf.Server
 			return data;
 		}
 
-		public override void SerializeTo(Action<Messages.ServerMessage> writer)
-		{
-			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
-			writer(msg);
-		}
-
 		public override string ToString()
 		{
 			return String.Format("ItemObject({0}/{1})", this.Name, this.ObjectID);

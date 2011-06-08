@@ -87,6 +87,8 @@ namespace Dwarrowdelf.Server
 		[OnGameDeserialized]
 		void OnDeserialized()
 		{
+			this.World.TickStartEvent += OnTickStart;
+
 			var aai = m_ai as Jobs.AssignmentAI;
 			if (aai != null)
 				aai.AssignmentChanged += OnAIAssignmentChanged;
@@ -536,18 +538,6 @@ namespace Dwarrowdelf.Server
 			};
 
 			return data;
-		}
-
-		public override void SerializeTo(Action<Messages.ServerMessage> writer)
-		{
-			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
-			writer(msg);
-		}
-
-		public void SerializeInventoryTo(Action<Messages.ServerMessage> writer)
-		{
-			foreach (var item in this.Inventory)
-				item.SerializeTo(writer);
 		}
 
 		public override string ToString()

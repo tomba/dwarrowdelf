@@ -18,6 +18,12 @@ namespace MyArea
 			this.Color = GameColor.Gold;
 		}
 
+		[OnGameDeserialized]
+		void OnDeserialized()
+		{
+			this.World.TickStartEvent += OnTickStart;
+		}
+
 		public override void Initialize(World world)
 		{
 			base.Initialize(world);
