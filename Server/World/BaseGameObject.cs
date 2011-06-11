@@ -180,7 +180,7 @@ namespace Dwarrowdelf.Server
 						{
 							var v = kvp.Value;
 
-							if (propDef.PropertyType != v.GetType())
+							if (v != null && propDef.PropertyType != v.GetType())
 							{
 								if (propDef.PropertyType.IsPrimitive)
 								{
