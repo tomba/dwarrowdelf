@@ -89,6 +89,8 @@ namespace Dwarrowdelf.Server
 
 		protected abstract void InitializeWorld();
 
+		public Guid LastSaveID { get; private set; }
+
 		public void Load(string saveFile)
 		{
 			if (m_world != null)
@@ -100,6 +102,8 @@ namespace Dwarrowdelf.Server
 
 			foreach (var p in saveData.Players)
 				AddPlayer(p);
+
+			this.LastSaveID = saveData.ID;
 		}
 
 		void VerifyAccess()
@@ -225,7 +229,7 @@ namespace Dwarrowdelf.Server
 
 			if (player.IsConnected)
 				++m_playersConnected;
-			if (player.IsPlayerInGame)
+			if (player.IsInGame)
 				++m_playersInGame;
 		}
 
@@ -239,7 +243,7 @@ namespace Dwarrowdelf.Server
 
 			if (player.IsConnected)
 				--m_playersConnected;
-			if (player.IsPlayerInGame)
+			if (player.IsInGame)
 				--m_playersInGame;
 		}
 
@@ -261,9 +265,9 @@ namespace Dwarrowdelf.Server
 
 				Debug.Assert(m_playersConnected >= 0);
 			}
-			else if (args.PropertyName == "IsPlayerInGame")
+			else if (args.PropertyName == "IsInGame")
 			{
-				if (player.IsPlayerInGame)
+				if (player.IsInGame)
 				{
 					++m_playersInGame;
 					CheckForStartTick();
@@ -305,17 +309,19 @@ namespace Dwarrowdelf.Server
 
 		public void Save()
 		{
-			int tick = m_world.TickNumber;
-			string name = String.Format("save-{0}.json", tick);
-			Save(name);
-		}
+			var id = Guid.NewGuid();
+			var msg = new Dwarrowdelf.Messages.SaveReplyMessage() { ID = id };
+			foreach (var p in m_players.Where(p => p.IsConnected && p.IsInGame))
+				p.Send(msg);
 
-		public void Save(string saveFile)
-		{
+			int tick = m_world.TickNumber;
+			string saveFile = String.Format("save-{0}-{1}.json", tick, id);
+
 			var saveData = new SaveData()
 			{
 				World = this.World,
 				Players = m_players,
+				ID = id,
 			};
 
 			SaveWorld(saveData, Path.Combine(m_gameDir, saveFile));
@@ -348,16 +354,16 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Loading game {0}", savePath);
 			var watch = Stopwatch.StartNew();
 
-			SaveData world;
+			SaveData saveData;
 
 			var stream = File.OpenRead(savePath);
 			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
-			world = deserializer.Deserialize<SaveData>();
+			saveData = deserializer.Deserialize<SaveData>();
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 
-			return world;
+			return saveData;
 		}
 
 		[Serializable]
@@ -365,6 +371,7 @@ namespace Dwarrowdelf.Server
 		{
 			public World World;
 			public List<Player> Players;
+			public Guid ID;
 		}
 	}
 }

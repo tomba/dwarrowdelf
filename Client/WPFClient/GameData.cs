@@ -5,6 +5,8 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Diagnostics;
+using System.IO;
 
 namespace Dwarrowdelf.Client
 {
@@ -99,5 +101,58 @@ namespace Dwarrowdelf.Client
 
 		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
 
+		public Action SaveEvent;
+
+		internal void Save(Guid id)
+		{
+			var savePath = Path.Combine("save", String.Format("client-{0}.json", id));
+
+			var saveData = new SaveData()
+			{
+			};
+
+			Trace.TraceInformation("Saving game {0}", savePath);
+			var watch = Stopwatch.StartNew();
+
+			var stream = new System.IO.MemoryStream();
+
+			var serializer = new Dwarrowdelf.JsonSerializer(stream);
+			serializer.Serialize(saveData);
+
+			stream.Position = 0;
+			//stream.CopyTo(Console.OpenStandardOutput());
+
+			stream.Position = 0;
+			using (var file = File.Create(savePath))
+				stream.WriteTo(file);
+
+			watch.Stop();
+			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
+
+			if (SaveEvent != null)
+				SaveEvent();
+		}
+
+		internal void Load(Guid id)
+		{
+			var savePath = Path.Combine("save", String.Format("client-{0}.json", id));
+
+			Trace.TraceInformation("Loading game {0}", savePath);
+			var watch = Stopwatch.StartNew();
+
+			SaveData data;
+
+			var stream = File.OpenRead(savePath);
+			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
+			data = deserializer.Deserialize<SaveData>();
+
+			watch.Stop();
+			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
+		}
+
+		[Serializable]
+		class SaveData
+		{
+		}
 	}
 }

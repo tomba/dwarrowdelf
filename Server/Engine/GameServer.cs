@@ -40,8 +40,6 @@ namespace Dwarrowdelf.Server
 
 			m_engine.World.HandleMessagesEvent -= OnHandleMessages; // XXX
 
-			m_engine.Save();
-
 			Debug.Print("Server exiting");
 
 			Connection.StopListening();

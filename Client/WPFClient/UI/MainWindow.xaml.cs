@@ -755,7 +755,25 @@ namespace Dwarrowdelf.Client
 			ExitGame();
 		}
 
+		private void Save_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Connection == null)
+				return;
 
+			var msg = new SaveRequestMessage();
+
+			GameData.Data.Connection.Send(msg);
+		}
+
+		private void Load_Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.Connection == null)
+				return;
+
+			var msg = new LoadMessage();
+
+			GameData.Data.Connection.Send(msg);
+		}
 
 
 
@@ -798,6 +816,25 @@ namespace Dwarrowdelf.Client
 
 		void Disconnect()
 		{
+			if (GameData.Data.User.IsPlayerInGame)
+			{
+				SetLogOnText("Saving");
+
+				GameData.Data.SaveEvent += OnGameSaved;
+
+				GameData.Data.Connection.Send(new SaveRequestMessage());
+			}
+			else
+			{
+				SetLogOnText("Logging Out");
+				GameData.Data.Connection.SendLogOut();
+			}
+		}
+
+		void OnGameSaved()
+		{
+			GameData.Data.SaveEvent -= OnGameSaved;
+
 			SetLogOnText("Logging Out");
 			GameData.Data.Connection.SendLogOut();
 		}

@@ -66,6 +66,8 @@ namespace Dwarrowdelf.Client
 
 			this.IsPlayerInGame = true;
 
+			GameData.Data.Load(msg.ID);
+
 			m_enterGameCallback();
 		}
 
@@ -92,6 +94,11 @@ namespace Dwarrowdelf.Client
 			GameData.Data.World.Controllables.Clear();
 			GameData.Data.CurrentObject = null;
 			//App.MainWindow.FollowObject = null;
+		}
+
+		void HandleMessage(SaveReplyMessage msg)
+		{
+			GameData.Data.Save(msg.ID);
 		}
 
 		void HandleMessage(ObjectDataMessage msg)

@@ -39,6 +39,9 @@
                 <Button Click="EnterGame_Button_Click">Enter Game</Button>
                 <Separator />
                 <Button Click="ExitGame_Button_Click">Exit Game</Button>
+                <Separator />
+                <Button Click="Save_Button_Click">Save</Button>
+                <Button Click="Load_Button_Click">Load</Button>
             </ToolBar>
             <ToolBar>
                 <Button Click="Button_Click_GC">GC</Button>

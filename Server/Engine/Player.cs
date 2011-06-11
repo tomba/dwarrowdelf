@@ -25,18 +25,18 @@ namespace Dwarrowdelf.Server
 		[GameProperty("HasControllablesBeenCreated")]
 		bool m_hasControllablesBeenCreated;
 
-		bool m_isPlayerInGame;
-		public bool IsPlayerInGame
+		bool m_isInGame;
+		public bool IsInGame
 		{
-			get { return m_isPlayerInGame; }
+			get { return m_isInGame; }
 
 			private set
 			{
-				if (m_isPlayerInGame == value)
+				if (m_isInGame == value)
 					return;
 
-				m_isPlayerInGame = value;
-				Notify("IsPlayerInGame");
+				m_isInGame = value;
+				Notify("IsInGame");
 			}
 		}
 
@@ -115,7 +115,7 @@ namespace Dwarrowdelf.Server
 					m_world.WorldChanged -= HandleWorldChange;
 					m_ipRunner = null;
 
-					this.IsPlayerInGame = false;
+					this.IsInGame = false;
 				}
 
 				Notify("IsConnected");
@@ -246,10 +246,10 @@ namespace Dwarrowdelf.Server
 		{
 			if (m_hasControllablesBeenCreated)
 			{
-				Send(new Messages.EnterGameReplyMessage());
+				Send(new Messages.EnterGameReplyMessage() { ID = m_engine.LastSaveID });
 				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
-				this.IsPlayerInGame = true;
+				this.IsInGame = true;
 			}
 			else
 			{
@@ -275,10 +275,10 @@ namespace Dwarrowdelf.Server
 				m_hasControllablesBeenCreated = true;
 			}
 
-			Send(new Messages.EnterGameReplyMessage());
+			Send(new Messages.EnterGameReplyMessage() { ID = m_engine.LastSaveID });
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 
-			this.IsPlayerInGame = true;
+			this.IsInGame = true;
 		}
 
 		void ReceiveMessage(ExitGameRequestMessage msg)
@@ -288,7 +288,7 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
 			Send(new Messages.ExitGameReplyMessage());
 
-			this.IsPlayerInGame = false;
+			this.IsInGame = false;
 		}
 
 		public bool StartTurnSent { get; private set; }
@@ -354,6 +354,15 @@ namespace Dwarrowdelf.Server
 			trace.TraceInformation("IronPythonCommand");
 
 			m_ipRunner.Exec(msg.Text);
+		}
+
+		void ReceiveMessage(SaveRequestMessage msg)
+		{
+			m_engine.Save();
+		}
+
+		void ReceiveMessage(LoadMessage msg)
+		{
 		}
 
 

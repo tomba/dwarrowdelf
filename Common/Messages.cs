@@ -73,6 +73,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public class EnterGameReplyMessage : ServerMessage
 	{
+		public Guid ID { get; set; }
 	}
 
 	[Serializable]
@@ -212,5 +213,21 @@ namespace Dwarrowdelf.Messages
 	public class ProceedTurnMessage : ClientMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
+	}
+
+	[Serializable]
+	public class SaveRequestMessage : ClientMessage
+	{
+	}
+
+	[Serializable]
+	public class SaveReplyMessage : ServerMessage
+	{
+		public Guid ID;
+	}
+
+	[Serializable]
+	public class LoadMessage : ClientMessage
+	{
 	}
 }

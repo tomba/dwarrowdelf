@@ -88,12 +88,11 @@ namespace Dwarrowdelf.Client
 
 		static string GetLatestSaveFile(string gameDir)
 		{
-			var files = Directory.EnumerateFiles(gameDir);
-			var list = new System.Collections.Generic.List<string>(files);
-			if (list.Count == 0)
-				return null;
-			list.Sort();
-			var last = list[list.Count - 1];
+			var files = Directory.GetFiles(gameDir);
+			var dates = files.Select(f => Directory.GetLastWriteTimeUtc(f)).ToArray();
+			Array.Sort(dates, files);
+
+			var last = files[files.Length - 1];
 			return Path.GetFileName(last);
 		}
 
