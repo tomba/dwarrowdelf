@@ -50,6 +50,17 @@ namespace Dwarrowdelf.Client
 		{
 			base.OnInitialized(e);
 
+			PopulateMenus();
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
+
+			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+		}
+
+		void PopulateMenus()
+		{
 			foreach (var content in dockingManager.DockableContents)
 			{
 				var item = new MenuItem()
@@ -130,12 +141,6 @@ namespace Dwarrowdelf.Client
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Designate));
 				designateMenu.Items.Add(item);
 			}
-
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
-
-			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
 		}
 
 		void dockableContent_StateChanged(object sender, RoutedEventArgs e)
