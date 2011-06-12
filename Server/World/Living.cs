@@ -23,32 +23,6 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		Jobs.IAI m_ai;
 
-		static readonly PropertyDefinition HitPointsProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.HitPoints, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition SpellPointsProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.SpellPoints, PropertyVisibility.Friendly, 1);
-
-		static readonly PropertyDefinition StrengthProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Strength, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition DexterityProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Dexterity, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition ConstitutionProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Constitution, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition IntelligenceProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Intelligence, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition WisdomProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Wisdom, PropertyVisibility.Friendly, 1);
-		static readonly PropertyDefinition CharismaProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.Charisma, PropertyVisibility.Friendly, 1);
-
-		static readonly PropertyDefinition ArmorClassProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.ArmorClass, PropertyVisibility.Friendly, 10);
-
-		static readonly PropertyDefinition VisionRangeProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.VisionRange, PropertyVisibility.Friendly, 10, VisionRangeChanged);
-
-		static readonly PropertyDefinition FoodFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.FoodFullness, PropertyVisibility.Friendly, 500);
-		static readonly PropertyDefinition WaterFullnessProperty = RegisterProperty(typeof(Living), typeof(int), PropertyID.WaterFullness, PropertyVisibility.Friendly, 500);
-
-		// String representation of assignment, for client use
-		static readonly PropertyDefinition AssignmentProperty = RegisterProperty(typeof(Living), typeof(string), PropertyID.Assignment, PropertyVisibility.Friendly, "");
-
-		static void VisionRangeChanged(PropertyDefinition property, object ob, object oldValue, object newValue)
-		{
-			Living l = (Living)ob;
-			l.m_visionMap = null;
-		}
-
 		Living()
 			: base(ObjectType.Living)
 		{
@@ -59,6 +33,10 @@ namespace Dwarrowdelf.Server
 		{
 			this.Name = name;
 			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
+			this.VisionRange = 10;
+			this.FoodFullness = 500;
+			this.WaterFullness = 500;
+			this.Assignment = "";
 		}
 
 		public override void Initialize(World world)
@@ -103,82 +81,146 @@ namespace Dwarrowdelf.Server
 				this.WaterFullness--;
 		}
 
+		[GameProperty("HitPoints")]
+		int m_hitPoints;
 		public int HitPoints
 		{
-			get { return (int)GetValue(HitPointsProperty); }
-			set { SetValue(HitPointsProperty, value); }
+			get { return m_hitPoints; }
+			set { if (m_hitPoints == value) return; m_hitPoints = value; NotifyInt(PropertyID.HitPoints, value); }
 		}
 
+		[GameProperty("SpellPoints")]
+		int m_spellPoints;
 		public int SpellPoints
 		{
-			get { return (int)GetValue(SpellPointsProperty); }
-			set { SetValue(SpellPointsProperty, value); }
+			get { return m_spellPoints; }
+			set { if (m_spellPoints == value) return; m_spellPoints = value; NotifyInt(PropertyID.SpellPoints, value); }
 		}
 
+		[GameProperty("Strength")]
+		int m_strength;
 		public int Strength
 		{
-			get { return (int)GetValue(StrengthProperty); }
-			set { SetValue(StrengthProperty, value); }
+			get { return m_strength; }
+			set { if (m_strength == value) return; m_strength = value; NotifyInt(PropertyID.Strength, value); }
 		}
 
+		[GameProperty("Dexterity")]
+		int m_dexterity;
 		public int Dexterity
 		{
-			get { return (int)GetValue(DexterityProperty); }
-			set { SetValue(DexterityProperty, value); }
+			get { return m_dexterity; }
+			set { if (m_dexterity == value) return; m_dexterity = value; NotifyInt(PropertyID.Dexterity, value); }
 		}
 
+		[GameProperty("Constitution")]
+		int m_constitution;
 		public int Constitution
 		{
-			get { return (int)GetValue(ConstitutionProperty); }
-			set { SetValue(ConstitutionProperty, value); }
+			get { return m_constitution; }
+			set { if (m_constitution == value) return; m_constitution = value; NotifyInt(PropertyID.Constitution, value); }
 		}
 
+		[GameProperty("Intelligence")]
+		int m_intelligence;
 		public int Intelligence
 		{
-			get { return (int)GetValue(IntelligenceProperty); }
-			set { SetValue(IntelligenceProperty, value); }
+			get { return m_intelligence; }
+			set { if (m_intelligence == value) return; m_intelligence = value; NotifyInt(PropertyID.Intelligence, value); }
 		}
 
+		[GameProperty("Wisdom")]
+		int m_wisdom;
 		public int Wisdom
 		{
-			get { return (int)GetValue(WisdomProperty); }
-			set { SetValue(WisdomProperty, value); }
+			get { return m_wisdom; }
+			set { if (m_wisdom == value) return; m_wisdom = value; NotifyInt(PropertyID.Wisdom, value); }
 		}
 
+		[GameProperty("Charisma")]
+		int m_charisma;
 		public int Charisma
 		{
-			get { return (int)GetValue(CharismaProperty); }
-			set { SetValue(CharismaProperty, value); }
+			get { return m_charisma; }
+			set { if (m_charisma == value) return; m_charisma = value; NotifyInt(PropertyID.Charisma, value); }
 		}
 
+		[GameProperty("ArmorClass")]
+		int m_armorClass;
 		public int ArmorClass
 		{
-			get { return (int)GetValue(ArmorClassProperty); }
-			set { SetValue(ArmorClassProperty, value); }
+			get { return m_armorClass; }
+			set { if (m_armorClass == value) return; m_armorClass = value; NotifyInt(PropertyID.ArmorClass, value); }
 		}
 
+		[GameProperty("VisionRange")]
+		int m_visionRange;
 		public int VisionRange
 		{
-			get { return (int)GetValue(VisionRangeProperty); }
-			set { SetValue(VisionRangeProperty, value); }
+			get { return m_visionRange; }
+			set { if (m_visionRange == value) return; m_visionRange = value; NotifyInt(PropertyID.VisionRange, value); m_visionMap = null; }
 		}
 
+		[GameProperty("FoodFullness")]
+		int m_foodFullness;
 		public int FoodFullness
 		{
-			get { return (int)GetValue(FoodFullnessProperty); }
-			set { SetValue(FoodFullnessProperty, value); }
+			get { return m_foodFullness; }
+			set { if (m_foodFullness == value) return; m_foodFullness = value; NotifyInt(PropertyID.FoodFullness, value); }
 		}
 
+		[GameProperty("WaterFullness")]
+		int m_waterFullness;
 		public int WaterFullness
 		{
-			get { return (int)GetValue(WaterFullnessProperty); }
-			set { SetValue(WaterFullnessProperty, value); }
+			get { return m_waterFullness; }
+			set { if (m_waterFullness == value) return; m_waterFullness = value; NotifyInt(PropertyID.WaterFullness, value); }
 		}
 
+		// String representation of assignment, for client use
+		[GameProperty("Assignment")]
+		string m_assignment;
 		public string Assignment
 		{
-			get { return (string)GetValue(AssignmentProperty); }
-			set { SetValue(AssignmentProperty, value); }
+			get { return m_assignment; }
+			set { if (m_assignment == value) return; m_assignment = value; Notify(PropertyID.Assignment, value); }
+		}
+
+		public override BaseGameObjectData Serialize()
+		{
+			var data = new LivingData()
+			{
+				ObjectID = this.ObjectID,
+				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
+				Location = this.Location,
+
+				CurrentAction = this.CurrentAction,
+				ActionTicksLeft = this.ActionTicksLeft,
+				ActionUserID = this.ActionUserID,
+
+				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
+			};
+
+			return data;
+		}
+
+		protected override Dictionary<PropertyID, object> SerializeProperties()
+		{
+			var props = base.SerializeProperties();
+			props[PropertyID.HitPoints] = m_hitPoints;
+			props[PropertyID.SpellPoints] = m_spellPoints;
+			props[PropertyID.Strength] = m_strength;
+			props[PropertyID.Dexterity] = m_dexterity;
+			props[PropertyID.Constitution] = m_constitution;
+			props[PropertyID.Intelligence] = m_intelligence;
+			props[PropertyID.Wisdom] = m_wisdom;
+			props[PropertyID.Charisma] = m_charisma;
+			props[PropertyID.ArmorClass] = m_armorClass;
+			props[PropertyID.VisionRange] = m_visionRange;
+			props[PropertyID.FoodFullness] = m_foodFullness;
+			props[PropertyID.WaterFullness] = m_waterFullness;
+			props[PropertyID.Assignment] = m_assignment;
+			return props;
 		}
 
 		public void SetAI(Jobs.IAI ai)
@@ -520,24 +562,6 @@ namespace Dwarrowdelf.Server
 				return GetVisibleLocationsSimpleFOV();
 			else
 				throw new Exception();
-		}
-
-		public override BaseGameObjectData Serialize()
-		{
-			var data = new LivingData()
-			{
-				ObjectID = this.ObjectID,
-				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
-				Location = this.Location,
-
-				CurrentAction = this.CurrentAction,
-				ActionTicksLeft = this.ActionTicksLeft,
-				ActionUserID = this.ActionUserID,
-
-				Properties = base.SerializeProperties(),
-			};
-
-			return data;
 		}
 
 		public override string ToString()

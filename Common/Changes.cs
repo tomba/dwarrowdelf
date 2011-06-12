@@ -209,20 +209,16 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class PropertyChange : ObjectChange
 	{
-		[NonSerialized]
-		PropertyDefinition m_property;
 		PropertyID m_propertyID;
 		object m_value;
 
-		public PropertyDefinition Property { get { return m_property; } }
 		public PropertyID PropertyID { get { return m_propertyID; } }
 		public object Value { get { return m_value; } }
 
-		public PropertyChange(IBaseGameObject ob, PropertyDefinition property, object value)
+		public PropertyChange(IBaseGameObject ob, PropertyID propertyID, object value)
 			: base(ob)
 		{
-			m_property = property;
-			m_propertyID = property.PropertyID;
+			m_propertyID = propertyID;
 			m_value = value;
 		}
 

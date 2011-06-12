@@ -62,32 +62,58 @@ namespace Dwarrowdelf.Server
 				o.SerializeTo(writer);
 		}
 
-		static readonly PropertyDefinition NameProperty = RegisterProperty(typeof(ServerGameObject), typeof(string), PropertyID.Name, PropertyVisibility.Public, null);
+		protected void Notify(PropertyID id, object value)
+		{
+			if (this.IsInitialized)
+				this.World.AddChange(new PropertyChange(this, id, value));
+		}
+
+		protected void NotifyInt(PropertyID id, int value)
+		{
+			if (this.IsInitialized)
+				this.World.AddChange(new PropertyChange(this, id, value));
+		}
+
+		[GameProperty("Name")]
+		string m_name;
 		public string Name
 		{
-			get { return (string)GetValue(NameProperty); }
-			set { SetValue(NameProperty, value); }
+			get { return m_name; }
+			set { if (m_name == value) return; m_name = value; Notify(PropertyID.Name, value); }
 		}
 
-		static readonly PropertyDefinition ColorProperty = RegisterProperty(typeof(ServerGameObject), typeof(GameColor), PropertyID.Color, PropertyVisibility.Public, new GameColor());
+		[GameProperty("Color")]
+		GameColor m_color;
 		public GameColor Color
 		{
-			get { return (GameColor)GetValue(ColorProperty); }
-			set { SetValue(ColorProperty, value); }
+			get { return m_color; }
+			set { if (m_color == value) return; m_color = value; Notify(PropertyID.Color, value); }
 		}
 
-		static readonly PropertyDefinition SymbolIDProperty = RegisterProperty(typeof(ServerGameObject), typeof(SymbolID), PropertyID.SymbolID, PropertyVisibility.Public, SymbolID.Undefined);
+		[GameProperty("SymbolID")]
+		SymbolID m_symbolID;
 		public SymbolID SymbolID
 		{
-			get { return (SymbolID)GetValue(SymbolIDProperty); }
-			set { SetValue(SymbolIDProperty, value); }
+			get { return m_symbolID; }
+			set { if (m_symbolID == value) return; m_symbolID = value; Notify(PropertyID.SymbolID, value); }
 		}
 
-		static readonly PropertyDefinition MaterialIDProperty = RegisterProperty(typeof(ServerGameObject), typeof(MaterialID), PropertyID.MaterialID, PropertyVisibility.Public, MaterialID.Undefined);
+		[GameProperty("MaterialID")]
+		MaterialID m_materialID;
 		public MaterialID MaterialID
 		{
-			get { return (MaterialID)GetValue(MaterialIDProperty); }
-			set { SetValue(MaterialIDProperty, value); this.Color = Materials.GetMaterial(value).Color; }
+			get { return m_materialID; }
+			set { if (m_materialID == value) return; m_materialID = value; Notify(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
+		}
+
+		protected virtual Dictionary<PropertyID, object> SerializeProperties()
+		{
+			var props = new Dictionary<PropertyID, object>();
+			props[PropertyID.Name] = m_name;
+			props[PropertyID.Color] = m_color;
+			props[PropertyID.SymbolID] = m_symbolID;
+			props[PropertyID.MaterialID] = m_materialID;
+			return props;
 		}
 
 		public MaterialClass MaterialClass { get { return Materials.GetMaterial(this.MaterialID).MaterialClass; } } // XXX

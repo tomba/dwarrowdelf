@@ -676,22 +676,11 @@ namespace Dwarrowdelf.Server
 				{
 					return true;
 				}
-				else if (c.Property.Visibility == PropertyVisibility.Friendly)
-				{
-					// xxx should check if the object is friendly
-					// return false for now, as all friendlies are controllables, thus we will still see it
-					// because the check above will return true to that controllable
-					return false;
-				}
-				else if (c.Property.Visibility == PropertyVisibility.Public)
-				{
-					ServerGameObject ob = (ServerGameObject)c.Object;
-
-					return controllables.Any(l => l.Sees(ob.Environment, ob.Location));
-				}
 				else
 				{
-					throw new Exception();
+					// Should check if the property is public or not
+					ServerGameObject ob = (ServerGameObject)c.Object;
+					return controllables.Any(l => l.Sees(ob.Environment, ob.Location));
 				}
 			}
 			else if (change is ActionStartedChange)

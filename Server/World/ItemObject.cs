@@ -32,21 +32,20 @@ namespace Dwarrowdelf.Server
 
 		public object ReservedBy { get; set; }
 
-		static readonly PropertyDefinition NutritionalValueProperty =
-			RegisterProperty(typeof(ItemObject), typeof(int), PropertyID.NutritionalValue, PropertyVisibility.Public, 0);
-		static readonly PropertyDefinition RefreshmentValueProperty =
-			RegisterProperty(typeof(ItemObject), typeof(int), PropertyID.RefreshmentValue, PropertyVisibility.Public, 0);
-
+		[GameProperty("NutritionalValue")]
+		int m_nutritionalValue;
 		public int NutritionalValue
 		{
-			get { return (int)GetValue(NutritionalValueProperty); }
-			set { SetValue(NutritionalValueProperty, value); }
+			get { return m_nutritionalValue; }
+			set { if (m_nutritionalValue == value) return; m_nutritionalValue = value; NotifyInt(PropertyID.NutritionalValue, value); }
 		}
 
+		[GameProperty("RefreshmentValue")]
+		int m_refreshmentValue;
 		public int RefreshmentValue
 		{
-			get { return (int)GetValue(RefreshmentValueProperty); }
-			set { SetValue(RefreshmentValueProperty, value); }
+			get { return m_refreshmentValue; }
+			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
 		}
 
 		public override BaseGameObjectData Serialize()
@@ -57,10 +56,18 @@ namespace Dwarrowdelf.Server
 				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
 				Location = this.Location,
 				ItemID = this.ItemID,
-				Properties = base.SerializeProperties(),
+				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
 			};
 
 			return data;
+		}
+
+		protected override Dictionary<PropertyID, object> SerializeProperties()
+		{
+			var props = base.SerializeProperties();
+			props[PropertyID.NutritionalValue] = m_nutritionalValue;
+			props[PropertyID.RefreshmentValue] = m_refreshmentValue;
+			return props;
 		}
 
 		public override string ToString()
