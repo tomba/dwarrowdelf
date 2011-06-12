@@ -13,9 +13,9 @@ namespace Dwarrowdelf.Server
 		ScriptScope m_scriptScope;
 		MyStream m_scriptOutputStream;
 
-		Action<Messages.ServerMessage> m_sender;
+		Action<Messages.ClientMessage> m_sender;
 
-		public IPRunner(World world, Action<Messages.ServerMessage> sender)
+		public IPRunner(World world, Action<Messages.ClientMessage> sender)
 		{
 			m_sender = sender;
 			m_scriptOutputStream = new MyStream(sender);
@@ -50,10 +50,10 @@ namespace Dwarrowdelf.Server
 
 		class MyStream : Stream
 		{
-			Action<Messages.ServerMessage> m_sender;
+			Action<Messages.ClientMessage> m_sender;
 			MemoryStream m_stream = new MemoryStream();
 
-			public MyStream(Action<Messages.ServerMessage> sender)
+			public MyStream(Action<Messages.ClientMessage> sender)
 			{
 				m_sender = sender;
 			}

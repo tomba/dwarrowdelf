@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client
 		public event Action LogOutEvent;
 
 		World m_world;
- 
+
 		string m_logOnName;
 		Action<ClientUser, string> m_logOnCallback;
 
@@ -89,6 +89,8 @@ namespace Dwarrowdelf.Client
 			m_connection.ConnectEvent += OnConnect;
 			m_connection.ReceiveEvent += _OnReceiveMessage;
 			m_connection.DisconnectEvent += _OnDisconnected;
+
+			trace.Header = String.Format("ClientConnection({0})", name);
 
 			m_logOnCallback = callback;
 			m_logOnName = name;
@@ -141,45 +143,58 @@ namespace Dwarrowdelf.Client
 
 		void _OnReceiveMessage(Message msg)
 		{
-			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ServerMessage>(OnReceiveMessage), msg);
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ClientMessage>(OnReceiveMessage), msg);
 		}
 
-		void OnReceiveMessage(ServerMessage msg)
+		void OnReceiveMessage(ClientMessage msg)
 		{
 			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
 			this.Stats.Refresh();
 
-			if (msg is LogOnReplyMessage)
-				HandleLoginReplyMessage((LogOnReplyMessage)msg);
+			if (msg is LogOnReplyBeginMessage)
+				HandleLoginReplyBeginMessage((LogOnReplyBeginMessage)msg);
+			else if (msg is LogOnReplyEndMessage)
+				HandleLoginReplyEndMessage((LogOnReplyEndMessage)msg);
 			else if (msg is LogOutReplyMessage)
 				HandleLogOutReplyMessage((LogOutReplyMessage)msg);
 			else
 				m_user.OnReceiveMessage(msg);
 		}
 
-		void HandleLoginReplyMessage(LogOnReplyMessage msg)
+		DateTime m_logOnStartTime;
+
+		void HandleLoginReplyBeginMessage(LogOnReplyBeginMessage msg)
 		{
-			trace.Header = String.Format("ClientConnection({0})", m_logOnName);
-			trace.TraceInformation("HandleLoginReplyMessage");
+			trace.TraceInformation("LogOnReplyBeginMessage");
+
+			m_logOnStartTime = DateTime.Now;
 
 			m_user = new ClientUser(this, m_world, msg.IsSeeAll);
 			GameData.Data.World.SetTick(msg.Tick);
+		}
+
+		void HandleLoginReplyEndMessage(LogOnReplyEndMessage msg)
+		{
+			trace.TraceInformation("LogOnReplyEndMessage");
+
+			var time = DateTime.Now - m_logOnStartTime;
+			Trace.TraceInformation("LogOn took {0}", time);
 
 			m_logOnCallback(m_user, null);
-
 			m_logOnCallback = null;
 			m_logOnName = null;
 		}
 
-		void HandleLogOutReplyMessage(ServerMessage msg)
+		void HandleLogOutReplyMessage(ClientMessage msg)
 		{
 			trace.TraceInformation("HandleLogOutReplyMessage");
+
 			if (this.LogOutEvent != null)
 				this.LogOutEvent();
 		}
 
-		public void Send(ClientMessage msg)
+		public void Send(ServerMessage msg)
 		{
 			if (m_connection == null)
 			{

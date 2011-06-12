@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client
 			if (m_serverInAppDomain)
 			{
 				string gameDir = "save";
-				bool cleanSaves = false;
+				bool cleanSaves = true;
 				string saveFile = null;
 
 				if (!Directory.Exists(gameDir))

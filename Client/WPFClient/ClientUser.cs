@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Client
 {
 	class ClientUser
 	{
-		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
+		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
 		Dictionary<Type, Action<Change>> m_changeHandlerMap = new Dictionary<Type, Action<Change>>();
 
 		ClientConnection m_connection;
@@ -22,6 +22,8 @@ namespace Dwarrowdelf.Client
 		Action m_enterGameCallback;
 
 		public event Action ExitedGameEvent;
+
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
 		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
 		{
@@ -41,15 +43,15 @@ namespace Dwarrowdelf.Client
 			m_connection.Send(new Messages.ExitGameRequestMessage());
 		}
 
-		public void OnReceiveMessage(ServerMessage msg)
+		public void OnReceiveMessage(ClientMessage msg)
 		{
-			//Debug.Print("Received Message {0}", msg);
+			//trace.TraceVerbose("Received Message {0}", msg);
 
-			Action<ServerMessage> f;
+			Action<ClientMessage> f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
-				f = WrapperGenerator.CreateHandlerWrapper<ServerMessage>("HandleMessage", t, this);
+				f = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("HandleMessage", t, this);
 
 				if (f == null)
 					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
@@ -60,13 +62,25 @@ namespace Dwarrowdelf.Client
 			f(msg);
 		}
 
-		void HandleMessage(EnterGameReplyMessage msg)
+		Guid m_gameID;
+
+		void HandleMessage(EnterGameReplyBeginMessage msg)
 		{
+			trace.TraceInformation("EnterGameReplyBeginMessage");
+
 			Debug.Assert(!this.IsPlayerInGame);
+
+			m_gameID = msg.ID;
+		}
+
+		void HandleMessage(EnterGameReplyEndMessage msg)
+		{
+			trace.TraceInformation("EnterGameReplyEndMessage");
 
 			this.IsPlayerInGame = true;
 
-			GameData.Data.Load(msg.ID);
+			if (m_gameID != Guid.Empty)
+				GameData.Data.Load(m_gameID);
 
 			m_enterGameCallback();
 		}
@@ -112,20 +126,6 @@ namespace Dwarrowdelf.Client
 			ob.Deserialize(data);
 		}
 
-		DateTime m_mapDataStartTime;
-		void HandleMessage(MapDataStart msg)
-		{
-			m_mapDataStartTime = DateTime.Now;
-			Trace.TraceInformation("Map transfer start");
-		}
-
-		void HandleMessage(MapDataEnd msg)
-		{
-			var time = DateTime.Now - m_mapDataStartTime;
-
-			Trace.TraceInformation("Map transfer took {0}", time);
-		}
-
 		void HandleMessage(MapDataMessage msg)
 		{
 			var env = GameData.Data.World.GetObject<Environment>(msg.Environment);
@@ -153,7 +153,7 @@ namespace Dwarrowdelf.Client
 			var env = GameData.Data.World.FindObject<Environment>(msg.Environment);
 			if (env == null)
 				throw new Exception();
-			Debug.Print("Received TerrainData for {0} tiles", msg.TileDataList.Count());
+			trace.TraceVerbose("Received TerrainData for {0} tiles", msg.TileDataList.Count());
 			env.SetTerrains(msg.TileDataList);
 		}
 

@@ -641,13 +641,8 @@ namespace Dwarrowdelf.Server
 			throw new Exception();
 		}
 
-		public override void SerializeTo(Action<Messages.ServerMessage> writer)
+		public override void SerializeTo(Action<Messages.ClientMessage> writer)
 		{
-			writer(new Messages.MapDataStart()
-			{
-				Environment = this.ObjectID,
-			});
-
 			writer(new Messages.MapDataMessage()
 			{
 				Environment = this.ObjectID,
@@ -742,11 +737,6 @@ namespace Dwarrowdelf.Server
 			{
 				o.SerializeTo(writer);
 			}
-
-			writer(new Messages.MapDataEnd()
-			{
-				Environment = this.ObjectID,
-			});
 		}
 
 		public override string ToString()

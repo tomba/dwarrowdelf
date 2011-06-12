@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 	[GameObject]
 	public class Player : INotifyPropertyChanged
 	{
-		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
+		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
 
 		GameEngine m_engine;
 		World m_world;
@@ -130,12 +130,12 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
-		public void Send(ServerMessage msg)
+		public void Send(ClientMessage msg)
 		{
 			m_connection.Send(msg);
 		}
 
-		public void Send(IEnumerable<ServerMessage> msgs)
+		public void Send(IEnumerable<ClientMessage> msgs)
 		{
 			foreach (var msg in msgs)
 				Send(msg);
@@ -145,14 +145,14 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceVerbose("OnReceiveMessage({0})", m);
 
-			var msg = (ClientMessage)m;
+			var msg = (ServerMessage)m;
 
-			Action<ClientMessage> f;
+			Action<ServerMessage> f;
 			Type t = msg.GetType();
 			if (!m_handlerMap.TryGetValue(t, out f))
 			{
 				System.Reflection.MethodInfo mi;
-				f = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("ReceiveMessage", t, this, out mi);
+				f = WrapperGenerator.CreateHandlerWrapper<ServerMessage>("ReceiveMessage", t, this, out mi);
 
 				if (f == null)
 					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
@@ -246,8 +246,9 @@ namespace Dwarrowdelf.Server
 		{
 			if (m_hasControllablesBeenCreated)
 			{
-				Send(new Messages.EnterGameReplyMessage() { ID = m_engine.LastSaveID });
+				Send(new Messages.EnterGameReplyBeginMessage() { ID = m_engine.LastSaveID });
 				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+				Send(new Messages.EnterGameReplyEndMessage());
 
 				this.IsInGame = true;
 			}
@@ -275,8 +276,9 @@ namespace Dwarrowdelf.Server
 				m_hasControllablesBeenCreated = true;
 			}
 
-			Send(new Messages.EnterGameReplyMessage() { ID = m_engine.LastSaveID });
+			Send(new Messages.EnterGameReplyBeginMessage() { ID = m_engine.LastSaveID });
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			Send(new Messages.EnterGameReplyEndMessage());
 
 			this.IsInGame = true;
 		}
@@ -434,12 +436,12 @@ namespace Dwarrowdelf.Server
 			m_player = player;
 		}
 
-		void Send(ServerMessage msg)
+		void Send(ClientMessage msg)
 		{
 			m_player.Send(msg);
 		}
 
-		void Send(IEnumerable<ServerMessage> msgs)
+		void Send(IEnumerable<ClientMessage> msgs)
 		{
 			m_player.Send(msgs);
 		}
@@ -568,7 +570,7 @@ namespace Dwarrowdelf.Server
 		void SendNewTerrains(Dictionary<Environment, HashSet<IntPoint3D>> revealedLocations)
 		{
 			var msgs = revealedLocations.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (Messages.ServerMessage)new Messages.MapDataTerrainsListMessage()
+				Select(kvp => (Messages.ClientMessage)new Messages.MapDataTerrainsListMessage()
 				{
 					Environment = kvp.Key.ObjectID,
 					TileDataList = kvp.Value.Select(l =>
@@ -716,7 +718,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		static ServerMessage ObjectToMessage(BaseGameObject revealedOb)
+		static ClientMessage ObjectToMessage(BaseGameObject revealedOb)
 		{
 			var msg = new ObjectDataMessage() { ObjectData = revealedOb.Serialize() };
 			return msg;

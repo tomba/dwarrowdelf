@@ -82,6 +82,8 @@ namespace Dwarrowdelf.Server
 			if (m_world != null)
 				throw new Exception();
 
+			this.LastSaveID = Guid.Empty;
+
 			m_world = new World(WorldTickMethod.Simultaneous);
 
 			this.World.Initialize(InitializeWorld);

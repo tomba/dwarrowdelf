@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		public override void SerializeTo(Action<Messages.ServerMessage> writer)
+		public override void SerializeTo(Action<Messages.ClientMessage> writer)
 		{
 			base.SerializeTo(writer);
 			foreach (var o in this.Inventory)

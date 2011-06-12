@@ -11,8 +11,11 @@ namespace Dwarrowdelf.Messages
 	{
 	}
 
+	/// <summary>
+	/// Message from Server to Client
+	/// </summary>
 	[Serializable]
-	public abstract class ServerMessage : Message
+	public abstract class ClientMessage : Message
 	{
 	}
 
@@ -20,74 +23,87 @@ namespace Dwarrowdelf.Messages
 	/// Used only to give some extra information to the user
 	/// </summary>
 	[Serializable]
-	public abstract class InformativeMessage : ServerMessage
+	public abstract class InformativeMessage : ClientMessage
+	{
+	}
+
+	/// <summary>
+	/// Message from Client to Server
+	/// </summary>
+	[Serializable]
+	public abstract class ServerMessage : Message
 	{
 	}
 
 	[Serializable]
-	public abstract class ClientMessage : Message
-	{
-	}
-
-	[Serializable]
-	public class IPCommandMessage : ClientMessage
-	{
-		public string Text { get; set; }
-	}
-
-	[Serializable]
-	public class IPOutputMessage : ServerMessage
+	public class IPCommandMessage : ServerMessage
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnRequestMessage : ClientMessage
+	public class IPOutputMessage : ClientMessage
+	{
+		public string Text { get; set; }
+	}
+
+	[Serializable]
+	public class LogOnRequestMessage : ServerMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnReplyMessage : ServerMessage
+	public class LogOnReplyBeginMessage : ClientMessage
 	{
 		public bool IsSeeAll { get; set; }
 		public int Tick { get; set; }
 	}
 
 	[Serializable]
-	public class LogOutRequestMessage : ClientMessage
+	public class LogOnReplyEndMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOutReplyMessage : ServerMessage
+	public class LogOutRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class EnterGameRequestMessage : ClientMessage
+	public class LogOutReplyMessage : ClientMessage
+	{
+	}
+
+	[Serializable]
+	public class EnterGameRequestMessage : ServerMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class EnterGameReplyMessage : ServerMessage
+	public class EnterGameReplyBeginMessage : ClientMessage
 	{
 		public Guid ID { get; set; }
 	}
 
 	[Serializable]
-	public class ExitGameRequestMessage : ClientMessage
+	public class EnterGameReplyEndMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class ExitGameReplyMessage : ServerMessage
+	public class ExitGameRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class SetTilesMessage : ClientMessage
+	public class ExitGameReplyMessage : ClientMessage
+	{
+	}
+
+	[Serializable]
+	public class SetTilesMessage : ServerMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntCuboid Cube { get; set; }
@@ -104,13 +120,13 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class SetWorldConfigMessage : ClientMessage
+	public class SetWorldConfigMessage : ServerMessage
 	{
 		public TimeSpan? MinTickTime { get; set; }
 	}
 
 	[Serializable]
-	public class CreateBuildingMessage : ClientMessage
+	public class CreateBuildingMessage : ServerMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntRect3D Area { get; set; }
@@ -121,7 +137,7 @@ namespace Dwarrowdelf.Messages
 	/// StateMessages change the world state
 	/// </summary>
 	[Serializable]
-	public abstract class StateMessage : ServerMessage
+	public abstract class StateMessage : ClientMessage
 	{
 	}
 
@@ -145,18 +161,6 @@ namespace Dwarrowdelf.Messages
 		{
 			return String.Format("ObjectDataMessage {0}", ObjectData.ObjectID);
 		}
-	}
-
-	[Serializable]
-	public class MapDataStart : InformativeMessage
-	{
-		public ObjectID Environment { get; set; }
-	}
-
-	[Serializable]
-	public class MapDataEnd : InformativeMessage
-	{
-		public ObjectID Environment { get; set; }
 	}
 
 	[Serializable]
@@ -199,7 +203,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ControllablesDataMessage : ServerMessage
+	public class ControllablesDataMessage : ClientMessage
 	{
 		public ObjectID[] Controllables { get; set; }
 
@@ -210,24 +214,24 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ProceedTurnMessage : ClientMessage
+	public class ProceedTurnMessage : ServerMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}
 
 	[Serializable]
-	public class SaveRequestMessage : ClientMessage
+	public class SaveRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class SaveReplyMessage : ServerMessage
+	public class SaveReplyMessage : ClientMessage
 	{
 		public Guid ID;
 	}
 
 	[Serializable]
-	public class LoadMessage : ClientMessage
+	public class LoadMessage : ServerMessage
 	{
 	}
 }

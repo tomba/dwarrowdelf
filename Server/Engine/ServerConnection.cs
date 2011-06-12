@@ -119,13 +119,15 @@ namespace Dwarrowdelf.Server
 			m_user = GetPlayer(name);
 			m_user.Connection = this;
 
-			Send(new Messages.LogOnReplyMessage() { IsSeeAll = m_user.IsSeeAll, Tick = m_engine.World.TickNumber });
+			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_user.IsSeeAll, Tick = m_engine.World.TickNumber });
 
 			if (m_user.IsSeeAll)
 			{
 				foreach (var env in m_engine.World.Environments)
 					env.SerializeTo(Send);
 			}
+
+			Send(new Messages.LogOnReplyEndMessage());
 		}
 
 		Player GetPlayer(string name)
@@ -158,7 +160,7 @@ namespace Dwarrowdelf.Server
 			Disconnect();
 		}
 
-		public void Send(ServerMessage msg)
+		public void Send(ClientMessage msg)
 		{
 			if (m_connection == null)
 			{
@@ -175,7 +177,7 @@ namespace Dwarrowdelf.Server
 			m_connection.Send(msg);
 		}
 
-		public void Send(IEnumerable<ServerMessage> msgs)
+		public void Send(IEnumerable<ClientMessage> msgs)
 		{
 			foreach (var msg in msgs)
 				Send(msg);
