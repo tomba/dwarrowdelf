@@ -224,7 +224,20 @@ namespace Dwarrowdelf.Client
 			ob.MoveTo(env, change.DestinationLocation);
 		}
 
-		void HandleChange(PropertyChange change)
+		void HandleChange(PropertyObjectChange change)
+		{
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+
+			if (ob == null)
+			{
+				trace.TraceWarning("Unknown object {0} for propertychange {1}", change.ObjectID, change.PropertyID);
+				return;
+			}
+
+			ob.SetProperty(change.PropertyID, change.Value);
+		}
+
+		void HandleChange(PropertyIntChange change)
 		{
 			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
 

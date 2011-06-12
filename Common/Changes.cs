@@ -207,24 +207,51 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class PropertyChange : ObjectChange
+	public abstract class PropertyChange : ObjectChange
 	{
 		PropertyID m_propertyID;
-		object m_value;
-
 		public PropertyID PropertyID { get { return m_propertyID; } }
-		public object Value { get { return m_value; } }
 
-		public PropertyChange(IBaseGameObject ob, PropertyID propertyID, object value)
+		protected  PropertyChange(IBaseGameObject ob, PropertyID propertyID)
 			: base(ob)
 		{
 			m_propertyID = propertyID;
+		}
+	}
+
+	[Serializable]
+	public class PropertyObjectChange : PropertyChange
+	{
+		object m_value;
+		public object Value { get { return m_value; } }
+
+		public PropertyObjectChange(IBaseGameObject ob, PropertyID propertyID, object value)
+			: base(ob, propertyID)
+		{
 			m_value = value;
 		}
 
 		public override string ToString()
 		{
 			return String.Format("PropertyChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
+		}
+	}
+
+	[Serializable]
+	public class PropertyIntChange : PropertyChange
+	{
+		int m_value;
+		public int Value { get { return m_value; } }
+
+		public PropertyIntChange(IBaseGameObject ob, PropertyID propertyID, int value)
+			: base(ob, propertyID)
+		{
+			m_value = value;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("PropertyIntChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
 		}
 	}
 

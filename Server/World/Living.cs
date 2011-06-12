@@ -178,7 +178,7 @@ namespace Dwarrowdelf.Server
 		public string Assignment
 		{
 			get { return m_assignment; }
-			set { if (m_assignment == value) return; m_assignment = value; Notify(PropertyID.Assignment, value); }
+			set { if (m_assignment == value) return; m_assignment = value; NotifyObject(PropertyID.Assignment, value); }
 		}
 
 		public override BaseGameObjectData Serialize()

@@ -62,16 +62,16 @@ namespace Dwarrowdelf.Server
 				o.SerializeTo(writer);
 		}
 
-		protected void Notify(PropertyID id, object value)
+		protected void NotifyObject(PropertyID id, object value)
 		{
 			if (this.IsInitialized)
-				this.World.AddChange(new PropertyChange(this, id, value));
+				this.World.AddChange(new PropertyObjectChange(this, id, value));
 		}
 
 		protected void NotifyInt(PropertyID id, int value)
 		{
 			if (this.IsInitialized)
-				this.World.AddChange(new PropertyChange(this, id, value));
+				this.World.AddChange(new PropertyIntChange(this, id, value));
 		}
 
 		[GameProperty("Name")]
@@ -79,7 +79,7 @@ namespace Dwarrowdelf.Server
 		public string Name
 		{
 			get { return m_name; }
-			set { if (m_name == value) return; m_name = value; Notify(PropertyID.Name, value); }
+			set { if (m_name == value) return; m_name = value; NotifyObject(PropertyID.Name, value); }
 		}
 
 		[GameProperty("Color")]
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Server
 		public GameColor Color
 		{
 			get { return m_color; }
-			set { if (m_color == value) return; m_color = value; Notify(PropertyID.Color, value); }
+			set { if (m_color == value) return; m_color = value; NotifyObject(PropertyID.Color, value); }
 		}
 
 		[GameProperty("SymbolID")]
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Server
 		public SymbolID SymbolID
 		{
 			get { return m_symbolID; }
-			set { if (m_symbolID == value) return; m_symbolID = value; Notify(PropertyID.SymbolID, value); }
+			set { if (m_symbolID == value) return; m_symbolID = value; NotifyObject(PropertyID.SymbolID, value); }
 		}
 
 		[GameProperty("MaterialID")]
@@ -103,7 +103,7 @@ namespace Dwarrowdelf.Server
 		public MaterialID MaterialID
 		{
 			get { return m_materialID; }
-			set { if (m_materialID == value) return; m_materialID = value; Notify(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
+			set { if (m_materialID == value) return; m_materialID = value; NotifyObject(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
 		}
 
 		protected virtual Dictionary<PropertyID, object> SerializeProperties()
