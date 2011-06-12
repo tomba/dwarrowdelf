@@ -15,7 +15,8 @@ namespace MyArea
 		[GameProperty]
 		bool m_priorityAction;
 
-		AnimalAI()
+		AnimalAI(GameSerializationContext ctx)
+			: base(ctx)
 		{
 		}
 

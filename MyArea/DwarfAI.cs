@@ -23,6 +23,11 @@ namespace MyArea
 		{
 		}
 
+		protected DwarfAI(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{

@@ -22,6 +22,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_location = location;
 		}
 
+		protected FellTreeAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var v = m_location - this.Worker.Location;

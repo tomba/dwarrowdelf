@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Server
 
 		// does this player sees all
 		[GameProperty("SeeAll")]
-		bool m_seeAll = true;
+		bool m_seeAll;
 		public bool IsSeeAll { get { return m_seeAll; } }
 
 		[GameProperty("Controllables")]
@@ -59,21 +59,17 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		protected Player()
-		{
-		}
-
 		public Player(int userID)
 		{
 			m_userID = userID;
+			m_seeAll = true;
 
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 			m_changeHandler = new ChangeHandler(this);
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		protected Player(GameSerializationContext ctx)
 		{
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 

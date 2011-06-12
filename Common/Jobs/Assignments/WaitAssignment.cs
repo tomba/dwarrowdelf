@@ -19,6 +19,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_turns = turns;
 		}
 
+		protected WaitAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var action = new WaitAction(m_turns, this.Priority);

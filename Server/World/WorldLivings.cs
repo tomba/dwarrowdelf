@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		[GameProperty]
-		ProcessableList<Living> m_livings = new ProcessableList<Living>();
+		ProcessableList<Living> m_livings;
 
 		LivingEnumerator m_livingEnumerator;
 

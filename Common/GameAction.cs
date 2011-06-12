@@ -61,6 +61,10 @@ namespace Dwarrowdelf
 			this.MagicNumber = MagicNumberGenerator();
 		}
 
+		protected GameAction(GameSerializationContext ctx)
+		{
+		}
+
 		public sealed override string ToString()
 		{
 			return String.Format("{0} [{1}, {3}] ({2})", GetType().Name, this.Priority, this.GetParams(), this.MagicNumber);
@@ -82,6 +86,11 @@ namespace Dwarrowdelf
 			this.Direction = direction;
 		}
 
+		protected MoveAction(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override string GetParams()
 		{
 			return this.Direction.ToString();
@@ -99,6 +108,11 @@ namespace Dwarrowdelf
 			: base(priority)
 		{
 			this.WaitTicks = ticks;
+		}
+
+		protected WaitAction(GameSerializationContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override string GetParams()
@@ -120,6 +134,11 @@ namespace Dwarrowdelf
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
 
+		protected DropAction(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override string GetParams()
 		{
 			return String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray());
@@ -137,6 +156,11 @@ namespace Dwarrowdelf
 			: base(priority)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+		}
+
+		protected GetAction(GameSerializationContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override string GetParams()
@@ -157,6 +181,11 @@ namespace Dwarrowdelf
 			: base(priority)
 		{
 			this.ItemObjectID = consumable.ObjectID;
+		}
+
+		protected ConsumeAction(GameSerializationContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override string GetParams()

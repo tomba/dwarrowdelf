@@ -18,8 +18,8 @@ namespace MyArea
 			this.Color = GameColor.Gold;
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		FoodGenerator(GameSerializationContext ctx)
+			: base(ctx)
 		{
 			this.World.TickStartEvent += OnTickStart;
 		}

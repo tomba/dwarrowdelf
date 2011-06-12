@@ -21,8 +21,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		protected StaticAssignmentGroup(GameSerializationContext ctx)
+			: base(ctx)
 		{
 			this.Assignments = new ReadOnlyObservableCollection<IAssignment>(m_assignments);
 		}

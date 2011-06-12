@@ -9,8 +9,8 @@ namespace Dwarrowdelf.Server
 	[GameObject(UseRef = true)]
 	public class ItemObject : ServerGameObject, IItemObject
 	{
-		ItemObject()
-			: base(ObjectType.Item)
+		protected ItemObject(GameSerializationContext ctx)
+			: base(ctx, ObjectType.Item)
 		{
 		}
 

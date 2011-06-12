@@ -20,6 +20,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_dest = destination;
 		}
 
+		protected MoveAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override Queue<Direction> GetPath(ILiving worker)
 		{
 			IntPoint3D finalPos;

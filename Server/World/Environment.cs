@@ -35,11 +35,11 @@ namespace Dwarrowdelf.Server
 
 		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
 		[GameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
-		HashSet<BuildingObject> m_buildings = new HashSet<BuildingObject>();
+		HashSet<BuildingObject> m_buildings;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
-		Environment()
-			: base(ObjectType.Environment)
+		Environment(GameSerializationContext ctx)
+			: base(ctx, ObjectType.Environment)
 		{
 		}
 
@@ -57,6 +57,8 @@ namespace Dwarrowdelf.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
+
+			m_buildings = new HashSet<BuildingObject>();
 		}
 
 		[OnGamePostDeserialization]

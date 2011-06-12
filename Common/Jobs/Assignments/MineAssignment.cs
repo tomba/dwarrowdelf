@@ -25,6 +25,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_mineActionType = mineActionType;
 		}
 
+		protected MineAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var v = m_location - this.Worker.Location;

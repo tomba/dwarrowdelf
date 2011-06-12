@@ -16,6 +16,10 @@ namespace Dwarrowdelf.Jobs.Assignments
 			this.Priority = priority;
 		}
 
+		protected Assignment(GameSerializationContext ctx)
+		{
+		}
+
 		public JobType JobType { get { return JobType.Assignment; } }
 		[GameProperty]
 		public IJob Parent { get; private set; }

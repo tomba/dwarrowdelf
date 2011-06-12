@@ -19,6 +19,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_item = item;
 		}
 
+		protected DropItemAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var action = new DropAction(new IItemObject[] { m_item }, this.Priority);

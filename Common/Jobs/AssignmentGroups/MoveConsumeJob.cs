@@ -26,6 +26,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			});
 		}
 
+		protected MoveConsumeJob(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		/*
 		 * XXX checkvalidity tms
 		protected override Progress AssignOverride(Living worker)

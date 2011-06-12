@@ -118,6 +118,7 @@ namespace Dwarrowdelf
 		public TypeClass TypeClass { get; private set; }
 		public TypeConverter TypeConverter { get; private set; }
 
+		public ConstructorInfo DeserializeConstructor { get; private set; }
 		public GameMemberEntry[] GameMemberEntries { get; private set; }
 		public MethodInfo[] OnSerializingMethods { get; private set; }
 		public MethodInfo[] OnSerializedMethods { get; private set; }
@@ -187,6 +188,9 @@ namespace Dwarrowdelf
 				this.OnDeserializingMethods = GetSerializationMethods(type, typeof(OnGameDeserializingAttribute));
 				this.OnDeserializedMethods = GetSerializationMethods(type, typeof(OnGameDeserializedAttribute));
 				this.OnGamePostDeserializationMethods = GetSerializationMethods(type, typeof(OnGamePostDeserializationAttribute));
+				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameSerializationContext) }, null);
+				if (this.DeserializeConstructor == null)
+					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
 				this.UseRef = attr.UseRef;
 			}
 			else if (type.Attributes.HasFlag(TypeAttributes.Serializable))

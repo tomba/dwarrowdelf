@@ -23,11 +23,6 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		Jobs.IAI m_ai;
 
-		Living()
-			: base(ObjectType.Living)
-		{
-		}
-
 		public Living(string name)
 			: base(ObjectType.Living)
 		{
@@ -37,6 +32,16 @@ namespace Dwarrowdelf.Server
 			this.FoodFullness = 500;
 			this.WaterFullness = 500;
 			this.Assignment = "";
+		}
+
+		Living(GameSerializationContext ctx)
+			: base(ctx, ObjectType.Living)
+		{
+			this.World.TickStartEvent += OnTickStart;
+
+			var aai = m_ai as Jobs.AssignmentAI;
+			if (aai != null)
+				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
 		public override void Initialize(World world)
@@ -60,16 +65,6 @@ namespace Dwarrowdelf.Server
 			this.World.TickStartEvent -= OnTickStart;
 			this.World.RemoveLiving(this);
 			base.Destruct();
-		}
-
-		[OnGameDeserialized]
-		void OnDeserialized()
-		{
-			this.World.TickStartEvent += OnTickStart;
-
-			var aai = m_ai as Jobs.AssignmentAI;
-			if (aai != null)
-				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
 		void OnTickStart()

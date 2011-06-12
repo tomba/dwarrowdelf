@@ -41,7 +41,6 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
 
-		[GameProperty]
 		GameConfig m_config = new GameConfig
 		{
 			RequirePlayer = true,

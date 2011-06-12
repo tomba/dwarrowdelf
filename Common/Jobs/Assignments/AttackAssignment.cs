@@ -30,6 +30,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_target = target;
 		}
 
+		protected AttackAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override void OnStateChanged(JobStatus status)
 		{
 			if (status == JobStatus.Ok)

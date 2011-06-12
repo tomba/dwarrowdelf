@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		[GameProperty]
-		Dictionary<ObjectID, IBaseGameObject> m_objectMap = new Dictionary<ObjectID, IBaseGameObject>();
+		Dictionary<ObjectID, IBaseGameObject> m_objectMap;
 		[GameProperty]
 		int[] m_objectIDcounterArray;
 
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Server
 		InvokeList m_instantInvokeList;
 
 		[GameProperty]
-		Random m_random = new Random();
+		Random m_random;
 
 		Thread m_worldThread;
 
@@ -45,9 +45,6 @@ namespace Dwarrowdelf.Server
 
 		World()
 		{
-			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
-			m_objectIDcounterArray = new int[maxType + 1];
-
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
 
@@ -55,10 +52,22 @@ namespace Dwarrowdelf.Server
 				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
+		World(GameSerializationContext ctx)
+			: this()
+		{
+		}
+
 		public World(WorldTickMethod tickMethod)
 			: this()
 		{
 			this.TickMethod = tickMethod;
+
+			m_objectMap = new Dictionary<ObjectID, IBaseGameObject>();
+			m_livings = new ProcessableList<Living>();
+			m_random = new Random();
+
+			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
+			m_objectIDcounterArray = new int[maxType + 1];
 		}
 
 		public void Initialize(Action initializer)

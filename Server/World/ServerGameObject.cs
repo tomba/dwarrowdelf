@@ -43,8 +43,8 @@ namespace Dwarrowdelf.Server
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		protected ServerGameObject(GameSerializationContext ctx, ObjectType objectType)
+			: base(ctx, objectType)
 		{
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}

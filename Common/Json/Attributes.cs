@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
+	public struct GameSerializationContext
+	{
+	}
+
 	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = false)]
 	public class GameObjectAttribute : Attribute
 	{

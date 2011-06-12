@@ -56,7 +56,7 @@ namespace Dwarrowdelf
 			if (Read() == false)
 				return null;
 
-			var ob =  DeserializeObject(null);
+			var ob = DeserializeObject(null);
 
 			CallPostDeser();
 
@@ -80,7 +80,7 @@ namespace Dwarrowdelf
 			if (Read() == false)
 				return default(T);
 
-			var ob =  (T)DeserializeObject(typeof(T));
+			var ob = (T)DeserializeObject(typeof(T));
 
 			CallPostDeser();
 
@@ -373,14 +373,7 @@ namespace Dwarrowdelf
 		{
 			var type = typeInfo.Type;
 
-			var defConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[0], null);
-
-			object ob;
-
-			if (defConstructor != null)
-				ob = Activator.CreateInstance(type, true);
-			else
-				ob = FormatterServices.GetUninitializedObject(type);
+			object ob = FormatterServices.GetUninitializedObject(type);
 
 			var deserializingMethods = typeInfo.OnDeserializingMethods;
 			foreach (var method in deserializingMethods)
@@ -419,6 +412,8 @@ namespace Dwarrowdelf
 			}
 
 			typeInfo.PopulateObjectMembers(ob, values);
+
+			typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new GameSerializationContext() });
 
 			var deserializedMethods = typeInfo.OnDeserializedMethods;
 			foreach (var method in deserializedMethods)

@@ -22,6 +22,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = environment;
 		}
 
+		LoiterJob(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
 			m_state = 0;

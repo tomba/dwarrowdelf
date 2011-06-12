@@ -57,6 +57,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_positioning = positioning;
 		}
 
+		protected MoveAssignmentBase(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		public DirectionSet Positioning
 		{
 			get { return m_positioning; }
@@ -141,7 +146,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		JobStatus PreparePath(ILiving worker)
 		{
 			var progress = CheckProgress(worker);
-			
+
 			if (progress != Jobs.JobStatus.Ok)
 				return progress;
 

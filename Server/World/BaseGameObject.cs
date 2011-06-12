@@ -29,6 +29,11 @@ namespace Dwarrowdelf.Server
 			m_objectType = objectType;
 		}
 
+		protected BaseGameObject(GameSerializationContext ctx, ObjectType objectType)
+			: this(objectType)
+		{
+		}
+
 		public virtual void Initialize(World world)
 		{
 			if (this.IsInitialized)

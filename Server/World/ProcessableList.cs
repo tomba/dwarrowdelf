@@ -11,11 +11,11 @@ namespace Dwarrowdelf.Server
 	class ProcessableList<T>
 	{
 		[GameProperty]
-		List<T> m_list = new List<T>();
+		List<T> m_list;
 		[GameProperty]
-		List<T> m_addList = new List<T>();
+		List<T> m_addList;
 		[GameProperty]
-		List<T> m_removeList = new List<T>();
+		List<T> m_removeList;
 
 		public ReadOnlyCollection<T> List { get; private set; }
 		public ReadOnlyCollection<T> AddList { get; private set; }
@@ -23,13 +23,16 @@ namespace Dwarrowdelf.Server
 
 		public ProcessableList()
 		{
+			m_list = new List<T>();
+			m_addList = new List<T>();
+			m_removeList = new List<T>();
+
 			this.List = m_list.AsReadOnly();
 			this.AddList = m_addList.AsReadOnly();
 			this.RemoveList = m_removeList.AsReadOnly();
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		ProcessableList(GameSerializationContext ctx)
 		{
 			this.List = m_list.AsReadOnly();
 			this.AddList = m_addList.AsReadOnly();

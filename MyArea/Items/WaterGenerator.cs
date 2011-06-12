@@ -18,8 +18,8 @@ namespace MyArea
 			this.Color = GameColor.Blue;
 		}
 
-		[OnGameDeserialized]
-		void OnDeserialized()
+		WaterGenerator(GameSerializationContext ctx)
+			: base(ctx)
 		{
 			this.World.TickStartEvent += OnTickStart;
 		}

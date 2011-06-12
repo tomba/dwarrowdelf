@@ -22,6 +22,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_environment = environment;
 		}
 
+		RandomMoveAssignment(GameSerializationContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override void OnStateChanged(JobStatus status)
 		{
 			if (status == JobStatus.Ok)

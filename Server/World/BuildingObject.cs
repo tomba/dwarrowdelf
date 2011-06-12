@@ -17,8 +17,8 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		public IntRect3D Area { get; set; }
 
-		BuildingObject()
-			: base(ObjectType.Building)
+		BuildingObject(GameSerializationContext ctx)
+			: base(ctx, ObjectType.Building)
 		{
 		}
 
