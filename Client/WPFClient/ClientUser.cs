@@ -229,10 +229,7 @@ namespace Dwarrowdelf.Client
 			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
 
 			if (ob == null)
-			{
-				trace.TraceWarning("Unknown object {0} for propertychange {1}", change.ObjectID, change.PropertyID);
-				return;
-			}
+				throw new Exception();
 
 			ob.SetProperty(change.PropertyID, change.Value);
 		}
