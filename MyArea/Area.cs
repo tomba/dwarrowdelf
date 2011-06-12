@@ -334,6 +334,15 @@ namespace MyArea
 					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
 					var item = new ItemObject(ItemID.Rock, material);
 					item.Initialize(world);
+
+					for (int t = 0; t < j; ++t)
+					{
+						var material2 = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
+						var item2 = new ItemObject(ItemID.Rock, material2);
+						item2.Initialize(world);
+						item2.MoveTo(item);
+					}
+
 					item.MoveTo(sheep);
 				}
 

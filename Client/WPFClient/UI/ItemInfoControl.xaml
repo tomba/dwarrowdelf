@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="308" d:DesignWidth="356">
+             d:DesignHeight="408" d:DesignWidth="511">
     <StackPanel Orientation="Vertical">
 
         <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
@@ -51,5 +51,12 @@
             <TextBlock>Reserved By</TextBlock>
             <TextBlock Text="{Binding ReservedBy}" />
         </UniformGrid>
+
+        <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+            <ListBox.Resources>
+                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+            </ListBox.Resources>
+        </ListBox>
+
     </StackPanel>
 </UserControl>
