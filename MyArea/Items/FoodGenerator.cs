@@ -21,19 +21,19 @@ namespace MyArea
 		FoodGenerator(GameSerializationContext ctx)
 			: base(ctx)
 		{
-			this.World.TickStartEvent += OnTickStart;
+			this.World.TickStarting += OnTickStart;
 		}
 
 		public override void Initialize(World world)
 		{
 			base.Initialize(world);
 
-			world.TickStartEvent += OnTickStart;
+			world.TickStarting += OnTickStart;
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickStartEvent -= OnTickStart;
+			this.World.TickStarting -= OnTickStart;
 
 			base.Destruct();
 		}

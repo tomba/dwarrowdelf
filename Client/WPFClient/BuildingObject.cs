@@ -78,7 +78,7 @@ namespace Dwarrowdelf.Client
 
 			env.AddBuilding(this);
 
-			this.World.TickStartEvent += OnTick;
+			this.World.TickStarting += OnTick;
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment.World.JobManager.RemoveJobSource(this);
 
-			this.World.TickStartEvent -= OnTick;
+			this.World.TickStarting -= OnTick;
 
 			base.Destruct();
 		}

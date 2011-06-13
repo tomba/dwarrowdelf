@@ -28,9 +28,7 @@ namespace Dwarrowdelf.Server
 		[GameProperty]
 		int[] m_objectIDcounterArray;
 
-		public event Action WorkEnded;
 		public event Action<Change> WorldChanged;
-		public event Action TickEnded;
 
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;

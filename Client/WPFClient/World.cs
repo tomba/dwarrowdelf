@@ -64,11 +64,11 @@ namespace Dwarrowdelf.Client
 		{
 			this.TickNumber = change.TickNumber;
 
-			if (TickStartEvent != null)
-				TickStartEvent();
+			if (TickStarting != null)
+				TickStarting();
 		}
 
-		public event Action TickStartEvent;
+		public event Action TickStarting;
 
 		internal void AddObject(IBaseGameObject ob)
 		{

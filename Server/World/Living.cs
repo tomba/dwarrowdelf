@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server
 		Living(GameSerializationContext ctx)
 			: base(ctx, ObjectType.Living)
 		{
-			this.World.TickStartEvent += OnTickStart;
+			this.World.TickStarting += OnTickStart;
 
 			var aai = m_ai as Jobs.AssignmentAI;
 			if (aai != null)
@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 			world.AddLiving(this);
-			world.TickStartEvent += OnTickStart;
+			world.TickStarting += OnTickStart;
 		}
 
 		public override void Destruct()
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Server
 			this.ActionTicksLeft = 0;
 			this.ActionUserID = 0;
 
-			this.World.TickStartEvent -= OnTickStart;
+			this.World.TickStarting -= OnTickStart;
 			this.World.RemoveLiving(this);
 			base.Destruct();
 		}

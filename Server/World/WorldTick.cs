@@ -9,14 +9,23 @@ namespace Dwarrowdelf.Server
 {
 	public partial class World
 	{
-		public event Action TickStartEvent;
-		public event Action<Living> TurnStartEvent;
-		public event Action TickOngoingEvent;
+		public event Action TickStarting;
+		public event Action TickEnded;
+		/// <summary>
+		/// Called in every Work call if World state is TickOngoing
+		/// </summary>
+		public event Action TickOngoing;
+
+		public event Action<Living> TurnStarting;
+		public event Action<Living> TurnEnded;
+
+		public event Action WorkEnded;
+
+		// XXX hackish
+		public event Action HandleMessagesEvent;
 
 		[GameProperty]
 		public int TickNumber { get; private set; }
-
-		public event Action HandleMessagesEvent;
 
 		enum WorldState
 		{
@@ -78,8 +87,8 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				if (TickOngoingEvent != null)
-					TickOngoingEvent();
+				if (TickOngoing != null)
+					TickOngoing();
 
 				if (this.TickMethod == WorldTickMethod.Simultaneous)
 					again = SimultaneousWork();
@@ -95,6 +104,7 @@ namespace Dwarrowdelf.Server
 			ExitWriteLock();
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
+
 			if (WorkEnded != null)
 				WorkEnded();
 
@@ -209,8 +219,8 @@ namespace Dwarrowdelf.Server
 
 			m_state = WorldState.TickOngoing;
 
-			if (TickStartEvent != null)
-				TickStartEvent();
+			if (TickStarting != null)
+				TickStarting();
 
 			if (this.TickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -233,7 +243,8 @@ namespace Dwarrowdelf.Server
 
 			AddChange(new TurnStartChange());
 
-			TurnStartEvent(null);
+			if (TurnStarting != null)
+				TurnStarting(null);
 		}
 
 		void StartTurnSequential(Living living)
@@ -242,12 +253,16 @@ namespace Dwarrowdelf.Server
 
 			AddChange(new TurnStartChange(living));
 
-			TurnStartEvent(living);
+			if (TurnStarting != null)
+				TurnStarting(living);
 		}
 
 		void EndTurn(Living living = null)
 		{
 			AddChange(new TurnEndChange(living));
+
+			if (TurnEnded != null)
+				TurnEnded(living);
 		}
 
 		void EndTick()

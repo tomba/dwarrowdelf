@@ -82,12 +82,12 @@ namespace Dwarrowdelf.Server
 
 			base.Initialize(world);
 
-			world.TickStartEvent += Tick;
+			world.TickStarting += Tick;
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickStartEvent -= Tick;
+			this.World.TickStarting -= Tick;
 
 			base.Destruct();
 		}

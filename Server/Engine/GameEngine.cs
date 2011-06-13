@@ -119,9 +119,9 @@ namespace Dwarrowdelf.Server
 
 			bool again = true;
 
-			this.World.TurnStartEvent += OnTurnStart;
+			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
-			this.World.TickOngoingEvent += OnTickOnGoing;
+			this.World.TickOngoing += OnTickOnGoing;
 
 			while (m_exit == false)
 			{
@@ -131,9 +131,9 @@ namespace Dwarrowdelf.Server
 				again = this.World.Work();
 			}
 
-			this.World.TickOngoingEvent -= OnTickOnGoing;
+			this.World.TickOngoing -= OnTickOnGoing;
 			this.World.TickEnded -= OnTickEnded;
-			this.World.TurnStartEvent -= OnTurnStart;
+			this.World.TurnStarting -= OnTurnStart;
 		}
 
 		public void Stop()
@@ -200,6 +200,8 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.UseMaxMoveTime)
 				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
+
+			// XXX use TurnEnded to cancel?
 		}
 
 		void MaxMoveTimerCallback(object stateInfo)

@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client
 			m_map = new Dictionary<IntPoint3D, DesignationData>();
 
 			this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
-			this.Environment.World.TickStartEvent += OnTickStartEvent;
+			this.Environment.World.TickStarting += OnTickStartEvent;
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 

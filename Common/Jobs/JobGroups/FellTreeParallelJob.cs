@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			}
 			SetSubJobs(jobs);
 
-			env.World.TickStartEvent += World_TickEvent;
+			env.World.TickStarting += World_TickEvent;
 		}
 
 		void World_TickEvent()
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		protected override void Cleanup()
 		{
-			m_environment.World.TickStartEvent -= World_TickEvent;
+			m_environment.World.TickStarting -= World_TickEvent;
 			m_locs = null;
 		}
 
