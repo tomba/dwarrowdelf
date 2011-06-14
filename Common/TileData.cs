@@ -23,7 +23,6 @@ namespace Dwarrowdelf
 
 		public bool Grass { get; set; }
 
-		public bool HasGrass { get { return this.Grass; } }
 		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
 
 		public bool IsHidden { get; set; }
