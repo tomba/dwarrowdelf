@@ -72,8 +72,8 @@ namespace Dwarrowdelf.Server
 		{
 			m_gameDir = gameDir;
 
-			m_minTickTimer = new Timer(this.MinTickTimerCallback);
-			m_maxMoveTimer = new Timer(this.MaxMoveTimerCallback);
+			m_minTickTimer = new Timer(this._MinTickTimerCallback);
+			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
 		}
 
 		public void Create()
@@ -121,7 +121,6 @@ namespace Dwarrowdelf.Server
 
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
-			this.World.TickOngoing += OnTickOnGoing;
 
 			while (m_exit == false)
 			{
@@ -131,7 +130,6 @@ namespace Dwarrowdelf.Server
 				again = this.World.Work();
 			}
 
-			this.World.TickOngoing -= OnTickOnGoing;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
 		}
@@ -143,15 +141,10 @@ namespace Dwarrowdelf.Server
 			SignalWorld();
 		}
 
-		void OnTickOnGoing()
-		{
-			// XXX We should catch ProceedTurnReceived directly, and do this there
-			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_players.Count > 0 && m_players.All(u => u.ProceedTurnReceived))
-				this.World.SetForceMove();
-		}
-
 		bool _IsTimeToStartTick()
 		{
+			// XXX check if this.UseMinTickTime && enough time passed
+
 			if (m_config.RequirePlayer && m_playersConnected == 0)
 				return false;
 
@@ -163,6 +156,7 @@ namespace Dwarrowdelf.Server
 
 		bool IsTimeToStartTick()
 		{
+			VerifyAccess();
 			bool r = _IsTimeToStartTick();
 			trace.TraceVerbose("IsTimeToStartTick = {0}", r);
 			return r;
@@ -170,6 +164,7 @@ namespace Dwarrowdelf.Server
 
 		void CheckForStartTick()
 		{
+			VerifyAccess();
 			if (IsTimeToStartTick())
 				this.World.SetOkToStartTick();
 		}
@@ -186,14 +181,11 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void MinTickTimerCallback(object stateInfo)
+		void _MinTickTimerCallback(object stateInfo)
 		{
 			trace.TraceVerbose("MinTickTimerCallback");
-			if (IsTimeToStartTick())
-			{
-				this.World.SetOkToStartTick();
-				SignalWorld();
-			}
+			this.World.BeginInvokeInstant(new Action(CheckForStartTick));
+			SignalWorld();
 		}
 
 		void OnTurnStart(Living living)
@@ -204,11 +196,16 @@ namespace Dwarrowdelf.Server
 			// XXX use TurnEnded to cancel?
 		}
 
-		void MaxMoveTimerCallback(object stateInfo)
+		void _MaxMoveTimerCallback(object stateInfo)
 		{
 			trace.TraceVerbose("MaxMoveTimerCallback");
-			this.World.SetForceMove();
+			this.World.BeginInvokeInstant(new Action(MaxMoveTimerCallback));
 			SignalWorld();
+		}
+
+		void MaxMoveTimerCallback()
+		{
+			this.World.SetProceedTurn();
 		}
 
 		public void SignalWorld()
@@ -229,6 +226,7 @@ namespace Dwarrowdelf.Server
 			m_players.Add(player);
 			player.Init(this);
 			player.PropertyChanged += OnPlayerPropertyChanged;
+			player.ProceedTurnReceived += OnPlayerProceedTurnReceived;
 
 			if (player.IsConnected)
 				++m_playersConnected;
@@ -242,12 +240,22 @@ namespace Dwarrowdelf.Server
 			bool ok = m_players.Remove(player);
 			Debug.Assert(ok);
 
+			player.ProceedTurnReceived -= OnPlayerProceedTurnReceived;
 			player.PropertyChanged -= OnPlayerPropertyChanged;
 
 			if (player.IsConnected)
 				--m_playersConnected;
 			if (player.IsInGame)
 				--m_playersInGame;
+		}
+
+		void OnPlayerProceedTurnReceived(Player player)
+		{
+			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_players.Count > 0 && m_players.All(u => u.IsProceedTurnReceived))
+			{
+				this.World.SetProceedTurn();
+				SignalWorld();
+			}
 		}
 
 		void OnPlayerPropertyChanged(object ob, PropertyChangedEventArgs args)

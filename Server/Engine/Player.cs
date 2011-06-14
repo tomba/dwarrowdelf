@@ -289,17 +289,18 @@ namespace Dwarrowdelf.Server
 			this.IsInGame = false;
 		}
 
-		public bool StartTurnSent { get; private set; }
-		public bool ProceedTurnReceived { get; private set; }
+		bool IsStartTurnSent { get; set; }
+		public bool IsProceedTurnReceived { get; private set; }
+		public event Action<Player> ProceedTurnReceived;
 
 		void ReceiveMessage(ProceedTurnMessage msg)
 		{
 			try
 			{
-				if (this.StartTurnSent == false)
+				if (this.IsStartTurnSent == false)
 					throw new Exception();
 
-				if (this.ProceedTurnReceived == true)
+				if (this.IsProceedTurnReceived == true)
 					throw new Exception();
 
 				foreach (var tuple in msg.Actions)
@@ -336,9 +337,10 @@ namespace Dwarrowdelf.Server
 					living.DoAction(action, m_userID);
 				}
 
-				this.ProceedTurnReceived = true;
+				this.IsProceedTurnReceived = true;
 
-				m_engine.SignalWorld();
+				if (ProceedTurnReceived != null)
+					ProceedTurnReceived(this);
 			}
 			catch (Exception e)
 			{
@@ -368,8 +370,8 @@ namespace Dwarrowdelf.Server
 		{
 			if (change is TickStartChange)
 			{
-				this.StartTurnSent = false;
-				this.ProceedTurnReceived = false;
+				this.IsStartTurnSent = false;
+				this.IsProceedTurnReceived = false;
 			}
 			else if (change is TurnStartChange)
 			{
@@ -377,7 +379,7 @@ namespace Dwarrowdelf.Server
 				if (c.Living != null && m_controllables.Contains(c.Living))
 					return;
 
-				this.StartTurnSent = true;
+				this.IsStartTurnSent = true;
 			}
 			else if (change is TurnEndChange)
 			{

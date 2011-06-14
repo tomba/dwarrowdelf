@@ -11,10 +11,6 @@ namespace Dwarrowdelf.Server
 	{
 		public event Action TickStarting;
 		public event Action TickEnded;
-		/// <summary>
-		/// Called in every Work call if World state is TickOngoing
-		/// </summary>
-		public event Action TickOngoing;
 
 		public event Action<Living> TurnStarting;
 		public event Action<Living> TurnEnded;
@@ -37,25 +33,21 @@ namespace Dwarrowdelf.Server
 
 		WorldState m_state = WorldState.Idle;
 
-		volatile bool m_okToStartTick = false;
-		volatile bool m_forceMove = false;
+		bool m_okToStartTick = false;
+		bool m_proceedTurn = false;
 
-		/// <summary>
-		/// Thread safe
-		/// </summary>
 		public void SetOkToStartTick()
 		{
+			trace.TraceVerbose("SetOkToStartTick");
+			VerifyAccess();
 			m_okToStartTick = true;
 		}
 
-		/// <summary>
-		/// Thread safe
-		/// </summary>
-		public void SetForceMove()
+		public void SetProceedTurn()
 		{
-			trace.TraceVerbose("SetForceMove");
-			m_forceMove = true;
-			// Race condition. The living may have done its move when m_forceMove is used.
+			trace.TraceVerbose("SetProceedTurn");
+			VerifyAccess();
+			m_proceedTurn = true;
 		}
 
 		public bool Work()
@@ -77,7 +69,8 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.Idle)
 			{
-				PreTickWork();
+				m_preTickInvokeList.ProcessInvokeList();
+				m_livings.Process();
 
 				if (m_okToStartTick)
 					StartTick();
@@ -87,9 +80,6 @@ namespace Dwarrowdelf.Server
 
 			if (m_state == WorldState.TickOngoing)
 			{
-				if (TickOngoing != null)
-					TickOngoing();
-
 				if (this.TickMethod == WorldTickMethod.Simultaneous)
 					again = SimultaneousWork();
 				else if (this.TickMethod == WorldTickMethod.Sequential)
@@ -114,26 +104,17 @@ namespace Dwarrowdelf.Server
 			return again;
 		}
 
-		void PreTickWork()
-		{
-			m_preTickInvokeList.ProcessInvokeList();
-			m_livings.Process();
-		}
-
 		bool SimultaneousWork()
 		{
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
-			//Debug.Assert(m_users.All(u => u.StartTurnSent));
 
 			trace.TraceVerbose("SimultaneousWork");
 
-			bool forceMove = m_forceMove;
-
-			if (!forceMove) // && !m_users.List.All(u => u.ProceedTurnReceived))
+			if (!m_proceedTurn)
 				return false;
 
-			m_forceMove = false;
+			m_proceedTurn = false;
 
 			foreach (var living in m_livings.List)
 				living.TurnPreRun();
@@ -156,21 +137,21 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			bool forceMove = m_forceMove;
+			Debug.Assert(false); // broken
 
-			trace.TraceVerbose("SequentialWork");
+			if (m_livings.List.Count == 0)
+			{
+				trace.TraceVerbose("no livings to handled");
+				m_state = WorldState.TickDone;
+				return true;
+			}
+
+			bool forceMove = m_proceedTurn;
 
 			bool again = true;
 
 			while (true)
 			{
-				if (m_livings.List.Count == 0)
-				{
-					trace.TraceVerbose("no livings to handled");
-					m_state = WorldState.TickDone;
-					break;
-				}
-
 				var living = m_livingEnumerator.Current;
 
 				if (m_livings.RemoveList.Contains(living))
@@ -182,7 +163,7 @@ namespace Dwarrowdelf.Server
 					break;
 				}
 
-				m_forceMove = false;
+				m_proceedTurn = false;
 
 				living.TurnPreRun();
 
