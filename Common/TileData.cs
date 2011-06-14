@@ -27,6 +27,7 @@ namespace Dwarrowdelf
 
 		public bool IsHidden { get; set; }
 
+#if VERBOSE
 		internal string ConvertToString()
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
@@ -48,6 +49,38 @@ namespace Dwarrowdelf
 				IsHidden = bool.Parse(arr[6]),
 			};
 		}
+#else
+		internal string ConvertToString()
+		{
+			ulong v =
+				((uint)this.FloorID << 0) |
+				((uint)this.FloorMaterialID << 8) |
+				((uint)this.InteriorID << 16) |
+				((uint)this.InteriorMaterialID << 24) |
+				((uint)this.WaterLevel << 32) |
+				((this.Grass ? 1u : 0) << 40) |
+				((this.IsHidden ? 1u : 0) << 48);
+
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return v.ToString(info);
+		}
+
+		public static TileData Parse(string str)
+		{
+			ulong v = ulong.Parse(str);
+
+			return new TileData()
+			{
+				FloorID = (FloorID)((v >> 0) & 0xff),
+				FloorMaterialID = (MaterialID)((v >> 8) & 0xff),
+				InteriorID = (InteriorID)((v >> 16) & 0xff),
+				InteriorMaterialID = (MaterialID)((v >> 24) & 0xff),
+				WaterLevel =(byte)((v >> 32) & 0xff),
+				Grass = ((v >> 40) & 0xff) != 0,
+				IsHidden = ((v >> 48) & 0xff) != 0,
+			};
+		}
+#endif
 	}
 
 	public enum VisibilityMode
