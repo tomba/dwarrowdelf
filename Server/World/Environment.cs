@@ -8,33 +8,33 @@ namespace Dwarrowdelf.Server
 {
 	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
 
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class Environment : ServerGameObject, IEnvironment
 	{
-		[GameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
+		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 		public TileGrid TileGrid { get { return m_tileGrid; } }
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
 
-		[GameProperty]
+		[SaveGameProperty]
 		public uint Version { get; private set; }
 
-		[GameProperty]
+		[SaveGameProperty]
 		public VisibilityMode VisibilityMode { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public int Width { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public int Height { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public int Depth { get; private set; }
 
-		[GameProperty]
+		[SaveGameProperty]
 		public IntPoint3D HomeLocation { get; set; }
 
 		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
-		[GameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
+		[SaveGameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
 		HashSet<BuildingObject> m_buildings;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Server
 			m_buildings = new HashSet<BuildingObject>();
 		}
 
-		[OnGamePostDeserialization]
+		[OnSaveGamePostDeserialization]
 		void OnDeserialized()
 		{
 			m_contentArray = new KeyedObjectCollection[this.Depth];
@@ -765,7 +765,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		class BuildingsSetConv : Dwarrowdelf.IGameConverter
+		class BuildingsSetConv : Dwarrowdelf.ISaveGameConverter
 		{
 			public object ConvertToSerializable(object parent, object value)
 			{
@@ -785,7 +785,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		class TileGridReaderWriter : IGameReaderWriter
+		class TileGridReaderWriter : ISaveGameReaderWriter
 		{
 			public void Write(Newtonsoft.Json.JsonWriter writer, object value)
 			{

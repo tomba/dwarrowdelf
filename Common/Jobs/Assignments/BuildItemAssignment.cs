@@ -7,12 +7,12 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class BuildItemAssignment : Assignment
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		readonly IItemObject[] m_items;
-		[GameProperty]
+		[SaveGameProperty]
 		readonly ItemID m_dstItemID;
 
 		public BuildItemAssignment(IJob parent, ActionPriority priority, IItemObject[] items, ItemID dstItemID)

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class ItemObject : ServerGameObject, IItemObject
 	{
 		protected ItemObject(GameSerializationContext ctx)
@@ -25,14 +25,14 @@ namespace Dwarrowdelf.Server
 			this.MaterialID = materialID;
 		}
 
-		[GameProperty]
+		[SaveGameProperty]
 		public ItemID ItemID { get; private set; }
 		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
 		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
 
 		public object ReservedBy { get; set; }
 
-		[GameProperty("NutritionalValue")]
+		[SaveGameProperty("NutritionalValue")]
 		int m_nutritionalValue;
 		public int NutritionalValue
 		{
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_nutritionalValue == value) return; m_nutritionalValue = value; NotifyInt(PropertyID.NutritionalValue, value); }
 		}
 
-		[GameProperty("RefreshmentValue")]
+		[SaveGameProperty("RefreshmentValue")]
 		int m_refreshmentValue;
 		public int RefreshmentValue
 		{

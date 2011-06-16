@@ -10,32 +10,32 @@ using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
-	public interface IGameConverter
+	public interface ISaveGameConverter
 	{
 		object ConvertToSerializable(object parent, object value);
 		object ConvertFromSerializable(object parent, object value);
 		Type OutputType { get; }
 	}
 
-	public interface IGameReaderWriter
+	public interface ISaveGameReaderWriter
 	{
 		void Write(JsonWriter writer, object value);
 		object Read(JsonReader reader);
 	}
 
-	class GameMemberEntry
+	class MemberEntry
 	{
 		public string Name { get; private set; }
 		public MemberInfo Member { get; private set; }
 		public Type MemberType { get; private set; }
-		public IGameConverter Converter { get; private set; }
-		public IGameReaderWriter ReaderWriter { get; private set; }
+		public ISaveGameConverter Converter { get; private set; }
+		public ISaveGameReaderWriter ReaderWriter { get; private set; }
 
-		public GameMemberEntry(MemberInfo member)
+		public MemberEntry(MemberInfo member)
 		{
-			var attrs = member.GetCustomAttributes(typeof(GamePropertyAttribute), false);
+			var attrs = member.GetCustomAttributes(typeof(SaveGamePropertyAttribute), false);
 			Trace.Assert(attrs.Length == 1);
-			var attr = (GamePropertyAttribute)attrs[0];
+			var attr = (SaveGamePropertyAttribute)attrs[0];
 
 			string name = attr.Name ?? member.Name;
 
@@ -53,14 +53,14 @@ namespace Dwarrowdelf
 			else
 				throw new Exception();
 
-			IGameConverter converter = null;
+			ISaveGameConverter converter = null;
 			if (attr.Converter != null)
 			{
 				converter = GetConverter(attr.Converter);
 				memberType = converter.OutputType;
 			}
 
-			IGameReaderWriter readerWriter = null;
+			ISaveGameReaderWriter readerWriter = null;
 			if (attr.ReaderWriter != null)
 				readerWriter = GetReaderWriter(attr.ReaderWriter);
 
@@ -71,17 +71,17 @@ namespace Dwarrowdelf
 			this.ReaderWriter = readerWriter;
 		}
 
-		static Dictionary<Type, IGameConverter> s_converterMap = new Dictionary<Type, IGameConverter>();
+		static Dictionary<Type, ISaveGameConverter> s_converterMap = new Dictionary<Type, ISaveGameConverter>();
 
-		static IGameConverter GetConverter(Type converterType)
+		static ISaveGameConverter GetConverter(Type converterType)
 		{
-			IGameConverter converter;
+			ISaveGameConverter converter;
 
 			lock (s_converterMap)
 			{
 				if (!s_converterMap.TryGetValue(converterType, out converter))
 				{
-					converter = (IGameConverter)Activator.CreateInstance(converterType);
+					converter = (ISaveGameConverter)Activator.CreateInstance(converterType);
 					s_converterMap[converterType] = converter;
 				}
 			}
@@ -89,17 +89,17 @@ namespace Dwarrowdelf
 			return converter;
 		}
 
-		static Dictionary<Type, IGameReaderWriter> s_readerWriterMap = new Dictionary<Type, IGameReaderWriter>();
+		static Dictionary<Type, ISaveGameReaderWriter> s_readerWriterMap = new Dictionary<Type, ISaveGameReaderWriter>();
 
-		static IGameReaderWriter GetReaderWriter(Type readerWriterType)
+		static ISaveGameReaderWriter GetReaderWriter(Type readerWriterType)
 		{
-			IGameReaderWriter readerWriter;
+			ISaveGameReaderWriter readerWriter;
 
 			lock (s_converterMap)
 			{
 				if (!s_readerWriterMap.TryGetValue(readerWriterType, out readerWriter))
 				{
-					readerWriter = (IGameReaderWriter)Activator.CreateInstance(readerWriterType);
+					readerWriter = (ISaveGameReaderWriter)Activator.CreateInstance(readerWriterType);
 					s_readerWriterMap[readerWriterType] = readerWriter;
 				}
 			}
@@ -150,7 +150,7 @@ namespace Dwarrowdelf
 		public TypeConverter TypeConverter { get; private set; }
 
 		public ConstructorInfo DeserializeConstructor { get; private set; }
-		public GameMemberEntry[] GameMemberEntries { get; private set; }
+		public MemberEntry[] GameMemberEntries { get; private set; }
 		public MethodInfo[] OnSerializingMethods { get; private set; }
 		public MethodInfo[] OnSerializedMethods { get; private set; }
 		public MethodInfo[] OnDeserializingMethods { get; private set; }
@@ -168,7 +168,7 @@ namespace Dwarrowdelf
 			this.Type = type;
 			this.TypeConverter = GetConverter(type);
 
-			var gameObjAttrs = type.GetCustomAttributes(typeof(GameObjectAttribute), false);
+			var gameObjAttrs = type.GetCustomAttributes(typeof(SaveGameObjectAttribute), false);
 
 			Type iface;
 
@@ -210,15 +210,15 @@ namespace Dwarrowdelf
 			}
 			else if (gameObjAttrs.Length > 0)
 			{
-				var attr = (GameObjectAttribute)gameObjAttrs[0];
+				var attr = (SaveGameObjectAttribute)gameObjAttrs[0];
 
 				this.TypeClass = TypeClass.GameObject;
 				this.GameMemberEntries = GetMemberEntries(type);
-				this.OnSerializingMethods = GetSerializationMethods(type, typeof(OnGameSerializingAttribute));
-				this.OnSerializedMethods = GetSerializationMethods(type, typeof(OnGameSerializedAttribute));
-				this.OnDeserializingMethods = GetSerializationMethods(type, typeof(OnGameDeserializingAttribute));
-				this.OnDeserializedMethods = GetSerializationMethods(type, typeof(OnGameDeserializedAttribute));
-				this.OnGamePostDeserializationMethods = GetSerializationMethods(type, typeof(OnGamePostDeserializationAttribute));
+				this.OnSerializingMethods = GetSerializationMethods(type, typeof(OnSaveGameSerializingAttribute));
+				this.OnSerializedMethods = GetSerializationMethods(type, typeof(OnSaveGameSerializedAttribute));
+				this.OnDeserializingMethods = GetSerializationMethods(type, typeof(OnSaveGameDeserializingAttribute));
+				this.OnDeserializedMethods = GetSerializationMethods(type, typeof(OnSaveGameDeserializedAttribute));
+				this.OnGamePostDeserializationMethods = GetSerializationMethods(type, typeof(OnSaveGamePostDeserializationAttribute));
 				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameSerializationContext) }, null);
 				if (this.DeserializeConstructor == null)
 					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
@@ -304,19 +304,19 @@ namespace Dwarrowdelf
 
 
 
-		static GameMemberEntry[] GetMemberEntries(Type type)
+		static MemberEntry[] GetMemberEntries(Type type)
 		{
 			var members = GetMembers(type);
-			var entries = new List<GameMemberEntry>();
+			var entries = new List<MemberEntry>();
 			var nameSet = new HashSet<string>();
 
 			foreach (var member in members)
 			{
-				var attrs = member.GetCustomAttributes(typeof(GamePropertyAttribute), false);
+				var attrs = member.GetCustomAttributes(typeof(SaveGamePropertyAttribute), false);
 				if (attrs.Length == 0)
 					continue;
 
-				var entry = new GameMemberEntry(member);
+				var entry = new MemberEntry(member);
 
 				if (nameSet.Add(entry.Name) == false)
 					throw new Exception("duplicate name");
@@ -329,7 +329,7 @@ namespace Dwarrowdelf
 			return entries.ToArray();
 		}
 
-		static int CompareEntries(GameMemberEntry a, GameMemberEntry b)
+		static int CompareEntries(MemberEntry a, MemberEntry b)
 		{
 			bool simpleA = TypeIsSimple(a.MemberType);
 			bool simpleB = TypeIsSimple(b.MemberType);

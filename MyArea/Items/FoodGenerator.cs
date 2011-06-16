@@ -7,7 +7,7 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class FoodGenerator : ItemObject
 	{
 		public FoodGenerator()

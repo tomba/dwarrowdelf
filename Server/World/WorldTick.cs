@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Server
 		// XXX hackish
 		public event Action HandleMessagesEvent;
 
-		[GameProperty]
+		[SaveGameProperty]
 		public int TickNumber { get; private set; }
 
 		enum WorldState

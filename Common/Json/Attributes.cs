@@ -10,54 +10,54 @@ namespace Dwarrowdelf
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = false)]
-	public class GameObjectAttribute : Attribute
+	public class SaveGameObjectAttribute : Attribute
 	{
 		public bool UseRef { get; set; }
 
-		public GameObjectAttribute()
+		public SaveGameObjectAttribute()
 		{
 		}
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
-	public class GamePropertyAttribute : Attribute
+	public class SaveGamePropertyAttribute : Attribute
 	{
 		public string Name { get; set; }
 		public Type Converter { get; set; }
 		public Type ReaderWriter { get; set; }
 
-		public GamePropertyAttribute()
+		public SaveGamePropertyAttribute()
 		{
 		}
 
-		public GamePropertyAttribute(string name)
+		public SaveGamePropertyAttribute(string name)
 		{
 			this.Name = name;
 		}
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnGameSerializingAttribute : Attribute
+	public class OnSaveGameSerializingAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnGameSerializedAttribute : Attribute
+	public class OnSaveGameSerializedAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnGameDeserializingAttribute : Attribute
+	public class OnSaveGameDeserializingAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnGameDeserializedAttribute : Attribute
+	public class OnSaveGameDeserializedAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnGamePostDeserializationAttribute : Attribute
+	public class OnSaveGamePostDeserializationAttribute : Attribute
 	{
 	}
 }

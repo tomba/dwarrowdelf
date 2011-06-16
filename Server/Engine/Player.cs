@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject]
+	[SaveGameObject]
 	public class Player : INotifyPropertyChanged
 	{
 		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Server
 
 		public World World { get { return m_world; } }
 
-		[GameProperty("HasControllablesBeenCreated")]
+		[SaveGameProperty("HasControllablesBeenCreated")]
 		bool m_hasControllablesBeenCreated;
 
 		bool m_isInGame;
@@ -40,16 +40,16 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		[GameProperty("UserID")]
+		[SaveGameProperty("UserID")]
 		int m_userID;
 		public int UserID { get { return m_userID; } }
 
 		// does this player sees all
-		[GameProperty("SeeAll")]
+		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
 		public bool IsSeeAll { get { return m_seeAll; } }
 
-		[GameProperty("Controllables")]
+		[SaveGameProperty("Controllables")]
 		List<Living> m_controllables;
 		public ReadOnlyCollection<Living> Controllables { get; private set; }
 

@@ -9,13 +9,13 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	class DwarfAI : AssignmentAI
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		bool m_priorityAction;
 
-		[GameProperty]
+		[SaveGameProperty]
 		ItemObject m_consumeObject;
 
 		public DwarfAI(Living ob)

@@ -10,15 +10,15 @@ using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
-	public interface IDeserializerRefResolver
+	public interface ISaveGameDeserializerRefResolver
 	{
 		object Get(int id);
 		void Add(int id, object ob);
 	}
 
-	public class JsonDeserializer
+	public class SaveGameDeserializer
 	{
-		class DefaultDeserializerRefResolver : IDeserializerRefResolver
+		class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
 		{
 			Dictionary<int, object> m_refMap = new Dictionary<int, object>();
 
@@ -40,12 +40,12 @@ namespace Dwarrowdelf
 		}
 
 		JsonTextReader m_reader;
-		IDeserializerRefResolver ReferenceResolver;
+		ISaveGameDeserializerRefResolver ReferenceResolver;
 
 		List<PostDeserializationDelegate> m_postDeserMethods = new List<PostDeserializationDelegate>();
 		delegate void PostDeserializationDelegate();
 
-		public JsonDeserializer(Stream stream)
+		public SaveGameDeserializer(Stream stream)
 		{
 			m_reader = new JsonTextReader(new StreamReader(stream));
 			this.ReferenceResolver = new DefaultDeserializerRefResolver();

@@ -9,10 +9,10 @@ using Dwarrowdelf.Jobs;
 
 namespace MyArea
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class AnimalAI : AssignmentAI
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		bool m_priorityAction;
 
 		AnimalAI(GameSerializationContext ctx)

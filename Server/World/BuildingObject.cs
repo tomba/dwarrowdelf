@@ -5,16 +5,16 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class BuildingObject : BaseGameObject, IBuildingObject
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 		public BuildingInfo BuildingInfo { get { return Buildings.GetBuildingInfo(this.BuildingID); } }
-		[GameProperty]
+		[SaveGameProperty]
 		public Environment Environment { get; private set; }
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
-		[GameProperty]
+		[SaveGameProperty]
 		public IntRect3D Area { get; set; }
 
 		BuildingObject(GameSerializationContext ctx)

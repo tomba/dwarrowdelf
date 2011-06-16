@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 		Sequential,
 	}
 
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public partial class World : IWorld
 	{
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
@@ -23,9 +23,9 @@ namespace Dwarrowdelf.Server
 
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
-		[GameProperty]
+		[SaveGameProperty]
 		Dictionary<ObjectID, IBaseGameObject> m_objectMap;
-		[GameProperty]
+		[SaveGameProperty]
 		int[] m_objectIDcounterArray;
 
 		public event Action<Change> WorldChanged;
@@ -33,12 +33,12 @@ namespace Dwarrowdelf.Server
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
 
-		[GameProperty]
+		[SaveGameProperty]
 		Random m_random;
 
 		Thread m_worldThread;
 
-		[GameProperty]
+		[SaveGameProperty]
 		public WorldTickMethod TickMethod { get; private set; }
 
 		World()

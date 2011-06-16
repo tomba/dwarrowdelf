@@ -8,12 +8,12 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class LoiterJob : AssignmentGroup
 	{
-		[GameProperty("Environment")]
+		[SaveGameProperty("Environment")]
 		readonly IEnvironment m_environment;
-		[GameProperty("State")]
+		[SaveGameProperty("State")]
 		int m_state;
 
 		public LoiterJob(IJob parent, ActionPriority priority, IEnvironment environment)

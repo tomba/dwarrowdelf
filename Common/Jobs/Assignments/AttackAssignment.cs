@@ -8,19 +8,19 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class AttackAssignment : Assignment
 	{
-		[GameProperty("Environment")]
+		[SaveGameProperty("Environment")]
 		readonly IEnvironment m_environment;
-		[GameProperty("Target")]
+		[SaveGameProperty("Target")]
 		readonly ILiving m_target;
 
-		[GameProperty]
+		[SaveGameProperty]
 		Queue<Direction> m_pathDirs;
-		[GameProperty]
+		[SaveGameProperty]
 		IntPoint3D m_supposedLocation;
-		[GameProperty]
+		[SaveGameProperty]
 		IntPoint3D m_dest;
 
 		public AttackAssignment(IJob parent, ActionPriority priority, IEnvironment environment, ILiving target)

@@ -7,14 +7,14 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject]
+	[SaveGameObject]
 	class ProcessableList<T>
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		List<T> m_list;
-		[GameProperty]
+		[SaveGameProperty]
 		List<T> m_addList;
-		[GameProperty]
+		[SaveGameProperty]
 		List<T> m_removeList;
 
 		public ReadOnlyCollection<T> List { get; private set; }

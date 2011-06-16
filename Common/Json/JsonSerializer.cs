@@ -11,15 +11,15 @@ using System.Collections;
 
 namespace Dwarrowdelf
 {
-	public interface IJsonReferenceResolver
+	public interface ISaveGameSerializerRefResolver
 	{
 		int Create(object ob);
 		int Get(object ob);
 	}
 
-	public class JsonSerializer
+	public class SaveGameSerializer
 	{
-		class DefaultReferenceResolver : IJsonReferenceResolver
+		class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
 		{
 			Dictionary<object, int> m_refMap = new Dictionary<object, int>();
 			int m_refNum;
@@ -44,13 +44,13 @@ namespace Dwarrowdelf
 		}
 
 		JsonTextWriter m_writer;
-		public IJsonReferenceResolver ReferenceResolver { get; set; }
+		public ISaveGameSerializerRefResolver ReferenceResolver { get; set; }
 
-		public JsonSerializer(Stream stream)
+		public SaveGameSerializer(Stream stream)
 		{
 			m_writer = new JsonTextWriter(new StreamWriter(stream));
 			m_writer.Formatting = Formatting.Indented;
-			this.ReferenceResolver = new DefaultReferenceResolver();
+			this.ReferenceResolver = new DefaultSerializerRefResolver();
 		}
 
 		public void Serialize<T>(T ob)

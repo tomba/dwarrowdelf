@@ -8,10 +8,10 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class MoveAssignment : MoveAssignmentBase
 	{
-		[GameProperty("Dest")]
+		[SaveGameProperty("Dest")]
 		readonly IntPoint3D m_dest;
 
 		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)

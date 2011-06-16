@@ -7,10 +7,10 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class WaitAssignment : Assignment
 	{
-		[GameProperty("Turns")]
+		[SaveGameProperty("Turns")]
 		readonly int m_turns;
 
 		public WaitAssignment(IJob parent, ActionPriority priority, int turns)

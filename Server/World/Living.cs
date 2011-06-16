@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public partial class Living : ServerGameObject, ILiving
 	{
 		[System.Diagnostics.Conditional("DEBUG")]
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Server
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
-		[GameProperty]
+		[SaveGameProperty]
 		Jobs.IAI m_ai;
 
 		public Living(string name)
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server
 				this.WaterFullness--;
 		}
 
-		[GameProperty("HitPoints")]
+		[SaveGameProperty("HitPoints")]
 		int m_hitPoints;
 		public int HitPoints
 		{
@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_hitPoints == value) return; m_hitPoints = value; NotifyInt(PropertyID.HitPoints, value); }
 		}
 
-		[GameProperty("SpellPoints")]
+		[SaveGameProperty("SpellPoints")]
 		int m_spellPoints;
 		public int SpellPoints
 		{
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_spellPoints == value) return; m_spellPoints = value; NotifyInt(PropertyID.SpellPoints, value); }
 		}
 
-		[GameProperty("Strength")]
+		[SaveGameProperty("Strength")]
 		int m_strength;
 		public int Strength
 		{
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_strength == value) return; m_strength = value; NotifyInt(PropertyID.Strength, value); }
 		}
 
-		[GameProperty("Dexterity")]
+		[SaveGameProperty("Dexterity")]
 		int m_dexterity;
 		public int Dexterity
 		{
@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_dexterity == value) return; m_dexterity = value; NotifyInt(PropertyID.Dexterity, value); }
 		}
 
-		[GameProperty("Constitution")]
+		[SaveGameProperty("Constitution")]
 		int m_constitution;
 		public int Constitution
 		{
@@ -116,7 +116,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_constitution == value) return; m_constitution = value; NotifyInt(PropertyID.Constitution, value); }
 		}
 
-		[GameProperty("Intelligence")]
+		[SaveGameProperty("Intelligence")]
 		int m_intelligence;
 		public int Intelligence
 		{
@@ -124,7 +124,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_intelligence == value) return; m_intelligence = value; NotifyInt(PropertyID.Intelligence, value); }
 		}
 
-		[GameProperty("Wisdom")]
+		[SaveGameProperty("Wisdom")]
 		int m_wisdom;
 		public int Wisdom
 		{
@@ -132,7 +132,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_wisdom == value) return; m_wisdom = value; NotifyInt(PropertyID.Wisdom, value); }
 		}
 
-		[GameProperty("Charisma")]
+		[SaveGameProperty("Charisma")]
 		int m_charisma;
 		public int Charisma
 		{
@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_charisma == value) return; m_charisma = value; NotifyInt(PropertyID.Charisma, value); }
 		}
 
-		[GameProperty("ArmorClass")]
+		[SaveGameProperty("ArmorClass")]
 		int m_armorClass;
 		public int ArmorClass
 		{
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_armorClass == value) return; m_armorClass = value; NotifyInt(PropertyID.ArmorClass, value); }
 		}
 
-		[GameProperty("VisionRange")]
+		[SaveGameProperty("VisionRange")]
 		int m_visionRange;
 		public int VisionRange
 		{
@@ -156,7 +156,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_visionRange == value) return; m_visionRange = value; NotifyInt(PropertyID.VisionRange, value); m_visionMap = null; }
 		}
 
-		[GameProperty("FoodFullness")]
+		[SaveGameProperty("FoodFullness")]
 		int m_foodFullness;
 		public int FoodFullness
 		{
@@ -164,7 +164,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_foodFullness == value) return; m_foodFullness = value; NotifyInt(PropertyID.FoodFullness, value); }
 		}
 
-		[GameProperty("WaterFullness")]
+		[SaveGameProperty("WaterFullness")]
 		int m_waterFullness;
 		public int WaterFullness
 		{
@@ -173,7 +173,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// String representation of assignment, for client use
-		[GameProperty("Assignment")]
+		[SaveGameProperty("Assignment")]
 		string m_assignment;
 		public string Assignment
 		{
@@ -322,13 +322,13 @@ namespace Dwarrowdelf.Server
 
 
 		// Actor stuff
-		[GameProperty]
+		[SaveGameProperty]
 		public GameAction CurrentAction { get; private set; }
 		public bool HasAction { get { return this.CurrentAction != null; } }
 
-		[GameProperty]
+		[SaveGameProperty]
 		public int ActionTicksLeft { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public int ActionUserID { get; private set; }
 
 		public void DoAction(GameAction action)

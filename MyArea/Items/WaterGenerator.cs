@@ -7,7 +7,7 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class WaterGenerator : ItemObject
 	{
 		public WaterGenerator()

@@ -10,21 +10,21 @@ namespace Dwarrowdelf.Jobs.Assignments
 {
 	public abstract class MoveAssignmentBase : Assignment
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		protected IntPoint3D Src { get; private set; } // just for ToString()
 
-		[GameProperty]
+		[SaveGameProperty]
 		protected readonly IEnvironment m_environment;
-		[GameProperty]
+		[SaveGameProperty]
 		DirectionSet m_positioning;
-		[GameProperty]
+		[SaveGameProperty]
 		IntPoint3D m_supposedLocation;
-		[GameProperty]
+		[SaveGameProperty]
 		int m_numFails;
-		[GameProperty(Converter = typeof(QueueConverter))]
+		[SaveGameProperty(Converter = typeof(QueueConverter))]
 		Queue<Direction> m_pathDirs;
 
-		class QueueConverter : IGameConverter
+		class QueueConverter : ISaveGameConverter
 		{
 			public object ConvertToSerializable(object parent, object value)
 			{

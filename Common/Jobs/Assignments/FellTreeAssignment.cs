@@ -7,12 +7,12 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class FellTreeAssignment : Assignment
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		readonly IntPoint3D m_location;
-		[GameProperty]
+		[SaveGameProperty]
 		readonly IEnvironment m_environment;
 
 		public FellTreeAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)

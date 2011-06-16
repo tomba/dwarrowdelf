@@ -9,15 +9,15 @@ namespace Dwarrowdelf.Server
 	/* Abstract game object, without inventory or location. */
 	abstract public class BaseGameObject : IBaseGameObject
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		public ObjectID ObjectID { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public World World { get; private set; }
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
 
-		[GameProperty]
+		[SaveGameProperty]
 		public bool IsInitialized { get; private set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public bool IsDestructed { get; private set; }
 
 		public event Action<BaseGameObject> Destructed;

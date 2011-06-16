@@ -116,7 +116,7 @@ namespace Dwarrowdelf.Client
 
 			var stream = new System.IO.MemoryStream();
 
-			var serializer = new Dwarrowdelf.JsonSerializer(stream);
+			var serializer = new Dwarrowdelf.SaveGameSerializer(stream);
 			serializer.Serialize(saveData);
 
 			stream.Position = 0;
@@ -143,7 +143,7 @@ namespace Dwarrowdelf.Client
 			SaveData data;
 
 			var stream = File.OpenRead(savePath);
-			var deserializer = new Dwarrowdelf.JsonDeserializer(stream);
+			var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream);
 			data = deserializer.Deserialize<SaveData>();
 
 			watch.Stop();

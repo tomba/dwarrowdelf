@@ -11,17 +11,17 @@ namespace Dwarrowdelf.Jobs
 	/// <summary>
 	/// abstract AI that handles Assignments
 	/// </summary>
-	[GameObject]
+	[SaveGameObject]
 	public abstract class AssignmentAI : IAI
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		public ILiving Worker { get; private set; }
 
-		[GameProperty("NeedToAbort")]
+		[SaveGameProperty("NeedToAbort")]
 		bool m_needToAbort;
 
 		IAssignment m_currentAssignment;
-		[GameProperty]
+		[SaveGameProperty]
 		public IAssignment CurrentAssignment
 		{
 			get { return m_currentAssignment; }
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Jobs
 			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
 		}
 
-		[OnGamePostDeserialization]
+		[OnSaveGamePostDeserialization]
 		void OnPostDeserialization()
 		{
 			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));

@@ -8,12 +8,12 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class RandomMoveAssignment : Assignment
 	{
-		[GameProperty("Environment")]
+		[SaveGameProperty("Environment")]
 		readonly IEnvironment m_environment;
-		[GameProperty("Dir")]
+		[SaveGameProperty("Dir")]
 		Direction m_dir;
 
 		public RandomMoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment)

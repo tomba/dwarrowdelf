@@ -20,16 +20,16 @@ namespace Dwarrowdelf.Server
 	/* Game object that has inventory, location */
 	abstract public class ServerGameObject : BaseGameObject, IGameObject
 	{
-		[GameProperty]
+		[SaveGameProperty]
 		public ServerGameObject Parent { get; private set; }
 		IBaseGameObject IGameObject.Parent { get { return this.Parent; } }
 		public Environment Environment { get { return this.Parent as Environment; } }
 		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
-		[GameProperty("Inventory")]
+		[SaveGameProperty("Inventory")]
 		KeyedObjectCollection m_children;
 		public ReadOnlyCollection<ServerGameObject> Inventory { get; private set; }
 
-		[GameProperty]
+		[SaveGameProperty]
 		public IntPoint3D Location { get; private set; }
 		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public int X { get { return this.Location.X; } }
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new PropertyIntChange(this, id, value));
 		}
 
-		[GameProperty("Name")]
+		[SaveGameProperty("Name")]
 		string m_name;
 		public string Name
 		{
@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_name == value) return; m_name = value; NotifyObject(PropertyID.Name, value); }
 		}
 
-		[GameProperty("Color")]
+		[SaveGameProperty("Color")]
 		GameColor m_color;
 		public GameColor Color
 		{
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_color == value) return; m_color = value; NotifyObject(PropertyID.Color, value); }
 		}
 
-		[GameProperty("SymbolID")]
+		[SaveGameProperty("SymbolID")]
 		SymbolID m_symbolID;
 		public SymbolID SymbolID
 		{
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_symbolID == value) return; m_symbolID = value; NotifyObject(PropertyID.SymbolID, value); }
 		}
 
-		[GameProperty("MaterialID")]
+		[SaveGameProperty("MaterialID")]
 		MaterialID m_materialID;
 		public MaterialID MaterialID
 		{
