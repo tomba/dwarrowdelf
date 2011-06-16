@@ -24,6 +24,7 @@ namespace Dwarrowdelf
 	{
 		public string Name { get; set; }
 		public Type Converter { get; set; }
+		public Type ReaderWriter { get; set; }
 
 		public GamePropertyAttribute()
 		{

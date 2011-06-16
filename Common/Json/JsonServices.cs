@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
@@ -16,12 +17,19 @@ namespace Dwarrowdelf
 		Type OutputType { get; }
 	}
 
+	public interface IGameReaderWriter
+	{
+		void Write(JsonWriter writer, object value);
+		object Read(JsonReader reader);
+	}
+
 	class GameMemberEntry
 	{
 		public string Name { get; private set; }
 		public MemberInfo Member { get; private set; }
 		public Type MemberType { get; private set; }
 		public IGameConverter Converter { get; private set; }
+		public IGameReaderWriter ReaderWriter { get; private set; }
 
 		public GameMemberEntry(MemberInfo member)
 		{
@@ -52,10 +60,15 @@ namespace Dwarrowdelf
 				memberType = converter.OutputType;
 			}
 
+			IGameReaderWriter readerWriter = null;
+			if (attr.ReaderWriter != null)
+				readerWriter = GetReaderWriter(attr.ReaderWriter);
+
 			this.Member = member;
 			this.Name = name;
 			this.MemberType = memberType;
 			this.Converter = converter;
+			this.ReaderWriter = readerWriter;
 		}
 
 		static Dictionary<Type, IGameConverter> s_converterMap = new Dictionary<Type, IGameConverter>();
@@ -74,6 +87,24 @@ namespace Dwarrowdelf
 			}
 
 			return converter;
+		}
+
+		static Dictionary<Type, IGameReaderWriter> s_readerWriterMap = new Dictionary<Type, IGameReaderWriter>();
+
+		static IGameReaderWriter GetReaderWriter(Type readerWriterType)
+		{
+			IGameReaderWriter readerWriter;
+
+			lock (s_converterMap)
+			{
+				if (!s_readerWriterMap.TryGetValue(readerWriterType, out readerWriter))
+				{
+					readerWriter = (IGameReaderWriter)Activator.CreateInstance(readerWriterType);
+					s_readerWriterMap[readerWriterType] = readerWriter;
+				}
+			}
+
+			return readerWriter;
 		}
 	}
 

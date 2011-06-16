@@ -234,12 +234,19 @@ namespace Dwarrowdelf
 
 				m_writer.WritePropertyName(entry.Name);
 
-				var memberType = entry.MemberType;
+				if (entry.ReaderWriter != null)
+				{
+					entry.ReaderWriter.Write(m_writer, value);
+				}
+				else
+				{
+					var memberType = entry.MemberType;
 
-				if (entry.Converter != null)
-					value = entry.Converter.ConvertToSerializable(ob, value);
+					if (entry.Converter != null)
+						value = entry.Converter.ConvertToSerializable(ob, value);
 
-				SerializeObject(value, memberType);
+					SerializeObject(value, memberType);
+				}
 			}
 
 			var serializedMethods = typeInfo.OnSerializedMethods;

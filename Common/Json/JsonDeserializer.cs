@@ -399,12 +399,21 @@ namespace Dwarrowdelf
 
 				Read();
 
-				var memberType = entry.MemberType;
+				object value;
 
-				object value = DeserializeObject(memberType);
+				if (entry.ReaderWriter != null)
+				{
+					value = entry.ReaderWriter.Read(m_reader);
+				}
+				else
+				{
+					var memberType = entry.MemberType;
 
-				if (entry.Converter != null)
-					value = entry.Converter.ConvertFromSerializable(ob, value);
+					value = DeserializeObject(memberType);
+
+					if (entry.Converter != null)
+						value = entry.Converter.ConvertFromSerializable(ob, value);
+				}
 
 				values[idx] = value;
 
