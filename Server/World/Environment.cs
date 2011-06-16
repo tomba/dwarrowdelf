@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 	[GameObject(UseRef = true)]
 	public class Environment : ServerGameObject, IEnvironment
 	{
-		[GameProperty("Grid", Converter = typeof(TileGridConv))]
+		[GameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 		public TileGrid TileGrid { get { return m_tileGrid; } }
 
@@ -785,59 +785,60 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		class TileGridConv : Dwarrowdelf.IGameConverter
+		class TileGridReaderWriter : IGameReaderWriter
 		{
-			public object ConvertToSerializable(object parent, object value)
+			public void Write(Newtonsoft.Json.JsonWriter writer, object value)
 			{
 				var grid = (TileGrid)value;
+
+				writer.WriteStartArray();
+
+				int w = grid.Grid.GetLength(2);
+				int h = grid.Grid.GetLength(1);
+				int d = grid.Grid.GetLength(0);
+
+				writer.WriteValue(w);
+				writer.WriteValue(h);
+				writer.WriteValue(d);
+
 				var srcArr = grid.Grid;
 
-				var size = new IntSize3D(grid.Grid.GetLength(2), grid.Grid.GetLength(1), grid.Grid.GetLength(0));
+				for (int z = 0; z < d; ++z)
+					for (int y = 0; y < h; ++y)
+						for (int x = 0; x < w; ++x)
+							writer.WriteValue(srcArr[z, y, x].ToUInt64());
 
-				var dstArr = new ulong[grid.Grid.Length];
-
-				int p = 0;
-				for (int z = 0; z < size.Depth; ++z)
-					for (int y = 0; y < size.Height; ++y)
-						for (int x = 0; x < size.Width; ++x)
-							dstArr[p++] = srcArr[z, y, x].ToUInt64();
-
-				var ser = new SerializableGrid();
-				ser.Size = size;
-				ser.TileDataArray = dstArr;
-
-				return ser;
+				writer.WriteEndArray();
 			}
 
-			public object ConvertFromSerializable(object parent, object value)
+			public object Read(Newtonsoft.Json.JsonReader reader)
 			{
-				var ser = (SerializableGrid)value;
-				var size = ser.Size;
-				var srcArr = ser.TileDataArray;
-				var grid = new TileGrid(size.Width, size.Height, size.Depth);
+				Debug.Assert(reader.TokenType == Newtonsoft.Json.JsonToken.StartArray);
+
+				reader.Read();
+				int w = (int)(long)reader.Value;
+				reader.Read();
+				int h = (int)(long)reader.Value;
+				reader.Read();
+				int d = (int)(long)reader.Value;
+
+				var grid = new TileGrid(w, h, d);
 				var dstArr = grid.Grid;
 
-				int p = 0;
-				for (int z = 0; z < size.Depth; ++z)
-					for (int y = 0; y < size.Height; ++y)
-						for (int x = 0; x < size.Width; ++x)
-							dstArr[z, y, x] = TileData.FromUInt64(srcArr[p++]);
+				for (int z = 0; z < d; ++z)
+					for (int y = 0; y < h; ++y)
+						for (int x = 0; x < w; ++x)
+						{
+							reader.Read();
+							var td = TileData.FromUInt64((ulong)(long)reader.Value);
+							dstArr[z, y, x] = td;
+						}
+
+				reader.Read();
+				Debug.Assert(reader.TokenType == Newtonsoft.Json.JsonToken.EndArray);
 
 				return grid;
 			}
-
-			public Type OutputType
-			{
-				get { return typeof(SerializableGrid); }
-			}
-
-			[Serializable]
-			public class SerializableGrid
-			{
-				public IntSize3D Size;
-				public ulong[] TileDataArray;
-			}
-
 		}
 	}
 
