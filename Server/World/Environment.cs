@@ -794,13 +794,13 @@ namespace Dwarrowdelf.Server
 
 				var size = new IntSize3D(grid.Grid.GetLength(2), grid.Grid.GetLength(1), grid.Grid.GetLength(0));
 
-				var dstArr = new TileData[grid.Grid.Length];
+				var dstArr = new ulong[grid.Grid.Length];
 
 				int p = 0;
 				for (int z = 0; z < size.Depth; ++z)
 					for (int y = 0; y < size.Height; ++y)
 						for (int x = 0; x < size.Width; ++x)
-							dstArr[p++] = srcArr[z, y, x];
+							dstArr[p++] = srcArr[z, y, x].ToUInt64();
 
 				var ser = new SerializableGrid();
 				ser.Size = size;
@@ -821,7 +821,7 @@ namespace Dwarrowdelf.Server
 				for (int z = 0; z < size.Depth; ++z)
 					for (int y = 0; y < size.Height; ++y)
 						for (int x = 0; x < size.Width; ++x)
-							dstArr[z, y, x] = srcArr[p++];
+							dstArr[z, y, x] = TileData.FromUInt64(srcArr[p++]);
 
 				return grid;
 			}
@@ -835,7 +835,7 @@ namespace Dwarrowdelf.Server
 			public class SerializableGrid
 			{
 				public IntSize3D Size;
-				public TileData[] TileDataArray;
+				public ulong[] TileDataArray;
 			}
 
 		}
