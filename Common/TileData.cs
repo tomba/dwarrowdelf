@@ -53,13 +53,13 @@ namespace Dwarrowdelf
 		internal string ConvertToString()
 		{
 			ulong v =
-				((uint)this.FloorID << 0) |
-				((uint)this.FloorMaterialID << 8) |
-				((uint)this.InteriorID << 16) |
-				((uint)this.InteriorMaterialID << 24) |
-				((uint)this.WaterLevel << 32) |
-				((this.Grass ? 1u : 0) << 40) |
-				((this.IsHidden ? 1u : 0) << 48);
+				((ulong)this.FloorID << 0) |
+				((ulong)this.FloorMaterialID << 8) |
+				((ulong)this.InteriorID << 16) |
+				((ulong)this.InteriorMaterialID << 24) |
+				((ulong)this.WaterLevel << 32) |
+				((this.Grass ? 1LU : 0LU) << 40) |
+				((this.IsHidden ? 1LU : 0LU) << 48);
 
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			return v.ToString(info);
@@ -75,7 +75,7 @@ namespace Dwarrowdelf
 				FloorMaterialID = (MaterialID)((v >> 8) & 0xff),
 				InteriorID = (InteriorID)((v >> 16) & 0xff),
 				InteriorMaterialID = (MaterialID)((v >> 24) & 0xff),
-				WaterLevel =(byte)((v >> 32) & 0xff),
+				WaterLevel = (byte)((v >> 32) & 0xff),
 				Grass = ((v >> 40) & 0xff) != 0,
 				IsHidden = ((v >> 48) & 0xff) != 0,
 			};
