@@ -17,7 +17,7 @@ namespace Dwarrowdelf
 		int Get(object ob);
 	}
 
-	public class SaveGameSerializer
+	public class SaveGameSerializer : IDisposable
 	{
 		class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
 		{
@@ -51,6 +51,12 @@ namespace Dwarrowdelf
 			m_writer = new JsonTextWriter(new StreamWriter(stream));
 			m_writer.Formatting = Formatting.Indented;
 			this.ReferenceResolver = new DefaultSerializerRefResolver();
+		}
+
+		public void Dispose()
+		{
+			m_writer.Close();
+			m_writer = null;
 		}
 
 		public void Serialize<T>(T ob)

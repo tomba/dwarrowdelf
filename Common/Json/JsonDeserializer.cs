@@ -16,7 +16,7 @@ namespace Dwarrowdelf
 		void Add(int id, object ob);
 	}
 
-	public class SaveGameDeserializer
+	public class SaveGameDeserializer : IDisposable
 	{
 		class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
 		{
@@ -49,6 +49,12 @@ namespace Dwarrowdelf
 		{
 			m_reader = new JsonTextReader(new StreamReader(stream));
 			this.ReferenceResolver = new DefaultDeserializerRefResolver();
+		}
+
+		public void Dispose()
+		{
+			m_reader.Close();
+			m_reader = null;
 		}
 
 		public object Deserialize()

@@ -343,18 +343,9 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Saving game {0}", savePath);
 			var watch = Stopwatch.StartNew();
 
-
-			var stream = new System.IO.MemoryStream();
-
-			var serializer = new Dwarrowdelf.SaveGameSerializer(stream);
-			serializer.Serialize(saveData);
-
-			stream.Position = 0;
-			//stream.CopyTo(Console.OpenStandardOutput());
-
-			stream.Position = 0;
-			using (var file = File.Create(savePath))
-				stream.WriteTo(file);
+			using (var stream = File.Create(savePath))
+			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				serializer.Serialize(saveData);
 
 			watch.Stop();
 			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
@@ -367,9 +358,9 @@ namespace Dwarrowdelf.Server
 
 			SaveData saveData;
 
-			var stream = File.OpenRead(savePath);
-			var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream);
-			saveData = deserializer.Deserialize<SaveData>();
+			using (var stream = File.OpenRead(savePath))
+			using (var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream))
+				saveData = deserializer.Deserialize<SaveData>();
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
