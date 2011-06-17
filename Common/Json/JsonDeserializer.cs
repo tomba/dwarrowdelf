@@ -46,8 +46,13 @@ namespace Dwarrowdelf
 		delegate void PostDeserializationDelegate();
 
 		public SaveGameDeserializer(Stream stream)
+			: this(new StreamReader(stream))
 		{
-			m_reader = new JsonTextReader(new StreamReader(stream));
+		}
+
+		public SaveGameDeserializer(TextReader reader)
+		{
+			m_reader = new JsonTextReader(reader);
 			this.ReferenceResolver = new DefaultDeserializerRefResolver();
 		}
 

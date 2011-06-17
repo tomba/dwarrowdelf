@@ -767,12 +767,7 @@ namespace Dwarrowdelf.Client
 
 		private void Load_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection == null)
-				return;
 
-			var msg = new LoadMessage();
-
-			GameData.Data.Connection.Send(msg);
 		}
 
 

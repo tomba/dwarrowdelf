@@ -86,6 +86,7 @@
     <Compile Include="Json\JsonServices.cs" />
     <Compile Include="MyTraceSource.cs" />
     <Compile Include="ObjectType.cs" />
+    <Compile Include="SaveFileManager.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />

@@ -24,9 +24,9 @@ namespace Dwarrowdelf.Server
 			this.Engine.Create();
 		}
 
-		public void LoadWorld(string saveFile)
+		public void LoadWorld(Guid id)
 		{
-			this.Engine.Load(saveFile);
+			this.Engine.Load(id);
 		}
 
 		public void Run(EventWaitHandle serverStartWaitHandle)

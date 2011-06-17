@@ -2,4 +2,5 @@
 bin
 obj
 *.csproj.user
+save
 

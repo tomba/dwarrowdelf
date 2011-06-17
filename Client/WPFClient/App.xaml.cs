@@ -31,6 +31,8 @@ namespace Dwarrowdelf.Client
 		Window m_serverStartDialog; // Hacky dialog
 		Label m_serverDialogLabel;
 
+		SaveManager m_saveManager;
+
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			m_serverInAppDomain = true;
@@ -46,24 +48,20 @@ namespace Dwarrowdelf.Client
 
 			if (m_serverInAppDomain)
 			{
-				string gameDir = "save";
-				bool cleanSaves = true;
-				string saveFile = null;
+				var gameDir = @"C:\Users\Tomba\Work\Dwarrowdelf\save";
+
+				bool cleanSaves = false;
+				Guid save = Guid.Empty;
+
+				m_saveManager = new SaveManager(gameDir);
 
 				if (!Directory.Exists(gameDir))
 					Directory.CreateDirectory(gameDir);
 
 				if (cleanSaves)
-				{
-					var files = Directory.EnumerateFiles(gameDir);
-					foreach (var file in files)
-						File.Delete(file);
-				}
-
-				if (!cleanSaves)
-				{
-					saveFile = GetLatestSaveFile(gameDir);
-				}
+					m_saveManager.DeleteAll();
+				else
+					save = m_saveManager.GetLatestSaveFile();
 
 				m_serverStartWaitHandle = new AutoResetEvent(false);
 
@@ -80,20 +78,10 @@ namespace Dwarrowdelf.Client
 				m_serverStartDialog.Content = m_serverDialogLabel;
 				m_serverStartDialog.Show();
 
-				m_embeddedServer = new EmbeddedServer(saveFile);
+				m_embeddedServer = new EmbeddedServer(gameDir, save);
 				m_embeddedServer.ServerStatusChangeEvent += OnServerStatusChange;
 				m_embeddedServer.Start(m_serverStartWaitHandle);
 			}
-		}
-
-		static string GetLatestSaveFile(string gameDir)
-		{
-			var files = Directory.GetFiles(gameDir);
-			var dates = files.Select(f => Directory.GetLastWriteTimeUtc(f)).ToArray();
-			Array.Sort(dates, files);
-
-			var last = files[files.Length - 1];
-			return Path.GetFileName(last);
 		}
 
 		void OnServerStatusChange(string status)
@@ -135,13 +123,13 @@ namespace Dwarrowdelf.Client
 			Thread m_serverThread;
 			EventWaitHandle m_serverStartWaitHandle;
 			AppDomain m_serverDomain;
-			string m_saveFile;
+			Guid m_save;
 
 			public Action<string> ServerStatusChangeEvent;
 
-			public EmbeddedServer(string saveFile)
+			public EmbeddedServer(string gameDir, Guid save)
 			{
-				m_saveFile = saveFile;
+				m_save = save;
 
 				var di = AppDomain.CurrentDomain.SetupInformation;
 
@@ -162,7 +150,7 @@ namespace Dwarrowdelf.Client
 
 				var gameFactory = (IGameFactory)m_serverDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
 
-				m_game = gameFactory.CreateGame("MyArea.dll", "save");
+				m_game = gameFactory.CreateGame("MyArea.dll", gameDir);
 
 				UpdateStatus("Game Created");
 			}
@@ -192,7 +180,7 @@ namespace Dwarrowdelf.Client
 				Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 				Thread.CurrentThread.Name = "Main";
 
-				if (m_saveFile == null)
+				if (m_save == Guid.Empty)
 				{
 					UpdateStatus("Creating World");
 					m_game.CreateWorld();
@@ -201,7 +189,7 @@ namespace Dwarrowdelf.Client
 				else
 				{
 					UpdateStatus("Loading World");
-					m_game.LoadWorld(m_saveFile);
+					m_game.LoadWorld(m_save);
 					UpdateStatus("World Loaded");
 				}
 

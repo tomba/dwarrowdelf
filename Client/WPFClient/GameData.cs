@@ -105,46 +105,50 @@ namespace Dwarrowdelf.Client
 
 		internal void Save(Guid id)
 		{
-			var savePath = Path.Combine("save", String.Format("client-{0}.json", id));
-
 			var saveData = new SaveData()
 			{
+				kala = "kalaaa",
 			};
 
-			Trace.TraceInformation("Saving game {0}", savePath);
+			Trace.TraceInformation("Saving client data");
 			var watch = Stopwatch.StartNew();
 
-			var stream = new System.IO.MemoryStream();
+			string data;
 
-			var serializer = new Dwarrowdelf.SaveGameSerializer(stream);
-			serializer.Serialize(saveData);
+			using (var stream = new System.IO.MemoryStream())
+			{
+				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				{
+					serializer.Serialize(saveData);
 
-			stream.Position = 0;
-			//stream.CopyTo(Console.OpenStandardOutput());
+					stream.Position = 0;
 
-			stream.Position = 0;
-			using (var file = File.Create(savePath))
-				stream.WriteTo(file);
+					using (StreamReader reader = new StreamReader(stream))
+						data = reader.ReadToEnd();
+				}
+			}
 
 			watch.Stop();
-			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
+			Trace.TraceInformation("Saving client data took {0}", watch.Elapsed);
+
+			var msg = new Messages.SaveClientDataMessage() { ID = id, Data = data };
+			this.Connection.Send(msg);
 
 			if (SaveEvent != null)
 				SaveEvent();
 		}
 
-		internal void Load(Guid id)
+		internal void Load(Guid id, string dataStr)
 		{
-			var savePath = Path.Combine("save", String.Format("client-{0}.json", id));
-
-			Trace.TraceInformation("Loading game {0}", savePath);
+			Trace.TraceInformation("Loading client data");
 			var watch = Stopwatch.StartNew();
 
-			SaveData data;
+			var reader = new StringReader(dataStr);
 
-			var stream = File.OpenRead(savePath);
-			var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream);
-			data = deserializer.Deserialize<SaveData>();
+			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader);
+			var data = deserializer.Deserialize<SaveData>();
+
+			// XXX restore state
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
@@ -153,6 +157,7 @@ namespace Dwarrowdelf.Client
 		[Serializable]
 		class SaveData
 		{
+			public string kala;
 		}
 	}
 }

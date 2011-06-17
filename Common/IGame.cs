@@ -14,7 +14,7 @@ namespace Dwarrowdelf
 	public interface IGame
 	{
 		void CreateWorld();
-		void LoadWorld(string saveFile);
+		void LoadWorld(Guid id);
 
 		void Run(EventWaitHandle serverStartWaitHandle);
 		void Stop();

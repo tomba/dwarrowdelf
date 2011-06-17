@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Client
 			this.IsPlayerInGame = true;
 
 			if (m_gameID != Guid.Empty)
-				GameData.Data.Load(m_gameID);
+				GameData.Data.Load(m_gameID, msg.ClientData);
 
 			m_enterGameCallback();
 		}

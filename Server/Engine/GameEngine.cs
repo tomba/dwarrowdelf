@@ -82,6 +82,7 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			this.LastSaveID = Guid.Empty;
+			this.LastLoadID = Guid.Empty;
 
 			m_world = new World(WorldTickMethod.Simultaneous);
 
@@ -91,20 +92,87 @@ namespace Dwarrowdelf.Server
 		protected abstract void InitializeWorld();
 
 		public Guid LastSaveID { get; private set; }
+		public Guid LastLoadID { get; private set; }
 
-		public void Load(string saveFile)
+		public void Save()
+		{
+			var id = Guid.NewGuid();
+
+			var msg = new Dwarrowdelf.Messages.SaveReplyMessage() { ID = id };
+			foreach (var p in m_players.Where(p => p.IsConnected && p.IsInGame))
+				p.Send(msg);
+
+			int tick = m_world.TickNumber;
+
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+
+			Directory.CreateDirectory(saveDir);
+
+			var now = DateTime.Now;
+
+			File.WriteAllText(Path.Combine(saveDir, "TIMESTAMP"), now.ToString("u"));
+			File.WriteAllText(Path.Combine(saveDir, "TICK"), tick.ToString());
+
+			using (var writer = File.CreateText(Path.Combine(saveDir, "_info.txt")))
+			{
+				writer.WriteLine("date {0:u}", now);
+				writer.WriteLine("tick {0}", tick);
+				writer.WriteLine("players");
+				foreach (var p in m_players)
+				{
+					writer.WriteLine("\t{0}: {1}, {2}", p.UserID, p.IsConnected ? "connected" : "not connected",
+						p.IsInGame ? "in game" : "not in game");
+				}
+			}
+
+			var saveData = new SaveData()
+			{
+				World = this.World,
+				Players = m_players,
+				ID = id,
+			};
+
+			SaveWorld(saveData, Path.Combine(saveDir, "server.json"));
+
+			this.LastSaveID = id;
+		}
+
+		public void SaveClientData(int userID, Guid id, string data)
+		{
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+
+			if (!Directory.Exists(saveDir))
+				throw new Exception();
+
+			if (this.LastSaveID != id)
+				throw new Exception();
+
+			string saveFile = String.Format("client-{0}.json", userID, id);
+			File.WriteAllText(Path.Combine(saveDir, saveFile), data);
+		}
+
+		public string LoadClientData(int userID, Guid id)
+		{
+			string saveFile = String.Format("client-{0}-{1}.json", userID, id);
+			if (File.Exists(saveFile))
+				return File.ReadAllText(Path.Combine(m_gameDir, saveFile));
+			else
+				return null;
+		}
+
+		public void Load(Guid id)
 		{
 			if (m_world != null)
 				throw new Exception();
 
-			var saveData = LoadWorld(Path.Combine(m_gameDir, saveFile));
+			var saveData = LoadWorld(Path.Combine(m_gameDir, id.ToString(), "server.json"));
 
 			m_world = saveData.World;
 
 			foreach (var p in saveData.Players)
 				AddPlayer(p);
 
-			this.LastSaveID = saveData.ID;
+			this.LastLoadID = saveData.ID;
 		}
 
 		void VerifyAccess()
@@ -317,26 +385,6 @@ namespace Dwarrowdelf.Server
 		}
 
 		public abstract Living[] CreateControllables(Player player);
-
-		public void Save()
-		{
-			var id = Guid.NewGuid();
-			var msg = new Dwarrowdelf.Messages.SaveReplyMessage() { ID = id };
-			foreach (var p in m_players.Where(p => p.IsConnected && p.IsInGame))
-				p.Send(msg);
-
-			int tick = m_world.TickNumber;
-			string saveFile = String.Format("save-{0}-{1}.json", tick, id);
-
-			var saveData = new SaveData()
-			{
-				World = this.World,
-				Players = m_players,
-				ID = id,
-			};
-
-			SaveWorld(saveData, Path.Combine(m_gameDir, saveFile));
-		}
 
 		static void SaveWorld(SaveData saveData, string savePath)
 		{

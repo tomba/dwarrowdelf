@@ -15,29 +15,21 @@ namespace Dwarrowdelf.Server
 		{
 			Thread.CurrentThread.Name = "Main";
 
-			string gameDir = "save";
+			var gameDir = @"C:\Users\Tomba\Work\Dwarrowdelf\save";
 			bool cleanSaves = true;
-			string saveFile = null;
 
-			if (!Directory.Exists(gameDir))
-				Directory.CreateDirectory(gameDir);
+			SaveManager saveManager = new SaveManager(gameDir);
+
+			Guid save = Guid.Empty;
 
 			if (cleanSaves)
-			{
-				var files = Directory.EnumerateFiles(gameDir);
-				foreach (var file in files)
-					File.Delete(file);
-			}
-
-			if (!cleanSaves)
-			{
-				saveFile = GetLatestSaveFile(gameDir);
-			}
-
+				saveManager.DeleteAll();
+			else
+				save = saveManager.GetLatestSaveFile();
 
 			var gf = new GameFactory();
 			// Typecast to Game to allow direct manipulation
-			var game = (Game)gf.CreateGame("MyArea.dll", "save");
+			var game = (Game)gf.CreateGame("MyArea.dll", gameDir);
 			game.CreateWorld();
 
 			var keyThread = new Thread(KeyMain);
