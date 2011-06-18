@@ -242,7 +242,7 @@ namespace Dwarrowdelf.Server
 		{
 			if (m_hasControllablesBeenCreated)
 			{
-				Send(new Messages.EnterGameReplyBeginMessage() { ID = m_engine.LastLoadID });
+				Send(new Messages.EnterGameReplyBeginMessage());
 				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
@@ -272,7 +272,7 @@ namespace Dwarrowdelf.Server
 				m_hasControllablesBeenCreated = true;
 			}
 
-			Send(new Messages.EnterGameReplyBeginMessage() { ID = m_engine.LastLoadID });
+			Send(new Messages.EnterGameReplyBeginMessage());
 			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
@@ -361,7 +361,7 @@ namespace Dwarrowdelf.Server
 			m_engine.Save();
 		}
 
-		void ReceiveMessage(SaveClientDataMessage msg)
+		void ReceiveMessage(SaveClientDataReplyMessage msg)
 		{
 			m_engine.SaveClientData(this.UserID, msg.ID, msg.Data);
 		}

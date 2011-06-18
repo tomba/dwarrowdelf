@@ -131,14 +131,14 @@ namespace Dwarrowdelf.Client
 			watch.Stop();
 			Trace.TraceInformation("Saving client data took {0}", watch.Elapsed);
 
-			var msg = new Messages.SaveClientDataMessage() { ID = id, Data = data };
+			var msg = new Messages.SaveClientDataReplyMessage() { ID = id, Data = data };
 			this.Connection.Send(msg);
 
 			if (SaveEvent != null)
 				SaveEvent();
 		}
 
-		internal void Load(Guid id, string dataStr)
+		internal void Load(string dataStr)
 		{
 			Trace.TraceInformation("Loading client data");
 			var watch = Stopwatch.StartNew();

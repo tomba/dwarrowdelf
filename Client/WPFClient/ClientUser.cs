@@ -62,15 +62,11 @@ namespace Dwarrowdelf.Client
 			f(msg);
 		}
 
-		Guid m_gameID;
-
 		void HandleMessage(EnterGameReplyBeginMessage msg)
 		{
 			trace.TraceInformation("EnterGameReplyBeginMessage");
 
 			Debug.Assert(!this.IsPlayerInGame);
-
-			m_gameID = msg.ID;
 		}
 
 		void HandleMessage(EnterGameReplyEndMessage msg)
@@ -79,8 +75,8 @@ namespace Dwarrowdelf.Client
 
 			this.IsPlayerInGame = true;
 
-			if (m_gameID != Guid.Empty)
-				GameData.Data.Load(m_gameID, msg.ClientData);
+			if (msg.ClientData != null)
+				GameData.Data.Load(msg.ClientData);
 
 			m_enterGameCallback();
 		}
@@ -110,7 +106,7 @@ namespace Dwarrowdelf.Client
 			//App.MainWindow.FollowObject = null;
 		}
 
-		void HandleMessage(SaveReplyMessage msg)
+		void HandleMessage(SaveClientDataRequestMessage msg)
 		{
 			GameData.Data.Save(msg.ID);
 		}

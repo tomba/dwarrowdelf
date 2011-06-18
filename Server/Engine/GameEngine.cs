@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Server
 		{
 			var id = Guid.NewGuid();
 
-			var msg = new Dwarrowdelf.Messages.SaveReplyMessage() { ID = id };
+			var msg = new Dwarrowdelf.Messages.SaveClientDataRequestMessage() { ID = id };
 			foreach (var p in m_players.Where(p => p.IsConnected && p.IsInGame))
 				p.Send(msg);
 

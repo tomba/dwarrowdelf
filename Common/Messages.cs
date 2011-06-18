@@ -84,7 +84,6 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public class EnterGameReplyBeginMessage : ClientMessage
 	{
-		public Guid ID { get; set; }
 	}
 
 	[Serializable]
@@ -226,13 +225,13 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class SaveReplyMessage : ClientMessage
+	public class SaveClientDataRequestMessage : ClientMessage
 	{
 		public Guid ID;
 	}
 
 	[Serializable]
-	public class SaveClientDataMessage : ServerMessage
+	public class SaveClientDataReplyMessage : ServerMessage
 	{
 		public Guid ID;
 		public string Data;
