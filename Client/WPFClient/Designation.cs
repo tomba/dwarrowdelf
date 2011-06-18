@@ -18,14 +18,6 @@ namespace Dwarrowdelf.Client
 		CreateStairs,
 	}
 
-	static class Designations
-	{
-
-		static Designations()
-		{
-		}
-	}
-
 	class Designation : IJobSource
 	{
 		public Environment Environment { get; private set; }
