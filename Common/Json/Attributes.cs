@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public struct GameSerializationContext
+	public struct SaveGameContext
 	{
 	}
 

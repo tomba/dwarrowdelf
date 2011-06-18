@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_turns = turns;
 		}
 
-		protected WaitAssignment(GameSerializationContext ctx)
+		protected WaitAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

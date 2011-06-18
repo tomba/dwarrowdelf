@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_environment = environment;
 		}
 
-		RandomMoveAssignment(GameSerializationContext ctx)
+		RandomMoveAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

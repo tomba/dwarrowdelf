@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_item = item;
 		}
 
-		protected DropItemAssignment(GameSerializationContext ctx)
+		protected DropItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

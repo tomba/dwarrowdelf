@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_mineActionType = mineActionType;
 		}
 
-		protected MineAssignment(GameSerializationContext ctx)
+		protected MineAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

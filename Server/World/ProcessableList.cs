@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Server
 			this.RemoveList = m_removeList.AsReadOnly();
 		}
 
-		ProcessableList(GameSerializationContext ctx)
+		ProcessableList(SaveGameContext ctx)
 		{
 			this.List = m_list.AsReadOnly();
 			this.AddList = m_addList.AsReadOnly();

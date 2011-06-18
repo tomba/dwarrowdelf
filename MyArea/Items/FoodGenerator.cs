@@ -18,7 +18,7 @@ namespace MyArea
 			this.Color = GameColor.Gold;
 		}
 
-		FoodGenerator(GameSerializationContext ctx)
+		FoodGenerator(SaveGameContext ctx)
 			: base(ctx)
 		{
 			this.World.TickStarting += OnTickStart;

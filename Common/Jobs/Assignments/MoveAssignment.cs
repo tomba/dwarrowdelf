@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_dest = destination;
 		}
 
-		protected MoveAssignment(GameSerializationContext ctx)
+		protected MoveAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

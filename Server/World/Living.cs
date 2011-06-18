@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server
 			this.Assignment = "";
 		}
 
-		Living(GameSerializationContext ctx)
+		Living(SaveGameContext ctx)
 			: base(ctx, ObjectType.Living)
 		{
 			this.World.TickStarting += OnTickStart;

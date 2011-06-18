@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_location = location;
 		}
 
-		protected FellTreeAssignment(GameSerializationContext ctx)
+		protected FellTreeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

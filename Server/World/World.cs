@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Server
 				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
-		World(GameSerializationContext ctx)
+		World(SaveGameContext ctx)
 			: this()
 		{
 		}

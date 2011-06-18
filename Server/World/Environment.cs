@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Server
 		HashSet<BuildingObject> m_buildings;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
-		Environment(GameSerializationContext ctx)
+		Environment(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
 		{
 		}

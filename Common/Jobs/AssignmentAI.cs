@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Jobs
 
 		MyTraceSource trace;
 
-		protected AssignmentAI(GameSerializationContext ctx)
+		protected AssignmentAI(SaveGameContext ctx)
 		{
 		}
 

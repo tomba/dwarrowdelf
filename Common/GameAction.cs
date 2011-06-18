@@ -61,7 +61,7 @@ namespace Dwarrowdelf
 			this.MagicNumber = MagicNumberGenerator();
 		}
 
-		protected GameAction(GameSerializationContext ctx)
+		protected GameAction(SaveGameContext ctx)
 		{
 		}
 
@@ -86,7 +86,7 @@ namespace Dwarrowdelf
 			this.Direction = direction;
 		}
 
-		protected MoveAction(GameSerializationContext ctx)
+		protected MoveAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -110,7 +110,7 @@ namespace Dwarrowdelf
 			this.WaitTicks = ticks;
 		}
 
-		protected WaitAction(GameSerializationContext ctx)
+		protected WaitAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -134,7 +134,7 @@ namespace Dwarrowdelf
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
 
-		protected DropAction(GameSerializationContext ctx)
+		protected DropAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -158,7 +158,7 @@ namespace Dwarrowdelf
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
 
-		protected GetAction(GameSerializationContext ctx)
+		protected GetAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -183,7 +183,7 @@ namespace Dwarrowdelf
 			this.ItemObjectID = consumable.ObjectID;
 		}
 
-		protected ConsumeAction(GameSerializationContext ctx)
+		protected ConsumeAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

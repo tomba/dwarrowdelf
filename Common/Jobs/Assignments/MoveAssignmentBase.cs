@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_positioning = positioning;
 		}
 
-		protected MoveAssignmentBase(GameSerializationContext ctx)
+		protected MoveAssignmentBase(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

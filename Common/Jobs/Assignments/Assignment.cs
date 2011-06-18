@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			this.Priority = priority;
 		}
 
-		protected Assignment(GameSerializationContext ctx)
+		protected Assignment(SaveGameContext ctx)
 		{
 		}
 

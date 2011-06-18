@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			});
 		}
 
-		protected MoveConsumeJob(GameSerializationContext ctx)
+		protected MoveConsumeJob(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Server
 			m_objectType = objectType;
 		}
 
-		protected BaseGameObject(GameSerializationContext ctx, ObjectType objectType)
+		protected BaseGameObject(SaveGameContext ctx, ObjectType objectType)
 			: this(objectType)
 		{
 		}

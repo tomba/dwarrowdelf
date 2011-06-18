@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = environment;
 		}
 
-		LoiterJob(GameSerializationContext ctx)
+		LoiterJob(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

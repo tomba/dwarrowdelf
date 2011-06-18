@@ -433,7 +433,7 @@ namespace Dwarrowdelf
 
 			typeInfo.PopulateObjectMembers(ob, values);
 
-			typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new GameSerializationContext() });
+			typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new SaveGameContext() });
 
 			var deserializedMethods = typeInfo.OnDeserializedMethods;
 			foreach (var method in deserializedMethods)

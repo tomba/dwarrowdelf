@@ -18,7 +18,7 @@ namespace MyArea
 			this.Color = GameColor.Blue;
 		}
 
-		WaterGenerator(GameSerializationContext ctx)
+		WaterGenerator(SaveGameContext ctx)
 			: base(ctx)
 		{
 			this.World.TickStarting += OnTickStart;

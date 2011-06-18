@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Server
 			m_changeHandler = new ChangeHandler(this);
 		}
 
-		protected Player(GameSerializationContext ctx)
+		protected Player(SaveGameContext ctx)
 		{
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 

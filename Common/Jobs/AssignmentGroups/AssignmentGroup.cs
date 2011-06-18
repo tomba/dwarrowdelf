@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Priority = priority;
 		}
 
-		protected AssignmentGroup(GameSerializationContext ctx)
+		protected AssignmentGroup(SaveGameContext ctx)
 		{
 		}
 

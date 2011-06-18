@@ -219,7 +219,7 @@ namespace Dwarrowdelf
 				this.OnDeserializingMethods = GetSerializationMethods(type, typeof(OnSaveGameDeserializingAttribute));
 				this.OnDeserializedMethods = GetSerializationMethods(type, typeof(OnSaveGameDeserializedAttribute));
 				this.OnGamePostDeserializationMethods = GetSerializationMethods(type, typeof(OnSaveGamePostDeserializationAttribute));
-				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(GameSerializationContext) }, null);
+				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(SaveGameContext) }, null);
 				if (this.DeserializeConstructor == null)
 					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
 				this.UseRef = attr.UseRef;

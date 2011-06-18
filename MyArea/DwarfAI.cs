@@ -23,7 +23,7 @@ namespace MyArea
 		{
 		}
 
-		protected DwarfAI(GameSerializationContext ctx)
+		protected DwarfAI(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

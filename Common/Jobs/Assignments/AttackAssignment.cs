@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_target = target;
 		}
 
-		protected AttackAssignment(GameSerializationContext ctx)
+		protected AttackAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
