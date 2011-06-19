@@ -147,15 +147,19 @@ namespace Dwarrowdelf.Server
 			if (this.LastSaveID != id)
 				throw new Exception();
 
-			string saveFile = String.Format("client-{0}.json", userID, id);
+			string saveFile = String.Format("client-{0}.json", userID);
 			File.WriteAllText(Path.Combine(saveDir, saveFile), data);
 		}
 
 		public string LoadClientData(int userID, Guid id)
 		{
-			string saveFile = String.Format("client-{0}-{1}.json", userID, id);
+			var saveDir = Path.Combine(m_gameDir, id.ToString());
+			string saveFile = String.Format("client-{0}.json", userID);
+
+			saveFile = Path.Combine(saveDir, saveFile);
+
 			if (File.Exists(saveFile))
-				return File.ReadAllText(Path.Combine(m_gameDir, saveFile));
+				return File.ReadAllText(saveFile);
 			else
 				return null;
 		}
