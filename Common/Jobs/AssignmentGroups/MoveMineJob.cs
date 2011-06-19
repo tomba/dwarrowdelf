@@ -8,11 +8,16 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
+	[SaveGameObject(UseRef = true)]
 	public class MoveMineJob : StaticAssignmentGroup
 	{
+		[SaveGameProperty]
 		readonly IEnvironment m_environment;
+		[SaveGameProperty]
 		readonly IntPoint3D m_location;
+		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
+		[SaveGameProperty]
 		MoveAssignment m_moveAssignment;
 
 		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
@@ -30,6 +35,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				m_moveAssignment,
 				new MineAssignment(this, priority, m_environment, m_location, mineActionType),
 			});
+		}
+
+
+		protected MoveMineJob(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override JobStatus AssignOverride(ILiving worker)
