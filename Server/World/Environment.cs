@@ -779,10 +779,9 @@ namespace Dwarrowdelf.Server
 				return new HashSet<BuildingObject>(arr);
 			}
 
-			public Type OutputType
-			{
-				get { return typeof(BuildingObject[]); }
-			}
+			public Type InputType { get { return typeof(HashSet<BuildingObject>); } }
+
+			public Type OutputType { get { return typeof(BuildingObject[]); } }
 		}
 
 		class TileGridReaderWriter : ISaveGameReaderWriter

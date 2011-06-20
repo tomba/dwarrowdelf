@@ -14,6 +14,7 @@ namespace Dwarrowdelf
 	{
 		object ConvertToSerializable(object parent, object value);
 		object ConvertFromSerializable(object parent, object value);
+		Type InputType { get; }
 		Type OutputType { get; }
 	}
 

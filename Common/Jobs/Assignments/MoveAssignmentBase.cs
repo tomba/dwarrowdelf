@@ -44,10 +44,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return new Queue<Direction>(a);
 			}
 
-			public Type OutputType
-			{
-				get { return typeof(Direction[]); }
-			}
+			public Type InputType { get { return typeof(Queue<Direction>); } }
+
+			public Type OutputType { get { return typeof(Direction[]); } }
 		}
 
 		public MoveAssignmentBase(IJob parent, ActionPriority priority, IEnvironment environment, DirectionSet positioning)
