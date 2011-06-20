@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
@@ -23,17 +24,25 @@ namespace Dwarrowdelf
 
 			foreach (var dir in Directory.EnumerateDirectories(gameDir))
 			{
-				var idStr = Path.GetFileName(dir);
-				var datetimeStr = File.ReadAllText(Path.Combine(dir, "TIMESTAMP"));
-				var tickStr = File.ReadAllText(Path.Combine(dir, "TICK"));
+				try
+				{
+					var idStr = Path.GetFileName(dir);
+					var datetimeStr = File.ReadAllText(Path.Combine(dir, "TIMESTAMP"));
+					var tickStr = File.ReadAllText(Path.Combine(dir, "TICK"));
 
-				var id = Guid.Parse(idStr);
-				var dateTime = DateTime.ParseExact(datetimeStr, "u", CultureInfo.InvariantCulture);
-				var tick = int.Parse(tickStr);
+					var id = Guid.Parse(idStr);
+					var dateTime = DateTime.ParseExact(datetimeStr, "u", CultureInfo.InvariantCulture);
+					var tick = int.Parse(tickStr);
 
-				var entry = new SaveEntry(id, dateTime, tick);
+					var entry = new SaveEntry(id, dateTime, tick);
 
-				m_entries.Add(entry);
+					m_entries.Add(entry);
+				}
+				catch (Exception)
+				{
+					Trace.TraceError("Broken save dir {0}", dir);
+					continue;
+				}
 			}
 		}
 
