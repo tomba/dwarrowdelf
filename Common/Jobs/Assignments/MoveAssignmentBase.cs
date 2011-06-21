@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		class QueueConverter : ISaveGameConverter
 		{
-			public object ConvertToSerializable(object parent, object value)
+			public object ConvertToSerializable(object value)
 			{
 				if (value == null)
 					return null;
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return q.ToArray();
 			}
 
-			public object ConvertFromSerializable(object parent, object value)
+			public object ConvertFromSerializable(object value)
 			{
 				if (value == null)
 					return null;

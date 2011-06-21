@@ -135,7 +135,7 @@ namespace Dwarrowdelf
 				{
 					var ob = _DeserializeObject(conv.OutputType);
 
-					return conv.ConvertFromSerializable(null, ob);
+					return conv.ConvertFromSerializable(ob);
 				}
 			}
 
@@ -448,7 +448,7 @@ namespace Dwarrowdelf
 					value = DeserializeObject(memberType);
 
 					if (entry.Converter != null)
-						value = entry.Converter.ConvertFromSerializable(ob, value);
+						value = entry.Converter.ConvertFromSerializable(value);
 				}
 
 				values[idx] = value;

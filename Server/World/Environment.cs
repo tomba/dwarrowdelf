@@ -767,13 +767,13 @@ namespace Dwarrowdelf.Server
 
 		class BuildingsSetConv : Dwarrowdelf.ISaveGameConverter
 		{
-			public object ConvertToSerializable(object parent, object value)
+			public object ConvertToSerializable(object value)
 			{
 				var set = (HashSet<BuildingObject>)value;
 				return set.ToArray();
 			}
 
-			public object ConvertFromSerializable(object parent, object value)
+			public object ConvertFromSerializable(object value)
 			{
 				var arr = (BuildingObject[])value;
 				return new HashSet<BuildingObject>(arr);

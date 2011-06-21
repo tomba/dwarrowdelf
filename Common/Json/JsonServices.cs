@@ -12,8 +12,8 @@ namespace Dwarrowdelf
 {
 	public interface ISaveGameConverter
 	{
-		object ConvertToSerializable(object parent, object value);
-		object ConvertFromSerializable(object parent, object value);
+		object ConvertToSerializable(object value);
+		object ConvertFromSerializable(object value);
 		Type InputType { get; }
 		Type OutputType { get; }
 	}

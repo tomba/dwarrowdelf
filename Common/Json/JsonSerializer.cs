@@ -88,7 +88,7 @@ namespace Dwarrowdelf
 				var globalConverter = m_globalConverters.GetGlobalConverter(type);
 				if (globalConverter != null)
 				{
-					ob = globalConverter.ConvertToSerializable(null, ob);
+					ob = globalConverter.ConvertToSerializable(ob);
 					SerializeObject(ob, containerType);
 					return;
 				}
@@ -267,7 +267,7 @@ namespace Dwarrowdelf
 					var memberType = entry.MemberType;
 
 					if (entry.Converter != null)
-						value = entry.Converter.ConvertToSerializable(ob, value);
+						value = entry.Converter.ConvertToSerializable(value);
 
 					SerializeObject(value, memberType);
 				}
