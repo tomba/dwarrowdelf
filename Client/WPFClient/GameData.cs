@@ -103,11 +103,36 @@ namespace Dwarrowdelf.Client
 
 		public Action SaveEvent;
 
+		class GameObjectConverter : ISaveGameConverter
+		{
+			#region ISaveGameConverter Members
+
+			public object ConvertToSerializable(object value)
+			{
+				var ob = (IBaseGameObject)value;
+				return ob.ObjectID;
+			}
+
+			public object ConvertFromSerializable(object value)
+			{
+				var oid = (ObjectID)value;
+				var ob = GameData.Data.World.FindObject(oid);
+				if (ob == null)
+					throw new Exception();
+				return ob;
+			}
+
+			public Type InputType { get { return typeof(IBaseGameObject); } }
+
+			public Type OutputType { get { return typeof(ObjectID); } }
+
+			#endregion
+		}
+
 		internal void Save(Guid id)
 		{
 			var saveData = new SaveData()
 			{
-				kala = "kalaaa",
 			};
 
 			Trace.TraceInformation("Saving client data");
@@ -117,7 +142,7 @@ namespace Dwarrowdelf.Client
 
 			using (var stream = new System.IO.MemoryStream())
 			{
-				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream, new [] { new GameObjectConverter() }))
 				{
 					serializer.Serialize(saveData);
 
@@ -145,7 +170,7 @@ namespace Dwarrowdelf.Client
 
 			var reader = new StringReader(dataStr);
 
-			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader);
+			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new [] { new GameObjectConverter() });
 			var data = deserializer.Deserialize<SaveData>();
 
 			// XXX restore state
@@ -157,7 +182,6 @@ namespace Dwarrowdelf.Client
 		[Serializable]
 		class SaveData
 		{
-			public string kala;
 		}
 	}
 }
