@@ -58,7 +58,7 @@ namespace Dwarrowdelf
 		public Guid GetLatestSaveFile()
 		{
 			var arr = m_entries.ToArray();
-			Array.Sort(arr, (e1, e2) => e1.DateTime.CompareTo(e2.DateTime));
+			Array.Sort(arr, (e1, e2) => -DateTime.Compare(e1.DateTime, e2.DateTime));
 			return arr[0].ID;
 		}
 	}
