@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using System.Collections;
 
 namespace Dwarrowdelf
 {
@@ -45,12 +45,19 @@ namespace Dwarrowdelf
 
 		JsonTextWriter m_writer;
 		public ISaveGameSerializerRefResolver ReferenceResolver { get; set; }
+		SaveGameConverterCache m_globalConverters;
 
 		public SaveGameSerializer(Stream stream)
 		{
 			m_writer = new JsonTextWriter(new StreamWriter(stream));
 			m_writer.Formatting = Formatting.Indented;
 			this.ReferenceResolver = new DefaultSerializerRefResolver();
+		}
+
+		public SaveGameSerializer(Stream stream, IEnumerable<ISaveGameConverter> globalConverters)
+			: this(stream)
+		{
+			m_globalConverters = new SaveGameConverterCache(globalConverters);
 		}
 
 		public void Dispose()
@@ -75,6 +82,17 @@ namespace Dwarrowdelf
 			}
 
 			var type = ob.GetType();
+
+			if (m_globalConverters != null)
+			{
+				var globalConverter = m_globalConverters.GetGlobalConverter(type);
+				if (globalConverter != null)
+				{
+					ob = globalConverter.ConvertToSerializable(null, ob);
+					SerializeObject(ob, containerType);
+					return;
+				}
+			}
 
 			bool writeType = !type.IsValueType && type != containerType;
 

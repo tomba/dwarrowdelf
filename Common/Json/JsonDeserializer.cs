@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -41,6 +42,7 @@ namespace Dwarrowdelf
 
 		JsonTextReader m_reader;
 		ISaveGameDeserializerRefResolver ReferenceResolver;
+		SaveGameConverterCache m_globalConverters;
 
 		List<PostDeserializationDelegate> m_postDeserMethods = new List<PostDeserializationDelegate>();
 		delegate void PostDeserializationDelegate();
@@ -54,6 +56,12 @@ namespace Dwarrowdelf
 		{
 			m_reader = new JsonTextReader(reader);
 			this.ReferenceResolver = new DefaultDeserializerRefResolver();
+		}
+
+		public SaveGameDeserializer(TextReader reader, IEnumerable<ISaveGameConverter> globalConverters)
+			: this(reader)
+		{
+			m_globalConverters = new SaveGameConverterCache(globalConverters);
 		}
 
 		public void Dispose()
@@ -118,6 +126,23 @@ namespace Dwarrowdelf
 		}
 
 		object DeserializeObject(Type expectedType)
+		{
+			if (expectedType != null && m_globalConverters != null)
+			{
+				var conv = m_globalConverters.GetGlobalConverter(expectedType);
+
+				if (conv != null)
+				{
+					var ob = _DeserializeObject(conv.OutputType);
+
+					return conv.ConvertFromSerializable(null, ob);
+				}
+			}
+
+			return _DeserializeObject(expectedType);
+		}
+
+		object _DeserializeObject(Type expectedType)
 		{
 			switch (m_reader.TokenType)
 			{

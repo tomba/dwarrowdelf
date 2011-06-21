@@ -429,4 +429,30 @@ namespace Dwarrowdelf
 			return String.Format("TypeInfo({0})", this.Type.Name);
 		}
 	}
+
+	class SaveGameConverterCache
+	{
+		ISaveGameConverter[] m_converters;
+		Dictionary<Type, ISaveGameConverter> m_cache;
+
+		public SaveGameConverterCache(IEnumerable<ISaveGameConverter> converters)
+		{
+			m_converters = converters.ToArray();
+			m_cache = new Dictionary<Type, ISaveGameConverter>();
+		}
+
+		public ISaveGameConverter GetGlobalConverter(Type type)
+		{
+			ISaveGameConverter converter;
+
+			if (m_cache.TryGetValue(type, out converter) == false)
+			{
+				converter = m_converters.FirstOrDefault(c => c.InputType.IsAssignableFrom(type));
+
+				m_cache.Add(type, converter);
+			}
+
+			return converter;
+		}
+	}
 }
