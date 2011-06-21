@@ -8,9 +8,12 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
+	[SaveGameObject(UseRef = true)]
 	public class MoveFellTreeJob : StaticAssignmentGroup
 	{
+		[SaveGameProperty]
 		readonly IEnvironment m_environment;
+		[SaveGameProperty]
 		readonly IntPoint3D m_location;
 
 		public MoveFellTreeJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
@@ -23,6 +26,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				new MoveAssignment(this, priority, m_environment, m_location, DirectionSet.Planar),
 				new FellTreeAssignment(this, priority, m_environment, m_location),
 			});
+		}
+
+		protected MoveFellTreeJob(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		/*

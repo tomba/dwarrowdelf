@@ -223,6 +223,11 @@ namespace Dwarrowdelf
 			this.MineActionType = mineActionType;
 		}
 
+		protected MineAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override string GetParams()
 		{
 			return this.Direction.ToString();
@@ -240,6 +245,11 @@ namespace Dwarrowdelf
 			: base(priority)
 		{
 			this.Direction = dir;
+		}
+
+		protected FellTreeAction(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override string GetParams()
@@ -266,6 +276,11 @@ namespace Dwarrowdelf
 			this.DstItemID = dstItemID;
 		}
 
+		protected BuildItemAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override string GetParams()
 		{
 			return String.Join(", ", this.SourceObjectIDs.Select(i => i.ToString()).ToArray());
@@ -283,6 +298,11 @@ namespace Dwarrowdelf
 			: base(priority)
 		{
 			this.Target = target.ObjectID;
+		}
+
+		protected AttackAction(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override string GetParams()
