@@ -135,6 +135,9 @@ namespace Dwarrowdelf
 				{
 					var ob = _DeserializeObject(conv.OutputType);
 
+					if (ob == null)
+						return null;
+
 					return conv.ConvertFromSerializable(ob);
 				}
 			}
