@@ -15,8 +15,12 @@ namespace Dwarrowdelf.Client
 		{
 			Dictionary<ObjectID, object> objectData = new Dictionary<ObjectID, object>();
 
-			foreach (var env in GameData.Data.World.Environments)
-				objectData[env.ObjectID] = env.Save();
+			foreach (var l in GameData.Data.World.Objects.OfType<BaseGameObject>())
+			{
+				var d = l.Save();
+				if (d != null)
+					objectData[l.ObjectID] = d;
+			}
 
 			var saveData = new SaveData()
 			{
@@ -63,7 +67,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var kvp in data.ObjectData)
 			{
-				var ob = GameData.Data.World.FindObject<Environment>(kvp.Key);
+				var ob = GameData.Data.World.FindObject<BaseGameObject>(kvp.Key);
 				ob.Restore(kvp.Value);
 			}
 

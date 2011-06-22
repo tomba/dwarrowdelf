@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client
 			{
 				var gameDir = @"C:\Users\Tomba\Work\Dwarrowdelf\save";
 
-				bool cleanSaves = true;
+				bool cleanSaves = false;
 				Guid save = Guid.Empty;
 
 				m_saveManager = new SaveManager(gameDir);

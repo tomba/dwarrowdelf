@@ -18,6 +18,23 @@ namespace Dwarrowdelf.Client
 		Grid2D<bool> m_visionMap;
 
 		Jobs.JobManagerAI m_ai;
+		Jobs.JobManagerAI AI
+		{
+			get { return m_ai; }
+			set
+			{
+				if (m_ai != null)
+					m_ai.AssignmentChanged -= OnAIAssignmentChanged;
+
+				m_ai = value;
+
+				if (m_ai != null)
+				{
+					m_ai.JobManager = this.World.JobManager;
+					m_ai.AssignmentChanged += OnAIAssignmentChanged;
+				}
+			}
+		}
 
 		public bool IsControllable { get; private set; }
 
@@ -40,6 +57,32 @@ namespace Dwarrowdelf.Client
 			this.Description = this.Name;
 		}
 
+		[Serializable]
+		class LivingSave
+		{
+			public Jobs.JobManagerAI AI;
+		}
+
+		public override object Save()
+		{
+			if (!this.IsControllable)
+				return null;
+
+			return new LivingSave()
+			{
+				AI = this.AI,
+			};
+		}
+
+		public override void Restore(object data)
+		{
+			var save = (LivingSave)data;
+
+			// XXX this will discard the AI created in SetControllables().
+
+			this.AI = save.AI;
+		}
+
 		public void SetControllable()
 		{
 			if (this.IsControllable)
@@ -48,8 +91,7 @@ namespace Dwarrowdelf.Client
 			this.IsControllable = true;
 			GameData.Data.World.Controllables.Add(this);
 
-			m_ai = new Jobs.JobManagerAI(this, this.World.JobManager);
-			m_ai.AssignmentChanged += OnAIAssignmentChanged;
+			this.AI = new Jobs.JobManagerAI(this);
 		}
 
 		GameAction m_currentAction;
@@ -73,8 +115,8 @@ namespace Dwarrowdelf.Client
 		{
 			GameAction action = null;
 
-			if (m_ai != null)
-				action = m_ai.DecideAction(priority);
+			if (this.AI != null)
+				action = this.AI.DecideAction(priority);
 
 			return action;
 		}
@@ -95,8 +137,8 @@ namespace Dwarrowdelf.Client
 			this.ActionTicksLeft = change.TicksLeft;
 			this.ActionUserID = change.UserID;
 
-			if (m_ai != null)
-				m_ai.ActionStarted(change);
+			if (this.AI != null)
+				this.AI.ActionStarted(change);
 		}
 
 		public void HandleActionProgress(ActionProgressChange change)
@@ -105,8 +147,8 @@ namespace Dwarrowdelf.Client
 
 			this.ActionTicksLeft = change.TicksLeft;
 
-			if (m_ai != null)
-				m_ai.ActionProgress(change);
+			if (this.AI != null)
+				this.AI.ActionProgress(change);
 
 			if (change.TicksLeft == 0)
 			{

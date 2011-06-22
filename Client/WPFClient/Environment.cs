@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Client
 			public Designation Designation;
 		}
 
-		public object Save()
+		public override object Save()
 		{
 			return new EnvironmentSave()
 			{
@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Client
 			};
 		}
 
-		public void Restore(object data)
+		public override void Restore(object data)
 		{
 			var save = (EnvironmentSave)data;
 

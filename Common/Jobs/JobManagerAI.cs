@@ -8,14 +8,19 @@ namespace Dwarrowdelf.Jobs
 	/// <summary>
 	/// AI that takes jobs from a JobManager
 	/// </summary>
+	[SaveGameObject]
 	public class JobManagerAI : AssignmentAI
 	{
-		JobManager m_jobManager;
+		public JobManager JobManager { get; set; }
 
-		public JobManagerAI(ILiving worker, JobManager jobManager)
+		public JobManagerAI(ILiving worker)
 			: base(worker)
 		{
-			m_jobManager = jobManager;
+		}
+
+		JobManagerAI(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
@@ -23,7 +28,7 @@ namespace Dwarrowdelf.Jobs
 			if (this.CurrentAssignment != null)
 				return this.CurrentAssignment;
 
-			return m_jobManager.FindJob(this.Worker);
+			return this.JobManager.FindJob(this.Worker);
 		}
 	}
 }

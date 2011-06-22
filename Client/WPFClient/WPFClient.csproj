@@ -119,7 +119,7 @@
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="Designation.cs" />
     <Compile Include="IDrawableElement.cs" />
-    <Compile Include="SaveManager.cs" />
+    <Compile Include="ClientSaveManager.cs" />
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>

@@ -34,6 +34,9 @@ namespace Dwarrowdelf.Client
 		}
 
 		public abstract void Deserialize(BaseGameObjectData data);
+
+		public virtual object Save() { return null; }
+		public virtual void Restore(object data) { }
 	}
 
 	class ClientGameObject : BaseGameObject, IGameObject, INotifyPropertyChanged
