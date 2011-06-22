@@ -59,6 +59,27 @@ namespace Dwarrowdelf.Client
 			this.World.AddEnvironment(this);
 		}
 
+		[Serializable]
+		class EnvironmentSave
+		{
+			public Designation Designation;
+		}
+
+		public object Save()
+		{
+			return new EnvironmentSave()
+			{
+				Designation = this.Designations,
+			};
+		}
+
+		public void Restore(object data)
+		{
+			var save = (EnvironmentSave)data;
+
+			this.Designations = save.Designation;
+		}
+
 		public bool IsWalkable(IntPoint3D l)
 		{
 			return GetInterior(l).Blocker == false;

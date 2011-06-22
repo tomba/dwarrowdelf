@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client
 			this.IsPlayerInGame = true;
 
 			if (msg.ClientData != null)
-				GameData.Data.Load(msg.ClientData);
+				ClientSaveManager.Load(msg.ClientData);
 
 			m_enterGameCallback();
 		}
@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(SaveClientDataRequestMessage msg)
 		{
-			GameData.Data.Save(msg.ID);
+			ClientSaveManager.Save(msg.ID);
 		}
 
 		void HandleMessage(ObjectDataMessage msg)

@@ -18,13 +18,18 @@ namespace Dwarrowdelf.Client
 		CreateStairs,
 	}
 
+	[SaveGameObject]
 	class Designation : IJobSource
 	{
+		[SaveGameProperty]
 		public Environment Environment { get; private set; }
 
+		[SaveGameProperty]
 		Dictionary<IntPoint3D, DesignationData> m_map;
+		[SaveGameProperty]
 		bool m_checkStatus;
 
+		[Serializable]
 		class DesignationData
 		{
 			public DesignationType Type;
@@ -41,6 +46,25 @@ namespace Dwarrowdelf.Client
 			this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
 			this.Environment.World.TickStarting += OnTickStartEvent;
 			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		Designation(SaveGameContext ctx)
+		{
+		}
+
+		[OnSaveGameDeserialized]
+		void OnDeserialized()
+		{
+			this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
+			this.Environment.World.TickStarting += OnTickStartEvent;
+			this.Environment.World.JobManager.AddJobSource(this);
+
+			foreach (var kvp in m_map)
+			{
+				var job = kvp.Value.Assignment;
+				GameData.Data.Jobs.Add(job);
+				job.StatusChanged += OnJobStatusChanged;
+			}
 		}
 
 		void OnEnvironmentMapTileTerrainChanged(IntPoint3D obj)

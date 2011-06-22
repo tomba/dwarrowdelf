@@ -815,7 +815,7 @@ namespace Dwarrowdelf.Client
 			{
 				SetLogOnText("Saving");
 
-				GameData.Data.SaveEvent += OnGameSaved;
+				ClientSaveManager.SaveEvent += OnGameSaved;
 
 				GameData.Data.Connection.Send(new SaveRequestMessage());
 			}
@@ -828,7 +828,7 @@ namespace Dwarrowdelf.Client
 
 		void OnGameSaved()
 		{
-			GameData.Data.SaveEvent -= OnGameSaved;
+			ClientSaveManager.SaveEvent -= OnGameSaved;
 
 			SetLogOnText("Logging Out");
 			GameData.Data.Connection.SendLogOut();
