@@ -17,16 +17,13 @@ namespace Dwarrowdelf.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		Jobs.IAI m_ai;
+		Jobs.JobManagerAI m_ai;
+
+		public bool IsControllable { get; private set; }
 
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_ai = new Jobs.JobManagerAI(this, this.World.JobManager);
-			var aai = m_ai as Jobs.AssignmentAI;
-			if (aai != null)
-				aai.AssignmentChanged += OnAIAssignmentChanged;
-
 			this.IsLiving = true;
 		}
 
@@ -41,6 +38,18 @@ namespace Dwarrowdelf.Client
 			this.ActionUserID = data.ActionUserID;
 
 			this.Description = this.Name;
+		}
+
+		public void SetControllable()
+		{
+			if (this.IsControllable)
+				throw new Exception();
+
+			this.IsControllable = true;
+			GameData.Data.World.Controllables.Add(this);
+
+			m_ai = new Jobs.JobManagerAI(this, this.World.JobManager);
+			m_ai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
 		GameAction m_currentAction;

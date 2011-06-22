@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client
 			foreach (var oid in msg.Controllables)
 			{
 				var l = GameData.Data.World.GetObject<Living>(oid);
-				GameData.Data.World.Controllables.Add(l);
+				l.SetControllable();
 			}
 		}
 
