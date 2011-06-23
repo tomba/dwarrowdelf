@@ -18,25 +18,7 @@ namespace Dwarrowdelf.Client
 		Grid2D<bool> m_visionMap;
 
 		Jobs.JobManagerAI m_ai;
-		Jobs.JobManagerAI AI
-		{
-			get { return m_ai; }
-			set
-			{
-				if (m_ai != null)
-					m_ai.AssignmentChanged -= OnAIAssignmentChanged;
-
-				m_ai = value;
-
-				if (m_ai != null)
-				{
-					m_ai.JobManager = this.World.JobManager;
-					m_ai.AssignmentChanged += OnAIAssignmentChanged;
-				}
-			}
-		}
-
-		public bool IsControllable { get; private set; }
+		bool m_isControllable;
 
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
@@ -78,20 +60,51 @@ namespace Dwarrowdelf.Client
 		{
 			var save = (LivingSave)data;
 
-			// XXX this will discard the AI created in SetControllables().
+			// XXX this will discard the AI created when the server sends ControllablesDataMessage
 
 			this.AI = save.AI;
 		}
 
-		public void SetControllable()
+		public bool IsControllable
 		{
-			if (this.IsControllable)
-				throw new Exception();
+			get { return m_isControllable; }
 
-			this.IsControllable = true;
-			GameData.Data.World.Controllables.Add(this);
+			set
+			{
+				if (m_isControllable == value)
+					return;
 
-			this.AI = new Jobs.JobManagerAI(this);
+				if (value == true)
+				{
+					GameData.Data.World.Controllables.Add(this);
+					this.AI = new Jobs.JobManagerAI(this);
+				}
+				else
+				{
+					GameData.Data.World.Controllables.Remove(this);
+					this.AI = null;
+				}
+
+				m_isControllable = value;
+			}
+		}
+
+		Jobs.JobManagerAI AI
+		{
+			get { return m_ai; }
+			set
+			{
+				if (m_ai != null)
+					m_ai.AssignmentChanged -= OnAIAssignmentChanged;
+
+				m_ai = value;
+
+				if (m_ai != null)
+				{
+					m_ai.JobManager = this.World.JobManager;
+					m_ai.AssignmentChanged += OnAIAssignmentChanged;
+				}
+			}
 		}
 
 		GameAction m_currentAction;
