@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Server
 		GameConfig m_config = new GameConfig
 		{
 			RequirePlayer = true,
-			RequirePlayerInGame = false,
+			RequirePlayerInGame = true,
 			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
