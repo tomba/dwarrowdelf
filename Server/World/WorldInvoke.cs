@@ -61,8 +61,8 @@ namespace Dwarrowdelf.Server
 
 				lock (m_invokeList)
 				{
-					if (m_invokeList.Count > 0)
-						Debug.Print("Processing {0} invoke callbacks", m_invokeList.Count);
+					//if (m_invokeList.Count > 0)
+					//	Debug.Print("Processing {0} invoke callbacks", m_invokeList.Count);
 					foreach (InvokeInfo a in m_invokeList)
 						a.Action.DynamicInvoke(a.Args); // XXX DynamicInvoke
 					m_invokeList.Clear();

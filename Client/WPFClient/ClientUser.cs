@@ -276,7 +276,7 @@ namespace Dwarrowdelf.Client
 
 		void TurnActionRequested(ObjectID livingID)
 		{
-			trace.TraceInformation("Turn Action requested for living: {0}", livingID);
+			trace.TraceVerbose("Turn Action requested for living: {0}", livingID);
 
 			Debug.Assert(m_turnActionRequested == false);
 
