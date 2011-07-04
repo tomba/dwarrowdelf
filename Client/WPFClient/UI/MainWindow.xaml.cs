@@ -551,14 +551,6 @@ namespace Dwarrowdelf.Client
 					m_manualJobSource.Add(job);
 				}
 			}
-			else if (tag == "MineArea")
-			{
-				var area = map.Selection.SelectionCuboid;
-				var env = map.Environment;
-
-				var job = new Jobs.AssignmentGroups.MineAreaJob(env, ActionPriority.Normal, area, MineActionType.Mine);
-				m_manualJobSource.Add(job);
-			}
 			else if (tag == "MineAreaParallel")
 			{
 				var area = map.Selection.SelectionCuboid;
@@ -581,11 +573,6 @@ namespace Dwarrowdelf.Client
 				var env = map.Environment;
 
 				var job = new Jobs.Assignments.MoveAssignment(null, ActionPriority.Normal, env, p, DirectionSet.Exact);
-				m_manualJobSource.Add(job);
-			}
-			else if (tag == "RunInCircles")
-			{
-				var job = new Jobs.AssignmentGroups.RunInCirclesJob(null, ActionPriority.Normal, map.Environment);
 				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Loiter")

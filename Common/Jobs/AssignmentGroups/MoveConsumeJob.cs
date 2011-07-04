@@ -9,21 +9,17 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveConsumeJob : StaticAssignmentGroup
+	public class MoveConsumeJob : AssignmentGroup
 	{
 		[SaveGameProperty("Item")]
 		readonly IItemObject m_item;
+		[SaveGameProperty("State")]
+		int m_state;
 
 		public MoveConsumeJob(IJob parent, ActionPriority priority, IItemObject item)
 			: base(parent, priority)
 		{
 			m_item = item;
-
-			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, item.Environment, item.Location, DirectionSet.Exact),
-				new GetItemAssignment(this, priority, item),
-				new ConsumeItemAssignment(this, priority, item),
-			});
 		}
 
 		protected MoveConsumeJob(SaveGameContext ctx)
@@ -31,20 +27,61 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		/*
-		 * XXX checkvalidity tms
-		protected override Progress AssignOverride(Living worker)
+
+		protected override JobStatus AssignOverride(ILiving worker)
 		{
-			if (worker.Environment != m_environment)
-				return Progress.Abort;
-
-			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
-				return Progress.Done;
-
-			return Progress.Ok;
+			m_state = 0;
+			return JobStatus.Ok;
 		}
-		*/
 
+		protected override void OnAssignmentStateChanged(JobStatus jobState)
+		{
+			switch (jobState)
+			{
+				case Jobs.JobStatus.Ok:
+					break;
+
+				case Jobs.JobStatus.Fail:
+					SetStatus(JobStatus.Fail);
+					break;
+
+				case Jobs.JobStatus.Abort:
+					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
+					break;
+
+				case Jobs.JobStatus.Done:
+					if (m_state == 2)
+						SetStatus(Jobs.JobStatus.Done);
+					else
+						m_state = m_state + 1;
+					break;
+			}
+		}
+
+		protected override IAssignment PrepareNextAssignment()
+		{
+			IAssignment assignment;
+
+			switch (m_state)
+			{
+				case 0:
+					assignment = new MoveAssignment(this, this.Priority, m_item.Environment, m_item.Location, DirectionSet.Exact);
+					break;
+
+				case 1:
+					assignment = new GetItemAssignment(this, this.Priority, m_item);
+					break;
+
+				case 2:
+					assignment = new ConsumeItemAssignment(this, this.Priority, m_item);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			return assignment;
+		}
 		public override string ToString()
 		{
 			return "MoveConsumeJob";

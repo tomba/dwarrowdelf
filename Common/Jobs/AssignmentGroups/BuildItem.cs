@@ -8,18 +8,81 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public class BuildItem : StaticAssignmentGroup
+	[SaveGameObject(UseRef = true)]
+	public class BuildItem : AssignmentGroup
 	{
+		[SaveGameProperty]
+		IBuildingObject m_workplace;
+		[SaveGameProperty]
+		IItemObject[] m_items;
+		[SaveGameProperty]
+		ItemID m_dstItemID;
+
+		[SaveGameProperty("State")]
+		int m_state;
+
 		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
 			: base(parent, priority)
 		{
-			var env = workplace.Environment;
-			var location = workplace.Area.Center;
+			m_workplace = workplace;
+			m_items = items;
+			m_dstItemID = dstItemID;
+		}
 
-			SetAssignments(new IAssignment[] {
-				new MoveAssignment(this, priority, env, location, DirectionSet.Exact),
-				new BuildItemAssignment(this, priority, items, dstItemID),
-			});
+		protected BuildItem(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override JobStatus AssignOverride(ILiving worker)
+		{
+			m_state = 0;
+			return JobStatus.Ok;
+		}
+
+		protected override void OnAssignmentStateChanged(JobStatus jobState)
+		{
+			switch (jobState)
+			{
+				case Jobs.JobStatus.Ok:
+					break;
+
+				case Jobs.JobStatus.Fail:
+					SetStatus(JobStatus.Fail);
+					break;
+
+				case Jobs.JobStatus.Abort:
+					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
+					break;
+
+				case Jobs.JobStatus.Done:
+					if (m_state == 1)
+						SetStatus(Jobs.JobStatus.Done);
+					else
+						m_state = m_state + 1;
+					break;
+			}
+		}
+
+		protected override IAssignment PrepareNextAssignment()
+		{
+			IAssignment assignment;
+
+			switch (m_state)
+			{
+				case 0:
+					assignment = new MoveAssignment(this, this.Priority, m_workplace.Environment, m_workplace.Area.Center, DirectionSet.Exact);
+					break;
+
+				case 1:
+					assignment = new BuildItemAssignment(this, this.Priority, m_items, m_dstItemID);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			return assignment;
 		}
 
 		public override string ToString()

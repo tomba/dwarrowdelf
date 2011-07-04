@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveMineJob : StaticAssignmentGroup
+	public class MoveMineJob : AssignmentGroup
 	{
 		[SaveGameProperty]
 		readonly IEnvironment m_environment;
@@ -17,8 +17,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		readonly IntPoint3D m_location;
 		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
-		[SaveGameProperty]
-		MoveAssignment m_moveAssignment;
+		[SaveGameProperty("State")]
+		int m_state;
 
 		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
 			: base(parent, priority)
@@ -26,15 +26,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_environment = environment;
 			m_location = location;
 			m_mineActionType = mineActionType;
-
-			var positioning = GetPossiblePositioning(environment, location, mineActionType);
-
-			m_moveAssignment = new MoveAssignment(this, priority, m_environment, m_location, positioning);
-
-			SetAssignments(new IAssignment[] {
-				m_moveAssignment,
-				new MineAssignment(this, priority, m_environment, m_location, mineActionType),
-			});
 		}
 
 
@@ -45,11 +36,54 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
-			var positioning = GetPossiblePositioning(m_environment, m_location, m_mineActionType);
+			m_state = 0;
+			return JobStatus.Ok;
+		}
 
-			m_moveAssignment.Positioning = positioning;
+		protected override void OnAssignmentStateChanged(JobStatus jobState)
+		{
+			switch (jobState)
+			{
+				case Jobs.JobStatus.Ok:
+					break;
 
-			return base.AssignOverride(worker);
+				case Jobs.JobStatus.Fail:
+					SetStatus(JobStatus.Fail);
+					break;
+
+				case Jobs.JobStatus.Abort:
+					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
+					break;
+
+				case Jobs.JobStatus.Done:
+					if (m_state == 1)
+						SetStatus(Jobs.JobStatus.Done);
+					else
+						m_state = m_state + 1;
+					break;
+			}
+		}
+
+		protected override IAssignment PrepareNextAssignment()
+		{
+			IAssignment assignment;
+
+			switch (m_state)
+			{
+				case 0:
+					var positioning = GetPossiblePositioning(m_environment, m_location, m_mineActionType);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_location, positioning);
+					break;
+
+				case 1:
+					assignment = new MineAssignment(this, this.Priority, m_environment, m_location, m_mineActionType);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			return assignment;
 		}
 
 		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)
@@ -82,20 +116,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			return pos;
 		}
-
-		/*
-		 * XXX checkvalidity tms
-		protected override Progress AssignOverride(Living worker)
-		{
-			if (worker.Environment != m_environment)
-				return Progress.Abort;
-
-			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
-				return Progress.Done;
-
-			return Progress.Ok;
-		}
-		*/
 
 		public override string ToString()
 		{

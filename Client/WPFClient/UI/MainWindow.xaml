@@ -337,18 +337,6 @@
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
 
-                                    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.StaticAssignmentGroup}" ItemsSource="{Binding Assignments}">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding}" />
-                                            <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding JobStatus}" />
-                                            <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
-                                            <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
-                                        </StackPanel>
-                                    </HierarchicalDataTemplate>
-
                                     <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
                                         <StackPanel Orientation="Vertical">
                                             <StackPanel Orientation="Horizontal">
@@ -426,11 +414,9 @@
                                         <MenuItem Header="Jobs">
                                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="FellTree" Header="Fell Tree" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="RunInCircles" Header="Run in circles" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Consume" Header="Consume" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Attack" Header="Attack" Click="MenuItem_Click_Job" />

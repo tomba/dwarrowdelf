@@ -113,13 +113,10 @@
     <Compile Include="Jobs\JobGroups\MineAreaParallelJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="Jobs\JobManagerAI.cs" />
-    <Compile Include="Jobs\AssignmentGroups\StaticAssignmentGroup.cs" />
     <Compile Include="Jobs\AssignmentGroups\BuildItem.cs" />
     <Compile Include="Jobs\AssignmentGroups\LoiterJob.cs" />
     <Compile Include="Jobs\AssignmentGroups\FetchItem.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MineAreaJob.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveMineJob.cs" />
-    <Compile Include="Jobs\AssignmentGroups\RunInCirclesJob.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Buildings.cs" />
