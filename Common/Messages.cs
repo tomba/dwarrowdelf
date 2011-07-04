@@ -214,7 +214,15 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ProceedTurnMessage : ServerMessage
+	public class ProceedTurnRequestMessage : ClientMessage
+	{
+		// Sequential : Living who's turn it is
+		// Simultaneous: AnyObjectID
+		public ObjectID LivingID { get; set; }
+	}
+
+	[Serializable]
+	public class ProceedTurnReplyMessage : ServerMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}

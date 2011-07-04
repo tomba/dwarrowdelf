@@ -66,6 +66,8 @@ namespace Dwarrowdelf.Server
 
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
 			m_objectIDcounterArray = new int[maxType + 1];
+
+			m_state = WorldState.Idle;
 		}
 
 		public void Initialize(Action initializer)
@@ -176,7 +178,8 @@ namespace Dwarrowdelf.Server
 			// XXX overflows
 			//return new ObjectID(objectType, Interlocked.Increment(ref m_objectIDcounterArray[(int)objectType]));
 			// XXX use a common counter to make debugging simpler
-			return new ObjectID(objectType, Interlocked.Increment(ref m_objectIDcounterArray[0]));
+			// XXX check wrapping and int -> uint
+			return new ObjectID(objectType, (uint)Interlocked.Increment(ref m_objectIDcounterArray[0]));
 		}
 
 		// XXX slow & bad

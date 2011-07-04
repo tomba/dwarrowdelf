@@ -10,26 +10,27 @@ namespace Dwarrowdelf
 	[System.ComponentModel.TypeConverter(typeof(ObjectIDConverter))]
 	public struct ObjectID : IEquatable<ObjectID>
 	{
-		readonly int m_value;
+		readonly uint m_value;
 
-		public static readonly ObjectID NullObjectID = new ObjectID(0);
+		public static readonly ObjectID NullObjectID = new ObjectID(ObjectType.None, 0x0);
+		public static readonly ObjectID AnyObjectID = new ObjectID(ObjectType.None, 0x1);
 
-		public ObjectID(int rawValue)
+		public ObjectID(uint rawValue)
 		{
 			m_value = rawValue;
 		}
 
-		public ObjectID(ObjectType objectType, int value)
+		public ObjectID(ObjectType objectType, uint value)
 		{
 			if ((value & ~((1 << 24) - 1)) != 0)
 				throw new Exception();
 
-			m_value = ((int)objectType << 24) | value;
+			m_value = ((uint)objectType << 24) | value;
 		}
 
-		public int RawValue { get { return m_value; } }
+		public uint RawValue { get { return m_value; } }
 
-		public int Value { get { return m_value & ((1 << 24) - 1); } }
+		public uint Value { get { return m_value & ((1 << 24) - 1); } }
 		public ObjectType ObjectType { get { return (ObjectType)(m_value >> 24); } }
 
 		public bool Equals(ObjectID objectID)
@@ -58,12 +59,17 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return m_value;
+			return (int)m_value;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("OID({0:x})", m_value);
+			if (this == ObjectID.NullObjectID)
+				return "OID(NULL)";
+			else if (this == ObjectID.AnyObjectID)
+				return "OID(ANY)";
+			else
+				return String.Format("OID({0}, {1})", this.ObjectType, this.Value);
 		}
 
 	}

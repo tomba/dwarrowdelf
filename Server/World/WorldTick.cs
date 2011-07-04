@@ -31,7 +31,10 @@ namespace Dwarrowdelf.Server
 			TickEnded,
 		}
 
-		WorldState m_state = WorldState.Idle;
+		[SaveGameProperty("State")]
+		WorldState m_state;
+
+		public bool IsTickOnGoing { get { return m_state == WorldState.TickOngoing; } }
 
 		bool m_okToStartTick = false;
 		bool m_proceedTurn = false;
@@ -122,7 +125,7 @@ namespace Dwarrowdelf.Server
 			foreach (var living in m_livings.List.Where(l => l.HasAction))
 				living.PerformAction();
 
-			EndTurn();
+			EndTurnSimultaneous();
 
 			m_state = WorldState.TickDone;
 
@@ -169,7 +172,7 @@ namespace Dwarrowdelf.Server
 
 				living.PerformAction();
 
-				EndTurn(living);
+				EndTurnSequential(living);
 
 				bool ok = m_livingEnumerator.MoveNext();
 				if (ok)
@@ -222,25 +225,34 @@ namespace Dwarrowdelf.Server
 			foreach (var living in m_livings.List)
 				living.TurnStarted();
 
-			AddChange(new TurnStartChange());
+			AddChange(new TurnStartSimultaneousChange());
 
 			if (TurnStarting != null)
 				TurnStarting(null);
+		}
+
+		void EndTurnSimultaneous()
+		{
+			AddChange(new TurnEndSimultaneousChange());
+
+			if (TurnEnded != null)
+				TurnEnded(null);
 		}
 
 		void StartTurnSequential(Living living)
 		{
 			living.TurnStarted();
 
-			AddChange(new TurnStartChange(living));
+			AddChange(new TurnStartSequentialChange(living));
 
 			if (TurnStarting != null)
 				TurnStarting(living);
 		}
 
-		void EndTurn(Living living = null)
+
+		void EndTurnSequential(Living living)
 		{
-			AddChange(new TurnEndChange(living));
+			AddChange(new TurnEndSequentialChange(living));
 
 			if (TurnEnded != null)
 				TurnEnded(living);

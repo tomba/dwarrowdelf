@@ -248,7 +248,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return new ObjectID(Convert.ToInt32(source, System.Globalization.NumberFormatInfo.InvariantInfo));
+			return new ObjectID(Convert.ToUInt32(source, System.Globalization.NumberFormatInfo.InvariantInfo));
 		}
 	}
 }

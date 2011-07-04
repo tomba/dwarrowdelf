@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 
 			if (target is int)
 			{
-				ob = FindObject(new ObjectID((int)target));
+				ob = FindObject(new ObjectID((uint)target));
 			}
 
 			if (ob == null)

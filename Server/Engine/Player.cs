@@ -59,6 +59,10 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
+		bool IsProceedTurnRequestSent { get; set; }
+		public bool IsProceedTurnReplyReceived { get; private set; }
+		public event Action<Player> ProceedTurnReceived;
+
 		public Player(int userID)
 		{
 			m_userID = userID;
@@ -247,6 +251,14 @@ namespace Dwarrowdelf.Server
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 				this.IsInGame = true;
+
+				if (this.World.IsTickOnGoing)
+				{
+					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
+						SendProceedTurnRequest(null);
+					else
+						throw new NotImplementedException();
+				}
 			}
 			else
 			{
@@ -289,18 +301,14 @@ namespace Dwarrowdelf.Server
 			this.IsInGame = false;
 		}
 
-		bool IsStartTurnSent { get; set; }
-		public bool IsProceedTurnReceived { get; private set; }
-		public event Action<Player> ProceedTurnReceived;
-
-		void ReceiveMessage(ProceedTurnMessage msg)
+		void ReceiveMessage(ProceedTurnReplyMessage msg)
 		{
 			try
 			{
-				if (this.IsStartTurnSent == false)
+				if (this.IsProceedTurnRequestSent == false)
 					throw new Exception();
 
-				if (this.IsProceedTurnReceived == true)
+				if (this.IsProceedTurnReplyReceived == true)
 					throw new Exception();
 
 				foreach (var tuple in msg.Actions)
@@ -337,7 +345,7 @@ namespace Dwarrowdelf.Server
 					living.DoAction(action, m_userID);
 				}
 
-				this.IsProceedTurnReceived = true;
+				this.IsProceedTurnReplyReceived = true;
 
 				if (ProceedTurnReceived != null)
 					ProceedTurnReceived(this);
@@ -369,34 +377,41 @@ namespace Dwarrowdelf.Server
 
 		void HandleWorldChange(Change change)
 		{
-			if (change is TickStartChange)
+			m_changeHandler.HandleWorldChange(change);
+
+			if (change is TurnStartSimultaneousChange)
 			{
-				this.IsStartTurnSent = false;
-				this.IsProceedTurnReceived = false;
+				SendProceedTurnRequest(null);
 			}
-			else if (change is TurnStartChange)
+			else if (change is TurnStartSequentialChange)
 			{
-				var c = (TurnStartChange)change;
-				if (c.Living != null && m_controllables.Contains(c.Living))
+				var c = (TurnStartSequentialChange)change;
+				if (m_controllables.Contains(c.Living))
 					return;
 
-				this.IsStartTurnSent = true;
+				SendProceedTurnRequest(c.Living);
 			}
-			else if (change is TurnEndChange)
+			else if (change is TurnEndSimultaneousChange || change is TurnEndSequentialChange)
 			{
-				var c = (TurnEndChange)change;
-				if (c.Living != null && m_controllables.Contains(c.Living))
-					return;
+				this.IsProceedTurnRequestSent = false;
+				this.IsProceedTurnReplyReceived = false;
 			}
-			else
-			{
-				m_changeHandler.HandleWorldChange(change);
-				return;
-			}
-
-			Send(new ChangeMessage { Change = change });
 		}
 
+		void SendProceedTurnRequest(ILiving living)
+		{
+			ObjectID id;
+
+			if (living == null)
+				id = ObjectID.AnyObjectID;
+			else
+				id = living.ObjectID;
+
+			this.IsProceedTurnRequestSent = true;
+
+			var msg = new ProceedTurnRequestMessage() { LivingID = id };
+			Send(msg);
+		}
 
 		void HandleEndOfWork()
 		{
@@ -651,17 +666,14 @@ namespace Dwarrowdelf.Server
 				var c = (MapChange)change;
 				return controllables.Any(l => l.Sees(c.Environment, c.Location));
 			}
-			else if (change is TurnStartChange)
+			else if (change is TurnStartSimultaneousChange || change is TurnEndSimultaneousChange)
 			{
-				var c = (TurnStartChange)change;
-				return c.Living == null || controllables.Contains(c.Living);
+				return true;
 			}
-			else if (change is TurnEndChange)
+			else if (change is TurnStartSequentialChange || change is TurnEndSequentialChange)
 			{
-				var c = (TurnEndChange)change;
-				return c.Living == null || controllables.Contains(c.Living);
+				return true;
 			}
-
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;

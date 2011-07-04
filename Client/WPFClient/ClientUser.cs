@@ -153,6 +153,10 @@ namespace Dwarrowdelf.Client
 			env.SetTerrains(msg.TileDataList);
 		}
 
+		void HandleMessage(ProceedTurnRequestMessage msg)
+		{
+			TurnActionRequested(msg.LivingID);
+		}
 
 		void HandleMessage(IPOutputMessage msg)
 		{
@@ -180,7 +184,6 @@ namespace Dwarrowdelf.Client
 
 			f(change);
 		}
-
 
 		void HandleChange(ObjectCreatedChange change)
 		{
@@ -263,20 +266,34 @@ namespace Dwarrowdelf.Client
 			GameData.Data.World.HandleChange(change);
 		}
 
-		void HandleChange(TurnStartChange change)
+		void HandleChange(TurnStartSimultaneousChange change)
 		{
+		}
+
+		void HandleChange(TurnStartSequentialChange change)
+		{
+		}
+
+		void TurnActionRequested(ObjectID livingID)
+		{
+			trace.TraceInformation("Turn Action requested for living: {0}", livingID);
+
 			Debug.Assert(m_turnActionRequested == false);
 
 			m_turnActionRequested = true;
 
-			if (change.LivingID == ObjectID.NullObjectID)
+			if (livingID == ObjectID.NullObjectID)
+			{
+				throw new Exception();
+			}
+			else if (livingID == ObjectID.AnyObjectID)
 			{
 				if (GameData.Data.IsAutoAdvanceTurn)
 					SendProceedTurn();
 			}
 			else
 			{
-				var living = GameData.Data.World.FindObject<Living>(change.LivingID);
+				var living = GameData.Data.World.FindObject<Living>(livingID);
 				if (living == null)
 					throw new Exception();
 				m_activeLiving = living;
@@ -325,13 +342,18 @@ namespace Dwarrowdelf.Client
 					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 			}
 
-			m_connection.Send(new ProceedTurnMessage() { Actions = list.ToArray() });
+			m_connection.Send(new ProceedTurnReplyMessage() { Actions = list.ToArray() });
 
 			m_activeLiving = null;
 			m_actionMap.Clear();
 		}
 
-		void HandleChange(TurnEndChange change)
+		void HandleChange(TurnEndSimultaneousChange change)
+		{
+			m_turnActionRequested = false;
+		}
+
+		void HandleChange(TurnEndSequentialChange change)
 		{
 			m_turnActionRequested = false;
 		}

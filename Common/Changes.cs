@@ -28,27 +28,23 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class TurnStartChange : Change
+	public class TurnStartSimultaneousChange : Change
 	{
-		[NonSerialized]
-		ILiving m_living;
-		ObjectID m_livingID;
-
-		// In sequential mode, the living who's turn it is
-		// In simultaneous mode, null
-		public ILiving Living { get { return m_living; } }
-		public ObjectID LivingID { get { return m_livingID; } }
-
-		public TurnStartChange(ILiving living = null)
+		public TurnStartSimultaneousChange()
 		{
-			m_living = living;
-			if (living != null)
-				m_livingID = living.ObjectID;
 		}
 	}
 
 	[Serializable]
-	public class TurnEndChange : Change
+	public class TurnEndSimultaneousChange : Change
+	{
+		public TurnEndSimultaneousChange()
+		{
+		}
+	}
+
+	[Serializable]
+	public class TurnStartSequentialChange : Change
 	{
 		[NonSerialized]
 		ILiving m_living;
@@ -57,11 +53,27 @@ namespace Dwarrowdelf
 		public ILiving Living { get { return m_living; } }
 		public ObjectID LivingID { get { return m_livingID; } }
 
-		public TurnEndChange(ILiving living = null)
+		public TurnStartSequentialChange(ILiving living)
 		{
 			m_living = living;
-			if (living != null)
-				m_livingID = living.ObjectID;
+			m_livingID = living.ObjectID;
+		}
+	}
+
+	[Serializable]
+	public class TurnEndSequentialChange : Change
+	{
+		[NonSerialized]
+		ILiving m_living;
+		ObjectID m_livingID;
+
+		public ILiving Living { get { return m_living; } }
+		public ObjectID LivingID { get { return m_livingID; } }
+
+		public TurnEndSequentialChange(ILiving living)
+		{
+			m_living = living;
+			m_livingID = living.ObjectID;
 		}
 	}
 
@@ -212,7 +224,7 @@ namespace Dwarrowdelf
 		PropertyID m_propertyID;
 		public PropertyID PropertyID { get { return m_propertyID; } }
 
-		protected  PropertyChange(IBaseGameObject ob, PropertyID propertyID)
+		protected PropertyChange(IBaseGameObject ob, PropertyID propertyID)
 			: base(ob)
 		{
 			m_propertyID = propertyID;

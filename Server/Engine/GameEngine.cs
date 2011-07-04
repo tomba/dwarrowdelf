@@ -323,7 +323,7 @@ namespace Dwarrowdelf.Server
 
 		void OnPlayerProceedTurnReceived(Player player)
 		{
-			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_players.Count > 0 && m_players.All(u => u.IsProceedTurnReceived))
+			if (m_world.TickMethod == WorldTickMethod.Simultaneous && m_players.Count > 0 && m_players.All(u => u.IsProceedTurnReplyReceived))
 			{
 				this.World.SetProceedTurn();
 				SignalWorld();
