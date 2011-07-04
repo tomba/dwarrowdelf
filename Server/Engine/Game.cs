@@ -38,6 +38,11 @@ namespace Dwarrowdelf.Server
 		{
 			this.Server.Stop();
 		}
+
+		public override object InitializeLifetimeService()
+		{
+			return null;
+		}
 	}
 
 	public class GameFactory : MarshalByRefObject, IGameFactory
@@ -78,6 +83,11 @@ namespace Dwarrowdelf.Server
 
 			var assembly = Assembly.LoadFile(path);
 			return assembly;
+		}
+
+		public override object InitializeLifetimeService()
+		{
+			return null;
 		}
 	}
 }
