@@ -77,7 +77,7 @@
     <Compile Include="Json\Attributes.cs" />
     <Compile Include="Json\JsonDeserializer.cs" />
     <Compile Include="Json\JsonSerializer.cs" />
-    <Compile Include="DataTypes\IntRect3D.cs" />
+    <Compile Include="DataTypes\IntRectZ.cs" />
     <Compile Include="EnvironmentHelpers.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Items.cs" />

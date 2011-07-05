@@ -59,7 +59,7 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public IntCuboid(IntRect3D rect)
+		public IntCuboid(IntRectZ rect)
 			: this(rect.X, rect.Y, rect.Z, rect.Width, rect.Height, 1)
 		{
 		}

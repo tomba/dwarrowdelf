@@ -26,7 +26,7 @@ namespace Dwarrowdelf
 	{
 		BuildingInfo BuildingInfo { get; }
 		IEnvironment Environment { get; }
-		IntRect3D Area { get; }
+		IntRectZ Area { get; }
 	}
 
 	public interface IGameObject : IBaseGameObject

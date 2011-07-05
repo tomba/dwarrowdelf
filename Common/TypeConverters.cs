@@ -112,7 +112,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntRect3DConverter : TypeConverter
+	public class IntRectZConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -126,10 +126,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntRect3D) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntRectZ) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntRect3D)value;
+			var rect = (IntRectZ)value;
 			return rect.ConvertToString();
 		}
 
@@ -143,7 +143,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntRect3D.Parse(source);
+			return IntRectZ.Parse(source);
 		}
 	}
 

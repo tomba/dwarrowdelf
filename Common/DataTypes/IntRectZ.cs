@@ -7,8 +7,8 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	[System.ComponentModel.TypeConverter(typeof(IntRect3DConverter))]
-	public struct IntRect3D : IEquatable<IntRect3D>
+	[System.ComponentModel.TypeConverter(typeof(IntRectZConverter))]
+	public struct IntRectZ : IEquatable<IntRectZ>
 	{
 		readonly IntRect m_rect;
 		readonly int m_z;
@@ -19,24 +19,24 @@ namespace Dwarrowdelf
 		public int Height { get { return m_rect.Height; } }
 		public int Z { get { return m_z; } }
 
-		public IntRect3D(int x, int y, int width, int height, int z)
+		public IntRectZ(int x, int y, int width, int height, int z)
 		{
 			m_rect = new IntRect(x, y, width, height);
 			m_z = z;
 		}
 
-		public IntRect3D(IntPoint point1, IntPoint point2, int z)
+		public IntRectZ(IntPoint point1, IntPoint point2, int z)
 		{
 			m_rect = new IntRect(point1, point2);
 			m_z = z;
 		}
 
-		public IntRect3D(IntPoint point, IntSize size, int z)
+		public IntRectZ(IntPoint point, IntSize size, int z)
 			: this(point.X, point.Y, size.Width, size.Height, z)
 		{
 		}
 
-		public IntRect3D(IntRect rect, int z)
+		public IntRectZ(IntRect rect, int z)
 		{
 			m_rect = rect;
 			m_z = z;
@@ -72,27 +72,27 @@ namespace Dwarrowdelf
 			get { return m_rect.IsNull; }
 		}
 
-		public static bool operator ==(IntRect3D left, IntRect3D right)
+		public static bool operator ==(IntRectZ left, IntRectZ right)
 		{
 			return left.Equals(right);
 		}
 
-		public static bool operator !=(IntRect3D left, IntRect3D right)
+		public static bool operator !=(IntRectZ left, IntRectZ right)
 		{
 			return !left.Equals(right);
 		}
 
-		public bool Equals(IntRect3D other)
+		public bool Equals(IntRectZ other)
 		{
 			return this.m_rect == other.m_rect && this.m_z == other.m_z;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntRect3D))
+			if (!(obj is IntRectZ))
 				return false;
 
-			return Equals((IntRect3D)obj);
+			return Equals((IntRectZ)obj);
 		}
 
 		public bool Contains(IntPoint3D l)
@@ -100,12 +100,12 @@ namespace Dwarrowdelf
 			return m_rect.Contains(l.ToIntPoint()) && l.Z == m_z;
 		}
 
-		public bool IntersectsWith(IntRect3D rect)
+		public bool IntersectsWith(IntRectZ rect)
 		{
 			return rect.Z == this.Z && m_rect.IntersectsWith(rect.m_rect);
 		}
 
-		public bool IntersectsWithInclusive(IntRect3D rect)
+		public bool IntersectsWithInclusive(IntRectZ rect)
 		{
 			return rect.Z == this.Z && m_rect.IntersectsWithInclusive(rect.m_rect);
 		}
@@ -138,11 +138,11 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1},{2},{3},{4}", this.X, this.Y, this.Width, this.Height, this.Z);
 		}
 
-		public static IntRect3D Parse(string str)
+		public static IntRectZ Parse(string str)
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			var arr = str.Split(',');
-			return new IntRect3D(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info), Convert.ToInt32(arr[3], info), Convert.ToInt32(arr[4], info));
+			return new IntRectZ(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info), Convert.ToInt32(arr[3], info), Convert.ToInt32(arr[4], info));
 		}
 	}
 }

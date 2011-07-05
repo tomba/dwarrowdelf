@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Server
 		public Environment Environment { get; private set; }
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		[SaveGameProperty]
-		public IntRect3D Area { get; set; }
+		public IntRectZ Area { get; set; }
 
 		BuildingObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Building)

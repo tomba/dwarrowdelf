@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 
-		public IntRect3D Area { get; set; }
+		public IntRectZ Area { get; set; }
 
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }

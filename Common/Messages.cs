@@ -129,7 +129,7 @@ namespace Dwarrowdelf.Messages
 	public class CreateBuildingMessage : ServerMessage
 	{
 		public ObjectID MapID { get; set; }
-		public IntRect3D Area { get; set; }
+		public IntRectZ Area { get; set; }
 		public BuildingID ID { get; set; }
 	}
 

@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 		public Environment Environment { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
 
-		public IntRect3D Area { get; private set; }
+		public IntRectZ Area { get; private set; }
 
 		public StockpileType StockpileType { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }
 
-		public Stockpile(Environment environment, IntRect3D area, StockpileType stockpileType)
+		public Stockpile(Environment environment, IntRectZ area, StockpileType stockpileType)
 		{
 			this.Environment = environment;
 			this.Area = area;
