@@ -135,7 +135,9 @@ namespace Dwarrowdelf.Client
 			var mc = (MapControl)d;
 			var val = (int)e.NewValue;
 
-			mc.m_renderView.CenterPos = new IntPoint3D((int)mc.CenterPos.X, (int)mc.CenterPos.Y, val);
+			var p = mc.m_renderView.CenterPos;
+
+			mc.m_renderView.CenterPos = new IntPoint3D(p.X, p.Y, val);
 
 			mc.InvalidateTiles();
 		}
