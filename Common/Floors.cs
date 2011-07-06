@@ -55,13 +55,15 @@ namespace Dwarrowdelf
 
 		static Floors()
 		{
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+
 			FloorInfo[] floors;
 
-			using (var stream = System.IO.File.OpenRead("Floors.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Floors.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
-					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
 					floors = (FloorInfo[])System.Xaml.XamlServices.Load(reader);

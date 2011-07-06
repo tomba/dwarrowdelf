@@ -54,13 +54,15 @@ namespace Dwarrowdelf
 
 		static Items()
 		{
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+
 			ItemInfo[] items;
 
-			using (var stream = System.IO.File.OpenRead("Items.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Items.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
-					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
 					items = (ItemInfo[])System.Xaml.XamlServices.Load(reader);

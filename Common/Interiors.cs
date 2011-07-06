@@ -42,13 +42,15 @@ namespace Dwarrowdelf
 
 		static Interiors()
 		{
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+
 			InteriorInfo[] interiors;
 
-			using (var stream = System.IO.File.OpenRead("Interiors.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Interiors.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
-					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
 					interiors = (InteriorInfo[])System.Xaml.XamlServices.Load(reader);

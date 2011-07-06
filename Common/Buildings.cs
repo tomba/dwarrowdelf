@@ -103,13 +103,15 @@ namespace Dwarrowdelf
 
 		static Buildings()
 		{
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+
 			BuildingInfo[] buildings;
 
-			using (var stream = System.IO.File.OpenRead("Buildings.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Buildings.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
-					LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
+					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
 					buildings = (BuildingInfo[])System.Xaml.XamlServices.Load(reader);
