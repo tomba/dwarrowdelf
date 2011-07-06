@@ -919,17 +919,22 @@ namespace Dwarrowdelf.Client
 			System.Diagnostics.Debugger.Break();
 		}
 
-		const string LayoutFileName = "WindowLayout.xml";
-
 		void SaveLayout()
 		{
-			dockingManager.SaveLayout(LayoutFileName);
+			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+			path = System.IO.Path.Combine(path, "Dwarrowdelf");
+			if (!System.IO.Directory.Exists(path))
+				System.IO.Directory.CreateDirectory(path);
+			path = System.IO.Path.Combine(path, "WindowLayout.xml");
+			dockingManager.SaveLayout(path);
 		}
 
 		void RestoreLayout()
 		{
-			if (System.IO.File.Exists(LayoutFileName))
-				dockingManager.RestoreLayout(LayoutFileName);
+			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+			path = System.IO.Path.Combine(path, "Dwarrowdelf", "WindowLayout.xml");
+			if (System.IO.File.Exists(path))
+				dockingManager.RestoreLayout(path);
 		}
 
 		private void MenuItem_Click_ShowWindow(object sender, RoutedEventArgs e)
