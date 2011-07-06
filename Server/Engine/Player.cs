@@ -216,11 +216,7 @@ namespace Dwarrowdelf.Server
 			if (env == null)
 				throw new Exception();
 
-			var building = new BuildingObject(id) { Area = r };
-			foreach (var p in building.Area.Range())
-			{
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-			}
+			var building = new BuildingObject(id, r);
 			building.Initialize(m_world, env);
 		}
 

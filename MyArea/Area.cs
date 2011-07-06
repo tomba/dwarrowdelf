@@ -278,7 +278,7 @@ namespace MyArea
 			posx = env.Bounds.Width / 10;
 			posy = env.Bounds.Height / 10;
 
-			var building = new BuildingObject(BuildingID.Smith) { Area = new IntRectZ(posx, posy, 3, 3, 9) };
+			var building = new BuildingObject(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
@@ -289,7 +289,7 @@ namespace MyArea
 
 			posx += 4;
 
-			building = new BuildingObject(BuildingID.Carpenter) { Area = new IntRectZ(posx, posy, 3, 3, 9) };
+			building = new BuildingObject(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
@@ -300,7 +300,7 @@ namespace MyArea
 
 			posx += 4;
 
-			building = new BuildingObject(BuildingID.Mason) { Area = new IntRectZ(posx, posy, 3, 3, 9) };
+			building = new BuildingObject(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
 				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);

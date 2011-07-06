@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Client
 {
 	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
 
-	abstract class BaseGameObject : IBaseGameObject
+	abstract class BaseGameObject : IBaseGameObject, INotifyPropertyChanged
 	{
 		public ObjectID ObjectID { get; private set; }
 		public World World { get; private set; }
@@ -33,13 +33,31 @@ namespace Dwarrowdelf.Client
 			this.World.RemoveObject(this);
 		}
 
-		public abstract void Deserialize(BaseGameObjectData data);
+		public virtual void Deserialize(BaseGameObjectData data)
+		{
+			foreach (var tuple in data.Properties)
+				SetProperty(tuple.Item1, tuple.Item2);
+		}
 
 		public virtual object Save() { return null; }
 		public virtual void Restore(object data) { }
+
+		public abstract void SetProperty(PropertyID propertyID, object value);
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		protected void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
 	}
 
-	class ClientGameObject : BaseGameObject, IGameObject, INotifyPropertyChanged
+	class ClientGameObject : BaseGameObject, IGameObject
 	{
 		GameObjectCollection m_inventory;
 		public ReadOnlyGameObjectCollection Inventory { get; private set; }
@@ -95,8 +113,7 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (GameObjectData)_data;
 
-			foreach (var tuple in data.Properties)
-				SetProperty(tuple.Item1, tuple.Item2);
+			base.Deserialize(_data);
 
 			ClientGameObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)
@@ -112,7 +129,7 @@ namespace Dwarrowdelf.Client
 
 
 
-		public virtual void SetProperty(PropertyID propertyID, object value)
+		public override void SetProperty(PropertyID propertyID, object value)
 		{
 			switch (propertyID)
 			{
@@ -232,18 +249,6 @@ namespace Dwarrowdelf.Client
 				m_desc = value;
 				Notify("Description");
 			}
-		}
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		#endregion
-
-		protected void Notify(string property)
-		{
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 	}
 }

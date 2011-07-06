@@ -9,6 +9,8 @@ namespace Dwarrowdelf
 	public abstract class BaseGameObjectData
 	{
 		public ObjectID ObjectID { get; set; }
+
+		public Tuple<PropertyID, object>[] Properties { get; set; }
 	}
 
 	[Serializable]
@@ -16,8 +18,6 @@ namespace Dwarrowdelf
 	{
 		public IntPoint3D Location { get; set; }
 		public ObjectID Environment { get; set; }
-
-		public Tuple<PropertyID, object>[] Properties { get; set; }
 	}
 
 	/* Item in inventory or floor */
@@ -46,11 +46,19 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public enum BuildingState
+	{
+		NeedsCleaning,
+		Functional,
+	}
+
+	[Serializable]
 	public class BuildingData : BaseGameObjectData
 	{
 		public BuildingID ID { get; set; }
 		public ObjectID Environment { get; set; }
 		public IntRectZ Area { get; set; }
+		public BuildingState State { get; set; }
 
 		public override string ToString()
 		{

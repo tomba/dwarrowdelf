@@ -24,19 +24,7 @@ namespace Dwarrowdelf.Client
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }
 
-		class BuildOrder
-		{
-			public BuildOrder(BuildableItem buildableItem)
-			{
-				this.BuildableItem = buildableItem;
-				this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
-			}
-
-			public BuildableItem BuildableItem { get; private set; }
-			public ItemObject[] SourceItems { get; private set; }
-
-			public Dwarrowdelf.Jobs.IJob Job { get; set; }
-		}
+		public BuildingID BuildingID { get { return this.BuildingInfo.ID; } }
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
 
@@ -49,9 +37,31 @@ namespace Dwarrowdelf.Client
 			m_element = ellipse;
 		}
 
+		BuildingState m_state;
+		public BuildingState BuildingState
+		{
+			get { return m_state; }
+			private set { m_state = value; Notify("BuildingState"); }
+		}
+
+		public override void SetProperty(PropertyID propertyID, object value)
+		{
+			switch (propertyID)
+			{
+				case PropertyID.BuildingState:
+					this.BuildingState = (BuildingState)value;
+					break;
+
+				default:
+					throw new Exception();
+			}
+		}
+
 		public override void Deserialize(BaseGameObjectData _data)
 		{
 			var data = (BuildingData)_data;
+
+			base.Deserialize(_data);
 
 			var env = this.World.FindObject<Environment>(data.Environment);
 
@@ -219,42 +229,98 @@ namespace Dwarrowdelf.Client
 		{
 			get
 			{
+				if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
+					return true;
+
 				return m_buildOrderQueue.Where(bo => bo.Job != null).Count() > 0;
 			}
 		}
 
 		IAssignment IJobSource.GetJob(ILiving living)
 		{
-			var order = m_buildOrderQueue.Where(bo => bo.Job != null).FirstOrDefault();
-			if (order != null)
+			var env = this.Environment;
+
+			if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
 			{
-				var job = order.Job;
-
-				var assignment = JobManager.FindAssignment(job, living);
-
-				if (assignment == null)
-					return null;
-
-				var jobState = assignment.Assign(living);
-
-				switch (jobState)
+				foreach (var p in this.Area.Range())
 				{
-					case JobStatus.Ok:
-						return assignment;
+					IAssignment assignment = null;
 
-					case JobStatus.Done:
-						throw new Exception();
+					var iid = env.GetInteriorID(p);
+					if (iid != InteriorID.Empty)
+					{
+						if (iid == InteriorID.Sapling || iid == InteriorID.Tree)
+						{
+							assignment = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
+						}
+					}
+					else if (env.GetGrass(p))
+					{
+					}
+					else if (env.GetContents(p).OfType<ItemObject>().Any(o => o.ItemID == ItemID.Rock)) // XXX
+					{
+#warning not ready
+					}
 
-					case JobStatus.Abort:
-					case JobStatus.Fail:
-						break;
+					if (assignment != null)
+					{
+						var jobState = assignment.Assign(living);
 
-					default:
-						throw new Exception();
+						switch (jobState)
+						{
+							case JobStatus.Ok:
+								return assignment;
+
+							case JobStatus.Done:
+								throw new Exception();
+
+							case JobStatus.Abort:
+							case JobStatus.Fail:
+								continue;
+
+							default:
+								throw new Exception();
+						}
+					}
 				}
-			}
 
-			return null;
+				Trace.TraceWarning("Don't know how to clean up building {0}", this.ObjectID);
+
+				return null;
+			}
+			else
+			{
+				var order = m_buildOrderQueue.Where(bo => bo.Job != null).FirstOrDefault();
+				if (order != null)
+				{
+					var job = order.Job;
+
+					var assignment = JobManager.FindAssignment(job, living);
+
+					if (assignment == null)
+						return null;
+
+					var jobState = assignment.Assign(living);
+
+					switch (jobState)
+					{
+						case JobStatus.Ok:
+							return assignment;
+
+						case JobStatus.Done:
+							throw new Exception();
+
+						case JobStatus.Abort:
+						case JobStatus.Fail:
+							break;
+
+						default:
+							throw new Exception();
+					}
+				}
+
+				return null;
+			}
 		}
 
 		void CreateJob(BuildOrder order)
@@ -284,6 +350,20 @@ namespace Dwarrowdelf.Client
 		public override string ToString()
 		{
 			return String.Format("Building({0:x})", this.ObjectID.Value);
+		}
+
+		class BuildOrder
+		{
+			public BuildOrder(BuildableItem buildableItem)
+			{
+				this.BuildableItem = buildableItem;
+				this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
+			}
+
+			public BuildableItem BuildableItem { get; private set; }
+			public ItemObject[] SourceItems { get; private set; }
+
+			public Dwarrowdelf.Jobs.IJob Job { get; set; }
 		}
 	}
 }

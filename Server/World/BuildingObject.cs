@@ -15,17 +15,25 @@ namespace Dwarrowdelf.Server
 		public Environment Environment { get; private set; }
 		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
 		[SaveGameProperty]
-		public IntRectZ Area { get; set; }
+		public IntRectZ Area { get; private set; }
+
+		public BuildingObject(BuildingID id, IntRectZ area)
+			: base(ObjectType.Building)
+		{
+			this.BuildingID = id;
+			this.Area = area;
+			this.BuildingState = BuildingState.NeedsCleaning;
+		}
 
 		BuildingObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Building)
 		{
 		}
 
-		public BuildingObject(BuildingID id)
-			: base(ObjectType.Building)
+		[OnSaveGameDeserialized]
+		void OnDeserialized()
 		{
-			this.BuildingID = id;
+			this.World.TickStarting += OnWorldTickStarting;
 		}
 
 		public override void Initialize(World world)
@@ -38,6 +46,14 @@ namespace Dwarrowdelf.Server
 			this.Environment = env;
 			env.AddBuilding(this);
 			base.Initialize(world);
+			CheckState();
+			this.World.TickStarting += OnWorldTickStarting;
+		}
+
+		void OnWorldTickStarting()
+		{
+			// XXX
+			CheckState();
 		}
 
 		public override void Destruct()
@@ -54,7 +70,51 @@ namespace Dwarrowdelf.Server
 				ID = this.BuildingInfo.ID,
 				Area = this.Area,
 				Environment = this.Environment.ObjectID,
+				State = this.BuildingState,
+				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
 			};
+		}
+
+		protected override Dictionary<PropertyID, object> SerializeProperties()
+		{
+			var props = base.SerializeProperties();
+			props[PropertyID.BuildingState] = m_state;
+			return props;
+		}
+
+		[SaveGameProperty]
+		BuildingState m_state;
+		public BuildingState BuildingState
+		{
+			get { return m_state; }
+			set { if (m_state == value) return; m_state = value; NotifyInt(PropertyID.BuildingState, (int)value); }
+		}
+
+		void CheckState()
+		{
+			var env = this.Environment;
+			BuildingState newState = BuildingState.Functional;
+
+			foreach (var p in this.Area.Range())
+			{
+				if (env.GetInteriorID(p) != InteriorID.Empty) // || env.GetGrass(p))
+				{
+					newState = BuildingState.NeedsCleaning;
+					break;
+				}
+
+				var obs = env.GetContents(p);
+				if (obs.OfType<ItemObject>().Any(o => o.ItemID == ItemID.Rock)) // XXX
+				{
+					newState = BuildingState.NeedsCleaning;
+					break;
+				}
+			}
+
+			if (newState != this.BuildingState)
+			{
+				this.BuildingState = newState;
+			}
 		}
 
 		public bool Contains(IntPoint3D point)

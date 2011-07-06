@@ -55,4 +55,29 @@
         </DockPanel>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type local:BuildingObject}">
+        <DataTemplate.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="5,3" />
+            </Style>
+        </DataTemplate.Resources>
+
+        <DockPanel>
+            <Button DockPanel.Dock="Right" Click="Button_Click">
+                <Image Source="/Images/eye.png" />
+            </Button>
+            <TextBlock Name="nameTextBlock">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding Path="BuildingID" />
+                            <Binding Path="ObjectID" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+            </TextBlock>
+
+            <DockPanel.ToolTip>
+                <local:BuildingInfoControl />
+            </DockPanel.ToolTip>
+        </DockPanel>
+    </DataTemplate>
 </ResourceDictionary>

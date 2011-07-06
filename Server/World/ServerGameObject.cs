@@ -62,18 +62,6 @@ namespace Dwarrowdelf.Server
 				o.SerializeTo(writer);
 		}
 
-		protected void NotifyObject(PropertyID id, object value)
-		{
-			if (this.IsInitialized)
-				this.World.AddChange(new PropertyObjectChange(this, id, value));
-		}
-
-		protected void NotifyInt(PropertyID id, int value)
-		{
-			if (this.IsInitialized)
-				this.World.AddChange(new PropertyIntChange(this, id, value));
-		}
-
 		[SaveGameProperty("Name")]
 		string m_name;
 		public string Name
@@ -106,9 +94,9 @@ namespace Dwarrowdelf.Server
 			set { if (m_materialID == value) return; m_materialID = value; NotifyObject(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
 		}
 
-		protected virtual Dictionary<PropertyID, object> SerializeProperties()
+		protected override Dictionary<PropertyID, object> SerializeProperties()
 		{
-			var props = new Dictionary<PropertyID, object>();
+			var props = base.SerializeProperties();
 			props[PropertyID.Name] = m_name;
 			props[PropertyID.Color] = m_color;
 			props[PropertyID.SymbolID] = m_symbolID;

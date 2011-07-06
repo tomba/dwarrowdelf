@@ -74,5 +74,22 @@ namespace Dwarrowdelf.Server
 			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
 			writer(msg);
 		}
+
+		protected virtual Dictionary<PropertyID, object> SerializeProperties()
+		{
+			return new Dictionary<PropertyID, object>();
+		}
+
+		protected void NotifyObject(PropertyID id, object value)
+		{
+			if (this.IsInitialized)
+				this.World.AddChange(new PropertyObjectChange(this, id, value));
+		}
+
+		protected void NotifyInt(PropertyID id, int value)
+		{
+			if (this.IsInitialized)
+				this.World.AddChange(new PropertyIntChange(this, id, value));
+		}
 	}
 }

@@ -37,5 +37,8 @@ namespace Dwarrowdelf
 		// Item
 		NutritionalValue,
 		RefreshmentValue,
+
+		// Building
+		BuildingState,
 	}
 }

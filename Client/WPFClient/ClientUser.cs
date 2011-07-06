@@ -204,7 +204,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectMoveChange change)
 		{
-			ClientGameObject ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -225,7 +225,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(PropertyObjectChange change)
 		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);
 
 			if (ob == null)
 				throw new Exception();
@@ -235,7 +235,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(PropertyIntChange change)
 		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -248,7 +248,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectDestructedChange change)
 		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);
 
 			ob.Destruct();
 		}

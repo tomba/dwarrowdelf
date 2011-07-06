@@ -158,6 +158,10 @@
 
                         <!-- All objects-->
                         <ad:DockableContent Name="allObjectsContent" Title="Objects" DataContext="{x:Static local:GameData.Data}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
+
                             <ListBox ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" />
                         </ad:DockableContent>
 

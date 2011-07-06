@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var button = (Button)sender;
 
-			var ob = (ClientGameObject)button.DataContext;
+			var ob = (BaseGameObject)button.DataContext;
 
 			UserControl content;
 
@@ -22,6 +22,8 @@ namespace Dwarrowdelf.Client.UI
 				content = new ItemInfoControl();
 			else if (ob is Living)
 				content = new LivingInfoControl();
+			else if (ob is BuildingObject)
+				content = new BuildingInfoControl();
 			else
 				throw new Exception();
 
