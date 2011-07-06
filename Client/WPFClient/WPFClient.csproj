@@ -149,10 +149,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Include="Symbols\SymbolDrawings.design" />
-    <None Include="Symbols\SymbolDrawings.xaml">
+    <Page Include="Symbols\SymbolDrawings.xaml">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
@@ -249,19 +248,17 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Symbols\SymbolInfosGfx.xaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="Symbols\SymbolInfosGfx.xaml">
       <SubType>Designer</SubType>
-    </None>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\eye.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Symbols\SymbolInfosChar.xaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Resource Include="Symbols\SymbolInfosChar.xaml">
       <SubType>Designer</SubType>
-    </None>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ApplicationIcon.ico" />

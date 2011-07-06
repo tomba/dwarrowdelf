@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Windows;
 using System.Resources;
+using System.IO;
 
 namespace Dwarrowdelf.Client
 {
@@ -13,10 +14,23 @@ namespace Dwarrowdelf.Client
 		/* [ name of the drawing -> [ color -> drawing ] ] */
 		Dictionary<string, Dictionary<GameColor, Drawing>> m_drawingMap;
 
-		public DrawingCache(Uri uri)
+		public DrawingCache(string drawingsName)
 		{
-			var resInfo = Application.GetRemoteStream(uri);
-			var drawingResources = (ResourceDictionary)System.Windows.Markup.XamlReader.Load(resInfo.Stream);
+			ResourceDictionary drawingResources;
+
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", drawingsName);
+
+			if (File.Exists(path))
+			{
+				using (var stream = File.OpenRead(path))
+					drawingResources = (ResourceDictionary)System.Xaml.XamlServices.Load(stream);
+			}
+			else
+			{
+				var uri = new Uri("Symbols/" + drawingsName, UriKind.Relative);
+				drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
+			}
 
 			m_drawingMap = new Dictionary<string, Dictionary<GameColor, Drawing>>(drawingResources.Count);
 

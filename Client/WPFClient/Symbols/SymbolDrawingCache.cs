@@ -16,27 +16,31 @@ namespace Dwarrowdelf.Client
 		DrawingCache m_drawingCache;
 		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap;
 
-		public SymbolDrawingCache(Uri symbolInfoUri)
+		public SymbolDrawingCache(string symbolInfoName)
 		{
-			Load(symbolInfoUri);
+			Load(symbolInfoName);
 		}
 
-		public void Load(Uri symbolInfoUri)
+		public void Load(string symbolInfoName)
 		{
 			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
-			var resInfo = Application.GetRemoteStream(symbolInfoUri);
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", symbolInfoName);
 
-			var settings = new System.Xaml.XamlXmlReaderSettings()
+			if (File.Exists(path))
 			{
-				LocalAssembly = System.Reflection.Assembly.GetCallingAssembly(),
-			};
-
-			using (var reader = new System.Xaml.XamlXmlReader(resInfo.Stream, settings))
-				m_symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(reader);
+				using (var stream = File.OpenRead(path))
+					m_symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(stream);
+			}
+			else
+			{
+				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
+				m_symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
+			}
 
 			if (m_symbolSet.Drawings != null)
-				m_drawingCache = new DrawingCache(new Uri(m_symbolSet.Drawings, UriKind.Relative));
+				m_drawingCache = new DrawingCache(m_symbolSet.Drawings);
 		}
 
 		public Drawing GetDrawing(SymbolID symbolID, GameColor color)

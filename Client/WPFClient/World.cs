@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client
 
 			this.Controllables = new LivingCollection();
 
-			this.SymbolDrawingCache = new SymbolDrawingCache(new Uri("/Symbols/SymbolInfosChar.xaml", UriKind.Relative));
+			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
 
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
 		}
