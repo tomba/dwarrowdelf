@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	public class FellTreeParallelJob : ParallelJobGroup
+	public class FellTreeParallelJob : JobGroup
 	{
 		readonly IEnvironment m_environment;
 		readonly IntCuboid m_area;
 
 		IEnumerable<IntPoint3D> m_locs;
+
+		List<Tuple<IntPoint3D, IJob>> m_jobs = new List<Tuple<IntPoint3D, IJob>>();
 
 		public FellTreeParallelJob(IEnvironment env, ActionPriority priority, IntCuboid area)
 			: base(null, priority)
@@ -20,28 +23,42 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_environment = env;
 			m_area = area;
 
-			var jobs = new List<IJob>();
-			m_locs = area.Range().Where(p => env.GetInterior(p).ID == InteriorID.Tree);
+			AddNewJobs();
+		}
+
+		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		{
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
+
+			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
+				throw new Exception();
+
+			// DONE
+
+			RemoveSubJob(job);
+			Debug.Assert(m_jobs.FindIndex(i => i.Item2 == job) != -1);
+			m_jobs.RemoveAt(m_jobs.FindIndex(i => i.Item2 == job));
+
+			AddNewJobs();
+
+			if (this.SubJobs.Count == 0)
+				SetStatus(JobStatus.Done);
+		}
+
+		void AddNewJobs()
+		{
+			var c = this.SubJobs.Count;
+
+			m_locs = m_area.Range().Where(p => !m_jobs.Any(i => i.Item1 == p) && m_environment.GetInterior(p).ID == InteriorID.Tree).Take(3 - c);
+
 			foreach (var p in m_locs)
 			{
-				var job = new AssignmentGroups.MoveFellTreeJob(this, priority, env, p);
-				jobs.Add(job);
+				var job = new AssignmentGroups.MoveFellTreeJob(this, this.Priority, m_environment, p);
+				AddSubJob(job);
+				m_jobs.Add(new Tuple<IntPoint3D, IJob>(p, job));
 			}
-			SetSubJobs(jobs);
 
-			env.World.TickStarting += World_TickEvent;
-		}
-
-		void World_TickEvent()
-		{
-			foreach (var job in this.SubJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
-				job.Retry();
-		}
-
-		protected override void Cleanup()
-		{
-			m_environment.World.TickStarting -= World_TickEvent;
-			m_locs = null;
 		}
 
 		public override string ToString()

@@ -26,7 +26,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		public JobType JobType { get { return Dwarrowdelf.Jobs.JobType.Assignment; } }
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
@@ -50,6 +49,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public void Fail()
 		{
 			SetStatus(JobStatus.Fail);
+		}
+
+		public IEnumerable<IAssignment> GetAssignments(ILiving living)
+		{
+			if (!this.IsAssigned)
+				yield return this;
 		}
 
 		public bool IsAssigned

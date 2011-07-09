@@ -74,7 +74,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IAssignment IJobSource.GetJob(ILiving living)
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		{
+			return null;
+		}
+		
+		IAssignment GetJob(ILiving living)
 		{
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()

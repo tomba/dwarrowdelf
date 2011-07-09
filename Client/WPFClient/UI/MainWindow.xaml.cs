@@ -542,6 +542,10 @@ namespace Dwarrowdelf.Client
 			{
 				var env = map.Environment;
 
+				var job = new Jobs.JobGroups.FellTreeParallelJob(env, ActionPriority.Normal, map.Selection.SelectionCuboid);
+				m_manualJobSource.Add(job);
+
+				/*
 				foreach (var p in map.Selection.SelectionCuboid.Range())
 				{
 					if (env.GetInterior(p).ID != InteriorID.Tree)
@@ -549,22 +553,14 @@ namespace Dwarrowdelf.Client
 
 					var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, env, p);
 					m_manualJobSource.Add(job);
-				}
+				}*/
 			}
-			else if (tag == "MineAreaParallel")
+			else if (tag == "MineArea")
 			{
 				var area = map.Selection.SelectionCuboid;
 				var env = map.Environment;
 
-				var job = new Jobs.JobGroups.MineAreaParallelJob(env, ActionPriority.Normal, area, MineActionType.Mine);
-				m_manualJobSource.Add(job);
-			}
-			else if (tag == "MineAreaSerial")
-			{
-				var area = map.Selection.SelectionCuboid;
-				var env = map.Environment;
-
-				var job = new Jobs.JobGroups.MineAreaSerialJob(env, ActionPriority.Normal, area, MineActionType.Mine);
+				var job = new Jobs.JobGroups.MineAreaJob(env, ActionPriority.Normal, area, MineActionType.Mine);
 				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Goto")

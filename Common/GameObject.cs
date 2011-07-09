@@ -56,6 +56,8 @@ namespace Dwarrowdelf
 		MaterialInfo GetInteriorMaterial(IntPoint3D l);
 
 		TileData GetTileData(IntPoint3D l);
+
+		bool GetHidden(IntPoint3D l);
 	}
 
 	public interface ILiving : IGameObject

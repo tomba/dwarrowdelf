@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Client
 		class DesignationData
 		{
 			public DesignationType Type;
-			public IAssignment Assignment;
+			public IJob Job;
 			public bool IsPossible;
 		}
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var kvp in m_map)
 			{
-				var job = kvp.Value.Assignment;
+				var job = kvp.Value.Job;
 				if (job != null)
 				{
 					GameData.Data.Jobs.Add(job);
@@ -144,13 +144,13 @@ namespace Dwarrowdelf.Client
 
 		bool IJobSource.HasWork
 		{
-			get { return m_map.Count > 0 && m_map.Any(dt => dt.Value.Assignment == null); }
+			get { return m_map.Count > 0 && m_map.Any(dt => dt.Value.Job == null); }
 		}
 
-		IAssignment IJobSource.GetJob(ILiving living)
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
 			var designations = m_map
-				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Assignment == null)
+				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Job == null)
 				.OrderBy(kvp => (kvp.Key - living.Location).Length);
 
 			foreach (var d in designations)
@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Client
 				var p = d.Key;
 				var dt = d.Value;
 
-				IAssignment assignment;
+				IJob job;
 
 				switch (dt.Type)
 				{
@@ -171,42 +171,25 @@ namespace Dwarrowdelf.Client
 						else
 							mat = MineActionType.Stairs;
 
-						assignment = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, mat);
+						job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, this.Environment, p, mat);
 
 						break;
 
 					case DesignationType.FellTree:
 
-						assignment = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
+						job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
 						break;
 
 					default:
 						throw new Exception();
 				}
 
-				var jobState = assignment.Assign(living);
+				GameData.Data.Jobs.Add(job);
+				job.StatusChanged += OnJobStatusChanged;
+				dt.Job = job;
 
-				switch (jobState)
-				{
-					case JobStatus.Ok:
-						GameData.Data.Jobs.Add(assignment);
-						assignment.StatusChanged += OnJobStatusChanged;
-						dt.Assignment = assignment;
-						return assignment;
-
-					case JobStatus.Done:
-						throw new Exception();
-
-					case JobStatus.Abort:
-					case JobStatus.Fail:
-						break;
-
-					default:
-						throw new Exception();
-				}
+				yield return job;
 			}
-
-			return null;
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
@@ -248,7 +231,7 @@ namespace Dwarrowdelf.Client
 
 		void RemoveJob(IntPoint3D p)
 		{
-			var job = m_map[p].Assignment;
+			var job = m_map[p].Job;
 
 			if (job != null)
 			{
@@ -257,13 +240,13 @@ namespace Dwarrowdelf.Client
 				if (job.JobStatus == JobStatus.Ok)
 					job.Abort();
 
-				m_map[p].Assignment = null;
+				m_map[p].Job = null;
 			}
 		}
 
 		IntPoint3D FindLocationFromJob(IJob job)
 		{
-			return m_map.First(e => e.Value.Assignment == job).Key;
+			return m_map.First(e => e.Value.Job == job).Key;
 		}
 
 		void CheckTile(IntPoint3D p)

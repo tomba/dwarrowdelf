@@ -236,91 +236,39 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IAssignment IJobSource.GetJob(ILiving living)
+		CleanAreaJob m_cleanJob;
+
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
 			var env = this.Environment;
 
 			if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
 			{
-				foreach (var p in this.Area.Range())
+				if (m_cleanJob == null)
 				{
-					IAssignment assignment = null;
-
-					var iid = env.GetInteriorID(p);
-					if (iid != InteriorID.Empty)
-					{
-						if (iid == InteriorID.Sapling || iid == InteriorID.Tree)
-						{
-							assignment = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, this.Environment, p);
-						}
-					}
-					else if (env.GetGrass(p))
-					{
-					}
-					else if (env.GetContents(p).OfType<ItemObject>().Any(o => o.ItemID == ItemID.Rock)) // XXX
-					{
-#warning not ready
-					}
-
-					if (assignment != null)
-					{
-						var jobState = assignment.Assign(living);
-
-						switch (jobState)
-						{
-							case JobStatus.Ok:
-								return assignment;
-
-							case JobStatus.Done:
-								throw new Exception();
-
-							case JobStatus.Abort:
-							case JobStatus.Fail:
-								continue;
-
-							default:
-								throw new Exception();
-						}
-					}
+					m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
+					GameData.Data.Jobs.Add(m_cleanJob);
+					m_cleanJob.StatusChanged += OnCleanStatusChanged;
 				}
 
-				Trace.TraceWarning("Don't know how to clean up building {0}", this.ObjectID);
-
-				return null;
+				yield return m_cleanJob;
 			}
 			else
 			{
 				var order = m_buildOrderQueue.Where(bo => bo.Job != null).FirstOrDefault();
 				if (order != null)
-				{
-					var job = order.Job;
-
-					var assignment = JobManager.FindAssignment(job, living);
-
-					if (assignment == null)
-						return null;
-
-					var jobState = assignment.Assign(living);
-
-					switch (jobState)
-					{
-						case JobStatus.Ok:
-							return assignment;
-
-						case JobStatus.Done:
-							throw new Exception();
-
-						case JobStatus.Abort:
-						case JobStatus.Fail:
-							break;
-
-						default:
-							throw new Exception();
-					}
-				}
-
-				return null;
+					yield return order.Job;
 			}
+		}
+
+		void OnCleanStatusChanged(IJob job, JobStatus status)
+		{
+			if (status != JobStatus.Done)
+				throw new Exception();
+
+			m_cleanJob.StatusChanged -= OnCleanStatusChanged;
+			GameData.Data.Jobs.Remove(m_cleanJob);
+			m_cleanJob = null;
 		}
 
 		void CreateJob(BuildOrder order)

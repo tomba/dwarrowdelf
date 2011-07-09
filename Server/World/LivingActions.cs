@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Server
 
 			if (!inter.IsMineable)
 			{
-				Trace.TraceWarning("{0} tried to mine {1}, but it't a wall", this, p);
+				Trace.TraceWarning("{0} tried to mine {1}, but it's not minable", this, p);
 				success = false;
 				return;
 			}

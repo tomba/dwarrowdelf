@@ -336,8 +336,6 @@
                                             <TextBlock Text="{Binding}" />
                                             <TextBlock Text=", " />
                                             <TextBlock Text="{Binding JobStatus}" />
-                                            <TextBlock Text=", " />
-                                            <TextBlock Text="{Binding JobGroupType}" />
                                         </StackPanel>
                                     </HierarchicalDataTemplate>
 
@@ -418,8 +416,7 @@
                                         <MenuItem Header="Jobs">
                                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="FellTree" Header="Fell Tree" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="MineAreaParallel" Header="Mine Area Parallel" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="MineAreaSerial" Header="Mine Area Serial" Click="MenuItem_Click_Job" />
+                                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="Consume" Header="Consume" Click="MenuItem_Click_Job" />

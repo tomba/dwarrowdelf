@@ -7,18 +7,30 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	public class FetchItems : ParallelJobGroup
+	public class FetchItems : JobGroup
 	{
 		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject[] items)
 			: base(parent, priority)
 		{
-			var jobs = new List<IJob>();
 			foreach (var item in items)
 			{
 				var job = new AssignmentGroups.FetchItem(this, priority, env, location, item);
-				jobs.Add(job);
+				AddSubJob(job);
 			}
-			SetSubJobs(jobs);
+		}
+
+		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		{
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
+
+			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
+				throw new Exception();
+
+			this.RemoveSubJob(job);
+
+			if (this.SubJobs.Count == 0)
+				SetStatus(JobStatus.Done);
 		}
 
 		public override string ToString()

@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Server
 				}
 
 				var obs = env.GetContents(p);
-				if (obs.OfType<ItemObject>().Any(o => o.ItemID == ItemID.Rock)) // XXX
+				if (obs.OfType<ItemObject>().Count() > 0) // XXX
 				{
 					newState = BuildingState.NeedsCleaning;
 					break;

@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs
 	public interface IJobSource
 	{
 		bool HasWork { get; }
-		IAssignment GetJob(ILiving living);
+		IEnumerable<IJob> GetJobs(ILiving living);
 	}
 
 	public class JobManager
@@ -33,81 +33,36 @@ namespace Dwarrowdelf.Jobs
 			m_jobSources.Remove(jobSource);
 		}
 
-		public IAssignment FindJob(ILiving living)
+		public IAssignment FindAssignment(ILiving living)
 		{
 			foreach (var jobSource in m_jobSources.Where(js => js.HasWork))
 			{
-				var assignment = jobSource.GetJob(living);
-				if (assignment != null)
-					return assignment;
-			}
-
-			return null;
-		}
-
-		public static IAssignment FindAssignment(IJob job, ILiving living)
-		{
-			Debug.Assert(job.JobStatus == JobStatus.Ok);
-
-			IAssignment assignment;
-
-			switch (job.JobType)
-			{
-				case JobType.Assignment:
-					assignment = (IAssignment)job;
-					break;
-
-				case JobType.JobGroup:
-					var jobGroup = (IJobGroup)job;
-
-					switch (jobGroup.JobGroupType)
+				foreach (var job in jobSource.GetJobs(living))
+				{
+					foreach (var assignment in job.GetAssignments(living))
 					{
-						case JobGroupType.Parallel:
-							assignment = FindAssignmentParallel(jobGroup.SubJobs, living);
-							break;
+						var jobState = assignment.Assign(living);
 
-						case JobGroupType.Serial:
-							assignment = FindAssignmentSerial(jobGroup.SubJobs, living);
-							break;
+						switch (jobState)
+						{
+							case JobStatus.Ok:
+								return assignment;
 
-						default:
-							throw new Exception();
+							case JobStatus.Done:
+								throw new Exception();
+
+							case JobStatus.Abort:
+							case JobStatus.Fail:
+								throw new Exception();
+
+							default:
+								throw new Exception();
+						}
 					}
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			if (assignment != null && assignment.IsAssigned == false)
-				return assignment;
-			else
-				return null;
-		}
-
-		static IAssignment FindAssignmentParallel(IEnumerable<IJob> jobs, ILiving living)
-		{
-			foreach (var job in jobs.Where(j => j.JobStatus == JobStatus.Ok))
-			{
-				var assignment = FindAssignment(job, living);
-
-				if (assignment != null)
-					return assignment;
+				}
 			}
 
 			return null;
 		}
-
-		static IAssignment FindAssignmentSerial(IEnumerable<IJob> jobs, ILiving living)
-		{
-			Debug.Assert(jobs.All(j => j.JobStatus == JobStatus.Ok || j.JobStatus == JobStatus.Done));
-
-			var job = jobs.First(j => j.JobStatus == JobStatus.Ok);
-
-			var assigment = FindAssignment(job, living);
-
-			return assigment;
-		}
-
 	}
 }

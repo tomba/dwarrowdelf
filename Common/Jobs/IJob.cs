@@ -27,21 +27,8 @@ namespace Dwarrowdelf.Jobs
 		Done,
 	}
 
-	public enum JobGroupType
-	{
-		Parallel,
-		Serial,
-	}
-
-	public enum JobType
-	{
-		Assignment,
-		JobGroup,
-	}
-
 	public interface IJob : INotifyPropertyChanged
 	{
-		JobType JobType { get; }
 		IJob Parent { get; }
 		ActionPriority Priority { get; }
 		JobStatus JobStatus { get; }
@@ -49,13 +36,14 @@ namespace Dwarrowdelf.Jobs
 		void Abort();
 		void Fail();
 
+		IEnumerable<IAssignment> GetAssignments(ILiving living);
+
 		event Action<IJob, JobStatus> StatusChanged;
 	}
 
 	public interface IJobGroup : IJob
 	{
 		ReadOnlyObservableCollection<IJob> SubJobs { get; }
-		JobGroupType JobGroupType { get; }
 	}
 
 	public interface IAssignment : IJob

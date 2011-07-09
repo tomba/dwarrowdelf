@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Jobs
 			if (this.CurrentAssignment != null)
 				return this.CurrentAssignment;
 
-			return this.JobManager.FindJob(this.Worker);
+			return this.JobManager.FindAssignment(this.Worker);
 		}
 	}
 }

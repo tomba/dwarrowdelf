@@ -7,20 +7,49 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	public class BuildItemJob : SerialJobGroup
+	public class BuildItemJob : JobGroup
 	{
+		IBuildingObject m_workplace;
+		IItemObject[] m_sourceObjects;
+		ItemID m_dstItemID;
+
+		int m_state;
+
 		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects, ItemID dstItemID)
 			: base(null, priority)
 		{
-			var env = workplace.Environment;
-			var location = workplace.Area.Center;
+			m_workplace = workplace;
+			m_sourceObjects = sourceObjects;
+			m_dstItemID = dstItemID;
 
-			var jobs = new IJob[] {
-				new FetchItems(this, priority, env, location, sourceObjects),
-				new AssignmentGroups.BuildItem(this, priority, workplace, sourceObjects, dstItemID),
-			};
+			m_state = 0;
 
-			SetSubJobs(jobs);
+			AddSubJob(new FetchItems(this, priority, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
+		}
+
+		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		{
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
+
+			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
+				throw new Exception();
+
+			RemoveSubJob(job);
+
+			if (m_state == 0)
+			{
+				m_state = 1;
+				AddSubJob(new AssignmentGroups.BuildItem(this, this.Priority, m_workplace, m_sourceObjects, m_dstItemID));
+			}
+			else if (m_state == 1)
+			{
+				SetStatus(Jobs.JobStatus.Done);
+			}
+			else
+			{
+				throw new Exception();
+			}
 		}
 
 		public override string ToString()

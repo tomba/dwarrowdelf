@@ -17,71 +17,135 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			this.Parent = parent;
 			this.Priority = priority;
-		}
 
-		protected void SetSubJobs(IEnumerable<IJob> jobs)
-		{
-			if (m_subJobs != null)
-				throw new Exception();
-
-			m_subJobs = new ObservableCollection<IJob>(jobs);
+			m_subJobs = new ObservableCollection<IJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
-
-			foreach (var job in jobs)
-				job.StatusChanged += OnJobStatusChanged;
 		}
 
-		public JobType JobType { get { return JobType.JobGroup; } }
+		protected void AddSubJob(IJob job)
+		{
+			m_subJobs.Add(job);
+			job.StatusChanged += OnSubJobStatusChangedInternal;
+		}
+
+		protected void AddSubJobs(IEnumerable<IJob> jobs)
+		{
+			foreach (var job in jobs)
+				AddSubJob(job);
+		}
+
+		protected void RemoveSubJob(IJob job)
+		{
+			Debug.Assert(m_subJobs.Contains(job));
+
+			job.StatusChanged -= OnSubJobStatusChangedInternal;
+			m_subJobs.Remove(job);
+		}
+
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
 		public JobStatus JobStatus { get; private set; }
-
-		protected virtual JobStatus GetJobStatus()
-		{
-			if (this.SubJobs.All(j => j.JobStatus == JobStatus.Done))
-				return JobStatus.Done;
-
-			if (this.SubJobs.Any(j => j.JobStatus == JobStatus.Fail))
-				return JobStatus.Fail;
-
-			return JobStatus.Ok;
-		}
 
 		public event Action<IJob, JobStatus> StatusChanged;
 
 		public void Retry()
 		{
-			foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
-				job.Retry();
+			throw new Exception();
+			//foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
+			//	job.Retry();
 		}
 
 		public void Abort()
 		{
-			foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Ok))
-				job.Abort();
+			throw new Exception();
+			//foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Ok))
+			//	job.Abort();
 		}
 
 		public void Fail()
 		{
-			foreach (var job in m_subJobs)
-				job.Fail();
+			throw new Exception();
+			//foreach (var job in m_subJobs)
+			//	job.Fail();
 		}
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
 
-		public abstract JobGroupType JobGroupType { get; }
-
-		void OnJobStatusChanged(IJob job, JobStatus status)
+		public IEnumerable<IAssignment> GetAssignments(ILiving living)
 		{
-			this.JobStatus = GetJobStatus();
+			foreach (var job in GetJobs(living))
+				foreach (var a in job.GetAssignments(living))
+					yield return a;
+		}
+
+		protected virtual IEnumerable<IJob> GetJobs(ILiving living)
+		{
+			return this.SubJobs.Where(j => j.JobStatus == JobStatus.Ok);
+		}
+
+		void OnSubJobStatusChangedInternal(IJob job, JobStatus status)
+		{
+			OnSubJobStatusChanged(job, status);
+		}
+
+		protected virtual void OnSubJobStatusChanged(IJob job, JobStatus status) { } // XXX to abstract
+
+		protected void SetStatus(JobStatus status)
+		{
+			if (this.JobStatus == status)
+				return;
+
+			switch (status)
+			{
+				case JobStatus.Ok:
+					break;
+
+				case JobStatus.Done:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
+					break;
+
+				case JobStatus.Abort:
+					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
+					break;
+
+				case JobStatus.Fail:
+					Debug.Assert(this.JobStatus == JobStatus.Ok);
+					break;
+			}
+
+			this.JobStatus = status;
+
+			switch (status)
+			{
+				case JobStatus.Ok:
+					break;
+
+				case JobStatus.Done:
+					m_subJobs.Clear();
+					m_subJobs = null;
+					m_roSubJobs = null;
+					break;
+
+				case JobStatus.Abort:
+					// XXX Abort others?
+
+					m_subJobs.Clear();
+					m_subJobs = null;
+					m_roSubJobs = null;
+					break;
+
+				case JobStatus.Fail:
+					// XXX Fail others?
+
+					m_subJobs.Clear();
+					m_subJobs = null;
+					m_roSubJobs = null;
+					break;
+			}
 
 			if (this.StatusChanged != null)
-				StatusChanged(this, this.JobStatus);
-
+				StatusChanged(this, status);
 			Notify("JobStatus");
-
-			if (this.JobStatus == Jobs.JobStatus.Done || this.JobStatus == Jobs.JobStatus.Fail)
-				Cleanup();
 		}
 
 		protected virtual void Cleanup()
@@ -97,47 +161,5 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
-	}
-
-
-	public abstract class ParallelJobGroup : JobGroup
-	{
-		protected ParallelJobGroup(IJob parent, ActionPriority priority)
-			: base(parent, priority)
-		{
-		}
-
-		protected override JobStatus GetJobStatus()
-		{
-			var progress = base.GetJobStatus();
-
-			return progress;
-		}
-
-		public override JobGroupType JobGroupType { get { return JobGroupType.Parallel; } }
-	}
-
-
-	public abstract class SerialJobGroup : JobGroup
-	{
-		protected SerialJobGroup(IJobGroup parent, ActionPriority priority)
-			: base(parent, priority)
-		{
-		}
-
-		protected override JobStatus GetJobStatus()
-		{
-			var progress = base.GetJobStatus();
-
-			if (progress != JobStatus.Ok)
-				return progress;
-
-			if (this.SubJobs.Any(j => j.JobStatus == JobStatus.Abort))
-				return JobStatus.Abort;
-
-			return JobStatus.Ok;
-		}
-
-		public override JobGroupType JobGroupType { get { return JobGroupType.Serial; } }
 	}
 }

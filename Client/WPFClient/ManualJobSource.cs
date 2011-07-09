@@ -45,37 +45,9 @@ namespace Dwarrowdelf.Client
 			get { return m_jobList.Count > 0; }
 		}
 
-		IAssignment IJobSource.GetJob(ILiving living)
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
-			var jobs = m_jobList.Where(j => j.JobStatus == JobStatus.Ok);
-
-			foreach (var job in jobs)
-			{
-				var assignment = JobManager.FindAssignment(job, living);
-
-				if (assignment == null)
-					continue;
-
-				var jobState = assignment.Assign(living);
-
-				switch (jobState)
-				{
-					case JobStatus.Ok:
-						return assignment;
-
-					case JobStatus.Done:
-						throw new Exception();
-
-					case JobStatus.Abort:
-					case JobStatus.Fail:
-						break;
-
-					default:
-						throw new Exception();
-				}
-			}
-
-			return null;
+			return m_jobList.Where(j => j.JobStatus == JobStatus.Ok);
 		}
 	}
 }
