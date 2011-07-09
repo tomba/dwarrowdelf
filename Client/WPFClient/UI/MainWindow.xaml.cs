@@ -663,16 +663,8 @@ namespace Dwarrowdelf.Client
 
 			switch (tag)
 			{
-				case "Retry":
-					job.Retry();
-					break;
-
 				case "Abort":
 					job.Abort();
-					break;
-
-				case "Fail":
-					job.Fail();
 					break;
 
 				default:

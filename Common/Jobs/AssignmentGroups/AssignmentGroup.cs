@@ -33,22 +33,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
-		public void Retry()
-		{
-			Debug.Assert(this.JobStatus != JobStatus.Ok);
-			Debug.Assert(this.CurrentAssignment == null);
-
-			SetStatus(JobStatus.Ok);
-		}
-
 		public void Abort()
 		{
 			SetStatus(JobStatus.Abort);
-		}
-
-		public void Fail()
-		{
-			SetStatus(JobStatus.Fail);
 		}
 
 		public IEnumerable<IAssignment> GetAssignments(ILiving living)
@@ -87,8 +74,10 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 				if (m_assignment != null)
 				{
-					Debug.Assert(m_assignment.JobStatus != Jobs.JobStatus.Ok);
 					m_assignment.StatusChanged -= OnCurrentAssignmentStatusChanged;
+
+					if (m_assignment.JobStatus == Jobs.JobStatus.Ok)
+						m_assignment.Abort();
 				}
 
 				m_assignment = value;
@@ -204,23 +193,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			D("SetState({0})", status);
 
-			switch (status)
-			{
-				case JobStatus.Ok:
-					break;
-
-				case JobStatus.Done:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-
-				case JobStatus.Abort:
-					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
-					break;
-
-				case JobStatus.Fail:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-			}
+			CheckStateChangeValidity(status);
 
 			this.JobStatus = status;
 
@@ -230,22 +203,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case JobStatus.Done:
-					this.Worker = null;
-					this.CurrentAssignment = null;
-					break;
-
 				case JobStatus.Abort:
-					if (this.CurrentAssignment != null && this.CurrentAssignment.JobStatus == JobStatus.Ok)
-						this.CurrentAssignment.Abort();
-
-					this.Worker = null;
-					this.CurrentAssignment = null;
-					break;
-
 				case JobStatus.Fail:
-					if (this.CurrentAssignment != null && this.CurrentAssignment.JobStatus == JobStatus.Ok)
-						this.CurrentAssignment.Fail();
-
 					this.Worker = null;
 					this.CurrentAssignment = null;
 					break;
@@ -253,7 +212,24 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
+
 			Notify("JobStatus");
+		}
+
+		void CheckStateChangeValidity(JobStatus status)
+		{
+			switch (status)
+			{
+				case JobStatus.Ok:
+					throw new Exception();
+
+				case JobStatus.Done:
+				case JobStatus.Abort:
+				case JobStatus.Fail:
+					if (this.JobStatus != JobStatus.Ok)
+						throw new Exception();
+					break;
+			}
 		}
 
 		public event Action<IJob, JobStatus> StatusChanged;

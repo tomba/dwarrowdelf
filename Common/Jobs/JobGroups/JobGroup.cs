@@ -20,6 +20,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			m_subJobs = new ObservableCollection<IJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
+
+			this.JobStatus = Jobs.JobStatus.Ok;
 		}
 
 		protected void AddSubJob(IJob job)
@@ -42,31 +44,28 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_subJobs.Remove(job);
 		}
 
+		void ClearSubJobs()
+		{
+			foreach (var job in m_subJobs)
+			{
+				job.StatusChanged -= OnSubJobStatusChangedInternal;
+
+				if (job.JobStatus == Jobs.JobStatus.Ok)
+					job.Abort();
+			}
+
+			m_subJobs.Clear();
+		}
+
 		public IJob Parent { get; private set; }
 		public ActionPriority Priority { get; private set; }
 		public JobStatus JobStatus { get; private set; }
 
 		public event Action<IJob, JobStatus> StatusChanged;
 
-		public void Retry()
-		{
-			throw new Exception();
-			//foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Abort))
-			//	job.Retry();
-		}
-
 		public void Abort()
 		{
-			throw new Exception();
-			//foreach (var job in m_subJobs.Where(j => j.JobStatus == Jobs.JobStatus.Ok))
-			//	job.Abort();
-		}
-
-		public void Fail()
-		{
-			throw new Exception();
-			//foreach (var job in m_subJobs)
-			//	job.Fail();
+			SetStatus(Jobs.JobStatus.Abort);
 		}
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
@@ -124,49 +123,19 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (this.JobStatus == status)
 				return;
 
-			switch (status)
-			{
-				case JobStatus.Ok:
-					break;
-
-				case JobStatus.Done:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-
-				case JobStatus.Abort:
-					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
-					break;
-
-				case JobStatus.Fail:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-			}
+			CheckStateChangeValidity(status);
 
 			this.JobStatus = status;
 
 			switch (status)
 			{
 				case JobStatus.Ok:
-					break;
+					throw new Exception();
 
 				case JobStatus.Done:
-					m_subJobs.Clear();
-					m_subJobs = null;
-					m_roSubJobs = null;
-					break;
-
 				case JobStatus.Abort:
-					// XXX Abort others?
-
-					m_subJobs.Clear();
-					m_subJobs = null;
-					m_roSubJobs = null;
-					break;
-
 				case JobStatus.Fail:
-					// XXX Fail others?
-
-					m_subJobs.Clear();
+					ClearSubJobs();
 					m_subJobs = null;
 					m_roSubJobs = null;
 					break;
@@ -174,7 +143,24 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
+
 			Notify("JobStatus");
+		}
+
+		void CheckStateChangeValidity(JobStatus status)
+		{
+			switch (status)
+			{
+				case JobStatus.Ok:
+					throw new Exception();
+
+				case JobStatus.Done:
+				case JobStatus.Abort:
+				case JobStatus.Fail:
+					if (this.JobStatus != JobStatus.Ok)
+						throw new Exception();
+					break;
+			}
 		}
 
 		protected virtual void Cleanup()

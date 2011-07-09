@@ -76,11 +76,6 @@ namespace Dwarrowdelf.Client
 
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
-			return null;
-		}
-		
-		IAssignment GetJob(ILiving living)
-		{
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
 				.Where(o => o.ReservedBy == null)
@@ -91,32 +86,14 @@ namespace Dwarrowdelf.Client
 			{
 				var job = new StoreToStockpileJob(this, ob);
 
-				var jobState = job.Assign(living);
+				job.Item.ReservedBy = this;
+				job.StatusChanged += OnJobStatusChanged;
+				m_jobs.Add(job);
 
-				switch (jobState)
-				{
-					case JobStatus.Ok:
-						job.Item.ReservedBy = this;
-						job.StatusChanged += OnJobStatusChanged;
-						m_jobs.Add(job);
+				GameData.Data.Jobs.Add(job);
 
-						GameData.Data.Jobs.Add(job);
-
-						return job;
-
-					case JobStatus.Done:
-						throw new Exception();
-
-					case JobStatus.Abort:
-					case JobStatus.Fail:
-						break;
-
-					default:
-						throw new Exception();
-				}
+				yield return job;
 			}
-
-			return null;
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
@@ -124,9 +101,7 @@ namespace Dwarrowdelf.Client
 			var j = (StoreToStockpileJob)job;
 
 			if (status == JobStatus.Ok)
-			{
 				throw new Exception();
-			}
 
 			j.Item.ReservedBy = null;
 			job.StatusChanged -= OnJobStatusChanged;

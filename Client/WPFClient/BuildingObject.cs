@@ -282,12 +282,12 @@ namespace Dwarrowdelf.Client
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			if (status == JobStatus.Done)
-			{
-				GameData.Data.Jobs.Remove(job);
-				job.StatusChanged -= OnJobStatusChanged;
-				CheckFinishedOrders();
-			}
+			if (status == JobStatus.Fail || status == JobStatus.Abort)
+				Trace.WriteLine("Build item failed");
+
+			GameData.Data.Jobs.Remove(job);
+			job.StatusChanged -= OnJobStatusChanged;
+			CheckFinishedOrders();
 		}
 
 		void OnTick()

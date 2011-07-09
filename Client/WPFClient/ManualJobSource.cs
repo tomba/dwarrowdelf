@@ -25,19 +25,9 @@ namespace Dwarrowdelf.Client
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			switch (status)
-			{
-				case JobStatus.Done:
-					job.StatusChanged -= OnJobStatusChanged;
-					m_jobList.Remove(job);
-					GameData.Data.Jobs.Remove(job);
-					break;
-
-				case JobStatus.Fail:
-				case JobStatus.Abort:
-				case JobStatus.Ok:
-					break;
-			}
+			job.StatusChanged -= OnJobStatusChanged;
+			m_jobList.Remove(job);
+			GameData.Data.Jobs.Remove(job);
 		}
 
 		bool IJobSource.HasWork

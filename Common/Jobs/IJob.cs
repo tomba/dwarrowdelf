@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs
 	public enum JobStatus
 	{
 		/// <summary>
-		/// Everything ok
+		/// Work ongoing
 		/// </summary>
 		Ok,
 		/// <summary>
@@ -32,9 +32,7 @@ namespace Dwarrowdelf.Jobs
 		IJob Parent { get; }
 		ActionPriority Priority { get; }
 		JobStatus JobStatus { get; }
-		void Retry();
 		void Abort();
-		void Fail();
 
 		IEnumerable<IAssignment> GetAssignments(ILiving living);
 

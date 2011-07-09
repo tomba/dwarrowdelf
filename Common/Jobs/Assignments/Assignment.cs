@@ -14,6 +14,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			this.Parent = parent;
 			this.Priority = priority;
+			this.JobStatus = Jobs.JobStatus.Ok;
 		}
 
 		protected Assignment(SaveGameContext ctx)
@@ -37,22 +38,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
-		public void Retry()
-		{
-			Debug.Assert(this.JobStatus != JobStatus.Ok);
-			Debug.Assert(this.IsAssigned == false);
-
-			SetState(JobStatus.Ok);
-		}
-
 		public void Abort()
 		{
 			SetState(JobStatus.Abort);
-		}
-
-		public void Fail()
-		{
-			SetState(JobStatus.Fail);
 		}
 
 		public IEnumerable<IAssignment> GetAssignments(ILiving living)
@@ -138,23 +126,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			if (this.JobStatus == status)
 				return;
 
-			switch (status)
-			{
-				case JobStatus.Ok:
-					break;
-
-				case JobStatus.Done:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-
-				case JobStatus.Abort:
-					Debug.Assert(this.JobStatus == JobStatus.Ok || this.JobStatus == JobStatus.Done);
-					break;
-
-				case JobStatus.Fail:
-					Debug.Assert(this.JobStatus == JobStatus.Ok);
-					break;
-			}
+			CheckStateChangeValidity(status);
 
 			switch (status)
 			{
@@ -174,6 +146,22 @@ namespace Dwarrowdelf.Jobs.Assignments
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
 			Notify("JobStatus");
+		}
+
+		void CheckStateChangeValidity(JobStatus status)
+		{
+			switch (status)
+			{
+				case JobStatus.Ok:
+					throw new Exception();
+
+				case JobStatus.Done:
+				case JobStatus.Abort:
+				case JobStatus.Fail:
+					if (this.JobStatus != JobStatus.Ok)
+						throw new Exception();
+					break;
+			}
 		}
 
 		public event Action<IJob, JobStatus> StatusChanged;
