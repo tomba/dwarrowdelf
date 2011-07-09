@@ -33,25 +33,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			return JobStatus.Ok;
 		}
 
-		protected override void OnAssignmentStateChanged(JobStatus jobState)
+		protected override void OnAssignmentDone()
 		{
-			switch (jobState)
-			{
-				case Jobs.JobStatus.Ok:
-					break;
-
-				case Jobs.JobStatus.Fail:
-					SetStatus(JobStatus.Fail);
-					break;
-
-				case Jobs.JobStatus.Abort:
-					SetStatus(Jobs.JobStatus.Abort); // XXX check why the job aborted, and possibly retry
-					break;
-
-				case Jobs.JobStatus.Done:
-					m_state = (m_state + 1) % 5;
-					break;
-			}
+			m_state = (m_state + 1) % 5;
 		}
 
 		protected override IAssignment PrepareNextAssignment()

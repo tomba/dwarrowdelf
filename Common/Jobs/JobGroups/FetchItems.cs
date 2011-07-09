@@ -19,14 +19,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			}
 		}
 
-		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		protected override void OnSubJobDone(IJob job)
 		{
-			if (status == Jobs.JobStatus.Ok)
-				throw new Exception();
-
-			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
-				throw new Exception();
-
 			this.RemoveSubJob(job);
 
 			if (this.SubJobs.Count == 0)

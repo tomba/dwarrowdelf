@@ -89,14 +89,8 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		protected override void OnSubJobDone(IJob job)
 		{
-			if (status == Jobs.JobStatus.Ok)
-				throw new Exception();
-
-			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
-				throw new Exception();
-
 			RemoveSubJob(job);
 			m_map[m_map.First(kvp => kvp.Value == job).Key] = null;
 

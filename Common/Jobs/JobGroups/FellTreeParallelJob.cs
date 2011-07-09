@@ -26,16 +26,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			AddNewJobs();
 		}
 
-		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		protected override void OnSubJobDone(IJob job)
 		{
-			if (status == Jobs.JobStatus.Ok)
-				throw new Exception();
-
-			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
-				throw new Exception();
-
-			// DONE
-
 			RemoveSubJob(job);
 			Debug.Assert(m_jobs.FindIndex(i => i.Item2 == job) != -1);
 			m_jobs.RemoveAt(m_jobs.FindIndex(i => i.Item2 == job));

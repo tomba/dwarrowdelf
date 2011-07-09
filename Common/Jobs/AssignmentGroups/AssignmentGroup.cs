@@ -262,10 +262,39 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			Debug.Assert(job == this.CurrentAssignment);
 
-			OnAssignmentStateChanged(status);
+			switch (status)
+			{
+				case Jobs.JobStatus.Ok:
+					throw new Exception();
+
+				case Jobs.JobStatus.Abort:
+					OnAssignmentAborted();
+					break;
+
+				case Jobs.JobStatus.Fail:
+					OnAssignmentFailed();
+					break;
+
+				case Jobs.JobStatus.Done:
+					OnAssignmentDone();
+					break;
+			}
 		}
 
-		protected abstract void OnAssignmentStateChanged(JobStatus jobState);
+		protected virtual void OnAssignmentAborted()
+		{
+			SetStatus(Jobs.JobStatus.Abort);
+		}
+
+		protected virtual void OnAssignmentFailed()
+		{
+			SetStatus(Jobs.JobStatus.Fail);
+		}
+
+		protected virtual void OnAssignmentDone()
+		{
+			SetStatus(Jobs.JobStatus.Done);
+		}
 
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;

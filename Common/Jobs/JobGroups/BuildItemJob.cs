@@ -27,14 +27,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			AddSubJob(new FetchItems(this, priority, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
 		}
 
-		protected override void OnSubJobStatusChanged(IJob job, JobStatus status)
+		protected override void OnSubJobDone(IJob job)
 		{
-			if (status == Jobs.JobStatus.Ok)
-				throw new Exception();
-
-			if (status == Jobs.JobStatus.Abort || status == Jobs.JobStatus.Fail)
-				throw new Exception();
-
 			RemoveSubJob(job);
 
 			if (m_state == 0)

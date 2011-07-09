@@ -85,10 +85,39 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		void OnSubJobStatusChangedInternal(IJob job, JobStatus status)
 		{
-			OnSubJobStatusChanged(job, status);
+			switch (status)
+			{
+				case Jobs.JobStatus.Ok:
+					throw new Exception();
+
+				case Jobs.JobStatus.Abort:
+					OnSubJobAborted(job);
+					break;
+
+				case Jobs.JobStatus.Fail:
+					OnSubJobFailed(job);
+					break;
+
+				case Jobs.JobStatus.Done:
+					OnSubJobDone(job);
+					break;
+			}
 		}
 
-		protected virtual void OnSubJobStatusChanged(IJob job, JobStatus status) { } // XXX to abstract
+		protected virtual void OnSubJobAborted(IJob job)
+		{
+			SetStatus(Jobs.JobStatus.Abort);
+		}
+
+		protected virtual void OnSubJobFailed(IJob job)
+		{
+			SetStatus(Jobs.JobStatus.Fail);
+		}
+
+		protected virtual void OnSubJobDone(IJob job)
+		{
+			SetStatus(Jobs.JobStatus.Done);
+		}
 
 		protected void SetStatus(JobStatus status)
 		{
