@@ -32,6 +32,11 @@ namespace Dwarrowdelf.Client
 		[Serializable]
 		class DesignationData
 		{
+			public DesignationData(DesignationType type)
+			{
+				this.Type = type;
+			}
+
 			public DesignationType Type;
 			public IJob Job;
 			public bool IsPossible;
@@ -106,8 +111,7 @@ namespace Dwarrowdelf.Client
 			{
 				case DesignationType.Mine:
 				case DesignationType.CreateStairs:
-					locations = area.Range().Where(p => !m_map.ContainsKey(p) &&
-						(this.Environment.GetTerrain(p).IsMinable || this.Environment.GetHidden(p)));
+					locations = area.Range().Where(p => this.Environment.GetTerrain(p).IsMinable || this.Environment.GetHidden(p));
 					break;
 
 				case DesignationType.FellTree:
@@ -120,8 +124,17 @@ namespace Dwarrowdelf.Client
 
 			foreach (var p in locations)
 			{
-				m_map[p] = new DesignationData();
-				m_map[p].Type = type;
+				DesignationData oldData;
+
+				if (m_map.TryGetValue(p, out oldData))
+				{
+					if (oldData.Type == type)
+						continue;
+
+					RemoveJob(p);
+				}
+
+				m_map[p] = new DesignationData(type);
 				CheckTile(p);
 			}
 
