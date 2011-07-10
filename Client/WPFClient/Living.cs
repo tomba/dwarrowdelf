@@ -221,7 +221,7 @@ namespace Dwarrowdelf.Client
 
 			s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
 				m_visionMap, env.Bounds.Plane,
-				l => env.GetInterior(new IntPoint3D(l, z)).Blocker);
+				l => env.GetInterior(new IntPoint3D(l, z)).IsBlocker);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

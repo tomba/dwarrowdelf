@@ -755,8 +755,8 @@ namespace Dwarrowdelf.Client
 		void NotifyTileTerrainChanges()
 		{
 			Notify("Interior");
-			Notify("Floor");
-			Notify("FloorMaterial");
+			Notify("Terrain");
+			Notify("TerrainMaterial");
 			Notify("InteriorMaterial");
 			Notify("WaterLevel");
 			Notify("Building");
@@ -849,23 +849,23 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public MaterialInfo FloorMaterial
+		public MaterialInfo TerrainMaterial
 		{
 			get
 			{
 				if (m_env == null)
 					return null;
-				return m_env.GetFloorMaterial(m_location);
+				return m_env.GetTerrainMaterial(m_location);
 			}
 		}
 
-		public FloorInfo Floor
+		public TerrainInfo Terrain
 		{
 			get
 			{
 				if (m_env == null)
 					return null;
-				return m_env.GetFloor(m_location);
+				return m_env.GetTerrain(m_location);
 			}
 		}
 
@@ -930,7 +930,7 @@ namespace Dwarrowdelf.Client
 		void NotifyTileTerrainChanges()
 		{
 			Notify("Interiors");
-			Notify("Floors");
+			Notify("Terrains");
 			Notify("WaterLevels");
 			Notify("Buildings");
 			Notify("Grasses");
@@ -1020,7 +1020,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public IEnumerable<Tuple<FloorInfo, MaterialInfo>> Floors
+		public IEnumerable<Tuple<TerrainInfo, MaterialInfo>> Terrains
 		{
 			get
 			{
@@ -1028,7 +1028,7 @@ namespace Dwarrowdelf.Client
 					return null;
 
 				return m_selection.SelectionCuboid.Range().
-					Select(p => Tuple.Create(m_env.GetFloor(p), m_env.GetFloorMaterial(p))).
+					Select(p => Tuple.Create(m_env.GetTerrain(p), m_env.GetTerrainMaterial(p))).
 					Distinct();
 			}
 		}

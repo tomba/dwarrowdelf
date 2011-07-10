@@ -209,12 +209,14 @@ namespace Dwarrowdelf.Server
 
 		void PerformMine(MineAction action, out bool success)
 		{
+			var env = this.Environment;
+
 			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
 
-			var inter = this.Environment.GetInterior(p);
-			var id = inter.ID;
+			var terrain = env.GetTerrain(p);
+			var id = terrain.ID;
 
-			if (!inter.IsMineable)
+			if (!terrain.IsMinable)
 			{
 				Trace.TraceWarning("{0} tried to mine {1}, but it's not minable", this, p);
 				success = false;
@@ -236,20 +238,26 @@ namespace Dwarrowdelf.Server
 						return;
 					}
 
-					if (!EnvironmentHelpers.CanMoveFrom(this.Environment, this.Location, action.Direction))
+					if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
 						success = false;
 						Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
 						return;
 					}
 
-					var material = this.Environment.GetInteriorMaterial(p);
+					ItemID itemID = ItemID.Undefined;
+					MaterialInfo material = null;
 
-					this.Environment.MineTile(p, InteriorID.Empty, MaterialID.Undefined);
-
-					if (this.World.Random.Next(21) < GetSkillLevel(SkillID.Mining) / 25 + 10)
+					if (id == TerrainID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
 					{
-						ItemID itemID;
+						if (env.GetInteriorID(p) == InteriorID.Ore)
+						{
+							material = env.GetInteriorMaterial(p);
+						}
+						else
+						{
+							material = env.GetTerrainMaterial(p);
+						}
 
 						switch (material.MaterialClass)
 						{
@@ -268,7 +276,13 @@ namespace Dwarrowdelf.Server
 							default:
 								throw new Exception();
 						}
+					}
 
+					env.SetTerrain(p, TerrainID.NaturalFloor, env.GetTerrainMaterialID(p));
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+					if (itemID != ItemID.Undefined)
+					{
 						var item = new ItemObject(itemID, material.ID);
 
 						item.Initialize(this.World);
@@ -290,16 +304,27 @@ namespace Dwarrowdelf.Server
 
 					// We can always create stairs down, but for other dirs we need access there
 					if (action.Direction != Direction.Down &&
-						!EnvironmentHelpers.CanMoveFrom(this.Environment, this.Location, action.Direction))
+						!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
 						success = false;
 						Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
 						return;
 					}
 
-					this.Environment.MineTile(p, InteriorID.Stairs, this.Environment.GetInteriorMaterialID(p));
-					if (this.Environment.GetFloorID(p + Direction.Up) == FloorID.NaturalFloor)
-						this.Environment.SetFloor(p + Direction.Up, FloorID.Hole, this.Environment.GetFloorMaterialID(p));
+					env.SetTerrain(p, TerrainID.NaturalFloor, env.GetTerrainMaterialID(p));
+
+					if (id == TerrainID.NaturalWall)
+					{
+						env.SetInterior(p, InteriorID.Stairs, env.GetTerrainMaterialID(p));
+
+						if (env.GetTerrainID(p + Direction.Up) == TerrainID.NaturalFloor)
+							env.SetTerrain(p + Direction.Up, TerrainID.Hole, env.GetTerrainMaterialID(p + Direction.Up));
+					}
+					else
+					{
+						env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					}
+
 					break;
 
 				default:

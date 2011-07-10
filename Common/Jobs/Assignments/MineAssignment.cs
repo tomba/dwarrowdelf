@@ -74,9 +74,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		JobStatus CheckProgress()
 		{
-			var inter = m_environment.GetInterior(m_location);
+			var terrain = m_environment.GetTerrain(m_location);
 
-			if (inter.ID == InteriorID.Undefined || inter.IsMineable)
+			if (terrain.ID == TerrainID.Undefined || terrain.IsMinable)
 				return JobStatus.Ok;
 			else
 				return JobStatus.Done;

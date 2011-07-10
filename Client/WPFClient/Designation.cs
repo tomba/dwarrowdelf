@@ -107,7 +107,7 @@ namespace Dwarrowdelf.Client
 				case DesignationType.Mine:
 				case DesignationType.CreateStairs:
 					locations = area.Range().Where(p => !m_map.ContainsKey(p) &&
-						(this.Environment.GetInterior(p).IsMineable || this.Environment.GetHidden(p)));
+						(this.Environment.GetTerrain(p).IsMinable || this.Environment.GetHidden(p)));
 					break;
 
 				case DesignationType.FellTree:
@@ -277,7 +277,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var d in dirs.ToDirections())
 			{
-				if (!this.Environment.GetInterior(p + d).Blocker)
+				if (!this.Environment.GetInterior(p + d).IsBlocker)
 				{
 					data.IsPossible = true;
 					return;

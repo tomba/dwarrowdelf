@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 	[StructLayout(LayoutKind.Sequential)]
 	public struct RenderTileDetailed
 	{
-		public RenderTileLayer Floor;
+		public RenderTileLayer Terrain;
 		public RenderTileLayer Interior;
 		public RenderTileLayer Object;
 		public RenderTileLayer Top;
@@ -26,16 +26,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		const int FloorShift = 0;
+		const int TerrainShift = 0;
 		const int InteriorShift = 7;
 		const int ObjectShift = 14;
 		const int TopShift = 21;
 		const int ValidShift = 28;
 
-		public byte FloorDarknessLevel
+		public byte TerrainDarknessLevel
 		{
-			get { return (byte)((m_packedValidAndDarkness >> FloorShift) & 0x7fu); }
-			set { m_packedValidAndDarkness &= ~(0x7fu << FloorShift); m_packedValidAndDarkness |= (value & 0x7fu) << FloorShift; }
+			get { return (byte)((m_packedValidAndDarkness >> TerrainShift) & 0x7fu); }
+			set { m_packedValidAndDarkness &= ~(0x7fu << TerrainShift); m_packedValidAndDarkness |= (value & 0x7fu) << TerrainShift; }
 		}
 
 		public byte InteriorDarknessLevel

@@ -165,7 +165,7 @@ namespace Dwarrowdelf.Server
 
 			var dstInter = GetInterior(to);
 
-			if (dstInter.Blocker)
+			if (dstInter.IsBlocker)
 				return false;
 
 			if (v.Z == 0)
@@ -173,15 +173,15 @@ namespace Dwarrowdelf.Server
 
 			Direction dir = v.ToDirection();
 
-			var dstFloor = GetFloor(to);
+			var dstTerrain = GetTerrain(to);
 
 			if (dir == Direction.Up)
-				return dstFloor.IsWaterPassable == true;
+				return dstTerrain.IsPermeable == true;
 
-			var srcFloor = GetFloor(from);
+			var srcTerrain = GetTerrain(from);
 
 			if (dir == Direction.Down)
-				return srcFloor.IsWaterPassable == true;
+				return srcTerrain.IsPermeable == true;
 
 			throw new Exception();
 		}
@@ -308,14 +308,14 @@ namespace Dwarrowdelf.Server
 			HandleWater();
 		}
 
-		public FloorID GetFloorID(IntPoint3D l)
+		public TerrainID GetTerrainID(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorID(l);
+			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		public MaterialID GetTerrainMaterialID(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorMaterialID(l);
+			return m_tileGrid.GetTerrainMaterialID(l);
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
@@ -328,14 +328,14 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public FloorInfo GetFloor(IntPoint3D l)
+		public TerrainInfo GetTerrain(IntPoint3D l)
 		{
-			return Floors.GetFloor(GetFloorID(l));
+			return Terrains.GetTerrain(GetTerrainID(l));
 		}
 
-		public MaterialInfo GetFloorMaterial(IntPoint3D l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
 		{
-			return Materials.GetMaterial(m_tileGrid.GetFloorMaterialID(l));
+			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
 		}
 
 		public InteriorInfo GetInterior(IntPoint3D l)
@@ -390,7 +390,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void SetFloor(IntPoint3D p, FloorID floorID, MaterialID materialID)
+		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
 		{
 			if (this.IsInitialized)
 			{
@@ -399,8 +399,8 @@ namespace Dwarrowdelf.Server
 				this.Version += 1;
 			}
 
-			m_tileGrid.SetFloorID(p, floorID);
-			m_tileGrid.SetFloorMaterialID(p, materialID);
+			m_tileGrid.SetTerrainID(p, terrainID);
+			m_tileGrid.SetTerrainMaterialID(p, materialID);
 
 			if (this.IsInitialized)
 			{
@@ -487,14 +487,9 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetHidden(l);
 		}
 
-		public bool IsWalkable(IntPoint3D l)
-		{
-			return !Interiors.GetInterior(GetInteriorID(l)).Blocker;
-		}
-
 		void UpdateHiddenStatus(IntPoint3D p)
 		{
-			if (!GetInterior(p).Blocker)
+			if (!GetTerrain(p).IsBlocker)
 			{
 				m_tileGrid.SetHidden(p, false);
 				return;
@@ -509,7 +504,7 @@ namespace Dwarrowdelf.Server
 				if (!this.Bounds.Contains(pp))
 					continue;
 
-				if (!GetInterior(pp).Blocker)
+				if (!GetTerrain(pp).IsBlocker)
 				{
 					hidden = false;
 					break;
@@ -519,10 +514,10 @@ namespace Dwarrowdelf.Server
 			m_tileGrid.SetHidden(p, hidden);
 		}
 
+			/*
 		public void MineTile(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
 			SetInterior(p, interiorID, materialID);
-
 			foreach (var dir in DirectionExtensions.PlanarDirections)
 			{
 				var pp = p + dir;
@@ -530,12 +525,13 @@ namespace Dwarrowdelf.Server
 				if (!this.Bounds.Contains(pp))
 					continue;
 
-				var flr = GetFloor(pp);
+				var flr = GetTerrain(pp);
 
 				if (flr.ID.IsSlope() && flr.ID.ToDir() == dir.Reverse())
-					SetFloor(pp, FloorID.NaturalFloor, GetFloorMaterialID(pp));
+					SetTerrain(pp, TerrainID.NaturalFloor, GetTerrainMaterialID(pp));
 			}
 		}
+		*/
 
 		// XXX not a good func. contents can be changed by the caller
 		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
@@ -572,23 +568,11 @@ namespace Dwarrowdelf.Server
 			if (!this.Bounds.Contains(p))
 				return false;
 
-			if (!this.IsWalkable(p))
+			if (!EnvironmentHelpers.CanEnter(this, p))
 				return false;
 
 			return true;
 		}
-
-		public bool CanEnter(IntPoint3D location)
-		{
-			if (!this.Bounds.Contains(location))
-				return false;
-
-			var dstInter = GetInterior(location);
-			var dstFloor = GetFloor(location);
-
-			return !dstInter.Blocker && dstFloor.IsCarrying;
-		}
-
 
 		protected override bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
@@ -758,7 +742,7 @@ namespace Dwarrowdelf.Server
 
 		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
 		{
-			return CanEnter(p);
+			return EnvironmentHelpers.CanEnter(this, p);
 		}
 
 		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
@@ -876,14 +860,14 @@ namespace Dwarrowdelf.Server
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public void SetFloorID(IntPoint3D p, FloorID id)
+		public void SetTerrainID(IntPoint3D p, TerrainID id)
 		{
-			m_grid[p.Z, p.Y, p.X].FloorID = id;
+			m_grid[p.Z, p.Y, p.X].TerrainID = id;
 		}
 
-		public FloorID GetFloorID(IntPoint3D p)
+		public TerrainID GetTerrainID(IntPoint3D p)
 		{
-			return m_grid[p.Z, p.Y, p.X].FloorID;
+			return m_grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
 
@@ -897,14 +881,14 @@ namespace Dwarrowdelf.Server
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public void SetFloorMaterialID(IntPoint3D p, MaterialID id)
+		public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
 		{
-			m_grid[p.Z, p.Y, p.X].FloorMaterialID = id;
+			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
 		}
 
-		public MaterialID GetFloorMaterialID(IntPoint3D p)
+		public MaterialID GetTerrainMaterialID(IntPoint3D p)
 		{
-			return m_grid[p.Z, p.Y, p.X].FloorMaterialID;
+			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
 		public void SetWaterLevel(IntPoint3D p, byte waterLevel)

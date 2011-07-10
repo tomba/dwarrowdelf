@@ -37,7 +37,7 @@ namespace MyArea
 					throw new Exception();
 
 				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
-			} while (!env.CanEnter(p));
+			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
 		}
@@ -53,15 +53,9 @@ namespace MyArea
 					throw new Exception();
 
 				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), m_random.Next(env.Depth));
-			} while (env.GetInteriorID(p) != InteriorID.NaturalWall);
+			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
 
 			return p;
-		}
-
-		void FillTile(Environment env, IntPoint3D p, MaterialID material)
-		{
-			env.SetInterior(p, InteriorID.NaturalWall, material);
-			env.SetFloor(p, FloorID.NaturalFloor, material);
 		}
 
 		Environment CreateMap1(World world)
@@ -78,48 +72,9 @@ namespace MyArea
 
 			Random r = new Random(123);
 
-			/* create terrain */
-			foreach (var p in env.Bounds.Range())
-			{
-				double d = grid[p.ToIntPoint()];
+			CreateTerrainFromHeightmap(grid, env);
 
-				if (d > p.Z)
-				{
-					FillTile(env, p, MaterialID.Granite);
-				}
-				else
-				{
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					if (env.GetInteriorID(p + Direction.Down) != InteriorID.Empty)
-					{
-						env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
-						env.SetGrass(p, true);
-					}
-					else
-					{
-						env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
-					}
-				}
-			}
-
-			int surfaceLevel = 0;
-			int numSurfaces = 0;
-			/* find the z level with most surface */
-			for (int z = env.Bounds.Z1; z < env.Bounds.Z2; ++z)
-			{
-				var n = 0;
-				foreach (var p in env.Bounds.Plane.Range())
-				{
-					if (env.GetInterior(new IntPoint3D(p, z)).Blocker == false && env.GetFloor(new IntPoint3D(p, z)).IsBlocking == true)
-						n++;
-				}
-
-				if (n > numSurfaces)
-				{
-					surfaceLevel = z;
-					numSurfaces = n;
-				}
-			}
+			int surfaceLevel = FindSurfaceLevel(env);
 
 			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
 
@@ -138,27 +93,20 @@ namespace MyArea
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.NativeGold);
-					env.SetFloor(p, FloorID.NaturalFloor, env.GetFloorMaterialID(p));
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Ore, MaterialID.NativeGold);
 				}
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					TileData td = new TileData()
-					{
-						FloorID = FloorID.NaturalFloor,
-						FloorMaterialID = MaterialID.Magnetite,
-						InteriorID = InteriorID.NaturalWall,
-						InteriorMaterialID = MaterialID.Magnetite,
-					};
-
-					env.SetTileData(p, td);
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Ore, MaterialID.Magnetite);
 				}
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetInterior(p, InteriorID.NaturalWall, MaterialID.Chrysoprase);
-					env.SetFloor(p, FloorID.NaturalFloor, env.GetFloorMaterialID(p));
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Ore, MaterialID.Chrysoprase);
 				}
 			}
 
@@ -281,7 +229,7 @@ namespace MyArea
 			var building = new BuildingObject(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
+				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -292,7 +240,7 @@ namespace MyArea
 			building = new BuildingObject(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
+				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -303,7 +251,7 @@ namespace MyArea
 			building = new BuildingObject(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, 9));
 			foreach (var p in building.Area.Range())
 			{
-				env.SetFloor(p, FloorID.NaturalFloor, MaterialID.Granite);
+				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				env.SetGrass(p, false);
 			}
@@ -352,13 +300,62 @@ namespace MyArea
 			return env;
 		}
 
+		static int FindSurfaceLevel(Environment env)
+		{
+			int surfaceLevel = 0;
+			int numSurfaces = 0;
+
+			/* find the z level with most surface */
+			for (int z = env.Bounds.Z1; z < env.Bounds.Z2; ++z)
+			{
+				int n = env.Bounds.Plane.Range()
+					.Where(p => EnvironmentHelpers.CanEnter(env, new IntPoint3D(p, z)))
+					.Count();
+
+				if (n > numSurfaces)
+				{
+					surfaceLevel = z;
+					numSurfaces = n;
+				}
+			}
+
+			return surfaceLevel;
+		}
+
+		static void CreateTerrainFromHeightmap(Grid2D<double> grid, Environment env)
+		{
+			foreach (var p in env.Bounds.Range())
+			{
+				double d = grid[p.ToIntPoint()];
+
+				if (d > p.Z)
+				{
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+				}
+				else
+				{
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+					if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
+					{
+						env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+						env.SetGrass(p, true);
+					}
+					else
+					{
+						env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
+					}
+				}
+			}
+		}
+
 		void CreateTrees(Environment env)
 		{
 			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
 
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
-				.Where(p => env.GetFloorID(p) == FloorID.NaturalFloor || env.GetFloorID(p).IsSlope())
+				.Where(p => env.GetTerrainID(p) == TerrainID.NaturalFloor || env.GetTerrainID(p).IsSlope())
 				.Where(p => m_random.Next() % 8 == 0);
 
 			foreach (var p in locations)
@@ -386,37 +383,24 @@ namespace MyArea
 			var locs = from s in bounds.Range()
 					   let su = s + Direction.Up
 					   where bounds.Contains(su)
-					   where grid.GetInteriorID(s) == InteriorID.Empty && grid.GetFloorID(s) != FloorID.Empty
-					   where grid.GetInteriorID(su) == InteriorID.Empty && grid.GetFloorID(su) == FloorID.Empty
+					   where grid.GetTerrainID(s) == TerrainID.NaturalFloor && grid.GetTerrainID(su) == TerrainID.Empty
 					   from d in DirectionExtensions.PlanarDirections
 					   let td = s + d
 					   let t = s + d + Direction.Up
 					   where bounds.Contains(t)
-					   where grid.GetInteriorID(td) == InteriorID.NaturalWall
-					   where grid.GetInteriorID(t) == InteriorID.Empty && grid.GetFloorID(t) != FloorID.Empty
+					   where grid.GetTerrainID(td) == TerrainID.NaturalWall && grid.GetTerrainID(t) == TerrainID.NaturalFloor
 					   select new { Location = s, Direction = d };
 
 			foreach (var loc in locs)
 			{
+				// skip places surrounded by walls
 				if (DirectionExtensions.PlanarDirections
 					.Where(d => bounds.Contains(loc.Location + d))
-					.All(d => grid.GetInteriorID(loc.Location + d) != InteriorID.Empty))
+					.All(d => grid.GetTerrainID(loc.Location + d) != TerrainID.NaturalWall))
 					continue;
 
-				grid.SetFloorID(loc.Location, loc.Direction.ToSlope());
-				grid.SetFloorMaterialID(loc.Location, grid.GetFloorMaterialID(loc.Location));
+				grid.SetTerrainID(loc.Location, loc.Direction.ToSlope());
 			}
-		}
-
-		static void ClearTile(Environment env, IntPoint3D p)
-		{
-			env.SetFloor(p, FloorID.Empty, MaterialID.Undefined);
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-		}
-
-		static void ClearInside(Environment env, IntPoint3D p)
-		{
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
 		void CreateOreCluster(Environment env, IntPoint3D p, MaterialID oreMaterialID)
@@ -429,15 +413,13 @@ namespace MyArea
 			if (!env.Bounds.Contains(p))
 				return;
 
-			var interID = env.GetInteriorID(p);
-			if (interID != InteriorID.NaturalWall)
+			if (env.GetTerrainID(p) != TerrainID.NaturalWall)
 				return;
 
-			var interMat = env.GetInteriorMaterialID(p);
-			if (interMat == oreMaterialID)
+			if (env.GetInteriorID(p) == InteriorID.Ore)
 				return;
 
-			env.SetInterior(p, InteriorID.NaturalWall, oreMaterialID);
+			env.SetInterior(p, InteriorID.Ore, oreMaterialID);
 
 			if (count > 0)
 			{

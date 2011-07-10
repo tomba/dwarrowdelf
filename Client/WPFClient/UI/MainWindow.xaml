@@ -13,7 +13,7 @@
 
     <Window.Resources>
         <local:MyInteriorsConverter x:Key="myInteriorsConverter" />
-        <local:MyFloorsConverter x:Key="myFloorsConverter" />
+        <local:MyTerrainsConverter x:Key="myTerrainsConverter" />
         <local:MyWatersConverter x:Key="myWatersConverter" />
         <local:MyBuildingsConverter x:Key="myBuildingsConverter" />
         <local:MyGrassesConverter x:Key="myGrassesConverter" />
@@ -234,14 +234,14 @@
                             <DockPanel>
                                 <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
+                                    <TextBlock>Terrain:
+                                             <TextBlock Text="{Binding Terrain.Name}" />
+                                            (<TextBlock Text="{Binding TerrainMaterial.Name}" />)
+                                             </TextBlock>
                                     <TextBlock>Interior:
                                           <TextBlock Text="{Binding Interior.Name}" />
                                          (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
                                           </TextBlock>
-                                    <TextBlock>Floor:
-                                             <TextBlock Text="{Binding Floor.Name}" />
-                                            (<TextBlock Text="{Binding FloorMaterial.Name}" />)
-                                             </TextBlock>
                                     <TextBlock>Water:
                                       <TextBlock Text="{Binding WaterLevel}" />
                                        </TextBlock>
@@ -279,11 +279,11 @@
                                         </TextBlock>
                                     </TextBlock>
 
+                                    <TextBlock>Terrain:
+                                        <TextBlock Text="{Binding Terrains, Converter={StaticResource myTerrainsConverter}}" />
+                                    </TextBlock>
                                     <TextBlock>Interior:
                                         <TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
-                                    </TextBlock>
-                                    <TextBlock>Floor:
-                                        <TextBlock Text="{Binding Floors, Converter={StaticResource myFloorsConverter}}" />
                                     </TextBlock>
                                     <TextBlock>Water:
                                         <TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
@@ -402,8 +402,8 @@
                                             <Separator />
                                             <MenuItem Header="Remove" Tag="Remove" Click="MenuItem_Click_Stockpile" />
                                         </MenuItem>
-                                        <MenuItem Name="setFloorMenu" Header="Set Floor" />
-                                        <MenuItem Name="setFloorMaterialMenu" Header="Set Floor Material" />
+                                        <MenuItem Name="setTerrainMenu" Header="Set Terrain" />
+                                        <MenuItem Name="setTerrainMaterialMenu" Header="Set Terrain Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />
                                         <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
                                         <MenuItem Header="Set Water" Click="MenuItem_Click_SetWater" />

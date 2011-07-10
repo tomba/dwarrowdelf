@@ -111,8 +111,8 @@ namespace Dwarrowdelf.Messages
 		public InteriorID? InteriorID { get; set; }
 		public MaterialID? InteriorMaterialID { get; set; }
 
-		public FloorID? FloorID { get; set; }
-		public MaterialID? FloorMaterialID { get; set; }
+		public TerrainID? TerrainID { get; set; }
+		public MaterialID? TerrainMaterialID { get; set; }
 
 		public byte? WaterLevel { get; set; }
 

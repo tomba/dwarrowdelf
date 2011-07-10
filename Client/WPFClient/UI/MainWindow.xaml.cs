@@ -87,15 +87,15 @@ namespace Dwarrowdelf.Client
 				setInteriorMenu.Items.Add(item);
 			}
 
-			foreach (var id in Enum.GetValues(typeof(FloorID)))
+			foreach (var id in Enum.GetValues(typeof(TerrainID)))
 			{
 				var item = new MenuItem()
 				{
 					Tag = id,
 					Header = id.ToString(),
 				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloor));
-				setFloorMenu.Items.Add(item);
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetTerrain));
+				setTerrainMenu.Items.Add(item);
 			}
 
 			foreach (var id in Enum.GetValues(typeof(MaterialID)))
@@ -116,8 +116,8 @@ namespace Dwarrowdelf.Client
 					Tag = id,
 					Header = id.ToString(),
 				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetFloorMaterial));
-				setFloorMaterialMenu.Items.Add(item);
+				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetTerrainMaterial));
+				setTerrainMaterialMenu.Items.Add(item);
 			}
 
 			foreach (var id in Enum.GetValues(typeof(BuildingID)))
@@ -351,15 +351,15 @@ namespace Dwarrowdelf.Client
 					else
 					{
 						var env = currentOb.Environment;
-						var curFloorId = env.GetFloor(currentOb.Location).ID;
+						var curTerrainId = env.GetTerrain(currentOb.Location).ID;
 						var destInterId = env.GetInterior(currentOb.Location + dir).ID;
-						var destDownFloorId = env.GetFloor(currentOb.Location + dir + Direction.Down).ID;
+						var destDownTerrainId = env.GetTerrain(currentOb.Location + dir + Direction.Down).ID;
 
 						if (dir.IsCardinal())
 						{
-							if (curFloorId.IsSlope() && curFloorId == dir.ToSlope())
+							if (curTerrainId.IsSlope() && curTerrainId == dir.ToSlope())
 								dir |= Direction.Up;
-							else if (destInterId == InteriorID.Empty && destDownFloorId.IsSlope() && destDownFloorId == dir.Reverse().ToSlope())
+							else if (destInterId == InteriorID.Empty && destDownTerrainId.IsSlope() && destDownTerrainId == dir.Reverse().ToSlope())
 								dir |= Direction.Down;
 						}
 
@@ -460,16 +460,16 @@ namespace Dwarrowdelf.Client
 			});
 		}
 
-		void MenuItem_Click_SetFloor(object sender, RoutedEventArgs e)
+		void MenuItem_Click_SetTerrain(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
-			var floor = (FloorID)item.Tag;
+			var terrain = (TerrainID)item.Tag;
 
 			GameData.Data.Connection.Send(new SetTilesMessage()
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				FloorID = floor,
+				TerrainID = terrain,
 			});
 		}
 
@@ -486,7 +486,7 @@ namespace Dwarrowdelf.Client
 			});
 		}
 
-		void MenuItem_Click_SetFloorMaterial(object sender, RoutedEventArgs e)
+		void MenuItem_Click_SetTerrainMaterial(object sender, RoutedEventArgs e)
 		{
 			MenuItem item = (MenuItem)e.Source;
 			var material = (MaterialID)item.Tag;
@@ -495,7 +495,7 @@ namespace Dwarrowdelf.Client
 			{
 				MapID = map.Environment.ObjectID,
 				Cube = map.Selection.SelectionCuboid,
-				FloorMaterialID = material,
+				TerrainMaterialID = material,
 			});
 		}
 
@@ -531,7 +531,7 @@ namespace Dwarrowdelf.Client
 
 				foreach (var p in map.Selection.SelectionCuboid.Range())
 				{
-					if (env.GetInterior(p).ID != InteriorID.NaturalWall)
+					if (env.GetTerrainID(p) != TerrainID.NaturalWall)
 						continue;
 
 					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p, MineActionType.Mine);
@@ -1138,9 +1138,9 @@ namespace Dwarrowdelf.Client
 		public MyInteriorsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
 	}
 
-	class MyFloorsConverter : ListConverter<Tuple<FloorInfo, MaterialInfo>>
+	class MyTerrainsConverter : ListConverter<Tuple<TerrainInfo, MaterialInfo>>
 	{
-		public MyFloorsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
+		public MyTerrainsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
 	}
 
 	class MyWatersConverter : ListConverter<byte>

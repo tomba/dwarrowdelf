@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_environment = env;
 			m_area = area;
 
-			m_locs = area.Range().Where(p => env.GetInterior(p).IsMineable || m_environment.GetHidden(p));
+			m_locs = area.Range().Where(p => env.GetTerrain(p).IsMinable || m_environment.GetHidden(p));
 			foreach (var p in m_locs)
 				m_map[p] = new MineData() { IsPossible = CheckTile(p) };
 		}
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				if (m_environment.GetHidden(p + d))
 					continue;
 
-				if (!m_environment.GetInterior(p + d).Blocker)
+				if (!m_environment.GetInterior(p + d).IsBlocker)
 					return true;
 			}
 

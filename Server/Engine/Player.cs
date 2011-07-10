@@ -184,10 +184,10 @@ namespace Dwarrowdelf.Server
 				if (msg.InteriorMaterialID.HasValue)
 					tileData.InteriorMaterialID = msg.InteriorMaterialID.Value;
 
-				if (msg.FloorID.HasValue)
-					tileData.FloorID = msg.FloorID.Value;
-				if (msg.FloorMaterialID.HasValue)
-					tileData.FloorMaterialID = msg.FloorMaterialID.Value;
+				if (msg.TerrainID.HasValue)
+					tileData.TerrainID = msg.TerrainID.Value;
+				if (msg.TerrainMaterialID.HasValue)
+					tileData.TerrainMaterialID = msg.TerrainMaterialID.Value;
 
 				if (msg.WaterLevel.HasValue)
 					tileData.WaterLevel = msg.WaterLevel.Value;
@@ -232,7 +232,7 @@ namespace Dwarrowdelf.Server
 					throw new Exception();
 
 				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
-			} while (!env.CanEnter(p));
+			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
 		}

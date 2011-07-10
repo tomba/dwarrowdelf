@@ -9,10 +9,10 @@ namespace Dwarrowdelf
 	{
 		Undefined,
 		Empty,
-		NaturalWall,
 		Stairs,
 		Sapling,
 		Tree,
+		Ore,
 	}
 
 	[Flags]
@@ -20,7 +20,6 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 		Blocker = 1 << 0,
-		Mineable = 1 << 1,
 	}
 
 	public class InteriorInfo
@@ -29,11 +28,8 @@ namespace Dwarrowdelf
 		public string Name { get; set; }
 		public InteriorFlags Flags { get; set; }
 
-		public bool Blocker { get { return (this.Flags & InteriorFlags.Blocker) != 0; } }
-		public bool IsSeeThrough { get { return !this.Blocker; } }
-		public bool IsWaterPassable { get { return !this.Blocker; } }
-
-		public bool IsMineable { get { return (this.Flags & InteriorFlags.Mineable) != 0; } }
+		public bool IsBlocker { get { return this.Flags.HasFlag(InteriorFlags.Blocker); } }
+		public bool IsSeeThrough { get { return !this.IsBlocker; } }
 	}
 
 	public static class Interiors

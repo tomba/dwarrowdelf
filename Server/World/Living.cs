@@ -510,7 +510,7 @@ namespace Dwarrowdelf.Server
 			int z = this.Z;
 			var env = this.Environment;
 			s_losAlgo.Calculate(this.Location2D, this.VisionRange, m_visionMap, env.Bounds2D,
-				l => !env.IsWalkable(new IntPoint3D(l, z)));
+				l => !EnvironmentHelpers.CanEnter(env, new IntPoint3D(l, z))); // XXX
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

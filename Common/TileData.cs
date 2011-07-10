@@ -12,8 +12,8 @@ namespace Dwarrowdelf
 		public InteriorID InteriorID { get; set; }
 		public MaterialID InteriorMaterialID { get; set; }
 
-		public FloorID FloorID { get; set; }
-		public MaterialID FloorMaterialID { get; set; }
+		public TerrainID TerrainID { get; set; }
+		public MaterialID TerrainMaterialID { get; set; }
 
 		public byte WaterLevel { get; set; }
 		public const int MinWaterLevel = 1;
@@ -22,15 +22,13 @@ namespace Dwarrowdelf
 
 		public bool Grass { get; set; }
 
-		public bool IsEmpty { get { return this.InteriorID == InteriorID.Empty && this.FloorID == FloorID.Empty; } }
-
 		public bool IsHidden { get; set; }
 
 		public ulong ToUInt64()
 		{
 			return
-				((ulong)this.FloorID << 0) |
-				((ulong)this.FloorMaterialID << 8) |
+				((ulong)this.TerrainID << 0) |
+				((ulong)this.TerrainMaterialID << 8) |
 				((ulong)this.InteriorID << 16) |
 				((ulong)this.InteriorMaterialID << 24) |
 				((ulong)this.WaterLevel << 32) |
@@ -42,8 +40,8 @@ namespace Dwarrowdelf
 		{
 			return new TileData()
 			{
-				FloorID = (FloorID)((value >> 0) & 0xff),
-				FloorMaterialID = (MaterialID)((value >> 8) & 0xff),
+				TerrainID = (TerrainID)((value >> 0) & 0xff),
+				TerrainMaterialID = (MaterialID)((value >> 8) & 0xff),
 				InteriorID = (InteriorID)((value >> 16) & 0xff),
 				InteriorMaterialID = (MaterialID)((value >> 24) & 0xff),
 				WaterLevel = (byte)((value >> 32) & 0xff),

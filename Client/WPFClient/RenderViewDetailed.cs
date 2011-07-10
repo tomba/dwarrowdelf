@@ -143,10 +143,10 @@ namespace Dwarrowdelf.Client
 						break;
 				}
 
-				GetFloorTile(p, env, ref tile.Floor, showVirtualSymbols, out seeThrough);
+				GetTerrainTile(p, env, ref tile.Terrain, showVirtualSymbols, out seeThrough);
 
-				if (tile.Floor.SymbolID != SymbolID.Undefined)
-					tile.FloorDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
+				if (tile.Terrain.SymbolID != SymbolID.Undefined)
+					tile.TerrainDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
 
 				if (!seeThrough)
 					break;
@@ -158,40 +158,28 @@ namespace Dwarrowdelf.Client
 			if (tile.InteriorDarknessLevel == 0)
 				tile.InteriorDarknessLevel = tile.ObjectDarknessLevel;
 
-			if (tile.FloorDarknessLevel == 0)
-				tile.FloorDarknessLevel = tile.InteriorDarknessLevel;
+			if (tile.TerrainDarknessLevel == 0)
+				tile.TerrainDarknessLevel = tile.InteriorDarknessLevel;
 		}
 
-		static void GetFloorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetTerrainTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			seeThrough = false;
 
-			var intID = env.GetInteriorID(ml);
+			var flrID = env.GetTerrainID(ml);
 
-			if (intID == InteriorID.NaturalWall)
-			{
-				var flrMatInfo = env.GetFloorMaterial(ml);
-				tile.SymbolID = SymbolID.Wall;
-				tile.Color = flrMatInfo.Color;
-				tile.BgColor = GameColor.None;
-				return;
-			}
-
-
-			var flrID = env.GetFloorID(ml);
-
-			if (flrID == FloorID.Undefined)
+			if (flrID == TerrainID.Undefined)
 				return;
 
-			if (flrID == FloorID.Empty)
+			if (flrID == TerrainID.Empty)
 			{
 				if (showVirtualSymbols)
 				{
-					var flrId2 = env.GetFloor(ml + Direction.Down).ID;
+					var flrId2 = env.GetTerrain(ml + Direction.Down).ID;
 
 					if (flrId2.IsSlope())
 					{
-						tile.Color = env.GetFloorMaterial(ml + Direction.Down).Color;
+						tile.Color = env.GetTerrainMaterial(ml + Direction.Down).Color;
 
 						switch (flrId2.ToDir().Reverse())
 						{
@@ -243,13 +231,13 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			var matInfo = env.GetFloorMaterial(ml);
+			var matInfo = env.GetTerrainMaterial(ml);
 			tile.Color = matInfo.Color;
 			tile.BgColor = GameColor.None;
 
 			switch (flrID)
 			{
-				case FloorID.NaturalFloor:
+				case TerrainID.NaturalFloor:
 					if (env.GetGrass(ml))
 					{
 						tile.SymbolID = SymbolID.Grass;
@@ -263,18 +251,22 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case FloorID.Hole:
+				case TerrainID.NaturalWall:
+					tile.SymbolID = SymbolID.Wall;
+					break;
+
+				case TerrainID.Hole:
 					tile.SymbolID = SymbolID.Floor;
 					break;
 
-				case FloorID.SlopeNorth:
-				case FloorID.SlopeNorthEast:
-				case FloorID.SlopeEast:
-				case FloorID.SlopeSouthEast:
-				case FloorID.SlopeSouth:
-				case FloorID.SlopeSouthWest:
-				case FloorID.SlopeWest:
-				case FloorID.SlopeNorthWest:
+				case TerrainID.SlopeNorth:
+				case TerrainID.SlopeNorthEast:
+				case TerrainID.SlopeEast:
+				case TerrainID.SlopeSouthEast:
+				case TerrainID.SlopeSouth:
+				case TerrainID.SlopeSouthWest:
+				case TerrainID.SlopeWest:
+				case TerrainID.SlopeNorthWest:
 					switch (flrID.ToDir())
 					{
 						case Direction.North:
@@ -343,11 +335,19 @@ namespace Dwarrowdelf.Client
 					tile.SymbolID = SymbolID.Undefined;
 					break;
 
-				case InteriorID.NaturalWall:
+				case InteriorID.Sapling:
+					tile.SymbolID = SymbolID.Sapling;
+					tile.Color = GameColor.ForestGreen;
+					break;
 
+				case InteriorID.Tree:
+					tile.SymbolID = SymbolID.Tree;
+					tile.Color = GameColor.ForestGreen;
+					break;
+
+				case InteriorID.Ore:
 					switch (matInfo.MaterialClass)
 					{
-						// these are see through, and GetFloorTile uses Wall symbol
 						case MaterialClass.Gem:
 							tile.SymbolID = SymbolID.GemOre;
 							break;
@@ -357,21 +357,9 @@ namespace Dwarrowdelf.Client
 							break;
 
 						default:
-							tile.SymbolID = SymbolID.Wall;
-							seeThrough = false;
+							tile.SymbolID = SymbolID.Undefined;
 							break;
 					}
-
-					break;
-
-				case InteriorID.Sapling:
-					tile.SymbolID = SymbolID.Sapling;
-					tile.Color = GameColor.ForestGreen;
-					break;
-
-				case InteriorID.Tree:
-					tile.SymbolID = SymbolID.Tree;
-					tile.Color = GameColor.ForestGreen;
 					break;
 
 				default:

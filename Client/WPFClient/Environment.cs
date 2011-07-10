@@ -82,17 +82,17 @@ namespace Dwarrowdelf.Client
 
 		public bool IsWalkable(IntPoint3D l)
 		{
-			return GetInterior(l).Blocker == false;
+			return GetInterior(l).IsBlocker == false;
 		}
 
-		public FloorID GetFloorID(IntPoint3D l)
+		public TerrainID GetTerrainID(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorID(l);
+			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public MaterialID GetFloorMaterialID(IntPoint3D l)
+		public MaterialID GetTerrainMaterialID(IntPoint3D l)
 		{
-			return m_tileGrid.GetFloorMaterialID(l);
+			return m_tileGrid.GetTerrainMaterialID(l);
 		}
 
 		public InteriorID GetInteriorID(IntPoint3D l)
@@ -105,14 +105,14 @@ namespace Dwarrowdelf.Client
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public FloorInfo GetFloor(IntPoint3D l)
+		public TerrainInfo GetTerrain(IntPoint3D l)
 		{
-			return Floors.GetFloor(GetFloorID(l));
+			return Terrains.GetTerrain(GetTerrainID(l));
 		}
 
-		public MaterialInfo GetFloorMaterial(IntPoint3D l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
 		{
-			return Materials.GetMaterial(m_tileGrid.GetFloorMaterialID(l));
+			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
 		}
 
 		public InteriorInfo GetInterior(IntPoint3D l)
@@ -135,11 +135,11 @@ namespace Dwarrowdelf.Client
 				MapTileTerrainChanged(l);
 		}
 
-		public void SetFloorID(IntPoint3D l, FloorID floorID)
+		public void SetTerrainID(IntPoint3D l, TerrainID terrainID)
 		{
 			this.Version += 1;
 
-			m_tileGrid.SetFloorID(l, floorID);
+			m_tileGrid.SetTerrainID(l, terrainID);
 
 			if (MapTileTerrainChanged != null)
 				MapTileTerrainChanged(l);
@@ -398,13 +398,7 @@ namespace Dwarrowdelf.Client
 
 		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
 		{
-			if (!this.Bounds.Contains(p))
-				return false;
-
-			var dstInter = GetInterior(p);
-			var dstFloor = GetFloor(p);
-
-			return !dstInter.Blocker && dstFloor.IsCarrying;
+			return EnvironmentHelpers.CanEnter(this, p);
 		}
 
 		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)

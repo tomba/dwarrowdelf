@@ -43,14 +43,14 @@ namespace Dwarrowdelf
 	{
 		IntCuboid Bounds { get; }
 
-		FloorID GetFloorID(IntPoint3D l);
-		MaterialID GetFloorMaterialID(IntPoint3D l);
+		TerrainID GetTerrainID(IntPoint3D l);
+		MaterialID GetTerrainMaterialID(IntPoint3D l);
 
 		InteriorID GetInteriorID(IntPoint3D l);
 		MaterialID GetInteriorMaterialID(IntPoint3D l);
 
-		FloorInfo GetFloor(IntPoint3D l);
-		MaterialInfo GetFloorMaterial(IntPoint3D l);
+		TerrainInfo GetTerrain(IntPoint3D l);
+		MaterialInfo GetTerrainMaterial(IntPoint3D l);
 
 		InteriorInfo GetInterior(IntPoint3D l);
 		MaterialInfo GetInteriorMaterial(IntPoint3D l);

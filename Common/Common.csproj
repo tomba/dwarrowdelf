@@ -127,7 +127,7 @@
     <Compile Include="DataTypes\IntVector3D.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
-    <Compile Include="Floors.cs" />
+    <Compile Include="Terrains.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />
     <Compile Include="MyMath.cs" />
@@ -208,7 +208,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Floors.xaml">
+    <EmbeddedResource Include="Data\Terrains.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

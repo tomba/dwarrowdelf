@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			{
 				m_dir = dir;
 
-				var flr = m_environment.GetFloorID(this.Worker.Location);
+				var flr = m_environment.GetTerrainID(this.Worker.Location);
 
 				if (flr.IsSlope() && flr.ToDir() == dir)
 					dir |= Direction.Up;
@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 					var p = this.Worker.Location + dir + Direction.Down;
 					if (m_environment.Bounds.Contains(p))
 					{
-						flr = m_environment.GetFloorID(this.Worker.Location + dir + Direction.Down);
+						flr = m_environment.GetTerrainID(this.Worker.Location + dir + Direction.Down);
 						if (flr.IsSlope() && flr.ToDir().Reverse() == dir)
 							dir |= Direction.Down;
 					}

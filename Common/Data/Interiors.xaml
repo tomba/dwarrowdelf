@@ -4,9 +4,9 @@
          xmlns="clr-namespace:Dwarrowdelf">
 
     <InteriorInfo ID="Empty" />
-    <InteriorInfo ID="NaturalWall" Flags="Blocker,Mineable" />
     <InteriorInfo ID="Stairs" />
     <InteriorInfo ID="Sapling" />
     <InteriorInfo ID="Tree" Flags="Blocker" />
+    <InteriorInfo ID="Ore" />
 
 </x:Array>
