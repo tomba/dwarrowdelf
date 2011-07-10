@@ -65,6 +65,8 @@ namespace Dwarrowdelf
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
 		bool IsDestructed { get; }
+
+		byte GetSkillLevel(SkillID skill);
 	}
 
 	public interface IItemObject : IGameObject

@@ -39,6 +39,8 @@ namespace Dwarrowdelf
 		public int ActionTicksLeft { get; set; }
 		public int ActionUserID { get; set; }
 
+		public Tuple<SkillID, byte>[] Skills { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("LivingData {0}", this.ObjectID);

@@ -246,6 +246,16 @@ namespace Dwarrowdelf.Client
 			ob.SetProperty(change.PropertyID, change.Value);
 		}
 
+		void HandleChange(SkillChange change)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			ob.SetSkillLevel(change.SkillID, change.Level);
+		}
+
 		void HandleChange(ObjectDestructedChange change)
 		{
 			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);

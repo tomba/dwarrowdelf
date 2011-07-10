@@ -23,6 +23,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		Jobs.IAI m_ai;
 
+		[SaveGameProperty("Skills")]
+		Dictionary<SkillID, byte> m_skillMap;
+
 		public Living(string name)
 			: base(ObjectType.Living)
 		{
@@ -32,6 +35,7 @@ namespace Dwarrowdelf.Server
 			this.FoodFullness = 500;
 			this.WaterFullness = 500;
 			this.Assignment = "";
+			m_skillMap = new Dictionary<SkillID, byte>();
 		}
 
 		Living(SaveGameContext ctx)
@@ -181,6 +185,27 @@ namespace Dwarrowdelf.Server
 			set { if (m_assignment == value) return; m_assignment = value; NotifyObject(PropertyID.Assignment, value); }
 		}
 
+		public byte GetSkillLevel(SkillID skill)
+		{
+			byte skillValue;
+			if (m_skillMap.TryGetValue(skill, out skillValue))
+				return skillValue;
+			return 0;
+		}
+
+		public void SetSkillLevel(SkillID skill, byte level)
+		{
+			byte oldLevel = GetSkillLevel(skill);
+
+			if (level == 0)
+				m_skillMap.Remove(skill);
+			else
+				m_skillMap[skill] = level;
+
+			if (this.IsInitialized && level != oldLevel)
+				this.World.AddChange(new SkillChange(this, skill, level));
+		}
+
 		public override BaseGameObjectData Serialize()
 		{
 			var data = new LivingData()
@@ -194,6 +219,8 @@ namespace Dwarrowdelf.Server
 				ActionUserID = this.ActionUserID,
 
 				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
+
+				Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray(),
 			};
 
 			return data;

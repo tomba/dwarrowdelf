@@ -14,7 +14,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class TickStartChange : Change
 	{
-		public int TickNumber { get; set; }
+		public int TickNumber { get; private set; }
 
 		public TickStartChange(int tickNumber)
 		{
@@ -97,17 +97,14 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class MapChange : EnvironmentChange
 	{
-		IntPoint3D m_location;
-		TileData m_tileData;
-
-		public IntPoint3D Location { get { return m_location; } }
-		public TileData TileData { get { return m_tileData; } }
+		public IntPoint3D Location { get; private set; }
+		public TileData TileData { get; private set; }
 
 		public MapChange(IEnvironment map, IntPoint3D l, TileData tileData)
 			: base(map)
 		{
-			m_location = l;
-			m_tileData = tileData;
+			this.Location = l;
+			this.TileData = tileData;
 		}
 
 		public override string ToString()
@@ -221,26 +218,24 @@ namespace Dwarrowdelf
 	[Serializable]
 	public abstract class PropertyChange : ObjectChange
 	{
-		PropertyID m_propertyID;
-		public PropertyID PropertyID { get { return m_propertyID; } }
+		public PropertyID PropertyID { get; private set; }
 
 		protected PropertyChange(IBaseGameObject ob, PropertyID propertyID)
 			: base(ob)
 		{
-			m_propertyID = propertyID;
+			this.PropertyID = propertyID;
 		}
 	}
 
 	[Serializable]
 	public class PropertyObjectChange : PropertyChange
 	{
-		object m_value;
-		public object Value { get { return m_value; } }
+		public object Value { get; private set; }
 
 		public PropertyObjectChange(IBaseGameObject ob, PropertyID propertyID, object value)
 			: base(ob, propertyID)
 		{
-			m_value = value;
+			this.Value = value;
 		}
 
 		public override string ToString()
@@ -252,18 +247,36 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class PropertyIntChange : PropertyChange
 	{
-		int m_value;
-		public int Value { get { return m_value; } }
+		public int Value { get; private set; }
 
 		public PropertyIntChange(IBaseGameObject ob, PropertyID propertyID, int value)
 			: base(ob, propertyID)
 		{
-			m_value = value;
+			this.Value = value;
 		}
 
 		public override string ToString()
 		{
 			return String.Format("PropertyIntChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
+		}
+	}
+
+	[Serializable]
+	public class SkillChange : ObjectChange
+	{
+		public SkillID SkillID { get; private set; }
+		public byte Level { get; private set; }
+
+		public SkillChange(IBaseGameObject ob, SkillID skillID, byte level)
+			: base(ob)
+		{
+			this.SkillID = skillID;
+			this.Level = level;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("SkillChange({0}, {1} : {2})", this.ObjectID, this.SkillID, this.Level);
 		}
 	}
 

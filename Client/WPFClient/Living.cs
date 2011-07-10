@@ -20,6 +20,9 @@ namespace Dwarrowdelf.Client
 		Jobs.JobManagerAI m_ai;
 		bool m_isControllable;
 
+		public ReadOnlyObservableCollection<Tuple<SkillID, byte>> Skills { get; private set; }
+		ObservableCollection<Tuple<SkillID, byte>> m_skills;
+
 		public Living(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -37,6 +40,9 @@ namespace Dwarrowdelf.Client
 			this.ActionUserID = data.ActionUserID;
 
 			this.Description = this.Name;
+
+			m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills);
+			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 		}
 
 		[Serializable]
@@ -391,6 +397,33 @@ namespace Dwarrowdelf.Client
 		{
 			get { return m_clientAssignment; }
 			private set { m_clientAssignment = value; Notify("ClientAssignment"); }
+		}
+
+		public byte GetSkillLevel(SkillID skill)
+		{
+			var tuple = m_skills.FirstOrDefault(t => t.Item1 == skill);
+
+			if (tuple == null)
+				return 0;
+
+			return tuple.Item2;
+		}
+
+		public void SetSkillLevel(SkillID skill, byte level)
+		{
+			for (int i = 0; i < m_skills.Count; ++i)
+			{
+				if (m_skills[i].Item1 == skill)
+				{
+					if (level == 0)
+						m_skills.RemoveAt(i);
+					else
+						m_skills[i] = new Tuple<SkillID, byte>(skill, level);
+					return;
+				}
+			}
+
+			m_skills.Add(new Tuple<SkillID, byte>(skill, level));
 		}
 	}
 }

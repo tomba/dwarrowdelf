@@ -39,7 +39,7 @@ namespace Dwarrowdelf
 			}
 
 			if (method == null)
-				throw new Exception();
+				throw new Exception("No handler method found");
 
 			DynamicMethod dm = new DynamicMethod(methodName + "Wrapper", null,
 				new Type[] { bindType, typeof(T) },

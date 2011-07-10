@@ -16,7 +16,8 @@ namespace Dwarrowdelf.Server
 			}
 			else if (action is MineAction)
 			{
-				ticks = 3;
+				var skill = GetSkillLevel(SkillID.Mining);
+				ticks = 10 / (skill / 26 + 1);
 			}
 			else if (action is FellTreeAction)
 			{
@@ -246,33 +247,37 @@ namespace Dwarrowdelf.Server
 
 					this.Environment.MineTile(p, InteriorID.Empty, MaterialID.Undefined);
 
-					ItemID itemID;
-
-					switch (material.MaterialClass)
+					if (this.World.Random.Next(21) < GetSkillLevel(SkillID.Mining) / 25 + 10)
 					{
-						case MaterialClass.Rock:
-							itemID = ItemID.Rock;
-							break;
+						ItemID itemID;
 
-						case MaterialClass.Mineral:
-							itemID = ItemID.Ore;
-							break;
+						switch (material.MaterialClass)
+						{
+							case MaterialClass.Rock:
+								itemID = ItemID.Rock;
+								break;
 
-						case MaterialClass.Gem:
-							itemID = ItemID.UncutGem;
-							break;
+							case MaterialClass.Mineral:
+								itemID = ItemID.Ore;
+								break;
 
-						default:
+							case MaterialClass.Gem:
+								itemID = ItemID.UncutGem;
+								break;
+
+							default:
+								throw new Exception();
+						}
+
+						var item = new ItemObject(itemID, material.ID);
+
+						item.Initialize(this.World);
+
+						var ok = item.MoveTo(this.Environment, p);
+						if (!ok)
 							throw new Exception();
 					}
 
-					var item = new ItemObject(itemID, material.ID);
-
-					item.Initialize(this.World);
-
-					var ok = item.MoveTo(this.Environment, p);
-					if (!ok)
-						throw new Exception();
 					break;
 
 				case MineActionType.Stairs:
