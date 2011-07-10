@@ -40,9 +40,6 @@ namespace Dwarrowdelf.Client
 
 				if (m_environment.GetInteriorID(p) != InteriorID.Empty)
 					return;
-
-				if (m_environment.GetContents(p).OfType<ItemObject>().Count() > 0)
-					return;
 			}
 
 			SetStatus(Jobs.JobStatus.Done);
@@ -54,13 +51,13 @@ namespace Dwarrowdelf.Client
 			{
 				if (m_map[p] == null)
 				{
-					IJob job = null;
+					var interiorID = m_environment.GetInteriorID(p);
 
-					var iid = m_environment.GetInteriorID(p);
-
-					if (iid != InteriorID.Empty)
+					if (interiorID != InteriorID.Empty)
 					{
-						if (iid == InteriorID.Tree)
+						IJob job;
+
+						if (interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling)
 						{
 							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeJob(this, ActionPriority.Normal, m_environment, p);
 						}
@@ -68,17 +65,7 @@ namespace Dwarrowdelf.Client
 						{
 							throw new NotImplementedException();
 						}
-					}
-					else
-					{
-						var ob = m_environment.GetContents(p).OfType<ItemObject>().FirstOrDefault();
 
-						if (ob != null)
-							job = new Dwarrowdelf.Jobs.AssignmentGroups.FetchItem(this, this.Priority, m_environment, m_area.Center - new IntVector3D(-5, 0, 0), ob);
-					}
-
-					if (job != null)
-					{
 						AddSubJob(job);
 						m_map[p] = job;
 					}

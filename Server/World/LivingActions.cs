@@ -338,9 +338,18 @@ namespace Dwarrowdelf.Server
 
 			var id = this.Environment.GetInteriorID(p);
 
-			if (id == InteriorID.Tree)
+			if (id != InteriorID.Tree && id != InteriorID.Sapling)
 			{
-				if (this.ActionTicksLeft == 0)
+				Trace.TraceWarning("{0} tried to fell tree {1}, but it't a tree", this, p);
+				success = false;
+				return;
+			}
+
+			success = true;
+
+			if (this.ActionTicksLeft == 0)
+			{
+				if (id == InteriorID.Tree)
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
@@ -353,12 +362,10 @@ namespace Dwarrowdelf.Server
 					var ok = log.MoveTo(this.Environment, p);
 					Debug.Assert(ok);
 				}
-				success = true;
-			}
-			else
-			{
-				Trace.TraceWarning("{0} tried to fell tree {1}, but it't a tree", this, p);
-				success = false;
+				else
+				{
+					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				}
 			}
 		}
 

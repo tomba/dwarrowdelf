@@ -43,6 +43,9 @@ namespace Dwarrowdelf.Server
 
 		public void Initialize(World world, Environment env)
 		{
+			if (BuildingObject.VerifyBuildSite(env, this.Area) == false)
+				throw new Exception();
+
 			this.Environment = env;
 			env.AddBuilding(this);
 			base.Initialize(world);
@@ -95,26 +98,11 @@ namespace Dwarrowdelf.Server
 			var env = this.Environment;
 			BuildingState newState = BuildingState.Functional;
 
-			foreach (var p in this.Area.Range())
-			{
-				if (env.GetInteriorID(p) != InteriorID.Empty) // || env.GetGrass(p))
-				{
-					newState = BuildingState.NeedsCleaning;
-					break;
-				}
-
-				var obs = env.GetContents(p);
-				if (obs.OfType<ItemObject>().Count() > 0) // XXX
-				{
-					newState = BuildingState.NeedsCleaning;
-					break;
-				}
-			}
+			if (this.Area.Range().Any(p => env.GetInteriorID(p) != InteriorID.Empty))
+				newState = BuildingState.NeedsCleaning;
 
 			if (newState != this.BuildingState)
-			{
 				this.BuildingState = newState;
-			}
 		}
 
 		public bool Contains(IntPoint3D point)
@@ -169,6 +157,11 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			return true;
+		}
+
+		public static bool VerifyBuildSite(Environment env, IntRectZ area)
+		{
+			return area.Range().All(p => env.GetTerrainID(p) == TerrainID.NaturalFloor);
 		}
 	}
 }

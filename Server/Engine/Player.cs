@@ -216,6 +216,12 @@ namespace Dwarrowdelf.Server
 			if (env == null)
 				throw new Exception();
 
+			if (BuildingObject.VerifyBuildSite(env, r) == false)
+			{
+				trace.TraceWarning("Bad site for building, ignoring CreateBuildingMessage");
+				return;
+			}
+
 			var building = new BuildingObject(id, r);
 			building.Initialize(m_world, env);
 		}
