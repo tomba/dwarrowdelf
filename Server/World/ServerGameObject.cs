@@ -43,6 +43,20 @@ namespace Dwarrowdelf.Server
 			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
 		}
 
+		protected ServerGameObject(ObjectType objectType, ServerGameObjectBuilder builder)
+			: base(objectType)
+		{
+			m_children = new KeyedObjectCollection();
+			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+
+			m_name = builder.Name;
+			m_color = builder.Color;
+			m_symbolID = builder.SymbolID;
+			m_materialID = builder.MaterialID;
+			if (m_color == GameColor.None)
+				m_color = Materials.GetMaterial(m_materialID).Color;
+		}
+
 		protected ServerGameObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
@@ -203,5 +217,13 @@ namespace Dwarrowdelf.Server
 		{
 			return String.Format("ServerGameObject({0})", this.ObjectID);
 		}
+	}
+
+	public abstract class ServerGameObjectBuilder
+	{
+		public string Name { get; set; }
+		public GameColor Color { get; set; }
+		public SymbolID SymbolID { get; set; }
+		public MaterialID MaterialID { get; set; }
 	}
 }

@@ -40,14 +40,14 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		internal Environment(TileGrid grid, VisibilityMode visibilityMode)
+		internal Environment(EnvironmentBuilder builder, VisibilityMode visibilityMode)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
 			this.VisibilityMode = visibilityMode;
 
-			m_tileGrid = grid;
-			var size = grid.Size;
+			m_tileGrid = builder.Grid;
+			var size = m_tileGrid.Size;
 
 			this.Width = size.Width;
 			this.Height = size.Height;
@@ -907,15 +907,19 @@ namespace Dwarrowdelf.Server
 		public int Height { get { return m_size.Height; } }
 		public int Depth { get { return m_size.Depth; } }
 
+		internal TileGrid Grid { get { return m_tileGrid; } }
+
 		public EnvironmentBuilder(IntSize3D size)
 		{
 			m_size = size;
 			m_tileGrid = new TileGrid(size);
 		}
 
-		public Environment Create(VisibilityMode visibilityMode)
+		public Environment Create(World world, VisibilityMode visibilityMode)
 		{
-			return new Environment(m_tileGrid, visibilityMode);
+			var env = new Environment(this, visibilityMode);
+			env.Initialize(world);
+			return env;
 		}
 
 		public TerrainID GetTerrainID(IntPoint3D l)

@@ -115,9 +115,8 @@ namespace MyArea
 				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
-			var env = envBuilder.Create(VisibilityMode.GlobalFOV);
+			var env = envBuilder.Create(world, VisibilityMode.GlobalFOV);
 			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
-			env.Initialize(world);
 
 
 
@@ -128,13 +127,13 @@ namespace MyArea
 			for (int i = 0; i < 0; ++i)
 			{
 				// Add a monster
-				var monster = new Living(String.Format("monsu{0}", i))
+				var builder = new LivingBuilder(String.Format("monsu{0}", i))
 				{
 					SymbolID = SymbolID.Monster,
 					Color = GetRandomColor(),
 				};
 				//monster.SetAI(new MonsterActor(monster));
-				monster.Initialize(world);
+				var monster = builder.Create(world);
 
 				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
 					throw new Exception();
@@ -145,8 +144,9 @@ namespace MyArea
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
-				var item = new ItemObject(ItemID.Gem, material);
-				item.Initialize(world);
+
+				var builder = new ItemObjectBuilder(ItemID.Gem, material);
+				var item = builder.Create(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
@@ -155,8 +155,8 @@ namespace MyArea
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-				var item = new ItemObject(ItemID.Rock, material);
-				item.Initialize(world);
+				var builder = new ItemObjectBuilder(ItemID.Rock, material);
+				var item = builder.Create(world);
 
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
@@ -225,41 +225,45 @@ namespace MyArea
 			posx = env.Bounds.Width / 10;
 			posy = env.Bounds.Height / 10;
 
-			var building = new BuildingObject(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
-			foreach (var p in building.Area.Range())
 			{
-				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-				env.SetGrass(p, false);
+				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
+				foreach (var p in builder.Area.Range())
+				{
+					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					env.SetGrass(p, false);
+				}
+				builder.Create(world, env);
 			}
-			building.Initialize(world, env);
 
 			posx += 4;
 
-			building = new BuildingObject(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, 9));
-			foreach (var p in building.Area.Range())
 			{
-				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-				env.SetGrass(p, false);
+				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, 9));
+				foreach (var p in builder.Area.Range())
+				{
+					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					env.SetGrass(p, false);
+				}
+				builder.Create(world, env);
 			}
-			building.Initialize(world, env);
 
 			posx += 4;
 
-			building = new BuildingObject(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, 9));
-			foreach (var p in building.Area.Range())
 			{
-				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-				env.SetGrass(p, false);
+				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, 9));
+				foreach (var p in builder.Area.Range())
+				{
+					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					env.SetGrass(p, false);
+				}
+				builder.Create(world, env);
 			}
-			building.Initialize(world, env);
-
 
 			{
-				var gen = new FoodGenerator();
-				gen.Initialize(env.World);
+				var gen = FoodGenerator.Create(env.World);
 				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
 			}
 
@@ -268,25 +272,25 @@ namespace MyArea
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
-				var sheep = new Living(String.Format("Sheep{0}", i))
+				var sheepBuilder = new LivingBuilder(String.Format("Sheep{0}", i))
 				{
 					SymbolID = SymbolID.Monster,
 					Color = this.GetRandomColor(),
 				};
+				var sheep = sheepBuilder.Create(world);
 				sheep.SetAI(new AnimalAI(sheep));
-				sheep.Initialize(env.World);
 
 				for (int j = 0; j < i; ++j)
 				{
 					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-					var item = new ItemObject(ItemID.Rock, material);
-					item.Initialize(world);
+					var builder = new ItemObjectBuilder(ItemID.Rock, material);
+					var item = builder.Create(world);
 
 					for (int t = 0; t < j; ++t)
 					{
 						var material2 = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-						var item2 = new ItemObject(ItemID.Rock, material2);
-						item2.Initialize(world);
+						builder = new ItemObjectBuilder(ItemID.Rock, material2);
+						var item2 = builder.Create(world);
 						item2.MoveTo(item);
 					}
 

@@ -10,12 +10,23 @@ namespace MyArea
 	[SaveGameObject(UseRef = true)]
 	public class FoodGenerator : ItemObject
 	{
-		public FoodGenerator()
-			: base(ItemID.Custom, MaterialID.Diamond)
+		public static FoodGenerator Create(World world)
 		{
-			this.Name = "Food Generator";
-			this.SymbolID = SymbolID.Contraption;
-			this.Color = GameColor.Gold;
+			var builder = new ItemObjectBuilder(ItemID.Custom, MaterialID.Diamond)
+			{
+				Name = "Food Generator",
+				SymbolID = SymbolID.Contraption,
+				Color = GameColor.Gold,
+			};
+
+			var item = new FoodGenerator(builder);
+			item.Initialize(world);
+			return item;
+		}
+
+		FoodGenerator(ItemObjectBuilder builder)
+			: base(builder)
+		{
 		}
 
 		FoodGenerator(SaveGameContext ctx)
@@ -45,12 +56,12 @@ namespace MyArea
 
 			if (!this.Environment.GetContents(this.Location).OfType<ItemObject>().Any(o => o.ItemID == Dwarrowdelf.ItemID.Food))
 			{
-				var ob = new ItemObject(ItemID.Food, Dwarrowdelf.MaterialID.Flesh)
+				var builder = new ItemObjectBuilder(ItemID.Food, Dwarrowdelf.MaterialID.Flesh)
 				{
 					Color = GameColor.Green,
 					NutritionalValue = 200,
 				};
-				ob.Initialize(this.World);
+				var ob = builder.Create(this.World);
 
 				var ok = ob.MoveTo(this.Parent, this.Location);
 				if (!ok)
@@ -59,12 +70,12 @@ namespace MyArea
 
 			if (!this.Environment.GetContents(this.Location).OfType<ItemObject>().Any(o => o.ItemID == Dwarrowdelf.ItemID.Drink))
 			{
-				var ob = new ItemObject(ItemID.Drink, Dwarrowdelf.MaterialID.Water)
+				var builder = new ItemObjectBuilder(ItemID.Drink, Dwarrowdelf.MaterialID.Water)
 				{
 					Color = GameColor.Aquamarine,
 					RefreshmentValue = 200,
 				};
-				ob.Initialize(this.World);
+				var ob = builder.Create(this.World);
 
 				var ok = ob.MoveTo(this.Parent, this.Location);
 				if (!ok)

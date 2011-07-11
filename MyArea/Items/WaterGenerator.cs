@@ -10,12 +10,23 @@ namespace MyArea
 	[SaveGameObject(UseRef = true)]
 	public class WaterGenerator : ItemObject
 	{
-		public WaterGenerator()
-			: base(ItemID.Custom, MaterialID.Diamond)
+		public static WaterGenerator Create(World world)
 		{
-			this.Name = "Water Generator";
-			this.SymbolID = SymbolID.Contraption;
-			this.Color = GameColor.Blue;
+			var builder = new ItemObjectBuilder(ItemID.Custom, MaterialID.Diamond)
+			{
+				Name = "Water Generator",
+				SymbolID = SymbolID.Contraption,
+				Color = GameColor.Blue,
+			};
+
+			var item = new WaterGenerator(builder);
+			item.Initialize(world);
+			return item;
+		}
+
+		WaterGenerator(ItemObjectBuilder builder)
+			: base(builder)
+		{
 		}
 
 		WaterGenerator(SaveGameContext ctx)

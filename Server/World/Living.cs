@@ -26,16 +26,19 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		public Living(string name)
-			: base(ObjectType.Living)
+		internal Living(LivingBuilder builder)
+			: base(ObjectType.Living, builder)
 		{
-			this.Name = name;
-			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
-			this.VisionRange = 10;
-			this.FoodFullness = 500;
-			this.WaterFullness = 500;
-			this.Assignment = "";
+			m_visionRange = builder.VisionRange;
+			m_foodFullness = builder.FoodFullness;
+			m_waterFullness = builder.WaterFullness;
+
+			m_assignment = "";
+
 			m_skillMap = new Dictionary<SkillID, byte>();
+			foreach (var kvp in builder.SkillMap)
+				if (kvp.Value != 0)
+					m_skillMap[kvp.Key] = kvp.Value;
 		}
 
 		Living(SaveGameContext ctx)
@@ -202,7 +205,7 @@ namespace Dwarrowdelf.Server
 			else
 				m_skillMap[skill] = level;
 
-			if (this.IsInitialized && level != oldLevel)
+			if (level != oldLevel)
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
@@ -271,9 +274,9 @@ namespace Dwarrowdelf.Server
 			{
 				Trace.TraceInformation("{0} dies", this);
 
-				var corpse = new ItemObject(ItemID.Corpse, this.MaterialID);
-				corpse.Name = this.Name;
-				corpse.Initialize(this.World);
+				var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
+				builder.Name = this.Name;
+				var corpse = builder.Create(this.World);
 				bool ok = corpse.MoveTo(this.Environment, this.Location);
 				if (!ok)
 					Trace.TraceWarning("Failed to move corpse");
@@ -592,6 +595,38 @@ namespace Dwarrowdelf.Server
 				return "<DestructedObject>";
 
 			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
+		}
+	}
+
+
+	public class LivingBuilder : ServerGameObjectBuilder
+	{
+		public int VisionRange { get; set; }
+		public int FoodFullness { get; set; }
+		public int WaterFullness { get; set; }
+		public Dictionary<SkillID, byte> SkillMap { get; private set; }
+
+		public LivingBuilder(string name)
+		{
+			this.Name = name;
+			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
+			this.VisionRange = 10;
+			this.FoodFullness = 500;
+			this.WaterFullness = 500;
+
+			this.SkillMap = new Dictionary<SkillID, byte>();
+		}
+
+		public Living Create(World world)
+		{
+			var living = new Living(this);
+			living.Initialize(world);
+			return living;
+		}
+
+		public void SetSkillLevel(SkillID skill, byte level)
+		{
+			this.SkillMap[skill] = level;
 		}
 	}
 }

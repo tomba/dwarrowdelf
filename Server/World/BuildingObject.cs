@@ -17,11 +17,11 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
-		public BuildingObject(BuildingID id, IntRectZ area)
+		internal BuildingObject(BuildingObjectBuilder builder)
 			: base(ObjectType.Building)
 		{
-			this.BuildingID = id;
-			this.Area = area;
+			this.BuildingID = builder.BuildingID;
+			this.Area = builder.Area;
 			this.BuildingState = BuildingState.NeedsCleaning;
 		}
 
@@ -147,8 +147,8 @@ namespace Dwarrowdelf.Server
 
 			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
 
-			ItemObject item = new ItemObject(dstItemID, obs.First().MaterialID);
-			item.Initialize(this.World);
+			var itemBuilder = new ItemObjectBuilder(dstItemID, obs.First().MaterialID);
+			var item = itemBuilder.Create(this.World);
 
 			foreach (var ob in obs)
 				ob.Destruct();
@@ -162,6 +162,25 @@ namespace Dwarrowdelf.Server
 		public static bool VerifyBuildSite(Environment env, IntRectZ area)
 		{
 			return area.Range().All(p => env.GetTerrainID(p) == TerrainID.NaturalFloor);
+		}
+	}
+
+	public class BuildingObjectBuilder
+	{
+		public BuildingID BuildingID { get; private set; }
+		public IntRectZ Area { get; private set; }
+
+		public BuildingObjectBuilder(BuildingID id, IntRectZ area)
+		{
+			this.BuildingID = id;
+			this.Area = area;
+		}
+
+		public BuildingObject Create(World world, Environment env)
+		{
+			var item = new BuildingObject(this);
+			item.Initialize(world, env);
+			return item;
 		}
 	}
 }

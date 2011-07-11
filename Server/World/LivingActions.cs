@@ -283,9 +283,8 @@ namespace Dwarrowdelf.Server
 
 					if (itemID != ItemID.Undefined)
 					{
-						var item = new ItemObject(itemID, material.ID);
-
-						item.Initialize(this.World);
+						var builder = new ItemObjectBuilder(itemID, material.ID);
+						var item = builder.Create(this.World);
 
 						var ok = item.MoveTo(this.Environment, p);
 						if (!ok)
@@ -353,12 +352,12 @@ namespace Dwarrowdelf.Server
 				{
 					var material = this.Environment.GetInteriorMaterialID(p);
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					var log = new ItemObject(ItemID.Log, material)
+					var builder = new ItemObjectBuilder(ItemID.Log, material)
 					{
 						Name = "Log",
 						Color = GameColor.SaddleBrown,
 					};
-					log.Initialize(this.World);
+					var log = builder.Create(this.World);
 					var ok = log.MoveTo(this.Environment, p);
 					Debug.Assert(ok);
 				}

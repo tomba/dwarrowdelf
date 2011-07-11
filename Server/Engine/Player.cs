@@ -222,8 +222,8 @@ namespace Dwarrowdelf.Server
 				return;
 			}
 
-			var building = new BuildingObject(id, r);
-			building.Initialize(m_world, env);
+			var builder = new BuildingObjectBuilder(id, r);
+			builder.Create(m_world, env);
 		}
 
 		Random m_random = new Random();

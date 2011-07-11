@@ -14,15 +14,15 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public ItemObject(ItemID itemID, MaterialID materialID)
-			: base(ObjectType.Item)
+		internal protected ItemObject(ItemObjectBuilder builder)
+			: base(ObjectType.Item, builder)
 		{
-			Debug.Assert(itemID != Dwarrowdelf.ItemID.Undefined);
-			Debug.Assert(materialID != Dwarrowdelf.MaterialID.Undefined);
+			Debug.Assert(builder.ItemID != Dwarrowdelf.ItemID.Undefined);
+			Debug.Assert(builder.MaterialID != Dwarrowdelf.MaterialID.Undefined);
 
-			this.ItemID = itemID;
-			this.SymbolID = this.ItemInfo.Symbol;
-			this.MaterialID = materialID;
+			this.ItemID = builder.ItemID;
+			m_nutritionalValue = builder.NutritionalValue;
+			m_refreshmentValue = builder.RefreshmentValue;
 		}
 
 		[SaveGameProperty]
@@ -73,6 +73,29 @@ namespace Dwarrowdelf.Server
 		public override string ToString()
 		{
 			return String.Format("ItemObject({0}/{1})", this.Name, this.ObjectID);
+		}
+	}
+
+	public class ItemObjectBuilder : ServerGameObjectBuilder
+	{
+		public ItemID ItemID { get; set; }
+		public int NutritionalValue { get; set; }
+		public int RefreshmentValue { get; set; }
+
+		public ItemObjectBuilder(ItemID itemID, MaterialID materialID)
+		{
+			this.ItemID = itemID;
+			this.MaterialID = materialID;
+		}
+
+		public ItemObject Create(World world)
+		{
+			if (this.SymbolID == SymbolID.Undefined)
+				this.SymbolID = Dwarrowdelf.Items.GetItem(this.ItemID).Symbol;
+
+			var item = new ItemObject(this);
+			item.Initialize(world);
+			return item;
 		}
 	}
 }

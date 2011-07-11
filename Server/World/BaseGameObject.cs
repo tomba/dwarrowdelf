@@ -82,14 +82,16 @@ namespace Dwarrowdelf.Server
 
 		protected void NotifyObject(PropertyID id, object value)
 		{
-			if (this.IsInitialized)
-				this.World.AddChange(new PropertyObjectChange(this, id, value));
+			Debug.Assert(this.IsInitialized);
+
+			this.World.AddChange(new PropertyObjectChange(this, id, value));
 		}
 
 		protected void NotifyInt(PropertyID id, int value)
 		{
-			if (this.IsInitialized)
-				this.World.AddChange(new PropertyIntChange(this, id, value));
+			Debug.Assert(this.IsInitialized);
+
+			this.World.AddChange(new PropertyIntChange(this, id, value));
 		}
 	}
 }
