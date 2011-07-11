@@ -162,66 +162,7 @@ namespace MyArea
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
-#if asd
-			for (int x = 3; x < 4; ++x)
-			{
-				for (int y = 12; y < 14; ++y)
-				{
-					var p = new IntPoint3D(x, y, surfaceLevel);
-					var td = env.GetTileData(p);
-					td.WaterLevel = TileData.MaxWaterLevel;
-					env.SetTileData(p, td);
-				}
-			}
-
-			for (int x = 2; x <= 4; ++x)
-			{
-				for (int y = 15; y < 21; ++y)
-				{
-					var p = new IntPoint3D(x, y, surfaceLevel);
-					FillTile(env, p, MaterialID.Granite);
-				}
-			}
-
-			for (int y = 16; y < 20; ++y)
-			{
-				var p = new IntPoint3D(3, y, surfaceLevel);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-			}
-
-			for (int y = 16; y < 18; ++y)
-			{
-				var p = new IntPoint3D(3, y, surfaceLevel);
-				var td = env.GetTileData(p);
-				td.WaterLevel = TileData.MaxWaterLevel;
-				env.SetTileData(p, td);
-			}
-
-			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 0));
-			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3D(3, 16, surfaceLevel - 4));
-			ClearInside(env, new IntPoint3D(3, 16, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(4, 16, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(5, 16, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(6, 16, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(7, 16, surfaceLevel - 5));
-			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 4));
-			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3D(7, 16, surfaceLevel - 0));
-
-			env.ScanWaterTiles();
-
-			{
-				// Add a water generator
-				var item = new Dwarrowdelf.Server.Items.WaterGenerator();
-				item.Initialize(world);
-				item.MoveTo(env, new IntPoint3D(3, 17, surfaceLevel));
-			}
-#endif
+			CreateWaterTest(env, surfaceLevel);
 
 			posx = env.Bounds.Width / 10;
 			posy = env.Bounds.Height / 10;
@@ -445,6 +386,83 @@ namespace MyArea
 		GameColor GetRandomColor()
 		{
 			return (GameColor)m_random.Next((int)GameColor.NumColors - 1) + 1;
+		}
+
+
+		static void ClearTile(Environment env, IntPoint3D p)
+		{
+			env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
+			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+		}
+
+		static void ClearInside(Environment env, IntPoint3D p)
+		{
+			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+		}
+
+		void CreateWalls(Environment env, IntRectZ area)
+		{
+			for (int x = area.X1; x < area.X2; ++x)
+			{
+				for (int y = area.Y1; y < area.Y2; ++y)
+				{
+					if ((y != area.Y1 && y != area.Y2 - 1) &&
+						(x != area.X1 && x != area.X2 - 1))
+						continue;
+
+					var p = new IntPoint3D(x, y, area.Z);
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				}
+			}
+		}
+
+		void CreateWater(Environment env, IntRectZ area)
+		{
+			for (int x = area.X1; x < area.X2; ++x)
+			{
+				for (int y = area.Y1; y < area.Y2; ++y)
+				{
+					var p = new IntPoint3D(x, y, area.Z);
+					env.SetWaterLevel(p, TileData.MaxWaterLevel);
+				}
+			}
+		}
+
+		void CreateWaterTest(Environment env, int surfaceLevel)
+		{
+			var pos = new IntPoint3D(10, 30, surfaceLevel);
+
+			CreateWalls(env, new IntRectZ(pos.X, pos.Y, 3, 8, surfaceLevel));
+			CreateWater(env, new IntRectZ(pos.X + 1, pos.Y + 1, 1, 6, surfaceLevel));
+
+			int x = 15;
+			int y = 30;
+
+			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 0));
+			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 4));
+			ClearInside(env, new IntPoint3D(x + 0, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(x + 1, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(x + 2, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(x + 3, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3D(x + 4, y, surfaceLevel - 5));
+			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 4));
+			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 0));
+
+			env.ScanWaterTiles();
+
+			{
+				// Add a water generator
+				var item = WaterGenerator.Create(env.World);
+				item.MoveTo(env, new IntPoint3D(pos.X + 1, pos.Y + 2, surfaceLevel));
+			}
 		}
 	}
 }

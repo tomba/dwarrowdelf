@@ -42,6 +42,11 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
+		public int X1 { get { return X; } }
+		public int X2 { get { return X + Width; } }
+		public int Y1 { get { return Y; } }
+		public int Y2 { get { return Y + Height; } }
+
 		public IntPoint3D X1Y1
 		{
 			get { return new IntPoint3D(m_rect.X1Y1, this.Z); }
