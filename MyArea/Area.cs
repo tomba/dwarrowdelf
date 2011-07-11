@@ -6,7 +6,6 @@ using System.Text;
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
 using Environment = Dwarrowdelf.Server.Environment;
-using System.IO;
 
 using Dwarrowdelf.TerrainGen;
 
@@ -322,11 +321,11 @@ namespace MyArea
 			return surfaceLevel;
 		}
 
-		static void CreateTerrainFromHeightmap(Grid2D<double> grid, Environment env)
+		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, Environment env)
 		{
 			foreach (var p in env.Bounds.Range())
 			{
-				double d = grid[p.ToIntPoint()];
+				double d = heightMap[p.ToIntPoint()];
 
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
@@ -378,17 +377,16 @@ namespace MyArea
 			 */
 
 			var bounds = env.Bounds;
-			var grid = env.TileGrid;
 
 			var locs = from s in bounds.Range()
 					   let su = s + Direction.Up
 					   where bounds.Contains(su)
-					   where grid.GetTerrainID(s) == TerrainID.NaturalFloor && grid.GetTerrainID(su) == TerrainID.Empty
+					   where env.GetTerrainID(s) == TerrainID.NaturalFloor && env.GetTerrainID(su) == TerrainID.Empty
 					   from d in DirectionExtensions.PlanarDirections
 					   let td = s + d
 					   let t = s + d + Direction.Up
 					   where bounds.Contains(t)
-					   where grid.GetTerrainID(td) == TerrainID.NaturalWall && grid.GetTerrainID(t) == TerrainID.NaturalFloor
+					   where env.GetTerrainID(td) == TerrainID.NaturalWall && env.GetTerrainID(t) == TerrainID.NaturalFloor
 					   select new { Location = s, Direction = d };
 
 			foreach (var loc in locs)
@@ -396,10 +394,10 @@ namespace MyArea
 				// skip places surrounded by walls
 				if (DirectionExtensions.PlanarDirections
 					.Where(d => bounds.Contains(loc.Location + d))
-					.All(d => grid.GetTerrainID(loc.Location + d) != TerrainID.NaturalWall))
+					.All(d => env.GetTerrainID(loc.Location + d) != TerrainID.NaturalWall))
 					continue;
 
-				grid.SetTerrainID(loc.Location, loc.Direction.ToSlope());
+				env.SetTerrain(loc.Location, loc.Direction.ToSlope(), env.GetTerrainMaterialID(loc.Location));
 			}
 		}
 
