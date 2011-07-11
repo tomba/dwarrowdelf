@@ -37,6 +37,8 @@ namespace Dwarrowdelf
 		Minable = 1 << 2,		// can be mined, changing the terrain to floor
 		Permeable = 1 << 3,		// Fluids can pass through
 		Supporting = 1 << 4,	// supports standing upon
+		BlocksVision = 1 << 5,	// Blocks line of sight
+		SeeThroughDown = 1 << 6,// The tile below is visible
 	}
 
 	public class TerrainInfo
@@ -64,6 +66,13 @@ namespace Dwarrowdelf
 		/// Tile can be mined, becoming a floor
 		/// </summary>
 		public bool IsMinable { get { return this.Flags.HasFlag(TerrainFlags.Minable); } }
+
+		/// <summary>
+		/// Does not block line of sight in planar directions
+		/// </summary>
+		public bool IsSeeThrough { get { return !this.Flags.HasFlag(TerrainFlags.BlocksVision); } }
+
+		public bool IsSeeThroughDown { get { return this.Flags.HasFlag(TerrainFlags.SeeThroughDown); } }
 	}
 
 	public static class Terrains

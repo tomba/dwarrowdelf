@@ -3,10 +3,10 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <TerrainInfo ID="Empty" Flags="Permeable" />
+    <TerrainInfo ID="Empty" Flags="Permeable,SeeThroughDown" />
 
     <TerrainInfo ID="NaturalFloor" Flags="Supporting" />
-    <TerrainInfo ID="NaturalWall" Flags="Blocker,Minable" />
+    <TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
     <TerrainInfo ID="Hole" Flags="Supporting,Permeable" />
 
     <TerrainInfo ID="SlopeNorth" Flags="Supporting,Minable" />

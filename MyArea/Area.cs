@@ -328,14 +328,14 @@ namespace MyArea
 			{
 				double d = grid[p.ToIntPoint()];
 
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
 				if (d > p.Z)
 				{
 					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
 				}
 				else
 				{
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
 					if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
 					{
 						env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);

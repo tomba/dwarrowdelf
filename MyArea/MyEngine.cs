@@ -38,7 +38,7 @@ namespace MyArea
 				do
 				{
 					p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), 9);
-				} while (env.GetInteriorID(p) != InteriorID.Empty);
+				} while (!EnvironmentHelpers.CanEnter(env, p));
 
 				var l = CreateDwarf(i);
 

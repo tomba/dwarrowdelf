@@ -6,8 +6,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	public delegate void MapChanged(Environment map, IntPoint3D l, TileData tileData);
-
 	[SaveGameObject(UseRef = true)]
 	public class Environment : ServerGameObject, IEnvironment
 	{
@@ -76,13 +74,34 @@ namespace Dwarrowdelf.Server
 
 		public override void Initialize(World world)
 		{
-			// Set IsHidden flags
-			foreach (var p in this.Bounds.Range())
-				UpdateHiddenStatus(p);
+			InitializeTileHiddenStatuses();
 
 			base.Initialize(world);
 
 			world.TickStarting += Tick;
+		}
+
+		void InitializeTileHiddenStatuses()
+		{
+			foreach (var p in this.Bounds.Range())
+			{
+				if (!GetTerrain(p).IsBlocker)
+				{
+					m_tileGrid.SetHidden(p, false);
+				}
+				else
+				{
+					bool hidden = DirectionExtensions.PlanarDirections
+						.Select(d => p + d)
+						.Where(pp => this.Bounds.Contains(pp))
+						.All(pp => !GetTerrain(pp).IsSeeThrough);
+
+					if (hidden && this.Bounds.Contains(p + Direction.Up))
+						hidden = !GetTerrain(p + Direction.Up).IsSeeThroughDown;
+
+					m_tileGrid.SetHidden(p, hidden);
+				}
+			}
 		}
 
 		public override void Destruct()
@@ -350,64 +369,48 @@ namespace Dwarrowdelf.Server
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			bool wasSeeThrough = false;
-
-			if (this.IsInitialized)
+			if (this.IsInitialized == false)
 			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
-
-				wasSeeThrough = GetInterior(p).IsSeeThrough;
+				m_tileGrid.SetInteriorID(p, interiorID);
+				m_tileGrid.SetInteriorMaterialID(p, materialID);
+				return;
 			}
+
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
 
 			m_tileGrid.SetInteriorID(p, interiorID);
 			m_tileGrid.SetInteriorMaterialID(p, materialID);
 
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(p);
+			var data = m_tileGrid.GetTileData(p);
 
-				MapChanged(p, d);
-
-				if (!wasSeeThrough && GetInterior(p).IsSeeThrough)
-				{
-					foreach (var dir in DirectionExtensions.PlanarDirections)
-					{
-						var pp = p + dir;
-
-						if (!this.Bounds.Contains(pp))
-							continue;
-
-						if (m_tileGrid.GetHidden(pp))
-						{
-							m_tileGrid.SetHidden(pp, false);
-
-							MapChanged(pp, m_tileGrid.GetTileData(pp));
-						}
-					}
-				}
-			}
+			MapChanged(p, data);
 		}
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
 		{
-			if (this.IsInitialized)
+			if (this.IsInitialized == false)
 			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
+				m_tileGrid.SetTerrainID(p, terrainID);
+				m_tileGrid.SetTerrainMaterialID(p, materialID);
+				return;
 			}
+
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			var oldData = GetTileData(p);
 
 			m_tileGrid.SetTerrainID(p, terrainID);
 			m_tileGrid.SetTerrainMaterialID(p, materialID);
 
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(p);
+			var data = m_tileGrid.GetTileData(p);
 
-				MapChanged(p, d);
-			}
+			MapChanged(p, data);
+
+			RevealTiles(p, oldData, data);
 		}
 
 		public TileData GetTileData(IntPoint3D l)
@@ -415,42 +418,75 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetTileData(l);
 		}
 
-		public void SetTileData(IntPoint3D l, TileData data)
+		public void SetTileData(IntPoint3D p, TileData data)
 		{
-			if (this.IsInitialized)
+			if (this.IsInitialized == false)
 			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
+				m_tileGrid.SetTileData(p, data);
+				return;
 			}
 
-			m_tileGrid.SetTileData(l, data);
+			Debug.Assert(this.World.IsWritable);
 
-			if (this.IsInitialized)
+			this.Version += 1;
+
+			var oldData = GetTileData(p);
+
+			m_tileGrid.SetTileData(p, data);
+
+			MapChanged(p, data);
+
+			RevealTiles(p, oldData, data);
+		}
+
+		void RevealTiles(IntPoint3D p, TileData oldData, TileData newData)
+		{
+			var oldTerrain = Terrains.GetTerrain(oldData.TerrainID);
+			var newTerrain = Terrains.GetTerrain(newData.TerrainID);
+
+			if (oldTerrain.IsSeeThrough != newTerrain.IsSeeThrough)
 			{
-				var d = m_tileGrid.GetTileData(l);
+				var revealed = DirectionExtensions.PlanarDirections
+					.Select(dir => p + dir)
+					.Where(pp => this.Bounds.Contains(pp))
+					.Where(pp => m_tileGrid.GetHidden(pp));
 
-				MapChanged(l, d);
+				foreach (var pp in revealed)
+				{
+					m_tileGrid.SetHidden(pp, false);
+					MapChanged(pp, m_tileGrid.GetTileData(pp));
+				}
+			}
+
+			if (oldTerrain.IsSeeThroughDown != newTerrain.IsSeeThroughDown)
+			{
+				var pp = p + Direction.Down;
+
+				if (this.Bounds.Contains(pp) && m_tileGrid.GetHidden(pp))
+				{
+					m_tileGrid.SetHidden(pp, false);
+					MapChanged(pp, m_tileGrid.GetTileData(pp));
+				}
 			}
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
 		{
-			if (this.IsInitialized)
+			if (this.IsInitialized == false)
 			{
-				Debug.Assert(this.World.IsWritable);
-
-				this.Version += 1;
+				m_tileGrid.SetWaterLevel(l, waterLevel);
+				return;
 			}
+
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
 
 			m_tileGrid.SetWaterLevel(l, waterLevel);
 
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(l);
+			var data = m_tileGrid.GetTileData(l);
 
-				MapChanged(l, d);
-			}
+			MapChanged(l, data);
 		}
 
 		public byte GetWaterLevel(IntPoint3D l)
@@ -486,52 +522,6 @@ namespace Dwarrowdelf.Server
 		{
 			return m_tileGrid.GetHidden(l);
 		}
-
-		void UpdateHiddenStatus(IntPoint3D p)
-		{
-			if (!GetTerrain(p).IsBlocker)
-			{
-				m_tileGrid.SetHidden(p, false);
-				return;
-			}
-
-			bool hidden = true;
-
-			foreach (var dir in DirectionExtensions.PlanarDirections)
-			{
-				var pp = p + dir;
-
-				if (!this.Bounds.Contains(pp))
-					continue;
-
-				if (!GetTerrain(pp).IsBlocker)
-				{
-					hidden = false;
-					break;
-				}
-			}
-
-			m_tileGrid.SetHidden(p, hidden);
-		}
-
-			/*
-		public void MineTile(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
-		{
-			SetInterior(p, interiorID, materialID);
-			foreach (var dir in DirectionExtensions.PlanarDirections)
-			{
-				var pp = p + dir;
-
-				if (!this.Bounds.Contains(pp))
-					continue;
-
-				var flr = GetTerrain(pp);
-
-				if (flr.ID.IsSlope() && flr.ID.ToDir() == dir.Reverse())
-					SetTerrain(pp, TerrainID.NaturalFloor, GetTerrainMaterialID(pp));
-			}
-		}
-		*/
 
 		// XXX not a good func. contents can be changed by the caller
 		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
