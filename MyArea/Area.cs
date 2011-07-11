@@ -8,6 +8,7 @@ using Dwarrowdelf.Server;
 using Environment = Dwarrowdelf.Server.Environment;
 
 using Dwarrowdelf.TerrainGen;
+using System.Threading.Tasks;
 
 namespace MyArea
 {
@@ -309,13 +310,11 @@ namespace MyArea
 			int numSurfaces = 0;
 
 			/* find the z level with most surface */
-			for (int z = env.Bounds.Z1; z < env.Bounds.Z2; ++z)
+			for (int z = 0; z < env.Depth; ++z)
 			{
 				int n = env.Bounds.Plane.Range()
 					.Select(p => new IntPoint3D(p, z))
-					.Where(p => env.GetTerrain(p).IsSupporting)
-					.Where(p => !env.GetTerrain(p).IsBlocker)
-					.Where(p => !env.GetInterior(p).IsBlocker)
+					.Where(p => env.GetTerrain(p).IsSupporting && !env.GetTerrain(p).IsBlocker && !env.GetInterior(p).IsBlocker)
 					.Count();
 
 				if (n > numSurfaces)
@@ -330,29 +329,39 @@ namespace MyArea
 
 		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, EnvironmentBuilder env)
 		{
-			foreach (var p in env.Bounds.Range())
+			var plane = env.Bounds.Plane;
+
+			Parallel.For(0, env.Height, y =>
 			{
-				double d = heightMap[p.ToIntPoint()];
-
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-				if (d > p.Z)
+				for (int x = 0; x < env.Width; ++x)
 				{
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-				}
-				else
-				{
-					if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
+					double d = heightMap[x, y];
+
+					for (int z = 0; z < env.Depth; ++z)
 					{
-						env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-						env.SetGrass(p, true);
-					}
-					else
-					{
-						env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
+						var p = new IntPoint3D(x, y, z);
+
+						env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+						if (d > p.Z)
+						{
+							env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+						}
+						else
+						{
+							if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
+							{
+								env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+								env.SetGrass(p, true);
+							}
+							else
+							{
+								env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
+							}
+						}
 					}
 				}
-			}
+			});
 		}
 
 		void CreateTrees(EnvironmentBuilder env)
@@ -360,8 +369,8 @@ namespace MyArea
 			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
 
 			var locations = env.Bounds.Range()
-				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
 				.Where(p => env.GetTerrainID(p) == TerrainID.NaturalFloor || env.GetTerrainID(p).IsSlope())
+				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
 				.Where(p => m_random.Next() % 8 == 0);
 
 			foreach (var p in locations)
