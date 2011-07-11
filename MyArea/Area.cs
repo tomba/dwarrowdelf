@@ -41,7 +41,7 @@ namespace MyArea
 			return p;
 		}
 
-		IntPoint3D GetRandomSubterraneanLocation(Environment env)
+		IntPoint3D GetRandomSubterraneanLocation(EnvironmentBuilder env)
 		{
 			IntPoint3D p;
 			int iter = 0;
@@ -67,21 +67,19 @@ namespace MyArea
 			DiamondSquare.Render(grid, 10, 5, 0.75);
 			Clamper.Clamp(grid, 10);
 
-			var env = new Environment(size, size, 20, VisibilityMode.GlobalFOV);
+			var envBuilder = new EnvironmentBuilder(new IntSize3D(size, size, 20));
 
 			Random r = new Random(123);
 
-			CreateTerrainFromHeightmap(grid, env);
+			CreateTerrainFromHeightmap(grid, envBuilder);
 
-			int surfaceLevel = FindSurfaceLevel(env);
+			int surfaceLevel = FindSurfaceLevel(envBuilder);
 
-			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
+			CreateSlopes(envBuilder);
 
-			CreateSlopes(env);
+			CreateTrees(envBuilder);
 
-			CreateTrees(env);
-
-			int posx = env.Bounds.Width / 10;
+			int posx = envBuilder.Bounds.Width / 10;
 			int posy = 1;
 
 			for (int x = posx; x < posx + 4; ++x)
@@ -92,31 +90,33 @@ namespace MyArea
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Ore, MaterialID.NativeGold);
+					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.NativeGold);
 				}
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Ore, MaterialID.Magnetite);
+					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.Magnetite);
 				}
 
 				{
 					p = new IntPoint3D(x, y++, surfaceLevel);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Ore, MaterialID.Chrysoprase);
+					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.Chrysoprase);
 				}
 			}
 
 			var oreMaterials = Materials.GetMaterials(MaterialClass.Gem).Concat(Materials.GetMaterials(MaterialClass.Mineral)).Select(mi => mi.ID).ToArray();
 			for (int i = 0; i < 30; ++i)
 			{
-				var p = GetRandomSubterraneanLocation(env);
+				var p = GetRandomSubterraneanLocation(envBuilder);
 				var idx = m_random.Next(oreMaterials.Length);
-				CreateOreCluster(env, p, oreMaterials[idx]);
+				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
+			var env = envBuilder.Create(VisibilityMode.GlobalFOV);
+			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
 			env.Initialize(world);
 
 
@@ -299,7 +299,7 @@ namespace MyArea
 			return env;
 		}
 
-		static int FindSurfaceLevel(Environment env)
+		static int FindSurfaceLevel(EnvironmentBuilder env)
 		{
 			int surfaceLevel = 0;
 			int numSurfaces = 0;
@@ -308,7 +308,10 @@ namespace MyArea
 			for (int z = env.Bounds.Z1; z < env.Bounds.Z2; ++z)
 			{
 				int n = env.Bounds.Plane.Range()
-					.Where(p => EnvironmentHelpers.CanEnter(env, new IntPoint3D(p, z)))
+					.Select(p => new IntPoint3D(p, z))
+					.Where(p => env.GetTerrain(p).IsSupporting)
+					.Where(p => !env.GetTerrain(p).IsBlocker)
+					.Where(p => !env.GetInterior(p).IsBlocker)
 					.Count();
 
 				if (n > numSurfaces)
@@ -321,7 +324,7 @@ namespace MyArea
 			return surfaceLevel;
 		}
 
-		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, Environment env)
+		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, EnvironmentBuilder env)
 		{
 			foreach (var p in env.Bounds.Range())
 			{
@@ -348,7 +351,7 @@ namespace MyArea
 			}
 		}
 
-		void CreateTrees(Environment env)
+		void CreateTrees(EnvironmentBuilder env)
 		{
 			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
 
@@ -364,7 +367,7 @@ namespace MyArea
 			}
 		}
 
-		static void CreateSlopes(Environment env)
+		static void CreateSlopes(EnvironmentBuilder env)
 		{
 			/*
 			 * su t
@@ -401,12 +404,12 @@ namespace MyArea
 			}
 		}
 
-		void CreateOreCluster(Environment env, IntPoint3D p, MaterialID oreMaterialID)
+		void CreateOreCluster(EnvironmentBuilder env, IntPoint3D p, MaterialID oreMaterialID)
 		{
 			CreateOreCluster(env, p, oreMaterialID, m_random.Next(6) + 1);
 		}
 
-		static void CreateOreCluster(Environment env, IntPoint3D p, MaterialID oreMaterialID, int count)
+		static void CreateOreCluster(EnvironmentBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
 		{
 			if (!env.Bounds.Contains(p))
 				return;

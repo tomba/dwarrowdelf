@@ -40,19 +40,21 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public Environment(int width, int height, int depth, VisibilityMode visibilityMode)
+		internal Environment(TileGrid grid, VisibilityMode visibilityMode)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
 			this.VisibilityMode = visibilityMode;
 
-			this.Width = width;
-			this.Height = height;
-			this.Depth = depth;
+			m_tileGrid = grid;
+			var size = grid.Size;
 
-			m_tileGrid = new TileGrid(this.Width, this.Height, this.Depth);
+			this.Width = size.Width;
+			this.Height = size.Height;
+			this.Depth = size.Depth;
+
 			m_contentArray = new KeyedObjectCollection[this.Depth];
-			for (int i = 0; i < depth; ++i)
+			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
 			m_buildings = new HashSet<BuildingObject>();
@@ -388,12 +390,7 @@ namespace Dwarrowdelf.Server
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
 		{
-			if (this.IsInitialized == false)
-			{
-				m_tileGrid.SetTerrain(p, terrainID, materialID);
-				return;
-			}
-
+			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
@@ -411,12 +408,7 @@ namespace Dwarrowdelf.Server
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			if (this.IsInitialized == false)
-			{
-				m_tileGrid.SetInterior(p, interiorID, materialID);
-				return;
-			}
-
+			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
@@ -430,12 +422,7 @@ namespace Dwarrowdelf.Server
 
 		public void SetTileData(IntPoint3D p, TileData data)
 		{
-			if (this.IsInitialized == false)
-			{
-				m_tileGrid.SetTileData(p, data);
-				return;
-			}
-
+			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
@@ -482,12 +469,7 @@ namespace Dwarrowdelf.Server
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
 		{
-			if (this.IsInitialized == false)
-			{
-				m_tileGrid.SetWaterLevel(l, waterLevel);
-				return;
-			}
-
+			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
@@ -501,21 +483,16 @@ namespace Dwarrowdelf.Server
 
 		public void SetGrass(IntPoint3D l, bool grass)
 		{
-			if (this.IsInitialized)
-			{
-				Debug.Assert(this.World.IsWritable);
+			Debug.Assert(this.IsInitialized);
+			Debug.Assert(this.World.IsWritable);
 
-				this.Version += 1;
-			}
+			this.Version += 1;
 
 			m_tileGrid.SetGrass(l, grass);
 
-			if (this.IsInitialized)
-			{
-				var d = m_tileGrid.GetTileData(l);
+			var d = m_tileGrid.GetTileData(l);
 
-				MapChanged(l, d);
-			}
+			MapChanged(l, d);
 		}
 
 		// XXX not a good func. contents can be changed by the caller
@@ -790,7 +767,7 @@ namespace Dwarrowdelf.Server
 				reader.Read();
 				int d = (int)(long)reader.Value;
 
-				var grid = new TileGrid(w, h, d);
+				var grid = new TileGrid(new IntSize3D(w, h, d));
 				var dstArr = grid.Grid;
 
 				for (int z = 0; z < d; ++z)
@@ -808,114 +785,217 @@ namespace Dwarrowdelf.Server
 				return grid;
 			}
 		}
+	}
 
-		class TileGrid
+	class TileGrid
+	{
+		TileData[, ,] m_grid;
+		public TileData[, ,] Grid { get { return m_grid; } }
+		public IntSize3D Size { get; private set; }
+
+		TileGrid()
 		{
-			TileData[, ,] m_grid;
+		}
 
-			TileGrid()
-			{
-			}
+		public TileGrid(IntSize3D size)
+		{
+			this.Size = size;
+			m_grid = new TileData[size.Depth, size.Height, size.Width];
+		}
 
-			public TileGrid(int width, int height, int depth)
-			{
-				m_grid = new TileData[depth, height, width];
-			}
+		public TileData GetTileData(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X];
+		}
 
-			public TileData[, ,] Grid { get { return m_grid; } }
+		public TerrainID GetTerrainID(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].TerrainID;
+		}
 
-			public TileData GetTileData(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X];
-			}
+		public MaterialID GetTerrainMaterialID(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
+		}
 
-			public TerrainID GetTerrainID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].TerrainID;
-			}
+		public InteriorID GetInteriorID(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].InteriorID;
+		}
 
-			public MaterialID GetTerrainMaterialID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
-			}
+		public MaterialID GetInteriorMaterialID(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
+		}
 
-			public InteriorID GetInteriorID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].InteriorID;
-			}
+		public bool GetHidden(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].IsHidden;
+		}
 
-			public MaterialID GetInteriorMaterialID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
-			}
+		public byte GetWaterLevel(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].WaterLevel;
+		}
 
-			public bool GetHidden(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].IsHidden;
-			}
-
-			public byte GetWaterLevel(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].WaterLevel;
-			}
-
-			public bool GetGrass(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].Grass;
-			}
+		public bool GetGrass(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].Grass;
+		}
 
 
-			public void SetTileData(IntPoint3D p, TileData data)
-			{
-				m_grid[p.Z, p.Y, p.X] = data;
-			}
+		public void SetTileData(IntPoint3D p, TileData data)
+		{
+			m_grid[p.Z, p.Y, p.X] = data;
+		}
 
-			public void SetTerrain(IntPoint3D p, TerrainID id, MaterialID matID)
-			{
-				m_grid[p.Z, p.Y, p.X].TerrainID = id;
-				m_grid[p.Z, p.Y, p.X].TerrainMaterialID = matID;
-			}
+		public void SetTerrain(IntPoint3D p, TerrainID id, MaterialID matID)
+		{
+			m_grid[p.Z, p.Y, p.X].TerrainID = id;
+			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = matID;
+		}
 
-			public void SetTerrainID(IntPoint3D p, TerrainID id)
-			{
-				m_grid[p.Z, p.Y, p.X].TerrainID = id;
-			}
+		public void SetTerrainID(IntPoint3D p, TerrainID id)
+		{
+			m_grid[p.Z, p.Y, p.X].TerrainID = id;
+		}
 
-			public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
-			{
-				m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
-			}
+		public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
+		{
+			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
+		}
 
-			public void SetInterior(IntPoint3D p, InteriorID id, MaterialID matID)
-			{
-				m_grid[p.Z, p.Y, p.X].InteriorID = id;
-				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
-			}
+		public void SetInterior(IntPoint3D p, InteriorID id, MaterialID matID)
+		{
+			m_grid[p.Z, p.Y, p.X].InteriorID = id;
+			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
+		}
 
-			public void SetInteriorID(IntPoint3D p, InteriorID id)
-			{
-				m_grid[p.Z, p.Y, p.X].InteriorID = id;
-			}
+		public void SetInteriorID(IntPoint3D p, InteriorID id)
+		{
+			m_grid[p.Z, p.Y, p.X].InteriorID = id;
+		}
 
-			public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
-			{
-				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
-			}
+		public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
+		{
+			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
+		}
 
-			public void SetWaterLevel(IntPoint3D p, byte waterLevel)
-			{
-				m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
-			}
+		public void SetWaterLevel(IntPoint3D p, byte waterLevel)
+		{
+			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
+		}
 
-			public void SetGrass(IntPoint3D p, bool grass)
-			{
-				m_grid[p.Z, p.Y, p.X].Grass = grass;
-			}
+		public void SetGrass(IntPoint3D p, bool grass)
+		{
+			m_grid[p.Z, p.Y, p.X].Grass = grass;
+		}
 
-			public void SetHidden(IntPoint3D p, bool hidden)
-			{
-				m_grid[p.Z, p.Y, p.X].IsHidden = hidden;
-			}
+		public void SetHidden(IntPoint3D p, bool hidden)
+		{
+			m_grid[p.Z, p.Y, p.X].IsHidden = hidden;
+		}
+	}
+
+	public class EnvironmentBuilder
+	{
+		TileGrid m_tileGrid;
+		IntSize3D m_size;
+
+		public IntCuboid Bounds { get { return new IntCuboid(m_size); } }
+		public int Width { get { return m_size.Width; } }
+		public int Height { get { return m_size.Height; } }
+		public int Depth { get { return m_size.Depth; } }
+
+		public EnvironmentBuilder(IntSize3D size)
+		{
+			m_size = size;
+			m_tileGrid = new TileGrid(size);
+		}
+
+		public Environment Create(VisibilityMode visibilityMode)
+		{
+			return new Environment(m_tileGrid, visibilityMode);
+		}
+
+		public TerrainID GetTerrainID(IntPoint3D l)
+		{
+			return m_tileGrid.GetTerrainID(l);
+		}
+
+		public MaterialID GetTerrainMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetTerrainMaterialID(l);
+		}
+
+		public InteriorID GetInteriorID(IntPoint3D l)
+		{
+			return m_tileGrid.GetInteriorID(l);
+		}
+
+		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		{
+			return m_tileGrid.GetInteriorMaterialID(l);
+		}
+
+		public TerrainInfo GetTerrain(IntPoint3D l)
+		{
+			return Terrains.GetTerrain(GetTerrainID(l));
+		}
+
+		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
+		}
+
+		public InteriorInfo GetInterior(IntPoint3D l)
+		{
+			return Interiors.GetInterior(GetInteriorID(l));
+		}
+
+		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		{
+			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
+		}
+
+		public TileData GetTileData(IntPoint3D l)
+		{
+			return m_tileGrid.GetTileData(l);
+		}
+
+		public byte GetWaterLevel(IntPoint3D l)
+		{
+			return m_tileGrid.GetWaterLevel(l);
+		}
+
+		public bool GetGrass(IntPoint3D l)
+		{
+			return m_tileGrid.GetGrass(l);
+		}
+
+		public bool GetHidden(IntPoint3D l)
+		{
+			return m_tileGrid.GetHidden(l);
+		}
+
+		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
+		{
+			m_tileGrid.SetTerrain(p, terrainID, materialID);
+		}
+
+		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		{
+			m_tileGrid.SetInterior(p, interiorID, materialID);
+		}
+
+		public void SetTileData(IntPoint3D p, TileData data)
+		{
+			m_tileGrid.SetTileData(p, data);
+		}
+
+		public void SetGrass(IntPoint3D l, bool grass)
+		{
+			m_tileGrid.SetGrass(l, grass);
 		}
 	}
 }
