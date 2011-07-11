@@ -35,7 +35,7 @@ namespace MyArea
 			this.World.TickStarting += OnTickStart;
 		}
 
-		public override void Initialize(World world)
+		protected override void Initialize(World world)
 		{
 			base.Initialize(world);
 

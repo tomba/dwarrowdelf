@@ -9,6 +9,13 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject(UseRef = true)]
 	public class Environment : ServerGameObject, IEnvironment
 	{
+		internal static Environment Create(World world, EnvironmentBuilder builder)
+		{
+			var ob = new Environment(builder);
+			ob.Initialize(world);
+			return ob;
+		}
+
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 
@@ -40,11 +47,11 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		internal Environment(EnvironmentBuilder builder, VisibilityMode visibilityMode)
+		Environment(EnvironmentBuilder builder)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
-			this.VisibilityMode = visibilityMode;
+			this.VisibilityMode = builder.VisibilityMode;
 
 			m_tileGrid = builder.Grid;
 			var size = m_tileGrid.Size;
@@ -73,7 +80,7 @@ namespace Dwarrowdelf.Server
 			ScanWaterTiles();
 		}
 
-		public override void Initialize(World world)
+		protected override void Initialize(World world)
 		{
 			InitializeTileHiddenStatuses();
 
@@ -907,19 +914,20 @@ namespace Dwarrowdelf.Server
 		public int Height { get { return m_size.Height; } }
 		public int Depth { get { return m_size.Depth; } }
 
+		public VisibilityMode VisibilityMode { get; set; }
+
 		internal TileGrid Grid { get { return m_tileGrid; } }
 
-		public EnvironmentBuilder(IntSize3D size)
+		public EnvironmentBuilder(IntSize3D size, VisibilityMode visibilityMode)
 		{
 			m_size = size;
 			m_tileGrid = new TileGrid(size);
+			this.VisibilityMode = visibilityMode;
 		}
 
-		public Environment Create(World world, VisibilityMode visibilityMode)
+		public Environment Create(World world)
 		{
-			var env = new Environment(this, visibilityMode);
-			env.Initialize(world);
-			return env;
+			return Environment.Create(world, this);
 		}
 
 		public TerrainID GetTerrainID(IntPoint3D l)

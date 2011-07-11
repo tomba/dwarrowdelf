@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public virtual void Initialize(World world)
+		protected virtual void Initialize(World world)
 		{
 			if (this.IsInitialized)
 				throw new Exception();

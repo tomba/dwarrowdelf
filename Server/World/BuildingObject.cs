@@ -8,6 +8,13 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject(UseRef = true)]
 	public class BuildingObject : BaseGameObject, IBuildingObject
 	{
+		internal static BuildingObject Create(World world, Environment env, BuildingObjectBuilder builder)
+		{
+			var ob = new BuildingObject(builder);
+			ob.Initialize(world, env);
+			return ob;
+		}
+
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 		public BuildingInfo BuildingInfo { get { return Buildings.GetBuildingInfo(this.BuildingID); } }
@@ -17,7 +24,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
-		internal BuildingObject(BuildingObjectBuilder builder)
+		BuildingObject(BuildingObjectBuilder builder)
 			: base(ObjectType.Building)
 		{
 			this.BuildingID = builder.BuildingID;
@@ -36,12 +43,12 @@ namespace Dwarrowdelf.Server
 			this.World.TickStarting += OnWorldTickStarting;
 		}
 
-		public override void Initialize(World world)
+		protected override void Initialize(World world)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void Initialize(World world, Environment env)
+		void Initialize(World world, Environment env)
 		{
 			if (BuildingObject.VerifyBuildSite(env, this.Area) == false)
 				throw new Exception();
@@ -178,9 +185,7 @@ namespace Dwarrowdelf.Server
 
 		public BuildingObject Create(World world, Environment env)
 		{
-			var item = new BuildingObject(this);
-			item.Initialize(world, env);
-			return item;
+			return BuildingObject.Create(world, env, this);
 		}
 	}
 }

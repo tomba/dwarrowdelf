@@ -9,12 +9,19 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject(UseRef = true)]
 	public class ItemObject : ServerGameObject, IItemObject
 	{
+		internal static ItemObject Create(World world, ItemObjectBuilder builder)
+		{
+			var ob = new ItemObject(builder);
+			ob.Initialize(world);
+			return ob;
+		}
+
 		protected ItemObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Item)
 		{
 		}
 
-		internal protected ItemObject(ItemObjectBuilder builder)
+		protected ItemObject(ItemObjectBuilder builder)
 			: base(ObjectType.Item, builder)
 		{
 			Debug.Assert(builder.ItemID != Dwarrowdelf.ItemID.Undefined);
@@ -93,9 +100,7 @@ namespace Dwarrowdelf.Server
 			if (this.SymbolID == SymbolID.Undefined)
 				this.SymbolID = Dwarrowdelf.Items.GetItem(this.ItemID).Symbol;
 
-			var item = new ItemObject(this);
-			item.Initialize(world);
-			return item;
+			return ItemObject.Create(world, this);
 		}
 	}
 }

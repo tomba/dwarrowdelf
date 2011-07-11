@@ -9,6 +9,13 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject(UseRef = true)]
 	public partial class Living : ServerGameObject, ILiving
 	{
+		internal static Living Create(World world, LivingBuilder builder)
+		{
+			var ob = new Living(builder);
+			ob.Initialize(world);
+			return ob;
+		}
+
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
 		{
@@ -26,7 +33,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		internal Living(LivingBuilder builder)
+		Living(LivingBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
 			m_visionRange = builder.VisionRange;
@@ -51,7 +58,7 @@ namespace Dwarrowdelf.Server
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
 
-		public override void Initialize(World world)
+		protected override void Initialize(World world)
 		{
 			base.Initialize(world);
 			world.AddLiving(this);
@@ -619,9 +626,7 @@ namespace Dwarrowdelf.Server
 
 		public Living Create(World world)
 		{
-			var living = new Living(this);
-			living.Initialize(world);
-			return living;
+			return Living.Create(world, this);
 		}
 
 		public void SetSkillLevel(SkillID skill, byte level)

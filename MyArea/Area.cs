@@ -67,7 +67,7 @@ namespace MyArea
 			DiamondSquare.Render(grid, 10, 5, 0.75);
 			Clamper.Clamp(grid, 10);
 
-			var envBuilder = new EnvironmentBuilder(new IntSize3D(size, size, 20));
+			var envBuilder = new EnvironmentBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
 
 			Random r = new Random(123);
 
@@ -115,7 +115,7 @@ namespace MyArea
 				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
-			var env = envBuilder.Create(world, VisibilityMode.GlobalFOV);
+			var env = envBuilder.Create(world);
 			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
 
 
