@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 		public string Name { get; set; }
 		public InteriorFlags Flags { get; set; }
 
-		public bool IsBlocker { get { return this.Flags.HasFlag(InteriorFlags.Blocker); } }
+		public bool IsBlocker { get { return (this.Flags & InteriorFlags.Blocker) != 0; } }
 		public bool IsSeeThrough { get { return !this.IsBlocker; } }
 	}
 

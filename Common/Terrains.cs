@@ -50,29 +50,29 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Tile can not be entered
 		/// </summary>
-		public bool IsBlocker { get { return this.Flags.HasFlag(TerrainFlags.Blocker); } }
+		public bool IsBlocker { get { return (this.Flags & TerrainFlags.Blocker) != 0; } }
 
 		/// <summary>
 		/// Tile can be stood upon
 		/// </summary>
-		public bool IsSupporting { get { return this.Flags.HasFlag(TerrainFlags.Supporting); } }
+		public bool IsSupporting { get { return (this.Flags & TerrainFlags.Supporting) != 0; } }
 
 		/// <summary>
 		/// Fluids can flow downwards through the tile
 		/// </summary>
-		public bool IsPermeable { get { return this.Flags.HasFlag(TerrainFlags.Permeable); } }
+		public bool IsPermeable { get { return (this.Flags & TerrainFlags.Permeable) != 0; } }
 
 		/// <summary>
 		/// Tile can be mined, becoming a floor
 		/// </summary>
-		public bool IsMinable { get { return this.Flags.HasFlag(TerrainFlags.Minable); } }
+		public bool IsMinable { get { return (this.Flags & TerrainFlags.Minable) != 0; } }
 
 		/// <summary>
 		/// Does not block line of sight in planar directions
 		/// </summary>
-		public bool IsSeeThrough { get { return !this.Flags.HasFlag(TerrainFlags.BlocksVision); } }
+		public bool IsSeeThrough { get { return (this.Flags & TerrainFlags.BlocksVision) == 0; } }
 
-		public bool IsSeeThroughDown { get { return this.Flags.HasFlag(TerrainFlags.SeeThroughDown); } }
+		public bool IsSeeThroughDown { get { return (this.Flags & TerrainFlags.SeeThroughDown) != 0; } }
 	}
 
 	public static class Terrains
