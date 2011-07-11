@@ -366,23 +366,24 @@ namespace Dwarrowdelf.Server
 			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
-		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		public TileData GetTileData(IntPoint3D l)
 		{
-			if (this.IsInitialized == false)
-			{
-				m_tileGrid.SetInterior(p, interiorID, materialID);
-				return;
-			}
+			return m_tileGrid.GetTileData(l);
+		}
 
-			Debug.Assert(this.World.IsWritable);
+		public byte GetWaterLevel(IntPoint3D l)
+		{
+			return m_tileGrid.GetWaterLevel(l);
+		}
 
-			this.Version += 1;
+		public bool GetGrass(IntPoint3D l)
+		{
+			return m_tileGrid.GetGrass(l);
+		}
 
-			m_tileGrid.SetInterior(p, interiorID, materialID);
-
-			var data = m_tileGrid.GetTileData(p);
-
-			MapChanged(p, data);
+		public bool GetHidden(IntPoint3D l)
+		{
+			return m_tileGrid.GetHidden(l);
 		}
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
@@ -408,9 +409,23 @@ namespace Dwarrowdelf.Server
 			RevealTiles(p, oldData, data);
 		}
 
-		public TileData GetTileData(IntPoint3D l)
+		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
 		{
-			return m_tileGrid.GetTileData(l);
+			if (this.IsInitialized == false)
+			{
+				m_tileGrid.SetInterior(p, interiorID, materialID);
+				return;
+			}
+
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			m_tileGrid.SetInterior(p, interiorID, materialID);
+
+			var data = m_tileGrid.GetTileData(p);
+
+			MapChanged(p, data);
 		}
 
 		public void SetTileData(IntPoint3D p, TileData data)
@@ -484,11 +499,6 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, data);
 		}
 
-		public byte GetWaterLevel(IntPoint3D l)
-		{
-			return m_tileGrid.GetWaterLevel(l);
-		}
-
 		public void SetGrass(IntPoint3D l, bool grass)
 		{
 			if (this.IsInitialized)
@@ -506,16 +516,6 @@ namespace Dwarrowdelf.Server
 
 				MapChanged(l, d);
 			}
-		}
-
-		public bool GetGrass(IntPoint3D l)
-		{
-			return m_tileGrid.GetGrass(l);
-		}
-
-		public bool GetHidden(IntPoint3D l)
-		{
-			return m_tileGrid.GetHidden(l);
 		}
 
 		// XXX not a good func. contents can be changed by the caller
@@ -829,25 +829,45 @@ namespace Dwarrowdelf.Server
 				return m_grid[p.Z, p.Y, p.X];
 			}
 
-			public void SetTileData(IntPoint3D p, TileData data)
+			public TerrainID GetTerrainID(IntPoint3D p)
 			{
-				m_grid[p.Z, p.Y, p.X] = data;
+				return m_grid[p.Z, p.Y, p.X].TerrainID;
 			}
 
-			public void SetInterior(IntPoint3D p, InteriorID id, MaterialID matID)
+			public MaterialID GetTerrainMaterialID(IntPoint3D p)
 			{
-				m_grid[p.Z, p.Y, p.X].InteriorID = id;
-				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
-			}
-
-			public void SetInteriorID(IntPoint3D p, InteriorID id)
-			{
-				m_grid[p.Z, p.Y, p.X].InteriorID = id;
+				return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 			}
 
 			public InteriorID GetInteriorID(IntPoint3D p)
 			{
 				return m_grid[p.Z, p.Y, p.X].InteriorID;
+			}
+
+			public MaterialID GetInteriorMaterialID(IntPoint3D p)
+			{
+				return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
+			}
+
+			public bool GetHidden(IntPoint3D p)
+			{
+				return m_grid[p.Z, p.Y, p.X].IsHidden;
+			}
+
+			public byte GetWaterLevel(IntPoint3D p)
+			{
+				return m_grid[p.Z, p.Y, p.X].WaterLevel;
+			}
+
+			public bool GetGrass(IntPoint3D p)
+			{
+				return m_grid[p.Z, p.Y, p.X].Grass;
+			}
+
+
+			public void SetTileData(IntPoint3D p, TileData data)
+			{
+				m_grid[p.Z, p.Y, p.X] = data;
 			}
 
 			public void SetTerrain(IntPoint3D p, TerrainID id, MaterialID matID)
@@ -861,30 +881,25 @@ namespace Dwarrowdelf.Server
 				m_grid[p.Z, p.Y, p.X].TerrainID = id;
 			}
 
-			public TerrainID GetTerrainID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].TerrainID;
-			}
-
-
-			public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
-			{
-				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
-			}
-
-			public MaterialID GetInteriorMaterialID(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
-			}
-
 			public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
 			{
 				m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
 			}
 
-			public MaterialID GetTerrainMaterialID(IntPoint3D p)
+			public void SetInterior(IntPoint3D p, InteriorID id, MaterialID matID)
 			{
-				return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
+				m_grid[p.Z, p.Y, p.X].InteriorID = id;
+				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
+			}
+
+			public void SetInteriorID(IntPoint3D p, InteriorID id)
+			{
+				m_grid[p.Z, p.Y, p.X].InteriorID = id;
+			}
+
+			public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
+			{
+				m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
 			}
 
 			public void SetWaterLevel(IntPoint3D p, byte waterLevel)
@@ -892,29 +907,14 @@ namespace Dwarrowdelf.Server
 				m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 			}
 
-			public byte GetWaterLevel(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].WaterLevel;
-			}
-
 			public void SetGrass(IntPoint3D p, bool grass)
 			{
 				m_grid[p.Z, p.Y, p.X].Grass = grass;
 			}
 
-			public bool GetGrass(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].Grass;
-			}
-
 			public void SetHidden(IntPoint3D p, bool hidden)
 			{
 				m_grid[p.Z, p.Y, p.X].IsHidden = hidden;
-			}
-
-			public bool GetHidden(IntPoint3D p)
-			{
-				return m_grid[p.Z, p.Y, p.X].IsHidden;
 			}
 		}
 	}
