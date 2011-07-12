@@ -136,7 +136,6 @@
       <DependentUpon>UIDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GrowingTileGrid.cs" />
     <Compile Include="UI\MasterMapControl.cs" />
     <Compile Include="UI\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />
