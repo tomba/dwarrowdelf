@@ -10,12 +10,12 @@
             </Style>
         </DataTemplate.Resources>
 
-        <DockPanel>
-            <Button DockPanel.Dock="Right" Click="Button_Click">
+        <DockPanel x:Name="dockPanel">
+            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
                 <Image Source="/Images/eye.png" />
             </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="16" />
-            <TextBlock Name="nameTextBlock">
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}" />
+            <TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Description" />
@@ -36,12 +36,12 @@
                 <Setter Property="Margin" Value="5,3" />
             </Style>
         </DataTemplate.Resources>
-        <DockPanel>
-            <Button DockPanel.Dock="Right" Click="Button_Click">
+        <DockPanel x:Name="dockPanel">
+            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
                 <Image Source="/Images/eye.png" />
             </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="16" />
-            <TextBlock Name="nameTextBlock">
+            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}" />
+            <TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Description" />
@@ -62,11 +62,11 @@
             </Style>
         </DataTemplate.Resources>
 
-        <DockPanel>
-            <Button DockPanel.Dock="Right" Click="Button_Click">
+        <DockPanel x:Name="dockPanel">
+            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
                 <Image Source="/Images/eye.png" />
             </Button>
-            <TextBlock Name="nameTextBlock">
+            <TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="BuildingID" />

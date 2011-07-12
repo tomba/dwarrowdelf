@@ -162,7 +162,7 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" />
+                            <ListBox ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                         </ad:DockableContent>
 
                         <!-- Items -->
@@ -171,7 +171,7 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch">
+                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
                                         <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
@@ -188,7 +188,7 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch">
+                            <ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
                                         <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
@@ -205,7 +205,7 @@
                                 <ResourceDictionary Source="/UI/UIDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch">
+                            <ListBox ItemsSource="{Binding World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="{x:Type ListBoxItem}">
                                         <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
@@ -221,7 +221,7 @@
                                 <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
                                 <ListBox Name="inventoryListBox"
                                           ItemsSource="{Binding Path=CurrentObject.Inventory}"
-                                          SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                                          SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                             </DockPanel>
                         </ad:DockableContent>
 
@@ -247,7 +247,7 @@
                                        </TextBlock>
                                 </StackPanel>
                                 <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-                                <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" />
+                                <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                             </DockPanel>
                         </ad:DockableContent>
 
@@ -296,7 +296,7 @@
                                     </TextBlock>
                                 </StackPanel>
 
-                                <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" />
+                                <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
                             </DockPanel>
 
                         </ad:DockableContent>
