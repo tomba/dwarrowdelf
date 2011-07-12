@@ -69,7 +69,19 @@ namespace Dwarrowdelf
 			else if (this == ObjectID.AnyObjectID)
 				return "OID(ANY)";
 			else
-				return String.Format("OID({0}, {1})", this.ObjectType, this.Value);
+			{
+				char c;
+				switch (this.ObjectType)
+				{
+					case Dwarrowdelf.ObjectType.Building: c = 'B'; break;
+					case Dwarrowdelf.ObjectType.Environment: c = 'E'; break;
+					case Dwarrowdelf.ObjectType.Item: c = 'I'; break;
+					case Dwarrowdelf.ObjectType.Living: c = 'L'; break;
+					default: c = '?'; break;
+				}
+
+				return String.Format("OID({0}, {1})", c, this.Value);
+			}
 		}
 
 	}
