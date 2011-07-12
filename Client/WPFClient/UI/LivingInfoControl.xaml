@@ -77,20 +77,22 @@
             </UniformGrid>
         </StackPanel>
 
-        <ListView ItemsSource="{Binding Skills}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
-                    <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <UniformGrid Columns="2">
+            <ListView ItemsSource="{Binding Skills}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
+                        <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
 
-        <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
-            <ListBox.Resources>
-                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
-            </ListBox.Resources>
-        </ListBox>
+            <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+                <ListBox.Resources>
+                    <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                </ListBox.Resources>
+            </ListBox>
+        </UniformGrid>
 
     </DockPanel>
 </UserControl>
