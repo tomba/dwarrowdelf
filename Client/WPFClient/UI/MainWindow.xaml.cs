@@ -376,10 +376,15 @@ namespace Dwarrowdelf.Client
 					map.BeginCenterPosAnim(v);
 				}
 			}
-			else if (e.Key == Key.Space)
+			else if (e.Key == Key.OemPeriod)
 			{
 				e.Handled = true;
 				GameData.Data.User.SendProceedTurn();
+			}
+			else if (e.Key == Key.Space)
+			{
+				e.Handled = true;
+				GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
 			}
 			else if (e.Key == Key.Add)
 			{
