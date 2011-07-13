@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Server
 
 		static Living()
 		{
-			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
+			var actionTypes = Helpers.GetNonabstractSubclasses(typeof(GameAction));
 
 			s_actionMethodMap = new Dictionary<Type, ActionData>(actionTypes.Count());
 

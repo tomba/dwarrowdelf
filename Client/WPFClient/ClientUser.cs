@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 
 		static ClientUser()
 		{
-			var changeTypes = typeof(Change).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Change)));
+			var changeTypes = Helpers.GetNonabstractSubclasses(typeof(Change));
 
 			s_changeHandlerMap = new Dictionary<Type, Action<ClientUser, Change>>(changeTypes.Count());
 
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 					s_changeHandlerMap[type] = method;
 			}
 
-			var messageTypes = typeof(ClientMessage).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ClientMessage)));
+			var messageTypes = Helpers.GetNonabstractSubclasses(typeof(ClientMessage));
 
 			s_handlerMap = new Dictionary<Type, Action<ClientUser, ClientMessage>>(messageTypes.Count());
 

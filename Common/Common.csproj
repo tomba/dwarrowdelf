@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
     <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />

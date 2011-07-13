@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Server
 
 		static Player()
 		{
-			var messageTypes = typeof(ServerMessage).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ServerMessage)));
+			var messageTypes = Helpers.GetNonabstractSubclasses(typeof(ServerMessage));
 
 			s_handlerMap = new Dictionary<Type, Action<Player, ServerMessage>>(messageTypes.Count());
 

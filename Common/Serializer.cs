@@ -9,10 +9,10 @@ namespace Dwarrowdelf
 	{
 		static Serializer()
 		{
-			var messageTypes = typeof(Message).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Message)));
-			var objectDataTypes = typeof(BaseGameObjectData).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(BaseGameObjectData)));
-			var changeTypes = typeof(Change).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Change)));
-			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
+			var messageTypes = Helpers.GetSubclasses(typeof(Message));
+			var objectDataTypes = Helpers.GetSubclasses(typeof(BaseGameObjectData));
+			var changeTypes = Helpers.GetSubclasses(typeof(Change));
+			var actionTypes = Helpers.GetSubclasses(typeof(GameAction));
 			var extra = new Type[] { typeof(SymbolID), typeof(GameColor) };
 			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(extra);
 			NetSerializer.Serializer.Initialize(types.ToArray());
