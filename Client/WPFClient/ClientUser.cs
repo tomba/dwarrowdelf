@@ -9,8 +9,33 @@ namespace Dwarrowdelf.Client
 {
 	class ClientUser
 	{
-		Dictionary<Type, Action<ClientMessage>> m_handlerMap = new Dictionary<Type, Action<ClientMessage>>();
-		Dictionary<Type, Action<Change>> m_changeHandlerMap = new Dictionary<Type, Action<Change>>();
+		static Dictionary<Type, Action<ClientUser, ClientMessage>> s_handlerMap;
+		static Dictionary<Type, Action<ClientUser, Change>> s_changeHandlerMap;
+
+		static ClientUser()
+		{
+			var changeTypes = typeof(Change).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(Change)));
+
+			s_changeHandlerMap = new Dictionary<Type, Action<ClientUser, Change>>(changeTypes.Count());
+
+			foreach (var type in changeTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<ClientUser, Change>("HandleChange", type);
+				if (method != null)
+					s_changeHandlerMap[type] = method;
+			}
+
+			var messageTypes = typeof(ClientMessage).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ClientMessage)));
+
+			s_handlerMap = new Dictionary<Type, Action<ClientUser, ClientMessage>>(messageTypes.Count());
+
+			foreach (var type in messageTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<ClientUser, ClientMessage>("HandleMessage", type);
+				if (method != null)
+					s_handlerMap[type] = method;
+			}
+		}
 
 		ClientConnection m_connection;
 
@@ -47,19 +72,8 @@ namespace Dwarrowdelf.Client
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
 
-			Action<ClientMessage> f;
-			Type t = msg.GetType();
-			if (!m_handlerMap.TryGetValue(t, out f))
-			{
-				f = WrapperGenerator.CreateHandlerWrapper<ClientMessage>("HandleMessage", t, this);
-
-				if (f == null)
-					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
-
-				m_handlerMap[t] = f;
-			}
-
-			f(msg);
+			var method = s_handlerMap[msg.GetType()];
+			method(this, msg);
 		}
 
 		void HandleMessage(EnterGameReplyBeginMessage msg)
@@ -168,21 +182,8 @@ namespace Dwarrowdelf.Client
 		{
 			var change = msg.Change;
 
-			Action<Change> f;
-			Type t = change.GetType();
-			if (!m_changeHandlerMap.TryGetValue(t, out f))
-			{
-				f = WrapperGenerator.CreateHandlerWrapper<Change>("HandleChange", t, this);
-
-				if (f == null)
-					throw new Exception(String.Format("No change handler for {0}", change.GetType()));
-
-				m_changeHandlerMap[t] = f;
-			}
-
-			//MyDebug.WriteLine("Change: {0}", msg);
-
-			f(change);
+			var method = s_changeHandlerMap[change.GetType()];
+			method(this, change);
 		}
 
 		void HandleChange(ObjectCreatedChange change)

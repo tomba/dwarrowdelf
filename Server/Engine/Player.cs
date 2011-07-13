@@ -13,7 +13,21 @@ namespace Dwarrowdelf.Server
 	[SaveGameObject]
 	public class Player : INotifyPropertyChanged
 	{
-		Dictionary<Type, Action<ServerMessage>> m_handlerMap = new Dictionary<Type, Action<ServerMessage>>();
+		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
+
+		static Player()
+		{
+			var messageTypes = typeof(ServerMessage).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ServerMessage)));
+
+			s_handlerMap = new Dictionary<Type, Action<Player, ServerMessage>>(messageTypes.Count());
+
+			foreach (var type in messageTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<Player, ServerMessage>("ReceiveMessage", type);
+				if (method != null)
+					s_handlerMap[type] = method;
+			}
+		}
 
 		GameEngine m_engine;
 		World m_world;
@@ -147,20 +161,8 @@ namespace Dwarrowdelf.Server
 
 			var msg = (ServerMessage)m;
 
-			Action<ServerMessage> f;
-			Type t = msg.GetType();
-			if (!m_handlerMap.TryGetValue(t, out f))
-			{
-				System.Reflection.MethodInfo mi;
-				f = WrapperGenerator.CreateHandlerWrapper<ServerMessage>("ReceiveMessage", t, this, out mi);
-
-				if (f == null)
-					throw new Exception(String.Format("No msg handler for {0}", msg.GetType()));
-
-				m_handlerMap[t] = f;
-			}
-
-			f(msg);
+			Action<Player, ServerMessage> method = s_handlerMap[msg.GetType()];
+			method(this, msg);
 		}
 
 		void ReceiveMessage(SetTilesMessage msg)

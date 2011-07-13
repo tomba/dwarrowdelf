@@ -10,21 +10,45 @@ namespace Dwarrowdelf
 	public static class WrapperGenerator
 	{
 		/// <summary>
-		/// Creates a wrapper delegate, that converts argument from T to argType,
+		/// Creates a wrapper delegate, that converts argument from T1 to argType,
 		/// and calls a method that takes argType.
 		/// </summary>
-		public static Action<T> CreateHandlerWrapper<T>(string methodName, Type argType, object bindOb)
+		public static Action<TOb, T1> CreateActionWrapper<TOb, T1>(string methodName, Type argType)
 		{
-			MethodInfo dummy;
-			return CreateHandlerWrapper<T>(methodName, argType, bindOb, out dummy);
+			var bindType = typeof(TOb);
+
+			var method = bindType.GetMethod(methodName,
+					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding, null,
+					new Type[] { argType }, null);
+
+			if (method == null)
+				return null;
+
+			DynamicMethod dm = new DynamicMethod(methodName + "Wrapper", null,
+				new Type[] { bindType, typeof(T1) },
+				bindType, true);
+			var gen = dm.GetILGenerator();
+
+			gen.Emit(OpCodes.Ldarg_0);
+			gen.Emit(OpCodes.Ldarg_1);
+			gen.Emit(OpCodes.Castclass, argType);
+			gen.Emit(OpCodes.Call, method);
+			gen.Emit(OpCodes.Ret);
+
+			var del = dm.CreateDelegate(typeof(Action<TOb, T1>));
+
+			return (Action<TOb, T1>)del;
 		}
 
-		public static Action<T> CreateHandlerWrapper<T>(string methodName, Type argType, object bindOb,
-			out MethodInfo method)
+		/// <summary>
+		/// Creates a wrapper delegate, that converts argument from T1 to argType,
+		/// and calls a method that takes argType.
+		/// </summary>
+		public static Func<TOb, T1, TResult> CreateFuncWrapper<TOb, T1, TResult>(string methodName, Type argType)
 		{
-			Type bindType = bindOb.GetType();
+			var bindType = typeof(TOb);
 
-			method = null;
+			MethodInfo method = null;
 
 			while (bindType.BaseType != null)
 			{
@@ -39,10 +63,10 @@ namespace Dwarrowdelf
 			}
 
 			if (method == null)
-				throw new Exception("No handler method found");
+				return null;
 
-			DynamicMethod dm = new DynamicMethod(methodName + "Wrapper", null,
-				new Type[] { bindType, typeof(T) },
+			DynamicMethod dm = new DynamicMethod(methodName + "Wrapper", typeof(TResult),
+				new Type[] { bindType, typeof(T1) },
 				bindType, true);
 			var gen = dm.GetILGenerator();
 
@@ -52,9 +76,9 @@ namespace Dwarrowdelf
 			gen.Emit(OpCodes.Call, method);
 			gen.Emit(OpCodes.Ret);
 
-			var del = dm.CreateDelegate(typeof(Action<T>), bindOb);
+			var del = dm.CreateDelegate(typeof(Func<TOb, T1, TResult>));
 
-			return (Action<T>)del;
+			return (Func<TOb, T1, TResult>)del;
 		}
 	}
 }

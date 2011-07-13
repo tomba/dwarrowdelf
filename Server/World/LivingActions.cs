@@ -8,97 +8,65 @@ namespace Dwarrowdelf.Server
 {
 	public partial class Living
 	{
-		void InitializeAction(GameAction action, out int ticks)
+		class ActionData
 		{
-			if (action is WaitAction)
+			public Func<Living, GameAction, bool> ActionHandler;
+			public Func<Living, GameAction, int> TickInitializer;
+		}
+
+		static Dictionary<Type, ActionData> s_actionMethodMap;
+
+		static Living()
+		{
+			var actionTypes = typeof(GameAction).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(GameAction)));
+
+			s_actionMethodMap = new Dictionary<Type, ActionData>(actionTypes.Count());
+
+			foreach (var type in actionTypes)
 			{
-				ticks = ((WaitAction)action).WaitTicks;
-			}
-			else if (action is MineAction)
-			{
-				var skill = GetSkillLevel(SkillID.Mining);
-				ticks = 10 / (skill / 26 + 1);
-			}
-			else if (action is FellTreeAction)
-			{
-				ticks = 5;
-			}
-			else if (action is MoveAction)
-			{
-				ticks = 1;
-			}
-			else if (action is BuildItemAction)
-			{
-				ticks = 8;
-			}
-			else if (action is ConsumeAction)
-			{
-				ticks = 6;
-			}
-			else
-			{
-				ticks = 1;
+				var actionHandler = WrapperGenerator.CreateFuncWrapper<Living, GameAction, bool>("PerformAction", type);
+				if (actionHandler == null)
+					throw new Exception();
+
+				var tickInitializer = WrapperGenerator.CreateFuncWrapper<Living, GameAction, int>("InitializeAction", type);
+				if (tickInitializer == null)
+					throw new Exception();
+
+				s_actionMethodMap[type] = new ActionData()
+				{
+					ActionHandler = actionHandler,
+					TickInitializer = tickInitializer,
+				};
 			}
 		}
 
 
-		void Perform(GameAction action, out bool success)
+		int InitializeAction(GameAction action)
 		{
-			if (action is MoveAction)
-			{
-				PerformMove((MoveAction)action, out success);
-			}
-			else if (action is WaitAction)
-			{
-				PerformWait((WaitAction)action, out success);
-			}
-			else if (action is GetAction)
-			{
-				PerformGet((GetAction)action, out success);
-			}
-			else if (action is DropAction)
-			{
-				PerformDrop((DropAction)action, out success);
-			}
-			else if (action is ConsumeAction)
-			{
-				PerformConsume((ConsumeAction)action, out success);
-			}
-			else if (action is MineAction)
-			{
-				PerformMine((MineAction)action, out success);
-			}
-			else if (action is FellTreeAction)
-			{
-				PerformFellTree((FellTreeAction)action, out success);
-			}
-			else if (action is BuildItemAction)
-			{
-				PerformBuildItem((BuildItemAction)action, out success);
-			}
-			else if (action is AttackAction)
-			{
-				PerformAttack((AttackAction)action, out success);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+			var method = s_actionMethodMap[action.GetType()].TickInitializer;
+			return method(this, action);
+		}
+
+		bool PerformAction(GameAction action)
+		{
+			var method = s_actionMethodMap[action.GetType()].ActionHandler;
+			return method(this, action);
 		}
 
 
-		void PerformGet(GetAction action, out bool success)
-		{
-			success = false;
 
+		int InitializeAction(GetAction action)
+		{
+			return 1;
+		}
+
+		bool PerformAction(GetAction action)
+		{
 			if (this.Environment == null)
-				return;
+				return false;
 
 			if (this.ActionTicksLeft > 0)
-			{
-				success = true;
-				return;
-			}
+				return true;
 
 			var list = this.Environment.GetContents(this.Location);
 
@@ -111,31 +79,31 @@ namespace Dwarrowdelf.Server
 				if (item == null)
 				{
 					Trace.TraceWarning("{0} tried to pick up {1}, but it's not there", this, itemID);
-					return;
+					return false;
 				}
 
 				if (item.MoveTo(this) == false)
 				{
 					Trace.TraceWarning("{0} tried to pick up {1}, but it doesn't move", this, itemID);
-					return;
+					return false;
 				}
 			}
 
-			success = true;
+			return true;
 		}
 
-		void PerformDrop(DropAction action, out bool success)
+		int InitializeAction(DropAction action)
 		{
-			success = false;
+			return 1;
+		}
 
+		bool PerformAction(DropAction action)
+		{
 			if (this.Environment == null)
-				return;
+				return false;
 
 			if (this.ActionTicksLeft > 0)
-			{
-				success = true;
-				return;
-			}
+				return true;
 
 			var list = this.Inventory;
 
@@ -148,28 +116,28 @@ namespace Dwarrowdelf.Server
 				if (ob == null)
 				{
 					Trace.TraceWarning("{0} tried to drop {1}, but it's not in inventory", this, itemID);
-					return;
+					return false;
 				}
 
 				if (ob.MoveTo(this.Environment, this.Location) == false)
 				{
 					Trace.TraceWarning("{0} tried to drop {1}, but it doesn't move", this, itemID);
-					return;
+					return false;
 				}
 			}
 
-			success = true;
+			return true;
 		}
 
-		void PerformConsume(ConsumeAction action, out bool success)
+		int InitializeAction(ConsumeAction action)
 		{
-			success = false;
+			return 6;
+		}
 
+		bool PerformAction(ConsumeAction action)
+		{
 			if (this.ActionTicksLeft > 0)
-			{
-				success = true;
-				return;
-			}
+				return true;
 
 			var ob = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
 			var item = ob as ItemObject;
@@ -177,8 +145,7 @@ namespace Dwarrowdelf.Server
 			if (item == null)
 			{
 				Trace.TraceWarning("{0} tried to eat {1}, but it't not in inventory", this, action.ItemObjectID);
-				success = false;
-				return;
+				return false;
 			}
 
 			var refreshment = item.RefreshmentValue;
@@ -186,8 +153,7 @@ namespace Dwarrowdelf.Server
 
 			if (refreshment == 0 && nutrition == 0)
 			{
-				success = false;
-				return;
+				return false;
 			}
 
 			ob.Destruct();
@@ -195,19 +161,30 @@ namespace Dwarrowdelf.Server
 			this.WaterFullness += refreshment;
 			this.FoodFullness += nutrition;
 
-			success = true;
+			return true;
 		}
 
-		void PerformMove(MoveAction action, out bool success)
+		int InitializeAction(MoveAction action)
+		{
+			return 1;
+		}
+
+		bool PerformAction(MoveAction action)
 		{
 			// this should check if movement is blocked, even when TicksLeft > 0
 			if (this.ActionTicksLeft == 0)
-				success = MoveDir(action.Direction);
+				return MoveDir(action.Direction);
 			else
-				success = true;
+				return true;
 		}
 
-		void PerformMine(MineAction action, out bool success)
+		int InitializeAction(MineAction action)
+		{
+			var skill = GetSkillLevel(SkillID.Mining);
+			return 10 / (skill / 26 + 1);
+		}
+
+		bool PerformAction(MineAction action)
 		{
 			var env = this.Environment;
 
@@ -219,30 +196,25 @@ namespace Dwarrowdelf.Server
 			if (!terrain.IsMinable)
 			{
 				Trace.TraceWarning("{0} tried to mine {1}, but it's not minable", this, p);
-				success = false;
-				return;
+				return false;
 			}
 
-			success = true;
-
 			if (this.ActionTicksLeft > 0)
-				return;
+				return true;
 
 			switch (action.MineActionType)
 			{
 				case MineActionType.Mine:
 					if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 					{
-						success = false;
 						Trace.TraceWarning("Mine: not Planar or Up direction");
-						return;
+						return false;
 					}
 
 					if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
-						success = false;
 						Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
-						return;
+						return false;
 					}
 
 					ItemID itemID = ItemID.Undefined;
@@ -296,18 +268,16 @@ namespace Dwarrowdelf.Server
 				case MineActionType.Stairs:
 					if (!action.Direction.IsPlanarUpDown())
 					{
-						success = false;
 						Trace.TraceWarning("MineStairs: not PlanarUpDown direction");
-						return;
+						return false;
 					}
 
 					// We can always create stairs down, but for other dirs we need access there
 					if (action.Direction != Direction.Down &&
 						!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
-						success = false;
 						Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
-						return;
+						return false;
 					}
 
 					env.SetTerrain(p, TerrainID.NaturalFloor, env.GetTerrainMaterialID(p));
@@ -329,9 +299,16 @@ namespace Dwarrowdelf.Server
 				default:
 					throw new Exception();
 			}
+
+			return true;
 		}
 
-		void PerformFellTree(FellTreeAction action, out bool success)
+		int InitializeAction(FellTreeAction action)
+		{
+			return 5;
+		}
+
+		bool PerformAction(FellTreeAction action)
 		{
 			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
 
@@ -340,11 +317,8 @@ namespace Dwarrowdelf.Server
 			if (id != InteriorID.Tree && id != InteriorID.Sapling)
 			{
 				Trace.TraceWarning("{0} tried to fell tree {1}, but it't a tree", this, p);
-				success = false;
-				return;
+				return false;
 			}
-
-			success = true;
 
 			if (this.ActionTicksLeft == 0)
 			{
@@ -366,42 +340,53 @@ namespace Dwarrowdelf.Server
 					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				}
 			}
+
+			return true;
 		}
 
-		void PerformWait(WaitAction action, out bool success)
+		int InitializeAction(WaitAction action)
 		{
-			success = true;
+			return action.WaitTicks;
 		}
 
-		void PerformBuildItem(BuildItemAction action, out bool success)
+		bool PerformAction(WaitAction action)
+		{
+			return true;
+		}
+
+		int InitializeAction(BuildItemAction action)
+		{
+			return 8;
+		}
+
+		bool PerformAction(BuildItemAction action)
 		{
 			var building = this.Environment.GetBuildingAt(this.Location);
 
 			if (building == null)
-			{
-				success = false;
-				return;
-			}
+				return false;
 
 			if (this.ActionTicksLeft != 0)
 			{
-				success = building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				return building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 			}
 			else
 			{
-				success = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				return building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 			}
+		}
+
+		int InitializeAction(AttackAction action)
+		{
+			return 1;
 		}
 
 		Random m_random = new Random();
 
-		void PerformAttack(AttackAction action, out bool success)
+		bool PerformAction(AttackAction action)
 		{
 			if (this.ActionTicksLeft != 0)
-			{
-				success = true;
-				return;
-			}
+				return true;
 
 			var attacker = this;
 			var attackee = this.World.FindObject<Living>(action.Target);
@@ -409,18 +394,14 @@ namespace Dwarrowdelf.Server
 			if (attackee == null)
 			{
 				Trace.TraceWarning("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
-				success = false;
-				return;
+				return false;
 			}
 
 			if (!attacker.Location.IsAdjacentTo(attackee.Location, DirectionSet.Planar))
 			{
 				Trace.TraceWarning("{0} tried to attack {1}, but it wasn't near", attacker, attackee);
-				success = false;
-				return;
+				return false;
 			}
-
-			success = true;
 
 			var roll = m_random.Next(20) + 1;
 			bool hit;
@@ -442,13 +423,16 @@ namespace Dwarrowdelf.Server
 			if (!hit)
 			{
 				Trace.TraceInformation("{0} misses {1}", attacker, attackee);
-				return;
+			}
+			else
+			{
+				var damage = m_random.Next(3) + 1;
+				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, attackee, damage);
+
+				attackee.ReceiveDamage(damage);
 			}
 
-			var damage = m_random.Next(3) + 1;
-			Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, attackee, damage);
-
-			attackee.ReceiveDamage(damage);
+			return true;
 		}
 	}
 }

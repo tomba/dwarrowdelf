@@ -327,7 +327,7 @@ namespace Dwarrowdelf.Server
 
 			if (!done)
 			{
-				Perform(action, out success);
+				success = PerformAction(action);
 			}
 
 			ActionState state;
@@ -380,9 +380,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(action.Priority != ActionPriority.Undefined);
 
-			int ticks;
-
-			InitializeAction(action, out ticks);
+			int ticks = InitializeAction(action);
 
 			var c = new ActionStartedChange(this)
 			{
