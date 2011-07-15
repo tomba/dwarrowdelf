@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
 				InitTextureRenderSurface(renderWidth, renderHeight);
 
-			if (m_tileRenderInvalid)
+			if (this.TileRenderInvalid)
 			{
 				m_renderer.TileSizeChanged((int)this.TileSize); // XXX
 
@@ -175,11 +175,11 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderTarget.TextAntialiasMode = TextAntialiasMode.Default;
 
 			var m = Matrix3x2.Identity;
-			m.M31 = (float)m_renderOffset.X;
-			m.M32 = (float)m_renderOffset.Y;
+			m.M31 = (float)this.RenderOffset.X;
+			m.M32 = (float)this.RenderOffset.Y;
 			m_renderTarget.Transform = m;
 
-			m_renderer.Render(m_renderTarget, m_gridSize.Width, m_gridSize.Height, (int)this.TileSize);
+			m_renderer.Render(m_renderTarget, this.GridSize.Width, this.GridSize.Height, (int)this.TileSize);
 
 			m_renderTarget.Transform = Matrix3x2.Identity;
 

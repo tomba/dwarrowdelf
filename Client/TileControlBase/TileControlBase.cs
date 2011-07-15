@@ -10,12 +10,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 	public abstract class TileControlBase : FrameworkElement
 	{
-		protected IntSize m_gridSize;
-		protected Point m_renderOffset;
+		IntSize m_gridSize;
+		Point m_renderOffset;
 
-		protected bool m_tileLayoutInvalid;
-		protected bool m_tileDataInvalid;
-		protected bool m_tileRenderInvalid;
+		bool m_tileLayoutInvalid;
+		bool m_tileDataInvalid;
+		bool m_tileRenderInvalid;
 
 		protected MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
@@ -27,6 +27,22 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			get { return m_gridSize; }
 		}
+
+		protected Point RenderOffset
+		{
+			get { return m_renderOffset; }
+		}
+
+		protected bool TileDataInvalid
+		{
+			get { return m_tileDataInvalid; }
+		}
+
+		protected bool TileRenderInvalid
+		{
+			get { return m_tileRenderInvalid; }
+		}
+
 
 		const double MAXTILESIZE = 64;
 		const double MINTILESIZE = 2;

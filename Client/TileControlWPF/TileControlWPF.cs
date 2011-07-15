@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
 	public class TileControlWPF : TileControlBase
 	{
-		RenderData<RenderTileDetailed> m_map;
+		RenderData<RenderTileDetailed> m_renderData;
 		ISymbolDrawingCache m_symbolDrawingCache;
 		SymbolBitmapCache m_symbolBitmapCache;
 		SolidColorBrush m_bgBrush;
@@ -25,12 +25,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void Render(DrawingContext dc, Size renderSize)
 		{
-			var w = renderSize.Width;
-			var h = renderSize.Height;
+			dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, renderSize.Width, renderSize.Height));
 
-			dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, w, h));
-
-			if (m_map == null)
+			if (m_renderData == null)
 				return;
 
 			if (m_symbolBitmapCache == null)
@@ -39,17 +36,14 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_symbolBitmapCache.TileSize != (int)this.TileSize)
 				m_symbolBitmapCache.TileSize = (int)this.TileSize;
 
-			var grid = m_map.ArrayGrid.Grid;
-			var columns = m_map.ArrayGrid.Width;
-			var rows = m_map.ArrayGrid.Height;
-			var ts = this.TileSize;
+			var grid = m_renderData.ArrayGrid.Grid;
 
-			dc.PushTransform(new TranslateTransform(m_renderOffset.X, m_renderOffset.Y));
-			dc.PushTransform(new ScaleTransform(ts, ts));
+			dc.PushTransform(new TranslateTransform(this.RenderOffset.X, this.RenderOffset.Y));
+			dc.PushTransform(new ScaleTransform(this.TileSize, this.TileSize));
 
-			for (int y = 0; y < rows; ++y)
+			for (int y = 0; y < this.GridSize.Height && y < m_renderData.Size.Height; ++y)
 			{
-				for (int x = 0; x < columns; ++x)
+				for (int x = 0; x < this.GridSize.Width && x < m_renderData.Size.Width; ++x)
 				{
 					var rect = new Rect(x, y, 1, 1);
 					Render(dc, ref grid[y, x].Terrain, rect);
@@ -86,7 +80,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (!(renderData is RenderData<RenderTileDetailed>))
 				throw new NotSupportedException();
 
-			m_map = (RenderData<RenderTileDetailed>)renderData;
+			m_renderData = (RenderData<RenderTileDetailed>)renderData;
 
 			InvalidateTileData();
 		}
