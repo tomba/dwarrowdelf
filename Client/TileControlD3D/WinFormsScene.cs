@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		Texture2D m_tileTextureArray;
 		ISymbolDrawingCache m_symbolDrawingCache;
-		RenderData<RenderTileDetailed> m_map;
+		RenderData<RenderTileDetailed> m_renderData;
 
 		int m_tileSize = 32;
 		IntSize m_gridSize;
@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client.TileControl
 				var rows = (int)Math.Ceiling((double)m_renderTarget.Description.Height / m_tileSize) | 1;
 
 				m_gridSize = new IntSize(columns, rows);
-				m_map.Size = m_gridSize;
+				m_renderData.SetSize(m_gridSize);
 			}
 		}
 
@@ -61,12 +61,12 @@ namespace Dwarrowdelf.Client.TileControl
 			var rows = (int)Math.Ceiling((double)height / m_tileSize) | 1;
 
 			m_gridSize = new IntSize(columns, rows);
-			m_map.Size = m_gridSize;
+			m_renderData.SetSize(m_gridSize);
 		}
 
 		public void Render()
 		{
-			m_scene.SendMapData(m_map, m_gridSize.Width, m_gridSize.Height);
+			m_scene.SendMapData(m_renderData, m_gridSize.Width, m_gridSize.Height);
 			m_scene.Render(m_tileSize, new System.Windows.Point(0, 0));
 		}
 
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (!(renderData is RenderData<RenderTileDetailed>))
 				throw new NotSupportedException();
 
-			m_map = (RenderData<RenderTileDetailed>)renderData;
+			m_renderData = (RenderData<RenderTileDetailed>)renderData;
 		}
 
 		#region IDisposable

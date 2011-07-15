@@ -7,8 +7,12 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface IRenderData
 	{
-		IntRect Bounds { get; }
-		IntSize Size { get; set; }
+		int Width { get; }
+		int Height { get; }
+		IntSize Size { get; }
+
+		bool Contains(IntPoint p);
+		void SetSize(IntSize size);
 		void Clear();
 	}
 }

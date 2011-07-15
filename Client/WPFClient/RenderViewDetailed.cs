@@ -41,13 +41,11 @@ namespace Dwarrowdelf.Client
 			// Note: invalidates the rendertile regardless of ml.Z
 			// invalidate only if the change is within resolve limits (MAXLEVEL?)
 
-			var x = ml.X - m_centerPos.X + m_renderData.Size.Width / 2;
-			var y = ml.Y - m_centerPos.Y + m_renderData.Size.Height / 2;
+			var x = ml.X - m_centerPos.X + m_renderData.Width / 2;
+			var y = ml.Y - m_centerPos.Y + m_renderData.Height / 2;
 
-			var p = new IntPoint(x, y);
-
-			if (m_renderData.ArrayGrid.Bounds.Contains(p))
-				m_renderData.ArrayGrid.Grid[p.Y, p.X].IsValid = false;
+			if (m_renderData.Contains(new IntPoint(x, y)))
+				m_renderData.Grid[y, x].IsValid = false;
 		}
 
 
@@ -58,9 +56,9 @@ namespace Dwarrowdelf.Client
 
 			//var sw = Stopwatch.StartNew();
 
-			var columns = m_renderData.Size.Width;
-			var rows = m_renderData.Size.Height;
-			var grid = m_renderData.ArrayGrid.Grid;
+			var columns = m_renderData.Width;
+			var rows = m_renderData.Height;
+			var grid = m_renderData.Grid;
 
 			if (m_invalid || (m_environment != null && (m_environment.VisibilityMode != VisibilityMode.AllVisible || m_environment.VisibilityMode != VisibilityMode.GlobalFOV)))
 			{
@@ -82,12 +80,12 @@ namespace Dwarrowdelf.Client
 				{
 					var p = new IntPoint(x, y);
 
-					if (m_renderData.ArrayGrid.Grid[y, x].IsValid)
+					if (m_renderData.Grid[y, x].IsValid)
 						continue;
 
 					var ml = new IntPoint3D(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
-					ResolveDetailed(out m_renderData.ArrayGrid.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					ResolveDetailed(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
 			});
 

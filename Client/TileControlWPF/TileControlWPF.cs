@@ -36,14 +36,14 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_symbolBitmapCache.TileSize != (int)this.TileSize)
 				m_symbolBitmapCache.TileSize = (int)this.TileSize;
 
-			var grid = m_renderData.ArrayGrid.Grid;
+			var grid = m_renderData.Grid;
 
 			dc.PushTransform(new TranslateTransform(this.RenderOffset.X, this.RenderOffset.Y));
 			dc.PushTransform(new ScaleTransform(this.TileSize, this.TileSize));
 
-			for (int y = 0; y < this.GridSize.Height && y < m_renderData.Size.Height; ++y)
+			for (int y = 0; y < this.GridSize.Height && y < m_renderData.Height; ++y)
 			{
-				for (int x = 0; x < this.GridSize.Width && x < m_renderData.Size.Width; ++x)
+				for (int x = 0; x < this.GridSize.Width && x < m_renderData.Width; ++x)
 				{
 					var rect = new Rect(x, y, 1, 1);
 					Render(dc, ref grid[y, x].Terrain, rect);

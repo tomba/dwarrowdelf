@@ -230,7 +230,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			m_colrowVariable.Set(new Vector2(columns, rows));
 
-			var arr = mapData.ArrayGrid.Grid;
+			var arr = mapData.Grid;
 			var arrLen = arr.Length;
 			var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
 
@@ -254,7 +254,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			unsafe
 			{
-				fixed (RenderTileDetailed* p = mapData.ArrayGrid.Grid)
+				fixed (RenderTileDetailed* p = mapData.Grid)
 				{
 					stream.WriteRange((IntPtr)p, arrLen * elemSize);
 				}

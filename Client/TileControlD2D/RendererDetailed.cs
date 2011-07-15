@@ -151,15 +151,15 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_darkBrush == null)
 				m_darkBrush = new SolidColorBrush(renderTarget, new Color4(1.0f, 0, 0, 0));
 
-			for (int y = 0; y < rows && y < m_renderData.Size.Height; ++y)
+			for (int y = 0; y < rows && y < m_renderData.Height; ++y)
 			{
-				for (int x = 0; x < columns && x < m_renderData.Size.Width; ++x)
+				for (int x = 0; x < columns && x < m_renderData.Width; ++x)
 				{
 					var x1 = x * tileSize;
 					var y1 = y * tileSize;
 					var dstRect = new RectF(x1, y1, tileSize, tileSize);
 
-					var data = m_renderData.ArrayGrid.Grid[y, x];
+					var data = m_renderData.Grid[y, x];
 
 					var d1 = (data.TerrainDarknessLevel - data.InteriorDarknessLevel) / 127f;
 					var d2 = (data.InteriorDarknessLevel - data.ObjectDarknessLevel) / 127f;

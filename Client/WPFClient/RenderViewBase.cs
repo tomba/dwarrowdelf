@@ -109,9 +109,9 @@ namespace Dwarrowdelf.Client
 		{
 			//Debug.WriteLine("RenderView.ScrollTiles");
 
-			var columns = m_renderData.Size.Width;
-			var rows = m_renderData.Size.Height;
-			var grid = m_renderData.ArrayGrid.Grid;
+			var columns = m_renderData.Width;
+			var rows = m_renderData.Height;
+			var grid = m_renderData.Grid;
 
 			var ax = Math.Abs(scrollVector.X);
 			var ay = Math.Abs(scrollVector.Y);
@@ -145,7 +145,6 @@ namespace Dwarrowdelf.Client
 
 			Array.Clear(grid, yClrIdx * columns, columns * ay);
 		}
-
 
 		void MapChangedCallback(IntPoint3D ml)
 		{

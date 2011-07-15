@@ -7,26 +7,34 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public class RenderData<T> : IRenderData where T : struct
 	{
-		ArrayGrid2D<T> m_grid;
+		public int Width { get { return this.Size.Width; } }
+		public int Height { get { return this.Size.Height; } }
+		public IntSize Size { get; private set; }
+
+		public T[,] Grid { get; private set; }
 
 		public RenderData()
 		{
-			m_grid = new ArrayGrid2D<T>(0, 0);
+			this.Grid = new T[0, 0];
 		}
 
-		public IntSize Size
+		public void SetSize(IntSize size)
 		{
-			get { return m_grid.Size; }
-			set { if (m_grid.Size != value) m_grid = new ArrayGrid2D<T>(value); }
+			if (this.Size == size)
+				return;
+
+			this.Grid = new T[size.Height, size.Width];
+			this.Size = size;
 		}
 
-		public IntRect Bounds { get { return m_grid.Bounds; } }
-
-		public ArrayGrid2D<T> ArrayGrid { get { return m_grid; } }
+		public bool Contains(IntPoint p)
+		{
+			return p.X >= 0 && p.X < this.Width && p.Y >= 0 && p.Y < this.Height;
+		}
 
 		public void Clear()
 		{
-			m_grid.Clear();
+			Array.Clear(this.Grid, 0, this.Grid.Length);
 		}
 	}
 }
