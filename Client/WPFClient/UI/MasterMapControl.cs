@@ -461,9 +461,9 @@ namespace Dwarrowdelf.Client
 				m_tileSetHack = value;
 
 				if (m_tileSetHack)
-					m_world.SymbolDrawingCache.Load("SymbolInfosChar.xaml");
+					GameData.Data.SymbolDrawingCache.Load("SymbolInfosChar.xaml");
 				else
-					m_world.SymbolDrawingCache.Load("SymbolInfosGfx.xaml");
+					GameData.Data.SymbolDrawingCache.Load("SymbolInfosGfx.xaml");
 
 				m_mapControl.InvalidateSymbols();
 

@@ -185,7 +185,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_gameColor = value;
 
-				m_drawing = new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
+				m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
 				if (this.Environment != null)
 					this.Environment.OnObjectVisualChanged(this);
 
@@ -202,7 +202,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_symbolID = value;
 
-				m_drawing = new DrawingImage(this.World.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
+				m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
 				if (this.Environment != null)
 					this.Environment.OnObjectVisualChanged(this);
 

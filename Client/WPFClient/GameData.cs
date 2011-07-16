@@ -26,9 +26,12 @@ namespace Dwarrowdelf.Client
 		public GameData()
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
+			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+
+		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
 		public ClientConnection Connection
 		{

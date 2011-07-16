@@ -18,8 +18,6 @@ namespace Dwarrowdelf.Client
 		
 		public LivingCollection Controllables { get; private set; }
 
-		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
-
 		public Dwarrowdelf.Jobs.JobManager JobManager { get; private set; }
 
 		// perhaps this is not needed in client side
@@ -34,8 +32,6 @@ namespace Dwarrowdelf.Client
 			this.Environments = new ReadOnlyEnvironmentCollection(m_environments);
 
 			this.Controllables = new LivingCollection();
-
-			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
 
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
 		}

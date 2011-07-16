@@ -25,7 +25,6 @@ namespace Dwarrowdelf.Client
 	{
 		IRenderView m_renderView;
 
-		World m_world;
 		Environment m_env;
 
 		public MapControl()
@@ -50,6 +49,8 @@ namespace Dwarrowdelf.Client
 
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
+
+			this.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
 
 			base.OnInitialized(e);
 		}
@@ -117,16 +118,6 @@ namespace Dwarrowdelf.Client
 				{
 					m_env.MapTileTerrainChanged += MapChangedCallback;
 					m_env.MapTileObjectChanged += MapObjectChangedCallback;
-
-					if (m_world != m_env.World)
-					{
-						m_world = m_env.World;
-						this.SymbolDrawingCache = m_world.SymbolDrawingCache;
-					}
-				}
-				else
-				{
-					m_world = null;
 				}
 
 				InvalidateTiles();
