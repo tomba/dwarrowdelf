@@ -9,7 +9,6 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface IRenderer : IDisposable
 	{
-		RenderData<RenderTileDetailed> RenderData { get; set; }
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 
 		void Render(DrawingContext dc, Size renderSize, RenderContext ctx);

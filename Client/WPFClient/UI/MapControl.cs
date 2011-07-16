@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 	/// </summary>
 	class MapControl : TileControl.TileControlBase, INotifyPropertyChanged
 	{
-		RenderViewDetailed m_renderView;
+		IRenderView m_renderView;
 
 		World m_world;
 		Environment m_env;
@@ -34,11 +34,18 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			m_renderView = new RenderViewDetailed();
-
+#if DETAILED
+			var renderView = new RenderViewDetailed();
 			var renderer = new TileControl.RendererWPF();
 			//var renderer = new TileControl.RendererD3D();
-			renderer.RenderData = m_renderView.RenderData;
+			renderer.RenderData = renderView.RenderData;
+#else
+			var renderView = new RenderViewSimple();
+			var renderer = new TileControl.RendererSimpleWPF(renderView.RenderData);
+#endif
+
+			m_renderView = renderView;
+
 			SetRenderer(renderer);
 
 			this.TileLayoutChanged += OnTileArrangementChanged;

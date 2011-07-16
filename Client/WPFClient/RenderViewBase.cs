@@ -15,6 +15,8 @@ namespace Dwarrowdelf.Client
 		bool ShowVirtualSymbols { get; set; }
 		Environment Environment { get; set; }
 		IRenderData RenderData { get; }
+
+		void Resolve();
 	}
 
 	abstract class RenderViewBase<T> : IRenderView where T : struct

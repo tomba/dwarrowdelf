@@ -44,6 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RenderTileSimple.cs" />
     <Compile Include="IBitmapGenerator.cs" />
     <Compile Include="IRenderData.cs" />
     <Compile Include="IRenderer.cs" />

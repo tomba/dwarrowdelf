@@ -45,7 +45,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RendererWPF.cs" />
+    <Compile Include="RendererBaseWPF.cs" />
+    <Compile Include="RendererSimpleWPF.cs" />
+    <Compile Include="RendererDetailedWPF.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
