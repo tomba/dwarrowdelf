@@ -6,6 +6,7 @@ using SlimDX.Direct2D;
 
 namespace Dwarrowdelf.Client.TileControl
 {
+	/*
 	interface IRenderer
 	{
 		void RenderTargetChanged();
@@ -13,5 +14,5 @@ namespace Dwarrowdelf.Client.TileControl
 		void Render(RenderTarget renderTarget, int columns, int rows, int tileSize);
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 		void InvalidateSymbols();
-	}
+	}*/
 }

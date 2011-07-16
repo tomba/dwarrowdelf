@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
 	public delegate void TileLayoutChangedDelegate(IntSize gridSize, double tileSize, Point centerPos);
 
-	public abstract class TileControlBase : FrameworkElement
+	public abstract class TileControlBase : FrameworkElement, IDisposable
 	{
+		IRenderer m_renderer;
+
 		IntSize m_gridSize;
 		Point m_renderOffset;
 
@@ -17,32 +20,25 @@ namespace Dwarrowdelf.Client.TileControl
 		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
 
-		protected MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
 		public event TileLayoutChangedDelegate TileLayoutChanged;
 		public event Action AboutToRender;
 
+		protected void SetRenderer(IRenderer renderer)
+		{
+			m_renderer = renderer;
+		}
 
 		public IntSize GridSize
 		{
 			get { return m_gridSize; }
 		}
 
-		protected Point RenderOffset
+		public void Dispose()
 		{
-			get { return m_renderOffset; }
+			m_renderer.Dispose();
 		}
-
-		protected bool TileDataInvalid
-		{
-			get { return m_tileDataInvalid; }
-		}
-
-		protected bool TileRenderInvalid
-		{
-			get { return m_tileRenderInvalid; }
-		}
-
 
 		const double MAXTILESIZE = 64;
 		const double MINTILESIZE = 2;
@@ -110,7 +106,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		protected void UpdateTileLayout(Size renderSize)
+		void UpdateTileLayout(Size renderSize)
 		{
 			var tileSize = this.TileSize;
 
@@ -146,6 +142,20 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
+
+			var renderSize = arrangeBounds;
+			var renderWidth = (int)Math.Ceiling(renderSize.Width);
+			var renderHeight = (int)Math.Ceiling(renderSize.Height);
+
+			//if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+			UpdateTileLayout(renderSize);
+
+			return base.ArrangeOverride(arrangeBounds);
+		}
+
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
 		{
@@ -165,7 +175,16 @@ namespace Dwarrowdelf.Client.TileControl
 					this.AboutToRender();
 			}
 
-			Render(drawingContext, renderSize);
+			var ctx = new TileControl.RenderContext()
+			{
+				TileSize = this.TileSize,
+				RenderGridSize = this.GridSize,
+				RenderOffset = m_renderOffset,
+				TileDataInvalid = m_tileDataInvalid,
+				TileRenderInvalid = m_tileRenderInvalid,
+			};
+
+			m_renderer.Render(drawingContext, renderSize, ctx);
 
 			m_tileLayoutInvalid = false;
 			m_tileDataInvalid = false;
@@ -174,7 +193,15 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceVerbose("OnRender End");
 		}
 
-		protected abstract void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize);
+		public TileControl.ISymbolDrawingCache SymbolDrawingCache
+		{
+			get { return m_renderer.SymbolDrawingCache; }
+			set
+			{
+				m_renderer.SymbolDrawingCache = value;
+				InvalidateTileRender();
+			}
+		}
 
 
 		public void InvalidateTileRender()

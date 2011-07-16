@@ -12,7 +12,7 @@ using DXGI = SlimDX.DXGI;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class RendererDetailed : IRenderer, IDisposable
+	public class RendererDetailed : IDisposable
 	{
 		RenderData<RenderTileDetailed> m_renderData;
 

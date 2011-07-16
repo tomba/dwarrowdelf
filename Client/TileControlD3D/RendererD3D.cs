@@ -5,10 +5,7 @@ using SlimDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	/// <summary>
-	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
-	/// </summary>
-	public class TileControlD3D : TileControlBase, IDisposable
+	public class RendererD3D : IRenderer
 	{
 		D3DImageSlimDX m_interopImageSource;
 		SingleQuad11 m_scene;
@@ -20,15 +17,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 		SlimDX.Direct3D11.Buffer m_colorBuffer;
 
-		RenderData<RenderTileDetailed> m_renderData;
 		ISymbolDrawingCache m_symbolDrawingCache;
 
-		public TileControlD3D()
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
+
+		public RendererD3D()
 		{
 			m_interopImageSource = new D3DImageSlimDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
-			this.Loaded += new RoutedEventHandler(OnLoaded);
+			//this.Loaded += new RoutedEventHandler(OnLoaded);
 
 			m_device = Helpers11.CreateDevice();
 			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
@@ -39,7 +37,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceInformation("OnLoaded");
 
-			InvalidateVisual();
+			//InvalidateVisual();
 		}
 
 
@@ -51,7 +49,7 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_interopImageSource.IsFrontBufferAvailable)
 			{
 				trace.TraceInformation("Frontbuffer available");
-
+				/*
 				var renderWidth = (int)Math.Ceiling(this.RenderSize.Width);
 				var renderHeight = (int)Math.Ceiling(this.RenderSize.Height);
 
@@ -62,6 +60,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_interopImageSource.Unlock();
 
 				InvalidateTileRender();
+				 */
 			}
 			else
 			{
@@ -95,25 +94,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		protected override Size ArrangeOverride(Size arrangeBounds)
-		{
-			if (m_disposed)
-				return base.ArrangeOverride(arrangeBounds);
 
-			trace.TraceVerbose("ArrangeOverride({0})", arrangeBounds);
-
-			var renderSize = arrangeBounds;
-			var renderWidth = (int)Math.Ceiling(renderSize.Width);
-			var renderHeight = (int)Math.Ceiling(renderSize.Height);
-
-			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-				UpdateTileLayout(renderSize);
-
-			return base.ArrangeOverride(arrangeBounds);
-		}
-
-
-		protected override void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize)
+		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, RenderContext ctx)
 		{
 			if (m_disposed)
 				return;
@@ -126,12 +108,12 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
 				InitTextureRenderSurface(renderWidth, renderHeight);
 
-			if (this.TileDataInvalid)
-				m_scene.SendMapData(m_renderData, this.GridSize.Width, this.GridSize.Height);
+			if (ctx.TileDataInvalid)
+				m_scene.SendMapData(this.RenderData, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
 
-			if (this.TileRenderInvalid)
+			if (ctx.TileRenderInvalid)
 			{
-				m_scene.Render((float)this.TileSize, this.RenderOffset);
+				m_scene.Render((float)ctx.TileSize, ctx.RenderOffset);
 				m_device.ImmediateContext.Flush();
 			}
 
@@ -142,36 +124,7 @@ namespace Dwarrowdelf.Client.TileControl
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
-
-
-
-
-		public void SetRenderData(IRenderData renderData)
-		{
-			if (!(renderData is RenderData<RenderTileDetailed>))
-				throw new NotSupportedException();
-
-			m_renderData = (RenderData<RenderTileDetailed>)renderData;
-
-			InvalidateTileData();
-		}
-
-		public void InvalidateSymbols()
-		{
-			if (m_tileTextureArray != null)
-			{
-				m_tileTextureArray.Dispose();
-				m_tileTextureArray = null;
-			}
-
-			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
-
-			if (m_scene != null)
-			{
-				m_scene.SetTileTextures(m_tileTextureArray);
-				InvalidateTileRender();
-			}
-		}
+		public RenderData<RenderTileDetailed> RenderData { get; set; }
 
 		public ISymbolDrawingCache SymbolDrawingCache
 		{
@@ -190,10 +143,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
 
 				if (m_scene != null)
-				{
 					m_scene.SetTileTextures(m_tileTextureArray);
-					InvalidateTileRender();
-				}
 			}
 		}
 
@@ -201,7 +151,7 @@ namespace Dwarrowdelf.Client.TileControl
 		#region IDisposable
 		bool m_disposed;
 
-		~TileControlD3D()
+		~RendererD3D()
 		{
 			Dispose(false);
 		}

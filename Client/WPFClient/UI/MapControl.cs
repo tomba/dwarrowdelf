@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : TileControl.TileControlWPF, INotifyPropertyChanged
+	class MapControl : TileControl.TileControlBase, INotifyPropertyChanged
 	{
 		RenderViewDetailed m_renderView;
 
@@ -36,7 +36,11 @@ namespace Dwarrowdelf.Client
 		{
 			m_renderView = new RenderViewDetailed();
 
-			this.SetRenderData(m_renderView.RenderData);
+			var renderer = new TileControl.RendererWPF();
+			//var renderer = new TileControl.RendererD3D();
+			renderer.RenderData = m_renderView.RenderData;
+			SetRenderer(renderer);
+
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
 
@@ -60,6 +64,11 @@ namespace Dwarrowdelf.Client
 				return;
 
 			m_renderView.Resolve();
+		}
+
+		public void InvalidateSymbols()
+		{
+			// XXX ???
 		}
 
 		public void InvalidateTiles()

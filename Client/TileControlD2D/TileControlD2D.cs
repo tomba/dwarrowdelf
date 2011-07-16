@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.TileControl
 	/// <summary>
 	/// Shows tilemap. Handles only what is seen on the screen, no knowledge of environment, position, etc.
 	/// </summary>
-	public class TileControlD2D : TileControlBase, IDisposable
+	public class TileControlD2D : TileControlBase
 	{
 		Factory m_d2dFactory;
 		RenderTarget m_renderTarget;
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client.TileControl
 			return base.ArrangeOverride(arrangeBounds);
 		}
 
-		protected override void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize)
+		protected void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize)
 		{
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
