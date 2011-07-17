@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:Dwarrowdelf.Client"
                     x:Class="Dwarrowdelf.Client.UI.UIDictionary">
 
-    <DataTemplate DataType="{x:Type local:ClientGameObject}">
+    <DataTemplate DataType="{x:Type local:ItemObject}">
         <DataTemplate.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="Margin" Value="5,3" />
