@@ -59,6 +59,17 @@ namespace Dwarrowdelf.Client
 
 	class ClientGameObject : BaseGameObject, IGameObject
 	{
+		static ClientGameObject()
+		{
+			GameData.Data.SymbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
+		}
+
+		static void OnSymbolDrawingCacheChanged()
+		{
+			foreach (var ob in GameData.Data.World.Objects.OfType<ClientGameObject>())
+				ob.ReloadDrawing();
+		}
+
 		GameObjectCollection m_inventory;
 		public ReadOnlyGameObjectCollection Inventory { get; private set; }
 
@@ -217,6 +228,14 @@ namespace Dwarrowdelf.Client
 			get { return m_drawing; }
 		}
 
+		void ReloadDrawing()
+		{
+			m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.GameColor));
+			if (this.Environment != null)
+				this.Environment.OnObjectVisualChanged(this);
+
+			Notify("Drawing");
+		}
 
 		MaterialID m_materialID;
 		public MaterialID MaterialID
