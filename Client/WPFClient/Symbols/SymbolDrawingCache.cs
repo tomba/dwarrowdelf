@@ -16,6 +16,8 @@ namespace Dwarrowdelf.Client
 		DrawingCache m_drawingCache;
 		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap;
 
+		public event Action DrawingsChanged;
+
 		public SymbolDrawingCache(string symbolInfoName)
 		{
 			Load(symbolInfoName);
@@ -41,6 +43,9 @@ namespace Dwarrowdelf.Client
 
 			if (m_symbolSet.Drawings != null)
 				m_drawingCache = new DrawingCache(m_symbolSet.Drawings);
+
+			if (this.DrawingsChanged != null)
+				this.DrawingsChanged();
 		}
 
 		public Drawing GetDrawing(SymbolID symbolID, GameColor color)

@@ -23,9 +23,20 @@ namespace Dwarrowdelf.Client.TileControl
 
 			set
 			{
+				if (m_symbolDrawingCache != null)
+					m_symbolDrawingCache.DrawingsChanged -= OnDrawingsChanged;
+
 				m_symbolDrawingCache = value;
 				this.SymbolBitmapCache = null;
+
+				if (m_symbolDrawingCache != null)
+					m_symbolDrawingCache.DrawingsChanged += OnDrawingsChanged;
 			}
+		}
+
+		void OnDrawingsChanged()
+		{
+			this.SymbolBitmapCache = null;
 		}
 
 		protected SymbolBitmapCache SymbolBitmapCache { get; private set; }

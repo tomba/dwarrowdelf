@@ -74,11 +74,6 @@ namespace Dwarrowdelf.Client
 			m_renderView.Resolve();
 		}
 
-		public void InvalidateSymbols()
-		{
-			// XXX ???
-		}
-
 		public void InvalidateTiles()
 		{
 			this.InvalidateTileData();

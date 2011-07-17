@@ -193,16 +193,26 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceVerbose("OnRender End");
 		}
 
-		public TileControl.ISymbolDrawingCache SymbolDrawingCache
+		public ISymbolDrawingCache SymbolDrawingCache
 		{
 			get { return m_renderer.SymbolDrawingCache; }
 			set
 			{
+				if (m_renderer.SymbolDrawingCache != null)
+					m_renderer.SymbolDrawingCache.DrawingsChanged -= OnSymbolDrawingCacheChanged;
+
 				m_renderer.SymbolDrawingCache = value;
 				InvalidateTileRender();
+
+				if (m_renderer.SymbolDrawingCache != null)
+					m_renderer.SymbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
 			}
 		}
 
+		void OnSymbolDrawingCacheChanged()
+		{
+			InvalidateTileRender();
+		}
 
 		public void InvalidateTileRender()
 		{

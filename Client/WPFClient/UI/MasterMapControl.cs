@@ -451,23 +451,33 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		bool m_tileSetHack;
-		public bool TileSetHack
+		string m_tileSet = "Char";
+		public string TileSet
 		{
-			get { return m_tileSetHack; }
+			get { return m_tileSet; }
 
 			set
 			{
-				m_tileSetHack = value;
+				string xaml;
 
-				if (m_tileSetHack)
-					GameData.Data.SymbolDrawingCache.Load("SymbolInfosChar.xaml");
-				else
-					GameData.Data.SymbolDrawingCache.Load("SymbolInfosGfx.xaml");
+				switch (value)
+				{
+					case "Char":
+						xaml = "SymbolInfosChar.xaml";
+						break;
 
-				m_mapControl.InvalidateSymbols();
+					case "Gfx":
+						xaml = "SymbolInfosGfx.xaml";
+						break;
 
-				Notify("TileSetHack");
+					default:
+						throw new Exception();
+				}
+
+				GameData.Data.SymbolDrawingCache.Load(xaml);
+				m_tileSet = value;
+
+				Notify("TileSet");
 			}
 		}
 

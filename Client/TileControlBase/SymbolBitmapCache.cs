@@ -9,6 +9,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ISymbolDrawingCache
 	{
+		event Action DrawingsChanged;
 		Drawing GetDrawing(SymbolID symbolID, GameColor color);
 	}
 

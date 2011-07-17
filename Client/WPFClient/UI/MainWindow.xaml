@@ -28,7 +28,10 @@
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
                 <Separator />
-                <ToggleButton IsChecked="{Binding Path=TileSetHack, ElementName=map}">TileSetHack</ToggleButton>
+                <ComboBox Text="{Binding Path=TileSet, ElementName=map}" MinWidth="100">
+                    <ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
+                    <ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
+                </ComboBox>
                 <Separator />
                 <ToggleButton IsChecked="{Binding Path=IsAutoAdvanceTurn}">AutoAdvanceTurn</ToggleButton>
                 <Separator />
