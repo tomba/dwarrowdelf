@@ -42,6 +42,11 @@ namespace Dwarrowdelf.Client
 		ScaleTransform m_scaleTransform;
 		TranslateTransform m_translateTransform;
 
+		double m_tileSizeTarget;
+		bool m_tileSizeAnimated;
+		Point m_centerPosTarget;
+		bool m_centerPosAnimated;
+
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
@@ -115,8 +120,11 @@ namespace Dwarrowdelf.Client
 		public void BeginTileSizeAnim(double targetTileSize)
 		{
 			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; };
+			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; m_tileSizeAnimated = false; };
 			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+			m_tileSizeTarget = targetTileSize;
+			m_tileSizeAnimated = true;
 		}
 
 		public double TileSize
@@ -133,8 +141,6 @@ namespace Dwarrowdelf.Client
 				m_mapControl.TileSize = v;
 			}
 		}
-
-		double m_animTargetTileSize;
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
@@ -154,33 +160,21 @@ namespace Dwarrowdelf.Client
 
 			e.Handled = true;
 
-			if (m_animTargetTileSize == 0)
-				m_animTargetTileSize = m_mapControl.TileSize;
-
-			var origTileSize = m_animTargetTileSize;
-			var origCenter = m_mapControl.CenterPos;
-
+			var origTileSize = m_tileSizeAnimated ? m_tileSizeTarget : m_mapControl.TileSize;
+			var origCenter = m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos;
 
 			double targetTileSize = origTileSize;
 
 			if (e.Delta > 0)
-			{
-				if (origTileSize == m_mapControl.MaxTileSize)
-					return;
-
 				targetTileSize *= 2;
-			}
 			else
-			{
-				if (origTileSize == m_mapControl.MinTileSize)
-					return;
-
 				targetTileSize /= 2;
-			}
 
 			targetTileSize = MyMath.Clamp(targetTileSize, m_mapControl.MaxTileSize, m_mapControl.MinTileSize);
 
-			m_animTargetTileSize = targetTileSize;
+			if (targetTileSize == origTileSize)
+				return;
+
 
 
 
@@ -193,7 +187,7 @@ namespace Dwarrowdelf.Client
 
 			var ml = m_mapControl.ScreenPointToMapLocation(p);
 			//ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
-			var targetCenter = ml - v;
+			var targetCenterPos = ml - v;
 
 			//targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
 
@@ -201,14 +195,8 @@ namespace Dwarrowdelf.Client
 			m_mapControl.TileSize = targetTileSize;
 			m_mapControl.CenterPos = targetCenter;
 #else
-			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; };
-			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
-
-			var anim2 = new PointAnimation(targetCenter, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim2.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);
-			anim2.Completed += delegate { m_mapControl.CenterPos = targetCenter; };
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim2, HandoffBehavior.SnapshotAndReplace);
+			BeginTileSizeAnim(targetTileSize);
+			BeginCenterPosAnim(targetCenterPos, new MyEase(m_mapControl.TileSize, targetTileSize));
 #endif
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
@@ -416,19 +404,26 @@ namespace Dwarrowdelf.Client
 
 		public void BeginCenterPosAnim(IntPoint targetCenterPos)
 		{
-			var center = new Point(targetCenterPos.X, targetCenterPos.Y);
-			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.CenterPos = center; };
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			var centerPosTarget = new Point(targetCenterPos.X, targetCenterPos.Y);
+			BeginCenterPosAnim(centerPosTarget);
 		}
 
 		public void BeginCenterPosAnim(IntVector centerPosDiff)
 		{
-			var v = new Vector(centerPosDiff.X, centerPosDiff.Y);
-			var center = m_mapControl.CenterPos + v;
-			var anim = new PointAnimation(center, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.CenterPos = center; };
+			var centerPosTarget = m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos;
+			centerPosTarget += new Vector(centerPosDiff.X, centerPosDiff.Y);
+			BeginCenterPosAnim(centerPosTarget);
+		}
+
+		void BeginCenterPosAnim(Point target, IEasingFunction easingFunc = null)
+		{
+			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
+			anim.Completed += delegate { m_mapControl.CenterPos = target; m_centerPosAnimated = false; };
+			anim.EasingFunction = easingFunc;
 			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+			m_centerPosTarget = target;
+			m_centerPosAnimated = true;
 		}
 
 		public IntPoint CenterPos
