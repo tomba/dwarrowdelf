@@ -47,6 +47,11 @@ namespace Dwarrowdelf.Client
 		Point m_centerPosTarget;
 		bool m_centerPosAnimated;
 
+		const int ANIM_TIME_MS = 200;
+
+		const double MAXTILESIZE = 64;
+		const double MINTILESIZE = 2;
+
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
@@ -87,8 +92,6 @@ namespace Dwarrowdelf.Client
 
 			m_selectionRect = new Rectangle();
 			m_selectionRect.Visibility = Visibility.Hidden;
-			m_selectionRect.Width = this.TileSize;
-			m_selectionRect.Height = this.TileSize;
 			m_selectionRect.Stroke = Brushes.Blue;
 			m_selectionRect.StrokeThickness = 1;
 			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
@@ -117,28 +120,40 @@ namespace Dwarrowdelf.Client
 		public int Columns { get { return m_mapControl.GridSize.Width; } }
 		public int Rows { get { return m_mapControl.GridSize.Height; } }
 
-		public void BeginTileSizeAnim(double targetTileSize)
-		{
-			var anim = new DoubleAnimation(targetTileSize, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.TileSize = targetTileSize; m_tileSizeAnimated = false; };
-			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
-
-			m_tileSizeTarget = targetTileSize;
-			m_tileSizeAnimated = true;
-		}
-
 		public double TileSize
 		{
 			get { return m_mapControl.TileSize; }
 
 			set
 			{
-				var v = value;
-				v = Math.Log(v, 2);
-				v = Math.Round(v);
-				v = Math.Pow(2, v);
+				if (m_tileSizeAnimated)
+				{
+					m_mapControl.BeginAnimation(MapControl.TileSizeProperty, null);
+					m_tileSizeAnimated = false;
+				}
 
-				m_mapControl.TileSize = v;
+				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
+				m_mapControl.TileSize = value;
+			}
+		}
+
+		public double TargetTileSize
+		{
+			get { return m_tileSizeAnimated ? m_tileSizeTarget : this.TileSize; }
+
+			set
+			{
+				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
+
+				if (value == this.TargetTileSize)
+					return;
+
+				var anim = new DoubleAnimation(value, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.Stop);
+				anim.Completed += delegate { m_mapControl.TileSize = value; m_tileSizeAnimated = false; };
+				m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+				m_tileSizeTarget = value;
+				m_tileSizeAnimated = true;
 			}
 		}
 
@@ -170,7 +185,7 @@ namespace Dwarrowdelf.Client
 			else
 				targetTileSize /= 2;
 
-			targetTileSize = MyMath.Clamp(targetTileSize, m_mapControl.MaxTileSize, m_mapControl.MinTileSize);
+			targetTileSize = MyMath.Clamp(targetTileSize, MAXTILESIZE, MINTILESIZE);
 
 			if (targetTileSize == origTileSize)
 				return;
@@ -191,13 +206,8 @@ namespace Dwarrowdelf.Client
 
 			//targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
 
-#if NOANIM
-			m_mapControl.TileSize = targetTileSize;
-			m_mapControl.CenterPos = targetCenter;
-#else
-			BeginTileSizeAnim(targetTileSize);
-			BeginCenterPosAnim(targetCenterPos, new MyEase(m_mapControl.TileSize, targetTileSize));
-#endif
+			this.TargetTileSize = targetTileSize;
+			this.TargetCenterPos = targetCenterPos;
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
@@ -218,6 +228,9 @@ namespace Dwarrowdelf.Client
 
 			protected override double EaseInCore(double normalizedTime)
 			{
+				if (t0 == tn)
+					return normalizedTime;
+
 				normalizedTime = 1.0 - normalizedTime;
 
 				double left = 1.0 / t0 - 1.0 / tn;
@@ -253,8 +266,8 @@ namespace Dwarrowdelf.Client
 
 		void UpdateScaleTransform()
 		{
-			m_scaleTransform.ScaleX = this.TileSize;
-			m_scaleTransform.ScaleY = -this.TileSize;
+			m_scaleTransform.ScaleX = m_mapControl.TileSize;
+			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
 		}
 
 		public MapSelection Selection
@@ -292,7 +305,7 @@ namespace Dwarrowdelf.Client
 		Rect MapRectToScreenPointRect(IntRect ir)
 		{
 			Rect r = new Rect(MapLocationToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
-				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
+				new Size(ir.Width * m_mapControl.TileSize, ir.Height * m_mapControl.TileSize));
 			return r;
 		}
 
@@ -382,10 +395,7 @@ namespace Dwarrowdelf.Client
 				cy += incY;
 
 			if (cx != m_mapControl.CenterPos.X || cy != m_mapControl.CenterPos.Y)
-			{
-				var p = new IntPoint((int)Math.Round(cx), (int)Math.Round(cy));
-				this.CenterPos = p;
-			}
+				m_mapControl.CenterPos = new Point(Math.Round(cx), Math.Round(cy));
 
 			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
@@ -402,37 +412,45 @@ namespace Dwarrowdelf.Client
 			base.OnMouseUp(e);
 		}
 
-		public void BeginCenterPosAnim(IntPoint targetCenterPos)
+		public void ZoomTo(Environment env, IntPoint3D p)
 		{
-			var centerPosTarget = new Point(targetCenterPos.X, targetCenterPos.Y);
-			BeginCenterPosAnim(centerPosTarget);
+			this.Environment = env;
+			this.Z = p.Z;
+			this.TargetCenterPos = new Point(p.X, p.Y);
 		}
 
-		public void BeginCenterPosAnim(IntVector centerPosDiff)
+		public Point CenterPos
 		{
-			var centerPosTarget = m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos;
-			centerPosTarget += new Vector(centerPosDiff.X, centerPosDiff.Y);
-			BeginCenterPosAnim(centerPosTarget);
-		}
+			get { return m_mapControl.CenterPos; }
 
-		void BeginCenterPosAnim(Point target, IEasingFunction easingFunc = null)
-		{
-			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(200)), FillBehavior.Stop);
-			anim.Completed += delegate { m_mapControl.CenterPos = target; m_centerPosAnimated = false; };
-			anim.EasingFunction = easingFunc;
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
-
-			m_centerPosTarget = target;
-			m_centerPosAnimated = true;
-		}
-
-		public IntPoint CenterPos
-		{
-			get { return new IntPoint((int)Math.Round(m_mapControl.CenterPos.X), (int)Math.Round(m_mapControl.CenterPos.Y)); }
 			set
 			{
-				var center = new Point(value.X, value.Y);
-				m_mapControl.CenterPos = center;
+				if (m_centerPosAnimated)
+				{
+					m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
+					m_centerPosAnimated = false;
+				}
+
+				m_mapControl.CenterPos = value;
+			}
+		}
+
+		public Point TargetCenterPos
+		{
+			get { return m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos; }
+
+			set
+			{
+				if (value == this.TargetCenterPos)
+					return;
+
+				var anim = new PointAnimation(value, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.Stop);
+				anim.Completed += delegate { m_mapControl.CenterPos = value; m_centerPosAnimated = false; };
+				anim.EasingFunction = new MyEase(m_mapControl.TileSize, this.TargetTileSize);
+				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+
+				m_centerPosTarget = value;
+				m_centerPosAnimated = true;
 			}
 		}
 
@@ -503,7 +521,7 @@ namespace Dwarrowdelf.Client
 					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
 
-					this.CenterPos = m_env.HomeLocation.ToIntPoint();
+					m_mapControl.CenterPos = new Point(m_env.HomeLocation.X, m_env.HomeLocation.Y);
 					this.Z = m_env.HomeLocation.Z;
 				}
 				else

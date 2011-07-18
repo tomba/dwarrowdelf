@@ -40,12 +40,6 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderer.Dispose();
 		}
 
-		const double MAXTILESIZE = 64;
-		const double MINTILESIZE = 2;
-
-		public double MaxTileSize { get { return MAXTILESIZE; } }
-		public double MinTileSize { get { return MINTILESIZE; } }
-
 		public double TileSize
 		{
 			get { return (double)GetValue(TileSizeProperty); }
@@ -68,10 +62,7 @@ namespace Dwarrowdelf.Client.TileControl
 		static object OnCoerceTileSize(DependencyObject d, Object baseValue)
 		{
 			var ts = (double)baseValue;
-
-			ts = MyMath.Clamp(ts, MAXTILESIZE, MINTILESIZE);
-
-			return ts;
+			return Math.Max(ts, 1);
 		}
 
 		public Point CenterPos

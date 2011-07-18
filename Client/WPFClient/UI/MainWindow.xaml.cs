@@ -278,9 +278,7 @@ namespace Dwarrowdelf.Client
 		{
 			Environment env = dst as Environment;
 
-			map.Environment = env;
-			map.Z = loc.Z;
-			map.BeginCenterPosAnim(this.FollowObject.Location.ToIntPoint());
+			map.ZoomTo(env, loc);
 
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = loc;
@@ -373,7 +371,8 @@ namespace Dwarrowdelf.Client
 					if (m < 1)
 						m = 1;
 					v = v * m;
-					map.BeginCenterPosAnim(v);
+
+					map.TargetCenterPos += new Vector(v.X, v.Y);
 				}
 			}
 			else if (e.Key == Key.OemPeriod)
@@ -389,13 +388,13 @@ namespace Dwarrowdelf.Client
 			else if (e.Key == Key.Add)
 			{
 				e.Handled = true;
-				map.BeginTileSizeAnim(map.TileSize * 2);
+				map.TargetTileSize *= 2;
 			}
 
 			else if (e.Key == Key.Subtract)
 			{
 				e.Handled = true;
-				map.BeginTileSizeAnim(map.TileSize / 2);
+				map.TargetTileSize /= 2;
 			}
 
 		}
@@ -1112,9 +1111,7 @@ namespace Dwarrowdelf.Client
 
 			this.FollowObject = null;
 
-			map.Environment = ob.Environment;
-			map.Z = ob.Location.Z;
-			map.BeginCenterPosAnim(ob.Location.ToIntPoint());
+			map.ZoomTo(ob.Environment, ob.Location);
 		}
 
 		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -1124,9 +1121,7 @@ namespace Dwarrowdelf.Client
 
 			this.FollowObject = null;
 
-			map.Environment = ob.Environment;
-			map.Z = ob.Location.Z;
-			map.BeginCenterPosAnim(ob.Location.ToIntPoint());
+			map.ZoomTo(ob.Environment, ob.Location);
 		}
 
 		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)

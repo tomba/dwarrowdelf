@@ -36,9 +36,8 @@ namespace Dwarrowdelf.Client
 #if USE_WPF
 #if DETAILED
 			var renderView = new RenderViewDetailed();
-			var renderer = new TileControl.RendererWPF();
-			//var renderer = new TileControl.RendererD3D();
-			renderer.RenderData = renderView.RenderData;
+			var renderer = new TileControl.RendererDetailedWPF(renderView.RenderData);
+			//var renderer = new TileControl.RendererD3D(renderView.RenderData);
 #else
 			var renderView = new RenderViewSimple();
 			var renderer = new TileControl.RendererSimpleWPF(renderView.RenderData);
