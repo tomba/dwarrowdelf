@@ -142,9 +142,9 @@
 
             <Separator />
             <TextBlock>CenterPos</TextBlock>
-            <TextBox Width="50" IsReadOnly="True">
+            <TextBox Width="100" IsReadOnly="True">
                 <TextBox.Text>
-                    <MultiBinding StringFormat="{}{0}, {1}">
+                    <MultiBinding StringFormat="{}{0:F2}, {1:F2}">
                         <Binding ElementName="map" Path="CenterPos.X" Mode="OneWay" />
                         <Binding ElementName="map" Path="CenterPos.Y" Mode="OneWay" />
                     </MultiBinding>
