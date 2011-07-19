@@ -41,8 +41,6 @@ namespace Dwarrowdelf.Client
 			//this.Width = 1024;
 			//this.Height = 600;
 
-			this.PreviewKeyDown += Window_PreKeyDown;
-			this.PreviewTextInput += Window_PreTextInput;
 			map.MouseDown += MapControl_MouseDown;
 		}
 
@@ -325,111 +323,116 @@ namespace Dwarrowdelf.Client
 			return true;
 		}
 
-		void Window_PreKeyDown(object sender, KeyEventArgs e)
+		void SetScrollDirection()
 		{
-			//MyDebug.WriteLine("OnMyKeyDown");
-			if (GameData.Data.User == null)
-				return;
+			var dir = Direction.None;
 
-			if (inputTextBox.IsFocused)
-				return;
+			if (Keyboard.IsKeyDown(Key.Up))
+				dir |= Direction.North;
+			else if (Keyboard.IsKeyDown(Key.Down))
+				dir |= Direction.South;
 
-			var currentOb = GameData.Data.CurrentObject;
+			if (Keyboard.IsKeyDown(Key.Left))
+				dir |= Direction.West;
+			else if (Keyboard.IsKeyDown(Key.Right))
+				dir |= Direction.East;
 
-			if (KeyIsDir(e.Key))
-			{
-				e.Handled = true;
-				Direction dir = KeyToDir(e.Key);
-				if (currentOb != null)
-				{
-					if (e.KeyboardDevice.Modifiers == ModifierKeys.Shift)
-					{
-						currentOb.RequestAction(new MineAction(dir, MineActionType.Mine, ActionPriority.Normal));
-					}
-					else
-					{
-						var env = currentOb.Environment;
-						var curTerrainId = env.GetTerrain(currentOb.Location).ID;
-						var destInterId = env.GetInterior(currentOb.Location + dir).ID;
-						var destDownTerrainId = env.GetTerrain(currentOb.Location + dir + Direction.Down).ID;
+			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
-						if (dir.IsCardinal())
-						{
-							if (curTerrainId.IsSlope() && curTerrainId == dir.ToSlope())
-								dir |= Direction.Up;
-							else if (destInterId == InteriorID.Empty && destDownTerrainId.IsSlope() && destDownTerrainId == dir.Reverse().ToSlope())
-								dir |= Direction.Down;
-						}
+			var v = IntVector.FromDirection(dir);
 
-						currentOb.RequestAction(new MoveAction(dir, ActionPriority.Normal));
-					}
-				}
-				else
-				{
-					var v = IntVector.FromDirection(dir);
-					var m = ((map.Columns + map.Rows) / 2) / 4;
-					if (m < 1)
-						m = 1;
-					v = v * m;
+			if (fast)
+				v *= 5;
 
-					map.TargetCenterPos += new Vector(v.X, v.Y);
-				}
-			}
-			else if (e.Key == Key.OemPeriod)
-			{
-				e.Handled = true;
-				GameData.Data.User.SendProceedTurn();
-			}
-			else if (e.Key == Key.Space)
-			{
-				e.Handled = true;
-				GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
-			}
-			else if (e.Key == Key.Add)
-			{
-				e.Handled = true;
-				map.TargetTileSize *= 2;
-			}
-
-			else if (e.Key == Key.Subtract)
-			{
-				e.Handled = true;
-				map.TargetTileSize /= 2;
-			}
-
+			map.ScrollToDirection(v);
 		}
 
-		void Window_PreTextInput(object sender, TextCompositionEventArgs e)
+		protected override void OnPreviewKeyDown(KeyEventArgs e)
 		{
-			if (inputTextBox.IsFocused)
+			if (GameData.Data.User == null)
+			{
+				base.OnPreviewKeyDown(e);
 				return;
-
-			string text = e.Text;
-			Direction dir;
-
-			if (text == ">")
-			{
-				dir = Direction.Down;
 			}
-			else if (text == "<")
+
+			if (inputTextBox.IsFocused)
 			{
-				dir = Direction.Up;
-			}
-			else
-			{
+				base.OnPreviewKeyDown(e);
 				return;
 			}
 
 			e.Handled = true;
-			var currentOb = GameData.Data.CurrentObject;
-			if (currentOb != null)
+
+			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
-				currentOb.RequestAction(new MoveAction(dir, ActionPriority.Normal));
+				SetScrollDirection();
+			}
+			else if (e.Key == Key.OemPeriod)
+			{
+				GameData.Data.User.SendProceedTurn();
+			}
+			else if (e.Key == Key.Space)
+			{
+				GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
+			}
+			else if (e.Key == Key.Add)
+			{
+				map.ZoomIn();
+			}
+			else if (e.Key == Key.Subtract)
+			{
+				map.ZoomOut();
 			}
 			else
 			{
-				map.Z += new IntVector3D(dir).Z;
+				e.Handled = false;
 			}
+
+			base.OnPreviewKeyDown(e);
+		}
+
+		protected override void OnPreviewKeyUp(KeyEventArgs e)
+		{
+			e.Handled = true;
+
+			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
+			{
+				SetScrollDirection();
+			}
+			else
+			{
+				e.Handled = false;
+			}
+
+			base.OnPreviewKeyUp(e);
+		}
+
+		protected override void OnPreviewTextInput(TextCompositionEventArgs e)
+		{
+			if (inputTextBox.IsFocused)
+			{
+				base.OnPreviewTextInput(e);
+				return;
+			}
+
+			string text = e.Text;
+
+			e.Handled = true;
+
+			if (text == ">")
+			{
+				map.Z--;
+			}
+			else if (text == "<")
+			{
+				map.Z++;
+			}
+			else
+			{
+				e.Handled = false;
+			}
+
+			base.OnPreviewTextInput(e);
 		}
 
 		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)

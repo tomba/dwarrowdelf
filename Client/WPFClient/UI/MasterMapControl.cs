@@ -42,15 +42,13 @@ namespace Dwarrowdelf.Client
 		ScaleTransform m_scaleTransform;
 		TranslateTransform m_translateTransform;
 
-		double m_tileSizeTarget;
-		bool m_tileSizeAnimated;
-		Point m_centerPosTarget;
-		bool m_centerPosAnimated;
-
 		const int ANIM_TIME_MS = 200;
 
 		const double MAXTILESIZE = 64;
 		const double MINTILESIZE = 2;
+
+		double? m_targetTileSize;
+		IntVector m_scrollVector;
 
 		public MasterMapControl()
 		{
@@ -71,7 +69,6 @@ namespace Dwarrowdelf.Client
 			grid.Children.Add((UIElement)mc);
 			m_mapControl = mc;
 			m_mapControl.TileLayoutChanged += OnTileArrangementChanged;
-
 
 			m_elementCanvas = new Canvas();
 			grid.Children.Add(m_elementCanvas);
@@ -126,39 +123,42 @@ namespace Dwarrowdelf.Client
 
 			set
 			{
-				if (m_tileSizeAnimated)
-				{
-					m_mapControl.BeginAnimation(MapControl.TileSizeProperty, null);
-					m_tileSizeAnimated = false;
-				}
+				m_targetTileSize = null;
+				m_mapControl.BeginAnimation(MapControl.TileSizeProperty, null);
 
 				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
 				m_mapControl.TileSize = value;
 			}
 		}
 
-		public double TargetTileSize
+		public void ZoomIn()
 		{
-			get { return m_tileSizeAnimated ? m_tileSizeTarget : this.TileSize; }
+			var ts = m_targetTileSize ?? this.TileSize;
+			ts *= 2;
+			ZoomTo(ts);
+		}
 
-			set
-			{
-				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
+		public void ZoomOut()
+		{
+			var ts = m_targetTileSize ?? this.TileSize;
+			ts /= 2;
+			ZoomTo(ts);
+		}
 
-				if (value == this.TargetTileSize)
-					return;
+		void ZoomTo(double tileSize)
+		{
+			tileSize = MyMath.Clamp(tileSize, MAXTILESIZE, MINTILESIZE);
 
-				var anim = new DoubleAnimation(value, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.Stop);
-				anim.Completed += delegate { m_mapControl.TileSize = value; m_tileSizeAnimated = false; };
-				m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			m_targetTileSize = tileSize;
 
-				m_tileSizeTarget = value;
-				m_tileSizeAnimated = true;
-			}
+			var anim = new DoubleAnimation(tileSize, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
+			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
+			e.Handled = true;
+
 			if (this.IsMouseCaptured || (Keyboard.Modifiers & ModifierKeys.Control) != 0)
 			{
 				if (e.Delta > 0)
@@ -166,17 +166,12 @@ namespace Dwarrowdelf.Client
 				else
 					this.Z++;
 
-				e.Handled = true;
-
 				return;
 			}
 
 			// Zoom so that the position under the mouse stays under the mouse
 
-			e.Handled = true;
-
-			var origTileSize = this.TargetTileSize;
-			var origCenter = this.TargetCenterPos;
+			var origTileSize = m_targetTileSize ?? this.TileSize;
 
 			double targetTileSize = origTileSize;
 
@@ -192,22 +187,17 @@ namespace Dwarrowdelf.Client
 
 
 
-
 			var p = e.GetPosition(this);
 
 			Vector v = p - new Point(m_mapControl.ActualWidth / 2, m_mapControl.ActualHeight / 2);
 			v /= targetTileSize;
 			v.Y = -v.Y;
-			//v = new Vector(Math.Round(v.X), Math.Round(v.Y));
 
 			var ml = m_mapControl.ScreenPointToMapLocation(p);
-			//ml = new Point(Math.Round(ml.X), Math.Round(ml.Y));
 			var targetCenterPos = ml - v;
 
-			//targetCenter = new Point(Math.Round(targetCenter.X), Math.Round(targetCenter.Y));
-
-			this.TargetTileSize = targetTileSize;
-			this.TargetCenterPos = targetCenterPos;
+			ZoomTo(targetTileSize);
+			ScrollTo(targetCenterPos, targetTileSize);
 
 			//Debug.Print("Wheel zoom {0:F2} -> {1:F2}, Center {2:F2} -> {3:F2}", origTileSize, targetTileSize, origCenter, targetCenter);
 		}
@@ -416,7 +406,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = env;
 			this.Z = p.Z;
-			this.TargetCenterPos = new Point(p.X, p.Y);
+			ScrollTo(new Point(p.X, p.Y));
 		}
 
 		public Point CenterPos
@@ -425,33 +415,62 @@ namespace Dwarrowdelf.Client
 
 			set
 			{
-				if (m_centerPosAnimated)
-				{
-					m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
-					m_centerPosAnimated = false;
-				}
-
+				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
 				m_mapControl.CenterPos = value;
 			}
 		}
 
-		public Point TargetCenterPos
+		void ScrollTo(Point target)
 		{
-			get { return m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos; }
+			ScrollToDirection(new IntVector());
 
-			set
+			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+		}
+
+		void ScrollTo(Point target, double targetTileSize)
+		{
+			ScrollToDirection(new IntVector());
+
+			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
+			anim.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+		}
+
+		public void ScrollToDirection(IntVector vector)
+		{
+			if (vector == m_scrollVector)
+				return;
+
+			m_scrollVector = vector;
+
+			if (vector == new IntVector())
+				StopScroll();
+			else
+				BeginScroll(vector);
+		}
+
+		void BeginScroll(IntVector vector)
+		{
+			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 16);
+			var v = vector * m;
+
+			var cp = this.CenterPos + new Vector(v.X, v.Y);
+
+			var anim = new PointAnimation(cp, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
+			anim.Completed += (o, args) =>
 			{
-				if (value == this.TargetCenterPos)
-					return;
+				if (m_scrollVector != new IntVector())
+					BeginScroll(m_scrollVector);
+			};
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+		}
 
-				var anim = new PointAnimation(value, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.Stop);
-				anim.Completed += delegate { m_mapControl.CenterPos = value; m_centerPosAnimated = false; };
-				anim.EasingFunction = new MyEase(m_mapControl.TileSize, this.TargetTileSize);
-				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
-
-				m_centerPosTarget = value;
-				m_centerPosAnimated = true;
-			}
+		void StopScroll()
+		{
+			var cp = this.CenterPos;
+			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
+			this.CenterPos = cp;
 		}
 
 		public bool ShowVirtualSymbols
