@@ -363,6 +363,9 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
+			if (m_mapControl == null)
+				return;
+
 			UpdateHoverTileInfo(e.GetPosition(this));
 
 			if (!IsMouseCaptured)
