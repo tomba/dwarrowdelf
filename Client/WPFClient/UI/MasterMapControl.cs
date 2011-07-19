@@ -175,8 +175,8 @@ namespace Dwarrowdelf.Client
 
 			e.Handled = true;
 
-			var origTileSize = m_tileSizeAnimated ? m_tileSizeTarget : m_mapControl.TileSize;
-			var origCenter = m_centerPosAnimated ? m_centerPosTarget : m_mapControl.CenterPos;
+			var origTileSize = this.TargetTileSize;
+			var origCenter = this.TargetCenterPos;
 
 			double targetTileSize = origTileSize;
 
