@@ -33,6 +33,7 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnInitialized(EventArgs e)
 		{
+#if USE_WPF
 #if DETAILED
 			var renderView = new RenderViewDetailed();
 			var renderer = new TileControl.RendererWPF();
@@ -41,6 +42,11 @@ namespace Dwarrowdelf.Client
 #else
 			var renderView = new RenderViewSimple();
 			var renderer = new TileControl.RendererSimpleWPF(renderView.RenderData);
+#endif
+#else
+			var renderView = new RenderViewDetailed();
+			var renderer = new TileControl.RendererD3D();
+			renderer.RenderData = renderView.RenderData;
 #endif
 
 			m_renderView = renderView;
