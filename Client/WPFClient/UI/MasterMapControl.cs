@@ -452,7 +452,7 @@ namespace Dwarrowdelf.Client
 
 		void BeginScroll(IntVector vector)
 		{
-			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 16);
+			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 32);
 			var v = vector * m;
 
 			var cp = this.CenterPos + new Vector(v.X, v.Y);

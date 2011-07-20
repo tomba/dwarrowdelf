@@ -342,7 +342,7 @@ namespace Dwarrowdelf.Client
 			var v = IntVector.FromDirection(dir);
 
 			if (fast)
-				v *= 5;
+				v *= 4;
 
 			map.ScrollToDirection(v);
 		}
