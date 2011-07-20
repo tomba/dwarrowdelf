@@ -310,4 +310,34 @@ namespace Dwarrowdelf
 			return this.Target.ToString();
 		}
 	}
+
+	[Serializable]
+	[SaveGameObject(UseRef = true)]
+	public class ConstructAction : GameAction
+	{
+		[SaveGameProperty]
+		public ObjectID EnvironmentID { get; private set; }
+		[SaveGameProperty]
+		public IntRectZ Area { get; private set; }
+		[SaveGameProperty]
+		public BuildingID BuildingID { get; private set; }
+
+		public ConstructAction(IEnvironment env, IntRectZ area, BuildingID buildingID, ActionPriority priority)
+			: base(priority)
+		{
+			this.EnvironmentID = env.ObjectID;
+			this.Area = area;
+			this.BuildingID = buildingID;
+		}
+
+		protected ConstructAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return String.Join(", ", this.EnvironmentID.ToString(), this.Area.ToString(), this.BuildingID.ToString());
+		}
+	}
 }

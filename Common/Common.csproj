@@ -73,6 +73,8 @@
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveConstructJob.cs" />
+    <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
     <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
     <Compile Include="Json\Attributes.cs" />

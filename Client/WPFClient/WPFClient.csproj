@@ -117,7 +117,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Collections.cs" />
+    <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="RenderViewSimple.cs" />
+    <Compile Include="ConstructionSite.cs" />
     <Compile Include="Jobs\CleanAreaJob.cs" />
     <Compile Include="Jobs\StoreToStockpileJob.cs" />
     <Compile Include="ManualJobSource.cs" />

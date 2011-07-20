@@ -528,6 +528,7 @@ namespace Dwarrowdelf.Client
 				{
 					m_env.Buildings.CollectionChanged -= OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged -= OnElementCollectionChanged;
 				}
 
 				m_env = value;
@@ -539,6 +540,7 @@ namespace Dwarrowdelf.Client
 
 					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
+					((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged += OnElementCollectionChanged;
 
 					m_mapControl.CenterPos = new Point(m_env.HomeLocation.X, m_env.HomeLocation.Y);
 					this.Z = m_env.HomeLocation.Z;
@@ -617,7 +619,8 @@ namespace Dwarrowdelf.Client
 			if (m_env != null)
 			{
 				var elements = m_env.Buildings.Cast<IDrawableElement>()
-					.Concat(m_env.Stockpiles);
+					.Concat(m_env.Stockpiles)
+					.Concat(m_env.ConstructionSites);
 
 				foreach (IDrawableElement element in elements)
 				{

@@ -39,6 +39,9 @@ namespace Dwarrowdelf.Client
 
 		public Designation Designations { get; private set; }
 
+		ObservableCollection<ConstructionSite> m_constructionSites;
+		public ReadOnlyObservableCollection<ConstructionSite> ConstructionSites { get; private set; }
+
 		public Environment(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -55,6 +58,9 @@ namespace Dwarrowdelf.Client
 			this.Stockpiles = new ReadOnlyObservableCollection<Stockpile>(m_stockpiles);
 
 			this.Designations = new Designation(this);
+
+			m_constructionSites = new ObservableCollection<ConstructionSite>();
+			this.ConstructionSites = new ReadOnlyObservableCollection<ConstructionSite>(m_constructionSites);
 
 			this.World.AddEnvironment(this);
 		}
@@ -403,6 +409,18 @@ namespace Dwarrowdelf.Client
 
 		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
 		{
+		}
+
+		internal void CreateConstructionSite(BuildingID buildingID, IntRectZ area)
+		{
+			var site = new ConstructionSite(this, buildingID, area);
+			m_constructionSites.Add(site);
+		}
+
+		internal void RemoveConstructionSite(ConstructionSite site)
+		{
+			var removed = m_constructionSites.Remove(site);
+			Debug.Assert(removed);
 		}
 	}
 }

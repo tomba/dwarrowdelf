@@ -26,11 +26,11 @@ namespace Dwarrowdelf.Server
 			{
 				var actionHandler = WrapperGenerator.CreateFuncWrapper<Living, GameAction, bool>("PerformAction", type);
 				if (actionHandler == null)
-					throw new Exception();
+					throw new Exception(String.Format("No PerformAction method found for {0}", type.Name));
 
 				var tickInitializer = WrapperGenerator.CreateFuncWrapper<Living, GameAction, int>("InitializeAction", type);
 				if (tickInitializer == null)
-					throw new Exception();
+					throw new Exception(String.Format("No InitializeAction method found for {0}", type.Name));
 
 				s_actionMethodMap[type] = new ActionData()
 				{
@@ -53,6 +53,32 @@ namespace Dwarrowdelf.Server
 			return method(this, action);
 		}
 
+
+		int InitializeAction(ConstructAction action)
+		{
+			return 10;
+		}
+
+		bool PerformAction(ConstructAction action)
+		{
+			if (this.ActionTicksLeft > 0)
+				return true;
+
+			var env = this.World.FindObject<Environment>(action.EnvironmentID);
+			if (env == null)
+				return false;
+
+			if (!action.Area.Contains(this.Location))
+				return false;
+
+			if (BuildingObject.VerifyBuildSite(env, action.Area) == false)
+				return false;
+
+			var builder = new BuildingObjectBuilder(action.BuildingID, action.Area);
+			var building = builder.Create(this.World, env);
+
+			return true;
+		}
 
 
 		int InitializeAction(GetAction action)

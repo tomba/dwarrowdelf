@@ -623,8 +623,7 @@ namespace Dwarrowdelf.Client
 			var env = map.Environment;
 			int z = map.Z;
 
-			var msg = new Messages.CreateBuildingMessage() { MapID = env.ObjectID, Area = new IntRectZ(r, z), ID = id };
-			GameData.Data.Connection.Send(msg);
+			env.CreateConstructionSite(id, new IntRectZ(r, z));
 		}
 
 		private void Get_Button_Click(object sender, RoutedEventArgs e)

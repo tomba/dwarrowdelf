@@ -28,6 +28,13 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			m_subJobs.Add(job);
 			job.StatusChanged += OnSubJobStatusChangedInternal;
+
+			if (job.JobStatus != Jobs.JobStatus.Ok)
+			{
+				// XXX I think job should be always Ok when it is constructed. Init() method for jobs?
+				OnSubJobStatusChangedInternal(job, job.JobStatus);
+				return;
+			}
 		}
 
 		protected void AddSubJobs(IEnumerable<IJob> jobs)

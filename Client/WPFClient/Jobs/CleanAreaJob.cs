@@ -84,6 +84,12 @@ namespace Dwarrowdelf.Client
 			Check();
 		}
 
+		protected override void OnSubJobAborted(IJob job)
+		{
+			RemoveSubJob(job);
+			m_map[m_map.First(kvp => kvp.Value == job).Key] = null;
+		}
+
 		public override string ToString()
 		{
 			return "CleanAreaJob";
