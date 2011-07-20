@@ -140,6 +140,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 					throw new Exception();
 
 				case JobStatus.Done:
+					Debug.Assert(this.SubJobs.Count == 0);
+					goto case JobStatus.Fail;
+
 				case JobStatus.Abort:
 				case JobStatus.Fail:
 					ClearSubJobs();

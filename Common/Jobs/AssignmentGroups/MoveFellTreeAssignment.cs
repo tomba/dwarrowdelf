@@ -9,24 +9,26 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveConsumeJob : AssignmentGroup
+	public class MoveFellTreeAssignment : AssignmentGroup
 	{
-		[SaveGameProperty("Item")]
-		readonly IItemObject m_item;
+		[SaveGameProperty]
+		readonly IEnvironment m_environment;
+		[SaveGameProperty]
+		readonly IntPoint3D m_location;
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveConsumeJob(IJob parent, ActionPriority priority, IItemObject item)
+		public MoveFellTreeAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
 			: base(parent, priority)
 		{
-			m_item = item;
+			m_environment = environment;
+			m_location = location;
 		}
 
-		protected MoveConsumeJob(SaveGameContext ctx)
+		protected MoveFellTreeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
-
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
@@ -36,7 +38,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override void OnAssignmentDone()
 		{
-			if (m_state == 2)
+			if (m_state == 1)
 				SetStatus(Jobs.JobStatus.Done);
 			else
 				m_state = m_state + 1;
@@ -49,15 +51,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_item.Environment, m_item.Location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_location, DirectionSet.Planar);
 					break;
 
 				case 1:
-					assignment = new GetItemAssignment(this, this.Priority, m_item);
-					break;
-
-				case 2:
-					assignment = new ConsumeItemAssignment(this, this.Priority, m_item);
+					assignment = new FellTreeAssignment(this, this.Priority, m_environment, m_location);
 					break;
 
 				default:
@@ -66,9 +64,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			return assignment;
 		}
+
+
 		public override string ToString()
 		{
-			return "MoveConsumeJob";
+			return "MoveFellTreeAssignment";
 		}
 	}
 }

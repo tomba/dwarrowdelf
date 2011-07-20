@@ -9,30 +9,24 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class BuildItem : AssignmentGroup
+	public class MoveConsumeAssignment : AssignmentGroup
 	{
-		[SaveGameProperty]
-		IBuildingObject m_workplace;
-		[SaveGameProperty]
-		IItemObject[] m_items;
-		[SaveGameProperty]
-		ItemID m_dstItemID;
-
+		[SaveGameProperty("Item")]
+		readonly IItemObject m_item;
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public BuildItem(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
+		public MoveConsumeAssignment(IJob parent, ActionPriority priority, IItemObject item)
 			: base(parent, priority)
 		{
-			m_workplace = workplace;
-			m_items = items;
-			m_dstItemID = dstItemID;
+			m_item = item;
 		}
 
-		protected BuildItem(SaveGameContext ctx)
+		protected MoveConsumeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
+
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
@@ -42,7 +36,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override void OnAssignmentDone()
 		{
-			if (m_state == 1)
+			if (m_state == 2)
 				SetStatus(Jobs.JobStatus.Done);
 			else
 				m_state = m_state + 1;
@@ -55,11 +49,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_workplace.Environment, m_workplace.Area.Center, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_item.Environment, m_item.Location, DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new BuildItemAssignment(this, this.Priority, m_items, m_dstItemID);
+					assignment = new GetItemAssignment(this, this.Priority, m_item);
+					break;
+
+				case 2:
+					assignment = new ConsumeItemAssignment(this, this.Priority, m_item);
 					break;
 
 				default:
@@ -68,11 +66,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			return assignment;
 		}
-
 		public override string ToString()
 		{
-			return "BuildItem";
+			return "MoveConsumeAssignment";
 		}
 	}
-
 }

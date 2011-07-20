@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class FetchItem : AssignmentGroup
+	public class FetchItemAssignment : AssignmentGroup
 	{
 		[SaveGameProperty]
 		public IItemObject Item { get; private set; }
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public FetchItem(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject item)
+		public FetchItemAssignment(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject item)
 			: base(parent, priority)
 		{
 			this.Item = item;
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_location = location;
 		}
 
-		protected FetchItem(SaveGameContext ctx)
+		protected FetchItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -78,7 +78,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "FetchItem";
+			return "FetchItemAssignment";
 		}
 	}
 }

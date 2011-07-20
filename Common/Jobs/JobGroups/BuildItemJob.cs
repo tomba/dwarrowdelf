@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (m_state == 0)
 			{
 				m_state = 1;
-				AddSubJob(new AssignmentGroups.BuildItem(this, this.Priority, m_workplace, m_sourceObjects, m_dstItemID));
+				AddSubJob(new AssignmentGroups.MoveBuildItemAssignment(this, this.Priority, m_workplace, m_sourceObjects, m_dstItemID));
 			}
 			else if (m_state == 1)
 			{

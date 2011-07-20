@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 
 						if (interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling)
 						{
-							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeJob(this, ActionPriority.Normal, m_environment, p);
+							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeAssignment(this, ActionPriority.Normal, m_environment, p);
 						}
 						else
 						{

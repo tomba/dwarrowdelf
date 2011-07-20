@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			foreach (var kvp in designations)
 			{
 				var p = kvp.Key;
-				var job = new AssignmentGroups.MoveMineJob(this, this.Priority, m_environment, p, MineActionType.Mine);
+				var job = new AssignmentGroups.MoveMineAssignment(this, this.Priority, m_environment, p, MineActionType.Mine);
 				AddSubJob(job);
 				m_map[p].Assignment = job;
 				yield return job;

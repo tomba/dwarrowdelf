@@ -541,7 +541,7 @@ namespace Dwarrowdelf.Client
 					if (env.GetTerrainID(p) != TerrainID.NaturalWall)
 						continue;
 
-					var job = new Jobs.AssignmentGroups.MoveMineJob(null, ActionPriority.Normal, env, p, MineActionType.Mine);
+					var job = new Jobs.AssignmentGroups.MoveMineAssignment(null, ActionPriority.Normal, env, p, MineActionType.Mine);
 					m_manualJobSource.Add(job);
 				}
 			}
@@ -580,7 +580,7 @@ namespace Dwarrowdelf.Client
 			}
 			else if (tag == "Loiter")
 			{
-				var job = new Jobs.AssignmentGroups.LoiterJob(null, ActionPriority.Normal, map.Environment);
+				var job = new Jobs.AssignmentGroups.LoiterAssignment(null, ActionPriority.Normal, map.Environment);
 				m_manualJobSource.Add(job);
 			}
 			else if (tag == "Consume")
@@ -593,7 +593,7 @@ namespace Dwarrowdelf.Client
 
 				foreach (var c in consumables)
 				{
-					var job = new Jobs.AssignmentGroups.MoveConsumeJob(null, ActionPriority.Normal, c);
+					var job = new Jobs.AssignmentGroups.MoveConsumeAssignment(null, ActionPriority.Normal, c);
 					m_manualJobSource.Add(job);
 				}
 			}

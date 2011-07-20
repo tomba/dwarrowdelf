@@ -9,20 +9,20 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class LoiterJob : AssignmentGroup
+	public class LoiterAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]
 		readonly IEnvironment m_environment;
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public LoiterJob(IJob parent, ActionPriority priority, IEnvironment environment)
+		public LoiterAssignment(IJob parent, ActionPriority priority, IEnvironment environment)
 			: base(parent, priority)
 		{
 			m_environment = environment;
 		}
 
-		LoiterJob(SaveGameContext ctx)
+		LoiterAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "LoiterJob";
+			return "LoiterAssignment";
 		}
 	}
 }

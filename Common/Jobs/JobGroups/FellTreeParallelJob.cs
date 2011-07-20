@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			foreach (var p in m_locs)
 			{
-				var job = new AssignmentGroups.MoveFellTreeJob(this, this.Priority, m_environment, p);
+				var job = new AssignmentGroups.MoveFellTreeAssignment(this, this.Priority, m_environment, p);
 				AddSubJob(job);
 				m_jobs.Add(new Tuple<IntPoint3D, IJob>(p, job));
 			}

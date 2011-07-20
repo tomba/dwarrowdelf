@@ -70,7 +70,7 @@ namespace MyArea
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterJob(null, priority, worker.Environment);
+				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterAssignment(null, priority, worker.Environment);
 			}
 			else
 			{
@@ -101,7 +101,7 @@ namespace MyArea
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, priority, ob);
 				m_consumeObject = ob;
 				return job;
 			}
@@ -132,7 +132,7 @@ namespace MyArea
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, priority, ob);
 				m_consumeObject = ob;
 				return job;
 			}
@@ -144,7 +144,7 @@ namespace MyArea
 		{
 			// XXX hacksor. Will get called when loiterjob is aborted, because we're gonne add a eating job. and at that point we've marked the consumeobject and priorityaction
 
-			if (!(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeJob))
+			if (!(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment))
 				return;
 
 			if (m_priorityAction)

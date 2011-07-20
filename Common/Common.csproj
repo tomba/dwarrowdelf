@@ -73,7 +73,7 @@
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConstructJob.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
     <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
@@ -93,8 +93,8 @@
     <Compile Include="Skills.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConsumeJob.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveFellTreeJob.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveConsumeAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveFellTreeAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConsumeItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\FellTreeAssignment.cs" />
     <Compile Include="Jobs\Assignments\WaitAssignment.cs" />
@@ -116,10 +116,10 @@
     <Compile Include="Jobs\JobGroups\MineAreaJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="Jobs\JobManagerAI.cs" />
-    <Compile Include="Jobs\AssignmentGroups\BuildItem.cs" />
-    <Compile Include="Jobs\AssignmentGroups\LoiterJob.cs" />
-    <Compile Include="Jobs\AssignmentGroups\FetchItem.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveMineJob.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\LoiterAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Buildings.cs" />

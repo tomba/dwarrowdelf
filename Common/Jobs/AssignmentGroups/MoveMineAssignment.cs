@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveMineJob : AssignmentGroup
+	public class MoveMineAssignment : AssignmentGroup
 	{
 		[SaveGameProperty]
 		readonly IEnvironment m_environment;
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveMineJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
+		public MoveMineAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
 			: base(parent, priority)
 		{
 			m_environment = environment;
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 
-		protected MoveMineJob(SaveGameContext ctx)
+		protected MoveMineAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -103,7 +103,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "MoveMineJob";
+			return "MoveMineAssignment";
 		}
 	}
 }

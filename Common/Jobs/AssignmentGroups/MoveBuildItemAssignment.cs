@@ -9,23 +9,27 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveFellTreeJob : AssignmentGroup
+	public class MoveBuildItemAssignment : AssignmentGroup
 	{
 		[SaveGameProperty]
-		readonly IEnvironment m_environment;
+		IBuildingObject m_workplace;
 		[SaveGameProperty]
-		readonly IntPoint3D m_location;
+		IItemObject[] m_items;
+		[SaveGameProperty]
+		ItemID m_dstItemID;
+
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveFellTreeJob(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
+		public MoveBuildItemAssignment(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
 			: base(parent, priority)
 		{
-			m_environment = environment;
-			m_location = location;
+			m_workplace = workplace;
+			m_items = items;
+			m_dstItemID = dstItemID;
 		}
 
-		protected MoveFellTreeJob(SaveGameContext ctx)
+		protected MoveBuildItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -51,11 +55,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_location, DirectionSet.Planar);
+					assignment = new MoveAssignment(this, this.Priority, m_workplace.Environment, m_workplace.Area.Center, DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new FellTreeAssignment(this, this.Priority, m_environment, m_location);
+					assignment = new BuildItemAssignment(this, this.Priority, m_items, m_dstItemID);
 					break;
 
 				default:
@@ -65,10 +69,10 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			return assignment;
 		}
 
-
 		public override string ToString()
 		{
-			return "MoveFellTreeJob";
+			return "MoveBuildItemAssignment";
 		}
 	}
+
 }
