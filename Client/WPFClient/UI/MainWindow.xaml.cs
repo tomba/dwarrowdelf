@@ -383,6 +383,34 @@ namespace Dwarrowdelf.Client
 			{
 				map.ZoomOut();
 			}
+			else if (e.Key == Key.D)
+			{
+				var area = map.Selection.SelectionCuboid;
+				var env = map.Environment;
+
+				if (area.IsNull)
+					return;
+
+				var dialog = new DesignateDialog();
+				dialog.Owner = this;
+				dialog.SetContext(env, area);
+				var res = dialog.ShowDialog();
+
+				if (res == true)
+				{
+					var type = dialog.DesignationType;
+
+
+					if (type == DesignationType.None)
+					{
+						env.Designations.RemoveArea(area);
+					}
+					else
+					{
+						env.Designations.AddArea(area, type);
+					}
+				}
+			}
 			else
 			{
 				e.Handled = false;
