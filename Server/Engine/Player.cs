@@ -176,7 +176,7 @@ namespace Dwarrowdelf.Server
 
 			foreach (var p in r.Range())
 			{
-				if (!env.Bounds.Contains(p))
+				if (!env.Contains(p))
 					continue;
 
 				var tileData = env.GetTileData(p);

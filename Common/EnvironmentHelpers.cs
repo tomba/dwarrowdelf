@@ -93,7 +93,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanMoveTo(IEnvironment env, IntPoint3D dstLoc, Direction dir)
 		{
-			if (!env.Bounds.Contains(dstLoc))
+			if (!env.Contains(dstLoc))
 				return false;
 
 			var dstTerrain = env.GetTerrain(dstLoc);
@@ -135,7 +135,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanEnter(IEnvironment env, IntPoint3D location)
 		{
-			if (!env.Bounds.Contains(location))
+			if (!env.Contains(location))
 				return false;
 
 			var dstTerrain = env.GetTerrain(location);

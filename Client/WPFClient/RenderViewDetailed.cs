@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Client
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
 
-			if (env == null || !env.Bounds.Contains(ml))
+			if (env == null || !env.Contains(ml))
 				return;
 
 			bool visible;

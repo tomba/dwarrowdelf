@@ -101,10 +101,10 @@ namespace Dwarrowdelf.Server
 				{
 					bool hidden = DirectionExtensions.PlanarDirections
 						.Select(d => p + d)
-						.Where(pp => this.Bounds.Contains(pp))
+						.Where(pp => this.Contains(pp))
 						.All(pp => !GetTerrain(pp).IsSeeThrough);
 
-					if (hidden && this.Bounds.Contains(p + Direction.Up))
+					if (hidden && this.Contains(p + Direction.Up))
 						hidden = !GetTerrain(p + Direction.Up).IsSeeThroughDown;
 
 					m_tileGrid.SetHidden(p, hidden);
@@ -132,6 +132,11 @@ namespace Dwarrowdelf.Server
 		public IntCuboid Bounds
 		{
 			get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); }
+		}
+
+		public bool Contains(IntPoint3D p)
+		{
+			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
 
 		public delegate bool ActionHandlerDelegate(ServerGameObject ob, GameAction action);
@@ -183,7 +188,7 @@ namespace Dwarrowdelf.Server
 
 		bool CanWaterFlow(IntPoint3D from, IntPoint3D to)
 		{
-			if (!this.Bounds.Contains(to))
+			if (!this.Contains(to))
 				return false;
 
 			IntVector3D v = to - from;
@@ -451,7 +456,7 @@ namespace Dwarrowdelf.Server
 			{
 				var revealed = DirectionExtensions.PlanarDirections
 					.Select(dir => p + dir)
-					.Where(pp => this.Bounds.Contains(pp))
+					.Where(pp => this.Contains(pp))
 					.Where(pp => m_tileGrid.GetHidden(pp));
 
 				foreach (var pp in revealed)
@@ -465,7 +470,7 @@ namespace Dwarrowdelf.Server
 			{
 				var pp = p + Direction.Down;
 
-				if (this.Bounds.Contains(pp) && m_tileGrid.GetHidden(pp))
+				if (this.Contains(pp) && m_tileGrid.GetHidden(pp))
 				{
 					m_tileGrid.SetHidden(pp, false);
 					MapChanged(pp, m_tileGrid.GetTileData(pp));
@@ -533,7 +538,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			if (!this.Bounds.Contains(p))
+			if (!this.Contains(p))
 				return false;
 
 			if (!EnvironmentHelpers.CanEnter(this, p))
@@ -927,6 +932,11 @@ namespace Dwarrowdelf.Server
 		public Environment Create(World world)
 		{
 			return Environment.Create(world, this);
+		}
+
+		public bool Contains(IntPoint3D p)
+		{
+			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
 
 		public TerrainID GetTerrainID(IntPoint3D l)

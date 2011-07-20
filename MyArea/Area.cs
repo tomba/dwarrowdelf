@@ -80,7 +80,7 @@ namespace MyArea
 
 			CreateTrees(envBuilder);
 
-			int posx = envBuilder.Bounds.Width / 10;
+			int posx = envBuilder.Width / 10;
 			int posy = 1;
 
 			for (int x = posx; x < posx + 4; ++x)
@@ -117,7 +117,7 @@ namespace MyArea
 			}
 
 			var env = envBuilder.Create(world);
-			env.HomeLocation = new IntPoint3D(env.Bounds.Width / 10, env.Bounds.Height / 10, surfaceLevel);
+			env.HomeLocation = new IntPoint3D(env.Width / 10, env.Height / 10, surfaceLevel);
 
 
 
@@ -164,8 +164,8 @@ namespace MyArea
 
 			CreateWaterTest(env, surfaceLevel);
 
-			posx = env.Bounds.Width / 10;
-			posy = env.Bounds.Height / 10;
+			posx = env.Width / 10;
+			posy = env.Height / 10;
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
@@ -206,7 +206,7 @@ namespace MyArea
 
 			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, new IntPoint3D(env.Bounds.Width / 10 - 2, env.Bounds.Height / 10 - 2, 9));
+				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, 9));
 			}
 
 
@@ -365,7 +365,7 @@ namespace MyArea
 
 		static void CreateOreCluster(EnvironmentBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
 		{
-			if (!env.Bounds.Contains(p))
+			if (!env.Contains(p))
 				return;
 
 			if (env.GetTerrainID(p) != TerrainID.NaturalWall)

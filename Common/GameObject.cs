@@ -42,6 +42,7 @@ namespace Dwarrowdelf
 	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
 	{
 		IntCuboid Bounds { get; }
+		bool Contains(IntPoint3D p);
 
 		TerrainID GetTerrainID(IntPoint3D l);
 		MaterialID GetTerrainMaterialID(IntPoint3D l);

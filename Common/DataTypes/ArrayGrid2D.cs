@@ -27,8 +27,6 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public IntRect Bounds { get { return new IntRect(0, 0, this.Width, this.Height); } }
-
 		public void Clear()
 		{
 			Array.Clear(this.Grid, 0, this.Grid.Length);

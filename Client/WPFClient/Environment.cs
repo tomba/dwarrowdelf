@@ -86,6 +86,11 @@ namespace Dwarrowdelf.Client
 			this.Designations = save.Designation;
 		}
 
+		public bool Contains(IntPoint3D p)
+		{
+			return this.Bounds.Contains(p);
+		}
+
 		public bool IsWalkable(IntPoint3D l)
 		{
 			return GetInterior(l).IsBlocker == false;

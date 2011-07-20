@@ -22,7 +22,5 @@ namespace Dwarrowdelf
 			this.Depth = depth;
 			this.Grid = new T[depth, height, width];
 		}
-
-		public IntCuboid Bounds { get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); } }
 	}
 }
