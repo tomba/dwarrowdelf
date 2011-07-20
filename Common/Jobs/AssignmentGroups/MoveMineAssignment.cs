@@ -9,65 +9,30 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveMineAssignment : AssignmentGroup
+	public class MoveMineAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
-		readonly IEnvironment m_environment;
-		[SaveGameProperty]
-		readonly IntPoint3D m_location;
-		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
-		[SaveGameProperty("State")]
-		int m_state;
 
 		public MoveMineAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
-			: base(parent, priority)
+			: base(parent, priority, environment, location)
 		{
-			m_environment = environment;
-			m_location = location;
 			m_mineActionType = mineActionType;
 		}
-
 
 		protected MoveMineAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
+		protected override DirectionSet GetPositioning()
 		{
-			m_state = 0;
-			return JobStatus.Ok;
+			return GetPossiblePositioning(this.Environment, this.Location, m_mineActionType);
 		}
 
-		protected override void OnAssignmentDone()
+		protected override IAssignment CreateAssignment()
 		{
-			if (m_state == 1)
-				SetStatus(Jobs.JobStatus.Done);
-			else
-				m_state = m_state + 1;
-		}
-
-		protected override IAssignment PrepareNextAssignment()
-		{
-			IAssignment assignment;
-
-			switch (m_state)
-			{
-				case 0:
-					var positioning = GetPossiblePositioning(m_environment, m_location, m_mineActionType);
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_location, positioning);
-					break;
-
-				case 1:
-					assignment = new MineAssignment(this, this.Priority, m_environment, m_location, m_mineActionType);
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			return assignment;
+			return new MineAssignment(this, this.Priority, this.Environment, this.Location, m_mineActionType);
 		}
 
 		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)

@@ -9,21 +9,16 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveConstructAssignment : AssignmentGroup
+	public class MoveConstructAssignment : MoveBaseAssignment
 	{
-		[SaveGameProperty]
-		readonly IEnvironment m_environment;
 		[SaveGameProperty]
 		readonly IntRectZ m_area;
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
-		[SaveGameProperty("State")]
-		int m_state;
 
 		public MoveConstructAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
-			: base(parent, priority)
+			: base(parent, priority, environment, area.Center)
 		{
-			m_environment = environment;
 			m_area = area;
 			m_buildingID = buildingID;
 		}
@@ -33,39 +28,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
+		protected override DirectionSet GetPositioning()
 		{
-			m_state = 0;
-			return JobStatus.Ok;
+			return DirectionSet.Exact;
 		}
 
-		protected override void OnAssignmentDone()
+		protected override IAssignment CreateAssignment()
 		{
-			if (m_state == 1)
-				SetStatus(Jobs.JobStatus.Done);
-			else
-				m_state = m_state + 1;
-		}
-
-		protected override IAssignment PrepareNextAssignment()
-		{
-			IAssignment assignment;
-
-			switch (m_state)
-			{
-				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_area.Center, DirectionSet.Exact);
-					break;
-
-				case 1:
-					assignment = new ConstructAssignment(this, this.Priority, m_environment, m_area, m_buildingID);
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			return assignment;
+			return new ConstructAssignment(this, this.Priority, this.Environment, m_area, m_buildingID);
 		}
 
 		public override string ToString()
