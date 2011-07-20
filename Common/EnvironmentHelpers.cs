@@ -141,6 +141,9 @@ namespace Dwarrowdelf
 			var dstTerrain = env.GetTerrain(location);
 			var dstInter = env.GetInterior(location);
 
+			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
+				return false;
+
 			return dstTerrain.IsSupporting && !dstTerrain.IsBlocker && !dstInter.IsBlocker;
 		}
 	}

@@ -290,7 +290,10 @@ namespace Dwarrowdelf.Client
 
 			foreach (var d in dirs.ToDirections())
 			{
-				if (!this.Environment.GetInterior(p + d).IsBlocker)
+				var terrain = this.Environment.GetTerrain(p + d);
+				var interior = this.Environment.GetInterior(p + d);
+
+				if (EnvironmentHelpers.CanEnter(this.Environment, p + d))
 				{
 					data.IsPossible = true;
 					return;
