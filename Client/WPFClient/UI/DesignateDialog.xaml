@@ -38,6 +38,11 @@
                         <Underline>F</Underline>ell Tree
                     </TextBlock>
                 </Button>
+                <Button Tag="None" Click="Button_Click">
+                    <TextBlock>
+                        <Underline>R</Underline>emove
+                    </TextBlock>
+                </Button>
             </StackPanel>
         </Border>
     </DockPanel>

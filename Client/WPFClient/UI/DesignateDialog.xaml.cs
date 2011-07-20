@@ -62,23 +62,30 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			DesignationType? type = null;
+
 			switch (e.Key)
 			{
 				case Key.M:
-					this.DesignationType = DesignationType.Mine;
+					type = DesignationType.Mine;
 					break;
 
 				case Key.S:
-					this.DesignationType = DesignationType.CreateStairs;
+					type = DesignationType.CreateStairs;
 					break;
 
 				case Key.F:
-					this.DesignationType = DesignationType.FellTree;
+					type = DesignationType.FellTree;
+					break;
+
+				case Key.R:
+					type = Client.DesignationType.None;
 					break;
 			}
 
-			if (this.DesignationType != Client.DesignationType.None)
+			if (type.HasValue)
 			{
+				this.DesignationType = type.Value;
 				this.DialogResult = true;
 				Close();
 				return;
@@ -92,23 +99,9 @@ namespace Dwarrowdelf.Client
 			var button = (Button)sender;
 			var tag = (string)button.Tag;
 
-			switch (tag)
-			{
-				case "Mine":
-					this.DesignationType = DesignationType.Mine;
-					break;
+			var type = (DesignationType)Enum.Parse(typeof(DesignationType), tag);
 
-				case "CreateStairs":
-					this.DesignationType = DesignationType.CreateStairs;
-					break;
-
-				case "FellTree":
-					this.DesignationType = DesignationType.FellTree;
-					break;
-
-				default:
-					throw new Exception();
-			}
+			this.DesignationType = type;
 
 			this.DialogResult = true;
 			Close();
