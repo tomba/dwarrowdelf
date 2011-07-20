@@ -26,20 +26,10 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource = new D3DImageSlimDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
-			//this.Loaded += new RoutedEventHandler(OnLoaded);
-
 			m_device = Helpers11.CreateDevice();
 			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
 			m_scene = new SingleQuad11(m_device, m_colorBuffer);
 		}
-
-		void OnLoaded(object sender, RoutedEventArgs e)
-		{
-			trace.TraceInformation("OnLoaded");
-
-			//InvalidateVisual();
-		}
-
 
 		void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -49,29 +39,13 @@ namespace Dwarrowdelf.Client.TileControl
 			if (m_interopImageSource.IsFrontBufferAvailable)
 			{
 				trace.TraceInformation("Frontbuffer available");
-				/*
-				var renderWidth = (int)Math.Ceiling(this.RenderSize.Width);
-				var renderHeight = (int)Math.Ceiling(this.RenderSize.Height);
 
-				m_interopImageSource.Lock();
-
-				InitTextureRenderSurface(renderWidth, renderHeight);
-
-				m_interopImageSource.Unlock();
-
-				InvalidateTileRender();
-				 */
+				m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
+				m_interopImageSource.InvalidateD3DImage();
 			}
 			else
 			{
 				trace.TraceInformation("Frontbuffer not available");
-
-				if (m_renderTexture != null)
-				{
-					m_interopImageSource.SetBackBufferSlimDX(null);
-					m_renderTexture.Dispose();
-					m_renderTexture = null;
-				}
 			}
 		}
 
@@ -132,21 +106,31 @@ namespace Dwarrowdelf.Client.TileControl
 
 			set
 			{
+				if (m_symbolDrawingCache != null)
+					m_symbolDrawingCache.DrawingsChanged -= OnDrawingsChanged;
+
 				m_symbolDrawingCache = value;
 
-				if (m_tileTextureArray != null)
-				{
-					m_tileTextureArray.Dispose();
-					m_tileTextureArray = null;
-				}
+				if (m_symbolDrawingCache != null)
+					m_symbolDrawingCache.DrawingsChanged += OnDrawingsChanged;
 
-				m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
-
-				if (m_scene != null)
-					m_scene.SetTileTextures(m_tileTextureArray);
+				OnDrawingsChanged();
 			}
 		}
 
+		void OnDrawingsChanged()
+		{
+			if (m_tileTextureArray != null)
+			{
+				m_tileTextureArray.Dispose();
+				m_tileTextureArray = null;
+			}
+
+			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
+
+			if (m_scene != null)
+				m_scene.SetTileTextures(m_tileTextureArray);
+		}
 
 		#region IDisposable
 		bool m_disposed;

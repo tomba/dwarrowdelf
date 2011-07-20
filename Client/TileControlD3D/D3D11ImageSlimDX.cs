@@ -50,13 +50,9 @@ namespace Dwarrowdelf.Client.TileControl
 
 			if (texture == null)
 			{
-				if (m_sharedTexture != null)
-				{
-					m_sharedTexture = null;
-					Lock();
-					SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
-					Unlock();
-				}
+				Lock();
+				SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
+				Unlock();
 			}
 			else if (IsShareable(texture))
 			{
