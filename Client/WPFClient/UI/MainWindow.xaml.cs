@@ -431,6 +431,26 @@ namespace Dwarrowdelf.Client
 					env.CreateConstructionSite(id, area);
 				}
 			}
+			else if (e.Key == Key.A)
+			{
+				var p = map.Selection.SelectionCuboid.Corner1;
+				var env = map.Environment;
+
+				var building = env.GetBuildingAt(p);
+
+				if (building == null)
+					return;
+
+				var dialog = new BuildItemDialog();
+				dialog.Owner = this;
+				dialog.SetContext(building);
+				var res = dialog.ShowDialog();
+
+				if (res == true)
+				{
+					building.AddBuildOrder(dialog.BuildableItem);
+				}
+			}
 			else
 			{
 				e.Handled = false;
@@ -1054,30 +1074,14 @@ namespace Dwarrowdelf.Client
 			if (building == null)
 				return;
 
-			MaterialClass materialClass;
-
-			switch (building.BuildingInfo.ID)
-			{
-				case BuildingID.Mason:
-					materialClass = MaterialClass.Rock;
-					break;
-
-				case BuildingID.Carpenter:
-					materialClass = MaterialClass.Wood;
-					break;
-
-				default:
-					return;
-			}
-
 			switch (tag)
 			{
 				case "Chair":
-					building.AddBuildOrder(ItemID.Chair, materialClass);
+					building.AddBuildOrder(ItemID.Chair);
 					break;
 
 				case "Table":
-					building.AddBuildOrder(ItemID.Table, materialClass);
+					building.AddBuildOrder(ItemID.Table);
 					break;
 
 				default:

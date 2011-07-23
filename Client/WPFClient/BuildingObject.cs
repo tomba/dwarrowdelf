@@ -106,15 +106,22 @@ namespace Dwarrowdelf.Client
 			return this.Area.Contains(point);
 		}
 
-		public void AddBuildOrder(ItemID itemID, MaterialID materialID)
-		{
-			throw new NotImplementedException();
-		}
-
-		public void AddBuildOrder(ItemID itemID, MaterialClass materialClass)
+		public void AddBuildOrder(ItemID itemID)
 		{
 			var buildableItem = this.BuildingInfo.FindBuildableItem(itemID);
 
+			if (buildableItem == null)
+				throw new Exception();
+
+			var bo = new BuildOrder(buildableItem);
+
+			m_buildOrderQueue.Add(bo);
+
+			CheckStatus();
+		}
+
+		public void AddBuildOrder(BuildableItem buildableItem)
+		{
 			if (buildableItem == null)
 				throw new Exception();
 

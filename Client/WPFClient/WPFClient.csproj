@@ -102,6 +102,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\BuildItemDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\DesignateDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -142,6 +146,9 @@
     </Compile>
     <Compile Include="UI\ConstructBuildingDialog.xaml.cs">
       <DependentUpon>ConstructBuildingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\BuildItemDialog.xaml.cs">
+      <DependentUpon>BuildItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\DesignateDialog.xaml.cs">
       <DependentUpon>DesignateDialog.xaml</DependentUpon>
