@@ -391,15 +391,6 @@
                             <local:MasterMapControl x:Name="map">
                                 <local:MasterMapControl.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Stockpile">
-                                            <MenuItem Header="Logs" Tag="Logs" Click="MenuItem_Click_Stockpile" />
-                                            <MenuItem Header="Gems" Tag="Gems" Click="MenuItem_Click_Stockpile" />
-                                            <MenuItem Header="Rocks" Tag="Rocks" Click="MenuItem_Click_Stockpile" />
-                                            <MenuItem Header="Metals" Tag="Metals" Click="MenuItem_Click_Stockpile" />
-                                            <MenuItem Header="Furniture" Tag="Furniture" Click="MenuItem_Click_Stockpile" />
-                                            <Separator />
-                                            <MenuItem Header="Remove" Tag="Remove" Click="MenuItem_Click_Stockpile" />
-                                        </MenuItem>
                                         <MenuItem Name="setTerrainMenu" Header="Set Terrain" />
                                         <MenuItem Name="setTerrainMaterialMenu" Header="Set Terrain Material" />
                                         <MenuItem Name="setInteriorMenu" Header="Set Interior" />

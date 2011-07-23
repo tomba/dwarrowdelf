@@ -389,6 +389,26 @@ namespace Dwarrowdelf.Client
 					}
 				}
 			}
+			else if (e.Key == Key.S)
+			{
+				var area = map.Selection.SelectionIntRectZ;
+				var env = map.Environment;
+
+				if (area.IsNull)
+					return;
+
+				var dialog = new StockpileDialog();
+				dialog.Owner = this;
+				dialog.SetContext(env, area);
+				var res = dialog.ShowDialog();
+
+				if (res == true)
+				{
+					var type = dialog.StockpileType;
+					var stockpile = new Stockpile(env, area, type);
+					env.AddStockpile(stockpile);
+				}
+			}
 			else if (e.Key == Key.B)
 			{
 				var area = map.Selection.SelectionIntRectZ;
@@ -987,64 +1007,6 @@ namespace Dwarrowdelf.Client
 				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
 				this.Topmost = false;
 				this.WindowState = System.Windows.WindowState.Normal;
-			}
-		}
-
-		private void MenuItem_Click_Stockpile(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			var area = map.Selection.SelectionCuboid;
-			var env = map.Environment;
-
-			StockpileType type;
-			switch (tag)
-			{
-				case "Logs":
-					type = StockpileType.Logs;
-					break;
-
-				case "Gems":
-					type = StockpileType.Gems;
-					break;
-
-				case "Metals":
-					type = StockpileType.Metals;
-					break;
-
-				case "Rocks":
-					type = StockpileType.Rocks;
-					break;
-
-				case "Furniture":
-					type = StockpileType.Furniture;
-					break;
-
-				case "Remove":
-					type = StockpileType.None;
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			if (type == StockpileType.None)
-			{
-				foreach (var p in area.Range())
-				{
-					var sp = env.GetStockpileAt(p);
-					if (sp != null)
-					{
-						env.RemoveStockpile(sp);
-						sp.Destruct();
-					}
-				}
-			}
-			else
-			{
-				var stockpile = new Stockpile(env, new IntRectZ(area.ToIntRect(), area.Z), type);
-				env.AddStockpile(stockpile);
 			}
 		}
 

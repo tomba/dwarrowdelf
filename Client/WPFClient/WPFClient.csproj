@@ -106,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\StockpileDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\DesignateDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -149,6 +153,9 @@
     </Compile>
     <Compile Include="UI\BuildItemDialog.xaml.cs">
       <DependentUpon>BuildItemDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StockpileDialog.xaml.cs">
+      <DependentUpon>StockpileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\DesignateDialog.xaml.cs">
       <DependentUpon>DesignateDialog.xaml</DependentUpon>

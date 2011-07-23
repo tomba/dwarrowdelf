@@ -5,7 +5,7 @@
         Title="Designate"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
+        WindowStyle="SingleBorderWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize">
     <Window.Resources>

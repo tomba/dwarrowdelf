@@ -6,7 +6,7 @@
         Title="Build Item"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
-        WindowStyle="ToolWindow"
+        WindowStyle="SingleBorderWindow"
         ShowInTaskbar="False"
         ResizeMode="CanResizeWithGrip" 
         MinWidth="640"
@@ -62,7 +62,7 @@
 
             <ListView Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=BuildMaterials}">
                 <ListView.View>
-                    <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
+                    <GridView AllowsColumnReorder="true">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=ItemID}" Header="ItemID"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=ItemClass}" Header="ItemClass"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=MaterialID}" Header="MaterialID"/>
