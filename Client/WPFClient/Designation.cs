@@ -273,11 +273,16 @@ namespace Dwarrowdelf.Client
 			switch (data.Type)
 			{
 				case DesignationType.Mine:
-					dirs = DirectionSet.Planar | DirectionSet.Up;
+					dirs = DirectionSet.Planar;
+					// If the tile below has stairs, tile tile can be mined from below
+					if (EnvironmentHelpers.CanMoveFrom(this.Environment, p + Direction.Down, Direction.Up))
+						dirs |= DirectionSet.Down;
 					break;
 
 				case DesignationType.CreateStairs:
-					dirs = DirectionSet.Planar | DirectionSet.Up | DirectionSet.Down;
+					dirs = DirectionSet.Planar | DirectionSet.Up;
+					if (EnvironmentHelpers.CanMoveFrom(this.Environment, p + Direction.Down, Direction.Up))
+						dirs |= DirectionSet.Down;
 					break;
 
 				case DesignationType.FellTree:
@@ -290,9 +295,6 @@ namespace Dwarrowdelf.Client
 
 			foreach (var d in dirs.ToDirections())
 			{
-				var terrain = this.Environment.GetTerrain(p + d);
-				var interior = this.Environment.GetInterior(p + d);
-
 				if (EnvironmentHelpers.CanEnter(this.Environment, p + d))
 				{
 					data.IsPossible = true;

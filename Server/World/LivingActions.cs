@@ -237,6 +237,7 @@ namespace Dwarrowdelf.Server
 						return false;
 					}
 
+					// XXX is this necessary for planar dirs? we can always move in those dirs
 					if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
 						Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
@@ -299,6 +300,7 @@ namespace Dwarrowdelf.Server
 					}
 
 					// We can always create stairs down, but for other dirs we need access there
+					// XXX ??? When we cannot move in planar dirs?
 					if (action.Direction != Direction.Down &&
 						!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 					{
