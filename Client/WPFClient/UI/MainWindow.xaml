@@ -33,8 +33,6 @@
                     <ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
                 </ComboBox>
                 <Separator />
-                <ToggleButton IsChecked="{Binding Path=IsAutoAdvanceTurn}">AutoAdvanceTurn</ToggleButton>
-                <Separator />
                 <Button Click="Connect_Button_Click">Connect</Button>
                 <Separator />
                 <Button Click="Disconnect_Button_Click">Disconnect</Button>
@@ -74,6 +72,35 @@
                     <!-- Filled programmatically -->
                 </ContextMenu>
             </ToolBarTray.ContextMenu>
+        </ToolBarTray>
+
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <ToggleButton Command="local:ClientCommands.AutoAdvanceTurnCommand" IsChecked="{Binding Path=IsAutoAdvanceTurn, Mode=OneWay}">
+                    <ToggleButton.ToolTip>Shortcut: Space</ToggleButton.ToolTip>
+                    AutoAdvanceTurn
+                </ToggleButton>
+                <Separator />
+                <Button Content="Stockpile..." Command="local:ClientCommands.OpenStockpileDialogCommand">
+                    <Button.ToolTip>Shortcut: Alt-S</Button.ToolTip>
+                </Button>
+                <Separator />
+                <Button Content="Add Build Item..." Command="local:ClientCommands.OpenBuildItemDialogCommand">
+                    <Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
+                </Button>
+                <Separator />
+                <Button Content="Building..." Command="local:ClientCommands.OpenConstructBuildingDialogCommand">
+                    <Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
+                </Button>
+                <Separator />
+                <Button Content="Designate..." Command="local:ClientCommands.OpenDesignateDialogCommand">
+                    <Button.ToolTip>Shortcut: Alt-D</Button.ToolTip>
+                </Button>
+                <Separator />
+                <Button Content="Set Terrains..." Command="local:ClientCommands.OpenSetTerrainDialogCommand">
+                    <Button.ToolTip>Shortcut: Alt-T</Button.ToolTip>
+                </Button>
+            </ToolBar>
         </ToolBarTray>
 
         <StatusBar DockPanel.Dock="Bottom" >

@@ -42,6 +42,13 @@ namespace Dwarrowdelf.Client
 			//this.Height = 600;
 
 			map.MouseDown += MapControl_MouseDown;
+
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenStockpileDialogCommand, OpenStockpileHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenDesignateDialogCommand, OpenDesignateHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenSetTerrainDialogCommand, OpenSetTerrainHandler));
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -218,6 +225,133 @@ namespace Dwarrowdelf.Client
 
 		public TileInfo CurrentTileInfo { get; private set; }
 
+
+		void OpenStockpileHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var area = map.Selection.SelectionIntRectZ;
+			var env = map.Environment;
+
+			if (area.IsNull)
+				return;
+
+			var dialog = new StockpileDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				var type = dialog.StockpileType;
+				var stockpile = new Stockpile(env, area, type);
+				env.AddStockpile(stockpile);
+			}
+		}
+
+		void OpenDesignateHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var area = map.Selection.SelectionCuboid;
+			var env = map.Environment;
+
+			if (area.IsNull)
+				return;
+
+			var dialog = new DesignateDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				var type = dialog.DesignationType;
+
+
+				if (type == DesignationType.None)
+				{
+					env.Designations.RemoveArea(area);
+				}
+				else
+				{
+					env.Designations.AddArea(area, type);
+				}
+			}
+		}
+
+		void OpenConstructBuildingHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var area = map.Selection.SelectionIntRectZ;
+			var env = map.Environment;
+
+			if (area.IsNull)
+				return;
+
+			var dialog = new ConstructBuildingDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				var id = dialog.BuildingID;
+
+				env.CreateConstructionSite(id, area);
+			}
+		}
+
+		void OpenBuildItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var p = map.Selection.SelectionCuboid.Corner1;
+			var env = map.Environment;
+
+			var building = env.GetBuildingAt(p);
+
+			if (building == null)
+				return;
+
+			var dialog = new BuildItemDialog();
+			dialog.Owner = this;
+			dialog.SetContext(building);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				building.AddBuildOrder(dialog.BuildableItem);
+			}
+		}
+
+		void OpenSetTerrainHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var area = map.Selection.SelectionCuboid;
+			var env = map.Environment;
+
+			if (area.IsNull)
+				return;
+
+			var dialog = new SetTerrainDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				GameData.Data.Connection.Send(new SetTilesMessage()
+				{
+					MapID = map.Environment.ObjectID,
+					Cube = map.Selection.SelectionCuboid,
+					TerrainID = dialog.TerrainID,
+					TerrainMaterialID = dialog.TerrainMaterialID,
+					InteriorID = dialog.InteriorID,
+					InteriorMaterialID = dialog.InteriorMaterialID,
+					Grass = dialog.Grass,
+					WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)TileData.MinWaterLevel) : null,
+				});
+			}
+		}
+
+		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
+		}
+
 		static Direction KeyToDir(Key key)
 		{
 			Direction dir;
@@ -307,7 +441,27 @@ namespace Dwarrowdelf.Client
 			}
 			else if (e.Key == Key.Space)
 			{
-				GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
+				ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.B)
+			{
+				ClientCommands.OpenConstructBuildingDialogCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.A)
+			{
+				ClientCommands.OpenBuildItemDialogCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.D)
+			{
+				ClientCommands.OpenDesignateDialogCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.T)
+			{
+				ClientCommands.OpenSetTerrainDialogCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.S)
+			{
+				ClientCommands.OpenStockpileDialogCommand.Execute(null, this);
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -316,122 +470,6 @@ namespace Dwarrowdelf.Client
 			else if (e.Key == Key.Subtract)
 			{
 				map.ZoomOut();
-			}
-			else if (e.Key == Key.D)
-			{
-				var area = map.Selection.SelectionCuboid;
-				var env = map.Environment;
-
-				if (area.IsNull)
-					return;
-
-				var dialog = new DesignateDialog();
-				dialog.Owner = this;
-				dialog.SetContext(env, area);
-				var res = dialog.ShowDialog();
-
-				if (res == true)
-				{
-					var type = dialog.DesignationType;
-
-
-					if (type == DesignationType.None)
-					{
-						env.Designations.RemoveArea(area);
-					}
-					else
-					{
-						env.Designations.AddArea(area, type);
-					}
-				}
-			}
-			else if (e.Key == Key.S)
-			{
-				var area = map.Selection.SelectionIntRectZ;
-				var env = map.Environment;
-
-				if (area.IsNull)
-					return;
-
-				var dialog = new StockpileDialog();
-				dialog.Owner = this;
-				dialog.SetContext(env, area);
-				var res = dialog.ShowDialog();
-
-				if (res == true)
-				{
-					var type = dialog.StockpileType;
-					var stockpile = new Stockpile(env, area, type);
-					env.AddStockpile(stockpile);
-				}
-			}
-			else if (e.Key == Key.B)
-			{
-				var area = map.Selection.SelectionIntRectZ;
-				var env = map.Environment;
-
-				if (area.IsNull)
-					return;
-
-				var dialog = new ConstructBuildingDialog();
-				dialog.Owner = this;
-				dialog.SetContext(env, area);
-				var res = dialog.ShowDialog();
-
-				if (res == true)
-				{
-					var id = dialog.BuildingID;
-
-					env.CreateConstructionSite(id, area);
-				}
-			}
-			else if (e.Key == Key.A)
-			{
-				var p = map.Selection.SelectionCuboid.Corner1;
-				var env = map.Environment;
-
-				var building = env.GetBuildingAt(p);
-
-				if (building == null)
-					return;
-
-				var dialog = new BuildItemDialog();
-				dialog.Owner = this;
-				dialog.SetContext(building);
-				var res = dialog.ShowDialog();
-
-				if (res == true)
-				{
-					building.AddBuildOrder(dialog.BuildableItem);
-				}
-			}
-			else if (e.Key == Key.T)
-			{
-				var area = map.Selection.SelectionCuboid;
-				var env = map.Environment;
-
-				if (area.IsNull)
-					return;
-
-				var dialog = new SetTerrainDialog();
-				dialog.Owner = this;
-				dialog.SetContext(env, area);
-				var res = dialog.ShowDialog();
-
-				if (res == true)
-				{
-					GameData.Data.Connection.Send(new SetTilesMessage()
-					{
-						MapID = map.Environment.ObjectID,
-						Cube = map.Selection.SelectionCuboid,
-						TerrainID = dialog.TerrainID,
-						TerrainMaterialID = dialog.TerrainMaterialID,
-						InteriorID = dialog.InteriorID,
-						InteriorMaterialID = dialog.InteriorMaterialID,
-						Grass = dialog.Grass,
-						WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)TileData.MinWaterLevel) : null,
-					});
-				}
 			}
 			else
 			{
@@ -528,16 +566,6 @@ namespace Dwarrowdelf.Client
 
 				var job = new Jobs.JobGroups.FellTreeParallelJob(env, ActionPriority.Normal, map.Selection.SelectionCuboid);
 				m_manualJobSource.Add(job);
-
-				/*
-				foreach (var p in map.Selection.SelectionCuboid.Range())
-				{
-					if (env.GetInterior(p).ID != InteriorID.Tree)
-						continue;
-
-					var job = new Jobs.AssignmentGroups.MoveFellTreeJob(null, ActionPriority.Normal, env, p);
-					m_manualJobSource.Add(job);
-				}*/
 			}
 			else if (tag == "MineArea")
 			{

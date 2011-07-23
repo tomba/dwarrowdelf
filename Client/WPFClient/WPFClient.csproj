@@ -158,6 +158,7 @@
     <Compile Include="UI\BuildItemDialog.xaml.cs">
       <DependentUpon>BuildItemDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ClientCommands.cs" />
     <Compile Include="UI\SetTerrainDialog.xaml.cs">
       <DependentUpon>SetTerrainDialog.xaml</DependentUpon>
     </Compile>
