@@ -81,23 +81,23 @@
                     AutoAdvanceTurn
                 </ToggleButton>
                 <Separator />
-                <Button Content="Stockpile..." Command="local:ClientCommands.OpenStockpileDialogCommand">
+                <Button Content="Stockpile..." Command="local:ClientCommands.OpenStockpileDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-S</Button.ToolTip>
                 </Button>
                 <Separator />
-                <Button Content="Add Build Item..." Command="local:ClientCommands.OpenBuildItemDialogCommand">
+                <Button Content="Add Build Item..." Command="local:ClientCommands.OpenBuildItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
                 </Button>
                 <Separator />
-                <Button Content="Building..." Command="local:ClientCommands.OpenConstructBuildingDialogCommand">
+                <Button Content="Building..." Command="local:ClientCommands.OpenConstructBuildingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
                 </Button>
                 <Separator />
-                <Button Content="Designate..." Command="local:ClientCommands.OpenDesignateDialogCommand">
+                <Button Content="Designate..." Command="local:ClientCommands.OpenDesignateDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-D</Button.ToolTip>
                 </Button>
                 <Separator />
-                <Button Content="Set Terrains..." Command="local:ClientCommands.OpenSetTerrainDialogCommand">
+                <Button Content="Set Terrains..." Command="local:ClientCommands.OpenSetTerrainDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-T</Button.ToolTip>
                 </Button>
             </ToolBar>
