@@ -391,15 +391,6 @@
                             <local:MasterMapControl x:Name="map">
                                 <local:MasterMapControl.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Name="setTerrainMenu" Header="Set Terrain" />
-                                        <MenuItem Name="setTerrainMaterialMenu" Header="Set Terrain Material" />
-                                        <MenuItem Name="setInteriorMenu" Header="Set Interior" />
-                                        <MenuItem Name="setInteriorMaterialMenu" Header="Set Interior Material" />
-                                        <MenuItem Header="Set Water" Click="MenuItem_Click_SetWater" />
-                                        <MenuItem Header="Set Grass">
-                                            <MenuItem Tag="True" Header="True" Click="MenuItem_Click_SetGrass" />
-                                            <MenuItem Tag="False" Header="False" Click="MenuItem_Click_SetGrass" />
-                                        </MenuItem>
                                         <MenuItem Header="Jobs">
                                             <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
                                             <MenuItem Tag="FellTree" Header="Fell Tree" Click="MenuItem_Click_Job" />

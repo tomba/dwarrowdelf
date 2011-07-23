@@ -1,0 +1,58 @@
+﻿<Window x:Class="Dwarrowdelf.Client.SetTerrainDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:ClassModifier="internal"
+        Title="Designate"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="SingleBorderWindow"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        x:Name="wnd">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="2,2" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <StackPanel Margin="6" Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
+            <Button Content="Ok" IsDefault="True" Click="OkButton_Click" />
+            <Button Content="Cancel" IsCancel="True" />
+
+        </StackPanel>
+
+        <UniformGrid DockPanel.Dock="Bottom">
+            <CheckBox IsThreeState="True" IsChecked="{Binding Grass,ElementName=wnd}">Grass</CheckBox>
+            <CheckBox IsThreeState="True" IsChecked="{Binding Water,ElementName=wnd}">Water</CheckBox>
+        </UniformGrid>
+
+        <UniformGrid Columns="4">
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="TerrainID" />
+                <ListBox Name="terrainIDListBox" SelectionMode="Single" SelectedValue="{Binding TerrainID,ElementName=wnd}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="TerrainMaterial" />
+                <ListBox Name="terrainMaterialListBox" SelectionMode="Single" SelectedValue="{Binding TerrainMaterialID,ElementName=wnd}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="InteriorID" />
+                <ListBox Name="interiorIDListBox" SelectionMode="Single" SelectedValue="{Binding InteriorID,ElementName=wnd}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="InteriorMaterial" />
+                <ListBox Name="interiorMaterialListBox" SelectionMode="Single" SelectedValue="{Binding InteriorMaterialID,ElementName=wnd}" />
+            </StackPanel>
+
+        </UniformGrid>
+
+    </DockPanel>
+
+</Window>

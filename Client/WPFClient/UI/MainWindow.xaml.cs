@@ -73,50 +73,6 @@ namespace Dwarrowdelf.Client
 
 				content.StateChanged += new RoutedEventHandler(dockableContent_StateChanged);
 			}
-
-			foreach (var id in Enum.GetValues(typeof(InteriorID)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInterior));
-				setInteriorMenu.Items.Add(item);
-			}
-
-			foreach (var id in Enum.GetValues(typeof(TerrainID)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetTerrain));
-				setTerrainMenu.Items.Add(item);
-			}
-
-			foreach (var id in Enum.GetValues(typeof(MaterialID)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetInteriorMaterial));
-				setInteriorMaterialMenu.Items.Add(item);
-			}
-
-			foreach (var id in Enum.GetValues(typeof(MaterialID)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetTerrainMaterial));
-				setTerrainMaterialMenu.Items.Add(item);
-			}
 		}
 
 		void dockableContent_StateChanged(object sender, RoutedEventArgs e)
@@ -449,6 +405,34 @@ namespace Dwarrowdelf.Client
 					building.AddBuildOrder(dialog.BuildableItem);
 				}
 			}
+			else if (e.Key == Key.T)
+			{
+				var area = map.Selection.SelectionCuboid;
+				var env = map.Environment;
+
+				if (area.IsNull)
+					return;
+
+				var dialog = new SetTerrainDialog();
+				dialog.Owner = this;
+				dialog.SetContext(env, area);
+				var res = dialog.ShowDialog();
+
+				if (res == true)
+				{
+					GameData.Data.Connection.Send(new SetTilesMessage()
+					{
+						MapID = map.Environment.ObjectID,
+						Cube = map.Selection.SelectionCuboid,
+						TerrainID = dialog.TerrainID,
+						TerrainMaterialID = dialog.TerrainMaterialID,
+						InteriorID = dialog.InteriorID,
+						InteriorMaterialID = dialog.InteriorMaterialID,
+						Grass = dialog.Grass,
+						WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)TileData.MinWaterLevel) : null,
+					});
+				}
+			}
 			else
 			{
 				e.Handled = false;
@@ -518,79 +502,6 @@ namespace Dwarrowdelf.Client
 		{
 			get { return map.Environment; }
 			set { map.Environment = value; }
-		}
-
-		void MenuItem_Click_SetInterior(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var inter = (InteriorID)item.Tag;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				InteriorID = inter,
-			});
-		}
-
-		void MenuItem_Click_SetTerrain(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var terrain = (TerrainID)item.Tag;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				TerrainID = terrain,
-			});
-		}
-
-		void MenuItem_Click_SetInteriorMaterial(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var material = (MaterialID)item.Tag;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				InteriorMaterialID = material,
-			});
-		}
-
-		void MenuItem_Click_SetTerrainMaterial(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var material = (MaterialID)item.Tag;
-
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				TerrainMaterialID = material,
-			});
-		}
-
-		private void MenuItem_Click_SetWater(object sender, RoutedEventArgs e)
-		{
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				WaterLevel = TileData.MaxWaterLevel,
-			});
-		}
-
-		private void MenuItem_Click_SetGrass(object sender, RoutedEventArgs e)
-		{
-			bool g = bool.Parse((string)((MenuItem)e.Source).Tag);
-			GameData.Data.Connection.Send(new SetTilesMessage()
-			{
-				MapID = map.Environment.ObjectID,
-				Cube = map.Selection.SelectionCuboid,
-				Grass = g,
-			});
 		}
 
 		private void MenuItem_Click_Job(object sender, RoutedEventArgs e)
