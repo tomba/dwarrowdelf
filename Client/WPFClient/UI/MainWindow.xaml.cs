@@ -117,28 +117,6 @@ namespace Dwarrowdelf.Client
 				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_SetTerrainMaterial));
 				setTerrainMaterialMenu.Items.Add(item);
 			}
-
-			foreach (var id in Enum.GetValues(typeof(BuildingID)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Build));
-				createBuildingMenu.Items.Add(item);
-			}
-
-			foreach (var id in Enum.GetValues(typeof(DesignationType)))
-			{
-				var item = new MenuItem()
-				{
-					Tag = id,
-					Header = id.ToString(),
-				};
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_Designate));
-				designateMenu.Items.Add(item);
-			}
 		}
 
 		void dockableContent_StateChanged(object sender, RoutedEventArgs e)
@@ -682,20 +660,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		private void MenuItem_Click_Build(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var id = (BuildingID)item.Tag;
-
-			var area = map.Selection.SelectionIntRectZ;
-			var env = map.Environment;
-
-			if (area.IsNull)
-				return;
-
-			env.CreateConstructionSite(id, area);
-		}
-
 		private void Get_Button_Click(object sender, RoutedEventArgs e)
 		{
 			var plr = GameData.Data.CurrentObject;
@@ -1023,69 +987,6 @@ namespace Dwarrowdelf.Client
 				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
 				this.Topmost = false;
 				this.WindowState = System.Windows.WindowState.Normal;
-			}
-		}
-
-		private void MenuItem_Click_Designate(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var id = (DesignationType)item.Tag;
-
-			var area = map.Selection.SelectionCuboid;
-			var env = map.Environment;
-
-			DesignationType type;
-
-			switch (id)
-			{
-				case DesignationType.None:
-					env.Designations.RemoveArea(area);
-					return;
-
-				case DesignationType.Mine:
-					type = DesignationType.Mine;
-					break;
-
-				case DesignationType.FellTree:
-					type = DesignationType.FellTree;
-					break;
-
-				case DesignationType.CreateStairs:
-					type = DesignationType.CreateStairs;
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			env.Designations.AddArea(area, type);
-		}
-
-		private void MenuItem_Click_Construct(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			string tag = (string)item.Tag;
-
-			var p = map.Selection.SelectionCuboid.Corner1;
-			var env = map.Environment;
-
-			var building = env.GetBuildingAt(p);
-
-			if (building == null)
-				return;
-
-			switch (tag)
-			{
-				case "Chair":
-					building.AddBuildOrder(ItemID.Chair);
-					break;
-
-				case "Table":
-					building.AddBuildOrder(ItemID.Table);
-					break;
-
-				default:
-					throw new Exception();
 			}
 		}
 
