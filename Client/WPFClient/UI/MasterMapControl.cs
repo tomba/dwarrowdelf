@@ -769,6 +769,20 @@ namespace Dwarrowdelf.Client
 				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
 			}
 		}
+
+		public IntRectZ SelectionIntRectZ
+		{
+			get
+			{
+				if (!this.IsSelectionValid)
+					return new IntRectZ();
+
+				if (this.SelectionStart.Z != this.SelectionEnd.Z)
+					return new IntRectZ();
+
+				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z).Inflate(1, 1);
+			}
+		}
 	}
 
 

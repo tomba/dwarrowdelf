@@ -115,6 +115,11 @@ namespace Dwarrowdelf
 			return rect.Z == this.Z && m_rect.IntersectsWithInclusive(rect.m_rect);
 		}
 
+		public IntRectZ Inflate(int width, int height)
+		{
+			return new IntRectZ(this.X, this.Y, this.Width + width, this.Height + height, this.Z);
+		}
+
 		public IEnumerable<IntPoint3D> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Height; ++y)

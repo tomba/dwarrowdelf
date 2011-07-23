@@ -411,6 +411,26 @@ namespace Dwarrowdelf.Client
 					}
 				}
 			}
+			else if (e.Key == Key.B)
+			{
+				var area = map.Selection.SelectionIntRectZ;
+				var env = map.Environment;
+
+				if (area.IsNull)
+					return;
+
+				var dialog = new ConstructBuildingDialog();
+				dialog.Owner = this;
+				dialog.SetContext(env, area);
+				var res = dialog.ShowDialog();
+
+				if (res == true)
+				{
+					var id = dialog.BuildingID;
+
+					env.CreateConstructionSite(id, area);
+				}
+			}
 			else
 			{
 				e.Handled = false;
@@ -647,11 +667,13 @@ namespace Dwarrowdelf.Client
 			MenuItem item = (MenuItem)e.Source;
 			var id = (BuildingID)item.Tag;
 
-			var r = map.Selection.SelectionCuboid.ToIntRect();
+			var area = map.Selection.SelectionIntRectZ;
 			var env = map.Environment;
-			int z = map.Z;
 
-			env.CreateConstructionSite(id, new IntRectZ(r, z));
+			if (area.IsNull)
+				return;
+
+			env.CreateConstructionSite(id, area);
 		}
 
 		private void Get_Button_Click(object sender, RoutedEventArgs e)

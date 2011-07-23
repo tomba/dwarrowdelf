@@ -13,9 +13,6 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
-	/// <summary>
-	/// Interaction logic for DesignateDialog.xaml
-	/// </summary>
 	partial class DesignateDialog : Window
 	{
 		public DesignationType DesignationType { get; private set; }
