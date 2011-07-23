@@ -110,8 +110,11 @@ namespace Dwarrowdelf.Client
 			switch (type)
 			{
 				case DesignationType.Mine:
-				case DesignationType.CreateStairs:
 					locations = area.Range().Where(p => this.Environment.GetTerrain(p).IsMinable || this.Environment.GetHidden(p));
+					break;
+
+				case DesignationType.CreateStairs:
+					locations = area.Range().Where(p => (this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall ) || this.Environment.GetHidden(p));
 					break;
 
 				case DesignationType.FellTree:

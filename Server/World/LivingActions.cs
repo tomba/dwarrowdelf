@@ -231,97 +231,116 @@ namespace Dwarrowdelf.Server
 			switch (action.MineActionType)
 			{
 				case MineActionType.Mine:
-					if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 					{
-						Trace.TraceWarning("Mine: not Planar or Up direction");
-						return false;
-					}
-
-					// XXX is this necessary for planar dirs? we can always move in those dirs
-					if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
-					{
-						Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
-						return false;
-					}
-
-					ItemID itemID = ItemID.Undefined;
-					MaterialInfo material = null;
-
-					if (id == TerrainID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
-					{
-						if (env.GetInteriorID(p) == InteriorID.Ore)
+						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
-							material = env.GetInteriorMaterial(p);
-						}
-						else
-						{
-							material = env.GetTerrainMaterial(p);
+							Trace.TraceWarning("Mine: not Planar or Up direction");
+							return false;
 						}
 
-						switch (material.MaterialClass)
+						// XXX is this necessary for planar dirs? we can always move in those dirs
+						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
-							case MaterialClass.Rock:
-								itemID = ItemID.Rock;
-								break;
+							Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
+							return false;
+						}
 
-							case MaterialClass.Mineral:
-								itemID = ItemID.Ore;
-								break;
+						ItemObject item = null;
 
-							case MaterialClass.Gem:
-								itemID = ItemID.UncutGem;
-								break;
+						if (id == TerrainID.NaturalWall && this.World.Random.Next(21) >= GetSkillLevel(SkillID.Mining) / 25 + 10)
+						{
+							ItemID itemID;
+							MaterialInfo material;
 
-							default:
+							if (env.GetInteriorID(p) == InteriorID.Ore)
+							{
+								material = env.GetInteriorMaterial(p);
+							}
+							else
+							{
+								material = env.GetTerrainMaterial(p);
+							}
+
+							switch (material.MaterialClass)
+							{
+								case MaterialClass.Rock:
+									itemID = ItemID.Rock;
+									break;
+
+								case MaterialClass.Mineral:
+									itemID = ItemID.Ore;
+									break;
+
+								case MaterialClass.Gem:
+									itemID = ItemID.UncutGem;
+									break;
+
+								default:
+									throw new Exception();
+							}
+
+							var builder = new ItemObjectBuilder(itemID, material.ID);
+							item = builder.Create(this.World);
+						}
+
+						var td = new TileData()
+						{
+							TerrainID = TerrainID.NaturalFloor,
+							TerrainMaterialID = env.GetTerrainMaterialID(p),
+							InteriorID = InteriorID.Empty,
+							InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined,
+							Grass = false,
+							IsHidden = false,
+							WaterLevel = 0,
+						};
+
+						env.SetTileData(p, td);
+
+						if (item != null)
+						{
+							var ok = item.MoveTo(this.Environment, p);
+							if (!ok)
 								throw new Exception();
 						}
 					}
-
-					env.SetTerrain(p, TerrainID.NaturalFloor, env.GetTerrainMaterialID(p));
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-					if (itemID != ItemID.Undefined)
-					{
-						var builder = new ItemObjectBuilder(itemID, material.ID);
-						var item = builder.Create(this.World);
-
-						var ok = item.MoveTo(this.Environment, p);
-						if (!ok)
-							throw new Exception();
-					}
-
 					break;
 
 				case MineActionType.Stairs:
-					if (!action.Direction.IsPlanarUpDown())
 					{
-						Trace.TraceWarning("MineStairs: not PlanarUpDown direction");
-						return false;
-					}
+						if (!action.Direction.IsPlanarUpDown())
+						{
+							Trace.TraceWarning("MineStairs: not PlanarUpDown direction");
+							return false;
+						}
 
-					// We can always create stairs down, but for other dirs we need access there
-					// XXX ??? When we cannot move in planar dirs?
-					if (action.Direction != Direction.Down &&
-						!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
-					{
-						Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
-						return false;
-					}
+						if (id != TerrainID.NaturalWall)
+							return false;
 
-					env.SetTerrain(p, TerrainID.NaturalFloor, env.GetTerrainMaterialID(p));
+						// We can always create stairs down, but for other dirs we need access there
+						// XXX ??? When we cannot move in planar dirs?
+						if (action.Direction != Direction.Down &&
+							!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
+						{
+							Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
+							return false;
+						}
 
-					if (id == TerrainID.NaturalWall)
-					{
-						env.SetInterior(p, InteriorID.Stairs, env.GetTerrainMaterialID(p));
+						var td = new TileData()
+						{
+							TerrainID = TerrainID.NaturalFloor,
+							TerrainMaterialID = env.GetTerrainMaterialID(p),
+							InteriorID = InteriorID.Stairs,
+							InteriorMaterialID = env.GetTerrainMaterialID(p),
+							Grass = false,
+							IsHidden = false,
+							WaterLevel = 0,
+						};
+
+						env.SetTileData(p, td);
 
 						if (env.GetTerrainID(p + Direction.Up) == TerrainID.NaturalFloor)
 							env.SetTerrain(p + Direction.Up, TerrainID.Hole, env.GetTerrainMaterialID(p + Direction.Up));
 					}
-					else
-					{
-						env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					}
-
 					break;
 
 				default:
