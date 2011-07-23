@@ -315,16 +315,6 @@ namespace Dwarrowdelf.Server
 			bool success = false;
 			bool done = false;
 
-			if (this.Parent != null)
-			{
-				var handled = this.Parent.HandleChildAction(this, action);
-				if (handled)
-				{
-					done = true;
-					success = true;
-				}
-			}
-
 			if (!done)
 			{
 				success = PerformAction(action);

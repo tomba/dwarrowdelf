@@ -37,7 +37,6 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public IntPoint3D HomeLocation { get; set; }
 
-		Dictionary<IntPoint3D, ActionHandlerDelegate> m_actionHandlers = new Dictionary<IntPoint3D, ActionHandlerDelegate>();
 		[SaveGameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
 		HashSet<BuildingObject> m_buildings;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
@@ -138,23 +137,6 @@ namespace Dwarrowdelf.Server
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
-
-		public delegate bool ActionHandlerDelegate(ServerGameObject ob, GameAction action);
-
-		public void SetActionHandler(IntPoint3D p, ActionHandlerDelegate handler)
-		{
-			m_actionHandlers[p] = handler;
-		}
-
-		public override bool HandleChildAction(ServerGameObject child, GameAction action)
-		{
-			ActionHandlerDelegate handler;
-			if (m_actionHandlers.TryGetValue(child.Location, out handler) == false)
-				return false;
-
-			return handler(child, action);
-		}
-
 
 		public void ScanWaterTiles()
 		{

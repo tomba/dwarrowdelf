@@ -120,8 +120,6 @@ namespace Dwarrowdelf.Server
 
 		public MaterialClass MaterialClass { get { return Materials.GetMaterial(this.MaterialID).MaterialClass; } } // XXX
 
-		public virtual bool HandleChildAction(ServerGameObject child, GameAction action) { return false; }
-
 		protected virtual bool OkToAddChild(ServerGameObject ob, IntPoint3D dstLoc) { return true; }
 		protected virtual bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
 
