@@ -179,7 +179,13 @@ namespace Dwarrowdelf.Client
 
 			if (change.State != ActionState.Done)
 			{
+				string name;
 				string failStr;
+
+				if (this.Name != null)
+					name = this.Name;
+				else
+					name = ToString();
 
 				switch (change.State)
 				{
@@ -195,7 +201,7 @@ namespace Dwarrowdelf.Client
 						throw new Exception();
 				}
 
-				Trace.TraceError("{0}: Action {1} {2}: {3}", this, change.ActionXXX, failStr, change.Error);
+				Trace.TraceError("{0} {1} action {2}: {3}", name, failStr, change.ActionXXX, change.Error);
 			}
 
 			if (this.AI != null)
