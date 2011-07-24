@@ -708,6 +708,11 @@ namespace Dwarrowdelf.Server
 				var c = (ActionProgressChange)change;
 				return controllables.Contains(c.Object);
 			}
+			else if (change is ActionDoneChange)
+			{
+				var c = (ActionDoneChange)change;
+				return controllables.Contains(c.Object);
+			}
 			else if (change is TickStartChange || change is ObjectDestructedChange)
 			{
 				return true;

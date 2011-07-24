@@ -186,6 +186,21 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			return this.JobStatus;
 		}
 
+		public JobStatus ActionDone(ActionDoneChange e)
+		{
+			Debug.Assert(this.Worker != null);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.CurrentAction != null);
+			Debug.Assert(this.CurrentAssignment != null);
+
+			D("ActionProgress");
+
+			this.CurrentAssignment.ActionDone(e);
+			Notify("CurrentAction");
+
+			return this.JobStatus;
+		}
+
 		protected void SetStatus(JobStatus status)
 		{
 			if (this.JobStatus == status)

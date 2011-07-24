@@ -110,15 +110,44 @@ namespace Dwarrowdelf.Jobs.Assignments
 			var state = ActionProgressOverride(e);
 			SetState(state);
 
-			if (e.TicksLeft == 0)
-				this.CurrentAction = null;
-
 			return state;
 		}
 
 		protected virtual JobStatus ActionProgressOverride(ActionProgressChange e)
 		{
 			return JobStatus.Ok;
+		}
+
+		public JobStatus ActionDone(ActionDoneChange e)
+		{
+			Debug.Assert(this.Worker != null);
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.CurrentAction != null);
+
+			var state = ActionDoneOverride(e);
+			SetState(state);
+
+			this.CurrentAction = null;
+
+			return state;
+		}
+
+		protected virtual JobStatus ActionDoneOverride(ActionDoneChange e)
+		{
+			switch (e.State)
+			{
+				case ActionState.Done:
+					return JobStatus.Done;
+
+				case ActionState.Fail:
+					return JobStatus.Fail;
+
+				case ActionState.Abort:
+					return JobStatus.Abort;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		void SetState(JobStatus status)

@@ -163,17 +163,25 @@ namespace Dwarrowdelf.Client
 		public void HandleActionProgress(ActionProgressChange change)
 		{
 			Debug.Assert(this.HasAction);
+			Debug.Assert(change.TicksLeft > 0);
 
 			this.ActionTicksLeft = change.TicksLeft;
 
 			if (this.AI != null)
 				this.AI.ActionProgress(change);
+		}
 
-			if (change.TicksLeft == 0)
-			{
-				//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
-				this.CurrentAction = null;
-			}
+		public void HandleActionDone(ActionDoneChange change)
+		{
+			Debug.Assert(this.HasAction);
+
+			this.ActionTicksLeft = 0;
+
+			if (this.AI != null)
+				this.AI.ActionDone(change);
+
+			//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
+			this.CurrentAction = null;
 		}
 
 		public void RequestAction(GameAction action)

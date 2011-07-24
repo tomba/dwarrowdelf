@@ -312,41 +312,39 @@ namespace Dwarrowdelf.Server
 
 			this.ActionTicksLeft -= 1;
 
-			bool success = false;
-			bool done = false;
-
-			if (!done)
-			{
-				success = PerformAction(action);
-			}
-
-			ActionState state;
-
-			if (success)
-				state = this.ActionTicksLeft > 0 ? ActionState.Ok : ActionState.Done;
-			else
-				state = ActionState.Fail;
+			bool success = PerformAction(action);
 
 			if (success == false)
 				this.ActionTicksLeft = 0;
 
-			var e = new ActionProgressChange(this)
+
+			if (this.ActionTicksLeft > 0)
+			{
+				var e = new ActionProgressChange(this)
 				{
 					ActionXXX = action,
 					UserID = this.ActionUserID,
 					TicksLeft = this.ActionTicksLeft,
+				};
+
+				this.ActionProgress(e);
+				this.World.AddChange(e);
+			}
+			else
+			{
+				ActionState state = success ? ActionState.Done : ActionState.Fail;
+
+				var e = new ActionDoneChange(this)
+				{
+					ActionXXX = action,
+					UserID = this.ActionUserID,
 					State = state,
 				};
 
-			this.ActionProgress(e);
-
-			this.World.AddChange(e);
-
-			// is the action originator an user?
-			//if (e.UserID != 0)
-			//	this.World.SendEvent(this, e);
+				this.ActionDone(e);
+				this.World.AddChange(e);
+			}
 		}
-
 
 		// Actor stuff
 		[SaveGameProperty]
@@ -393,15 +391,14 @@ namespace Dwarrowdelf.Server
 
 			var action = this.CurrentAction;
 
-			var e = new ActionProgressChange(this)
+			var e = new ActionDoneChange(this)
 			{
 				ActionXXX = action,
 				UserID = this.ActionUserID,
-				TicksLeft = 0,
 				State = ActionState.Abort,
 			};
 
-			this.ActionProgress(e);
+			this.ActionDone(e);
 
 			this.World.AddChange(e);
 		}
@@ -451,6 +448,8 @@ namespace Dwarrowdelf.Server
 
 		void ActionProgress(ActionProgressChange e)
 		{
+			Debug.Assert(e.TicksLeft > 0);
+
 			if (!this.HasAction)
 				throw new Exception();
 
@@ -458,18 +457,27 @@ namespace Dwarrowdelf.Server
 
 			this.ActionTicksLeft = e.TicksLeft;
 
-			D("ActionProgress({0}, {1})", action, e.State);
+			D("ActionProgress({0}, left: {1})", action, e.TicksLeft);
 
 			if (m_ai != null)
 				m_ai.ActionProgress(e);
+		}
 
-			if (e.TicksLeft == 0)
-			{
-				D("ActionDone({0})", action);
-				this.CurrentAction = null;
-				this.ActionTicksLeft = 0;
-				this.ActionUserID = 0;
-			}
+		void ActionDone(ActionDoneChange c)
+		{
+			if (!this.HasAction)
+				throw new Exception();
+
+			var action = this.CurrentAction;
+
+			D("ActionDone({0}, {1})", action, c.State);
+
+			if (m_ai != null)
+				m_ai.ActionDone(c);
+
+			this.CurrentAction = null;
+			this.ActionTicksLeft = 0;
+			this.ActionUserID = 0;
 		}
 
 		void OnAIAssignmentChanged(Jobs.IAssignment assignment)

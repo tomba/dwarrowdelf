@@ -25,7 +25,12 @@ namespace Dwarrowdelf.Jobs
 		/// Called when worker's current action's state changes.
 		/// Note: can be an action started by something else than this AI
 		/// </summary>
-		/// <param name="e"></param>
 		void ActionProgress(ActionProgressChange change);
+
+		/// <summary>
+		/// Called when worker's current action is done/failed.
+		/// Note: can be an action started by something else than this AI
+		/// </summary>
+		void ActionDone(ActionDoneChange change);
 	}
 }

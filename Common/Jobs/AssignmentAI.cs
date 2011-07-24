@@ -243,8 +243,8 @@ namespace Dwarrowdelf.Jobs
 		{
 			var assignment = this.CurrentAssignment;
 
-			trace.TraceVerbose("ActionProgress({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
-				e.ActionXXX, e.State,
+			trace.TraceVerbose("ActionProgress({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
+				e.ActionXXX,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
@@ -255,13 +255,6 @@ namespace Dwarrowdelf.Jobs
 			if (assignment == null)
 			{
 				trace.TraceVerbose("ActionProgress: no assignment, so not for me");
-				return;
-			}
-
-			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
-				assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
-			{
-				trace.TraceVerbose("ActionProgress: cancel event for action not started by us, ignore");
 				return;
 			}
 
@@ -282,6 +275,51 @@ namespace Dwarrowdelf.Jobs
 			var state = assignment.ActionProgress(e);
 
 			trace.TraceVerbose("ActionProgress: {0} in {1}", state, assignment);
+		}
+
+		public void ActionDone(ActionDoneChange e)
+		{
+			var assignment = this.CurrentAssignment;
+
+			trace.TraceVerbose("ActionDone({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
+				e.ActionXXX, e.State,
+				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
+				assignment != null ? assignment.ToString() : "<none>",
+				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
+
+			Debug.Assert(this.Worker.HasAction);
+			Debug.Assert(e.ActionXXX.MagicNumber == this.Worker.CurrentAction.MagicNumber);
+
+			if (assignment == null)
+			{
+				trace.TraceVerbose("ActionDone: no assignment, so not for me");
+				return;
+			}
+
+			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
+				assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			{
+				trace.TraceVerbose("ActionDone: cancel event for action not started by us, ignore");
+				return;
+			}
+
+			if (assignment.CurrentAction == null)
+			{
+				// XXX this can happen when doing a multi-turn action, and the user aborts the action. 
+				throw new NotImplementedException("implement cancel work");
+			}
+
+			// does the action originate from us?
+			if (assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			{
+				throw new NotImplementedException("implement cancel work");
+			}
+
+			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
+
+			var state = assignment.ActionDone(e);
+
+			trace.TraceVerbose("ActionDone: {0} in {1}", state, assignment);
 		}
 	}
 }

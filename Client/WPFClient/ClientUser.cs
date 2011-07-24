@@ -382,13 +382,20 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionProgressChange change)
 		{
-			//Debug.WriteLine("ActionProgressChange({0})", change.ObjectID);
-
 			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
 			if (ob == null)
 				throw new Exception();
 
 			ob.HandleActionProgress(change);
+		}
+
+		void HandleChange(ActionDoneChange change)
+		{
+			var ob = GameData.Data.World.FindObject<Living>(change.ObjectID);
+			if (ob == null)
+				throw new Exception();
+
+			ob.HandleActionDone(change);
 		}
 	}
 }
