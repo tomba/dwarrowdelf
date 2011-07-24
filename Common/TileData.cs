@@ -53,9 +53,24 @@ namespace Dwarrowdelf
 
 	public enum VisibilityMode
 	{
-		AllVisible,	// everything visible
-		GlobalFOV,	// areas inside the mountain are not visible
-		SimpleFOV,	// everything inside VisionRange is visible
-		LOS,		// use LOS algorithm
+		/// <summary>
+		/// Everything visible
+		/// </summary>
+		AllVisible,
+
+		/// <summary>
+		/// Areas inside the mountain are not visible
+		/// </summary>
+		GlobalFOV,
+
+		/// <summary>
+		/// everything inside VisionRange is visible
+		/// </summary>
+		SimpleFOV,
+
+		/// <summary>
+		/// use LOS algorithm
+		/// </summary>
+		LOS,
 	}
 }
