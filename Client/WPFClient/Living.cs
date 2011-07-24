@@ -201,7 +201,7 @@ namespace Dwarrowdelf.Client
 						throw new Exception();
 				}
 
-				Trace.TraceError("{0} {1} action {2}: {3}", name, failStr, change.ActionXXX, change.Error);
+				GameData.Data.AddMessage("{0} {1} action {2}: {3}", name, failStr, change.ActionXXX, change.Error);
 			}
 
 			if (this.AI != null)

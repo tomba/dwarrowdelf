@@ -138,6 +138,7 @@
     </Page>
     <Compile Include="Collections.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
+    <Compile Include="ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />
     <Compile Include="Jobs\CleanAreaJob.cs" />

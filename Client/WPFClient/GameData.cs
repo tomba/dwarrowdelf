@@ -27,11 +27,31 @@ namespace Dwarrowdelf.Client
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
+			m_messages = new ObservableCollection<string>();
+			this.Messages = new ReadOnlyObservableCollection<string>(m_messages);
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
+
+		public void AddMessage(string format, params object[] args)
+		{
+			AddMessage(String.Format(format, args));
+		}
+
+		public void AddMessage(string message)
+		{
+			if (m_messages.Count > 100)
+				m_messages.RemoveAt(0);
+
+			//Trace.TraceInformation(message);
+
+			m_messages.Add(message);
+		}
+
+		ObservableCollection<string> m_messages;
+		public ReadOnlyObservableCollection<string> Messages { get; private set; }
 
 		public ClientConnection Connection
 		{

@@ -437,12 +437,25 @@
 
                 <!-- Console -->
                 <ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
+
+                    <ad:DockableContent Name="messagesContent" Title="Messages">
+                        <ListBox ItemsSource="{Binding Messages,Mode=OneWay}" SelectionMode="Multiple" local:ListBoxExtenders.AutoScrollToEnd="True"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" TextWrapping="WrapWithOverflow" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ad:DockableContent>
+
                     <ad:DockableContent Name="consoleContent" Title="Console">
                         <DockPanel>
                             <local:HistoryTextBox DockPanel.Dock="Bottom" x:Name="inputTextBox" TextEntered="TextBox_PreviewKeyDown" FontFamily="Lucida Console" />
                             <TextBox Name="outputTextBox" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Lucida Console" />
                         </DockPanel>
                     </ad:DockableContent>
+
                 </ad:DockablePane>
 
             </ad:ResizingPanel>
