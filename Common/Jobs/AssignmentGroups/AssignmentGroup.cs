@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected abstract IAssignment PrepareNextAssignment();
 
-		public JobStatus ActionProgress(ActionProgressChange e)
+		public JobStatus ActionProgress()
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
@@ -180,13 +180,13 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			D("ActionProgress");
 
-			this.CurrentAssignment.ActionProgress(e);
+			this.CurrentAssignment.ActionProgress();
 			Notify("CurrentAction");
 
 			return this.JobStatus;
 		}
 
-		public JobStatus ActionDone(ActionDoneChange e)
+		public JobStatus ActionDone(ActionState actionStatus)
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
@@ -195,7 +195,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			D("ActionProgress");
 
-			this.CurrentAssignment.ActionDone(e);
+			this.CurrentAssignment.ActionDone(actionStatus);
 			Notify("CurrentAction");
 
 			return this.JobStatus;

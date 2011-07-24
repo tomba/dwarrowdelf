@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Jobs
 
 		JobStatus Assign(ILiving worker);
 		JobStatus PrepareNextAction();
-		JobStatus ActionProgress(ActionProgressChange e);
-		JobStatus ActionDone(ActionDoneChange e);
+		JobStatus ActionProgress();
+		JobStatus ActionDone(ActionState actionStatus);
 	}
 }

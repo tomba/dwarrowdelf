@@ -51,9 +51,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return action;
 		}
 
-		protected override JobStatus ActionDoneOverride(ActionDoneChange e)
+		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
 		{
-			switch (e.State)
+			switch (actionStatus)
 			{
 				case ActionState.Done:
 					return CheckProgress();

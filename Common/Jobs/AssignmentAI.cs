@@ -272,7 +272,7 @@ namespace Dwarrowdelf.Jobs
 
 			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
-			var state = assignment.ActionProgress(e);
+			var state = assignment.ActionProgress();
 
 			trace.TraceVerbose("ActionProgress: {0} in {1}", state, assignment);
 		}
@@ -317,7 +317,7 @@ namespace Dwarrowdelf.Jobs
 
 			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
-			var state = assignment.ActionDone(e);
+			var state = assignment.ActionDone(e.State);
 
 			trace.TraceVerbose("ActionDone: {0} in {1}", state, assignment);
 		}

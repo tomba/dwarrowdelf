@@ -101,30 +101,30 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected abstract GameAction PrepareNextActionOverride(out JobStatus status);
 
-		public JobStatus ActionProgress(ActionProgressChange e)
+		public JobStatus ActionProgress()
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
-			var state = ActionProgressOverride(e);
+			var state = ActionProgressOverride();
 			SetState(state);
 
 			return state;
 		}
 
-		protected virtual JobStatus ActionProgressOverride(ActionProgressChange e)
+		protected virtual JobStatus ActionProgressOverride()
 		{
 			return JobStatus.Ok;
 		}
 
-		public JobStatus ActionDone(ActionDoneChange e)
+		public JobStatus ActionDone(ActionState actionStatus)
 		{
 			Debug.Assert(this.Worker != null);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
-			var state = ActionDoneOverride(e);
+			var state = ActionDoneOverride(actionStatus);
 			SetState(state);
 
 			this.CurrentAction = null;
@@ -132,9 +132,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return state;
 		}
 
-		protected virtual JobStatus ActionDoneOverride(ActionDoneChange e)
+		protected virtual JobStatus ActionDoneOverride(ActionState actionStatus)
 		{
-			switch (e.State)
+			switch (actionStatus)
 			{
 				case ActionState.Done:
 					return JobStatus.Done;
