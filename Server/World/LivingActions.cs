@@ -66,13 +66,22 @@ namespace Dwarrowdelf.Server
 
 			var env = this.World.FindObject<Environment>(action.EnvironmentID);
 			if (env == null)
+			{
+				SetActionError("no env");
 				return false;
+			}
 
 			if (!action.Area.Contains(this.Location))
+			{
+				SetActionError("living not at the building site");
 				return false;
+			}
 
 			if (BuildingObject.VerifyBuildSite(env, action.Area) == false)
+			{
+				SetActionError("Build site not clean");
 				return false;
+			}
 
 			var builder = new BuildingObjectBuilder(action.BuildingID, action.Area);
 			var building = builder.Create(this.World, env);
@@ -89,7 +98,10 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(GetAction action)
 		{
 			if (this.Environment == null)
+			{
+				SetActionError("no env");
 				return false;
+			}
 
 			if (this.ActionTicksLeft > 0)
 				return true;
@@ -99,18 +111,21 @@ namespace Dwarrowdelf.Server
 			foreach (var itemID in action.ItemObjectIDs)
 			{
 				if (itemID == this.ObjectID)
-					throw new Exception();
+				{
+					SetActionError("object cannot get itself");
+					return false;
+				}
 
 				var item = list.FirstOrDefault(o => o.ObjectID == itemID);
 				if (item == null)
 				{
-					Trace.TraceWarning("{0} tried to pick up {1}, but it's not there", this, itemID);
+					SetActionError("{0} tried to pick up {1}, but it's not there", this, itemID);
 					return false;
 				}
 
 				if (item.MoveTo(this) == false)
 				{
-					Trace.TraceWarning("{0} tried to pick up {1}, but it doesn't move", this, itemID);
+					SetActionError("{0} tried to pick up {1}, but it doesn't move", this, itemID);
 					return false;
 				}
 			}
@@ -126,7 +141,10 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(DropAction action)
 		{
 			if (this.Environment == null)
+			{
+				SetActionError("no env");
 				return false;
+			}
 
 			if (this.ActionTicksLeft > 0)
 				return true;
@@ -136,18 +154,21 @@ namespace Dwarrowdelf.Server
 			foreach (var itemID in action.ItemObjectIDs)
 			{
 				if (itemID == this.ObjectID)
-					throw new Exception();
+				{
+					SetActionError("object cannot drop itself");
+					return false;
+				}
 
 				var ob = list.FirstOrDefault(o => o.ObjectID == itemID);
 				if (ob == null)
 				{
-					Trace.TraceWarning("{0} tried to drop {1}, but it's not in inventory", this, itemID);
+					SetActionError("{0} tried to drop {1}, but it's not in inventory", this, itemID);
 					return false;
 				}
 
 				if (ob.MoveTo(this.Environment, this.Location) == false)
 				{
-					Trace.TraceWarning("{0} tried to drop {1}, but it doesn't move", this, itemID);
+					SetActionError("{0} tried to drop {1}, but it doesn't move", this, itemID);
 					return false;
 				}
 			}
@@ -170,7 +191,7 @@ namespace Dwarrowdelf.Server
 
 			if (item == null)
 			{
-				Trace.TraceWarning("{0} tried to eat {1}, but it't not in inventory", this, action.ItemObjectID);
+				SetActionError("{0} tried to eat {1}, but it't not in inventory", this, action.ItemObjectID);
 				return false;
 			}
 
@@ -179,6 +200,7 @@ namespace Dwarrowdelf.Server
 
 			if (refreshment == 0 && nutrition == 0)
 			{
+				SetActionError("cannot eat a non-digestible item");
 				return false;
 			}
 
@@ -198,10 +220,15 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(MoveAction action)
 		{
 			// this should check if movement is blocked, even when TicksLeft > 0
-			if (this.ActionTicksLeft == 0)
-				return MoveDir(action.Direction);
-			else
+			if (this.ActionTicksLeft > 0)
 				return true;
+
+			var ok = MoveDir(action.Direction);
+
+			if (!ok)
+				SetActionError("could not move (blocked?)");
+
+			return ok;
 		}
 
 		int InitializeAction(MineAction action)
@@ -221,7 +248,7 @@ namespace Dwarrowdelf.Server
 
 			if (!terrain.IsMinable)
 			{
-				Trace.TraceWarning("{0} tried to mine {1}, but it's not minable", this, p);
+				SetActionError("{0} tried to mine {1}, but it's not minable", this, p);
 				return false;
 			}
 
@@ -234,14 +261,14 @@ namespace Dwarrowdelf.Server
 					{
 						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
-							Trace.TraceWarning("Mine: not Planar or Up direction");
+							SetActionError("Mine: not Planar or Up direction");
 							return false;
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
 						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
-							Trace.TraceWarning("Mine: unable to move to {0}", action.Direction);
+							SetActionError("Mine: unable to move to {0}", action.Direction);
 							return false;
 						}
 
@@ -309,19 +336,22 @@ namespace Dwarrowdelf.Server
 					{
 						if (!action.Direction.IsPlanarUpDown())
 						{
-							Trace.TraceWarning("MineStairs: not PlanarUpDown direction");
+							SetActionError("MineStairs: not PlanarUpDown direction");
 							return false;
 						}
 
 						if (id != TerrainID.NaturalWall)
+						{
+							SetActionError("stairs can only be mined at a wall");
 							return false;
+						}
 
 						// We can always create stairs down, but for other dirs we need access there
 						// XXX ??? When we cannot move in planar dirs?
 						if (action.Direction != Direction.Down &&
 							!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
-							Trace.TraceWarning("MineStairs: unable to move to {0}", action.Direction);
+							SetActionError("MineStairs: unable to move to {0}", action.Direction);
 							return false;
 						}
 
@@ -363,7 +393,7 @@ namespace Dwarrowdelf.Server
 
 			if (id != InteriorID.Tree && id != InteriorID.Sapling)
 			{
-				Trace.TraceWarning("{0} tried to fell tree {1}, but it't a tree", this, p);
+				SetActionError("{0} tried to fell tree {1}, but it't a tree", this, p);
 				return false;
 			}
 
@@ -411,15 +441,24 @@ namespace Dwarrowdelf.Server
 			var building = this.Environment.GetBuildingAt(this.Location);
 
 			if (building == null)
+			{
+				SetActionError("cannot find building");
 				return false;
+			}
 
 			if (this.ActionTicksLeft != 0)
 			{
-				return building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				var ok = building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				if (!ok)
+					SetActionError("build item request is invalid");
+				return ok;
 			}
 			else
 			{
-				return building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				var ok = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+				if (!ok)
+					SetActionError("unable to build the item");
+				return ok;
 			}
 		}
 
@@ -440,13 +479,13 @@ namespace Dwarrowdelf.Server
 
 			if (attackee == null)
 			{
-				Trace.TraceWarning("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
+				SetActionError("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
 				return false;
 			}
 
 			if (!attacker.Location.IsAdjacentTo(attackee.Location, DirectionSet.Planar))
 			{
-				Trace.TraceWarning("{0} tried to attack {1}, but it wasn't near", attacker, attackee);
+				SetActionError("{0} tried to attack {1}, but it wasn't near", attacker, attackee);
 				return false;
 			}
 

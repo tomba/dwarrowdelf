@@ -177,6 +177,27 @@ namespace Dwarrowdelf.Client
 
 			this.ActionTicksLeft = 0;
 
+			if (change.State != ActionState.Done)
+			{
+				string failStr;
+
+				switch (change.State)
+				{
+					case ActionState.Fail:
+						failStr = "failed";
+						break;
+
+					case ActionState.Abort:
+						failStr = "aborted";
+						break;
+
+					default:
+						throw new Exception();
+				}
+
+				Trace.TraceError("{0}: Action {1} {2}: {3}", this, change.ActionXXX, failStr, change.Error);
+			}
+
 			if (this.AI != null)
 				this.AI.ActionDone(change);
 
@@ -237,7 +258,10 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Living({0:x})", this.ObjectID.Value);
+			if (this.IsDestructed)
+				return "<DestructedObject>";
+
+			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
 		}
 
 

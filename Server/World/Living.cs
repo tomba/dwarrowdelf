@@ -339,11 +339,27 @@ namespace Dwarrowdelf.Server
 					ActionXXX = action,
 					UserID = this.ActionUserID,
 					State = state,
+					Error = success ? null : (m_actionError ?? "<no error str>"),
 				};
+
+				m_actionError = null;
 
 				this.ActionDone(e);
 				this.World.AddChange(e);
 			}
+		}
+
+		string m_actionError;
+
+		void SetActionError(string format, params object[] args)
+		{
+			SetActionError(String.Format(format, args));
+		}
+
+		void SetActionError(string error)
+		{
+			Trace.TraceWarning("{0} SetActionError({1})", this, error);
+			m_actionError = error;
 		}
 
 		// Actor stuff
