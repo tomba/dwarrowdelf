@@ -41,6 +41,8 @@ namespace Dwarrowdelf
 
 	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
 	{
+		VisibilityMode VisibilityMode { get; }
+
 		IntCuboid Bounds { get; }
 		bool Contains(IntPoint3D p);
 

@@ -22,8 +22,6 @@ namespace Dwarrowdelf
 
 		public bool Grass { get; set; }
 
-		public bool IsHidden { get; set; }
-
 		public ulong ToUInt64()
 		{
 			return
@@ -32,8 +30,7 @@ namespace Dwarrowdelf
 				((ulong)this.InteriorID << 16) |
 				((ulong)this.InteriorMaterialID << 24) |
 				((ulong)this.WaterLevel << 32) |
-				((this.Grass ? 1LU : 0LU) << 40) |
-				((this.IsHidden ? 1LU : 0LU) << 48);
+				((this.Grass ? 1LU : 0LU) << 40);
 		}
 
 		public static TileData FromUInt64(ulong value)
@@ -46,7 +43,6 @@ namespace Dwarrowdelf
 				InteriorMaterialID = (MaterialID)((value >> 24) & 0xff),
 				WaterLevel = (byte)((value >> 32) & 0xff),
 				Grass = ((value >> 40) & 0xff) != 0,
-				IsHidden = ((value >> 48) & 0xff) != 0,
 			};
 		}
 	}

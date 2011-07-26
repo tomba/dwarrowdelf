@@ -317,7 +317,6 @@ namespace Dwarrowdelf.Server
 							InteriorID = InteriorID.Empty,
 							InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined,
 							Grass = false,
-							IsHidden = false,
 							WaterLevel = 0,
 						};
 
@@ -362,7 +361,6 @@ namespace Dwarrowdelf.Server
 							InteriorID = InteriorID.Stairs,
 							InteriorMaterialID = env.GetTerrainMaterialID(p),
 							Grass = false,
-							IsHidden = false,
 							WaterLevel = 0,
 						};
 

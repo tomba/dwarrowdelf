@@ -168,7 +168,7 @@ namespace Dwarrowdelf.Client
 
 		public bool GetHidden(IntPoint3D ml)
 		{
-			return m_tileGrid.GetHidden(ml);
+			return m_tileGrid.GetTerrainID(ml) == TerrainID.Undefined;
 		}
 
 		public TileData GetTileData(IntPoint3D p)

@@ -81,34 +81,9 @@ namespace Dwarrowdelf.Server
 
 		protected override void Initialize(World world)
 		{
-			InitializeTileHiddenStatuses();
-
 			base.Initialize(world);
 
 			world.TickStarting += Tick;
-		}
-
-		void InitializeTileHiddenStatuses()
-		{
-			foreach (var p in this.Bounds.Range())
-			{
-				if (!GetTerrain(p).IsBlocker)
-				{
-					m_tileGrid.SetHidden(p, false);
-				}
-				else
-				{
-					bool hidden = DirectionExtensions.PlanarDirections
-						.Select(d => p + d)
-						.Where(pp => this.Contains(pp))
-						.All(pp => !GetTerrain(pp).IsSeeThrough);
-
-					if (hidden && this.Contains(p + Direction.Up))
-						hidden = !GetTerrain(p + Direction.Up).IsSeeThroughDown;
-
-					m_tileGrid.SetHidden(p, hidden);
-				}
-			}
 		}
 
 		public override void Destruct()
@@ -378,7 +353,8 @@ namespace Dwarrowdelf.Server
 
 		public bool GetHidden(IntPoint3D l)
 		{
-			return m_tileGrid.GetHidden(l);
+			// WWW
+			return false;
 		}
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
@@ -431,6 +407,7 @@ namespace Dwarrowdelf.Server
 
 		void RevealTiles(IntPoint3D p, TileData oldData, TileData newData)
 		{
+#if WWW
 			var oldTerrain = Terrains.GetTerrain(oldData.TerrainID);
 			var newTerrain = Terrains.GetTerrain(newData.TerrainID);
 
@@ -458,6 +435,7 @@ namespace Dwarrowdelf.Server
 					MapChanged(pp, m_tileGrid.GetTileData(pp));
 				}
 			}
+#endif
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
@@ -601,8 +579,8 @@ namespace Dwarrowdelf.Server
 				foreach (var p in this.Bounds.Range())
 				{
 					int idx = bounds.GetIndex(p);
-					if (m_tileGrid.GetHidden(p))
-						arr[idx] = new TileData() { IsHidden = true };
+					if (GetHidden(p))
+						arr[idx] = new TileData();
 					else
 						arr[idx] = m_tileGrid.GetTileData(p);
 				}
@@ -627,8 +605,8 @@ namespace Dwarrowdelf.Server
 					{
 						int idx = plane.GetIndex(p2d);
 						var p = new IntPoint3D(p2d, z);
-						if (m_tileGrid.GetHidden(p))
-							arr[idx] = new TileData() { IsHidden = true };
+						if (GetHidden(p))
+							arr[idx] = new TileData();
 						else
 							arr[idx] = m_tileGrid.GetTileData(p);
 					}
@@ -652,8 +630,8 @@ namespace Dwarrowdelf.Server
 						for (int x = bounds.X1; x < bounds.X2; ++x)
 						{
 							IntPoint3D p = new IntPoint3D(x, y, z);
-							if (m_tileGrid.GetHidden(p))
-								arr[x] = new TileData() { IsHidden = true };
+							if (GetHidden(p))
+								arr[x] = new TileData();
 							else
 								arr[x] = m_tileGrid.GetTileData(p);
 						}
@@ -821,11 +799,6 @@ namespace Dwarrowdelf.Server
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public bool GetHidden(IntPoint3D p)
-		{
-			return m_grid[p.Z, p.Y, p.X].IsHidden;
-		}
-
 		public byte GetWaterLevel(IntPoint3D p)
 		{
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
@@ -882,11 +855,6 @@ namespace Dwarrowdelf.Server
 		public void SetGrass(IntPoint3D p, bool grass)
 		{
 			m_grid[p.Z, p.Y, p.X].Grass = grass;
-		}
-
-		public void SetHidden(IntPoint3D p, bool hidden)
-		{
-			m_grid[p.Z, p.Y, p.X].IsHidden = hidden;
 		}
 	}
 
@@ -974,11 +942,6 @@ namespace Dwarrowdelf.Server
 		public bool GetGrass(IntPoint3D l)
 		{
 			return m_tileGrid.GetGrass(l);
-		}
-
-		public bool GetHidden(IntPoint3D l)
-		{
-			return m_tileGrid.GetHidden(l);
 		}
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
