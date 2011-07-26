@@ -76,4 +76,9 @@ namespace Dwarrowdelf
 		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
 	}
+
+	public interface IPlayer
+	{
+		void Send(Dwarrowdelf.Messages.ClientMessage message);
+	}
 }

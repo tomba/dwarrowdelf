@@ -69,10 +69,11 @@ namespace Dwarrowdelf.Server
 
 		public abstract BaseGameObjectData Serialize();
 
-		public virtual void SerializeTo(Action<Messages.ClientMessage> writer)
+		public virtual void SendTo(IPlayer player)
 		{
+			var data = Serialize();
 			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
-			writer(msg);
+			player.Send(msg);
 		}
 
 		protected virtual Dictionary<PropertyID, object> SerializeProperties()

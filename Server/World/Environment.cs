@@ -582,9 +582,9 @@ namespace Dwarrowdelf.Server
 			throw new Exception();
 		}
 
-		public override void SerializeTo(Action<Messages.ClientMessage> writer)
+		public override void SendTo(IPlayer player)
 		{
-			writer(new Messages.MapDataMessage()
+			player.Send(new Messages.MapDataMessage()
 			{
 				Environment = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
@@ -607,7 +607,7 @@ namespace Dwarrowdelf.Server
 						arr[idx] = m_tileGrid.GetTileData(p);
 				}
 
-				writer(new Messages.MapDataTerrainsMessage()
+				player.Send(new Messages.MapDataTerrainsMessage()
 				{
 					Environment = this.ObjectID,
 					Bounds = bounds,
@@ -636,7 +636,7 @@ namespace Dwarrowdelf.Server
 					msg.Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1);
 					msg.TerrainData = arr;
 
-					writer(msg);
+					player.Send(msg);
 				}
 			}
 			else
@@ -661,7 +661,7 @@ namespace Dwarrowdelf.Server
 						msg.Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1);
 						msg.TerrainData = arr;
 
-						writer(msg);
+						player.Send(msg);
 					}
 				}
 			}
@@ -670,13 +670,13 @@ namespace Dwarrowdelf.Server
 			{
 				foreach (var o in m_contentArray[z])
 				{
-					o.SerializeTo(writer);
+					o.SendTo(player);
 				}
 			}
 
 			foreach (var o in m_buildings)
 			{
-				o.SerializeTo(writer);
+				o.SendTo(player);
 			}
 		}
 

@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObject]
-	public class Player : INotifyPropertyChanged
+	public class Player : INotifyPropertyChanged, IPlayer
 	{
 		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
 
@@ -571,7 +571,7 @@ namespace Dwarrowdelf.Server
 			{
 				if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
 				{
-					env.SerializeTo(Send);
+					env.SendTo(m_player);
 				}
 				else
 				{

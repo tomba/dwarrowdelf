@@ -69,11 +69,12 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		public override void SerializeTo(Action<Messages.ClientMessage> writer)
+		public override void SendTo(IPlayer player)
 		{
-			base.SerializeTo(writer);
+			base.SendTo(player);
+
 			foreach (var o in this.Inventory)
-				o.SerializeTo(writer);
+				o.SendTo(player);
 		}
 
 		[SaveGameProperty("Name")]

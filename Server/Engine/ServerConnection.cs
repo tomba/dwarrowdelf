@@ -124,7 +124,7 @@ namespace Dwarrowdelf.Server
 			if (m_user.IsSeeAll)
 			{
 				foreach (var env in m_engine.World.Environments)
-					env.SerializeTo(Send);
+					env.SendTo(m_user);
 			}
 
 			Send(new Messages.LogOnReplyEndMessage());
