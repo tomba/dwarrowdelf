@@ -268,7 +268,7 @@ namespace Dwarrowdelf.Server
 		{
 			get
 			{
-				Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+				Debug.Assert(World.LivingVisionMode == LivingVisionMode.LOS);
 				UpdateLOS();
 				return m_visionMap;
 			}
@@ -514,7 +514,7 @@ namespace Dwarrowdelf.Server
 			if (this.Environment == null)
 				return;
 
-			if (this.Environment.VisibilityMode != VisibilityMode.LOS)
+			if (World.LivingVisionMode != LivingVisionMode.LOS)
 				throw new Exception();
 
 			if (m_losLocation == this.Location &&
@@ -550,30 +550,30 @@ namespace Dwarrowdelf.Server
 			if (env == null)
 				return true;
 
-			if (env.VisibilityMode == VisibilityMode.AllVisible)
-				return true;
-
-			if (env.VisibilityMode == VisibilityMode.GlobalFOV)
-				return !env.GetHidden(l);
-
 			IntVector3D dl = l - this.Location;
 
+			// XXX livings don't currently see up or down
 			if (dl.Z != 0)
 				return false;
 
-			if (Math.Abs(dl.X) > this.VisionRange ||
-				Math.Abs(dl.Y) > this.VisionRange)
+			// is the target outside range?
+			if (Math.Abs(dl.X) > this.VisionRange || Math.Abs(dl.Y) > this.VisionRange)
+				return false;
+
+			switch (World.LivingVisionMode)
 			{
-				return false;
+				case LivingVisionMode.SquareFOV:
+					return true;
+
+				case LivingVisionMode.LOS:
+					if (this.VisionMap[new IntPoint(dl.X, dl.Y)] == false)
+						return false;
+
+					return true;
+
+				default:
+					throw new Exception();
 			}
-
-			if (env.VisibilityMode == VisibilityMode.SimpleFOV)
-				return true;
-
-			if (this.VisionMap[new IntPoint(dl.X, dl.Y)] == false)
-				return false;
-
-			return true;
 		}
 
 		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
@@ -600,12 +600,17 @@ namespace Dwarrowdelf.Server
 
 		public IEnumerable<IntPoint> GetVisibleLocations()
 		{
-			if (this.Environment.VisibilityMode == VisibilityMode.LOS)
-				return GetVisibleLocationsLOS();
-			else if (this.Environment.VisibilityMode == VisibilityMode.SimpleFOV)
-				return GetVisibleLocationsSimpleFOV();
-			else
-				throw new Exception();
+			switch (World.LivingVisionMode)
+			{
+				case LivingVisionMode.LOS:
+					return GetVisibleLocationsLOS();
+
+				case LivingVisionMode.SquareFOV:
+					return GetVisibleLocationsSimpleFOV();
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		public override string ToString()

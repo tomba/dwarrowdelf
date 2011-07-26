@@ -15,13 +15,16 @@ namespace Dwarrowdelf.Client
 
 		EnvironmentCollection m_environments;
 		public ReadOnlyEnvironmentCollection Environments { get; private set; }
-		
+
 		public LivingCollection Controllables { get; private set; }
 
 		public Dwarrowdelf.Jobs.JobManager JobManager { get; private set; }
 
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
+
+		LivingVisionMode m_livingVisionMode;
+		public LivingVisionMode LivingVisionMode { get { return m_livingVisionMode; } }
 
 		public World()
 		{
@@ -54,6 +57,11 @@ namespace Dwarrowdelf.Client
 		public void SetTick(int tick)
 		{
 			this.TickNumber = tick;
+		}
+
+		public void SetLivingVisionMode(LivingVisionMode mode)
+		{
+			m_livingVisionMode = mode;
 		}
 
 		public void HandleChange(TickStartChange change)

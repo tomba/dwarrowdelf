@@ -18,6 +18,9 @@ namespace Dwarrowdelf.Server
 	{
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");
 
+		// XXX where should this be?
+		public LivingVisionMode LivingVisionMode { get { return LivingVisionMode.LOS; } }
+
 		// only for debugging
 		public bool IsWritable { get; private set; }
 

@@ -171,6 +171,7 @@ namespace Dwarrowdelf.Client
 			m_logOnStartTime = DateTime.Now;
 
 			m_user = new ClientUser(this, m_world, msg.IsSeeAll);
+			GameData.Data.World.SetLivingVisionMode(msg.LivingVisionMode);
 			GameData.Data.World.SetTick(msg.Tick);
 		}
 

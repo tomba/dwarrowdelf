@@ -58,6 +58,7 @@ namespace Dwarrowdelf.Messages
 	{
 		public bool IsSeeAll { get; set; }
 		public int Tick { get; set; }
+		public LivingVisionMode LivingVisionMode { get; set; }
 	}
 
 	[Serializable]

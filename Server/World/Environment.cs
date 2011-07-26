@@ -41,6 +41,8 @@ namespace Dwarrowdelf.Server
 		HashSet<BuildingObject> m_buildings;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
+		public event Action<IntPoint3D, TileData, TileData> TerrainChanged;
+
 		Environment(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
 		{
@@ -372,7 +374,8 @@ namespace Dwarrowdelf.Server
 
 			MapChanged(p, data);
 
-			RevealTiles(p, oldData, data);
+			if (this.TerrainChanged != null)
+				this.TerrainChanged(p, oldData, data);
 		}
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
@@ -402,40 +405,8 @@ namespace Dwarrowdelf.Server
 
 			MapChanged(p, data);
 
-			RevealTiles(p, oldData, data);
-		}
-
-		void RevealTiles(IntPoint3D p, TileData oldData, TileData newData)
-		{
-#if WWW
-			var oldTerrain = Terrains.GetTerrain(oldData.TerrainID);
-			var newTerrain = Terrains.GetTerrain(newData.TerrainID);
-
-			if (oldTerrain.IsSeeThrough != newTerrain.IsSeeThrough)
-			{
-				var revealed = DirectionExtensions.PlanarDirections
-					.Select(dir => p + dir)
-					.Where(pp => this.Contains(pp))
-					.Where(pp => m_tileGrid.GetHidden(pp));
-
-				foreach (var pp in revealed)
-				{
-					m_tileGrid.SetHidden(pp, false);
-					MapChanged(pp, m_tileGrid.GetTileData(pp));
-				}
-			}
-
-			if (oldTerrain.IsSeeThroughDown != newTerrain.IsSeeThroughDown)
-			{
-				var pp = p + Direction.Down;
-
-				if (this.Contains(pp) && m_tileGrid.GetHidden(pp))
-				{
-					m_tileGrid.SetHidden(pp, false);
-					MapChanged(pp, m_tileGrid.GetTileData(pp));
-				}
-			}
-#endif
+			if (this.TerrainChanged != null)
+				this.TerrainChanged(p, oldData, data);
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
@@ -562,6 +533,8 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player)
 		{
+			var visionTracker = player.GetVisionTracker(this);
+
 			player.Send(new Messages.MapDataMessage()
 			{
 				Environment = this.ObjectID,
@@ -579,7 +552,7 @@ namespace Dwarrowdelf.Server
 				foreach (var p in this.Bounds.Range())
 				{
 					int idx = bounds.GetIndex(p);
-					if (GetHidden(p))
+					if (!visionTracker.Sees(p))
 						arr[idx] = new TileData();
 					else
 						arr[idx] = m_tileGrid.GetTileData(p);
@@ -605,7 +578,7 @@ namespace Dwarrowdelf.Server
 					{
 						int idx = plane.GetIndex(p2d);
 						var p = new IntPoint3D(p2d, z);
-						if (GetHidden(p))
+						if (!visionTracker.Sees(p))
 							arr[idx] = new TileData();
 						else
 							arr[idx] = m_tileGrid.GetTileData(p);
@@ -630,7 +603,7 @@ namespace Dwarrowdelf.Server
 						for (int x = bounds.X1; x < bounds.X2; ++x)
 						{
 							IntPoint3D p = new IntPoint3D(x, y, z);
-							if (GetHidden(p))
+							if (!visionTracker.Sees(p))
 								arr[x] = new TileData();
 							else
 								arr[x] = m_tileGrid.GetTileData(p);

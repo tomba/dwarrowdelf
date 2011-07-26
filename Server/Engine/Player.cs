@@ -61,7 +61,6 @@ namespace Dwarrowdelf.Server
 		// does this player sees all
 		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
-		public bool IsSeeAll { get { return m_seeAll; } }
 
 		[SaveGameProperty("Controllables")]
 		List<Living> m_controllables;
@@ -80,11 +79,15 @@ namespace Dwarrowdelf.Server
 		public Player(int userID)
 		{
 			m_userID = userID;
-			m_seeAll = true;
+			m_seeAll = false;
 
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
-			m_changeHandler = new ChangeHandler(this);
+
+			if (m_seeAll)
+				m_changeHandler = new AdminChangeHandler(this);
+			else
+				m_changeHandler = new PlayerChangeHandler(this);
 		}
 
 		protected Player(SaveGameContext ctx)
@@ -92,9 +95,12 @@ namespace Dwarrowdelf.Server
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
 
 			foreach (var l in this.Controllables)
-				l.Destructed += OnPlayerDestructed; // XXX remove if player deleted
+				l.Destructed += OnControllableDestructed; // XXX remove if player deleted
 
-			m_changeHandler = new ChangeHandler(this);
+			if (m_seeAll)
+				m_changeHandler = new AdminChangeHandler(this);
+			else
+				m_changeHandler = new PlayerChangeHandler(this);
 		}
 
 		public void Init(GameEngine engine)
@@ -103,6 +109,27 @@ namespace Dwarrowdelf.Server
 			m_world = m_engine.World;
 
 			trace.Header = String.Format("Player({0})", m_userID);
+		}
+
+		void AddControllable(Living living)
+		{
+			m_controllables.Add(living);
+			living.Destructed += OnControllableDestructed;
+
+			// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
+			if (living.Environment != null)
+			{
+				var tracker = GetVisionTrackerInternal(living.Environment);
+				tracker.HandleNewControllable(living);
+			}
+		}
+
+		void RemoveControllable(Living living)
+		{
+			var ok = m_controllables.Remove(living);
+			Debug.Assert(ok);
+			living.Destructed -= OnControllableDestructed;
+			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
 		}
 
 		public bool IsConnected { get { return m_connection != null; } }
@@ -119,13 +146,11 @@ namespace Dwarrowdelf.Server
 
 				if (m_connection != null)
 				{
-					m_world.WorkEnded += HandleEndOfWork;
 					m_world.WorldChanged += HandleWorldChange;
 					m_ipRunner = new IPRunner(m_world, Send);
 				}
 				else
 				{
-					m_world.WorkEnded -= HandleEndOfWork;
 					m_world.WorldChanged -= HandleWorldChange;
 					m_ipRunner = null;
 
@@ -136,12 +161,10 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void OnPlayerDestructed(BaseGameObject ob)
+		void OnControllableDestructed(BaseGameObject ob)
 		{
 			var living = (Living)ob;
-			m_controllables.Remove(living);
-			living.Destructed -= OnPlayerDestructed;
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			RemoveControllable(living);
 		}
 
 		public void Send(ClientMessage msg)
@@ -157,11 +180,11 @@ namespace Dwarrowdelf.Server
 
 		public void ReceiveLogOnMessage(LogOnRequestMessage msg)
 		{
-			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_seeAll, Tick = m_engine.World.TickNumber });
+			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_seeAll, Tick = m_engine.World.TickNumber, LivingVisionMode = m_engine.World.LivingVisionMode, });
 
 			if (m_seeAll)
 			{
-				foreach (var env in m_engine.World.Environments)
+				foreach (var env in this.World.Environments)
 					env.SendTo(this);
 			}
 
@@ -171,6 +194,10 @@ namespace Dwarrowdelf.Server
 		public void ReceiveLogOutMessage(LogOutRequestMessage msg)
 		{
 			Send(new Messages.LogOutReplyMessage());
+
+			foreach (var kvp in m_visionTrackers)
+				kvp.Value.Stop();
+			m_visionTrackers.Clear();
 		}
 
 		public void OnReceiveMessage(Message m)
@@ -269,7 +296,7 @@ namespace Dwarrowdelf.Server
 			if (m_hasControllablesBeenCreated)
 			{
 				Send(new Messages.EnterGameReplyBeginMessage());
-				Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+				Send(new Messages.ControllablesDataMessage() { Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 				this.IsInGame = true;
@@ -298,16 +325,14 @@ namespace Dwarrowdelf.Server
 			{
 				trace.TraceInformation("Creating controllables");
 				var controllables = m_engine.CreateControllables(this);
-				m_controllables.AddRange(controllables);
-
-				foreach (var l in m_controllables)
-					l.Destructed += OnPlayerDestructed;
+				foreach (var l in controllables)
+					AddControllable(l);
 
 				m_hasControllablesBeenCreated = true;
 			}
 
 			Send(new Messages.EnterGameReplyBeginMessage());
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			Send(new Messages.ControllablesDataMessage() { Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
 			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 			this.IsInGame = true;
@@ -338,7 +363,7 @@ namespace Dwarrowdelf.Server
 					var actorOid = tuple.Item1;
 					var action = tuple.Item2;
 
-					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
+					var living = this.Controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
 						continue;
@@ -408,7 +433,7 @@ namespace Dwarrowdelf.Server
 			else if (change is TurnStartSequentialChange)
 			{
 				var c = (TurnStartSequentialChange)change;
-				if (m_controllables.Contains(c.Living))
+				if (this.Controllables.Contains(c.Living))
 					return;
 
 				SendProceedTurnRequest(c.Living);
@@ -435,11 +460,6 @@ namespace Dwarrowdelf.Server
 			Send(msg);
 		}
 
-		void HandleEndOfWork()
-		{
-			m_changeHandler.HandleEndOfWork();
-		}
-
 		#region INotifyPropertyChanged Members
 		public event PropertyChangedEventHandler PropertyChanged;
 		#endregion
@@ -450,245 +470,141 @@ namespace Dwarrowdelf.Server
 				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 
+		Dictionary<Environment, VisionTrackerBase> m_visionTrackers = new Dictionary<Environment, VisionTrackerBase>();
+
+		public bool Sees(IBaseGameObject ob, IntPoint3D p)
+		{
+			if (m_seeAll)
+				return true;
+
+			var env = ob as Environment;
+
+			if (env == null)
+				return false;
+
+			IVisionTracker tracker = GetVisionTracker(env);
+
+			return tracker.Sees(p);
+		}
+
+		public IVisionTracker GetVisionTracker(IEnvironment env)
+		{
+			return GetVisionTrackerInternal((Environment)env);
+		}
+
+		VisionTrackerBase GetVisionTrackerInternal(Environment env)
+		{
+			if (m_seeAll)
+				return AdminVisionTracker.Tracker;
+
+			VisionTrackerBase tracker;
+
+			if (m_visionTrackers.TryGetValue(env, out tracker) == false)
+			{
+				switch (env.VisibilityMode)
+				{
+					case VisibilityMode.AllVisible:
+						tracker = new AllVisibleVisionTracker(this, env);
+						break;
+
+					case VisibilityMode.GlobalFOV:
+						tracker = new GlobalFOVVisionTracker(this, env);
+						break;
+
+					case VisibilityMode.LivingLOS:
+						tracker = new LOSVisionTracker(this, env);
+						break;
+
+					default:
+						throw new NotImplementedException();
+				}
+
+				m_visionTrackers[env] = tracker;
+
+				tracker.Start();
+			}
+
+			return tracker;
+		}
 	}
 
-
-
-	class ChangeHandler
+	abstract class ChangeHandler
 	{
-		// These are used to determine new tiles and objects in sight
-		HashSet<Environment> m_knownEnvironments = new HashSet<Environment>();
+		protected Player m_player;
 
-		Dictionary<Environment, HashSet<IntPoint3D>> m_oldKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
-		HashSet<ServerGameObject> m_oldKnownObjects = new HashSet<ServerGameObject>();
-
-		Dictionary<Environment, HashSet<IntPoint3D>> m_newKnownLocations = new Dictionary<Environment, HashSet<IntPoint3D>>();
-		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
-
-		Player m_player;
-
-		public ChangeHandler(Player player)
+		protected ChangeHandler(Player player)
 		{
 			m_player = player;
 		}
 
-		void Send(ClientMessage msg)
+		protected void Send(ClientMessage msg)
 		{
 			m_player.Send(msg);
 		}
 
-		void Send(IEnumerable<ClientMessage> msgs)
+		protected void Send(IEnumerable<ClientMessage> msgs)
 		{
 			m_player.Send(msgs);
 		}
 
-		// Called from the world at the end of work
-		public void HandleEndOfWork()
+		public abstract void HandleWorldChange(Change change);
+	}
+
+	class AdminChangeHandler : ChangeHandler
+	{
+		public AdminChangeHandler(Player player)
+			: base(player)
 		{
-			// if the player sees all, no need to send new terrains/objects
-			if (!m_player.IsSeeAll)
-				HandleNewTerrainsAndObjects(m_player.Controllables);
 		}
 
-		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
+		public override void HandleWorldChange(Change change)
 		{
-			m_oldKnownLocations = m_newKnownLocations;
-			m_newKnownLocations = CollectLocations(friendlies);
+			var changeMsg = new ChangeMessage { Change = change };
 
-			m_oldKnownObjects = m_newKnownObjects;
-			m_newKnownObjects = CollectObjects(m_newKnownLocations);
+			Send(changeMsg);
 
-			var revealedLocations = CollectRevealedLocations(m_oldKnownLocations, m_newKnownLocations);
-			var revealedObjects = CollectRevealedObjects(m_oldKnownObjects, m_newKnownObjects);
-			var revealedEnvironments = m_newKnownLocations.Keys.Except(m_knownEnvironments).ToArray();
-
-			m_knownEnvironments.UnionWith(revealedEnvironments);
-
-			SendNewEnvironments(revealedEnvironments);
-			SendNewTerrains(revealedLocations);
-			SendNewObjects(revealedObjects);
-		}
-
-		// Collect all environments and locations that friendlies see
-		Dictionary<Environment, HashSet<IntPoint3D>> CollectLocations(IEnumerable<Living> friendlies)
-		{
-			var knownLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
-
-			foreach (var l in friendlies)
+			if (change is ObjectCreatedChange)
 			{
-				if (l.Environment == null)
-					continue;
-
-				IEnumerable<IntPoint3D> locList;
-
-				/* for AllVisible maps we don't track visible locations, but we still
-				 * need to handle newly visible maps */
-				if (l.Environment.VisibilityMode == VisibilityMode.AllVisible || l.Environment.VisibilityMode == VisibilityMode.GlobalFOV)
-					locList = new List<IntPoint3D>();
-				else
-					locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
-
-				if (!knownLocs.ContainsKey(l.Environment))
-					knownLocs[l.Environment] = new HashSet<IntPoint3D>();
-
-				knownLocs[l.Environment].UnionWith(locList);
-			}
-
-			return knownLocs;
-		}
-
-		// Collect all objects in the given location map
-		static HashSet<ServerGameObject> CollectObjects(Dictionary<Environment, HashSet<IntPoint3D>> knownLocs)
-		{
-			var knownObs = new HashSet<ServerGameObject>();
-
-			foreach (var kvp in knownLocs)
-			{
-				var env = kvp.Key;
-				var newLocs = kvp.Value;
-
-				foreach (var p in newLocs)
-				{
-					var obList = env.GetContents(p);
-					if (obList != null)
-						knownObs.UnionWith(obList);
-				}
-			}
-
-			return knownObs;
-		}
-
-		// Collect locations that are newly visible
-		static Dictionary<Environment, HashSet<IntPoint3D>> CollectRevealedLocations(Dictionary<Environment, HashSet<IntPoint3D>> oldLocs,
-			Dictionary<Environment, HashSet<IntPoint3D>> newLocs)
-		{
-			var revealedLocs = new Dictionary<Environment, HashSet<IntPoint3D>>();
-
-			foreach (var kvp in newLocs)
-			{
-				if (oldLocs.ContainsKey(kvp.Key))
-					revealedLocs[kvp.Key] = new HashSet<IntPoint3D>(kvp.Value.Except(oldLocs[kvp.Key]));
-				else
-					revealedLocs[kvp.Key] = kvp.Value;
-			}
-
-			return revealedLocs;
-		}
-
-		// Collect objects that are newly visible
-		static ServerGameObject[] CollectRevealedObjects(HashSet<ServerGameObject> oldObjects, HashSet<ServerGameObject> newObjects)
-		{
-			var revealedObs = newObjects.Except(oldObjects).ToArray();
-			return revealedObs;
-		}
-
-		private void SendNewEnvironments(IEnumerable<Environment> revealedEnvironments)
-		{
-			// send full data for AllVisible envs, and intro for other maps
-			foreach (var env in revealedEnvironments)
-			{
-				if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
-				{
-					env.SendTo(m_player);
-				}
-				else
-				{
-					var msg = new Messages.MapDataMessage()
-					{
-						Environment = env.ObjectID,
-						VisibilityMode = env.VisibilityMode,
-					};
-					Send(msg);
-				}
+				var c = (ObjectCreatedChange)change;
+				var newObject = (BaseGameObject)c.Object;
+				newObject.SendTo(m_player);
 			}
 		}
+	}
 
-		void SendNewTerrains(Dictionary<Environment, HashSet<IntPoint3D>> revealedLocations)
+	class PlayerChangeHandler : ChangeHandler
+	{
+		public PlayerChangeHandler(Player player)
+			: base(player)
 		{
-			var msgs = revealedLocations.Where(kvp => kvp.Value.Count() > 0).
-				Select(kvp => (Messages.ClientMessage)new Messages.MapDataTerrainsListMessage()
-				{
-					Environment = kvp.Key.ObjectID,
-					TileDataList = kvp.Value.Select(l =>
-						new Tuple<IntPoint3D, TileData>(l, kvp.Key.GetTileData(l))
-						).ToArray(),
-				});
 
-
-			Send(msgs);
 		}
 
-		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
+		public override void HandleWorldChange(Change change)
 		{
-			var msgs = revealedObjects.Select(o => new ObjectDataMessage() { ObjectData = o.Serialize() });
-			Send(msgs);
-		}
-
-
-		public void HandleWorldChange(Change change)
-		{
-			// can any friendly see the change?
-			if (!m_player.IsSeeAll && !CanSeeChange(change, m_player.Controllables))
+			// can the player see the change?
+			if (!CanSeeChange(change, m_player.Controllables))
 				return;
 
-			if (!m_player.IsSeeAll)
+			// We don't collect newly visible terrains/objects on AllVisible maps.
+			// However, we still need to tell about newly created objects that come
+			// to AllVisible maps.
+			var c = change as ObjectMoveChange;
+			if (c != null && c.Source != c.Destination && c.Destination is Environment &&
+				(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 			{
-				// We don't collect newly visible terrains/objects on AllVisible maps.
-				// However, we still need to tell about newly created objects that come
-				// to AllVisible maps.
-				var c = change as ObjectMoveChange;
-				if (c != null && c.Source != c.Destination && c.Destination is Environment &&
-					(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
-				{
-					var newObject = (ServerGameObject)c.Object;
-					var newObMsg = ObjectToMessage(newObject);
-					Send(newObMsg);
-				}
+				var newObject = (ServerGameObject)c.Object;
+				newObject.SendTo(m_player);
 			}
 
 			var changeMsg = new ChangeMessage { Change = change };
 
 			Send(changeMsg);
-
-			// XXX this is getting confusing...
-			if (m_player.IsSeeAll && change is ObjectCreatedChange)
-			{
-				var c = (ObjectCreatedChange)change;
-				var newObject = (BaseGameObject)c.Object;
-				var newObMsg = ObjectToMessage(newObject);
-				Send(newObMsg);
-			}
 		}
 
 		bool CanSeeChange(Change change, IList<Living> controllables)
 		{
-			// XXX these checks are not totally correct. objects may have changed after
-			// the creation of the change, for example moved. Should changes contain
-			// all the information needed for these checks?
-			if (change is ObjectMoveChange)
-			{
-				var c = (ObjectMoveChange)change;
-
-				return controllables.Any(l =>
-				{
-					if (l == c.Object)
-						return true;
-
-					if (l.Sees(c.Source, c.SourceLocation))
-						return true;
-
-					if (l.Sees(c.Destination, c.DestinationLocation))
-						return true;
-
-					return false;
-				});
-			}
-			else if (change is MapChange)
-			{
-				var c = (MapChange)change;
-				return controllables.Any(l => l.Sees(c.Environment, c.Location));
-			}
-			else if (change is TurnStartSimultaneousChange || change is TurnEndSimultaneousChange)
+			if (change is TurnStartSimultaneousChange || change is TurnEndSimultaneousChange)
 			{
 				return true;
 			}
@@ -696,6 +612,41 @@ namespace Dwarrowdelf.Server
 			{
 				return true;
 			}
+			else if (change is TickStartChange)
+			{
+				return true;
+			}
+			else if (change is ObjectDestructedChange)
+			{
+				// XXX We should only send this if the player sees the object.
+				// And the client should have a cleanup of some kind to remove old objects (which may or may not be destructed)
+				return true;
+			}
+			else if (change is ObjectCreatedChange)
+			{
+				return false;
+			}
+			else if (change is ObjectMoveChange)
+			{
+				var c = (ObjectMoveChange)change;
+
+				if (controllables.Contains(c.Object))
+					return true;
+
+				if (m_player.Sees(c.Source, c.SourceLocation))
+					return true;
+
+				if (m_player.Sees(c.Destination, c.DestinationLocation))
+					return true;
+
+				return false;
+			}
+			else if (change is MapChange)
+			{
+				var c = (MapChange)change;
+				return m_player.Sees(c.Environment, c.Location);
+			}
+
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
@@ -713,7 +664,7 @@ namespace Dwarrowdelf.Server
 				{
 					// Should check if the property is public or not
 					ServerGameObject ob = (ServerGameObject)c.Object;
-					return controllables.Any(l => l.Sees(ob.Environment, ob.Location));
+					return m_player.Sees(ob.Environment, ob.Location);
 				}
 			}
 			else if (change is ActionStartedChange)
@@ -731,24 +682,11 @@ namespace Dwarrowdelf.Server
 				var c = (ActionDoneChange)change;
 				return controllables.Contains(c.Object);
 			}
-			else if (change is TickStartChange || change is ObjectDestructedChange)
-			{
-				return true;
-			}
-			else if (change is ObjectCreatedChange)
-			{
-				return false;
-			}
+
 			else
 			{
 				throw new Exception();
 			}
-		}
-
-		static ClientMessage ObjectToMessage(BaseGameObject revealedOb)
-		{
-			var msg = new ObjectDataMessage() { ObjectData = revealedOb.Serialize() };
-			return msg;
 		}
 	}
 }

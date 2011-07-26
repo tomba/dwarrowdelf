@@ -47,6 +47,19 @@ namespace Dwarrowdelf
 		}
 	}
 
+	public enum LivingVisionMode
+	{
+		/// <summary>
+		/// everything inside VisionRange is visible
+		/// </summary>
+		SquareFOV,
+
+		/// <summary>
+		/// use LOS algorithm
+		/// </summary>
+		LOS,
+	}
+
 	public enum VisibilityMode
 	{
 		/// <summary>
@@ -60,13 +73,8 @@ namespace Dwarrowdelf
 		GlobalFOV,
 
 		/// <summary>
-		/// everything inside VisionRange is visible
+		/// Things seen by controllables are visible
 		/// </summary>
-		SimpleFOV,
-
-		/// <summary>
-		/// use LOS algorithm
-		/// </summary>
-		LOS,
+		LivingLOS,
 	}
 }

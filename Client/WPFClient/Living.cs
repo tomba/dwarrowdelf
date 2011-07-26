@@ -234,7 +234,7 @@ namespace Dwarrowdelf.Client
 
 		void UpdateLOS()
 		{
-			Debug.Assert(this.Environment.VisibilityMode == VisibilityMode.LOS);
+			Debug.Assert(this.World.LivingVisionMode == LivingVisionMode.LOS);
 
 			if (this.Environment == null)
 				return;

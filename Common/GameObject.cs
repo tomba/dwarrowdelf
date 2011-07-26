@@ -82,5 +82,11 @@ namespace Dwarrowdelf
 	public interface IPlayer
 	{
 		void Send(Dwarrowdelf.Messages.ClientMessage message);
+		IVisionTracker GetVisionTracker(IEnvironment env);
+	}
+
+	public interface IVisionTracker
+	{
+		bool Sees(IntPoint3D p);
 	}
 }

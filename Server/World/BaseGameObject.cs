@@ -67,6 +67,7 @@ namespace Dwarrowdelf.Server
 			this.World.RemoveGameObject(this);
 		}
 
+#warning should be removed
 		public abstract BaseGameObjectData Serialize();
 
 		public virtual void SendTo(IPlayer player)
