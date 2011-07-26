@@ -155,6 +155,24 @@ namespace Dwarrowdelf.Server
 				Send(msg);
 		}
 
+		public void ReceiveLogOnMessage(LogOnRequestMessage msg)
+		{
+			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_seeAll, Tick = m_engine.World.TickNumber });
+
+			if (m_seeAll)
+			{
+				foreach (var env in m_engine.World.Environments)
+					env.SendTo(this);
+			}
+
+			Send(new Messages.LogOnReplyEndMessage());
+		}
+
+		public void ReceiveLogOutMessage(LogOutRequestMessage msg)
+		{
+			Send(new Messages.LogOutReplyMessage());
+		}
+
 		public void OnReceiveMessage(Message m)
 		{
 			trace.TraceVerbose("OnReceiveMessage({0})", m);

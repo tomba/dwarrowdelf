@@ -119,15 +119,7 @@ namespace Dwarrowdelf.Server
 			m_user = GetPlayer(name);
 			m_user.Connection = this;
 
-			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_user.IsSeeAll, Tick = m_engine.World.TickNumber });
-
-			if (m_user.IsSeeAll)
-			{
-				foreach (var env in m_engine.World.Environments)
-					env.SendTo(m_user);
-			}
-
-			Send(new Messages.LogOnReplyEndMessage());
+			m_user.ReceiveLogOnMessage(msg);
 		}
 
 		Player GetPlayer(string name)
@@ -151,7 +143,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("HandleLogOutMessage");
 
-			Send(new Messages.LogOutReplyMessage());
+			m_user.ReceiveLogOutMessage(msg);
 
 			m_user.Connection = null;
 			m_user = null;
