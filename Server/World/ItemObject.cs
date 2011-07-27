@@ -55,18 +55,27 @@ namespace Dwarrowdelf.Server
 			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
 		}
 
-		public override BaseGameObjectData Serialize()
+		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
 		{
-			var data = new ItemData()
-			{
-				ObjectID = this.ObjectID,
-				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
-				Location = this.Location,
-				ItemID = this.ItemID,
-				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
-			};
+			base.SerializeTo(data, observer);
 
-			return data;
+			SerializeToInternal((ItemData)data, observer);
+		}
+
+		void SerializeToInternal(ItemData data, IPlayer observer)
+		{
+			data.ItemID = this.ItemID;
+		}
+
+		public override void SendTo(IPlayer player)
+		{
+			var data = new ItemData();
+
+			SerializeTo(data, player);
+
+			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
+
+			base.SendTo(player);
 		}
 
 		protected override Dictionary<PropertyID, object> SerializeProperties()

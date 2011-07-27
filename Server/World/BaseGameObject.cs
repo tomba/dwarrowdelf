@@ -67,14 +67,12 @@ namespace Dwarrowdelf.Server
 			this.World.RemoveGameObject(this);
 		}
 
-#warning should be removed
-		public abstract BaseGameObjectData Serialize();
+		public abstract void SendTo(IPlayer player);
 
-		public virtual void SendTo(IPlayer player)
+		protected virtual void SerializeTo(BaseGameObjectData data, IPlayer observer)
 		{
-			var data = Serialize();
-			var msg = new Messages.ObjectDataMessage() { ObjectData = Serialize() };
-			player.Send(msg);
+			data.ObjectID = this.ObjectID;
+			data.Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray();
 		}
 
 		protected virtual Dictionary<PropertyID, object> SerializeProperties()

@@ -71,10 +71,21 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player)
 		{
-			base.SendTo(player);
-
 			foreach (var o in this.Inventory)
 				o.SendTo(player);
+		}
+
+		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		{
+			base.SerializeTo(data, observer);
+
+			SerializeToInternal((GameObjectData)data, observer);
+		}
+
+		void SerializeToInternal(GameObjectData data, IPlayer observer)
+		{
+			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
+			data.Location = this.Location;
 		}
 
 		[SaveGameProperty("Name")]

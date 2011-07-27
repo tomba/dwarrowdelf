@@ -525,12 +525,6 @@ namespace Dwarrowdelf.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public override BaseGameObjectData Serialize()
-		{
-			// never called
-			throw new Exception();
-		}
-
 		public override void SendTo(IPlayer player)
 		{
 			var visionTracker = player.GetVisionTracker(this);

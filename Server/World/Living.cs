@@ -216,24 +216,31 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
-		public override BaseGameObjectData Serialize()
+		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
 		{
-			var data = new LivingData()
-			{
-				ObjectID = this.ObjectID,
-				Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID,
-				Location = this.Location,
+			base.SerializeTo(data, observer);
 
-				CurrentAction = this.CurrentAction,
-				ActionTicksLeft = this.ActionTicksLeft,
-				ActionUserID = this.ActionUserID,
+			SerializeToInternal((LivingData)data, observer);
+		}
 
-				Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray(),
+		void SerializeToInternal(LivingData data, IPlayer observer)
+		{
+			data.CurrentAction = this.CurrentAction;
+			data.ActionTicksLeft = this.ActionTicksLeft;
+			data.ActionUserID = this.ActionUserID;
 
-				Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray(),
-			};
+			data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
+		}
 
-			return data;
+		public override void SendTo(IPlayer player)
+		{
+			var data = new LivingData();
+
+			SerializeTo(data, player);
+
+			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
+
+			base.SendTo(player);
 		}
 
 		protected override Dictionary<PropertyID, object> SerializeProperties()

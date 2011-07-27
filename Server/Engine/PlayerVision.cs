@@ -330,8 +330,8 @@ namespace Dwarrowdelf.Server
 
 		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
 		{
-			var msgs = revealedObjects.Select(o => new Dwarrowdelf.Messages.ObjectDataMessage() { ObjectData = o.Serialize() });
-			m_player.Send(msgs);
+			foreach (var ob in revealedObjects)
+				ob.SendTo(m_player);
 		}
 	}
 }
