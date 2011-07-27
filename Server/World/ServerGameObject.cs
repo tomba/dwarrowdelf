@@ -150,7 +150,20 @@ namespace Dwarrowdelf.Server
 		public bool MoveTo(int x, int y, int z)
 		{
 			var p = new IntPoint3D(x, y, z);
-			return MoveTo(this.Environment, p);
+			return MoveTo(p);
+		}
+
+		public bool MoveTo(IntPoint3D location)
+		{
+			if (this.Parent == null)
+				return false;
+
+			if (this.Parent.OkToAddChild(this, location) == false)
+				return false;
+
+			MoveToLow(location);
+
+			return true;
 		}
 
 		public bool MoveDir(Direction dir)
@@ -160,15 +173,9 @@ namespace Dwarrowdelf.Server
 			if (this.Environment == null)
 				throw new Exception();
 
-			var dst = this.Environment;
-			var dstLoc = this.Location + dir;
+			var location = this.Location + dir;
 
-			if (!dst.OkToMoveChild(this, dir, dstLoc))
-				return false;
-
-			MoveToLow(dst, dstLoc);
-
-			return true;
+			return MoveTo(location);
 		}
 
 		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
@@ -178,6 +185,11 @@ namespace Dwarrowdelf.Server
 
 			var src = this.Parent;
 			var srcLoc = this.Location;
+
+#if DEBUG
+			if (src == dst)
+				Trace.TraceWarning("MoveToLow(env, pos) shouldn't be used when moving inside one environment");
+#endif
 
 			if (src != dst)
 			{
@@ -206,10 +218,29 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			if (src != dst)
+			if (src == dst)
+			{
+				this.World.AddChange(new ObjectMoveLocationChange(this, srcLoc, dstLoc));
+			}
+			else
+			{
 				OnEnvironmentChanged(src, dst);
+				this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
+			}
+		}
 
-			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
+		void MoveToLow(IntPoint3D location)
+		{
+			Debug.Assert(this.IsInitialized);
+			Debug.Assert(!this.IsDestructed);
+
+			var oldLocation = this.Location;
+
+			this.Location = location;
+			if (this.Parent != null)
+				this.Parent.OnChildMoved(this, oldLocation, location);
+
+			this.World.AddChange(new ObjectMoveLocationChange(this, oldLocation, location));
 		}
 
 		public override string ToString()

@@ -668,6 +668,24 @@ namespace Dwarrowdelf.Server
 
 				return false;
 			}
+			else if (change is ObjectMoveLocationChange)
+			{
+				var c = (ObjectMoveLocationChange)change;
+
+				if (controllables.Contains(c.Object))
+					return true;
+
+				// XXX
+				var env = ((IGameObject)c.Object).Parent;
+
+				if (m_player.Sees(env, c.SourceLocation))
+					return true;
+
+				if (m_player.Sees(env, c.DestinationLocation))
+					return true;
+
+				return false;
+			}
 			else if (change is MapChange)
 			{
 				var c = (MapChange)change;

@@ -224,6 +224,23 @@ namespace Dwarrowdelf.Client
 			ob.MoveTo(env, change.DestinationLocation);
 		}
 
+		void HandleChange(ObjectMoveLocationChange change)
+		{
+			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+
+			if (ob == null)
+			{
+				/* There's a special case where we don't get objectinfo, but we do get
+				 * ObjectMove: If the object moves from tile, that just came visible to us, 
+				 * to a tile that we cannot see. So let's not throw exception, but exit
+				 * silently */
+				// XXX is this still valid?
+				return;
+			}
+
+			ob.MoveTo(change.DestinationLocation);
+		}
+
 		void HandleChange(PropertyObjectChange change)
 		{
 			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);

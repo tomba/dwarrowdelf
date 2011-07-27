@@ -200,6 +200,26 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public class ObjectMoveLocationChange : ObjectChange
+	{
+		public IntPoint3D SourceLocation;
+		public IntPoint3D DestinationLocation;
+
+		public ObjectMoveLocationChange(IGameObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
+			: base(mover)
+		{
+			this.SourceLocation = sourceLocation;
+			this.DestinationLocation = destinationLocation;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ObjectMoveLocationChange {0} {1} -> {2}",
+				this.ObjectID, this.SourceLocation, this.DestinationLocation);
+		}
+	}
+
+	[Serializable]
 	public class FullObjectChange : ObjectChange
 	{
 		public FullObjectChange(IBaseGameObject ob)

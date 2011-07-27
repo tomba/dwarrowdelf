@@ -86,6 +86,7 @@ namespace Dwarrowdelf.Client
 
 		protected virtual void ChildAdded(ClientGameObject child) { }
 		protected virtual void ChildRemoved(ClientGameObject child) { }
+		protected virtual void ChildMoved(ClientGameObject child, IntPoint3D from, IntPoint3D to) { }
 
 		public void MoveTo(ClientGameObject parent, IntPoint3D location)
 		{
@@ -105,6 +106,18 @@ namespace Dwarrowdelf.Client
 				parent.m_inventory.Add(this);
 				parent.ChildAdded(this);
 			}
+
+			if (ObjectMoved != null)
+				ObjectMoved(this, this.Parent, this.Location);
+		}
+
+		public void MoveTo(IntPoint3D location)
+		{
+			var oldLocation = this.Location;
+
+			this.Location = location;
+
+			this.Parent.ChildMoved(this, oldLocation, location);
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, this.Parent, this.Location);

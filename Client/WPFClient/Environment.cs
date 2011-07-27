@@ -381,6 +381,39 @@ namespace Dwarrowdelf.Client
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Remove);
 		}
 
+		protected override void ChildMoved(ClientGameObject child, IntPoint3D from, IntPoint3D to)
+		{
+			List<ClientGameObject> obs;
+
+			/* first remove from the old position ... */
+
+			Debug.Assert(m_objectMap.ContainsKey(from));
+
+			obs = m_objectMap[from];
+
+			bool removed = obs.Remove(child);
+			Debug.Assert(removed);
+
+			if (MapTileObjectChanged != null)
+				MapTileObjectChanged(child, from, MapTileObjectChangeType.Remove);
+
+			/* ... and then add to the new one */
+
+			if (!m_objectMap.TryGetValue(to, out obs))
+			{
+				obs = new List<ClientGameObject>();
+				m_objectMap[to] = obs;
+			}
+
+			if (child.IsLiving)
+				obs.Insert(0, child);
+			else
+				obs.Add(child);
+
+			if (MapTileObjectChanged != null)
+				MapTileObjectChanged(child, to, MapTileObjectChangeType.Add);
+		}
+
 		// called from object when its visual property changes
 		internal void OnObjectVisualChanged(ClientGameObject ob)
 		{
