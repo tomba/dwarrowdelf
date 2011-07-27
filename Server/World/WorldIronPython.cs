@@ -18,9 +18,9 @@ namespace Dwarrowdelf.Server
 			get { return m_livings.List.ToArray(); }
 		}
 
-		public IBaseGameObject IPGet(object target)
+		public BaseGameObject IPGet(object target)
 		{
-			IBaseGameObject ob = null;
+			BaseGameObject ob = null;
 
 			if (target is int)
 			{

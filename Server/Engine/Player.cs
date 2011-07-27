@@ -184,8 +184,14 @@ namespace Dwarrowdelf.Server
 
 			if (m_seeAll)
 			{
-				foreach (var env in this.World.Environments)
-					env.SendTo(this);
+				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
+				foreach (var ob in this.World.AllObjects)
+				{
+					var sob = ob as ServerGameObject;
+
+					if (sob == null || sob.Parent == null)
+						ob.SendTo(this);
+				}
 			}
 
 			Send(new Messages.LogOnReplyEndMessage());
@@ -215,7 +221,7 @@ namespace Dwarrowdelf.Server
 			ObjectID mapID = msg.MapID;
 			IntCuboid r = msg.Cube;
 
-			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
+			var env = m_world.FindObject<Environment>(mapID);
 			if (env == null)
 				throw new Exception();
 
@@ -259,7 +265,7 @@ namespace Dwarrowdelf.Server
 			var r = msg.Area;
 			var id = msg.ID;
 
-			var env = m_world.Environments.SingleOrDefault(e => e.ObjectID == mapID);
+			var env = m_world.FindObject<Environment>(mapID);
 			if (env == null)
 				throw new Exception();
 
@@ -663,8 +669,12 @@ namespace Dwarrowdelf.Server
 				else
 				{
 					// Should check if the property is public or not
-					ServerGameObject ob = (ServerGameObject)c.Object;
-					return m_player.Sees(ob.Environment, ob.Location);
+					ServerGameObject sob = c.Object as ServerGameObject;
+					if (sob != null)
+						return m_player.Sees(sob.Environment, sob.Location);
+
+					// XXX how to check for non-ServerGameObjects? for example building objects
+					return true;
 				}
 			}
 			else if (change is ActionStartedChange)

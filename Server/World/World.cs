@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		[SaveGameProperty]
-		Dictionary<ObjectID, IBaseGameObject> m_objectMap;
+		Dictionary<ObjectID, BaseGameObject> m_objectMap;
 		[SaveGameProperty]
 		int[] m_objectIDcounterArray;
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 		{
 			this.TickMethod = tickMethod;
 
-			m_objectMap = new Dictionary<ObjectID, IBaseGameObject>();
+			m_objectMap = new Dictionary<ObjectID, BaseGameObject>();
 			m_livings = new ProcessableList<Living>();
 			m_random = new Random();
 
@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server
 				WorldChanged(change);
 		}
 
-		internal void AddGameObject(IBaseGameObject ob)
+		internal void AddGameObject(BaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -139,7 +139,7 @@ namespace Dwarrowdelf.Server
 				m_objectMap.Add(ob.ObjectID, ob);
 		}
 
-		internal void RemoveGameObject(IBaseGameObject ob)
+		internal void RemoveGameObject(BaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -149,7 +149,7 @@ namespace Dwarrowdelf.Server
 					throw new Exception();
 		}
 
-		public IBaseGameObject FindObject(ObjectID objectID)
+		public BaseGameObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -157,7 +157,7 @@ namespace Dwarrowdelf.Server
 
 			lock (m_objectMap)
 			{
-				IBaseGameObject ob = null;
+				BaseGameObject ob = null;
 
 				if (m_objectMap.TryGetValue(objectID, out ob))
 					return ob;
@@ -166,7 +166,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : class, IBaseGameObject
+		public T FindObject<T>(ObjectID objectID) where T : BaseGameObject
 		{
 			var ob = FindObject(objectID);
 
@@ -185,16 +185,7 @@ namespace Dwarrowdelf.Server
 			return new ObjectID(objectType, (uint)Interlocked.Increment(ref m_objectIDcounterArray[0]));
 		}
 
-		// XXX slow & bad
-		public IEnumerable<Environment> Environments
-		{
-			get
-			{
-				Environment[] envs;
-				lock (m_objectMap)
-					envs = m_objectMap.Values.OfType<Environment>().ToArray();
-				return envs;
-			}
-		}
+		public IEnumerable<BaseGameObject> AllObjects { get { return m_objectMap.Values.AsEnumerable(); } }
+
 	}
 }

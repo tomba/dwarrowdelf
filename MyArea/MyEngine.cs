@@ -28,7 +28,8 @@ namespace MyArea
 		{
 			const int NUM_DWARVES = 5;
 
-			var env = this.World.Environments.First(); // XXX entry location
+			// XXX entry location
+			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.Environment>().First();
 
 			var list = new List<Living>();
 
