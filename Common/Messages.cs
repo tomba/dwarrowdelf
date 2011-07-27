@@ -121,6 +121,16 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
+	public class CreateItemMessage : ServerMessage
+	{
+		public ItemID ItemID;
+		public MaterialID MaterialID;
+
+		public ObjectID EnvironmentID;
+		public IntPoint3D? Location;
+	}
+
+	[Serializable]
 	public class SetWorldConfigMessage : ServerMessage
 	{
 		public TimeSpan? MinTickTime { get; set; }

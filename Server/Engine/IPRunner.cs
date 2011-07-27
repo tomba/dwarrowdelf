@@ -26,7 +26,10 @@ namespace Dwarrowdelf.Server
 
 			m_scriptScope = m_scriptEngine.CreateScope();
 			m_scriptScope.SetVariable("world", world);
-			m_scriptScope.SetVariable("get", new Func<object, IBaseGameObject>(world.IPGet));
+			m_scriptScope.SetVariable("get", new Func<object, BaseGameObject>(world.IPGet));
+			m_scriptScope.SetVariable("getitem", new Func<object, ItemObject>(world.IPGetItem));
+			m_scriptScope.SetVariable("getenv", new Func<object, Environment>(world.IPGetEnv));
+			m_scriptScope.SetVariable("getliving", new Func<object, Living>(world.IPGetLiving));
 
 			m_scriptEngine.Execute("import clr", m_scriptScope);
 			m_scriptEngine.Execute("clr.AddReference('Dwarrowdelf.Common')", m_scriptScope);

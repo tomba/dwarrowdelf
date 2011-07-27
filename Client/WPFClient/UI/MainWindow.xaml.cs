@@ -49,6 +49,7 @@ namespace Dwarrowdelf.Client
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenDesignateDialogCommand, OpenDesignateHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenSetTerrainDialogCommand, OpenSetTerrainHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateItemDialogCommand, OpenCreateItemHandler));
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -343,6 +344,31 @@ namespace Dwarrowdelf.Client
 					InteriorMaterialID = dialog.InteriorMaterialID,
 					Grass = dialog.Grass,
 					WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)TileData.MinWaterLevel) : null,
+				});
+			}
+		}
+
+		void OpenCreateItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var env = map.Environment;
+
+			var area = map.Selection.SelectionCuboid;
+			if (area.IsNull)
+				return;
+
+			var dialog = new CreateItemDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area.Corner1);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				GameData.Data.Connection.Send(new CreateItemMessage()
+				{
+					ItemID = dialog.ItemID,
+					MaterialID = dialog.MaterialID,
+					EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
+					Location = dialog.Location,
 				});
 			}
 		}

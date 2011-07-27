@@ -22,6 +22,7 @@ namespace Dwarrowdelf.Client
 		public static RoutedUICommand OpenConstructBuildingDialogCommand;
 		public static RoutedUICommand OpenDesignateDialogCommand;
 		public static RoutedUICommand OpenSetTerrainDialogCommand;
+		public static RoutedUICommand OpenCreateItemDialogCommand;
 
 		static ClientCommands()
 		{
@@ -41,6 +42,9 @@ namespace Dwarrowdelf.Client
 
 			OpenSetTerrainDialogCommand = new RoutedUICommand("Open Set Terrain Dialog", "OpenSetTerrainDialog", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.T, ModifierKeys.Alt) });
+
+			OpenCreateItemDialogCommand = new RoutedUICommand("Open Create Item Dialog", "OpenCreateItemDialog", typeof(ClientCommands),
+				new InputGestureCollection() { new KeyGesture(Key.C, ModifierKeys.Alt) });
 		}
 	}
 }

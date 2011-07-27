@@ -253,6 +253,27 @@ namespace Dwarrowdelf.Server
 			env.ScanWaterTiles();
 		}
 
+		void ReceiveMessage(CreateItemMessage msg)
+		{
+			var builder = new ItemObjectBuilder(msg.ItemID, msg.MaterialID);
+			var item = builder.Create(this.World);
+
+			trace.TraceInformation("Created item {0}", item);
+
+			if (msg.EnvironmentID != ObjectID.NullObjectID)
+			{
+				var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+
+				if (env == null)
+					throw new Exception();
+
+				if (msg.Location.HasValue)
+					item.MoveTo(env, msg.Location.Value);
+				else
+					item.MoveTo(env);
+			}
+		}
+
 		void ReceiveMessage(SetWorldConfigMessage msg)
 		{
 			if (msg.MinTickTime.HasValue)
