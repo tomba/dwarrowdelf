@@ -609,6 +609,17 @@ namespace Dwarrowdelf.Server
 
 		public override void HandleWorldChange(Change change)
 		{
+			// XXX if the created object cannot be moved (i.e. not ServerGameObject), we need to send the object data manually here
+			var occ = change as ObjectCreatedChange;
+			if (occ != null)
+			{
+				if (!(occ.Object is ServerGameObject))
+				{
+					var newObject = (BaseGameObject)occ.Object;
+					newObject.SendTo(m_player);
+				}
+			}
+
 			// can the player see the change?
 			if (!CanSeeChange(change, m_player.Controllables))
 				return;
