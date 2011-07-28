@@ -98,11 +98,21 @@ namespace MyArea
 					break;
 			}
 
-			var l = builder.Create(this.World);
+			var dwarf = builder.Create(this.World);
 
-			l.SetAI(new DwarfAI(l));
+			dwarf.SetAI(new DwarfAI(dwarf));
 
-			return l;
+
+			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+			var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+
+			var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
+			var item = itemBuilder.Create(this.World);
+
+			item.MoveTo(dwarf);
+
+
+			return dwarf;
 		}
 	}
 }
