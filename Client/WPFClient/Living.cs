@@ -41,7 +41,10 @@ namespace Dwarrowdelf.Client
 
 			this.Description = this.Name;
 
-			m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills);
+			if (data.Skills != null)
+				m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills);
+			else
+				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 		}
 

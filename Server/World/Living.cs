@@ -216,49 +216,55 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, observer);
+			base.SerializeTo(data, visibility);
 
-			SerializeToInternal((LivingData)data, observer);
+			SerializeToInternal((LivingData)data, visibility);
 		}
 
-		void SerializeToInternal(LivingData data, IPlayer observer)
+		void SerializeToInternal(LivingData data, ObjectVisibility visibility)
 		{
-			data.CurrentAction = this.CurrentAction;
-			data.ActionTicksLeft = this.ActionTicksLeft;
-			data.ActionUserID = this.ActionUserID;
+			if (visibility == ObjectVisibility.All)
+			{
+				data.CurrentAction = this.CurrentAction;
+				data.ActionTicksLeft = this.ActionTicksLeft;
+				data.ActionUserID = this.ActionUserID;
 
-			data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
+				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
+			}
 		}
 
-		public override void SendTo(IPlayer player)
+		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			var data = new LivingData();
 
-			SerializeTo(data, player);
+			SerializeTo(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
 
-			base.SendTo(player);
+			base.SendTo(player, visibility);
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties()
+		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
-			var props = base.SerializeProperties();
-			props[PropertyID.HitPoints] = m_hitPoints;
-			props[PropertyID.SpellPoints] = m_spellPoints;
-			props[PropertyID.Strength] = m_strength;
-			props[PropertyID.Dexterity] = m_dexterity;
-			props[PropertyID.Constitution] = m_constitution;
-			props[PropertyID.Intelligence] = m_intelligence;
-			props[PropertyID.Wisdom] = m_wisdom;
-			props[PropertyID.Charisma] = m_charisma;
-			props[PropertyID.ArmorClass] = m_armorClass;
-			props[PropertyID.VisionRange] = m_visionRange;
-			props[PropertyID.FoodFullness] = m_foodFullness;
-			props[PropertyID.WaterFullness] = m_waterFullness;
-			props[PropertyID.Assignment] = m_assignment;
+			var props = base.SerializeProperties(visibility);
+			if (visibility == ObjectVisibility.All)
+			{
+				props[PropertyID.HitPoints] = m_hitPoints;
+				props[PropertyID.SpellPoints] = m_spellPoints;
+				props[PropertyID.Strength] = m_strength;
+				props[PropertyID.Dexterity] = m_dexterity;
+				props[PropertyID.Constitution] = m_constitution;
+				props[PropertyID.Intelligence] = m_intelligence;
+				props[PropertyID.Wisdom] = m_wisdom;
+				props[PropertyID.Charisma] = m_charisma;
+				props[PropertyID.ArmorClass] = m_armorClass;
+				props[PropertyID.VisionRange] = m_visionRange;
+				props[PropertyID.FoodFullness] = m_foodFullness;
+				props[PropertyID.WaterFullness] = m_waterFullness;
+				props[PropertyID.Assignment] = m_assignment;
+			}
 			return props;
 		}
 

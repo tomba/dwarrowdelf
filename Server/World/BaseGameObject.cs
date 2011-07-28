@@ -67,15 +67,15 @@ namespace Dwarrowdelf.Server
 			this.World.RemoveGameObject(this);
 		}
 
-		public abstract void SendTo(IPlayer player);
+		public abstract void SendTo(IPlayer player, ObjectVisibility visibility);
 
-		protected virtual void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		protected virtual void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
 			data.ObjectID = this.ObjectID;
-			data.Properties = SerializeProperties().Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray();
+			data.Properties = SerializeProperties(visibility).Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray();
 		}
 
-		protected virtual Dictionary<PropertyID, object> SerializeProperties()
+		protected virtual Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
 			return new Dictionary<PropertyID, object>();
 		}

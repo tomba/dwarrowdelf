@@ -81,12 +81,22 @@ namespace Dwarrowdelf
 
 	public interface IPlayer
 	{
+		bool IsFriendly(IBaseGameObject living);
 		void Send(Dwarrowdelf.Messages.ClientMessage message);
 		IVisionTracker GetVisionTracker(IEnvironment env);
+		ObjectVisibility GetObjectVisibility(IBaseGameObject ob);
 	}
 
 	public interface IVisionTracker
 	{
 		bool Sees(IntPoint3D p);
+	}
+
+	public enum ObjectVisibility
+	{
+		Undefined,
+		None,
+		Public,
+		All,
 	}
 }

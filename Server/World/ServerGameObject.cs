@@ -69,20 +69,23 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		public override void SendTo(IPlayer player)
+		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			foreach (var o in this.Inventory)
-				o.SendTo(player);
+			if (visibility == ObjectVisibility.All)
+			{
+				foreach (var o in this.Inventory)
+					o.SendTo(player, visibility);
+			}
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, observer);
+			base.SerializeTo(data, visibility);
 
-			SerializeToInternal((GameObjectData)data, observer);
+			SerializeToInternal((GameObjectData)data, visibility);
 		}
 
-		void SerializeToInternal(GameObjectData data, IPlayer observer)
+		void SerializeToInternal(GameObjectData data, ObjectVisibility visibility)
 		{
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
@@ -120,9 +123,9 @@ namespace Dwarrowdelf.Server
 			set { if (m_materialID == value) return; m_materialID = value; NotifyObject(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties()
+		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
-			var props = base.SerializeProperties();
+			var props = base.SerializeProperties(visibility);
 			props[PropertyID.Name] = m_name;
 			props[PropertyID.Color] = m_color;
 			props[PropertyID.SymbolID] = m_symbolID;

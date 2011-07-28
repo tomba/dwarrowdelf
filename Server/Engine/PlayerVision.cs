@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Start()
 		{
-			m_environment.SendTo(m_player);
+			m_environment.SendTo(m_player, ObjectVisibility.Undefined);
 		}
 
 		public override void Stop()
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Server
 		{
 			m_environment.TerrainChanged += OnTerrainChanged;
 
-			m_environment.SendTo(m_player);
+			m_environment.SendTo(m_player, ObjectVisibility.Undefined);
 		}
 
 		public override void Stop()
@@ -303,7 +303,7 @@ namespace Dwarrowdelf.Server
 			{
 				if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
 				{
-					env.SendTo(m_player);
+					env.SendTo(m_player, ObjectVisibility.Undefined);
 				}
 				else
 				{
@@ -331,7 +331,10 @@ namespace Dwarrowdelf.Server
 		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
 		{
 			foreach (var ob in revealedObjects)
-				ob.SendTo(m_player);
+			{
+				var vis = m_player.GetObjectVisibility(ob);
+				ob.SendTo(m_player, vis);
+			}
 		}
 	}
 }

@@ -55,34 +55,37 @@ namespace Dwarrowdelf.Server
 			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, observer);
+			base.SerializeTo(data, visibility);
 
-			SerializeToInternal((ItemData)data, observer);
+			SerializeToInternal((ItemData)data, visibility);
 		}
 
-		void SerializeToInternal(ItemData data, IPlayer observer)
+		void SerializeToInternal(ItemData data, ObjectVisibility visibility)
 		{
 			data.ItemID = this.ItemID;
 		}
 
-		public override void SendTo(IPlayer player)
+		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			var data = new ItemData();
 
-			SerializeTo(data, player);
+			SerializeTo(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
 
-			base.SendTo(player);
+			base.SendTo(player, visibility);
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties()
+		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
-			var props = base.SerializeProperties();
-			props[PropertyID.NutritionalValue] = m_nutritionalValue;
-			props[PropertyID.RefreshmentValue] = m_refreshmentValue;
+			var props = base.SerializeProperties(visibility);
+			if (visibility == ObjectVisibility.All)
+			{
+				props[PropertyID.NutritionalValue] = m_nutritionalValue;
+				props[PropertyID.RefreshmentValue] = m_refreshmentValue;
+			}
 			return props;
 		}
 

@@ -66,6 +66,9 @@ namespace Dwarrowdelf.Server
 		List<Living> m_controllables;
 		public ReadOnlyCollection<Living> Controllables { get; private set; }
 
+		public bool IsController(IBaseGameObject living) { return this.Controllables.Contains(living); }
+		public bool IsFriendly(IBaseGameObject living) { return m_seeAll || this.Controllables.Contains(living); }
+
 		IPRunner m_ipRunner;
 
 		ChangeHandler m_changeHandler;
@@ -115,6 +118,9 @@ namespace Dwarrowdelf.Server
 		{
 			m_controllables.Add(living);
 			living.Destructed += OnControllableDestructed;
+
+			// Always send object data after the living has became a controllable
+			living.SendTo(this, ObjectVisibility.All);
 
 			// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
 			if (living.Environment != null)
@@ -190,7 +196,7 @@ namespace Dwarrowdelf.Server
 					var sob = ob as ServerGameObject;
 
 					if (sob == null || sob.Parent == null)
-						ob.SendTo(this);
+						ob.SendTo(this, ObjectVisibility.All);
 				}
 			}
 
@@ -460,7 +466,7 @@ namespace Dwarrowdelf.Server
 			else if (change is TurnStartSequentialChange)
 			{
 				var c = (TurnStartSequentialChange)change;
-				if (this.Controllables.Contains(c.Living))
+				if (!this.IsController(c.Living))
 					return;
 
 				SendProceedTurnRequest(c.Living);
@@ -498,6 +504,31 @@ namespace Dwarrowdelf.Server
 		}
 
 		Dictionary<Environment, VisionTrackerBase> m_visionTrackers = new Dictionary<Environment, VisionTrackerBase>();
+
+		public ObjectVisibility GetObjectVisibility(IBaseGameObject ob)
+		{
+			var sgo = ob as ServerGameObject;
+
+			if (sgo == null)
+			{
+				// XXX If the ob is not SGO, it's a building. Send all.
+				return ObjectVisibility.All;
+			}
+
+			for (ServerGameObject o = sgo; o != null; o = o.Parent)
+			{
+				if (this.IsController(o))
+				{
+					// if this player is the controller of the object or any of the object's parent
+					return ObjectVisibility.All;
+				}
+			}
+
+			if (Sees(sgo.Parent, sgo.Location))
+				return ObjectVisibility.Public;
+			else
+				return ObjectVisibility.None;
+		}
 
 		public bool Sees(IBaseGameObject ob, IntPoint3D p)
 		{
@@ -594,7 +625,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (ObjectCreatedChange)change;
 				var newObject = (BaseGameObject)c.Object;
-				newObject.SendTo(m_player);
+				newObject.SendTo(m_player, ObjectVisibility.All);
 			}
 		}
 	}
@@ -616,7 +647,7 @@ namespace Dwarrowdelf.Server
 				if (!(occ.Object is ServerGameObject))
 				{
 					var newObject = (BaseGameObject)occ.Object;
-					newObject.SendTo(m_player);
+					newObject.SendTo(m_player, ObjectVisibility.All);
 				}
 			}
 
@@ -632,7 +663,8 @@ namespace Dwarrowdelf.Server
 				(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 			{
 				var newObject = (ServerGameObject)c.Object;
-				newObject.SendTo(m_player);
+				var vis = m_player.GetObjectVisibility(newObject);
+				newObject.SendTo(m_player, vis);
 			}
 
 			var changeMsg = new ChangeMessage { Change = change };
@@ -718,7 +750,11 @@ namespace Dwarrowdelf.Server
 				}
 				else
 				{
-					// Should check if the property is public or not
+					var vis = PropertyVisibilities.GetPropertyVisibility(c.PropertyID);
+
+					if (vis == PropertyVisibility.Friendly && !m_player.IsFriendly(c.Object))
+						return false;
+
 					ServerGameObject sob = c.Object as ServerGameObject;
 					if (sob != null)
 						return m_player.Sees(sob.Environment, sob.Location);

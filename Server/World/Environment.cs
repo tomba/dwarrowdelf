@@ -525,8 +525,10 @@ namespace Dwarrowdelf.Server
 			return m_buildings.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public override void SendTo(IPlayer player)
+		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
+			Debug.Assert(visibility == ObjectVisibility.Undefined);
+
 			var visionTracker = player.GetVisionTracker(this);
 
 			player.Send(new Messages.MapDataMessage()
@@ -615,13 +617,14 @@ namespace Dwarrowdelf.Server
 			{
 				foreach (var o in m_contentArray[z])
 				{
-					o.SendTo(player);
+					var vis = player.IsFriendly(o) ? ObjectVisibility.All : ObjectVisibility.Public;
+					o.SendTo(player, vis);
 				}
 			}
 
 			foreach (var o in m_buildings)
 			{
-				o.SendTo(player);
+				o.SendTo(player, ObjectVisibility.All);
 			}
 		}
 

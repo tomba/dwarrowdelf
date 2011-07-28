@@ -72,14 +72,14 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, IPlayer observer)
+		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, observer);
+			base.SerializeTo(data, visibility);
 
-			SerializeToInternal((BuildingData)data, observer);
+			SerializeToInternal((BuildingData)data, visibility);
 		}
 
-		void SerializeToInternal(BuildingData data, IPlayer observer)
+		void SerializeToInternal(BuildingData data, ObjectVisibility visibility)
 		{
 			data.ID = this.BuildingInfo.ID;
 			data.Area = this.Area;
@@ -87,18 +87,18 @@ namespace Dwarrowdelf.Server
 			data.State = this.BuildingState;
 		}
 
-		public override void SendTo(IPlayer player)
+		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			var data = new BuildingData();
 
-			SerializeTo(data, player);
+			SerializeTo(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties()
+		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
-			var props = base.SerializeProperties();
+			var props = base.SerializeProperties(visibility);
 			props[PropertyID.BuildingState] = m_state;
 			return props;
 		}
