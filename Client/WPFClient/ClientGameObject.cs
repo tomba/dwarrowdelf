@@ -185,7 +185,7 @@ namespace Dwarrowdelf.Client
 			private set { m_parent = value; Notify("Parent"); }
 		}
 
-		IBaseGameObject IGameObject.Parent { get { return this.Parent; } }
+		IGameObject IGameObject.Parent { get { return this.Parent; } }
 
 		IntPoint3D m_location;
 		public IntPoint3D Location

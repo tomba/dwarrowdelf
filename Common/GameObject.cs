@@ -32,7 +32,7 @@ namespace Dwarrowdelf
 	public interface IGameObject : IBaseGameObject
 	{
 		IEnvironment Environment { get; }
-		IBaseGameObject Parent { get; }
+		IGameObject Parent { get; }
 		IntPoint3D Location { get; }
 
 		MaterialClass MaterialClass { get; }

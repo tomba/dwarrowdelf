@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Server
 	{
 		[SaveGameProperty]
 		public ServerGameObject Parent { get; private set; }
-		IBaseGameObject IGameObject.Parent { get { return this.Parent; } }
+		IGameObject IGameObject.Parent { get { return this.Parent; } }
 		public Environment Environment { get { return this.Parent as Environment; } }
 		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
 		[SaveGameProperty("Inventory")]
