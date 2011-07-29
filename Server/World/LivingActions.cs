@@ -436,7 +436,7 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(BuildItemAction action)
 		{
-			var building = this.Environment.GetBuildingAt(this.Location);
+			var building = this.Environment.GetLargeObjectAt<BuildingObject>(this.Location);
 
 			if (building == null)
 			{

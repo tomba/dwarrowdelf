@@ -241,11 +241,7 @@ namespace Dwarrowdelf.Server
 
 			var revealedLocations = CollectRevealedLocations(m_oldKnownLocations, m_newKnownLocations);
 			var revealedObjects = CollectRevealedObjects(m_oldKnownObjects, m_newKnownObjects);
-			//var revealedEnvironments = m_newKnownLocations.Keys.Except(m_knownEnvironments).ToArray();
 
-			//m_knownEnvironments.UnionWith(revealedEnvironments);
-
-			//SendNewEnvironments(revealedEnvironments);
 			SendNewTerrains(revealedLocations);
 			SendNewObjects(revealedObjects);
 		}
@@ -294,27 +290,6 @@ namespace Dwarrowdelf.Server
 		static IEnumerable<GameObject> CollectRevealedObjects(HashSet<GameObject> oldObjects, HashSet<GameObject> newObjects)
 		{
 			return newObjects.Except(oldObjects);
-		}
-
-		private void SendNewEnvironments(IEnumerable<Environment> revealedEnvironments)
-		{
-			// send full data for AllVisible envs, and intro for other maps
-			foreach (var env in revealedEnvironments)
-			{
-				if (env.VisibilityMode == VisibilityMode.AllVisible || env.VisibilityMode == VisibilityMode.GlobalFOV)
-				{
-					env.SendTo(m_player, ObjectVisibility.Undefined);
-				}
-				else
-				{
-					var msg = new Messages.MapDataMessage()
-					{
-						Environment = env.ObjectID,
-						VisibilityMode = env.VisibilityMode,
-					};
-					m_player.Send(msg);
-				}
-			}
 		}
 
 		void SendNewTerrains(IEnumerable<IntPoint3D> revealedLocations)

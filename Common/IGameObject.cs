@@ -22,11 +22,15 @@ namespace Dwarrowdelf
 		IWorld World { get; }
 	}
 
-	public interface IBuildingObject : IBaseGameObject
+	public interface ILargeGameObject : IBaseGameObject
 	{
-		BuildingInfo BuildingInfo { get; }
 		IEnvironment Environment { get; }
 		IntRectZ Area { get; }
+	}
+
+	public interface IBuildingObject : ILargeGameObject
+	{
+		BuildingInfo BuildingInfo { get; }
 	}
 
 	public interface IGameObject : IBaseGameObject
@@ -34,6 +38,14 @@ namespace Dwarrowdelf
 		IEnvironment Environment { get; }
 		IGameObject Parent { get; }
 		IntPoint3D Location { get; }
+	}
+
+	interface IEnvGameObject : IBaseGameObject
+	{
+		IEnvironment Environment { get; }
+		IntSize Size { get; }
+		IntRectZ Area { get; }
+
 	}
 
 	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment

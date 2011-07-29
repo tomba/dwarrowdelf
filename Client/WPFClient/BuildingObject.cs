@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
 
-		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
+		IEnvironment ILargeGameObject.Environment { get { return this.Environment as IEnvironment; } }
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRectZ Area { get; set; }

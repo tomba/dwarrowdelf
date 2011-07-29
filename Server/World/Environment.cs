@@ -37,8 +37,8 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public IntPoint3D HomeLocation { get; set; }
 
-		[SaveGameProperty("Buildings", Converter = typeof(BuildingsSetConv))]
-		HashSet<BuildingObject> m_buildings;
+		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
+		HashSet<LargeGameObject> m_largeObjectSet;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
 		public event Action<IntPoint3D, TileData, TileData> TerrainChanged;
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Server
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
-			m_buildings = new HashSet<BuildingObject>();
+			m_largeObjectSet = new HashSet<LargeGameObject>();
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -497,27 +497,32 @@ namespace Dwarrowdelf.Server
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		public void AddBuilding(BuildingObject building)
+		public void AddLargeObject(LargeGameObject ob)
 		{
 			Debug.Assert(this.World.IsWritable);
 
-			Debug.Assert(m_buildings.Any(b => b.Area.IntersectsWith(building.Area)) == false);
-			Debug.Assert(building.IsInitialized == false);
+			Debug.Assert(m_largeObjectSet.Any(b => b.Area.IntersectsWith(ob.Area)) == false);
+			Debug.Assert(ob.IsInitialized == false);
 
-			m_buildings.Add(building);
+			m_largeObjectSet.Add(ob);
 		}
 
-		public void RemoveBuilding(BuildingObject building)
+		public void RemoveLargeObject(LargeGameObject ob)
 		{
 			Debug.Assert(this.World.IsWritable);
-			Debug.Assert(m_buildings.Contains(building));
+			Debug.Assert(m_largeObjectSet.Contains(ob));
 
-			m_buildings.Remove(building);
+			m_largeObjectSet.Remove(ob);
 		}
 
-		public BuildingObject GetBuildingAt(IntPoint3D p)
+		public LargeGameObject GetLargeObjectAt(IntPoint3D p)
 		{
-			return m_buildings.SingleOrDefault(b => b.Contains(p));
+			return m_largeObjectSet.SingleOrDefault(b => b.Contains(p));
+		}
+
+		public T GetLargeObjectAt<T>(IntPoint3D p) where T : LargeGameObject
+		{
+			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
@@ -617,7 +622,7 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			foreach (var o in m_buildings)
+			foreach (var o in m_largeObjectSet)
 			{
 				o.SendTo(player, ObjectVisibility.All);
 			}
@@ -647,23 +652,23 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		class BuildingsSetConv : Dwarrowdelf.ISaveGameConverter
+		class LargeObjectSetConv : Dwarrowdelf.ISaveGameConverter
 		{
 			public object ConvertToSerializable(object value)
 			{
-				var set = (HashSet<BuildingObject>)value;
+				var set = (HashSet<LargeGameObject>)value;
 				return set.ToArray();
 			}
 
 			public object ConvertFromSerializable(object value)
 			{
-				var arr = (BuildingObject[])value;
-				return new HashSet<BuildingObject>(arr);
+				var arr = (LargeGameObject[])value;
+				return new HashSet<LargeGameObject>(arr);
 			}
 
-			public Type InputType { get { return typeof(HashSet<BuildingObject>); } }
+			public Type InputType { get { return typeof(HashSet<LargeGameObject>); } }
 
-			public Type OutputType { get { return typeof(BuildingObject[]); } }
+			public Type OutputType { get { return typeof(LargeGameObject[]); } }
 		}
 
 		class TileGridReaderWriter : ISaveGameReaderWriter

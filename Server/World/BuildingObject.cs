@@ -5,8 +5,45 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
+	public abstract class LargeGameObject : BaseGameObject, ILargeGameObject
+	{
+		[SaveGameProperty]
+		public Environment Environment { get; private set; }
+		IEnvironment ILargeGameObject.Environment { get { return this.Environment as IEnvironment; } }
+
+		[SaveGameProperty]
+		public IntRectZ Area { get; private set; }
+
+		protected LargeGameObject(ObjectType objectType, IntRectZ area)
+			: base(objectType)
+		{
+			this.Area = area;
+		}
+
+		protected LargeGameObject(SaveGameContext ctx, ObjectType objectType)
+			: base(ctx, objectType)
+		{
+		}
+
+		public bool Contains(IntPoint3D point)
+		{
+			return this.Area.Contains(point);
+		}
+
+		protected void SetEnvironment(Environment env)
+		{
+			if (this.Environment != null)
+				this.Environment.RemoveLargeObject(this);
+
+			this.Environment = env;
+
+			if (this.Environment != null)
+				this.Environment.AddLargeObject(this);
+		}
+	}
+
 	[SaveGameObject(UseRef = true)]
-	public class BuildingObject : BaseGameObject, IBuildingObject
+	public class BuildingObject : LargeGameObject, IBuildingObject
 	{
 		internal static BuildingObject Create(World world, Environment env, BuildingObjectBuilder builder)
 		{
@@ -18,17 +55,11 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 		public BuildingInfo BuildingInfo { get { return Buildings.GetBuildingInfo(this.BuildingID); } }
-		[SaveGameProperty]
-		public Environment Environment { get; private set; }
-		IEnvironment IBuildingObject.Environment { get { return this.Environment as IEnvironment; } }
-		[SaveGameProperty]
-		public IntRectZ Area { get; private set; }
 
 		BuildingObject(BuildingObjectBuilder builder)
-			: base(ObjectType.Building)
+			: base(ObjectType.Building, builder.Area)
 		{
 			this.BuildingID = builder.BuildingID;
-			this.Area = builder.Area;
 			this.BuildingState = BuildingState.NeedsCleaning;
 		}
 
@@ -53,8 +84,7 @@ namespace Dwarrowdelf.Server
 			if (BuildingObject.VerifyBuildSite(env, this.Area) == false)
 				throw new Exception();
 
-			this.Environment = env;
-			env.AddBuilding(this);
+			SetEnvironment(env);
 			base.Initialize(world);
 			CheckState();
 			this.World.TickStarting += OnWorldTickStarting;
@@ -68,7 +98,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Destruct()
 		{
-			this.Environment.RemoveBuilding(this);
+			SetEnvironment(null);
 			base.Destruct();
 		}
 
@@ -121,11 +151,6 @@ namespace Dwarrowdelf.Server
 
 			if (newState != this.BuildingState)
 				this.BuildingState = newState;
-		}
-
-		public bool Contains(IntPoint3D point)
-		{
-			return this.Area.Contains(point);
 		}
 
 		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
