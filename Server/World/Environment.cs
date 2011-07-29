@@ -100,11 +100,6 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new MapChange(this, l, tileData));
 		}
 
-		public IntRect Bounds2D
-		{
-			get { return new IntRect(0, 0, this.Width, this.Height); }
-		}
-
 		public IntCuboid Bounds
 		{
 			get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); }

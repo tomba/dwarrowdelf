@@ -31,7 +31,6 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public IntPoint3D Location { get; private set; }
-		public IntPoint Location2D { get { return new IntPoint(this.Location.X, this.Location.Y); } }
 		public int X { get { return this.Location.X; } }
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
