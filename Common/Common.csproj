@@ -152,7 +152,7 @@
     <Compile Include="MMLogTraceListener.cs" />
     <Compile Include="ObjectID.cs" />
     <Compile Include="GameAction.cs" />
-    <Compile Include="GameObject.cs" />
+    <Compile Include="IGameObject.cs" />
     <Compile Include="DataTypes\IntPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileData.cs" />
