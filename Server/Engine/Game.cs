@@ -47,9 +47,9 @@ namespace Dwarrowdelf.Server
 
 	public class GameFactory : MarshalByRefObject, IGameFactory
 	{
-		public IGame CreateGame(string gameDll, string gameDir)
+		public IGame CreateGame(string gameAreaName, string gameDir)
 		{
-			var assembly = LoadGameAssembly(gameDll);
+			var assembly = LoadGameAssembly(gameAreaName);
 
 			var engine = (GameEngine)assembly.CreateInstance("MyArea.MyEngine", false, BindingFlags.Public | BindingFlags.Instance, null, new object[] { gameDir }, null, null);
 
@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Server
 			return game;
 		}
 
-		Assembly LoadGameAssembly(string gameDll)
+		Assembly LoadGameAssembly(string gameAreaName)
 		{
 			// XXX
 #if DEBUG
@@ -75,11 +75,11 @@ namespace Dwarrowdelf.Server
 
 			parts.RemoveRange(parts.Count - 4, 4);
 
-			parts.Add(Path.Combine("MyArea", "bin", debug ? "Debug" : "Release"));
+			parts.Add(Path.Combine(gameAreaName, "bin", debug ? "Debug" : "Release"));
 
 			var path = string.Join(Path.DirectorySeparatorChar.ToString(), parts);
 
-			path = Path.Combine(path, gameDll);
+			path = Path.Combine(path, gameAreaName + ".dll");
 
 			var assembly = Assembly.LoadFile(path);
 			return assembly;

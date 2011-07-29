@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using Dwarrowdelf;
+using Dwarrowdelf.Server;
+using Environment = Dwarrowdelf.Server.Environment;
+
+namespace MyArea
+{
+	public class Area
+	{
+		Random m_random = new Random(1234);
+
+		const int NUM_SHEEP = 5;
+
+		public void InitializeWorld(World world)
+		{
+			var envBuilder = new EnvironmentBuilder(new IntSize3D(64, 64, 4), VisibilityMode.AllVisible);
+
+			TileData td;
+
+			int surfaceLevel = 2;
+
+			td = new TileData() { TerrainID = TerrainID.NaturalWall, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
+			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 0), td);
+			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 1), td);
+
+			td = new TileData() { TerrainID = TerrainID.NaturalFloor, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
+			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 2), td);
+
+			td = new TileData() { TerrainID = TerrainID.Empty, InteriorID = InteriorID.Empty };
+			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 3), td);
+
+			td = new TileData() { TerrainID = TerrainID.NaturalWall, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
+			DrawRect(envBuilder, new IntRectZ(envBuilder.Bounds.Plane, 2), td);
+
+			var env = envBuilder.Create(world);
+			env.HomeLocation = new IntPoint3D(envBuilder.Width / 2, 4, surfaceLevel);
+
+
+			/* Add Monsters */
+
+			var rockMaterials = Materials.GetMaterials(MaterialClass.Rock).ToArray();
+
+			for (int i = 0; i < NUM_SHEEP; ++i)
+			{
+				var sheepBuilder = new LivingBuilder(String.Format("Sheep{0}", i))
+				{
+					SymbolID = SymbolID.Monster,
+					Color = this.GetRandomColor(),
+				};
+				var sheep = sheepBuilder.Create(world);
+				sheep.SetAI(new AnimalAI(sheep));
+
+				for (int j = 0; j < i; ++j)
+				{
+					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
+					var builder = new ItemObjectBuilder(ItemID.Rock, material);
+					var item = builder.Create(world);
+
+					for (int t = 0; t < j; ++t)
+					{
+						var material2 = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
+						builder = new ItemObjectBuilder(ItemID.Rock, material2);
+						var item2 = builder.Create(world);
+						item2.MoveTo(item);
+					}
+
+					item.MoveTo(sheep);
+				}
+
+				sheep.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
+
+		}
+
+		static void FillVolume(EnvironmentBuilder env, IntCuboid volume, TileData data)
+		{
+			foreach (var p in volume.Range())
+				env.SetTileData(p, data);
+		}
+
+		static void DrawRect(EnvironmentBuilder env, IntRectZ area, TileData data)
+		{
+			foreach (var p in area.Range())
+			{
+				if ((p.Y != area.Y1 && p.Y != area.Y2 - 1) &&
+					(p.X != area.X1 && p.X != area.X2 - 1))
+					continue;
+
+				env.SetTileData(p, data);
+			}
+		}
+
+		GameColor GetRandomColor()
+		{
+			return (GameColor)m_random.Next((int)GameColor.NumColors - 1) + 1;
+		}
+
+		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		{
+			IntPoint3D p;
+			int iter = 0;
+
+			do
+			{
+				if (iter++ > 10000)
+					throw new Exception();
+
+				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+			} while (!EnvironmentHelpers.CanEnter(env, p));
+
+			return p;
+		}
+	}
+}

@@ -16,15 +16,50 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
+		IntPoint3D[] m_corners;
+
 		public LoiterAssignment(IJob parent, ActionPriority priority, IEnvironment environment)
 			: base(parent, priority)
 		{
 			m_environment = environment;
+
+			m_corners = new IntPoint3D[4];
+
+			m_corners[0] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(-10, -10, 0));
+			m_corners[1] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, -10, 0));
+			m_corners[2] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, 10, 0));
+			m_corners[3] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(-10, 10, 0));
 		}
 
 		LoiterAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
+		}
+
+		static IntPoint3D FindCorner(IEnvironment env, IntPoint3D hl, IntVector3D v)
+		{
+			IntPoint3D p = hl + v;
+
+			int steps = Math.Max(Math.Abs(v.X), Math.Abs(v.Y));
+
+			double x = p.X;
+			double y = p.Y;
+
+			double xd = (double)v.X / steps;
+			double yd = (double)v.Y / steps;
+
+			for (int i = 0; i < steps; ++i)
+			{
+				if (env.CanEnter(p))
+					return p;
+
+				x -= xd;
+				y -= yd;
+
+				p = new IntPoint3D((int)x, (int)y, p.Z);
+			}
+
+			throw new Exception();
 		}
 
 		protected override JobStatus AssignOverride(ILiving worker)
@@ -35,7 +70,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override void OnAssignmentDone()
 		{
-			m_state = (m_state + 1) % 5;
+			m_state = (m_state + 1) % 4;
 		}
 
 		protected override IAssignment PrepareNextAssignment()
@@ -45,23 +80,19 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[0], DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 18, 9), DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[1], DirectionSet.Exact);
 					break;
 
 				case 2:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(14, 28, 9), DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[2], DirectionSet.Exact);
 					break;
 
 				case 3:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 28, 9), DirectionSet.Exact);
-					break;
-
-				case 4:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, new IntPoint3D(2, 18, 9), DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[3], DirectionSet.Exact);
 					break;
 
 				default:

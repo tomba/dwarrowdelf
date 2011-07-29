@@ -50,6 +50,8 @@ namespace Dwarrowdelf
 
 	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
 	{
+		IntPoint3D HomeLocation { get; }
+
 		VisibilityMode VisibilityMode { get; }
 
 		IntCuboid Bounds { get; }

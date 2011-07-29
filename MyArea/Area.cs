@@ -117,7 +117,7 @@ namespace MyArea
 			}
 
 			var env = envBuilder.Create(world);
-			env.HomeLocation = new IntPoint3D(env.Width / 10, env.Height / 10, surfaceLevel);
+			env.HomeLocation = new IntPoint3D(20, 20, surfaceLevel);
 
 
 

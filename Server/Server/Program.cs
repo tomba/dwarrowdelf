@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Server
 
 			var gf = new GameFactory();
 			// Typecast to Game to allow direct manipulation
-			var game = (Game)gf.CreateGame("MyArea.dll", gameDir);
+			var game = (Game)gf.CreateGame("MyArea", gameDir);
 
 			if (save == Guid.Empty)
 				game.CreateWorld();
