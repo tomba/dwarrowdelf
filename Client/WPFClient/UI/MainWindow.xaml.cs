@@ -343,7 +343,7 @@ namespace Dwarrowdelf.Client
 					InteriorID = dialog.InteriorID,
 					InteriorMaterialID = dialog.InteriorMaterialID,
 					Grass = dialog.Grass,
-					WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)TileData.MinWaterLevel) : null,
+					WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
 				});
 			}
 		}
