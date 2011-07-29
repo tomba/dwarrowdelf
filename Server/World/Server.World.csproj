@@ -62,6 +62,7 @@
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="BuildingObject.cs" />
     <Compile Include="LivingActions.cs" />
+    <Compile Include="LocatableGameObject.cs" />
     <Compile Include="ProcessableList.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="Living.cs" />

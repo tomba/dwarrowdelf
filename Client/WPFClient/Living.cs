@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	class Living : ClientGameObject, ILiving
+	class Living : LocatabletGameObject, ILiving
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();

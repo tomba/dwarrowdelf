@@ -65,6 +65,11 @@ namespace Dwarrowdelf.Client
 			this.World.AddEnvironment(this);
 		}
 
+		public override void SetProperty(PropertyID propertyID, object value)
+		{
+			throw new NotImplementedException();
+		}
+
 		[Serializable]
 		class EnvironmentSave
 		{

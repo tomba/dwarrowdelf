@@ -25,7 +25,7 @@
             <TextBlock Text="{Binding Description}" />
 
             <TextBlock>Color</TextBlock>
-            <TextBlock Text="{Binding GameColor}" />
+            <TextBlock Text="{Binding Color}" />
 
             <TextBlock>MaterialID</TextBlock>
             <TextBlock Text="{Binding Material.ID}" />

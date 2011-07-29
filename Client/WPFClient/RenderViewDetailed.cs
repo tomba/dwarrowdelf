@@ -384,13 +384,13 @@ namespace Dwarrowdelf.Client
 
 		static void GetObjectTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
-			var ob = env.GetFirstObject(ml);
+			var ob = (LocatabletGameObject)env.GetFirstObject(ml);
 
 			if (ob == null)
 				return;
 
 			tile.SymbolID = ob.SymbolID;
-			tile.Color = ob.GameColor;
+			tile.Color = ob.Color;
 			tile.BgColor = GameColor.None;
 		}
 

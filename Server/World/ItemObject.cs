@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObject(UseRef = true)]
-	public class ItemObject : ServerGameObject, IItemObject
+	public class ItemObject : LocatableGameObject, IItemObject
 	{
 		internal static ItemObject Create(World world, ItemObjectBuilder builder)
 		{
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ItemObjectBuilder : ServerGameObjectBuilder
+	public class ItemObjectBuilder : LocatableGameObjectBuilder
 	{
 		public ItemID ItemID { get; set; }
 		public int NutritionalValue { get; set; }

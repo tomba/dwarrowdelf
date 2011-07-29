@@ -34,9 +34,6 @@ namespace Dwarrowdelf
 		IEnvironment Environment { get; }
 		IGameObject Parent { get; }
 		IntPoint3D Location { get; }
-
-		MaterialClass MaterialClass { get; }
-		MaterialID MaterialID { get; }
 	}
 
 	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
@@ -63,7 +60,16 @@ namespace Dwarrowdelf
 		bool GetHidden(IntPoint3D l);
 	}
 
-	public interface ILiving : IGameObject
+	public interface ILocatableGameObject : IGameObject
+	{
+		string Name { get; }
+		GameColor Color { get; }
+		SymbolID SymbolID { get; }
+		MaterialClass MaterialClass { get; }
+		MaterialID MaterialID { get; }
+	}
+
+	public interface ILiving : ILocatableGameObject
 	{
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
@@ -72,7 +78,7 @@ namespace Dwarrowdelf
 		byte GetSkillLevel(SkillID skill);
 	}
 
-	public interface IItemObject : IGameObject
+	public interface IItemObject : ILocatableGameObject
 	{
 		ItemClass ItemClass { get; }
 		ItemID ItemID { get; }

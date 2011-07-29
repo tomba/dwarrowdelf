@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	class ItemObject : ClientGameObject, IItemObject
+	class ItemObject : LocatabletGameObject, IItemObject
 	{
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)

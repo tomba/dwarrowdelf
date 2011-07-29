@@ -140,7 +140,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="BaseGameObject.cs" />
     <Compile Include="Collections.cs" />
+    <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />

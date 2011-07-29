@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObject(UseRef = true)]
-	public partial class Living : ServerGameObject, ILiving
+	public partial class Living : LocatableGameObject, ILiving
 	{
 		internal static Living Create(World world, LivingBuilder builder)
 		{
@@ -638,7 +638,7 @@ namespace Dwarrowdelf.Server
 	}
 
 
-	public class LivingBuilder : ServerGameObjectBuilder
+	public class LivingBuilder : LocatableGameObjectBuilder
 	{
 		public int VisionRange { get; set; }
 		public int FoodFullness { get; set; }
