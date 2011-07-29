@@ -215,7 +215,7 @@
     <Compile Include="Living.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />
-    <Compile Include="ClientGameObject.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="UI\ItemInfoControl.xaml.cs">
       <DependentUpon>ItemInfoControl.xaml</DependentUpon>

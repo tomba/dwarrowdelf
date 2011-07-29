@@ -845,7 +845,7 @@ namespace Dwarrowdelf.Client
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
+		void MapObjectChanged(GameObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
 		{
 			if (l != m_location)
 				return;
@@ -1006,7 +1006,7 @@ namespace Dwarrowdelf.Client
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
+		void MapObjectChanged(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
@@ -1108,7 +1108,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public IEnumerable<ClientGameObject> Objects
+		public IEnumerable<GameObject> Objects
 		{
 			get
 			{

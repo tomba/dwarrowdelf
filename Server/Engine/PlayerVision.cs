@@ -188,10 +188,10 @@ namespace Dwarrowdelf.Server
 		Environment m_environment;
 
 		HashSet<IntPoint3D> m_oldKnownLocations = new HashSet<IntPoint3D>();
-		HashSet<ServerGameObject> m_oldKnownObjects = new HashSet<ServerGameObject>();
+		HashSet<GameObject> m_oldKnownObjects = new HashSet<GameObject>();
 
 		HashSet<IntPoint3D> m_newKnownLocations = new HashSet<IntPoint3D>();
-		HashSet<ServerGameObject> m_newKnownObjects = new HashSet<ServerGameObject>();
+		HashSet<GameObject> m_newKnownObjects = new HashSet<GameObject>();
 
 		public LOSVisionTracker(Player player, Environment env)
 		{
@@ -269,9 +269,9 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all objects in the given location map
-		HashSet<ServerGameObject> CollectObjects(HashSet<IntPoint3D> knownLocs)
+		HashSet<GameObject> CollectObjects(HashSet<IntPoint3D> knownLocs)
 		{
-			var knownObs = new HashSet<ServerGameObject>();
+			var knownObs = new HashSet<GameObject>();
 
 			foreach (var p in knownLocs)
 			{
@@ -291,7 +291,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect objects that are newly visible
-		static IEnumerable<ServerGameObject> CollectRevealedObjects(HashSet<ServerGameObject> oldObjects, HashSet<ServerGameObject> newObjects)
+		static IEnumerable<GameObject> CollectRevealedObjects(HashSet<GameObject> oldObjects, HashSet<GameObject> newObjects)
 		{
 			return newObjects.Except(oldObjects);
 		}
@@ -328,7 +328,7 @@ namespace Dwarrowdelf.Server
 			m_player.Send(msg);
 		}
 
-		void SendNewObjects(IEnumerable<ServerGameObject> revealedObjects)
+		void SendNewObjects(IEnumerable<GameObject> revealedObjects)
 		{
 			foreach (var ob in revealedObjects)
 			{

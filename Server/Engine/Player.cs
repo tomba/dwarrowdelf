@@ -193,7 +193,7 @@ namespace Dwarrowdelf.Server
 				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
 				foreach (var ob in this.World.AllObjects)
 				{
-					var sob = ob as ServerGameObject;
+					var sob = ob as GameObject;
 
 					if (sob == null || sob.Parent == null)
 						ob.SendTo(this, ObjectVisibility.All);
@@ -507,7 +507,7 @@ namespace Dwarrowdelf.Server
 
 		public ObjectVisibility GetObjectVisibility(IBaseGameObject ob)
 		{
-			var sgo = ob as ServerGameObject;
+			var sgo = ob as GameObject;
 
 			if (sgo == null)
 			{
@@ -515,7 +515,7 @@ namespace Dwarrowdelf.Server
 				return ObjectVisibility.All;
 			}
 
-			for (ServerGameObject o = sgo; o != null; o = o.Parent)
+			for (GameObject o = sgo; o != null; o = o.Parent)
 			{
 				if (this.IsController(o))
 				{
@@ -644,7 +644,7 @@ namespace Dwarrowdelf.Server
 			var occ = change as ObjectCreatedChange;
 			if (occ != null)
 			{
-				if (!(occ.Object is ServerGameObject))
+				if (!(occ.Object is GameObject))
 				{
 					var newObject = (BaseGameObject)occ.Object;
 					newObject.SendTo(m_player, ObjectVisibility.All);
@@ -662,7 +662,7 @@ namespace Dwarrowdelf.Server
 			if (c != null && c.Source != c.Destination && c.Destination is Environment &&
 				(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 			{
-				var newObject = (ServerGameObject)c.Object;
+				var newObject = (GameObject)c.Object;
 				var vis = m_player.GetObjectVisibility(newObject);
 				newObject.SendTo(m_player, vis);
 			}
@@ -755,7 +755,7 @@ namespace Dwarrowdelf.Server
 					if (vis == PropertyVisibility.Friendly && !m_player.IsFriendly(c.Object))
 						return false;
 
-					ServerGameObject sob = c.Object as ServerGameObject;
+					GameObject sob = c.Object as GameObject;
 					if (sob != null)
 						return m_player.Sees(sob.Environment, sob.Location);
 

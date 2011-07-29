@@ -14,14 +14,14 @@ namespace Dwarrowdelf.Client
 		Remove,
 	}
 
-	class Environment : ClientGameObject, IEnvironment
+	class Environment : GameObject, IEnvironment
 	{
-		public event Action<ClientGameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
+		public event Action<GameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
 		public event Action<IntPoint3D> MapTileTerrainChanged;
 
 		GrowingTileGrid m_tileGrid;
-		Dictionary<IntPoint3D, List<ClientGameObject>> m_objectMap;
-		List<ClientGameObject> m_objectList;
+		Dictionary<IntPoint3D, List<GameObject>> m_objectMap;
+		List<GameObject> m_objectList;
 
 		public uint Version { get; private set; }
 
@@ -48,8 +48,8 @@ namespace Dwarrowdelf.Client
 			this.Version = 1;
 
 			m_tileGrid = new GrowingTileGrid();
-			m_objectMap = new Dictionary<IntPoint3D, List<ClientGameObject>>();
-			m_objectList = new List<ClientGameObject>();
+			m_objectMap = new Dictionary<IntPoint3D, List<GameObject>>();
+			m_objectList = new List<GameObject>();
 
 			m_buildings = new BuildingCollection();
 			this.Buildings = new ReadOnlyBuildingCollection(m_buildings);
@@ -321,39 +321,39 @@ namespace Dwarrowdelf.Client
 			return m_buildings.SingleOrDefault(b => b.Area.Contains(p));
 		}
 
-		static IList<ClientGameObject> EmptyObjectList = new ClientGameObject[0];
+		static IList<GameObject> EmptyObjectList = new GameObject[0];
 
-		public IList<ClientGameObject> GetContents(IntPoint3D l)
+		public IList<GameObject> GetContents(IntPoint3D l)
 		{
-			List<ClientGameObject> obs;
+			List<GameObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
 				return EmptyObjectList;
 
 			return obs.AsReadOnly();
 		}
 
-		public IList<ClientGameObject> GetContents()
+		public IList<GameObject> GetContents()
 		{
 			return m_objectList.AsReadOnly();
 		}
 
-		public ClientGameObject GetFirstObject(IntPoint3D l)
+		public GameObject GetFirstObject(IntPoint3D l)
 		{
-			List<ClientGameObject> obs;
+			List<GameObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
 				return null;
 
 			return obs.FirstOrDefault();
 		}
 
-		protected override void ChildAdded(ClientGameObject child)
+		protected override void ChildAdded(GameObject child)
 		{
 			IntPoint3D l = child.Location;
 
-			List<ClientGameObject> obs;
+			List<GameObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs))
 			{
-				obs = new List<ClientGameObject>();
+				obs = new List<GameObject>();
 				m_objectMap[l] = obs;
 			}
 
@@ -368,13 +368,13 @@ namespace Dwarrowdelf.Client
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Add);
 		}
 
-		protected override void ChildRemoved(ClientGameObject child)
+		protected override void ChildRemoved(GameObject child)
 		{
 			IntPoint3D l = child.Location;
 
 			Debug.Assert(m_objectMap.ContainsKey(l));
 
-			List<ClientGameObject> obs = m_objectMap[l];
+			List<GameObject> obs = m_objectMap[l];
 
 			bool removed = obs.Remove(child);
 			Debug.Assert(removed);
@@ -386,9 +386,9 @@ namespace Dwarrowdelf.Client
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Remove);
 		}
 
-		protected override void ChildMoved(ClientGameObject child, IntPoint3D from, IntPoint3D to)
+		protected override void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to)
 		{
-			List<ClientGameObject> obs;
+			List<GameObject> obs;
 
 			/* first remove from the old position ... */
 
@@ -406,7 +406,7 @@ namespace Dwarrowdelf.Client
 
 			if (!m_objectMap.TryGetValue(to, out obs))
 			{
-				obs = new List<ClientGameObject>();
+				obs = new List<GameObject>();
 				m_objectMap[to] = obs;
 			}
 
@@ -420,7 +420,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// called from object when its visual property changes
-		internal void OnObjectVisualChanged(ClientGameObject ob)
+		internal void OnObjectVisualChanged(GameObject ob)
 		{
 			if (MapTileObjectChanged != null)
 			{

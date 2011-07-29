@@ -7,27 +7,27 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	class KeyedObjectCollection : KeyedCollection<ObjectID, ServerGameObject>
+	class KeyedObjectCollection : KeyedCollection<ObjectID, GameObject>
 	{
 		public KeyedObjectCollection() : base(null, 10) { }
 
-		protected override ObjectID GetKeyForItem(ServerGameObject item)
+		protected override ObjectID GetKeyForItem(GameObject item)
 		{
 			return item.ObjectID;
 		}
 	}
 
 	/* Game object that has inventory, location */
-	abstract public class ServerGameObject : BaseGameObject, IGameObject
+	abstract public class GameObject : BaseGameObject, IGameObject
 	{
 		[SaveGameProperty]
-		public ServerGameObject Parent { get; private set; }
+		public GameObject Parent { get; private set; }
 		IGameObject IGameObject.Parent { get { return this.Parent; } }
 		public Environment Environment { get { return this.Parent as Environment; } }
 		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
 		[SaveGameProperty("Inventory")]
 		KeyedObjectCollection m_children;
-		public ReadOnlyCollection<ServerGameObject> Inventory { get; private set; }
+		public ReadOnlyCollection<GameObject> Inventory { get; private set; }
 
 		[SaveGameProperty]
 		public IntPoint3D Location { get; private set; }
@@ -35,24 +35,24 @@ namespace Dwarrowdelf.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		protected ServerGameObject(ObjectType objectType)
+		protected GameObject(ObjectType objectType)
 			: base(objectType)
 		{
 			m_children = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
-		protected ServerGameObject(ObjectType objectType, ServerGameObjectBuilder builder)
+		protected GameObject(ObjectType objectType, ServerGameObjectBuilder builder)
 			: base(objectType)
 		{
 			m_children = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
-		protected ServerGameObject(SaveGameContext ctx, ObjectType objectType)
+		protected GameObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
-			this.Inventory = new ReadOnlyCollection<ServerGameObject>(m_children);
+			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
 		public override void Destruct()
@@ -90,21 +90,21 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		protected virtual bool OkToAddChild(ServerGameObject ob, IntPoint3D dstLoc) { return true; }
-		protected virtual bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
+		protected virtual bool OkToAddChild(GameObject ob, IntPoint3D dstLoc) { return true; }
+		protected virtual bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
 
-		protected virtual void OnChildAdded(ServerGameObject child) { }
-		protected virtual void OnChildRemoved(ServerGameObject child) { }
-		protected virtual void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc) { }
+		protected virtual void OnChildAdded(GameObject child) { }
+		protected virtual void OnChildRemoved(GameObject child) { }
+		protected virtual void OnChildMoved(GameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc) { }
 
-		protected virtual void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv) { }
+		protected virtual void OnEnvironmentChanged(GameObject oldEnv, GameObject newEnv) { }
 
-		public bool MoveTo(ServerGameObject parent)
+		public bool MoveTo(GameObject parent)
 		{
 			return MoveTo(parent, new IntPoint3D());
 		}
 
-		public bool MoveTo(ServerGameObject dst, IntPoint3D dstLoc)
+		public bool MoveTo(GameObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -147,7 +147,7 @@ namespace Dwarrowdelf.Server
 			return MoveTo(location);
 		}
 
-		void MoveToLow(ServerGameObject dst, IntPoint3D dstLoc)
+		void MoveToLow(GameObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);

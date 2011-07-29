@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObject(UseRef = true)]
-	public class Environment : ServerGameObject, IEnvironment
+	public class Environment : GameObject, IEnvironment
 	{
 		internal static Environment Create(World world, EnvironmentBuilder builder)
 		{
@@ -433,34 +433,34 @@ namespace Dwarrowdelf.Server
 		}
 
 		// XXX not a good func. contents can be changed by the caller
-		public IEnumerable<ServerGameObject> GetContents(IntPoint3D l)
+		public IEnumerable<GameObject> GetContents(IntPoint3D l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<ServerGameObject> Objects()
+		public IEnumerable<GameObject> Objects()
 		{
 			for (int z = 0; z < this.Depth; ++z)
 				foreach (var ob in m_contentArray[z].AsEnumerable())
 					yield return ob;
 		}
 
-		protected override void OnChildAdded(ServerGameObject child)
+		protected override void OnChildAdded(GameObject child)
 		{
 			var list = m_contentArray[child.Z];
 			Debug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
 
-		protected override void OnChildRemoved(ServerGameObject child)
+		protected override void OnChildRemoved(GameObject child)
 		{
 			var list = m_contentArray[child.Z];
 			Debug.Assert(list.Contains(child));
 			list.Remove(child);
 		}
 
-		protected override bool OkToAddChild(ServerGameObject ob, IntPoint3D p)
+		protected override bool OkToAddChild(GameObject ob, IntPoint3D p)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -473,12 +473,12 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		protected override bool OkToMoveChild(ServerGameObject ob, Direction dir, IntPoint3D dstLoc)
+		protected override bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
 			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
 		}
 
-		protected override void OnChildMoved(ServerGameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
+		protected override void OnChildMoved(GameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
 			if (srcLoc.Z == dstLoc.Z)
 				return;

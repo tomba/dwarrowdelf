@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client
 			InvalidateTiles();
 		}
 
-		void MapObjectChangedCallback(ClientGameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
+		void MapObjectChangedCallback(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			InvalidateTiles();
 		}

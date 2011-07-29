@@ -517,7 +517,7 @@ namespace Dwarrowdelf.Server
 				this.Assignment = null;
 		}
 
-		protected override void OnEnvironmentChanged(ServerGameObject oldEnv, ServerGameObject newEnv)
+		protected override void OnEnvironmentChanged(GameObject oldEnv, GameObject newEnv)
 		{
 			m_losMapVersion = 0;
 		}

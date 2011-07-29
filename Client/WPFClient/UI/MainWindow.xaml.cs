@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client
 {
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		ClientGameObject m_followObject;
+		GameObject m_followObject;
 		bool m_closing;
 		DispatcherTimer m_timer;
 		ManualJobSource m_manualJobSource;
@@ -183,7 +183,7 @@ namespace Dwarrowdelf.Client
 				e.Accepted = false;
 		}
 
-		public ClientGameObject FollowObject
+		public GameObject FollowObject
 		{
 			get { return m_followObject; }
 
@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void FollowedObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc)
+		void FollowedObjectMoved(GameObject ob, GameObject dst, IntPoint3D loc)
 		{
 			Environment env = dst as Environment;
 
@@ -651,7 +651,7 @@ namespace Dwarrowdelf.Client
 			if (!(plr.Environment is Environment))
 				throw new Exception();
 
-			var list = currentTileItems.SelectedItems.Cast<ClientGameObject>();
+			var list = currentTileItems.SelectedItems.Cast<GameObject>();
 
 			if (list.Count() == 0)
 				return;
@@ -667,7 +667,7 @@ namespace Dwarrowdelf.Client
 
 		private void Drop_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var list = inventoryListBox.SelectedItems.Cast<ClientGameObject>();
+			var list = inventoryListBox.SelectedItems.Cast<GameObject>();
 
 			if (list.Count() == 0)
 				return;
@@ -991,7 +991,7 @@ namespace Dwarrowdelf.Client
 			if (e.AddedItems.Count == 0)
 				return;
 
-			var ob = (ClientGameObject)e.AddedItems[0];
+			var ob = (GameObject)e.AddedItems[0];
 
 			this.FollowObject = null;
 
@@ -1001,7 +1001,7 @@ namespace Dwarrowdelf.Client
 		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			var item = (ListBoxItem)sender;
-			var ob = (ClientGameObject)item.Content;
+			var ob = (GameObject)item.Content;
 
 			this.FollowObject = null;
 
@@ -1011,7 +1011,7 @@ namespace Dwarrowdelf.Client
 		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			var item = (ListBoxItem)sender;
-			var ob = (ClientGameObject)item.Content;
+			var ob = (GameObject)item.Content;
 
 			this.FollowObject = ob;
 		}

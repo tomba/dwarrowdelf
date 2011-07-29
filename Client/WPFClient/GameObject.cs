@@ -8,9 +8,9 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	delegate void ObjectMoved(ClientGameObject ob, ClientGameObject dst, IntPoint3D loc);
+	delegate void ObjectMoved(GameObject ob, GameObject dst, IntPoint3D loc);
 
-	abstract class ClientGameObject : BaseGameObject, IGameObject
+	abstract class GameObject : BaseGameObject, IGameObject
 	{
 		GameObjectCollection m_inventory;
 		public ReadOnlyGameObjectCollection Inventory { get; private set; }
@@ -19,20 +19,20 @@ namespace Dwarrowdelf.Client
 
 		public bool IsLiving { get; protected set; }
 
-		public ClientGameObject(World world, ObjectID objectID)
+		public GameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			m_inventory = new GameObjectCollection();
 			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
 
-		protected virtual void ChildAdded(ClientGameObject child) { }
-		protected virtual void ChildRemoved(ClientGameObject child) { }
-		protected virtual void ChildMoved(ClientGameObject child, IntPoint3D from, IntPoint3D to) { }
+		protected virtual void ChildAdded(GameObject child) { }
+		protected virtual void ChildRemoved(GameObject child) { }
+		protected virtual void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to) { }
 
-		public void MoveTo(ClientGameObject parent, IntPoint3D location)
+		public void MoveTo(GameObject parent, IntPoint3D location)
 		{
-			ClientGameObject oldParent = this.Parent;
+			GameObject oldParent = this.Parent;
 
 			if (oldParent != null)
 			{
@@ -81,9 +81,9 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			ClientGameObject env = null;
+			GameObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)
-				env = this.World.FindObject<ClientGameObject>(data.Environment);
+				env = this.World.FindObject<GameObject>(data.Environment);
 
 			MoveTo(env, data.Location);
 		}
@@ -93,8 +93,8 @@ namespace Dwarrowdelf.Client
 			return String.Format("Object({0})", this.ObjectID);
 		}
 
-		ClientGameObject m_parent;
-		public ClientGameObject Parent
+		GameObject m_parent;
+		public GameObject Parent
 		{
 			get { return m_parent; }
 			private set { m_parent = value; Notify("Parent"); }

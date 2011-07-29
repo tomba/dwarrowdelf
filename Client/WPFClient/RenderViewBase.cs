@@ -153,7 +153,7 @@ namespace Dwarrowdelf.Client
 			MapChangedOverride(ml);
 		}
 
-		void MapObjectChangedCallback(ClientGameObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
+		void MapObjectChangedCallback(GameObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
 		{
 			MapChangedOverride(ml);
 		}

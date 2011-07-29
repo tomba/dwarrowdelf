@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	abstract class LocatabletGameObject : ClientGameObject, ILocatableGameObject
+	abstract class LocatabletGameObject : GameObject, ILocatableGameObject
 	{
 		static LocatabletGameObject()
 		{

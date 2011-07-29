@@ -205,7 +205,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectMoveChange change)
 		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<GameObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -217,16 +217,16 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			ClientGameObject env = null;
+			GameObject env = null;
 			if (change.DestinationMapID != ObjectID.NullObjectID)
-				env = GameData.Data.World.FindObject<ClientGameObject>(change.DestinationMapID);
+				env = GameData.Data.World.FindObject<GameObject>(change.DestinationMapID);
 
 			ob.MoveTo(env, change.DestinationLocation);
 		}
 
 		void HandleChange(ObjectMoveLocationChange change)
 		{
-			var ob = GameData.Data.World.FindObject<ClientGameObject>(change.ObjectID);
+			var ob = GameData.Data.World.FindObject<GameObject>(change.ObjectID);
 
 			if (ob == null)
 			{

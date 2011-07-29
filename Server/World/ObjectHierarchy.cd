@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Dwarrowdelf.Server.LocatableGameObject" Collapsed="true">
+    <Position X="7.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>GAABAAIAAAAABAAAAAAAAAQAQAQAAAAAAAAAgAgAAAA=</HashCode>
+      <FileName>LocatableGameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.Living" Collapsed="true">
+    <Position X="8.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MgCcAUCpQQsEoWF0BkQgDWCIwTBIUECgBAAQDAFIACA=</HashCode>
+      <FileName>Living.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.ItemObject" Collapsed="true">
+    <Position X="6.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAwBAAAAAEgAAABAAAQAAAAEAACAAACEAEBAA=</HashCode>
+      <FileName>ItemObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.Environment" Collapsed="true">
+    <Position X="10.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAEEAgEMRCCQD2AcEAAEYGwBQQABHEcgAokAQQEQQwA=</HashCode>
+      <FileName>Environment.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.BuildingObject" Collapsed="true">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAQECQAQBAQAAAAAAFAAQUAAAEEAAAEIAARAYAAA=</HashCode>
+      <FileName>BuildingObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.BaseGameObject" Collapsed="true">
+    <Position X="7.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQRAAAQAAQAMgBAAQQAAAEAAAAAAABACAAAA=</HashCode>
+      <FileName>BaseGameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.GameObject" Collapsed="true">
+    <Position X="8.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQAASACQAAAACAEAAIARQQAQAAJEAIACAEAAgAAYAE=</HashCode>
+      <FileName>GameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
