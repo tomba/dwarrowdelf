@@ -297,7 +297,11 @@ namespace Dwarrowdelf.Server
 					Name = msg.Name,
 				};
 				var living = livingBuilder.Create(this.World);
-				//sheep.SetAI(new AnimalAI(sheep));
+
+				if (msg.IsControllable)
+					m_engine.SetupControllable(living);
+				else
+					living.SetAI(new Jobs.HerbivoreAI(living));
 
 				trace.TraceInformation("Created living {0}", living);
 

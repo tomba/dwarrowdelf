@@ -62,7 +62,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimalAI.cs" />
     <Compile Include="Area.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="Items\FoodGenerator.cs" />

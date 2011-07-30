@@ -24,6 +24,11 @@ namespace MyArea
 
 		Random m_random = new Random();
 
+		public override void SetupControllable(Living living)
+		{
+			living.SetAI(new DwarfAI(living));
+		}
+
 		public override Living[] CreateControllables(Player player)
 		{
 			const int NUM_DWARVES = 1;

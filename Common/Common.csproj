@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Jobs\HerbivoreAI.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />

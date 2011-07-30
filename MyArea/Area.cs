@@ -220,7 +220,7 @@ namespace MyArea
 					Color = this.GetRandomColor(),
 				};
 				var sheep = sheepBuilder.Create(world);
-				sheep.SetAI(new AnimalAI(sheep));
+				sheep.SetAI(new Dwarrowdelf.Jobs.HerbivoreAI(sheep));
 
 				for (int j = 0; j < i; ++j)
 				{

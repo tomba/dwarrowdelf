@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using Dwarrowdelf;
-using Dwarrowdelf.Server;
 using Dwarrowdelf.Jobs;
 
-namespace MyArea
+namespace Dwarrowdelf.Jobs
 {
 	[SaveGameObject(UseRef = true)]
-	public class AnimalAI : AssignmentAI
+	public class HerbivoreAI : AssignmentAI
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		AnimalAI(SaveGameContext ctx)
+		HerbivoreAI(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
 
-		public AnimalAI(Living ob)
+		public HerbivoreAI(ILiving ob)
 			: base(ob)
 		{
 			m_priorityAction = false;
@@ -29,7 +28,7 @@ namespace MyArea
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
-			var worker = (Living)this.Worker;
+			var worker = this.Worker;
 
 			bool hasAssignment = this.CurrentAssignment != null;
 			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
