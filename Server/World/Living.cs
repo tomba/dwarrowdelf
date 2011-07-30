@@ -301,6 +301,10 @@ namespace Dwarrowdelf.Server
 				if (!ok)
 					Trace.TraceWarning("Failed to move corpse");
 
+				// make a copy, as the collection will be modified
+				foreach (var item in this.Inventory.ToList())
+					item.MoveTo(this.Environment, this.Location);
+
 				this.Destruct();
 			}
 		}
