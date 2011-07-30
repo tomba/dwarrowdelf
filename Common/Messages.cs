@@ -131,6 +131,17 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
+	public class CreateLivingMessage : ServerMessage
+	{
+		public ObjectID EnvironmentID;
+		public IntRectZ Area;
+
+		public string Name;
+		public SymbolID SymbolID;
+		public GameColor Color;
+	}
+
+	[Serializable]
 	public class SetWorldConfigMessage : ServerMessage
 	{
 		public TimeSpan? MinTickTime { get; set; }

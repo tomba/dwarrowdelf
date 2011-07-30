@@ -280,6 +280,35 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		void ReceiveMessage(CreateLivingMessage msg)
+		{
+			bool useNum = msg.Area.Area > 1;
+			int num = 0;
+
+			foreach (var p in msg.Area.Range())
+			{
+				string name = useNum ? String.Format("{0} {1}", msg.Name, num++) : msg.Name;
+
+				var livingBuilder = new LivingBuilder(name)
+				{
+					SymbolID = msg.SymbolID,
+					Color = msg.Color,
+
+				};
+				var living = livingBuilder.Create(this.World);
+				//sheep.SetAI(new AnimalAI(sheep));
+
+				trace.TraceInformation("Created living {0}", living);
+
+				var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+
+				if (env == null)
+					throw new Exception();
+
+				living.MoveTo(env, p);
+			}
+		}
+
 		void ReceiveMessage(SetWorldConfigMessage msg)
 		{
 			if (msg.MinTickTime.HasValue)

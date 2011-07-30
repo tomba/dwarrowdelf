@@ -106,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\CreateLivingDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\CreateItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -167,6 +171,9 @@
       <DependentUpon>BuildItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ClientCommands.cs" />
+    <Compile Include="UI\CreateLivingDialog.xaml.cs">
+      <DependentUpon>CreateLivingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\CreateItemDialog.xaml.cs">
       <DependentUpon>CreateItemDialog.xaml</DependentUpon>
     </Compile>

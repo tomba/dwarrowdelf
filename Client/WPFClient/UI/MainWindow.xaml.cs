@@ -50,6 +50,7 @@ namespace Dwarrowdelf.Client
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenDesignateDialogCommand, OpenDesignateHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenSetTerrainDialogCommand, OpenSetTerrainHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateItemDialogCommand, OpenCreateItemHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateLivingDialogCommand, OpenCreateLivingHandler));
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -369,6 +370,33 @@ namespace Dwarrowdelf.Client
 					MaterialID = dialog.MaterialID,
 					EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
 					Location = dialog.Location,
+				});
+			}
+		}
+
+		void OpenCreateLivingHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var env = map.Environment;
+
+			var area = map.Selection.SelectionIntRectZ;
+			if (area.IsNull)
+				return;
+
+			var dialog = new CreateLivingDialog();
+			dialog.Owner = this;
+			dialog.SetContext(env, area);
+			var res = dialog.ShowDialog();
+
+			if (res == true)
+			{
+				GameData.Data.Connection.Send(new CreateLivingMessage()
+				{
+					EnvironmentID = dialog.Environment.ObjectID,
+					Area = dialog.Area,
+
+					Name = dialog.LivingName,
+					Color = dialog.Color,
+					SymbolID = dialog.SymbolID,
 				});
 			}
 		}
