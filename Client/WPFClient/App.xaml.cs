@@ -147,8 +147,8 @@ namespace Dwarrowdelf.Client
 
 				var gameFactory = (IGameFactory)m_serverDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
 
-				m_game = gameFactory.CreateGame("MyArea", gameDir);
-				//m_game = gameFactory.CreateGame("ArenaArea", gameDir);
+				//m_game = gameFactory.CreateGame("MyArea", gameDir);
+				m_game = gameFactory.CreateGame("ArenaArea", gameDir);
 
 				UpdateStatus("Game Created");
 			}

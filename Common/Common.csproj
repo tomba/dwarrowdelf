@@ -73,6 +73,7 @@
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
+    <Compile Include="Jobs\AssignmentGroups\PatrolAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBaseAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />

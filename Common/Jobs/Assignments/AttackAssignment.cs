@@ -11,8 +11,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 	[SaveGameObject(UseRef = true)]
 	public class AttackAssignment : Assignment
 	{
-		[SaveGameProperty("Environment")]
-		readonly IEnvironment m_environment;
 		[SaveGameProperty("Target")]
 		readonly ILiving m_target;
 
@@ -23,10 +21,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		IntPoint3D m_dest;
 
-		public AttackAssignment(IJob parent, ActionPriority priority, IEnvironment environment, ILiving target)
+		public AttackAssignment(IJob parent, ActionPriority priority, ILiving target)
 			: base(parent, priority)
 		{
-			m_environment = environment;
 			m_target = target;
 		}
 
@@ -46,6 +43,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
+			Debug.Assert(m_target.Environment == worker.Environment);
+
 			var res = PreparePath(worker);
 			if (res == Jobs.JobStatus.Done)
 				res = Jobs.JobStatus.Ok;
@@ -117,7 +116,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 
 			IntPoint3D finalPos;
-			var path = AStar.AStar.Find(m_environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
+			var path = AStar.AStar.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
 
 			if (path == null)
 				return Jobs.JobStatus.Abort;

@@ -26,7 +26,7 @@ namespace MyArea
 
 		public override Living[] CreateControllables(Player player)
 		{
-			const int NUM_DWARVES = 5;
+			const int NUM_DWARVES = 1;
 
 			// XXX entry location
 			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.Environment>().First();
@@ -64,22 +64,22 @@ namespace MyArea
 			{
 				case 0:
 					builder.Name = "Doc";
-					builder.SetSkillLevel(SkillID.Mining, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 100);
 					break;
 
 				case 1:
 					builder.Name = "Grumpy";
-					builder.SetSkillLevel(SkillID.Carpentry, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 100);
 					break;
 
 				case 2:
 					builder.Name = "Happy";
-					builder.SetSkillLevel(SkillID.WoodCutting, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 100);
 					break;
 
 				case 3:
 					builder.Name = "Sleepy";
-					builder.SetSkillLevel(SkillID.Masonry, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 100);
 					break;
 
 				case 4:

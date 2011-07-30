@@ -149,6 +149,21 @@ namespace Dwarrowdelf
 					yield return new IntPoint(x, y);
 		}
 
+		public IEnumerable<IntPoint> Perimeter()
+		{
+			for (int x = this.X1; x < this.X2; ++x)
+				yield return new IntPoint(x, this.Y1);
+
+			for (int y = this.Y1 + 1; y < this.Y2 - 1; ++y)
+				yield return new IntPoint(this.X2 - 1, y);
+
+			for (int x = this.X2 - 1; x >= this.X1; --x)
+				yield return new IntPoint(x, this.Y2 - 1);
+
+			for (int y = this.Y2 - 2; y > this.Y1; --y)
+				yield return new IntPoint(this.X1, y);
+		}
+
 		public override int GetHashCode()
 		{
 			return this.X | (this.Y << 8) | (this.Width << 16) | (this.Height << 24);

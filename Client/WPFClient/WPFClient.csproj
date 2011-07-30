@@ -142,6 +142,7 @@
     </Page>
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="Collections.cs" />
+    <Compile Include="FighterAI.cs" />
     <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="ListBoxExtenders.cs" />

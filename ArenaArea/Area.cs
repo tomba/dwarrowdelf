@@ -42,7 +42,7 @@ namespace MyArea
 
 			/* Add Monsters */
 
-			var rockMaterials = Materials.GetMaterials(MaterialClass.Rock).ToArray();
+			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
@@ -56,14 +56,15 @@ namespace MyArea
 
 				for (int j = 0; j < i; ++j)
 				{
-					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-					var builder = new ItemObjectBuilder(ItemID.Rock, material);
+					var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+					var builder = new ItemObjectBuilder(ItemID.Gem, material);
 					var item = builder.Create(world);
 
 					for (int t = 0; t < j; ++t)
 					{
-						var material2 = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-						builder = new ItemObjectBuilder(ItemID.Rock, material2);
+						// XXX gems inside gems
+						var material2 = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+						builder = new ItemObjectBuilder(ItemID.Gem, material2);
 						var item2 = builder.Create(world);
 						item2.MoveTo(item);
 					}

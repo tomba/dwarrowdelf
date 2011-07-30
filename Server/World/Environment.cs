@@ -527,8 +527,6 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			Debug.Assert(visibility == ObjectVisibility.Undefined);
-
 			var visionTracker = player.GetVisionTracker(this);
 
 			player.Send(new Messages.MapDataMessage()

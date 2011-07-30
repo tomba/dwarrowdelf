@@ -635,7 +635,7 @@ namespace Dwarrowdelf.Client
 				var ob = env.GetFirstObject(p);
 				if (ob is Living)
 				{
-					var job = new Jobs.Assignments.AttackAssignment(null, ActionPriority.Normal, env, (ILiving)ob);
+					var job = new Jobs.Assignments.AttackAssignment(null, ActionPriority.Normal, (ILiving)ob);
 					m_manualJobSource.Add(job);
 				}
 			}
