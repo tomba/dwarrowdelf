@@ -97,12 +97,26 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(ControllablesDataMessage msg)
 		{
-			GameData.Data.World.Controllables.Clear();
+			bool b;
+
+			switch (msg.Operation)
+			{
+				case ControllablesDataMessage.Op.Add:
+					b = true;
+					break;
+
+				case ControllablesDataMessage.Op.Remove:
+					b = false;
+					break;
+
+				default:
+					throw new Exception();
+			}
 
 			foreach (var oid in msg.Controllables)
 			{
 				var l = GameData.Data.World.GetObject<Living>(oid);
-				l.IsControllable = true;
+				l.IsControllable = b;
 			}
 		}
 

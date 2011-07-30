@@ -36,6 +36,10 @@ namespace Dwarrowdelf.Server
 		Living(LivingBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
+			Debug.Assert(builder.LivingID != Dwarrowdelf.LivingID.Undefined);
+
+			this.LivingID = builder.LivingID;
+
 			m_visionRange = builder.VisionRange;
 			m_foodFullness = builder.FoodFullness;
 			m_waterFullness = builder.WaterFullness;
@@ -89,6 +93,11 @@ namespace Dwarrowdelf.Server
 			if (this.WaterFullness > 0)
 				this.WaterFullness--;
 		}
+
+		[SaveGameProperty]
+		public LivingID LivingID { get; private set; }
+
+		public LivingInfo LivingInfo { get { return Livings.GetLivingInfo(this.LivingID); } }
 
 		[SaveGameProperty("HitPoints")]
 		int m_hitPoints;
@@ -225,6 +234,8 @@ namespace Dwarrowdelf.Server
 
 		void SerializeToInternal(LivingData data, ObjectVisibility visibility)
 		{
+			data.LivingID = this.LivingID;
+
 			if (visibility == ObjectVisibility.All)
 			{
 				data.CurrentAction = this.CurrentAction;
@@ -295,7 +306,7 @@ namespace Dwarrowdelf.Server
 				Trace.TraceInformation("{0} dies", this);
 
 				var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
-				builder.Name = this.Name;
+				builder.Name = this.Name ?? this.LivingInfo.Name;
 				var corpse = builder.Create(this.World);
 				bool ok = corpse.MoveTo(this.Environment, this.Location);
 				if (!ok)
@@ -637,21 +648,23 @@ namespace Dwarrowdelf.Server
 			if (this.IsDestructed)
 				return "<DestructedObject>";
 
-			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
+			return String.Format("Living({0}/{1})", this.Name ?? this.LivingInfo.Name, this.ObjectID);
 		}
 	}
 
 
 	public class LivingBuilder : LocatableGameObjectBuilder
 	{
+		public LivingID LivingID { get; set; }
 		public int VisionRange { get; set; }
 		public int FoodFullness { get; set; }
 		public int WaterFullness { get; set; }
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
 
-		public LivingBuilder(string name)
+		public LivingBuilder(LivingID livingID)
 		{
-			this.Name = name;
+			this.LivingID = livingID;
+
 			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
 			this.VisionRange = 10;
 			this.FoodFullness = 500;
@@ -662,6 +675,12 @@ namespace Dwarrowdelf.Server
 
 		public Living Create(World world)
 		{
+			if (this.SymbolID == SymbolID.Undefined)
+				this.SymbolID = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID).Symbol;
+
+			if (this.Color == GameColor.None)
+				this.Color = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID).Color;
+
 			return Living.Create(world, this);
 		}
 

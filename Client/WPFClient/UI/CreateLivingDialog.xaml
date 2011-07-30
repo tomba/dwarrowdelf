@@ -17,7 +17,7 @@
         </StackPanel>
 
 
-        <UniformGrid Columns="3">
+        <UniformGrid Columns="2">
 
             <UniformGrid Columns="2" VerticalAlignment="Top">
                 <TextBlock>Name</TextBlock>
@@ -26,16 +26,13 @@
                 <TextBlock>Area</TextBlock>
 
                 <TextBox Name="areaTextBox" Width="75" IsReadOnly="True" />
+
+                <CheckBox IsChecked="{Binding Path=IsControllable,ElementName=wnd}">Controllable</CheckBox>
             </UniformGrid>
 
             <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="SymbolID" />
-                <ListBox Name="symbolIDListBox" SelectionMode="Single" SelectedValue="{Binding SymbolID,ElementName=wnd}" />
-            </DockPanel>
-
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="Color" />
-                <ListBox Name="colorListBox" SelectionMode="Single" SelectedValue="{Binding Color,ElementName=wnd}" />
+                <TextBlock DockPanel.Dock="Top" Text="LivingID" />
+                <ListBox Name="livingIDListBox" SelectionMode="Single" SelectedValue="{Binding LivingID,ElementName=wnd}" />
             </DockPanel>
 
         </UniformGrid>

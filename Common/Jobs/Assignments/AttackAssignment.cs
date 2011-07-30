@@ -44,6 +44,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
 			Debug.Assert(m_target.Environment == worker.Environment);
+			Debug.Assert(!m_target.IsDestructed);
 
 			var res = PreparePath(worker);
 			if (res == Jobs.JobStatus.Done)
@@ -53,6 +54,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
+			if (m_target.IsDestructed)
+			{
+				progress = Jobs.JobStatus.Done;
+				return null;
+			}
+
 			if (this.Worker.Location.IsAdjacentTo(m_target.Location, DirectionSet.Planar))
 			{
 				var action = new AttackAction(m_target, this.Priority);
@@ -88,10 +95,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
 		{
+			if (CheckProgress() == Jobs.JobStatus.Done)
+				return Jobs.JobStatus.Done;
+
 			switch (actionStatus)
 			{
 				case ActionState.Done:
-					return CheckProgress();
+					return Jobs.JobStatus.Ok;
 
 				case ActionState.Fail:
 					var res = PreparePath(this.Worker);

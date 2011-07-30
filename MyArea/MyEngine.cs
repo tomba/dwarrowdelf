@@ -54,7 +54,7 @@ namespace MyArea
 
 		Living CreateDwarf(int i)
 		{
-			var builder = new LivingBuilder(String.Format("Dwarf{0}", i))
+			var builder = new LivingBuilder(LivingID.Dwarf)
 			{
 				SymbolID = SymbolID.Player,
 				Color = (GameColor)m_random.Next((int)GameColor.NumColors - 1) + 1,

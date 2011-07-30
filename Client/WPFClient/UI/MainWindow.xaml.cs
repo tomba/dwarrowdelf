@@ -395,8 +395,9 @@ namespace Dwarrowdelf.Client
 					Area = dialog.Area,
 
 					Name = dialog.LivingName,
-					Color = dialog.Color,
-					SymbolID = dialog.SymbolID,
+					LivingID = dialog.LivingID,
+
+					IsControllable = dialog.IsControllable,
 				});
 			}
 		}

@@ -19,8 +19,9 @@ namespace Dwarrowdelf.Client
 		public IntRectZ Area { get; set; }
 
 		public string LivingName { get; set; }
-		public SymbolID SymbolID { get; set; }
-		public GameColor Color { get; set; }
+		public LivingID LivingID { get; set; }
+
+		public bool IsControllable { get; set; }
 
 		public CreateLivingDialog()
 		{
@@ -29,8 +30,7 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			symbolIDListBox.ItemsSource = Enum.GetValues(typeof(SymbolID)).Cast<SymbolID>().OrderBy(id => id.ToString()).ToArray();
-			colorListBox.ItemsSource = Enum.GetValues(typeof(GameColor)).Cast<GameColor>().OrderBy(id => id.ToString()).ToArray();
+			livingIDListBox.ItemsSource = Enum.GetValues(typeof(LivingID)).Cast<LivingID>().OrderBy(id => id.ToString()).ToArray();
 
 			base.OnInitialized(e);
 		}

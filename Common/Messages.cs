@@ -137,8 +137,9 @@ namespace Dwarrowdelf.Messages
 		public IntRectZ Area;
 
 		public string Name;
-		public SymbolID SymbolID;
-		public GameColor Color;
+		public LivingID LivingID;
+
+		public bool IsControllable;
 	}
 
 	[Serializable]
@@ -227,6 +228,14 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public class ControllablesDataMessage : ClientMessage
 	{
+		public enum Op
+		{
+			None,
+			Add,
+			Remove,
+		}
+
+		public Op Operation { get; set; }
 		public ObjectID[] Controllables { get; set; }
 
 		public override string ToString()

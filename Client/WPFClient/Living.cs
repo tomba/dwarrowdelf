@@ -33,13 +33,15 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (LivingData)_data;
 
+			this.LivingInfo = Dwarrowdelf.Livings.GetLivingInfo(data.LivingID);
+
 			base.Deserialize(_data);
 
 			this.CurrentAction = data.CurrentAction;
 			this.ActionTicksLeft = data.ActionTicksLeft;
 			this.ActionUserID = data.ActionUserID;
 
-			this.Description = this.Name;
+			this.Description = this.Name ?? this.LivingInfo.Name;
 
 			if (data.Skills != null)
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>(data.Skills);
@@ -47,6 +49,10 @@ namespace Dwarrowdelf.Client
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 		}
+
+		public LivingID LivingID { get { return this.LivingInfo.LivingID; } }
+		public LivingInfo LivingInfo { get; private set; }
+		public LivingClass LivingClass { get { return this.LivingInfo.LivingClass; } }
 
 		[Serializable]
 		class LivingSave
@@ -99,10 +105,11 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		Jobs.AssignmentAI AI
+		public Jobs.AssignmentAI AI
 		{
 			get { return m_ai; }
-			set
+
+			private set
 			{
 				if (m_ai != null)
 					m_ai.AssignmentChanged -= OnAIAssignmentChanged;
@@ -115,6 +122,8 @@ namespace Dwarrowdelf.Client
 						((Jobs.JobManagerAI)m_ai).JobManager = this.World.JobManager;
 					m_ai.AssignmentChanged += OnAIAssignmentChanged;
 				}
+
+				Notify("AI");
 			}
 		}
 

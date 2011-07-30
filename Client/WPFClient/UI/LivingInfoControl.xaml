@@ -15,6 +15,12 @@
                 <TextBlock>Name</TextBlock>
                 <TextBlock Text="{Binding Name}" />
 
+                <TextBlock>LivingID</TextBlock>
+                <TextBlock Text="{Binding LivingID}" />
+
+                <TextBlock>LivingClass</TextBlock>
+                <TextBlock Text="{Binding LivingClass}" />
+
                 <TextBlock>Desc</TextBlock>
                 <TextBlock Text="{Binding Description}" />
 
@@ -33,10 +39,13 @@
                 <TextBlock>Location</TextBlock>
                 <TextBlock Text="{Binding Location}" />
 
-                <TextBlock>ServerAssignment</TextBlock>
+                <TextBlock>Client AI</TextBlock>
+                <TextBlock Text="{Binding AI}" />
+
+                <TextBlock>Server Assignment</TextBlock>
                 <TextBlock Text="{Binding ServerAssignment}" />
 
-                <TextBlock>ClientAssignment</TextBlock>
+                <TextBlock>Client Assignment</TextBlock>
                 <TextBlock Text="{Binding ClientAssignment}" />
 
                 <TextBlock>Action</TextBlock>

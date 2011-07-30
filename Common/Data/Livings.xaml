@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<x:Array Type="LivingInfo"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns="clr-namespace:Dwarrowdelf">
+
+    <LivingInfo LivingID="Dwarf" LivingClass="Civilized" Symbol="Player" Color="Yellow" />
+    <LivingInfo LivingID="Sheep" LivingClass="Herbivore" Symbol="Monster" Color="Beige" />
+
+    <LivingInfo LivingID="50" Name="MyItem" LivingClass="Civilized" Symbol="Gem" />
+
+</x:Array>

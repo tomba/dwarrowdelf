@@ -119,6 +119,8 @@ namespace Dwarrowdelf.Server
 			m_controllables.Add(living);
 			living.Destructed += OnControllableDestructed;
 
+			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Add, Controllables = new ObjectID[] { living.ObjectID } });
+
 			// Always send object data after the living has became a controllable
 			living.SendTo(this, ObjectVisibility.All);
 
@@ -135,7 +137,7 @@ namespace Dwarrowdelf.Server
 			var ok = m_controllables.Remove(living);
 			Debug.Assert(ok);
 			living.Destructed -= OnControllableDestructed;
-			Send(new Messages.ControllablesDataMessage() { Controllables = m_controllables.Select(l => l.ObjectID).ToArray() });
+			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Remove, Controllables = new ObjectID[] { living.ObjectID } });
 		}
 
 		public bool IsConnected { get { return m_connection != null; } }
@@ -284,16 +286,15 @@ namespace Dwarrowdelf.Server
 		{
 			bool useNum = msg.Area.Area > 1;
 			int num = 0;
+			var controllables = new List<Living>();
 
 			foreach (var p in msg.Area.Range())
 			{
 				string name = useNum ? String.Format("{0} {1}", msg.Name, num++) : msg.Name;
 
-				var livingBuilder = new LivingBuilder(name)
+				var livingBuilder = new LivingBuilder(msg.LivingID)
 				{
-					SymbolID = msg.SymbolID,
-					Color = msg.Color,
-
+					Name = msg.Name,
 				};
 				var living = livingBuilder.Create(this.World);
 				//sheep.SetAI(new AnimalAI(sheep));
@@ -306,7 +307,13 @@ namespace Dwarrowdelf.Server
 					throw new Exception();
 
 				living.MoveTo(env, p);
+
+				if (msg.IsControllable)
+					controllables.Add(living);
 			}
+
+			foreach (var l in controllables)
+				AddControllable(l);
 		}
 
 		void ReceiveMessage(SetWorldConfigMessage msg)
@@ -358,7 +365,7 @@ namespace Dwarrowdelf.Server
 			if (m_hasControllablesBeenCreated)
 			{
 				Send(new Messages.EnterGameReplyBeginMessage());
-				Send(new Messages.ControllablesDataMessage() { Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
+				Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Add, Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 				this.IsInGame = true;
@@ -383,6 +390,8 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("EnterGameRequestMessage {0}", name);
 
+			Send(new Messages.EnterGameReplyBeginMessage());
+
 			if (!m_hasControllablesBeenCreated)
 			{
 				trace.TraceInformation("Creating controllables");
@@ -393,8 +402,6 @@ namespace Dwarrowdelf.Server
 				m_hasControllablesBeenCreated = true;
 			}
 
-			Send(new Messages.EnterGameReplyBeginMessage());
-			Send(new Messages.ControllablesDataMessage() { Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
 			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 			this.IsInGame = true;
@@ -404,7 +411,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("ExitGameRequestMessage");
 
-			Send(new Messages.ControllablesDataMessage() { Controllables = new ObjectID[0] });
+			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Remove, Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
 			Send(new Messages.ExitGameReplyMessage());
 
 			this.IsInGame = false;

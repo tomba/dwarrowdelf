@@ -35,6 +35,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class LivingData : GameObjectData
 	{
+		public LivingID LivingID { get; set; }
 		public GameAction CurrentAction { get; set; }
 		public int ActionTicksLeft { get; set; }
 		public int ActionUserID { get; set; }

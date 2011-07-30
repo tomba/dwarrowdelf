@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\AssignmentGroups\PatrolAssignment.cs" />
@@ -214,6 +215,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Terrains.xaml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Livings.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

@@ -51,6 +51,8 @@ namespace Dwarrowdelf.AStar
 
 		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3D src, IntPoint3D dest, DirectionSet positioning, out IntPoint3D finalLocation)
 		{
+			Debug.Assert(environment != null);
+
 			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
 			CancellationTokenSource cts = new CancellationTokenSource();
 

@@ -46,7 +46,7 @@ namespace MyArea
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
-				var sheepBuilder = new LivingBuilder(String.Format("Sheep{0}", i))
+				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
 				{
 					SymbolID = SymbolID.Monster,
 					Color = this.GetRandomColor(),
