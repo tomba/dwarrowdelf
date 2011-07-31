@@ -20,6 +20,8 @@ namespace Dwarrowdelf
 	public interface IBaseGameObject : IIdentifiable
 	{
 		IWorld World { get; }
+		bool IsDestructed { get; }
+		event Action<IBaseGameObject> Destructed;
 	}
 
 	public interface ILargeGameObject : IBaseGameObject
@@ -87,7 +89,6 @@ namespace Dwarrowdelf
 	{
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
-		bool IsDestructed { get; }
 
 		byte GetSkillLevel(SkillID skill);
 	}

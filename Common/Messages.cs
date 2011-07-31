@@ -140,6 +140,7 @@ namespace Dwarrowdelf.Messages
 		public LivingID LivingID;
 
 		public bool IsControllable;
+		public bool IsHerd;
 	}
 
 	[Serializable]

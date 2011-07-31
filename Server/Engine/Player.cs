@@ -288,6 +288,11 @@ namespace Dwarrowdelf.Server
 			int num = 0;
 			var controllables = new List<Living>();
 
+			Dwarrowdelf.Jobs.HerbivoreHerd herd = null;
+
+			if (msg.IsHerd)
+				herd = new Jobs.HerbivoreHerd();
+
 			foreach (var p in msg.Area.Range())
 			{
 				string name = useNum ? String.Format("{0} {1}", msg.Name, num++) : msg.Name;
@@ -301,7 +306,13 @@ namespace Dwarrowdelf.Server
 				if (msg.IsControllable)
 					m_engine.SetupControllable(living);
 				else
-					living.SetAI(new Jobs.HerbivoreAI(living));
+				{
+					var ai = new Jobs.HerbivoreAI(living);
+					living.SetAI(ai);
+
+					if (msg.IsHerd)
+						herd.AddMember(ai);
+				}
 
 				trace.TraceInformation("Created living {0}", living);
 

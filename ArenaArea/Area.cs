@@ -44,6 +44,8 @@ namespace MyArea
 
 			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
 
+			var herd = new Dwarrowdelf.Jobs.HerbivoreHerd();
+
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
 				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
@@ -52,7 +54,9 @@ namespace MyArea
 					Color = this.GetRandomColor(),
 				};
 				var sheep = sheepBuilder.Create(world);
-				sheep.SetAI(new Dwarrowdelf.Jobs.HerbivoreAI(sheep));
+				var ai = new Dwarrowdelf.Jobs.HerbivoreAI(sheep);
+				herd.AddMember(ai);
+				sheep.SetAI(ai);
 
 				for (int j = 0; j < i; ++j)
 				{

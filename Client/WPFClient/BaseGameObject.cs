@@ -13,6 +13,14 @@ namespace Dwarrowdelf.Client
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
 		public bool IsDestructed { get; private set; }
 
+		public event Action<BaseGameObject> Destructed;
+
+		event Action<IBaseGameObject> IBaseGameObject.Destructed
+		{
+			add { lock (this.Destructed) this.Destructed += value; }
+			remove { lock (this.Destructed) this.Destructed -= value; }
+		}
+
 		protected BaseGameObject(World world, ObjectID objectID)
 		{
 			this.ObjectID = objectID;
@@ -26,6 +34,10 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 
 			this.IsDestructed = true;
+
+			if (this.Destructed != null)
+				this.Destructed(this);
+
 			this.World.RemoveObject(this);
 		}
 

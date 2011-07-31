@@ -22,6 +22,12 @@ namespace Dwarrowdelf.Server
 
 		public event Action<BaseGameObject> Destructed;
 
+		event Action<IBaseGameObject> IBaseGameObject.Destructed
+		{
+			add { this.Destructed += value; }
+			remove { this.Destructed -= value; }
+		}
+
 		ObjectType m_objectType;
 
 		protected BaseGameObject(ObjectType objectType)

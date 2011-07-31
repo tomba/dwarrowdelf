@@ -119,6 +119,23 @@ namespace Dwarrowdelf
 			return new IntPoint(this.X, this.Y);
 		}
 
+		public static IntPoint3D Center(IEnumerable<IntPoint3D> points)
+		{
+			int x, y, z;
+			int count = 0;
+			x = y = z = 0;
+
+			foreach (var p in points)
+			{
+				x += p.X;
+				y += p.Y;
+				z += p.Z;
+				count++;
+			}
+
+			return new IntPoint3D(x / count, y / count, z / count);
+		}
+
 		public override string ToString()
 		{
 			return String.Format(System.Globalization.CultureInfo.InvariantCulture,

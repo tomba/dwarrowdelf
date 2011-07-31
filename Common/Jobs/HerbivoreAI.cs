@@ -14,6 +14,8 @@ namespace Dwarrowdelf.Jobs
 		[SaveGameProperty]
 		bool m_priorityAction;
 
+		public HerbivoreHerd Herd { get; set; }
+
 		HerbivoreAI(SaveGameContext ctx)
 			: base(ctx)
 		{
@@ -51,7 +53,7 @@ namespace Dwarrowdelf.Jobs
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.Assignments.RandomMoveAssignment(null, priority, worker.Environment);
+				return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(null, priority, this.Herd);
 			}
 			else
 			{

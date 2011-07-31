@@ -398,6 +398,7 @@ namespace Dwarrowdelf.Client
 					LivingID = dialog.LivingID,
 
 					IsControllable = dialog.IsControllable,
+					IsHerd = dialog.IsHerd,
 				});
 			}
 		}
