@@ -432,6 +432,13 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, d);
 		}
 
+		public IEnumerable<IGameObject> GetContents(IntRectZ rect)
+		{
+			var obs = m_contentArray[rect.Z];
+
+			return obs.Where(o => rect.Contains(o.Location));
+		}
+
 		// XXX not a good func. contents can be changed by the caller
 		public IEnumerable<GameObject> GetContents(IntPoint3D l)
 		{

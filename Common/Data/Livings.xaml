@@ -3,10 +3,10 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <LivingInfo LivingID="Dwarf" LivingClass="Civilized" Symbol="Player" Color="Yellow" />
-    <LivingInfo LivingID="Sheep" LivingClass="Herbivore" Symbol="Sheep" Color="Beige" />
-    <LivingInfo LivingID="Wolf" LivingClass="Carnivore" Symbol="Wolf" Color="LightGray" />
-    <LivingInfo LivingID="Dragon" LivingClass="Monster" Symbol="Dragon" Color="Red" />
+    <LivingInfo LivingID="Dwarf" LivingClass="Civilized" Symbol="Player" Color="Yellow" Level="4" />
+    <LivingInfo LivingID="Sheep" LivingClass="Herbivore" Symbol="Sheep" Color="Beige" Level="2" />
+    <LivingInfo LivingID="Wolf" LivingClass="Carnivore" Symbol="Wolf" Color="LightGray" Level="4" />
+    <LivingInfo LivingID="Dragon" LivingClass="Monster" Symbol="Dragon" Color="Red" Level="10" />
 
     <LivingInfo LivingID="50" Name="MyItem" LivingClass="Civilized" Symbol="Gem" />
 

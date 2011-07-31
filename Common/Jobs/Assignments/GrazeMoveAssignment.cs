@@ -80,8 +80,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			var dir = v.ToDirection();
 
-			Trace.TraceInformation("{0} -> {1}: {2}", center, this.Worker.Location, dir);
-
 			var action = DoMove(dir);
 
 			progress = Jobs.JobStatus.Ok;
@@ -130,6 +128,5 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			return String.Format("GrazeMoveAssignment");
 		}
-
 	}
 }

@@ -473,17 +473,17 @@ namespace Dwarrowdelf.Server
 				return true;
 
 			var attacker = this;
-			var attackee = this.World.FindObject<Living>(action.Target);
+			var target = this.World.FindObject<Living>(action.Target);
 
-			if (attackee == null)
+			if (target == null)
 			{
 				SetActionError("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
 				return false;
 			}
 
-			if (!attacker.Location.IsAdjacentTo(attackee.Location, DirectionSet.Planar))
+			if (!attacker.Location.IsAdjacentTo(target.Location, DirectionSet.Planar))
 			{
-				SetActionError("{0} tried to attack {1}, but it wasn't near", attacker, attackee);
+				SetActionError("{0} tried to attack {1}, but it wasn't near", attacker, target);
 				return false;
 			}
 
@@ -500,20 +500,20 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				var ac = attackee.ArmorClass;
+				var ac = target.ArmorClass;
 				hit = roll >= ac;
 			}
 
 			if (!hit)
 			{
-				Trace.TraceInformation("{0} misses {1}", attacker, attackee);
+				Trace.TraceInformation("{0} misses {1}", attacker, target);
 			}
 			else
 			{
-				var damage = m_random.Next(3) + 1;
-				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, attackee, damage);
+				var damage = m_random.Next(attacker.LivingInfo.Level) + 1;
+				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
 
-				attackee.ReceiveDamage(damage);
+				target.ReceiveDamage(damage);
 			}
 
 			return true;

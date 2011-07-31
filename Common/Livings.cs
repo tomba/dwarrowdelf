@@ -21,15 +21,16 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
+	[Flags]
 	public enum LivingClass
 	{
 		Undefined = 0,
-		Civilized,
-		Herbivore,
-		Carnivore,
-		Monster,
+		Civilized = 1 << 0,
+		Herbivore = 1 << 1,
+		Carnivore = 1 << 2,
+		Monster = 1 << 3,
 
-		Custom,
+		Custom = 1 << 10,
 	}
 
 	public enum LivingGender
@@ -46,6 +47,7 @@ namespace Dwarrowdelf
 		public LivingClass LivingClass { get; set; }
 		public SymbolID Symbol { get; set; }
 		public GameColor Color { get; set; }
+		public int Level { get; set; }
 	}
 
 	public static class Livings

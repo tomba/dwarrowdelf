@@ -47,7 +47,7 @@ namespace Dwarrowdelf.AI
 
 		public event Action<IAssignment> AssignmentChanged;
 
-		MyTraceSource trace;
+		protected MyTraceSource trace;
 
 		protected AssignmentAI(SaveGameContext ctx)
 		{

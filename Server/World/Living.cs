@@ -40,8 +40,7 @@ namespace Dwarrowdelf.Server
 
 			this.LivingID = builder.LivingID;
 
-			m_hitPoints = 10;
-			m_maxHitPoints = 20;
+			m_maxHitPoints = m_hitPoints = builder.HitPoints;
 
 			m_gender = builder.Gender;
 
@@ -92,6 +91,7 @@ namespace Dwarrowdelf.Server
 
 		void OnTickStart()
 		{
+			// XXX track only for dwarves
 			if (this.FoodFullness > 0)
 				this.FoodFullness--;
 
@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public LivingID LivingID { get; private set; }
-
+		public LivingClass LivingClass { get { return this.LivingInfo.LivingClass; } }
 		public LivingInfo LivingInfo { get { return Livings.GetLivingInfo(this.LivingID); } }
 
 		[SaveGameProperty("HitPoints")]
@@ -680,7 +680,7 @@ namespace Dwarrowdelf.Server
 			if (this.IsDestructed)
 				return "<DestructedObject>";
 
-			return String.Format("Living({0}/{1})", this.Name ?? this.LivingInfo.Name, this.ObjectID);
+			return String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID);
 		}
 	}
 
@@ -693,6 +693,7 @@ namespace Dwarrowdelf.Server
 		public int WaterFullness { get; set; }
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
 		public LivingGender Gender { get; set; }
+		public int HitPoints;
 
 		public LivingBuilder(LivingID livingID)
 		{
@@ -708,11 +709,16 @@ namespace Dwarrowdelf.Server
 
 		public Living Create(World world)
 		{
+			var li = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID);
+
 			if (this.SymbolID == SymbolID.Undefined)
-				this.SymbolID = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID).Symbol;
+				this.SymbolID = li.Symbol;
 
 			if (this.Color == GameColor.None)
-				this.Color = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID).Color;
+				this.Color = li.Color;
+
+			if (this.HitPoints == 0)
+				this.HitPoints = li.Level * 10;
 
 			return Living.Create(world, this);
 		}

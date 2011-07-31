@@ -65,9 +65,9 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			if (this == ObjectID.NullObjectID)
-				return "OID(NULL)";
+				return "NULL";
 			else if (this == ObjectID.AnyObjectID)
-				return "OID(ANY)";
+				return "ANY";
 			else
 			{
 				char c;
@@ -80,7 +80,7 @@ namespace Dwarrowdelf
 					default: c = '?'; break;
 				}
 
-				return String.Format("OID({0}, {1})", c, this.Value);
+				return String.Format("{0}{1}", c, this.Value);
 			}
 		}
 

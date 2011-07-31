@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 	public class FighterAI : AssignmentAI
 	{
 		[SaveGameProperty]
-		Living m_target;
+		ILiving m_target;
 
 		[SaveGameProperty]
 		List<IntPoint3D> m_patrolRoute;
@@ -47,31 +47,31 @@ namespace Dwarrowdelf.Client
 
 			if (m_target == null)
 			{
-				m_target = FindNearbyEnemy();
+				m_target = AIHelpers.FindNearbyEnemy(this.Worker, LivingClass.Carnivore | LivingClass.Monster);
 
 				if (m_target == null)
 				{
 					// continue patrolling
 					if (this.CurrentAssignment == null || (this.CurrentAssignment is PatrolAssignment) == false)
 					{
-						Trace.TraceInformation("Start patrolling");
+						trace.TraceInformation("Start patrolling");
 						return new PatrolAssignment(null, ActionPriority.Normal, this.Worker.Environment, m_patrolRoute.ToArray());
 					}
 					else
 					{
-						Trace.TraceInformation("Continue patrolling");
+						trace.TraceInformation("Continue patrolling");
 						return this.CurrentAssignment;
 					}
 				}
 
-				Trace.TraceInformation("Found target");
+				trace.TraceInformation("Found target");
 			}
 
 			Debug.Assert(m_target != null);
 
 			if (this.CurrentAssignment == null || (this.CurrentAssignment is AttackAssignment) == false)
 			{
-				Trace.TraceInformation("Start attacking");
+				trace.TraceInformation("Start attacking");
 
 				var assignment = new AttackAssignment(null, ActionPriority.Normal, m_target);
 				assignment.StatusChanged += OnAttackStatusChanged;
@@ -79,23 +79,24 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				Trace.TraceInformation("Continue attacking");
+				trace.TraceInformation("Continue attacking");
 				return this.CurrentAssignment;
 			}
 		}
 
 		void OnAttackStatusChanged(IJob job, JobStatus status)
 		{
-			Trace.TraceInformation("Attack finished: {0}", status);
+			trace.TraceInformation("Attack finished: {0}", status);
 
 			job.StatusChanged -= OnAttackStatusChanged;
 			m_target = null;
 		}
 
+#if asd
 		Living FindNearbyEnemy()
 		{
 			// XXX
-			var env = (Environment)this.Worker.Environment;
+			var env = this.Worker.Environment;
 			var center = this.Worker.Location;
 
 			const int r = 20;
@@ -126,5 +127,6 @@ namespace Dwarrowdelf.Client
 
 			return null;
 		}
+#endif
 	}
 }

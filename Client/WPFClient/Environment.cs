@@ -323,6 +323,11 @@ namespace Dwarrowdelf.Client
 
 		static IList<GameObject> EmptyObjectList = new GameObject[0];
 
+		public IEnumerable<IGameObject> GetContents(IntRectZ rect)
+		{
+			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
+		}
+
 		public IList<GameObject> GetContents(IntPoint3D l)
 		{
 			List<GameObject> obs;

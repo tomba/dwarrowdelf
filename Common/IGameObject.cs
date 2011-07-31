@@ -74,6 +74,8 @@ namespace Dwarrowdelf
 		TileData GetTileData(IntPoint3D l);
 
 		bool GetHidden(IntPoint3D l);
+
+		IEnumerable<IGameObject> GetContents(IntRectZ rect);
 	}
 
 	public interface ILocatableGameObject : IGameObject
@@ -89,6 +91,9 @@ namespace Dwarrowdelf
 	{
 		GameAction CurrentAction { get; }
 		bool HasAction { get; }
+
+		LivingID LivingID { get; }
+		LivingClass LivingClass { get; }
 
 		byte GetSkillLevel(SkillID skill);
 	}
