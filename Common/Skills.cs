@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public enum SkillID : byte
+	public enum SkillID
 	{
 		None,
 

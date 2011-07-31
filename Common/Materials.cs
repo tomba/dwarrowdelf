@@ -7,6 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
+	// Stored in TileData, needs to be byte
 	public enum MaterialID : byte
 	{
 		Undefined,
@@ -48,7 +49,7 @@ namespace Dwarrowdelf
 		Water,
 	}
 
-	public enum MaterialClass : byte
+	public enum MaterialClass
 	{
 		Undefined,
 		Wood,

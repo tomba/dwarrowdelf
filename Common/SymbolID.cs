@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
+	// Stored in render tile data, needs to be short
 	public enum SymbolID : short
 	{
 		Undefined,

@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public enum LivingID : byte
+	public enum LivingID
 	{
 		Undefined = 0,
 		Dwarf,
@@ -19,7 +19,7 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public enum LivingClass : byte
+	public enum LivingClass
 	{
 		Undefined = 0,
 		Civilized,
@@ -29,7 +29,7 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public enum LivingGender : byte
+	public enum LivingGender
 	{
 		Undefined,
 		Male,

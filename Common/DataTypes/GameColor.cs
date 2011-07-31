@@ -47,6 +47,7 @@ using System.Runtime.Serialization;
 
 namespace Dwarrowdelf
 {
+	// Stored in render tile data, needs to be short
 	public enum GameColor : byte
 	{
 		None = 0,

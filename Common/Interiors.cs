@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
+	// Stored in TileData, needs to be byte
 	public enum InteriorID : byte
 	{
 		Undefined,

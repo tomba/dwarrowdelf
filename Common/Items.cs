@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public enum ItemID : byte
+	public enum ItemID
 	{
 		Undefined = 0,
 		Log,
@@ -27,7 +27,7 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public enum ItemClass : byte
+	public enum ItemClass
 	{
 		Undefined = 0,
 		Furniture,

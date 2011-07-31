@@ -7,7 +7,7 @@ using System.Windows.Markup;
 
 namespace Dwarrowdelf
 {
-	public enum BuildingID : byte
+	public enum BuildingID
 	{
 		Undefined = 0,
 		Carpenter,

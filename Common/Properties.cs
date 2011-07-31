@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public enum PropertyID : ushort
+	public enum PropertyID
 	{
 		None,
 
