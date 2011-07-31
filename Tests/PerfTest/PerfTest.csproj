@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SkillMap.cs" />
     <Compile Include="RemoteMethodCall.cs" />
     <Compile Include="LocalMethodCall.cs" />
     <Compile Include="Program.cs" />

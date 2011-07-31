@@ -11,8 +11,10 @@ namespace PerfTest
 	{
 		static void Main(string[] args)
 		{
-			RunSuite(new LocalMethodCallTestSuite());
-			RunSuite(new RemoteMethodCallTestSuite());
+			RunSuite(new SkillMapTestSuite());
+
+		//	RunSuite(new LocalMethodCallTestSuite());
+		//	RunSuite(new RemoteMethodCallTestSuite());
 
 			//Console.WriteLine("Done. Press enter to quit.");
 			//Console.ReadLine();
