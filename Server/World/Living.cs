@@ -269,7 +269,8 @@ namespace Dwarrowdelf.Server
 			if (visibility == ObjectVisibility.All)
 			{
 				data.CurrentAction = this.CurrentAction;
-				data.ActionTicksLeft = this.ActionTicksLeft;
+				data.ActionTicksUsed = this.ActionTicksUsed;
+				data.ActionTotalTicks = this.ActionTotalTicks;
 				data.ActionUserID = this.ActionUserID;
 
 				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
@@ -366,39 +367,48 @@ namespace Dwarrowdelf.Server
 				return;
 			}
 
-			if (this.ActionTicksLeft == 0)
-				throw new Exception();
-
 			D("PerformAction: {0}", action);
 
 			this.ActionTicksUsed++;
 
-			bool success = PerformAction(action);
+			bool ok = true;
 
-			if (success == false)
-				this.ActionTotalTicks = this.ActionTicksUsed = 0;
+			int totalTicks = GetActionTotalTicks(action);
 
-			if (this.ActionTicksLeft > 0)
+			if (totalTicks == -1)
+				ok = false;
+			else
+				this.ActionTotalTicks = totalTicks;
+
+			if (ok && this.ActionTicksUsed < this.ActionTotalTicks)
 			{
-				D("ActionProgress({0}, left: {1})", action, this.ActionTicksLeft);
+				D("ActionProgress({0}, {1}/{2})", action, this.ActionTicksUsed, this.ActionTotalTicks);
 
 				var e = new ActionProgressChange(this)
 				{
 					ActionXXX = action,
 					UserID = this.ActionUserID,
-					TicksLeft = this.ActionTicksLeft,
+					TicksUsed = this.ActionTicksUsed,
+					TotalTicks = this.ActionTotalTicks,
 				};
 
 				if (m_ai != null)
 					m_ai.ActionProgress(e);
 
 				this.World.AddChange(e);
-			}
-			else
-			{
-				ActionState state = success ? ActionState.Done : ActionState.Fail;
 
-				var error = success ? null : (m_actionError ?? "<no error str>");
+				return;
+			}
+
+			if (ok)
+				ok = PerformAction(action);
+
+			this.ActionTotalTicks = this.ActionTicksUsed = 0;
+
+			{
+				ActionState state = ok ? ActionState.Done : ActionState.Fail;
+
+				var error = ok ? null : (m_actionError ?? "<no error str>");
 
 				D("ActionDone({0}, state: {1}, err: {2})", action, state, error);
 
@@ -441,8 +451,6 @@ namespace Dwarrowdelf.Server
 		public GameAction CurrentAction { get; private set; }
 		public bool HasAction { get { return this.CurrentAction != null; } }
 
-		public int ActionTicksLeft { get { return this.ActionTotalTicks - this.ActionTicksUsed; } }
-
 		[SaveGameProperty]
 		public int ActionTotalTicks { get; private set; }
 		[SaveGameProperty]
@@ -451,21 +459,20 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public int ActionUserID { get; private set; }
 
-		public void DoAction(GameAction action)
+		public void StartAction(GameAction action)
 		{
-			DoAction(action, 0);
+			StartAction(action, 0);
 		}
 
-		public void DoAction(GameAction action, int userID)
+		public void StartAction(GameAction action, int userID)
 		{
 			D("DoAction: {0}, uid: {1}", action, userID);
 
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(action.Priority != ActionPriority.Undefined);
 
-			int totalTicks = InitializeAction(action);
 			this.CurrentAction = action;
-			this.ActionTotalTicks = totalTicks;
+			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
 			this.ActionUserID = userID;
 
@@ -473,7 +480,6 @@ namespace Dwarrowdelf.Server
 			{
 				Action = action,
 				UserID = userID,
-				TicksLeft = this.ActionTicksLeft,
 			};
 
 			if (m_ai != null)
@@ -535,7 +541,7 @@ namespace Dwarrowdelf.Server
 				}
 
 				if (action != null)
-					DoAction(action);
+					StartAction(action);
 			}
 		}
 

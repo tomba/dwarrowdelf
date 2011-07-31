@@ -341,8 +341,11 @@
                                         <TextBlock Text="{Binding}" />
                                         :
                                         <TextBlock Text="{Binding CurrentAction}" />
-                                        left
-                                        <TextBlock Text="{Binding ActionTicksLeft}" />
+                                        (
+                                        <TextBlock Text="{Binding ActionTicksUsed}" />
+                                        /
+                                        <TextBlock Text="{Binding ActionTotalTicks}" />
+                                        )
                                     </TextBlock>
 
                                             <TextBlock Margin="20,0,0,0">

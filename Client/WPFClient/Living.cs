@@ -38,7 +38,8 @@ namespace Dwarrowdelf.Client
 			base.Deserialize(_data);
 
 			this.CurrentAction = data.CurrentAction;
-			this.ActionTicksLeft = data.ActionTicksLeft;
+			this.ActionTicksUsed = data.ActionTicksUsed;
+			this.ActionTotalTicks = data.ActionTotalTicks;
 			this.ActionUserID = data.ActionUserID;
 
 			this.Description = this.Name ?? this.LivingInfo.Name;
@@ -134,11 +135,18 @@ namespace Dwarrowdelf.Client
 			private set { m_currentAction = value; Notify("CurrentAction"); }
 		}
 
-		int m_actionTicksLeft;
-		public int ActionTicksLeft
+		int m_actionTicksUsed;
+		public int ActionTicksUsed
 		{
-			get { return m_actionTicksLeft; }
-			private set { m_actionTicksLeft = value; Notify("ActionTicksLeft"); }
+			get { return m_actionTicksUsed; }
+			private set { m_actionTicksUsed = value; Notify("ActionTicksUsed"); }
+		}
+
+		int m_actionTotalTicks;
+		public int ActionTotalTicks
+		{
+			get { return m_actionTotalTicks; }
+			private set { m_actionTotalTicks = value; Notify("ActionTotalTicks"); }
 		}
 
 		public bool HasAction { get { return this.CurrentAction != null; } }
@@ -167,7 +175,6 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(!this.HasAction);
 
 			this.CurrentAction = change.Action;
-			this.ActionTicksLeft = change.TicksLeft;
 			this.ActionUserID = change.UserID;
 
 			if (this.AI != null)
@@ -177,9 +184,9 @@ namespace Dwarrowdelf.Client
 		public void HandleActionProgress(ActionProgressChange change)
 		{
 			Debug.Assert(this.HasAction);
-			Debug.Assert(change.TicksLeft > 0);
 
-			this.ActionTicksLeft = change.TicksLeft;
+			this.ActionTotalTicks = change.TotalTicks;
+			this.ActionTicksUsed = change.TicksUsed;
 
 			if (this.AI != null)
 				this.AI.ActionProgress(change);
@@ -189,7 +196,8 @@ namespace Dwarrowdelf.Client
 		{
 			Debug.Assert(this.HasAction);
 
-			this.ActionTicksLeft = 0;
+			this.ActionTotalTicks = 0;
+			this.ActionTicksUsed = 0;
 
 			if (change.State != ActionState.Done)
 			{

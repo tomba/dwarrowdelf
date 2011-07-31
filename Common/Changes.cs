@@ -304,7 +304,6 @@ namespace Dwarrowdelf
 	public class ActionStartedChange : ObjectChange
 	{
 		public GameAction Action { get; set; }
-		public int TicksLeft { get; set; }
 		public int UserID { get; set; }
 
 		public ActionStartedChange(IBaseGameObject ob)
@@ -314,8 +313,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("ActionStartedChange({0}, {1}, left: {2}, uid: {3})",
-				this.ObjectID, this.Action, this.TicksLeft, this.UserID);
+			return String.Format("ActionStartedChange({0}, {1}, uid: {2})",
+				this.ObjectID, this.Action, this.UserID);
 		}
 	}
 
@@ -325,7 +324,8 @@ namespace Dwarrowdelf
 		// just for debug
 		public GameAction ActionXXX { get; set; }
 		public int UserID { get; set; }
-		public int TicksLeft { get; set; }
+		public int TotalTicks { get; set; }
+		public int TicksUsed { get; set; }
 
 		public ActionProgressChange(IBaseGameObject ob)
 			: base(ob)
@@ -334,8 +334,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("ActionProgressChange(UID({0}), {1}, left: {2})",
-				this.UserID, this.ObjectID, this.TicksLeft);
+			return String.Format("ActionProgressChange(UID({0}), {1}, ticks: {2}/{3})",
+				this.UserID, this.ObjectID, this.TicksUsed, this.TotalTicks);
 		}
 	}
 

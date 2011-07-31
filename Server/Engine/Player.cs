@@ -473,7 +473,7 @@ namespace Dwarrowdelf.Server
 							throw new Exception("already has an action");
 					}
 
-					living.DoAction(action, m_userID);
+					living.StartAction(action, m_userID);
 				}
 
 				this.IsProceedTurnReplyReceived = true;

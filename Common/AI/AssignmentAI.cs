@@ -210,8 +210,8 @@ namespace Dwarrowdelf.AI
 
 		public void ActionStarted(ActionStartedChange change)
 		{
-			trace.TraceVerbose("ActionStarted({0}, left {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
-				change.Action, change.TicksLeft,
+			trace.TraceVerbose("ActionStarted({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
+				change.Action,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
 				this.CurrentAssignment != null && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");

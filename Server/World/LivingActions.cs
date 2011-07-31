@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 		class ActionData
 		{
 			public Func<Living, GameAction, bool> ActionHandler;
-			public Func<Living, GameAction, int> TickInitializer;
+			public Func<Living, GameAction, int> GetTotalTicks;
 		}
 
 		static Dictionary<Type, ActionData> s_actionMethodMap;
@@ -28,42 +28,41 @@ namespace Dwarrowdelf.Server
 				if (actionHandler == null)
 					throw new Exception(String.Format("No PerformAction method found for {0}", type.Name));
 
-				var tickInitializer = WrapperGenerator.CreateFuncWrapper<Living, GameAction, int>("InitializeAction", type);
+				var tickInitializer = WrapperGenerator.CreateFuncWrapper<Living, GameAction, int>("GetTotalTicks", type);
 				if (tickInitializer == null)
-					throw new Exception(String.Format("No InitializeAction method found for {0}", type.Name));
+					throw new Exception(String.Format("No GetTotalTicks method found for {0}", type.Name));
 
 				s_actionMethodMap[type] = new ActionData()
 				{
 					ActionHandler = actionHandler,
-					TickInitializer = tickInitializer,
+					GetTotalTicks = tickInitializer,
 				};
 			}
 		}
 
 
-		int InitializeAction(GameAction action)
+		int GetActionTotalTicks(GameAction action)
 		{
-			var method = s_actionMethodMap[action.GetType()].TickInitializer;
+			var method = s_actionMethodMap[action.GetType()].GetTotalTicks;
 			return method(this, action);
 		}
 
 		bool PerformAction(GameAction action)
 		{
+			Debug.Assert(this.ActionTotalTicks <= this.ActionTicksUsed);
+
 			var method = s_actionMethodMap[action.GetType()].ActionHandler;
 			return method(this, action);
 		}
 
 
-		int InitializeAction(ConstructAction action)
+		int GetTotalTicks(ConstructAction action)
 		{
 			return 10;
 		}
 
 		bool PerformAction(ConstructAction action)
 		{
-			if (this.ActionTicksLeft > 0)
-				return true;
-
 			var env = this.World.FindObject<Environment>(action.EnvironmentID);
 			if (env == null)
 			{
@@ -90,7 +89,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		int InitializeAction(GetAction action)
+		int GetTotalTicks(GetAction action)
 		{
 			return 1;
 		}
@@ -102,9 +101,6 @@ namespace Dwarrowdelf.Server
 				SetActionError("no env");
 				return false;
 			}
-
-			if (this.ActionTicksLeft > 0)
-				return true;
 
 			var list = this.Environment.GetContents(this.Location);
 
@@ -133,7 +129,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int InitializeAction(DropAction action)
+		int GetTotalTicks(DropAction action)
 		{
 			return 1;
 		}
@@ -145,9 +141,6 @@ namespace Dwarrowdelf.Server
 				SetActionError("no env");
 				return false;
 			}
-
-			if (this.ActionTicksLeft > 0)
-				return true;
 
 			var list = this.Inventory;
 
@@ -176,16 +169,13 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int InitializeAction(ConsumeAction action)
+		int GetTotalTicks(ConsumeAction action)
 		{
 			return 6;
 		}
 
 		bool PerformAction(ConsumeAction action)
 		{
-			if (this.ActionTicksLeft > 0)
-				return true;
-
 			var ob = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
 			var item = ob as ItemObject;
 
@@ -212,24 +202,14 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int InitializeAction(MoveAction action)
+		int GetTotalTicks(MoveAction action)
 		{
-			return 1;
+			var obs = this.Environment.GetContents(this.Location + action.Direction);
+			return obs.OfType<Living>().Count() + 1;
 		}
 
 		bool PerformAction(MoveAction action)
 		{
-			// this should check if movement is blocked, even when TicksLeft > 0
-			if (this.ActionTicksLeft > 0)
-				return true;
-
-			if (this.ActionTicksUsed == 1)
-			{
-				var obs = this.Environment.GetContents(this.Location + action.Direction);
-				if (obs.OfType<Living>().Count() > 0)
-					this.ActionTicksLeft = 1;
-			}
-
 			var ok = MoveDir(action.Direction);
 
 			if (!ok)
@@ -238,7 +218,7 @@ namespace Dwarrowdelf.Server
 			return ok;
 		}
 
-		int InitializeAction(MineAction action)
+		int GetTotalTicks(MineAction action)
 		{
 			var skill = GetSkillLevel(SkillID.Mining);
 			return 10 / (skill / 26 + 1);
@@ -258,9 +238,6 @@ namespace Dwarrowdelf.Server
 				SetActionError("{0} tried to mine {1}, but it's not minable", this, p);
 				return false;
 			}
-
-			if (this.ActionTicksLeft > 0)
-				return true;
 
 			switch (action.MineActionType)
 			{
@@ -385,7 +362,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int InitializeAction(FellTreeAction action)
+		int GetTotalTicks(FellTreeAction action)
 		{
 			return 5;
 		}
@@ -402,31 +379,28 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (this.ActionTicksLeft == 0)
+			if (id == InteriorID.Tree)
 			{
-				if (id == InteriorID.Tree)
+				var material = this.Environment.GetInteriorMaterialID(p);
+				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{
-					var material = this.Environment.GetInteriorMaterialID(p);
-					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					var builder = new ItemObjectBuilder(ItemID.Log, material)
-					{
-						Name = "Log",
-						Color = GameColor.SaddleBrown,
-					};
-					var log = builder.Create(this.World);
-					var ok = log.MoveTo(this.Environment, p);
-					Debug.Assert(ok);
-				}
-				else
-				{
-					this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-				}
+					Name = "Log",
+					Color = GameColor.SaddleBrown,
+				};
+				var log = builder.Create(this.World);
+				var ok = log.MoveTo(this.Environment, p);
+				Debug.Assert(ok);
+			}
+			else
+			{
+				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 
 			return true;
 		}
 
-		int InitializeAction(WaitAction action)
+		int GetTotalTicks(WaitAction action)
 		{
 			return action.WaitTicks;
 		}
@@ -436,7 +410,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int InitializeAction(BuildItemAction action)
+		int GetTotalTicks(BuildItemAction action)
 		{
 			return 8;
 		}
@@ -450,24 +424,23 @@ namespace Dwarrowdelf.Server
 				SetActionError("cannot find building");
 				return false;
 			}
+			/*
+						if (this.ActionTicksLeft != 0)
+						{
+							var ok = building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+							if (!ok)
+								SetActionError("build item request is invalid");
+							return ok;
+						}
+			 */
 
-			if (this.ActionTicksLeft != 0)
-			{
-				var ok = building.VerifyBuildItem(this, action.SourceObjectIDs, action.DstItemID);
-				if (!ok)
-					SetActionError("build item request is invalid");
-				return ok;
-			}
-			else
-			{
-				var ok = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
-				if (!ok)
-					SetActionError("unable to build the item");
-				return ok;
-			}
+			var ok = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+			if (!ok)
+				SetActionError("unable to build the item");
+			return ok;
 		}
 
-		int InitializeAction(AttackAction action)
+		int GetTotalTicks(AttackAction action)
 		{
 			return 1;
 		}
@@ -476,9 +449,6 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(AttackAction action)
 		{
-			if (this.ActionTicksLeft != 0)
-				return true;
-
 			var attacker = this;
 			var target = this.World.FindObject<Living>(action.Target);
 
