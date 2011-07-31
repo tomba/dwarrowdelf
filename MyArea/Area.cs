@@ -130,7 +130,6 @@ namespace MyArea
 				// Add a monster
 				var builder = new LivingBuilder(LivingID.Sheep)
 				{
-					SymbolID = SymbolID.Monster,
 					Color = GetRandomColor(),
 				};
 				//monster.SetAI(new MonsterActor(monster));
@@ -216,11 +215,10 @@ namespace MyArea
 			{
 				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
 				{
-					SymbolID = SymbolID.Monster,
 					Color = this.GetRandomColor(),
 				};
 				var sheep = sheepBuilder.Create(world);
-				sheep.SetAI(new Dwarrowdelf.Jobs.HerbivoreAI(sheep));
+				sheep.SetAI(new Dwarrowdelf.AI.HerbivoreAI(sheep));
 
 				for (int j = 0; j < i; ++j)
 				{

@@ -69,11 +69,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\CarnivoreAI.cs" />
+    <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
-    <Compile Include="Jobs\HerbivoreAI.cs" />
-    <Compile Include="Jobs\HerbivoreHerd.cs" />
+    <Compile Include="AI\HerbivoreAI.cs" />
+    <Compile Include="AI\HerbivoreHerd.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
@@ -108,8 +110,8 @@
     <Compile Include="Jobs\Assignments\GetItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\BuildItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\MineAssignment.cs" />
-    <Compile Include="Jobs\IAI.cs" />
-    <Compile Include="Jobs\AssignmentAI.cs" />
+    <Compile Include="AI\IAI.cs" />
+    <Compile Include="AI\AssignmentAI.cs" />
     <Compile Include="AStar\OpenList.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="Jobs\Assignments\Assignment.cs" />
@@ -121,7 +123,7 @@
     <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />
     <Compile Include="Jobs\JobGroups\MineAreaJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
-    <Compile Include="Jobs\JobManagerAI.cs" />
+    <Compile Include="AI\JobManagerAI.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\LoiterAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />

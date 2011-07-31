@@ -11,15 +11,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 	[SaveGameObject(UseRef = true)]
 	public class RandomMoveAssignment : Assignment
 	{
-		[SaveGameProperty("Environment")]
-		readonly IEnvironment m_environment;
 		[SaveGameProperty("Dir")]
 		Direction m_dir;
 
-		public RandomMoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment)
+		public RandomMoveAssignment(IJob parent, ActionPriority priority)
 			: base(parent, priority)
 		{
-			m_environment = environment;
 		}
 
 		RandomMoveAssignment(SaveGameContext ctx)
@@ -78,18 +75,19 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 			else
 			{
+				var env = this.Worker.Environment;
 				m_dir = dir;
 
-				var flr = m_environment.GetTerrainID(this.Worker.Location);
+				var flr = env.GetTerrainID(this.Worker.Location);
 
 				if (flr.IsSlope() && flr.ToDir() == dir)
 					dir |= Direction.Up;
 				else
 				{
 					var p = this.Worker.Location + dir + Direction.Down;
-					if (m_environment.Contains(p))
+					if (env.Contains(p))
 					{
-						flr = m_environment.GetTerrainID(this.Worker.Location + dir + Direction.Down);
+						flr = env.GetTerrainID(this.Worker.Location + dir + Direction.Down);
 						if (flr.IsSlope() && flr.ToDir().Reverse() == dir)
 							dir |= Direction.Down;
 					}

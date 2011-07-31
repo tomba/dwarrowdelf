@@ -288,10 +288,10 @@ namespace Dwarrowdelf.Server
 			int num = 0;
 			var controllables = new List<Living>();
 
-			Dwarrowdelf.Jobs.HerbivoreHerd herd = null;
+			Dwarrowdelf.AI.HerbivoreHerd herd = null;
 
 			if (msg.IsHerd)
-				herd = new Jobs.HerbivoreHerd();
+				herd = new Dwarrowdelf.AI.HerbivoreHerd();
 
 			foreach (var p in msg.Area.Range())
 			{
@@ -307,7 +307,7 @@ namespace Dwarrowdelf.Server
 					m_engine.SetupControllable(living);
 				else
 				{
-					var ai = new Jobs.HerbivoreAI(living);
+					var ai = new Dwarrowdelf.AI.HerbivoreAI(living);
 					living.SetAI(ai);
 
 					if (msg.IsHerd)

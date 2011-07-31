@@ -12,6 +12,8 @@ namespace Dwarrowdelf
 		Undefined = 0,
 		Dwarf,
 		Sheep,
+		Wolf,
+		Dragon,
 
 		/// <summary>
 		/// Used for dynamically initialized livings
@@ -25,6 +27,7 @@ namespace Dwarrowdelf
 		Civilized,
 		Herbivore,
 		Carnivore,
+		Monster,
 
 		Custom,
 	}

@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Dwarrowdelf.AI;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {

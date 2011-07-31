@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Dwarrowdelf.Jobs;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.AI
 {
 	/// <summary>
 	/// AI that takes jobs from a JobManager

@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		Jobs.AssignmentAI m_ai;
+		Dwarrowdelf.AI.AssignmentAI m_ai;
 		bool m_isControllable;
 
 		public ReadOnlyObservableCollection<Tuple<SkillID, byte>> Skills { get; private set; }
@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 		[Serializable]
 		class LivingSave
 		{
-			public Jobs.AssignmentAI AI;
+			public Dwarrowdelf.AI.AssignmentAI AI;
 		}
 
 		public override object Save()
@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public Jobs.AssignmentAI AI
+		public Dwarrowdelf.AI.AssignmentAI AI
 		{
 			get { return m_ai; }
 
@@ -118,8 +118,8 @@ namespace Dwarrowdelf.Client
 
 				if (m_ai != null)
 				{
-					if (m_ai is Jobs.JobManagerAI)
-						((Jobs.JobManagerAI)m_ai).JobManager = this.World.JobManager;
+					if (m_ai is Dwarrowdelf.AI.JobManagerAI)
+						((Dwarrowdelf.AI.JobManagerAI)m_ai).JobManager = this.World.JobManager;
 					m_ai.AssignmentChanged += OnAIAssignmentChanged;
 				}
 

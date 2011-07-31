@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Dwarrowdelf.Jobs;
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
+using Dwarrowdelf.AI;
 
 namespace MyArea
 {

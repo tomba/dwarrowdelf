@@ -6,7 +6,7 @@ using System.ComponentModel;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.AI
 {
 	/// <summary>
 	/// abstract AI that handles Assignments

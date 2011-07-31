@@ -6,6 +6,7 @@ using Dwarrowdelf.Jobs;
 using Dwarrowdelf.Jobs.Assignments;
 using System.Diagnostics;
 using Dwarrowdelf.Jobs.AssignmentGroups;
+using Dwarrowdelf.AI;
 
 namespace Dwarrowdelf.Client
 {

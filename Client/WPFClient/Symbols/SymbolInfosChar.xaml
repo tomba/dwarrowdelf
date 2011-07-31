@@ -36,7 +36,9 @@
     <CharSymbol ID="SlopeDownNorthWest" Outline="False">▼</CharSymbol>
 
     <CharSymbol ID="Player">☺</CharSymbol>
-    <CharSymbol ID="Monster">b</CharSymbol>
+    <CharSymbol ID="Sheep">b</CharSymbol>
+    <CharSymbol ID="Wolf">w</CharSymbol>
+    <CharSymbol ID="Dragon">D</CharSymbol>
 
     <CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40">☼</CharSymbol>
     <CharSymbol ID="Gem" X="30" Y="50" W="40" H="40">♦</CharSymbol>

@@ -6,6 +6,7 @@ using System.Text;
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
 using Environment = Dwarrowdelf.Server.Environment;
+using Dwarrowdelf.AI;
 
 namespace MyArea
 {
@@ -42,43 +43,69 @@ namespace MyArea
 
 			/* Add Monsters */
 
-			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+			CreateSheep(env, surfaceLevel);
 
-			var herd = new Dwarrowdelf.Jobs.HerbivoreHerd();
+			{
+				var builder = new LivingBuilder(LivingID.Wolf);
+				var wolf = builder.Create(env.World);
+				var ai = new Dwarrowdelf.AI.CarnivoreAI(wolf);
+				wolf.SetAI(ai);
+
+				wolf.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
+
+			{
+				var builder = new LivingBuilder(LivingID.Dragon);
+				var dragon = builder.Create(env.World);
+				var ai = new Dwarrowdelf.AI.MonsterAI(dragon);
+				dragon.SetAI(ai);
+
+				dragon.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
+		}
+
+		void CreateSheep(Environment env, int surfaceLevel)
+		{
+			var herd = new HerbivoreHerd();
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
 				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
 				{
-					SymbolID = SymbolID.Monster,
 					Color = this.GetRandomColor(),
 				};
-				var sheep = sheepBuilder.Create(world);
-				var ai = new Dwarrowdelf.Jobs.HerbivoreAI(sheep);
+				var sheep = sheepBuilder.Create(env.World);
+				var ai = new HerbivoreAI(sheep);
 				herd.AddMember(ai);
 				sheep.SetAI(ai);
 
-				for (int j = 0; j < i; ++j)
-				{
-					var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
-					var builder = new ItemObjectBuilder(ItemID.Gem, material);
-					var item = builder.Create(world);
-
-					for (int t = 0; t < j; ++t)
-					{
-						// XXX gems inside gems
-						var material2 = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
-						builder = new ItemObjectBuilder(ItemID.Gem, material2);
-						var item2 = builder.Create(world);
-						item2.MoveTo(item);
-					}
-
-					item.MoveTo(sheep);
-				}
+				CreateItems(sheep, i);
 
 				sheep.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
+		}
 
+		void CreateItems(Living living, int numItems)
+		{
+			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+
+			for (int i = 0; i < numItems; ++i)
+			{
+				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+				var builder = new ItemObjectBuilder(ItemID.Gem, material);
+				var item = builder.Create(living.World);
+
+				for (int t = 0; t < i; ++t)
+				{
+					// XXX gems inside gems
+					var material2 = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+					builder = new ItemObjectBuilder(ItemID.Gem, material2);
+					var item2 = builder.Create(living.World);
+					item2.MoveTo(item);
+				}
+
+				item.MoveTo(living);
+			}
 		}
 
 		static void FillVolume(EnvironmentBuilder env, IntCuboid volume, TileData data)

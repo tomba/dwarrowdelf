@@ -43,9 +43,13 @@ namespace Dwarrowdelf
 		Tree,
 		Grass,
 
-		/* objects */
+		/* Livings */
 		Player,
-		Monster,
+		Sheep,
+		Wolf,
+		Dragon,
+
+		/* items */
 		UncutGem,
 		Gem,
 		Key,

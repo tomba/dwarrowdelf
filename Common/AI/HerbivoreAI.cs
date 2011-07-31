@@ -6,7 +6,7 @@ using System.Diagnostics;
 using Dwarrowdelf;
 using Dwarrowdelf.Jobs;
 
-namespace Dwarrowdelf.Jobs
+namespace Dwarrowdelf.AI
 {
 	[SaveGameObject(UseRef = true)]
 	public class HerbivoreAI : AssignmentAI

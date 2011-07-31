@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Server
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 		[SaveGameProperty]
-		Jobs.IAI m_ai;
+		Dwarrowdelf.AI.IAI m_ai;
 
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Server
 		{
 			this.World.TickStarting += OnTickStart;
 
-			var aai = m_ai as Jobs.AssignmentAI;
+			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Destruct()
 		{
-			var aai = m_ai as Jobs.AssignmentAI;
+			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
 				aai.AssignmentChanged -= OnAIAssignmentChanged;
 
@@ -311,11 +311,11 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		public void SetAI(Jobs.IAI ai)
+		public void SetAI(Dwarrowdelf.AI.IAI ai)
 		{
 			m_ai = ai;
 
-			var aai = m_ai as Jobs.AssignmentAI;
+			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 		}
