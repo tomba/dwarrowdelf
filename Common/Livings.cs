@@ -22,7 +22,7 @@ namespace Dwarrowdelf
 	}
 
 	[Flags]
-	public enum LivingClass
+	public enum LivingCategory
 	{
 		Undefined = 0,
 		Civilized = 1 << 0,
@@ -42,9 +42,9 @@ namespace Dwarrowdelf
 
 	public class LivingInfo
 	{
-		public LivingID LivingID { get; set; }
+		public LivingID ID { get; set; }
 		public string Name { get; set; }
-		public LivingClass LivingClass { get; set; }
+		public LivingCategory Category { get; set; }
 		public SymbolID Symbol { get; set; }
 		public GameColor Color { get; set; }
 		public int Level { get; set; }
@@ -70,25 +70,25 @@ namespace Dwarrowdelf
 					livings = (LivingInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = livings.Max(i => (int)i.LivingID);
+			var max = livings.Max(i => (int)i.ID);
 			s_livings = new LivingInfo[max + 1];
 
 			foreach (var living in livings)
 			{
-				if (s_livings[(int)living.LivingID] != null)
+				if (s_livings[(int)living.ID] != null)
 					throw new Exception();
 
 				if (living.Name == null)
-					living.Name = living.LivingID.ToString().ToLowerInvariant();
+					living.Name = living.ID.ToString().ToLowerInvariant();
 
-				s_livings[(int)living.LivingID] = living;
+				s_livings[(int)living.ID] = living;
 			}
 
 			s_livings[(int)LivingID.Custom] = new LivingInfo()
 			{
-				LivingID = LivingID.Custom,
+				ID = LivingID.Custom,
 				Name = "<undefined>",
-				LivingClass = LivingClass.Custom,
+				Category = LivingCategory.Custom,
 				Symbol = SymbolID.Undefined,
 			};
 		}

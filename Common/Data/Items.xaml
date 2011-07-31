@@ -3,18 +3,18 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <ItemInfo ItemID="Log" ItemClass="RawMaterial" Symbol="Log"/>
-    <ItemInfo ItemID="Chair" ItemClass="Furniture" Symbol="Chair"/>
-    <ItemInfo ItemID="Table" ItemClass="Furniture" Symbol="Table"/>
-    <ItemInfo ItemID="Food" ItemClass="Food" Symbol="Consumable"/>
-    <ItemInfo ItemID="Drink" ItemClass="Drink" Symbol="Consumable"/>
-    <ItemInfo ItemID="Rock" ItemClass="RawMaterial" Symbol="Rock"/>
-    <ItemInfo ItemID="Ore" ItemClass="RawMaterial" Symbol="Rock"/>
-    <ItemInfo ItemID="Gem" ItemClass="Gem" Symbol="Gem"/>
-    <ItemInfo ItemID="UncutGem" Name="uncut gem" ItemClass="RawMaterial" Symbol="UncutGem"/>
+    <ItemInfo ID="Log" Category="RawMaterial" Symbol="Log"/>
+    <ItemInfo ID="Chair" Category="Furniture" Symbol="Chair"/>
+    <ItemInfo ID="Table" Category="Furniture" Symbol="Table"/>
+    <ItemInfo ID="Food" Category="Food" Symbol="Consumable"/>
+    <ItemInfo ID="Drink" Category="Drink" Symbol="Consumable"/>
+    <ItemInfo ID="Rock" Category="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ID="Ore" Category="RawMaterial" Symbol="Rock"/>
+    <ItemInfo ID="Gem" Category="Gem" Symbol="Gem"/>
+    <ItemInfo ID="UncutGem" Name="uncut gem" Category="RawMaterial" Symbol="UncutGem"/>
 
-    <ItemInfo ItemID="Corpse" ItemClass="Corpse" Symbol="Consumable"/>
+    <ItemInfo ID="Corpse" Category="Corpse" Symbol="Consumable"/>
 
-    <ItemInfo ItemID="50" Name="MyItem" ItemClass="Gem" Symbol="Gem" />
+    <ItemInfo ID="50" Name="MyItem" Category="Gem" Symbol="Gem" />
 
 </x:Array>

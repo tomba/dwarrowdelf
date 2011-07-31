@@ -64,9 +64,9 @@
                 <ListView.View>
                     <GridView AllowsColumnReorder="true">
                         <GridViewColumn DisplayMemberBinding="{Binding Path=ItemID}" Header="ItemID"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=ItemClass}" Header="ItemClass"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=ItemCategory}" Header="ItemCategory"/>
                         <GridViewColumn DisplayMemberBinding="{Binding Path=MaterialID}" Header="MaterialID"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=MaterialClass}" Header="MaterialClass"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=MaterialCategory}" Header="MaterialCategory"/>
                     </GridView>
                 </ListView.View>
             </ListView>

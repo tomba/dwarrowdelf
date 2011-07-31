@@ -29,8 +29,8 @@ namespace Dwarrowdelf.Client
 		}
 
 		public ItemInfo ItemInfo { get; private set; }
-		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
-		public ItemID ItemID { get { return this.ItemInfo.ItemID; } }
+		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
+		public ItemID ItemID { get { return this.ItemInfo.ID; } }
 
 		int m_nutritionalValue;
 		public int NutritionalValue

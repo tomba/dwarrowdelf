@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public LivingID LivingID { get; private set; }
-		public LivingClass LivingClass { get { return this.LivingInfo.LivingClass; } }
+		public LivingCategory LivingCategory { get { return this.LivingInfo.Category; } }
 		public LivingInfo LivingInfo { get { return Livings.GetLivingInfo(this.LivingID); } }
 
 		[SaveGameProperty("HitPoints")]

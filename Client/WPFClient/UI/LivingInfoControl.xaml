@@ -18,8 +18,8 @@
                 <TextBlock>LivingID</TextBlock>
                 <TextBlock Text="{Binding LivingID}" />
 
-                <TextBlock>LivingClass</TextBlock>
-                <TextBlock Text="{Binding LivingClass}" />
+                <TextBlock>LivingCategory</TextBlock>
+                <TextBlock Text="{Binding LivingCategory}" />
 
                 <TextBlock>Desc</TextBlock>
                 <TextBlock Text="{Binding Description}" />

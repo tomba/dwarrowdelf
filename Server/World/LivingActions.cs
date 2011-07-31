@@ -288,17 +288,17 @@ namespace Dwarrowdelf.Server
 								material = env.GetTerrainMaterial(p);
 							}
 
-							switch (material.MaterialClass)
+							switch (material.Category)
 							{
-								case MaterialClass.Rock:
+								case MaterialCategory.Rock:
 									itemID = ItemID.Rock;
 									break;
 
-								case MaterialClass.Mineral:
+								case MaterialCategory.Mineral:
 									itemID = ItemID.Ore;
 									break;
 
-								case MaterialClass.Gem:
+								case MaterialCategory.Gem:
 									itemID = ItemID.UncutGem;
 									break;
 

@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public ItemID ItemID { get; private set; }
 		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
-		public ItemClass ItemClass { get { return this.ItemInfo.ItemClass; } }
+		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
 
 		public object ReservedBy { get; set; }
 

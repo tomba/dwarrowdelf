@@ -87,7 +87,7 @@ namespace MyArea
 
 		void CreateItems(Living living, int numItems)
 		{
-			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 
 			for (int i = 0; i < numItems; ++i)
 			{

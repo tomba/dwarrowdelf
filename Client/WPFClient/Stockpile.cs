@@ -153,19 +153,19 @@ namespace Dwarrowdelf.Client
 		{
 			StockpileType types = this.StockpileType;
 
-			if ((types & StockpileType.Logs) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Wood)
+			if ((types & StockpileType.Logs) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Wood)
 				return true;
 
-			if ((types & StockpileType.Gems) != 0 && item.ItemClass == ItemClass.Gem && item.MaterialClass == MaterialClass.Gem)
+			if ((types & StockpileType.Gems) != 0 && item.ItemCategory == ItemCategory.Gem && item.MaterialCategory == MaterialCategory.Gem)
 				return true;
 
-			if ((types & StockpileType.Rocks) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Rock)
+			if ((types & StockpileType.Rocks) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Rock)
 				return true;
 
-			if ((types & StockpileType.Metals) != 0 && item.ItemClass == ItemClass.RawMaterial && item.MaterialClass == MaterialClass.Metal)
+			if ((types & StockpileType.Metals) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Metal)
 				return true;
 
-			if ((types & StockpileType.Furniture) != 0 && item.ItemClass == ItemClass.Furniture)
+			if ((types & StockpileType.Furniture) != 0 && item.ItemCategory == ItemCategory.Furniture)
 				return true;
 
 			return false;

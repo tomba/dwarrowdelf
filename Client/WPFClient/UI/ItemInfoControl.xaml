@@ -18,8 +18,8 @@
             <TextBlock>ItemID</TextBlock>
             <TextBlock Text="{Binding ItemID}" />
 
-            <TextBlock>ItemClass</TextBlock>
-            <TextBlock Text="{Binding ItemClass}" />
+            <TextBlock>ItemCategory</TextBlock>
+            <TextBlock Text="{Binding ItemCategory}" />
 
             <TextBlock>Desc</TextBlock>
             <TextBlock Text="{Binding Description}" />
@@ -30,8 +30,8 @@
             <TextBlock>MaterialID</TextBlock>
             <TextBlock Text="{Binding Material.ID}" />
 
-            <TextBlock>MaterialClass</TextBlock>
-            <TextBlock Text="{Binding MaterialClass}" />
+            <TextBlock>MaterialCategory</TextBlock>
+            <TextBlock Text="{Binding MaterialCategory}" />
 
             <TextBlock>ObjectID</TextBlock>
             <TextBlock Text="{Binding ObjectID}" />

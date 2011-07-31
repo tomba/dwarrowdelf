@@ -7,7 +7,7 @@ namespace Dwarrowdelf.AI
 {
 	public static class AIHelpers
 	{
-		public static ILiving FindNearbyEnemy(ILiving living, LivingClass classMask)
+		public static ILiving FindNearbyEnemy(ILiving living, LivingCategory classMask)
 		{
 			var env = living.Environment;
 			var center = living.Location;
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.AI
 			var target = env.GetContents(rect)
 				.Where(o => o != living)
 				.OfType<ILiving>()
-				.Where(o => (o.LivingClass & classMask) != 0)
+				.Where(o => (o.LivingCategory & classMask) != 0)
 				.OrderBy(o => (center - o.Location).Length)
 				.FirstOrDefault();
 

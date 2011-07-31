@@ -50,9 +50,9 @@ namespace Dwarrowdelf.Client
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 		}
 
-		public LivingID LivingID { get { return this.LivingInfo.LivingID; } }
+		public LivingID LivingID { get { return this.LivingInfo.ID; } }
 		public LivingInfo LivingInfo { get; private set; }
-		public LivingClass LivingClass { get { return this.LivingInfo.LivingClass; } }
+		public LivingCategory LivingCategory { get { return this.LivingInfo.Category; } }
 
 		[Serializable]
 		class LivingSave

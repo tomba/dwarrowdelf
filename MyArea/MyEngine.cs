@@ -108,7 +108,7 @@ namespace MyArea
 			dwarf.SetAI(new DwarfAI(dwarf));
 
 
-			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 			var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
 
 			var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);

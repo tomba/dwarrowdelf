@@ -83,7 +83,7 @@ namespace Dwarrowdelf
 		string Name { get; }
 		GameColor Color { get; }
 		SymbolID SymbolID { get; }
-		MaterialClass MaterialClass { get; }
+		MaterialCategory MaterialCategory { get; }
 		MaterialID MaterialID { get; }
 	}
 
@@ -93,14 +93,14 @@ namespace Dwarrowdelf
 		bool HasAction { get; }
 
 		LivingID LivingID { get; }
-		LivingClass LivingClass { get; }
+		LivingCategory LivingCategory { get; }
 
 		byte GetSkillLevel(SkillID skill);
 	}
 
 	public interface IItemObject : ILocatableGameObject
 	{
-		ItemClass ItemClass { get; }
+		ItemCategory ItemCategory { get; }
 		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
 	}

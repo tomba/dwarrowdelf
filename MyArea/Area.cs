@@ -108,7 +108,7 @@ namespace MyArea
 				}
 			}
 
-			var oreMaterials = Materials.GetMaterials(MaterialClass.Gem).Concat(Materials.GetMaterials(MaterialClass.Mineral)).Select(mi => mi.ID).ToArray();
+			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
 			for (int i = 0; i < 30; ++i)
 			{
 				var p = GetRandomSubterraneanLocation(envBuilder);
@@ -140,7 +140,7 @@ namespace MyArea
 			}
 
 			// Add items
-			var gemMaterials = Materials.GetMaterials(MaterialClass.Gem).ToArray();
+			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
@@ -151,7 +151,7 @@ namespace MyArea
 				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
-			var rockMaterials = Materials.GetMaterials(MaterialClass.Rock).ToArray();
+			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
 				var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
@@ -305,7 +305,7 @@ namespace MyArea
 
 		void CreateTrees(EnvironmentBuilder env)
 		{
-			var materials = Materials.GetMaterials(MaterialClass.Wood).ToArray();
+			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetTerrainID(p) == TerrainID.NaturalFloor || env.GetTerrainID(p).IsSlope())

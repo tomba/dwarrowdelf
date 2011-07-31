@@ -166,12 +166,12 @@ namespace Dwarrowdelf.Server
 			switch (this.BuildingInfo.ID)
 			{
 				case BuildingID.Carpenter:
-					if (srcArray[0].MaterialClass != MaterialClass.Wood)
+					if (srcArray[0].MaterialCategory != MaterialCategory.Wood)
 						return false;
 					break;
 
 				case BuildingID.Mason:
-					if (srcArray[0].MaterialClass != MaterialClass.Rock)
+					if (srcArray[0].MaterialCategory != MaterialCategory.Rock)
 						return false;
 					break;
 

@@ -49,7 +49,7 @@ namespace Dwarrowdelf
 		Water,
 	}
 
-	public enum MaterialClass
+	public enum MaterialCategory
 	{
 		Undefined,
 		Wood,
@@ -64,7 +64,7 @@ namespace Dwarrowdelf
 	public class MaterialInfo
 	{
 		public MaterialID ID { get; set; }
-		public MaterialClass MaterialClass { get; set; }
+		public MaterialCategory Category { get; set; }
 		public string Name { get; set; }
 		public string Adjective { get; set; }
 		public GameColor Color { get; set; }
@@ -111,7 +111,7 @@ namespace Dwarrowdelf
 			{
 				ID = MaterialID.Undefined,
 				Name = "<undefined>",
-				MaterialClass = MaterialClass.Undefined,
+				Category = MaterialCategory.Undefined,
 				Color = GameColor.None,
 			};
 		}
@@ -123,9 +123,9 @@ namespace Dwarrowdelf
 			return s_materials[(int)id];
 		}
 
-		public static IEnumerable<MaterialInfo> GetMaterials(MaterialClass materialClass)
+		public static IEnumerable<MaterialInfo> GetMaterials(MaterialCategory materialClass)
 		{
-			return s_materials.Where(m => m != null && m.MaterialClass == materialClass);
+			return s_materials.Where(m => m != null && m.Category == materialClass);
 		}
 	}
 }

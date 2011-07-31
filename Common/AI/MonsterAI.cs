@@ -32,7 +32,7 @@ namespace Dwarrowdelf.AI
 
 			if (m_target == null)
 			{
-				m_target = AIHelpers.FindNearbyEnemy(this.Worker, LivingClass.Civilized);
+				m_target = AIHelpers.FindNearbyEnemy(this.Worker, LivingCategory.Civilized);
 
 				if (m_target == null)
 				{

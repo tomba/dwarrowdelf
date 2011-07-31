@@ -4,42 +4,42 @@
          xmlns="clr-namespace:Dwarrowdelf">
 
     <!-- Alloys -->
-    <MaterialInfo ID="Steel" MaterialClass="Metal" Color="LightSteelBlue" />
+    <MaterialInfo ID="Steel" Category="Metal" Color="LightSteelBlue" />
 
     <!-- Pure Metals -->
-    <MaterialInfo ID="Iron" MaterialClass="Metal" Color="SteelBlue" />
-    <MaterialInfo ID="Gold" MaterialClass="Metal" Color="Gold" />
-    <MaterialInfo ID="Copper" MaterialClass="Metal" Color="DarkGoldenrod" />
-    <MaterialInfo ID="Zinc" MaterialClass="Metal" Color="DarkSlateGray" />
+    <MaterialInfo ID="Iron" Category="Metal" Color="SteelBlue" />
+    <MaterialInfo ID="Gold" Category="Metal" Color="Gold" />
+    <MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
+    <MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
 
     <!-- Rocks -->
-    <MaterialInfo ID="Granite" MaterialClass="Rock" Color="DarkGray" />
-    <MaterialInfo ID="Quartzite" MaterialClass="Rock" Color="Gray" />
-    <MaterialInfo ID="Sandstone" MaterialClass="Rock" Color="DimGray" />
-    <MaterialInfo ID="Diorite" MaterialClass="Rock" Color="LightGray" />
-    <MaterialInfo ID="Dolostone" MaterialClass="Rock" Color="LightGray" />
+    <MaterialInfo ID="Granite" Category="Rock" Color="DarkGray" />
+    <MaterialInfo ID="Quartzite" Category="Rock" Color="Gray" />
+    <MaterialInfo ID="Sandstone" Category="Rock" Color="DimGray" />
+    <MaterialInfo ID="Diorite" Category="Rock" Color="LightGray" />
+    <MaterialInfo ID="Dolostone" Category="Rock" Color="LightGray" />
 
     <!-- Minerals -->
-    <MaterialInfo ID="Magnetite" MaterialClass="Mineral" Color="LightGray" />
-    <MaterialInfo ID="NativeGold" Name="native gold" MaterialClass="Mineral" Color="Gold" />
+    <MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
+    <MaterialInfo ID="NativeGold" Name="native gold" Category="Mineral" Color="Gold" />
 
     <!-- Gems (minerals) -->
-    <MaterialInfo ID="Diamond" MaterialClass="Gem" Color="LightCyan" />
-    <MaterialInfo ID="Ruby" MaterialClass="Gem" Color="Red" />
-    <MaterialInfo ID="Sapphire" MaterialClass="Gem" Color="Cyan" />
-    <MaterialInfo ID="Emerald" MaterialClass="Gem" Color="SpringGreen" />
-    <MaterialInfo ID="Chrysoprase" MaterialClass="Gem" Color="SpringGreen" />
+    <MaterialInfo ID="Diamond" Category="Gem" Color="LightCyan" />
+    <MaterialInfo ID="Ruby" Category="Gem" Color="Red" />
+    <MaterialInfo ID="Sapphire" Category="Gem" Color="Cyan" />
+    <MaterialInfo ID="Emerald" Category="Gem" Color="SpringGreen" />
+    <MaterialInfo ID="Chrysoprase" Category="Gem" Color="SpringGreen" />
 
     <!-- Woods -->
-    <MaterialInfo ID="Oak" Adjective="oaken" MaterialClass="Wood" Color="Sienna" />
-    <MaterialInfo ID="Birch" Adjective="birchen" MaterialClass="Wood" Color="Sienna" />
-    <MaterialInfo ID="Fir" MaterialClass="Wood" Color="Sienna" />
-    <MaterialInfo ID="Pine" MaterialClass="Wood" Color="Sienna" />
+    <MaterialInfo ID="Oak" Adjective="oaken" Category="Wood" Color="Sienna" />
+    <MaterialInfo ID="Birch" Adjective="birchen" Category="Wood" Color="Sienna" />
+    <MaterialInfo ID="Fir" Category="Wood" Color="Sienna" />
+    <MaterialInfo ID="Pine" Category="Wood" Color="Sienna" />
 
-    <MaterialInfo ID="Flesh" MaterialClass="Consumable" Color="Green" />
-    <MaterialInfo ID="Water" MaterialClass="Consumable" Color="Blue" />
+    <MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
+    <MaterialInfo ID="Water" Category="Consumable" Color="Blue" />
 
     <!-- custom test material -->
-    <MaterialInfo ID="99" Name="MyMaterial" MaterialClass="Custom" Color="LightCyan" />
+    <MaterialInfo ID="99" Name="MyMaterial" Category="Custom" Color="LightCyan" />
 
 </x:Array>

@@ -126,7 +126,7 @@ namespace Dwarrowdelf.Client
 			get { return m_materialInfo; }
 		}
 
-		public MaterialClass MaterialClass { get { return m_materialInfo.MaterialClass; } } // XXX
+		public MaterialCategory MaterialCategory { get { return m_materialInfo.Category; } } // XXX
 
 		string m_desc;
 		public string Description

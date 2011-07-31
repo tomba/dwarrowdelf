@@ -27,7 +27,7 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public enum ItemClass
+	public enum ItemCategory
 	{
 		Undefined = 0,
 		Furniture,
@@ -42,9 +42,9 @@ namespace Dwarrowdelf
 
 	public class ItemInfo
 	{
-		public ItemID ItemID { get; set; }
+		public ItemID ID { get; set; }
 		public string Name { get; set; }
-		public ItemClass ItemClass { get; set; }
+		public ItemCategory Category { get; set; }
 		public SymbolID Symbol { get; set; }
 	}
 
@@ -68,25 +68,25 @@ namespace Dwarrowdelf
 					items = (ItemInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = items.Max(i => (int)i.ItemID);
+			var max = items.Max(i => (int)i.ID);
 			s_items = new ItemInfo[max + 1];
 
 			foreach (var item in items)
 			{
-				if (s_items[(int)item.ItemID] != null)
+				if (s_items[(int)item.ID] != null)
 					throw new Exception();
 
 				if (item.Name == null)
-					item.Name = item.ItemID.ToString().ToLowerInvariant();
+					item.Name = item.ID.ToString().ToLowerInvariant();
 
-				s_items[(int)item.ItemID] = item;
+				s_items[(int)item.ID] = item;
 			}
 
 			s_items[(int)ItemID.Custom] = new ItemInfo()
 			{
-				ItemID = ItemID.Custom,
+				ID = ItemID.Custom,
 				Name = "<undefined>",
-				ItemClass = ItemClass.Custom,
+				Category = ItemCategory.Custom,
 				Symbol = SymbolID.Undefined,
 			};
 		}

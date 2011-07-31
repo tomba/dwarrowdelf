@@ -75,9 +75,9 @@ namespace Dwarrowdelf
 	public class BuildableItemMaterialInfo
 	{
 		public ItemID? ItemID { get; set; }
-		public ItemClass? ItemClass { get; set; }
+		public ItemCategory? ItemCategory { get; set; }
 
-		public MaterialClass? MaterialClass { get; set; }
+		public MaterialCategory? MaterialCategory { get; set; }
 		public MaterialID? MaterialID { get; set; }
 
 		public bool MatchItem(IItemObject ob)
@@ -85,13 +85,13 @@ namespace Dwarrowdelf
 			if (this.ItemID.HasValue && this.ItemID.Value != ob.ItemID)
 				return false;
 
-			if (this.ItemClass.HasValue && this.ItemClass.Value != ob.ItemClass)
+			if (this.ItemCategory.HasValue && this.ItemCategory.Value != ob.ItemCategory)
 				return false;
 
 			if (this.MaterialID.HasValue && this.MaterialID.Value != ob.MaterialID)
 				return false;
 
-			if (this.MaterialClass.HasValue && this.MaterialClass.Value != Dwarrowdelf.Materials.GetMaterial(ob.MaterialID).MaterialClass)
+			if (this.MaterialCategory.HasValue && this.MaterialCategory.Value != Dwarrowdelf.Materials.GetMaterial(ob.MaterialID).Category)
 				return false;
 
 			return true;

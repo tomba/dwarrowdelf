@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 			set { if (m_symbolID == value) return; m_symbolID = value; NotifyObject(PropertyID.SymbolID, value); }
 		}
 
-		public MaterialClass MaterialClass { get { return Materials.GetMaterial(this.MaterialID).MaterialClass; } } // XXX
+		public MaterialCategory MaterialCategory { get { return Materials.GetMaterial(this.MaterialID).Category; } } // XXX
 
 
 		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)

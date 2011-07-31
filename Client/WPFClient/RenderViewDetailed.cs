@@ -344,13 +344,13 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case InteriorID.Ore:
-					switch (matInfo.MaterialClass)
+					switch (matInfo.Category)
 					{
-						case MaterialClass.Gem:
+						case MaterialCategory.Gem:
 							tile.SymbolID = SymbolID.GemOre;
 							break;
 
-						case MaterialClass.Mineral:
+						case MaterialCategory.Mineral:
 							tile.SymbolID = SymbolID.ValuableOre;
 							break;
 
