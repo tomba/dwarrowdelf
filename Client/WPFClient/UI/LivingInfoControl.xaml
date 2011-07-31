@@ -50,6 +50,9 @@
 
                 <TextBlock>Action</TextBlock>
                 <TextBlock Text="{Binding CurrentAction}" />
+
+                <TextBlock>Gender</TextBlock>
+                <TextBlock Text="{Binding Gender}" />
             </UniformGrid>
 
             <Separator />
@@ -58,8 +61,23 @@
                 <TextBlock Text="HP" />
                 <TextBlock Text="SP" />
 
-                <TextBlock Text="{Binding HitPoints}" />
-                <TextBlock Text="{Binding SpellPoints}" />
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}/{1}">
+                            <Binding Path="HitPoints" />
+                            <Binding Path="MaxHitPoints" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0}/{1}">
+                            <Binding Path="SpellPoints" />
+                            <Binding Path="MaxSpellPoints" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
 
                 <TextBlock Text="Food Fullness" />
                 <TextBlock Text="Water Fullness" />

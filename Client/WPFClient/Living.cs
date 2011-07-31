@@ -294,8 +294,16 @@ namespace Dwarrowdelf.Client
 					this.HitPoints = (int)value;
 					break;
 
+				case PropertyID.MaxHitPoints:
+					this.MaxHitPoints = (int)value;
+					break;
+
 				case PropertyID.SpellPoints:
 					this.SpellPoints = (int)value;
+					break;
+
+				case PropertyID.MaxSpellPoints:
+					this.MaxSpellPoints = (int)value;
 					break;
 
 				case PropertyID.Strength:
@@ -342,6 +350,10 @@ namespace Dwarrowdelf.Client
 					this.ServerAssignment = (string)value;
 					break;
 
+				case PropertyID.Gender:
+					this.Gender = (LivingGender)value;
+					break;
+
 				default:
 					base.SetProperty(propertyID, value);
 					break;
@@ -355,11 +367,25 @@ namespace Dwarrowdelf.Client
 			private set { m_hitPoints = value; Notify("HitPoints"); }
 		}
 
+		int m_maxHitPoints;
+		public int MaxHitPoints
+		{
+			get { return m_maxHitPoints; }
+			private set { m_maxHitPoints = value; Notify("MaxHitPoints"); }
+		}
+
 		int m_spellPoints;
 		public int SpellPoints
 		{
 			get { return m_spellPoints; }
 			private set { m_spellPoints = value; Notify("SpellPoints"); }
+		}
+
+		int m_maxSpellPoints;
+		public int MaxSpellPoints
+		{
+			get { return m_maxSpellPoints; }
+			private set { m_maxSpellPoints = value; Notify("MaxSpellPoints"); }
 		}
 
 		int m_strength;
@@ -449,6 +475,13 @@ namespace Dwarrowdelf.Client
 		{
 			get { return m_clientAssignment; }
 			private set { m_clientAssignment = value; Notify("ClientAssignment"); }
+		}
+
+		LivingGender m_gender;
+		public LivingGender Gender
+		{
+			get { return m_gender; }
+			private set { m_gender = value; Notify("Gender"); }
 		}
 
 		public byte GetSkillLevel(SkillID skill)

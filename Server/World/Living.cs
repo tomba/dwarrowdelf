@@ -40,6 +40,11 @@ namespace Dwarrowdelf.Server
 
 			this.LivingID = builder.LivingID;
 
+			m_hitPoints = 10;
+			m_maxHitPoints = 20;
+
+			m_gender = builder.Gender;
+
 			m_visionRange = builder.VisionRange;
 			m_foodFullness = builder.FoodFullness;
 			m_waterFullness = builder.WaterFullness;
@@ -107,12 +112,28 @@ namespace Dwarrowdelf.Server
 			set { if (m_hitPoints == value) return; m_hitPoints = value; NotifyInt(PropertyID.HitPoints, value); }
 		}
 
+		[SaveGameProperty("MaxHitPoints")]
+		int m_maxHitPoints;
+		public int MaxHitPoints
+		{
+			get { return m_maxHitPoints; }
+			set { if (m_maxHitPoints == value) return; m_maxHitPoints = value; NotifyInt(PropertyID.MaxHitPoints, value); }
+		}
+
 		[SaveGameProperty("SpellPoints")]
 		int m_spellPoints;
 		public int SpellPoints
 		{
 			get { return m_spellPoints; }
 			set { if (m_spellPoints == value) return; m_spellPoints = value; NotifyInt(PropertyID.SpellPoints, value); }
+		}
+
+		[SaveGameProperty("MaxSpellPoints")]
+		int m_maxSpellPoints;
+		public int MaxSpellPoints
+		{
+			get { return m_maxSpellPoints; }
+			set { if (m_maxSpellPoints == value) return; m_maxSpellPoints = value; NotifyInt(PropertyID.MaxSpellPoints, value); }
 		}
 
 		[SaveGameProperty("Strength")]
@@ -204,6 +225,14 @@ namespace Dwarrowdelf.Server
 			set { if (m_assignment == value) return; m_assignment = value; NotifyObject(PropertyID.Assignment, value); }
 		}
 
+		[SaveGameProperty("Gender")]
+		LivingGender m_gender;
+		public LivingGender Gender
+		{
+			get { return m_gender; }
+			set { if (m_gender == value) return; m_gender = value; NotifyObject(PropertyID.Gender, value); }
+		}
+
 		public byte GetSkillLevel(SkillID skill)
 		{
 			byte skillValue;
@@ -263,7 +292,9 @@ namespace Dwarrowdelf.Server
 			if (visibility == ObjectVisibility.All)
 			{
 				props[PropertyID.HitPoints] = m_hitPoints;
+				props[PropertyID.MaxHitPoints] = m_maxHitPoints;
 				props[PropertyID.SpellPoints] = m_spellPoints;
+				props[PropertyID.MaxSpellPoints] = m_maxSpellPoints;
 				props[PropertyID.Strength] = m_strength;
 				props[PropertyID.Dexterity] = m_dexterity;
 				props[PropertyID.Constitution] = m_constitution;
@@ -275,6 +306,7 @@ namespace Dwarrowdelf.Server
 				props[PropertyID.FoodFullness] = m_foodFullness;
 				props[PropertyID.WaterFullness] = m_waterFullness;
 				props[PropertyID.Assignment] = m_assignment;
+				props[PropertyID.Gender] = m_gender;
 			}
 			return props;
 		}
@@ -660,6 +692,7 @@ namespace Dwarrowdelf.Server
 		public int FoodFullness { get; set; }
 		public int WaterFullness { get; set; }
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
+		public LivingGender Gender { get; set; }
 
 		public LivingBuilder(LivingID livingID)
 		{

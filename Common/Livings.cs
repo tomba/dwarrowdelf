@@ -29,6 +29,13 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
+	public enum LivingGender : byte
+	{
+		Undefined,
+		Male,
+		Female,
+	}
+
 	public class LivingInfo
 	{
 		public LivingID LivingID { get; set; }

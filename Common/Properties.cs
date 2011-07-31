@@ -17,7 +17,10 @@ namespace Dwarrowdelf
 
 		// Living
 		HitPoints,
+		MaxHitPoints,
+
 		SpellPoints,
+		MaxSpellPoints,
 
 		Strength,
 		Dexterity,
@@ -33,6 +36,8 @@ namespace Dwarrowdelf
 		WaterFullness,
 
 		Assignment,
+
+		Gender,
 
 		// Item
 		NutritionalValue,
