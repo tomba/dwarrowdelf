@@ -370,7 +370,7 @@ namespace Dwarrowdelf.Server
 
 			D("PerformAction: {0}", action);
 
-			this.ActionTicksLeft -= 1;
+			this.ActionTicksLeft--;
 
 			bool success = PerformAction(action);
 
@@ -446,6 +446,10 @@ namespace Dwarrowdelf.Server
 
 			int ticks = InitializeAction(action);
 
+			this.CurrentAction = action;
+			this.ActionTicksLeft = ticks;
+			this.ActionUserID = userID;
+
 			var c = new ActionStartedChange(this)
 			{
 				Action = action,
@@ -453,7 +457,8 @@ namespace Dwarrowdelf.Server
 				TicksLeft = ticks,
 			};
 
-			HandleActionStarted(c);
+			if (m_ai != null)
+				m_ai.ActionStarted(c);
 
 			this.World.AddChange(c);
 		}
@@ -508,18 +513,6 @@ namespace Dwarrowdelf.Server
 				if (action != null)
 					DoAction(action);
 			}
-		}
-
-		void HandleActionStarted(ActionStartedChange change)
-		{
-			Debug.Assert(!this.HasAction);
-
-			this.CurrentAction = change.Action;
-			this.ActionTicksLeft = change.TicksLeft;
-			this.ActionUserID = change.UserID;
-
-			if (m_ai != null)
-				m_ai.ActionStarted(change);
 		}
 
 		void ActionProgress(ActionProgressChange e)

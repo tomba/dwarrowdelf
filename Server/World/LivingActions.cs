@@ -223,6 +223,13 @@ namespace Dwarrowdelf.Server
 			if (this.ActionTicksLeft > 0)
 				return true;
 
+			if (this.ActionTicksUsed == 1)
+			{
+				var obs = this.Environment.GetContents(this.Location + action.Direction);
+				if (obs.OfType<Living>().Count() > 0)
+					this.ActionTicksLeft = 1;
+			}
+
 			var ok = MoveDir(action.Direction);
 
 			if (!ok)
