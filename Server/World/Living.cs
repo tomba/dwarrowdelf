@@ -81,7 +81,8 @@ namespace Dwarrowdelf.Server
 
 			m_ai = null;
 			this.CurrentAction = null;
-			this.ActionTicksLeft = 0;
+			this.ActionTotalTicks = 0;
+			this.ActionTicksUsed = 0;
 			this.ActionUserID = 0;
 
 			this.World.TickStarting -= OnTickStart;
@@ -370,16 +371,17 @@ namespace Dwarrowdelf.Server
 
 			D("PerformAction: {0}", action);
 
-			this.ActionTicksLeft--;
+			this.ActionTicksUsed++;
 
 			bool success = PerformAction(action);
 
 			if (success == false)
-				this.ActionTicksLeft = 0;
-
+				this.ActionTotalTicks = this.ActionTicksUsed = 0;
 
 			if (this.ActionTicksLeft > 0)
 			{
+				D("ActionProgress({0}, left: {1})", action, this.ActionTicksLeft);
+
 				var e = new ActionProgressChange(this)
 				{
 					ActionXXX = action,
@@ -387,24 +389,36 @@ namespace Dwarrowdelf.Server
 					TicksLeft = this.ActionTicksLeft,
 				};
 
-				this.ActionProgress(e);
+				if (m_ai != null)
+					m_ai.ActionProgress(e);
+
 				this.World.AddChange(e);
 			}
 			else
 			{
 				ActionState state = success ? ActionState.Done : ActionState.Fail;
 
+				var error = success ? null : (m_actionError ?? "<no error str>");
+
+				D("ActionDone({0}, state: {1}, err: {2})", action, state, error);
+
 				var e = new ActionDoneChange(this)
 				{
 					ActionXXX = action,
 					UserID = this.ActionUserID,
 					State = state,
-					Error = success ? null : (m_actionError ?? "<no error str>"),
+					Error = error,
 				};
 
 				m_actionError = null;
 
-				this.ActionDone(e);
+				if (m_ai != null)
+					m_ai.ActionDone(e);
+
+				this.CurrentAction = null;
+				this.ActionTotalTicks = this.ActionTicksUsed = 0;
+				this.ActionUserID = 0;
+
 				this.World.AddChange(e);
 			}
 		}
@@ -427,8 +441,13 @@ namespace Dwarrowdelf.Server
 		public GameAction CurrentAction { get; private set; }
 		public bool HasAction { get { return this.CurrentAction != null; } }
 
+		public int ActionTicksLeft { get { return this.ActionTotalTicks - this.ActionTicksUsed; } }
+
 		[SaveGameProperty]
-		public int ActionTicksLeft { get; private set; }
+		public int ActionTotalTicks { get; private set; }
+		[SaveGameProperty]
+		public int ActionTicksUsed { get; private set; }
+
 		[SaveGameProperty]
 		public int ActionUserID { get; private set; }
 
@@ -444,17 +463,17 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(action.Priority != ActionPriority.Undefined);
 
-			int ticks = InitializeAction(action);
-
+			int totalTicks = InitializeAction(action);
 			this.CurrentAction = action;
-			this.ActionTicksLeft = ticks;
+			this.ActionTotalTicks = totalTicks;
+			this.ActionTicksUsed = 0;
 			this.ActionUserID = userID;
 
 			var c = new ActionStartedChange(this)
 			{
 				Action = action,
 				UserID = userID,
-				TicksLeft = ticks,
+				TicksLeft = this.ActionTicksLeft,
 			};
 
 			if (m_ai != null)
@@ -479,7 +498,12 @@ namespace Dwarrowdelf.Server
 				State = ActionState.Abort,
 			};
 
-			this.ActionDone(e);
+			if (m_ai != null)
+				m_ai.ActionDone(e);
+
+			this.CurrentAction = null;
+			this.ActionTotalTicks = this.ActionTicksUsed = 0;
+			this.ActionUserID = 0;
 
 			this.World.AddChange(e);
 		}
@@ -513,40 +537,6 @@ namespace Dwarrowdelf.Server
 				if (action != null)
 					DoAction(action);
 			}
-		}
-
-		void ActionProgress(ActionProgressChange e)
-		{
-			Debug.Assert(e.TicksLeft > 0);
-
-			if (!this.HasAction)
-				throw new Exception();
-
-			var action = this.CurrentAction;
-
-			this.ActionTicksLeft = e.TicksLeft;
-
-			D("ActionProgress({0}, left: {1})", action, e.TicksLeft);
-
-			if (m_ai != null)
-				m_ai.ActionProgress(e);
-		}
-
-		void ActionDone(ActionDoneChange c)
-		{
-			if (!this.HasAction)
-				throw new Exception();
-
-			var action = this.CurrentAction;
-
-			D("ActionDone({0}, {1})", action, c.State);
-
-			if (m_ai != null)
-				m_ai.ActionDone(c);
-
-			this.CurrentAction = null;
-			this.ActionTicksLeft = 0;
-			this.ActionUserID = 0;
 		}
 
 		void OnAIAssignmentChanged(Jobs.IAssignment assignment)
