@@ -95,6 +95,8 @@ namespace Dwarrowdelf
 		LivingID LivingID { get; }
 		LivingCategory LivingCategory { get; }
 
+		int VisionRange { get; }
+
 		byte GetSkillLevel(SkillID skill);
 	}
 

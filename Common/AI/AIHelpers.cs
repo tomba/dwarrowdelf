@@ -12,7 +12,7 @@ namespace Dwarrowdelf.AI
 			var env = living.Environment;
 			var center = living.Location;
 
-			const int r = 20;
+			int r = living.VisionRange;
 			int maxSide = 2 * r + 1;
 
 			var rect = new IntRectZ(center.X - maxSide / 2, center.Y - maxSide / 2, maxSide, maxSide, living.Location.Z);
