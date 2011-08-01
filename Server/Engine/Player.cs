@@ -284,8 +284,6 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(CreateLivingMessage msg)
 		{
-			bool useNum = msg.Area.Area > 1;
-			int num = 0;
 			var controllables = new List<Living>();
 
 			Dwarrowdelf.AI.Herd herd = null;
@@ -297,8 +295,6 @@ namespace Dwarrowdelf.Server
 
 			foreach (var p in msg.Area.Range())
 			{
-				string name = useNum ? String.Format("{0} {1}", msg.Name, num++) : msg.Name;
-
 				var livingBuilder = new LivingBuilder(msg.LivingID)
 				{
 					Name = msg.Name,
