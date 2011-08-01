@@ -51,6 +51,15 @@
                 <TextBlock>Action</TextBlock>
                 <TextBlock Text="{Binding CurrentAction}" />
 
+                <TextBlock>ActionTicksUsed</TextBlock>
+                <TextBlock Text="{Binding ActionTicksUsed}" />
+
+                <TextBlock>ActionTotalTicks</TextBlock>
+                <TextBlock Text="{Binding ActionTotalTicks}" />
+
+                <TextBlock>Previous Action</TextBlock>
+                <TextBlock Text="{Binding PreviousAction}" />
+
                 <TextBlock>Gender</TextBlock>
                 <TextBlock Text="{Binding Gender}" />
             </UniformGrid>

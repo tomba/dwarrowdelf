@@ -135,6 +135,13 @@ namespace Dwarrowdelf.Client
 			private set { m_currentAction = value; Notify("CurrentAction"); }
 		}
 
+		GameAction m_previousAction;
+		public GameAction PreviousAction
+		{
+			get { return m_previousAction; }
+			private set { m_previousAction = value; Notify("PreviousAction"); }
+		}
+
 		int m_actionTicksUsed;
 		public int ActionTicksUsed
 		{
@@ -230,6 +237,7 @@ namespace Dwarrowdelf.Client
 				this.AI.ActionDone(change);
 
 			//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
+			this.PreviousAction = this.CurrentAction;
 			this.CurrentAction = null;
 		}
 

@@ -338,21 +338,21 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Vertical">
                                             <TextBlock>
-                                        <TextBlock Text="{Binding}" />
-                                        :
-                                        <TextBlock Text="{Binding CurrentAction}" />
-                                        (
-                                        <TextBlock Text="{Binding ActionTicksUsed}" />
-                                        /
-                                        <TextBlock Text="{Binding ActionTotalTicks}" />
-                                        )
-                                    </TextBlock>
+                                                <TextBlock Text="{Binding}" />
+                                                :
+                                                <TextBlock Text="{Binding CurrentAction}" />
+                                                (
+                                                <TextBlock Text="{Binding ActionTicksUsed}" />
+                                                /
+                                                <TextBlock Text="{Binding ActionTotalTicks}" />
+                                                )
+                                            </TextBlock>
 
                                             <TextBlock Margin="20,0,0,0">
-                                        Client: <TextBlock Text="{Binding ClientAssignment, TargetNullValue=none}" />
-                                        /
-                                        Server: <TextBlock Text="{Binding ServerAssignment, TargetNullValue=none}" />
-                                    </TextBlock>
+                                                Client: <TextBlock Text="{Binding ClientAssignment, TargetNullValue=none}" />
+                                                /
+                                                Server: <TextBlock Text="{Binding ServerAssignment, TargetNullValue=none}" />
+                                            </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
