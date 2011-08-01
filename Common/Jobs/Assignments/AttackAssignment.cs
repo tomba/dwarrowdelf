@@ -93,6 +93,14 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
+		protected override JobStatus ActionProgressOverride()
+		{
+			if (this.CurrentAction is MoveAction && this.Worker.Location.IsAdjacentTo(m_target.Location, DirectionSet.Planar))
+				return Jobs.JobStatus.Abort;
+
+			return Jobs.JobStatus.Ok;
+		}
+
 		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
 		{
 			if (CheckProgress() == Jobs.JobStatus.Done)
