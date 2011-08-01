@@ -6,27 +6,31 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.AI
 {
-	public class HerbivoreHerd
+	[SaveGameObject(UseRef = true)]
+	public class Herd
 	{
-		List<HerbivoreAI> m_members = new List<HerbivoreAI>();
+		[SaveGameProperty]
+		List<IAI> m_members = new List<IAI>();
 
-		public HerbivoreHerd()
+		public Herd()
 		{
-
 		}
 
-		public void AddMember(HerbivoreAI ai)
+		Herd(SaveGameContext ctx)
 		{
-			Debug.Assert(ai.Herd == null);
+		}
 
-			ai.Herd = this;
+		public void AddMember(IAI ai)
+		{
+			Debug.Assert(!m_members.Contains(ai));
+
 			m_members.Add(ai);
 			ai.Worker.Destructed += OnDestructed;
 		}
 
-		public void RemoveMember(HerbivoreAI ai)
+		public void RemoveMember(IAI ai)
 		{
-			Debug.Assert(ai.Herd == this);
+			Debug.Assert(m_members.Contains(ai));
 
 			m_members.Remove(ai);
 		}

@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 	[SaveGameObject(UseRef = true)]
 	public class GrazeMoveAssignment : Assignment
 	{
-		HerbivoreHerd m_herd;
+		Herd m_herd;
 
-		public GrazeMoveAssignment(IJob parent, ActionPriority priority, HerbivoreHerd herd)
+		public GrazeMoveAssignment(IJob parent, ActionPriority priority, Herd herd)
 			: base(parent, priority)
 		{
 			m_herd = herd;

@@ -288,10 +288,12 @@ namespace Dwarrowdelf.Server
 			int num = 0;
 			var controllables = new List<Living>();
 
-			Dwarrowdelf.AI.HerbivoreHerd herd = null;
+			Dwarrowdelf.AI.Herd herd = null;
 
 			if (msg.IsHerd)
-				herd = new Dwarrowdelf.AI.HerbivoreHerd();
+				herd = new Dwarrowdelf.AI.Herd();
+
+			var livingInfo = Livings.GetLivingInfo(msg.LivingID);
 
 			foreach (var p in msg.Area.Range())
 			{
@@ -304,14 +306,37 @@ namespace Dwarrowdelf.Server
 				var living = livingBuilder.Create(this.World);
 
 				if (msg.IsControllable)
+				{
 					m_engine.SetupControllable(living);
+				}
 				else
 				{
-					var ai = new Dwarrowdelf.AI.HerbivoreAI(living);
-					living.SetAI(ai);
+					switch (livingInfo.Category)
+					{
+						case LivingCategory.Herbivore:
+							{
+								var ai = new Dwarrowdelf.AI.HerbivoreAI(living);
+								living.SetAI(ai);
 
-					if (msg.IsHerd)
-						herd.AddMember(ai);
+								if (msg.IsHerd)
+									ai.Herd = herd;
+							}
+							break;
+
+						case LivingCategory.Carnivore:
+							{
+								var ai = new Dwarrowdelf.AI.CarnivoreAI(living);
+								living.SetAI(ai);
+							}
+							break;
+
+						case LivingCategory.Monster:
+							{
+								var ai = new Dwarrowdelf.AI.MonsterAI(living);
+								living.SetAI(ai);
+							}
+							break;
+					}
 				}
 
 				trace.TraceInformation("Created living {0}", living);

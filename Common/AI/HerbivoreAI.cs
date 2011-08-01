@@ -14,7 +14,23 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		public HerbivoreHerd Herd { get; set; }
+		[SaveGameProperty]
+		Herd m_herd;
+
+		public Herd Herd {
+			get { return m_herd; }
+
+			set
+			{
+				if (m_herd != null)
+					m_herd.RemoveMember(this);
+
+				m_herd = value;
+
+				if (m_herd != null)
+					m_herd.AddMember(this);
+			}
+		}
 
 		HerbivoreAI(SaveGameContext ctx)
 			: base(ctx)

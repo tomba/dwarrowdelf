@@ -66,7 +66,7 @@ namespace MyArea
 
 		void CreateSheep(Environment env, int surfaceLevel)
 		{
-			var herd = new HerbivoreHerd();
+			var herd = new Herd();
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
@@ -76,7 +76,7 @@ namespace MyArea
 				};
 				var sheep = sheepBuilder.Create(env.World);
 				var ai = new HerbivoreAI(sheep);
-				herd.AddMember(ai);
+				ai.Herd = herd;
 				sheep.SetAI(ai);
 
 				CreateItems(sheep, i);

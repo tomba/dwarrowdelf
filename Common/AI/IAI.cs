@@ -7,6 +7,8 @@ namespace Dwarrowdelf.AI
 {
 	public interface IAI
 	{
+		ILiving Worker { get; }
+
 		/// <summary>
 		/// In server this is called two times per turn, once for high priority and once for idle priority.
 		/// In client this is called once per turn, if the living doesn't have an action or the current action is lower than high priority.
