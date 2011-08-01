@@ -41,6 +41,14 @@ namespace Dwarrowdelf.Server
 			this.LivingID = builder.LivingID;
 
 			m_maxHitPoints = m_hitPoints = builder.HitPoints;
+			m_armorClass = builder.AC;
+
+			m_strength = builder.Str;
+			m_dexterity = builder.Dex;
+			m_constitution = builder.Con;
+			m_intelligence = builder.Int;
+			m_wisdom = builder.Wis;
+			m_charisma = builder.Cha;
 
 			m_gender = builder.Gender;
 
@@ -332,9 +340,10 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void ReceiveDamage(int damage)
+		void ReceiveDamage(Living attacker, DamageCategory cat, int damage)
 		{
 			this.HitPoints -= damage;
+
 			if (this.HitPoints <= 0)
 			{
 				Trace.TraceInformation("{0} dies", this);
@@ -679,10 +688,22 @@ namespace Dwarrowdelf.Server
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
 		public LivingGender Gender { get; set; }
 		public int HitPoints;
+		public int AC;
+
+		public int Str, Dex, Con, Int, Wis, Cha;
 
 		public LivingBuilder(LivingID livingID)
 		{
 			this.LivingID = livingID;
+
+			var li = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID);
+
+			this.SymbolID = li.Symbol;
+			this.Color = li.Color;
+			this.HitPoints = li.Level * 10;
+			this.AC = li.Level;
+
+			Str = Dex = Con = Int = Wis = Cha = li.Level * 10;
 
 			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
 			this.VisionRange = 10;
@@ -694,17 +715,6 @@ namespace Dwarrowdelf.Server
 
 		public Living Create(World world)
 		{
-			var li = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID);
-
-			if (this.SymbolID == SymbolID.Undefined)
-				this.SymbolID = li.Symbol;
-
-			if (this.Color == GameColor.None)
-				this.Color = li.Color;
-
-			if (this.HitPoints == 0)
-				this.HitPoints = li.Level * 10;
-
 			return Living.Create(world, this);
 		}
 

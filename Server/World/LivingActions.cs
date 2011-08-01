@@ -477,20 +477,26 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				var ac = target.ArmorClass;
-				hit = roll >= ac;
+				hit = (roll - target.ArmorClass) > 0;
 			}
 
 			if (!hit)
 			{
 				Trace.TraceInformation("{0} misses {1}", attacker, target);
+
+				var c = new DamageChange(target, attacker, DamageCategory.Melee, 0) { IsHit = false };
+				this.World.AddChange(c);
 			}
 			else
 			{
-				var damage = m_random.Next(attacker.LivingInfo.Level) + 1;
+				var damage = m_random.Next(attacker.Strength / 10) + 1;
+
 				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
 
-				target.ReceiveDamage(damage);
+				var c = new DamageChange(target, attacker, DamageCategory.Melee, damage) { IsHit = true };
+				this.World.AddChange(c);
+
+				target.ReceiveDamage(attacker, DamageCategory.Melee, damage);
 			}
 
 			return true;

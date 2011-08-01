@@ -105,13 +105,11 @@ namespace Dwarrowdelf.Server
 		{
 			this.ItemID = itemID;
 			this.MaterialID = materialID;
+			this.SymbolID = Dwarrowdelf.Items.GetItem(this.ItemID).Symbol;
 		}
 
 		public ItemObject Create(World world)
 		{
-			if (this.SymbolID == SymbolID.Undefined)
-				this.SymbolID = Dwarrowdelf.Items.GetItem(this.ItemID).Symbol;
-
 			return ItemObject.Create(world, this);
 		}
 	}

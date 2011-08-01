@@ -53,9 +53,8 @@ namespace Dwarrowdelf.Client
 				{
 					if (listBox.Items.Count > 0)
 					{
-						object lastItem = listBox.Items[listBox.Items.Count - 1];
-						listBoxItems.MoveCurrentTo(lastItem);
-						listBox.ScrollIntoView(lastItem);
+						listBoxItems.MoveCurrentToLast();
+						listBox.ScrollIntoView(listBoxItems.CurrentItem);
 					}
 				});
 

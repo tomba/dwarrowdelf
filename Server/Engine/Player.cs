@@ -806,7 +806,6 @@ namespace Dwarrowdelf.Server
 				var c = (MapChange)change;
 				return m_player.Sees(c.Environment, c.Location);
 			}
-
 			else if (change is FullObjectChange)
 			{
 				var c = (FullObjectChange)change;
@@ -851,6 +850,14 @@ namespace Dwarrowdelf.Server
 				return controllables.Contains(c.Object);
 			}
 
+			else if (change is ObjectChange)
+			{
+				var c = (ObjectChange)change;
+
+				var vis = m_player.GetObjectVisibility(c.Object);
+
+				return vis == ObjectVisibility.All || vis == ObjectVisibility.Public;
+			}
 			else
 			{
 				throw new Exception();

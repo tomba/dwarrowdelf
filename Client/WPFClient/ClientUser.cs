@@ -255,6 +255,42 @@ namespace Dwarrowdelf.Client
 			ob.MoveTo(change.DestinationLocation);
 		}
 
+		void HandleChange(DamageChange change)
+		{
+			var world = GameData.Data.World;
+
+			var attacker = world.FindObject<Living>(change.AttackerID);
+			var target = world.GetObject<Living>(change.ObjectID);
+
+			string aname = attacker == null ? "nobody" : attacker.ToString();
+			string tname = target.ToString();
+
+			string msg;
+
+			if (change.IsHit)
+			{
+				switch (change.DamageCategory)
+				{
+					case DamageCategory.None:
+						msg = String.Format("{0} hits {1}, dealing {2} damage", aname, tname, change.Damage);
+						break;
+
+					case DamageCategory.Melee:
+						msg = String.Format("{0} hits {1}, dealing {2} damage", aname, tname, change.Damage);
+						break;
+
+					default:
+						throw new Exception();
+				}
+			}
+			else
+			{
+				msg = String.Format("{0} misses {1}", aname, tname);
+			}
+
+			GameData.Data.AddMessage(msg);
+		}
+
 		void HandleChange(PropertyObjectChange change)
 		{
 			var ob = GameData.Data.World.FindObject<BaseGameObject>(change.ObjectID);

@@ -297,9 +297,8 @@ namespace Dwarrowdelf.Client
 			if (this.IsDestructed)
 				return "<DestructedObject>";
 
-			return String.Format("Living({0}/{1})", this.Name, this.ObjectID);
+			return String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID);
 		}
-
 
 
 		public override void SetProperty(PropertyID propertyID, object value)

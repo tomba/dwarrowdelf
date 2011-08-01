@@ -19,6 +19,23 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
+	// XXX we need a wrapper for the string, so that ListBox manages to scroll the last item into view.
+	// otherwise listbox will compare the strings, and scroll to first occurance of the string...
+	class GameInformMessage
+	{
+		string m_str;
+
+		public GameInformMessage(string str)
+		{
+			m_str = str;
+		}
+
+		public override string ToString()
+		{
+			return m_str;
+		}
+	}
+
 	class GameData : DependencyObject
 	{
 		public static readonly GameData Data = new GameData();
@@ -27,31 +44,50 @@ namespace Dwarrowdelf.Client
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
-			m_messages = new ObservableCollection<string>();
-			this.Messages = new ReadOnlyObservableCollection<string>(m_messages);
+			m_messages = new ObservableCollection<GameInformMessage>();
+			this.Messages = new ReadOnlyObservableCollection<GameInformMessage>(m_messages);
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
+		bool m_previousWasTickMessage = true;
+
 		public void AddMessage(string format, params object[] args)
 		{
-			AddMessage(String.Format(format, args));
+			AddMessageInternal(String.Format(format, args));
+			m_previousWasTickMessage = false;
 		}
 
 		public void AddMessage(string message)
+		{
+			AddMessageInternal(message);
+			m_previousWasTickMessage = false;
+		}
+
+		public void AddTickMessage()
+		{
+			if (m_previousWasTickMessage)
+				return;
+
+			AddMessageInternal("---");
+
+			m_previousWasTickMessage = true;
+		}
+
+		void AddMessageInternal(string message)
 		{
 			if (m_messages.Count > 100)
 				m_messages.RemoveAt(0);
 
 			//Trace.TraceInformation(message);
 
-			m_messages.Add(message);
+			m_messages.Add(new GameInformMessage(message));
 		}
 
-		ObservableCollection<string> m_messages;
-		public ReadOnlyObservableCollection<string> Messages { get; private set; }
+		ObservableCollection<GameInformMessage> m_messages;
+		public ReadOnlyObservableCollection<GameInformMessage> Messages { get; private set; }
 
 		public ClientConnection Connection
 		{
