@@ -355,7 +355,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// called during tick processing. the world state is not quite valid.
-		public void PerformAction()
+		public void ProcessAction()
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -369,8 +369,6 @@ namespace Dwarrowdelf.Server
 
 			D("PerformAction: {0}", action);
 
-			this.ActionTicksUsed++;
-
 			bool ok = true;
 
 			int totalTicks = GetActionTotalTicks(action);
@@ -380,57 +378,72 @@ namespace Dwarrowdelf.Server
 			else
 				this.ActionTotalTicks = totalTicks;
 
+			this.ActionTicksUsed++;
+
 			if (ok && this.ActionTicksUsed < this.ActionTotalTicks)
 			{
-				D("ActionProgress({0}, {1}/{2})", action, this.ActionTicksUsed, this.ActionTotalTicks);
-
-				var e = new ActionProgressChange(this)
-				{
-					ActionXXX = action,
-					UserID = this.ActionUserID,
-					TicksUsed = this.ActionTicksUsed,
-					TotalTicks = this.ActionTotalTicks,
-				};
-
-				if (m_ai != null)
-					m_ai.ActionProgress(e);
-
-				this.World.AddChange(e);
-
-				return;
+				HandleActionProgress();
 			}
-
-			if (ok)
-				ok = PerformAction(action);
-
-			this.ActionTotalTicks = this.ActionTicksUsed = 0;
-
+			else
 			{
-				ActionState state = ok ? ActionState.Done : ActionState.Fail;
+				if (ok)
+					ok = PerformAction(action);
 
-				var error = ok ? null : (m_actionError ?? "<no error str>");
-
-				D("ActionDone({0}, state: {1}, err: {2})", action, state, error);
-
-				var e = new ActionDoneChange(this)
+				if (ok)
 				{
-					ActionXXX = action,
-					UserID = this.ActionUserID,
-					State = state,
-					Error = error,
-				};
+					D("Action Done({0})", this.CurrentAction);
 
-				m_actionError = null;
+					HandleActionDone(ActionState.Done);
+				}
+				else
+				{
+					var error = m_actionError ?? "<no error str>";
 
-				if (m_ai != null)
-					m_ai.ActionDone(e);
+					D("Action Failed({0}, err: {1})", this.CurrentAction, error);
 
-				this.CurrentAction = null;
-				this.ActionTotalTicks = this.ActionTicksUsed = 0;
-				this.ActionUserID = 0;
-
-				this.World.AddChange(e);
+					HandleActionDone(ActionState.Fail, error);
+				}
 			}
+		}
+
+		void HandleActionProgress()
+		{
+			D("ActionProgress({0}, {1}/{2})", this.CurrentAction, this.ActionTicksUsed, this.ActionTotalTicks);
+
+			var e = new ActionProgressChange(this)
+			{
+				ActionXXX = this.CurrentAction,
+				UserID = this.ActionUserID,
+				TicksUsed = this.ActionTicksUsed,
+				TotalTicks = this.ActionTotalTicks,
+			};
+
+			if (m_ai != null)
+				m_ai.ActionProgress(e);
+
+			this.World.AddChange(e);
+		}
+
+		void HandleActionDone(ActionState state, string error = null)
+		{
+			var e = new ActionDoneChange(this)
+			{
+				ActionXXX = this.CurrentAction,
+				UserID = this.ActionUserID,
+				State = state,
+				Error = error,
+			};
+
+			m_actionError = null;
+
+			if (m_ai != null)
+				m_ai.ActionDone(e);
+
+			this.CurrentAction = null;
+			this.ActionTotalTicks = this.ActionTicksUsed = 0;
+			this.ActionUserID = 0;
+
+			this.World.AddChange(e);
 		}
 
 		string m_actionError;
@@ -494,24 +507,7 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			D("CancelAction({0}, uid: {1})", this.CurrentAction, this.ActionUserID);
-
-			var action = this.CurrentAction;
-
-			var e = new ActionDoneChange(this)
-			{
-				ActionXXX = action,
-				UserID = this.ActionUserID,
-				State = ActionState.Abort,
-			};
-
-			if (m_ai != null)
-				m_ai.ActionDone(e);
-
-			this.CurrentAction = null;
-			this.ActionTotalTicks = this.ActionTicksUsed = 0;
-			this.ActionUserID = 0;
-
-			this.World.AddChange(e);
+			HandleActionDone(ActionState.Abort, "aborted");
 		}
 
 		public void TurnStarted()

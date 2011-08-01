@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Server
 				living.TurnPreRun();
 
 			foreach (var living in m_livings.List.Where(l => l.HasAction))
-				living.PerformAction();
+				living.ProcessAction();
 
 			EndTurnSimultaneous();
 
@@ -170,7 +170,7 @@ namespace Dwarrowdelf.Server
 
 				living.TurnPreRun();
 
-				living.PerformAction();
+				living.ProcessAction();
 
 				EndTurnSequential(living);
 
