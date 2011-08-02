@@ -37,6 +37,14 @@ namespace Dwarrowdelf.Client.UI
 				Content = content,
 			};
 
+			// XXX for some reason the DockableContent window seems to stay even after closed. This leads to the object being referenced.
+			// This hack lets at least the object to be collected, although the window will stay in memory.
+			dockableContent.Closed += (s2, e2) =>
+				{
+					var s = (DockableContent)s2;
+					s.Content = null;
+				};
+
 			dockableContent.ShowAsFloatingWindow(GameData.Data.MainWindow.Dock, true);
 		}
 	}
