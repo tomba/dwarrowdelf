@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client
 			if (TickStarting != null)
 				TickStarting();
 
-			GameData.Data.AddTickMessage();
+			GameData.Data.AddTickGameEvent();
 		}
 
 		public event Action TickStarting;

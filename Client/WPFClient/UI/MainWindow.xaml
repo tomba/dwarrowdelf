@@ -441,13 +441,13 @@
                 <!-- Console -->
                 <ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
 
-                    <ad:DockableContent Name="messagesContent" Title="Messages">
-                        <ListBox ItemsSource="{Binding Messages,Mode=OneWay}" SelectionMode="Single" local:ListBoxExtenders.AutoScrollToEnd="True"
+                    <ad:DockableContent Name="eventsContent" Title="Events">
+                        <ListBox ItemsSource="{Binding GameEvents,Mode=OneWay}" SelectionMode="Single" local:ListBoxExtenders.AutoScrollToEnd="True"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
                                  SelectionChanged="MessageListBox_SelectionChanged">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding}" TextWrapping="WrapWithOverflow" />
+                                    <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>

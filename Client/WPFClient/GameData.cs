@@ -19,29 +19,22 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	// XXX we need a wrapper for the string, so that ListBox manages to scroll the last item into view.
-	// otherwise listbox will compare the strings, and scroll to first occurance of the string...
-	class GameInformMessage
+	class GameEvent
 	{
-		string m_str;
+		public string Message { get; private set; }
 		public Environment Environment { get; private set; }
 		public IntPoint3D Location { get; private set; }
 
-		public GameInformMessage(string str)
+		public GameEvent(string str)
 		{
-			m_str = str;
+			this.Message = str;
 		}
 
-		public GameInformMessage(string str, Environment env, IntPoint3D location)
+		public GameEvent(string str, Environment env, IntPoint3D location)
 		{
-			m_str = str;
+			this.Message = str;
 			this.Environment = env;
 			this.Location = location;
-		}
-
-		public override string ToString()
-		{
-			return m_str;
 		}
 	}
 
@@ -53,62 +46,62 @@ namespace Dwarrowdelf.Client
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
-			m_messages = new ObservableCollection<GameInformMessage>();
-			this.Messages = new ReadOnlyObservableCollection<GameInformMessage>(m_messages);
+			m_gameEvents = new ObservableCollection<GameEvent>();
+			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
 		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
-		bool m_previousWasTickMessage = true;
+		bool m_previousWasTickEvent = true;
 
-		public void AddMessage(Environment env, IntPoint3D location, string format, params object[] args)
+		public void AddGameEvent(Environment env, IntPoint3D location, string format, params object[] args)
 		{
-			AddMessageInternal(env, location, String.Format(format, args));
-			m_previousWasTickMessage = false;
+			AddGameEventInternal(env, location, String.Format(format, args));
+			m_previousWasTickEvent = false;
 		}
 
-		public void AddMessage(Environment env, IntPoint3D location, string message)
+		public void AddGameEvent(Environment env, IntPoint3D location, string message)
 		{
-			AddMessageInternal(env, location, message);
-			m_previousWasTickMessage = false;
+			AddGameEventInternal(env, location, message);
+			m_previousWasTickEvent = false;
 		}
 
-		public void AddMessage(GameObject ob, string format, params object[] args)
+		public void AddGameEvent(GameObject ob, string format, params object[] args)
 		{
-			AddMessageInternal(ob.Environment, ob.Location, String.Format(format, args));
-			m_previousWasTickMessage = false;
+			AddGameEventInternal(ob.Environment, ob.Location, String.Format(format, args));
+			m_previousWasTickEvent = false;
 		}
 
-		public void AddMessage(GameObject ob, string message)
+		public void AddGameEvent(GameObject ob, string message)
 		{
-			AddMessageInternal(ob.Environment, ob.Location, message);
-			m_previousWasTickMessage = false;
+			AddGameEventInternal(ob.Environment, ob.Location, message);
+			m_previousWasTickEvent = false;
 		}
 
-		public void AddTickMessage()
+		public void AddTickGameEvent()
 		{
-			if (m_previousWasTickMessage)
+			if (m_previousWasTickEvent)
 				return;
 
-			AddMessageInternal(null, new IntPoint3D(), "---");
+			AddGameEventInternal(null, new IntPoint3D(), "---");
 
-			m_previousWasTickMessage = true;
+			m_previousWasTickEvent = true;
 		}
 
-		void AddMessageInternal(Environment env, IntPoint3D location, string message)
+		void AddGameEventInternal(Environment env, IntPoint3D location, string message)
 		{
-			if (m_messages.Count > 100)
-				m_messages.RemoveAt(0);
+			if (m_gameEvents.Count > 100)
+				m_gameEvents.RemoveAt(0);
 
 			//Trace.TraceInformation(message);
 
-			m_messages.Add(new GameInformMessage(message, env, location));
+			m_gameEvents.Add(new GameEvent(message, env, location));
 		}
 
-		ObservableCollection<GameInformMessage> m_messages;
-		public ReadOnlyObservableCollection<GameInformMessage> Messages { get; private set; }
+		ObservableCollection<GameEvent> m_gameEvents;
+		public ReadOnlyObservableCollection<GameEvent> GameEvents { get; private set; }
 
 		public ClientConnection Connection
 		{
