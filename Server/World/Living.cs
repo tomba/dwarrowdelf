@@ -348,6 +348,9 @@ namespace Dwarrowdelf.Server
 			{
 				Trace.TraceInformation("{0} dies", this);
 
+				var c = new DeathChange(this);
+				this.World.AddChange(c);
+
 				var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
 				builder.Name = this.Name ?? this.LivingInfo.Name;
 				var corpse = builder.Create(this.World);

@@ -391,4 +391,13 @@ namespace Dwarrowdelf
 			this.Damage = damage;
 		}
 	}
+
+	[Serializable]
+	public class DeathChange : ObjectChange
+	{
+		public DeathChange(IBaseGameObject ob)
+			: base(ob)
+		{
+		}
+	}
 }
