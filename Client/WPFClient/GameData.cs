@@ -24,10 +24,19 @@ namespace Dwarrowdelf.Client
 	class GameInformMessage
 	{
 		string m_str;
+		public Environment Environment { get; private set; }
+		public IntPoint3D Location { get; private set; }
 
 		public GameInformMessage(string str)
 		{
 			m_str = str;
+		}
+
+		public GameInformMessage(string str, Environment env, IntPoint3D location)
+		{
+			m_str = str;
+			this.Environment = env;
+			this.Location = location;
 		}
 
 		public override string ToString()
@@ -54,15 +63,27 @@ namespace Dwarrowdelf.Client
 
 		bool m_previousWasTickMessage = true;
 
-		public void AddMessage(string format, params object[] args)
+		public void AddMessage(Environment env, IntPoint3D location, string format, params object[] args)
 		{
-			AddMessageInternal(String.Format(format, args));
+			AddMessageInternal(env, location, String.Format(format, args));
 			m_previousWasTickMessage = false;
 		}
 
-		public void AddMessage(string message)
+		public void AddMessage(Environment env, IntPoint3D location, string message)
 		{
-			AddMessageInternal(message);
+			AddMessageInternal(env, location, message);
+			m_previousWasTickMessage = false;
+		}
+
+		public void AddMessage(GameObject ob, string format, params object[] args)
+		{
+			AddMessageInternal(ob.Environment, ob.Location, String.Format(format, args));
+			m_previousWasTickMessage = false;
+		}
+
+		public void AddMessage(GameObject ob, string message)
+		{
+			AddMessageInternal(ob.Environment, ob.Location, message);
 			m_previousWasTickMessage = false;
 		}
 
@@ -71,19 +92,19 @@ namespace Dwarrowdelf.Client
 			if (m_previousWasTickMessage)
 				return;
 
-			AddMessageInternal("---");
+			AddMessageInternal(null, new IntPoint3D(), "---");
 
 			m_previousWasTickMessage = true;
 		}
 
-		void AddMessageInternal(string message)
+		void AddMessageInternal(Environment env, IntPoint3D location, string message)
 		{
 			if (m_messages.Count > 100)
 				m_messages.RemoveAt(0);
 
 			//Trace.TraceInformation(message);
 
-			m_messages.Add(new GameInformMessage(message));
+			m_messages.Add(new GameInformMessage(message, env, location));
 		}
 
 		ObservableCollection<GameInformMessage> m_messages;

@@ -285,14 +285,14 @@ namespace Dwarrowdelf.Client
 				msg = String.Format("{0} misses {1}", aname, tname);
 			}
 
-			GameData.Data.AddMessage(msg);
+			GameData.Data.AddMessage(attacker, msg);
 		}
 
 		void HandleChange(DeathChange change)
 		{
 			var target = m_world.GetObject<Living>(change.ObjectID);
 
-			GameData.Data.AddMessage("{0} dies", target);
+			GameData.Data.AddMessage(target, "{0} dies", target);
 		}
 
 		void HandleChange(PropertyObjectChange change)

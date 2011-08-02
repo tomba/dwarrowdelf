@@ -402,13 +402,6 @@ namespace Dwarrowdelf.Client
 			base.OnMouseUp(e);
 		}
 
-		public void ZoomTo(Environment env, IntPoint3D p)
-		{
-			this.Environment = env;
-			this.Z = p.Z;
-			ScrollTo(new Point(p.X, p.Y));
-		}
-
 		public Point CenterPos
 		{
 			get { return m_mapControl.CenterPos; }
@@ -420,9 +413,19 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public void ScrollTo(Environment env, IntPoint3D p)
+		{
+			this.Environment = env;
+			this.Z = p.Z;
+			ScrollTo(new Point(p.X, p.Y));
+		}
+
 		void ScrollTo(Point target)
 		{
 			ScrollToDirection(new IntVector());
+
+			if (this.CenterPos == target)
+				return;
 
 			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
 			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
@@ -431,6 +434,9 @@ namespace Dwarrowdelf.Client
 		void ScrollTo(Point target, double targetTileSize)
 		{
 			ScrollToDirection(new IntVector());
+
+			if (this.CenterPos == target)
+				return;
 
 			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
 			anim.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);

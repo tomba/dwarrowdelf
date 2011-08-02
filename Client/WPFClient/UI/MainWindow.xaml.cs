@@ -219,7 +219,7 @@ namespace Dwarrowdelf.Client
 		{
 			Environment env = dst as Environment;
 
-			map.ZoomTo(env, loc);
+			map.ScrollTo(env, loc);
 
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = loc;
@@ -1025,7 +1025,7 @@ namespace Dwarrowdelf.Client
 
 			this.FollowObject = null;
 
-			map.ZoomTo(ob.Environment, ob.Location);
+			map.ScrollTo(ob.Environment, ob.Location);
 		}
 
 		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -1035,7 +1035,7 @@ namespace Dwarrowdelf.Client
 
 			this.FollowObject = null;
 
-			map.ZoomTo(ob.Environment, ob.Location);
+			map.ScrollTo(ob.Environment, ob.Location);
 		}
 
 		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -1044,6 +1044,19 @@ namespace Dwarrowdelf.Client
 			var ob = (GameObject)item.Content;
 
 			this.FollowObject = ob;
+		}
+
+		private void MessageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count != 1)
+				return;
+
+			var msg = (GameInformMessage)e.AddedItems[0];
+
+			if (msg.Environment == null)
+				return;
+
+			map.ScrollTo(msg.Environment, msg.Location);
 		}
 	}
 
