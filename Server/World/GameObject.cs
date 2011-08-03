@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Server
 
 			base.Destruct();
 		}
-				
+
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			if (visibility == ObjectVisibility.All)
@@ -110,12 +110,18 @@ namespace Dwarrowdelf.Server
 
 		public bool MoveTo(GameObject parent)
 		{
+			if (this.Parent == parent)
+				return true;
+
 			return MoveTo(parent, new IntPoint3D());
 		}
 
 		public bool MoveTo(GameObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
+
+			if (this.Parent == dst && this.Location == dstLoc)
+				return true;
 
 			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
@@ -135,6 +141,9 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.Parent == null)
 				return false;
+
+			if (this.Location == location)
+				return true;
 
 			if (this.Parent.OkToAddChild(this, location) == false)
 				return false;
