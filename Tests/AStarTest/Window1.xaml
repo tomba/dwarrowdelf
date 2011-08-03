@@ -4,14 +4,14 @@
 	xmlns:local="clr-namespace:AStarTest"
     xmlns:dd="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
  xmlns:sys="clr-namespace:System;assembly=mscorlib"
-   Title="Window1" Width="1280" Height="1024">
+   Title="Window1" Width="1024" Height="720">
 
     <Window.Resources>
         <ObjectDataProvider MethodName="GetValues"
                         ObjectType="{x:Type sys:Enum}"
                         x:Key="AlignmentValues">
             <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="dd:Positioning" />
+                <x:Type TypeName="dd:DirectionSet" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>

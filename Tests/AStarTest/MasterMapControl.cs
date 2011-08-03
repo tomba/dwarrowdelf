@@ -15,7 +15,6 @@ using System.Windows.Threading;
 using System.ComponentModel;
 
 using Dwarrowdelf;
-using Dwarrowdelf.Client;
 using AStarTest;
 using System.Diagnostics;
 
@@ -137,7 +136,7 @@ namespace AStarTest
 			set { m_map.Z = value; }
 		}
 
-		public int TileSize
+		public double TileSize
 		{
 			get { return m_map.TileSize; }
 			set
@@ -147,7 +146,7 @@ namespace AStarTest
 			}
 		}
 
-		public IntPoint CenterPos
+		public Point CenterPos
 		{
 			get { return m_map.CenterPos; }
 			set
@@ -159,7 +158,7 @@ namespace AStarTest
 
 		void CheckCanvas()
 		{
-			var p = m_map.MapLocationToScreenPoint(new IntPoint(0, -1));
+			var p = m_map.MapLocationToScreenPoint(new Point(-0.5, -0.5));
 
 			m_scaleTransform.ScaleX = m_map.TileSize;
 			m_scaleTransform.ScaleY = -m_map.TileSize;

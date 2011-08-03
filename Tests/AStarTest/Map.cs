@@ -23,9 +23,13 @@ namespace AStarTest
 
 	class Map : ArrayGrid3D<AStarMapTile>
 	{
+		public IntCuboid Bounds { get; private set; }
+
 		public Map(int width, int height, int depth)
 			: base(width, height, depth)
 		{
+			this.Bounds = new IntCuboid(0, 0, 0, width, height, depth);
+
 			for (int y = 0; y < 350; ++y)
 				SetBlocked(new IntPoint3D(5, y, 0), true);
 

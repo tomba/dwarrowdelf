@@ -20,6 +20,7 @@ using AStarTest;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Threading;
+using Dwarrowdelf.Client.TileControl;
 
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
@@ -31,7 +32,7 @@ using System.Threading;
  */
 namespace AStarTest
 {
-	class MapControl : MapControlBase<MapControlTile>, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
+	class MapControl : Dwarrowdelf.Client.TileControl.TileControlBase, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
 	{
 		public class TileInfo
 		{
@@ -58,8 +59,12 @@ namespace AStarTest
 
 		public event Action SomethingChanged;
 
+		RenderView m_renderView;
+
 		public MapControl()
 		{
+			this.SrcPos = this.DstPos = DirectionSet.Exact;
+
 			//this.UseLayoutRounding = false;
 
 			this.CurrentTileInfo = new TileInfo();
@@ -70,18 +75,23 @@ namespace AStarTest
 
 			m_map = new Map(MapWidth, MapHeight, MapDepth);
 
-			base.CenterPos = new IntPoint(10, 10);
 			ClearMap();
 		}
 
 		protected override void OnInitialized(EventArgs e)
 		{
+			m_renderView = new RenderView();
+
+			var renderer = new Renderer(m_renderView);
+
+			SetRenderer(renderer);
+
+			this.TileLayoutChanged += OnTileArrangementChanged;
+			this.AboutToRender += OnAboutToRender;
+
 			base.OnInitialized(e);
-			/*
-			m_from = new IntPoint(6, 0);
-			m_to = new IntPoint(4, 0);
-			DoAStar(m_from, m_to);
-			Application.Current.Shutdown();*/
+
+			base.CenterPos = new Point(10, 10);
 		}
 
 		void ClearMap()
@@ -89,32 +99,39 @@ namespace AStarTest
 			m_path = null;
 			m_result = null;
 			m_nodes = null;
-			InvalidateTiles();
+			InvalidateTileData();
 		}
 
-		protected override void UpdateTilesOverride(MapControlTile[,] tileArray)
+		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
 			if (SomethingChanged != null)
 				SomethingChanged();
 
-			for (int y = 0; y < this.Rows; ++y)
-			{
-				for (int x = 0; x < this.Columns; ++x)
-				{
-					var tile = tileArray[y, x];
+			m_renderView.SetGridSize(gridSize);
+		}
 
-					var ml = ScreenLocationToMapLocation(new IntPoint(x, y));
+		void OnAboutToRender()
+		{
+			var width = m_renderView.Width;
+			var height = m_renderView.Height;
+			var grid = m_renderView.Grid;
+
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					var tile = grid[y, x];
+
+					var _ml = ScreenLocationToMapLocation(new Point(x, y));
+					var ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 					UpdateTile(tile, ml);
 				}
 			}
 		}
 
-		protected void UpdateTile(UIElement _tile, IntPoint _ml)
+		void UpdateTile(RenderTileData tile, IntPoint3D ml)
 		{
-			MapControlTile tile = (MapControlTile)_tile;
-			IntPoint3D ml = new IntPoint3D(_ml, m_z);
-
 			tile.ClearTile();
 
 			if (!m_map.Bounds.Contains(ml))
@@ -154,8 +171,6 @@ namespace AStarTest
 					tile.Brush = Brushes.Red;
 				}
 			}
-
-			tile.InvalidateVisual();
 		}
 
 		public int Z
@@ -168,7 +183,7 @@ namespace AStarTest
 					return;
 
 				m_z = value;
-				InvalidateTiles();
+				InvalidateTileData();
 				var old = this.CurrentTileInfo.Location;
 				this.CurrentTileInfo.Location = new IntPoint3D(old.X, old.Y, m_z);
 				Notify("CurrentTileInfo");
@@ -177,8 +192,8 @@ namespace AStarTest
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			IntPoint _ml = ScreenPointToMapLocation(e.GetPosition(this));
-			IntPoint3D ml = new IntPoint3D(_ml, m_z);
+			var _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 			if (!m_map.Bounds.Contains(ml))
 			{
@@ -205,16 +220,21 @@ namespace AStarTest
 			{
 				m_removing = m_map.GetBlocked(ml);
 				m_map.SetBlocked(ml, !m_removing);
-				InvalidateTiles();
+				InvalidateTileData();
 			}
+		}
+
+		IntPoint PointToIntPoint(Point p)
+		{
+			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
 
-			IntPoint _ml = ScreenPointToMapLocation(e.GetPosition(this));
-			IntPoint3D ml = new IntPoint3D(_ml, m_z);
+			var _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 			if (this.CurrentTileInfo.Location != ml)
 			{
@@ -232,7 +252,7 @@ namespace AStarTest
 
 				m_map.SetBlocked(ml, !m_removing);
 
-				InvalidateTiles();
+				InvalidateTileData();
 			}
 		}
 
@@ -315,7 +335,7 @@ namespace AStarTest
 				if (AStarDone != null)
 					AStarDone(m_result);
 
-				InvalidateTiles();
+				InvalidateTileData();
 			}
 			else
 			{
@@ -354,7 +374,7 @@ namespace AStarTest
 							if (AStarDone != null)
 								AStarDone(m_result);
 
-							InvalidateTiles();
+							InvalidateTileData();
 						}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 		}
@@ -382,7 +402,7 @@ namespace AStarTest
 			Dispatcher.Invoke(new Action(delegate
 			{
 				m_nodes = nodes;
-				InvalidateTiles();
+				InvalidateTileData();
 				UpdateLayout();
 			}));
 
@@ -423,90 +443,5 @@ namespace AStarTest
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
-	}
-
-	class MapControlTile : UIElement
-	{
-		static Pen s_edgePen;
-
-		static MapControlTile()
-		{
-			s_edgePen = new Pen(Brushes.Gray, 1);
-			s_edgePen.Freeze();
-		}
-
-		public MapControlTile()
-		{
-			this.IsHitTestVisible = false;
-		}
-
-		public Brush Brush;
-		public int G;
-		public int H;
-		public Direction From;
-		public int Weight;
-		public Stairs Stairs;
-
-		public void ClearTile()
-		{
-			this.Brush = Brushes.Black;
-			this.G = 0;
-			this.H = 0;
-			this.From = Direction.None;
-			this.Weight = 0;
-			this.Stairs = Stairs.None;
-		}
-
-		protected override void OnRender(DrawingContext dc)
-		{
-			dc.DrawRectangle(this.Brush, s_edgePen, new Rect(this.RenderSize));
-
-			if (this.Stairs == Stairs.Down)
-			{
-				double tri = this.RenderSize.Width / 3;
-				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri, tri), new Point(tri * 2, this.RenderSize.Height / 2));
-				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri * 2, this.RenderSize.Height / 2), new Point(tri, tri * 2));
-			}
-			else if (this.Stairs == Stairs.Up)
-			{
-				double tri = this.RenderSize.Width / 3;
-				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri * 2, tri), new Point(tri, this.RenderSize.Height / 2));
-				dc.DrawLine(new Pen(Brushes.White, 2), new Point(tri, this.RenderSize.Height / 2), new Point(tri * 2, tri * 2));
-			}
-
-			if (this.RenderSize.Width < 32)
-				return;
-
-			if (From != Direction.None)
-			{
-				var iv = IntVector.FromDirection(From);
-				iv *= (int)Math.Round(this.RenderSize.Width / 3);
-				Point mp = new Point(this.RenderSize.Width / 2, this.RenderSize.Height / 2);
-				dc.DrawEllipse(Brushes.White, null, mp, 3, 3);
-				dc.DrawLine(new Pen(Brushes.White, 2), mp, mp + new Vector(iv.X, -iv.Y));
-			}
-
-			if (this.Weight != 0)
-			{
-				var ft = new FormattedText(this.Weight.ToString(), System.Globalization.CultureInfo.CurrentCulture,
-					FlowDirection.LeftToRight, new Typeface("Verdana"), 8, Brushes.White);
-				dc.DrawText(ft, new Point(this.RenderSize.Width - ft.Width - 2, 2));
-			}
-
-			if (G != 0 || H != 0)
-			{
-				var ft = new FormattedText(G.ToString(), System.Globalization.CultureInfo.CurrentCulture,
-					FlowDirection.LeftToRight, new Typeface("Verdana"), 8, Brushes.White);
-				dc.DrawText(ft, new Point(2, this.RenderSize.Height - ft.Height - 2));
-
-				ft = new FormattedText(H.ToString(), System.Globalization.CultureInfo.CurrentCulture,
-					FlowDirection.LeftToRight, new Typeface("Verdana"), 8, Brushes.White);
-				dc.DrawText(ft, new Point(this.RenderSize.Width - ft.Width - 2, this.RenderSize.Height - ft.Height - 2));
-
-				ft = new FormattedText((G + H).ToString(), System.Globalization.CultureInfo.CurrentCulture,
-					FlowDirection.LeftToRight, new Typeface("Verdana"), 8, Brushes.White);
-				dc.DrawText(ft, new Point(2, 2));
-			}
-		}
 	}
 }
