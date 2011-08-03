@@ -6,7 +6,7 @@
         WindowStyle="None"
         ShowInTaskbar="False"
         Title="LogOnDialog" Height="200" Width="200">
-    <Border BorderBrush="Gray" BorderThickness="4">
-        <Label Name="label" HorizontalAlignment="Center" VerticalAlignment="Center">Test</Label>
+    <Border BorderBrush="Gray" Background="LightCyan" BorderThickness="4" Padding="10">
+        <Label Name="label" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
     </Border>
 </Window>
