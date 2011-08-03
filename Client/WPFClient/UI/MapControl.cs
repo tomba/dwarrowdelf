@@ -33,7 +33,12 @@ namespace Dwarrowdelf.Client
 
 		bool IsD3D10Supported()
 		{
-			return false;
+			var os = System.Environment.OSVersion;
+
+			if (os.Version.Major >= 6)
+				return true;
+			else
+				return false;
 		}
 
 		protected override void OnInitialized(EventArgs e)
