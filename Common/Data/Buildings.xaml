@@ -5,25 +5,25 @@
 
     <BuildingInfo ID="Carpenter">
 
-        <BuildableItem ID="Chair">
-            <BuildableItemMaterialInfo ID="Log" Category="Wood" />
+        <BuildableItem ItemID="Chair">
+            <BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
         </BuildableItem>
 
-        <BuildableItem ID="Table">
-            <BuildableItemMaterialInfo ID="Log" Category="Wood" />
-            <BuildableItemMaterialInfo Category="Gem" />
+        <BuildableItem ItemID="Table">
+            <BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+            <BuildableItemMaterialInfo MaterialCategory="Gem" />
         </BuildableItem>
 
     </BuildingInfo>
 
     <BuildingInfo ID="Mason">
-        <BuildableItem ID="Chair">
-            <BuildableItemMaterialInfo ID="Rock" Category="Rock" />
+        <BuildableItem ItemID="Chair">
+            <BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
         </BuildableItem>
 
-        <BuildableItem ID="Table">
-            <BuildableItemMaterialInfo ID="Rock" Category="Rock" />
-            <BuildableItemMaterialInfo Category="Gem" />
+        <BuildableItem ItemID="Table">
+            <BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+            <BuildableItemMaterialInfo MaterialCategory="Gem" />
         </BuildableItem>
     </BuildingInfo>
 
