@@ -9,6 +9,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface IRenderer : IDisposable
 	{
+		// XXX this shouldn't be here. it forces the SymbolID stuff to the tilemap
 		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 
 		void Render(DrawingContext dc, Size renderSize, RenderContext ctx);
