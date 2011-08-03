@@ -58,9 +58,18 @@ namespace Dwarrowdelf.Server
 		public override void Destruct()
 		{
 			this.MoveTo(null);
+
+			if (this.Inventory.Count > 0)
+			{
+				Trace.TraceWarning("{0} contains items when being destructed", this);
+
+				foreach (var ob in this.Inventory.ToArray())
+					ob.Destruct();
+			}
+
 			base.Destruct();
 		}
-
+				
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			if (visibility == ObjectVisibility.All)
