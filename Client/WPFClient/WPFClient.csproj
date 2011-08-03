@@ -164,6 +164,7 @@
     <Compile Include="Designation.cs" />
     <Compile Include="IDrawableElement.cs" />
     <Compile Include="ClientSaveManager.cs" />
+    <Compile Include="ServerInAppDomain.cs" />
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>

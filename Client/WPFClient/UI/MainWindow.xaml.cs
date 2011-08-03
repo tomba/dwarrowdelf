@@ -26,20 +26,16 @@ namespace Dwarrowdelf.Client
 		DispatcherTimer m_timer;
 		ManualJobSource m_manualJobSource;
 
+		bool m_serverInAppDomain = true;
+
 		bool m_autoConnect = true;
 		bool m_autoEnterGame = true;
 
 		public MainWindow()
 		{
-			Application.Current.MainWindow = this;
-			//this.WindowState = WindowState.Maximized;
-
 			this.CurrentTileInfo = new TileInfo();
 
 			InitializeComponent();
-
-			//this.Width = 1024;
-			//this.Height = 600;
 
 			map.MouseDown += MapControl_MouseDown;
 
@@ -114,6 +110,9 @@ namespace Dwarrowdelf.Client
 			var p = (Win32.WindowPlacement)Properties.Settings.Default.MainWindowPlacement;
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
+
+			if (m_autoConnect)
+				Connect();
 		}
 
 		private void dockingManager_Loaded(object sender, RoutedEventArgs e)
@@ -124,12 +123,6 @@ namespace Dwarrowdelf.Client
 		public AvalonDock.DockingManager Dock { get { return dockingManager; } }
 
 		public MasterMapControl MapControl { get { return map; } }
-
-		public void OnServerStarted()
-		{
-			if (m_autoConnect)
-				Connect();
-		}
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
@@ -729,7 +722,10 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_logOnDialog == null)
 			{
+				this.IsEnabled = false;
+
 				m_logOnDialog = new LogOnDialog();
+				m_logOnDialog.Owner = this;
 				m_logOnDialog.SetText(text);
 				m_logOnDialog.Show();
 			}
@@ -745,6 +741,9 @@ namespace Dwarrowdelf.Client
 			{
 				m_logOnDialog.Close();
 				m_logOnDialog = null;
+
+				this.IsEnabled = true;
+				this.Focus();
 			}
 		}
 
@@ -797,8 +796,26 @@ namespace Dwarrowdelf.Client
 		}
 
 
+		ServerInAppDomain m_server;
 
 		void Connect()
+		{
+			if (m_serverInAppDomain)
+			{
+				SetLogOnText("Starting server");
+
+				m_server = new ServerInAppDomain();
+				m_server.Started += () => this.Dispatcher.BeginInvoke(new Action(OnServerStarted));
+				m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string>(SetLogOnText), str);
+				m_server.Start();
+			}
+			else
+			{
+				OnServerStarted();
+			}
+		}
+
+		void OnServerStarted()
 		{
 			var world = new World();
 			GameData.Data.World = world;
@@ -870,6 +887,12 @@ namespace Dwarrowdelf.Client
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
 
+			if (m_server != null)
+			{
+				m_server.Stop();
+				m_server = null;
+			}
+
 			if (m_closing)
 				Close();
 		}
@@ -879,6 +902,12 @@ namespace Dwarrowdelf.Client
 			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
+
+			if (m_server != null)
+			{
+				m_server.Stop();
+				m_server = null;
+			}
 		}
 
 
