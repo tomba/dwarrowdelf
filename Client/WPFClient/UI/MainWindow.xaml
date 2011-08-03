@@ -100,6 +100,12 @@
                 <Button Content="Set Terrains..." Command="local:ClientCommands.OpenSetTerrainDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-T</Button.ToolTip>
                 </Button>
+                <Button Content="Create Item..." Command="local:ClientCommands.OpenCreateItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
+                    <Button.ToolTip>Shortcut: Alt-C</Button.ToolTip>
+                </Button>
+                <Button Content="Create Living..." Command="local:ClientCommands.OpenCreateLivingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
+                    <Button.ToolTip>Shortcut: Alt-L</Button.ToolTip>
+                </Button>
             </ToolBar>
         </ToolBarTray>
 
