@@ -98,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\ConsoleDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ConstructBuildingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -163,6 +167,9 @@
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ConsoleDialog.xaml.cs">
+      <DependentUpon>ConsoleDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ConstructBuildingDialog.xaml.cs">
       <DependentUpon>ConstructBuildingDialog.xaml</DependentUpon>

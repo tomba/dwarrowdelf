@@ -1,0 +1,23 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.ConsoleDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Dwarrowdelf.Client"
+        FocusManager.FocusedElement="{Binding ElementName=inputTextBox}"
+        Title="ConsoleDialog" Height="400" Width="640"
+        DataContext="{x:Static local:GameData.Data}">
+    
+    <DockPanel IsEnabled="{Binding IsUserConnected}">
+        <local:HistoryTextBox DockPanel.Dock="Bottom" x:Name="inputTextBox" TextEntered="InputTextBox_TextEntered" FontFamily="Lucida Console" />
+
+        <ListBox ItemsSource="{Binding IPMessages,Mode=OneWay}" SelectionMode="Single" local:ListBoxExtenders.AutoScrollToEnd="True"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Text}" TextWrapping="WrapWithOverflow" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+    </DockPanel>
+    
+</Window>

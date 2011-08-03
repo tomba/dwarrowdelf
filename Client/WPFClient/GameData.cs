@@ -48,6 +48,9 @@ namespace Dwarrowdelf.Client
 			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
 			m_gameEvents = new ObservableCollection<GameEvent>();
 			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
+
+			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
+			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
 		}
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
@@ -103,6 +106,18 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<GameEvent> m_gameEvents;
 		public ReadOnlyObservableCollection<GameEvent> GameEvents { get; private set; }
 
+
+		public void AddIPMessage(Dwarrowdelf.Messages.IPOutputMessage msg)
+		{
+			if (m_ipMessages.Count > 100)
+				m_ipMessages.RemoveAt(0);
+
+			m_ipMessages.Add(msg);
+		}
+
+		ObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> m_ipMessages;
+		public ReadOnlyObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> IPMessages { get; private set; }
+
 		public ClientConnection Connection
 		{
 			get { return (ClientConnection)GetValue(ConnectionProperty); }
@@ -120,7 +135,17 @@ namespace Dwarrowdelf.Client
 		}
 
 		public static readonly DependencyProperty UserProperty =
-			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null));
+			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null, (o, v) => { GameData.Data.IsUserConnected = v.NewValue != null; }));
+
+
+		public bool IsUserConnected
+		{
+			get { return (bool)GetValue(IsUserConnectedProperty); }
+			set { SetValue(IsUserConnectedProperty, value); }
+		}
+
+		public static readonly DependencyProperty IsUserConnectedProperty =
+			DependencyProperty.Register("IsUserConnected", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
 
 
 

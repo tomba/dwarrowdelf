@@ -51,6 +51,7 @@ namespace Dwarrowdelf.Client
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenSetTerrainDialogCommand, OpenSetTerrainHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateItemDialogCommand, OpenCreateItemHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateLivingDialogCommand, OpenCreateLivingHandler));
+			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler));
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -403,6 +404,13 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		void OpenConsoleHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var dialog = new UI.ConsoleDialog();
+			dialog.Owner = this;
+			dialog.Show();
+		}
+
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
 		{
 			GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
@@ -479,12 +487,6 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			if (inputTextBox.IsFocused)
-			{
-				base.OnPreviewKeyDown(e);
-				return;
-			}
-
 			e.Handled = true;
 
 			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
@@ -553,12 +555,6 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnPreviewTextInput(TextCompositionEventArgs e)
 		{
-			if (inputTextBox.IsFocused)
-			{
-				base.OnPreviewTextInput(e);
-				return;
-			}
-
 			string text = e.Text;
 
 			e.Handled = true;
@@ -851,6 +847,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
+				GameData.Data.User = null;
 				SetLogOnText("Logging Out");
 				GameData.Data.Connection.SendLogOut();
 			}
@@ -858,6 +855,8 @@ namespace Dwarrowdelf.Client
 
 		void OnGameSaved()
 		{
+			GameData.Data.User = null;
+
 			ClientSaveManager.SaveEvent -= OnGameSaved;
 
 			SetLogOnText("Logging Out");
@@ -937,18 +936,6 @@ namespace Dwarrowdelf.Client
 		private void currentObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
 		{
 			currentObjectComboBox.SelectedItem = null;
-		}
-
-		private void TextBox_PreviewKeyDown(string str)
-		{
-			if (GameData.Data.User == null)
-			{
-				outputTextBox.AppendText("** not connected **\n");
-				return;
-			}
-
-			var msg = new IPCommandMessage() { Text = str };
-			GameData.Data.Connection.Send(msg);
 		}
 
 		private void Button_Click_GC(object sender, RoutedEventArgs e)

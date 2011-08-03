@@ -188,8 +188,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(IPOutputMessage msg)
 		{
-			App.MainWindow.outputTextBox.AppendText(msg.Text);
-			App.MainWindow.outputTextBox.ScrollToEnd();
+			GameData.Data.AddIPMessage(msg);
 		}
 
 		void HandleMessage(ChangeMessage msg)

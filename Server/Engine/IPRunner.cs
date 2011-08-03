@@ -73,6 +73,10 @@ namespace Dwarrowdelf.Server
 				var text = System.Text.Encoding.Unicode.GetString(m_stream.GetBuffer(), 0, (int)m_stream.Position);
 				m_stream.Position = 0;
 				m_stream.SetLength(0);
+
+				if (text == "\r\n")
+					return;
+
 				var msg = new Messages.IPOutputMessage() { Text = text };
 				m_sender(msg);
 			}
