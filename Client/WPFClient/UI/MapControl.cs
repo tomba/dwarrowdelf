@@ -31,22 +31,44 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
+		bool IsD3D10Supported()
+		{
+			return false;
+		}
+
 		protected override void OnInitialized(EventArgs e)
 		{
-#if USE_WPF
-#if DETAILED
-			var renderView = new RenderViewDetailed();
-			var renderer = new TileControl.RendererDetailedWPF(renderView.RenderData);
-			//var renderer = new TileControl.RendererD3D(renderView.RenderData);
-#else
-			var renderView = new RenderViewSimple();
-			var renderer = new TileControl.RendererSimpleWPF(renderView.RenderData);
-#endif
-#else
-			var renderView = new RenderViewDetailed();
-			var renderer = new TileControl.RendererD3D();
-			renderer.RenderData = renderView.RenderData;
-#endif
+			TileControl.IRenderer renderer;
+			IRenderView renderView;
+
+			if (IsD3D10Supported())
+			{
+				var renderViewDetailed = new RenderViewDetailed();
+				var rendererD3D = new TileControl.RendererD3D();
+				rendererD3D.RenderData = renderViewDetailed.RenderData;
+
+				renderer = rendererD3D;
+				renderView = renderViewDetailed;
+			}
+			else
+			{
+				bool detailed = true;
+
+				if (detailed)
+				{
+					var renderViewDetailed = new RenderViewDetailed();
+					renderer = new TileControl.RendererDetailedWPF(renderViewDetailed.RenderData);
+
+					renderView = renderViewDetailed;
+				}
+				else
+				{
+					var renderViewSimple = new RenderViewSimple();
+					renderer = new TileControl.RendererSimpleWPF(renderViewSimple.RenderData);
+
+					renderView = renderViewSimple;
+				}
+			}
 
 			m_renderView = renderView;
 
