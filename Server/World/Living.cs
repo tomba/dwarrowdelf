@@ -340,30 +340,33 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void ReceiveDamage(Living attacker, DamageCategory cat, int damage)
+		public void ReceiveDamage(Living attacker, DamageCategory cat, int damage)
 		{
 			this.HitPoints -= damage;
 
 			if (this.HitPoints <= 0)
-			{
-				Trace.TraceInformation("{0} dies", this);
+				Die();
+		}
 
-				var c = new DeathChange(this);
-				this.World.AddChange(c);
+		public void Die()
+		{
+			Trace.TraceInformation("{0} dies", this);
 
-				var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
-				builder.Name = this.Name ?? this.LivingInfo.Name;
-				var corpse = builder.Create(this.World);
-				bool ok = corpse.MoveTo(this.Environment, this.Location);
-				if (!ok)
-					Trace.TraceWarning("Failed to move corpse");
+			var c = new DeathChange(this);
+			this.World.AddChange(c);
 
-				// make a copy, as the collection will be modified
-				foreach (var item in this.Inventory.ToList())
-					item.MoveTo(this.Environment, this.Location);
+			var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
+			builder.Name = this.Name ?? this.LivingInfo.Name;
+			var corpse = builder.Create(this.World);
+			bool ok = corpse.MoveTo(this.Environment, this.Location);
+			if (!ok)
+				Trace.TraceWarning("Failed to move corpse");
 
-				this.Destruct();
-			}
+			// make a copy, as the collection will be modified
+			foreach (var item in this.Inventory.ToList())
+				item.MoveTo(this.Environment, this.Location);
+
+			this.Destruct();
 		}
 
 		// called during tick processing. the world state is not quite valid.
