@@ -201,6 +201,8 @@
     <Compile Include="UI\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\TileAreaInfo.cs" />
+    <Compile Include="UI\TileInfo.cs" />
     <Compile Include="UI\UIDictionary.xaml.cs">
       <DependentUpon>UIDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>

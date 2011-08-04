@@ -44,6 +44,8 @@ namespace Dwarrowdelf.Client
 		bool m_autoConnect = true;
 		bool m_autoEnterGame = true;
 
+		public TileInfo CurrentTileInfo { get; private set; }
+
 		public MainWindow()
 		{
 			this.CurrentTileInfo = new TileInfo();
@@ -385,9 +387,6 @@ namespace Dwarrowdelf.Client
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = loc;
 		}
-
-		public TileInfo CurrentTileInfo { get; private set; }
-
 
 		void OpenConstructBuildingHandler(object sender, ExecutedRoutedEventArgs e)
 		{
@@ -1128,6 +1127,33 @@ namespace Dwarrowdelf.Client
 				return;
 
 			map.ScrollTo(msg.Environment, msg.Location);
+		}
+	}
+
+
+
+	public class ListConverter<T> : IValueConverter
+	{
+		Func<T, string> m_converter;
+
+		public ListConverter(Func<T, string> itemConverter)
+		{
+			m_converter = itemConverter;
+		}
+
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (value == null)
+				return "";
+
+			var list = (IEnumerable<T>)value;
+
+			return String.Join(", ", list.Select(item => m_converter(item)));
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
 		}
 	}
 
