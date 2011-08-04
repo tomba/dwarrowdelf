@@ -8,7 +8,7 @@
         WindowStyle="SingleBorderWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        x:Name="wnd">
+        DataContext="{Binding RelativeSource={RelativeSource Self},Path=Data}">
 
     <Window.Resources>
         <Style TargetType="Button">
@@ -25,30 +25,30 @@
         </StackPanel>
 
         <UniformGrid DockPanel.Dock="Bottom">
-            <CheckBox IsThreeState="True" IsChecked="{Binding Grass,ElementName=wnd}">Grass</CheckBox>
-            <CheckBox IsThreeState="True" IsChecked="{Binding Water,ElementName=wnd}">Water</CheckBox>
+            <CheckBox IsThreeState="True" IsChecked="{Binding Grass}">Grass</CheckBox>
+            <CheckBox IsThreeState="True" IsChecked="{Binding Water}">Water</CheckBox>
         </UniformGrid>
 
         <UniformGrid Columns="4">
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainID" />
-                <ListBox Name="terrainIDListBox" SelectionMode="Single" SelectedValue="{Binding TerrainID,ElementName=wnd}" />
+                <ListBox Name="terrainIDListBox" SelectionMode="Single" SelectedValue="{Binding TerrainID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainMaterial" />
-                <ListBox Name="terrainMaterialListBox" SelectionMode="Single" SelectedValue="{Binding TerrainMaterialID,ElementName=wnd}" />
+                <ListBox Name="terrainMaterialListBox" SelectionMode="Single" SelectedValue="{Binding TerrainMaterialID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorID" />
-                <ListBox Name="interiorIDListBox" SelectionMode="Single" SelectedValue="{Binding InteriorID,ElementName=wnd}" />
+                <ListBox Name="interiorIDListBox" SelectionMode="Single" SelectedValue="{Binding InteriorID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorMaterial" />
-                <ListBox Name="interiorMaterialListBox" SelectionMode="Single" SelectedValue="{Binding InteriorMaterialID,ElementName=wnd}" />
+                <ListBox Name="interiorMaterialListBox" SelectionMode="Single" SelectedValue="{Binding InteriorMaterialID}" />
             </StackPanel>
 
         </UniformGrid>

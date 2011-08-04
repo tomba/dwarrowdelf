@@ -99,6 +99,8 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		SetTerrainData m_setTerrainData;
+
 		void MapControl_GotSelection(MapSelection selection)
 		{
 			var env = this.Map;
@@ -121,21 +123,25 @@ namespace Dwarrowdelf.Client
 					{
 						var dialog = new SetTerrainDialog();
 						dialog.Owner = this;
-						dialog.SetContext(env, selection.SelectionCuboid);
+						if (m_setTerrainData != null)
+							dialog.Data = m_setTerrainData;
 						var res = dialog.ShowDialog();
 
 						if (res == true)
 						{
+							var data = dialog.Data;
+							m_setTerrainData = data;
+
 							GameData.Data.Connection.Send(new SetTilesMessage()
 							{
 								MapID = map.Environment.ObjectID,
 								Cube = map.Selection.SelectionCuboid,
-								TerrainID = dialog.TerrainID,
-								TerrainMaterialID = dialog.TerrainMaterialID,
-								InteriorID = dialog.InteriorID,
-								InteriorMaterialID = dialog.InteriorMaterialID,
-								Grass = dialog.Grass,
-								WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
+								TerrainID = data.TerrainID,
+								TerrainMaterialID = data.TerrainMaterialID,
+								InteriorID = data.InteriorID,
+								InteriorMaterialID = data.InteriorMaterialID,
+								Grass = data.Grass,
+								WaterLevel = data.Water.HasValue ? (data.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
 							});
 						}
 					}

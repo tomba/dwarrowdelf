@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
-	partial class SetTerrainDialog : Window
+	class SetTerrainData
 	{
 		public TerrainID? TerrainID { get; set; }
 		public MaterialID? TerrainMaterialID { get; set; }
@@ -23,7 +23,10 @@ namespace Dwarrowdelf.Client
 
 		public bool? Water { get; set; }
 		public bool? Grass { get; set; }
+	}
 
+	partial class SetTerrainDialog : Window
+	{
 		public SetTerrainDialog()
 		{
 			InitializeComponent();
@@ -40,13 +43,18 @@ namespace Dwarrowdelf.Client
 			base.OnInitialized(e);
 		}
 
-		public void SetContext(Environment env, IntCuboid area)
-		{
-		}
-
 		private void OkButton_Click(object sender, RoutedEventArgs e)
 		{
 			this.DialogResult = true;
 		}
+
+		public SetTerrainData Data
+		{
+			get { return (SetTerrainData)GetValue(UserProperty); }
+			set { SetValue(UserProperty, value); }
+		}
+
+		public static readonly DependencyProperty UserProperty =
+			DependencyProperty.Register("Data", typeof(SetTerrainData), typeof(SetTerrainDialog), new PropertyMetadata(new SetTerrainData()));
 	}
 }
