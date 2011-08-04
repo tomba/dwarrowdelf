@@ -320,6 +320,7 @@
                                 </StackPanel>
 
                                 <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
                             </DockPanel>
 
                         </ad:DockableContent>

@@ -72,11 +72,11 @@ namespace Dwarrowdelf.Client
 				switch (m_toolMode)
 				{
 					case Client.ToolMode.Info:
-						this.MapControl.SelectionMode = SelectionMode.None;
+						this.MapControl.SelectionMode = UI.MapSelectionMode.None;
 						break;
 
 					case Client.ToolMode.CreateItem:
-						this.MapControl.SelectionMode = SelectionMode.Point;
+						this.MapControl.SelectionMode = UI.MapSelectionMode.Point;
 						break;
 
 					case Client.ToolMode.DesignationMine:
@@ -84,11 +84,11 @@ namespace Dwarrowdelf.Client
 					case Client.ToolMode.DesignationRemove:
 					case Client.ToolMode.SetTerrain:
 					case Client.ToolMode.CreateLiving:
-						this.MapControl.SelectionMode = SelectionMode.Cuboid;
+						this.MapControl.SelectionMode = UI.MapSelectionMode.Cuboid;
 						break;
 
 					case Client.ToolMode.CreateStockpile:
-						this.MapControl.SelectionMode = SelectionMode.Rectangle;
+						this.MapControl.SelectionMode = UI.MapSelectionMode.Rectangle;
 						break;
 
 					default:

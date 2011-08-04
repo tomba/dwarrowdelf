@@ -20,13 +20,6 @@ using System.Windows.Media.Animation;
 
 namespace Dwarrowdelf.Client
 {
-	enum SelectionMode
-	{
-		None,
-		Point,
-		Rectangle,
-		Cuboid,
-	}
 
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
@@ -39,9 +32,6 @@ namespace Dwarrowdelf.Client
 		public UI.HoverTileInfo HoverTileInfo { get; private set; }
 
 		MapControl m_mapControl;
-
-		MapSelection m_selection;
-		Rectangle m_selectionRect;
 
 		Canvas m_canvas;
 		Canvas m_elementCanvas;
@@ -59,6 +49,9 @@ namespace Dwarrowdelf.Client
 		IntVector m_scrollVector;
 
 		Dwarrowdelf.Client.UI.MapControlToolTipService m_toolTipService;
+		Dwarrowdelf.Client.UI.MapControlSelectionService m_selectionService;
+
+		public event Action<MapSelection> GotSelection;
 
 		public MasterMapControl()
 		{
@@ -98,15 +91,6 @@ namespace Dwarrowdelf.Client
 			m_canvas = new Canvas();
 			grid.Children.Add(m_canvas);
 
-			m_selectionRect = new Rectangle();
-			m_selectionRect.Visibility = Visibility.Hidden;
-			m_selectionRect.Stroke = Brushes.Blue;
-			m_selectionRect.StrokeThickness = 1;
-			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
-			m_selectionRect.Fill.Opacity = 0.2;
-			m_selectionRect.Fill.Freeze();
-			m_canvas.Children.Add(m_selectionRect);
-
 			this.TileSize = 16;
 
 			{
@@ -121,6 +105,11 @@ namespace Dwarrowdelf.Client
 
 			m_toolTipService = new UI.MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
+
+			m_selectionService = new UI.MapControlSelectionService(m_mapControl, m_canvas);
+			m_selectionService.RequestScroll += v => ScrollToDirection(v);
+			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
+			m_selectionService.SelectionChanged += OnSelectionChanged;
 
 			this.HoverTileInfo = new UI.HoverTileInfo(m_mapControl);
 		}
@@ -257,18 +246,8 @@ namespace Dwarrowdelf.Client
 		// Called when underlying MapControl changes (tile positioning, tile size)
 		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
-			var pos = Mouse.GetPosition(this);
-
 			UpdateTranslateTransform();
 			UpdateScaleTransform();
-			if (this.IsMouseCaptured)
-			{
-				UpdateSelection(pos);
-			}
-			else
-			{
-				UpdateSelectionRect();
-			}
 		}
 
 		void UpdateTranslateTransform()
@@ -284,180 +263,38 @@ namespace Dwarrowdelf.Client
 			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
 		}
 
-		SelectionMode m_selectionMode;
-		public SelectionMode SelectionMode
+		public UI.MapSelectionMode SelectionMode
 		{
-			get { return m_selectionMode; }
-			set { m_selectionMode = value; }
+			get { return m_selectionService.SelectionMode; }
+			set { m_selectionService.SelectionMode = value; }
 		}
 
 		public MapSelection Selection
 		{
-			get
-			{
-				return m_selection;
-			}
-
-			set
-			{
-				if (m_selection.IsSelectionValid == value.IsSelectionValid &&
-					m_selection.SelectionStart == value.SelectionStart &&
-					m_selection.SelectionEnd == value.SelectionEnd)
-					return;
-
-				m_selection = value;
-
-				if (!m_selection.IsSelectionValid)
-				{
-					this.SelectedTileAreaInfo.Environment = null;
-				}
-				else
-				{
-					this.SelectedTileAreaInfo.Environment = this.Environment;
-					this.SelectedTileAreaInfo.Selection = this.Selection;
-				}
-
-				UpdateSelectionRect();
-
-				Notify("Selection");
-			}
+			get { return m_selectionService.Selection; }
+			set { m_selectionService.Selection = value; }
 		}
 
-		void UpdateSelection(Point mousePos)
+		void OnSelectionChanged(MapSelection selection)
 		{
-			IntPoint3D start;
-
-			var end = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
-
-			switch (m_selectionMode)
+			if (!selection.IsSelectionValid)
 			{
-				case Client.SelectionMode.Point:
-					start = end;
-					break;
-
-				case Client.SelectionMode.Rectangle:
-					start = new IntPoint3D(this.Selection.SelectionStart.ToIntPoint(), this.Z);
-					break;
-
-				case Client.SelectionMode.Cuboid:
-					start = this.Selection.SelectionStart;
-					break;
-
-				default:
-					throw new Exception();
+				this.SelectedTileAreaInfo.Environment = null;
+			}
+			else
+			{
+				this.SelectedTileAreaInfo.Environment = this.Environment;
+				this.SelectedTileAreaInfo.Selection = this.Selection;
 			}
 
-			this.Selection = new MapSelection(start, end);
+			Notify("Selection");
 		}
 
-		void UpdateSelectionRect()
+		protected override void OnGotMouseCapture(MouseEventArgs e)
 		{
-			if (!this.Selection.IsSelectionValid)
-			{
-				m_selectionRect.Visibility = Visibility.Hidden;
-				return;
-			}
-
-			if (this.Selection.SelectionCuboid.Z1 > this.Z || this.Selection.SelectionCuboid.Z2 - 1 < this.Z)
-			{
-				m_selectionRect.Visibility = Visibility.Hidden;
-				return;
-			}
-
-			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
-			ir = ir.Inflate(1, 1);
-
-			var r = m_mapControl.MapRectToScreenPointRect(ir);
-
-			Canvas.SetLeft(m_selectionRect, r.Left);
-			Canvas.SetTop(m_selectionRect, r.Top);
-			m_selectionRect.Width = r.Width;
-			m_selectionRect.Height = r.Height;
-
-			m_selectionRect.Visibility = Visibility.Visible;
-		}
-
-		protected override void OnMouseDown(MouseButtonEventArgs e)
-		{
-			if (e.LeftButton != MouseButtonState.Pressed)
-			{
-				base.OnMouseDown(e);
-				return;
-			}
-
-			if (this.SelectionMode == Client.SelectionMode.None)
-				return;
-
-			Point pos = e.GetPosition(this);
-			var ml = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
-
-			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
-			{
-				this.Selection = new MapSelection();
-				return;
-			}
-
-			this.Selection = new MapSelection(ml, ml);
-
-			CaptureMouse();
-
 			m_toolTipService.IsToolTipEnabled = false;
-
-			e.Handled = true;
-
-			base.OnMouseDown(e);
+			base.OnGotMouseCapture(e);
 		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			if (m_mapControl == null)
-				return;
-
-			var pos = e.GetPosition(this);
-
-			if (!IsMouseCaptured)
-			{
-				base.OnMouseMove(e);
-				return;
-			}
-
-			int limit = 4;
-			int speed = 1;
-
-			int dx = 0;
-			int dy = 0;
-
-			if (this.ActualWidth - pos.X < limit)
-				dx = speed;
-			else if (pos.X < limit)
-				dx = -speed;
-
-			if (this.ActualHeight - pos.Y < limit)
-				dy = -speed;
-			else if (pos.Y < limit)
-				dy = speed;
-
-			var v = new IntVector(dx, dy);
-			ScrollToDirection(v);
-
-			UpdateSelection(pos);
-
-			e.Handled = true;
-
-			base.OnMouseMove(e);
-		}
-
-		protected override void OnMouseUp(MouseButtonEventArgs e)
-		{
-			ReleaseMouseCapture();
-
-			if (this.GotSelection != null)
-				this.GotSelection(this.Selection);
-
-			base.OnMouseUp(e);
-		}
-
-		public event Action<MapSelection> GotSelection;
 
 		protected override void OnLostMouseCapture(MouseEventArgs e)
 		{
@@ -651,17 +488,6 @@ namespace Dwarrowdelf.Client
 					child.Visibility = System.Windows.Visibility.Hidden;
 				else
 					child.Visibility = System.Windows.Visibility.Visible;
-			}
-
-			Point pos = Mouse.GetPosition(this);
-
-			if (this.IsMouseCaptured)
-			{
-				UpdateSelection(pos);
-			}
-			else
-			{
-				UpdateSelectionRect();
 			}
 
 			Notify("Z");
