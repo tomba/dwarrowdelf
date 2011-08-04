@@ -495,7 +495,7 @@ namespace Dwarrowdelf.Client
 
 		void ScrollTo(Point target)
 		{
-			ScrollToDirection(new IntVector());
+			StopScrollToDir();
 
 			if (this.CenterPos == target)
 				return;
@@ -506,7 +506,7 @@ namespace Dwarrowdelf.Client
 
 		void ScrollTo(Point target, double targetTileSize)
 		{
-			ScrollToDirection(new IntVector());
+			StopScrollToDir();
 
 			if (this.CenterPos == target)
 				return;
@@ -521,18 +521,21 @@ namespace Dwarrowdelf.Client
 			if (vector == m_scrollVector)
 				return;
 
-			m_scrollVector = vector;
-
 			if (vector == new IntVector())
-				StopScroll();
+			{
+				StopScrollToDir();
+			}
 			else
-				BeginScroll(vector);
+			{
+				m_scrollVector = vector;
+				BeginScrollToDir();
+			}
 		}
 
-		void BeginScroll(IntVector vector)
+		void BeginScrollToDir()
 		{
 			int m = (int)(Math.Sqrt(MAXTILESIZE / this.TileSize) * 32);
-			var v = vector * m;
+			var v = m_scrollVector * m;
 
 			var cp = this.CenterPos + new Vector(v.X, v.Y);
 
@@ -540,16 +543,20 @@ namespace Dwarrowdelf.Client
 			anim.Completed += (o, args) =>
 			{
 				if (m_scrollVector != new IntVector())
-					BeginScroll(m_scrollVector);
+					BeginScrollToDir();
 			};
 			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		void StopScroll()
+		void StopScrollToDir()
 		{
-			var cp = this.CenterPos;
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
-			this.CenterPos = cp;
+			if (m_scrollVector != new IntVector())
+			{
+				m_scrollVector = new IntVector();
+				var cp = this.CenterPos;
+				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
+				this.CenterPos = cp;
+			}
 		}
 
 		public bool ShowVirtualSymbols
