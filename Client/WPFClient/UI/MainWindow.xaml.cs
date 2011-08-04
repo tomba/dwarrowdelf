@@ -16,6 +16,7 @@ using System.ComponentModel;
 using Dwarrowdelf.Messages;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
+using Dwarrowdelf.Client.UI;
 
 namespace Dwarrowdelf.Client
 {
@@ -72,11 +73,11 @@ namespace Dwarrowdelf.Client
 				switch (m_toolMode)
 				{
 					case Client.ToolMode.Info:
-						this.MapControl.SelectionMode = UI.MapSelectionMode.None;
+						this.MapControl.SelectionMode = MapSelectionMode.None;
 						break;
 
 					case Client.ToolMode.CreateItem:
-						this.MapControl.SelectionMode = UI.MapSelectionMode.Point;
+						this.MapControl.SelectionMode = MapSelectionMode.Point;
 						break;
 
 					case Client.ToolMode.DesignationMine:
@@ -84,11 +85,11 @@ namespace Dwarrowdelf.Client
 					case Client.ToolMode.DesignationRemove:
 					case Client.ToolMode.SetTerrain:
 					case Client.ToolMode.CreateLiving:
-						this.MapControl.SelectionMode = UI.MapSelectionMode.Cuboid;
+						this.MapControl.SelectionMode = MapSelectionMode.Cuboid;
 						break;
 
 					case Client.ToolMode.CreateStockpile:
-						this.MapControl.SelectionMode = UI.MapSelectionMode.Rectangle;
+						this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 						break;
 
 					default:
@@ -432,7 +433,7 @@ namespace Dwarrowdelf.Client
 
 		void OpenConsoleHandler(object sender, ExecutedRoutedEventArgs e)
 		{
-			var dialog = new UI.ConsoleDialog();
+			var dialog = new ConsoleDialog();
 			dialog.Owner = this;
 			dialog.Show();
 		}

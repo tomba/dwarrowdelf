@@ -255,4 +255,70 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.MouseMove -= OnMouseMove;
 		}
 	}
+
+	struct MapSelection
+	{
+		public MapSelection(IntPoint3D start, IntPoint3D end)
+			: this()
+		{
+			this.SelectionStart = start;
+			this.SelectionEnd = end;
+			this.IsSelectionValid = true;
+		}
+
+		public MapSelection(IntCuboid cuboid)
+			: this()
+		{
+			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
+			{
+				this.IsSelectionValid = false;
+			}
+			else
+			{
+				this.SelectionStart = cuboid.Corner1;
+				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
+				this.IsSelectionValid = true;
+			}
+		}
+
+		public bool IsSelectionValid { get; set; }
+		public IntPoint3D SelectionStart { get; set; }
+		public IntPoint3D SelectionEnd { get; set; }
+
+		public IntPoint3D SelectionPoint
+		{
+			get
+			{
+				if (this.SelectionStart != this.SelectionEnd)
+					throw new Exception();
+
+				return this.SelectionStart;
+			}
+		}
+
+		public IntCuboid SelectionCuboid
+		{
+			get
+			{
+				if (!this.IsSelectionValid)
+					return new IntCuboid();
+
+				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
+			}
+		}
+
+		public IntRectZ SelectionIntRectZ
+		{
+			get
+			{
+				if (!this.IsSelectionValid)
+					return new IntRectZ();
+
+				if (this.SelectionStart.Z != this.SelectionEnd.Z)
+					throw new Exception();
+
+				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z).Inflate(1, 1);
+			}
+		}
+	}
 }

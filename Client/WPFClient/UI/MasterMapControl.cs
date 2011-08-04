@@ -17,6 +17,7 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Media.Animation;
+using Dwarrowdelf.Client.UI;
 
 namespace Dwarrowdelf.Client
 {
@@ -29,7 +30,7 @@ namespace Dwarrowdelf.Client
 		World m_world;
 		Environment m_env;
 
-		public UI.HoverTileInfo HoverTileInfo { get; private set; }
+		public HoverTileInfo HoverTileInfo { get; private set; }
 
 		MapControl m_mapControl;
 
@@ -48,8 +49,8 @@ namespace Dwarrowdelf.Client
 		double? m_targetTileSize;
 		IntVector m_scrollVector;
 
-		Dwarrowdelf.Client.UI.MapControlToolTipService m_toolTipService;
-		Dwarrowdelf.Client.UI.MapControlSelectionService m_selectionService;
+		MapControlToolTipService m_toolTipService;
+		MapControlSelectionService m_selectionService;
 
 		public event Action<MapSelection> GotSelection;
 
@@ -103,15 +104,15 @@ namespace Dwarrowdelf.Client
 				propDesc.AddValueChanged(m_mapControl, OnZChanged);
 			}
 
-			m_toolTipService = new UI.MapControlToolTipService(m_mapControl);
+			m_toolTipService = new MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
 
-			m_selectionService = new UI.MapControlSelectionService(m_mapControl, m_canvas);
+			m_selectionService = new MapControlSelectionService(m_mapControl, m_canvas);
 			m_selectionService.RequestScroll += v => ScrollToDirection(v);
 			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 			m_selectionService.SelectionChanged += OnSelectionChanged;
 
-			this.HoverTileInfo = new UI.HoverTileInfo(m_mapControl);
+			this.HoverTileInfo = new HoverTileInfo(m_mapControl);
 		}
 
 		public void InvalidateTiles()
@@ -263,7 +264,7 @@ namespace Dwarrowdelf.Client
 			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
 		}
 
-		public UI.MapSelectionMode SelectionMode
+		public MapSelectionMode SelectionMode
 		{
 			get { return m_selectionService.SelectionMode; }
 			set { m_selectionService.SelectionMode = value; }
@@ -616,74 +617,6 @@ namespace Dwarrowdelf.Client
 		#endregion
 	}
 
-
-
-
-	struct MapSelection
-	{
-		public MapSelection(IntPoint3D start, IntPoint3D end)
-			: this()
-		{
-			this.SelectionStart = start;
-			this.SelectionEnd = end;
-			this.IsSelectionValid = true;
-		}
-
-		public MapSelection(IntCuboid cuboid)
-			: this()
-		{
-			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
-			{
-				this.IsSelectionValid = false;
-			}
-			else
-			{
-				this.SelectionStart = cuboid.Corner1;
-				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
-				this.IsSelectionValid = true;
-			}
-		}
-
-		public bool IsSelectionValid { get; set; }
-		public IntPoint3D SelectionStart { get; set; }
-		public IntPoint3D SelectionEnd { get; set; }
-
-		public IntPoint3D SelectionPoint
-		{
-			get
-			{
-				if (this.SelectionStart != this.SelectionEnd)
-					throw new Exception();
-
-				return this.SelectionStart;
-			}
-		}
-
-		public IntCuboid SelectionCuboid
-		{
-			get
-			{
-				if (!this.IsSelectionValid)
-					return new IntCuboid();
-
-				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
-			}
-		}
-
-		public IntRectZ SelectionIntRectZ
-		{
-			get
-			{
-				if (!this.IsSelectionValid)
-					return new IntRectZ();
-
-				if (this.SelectionStart.Z != this.SelectionEnd.Z)
-					throw new Exception();
-
-				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z).Inflate(1, 1);
-			}
-		}
-	}
 
 
 
