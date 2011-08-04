@@ -59,8 +59,6 @@ namespace Dwarrowdelf.Client
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 
 			CreateToolTip();
-
-			this.LostMouseCapture += OnLostMouseCapture;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -476,9 +474,16 @@ namespace Dwarrowdelf.Client
 			base.OnMouseUp(e);
 		}
 
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
+		protected override void OnMouseLeave(MouseEventArgs e)
+		{
+			CloseToolTip();
+			base.OnMouseLeave(e);
+		}
+
+		protected override void OnLostMouseCapture(MouseEventArgs e)
 		{
 			StopScrollToDir();
+			base.OnLostMouseCapture(e);
 		}
 
 		public Point CenterPos
