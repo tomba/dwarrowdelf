@@ -59,6 +59,8 @@ namespace Dwarrowdelf.Client
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 
 			CreateToolTip();
+
+			this.LostMouseCapture += OnLostMouseCapture;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -442,24 +444,23 @@ namespace Dwarrowdelf.Client
 			}
 
 			int limit = 4;
-			var cx = m_mapControl.CenterPos.X;
-			var cy = m_mapControl.CenterPos.Y;
+			int speed = 1;
 
-			int incX = 4;
-			int incY = 4;
+			int dx = 0;
+			int dy = 0;
 
 			if (this.ActualWidth - pos.X < limit)
-				cx += incX;
+				dx = speed;
 			else if (pos.X < limit)
-				cx -= incX;
+				dx = -speed;
 
 			if (this.ActualHeight - pos.Y < limit)
-				cy -= incY;
+				dy = -speed;
 			else if (pos.Y < limit)
-				cy += incY;
+				dy = speed;
 
-			if (cx != m_mapControl.CenterPos.X || cy != m_mapControl.CenterPos.Y)
-				m_mapControl.CenterPos = new Point(Math.Round(cx), Math.Round(cy));
+			var v = new IntVector(dx, dy);
+			ScrollToDirection(v);
 
 			UpdateSelection(pos);
 
@@ -473,6 +474,11 @@ namespace Dwarrowdelf.Client
 			ReleaseMouseCapture();
 
 			base.OnMouseUp(e);
+		}
+
+		void OnLostMouseCapture(object sender, MouseEventArgs e)
+		{
+			StopScrollToDir();
 		}
 
 		public Point CenterPos
