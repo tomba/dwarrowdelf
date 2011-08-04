@@ -58,8 +58,7 @@ namespace Dwarrowdelf.Client
 		double? m_targetTileSize;
 		IntVector m_scrollVector;
 
-		IntPoint3D? m_tooltipMapLocation;
-		ToolTip m_toolTip;
+		Dwarrowdelf.Client.UI.MapControlToolTipService m_toolTipService;
 
 		public MasterMapControl()
 		{
@@ -67,8 +66,6 @@ namespace Dwarrowdelf.Client
 
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
-
-			CreateToolTip();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -122,6 +119,9 @@ namespace Dwarrowdelf.Client
 				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
 				propDesc.AddValueChanged(m_mapControl, OnZChanged);
 			}
+
+			m_toolTipService = new UI.MapControlToolTipService(m_mapControl);
+			m_toolTipService.IsToolTipEnabled = true;
 		}
 
 		public void InvalidateTiles()
@@ -267,7 +267,6 @@ namespace Dwarrowdelf.Client
 			else
 			{
 				UpdateSelectionRect();
-				UpdateToolTip(pos);
 			}
 			UpdateHoverTileInfo(pos);
 		}
@@ -351,13 +350,6 @@ namespace Dwarrowdelf.Client
 			this.Selection = new MapSelection(start, end);
 		}
 
-		Rect MapRectToScreenPointRect(IntRect ir)
-		{
-			Rect r = new Rect(MapLocationToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
-				new Size(ir.Width * m_mapControl.TileSize, ir.Height * m_mapControl.TileSize));
-			return r;
-		}
-
 		void UpdateSelectionRect()
 		{
 			if (!this.Selection.IsSelectionValid)
@@ -375,7 +367,7 @@ namespace Dwarrowdelf.Client
 			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
 			ir = ir.Inflate(1, 1);
 
-			var r = MapRectToScreenPointRect(ir);
+			var r = m_mapControl.MapRectToScreenPointRect(ir);
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);
@@ -383,55 +375,6 @@ namespace Dwarrowdelf.Client
 			m_selectionRect.Height = r.Height;
 
 			m_selectionRect.Visibility = Visibility.Visible;
-		}
-
-		void CreateToolTip()
-		{
-			var toolTipContent = new UI.ObjectInfoControl();
-			var tt = new ToolTip();
-			tt.Content = toolTipContent;
-			tt.IsOpen = false;
-			tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-			tt.PlacementTarget = this;
-			tt.DataContext = null;
-			m_toolTip = tt;
-		}
-
-		void UpdateToolTip(Point mousePos)
-		{
-			if (this.Environment == null)
-			{
-				CloseToolTip();
-				return;
-			}
-
-			var ml = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
-
-			var ob = this.Environment.GetFirstObject(ml);
-
-			if (ob != null)
-			{
-				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
-				{
-					m_toolTip.DataContext = ob;
-
-					var rect = MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
-					m_toolTip.PlacementRectangle = rect;
-
-					m_toolTip.IsOpen = true;
-					m_tooltipMapLocation = ml;
-				}
-			}
-			else
-			{
-				CloseToolTip();
-			}
-		}
-
-		void CloseToolTip()
-		{
-			m_toolTip.IsOpen = false;
-			m_tooltipMapLocation = null;
 		}
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -458,7 +401,7 @@ namespace Dwarrowdelf.Client
 
 			CaptureMouse();
 
-			CloseToolTip();
+			m_toolTipService.IsToolTipEnabled = false;
 
 			e.Handled = true;
 
@@ -476,8 +419,6 @@ namespace Dwarrowdelf.Client
 
 			if (!IsMouseCaptured)
 			{
-				UpdateToolTip(pos);
-
 				base.OnMouseMove(e);
 				return;
 			}
@@ -518,16 +459,11 @@ namespace Dwarrowdelf.Client
 			base.OnMouseUp(e);
 		}
 
-		protected override void OnMouseLeave(MouseEventArgs e)
-		{
-			CloseToolTip();
-			base.OnMouseLeave(e);
-		}
-
 		public event Action<MapSelection> GotSelection;
 
 		protected override void OnLostMouseCapture(MouseEventArgs e)
 		{
+			m_toolTipService.IsToolTipEnabled = true;
 			StopScrollToDir();
 			base.OnLostMouseCapture(e);
 		}
@@ -728,7 +664,6 @@ namespace Dwarrowdelf.Client
 			else
 			{
 				UpdateSelectionRect();
-				UpdateToolTip(pos);
 			}
 
 			Notify("Z");
