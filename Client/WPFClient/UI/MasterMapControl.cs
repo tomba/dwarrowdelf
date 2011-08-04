@@ -50,10 +50,15 @@ namespace Dwarrowdelf.Client
 		double? m_targetTileSize;
 		IntVector m_scrollVector;
 
+		IntPoint3D? m_tooltipMapLocation;
+		ToolTip m_toolTip;
+
 		public MasterMapControl()
 		{
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
+
+			CreateToolTip();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -241,10 +246,20 @@ namespace Dwarrowdelf.Client
 		// Called when underlying MapControl changes (tile positioning, tile size)
 		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
+			var pos = Mouse.GetPosition(this);
+
 			UpdateTranslateTransform();
 			UpdateScaleTransform();
-			UpdateSelectionRect();
-			UpdateHoverTileInfo(Mouse.GetPosition(this));
+			if (this.IsMouseCaptured)
+			{
+				UpdateSelection(pos);
+			}
+			else
+			{
+				UpdateSelectionRect();
+				UpdateToolTip(pos);
+			}
+			UpdateHoverTileInfo(pos);
 		}
 
 		void UpdateTranslateTransform()
@@ -292,6 +307,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		void UpdateSelection(Point mousePos)
+		{
+			var newEnd = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
+			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
+		}
+
 		Rect MapRectToScreenPointRect(IntRect ir)
 		{
 			Rect r = new Rect(MapLocationToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
@@ -326,6 +347,55 @@ namespace Dwarrowdelf.Client
 			m_selectionRect.Visibility = Visibility.Visible;
 		}
 
+		void CreateToolTip()
+		{
+			var toolTipContent = new UI.ObjectInfoControl();
+			var tt = new ToolTip();
+			tt.Content = toolTipContent;
+			tt.IsOpen = false;
+			tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+			tt.PlacementTarget = this;
+			tt.DataContext = null;
+			m_toolTip = tt;
+		}
+
+		void UpdateToolTip(Point mousePos)
+		{
+			if (this.Environment == null)
+			{
+				CloseToolTip();
+				return;
+			}
+
+			var ml = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
+
+			var ob = this.Environment.GetFirstObject(ml);
+
+			if (ob != null)
+			{
+				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
+				{
+					m_toolTip.DataContext = ob;
+
+					var rect = MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
+					m_toolTip.PlacementRectangle = rect;
+
+					m_toolTip.IsOpen = true;
+					m_tooltipMapLocation = ml;
+				}
+			}
+			else
+			{
+				CloseToolTip();
+			}
+		}
+
+		void CloseToolTip()
+		{
+			m_toolTip.IsOpen = false;
+			m_tooltipMapLocation = null;
+		}
+
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			if (e.LeftButton != MouseButtonState.Pressed)
@@ -347,6 +417,8 @@ namespace Dwarrowdelf.Client
 
 			CaptureMouse();
 
+			CloseToolTip();
+
 			e.Handled = true;
 
 			base.OnMouseDown(e);
@@ -357,15 +429,17 @@ namespace Dwarrowdelf.Client
 			if (m_mapControl == null)
 				return;
 
-			UpdateHoverTileInfo(e.GetPosition(this));
+			var pos = e.GetPosition(this);
+
+			UpdateHoverTileInfo(pos);
 
 			if (!IsMouseCaptured)
 			{
+				UpdateToolTip(pos);
+
 				base.OnMouseMove(e);
 				return;
 			}
-
-			Point pos = e.GetPosition(this);
 
 			int limit = 4;
 			var cx = m_mapControl.CenterPos.X;
@@ -387,8 +461,7 @@ namespace Dwarrowdelf.Client
 			if (cx != m_mapControl.CenterPos.X || cy != m_mapControl.CenterPos.Y)
 				m_mapControl.CenterPos = new Point(Math.Round(cx), Math.Round(cy));
 
-			var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
-			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
+			UpdateSelection(pos);
 
 			e.Handled = true;
 
@@ -582,16 +655,20 @@ namespace Dwarrowdelf.Client
 					child.Visibility = System.Windows.Visibility.Visible;
 			}
 
+			Point pos = Mouse.GetPosition(this);
+
 			if (this.IsMouseCaptured)
 			{
-				Point pos = Mouse.GetPosition(this);
-				var newEnd = new IntPoint3D(ScreenPointToMapLocation(pos), z);
-				Selection = new MapSelection(Selection.SelectionStart, newEnd);
+				UpdateSelection(pos);
 			}
-			UpdateSelectionRect();
+			else
+			{
+				UpdateSelectionRect();
+				UpdateToolTip(pos);
+			}
 
 			Notify("Z");
-			UpdateHoverTileInfo(Mouse.GetPosition(this));
+			UpdateHoverTileInfo(pos);
 		}
 
 		void AddElement(IDrawableElement element)
