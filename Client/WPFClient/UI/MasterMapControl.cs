@@ -20,6 +20,14 @@ using System.Windows.Media.Animation;
 
 namespace Dwarrowdelf.Client
 {
+	enum SelectionMode
+	{
+		None,
+		Point,
+		Rectangle,
+		Cuboid,
+	}
+
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
@@ -275,6 +283,13 @@ namespace Dwarrowdelf.Client
 			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
 		}
 
+		SelectionMode m_selectionMode;
+		public SelectionMode SelectionMode
+		{
+			get { return m_selectionMode; }
+			set { m_selectionMode = value; }
+		}
+
 		public MapSelection Selection
 		{
 			get
@@ -309,8 +324,29 @@ namespace Dwarrowdelf.Client
 
 		void UpdateSelection(Point mousePos)
 		{
-			var newEnd = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
-			this.Selection = new MapSelection(this.Selection.SelectionStart, newEnd);
+			IntPoint3D start;
+
+			var end = new IntPoint3D(ScreenPointToMapLocation(mousePos), this.Z);
+
+			switch (m_selectionMode)
+			{
+				case Client.SelectionMode.Point:
+					start = end;
+					break;
+
+				case Client.SelectionMode.Rectangle:
+					start = new IntPoint3D(this.Selection.SelectionStart.ToIntPoint(), this.Z);
+					break;
+
+				case Client.SelectionMode.Cuboid:
+					start = this.Selection.SelectionStart;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			this.Selection = new MapSelection(start, end);
 		}
 
 		Rect MapRectToScreenPointRect(IntRect ir)
@@ -404,6 +440,9 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
+			if (this.SelectionMode == Client.SelectionMode.None)
+				return;
+
 			Point pos = e.GetPosition(this);
 			var ml = new IntPoint3D(ScreenPointToMapLocation(pos), this.Z);
 
@@ -471,6 +510,9 @@ namespace Dwarrowdelf.Client
 		{
 			ReleaseMouseCapture();
 
+			if (this.GotSelection != null)
+				this.GotSelection(this.Selection);
+
 			base.OnMouseUp(e);
 		}
 
@@ -479,6 +521,8 @@ namespace Dwarrowdelf.Client
 			CloseToolTip();
 			base.OnMouseLeave(e);
 		}
+
+		public event Action<MapSelection> GotSelection;
 
 		protected override void OnLostMouseCapture(MouseEventArgs e)
 		{
@@ -860,6 +904,17 @@ namespace Dwarrowdelf.Client
 		public IntPoint3D SelectionStart { get; set; }
 		public IntPoint3D SelectionEnd { get; set; }
 
+		public IntPoint3D SelectionPoint
+		{
+			get
+			{
+				if (this.SelectionStart != this.SelectionEnd)
+					throw new Exception();
+
+				return this.SelectionStart;
+			}
+		}
+
 		public IntCuboid SelectionCuboid
 		{
 			get
@@ -879,7 +934,7 @@ namespace Dwarrowdelf.Client
 					return new IntRectZ();
 
 				if (this.SelectionStart.Z != this.SelectionEnd.Z)
-					return new IntRectZ();
+					throw new Exception();
 
 				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z).Inflate(1, 1);
 			}

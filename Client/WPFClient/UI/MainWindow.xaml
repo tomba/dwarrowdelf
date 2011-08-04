@@ -81,9 +81,6 @@
                     AutoAdvanceTurn
                 </ToggleButton>
                 <Separator />
-                <Button Content="Stockpile..." Command="local:ClientCommands.OpenStockpileDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-S</Button.ToolTip>
-                </Button>
                 <Separator />
                 <Button Content="Add Build Item..." Command="local:ClientCommands.OpenBuildItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
@@ -93,19 +90,9 @@
                     <Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
                 </Button>
                 <Separator />
-                <Button Content="Designate..." Command="local:ClientCommands.OpenDesignateDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-D</Button.ToolTip>
-                </Button>
-                <Separator />
-                <Button Content="Set Terrains..." Command="local:ClientCommands.OpenSetTerrainDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-T</Button.ToolTip>
-                </Button>
-                <Button Content="Create Item..." Command="local:ClientCommands.OpenCreateItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-C</Button.ToolTip>
-                </Button>
-                <Button Content="Create Living..." Command="local:ClientCommands.OpenCreateLivingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-L</Button.ToolTip>
-                </Button>
+
+                <Label>Tool</Label>
+                <ComboBox x:Name="toolModeComboBox" Width="100" SelectedValue="{Binding ToolMode, ElementName=mainWindow}" Focusable="False" />
             </ToolBar>
         </ToolBarTray>
 

@@ -19,6 +19,18 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	enum ToolMode
+	{
+		Info,
+		DesignationRemove,
+		DesignationMine,
+		DesignationFellTree,
+		SetTerrain,
+		CreateStockpile,
+		CreateItem,
+		CreateLiving,
+	}
+
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		GameObject m_followObject;
@@ -35,19 +47,165 @@ namespace Dwarrowdelf.Client
 		{
 			this.CurrentTileInfo = new TileInfo();
 
+			m_toolMode = Client.ToolMode.Info;
+
 			InitializeComponent();
 
 			map.MouseDown += MapControl_MouseDown;
 
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenStockpileDialogCommand, OpenStockpileHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenDesignateDialogCommand, OpenDesignateHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenSetTerrainDialogCommand, OpenSetTerrainHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateItemDialogCommand, OpenCreateItemHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenCreateLivingDialogCommand, OpenCreateLivingHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler));
+
+			this.MapControl.GotSelection += new Action<MapSelection>(MapControl_GotSelection);
+		}
+
+		ToolMode m_toolMode;
+		public ToolMode ToolMode
+		{
+			get { return m_toolMode; }
+			set
+			{
+				m_toolMode = value;
+
+				switch (m_toolMode)
+				{
+					case Client.ToolMode.Info:
+						this.MapControl.SelectionMode = SelectionMode.None;
+						break;
+
+					case Client.ToolMode.CreateItem:
+						this.MapControl.SelectionMode = SelectionMode.Point;
+						break;
+
+					case Client.ToolMode.DesignationMine:
+					case Client.ToolMode.DesignationFellTree:
+					case Client.ToolMode.DesignationRemove:
+					case Client.ToolMode.SetTerrain:
+					case Client.ToolMode.CreateLiving:
+						this.MapControl.SelectionMode = SelectionMode.Cuboid;
+						break;
+
+					case Client.ToolMode.CreateStockpile:
+						this.MapControl.SelectionMode = SelectionMode.Rectangle;
+						break;
+
+					default:
+						break;
+				}
+
+				Notify("ToolMode");
+			}
+		}
+
+		void MapControl_GotSelection(MapSelection selection)
+		{
+			var env = this.Map;
+
+			switch (m_toolMode)
+			{
+				case Client.ToolMode.DesignationRemove:
+					env.Designations.RemoveArea(selection.SelectionCuboid);
+					break;
+
+				case Client.ToolMode.DesignationMine:
+					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Mine);
+					break;
+
+				case Client.ToolMode.DesignationFellTree:
+					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.FellTree);
+					break;
+
+				case Client.ToolMode.SetTerrain:
+					{
+						var dialog = new SetTerrainDialog();
+						dialog.Owner = this;
+						dialog.SetContext(env, selection.SelectionCuboid);
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							GameData.Data.Connection.Send(new SetTilesMessage()
+							{
+								MapID = map.Environment.ObjectID,
+								Cube = map.Selection.SelectionCuboid,
+								TerrainID = dialog.TerrainID,
+								TerrainMaterialID = dialog.TerrainMaterialID,
+								InteriorID = dialog.InteriorID,
+								InteriorMaterialID = dialog.InteriorMaterialID,
+								Grass = dialog.Grass,
+								WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
+							});
+						}
+					}
+					break;
+
+				case Client.ToolMode.CreateStockpile:
+					{
+						var dialog = new StockpileDialog();
+						dialog.Owner = this;
+						dialog.SetContext(env, selection.SelectionIntRectZ);
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							var type = dialog.StockpileType;
+							var stockpile = new Stockpile(env, selection.SelectionIntRectZ, type);
+							env.AddStockpile(stockpile);
+						}
+					}
+					break;
+
+				case Client.ToolMode.CreateItem:
+					{
+						var dialog = new CreateItemDialog();
+						dialog.Owner = this;
+						dialog.SetContext(env, selection.SelectionPoint);
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							GameData.Data.Connection.Send(new CreateItemMessage()
+							{
+								ItemID = dialog.ItemID,
+								MaterialID = dialog.MaterialID,
+								EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
+								Location = dialog.Location,
+							});
+						}
+					}
+					break;
+
+				case Client.ToolMode.CreateLiving:
+					{
+						var dialog = new CreateLivingDialog();
+						dialog.Owner = this;
+						dialog.SetContext(env, selection.SelectionIntRectZ);
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							GameData.Data.Connection.Send(new CreateLivingMessage()
+							{
+								EnvironmentID = dialog.Environment.ObjectID,
+								Area = dialog.Area,
+
+								Name = dialog.LivingName,
+								LivingID = dialog.LivingID,
+
+								IsControllable = dialog.IsControllable,
+								IsHerd = dialog.IsHerd,
+							});
+						}
+					}
+					break;
+
+				default:
+					break;
+			}
+
+			this.MapControl.Selection = new MapSelection();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -61,6 +219,8 @@ namespace Dwarrowdelf.Client
 
 			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+
+			toolModeComboBox.ItemsSource = Enum.GetValues(typeof(ToolMode)).Cast<ToolMode>().OrderBy(id => id.ToString()).ToArray();
 		}
 
 		void PopulateMenus()
@@ -222,56 +382,6 @@ namespace Dwarrowdelf.Client
 		public TileInfo CurrentTileInfo { get; private set; }
 
 
-		void OpenStockpileHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var area = map.Selection.SelectionIntRectZ;
-			var env = map.Environment;
-
-			if (area.IsNull)
-				return;
-
-			var dialog = new StockpileDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				var type = dialog.StockpileType;
-				var stockpile = new Stockpile(env, area, type);
-				env.AddStockpile(stockpile);
-			}
-		}
-
-		void OpenDesignateHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var area = map.Selection.SelectionCuboid;
-			var env = map.Environment;
-
-			if (area.IsNull)
-				return;
-
-			var dialog = new DesignateDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				var type = dialog.DesignationType;
-
-
-				if (type == DesignationType.None)
-				{
-					env.Designations.RemoveArea(area);
-				}
-				else
-				{
-					env.Designations.AddArea(area, type);
-				}
-			}
-		}
-
 		void OpenConstructBuildingHandler(object sender, ExecutedRoutedEventArgs e)
 		{
 			var area = map.Selection.SelectionIntRectZ;
@@ -311,89 +421,6 @@ namespace Dwarrowdelf.Client
 			if (res == true)
 			{
 				building.AddBuildOrder(dialog.BuildableItem);
-			}
-		}
-
-		void OpenSetTerrainHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var area = map.Selection.SelectionCuboid;
-			var env = map.Environment;
-
-			if (area.IsNull)
-				return;
-
-			var dialog = new SetTerrainDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				GameData.Data.Connection.Send(new SetTilesMessage()
-				{
-					MapID = map.Environment.ObjectID,
-					Cube = map.Selection.SelectionCuboid,
-					TerrainID = dialog.TerrainID,
-					TerrainMaterialID = dialog.TerrainMaterialID,
-					InteriorID = dialog.InteriorID,
-					InteriorMaterialID = dialog.InteriorMaterialID,
-					Grass = dialog.Grass,
-					WaterLevel = dialog.Water.HasValue ? (dialog.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
-				});
-			}
-		}
-
-		void OpenCreateItemHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var env = map.Environment;
-
-			var area = map.Selection.SelectionCuboid;
-			if (area.IsNull)
-				return;
-
-			var dialog = new CreateItemDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area.Corner1);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				GameData.Data.Connection.Send(new CreateItemMessage()
-				{
-					ItemID = dialog.ItemID,
-					MaterialID = dialog.MaterialID,
-					EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
-					Location = dialog.Location,
-				});
-			}
-		}
-
-		void OpenCreateLivingHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var env = map.Environment;
-
-			var area = map.Selection.SelectionIntRectZ;
-			if (area.IsNull)
-				return;
-
-			var dialog = new CreateLivingDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				GameData.Data.Connection.Send(new CreateLivingMessage()
-				{
-					EnvironmentID = dialog.Environment.ObjectID,
-					Area = dialog.Area,
-
-					Name = dialog.LivingName,
-					LivingID = dialog.LivingID,
-
-					IsControllable = dialog.IsControllable,
-					IsHerd = dialog.IsHerd,
-				});
 			}
 		}
 
@@ -502,17 +529,33 @@ namespace Dwarrowdelf.Client
 			{
 				ClientCommands.OpenBuildItemDialogCommand.Execute(null, this);
 			}
-			else if (e.Key == Key.D)
+			else if (e.Key == Key.M)
 			{
-				ClientCommands.OpenDesignateDialogCommand.Execute(null, this);
+				this.ToolMode = Client.ToolMode.DesignationMine;
+			}
+			else if (e.Key == Key.R)
+			{
+				this.ToolMode = Client.ToolMode.DesignationRemove;
+			}
+			else if (e.Key == Key.F)
+			{
+				this.ToolMode = Client.ToolMode.DesignationFellTree;
 			}
 			else if (e.Key == Key.T)
 			{
-				ClientCommands.OpenSetTerrainDialogCommand.Execute(null, this);
+				this.ToolMode = Client.ToolMode.SetTerrain;
 			}
 			else if (e.Key == Key.S)
 			{
-				ClientCommands.OpenStockpileDialogCommand.Execute(null, this);
+				this.ToolMode = Client.ToolMode.CreateStockpile;
+			}
+			else if (e.Key == Key.L)
+			{
+				this.ToolMode = Client.ToolMode.CreateLiving;
+			}
+			else if (e.Key == Key.I)
+			{
+				this.ToolMode = Client.ToolMode.CreateItem;
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -521,6 +564,10 @@ namespace Dwarrowdelf.Client
 			else if (e.Key == Key.Subtract)
 			{
 				map.ZoomOut();
+			}
+			if (e.Key == Key.Escape)
+			{
+				this.ToolMode = Client.ToolMode.Info;
 			}
 			else
 			{
