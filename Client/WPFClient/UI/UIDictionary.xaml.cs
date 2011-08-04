@@ -16,16 +16,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var ob = (BaseGameObject)button.DataContext;
 
-			UserControl content;
-
-			if (ob is ItemObject)
-				content = new ItemInfoControl();
-			else if (ob is Living)
-				content = new LivingInfoControl();
-			else if (ob is BuildingObject)
-				content = new BuildingInfoControl();
-			else
-				throw new Exception();
+			var content = new ObjectInfoControl();
 
 			content.DataContext = ob;
 
