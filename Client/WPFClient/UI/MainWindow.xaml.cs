@@ -574,6 +574,7 @@ namespace Dwarrowdelf.Client
 			if (e.Key == Key.Escape)
 			{
 				this.ToolMode = Client.ToolMode.Info;
+				this.MapControl.Focus();
 			}
 			else
 			{

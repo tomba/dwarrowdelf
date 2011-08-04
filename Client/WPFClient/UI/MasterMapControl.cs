@@ -63,6 +63,8 @@ namespace Dwarrowdelf.Client
 
 		public MasterMapControl()
 		{
+			this.Focusable = true;
+
 			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 
