@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 		World m_world;
 		Environment m_env;
 
-		public HoverTileInfo HoverTileInfo { get; private set; }
+		public UI.HoverTileInfo HoverTileInfo { get; private set; }
 
 		MapControl m_mapControl;
 
@@ -64,7 +64,6 @@ namespace Dwarrowdelf.Client
 		{
 			this.Focusable = true;
 
-			this.HoverTileInfo = new HoverTileInfo();
 			this.SelectedTileAreaInfo = new TileAreaInfo();
 		}
 
@@ -122,6 +121,8 @@ namespace Dwarrowdelf.Client
 
 			m_toolTipService = new UI.MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
+
+			this.HoverTileInfo = new UI.HoverTileInfo(m_mapControl);
 		}
 
 		public void InvalidateTiles()
@@ -268,7 +269,6 @@ namespace Dwarrowdelf.Client
 			{
 				UpdateSelectionRect();
 			}
-			UpdateHoverTileInfo(pos);
 		}
 
 		void UpdateTranslateTransform()
@@ -414,8 +414,6 @@ namespace Dwarrowdelf.Client
 				return;
 
 			var pos = e.GetPosition(this);
-
-			UpdateHoverTileInfo(pos);
 
 			if (!IsMouseCaptured)
 			{
@@ -667,7 +665,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			Notify("Z");
-			UpdateHoverTileInfo(pos);
 		}
 
 		void AddElement(IDrawableElement element)
@@ -752,22 +749,6 @@ namespace Dwarrowdelf.Client
 
 
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
-
-		void UpdateHoverTileInfo(Point p)
-		{
-			var sl = ScreenPointToScreenLocation(p);
-			var ml = new IntPoint3D(ScreenPointToMapLocation(p), m_mapControl.Z);
-
-			if (p != this.HoverTileInfo.MousePos ||
-				sl != this.HoverTileInfo.ScreenLocation ||
-				ml != this.HoverTileInfo.MapLocation)
-			{
-				this.HoverTileInfo.MousePos = p;
-				this.HoverTileInfo.ScreenLocation = sl;
-				this.HoverTileInfo.MapLocation = ml;
-				Notify("HoverTileInfo");
-			}
-		}
 
 		public IntPoint ScreenPointToMapLocation(Point p)
 		{
@@ -882,13 +863,6 @@ namespace Dwarrowdelf.Client
 
 
 
-
-	class HoverTileInfo
-	{
-		public Point MousePos { get; set; }
-		public IntPoint3D MapLocation { get; set; }
-		public IntPoint ScreenLocation { get; set; }
-	}
 
 	class TileInfo : INotifyPropertyChanged
 	{

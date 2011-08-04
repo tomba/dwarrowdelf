@@ -269,6 +269,12 @@ namespace Dwarrowdelf.Client.TileControl
 			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
 		}
 
+		public IntPoint ScreenPointToIntScreenLocation(Point p)
+		{
+			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return new IntPoint((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
+		}
+
 		public Point ScreenLocationToScreenPoint(Point loc)
 		{
 			loc.Offset(0.5, 0.5);
