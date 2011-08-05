@@ -415,25 +415,6 @@ namespace Dwarrowdelf.Client
 			Notify("Z");
 		}
 
-
-
-		public IntPoint ScreenPointToMapLocation(Point p)
-		{
-			p = m_mapControl.ScreenPointToMapLocation(p);
-			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
-		}
-
-		Point MapLocationToScreenPoint(Point loc)
-		{
-			return m_mapControl.MapLocationToScreenPoint(loc);
-		}
-
-		IntPoint ScreenPointToScreenLocation(Point p)
-		{
-			p = m_mapControl.ScreenPointToScreenLocation(p);
-			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
-		}
-
 		void Notify(string name)
 		{
 			if (PropertyChanged != null)

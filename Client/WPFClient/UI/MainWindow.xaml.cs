@@ -54,8 +54,6 @@ namespace Dwarrowdelf.Client
 
 			InitializeComponent();
 
-			map.MouseDown += MapControl_MouseDown;
-
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
@@ -620,19 +618,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			base.OnPreviewTextInput(e);
-		}
-
-		void MapControl_MouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.RightButton == MouseButtonState.Pressed)
-			{
-				var ml = new IntPoint3D(map.ScreenPointToMapLocation(e.GetPosition(map)), map.Z);
-
-				if (map.Selection.SelectionCuboid.Contains(ml))
-					return;
-
-				map.Selection = new MapSelection(ml, ml);
-			}
 		}
 
 		internal Environment Map
