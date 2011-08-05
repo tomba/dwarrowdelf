@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Net.Sockets;
 
 namespace MemoryMappedLog
 {
@@ -45,6 +46,10 @@ namespace MemoryMappedLog
 		bool m_scrollToEnd = true;
 		int m_logIndex;
 		DateTime m_lastDateTime;
+
+		TcpClient m_tcpClient;
+		NetworkStream m_netStream;
+		StreamWriter m_netWriter;
 
 		public bool Halt { get; set; }
 
@@ -201,6 +206,12 @@ namespace MemoryMappedLog
 
 			m_debugCollection.Add(ve);
 
+			var str = String.Format("{0} | {1}: {2}", entry.DateTime, entry.Component, entry.Message);
+			m_logFile.WriteLine(str);
+
+			if (m_netWriter != null)
+				m_netWriter.WriteLine(str);
+
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
 
@@ -228,7 +239,11 @@ namespace MemoryMappedLog
 				m_debugCollection.Add(ve);
 				last = ve;
 
-				m_logFile.WriteLine(String.Format("{0} | {1}: {2}", e.DateTime, e.Component, e.Message));
+				var str = String.Format("{0} | {1}: {2}", e.DateTime, e.Component, e.Message);
+				m_logFile.WriteLine(str);
+
+				if (m_netWriter != null)
+					m_netWriter.WriteLine(str);
 			}
 
 			m_logFile.Flush();
@@ -296,6 +311,55 @@ namespace MemoryMappedLog
 				var last = m_debugCollection.LastOrDefault();
 				if (last != null)
 					logListView.ScrollIntoView(last);
+			}
+		}
+
+		private void ToggleButton_Checked(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				m_tcpClient = new TcpClient(addressTextBox.Text, 9999);
+				m_netStream = m_tcpClient.GetStream();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(String.Format("Failed to connect: {0}", ex.Message));
+
+				if (m_tcpClient != null)
+				{
+					m_tcpClient.Close();
+					m_tcpClient = null;
+				}
+
+				e.Handled = true;
+				connectButton.IsChecked = false;
+			}
+
+			m_netWriter = new StreamWriter(m_netStream);
+			m_netWriter.AutoFlush = true;
+
+			m_netWriter.WriteLine("Connected");
+		}
+
+		private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
+		{
+			if (m_netWriter != null)
+			{
+				m_netWriter.WriteLine("Disconnecting");
+				m_netWriter.Close();
+				m_netWriter = null;
+			}
+
+			if (m_netStream != null)
+			{
+				m_netStream.Close();
+				m_netStream = null;
+			}
+
+			if (m_tcpClient != null)
+			{
+				m_tcpClient.Close();
+				m_tcpClient = null;
 			}
 		}
 	}
