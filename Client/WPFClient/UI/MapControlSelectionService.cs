@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
 		public event Action<IntVector> RequestScroll;
-		
+
 		public MapControlSelectionService(MapControl mapControl, Canvas canvas)
 		{
 			m_canvas = canvas;
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client.UI
 				default:
 					throw new Exception();
 			}
-			
+
 			this.Selection = new MapSelection(start, end);
 		}
 
@@ -168,6 +168,59 @@ namespace Dwarrowdelf.Client.UI
 				UpdateSelectionRect();
 		}
 
+		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		{
+			var pos = Mouse.GetPosition(m_mapControl);
+
+			if (m_mapControl.IsMouseCaptured)
+				UpdateSelection(pos);
+
+			UpdateSelectionRect();
+		}
+
+		void OnMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton != MouseButton.Left)
+				return;
+
+			if (this.SelectionMode == MapSelectionMode.None)
+				return;
+
+			Point pos = e.GetPosition(m_mapControl);
+			var ml = m_mapControl.ScreenPointToMapLocation(pos);
+
+			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
+			{
+				this.Selection = new MapSelection();
+				return;
+			}
+
+			this.Selection = new MapSelection(ml, ml);
+
+			m_mapControl.CaptureMouse();
+		}
+
+		void OnMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton != MouseButton.Left || !m_mapControl.IsMouseCaptured)
+				return;
+
+			m_mapControl.ReleaseMouseCapture();
+
+			if (this.GotSelection != null)
+				this.GotSelection(this.Selection);
+		}
+
+		void OnGotMouseCapture(object sender, MouseEventArgs e)
+		{
+			m_mapControl.MouseMove += OnMouseMove;
+		}
+
+		void OnLostMouseCapture(object sender, MouseEventArgs e)
+		{
+			m_mapControl.MouseMove -= OnMouseMove;
+		}
+
 		void OnMouseMove(object sender, MouseEventArgs e)
 		{
 			var pos = e.GetPosition(m_mapControl);
@@ -194,56 +247,6 @@ namespace Dwarrowdelf.Client.UI
 				RequestScroll(v);
 
 			UpdateSelection(pos);
-		}
-
-		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
-		{
-			var pos = Mouse.GetPosition(m_mapControl);
-
-			if (m_mapControl.IsMouseCaptured)
-				UpdateSelection(pos);
-
-			UpdateSelectionRect();
-		}
-
-		void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.LeftButton != MouseButtonState.Pressed)
-				return;
-
-			if (this.SelectionMode == MapSelectionMode.None)
-				return;
-
-			Point pos = e.GetPosition(m_mapControl);
-			var ml = m_mapControl.ScreenPointToMapLocation(pos);
-
-			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
-			{
-				this.Selection = new MapSelection();
-				return;
-			}
-
-			this.Selection = new MapSelection(ml, ml);
-
-			m_mapControl.CaptureMouse();
-		}
-
-		void OnMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			m_mapControl.ReleaseMouseCapture();
-
-			if (this.GotSelection != null)
-				this.GotSelection(this.Selection);
-		}
-
-		void OnGotMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_mapControl.MouseMove += OnMouseMove;
-		}
-
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_mapControl.MouseMove -= OnMouseMove;
 		}
 	}
 

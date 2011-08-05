@@ -409,24 +409,11 @@
 
                     </ad:DockablePane>
 
+                    <!-- MAP -->
                     <ad:DocumentPane>
                         <ad:DocumentContent Title="Map">
 
-                            <local:MasterMapControl x:Name="map">
-                                <local:MasterMapControl.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Jobs">
-                                            <MenuItem Tag="Mine" Header="Mine" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="FellTree" Header="Fell Tree" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="MineArea" Header="Mine Area" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="Goto" Header="Go To" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="Loiter" Header="Loiter" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="Consume" Header="Consume" Click="MenuItem_Click_Job" />
-                                            <MenuItem Tag="Attack" Header="Attack" Click="MenuItem_Click_Job" />
-                                        </MenuItem>
-                                    </ContextMenu>
-                                </local:MasterMapControl.ContextMenu>
-                            </local:MasterMapControl>
+                            <local:MasterMapControl x:Name="map" />
 
                         </ad:DocumentContent>
                     </ad:DocumentPane>
