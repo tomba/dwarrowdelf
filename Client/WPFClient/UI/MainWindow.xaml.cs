@@ -64,11 +64,7 @@ namespace Dwarrowdelf.Client
 
 			InitializeComponent();
 
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
-
-			this.MapControl.GotSelection += new Action<MapSelection>(MapControl_GotSelection);
+			this.MapControl.GotSelection += MapControl_GotSelection;
 		}
 
 		public ToolMode ToolMode
@@ -392,53 +388,6 @@ namespace Dwarrowdelf.Client
 
 			this.CurrentTileInfo.Environment = env;
 			this.CurrentTileInfo.Location = loc;
-		}
-
-		void OpenConstructBuildingHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var area = map.Selection.SelectionIntRectZ;
-			var env = map.Environment;
-
-			if (area.IsNull)
-				return;
-
-			var dialog = new ConstructBuildingDialog();
-			dialog.Owner = this;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				var id = dialog.BuildingID;
-
-				env.CreateConstructionSite(id, area);
-			}
-		}
-
-		void OpenBuildItemHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var p = map.Selection.SelectionCuboid.Corner1;
-			var env = map.Environment;
-
-			var building = env.GetBuildingAt(p);
-
-			if (building == null)
-				return;
-
-			var dialog = new BuildItemDialog();
-			dialog.Owner = this;
-			dialog.SetContext(building);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				building.AddBuildOrder(dialog.BuildableItem);
-			}
-		}
-
-		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;
 		}
 
 		static Direction KeyToDir(Key key)
