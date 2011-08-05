@@ -27,7 +27,6 @@ namespace Dwarrowdelf.Client
 	/// </summary>
 	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		World m_world;
 		Environment m_env;
 
 		public HoverTileInfo HoverTileInfo { get; private set; }
@@ -443,19 +442,12 @@ namespace Dwarrowdelf.Client
 
 				if (m_env != null)
 				{
-					if (m_world != m_env.World)
-						m_world = m_env.World;
-
 					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
 					((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged += OnElementCollectionChanged;
 
 					m_mapControl.CenterPos = new Point(m_env.HomeLocation.X, m_env.HomeLocation.Y);
 					this.Z = m_env.HomeLocation.Z;
-				}
-				else
-				{
-					m_world = null;
 				}
 
 				this.Selection = new MapSelection();
@@ -468,7 +460,6 @@ namespace Dwarrowdelf.Client
 		public int Z
 		{
 			get { return m_mapControl.Z; }
-
 			set { m_mapControl.Z = value; }
 		}
 
