@@ -65,11 +65,7 @@ namespace Dwarrowdelf.Client.UI
 					m_mapControl.MouseUp += OnMouseUp;
 					m_mapControl.GotMouseCapture += OnGotMouseCapture;
 					m_mapControl.LostMouseCapture += OnLostMouseCapture;
-
-					{
-						var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-						propDesc.AddValueChanged(m_mapControl, OnZChanged);
-					}
+					m_mapControl.ZChanged += OnZChanged;
 				}
 				else
 				{
@@ -78,12 +74,7 @@ namespace Dwarrowdelf.Client.UI
 					m_mapControl.MouseUp -= OnMouseUp;
 					m_mapControl.GotMouseCapture -= OnGotMouseCapture;
 					m_mapControl.LostMouseCapture -= OnLostMouseCapture;
-
-					{
-						var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-						propDesc.RemoveValueChanged(m_mapControl, OnZChanged);
-					}
-
+					m_mapControl.ZChanged -= OnZChanged;
 				}
 
 				m_selectionMode = value;
@@ -167,7 +158,7 @@ namespace Dwarrowdelf.Client.UI
 			m_selectionRect.Visibility = Visibility.Visible;
 		}
 
-		void OnZChanged(object sender, EventArgs e)
+		void OnZChanged(int z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 

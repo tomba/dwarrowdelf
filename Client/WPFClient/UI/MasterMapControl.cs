@@ -75,6 +75,8 @@ namespace Dwarrowdelf.Client
 			grid.Children.Add(mc);
 			m_mapControl = mc;
 			m_mapControl.TileLayoutChanged += OnTileArrangementChanged;
+			m_mapControl.ZChanged += OnZChanged;
+			m_mapControl.CenterPosChanged += cp => Notify("CenterPos");
 
 			m_elementCanvas = new Canvas();
 			grid.Children.Add(m_elementCanvas);
@@ -94,16 +96,6 @@ namespace Dwarrowdelf.Client
 			grid.Children.Add(m_canvas);
 
 			this.TileSize = 16;
-
-			{
-				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.CenterPosProperty, typeof(MapControl));
-				propDesc.AddValueChanged(m_mapControl, delegate { Notify("CenterPos"); });
-			}
-
-			{
-				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-				propDesc.AddValueChanged(m_mapControl, OnZChanged);
-			}
 
 			m_toolTipService = new MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
@@ -480,10 +472,8 @@ namespace Dwarrowdelf.Client
 			set { m_mapControl.Z = value; }
 		}
 
-		void OnZChanged(object sender, EventArgs e)
+		void OnZChanged(int z)
 		{
-			var z = this.Z;
-
 			foreach (FrameworkElement child in m_elementCanvas.Children)
 			{
 				if (GetElementZ(child) != z)

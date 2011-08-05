@@ -22,8 +22,17 @@ namespace Dwarrowdelf.Client.TileControl
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
+		/// <summary>
+		/// Called before render if grid size, tilesize or centerpos have changed
+		/// </summary>
 		public event TileLayoutChangedDelegate TileLayoutChanged;
+
+		/// <summary>
+		/// Called before render if tile data has changed
+		/// </summary>
 		public event Action AboutToRender;
+
+		public event Action<Point> CenterPosChanged;
 
 		protected void SetRenderer(IRenderer renderer)
 		{
@@ -90,6 +99,9 @@ namespace Dwarrowdelf.Client.TileControl
 				tc.InvalidateTileData();
 
 			tc.UpdateTileLayout(tc.RenderSize);
+
+			if (tc.CenterPosChanged != null)
+				tc.CenterPosChanged(p);
 		}
 
 

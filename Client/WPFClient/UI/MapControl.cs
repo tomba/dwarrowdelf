@@ -26,6 +26,8 @@ namespace Dwarrowdelf.Client
 		IRenderView m_renderView;
 
 		Environment m_env;
+		public event Action<Environment> EnvironmentChanged;
+		public event Action<int> ZChanged;
 
 		public MapControl()
 		{
@@ -149,6 +151,9 @@ namespace Dwarrowdelf.Client
 
 				InvalidateTiles();
 
+				if (this.EnvironmentChanged != null)
+					this.EnvironmentChanged(value);
+
 				Notify("Environment");
 			}
 		}
@@ -185,6 +190,9 @@ namespace Dwarrowdelf.Client
 			mc.m_renderView.CenterPos = new IntPoint3D(p.X, p.Y, val);
 
 			mc.InvalidateTiles();
+
+			if (mc.ZChanged != null)
+				mc.ZChanged(val);
 		}
 
 

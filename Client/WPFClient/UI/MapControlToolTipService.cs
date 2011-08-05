@@ -38,22 +38,14 @@ namespace Dwarrowdelf.Client.UI
 					m_mapControl.MouseLeave += OnMouseLeave;
 					m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
 					m_mapControl.MouseMove += OnMouseMove;
-
-					{
-						var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-						propDesc.AddValueChanged(m_mapControl, OnZChanged);
-					}
+					m_mapControl.ZChanged += OnZChanged;
 				}
 				else
 				{
 					m_mapControl.MouseLeave -= OnMouseLeave;
 					m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
 					m_mapControl.MouseMove -= OnMouseMove;
-
-					{
-						var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-						propDesc.RemoveValueChanged(m_mapControl, OnZChanged);
-					}
+					m_mapControl.ZChanged -= OnZChanged;
 			
 					CloseToolTip();
 				}
@@ -62,7 +54,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnZChanged(object sender, EventArgs e)
+		void OnZChanged(int z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 			UpdateToolTip(pos);

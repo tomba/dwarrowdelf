@@ -22,11 +22,7 @@ namespace Dwarrowdelf.Client.UI
 
 			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
 			m_mapControl.MouseMove += OnMouseMove;
-
-			{
-				var propDesc = DependencyPropertyDescriptor.FromProperty(MapControl.ZProperty, typeof(MapControl));
-				propDesc.AddValueChanged(m_mapControl, OnZChanged);
-			}
+			m_mapControl.ZChanged += OnZChanged;
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)
@@ -41,7 +37,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo(p);
 		}
 
-		void OnZChanged(object sender, EventArgs e)
+		void OnZChanged(int z)
 		{
 			var p = Mouse.GetPosition(m_mapControl);
 			UpdateHoverTileInfo(p);
