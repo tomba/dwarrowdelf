@@ -166,6 +166,7 @@
     <Compile Include="ServerInAppDomain.cs" />
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\HoverTileInfo.cs" />
+    <Compile Include="UI\MainWindowCommandHandler.cs" />
     <Compile Include="UI\MapControlElementsService.cs" />
     <Compile Include="UI\MapControlSelectionService.cs" />
     <Compile Include="UI\MapControlToolTipService.cs" />

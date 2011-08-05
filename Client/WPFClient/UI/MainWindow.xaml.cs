@@ -45,6 +45,17 @@ namespace Dwarrowdelf.Client
 
 		public TileInfo CurrentTileInfo { get; private set; }
 
+		// Stores previous user values for setTerrainData
+		SetTerrainData m_setTerrainData;
+
+		ToolMode m_toolMode;
+
+		ServerInAppDomain m_server;
+
+		LogOnDialog m_logOnDialog;
+
+		MainWindowCommandHandler m_cmdHandler;
+
 		public MainWindow()
 		{
 			this.CurrentTileInfo = new TileInfo();
@@ -56,12 +67,10 @@ namespace Dwarrowdelf.Client
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
 			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
-			this.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler));
 
 			this.MapControl.GotSelection += new Action<MapSelection>(MapControl_GotSelection);
 		}
 
-		ToolMode m_toolMode;
 		public ToolMode ToolMode
 		{
 			get { return m_toolMode; }
@@ -98,8 +107,6 @@ namespace Dwarrowdelf.Client
 				Notify("ToolMode");
 			}
 		}
-
-		SetTerrainData m_setTerrainData;
 
 		void MapControl_GotSelection(MapSelection selection)
 		{
@@ -227,6 +234,8 @@ namespace Dwarrowdelf.Client
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
 
 			toolModeComboBox.ItemsSource = Enum.GetValues(typeof(ToolMode)).Cast<ToolMode>().OrderBy(id => id.ToString()).ToArray();
+
+			m_cmdHandler = new MainWindowCommandHandler(this);
 		}
 
 		void PopulateMenus()
@@ -425,13 +434,6 @@ namespace Dwarrowdelf.Client
 			{
 				building.AddBuildOrder(dialog.BuildableItem);
 			}
-		}
-
-		void OpenConsoleHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var dialog = new ConsoleDialog();
-			dialog.Owner = this;
-			dialog.Show();
 		}
 
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
@@ -677,8 +679,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		LogOnDialog m_logOnDialog;
-
 		void SetLogOnText(string text)
 		{
 			if (m_logOnDialog == null)
@@ -756,8 +756,6 @@ namespace Dwarrowdelf.Client
 
 		}
 
-
-		ServerInAppDomain m_server;
 
 		void Connect()
 		{

@@ -34,5 +34,6 @@ namespace Dwarrowdelf.Client
 			OpenConsoleCommand = new RoutedUICommand("Open Console", "OpenConsole", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });
 		}
+
 	}
 }

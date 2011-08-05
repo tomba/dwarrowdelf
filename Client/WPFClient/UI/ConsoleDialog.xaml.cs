@@ -21,6 +21,17 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (e.Key == Key.Escape)
+			{
+				Close();
+				return;
+			}
+
+			base.OnKeyDown(e);
+		}
+
 		private void InputTextBox_TextEntered(string str)
 		{
 			if (string.IsNullOrEmpty(str))
