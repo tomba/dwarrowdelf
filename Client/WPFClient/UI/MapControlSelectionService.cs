@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Windows.Shapes;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.ComponentModel;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {

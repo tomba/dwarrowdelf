@@ -27,19 +27,13 @@ namespace Dwarrowdelf.Client
 	/// </summary>
 	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		Environment m_env;
-
 		public HoverTileInfo HoverTileInfo { get; private set; }
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 
 		MapControl m_mapControl;
 
-		Canvas m_canvas;
+		Canvas m_selectionCanvas;
 		Canvas m_elementCanvas;
-		Dictionary<IDrawableElement, FrameworkElement> m_elementMap;
-
-		ScaleTransform m_scaleTransform;
-		TranslateTransform m_translateTransform;
 
 		const int ANIM_TIME_MS = 200;
 
@@ -51,6 +45,7 @@ namespace Dwarrowdelf.Client
 
 		MapControlToolTipService m_toolTipService;
 		MapControlSelectionService m_selectionService;
+		MapControlElementsService m_elementsService;
 
 		public event Action<MapSelection> GotSelection;
 
@@ -73,36 +68,27 @@ namespace Dwarrowdelf.Client
 
 			grid.Children.Add(mc);
 			m_mapControl = mc;
-			m_mapControl.TileLayoutChanged += OnTileArrangementChanged;
 			m_mapControl.ZChanged += OnZChanged;
+			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 			m_mapControl.CenterPosChanged += cp => Notify("CenterPos");
 
 			m_elementCanvas = new Canvas();
 			grid.Children.Add(m_elementCanvas);
 
-			var group = new TransformGroup();
-			m_scaleTransform = new ScaleTransform();
-			m_translateTransform = new TranslateTransform();
-			group.Children.Add(m_scaleTransform);
-			group.Children.Add(m_translateTransform);
-			m_elementCanvas.RenderTransform = group;
-
-			m_elementMap = new Dictionary<IDrawableElement, FrameworkElement>();
-
-
-
-			m_canvas = new Canvas();
-			grid.Children.Add(m_canvas);
+			m_selectionCanvas = new Canvas();
+			grid.Children.Add(m_selectionCanvas);
 
 			this.TileSize = 16;
 
 			m_toolTipService = new MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
 
-			m_selectionService = new MapControlSelectionService(m_mapControl, m_canvas);
+			m_selectionService = new MapControlSelectionService(m_mapControl, m_selectionCanvas);
 			m_selectionService.RequestScroll += v => ScrollToDirection(v);
 			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 			m_selectionService.SelectionChanged += OnSelectionChanged;
+
+			m_elementsService = new MapControlElementsService(m_mapControl, m_elementCanvas);
 
 			this.HoverTileInfo = new HoverTileInfo(m_mapControl);
 		}
@@ -233,27 +219,6 @@ namespace Dwarrowdelf.Client
 			{
 				return new MyEase(t0, tn);
 			}
-		}
-
-
-		// Called when underlying MapControl changes (tile positioning, tile size)
-		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
-		{
-			UpdateTranslateTransform();
-			UpdateScaleTransform();
-		}
-
-		void UpdateTranslateTransform()
-		{
-			var p = m_mapControl.MapLocationToScreenPoint(new Point(-0.5, -0.5));
-			m_translateTransform.X = p.X;
-			m_translateTransform.Y = p.Y;
-		}
-
-		void UpdateScaleTransform()
-		{
-			m_scaleTransform.ScaleX = m_mapControl.TileSize;
-			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
 		}
 
 		public MapSelectionMode SelectionMode
@@ -422,39 +387,21 @@ namespace Dwarrowdelf.Client
 
 		public Environment Environment
 		{
-			get { return m_env; }
+			get { return m_mapControl.Environment; }
+			set { m_mapControl.Environment = value; }
+		}
 
-			set
+		void OnEnvironmentChanged(Environment env)
+		{
+			if (env != null)
 			{
-				if (m_env == value)
-					return;
-
-				m_mapControl.Environment = value;
-
-				if (m_env != null)
-				{
-					m_env.Buildings.CollectionChanged -= OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged -= OnElementCollectionChanged;
-				}
-
-				m_env = value;
-
-				if (m_env != null)
-				{
-					m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
-					((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged += OnElementCollectionChanged;
-
-					m_mapControl.CenterPos = new Point(m_env.HomeLocation.X, m_env.HomeLocation.Y);
-					this.Z = m_env.HomeLocation.Z;
-				}
-
-				this.Selection = new MapSelection();
-				UpdateElements();
-
-				Notify("Environment");
+				m_mapControl.CenterPos = new Point(env.HomeLocation.X, env.HomeLocation.Y);
+				this.Z = env.HomeLocation.Z;
 			}
+
+			this.Selection = new MapSelection();
+
+			Notify("Environment");
 		}
 
 		public int Z
@@ -465,96 +412,9 @@ namespace Dwarrowdelf.Client
 
 		void OnZChanged(int z)
 		{
-			foreach (FrameworkElement child in m_elementCanvas.Children)
-			{
-				if (GetElementZ(child) != z)
-					child.Visibility = System.Windows.Visibility.Hidden;
-				else
-					child.Visibility = System.Windows.Visibility.Visible;
-			}
-
 			Notify("Z");
 		}
 
-		void AddElement(IDrawableElement element)
-		{
-			var e = element.Element;
-
-			if (e != null)
-			{
-				var r = element.Area;
-				Canvas.SetLeft(e, r.X);
-				Canvas.SetTop(e, r.Y);
-				SetElementZ(e, r.Z);
-
-				m_elementCanvas.Children.Add(e);
-				m_elementMap[element] = e;
-			}
-		}
-
-		void RemoveElement(IDrawableElement element)
-		{
-			var e = m_elementMap[element];
-			m_elementCanvas.Children.Remove(e);
-			m_elementMap.Remove(element);
-		}
-
-		void UpdateElements()
-		{
-			m_elementCanvas.Children.Clear();
-			m_elementMap.Clear();
-
-			if (m_env != null)
-			{
-				var elements = m_env.Buildings.Cast<IDrawableElement>()
-					.Concat(m_env.Stockpiles)
-					.Concat(m_env.ConstructionSites);
-
-				foreach (IDrawableElement element in elements)
-				{
-					if (element.Environment == m_env)
-						AddElement(element);
-				}
-			}
-		}
-
-		void OnElementCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					foreach (IDrawableElement b in e.NewItems)
-						if (b.Environment == m_env)
-							AddElement(b);
-					break;
-
-				case NotifyCollectionChangedAction.Remove:
-					foreach (IDrawableElement b in e.OldItems)
-						if (b.Environment == m_env)
-							RemoveElement(b);
-
-					break;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-
-
-
-		public static int GetElementZ(DependencyObject obj)
-		{
-			return (int)obj.GetValue(ElementZProperty);
-		}
-
-		public static void SetElementZ(DependencyObject obj, int value)
-		{
-			obj.SetValue(ElementZProperty, value);
-		}
-
-		public static readonly DependencyProperty ElementZProperty =
-			DependencyProperty.RegisterAttached("ElementZ", typeof(int), typeof(MasterMapControl), new UIPropertyMetadata(0));
 
 
 		public IntPoint ScreenPointToMapLocation(Point p)
@@ -589,7 +449,6 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_mapControl != null)
 			{
-				m_mapControl.TileLayoutChanged -= OnTileArrangementChanged;
 				m_mapControl.Dispose();
 				m_mapControl = null;
 			}
