@@ -237,62 +237,62 @@ namespace Dwarrowdelf.Client.TileControl
 		}
 
 
-
-
-		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
-
-		public Point MapLocationToScreenLocation(Point ml)
+		public Point ScreenPointToScreenTile(Point p)
 		{
-			var gridSize = this.GridSize;
+			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
+			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
+		}
 
-			var p = ml - this.ScreenMapDiff;
-			p = new Point(p.X, -p.Y);
-			p += new Vector(gridSize.Width / 2, gridSize.Height / 2);
-
+		public Point ScreenTileToScreenPoint(Point t)
+		{
+			t.Offset(0.5, 0.5);
+			var p = new Point(t.X * this.TileSize, t.Y * this.TileSize);
+			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
 			return p;
 		}
 
-		public Point ScreenLocationToMapLocation(Point sl)
+		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
+
+		public Point ScreenTileToMapTile(Point st)
 		{
 			var gridSize = this.GridSize;
 
-			var v = sl - new Vector(gridSize.Width / 2, gridSize.Height / 2);
+			var v = st - new Vector(gridSize.Width / 2, gridSize.Height / 2);
 			v = new Point(v.X, -v.Y);
 			v += this.ScreenMapDiff;
 
 			return v;
 		}
 
-		public Point ScreenPointToMapLocation(Point p)
+		public Point MapTileToScreenTile(Point mt)
 		{
-			var sl = ScreenPointToScreenLocation(p);
-			return ScreenLocationToMapLocation(sl);
+			var gridSize = this.GridSize;
+
+			var st = mt - this.ScreenMapDiff;
+			st = new Point(st.X, -st.Y);
+			st += new Vector(gridSize.Width / 2, gridSize.Height / 2);
+
+			return st;
 		}
 
-		public Point MapLocationToScreenPoint(Point ml)
+
+		public Point ScreenPointToMapTile(Point p)
 		{
-			var sl = MapLocationToScreenLocation(ml);
-			return ScreenLocationToScreenPoint(sl);
+			var st = ScreenPointToScreenTile(p);
+			return ScreenTileToMapTile(st);
 		}
 
-		public Point ScreenPointToScreenLocation(Point p)
+		public Point MapTileToScreenPoint(Point mt)
 		{
-			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new Point(p.X / this.TileSize - 0.5, p.Y / this.TileSize - 0.5);
+			var st = MapTileToScreenTile(mt);
+			return ScreenTileToScreenPoint(st);
 		}
 
-		public IntPoint ScreenPointToIntScreenLocation(Point p)
+
+		public IntPoint ScreenPointToIntScreenTile(Point p)
 		{
 			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
 			return new IntPoint((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
-		}
-
-		public Point ScreenLocationToScreenPoint(Point loc)
-		{
-			loc.Offset(0.5, 0.5);
-			var p = new Point(loc.X * this.TileSize, loc.Y * this.TileSize);
-			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return p;
 		}
 	}
 }

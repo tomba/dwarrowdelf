@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client
 			v /= targetTileSize;
 			v.Y = -v.Y;
 
-			var ml = m_mapControl.ScreenPointToMapLocation(p);
+			var ml = m_mapControl.ScreenPointToMapTile(p);
 			var targetCenterPos = ml - v;
 
 			ZoomTo(targetTileSize);

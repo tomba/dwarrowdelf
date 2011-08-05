@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void UpdateTranslateTransform()
 		{
-			var p = m_mapControl.MapLocationToScreenPoint(new Point(-0.5, -0.5));
+			var p = m_mapControl.MapTileToScreenPoint(new Point(-0.5, -0.5));
 			m_translateTransform.X = p.X;
 			m_translateTransform.Y = p.Y;
 		}

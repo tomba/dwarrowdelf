@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			var ml = m_mapControl.ScreenPointToMapLocation3D(mousePos);
+			var ml = m_mapControl.ScreenPointToMapLocation(mousePos);
 
 			var ob = m_mapControl.Environment.GetFirstObject(ml);
 

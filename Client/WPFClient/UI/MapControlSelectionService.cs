@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			IntPoint3D start;
 
-			var end = m_mapControl.ScreenPointToMapLocation3D(mousePos);
+			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
 
 			switch (m_selectionMode)
 			{
@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			Point pos = e.GetPosition(m_mapControl);
-			var ml = m_mapControl.ScreenPointToMapLocation3D(pos);
+			var ml = m_mapControl.ScreenPointToMapLocation(pos);
 
 			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
 			{

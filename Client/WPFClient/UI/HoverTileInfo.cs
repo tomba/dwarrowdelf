@@ -45,8 +45,8 @@ namespace Dwarrowdelf.Client.UI
 
 		void UpdateHoverTileInfo(Point p)
 		{
-			var sl = m_mapControl.ScreenPointToIntScreenLocation(p);
-			var ml = m_mapControl.ScreenPointToMapLocation3D(p);
+			var sl = m_mapControl.ScreenPointToIntScreenTile(p);
+			var ml = m_mapControl.ScreenPointToMapLocation(p);
 
 			if (p != this.MousePos)
 			{

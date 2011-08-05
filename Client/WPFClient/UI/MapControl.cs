@@ -160,14 +160,14 @@ namespace Dwarrowdelf.Client
 
 		public Rect MapRectToScreenPointRect(IntRect ir)
 		{
-			Rect r = new Rect(MapLocationToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
+			Rect r = new Rect(MapTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
 				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
 			return r;
 		}
 
-		public IntPoint3D ScreenPointToMapLocation3D(Point p)
+		public IntPoint3D ScreenPointToMapLocation(Point p)
 		{
-			var ml = ScreenPointToMapLocation(p);
+			var ml = ScreenPointToMapTile(p);
 			return new IntPoint3D((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
 		}
 
