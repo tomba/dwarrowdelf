@@ -37,7 +37,6 @@ namespace Dwarrowdelf.Client
 		GameObject m_followObject;
 		bool m_closing;
 		DispatcherTimer m_timer;
-		ManualJobSource m_manualJobSource;
 
 		bool m_serverInAppDomain = true;
 
@@ -882,8 +881,6 @@ namespace Dwarrowdelf.Client
 		void EnterGame()
 		{
 			SetLogOnText("Entering Game");
-
-			m_manualJobSource = new ManualJobSource(GameData.Data.World.JobManager);
 
 			GameData.Data.User.SendEnterGame(OnEnteredGame);
 		}

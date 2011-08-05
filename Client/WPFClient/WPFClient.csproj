@@ -158,7 +158,6 @@
     <Compile Include="ConstructionSite.cs" />
     <Compile Include="Jobs\CleanAreaJob.cs" />
     <Compile Include="Jobs\StoreToStockpileJob.cs" />
-    <Compile Include="ManualJobSource.cs" />
     <Compile Include="RenderViewDetailed.cs" />
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="Designation.cs" />
