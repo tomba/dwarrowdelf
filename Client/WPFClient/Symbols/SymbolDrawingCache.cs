@@ -12,6 +12,9 @@ namespace Dwarrowdelf.Client
 {
 	class SymbolDrawingCache : Dwarrowdelf.Client.TileControl.ISymbolDrawingCache
 	{
+		// use char symbols as backup
+		static Symbols.SymbolSet s_charSymbolSet;
+
 		Symbols.SymbolSet m_symbolSet;
 		DrawingCache m_drawingCache;
 		Dictionary<SymbolID, Dictionary<GameColor, Drawing>> m_drawingMap;
@@ -20,6 +23,12 @@ namespace Dwarrowdelf.Client
 
 		public SymbolDrawingCache(string symbolInfoName)
 		{
+			if (s_charSymbolSet == null)
+			{
+				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
+				s_charSymbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
+			}
+
 			Load(symbolInfoName);
 		}
 
@@ -27,25 +36,34 @@ namespace Dwarrowdelf.Client
 		{
 			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
-			var asm = System.Reflection.Assembly.GetExecutingAssembly();
-			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", symbolInfoName);
-
-			if (File.Exists(path))
-			{
-				using (var stream = File.OpenRead(path))
-					m_symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(stream);
-			}
-			else
-			{
-				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
-				m_symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
-			}
+			m_symbolSet = LoadSymbolSet(symbolInfoName);
 
 			if (m_symbolSet.Drawings != null)
 				m_drawingCache = new DrawingCache(m_symbolSet.Drawings);
 
 			if (this.DrawingsChanged != null)
 				this.DrawingsChanged();
+		}
+
+		static Symbols.SymbolSet LoadSymbolSet(string symbolInfoName)
+		{
+			var asm = System.Reflection.Assembly.GetExecutingAssembly();
+			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", symbolInfoName);
+
+			Symbols.SymbolSet symbolSet;
+
+			if (File.Exists(path))
+			{
+				using (var stream = File.OpenRead(path))
+					symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(stream);
+			}
+			else
+			{
+				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
+				symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
+			}
+
+			return symbolSet;
 		}
 
 		public Drawing GetDrawing(SymbolID symbolID, GameColor color)
@@ -70,7 +88,12 @@ namespace Dwarrowdelf.Client
 
 		Drawing CreateDrawing(SymbolID symbolID, GameColor color)
 		{
-			var symbol = m_symbolSet.Symbols[symbolID];
+			Symbols.BaseSymbol symbol;
+
+			if (m_symbolSet.Symbols.Contains(symbolID))
+				symbol = m_symbolSet.Symbols[symbolID];
+			else
+				symbol = s_charSymbolSet.Symbols[symbolID];
 
 			return CreateDrawing(symbol, color);
 		}

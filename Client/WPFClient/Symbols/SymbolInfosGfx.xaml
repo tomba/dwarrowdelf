@@ -3,14 +3,10 @@
            FontFamily="Arial" FontSize="64"  Outline="False" OutlineThickness="0.5"
            Drawings="SymbolDrawings.xaml">
 
-    <CharSymbol ID="Undefined">?</CharSymbol>
     <DrawingSymbol ID="Floor">Dirt_Block</DrawingSymbol>
 
     <DrawingSymbol ID="Grass">Grass_Block</DrawingSymbol>
     <DrawingSymbol ID="Wall">Stone_Block</DrawingSymbol>
-
-    <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60">£</CharSymbol>
-    <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60">☼</CharSymbol>
 
     <DrawingSymbol ID="Water">Water_Block</DrawingSymbol>
 
@@ -40,19 +36,10 @@
 
     <DrawingSymbol ID="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
     <DrawingSymbol ID="Sheep" X="10" Y="20" W="80" H="60">Enemy_Bug</DrawingSymbol>
-    <CharSymbol ID="Wolf">W</CharSymbol>
-    <CharSymbol ID="Dragon">D</CharSymbol>
     
-    <CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40">☼</CharSymbol>
     <DrawingSymbol ID="Gem">Gem_Blue</DrawingSymbol>
     <DrawingSymbol ID="Sapling">Tree_Short</DrawingSymbol>
     <DrawingSymbol ID="Tree">Tree_Tall</DrawingSymbol>
     <DrawingSymbol ID="Key"  X="20" Y="10" W="60" H="80">Key</DrawingSymbol>
     <DrawingSymbol ID="Rock" X="10" Y="10" W="80" H="80">Rock</DrawingSymbol>
-    <CharSymbol ID="Log" X="5" Y="60" W="90" H="20">▬</CharSymbol>
-    <CharSymbol ID="Contraption">۩</CharSymbol>
-    <CharSymbol ID="Consumable">%</CharSymbol>
-
-    <CharSymbol ID="Chair" X="20" Y="40" W="60" H="60">╥</CharSymbol>
-    <CharSymbol ID="Table">╤</CharSymbol>
 </SymbolSet>
