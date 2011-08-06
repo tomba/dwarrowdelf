@@ -96,13 +96,13 @@
         </ToolBarTray>
 
         <StatusBar DockPanel.Dock="Bottom" >
-            Tick
+            <TextBlock>Tick</TextBlock>
             <TextBlock Text="{Binding Data.World.TickNumber, FallbackValue=-}" />
             <Separator />
-            Env
+            <TextBlock>Env</TextBlock>
             <TextBlock Text="{Binding Path=Environment, ElementName=map, TargetNullValue=-}" />
             <Separator />
-            Z
+            <TextBlock>Z</TextBlock>
             <TextBlock Text="{Binding Path=Z, ElementName=map, TargetNullValue=x, FallbackValue=y}" />
             <Separator />
             <TextBlock DataContext="{Binding Data.Connection.Stats}">
