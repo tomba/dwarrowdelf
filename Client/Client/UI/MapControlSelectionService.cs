@@ -189,12 +189,6 @@ namespace Dwarrowdelf.Client.UI
 			Point pos = e.GetPosition(m_mapControl);
 			var ml = m_mapControl.ScreenPointToMapLocation(pos);
 
-			if (this.Selection.IsSelectionValid && this.Selection.SelectionCuboid.Contains(ml))
-			{
-				this.Selection = new MapSelection();
-				return;
-			}
-
 			this.Selection = new MapSelection(ml, ml);
 
 			m_mapControl.CaptureMouse();
