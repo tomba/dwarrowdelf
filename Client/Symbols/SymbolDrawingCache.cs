@@ -8,9 +8,9 @@ using System.IO;
 using System.Xml.Linq;
 using System.Diagnostics;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.Symbols
 {
-	class SymbolDrawingCache : Dwarrowdelf.Client.TileControl.ISymbolDrawingCache
+	public class SymbolDrawingCache : ISymbolDrawingCache
 	{
 		// use char symbols as backup
 		static Symbols.SymbolSet s_charSymbolSet;
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (s_charSymbolSet == null)
 			{
-				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
+				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + symbolInfoName, UriKind.Relative);
 				s_charSymbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
 			}
 
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				var uri = new Uri("Symbols/" + symbolInfoName, UriKind.Relative);
+				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + symbolInfoName, UriKind.Relative);
 				symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
 			}
 

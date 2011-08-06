@@ -44,8 +44,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.cs" />
     <Compile Include="GrowingTileGrid.cs" />
     <Compile Include="HSL.cs" />
+    <Compile Include="ISymbolDrawingCache.cs" />
     <Compile Include="ObservableKeyedCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

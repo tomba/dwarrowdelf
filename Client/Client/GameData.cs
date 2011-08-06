@@ -10,15 +10,6 @@ using System.IO;
 
 namespace Dwarrowdelf.Client
 {
-	static class MyExtensions
-	{
-		public static System.Windows.Media.Color ToWindowsColor(this GameColor color)
-		{
-			var rgb = color.ToGameColorRGB();
-			return System.Windows.Media.Color.FromRgb(rgb.R, rgb.G, rgb.B);
-		}
-	}
-
 	class GameEvent
 	{
 		public string Message { get; private set; }
@@ -45,7 +36,7 @@ namespace Dwarrowdelf.Client
 		public GameData()
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
-			this.SymbolDrawingCache = new SymbolDrawingCache("SymbolInfosChar.xaml");
+			this.SymbolDrawingCache = new Dwarrowdelf.Client.Symbols.SymbolDrawingCache("SymbolInfosChar.xaml");
 			m_gameEvents = new ObservableCollection<GameEvent>();
 			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
 
@@ -55,7 +46,7 @@ namespace Dwarrowdelf.Client
 
 		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
 
-		public SymbolDrawingCache SymbolDrawingCache { get; private set; }
+		public Dwarrowdelf.Client.Symbols.SymbolDrawingCache SymbolDrawingCache { get; private set; }
 
 		bool m_previousWasTickEvent = true;
 

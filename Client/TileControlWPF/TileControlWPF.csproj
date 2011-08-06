@@ -55,6 +55,10 @@
       <Project>{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}</Project>
       <Name>Common %28Common\Common%29</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Base\Client.Base.csproj">
+      <Project>{1794F5B1-762E-40D2-A314-040487DEEFE2}</Project>
+      <Name>Client.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TileControlBase\TileControlBase.csproj">
       <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
       <Name>TileControlBase</Name>

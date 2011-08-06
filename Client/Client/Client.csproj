@@ -231,10 +231,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <None Include="Symbols\SymbolDrawings.design" />
-    <Page Include="Symbols\SymbolDrawings.xaml">
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
@@ -260,8 +256,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Symbols\SymbolDrawingCache.cs" />
-    <Compile Include="Symbols\Symbols.cs" />
     <Compile Include="ClientUser.cs" />
     <Compile Include="World.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -286,6 +280,10 @@
     <ProjectReference Include="..\..\Server\Server\Server.csproj">
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server %28Server\Server%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Symbols\Client.Symbols.csproj">
+      <Project>{E8C9A027-2A2C-425A-B57F-4D277C21E42F}</Project>
+      <Name>Client.Symbols</Name>
     </ProjectReference>
     <ProjectReference Include="..\TileControlBase\TileControlBase.csproj">
       <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
@@ -331,17 +329,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Symbols\SymbolInfosGfx.xaml">
-      <SubType>Designer</SubType>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\eye.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Symbols\SymbolInfosChar.xaml">
-      <SubType>Designer</SubType>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ApplicationIcon.ico" />

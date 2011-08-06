@@ -7,12 +7,6 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public interface ISymbolDrawingCache
-	{
-		event Action DrawingsChanged;
-		Drawing GetDrawing(SymbolID symbolID, GameColor color);
-	}
-
 	public class SymbolBitmapCache : IBitmapGenerator
 	{
 		ISymbolDrawingCache m_symbolDrawingCache;
