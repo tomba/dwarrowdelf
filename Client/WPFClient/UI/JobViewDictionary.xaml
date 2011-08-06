@@ -1,8 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:jobs="clr-namespace:Dwarrowdelf.Jobs;assembly=Dwarrowdelf.Common">
+                    xmlns:jjg="clr-namespace:Dwarrowdelf.Jobs.JobGroups;assembly=Dwarrowdelf.Common"
+                    xmlns:jag="clr-namespace:Dwarrowdelf.Jobs.AssignmentGroups;assembly=Dwarrowdelf.Common"
+                    xmlns:ja="clr-namespace:Dwarrowdelf.Jobs.Assignments;assembly=Dwarrowdelf.Common">
 
-    <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
+    <HierarchicalDataTemplate DataType="{x:Type jjg:JobGroup}" ItemsSource="{Binding SubJobs}">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding}" />
             <TextBlock Text=", " />
@@ -10,7 +12,7 @@
         </StackPanel>
     </HierarchicalDataTemplate>
 
-    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
+    <HierarchicalDataTemplate DataType="{x:Type jag:AssignmentGroup}">
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding}" />
@@ -29,7 +31,7 @@
         </StackPanel>
     </HierarchicalDataTemplate>
 
-    <DataTemplate DataType="{x:Type jobs:Assignments.Assignment}">
+    <DataTemplate DataType="{x:Type ja:Assignment}">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding}" />
             <TextBlock Text=", " />
