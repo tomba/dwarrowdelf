@@ -295,6 +295,8 @@ namespace Dwarrowdelf.Client
 
 		public MasterMapControl MapControl { get { return map; } }
 
+		public GameData Data { get { return GameData.Data; } }
+
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
