@@ -35,6 +35,9 @@ namespace Dwarrowdelf.Client
 
 		bool IsD3D10Supported()
 		{
+			if (DesignerProperties.GetIsInDesignMode(this))
+				return false;
+
 			var os = System.Environment.OSVersion;
 
 			if (os.Version.Major >= 6)
