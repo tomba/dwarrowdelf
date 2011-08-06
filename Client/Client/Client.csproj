@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dwarrowdelf.Client</RootNamespace>
-    <AssemblyName>Dwarrowdelf</AssemblyName>
+    <AssemblyName>Dwarrowdelf.Client</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -303,9 +303,9 @@
       <Project>{20715EEB-6DF6-4A43-BF10-D7D0D4A39017}</Project>
       <Name>Win32</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WPFClientBase\WPFClientBase.csproj">
+    <ProjectReference Include="..\Base\Client.Base.csproj">
       <Project>{1794F5B1-762E-40D2-A314-040487DEEFE2}</Project>
-      <Name>WPFClientBase</Name>
+      <Name>Client.Base</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

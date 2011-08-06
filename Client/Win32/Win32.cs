@@ -24,15 +24,15 @@ namespace Win32
 
 		public bool ShowMaximized { get; set; }
 	}
-	
+
 	public static class Helpers
 	{
-        #region Win32 API declarations to set and get window placement
-        [DllImport("user32.dll")]
-        static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
+		#region Win32 API declarations to set and get window placement
+		[DllImport("user32.dll")]
+		static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
 
-        [DllImport("user32.dll")]
-        static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
+		[DllImport("user32.dll")]
+		static extern bool GetWindowPlacement(IntPtr hWnd, out WINDOWPLACEMENT lpwndpl);
 
 		// RECT structure required by WINDOWPLACEMENT structure
 		[Serializable]
@@ -80,11 +80,11 @@ namespace Win32
 			public POINT maxPosition;
 			public RECT normalPosition;
 		}
-    
-        const int SW_SHOWNORMAL = 1;
-        const int SW_SHOWMINIMIZED = 2;
+
+		const int SW_SHOWNORMAL = 1;
+		const int SW_SHOWMINIMIZED = 2;
 		const int SW_SHOWMAXIMIZED = 3;
-        #endregion
+		#endregion
 
 		static public void LoadWindowPlacement(Window window, WindowPlacement placement)
 		{

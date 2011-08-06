@@ -7,7 +7,7 @@
     x:ClassModifier="internal"
     x:Name="mainWindow"
     TextOptions.TextFormattingMode="Display"
-    Icon="/Dwarrowdelf;component/Images/MainWindow.png"
+    Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Window.Resources>
