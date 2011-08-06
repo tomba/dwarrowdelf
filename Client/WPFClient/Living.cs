@@ -93,8 +93,8 @@ namespace Dwarrowdelf.Client
 				if (value == true)
 				{
 					GameData.Data.World.Controllables.Add(this);
-					//this.AI = new Jobs.JobManagerAI(this);
-					this.AI = new FighterAI(this);
+					this.AI = new Dwarrowdelf.AI.JobManagerAI(this);
+					//this.AI = new FighterAI(this);
 				}
 				else
 				{

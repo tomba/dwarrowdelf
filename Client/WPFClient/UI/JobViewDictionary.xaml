@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:jobs="clr-namespace:Dwarrowdelf.Jobs;assembly=Dwarrowdelf.Common">
+
+    <HierarchicalDataTemplate DataType="{x:Type jobs:JobGroups.JobGroup}" ItemsSource="{Binding SubJobs}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding}" />
+            <TextBlock Text=", " />
+            <TextBlock Text="{Binding JobStatus}" />
+        </StackPanel>
+    </HierarchicalDataTemplate>
+
+    <HierarchicalDataTemplate DataType="{x:Type jobs:AssignmentGroups.AssignmentGroup}">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding}" />
+                <TextBlock Text=", " />
+                <TextBlock Text="{Binding JobStatus}" />
+                <TextBlock Text=", " />
+                <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
+                <TextBlock Text=", " />
+                <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" DataContext="{Binding CurrentAssignment}">
+                <TextBlock Text=" - " />
+                <TextBlock Text="{Binding}" />
+            </StackPanel>
+        </StackPanel>
+    </HierarchicalDataTemplate>
+
+    <DataTemplate DataType="{x:Type jobs:Assignments.Assignment}">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding}" />
+            <TextBlock Text=", " />
+            <TextBlock Text="{Binding JobStatus}" />
+            <TextBlock Text=" , " />
+            <TextBlock Text="{Binding Worker.Name, FallbackValue=NoBody}" />
+            <TextBlock Text=", " />
+            <TextBlock Text="{Binding CurrentAction, TargetNullValue=NoAction}" />
+        </StackPanel>
+    </DataTemplate>
+
+</ResourceDictionary>
