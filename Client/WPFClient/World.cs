@@ -116,7 +116,7 @@ namespace Dwarrowdelf.Client
 
 		public IBaseGameObject GetObject(ObjectID objectID)
 		{
-			if (objectID == ObjectID.NullObjectID)
+			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
 				throw new ArgumentException();
 
 			if (m_objects.Contains(objectID))

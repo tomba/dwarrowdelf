@@ -15,6 +15,7 @@ namespace Dwarrowdelf
 	public interface IIdentifiable
 	{
 		ObjectID ObjectID { get; }
+		ObjectType ObjectType { get; }
 	}
 
 	public interface IBaseGameObject : IIdentifiable

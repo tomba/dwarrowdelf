@@ -11,6 +11,9 @@ namespace Dwarrowdelf.Server
 	{
 		[SaveGameProperty]
 		public ObjectID ObjectID { get; private set; }
+
+		public ObjectType ObjectType { get { return this.ObjectID.ObjectType; } }
+
 		[SaveGameProperty]
 		public World World { get; private set; }
 		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }

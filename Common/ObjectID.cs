@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 
 namespace Dwarrowdelf
 {
+	/// <summary>
+	/// 24 bit ID with 8 bit Object type
+	/// </summary>
 	[Serializable]
 	[System.ComponentModel.TypeConverter(typeof(ObjectIDConverter))]
 	public struct ObjectID : IEquatable<ObjectID>
