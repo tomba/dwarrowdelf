@@ -56,28 +56,29 @@ namespace Dwarrowdelf.Client
 		{
 			switch (toolMode)
 			{
-				case Client.ClientToolMode.Info:
+				case ClientToolMode.Info:
 					this.MapControl.SelectionMode = MapSelectionMode.None;
 					break;
 
-				case Client.ClientToolMode.CreateItem:
+				case ClientToolMode.CreateItem:
 					this.MapControl.SelectionMode = MapSelectionMode.Point;
 					break;
 
-				case Client.ClientToolMode.DesignationMine:
-				case Client.ClientToolMode.DesignationFellTree:
-				case Client.ClientToolMode.DesignationRemove:
-				case Client.ClientToolMode.SetTerrain:
-				case Client.ClientToolMode.CreateLiving:
+				case ClientToolMode.DesignationMine:
+				case ClientToolMode.DesignationStairs:
+				case ClientToolMode.DesignationFellTree:
+				case ClientToolMode.DesignationRemove:
+				case ClientToolMode.SetTerrain:
+				case ClientToolMode.CreateLiving:
 					this.MapControl.SelectionMode = MapSelectionMode.Cuboid;
 					break;
 
-				case Client.ClientToolMode.CreateStockpile:
+				case ClientToolMode.CreateStockpile:
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
 				default:
-					break;
+					throw new Exception();
 			}
 		}
 
@@ -87,19 +88,23 @@ namespace Dwarrowdelf.Client
 
 			switch (this.mainWindowTools.ToolMode)
 			{
-				case Client.ClientToolMode.DesignationRemove:
+				case ClientToolMode.DesignationRemove:
 					env.Designations.RemoveArea(selection.SelectionCuboid);
 					break;
 
-				case Client.ClientToolMode.DesignationMine:
+				case ClientToolMode.DesignationMine:
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Mine);
 					break;
 
-				case Client.ClientToolMode.DesignationFellTree:
+				case ClientToolMode.DesignationStairs:
+					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.CreateStairs);
+					break;
+
+				case ClientToolMode.DesignationFellTree:
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.FellTree);
 					break;
 
-				case Client.ClientToolMode.SetTerrain:
+				case ClientToolMode.SetTerrain:
 					{
 						var dialog = new SetTerrainDialog();
 						dialog.Owner = this;
@@ -127,7 +132,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ClientToolMode.CreateStockpile:
+				case ClientToolMode.CreateStockpile:
 					{
 						var dialog = new StockpileDialog();
 						dialog.Owner = this;
@@ -143,7 +148,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ClientToolMode.CreateItem:
+				case ClientToolMode.CreateItem:
 					{
 						var dialog = new CreateItemDialog();
 						dialog.Owner = this;
@@ -163,7 +168,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ClientToolMode.CreateLiving:
+				case ClientToolMode.CreateLiving:
 					{
 						var dialog = new CreateLivingDialog();
 						dialog.Owner = this;
@@ -188,7 +193,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				default:
-					break;
+					throw new Exception();
 			}
 
 			this.MapControl.Selection = new MapSelection();

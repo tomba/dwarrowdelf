@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,14 +14,38 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client
 {
-	/// <summary>
-	/// Interaction logic for MainWindowTools.xaml
-	/// </summary>
+
 	partial class MainWindowTools : UserControl
 	{
+		public static readonly Dictionary<ClientToolMode, ToolData> ToolDatas;
+
+		static MainWindowTools()
+		{
+			var res = (ResourceDictionary)Application.LoadComponent(new Uri("/UI/ToolIcons.xaml", UriKind.Relative));
+
+			ToolDatas = new Dictionary<ClientToolMode, ToolData>();
+
+			Action<ClientToolMode, string, char> add = (i, n, k) => ToolDatas[i] = new ToolData(i, n, k, (DrawingBrush)res[i.ToString()]);
+
+			add(ClientToolMode.Info, "Info", 'i');
+
+			add(ClientToolMode.DesignationMine, "Mine", 'm');
+			add(ClientToolMode.DesignationStairs, "Mine stairs", 's');
+			add(ClientToolMode.DesignationFellTree, "Fell tree", 'f');
+			add(ClientToolMode.DesignationRemove, "Remove", 'r');
+
+			add(ClientToolMode.CreateStockpile, "Create stockpile", 'p');
+
+			add(ClientToolMode.CreateLiving, "Create living", 'l');
+			add(ClientToolMode.CreateItem, "Create item", 'i');
+			add(ClientToolMode.SetTerrain, "Set terrain", 't');
+		}
+
 		public MainWindowTools()
 		{
 			this.InitializeComponent();
+
+			this.ToolMode = ClientToolMode.Info;
 		}
 
 		public event Action<ClientToolMode> ToolModeChanged;
@@ -32,8 +57,8 @@ namespace Dwarrowdelf.Client
 		}
 
 		public static readonly DependencyProperty ToolModeProperty =
-			DependencyProperty.Register("ToolMode", typeof(ClientToolMode), typeof(MainWindowTools), 
-			new UIPropertyMetadata(ClientToolMode.Info, new PropertyChangedCallback(ToolModeChangedCallback)));
+			DependencyProperty.Register("ToolMode", typeof(ClientToolMode), typeof(MainWindowTools),
+			new UIPropertyMetadata(new PropertyChangedCallback(ToolModeChangedCallback)));
 
 		static void ToolModeChangedCallback(DependencyObject ob, DependencyPropertyChangedEventArgs args)
 		{
@@ -50,7 +75,7 @@ namespace Dwarrowdelf.Client
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
 				case ClientToolMode.DesignationFellTree:
-					ctrl.DesignationToolMode = mode.ToString();
+					ctrl.DesignationToolMode = mode;
 					ctrl.designationButton.IsChecked = true;
 					break;
 
@@ -78,78 +103,69 @@ namespace Dwarrowdelf.Client
 				ctrl.ToolModeChanged(mode);
 		}
 
-		public string DesignationToolMode
+		public ClientToolMode DesignationToolMode
 		{
-			get { return (string)GetValue(DesignationToolModeProperty); }
+			get { return (ClientToolMode)GetValue(DesignationToolModeProperty); }
 			set { SetValue(DesignationToolModeProperty, value); }
 		}
 
 		public static readonly DependencyProperty DesignationToolModeProperty =
-			DependencyProperty.Register("DesignationToolMode", typeof(string), typeof(MainWindowTools), new UIPropertyMetadata("DesignationMine"));
-
-
+			DependencyProperty.Register("DesignationToolMode", typeof(ClientToolMode), typeof(MainWindowTools), new UIPropertyMetadata(ClientToolMode.DesignationMine));
 
 
 		private void MenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var item = (MenuItem)sender;
-			var tag = (string)item.Header;
+			var toolData = (ToolData)item.DataContext;
 
-			this.DesignationToolMode = tag;
+			this.DesignationToolMode = toolData.Mode;
 
 			if (this.designationButton.IsChecked == true)
-			{
-				var mode = (ClientToolMode)Enum.Parse(typeof(ClientToolMode), (string)tag);
-				this.ToolMode = mode;
-			}
+				this.ToolMode = toolData.Mode;
 		}
 
 		private void RadioButton_Checked(object sender, RoutedEventArgs e)
 		{
 			var item = (RadioButton)sender;
-
-			var mode = (ClientToolMode)Enum.Parse(typeof(ClientToolMode), (string)item.Content);
-
-			this.ToolMode = mode;
+			var toolData = (ToolData)item.DataContext;
+			this.ToolMode = toolData.Mode;
 		}
 	}
 
-	class ClientToolModeToBrushConverter : IMultiValueConverter
+	class ToolData
 	{
-		#region IMultiValueConverter Members
-
-		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public ToolData(ClientToolMode mode, string name, char key, DrawingBrush brush)
 		{
-			if (values.Length != 2)
-				throw new Exception("illegal length");
+			this.Mode = mode;
+			this.Name = name;
+			this.ToolTip = String.Format("{0} ({1})", this.Name, char.ToUpper(key));
+			this.Brush = brush;
+			this.Brush.Freeze();
+		}
 
-			if (values[0] == null)
-				throw new Exception("res dir null");
+		public ClientToolMode Mode { get; private set; }
+		public string Name { get; private set; }
+		public string ToolTip { get; private set; }
+		public DrawingBrush Brush { get; private set; }
+	}
 
-			if (!(values[0] is ResourceDictionary))
-				return null;
-			//throw new Exception(String.Format("illegal res type {0}", values[0].GetType().Name));
+	class ClientToolModeToToolDataConverter : IValueConverter
+	{
+		#region IValueConverter Members
 
-			var resDictionary = (ResourceDictionary)values[0];
-
-			object value = values[1];
-
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
 			if (value == null)
 				return null;
 
-			ClientToolMode mode;
+			var mode = (ClientToolMode)value;
 
-			if (value is string)
-				mode = (ClientToolMode)Enum.Parse(typeof(ClientToolMode), (string)value);
-			else
-				throw new Exception(String.Format("illegal type {0}", value.GetType().Name));
+			var data = MainWindowTools.ToolDatas[mode];
 
-			string str = mode.ToString();
-			var data = resDictionary[str];
 			return data;
 		}
 
-		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}
@@ -157,9 +173,9 @@ namespace Dwarrowdelf.Client
 		#endregion
 	}
 
-
 	public enum ClientToolMode
 	{
+		None = 0,
 		Info,
 		DesignationRemove,
 		DesignationMine,
