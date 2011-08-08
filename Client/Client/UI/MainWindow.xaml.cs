@@ -20,18 +20,6 @@ using Dwarrowdelf.Client.UI;
 
 namespace Dwarrowdelf.Client
 {
-	enum ToolMode
-	{
-		Info,
-		DesignationRemove,
-		DesignationMine,
-		DesignationFellTree,
-		SetTerrain,
-		CreateStockpile,
-		CreateItem,
-		CreateLiving,
-	}
-
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		GameObject m_followObject;
@@ -40,15 +28,13 @@ namespace Dwarrowdelf.Client
 
 		bool m_serverInAppDomain = true;
 
-		bool m_autoConnect = true;
-		bool m_autoEnterGame = true;
+		bool m_autoConnect = false;
+		bool m_autoEnterGame = false;
 
 		public TileInfo CurrentTileInfo { get; private set; }
 
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
-
-		ToolMode m_toolMode;
 
 		ServerInAppDomain m_server;
 
@@ -60,47 +46,38 @@ namespace Dwarrowdelf.Client
 		{
 			this.CurrentTileInfo = new TileInfo();
 
-			m_toolMode = Client.ToolMode.Info;
-
 			InitializeComponent();
 
 			this.MapControl.GotSelection += MapControl_GotSelection;
+			this.mainWindowTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
 		}
 
-		public ToolMode ToolMode
+		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)
 		{
-			get { return m_toolMode; }
-			set
+			switch (toolMode)
 			{
-				m_toolMode = value;
+				case Client.ClientToolMode.Info:
+					this.MapControl.SelectionMode = MapSelectionMode.None;
+					break;
 
-				switch (m_toolMode)
-				{
-					case Client.ToolMode.Info:
-						this.MapControl.SelectionMode = MapSelectionMode.None;
-						break;
+				case Client.ClientToolMode.CreateItem:
+					this.MapControl.SelectionMode = MapSelectionMode.Point;
+					break;
 
-					case Client.ToolMode.CreateItem:
-						this.MapControl.SelectionMode = MapSelectionMode.Point;
-						break;
+				case Client.ClientToolMode.DesignationMine:
+				case Client.ClientToolMode.DesignationFellTree:
+				case Client.ClientToolMode.DesignationRemove:
+				case Client.ClientToolMode.SetTerrain:
+				case Client.ClientToolMode.CreateLiving:
+					this.MapControl.SelectionMode = MapSelectionMode.Cuboid;
+					break;
 
-					case Client.ToolMode.DesignationMine:
-					case Client.ToolMode.DesignationFellTree:
-					case Client.ToolMode.DesignationRemove:
-					case Client.ToolMode.SetTerrain:
-					case Client.ToolMode.CreateLiving:
-						this.MapControl.SelectionMode = MapSelectionMode.Cuboid;
-						break;
+				case Client.ClientToolMode.CreateStockpile:
+					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
+					break;
 
-					case Client.ToolMode.CreateStockpile:
-						this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
-						break;
-
-					default:
-						break;
-				}
-
-				Notify("ToolMode");
+				default:
+					break;
 			}
 		}
 
@@ -108,21 +85,21 @@ namespace Dwarrowdelf.Client
 		{
 			var env = this.Map;
 
-			switch (m_toolMode)
+			switch (this.mainWindowTools.ToolMode)
 			{
-				case Client.ToolMode.DesignationRemove:
+				case Client.ClientToolMode.DesignationRemove:
 					env.Designations.RemoveArea(selection.SelectionCuboid);
 					break;
 
-				case Client.ToolMode.DesignationMine:
+				case Client.ClientToolMode.DesignationMine:
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Mine);
 					break;
 
-				case Client.ToolMode.DesignationFellTree:
+				case Client.ClientToolMode.DesignationFellTree:
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.FellTree);
 					break;
 
-				case Client.ToolMode.SetTerrain:
+				case Client.ClientToolMode.SetTerrain:
 					{
 						var dialog = new SetTerrainDialog();
 						dialog.Owner = this;
@@ -150,7 +127,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ToolMode.CreateStockpile:
+				case Client.ClientToolMode.CreateStockpile:
 					{
 						var dialog = new StockpileDialog();
 						dialog.Owner = this;
@@ -166,7 +143,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ToolMode.CreateItem:
+				case Client.ClientToolMode.CreateItem:
 					{
 						var dialog = new CreateItemDialog();
 						dialog.Owner = this;
@@ -186,7 +163,7 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
-				case Client.ToolMode.CreateLiving:
+				case Client.ClientToolMode.CreateLiving:
 					{
 						var dialog = new CreateLivingDialog();
 						dialog.Owner = this;
@@ -228,8 +205,6 @@ namespace Dwarrowdelf.Client
 
 			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
-
-			toolModeComboBox.ItemsSource = Enum.GetValues(typeof(ToolMode)).Cast<ToolMode>().OrderBy(id => id.ToString()).ToArray();
 
 			m_cmdHandler = new MainWindowCommandHandler(this);
 		}
@@ -487,31 +462,31 @@ namespace Dwarrowdelf.Client
 			}
 			else if (e.Key == Key.M)
 			{
-				this.ToolMode = Client.ToolMode.DesignationMine;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationMine;
 			}
 			else if (e.Key == Key.R)
 			{
-				this.ToolMode = Client.ToolMode.DesignationRemove;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationRemove;
 			}
 			else if (e.Key == Key.F)
 			{
-				this.ToolMode = Client.ToolMode.DesignationFellTree;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationFellTree;
 			}
 			else if (e.Key == Key.T)
 			{
-				this.ToolMode = Client.ToolMode.SetTerrain;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.SetTerrain;
 			}
 			else if (e.Key == Key.S)
 			{
-				this.ToolMode = Client.ToolMode.CreateStockpile;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateStockpile;
 			}
 			else if (e.Key == Key.L)
 			{
-				this.ToolMode = Client.ToolMode.CreateLiving;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateLiving;
 			}
 			else if (e.Key == Key.I)
 			{
-				this.ToolMode = Client.ToolMode.CreateItem;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateItem;
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -523,7 +498,7 @@ namespace Dwarrowdelf.Client
 			}
 			if (e.Key == Key.Escape)
 			{
-				this.ToolMode = Client.ToolMode.Info;
+				this.mainWindowTools.ToolMode = Client.ClientToolMode.Info;
 				this.MapControl.Focus();
 			}
 			else

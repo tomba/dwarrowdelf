@@ -88,12 +88,10 @@
                 <Button Content="Building..." Command="local:ClientCommands.OpenConstructBuildingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
                     <Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
                 </Button>
-                <Separator />
-
-                <Label>Tool</Label>
-                <ComboBox x:Name="toolModeComboBox" Width="100" SelectedValue="{Binding ToolMode, ElementName=mainWindow}" Focusable="False" />
             </ToolBar>
         </ToolBarTray>
+
+        <local:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
 
         <StatusBar DockPanel.Dock="Bottom" >
             <TextBlock>Tick</TextBlock>

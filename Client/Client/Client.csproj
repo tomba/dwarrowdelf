@@ -34,6 +34,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.20525.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\ApplicationIcon.ico</ApplicationIcon>
@@ -122,6 +124,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainWindowTools.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\SetTerrainDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -137,6 +143,10 @@
     <Page Include="UI\LogOnDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ToolIcons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\UIDictionary.xaml">
       <SubType>Designer</SubType>
@@ -171,6 +181,9 @@
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\HoverTileInfo.cs" />
     <Compile Include="UI\MainWindowCommandHandler.cs" />
+    <Compile Include="UI\MainWindowTools.xaml.cs">
+      <DependentUpon>MainWindowTools.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MapControlElementsService.cs" />
     <Compile Include="UI\MapControlSelectionService.cs" />
     <Compile Include="UI\MapControlToolTipService.cs" />
@@ -271,6 +284,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="UI\ToolIcons.design" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
