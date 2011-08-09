@@ -61,6 +61,12 @@
     <Reference Include="AvalonDock">
       <HintPath>..\..\AvalonDock\AvalonDock.dll</HintPath>
     </Reference>
+    <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\..\IronPython\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL">
+      <HintPath>..\..\IronPython\Microsoft.Scripting.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -177,6 +183,7 @@
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="FighterAI.cs" />
+    <Compile Include="IPRunner.cs" />
     <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="ListBoxExtenders.cs" />

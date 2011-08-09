@@ -16,6 +16,8 @@ namespace Dwarrowdelf.Client.UI
 {
 	public partial class ConsoleDialog : Window
 	{
+		IPRunner m_ipRunner;
+
 		public ConsoleDialog()
 		{
 			InitializeComponent();
@@ -39,9 +41,28 @@ namespace Dwarrowdelf.Client.UI
 				Close();
 				return;
 			}
-			
-			var msg = new IPCommandMessage() { Text = str };
-			GameData.Data.Connection.Send(msg);
+
+			if (this.serverButton.IsChecked == true)
+			{
+				var msg = new IPCommandMessage() { Text = str };
+				GameData.Data.Connection.Send(msg);
+			}
+			else if (this.clientButton.IsChecked == true)
+			{
+				if (m_ipRunner == null)
+					m_ipRunner = new IPRunner(Writer);
+
+				m_ipRunner.Exec(str);
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
+		void Writer(string txt)
+		{
+			GameData.Data.AddIPMessage(new IPOutputMessage() { Text = txt });
 		}
 	}
 }

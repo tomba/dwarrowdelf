@@ -5,9 +5,21 @@
         FocusManager.FocusedElement="{Binding ElementName=inputTextBox}"
         Title="ConsoleDialog" Height="400" Width="640"
         DataContext="{x:Static local:GameData.Data}">
-    
-    <DockPanel IsEnabled="{Binding IsUserConnected}">
-        <local:HistoryTextBox DockPanel.Dock="Bottom" x:Name="inputTextBox" TextEntered="InputTextBox_TextEntered" FontFamily="Lucida Console" />
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <local:HistoryTextBox x:Name="inputTextBox" TextEntered="InputTextBox_TextEntered" FontFamily="Lucida Console" Grid.RowSpan="2" AcceptsTab="True" />
+            <RadioButton Margin="6,2" Name="serverButton" Content="Server" GroupName="Destination" Grid.Column="1" Grid.Row="0" Focusable="False" />
+            <RadioButton Margin="6,2" Name="clientButton" Content="Client" GroupName="Destination" Grid.Column="1" Grid.Row="1" Focusable="False" IsChecked="True" />
+        </Grid>
 
         <ListBox ItemsSource="{Binding IPMessages,Mode=OneWay}" SelectionMode="Single" local:ListBoxExtenders.AutoScrollToEnd="True"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible" FontFamily="Lucida Console">
@@ -19,5 +31,5 @@
         </ListBox>
 
     </DockPanel>
-    
+
 </Window>
