@@ -1,0 +1,82 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MainWindowStatusBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+
+    <StatusBar>
+        <TextBlock>Tick</TextBlock>
+        <TextBlock Text="{Binding Data.World.TickNumber, FallbackValue=-}" />
+        <Separator />
+        <TextBlock>Env</TextBlock>
+        <TextBlock Text="{Binding Path=MapControl.Environment, TargetNullValue=-}" />
+        <Separator />
+        <TextBlock>Z</TextBlock>
+        <TextBlock Text="{Binding Path=MapControl.Z, TargetNullValue=x, FallbackValue=y}" />
+        <Separator />
+        <TextBlock DataContext="{Binding Data.Connection.Stats}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Sent: {0} / {1:N0}">
+                        <Binding Path="SentMessages" FallbackValue="0" />
+                        <Binding Path="SentBytes" FallbackValue="0" />
+                    </MultiBinding>
+                </TextBlock.Text>
+        </TextBlock>
+        <Separator />
+        <TextBlock DataContext="{Binding Data.Connection.Stats}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="Recv: {0} / {1:N0}">
+                        <Binding Path="ReceivedMessages" FallbackValue="0" />
+                        <Binding Path="ReceivedBytes" FallbackValue="0" />
+                    </MultiBinding>
+                </TextBlock.Text>
+        </TextBlock>
+        <Separator />
+
+        <TextBlock>ML</TextBlock>
+        <TextBox Width="75" IsReadOnly="True" DataContext="{Binding MapControl.TileInfo}">
+            <TextBox.Text>
+                <MultiBinding StringFormat="{}{0}, {1}, {2}">
+                    <Binding Path="Location.X" Mode="OneWay" />
+                    <Binding Path="Location.Y" Mode="OneWay" />
+                    <Binding Path="Location.Z" Mode="OneWay" />
+                </MultiBinding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBlock>SL</TextBlock>
+        <TextBox Width="50" IsReadOnly="True" DataContext="{Binding MapControl.TileInfo}">
+            <TextBox.Text>
+                <MultiBinding StringFormat="{}{0}, {1}">
+                    <Binding Path="ScreenLocation.X" Mode="OneWay" />
+                    <Binding Path="ScreenLocation.Y" Mode="OneWay" />
+                </MultiBinding>
+            </TextBox.Text>
+        </TextBox>
+
+        <TextBlock>MousePos</TextBlock>
+        <TextBox Width="50" IsReadOnly="True" DataContext="{Binding MapControl.TileInfo}">
+            <TextBox.Text>
+                <MultiBinding StringFormat="{}{0}, {1}">
+                    <Binding Path="MousePos.X" Mode="OneWay" />
+                    <Binding Path="MousePos.Y" Mode="OneWay" />
+                </MultiBinding>
+            </TextBox.Text>
+        </TextBox>
+
+        <Separator />
+        <TextBlock>FPS</TextBlock>
+        <TextBox Name="fpsTextBlock" Width="50" IsReadOnly="True" />
+
+        <Separator />
+        <TextBlock>CenterPos</TextBlock>
+        <TextBox Width="100" IsReadOnly="True" DataContext="{Binding MapControl}">
+            <TextBox.Text>
+                <MultiBinding StringFormat="{}{0:F2}, {1:F2}">
+                    <Binding Path="CenterPos.X" Mode="OneWay" />
+                    <Binding Path="CenterPos.Y" Mode="OneWay" />
+                </MultiBinding>
+            </TextBox.Text>
+        </TextBox>
+    </StatusBar>
+</UserControl>

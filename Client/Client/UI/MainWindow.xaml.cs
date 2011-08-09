@@ -24,7 +24,6 @@ namespace Dwarrowdelf.Client
 	{
 		GameObject m_followObject;
 		bool m_closing;
-		DispatcherTimer m_timer;
 
 		bool m_serverInAppDomain = true;
 
@@ -203,9 +202,6 @@ namespace Dwarrowdelf.Client
 
 			PopulateMenus();
 
-			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
-
 			m_cmdHandler = new MainWindowCommandHandler(this);
 		}
 
@@ -296,18 +292,6 @@ namespace Dwarrowdelf.Client
 			this.FollowObject = null;
 			map.Environment = null;
 			map.Dispose();
-		}
-
-		int m_fpsCounter;
-		void CompositionTarget_Rendering(object sender, EventArgs e)
-		{
-			m_fpsCounter++;
-		}
-
-		void OnTimerCallback(object ob, EventArgs args)
-		{
-			fpsTextBlock.Text = ((double)m_fpsCounter).ToString();
-			m_fpsCounter = 0;
 		}
 
 		private void FilterItems(object sender, FilterEventArgs e)
