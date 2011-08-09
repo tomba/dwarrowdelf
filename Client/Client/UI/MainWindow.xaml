@@ -78,6 +78,7 @@
             </ToolBar>
         </ToolBarTray>
 
+        <!-- Statusbar -->
         <localui:MainWindowStatusBar DockPanel.Dock="Bottom" />
 
         <ad:DockingManager x:Name="dockingManager" Loaded="dockingManager_Loaded">
