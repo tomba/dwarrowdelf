@@ -115,9 +115,9 @@
             <TextBox Width="75" IsReadOnly="True">
                 <TextBox.Text>
                     <MultiBinding StringFormat="{}{0}, {1}, {2}">
-                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.X" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.Y" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.MapLocation.Z" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.Location.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.Location.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.Location.Z" Mode="OneWay" />
                     </MultiBinding>
                 </TextBox.Text>
             </TextBox>
@@ -126,8 +126,8 @@
             <TextBox Width="50" IsReadOnly="True">
                 <TextBox.Text>
                     <MultiBinding StringFormat="{}{0}, {1}">
-                        <Binding ElementName="map" Path="HoverTileInfo.ScreenLocation.X" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.ScreenLocation.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.ScreenLocation.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.ScreenLocation.Y" Mode="OneWay" />
                     </MultiBinding>
                 </TextBox.Text>
             </TextBox>
@@ -136,8 +136,8 @@
             <TextBox Width="50" IsReadOnly="True">
                 <TextBox.Text>
                     <MultiBinding StringFormat="{}{0}, {1}">
-                        <Binding ElementName="map" Path="HoverTileInfo.MousePos.X" Mode="OneWay" />
-                        <Binding ElementName="map" Path="HoverTileInfo.MousePos.Y" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.MousePos.X" Mode="OneWay" />
+                        <Binding ElementName="map" Path="TileInfo.MousePos.Y" Mode="OneWay" />
                     </MultiBinding>
                 </TextBox.Text>
             </TextBox>
@@ -234,7 +234,7 @@
 
                                 <StackPanel DockPanel.Dock="Top">
                                     <TextBlock>
-                                        Area:
+                                        <TextBlock Text="Area:" />
                                         <TextBlock>
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
@@ -275,6 +275,68 @@
 
                         </ad:DockableContent>
 
+                        <!-- Hover -->
+                        <ad:DockableContent Name="hoverTileContent" Title="Hover" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}">
+                            <ad:DockableContent.Resources>
+                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                            </ad:DockableContent.Resources>
+
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Location:" />
+                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Terrain:" />
+                                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Interior:" />
+                                    <TextBlock Grid.Column="0" Grid.Row="3" Text="Water:" />
+
+                                    <TextBlock Grid.Column="1" Grid.Row="0">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0},{1},{2}">
+                                                <Binding Path="Location.X" Mode="OneWay" />
+                                                <Binding Path="Location.Y" Mode="OneWay" />
+                                                <Binding Path="Location.Z" Mode="OneWay" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Column="1" Grid.Row="1">
+                                           <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} ({1})">
+                                                    <Binding Path="Terrain.Name" Mode="OneWay" />
+                                                    <Binding Path="TerrainMaterial.Name" Mode="OneWay" />
+                                                </MultiBinding>
+                                               </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Column="1" Grid.Row="2">
+                                           <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} ({1})">
+                                                    <Binding Path="Interior.Name" Mode="OneWay" />
+                                                    <Binding Path="InteriorMaterial.Name" Mode="OneWay" />
+                                                </MultiBinding>
+                                               </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding WaterLevel, Mode=OneWay}" />
+
+                                </Grid>
+
+                                <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+
+                            </DockPanel>
+
+                        </ad:DockableContent>
+
                         <!-- Controllables' actions -->
                         <ad:DockableContent Name="actionsContent" Title="Actions">
                             <ListBox ItemsSource="{Binding Data.World.Controllables}">
@@ -282,20 +344,23 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Vertical">
                                             <TextBlock>
-                                                <TextBlock Text="{Binding}" />
-                                                :
-                                                <TextBlock Text="{Binding CurrentAction}" />
-                                                (
-                                                <TextBlock Text="{Binding ActionTicksUsed}" />
-                                                /
-                                                <TextBlock Text="{Binding ActionTotalTicks}" />
-                                                )
+                                                                          <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0}: {1} ({2}/{3})">
+                                                    <Binding />
+                                                    <Binding Path="CurrentAction" />
+                                                    <Binding Path="ActionTicksUsed" />
+                                                    <Binding Path="ActionTotalTicks" />
+                                                </MultiBinding>
+                                               </TextBlock.Text>
                                             </TextBlock>
 
                                             <TextBlock Margin="20,0,0,0">
-                                                Client: <TextBlock Text="{Binding ClientAssignment, TargetNullValue=none}" />
-                                                /
-                                                Server: <TextBlock Text="{Binding ServerAssignment, TargetNullValue=none}" />
+                                                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="Client: {0} / Server: {1}">
+                                                    <Binding Path="ClientAssignment" TargetNullValue="none" />
+                                                    <Binding Path="ServerAssignment" TargetNullValue="none" />
+                                                    </MultiBinding>
+                                                                                </TextBlock.Text>
                                             </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>

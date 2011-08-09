@@ -3,19 +3,87 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Input;
+using System.Windows;
 
 namespace Dwarrowdelf.Client.UI
 {
-#if asd
 	class TileInfo : INotifyPropertyChanged
 	{
-		Environment m_env;
-		IntPoint3D m_location;
-		GameObjectCollection m_obs;
+		MapControl m_mapControl;
 
-		public TileInfo()
+		public Point MousePos { get; private set; }
+		public IntPoint ScreenLocation { get; private set; }
+
+		public TileInfo(MapControl mapControl)
 		{
-			m_obs = new GameObjectCollection();
+			m_mapControl = mapControl;
+
+			m_mapControl.MouseMove += OnMouseMove;
+			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
+			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
+
+			this.Objects = new GameObjectCollection();
+		}
+
+		void OnEnvironmentChanged(Environment env)
+		{
+			if (this.Environment == env)
+				return;
+
+			if (this.Environment != null)
+			{
+				this.Environment.MapTileTerrainChanged -= MapTerrainChanged;
+				this.Environment.MapTileObjectChanged -= MapObjectChanged;
+			}
+
+			this.Environment = env;
+
+			if (this.Environment != null)
+			{
+				this.Environment.MapTileTerrainChanged += MapTerrainChanged;
+				this.Environment.MapTileObjectChanged += MapObjectChanged;
+			}
+
+			Notify("Environment");
+			NotifyTileChanges();
+		}
+
+		void OnMouseMove(object sender, MouseEventArgs e)
+		{
+			var p = e.GetPosition(m_mapControl);
+			UpdateHoverTileInfo(p);
+		}
+
+		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		{
+			var p = Mouse.GetPosition(m_mapControl);
+			UpdateHoverTileInfo(p);
+		}
+
+		void UpdateHoverTileInfo(Point p)
+		{
+			var sl = m_mapControl.ScreenPointToIntScreenTile(p);
+			var ml = m_mapControl.ScreenPointToMapLocation(p);
+
+			if (p != this.MousePos)
+			{
+				this.MousePos = p;
+				Notify("MousePos");
+			}
+
+			if (sl != this.ScreenLocation)
+			{
+				this.ScreenLocation = sl;
+				Notify("ScreenLocation");
+			}
+
+			if (ml != this.Location)
+			{
+				this.Location = ml;
+				Notify("Location");
+				NotifyTileChanges();
+			}
 		}
 
 		void NotifyTileChanges()
@@ -36,12 +104,12 @@ namespace Dwarrowdelf.Client.UI
 
 		void NotifyTileObjectChanges()
 		{
-			m_obs.Clear();
-			if (m_env != null)
+			this.Objects.Clear();
+			if (this.Environment != null)
 			{
-				var list = m_env.GetContents(m_location);
+				var list = this.Environment.GetContents(this.Location);
 				foreach (var o in list)
-					m_obs.Add(o);
+					this.Objects.Add(o);
 			}
 
 			Notify("Objects");
@@ -49,7 +117,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapTerrainChanged(IntPoint3D l)
 		{
-			if (l != m_location)
+			if (l != this.Location)
 				return;
 
 			NotifyTileTerrainChanges();
@@ -57,57 +125,23 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapObjectChanged(GameObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
 		{
-			if (l != m_location)
+			if (l != this.Location)
 				return;
 
 			NotifyTileObjectChanges();
 		}
 
-		public Environment Environment
-		{
-			get { return m_env; }
-			set
-			{
-				if (m_env != null)
-				{
-					m_env.MapTileTerrainChanged -= MapTerrainChanged;
-					m_env.MapTileObjectChanged -= MapObjectChanged;
-				}
-
-				m_env = value;
-
-				if (m_env == null)
-					m_location = new IntPoint3D();
-
-				if (m_env != null)
-				{
-					m_env.MapTileTerrainChanged += MapTerrainChanged;
-					m_env.MapTileObjectChanged += MapObjectChanged;
-				}
-
-				Notify("Environment");
-				NotifyTileChanges();
-			}
-		}
-
-		public IntPoint3D Location
-		{
-			get { return m_location; }
-			set
-			{
-				m_location = value;
-				Notify("Location");
-				NotifyTileChanges();
-			}
-		}
+		public Environment Environment { get; private set; }
+		public IntPoint3D Location { get; private set; }
+		public GameObjectCollection Objects { get; private set; }
 
 		public InteriorInfo Interior
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return null;
-				return m_env.GetInterior(m_location);
+				return this.Environment.GetInterior(this.Location);
 			}
 		}
 
@@ -115,9 +149,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return null;
-				return m_env.GetInteriorMaterial(m_location);
+				return this.Environment.GetInteriorMaterial(this.Location);
 			}
 		}
 
@@ -125,9 +159,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return null;
-				return m_env.GetTerrainMaterial(m_location);
+				return this.Environment.GetTerrainMaterial(this.Location);
 			}
 		}
 
@@ -135,9 +169,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return null;
-				return m_env.GetTerrain(m_location);
+				return this.Environment.GetTerrain(this.Location);
 			}
 		}
 
@@ -145,17 +179,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return 0;
-				return m_env.GetWaterLevel(m_location);
-			}
-		}
-
-		public GameObjectCollection Objects
-		{
-			get
-			{
-				return m_obs;
+				return this.Environment.GetWaterLevel(this.Location);
 			}
 		}
 
@@ -163,9 +189,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (m_env == null)
+				if (this.Environment == null)
 					return null;
-				return m_env.GetBuildingAt(m_location);
+				return this.Environment.GetBuildingAt(this.Location);
 			}
 		}
 
@@ -181,5 +207,4 @@ namespace Dwarrowdelf.Client.UI
 
 		#endregion
 	}
-#endif
 }

@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 	/// </summary>
 	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		public HoverTileInfo HoverTileInfo { get; private set; }
+		public TileInfo TileInfo { get; private set; }
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 
 		public MapControl MapControl { get { return m_mapControl; } }
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Client
 
 			m_dragService = new MapControlDragService(this);
 
-			this.HoverTileInfo = new HoverTileInfo(m_mapControl);
+			this.TileInfo = new TileInfo(m_mapControl);
 		}
 
 		public void InvalidateTiles()
