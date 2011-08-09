@@ -6,7 +6,7 @@
     <CharSymbol ID="Floor" Reverse="True" Outline="False" Char="▓" />
 
     <CharSymbol ID="Grass" Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
-    <CharSymbol ID="Wall" Opaque="True" Outline="False" Char="▓" />
+    <CharSymbol ID="Wall" Outline="False" Char="▓" />
 
     <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
     <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />

@@ -889,5 +889,12 @@ namespace Dwarrowdelf.Client
 
 			map.ScrollTo(msg.Environment, msg.Location);
 		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = new Dwarrowdelf.Client.Symbols.SymbolEditorDialog();
+			dialog.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
+			dialog.Show();
+		}
 	}
 }

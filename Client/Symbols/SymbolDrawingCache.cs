@@ -32,11 +32,24 @@ namespace Dwarrowdelf.Client.Symbols
 			Load(symbolInfoName);
 		}
 
+		public Symbols.SymbolSet SymbolSet { get { return m_symbolSet; } }
+
 		public void Load(string symbolInfoName)
 		{
 			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
 			m_symbolSet = LoadSymbolSet(symbolInfoName);
+
+			if (m_symbolSet.Drawings != null)
+				m_drawingCache = new DrawingCache(m_symbolSet.Drawings);
+
+			if (this.DrawingsChanged != null)
+				this.DrawingsChanged();
+		}
+
+		public void Update()
+		{
+			m_drawingMap = new Dictionary<SymbolID, Dictionary<GameColor, Drawing>>();
 
 			if (m_symbolSet.Drawings != null)
 				m_drawingCache = new DrawingCache(m_symbolSet.Drawings);
