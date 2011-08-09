@@ -30,6 +30,7 @@ namespace Dwarrowdelf.Client
 		public HoverTileInfo HoverTileInfo { get; private set; }
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 
+		public MapControl MapControl { get { return m_mapControl; } }
 		MapControl m_mapControl;
 
 		Canvas m_selectionCanvas;
@@ -46,6 +47,7 @@ namespace Dwarrowdelf.Client
 		MapControlToolTipService m_toolTipService;
 		MapControlSelectionService m_selectionService;
 		MapControlElementsService m_elementsService;
+		MapControlDragService m_dragService;
 
 		public event Action<MapSelection> GotSelection;
 
@@ -89,6 +91,8 @@ namespace Dwarrowdelf.Client
 			m_selectionService.SelectionChanged += OnSelectionChanged;
 
 			m_elementsService = new MapControlElementsService(m_mapControl, m_elementCanvas);
+
+			m_dragService = new MapControlDragService(this);
 
 			this.HoverTileInfo = new HoverTileInfo(m_mapControl);
 		}
@@ -224,7 +228,11 @@ namespace Dwarrowdelf.Client
 		public MapSelectionMode SelectionMode
 		{
 			get { return m_selectionService.SelectionMode; }
-			set { m_selectionService.SelectionMode = value; }
+			set
+			{
+				m_dragService.IsEnabled = value == MapSelectionMode.None;
+				m_selectionService.SelectionMode = value;
+			}
 		}
 
 		public MapSelection Selection

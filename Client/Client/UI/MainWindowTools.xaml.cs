@@ -44,8 +44,6 @@ namespace Dwarrowdelf.Client
 		public MainWindowTools()
 		{
 			this.InitializeComponent();
-
-			this.ToolMode = ClientToolMode.Info;
 		}
 
 		public event Action<ClientToolMode> ToolModeChanged;

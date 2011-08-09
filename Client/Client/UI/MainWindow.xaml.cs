@@ -46,6 +46,8 @@ namespace Dwarrowdelf.Client
 
 			this.MapControl.GotSelection += MapControl_GotSelection;
 			this.mainWindowTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
+
+			this.mainWindowTools.ToolMode = ClientToolMode.Info;
 		}
 
 		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)

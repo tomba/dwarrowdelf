@@ -179,6 +179,7 @@
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="ServerInAppDomain.cs" />
     <Compile Include="Stockpile.cs" />
+    <Compile Include="UI\MapControDragService.cs" />
     <Compile Include="UI\HoverTileInfo.cs" />
     <Compile Include="UI\MainWindowCommandHandler.cs" />
     <Compile Include="UI\MainWindowTools.xaml.cs">
