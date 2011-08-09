@@ -1,0 +1,69 @@
+﻿<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:Dwarrowdelf.Client"
+	mc:Ignorable="d"
+	x:Class="Dwarrowdelf.Client.DockSelectedControl"
+	x:Name="UserControl"
+	d:DesignWidth="371" d:DesignHeight="314">
+
+	<UserControl.Resources>
+		<local:MyTerrainsConverter x:Key="myTerrainsConverter" />
+		<local:MyInteriorsConverter x:Key="myInteriorsConverter" />
+		<local:MyWatersConverter x:Key="myWatersConverter" />
+		<local:MyBuildingsConverter x:Key="myBuildingsConverter" />
+		<local:MyGrassesConverter x:Key="myGrassesConverter" />
+	</UserControl.Resources>
+
+	<Grid x:Name="LayoutRoot">
+		<Grid.Resources>
+			<ResourceDictionary Source="/UI/UIDictionary.xaml" />
+		</Grid.Resources>
+
+		<DockPanel>
+
+			<StackPanel DockPanel.Dock="Top">
+				<TextBlock><InlineUIContainer>
+						<TextBlock Text="Area:" />
+					</InlineUIContainer><Run Text=" "/><InlineUIContainer>
+						<TextBlock>
+							<TextBlock.Text>
+								<MultiBinding StringFormat="{}{0}, {1}, {2} -&gt; {3}, {4}, {5} ({6} x {7} x {8})">
+									<Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
+									<Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
+									<Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
+									<Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
+									<Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
+									<Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
+									<Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
+									<Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
+									<Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
+								</MultiBinding>
+							</TextBlock.Text>
+						</TextBlock>
+					</InlineUIContainer></TextBlock>
+
+				<TextBlock><Run Text="Terrain: "/><InlineUIContainer>
+						<TextBlock Text="{Binding Terrains, Converter={StaticResource myTerrainsConverter}}" />
+					</InlineUIContainer></TextBlock>
+				<TextBlock><Run Text="Interior: "/><InlineUIContainer>
+						<TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
+					</InlineUIContainer></TextBlock>
+				<TextBlock><Run Text="Water: "/><InlineUIContainer>
+						<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
+					</InlineUIContainer></TextBlock>
+				<TextBlock><Run Text="Building: "/><InlineUIContainer>
+						<TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
+					</InlineUIContainer></TextBlock>
+				<TextBlock><Run Text="Grass: "/><InlineUIContainer>
+						<TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
+					</InlineUIContainer></TextBlock>
+			</StackPanel>
+
+			<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+
+		</DockPanel>
+	</Grid>
+</UserControl>

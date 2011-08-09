@@ -12,11 +12,6 @@
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Window.Resources>
-        <local:MyInteriorsConverter x:Key="myInteriorsConverter" />
-        <local:MyTerrainsConverter x:Key="myTerrainsConverter" />
-        <local:MyWatersConverter x:Key="myWatersConverter" />
-        <local:MyBuildingsConverter x:Key="myBuildingsConverter" />
-        <local:MyGrassesConverter x:Key="myGrassesConverter" />
         <CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
         <CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings"/>
     </Window.Resources>
@@ -227,53 +222,7 @@
 
                         <!-- Selection -->
                         <ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
-                            </ad:DockableContent.Resources>
-
-                            <DockPanel>
-
-                                <StackPanel DockPanel.Dock="Top">
-                                    <TextBlock>
-                                        <TextBlock Text="Area:" />
-                                        <TextBlock>
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}, {1}, {2} -> {3}, {4}, {5} ({6} x {7} x {8})">
-                                                    <Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
-                                                    <Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </TextBlock>
-
-                                    <TextBlock>Terrain:
-                                        <TextBlock Text="{Binding Terrains, Converter={StaticResource myTerrainsConverter}}" />
-                                    </TextBlock>
-                                    <TextBlock>Interior:
-                                        <TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
-                                    </TextBlock>
-                                    <TextBlock>Water:
-                                        <TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
-                                    </TextBlock>
-                                    <TextBlock>Building:
-                                        <TextBlock Text="{Binding Buildings, Converter={StaticResource myBuildingsConverter}}" />
-                                    </TextBlock>
-                                    <TextBlock>Grass:
-                                        <TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
-                                    </TextBlock>
-                                </StackPanel>
-
-                                <ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-
-                            </DockPanel>
-
+                            <local:DockSelectedControl />
                         </ad:DockableContent>
 
                         <!-- Hover -->

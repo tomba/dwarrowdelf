@@ -124,6 +124,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\DockSelectedControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\JobViewDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,6 +189,9 @@
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\DockHoverControl.xaml.cs">
       <DependentUpon>DockHoverControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DockSelectedControl.xaml.cs">
+      <DependentUpon>DockSelectedControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MapControDragService.cs" />
     <Compile Include="UI\MainWindowCommandHandler.cs" />
