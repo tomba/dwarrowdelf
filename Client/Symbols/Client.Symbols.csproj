@@ -73,12 +73,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="SymbolInfosChar.xaml">
+    <Page Include="SymbolInfosChar.xaml">
       <SubType>Designer</SubType>
-    </Resource>
-    <Resource Include="SymbolInfosGfx.xaml">
+    </Page>
+    <Page Include="SymbolInfosGfx.xaml">
       <SubType>Designer</SubType>
-    </Resource>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
