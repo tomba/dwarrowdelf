@@ -1,8 +1,9 @@
-﻿<Window x:Class="Dwarrowdelf.Client.SetTerrainDialog"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Dwarrowdelf.Client.SetTerrainDialog"
         x:ClassModifier="internal"
         Title="Designate"
         SizeToContent="WidthAndHeight"
@@ -10,10 +11,10 @@
         WindowStyle="SingleBorderWindow"
         ShowInTaskbar="False"
         ResizeMode="NoResize"
-        DataContext="{Binding RelativeSource={RelativeSource Self},Path=Data}">
+        DataContext="{Binding Data, RelativeSource={RelativeSource Self}}">
 
     <Window.Resources>
-        <Style TargetType="Button">
+        <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="2,2" />
             <Setter Property="Padding" Value="10,0" />
         </Style>
@@ -37,43 +38,50 @@
         </ObjectDataProvider>
     </Window.Resources>
 
-    <DockPanel>
-        <StackPanel Margin="6" Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-            <Button Content="Ok" IsDefault="True" Click="OkButton_Click" />
-            <Button Content="Cancel" IsCancel="True" />
+    <DockPanel Margin="2">
 
-        </StackPanel>
+    	<Grid DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="6" Width="162.064">
+    		<Grid.RowDefinitions>
+    			<RowDefinition/>
+    		</Grid.RowDefinitions>
+    		<Grid.ColumnDefinitions>
+    			<ColumnDefinition Width="1*" />
+    			<ColumnDefinition Width="1*" />
+    		</Grid.ColumnDefinitions>
+    		<Button Content="Ok" IsDefault="True" Click="OkButton_Click" />
+    		<Button Content="Cancel" IsCancel="True" Grid.Column="1" />
+    	</Grid>
 
         <UniformGrid DockPanel.Dock="Bottom">
-            <CheckBox IsThreeState="True" IsChecked="{Binding Grass}">Grass</CheckBox>
-            <CheckBox IsThreeState="True" IsChecked="{Binding Water}">Water</CheckBox>
+            <CheckBox IsThreeState="True" IsChecked="{Binding Grass}" Content="Grass"/>
+            <CheckBox IsThreeState="True" IsChecked="{Binding Water}" Content="Water"/>
         </UniformGrid>
 
         <UniformGrid Columns="4">
             <UniformGrid.Resources>
-                <Style TargetType="ListBox">
+                <Style TargetType="{x:Type ListBox}">
                     <Setter Property="SelectionMode" Value="Single" />
                 </Style>
             </UniformGrid.Resources>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainID" />
-                <ListBox Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
+                <ListBox x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainMaterial" />
-                <ListBox Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
+                <ListBox x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorID" />
-                <ListBox Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
+                <ListBox x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorMaterial" />
-                <ListBox Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
+                <ListBox x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
             </StackPanel>
 
         </UniformGrid>
