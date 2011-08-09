@@ -46,6 +46,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymbolDrawingCache.cs" />
     <Compile Include="Symbols.cs" />
+    <Compile Include="TestControl.xaml.cs">
+      <DependentUpon>TestControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
@@ -63,6 +66,10 @@
   <ItemGroup>
     <Page Include="SymbolDrawings.xaml">
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
