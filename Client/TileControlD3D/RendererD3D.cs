@@ -60,6 +60,9 @@ namespace Dwarrowdelf.Client.TileControl
 				m_renderTexture = null;
 			}
 
+			if (width == 0 || height == 0)
+				throw new Exception();
+
 			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
 			m_renderTexture = Helpers11.CreateTextureRenderSurface(m_device, width, height);
 			m_scene.SetRenderTarget(m_renderTexture);

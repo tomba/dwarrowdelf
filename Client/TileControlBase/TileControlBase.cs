@@ -34,6 +34,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public event Action<Point> CenterPosChanged;
 
+		protected TileControlBase()
+		{
+			this.MinHeight = 64;
+			this.MinWidth = 64;
+		}
+
 		protected void SetRenderer(IRenderer renderer)
 		{
 			m_renderer = renderer;
