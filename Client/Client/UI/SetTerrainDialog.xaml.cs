@@ -34,12 +34,6 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			terrainIDListBox.ItemsSource = Enum.GetValues(typeof(TerrainID)).Cast<TerrainID>().OrderBy(id => id.ToString()).ToArray();
-			terrainMaterialListBox.ItemsSource = Enum.GetValues(typeof(MaterialID)).Cast<MaterialID>().OrderBy(id => id.ToString()).ToArray();
-
-			interiorIDListBox.ItemsSource = Enum.GetValues(typeof(InteriorID)).Cast<InteriorID>().OrderBy(id => id.ToString()).ToArray();
-			interiorMaterialListBox.ItemsSource = Enum.GetValues(typeof(MaterialID)).Cast<MaterialID>().OrderBy(id => id.ToString()).ToArray();
-
 			base.OnInitialized(e);
 		}
 

@@ -1,6 +1,8 @@
 ﻿<Window x:Class="Dwarrowdelf.Client.SetTerrainDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
         x:ClassModifier="internal"
         Title="Designate"
         SizeToContent="WidthAndHeight"
@@ -15,6 +17,24 @@
             <Setter Property="Margin" Value="2,2" />
             <Setter Property="Padding" Value="10,0" />
         </Style>
+
+        <ObjectDataProvider x:Key="terrainIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="common:TerrainID" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="interiorIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="common:InteriorID" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <ObjectDataProvider x:Key="materialIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="common:MaterialID" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
 
     <DockPanel>
@@ -30,25 +50,30 @@
         </UniformGrid>
 
         <UniformGrid Columns="4">
+            <UniformGrid.Resources>
+                <Style TargetType="ListBox">
+                    <Setter Property="SelectionMode" Value="Single" />
+                </Style>
+            </UniformGrid.Resources>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainID" />
-                <ListBox Name="terrainIDListBox" SelectionMode="Single" SelectedValue="{Binding TerrainID}" />
+                <ListBox Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="TerrainMaterial" />
-                <ListBox Name="terrainMaterialListBox" SelectionMode="Single" SelectedValue="{Binding TerrainMaterialID}" />
+                <ListBox Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorID" />
-                <ListBox Name="interiorIDListBox" SelectionMode="Single" SelectedValue="{Binding InteriorID}" />
+                <ListBox Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
             </StackPanel>
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="InteriorMaterial" />
-                <ListBox Name="interiorMaterialListBox" SelectionMode="Single" SelectedValue="{Binding InteriorMaterialID}" />
+                <ListBox Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
             </StackPanel>
 
         </UniformGrid>
