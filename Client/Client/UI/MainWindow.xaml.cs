@@ -31,8 +31,6 @@ namespace Dwarrowdelf.Client
 		bool m_autoConnect = false;
 		bool m_autoEnterGame = false;
 
-		public TileInfo CurrentTileInfo { get; private set; }
-
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
 
@@ -44,8 +42,6 @@ namespace Dwarrowdelf.Client
 
 		public MainWindow()
 		{
-			this.CurrentTileInfo = new TileInfo();
-
 			InitializeComponent();
 
 			this.MapControl.GotSelection += MapControl_GotSelection;
@@ -205,9 +201,6 @@ namespace Dwarrowdelf.Client
 
 			PopulateMenus();
 
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.CurrentObjectProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, (ob, ev) => this.FollowObject = GameData.Data.CurrentObject);
-
 			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
 			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
 
@@ -350,13 +343,6 @@ namespace Dwarrowdelf.Client
 					m_followObject.ObjectMoved += FollowedObjectMoved;
 					FollowedObjectMoved(m_followObject, m_followObject.Environment, m_followObject.Location);
 				}
-				else
-				{
-					//map.InvalidateTiles(); ??? XXX
-
-					this.CurrentTileInfo.Environment = null;
-					this.CurrentTileInfo.Location = new IntPoint3D();
-				}
 
 				Notify("FollowObject");
 			}
@@ -367,9 +353,6 @@ namespace Dwarrowdelf.Client
 			Environment env = dst as Environment;
 
 			map.ScrollTo(env, loc);
-
-			this.CurrentTileInfo.Environment = env;
-			this.CurrentTileInfo.Location = loc;
 		}
 
 		static Direction KeyToDir(Key key)
@@ -556,38 +539,6 @@ namespace Dwarrowdelf.Client
 		{
 			get { return map.Environment; }
 			set { map.Environment = value; }
-		}
-
-		private void Get_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var plr = GameData.Data.CurrentObject;
-			if (!(plr.Environment is Environment))
-				throw new Exception();
-
-			var list = currentTileItems.SelectedItems.Cast<GameObject>();
-
-			if (list.Count() == 0)
-				return;
-
-			if (list.Contains(plr))
-				return;
-
-			Debug.Assert(list.All(o => o.Environment == plr.Environment));
-			Debug.Assert(list.All(o => o.Location == plr.Location));
-
-			plr.RequestAction(new GetAction(list, ActionPriority.Normal));
-		}
-
-		private void Drop_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var list = inventoryListBox.SelectedItems.Cast<GameObject>();
-
-			if (list.Count() == 0)
-				return;
-
-			var plr = GameData.Data.CurrentObject;
-
-			plr.RequestAction(new DropAction(list, ActionPriority.Normal));
 		}
 
 		private void MenuItem_Click_JobTreeView(object sender, RoutedEventArgs e)
@@ -843,16 +794,6 @@ namespace Dwarrowdelf.Client
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
-		}
-
-		private void currentObjectCheckBox_Checked(object sender, RoutedEventArgs e)
-		{
-			currentObjectComboBox.SelectedItem = GameData.Data.World.Controllables.FirstOrDefault();
-		}
-
-		private void currentObjectCheckBox_Unchecked(object sender, RoutedEventArgs e)
-		{
-			currentObjectComboBox.SelectedItem = null;
 		}
 
 		private void Button_Click_GC(object sender, RoutedEventArgs e)

@@ -6,6 +6,7 @@ using System.ComponentModel;
 
 namespace Dwarrowdelf.Client.UI
 {
+#if asd
 	class TileInfo : INotifyPropertyChanged
 	{
 		Environment m_env;
@@ -180,4 +181,5 @@ namespace Dwarrowdelf.Client.UI
 
 		#endregion
 	}
+#endif
 }

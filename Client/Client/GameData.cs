@@ -140,17 +140,6 @@ namespace Dwarrowdelf.Client
 
 
 
-		public Living CurrentObject
-		{
-			get { return (Living)GetValue(CurrentObjectProperty); }
-			set { SetValue(CurrentObjectProperty, value); }
-		}
-
-		public static readonly DependencyProperty CurrentObjectProperty =
-			DependencyProperty.Register("CurrentObject", typeof(Living), typeof(GameData), new UIPropertyMetadata(null));
-
-
-
 		public World World
 		{
 			get { return (World)GetValue(WorldProperty); }

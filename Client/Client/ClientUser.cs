@@ -130,7 +130,6 @@ namespace Dwarrowdelf.Client
 				ExitedGameEvent();
 
 			m_world.Controllables.Clear();
-			GameData.Data.CurrentObject = null;
 			//App.MainWindow.FollowObject = null;
 		}
 

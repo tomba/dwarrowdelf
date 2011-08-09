@@ -50,16 +50,7 @@
                 <Separator />
                 <ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
             </ToolBar>
-            <ToolBar>
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Name="currentObjectCheckBox" VerticalAlignment="Center" Margin="2,0" 
-                              Unchecked="currentObjectCheckBox_Unchecked" Checked="currentObjectCheckBox_Checked">CurrentObject</CheckBox>
-                    <ComboBox Name="currentObjectComboBox" IsEnabled="{Binding ElementName=currentObjectCheckBox, Path=IsChecked}" MinWidth="100"
-                              ItemsSource="{Binding Data.World.Controllables}"
-                              SelectedItem="{Binding Data.CurrentObject}"
-                              IsReadOnly="True" />
-                </StackPanel>
-            </ToolBar>
+
             <ToolBar>
                 <Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
                         ValueChanged="slider_ValueChanged"/>
@@ -231,42 +222,6 @@
                                     </Style>
                                 </ListBox.ItemContainerStyle>
                             </ListBox>
-                        </ad:DockableContent>
-
-                        <!-- Inventory -->
-                        <ad:DockableContent Name="inventoryContent" Title="Inventory">
-                            <DockPanel>
-                                <Button DockPanel.Dock="Bottom" Click="Drop_Button_Click">Drop</Button>
-                                <ListBox Name="inventoryListBox"
-                                          ItemsSource="{Binding Data.CurrentObject.Inventory}"
-                                          SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-                            </DockPanel>
-                        </ad:DockableContent>
-
-                        <!-- Current tile info-->
-                        <ad:DockableContent Name="currentTileContent" Title="Current Tile Info" DataContext="{Binding Path=CurrentTileInfo, ElementName=mainWindow}">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
-                            </ad:DockableContent.Resources>
-
-                            <DockPanel>
-                                <StackPanel DockPanel.Dock="Top">
-                                    <TextBlock>Location: <TextBlock Text="{Binding Location}" /></TextBlock>
-                                    <TextBlock>Terrain:
-                                             <TextBlock Text="{Binding Terrain.Name}" />
-                                            (<TextBlock Text="{Binding TerrainMaterial.Name}" />)
-                                             </TextBlock>
-                                    <TextBlock>Interior:
-                                          <TextBlock Text="{Binding Interior.Name}" />
-                                         (<TextBlock Text="{Binding InteriorMaterial.Name}" />)
-                                          </TextBlock>
-                                    <TextBlock>Water:
-                                      <TextBlock Text="{Binding WaterLevel}" />
-                                       </TextBlock>
-                                </StackPanel>
-                                <Button DockPanel.Dock="Bottom" Click="Get_Button_Click">Get</Button>
-                                <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-                            </DockPanel>
                         </ad:DockableContent>
 
                         <!-- Selection -->
