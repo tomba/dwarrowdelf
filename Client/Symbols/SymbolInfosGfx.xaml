@@ -10,10 +10,6 @@
 
     <DrawingSymbol ID="Water">Water_Block</DrawingSymbol>
 
-    <DrawingSymbol ID="StairsUp">StairsUp</DrawingSymbol>
-    <DrawingSymbol ID="StairsDown">StairsDown</DrawingSymbol>
-    <DrawingSymbol ID="StairsUpDown">StairsUpDown</DrawingSymbol>
-
     <DrawingSymbol ID="SlopeUpNorth" Rotate="90">SlopeUp</DrawingSymbol>
     <DrawingSymbol ID="SlopeUpSouth" Rotate="270">SlopeUp</DrawingSymbol>
     <DrawingSymbol ID="SlopeUpWest" Rotate="0">SlopeUp</DrawingSymbol>
@@ -34,12 +30,8 @@
     <DrawingSymbol ID="SlopeDownSouthWest" Rotate="90">SlopeDownCorner</DrawingSymbol>
     <DrawingSymbol ID="SlopeDownNorthWest" Rotate="180">SlopeDownCorner</DrawingSymbol>
 
-    <DrawingSymbol ID="Player" X="20" Y="10" W="60" H="80">Character_Cat_Girl</DrawingSymbol>
-    <DrawingSymbol ID="Sheep" X="10" Y="20" W="80" H="60">Enemy_Bug</DrawingSymbol>
-    
     <DrawingSymbol ID="Gem">Gem_Blue</DrawingSymbol>
     <DrawingSymbol ID="Sapling">Tree_Short</DrawingSymbol>
     <DrawingSymbol ID="Tree">Tree_Tall</DrawingSymbol>
-    <DrawingSymbol ID="Key"  X="20" Y="10" W="60" H="80">Key</DrawingSymbol>
     <DrawingSymbol ID="Rock" X="10" Y="10" W="80" H="80">Rock</DrawingSymbol>
 </SymbolSet>
