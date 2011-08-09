@@ -239,9 +239,8 @@ namespace Dwarrowdelf.Client
 					if (env.GetGrass(ml))
 					{
 						tile.SymbolID = SymbolID.Grass;
-						// override the material color
-						tile.Color = GameColor.DarkGreen;
-						tile.BgColor = GameColor.Green;
+						// Grass color should come from the symbol definition
+						tile.Color = GameColor.None;
 					}
 					else
 					{
