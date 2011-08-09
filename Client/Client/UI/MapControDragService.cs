@@ -81,11 +81,14 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnLostMouseCapture(object sender, MouseEventArgs e)
 		{
+			m_mapControl.ClearValue(UserControl.CursorProperty);
 			m_mapControl.MouseMove -= OnMouseMove;
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)
 		{
+			m_mapControl.Cursor = Cursors.ScrollAll;
+
 			var pos = e.GetPosition(m_mapControl);
 
 			var v = m_mapControl.MapControl.MapTileToScreenPoint(m_mapTile) - pos;

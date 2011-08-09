@@ -232,6 +232,11 @@ namespace Dwarrowdelf.Client
 			{
 				m_dragService.IsEnabled = value == MapSelectionMode.None;
 				m_selectionService.SelectionMode = value;
+
+				if (value == MapSelectionMode.None)
+					ClearValue(UserControl.CursorProperty);
+				else
+					Cursor = Cursors.Cross;
 			}
 		}
 
