@@ -18,15 +18,9 @@ namespace Dwarrowdelf.Client.Symbols
 	/// </summary>
 	public partial class SymbolEditorDialog : Window
 	{
-		System.Windows.Threading.DispatcherTimer m_timer;
-
 		public SymbolEditorDialog()
 		{
 			this.InitializeComponent();
-
-			m_timer = new System.Windows.Threading.DispatcherTimer();
-			m_timer.Tick += new EventHandler(m_timer_Tick);
-			m_timer.Interval = TimeSpan.FromMilliseconds(200);
 		}
 
 		public SymbolDrawingCache SymbolDrawingCache
@@ -40,27 +34,16 @@ namespace Dwarrowdelf.Client.Symbols
 
 		static void OnSymbolDrawingCacheChanged(DependencyObject ob, DependencyPropertyChangedEventArgs args)
 		{
+			
 			var cache = (SymbolDrawingCache)args.NewValue;
 			var dlg = (SymbolEditorDialog)ob;
 
-			var symbols = cache.SymbolSet.Symbols;
-
-			var chars = symbols.OfType<CharSymbol>().ToArray();
-			var drawings = symbols.OfType<DrawingSymbol>().ToArray();
-
-			dlg.charGrid.DataContext = chars;
-			dlg.drawingGrid.DataContext = drawings;
+			dlg.DataContext = cache.SymbolSet;
 		}
 
-		void m_timer_Tick(object sender, EventArgs e)
+		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			m_timer.Stop();
 			this.SymbolDrawingCache.Update();
-		}
-
-		private void charGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-		{
-			m_timer.Start();
 		}
 	}
 }
