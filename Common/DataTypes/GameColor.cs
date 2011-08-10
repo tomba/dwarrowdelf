@@ -191,13 +191,13 @@ namespace Dwarrowdelf
 		WhiteSmoke,
 		Yellow,
 		YellowGreen,
-
-		NumColors,
 	}
 
 	[Serializable]
 	public struct GameColorRGB : IEquatable<GameColorRGB>
 	{
+		public static readonly int NUMCOLORS;
+
 		readonly byte m_state;
 		readonly byte m_r;
 		readonly byte m_g;
@@ -349,6 +349,12 @@ namespace Dwarrowdelf
 		};
 
 		public static readonly GameColorRGB Empty = new GameColorRGB();
+
+		static GameColorRGB()
+		{
+			var array = Enum.GetNames(typeof(GameColor));
+			NUMCOLORS = array.Length;
+		}
 
 		public GameColorRGB(byte r, byte g, byte b)
 		{

@@ -180,7 +180,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public static SlimDX.Direct3D11.Buffer CreateGameColorBuffer(Device device)
 		{
-			int numcolors = (int)GameColor.NumColors;
+			int numcolors = GameColorRGB.NUMCOLORS;
 
 			var arr = new int[numcolors];
 			for (int i = 0; i < numcolors; ++i)

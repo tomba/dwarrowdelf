@@ -383,7 +383,7 @@ namespace MyArea
 
 		GameColor GetRandomColor()
 		{
-			return (GameColor)m_random.Next((int)GameColor.NumColors - 1) + 1;
+			return (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1;
 		}
 
 
