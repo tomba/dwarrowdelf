@@ -1,243 +1,243 @@
-﻿<Window x:Class="Dwarrowdelf.Client.MainWindow"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Dwarrowdelf.Client"
-    xmlns:localui="clr-namespace:Dwarrowdelf.Client.UI"
-    xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-    Title="Dwarrowdelf" Height="785" Width="1173"
-    x:ClassModifier="internal"
-    x:Name="mainWindow"
-    TextOptions.TextFormattingMode="Display"
-    Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
-    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+﻿<Window x:Class="Dwarrowdelf.Client.UI.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:Dwarrowdelf.Client"
+	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+	xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+	Title="Dwarrowdelf" Height="785" Width="1173"
+	x:ClassModifier="internal"
+	x:Name="mainWindow"
+	TextOptions.TextFormattingMode="Display"
+	Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
+	DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <Window.Resources>
-        <CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
-        <CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings"/>
-    </Window.Resources>
+	<Window.Resources>
+		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
+		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings"/>
+	</Window.Resources>
 
-    <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <ToggleButton IsChecked="{Binding Data.DisableLOS}">Disable Client LOS</ToggleButton>
-                <Separator />
-                <ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
-                <Separator />
-                <ComboBox Text="{Binding Path=TileSet, ElementName=map}" MinWidth="100">
-                    <ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
-                    <ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
-                </ComboBox>
-                <Separator />
-                <Button Click="Connect_Button_Click">Connect</Button>
-                <Separator />
-                <Button Click="Disconnect_Button_Click">Disconnect</Button>
-                <Separator />
-                <Button Click="EnterGame_Button_Click">Enter Game</Button>
-                <Separator />
-                <Button Click="ExitGame_Button_Click">Exit Game</Button>
-                <Separator />
-                <Button Click="Save_Button_Click">Save</Button>
-                <Button Click="Load_Button_Click">Load</Button>
-            </ToolBar>
-            <ToolBar>
-                <Button Click="Button_Click_GC">GC</Button>
-                <Separator />
-                <Button Click="Button_Click_Break">Break</Button>
-                <Separator />
-                <ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
-                <Separator />
-                <Button Click="Button_Click">Edit Symbols</Button>
-            </ToolBar>
+	<DockPanel>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<ToggleButton IsChecked="{Binding Data.DisableLOS}">Disable Client LOS</ToggleButton>
+				<Separator />
+				<ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
+				<Separator />
+				<ComboBox Text="{Binding Path=TileSet, ElementName=map}" MinWidth="100">
+					<ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
+					<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
+				</ComboBox>
+				<Separator />
+				<Button Click="Connect_Button_Click">Connect</Button>
+				<Separator />
+				<Button Click="Disconnect_Button_Click">Disconnect</Button>
+				<Separator />
+				<Button Click="EnterGame_Button_Click">Enter Game</Button>
+				<Separator />
+				<Button Click="ExitGame_Button_Click">Exit Game</Button>
+				<Separator />
+				<Button Click="Save_Button_Click">Save</Button>
+				<Button Click="Load_Button_Click">Load</Button>
+			</ToolBar>
+			<ToolBar>
+				<Button Click="Button_Click_GC">GC</Button>
+				<Separator />
+				<Button Click="Button_Click_Break">Break</Button>
+				<Separator />
+				<ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
+				<Separator />
+				<Button Click="Button_Click">Edit Symbols</Button>
+			</ToolBar>
 
-            <ToolBar>
-                <Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
-                        ValueChanged="slider_ValueChanged"/>
-                <TextBox Text="{Binding Path=Value, ElementName=slider}" />
-            </ToolBar>
+			<ToolBar>
+				<Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
+						ValueChanged="slider_ValueChanged"/>
+				<TextBox Text="{Binding Path=Value, ElementName=slider}" />
+			</ToolBar>
 
-            <ToolBarTray.ContextMenu>
-                <ContextMenu Name="contentMenu">
-                    <!-- Filled programmatically -->
-                </ContextMenu>
-            </ToolBarTray.ContextMenu>
-        </ToolBarTray>
+			<ToolBarTray.ContextMenu>
+				<ContextMenu Name="contentMenu">
+					<!-- Filled programmatically -->
+				</ContextMenu>
+			</ToolBarTray.ContextMenu>
+		</ToolBarTray>
 
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <ToggleButton Command="local:ClientCommands.AutoAdvanceTurnCommand" IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}">
-                    <ToggleButton.ToolTip>Shortcut: Space</ToggleButton.ToolTip>
-                    AutoAdvanceTurn
-                </ToggleButton>
-                <Separator />
-                <Separator />
-                <Button Content="Add Build Item..." Command="local:ClientCommands.OpenBuildItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
-                </Button>
-                <Separator />
-                <Button Content="Building..." Command="local:ClientCommands.OpenConstructBuildingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-                    <Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<ToggleButton Command="ui:ClientCommands.AutoAdvanceTurnCommand" IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}">
+					<ToggleButton.ToolTip>Shortcut: Space</ToggleButton.ToolTip>
+					AutoAdvanceTurn
+				</ToggleButton>
+				<Separator />
+				<Separator />
+				<Button Content="Add Build Item..." Command="ui:ClientCommands.OpenBuildItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
+					<Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
+				</Button>
+				<Separator />
+				<Button Content="Building..." Command="ui:ClientCommands.OpenConstructBuildingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
+					<Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
 
-        <!-- Statusbar -->
-        <localui:MainWindowStatusBar DockPanel.Dock="Bottom" />
+		<!-- Statusbar -->
+		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />
 
-        <ad:DockingManager x:Name="dockingManager" Loaded="dockingManager_Loaded">
-            <ad:ResizingPanel Orientation="Vertical">
-                <ad:ResizingPanel Orientation="Horizontal">
+		<ad:DockingManager x:Name="dockingManager" Loaded="dockingManager_Loaded">
+			<ad:ResizingPanel Orientation="Vertical">
+				<ad:ResizingPanel Orientation="Horizontal">
 
-                    <ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
+					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
 
-                        <!-- All objects-->
-                        <ad:DockableContent Name="allObjectsContent" Title="Objects">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                            </ad:DockableContent.Resources>
+						<!-- All objects-->
+						<ad:DockableContent Name="allObjectsContent" Title="Objects">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-                        </ad:DockableContent>
+							<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+						</ad:DockableContent>
 
-                        <!-- Items -->
-                        <ad:DockableContent Name="itemsContent" Title="Items">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                            </ad:DockableContent.Resources>
+						<!-- Items -->
+						<ad:DockableContent Name="itemsContent" Title="Items">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-                                        <EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
+							<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+								<ListBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ListBoxItem}">
+										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+									</Style>
+								</ListBox.ItemContainerStyle>
+							</ListBox>
 
-                        </ad:DockableContent>
+						</ad:DockableContent>
 
-                        <!-- Livings -->
-                        <ad:DockableContent Name="livingsContent" Title="Livings">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                            </ad:DockableContent.Resources>
+						<!-- Livings -->
+						<ad:DockableContent Name="livingsContent" Title="Livings">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-                                        <EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
+							<ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+								<ListBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ListBoxItem}">
+										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+									</Style>
+								</ListBox.ItemContainerStyle>
+							</ListBox>
 
-                        </ad:DockableContent>
+						</ad:DockableContent>
 
-                        <!-- Controllables -->
-                        <ad:DockableContent Name="controllablesContent" Title="Controllables">
-                            <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                            </ad:DockableContent.Resources>
+						<!-- Controllables -->
+						<ad:DockableContent Name="controllablesContent" Title="Controllables">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-                            <ListBox ItemsSource="{Binding Data.World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                                <ListBox.ItemContainerStyle>
-                                    <Style TargetType="{x:Type ListBoxItem}">
-                                        <EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-                                        <EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-                                    </Style>
-                                </ListBox.ItemContainerStyle>
-                            </ListBox>
-                        </ad:DockableContent>
+							<ListBox ItemsSource="{Binding Data.World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+								<ListBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ListBoxItem}">
+										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+									</Style>
+								</ListBox.ItemContainerStyle>
+							</ListBox>
+						</ad:DockableContent>
 
-                        <!-- Selection -->
-                        <ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
-                            <local:DockSelectedControl />
-                        </ad:DockableContent>
+						<!-- Selection -->
+						<ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
+							<ui:DockSelectedControl />
+						</ad:DockableContent>
 
-                        <!-- Hover -->
-                        <ad:DockableContent Name="hoverTileContent" Title="Hover" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}">
-                            <localui:DockHoverControl />
-                        </ad:DockableContent>
+						<!-- Hover -->
+						<ad:DockableContent Name="hoverTileContent" Title="Hover" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}">
+							<ui:DockHoverControl />
+						</ad:DockableContent>
 
-                        <!-- Controllables' actions -->
-                        <ad:DockableContent Name="actionsContent" Title="Actions">
-                            <ListBox ItemsSource="{Binding Data.World.Controllables}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock>
-                                                                          <TextBlock.Text>
-                                                <MultiBinding StringFormat="{}{0}: {1} ({2}/{3})">
-                                                    <Binding />
-                                                    <Binding Path="CurrentAction" />
-                                                    <Binding Path="ActionTicksUsed" />
-                                                    <Binding Path="ActionTotalTicks" />
-                                                </MultiBinding>
-                                               </TextBlock.Text>
-                                            </TextBlock>
+						<!-- Controllables' actions -->
+						<ad:DockableContent Name="actionsContent" Title="Actions">
+							<ListBox ItemsSource="{Binding Data.World.Controllables}">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<StackPanel Orientation="Vertical">
+											<TextBlock>
+																		  <TextBlock.Text>
+												<MultiBinding StringFormat="{}{0}: {1} ({2}/{3})">
+													<Binding />
+													<Binding Path="CurrentAction" />
+													<Binding Path="ActionTicksUsed" />
+													<Binding Path="ActionTotalTicks" />
+												</MultiBinding>
+											   </TextBlock.Text>
+											</TextBlock>
 
-                                            <TextBlock Margin="20,0,0,0">
-                                                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="Client: {0} / Server: {1}">
-                                                    <Binding Path="ClientAssignment" TargetNullValue="none" />
-                                                    <Binding Path="ServerAssignment" TargetNullValue="none" />
-                                                    </MultiBinding>
-                                                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </ad:DockableContent>
+											<TextBlock Margin="20,0,0,0">
+																			<TextBlock.Text>
+												<MultiBinding StringFormat="Client: {0} / Server: {1}">
+													<Binding Path="ClientAssignment" TargetNullValue="none" />
+													<Binding Path="ServerAssignment" TargetNullValue="none" />
+													</MultiBinding>
+																				</TextBlock.Text>
+											</TextBlock>
+										</StackPanel>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</ad:DockableContent>
 
-                        <!-- Jobs -->
-                        <ad:DockableContent Name="jobsContent" Title="Jobs">
-                            <TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
-                                <TreeView.Resources>
-                                    <ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
-                                </TreeView.Resources>
+						<!-- Jobs -->
+						<ad:DockableContent Name="jobsContent" Title="Jobs">
+							<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
+								<TreeView.Resources>
+									<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
+								</TreeView.Resources>
 
-                                <TreeView.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
-                                    </ContextMenu>
-                                </TreeView.ContextMenu>
-                            </TreeView>
-                        </ad:DockableContent>
+								<TreeView.ContextMenu>
+									<ContextMenu>
+										<MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+									</ContextMenu>
+								</TreeView.ContextMenu>
+							</TreeView>
+						</ad:DockableContent>
 
-                    </ad:DockablePane>
+					</ad:DockablePane>
 
-                    <!-- MAP -->
-                    <ad:DocumentPane>
-                        <ad:DocumentContent Title="Map">
+					<!-- MAP -->
+					<ad:DocumentPane>
+						<ad:DocumentContent Title="Map">
 
-                            <DockPanel>
-                                <local:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
-                                <local:MasterMapControl x:Name="map" />
-                            </DockPanel>
+							<DockPanel>
+								<ui:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
+								<ui:MasterMapControl x:Name="map" />
+							</DockPanel>
 
-                        </ad:DocumentContent>
-                    </ad:DocumentPane>
-                </ad:ResizingPanel>
+						</ad:DocumentContent>
+					</ad:DocumentPane>
+				</ad:ResizingPanel>
 
-                <!-- Events -->
-                <ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
+				<!-- Events -->
+				<ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
 
-                    <ad:DockableContent Name="eventsContent" Title="Events">
-                        <ListBox ItemsSource="{Binding Data.GameEvents,Mode=OneWay}" SelectionMode="Single" local:ListBoxExtenders.AutoScrollToEnd="True"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                 SelectionChanged="MessageListBox_SelectionChanged">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </ad:DockableContent>
-                </ad:DockablePane>
+					<ad:DockableContent Name="eventsContent" Title="Events">
+						<ListBox ItemsSource="{Binding Data.GameEvents,Mode=OneWay}" SelectionMode="Single" ui:ListBoxExtenders.AutoScrollToEnd="True"
+								 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
+								 SelectionChanged="MessageListBox_SelectionChanged">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</ad:DockableContent>
+				</ad:DockablePane>
 
-            </ad:ResizingPanel>
-        </ad:DockingManager>
+			</ad:ResizingPanel>
+		</ad:DockingManager>
 
-    </DockPanel>
+	</DockPanel>
 
 </Window>

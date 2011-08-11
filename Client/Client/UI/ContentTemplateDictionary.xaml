@@ -1,16 +1,17 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:local="clr-namespace:Dwarrowdelf.Client">
+					xmlns:local="clr-namespace:Dwarrowdelf.Client"
+					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 
 	<DataTemplate DataType="{x:Type local:ItemObject}">
-		<local:ItemInfoControl />
+		<ui:ItemInfoControl />
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type local:Living}">
-		<local:LivingInfoControl />
+		<ui:LivingInfoControl />
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<local:BuildingInfoControl />
+		<ui:BuildingInfoControl />
 	</DataTemplate>
 </ResourceDictionary>

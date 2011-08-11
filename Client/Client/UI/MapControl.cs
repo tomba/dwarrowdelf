@@ -16,7 +16,7 @@ using System.Windows.Threading;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.

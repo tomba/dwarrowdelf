@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client
 			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
 		}
 
-		public MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
 		public Dwarrowdelf.Client.Symbols.SymbolDrawingCache SymbolDrawingCache { get; private set; }
 

@@ -16,9 +16,8 @@ using System.ComponentModel;
 using Dwarrowdelf.Messages;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
-using Dwarrowdelf.Client.UI;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
@@ -436,31 +435,31 @@ namespace Dwarrowdelf.Client
 			}
 			else if (e.Key == Key.M)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationMine;
+				this.mainWindowTools.ToolMode = ClientToolMode.DesignationMine;
 			}
 			else if (e.Key == Key.R)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationRemove;
+				this.mainWindowTools.ToolMode = ClientToolMode.DesignationRemove;
 			}
 			else if (e.Key == Key.F)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.DesignationFellTree;
+				this.mainWindowTools.ToolMode = ClientToolMode.DesignationFellTree;
 			}
 			else if (e.Key == Key.T)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.SetTerrain;
+				this.mainWindowTools.ToolMode = ClientToolMode.SetTerrain;
 			}
 			else if (e.Key == Key.S)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateStockpile;
+				this.mainWindowTools.ToolMode = ClientToolMode.CreateStockpile;
 			}
 			else if (e.Key == Key.L)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateLiving;
+				this.mainWindowTools.ToolMode = ClientToolMode.CreateLiving;
 			}
 			else if (e.Key == Key.I)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.CreateItem;
+				this.mainWindowTools.ToolMode = ClientToolMode.CreateItem;
 			}
 			else if (e.Key == Key.Add)
 			{
@@ -472,7 +471,7 @@ namespace Dwarrowdelf.Client
 			}
 			if (e.Key == Key.Escape)
 			{
-				this.mainWindowTools.ToolMode = Client.ClientToolMode.Info;
+				this.mainWindowTools.ToolMode = ClientToolMode.Info;
 				this.MapControl.Focus();
 			}
 			else

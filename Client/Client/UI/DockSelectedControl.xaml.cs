@@ -12,11 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
-	/// <summary>
-	/// Interaction logic for DockSelectedControl.xaml
-	/// </summary>
 	public partial class DockSelectedControl : UserControl
 	{
 		public DockSelectedControl()

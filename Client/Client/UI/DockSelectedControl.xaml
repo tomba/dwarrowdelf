@@ -4,17 +4,18 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:Dwarrowdelf.Client"
+	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 	mc:Ignorable="d"
-	x:Class="Dwarrowdelf.Client.DockSelectedControl"
+	x:Class="Dwarrowdelf.Client.UI.DockSelectedControl"
 	x:Name="UserControl"
 	d:DesignWidth="371" d:DesignHeight="314">
 
 	<UserControl.Resources>
-		<local:MyTerrainsConverter x:Key="myTerrainsConverter" />
-		<local:MyInteriorsConverter x:Key="myInteriorsConverter" />
-		<local:MyWatersConverter x:Key="myWatersConverter" />
-		<local:MyBuildingsConverter x:Key="myBuildingsConverter" />
-		<local:MyGrassesConverter x:Key="myGrassesConverter" />
+		<ui:MyTerrainsConverter x:Key="myTerrainsConverter" />
+		<ui:MyInteriorsConverter x:Key="myInteriorsConverter" />
+		<ui:MyWatersConverter x:Key="myWatersConverter" />
+		<ui:MyBuildingsConverter x:Key="myBuildingsConverter" />
+		<ui:MyGrassesConverter x:Key="myGrassesConverter" />
 	</UserControl.Resources>
 
 	<Grid x:Name="LayoutRoot">

@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	/// <summary>
 	/// Interaction logic for BuildingInfoControl.xaml

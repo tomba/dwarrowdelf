@@ -158,10 +158,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\DesignateDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\LogOnDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -190,7 +186,7 @@
     <Compile Include="IPRunner.cs" />
     <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
-    <Compile Include="ListBoxExtenders.cs" />
+    <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />
     <Compile Include="Jobs\CleanAreaJob.cs" />
@@ -243,9 +239,6 @@
     </Compile>
     <Compile Include="UI\StockpileDialog.xaml.cs">
       <DependentUpon>StockpileDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\DesignateDialog.xaml.cs">
-      <DependentUpon>DesignateDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>

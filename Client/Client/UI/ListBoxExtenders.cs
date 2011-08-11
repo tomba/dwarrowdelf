@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Collections.Specialized;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
 	/// <summary>
 	/// This class contains a few useful extenders for the ListBox

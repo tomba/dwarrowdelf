@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client
 	public partial class App : Application
 	{
 		public new static App Current { get { return (App)Application.Current; } }
-		internal new static MainWindow MainWindow { get { return (MainWindow)Application.Current.MainWindow; } }
+		internal new static UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
 		protected override void OnStartup(StartupEventArgs e)
 		{

@@ -3,7 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Dwarrowdelf.Client.SetTerrainDialog"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" 
+		x:Class="Dwarrowdelf.Client.UI.SetTerrainDialog"
         x:ClassModifier="internal"
         Title="Designate"
         SizeToContent="WidthAndHeight"
@@ -13,79 +16,79 @@
         ResizeMode="NoResize"
         DataContext="{Binding Data, RelativeSource={RelativeSource Self}}">
 
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="2,2" />
-            <Setter Property="Padding" Value="10,0" />
-        </Style>
+	<Window.Resources>
+		<Style TargetType="{x:Type Button}">
+			<Setter Property="Margin" Value="2,2" />
+			<Setter Property="Padding" Value="10,0" />
+		</Style>
 
-        <ObjectDataProvider x:Key="terrainIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="common:TerrainID" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+		<ObjectDataProvider x:Key="terrainIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="common:TerrainID" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
 
-        <ObjectDataProvider x:Key="interiorIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="common:InteriorID" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
+		<ObjectDataProvider x:Key="interiorIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="common:InteriorID" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
 
-        <ObjectDataProvider x:Key="materialIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="common:MaterialID" />
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-    </Window.Resources>
+		<ObjectDataProvider x:Key="materialIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="common:MaterialID" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+	</Window.Resources>
 
-    <DockPanel Margin="2">
+	<DockPanel Margin="2">
 
-    	<Grid DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="6" Width="162.064">
-    		<Grid.RowDefinitions>
-    			<RowDefinition/>
-    		</Grid.RowDefinitions>
-    		<Grid.ColumnDefinitions>
-    			<ColumnDefinition Width="1*" />
-    			<ColumnDefinition Width="1*" />
-    		</Grid.ColumnDefinitions>
-    		<Button Content="Ok" IsDefault="True" Click="OkButton_Click" />
-    		<Button Content="Cancel" IsCancel="True" Grid.Column="1" />
-    	</Grid>
+		<Grid DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="6" Width="162.064">
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+			<Button Content="Ok" IsDefault="True" Click="OkButton_Click" />
+			<Button Content="Cancel" IsCancel="True" Grid.Column="1" />
+		</Grid>
 
-        <UniformGrid DockPanel.Dock="Bottom">
-            <CheckBox IsThreeState="True" IsChecked="{Binding Grass}" Content="Grass"/>
-            <CheckBox IsThreeState="True" IsChecked="{Binding Water}" Content="Water"/>
-        </UniformGrid>
+		<UniformGrid DockPanel.Dock="Bottom">
+			<CheckBox IsThreeState="True" IsChecked="{Binding Grass}" Content="Grass"/>
+			<CheckBox IsThreeState="True" IsChecked="{Binding Water}" Content="Water"/>
+		</UniformGrid>
 
-        <UniformGrid Columns="4">
-            <UniformGrid.Resources>
-                <Style TargetType="{x:Type ListBox}">
-                    <Setter Property="SelectionMode" Value="Single" />
-                </Style>
-            </UniformGrid.Resources>
+		<UniformGrid Columns="4">
+			<UniformGrid.Resources>
+				<Style TargetType="{x:Type ListBox}">
+					<Setter Property="SelectionMode" Value="Single" />
+				</Style>
+			</UniformGrid.Resources>
 
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="TerrainID" />
-                <ListBox x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
-            </StackPanel>
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="TerrainID" />
+				<ListBox x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
+			</StackPanel>
 
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="TerrainMaterial" />
-                <ListBox x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
-            </StackPanel>
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="TerrainMaterial" />
+				<ListBox x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
+			</StackPanel>
 
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="InteriorID" />
-                <ListBox x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
-            </StackPanel>
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="InteriorID" />
+				<ListBox x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
+			</StackPanel>
 
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="InteriorMaterial" />
-                <ListBox x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
-            </StackPanel>
+			<StackPanel Orientation="Vertical">
+				<TextBlock Text="InteriorMaterial" />
+				<ListBox x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
+			</StackPanel>
 
-        </UniformGrid>
+		</UniformGrid>
 
-    </DockPanel>
+	</DockPanel>
 
 </Window>

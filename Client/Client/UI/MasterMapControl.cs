@@ -19,9 +19,8 @@ using System.Diagnostics;
 using System.Windows.Media.Animation;
 using Dwarrowdelf.Client.UI;
 
-namespace Dwarrowdelf.Client
+namespace Dwarrowdelf.Client.UI
 {
-
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
