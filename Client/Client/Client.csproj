@@ -106,15 +106,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\ConsoleDialog.xaml">
+    <Page Include="UI\Windows\ConsoleDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\ConstructBuildingDialog.xaml">
+    <Page Include="UI\Windows\ConstructBuildingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\BuildItemDialog.xaml">
+    <Page Include="UI\Windows\BuildItemDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -122,19 +122,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\CreateLivingDialog.xaml">
+    <Page Include="UI\Windows\CreateLivingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\CreateItemDialog.xaml">
+    <Page Include="UI\Windows\CreateItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\DockHoverControl.xaml">
+    <Page Include="UI\MainWindow\DockHoverControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\DockSelectedControl.xaml">
+    <Page Include="UI\MainWindow\DockSelectedControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -142,23 +142,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindowStatusBar.xaml">
+    <Page Include="UI\MainWindow\MainWindowStatusBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindowTools.xaml">
+    <Page Include="UI\MainWindow\MainWindowTools.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\SetTerrainDialog.xaml">
+    <Page Include="UI\Windows\SetTerrainDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\StockpileDialog.xaml">
+    <Page Include="UI\Windows\StockpileDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\LogOnDialog.xaml">
+    <Page Include="UI\Windows\LogOnDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -174,7 +174,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow.xaml">
+    <Page Include="UI\MainWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -198,59 +198,59 @@
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="ServerInAppDomain.cs" />
     <Compile Include="Stockpile.cs" />
-    <Compile Include="UI\DockHoverControl.xaml.cs">
+    <Compile Include="UI\MainWindow\DockHoverControl.xaml.cs">
       <DependentUpon>DockHoverControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\DockSelectedControl.xaml.cs">
+    <Compile Include="UI\MainWindow\DockSelectedControl.xaml.cs">
       <DependentUpon>DockSelectedControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainWindowStatusBar.xaml.cs">
+    <Compile Include="UI\MainWindow\MainWindowStatusBar.xaml.cs">
       <DependentUpon>MainWindowStatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControDragService.cs" />
-    <Compile Include="UI\MainWindowCommandHandler.cs" />
-    <Compile Include="UI\MainWindowTools.xaml.cs">
+    <Compile Include="UI\MapControl\MapControDragService.cs" />
+    <Compile Include="UI\MainWindow\MainWindowCommandHandler.cs" />
+    <Compile Include="UI\MainWindow\MainWindowTools.xaml.cs">
       <DependentUpon>MainWindowTools.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControlElementsService.cs" />
-    <Compile Include="UI\MapControlSelectionService.cs" />
-    <Compile Include="UI\MapControlToolTipService.cs" />
+    <Compile Include="UI\MapControl\MapControlElementsService.cs" />
+    <Compile Include="UI\MapControl\MapControlSelectionService.cs" />
+    <Compile Include="UI\MapControl\MapControlToolTipService.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ConsoleDialog.xaml.cs">
+    <Compile Include="UI\Windows\ConsoleDialog.xaml.cs">
       <DependentUpon>ConsoleDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ConstructBuildingDialog.xaml.cs">
+    <Compile Include="UI\Windows\ConstructBuildingDialog.xaml.cs">
       <DependentUpon>ConstructBuildingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\BuildItemDialog.xaml.cs">
+    <Compile Include="UI\Windows\BuildItemDialog.xaml.cs">
       <DependentUpon>BuildItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ClientCommands.cs" />
-    <Compile Include="UI\CreateLivingDialog.xaml.cs">
+    <Compile Include="UI\Windows\CreateLivingDialog.xaml.cs">
       <DependentUpon>CreateLivingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\CreateItemDialog.xaml.cs">
+    <Compile Include="UI\Windows\CreateItemDialog.xaml.cs">
       <DependentUpon>CreateItemDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\SetTerrainDialog.xaml.cs">
+    <Compile Include="UI\Windows\SetTerrainDialog.xaml.cs">
       <DependentUpon>SetTerrainDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\StockpileDialog.xaml.cs">
+    <Compile Include="UI\Windows\StockpileDialog.xaml.cs">
       <DependentUpon>StockpileDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\LogOnDialog.xaml.cs">
+    <Compile Include="UI\Windows\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\TileAreaInfo.cs" />
-    <Compile Include="UI\TileInfo.cs" />
+    <Compile Include="UI\MapControl\TileAreaInfo.cs" />
+    <Compile Include="UI\MapControl\TileInfo.cs" />
     <Compile Include="UI\ListItemTemplateDictionary.xaml.cs">
       <DependentUpon>ListItemTemplateDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\MasterMapControl.cs" />
-    <Compile Include="UI\MapControl.cs" />
+    <Compile Include="UI\MapControl\MasterMapControl.cs" />
+    <Compile Include="UI\MapControl\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -260,7 +260,7 @@
     <Compile Include="UI\LivingInfoControl.xaml.cs">
       <DependentUpon>LivingInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainWindow.xaml.cs">
+    <Compile Include="UI\MainWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

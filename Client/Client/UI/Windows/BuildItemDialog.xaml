@@ -1,7 +1,7 @@
-﻿<Window x:Class="Dwarrowdelf.Client.BuildItemDialog"
+﻿<Window x:Class="Dwarrowdelf.Client.UI.BuildItemDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:dd="clr-namespace:Dwarrowdelf.Client"
+        xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
         x:ClassModifier="internal"
         Title="Build Item"
         SizeToContent="WidthAndHeight"
@@ -19,7 +19,7 @@
             <Setter Property="Padding" Value="10,0" />
         </Style>
 
-        <dd:CapitalizeConverter x:Key="converter"/>
+        <ui:CapitalizeConverter x:Key="converter"/>
     </Window.Resources>
 
     <DockPanel>
