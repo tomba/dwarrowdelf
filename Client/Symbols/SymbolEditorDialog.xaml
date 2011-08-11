@@ -9,6 +9,7 @@
 	mc:Ignorable="d"
 	x:Class="Dwarrowdelf.Client.Symbols.SymbolEditorDialog"
 	x:Name="Window"
+	xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
 	Title="SymbolEditorDialog"
 	d:DataContext="{d:DesignData /SymbolInfosChar.xaml}" Height="574" Width="506">
 
@@ -29,65 +30,6 @@
 			<RowDefinition Height="0.259*"/>
 			<RowDefinition Height="0.741*"/>
 		</Grid.RowDefinitions>
-		<GroupBox Header="{Binding SelectedItem.ID, ElementName=listBox}" DataContext="{Binding SelectedItem, ElementName=listBox}" Grid.Row="1" Grid.Column="1">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="Auto" MinWidth="100"/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Text="W" Grid.Row="3" />
-				<TextBox Text="{Binding H}" Grid.Column="1" Grid.Row="4" />
-				<TextBlock Text="H" Grid.Row="4" />
-				<TextBox Text="{Binding Rotate}" Grid.Column="1" Grid.Row="5" />
-				<TextBlock Text="Opaque" Grid.Row="6" />
-				<TextBlock Text="X" Grid.Row="1" />
-				<TextBox Text="{Binding X}" Grid.Column="1" Grid.Row="1" />
-				<CheckBox Content="" IsChecked="{Binding Opaque}" Grid.Column="1" Grid.Row="6" />
-				<TextBlock Text="Y" Grid.Row="2" />
-				<TextBox Text="{Binding Y}" Grid.Column="1" Grid.Row="2" />
-				<TextBlock Text="Rotate" Grid.Row="5" />
-				<TextBox Text="{Binding W}" Grid.Column="1" Grid.Row="3" />
-				<TextBox Text="{Binding Char}" Grid.Column="1" Grid.Row="7" />
-				<TextBlock Text="Char" Grid.Row="7" />
-				<TextBox Text="{Binding DrawingName}" Grid.Column="1" Grid.Row="16" />
-				<TextBlock Grid.Row="16" Text="DrawingName"/>
-				<TextBlock Text="Outline" Grid.Row="9"/>
-				<TextBox Text="{Binding Path=OutlineThickness}" Grid.Column="1" Grid.Row="10" />
-				<TextBlock Text="OutlineThickness" Grid.Row="10"/>
-				<TextBox Text="{Binding Path=FontFamily}" Grid.Column="1" Grid.Row="11" />
-				<TextBlock Text="FontFamily" Grid.Row="11"/>
-				<TextBox Text="{Binding Path=FontSize}" Grid.Column="1" Grid.Row="12" />
-				<TextBlock Text="FontSize" Grid.Row="12"/>
-				<TextBlock Text="Color" Grid.Row="13"/>
-				<TextBlock Text="Background" Grid.Row="14"/>
-				<TextBlock Text="Reverse" Grid.Row="15" />
-				<CheckBox Content="" IsChecked="{Binding Path=Outline}" Grid.Column="1" Grid.Row="9" />
-				<CheckBox Content="" IsChecked="{Binding Path=Reverse}" Grid.Column="1" Grid.Row="15" />
-				<ComboBox Grid.Column="1" Grid.Row="13" Name="comboBox1" ItemsSource="{Binding Source={StaticResource colorIDs}}" SelectedValue="{Binding Color}" />
-				<ComboBox ItemsSource="{Binding Source={StaticResource colorIDs}}" Name="comboBox2" Grid.Column="1" Grid.Row="14" SelectedValue="{Binding Background}" />
-			</Grid>
-		</GroupBox>
 		<GroupBox Header="SymbolSet">
 			<Grid>
 				<Grid.RowDefinitions>
@@ -113,14 +55,17 @@
 				<CheckBox Content="" Grid.Column="1" Grid.Row="2" IsChecked="{Binding Outline}"/>
 			</Grid>
 		</GroupBox>
-		<ListBox x:Name="listBox" ItemsSource="{Binding Symbols}" SelectedIndex="2" Grid.Row="1">
+		<ListBox x:Name="listBox" ItemsSource="{Binding Symbols}" SelectedIndex="2" Grid.Row="1" SelectionChanged="listBox_SelectionChanged">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding ID}" />
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Button Content="Update" Margin="47,53.76,113,36" Click="Button_Click" Grid.Column="1" />
+		<Button Content="Update" Margin="6,0,197,106" Click="Button_Click" Grid.Column="1" />
+		<WindowsFormsHost Grid.Column="1" Name="windowsFormsHost1" Grid.Row="1">
+			<wf:PropertyGrid x:Name="propGrid" />
+		</WindowsFormsHost>
 	</Grid>
 
 </Window>

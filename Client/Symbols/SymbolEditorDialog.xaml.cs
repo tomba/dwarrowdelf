@@ -45,5 +45,14 @@ namespace Dwarrowdelf.Client.Symbols
 		{
 			this.SymbolDrawingCache.Update();
 		}
+
+		private void listBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count != 1)
+				return;
+
+			var ob = e.AddedItems[0];
+			propGrid.SelectedObject = ob;
+		}
 	}
 }
