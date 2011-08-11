@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Client.UI
 					m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
 					m_mapControl.MouseMove -= OnMouseMove;
 					m_mapControl.ZChanged -= OnZChanged;
-			
+
 					CloseToolTip();
 				}
 
@@ -81,19 +81,17 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (!m_isToolTipEnabled)
 				return;
-			
+
 			CloseToolTip();
 		}
 
 		void CreateToolTip()
 		{
-			var toolTipContent = new UI.ObjectInfoControl();
 			var tt = new ToolTip();
-			tt.Content = toolTipContent;
+			tt.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentTemplateDictionary.xaml", UriKind.Relative) };
 			tt.IsOpen = false;
 			tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 			tt.PlacementTarget = m_mapControl;
-			tt.DataContext = null;
 			m_toolTip = tt;
 		}
 
@@ -113,7 +111,7 @@ namespace Dwarrowdelf.Client.UI
 			{
 				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
 				{
-					m_toolTip.DataContext = ob;
+					m_toolTip.Content = ob;
 
 					var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
 					m_toolTip.PlacementRectangle = rect;

@@ -92,7 +92,7 @@
                         <!-- All objects-->
                         <ad:DockableContent Name="allObjectsContent" Title="Objects">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
@@ -101,7 +101,7 @@
                         <!-- Items -->
                         <ad:DockableContent Name="itemsContent" Title="Items">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -118,7 +118,7 @@
                         <!-- Livings -->
                         <ad:DockableContent Name="livingsContent" Title="Livings">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -135,7 +135,7 @@
                         <!-- Controllables -->
                         <ad:DockableContent Name="controllablesContent" Title="Controllables">
                             <ad:DockableContent.Resources>
-                                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
                             </ad:DockableContent.Resources>
 
                             <ListBox ItemsSource="{Binding Data.World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

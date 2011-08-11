@@ -118,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\ContentTemplateDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\CreateLivingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -166,7 +170,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\UIDictionary.xaml">
+    <Page Include="UI\ListItemTemplateDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -215,7 +219,6 @@
     <Compile Include="UI\MapControlElementsService.cs" />
     <Compile Include="UI\MapControlSelectionService.cs" />
     <Compile Include="UI\MapControlToolTipService.cs" />
-    <Compile Include="UI\ObjectInfoControl.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
     </Compile>
@@ -249,8 +252,8 @@
     </Compile>
     <Compile Include="UI\TileAreaInfo.cs" />
     <Compile Include="UI\TileInfo.cs" />
-    <Compile Include="UI\UIDictionary.xaml.cs">
-      <DependentUpon>UIDictionary.xaml</DependentUpon>
+    <Compile Include="UI\ListItemTemplateDictionary.xaml.cs">
+      <DependentUpon>ListItemTemplateDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\MasterMapControl.cs" />

@@ -8,7 +8,7 @@ using AvalonDock;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class UIDictionary
+	partial class ListItemTemplateDictionary
 	{
 		public void Button_Click(object sender, RoutedEventArgs e)
 		{
@@ -16,16 +16,16 @@ namespace Dwarrowdelf.Client.UI
 
 			var ob = (BaseGameObject)button.DataContext;
 
-			var content = new ObjectInfoControl();
-
-			content.DataContext = ob;
+			var contentControl = new ContentControl();
+			contentControl.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentTemplateDictionary.xaml", UriKind.Relative) };
+			contentControl.Content = ob;
 
 			var dockableContent = new DockableContent()
 			{
 				Title = ob.ToString(),
 				HideOnClose = false,
 				IsCloseable = true,
-				Content = content,
+				Content = contentControl,
 			};
 
 			// XXX for some reason the DockableContent window seems to stay even after closed. This leads to the object being referenced.

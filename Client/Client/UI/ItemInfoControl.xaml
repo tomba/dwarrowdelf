@@ -54,7 +54,7 @@
 
         <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
             <ListBox.Resources>
-                <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
             </ListBox.Resources>
         </ListBox>
 

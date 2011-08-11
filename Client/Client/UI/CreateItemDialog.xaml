@@ -32,7 +32,7 @@
 
             <StackPanel Orientation="Vertical" DataContext="{x:Static local:GameData.Data}">
                 <StackPanel.Resources>
-                    <ResourceDictionary Source="/UI/UIDictionary.xaml" />
+                    <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
                 </StackPanel.Resources>
                 
                 <TextBlock Text="Environment" />
