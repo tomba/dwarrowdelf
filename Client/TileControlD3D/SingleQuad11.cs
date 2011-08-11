@@ -214,6 +214,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetTileTextures(Texture2D textureArray)
 		{
+			if (m_tileTextureView != null)
+			{
+				m_tileTextureView.Dispose();
+				m_tileTextureView = null;
+			}
+
 			m_tileTextureView = new ShaderResourceView(m_device, textureArray, new ShaderResourceViewDescription()
 			{
 				Format = textureArray.Description.Format,
