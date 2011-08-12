@@ -8,7 +8,8 @@ namespace Dwarrowdelf
 {
 	public class MyTraceSource : TraceSource
 	{
-		public string Header { get; set; }
+		string m_header;
+		public string Header { set { m_header = "[" + value + "] "; } }
 
 		public MyTraceSource(string name, string header = null)
 			: base(name)
@@ -23,9 +24,21 @@ namespace Dwarrowdelf
 		}
 
 		[Conditional("TRACE")]
+		public void TraceWarning(string message)
+		{
+			Trace(TraceEventType.Warning, message);
+		}
+
+		[Conditional("TRACE")]
 		public void TraceWarning(string format, params object[] args)
 		{
 			Trace(TraceEventType.Warning, format, args);
+		}
+
+		[Conditional("TRACE")]
+		public new void TraceInformation(string message)
+		{
+			Trace(TraceEventType.Information, message);
 		}
 
 		[Conditional("TRACE")]
@@ -35,18 +48,40 @@ namespace Dwarrowdelf
 		}
 
 		[Conditional("TRACE")]
+		public void TraceVerbose(string message)
+		{
+			Trace(TraceEventType.Verbose, message);
+		}
+
+		[Conditional("TRACE")]
 		public void TraceVerbose(string format, params object[] args)
 		{
 			Trace(TraceEventType.Verbose, format, args);
 		}
 
 		[Conditional("TRACE")]
+		void Trace(TraceEventType eventType, string message)
+		{
+			if (this.Switch.ShouldTrace(eventType) && this.Listeners != null)
+			{
+				TraceEvent(eventType, 0, m_header + message);
+			}
+		}
+
+		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string format, params object[] args)
 		{
-			var sb = new StringBuilder();
-			sb.AppendFormat("[{0}] ", this.Header);
-			sb.AppendFormat(format, args);
-			TraceEvent(eventType, 0, sb.ToString());
+			if (this.Switch.ShouldTrace(eventType) && this.Listeners != null)
+			{
+				if (args == null || args.Length == 0)
+				{
+					TraceEvent(eventType, 0, m_header + format);
+				}
+				else
+				{
+					TraceEvent(eventType, 0, m_header + format, args);
+				}
+			}
 		}
 	}
 }

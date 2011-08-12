@@ -55,26 +55,10 @@ namespace Dwarrowdelf
 
 		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
 		{
-			if (args == null)
+			if (args == null || args.Length == 0)
 				WriteLine(format);
 			else
 				WriteLine(String.Format(format, args));
-		}
-
-	}
-
-	public static class TraceExtensions
-	{
-		[Conditional("TRACE")]
-		public static void TraceError(this TraceSource traceSource, string format, params object[] args)
-		{
-			traceSource.TraceEvent(TraceEventType.Error, 0, format, args);
-		}
-
-		[Conditional("TRACE")]
-		public static void TraceVerbose(this TraceSource traceSource, string format, params object[] args)
-		{
-			traceSource.TraceEvent(TraceEventType.Verbose, 0, format, args);
 		}
 	}
 }
