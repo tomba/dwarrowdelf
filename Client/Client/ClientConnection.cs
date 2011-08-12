@@ -173,6 +173,10 @@ namespace Dwarrowdelf.Client
 			m_user = new ClientUser(this, m_world, msg.IsSeeAll);
 			GameData.Data.World.SetLivingVisionMode(msg.LivingVisionMode);
 			GameData.Data.World.SetTick(msg.Tick);
+
+			m_logOnCallback(m_user, null);
+			m_logOnCallback = null;
+			m_logOnName = null;
 		}
 
 		void HandleLoginReplyEndMessage(LogOnReplyEndMessage msg)
@@ -182,9 +186,8 @@ namespace Dwarrowdelf.Client
 			var time = DateTime.Now - m_logOnStartTime;
 			Trace.TraceInformation("LogOn took {0}", time);
 
-			m_logOnCallback(m_user, null);
-			m_logOnCallback = null;
-			m_logOnName = null;
+			// XXX we don't currently do anything here. We could keep the login dialog open until this, but we need to call
+			// logonCallback in HandleLoginReplyBeginMessage, so that GameData.User etc are set
 		}
 
 		void HandleLogOutReplyMessage(ClientMessage msg)
