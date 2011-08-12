@@ -89,31 +89,31 @@
 
 					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
 
-						<!-- All objects-->
-						<ad:DockableContent Name="allObjectsContent" Title="Objects">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
+							<!-- All objects-->
+							<ad:DockableContent Name="allObjectsContent" Title="Objects">
+								<ad:DockableContent.Resources>
+									<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+								</ad:DockableContent.Resources>
 
-							<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-						</ad:DockableContent>
+								<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+							</ad:DockableContent>
 
-						<!-- Items -->
-						<ad:DockableContent Name="itemsContent" Title="Items">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
+							<!-- Items -->
+							<ad:DockableContent Name="itemsContent" Title="Items">
+								<ad:DockableContent.Resources>
+									<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+								</ad:DockableContent.Resources>
 
-							<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-								<ListBox.ItemContainerStyle>
-									<Style TargetType="{x:Type ListBoxItem}">
-										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-									</Style>
-								</ListBox.ItemContainerStyle>
-							</ListBox>
+								<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									<ListBox.ItemContainerStyle>
+										<Style TargetType="{x:Type ListBoxItem}">
+											<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+											<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+										</Style>
+									</ListBox.ItemContainerStyle>
+								</ListBox>
 
-						</ad:DockableContent>
+							</ad:DockableContent>
 
 						<!-- Livings -->
 						<ad:DockableContent Name="livingsContent" Title="Livings">
@@ -147,7 +147,23 @@
 								</ListBox.ItemContainerStyle>
 							</ListBox>
 						</ad:DockableContent>
+					</ad:DockablePane>
 
+
+					<!-- MAP -->
+					<ad:DocumentPane>
+						<ad:DocumentContent Title="Map">
+
+							<DockPanel>
+								<ui:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
+								<ui:MasterMapControl x:Name="map" />
+							</DockPanel>
+
+						</ad:DocumentContent>
+					</ad:DocumentPane>
+
+
+					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
 						<!-- Selection -->
 						<ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
 							<ui:DockSelectedControl />
@@ -205,18 +221,6 @@
 						</ad:DockableContent>
 
 					</ad:DockablePane>
-
-					<!-- MAP -->
-					<ad:DocumentPane>
-						<ad:DocumentContent Title="Map">
-
-							<DockPanel>
-								<ui:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
-								<ui:MasterMapControl x:Name="map" />
-							</DockPanel>
-
-						</ad:DocumentContent>
-					</ad:DocumentPane>
 				</ad:ResizingPanel>
 
 				<!-- Events -->
