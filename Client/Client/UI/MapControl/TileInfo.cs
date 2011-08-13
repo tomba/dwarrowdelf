@@ -99,6 +99,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("TerrainMaterial");
 			Notify("InteriorMaterial");
 			Notify("WaterLevel");
+			Notify("Grass");
 			Notify("Building");
 		}
 
@@ -182,6 +183,16 @@ namespace Dwarrowdelf.Client.UI
 				if (this.Environment == null)
 					return 0;
 				return this.Environment.GetWaterLevel(this.Location);
+			}
+		}
+
+		public bool Grass
+		{
+			get
+			{
+				if (this.Environment == null)
+					return false;
+				return this.Environment.GetGrass(this.Location);
 			}
 		}
 

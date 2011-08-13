@@ -6,29 +6,33 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 
-    <UserControl.Resources>
-        <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-    </UserControl.Resources>
+	<UserControl.Resources>
+		<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+	</UserControl.Resources>
 
-    <DockPanel>
-        <Grid DockPanel.Dock="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
+	<DockPanel>
+		<Grid DockPanel.Dock="Top">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Text="Location:" Margin="2" />
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="Terrain:" Margin="2" />
-            <TextBlock Grid.Column="0" Grid.Row="2" Text="Interior:" Margin="2" />
-            <TextBlock Grid.Column="0" Grid.Row="3" Text="Water:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="Location:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="1" Text="Terrain:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="2" Text="Interior:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="3" Text="Water:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="4" Text="Grass:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="5" Text="Building:" Margin="2" />
 
-            <TextBlock Grid.Column="1" Grid.Row="0" Margin="2">
+			<TextBlock Grid.Column="1" Grid.Row="0" Margin="2">
 				<TextBlock.Text>
 					<MultiBinding StringFormat="{}{0},{1},{2}">
 						<Binding Path="Location.X" Mode="OneWay" />
@@ -36,32 +40,35 @@
 						<Binding Path="Location.Z" Mode="OneWay" />
 					</MultiBinding>
 				</TextBlock.Text>
-            </TextBlock>
+			</TextBlock>
 
-            <TextBlock Grid.Column="1" Grid.Row="1" Margin="2">
-                <TextBlock.Text>
-				    <MultiBinding StringFormat="{}{0} ({1})">
-					    <Binding Path="Terrain.Name" Mode="OneWay" />
+			<TextBlock Grid.Column="1" Grid.Row="1" Margin="2">
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} ({1})">
+						<Binding Path="Terrain.Name" Mode="OneWay" />
 						<Binding Path="TerrainMaterial.Name" Mode="OneWay" />
 					</MultiBinding>
 				</TextBlock.Text>
-            </TextBlock>
+			</TextBlock>
 
-            <TextBlock Grid.Column="1" Grid.Row="2" Margin="2">
-                <TextBlock.Text>
-				    <MultiBinding StringFormat="{}{0} ({1})">
-					    <Binding Path="Interior.Name" Mode="OneWay" />
+			<TextBlock Grid.Column="1" Grid.Row="2" Margin="2">
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} ({1})">
+						<Binding Path="Interior.Name" Mode="OneWay" />
 						<Binding Path="InteriorMaterial.Name" Mode="OneWay" />
 					</MultiBinding>
 				</TextBlock.Text>
-            </TextBlock>
+			</TextBlock>
 
-            <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding WaterLevel, Mode=OneWay}" Margin="2" />
+			<TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding WaterLevel, Mode=OneWay}" Margin="2" />
 
-        </Grid>
+			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Grass, Mode=OneWay}" Margin="2" />
 
-        <ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Building.BuildingInfo.Name, Mode=OneWay}" Margin="2" />
+		</Grid>
 
-    </DockPanel>
+		<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+
+	</DockPanel>
 
 </UserControl>
