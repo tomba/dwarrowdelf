@@ -14,6 +14,8 @@ namespace Dwarrowdelf.Client
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 		public System.Windows.FrameworkElement Element { get; private set; }
 
+		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
+
 		public ConstructionSite(Environment environment, BuildingID buildingID, IntRectZ area)
 		{
 			this.Environment = environment;

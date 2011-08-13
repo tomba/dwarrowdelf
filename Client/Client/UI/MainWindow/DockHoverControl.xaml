@@ -30,7 +30,7 @@
 			<TextBlock Grid.Column="0" Grid.Row="2" Text="Interior:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="3" Text="Water:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="4" Text="Grass:" Margin="2" />
-			<TextBlock Grid.Column="0" Grid.Row="5" Text="Building:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="5" Text="Map Element:" Margin="2" />
 
 			<TextBlock Grid.Column="1" Grid.Row="0" Margin="2">
 				<TextBlock.Text>
@@ -64,7 +64,7 @@
 
 			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Grass, Mode=OneWay}" Margin="2" />
 
-			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Building.BuildingInfo.Name, Mode=OneWay}" Margin="2" />
+			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding MapElement.Description, Mode=OneWay}" Margin="2" />
 		</Grid>
 
 		<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>

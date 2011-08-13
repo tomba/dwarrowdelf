@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("Interiors");
 			Notify("Terrains");
 			Notify("WaterLevels");
-			Notify("Buildings");
+			Notify("MapElements");
 			Notify("Grasses");
 		}
 
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<BuildingObject> Buildings
+		public IEnumerable<IDrawableElement> MapElements
 		{
 			get
 			{
@@ -159,7 +159,7 @@ namespace Dwarrowdelf.Client.UI
 					return null;
 
 				return m_selection.SelectionCuboid.Range().
-					Select(p => m_env.GetBuildingAt(p)).
+					Select(p => m_env.GetElementAt(p)).
 					Where(b => b != null).
 					Distinct();
 			}

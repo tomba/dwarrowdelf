@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("InteriorMaterial");
 			Notify("WaterLevel");
 			Notify("Grass");
-			Notify("Building");
+			Notify("MapElement");
 		}
 
 		void NotifyTileObjectChanges()
@@ -196,13 +196,13 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public BuildingObject Building
+		public IDrawableElement MapElement
 		{
 			get
 			{
 				if (this.Environment == null)
 					return null;
-				return this.Environment.GetBuildingAt(this.Location);
+				return this.Environment.GetElementAt(this.Location);
 			}
 		}
 

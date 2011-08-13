@@ -12,5 +12,6 @@ namespace Dwarrowdelf.Client
 		Environment Environment { get; }
 		IntCuboid Area { get; }
 		FrameworkElement Element { get; }
+		string Description { get; }
 	}
 }

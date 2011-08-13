@@ -26,6 +26,8 @@ namespace Dwarrowdelf.Client
 
 		public BuildingID BuildingID { get { return this.BuildingInfo.ID; } }
 
+		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
+
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
 
 		bool m_initialized;

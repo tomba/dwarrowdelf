@@ -36,6 +36,8 @@ namespace Dwarrowdelf.Client
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }
 
+		public string Description { get { return "Stockpile"; } }
+
 		public Stockpile(Environment environment, IntRectZ area, StockpileType stockpileType)
 		{
 			this.Environment = environment;

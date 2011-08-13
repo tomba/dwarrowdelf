@@ -446,10 +446,5 @@ namespace Dwarrowdelf.Client
 		{
 			return m_mapElements.FirstOrDefault(e => e.Area.Contains(p));
 		}
-
-		public IEnumerable<IDrawableElement> GetElementsAt(IntPoint3D p)
-		{
-			return m_mapElements.Where(e => e.Area.Contains(p));
-		}
 	}
 }

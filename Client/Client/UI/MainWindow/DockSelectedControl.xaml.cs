@@ -62,9 +62,9 @@ namespace Dwarrowdelf.Client.UI
 		public MyWatersConverter() : base(item => item.ToString()) { }
 	}
 
-	class MyBuildingsConverter : ListConverter<BuildingObject>
+	class MyBuildingsConverter : ListConverter<IDrawableElement>
 	{
-		public MyBuildingsConverter() : base(item => item.BuildingInfo.Name) { }
+		public MyBuildingsConverter() : base(item => item.Description) { }
 	}
 
 	class MyGrassesConverter : ListConverter<bool>
