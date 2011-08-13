@@ -254,7 +254,7 @@ namespace Dwarrowdelf.Client.UI
 			else
 			{
 				this.SelectedTileAreaInfo.Environment = this.Environment;
-				this.SelectedTileAreaInfo.Selection = this.Selection;
+				this.SelectedTileAreaInfo.Selection = selection;
 			}
 
 			Notify("Selection");

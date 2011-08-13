@@ -117,7 +117,7 @@ namespace Dwarrowdelf.Client.UI
 							GameData.Data.Connection.Send(new SetTilesMessage()
 							{
 								MapID = map.Environment.ObjectID,
-								Cube = map.Selection.SelectionCuboid,
+								Cube = selection.SelectionCuboid,
 								TerrainID = data.TerrainID,
 								TerrainMaterialID = data.TerrainMaterialID,
 								InteriorID = data.InteriorID,
