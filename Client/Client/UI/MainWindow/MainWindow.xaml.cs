@@ -26,8 +26,8 @@ namespace Dwarrowdelf.Client.UI
 
 		bool m_serverInAppDomain = true;
 
-		bool m_autoConnect = false;
-		bool m_autoEnterGame = false;
+		bool m_autoConnect = true;
+		bool m_autoEnterGame = true;
 
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
@@ -70,6 +70,7 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case ClientToolMode.CreateStockpile:
+				case ClientToolMode.ConstructBuilding:
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
@@ -139,7 +140,7 @@ namespace Dwarrowdelf.Client.UI
 						{
 							var type = dialog.StockpileType;
 							var stockpile = new Stockpile(env, selection.SelectionIntRectZ, type);
-							env.AddStockpile(stockpile);
+							env.AddMapElement(stockpile);
 						}
 					}
 					break;
@@ -184,6 +185,22 @@ namespace Dwarrowdelf.Client.UI
 								IsControllable = dialog.IsControllable,
 								IsHerd = dialog.IsHerd,
 							});
+						}
+					}
+					break;
+
+				case ClientToolMode.ConstructBuilding:
+					{
+						var dialog = new ConstructBuildingDialog();
+						dialog.Owner = this;
+						dialog.SetContext(env, selection.SelectionIntRectZ);
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							var id = dialog.BuildingID;
+							var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
+							env.AddMapElement(site);
 						}
 					}
 					break;
@@ -425,13 +442,13 @@ namespace Dwarrowdelf.Client.UI
 			{
 				ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
 			}
-			else if (e.Key == Key.B)
-			{
-				ClientCommands.OpenConstructBuildingDialogCommand.Execute(null, this);
-			}
 			else if (e.Key == Key.A)
 			{
 				ClientCommands.OpenBuildItemDialogCommand.Execute(null, this);
+			}
+			else if (e.Key == Key.B)
+			{
+				this.mainWindowTools.ToolMode = ClientToolMode.ConstructBuilding;
 			}
 			else if (e.Key == Key.M)
 			{

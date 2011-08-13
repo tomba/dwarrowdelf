@@ -39,6 +39,7 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.CreateLiving, "Create living", 'l');
 			add(ClientToolMode.CreateItem, "Create item", 'i');
 			add(ClientToolMode.SetTerrain, "Set terrain", 't');
+			add(ClientToolMode.ConstructBuilding, "Construct building", 'b');
 		}
 
 		public MainWindowTools()
@@ -91,6 +92,10 @@ namespace Dwarrowdelf.Client.UI
 
 				case ClientToolMode.CreateStockpile:
 					ctrl.createStockpile.IsChecked = true;
+					break;
+
+				case ClientToolMode.ConstructBuilding:
+					ctrl.constructBuilding.IsChecked = true;
 					break;
 
 				default:
@@ -183,5 +188,6 @@ namespace Dwarrowdelf.Client.UI
 		CreateStockpile,
 		CreateItem,
 		CreateLiving,
+		ConstructBuilding,
 	}
 }

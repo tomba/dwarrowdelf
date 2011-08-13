@@ -73,10 +73,6 @@
 				<Button Content="Add Build Item..." Command="ui:ClientCommands.OpenBuildItemDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
 					<Button.ToolTip>Shortcut: Alt-A</Button.ToolTip>
 				</Button>
-				<Separator />
-				<Button Content="Building..." Command="ui:ClientCommands.OpenConstructBuildingDialogCommand" IsEnabled="{Binding Selection.IsSelectionValid,ElementName=map}">
-					<Button.ToolTip>Shortcut: Alt-B</Button.ToolTip>
-				</Button>
 			</ToolBar>
 		</ToolBarTray>
 

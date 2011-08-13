@@ -17,7 +17,6 @@ namespace Dwarrowdelf.Client.UI
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler));
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenBuildItemDialogCommand, OpenBuildItemHandler));
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConstructBuildingDialogCommand, OpenConstructBuildingHandler));
 		}
 
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
@@ -30,29 +29,6 @@ namespace Dwarrowdelf.Client.UI
 			var dialog = new ConsoleDialog();
 			dialog.Owner = m_mainWindow;
 			dialog.Show();
-		}
-
-		void OpenConstructBuildingHandler(object sender, ExecutedRoutedEventArgs e)
-		{
-			var mapControl = m_mainWindow.MapControl;
-
-			var area = mapControl.Selection.SelectionIntRectZ;
-			var env = mapControl.Environment;
-
-			if (area.IsNull)
-				return;
-
-			var dialog = new ConstructBuildingDialog();
-			dialog.Owner = m_mainWindow;
-			dialog.SetContext(env, area);
-			var res = dialog.ShowDialog();
-
-			if (res == true)
-			{
-				var id = dialog.BuildingID;
-
-				env.CreateConstructionSite(id, area);
-			}
 		}
 
 		void OpenBuildItemHandler(object sender, ExecutedRoutedEventArgs e)

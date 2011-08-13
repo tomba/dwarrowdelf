@@ -18,7 +18,6 @@ namespace Dwarrowdelf.Client.UI
 	{
 		public static RoutedUICommand AutoAdvanceTurnCommand;
 		public static RoutedUICommand OpenBuildItemDialogCommand;
-		public static RoutedUICommand OpenConstructBuildingDialogCommand;
 		public static RoutedUICommand OpenConsoleCommand;
 
 		static ClientCommands()
@@ -27,9 +26,6 @@ namespace Dwarrowdelf.Client.UI
 
 			OpenBuildItemDialogCommand = new RoutedUICommand("Open Build Item Dialog", "BuildItemDialog", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.A, ModifierKeys.Alt) });
-
-			OpenConstructBuildingDialogCommand = new RoutedUICommand("Open Construct Building Dialog", "ConstructBuildingDialog", typeof(ClientCommands),
-				new InputGestureCollection() { new KeyGesture(Key.B, ModifierKeys.Alt) });
 
 			OpenConsoleCommand = new RoutedUICommand("Open Console", "OpenConsole", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });

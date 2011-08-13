@@ -84,6 +84,8 @@
 						  DataContext="{Binding Source={x:Static ui:MainWindowTools.ToolDatas}, Path=.[CreateLiving]}" />
 			<RadioButton Name="setTerrain" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
 						  DataContext="{Binding Source={x:Static ui:MainWindowTools.ToolDatas}, Path=.[SetTerrain]}" />
+			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowTools.ToolDatas}, Path=.[ConstructBuilding]}" />
 
 		</ToolBar>
 	</ToolBarTray>

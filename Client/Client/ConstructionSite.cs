@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 			GameData.Data.Jobs.Remove(m_job);
 			m_job = null;
 
-			this.Environment.RemoveConstructionSite(this);
+			this.Environment.RemoveMapElement(this);
 			this.Destruct();
 		}
 	}

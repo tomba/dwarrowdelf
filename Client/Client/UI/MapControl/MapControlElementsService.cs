@@ -45,20 +45,12 @@ namespace Dwarrowdelf.Client.UI
 		void OnEnvironmentChanged(Environment env)
 		{
 			if (m_env != null)
-			{
-				m_env.Buildings.CollectionChanged -= OnElementCollectionChanged;
-				((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged -= OnElementCollectionChanged;
-				((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged -= OnElementCollectionChanged;
-			}
+				((INotifyCollectionChanged)m_env.MapElements).CollectionChanged -= OnElementCollectionChanged;
 
 			m_env = env;
 
 			if (m_env != null)
-			{
-				m_env.Buildings.CollectionChanged += OnElementCollectionChanged;
-				((INotifyCollectionChanged)m_env.Stockpiles).CollectionChanged += OnElementCollectionChanged;
-				((INotifyCollectionChanged)m_env.ConstructionSites).CollectionChanged += OnElementCollectionChanged;
-			}
+				((INotifyCollectionChanged)m_env.MapElements).CollectionChanged += OnElementCollectionChanged;
 
 			UpdateElements();
 		}
@@ -123,11 +115,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (m_env != null)
 			{
-				var elements = m_env.Buildings.Cast<IDrawableElement>()
-					.Concat(m_env.Stockpiles)
-					.Concat(m_env.ConstructionSites);
-
-				foreach (IDrawableElement element in elements)
+				foreach (IDrawableElement element in m_env.MapElements)
 				{
 					if (element.Environment == m_env)
 						AddElement(element);
@@ -170,6 +158,5 @@ namespace Dwarrowdelf.Client.UI
 
 		public static readonly DependencyProperty ElementZProperty =
 			DependencyProperty.RegisterAttached("ElementZ", typeof(int), typeof(MapControlElementsService), new UIPropertyMetadata(0));
-
 	}
 }

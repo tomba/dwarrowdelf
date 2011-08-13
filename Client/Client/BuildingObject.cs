@@ -28,6 +28,8 @@ namespace Dwarrowdelf.Client
 
 		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
 
+		bool m_initialized;
+
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -65,20 +67,6 @@ namespace Dwarrowdelf.Client
 
 			var env = this.World.FindObject<Environment>(data.Environment);
 
-			if (env.Buildings.Contains(this.ObjectID))
-			{
-				/* this shouldn't happen, as building's data are currently never modified.
-				 * however, we get this from object creation also. for now, just check if the
-				 * data are the same, and go on. */
-				var building = env.Buildings[data.ObjectID];
-
-				if (building.Area != data.Area ||
-					building.Environment != env)
-					throw new Exception();
-
-				return;
-			}
-
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
 			this.Environment = env;
@@ -86,14 +74,21 @@ namespace Dwarrowdelf.Client
 			m_element.Width = this.Area.Width;
 			m_element.Height = this.Area.Height;
 
-			env.AddBuilding(this);
+			if (m_initialized == false)
+			{
+				env.AddMapElement(this);
 
-			this.World.TickStarting += OnTick;
-			this.Environment.World.JobManager.AddJobSource(this);
+				this.World.TickStarting += OnTick;
+				this.Environment.World.JobManager.AddJobSource(this);
+
+				m_initialized = true;
+			}
 		}
 
 		public override void Destruct()
 		{
+			this.Environment.RemoveMapElement(this);
+
 			this.Environment.World.JobManager.RemoveJobSource(this);
 
 			this.World.TickStarting -= OnTick;

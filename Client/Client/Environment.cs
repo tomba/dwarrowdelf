@@ -29,18 +29,12 @@ namespace Dwarrowdelf.Client
 
 		public IntCuboid Bounds { get; set; }
 
-		BuildingCollection m_buildings;
-		public ReadOnlyBuildingCollection Buildings { get; private set; }
-
-		ObservableCollection<Stockpile> m_stockpiles;
-		public ReadOnlyObservableCollection<Stockpile> Stockpiles { get; private set; }
+		ObservableCollection<IDrawableElement> m_mapElements;
+		public ReadOnlyObservableCollection<IDrawableElement> MapElements { get; private set; }
 
 		public IntPoint3D HomeLocation { get; set; }
 
 		public Designation Designations { get; private set; }
-
-		ObservableCollection<ConstructionSite> m_constructionSites;
-		public ReadOnlyObservableCollection<ConstructionSite> ConstructionSites { get; private set; }
 
 		public Environment(World world, ObjectID objectID)
 			: base(world, objectID)
@@ -51,16 +45,10 @@ namespace Dwarrowdelf.Client
 			m_objectMap = new Dictionary<IntPoint3D, List<GameObject>>();
 			m_objectList = new List<GameObject>();
 
-			m_buildings = new BuildingCollection();
-			this.Buildings = new ReadOnlyBuildingCollection(m_buildings);
-
-			m_stockpiles = new ObservableCollection<Stockpile>();
-			this.Stockpiles = new ReadOnlyObservableCollection<Stockpile>(m_stockpiles);
+			m_mapElements = new ObservableCollection<IDrawableElement>();
+			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
 
 			this.Designations = new Designation(this);
-
-			m_constructionSites = new ObservableCollection<ConstructionSite>();
-			this.ConstructionSites = new ReadOnlyObservableCollection<ConstructionSite>(m_constructionSites);
 
 			this.World.AddEnvironment(this);
 		}
@@ -286,41 +274,6 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		public void AddStockpile(Stockpile stockpile)
-		{
-			Debug.Assert(m_stockpiles.All(s => (s.Area.IntersectsWith(stockpile.Area)) == false));
-
-			this.Version++;
-
-			m_stockpiles.Add(stockpile);
-		}
-
-		public void RemoveStockpile(Stockpile stockpile)
-		{
-			this.Version++;
-			m_stockpiles.Remove(stockpile);
-		}
-
-		public Stockpile GetStockpileAt(IntPoint3D p)
-		{
-			return m_stockpiles.SingleOrDefault(s => s.Area.Contains(p));
-		}
-
-
-		public void AddBuilding(BuildingObject building)
-		{
-			Debug.Assert(m_buildings.All(b => (b.Area.IntersectsWith(building.Area)) == false));
-
-			this.Version += 1;
-
-			m_buildings.Add(building);
-		}
-
-		public BuildingObject GetBuildingAt(IntPoint3D p)
-		{
-			return m_buildings.SingleOrDefault(b => b.Area.Contains(p));
-		}
-
 		static IList<GameObject> EmptyObjectList = new GameObject[0];
 
 		public IEnumerable<IGameObject> GetContents(IntRectZ rect)
@@ -459,16 +412,44 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		internal void CreateConstructionSite(BuildingID buildingID, IntRectZ area)
+
+		// XXX
+		public Stockpile GetStockpileAt(IntPoint3D p)
 		{
-			var site = new ConstructionSite(this, buildingID, area);
-			m_constructionSites.Add(site);
+			return m_mapElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
 		}
 
-		internal void RemoveConstructionSite(ConstructionSite site)
+		public BuildingObject GetBuildingAt(IntPoint3D p)
 		{
-			var removed = m_constructionSites.Remove(site);
-			Debug.Assert(removed);
+			return m_mapElements.OfType<BuildingObject>().SingleOrDefault(b => b.Area.Contains(p));
+		}
+
+		public void AddMapElement(IDrawableElement element)
+		{
+			this.Version++;
+
+			// XXX can the elements overlap?
+			Debug.Assert(m_mapElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
+			Debug.Assert(!m_mapElements.Contains(element));
+			m_mapElements.Add(element);
+		}
+
+		public void RemoveMapElement(IDrawableElement element)
+		{
+			this.Version++;
+
+			var ok = m_mapElements.Remove(element);
+			Debug.Assert(ok);
+		}
+
+		public IDrawableElement GetElementAt(IntPoint3D p)
+		{
+			return m_mapElements.FirstOrDefault(e => e.Area.Contains(p));
+		}
+
+		public IEnumerable<IDrawableElement> GetElementsAt(IntPoint3D p)
+		{
+			return m_mapElements.Where(e => e.Area.Contains(p));
 		}
 	}
 }
