@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Messages
 		public MaterialID MaterialID;
 
 		public ObjectID EnvironmentID;
-		public IntPoint3D? Location;
+		public IntCuboid Area;
 	}
 
 	[Serializable]

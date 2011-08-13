@@ -263,22 +263,17 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(CreateItemMessage msg)
 		{
-			var builder = new ItemObjectBuilder(msg.ItemID, msg.MaterialID);
-			var item = builder.Create(this.World);
+			var env = this.World.FindObject<Environment>(msg.EnvironmentID);
 
-			trace.TraceInformation("Created item {0}", item);
+			if (env == null)
+				throw new Exception();
 
-			if (msg.EnvironmentID != ObjectID.NullObjectID)
+			foreach (var p in msg.Area.Range())
 			{
-				var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+				var builder = new ItemObjectBuilder(msg.ItemID, msg.MaterialID);
+				var item = builder.Create(this.World);
 
-				if (env == null)
-					throw new Exception();
-
-				if (msg.Location.HasValue)
-					item.MoveTo(env, msg.Location.Value);
-				else
-					item.MoveTo(env);
+				item.MoveTo(env, p);
 			}
 		}
 
@@ -292,6 +287,11 @@ namespace Dwarrowdelf.Server
 				herd = new Dwarrowdelf.AI.Herd();
 
 			var livingInfo = Livings.GetLivingInfo(msg.LivingID);
+
+			var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+
+			if (env == null)
+				throw new Exception();
 
 			foreach (var p in msg.Area.Range())
 			{
@@ -336,11 +336,6 @@ namespace Dwarrowdelf.Server
 				}
 
 				trace.TraceInformation("Created living {0}", living);
-
-				var env = this.World.FindObject<Environment>(msg.EnvironmentID);
-
-				if (env == null)
-					throw new Exception();
 
 				living.MoveTo(env, p);
 

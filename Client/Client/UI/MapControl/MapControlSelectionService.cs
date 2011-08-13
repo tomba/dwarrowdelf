@@ -14,7 +14,6 @@ namespace Dwarrowdelf.Client.UI
 	enum MapSelectionMode
 	{
 		None,
-		Point,
 		Rectangle,
 		Cuboid,
 	}
@@ -112,10 +111,6 @@ namespace Dwarrowdelf.Client.UI
 
 			switch (m_selectionMode)
 			{
-				case MapSelectionMode.Point:
-					start = end;
-					break;
-
 				case MapSelectionMode.Rectangle:
 					start = new IntPoint3D(this.Selection.SelectionStart.ToIntPoint(), end.Z);
 					break;
@@ -272,17 +267,6 @@ namespace Dwarrowdelf.Client.UI
 		public bool IsSelectionValid { get; set; }
 		public IntPoint3D SelectionStart { get; set; }
 		public IntPoint3D SelectionEnd { get; set; }
-
-		public IntPoint3D SelectionPoint
-		{
-			get
-			{
-				if (this.SelectionStart != this.SelectionEnd)
-					throw new Exception();
-
-				return this.SelectionStart;
-			}
-		}
 
 		public IntCuboid SelectionCuboid
 		{

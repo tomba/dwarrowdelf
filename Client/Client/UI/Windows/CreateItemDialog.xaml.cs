@@ -19,11 +19,7 @@ namespace Dwarrowdelf.Client.UI
 		public MaterialID MaterialID { get; set; }
 
 		public Environment Environment { get; set; }
-		public IntPoint3D Location { get; set; }
-
-		public int X { get; set; }
-		public int Y { get; set; }
-		public int Z { get; set; }
+		public IntCuboid Area { get; set; }
 
 		public CreateItemDialog()
 		{
@@ -38,23 +34,14 @@ namespace Dwarrowdelf.Client.UI
 			base.OnInitialized(e);
 		}
 
-		public void SetContext(Environment env, IntPoint3D location)
+		public void SetContext(Environment env, IntCuboid area)
 		{
 			this.Environment = env;
-			this.Location = location;
-			this.X = location.X;
-			this.Y = location.Y;
-			this.Z = location.Z;
-
-			environmentListBox.GetBindingExpression(ListBox.SelectedValueProperty).UpdateTarget();
-			textBoxX.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
-			textBoxY.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
-			textBoxZ.GetBindingExpression(TextBox.TextProperty).UpdateTarget();
+			this.Area = area;
 		}
 
 		private void OkButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.Location = new IntPoint3D(this.X, this.Y, this.Z);
 			this.DialogResult = true;
 		}
 	}

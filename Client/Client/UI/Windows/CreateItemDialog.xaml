@@ -18,7 +18,7 @@
         </StackPanel>
 
 
-        <UniformGrid Columns="4">
+        <UniformGrid Columns="2">
 
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="ItemID" />
@@ -28,26 +28,6 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="MaterialID" />
                 <ListBox Name="materialIDListBox" SelectionMode="Single" SelectedValue="{Binding MaterialID,ElementName=wnd}" />
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical" DataContext="{x:Static local:GameData.Data}">
-                <StackPanel.Resources>
-                    <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                </StackPanel.Resources>
-                
-                <TextBlock Text="Environment" />
-                <ListBox Name="environmentListBox"  ItemsSource="{Binding World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                          SelectionMode="Single" SelectedValue="{Binding Environment,ElementName=wnd}" />
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBlock>
-                <TextBox Name="textBoxX" Width="40" Text="{Binding X, ElementName=wnd}" />
-                    ,
-                <TextBox Name="textBoxY" Width="40" Text="{Binding Y, ElementName=wnd}" />
-                    ,
-                <TextBox Name="textBoxZ" Width="40" Text="{Binding Z, ElementName=wnd}" />
-                </TextBlock>
             </StackPanel>
             
         </UniformGrid>

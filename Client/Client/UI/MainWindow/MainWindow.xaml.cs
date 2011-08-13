@@ -57,9 +57,6 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case ClientToolMode.CreateItem:
-					this.MapControl.SelectionMode = MapSelectionMode.Point;
-					break;
-
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
 				case ClientToolMode.DesignationFellTree:
@@ -149,7 +146,7 @@ namespace Dwarrowdelf.Client.UI
 					{
 						var dialog = new CreateItemDialog();
 						dialog.Owner = this;
-						dialog.SetContext(env, selection.SelectionPoint);
+						dialog.SetContext(env, selection.SelectionCuboid);
 						var res = dialog.ShowDialog();
 
 						if (res == true)
@@ -159,7 +156,7 @@ namespace Dwarrowdelf.Client.UI
 								ItemID = dialog.ItemID,
 								MaterialID = dialog.MaterialID,
 								EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
-								Location = dialog.Location,
+								Area = dialog.Area,
 							});
 						}
 					}
