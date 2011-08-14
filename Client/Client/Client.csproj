@@ -122,10 +122,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Windows\BuildItemDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\ContentTemplateDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -197,6 +193,7 @@
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\CapitalizeConverter.cs" />
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />
@@ -234,9 +231,6 @@
     </Compile>
     <Compile Include="UI\Windows\ConstructBuildingDialog.xaml.cs">
       <DependentUpon>ConstructBuildingDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\BuildItemDialog.xaml.cs">
-      <DependentUpon>BuildItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ClientCommands.cs" />
     <Compile Include="UI\Windows\CreateLivingDialog.xaml.cs">

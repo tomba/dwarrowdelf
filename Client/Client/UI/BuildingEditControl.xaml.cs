@@ -14,14 +14,20 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	/// <summary>
-	/// Interaction logic for BuildingInfoControl.xaml
-	/// </summary>
 	public partial class BuildingEditControl : UserControl
 	{
 		public BuildingEditControl()
 		{
 			InitializeComponent();
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			var building = (BuildingObject)this.DataContext;
+
+			var item = (BuildableItem)itemListBox.SelectedItem;
+
+			building.AddBuildOrder(item);
 		}
 	}
 }

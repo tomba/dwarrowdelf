@@ -469,10 +469,6 @@ namespace Dwarrowdelf.Client.UI
 			{
 				ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
 			}
-			else if (e.Key == Key.A)
-			{
-				ClientCommands.OpenBuildItemDialogCommand.Execute(null, this);
-			}
 			else if (e.Key == Key.B)
 			{
 				this.mainWindowTools.ToolMode = ClientToolMode.ConstructBuilding;

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using Dwarrowdelf.Jobs;
 using System.Windows;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
@@ -28,7 +29,8 @@ namespace Dwarrowdelf.Client
 
 		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
 
-		List<BuildOrder> m_buildOrderQueue = new List<BuildOrder>();
+		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
+		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
 		bool m_initialized;
 
@@ -40,6 +42,8 @@ namespace Dwarrowdelf.Client
 			ellipse.StrokeThickness = 0.1;
 			ellipse.IsHitTestVisible = false;
 			m_element = ellipse;
+
+			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 		}
 
 		BuildingState m_state;
@@ -305,7 +309,7 @@ namespace Dwarrowdelf.Client
 			return String.Format("Building({0:x})", this.ObjectID.Value);
 		}
 
-		class BuildOrder
+		public class BuildOrder
 		{
 			public BuildOrder(BuildableItem buildableItem)
 			{
