@@ -17,80 +17,31 @@ namespace Dwarrowdelf.Client.UI
 
 		Point m_mapTile;
 
-		bool m_enabled;
+		DragHelper m_dragHelper;
 
 		public MapControlDragService(MasterMapControl mapControl)
 		{
 			m_mapControl = mapControl;
+
+			m_dragHelper = new DragHelper(m_mapControl);
+			m_dragHelper.DragStarted += OnDragStarted;
+			m_dragHelper.DragEnded += OnDragEnded;
+			m_dragHelper.Dragging += OnDragging;
 		}
 
-		public bool IsEnabled
+		void OnDragStarted(Point pos)
 		{
-			get { return m_enabled; }
-			set
-			{
-				if (m_enabled == value)
-					return;
-
-				if (m_enabled)
-				{
-					if (m_mapControl.IsMouseCaptured)
-						m_mapControl.ReleaseMouseCapture();
-
-					m_mapControl.MouseDown -= OnMouseDown;
-					m_mapControl.MouseUp -= OnMouseUp;
-					m_mapControl.GotMouseCapture -= OnGotMouseCapture;
-					m_mapControl.LostMouseCapture -= OnLostMouseCapture;
-				}
-
-				m_enabled = value;
-
-				if (m_enabled)
-				{
-					m_mapControl.MouseDown += OnMouseDown;
-					m_mapControl.MouseUp += OnMouseUp;
-					m_mapControl.GotMouseCapture += OnGotMouseCapture;
-					m_mapControl.LostMouseCapture += OnLostMouseCapture;
-				}
-			}
+			m_mapTile = m_mapControl.MapControl.ScreenPointToMapTile(pos);
+			m_mapControl.Cursor = Cursors.ScrollAll;
 		}
 
-		void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left)
-				return;
-
-			var p = e.GetPosition(m_mapControl);
-			m_mapTile = m_mapControl.MapControl.ScreenPointToMapTile(p);
-
-			m_mapControl.CaptureMouse();
-		}
-
-		void OnMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left || !m_mapControl.IsMouseCaptured)
-				return;
-
-			m_mapControl.ReleaseMouseCapture();
-		}
-
-		void OnGotMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_mapControl.MouseMove += OnMouseMove;
-		}
-
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
+		void OnDragEnded(Point pos)
 		{
 			m_mapControl.ClearValue(UserControl.CursorProperty);
-			m_mapControl.MouseMove -= OnMouseMove;
 		}
 
-		void OnMouseMove(object sender, MouseEventArgs e)
+		void OnDragging(Point pos)
 		{
-			m_mapControl.Cursor = Cursors.ScrollAll;
-
-			var pos = e.GetPosition(m_mapControl);
-
 			var v = m_mapControl.MapControl.MapTileToScreenPoint(m_mapTile) - pos;
 
 			var sp = m_mapControl.MapControl.MapTileToScreenPoint(m_mapControl.CenterPos) + v;
@@ -98,6 +49,12 @@ namespace Dwarrowdelf.Client.UI
 			var mt = m_mapControl.MapControl.ScreenPointToMapTile(sp);
 
 			m_mapControl.CenterPos = mt;
+		}
+
+		public bool IsEnabled
+		{
+			get { return m_dragHelper.IsEnabled; }
+			set { m_dragHelper.IsEnabled = value; }
 		}
 	}
 }

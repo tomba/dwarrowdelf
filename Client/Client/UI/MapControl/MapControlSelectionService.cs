@@ -25,14 +25,15 @@ namespace Dwarrowdelf.Client.UI
 
 		MapSelectionMode m_selectionMode;
 
-		MapControl m_mapControl;
+		MasterMapControl m_mapControl;
 		Canvas m_canvas;
+
+		DragHelper m_dragHelper;
 
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
-		public event Action<IntVector> RequestScroll;
 
-		public MapControlSelectionService(MapControl mapControl, Canvas canvas)
+		public MapControlSelectionService(MasterMapControl mapControl, Canvas canvas)
 		{
 			m_canvas = canvas;
 			m_mapControl = mapControl;
@@ -45,6 +46,11 @@ namespace Dwarrowdelf.Client.UI
 			m_selectionRect.Fill.Opacity = 0.2;
 			m_selectionRect.Fill.Freeze();
 			m_canvas.Children.Add(m_selectionRect);
+
+			m_dragHelper = new DragHelper(m_mapControl);
+			m_dragHelper.DragStarted += OnDragStarted;
+			m_dragHelper.DragEnded += OnDragEnded;
+			m_dragHelper.Dragging += OnDragging;
 		}
 
 		public MapSelectionMode SelectionMode
@@ -55,28 +61,21 @@ namespace Dwarrowdelf.Client.UI
 				if (value == m_selectionMode)
 					return;
 
+				if (m_selectionMode != MapSelectionMode.None)
+				{
+					m_mapControl.MapControl.TileLayoutChanged -= OnTileLayoutChanged;
+					m_mapControl.MapControl.ZChanged -= OnZChanged;
+				}
+
 				this.Selection = new MapSelection();
-
-				if (value != UI.MapSelectionMode.None)
-				{
-					m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
-					m_mapControl.MouseDown += OnMouseDown;
-					m_mapControl.MouseUp += OnMouseUp;
-					m_mapControl.GotMouseCapture += OnGotMouseCapture;
-					m_mapControl.LostMouseCapture += OnLostMouseCapture;
-					m_mapControl.ZChanged += OnZChanged;
-				}
-				else
-				{
-					m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
-					m_mapControl.MouseDown -= OnMouseDown;
-					m_mapControl.MouseUp -= OnMouseUp;
-					m_mapControl.GotMouseCapture -= OnGotMouseCapture;
-					m_mapControl.LostMouseCapture -= OnLostMouseCapture;
-					m_mapControl.ZChanged -= OnZChanged;
-				}
-
 				m_selectionMode = value;
+				m_dragHelper.IsEnabled = m_selectionMode != MapSelectionMode.None;
+
+				if (m_selectionMode != MapSelectionMode.None)
+				{
+					m_mapControl.MapControl.TileLayoutChanged += OnTileLayoutChanged;
+					m_mapControl.MapControl.ZChanged += OnZChanged;
+				}
 			}
 		}
 
@@ -103,11 +102,68 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		void OnDragStarted(Point pos)
+		{
+			var ml = m_mapControl.MapControl.ScreenPointToMapLocation(pos);
+			this.Selection = new MapSelection(ml, ml);
+		}
+
+		void OnDragEnded(Point pos)
+		{
+			if (this.GotSelection != null)
+				this.GotSelection(this.Selection);
+		}
+
+		void OnDragging(Point pos)
+		{
+			int limit = 4;
+			int speed = 1;
+
+			int dx = 0;
+			int dy = 0;
+
+			if (m_mapControl.ActualWidth - pos.X < limit)
+				dx = speed;
+			else if (pos.X < limit)
+				dx = -speed;
+
+			if (m_mapControl.ActualHeight - pos.Y < limit)
+				dy = -speed;
+			else if (pos.Y < limit)
+				dy = speed;
+
+			var v = new IntVector(dx, dy);
+
+			m_mapControl.ScrollToDirection(v);
+
+			UpdateSelection(pos);
+		}
+
+		void OnZChanged(int z)
+		{
+			Point pos = Mouse.GetPosition(m_mapControl);
+
+			if (m_mapControl.IsMouseCaptured)
+				UpdateSelection(pos);
+			else
+				UpdateSelectionRect();
+		}
+
+		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		{
+			var pos = Mouse.GetPosition(m_mapControl);
+
+			if (m_mapControl.IsMouseCaptured)
+				UpdateSelection(pos);
+
+			UpdateSelectionRect();
+		}
+
 		void UpdateSelection(Point mousePos)
 		{
 			IntPoint3D start;
 
-			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
+			var end = m_mapControl.MapControl.ScreenPointToMapLocation(mousePos);
 
 			switch (m_selectionMode)
 			{
@@ -143,7 +199,7 @@ namespace Dwarrowdelf.Client.UI
 			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
 			ir = ir.Inflate(1, 1);
 
-			var r = m_mapControl.MapRectToScreenPointRect(ir);
+			var r = m_mapControl.MapControl.MapRectToScreenPointRect(ir);
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);
@@ -151,91 +207,6 @@ namespace Dwarrowdelf.Client.UI
 			m_selectionRect.Height = r.Height;
 
 			m_selectionRect.Visibility = Visibility.Visible;
-		}
-
-		void OnZChanged(int z)
-		{
-			Point pos = Mouse.GetPosition(m_mapControl);
-
-			if (m_mapControl.IsMouseCaptured)
-				UpdateSelection(pos);
-			else
-				UpdateSelectionRect();
-		}
-
-		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
-		{
-			var pos = Mouse.GetPosition(m_mapControl);
-
-			if (m_mapControl.IsMouseCaptured)
-				UpdateSelection(pos);
-
-			UpdateSelectionRect();
-		}
-
-		void OnMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left)
-				return;
-
-			if (this.SelectionMode == MapSelectionMode.None)
-				return;
-
-			Point pos = e.GetPosition(m_mapControl);
-			var ml = m_mapControl.ScreenPointToMapLocation(pos);
-
-			this.Selection = new MapSelection(ml, ml);
-
-			m_mapControl.CaptureMouse();
-		}
-
-		void OnMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left || !m_mapControl.IsMouseCaptured)
-				return;
-
-			m_mapControl.ReleaseMouseCapture();
-
-			if (this.GotSelection != null)
-				this.GotSelection(this.Selection);
-		}
-
-		void OnGotMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_mapControl.MouseMove += OnMouseMove;
-		}
-
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_mapControl.MouseMove -= OnMouseMove;
-		}
-
-		void OnMouseMove(object sender, MouseEventArgs e)
-		{
-			var pos = e.GetPosition(m_mapControl);
-
-			int limit = 4;
-			int speed = 1;
-
-			int dx = 0;
-			int dy = 0;
-
-			if (m_mapControl.ActualWidth - pos.X < limit)
-				dx = speed;
-			else if (pos.X < limit)
-				dx = -speed;
-
-			if (m_mapControl.ActualHeight - pos.Y < limit)
-				dy = -speed;
-			else if (pos.Y < limit)
-				dy = speed;
-
-			var v = new IntVector(dx, dy);
-
-			if (this.RequestScroll != null)
-				RequestScroll(v);
-
-			UpdateSelection(pos);
 		}
 	}
 

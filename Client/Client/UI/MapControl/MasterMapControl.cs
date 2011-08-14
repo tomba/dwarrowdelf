@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client.UI
 			AddChild(grid);
 
 			MapControl mc = new MapControl();
-
+			
 			grid.Children.Add(mc);
 			m_mapControl = mc;
 			m_mapControl.ZChanged += OnZChanged;
@@ -84,8 +84,7 @@ namespace Dwarrowdelf.Client.UI
 			m_toolTipService = new MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
 
-			m_selectionService = new MapControlSelectionService(m_mapControl, m_selectionCanvas);
-			m_selectionService.RequestScroll += v => ScrollToDirection(v);
+			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);
 			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 			m_selectionService.SelectionChanged += OnSelectionChanged;
 
