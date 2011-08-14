@@ -207,7 +207,6 @@
     <Compile Include="UI\MainWindow\MainWindowStatusBar.xaml.cs">
       <DependentUpon>MainWindowStatusBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControl\DragHelper.cs" />
     <Compile Include="UI\MapControl\MapControDragService.cs" />
     <Compile Include="UI\MainWindow\MainWindowCommandHandler.cs" />
     <Compile Include="UI\MainWindow\MainWindowTools.xaml.cs">

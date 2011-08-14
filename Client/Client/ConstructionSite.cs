@@ -27,6 +27,7 @@ namespace Dwarrowdelf.Client
 			rect.StrokeThickness = 0.1;
 			rect.Width = this.Area.Width;
 			rect.Height = this.Area.Height;
+			rect.IsHitTestVisible = false;
 			this.Element = rect;
 
 			this.Environment.World.JobManager.AddJobSource(this);

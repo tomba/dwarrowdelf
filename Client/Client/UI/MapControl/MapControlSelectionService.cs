@@ -28,8 +28,6 @@ namespace Dwarrowdelf.Client.UI
 		MasterMapControl m_mapControl;
 		Canvas m_canvas;
 
-		DragHelper m_dragHelper;
-
 		bool m_selecting;
 
 		public event Action<MapSelection> SelectionChanged;
@@ -47,13 +45,8 @@ namespace Dwarrowdelf.Client.UI
 			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
 			m_selectionRect.Fill.Opacity = 0.2;
 			m_selectionRect.Fill.Freeze();
+			m_selectionRect.IsHitTestVisible = false;
 			m_canvas.Children.Add(m_selectionRect);
-
-			m_dragHelper = new DragHelper(m_mapControl);
-			m_dragHelper.DragStarted += OnDragStarted;
-			m_dragHelper.DragEnded += OnDragEnded;
-			m_dragHelper.Dragging += OnDragging;
-			m_dragHelper.DragAborted += OnDragAborted;
 		}
 
 		public MapSelectionMode SelectionMode
@@ -66,16 +59,25 @@ namespace Dwarrowdelf.Client.UI
 
 				if (m_selectionMode != MapSelectionMode.None)
 				{
+					m_mapControl.MapControl.DragStarted -= OnDragStarted;
+					m_mapControl.MapControl.DragEnded -= OnDragEnded;
+					m_mapControl.MapControl.Dragging -= OnDragging;
+					m_mapControl.MapControl.DragAborted -= OnDragAborted;
+
 					m_mapControl.MapControl.TileLayoutChanged -= OnTileLayoutChanged;
 					m_mapControl.MapControl.ZChanged -= OnZChanged;
 				}
 
 				this.Selection = new MapSelection();
 				m_selectionMode = value;
-				m_dragHelper.IsEnabled = m_selectionMode != MapSelectionMode.None;
 
 				if (m_selectionMode != MapSelectionMode.None)
 				{
+					m_mapControl.MapControl.DragStarted += OnDragStarted;
+					m_mapControl.MapControl.DragEnded += OnDragEnded;
+					m_mapControl.MapControl.Dragging += OnDragging;
+					m_mapControl.MapControl.DragAborted += OnDragAborted;
+
 					m_mapControl.MapControl.TileLayoutChanged += OnTileLayoutChanged;
 					m_mapControl.MapControl.ZChanged += OnZChanged;
 				}

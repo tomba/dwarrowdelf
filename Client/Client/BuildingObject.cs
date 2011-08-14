@@ -38,6 +38,7 @@ namespace Dwarrowdelf.Client
 			var ellipse = new Rectangle();
 			ellipse.Stroke = Brushes.DarkGray;
 			ellipse.StrokeThickness = 0.1;
+			ellipse.IsHitTestVisible = false;
 			m_element = ellipse;
 		}
 

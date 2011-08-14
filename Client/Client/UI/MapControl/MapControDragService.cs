@@ -17,23 +17,36 @@ namespace Dwarrowdelf.Client.UI
 
 		Point m_mapTile;
 
-		DragHelper m_dragHelper;
+		bool m_enabled;
 
 		public MapControlDragService(MasterMapControl mapControl)
 		{
 			m_mapControl = mapControl;
-
-			m_dragHelper = new DragHelper(m_mapControl);
-			m_dragHelper.DragStarted += OnDragStarted;
-			m_dragHelper.DragEnded += OnDragEnded;
-			m_dragHelper.Dragging += OnDragging;
-			m_dragHelper.DragAborted += OnDragAborted;
 		}
 
 		public bool IsEnabled
 		{
-			get { return m_dragHelper.IsEnabled; }
-			set { m_dragHelper.IsEnabled = value; }
+			get { return m_enabled; }
+			set
+			{
+				if (m_enabled)
+				{
+					m_mapControl.MapControl.DragStarted -= OnDragStarted;
+					m_mapControl.MapControl.DragEnded -= OnDragEnded;
+					m_mapControl.MapControl.Dragging -= OnDragging;
+					m_mapControl.MapControl.DragAborted -= OnDragAborted;
+				}
+
+				m_enabled = value;
+
+				if (m_enabled)
+				{
+					m_mapControl.MapControl.DragStarted += OnDragStarted;
+					m_mapControl.MapControl.DragEnded += OnDragEnded;
+					m_mapControl.MapControl.Dragging += OnDragging;
+					m_mapControl.MapControl.DragAborted += OnDragAborted;
+				}
+			}
 		}
 
 		void OnDragStarted(Point pos)
