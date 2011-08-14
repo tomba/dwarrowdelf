@@ -12,6 +12,30 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+/// ITEM MANAGEMENT
+/// add
+/// cancel
+/// promote/demote task
+/// repeat
+/// suspend
+/// 
+/// BUILDING MANAGEMENT
+/// remove building
+/// 
+/// ITEMS (carpenter, wooden)
+/// barrel
+/// bucket
+/// bed
+/// chair
+/// door
+/// 
+/// ITEMS (mason, stone)
+/// block
+/// door
+/// chair
+/// table
+/// 
+
 namespace Dwarrowdelf.Client.UI
 {
 	public partial class BuildingEditControl : UserControl
