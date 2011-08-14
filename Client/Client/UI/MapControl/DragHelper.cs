@@ -8,24 +8,34 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
 	class DragHelper
 	{
+		enum State
+		{
+			None,
+			Captured,
+			Dragging,
+		}
+
 		UIElement m_control;
 		bool m_enabled;
-		bool m_dragging;
 		Point m_startPos;
+		State m_state;
 
 		public event Action<Point> DragStarted;
 		public event Action<Point> Dragging;
 		public event Action<Point> DragEnded;
+		public event Action DragAborted;
 
 		public DragHelper(UIElement control)
 		{
 			m_control = control;
 			m_enabled = false;
+			m_state = State.None;
 		}
 
 		public bool IsEnabled
@@ -39,7 +49,7 @@ namespace Dwarrowdelf.Client.UI
 
 				if (m_enabled)
 				{
-					if (m_control.IsMouseCaptured)
+					if (m_state != State.None)
 						m_control.ReleaseMouseCapture();
 
 					m_control.MouseDown -= OnMouseDown;
@@ -63,6 +73,8 @@ namespace Dwarrowdelf.Client.UI
 			if (e.ChangedButton != MouseButton.Left)
 				return;
 
+			m_state = State.Captured;
+
 			Point pos = e.GetPosition(m_control);
 			m_startPos = pos;
 
@@ -75,37 +87,33 @@ namespace Dwarrowdelf.Client.UI
 			if (e.ChangedButton != MouseButton.Left)
 				return;
 
-			var dragging = m_dragging;
+			var state = m_state;
+			m_state = State.None;
 
-			if (m_control.IsMouseCaptured)
-				m_control.ReleaseMouseCapture();
-
-			if (dragging)
+			if (state == State.Dragging)
 			{
 				Point pos = e.GetPosition(m_control);
 
 				if (this.DragEnded != null)
 					this.DragEnded(pos);
 			}
-		}
 
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
-		{
-			m_startPos = new Point();
-			m_dragging = false;
-			m_control.MouseMove -= OnMouseMove;
+			if (state != State.None)
+				m_control.ReleaseMouseCapture();
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)
 		{
 			Point pos = e.GetPosition(m_control);
 
-			if (m_dragging == false)
+			Debug.Assert(m_state != State.None);
+
+			if (m_state == State.Captured)
 			{
-				if ((pos - m_startPos).Length < 4)
+				if ((pos - m_startPos).Length < 2)
 					return;
 
-				m_dragging = true;
+				m_state = State.Dragging;
 
 				if (this.DragStarted != null)
 					this.DragStarted(m_startPos);
@@ -113,6 +121,16 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.Dragging != null)
 				this.Dragging(pos);
+		}
+
+		void OnLostMouseCapture(object sender, MouseEventArgs e)
+		{
+			if (m_state == State.Dragging && this.DragAborted != null)
+				this.DragAborted();
+
+			m_startPos = new Point();
+			m_state = State.None;
+			m_control.MouseMove -= OnMouseMove;
 		}
 	}
 }

@@ -30,6 +30,8 @@ namespace Dwarrowdelf.Client.UI
 
 		DragHelper m_dragHelper;
 
+		bool m_selecting;
+
 		public event Action<MapSelection> SelectionChanged;
 		public event Action<MapSelection> GotSelection;
 
@@ -51,6 +53,7 @@ namespace Dwarrowdelf.Client.UI
 			m_dragHelper.DragStarted += OnDragStarted;
 			m_dragHelper.DragEnded += OnDragEnded;
 			m_dragHelper.Dragging += OnDragging;
+			m_dragHelper.DragAborted += OnDragAborted;
 		}
 
 		public MapSelectionMode SelectionMode
@@ -104,12 +107,14 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnDragStarted(Point pos)
 		{
+			m_selecting = true;
 			var ml = m_mapControl.MapControl.ScreenPointToMapLocation(pos);
 			this.Selection = new MapSelection(ml, ml);
 		}
 
 		void OnDragEnded(Point pos)
 		{
+			m_selecting = false;
 			if (this.GotSelection != null)
 				this.GotSelection(this.Selection);
 		}
@@ -139,11 +144,17 @@ namespace Dwarrowdelf.Client.UI
 			UpdateSelection(pos);
 		}
 
+		void OnDragAborted()
+		{
+			m_selecting = false;
+			this.Selection = new MapSelection();
+		}
+
 		void OnZChanged(int z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
 
-			if (m_mapControl.IsMouseCaptured)
+			if (m_selecting)
 				UpdateSelection(pos);
 			else
 				UpdateSelectionRect();
@@ -153,7 +164,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var pos = Mouse.GetPosition(m_mapControl);
 
-			if (m_mapControl.IsMouseCaptured)
+			if (m_selecting)
 				UpdateSelection(pos);
 
 			UpdateSelectionRect();

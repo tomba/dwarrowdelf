@@ -27,6 +27,13 @@ namespace Dwarrowdelf.Client.UI
 			m_dragHelper.DragStarted += OnDragStarted;
 			m_dragHelper.DragEnded += OnDragEnded;
 			m_dragHelper.Dragging += OnDragging;
+			m_dragHelper.DragAborted += OnDragAborted;
+		}
+
+		public bool IsEnabled
+		{
+			get { return m_dragHelper.IsEnabled; }
+			set { m_dragHelper.IsEnabled = value; }
 		}
 
 		void OnDragStarted(Point pos)
@@ -51,10 +58,9 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.CenterPos = mt;
 		}
 
-		public bool IsEnabled
+		void OnDragAborted()
 		{
-			get { return m_dragHelper.IsEnabled; }
-			set { m_dragHelper.IsEnabled = value; }
+			m_mapControl.ClearValue(UserControl.CursorProperty);
 		}
 	}
 }
