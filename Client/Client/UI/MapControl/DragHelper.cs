@@ -30,6 +30,7 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<Point> Dragging;
 		public event Action<Point> DragEnded;
 		public event Action DragAborted;
+		public event Action<Point> Clicked;
 
 		public DragHelper(UIElement control)
 		{
@@ -90,12 +91,23 @@ namespace Dwarrowdelf.Client.UI
 			var state = m_state;
 			m_state = State.None;
 
-			if (state == State.Dragging)
-			{
-				Point pos = e.GetPosition(m_control);
+			Point pos = e.GetPosition(m_control);
 
-				if (this.DragEnded != null)
-					this.DragEnded(pos);
+			switch (state)
+			{
+				case State.Captured:
+
+					if (this.Clicked != null)
+						this.Clicked(pos);
+
+					break;
+
+				case State.Dragging:
+
+					if (this.DragEnded != null)
+						this.DragEnded(pos);
+
+					break;
 			}
 
 			if (state != State.None)
