@@ -106,6 +106,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\ContentEditTemplateDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\BuildingEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Windows\ConsoleDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -186,6 +194,9 @@
     <Compile Include="IPRunner.cs" />
     <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
+    <Compile Include="UI\BuildingEditControl.xaml.cs">
+      <DependentUpon>BuildingEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />

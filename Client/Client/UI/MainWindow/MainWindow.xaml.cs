@@ -216,6 +216,36 @@ namespace Dwarrowdelf.Client.UI
 			PopulateMenus();
 
 			m_cmdHandler = new MainWindowCommandHandler(this);
+
+			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
+		}
+
+		void OnMouseClicked(object sender, MouseButtonEventArgs e)
+		{
+			if (this.mainWindowTools.ToolMode == ClientToolMode.Info)
+			{
+				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(e.GetPosition(this.MapControl));
+
+				object ob = this.MapControl.Environment.GetFirstObject(ml);
+
+				if (ob == null)
+					ob = this.MapControl.Environment.GetElementAt(ml);
+
+				if (ob != null)
+				{
+					var contentControl = new ContentControl();
+					contentControl.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentEditTemplateDictionary.xaml", UriKind.Relative) };
+					contentControl.Content = ob;
+
+					var dlg = new Window();
+					dlg.Owner = this;
+					dlg.Content = contentControl;
+
+					dlg.Show();
+				}
+
+				e.Handled = true;
+			}
 		}
 
 		void PopulateMenus()
