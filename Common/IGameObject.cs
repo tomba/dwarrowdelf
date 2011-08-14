@@ -83,7 +83,6 @@ namespace Dwarrowdelf
 	{
 		string Name { get; }
 		GameColor Color { get; }
-		SymbolID SymbolID { get; }
 		MaterialCategory MaterialCategory { get; }
 		MaterialID MaterialID { get; }
 	}

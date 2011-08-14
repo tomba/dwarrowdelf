@@ -27,11 +27,6 @@ namespace Dwarrowdelf
 		Bucket,
 
 		Contraption,
-
-		/// <summary>
-		/// Used for dynamically initialized items
-		/// </summary>
-		Custom,
 	}
 
 	public enum ItemCategory
@@ -44,8 +39,6 @@ namespace Dwarrowdelf
 		RawMaterial,
 		Corpse,
 		Other,
-
-		Custom,
 	}
 
 	public class ItemInfo
@@ -53,7 +46,6 @@ namespace Dwarrowdelf
 		public ItemID ID { get; set; }
 		public string Name { get; set; }
 		public ItemCategory Category { get; set; }
-		public SymbolID Symbol { get; set; }
 	}
 
 	public static class Items
@@ -89,14 +81,6 @@ namespace Dwarrowdelf
 
 				s_items[(int)item.ID] = item;
 			}
-
-			s_items[(int)ItemID.Custom] = new ItemInfo()
-			{
-				ID = ItemID.Custom,
-				Name = "<undefined>",
-				Category = ItemCategory.Custom,
-				Symbol = SymbolID.Undefined,
-			};
 		}
 
 		public static ItemInfo GetItem(ItemID id)

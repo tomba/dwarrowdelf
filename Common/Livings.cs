@@ -14,11 +14,6 @@ namespace Dwarrowdelf
 		Sheep,
 		Wolf,
 		Dragon,
-
-		/// <summary>
-		/// Used for dynamically initialized livings
-		/// </summary>
-		Custom,
 	}
 
 	[Flags]
@@ -29,8 +24,6 @@ namespace Dwarrowdelf
 		Herbivore = 1 << 1,
 		Carnivore = 1 << 2,
 		Monster = 1 << 3,
-
-		Custom = 1 << 10,
 	}
 
 	public enum LivingGender
@@ -45,7 +38,6 @@ namespace Dwarrowdelf
 		public LivingID ID { get; set; }
 		public string Name { get; set; }
 		public LivingCategory Category { get; set; }
-		public SymbolID Symbol { get; set; }
 		public GameColor Color { get; set; }
 		public int Level { get; set; }
 	}
@@ -83,14 +75,6 @@ namespace Dwarrowdelf
 
 				s_livings[(int)living.ID] = living;
 			}
-
-			s_livings[(int)LivingID.Custom] = new LivingInfo()
-			{
-				ID = LivingID.Custom,
-				Name = "<undefined>",
-				Category = LivingCategory.Custom,
-				Symbol = SymbolID.Undefined,
-			};
 		}
 
 		public static LivingInfo GetLivingInfo(LivingID livingID)

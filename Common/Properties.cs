@@ -11,7 +11,6 @@ namespace Dwarrowdelf
 
 		// Base
 		Name,
-		SymbolID,
 		MaterialID,
 		Color,
 
@@ -62,7 +61,6 @@ namespace Dwarrowdelf
 			var map = new Dictionary<PropertyID, PropertyVisibility>();
 
 			map[PropertyID.Name] = PropertyVisibility.Public;
-			map[PropertyID.SymbolID] = PropertyVisibility.Public;
 			map[PropertyID.MaterialID] = PropertyVisibility.Public;
 			map[PropertyID.Color] = PropertyVisibility.Public;
 

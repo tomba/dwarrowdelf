@@ -61,7 +61,6 @@ namespace MyArea
 		{
 			var builder = new LivingBuilder(LivingID.Dwarf)
 			{
-				SymbolID = SymbolID.Player,
 				Color = (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1,
 			};
 

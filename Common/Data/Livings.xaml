@@ -3,11 +3,11 @@
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns="clr-namespace:Dwarrowdelf">
 
-    <LivingInfo ID="Dwarf" Category="Civilized" Symbol="Player" Color="Yellow" Level="4" />
-    <LivingInfo ID="Sheep" Category="Herbivore" Symbol="Sheep" Color="Beige" Level="2" />
-    <LivingInfo ID="Wolf" Category="Carnivore" Symbol="Wolf" Color="LightGray" Level="4" />
-    <LivingInfo ID="Dragon" Category="Monster" Symbol="Dragon" Color="Red" Level="10" />
+    <LivingInfo ID="Dwarf" Category="Civilized" Color="Yellow" Level="4" />
+    <LivingInfo ID="Sheep" Category="Herbivore" Color="Beige" Level="2" />
+    <LivingInfo ID="Wolf" Category="Carnivore" Color="LightGray" Level="4" />
+    <LivingInfo ID="Dragon" Category="Monster" Color="Red" Level="10" />
 
-    <LivingInfo ID="50" Name="MyItem" Category="Civilized" Symbol="Gem" />
+    <LivingInfo ID="50" Name="MyItem" Category="Civilized" />
 
 </x:Array>

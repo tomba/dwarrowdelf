@@ -50,6 +50,7 @@
     <Compile Include="ISymbolDrawingCache.cs" />
     <Compile Include="ObservableKeyedCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SymbolID.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

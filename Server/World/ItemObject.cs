@@ -105,7 +105,6 @@ namespace Dwarrowdelf.Server
 		{
 			this.ItemID = itemID;
 			this.MaterialID = materialID;
-			this.SymbolID = Dwarrowdelf.Items.GetItem(this.ItemID).Symbol;
 		}
 
 		public ItemObject Create(World world)

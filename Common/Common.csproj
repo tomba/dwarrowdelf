@@ -146,7 +146,6 @@
     <Compile Include="ObjectData.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="SymbolID.cs" />
     <Compile Include="DataTypes\IntCuboid.cs" />
     <Compile Include="DataTypes\IntVector.cs" />
     <Compile Include="DataTypes\IntSize.cs" />

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Dwarrowdelf
+namespace Dwarrowdelf.Client
 {
 	// Stored in render tile data, needs to be short
 	public enum SymbolID : short
 	{
 		Undefined,
+
+		Unknown,
 
 		/* floors */
 		Floor,
@@ -59,6 +61,10 @@ namespace Dwarrowdelf
 		Consumable,
 		Chair,
 		Table,
+		Door,
+		Bed,
+		Barrel,
+		Bucket,
 
 		/* top */
 		Water,

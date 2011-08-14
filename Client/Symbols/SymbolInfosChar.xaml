@@ -1,55 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:Dwarrowdelf.Client.Symbols"
-           FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5">
+		   FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5">
 
-    <CharSymbol ID="Undefined" Char="?" />
-    <CharSymbol ID="Floor" Reverse="True" Outline="False" Char="▓" />
+	<CharSymbol ID="Undefined" Char="?" />
+	<CharSymbol ID="Unknown" Char="?" />
 
-    <CharSymbol ID="Grass" Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
-    <CharSymbol ID="Wall" Outline="False" Char="▓" />
+	<CharSymbol ID="Floor" Reverse="True" Outline="False" Char="▓" />
 
-    <CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
-    <CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />
+	<CharSymbol ID="Grass" Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
+	<CharSymbol ID="Wall" Outline="False" Char="▓" />
 
-    <CharSymbol ID="Water" X="10" Y="30" W="80" H="40" Char="~" />
+	<CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
+	<CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />
 
-    <CharSymbol ID="StairsUp" Char="&lt;" />
-    <CharSymbol ID="StairsDown" Char="&gt;" />
-    <CharSymbol ID="StairsUpDown" Char="X" />
+	<CharSymbol ID="Water" X="10" Y="30" W="80" H="40" Char="~" />
 
-    <CharSymbol ID="SlopeUpNorth" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpNorthEast" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpEast" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpSouthEast" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpSouth" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpSouthWest" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpWest" Outline="False" Char="▲" />
-    <CharSymbol ID="SlopeUpNorthWest" Outline="False" Char="▲" />
+	<CharSymbol ID="StairsUp" Char="&lt;" />
+	<CharSymbol ID="StairsDown" Char="&gt;" />
+	<CharSymbol ID="StairsUpDown" Char="X" />
 
-    <CharSymbol ID="SlopeDownNorth" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownNorthEast" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownEast" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownSouthEast" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownSouth" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownSouthWest" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownWest" Outline="False" Char="▼" />
-    <CharSymbol ID="SlopeDownNorthWest" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeUpNorth" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpNorthEast" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpEast" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpSouthEast" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpSouth" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpSouthWest" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpWest" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpNorthWest" Outline="False" Char="▲" />
 
-    <CharSymbol ID="Player" Char="☺" />
-    <CharSymbol ID="Sheep" Char="b" />
-    <CharSymbol ID="Wolf" Char="w" />
-    <CharSymbol ID="Dragon" Char="D" />
+	<CharSymbol ID="SlopeDownNorth" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownNorthEast" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownEast" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownSouthEast" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownSouth" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownSouthWest" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownWest" Outline="False" Char="▼" />
+	<CharSymbol ID="SlopeDownNorthWest" Outline="False" Char="▼" />
 
-    <CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40" Char="☼" />
-    <CharSymbol ID="Gem" X="30" Y="50" W="40" H="40" Char="♦" />
-    <CharSymbol ID="Sapling" X="20" Y="30" W="60" H="70" Char="♠" />
-    <CharSymbol ID="Tree" Char="♣" />
-    <CharSymbol ID="Key" Char="Ⱡ" />
-    <CharSymbol ID="Rock" X="20" Y="40" W="60" H="60" Char="●" />
-    <CharSymbol ID="Log" X="5" Y="60" W="90" H="20" Char="▬" />
-    <CharSymbol ID="Contraption" Outline="False" Char="۩" />
-    <CharSymbol ID="Consumable" Char="%" />
+	<CharSymbol ID="Player" Char="☺" />
+	<CharSymbol ID="Sheep" Char="b" />
+	<CharSymbol ID="Wolf" Char="w" />
+	<CharSymbol ID="Dragon" Char="D" />
 
-    <CharSymbol ID="Chair" X="20" Y="40" W="60" H="60" Char="╥" />
-    <CharSymbol ID="Table" Char="╤" />
+	<CharSymbol ID="UncutGem" X="30" Y="50" W="40" H="40" Char="☼" />
+	<CharSymbol ID="Gem" X="30" Y="50" W="40" H="40" Char="♦" />
+	<CharSymbol ID="Sapling" X="20" Y="30" W="60" H="70" Char="♠" />
+	<CharSymbol ID="Tree" Char="♣" />
+	<CharSymbol ID="Key" Char="Ⱡ" />
+	<CharSymbol ID="Rock" X="20" Y="40" W="60" H="60" Char="●" />
+	<CharSymbol ID="Log" X="5" Y="60" W="90" H="20" Char="▬" />
+	<CharSymbol ID="Contraption" Outline="False" Char="۩" />
+	<CharSymbol ID="Consumable" Char="%" />
+
+	<CharSymbol ID="Chair" X="20" Y="40" W="60" H="60" Char="╥" />
+	<CharSymbol ID="Table" Char="╤" />
+	<CharSymbol ID="Door" Char="╤" />
+	<CharSymbol ID="Bed" Char="╤" />
+	<CharSymbol ID="Barrel" Char="╤" />
+	<CharSymbol ID="Bucket" Char="╤" />
 </SymbolSet>

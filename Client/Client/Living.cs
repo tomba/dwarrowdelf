@@ -34,6 +34,7 @@ namespace Dwarrowdelf.Client
 			var data = (LivingData)_data;
 
 			this.LivingInfo = Dwarrowdelf.Livings.GetLivingInfo(data.LivingID);
+			this.SymbolID = LivingSymbols.GetSymbol(this.LivingID);
 
 			base.Deserialize(_data);
 
@@ -524,6 +525,45 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_skills.Add(new Tuple<SkillID, byte>(skill, level));
+		}
+	}
+
+	static class LivingSymbols
+	{
+		static SymbolID[] s_symbols;
+
+		static LivingSymbols()
+		{
+			var arr = (LivingID[])Enum.GetValues(typeof(LivingID));
+			var max = arr.Max(i => (int)i);
+			s_symbols = new SymbolID[max + 1];
+
+			var set = new Action<LivingID, SymbolID>((lid, sid) => s_symbols[(int)lid] = sid);
+
+			set(LivingID.Dwarf, SymbolID.Player);
+
+			var symbolIDs = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+
+			for (int i = 1; i < s_symbols.Length; ++i)
+			{
+				if (s_symbols[i] != SymbolID.Undefined)
+					continue;
+
+				var livingID = (LivingID)i;
+
+				var symbolID = symbolIDs.Single(sid => sid.ToString() == livingID.ToString());
+				s_symbols[i] = symbolID;
+			}
+		}
+
+		public static SymbolID GetSymbol(LivingID id)
+		{
+			var sym = s_symbols[(int)id];
+
+			if (sym == SymbolID.Undefined)
+				return SymbolID.Unknown;
+
+			return sym;
 		}
 	}
 }

@@ -12,10 +12,9 @@ namespace MyArea
 	{
 		public static FoodGenerator Create(World world)
 		{
-			var builder = new ItemObjectBuilder(ItemID.Custom, MaterialID.Diamond)
+			var builder = new ItemObjectBuilder(ItemID.Contraption, MaterialID.Diamond)
 			{
 				Name = "Food Generator",
-				SymbolID = SymbolID.Contraption,
 				Color = GameColor.Gold,
 			};
 

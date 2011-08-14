@@ -69,6 +69,7 @@ namespace Dwarrowdelf.Client
 			var data = (ItemData)_data;
 
 			this.ItemInfo = Dwarrowdelf.Items.GetItem(data.ItemID);
+			this.SymbolID = ItemSymbols.GetSymbol(this.ItemID);
 
 			base.Deserialize(_data);
 
@@ -106,6 +107,49 @@ namespace Dwarrowdelf.Client
 						this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
 					break;
 			}
+		}
+	}
+
+	static class ItemSymbols
+	{
+		static SymbolID[] s_symbols;
+
+		static ItemSymbols()
+		{
+			var arr = (ItemID[])Enum.GetValues(typeof(ItemID));
+			var max = arr.Max(i => (int)i);
+			s_symbols = new SymbolID[max + 1];
+
+			var set = new Action<ItemID, SymbolID>((lid, sid) => s_symbols[(int)lid] = sid);
+
+			set(ItemID.Food, SymbolID.Consumable);
+			set(ItemID.Drink, SymbolID.Consumable);
+			set(ItemID.Corpse, SymbolID.Rock);
+
+			set(ItemID.Ore, SymbolID.Rock);
+
+			var symbolIDs = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+
+			for (int i = 1; i < s_symbols.Length; ++i)
+			{
+				if (s_symbols[i] != SymbolID.Undefined)
+					continue;
+
+				var itemID = (ItemID)i;
+
+				var symbolID = symbolIDs.Single(sid => sid.ToString() == itemID.ToString());
+				s_symbols[i] = symbolID;
+			}
+		}
+
+		public static SymbolID GetSymbol(ItemID id)
+		{
+			var sym = s_symbols[(int)id];
+
+			if (sym == SymbolID.Undefined)
+				return SymbolID.Unknown;
+
+			return sym;
 		}
 	}
 }

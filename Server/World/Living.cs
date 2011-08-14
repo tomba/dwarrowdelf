@@ -704,7 +704,6 @@ namespace Dwarrowdelf.Server
 
 			var li = Dwarrowdelf.Livings.GetLivingInfo(this.LivingID);
 
-			this.SymbolID = li.Symbol;
 			this.Color = li.Color;
 			this.HitPoints = li.Level * 10;
 			this.AC = li.Level;

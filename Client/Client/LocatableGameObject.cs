@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Client
 		public LocatabletGameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
+			this.SymbolID = Client.SymbolID.Unknown;
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
@@ -36,10 +37,6 @@ namespace Dwarrowdelf.Client
 
 				case PropertyID.Color:
 					this.Color = (GameColor)value;
-					break;
-
-				case PropertyID.SymbolID:
-					this.SymbolID = (SymbolID)value;
 					break;
 
 				case PropertyID.MaterialID:
@@ -79,7 +76,7 @@ namespace Dwarrowdelf.Client
 		public SymbolID SymbolID
 		{
 			get { return m_symbolID; }
-			private set
+			protected set
 			{
 				m_symbolID = value;
 

@@ -3,25 +3,25 @@
 		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		 xmlns="clr-namespace:Dwarrowdelf">
 
-	<ItemInfo ID="Log" Category="RawMaterial" Symbol="Log"/>
-	<ItemInfo ID="Food" Category="Food" Symbol="Consumable"/>
-	<ItemInfo ID="Drink" Category="Drink" Symbol="Consumable"/>
-	<ItemInfo ID="Rock" Category="RawMaterial" Symbol="Rock"/>
-	<ItemInfo ID="Ore" Category="RawMaterial" Symbol="Rock"/>
-	<ItemInfo ID="Gem" Category="Gem" Symbol="Gem"/>
-	<ItemInfo ID="UncutGem" Name="uncut gem" Category="RawMaterial" Symbol="UncutGem"/>
+	<ItemInfo ID="Log" Category="RawMaterial" />
+	<ItemInfo ID="Food" Category="Food" />
+	<ItemInfo ID="Drink" Category="Drink" />
+	<ItemInfo ID="Rock" Category="RawMaterial" />
+	<ItemInfo ID="Ore" Category="RawMaterial" />
+	<ItemInfo ID="Gem" Category="Gem" />
+	<ItemInfo ID="UncutGem" Name="uncut gem" Category="RawMaterial" />
 
-	<ItemInfo ID="Corpse" Category="Corpse" Symbol="Consumable"/>
+	<ItemInfo ID="Corpse" Category="Corpse" />
 
-	<ItemInfo ID="Chair" Category="Furniture" Symbol="Chair"/>
-	<ItemInfo ID="Table" Category="Furniture" Symbol="Table"/>
-	<ItemInfo ID="Door" Category="Furniture" Symbol="Chair"/>
-	<ItemInfo ID="Bed" Category="Furniture" Symbol="Table"/>
-	<ItemInfo ID="Barrel" Category="Furniture" Symbol="Chair"/>
-	<ItemInfo ID="Bucket" Category="Furniture" Symbol="Table"/>
+	<ItemInfo ID="Chair" Category="Furniture" />
+	<ItemInfo ID="Table" Category="Furniture" />
+	<ItemInfo ID="Door" Category="Furniture" />
+	<ItemInfo ID="Bed" Category="Furniture" />
+	<ItemInfo ID="Barrel" Category="Furniture" />
+	<ItemInfo ID="Bucket" Category="Furniture" />
 
-	<ItemInfo ID="Contraption" Category="Other" Symbol="Contraption" />
+	<ItemInfo ID="Contraption" Category="Other" />
 
-	<ItemInfo ID="50" Name="MyItem" Category="Gem" Symbol="Gem" />
+	<ItemInfo ID="50" Name="MyItem" Category="Gem" />
 
 </x:Array>

@@ -12,7 +12,6 @@ namespace Dwarrowdelf.Server
 		{
 			m_name = builder.Name;
 			m_color = builder.Color;
-			m_symbolID = builder.SymbolID;
 			m_materialID = builder.MaterialID;
 			if (m_color == GameColor.None)
 				m_color = Materials.GetMaterial(m_materialID).Color;
@@ -47,14 +46,6 @@ namespace Dwarrowdelf.Server
 			set { if (m_color == value) return; m_color = value; NotifyObject(PropertyID.Color, value); }
 		}
 
-		[SaveGameProperty("SymbolID")]
-		SymbolID m_symbolID;
-		public SymbolID SymbolID
-		{
-			get { return m_symbolID; }
-			set { if (m_symbolID == value) return; m_symbolID = value; NotifyObject(PropertyID.SymbolID, value); }
-		}
-
 		public MaterialCategory MaterialCategory { get { return Materials.GetMaterial(this.MaterialID).Category; } } // XXX
 
 
@@ -64,7 +55,6 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.Name] = m_name;
 			props[PropertyID.MaterialID] = m_materialID;
 			props[PropertyID.Color] = m_color;
-			props[PropertyID.SymbolID] = m_symbolID;
 			return props;
 		}
 	}
@@ -74,6 +64,5 @@ namespace Dwarrowdelf.Server
 		public string Name { get; set; }
 		public MaterialID MaterialID { get; set; }
 		public GameColor Color { get; set; }
-		public SymbolID SymbolID { get; set; }
 	}
 }
