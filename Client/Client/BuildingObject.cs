@@ -321,6 +321,9 @@ namespace Dwarrowdelf.Client
 			public ItemObject[] SourceItems { get; private set; }
 
 			public Dwarrowdelf.Jobs.IJob Job { get; set; }
+
+			public bool IsRepeat { get; set; }
+			public bool IsSuspended { get; set; }
 		}
 	}
 }
