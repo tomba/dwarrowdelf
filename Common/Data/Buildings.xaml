@@ -1,34 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <x:Array Type="BuildingInfo"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns="clr-namespace:Dwarrowdelf">
+		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		 xmlns="clr-namespace:Dwarrowdelf">
 
-    <BuildingInfo ID="Carpenter">
+	<BuildingInfo ID="Carpenter">
 
-        <BuildableItem ItemID="Chair">
-            <BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
-        </BuildableItem>
+		<BuildableItem ItemID="Chair">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-        <BuildableItem ItemID="Table">
-            <BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
-            <BuildableItemMaterialInfo MaterialCategory="Gem" />
-        </BuildableItem>
+		<BuildableItem ItemID="Table">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-    </BuildingInfo>
+		<BuildableItem ItemID="Door">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-    <BuildingInfo ID="Mason">
-        <BuildableItem ItemID="Chair">
-            <BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
-        </BuildableItem>
+		<BuildableItem ItemID="Bed">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-        <BuildableItem ItemID="Table">
-            <BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
-            <BuildableItemMaterialInfo MaterialCategory="Gem" />
-        </BuildableItem>
-    </BuildingInfo>
+		<BuildableItem ItemID="Barrel">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-    <BuildingInfo ID="Smith">
+		<BuildableItem ItemID="Bucket">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+		</BuildableItem>
 
-    </BuildingInfo>
+		<BuildableItem ItemID="Contraption">
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<BuildableItemMaterialInfo MaterialCategory="Gem" />
+		</BuildableItem>
+
+	</BuildingInfo>
+
+	<BuildingInfo ID="Mason">
+		<BuildableItem ItemID="Chair">
+			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="Contraption">
+			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+			<BuildableItemMaterialInfo MaterialCategory="Gem" />
+		</BuildableItem>
+	</BuildingInfo>
+
+	<BuildingInfo ID="Smith">
+
+	</BuildingInfo>
 
 </x:Array>

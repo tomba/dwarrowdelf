@@ -27,6 +27,7 @@ using System.Windows.Shapes;
 /// bucket
 /// bed
 /// chair
+/// table
 /// door
 /// 
 /// ITEMS (mason, stone)

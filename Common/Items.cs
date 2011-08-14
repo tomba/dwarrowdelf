@@ -11,8 +11,6 @@ namespace Dwarrowdelf
 	{
 		Undefined = 0,
 		Log,
-		Chair,
-		Table,
 		Food,
 		Drink,
 		Rock,
@@ -20,6 +18,15 @@ namespace Dwarrowdelf
 		Gem,
 		UncutGem,
 		Corpse,
+
+		Chair,
+		Table,
+		Door,
+		Bed,
+		Barrel,
+		Bucket,
+
+		Contraption,
 
 		/// <summary>
 		/// Used for dynamically initialized items
@@ -36,6 +43,7 @@ namespace Dwarrowdelf
 		Gem,
 		RawMaterial,
 		Corpse,
+		Other,
 
 		Custom,
 	}

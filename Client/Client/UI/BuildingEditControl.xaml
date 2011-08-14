@@ -11,9 +11,18 @@
 		<ui:CapitalizeConverter x:Key="converter"/>
 	</UserControl.Resources>
 
-	<DockPanel>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
 
-		<GroupBox Header="Info" DockPanel.Dock="Top">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<GroupBox Header="Info" Grid.ColumnSpan="2" Grid.Row="0">
 			<StackPanel Orientation="Vertical">
 
 				<UniformGrid Columns="2">
@@ -30,11 +39,14 @@
 			</StackPanel>
 		</GroupBox>
 
+		<GroupBox Header="Build queue" Grid.Column="0" Grid.Row="1">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
 
-		<GroupBox Header="Build queue" DockPanel.Dock="Left">
-			<DockPanel>
-
-				<ListBox Name="buildQueueListBox" DockPanel.Dock="Left" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100">
+				<ListBox Name="buildQueueListBox" Grid.Column="0" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding BuildableItem.ItemInfo.Name, Converter={StaticResource converter}}" />
@@ -42,7 +54,7 @@
 					</ListBox.ItemTemplate>
 				</ListBox>
 
-				<StackPanel DockPanel.Dock="Right" Orientation="Vertical" DataContext="{Binding Path=SelectedValue, ElementName=buildQueueListBox}">
+				<StackPanel Grid.Column="1" Orientation="Vertical" DataContext="{Binding Path=SelectedValue, ElementName=buildQueueListBox}">
 					<Button Content="Up" />
 					<Button Content="Down" />
 					<Separator />
@@ -50,25 +62,28 @@
 					<ToggleButton Content="Repeat" IsChecked="{Binding IsRepeat}" />
 					<ToggleButton Content="Suspend" IsChecked="{Binding IsSuspended}" />
 				</StackPanel>
-			</DockPanel>
+			</Grid>
 		</GroupBox>
 
-		<GroupBox Header="Build" DockPanel.Dock="Right">
+		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="1*" />
-					<ColumnDefinition Width="1*" />
-					<ColumnDefinition Width="1*" />
+					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="2*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="1*" />
 				</Grid.RowDefinitions>
 
-				<TextBlock Grid.Column="0" Grid.Row="0" Text="Items" />
+				<Button Grid.Row="0" Content="Add" Click="Button_Click" />
 
-				<ListBox Name="itemListBox" Grid.Column="0" Grid.Row="1" ItemsSource="{Binding BuildingInfo.BuildableItems}">
+				<TextBlock Grid.Row="1" Text="Items" />
+
+				<ListBox Name="itemListBox" Grid.Row="2" ItemsSource="{Binding BuildingInfo.BuildableItems}">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Path=ItemInfo.Name, Converter={StaticResource converter}}" />
@@ -76,12 +91,12 @@
 					</ListBox.ItemTemplate>
 				</ListBox>
 
-				<TextBlock Grid.Column="1" Grid.Row="0" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}">
+				<TextBlock Grid.Row="3" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}">
 					<TextBlock Text="{Binding Path=ItemInfo.Name, Converter={StaticResource converter}}" />
 					<TextBlock Text=" materials" />
 				</TextBlock>
 
-				<ListView Grid.Column="1" Grid.Row="1" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}" ItemsSource="{Binding Path=BuildMaterials}">
+				<ListView Grid.Row="4" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}" ItemsSource="{Binding Path=BuildMaterials}">
 					<ListView.View>
 						<GridView AllowsColumnReorder="true">
 							<GridViewColumn DisplayMemberBinding="{Binding Path=ItemID}" Header="ItemID"/>
@@ -91,12 +106,8 @@
 						</GridView>
 					</ListView.View>
 				</ListView>
-
-				<StackPanel Orientation="Vertical"  Grid.Column="2" Grid.Row="1">
-					<Button Content="Add" Click="Button_Click" />
-				</StackPanel>
 			</Grid>
 		</GroupBox>
 
-	</DockPanel>
+	</Grid>
 </UserControl>
