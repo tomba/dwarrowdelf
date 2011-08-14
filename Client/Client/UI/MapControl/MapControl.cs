@@ -43,7 +43,6 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<Point> Dragging;
 		public event Action<Point> DragEnded;
 		public event Action DragAborted;
-		public event Action<Point> Clicked;
 
 		public MapControl()
 		{
@@ -226,6 +225,14 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTiles();
 		}
 
+		public static readonly RoutedEvent MouseClickedEvent = EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(MapControl));
+
+		public event MouseButtonEventHandler MouseClicked
+		{
+			add { AddHandler(MouseClickedEvent, value); }
+			remove { RemoveHandler(MouseClickedEvent, value); }
+		}
+
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
@@ -241,7 +248,6 @@ namespace Dwarrowdelf.Client.UI
 
 			e.Handled = true;
 		}
-
 
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
@@ -260,8 +266,11 @@ namespace Dwarrowdelf.Client.UI
 			{
 				case DragState.Captured:
 
-					if (this.Clicked != null)
-						this.Clicked(pos);
+					var newEvent = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left)
+					{
+						RoutedEvent = MapControl.MouseClickedEvent
+					};
+					RaiseEvent(newEvent);
 
 					break;
 
