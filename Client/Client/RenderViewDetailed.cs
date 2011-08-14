@@ -171,61 +171,7 @@ namespace Dwarrowdelf.Client
 
 			if (flrID == TerrainID.Empty)
 			{
-				if (showVirtualSymbols)
-				{
-					var flrId2 = env.GetTerrain(ml + Direction.Down).ID;
-
-					if (flrId2.IsSlope())
-					{
-						tile.Color = env.GetTerrainMaterial(ml + Direction.Down).Color;
-
-						switch (flrId2.ToDir().Reverse())
-						{
-							case Direction.North:
-								tile.SymbolID = SymbolID.SlopeDownNorth;
-								break;
-							case Direction.NorthEast:
-								tile.SymbolID = SymbolID.SlopeDownNorthEast;
-								break;
-							case Direction.East:
-								tile.SymbolID = SymbolID.SlopeDownEast;
-								break;
-							case Direction.SouthEast:
-								tile.SymbolID = SymbolID.SlopeDownSouthEast;
-								break;
-							case Direction.South:
-								tile.SymbolID = SymbolID.SlopeDownSouth;
-								break;
-							case Direction.SouthWest:
-								tile.SymbolID = SymbolID.SlopeDownSouthWest;
-								break;
-							case Direction.West:
-								tile.SymbolID = SymbolID.SlopeDownWest;
-								break;
-							case Direction.NorthWest:
-								tile.SymbolID = SymbolID.SlopeDownNorthWest;
-								break;
-							default:
-								throw new Exception();
-						}
-
-						if (env.GetGrass(ml + Direction.Down))
-						{
-							// override the material color
-							tile.Color = GameColor.Green;
-							tile.BgColor = GameColor.DarkGreen;
-						}
-					}
-					else
-					{
-						seeThrough = true;
-					}
-				}
-				else
-				{
-					seeThrough = true;
-				}
-
+				seeThrough = true;
 				return;
 			}
 

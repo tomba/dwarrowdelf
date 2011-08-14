@@ -19,14 +19,14 @@
 	<CharSymbol ID="StairsDown" Char="&gt;" />
 	<CharSymbol ID="StairsUpDown" Char="X" />
 
-	<CharSymbol ID="SlopeUpNorth" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpNorthEast" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpEast" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpSouthEast" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpSouth" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpSouthWest" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpWest" Outline="False" Char="▲" />
-	<CharSymbol ID="SlopeUpNorthWest" Outline="False" Char="▲" />
+	<CharSymbol ID="SlopeUpNorth" Outline="False" Char="▲" Rotate="0" />
+	<CharSymbol ID="SlopeUpNorthEast" Outline="False" Char="▲" Rotate="45" />
+	<CharSymbol ID="SlopeUpEast" Outline="False" Char="▲" Rotate="90" />
+	<CharSymbol ID="SlopeUpSouthEast" Outline="False" Char="▲" Rotate="135" />
+	<CharSymbol ID="SlopeUpSouth" Outline="False" Char="▲" Rotate="180" />
+	<CharSymbol ID="SlopeUpSouthWest" Outline="False" Char="▲" Rotate="225" />
+	<CharSymbol ID="SlopeUpWest" Outline="False" Char="▲" Rotate="270" />
+	<CharSymbol ID="SlopeUpNorthWest" Outline="False" Char="▲" Rotate="315" />
 
 	<CharSymbol ID="SlopeDownNorth" Outline="False" Char="▼" />
 	<CharSymbol ID="SlopeDownNorthEast" Outline="False" Char="▼" />
