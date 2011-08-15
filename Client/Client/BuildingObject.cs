@@ -34,9 +34,13 @@ namespace Dwarrowdelf.Client
 
 		bool m_initialized;
 
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
+
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
+			trace.Header = String.Format("Building({0})", objectID.Value);
+
 			var ellipse = new Rectangle();
 			ellipse.Stroke = Brushes.DarkGray;
 			ellipse.StrokeThickness = 0.1;
@@ -85,7 +89,6 @@ namespace Dwarrowdelf.Client
 			{
 				env.AddMapElement(this);
 
-				this.World.TickStarting += OnTick;
 				this.Environment.World.JobManager.AddJobSource(this);
 
 				m_initialized = true;
@@ -98,28 +101,12 @@ namespace Dwarrowdelf.Client
 
 			this.Environment.World.JobManager.RemoveJobSource(this);
 
-			this.World.TickStarting -= OnTick;
-
 			base.Destruct();
 		}
 
 		public bool Contains(IntPoint3D point)
 		{
 			return this.Area.Contains(point);
-		}
-
-		public void AddBuildOrder(ItemID itemID)
-		{
-			var buildableItem = this.BuildingInfo.FindBuildableItem(itemID);
-
-			if (buildableItem == null)
-				throw new Exception();
-
-			var bo = new BuildOrder(buildableItem);
-
-			m_buildOrderQueue.Add(bo);
-
-			CheckStatus();
 		}
 
 		public void AddBuildOrder(BuildableItem buildableItem)
@@ -131,53 +118,189 @@ namespace Dwarrowdelf.Client
 
 			m_buildOrderQueue.Add(bo);
 
-			CheckStatus();
+			if (this.CurrentBuildOrder == null)
+			{
+				this.CurrentBuildOrder = bo;
+				trace.TraceInformation("new order {0}", this.CurrentBuildOrder);
+			}
 		}
 
-		void CheckStatus()
+		bool IJobSource.HasWork
 		{
-			var order = m_buildOrderQueue.FirstOrDefault();
-			if (order == null || order.Job != null)
-				return;
+			get
+			{
+				if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
+					return true;
 
+				return this.CurrentBuildOrder != null;
+			}
+		}
+
+		CleanAreaJob m_cleanJob;
+
+		BuildOrder m_currentBuildOrder;
+		IJob m_currentJob;
+
+		BuildOrder CurrentBuildOrder
+		{
+			get { return m_currentBuildOrder; }
+
+			set
+			{
+				if (m_currentBuildOrder == value)
+					return;
+
+				m_currentBuildOrder = value;
+				Notify("CurrentBuildOrder");
+			}
+		}
+
+		BuildOrder FindNextBuildOrder(BuildOrder previousBuildOrder)
+		{
+			if (m_buildOrderQueue.Count == 0)
+				return null;
+
+			int idx;
+
+			if (previousBuildOrder != null)
+				idx = m_buildOrderQueue.IndexOf(previousBuildOrder);
+			else
+				idx = -1;
+
+			for (int i = 0; i < m_buildOrderQueue.Count; ++i)
+			{
+				idx = (idx + 1) % m_buildOrderQueue.Count;
+
+				var buildOrder = m_buildOrderQueue[idx];
+
+				if (buildOrder.IsSuspended)
+					continue;
+
+				return buildOrder;
+			}
+
+			return null;
+		}
+
+		void RemoveBuildOrder(BuildOrder buildOrder)
+		{
+			if (this.CurrentBuildOrder != buildOrder)
+			{
+				var ok = m_buildOrderQueue.Remove(buildOrder);
+				Debug.Assert(ok);
+			}
+			else
+			{
+				if (m_currentJob != null)
+				{
+					GameData.Data.Jobs.Remove(m_currentJob);
+					m_currentJob.StatusChanged -= OnJobStatusChanged;
+					m_currentJob.Abort();
+					m_currentJob = null;
+				}
+
+				var next = FindNextBuildOrder(buildOrder);
+				if (next == buildOrder)
+					next = null;
+
+				m_buildOrderQueue.Remove(buildOrder);
+
+				this.CurrentBuildOrder = next;
+			}
+		}
+
+		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		{
+			var env = this.Environment;
+
+			if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
+			{
+				if (m_cleanJob == null)
+				{
+					m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
+					GameData.Data.Jobs.Add(m_cleanJob);
+					m_cleanJob.StatusChanged += OnCleanStatusChanged;
+				}
+
+				yield return m_cleanJob;
+			}
+			else
+			{
+				if (this.CurrentBuildOrder == null)
+				{
+					trace.TraceInformation("XXX current order null");
+					yield break;
+				}
+
+				if (m_currentJob == null)
+				{
+					var job = CreateJob(this.CurrentBuildOrder);
+
+					if (job == null)
+					{
+						trace.TraceWarning("XXX failed to create job");
+						yield break;
+					}
+
+					m_currentJob = job;
+
+					trace.TraceInformation("new build job created");
+				}
+
+				yield return m_currentJob;
+			}
+		}
+
+		void OnCleanStatusChanged(IJob job, JobStatus status)
+		{
+			if (status != JobStatus.Done)
+				throw new Exception();
+
+			m_cleanJob.StatusChanged -= OnCleanStatusChanged;
+			GameData.Data.Jobs.Remove(m_cleanJob);
+			m_cleanJob = null;
+		}
+
+		IJob CreateJob(BuildOrder order)
+		{
 			var ok = FindMaterials(order);
 
 			if (!ok)
-				return;
+				return null;
 
-			CreateJob(order);
+			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceItems, order.BuildableItem.ItemID);
+			job.StatusChanged += OnJobStatusChanged;
+			GameData.Data.Jobs.Add(job);
+			return job;
 		}
 
-		void CheckFinishedOrders()
+		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			List<BuildOrder> doneOrders = new List<BuildOrder>();
-
-			foreach (var order in m_buildOrderQueue.Where(o => o.Job != null))
+			switch (status)
 			{
-				if (order.Job.JobStatus == Jobs.JobStatus.Done)
-				{
-					Debug.Print("BuildOrder done");
-					order.Job = null;
-					doneOrders.Add(order);
-				}
-				else if (order.Job.JobStatus == Jobs.JobStatus.Fail)
-				{
-					Debug.Print("BuildOrder FAILED");
-					order.Job = null;
-					doneOrders.Add(order);
-				}
-				else
-				{
-					// not started or in progress
-				}
+				case JobStatus.Done:
+					trace.TraceInformation("build job done");
+					break;
+
+				case JobStatus.Abort:
+				case JobStatus.Fail:
+					trace.TraceError("Build item failed");
+					break;
+
+				default:
+					throw new Exception();
 			}
 
-			foreach (var order in doneOrders)
-				m_buildOrderQueue.Remove(order);
+			m_currentJob = null;
+			GameData.Data.Jobs.Remove(job);
+			job.StatusChanged -= OnJobStatusChanged;
+
+			var old = this.CurrentBuildOrder;
+			var next = FindNextBuildOrder(old);
+			this.CurrentBuildOrder = next;
+			RemoveBuildOrder(old);
 		}
 
-		/* find the materials closest to this building.
-		 * XXX path should be saved, or path should be determined later */
 		bool FindMaterials(BuildOrder order)
 		{
 			var numItems = order.BuildableItem.BuildMaterials.Count;
@@ -198,7 +321,7 @@ namespace Dwarrowdelf.Client
 
 			if (numFound < numItems)
 			{
-				Trace.TraceInformation("Failed to find materials");
+				trace.TraceInformation("Failed to find materials");
 				for (int i = 0; i < numFound; ++i)
 				{
 					order.SourceItems[i].ReservedBy = null;
@@ -234,96 +357,25 @@ namespace Dwarrowdelf.Client
 			return ob;
 		}
 
-		bool IJobSource.HasWork
-		{
-			get
-			{
-				if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
-					return true;
-
-				return m_buildOrderQueue.Where(bo => bo.Job != null).Count() > 0;
-			}
-		}
-
-		CleanAreaJob m_cleanJob;
-
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
-		{
-			var env = this.Environment;
-
-			if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
-			{
-				if (m_cleanJob == null)
-				{
-					m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
-					GameData.Data.Jobs.Add(m_cleanJob);
-					m_cleanJob.StatusChanged += OnCleanStatusChanged;
-				}
-
-				yield return m_cleanJob;
-			}
-			else
-			{
-				var order = m_buildOrderQueue.Where(bo => bo.Job != null).FirstOrDefault();
-				if (order != null)
-					yield return order.Job;
-			}
-		}
-
-		void OnCleanStatusChanged(IJob job, JobStatus status)
-		{
-			if (status != JobStatus.Done)
-				throw new Exception();
-
-			m_cleanJob.StatusChanged -= OnCleanStatusChanged;
-			GameData.Data.Jobs.Remove(m_cleanJob);
-			m_cleanJob = null;
-		}
-
-		void CreateJob(BuildOrder order)
-		{
-			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal,
-				order.SourceItems, order.BuildableItem.ItemID);
-			job.StatusChanged += OnJobStatusChanged;
-			order.Job = job;
-			GameData.Data.Jobs.Add(job);
-		}
-
-		void OnJobStatusChanged(IJob job, JobStatus status)
-		{
-			if (status == JobStatus.Fail || status == JobStatus.Abort)
-				Trace.WriteLine("Build item failed");
-
-			GameData.Data.Jobs.Remove(job);
-			job.StatusChanged -= OnJobStatusChanged;
-			CheckFinishedOrders();
-		}
-
-		void OnTick()
-		{
-			CheckStatus();
-		}
 
 		public override string ToString()
 		{
 			return String.Format("Building({0:x})", this.ObjectID.Value);
 		}
+	}
 
-		public class BuildOrder
+	class BuildOrder
+	{
+		public BuildOrder(BuildableItem buildableItem)
 		{
-			public BuildOrder(BuildableItem buildableItem)
-			{
-				this.BuildableItem = buildableItem;
-				this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
-			}
-
-			public BuildableItem BuildableItem { get; private set; }
-			public ItemObject[] SourceItems { get; private set; }
-
-			public Dwarrowdelf.Jobs.IJob Job { get; set; }
-
-			public bool IsRepeat { get; set; }
-			public bool IsSuspended { get; set; }
+			this.BuildableItem = buildableItem;
+			this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
 		}
+
+		public BuildableItem BuildableItem { get; private set; }
+		public ItemObject[] SourceItems { get; private set; }
+
+		public bool IsRepeat { get; set; }
+		public bool IsSuspended { get; set; }
 	}
 }
