@@ -10,6 +10,7 @@
 	<ItemInfo ID="Ore" Category="RawMaterial" />
 	<ItemInfo ID="Gem" Category="Gem" />
 	<ItemInfo ID="UncutGem" Name="uncut gem" Category="RawMaterial" />
+	<ItemInfo ID="Block" Category="RawMaterial" />
 
 	<ItemInfo ID="Corpse" Category="Corpse" />
 

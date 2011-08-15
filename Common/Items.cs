@@ -17,6 +17,7 @@ namespace Dwarrowdelf
 		Ore,
 		Gem,
 		UncutGem,
+		Block,
 		Corpse,
 
 		Chair,

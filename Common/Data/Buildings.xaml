@@ -37,7 +37,19 @@
 	</BuildingInfo>
 
 	<BuildingInfo ID="Mason">
+		<BuildableItem ItemID="Block">
+			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="Door">
+			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+		</BuildableItem>
+
 		<BuildableItem ItemID="Chair">
+			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="Table">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
