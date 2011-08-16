@@ -15,6 +15,9 @@ namespace AStarTest
 
 		public void SetGridSize(IntSize size)
 		{
+			if (size.Width == this.Width && size.Height == this.Height)
+				return;
+
 			this.Grid = new RenderTileData[size.Height, size.Width];
 
 			for (int y = 0; y < size.Height; ++y)

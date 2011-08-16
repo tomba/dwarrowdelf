@@ -76,6 +76,12 @@ namespace AStarTest
 			m_map = new Map(MapWidth, MapHeight, MapDepth);
 
 			ClearMap();
+
+			this.DragStarted += OnDragStarted;
+			this.DragEnded += OnDragEnded;
+			this.Dragging += OnDragging;
+			this.DragAborted += OnDragAborted;
+			this.MouseClicked += OnMouseClicked;
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -129,6 +135,12 @@ namespace AStarTest
 				}
 			}
 		}
+
+		IntPoint PointToIntPoint(Point p)
+		{
+			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
+		}
+
 
 		void UpdateTile(RenderTileData tile, IntPoint3D ml)
 		{
@@ -190,10 +202,10 @@ namespace AStarTest
 			}
 		}
 
-		protected override void OnMouseDown(MouseButtonEventArgs e)
+		void OnMouseClicked(object sender, MouseButtonEventArgs e)
 		{
-			var _ml = ScreenPointToMapTile(e.GetPosition(this));
-			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
+			var pos = e.GetPosition(this);
+			var ml = ScreenPointToMapLocation(pos);
 
 			if (!m_map.Bounds.Contains(ml))
 			{
@@ -201,7 +213,7 @@ namespace AStarTest
 				return;
 			}
 
-			if (e.LeftButton == MouseButtonState.Pressed)
+			if (e.ChangedButton == MouseButton.Left)
 			{
 				if (m_state == 0 || m_state == 3)
 				{
@@ -216,7 +228,7 @@ namespace AStarTest
 					m_state = 3;
 				}
 			}
-			else if (e.RightButton == MouseButtonState.Pressed)
+			else if (e.ChangedButton == MouseButton.Right)
 			{
 				m_removing = m_map.GetBlocked(ml);
 				m_map.SetBlocked(ml, !m_removing);
@@ -224,17 +236,18 @@ namespace AStarTest
 			}
 		}
 
-		IntPoint PointToIntPoint(Point p)
+		public IntPoint3D ScreenPointToMapLocation(Point p)
 		{
-			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
+			var ml = ScreenPointToMapTile(p);
+			return new IntPoint3D((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
 
-			var _ml = ScreenPointToMapTile(e.GetPosition(this));
-			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
+			var pos = e.GetPosition(this);
+			var ml = ScreenPointToMapLocation(pos);
 
 			if (this.CurrentTileInfo.Location != ml)
 			{
@@ -431,6 +444,36 @@ namespace AStarTest
 			if (stairs == Stairs.Down || stairs == Stairs.UpDown)
 				yield return Direction.Down;
 		}
+
+		Point m_mapTile;
+
+		void OnDragStarted(Point pos)
+		{
+			m_mapTile = ScreenPointToMapTile(pos);
+			Cursor = Cursors.ScrollAll;
+		}
+
+		void OnDragEnded(Point pos)
+		{
+			ClearValue(UserControl.CursorProperty);
+		}
+
+		void OnDragging(Point pos)
+		{
+			var v = MapTileToScreenPoint(m_mapTile) - pos;
+
+			var sp = MapTileToScreenPoint(this.CenterPos) + v;
+
+			var mt = ScreenPointToMapTile(sp);
+
+			this.CenterPos = mt;
+		}
+
+		void OnDragAborted()
+		{
+			ClearValue(UserControl.CursorProperty);
+		}
+
 
 		void Notify(string propertyName)
 		{

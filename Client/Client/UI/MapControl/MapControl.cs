@@ -29,26 +29,10 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<Environment> EnvironmentChanged;
 		public event Action<int> ZChanged;
 
-		enum DragState
-		{
-			None,
-			Captured,
-			Dragging,
-		}
-
-		Point m_dragStartPos;
-		DragState m_dragState;
-
-		public event Action<Point> DragStarted;
-		public event Action<Point> Dragging;
-		public event Action<Point> DragEnded;
-		public event Action DragAborted;
-
 		TileControl.ISymbolTileRenderer m_renderer;
 
 		public MapControl()
 		{
-			m_dragState = DragState.None;
 		}
 
 		bool IsD3D10Supported()
@@ -229,110 +213,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			InvalidateTileData();
 		}
-
-		public static readonly RoutedEvent MouseClickedEvent = EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(MapControl));
-
-		public event MouseButtonEventHandler MouseClicked
-		{
-			add { AddHandler(MouseClickedEvent, value); }
-			remove { RemoveHandler(MouseClickedEvent, value); }
-		}
-
-
-		protected override void OnMouseDown(MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left)
-			{
-				base.OnMouseDown(e);
-				return;
-			}
-
-			m_dragState = DragState.Captured;
-			m_dragStartPos = e.GetPosition(this);
-			CaptureMouse();
-
-			e.Handled = true;
-		}
-
-		protected override void OnMouseUp(MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton != MouseButton.Left)
-			{
-				base.OnMouseUp(e);
-				return;
-			}
-
-			var state = m_dragState;
-			m_dragState = DragState.None;
-
-			Point pos = e.GetPosition(this);
-
-			switch (state)
-			{
-				case DragState.Captured:
-
-					var newEvent = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left)
-					{
-						RoutedEvent = MapControl.MouseClickedEvent
-					};
-					RaiseEvent(newEvent);
-
-					break;
-
-				case DragState.Dragging:
-
-					if (this.DragEnded != null)
-						this.DragEnded(pos);
-
-					break;
-			}
-
-			if (state != DragState.None)
-				ReleaseMouseCapture();
-
-			e.Handled = true;
-		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			if (m_dragState == DragState.None)
-			{
-				base.OnMouseMove(e);
-				return;
-			}
-
-			Point pos = e.GetPosition(this);
-
-			if (m_dragState == DragState.Captured)
-			{
-				if ((pos - m_dragStartPos).Length < 2)
-				{
-					e.Handled = true;
-					return;
-				}
-
-				m_dragState = DragState.Dragging;
-
-				if (this.DragStarted != null)
-					this.DragStarted(m_dragStartPos);
-			}
-
-			if (this.Dragging != null)
-				this.Dragging(pos);
-
-			e.Handled = true;
-		}
-
-		void OnLostMouseCapture(object sender, MouseEventArgs e)
-		{
-			if (m_dragState == DragState.Dragging && this.DragAborted != null)
-				this.DragAborted();
-
-			m_dragStartPos = new Point();
-			m_dragState = DragState.None;
-		}
-
-
 
 		void Notify(string name)
 		{

@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 using Dwarrowdelf.Client.TileControl;
+using System.Diagnostics;
 
 namespace AStarTest
 {
