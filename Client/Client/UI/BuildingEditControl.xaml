@@ -25,16 +25,27 @@
 		<GroupBox Header="Info" Grid.ColumnSpan="2" Grid.Row="0">
 			<StackPanel Orientation="Vertical">
 
-				<UniformGrid Columns="2">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition />
+						<RowDefinition />
+						<RowDefinition />
+					</Grid.RowDefinitions>
 					<TextBlock>BuildingID</TextBlock>
 					<TextBlock Text="{Binding BuildingID}" />
 
-					<TextBlock>BuildingState</TextBlock>
-					<TextBlock Text="{Binding BuildingState}" />
+					<TextBlock Grid.Row="1">BuildingState</TextBlock>
+					<TextBlock Grid.Row="1" Text="{Binding BuildingState}" Grid.Column="1" />
 
-					<TextBlock>Area</TextBlock>
-					<TextBlock Text="{Binding Area}" />
-				</UniformGrid>
+					<TextBlock Grid.Row="2">Area</TextBlock>
+					<TextBlock Text="{Binding Area}" Grid.Row="2" Grid.Column="1" />
+					<Button Content="Destruct" Grid.Column="2" Grid.RowSpan="2" Height="23" Name="button1" Width="75" Click="button1_Click" />
+				</Grid>
 
 			</StackPanel>
 		</GroupBox>

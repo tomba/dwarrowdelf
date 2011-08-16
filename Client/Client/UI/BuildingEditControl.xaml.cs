@@ -63,5 +63,12 @@ namespace Dwarrowdelf.Client.UI
 
 			building.AddBuildOrder(item);
 		}
+
+		private void button1_Click(object sender, RoutedEventArgs e)
+		{
+			var building = (BuildingObject)this.DataContext;
+
+			building.DestructBuilding();
+		}
 	}
 }

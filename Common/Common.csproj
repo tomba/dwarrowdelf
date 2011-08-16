@@ -74,6 +74,8 @@
     <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
+    <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
     <Compile Include="AI\HerbivoreAI.cs" />
     <Compile Include="AI\Herd.cs" />
@@ -82,8 +84,8 @@
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\AssignmentGroups\PatrolAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBaseAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
-    <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveConstructBuildingAssignment.cs" />
+    <Compile Include="Jobs\Assignments\ConstructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
     <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
     <Compile Include="Json\Attributes.cs" />

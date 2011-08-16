@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObject(UseRef = true)]
-	public class ConstructAssignment : Assignment
+	public class ConstructBuildingAssignment : Assignment
 	{
 		[SaveGameProperty]
 		readonly IEnvironment m_environment;
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
 
-		public ConstructAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
 			: base(parent, priority)
 		{
 			m_environment = environment;
@@ -26,21 +26,21 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_buildingID = buildingID;
 		}
 
-		protected ConstructAssignment(SaveGameContext ctx)
+		protected ConstructBuildingAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new ConstructAction(m_environment, m_area, m_buildingID, this.Priority);
+			var action = new ConstructBuildingAction(m_environment, m_area, m_buildingID, this.Priority);
 			progress = JobStatus.Ok;
 			return action;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("ConstructAssignment");
+			return String.Format("ConstructBuildingAssignment");
 		}
 
 	}

@@ -9,21 +9,21 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public class MoveConstructAssignment : MoveBaseAssignment
+	public class MoveConstructBuildingAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
 		readonly IntRectZ m_area;
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
 
-		public MoveConstructAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
+		public MoveConstructBuildingAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
 			: base(parent, priority, environment, area.Center)
 		{
 			m_area = area;
 			m_buildingID = buildingID;
 		}
 
-		protected MoveConstructAssignment(SaveGameContext ctx)
+		protected MoveConstructBuildingAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -35,12 +35,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new ConstructAssignment(this, this.Priority, this.Environment, m_area, m_buildingID);
+			return new ConstructBuildingAssignment(this, this.Priority, this.Environment, m_area, m_buildingID);
 		}
 
 		public override string ToString()
 		{
-			return "MoveConstructAssignment";
+			return "MoveConstructBuildingAssignment";
 		}
 	}
 }

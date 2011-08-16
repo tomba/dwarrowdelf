@@ -98,6 +98,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Destruct()
 		{
+			this.World.TickStarting -= OnWorldTickStarting;
 			SetEnvironment(null);
 			base.Destruct();
 		}

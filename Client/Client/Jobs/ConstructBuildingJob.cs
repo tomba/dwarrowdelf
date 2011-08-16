@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_state = 1;
 
-				AddSubJob(new MoveConstructAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
+				AddSubJob(new MoveConstructBuildingAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
 			}
 			else if (m_state == 1)
 			{
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 			if (m_state == 1)
 			{
 				RemoveSubJob(job);
-				AddSubJob(new MoveConstructAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
+				AddSubJob(new MoveConstructBuildingAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
 				return;
 			}
 

@@ -313,7 +313,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObject(UseRef = true)]
-	public class ConstructAction : GameAction
+	public class ConstructBuildingAction : GameAction
 	{
 		[SaveGameProperty]
 		public ObjectID EnvironmentID { get; private set; }
@@ -322,7 +322,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 
-		public ConstructAction(IEnvironment env, IntRectZ area, BuildingID buildingID, ActionPriority priority)
+		public ConstructBuildingAction(IEnvironment env, IntRectZ area, BuildingID buildingID, ActionPriority priority)
 			: base(priority)
 		{
 			this.EnvironmentID = env.ObjectID;
@@ -330,7 +330,7 @@ namespace Dwarrowdelf
 			this.BuildingID = buildingID;
 		}
 
-		protected ConstructAction(SaveGameContext ctx)
+		protected ConstructBuildingAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -338,6 +338,30 @@ namespace Dwarrowdelf
 		protected override string GetParams()
 		{
 			return String.Join(", ", this.EnvironmentID.ToString(), this.Area.ToString(), this.BuildingID.ToString());
+		}
+	}
+
+	[Serializable]
+	[SaveGameObject(UseRef = true)]
+	public class DestructBuildingAction : GameAction
+	{
+		[SaveGameProperty]
+		public ObjectID BuildingID { get; private set; }
+
+		public DestructBuildingAction(ObjectID buildingID, ActionPriority priority)
+			: base(priority)
+		{
+			this.BuildingID = buildingID;
+		}
+
+		protected DestructBuildingAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return this.BuildingID.ToString();
 		}
 	}
 }

@@ -56,12 +56,12 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		int GetTotalTicks(ConstructAction action)
+		int GetTotalTicks(ConstructBuildingAction action)
 		{
 			return 10;
 		}
 
-		bool PerformAction(ConstructAction action)
+		bool PerformAction(ConstructBuildingAction action)
 		{
 			var env = this.World.FindObject<Environment>(action.EnvironmentID);
 			if (env == null)
@@ -88,6 +88,30 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		int GetTotalTicks(DestructBuildingAction action)
+		{
+			return 10;
+		}
+
+		bool PerformAction(DestructBuildingAction action)
+		{
+			var building = this.World.FindObject<BuildingObject>(action.BuildingID);
+			if (building == null)
+			{
+				SetActionError("no building");
+				return false;
+			}
+
+			if (!building.Area.Contains(this.Location))
+			{
+				SetActionError("living not at the building site");
+				return false;
+			}
+
+			building.Destruct();
+
+			return true;
+		}
 
 		int GetTotalTicks(GetAction action)
 		{
