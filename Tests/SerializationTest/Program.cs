@@ -14,24 +14,22 @@ using System.Reflection;
 
 namespace SerializationTest
 {
-	class MyConv : IGameConverter
+	class MyConv : ISaveGameConverter
 	{
-		public object ConvertToSerializable(object parent, object value)
+		public object ConvertToSerializable(object value)
 		{
 			return String.Format("X{0}X", value);
 		}
 
-		public object ConvertFromSerializable(object parent, object value)
+		public object ConvertFromSerializable(object value)
 		{
 			string str = (string)value;
 			str = str.Substring(1, str.Length - 2);
 			return Int32.Parse(str);
 		}
 
-		public Type OutputType
-		{
-			get { return typeof(string); }
-		}
+		public Type InputType { get { return typeof(string); } }
+		public Type OutputType { get { return typeof(string); } }
 	}
 
 	public class ClassMainBase
@@ -40,27 +38,22 @@ namespace SerializationTest
 		int privatebase;
 	}
 
-	[GameObject(UseRef = true)]
+	[SaveGameObject(UseRef = true)]
 	public class ClassMain : ClassMainBase
 	{
-		[GameProperty("AA", Converter = typeof(MyConv))]
+		[SaveGameProperty("AA", Converter = typeof(MyConv))]
 		public int a;
 
 		public float b;
 
-		[GameProperty]
+		[SaveGameProperty]
 		public Rect MyRect { get; set; }
-		[GameProperty]
+		[SaveGameProperty]
 		public ClassA BorC;
-		[GameProperty]
+		[SaveGameProperty]
 		public ClassMain Self;
-		[GameProperty]
+		[SaveGameProperty]
 		int privint;
-
-		[OnGameDeserialized]
-		void OnDeserialized()
-		{
-		}
 	}
 
 	public interface IClassA
@@ -138,12 +131,12 @@ namespace SerializationTest
 			var stream = new MemoryStream();
 
 
-			JsonSerializer ser;
-			JsonDeserializer deser;
+			SaveGameSerializer ser;
+			SaveGameDeserializer deser;
 
-			ser = new JsonSerializer(stream);
-			var l = new List<ClassB>(); l.Add(new ClassB() { IntA = 3 });
-			//var l = new ClassB[] { new ClassB() { IntA = 3 } };
+			ser = new SaveGameSerializer(stream);
+			//var l = new List<ClassA>(); l.Add(new ClassB() { IntA = 3 });
+			var l = new IClassA[] { new ClassB() { IntA = 3 } };
 			//var l = new Dictionary<string, ClassB>(); l.Add("kala", new ClassB() { IntA = 3 }); l.Add("kala2", new ClassB() { IntB = 5 });
 			ser.Serialize(l);
 
@@ -156,15 +149,16 @@ namespace SerializationTest
 
 			stream.Position = 0;
 
-			deser = new JsonDeserializer(stream);
-			var ob = deser.Deserialize<List<ClassB>>();
+			deser = new SaveGameDeserializer(stream);
+			//var ob = deser.Deserialize<List<ClassA>>();
+			var ob = deser.Deserialize<IClassA[]>();
 
 			Debug.Print("\n---------");
 
 			Debug.Print("Deserialized {0}", ob.GetType());
 
 			stream = new MemoryStream();
-			ser = new JsonSerializer(stream);
+			ser = new SaveGameSerializer(stream);
 			ser.Serialize(ob);
 
 			stream.Position = 0;
