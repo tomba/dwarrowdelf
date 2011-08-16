@@ -32,7 +32,7 @@ using Dwarrowdelf.Client.TileControl;
  */
 namespace AStarTest
 {
-	class MapControl : Dwarrowdelf.Client.TileControl.TileControlBase, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
+	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
 	{
 		public class TileInfo
 		{

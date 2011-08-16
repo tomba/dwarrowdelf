@@ -332,6 +332,10 @@
       <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
       <Name>TileControlBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
+      <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
+      <Name>TileControlCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TileControlD3D\TileControlD3D.csproj">
       <Project>{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}</Project>
       <Name>TileControlD3D</Name>

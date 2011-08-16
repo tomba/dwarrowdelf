@@ -5,7 +5,7 @@ using SlimDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class RendererD3D : IRenderer
+	public class RendererD3D : ISymbolTileRenderer
 	{
 		D3DImageSlimDX m_interopImageSource;
 		SingleQuad11 m_scene;
@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 
 
-		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, RenderContext ctx)
+		public void Render(System.Windows.Media.DrawingContext drawingContext, Size renderSize, TileRenderContext ctx)
 		{
 			if (m_disposed)
 				return;

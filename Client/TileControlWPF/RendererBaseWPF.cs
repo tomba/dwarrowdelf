@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public abstract class RendererBaseWPF : IRenderer
+	public abstract class RendererBaseWPF : ISymbolTileRenderer
 	{
 		ISymbolDrawingCache m_symbolDrawingCache;
 		IRenderData m_renderData;
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected SymbolBitmapCache SymbolBitmapCache { get; private set; }
 
-		public void Render(DrawingContext dc, Size renderSize, RenderContext ctx)
+		public void Render(DrawingContext dc, Size renderSize, TileRenderContext ctx)
 		{
 			dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, renderSize.Width, renderSize.Height));
 

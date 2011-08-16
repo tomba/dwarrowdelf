@@ -7,7 +7,8 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public abstract class TileControlBase : TileControlCore
+	public interface ISymbolTileRenderer : ITileRenderer
 	{
+		ISymbolDrawingCache SymbolDrawingCache { get; set; }
 	}
 }

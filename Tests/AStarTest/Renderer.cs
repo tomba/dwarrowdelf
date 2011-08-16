@@ -8,7 +8,7 @@ using Dwarrowdelf.Client.TileControl;
 
 namespace AStarTest
 {
-	class Renderer : IRenderer
+	class Renderer : ITileRenderer
 	{
 		RenderView m_renderData;
 
@@ -17,7 +17,7 @@ namespace AStarTest
 			m_renderData = renderData;
 		}
 
-		public void Render(DrawingContext dc, Size renderSize, RenderContext ctx)
+		public void Render(DrawingContext dc, Size renderSize, TileRenderContext ctx)
 		{
 			dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, renderSize.Width, renderSize.Height));
 
@@ -46,18 +46,6 @@ namespace AStarTest
 
 		public void Dispose()
 		{
-		}
-
-		public Dwarrowdelf.Client.ISymbolDrawingCache SymbolDrawingCache
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-			set
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

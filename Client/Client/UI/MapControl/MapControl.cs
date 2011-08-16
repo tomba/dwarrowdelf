@@ -44,6 +44,8 @@ namespace Dwarrowdelf.Client.UI
 		public event Action<Point> DragEnded;
 		public event Action DragAborted;
 
+		TileControl.ISymbolTileRenderer m_renderer;
+
 		public MapControl()
 		{
 			m_dragState = DragState.None;
@@ -64,7 +66,7 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			TileControl.IRenderer renderer;
+			TileControl.ISymbolTileRenderer renderer;
 			IRenderView renderView;
 
 			if (IsD3D10Supported())
@@ -96,6 +98,7 @@ namespace Dwarrowdelf.Client.UI
 				}
 			}
 
+			m_renderer = renderer;
 			m_renderView = renderView;
 
 			SetRenderer(renderer);
@@ -103,9 +106,16 @@ namespace Dwarrowdelf.Client.UI
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
 
-			this.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
+			var symbolDrawingCache = GameData.Data.SymbolDrawingCache;
+			symbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
+			m_renderer.SymbolDrawingCache = symbolDrawingCache;
 
 			base.OnInitialized(e);
+		}
+
+		void OnSymbolDrawingCacheChanged()
+		{
+			InvalidateTileRender();
 		}
 
 		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
@@ -127,11 +137,6 @@ namespace Dwarrowdelf.Client.UI
 			m_renderView.Resolve();
 		}
 
-		public void InvalidateTiles()
-		{
-			this.InvalidateTileData();
-		}
-
 		public bool ShowVirtualSymbols
 		{
 			get { return m_renderView.ShowVirtualSymbols; }
@@ -139,7 +144,7 @@ namespace Dwarrowdelf.Client.UI
 			set
 			{
 				m_renderView.ShowVirtualSymbols = value;
-				InvalidateTiles();
+				InvalidateTileData();
 				Notify("ShowVirtualSymbols");
 			}
 		}
@@ -168,7 +173,7 @@ namespace Dwarrowdelf.Client.UI
 					m_env.MapTileObjectChanged += MapObjectChangedCallback;
 				}
 
-				InvalidateTiles();
+				InvalidateTileData();
 
 				if (this.EnvironmentChanged != null)
 					this.EnvironmentChanged(value);
@@ -208,7 +213,7 @@ namespace Dwarrowdelf.Client.UI
 
 			mc.m_renderView.CenterPos = new IntPoint3D(p.X, p.Y, val);
 
-			mc.InvalidateTiles();
+			mc.InvalidateTileData();
 
 			if (mc.ZChanged != null)
 				mc.ZChanged(val);
@@ -217,12 +222,12 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapChangedCallback(IntPoint3D l)
 		{
-			InvalidateTiles();
+			InvalidateTileData();
 		}
 
 		void MapObjectChangedCallback(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
-			InvalidateTiles();
+			InvalidateTileData();
 		}
 
 		public static readonly RoutedEvent MouseClickedEvent = EventManager.RegisterRoutedEvent("MouseClicked", RoutingStrategy.Bubble, typeof(MouseButtonEventHandler), typeof(MapControl));

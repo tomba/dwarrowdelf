@@ -7,7 +7,8 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public abstract class TileControlBase : TileControlCore
+	public interface ITileRenderer : IDisposable
 	{
+		void Render(DrawingContext dc, Size renderSize, TileRenderContext ctx);
 	}
 }

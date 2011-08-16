@@ -73,6 +73,10 @@
       <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
       <Name>TileControlBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
+      <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
+      <Name>TileControlCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
