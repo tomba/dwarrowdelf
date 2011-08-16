@@ -7,9 +7,10 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
+	[SaveGameObject(UseRef = true)]
 	public class FetchItems : JobGroup
 	{
-		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject[] items)
+		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IEnumerable<IItemObject> items)
 			: base(parent, priority)
 		{
 			foreach (var item in items)
@@ -17,6 +18,11 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				var job = new AssignmentGroups.FetchItemAssignment(this, priority, env, location, item);
 				AddSubJob(job);
 			}
+		}
+
+		protected FetchItems(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override void OnSubJobDone(IJob job)

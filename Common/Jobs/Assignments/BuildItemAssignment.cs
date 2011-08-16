@@ -22,6 +22,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_dstItemID = dstItemID;
 		}
 
+		protected BuildItemAssignment(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			var action = new BuildItemAction(m_items, m_dstItemID, this.Priority);

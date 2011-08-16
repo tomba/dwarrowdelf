@@ -7,24 +7,34 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
+	[SaveGameObject(UseRef = true)]
 	public class BuildItemJob : JobGroup
 	{
+		[SaveGameProperty]
 		IBuildingObject m_workplace;
+		[SaveGameProperty]
 		IItemObject[] m_sourceObjects;
+		[SaveGameProperty]
 		ItemID m_dstItemID;
 
+		[SaveGameProperty]
 		int m_state;
 
-		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IItemObject[] sourceObjects, ItemID dstItemID)
+		public BuildItemJob(IBuildingObject workplace, ActionPriority priority, IEnumerable<IItemObject> sourceObjects, ItemID dstItemID)
 			: base(null, priority)
 		{
 			m_workplace = workplace;
-			m_sourceObjects = sourceObjects;
+			m_sourceObjects = sourceObjects.ToArray();
 			m_dstItemID = dstItemID;
 
 			m_state = 0;
 
 			AddSubJob(new FetchItems(this, priority, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
+		}
+
+		protected BuildItemJob(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override void OnSubJobDone(IJob job)

@@ -8,9 +8,12 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
+	[SaveGameObject(UseRef = true)]
 	public abstract class JobGroup : IJobGroup
 	{
+		[SaveGameProperty]
 		ObservableCollection<IJob> m_subJobs;
+		[SaveGameProperty]
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
 		protected JobGroup(IJob parent, ActionPriority priority)
@@ -22,6 +25,10 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 
 			this.JobStatus = Jobs.JobStatus.Ok;
+		}
+
+		protected JobGroup(SaveGameContext ctx)
+		{
 		}
 
 		protected void AddSubJob(IJob job)
@@ -64,8 +71,11 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_subJobs.Clear();
 		}
 
+		[SaveGameProperty]
 		public IJob Parent { get; private set; }
+		[SaveGameProperty]
 		public ActionPriority Priority { get; private set; }
+		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
 		public event Action<IJob, JobStatus> StatusChanged;
