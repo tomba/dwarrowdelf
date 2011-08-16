@@ -120,6 +120,7 @@ namespace Dwarrowdelf.Client
 
 			if (this.CurrentBuildOrder == null)
 			{
+				bo.IsUnderWork = true;
 				this.CurrentBuildOrder = bo;
 				trace.TraceInformation("new order {0}", this.CurrentBuildOrder);
 			}
@@ -204,6 +205,9 @@ namespace Dwarrowdelf.Client
 					next = null;
 
 				m_buildOrderQueue.Remove(buildOrder);
+
+				if (next != null)
+					next.IsUnderWork = true;
 
 				this.CurrentBuildOrder = next;
 			}
@@ -297,8 +301,14 @@ namespace Dwarrowdelf.Client
 
 			var old = this.CurrentBuildOrder;
 			var next = FindNextBuildOrder(old);
+
+			old.IsUnderWork = false;
+			next.IsUnderWork = true;
+
 			this.CurrentBuildOrder = next;
-			RemoveBuildOrder(old);
+
+			if (old.IsRepeat == false)
+				RemoveBuildOrder(old);
 		}
 
 		bool FindMaterials(BuildOrder order)
@@ -364,8 +374,12 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class BuildOrder
+	class BuildOrder : INotifyPropertyChanged
 	{
+		bool m_isRepeat;
+		bool m_isSuspended;
+		bool m_isUnderWork;
+
 		public BuildOrder(BuildableItem buildableItem)
 		{
 			this.BuildableItem = buildableItem;
@@ -375,7 +389,20 @@ namespace Dwarrowdelf.Client
 		public BuildableItem BuildableItem { get; private set; }
 		public ItemObject[] SourceItems { get; private set; }
 
-		public bool IsRepeat { get; set; }
-		public bool IsSuspended { get; set; }
+		public bool IsRepeat { get { return m_isRepeat; } set { m_isRepeat = value; Notify("IsRepeat"); } }
+		public bool IsSuspended { get { return m_isSuspended; } set { m_isSuspended = value; Notify("IsSuspended"); } }
+		public bool IsUnderWork { get { return m_isUnderWork; } set { m_isUnderWork = value; Notify("IsUnderWork"); } }
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		protected void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
 	}
 }

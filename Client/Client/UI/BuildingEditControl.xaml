@@ -46,10 +46,20 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 
-				<ListBox Name="buildQueueListBox" Grid.Column="0" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100">
+				<ListBox Name="buildQueueListBox" Grid.Column="0" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100" HorizontalContentAlignment="Stretch">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding BuildableItem.ItemInfo.Name, Converter={StaticResource converter}}" />
+							<DockPanel>
+								<TextBlock Name="buildOrderName" DockPanel.Dock="Left" Text="{Binding BuildableItem.ItemInfo.Name, Converter={StaticResource converter}}" />
+								<ToggleButton DockPanel.Dock="Right" Content="R" IsChecked="{Binding IsRepeat}" Padding="4,0" HorizontalAlignment="Right" />
+								<ToggleButton DockPanel.Dock="Right" Content="S" IsChecked="{Binding IsSuspended}" Padding="4,0" HorizontalAlignment="Right" />
+							</DockPanel>
+
+							<DataTemplate.Triggers>
+								<DataTrigger Binding="{Binding IsUnderWork}" Value="True">
+									<Setter TargetName="buildOrderName" Property="Background" Value="Green" />
+								</DataTrigger>
+							</DataTemplate.Triggers>
 						</DataTemplate>
 					</ListBox.ItemTemplate>
 				</ListBox>
@@ -59,8 +69,6 @@
 					<Button Content="Down" />
 					<Separator />
 					<Button Content="Cancel" />
-					<ToggleButton Content="Repeat" IsChecked="{Binding IsRepeat}" />
-					<ToggleButton Content="Suspend" IsChecked="{Binding IsSuspended}" />
 				</StackPanel>
 			</Grid>
 		</GroupBox>
