@@ -158,7 +158,7 @@ namespace AStarTest
 
 		void CheckCanvas()
 		{
-			var p = m_map.MapLocationToScreenPoint(new Point(-0.5, -0.5));
+			var p = m_map.MapTileToScreenPoint(new Point(-0.5, -0.5));
 
 			m_scaleTransform.ScaleX = m_map.TileSize;
 			m_scaleTransform.ScaleY = -m_map.TileSize;

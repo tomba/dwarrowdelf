@@ -122,7 +122,7 @@ namespace AStarTest
 				{
 					var tile = grid[y, x];
 
-					var _ml = ScreenLocationToMapLocation(new Point(x, y));
+					var _ml = ScreenTileToMapTile(new Point(x, y));
 					var ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 					UpdateTile(tile, ml);
@@ -192,7 +192,7 @@ namespace AStarTest
 
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			var _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			var _ml = ScreenPointToMapTile(e.GetPosition(this));
 			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 			if (!m_map.Bounds.Contains(ml))
@@ -233,7 +233,7 @@ namespace AStarTest
 		{
 			base.OnMouseMove(e);
 
-			var _ml = ScreenPointToMapLocation(e.GetPosition(this));
+			var _ml = ScreenPointToMapTile(e.GetPosition(this));
 			IntPoint3D ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
 
 			if (this.CurrentTileInfo.Location != ml)

@@ -48,7 +48,7 @@ namespace AStarTest
 		{
 		}
 
-		public ISymbolDrawingCache SymbolDrawingCache
+		public Dwarrowdelf.Client.ISymbolDrawingCache SymbolDrawingCache
 		{
 			get
 			{
