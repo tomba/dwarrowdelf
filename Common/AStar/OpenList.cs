@@ -19,42 +19,8 @@ namespace Dwarrowdelf.AStar
 		void NodeUpdated(T node);
 	}
 
-	class SimpleOpenList<T> : IOpenList<T> where T : class, IOpenListNode
-	{
-		List<T> m_list = new List<T>(128);
-
-		public bool IsEmpty
-		{
-			get { return m_list.Count == 0; }
-		}
-
-		public void Add(T node)
-		{
-			m_list.Add(node);
-			m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
-		}
-
-		public T Pop()
-		{
-			var node = m_list.First();
-			m_list.RemoveAt(0);
-			return node;
-		}
-
-		public void NodeUpdated(T node)
-		{
-			Debug.Assert(m_list.Contains(node));
-			m_list.Sort((n1, n2) => n1.F == n2.F ? 0 : (n1.F > n2.F ? 1 : -1));
-		}
-	}
-
 	class BinaryHeap<T> : IOpenList<T> where T : class, IOpenListNode
 	{
-		static BinaryHeap()
-		{
-			//BinaryHeap<T>.Test();
-		}
-
 		T[] m_openList = new T[128];
 		int m_count;
 
@@ -113,7 +79,7 @@ namespace Dwarrowdelf.AStar
 
 		void HeapifyDown(int i)
 		{
-#if USE_ITERATIVE
+#if USE_RECURSIVE
 			int li = Left(i);
 			int ri = Right(i);
 			int lowest;
@@ -175,78 +141,5 @@ namespace Dwarrowdelf.AStar
 
 			HeapifyUp(i, node);
 		}
-#if notworking
-		[System.Diagnostics.Conditional("DEBUG")]
-		public static void Test()
-		{
-			var openList = new BinaryHeap<AStar2DNode>();
-			var testList = new List<int>();
-			Random rand = new Random();
-			ushort val;
-
-			ushort[] arr1 = { 32, 28, 71, 71, 71, 81, 89, 70, 92, 69, 96, 52, 30 };
-			ushort[] arr2 = new ushort[arr1.Length];
-
-			/* Test 1 */
-			foreach (ushort u in arr1)
-				openList.Add(new AStar2DNode(new IntPoint(), null) { G = u });
-
-			{
-				var n = openList.m_openList.Single(z => z != null && z.G == 69);
-				n.G = 91;
-				var idx = Array.FindIndex<ushort>(arr1, s => s == 69);
-				arr1[idx] = 91;
-				openList.NodeUpdated(n);
-			}
-
-			for (int i = 0; i < arr2.Length; ++i)
-				arr2[i] = openList.Pop().G;
-
-			Array.Sort(arr1);
-
-			for (int i = 0; i < arr1.Length; ++i)
-			{
-				if (arr1[i] != arr2[i])
-					throw new Exception();
-			}
-
-
-			/* test 2 */
-			for (int i = 0; i < 100; ++i)
-			{
-				val = (ushort)rand.Next(100);
-				openList.Add(new AStar2DNode(new IntPoint(), null) { G = val });
-				testList.Add(val);
-
-				if (i % 20 == 19)
-				{
-					testList.Sort();
-					for (int t = 0; t < 5; ++t)
-					{
-						int v1 = openList.Pop().F;
-						int v2 = testList[0];
-						testList.RemoveAt(0);
-
-						if (v1 != v2)
-							throw new Exception();
-
-					}
-				}
-			}
-
-			testList.Sort();
-
-			while (!openList.IsEmpty)
-			{
-				int v1 = openList.Pop().F;
-				int v2 = testList[0];
-				testList.RemoveAt(0);
-
-				if (v1 != v2)
-					throw new Exception();
-
-			}
-		}
-#endif
 	}
 }
