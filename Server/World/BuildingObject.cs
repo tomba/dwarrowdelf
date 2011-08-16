@@ -60,7 +60,6 @@ namespace Dwarrowdelf.Server
 			: base(ObjectType.Building, builder.Area)
 		{
 			this.BuildingID = builder.BuildingID;
-			this.BuildingState = BuildingState.NeedsCleaning;
 		}
 
 		BuildingObject(SaveGameContext ctx)
@@ -71,7 +70,6 @@ namespace Dwarrowdelf.Server
 		[OnSaveGameDeserialized]
 		void OnDeserialized()
 		{
-			this.World.TickStarting += OnWorldTickStarting;
 		}
 
 		protected override void Initialize(World world)
@@ -86,19 +84,10 @@ namespace Dwarrowdelf.Server
 
 			SetEnvironment(env);
 			base.Initialize(world);
-			CheckState();
-			this.World.TickStarting += OnWorldTickStarting;
-		}
-
-		void OnWorldTickStarting()
-		{
-			// XXX
-			CheckState();
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickStarting -= OnWorldTickStarting;
 			SetEnvironment(null);
 			base.Destruct();
 		}
@@ -115,7 +104,6 @@ namespace Dwarrowdelf.Server
 			data.ID = this.BuildingInfo.ID;
 			data.Area = this.Area;
 			data.Environment = this.Environment.ObjectID;
-			data.State = this.BuildingState;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
@@ -130,28 +118,7 @@ namespace Dwarrowdelf.Server
 		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
 			var props = base.SerializeProperties(visibility);
-			props[PropertyID.BuildingState] = m_state;
 			return props;
-		}
-
-		[SaveGameProperty]
-		BuildingState m_state;
-		public BuildingState BuildingState
-		{
-			get { return m_state; }
-			set { if (m_state == value) return; m_state = value; NotifyInt(PropertyID.BuildingState, (int)value); }
-		}
-
-		void CheckState()
-		{
-			var env = this.Environment;
-			BuildingState newState = BuildingState.Functional;
-
-			if (this.Area.Range().Any(p => env.GetInteriorID(p) != InteriorID.Empty))
-				newState = BuildingState.NeedsCleaning;
-
-			if (newState != this.BuildingState)
-				this.BuildingState = newState;
 		}
 
 		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)

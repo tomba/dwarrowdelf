@@ -41,9 +41,6 @@ namespace Dwarrowdelf
 		// Item
 		NutritionalValue,
 		RefreshmentValue,
-
-		// Building
-		BuildingState,
 	}
 
 	public enum PropertyVisibility
@@ -86,9 +83,6 @@ namespace Dwarrowdelf
 			// Item
 			map[PropertyID.NutritionalValue] = PropertyVisibility.Public;
 			map[PropertyID.RefreshmentValue] = PropertyVisibility.Public;
-
-			// Building
-			map[PropertyID.BuildingState] = PropertyVisibility.Public;
 
 
 			var max = map.Keys.Max(id => (int)id);

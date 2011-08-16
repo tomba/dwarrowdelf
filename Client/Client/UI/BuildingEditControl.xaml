@@ -8,7 +8,8 @@
 			 d:DesignHeight="472" d:DesignWidth="748">
 
 	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="converter"/>
+		<ui:CapitalizeConverter x:Key="converter" />
+		<ui:BuildingStateToBoolConverter x:Key="buildingStateConverter" />
 	</UserControl.Resources>
 
 	<Grid>
@@ -37,20 +38,25 @@
 						<RowDefinition />
 					</Grid.RowDefinitions>
 					<TextBlock>BuildingID</TextBlock>
-					<TextBlock Text="{Binding BuildingID}" />
+					<TextBlock Text="{Binding BuildingID}" Grid.Column="1" />
 
 					<TextBlock Grid.Row="1">BuildingState</TextBlock>
 					<TextBlock Grid.Row="1" Text="{Binding BuildingState}" Grid.Column="1" />
 
 					<TextBlock Grid.Row="2">Area</TextBlock>
 					<TextBlock Text="{Binding Area}" Grid.Row="2" Grid.Column="1" />
-					<Button Content="Destruct" Grid.Column="2" Grid.RowSpan="2" Height="23" Name="button1" Width="75" Click="button1_Click" />
+					<Button Content="Destruct" Grid.Column="2" Width="100" Click="DestructButtonClick"
+						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=FunctionalNeedsCleaning}" />
+					<Button Content="Cancel destruct" Grid.Column="2" Grid.Row="2" Width="100" Click="CancelDestructButtonClick"
+						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Destructing}" />
+
 				</Grid>
 
 			</StackPanel>
 		</GroupBox>
 
-		<GroupBox Header="Build queue" Grid.Column="0" Grid.Row="1">
+		<GroupBox Header="Build queue" Grid.Column="0" Grid.Row="1"
+				  IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
@@ -84,7 +90,9 @@
 			</Grid>
 		</GroupBox>
 
-		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1">
+		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1"
+			IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
+
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />

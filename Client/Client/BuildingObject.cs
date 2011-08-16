@@ -48,23 +48,14 @@ namespace Dwarrowdelf.Client
 			m_element = ellipse;
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
-		}
 
-		BuildingState m_state;
-		public BuildingState BuildingState
-		{
-			get { return m_state; }
-			private set { m_state = value; Notify("BuildingState"); }
+			this.BuildingState = Client.BuildingState.Functional;
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
 		{
 			switch (propertyID)
 			{
-				case PropertyID.BuildingState:
-					this.BuildingState = (BuildingState)value;
-					break;
-
 				default:
 					throw new Exception();
 			}
@@ -109,10 +100,34 @@ namespace Dwarrowdelf.Client
 			return this.Area.Contains(point);
 		}
 
-		bool m_destructingBuilding;
+		BuildingState m_buildingState;
+		public BuildingState BuildingState
+		{
+			get { return m_buildingState; }
+			set
+			{
+				m_buildingState = value;
+				Notify("BuildingState");
+			}
+		}
+
 		public void DestructBuilding()
 		{
-			m_destructingBuilding = true;
+			this.BuildingState = Client.BuildingState.Destructing;
+
+			while (m_buildOrderQueue.Count > 0)
+				RemoveBuildOrder(m_buildOrderQueue[0]);
+		}
+
+		public void CancelDestructBuilding()
+		{
+			this.BuildingState = Client.BuildingState.Functional;
+
+			if (m_destructJob != null)
+			{
+				m_destructJob.Abort();
+				m_destructJob = null;
+			}
 		}
 
 		public void AddBuildOrder(BuildableItem buildableItem)
@@ -136,13 +151,18 @@ namespace Dwarrowdelf.Client
 		{
 			get
 			{
-				if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
-					return true;
+				switch (this.BuildingState)
+				{
+					case Client.BuildingState.NeedsCleaning:
+					case Client.BuildingState.Destructing:
+						return true;
 
-				if (m_destructingBuilding)
-					return true;
+					case Client.BuildingState.Functional:
+						return this.CurrentBuildOrder != null;
 
-				return this.CurrentBuildOrder != null;
+					default:
+						throw new Exception();
+				}
 			}
 		}
 
@@ -228,59 +248,65 @@ namespace Dwarrowdelf.Client
 		{
 			var env = this.Environment;
 
-			if (m_destructingBuilding)
+			switch (this.BuildingState)
 			{
-				if (m_destructJob == null)
-				{
-					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, ActionPriority.Normal, this);
-					GameData.Data.Jobs.Add(m_destructJob);
-					m_destructJob.StatusChanged += OnDestructStatusChanged;
-				}
-
-				yield return m_destructJob;
-			}
-			else if (this.BuildingState == Dwarrowdelf.BuildingState.NeedsCleaning)
-			{
-				if (m_cleanJob == null)
-				{
-					m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
-					GameData.Data.Jobs.Add(m_cleanJob);
-					m_cleanJob.StatusChanged += OnCleanStatusChanged;
-				}
-
-				yield return m_cleanJob;
-			}
-			else
-			{
-				if (this.CurrentBuildOrder == null)
-				{
-					trace.TraceInformation("XXX current order null");
-					yield break;
-				}
-
-				if (m_currentJob == null)
-				{
-					var job = CreateJob(this.CurrentBuildOrder);
-
-					if (job == null)
+				case Client.BuildingState.NeedsCleaning:
+					if (m_cleanJob == null)
 					{
-						trace.TraceWarning("XXX failed to create job");
+						m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
+						GameData.Data.Jobs.Add(m_cleanJob);
+						m_cleanJob.StatusChanged += OnCleanStatusChanged;
+					}
+
+					yield return m_cleanJob;
+
+					break;
+
+				case Client.BuildingState.Functional:
+					if (this.CurrentBuildOrder == null)
+					{
+						trace.TraceInformation("XXX current order null");
 						yield break;
 					}
 
-					m_currentJob = job;
+					if (m_currentJob == null)
+					{
+						var job = CreateJob(this.CurrentBuildOrder);
 
-					trace.TraceInformation("new build job created");
-				}
+						if (job == null)
+						{
+							trace.TraceWarning("XXX failed to create job");
+							yield break;
+						}
 
-				yield return m_currentJob;
+						m_currentJob = job;
+
+						trace.TraceInformation("new build job created");
+					}
+
+					yield return m_currentJob;
+
+					break;
+
+				case Client.BuildingState.Destructing:
+					if (m_destructJob == null)
+					{
+						m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, ActionPriority.Normal, this);
+						GameData.Data.Jobs.Add(m_destructJob);
+						m_destructJob.StatusChanged += OnDestructStatusChanged;
+					}
+
+					yield return m_destructJob;
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 
 		void OnDestructStatusChanged(IJob job, JobStatus status)
 		{
-			if (status != JobStatus.Done)
-				throw new Exception();
+			// We don't care about the status. If the job failed, it will be retried automatically.
 
 			m_destructJob.StatusChanged -= OnDestructStatusChanged;
 			GameData.Data.Jobs.Remove(m_destructJob);
@@ -289,8 +315,7 @@ namespace Dwarrowdelf.Client
 
 		void OnCleanStatusChanged(IJob job, JobStatus status)
 		{
-			if (status != JobStatus.Done)
-				throw new Exception();
+			// We don't care about the status. If the job failed, it will be retried automatically.
 
 			m_cleanJob.StatusChanged -= OnCleanStatusChanged;
 			GameData.Data.Jobs.Remove(m_cleanJob);
@@ -436,5 +461,16 @@ namespace Dwarrowdelf.Client
 			if (this.PropertyChanged != null)
 				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
+	}
+
+	[Flags]
+	enum BuildingState
+	{
+		Undefined = 0,
+		// XXX cleaning is currently not supported. remove?
+		NeedsCleaning = 1 << 0,
+		Functional = 1 << 1,
+		Destructing = 1 << 2,
+		FunctionalNeedsCleaning = Functional | NeedsCleaning,
 	}
 }

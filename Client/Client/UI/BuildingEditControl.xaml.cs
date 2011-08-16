@@ -64,11 +64,37 @@ namespace Dwarrowdelf.Client.UI
 			building.AddBuildOrder(item);
 		}
 
-		private void button1_Click(object sender, RoutedEventArgs e)
+		private void DestructButtonClick(object sender, RoutedEventArgs e)
 		{
 			var building = (BuildingObject)this.DataContext;
 
 			building.DestructBuilding();
+		}
+
+		private void CancelDestructButtonClick(object sender, RoutedEventArgs e)
+		{
+			var building = (BuildingObject)this.DataContext;
+
+			building.CancelDestructBuilding();
+		}
+	}
+
+	public class BuildingStateToBoolConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			var state = (BuildingState)value;
+			BuildingState target;
+
+			if (Enum.TryParse((string)parameter, out target) == false)
+				throw new Exception();
+
+			return (state & target) != 0;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

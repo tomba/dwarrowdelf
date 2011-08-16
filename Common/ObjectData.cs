@@ -50,19 +50,11 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public enum BuildingState
-	{
-		NeedsCleaning,
-		Functional,
-	}
-
-	[Serializable]
 	public class BuildingData : BaseGameObjectData
 	{
 		public BuildingID ID { get; set; }
 		public ObjectID Environment { get; set; }
 		public IntRectZ Area { get; set; }
-		public BuildingState State { get; set; }
 
 		public override string ToString()
 		{
