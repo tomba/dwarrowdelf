@@ -91,7 +91,7 @@
 
 				<TextBlock Grid.Row="1" Text="Items" />
 
-				<ListBox Name="itemListBox" Grid.Row="2" ItemsSource="{Binding BuildingInfo.BuildableItems}">
+				<ListBox Name="itemListBox" Grid.Row="2" ItemsSource="{Binding BuildingInfo.BuildableItems}" MouseDoubleClick="itemListBox_MouseDoubleClick">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Path=ItemInfo.Name, Converter={StaticResource converter}}" />

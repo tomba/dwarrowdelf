@@ -54,6 +54,14 @@ namespace Dwarrowdelf.Client.UI
 
 			building.AddBuildOrder(item);
 		}
+
+		private void itemListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			var building = (BuildingObject)this.DataContext;
+
+			var item = (BuildableItem)itemListBox.SelectedItem;
+
+			building.AddBuildOrder(item);
+		}
 	}
 }
-
