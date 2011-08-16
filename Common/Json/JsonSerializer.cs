@@ -11,6 +11,17 @@ using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
+	/*
+	 * Fails to serialize:
+	 * 
+	 * class foo { ILuokka[] m_array; }
+	 * 
+	 * new foo() { m_array = new Luokka[] };
+	 * 
+	 * I.e. if the array/list object is different type than the field type
+	 * 
+	 */
+
 	public interface ISaveGameSerializerRefResolver
 	{
 		int Create(object ob);
