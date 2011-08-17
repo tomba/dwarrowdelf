@@ -87,7 +87,7 @@ namespace Dwarrowdelf.AI
 					Debug.Assert(this.CurrentAssignment.CurrentAction.MagicNumber == this.Worker.CurrentAction.MagicNumber);
 			}
 
-			if (this.Worker.HasAction && this.Worker.CurrentAction.Priority > priority)
+			if (this.Worker.HasAction && this.Worker.ActionPriority > priority)
 			{
 				trace.TraceVerbose("DecideAction: worker already doing higher priority action");
 				return this.Worker.CurrentAction;
@@ -182,8 +182,6 @@ namespace Dwarrowdelf.AI
 					var action = assignment.CurrentAction;
 					if (action == null)
 						throw new Exception();
-
-					action.Priority = priority;
 
 					trace.TraceVerbose("DecideAction: new action {0}", action);
 					return action;

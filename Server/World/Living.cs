@@ -89,6 +89,7 @@ namespace Dwarrowdelf.Server
 
 			m_ai = null;
 			this.CurrentAction = null;
+			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
 			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
 			this.ActionUserID = 0;
@@ -277,6 +278,7 @@ namespace Dwarrowdelf.Server
 			if (visibility == ObjectVisibility.All)
 			{
 				data.CurrentAction = this.CurrentAction;
+				data.ActionPriority = this.ActionPriority;
 				data.ActionTicksUsed = this.ActionTicksUsed;
 				data.ActionTotalTicks = this.ActionTotalTicks;
 				data.ActionUserID = this.ActionUserID;
@@ -455,6 +457,7 @@ namespace Dwarrowdelf.Server
 				m_ai.ActionDone(e);
 
 			this.CurrentAction = null;
+			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
 			this.ActionTotalTicks = this.ActionTicksUsed = 0;
 			this.ActionUserID = 0;
 
@@ -485,21 +488,25 @@ namespace Dwarrowdelf.Server
 		public int ActionTicksUsed { get; private set; }
 
 		[SaveGameProperty]
+		public ActionPriority ActionPriority { get; private set; }
+
+		[SaveGameProperty]
 		public int ActionUserID { get; private set; }
 
-		public void StartAction(GameAction action)
+		public void StartAction(GameAction action, ActionPriority priority)
 		{
-			StartAction(action, 0);
+			StartAction(action, priority, 0);
 		}
 
-		public void StartAction(GameAction action, int userID)
+		public void StartAction(GameAction action, ActionPriority priority, int userID)
 		{
 			D("DoAction: {0}, uid: {1}", action, userID);
 
 			Debug.Assert(!this.HasAction);
-			Debug.Assert(action.Priority != ActionPriority.Undefined);
+			Debug.Assert(priority != ActionPriority.Undefined);
 
 			this.CurrentAction = action;
+			this.ActionPriority = priority;
 			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
 			this.ActionUserID = userID;
@@ -507,6 +514,7 @@ namespace Dwarrowdelf.Server
 			var c = new ActionStartedChange(this)
 			{
 				Action = action,
+				Priority = priority,
 				UserID = userID,
 			};
 
@@ -541,20 +549,18 @@ namespace Dwarrowdelf.Server
 		{
 			var action = m_ai.DecideAction(priority);
 
-			Debug.Assert(action == null || action.Priority != ActionPriority.Undefined);
-
 			if (action != this.CurrentAction)
 			{
 				if (this.HasAction)
 				{
-					if (action != null && this.CurrentAction.Priority > action.Priority)
+					if (action != null && this.ActionPriority > priority)
 						throw new Exception();
 
 					CancelAction();
 				}
 
 				if (action != null)
-					StartAction(action);
+					StartAction(action, priority);
 			}
 		}
 

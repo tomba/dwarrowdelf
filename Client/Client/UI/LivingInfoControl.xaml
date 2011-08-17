@@ -1,134 +1,137 @@
 ﻿<UserControl x:Class="Dwarrowdelf.Client.UI.LivingInfoControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignHeight="476" d:DesignWidth="489">
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d" d:DesignHeight="476" d:DesignWidth="489">
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Vertical">
 
-            <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
+			<Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
 
-            <Separator />
+			<Separator />
 
-            <UniformGrid Columns="2">
-                <TextBlock>Name</TextBlock>
-                <TextBlock Text="{Binding Name}" />
+			<UniformGrid Columns="2">
+				<TextBlock>Name</TextBlock>
+				<TextBlock Text="{Binding Name}" />
 
-                <TextBlock>LivingID</TextBlock>
-                <TextBlock Text="{Binding LivingID}" />
+				<TextBlock>LivingID</TextBlock>
+				<TextBlock Text="{Binding LivingID}" />
 
-                <TextBlock>LivingCategory</TextBlock>
-                <TextBlock Text="{Binding LivingCategory}" />
+				<TextBlock>LivingCategory</TextBlock>
+				<TextBlock Text="{Binding LivingCategory}" />
 
-                <TextBlock>Desc</TextBlock>
-                <TextBlock Text="{Binding Description}" />
+				<TextBlock>Desc</TextBlock>
+				<TextBlock Text="{Binding Description}" />
 
-                <TextBlock>Color</TextBlock>
-                <TextBlock Text="{Binding Color}" />
+				<TextBlock>Color</TextBlock>
+				<TextBlock Text="{Binding Color}" />
 
-                <TextBlock>MaterialID</TextBlock>
-                <TextBlock Text="{Binding Material.ID}" />
+				<TextBlock>MaterialID</TextBlock>
+				<TextBlock Text="{Binding Material.ID}" />
 
-                <TextBlock>ObjectID</TextBlock>
-                <TextBlock Text="{Binding ObjectID}" />
+				<TextBlock>ObjectID</TextBlock>
+				<TextBlock Text="{Binding ObjectID}" />
 
-                <TextBlock>Parent</TextBlock>
-                <TextBlock Text="{Binding Parent}" />
+				<TextBlock>Parent</TextBlock>
+				<TextBlock Text="{Binding Parent}" />
 
-                <TextBlock>Location</TextBlock>
-                <TextBlock Text="{Binding Location}" />
+				<TextBlock>Location</TextBlock>
+				<TextBlock Text="{Binding Location}" />
 
-                <TextBlock>Client AI</TextBlock>
-                <TextBlock Text="{Binding AI}" />
+				<TextBlock>Client AI</TextBlock>
+				<TextBlock Text="{Binding AI}" />
 
-                <TextBlock>Server Assignment</TextBlock>
-                <TextBlock Text="{Binding ServerAssignment}" />
+				<TextBlock>Server Assignment</TextBlock>
+				<TextBlock Text="{Binding ServerAssignment}" />
 
-                <TextBlock>Client Assignment</TextBlock>
-                <TextBlock Text="{Binding ClientAssignment}" />
+				<TextBlock>Client Assignment</TextBlock>
+				<TextBlock Text="{Binding ClientAssignment}" />
 
-                <TextBlock>Action</TextBlock>
-                <TextBlock Text="{Binding CurrentAction}" />
+				<TextBlock>Action</TextBlock>
+				<TextBlock Text="{Binding CurrentAction}" />
 
-                <TextBlock>ActionTicksUsed</TextBlock>
-                <TextBlock Text="{Binding ActionTicksUsed}" />
+				<TextBlock>ActionPriority</TextBlock>
+				<TextBlock Text="{Binding ActionPriority}" />
 
-                <TextBlock>ActionTotalTicks</TextBlock>
-                <TextBlock Text="{Binding ActionTotalTicks}" />
+				<TextBlock>ActionTicksUsed</TextBlock>
+				<TextBlock Text="{Binding ActionTicksUsed}" />
 
-                <TextBlock>Previous Action</TextBlock>
-                <TextBlock Text="{Binding PreviousAction}" />
+				<TextBlock>ActionTotalTicks</TextBlock>
+				<TextBlock Text="{Binding ActionTotalTicks}" />
 
-                <TextBlock>Gender</TextBlock>
-                <TextBlock Text="{Binding Gender}" />
-            </UniformGrid>
+				<TextBlock>Previous Action</TextBlock>
+				<TextBlock Text="{Binding PreviousAction}" />
 
-            <Separator />
+				<TextBlock>Gender</TextBlock>
+				<TextBlock Text="{Binding Gender}" />
+			</UniformGrid>
 
-            <UniformGrid Columns="2">
-                <TextBlock Text="HP" />
-                <TextBlock Text="SP" />
+			<Separator />
 
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0}/{1}">
-                            <Binding Path="HitPoints" />
-                            <Binding Path="MaxHitPoints" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+			<UniformGrid Columns="2">
+				<TextBlock Text="HP" />
+				<TextBlock Text="SP" />
 
-                <TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0}/{1}">
-                            <Binding Path="SpellPoints" />
-                            <Binding Path="MaxSpellPoints" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
+				<TextBlock>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0}/{1}">
+							<Binding Path="HitPoints" />
+							<Binding Path="MaxHitPoints" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
 
-                <TextBlock Text="Food Fullness" />
-                <TextBlock Text="Water Fullness" />
-                <TextBlock Text="{Binding FoodFullness}" />
-                <TextBlock Text="{Binding WaterFullness}" />
-            </UniformGrid>
+				<TextBlock>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0}/{1}">
+							<Binding Path="SpellPoints" />
+							<Binding Path="MaxSpellPoints" />
+						</MultiBinding>
+					</TextBlock.Text>
+				</TextBlock>
 
-            <Separator />
+				<TextBlock Text="Food Fullness" />
+				<TextBlock Text="Water Fullness" />
+				<TextBlock Text="{Binding FoodFullness}" />
+				<TextBlock Text="{Binding WaterFullness}" />
+			</UniformGrid>
 
-            <UniformGrid Columns="6">
-                <TextBlock Text="Str" />
-                <TextBlock Text="Dex" />
-                <TextBlock Text="Con" />
-                <TextBlock Text="Int" />
-                <TextBlock Text="Wis" />
-                <TextBlock Text="Cha" />
+			<Separator />
 
-                <TextBlock Text="{Binding Strength}" />
-                <TextBlock Text="{Binding Dexterity}" />
-                <TextBlock Text="{Binding Constitution}" />
-                <TextBlock Text="{Binding Intelligence}" />
-                <TextBlock Text="{Binding Wisdom}" />
-                <TextBlock Text="{Binding Charisma}" />
-            </UniformGrid>
-        </StackPanel>
+			<UniformGrid Columns="6">
+				<TextBlock Text="Str" />
+				<TextBlock Text="Dex" />
+				<TextBlock Text="Con" />
+				<TextBlock Text="Int" />
+				<TextBlock Text="Wis" />
+				<TextBlock Text="Cha" />
 
-        <UniformGrid Columns="2">
-            <ListView ItemsSource="{Binding Skills}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
-                        <GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
+				<TextBlock Text="{Binding Strength}" />
+				<TextBlock Text="{Binding Dexterity}" />
+				<TextBlock Text="{Binding Constitution}" />
+				<TextBlock Text="{Binding Intelligence}" />
+				<TextBlock Text="{Binding Wisdom}" />
+				<TextBlock Text="{Binding Charisma}" />
+			</UniformGrid>
+		</StackPanel>
 
-            <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
-                <ListBox.Resources>
-                    <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-                </ListBox.Resources>
-            </ListBox>
-        </UniformGrid>
+		<UniformGrid Columns="2">
+			<ListView ItemsSource="{Binding Skills}">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
+						<GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
+					</GridView>
+				</ListView.View>
+			</ListView>
 
-    </DockPanel>
+			<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+				<ListBox.Resources>
+					<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+				</ListBox.Resources>
+			</ListBox>
+		</UniformGrid>
+
+	</DockPanel>
 </UserControl>

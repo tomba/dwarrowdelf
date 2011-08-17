@@ -304,6 +304,7 @@ namespace Dwarrowdelf
 	public class ActionStartedChange : ObjectChange
 	{
 		public GameAction Action { get; set; }
+		public ActionPriority Priority { get; set; }
 		public int UserID { get; set; }
 
 		public ActionStartedChange(IBaseGameObject ob)

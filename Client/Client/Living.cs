@@ -39,6 +39,7 @@ namespace Dwarrowdelf.Client
 			base.Deserialize(_data);
 
 			this.CurrentAction = data.CurrentAction;
+			this.ActionPriority = data.ActionPriority;
 			this.ActionTicksUsed = data.ActionTicksUsed;
 			this.ActionTotalTicks = data.ActionTotalTicks;
 			this.ActionUserID = data.ActionUserID;
@@ -157,6 +158,13 @@ namespace Dwarrowdelf.Client
 			private set { m_actionTotalTicks = value; Notify("ActionTotalTicks"); }
 		}
 
+		ActionPriority m_actionPriority;
+		public ActionPriority ActionPriority
+		{
+			get { return m_actionPriority; }
+			private set { m_actionPriority = value; Notify("ActionPriority"); }
+		}
+
 		public bool HasAction { get { return this.CurrentAction != null; } }
 		public int ActionUserID { get; private set; }
 
@@ -166,8 +174,6 @@ namespace Dwarrowdelf.Client
 
 			if (this.AI != null)
 				action = this.AI.DecideAction(priority);
-
-			Debug.Assert(action == null || action.Priority != ActionPriority.Undefined);
 
 			return action;
 		}
@@ -185,6 +191,7 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(!this.HasAction);
 
 			this.CurrentAction = change.Action;
+			this.ActionPriority = change.Priority;
 			this.ActionUserID = change.UserID;
 
 			if (this.AI != null)
@@ -205,9 +212,6 @@ namespace Dwarrowdelf.Client
 		public void HandleActionDone(ActionDoneChange change)
 		{
 			Debug.Assert(this.HasAction);
-
-			this.ActionTotalTicks = 0;
-			this.ActionTicksUsed = 0;
 
 			if (change.State != ActionState.Done)
 			{
@@ -242,6 +246,9 @@ namespace Dwarrowdelf.Client
 			//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
 			this.PreviousAction = this.CurrentAction;
 			this.CurrentAction = null;
+			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
+			this.ActionTotalTicks = 0;
+			this.ActionTicksUsed = 0;
 		}
 
 		public void RequestAction(GameAction action)
@@ -253,7 +260,7 @@ namespace Dwarrowdelf.Client
 
 		public bool UserActionPossible()
 		{
-			return !this.HasAction || this.CurrentAction.Priority < ActionPriority.High;
+			return !this.HasAction || this.ActionPriority < ActionPriority.High;
 		}
 
 		public Grid2D<bool> VisionMap

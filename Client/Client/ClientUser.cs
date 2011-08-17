@@ -416,7 +416,7 @@ namespace Dwarrowdelf.Client
 				if (m_actionMap.ContainsKey(living))
 					action = m_actionMap[living];
 				else
-					action = living.DecideAction(ActionPriority.Normal);
+					action = living.DecideAction(ActionPriority.User);
 
 				if (action != living.CurrentAction)
 					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));

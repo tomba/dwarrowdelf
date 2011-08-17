@@ -37,9 +37,8 @@ namespace Dwarrowdelf
 	public enum ActionPriority
 	{
 		Undefined = 0,
-		Lowest,
 		Idle,
-		Normal,
+		User,
 		High,
 	}
 
@@ -52,8 +51,6 @@ namespace Dwarrowdelf
 
 		[SaveGameProperty]
 		public int MagicNumber { get; private set; }
-		[SaveGameProperty]
-		public ActionPriority Priority { get; set; }
 
 		protected GameAction()
 		{
@@ -66,7 +63,7 @@ namespace Dwarrowdelf
 
 		public sealed override string ToString()
 		{
-			return String.Format("{0} [{1}, {3}] ({2})", GetType().Name, this.Priority, this.GetParams(), this.MagicNumber);
+			return String.Format("{0} ({1})", GetType().Name, this.GetParams());
 		}
 
 		protected abstract string GetParams();

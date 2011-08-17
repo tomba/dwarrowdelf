@@ -37,6 +37,7 @@ namespace Dwarrowdelf
 	{
 		public LivingID LivingID { get; set; }
 		public GameAction CurrentAction { get; set; }
+		public ActionPriority ActionPriority { get; set; }
 		public int ActionTicksUsed { get; set; }
 		public int ActionTotalTicks { get; set; }
 		public int ActionUserID { get; set; }

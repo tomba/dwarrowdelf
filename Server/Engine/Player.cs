@@ -470,7 +470,7 @@ namespace Dwarrowdelf.Server
 
 					if (action == null)
 					{
-						if (living.CurrentAction.Priority == ActionPriority.High)
+						if (living.ActionPriority == ActionPriority.High)
 							throw new Exception();
 
 						living.CancelAction();
@@ -478,18 +478,15 @@ namespace Dwarrowdelf.Server
 						continue;
 					}
 
-					if (action.Priority > ActionPriority.Normal)
-						throw new Exception();
-
 					if (living.HasAction)
 					{
-						if (living.CurrentAction.Priority <= action.Priority)
+						if (living.ActionPriority <= ActionPriority.User)
 							living.CancelAction();
 						else
 							throw new Exception("already has an action");
 					}
 
-					living.StartAction(action, m_userID);
+					living.StartAction(action, ActionPriority.User, m_userID);
 				}
 
 				this.IsProceedTurnReplyReceived = true;

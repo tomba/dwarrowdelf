@@ -90,6 +90,7 @@ namespace Dwarrowdelf
 	public interface ILiving : ILocatableGameObject
 	{
 		GameAction CurrentAction { get; }
+		ActionPriority ActionPriority { get; }
 		bool HasAction { get; }
 
 		LivingID LivingID { get; }
