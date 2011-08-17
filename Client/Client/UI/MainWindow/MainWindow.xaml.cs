@@ -512,7 +512,7 @@ namespace Dwarrowdelf.Client.UI
 			if (e.Key == Key.Escape)
 			{
 				this.mainWindowTools.ToolMode = ClientToolMode.Info;
-				this.MapControl.Focus();
+				this.Focus(); // XXX focus mainwindow instead of mapcontrol, it works somehow better
 			}
 			else
 			{
