@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			if (l < moveStrength && r.Next(4) < 2)
 			{
 				progress = Jobs.JobStatus.Ok;
-				return new WaitAction(r.Next(4) + 1, this.Priority);
+				return new WaitAction(r.Next(4) + 1);
 			}
 
 			var moveVector = new IntVector3D(r.Next(-moveStrength, moveStrength + 1), r.Next(-moveStrength, moveStrength + 1), 0);
@@ -107,7 +107,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				}
 			}
 
-			return new MoveAction(dir, this.Priority);
+			return new MoveAction(dir);
 		}
 
 		protected override JobStatus ActionDoneOverride(ActionState actionStatus)

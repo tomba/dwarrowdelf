@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new WaitAction(m_turns, this.Priority);
+			var action = new WaitAction(m_turns);
 			progress = JobStatus.Ok;
 			return action;
 		}

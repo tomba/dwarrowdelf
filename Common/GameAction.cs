@@ -53,11 +53,10 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public int MagicNumber { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; private set; }
+		public ActionPriority Priority { get; set; }
 
-		protected GameAction(ActionPriority priority)
+		protected GameAction()
 		{
-			this.Priority = priority;
 			this.MagicNumber = MagicNumberGenerator();
 		}
 
@@ -80,8 +79,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public Direction Direction { get; private set; }
 
-		public MoveAction(Direction direction, ActionPriority priority)
-			: base(priority)
+		public MoveAction(Direction direction)
 		{
 			this.Direction = direction;
 		}
@@ -104,8 +102,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public int WaitTicks { get; private set; }
 
-		public WaitAction(int ticks, ActionPriority priority)
-			: base(priority)
+		public WaitAction(int ticks)
 		{
 			this.WaitTicks = ticks;
 		}
@@ -128,8 +125,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public DropAction(IEnumerable<IGameObject> items, ActionPriority priority)
-			: base(priority)
+		public DropAction(IEnumerable<IGameObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -152,8 +148,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public GetAction(IEnumerable<IGameObject> items, ActionPriority priority)
-			: base(priority)
+		public GetAction(IEnumerable<IGameObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -177,8 +172,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID ItemObjectID { get; private set; }
 
-		public ConsumeAction(IGameObject consumable, ActionPriority priority)
-			: base(priority)
+		public ConsumeAction(IGameObject consumable)
 		{
 			this.ItemObjectID = consumable.ObjectID;
 		}
@@ -216,8 +210,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public MineActionType MineActionType { get; private set; }
 
-		public MineAction(Direction dir, MineActionType mineActionType, ActionPriority priority)
-			: base(priority)
+		public MineAction(Direction dir, MineActionType mineActionType)
 		{
 			this.Direction = dir;
 			this.MineActionType = mineActionType;
@@ -241,8 +234,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public Direction Direction { get; private set; }
 
-		public FellTreeAction(Direction dir, ActionPriority priority)
-			: base(priority)
+		public FellTreeAction(Direction dir)
 		{
 			this.Direction = dir;
 		}
@@ -269,8 +261,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ItemID DstItemID { get; private set; }
 
-		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemID dstItemID, ActionPriority priority)
-			: base(priority)
+		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemID dstItemID)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 			this.DstItemID = dstItemID;
@@ -294,8 +285,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID Target { get; private set; }
 
-		public AttackAction(ILiving target, ActionPriority priority)
-			: base(priority)
+		public AttackAction(ILiving target)
 		{
 			this.Target = target.ObjectID;
 		}
@@ -322,8 +312,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 
-		public ConstructBuildingAction(IEnvironment env, IntRectZ area, BuildingID buildingID, ActionPriority priority)
-			: base(priority)
+		public ConstructBuildingAction(IEnvironment env, IntRectZ area, BuildingID buildingID)
 		{
 			this.EnvironmentID = env.ObjectID;
 			this.Area = area;
@@ -348,8 +337,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID BuildingID { get; private set; }
 
-		public DestructBuildingAction(ObjectID buildingID, ActionPriority priority)
-			: base(priority)
+		public DestructBuildingAction(ObjectID buildingID)
 		{
 			this.BuildingID = buildingID;
 		}

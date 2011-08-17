@@ -178,6 +178,8 @@ namespace Dwarrowdelf.AI
 					if (action == null)
 						throw new Exception();
 
+					action.Priority = priority;
+
 					trace.TraceVerbose("DecideAction: new action {0}", action);
 					return action;
 				}

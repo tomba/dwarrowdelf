@@ -62,7 +62,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			if (this.Worker.Location.IsAdjacentTo(m_target.Location, DirectionSet.Planar))
 			{
-				var action = new AttackAction(m_target, this.Priority);
+				var action = new AttackAction(m_target);
 				progress = JobStatus.Ok;
 				return action;
 			}
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 				m_supposedLocation += new IntVector3D(dir);
 
-				var action = new MoveAction(dir, this.Priority);
+				var action = new MoveAction(dir);
 				progress = JobStatus.Ok;
 				return action;
 			}

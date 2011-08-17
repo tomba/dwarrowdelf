@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new DestructBuildingAction(m_building.ObjectID, this.Priority);
+			var action = new DestructBuildingAction(m_building.ObjectID);
 			progress = JobStatus.Ok;
 			return action;
 		}

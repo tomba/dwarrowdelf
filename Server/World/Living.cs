@@ -541,6 +541,8 @@ namespace Dwarrowdelf.Server
 		{
 			var action = m_ai.DecideAction(priority);
 
+			Debug.Assert(action == null || action.Priority != ActionPriority.Undefined);
+
 			if (action != this.CurrentAction)
 			{
 				if (this.HasAction)

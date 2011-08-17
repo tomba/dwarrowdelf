@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return null;
 			}
 
-			var action = new FellTreeAction(v.ToDirection(), this.Priority);
+			var action = new FellTreeAction(v.ToDirection());
 			progress = JobStatus.Ok;
 			return action;
 		}

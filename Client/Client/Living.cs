@@ -167,6 +167,8 @@ namespace Dwarrowdelf.Client
 			if (this.AI != null)
 				action = this.AI.DecideAction(priority);
 
+			Debug.Assert(action == null || action.Priority != ActionPriority.Undefined);
+
 			return action;
 		}
 

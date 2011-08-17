@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new BuildItemAction(m_items, m_dstItemID, this.Priority);
+			var action = new BuildItemAction(m_items, m_dstItemID);
 			progress = JobStatus.Ok;
 			return action;
 		}

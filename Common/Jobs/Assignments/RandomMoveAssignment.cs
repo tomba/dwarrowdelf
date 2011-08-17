@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			if (dir == Direction.None)
 			{
-				action = new WaitAction(random.Next(4) + 1, this.Priority);
+				action = new WaitAction(random.Next(4) + 1);
 			}
 			else
 			{
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 					}
 				}
 
-				action = new MoveAction(dir, this.Priority);
+				action = new MoveAction(dir);
 			}
 
 			progress = Jobs.JobStatus.Ok;

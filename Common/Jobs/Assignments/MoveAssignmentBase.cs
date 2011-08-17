@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			m_supposedLocation += new IntVector3D(dir);
 
-			var action = new MoveAction(dir, this.Priority);
+			var action = new MoveAction(dir);
 			progress = JobStatus.Ok;
 			return action;
 		}

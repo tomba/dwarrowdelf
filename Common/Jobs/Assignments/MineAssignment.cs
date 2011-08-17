@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return null;
 			}
 
-			var action = new MineAction(v.ToDirection(), m_mineActionType, this.Priority);
+			var action = new MineAction(v.ToDirection(), m_mineActionType);
 			progress = JobStatus.Ok;
 			return action;
 		}
