@@ -14,8 +14,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty("Dest")]
 		readonly IntPoint3D m_dest;
 
-		public MoveAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
-			: base(parent, priority, environment, positioning)
+		public MoveAssignment(IJob parent, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
+			: base(parent, environment, positioning)
 		{
 			m_dest = destination;
 		}

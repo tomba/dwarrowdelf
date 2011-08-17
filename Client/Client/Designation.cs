@@ -187,13 +187,13 @@ namespace Dwarrowdelf.Client
 						else
 							mat = MineActionType.Stairs;
 
-						job = new Jobs.AssignmentGroups.MoveMineAssignment(null, ActionPriority.Normal, this.Environment, p, mat);
+						job = new Jobs.AssignmentGroups.MoveMineAssignment(null, this.Environment, p, mat);
 
 						break;
 
 					case DesignationType.FellTree:
 
-						job = new Jobs.AssignmentGroups.MoveFellTreeAssignment(null, ActionPriority.Normal, this.Environment, p);
+						job = new Jobs.AssignmentGroups.MoveFellTreeAssignment(null, this.Environment, p);
 						break;
 
 					default:

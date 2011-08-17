@@ -16,8 +16,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveConsumeAssignment(IJob parent, ActionPriority priority, IItemObject item)
-			: base(parent, priority)
+		public MoveConsumeAssignment(IJob parent, IItemObject item)
+			: base(parent)
 		{
 			m_item = item;
 		}
@@ -49,15 +49,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_item.Environment, m_item.Location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_item.Environment, m_item.Location, DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new GetItemAssignment(this, this.Priority, m_item);
+					assignment = new GetItemAssignment(this, m_item);
 					break;
 
 				case 2:
-					assignment = new ConsumeItemAssignment(this, this.Priority, m_item);
+					assignment = new ConsumeItemAssignment(this, m_item);
 					break;
 
 				default:

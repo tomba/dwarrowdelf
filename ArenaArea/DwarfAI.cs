@@ -71,7 +71,7 @@ namespace MyArea
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterAssignment(null, priority, worker.Environment);
+				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterAssignment(null, worker.Environment);
 			}
 			else
 			{
@@ -102,7 +102,7 @@ namespace MyArea
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
 				m_consumeObject = ob;
 				return job;
 			}
@@ -133,7 +133,7 @@ namespace MyArea
 			{
 				m_priorityAction = true;
 				ob.ReservedBy = worker;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, priority, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
 				m_consumeObject = ob;
 				return job;
 			}

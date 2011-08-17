@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_job == null)
 			{
-				m_job = new ConstructBuildingJob(null, ActionPriority.Normal, this.Environment, this.Area, this.BuildingID);
+				m_job = new ConstructBuildingJob(null, this.Environment, this.Area, this.BuildingID);
 				GameData.Data.Jobs.Add(m_job);
 				m_job.StatusChanged += OnJobStatusChanged;
 			}

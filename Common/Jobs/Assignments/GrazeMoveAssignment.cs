@@ -14,8 +14,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 	{
 		Herd m_herd;
 
-		public GrazeMoveAssignment(IJob parent, ActionPriority priority, Herd herd)
-			: base(parent, priority)
+		public GrazeMoveAssignment(IJob parent, Herd herd)
+			: base(parent)
 		{
 			m_herd = herd;
 		}

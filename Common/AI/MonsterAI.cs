@@ -40,7 +40,7 @@ namespace Dwarrowdelf.AI
 					if (this.CurrentAssignment == null || (this.CurrentAssignment is RandomMoveAssignment) == false)
 					{
 						trace.TraceInformation("Start random move");
-						return new RandomMoveAssignment(null, priority);
+						return new RandomMoveAssignment(null);
 					}
 					else
 					{
@@ -58,7 +58,7 @@ namespace Dwarrowdelf.AI
 			{
 				trace.TraceInformation("Start attacking");
 
-				var assignment = new AttackAssignment(null, priority, m_target);
+				var assignment = new AttackAssignment(null, m_target);
 				assignment.StatusChanged += OnAttackStatusChanged;
 				return assignment;
 			}

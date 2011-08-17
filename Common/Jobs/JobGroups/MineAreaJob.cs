@@ -22,8 +22,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		Dictionary<IntPoint3D, MineData> m_map = new Dictionary<IntPoint3D, MineData>();
 
-		public MineAreaJob(IEnvironment env, ActionPriority priority, IntCuboid area, MineActionType mineActionType)
-			: base(null, priority)
+		public MineAreaJob(IEnvironment env, IntCuboid area, MineActionType mineActionType)
+			: base(null)
 		{
 			m_environment = env;
 			m_area = area;
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			foreach (var kvp in designations)
 			{
 				var p = kvp.Key;
-				var job = new AssignmentGroups.MoveMineAssignment(this, this.Priority, m_environment, p, MineActionType.Mine);
+				var job = new AssignmentGroups.MoveMineAssignment(this, m_environment, p, MineActionType.Mine);
 				AddSubJob(job);
 				m_map[p].Assignment = job;
 				yield return job;

@@ -69,7 +69,7 @@ namespace Dwarrowdelf.AI
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(null, priority, this.Herd);
+				return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(null, this.Herd);
 			}
 			else
 			{

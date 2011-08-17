@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 					if (this.CurrentAssignment == null || (this.CurrentAssignment is PatrolAssignment) == false)
 					{
 						trace.TraceInformation("Start patrolling");
-						return new PatrolAssignment(null, ActionPriority.Normal, this.Worker.Environment, m_patrolRoute.ToArray());
+						return new PatrolAssignment(null, this.Worker.Environment, m_patrolRoute.ToArray());
 					}
 					else
 					{
@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Client
 			{
 				trace.TraceInformation("Start attacking");
 
-				var assignment = new AttackAssignment(null, ActionPriority.Normal, m_target);
+				var assignment = new AttackAssignment(null, m_target);
 				assignment.StatusChanged += OnAttackStatusChanged;
 				return assignment;
 			}

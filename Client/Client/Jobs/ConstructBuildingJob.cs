@@ -18,15 +18,15 @@ namespace Dwarrowdelf.Client
 		BuildingID m_buildingID;
 		int m_state;
 
-		public ConstructBuildingJob(IJob parent, ActionPriority priority, Environment env, IntRectZ area, BuildingID buildingID)
-			: base(parent, priority)
+		public ConstructBuildingJob(IJob parent, Environment env, IntRectZ area, BuildingID buildingID)
+			: base(parent)
 		{
 			m_environment = env;
 			m_area = area;
 			m_buildingID = buildingID;
 
 			m_state = 0;
-			AddSubJob(new CleanAreaJob(this, priority, m_environment, m_area));
+			AddSubJob(new CleanAreaJob(this, m_environment, m_area));
 		}
 
 		protected override void OnSubJobDone(IJob job)
@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_state = 1;
 
-				AddSubJob(new MoveConstructBuildingAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
+				AddSubJob(new MoveConstructBuildingAssignment(this, m_environment, m_area, m_buildingID));
 			}
 			else if (m_state == 1)
 			{
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 			if (m_state == 1)
 			{
 				RemoveSubJob(job);
-				AddSubJob(new MoveConstructBuildingAssignment(this, this.Priority, m_environment, m_area, m_buildingID));
+				AddSubJob(new MoveConstructBuildingAssignment(this, m_environment, m_area, m_buildingID));
 				return;
 			}
 

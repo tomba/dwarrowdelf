@@ -21,8 +21,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		IntPoint3D m_dest;
 
-		public AttackAssignment(IJob parent, ActionPriority priority, ILiving target)
-			: base(parent, priority)
+		public AttackAssignment(IJob parent, ILiving target)
+			: base(parent)
 		{
 			m_target = target;
 		}

@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client
 		State m_state;
 
 		public StoreToStockpileJob(Stockpile stockpile, ItemObject item)
-			: base(null, ActionPriority.Normal)
+			: base(null)
 		{
 			this.Item = item;
 			m_stockpile = stockpile;
@@ -78,17 +78,17 @@ namespace Dwarrowdelf.Client
 			switch (m_state)
 			{
 				case State.MoveToItem:
-					assignment = new MoveAssignment(this, ActionPriority.Normal, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
 				case State.GetItem:
-					assignment = new GetItemAssignment(this, ActionPriority.Normal, this.Item);
+					assignment = new GetItemAssignment(this, this.Item);
 					break;
 
 				case State.MoveToStockpile:
 					if (!m_stockpile.Area.Contains(this.Worker.Location))
 					{
-						assignment = new MoveToAreaAssignment(this, ActionPriority.Normal, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact);
+						assignment = new MoveToAreaAssignment(this, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact);
 					}
 					else
 					{
@@ -97,12 +97,12 @@ namespace Dwarrowdelf.Client
 						if (!ok)
 							throw new Exception();
 
-						assignment = new MoveAssignment(this, ActionPriority.Normal, m_stockpile.Environment, l, DirectionSet.Exact);
+						assignment = new MoveAssignment(this, m_stockpile.Environment, l, DirectionSet.Exact);
 					}
 					break;
 
 				case State.DropItem:
-					assignment = new DropItemAssignment(this, ActionPriority.Normal, this.Item);
+					assignment = new DropItemAssignment(this, this.Item);
 					break;
 
 				default:

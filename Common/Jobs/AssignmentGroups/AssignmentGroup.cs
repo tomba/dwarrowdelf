@@ -16,10 +16,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			//Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		protected AssignmentGroup(IJob parent, ActionPriority priority)
+		protected AssignmentGroup(IJob parent)
 		{
 			this.Parent = parent;
-			this.Priority = priority;
 		}
 
 		protected AssignmentGroup(SaveGameContext ctx)
@@ -29,7 +28,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; private set; }
+		public ActionPriority Priority { get; set; }
 		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 

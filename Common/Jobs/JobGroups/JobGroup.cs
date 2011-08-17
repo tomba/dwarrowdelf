@@ -16,10 +16,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
-		protected JobGroup(IJob parent, ActionPriority priority)
+		protected JobGroup(IJob parent)
 		{
 			this.Parent = parent;
-			this.Priority = priority;
 
 			m_subJobs = new ObservableCollection<IJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
@@ -74,7 +73,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; private set; }
+		public ActionPriority Priority { get; set; }
 		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 

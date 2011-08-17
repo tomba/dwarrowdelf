@@ -253,7 +253,7 @@ namespace Dwarrowdelf.Client
 				case Client.BuildingState.NeedsCleaning:
 					if (m_cleanJob == null)
 					{
-						m_cleanJob = new CleanAreaJob(null, ActionPriority.Normal, this.Environment, this.Area);
+						m_cleanJob = new CleanAreaJob(null, this.Environment, this.Area);
 						GameData.Data.Jobs.Add(m_cleanJob);
 						m_cleanJob.StatusChanged += OnCleanStatusChanged;
 					}
@@ -291,7 +291,7 @@ namespace Dwarrowdelf.Client
 				case Client.BuildingState.Destructing:
 					if (m_destructJob == null)
 					{
-						m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, ActionPriority.Normal, this);
+						m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, this);
 						GameData.Data.Jobs.Add(m_destructJob);
 						m_destructJob.StatusChanged += OnDestructStatusChanged;
 					}
@@ -329,7 +329,7 @@ namespace Dwarrowdelf.Client
 			if (!ok)
 				return null;
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, ActionPriority.Normal, order.SourceItems, order.BuildableItem.ItemID);
+			var job = new Jobs.JobGroups.BuildItemJob(this, order.SourceItems, order.BuildableItem.ItemID);
 			job.StatusChanged += OnJobStatusChanged;
 			GameData.Data.Jobs.Add(job);
 			return job;

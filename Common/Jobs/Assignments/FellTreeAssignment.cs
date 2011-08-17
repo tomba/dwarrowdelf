@@ -15,8 +15,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly IEnvironment m_environment;
 
-		public FellTreeAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
-			: base(parent, priority)
+		public FellTreeAssignment(IJob parent, IEnvironment environment, IntPoint3D location)
+			: base(parent)
 		{
 			m_environment = environment;
 			m_location = location;

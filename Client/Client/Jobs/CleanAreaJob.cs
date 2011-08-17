@@ -17,8 +17,8 @@ namespace Dwarrowdelf.Client
 
 		Dictionary<IntPoint3D, IJob> m_map;
 
-		public CleanAreaJob(IJob parent, ActionPriority priority, Environment env, IntRectZ area)
-			: base(parent, priority)
+		public CleanAreaJob(IJob parent, Environment env, IntRectZ area)
+			: base(parent)
 		{
 			m_environment = env;
 			m_area = area;
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 
 						if (interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling)
 						{
-							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeAssignment(this, ActionPriority.Normal, m_environment, p);
+							job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveFellTreeAssignment(this, m_environment, p);
 						}
 						else
 						{

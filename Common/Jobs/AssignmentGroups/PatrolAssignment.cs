@@ -19,8 +19,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IntPoint3D[] m_waypoints;
 
-		public PatrolAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D[] waypoints)
-			: base(parent, priority)
+		public PatrolAssignment(IJob parent, IEnvironment environment, IntPoint3D[] waypoints)
+			: base(parent)
 		{
 			m_environment = environment;
 			m_waypoints = waypoints;
@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment PrepareNextAssignment()
 		{
-			return new MoveAssignment(this, this.Priority, m_environment, m_waypoints[m_state], DirectionSet.Exact);
+			return new MoveAssignment(this, m_environment, m_waypoints[m_state], DirectionSet.Exact);
 		}
 
 		public override string ToString()

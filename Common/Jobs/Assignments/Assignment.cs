@@ -10,10 +10,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 {
 	public abstract class Assignment : IAssignment
 	{
-		protected Assignment(IJob parent, ActionPriority priority)
+		protected Assignment(IJob parent)
 		{
 			this.Parent = parent;
-			this.Priority = priority;
 			this.JobStatus = Jobs.JobStatus.Ok;
 		}
 
@@ -24,7 +23,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; private set; }
+		public ActionPriority Priority { get; set; }
 
 		public bool IsAssigned
 		{

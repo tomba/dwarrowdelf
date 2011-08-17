@@ -13,8 +13,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty("Turns")]
 		readonly int m_turns;
 
-		public WaitAssignment(IJob parent, ActionPriority priority, int turns)
-			: base(parent, priority)
+		public WaitAssignment(IJob parent, int turns)
+			: base(parent)
 		{
 			m_turns = turns;
 		}

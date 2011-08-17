@@ -14,8 +14,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
 
-		public MoveMineAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
-			: base(parent, priority, environment, location)
+		public MoveMineAssignment(IJob parent, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
+			: base(parent, environment, location)
 		{
 			m_mineActionType = mineActionType;
 		}
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new MineAssignment(this, this.Priority, this.Environment, this.Location, m_mineActionType);
+			return new MineAssignment(this, this.Environment, this.Location, m_mineActionType);
 		}
 
 		static DirectionSet GetPossiblePositioning(IEnvironment env, IntPoint3D p, MineActionType mineActionType)

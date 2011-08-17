@@ -20,8 +20,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public FetchItemAssignment(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IItemObject item)
-			: base(parent, priority)
+		public FetchItemAssignment(IJob parent, IEnvironment env, IntPoint3D location, IItemObject item)
+			: base(parent)
 		{
 			this.Item = item;
 			m_environment = env;
@@ -54,19 +54,19 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new GetItemAssignment(this, this.Priority, this.Item);
+					assignment = new GetItemAssignment(this, this.Item);
 					break;
 
 				case 2:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_environment, m_location, DirectionSet.Exact);
 					break;
 
 				case 3:
-					assignment = new DropItemAssignment(this, this.Priority, this.Item);
+					assignment = new DropItemAssignment(this, this.Item);
 					break;
 
 				default:

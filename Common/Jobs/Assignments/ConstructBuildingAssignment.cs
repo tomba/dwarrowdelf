@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
 
-		public ConstructBuildingAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntRectZ area, BuildingID buildingID)
-			: base(parent, priority)
+		public ConstructBuildingAssignment(IJob parent, IEnvironment environment, IntRectZ area, BuildingID buildingID)
+			: base(parent)
 		{
 			m_environment = environment;
 			m_area = area;

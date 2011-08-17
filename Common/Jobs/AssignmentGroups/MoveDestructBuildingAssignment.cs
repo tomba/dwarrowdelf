@@ -14,8 +14,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		readonly IBuildingObject m_building;
 
-		public MoveDestructBuildingAssignment(IJob parent, ActionPriority priority, IBuildingObject building)
-			: base(parent, priority, building.Environment, building.Area.Center)
+		public MoveDestructBuildingAssignment(IJob parent, IBuildingObject building)
+			: base(parent, building.Environment, building.Area.Center)
 		{
 			m_building = building;
 		}
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new DestructBuildingAssignment(this, this.Priority, m_building);
+			return new DestructBuildingAssignment(this, m_building);
 		}
 
 		public override string ToString()

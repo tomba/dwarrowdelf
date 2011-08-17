@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		IntPoint3D[] m_corners;
 
-		public LoiterAssignment(IJob parent, ActionPriority priority, IEnvironment environment)
-			: base(parent, priority)
+		public LoiterAssignment(IJob parent, IEnvironment environment)
+			: base(parent)
 		{
 			m_environment = environment;
 
@@ -80,19 +80,19 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[0], DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_environment, m_corners[0], DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[1], DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_environment, m_corners[1], DirectionSet.Exact);
 					break;
 
 				case 2:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[2], DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_environment, m_corners[2], DirectionSet.Exact);
 					break;
 
 				case 3:
-					assignment = new MoveAssignment(this, this.Priority, m_environment, m_corners[3], DirectionSet.Exact);
+					assignment = new MoveAssignment(this, m_environment, m_corners[3], DirectionSet.Exact);
 					break;
 
 				default:

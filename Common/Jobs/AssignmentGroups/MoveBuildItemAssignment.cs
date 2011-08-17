@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		ItemID m_dstItemID;
 
-		public MoveBuildItemAssignment(IJob parent, ActionPriority priority, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
-			: base(parent, priority, workplace.Environment, workplace.Area.Center)
+		public MoveBuildItemAssignment(IJob parent, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
+			: base(parent, workplace.Environment, workplace.Area.Center)
 		{
 			m_workplace = workplace;
 			m_items = items;
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new BuildItemAssignment(this, this.Priority, m_items, m_dstItemID);
+			return new BuildItemAssignment(this, m_items, m_dstItemID);
 		}
 
 		public override string ToString()

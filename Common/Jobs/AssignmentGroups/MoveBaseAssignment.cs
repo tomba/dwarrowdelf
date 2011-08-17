@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveBaseAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
-			: base(parent, priority)
+		public MoveBaseAssignment(IJob parent, IEnvironment environment, IntPoint3D location)
+			: base(parent)
 		{
 			this.Environment = environment;
 			this.Location = location;
@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			{
 				case 0:
 					var positioning = GetPositioning();
-					assignment = new MoveAssignment(this, this.Priority, this.Environment, this.Location, positioning);
+					assignment = new MoveAssignment(this, this.Environment, this.Location, positioning);
 					break;
 
 				case 1:

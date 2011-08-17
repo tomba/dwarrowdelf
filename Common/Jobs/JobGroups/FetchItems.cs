@@ -10,12 +10,12 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	[SaveGameObject(UseRef = true)]
 	public class FetchItems : JobGroup
 	{
-		public FetchItems(IJob parent, ActionPriority priority, IEnvironment env, IntPoint3D location, IEnumerable<IItemObject> items)
-			: base(parent, priority)
+		public FetchItems(IJob parent, IEnvironment env, IntPoint3D location, IEnumerable<IItemObject> items)
+			: base(parent)
 		{
 			foreach (var item in items)
 			{
-				var job = new AssignmentGroups.FetchItemAssignment(this, priority, env, location, item);
+				var job = new AssignmentGroups.FetchItemAssignment(this, env, location, item);
 				AddSubJob(job);
 			}
 		}

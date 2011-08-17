@@ -107,6 +107,11 @@ namespace Dwarrowdelf.AI
 				}
 
 				var assignment = GetNewOrCurrentAssignment(priority);
+
+				// XXX I don't like setting the priority here...
+				if (assignment != null && assignment.Priority == ActionPriority.Undefined)
+					assignment.Priority = priority;
+
 				var oldAssignment = this.CurrentAssignment;
 
 				if (assignment == null)

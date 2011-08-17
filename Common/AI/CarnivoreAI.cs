@@ -51,7 +51,7 @@ namespace Dwarrowdelf.AI
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.Assignments.RandomMoveAssignment(null, priority);
+				return new Dwarrowdelf.Jobs.Assignments.RandomMoveAssignment(null);
 			}
 			else
 			{

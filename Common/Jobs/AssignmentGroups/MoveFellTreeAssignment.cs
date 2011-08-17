@@ -11,8 +11,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	[SaveGameObject(UseRef = true)]
 	public class MoveFellTreeAssignment : MoveBaseAssignment
 	{
-		public MoveFellTreeAssignment(IJob parent, ActionPriority priority, IEnvironment environment, IntPoint3D location)
-			: base(parent, priority, environment, location)
+		public MoveFellTreeAssignment(IJob parent, IEnvironment environment, IntPoint3D location)
+			: base(parent, environment, location)
 		{
 		}
 
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new FellTreeAssignment(this, this.Priority, this.Environment, this.Location);
+			return new FellTreeAssignment(this, this.Environment, this.Location);
 		}
 
 		public override string ToString()
