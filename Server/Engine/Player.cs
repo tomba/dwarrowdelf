@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Server
 		public Player(int userID)
 		{
 			m_userID = userID;
-			m_seeAll = true;
+			m_seeAll = false;
 
 			m_controllables = new List<Living>();
 			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
