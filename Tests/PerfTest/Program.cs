@@ -11,7 +11,8 @@ namespace PerfTest
 	{
 		static void Main(string[] args)
 		{
-			RunSuite(new SkillMapTestSuite());
+			RunSuite(new StructAccessTestSuite());
+			//RunSuite(new SkillMapTestSuite());
 
 		//	RunSuite(new LocalMethodCallTestSuite());
 		//	RunSuite(new RemoteMethodCallTestSuite());
