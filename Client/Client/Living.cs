@@ -168,12 +168,12 @@ namespace Dwarrowdelf.Client
 		public bool HasAction { get { return this.CurrentAction != null; } }
 		public int ActionUserID { get; private set; }
 
-		public GameAction DecideAction(ActionPriority priority)
+		public GameAction DecideAction()
 		{
 			GameAction action = null;
 
 			if (this.AI != null)
-				action = this.AI.DecideAction(priority);
+				action = this.AI.DecideAction(ActionPriority.User);
 
 			return action;
 		}
