@@ -419,11 +419,6 @@ namespace Dwarrowdelf.Client
 			return m_mapElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
 		}
 
-		public BuildingObject GetBuildingAt(IntPoint3D p)
-		{
-			return m_mapElements.OfType<BuildingObject>().SingleOrDefault(b => b.Area.Contains(p));
-		}
-
 		public void AddMapElement(IDrawableElement element)
 		{
 			this.Version++;
