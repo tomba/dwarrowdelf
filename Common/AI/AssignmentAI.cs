@@ -249,13 +249,13 @@ namespace Dwarrowdelf.AI
 			var assignment = this.CurrentAssignment;
 
 			trace.TraceVerbose("ActionProgress({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
-				e.ActionXXX,
+				e.MagicNumber,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
 			Debug.Assert(this.Worker.HasAction);
-			Debug.Assert(e.ActionXXX.MagicNumber == this.Worker.CurrentAction.MagicNumber);
+			Debug.Assert(e.MagicNumber == this.Worker.CurrentAction.MagicNumber);
 
 			if (assignment == null)
 			{
@@ -270,7 +270,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			// does the action originate from us?
-			if (assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			if (assignment.CurrentAction.MagicNumber != e.MagicNumber)
 			{
 				throw new NotImplementedException("implement cancel work");
 			}
@@ -287,13 +287,13 @@ namespace Dwarrowdelf.AI
 			var assignment = this.CurrentAssignment;
 
 			trace.TraceVerbose("ActionDone({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
-				e.ActionXXX, e.State,
+				e.MagicNumber, e.State,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
 			Debug.Assert(this.Worker.HasAction);
-			Debug.Assert(e.ActionXXX.MagicNumber == this.Worker.CurrentAction.MagicNumber);
+			Debug.Assert(e.MagicNumber == this.Worker.CurrentAction.MagicNumber);
 
 			if (assignment == null)
 			{
@@ -302,7 +302,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
-				assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+				assignment.CurrentAction.MagicNumber != e.MagicNumber)
 			{
 				trace.TraceVerbose("ActionDone: cancel event for action not started by us, ignore");
 				return;
@@ -315,7 +315,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			// does the action originate from us?
-			if (assignment.CurrentAction.MagicNumber != e.ActionXXX.MagicNumber)
+			if (assignment.CurrentAction.MagicNumber != e.MagicNumber)
 			{
 				throw new NotImplementedException("implement cancel work");
 			}

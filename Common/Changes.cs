@@ -322,8 +322,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ActionProgressChange : ObjectChange
 	{
-		// just for debug
-		public GameAction ActionXXX { get; set; }
+		public int MagicNumber { get; set; }
 		public int UserID { get; set; }
 		public int TotalTicks { get; set; }
 		public int TicksUsed { get; set; }
@@ -343,8 +342,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ActionDoneChange : ObjectChange
 	{
-		// just for debug
-		public GameAction ActionXXX { get; set; }
+		public int MagicNumber { get; set; }
 		public int UserID { get; set; }
 		public ActionState State { get; set; }
 		public string Error { get; set; }

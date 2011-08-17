@@ -429,7 +429,7 @@ namespace Dwarrowdelf.Server
 
 			var e = new ActionProgressChange(this)
 			{
-				ActionXXX = this.CurrentAction,
+				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
 				TicksUsed = this.ActionTicksUsed,
 				TotalTicks = this.ActionTotalTicks,
@@ -445,7 +445,7 @@ namespace Dwarrowdelf.Server
 		{
 			var e = new ActionDoneChange(this)
 			{
-				ActionXXX = this.CurrentAction,
+				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
 				State = state,
 				Error = error,
