@@ -83,10 +83,9 @@
 
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
-				<ToggleButton Command="ui:ClientCommands.AutoAdvanceTurnCommand" IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}">
-					<ToggleButton.ToolTip>Shortcut: Space</ToggleButton.ToolTip>
-					AutoAdvanceTurn
-				</ToggleButton>
+				<ToggleButton Content="AutoAdvanceTurn" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
+							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
+				<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
 			</ToolBar>
 		</ToolBarTray>
 
