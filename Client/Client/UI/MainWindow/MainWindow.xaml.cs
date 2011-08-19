@@ -405,27 +405,6 @@ namespace Dwarrowdelf.Client.UI
 			map.ScrollTo(env, loc);
 		}
 
-		static Direction KeyToDir(Key key)
-		{
-			Direction dir;
-
-			switch (key)
-			{
-				case Key.Up: dir = Direction.North; break;
-				case Key.Down: dir = Direction.South; break;
-				case Key.Left: dir = Direction.West; break;
-				case Key.Right: dir = Direction.East; break;
-				case Key.Home: dir = Direction.NorthWest; break;
-				case Key.End: dir = Direction.SouthWest; break;
-				case Key.PageUp: dir = Direction.NorthEast; break;
-				case Key.PageDown: dir = Direction.SouthEast; break;
-				default:
-					throw new Exception();
-			}
-
-			return dir;
-		}
-
 		static bool KeyIsDir(Key key)
 		{
 			switch (key)
@@ -447,6 +426,15 @@ namespace Dwarrowdelf.Client.UI
 		void SetScrollDirection()
 		{
 			var dir = Direction.None;
+
+			if (Keyboard.IsKeyDown(Key.Home))
+				dir |= Direction.NorthWest;
+			else if (Keyboard.IsKeyDown(Key.PageUp))
+				dir |= Direction.NorthEast;
+			if (Keyboard.IsKeyDown(Key.PageDown))
+				dir |= Direction.SouthEast;
+			else if (Keyboard.IsKeyDown(Key.End))
+				dir |= Direction.SouthWest;
 
 			if (Keyboard.IsKeyDown(Key.Up))
 				dir |= Direction.North;
