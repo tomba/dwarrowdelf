@@ -387,7 +387,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(SolutionDir)\Server\Server\app.config $(TargetDir)Server.exe.config</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(SolutionDir)\Server\Server\app.config $(TargetDir)Dwarrowdelf.Server.exe.config</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

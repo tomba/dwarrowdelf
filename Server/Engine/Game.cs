@@ -62,24 +62,29 @@ namespace Dwarrowdelf.Server
 
 		Assembly LoadGameAssembly(string gameAreaName)
 		{
-			// XXX
-#if DEBUG
-			const bool debug = true;
-#else
-			const bool debug = false;
-#endif
-
 			var basePath = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
 
-			var parts = basePath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).ToList();
+			string path;
 
-			parts.RemoveRange(parts.Count - 4, 4);
+			path = Path.Combine(basePath, gameAreaName + ".dll");
 
-			parts.Add(Path.Combine(gameAreaName, "bin", debug ? "Debug" : "Release"));
+			if (!File.Exists(path))
+			{
+#if DEBUG
+				const bool debug = true;
+#else
+				const bool debug = false;
+#endif
+				var parts = basePath.Split(new char[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-			var path = string.Join(Path.DirectorySeparatorChar.ToString(), parts);
+				parts.RemoveRange(parts.Count - 4, 4);
 
-			path = Path.Combine(path, gameAreaName + ".dll");
+				parts.Add(Path.Combine(gameAreaName, "bin", debug ? "Debug" : "Release"));
+
+				path = string.Join(Path.DirectorySeparatorChar.ToString(), parts);
+
+				path = Path.Combine(path, gameAreaName + ".dll");
+			}
 
 			var assembly = Assembly.LoadFile(path);
 			return assembly;
