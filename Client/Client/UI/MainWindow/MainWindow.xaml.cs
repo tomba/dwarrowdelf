@@ -220,32 +220,58 @@ namespace Dwarrowdelf.Client.UI
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 		}
 
-		void OnMouseClicked(object sender, MouseButtonEventArgs e)
+		void OnMouseClicked(object sender, MouseButtonEventArgs ev)
 		{
 			if (this.mainWindowTools.ToolMode == ClientToolMode.Info)
 			{
-				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(e.GetPosition(this.MapControl));
+				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
 
-				object ob = this.MapControl.Environment.GetFirstObject(ml);
+				var env = this.MapControl.Environment;
 
-				if (ob == null)
-					ob = this.MapControl.Environment.GetElementAt(ml);
+				List<object> obs = new List<object>();
+				obs.AddRange(env.GetContents(ml));
+				obs.AddRange(env.GetElementsAt(ml));
 
-				if (ob != null)
+				if (obs.Count == 1)
 				{
-					var contentControl = new ContentControl();
-					contentControl.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentEditTemplateDictionary.xaml", UriKind.Relative) };
-					contentControl.Content = ob;
+					object ob = obs[0];
+					ShowObjectInDialog(ob);
+				}
+				else if (obs.Count > 0)
+				{
+					var ctxMenu = (ContextMenu)this.FindResource("objectSelectorContextMenu");
 
-					var dlg = new Window();
-					dlg.Owner = this;
-					dlg.Content = contentControl;
+					ctxMenu.ItemsSource = obs;
+					ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+					ctxMenu.PlacementTarget = this.MapControl.MapControl;
+					var rect = this.MapControl.MapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
+					ctxMenu.PlacementRectangle = rect;
 
-					dlg.Show();
+					ctxMenu.IsOpen = true;
 				}
 
-				e.Handled = true;
+				ev.Handled = true;
 			}
+		}
+
+		void OnObjectSelectContextMenuClick(object sender, RoutedEventArgs e)
+		{
+			var item = (MenuItem)e.OriginalSource;
+			var ob = item.Header;
+			ShowObjectInDialog(ob);
+		}
+
+		void ShowObjectInDialog(object ob)
+		{
+			var contentControl = new ContentControl();
+			contentControl.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentEditTemplateDictionary.xaml", UriKind.Relative) };
+			contentControl.Content = ob;
+
+			var dlg = new Window();
+			dlg.Owner = this;
+			dlg.Content = contentControl;
+
+			dlg.Show();
 		}
 
 		void PopulateMenus()

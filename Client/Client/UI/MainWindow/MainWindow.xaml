@@ -14,6 +14,25 @@
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings"/>
+
+		<ContextMenu x:Key="objectSelectorContextMenu">
+			<ContextMenu.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<Image Source="{Binding Drawing}" Width="24" Height="24" />
+						<TextBlock Text="{Binding Description}" />
+					</StackPanel>
+				</DataTemplate>
+
+			</ContextMenu.ItemTemplate>
+
+			<ContextMenu.ItemContainerStyle>
+				<Style>
+					<!-- <Setter Property="MenuItem.Icon" Value="{Binding Drawing}" /> -->
+					<EventSetter Event="MenuItem.Click" Handler="OnObjectSelectContextMenuClick" />
+				</Style>
+			</ContextMenu.ItemContainerStyle>
+		</ContextMenu>
 	</Window.Resources>
 
 	<DockPanel>
@@ -80,31 +99,31 @@
 
 					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
 
-							<!-- All objects-->
-							<ad:DockableContent Name="allObjectsContent" Title="Objects">
-								<ad:DockableContent.Resources>
-									<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-								</ad:DockableContent.Resources>
+						<!-- All objects-->
+						<ad:DockableContent Name="allObjectsContent" Title="Objects">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-								<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-							</ad:DockableContent>
+							<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+						</ad:DockableContent>
 
-							<!-- Items -->
-							<ad:DockableContent Name="itemsContent" Title="Items">
-								<ad:DockableContent.Resources>
-									<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-								</ad:DockableContent.Resources>
+						<!-- Items -->
+						<ad:DockableContent Name="itemsContent" Title="Items">
+							<ad:DockableContent.Resources>
+								<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+							</ad:DockableContent.Resources>
 
-								<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-									<ListBox.ItemContainerStyle>
-										<Style TargetType="{x:Type ListBoxItem}">
-											<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-											<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-										</Style>
-									</ListBox.ItemContainerStyle>
-								</ListBox>
+							<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+								<ListBox.ItemContainerStyle>
+									<Style TargetType="{x:Type ListBoxItem}">
+										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
+										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+									</Style>
+								</ListBox.ItemContainerStyle>
+							</ListBox>
 
-							</ad:DockableContent>
+						</ad:DockableContent>
 
 						<!-- Livings -->
 						<ad:DockableContent Name="livingsContent" Title="Livings">
