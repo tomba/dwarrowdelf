@@ -1,0 +1,23 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.ObjectEditDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="ObjectEditDialog" Height="640" Width="640"
+		xmlns:local="clr-namespace:Dwarrowdelf.Client"
+		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
+
+	<Window.Resources>
+		<DataTemplate DataType="{x:Type local:ItemObject}">
+			<ui:ItemEditControl />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type local:Living}">
+			<ui:LivingEditControl />
+		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type local:BuildingObject}">
+			<ui:BuildingEditControl />
+		</DataTemplate>
+	</Window.Resources>
+
+	<ContentControl Content="{Binding}" />
+</Window>

@@ -263,14 +263,9 @@ namespace Dwarrowdelf.Client.UI
 
 		void ShowObjectInDialog(object ob)
 		{
-			var contentControl = new ContentControl();
-			contentControl.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentEditTemplateDictionary.xaml", UriKind.Relative) };
-			contentControl.Content = ob;
-
-			var dlg = new Window();
+			var dlg = new ObjectEditDialog();
+			dlg.DataContext = ob;
 			dlg.Owner = this;
-			dlg.Content = contentControl;
-
 			dlg.Show();
 		}
 

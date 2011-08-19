@@ -106,13 +106,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\ContentEditTemplateDictionary.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\BuildingEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\LivingEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\ItemEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\ObjectInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Windows\ObjectEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Windows\ConsoleDialog.xaml">
       <SubType>Designer</SubType>
@@ -121,10 +133,6 @@
     <Page Include="UI\Windows\ConstructBuildingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\ContentTemplateDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Windows\CreateLivingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -194,6 +202,12 @@
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\CapitalizeConverter.cs" />
+    <Compile Include="UI\LivingEditControl.xaml.cs">
+      <DependentUpon>LivingEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ItemEditControl.xaml.cs">
+      <DependentUpon>ItemEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />
@@ -225,6 +239,12 @@
     <Compile Include="UI\MapControl\MapControlToolTipService.cs" />
     <Compile Include="UI\BuildingInfoControl.xaml.cs">
       <DependentUpon>BuildingInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ObjectInfoControl.xaml.cs">
+      <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\ObjectEditDialog.xaml.cs">
+      <DependentUpon>ObjectEditDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ConsoleDialog.xaml.cs">
       <DependentUpon>ConsoleDialog.xaml</DependentUpon>

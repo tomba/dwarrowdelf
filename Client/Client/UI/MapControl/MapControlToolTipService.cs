@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Client.UI
 		void CreateToolTip()
 		{
 			var tt = new ToolTip();
-			tt.Resources = new ResourceDictionary() { Source = new Uri("/UI/ContentTemplateDictionary.xaml", UriKind.Relative) };
+			tt.Content = new ObjectInfoControl();
 			tt.IsOpen = false;
 			tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 			tt.PlacementTarget = m_mapControl;
@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Client.UI
 			{
 				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
 				{
-					m_toolTip.Content = ob;
+					m_toolTip.DataContext = ob;
 
 					var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
 					m_toolTip.PlacementRectangle = rect;
