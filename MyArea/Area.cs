@@ -117,10 +117,28 @@ namespace MyArea
 			}
 
 			var env = envBuilder.Create(world);
-			env.HomeLocation = new IntPoint3D(20, 20, surfaceLevel);
+			for (int i = 0; i < 200; ++i)
+			{
+				var p = new IntPoint3D(i, i, surfaceLevel);
+				if (!EnvironmentHelpers.CanEnter(env, p))
+					continue;
 
+				for (i = i + 5; i < 200; ++i)
+				{
+					p = new IntPoint3D(i, i, surfaceLevel);
+					if (!EnvironmentHelpers.CanEnter(env, p))
+						continue;
 
+					env.HomeLocation = new IntPoint3D(i, i, surfaceLevel);
 
+					break;
+				}
+
+				break;
+			}
+
+			if (env.HomeLocation == new IntPoint3D())
+				throw new Exception();
 
 
 
