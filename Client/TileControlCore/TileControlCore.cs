@@ -17,6 +17,8 @@ namespace Dwarrowdelf.Client.TileControl
 		IntSize m_gridSize;
 		Point m_renderOffset;
 
+		Size m_oldRenderSize;
+
 		bool m_tileLayoutInvalid;
 		bool m_tileDataInvalid;
 		bool m_tileRenderInvalid;
@@ -169,10 +171,22 @@ namespace Dwarrowdelf.Client.TileControl
 			var renderWidth = (int)Math.Ceiling(renderSize.Width);
 			var renderHeight = (int)Math.Ceiling(renderSize.Height);
 
-			//if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
-			UpdateTileLayout(renderSize);
+			if (m_oldRenderSize != arrangeBounds)
+				UpdateTileLayout(renderSize);
 
-			return base.ArrangeOverride(arrangeBounds);
+			m_oldRenderSize = arrangeBounds;
+
+			var ret = base.ArrangeOverride(arrangeBounds);
+
+			trace.TraceVerbose("ArrangeOverride end({0})", ret);
+
+			return ret;
+		}
+
+		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+		{
+			trace.TraceVerbose("OnRenderSizeChanged({0})", sizeInfo);
+			base.OnRenderSizeChanged(sizeInfo);
 		}
 
 		protected override void OnRender(System.Windows.Media.DrawingContext drawingContext)
@@ -215,7 +229,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			if (m_tileRenderInvalid == false)
 			{
-				trace.TraceVerbose("InvalidateRender");
+				trace.TraceVerbose("InvalidateTileRender");
 				m_tileRenderInvalid = true;
 				InvalidateVisual();
 			}
@@ -225,6 +239,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			if (m_tileDataInvalid == false)
 			{
+				trace.TraceVerbose("InvalidateTileData");
 				m_tileDataInvalid = true;
 				InvalidateTileRender();
 			}

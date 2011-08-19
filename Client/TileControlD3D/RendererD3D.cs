@@ -83,7 +83,12 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource.Lock();
 
 			if (m_interopImageSource.PixelWidth != renderWidth || m_interopImageSource.PixelHeight != renderHeight)
+			{
 				InitTextureRenderSurface(renderWidth, renderHeight);
+				// force a full update if we re-allocate the render surface
+				ctx.TileDataInvalid = true;
+				ctx.TileRenderInvalid = true;
+			}
 
 			if (ctx.TileDataInvalid)
 				m_scene.SendMapData(this.RenderData, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
