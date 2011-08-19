@@ -38,11 +38,20 @@ namespace Dwarrowdelf.Client.UI
 			m_canvas = canvas;
 			m_mapControl = mapControl;
 
+			var brush = new LinearGradientBrush();
+			brush.GradientStops.Add(new GradientStop(Colors.Blue, 0.0));
+			brush.GradientStops.Add(new GradientStop(Colors.LightBlue, 0.5));
+			brush.GradientStops.Add(new GradientStop(Colors.Blue, 1.0));
+			brush.StartPoint = new Point(0.5, 0);
+			brush.EndPoint = new Point(0.5, 1);
+
 			m_selectionRect = new Rectangle();
 			m_selectionRect.Visibility = Visibility.Hidden;
-			m_selectionRect.Stroke = Brushes.Blue;
+			m_selectionRect.Stroke = new SolidColorBrush(Colors.Blue);
+			m_selectionRect.Stroke.Opacity = 0.6;
+			m_selectionRect.Stroke.Freeze();
 			m_selectionRect.StrokeThickness = 1;
-			m_selectionRect.Fill = new SolidColorBrush(Colors.Blue);
+			m_selectionRect.Fill = brush;
 			m_selectionRect.Fill.Opacity = 0.2;
 			m_selectionRect.Fill.Freeze();
 			m_selectionRect.IsHitTestVisible = false;
