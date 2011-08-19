@@ -360,7 +360,9 @@ namespace Dwarrowdelf.Client
 			var next = FindNextBuildOrder(old);
 
 			old.IsUnderWork = false;
-			next.IsUnderWork = true;
+
+			if (next != null)
+				next.IsUnderWork = true;
 
 			this.CurrentBuildOrder = next;
 
