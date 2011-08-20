@@ -65,6 +65,9 @@
 
 				<TextBlock>Gender</TextBlock>
 				<TextBlock Text="{Binding Gender}" />
+
+				<TextBlock>Destructed</TextBlock>
+				<TextBlock Text="{Binding IsDestructed}" />
 			</UniformGrid>
 
 			<Separator />

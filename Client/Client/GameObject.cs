@@ -26,6 +26,14 @@ namespace Dwarrowdelf.Client
 			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
 
+		public override void Destruct()
+		{
+			if (this.Parent != null)
+				throw new Exception();
+
+			base.Destruct();
+		}
+
 		protected virtual void ChildAdded(GameObject child) { }
 		protected virtual void ChildRemoved(GameObject child) { }
 		protected virtual void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to) { }
