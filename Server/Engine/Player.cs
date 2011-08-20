@@ -594,19 +594,30 @@ namespace Dwarrowdelf.Server
 				return ObjectVisibility.None;
 		}
 
+		/* does the player see location p in object ob */
 		public bool Sees(IBaseGameObject ob, IntPoint3D p)
 		{
 			if (m_seeAll)
 				return true;
 
 			var env = ob as Environment;
+			if (env != null)
+			{
+				IVisionTracker tracker = GetVisionTracker(env);
+				return tracker.Sees(p);
+			}
 
-			if (env == null)
-				return false;
+			/* is it inside one of the controllables? */
+			var lgo = ob as LocatableGameObject;
+			while (lgo != null)
+			{
+				if (m_controllables.Contains(lgo))
+					return true;
 
-			IVisionTracker tracker = GetVisionTracker(env);
+				lgo = lgo.Parent as LocatableGameObject;
+			}
 
-			return tracker.Sees(p);
+			return false;
 		}
 
 		public IVisionTracker GetVisionTracker(IEnvironment env)
