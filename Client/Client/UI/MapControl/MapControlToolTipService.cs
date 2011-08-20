@@ -105,7 +105,12 @@ namespace Dwarrowdelf.Client.UI
 
 			var ml = m_mapControl.ScreenPointToMapLocation(mousePos);
 
-			var ob = m_mapControl.Environment.GetFirstObject(ml);
+			object ob;
+
+			ob = m_mapControl.Environment.GetFirstObject(ml);
+
+			if (ob == null)
+				ob = m_mapControl.Environment.GetElementAt(ml);
 
 			if (ob != null)
 			{
