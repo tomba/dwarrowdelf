@@ -234,13 +234,13 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				if (m_currentJob != null)
-				{
-					GameData.Data.Jobs.Remove(m_currentJob);
-					m_currentJob.StatusChanged -= OnJobStatusChanged;
-					m_currentJob.Abort();
-					m_currentJob = null;
-				}
+				StopCurrentJob();
+
+				buildOrder.IsUnderWork = false;
+
+				for (int i = 0; i < buildOrder.SourceItems.Length; ++i)
+					if (buildOrder.SourceItems[i] != null)
+						buildOrder.SourceItems[i].ReservedBy = null;
 
 				var next = FindNextBuildOrder(buildOrder);
 				if (next == buildOrder)
@@ -258,18 +258,18 @@ namespace Dwarrowdelf.Client
 
 		void MoveToNextBuildOrder()
 		{
-			if (m_currentJob != null)
-			{
-				GameData.Data.Jobs.Remove(m_currentJob);
-				m_currentJob.StatusChanged -= OnJobStatusChanged;
-				m_currentJob.Abort();
-				m_currentJob = null;
-			}
+			StopCurrentJob();
 
 			var current = this.CurrentBuildOrder;
 
 			if (current != null)
+			{
 				current.IsUnderWork = false;
+
+				for (int i = 0; i < current.SourceItems.Length; ++i)
+					if (current.SourceItems[i] != null)
+						current.SourceItems[i].ReservedBy = null;
+			}
 
 			var next = FindNextBuildOrder(current);
 
@@ -277,6 +277,21 @@ namespace Dwarrowdelf.Client
 
 			if (next != null)
 				next.IsUnderWork = true;
+		}
+
+		void StopCurrentJob()
+		{
+			var job = m_currentJob;
+
+			if (job != null)
+			{
+				m_currentJob = null;
+
+				GameData.Data.Jobs.Remove(job);
+				job.StatusChanged -= OnJobStatusChanged;
+				if (job.JobStatus == JobStatus.Ok)
+					job.Abort();
+			}
 		}
 
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
@@ -393,9 +408,7 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 			}
 
-			m_currentJob = null;
-			GameData.Data.Jobs.Remove(job);
-			job.StatusChanged -= OnJobStatusChanged;
+			StopCurrentJob();
 
 			if (fail || this.CurrentBuildOrder.IsRepeat == false)
 				RemoveBuildOrder(this.CurrentBuildOrder);
