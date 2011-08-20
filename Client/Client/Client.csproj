@@ -110,14 +110,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\LivingEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\ItemEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\ObjectInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,12 +194,6 @@
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\CapitalizeConverter.cs" />
-    <Compile Include="UI\LivingEditControl.xaml.cs">
-      <DependentUpon>LivingEditControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ItemEditControl.xaml.cs">
-      <DependentUpon>ItemEditControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />

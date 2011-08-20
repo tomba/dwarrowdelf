@@ -1,65 +1,65 @@
 ﻿<UserControl x:Class="Dwarrowdelf.Client.UI.ItemInfoControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="408" d:DesignWidth="511">
-    <StackPanel Orientation="Vertical">
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+	<StackPanel Orientation="Vertical">
 
-        <Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
+		<Image Source="{Binding Drawing}" Stretch="Uniform" Width="64" Height="64" />
 
-        <Separator />
+		<Separator />
 
-        <UniformGrid Columns="2">
-            <TextBlock>Name</TextBlock>
-            <TextBlock Text="{Binding Name}" />
+		<UniformGrid Columns="2">
+			<TextBlock>Name</TextBlock>
+			<TextBlock Text="{Binding Name}" />
 
-            <TextBlock>ItemID</TextBlock>
-            <TextBlock Text="{Binding ItemID}" />
+			<TextBlock>ItemID</TextBlock>
+			<TextBlock Text="{Binding ItemID}" />
 
-            <TextBlock>ItemCategory</TextBlock>
-            <TextBlock Text="{Binding ItemCategory}" />
+			<TextBlock>ItemCategory</TextBlock>
+			<TextBlock Text="{Binding ItemCategory}" />
 
-            <TextBlock>Desc</TextBlock>
-            <TextBlock Text="{Binding Description}" />
+			<TextBlock>Desc</TextBlock>
+			<TextBlock Text="{Binding Description}" />
 
-            <TextBlock>Color</TextBlock>
-            <TextBlock Text="{Binding Color}" />
+			<TextBlock>Color</TextBlock>
+			<TextBlock Text="{Binding Color}" />
 
-            <TextBlock>MaterialID</TextBlock>
-            <TextBlock Text="{Binding Material.ID}" />
+			<TextBlock>MaterialID</TextBlock>
+			<TextBlock Text="{Binding Material.ID}" />
 
-            <TextBlock>MaterialCategory</TextBlock>
-            <TextBlock Text="{Binding MaterialCategory}" />
+			<TextBlock>MaterialCategory</TextBlock>
+			<TextBlock Text="{Binding MaterialCategory}" />
 
-            <TextBlock>ObjectID</TextBlock>
-            <TextBlock Text="{Binding ObjectID}" />
+			<TextBlock>ObjectID</TextBlock>
+			<TextBlock Text="{Binding ObjectID}" />
 
-            <TextBlock>Parent</TextBlock>
-            <TextBlock Text="{Binding Parent}" />
+			<TextBlock>Parent</TextBlock>
+			<TextBlock Text="{Binding Parent}" />
 
-            <TextBlock>Location</TextBlock>
-            <TextBlock Text="{Binding Location}" />
+			<TextBlock>Location</TextBlock>
+			<TextBlock Text="{Binding Location}" />
 
-            <TextBlock>Nutritional Value</TextBlock>
-            <TextBlock Text="{Binding NutritionalValue}" />
+			<TextBlock>Nutritional Value</TextBlock>
+			<TextBlock Text="{Binding NutritionalValue}" />
 
-            <TextBlock>Refreshment Value</TextBlock>
-            <TextBlock Text="{Binding RefreshmentValue}" />
+			<TextBlock>Refreshment Value</TextBlock>
+			<TextBlock Text="{Binding RefreshmentValue}" />
 
-            <TextBlock>Reserved By</TextBlock>
-            <TextBlock Text="{Binding ReservedBy}" />
+			<TextBlock>Reserved By</TextBlock>
+			<TextBlock Text="{Binding ReservedBy}" />
 
 			<TextBlock>Destructed</TextBlock>
 			<TextBlock Text="{Binding IsDestructed}" />
 		</UniformGrid>
 
-        <ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
-            <ListBox.Resources>
-                <ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
-            </ListBox.Resources>
-        </ListBox>
+		<GroupBox Header="Inventory">
+			<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch" MinHeight="50">
+				<ListBox.Resources>
+					<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+				</ListBox.Resources>
+			</ListBox>
+		</GroupBox>
 
-    </StackPanel>
+	</StackPanel>
 </UserControl>
