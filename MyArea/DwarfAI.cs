@@ -16,9 +16,6 @@ namespace MyArea
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		[SaveGameProperty]
-		ItemObject m_consumeObject;
-
 		public DwarfAI(Living ob)
 			: base(ob)
 		{
@@ -87,8 +84,6 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.FoodFullness > 300)
 				return null;
 
-			Debug.Assert(m_consumeObject == null);
-
 			ItemObject ob = null;
 			var env = worker.Environment;
 
@@ -101,9 +96,7 @@ namespace MyArea
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				ob.ReservedBy = worker;
 				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
-				m_consumeObject = ob;
 				return job;
 			}
 
@@ -118,8 +111,6 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.WaterFullness > 300)
 				return null;
 
-			Debug.Assert(m_consumeObject == null);
-
 			ItemObject ob = null;
 			var env = worker.Environment;
 
@@ -132,9 +123,7 @@ namespace MyArea
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				ob.ReservedBy = worker;
 				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
-				m_consumeObject = ob;
 				return job;
 			}
 
@@ -150,9 +139,6 @@ namespace MyArea
 
 			if (m_priorityAction)
 			{
-				// XXX ob's ReservedBy should probably be cleared elsewhere
-				m_consumeObject.ReservedBy = null;
-				m_consumeObject = null;
 				m_priorityAction = false;
 			}
 		}

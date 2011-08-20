@@ -224,6 +224,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 			}
 
+			OnStatusChanged(status);
+
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
 
@@ -245,6 +247,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 			}
 		}
+
+		protected virtual void OnStatusChanged(JobStatus status) { }
 
 		public event Action<IJob, JobStatus> StatusChanged;
 

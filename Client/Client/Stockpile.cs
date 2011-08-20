@@ -61,7 +61,6 @@ namespace Dwarrowdelf.Client
 
 			foreach (var job in m_jobs)
 			{
-				job.Item.ReservedBy = null;
 				job.StatusChanged -= OnJobStatusChanged;
 				GameData.Data.Jobs.Remove(job);
 			}
@@ -89,7 +88,6 @@ namespace Dwarrowdelf.Client
 			{
 				var job = new StoreToStockpileJob(this, ob);
 
-				job.Item.ReservedBy = this;
 				job.StatusChanged += OnJobStatusChanged;
 				m_jobs.Add(job);
 
@@ -106,7 +104,6 @@ namespace Dwarrowdelf.Client
 			if (status == JobStatus.Ok)
 				throw new Exception();
 
-			j.Item.ReservedBy = null;
 			job.StatusChanged -= OnJobStatusChanged;
 			m_jobs.Remove(j);
 

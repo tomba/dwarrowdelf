@@ -5,6 +5,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using Dwarrowdelf.Jobs.Assignments;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
@@ -20,6 +21,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			: base(parent)
 		{
 			m_item = item;
+			m_item.ReservedBy = this;
 		}
 
 		protected MoveConsumeAssignment(SaveGameContext ctx)
@@ -27,6 +29,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
+		protected override void OnStatusChanged(JobStatus status)
+		{
+			Debug.Assert(status != Jobs.JobStatus.Ok);
+
+			m_item.ReservedBy = null;
+
+			base.OnStatusChanged(status);
+		}
 
 		protected override JobStatus AssignOverride(ILiving worker)
 		{
@@ -66,6 +76,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			return assignment;
 		}
+
 		public override string ToString()
 		{
 			return "MoveConsumeAssignment";

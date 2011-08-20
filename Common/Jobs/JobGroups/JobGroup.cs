@@ -77,6 +77,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
+		protected virtual void OnStatusChanged(JobStatus status) { }
+
 		public event Action<IJob, JobStatus> StatusChanged;
 
 		public void Abort()
@@ -159,6 +161,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 					m_roSubJobs = null;
 					break;
 			}
+
+			OnStatusChanged(status);
 
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);

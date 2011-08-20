@@ -238,10 +238,6 @@ namespace Dwarrowdelf.Client
 
 				buildOrder.IsUnderWork = false;
 
-				for (int i = 0; i < buildOrder.SourceItems.Length; ++i)
-					if (buildOrder.SourceItems[i] != null)
-						buildOrder.SourceItems[i].ReservedBy = null;
-
 				var next = FindNextBuildOrder(buildOrder);
 				if (next == buildOrder)
 					next = null;
@@ -263,13 +259,7 @@ namespace Dwarrowdelf.Client
 			var current = this.CurrentBuildOrder;
 
 			if (current != null)
-			{
 				current.IsUnderWork = false;
-
-				for (int i = 0; i < current.SourceItems.Length; ++i)
-					if (current.SourceItems[i] != null)
-						current.SourceItems[i].ReservedBy = null;
-			}
 
 			var next = FindNextBuildOrder(current);
 
@@ -429,7 +419,6 @@ namespace Dwarrowdelf.Client
 				if (ob == null)
 					break;
 
-				ob.ReservedBy = this;
 				order.SourceItems[i] = ob;
 				numFound++;
 			}
@@ -438,10 +427,7 @@ namespace Dwarrowdelf.Client
 			{
 				trace.TraceInformation("Failed to find materials");
 				for (int i = 0; i < numFound; ++i)
-				{
-					order.SourceItems[i].ReservedBy = null;
 					order.SourceItems[i] = null;
-				}
 				return false;
 			}
 			else

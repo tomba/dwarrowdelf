@@ -31,7 +31,14 @@ namespace Dwarrowdelf.Client
 			: base(null)
 		{
 			this.Item = item;
+			this.Item.ReservedBy = this;
 			m_stockpile = stockpile;
+		}
+
+		protected override void OnStatusChanged(JobStatus status)
+		{
+			this.Item.ReservedBy = null;
+			base.OnStatusChanged(status);
 		}
 
 		protected override JobStatus AssignOverride(ILiving worker)
