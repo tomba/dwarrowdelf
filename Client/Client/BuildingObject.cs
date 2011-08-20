@@ -137,14 +137,7 @@ namespace Dwarrowdelf.Client
 
 			var bo = new BuildOrder(buildableItem);
 
-			m_buildOrderQueue.Add(bo);
-
-			if (this.CurrentBuildOrder == null)
-			{
-				bo.IsUnderWork = true;
-				this.CurrentBuildOrder = bo;
-				trace.TraceInformation("new order {0}", this.CurrentBuildOrder);
-			}
+			AddBuildOrder(bo);
 		}
 
 		bool IJobSource.HasWork
@@ -214,10 +207,28 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
+		void AddBuildOrder(BuildOrder buildOrder)
+		{
+			buildOrder.PropertyChanged += OnBuildOrderPropertyChanged;
+			m_buildOrderQueue.Add(buildOrder);
+
+			trace.TraceInformation("new order {0}", buildOrder);
+
+			if (this.CurrentBuildOrder == null)
+				MoveToNextBuildOrder();
+		}
+
+		void OnBuildOrderPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (this.CurrentBuildOrder == null || this.CurrentBuildOrder.IsSuspended)
+				MoveToNextBuildOrder();
+		}
+
 		void RemoveBuildOrder(BuildOrder buildOrder)
 		{
 			if (this.CurrentBuildOrder != buildOrder)
 			{
+				buildOrder.PropertyChanged -= OnBuildOrderPropertyChanged;
 				var ok = m_buildOrderQueue.Remove(buildOrder);
 				Debug.Assert(ok);
 			}
@@ -235,13 +246,37 @@ namespace Dwarrowdelf.Client
 				if (next == buildOrder)
 					next = null;
 
+				buildOrder.PropertyChanged -= OnBuildOrderPropertyChanged;
 				m_buildOrderQueue.Remove(buildOrder);
+
+				this.CurrentBuildOrder = next;
 
 				if (next != null)
 					next.IsUnderWork = true;
-
-				this.CurrentBuildOrder = next;
 			}
+		}
+
+		void MoveToNextBuildOrder()
+		{
+			if (m_currentJob != null)
+			{
+				GameData.Data.Jobs.Remove(m_currentJob);
+				m_currentJob.StatusChanged -= OnJobStatusChanged;
+				m_currentJob.Abort();
+				m_currentJob = null;
+			}
+
+			var current = this.CurrentBuildOrder;
+
+			if (current != null)
+				current.IsUnderWork = false;
+
+			var next = FindNextBuildOrder(current);
+
+			this.CurrentBuildOrder = next;
+
+			if (next != null)
+				next.IsUnderWork = true;
 		}
 
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
@@ -337,6 +372,8 @@ namespace Dwarrowdelf.Client
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
+			bool fail = false;
+
 			switch (status)
 			{
 				case JobStatus.Done:
@@ -344,7 +381,11 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case JobStatus.Abort:
+					trace.TraceError("Build item aborted");
+					break;
+
 				case JobStatus.Fail:
+					fail = true;
 					trace.TraceError("Build item failed");
 					break;
 
@@ -356,18 +397,10 @@ namespace Dwarrowdelf.Client
 			GameData.Data.Jobs.Remove(job);
 			job.StatusChanged -= OnJobStatusChanged;
 
-			var old = this.CurrentBuildOrder;
-			var next = FindNextBuildOrder(old);
-
-			old.IsUnderWork = false;
-
-			if (next != null)
-				next.IsUnderWork = true;
-
-			this.CurrentBuildOrder = next;
-
-			if (old.IsRepeat == false)
-				RemoveBuildOrder(old);
+			if (fail || this.CurrentBuildOrder.IsRepeat == false)
+				RemoveBuildOrder(this.CurrentBuildOrder);
+			else
+				MoveToNextBuildOrder();
 		}
 
 		bool FindMaterials(BuildOrder order)
@@ -448,9 +481,9 @@ namespace Dwarrowdelf.Client
 		public BuildableItem BuildableItem { get; private set; }
 		public ItemObject[] SourceItems { get; private set; }
 
-		public bool IsRepeat { get { return m_isRepeat; } set { m_isRepeat = value; Notify("IsRepeat"); } }
-		public bool IsSuspended { get { return m_isSuspended; } set { m_isSuspended = value; Notify("IsSuspended"); } }
-		public bool IsUnderWork { get { return m_isUnderWork; } set { m_isUnderWork = value; Notify("IsUnderWork"); } }
+		public bool IsRepeat { get { return m_isRepeat; } set { if (m_isRepeat == value) return; m_isRepeat = value; Notify("IsRepeat"); } }
+		public bool IsSuspended { get { return m_isSuspended; } set { if (m_isSuspended == value) return; m_isSuspended = value; Notify("IsSuspended"); } }
+		public bool IsUnderWork { get { return m_isUnderWork; } set { if (m_isUnderWork == value) return; m_isUnderWork = value; Notify("IsUnderWork"); } }
 
 		#region INotifyPropertyChanged Members
 
