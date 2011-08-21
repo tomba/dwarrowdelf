@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client
 				var domainSetup = new AppDomainSetup()
 				{
 					ApplicationBase = di.ApplicationBase,
-					ConfigurationFile = di.ApplicationBase + "Server.exe.config",
+					ConfigurationFile = di.ApplicationBase + "Dwarrowdelf.Server.exe.config",
 				};
 
 				m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
