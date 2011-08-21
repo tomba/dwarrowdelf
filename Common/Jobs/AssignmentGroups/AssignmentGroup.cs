@@ -207,22 +207,13 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			D("SetState({0})", status);
 
-			CheckStateChangeValidity(status);
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
 
 			this.JobStatus = status;
 
-			switch (status)
-			{
-				case JobStatus.Ok:
-					break;
-
-				case JobStatus.Done:
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					this.Worker = null;
-					this.CurrentAssignment = null;
-					break;
-			}
+			this.Worker = null;
+			this.CurrentAssignment = null;
 
 			OnStatusChanged(status);
 
@@ -230,22 +221,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				StatusChanged(this, status);
 
 			Notify("JobStatus");
-		}
-
-		void CheckStateChangeValidity(JobStatus status)
-		{
-			switch (status)
-			{
-				case JobStatus.Ok:
-					throw new Exception();
-
-				case JobStatus.Done:
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					if (this.JobStatus != JobStatus.Ok)
-						throw new Exception();
-					break;
-			}
 		}
 
 		protected virtual void OnStatusChanged(JobStatus status) { }

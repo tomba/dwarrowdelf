@@ -154,42 +154,17 @@ namespace Dwarrowdelf.Jobs.Assignments
 			if (this.JobStatus == status)
 				return;
 
-			CheckStateChangeValidity(status);
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
 
-			switch (status)
-			{
-				case JobStatus.Ok:
-					break;
-
-				case JobStatus.Done:
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					this.Worker = null;
-					this.CurrentAction = null;
-					break;
-			}
+			this.Worker = null;
+			this.CurrentAction = null;
 
 			this.JobStatus = status;
 			OnStateChanged(status);
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
 			Notify("JobStatus");
-		}
-
-		void CheckStateChangeValidity(JobStatus status)
-		{
-			switch (status)
-			{
-				case JobStatus.Ok:
-					throw new Exception();
-
-				case JobStatus.Done:
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					if (this.JobStatus != JobStatus.Ok)
-						throw new Exception();
-					break;
-			}
 		}
 
 		public event Action<IJob, JobStatus> StatusChanged;

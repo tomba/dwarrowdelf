@@ -141,15 +141,13 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (this.JobStatus == status)
 				return;
 
-			CheckStateChangeValidity(status);
+			if (status == Jobs.JobStatus.Ok)
+				throw new Exception();
 
 			this.JobStatus = status;
 
 			switch (status)
 			{
-				case JobStatus.Ok:
-					throw new Exception();
-
 				case JobStatus.Done:
 					Debug.Assert(this.SubJobs.Count == 0);
 					goto case JobStatus.Fail;
@@ -168,22 +166,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				StatusChanged(this, status);
 
 			Notify("JobStatus");
-		}
-
-		void CheckStateChangeValidity(JobStatus status)
-		{
-			switch (status)
-			{
-				case JobStatus.Ok:
-					throw new Exception();
-
-				case JobStatus.Done:
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					if (this.JobStatus != JobStatus.Ok)
-						throw new Exception();
-					break;
-			}
 		}
 
 		protected virtual void Cleanup()
