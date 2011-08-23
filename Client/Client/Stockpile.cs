@@ -68,14 +68,6 @@ namespace Dwarrowdelf.Client
 			m_jobs = null;
 		}
 
-		bool IJobSource.HasWork
-		{
-			get
-			{
-				return true; // XXX
-			}
-		}
-
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
 			var obs = this.Environment.GetContents()

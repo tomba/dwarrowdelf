@@ -10,7 +10,6 @@ namespace Dwarrowdelf.Jobs
 {
 	public interface IJobSource
 	{
-		bool HasWork { get; }
 		IEnumerable<IJob> GetJobs(ILiving living);
 	}
 
@@ -35,7 +34,7 @@ namespace Dwarrowdelf.Jobs
 
 		public IAssignment FindAssignment(ILiving living)
 		{
-			foreach (var jobSource in m_jobSources.Where(js => js.HasWork))
+			foreach (var jobSource in m_jobSources)
 			{
 				foreach (var job in jobSource.GetJobs(living))
 				{

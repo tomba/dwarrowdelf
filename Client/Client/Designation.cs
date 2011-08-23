@@ -158,11 +158,6 @@ namespace Dwarrowdelf.Client
 				RemoveDesignation(kvp.Key);
 		}
 
-		bool IJobSource.HasWork
-		{
-			get { return m_map.Count > 0 && m_map.Any(dt => dt.Value.Job == null); }
-		}
-
 		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
 		{
 			var designations = m_map

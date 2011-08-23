@@ -140,25 +140,6 @@ namespace Dwarrowdelf.Client
 			AddBuildOrder(bo);
 		}
 
-		bool IJobSource.HasWork
-		{
-			get
-			{
-				switch (this.BuildingState)
-				{
-					case Client.BuildingState.NeedsCleaning:
-					case Client.BuildingState.Destructing:
-						return true;
-
-					case Client.BuildingState.Functional:
-						return this.CurrentBuildOrder != null;
-
-					default:
-						throw new Exception();
-				}
-			}
-		}
-
 		IJob m_destructJob;
 
 		CleanAreaJob m_cleanJob;
@@ -304,10 +285,7 @@ namespace Dwarrowdelf.Client
 
 				case Client.BuildingState.Functional:
 					if (this.CurrentBuildOrder == null)
-					{
-						trace.TraceInformation("XXX current order null");
 						yield break;
-					}
 
 					if (m_currentJob == null)
 					{

@@ -38,11 +38,6 @@ namespace Dwarrowdelf.Client
 			this.Environment.World.JobManager.RemoveJobSource(this);
 		}
 
-		public bool HasWork
-		{
-			get { return true; }
-		}
-
 		ConstructBuildingJob m_job;
 
 		public IEnumerable<IJob> GetJobs(ILiving living)
