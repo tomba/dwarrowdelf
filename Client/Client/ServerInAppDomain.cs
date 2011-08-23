@@ -20,7 +20,12 @@ namespace Dwarrowdelf.Client
 
 		public void Start()
 		{
-			var gameDir = @"C:\Users\Tomba\Work\Dwarrowdelf\save";
+			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
+			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
+			if (!System.IO.Directory.Exists(path))
+				System.IO.Directory.CreateDirectory(path);
+
+			var gameDir = path;
 
 			bool cleanSaves = true;
 			Guid save = Guid.Empty;
