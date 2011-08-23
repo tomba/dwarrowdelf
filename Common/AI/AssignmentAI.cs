@@ -138,6 +138,7 @@ namespace Dwarrowdelf.AI
 				// are we doing an assignment for another priority level?
 				if (this.CurrentPriority != ActionPriority.Undefined && this.CurrentPriority != priority)
 				{
+					Debug.Assert(assignment == oldAssignment);
 					Debug.Assert(assignment.Worker == this.Worker);
 					trace.TraceVerbose("DecideAction: Already doing an assignment for different priority level");
 					return this.Worker.CurrentAction;
