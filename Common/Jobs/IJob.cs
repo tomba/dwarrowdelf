@@ -41,7 +41,6 @@ namespace Dwarrowdelf.Jobs
 
 	public interface IJobGroup : IJob
 	{
-		ReadOnlyObservableCollection<IJob> SubJobs { get; }
 	}
 
 	public interface IAssignment : IJob
