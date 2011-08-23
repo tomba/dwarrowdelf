@@ -28,8 +28,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; set; }
-		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
 		public void Abort()

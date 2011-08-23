@@ -22,8 +22,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
-		[SaveGameProperty]
-		public ActionPriority Priority { get; set; }
 
 		public bool IsAssigned
 		{

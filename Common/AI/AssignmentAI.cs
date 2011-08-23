@@ -20,29 +20,37 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty("NeedToAbort")]
 		bool m_needToAbort;
 
+		[SaveGameProperty]
 		IAssignment m_currentAssignment;
 		[SaveGameProperty]
-		public IAssignment CurrentAssignment
+		ActionPriority m_currentPriority;
+
+		public IAssignment CurrentAssignment { get { return m_currentAssignment; } }
+
+		public ActionPriority CurrentPriority { get { return m_currentPriority; } }
+
+		void SetCurrentAssignment(IAssignment assignment, ActionPriority priority)
 		{
-			get { return m_currentAssignment; }
-
-			private set
+			if (m_currentAssignment != null)
 			{
-				if (m_currentAssignment != null)
-				{
-					if (this.Worker.HasAction)
-						m_needToAbort = true;	// XXX what if worker has high priority server action?
-					m_currentAssignment.StatusChanged -= OnJobStatusChanged;
-				}
-
-				m_currentAssignment = value;
-
-				if (m_currentAssignment != null)
-					m_currentAssignment.StatusChanged += OnJobStatusChanged;
-
-				if (AssignmentChanged != null)
-					AssignmentChanged(value);
+				if (this.Worker.HasAction)
+					m_needToAbort = true;	// XXX what if worker has high priority server action?
+				m_currentAssignment.StatusChanged -= OnJobStatusChanged;
 			}
+
+			m_currentAssignment = assignment;
+			m_currentPriority = priority;
+
+			if (m_currentAssignment != null)
+				m_currentAssignment.StatusChanged += OnJobStatusChanged;
+
+			if (AssignmentChanged != null)
+				AssignmentChanged(assignment);
+		}
+
+		void ClearCurrentAssignment()
+		{
+			SetCurrentAssignment(null, ActionPriority.Undefined);
 		}
 
 		public event Action<IAssignment> AssignmentChanged;
@@ -51,6 +59,8 @@ namespace Dwarrowdelf.AI
 
 		protected AssignmentAI(SaveGameContext ctx)
 		{
+			if (m_currentAssignment != null)
+				m_currentAssignment.StatusChanged += OnJobStatusChanged;
 		}
 
 		protected AssignmentAI(ILiving worker)
@@ -108,10 +118,6 @@ namespace Dwarrowdelf.AI
 
 				var assignment = GetNewOrCurrentAssignment(priority);
 
-				// XXX I don't like setting the priority here...
-				if (assignment != null && assignment.Priority == ActionPriority.Undefined)
-					assignment.Priority = priority;
-
 				var oldAssignment = this.CurrentAssignment;
 
 				if (assignment == null)
@@ -124,13 +130,13 @@ namespace Dwarrowdelf.AI
 						oldAssignment.Abort();
 					}
 
-					this.CurrentAssignment = null;
+					ClearCurrentAssignment();
 
 					return needToAbort ? null : this.Worker.CurrentAction;
 				}
 
 				// are we doing an assignment for another priority level?
-				if (assignment.Priority != priority)
+				if (this.CurrentPriority != ActionPriority.Undefined && this.CurrentPriority != priority)
 				{
 					Debug.Assert(assignment.Worker == this.Worker);
 					trace.TraceVerbose("DecideAction: Already doing an assignment for different priority level");
@@ -161,7 +167,7 @@ namespace Dwarrowdelf.AI
 						oldAssignment.Abort();
 					}
 
-					this.CurrentAssignment = assignment;
+					SetCurrentAssignment(assignment, priority);
 				}
 
 				Debug.Assert(this.CurrentAssignment == assignment);
@@ -208,7 +214,7 @@ namespace Dwarrowdelf.AI
 			JobStatusChangedOverride(job, status);
 
 			Debug.Assert(job.JobStatus != JobStatus.Ok);
-			this.CurrentAssignment = null;
+			ClearCurrentAssignment();
 		}
 
 		protected virtual void JobStatusChangedOverride(IJob job, JobStatus status) { }
@@ -231,7 +237,7 @@ namespace Dwarrowdelf.AI
 			{
 				trace.TraceVerbose("ActionStarted: action started by someone else, cancel our current assignment");
 				this.CurrentAssignment.Abort();
-				this.CurrentAssignment = null;
+				ClearCurrentAssignment();
 				return;
 			}
 

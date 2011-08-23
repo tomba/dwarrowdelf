@@ -30,7 +30,6 @@ namespace Dwarrowdelf.Jobs
 	public interface IJob : INotifyPropertyChanged
 	{
 		IJob Parent { get; }
-		ActionPriority Priority { get; set; }
 		JobStatus JobStatus { get; }
 		void Abort();
 

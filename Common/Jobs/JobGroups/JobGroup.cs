@@ -73,8 +73,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public ActionPriority Priority { get; set; }
-		[SaveGameProperty]
 		public JobStatus JobStatus { get; private set; }
 
 		protected virtual void OnStatusChanged(JobStatus status) { }
