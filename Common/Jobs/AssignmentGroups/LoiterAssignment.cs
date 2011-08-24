@@ -29,6 +29,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_corners[1] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, -10, 0));
 			m_corners[2] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, 10, 0));
 			m_corners[3] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(-10, 10, 0));
+
+			m_state = 0;
 		}
 
 		LoiterAssignment(SaveGameContext ctx)
@@ -60,12 +62,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			}
 
 			throw new Exception();
-		}
-
-		protected override JobStatus AssignOverride(ILiving worker)
-		{
-			m_state = 0;
-			return JobStatus.Ok;
 		}
 
 		protected override void OnAssignmentDone()

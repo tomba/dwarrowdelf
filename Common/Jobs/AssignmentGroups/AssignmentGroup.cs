@@ -19,6 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		protected AssignmentGroup(IJob parent)
 		{
 			this.Parent = parent;
+			this.JobStatus = Jobs.JobStatus.Ok;
 		}
 
 		protected AssignmentGroup(SaveGameContext ctx)
@@ -92,7 +93,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			get { return this.CurrentAssignment != null ? this.CurrentAssignment.CurrentAction : null; }
 		}
 
-		public JobStatus Assign(ILiving worker)
+		public void Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
@@ -101,14 +102,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			this.Worker = worker;
 
-			var status = AssignOverride(worker);
+			AssignOverride(worker);
 
-			SetStatus(status);
-
-			return this.JobStatus;
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 		}
 
-		protected abstract JobStatus AssignOverride(ILiving worker);
+		protected virtual void AssignOverride(ILiving worker)
+		{
+		}
 
 		public JobStatus PrepareNextAction()
 		{
@@ -129,13 +130,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 					this.CurrentAssignment = assignment;
 
-					var status = this.CurrentAssignment.Assign(this.Worker);
-
-					if (this.JobStatus != Jobs.JobStatus.Ok)
-						return this.JobStatus;
-
-					if (status != Jobs.JobStatus.Ok)
-						continue;
+					this.CurrentAssignment.Assign(this.Worker);
+					Debug.Assert(this.CurrentAssignment.JobStatus == JobStatus.Ok);
 				}
 
 				Debug.Assert(this.CurrentAssignment != null);

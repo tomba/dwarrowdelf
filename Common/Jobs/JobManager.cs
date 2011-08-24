@@ -40,23 +40,8 @@ namespace Dwarrowdelf.Jobs
 				{
 					foreach (var assignment in job.GetAssignments(living))
 					{
-						var jobState = assignment.Assign(living);
-
-						switch (jobState)
-						{
-							case JobStatus.Ok:
-								return assignment;
-
-							case JobStatus.Done:
-								throw new Exception();
-
-							case JobStatus.Abort:
-							case JobStatus.Fail:
-								throw new Exception();
-
-							default:
-								throw new Exception();
-						}
+						return assignment;
+#warning foo
 					}
 				}
 			}

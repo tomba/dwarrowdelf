@@ -81,14 +81,10 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_numFails = 0;
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
 			this.Src = worker.Location;
 			m_numFails = 0;
-
-			var res = PreparePath(worker);
-
-			return res;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)

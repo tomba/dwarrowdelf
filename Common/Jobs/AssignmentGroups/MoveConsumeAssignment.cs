@@ -22,6 +22,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			m_item = item;
 			m_item.ReservedBy = this;
+			m_state = 0;
 		}
 
 		protected MoveConsumeAssignment(SaveGameContext ctx)
@@ -36,12 +37,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_item.ReservedBy = null;
 
 			base.OnStatusChanged(status);
-		}
-
-		protected override JobStatus AssignOverride(ILiving worker)
-		{
-			m_state = 0;
-			return JobStatus.Ok;
 		}
 
 		protected override void OnAssignmentDone()

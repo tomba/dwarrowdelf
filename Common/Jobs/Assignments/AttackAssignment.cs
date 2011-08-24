@@ -41,17 +41,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_pathDirs = null;
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
-		{
-			Debug.Assert(m_target.Environment == worker.Environment);
-			Debug.Assert(!m_target.IsDestructed);
-
-			var res = PreparePath(worker);
-			if (res == Jobs.JobStatus.Done)
-				res = Jobs.JobStatus.Ok;
-			return res;
-		}
-
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			if (m_target.IsDestructed)

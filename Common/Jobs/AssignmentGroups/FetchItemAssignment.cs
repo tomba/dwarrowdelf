@@ -26,17 +26,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Item = item;
 			m_environment = env;
 			m_location = location;
+			m_state = 0;
 		}
 
 		protected FetchItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
-		}
-
-		protected override JobStatus AssignOverride(ILiving worker)
-		{
-			m_state = 0;
-			return JobStatus.Ok;
 		}
 
 		protected override void OnAssignmentDone()

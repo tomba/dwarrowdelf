@@ -31,14 +31,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
 			// start at waypoint closest to the worker
 			m_state = m_waypoints
 				.Select((p, i) => new Tuple<IntPoint3D, int>(p, i))
 				.OrderBy(t => (t.Item1 - worker.Location).Length).First().Item2;
-
-			return JobStatus.Ok;
 		}
 
 		protected override void OnAssignmentDone()

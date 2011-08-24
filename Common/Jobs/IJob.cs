@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Jobs
 		ILiving Worker { get; }
 		GameAction CurrentAction { get; }
 
-		JobStatus Assign(ILiving worker);
+		void Assign(ILiving worker);
 		JobStatus PrepareNextAction();
 		JobStatus ActionProgress();
 		JobStatus ActionDone(ActionState actionStatus);

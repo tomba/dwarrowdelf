@@ -62,24 +62,20 @@ namespace Dwarrowdelf.Jobs.Assignments
 			private set { if (m_action == value) return; m_action = value; Notify("CurrentAction"); }
 		}
 
-		public JobStatus Assign(ILiving worker)
+		public void Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
 			Debug.Assert(this.JobStatus == JobStatus.Ok);
 
-			var state = AssignOverride(worker);
-			SetState(state);
-			if (state != JobStatus.Ok)
-				return state;
-
 			this.Worker = worker;
 
-			return state;
+			AssignOverride(worker);
+
+			Debug.Assert(this.JobStatus == JobStatus.Ok);
 		}
 
-		protected virtual JobStatus AssignOverride(ILiving worker)
+		protected virtual void AssignOverride(ILiving worker)
 		{
-			return JobStatus.Ok;
 		}
 
 

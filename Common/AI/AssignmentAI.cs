@@ -149,18 +149,10 @@ namespace Dwarrowdelf.AI
 				{
 					trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
 
-					if (assignment.IsAssigned)
-					{
-						// already assigned
-						Debug.Assert(assignment.Worker == this.Worker);
-					}
-					else
-					{
-						var assignState = assignment.Assign(this.Worker);
+					Debug.Assert(assignment.IsAssigned == false);
 
-						if (assignState != JobStatus.Ok)
-							continue;
-					}
+					assignment.Assign(this.Worker);
+					Debug.Assert(assignment.JobStatus == JobStatus.Ok);
 
 					if (oldAssignment != null)
 					{

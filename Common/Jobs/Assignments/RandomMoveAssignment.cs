@@ -32,11 +32,10 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// else Abort, Done or Fail
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILiving worker)
 		{
 			int i = worker.World.Random.Next(8);
 			m_dir = DirectionExtensions.PlanarDirections[i];
-			return Jobs.JobStatus.Ok;
 		}
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)

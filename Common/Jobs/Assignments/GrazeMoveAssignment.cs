@@ -33,11 +33,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// else Abort, Done or Fail
 		}
 
-		protected override JobStatus AssignOverride(ILiving worker)
-		{
-			return Jobs.JobStatus.Ok;
-		}
-
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
 			if (this.m_herd == null)
