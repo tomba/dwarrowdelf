@@ -40,12 +40,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 			SetState(JobStatus.Abort);
 		}
 
-		public IEnumerable<IAssignment> GetAssignments(ILiving living)
-		{
-			if (!this.IsAssigned)
-				yield return this;
-		}
-
 		ILiving m_worker;
 		[SaveGameProperty]
 		public ILiving Worker

@@ -33,13 +33,12 @@ namespace Dwarrowdelf.Jobs
 		JobStatus JobStatus { get; }
 		void Abort();
 
-		IEnumerable<IAssignment> GetAssignments(ILiving living);
-
 		event Action<IJob, JobStatus> StatusChanged;
 	}
 
 	public interface IJobGroup : IJob
 	{
+		IAssignment FindAssignment(ILiving living);
 	}
 
 	public interface IAssignment : IJob

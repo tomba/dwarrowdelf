@@ -86,11 +86,26 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
 
-		public IEnumerable<IAssignment> GetAssignments(ILiving living)
+		public IAssignment FindAssignment(ILiving living)
 		{
 			foreach (var job in GetJobs(living))
-				foreach (var a in job.GetAssignments(living))
-					yield return a;
+			{
+				var assignment = job as IAssignment;
+				if (assignment != null)
+				{
+					if (assignment.IsAssigned == false)
+						return assignment;
+					else
+						return null;
+				}
+
+				var jobGroup = (IJobGroup)job;
+				assignment = jobGroup.FindAssignment(living);
+				if (assignment != null)
+					return assignment;
+			}
+
+			return null;
 		}
 
 		protected virtual IEnumerable<IJob> GetJobs(ILiving living)

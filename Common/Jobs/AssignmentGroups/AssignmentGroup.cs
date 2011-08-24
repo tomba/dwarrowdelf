@@ -36,12 +36,6 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			SetStatus(JobStatus.Abort);
 		}
 
-		public IEnumerable<IAssignment> GetAssignments(ILiving living)
-		{
-			if (!this.IsAssigned)
-				yield return this;
-		}
-
 		public bool IsAssigned
 		{
 			get

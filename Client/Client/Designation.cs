@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Client
 				RemoveDesignation(kvp.Key);
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILiving living)
 		{
 			var designations = m_map
 				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Job == null)
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Client
 				var p = d.Key;
 				var dt = d.Value;
 
-				IJob job;
+				IAssignment job;
 
 				switch (dt.Type)
 				{
@@ -199,8 +199,10 @@ namespace Dwarrowdelf.Client
 				job.StatusChanged += OnJobStatusChanged;
 				dt.Job = job;
 
-				yield return job;
+				return job;
 			}
+
+			return null;
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)

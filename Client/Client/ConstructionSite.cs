@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client
 
 		ConstructBuildingJob m_job;
 
-		public IEnumerable<IJob> GetJobs(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILiving living)
 		{
 			if (m_job == null)
 			{
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 				m_job.StatusChanged += OnJobStatusChanged;
 			}
 
-			yield return m_job;
+			return m_job.FindAssignment(living);
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)

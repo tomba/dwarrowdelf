@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 			m_jobs = null;
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILiving living)
 		{
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
@@ -85,8 +85,10 @@ namespace Dwarrowdelf.Client
 
 				GameData.Data.Jobs.Add(job);
 
-				yield return job;
+				return job;
 			}
+
+			return null;
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)

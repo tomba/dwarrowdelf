@@ -140,12 +140,12 @@ namespace Dwarrowdelf.Client
 			AddBuildOrder(bo);
 		}
 
-		IJob m_destructJob;
+		IAssignment m_destructJob;
 
 		CleanAreaJob m_cleanJob;
 
 		BuildOrder m_currentBuildOrder;
-		IJob m_currentJob;
+		IJobGroup m_currentJob;
 
 		BuildOrder CurrentBuildOrder
 		{
@@ -265,7 +265,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IEnumerable<IJob> IJobSource.GetJobs(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILiving living)
 		{
 			var env = this.Environment;
 
@@ -279,13 +279,11 @@ namespace Dwarrowdelf.Client
 						m_cleanJob.StatusChanged += OnCleanStatusChanged;
 					}
 
-					yield return m_cleanJob;
-
-					break;
+					return m_cleanJob.FindAssignment(living);
 
 				case Client.BuildingState.Functional:
 					if (this.CurrentBuildOrder == null)
-						yield break;
+						return null;
 
 					if (m_currentJob == null)
 					{
@@ -294,7 +292,7 @@ namespace Dwarrowdelf.Client
 						if (job == null)
 						{
 							trace.TraceWarning("XXX failed to create job");
-							yield break;
+							return null;
 						}
 
 						m_currentJob = job;
@@ -302,20 +300,16 @@ namespace Dwarrowdelf.Client
 						trace.TraceInformation("new build job created");
 					}
 
-					yield return m_currentJob;
-
-					break;
+					return m_currentJob.FindAssignment(living);
 
 				case Client.BuildingState.Destructing:
-					if (m_destructJob == null)
-					{
-						m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, this);
-						GameData.Data.Jobs.Add(m_destructJob);
-						m_destructJob.StatusChanged += OnDestructStatusChanged;
-					}
+					if (m_destructJob != null)
+						return null;
 
-					yield return m_destructJob;
-					break;
+					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, this);
+					GameData.Data.Jobs.Add(m_destructJob);
+					m_destructJob.StatusChanged += OnDestructStatusChanged;
+					return m_destructJob;
 
 				default:
 					throw new Exception();
@@ -340,7 +334,7 @@ namespace Dwarrowdelf.Client
 			m_cleanJob = null;
 		}
 
-		IJob CreateJob(BuildOrder order)
+		IJobGroup CreateJob(BuildOrder order)
 		{
 			var ok = FindMaterials(order);
 

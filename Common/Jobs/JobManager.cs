@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs
 {
 	public interface IJobSource
 	{
-		IEnumerable<IJob> GetJobs(ILiving living);
+		IAssignment FindAssignment(ILiving living);
 	}
 
 	public class JobManager
@@ -36,14 +36,9 @@ namespace Dwarrowdelf.Jobs
 		{
 			foreach (var jobSource in m_jobSources)
 			{
-				foreach (var job in jobSource.GetJobs(living))
-				{
-					foreach (var assignment in job.GetAssignments(living))
-					{
-						return assignment;
-#warning foo
-					}
-				}
+				var assignment = jobSource.FindAssignment(living);
+				if (assignment != null)
+					return assignment;
 			}
 
 			return null;
