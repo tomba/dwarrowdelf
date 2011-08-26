@@ -135,8 +135,8 @@ namespace Dwarrowdelf.AI
 					return needToAbort ? null : this.Worker.CurrentAction;
 				}
 
-				// are we doing an assignment for another priority level?
-				if (this.CurrentPriority != ActionPriority.Undefined && this.CurrentPriority != priority)
+				// are we doing this assignment for another priority level?
+				if (assignment == oldAssignment && this.CurrentPriority != priority)
 				{
 					Debug.Assert(assignment == oldAssignment);
 					Debug.Assert(assignment.Worker == this.Worker);
