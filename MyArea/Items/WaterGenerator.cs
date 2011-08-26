@@ -53,7 +53,8 @@ namespace MyArea
 			if (this.Environment == null)
 				return;
 
-			this.Environment.SetWaterLevel(this.Location, TileData.MaxWaterLevel);
+			if (this.Environment.GetWaterLevel(this.Location) < TileData.MaxWaterLevel)
+				this.Environment.SetWaterLevel(this.Location, TileData.MaxWaterLevel);
 		}
 	}
 }

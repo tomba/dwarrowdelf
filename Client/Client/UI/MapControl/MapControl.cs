@@ -193,9 +193,9 @@ namespace Dwarrowdelf.Client.UI
 			var mc = (MapControl)d;
 			var val = (int)e.NewValue;
 
-			var p = mc.m_renderView.CenterPos;
+			var p = mc.CenterPos;
 
-			mc.m_renderView.CenterPos = new IntPoint3D(p.X, p.Y, val);
+			mc.m_renderView.CenterPos = new IntPoint3D((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
 
 			mc.InvalidateTileData();
 
@@ -206,11 +206,17 @@ namespace Dwarrowdelf.Client.UI
 
 		void MapChangedCallback(IntPoint3D l)
 		{
+			if (!m_renderView.Contains(l))
+				return;
+
 			InvalidateTileData();
 		}
 
 		void MapObjectChangedCallback(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
+			if (!m_renderView.Contains(l))
+				return;
+
 			InvalidateTileData();
 		}
 

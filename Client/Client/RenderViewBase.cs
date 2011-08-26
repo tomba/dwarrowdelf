@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client
 	interface IRenderView
 	{
 		IntPoint3D CenterPos { get; set; }
+		bool Contains(IntPoint3D ml);
 		bool ShowVirtualSymbols { get; set; }
 		Environment Environment { get; set; }
 		IRenderData RenderData { get; }
@@ -26,6 +27,7 @@ namespace Dwarrowdelf.Client
 		protected bool m_showVirtualSymbols = true;
 		protected Environment m_environment;
 		protected IntPoint3D m_centerPos;
+		IntRectZ m_bounds;
 
 		protected bool m_invalid;
 
@@ -61,7 +63,16 @@ namespace Dwarrowdelf.Client
 					else
 						ScrollTiles(diff.ToIntVector());
 				}
+
+				var cp = CenterPos;
+				var s = m_renderData.Size;
+				m_bounds = new IntRectZ(new IntPoint(cp.X - s.Width / 2, cp.Y - s.Height / 2), s, cp.Z);
 			}
+		}
+
+		public bool Contains(IntPoint3D ml)
+		{
+			return m_bounds.Contains(ml);
 		}
 
 		public bool ShowVirtualSymbols
