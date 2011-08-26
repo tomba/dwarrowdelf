@@ -446,7 +446,7 @@ namespace Dwarrowdelf.Server
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<GameObject> Objects()
+		public IEnumerable<IGameObject> Objects()
 		{
 			for (int z = 0; z < this.Depth; ++z)
 				foreach (var ob in m_contentArray[z].AsEnumerable())

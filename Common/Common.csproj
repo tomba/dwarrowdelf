@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="AI\AIHelpers.cs" />
     <Compile Include="AI\CarnivoreAI.cs" />
+    <Compile Include="AI\DwarfAI.cs" />
     <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />

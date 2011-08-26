@@ -5,18 +5,16 @@ using System.Text;
 using System.Diagnostics;
 using Dwarrowdelf.Jobs;
 using Dwarrowdelf;
-using Dwarrowdelf.Server;
-using Dwarrowdelf.AI;
 
-namespace MyArea
+namespace Dwarrowdelf.AI
 {
 	[SaveGameObject(UseRef = true)]
-	class DwarfAI : AssignmentAI
+	public class DwarfAI : AssignmentAI
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		public DwarfAI(Living ob)
+		public DwarfAI(ILiving ob)
 			: base(ob)
 		{
 		}
@@ -29,7 +27,7 @@ namespace MyArea
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
-			var worker = (Living)this.Worker;
+			var worker = (ILiving)this.Worker;
 
 			bool hasAssignment = this.CurrentAssignment != null;
 			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
@@ -76,7 +74,7 @@ namespace MyArea
 			}
 		}
 
-		IAssignment CreateFoodAssignmentIfNeeded(Living worker, ActionPriority priority)
+		IAssignment CreateFoodAssignmentIfNeeded(ILiving worker, ActionPriority priority)
 		{
 			if (priority == ActionPriority.High && worker.FoodFullness > 50)
 				return null;
@@ -84,11 +82,11 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.FoodFullness > 300)
 				return null;
 
-			ItemObject ob = null;
+			IItemObject ob = null;
 			var env = worker.Environment;
 
 			ob = env.Objects()
-				.OfType<ItemObject>()
+				.OfType<IItemObject>()
 				.Where(o => o.ReservedBy == null && o.NutritionalValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
 				.FirstOrDefault();
@@ -103,7 +101,7 @@ namespace MyArea
 			return null;
 		}
 
-		IAssignment CreateDrinkAssignmentIfNeeded(Living worker, ActionPriority priority)
+		IAssignment CreateDrinkAssignmentIfNeeded(ILiving worker, ActionPriority priority)
 		{
 			if (priority == ActionPriority.High && worker.WaterFullness > 50)
 				return null;
@@ -111,11 +109,11 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.WaterFullness > 300)
 				return null;
 
-			ItemObject ob = null;
+			IItemObject ob = null;
 			var env = worker.Environment;
 
 			ob = env.Objects()
-				.OfType<ItemObject>()
+				.OfType<IItemObject>()
 				.Where(o => o.ReservedBy == null && o.RefreshmentValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
 				.FirstOrDefault();

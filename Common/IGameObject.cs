@@ -77,6 +77,7 @@ namespace Dwarrowdelf
 		bool GetHidden(IntPoint3D l);
 
 		IEnumerable<IGameObject> GetContents(IntRectZ rect);
+		IEnumerable<IGameObject> Objects();
 	}
 
 	public interface ILocatableGameObject : IGameObject
@@ -99,6 +100,9 @@ namespace Dwarrowdelf
 		int VisionRange { get; }
 
 		byte GetSkillLevel(SkillID skill);
+
+		int FoodFullness { get; }
+		int WaterFullness { get; }
 	}
 
 	public interface IItemObject : ILocatableGameObject
@@ -106,6 +110,9 @@ namespace Dwarrowdelf
 		ItemCategory ItemCategory { get; }
 		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
+
+		int NutritionalValue { get; }
+		int RefreshmentValue { get; }
 	}
 
 	public interface IPlayer

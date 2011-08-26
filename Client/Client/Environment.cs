@@ -281,6 +281,11 @@ namespace Dwarrowdelf.Client
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}
 
+		public IEnumerable<IGameObject> Objects()
+		{
+			return m_objectMap.SelectMany(kvp => kvp.Value);
+		}
+
 		public IList<GameObject> GetContents(IntPoint3D l)
 		{
 			List<GameObject> obs;
