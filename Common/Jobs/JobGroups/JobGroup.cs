@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_subJobs = new ObservableCollection<IJob>();
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
 
-			this.JobStatus = Jobs.JobStatus.Ok;
+			this.Status = JobStatus.Ok;
 		}
 
 		protected JobGroup(SaveGameContext ctx)
@@ -35,10 +35,10 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_subJobs.Add(job);
 			job.StatusChanged += OnSubJobStatusChangedInternal;
 
-			if (job.JobStatus != Jobs.JobStatus.Ok)
+			if (job.Status != JobStatus.Ok)
 			{
 				// XXX I think job should be always Ok when it is constructed. Init() method for jobs?
-				OnSubJobStatusChangedInternal(job, job.JobStatus);
+				OnSubJobStatusChangedInternal(job, job.Status);
 				return;
 			}
 		}
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			{
 				job.StatusChanged -= OnSubJobStatusChangedInternal;
 
-				if (job.JobStatus == Jobs.JobStatus.Ok)
+				if (job.Status == JobStatus.Ok)
 					job.Abort();
 			}
 
@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public JobStatus JobStatus { get; private set; }
+		public JobStatus Status { get; private set; }
 
 		protected virtual void OnStatusChanged(JobStatus status) { }
 
@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public void Abort()
 		{
-			SetStatus(Jobs.JobStatus.Abort);
+			SetStatus(JobStatus.Abort);
 		}
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
@@ -110,25 +110,25 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		protected virtual IEnumerable<IJob> GetJobs(ILiving living)
 		{
-			return this.SubJobs.Where(j => j.JobStatus == JobStatus.Ok);
+			return this.SubJobs.Where(j => j.Status == JobStatus.Ok);
 		}
 
 		void OnSubJobStatusChangedInternal(IJob job, JobStatus status)
 		{
 			switch (status)
 			{
-				case Jobs.JobStatus.Ok:
+				case JobStatus.Ok:
 					throw new Exception();
 
-				case Jobs.JobStatus.Abort:
+				case JobStatus.Abort:
 					OnSubJobAborted(job);
 					break;
 
-				case Jobs.JobStatus.Fail:
+				case JobStatus.Fail:
 					OnSubJobFailed(job);
 					break;
 
-				case Jobs.JobStatus.Done:
+				case JobStatus.Done:
 					OnSubJobDone(job);
 					break;
 			}
@@ -136,28 +136,28 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		protected virtual void OnSubJobAborted(IJob job)
 		{
-			SetStatus(Jobs.JobStatus.Abort);
+			SetStatus(JobStatus.Abort);
 		}
 
 		protected virtual void OnSubJobFailed(IJob job)
 		{
-			SetStatus(Jobs.JobStatus.Fail);
+			SetStatus(JobStatus.Fail);
 		}
 
 		protected virtual void OnSubJobDone(IJob job)
 		{
-			SetStatus(Jobs.JobStatus.Done);
+			SetStatus(JobStatus.Done);
 		}
 
 		protected void SetStatus(JobStatus status)
 		{
-			if (this.JobStatus == status)
+			if (this.Status == status)
 				return;
 
-			if (status == Jobs.JobStatus.Ok)
+			if (status == JobStatus.Ok)
 				throw new Exception();
 
-			this.JobStatus = status;
+			this.Status = status;
 
 			switch (status)
 			{

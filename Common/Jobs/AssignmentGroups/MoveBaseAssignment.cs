@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		protected override void OnAssignmentDone()
 		{
 			if (m_state == 1)
-				SetStatus(Jobs.JobStatus.Done);
+				SetStatus(JobStatus.Done);
 			else
 				m_state = m_state + 1;
 		}

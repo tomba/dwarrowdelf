@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				action = new MoveAction(dir);
 			}
 
-			progress = Jobs.JobStatus.Ok;
+			progress = JobStatus.Ok;
 			return action;
 		}
 

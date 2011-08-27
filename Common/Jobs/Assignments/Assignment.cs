@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected Assignment(IJob parent)
 		{
 			this.Parent = parent;
-			this.JobStatus = Jobs.JobStatus.Ok;
+			this.Status = JobStatus.Ok;
 		}
 
 		protected Assignment(SaveGameContext ctx)
@@ -27,13 +27,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			get
 			{
-				Debug.Assert(m_worker == null || this.JobStatus == Jobs.JobStatus.Ok);
+				Debug.Assert(m_worker == null || this.Status == JobStatus.Ok);
 				return m_worker != null;
 			}
 		}
 
 		[SaveGameProperty]
-		public JobStatus JobStatus { get; private set; }
+		public JobStatus Status { get; private set; }
 
 		public void Abort()
 		{
@@ -59,13 +59,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 		public void Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 
 			this.Worker = worker;
 
 			AssignOverride(worker);
 
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 		}
 
 		protected virtual void AssignOverride(ILiving worker)
@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			JobStatus status;
 			var action = PrepareNextActionOverride(out status);
-			Debug.Assert((action == null && status != Jobs.JobStatus.Ok) || (action != null && status == Jobs.JobStatus.Ok));
+			Debug.Assert((action == null && status != JobStatus.Ok) || (action != null && status == JobStatus.Ok));
 			this.CurrentAction = action;
 			SetState(status);
 			return status;
@@ -91,7 +91,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		public JobStatus ActionProgress()
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
 			var state = ActionProgressOverride();
@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		public JobStatus ActionDone(ActionState actionStatus)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 
 			var state = ActionDoneOverride(actionStatus);
@@ -139,16 +139,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		void SetState(JobStatus status)
 		{
-			if (this.JobStatus == status)
+			if (this.Status == status)
 				return;
 
-			if (status == Jobs.JobStatus.Ok)
+			if (status == JobStatus.Ok)
 				throw new Exception();
 
 			this.Worker = null;
 			this.CurrentAction = null;
 
-			this.JobStatus = status;
+			this.Status = status;
 			OnStateChanged(status);
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);

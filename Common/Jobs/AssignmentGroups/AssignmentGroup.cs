@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		protected AssignmentGroup(IJob parent)
 		{
 			this.Parent = parent;
-			this.JobStatus = Jobs.JobStatus.Ok;
+			this.Status = JobStatus.Ok;
 		}
 
 		protected AssignmentGroup(SaveGameContext ctx)
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public IJob Parent { get; private set; }
 		[SaveGameProperty]
-		public JobStatus JobStatus { get; private set; }
+		public JobStatus Status { get; private set; }
 
 		public void Abort()
 		{
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 			get
 			{
-				Debug.Assert(m_worker == null || this.JobStatus == Jobs.JobStatus.Ok);
+				Debug.Assert(m_worker == null || this.Status == JobStatus.Ok);
 				return m_worker != null;
 			}
 		}
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				{
 					m_assignment.StatusChanged -= OnCurrentAssignmentStatusChanged;
 
-					if (m_assignment.JobStatus == Jobs.JobStatus.Ok)
+					if (m_assignment.Status == JobStatus.Ok)
 						m_assignment.Abort();
 				}
 
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public void Assign(ILiving worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 
 			D("Assign {0}", worker);
 
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			AssignOverride(worker);
 
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 		}
 
 		protected virtual void AssignOverride(ILiving worker)
@@ -113,30 +113,30 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			while (true)
 			{
-				while (this.CurrentAssignment == null || this.CurrentAssignment.JobStatus != Jobs.JobStatus.Ok)
+				while (this.CurrentAssignment == null || this.CurrentAssignment.Status != JobStatus.Ok)
 				{
 					var assignment = PrepareNextAssignment();
 
-					if (this.JobStatus != Jobs.JobStatus.Ok)
-						return this.JobStatus;
+					if (this.Status != JobStatus.Ok)
+						return this.Status;
 
-					Debug.Assert(assignment.JobStatus == Jobs.JobStatus.Ok);
+					Debug.Assert(assignment.Status == JobStatus.Ok);
 
 					this.CurrentAssignment = assignment;
 
 					this.CurrentAssignment.Assign(this.Worker);
-					Debug.Assert(this.CurrentAssignment.JobStatus == JobStatus.Ok);
+					Debug.Assert(this.CurrentAssignment.Status == JobStatus.Ok);
 				}
 
 				Debug.Assert(this.CurrentAssignment != null);
-				Debug.Assert(this.CurrentAssignment.JobStatus == Jobs.JobStatus.Ok);
+				Debug.Assert(this.CurrentAssignment.Status == JobStatus.Ok);
 
 				{
 					var status = this.CurrentAssignment.PrepareNextAction();
 					Notify("CurrentAction");
 
-					if (this.JobStatus != Jobs.JobStatus.Ok)
-						return this.JobStatus;
+					if (this.Status != JobStatus.Ok)
+						return this.Status;
 
 					switch (status)
 					{
@@ -161,7 +161,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		public JobStatus ActionProgress()
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 			Debug.Assert(this.CurrentAssignment != null);
 
@@ -170,13 +170,13 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.CurrentAssignment.ActionProgress();
 			Notify("CurrentAction");
 
-			return this.JobStatus;
+			return this.Status;
 		}
 
 		public JobStatus ActionDone(ActionState actionStatus)
 		{
 			Debug.Assert(this.Worker != null);
-			Debug.Assert(this.JobStatus == JobStatus.Ok);
+			Debug.Assert(this.Status == JobStatus.Ok);
 			Debug.Assert(this.CurrentAction != null);
 			Debug.Assert(this.CurrentAssignment != null);
 
@@ -185,20 +185,20 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.CurrentAssignment.ActionDone(actionStatus);
 			Notify("CurrentAction");
 
-			return this.JobStatus;
+			return this.Status;
 		}
 
 		protected void SetStatus(JobStatus status)
 		{
-			if (this.JobStatus == status)
+			if (this.Status == status)
 				return;
 
 			D("SetState({0})", status);
 
-			if (status == Jobs.JobStatus.Ok)
+			if (status == JobStatus.Ok)
 				throw new Exception();
 
-			this.JobStatus = status;
+			this.Status = status;
 
 			this.Worker = null;
 			this.CurrentAssignment = null;
@@ -221,18 +221,18 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			switch (status)
 			{
-				case Jobs.JobStatus.Ok:
+				case JobStatus.Ok:
 					throw new Exception();
 
-				case Jobs.JobStatus.Abort:
+				case JobStatus.Abort:
 					OnAssignmentAborted();
 					break;
 
-				case Jobs.JobStatus.Fail:
+				case JobStatus.Fail:
 					OnAssignmentFailed();
 					break;
 
-				case Jobs.JobStatus.Done:
+				case JobStatus.Done:
 					OnAssignmentDone();
 					break;
 			}
@@ -240,17 +240,17 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected virtual void OnAssignmentAborted()
 		{
-			SetStatus(Jobs.JobStatus.Abort);
+			SetStatus(JobStatus.Abort);
 		}
 
 		protected virtual void OnAssignmentFailed()
 		{
-			SetStatus(Jobs.JobStatus.Fail);
+			SetStatus(JobStatus.Fail);
 		}
 
 		protected virtual void OnAssignmentDone()
 		{
-			SetStatus(Jobs.JobStatus.Done);
+			SetStatus(JobStatus.Done);
 		}
 
 		#region INotifyPropertyChanged Members

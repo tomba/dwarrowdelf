@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client
 					return;
 			}
 
-			SetStatus(Jobs.JobStatus.Done);
+			SetStatus(JobStatus.Done);
 		}
 
 		protected override IEnumerable<IJob> GetJobs(ILiving living)

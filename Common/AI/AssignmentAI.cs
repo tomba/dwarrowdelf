@@ -152,7 +152,7 @@ namespace Dwarrowdelf.AI
 					Debug.Assert(assignment.IsAssigned == false);
 
 					assignment.Assign(this.Worker);
-					Debug.Assert(assignment.JobStatus == JobStatus.Ok);
+					Debug.Assert(assignment.Status == JobStatus.Ok);
 
 					if (oldAssignment != null)
 					{
@@ -206,7 +206,7 @@ namespace Dwarrowdelf.AI
 
 			JobStatusChangedOverride(job, status);
 
-			Debug.Assert(job.JobStatus != JobStatus.Ok);
+			Debug.Assert(job.Status != JobStatus.Ok);
 			ClearCurrentAssignment();
 		}
 

@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			var dir = DirectionExtensions.PlanarDirections[i];
 			var action = DoMove(dir);
 
-			progress = Jobs.JobStatus.Ok;
+			progress = JobStatus.Ok;
 			return action;
 		}
 
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			if (l < moveStrength && r.Next(4) < 2)
 			{
-				progress = Jobs.JobStatus.Ok;
+				progress = JobStatus.Ok;
 				return new WaitAction(r.Next(4) + 1);
 			}
 
@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			var action = DoMove(dir);
 
-			progress = Jobs.JobStatus.Ok;
+			progress = JobStatus.Ok;
 			return action;
 		}
 

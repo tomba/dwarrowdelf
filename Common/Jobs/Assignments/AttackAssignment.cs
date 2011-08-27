@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			if (m_target.IsDestructed)
 			{
-				progress = Jobs.JobStatus.Done;
+				progress = JobStatus.Done;
 				return null;
 			}
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 					if (res != JobStatus.Ok)
 					{
-						Debug.Assert(res != Jobs.JobStatus.Done);
+						Debug.Assert(res != JobStatus.Done);
 						progress = res;
 						return null;
 					}
@@ -85,20 +85,20 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected override JobStatus ActionProgressOverride()
 		{
 			if (this.CurrentAction is MoveAction && this.Worker.Location.IsAdjacentTo(m_target.Location, DirectionSet.Planar))
-				return Jobs.JobStatus.Abort;
+				return JobStatus.Abort;
 
-			return Jobs.JobStatus.Ok;
+			return JobStatus.Ok;
 		}
 
 		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
 		{
-			if (CheckProgress() == Jobs.JobStatus.Done)
-				return Jobs.JobStatus.Done;
+			if (CheckProgress() == JobStatus.Done)
+				return JobStatus.Done;
 
 			switch (actionStatus)
 			{
 				case ActionState.Done:
-					return Jobs.JobStatus.Ok;
+					return JobStatus.Ok;
 
 				case ActionState.Fail:
 					var res = PreparePath(this.Worker);
@@ -126,12 +126,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			var path = AStar.AStarFinder.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
 
 			if (path == null)
-				return Jobs.JobStatus.Abort;
+				return JobStatus.Abort;
 
 			m_pathDirs = new Queue<Direction>(path);
 
 			if (m_pathDirs.Count == 0)
-				return Jobs.JobStatus.Done;
+				return JobStatus.Done;
 
 			m_supposedLocation = worker.Location;
 

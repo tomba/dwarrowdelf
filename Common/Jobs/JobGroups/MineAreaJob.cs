@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				kvp.Value.IsPossible = CheckTile(kvp.Key);
 
 			if (m_map.Count == 0)
-				SetStatus(Jobs.JobStatus.Done);
+				SetStatus(JobStatus.Done);
 		}
 
 		bool CheckTile(IntPoint3D p)

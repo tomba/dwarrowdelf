@@ -260,7 +260,7 @@ namespace Dwarrowdelf.Client
 
 				GameData.Data.Jobs.Remove(job);
 				job.StatusChanged -= OnJobStatusChanged;
-				if (job.JobStatus == JobStatus.Ok)
+				if (job.Status == JobStatus.Ok)
 					job.Abort();
 			}
 		}

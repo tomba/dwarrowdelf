@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override void OnStatusChanged(JobStatus status)
 		{
-			Debug.Assert(status != Jobs.JobStatus.Ok);
+			Debug.Assert(status != JobStatus.Ok);
 
 			m_item.ReservedBy = null;
 
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		protected override void OnAssignmentDone()
 		{
 			if (m_state == 2)
-				SetStatus(Jobs.JobStatus.Done);
+				SetStatus(JobStatus.Done);
 			else
 				m_state = m_state + 1;
 		}

@@ -139,16 +139,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			var progress = CheckProgress(worker);
 
-			if (progress != Jobs.JobStatus.Ok)
+			if (progress != JobStatus.Ok)
 				return progress;
 
 			var path = GetPath(worker);
 
 			if (path == null)
-				return Jobs.JobStatus.Abort;
+				return JobStatus.Abort;
 
 			if (path.Count == 0)
-				return Jobs.JobStatus.Done;
+				return JobStatus.Done;
 
 			m_pathDirs = path;
 			m_supposedLocation = worker.Location;

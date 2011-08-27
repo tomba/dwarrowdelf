@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 			}
 			else if (m_state == 1)
 			{
-				SetStatus(Jobs.JobStatus.Done);
+				SetStatus(JobStatus.Done);
 			}
 			else
 			{
