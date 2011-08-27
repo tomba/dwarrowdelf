@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override Queue<Direction> GetPath(ILiving worker)
 		{
-			var res = AStar.AStar.Find(m_environment, worker.Location, DirectionSet.Exact, new AStar.AStarAreaTarget(m_dest));
+			var res = AStar.AStarFinder.Find(m_environment, worker.Location, DirectionSet.Exact, new AStar.AStarAreaTarget(m_dest));
 
 			if (res.Status != AStar.AStarStatus.Found)
 				return null;

@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 
 			IntPoint3D finalPos;
-			var path = AStar.AStar.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
+			var path = AStar.AStarFinder.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
 
 			if (path == null)
 				return Jobs.JobStatus.Abort;

@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected override Queue<Direction> GetPath(ILiving worker)
 		{
 			IntPoint3D finalPos;
-			var path = AStar.AStar.Find(m_environment, worker.Location, m_dest, this.Positioning, out finalPos);
+			var path = AStar.AStarFinder.Find(m_environment, worker.Location, m_dest, this.Positioning, out finalPos);
 
 			if (path == null)
 				return null;

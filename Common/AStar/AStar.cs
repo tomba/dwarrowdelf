@@ -35,7 +35,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	public static class AStar
+	public static class AStarFinder
 	{
 		class AStarState
 		{

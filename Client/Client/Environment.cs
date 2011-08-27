@@ -408,12 +408,12 @@ namespace Dwarrowdelf.Client
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		bool AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
 		{
 			return EnvironmentHelpers.CanEnter(this, p);
 		}
 
-		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
+		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, AStar.AStarNode> nodes)
 		{
 		}
 

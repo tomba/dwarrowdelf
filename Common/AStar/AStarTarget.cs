@@ -33,7 +33,7 @@ namespace Dwarrowdelf.AStar
 #if !asd
 			int hDiagonal = Math.Min(Math.Min(Math.Abs(v.X), Math.Abs(v.Y)), Math.Abs(v.Z));
 			int hStraight = v.ManhattanLength;
-			int h = AStar.COST_DIAGONAL * hDiagonal + AStar.COST_STRAIGHT * (hStraight - 2 * hDiagonal);
+			int h = AStarFinder.COST_DIAGONAL * hDiagonal + AStarFinder.COST_STRAIGHT * (hStraight - 2 * hDiagonal);
 #else
 			int h = v.ManhattanLength * AStar.COST_STRAIGHT;
 #endif

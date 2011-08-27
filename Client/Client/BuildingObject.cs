@@ -425,7 +425,7 @@ namespace Dwarrowdelf.Client
 					return false;
 			};
 
-			var res = AStar.AStar.FindNearest(this.Environment, this.Area.Center, func);
+			var res = AStar.AStarFinder.FindNearest(this.Environment, this.Area.Center, func);
 
 			return ob;
 		}

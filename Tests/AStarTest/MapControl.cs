@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Threading;
 using Dwarrowdelf.Client.TileControl;
+using Dwarrowdelf.AStar;
 
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
@@ -288,8 +289,8 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
-		Dwarrowdelf.AStar.AStarStatus m_astarStatus;
-		public Dwarrowdelf.AStar.AStarStatus Status
+		AStarStatus m_astarStatus;
+		public AStarStatus Status
 		{
 			get { return m_astarStatus; }
 			set { m_astarStatus = value; Notify("Status"); }
@@ -302,10 +303,10 @@ namespace AStarTest
 			set { m_pathLength = value; Notify("PathLength"); }
 		}
 
-		public event Action<Dwarrowdelf.AStar.AStarResult> AStarDone;
+		public event Action<AStarResult> AStarDone;
 		IEnumerable<IntPoint3D> m_path;
-		Dwarrowdelf.AStar.AStarResult m_result;
-		IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> m_nodes;
+		AStarResult m_result;
+		IDictionary<IntPoint3D, AStarNode> m_nodes;
 
 		void DoAStar(IntPoint3D src, IntPoint3D dst)
 		{
@@ -316,7 +317,7 @@ namespace AStarTest
 
 			if (!this.Step)
 			{
-				m_result = Dwarrowdelf.AStar.AStar.Find(this, src, this.SrcPos, dst, this.DstPos);
+				m_result = AStarFinder.Find(this, src, this.SrcPos, dst, this.DstPos);
 
 				sw.Stop();
 				stopBytes = GC.GetTotalMemory(true);
@@ -327,7 +328,7 @@ namespace AStarTest
 				this.Status = m_result.Status;
 				m_nodes = m_result.Nodes;
 
-				if (m_result.Status != Dwarrowdelf.AStar.AStarStatus.Found)
+				if (m_result.Status != AStarStatus.Found)
 				{
 					m_path = null;
 					this.PathLength = 0;
@@ -354,7 +355,7 @@ namespace AStarTest
 			{
 				m_contEvent.Reset();
 
-				Task.Factory.StartNew(() => m_result = Dwarrowdelf.AStar.AStar.Find(this, src, this.SrcPos, dst, this.DstPos))
+				Task.Factory.StartNew(() => m_result = AStarFinder.Find(this, src, this.SrcPos, dst, this.DstPos))
 					.ContinueWith((task) =>
 						{
 							sw.Stop();
@@ -366,7 +367,7 @@ namespace AStarTest
 							this.Status = m_result.Status;
 							m_nodes = m_result.Nodes;
 
-							if (m_result.Status != Dwarrowdelf.AStar.AStarStatus.Found)
+							if (m_result.Status != AStarStatus.Found)
 							{
 								m_path = null;
 								this.PathLength = 0;
@@ -407,7 +408,7 @@ namespace AStarTest
 			return m_map.Bounds.Contains(p) && !m_map.GetBlocked(p);
 		}
 
-		void Dwarrowdelf.AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
+		void IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
 		{
 			if (!this.Step)
 				return;

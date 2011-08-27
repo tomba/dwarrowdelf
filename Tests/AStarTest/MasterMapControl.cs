@@ -17,6 +17,7 @@ using System.ComponentModel;
 using Dwarrowdelf;
 using AStarTest;
 using System.Diagnostics;
+using Dwarrowdelf.AStar;
 
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
@@ -67,7 +68,7 @@ namespace AStarTest
 
 			m_map = new MapControl();
 			m_map.SomethingChanged += new Action(m_map_SomethingChanged);
-			m_map.AStarDone += new Action<Dwarrowdelf.AStar.AStarResult>(m_map_AStarDone);
+			m_map.AStarDone += new Action<AStarResult>(m_map_AStarDone);
 			grid.Children.Add((UIElement)m_map);
 
 			m_canvas = new Canvas();
@@ -102,7 +103,7 @@ namespace AStarTest
 			m_canvas.Children.Add(pl);
 		}
 
-		void m_map_AStarDone(Dwarrowdelf.AStar.AStarResult res)
+		void m_map_AStarDone(AStarResult res)
 		{
 			var l = res.LastNode.Loc;
 			var dirs = res.GetPathReverse();
