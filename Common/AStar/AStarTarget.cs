@@ -62,7 +62,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	public class AStarDelegateTarget : Dwarrowdelf.AStar.IAStarTarget
+	public class AStarDelegateTarget : IAStarTarget
 	{
 		Func<IntPoint3D, bool> m_func;
 
