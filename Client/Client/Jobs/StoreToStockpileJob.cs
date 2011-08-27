@@ -11,6 +11,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObject(UseRef = true)]
 	class StoreToStockpileJob : AssignmentGroup
 	{
 		enum State
@@ -23,8 +24,11 @@ namespace Dwarrowdelf.Client
 			Done,
 		}
 
+		[SaveGameProperty]
 		public ItemObject Item { get; private set; }
+		[SaveGameProperty]
 		Stockpile m_stockpile;
+		[SaveGameProperty]
 		State m_state;
 
 		public StoreToStockpileJob(Stockpile stockpile, ItemObject item)
@@ -34,6 +38,11 @@ namespace Dwarrowdelf.Client
 			this.Item.ReservedBy = this;
 			m_stockpile = stockpile;
 			m_state = State.MoveToItem;
+		}
+
+		protected StoreToStockpileJob(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override void OnStatusChanged(JobStatus status)

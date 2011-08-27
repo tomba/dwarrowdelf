@@ -38,8 +38,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class BaseGameObjectCollection : IdentifiableCollection<IBaseGameObject> { }
-	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<IBaseGameObject>
+	class BaseGameObjectCollection : IdentifiableCollection<BaseGameObject> { }
+	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<BaseGameObject>
 	{
 		public ReadOnlyBaseGameObjectCollection(BaseGameObjectCollection collection)
 			: base(collection)

@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 		{
 			Dictionary<ObjectID, object> objectData = new Dictionary<ObjectID, object>();
 
-			foreach (var l in GameData.Data.World.Objects.OfType<BaseGameObject>())
+			foreach (var l in GameData.Data.World.Objects)
 			{
 				var d = l.Save();
 				if (d != null)
@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var kvp in data.ObjectData)
 			{
-				var ob = GameData.Data.World.FindObject<BaseGameObject>(kvp.Key);
+				var ob = GameData.Data.World.FindObject(kvp.Key);
 				ob.Restore(kvp.Value);
 			}
 
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Client
 
 			public object ConvertToSerializable(object value)
 			{
-				var ob = (IBaseGameObject)value;
+				var ob = (BaseGameObject)value;
 				return ob.ObjectID;
 			}
 

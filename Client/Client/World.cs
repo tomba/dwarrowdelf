@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action TickStarting;
 
-		internal void AddObject(IBaseGameObject ob)
+		internal void AddObject(BaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client
 			m_objects.Add(ob);
 		}
 
-		internal void RemoveObject(IBaseGameObject ob)
+		internal void RemoveObject(BaseGameObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 		}
 
-		public IBaseGameObject FindObject(ObjectID objectID)
+		public BaseGameObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client
 				return null;
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : class, IBaseGameObject
+		public T FindObject<T>(ObjectID objectID) where T : BaseGameObject
 		{
 			var ob = FindObject(objectID);
 
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client
 			return (T)ob;
 		}
 
-		public IBaseGameObject GetObject(ObjectID objectID)
+		public BaseGameObject GetObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
 				throw new ArgumentException();
@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public T GetObject<T>(ObjectID objectID) where T : class, IBaseGameObject
+		public T GetObject<T>(ObjectID objectID) where T : BaseGameObject
 		{
 			return (T)GetObject(objectID);
 		}
