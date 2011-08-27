@@ -99,7 +99,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			// 8 bytes for Z, 12 bytes for X/Y
+			// 8 bits for Z, 12 bits for X/Y
 			return (this.Z << 24) | (this.Y << 12) | (this.X << 0);
 		}
 
