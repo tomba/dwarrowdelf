@@ -119,10 +119,14 @@ namespace Dwarrowdelf.Server
 			m_controllables.Add(living);
 			living.Destructed += OnControllableDestructed;
 
-			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Add, Controllables = new ObjectID[] { living.ObjectID } });
-
-			// Always send object data after the living has became a controllable
+			// Always send object data when the living has became a controllable
 			living.SendTo(this, ObjectVisibility.All);
+
+			Send(new Messages.ControllablesDataMessage()
+			{
+				Operation = ControllablesDataMessage.Op.Add,
+				Controllables = new ObjectID[] { living.ObjectID }
+			});
 
 			// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
 			if (living.Environment != null)
@@ -137,7 +141,32 @@ namespace Dwarrowdelf.Server
 			var ok = m_controllables.Remove(living);
 			Debug.Assert(ok);
 			living.Destructed -= OnControllableDestructed;
-			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Remove, Controllables = new ObjectID[] { living.ObjectID } });
+			Send(new Messages.ControllablesDataMessage()
+			{
+				Operation = ControllablesDataMessage.Op.Remove,
+				Controllables = new ObjectID[] { living.ObjectID }
+			});
+		}
+
+		void SendControllables()
+		{
+			foreach (var living in this.Controllables)
+				living.SendTo(this, ObjectVisibility.All);
+
+			Send(new Messages.ControllablesDataMessage()
+			{
+				Operation = ControllablesDataMessage.Op.Add,
+				Controllables = this.Controllables.Select(l => l.ObjectID).ToArray()
+			});
+
+			foreach (var living in this.Controllables)
+			{
+				if (living.Environment != null)
+				{
+					var tracker = GetVisionTrackerInternal(living.Environment);
+					tracker.HandleNewControllable(living);
+				}
+			}
 		}
 
 		public bool IsConnected { get { return m_connection != null; } }
@@ -396,7 +425,9 @@ namespace Dwarrowdelf.Server
 			if (m_hasControllablesBeenCreated)
 			{
 				Send(new Messages.EnterGameReplyBeginMessage());
-				Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Add, Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
+
+				SendControllables();
+
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
 
 				this.IsInGame = true;
