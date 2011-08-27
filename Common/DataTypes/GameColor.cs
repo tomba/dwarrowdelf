@@ -198,7 +198,6 @@ namespace Dwarrowdelf
 	{
 		public static readonly int NUMCOLORS;
 
-		readonly byte m_state;
 		readonly byte m_r;
 		readonly byte m_g;
 		readonly byte m_b;
@@ -348,17 +347,14 @@ namespace Dwarrowdelf
 			new GameColorRGB(154,205,50),
 		};
 
-		public static readonly GameColorRGB Empty = new GameColorRGB();
-
 		static GameColorRGB()
 		{
 			var array = Enum.GetNames(typeof(GameColor));
 			NUMCOLORS = array.Length;
 		}
 
-		public GameColorRGB(byte r, byte g, byte b)
+		GameColorRGB(byte r, byte g, byte b)
 		{
-			m_state = 1;
 			m_r = r;
 			m_g = g;
 			m_b = b;
@@ -367,8 +363,6 @@ namespace Dwarrowdelf
 		public byte R { get { return m_r; } }
 		public byte G { get { return m_g; } }
 		public byte B { get { return m_b; } }
-
-		public bool IsEmpty { get { return m_state == 0; } }
 
 		public override string ToString()
 		{
@@ -380,7 +374,7 @@ namespace Dwarrowdelf
 
 		public bool Equals(GameColorRGB other)
 		{
-			return ((other.m_r == this.m_r) && (other.m_g == this.m_g) && (other.m_b == this.m_b) && (other.m_state == this.m_state));
+			return ((other.m_r == this.m_r) && (other.m_g == this.m_g) && (other.m_b == this.m_b));
 		}
 
 		#endregion
