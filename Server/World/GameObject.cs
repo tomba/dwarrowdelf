@@ -83,10 +83,10 @@ namespace Dwarrowdelf.Server
 		{
 			base.SerializeTo(data, visibility);
 
-			SerializeToInternal((GameObjectData)data, visibility);
+			SerializeToInternal((LocatableGameObjectData)data, visibility);
 		}
 
-		void SerializeToInternal(GameObjectData data, ObjectVisibility visibility)
+		void SerializeToInternal(LocatableGameObjectData data, ObjectVisibility visibility)
 		{
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;

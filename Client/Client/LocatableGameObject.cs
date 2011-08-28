@@ -27,6 +27,19 @@ namespace Dwarrowdelf.Client
 			this.SymbolID = Client.SymbolID.Unknown;
 		}
 
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (LocatableGameObjectData)_data;
+
+			base.Deserialize(_data);
+
+			GameObject env = null;
+			if (data.Environment != ObjectID.NullObjectID)
+				env = this.World.FindObject<GameObject>(data.Environment);
+
+			MoveTo(env, data.Location);
+		}
+
 		public override void SetProperty(PropertyID propertyID, object value)
 		{
 			switch (propertyID)

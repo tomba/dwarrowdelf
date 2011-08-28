@@ -83,19 +83,6 @@ namespace Dwarrowdelf.Client
 			get { return this.Parent as IEnvironment; }
 		}
 
-		public override void Deserialize(BaseGameObjectData _data)
-		{
-			var data = (GameObjectData)_data;
-
-			base.Deserialize(_data);
-
-			GameObject env = null;
-			if (data.Environment != ObjectID.NullObjectID)
-				env = this.World.FindObject<GameObject>(data.Environment);
-
-			MoveTo(env, data.Location);
-		}
-
 		public override string ToString()
 		{
 			return String.Format("Object({0})", this.ObjectID);
