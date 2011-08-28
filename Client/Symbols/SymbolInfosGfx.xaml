@@ -3,9 +3,10 @@
            FontFamily="Arial" FontSize="64"  Outline="False" OutlineThickness="0.5"
            Drawings="SymbolDrawings.xaml">
 
-    <DrawingSymbol ID="Floor" DrawingName="Dirt_Block" />
+	<DrawingSymbol ID="Floor" DrawingName="Dirt_Block" />
+	<DrawingSymbol ID="DesignationMine" DrawingName="Dirt_Block" Opacity="0.75" />
 
-    <DrawingSymbol ID="Grass" DrawingName="Grass_Block" />
+	<DrawingSymbol ID="Grass" DrawingName="Grass_Block" />
     <DrawingSymbol ID="Wall" DrawingName="Stone_Block" />
 
     <DrawingSymbol ID="Water" DrawingName="Water_Block" />

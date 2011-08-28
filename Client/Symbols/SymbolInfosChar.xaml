@@ -10,6 +10,11 @@
 	<CharSymbol ID="Grass" Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
 	<CharSymbol ID="Wall" Outline="False" Char="▓" />
 
+	<CombinedSymbol ID="DesignationMine" Opacity="0.75" >
+		<CharSymbol Reverse="True" Outline="False" Char="▓" />
+		<CharSymbol X="20" Y="40" W="60" H="60" Char="●" />
+	</CombinedSymbol>
+
 	<CharSymbol ID="ValuableOre" Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
 	<CharSymbol ID="GemOre" Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />
 

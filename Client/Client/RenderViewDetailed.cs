@@ -406,7 +406,7 @@ namespace Dwarrowdelf.Client
 					return SymbolID.Undefined;
 
 				case DesignationType.Mine:
-					return SymbolID.Rock;
+					return SymbolID.DesignationMine;
 
 				case DesignationType.CreateStairs:
 					return SymbolID.StairsUp;
