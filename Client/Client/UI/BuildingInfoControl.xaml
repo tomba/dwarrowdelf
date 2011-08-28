@@ -25,7 +25,7 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<DockPanel>
-							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding BuildableItem.ItemInfo.Name, Converter={StaticResource converter}}" />
+							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding Name, Converter={StaticResource converter}}" />
 							<!--
 							<Label Content="R" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsRepeat}" Padding="4,0" />
 							<Label Content="S" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsSuspended}" Padding="4,0" />

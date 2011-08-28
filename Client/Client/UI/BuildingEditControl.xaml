@@ -46,7 +46,7 @@
 					<TextBlock Grid.Row="2">Area</TextBlock>
 					<TextBlock Text="{Binding Area}" Grid.Row="2" Grid.Column="1" />
 					<Button Content="Destruct" Grid.Column="2" Width="100" Click="DestructButtonClick"
-						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=FunctionalNeedsCleaning}" />
+						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}" />
 					<Button Content="Cancel destruct" Grid.Column="2" Grid.Row="2" Width="100" Click="CancelDestructButtonClick"
 						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Destructing}" />
 
@@ -67,7 +67,7 @@
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<DockPanel>
-								<TextBlock Name="buildOrderName" DockPanel.Dock="Left" Text="{Binding BuildableItem.ItemInfo.Name, Converter={StaticResource converter}}" />
+								<TextBlock Name="buildOrderName" DockPanel.Dock="Left" Text="{Binding Name, Converter={StaticResource converter}}" />
 								<ToggleButton DockPanel.Dock="Right" Content="R" IsChecked="{Binding IsRepeat}" Padding="4,0" HorizontalAlignment="Right" />
 								<ToggleButton DockPanel.Dock="Right" Content="S" IsChecked="{Binding IsSuspended}" Padding="4,0" HorizontalAlignment="Right" />
 							</DockPanel>

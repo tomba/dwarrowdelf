@@ -34,6 +34,13 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
 
+
+		IAssignment m_destructJob;
+
+		BuildOrder m_currentBuildOrder;
+		IJobGroup m_currentJob;
+
+
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -93,6 +100,58 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
+		[Serializable]
+		class BuildingSave
+		{
+			public BuildOrder[] BuildOrders;
+
+			public IAssignment DestructJob;
+			public BuildOrder CurrentBuildOrder;
+			public IJobGroup CurrentJob;
+
+			public BuildingState BuildingState;
+		}
+
+		public override object Save()
+		{
+			return new BuildingSave()
+			{
+				BuildOrders = m_buildOrderQueue.ToArray(),
+
+				DestructJob = m_destructJob,
+				CurrentBuildOrder = m_currentBuildOrder,
+				CurrentJob = m_currentJob,
+
+				BuildingState = m_buildingState,
+			};
+		}
+
+		public override void Restore(object data)
+		{
+			var save = (BuildingSave)data;
+
+			m_buildOrderQueue = new ObservableCollection<BuildOrder>(save.BuildOrders);
+			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
+
+			m_destructJob = save.DestructJob;
+			m_currentBuildOrder = save.CurrentBuildOrder;
+			m_currentJob = save.CurrentJob;
+
+			m_buildingState = save.BuildingState;
+
+			if (m_currentJob != null)
+			{
+				m_currentJob.StatusChanged += OnJobStatusChanged;
+				GameData.Data.Jobs.Add(m_currentJob);
+			}
+
+			if (m_destructJob != null)
+			{
+				GameData.Data.Jobs.Add(m_destructJob);
+				m_destructJob.StatusChanged += OnDestructStatusChanged;
+			}
+		}
+
 		public bool Contains(IntPoint3D point)
 		{
 			return this.Area.Contains(point);
@@ -137,13 +196,6 @@ namespace Dwarrowdelf.Client
 
 			AddBuildOrder(bo);
 		}
-
-		IAssignment m_destructJob;
-
-		CleanAreaJob m_cleanJob;
-
-		BuildOrder m_currentBuildOrder;
-		IJobGroup m_currentJob;
 
 		BuildOrder CurrentBuildOrder
 		{
@@ -269,16 +321,6 @@ namespace Dwarrowdelf.Client
 
 			switch (this.BuildingState)
 			{
-				case Client.BuildingState.NeedsCleaning:
-					if (m_cleanJob == null)
-					{
-						m_cleanJob = new CleanAreaJob(null, this.Environment, this.Area);
-						GameData.Data.Jobs.Add(m_cleanJob);
-						m_cleanJob.StatusChanged += OnCleanStatusChanged;
-					}
-
-					return m_cleanJob.FindAssignment(living);
-
 				case Client.BuildingState.Functional:
 					if (this.CurrentBuildOrder == null)
 						return null;
@@ -323,15 +365,6 @@ namespace Dwarrowdelf.Client
 			m_destructJob = null;
 		}
 
-		void OnCleanStatusChanged(IJob job, JobStatus status)
-		{
-			// We don't care about the status. If the job failed, it will be retried automatically.
-
-			m_cleanJob.StatusChanged -= OnCleanStatusChanged;
-			GameData.Data.Jobs.Remove(m_cleanJob);
-			m_cleanJob = null;
-		}
-
 		IJobGroup CreateJob(BuildOrder order)
 		{
 			var ok = FindMaterials(order);
@@ -339,7 +372,7 @@ namespace Dwarrowdelf.Client
 			if (!ok)
 				return null;
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, order.SourceItems, order.BuildableItem.ItemID);
+			var job = new Jobs.JobGroups.BuildItemJob(this, order.SourceItems, order.BuildableItemID);
 			job.StatusChanged += OnJobStatusChanged;
 			GameData.Data.Jobs.Add(job);
 			return job;
@@ -378,13 +411,15 @@ namespace Dwarrowdelf.Client
 
 		bool FindMaterials(BuildOrder order)
 		{
-			var numItems = order.BuildableItem.BuildMaterials.Count;
+			var buildableItem = this.BuildingInfo.FindBuildableItem(order.BuildableItemID);
+
+			var numItems = buildableItem.BuildMaterials.Count;
 
 			int numFound = 0;
 
-			for (int i = 0; i < order.BuildableItem.BuildMaterials.Count; ++i)
+			for (int i = 0; i < buildableItem.BuildMaterials.Count; ++i)
 			{
-				var ob = FindItem(order.BuildableItem.BuildMaterials[i]);
+				var ob = FindItem(buildableItem.BuildMaterials[i]);
 
 				if (ob == null)
 					break;
@@ -435,6 +470,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
+	[SaveGameObject]
 	class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;
@@ -443,15 +479,27 @@ namespace Dwarrowdelf.Client
 
 		public BuildOrder(BuildableItem buildableItem)
 		{
-			this.BuildableItem = buildableItem;
+			this.BuildableItemID = buildableItem.ItemID;
+			this.Name = buildableItem.ItemInfo.Name;
 			this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
 		}
 
-		public BuildableItem BuildableItem { get; private set; }
+		protected BuildOrder(SaveGameContext context)
+		{
+		}
+
+		[SaveGameProperty]
+		public ItemID BuildableItemID { get; private set; }
+		[SaveGameProperty]
+		public string Name { get; private set; } // XXX just for UI
+		[SaveGameProperty]
 		public ItemObject[] SourceItems { get; private set; }
 
+		[SaveGameProperty]
 		public bool IsRepeat { get { return m_isRepeat; } set { if (m_isRepeat == value) return; m_isRepeat = value; Notify("IsRepeat"); } }
+		[SaveGameProperty]
 		public bool IsSuspended { get { return m_isSuspended; } set { if (m_isSuspended == value) return; m_isSuspended = value; Notify("IsSuspended"); } }
+		[SaveGameProperty]
 		public bool IsUnderWork { get { return m_isUnderWork; } set { if (m_isUnderWork == value) return; m_isUnderWork = value; Notify("IsUnderWork"); } }
 
 		#region INotifyPropertyChanged Members
@@ -471,10 +519,7 @@ namespace Dwarrowdelf.Client
 	enum BuildingState
 	{
 		Undefined = 0,
-		// XXX cleaning is currently not supported. remove?
-		NeedsCleaning = 1 << 0,
 		Functional = 1 << 1,
 		Destructing = 1 << 2,
-		FunctionalNeedsCleaning = Functional | NeedsCleaning,
 	}
 }
