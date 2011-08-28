@@ -20,8 +20,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		int m_state;
 
-		public BuildItemJob(IBuildingObject workplace, IEnumerable<IItemObject> sourceObjects, ItemID dstItemID)
-			: base(null)
+		public BuildItemJob(IJobObserver parent, IBuildingObject workplace, IEnumerable<IItemObject> sourceObjects, ItemID dstItemID)
+			: base(parent)
 		{
 			m_workplace = workplace;
 			m_sourceObjects = sourceObjects.ToArray();

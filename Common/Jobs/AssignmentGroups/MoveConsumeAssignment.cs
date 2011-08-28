@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveConsumeAssignment(IJob parent, IItemObject item)
+		public MoveConsumeAssignment(IJobObserver parent, IItemObject item)
 			: base(parent)
 		{
 			m_item = item;

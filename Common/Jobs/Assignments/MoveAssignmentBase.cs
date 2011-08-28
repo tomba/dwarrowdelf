@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			public Type OutputType { get { return typeof(Direction[]); } }
 		}
 
-		public MoveAssignmentBase(IJob parent, IEnvironment environment, DirectionSet positioning)
+		public MoveAssignmentBase(IJobObserver parent, IEnvironment environment, DirectionSet positioning)
 			: base(parent)
 		{
 			m_environment = environment;

@@ -9,13 +9,13 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.JobGroups
 {
 	[SaveGameObject(UseRef = true)]
-	public abstract class JobGroup : IJobGroup
+	public abstract class JobGroup : IJobGroup, IJobObserver
 	{
 		[SaveGameProperty]
 		ObservableCollection<IJob> m_subJobs;
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
-		protected JobGroup(IJob parent)
+		protected JobGroup(IJobObserver parent)
 		{
 			this.Parent = parent;
 
@@ -28,21 +28,18 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		protected JobGroup(SaveGameContext ctx)
 		{
 			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
-
-			foreach (var job in m_subJobs)
-				job.StatusChanged += OnSubJobStatusChangedInternal;
 		}
 
 		protected void AddSubJob(IJob job)
 		{
 			m_subJobs.Add(job);
-			job.StatusChanged += OnSubJobStatusChangedInternal;
 
 			if (job.Status != JobStatus.Ok)
 			{
+				throw new Exception();
 				// XXX I think job should be always Ok when it is constructed. Init() method for jobs?
-				OnSubJobStatusChangedInternal(job, job.Status);
-				return;
+				//OnObserverJobStatusChanged(job, job.Status);
+				//return;
 			}
 		}
 
@@ -56,7 +53,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			Debug.Assert(m_subJobs.Contains(job));
 
-			job.StatusChanged -= OnSubJobStatusChangedInternal;
 			m_subJobs.Remove(job);
 		}
 
@@ -64,8 +60,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			foreach (var job in m_subJobs)
 			{
-				job.StatusChanged -= OnSubJobStatusChangedInternal;
-
 				if (job.Status == JobStatus.Ok)
 					job.Abort();
 			}
@@ -74,7 +68,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		}
 
 		[SaveGameProperty]
-		public IJob Parent { get; private set; }
+		public IJobObserver Parent { get; private set; }
 		[SaveGameProperty]
 		public JobStatus Status { get; private set; }
 
@@ -116,7 +110,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			return this.SubJobs.Where(j => j.Status == JobStatus.Ok);
 		}
 
-		void OnSubJobStatusChangedInternal(IJob job, JobStatus status)
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			switch (status)
 			{
@@ -177,6 +171,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			}
 
 			OnStatusChanged(status);
+
+			if (this.Parent != null)
+				this.Parent.OnObservableJobStatusChanged(this, status);
 
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);

@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 	{
 		readonly IntCuboid m_dest;
 
-		public MoveToAreaAssignment(IJob parent, IEnvironment environment, IntCuboid destination, DirectionSet positioning)
+		public MoveToAreaAssignment(IJobObserver parent, IEnvironment environment, IntCuboid destination, DirectionSet positioning)
 			: base(parent, environment, positioning)
 		{
 			m_dest = destination;

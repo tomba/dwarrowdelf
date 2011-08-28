@@ -12,7 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
-	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableElement, IJobSource
+	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public Environment Environment { get; set; }
@@ -140,16 +140,10 @@ namespace Dwarrowdelf.Client
 			m_buildingState = save.BuildingState;
 
 			if (m_currentJob != null)
-			{
-				m_currentJob.StatusChanged += OnJobStatusChanged;
 				GameData.Data.Jobs.Add(m_currentJob);
-			}
 
 			if (m_destructJob != null)
-			{
 				GameData.Data.Jobs.Add(m_destructJob);
-				m_destructJob.StatusChanged += OnDestructStatusChanged;
-			}
 		}
 
 		public bool Contains(IntPoint3D point)
@@ -309,7 +303,6 @@ namespace Dwarrowdelf.Client
 				m_currentJob = null;
 
 				GameData.Data.Jobs.Remove(job);
-				job.StatusChanged -= OnJobStatusChanged;
 				if (job.Status == JobStatus.Ok)
 					job.Abort();
 			}
@@ -348,21 +341,11 @@ namespace Dwarrowdelf.Client
 
 					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, this);
 					GameData.Data.Jobs.Add(m_destructJob);
-					m_destructJob.StatusChanged += OnDestructStatusChanged;
 					return m_destructJob;
 
 				default:
 					throw new Exception();
 			}
-		}
-
-		void OnDestructStatusChanged(IJob job, JobStatus status)
-		{
-			// We don't care about the status. If the job failed, it will be retried automatically.
-
-			m_destructJob.StatusChanged -= OnDestructStatusChanged;
-			GameData.Data.Jobs.Remove(m_destructJob);
-			m_destructJob = null;
 		}
 
 		IJobGroup CreateJob(BuildOrder order)
@@ -372,10 +355,28 @@ namespace Dwarrowdelf.Client
 			if (!ok)
 				return null;
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, order.SourceItems, order.BuildableItemID);
-			job.StatusChanged += OnJobStatusChanged;
+			var job = new Jobs.JobGroups.BuildItemJob(this, this, order.SourceItems, order.BuildableItemID);
 			GameData.Data.Jobs.Add(job);
 			return job;
+		}
+
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
+		{
+			switch (this.BuildingState)
+			{
+				case Client.BuildingState.Functional:
+					Debug.Assert(job is Jobs.JobGroups.BuildItemJob);
+					OnJobStatusChanged(job, status);
+					break;
+
+				case Client.BuildingState.Destructing:
+					Debug.Assert(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment);
+					OnDestructStatusChanged(job, status);
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
@@ -407,6 +408,14 @@ namespace Dwarrowdelf.Client
 				RemoveBuildOrder(this.CurrentBuildOrder);
 			else
 				MoveToNextBuildOrder();
+		}
+
+		void OnDestructStatusChanged(IJob job, JobStatus status)
+		{
+			// We don't care about the status. If the job failed, it will be retried automatically.
+
+			GameData.Data.Jobs.Remove(m_destructJob);
+			m_destructJob = null;
 		}
 
 		bool FindMaterials(BuildOrder order)

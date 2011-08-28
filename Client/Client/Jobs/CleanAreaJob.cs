@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 
 		Dictionary<IntPoint3D, IJob> m_map;
 
-		public CleanAreaJob(IJob parent, Environment env, IntRectZ area)
+		public CleanAreaJob(IJobObserver parent, Environment env, IntRectZ area)
 			: base(parent)
 		{
 			m_environment = env;

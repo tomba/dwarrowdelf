@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 		BuildingID m_buildingID;
 		int m_state;
 
-		public ConstructBuildingJob(IJob parent, Environment env, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingJob(IJobObserver parent, Environment env, IntRectZ area, BuildingID buildingID)
 			: base(parent)
 		{
 			m_environment = env;

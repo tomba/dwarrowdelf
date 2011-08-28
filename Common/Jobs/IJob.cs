@@ -27,9 +27,14 @@ namespace Dwarrowdelf.Jobs
 		Done,
 	}
 
+	public interface IJobObserver
+	{
+		void OnObservableJobStatusChanged(IJob job, JobStatus status);
+	}
+
 	public interface IJob : INotifyPropertyChanged
 	{
-		IJob Parent { get; }
+		IJobObserver Parent { get; }
 		JobStatus Status { get; }
 		void Abort();
 

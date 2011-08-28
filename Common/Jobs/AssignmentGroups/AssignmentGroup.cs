@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	public abstract class AssignmentGroup : IAssignment
+	public abstract class AssignmentGroup : IAssignment, IJobObserver
 	{
 		[System.Diagnostics.Conditional("DEBUG")]
 		void D(string format, params object[] args)
@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			//Debug.Print("[AI O] [{0}]: {1}", this.Worker, String.Format(format, args));
 		}
 
-		protected AssignmentGroup(IJob parent)
+		protected AssignmentGroup(IJobObserver parent)
 		{
 			this.Parent = parent;
 			this.Status = JobStatus.Ok;
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		}
 
 		[SaveGameProperty]
-		public IJob Parent { get; private set; }
+		public IJobObserver Parent { get; private set; }
 		[SaveGameProperty]
 		public JobStatus Status { get; private set; }
 
@@ -66,19 +66,12 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 				if (m_assignment != null)
 				{
-					m_assignment.StatusChanged -= OnCurrentAssignmentStatusChanged;
-
 					if (m_assignment.Status == JobStatus.Ok)
 						m_assignment.Abort();
 				}
 
 				m_assignment = value;
 				Notify("CurrentAssignment");
-
-				if (m_assignment != null)
-				{
-					m_assignment.StatusChanged += OnCurrentAssignmentStatusChanged;
-				}
 			}
 		}
 
@@ -205,6 +198,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			OnStatusChanged(status);
 
+			if (this.Parent != null)
+				this.Parent.OnObservableJobStatusChanged(this, status);
+
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
 
@@ -215,7 +211,8 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public event Action<IJob, JobStatus> StatusChanged;
 
-		void OnCurrentAssignmentStatusChanged(IJob job, JobStatus status)
+
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			Debug.Assert(job == this.CurrentAssignment);
 

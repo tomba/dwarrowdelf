@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly IItemObject m_item;
 
-		public DropItemAssignment(IJob parent, IItemObject item)
+		public DropItemAssignment(IJobObserver parent, IItemObject item)
 			: base(parent)
 		{
 			m_item = item;

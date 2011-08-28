@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject]
-	class Designation : IJobSource
+	class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public Environment Environment { get; private set; }
@@ -70,10 +70,7 @@ namespace Dwarrowdelf.Client
 			{
 				var job = kvp.Value.Job;
 				if (job != null)
-				{
 					GameData.Data.Jobs.Add(job);
-					job.StatusChanged += OnJobStatusChanged;
-				}
 			}
 		}
 
@@ -188,13 +185,13 @@ namespace Dwarrowdelf.Client
 						else
 							mat = MineActionType.Stairs;
 
-						job = new Jobs.AssignmentGroups.MoveMineAssignment(null, this.Environment, p, mat);
+						job = new Jobs.AssignmentGroups.MoveMineAssignment(this, this.Environment, p, mat);
 
 						break;
 
 					case DesignationType.FellTree:
 
-						job = new Jobs.AssignmentGroups.MoveFellTreeAssignment(null, this.Environment, p);
+						job = new Jobs.AssignmentGroups.MoveFellTreeAssignment(this, this.Environment, p);
 						break;
 
 					default:
@@ -202,7 +199,6 @@ namespace Dwarrowdelf.Client
 				}
 
 				GameData.Data.Jobs.Add(job);
-				job.StatusChanged += OnJobStatusChanged;
 				dt.Job = job;
 
 				return job;
@@ -211,7 +207,7 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
-		void OnJobStatusChanged(IJob job, JobStatus status)
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			switch (status)
 			{
@@ -255,7 +251,6 @@ namespace Dwarrowdelf.Client
 			if (job != null)
 			{
 				GameData.Data.Jobs.Remove(job);
-				job.StatusChanged -= OnJobStatusChanged;
 				if (job.Status == JobStatus.Ok)
 					job.Abort();
 

@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 {
 	public abstract class Assignment : IAssignment
 	{
-		protected Assignment(IJob parent)
+		protected Assignment(IJobObserver parent)
 		{
 			this.Parent = parent;
 			this.Status = JobStatus.Ok;
@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		}
 
 		[SaveGameProperty]
-		public IJob Parent { get; private set; }
+		public IJobObserver Parent { get; private set; }
 
 		public bool IsAssigned
 		{
@@ -149,7 +149,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 			this.CurrentAction = null;
 
 			this.Status = status;
+
 			OnStateChanged(status);
+
+			if (this.Parent != null)
+				this.Parent.OnObservableJobStatusChanged(this, status);
+
 			if (this.StatusChanged != null)
 				StatusChanged(this, status);
 			Notify("JobStatus");

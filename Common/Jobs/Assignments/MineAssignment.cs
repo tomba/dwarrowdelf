@@ -17,8 +17,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly IEnvironment m_environment;
 
-		public MineAssignment(IJob job, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
-			: base(job)
+		public MineAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D location, MineActionType mineActionType)
+			: base(parent)
 		{
 			m_environment = environment;
 			m_location = location;

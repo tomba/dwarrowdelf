@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
 
-		public MoveConstructBuildingAssignment(IJob parent, IEnvironment environment, IntRectZ area, BuildingID buildingID)
+		public MoveConstructBuildingAssignment(IJobObserver parent, IEnvironment environment, IntRectZ area, BuildingID buildingID)
 			: base(parent, environment, area.Center)
 		{
 			m_area = area;

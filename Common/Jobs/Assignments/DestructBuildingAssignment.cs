@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly IBuildingObject m_building;
 
-		public DestructBuildingAssignment(IJob parent, IBuildingObject building)
+		public DestructBuildingAssignment(IJobObserver parent, IBuildingObject building)
 			: base(parent)
 		{
 			m_building = building;

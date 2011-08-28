@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 
 	// XXX should be configurable for classes, subclasses and certain items...
 
-	class Stockpile : IDrawableElement, IJobSource
+	class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
 		public Environment Environment { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
@@ -60,10 +60,7 @@ namespace Dwarrowdelf.Client
 			this.Environment.World.JobManager.RemoveJobSource(this);
 
 			foreach (var job in m_jobs)
-			{
-				job.StatusChanged -= OnJobStatusChanged;
 				GameData.Data.Jobs.Remove(job);
-			}
 
 			m_jobs = null;
 		}
@@ -78,9 +75,8 @@ namespace Dwarrowdelf.Client
 
 			foreach (var ob in obs)
 			{
-				var job = new StoreToStockpileJob(this, ob);
+				var job = new StoreToStockpileJob(this, this, ob);
 
-				job.StatusChanged += OnJobStatusChanged;
 				m_jobs.Add(job);
 
 				GameData.Data.Jobs.Add(job);
@@ -91,14 +87,13 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
-		void OnJobStatusChanged(IJob job, JobStatus status)
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			var j = (StoreToStockpileJob)job;
 
 			if (status == JobStatus.Ok)
 				throw new Exception();
 
-			job.StatusChanged -= OnJobStatusChanged;
 			m_jobs.Remove(j);
 
 			GameData.Data.Jobs.Remove(j);

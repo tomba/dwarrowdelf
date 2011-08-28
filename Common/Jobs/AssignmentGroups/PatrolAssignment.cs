@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IntPoint3D[] m_waypoints;
 
-		public PatrolAssignment(IJob parent, IEnvironment environment, IntPoint3D[] waypoints)
+		public PatrolAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D[] waypoints)
 			: base(parent)
 		{
 			m_environment = environment;

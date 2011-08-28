@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty("Dir")]
 		Direction m_dir;
 
-		public RandomMoveAssignment(IJob parent)
+		public RandomMoveAssignment(IJobObserver parent)
 			: base(parent)
 		{
 		}

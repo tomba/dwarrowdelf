@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly ItemID m_dstItemID;
 
-		public BuildItemAssignment(IJob parent, IItemObject[] items, ItemID dstItemID)
+		public BuildItemAssignment(IJobObserver parent, IItemObject[] items, ItemID dstItemID)
 			: base(parent)
 		{
 			m_items = items;

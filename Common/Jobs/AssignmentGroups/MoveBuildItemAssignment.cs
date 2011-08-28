@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		ItemID m_dstItemID;
 
-		public MoveBuildItemAssignment(IJob parent, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
+		public MoveBuildItemAssignment(IJobObserver parent, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
 			: base(parent, workplace.Environment, workplace.Area.Center)
 		{
 			m_workplace = workplace;

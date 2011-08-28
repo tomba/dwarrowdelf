@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	[SaveGameObject(UseRef = true)]
 	public class MoveFellTreeAssignment : MoveBaseAssignment
 	{
-		public MoveFellTreeAssignment(IJob parent, IEnvironment environment, IntPoint3D location)
+		public MoveFellTreeAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D location)
 			: base(parent, environment, location)
 		{
 		}

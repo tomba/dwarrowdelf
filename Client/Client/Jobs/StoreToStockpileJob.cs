@@ -31,8 +31,8 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		State m_state;
 
-		public StoreToStockpileJob(Stockpile stockpile, ItemObject item)
-			: base(null)
+		public StoreToStockpileJob(IJobObserver parent, Stockpile stockpile, ItemObject item)
+			: base(parent)
 		{
 			this.Item = item;
 			this.Item.ReservedBy = this;

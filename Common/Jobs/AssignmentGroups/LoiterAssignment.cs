@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IntPoint3D[] m_corners;
 
-		public LoiterAssignment(IJob parent, IEnvironment environment)
+		public LoiterAssignment(IJobObserver parent, IEnvironment environment)
 			: base(parent)
 		{
 			m_environment = environment;

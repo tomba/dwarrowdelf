@@ -6,7 +6,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	class ConstructionSite : IJobSource, IDrawableElement
+	class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
 	{
 		public BuildingID BuildingID;
 		public Environment Environment { get; private set; }
@@ -44,20 +44,18 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_job == null)
 			{
-				m_job = new ConstructBuildingJob(null, this.Environment, this.Area, this.BuildingID);
+				m_job = new ConstructBuildingJob(this, this.Environment, this.Area, this.BuildingID);
 				GameData.Data.Jobs.Add(m_job);
-				m_job.StatusChanged += OnJobStatusChanged;
 			}
 
 			return m_job.FindAssignment(living);
 		}
 
-		void OnJobStatusChanged(IJob job, JobStatus status)
+		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			if (status != JobStatus.Done)
 				throw new Exception();
 
-			m_job.StatusChanged -= OnJobStatusChanged;
 			GameData.Data.Jobs.Remove(m_job);
 			m_job = null;
 
