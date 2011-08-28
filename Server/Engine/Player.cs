@@ -184,12 +184,10 @@ namespace Dwarrowdelf.Server
 				if (m_connection != null)
 				{
 					m_world.WorldChanged += HandleWorldChange;
-					m_ipRunner = new IPRunner(m_world, Send);
 				}
 				else
 				{
 					m_world.WorldChanged -= HandleWorldChange;
-					m_ipRunner = null;
 
 					this.IsInGame = false;
 				}
@@ -535,6 +533,9 @@ namespace Dwarrowdelf.Server
 		void ReceiveMessage(IPCommandMessage msg)
 		{
 			trace.TraceInformation("IronPythonCommand");
+
+			if (m_ipRunner == null)
+				m_ipRunner = new IPRunner(m_world, Send);
 
 			m_ipRunner.Exec(msg.Text);
 		}
