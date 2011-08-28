@@ -52,6 +52,7 @@ namespace Dwarrowdelf.Client.Symbols
 		public int H { get; set; }
 		public int Rotate { get; set; }
 		public bool Opaque { get; set; }
+		public double? Opacity { get; set; }
 	}
 
 	[ContentProperty("Char")]

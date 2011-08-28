@@ -155,7 +155,8 @@ namespace Dwarrowdelf.Client.Symbols
 				throw new Exception();
 			}
 
-			drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.W, symbol.H), symbol.Rotate, !symbol.Opaque);
+			drawing = NormalizeDrawing(drawing, new Point(symbol.X, symbol.Y), new Size(symbol.W, symbol.H), symbol.Rotate,
+				!symbol.Opaque, symbol.Opacity);
 
 			drawing.Freeze();
 			return drawing;
@@ -197,7 +198,7 @@ namespace Dwarrowdelf.Client.Symbols
 			return dGroup;
 		}
 
-		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle, bool bgTransparent)
+		static Drawing NormalizeDrawing(Drawing drawing, Point location, Size size, double angle, bool bgTransparent, double? opacity)
 		{
 			var transform = CreateNormalizeTransform(drawing.Bounds, location, size, angle);
 
@@ -208,7 +209,13 @@ namespace Dwarrowdelf.Client.Symbols
 
 				dc.PushTransform(transform);
 
+				if (opacity.HasValue)
+					dc.PushOpacity(opacity.Value);
+
 				dc.DrawDrawing(drawing);
+
+				if (opacity.HasValue)
+					dc.Pop();
 
 				dc.Pop();
 			}
