@@ -181,23 +181,14 @@ namespace Dwarrowdelf.Messages
 	{
 		public BaseGameObjectData ObjectData { get; set; }
 
+		public ObjectDataMessage(BaseGameObjectData objectData)
+		{
+			this.ObjectData = objectData;
+		}
+
 		public override string ToString()
 		{
 			return String.Format("ObjectDataMessage {0}", ObjectData.ObjectID);
-		}
-	}
-
-	[Serializable]
-	public class MapDataMessage : StateMessage
-	{
-		public ObjectID Environment { get; set; }
-		public VisibilityMode VisibilityMode { get; set; }
-		public IntCuboid Bounds { get; set; }
-		public IntPoint3D HomeLocation { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("MapDataMessage {0}, bounds {1}", this.Environment, this.Bounds);
 		}
 	}
 

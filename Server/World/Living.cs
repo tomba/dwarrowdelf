@@ -293,7 +293,7 @@ namespace Dwarrowdelf.Server
 
 			SerializeTo(data, visibility);
 
-			player.Send(new Messages.ObjectDataMessage() { ObjectData = data });
+			player.Send(new Messages.ObjectDataMessage(data));
 
 			base.SendTo(player, visibility);
 		}

@@ -44,8 +44,11 @@ namespace Dwarrowdelf.Client
 
 		public virtual void Deserialize(BaseGameObjectData data)
 		{
-			foreach (var tuple in data.Properties)
-				SetProperty(tuple.Item1, tuple.Item2);
+			if (data.Properties != null)
+			{
+				foreach (var tuple in data.Properties)
+					SetProperty(tuple.Item1, tuple.Item2);
+			}
 		}
 
 		public virtual object Save() { return null; }

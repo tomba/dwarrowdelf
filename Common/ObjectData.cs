@@ -19,6 +19,14 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public class MapData : GameObjectData
+	{
+		public VisibilityMode VisibilityMode { get; set; }
+		public IntCuboid Bounds { get; set; }
+		public IntPoint3D HomeLocation { get; set; }
+	}
+
+	[Serializable]
 	public abstract class LocatableGameObjectData : GameObjectData
 	{
 		public IntPoint3D Location { get; set; }

@@ -536,13 +536,13 @@ namespace Dwarrowdelf.Server
 		{
 			var visionTracker = player.GetVisionTracker(this);
 
-			player.Send(new Messages.MapDataMessage()
+			player.Send(new Messages.ObjectDataMessage(new MapData()
 			{
-				Environment = this.ObjectID,
+				ObjectID = this.ObjectID,
 				VisibilityMode = this.VisibilityMode,
 				Bounds = this.Bounds,
 				HomeLocation = this.HomeLocation,
-			});
+			}));
 
 			var bounds = this.Bounds;
 

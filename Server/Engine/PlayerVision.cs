@@ -205,14 +205,12 @@ namespace Dwarrowdelf.Server
 		{
 			m_environment.World.WorkEnded += HandleEndOfWork;
 
-			var msg = new Dwarrowdelf.Messages.MapDataMessage()
+			m_player.Send(new Messages.ObjectDataMessage(new MapData()
 			{
-				Environment = m_environment.ObjectID,
-				HomeLocation = m_environment.HomeLocation,
+				ObjectID = m_environment.ObjectID,
 				VisibilityMode = m_environment.VisibilityMode,
-			};
-
-			m_player.Send(msg);
+				HomeLocation = m_environment.HomeLocation,
+			}));
 		}
 
 		public override void Stop()

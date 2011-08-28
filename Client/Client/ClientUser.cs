@@ -149,20 +149,6 @@ namespace Dwarrowdelf.Client
 			ob.Deserialize(data);
 		}
 
-		void HandleMessage(MapDataMessage msg)
-		{
-			var env = m_world.GetObject<Environment>(msg.Environment);
-
-			if (!msg.Bounds.IsNull)
-				env.Bounds = msg.Bounds;
-			env.HomeLocation = msg.HomeLocation;
-			env.VisibilityMode = msg.VisibilityMode;
-
-			// XXX
-			if (App.MainWindow.map.Environment == null)
-				App.MainWindow.map.Environment = env;
-		}
-
 		void HandleMessage(MapDataTerrainsMessage msg)
 		{
 			var env = m_world.FindObject<Environment>(msg.Environment);

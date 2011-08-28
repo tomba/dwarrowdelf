@@ -25,14 +25,14 @@ namespace Dwarrowdelf.Client
 
 		public uint Version { get; private set; }
 
-		public VisibilityMode VisibilityMode { get; set; }
+		public VisibilityMode VisibilityMode { get; private set; }
 
-		public IntCuboid Bounds { get; set; }
+		public IntCuboid Bounds { get; private set; }
 
 		ObservableCollection<IDrawableElement> m_mapElements;
 		public ReadOnlyObservableCollection<IDrawableElement> MapElements { get; private set; }
 
-		public IntPoint3D HomeLocation { get; set; }
+		public IntPoint3D HomeLocation { get; private set; }
 
 		public Designation Designations { get; private set; }
 
@@ -51,6 +51,21 @@ namespace Dwarrowdelf.Client
 			this.Designations = new Designation(this);
 
 			this.World.AddEnvironment(this);
+		}
+
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (MapData)_data;
+
+			base.Deserialize(_data);
+
+			if (!data.Bounds.IsNull)
+				this.Bounds = data.Bounds;
+			this.HomeLocation = data.HomeLocation;
+			this.VisibilityMode = data.VisibilityMode;
+
+			if (App.MainWindow.map.Environment == null)
+				App.MainWindow.map.Environment = this;
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
