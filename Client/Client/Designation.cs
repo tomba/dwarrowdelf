@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case DesignationType.CreateStairs:
-					locations = area.Range().Where(p => (this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall ) || this.Environment.GetHidden(p));
+					locations = area.Range().Where(p => (this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall) || this.Environment.GetHidden(p));
 					break;
 
 				case DesignationType.FellTree:
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			// XXX
-			GameData.Data.MainWindow.MapControl.InvalidateTiles();
+			GameData.Data.MainWindow.MapControl.InvalidateTileData();
 		}
 
 		public void RemoveArea(IntCuboid area)
@@ -239,7 +239,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			// XXX
-			GameData.Data.MainWindow.MapControl.InvalidateTiles();
+			GameData.Data.MainWindow.MapControl.InvalidateTileData();
 		}
 
 		void RemoveJob(IntPoint3D p)

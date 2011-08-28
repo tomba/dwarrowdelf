@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client
 {
@@ -42,6 +43,33 @@ namespace Dwarrowdelf.Client
 
 			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
 			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
+
+			m_timer = new DispatcherTimer(DispatcherPriority.Background);
+			m_timer.Interval = TimeSpan.FromMilliseconds(500);
+			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
+		}
+
+		event Action _Blink;
+
+		DispatcherTimer m_timer;
+
+		public event Action Blink
+		{
+			add
+			{
+				if (_Blink == null)
+					m_timer.IsEnabled = true;
+
+				_Blink = (Action)Delegate.Combine(_Blink, value);
+			}
+
+			remove
+			{
+				_Blink = (Action)Delegate.Remove(_Blink, value);
+
+				if (_Blink == null)
+					m_timer.IsEnabled = false;
+			}
 		}
 
 		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }

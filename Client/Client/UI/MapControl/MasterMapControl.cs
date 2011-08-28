@@ -95,9 +95,10 @@ namespace Dwarrowdelf.Client.UI
 			this.TileInfo = new TileInfo(m_mapControl);
 		}
 
-		public void InvalidateTiles()
+		public void InvalidateTileData()
 		{
-			m_mapControl.InvalidateTileData();
+			if (m_mapControl != null)
+				m_mapControl.InvalidateTileData();
 		}
 
 		public int Columns { get { return m_mapControl.GridSize.Width; } }

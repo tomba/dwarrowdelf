@@ -13,9 +13,16 @@ namespace Dwarrowdelf.Client
 	{
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
+		static bool m_symbolToggler;
 
 		public RenderViewDetailed()
 		{
+			GameData.Data.Blink += OnBlink;
+		}
+
+		void OnBlink()
+		{
+			m_symbolToggler = !m_symbolToggler;
 		}
 
 		/*
@@ -343,28 +350,14 @@ namespace Dwarrowdelf.Client
 		{
 			SymbolID id;
 
-			DesignationType dt = env.Designations.ContainsPoint(ml);
-
-			if (dt != DesignationType.None)
+			id = GetDesignationSymbolAt(env.Designations, ml);
+			if (id != SymbolID.Undefined)
 			{
-				switch (dt)
-				{
-					case DesignationType.Mine:
-						id = SymbolID.Rock;
-						break;
-
-					case DesignationType.CreateStairs:
-						id = SymbolID.StairsUp;
-						break;
-
-					case DesignationType.FellTree:
-						id = SymbolID.Log;
-						break;
-
-					default:
-						throw new Exception();
-				}
 				tile.SymbolID = id;
+				if (m_symbolToggler)
+					tile.Color = GameColor.DarkGray;
+				else
+					tile.Color = GameColor.LightGray;
 				return;
 			}
 
@@ -401,6 +394,29 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.DarkBlue;
 
 			tile.SymbolID = id;
+		}
+
+		public static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3D p)
+		{
+			var dt = designation.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case DesignationType.None:
+					return SymbolID.Undefined;
+
+				case DesignationType.Mine:
+					return SymbolID.Rock;
+
+				case DesignationType.CreateStairs:
+					return SymbolID.StairsUp;
+
+				case DesignationType.FellTree:
+					return SymbolID.Log;
+
+				default:
+					throw new Exception();
+			}
 		}
 	}
 }
