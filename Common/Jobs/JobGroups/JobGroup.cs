@@ -13,7 +13,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	{
 		[SaveGameProperty]
 		ObservableCollection<IJob> m_subJobs;
-		[SaveGameProperty]
 		ReadOnlyObservableCollection<IJob> m_roSubJobs;
 
 		protected JobGroup(IJob parent)
@@ -28,6 +27,10 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		protected JobGroup(SaveGameContext ctx)
 		{
+			m_roSubJobs = new ReadOnlyObservableCollection<IJob>(m_subJobs);
+
+			foreach (var job in m_subJobs)
+				job.StatusChanged += OnSubJobStatusChangedInternal;
 		}
 
 		protected void AddSubJob(IJob job)
