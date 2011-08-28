@@ -16,6 +16,8 @@ namespace Dwarrowdelf.Client
 
 		public event Action<BaseGameObject> Destructed;
 
+		public bool IsInitialized { get; private set; }
+
 		event Action<IBaseGameObject> IBaseGameObject.Destructed
 		{
 			add { lock (this.Destructed) this.Destructed += value; }
@@ -49,6 +51,8 @@ namespace Dwarrowdelf.Client
 				foreach (var tuple in data.Properties)
 					SetProperty(tuple.Item1, tuple.Item2);
 			}
+
+			this.IsInitialized = true;
 		}
 
 		public virtual object Save() { return null; }

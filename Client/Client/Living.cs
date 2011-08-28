@@ -304,10 +304,18 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			if (this.IsDestructed)
-				return "<DestructedObject>";
+			string name;
 
-			return String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID);
+			if (this.IsDestructed)
+				name = "<DestructedObject>";
+			else if (!this.IsInitialized)
+				name = "<UninitializedObject>";
+			else if (this.Name != null)
+				name = this.Name;
+			else
+				name = this.LivingInfo.Name;
+
+			return String.Format("{0} ({1})", name, this.ObjectID);
 		}
 
 

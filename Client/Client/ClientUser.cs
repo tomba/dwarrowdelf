@@ -214,6 +214,8 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
+			Debug.Assert(ob.IsInitialized);
+
 			GameObject env = null;
 			if (change.DestinationMapID != ObjectID.NullObjectID)
 				env = m_world.FindObject<GameObject>(change.DestinationMapID);
@@ -234,6 +236,8 @@ namespace Dwarrowdelf.Client
 				// XXX is this still valid?
 				return;
 			}
+
+			Debug.Assert(ob.IsInitialized);
 
 			ob.MoveTo(change.DestinationLocation);
 		}
@@ -286,6 +290,8 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 				throw new Exception();
 
+			Debug.Assert(ob.IsInitialized);
+
 			ob.SetProperty(change.PropertyID, change.Value);
 		}
 
@@ -299,6 +305,8 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
+			Debug.Assert(ob.IsInitialized);
+
 			ob.SetProperty(change.PropertyID, change.Value);
 		}
 
@@ -309,12 +317,16 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 				throw new Exception();
 
+			Debug.Assert(ob.IsInitialized);
+
 			ob.SetSkillLevel(change.SkillID, change.Level);
 		}
 
 		void HandleChange(ObjectDestructedChange change)
 		{
 			var ob = m_world.FindObject<BaseGameObject>(change.ObjectID);
+
+			Debug.Assert(ob.IsInitialized);
 
 			ob.Destruct();
 		}
@@ -324,6 +336,9 @@ namespace Dwarrowdelf.Client
 			var env = m_world.FindObject<Environment>(change.EnvironmentID);
 			if (env == null)
 				throw new Exception();
+
+			Debug.Assert(env.IsInitialized);
+
 			env.SetTileData(change.Location, change.TileData);
 		}
 
@@ -432,6 +447,8 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 				throw new Exception();
 
+			Debug.Assert(ob.IsInitialized);
+
 			ob.HandleActionStarted(change);
 		}
 
@@ -441,14 +458,19 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 				throw new Exception();
 
+			Debug.Assert(ob.IsInitialized);
+
 			ob.HandleActionProgress(change);
 		}
 
 		void HandleChange(ActionDoneChange change)
 		{
 			var ob = m_world.FindObject<Living>(change.ObjectID);
+
 			if (ob == null)
 				throw new Exception();
+
+			Debug.Assert(ob.IsInitialized);
 
 			ob.HandleActionDone(change);
 		}
