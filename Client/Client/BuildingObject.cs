@@ -32,8 +32,6 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
 		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
-		bool m_initialized;
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
 
 		public BuildingObject(World world, ObjectID objectID)
@@ -63,6 +61,8 @@ namespace Dwarrowdelf.Client
 
 		public override void Deserialize(BaseGameObjectData _data)
 		{
+			var initialized = this.IsInitialized;
+
 			var data = (BuildingData)_data;
 
 			base.Deserialize(_data);
@@ -76,13 +76,11 @@ namespace Dwarrowdelf.Client
 			m_element.Width = this.Area.Width;
 			m_element.Height = this.Area.Height;
 
-			if (m_initialized == false)
+			if (initialized == false)
 			{
 				env.AddMapElement(this);
 
 				this.Environment.World.JobManager.AddJobSource(this);
-
-				m_initialized = true;
 			}
 		}
 
