@@ -9,6 +9,9 @@ namespace Dwarrowdelf
 	{
 		public static string Capitalize(this string str)
 		{
+			if (str == null)
+				return null;
+
 			if (str.Length == 0)
 				return String.Empty;
 
