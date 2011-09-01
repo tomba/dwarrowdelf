@@ -16,11 +16,6 @@ namespace Dwarrowdelf.Client
 
 		}
 
-		public override string ToString()
-		{
-			return String.Format("Item({0:x})", this.ObjectID.Value);
-		}
-
 		object m_reservedBy;
 		public object ReservedBy
 		{
@@ -107,6 +102,22 @@ namespace Dwarrowdelf.Client
 						this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
 					break;
 			}
+		}
+
+		public override string ToString()
+		{
+			string name;
+
+			if (this.IsDestructed)
+				name = "<DestructedObject>";
+			else if (!this.IsInitialized)
+				name = "<UninitializedObject>";
+			else if (this.Name != null)
+				name = this.Name;
+			else
+				name = this.ItemInfo.Name;
+
+			return String.Format("{0} ({1})", name, this.ObjectID);
 		}
 	}
 

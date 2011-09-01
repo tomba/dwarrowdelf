@@ -167,6 +167,9 @@ namespace Dwarrowdelf
 		{
 			m_writer.WriteStartObject();
 
+			m_writer.WriteWhitespace(" ");
+			m_writer.WriteComment(ob.ToString());
+
 			bool canRef = typeInfo.UseRef;
 			int id = canRef == false ? -1 : this.ReferenceResolver.Get(ob);
 
@@ -174,8 +177,6 @@ namespace Dwarrowdelf
 			{
 				m_writer.WritePropertyName("$ref");
 				m_writer.WriteValue(id);
-				m_writer.WriteWhitespace(" ");
-				m_writer.WriteComment(ob.ToString());
 			}
 			else
 			{

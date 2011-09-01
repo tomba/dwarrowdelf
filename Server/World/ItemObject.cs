@@ -91,7 +91,16 @@ namespace Dwarrowdelf.Server
 
 		public override string ToString()
 		{
-			return String.Format("ItemObject({0}/{1})", this.Name, this.ObjectID);
+			string name;
+
+			if (this.IsDestructed)
+				name = "<DestructedObject>";
+			else if (this.Name != null)
+				name = this.Name;
+			else
+				name = this.ItemInfo.Name;
+
+			return String.Format("{0} ({1})", name, this.ObjectID);
 		}
 	}
 
