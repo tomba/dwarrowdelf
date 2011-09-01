@@ -184,15 +184,17 @@ namespace Dwarrowdelf
 
 				m_state = State.Receiving;
 
-				var recvStream = new RecvStream(1024 * 128);
-
-				var state = new ReadState()
+				using (var recvStream = new RecvStream(1024 * 128))
 				{
-					Socket = m_socket,
-					RecvStream = recvStream,
-				};
 
-				m_socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
+					var state = new ReadState()
+					{
+						Socket = m_socket,
+						RecvStream = recvStream,
+					};
+
+					m_socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
+				}
 			}
 		}
 
