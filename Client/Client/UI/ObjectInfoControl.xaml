@@ -21,5 +21,9 @@
 		<DataTemplate DataType="{x:Type local:BuildingObject}">
 			<ui:BuildingInfoControl />
 		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type local:Stockpile}">
+			<ui:StockpileInfoControl />
+		</DataTemplate>
 	</ContentControl.Resources>
 </ContentControl>

@@ -119,6 +119,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\StockpileEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\StockpileInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\ObjectInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -203,6 +211,12 @@
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\CapitalizeConverter.cs" />
+    <Compile Include="UI\StockpileEditControl.xaml.cs">
+      <DependentUpon>StockpileEditControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StockpileInfoControl.xaml.cs">
+      <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
     <Compile Include="RenderViewSimple.cs" />
     <Compile Include="ConstructionSite.cs" />

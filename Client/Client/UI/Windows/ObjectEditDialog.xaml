@@ -17,6 +17,10 @@
 		<DataTemplate DataType="{x:Type local:BuildingObject}">
 			<ui:BuildingEditControl />
 		</DataTemplate>
+
+		<DataTemplate DataType="{x:Type local:Stockpile}">
+			<ui:StockpileEditControl />
+		</DataTemplate>
 	</Window.Resources>
 
 	<ContentControl Content="{Binding}" />
