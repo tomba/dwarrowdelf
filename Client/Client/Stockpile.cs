@@ -65,8 +65,10 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment.World.JobManager.RemoveJobSource(this);
 
-			foreach (var job in m_jobs)
-				GameData.Data.Jobs.Remove(job);
+			var jobs = m_jobs.ToArray();
+
+			foreach (var job in jobs)
+				job.Abort();
 
 			m_jobs = null;
 		}

@@ -44,6 +44,7 @@
 		<UniformGrid DockPanel.Dock="Top" Columns="2">
 			<TextBlock><Run Text="Area"/></TextBlock>
 			<TextBlock Text="{Binding Area}" />
+			<Button Click="Button_Click">Destruct</Button>
 		</UniformGrid>
 
 		<Grid DataContext="{Binding Criterias[0]}">

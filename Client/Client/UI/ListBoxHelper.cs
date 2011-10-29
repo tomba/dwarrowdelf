@@ -49,6 +49,10 @@ namespace Dwarrowdelf.Client
 		{
 			var listBox = (ListBox)sender;
 			IList selectedItems = GetSelectedItems(listBox);
+
+			if (selectedItems == null)
+				return;
+
 			selectedItems.Clear();
 			if (listBox.SelectedItems != null)
 			{

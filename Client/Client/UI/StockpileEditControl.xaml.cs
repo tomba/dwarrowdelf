@@ -20,5 +20,19 @@ namespace Dwarrowdelf.Client.UI
 		{
 			InitializeComponent();
 		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			if (this.DataContext == null)
+				return;
+
+			var stockpile = (Stockpile)this.DataContext;
+			stockpile.Environment.RemoveMapElement(stockpile);
+			stockpile.Destruct();
+			this.DataContext = null;
+
+			var wnd = Window.GetWindow(this);
+			wnd.Close();
+		}
 	}
 }
