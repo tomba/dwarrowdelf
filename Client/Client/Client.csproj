@@ -175,10 +175,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\Windows\StockpileDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Windows\LogOnDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -205,6 +201,7 @@
     <Compile Include="Collections.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
+    <Compile Include="UI\ListBoxHelper.cs" />
     <Compile Include="LocatableGameObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
@@ -270,9 +267,6 @@
     </Compile>
     <Compile Include="UI\Windows\SetTerrainDialog.xaml.cs">
       <DependentUpon>SetTerrainDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\StockpileDialog.xaml.cs">
-      <DependentUpon>StockpileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>

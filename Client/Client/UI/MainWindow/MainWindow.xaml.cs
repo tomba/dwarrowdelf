@@ -128,17 +128,16 @@ namespace Dwarrowdelf.Client.UI
 
 				case ClientToolMode.CreateStockpile:
 					{
-						var dialog = new StockpileDialog();
-						dialog.Owner = this;
-						dialog.SetContext(env, selection.SelectionIntRectZ);
-						var res = dialog.ShowDialog();
+						var stockpile = new Stockpile(env, selection.SelectionIntRectZ);
+						env.AddMapElement(stockpile);
 
-						if (res == true)
-						{
-							var type = dialog.StockpileType;
-							var stockpile = new Stockpile(env, selection.SelectionIntRectZ, type);
-							env.AddMapElement(stockpile);
-						}
+						// Add one empty, so StockpileEditor works...
+						stockpile.Criterias.Add(new StockpileCriteria());
+
+						var dlg = new ObjectEditDialog();
+						dlg.DataContext = stockpile;
+						dlg.Owner = this;
+						dlg.Show();
 					}
 					break;
 

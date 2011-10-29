@@ -6,11 +6,13 @@ using Dwarrowdelf.Jobs;
 using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
 	[Flags]
-	enum StockpileType
+	enum StockpileType // XXX REMOVE
 	{
 		None = 0,
 		Logs = 1 << 0,
@@ -20,7 +22,23 @@ namespace Dwarrowdelf.Client
 		Furniture = 1 << 4,
 	}
 
-	// XXX should be configurable for classes, subclasses and certain items...
+
+	class StockpileCriteria
+	{
+		public StockpileCriteria()
+		{
+			this.ItemIDs = new ObservableCollection<ItemID>();
+			this.ItemCategories = new ObservableCollection<ItemCategory>();
+			this.MaterialIDs = new ObservableCollection<MaterialID>();
+			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
+		}
+
+		public ObservableCollection<ItemID> ItemIDs { get; private set; }
+		public ObservableCollection<ItemCategory> ItemCategories { get; private set; }
+		public ObservableCollection<MaterialID> MaterialIDs { get; private set; }
+		public ObservableCollection<MaterialCategory> MaterialCategories { get; private set; }
+		// quality
+	}
 
 	class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
@@ -29,7 +47,7 @@ namespace Dwarrowdelf.Client
 
 		public IntRectZ Area { get; private set; }
 
-		public StockpileType StockpileType { get; private set; }
+		public ObservableCollection<StockpileCriteria> Criterias { get; private set; }
 
 		List<StoreToStockpileJob> m_jobs = new List<StoreToStockpileJob>();
 
@@ -38,11 +56,11 @@ namespace Dwarrowdelf.Client
 
 		public string Description { get { return "Stockpile"; } }
 
-		public Stockpile(Environment environment, IntRectZ area, StockpileType stockpileType)
+		public Stockpile(Environment environment, IntRectZ area)
 		{
 			this.Environment = environment;
 			this.Area = area;
-			this.StockpileType = stockpileType;
+			this.Criterias = new ObservableCollection<StockpileCriteria>();
 
 			var rect = new Rectangle();
 			rect.Stroke = Brushes.Gray;
@@ -67,6 +85,9 @@ namespace Dwarrowdelf.Client
 
 		IAssignment IJobSource.FindAssignment(ILiving living)
 		{
+			if (this.Criterias.Count == 0)
+				return null;
+
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
 				.Where(o => o.ReservedBy == null)
@@ -140,29 +161,34 @@ namespace Dwarrowdelf.Client
 
 		bool Match(ItemObject item)
 		{
-			StockpileType types = this.StockpileType;
+			foreach (var c in this.Criterias)
+			{
+				Debug.Assert(c.ItemCategories != null || c.ItemIDs != null || c.MaterialCategories != null || c.MaterialIDs != null);
 
-			if ((types & StockpileType.Logs) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Wood)
-				return true;
+				if (c.ItemCategories.Count == 0 && c.ItemIDs.Count == 0 && c.MaterialCategories.Count == 0 && c.MaterialIDs.Count == 0)
+					continue;
 
-			if ((types & StockpileType.Gems) != 0 && item.ItemCategory == ItemCategory.Gem && item.MaterialCategory == MaterialCategory.Gem)
-				return true;
+				if (c.ItemCategories.Count != 0 && c.ItemCategories.Contains(item.ItemCategory) == false)
+					continue;
 
-			if ((types & StockpileType.Rocks) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Rock)
-				return true;
+				if (c.ItemIDs.Count != 0 && c.ItemIDs.Contains(item.ItemID) == false)
+					continue;
 
-			if ((types & StockpileType.Metals) != 0 && item.ItemCategory == ItemCategory.RawMaterial && item.MaterialCategory == MaterialCategory.Metal)
-				return true;
+				if (c.MaterialCategories.Count != 0 && c.MaterialCategories.Contains(item.MaterialCategory) == false)
+					continue;
 
-			if ((types & StockpileType.Furniture) != 0 && item.ItemCategory == ItemCategory.Furniture)
+				if (c.MaterialIDs.Count != 0 && c.MaterialIDs.Contains(item.MaterialID) == false)
+					continue;
+
 				return true;
+			}
 
 			return false;
 		}
 
 		public override string ToString()
 		{
-			return String.Format("Stockpile({0})", this.StockpileType);
+			return String.Format("Stockpile");
 		}
 	}
 }
