@@ -11,18 +11,6 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
-	[Flags]
-	enum StockpileType // XXX REMOVE
-	{
-		None = 0,
-		Logs = 1 << 0,
-		Gems = 1 << 1,
-		Rocks = 1 << 2,
-		Metals = 1 << 3,
-		Furniture = 1 << 4,
-	}
-
-
 	class StockpileCriteria
 	{
 		public StockpileCriteria()
