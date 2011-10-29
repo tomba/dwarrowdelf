@@ -254,8 +254,7 @@ namespace Dwarrowdelf.Client.TileControl
 					}
 				}
 #else
-			/* map only the required area, not the whole tilebuffer */
-			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, 0, columns * rows * elemSize, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
+			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
 			var stream = box.Data;
 
 			unsafe
