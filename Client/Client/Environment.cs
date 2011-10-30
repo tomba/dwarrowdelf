@@ -77,6 +77,7 @@ namespace Dwarrowdelf.Client
 		class EnvironmentSave
 		{
 			public Designation Designation;
+			public Stockpile[] Stockpiles;
 		}
 
 		public override object Save()
@@ -84,6 +85,7 @@ namespace Dwarrowdelf.Client
 			return new EnvironmentSave()
 			{
 				Designation = this.Designations,
+				Stockpiles = this.MapElements.OfType<Stockpile>().ToArray(),
 			};
 		}
 

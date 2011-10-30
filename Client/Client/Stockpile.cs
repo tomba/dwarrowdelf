@@ -28,11 +28,14 @@ namespace Dwarrowdelf.Client
 		// quality
 	}
 
+	[SaveGameObject(UseRef=true)]
 	class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
+		[SaveGameProperty]
 		public Environment Environment { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
 
+		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
 		public ObservableCollection<StockpileCriteria> Criterias { get; private set; }
@@ -59,6 +62,10 @@ namespace Dwarrowdelf.Client
 			m_element = rect;
 
 			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		Stockpile(SaveGameContext ctx)
+		{
 		}
 
 		public void Destruct()
