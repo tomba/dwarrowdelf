@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class AttackAssignment : Assignment
 	{
 		[SaveGameProperty("Target")]

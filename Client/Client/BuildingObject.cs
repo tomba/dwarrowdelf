@@ -479,7 +479,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	[SaveGameObject]
+	[SaveGameObjectByValue]
 	class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;

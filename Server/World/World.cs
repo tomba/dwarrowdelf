@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 		Sequential,
 	}
 
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public partial class World : IWorld
 	{
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "World");

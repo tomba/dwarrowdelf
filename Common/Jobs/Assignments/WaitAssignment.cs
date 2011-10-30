@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class WaitAssignment : Assignment
 	{
 		[SaveGameProperty("Turns")]

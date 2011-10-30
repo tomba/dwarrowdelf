@@ -10,7 +10,7 @@ using Dwarrowdelf.AI;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObject]
+	[SaveGameObjectByRef]
 	public class FighterAI : AssignmentAI
 	{
 		[SaveGameProperty]

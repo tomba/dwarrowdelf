@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class LoiterAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]

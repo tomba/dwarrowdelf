@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public abstract class MoveBaseAssignment : AssignmentGroup
 	{
 		[SaveGameProperty]

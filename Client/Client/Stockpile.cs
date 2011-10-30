@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client
 		// quality
 	}
 
-	[SaveGameObject(UseRef=true)]
+	[SaveGameObjectByRef]
 	class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]

@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	class StoreToStockpileJob : AssignmentGroup
 	{
 		enum State

@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.AI
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class CarnivoreAI : AssignmentAI
 	{
 		[SaveGameProperty]

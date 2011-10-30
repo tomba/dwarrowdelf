@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public abstract class JobGroup : IJobGroup, IJobObserver
 	{
 		[SaveGameProperty]

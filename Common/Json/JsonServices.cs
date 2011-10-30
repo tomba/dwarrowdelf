@@ -169,7 +169,12 @@ namespace Dwarrowdelf
 			this.Type = type;
 			this.TypeConverter = GetConverter(type);
 
-			var gameObjAttrs = type.GetCustomAttributes(typeof(SaveGameObjectAttribute), false);
+			var gameObjAttrs = type.GetCustomAttributes(typeof(SaveGameObjectBaseAttribute), true);
+
+			if (gameObjAttrs.Length > 1)
+			{
+				throw new Exception("Invalid SaveGameObject attributes");
+			}
 
 			Type iface;
 
@@ -211,7 +216,7 @@ namespace Dwarrowdelf
 			}
 			else if (gameObjAttrs.Length > 0)
 			{
-				var attr = (SaveGameObjectAttribute)gameObjAttrs[0];
+				var attr = (SaveGameObjectBaseAttribute)gameObjAttrs[0];
 
 				this.TypeClass = TypeClass.GameObject;
 				this.GameMemberEntries = GetMemberEntries(type);
@@ -223,7 +228,12 @@ namespace Dwarrowdelf
 				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(SaveGameContext) }, null);
 				if (this.DeserializeConstructor == null)
 					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
-				this.UseRef = attr.UseRef;
+				if (attr is SaveGameObjectByRefAttribute)
+					this.UseRef = true;
+				else if (attr is SaveGameObjectByValueAttribute)
+					this.UseRef = false;
+				else
+					throw new Exception();
 			}
 			else if (type.Attributes.HasFlag(TypeAttributes.Serializable))
 			{

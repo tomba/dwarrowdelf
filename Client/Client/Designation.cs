@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 		CreateStairs,
 	}
 
-	[SaveGameObject]
+	[SaveGameObjectByRef]
 	class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]

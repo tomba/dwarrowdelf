@@ -9,12 +9,23 @@ namespace Dwarrowdelf
 	{
 	}
 
-	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = false)]
-	public class SaveGameObjectAttribute : Attribute
+	public abstract class SaveGameObjectBaseAttribute : Attribute
 	{
-		public bool UseRef { get; set; }
 
-		public SaveGameObjectAttribute()
+	}
+
+	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true)]
+	public class SaveGameObjectByRefAttribute : SaveGameObjectBaseAttribute
+	{
+		public SaveGameObjectByRefAttribute()
+		{
+		}
+	}
+
+	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true)]
+	public class SaveGameObjectByValueAttribute : SaveGameObjectBaseAttribute
+	{
+		public SaveGameObjectByValueAttribute()
 		{
 		}
 	}

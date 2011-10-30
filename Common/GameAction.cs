@@ -43,7 +43,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public abstract class GameAction
 	{
 		// XXX. Server gen creates negative numbers, client positive
@@ -70,7 +70,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class MoveAction : GameAction
 	{
 		[SaveGameProperty]
@@ -93,7 +93,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class WaitAction : GameAction
 	{
 		[SaveGameProperty]
@@ -116,7 +116,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class DropAction : GameAction
 	{
 		[SaveGameProperty]
@@ -139,7 +139,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class GetAction : GameAction
 	{
 		[SaveGameProperty]
@@ -163,7 +163,7 @@ namespace Dwarrowdelf
 
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class ConsumeAction : GameAction
 	{
 		[SaveGameProperty]
@@ -199,7 +199,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class MineAction : GameAction
 	{
 		[SaveGameProperty]
@@ -225,7 +225,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class FellTreeAction : GameAction
 	{
 		[SaveGameProperty]
@@ -248,7 +248,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class BuildItemAction : GameAction
 	{
 		// public object type etc
@@ -276,7 +276,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class AttackAction : GameAction
 	{
 		[SaveGameProperty]
@@ -299,7 +299,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class ConstructBuildingAction : GameAction
 	{
 		[SaveGameProperty]
@@ -328,7 +328,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class DestructBuildingAction : GameAction
 	{
 		[SaveGameProperty]

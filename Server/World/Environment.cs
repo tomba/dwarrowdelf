@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class Environment : GameObject, IEnvironment
 	{
 		internal static Environment Create(World world, EnvironmentBuilder builder)

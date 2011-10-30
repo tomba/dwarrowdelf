@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
+	[SaveGameObjectByRef]
 	public abstract class LocatableGameObject : GameObject, ILocatableGameObject
 	{
 		protected LocatableGameObject(ObjectType objectType, LocatableGameObjectBuilder builder)

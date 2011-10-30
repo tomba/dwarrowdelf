@@ -8,7 +8,7 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.AI
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class DwarfAI : AssignmentAI
 	{
 		[SaveGameProperty]

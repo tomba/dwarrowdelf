@@ -9,7 +9,7 @@ using Dwarrowdelf.AI;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class GrazeMoveAssignment : Assignment
 	{
 		Herd m_herd;

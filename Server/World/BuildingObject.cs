@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class BuildingObject : LargeGameObject, IBuildingObject
 	{
 		internal static BuildingObject Create(World world, Environment env, BuildingObjectBuilder builder)

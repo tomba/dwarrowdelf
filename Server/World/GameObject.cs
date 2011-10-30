@@ -18,6 +18,7 @@ namespace Dwarrowdelf.Server
 	}
 
 	/* Game object that has inventory, location */
+	[SaveGameObjectByRef]
 	abstract public class GameObject : BaseGameObject, IGameObject
 	{
 		[SaveGameProperty]

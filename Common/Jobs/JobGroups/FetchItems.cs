@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class FetchItems : JobGroup
 	{
 		public FetchItems(IJobObserver parent, IEnvironment env, IntPoint3D location, IEnumerable<IItemObject> items)

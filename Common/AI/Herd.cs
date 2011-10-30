@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.AI
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class Herd
 	{
 		[SaveGameProperty]

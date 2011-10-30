@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public partial class Living : LocatableGameObject, ILiving
 	{
 		internal static Living Create(World world, LivingBuilder builder)

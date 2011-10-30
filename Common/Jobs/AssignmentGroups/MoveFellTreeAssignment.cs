@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class MoveFellTreeAssignment : MoveBaseAssignment
 	{
 		public MoveFellTreeAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D location)

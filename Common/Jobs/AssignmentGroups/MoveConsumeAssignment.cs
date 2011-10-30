@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
-	[SaveGameObject(UseRef = true)]
+	[SaveGameObjectByRef]
 	public class MoveConsumeAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Item")]

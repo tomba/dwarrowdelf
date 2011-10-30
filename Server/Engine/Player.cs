@@ -10,7 +10,7 @@ using System.ComponentModel;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObject]
+	[SaveGameObjectByRef]
 	public class Player : INotifyPropertyChanged, IPlayer
 	{
 		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
