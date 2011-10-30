@@ -688,6 +688,9 @@ namespace Dwarrowdelf.Server
 				int h = grid.Grid.GetLength(1);
 				int d = grid.Grid.GetLength(0);
 
+				var oldFormatting = writer.Formatting;
+				writer.Formatting = Newtonsoft.Json.Formatting.None;
+
 				writer.WriteValue(w);
 				writer.WriteValue(h);
 				writer.WriteValue(d);
@@ -698,6 +701,8 @@ namespace Dwarrowdelf.Server
 					for (int y = 0; y < h; ++y)
 						for (int x = 0; x < w; ++x)
 							writer.WriteValue(srcArr[z, y, x].ToUInt64());
+
+				writer.Formatting = oldFormatting;
 
 				writer.WriteEndArray();
 			}
