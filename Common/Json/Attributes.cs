@@ -17,6 +17,8 @@ namespace Dwarrowdelf
 	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true)]
 	public class SaveGameObjectByRefAttribute : SaveGameObjectBaseAttribute
 	{
+		public bool ClientObject { get; set; }
+
 		public SaveGameObjectByRefAttribute()
 		{
 		}
@@ -36,6 +38,7 @@ namespace Dwarrowdelf
 		public string Name { get; set; }
 		public Type Converter { get; set; }
 		public Type ReaderWriter { get; set; }
+		public bool UseOldList { get; set; }
 
 		public SaveGamePropertyAttribute()
 		{

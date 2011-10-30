@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		[OnSaveGameDeserialized]
+		[OnSaveGamePostDeserialization]
 		void OnDeserialized()
 		{
 			this.Environment.World.JobManager.AddJobSource(this);

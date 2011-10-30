@@ -18,6 +18,13 @@ namespace Dwarrowdelf
 		Type OutputType { get; }
 	}
 
+	public interface ISaveGameRefResolver
+	{
+		int ToRefID(object value);
+		object FromRef(int refID);
+		Type InputType { get; }
+	}
+
 	public interface ISaveGameReaderWriter
 	{
 		void Write(JsonWriter writer, object value);
@@ -31,6 +38,7 @@ namespace Dwarrowdelf
 		public Type MemberType { get; private set; }
 		public ISaveGameConverter Converter { get; private set; }
 		public ISaveGameReaderWriter ReaderWriter { get; private set; }
+		public bool UseOldList { get; private set; }
 
 		public MemberEntry(MemberInfo member)
 		{
@@ -65,11 +73,14 @@ namespace Dwarrowdelf
 			if (attr.ReaderWriter != null)
 				readerWriter = GetReaderWriter(attr.ReaderWriter);
 
+			bool useOldList = attr.UseOldList;
+
 			this.Member = member;
 			this.Name = name;
 			this.MemberType = memberType;
 			this.Converter = converter;
 			this.ReaderWriter = readerWriter;
+			this.UseOldList = useOldList;
 		}
 
 		static Dictionary<Type, ISaveGameConverter> s_converterMap = new Dictionary<Type, ISaveGameConverter>();
@@ -226,8 +237,12 @@ namespace Dwarrowdelf
 				this.OnDeserializedMethods = GetSerializationMethods(type, typeof(OnSaveGameDeserializedAttribute));
 				this.OnGamePostDeserializationMethods = GetSerializationMethods(type, typeof(OnSaveGamePostDeserializationAttribute));
 				this.DeserializeConstructor = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { typeof(SaveGameContext) }, null);
-				if (this.DeserializeConstructor == null)
+
+				var byref = attr as SaveGameObjectByRefAttribute;
+
+				if (this.DeserializeConstructor == null && byref != null && byref.ClientObject == false)
 					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
+
 				if (attr is SaveGameObjectByRefAttribute)
 					this.UseRef = true;
 				else if (attr is SaveGameObjectByValueAttribute)
@@ -303,6 +318,23 @@ namespace Dwarrowdelf
 				var entry = entries[i];
 				var value = values[i];
 				var member = entry.Member;
+
+				if (entry.UseOldList && value != null)
+				{
+					IList dstList;
+
+					if (member.MemberType == MemberTypes.Field)
+						dstList = (IList)((FieldInfo)member).GetValue(ob);
+					else if (member.MemberType == MemberTypes.Property)
+						dstList = (IList)((PropertyInfo)member).GetValue(ob, null);
+					else
+						throw new Exception();
+
+					dstList.Clear();
+					var srcList = (IList)value;
+					foreach (var item in srcList)
+						dstList.Add(item);
+				}
 
 				if (member.MemberType == MemberTypes.Field)
 					((FieldInfo)member).SetValue(ob, value);
@@ -463,6 +495,32 @@ namespace Dwarrowdelf
 			}
 
 			return converter;
+		}
+	}
+
+	class SaveGameRefResolverCache
+	{
+		ISaveGameRefResolver[] m_resolvers;
+		Dictionary<Type, ISaveGameRefResolver> m_cache;
+
+		public SaveGameRefResolverCache(IEnumerable<ISaveGameRefResolver> converters)
+		{
+			m_resolvers = converters.ToArray();
+			m_cache = new Dictionary<Type, ISaveGameRefResolver>();
+		}
+
+		public ISaveGameRefResolver GetGlobalResolver(Type type)
+		{
+			ISaveGameRefResolver resolver;
+
+			if (m_cache.TryGetValue(type, out resolver) == false)
+			{
+				resolver = m_resolvers.FirstOrDefault(c => c.InputType.IsAssignableFrom(type));
+
+				m_cache.Add(type, resolver);
+			}
+
+			return resolver;
 		}
 	}
 }

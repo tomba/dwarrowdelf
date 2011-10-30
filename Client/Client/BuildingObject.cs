@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef(ClientObject = true)]
 	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
@@ -29,17 +30,22 @@ namespace Dwarrowdelf.Client
 
 		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
 
+		[SaveGameProperty]
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
 		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
 
-
+		[SaveGameProperty]
 		IAssignment m_destructJob;
 
+		[SaveGameProperty]
 		BuildOrder m_currentBuildOrder;
+		[SaveGameProperty]
 		IJobGroup m_currentJob;
 
+		[SaveGameProperty]
+		BuildingState m_buildingState;
 
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
@@ -100,44 +106,10 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
-		[Serializable]
-		class BuildingSave
+		[OnSaveGamePostDeserialization]
+		public void OnDeserialized()
 		{
-			public BuildOrder[] BuildOrders;
-
-			public IAssignment DestructJob;
-			public BuildOrder CurrentBuildOrder;
-			public IJobGroup CurrentJob;
-
-			public BuildingState BuildingState;
-		}
-
-		public override object Save()
-		{
-			return new BuildingSave()
-			{
-				BuildOrders = m_buildOrderQueue.ToArray(),
-
-				DestructJob = m_destructJob,
-				CurrentBuildOrder = m_currentBuildOrder,
-				CurrentJob = m_currentJob,
-
-				BuildingState = m_buildingState,
-			};
-		}
-
-		public override void Restore(object data)
-		{
-			var save = (BuildingSave)data;
-
-			m_buildOrderQueue = new ObservableCollection<BuildOrder>(save.BuildOrders);
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
-
-			m_destructJob = save.DestructJob;
-			m_currentBuildOrder = save.CurrentBuildOrder;
-			m_currentJob = save.CurrentJob;
-
-			m_buildingState = save.BuildingState;
 
 			if (m_currentJob != null)
 				GameData.Data.Jobs.Add(m_currentJob);
@@ -151,7 +123,6 @@ namespace Dwarrowdelf.Client
 			return this.Area.Contains(point);
 		}
 
-		BuildingState m_buildingState;
 		public BuildingState BuildingState
 		{
 			get { return m_buildingState; }
@@ -479,7 +450,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	[SaveGameObjectByValue]
+	[SaveGameObjectByRef]
 	class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;

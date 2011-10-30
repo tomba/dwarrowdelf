@@ -140,6 +140,12 @@ namespace Dwarrowdelf.Client.UI
 
 					break;
 
+				case NotifyCollectionChangedAction.Reset:
+					foreach (IDrawableElement b in m_elementMap.Keys.ToArray())
+						RemoveElement(b);
+
+					break;
+
 				default:
 					throw new Exception();
 			}

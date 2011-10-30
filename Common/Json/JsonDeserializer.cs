@@ -43,6 +43,7 @@ namespace Dwarrowdelf
 		JsonTextReader m_reader;
 		ISaveGameDeserializerRefResolver ReferenceResolver;
 		SaveGameConverterCache m_globalConverters;
+		SaveGameRefResolverCache m_globalResolvers;
 
 		List<PostDeserializationDelegate> m_postDeserMethods = new List<PostDeserializationDelegate>();
 		delegate void PostDeserializationDelegate();
@@ -62,6 +63,13 @@ namespace Dwarrowdelf
 			: this(reader)
 		{
 			m_globalConverters = new SaveGameConverterCache(globalConverters);
+		}
+
+
+		public SaveGameDeserializer(TextReader reader, IEnumerable<ISaveGameRefResolver> globalRefResolers)
+			: this(reader)
+		{
+			m_globalResolvers = new SaveGameRefResolverCache(globalRefResolers);
 		}
 
 		public void Dispose()
@@ -412,7 +420,31 @@ namespace Dwarrowdelf
 		{
 			var type = typeInfo.Type;
 
-			object ob = FormatterServices.GetUninitializedObject(type);
+			object ob;
+			bool created;
+
+			if (m_reader.TokenType == JsonToken.PropertyName && (string)m_reader.Value == "$sid")
+			{
+				Read();
+
+				Trace.Assert(m_reader.TokenType == JsonToken.Integer);
+
+				var sid = (int)(long)m_reader.Value;
+
+				Read();
+
+				var conv = m_globalResolvers.GetGlobalResolver(type);
+
+				ob = conv.FromRef(sid);
+
+				created = false;
+			}
+			else
+			{
+				ob = FormatterServices.GetUninitializedObject(type);
+
+				created = true;
+			}
 
 			var deserializingMethods = typeInfo.OnDeserializingMethods;
 			foreach (var method in deserializingMethods)
@@ -461,7 +493,8 @@ namespace Dwarrowdelf
 
 			typeInfo.PopulateObjectMembers(ob, values);
 
-			typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new SaveGameContext() });
+			if (created)
+				typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new SaveGameContext() });
 
 			var deserializedMethods = typeInfo.OnDeserializedMethods;
 			foreach (var method in deserializedMethods)

@@ -67,11 +67,6 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		[OnSaveGameDeserialized]
-		void OnDeserialized()
-		{
-		}
-
 		protected override void Initialize(World world)
 		{
 			throw new NotImplementedException();

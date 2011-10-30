@@ -14,6 +14,7 @@ namespace Dwarrowdelf.Client
 		Remove,
 	}
 
+	[SaveGameObjectByRef(ClientObject = true)]
 	class Environment : GameObject, IEnvironment
 	{
 		public event Action<GameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
@@ -29,11 +30,13 @@ namespace Dwarrowdelf.Client
 
 		public IntCuboid Bounds { get; private set; }
 
+		[SaveGameProperty(UseOldList = true)]
 		ObservableCollection<IDrawableElement> m_mapElements;
 		public ReadOnlyObservableCollection<IDrawableElement> MapElements { get; private set; }
 
 		public IntPoint3D HomeLocation { get; private set; }
 
+		[SaveGameProperty]
 		public Designation Designations { get; private set; }
 
 		public Environment(World world, ObjectID objectID)
@@ -68,32 +71,15 @@ namespace Dwarrowdelf.Client
 				App.MainWindow.map.Environment = this;
 		}
 
+		[OnSaveGameDeserialized]
+		void OnDeserialized()
+		{
+			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
+		}
+
 		public override void SetProperty(PropertyID propertyID, object value)
 		{
 			throw new NotImplementedException();
-		}
-
-		[Serializable]
-		class EnvironmentSave
-		{
-			public Designation Designation;
-			public Stockpile[] Stockpiles;
-		}
-
-		public override object Save()
-		{
-			return new EnvironmentSave()
-			{
-				Designation = this.Designations,
-				Stockpiles = this.MapElements.OfType<Stockpile>().ToArray(),
-			};
-		}
-
-		public override void Restore(object data)
-		{
-			var save = (EnvironmentSave)data;
-
-			this.Designations = save.Designation;
 		}
 
 		public bool Contains(IntPoint3D p)

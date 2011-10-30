@@ -8,6 +8,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef(ClientObject = true)]
 	abstract class LocatabletGameObject : GameObject, ILocatableGameObject
 	{
 		static LocatabletGameObject()

@@ -10,6 +10,7 @@ namespace Dwarrowdelf.Client
 {
 	delegate void ObjectMoved(GameObject ob, GameObject dst, IntPoint3D loc);
 
+	[SaveGameObjectByRef(ClientObject = true)]
 	abstract class GameObject : BaseGameObject, IGameObject
 	{
 		GameObjectCollection m_inventory;

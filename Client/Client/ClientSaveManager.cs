@@ -13,19 +13,7 @@ namespace Dwarrowdelf.Client
 
 		public static void Save(Guid id)
 		{
-			Dictionary<ObjectID, object> objectData = new Dictionary<ObjectID, object>();
-
-			foreach (var l in GameData.Data.World.Objects)
-			{
-				var d = l.Save();
-				if (d != null)
-					objectData[l.ObjectID] = d;
-			}
-
-			var saveData = new SaveData()
-			{
-				ObjectData = objectData,
-			};
+			var saveData = GameData.Data.World.Objects.ToArray();
 
 			Trace.TraceInformation("Saving client data");
 			var watch = Stopwatch.StartNew();
@@ -34,7 +22,7 @@ namespace Dwarrowdelf.Client
 
 			using (var stream = new System.IO.MemoryStream())
 			{
-				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream, new[] { new GameObjectConverter() }))
+				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream, new[] { new ClientObjectRefResolver() }))
 				{
 					serializer.Serialize(saveData);
 
@@ -62,38 +50,24 @@ namespace Dwarrowdelf.Client
 
 			var reader = new StringReader(dataStr);
 
-			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new GameObjectConverter() });
-			var data = deserializer.Deserialize<SaveData>();
-
-			foreach (var kvp in data.ObjectData)
-			{
-				var ob = GameData.Data.World.FindObject(kvp.Key);
-				ob.Restore(kvp.Value);
-			}
+			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
+			var data = deserializer.Deserialize<BaseGameObject[]>();
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 		}
 
-		[Serializable]
-		class SaveData
+		class ClientObjectRefResolver : ISaveGameRefResolver
 		{
-			public Dictionary<ObjectID, object> ObjectData;
-		}
-
-		class GameObjectConverter : ISaveGameConverter
-		{
-			#region ISaveGameConverter Members
-
-			public object ConvertToSerializable(object value)
+			public int ToRefID(object value)
 			{
 				var ob = (BaseGameObject)value;
-				return ob.ObjectID;
+				return (int)ob.ObjectID.RawValue;
 			}
 
-			public object ConvertFromSerializable(object value)
+			public object FromRef(int refID)
 			{
-				var oid = (ObjectID)value;
+				var oid = new ObjectID((uint)refID);
 				var ob = GameData.Data.World.FindObject(oid);
 				if (ob == null)
 					throw new Exception();
@@ -101,10 +75,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			public Type InputType { get { return typeof(IBaseGameObject); } }
-
-			public Type OutputType { get { return typeof(ObjectID); } }
-
-			#endregion
 		}
 	}
 }

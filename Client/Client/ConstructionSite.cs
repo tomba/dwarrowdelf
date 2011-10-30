@@ -6,6 +6,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef]
 	class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
 	{
 		public BuildingID BuildingID;
@@ -31,6 +32,10 @@ namespace Dwarrowdelf.Client
 			this.Element = rect;
 
 			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		void ConstructionSize(SaveGameContext ctx)
+		{
 		}
 
 		public void Destruct()

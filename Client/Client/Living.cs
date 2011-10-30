@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef(ClientObject = true)]
 	class Living : LocatabletGameObject, ILiving
 	{
 		// XXX not re-entrant
@@ -57,32 +58,6 @@ namespace Dwarrowdelf.Client
 		public LivingInfo LivingInfo { get; private set; }
 		public LivingCategory LivingCategory { get { return this.LivingInfo.Category; } }
 
-		[Serializable]
-		class LivingSave
-		{
-			public Dwarrowdelf.AI.AssignmentAI AI;
-		}
-
-		public override object Save()
-		{
-			if (!this.IsControllable)
-				return null;
-
-			return new LivingSave()
-			{
-				AI = this.AI,
-			};
-		}
-
-		public override void Restore(object data)
-		{
-			var save = (LivingSave)data;
-
-			// XXX this will discard the AI created when the server sends ControllablesDataMessage
-
-			this.AI = save.AI;
-		}
-
 		public bool IsControllable
 		{
 			get { return m_isControllable; }
@@ -108,6 +83,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		[SaveGameProperty]
 		public Dwarrowdelf.AI.AssignmentAI AI
 		{
 			get { return m_ai; }
@@ -504,6 +480,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		string m_clientAssignment;
+		[SaveGameProperty]
 		public string ClientAssignment
 		{
 			get { return m_clientAssignment; }

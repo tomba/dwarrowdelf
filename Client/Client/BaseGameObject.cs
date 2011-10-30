@@ -6,6 +6,7 @@ using System.ComponentModel;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef(ClientObject = true)]
 	abstract class BaseGameObject : IBaseGameObject, INotifyPropertyChanged
 	{
 		public ObjectID ObjectID { get; private set; }
@@ -54,9 +55,6 @@ namespace Dwarrowdelf.Client
 
 			this.IsInitialized = true;
 		}
-
-		public virtual object Save() { return null; }
-		public virtual void Restore(object data) { }
 
 		public abstract void SetProperty(PropertyID propertyID, object value);
 

@@ -57,6 +57,7 @@ namespace Dwarrowdelf
 		JsonTextWriter m_writer;
 		public ISaveGameSerializerRefResolver ReferenceResolver { get; set; }
 		SaveGameConverterCache m_globalConverters;
+		SaveGameRefResolverCache m_globalResolvers;
 
 		public SaveGameSerializer(Stream stream)
 		{
@@ -69,6 +70,12 @@ namespace Dwarrowdelf
 			: this(stream)
 		{
 			m_globalConverters = new SaveGameConverterCache(globalConverters);
+		}
+
+		public SaveGameSerializer(Stream stream, IEnumerable<ISaveGameRefResolver> globalResolvers)
+			: this(stream)
+		{
+			m_globalResolvers = new SaveGameRefResolverCache(globalResolvers);
 		}
 
 		public void Dispose()
@@ -255,6 +262,18 @@ namespace Dwarrowdelf
 		void SerializeGameObject(object ob, TypeInfo typeInfo)
 		{
 			var type = typeInfo.Type;
+
+
+			if (m_globalResolvers != null)
+			{
+				var globalConverter = m_globalResolvers.GetGlobalResolver(type);
+				if (globalConverter != null)
+				{
+					var id = globalConverter.ToRefID(ob);
+					m_writer.WritePropertyName("$sid");
+					m_writer.WriteValue(id);
+				}
+			}
 
 			var serializingMethods = typeInfo.OnSerializingMethods;
 			foreach (var method in serializingMethods)

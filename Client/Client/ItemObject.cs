@@ -8,6 +8,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef(ClientObject = true)]
 	class ItemObject : LocatabletGameObject, IItemObject
 	{
 		public ItemObject(World world, ObjectID objectID)
@@ -16,6 +17,7 @@ namespace Dwarrowdelf.Client
 
 		}
 
+		[SaveGameProperty]
 		object m_reservedBy;
 		public object ReservedBy
 		{

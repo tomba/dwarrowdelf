@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
+	[SaveGameObjectByRef]
 	class StockpileCriteria
 	{
 		public StockpileCriteria()
@@ -21,9 +22,17 @@ namespace Dwarrowdelf.Client
 			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
 		}
 
+		StockpileCriteria(SaveGameContext ctx)
+		{
+		}
+
+		[SaveGameProperty]
 		public ObservableCollection<ItemID> ItemIDs { get; private set; }
+		[SaveGameProperty]
 		public ObservableCollection<ItemCategory> ItemCategories { get; private set; }
+		[SaveGameProperty]
 		public ObservableCollection<MaterialID> MaterialIDs { get; private set; }
+		[SaveGameProperty]
 		public ObservableCollection<MaterialCategory> MaterialCategories { get; private set; }
 		// quality
 	}
@@ -38,9 +47,11 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
+		[SaveGameProperty]
 		public ObservableCollection<StockpileCriteria> Criterias { get; private set; }
 
-		List<StoreToStockpileJob> m_jobs = new List<StoreToStockpileJob>();
+		[SaveGameProperty]
+		List<StoreToStockpileJob> m_jobs;
 
 		FrameworkElement m_element;
 		public FrameworkElement Element { get { return m_element; } }
@@ -53,11 +64,13 @@ namespace Dwarrowdelf.Client
 			this.Area = area;
 			this.Criterias = new ObservableCollection<StockpileCriteria>();
 
+			m_jobs = new List<StoreToStockpileJob>();
+
 			var rect = new Rectangle();
 			rect.Stroke = Brushes.Gray;
 			rect.StrokeThickness = 0.1;
-			rect.Width = area.Width;
-			rect.Height = area.Height;
+			rect.Width = this.Area.Width;
+			rect.Height = this.Area.Height;
 			rect.IsHitTestVisible = false;
 			m_element = rect;
 
@@ -66,6 +79,22 @@ namespace Dwarrowdelf.Client
 
 		Stockpile(SaveGameContext ctx)
 		{
+			var rect = new Rectangle();
+			rect.Stroke = Brushes.Gray;
+			rect.StrokeThickness = 0.1;
+			rect.Width = this.Area.Width;
+			rect.Height = this.Area.Height;
+			rect.IsHitTestVisible = false;
+			m_element = rect;
+
+			this.Environment.World.JobManager.AddJobSource(this);
+		}
+
+		[OnSaveGameDeserialized]
+		void OnDeserialized()
+		{
+			foreach (var job in m_jobs)
+				GameData.Data.Jobs.Add(job);
 		}
 
 		public void Destruct()
