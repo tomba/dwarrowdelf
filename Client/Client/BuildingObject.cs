@@ -295,7 +295,8 @@ namespace Dwarrowdelf.Client
 
 						if (job == null)
 						{
-							trace.TraceWarning("XXX failed to create job");
+							trace.TraceWarning("XXX failed to create job, removing build order");
+							RemoveBuildOrder(this.CurrentBuildOrder);
 							return null;
 						}
 
