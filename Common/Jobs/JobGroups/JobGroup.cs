@@ -56,17 +56,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_subJobs.Remove(job);
 		}
 
-		void ClearSubJobs()
-		{
-			foreach (var job in m_subJobs)
-			{
-				if (job.Status == JobStatus.Ok)
-					job.Abort();
-			}
-
-			m_subJobs.Clear();
-		}
-
 		[SaveGameProperty]
 		public IJobObserver Parent { get; private set; }
 		[SaveGameProperty]
@@ -159,19 +148,19 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			this.Status = status;
 
-			switch (status)
-			{
-				case JobStatus.Done:
-					Debug.Assert(this.SubJobs.Count == 0);
-					goto case JobStatus.Fail;
+			Debug.Assert(status == JobStatus.Done && this.SubJobs.Count == 0);
 
-				case JobStatus.Abort:
-				case JobStatus.Fail:
-					ClearSubJobs();
-					m_subJobs = null;
-					m_roSubJobs = null;
-					break;
+			Cleanup();
+
+			foreach (var job in m_subJobs.ToArray())
+			{
+				if (job.Status == JobStatus.Ok)
+					job.Abort();
 			}
+
+			m_subJobs.Clear();
+			m_subJobs = null;
+			m_roSubJobs = null;
 
 			OnStatusChanged(status);
 

@@ -58,14 +58,14 @@ namespace Dwarrowdelf.Client
 
 		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
-			if (status != JobStatus.Done)
-				throw new Exception();
-
 			GameData.Data.Jobs.Remove(m_job);
 			m_job = null;
 
-			this.Environment.RemoveMapElement(this);
-			this.Destruct();
+			if (status == JobStatus.Done || status == JobStatus.Fail)
+			{
+				this.Environment.RemoveMapElement(this);
+				this.Destruct();
+			}
 		}
 	}
 }

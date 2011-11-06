@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
@@ -18,6 +19,8 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				var job = new AssignmentGroups.FetchItemAssignment(this, env, location, item);
 				AddSubJob(job);
 			}
+
+			Debug.Assert(this.SubJobs.Count > 0);
 		}
 
 		protected FetchItems(SaveGameContext ctx)
