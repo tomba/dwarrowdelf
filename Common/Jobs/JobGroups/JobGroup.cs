@@ -92,14 +92,14 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				{
 					if (assignment.IsAssigned == false)
 						return assignment;
-					else
-						return null;
 				}
-
-				var jobGroup = (IJobGroup)job;
-				assignment = jobGroup.FindAssignment(living);
-				if (assignment != null)
-					return assignment;
+				else
+				{
+					var jobGroup = (IJobGroup)job;
+					assignment = jobGroup.FindAssignment(living);
+					if (assignment != null)
+						return assignment;
+				}
 			}
 
 			return null;
