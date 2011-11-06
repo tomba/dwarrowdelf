@@ -191,6 +191,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			if (status == JobStatus.Ok)
 				throw new Exception();
 
+			if (this.Status != JobStatus.Ok)
+				throw new Exception();
+
 			this.Status = status;
 
 			this.Worker = null;

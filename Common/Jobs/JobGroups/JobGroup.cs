@@ -154,6 +154,9 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (status == JobStatus.Ok)
 				throw new Exception();
 
+			if (this.Status != JobStatus.Ok)
+				throw new Exception();
+
 			this.Status = status;
 
 			switch (status)
