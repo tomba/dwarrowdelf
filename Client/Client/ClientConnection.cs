@@ -12,22 +12,47 @@ using System.ComponentModel;
 
 using Dwarrowdelf;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client
 {
 	class ClientNetStatistics : INotifyPropertyChanged
 	{
-		public int SentMessages { get; set; }
-		public int SentBytes { get; set; }
-		public int ReceivedMessages { get; set; }
-		public int ReceivedBytes { get; set; }
+		int m_sentMessages;
+		int m_sentBytes;
+		int m_receivedMessages;
+		int m_receivedBytes;
 
-		public void Refresh()
+		public int SentMessages { get { return m_sentMessages; } set { m_sentMessages = value; Refresh(); } }
+		public int SentBytes { get { return m_sentBytes; } set { m_sentBytes = value; Refresh(); } }
+		public int ReceivedMessages { get { return m_receivedMessages; } set { m_receivedMessages = value; Refresh(); } }
+		public int ReceivedBytes { get { return m_receivedBytes; } set { m_receivedBytes = value; Refresh(); } }
+
+		DispatcherTimer m_timer;
+
+		public ClientNetStatistics()
 		{
+			m_timer = new DispatcherTimer();
+			m_timer.Interval = TimeSpan.FromMilliseconds(250);
+			m_timer.Tick += RefreshTick;
+		}
+
+		void RefreshTick(object sender, EventArgs e)
+		{
+			m_timer.Stop();
+
 			Notify("SentMessages");
 			Notify("SentBytes");
 			Notify("ReceivedMessages");
 			Notify("ReceivedBytes");
+		}
+
+		void Refresh()
+		{
+			if (m_timer.IsEnabled)
+				return;
+
+			m_timer.Start();
 		}
 
 		void Notify(string property)
@@ -150,7 +175,6 @@ namespace Dwarrowdelf.Client
 		{
 			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
-			this.Stats.Refresh();
 
 			if (msg is LogOnReplyBeginMessage)
 				HandleLoginReplyBeginMessage((LogOnReplyBeginMessage)msg);
@@ -216,7 +240,6 @@ namespace Dwarrowdelf.Client
 
 			this.Stats.SentBytes = m_connection.SentBytes;
 			this.Stats.SentMessages = m_connection.SentMessages;
-			this.Stats.Refresh();
 		}
 	}
 }
