@@ -131,6 +131,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\NetStatWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\ObjectEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -248,6 +252,9 @@
     </Compile>
     <Compile Include="UI\ObjectInfoControl.xaml.cs">
       <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\NetStatWindow.xaml.cs">
+      <DependentUpon>NetStatWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\ObjectEditDialog.xaml.cs">
       <DependentUpon>ObjectEditDialog.xaml</DependentUpon>

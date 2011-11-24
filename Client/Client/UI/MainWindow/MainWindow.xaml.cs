@@ -943,5 +943,12 @@ namespace Dwarrowdelf.Client.UI
 			dialog.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
 			dialog.Show();
 		}
+
+		private void Button_OpenNetStats_Click(object sender, RoutedEventArgs e)
+		{
+			var netWnd = new UI.NetStatWindow();
+			netWnd.Owner = this;
+			netWnd.Show();
+		}
 	}
 }

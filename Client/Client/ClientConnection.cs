@@ -13,6 +13,7 @@ using System.ComponentModel;
 using Dwarrowdelf;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client
 {
@@ -30,6 +31,34 @@ namespace Dwarrowdelf.Client
 
 		DispatcherTimer m_timer;
 
+		public class MessageCountStore : INotifyPropertyChanged
+		{
+			int m_count;
+
+			public Type Type { get; set; }
+			public int Count { get { return m_count; } set { m_count = value; Notify("Count"); } }
+
+			void Notify(string property)
+			{
+				if (this.PropertyChanged != null)
+					this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+			}
+
+			#region INotifyPropertyChanged Members
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			#endregion
+		}
+
+		Dictionary<Type, int> m_receivedCountMap = new Dictionary<Type, int>();
+		ObservableCollection<MessageCountStore> m_receivedMessageCounts = new ObservableCollection<MessageCountStore>();
+		public ObservableCollection<MessageCountStore> ReceivedMessageCounts { get { return m_receivedMessageCounts; } }
+
+		Dictionary<Type, int> m_sentCountMap = new Dictionary<Type, int>();
+		ObservableCollection<MessageCountStore> m_sentMessageCounts = new ObservableCollection<MessageCountStore>();
+		public ObservableCollection<MessageCountStore> SentMessageCounts { get { return m_sentMessageCounts; } }
+
 		public ClientNetStatistics()
 		{
 			m_timer = new DispatcherTimer();
@@ -45,6 +74,40 @@ namespace Dwarrowdelf.Client
 			Notify("SentBytes");
 			Notify("ReceivedMessages");
 			Notify("ReceivedBytes");
+
+			foreach (var kvp in m_receivedCountMap)
+			{
+				var t = kvp.Key;
+				var c = kvp.Value;
+
+				var entry = m_receivedMessageCounts.SingleOrDefault(i => i.Type == t);
+				if (entry == null)
+				{
+					entry = new MessageCountStore() { Type = t, Count = c };
+					m_receivedMessageCounts.Add(entry);
+				}
+				else
+				{
+					entry.Count = c;
+				}
+			}
+
+			foreach (var kvp in m_sentCountMap)
+			{
+				var t = kvp.Key;
+				var c = kvp.Value;
+
+				var entry = m_sentMessageCounts.SingleOrDefault(i => i.Type == t);
+				if (entry == null)
+				{
+					entry = new MessageCountStore() { Type = t, Count = c };
+					m_sentMessageCounts.Add(entry);
+				}
+				else
+				{
+					entry.Count = c;
+				}
+			}
 		}
 
 		void Refresh()
@@ -53,6 +116,30 @@ namespace Dwarrowdelf.Client
 				return;
 
 			m_timer.Start();
+		}
+
+		public void AddReceivedMessages(ClientMessage msg)
+		{
+			int c = 0;
+
+			m_receivedCountMap.TryGetValue(msg.GetType(), out c);
+
+			c++;
+			m_receivedCountMap[msg.GetType()] = c;
+
+			Refresh();
+		}
+
+		public void AddSentMessages(ServerMessage msg)
+		{
+			int c = 0;
+
+			m_sentCountMap.TryGetValue(msg.GetType(), out c);
+
+			c++;
+			m_sentCountMap[msg.GetType()] = c;
+
+			Refresh();
 		}
 
 		void Notify(string property)
@@ -175,6 +262,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
 			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
+			this.Stats.AddReceivedMessages(msg);
 
 			if (msg is LogOnReplyBeginMessage)
 				HandleLoginReplyBeginMessage((LogOnReplyBeginMessage)msg);
@@ -240,6 +328,7 @@ namespace Dwarrowdelf.Client
 
 			this.Stats.SentBytes = m_connection.SentBytes;
 			this.Stats.SentMessages = m_connection.SentMessages;
+			this.Stats.AddSentMessages(msg);
 		}
 	}
 }

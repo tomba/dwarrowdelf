@@ -42,6 +42,8 @@
 				<Separator />
 				<ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
 				<Separator />
+				<Button Content="Open NetStats" Click="Button_OpenNetStats_Click" />
+				<Separator />
 				<ComboBox Text="{Binding Path=TileSet, ElementName=map}" MinWidth="100">
 					<ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
 					<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
