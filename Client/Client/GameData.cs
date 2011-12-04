@@ -57,6 +57,9 @@ namespace Dwarrowdelf.Client
 		{
 			add
 			{
+				if (DesignerProperties.GetIsInDesignMode(this))
+					return;
+
 				if (_Blink == null)
 					m_timer.IsEnabled = true;
 
@@ -65,6 +68,9 @@ namespace Dwarrowdelf.Client
 
 			remove
 			{
+				if (DesignerProperties.GetIsInDesignMode(this))
+					return;
+
 				_Blink = (Action)Delegate.Remove(_Blink, value);
 
 				if (_Blink == null)
