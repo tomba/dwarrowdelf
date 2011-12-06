@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Diagnostics;
-using System.Windows.Media;
-using System.ComponentModel;
-using Dwarrowdelf.Jobs;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Collections.ObjectModel;
+using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
