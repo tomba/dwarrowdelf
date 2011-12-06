@@ -1,92 +1,94 @@
 ﻿<Window x:Class="MemoryMappedLog.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:MemoryMappedLog"
-        x:Name="debugWindow"
-        TextOptions.TextFormattingMode="Display"
-        Title="MainWindow" Height="514" Width="739"
-        FocusManager.FocusedElement="{Binding ElementName=logListView}">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:MemoryMappedLog"
+		x:Name="debugWindow"
+		TextOptions.TextFormattingMode="Display"
+		Title="MainWindow" Height="514" Width="739"
+		FocusManager.FocusedElement="{Binding ElementName=logListView}">
 
-    <Window.Resources>
-        <local:LogEntryToBgBrushConverter x:Key="bgConverter" />
-        <local:TimeDiffToStringConverter x:Key="timeDiffConverter" />
-    </Window.Resources>
+	<Window.Resources>
+		<local:LogEntryToBgBrushConverter x:Key="bgConverter" />
+		<local:TimeDiffToStringConverter x:Key="timeDiffConverter" />
+	</Window.Resources>
 
-    <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <Button Click="OnClearClicked">Clear</Button>
-                <Separator />
-                <Button Click="OnMarkClicked">Mark</Button>
-                <Separator />
-                <ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
-                <Separator />
-                <Button Click="OnRulesClicked">Rules...</Button>
-            </ToolBar>
-            <ToolBar>
-                <TextBox Name="filterTextBox" MinWidth="150" GotKeyboardFocus="filterTextBox_GotKeyboardFocus" LostKeyboardFocus="filterTextBox_LostKeyboardFocus"
-                         PreviewKeyDown="filterTextBox_PreviewKeyDown">
-                    <TextBox.Text>
-                        <Binding Path="ShowOnly" ElementName="debugWindow" UpdateSourceTrigger="PropertyChanged" TargetNullValue="&lt;enter filter&gt;">
-                            <Binding.ValidationRules>
-                                <local:RegexValidationRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
+	<DockPanel>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<Button Click="OnClearClicked">Clear</Button>
+				<Separator />
+				<Button Click="OnMarkClicked">Mark</Button>
+				<Separator />
+				<ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
+				<Separator />
+				<Button Click="OnRulesClicked">Rules...</Button>
+			</ToolBar>
+			<ToolBar>
+				<TextBox Name="filterTextBox" MinWidth="150" GotKeyboardFocus="filterTextBox_GotKeyboardFocus" LostKeyboardFocus="filterTextBox_LostKeyboardFocus"
+						 PreviewKeyDown="filterTextBox_PreviewKeyDown">
+					<TextBox.Text>
+						<Binding Path="ShowOnly" ElementName="debugWindow" UpdateSourceTrigger="PropertyChanged" TargetNullValue="&lt;enter filter&gt;">
+							<Binding.ValidationRules>
+								<local:RegexValidationRule />
+							</Binding.ValidationRules>
+						</Binding>
+					</TextBox.Text>
 
-                    <TextBox.Style>
-                        <Style>
-                            <Style.Triggers>
-                                <MultiTrigger>
-                                    <MultiTrigger.Conditions>
-                                        <Condition Property="TextBox.Tag" Value="{x:Null}" />
-                                        <Condition Property="TextBox.IsKeyboardFocused" Value="false" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter Property="TextBox.Foreground" Value="Gray" />
-                                </MultiTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBox.Style>
+					<TextBox.Style>
+						<Style>
+							<Style.Triggers>
+								<MultiTrigger>
+									<MultiTrigger.Conditions>
+										<Condition Property="TextBox.Tag" Value="{x:Null}" />
+										<Condition Property="TextBox.IsKeyboardFocused" Value="false" />
+									</MultiTrigger.Conditions>
+									<Setter Property="TextBox.Foreground" Value="Gray" />
+								</MultiTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBox.Style>
 
-                </TextBox>
-                <Button Click="OnClearFilterClicked">C</Button>
-            </ToolBar>
-            <ToolBar>
-                <TextBlock>LogServer</TextBlock>
-                <TextBox Name="addressTextBox" Width="150">192.168.100.50</TextBox>
-                <ToggleButton Name="connectButton" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked" IsChecked="False" >Connect</ToggleButton>
-            </ToolBar>
-        </ToolBarTray>
+				</TextBox>
+				<Button Click="OnClearFilterClicked">C</Button>
+			</ToolBar>
+			<ToolBar>
+				<TextBlock>LogServer</TextBlock>
+				<TextBox Name="addressTextBox" Width="150">192.168.100.50</TextBox>
+				<ToggleButton Name="connectButton" Checked="ToggleButton_Checked" Unchecked="ToggleButton_Unchecked" IsChecked="False" >Connect</ToggleButton>
+			</ToolBar>
+		</ToolBarTray>
 
-        <ListView Name="logListView" ItemsSource="{Binding Path=DebugEntries, ElementName=debugWindow}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible">
+		<ListView Name="logListView" ItemsSource="{Binding Path=DebugEntries, ElementName=debugWindow}"
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				  ScrollViewer.VerticalScrollBarVisibility="Visible"
+				  VirtualizingStackPanel.IsVirtualizing="True"
+				  VirtualizingStackPanel.VirtualizationMode="Recycling">
 
-            <ListView.ItemContainerStyle>
-                <Style TargetType="{x:Type ListViewItem}">
-                    <Setter Property="Background">
-                        <Setter.Value>
-                            <Binding Converter="{StaticResource bgConverter}" />
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
+			<ListView.ItemContainerStyle>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="Background">
+						<Setter.Value>
+							<Binding Converter="{StaticResource bgConverter}" />
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</ListView.ItemContainerStyle>
 
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Time" DisplayMemberBinding="{Binding DateTime,StringFormat='HH:mm:ss.ffff'}" />
-                    <GridViewColumn Header="TimeDiff" DisplayMemberBinding="{Binding TimeDiff, Converter={StaticResource timeDiffConverter}}" />
-                    <GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
-                    <GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
-                    <GridViewColumn Header="Message">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </DockPanel>
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="Time" DisplayMemberBinding="{Binding DateTime,StringFormat='HH:mm:ss.ffff'}" />
+					<GridViewColumn Header="TimeDiff" DisplayMemberBinding="{Binding TimeDiff, Converter={StaticResource timeDiffConverter}}" />
+					<GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
+					<GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
+					<GridViewColumn Header="Message">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
 </Window>
