@@ -3,22 +3,15 @@
   <Class Name="Dwarrowdelf.Server.LocatableGameObject" Collapsed="true">
     <Position X="7.75" Y="4.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>GAABAAIAAAAABAAAAAAAAAQAQAQAAAAAAAAAgAgAAAA=</HashCode>
+      <HashCode>GAAAAAAAAAAABAAAAAAAAAQBQAAAAAAAAAAAgAgAAAA=</HashCode>
       <FileName>LocatableGameObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.Living" Collapsed="true">
     <Position X="9" Y="5.75" Width="1.5" />
-    <NestedTypes>
-      <Class Name="Dwarrowdelf.Server.Living.ActionData" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>LivingActions.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Class>
-    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>MgCcAUCpQQsEoWF0BkQgDWCIwTBIUECgBAAQDAFIACA=</HashCode>
+      <HashCode>MiCcAYCpQQsEo4H0BsQgDWCIwbBgUUCgBBAQDAZIACA=</HashCode>
       <FileName>Living.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -26,7 +19,7 @@
   <Class Name="Dwarrowdelf.Server.ItemObject" Collapsed="true">
     <Position X="6.75" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAQAAwBAAAAAEgAAABAAAQAAAAEAACAAACEAEBAA=</HashCode>
+      <HashCode>AAAAAQAAwBAAAAAEgCAABAAAQAAAAEAACAAAAEAEBAA=</HashCode>
       <FileName>ItemObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -34,15 +27,15 @@
   <Class Name="Dwarrowdelf.Server.Environment" Collapsed="true">
     <Position X="11.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>JAEEAgEMRCCQD2AcEAAEYGwBQQABHEcgAokAQQEQQwA=</HashCode>
+      <HashCode>JAAEAgEMRCCQD2AMEAAEYGwBQUABHEcoAIkAQQEQQwA=</HashCode>
       <FileName>Environment.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.BuildingObject" Collapsed="true">
-    <Position X="4.5" Y="2.75" Width="1.5" />
+    <Position X="3.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAQECQAQBAQAAAAAAFAAQUAAAEEAAAEIAARAYAAA=</HashCode>
+      <HashCode>AQAAAQAAQAQAAQAAAAAABAAQUAAAEEAAAAAAABAAAAA=</HashCode>
       <FileName>BuildingObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -50,7 +43,7 @@
   <Class Name="Dwarrowdelf.Server.BaseGameObject" Collapsed="true">
     <Position X="7.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQRAAAQAAQAMgBAAQQAAAEAAAAAAABACAAAA=</HashCode>
+      <HashCode>AAAAAAAAQRAAAQAAQAMgBAAQQAAAEAAAAIAABACAAAA=</HashCode>
       <FileName>BaseGameObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -60,6 +53,14 @@
     <TypeIdentifier>
       <HashCode>AgQAASACQAAAACAEAAIARQQAQAAJEAIACAEAAgAAYAE=</HashCode>
       <FileName>GameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.LargeGameObject" Collapsed="true">
+    <Position X="3.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIAQAQAAA=</HashCode>
+      <FileName>LargeGameObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
