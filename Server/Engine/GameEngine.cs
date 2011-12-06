@@ -260,7 +260,7 @@ namespace Dwarrowdelf.Server
 			SignalWorld();
 		}
 
-		void OnTurnStart(Living living)
+		void OnTurnStart(LivingObject living)
 		{
 			if (this.UseMaxMoveTime)
 				m_maxMoveTimer.Change(m_config.MaxMoveTime, TimeSpan.FromMilliseconds(-1));
@@ -388,8 +388,8 @@ namespace Dwarrowdelf.Server
 			return player;
 		}
 
-		public abstract Living[] CreateControllables(Player player);
-		public abstract void SetupControllable(Living living);
+		public abstract LivingObject[] CreateControllables(Player player);
+		public abstract void SetupControllable(LivingObject living);
 
 		static void SaveWorld(SaveData saveData, string savePath)
 		{

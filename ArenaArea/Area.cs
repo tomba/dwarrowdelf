@@ -5,7 +5,7 @@ using System.Text;
 
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
-using Environment = Dwarrowdelf.Server.Environment;
+using Environment = Dwarrowdelf.Server.EnvironmentObject;
 using Dwarrowdelf.AI;
 
 namespace MyArea
@@ -85,7 +85,7 @@ namespace MyArea
 			}
 		}
 
-		void CreateItems(Living living, int numItems)
+		void CreateItems(LivingObject living, int numItems)
 		{
 			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 

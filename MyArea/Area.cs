@@ -5,7 +5,7 @@ using System.Text;
 
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
-using Environment = Dwarrowdelf.Server.Environment;
+using Environment = Dwarrowdelf.Server.EnvironmentObject;
 
 using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;

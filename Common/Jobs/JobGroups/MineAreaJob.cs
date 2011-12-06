@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 {
 	public class MineAreaJob : JobGroup
 	{
-		readonly IEnvironment m_environment;
+		readonly IEnvironmentObject m_environment;
 		readonly IntCuboid m_area;
 
 		IEnumerable<IntPoint3D> m_locs;
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		Dictionary<IntPoint3D, MineData> m_map = new Dictionary<IntPoint3D, MineData>();
 
-		public MineAreaJob(IEnvironment env, IntCuboid area, MineActionType mineActionType)
+		public MineAreaJob(IEnvironmentObject env, IntCuboid area, MineActionType mineActionType)
 			: base(null)
 		{
 			m_environment = env;
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 				m_map[p] = new MineData() { IsPossible = CheckTile(p) };
 		}
 
-		protected override IEnumerable<IJob> GetJobs(ILiving living)
+		protected override IEnumerable<IJob> GetJobs(ILivingObject living)
 		{
 			var designations = m_map
 				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Assignment == null)

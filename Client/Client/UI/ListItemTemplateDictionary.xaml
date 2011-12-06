@@ -31,7 +31,7 @@
         </DockPanel>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:Living}">
+    <DataTemplate DataType="{x:Type local:LivingObject}">
         <DataTemplate.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="Margin" Value="5,3" />

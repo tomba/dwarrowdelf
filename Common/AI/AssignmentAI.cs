@@ -15,7 +15,7 @@ namespace Dwarrowdelf.AI
 	public abstract class AssignmentAI : IAI
 	{
 		[SaveGameProperty]
-		public ILiving Worker { get; private set; }
+		public ILivingObject Worker { get; private set; }
 
 		[SaveGameProperty("NeedToAbort")]
 		bool m_needToAbort;
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.AI
 				m_currentAssignment.StatusChanged += OnJobStatusChanged;
 		}
 
-		protected AssignmentAI(ILiving worker)
+		protected AssignmentAI(ILivingObject worker)
 		{
 			this.Worker = worker;
 			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));

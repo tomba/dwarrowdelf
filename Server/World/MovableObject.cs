@@ -2,30 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	class KeyedObjectCollection : KeyedCollection<ObjectID, GameObject>
-	{
-		public KeyedObjectCollection() : base(null, 10) { }
-
-		protected override ObjectID GetKeyForItem(GameObject item)
-		{
-			return item.ObjectID;
-		}
-	}
-
 	[SaveGameObjectByRef]
-	abstract public class GameObject : ContainerObject, IGameObject
+	abstract public class MovableObject : ContainerObject, IMovableObject
 	{
 		[SaveGameProperty]
 		public ContainerObject Parent { get; private set; }
-		IContainerObject IGameObject.Parent { get { return this.Parent; } }
+		IContainerObject IMovableObject.Parent { get { return this.Parent; } }
 
-		public Environment Environment { get { return this.Parent as Environment; } }
-		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
+		public EnvironmentObject Environment { get { return this.Parent as EnvironmentObject; } }
+		IEnvironmentObject IMovableObject.Environment { get { return this.Parent as IEnvironmentObject; } }
 
 		[SaveGameProperty]
 		public IntPoint3D Location { get; private set; }
@@ -33,17 +22,17 @@ namespace Dwarrowdelf.Server
 		public int Y { get { return this.Location.Y; } }
 		public int Z { get { return this.Location.Z; } }
 
-		protected GameObject(ObjectType objectType)
+		protected MovableObject(ObjectType objectType)
 			: base(objectType)
 		{
 		}
 
-		protected GameObject(ObjectType objectType, ServerGameObjectBuilder builder)
+		protected MovableObject(ObjectType objectType, ServerGameObjectBuilder builder)
 			: base(objectType)
 		{
 		}
 
-		protected GameObject(SaveGameContext ctx, ObjectType objectType)
+		protected MovableObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
 		}

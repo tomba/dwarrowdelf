@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 {
 	/* Abstract game object, without inventory or location. */
 	[SaveGameObjectByRef]
-	abstract public class BaseGameObject : IBaseGameObject
+	abstract public class BaseObject : IBaseObject
 	{
 		[SaveGameProperty]
 		public ObjectID ObjectID { get; private set; }
@@ -17,16 +17,16 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public World World { get; private set; }
-		IWorld IBaseGameObject.World { get { return this.World as IWorld; } }
+		IWorld IBaseObject.World { get { return this.World as IWorld; } }
 
 		[SaveGameProperty]
 		public bool IsInitialized { get; private set; }
 		[SaveGameProperty]
 		public bool IsDestructed { get; private set; }
 
-		public event Action<BaseGameObject> Destructed;
+		public event Action<BaseObject> Destructed;
 
-		event Action<IBaseGameObject> IBaseGameObject.Destructed
+		event Action<IBaseObject> IBaseObject.Destructed
 		{
 			add { this.Destructed += value; }
 			remove { this.Destructed -= value; }
@@ -34,12 +34,12 @@ namespace Dwarrowdelf.Server
 
 		ObjectType m_objectType;
 
-		protected BaseGameObject(ObjectType objectType)
+		protected BaseObject(ObjectType objectType)
 		{
 			m_objectType = objectType;
 		}
 
-		protected BaseGameObject(SaveGameContext ctx, ObjectType objectType)
+		protected BaseObject(SaveGameContext ctx, ObjectType objectType)
 			: this(objectType)
 		{
 		}

@@ -35,7 +35,7 @@ namespace Dwarrowdelf.AI
 			m_members.Remove(ai);
 		}
 
-		void OnDestructed(IBaseGameObject ob)
+		void OnDestructed(IBaseObject ob)
 		{
 			var a = m_members.Single(ai => ai.Worker == ob);
 

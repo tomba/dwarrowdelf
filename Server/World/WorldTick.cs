@@ -12,8 +12,8 @@ namespace Dwarrowdelf.Server
 		public event Action TickStarting;
 		public event Action TickEnded;
 
-		public event Action<Living> TurnStarting;
-		public event Action<Living> TurnEnded;
+		public event Action<LivingObject> TurnStarting;
+		public event Action<LivingObject> TurnEnded;
 
 		public event Action WorkEnded;
 
@@ -239,7 +239,7 @@ namespace Dwarrowdelf.Server
 				TurnEnded(null);
 		}
 
-		void StartTurnSequential(Living living)
+		void StartTurnSequential(LivingObject living)
 		{
 			living.TurnStarted();
 
@@ -250,7 +250,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		void EndTurnSequential(Living living)
+		void EndTurnSequential(LivingObject living)
 		{
 			AddChange(new TurnEndSequentialChange(living));
 

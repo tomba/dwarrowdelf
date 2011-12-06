@@ -37,7 +37,7 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		public HerbivoreAI(ILiving ob)
+		public HerbivoreAI(ILivingObject ob)
 			: base(ob)
 		{
 			m_priorityAction = false;

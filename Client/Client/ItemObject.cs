@@ -9,7 +9,7 @@ using System.Windows;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	class ItemObject : LocatabletGameObject, IItemObject
+	class ItemObject : ConcreteObject, IItemObject
 	{
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)

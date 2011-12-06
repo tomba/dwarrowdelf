@@ -6,9 +6,9 @@ using System.Text;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class BuildingObject : LargeGameObject, IBuildingObject
+	public class BuildingObject : AreaObject, IBuildingObject
 	{
-		internal static BuildingObject Create(World world, Environment env, BuildingObjectBuilder builder)
+		internal static BuildingObject Create(World world, EnvironmentObject env, BuildingObjectBuilder builder)
 		{
 			var ob = new BuildingObject(builder);
 			ob.Initialize(world, env);
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Server
 			throw new NotImplementedException();
 		}
 
-		void Initialize(World world, Environment env)
+		void Initialize(World world, EnvironmentObject env)
 		{
 			if (BuildingObject.VerifyBuildSite(env, this.Area) == false)
 				throw new Exception();
@@ -79,7 +79,7 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		public bool VerifyBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
+		public bool VerifyBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
 		{
 			if (!Contains(builder.Location))
 				return false;
@@ -109,7 +109,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public bool PerformBuildItem(Living builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
+		public bool PerformBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
 		{
 			if (!VerifyBuildItem(builder, sourceObjects, dstItemID))
 				return false;
@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		public static bool VerifyBuildSite(Environment env, IntRectZ area)
+		public static bool VerifyBuildSite(EnvironmentObject env, IntRectZ area)
 		{
 			return area.Range().All(p => env.GetTerrainID(p) == TerrainID.NaturalFloor);
 		}
@@ -145,7 +145,7 @@ namespace Dwarrowdelf.Server
 			this.Area = area;
 		}
 
-		public BuildingObject Create(World world, Environment env)
+		public BuildingObject Create(World world, EnvironmentObject env)
 		{
 			return BuildingObject.Create(world, env, this);
 		}

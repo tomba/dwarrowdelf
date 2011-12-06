@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Client
 {
 	interface IDrawableElement
 	{
-		Environment Environment { get; }
+		EnvironmentObject Environment { get; }
 		IntCuboid Area { get; }
 		FrameworkElement Element { get; }
 		string Description { get; }

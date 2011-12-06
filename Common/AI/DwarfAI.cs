@@ -14,7 +14,7 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		public DwarfAI(ILiving ob)
+		public DwarfAI(ILivingObject ob)
 			: base(ob)
 		{
 		}
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.AI
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
-			var worker = (ILiving)this.Worker;
+			var worker = (ILivingObject)this.Worker;
 
 			bool hasAssignment = this.CurrentAssignment != null;
 			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.AI
 			}
 		}
 
-		IAssignment CreateFoodAssignmentIfNeeded(ILiving worker, ActionPriority priority)
+		IAssignment CreateFoodAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
 		{
 			if (priority == ActionPriority.High && worker.FoodFullness > 50)
 				return null;
@@ -101,7 +101,7 @@ namespace Dwarrowdelf.AI
 			return null;
 		}
 
-		IAssignment CreateDrinkAssignmentIfNeeded(ILiving worker, ActionPriority priority)
+		IAssignment CreateDrinkAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
 		{
 			if (priority == ActionPriority.High && worker.WaterFullness > 50)
 				return null;

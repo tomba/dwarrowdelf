@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.UI
 			this.Objects = new GameObjectCollection();
 		}
 
-		void OnEnvironmentChanged(Environment env)
+		void OnEnvironmentChanged(EnvironmentObject env)
 		{
 			if (this.Environment == env)
 				return;
@@ -124,7 +124,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(GameObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
+		void MapObjectChanged(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
 		{
 			if (l != this.Location)
 				return;
@@ -132,7 +132,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileObjectChanges();
 		}
 
-		public Environment Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 		public IntPoint3D Location { get; private set; }
 		public GameObjectCollection Objects { get; private set; }
 

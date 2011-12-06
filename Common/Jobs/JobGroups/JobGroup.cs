@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public ReadOnlyObservableCollection<IJob> SubJobs { get { return m_roSubJobs; } }
 
-		public IAssignment FindAssignment(ILiving living)
+		public IAssignment FindAssignment(ILivingObject living)
 		{
 			foreach (var job in GetJobs(living))
 			{
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			return null;
 		}
 
-		protected virtual IEnumerable<IJob> GetJobs(ILiving living)
+		protected virtual IEnumerable<IJob> GetJobs(ILivingObject living)
 		{
 			return this.SubJobs.Where(j => j.Status == JobStatus.Ok);
 		}

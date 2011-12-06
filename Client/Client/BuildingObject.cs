@@ -13,12 +13,12 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	class BuildingObject : BaseGameObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
+	class BuildingObject : BaseObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
-		public Environment Environment { get; set; }
+		public EnvironmentObject Environment { get; set; }
 
-		IEnvironment ILargeGameObject.Environment { get { return this.Environment as IEnvironment; } }
+		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRectZ Area { get; set; }
@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			var env = this.World.FindObject<Environment>(data.Environment);
+			var env = this.World.FindObject<EnvironmentObject>(data.Environment);
 
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
@@ -279,7 +279,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IAssignment IJobSource.FindAssignment(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
 			var env = this.Environment;
 

@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	class Living : LocatabletGameObject, ILiving
+	class LivingObject : ConcreteObject, ILivingObject
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<Tuple<SkillID, byte>> Skills { get; private set; }
 		ObservableCollection<Tuple<SkillID, byte>> m_skills;
 
-		public Living(World world, ObjectID objectID)
+		public LivingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			this.IsLiving = true;

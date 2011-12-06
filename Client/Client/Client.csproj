@@ -201,13 +201,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="BaseGameObject.cs" />
+    <Compile Include="BaseObject.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
-    <Compile Include="LocatableGameObject.cs" />
+    <Compile Include="ConcreteObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
@@ -308,11 +308,11 @@
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
     <Compile Include="ClientConnection.cs" />
-    <Compile Include="Living.cs" />
+    <Compile Include="LivingObject.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />
-    <Compile Include="GameObject.cs" />
-    <Compile Include="Environment.cs" />
+    <Compile Include="MovableObject.cs" />
+    <Compile Include="EnvironmentObject.cs" />
     <Compile Include="UI\ItemInfoControl.xaml.cs">
       <DependentUpon>ItemInfoControl.xaml</DependentUpon>
     </Compile>

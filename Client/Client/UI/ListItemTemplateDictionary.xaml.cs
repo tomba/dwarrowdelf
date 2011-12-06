@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var button = (Button)sender;
 
-			var ob = (BaseGameObject)button.DataContext;
+			var ob = (BaseObject)button.DataContext;
 
 			var dlg = new ObjectEditDialog();
 			dlg.DataContext = ob;

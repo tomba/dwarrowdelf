@@ -8,11 +8,11 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class Environment : ContainerObject, IEnvironment
+	public class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		internal static Environment Create(World world, EnvironmentBuilder builder)
+		internal static EnvironmentObject Create(World world, EnvironmentBuilder builder)
 		{
-			var ob = new Environment(builder);
+			var ob = new EnvironmentObject(builder);
 			ob.Initialize(world);
 			return ob;
 		}
@@ -39,17 +39,17 @@ namespace Dwarrowdelf.Server
 		public IntPoint3D HomeLocation { get; set; }
 
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
-		HashSet<LargeGameObject> m_largeObjectSet;
+		HashSet<AreaObject> m_largeObjectSet;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
 		public event Action<IntPoint3D, TileData, TileData> TerrainChanged;
 
-		Environment(SaveGameContext ctx)
+		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
 		{
 		}
 
-		Environment(EnvironmentBuilder builder)
+		EnvironmentObject(EnvironmentBuilder builder)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Server
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
 
-			m_largeObjectSet = new HashSet<LargeGameObject>();
+			m_largeObjectSet = new HashSet<AreaObject>();
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -433,7 +433,7 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, d);
 		}
 
-		public IEnumerable<IGameObject> GetContents(IntRectZ rect)
+		public IEnumerable<IMovableObject> GetContents(IntRectZ rect)
 		{
 			var obs = m_contentArray[rect.Z];
 
@@ -441,34 +441,34 @@ namespace Dwarrowdelf.Server
 		}
 
 		// XXX not a good func. contents can be changed by the caller
-		public IEnumerable<GameObject> GetContents(IntPoint3D l)
+		public IEnumerable<MovableObject> GetContents(IntPoint3D l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<IGameObject> Objects()
+		public IEnumerable<IMovableObject> Objects()
 		{
 			for (int z = 0; z < this.Depth; ++z)
 				foreach (var ob in m_contentArray[z].AsEnumerable())
 					yield return ob;
 		}
 
-		protected override void OnChildAdded(GameObject child)
+		protected override void OnChildAdded(MovableObject child)
 		{
 			var list = m_contentArray[child.Z];
 			Debug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
 
-		protected override void OnChildRemoved(GameObject child)
+		protected override void OnChildRemoved(MovableObject child)
 		{
 			var list = m_contentArray[child.Z];
 			Debug.Assert(list.Contains(child));
 			list.Remove(child);
 		}
 
-		public override bool OkToAddChild(GameObject ob, IntPoint3D p)
+		public override bool OkToAddChild(MovableObject ob, IntPoint3D p)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -481,12 +481,12 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		public override bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc)
+		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3D dstLoc)
 		{
 			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
 		}
 
-		protected override void OnChildMoved(GameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
+		protected override void OnChildMoved(MovableObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
 		{
 			if (srcLoc.Z == dstLoc.Z)
 				return;
@@ -505,7 +505,7 @@ namespace Dwarrowdelf.Server
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		public void AddLargeObject(LargeGameObject ob)
+		public void AddLargeObject(AreaObject ob)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -515,7 +515,7 @@ namespace Dwarrowdelf.Server
 			m_largeObjectSet.Add(ob);
 		}
 
-		public void RemoveLargeObject(LargeGameObject ob)
+		public void RemoveLargeObject(AreaObject ob)
 		{
 			Debug.Assert(this.World.IsWritable);
 			Debug.Assert(m_largeObjectSet.Contains(ob));
@@ -523,12 +523,12 @@ namespace Dwarrowdelf.Server
 			m_largeObjectSet.Remove(ob);
 		}
 
-		public LargeGameObject GetLargeObjectAt(IntPoint3D p)
+		public AreaObject GetLargeObjectAt(IntPoint3D p)
 		{
 			return m_largeObjectSet.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public T GetLargeObjectAt<T>(IntPoint3D p) where T : LargeGameObject
+		public T GetLargeObjectAt<T>(IntPoint3D p) where T : AreaObject
 		{
 			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
 		}
@@ -662,19 +662,19 @@ namespace Dwarrowdelf.Server
 		{
 			public object ConvertToSerializable(object value)
 			{
-				var set = (HashSet<LargeGameObject>)value;
+				var set = (HashSet<AreaObject>)value;
 				return set.ToArray();
 			}
 
 			public object ConvertFromSerializable(object value)
 			{
-				var arr = (LargeGameObject[])value;
-				return new HashSet<LargeGameObject>(arr);
+				var arr = (AreaObject[])value;
+				return new HashSet<AreaObject>(arr);
 			}
 
-			public Type InputType { get { return typeof(HashSet<LargeGameObject>); } }
+			public Type InputType { get { return typeof(HashSet<AreaObject>); } }
 
-			public Type OutputType { get { return typeof(LargeGameObject[]); } }
+			public Type OutputType { get { return typeof(AreaObject[]); } }
 		}
 
 		class TileGridReaderWriter : ISaveGameReaderWriter
@@ -860,9 +860,9 @@ namespace Dwarrowdelf.Server
 			this.VisibilityMode = visibilityMode;
 		}
 
-		public Environment Create(World world)
+		public EnvironmentObject Create(World world)
 		{
-			return Environment.Create(world, this);
+			return EnvironmentObject.Create(world, this);
 		}
 
 		public bool Contains(IntPoint3D p)

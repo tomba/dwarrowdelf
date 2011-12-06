@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 		IntPoint3D CenterPos { get; set; }
 		bool Contains(IntPoint3D ml);
 		bool ShowVirtualSymbols { get; set; }
-		Environment Environment { get; set; }
+		EnvironmentObject Environment { get; set; }
 		IRenderData RenderData { get; }
 
 		void Resolve();
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 		protected readonly RenderData<T> m_renderData;
 
 		protected bool m_showVirtualSymbols = true;
-		protected Environment m_environment;
+		protected EnvironmentObject m_environment;
 		protected IntPoint3D m_centerPos;
 		IntRectZ m_bounds;
 
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public Environment Environment
+		public EnvironmentObject Environment
 		{
 			get { return m_environment; }
 
@@ -164,14 +164,14 @@ namespace Dwarrowdelf.Client
 			MapChangedOverride(ml);
 		}
 
-		void MapObjectChangedCallback(GameObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
+		void MapObjectChangedCallback(MovableObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
 		{
 			MapChangedOverride(ml);
 		}
 
 		protected abstract void MapChangedOverride(IntPoint3D ml);
 
-		protected static bool TileVisible(IntPoint3D ml, Environment env)
+		protected static bool TileVisible(IntPoint3D ml, EnvironmentObject env)
 		{
 			switch (env.VisibilityMode)
 			{

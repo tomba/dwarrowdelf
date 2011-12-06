@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		protected IntPoint3D Src { get; private set; } // just for ToString()
 
 		[SaveGameProperty]
-		protected readonly IEnvironment m_environment;
+		protected readonly IEnvironmentObject m_environment;
 		[SaveGameProperty]
 		DirectionSet m_positioning;
 		[SaveGameProperty]
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			public Type OutputType { get { return typeof(Direction[]); } }
 		}
 
-		public MoveAssignmentBase(IJobObserver parent, IEnvironment environment, DirectionSet positioning)
+		public MoveAssignmentBase(IJobObserver parent, IEnvironmentObject environment, DirectionSet positioning)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_numFails = 0;
 		}
 
-		protected override void AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILivingObject worker)
 		{
 			this.Src = worker.Location;
 			m_numFails = 0;
@@ -135,7 +135,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
-		JobStatus PreparePath(ILiving worker)
+		JobStatus PreparePath(ILivingObject worker)
 		{
 			var progress = CheckProgress(worker);
 
@@ -156,8 +156,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return JobStatus.Ok;
 		}
 
-		protected abstract Queue<Direction> GetPath(ILiving worker);
+		protected abstract Queue<Direction> GetPath(ILivingObject worker);
 
-		protected abstract JobStatus CheckProgress(ILiving worker);
+		protected abstract JobStatus CheckProgress(ILivingObject worker);
 	}
 }

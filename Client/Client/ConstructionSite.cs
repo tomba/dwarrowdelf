@@ -10,14 +10,14 @@ namespace Dwarrowdelf.Client
 	class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
 	{
 		public BuildingID BuildingID;
-		public Environment Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 		public IntRectZ Area { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 		public System.Windows.FrameworkElement Element { get; private set; }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
 
-		public ConstructionSite(Environment environment, BuildingID buildingID, IntRectZ area)
+		public ConstructionSite(EnvironmentObject environment, BuildingID buildingID, IntRectZ area)
 		{
 			this.Environment = environment;
 			this.BuildingID = buildingID;
@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client
 
 		ConstructBuildingJob m_job;
 
-		IAssignment IJobSource.FindAssignment(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
 			if (m_job == null)
 			{

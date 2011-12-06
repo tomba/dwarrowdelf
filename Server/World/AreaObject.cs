@@ -5,22 +5,22 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	public abstract class LargeGameObject : BaseGameObject, ILargeGameObject
+	public abstract class AreaObject : BaseObject, IAreaObject
 	{
 		[SaveGameProperty]
-		public Environment Environment { get; private set; }
-		IEnvironment ILargeGameObject.Environment { get { return this.Environment as IEnvironment; } }
+		public EnvironmentObject Environment { get; private set; }
+		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
 
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
-		protected LargeGameObject(ObjectType objectType, IntRectZ area)
+		protected AreaObject(ObjectType objectType, IntRectZ area)
 			: base(objectType)
 		{
 			this.Area = area;
 		}
 
-		protected LargeGameObject(SaveGameContext ctx, ObjectType objectType)
+		protected AreaObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
 		}
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Server
 			return this.Area.Contains(point);
 		}
 
-		protected void SetEnvironment(Environment env)
+		protected void SetEnvironment(EnvironmentObject env)
 		{
 			if (this.Environment != null)
 				this.Environment.RemoveLargeObject(this);

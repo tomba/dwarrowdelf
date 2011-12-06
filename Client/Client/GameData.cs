@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 	class GameEvent
 	{
 		public string Message { get; private set; }
-		public Environment Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 		public IntPoint3D Location { get; private set; }
 
 		public GameEvent(string str)
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 			this.Message = str;
 		}
 
-		public GameEvent(string str, Environment env, IntPoint3D location)
+		public GameEvent(string str, EnvironmentObject env, IntPoint3D location)
 		{
 			this.Message = str;
 			this.Environment = env;
@@ -84,25 +84,25 @@ namespace Dwarrowdelf.Client
 
 		bool m_previousWasTickEvent = true;
 
-		public void AddGameEvent(Environment env, IntPoint3D location, string format, params object[] args)
+		public void AddGameEvent(EnvironmentObject env, IntPoint3D location, string format, params object[] args)
 		{
 			AddGameEventInternal(env, location, String.Format(format, args));
 			m_previousWasTickEvent = false;
 		}
 
-		public void AddGameEvent(Environment env, IntPoint3D location, string message)
+		public void AddGameEvent(EnvironmentObject env, IntPoint3D location, string message)
 		{
 			AddGameEventInternal(env, location, message);
 			m_previousWasTickEvent = false;
 		}
 
-		public void AddGameEvent(GameObject ob, string format, params object[] args)
+		public void AddGameEvent(MovableObject ob, string format, params object[] args)
 		{
 			AddGameEventInternal(ob.Environment, ob.Location, String.Format(format, args));
 			m_previousWasTickEvent = false;
 		}
 
-		public void AddGameEvent(GameObject ob, string message)
+		public void AddGameEvent(MovableObject ob, string message)
 		{
 			AddGameEventInternal(ob.Environment, ob.Location, message);
 			m_previousWasTickEvent = false;
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Client
 			m_previousWasTickEvent = true;
 		}
 
-		void AddGameEventInternal(Environment env, IntPoint3D location, string message)
+		void AddGameEventInternal(EnvironmentObject env, IntPoint3D location, string message)
 		{
 			if (m_gameEvents.Count > 100)
 				m_gameEvents.RemoveAt(0);

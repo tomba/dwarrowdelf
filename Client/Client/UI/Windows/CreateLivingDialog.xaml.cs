@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client.UI
 {
 	partial class CreateLivingDialog : Window
 	{
-		public Environment Environment { get; set; }
+		public EnvironmentObject Environment { get; set; }
 		public IntRectZ Area { get; set; }
 
 		public string LivingName { get; set; }
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client.UI
 			base.OnInitialized(e);
 		}
 
-		public void SetContext(Environment env, IntRectZ area)
+		public void SetContext(EnvironmentObject env, IntRectZ area)
 		{
 			this.Environment = env;
 			this.Area = area;

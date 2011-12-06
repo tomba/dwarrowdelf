@@ -122,7 +122,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public DropAction(IEnumerable<IGameObject> items)
+		public DropAction(IEnumerable<IMovableObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -145,7 +145,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID[] ItemObjectIDs { get; private set; }
 
-		public GetAction(IEnumerable<IGameObject> items)
+		public GetAction(IEnumerable<IMovableObject> items)
 		{
 			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
 		}
@@ -169,7 +169,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID ItemObjectID { get; private set; }
 
-		public ConsumeAction(IGameObject consumable)
+		public ConsumeAction(IMovableObject consumable)
 		{
 			this.ItemObjectID = consumable.ObjectID;
 		}
@@ -258,7 +258,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ItemID DstItemID { get; private set; }
 
-		public BuildItemAction(IEnumerable<IGameObject> sourceItems, ItemID dstItemID)
+		public BuildItemAction(IEnumerable<IMovableObject> sourceItems, ItemID dstItemID)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 			this.DstItemID = dstItemID;
@@ -282,7 +282,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID Target { get; private set; }
 
-		public AttackAction(ILiving target)
+		public AttackAction(ILivingObject target)
 		{
 			this.Target = target.ObjectID;
 		}
@@ -309,7 +309,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 
-		public ConstructBuildingAction(IEnvironment env, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingAction(IEnvironmentObject env, IntRectZ area, BuildingID buildingID)
 		{
 			this.EnvironmentID = env.ObjectID;
 			this.Area = area;

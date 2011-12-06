@@ -14,12 +14,12 @@ namespace Dwarrowdelf.Client
 	public class FighterAI : AssignmentAI
 	{
 		[SaveGameProperty]
-		ILiving m_target;
+		ILivingObject m_target;
 
 		[SaveGameProperty]
 		List<IntPoint3D> m_patrolRoute;
 
-		public FighterAI(ILiving worker)
+		public FighterAI(ILivingObject worker)
 			: base(worker)
 		{
 			this.OnDuty = true;

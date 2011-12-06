@@ -7,11 +7,11 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public partial class Living : LocatableGameObject, ILiving
+	public partial class LivingObject : ConcreteObject, ILivingObject
 	{
-		internal static Living Create(World world, LivingBuilder builder)
+		internal static LivingObject Create(World world, LivingBuilder builder)
 		{
-			var ob = new Living(builder);
+			var ob = new LivingObject(builder);
 			ob.Initialize(world);
 			return ob;
 		}
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		Living(LivingBuilder builder)
+		LivingObject(LivingBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
 			Debug.Assert(builder.LivingID != Dwarrowdelf.LivingID.Undefined);
@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Server
 					m_skillMap[kvp.Key] = kvp.Value;
 		}
 
-		Living(SaveGameContext ctx)
+		LivingObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Living)
 		{
 			this.World.TickStarting += OnTickStart;
@@ -342,7 +342,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void ReceiveDamage(Living attacker, DamageCategory cat, int damage)
+		public void ReceiveDamage(LivingObject attacker, DamageCategory cat, int damage)
 		{
 			this.HitPoints -= damage;
 
@@ -607,7 +607,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// does this living see location l in env
-		public bool Sees(Environment env, IntPoint3D l)
+		public bool Sees(EnvironmentObject env, IntPoint3D l)
 		{
 			if (env != this.Environment)
 				return false;
@@ -726,9 +726,9 @@ namespace Dwarrowdelf.Server
 			this.SkillMap = new Dictionary<SkillID, byte>();
 		}
 
-		public Living Create(World world)
+		public LivingObject Create(World world)
 		{
-			return Living.Create(world, this);
+			return LivingObject.Create(world, this);
 		}
 
 		public void SetSkillLevel(SkillID skill, byte level)

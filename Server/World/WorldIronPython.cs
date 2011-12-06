@@ -13,14 +13,14 @@ namespace Dwarrowdelf.Server
 			get { return m_objectMap.Values.OfType<ItemObject>().ToArray(); }
 		}
 
-		public Living[] IPLivings
+		public LivingObject[] IPLivings
 		{
 			get { return m_livings.List.ToArray(); }
 		}
 
-		public BaseGameObject IPGet(object target)
+		public BaseObject IPGet(object target)
 		{
-			BaseGameObject ob = null;
+			BaseObject ob = null;
 
 			if (target is int)
 			{
@@ -50,15 +50,15 @@ namespace Dwarrowdelf.Server
 			return ob;
 		}
 
-		public Environment IPGetEnv(object target)
+		public EnvironmentObject IPGetEnv(object target)
 		{
-			Environment ob = null;
+			EnvironmentObject ob = null;
 
 			if (target is int)
 			{
 				var oid = new ObjectID(ObjectType.Environment, (uint)(int)target);
 
-				ob = FindObject<Environment>(oid);
+				ob = FindObject<EnvironmentObject>(oid);
 			}
 
 			if (ob == null)
@@ -67,15 +67,15 @@ namespace Dwarrowdelf.Server
 			return ob;
 		}
 
-		public Living IPGetLiving(object target)
+		public LivingObject IPGetLiving(object target)
 		{
-			Living ob = null;
+			LivingObject ob = null;
 
 			if (target is int)
 			{
 				var oid = new ObjectID(ObjectType.Living, (uint)(int)target);
 
-				ob = FindObject<Living>(oid);
+				ob = FindObject<LivingObject>(oid);
 			}
 
 			if (ob == null)

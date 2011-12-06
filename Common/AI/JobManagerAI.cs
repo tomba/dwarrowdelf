@@ -14,7 +14,7 @@ namespace Dwarrowdelf.AI
 	{
 		public JobManager JobManager { get; set; }
 
-		public JobManagerAI(ILiving worker)
+		public JobManagerAI(ILivingObject worker)
 			: base(worker)
 		{
 		}

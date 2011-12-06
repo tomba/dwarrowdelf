@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty("Dest")]
 		readonly IntPoint3D m_dest;
 
-		public MoveAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D destination, DirectionSet positioning)
+		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D destination, DirectionSet positioning)
 			: base(parent, environment, positioning)
 		{
 			m_dest = destination;
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 		}
 
-		protected override Queue<Direction> GetPath(ILiving worker)
+		protected override Queue<Direction> GetPath(ILivingObject worker)
 		{
 			IntPoint3D finalPos;
 			var path = AStar.AStarFinder.Find(m_environment, worker.Location, m_dest, this.Positioning, out finalPos);
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return new Queue<Direction>(path);
 		}
 
-		protected override JobStatus CheckProgress(ILiving worker)
+		protected override JobStatus CheckProgress(ILivingObject worker)
 		{
 			if (worker.Location.IsAdjacentTo(m_dest, this.Positioning))
 				return JobStatus.Done;

@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public class AttackAssignment : Assignment
 	{
 		[SaveGameProperty("Target")]
-		readonly ILiving m_target;
+		readonly ILivingObject m_target;
 
 		[SaveGameProperty]
 		Queue<Direction> m_pathDirs;
@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		IntPoint3D m_dest;
 
-		public AttackAssignment(IJobObserver parent, ILiving target)
+		public AttackAssignment(IJobObserver parent, ILivingObject target)
 			: base(parent)
 		{
 			m_target = target;
@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 		}
 
-		JobStatus PreparePath(ILiving worker)
+		JobStatus PreparePath(ILivingObject worker)
 		{
 			m_dest = m_target.Location;
 

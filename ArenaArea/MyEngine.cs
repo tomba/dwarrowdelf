@@ -24,19 +24,19 @@ namespace MyArea
 
 		Random m_random = new Random();
 
-		public override void SetupControllable(Living living)
+		public override void SetupControllable(LivingObject living)
 		{
 			living.SetAI(new DwarfAI(living));
 		}
 
-		public override Living[] CreateControllables(Player player)
+		public override LivingObject[] CreateControllables(Player player)
 		{
 			const int NUM_DWARVES = 1;
 
 			// XXX entry location
-			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.Environment>().First();
+			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.EnvironmentObject>().First();
 
-			var list = new List<Living>();
+			var list = new List<LivingObject>();
 
 			for (int i = 0; i < NUM_DWARVES; ++i)
 			{
@@ -57,7 +57,7 @@ namespace MyArea
 			return list.ToArray();
 		}
 
-		Living CreateDwarf(int i)
+		LivingObject CreateDwarf(int i)
 		{
 			var builder = new LivingBuilder(LivingID.Dwarf)
 			{

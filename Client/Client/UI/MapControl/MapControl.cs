@@ -25,8 +25,8 @@ namespace Dwarrowdelf.Client.UI
 	{
 		IRenderView m_renderView;
 
-		Environment m_env;
-		public event Action<Environment> EnvironmentChanged;
+		EnvironmentObject m_env;
+		public event Action<EnvironmentObject> EnvironmentChanged;
 		public event Action<int> ZChanged;
 
 		TileControl.ISymbolTileRenderer m_renderer;
@@ -133,7 +133,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Environment Environment
+		public EnvironmentObject Environment
 		{
 			get { return m_env; }
 
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileData();
 		}
 
-		void MapObjectChangedCallback(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
+		void MapObjectChangedCallback(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			if (!m_renderView.Contains(l))
 				return;

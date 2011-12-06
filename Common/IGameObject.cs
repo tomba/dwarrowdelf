@@ -18,30 +18,30 @@ namespace Dwarrowdelf
 		ObjectType ObjectType { get; }
 	}
 
-	public interface IBaseGameObject : IIdentifiable
+	public interface IBaseObject : IIdentifiable
 	{
 		IWorld World { get; }
 		bool IsDestructed { get; }
-		event Action<IBaseGameObject> Destructed;
+		event Action<IBaseObject> Destructed;
 	}
 
-	public interface ILargeGameObject : IBaseGameObject
+	public interface IAreaObject : IBaseObject
 	{
-		IEnvironment Environment { get; }
+		IEnvironmentObject Environment { get; }
 		IntRectZ Area { get; }
 	}
 
-	public interface IBuildingObject : ILargeGameObject
+	public interface IBuildingObject : IAreaObject
 	{
 		BuildingInfo BuildingInfo { get; }
 	}
 
-	public interface IContainerObject : IBaseGameObject
+	public interface IContainerObject : IBaseObject
 	{
 
 	}
 
-	public interface IEnvironment : IContainerObject, AStar.IAStarEnvironment
+	public interface IEnvironmentObject : IContainerObject, AStar.IAStarEnvironment
 	{
 		IntPoint3D HomeLocation { get; }
 
@@ -66,18 +66,18 @@ namespace Dwarrowdelf
 
 		bool GetHidden(IntPoint3D l);
 
-		IEnumerable<IGameObject> GetContents(IntRectZ rect);
-		IEnumerable<IGameObject> Objects();
+		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
+		IEnumerable<IMovableObject> Objects();
 	}
 
-	public interface IGameObject : IContainerObject
+	public interface IMovableObject : IContainerObject
 	{
-		IEnvironment Environment { get; }
+		IEnvironmentObject Environment { get; }
 		IContainerObject Parent { get; }
 		IntPoint3D Location { get; }
 	}
 
-	public interface ILocatableGameObject : IGameObject
+	public interface IConcreteObject : IMovableObject
 	{
 		string Name { get; }
 		GameColor Color { get; }
@@ -85,7 +85,7 @@ namespace Dwarrowdelf
 		MaterialID MaterialID { get; }
 	}
 
-	public interface ILiving : ILocatableGameObject
+	public interface ILivingObject : IConcreteObject
 	{
 		GameAction CurrentAction { get; }
 		ActionPriority ActionPriority { get; }
@@ -102,7 +102,7 @@ namespace Dwarrowdelf
 		int WaterFullness { get; }
 	}
 
-	public interface IItemObject : ILocatableGameObject
+	public interface IItemObject : IConcreteObject
 	{
 		ItemCategory ItemCategory { get; }
 		ItemID ItemID { get; }
@@ -114,10 +114,10 @@ namespace Dwarrowdelf
 
 	public interface IPlayer
 	{
-		bool IsFriendly(IBaseGameObject living);
+		bool IsFriendly(IBaseObject living);
 		void Send(Dwarrowdelf.Messages.ClientMessage message);
-		IVisionTracker GetVisionTracker(IEnvironment env);
-		ObjectVisibility GetObjectVisibility(IBaseGameObject ob);
+		IVisionTracker GetVisionTracker(IEnvironmentObject env);
+		ObjectVisibility GetObjectVisibility(IBaseObject ob);
 	}
 
 	public interface IVisionTracker

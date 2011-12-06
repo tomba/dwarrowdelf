@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client.UI
 		ScaleTransform m_scaleTransform;
 		TranslateTransform m_translateTransform;
 
-		Environment m_env;
+		EnvironmentObject m_env;
 
 		public MapControlElementsService(MapControl mapControl, Canvas canvas)
 		{
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client.UI
 			OnEnvironmentChanged(m_mapControl.Environment);
 		}
 
-		void OnEnvironmentChanged(Environment env)
+		void OnEnvironmentChanged(EnvironmentObject env)
 		{
 			if (m_env != null)
 				((INotifyCollectionChanged)m_env.MapElements).CollectionChanged -= OnElementCollectionChanged;

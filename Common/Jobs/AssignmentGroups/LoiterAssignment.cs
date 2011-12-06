@@ -12,14 +12,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	public class LoiterAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]
-		readonly IEnvironment m_environment;
+		readonly IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
 		int m_state;
 
 		[SaveGameProperty]
 		IntPoint3D[] m_corners;
 
-		public LoiterAssignment(IJobObserver parent, IEnvironment environment)
+		public LoiterAssignment(IJobObserver parent, IEnvironmentObject environment)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		static IntPoint3D FindCorner(IEnvironment env, IntPoint3D hl, IntVector3D v)
+		static IntPoint3D FindCorner(IEnvironmentObject env, IntPoint3D hl, IntVector3D v)
 		{
 			IntPoint3D p = hl + v;
 

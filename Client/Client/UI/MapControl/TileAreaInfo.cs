@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Client.UI
 {
 	class TileAreaInfo : INotifyPropertyChanged
 	{
-		Environment m_env;
+		EnvironmentObject m_env;
 		MapSelection m_selection;
 
 		GameObjectCollection m_objects;
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileTerrainChanges();
 		}
 
-		void MapObjectChanged(GameObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
+		void MapObjectChanged(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
 		{
 			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Environment Environment
+		public EnvironmentObject Environment
 		{
 			get { return m_env; }
 			set
@@ -143,7 +143,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<GameObject> Objects
+		public IEnumerable<MovableObject> Objects
 		{
 			get
 			{

@@ -6,17 +6,17 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	public partial class Living
+	public partial class LivingObject
 	{
 		class ActionData
 		{
-			public Func<Living, GameAction, bool> ActionHandler;
-			public Func<Living, GameAction, int> GetTotalTicks;
+			public Func<LivingObject, GameAction, bool> ActionHandler;
+			public Func<LivingObject, GameAction, int> GetTotalTicks;
 		}
 
 		static Dictionary<Type, ActionData> s_actionMethodMap;
 
-		static Living()
+		static LivingObject()
 		{
 			var actionTypes = Helpers.GetNonabstractSubclasses(typeof(GameAction));
 
@@ -24,11 +24,11 @@ namespace Dwarrowdelf.Server
 
 			foreach (var type in actionTypes)
 			{
-				var actionHandler = WrapperGenerator.CreateFuncWrapper<Living, GameAction, bool>("PerformAction", type);
+				var actionHandler = WrapperGenerator.CreateFuncWrapper<LivingObject, GameAction, bool>("PerformAction", type);
 				if (actionHandler == null)
 					throw new Exception(String.Format("No PerformAction method found for {0}", type.Name));
 
-				var tickInitializer = WrapperGenerator.CreateFuncWrapper<Living, GameAction, int>("GetTotalTicks", type);
+				var tickInitializer = WrapperGenerator.CreateFuncWrapper<LivingObject, GameAction, int>("GetTotalTicks", type);
 				if (tickInitializer == null)
 					throw new Exception(String.Format("No GetTotalTicks method found for {0}", type.Name));
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(ConstructBuildingAction action)
 		{
-			var env = this.World.FindObject<Environment>(action.EnvironmentID);
+			var env = this.World.FindObject<EnvironmentObject>(action.EnvironmentID);
 			if (env == null)
 			{
 				SetActionError("no env");
@@ -229,7 +229,7 @@ namespace Dwarrowdelf.Server
 		int GetTotalTicks(MoveAction action)
 		{
 			var obs = this.Environment.GetContents(this.Location + action.Direction);
-			return obs.OfType<Living>().Count() + 1;
+			return obs.OfType<LivingObject>().Count() + 1;
 		}
 
 		bool PerformAction(MoveAction action)
@@ -474,7 +474,7 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(AttackAction action)
 		{
 			var attacker = this;
-			var target = this.World.FindObject<Living>(action.Target);
+			var target = this.World.FindObject<LivingObject>(action.Target);
 
 			if (target == null)
 			{

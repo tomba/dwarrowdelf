@@ -8,16 +8,16 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	delegate void ObjectMoved(GameObject ob, ContainerObject dst, IntPoint3D loc);
+	delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3D loc);
 
 	[SaveGameObjectByRef(ClientObject = true)]
-	abstract class GameObject : ContainerObject, IGameObject
+	abstract class MovableObject : ContainerObject, IMovableObject
 	{
 		public event ObjectMoved ObjectMoved;
 
 		public bool IsLiving { get; protected set; }
 
-		public GameObject(World world, ObjectID objectID)
+		public MovableObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 		}
@@ -59,14 +59,14 @@ namespace Dwarrowdelf.Client
 				ObjectMoved(this, this.Parent, this.Location);
 		}
 
-		public Environment Environment
+		public EnvironmentObject Environment
 		{
-			get { return this.Parent as Environment; }
+			get { return this.Parent as EnvironmentObject; }
 		}
 
-		IEnvironment IGameObject.Environment
+		IEnvironmentObject IMovableObject.Environment
 		{
-			get { return this.Parent as IEnvironment; }
+			get { return this.Parent as IEnvironmentObject; }
 		}
 
 		public override string ToString()
@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Client
 			private set { m_parent = value; Notify("Parent"); }
 		}
 
-		IContainerObject IGameObject.Parent { get { return this.Parent; } }
+		IContainerObject IMovableObject.Parent { get { return this.Parent; } }
 
 		IntPoint3D m_location;
 		public IntPoint3D Location

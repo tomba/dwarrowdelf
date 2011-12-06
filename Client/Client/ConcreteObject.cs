@@ -9,20 +9,20 @@ using System.Windows;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	abstract class LocatabletGameObject : GameObject, ILocatableGameObject
+	abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
-		static LocatabletGameObject()
+		static ConcreteObject()
 		{
 			GameData.Data.SymbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
 		}
 
 		static void OnSymbolDrawingCacheChanged()
 		{
-			foreach (var ob in GameData.Data.World.Objects.OfType<LocatabletGameObject>())
+			foreach (var ob in GameData.Data.World.Objects.OfType<ConcreteObject>())
 				ob.ReloadDrawing();
 		}
 
-		public LocatabletGameObject(World world, ObjectID objectID)
+		public ConcreteObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			this.SymbolID = Client.SymbolID.Unknown;

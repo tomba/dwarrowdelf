@@ -47,13 +47,13 @@ namespace Dwarrowdelf
 	public class TurnStartSequentialChange : Change
 	{
 		[NonSerialized]
-		ILiving m_living;
+		ILivingObject m_living;
 		ObjectID m_livingID;
 
-		public ILiving Living { get { return m_living; } }
+		public ILivingObject Living { get { return m_living; } }
 		public ObjectID LivingID { get { return m_livingID; } }
 
-		public TurnStartSequentialChange(ILiving living)
+		public TurnStartSequentialChange(ILivingObject living)
 		{
 			m_living = living;
 			m_livingID = living.ObjectID;
@@ -64,13 +64,13 @@ namespace Dwarrowdelf
 	public class TurnEndSequentialChange : Change
 	{
 		[NonSerialized]
-		ILiving m_living;
+		ILivingObject m_living;
 		ObjectID m_livingID;
 
-		public ILiving Living { get { return m_living; } }
+		public ILivingObject Living { get { return m_living; } }
 		public ObjectID LivingID { get { return m_livingID; } }
 
-		public TurnEndSequentialChange(ILiving living)
+		public TurnEndSequentialChange(ILivingObject living)
 		{
 			m_living = living;
 			m_livingID = living.ObjectID;
@@ -81,13 +81,13 @@ namespace Dwarrowdelf
 	public abstract class EnvironmentChange : Change
 	{
 		[NonSerialized]
-		IEnvironment m_environment;
+		IEnvironmentObject m_environment;
 		ObjectID m_environmentID;
 
-		public IEnvironment Environment { get { return m_environment; } }
+		public IEnvironmentObject Environment { get { return m_environment; } }
 		public ObjectID EnvironmentID { get { return m_environmentID; } }
 
-		public EnvironmentChange(IEnvironment env)
+		public EnvironmentChange(IEnvironmentObject env)
 		{
 			m_environment = env;
 			m_environmentID = env.ObjectID;
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 		public IntPoint3D Location { get; private set; }
 		public TileData TileData { get; private set; }
 
-		public MapChange(IEnvironment map, IntPoint3D l, TileData tileData)
+		public MapChange(IEnvironmentObject map, IntPoint3D l, TileData tileData)
 			: base(map)
 		{
 			this.Location = l;
@@ -117,13 +117,13 @@ namespace Dwarrowdelf
 	public abstract class ObjectChange : Change
 	{
 		[NonSerialized]
-		IBaseGameObject m_object;
+		IBaseObject m_object;
 		ObjectID m_objectID;
 
-		public IBaseGameObject Object { get { return m_object; } }
+		public IBaseObject Object { get { return m_object; } }
 		public ObjectID ObjectID { get { return m_objectID; } }
 
-		protected ObjectChange(IBaseGameObject @object)
+		protected ObjectChange(IBaseObject @object)
 		{
 			m_object = @object;
 			m_objectID = m_object.ObjectID;
@@ -133,7 +133,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ObjectCreatedChange : ObjectChange
 	{
-		public ObjectCreatedChange(IBaseGameObject ob)
+		public ObjectCreatedChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -147,7 +147,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ObjectDestructedChange : ObjectChange
 	{
-		public ObjectDestructedChange(IBaseGameObject ob)
+		public ObjectDestructedChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -178,7 +178,7 @@ namespace Dwarrowdelf
 		public ObjectID DestinationID { get { return m_destinationID; } }
 		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
 
-		public ObjectMoveChange(IGameObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
+		public ObjectMoveChange(IMovableObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
 			IContainerObject destinationEnv, IntPoint3D destinationLocation)
 			: base(mover)
 		{
@@ -205,7 +205,7 @@ namespace Dwarrowdelf
 		public IntPoint3D SourceLocation;
 		public IntPoint3D DestinationLocation;
 
-		public ObjectMoveLocationChange(IGameObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
+		public ObjectMoveLocationChange(IMovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
 			: base(mover)
 		{
 			this.SourceLocation = sourceLocation;
@@ -222,7 +222,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class FullObjectChange : ObjectChange
 	{
-		public FullObjectChange(IBaseGameObject ob)
+		public FullObjectChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -240,7 +240,7 @@ namespace Dwarrowdelf
 	{
 		public PropertyID PropertyID { get; private set; }
 
-		protected PropertyChange(IBaseGameObject ob, PropertyID propertyID)
+		protected PropertyChange(IBaseObject ob, PropertyID propertyID)
 			: base(ob)
 		{
 			this.PropertyID = propertyID;
@@ -252,7 +252,7 @@ namespace Dwarrowdelf
 	{
 		public object Value { get; private set; }
 
-		public PropertyObjectChange(IBaseGameObject ob, PropertyID propertyID, object value)
+		public PropertyObjectChange(IBaseObject ob, PropertyID propertyID, object value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -269,7 +269,7 @@ namespace Dwarrowdelf
 	{
 		public int Value { get; private set; }
 
-		public PropertyIntChange(IBaseGameObject ob, PropertyID propertyID, int value)
+		public PropertyIntChange(IBaseObject ob, PropertyID propertyID, int value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -287,7 +287,7 @@ namespace Dwarrowdelf
 		public SkillID SkillID { get; private set; }
 		public byte Level { get; private set; }
 
-		public SkillChange(IBaseGameObject ob, SkillID skillID, byte level)
+		public SkillChange(IBaseObject ob, SkillID skillID, byte level)
 			: base(ob)
 		{
 			this.SkillID = skillID;
@@ -307,7 +307,7 @@ namespace Dwarrowdelf
 		public ActionPriority Priority { get; set; }
 		public int UserID { get; set; }
 
-		public ActionStartedChange(IBaseGameObject ob)
+		public ActionStartedChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -327,7 +327,7 @@ namespace Dwarrowdelf
 		public int TotalTicks { get; set; }
 		public int TicksUsed { get; set; }
 
-		public ActionProgressChange(IBaseGameObject ob)
+		public ActionProgressChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -347,7 +347,7 @@ namespace Dwarrowdelf
 		public ActionState State { get; set; }
 		public string Error { get; set; }
 
-		public ActionDoneChange(IBaseGameObject ob)
+		public ActionDoneChange(IBaseObject ob)
 			: base(ob)
 		{
 		}
@@ -369,10 +369,10 @@ namespace Dwarrowdelf
 	public class DamageChange : ObjectChange
 	{
 		[NonSerialized]
-		IBaseGameObject m_attacker;
+		IBaseObject m_attacker;
 		ObjectID m_attackerID;
 
-		public IBaseGameObject Attacker { get { return m_attacker; } }
+		public IBaseObject Attacker { get { return m_attacker; } }
 		public ObjectID AttackerID { get { return m_attackerID; } }
 
 		public DamageCategory DamageCategory;
@@ -380,7 +380,7 @@ namespace Dwarrowdelf
 
 		public bool IsHit;
 
-		public DamageChange(IBaseGameObject target, IBaseGameObject attacker, DamageCategory cat, int damage)
+		public DamageChange(IBaseObject target, IBaseObject attacker, DamageCategory cat, int damage)
 			: base(target)
 		{
 			m_attacker = attacker;
@@ -394,7 +394,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class DeathChange : ObjectChange
 	{
-		public DeathChange(IBaseGameObject ob)
+		public DeathChange(IBaseObject ob)
 			: base(ob)
 		{
 		}

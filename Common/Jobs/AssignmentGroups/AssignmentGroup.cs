@@ -45,9 +45,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			}
 		}
 
-		ILiving m_worker;
+		ILivingObject m_worker;
 		[SaveGameProperty]
-		public ILiving Worker
+		public ILivingObject Worker
 		{
 			get { return m_worker; }
 			private set { if (m_worker == value) return; m_worker = value; Notify("Worker"); }
@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			get { return this.CurrentAssignment != null ? this.CurrentAssignment.CurrentAction : null; }
 		}
 
-		public void Assign(ILiving worker)
+		public void Assign(ILivingObject worker)
 		{
 			Debug.Assert(this.IsAssigned == false);
 			Debug.Assert(this.Status == JobStatus.Ok);
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			Debug.Assert(this.Status == JobStatus.Ok);
 		}
 
-		protected virtual void AssignOverride(ILiving worker)
+		protected virtual void AssignOverride(ILivingObject worker)
 		{
 		}
 

@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void Resolve(out RenderTileSimple tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		static void Resolve(out RenderTileSimple tile, EnvironmentObject env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTileSimple();
 			tile.IsValid = true;
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client
 			tile.SymbolID = GetTerrainTile(p, env, showVirtualSymbols);
 		}
 
-		static SymbolID GetTerrainTile(IntPoint3D ml, Environment env, bool showVirtualSymbols)
+		static SymbolID GetTerrainTile(IntPoint3D ml, EnvironmentObject env, bool showVirtualSymbols)
 		{
 			var flrID = env.GetTerrainID(ml);
 

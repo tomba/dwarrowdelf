@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	abstract class ContainerObject : BaseGameObject, IContainerObject
+	abstract class ContainerObject : BaseObject, IContainerObject
 	{
 		GameObjectCollection m_inventory;
 		public ReadOnlyGameObjectCollection Inventory { get; private set; }
@@ -17,23 +17,23 @@ namespace Dwarrowdelf.Client
 			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
 
-		protected virtual void ChildAdded(GameObject child) { }
-		protected virtual void ChildRemoved(GameObject child) { }
-		protected virtual void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to) { }
+		protected virtual void ChildAdded(MovableObject child) { }
+		protected virtual void ChildRemoved(MovableObject child) { }
+		protected virtual void ChildMoved(MovableObject child, IntPoint3D from, IntPoint3D to) { }
 
-		public void AddChild(GameObject ob)
+		public void AddChild(MovableObject ob)
 		{
 			m_inventory.Add(ob);
 			ChildAdded(ob);
 		}
 
-		public void RemoveChild(GameObject ob)
+		public void RemoveChild(MovableObject ob)
 		{
 			m_inventory.Remove(ob);
 			ChildRemoved(ob);
 		}
 
-		public void MoveChild(GameObject ob, IntPoint3D from, IntPoint3D to)
+		public void MoveChild(MovableObject ob, IntPoint3D from, IntPoint3D to)
 		{
 			ChildMoved(ob, from, to);
 		}

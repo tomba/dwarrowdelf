@@ -13,12 +13,12 @@ namespace Dwarrowdelf.Client
 {
 	class ConstructBuildingJob : JobGroup
 	{
-		Environment m_environment;
+		EnvironmentObject m_environment;
 		IntRectZ m_area;
 		BuildingID m_buildingID;
 		int m_state;
 
-		public ConstructBuildingJob(IJobObserver parent, Environment env, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingJob(IJobObserver parent, EnvironmentObject env, IntRectZ area, BuildingID buildingID)
 			: base(parent)
 		{
 			m_environment = env;

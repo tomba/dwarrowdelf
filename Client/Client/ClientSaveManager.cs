@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Client
 			var reader = new StringReader(dataStr);
 
 			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
-			var data = deserializer.Deserialize<BaseGameObject[]>();
+			var data = deserializer.Deserialize<BaseObject[]>();
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 		{
 			public int ToRefID(object value)
 			{
-				var ob = (BaseGameObject)value;
+				var ob = (BaseObject)value;
 				return (int)ob.ObjectID.RawValue;
 			}
 
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client
 				return ob;
 			}
 
-			public Type InputType { get { return typeof(IBaseGameObject); } }
+			public Type InputType { get { return typeof(IBaseObject); } }
 		}
 	}
 }

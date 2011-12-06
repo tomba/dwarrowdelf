@@ -12,12 +12,12 @@ namespace Dwarrowdelf.Client
 {
 	class CleanAreaJob : JobGroup
 	{
-		Environment m_environment;
+		EnvironmentObject m_environment;
 		IntRectZ m_area;
 
 		Dictionary<IntPoint3D, IJob> m_map;
 
-		public CleanAreaJob(IJobObserver parent, Environment env, IntRectZ area)
+		public CleanAreaJob(IJobObserver parent, EnvironmentObject env, IntRectZ area)
 			: base(parent)
 		{
 			m_environment = env;
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 			SetStatus(JobStatus.Done);
 		}
 
-		protected override IEnumerable<IJob> GetJobs(ILiving living)
+		protected override IEnumerable<IJob> GetJobs(ILivingObject living)
 		{
 			foreach (var p in m_area.Range())
 			{

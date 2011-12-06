@@ -43,16 +43,16 @@ namespace Dwarrowdelf.Jobs
 
 	public interface IJobGroup : IJob
 	{
-		IAssignment FindAssignment(ILiving living);
+		IAssignment FindAssignment(ILivingObject living);
 	}
 
 	public interface IAssignment : IJob
 	{
 		bool IsAssigned { get; }
-		ILiving Worker { get; }
+		ILivingObject Worker { get; }
 		GameAction CurrentAction { get; }
 
-		void Assign(ILiving worker);
+		void Assign(ILivingObject worker);
 		JobStatus PrepareNextAction();
 		JobStatus ActionProgress();
 		JobStatus ActionDone(ActionState actionStatus);

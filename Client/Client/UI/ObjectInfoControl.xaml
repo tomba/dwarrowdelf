@@ -14,7 +14,7 @@
 			<ui:ItemInfoControl />
 		</DataTemplate>
 
-		<DataTemplate DataType="{x:Type local:Living}">
+		<DataTemplate DataType="{x:Type local:LivingObject}">
 			<ui:LivingInfoControl />
 		</DataTemplate>
 

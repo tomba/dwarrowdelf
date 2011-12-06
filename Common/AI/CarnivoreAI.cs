@@ -19,7 +19,7 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		public CarnivoreAI(ILiving ob)
+		public CarnivoreAI(ILivingObject ob)
 			: base(ob)
 		{
 			m_priorityAction = false;

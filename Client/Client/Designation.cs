@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 	class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
-		public Environment Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 
 		[SaveGameProperty]
 		Dictionary<IntPoint3D, DesignationData> m_map;
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client
 			public bool IsPossible;
 		}
 
-		public Designation(Environment env)
+		public Designation(EnvironmentObject env)
 		{
 			this.Environment = env;
 
@@ -161,7 +161,7 @@ namespace Dwarrowdelf.Client
 				RemoveDesignation(kvp.Key);
 		}
 
-		IAssignment IJobSource.FindAssignment(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
 			var designations = m_map
 				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Job == null)

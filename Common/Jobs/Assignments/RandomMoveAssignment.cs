@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			// else Abort, Done or Fail
 		}
 
-		protected override void AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILivingObject worker)
 		{
 			int i = worker.World.Random.Next(8);
 			m_dir = DirectionExtensions.PlanarDirections[i];

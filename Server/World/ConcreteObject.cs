@@ -6,9 +6,9 @@ using System.Text;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public abstract class LocatableGameObject : GameObject, ILocatableGameObject
+	public abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
-		protected LocatableGameObject(ObjectType objectType, LocatableGameObjectBuilder builder)
+		protected ConcreteObject(ObjectType objectType, LocatableGameObjectBuilder builder)
 			: base(objectType, builder)
 		{
 			m_name = builder.Name;
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Server
 				m_color = Materials.GetMaterial(m_materialID).Color;
 		}
 
-		protected LocatableGameObject(SaveGameContext ctx, ObjectType objectType)
+		protected ConcreteObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
 		}

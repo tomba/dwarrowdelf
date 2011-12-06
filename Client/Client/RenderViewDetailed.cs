@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTileDetailed tile, Environment env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
@@ -167,7 +167,7 @@ namespace Dwarrowdelf.Client
 				tile.TerrainDarknessLevel = tile.InteriorDarknessLevel;
 		}
 
-		static void GetTerrainTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetTerrainTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			seeThrough = false;
 
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetInteriorTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetInteriorTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			var intID = env.GetInteriorID(ml);
 			var intID2 = env.GetInteriorID(ml + Direction.Down);
@@ -334,9 +334,9 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetObjectTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetObjectTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
-			var ob = (LocatabletGameObject)env.GetFirstObject(ml);
+			var ob = (ConcreteObject)env.GetFirstObject(ml);
 
 			if (ob == null)
 				return;
@@ -346,7 +346,7 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.None;
 		}
 
-		static void GetTopTile(IntPoint3D ml, Environment env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetTopTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
 			SymbolID id;
 

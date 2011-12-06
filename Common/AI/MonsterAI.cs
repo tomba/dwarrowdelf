@@ -12,14 +12,14 @@ namespace Dwarrowdelf.AI
 	[SaveGameObjectByRef]
 	public class MonsterAI : AssignmentAI
 	{
-		ILiving m_target;
+		ILivingObject m_target;
 
 		MonsterAI(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
 
-		public MonsterAI(ILiving ob)
+		public MonsterAI(ILivingObject ob)
 			: base(ob)
 		{
 		}

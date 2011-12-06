@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client.UI
 {
 	partial class MainWindow : Window, INotifyPropertyChanged
 	{
-		GameObject m_followObject;
+		MovableObject m_followObject;
 		bool m_closing;
 
 		bool m_serverInAppDomain = true;
@@ -367,13 +367,13 @@ namespace Dwarrowdelf.Client.UI
 
 		private void FilterLivings(object sender, FilterEventArgs e)
 		{
-			if (e.Item is Living)
+			if (e.Item is LivingObject)
 				e.Accepted = true;
 			else
 				e.Accepted = false;
 		}
 
-		public GameObject FollowObject
+		public MovableObject FollowObject
 		{
 			get { return m_followObject; }
 
@@ -397,9 +397,9 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void FollowedObjectMoved(GameObject ob, ContainerObject dst, IntPoint3D loc)
+		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3D loc)
 		{
-			Environment env = dst as Environment;
+			EnvironmentObject env = dst as EnvironmentObject;
 
 			map.ScrollTo(env, loc);
 		}
@@ -568,7 +568,7 @@ namespace Dwarrowdelf.Client.UI
 			base.OnPreviewTextInput(e);
 		}
 
-		internal Environment Map
+		internal EnvironmentObject Map
 		{
 			get { return map.Environment; }
 			set { map.Environment = value; }
@@ -899,7 +899,7 @@ namespace Dwarrowdelf.Client.UI
 			if (e.AddedItems.Count == 0)
 				return;
 
-			var ob = (GameObject)e.AddedItems[0];
+			var ob = (MovableObject)e.AddedItems[0];
 
 			this.FollowObject = null;
 
@@ -909,7 +909,7 @@ namespace Dwarrowdelf.Client.UI
 		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			var item = (ListBoxItem)sender;
-			var ob = (GameObject)item.Content;
+			var ob = (MovableObject)item.Content;
 
 			this.FollowObject = null;
 
@@ -919,7 +919,7 @@ namespace Dwarrowdelf.Client.UI
 		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			var item = (ListBoxItem)sender;
-			var ob = (GameObject)item.Content;
+			var ob = (MovableObject)item.Content;
 
 			this.FollowObject = ob;
 		}

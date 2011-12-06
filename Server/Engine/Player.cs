@@ -63,11 +63,11 @@ namespace Dwarrowdelf.Server
 		bool m_seeAll;
 
 		[SaveGameProperty("Controllables")]
-		List<Living> m_controllables;
-		public ReadOnlyCollection<Living> Controllables { get; private set; }
+		List<LivingObject> m_controllables;
+		public ReadOnlyCollection<LivingObject> Controllables { get; private set; }
 
-		public bool IsController(IBaseGameObject living) { return this.Controllables.Contains(living); }
-		public bool IsFriendly(IBaseGameObject living) { return m_seeAll || this.Controllables.Contains(living); }
+		public bool IsController(IBaseObject living) { return this.Controllables.Contains(living); }
+		public bool IsFriendly(IBaseObject living) { return m_seeAll || this.Controllables.Contains(living); }
 
 		IPRunner m_ipRunner;
 
@@ -84,8 +84,8 @@ namespace Dwarrowdelf.Server
 			m_userID = userID;
 			m_seeAll = false;
 
-			m_controllables = new List<Living>();
-			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
+			m_controllables = new List<LivingObject>();
+			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 
 			if (m_seeAll)
 				m_changeHandler = new AdminChangeHandler(this);
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Server
 
 		protected Player(SaveGameContext ctx)
 		{
-			this.Controllables = new ReadOnlyCollection<Living>(m_controllables);
+			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 
 			foreach (var l in this.Controllables)
 				l.Destructed += OnControllableDestructed; // XXX remove if player deleted
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Server
 			trace.Header = String.Format("Player({0})", m_userID);
 		}
 
-		void AddControllable(Living living)
+		void AddControllable(LivingObject living)
 		{
 			m_controllables.Add(living);
 			living.Destructed += OnControllableDestructed;
@@ -136,7 +136,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void RemoveControllable(Living living)
+		void RemoveControllable(LivingObject living)
 		{
 			var ok = m_controllables.Remove(living);
 			Debug.Assert(ok);
@@ -196,9 +196,9 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void OnControllableDestructed(BaseGameObject ob)
+		void OnControllableDestructed(BaseObject ob)
 		{
-			var living = (Living)ob;
+			var living = (LivingObject)ob;
 			RemoveControllable(living);
 		}
 
@@ -222,7 +222,7 @@ namespace Dwarrowdelf.Server
 				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
 				foreach (var ob in this.World.AllObjects)
 				{
-					var sob = ob as GameObject;
+					var sob = ob as MovableObject;
 
 					if (sob == null || sob.Parent == null)
 						ob.SendTo(this, ObjectVisibility.All);
@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Server
 			ObjectID mapID = msg.MapID;
 			IntCuboid r = msg.Cube;
 
-			var env = m_world.FindObject<Environment>(mapID);
+			var env = m_world.FindObject<EnvironmentObject>(mapID);
 			if (env == null)
 				throw new Exception();
 
@@ -290,7 +290,7 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(CreateItemMessage msg)
 		{
-			var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+			var env = this.World.FindObject<EnvironmentObject>(msg.EnvironmentID);
 
 			if (env == null)
 				throw new Exception();
@@ -306,7 +306,7 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(CreateLivingMessage msg)
 		{
-			var controllables = new List<Living>();
+			var controllables = new List<LivingObject>();
 
 			Dwarrowdelf.AI.Herd herd = null;
 
@@ -315,7 +315,7 @@ namespace Dwarrowdelf.Server
 
 			var livingInfo = Livings.GetLivingInfo(msg.LivingID);
 
-			var env = this.World.FindObject<Environment>(msg.EnvironmentID);
+			var env = this.World.FindObject<EnvironmentObject>(msg.EnvironmentID);
 
 			if (env == null)
 				throw new Exception();
@@ -386,7 +386,7 @@ namespace Dwarrowdelf.Server
 			var r = msg.Area;
 			var id = msg.ID;
 
-			var env = m_world.FindObject<Environment>(mapID);
+			var env = m_world.FindObject<EnvironmentObject>(mapID);
 			if (env == null)
 				throw new Exception();
 
@@ -401,7 +401,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		Random m_random = new Random();
-		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		IntPoint3D GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
 		{
 			IntPoint3D p;
 			int iter = 0;
@@ -574,7 +574,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void SendProceedTurnRequest(ILiving living)
+		void SendProceedTurnRequest(ILivingObject living)
 		{
 			ObjectID id;
 
@@ -599,11 +599,11 @@ namespace Dwarrowdelf.Server
 				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 
-		Dictionary<Environment, VisionTrackerBase> m_visionTrackers = new Dictionary<Environment, VisionTrackerBase>();
+		Dictionary<EnvironmentObject, VisionTrackerBase> m_visionTrackers = new Dictionary<EnvironmentObject, VisionTrackerBase>();
 
-		public ObjectVisibility GetObjectVisibility(IBaseGameObject ob)
+		public ObjectVisibility GetObjectVisibility(IBaseObject ob)
 		{
-			var sgo = ob as GameObject;
+			var sgo = ob as MovableObject;
 
 			if (sgo == null)
 			{
@@ -611,7 +611,7 @@ namespace Dwarrowdelf.Server
 				return ObjectVisibility.All;
 			}
 
-			for (GameObject o = sgo; o != null; o = o.Parent as GameObject)
+			for (MovableObject o = sgo; o != null; o = o.Parent as MovableObject)
 			{
 				if (this.IsController(o))
 				{
@@ -627,12 +627,12 @@ namespace Dwarrowdelf.Server
 		}
 
 		/* does the player see location p in object ob */
-		public bool Sees(IBaseGameObject ob, IntPoint3D p)
+		public bool Sees(IBaseObject ob, IntPoint3D p)
 		{
 			if (m_seeAll)
 				return true;
 
-			var env = ob as Environment;
+			var env = ob as EnvironmentObject;
 			if (env != null)
 			{
 				IVisionTracker tracker = GetVisionTracker(env);
@@ -640,24 +640,24 @@ namespace Dwarrowdelf.Server
 			}
 
 			/* is it inside one of the controllables? */
-			var lgo = ob as LocatableGameObject;
+			var lgo = ob as ConcreteObject;
 			while (lgo != null)
 			{
 				if (m_controllables.Contains(lgo))
 					return true;
 
-				lgo = lgo.Parent as LocatableGameObject;
+				lgo = lgo.Parent as ConcreteObject;
 			}
 
 			return false;
 		}
 
-		public IVisionTracker GetVisionTracker(IEnvironment env)
+		public IVisionTracker GetVisionTracker(IEnvironmentObject env)
 		{
-			return GetVisionTrackerInternal((Environment)env);
+			return GetVisionTrackerInternal((EnvironmentObject)env);
 		}
 
-		VisionTrackerBase GetVisionTrackerInternal(Environment env)
+		VisionTrackerBase GetVisionTrackerInternal(EnvironmentObject env)
 		{
 			if (m_seeAll)
 				return AdminVisionTracker.Tracker;
@@ -731,7 +731,7 @@ namespace Dwarrowdelf.Server
 			if (change is ObjectCreatedChange)
 			{
 				var c = (ObjectCreatedChange)change;
-				var newObject = (BaseGameObject)c.Object;
+				var newObject = (BaseObject)c.Object;
 				newObject.SendTo(m_player, ObjectVisibility.All);
 			}
 		}
@@ -751,9 +751,9 @@ namespace Dwarrowdelf.Server
 			var occ = change as ObjectCreatedChange;
 			if (occ != null)
 			{
-				if (!(occ.Object is GameObject))
+				if (!(occ.Object is MovableObject))
 				{
-					var newObject = (BaseGameObject)occ.Object;
+					var newObject = (BaseObject)occ.Object;
 					newObject.SendTo(m_player, ObjectVisibility.All);
 				}
 			}
@@ -766,10 +766,10 @@ namespace Dwarrowdelf.Server
 			// However, we still need to tell about newly created objects that come
 			// to AllVisible maps.
 			var c = change as ObjectMoveChange;
-			if (c != null && c.Source != c.Destination && c.Destination is Environment &&
-				(((Environment)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((Environment)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
+			if (c != null && c.Source != c.Destination && c.Destination is EnvironmentObject &&
+				(((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 			{
-				var newObject = (GameObject)c.Object;
+				var newObject = (MovableObject)c.Object;
 				var vis = m_player.GetObjectVisibility(newObject);
 				newObject.SendTo(m_player, vis);
 			}
@@ -779,7 +779,7 @@ namespace Dwarrowdelf.Server
 			Send(changeMsg);
 		}
 
-		bool CanSeeChange(Change change, IList<Living> controllables)
+		bool CanSeeChange(Change change, IList<LivingObject> controllables)
 		{
 			if (change is TurnStartSimultaneousChange || change is TurnEndSimultaneousChange)
 			{
@@ -826,7 +826,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				// XXX
-				var env = ((IGameObject)c.Object).Parent;
+				var env = ((IMovableObject)c.Object).Parent;
 
 				if (m_player.Sees(env, c.SourceLocation))
 					return true;
@@ -861,7 +861,7 @@ namespace Dwarrowdelf.Server
 					if (vis == PropertyVisibility.Friendly && !m_player.IsFriendly(c.Object))
 						return false;
 
-					GameObject sob = c.Object as GameObject;
+					MovableObject sob = c.Object as MovableObject;
 					if (sob != null)
 						return m_player.Sees(sob.Environment, sob.Location);
 

@@ -38,8 +38,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class BaseGameObjectCollection : IdentifiableCollection<BaseGameObject> { }
-	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<BaseGameObject>
+	class BaseGameObjectCollection : IdentifiableCollection<BaseObject> { }
+	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<BaseObject>
 	{
 		public ReadOnlyBaseGameObjectCollection(BaseGameObjectCollection collection)
 			: base(collection)
@@ -47,8 +47,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class GameObjectCollection : IdentifiableCollection<GameObject> { }
-	class ReadOnlyGameObjectCollection : ReadOnlyIdentifiableCollection<GameObject>
+	class GameObjectCollection : IdentifiableCollection<MovableObject> { }
+	class ReadOnlyGameObjectCollection : ReadOnlyIdentifiableCollection<MovableObject>
 	{
 		public ReadOnlyGameObjectCollection(GameObjectCollection collection)
 			: base(collection)
@@ -56,8 +56,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class LivingCollection : IdentifiableCollection<Living> { }
-	class ReadOnlyLivingCollection : ReadOnlyIdentifiableCollection<Living>
+	class LivingCollection : IdentifiableCollection<LivingObject> { }
+	class ReadOnlyLivingCollection : ReadOnlyIdentifiableCollection<LivingObject>
 	{
 		public ReadOnlyLivingCollection(LivingCollection collection)
 			: base(collection)
@@ -65,8 +65,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class EnvironmentCollection : IdentifiableCollection<Environment> { }
-	class ReadOnlyEnvironmentCollection : ReadOnlyIdentifiableCollection<Environment>
+	class EnvironmentCollection : IdentifiableCollection<EnvironmentObject> { }
+	class ReadOnlyEnvironmentCollection : ReadOnlyIdentifiableCollection<EnvironmentObject>
 	{
 		public ReadOnlyEnvironmentCollection(EnvironmentCollection collection)
 			: base(collection)

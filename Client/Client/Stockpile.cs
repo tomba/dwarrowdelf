@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 	class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
-		public Environment Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
 
 		[SaveGameProperty]
@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Client
 
 		public string Description { get { return "Stockpile"; } }
 
-		public Stockpile(Environment environment, IntRectZ area)
+		public Stockpile(EnvironmentObject environment, IntRectZ area)
 		{
 			this.Environment = environment;
 			this.Area = area;
@@ -109,7 +109,7 @@ namespace Dwarrowdelf.Client
 			m_jobs = null;
 		}
 
-		IAssignment IJobSource.FindAssignment(ILiving living)
+		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
 			if (this.Criterias.Count == 0)
 				return null;

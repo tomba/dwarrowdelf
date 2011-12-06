@@ -15,14 +15,14 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef(ClientObject = true)]
-	class Environment : ContainerObject, IEnvironment
+	class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		public event Action<GameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
+		public event Action<MovableObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
 		public event Action<IntPoint3D> MapTileTerrainChanged;
 
 		GrowingTileGrid m_tileGrid;
-		Dictionary<IntPoint3D, List<GameObject>> m_objectMap;
-		List<GameObject> m_objectList;
+		Dictionary<IntPoint3D, List<MovableObject>> m_objectMap;
+		List<MovableObject> m_objectList;
 
 		public uint Version { get; private set; }
 
@@ -39,14 +39,14 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public Designation Designations { get; private set; }
 
-		public Environment(World world, ObjectID objectID)
+		public EnvironmentObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
 			this.Version = 1;
 
 			m_tileGrid = new GrowingTileGrid();
-			m_objectMap = new Dictionary<IntPoint3D, List<GameObject>>();
-			m_objectList = new List<GameObject>();
+			m_objectMap = new Dictionary<IntPoint3D, List<MovableObject>>();
+			m_objectList = new List<MovableObject>();
 
 			m_mapElements = new ObservableCollection<IDrawableElement>();
 			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
@@ -277,49 +277,49 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		static IList<GameObject> EmptyObjectList = new GameObject[0];
+		static IList<MovableObject> EmptyObjectList = new MovableObject[0];
 
-		public IEnumerable<IGameObject> GetContents(IntRectZ rect)
+		public IEnumerable<IMovableObject> GetContents(IntRectZ rect)
 		{
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}
 
-		public IEnumerable<IGameObject> Objects()
+		public IEnumerable<IMovableObject> Objects()
 		{
 			return m_objectMap.SelectMany(kvp => kvp.Value);
 		}
 
-		public IList<GameObject> GetContents(IntPoint3D l)
+		public IList<MovableObject> GetContents(IntPoint3D l)
 		{
-			List<GameObject> obs;
+			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
 				return EmptyObjectList;
 
 			return obs.AsReadOnly();
 		}
 
-		public IList<GameObject> GetContents()
+		public IList<MovableObject> GetContents()
 		{
 			return m_objectList.AsReadOnly();
 		}
 
-		public GameObject GetFirstObject(IntPoint3D l)
+		public MovableObject GetFirstObject(IntPoint3D l)
 		{
-			List<GameObject> obs;
+			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
 				return null;
 
 			return obs.FirstOrDefault();
 		}
 
-		protected override void ChildAdded(GameObject child)
+		protected override void ChildAdded(MovableObject child)
 		{
 			IntPoint3D l = child.Location;
 
-			List<GameObject> obs;
+			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs))
 			{
-				obs = new List<GameObject>();
+				obs = new List<MovableObject>();
 				m_objectMap[l] = obs;
 			}
 
@@ -334,13 +334,13 @@ namespace Dwarrowdelf.Client
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Add);
 		}
 
-		protected override void ChildRemoved(GameObject child)
+		protected override void ChildRemoved(MovableObject child)
 		{
 			IntPoint3D l = child.Location;
 
 			Debug.Assert(m_objectMap.ContainsKey(l));
 
-			List<GameObject> obs = m_objectMap[l];
+			List<MovableObject> obs = m_objectMap[l];
 
 			bool removed = obs.Remove(child);
 			Debug.Assert(removed);
@@ -352,9 +352,9 @@ namespace Dwarrowdelf.Client
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Remove);
 		}
 
-		protected override void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to)
+		protected override void ChildMoved(MovableObject child, IntPoint3D from, IntPoint3D to)
 		{
-			List<GameObject> obs;
+			List<MovableObject> obs;
 
 			/* first remove from the old position ... */
 
@@ -372,7 +372,7 @@ namespace Dwarrowdelf.Client
 
 			if (!m_objectMap.TryGetValue(to, out obs))
 			{
-				obs = new List<GameObject>();
+				obs = new List<MovableObject>();
 				m_objectMap[to] = obs;
 			}
 
@@ -386,7 +386,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// called from object when its visual property changes
-		internal void OnObjectVisualChanged(GameObject ob)
+		internal void OnObjectVisualChanged(MovableObject ob)
 		{
 			if (MapTileObjectChanged != null)
 			{

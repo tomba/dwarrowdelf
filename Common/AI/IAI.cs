@@ -7,7 +7,7 @@ namespace Dwarrowdelf.AI
 {
 	public interface IAI
 	{
-		ILiving Worker { get; }
+		ILivingObject Worker { get; }
 
 		/// <summary>
 		/// In server this is called two times per turn, once for high priority and once for idle priority.

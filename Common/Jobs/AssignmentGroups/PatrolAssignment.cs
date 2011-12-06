@@ -12,14 +12,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	public class PatrolAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]
-		readonly IEnvironment m_environment;
+		readonly IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
 		int m_state;
 
 		[SaveGameProperty]
 		IntPoint3D[] m_waypoints;
 
-		public PatrolAssignment(IJobObserver parent, IEnvironment environment, IntPoint3D[] waypoints)
+		public PatrolAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D[] waypoints)
 			: base(parent)
 		{
 			m_environment = environment;
@@ -31,7 +31,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		protected override void AssignOverride(ILiving worker)
+		protected override void AssignOverride(ILivingObject worker)
 		{
 			// start at waypoint closest to the worker
 			m_state = m_waypoints

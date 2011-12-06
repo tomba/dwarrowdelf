@@ -12,13 +12,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public class ConstructBuildingAssignment : Assignment
 	{
 		[SaveGameProperty]
-		readonly IEnvironment m_environment;
+		readonly IEnvironmentObject m_environment;
 		[SaveGameProperty]
 		readonly IntRectZ m_area;
 		[SaveGameProperty]
 		readonly BuildingID m_buildingID;
 
-		public ConstructBuildingAssignment(IJobObserver parent, IEnvironment environment, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingAssignment(IJobObserver parent, IEnvironmentObject environment, IntRectZ area, BuildingID buildingID)
 			: base(parent)
 		{
 			m_environment = environment;

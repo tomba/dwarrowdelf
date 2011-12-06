@@ -115,7 +115,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var oid in msg.Controllables)
 			{
-				var l = m_world.GetObject<Living>(oid);
+				var l = m_world.GetObject<LivingObject>(oid);
 				l.IsControllable = b;
 			}
 		}
@@ -145,13 +145,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleObjectData(BaseGameObjectData data)
 		{
-			var ob = m_world.GetObject<BaseGameObject>(data.ObjectID);
+			var ob = m_world.GetObject<BaseObject>(data.ObjectID);
 			ob.Deserialize(data);
 		}
 
 		void HandleMessage(MapDataTerrainsMessage msg)
 		{
-			var env = m_world.FindObject<Environment>(msg.Environment);
+			var env = m_world.FindObject<EnvironmentObject>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			env.SetTerrains(msg.Bounds, msg.TerrainData);
@@ -159,7 +159,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(MapDataTerrainsListMessage msg)
 		{
-			var env = m_world.FindObject<Environment>(msg.Environment);
+			var env = m_world.FindObject<EnvironmentObject>(msg.Environment);
 			if (env == null)
 				throw new Exception();
 			trace.TraceVerbose("Received TerrainData for {0} tiles", msg.TileDataList.Count());
@@ -193,7 +193,7 @@ namespace Dwarrowdelf.Client
 		// XXX check if this is needed
 		void HandleChange(FullObjectChange change)
 		{
-			var ob = m_world.FindObject<BaseGameObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
 			if (ob == null)
 				throw new Exception();
 
@@ -202,7 +202,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectMoveChange change)
 		{
-			var ob = m_world.FindObject<GameObject>(change.ObjectID);
+			var ob = m_world.FindObject<MovableObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -225,7 +225,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectMoveLocationChange change)
 		{
-			var ob = m_world.FindObject<GameObject>(change.ObjectID);
+			var ob = m_world.FindObject<MovableObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -244,8 +244,8 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(DamageChange change)
 		{
-			var attacker = m_world.FindObject<Living>(change.AttackerID);
-			var target = m_world.GetObject<Living>(change.ObjectID);
+			var attacker = m_world.FindObject<LivingObject>(change.AttackerID);
+			var target = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			string aname = attacker == null ? "nobody" : attacker.ToString();
 			string tname = target.ToString();
@@ -278,14 +278,14 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(DeathChange change)
 		{
-			var target = m_world.GetObject<Living>(change.ObjectID);
+			var target = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			GameData.Data.AddGameEvent(target, "{0} dies", target);
 		}
 
 		void HandleChange(PropertyObjectChange change)
 		{
-			var ob = m_world.FindObject<BaseGameObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
 
 			if (ob == null)
 				throw new Exception();
@@ -297,7 +297,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(PropertyIntChange change)
 		{
-			var ob = m_world.FindObject<BaseGameObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
 
 			if (ob == null)
 			{
@@ -312,7 +312,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(SkillChange change)
 		{
-			var ob = m_world.FindObject<Living>(change.ObjectID);
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
 
 			if (ob == null)
 				throw new Exception();
@@ -324,7 +324,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectDestructedChange change)
 		{
-			var ob = m_world.FindObject<BaseGameObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -333,7 +333,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(MapChange change)
 		{
-			var env = m_world.FindObject<Environment>(change.EnvironmentID);
+			var env = m_world.FindObject<EnvironmentObject>(change.EnvironmentID);
 			if (env == null)
 				throw new Exception();
 
@@ -374,7 +374,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				var living = m_world.FindObject<Living>(livingID);
+				var living = m_world.FindObject<LivingObject>(livingID);
 				if (living == null)
 					throw new Exception();
 				m_activeLiving = living;
@@ -382,10 +382,10 @@ namespace Dwarrowdelf.Client
 		}
 
 		bool m_turnActionRequested;
-		Living m_activeLiving;
-		Dictionary<Living, GameAction> m_actionMap = new Dictionary<Living, GameAction>();
+		LivingObject m_activeLiving;
+		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
 
-		public void SignalLivingHasAction(Living living, GameAction action)
+		public void SignalLivingHasAction(LivingObject living, GameAction action)
 		{
 			if (m_turnActionRequested == false)
 				return;
@@ -443,7 +443,7 @@ namespace Dwarrowdelf.Client
 		{
 			//Debug.WriteLine("ActionStartedChange({0})", change.ObjectID);
 
-			var ob = m_world.FindObject<Living>(change.ObjectID);
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
 			if (ob == null)
 				throw new Exception();
 
@@ -454,7 +454,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionProgressChange change)
 		{
-			var ob = m_world.FindObject<Living>(change.ObjectID);
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
 			if (ob == null)
 				throw new Exception();
 
@@ -465,7 +465,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionDoneChange change)
 		{
-			var ob = m_world.FindObject<Living>(change.ObjectID);
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
 
 			if (ob == null)
 				throw new Exception();

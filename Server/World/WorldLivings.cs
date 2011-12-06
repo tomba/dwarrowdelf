@@ -9,17 +9,17 @@ namespace Dwarrowdelf.Server
 	public partial class World
 	{
 		[SaveGameProperty]
-		ProcessableList<Living> m_livings;
+		ProcessableList<LivingObject> m_livings;
 
 		LivingEnumerator m_livingEnumerator;
 
-		internal void AddLiving(Living living)
+		internal void AddLiving(LivingObject living)
 		{
 			VerifyAccess();
 			m_livings.Add(living);
 		}
 
-		internal void RemoveLiving(Living living)
+		internal void RemoveLiving(LivingObject living)
 		{
 			VerifyAccess();
 			m_livings.Remove(living);
@@ -27,16 +27,16 @@ namespace Dwarrowdelf.Server
 
 		class LivingEnumerator
 		{
-			IList<Living> m_list;
+			IList<LivingObject> m_list;
 			int m_index;
 
-			public LivingEnumerator(IList<Living> list)
+			public LivingEnumerator(IList<LivingObject> list)
 			{
 				m_list = list;
 				m_index = -1;
 			}
 
-			public Living Current
+			public LivingObject Current
 			{
 				get { return m_index == -1 ? null : m_list[m_index]; }
 			}

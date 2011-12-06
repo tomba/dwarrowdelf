@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
-		public void SetContext(Environment env, IntRectZ area)
+		public void SetContext(EnvironmentObject env, IntRectZ area)
 		{
 		}
 

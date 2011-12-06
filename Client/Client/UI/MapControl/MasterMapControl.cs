@@ -284,7 +284,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public void ScrollTo(Environment env, IntPoint3D p)
+		public void ScrollTo(EnvironmentObject env, IntPoint3D p)
 		{
 			this.Environment = env;
 			this.Z = p.Z;
@@ -397,13 +397,13 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public Environment Environment
+		public EnvironmentObject Environment
 		{
 			get { return m_mapControl.Environment; }
 			set { m_mapControl.Environment = value; }
 		}
 
-		void OnEnvironmentChanged(Environment env)
+		void OnEnvironmentChanged(EnvironmentObject env)
 		{
 			if (env != null)
 			{

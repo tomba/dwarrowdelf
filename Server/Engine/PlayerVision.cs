@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 		public abstract void Start();
 		public abstract void Stop();
 		public abstract bool Sees(IntPoint3D p);
-		public virtual void HandleNewControllable(Living living) { } // XXX update vision map
+		public virtual void HandleNewControllable(LivingObject living) { } // XXX update vision map
 	}
 
 	class AdminVisionTracker : VisionTrackerBase
@@ -35,9 +35,9 @@ namespace Dwarrowdelf.Server
 	class AllVisibleVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
-		Environment m_environment;
+		EnvironmentObject m_environment;
 
-		public AllVisibleVisionTracker(Player player, Environment env)
+		public AllVisibleVisionTracker(Player player, EnvironmentObject env)
 		{
 			Debug.Assert(env.VisibilityMode == VisibilityMode.AllVisible);
 
@@ -63,10 +63,10 @@ namespace Dwarrowdelf.Server
 	class GlobalFOVVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
-		Environment m_environment;
+		EnvironmentObject m_environment;
 		bool[, ,] m_visibilityArray;
 
-		public GlobalFOVVisionTracker(Player player, Environment env)
+		public GlobalFOVVisionTracker(Player player, EnvironmentObject env)
 		{
 			Debug.Assert(env.VisibilityMode == VisibilityMode.GlobalFOV);
 
@@ -185,15 +185,15 @@ namespace Dwarrowdelf.Server
 	class LOSVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
-		Environment m_environment;
+		EnvironmentObject m_environment;
 
 		HashSet<IntPoint3D> m_oldKnownLocations = new HashSet<IntPoint3D>();
-		HashSet<GameObject> m_oldKnownObjects = new HashSet<GameObject>();
+		HashSet<MovableObject> m_oldKnownObjects = new HashSet<MovableObject>();
 
 		HashSet<IntPoint3D> m_newKnownLocations = new HashSet<IntPoint3D>();
-		HashSet<GameObject> m_newKnownObjects = new HashSet<GameObject>();
+		HashSet<MovableObject> m_newKnownObjects = new HashSet<MovableObject>();
 
-		public LOSVisionTracker(Player player, Environment env)
+		public LOSVisionTracker(Player player, EnvironmentObject env)
 		{
 			Debug.Assert(env.VisibilityMode == VisibilityMode.LivingLOS);
 
@@ -229,7 +229,7 @@ namespace Dwarrowdelf.Server
 			HandleNewTerrainsAndObjects(m_player.Controllables);
 		}
 
-		void HandleNewTerrainsAndObjects(IList<Living> friendlies)
+		void HandleNewTerrainsAndObjects(IList<LivingObject> friendlies)
 		{
 			m_oldKnownLocations = m_newKnownLocations;
 			m_newKnownLocations = CollectLocations(friendlies);
@@ -245,7 +245,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all locations that friendlies see
-		HashSet<IntPoint3D> CollectLocations(IEnumerable<Living> friendlies)
+		HashSet<IntPoint3D> CollectLocations(IEnumerable<LivingObject> friendlies)
 		{
 			var knownLocs = new HashSet<IntPoint3D>();
 
@@ -263,14 +263,14 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all objects in the given location map
-		HashSet<GameObject> CollectObjects(HashSet<IntPoint3D> knownLocs)
+		HashSet<MovableObject> CollectObjects(HashSet<IntPoint3D> knownLocs)
 		{
-			var knownObs = new HashSet<GameObject>();
+			var knownObs = new HashSet<MovableObject>();
 
 			foreach (var p in knownLocs)
 			{
 				// XXX
-				var obList = ((Environment)m_environment).GetContents(p);
+				var obList = ((EnvironmentObject)m_environment).GetContents(p);
 				if (obList != null)
 					knownObs.UnionWith(obList);
 			}
@@ -285,7 +285,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect objects that are newly visible
-		static IEnumerable<GameObject> CollectRevealedObjects(HashSet<GameObject> oldObjects, HashSet<GameObject> newObjects)
+		static IEnumerable<MovableObject> CollectRevealedObjects(HashSet<MovableObject> oldObjects, HashSet<MovableObject> newObjects)
 		{
 			return newObjects.Except(oldObjects);
 		}
@@ -301,7 +301,7 @@ namespace Dwarrowdelf.Server
 			m_player.Send(msg);
 		}
 
-		void SendNewObjects(IEnumerable<GameObject> revealedObjects)
+		void SendNewObjects(IEnumerable<MovableObject> revealedObjects)
 		{
 			foreach (var ob in revealedObjects)
 			{

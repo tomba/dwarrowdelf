@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
 		}
 
-		internal void AddEnvironment(Environment env)
+		internal void AddEnvironment(EnvironmentObject env)
 		{
 			m_environments.Add(env);
 		}
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action TickStarting;
 
-		internal void AddObject(BaseGameObject ob)
+		internal void AddObject(BaseObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client
 			m_objects.Add(ob);
 		}
 
-		internal void RemoveObject(BaseGameObject ob)
+		internal void RemoveObject(BaseObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 		}
 
-		public BaseGameObject FindObject(ObjectID objectID)
+		public BaseObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException();
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client
 				return null;
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : BaseGameObject
+		public T FindObject<T>(ObjectID objectID) where T : BaseObject
 		{
 			var ob = FindObject(objectID);
 
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client
 			return (T)ob;
 		}
 
-		public BaseGameObject GetObject(ObjectID objectID)
+		public BaseObject GetObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
 				throw new ArgumentException();
@@ -125,10 +125,10 @@ namespace Dwarrowdelf.Client
 			switch (objectID.ObjectType)
 			{
 				case ObjectType.Environment:
-					return new Environment(this, objectID);
+					return new EnvironmentObject(this, objectID);
 
 				case ObjectType.Living:
-					return new Living(this, objectID);
+					return new LivingObject(this, objectID);
 
 				case ObjectType.Item:
 					return new ItemObject(this, objectID);
@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public T GetObject<T>(ObjectID objectID) where T : BaseGameObject
+		public T GetObject<T>(ObjectID objectID) where T : BaseObject
 		{
 			return (T)GetObject(objectID);
 		}

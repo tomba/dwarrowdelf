@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
 
 		[SaveGameProperty]
-		Dictionary<ObjectID, BaseGameObject> m_objectMap;
+		Dictionary<ObjectID, BaseObject> m_objectMap;
 		[SaveGameProperty]
 		int[] m_objectIDcounterArray;
 
@@ -63,8 +63,8 @@ namespace Dwarrowdelf.Server
 		{
 			this.TickMethod = tickMethod;
 
-			m_objectMap = new Dictionary<ObjectID, BaseGameObject>();
-			m_livings = new ProcessableList<Living>();
+			m_objectMap = new Dictionary<ObjectID, BaseObject>();
+			m_livings = new ProcessableList<LivingObject>();
 			m_random = new Random();
 
 			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server
 				WorldChanged(change);
 		}
 
-		internal void AddGameObject(BaseGameObject ob)
+		internal void AddGameObject(BaseObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -139,7 +139,7 @@ namespace Dwarrowdelf.Server
 				m_objectMap.Add(ob.ObjectID, ob);
 		}
 
-		internal void RemoveGameObject(BaseGameObject ob)
+		internal void RemoveGameObject(BaseObject ob)
 		{
 			if (ob.ObjectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -149,7 +149,7 @@ namespace Dwarrowdelf.Server
 					throw new Exception();
 		}
 
-		public BaseGameObject FindObject(ObjectID objectID)
+		public BaseObject FindObject(ObjectID objectID)
 		{
 			if (objectID == ObjectID.NullObjectID)
 				throw new ArgumentException("Null ObjectID");
@@ -157,7 +157,7 @@ namespace Dwarrowdelf.Server
 
 			lock (m_objectMap)
 			{
-				BaseGameObject ob = null;
+				BaseObject ob = null;
 
 				if (m_objectMap.TryGetValue(objectID, out ob))
 					return ob;
@@ -166,7 +166,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public T FindObject<T>(ObjectID objectID) where T : BaseGameObject
+		public T FindObject<T>(ObjectID objectID) where T : BaseObject
 		{
 			var ob = FindObject(objectID);
 
@@ -185,7 +185,7 @@ namespace Dwarrowdelf.Server
 			return new ObjectID(objectType, (uint)Interlocked.Increment(ref m_objectIDcounterArray[0]));
 		}
 
-		public IEnumerable<BaseGameObject> AllObjects { get { return m_objectMap.Values.AsEnumerable(); } }
+		public IEnumerable<BaseObject> AllObjects { get { return m_objectMap.Values.AsEnumerable(); } }
 
 	}
 }

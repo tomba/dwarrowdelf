@@ -12,13 +12,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 	{
 		readonly IntCuboid m_dest;
 
-		public MoveToAreaAssignment(IJobObserver parent, IEnvironment environment, IntCuboid destination, DirectionSet positioning)
+		public MoveToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntCuboid destination, DirectionSet positioning)
 			: base(parent, environment, positioning)
 		{
 			m_dest = destination;
 		}
 
-		protected override Queue<Direction> GetPath(ILiving worker)
+		protected override Queue<Direction> GetPath(ILivingObject worker)
 		{
 			var res = AStar.AStarFinder.Find(m_environment, worker.Location, DirectionSet.Exact, new AStar.AStarAreaTarget(m_dest));
 
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			return new Queue<Direction>(path);
 		}
 
-		protected override JobStatus CheckProgress(ILiving worker)
+		protected override JobStatus CheckProgress(ILivingObject worker)
 		{
 			if (m_dest.Contains(worker.Location))
 				return JobStatus.Done;

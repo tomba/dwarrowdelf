@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	[SaveGameObjectByRef]
 	public class FetchItems : JobGroup
 	{
-		public FetchItems(IJobObserver parent, IEnvironment env, IntPoint3D location, IEnumerable<IItemObject> items)
+		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3D location, IEnumerable<IItemObject> items)
 			: base(parent)
 		{
 			foreach (var item in items)
