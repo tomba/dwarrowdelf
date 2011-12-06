@@ -77,12 +77,10 @@ namespace Dwarrowdelf.Client
 			{
 				m_color = value;
 
-				m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.Color));
 				if (this.Environment != null)
 					this.Environment.OnObjectVisualChanged(this);
 
 				Notify("Color");
-				Notify("Drawing");
 			}
 		}
 
@@ -94,28 +92,19 @@ namespace Dwarrowdelf.Client
 			{
 				m_symbolID = value;
 
-				m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.Color));
 				if (this.Environment != null)
 					this.Environment.OnObjectVisualChanged(this);
 
 				Notify("SymbolID");
-				Notify("Drawing");
 			}
-		}
-
-		DrawingImage m_drawing;
-		public DrawingImage Drawing
-		{
-			get { return m_drawing; }
 		}
 
 		void ReloadDrawing()
 		{
-			m_drawing = new DrawingImage(GameData.Data.SymbolDrawingCache.GetDrawing(this.SymbolID, this.Color));
 			if (this.Environment != null)
 				this.Environment.OnObjectVisualChanged(this);
 
-			Notify("Drawing");
+			Notify("SymbolID");
 		}
 
 		MaterialID m_materialID;

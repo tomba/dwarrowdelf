@@ -4,81 +4,112 @@
                     xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
                     x:Class="Dwarrowdelf.Client.UI.ListItemTemplateDictionary">
 
-    <DataTemplate DataType="{x:Type local:ItemObject}">
-        <DataTemplate.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="5,3" />
-            </Style>
-        </DataTemplate.Resources>
+	<DataTemplate DataType="{x:Type local:ItemObject}">
+		<DataTemplate.Resources>
+			<Style TargetType="TextBlock">
+				<Setter Property="Margin" Value="5,3" />
+			</Style>
 
-        <DockPanel x:Name="dockPanel">
-            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
-                <Image Source="/Images/eye.png" />
-            </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}" />
-            <TextBlock>
+			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+		</DataTemplate.Resources>
+
+		<DockPanel x:Name="dockPanel">
+			<Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+				<Image Source="/Images/eye.png" />
+			</Button>
+
+			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+				<Image.Source>
+					<DrawingImage>
+						<DrawingImage.Drawing>
+							<MultiBinding Converter="{StaticResource drawingConverter}">
+								<Binding Path="SymbolID" />
+								<Binding Path="Color" />
+							</MultiBinding>
+						</DrawingImage.Drawing>
+					</DrawingImage>
+				</Image.Source>
+			</Image>
+
+			<TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Description" />
                             <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
-            </TextBlock>
+			</TextBlock>
 
-            <DockPanel.ToolTip>
+			<DockPanel.ToolTip>
 				<ui:ItemInfoControl />
-            </DockPanel.ToolTip>
-        </DockPanel>
-    </DataTemplate>
+			</DockPanel.ToolTip>
+		</DockPanel>
+	</DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:LivingObject}">
-        <DataTemplate.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="5,3" />
-            </Style>
-        </DataTemplate.Resources>
-        <DockPanel x:Name="dockPanel">
-            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
-                <Image Source="/Images/eye.png" />
-            </Button>
-            <Image DockPanel.Dock="Left" Source="{Binding Path=Drawing}" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}" />
-            <TextBlock>
+	<DataTemplate DataType="{x:Type local:LivingObject}">
+		<DataTemplate.Resources>
+			<Style TargetType="TextBlock">
+				<Setter Property="Margin" Value="5,3" />
+			</Style>
+
+			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+		</DataTemplate.Resources>
+
+		<DockPanel x:Name="dockPanel">
+			<Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+				<Image Source="/Images/eye.png" />
+			</Button>
+
+			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+				<Image.Source>
+					<DrawingImage>
+						<DrawingImage.Drawing>
+							<MultiBinding Converter="{StaticResource drawingConverter}">
+								<Binding Path="SymbolID" />
+								<Binding Path="Color" />
+							</MultiBinding>
+						</DrawingImage.Drawing>
+					</DrawingImage>
+				</Image.Source>
+			</Image>
+
+			<TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="Description" />
                             <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
-            </TextBlock>
-            <DockPanel.ToolTip>
+			</TextBlock>
+			<DockPanel.ToolTip>
 				<ui:LivingInfoControl />
-            </DockPanel.ToolTip>
-        </DockPanel>
-    </DataTemplate>
+			</DockPanel.ToolTip>
+		</DockPanel>
+	</DataTemplate>
 
-    <DataTemplate DataType="{x:Type local:BuildingObject}">
-        <DataTemplate.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="5,3" />
-            </Style>
-        </DataTemplate.Resources>
+	<DataTemplate DataType="{x:Type local:BuildingObject}">
+		<DataTemplate.Resources>
+			<Style TargetType="TextBlock">
+				<Setter Property="Margin" Value="5,3" />
+			</Style>
+		</DataTemplate.Resources>
 
-        <DockPanel x:Name="dockPanel">
-            <Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
-                <Image Source="/Images/eye.png" />
-            </Button>
-            <TextBlock>
+		<DockPanel x:Name="dockPanel">
+			<Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+				<Image Source="/Images/eye.png" />
+			</Button>
+			<TextBlock>
                     <TextBlock.Text>
                         <MultiBinding StringFormat="{}{0} ({1})">
                             <Binding Path="BuildingID" />
                             <Binding Path="ObjectID" />
                         </MultiBinding>
                     </TextBlock.Text>
-            </TextBlock>
+			</TextBlock>
 
-            <DockPanel.ToolTip>
-                <ui:BuildingInfoControl />
-            </DockPanel.ToolTip>
-        </DockPanel>
-    </DataTemplate>
+			<DockPanel.ToolTip>
+				<ui:BuildingInfoControl />
+			</DockPanel.ToolTip>
+		</DockPanel>
+	</DataTemplate>
 </ResourceDictionary>
