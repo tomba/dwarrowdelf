@@ -36,22 +36,12 @@ namespace Dwarrowdelf
 		BuildingInfo BuildingInfo { get; }
 	}
 
-	public interface IGameObject : IBaseGameObject
+	public interface IContainerObject : IBaseGameObject
 	{
-		IEnvironment Environment { get; }
-		IGameObject Parent { get; }
-		IntPoint3D Location { get; }
-	}
-
-	interface IEnvGameObject : IBaseGameObject
-	{
-		IEnvironment Environment { get; }
-		IntSize Size { get; }
-		IntRectZ Area { get; }
 
 	}
 
-	public interface IEnvironment : IGameObject, AStar.IAStarEnvironment
+	public interface IEnvironment : IContainerObject, AStar.IAStarEnvironment
 	{
 		IntPoint3D HomeLocation { get; }
 
@@ -78,6 +68,13 @@ namespace Dwarrowdelf
 
 		IEnumerable<IGameObject> GetContents(IntRectZ rect);
 		IEnumerable<IGameObject> Objects();
+	}
+
+	public interface IGameObject : IContainerObject
+	{
+		IEnvironment Environment { get; }
+		IContainerObject Parent { get; }
+		IntPoint3D Location { get; }
 	}
 
 	public interface ILocatableGameObject : IGameObject

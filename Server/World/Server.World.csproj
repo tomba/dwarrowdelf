@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="BuildingObject.cs" />
+    <Compile Include="ContainerObject.cs" />
     <Compile Include="LargeGameObject.cs" />
     <Compile Include="LivingActions.cs" />
     <Compile Include="LocatableGameObject.cs" />

@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef(ClientObject = true)]
-	class Environment : GameObject, IEnvironment
+	class Environment : ContainerObject, IEnvironment
 	{
 		public event Action<GameObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
 		public event Action<IntPoint3D> MapTileTerrainChanged;

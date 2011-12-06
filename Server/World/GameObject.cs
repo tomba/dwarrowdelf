@@ -17,18 +17,15 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	/* Game object that has inventory, location */
 	[SaveGameObjectByRef]
-	abstract public class GameObject : BaseGameObject, IGameObject
+	abstract public class GameObject : ContainerObject, IGameObject
 	{
 		[SaveGameProperty]
-		public GameObject Parent { get; private set; }
-		IGameObject IGameObject.Parent { get { return this.Parent; } }
+		public ContainerObject Parent { get; private set; }
+		IContainerObject IGameObject.Parent { get { return this.Parent; } }
+
 		public Environment Environment { get { return this.Parent as Environment; } }
 		IEnvironment IGameObject.Environment { get { return this.Parent as IEnvironment; } }
-		[SaveGameProperty("Inventory")]
-		KeyedObjectCollection m_children;
-		public ReadOnlyCollection<GameObject> Inventory { get; private set; }
 
 		[SaveGameProperty]
 		public IntPoint3D Location { get; private set; }
@@ -39,45 +36,23 @@ namespace Dwarrowdelf.Server
 		protected GameObject(ObjectType objectType)
 			: base(objectType)
 		{
-			m_children = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
 		protected GameObject(ObjectType objectType, ServerGameObjectBuilder builder)
 			: base(objectType)
 		{
-			m_children = new KeyedObjectCollection();
-			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
 		protected GameObject(SaveGameContext ctx, ObjectType objectType)
 			: base(ctx, objectType)
 		{
-			this.Inventory = new ReadOnlyCollection<GameObject>(m_children);
 		}
 
 		public override void Destruct()
 		{
 			this.MoveTo(null);
 
-			if (this.Inventory.Count > 0)
-			{
-				Trace.TraceWarning("{0} contains items when being destructed", this);
-
-				foreach (var ob in this.Inventory.ToArray())
-					ob.Destruct();
-			}
-
 			base.Destruct();
-		}
-
-		public override void SendTo(IPlayer player, ObjectVisibility visibility)
-		{
-			if (visibility == ObjectVisibility.All)
-			{
-				foreach (var o in this.Inventory)
-					o.SendTo(player, visibility);
-			}
 		}
 
 		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
@@ -100,16 +75,9 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		protected virtual bool OkToAddChild(GameObject ob, IntPoint3D dstLoc) { return true; }
-		protected virtual bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
+		protected virtual void OnEnvironmentChanged(ContainerObject oldEnv, ContainerObject newEnv) { }
 
-		protected virtual void OnChildAdded(GameObject child) { }
-		protected virtual void OnChildRemoved(GameObject child) { }
-		protected virtual void OnChildMoved(GameObject child, IntPoint3D srcLoc, IntPoint3D dstLoc) { }
-
-		protected virtual void OnEnvironmentChanged(GameObject oldEnv, GameObject newEnv) { }
-
-		public bool MoveTo(GameObject parent)
+		public bool MoveTo(ContainerObject parent)
 		{
 			if (this.Parent == parent)
 				return true;
@@ -117,7 +85,7 @@ namespace Dwarrowdelf.Server
 			return MoveTo(parent, new IntPoint3D());
 		}
 
-		public bool MoveTo(GameObject dst, IntPoint3D dstLoc)
+		public bool MoveTo(ContainerObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -166,7 +134,7 @@ namespace Dwarrowdelf.Server
 			return MoveTo(location);
 		}
 
-		void MoveToLow(GameObject dst, IntPoint3D dstLoc)
+		void MoveToLow(ContainerObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
@@ -182,10 +150,7 @@ namespace Dwarrowdelf.Server
 			if (src != dst)
 			{
 				if (src != null)
-				{
-					src.OnChildRemoved(this);
-					src.m_children.Remove(this);
-				}
+					src.RemoveChild(this);
 
 				this.Parent = dst;
 			}
@@ -194,16 +159,13 @@ namespace Dwarrowdelf.Server
 			{
 				this.Location = dstLoc;
 				if (dst != null && src == dst)
-					dst.OnChildMoved(this, srcLoc, dstLoc);
+					dst.MoveChild(this, srcLoc, dstLoc);
 			}
 
 			if (src != dst)
 			{
 				if (dst != null)
-				{
-					dst.m_children.Add(this);
-					dst.OnChildAdded(this);
-				}
+					dst.AddChild(this);
 			}
 
 			if (src == dst)
@@ -226,7 +188,7 @@ namespace Dwarrowdelf.Server
 
 			this.Location = location;
 			if (this.Parent != null)
-				this.Parent.OnChildMoved(this, oldLocation, location);
+				this.Parent.MoveChild(this, oldLocation, location);
 
 			this.World.AddChange(new ObjectMoveLocationChange(this, oldLocation, location));
 		}

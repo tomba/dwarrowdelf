@@ -397,7 +397,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void FollowedObjectMoved(GameObject ob, GameObject dst, IntPoint3D loc)
+		void FollowedObjectMoved(GameObject ob, ContainerObject dst, IntPoint3D loc)
 		{
 			Environment env = dst as Environment;
 

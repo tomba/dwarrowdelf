@@ -162,24 +162,24 @@ namespace Dwarrowdelf
 	public class ObjectMoveChange : ObjectChange
 	{
 		[NonSerialized]
-		IGameObject m_source;
+		IContainerObject m_source;
 		ObjectID m_sourceID;
 		IntPoint3D m_sourceLocation;
 		[NonSerialized]
-		IGameObject m_destination;
+		IContainerObject m_destination;
 		ObjectID m_destinationID;
 		IntPoint3D m_destinationLocation;
 
-		public IGameObject Source { get { return m_source; } }
+		public IContainerObject Source { get { return m_source; } }
 		public ObjectID SourceMapID { get { return m_sourceID; } }
 		public IntPoint3D SourceLocation { get { return m_sourceLocation; } }
 
-		public IGameObject Destination { get { return m_destination; } }
+		public IContainerObject Destination { get { return m_destination; } }
 		public ObjectID DestinationMapID { get { return m_destinationID; } }
 		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
 
-		public ObjectMoveChange(IGameObject mover, IGameObject sourceEnv, IntPoint3D sourceLocation,
-			IGameObject destinationEnv, IntPoint3D destinationLocation)
+		public ObjectMoveChange(IGameObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
+			IContainerObject destinationEnv, IntPoint3D destinationLocation)
 			: base(mover)
 		{
 			m_source = sourceEnv;

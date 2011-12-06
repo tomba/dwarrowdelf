@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Dwarrowdelf.Server.LocatableGameObject" Collapsed="true">
-    <Position X="7.75" Y="4.25" Width="1.75" />
+    <Position X="7.75" Y="6" Width="1.5" />
     <TypeIdentifier>
       <HashCode>GAAAAAAAAAAABAAAAAAAAAQBQAAAAAAAAAAAgAgAAAA=</HashCode>
       <FileName>LocatableGameObject.cs</FileName>
@@ -9,7 +9,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.Living" Collapsed="true">
-    <Position X="9" Y="5.75" Width="1.5" />
+    <Position X="9" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>MiCcAYCpQQsEo4H0BsQgDWCIwbBgUUCgBBAQDAZIACA=</HashCode>
       <FileName>Living.cs</FileName>
@@ -17,7 +17,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.ItemObject" Collapsed="true">
-    <Position X="6.75" Y="5.75" Width="1.5" />
+    <Position X="6.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAQAAwBAAAAAEgCAABAAAQAAAAEAACAAAAEAEBAA=</HashCode>
       <FileName>ItemObject.cs</FileName>
@@ -25,7 +25,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.Environment" Collapsed="true">
-    <Position X="11.25" Y="4.25" Width="1.5" />
+    <Position X="11.25" Y="4.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>JAAEAgEMRCCQD2AMEAAEYGwBQUABHEcoAIkAQQEQQwA=</HashCode>
       <FileName>Environment.cs</FileName>
@@ -49,9 +49,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Dwarrowdelf.Server.GameObject" Collapsed="true">
-    <Position X="9" Y="2.75" Width="1.5" />
+    <Position X="7.75" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgQAASACQAAAACAEAAIARQQAQAAJEAIACAEAAgAAYAE=</HashCode>
+      <HashCode>AgQAASACQAAAAAAEAAIARQAAQAAIEAAACAAAAAAAYAE=</HashCode>
       <FileName>GameObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -61,6 +61,14 @@
     <TypeIdentifier>
       <HashCode>AAAABAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIAQAQAAA=</HashCode>
       <FileName>LargeGameObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Dwarrowdelf.Server.ContainerObject" Collapsed="true">
+    <Position X="7.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAACAAAAAAAAQAQAABAAIAAAEAAgAAAAA=</HashCode>
+      <FileName>ContainerObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

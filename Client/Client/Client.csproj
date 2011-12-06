@@ -203,6 +203,7 @@
     </Page>
     <Compile Include="BaseGameObject.cs" />
     <Compile Include="Collections.cs" />
+    <Compile Include="ContainerObject.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class Environment : GameObject, IEnvironment
+	public class Environment : ContainerObject, IEnvironment
 	{
 		internal static Environment Create(World world, EnvironmentBuilder builder)
 		{
@@ -467,7 +468,7 @@ namespace Dwarrowdelf.Server
 			list.Remove(child);
 		}
 
-		protected override bool OkToAddChild(GameObject ob, IntPoint3D p)
+		public override bool OkToAddChild(GameObject ob, IntPoint3D p)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -480,7 +481,7 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		protected override bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc)
+		public override bool OkToMoveChild(GameObject ob, Direction dir, IntPoint3D dstLoc)
 		{
 			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
 		}

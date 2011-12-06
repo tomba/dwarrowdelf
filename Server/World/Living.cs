@@ -572,7 +572,7 @@ namespace Dwarrowdelf.Server
 				this.Assignment = null;
 		}
 
-		protected override void OnEnvironmentChanged(GameObject oldEnv, GameObject newEnv)
+		protected override void OnEnvironmentChanged(ContainerObject oldEnv, ContainerObject newEnv)
 		{
 			m_losMapVersion = 0;
 		}
@@ -606,17 +606,11 @@ namespace Dwarrowdelf.Server
 			m_losLocation = this.Location;
 		}
 
-		// does this living see location l in object ob
-		public bool Sees(IGameObject ob, IntPoint3D l)
+		// does this living see location l in env
+		public bool Sees(Environment env, IntPoint3D l)
 		{
-			if (ob != this.Environment)
+			if (env != this.Environment)
 				return false;
-
-			var env = ob as Environment;
-
-			// if the ob is not Environment, and we're in it, we see everything there
-			if (env == null)
-				return true;
 
 			IntVector3D dl = l - this.Location;
 

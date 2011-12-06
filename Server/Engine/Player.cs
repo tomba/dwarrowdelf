@@ -611,7 +611,7 @@ namespace Dwarrowdelf.Server
 				return ObjectVisibility.All;
 			}
 
-			for (GameObject o = sgo; o != null; o = o.Parent)
+			for (GameObject o = sgo; o != null; o = o.Parent as GameObject)
 			{
 				if (this.IsController(o))
 				{

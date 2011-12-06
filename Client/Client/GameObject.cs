@@ -8,14 +8,11 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
-	delegate void ObjectMoved(GameObject ob, GameObject dst, IntPoint3D loc);
+	delegate void ObjectMoved(GameObject ob, ContainerObject dst, IntPoint3D loc);
 
 	[SaveGameObjectByRef(ClientObject = true)]
-	abstract class GameObject : BaseGameObject, IGameObject
+	abstract class GameObject : ContainerObject, IGameObject
 	{
-		GameObjectCollection m_inventory;
-		public ReadOnlyGameObjectCollection Inventory { get; private set; }
-
 		public event ObjectMoved ObjectMoved;
 
 		public bool IsLiving { get; protected set; }
@@ -23,8 +20,6 @@ namespace Dwarrowdelf.Client
 		public GameObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_inventory = new GameObjectCollection();
-			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
 		}
 
 		public override void Destruct()
@@ -35,28 +30,18 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
-		protected virtual void ChildAdded(GameObject child) { }
-		protected virtual void ChildRemoved(GameObject child) { }
-		protected virtual void ChildMoved(GameObject child, IntPoint3D from, IntPoint3D to) { }
-
-		public void MoveTo(GameObject parent, IntPoint3D location)
+		public void MoveTo(ContainerObject parent, IntPoint3D location)
 		{
-			GameObject oldParent = this.Parent;
+			var oldParent = this.Parent;
 
 			if (oldParent != null)
-			{
-				oldParent.m_inventory.Remove(this);
-				oldParent.ChildRemoved(this);
-			}
+				oldParent.RemoveChild(this);
 
 			this.Parent = parent;
 			this.Location = location;
 
 			if (parent != null)
-			{
-				parent.m_inventory.Add(this);
-				parent.ChildAdded(this);
-			}
+				parent.AddChild(this);
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, this.Parent, this.Location);
@@ -68,7 +53,7 @@ namespace Dwarrowdelf.Client
 
 			this.Location = location;
 
-			this.Parent.ChildMoved(this, oldLocation, location);
+			this.Parent.MoveChild(this, oldLocation, location);
 
 			if (ObjectMoved != null)
 				ObjectMoved(this, this.Parent, this.Location);
@@ -89,14 +74,14 @@ namespace Dwarrowdelf.Client
 			return String.Format("Object({0})", this.ObjectID);
 		}
 
-		GameObject m_parent;
-		public GameObject Parent
+		ContainerObject m_parent;
+		public ContainerObject Parent
 		{
 			get { return m_parent; }
 			private set { m_parent = value; Notify("Parent"); }
 		}
 
-		IGameObject IGameObject.Parent { get { return this.Parent; } }
+		IContainerObject IGameObject.Parent { get { return this.Parent; } }
 
 		IntPoint3D m_location;
 		public IntPoint3D Location
