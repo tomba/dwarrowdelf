@@ -171,11 +171,11 @@ namespace Dwarrowdelf
 		IntPoint3D m_destinationLocation;
 
 		public IContainerObject Source { get { return m_source; } }
-		public ObjectID SourceMapID { get { return m_sourceID; } }
+		public ObjectID SourceID { get { return m_sourceID; } }
 		public IntPoint3D SourceLocation { get { return m_sourceLocation; } }
 
 		public IContainerObject Destination { get { return m_destination; } }
-		public ObjectID DestinationMapID { get { return m_destinationID; } }
+		public ObjectID DestinationID { get { return m_destinationID; } }
 		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
 
 		public ObjectMoveChange(IGameObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
@@ -195,7 +195,7 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return String.Format("ObjectMoveChange {0} ({1}, {2}) -> ({3}, {4})",
-				this.ObjectID, this.SourceMapID, this.SourceLocation, this.DestinationMapID, this.DestinationLocation);
+				this.ObjectID, this.SourceID, this.SourceLocation, this.DestinationID, this.DestinationLocation);
 		}
 	}
 

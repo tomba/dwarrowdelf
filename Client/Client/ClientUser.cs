@@ -217,8 +217,8 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(ob.IsInitialized);
 
 			ContainerObject env = null;
-			if (change.DestinationMapID != ObjectID.NullObjectID)
-				env = m_world.FindObject<ContainerObject>(change.DestinationMapID);
+			if (change.DestinationID != ObjectID.NullObjectID)
+				env = m_world.FindObject<ContainerObject>(change.DestinationID);
 
 			ob.MoveTo(env, change.DestinationLocation);
 		}
