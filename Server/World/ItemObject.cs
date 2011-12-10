@@ -37,6 +37,7 @@ namespace Dwarrowdelf.Server
 		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
 
+		[SaveGameProperty("ReservedBy")]
 		object m_reservedBy;
 		public object ReservedBy
 		{
