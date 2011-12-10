@@ -37,7 +37,29 @@ namespace Dwarrowdelf.Server
 		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
 
-		public object ReservedBy { get; set; }
+		object m_reservedBy;
+		public object ReservedBy
+		{
+			get { return m_reservedBy; }
+			set
+			{
+				Debug.Assert(value == null || m_reservedBy == null);
+				m_reservedBy = value;
+				if (value != null)
+					this.ReservedByStr = value.ToString();
+				else
+					this.ReservedByStr = null;
+			}
+		}
+
+		// String representation of ReservedBy, for client use
+		[SaveGameProperty("ReservedByStr")]
+		string m_reservedByStr;
+		public string ReservedByStr
+		{
+			get { return m_reservedByStr; }
+			set { if (m_reservedByStr == value) return; m_reservedByStr = value; NotifyObject(PropertyID.ReservedByStr, value); }
+		}
 
 		[SaveGameProperty("NutritionalValue")]
 		int m_nutritionalValue;
@@ -85,6 +107,7 @@ namespace Dwarrowdelf.Server
 			{
 				props[PropertyID.NutritionalValue] = m_nutritionalValue;
 				props[PropertyID.RefreshmentValue] = m_refreshmentValue;
+				props[PropertyID.ReservedByStr] = m_reservedByStr;
 			}
 			return props;
 		}

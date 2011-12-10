@@ -35,6 +35,7 @@ namespace Dwarrowdelf
 		WaterFullness,
 
 		Assignment,
+		ReservedByStr,
 
 		Gender,
 

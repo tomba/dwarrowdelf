@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Dwarrowdelf.Messages;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
@@ -20,7 +21,12 @@ namespace Dwarrowdelf.Client
 		public object ReservedBy
 		{
 			get { return m_reservedBy; }
-			set { m_reservedBy = value; Notify("ReservedBy"); }
+			set
+			{
+				Debug.Assert(value == null || m_reservedBy == null);
+				m_reservedBy = value;
+				Notify("ReservedBy");
+			}
 		}
 
 		public ItemInfo ItemInfo { get; private set; }
@@ -41,6 +47,13 @@ namespace Dwarrowdelf.Client
 			private set { m_refreshmentValue = value; Notify("RefreshmentValue"); }
 		}
 
+		string m_serverReservedBy;
+		public string ServerReservedBy
+		{
+			get { return m_serverReservedBy; }
+			private set { m_serverReservedBy = value; Notify("ServerReservedBy"); }
+		}
+
 		public override void SetProperty(PropertyID propertyID, object value)
 		{
 			switch (propertyID)
@@ -51,6 +64,10 @@ namespace Dwarrowdelf.Client
 
 				case PropertyID.RefreshmentValue:
 					this.RefreshmentValue = (int)value;
+					break;
+
+				case PropertyID.ReservedByStr:
+					this.ServerReservedBy = (string)value;
 					break;
 
 				default:
