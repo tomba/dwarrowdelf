@@ -38,6 +38,7 @@ namespace Dwarrowdelf.Client
 				throw new Exception();
 
 			this.IsDestructed = true;
+			Notify("IsDestructed");
 
 			if (this.Destructed != null)
 				this.Destructed(this);
