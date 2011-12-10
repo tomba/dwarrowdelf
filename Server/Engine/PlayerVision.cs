@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Start()
 		{
-			m_environment.SendTo(m_player, ObjectVisibility.Undefined);
+			m_environment.SendTo(m_player, ObjectVisibility.Public);
 		}
 
 		public override void Stop()
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Server
 		{
 			m_environment.TerrainChanged += OnTerrainChanged;
 
-			m_environment.SendTo(m_player, ObjectVisibility.Undefined);
+			m_environment.SendTo(m_player, ObjectVisibility.Public);
 		}
 
 		public override void Stop()

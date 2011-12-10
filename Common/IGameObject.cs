@@ -125,11 +125,12 @@ namespace Dwarrowdelf
 		bool Sees(IntPoint3D p);
 	}
 
+	[Flags]
 	public enum ObjectVisibility
 	{
-		Undefined,
-		None,
-		Public,
-		All,
+		None = 0,
+		Private = 1 << 0,
+		Public = 1 << 1,
+		All = Private | Public,
 	}
 }

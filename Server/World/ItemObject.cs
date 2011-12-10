@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Server
 		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
 			var props = base.SerializeProperties(visibility);
-			if (visibility == ObjectVisibility.All)
+			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				props[PropertyID.NutritionalValue] = m_nutritionalValue;
 				props[PropertyID.RefreshmentValue] = m_refreshmentValue;

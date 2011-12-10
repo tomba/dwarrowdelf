@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			if (visibility == ObjectVisibility.All)
+			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				foreach (var o in this.Inventory)
 					o.SendTo(player, visibility);

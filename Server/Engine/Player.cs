@@ -891,7 +891,7 @@ namespace Dwarrowdelf.Server
 
 				var vis = m_player.GetObjectVisibility(c.Object);
 
-				return vis == ObjectVisibility.All || vis == ObjectVisibility.Public;
+				return vis != ObjectVisibility.None;
 			}
 			else
 			{

@@ -275,7 +275,7 @@ namespace Dwarrowdelf.Server
 		{
 			data.LivingID = this.LivingID;
 
-			if (visibility == ObjectVisibility.All)
+			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				data.CurrentAction = this.CurrentAction;
 				data.ActionPriority = this.ActionPriority;
@@ -301,7 +301,7 @@ namespace Dwarrowdelf.Server
 		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
 		{
 			var props = base.SerializeProperties(visibility);
-			if (visibility == ObjectVisibility.All)
+			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				props[PropertyID.HitPoints] = m_hitPoints;
 				props[PropertyID.MaxHitPoints] = m_maxHitPoints;
@@ -318,8 +318,13 @@ namespace Dwarrowdelf.Server
 				props[PropertyID.FoodFullness] = m_foodFullness;
 				props[PropertyID.WaterFullness] = m_waterFullness;
 				props[PropertyID.Assignment] = m_assignment;
+			}
+
+			if ((visibility & ObjectVisibility.Public) != 0)
+			{
 				props[PropertyID.Gender] = m_gender;
 			}
+
 			return props;
 		}
 
