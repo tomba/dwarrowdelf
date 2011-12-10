@@ -44,57 +44,60 @@ namespace Dwarrowdelf
 		RefreshmentValue,
 	}
 
-	public enum PropertyVisibility
-	{
-		Public,
-		Friendly,
-	}
-
 	public static class PropertyVisibilities
 	{
-		static PropertyVisibility[] s_visibilityArray;
+		static ObjectVisibility[] s_visibilityArray;
 
 		static PropertyVisibilities()
 		{
-			var map = new Dictionary<PropertyID, PropertyVisibility>();
+			var map = new Dictionary<PropertyID, ObjectVisibility>();
 
-			map[PropertyID.Name] = PropertyVisibility.Public;
-			map[PropertyID.MaterialID] = PropertyVisibility.Public;
-			map[PropertyID.Color] = PropertyVisibility.Public;
+			// Common
+			map[PropertyID.Name] = ObjectVisibility.Public;
+			map[PropertyID.MaterialID] = ObjectVisibility.Public;
+			map[PropertyID.Color] = ObjectVisibility.Public;
 
 			// Living
-			map[PropertyID.HitPoints] = PropertyVisibility.Friendly;
-			map[PropertyID.SpellPoints] = PropertyVisibility.Friendly;
+			map[PropertyID.HitPoints] = ObjectVisibility.Private;
+			map[PropertyID.MaxHitPoints] = ObjectVisibility.Private;
+			map[PropertyID.SpellPoints] = ObjectVisibility.Private;
+			map[PropertyID.MaxSpellPoints] = ObjectVisibility.Private;
 
-			map[PropertyID.Strength] = PropertyVisibility.Friendly;
-			map[PropertyID.Dexterity] = PropertyVisibility.Friendly;
-			map[PropertyID.Constitution] = PropertyVisibility.Friendly;
-			map[PropertyID.Intelligence] = PropertyVisibility.Friendly;
-			map[PropertyID.Wisdom] = PropertyVisibility.Friendly;
-			map[PropertyID.Charisma] = PropertyVisibility.Friendly;
+			map[PropertyID.Strength] = ObjectVisibility.Private;
+			map[PropertyID.Dexterity] = ObjectVisibility.Private;
+			map[PropertyID.Constitution] = ObjectVisibility.Private;
+			map[PropertyID.Intelligence] = ObjectVisibility.Private;
+			map[PropertyID.Wisdom] = ObjectVisibility.Private;
+			map[PropertyID.Charisma] = ObjectVisibility.Private;
 
-			map[PropertyID.ArmorClass] = PropertyVisibility.Friendly;
+			map[PropertyID.ArmorClass] = ObjectVisibility.Private;
 
-			map[PropertyID.VisionRange] = PropertyVisibility.Friendly;
-			map[PropertyID.FoodFullness] = PropertyVisibility.Friendly;
-			map[PropertyID.WaterFullness] = PropertyVisibility.Friendly;
+			map[PropertyID.VisionRange] = ObjectVisibility.Private;
+			map[PropertyID.FoodFullness] = ObjectVisibility.Private;
+			map[PropertyID.WaterFullness] = ObjectVisibility.Private;
 
-			map[PropertyID.Assignment] = PropertyVisibility.Friendly;
+			map[PropertyID.Gender] = ObjectVisibility.Public;
+
+			map[PropertyID.Assignment] = ObjectVisibility.Debug;
 
 			// Item
-			map[PropertyID.NutritionalValue] = PropertyVisibility.Public;
-			map[PropertyID.RefreshmentValue] = PropertyVisibility.Public;
-
+			map[PropertyID.NutritionalValue] = ObjectVisibility.Public;
+			map[PropertyID.RefreshmentValue] = ObjectVisibility.Public;
+			map[PropertyID.ReservedByStr] = ObjectVisibility.Debug;
 
 			var max = map.Keys.Max(id => (int)id);
-			s_visibilityArray = new PropertyVisibility[max + 1];
+			s_visibilityArray = new ObjectVisibility[max + 1];
 
 			foreach (var kvp in map)
 				s_visibilityArray[(int)kvp.Key] = kvp.Value;
+
+			for (int i = 1; i < s_visibilityArray.Length; ++i)
+					if (s_visibilityArray[i] == ObjectVisibility.None)
+						throw new Exception("missing visibility for " + (PropertyID)i);
 		}
 
 		// XXX Server's living has own checks for visibility
-		public static PropertyVisibility GetPropertyVisibility(PropertyID id)
+		public static ObjectVisibility GetPropertyVisibility(PropertyID id)
 		{
 			return s_visibilityArray[(int)id];
 		}

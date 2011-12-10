@@ -50,9 +50,9 @@ namespace Dwarrowdelf.Server
 		public MaterialCategory MaterialCategory { get { return Materials.GetMaterial(this.MaterialID).Category; } } // XXX
 
 
-		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
+		protected override Dictionary<PropertyID, object> SerializeProperties()
 		{
-			var props = base.SerializeProperties(visibility);
+			var props = base.SerializeProperties();
 			props[PropertyID.Name] = m_name;
 			props[PropertyID.MaterialID] = m_materialID;
 			props[PropertyID.Color] = m_color;

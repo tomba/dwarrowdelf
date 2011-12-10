@@ -623,7 +623,7 @@ namespace Dwarrowdelf.Server
 			{
 				foreach (var o in m_contentArray[z])
 				{
-					var vis = player.IsFriendly(o) ? ObjectVisibility.All : ObjectVisibility.Public;
+					var vis = player.GetObjectVisibility(o);
 					o.SendTo(player, vis);
 				}
 			}

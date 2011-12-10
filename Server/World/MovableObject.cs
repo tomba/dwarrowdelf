@@ -58,9 +58,9 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
+		protected override Dictionary<PropertyID, object> SerializeProperties()
 		{
-			var props = base.SerializeProperties(visibility);
+			var props = base.SerializeProperties();
 			return props;
 		}
 

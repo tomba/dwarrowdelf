@@ -114,7 +114,6 @@ namespace Dwarrowdelf
 
 	public interface IPlayer
 	{
-		bool IsFriendly(IBaseObject living);
 		void Send(Dwarrowdelf.Messages.ClientMessage message);
 		IVisionTracker GetVisionTracker(IEnvironmentObject env);
 		ObjectVisibility GetObjectVisibility(IBaseObject ob);
@@ -131,6 +130,7 @@ namespace Dwarrowdelf
 		None = 0,
 		Private = 1 << 0,
 		Public = 1 << 1,
-		All = Private | Public,
+		Debug = 2 << 1,
+		All = Private | Public | Debug,
 	}
 }

@@ -298,32 +298,26 @@ namespace Dwarrowdelf.Server
 			base.SendTo(player, visibility);
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
+		protected override Dictionary<PropertyID, object> SerializeProperties()
 		{
-			var props = base.SerializeProperties(visibility);
-			if ((visibility & ObjectVisibility.Private) != 0)
-			{
-				props[PropertyID.HitPoints] = m_hitPoints;
-				props[PropertyID.MaxHitPoints] = m_maxHitPoints;
-				props[PropertyID.SpellPoints] = m_spellPoints;
-				props[PropertyID.MaxSpellPoints] = m_maxSpellPoints;
-				props[PropertyID.Strength] = m_strength;
-				props[PropertyID.Dexterity] = m_dexterity;
-				props[PropertyID.Constitution] = m_constitution;
-				props[PropertyID.Intelligence] = m_intelligence;
-				props[PropertyID.Wisdom] = m_wisdom;
-				props[PropertyID.Charisma] = m_charisma;
-				props[PropertyID.ArmorClass] = m_armorClass;
-				props[PropertyID.VisionRange] = m_visionRange;
-				props[PropertyID.FoodFullness] = m_foodFullness;
-				props[PropertyID.WaterFullness] = m_waterFullness;
-				props[PropertyID.Assignment] = m_assignment;
-			}
+			var props = base.SerializeProperties();
 
-			if ((visibility & ObjectVisibility.Public) != 0)
-			{
-				props[PropertyID.Gender] = m_gender;
-			}
+			props[PropertyID.HitPoints] = m_hitPoints;
+			props[PropertyID.MaxHitPoints] = m_maxHitPoints;
+			props[PropertyID.SpellPoints] = m_spellPoints;
+			props[PropertyID.MaxSpellPoints] = m_maxSpellPoints;
+			props[PropertyID.Strength] = m_strength;
+			props[PropertyID.Dexterity] = m_dexterity;
+			props[PropertyID.Constitution] = m_constitution;
+			props[PropertyID.Intelligence] = m_intelligence;
+			props[PropertyID.Wisdom] = m_wisdom;
+			props[PropertyID.Charisma] = m_charisma;
+			props[PropertyID.ArmorClass] = m_armorClass;
+			props[PropertyID.VisionRange] = m_visionRange;
+			props[PropertyID.FoodFullness] = m_foodFullness;
+			props[PropertyID.WaterFullness] = m_waterFullness;
+			props[PropertyID.Assignment] = m_assignment;
+			props[PropertyID.Gender] = m_gender;
 
 			return props;
 		}

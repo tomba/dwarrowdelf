@@ -67,7 +67,6 @@ namespace Dwarrowdelf.Server
 		public ReadOnlyCollection<LivingObject> Controllables { get; private set; }
 
 		public bool IsController(IBaseObject living) { return this.Controllables.Contains(living); }
-		public bool IsFriendly(IBaseObject living) { return m_seeAll || this.Controllables.Contains(living); }
 
 		IPRunner m_ipRunner;
 
@@ -857,13 +856,10 @@ namespace Dwarrowdelf.Server
 				else
 				{
 					var vis = PropertyVisibilities.GetPropertyVisibility(c.PropertyID);
+					var ov = m_player.GetObjectVisibility(c.Object);
 
-					if (vis == PropertyVisibility.Friendly && !m_player.IsFriendly(c.Object))
+					if ((ov & vis) == 0)
 						return false;
-
-					MovableObject sob = c.Object as MovableObject;
-					if (sob != null)
-						return m_player.Sees(sob.Environment, sob.Location);
 
 					// XXX how to check for non-ServerGameObjects? for example building objects
 					return true;

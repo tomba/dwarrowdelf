@@ -101,15 +101,14 @@ namespace Dwarrowdelf.Server
 			base.SendTo(player, visibility);
 		}
 
-		protected override Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
+		protected override Dictionary<PropertyID, object> SerializeProperties()
 		{
-			var props = base.SerializeProperties(visibility);
-			if ((visibility & ObjectVisibility.Private) != 0)
-			{
-				props[PropertyID.NutritionalValue] = m_nutritionalValue;
-				props[PropertyID.RefreshmentValue] = m_refreshmentValue;
-				props[PropertyID.ReservedByStr] = m_reservedByStr;
-			}
+			var props = base.SerializeProperties();
+
+			props[PropertyID.NutritionalValue] = m_nutritionalValue;
+			props[PropertyID.RefreshmentValue] = m_refreshmentValue;
+			props[PropertyID.ReservedByStr] = m_reservedByStr;
+
 			return props;
 		}
 

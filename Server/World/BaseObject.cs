@@ -82,10 +82,13 @@ namespace Dwarrowdelf.Server
 		protected virtual void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
 			data.ObjectID = this.ObjectID;
-			data.Properties = SerializeProperties(visibility).Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).ToArray();
+			data.Properties = SerializeProperties().
+				Where(kvp => (PropertyVisibilities.GetPropertyVisibility(kvp.Key) & visibility) != 0).
+				Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).
+				ToArray();
 		}
 
-		protected virtual Dictionary<PropertyID, object> SerializeProperties(ObjectVisibility visibility)
+		protected virtual Dictionary<PropertyID, object> SerializeProperties()
 		{
 			return new Dictionary<PropertyID, object>();
 		}
