@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Dwarrowdelf.Jobs;
-using System.Windows;
-using System.Windows.Shapes;
-using System.Windows.Media;
-using System.Diagnostics;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
@@ -53,9 +49,6 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		List<StoreToStockpileJob> m_jobs;
 
-		FrameworkElement m_element;
-		public FrameworkElement Element { get { return m_element; } }
-
 		public string Description { get { return "Stockpile"; } }
 
 		public Stockpile(EnvironmentObject environment, IntRectZ area)
@@ -66,27 +59,11 @@ namespace Dwarrowdelf.Client
 
 			m_jobs = new List<StoreToStockpileJob>();
 
-			var rect = new Rectangle();
-			rect.Stroke = Brushes.Gray;
-			rect.StrokeThickness = 0.1;
-			rect.Width = this.Area.Width;
-			rect.Height = this.Area.Height;
-			rect.IsHitTestVisible = false;
-			m_element = rect;
-
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
 		Stockpile(SaveGameContext ctx)
 		{
-			var rect = new Rectangle();
-			rect.Stroke = Brushes.Gray;
-			rect.StrokeThickness = 0.1;
-			rect.Width = this.Area.Width;
-			rect.Height = this.Area.Height;
-			rect.IsHitTestVisible = false;
-			m_element = rect;
-
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 

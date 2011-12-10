@@ -13,7 +13,6 @@ namespace Dwarrowdelf.Client
 		public EnvironmentObject Environment { get; private set; }
 		public IntRectZ Area { get; private set; }
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
-		public System.Windows.FrameworkElement Element { get; private set; }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
 
@@ -22,14 +21,6 @@ namespace Dwarrowdelf.Client
 			this.Environment = environment;
 			this.BuildingID = buildingID;
 			this.Area = area;
-
-			var rect = new System.Windows.Shapes.Rectangle();
-			rect.Stroke = System.Windows.Media.Brushes.Cyan;
-			rect.StrokeThickness = 0.1;
-			rect.Width = this.Area.Width;
-			rect.Height = this.Area.Height;
-			rect.IsHitTestVisible = false;
-			this.Element = rect;
 
 			this.Environment.World.JobManager.AddJobSource(this);
 		}

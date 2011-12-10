@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
@@ -22,9 +17,6 @@ namespace Dwarrowdelf.Client
 		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRectZ Area { get; set; }
-
-		FrameworkElement m_element;
-		public FrameworkElement Element { get { return m_element; } }
 
 		public BuildingID BuildingID { get { return this.BuildingInfo.ID; } }
 
@@ -51,12 +43,6 @@ namespace Dwarrowdelf.Client
 			: base(world, objectID)
 		{
 			trace.Header = String.Format("Building({0})", objectID.Value);
-
-			var ellipse = new Rectangle();
-			ellipse.Stroke = Brushes.DarkGray;
-			ellipse.StrokeThickness = 0.1;
-			ellipse.IsHitTestVisible = false;
-			m_element = ellipse;
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
@@ -85,9 +71,6 @@ namespace Dwarrowdelf.Client
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
 			this.Environment = env;
-
-			m_element.Width = this.Area.Width;
-			m_element.Height = this.Area.Height;
 
 			if (initialized == false)
 			{

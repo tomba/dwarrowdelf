@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -87,18 +88,27 @@ namespace Dwarrowdelf.Client.UI
 
 		void AddElement(IDrawableElement element)
 		{
-			var e = element.Element;
+			var shape = new Rectangle();
 
-			if (e != null)
-			{
-				var r = element.Area;
-				Canvas.SetLeft(e, r.X);
-				Canvas.SetTop(e, r.Y);
-				SetElementZ(e, r.Z);
+			if (element is BuildingObject)
+				shape.Stroke = Brushes.DarkGray;
+			else if (element is Stockpile)
+				shape.Stroke = Brushes.Gray;
+			else if (element is ConstructionSite)
+				shape.Stroke = Brushes.Cyan;
 
-				m_canvas.Children.Add(e);
-				m_elementMap[element] = e;
-			}
+			shape.StrokeThickness = 0.1;
+			shape.IsHitTestVisible = false;
+			shape.Width = element.Area.Width;
+			shape.Height = element.Area.Height;
+
+			var r = element.Area;
+			Canvas.SetLeft(shape, r.X);
+			Canvas.SetTop(shape, r.Y);
+			SetElementZ(shape, r.Z);
+
+			m_canvas.Children.Add(shape);
+			m_elementMap[element] = shape;
 		}
 
 		void RemoveElement(IDrawableElement element)
