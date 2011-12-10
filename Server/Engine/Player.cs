@@ -602,15 +602,18 @@ namespace Dwarrowdelf.Server
 
 		public ObjectVisibility GetObjectVisibility(IBaseObject ob)
 		{
-			var sgo = ob as MovableObject;
+			var mo = ob as MovableObject;
 
-			if (sgo == null)
+			if (mo == null)
 			{
-				// XXX If the ob is not SGO, it's a building. Send all.
+				if ((ob is BuildingObject) == false)
+					throw new Exception();
+
+				// XXX If the ob is not movable object, it's a building. Send all.
 				return ObjectVisibility.All;
 			}
 
-			for (MovableObject o = sgo; o != null; o = o.Parent as MovableObject)
+			for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
 			{
 				if (this.IsController(o))
 				{
@@ -619,7 +622,7 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			if (Sees(sgo.Parent, sgo.Location))
+			if (Sees(mo.Parent, mo.Location))
 				return ObjectVisibility.Public;
 			else
 				return ObjectVisibility.None;
