@@ -623,7 +623,8 @@ namespace Dwarrowdelf.Server
 			}
 
 			if (Sees(mo.Parent, mo.Location))
-				return ObjectVisibility.Public;
+				return ObjectVisibility.Public
+					| ObjectVisibility.Debug; // XXX debug also
 			else
 				return ObjectVisibility.None;
 		}
