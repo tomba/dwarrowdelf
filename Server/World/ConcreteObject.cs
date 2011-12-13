@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 	[SaveGameObjectByRef]
 	public abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
-		protected ConcreteObject(ObjectType objectType, LocatableGameObjectBuilder builder)
+		protected ConcreteObject(ObjectType objectType, ConcreteObjectBuilder builder)
 			: base(objectType, builder)
 		{
 			m_name = builder.Name;
@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public abstract class LocatableGameObjectBuilder : ServerGameObjectBuilder
+	public abstract class ConcreteObjectBuilder : MovableObjectBuilder
 	{
 		public string Name { get; set; }
 		public MaterialID MaterialID { get; set; }

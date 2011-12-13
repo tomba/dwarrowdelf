@@ -18,7 +18,7 @@ namespace MyArea
 
 		public void InitializeWorld(World world)
 		{
-			var envBuilder = new EnvironmentBuilder(new IntSize3D(64, 64, 4), VisibilityMode.AllVisible);
+			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(64, 64, 4), VisibilityMode.AllVisible);
 
 			TileData td;
 
@@ -46,7 +46,7 @@ namespace MyArea
 			CreateSheep(env, surfaceLevel);
 
 			{
-				var builder = new LivingBuilder(LivingID.Wolf);
+				var builder = new LivingObjectBuilder(LivingID.Wolf);
 				var wolf = builder.Create(env.World);
 				var ai = new Dwarrowdelf.AI.CarnivoreAI(wolf);
 				wolf.SetAI(ai);
@@ -55,7 +55,7 @@ namespace MyArea
 			}
 
 			{
-				var builder = new LivingBuilder(LivingID.Dragon);
+				var builder = new LivingObjectBuilder(LivingID.Dragon);
 				var dragon = builder.Create(env.World);
 				var ai = new Dwarrowdelf.AI.MonsterAI(dragon);
 				dragon.SetAI(ai);
@@ -70,7 +70,7 @@ namespace MyArea
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
-				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
+				var sheepBuilder = new LivingObjectBuilder(LivingID.Sheep)
 				{
 					Color = this.GetRandomColor(),
 				};
@@ -108,13 +108,13 @@ namespace MyArea
 			}
 		}
 
-		static void FillVolume(EnvironmentBuilder env, IntCuboid volume, TileData data)
+		static void FillVolume(EnvironmentObjectBuilder env, IntCuboid volume, TileData data)
 		{
 			foreach (var p in volume.Range())
 				env.SetTileData(p, data);
 		}
 
-		static void DrawRect(EnvironmentBuilder env, IntRectZ area, TileData data)
+		static void DrawRect(EnvironmentObjectBuilder env, IntRectZ area, TileData data)
 		{
 			foreach (var p in area.Range())
 			{

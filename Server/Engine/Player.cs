@@ -321,7 +321,7 @@ namespace Dwarrowdelf.Server
 
 			foreach (var p in msg.Area.Range())
 			{
-				var livingBuilder = new LivingBuilder(msg.LivingID)
+				var livingBuilder = new LivingObjectBuilder(msg.LivingID)
 				{
 					Name = msg.Name,
 				};

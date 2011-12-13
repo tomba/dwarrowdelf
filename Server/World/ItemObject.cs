@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ItemObjectBuilder : LocatableGameObjectBuilder
+	public class ItemObjectBuilder : ConcreteObjectBuilder
 	{
 		public ItemID ItemID { get; set; }
 		public int NutritionalValue { get; set; }

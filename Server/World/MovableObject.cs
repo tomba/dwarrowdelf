@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		protected MovableObject(ObjectType objectType, ServerGameObjectBuilder builder)
+		protected MovableObject(ObjectType objectType, MovableObjectBuilder builder)
 			: base(objectType)
 		{
 		}
@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public abstract class ServerGameObjectBuilder
+	public abstract class MovableObjectBuilder
 	{
 	}
 }

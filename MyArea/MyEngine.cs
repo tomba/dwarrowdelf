@@ -59,7 +59,7 @@ namespace MyArea
 
 		LivingObject CreateDwarf(int i)
 		{
-			var builder = new LivingBuilder(LivingID.Dwarf)
+			var builder = new LivingObjectBuilder(LivingID.Dwarf)
 			{
 				Color = (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1,
 			};

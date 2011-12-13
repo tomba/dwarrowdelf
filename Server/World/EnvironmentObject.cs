@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Server
 	[SaveGameObjectByRef]
 	public class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		internal static EnvironmentObject Create(World world, EnvironmentBuilder builder)
+		internal static EnvironmentObject Create(World world, EnvironmentObjectBuilder builder)
 		{
 			var ob = new EnvironmentObject(builder);
 			ob.Initialize(world);
@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		EnvironmentObject(EnvironmentBuilder builder)
+		EnvironmentObject(EnvironmentObjectBuilder builder)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
@@ -839,7 +839,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class EnvironmentBuilder
+	public class EnvironmentObjectBuilder
 	{
 		TileGrid m_tileGrid;
 		IntSize3D m_size;
@@ -853,7 +853,7 @@ namespace Dwarrowdelf.Server
 
 		internal TileGrid Grid { get { return m_tileGrid; } }
 
-		public EnvironmentBuilder(IntSize3D size, VisibilityMode visibilityMode)
+		public EnvironmentObjectBuilder(IntSize3D size, VisibilityMode visibilityMode)
 		{
 			m_size = size;
 			m_tileGrid = new TileGrid(size);

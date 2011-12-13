@@ -42,7 +42,7 @@ namespace MyArea
 			return p;
 		}
 
-		IntPoint3D GetRandomSubterraneanLocation(EnvironmentBuilder env)
+		IntPoint3D GetRandomSubterraneanLocation(EnvironmentObjectBuilder env)
 		{
 			IntPoint3D p;
 			int iter = 0;
@@ -68,7 +68,7 @@ namespace MyArea
 			DiamondSquare.Render(grid, 10, 5, 0.75);
 			Clamper.Clamp(grid, 10);
 
-			var envBuilder = new EnvironmentBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
+			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
 
 			Random r = new Random(123);
 
@@ -146,7 +146,7 @@ namespace MyArea
 			for (int i = 0; i < 0; ++i)
 			{
 				// Add a monster
-				var builder = new LivingBuilder(LivingID.Sheep)
+				var builder = new LivingObjectBuilder(LivingID.Sheep)
 				{
 					Color = GetRandomColor(),
 				};
@@ -231,7 +231,7 @@ namespace MyArea
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
-				var sheepBuilder = new LivingBuilder(LivingID.Sheep)
+				var sheepBuilder = new LivingObjectBuilder(LivingID.Sheep)
 				{
 					Color = this.GetRandomColor(),
 				};
@@ -261,7 +261,7 @@ namespace MyArea
 			return env;
 		}
 
-		static int FindSurfaceLevel(EnvironmentBuilder env)
+		static int FindSurfaceLevel(EnvironmentObjectBuilder env)
 		{
 			int surfaceLevel = 0;
 			int numSurfaces = 0;
@@ -284,7 +284,7 @@ namespace MyArea
 			return surfaceLevel;
 		}
 
-		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, EnvironmentBuilder env)
+		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, EnvironmentObjectBuilder env)
 		{
 			var plane = env.Bounds.Plane;
 
@@ -321,7 +321,7 @@ namespace MyArea
 			});
 		}
 
-		void CreateTrees(EnvironmentBuilder env)
+		void CreateTrees(EnvironmentObjectBuilder env)
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
@@ -337,7 +337,7 @@ namespace MyArea
 			}
 		}
 
-		static void CreateSlopes(EnvironmentBuilder env)
+		static void CreateSlopes(EnvironmentObjectBuilder env)
 		{
 			/*
 			 * su t
@@ -374,12 +374,12 @@ namespace MyArea
 			}
 		}
 
-		void CreateOreCluster(EnvironmentBuilder env, IntPoint3D p, MaterialID oreMaterialID)
+		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID)
 		{
 			CreateOreCluster(env, p, oreMaterialID, m_random.Next(6) + 1);
 		}
 
-		static void CreateOreCluster(EnvironmentBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
+		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
 		{
 			if (!env.Contains(p))
 				return;

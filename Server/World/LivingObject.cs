@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Server
 	[SaveGameObjectByRef]
 	public partial class LivingObject : ConcreteObject, ILivingObject
 	{
-		internal static LivingObject Create(World world, LivingBuilder builder)
+		internal static LivingObject Create(World world, LivingObjectBuilder builder)
 		{
 			var ob = new LivingObject(builder);
 			ob.Initialize(world);
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		LivingObject(LivingBuilder builder)
+		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
 			Debug.Assert(builder.LivingID != Dwarrowdelf.LivingID.Undefined);
@@ -692,7 +692,7 @@ namespace Dwarrowdelf.Server
 	}
 
 
-	public class LivingBuilder : LocatableGameObjectBuilder
+	public class LivingObjectBuilder : ConcreteObjectBuilder
 	{
 		public LivingID LivingID { get; set; }
 		public int VisionRange { get; set; }
@@ -705,7 +705,7 @@ namespace Dwarrowdelf.Server
 
 		public int Str, Dex, Con, Int, Wis, Cha;
 
-		public LivingBuilder(LivingID livingID)
+		public LivingObjectBuilder(LivingID livingID)
 		{
 			this.LivingID = livingID;
 
