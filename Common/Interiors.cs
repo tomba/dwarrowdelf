@@ -25,9 +25,9 @@ namespace Dwarrowdelf
 
 	public class InteriorInfo
 	{
-		public InteriorID ID { get; set; }
-		public string Name { get; set; }
-		public InteriorFlags Flags { get; set; }
+		public InteriorID ID { get; internal set; }
+		public string Name { get; internal set; }
+		public InteriorFlags Flags { get; internal set; }
 
 		public bool IsBlocker { get { return (this.Flags & InteriorFlags.Blocker) != 0; } }
 		public bool IsSeeThrough { get { return !this.IsBlocker; } }

@@ -52,11 +52,11 @@ namespace Dwarrowdelf
 
 	public class ItemInfo
 	{
-		public ItemID ID { get; set; }
-		public string Name { get; set; }
-		public ItemCategory Category { get; set; }
-		public WeaponInfo WeaponInfo { get; set; }
-		public ArmorInfo ArmorInfo { get; set; }
+		public ItemID ID { get; internal set; }
+		public string Name { get; internal set; }
+		public ItemCategory Category { get; internal set; }
+		public WeaponInfo WeaponInfo { get; internal set; }
+		public ArmorInfo ArmorInfo { get; internal set; }
 	}
 
 	public enum WeaponType
@@ -67,14 +67,14 @@ namespace Dwarrowdelf
 
 	public class WeaponInfo
 	{
-		public int WC { get; set; }
-		public bool IsTwoHanded { get; set; }
-		public WeaponType WeaponType { get; set; }
+		public int WC { get; internal set; }
+		public bool IsTwoHanded { get; internal set; }
+		public WeaponType WeaponType { get; internal set; }
 	}
 
 	public class ArmorInfo
 	{
-		public int AC { get; set; }
+		public int AC { get; internal set; }
 	}
 
 	public static class Items

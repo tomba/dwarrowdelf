@@ -63,11 +63,11 @@ namespace Dwarrowdelf
 
 	public class MaterialInfo
 	{
-		public MaterialID ID { get; set; }
-		public MaterialCategory Category { get; set; }
-		public string Name { get; set; }
-		public string Adjective { get; set; }
-		public GameColor Color { get; set; }
+		public MaterialID ID { get; internal set; }
+		public MaterialCategory Category { get; internal set; }
+		public string Name { get; internal set; }
+		public string Adjective { get; internal set; }
+		public GameColor Color { get; internal set; }
 	}
 
 	public static class Materials

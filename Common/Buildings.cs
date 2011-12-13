@@ -18,9 +18,9 @@ namespace Dwarrowdelf
 	[ContentProperty("BuildableItems")]
 	public class BuildingInfo
 	{
-		public BuildingID ID { get; set; }
-		public string Name { get; set; }
-		public List<BuildableItem> BuildableItems { get; set; }
+		public BuildingID ID { get; internal set; }
+		public string Name { get; internal set; }
+		public List<BuildableItem> BuildableItems { get; internal set; }
 
 		public BuildingInfo()
 		{
@@ -46,9 +46,9 @@ namespace Dwarrowdelf
 	[ContentProperty("BuildMaterials")]
 	public class BuildableItem
 	{
-		public ItemID ItemID { get; set; }
+		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
-		public List<BuildableItemMaterialInfo> BuildMaterials { get; set; }
+		public List<BuildableItemMaterialInfo> BuildMaterials { get; internal set; }
 
 		public BuildableItem()
 		{
@@ -74,11 +74,11 @@ namespace Dwarrowdelf
 
 	public class BuildableItemMaterialInfo
 	{
-		public ItemID? ItemID { get; set; }
-		public ItemCategory? ItemCategory { get; set; }
+		public ItemID? ItemID { get; internal set; }
+		public ItemCategory? ItemCategory { get; internal set; }
 
-		public MaterialCategory? MaterialCategory { get; set; }
-		public MaterialID? MaterialID { get; set; }
+		public MaterialCategory? MaterialCategory { get; internal set; }
+		public MaterialID? MaterialID { get; internal set; }
 
 		public bool MatchItem(IItemObject ob)
 		{

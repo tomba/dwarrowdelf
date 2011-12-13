@@ -43,9 +43,9 @@ namespace Dwarrowdelf
 
 	public class TerrainInfo
 	{
-		public TerrainID ID { get; set; }
-		public string Name { get; set; }
-		public TerrainFlags Flags { get; set; }
+		public TerrainID ID { get; internal set; }
+		public string Name { get; internal set; }
+		public TerrainFlags Flags { get; internal set; }
 
 		/// <summary>
 		/// Tile can not be entered

@@ -35,11 +35,11 @@ namespace Dwarrowdelf
 
 	public class LivingInfo
 	{
-		public LivingID ID { get; set; }
-		public string Name { get; set; }
-		public LivingCategory Category { get; set; }
-		public GameColor Color { get; set; }
-		public int Level { get; set; }
+		public LivingID ID { get; internal set; }
+		public string Name { get; internal set; }
+		public LivingCategory Category { get; internal set; }
+		public GameColor Color { get; internal set; }
+		public int Level { get; internal set; }
 	}
 
 	public static class Livings
