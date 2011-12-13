@@ -34,8 +34,11 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public ItemID ItemID { get; private set; }
-		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItem(this.ItemID); } }
+		public ItemInfo ItemInfo { get { return Dwarrowdelf.Items.GetItemInfo(this.ItemID); } }
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
+
+		public ArmorInfo ArmorInfo { get { return this.ItemInfo.ArmorInfo; } }
+		public WeaponInfo WeaponInfo { get { return this.ItemInfo.WeaponInfo; } }
 
 		[SaveGameProperty("ReservedBy")]
 		object m_reservedBy;

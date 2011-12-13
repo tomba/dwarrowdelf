@@ -27,6 +27,12 @@ namespace Dwarrowdelf
 		Barrel,
 		Bucket,
 
+		ShortSword,
+		BattleAxe,
+
+		ChainMail,
+		PlateMail,
+
 		Contraption,
 	}
 
@@ -39,6 +45,8 @@ namespace Dwarrowdelf
 		Gem,
 		RawMaterial,
 		Corpse,
+		Weapon,
+		Armor,
 		Other,
 	}
 
@@ -47,6 +55,26 @@ namespace Dwarrowdelf
 		public ItemID ID { get; set; }
 		public string Name { get; set; }
 		public ItemCategory Category { get; set; }
+		public WeaponInfo WeaponInfo { get; set; }
+		public ArmorInfo ArmorInfo { get; set; }
+	}
+
+	public enum WeaponType
+	{
+		Edged,
+		Blunt,
+	}
+
+	public class WeaponInfo
+	{
+		public int WC { get; set; }
+		public bool IsTwoHanded { get; set; }
+		public WeaponType WeaponType { get; set; }
+	}
+
+	public class ArmorInfo
+	{
+		public int AC { get; set; }
 	}
 
 	public static class Items
@@ -84,12 +112,19 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public static ItemInfo GetItem(ItemID id)
+		public static ItemInfo GetItemInfo(ItemID id)
 		{
 			Debug.Assert(id != ItemID.Undefined);
 			Debug.Assert(s_items[(int)id] != null);
 
 			return s_items[(int)id];
+		}
+
+		public static IEnumerable<ItemInfo> GetItemInfos(ItemCategory category)
+		{
+			Debug.Assert(category != ItemCategory.Undefined);
+
+			return s_items.Where(ii => ii != null && ii.Category == category);
 		}
 	}
 }

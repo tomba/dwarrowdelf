@@ -67,6 +67,9 @@ namespace Dwarrowdelf.Client
 		Barrel,
 		Bucket,
 
+		Weapon,
+		Armor,
+
 		/* top */
 		Water,
 

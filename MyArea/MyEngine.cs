@@ -107,13 +107,35 @@ namespace MyArea
 			dwarf.SetAI(new DwarfAI(dwarf));
 
 
-			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
-			var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+			{
+				var materials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
+				var material = materials[m_random.Next(materials.Length)].ID;
 
-			var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
-			var item = itemBuilder.Create(this.World);
+				var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
+				var item = itemBuilder.Create(this.World);
 
-			item.MoveTo(dwarf);
+				item.MoveTo(dwarf);
+			}
+
+			{
+				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+				var material = materials[m_random.Next(materials.Length)].ID;
+
+				var itemBuilder = new ItemObjectBuilder(ItemID.ShortSword, material);
+				var item = itemBuilder.Create(this.World);
+
+				item.MoveTo(dwarf);
+			}
+
+			{
+				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+				var material = materials[m_random.Next(materials.Length)].ID;
+
+				var itemBuilder = new ItemObjectBuilder(ItemID.ChainMail, material);
+				var item = itemBuilder.Create(this.World);
+
+				item.MoveTo(dwarf);
+			}
 
 
 			return dwarf;

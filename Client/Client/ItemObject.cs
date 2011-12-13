@@ -80,7 +80,7 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (ItemData)_data;
 
-			this.ItemInfo = Dwarrowdelf.Items.GetItem(data.ItemID);
+			this.ItemInfo = Dwarrowdelf.Items.GetItemInfo(data.ItemID);
 			this.SymbolID = ItemSymbols.GetSymbol(this.ItemID);
 
 			base.Deserialize(_data);
@@ -140,6 +140,7 @@ namespace Dwarrowdelf.Client
 
 	static class ItemSymbols
 	{
+		// ItemID -> SymbolID
 		static SymbolID[] s_symbols;
 
 		static ItemSymbols()
@@ -155,6 +156,12 @@ namespace Dwarrowdelf.Client
 			set(ItemID.Corpse, SymbolID.Rock);
 
 			set(ItemID.Ore, SymbolID.Rock);
+
+			foreach (var ii in Items.GetItemInfos(ItemCategory.Weapon))
+				set(ii.ID, SymbolID.Weapon);
+
+			foreach (var ii in Items.GetItemInfos(ItemCategory.Armor))
+				set(ii.ID, SymbolID.Armor);
 
 			var symbolIDs = (SymbolID[])Enum.GetValues(typeof(SymbolID));
 

@@ -47,7 +47,7 @@ namespace Dwarrowdelf
 	public class BuildableItem
 	{
 		public ItemID ItemID { get; set; }
-		public ItemInfo ItemInfo { get { return Items.GetItem(this.ItemID); } }
+		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
 		public List<BuildableItemMaterialInfo> BuildMaterials { get; set; }
 
 		public BuildableItem()

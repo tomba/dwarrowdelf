@@ -23,6 +23,30 @@
 
 	<ItemInfo ID="Contraption" Category="Other" />
 
+	<ItemInfo ID="ShortSword" Category="Weapon">
+		<ItemInfo.WeaponInfo>
+			<WeaponInfo WC="10" IsTwoHanded="False" WeaponType="Edged" />
+		</ItemInfo.WeaponInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="BattleAxe" Category="Weapon">
+		<ItemInfo.WeaponInfo>
+			<WeaponInfo WC="15" IsTwoHanded="True" WeaponType="Edged" />
+		</ItemInfo.WeaponInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="ChainMail" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="10" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="PlateMail" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="20" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
 	<ItemInfo ID="50" Name="MyItem" Category="Gem" />
 
 </x:Array>
