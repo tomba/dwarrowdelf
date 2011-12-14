@@ -37,13 +37,19 @@
 
 	<ItemInfo ID="ChainMail" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="10" />
+			<ArmorInfo AC="10" Slot="Torso" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="PlateMail" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="20" />
+			<ArmorInfo AC="20" Slot="Torso" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="Skullcap" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="3" Slot="Head" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 

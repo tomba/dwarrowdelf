@@ -135,8 +135,21 @@ namespace MyArea
 				var item = itemBuilder.Create(this.World);
 
 				item.MoveTo(dwarf);
+
+				dwarf.WearArmor(item);
 			}
 
+			{
+				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+				var material = materials[m_random.Next(materials.Length)].ID;
+
+				var itemBuilder = new ItemObjectBuilder(ItemID.Skullcap, material);
+				var item = itemBuilder.Create(this.World);
+
+				item.MoveTo(dwarf);
+
+				dwarf.WearArmor(item);
+			}
 
 			return dwarf;
 		}

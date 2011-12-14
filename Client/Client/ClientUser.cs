@@ -322,6 +322,26 @@ namespace Dwarrowdelf.Client
 			ob.SetSkillLevel(change.SkillID, change.Level);
 		}
 
+		void HandleChange(WearChange change)
+		{
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			Debug.Assert(ob.IsInitialized);
+
+			if (change.WearableID != ObjectID.NullObjectID)
+			{
+				var wearable = m_world.GetObject<ItemObject>(change.WearableID);
+				ob.WearArmor(change.Slot, wearable);
+			}
+			else
+			{
+				ob.RemoveArmor(change.Slot);
+			}
+		}
+
 		void HandleChange(ObjectDestructedChange change)
 		{
 			var ob = m_world.FindObject<BaseObject>(change.ObjectID);

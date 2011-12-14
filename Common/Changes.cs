@@ -399,4 +399,28 @@ namespace Dwarrowdelf
 		{
 		}
 	}
+
+	[Serializable]
+	public class WearChange : ObjectChange
+	{
+		[NonSerialized]
+		public IItemObject m_wearable;
+		ObjectID m_wearableID;
+
+		public IItemObject Wearable { get { return m_wearable; } }
+		public ObjectID WearableID { get { return m_wearableID; } }
+
+		public ArmorSlot Slot;
+
+		public WearChange(ILivingObject wearer, ArmorSlot slot, IItemObject wearable)
+			: base(wearer)
+		{
+			m_wearable = wearable;
+			if (m_wearable != null)
+				m_wearableID = m_wearable.ObjectID;
+			else
+				m_wearableID = ObjectID.NullObjectID;
+			this.Slot = slot;
+		}
+	}
 }

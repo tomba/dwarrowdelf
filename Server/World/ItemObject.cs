@@ -81,6 +81,8 @@ namespace Dwarrowdelf.Server
 			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
 		}
 
+		public LivingObject Wearer { get; internal set; }
+
 		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
 			base.SerializeTo(data, visibility);

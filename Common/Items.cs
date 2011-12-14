@@ -33,6 +33,8 @@ namespace Dwarrowdelf
 		ChainMail,
 		PlateMail,
 
+		Skullcap,
+
 		Contraption,
 	}
 
@@ -72,9 +74,18 @@ namespace Dwarrowdelf
 		public WeaponType WeaponType { get; internal set; }
 	}
 
+	public enum ArmorSlot
+	{
+		Undefined = 0,
+		Head,
+		Hands,
+		Torso,
+	}
+
 	public class ArmorInfo
 	{
 		public int AC { get; internal set; }
+		public ArmorSlot Slot { get; internal set; }
 	}
 
 	public static class Items

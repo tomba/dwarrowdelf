@@ -23,6 +23,9 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<Tuple<SkillID, byte>> Skills { get; private set; }
 		ObservableCollection<Tuple<SkillID, byte>> m_skills;
 
+		public ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>> ArmorSlots { get; private set; }
+		ObservableCollection<Tuple<ArmorSlot, ItemObject>> m_armorSlots;
+
 		public LivingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -51,6 +54,18 @@ namespace Dwarrowdelf.Client
 			else
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
+
+			if (data.ArmorSlots != null)
+			{
+				var l = data.ArmorSlots.Select(t => new Tuple<ArmorSlot, ItemObject>(t.Item1, this.World.GetObject<ItemObject>(t.Item2)));
+				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>(l);
+			}
+			else
+			{
+				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>();
+			}
+
+			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 		}
 
 		public LivingID LivingID { get { return this.LivingInfo.ID; } }
@@ -518,6 +533,34 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_skills.Add(new Tuple<SkillID, byte>(skill, level));
+		}
+
+		public void WearArmor(ArmorSlot slot, ItemObject wearable)
+		{
+			for (int i = 0; i < m_armorSlots.Count; ++i)
+			{
+				if (m_armorSlots[i].Item1 == slot)
+				{
+					m_armorSlots.RemoveAt(i);
+					break;
+				}
+			}
+
+			m_armorSlots.Add(new Tuple<ArmorSlot, ItemObject>(slot, wearable));
+		}
+
+		public void RemoveArmor(ArmorSlot slot)
+		{
+			for (int i = 0; i < m_armorSlots.Count; ++i)
+			{
+				if (m_armorSlots[i].Item1 == slot)
+				{
+					m_armorSlots.RemoveAt(i);
+					return;
+				}
+			}
+
+			throw new Exception();
 		}
 	}
 

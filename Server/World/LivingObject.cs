@@ -33,6 +33,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
+		[SaveGameProperty("ArmorSlots")]
+		Dictionary<ArmorSlot, ItemObject> m_armorSlots;
+
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
@@ -62,6 +65,8 @@ namespace Dwarrowdelf.Server
 			foreach (var kvp in builder.SkillMap)
 				if (kvp.Value != 0)
 					m_skillMap[kvp.Key] = kvp.Value;
+
+			m_armorSlots = new Dictionary<ArmorSlot, ItemObject>();
 		}
 
 		LivingObject(SaveGameContext ctx)
@@ -264,6 +269,29 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
+		public void WearArmor(ItemObject wearable)
+		{
+			Debug.Assert(this.Inventory.Contains(wearable));
+			Debug.Assert(wearable.ArmorInfo != null);
+			Debug.Assert(!m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
+
+			wearable.Wearer = this;
+			m_armorSlots[wearable.ArmorInfo.Slot] = wearable;
+
+			this.World.AddChange(new WearChange(this, wearable.ArmorInfo.Slot, wearable));
+		}
+
+		public void RemoveArmor(ItemObject wearable)
+		{
+			Debug.Assert(m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
+			Debug.Assert(m_armorSlots[wearable.ArmorInfo.Slot] == wearable);
+
+			wearable.Wearer = null;
+			m_armorSlots.Remove(wearable.ArmorInfo.Slot);
+
+			this.World.AddChange(new WearChange(this, wearable.ArmorInfo.Slot, null));
+		}
+
 		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
 			base.SerializeTo(data, visibility);
@@ -284,6 +312,8 @@ namespace Dwarrowdelf.Server
 				data.ActionUserID = this.ActionUserID;
 
 				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
+
+				data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>((ArmorSlot)kvp.Key, kvp.Value.ObjectID)).ToArray();
 			}
 		}
 
