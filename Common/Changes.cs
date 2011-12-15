@@ -423,4 +423,25 @@ namespace Dwarrowdelf
 			this.Slot = slot;
 		}
 	}
+
+	[Serializable]
+	public class WieldChange : ObjectChange
+	{
+		[NonSerialized]
+		public IItemObject m_weapon;
+		ObjectID m_weaponID;
+
+		public IItemObject Weapon { get { return m_weapon; } }
+		public ObjectID WeaponID { get { return m_weaponID; } }
+
+		public WieldChange(ILivingObject wearer, IItemObject weapon)
+			: base(wearer)
+		{
+			m_weapon = weapon;
+			if (m_weapon != null)
+				m_weaponID = m_weapon.ObjectID;
+			else
+				m_weaponID = ObjectID.NullObjectID;
+		}
+	}
 }

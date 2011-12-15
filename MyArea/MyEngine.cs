@@ -125,6 +125,8 @@ namespace MyArea
 				var item = itemBuilder.Create(this.World);
 
 				item.MoveTo(dwarf);
+
+				dwarf.WieldWeapon(item);
 			}
 
 			{

@@ -59,6 +59,8 @@ namespace Dwarrowdelf
 
 		public Tuple<ArmorSlot, ObjectID>[] ArmorSlots { get; set; }
 
+		public ObjectID WeaponID { get; set; }
+
 		public override string ToString()
 		{
 			return String.Format("LivingData {0}", this.ObjectID);

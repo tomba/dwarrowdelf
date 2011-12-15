@@ -66,6 +66,9 @@ namespace Dwarrowdelf.Client
 			}
 
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
+
+			if (data.WeaponID != ObjectID.NullObjectID)
+				this.Weapon = this.World.GetObject<ItemObject>(data.WeaponID);
 		}
 
 		public LivingID LivingID { get { return this.LivingInfo.ID; } }
@@ -561,6 +564,20 @@ namespace Dwarrowdelf.Client
 			}
 
 			throw new Exception();
+		}
+
+		public ItemObject Weapon { get; private set; }
+
+		public void WieldWeapon(ItemObject weapon)
+		{
+			this.Weapon = weapon;
+			Notify("Weapon");
+		}
+
+		public void RemoveWeapon()
+		{
+			this.Weapon = null;
+			Notify("Weapon");
 		}
 	}
 

@@ -36,6 +36,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("ArmorSlots")]
 		Dictionary<ArmorSlot, ItemObject> m_armorSlots;
 
+		[SaveGameProperty("Weapon")]
+		ItemObject m_weapon;
+
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
@@ -292,6 +295,28 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new WearChange(this, wearable.ArmorInfo.Slot, null));
 		}
 
+		public void WieldWeapon(ItemObject weapon)
+		{
+			Debug.Assert(this.Inventory.Contains(weapon));
+			Debug.Assert(weapon.WeaponInfo != null);
+			Debug.Assert(m_weapon == null);
+
+			m_weapon = weapon;
+			weapon.Wearer = this;
+
+			this.World.AddChange(new WieldChange(this, weapon));
+		}
+
+		public void RemoveWeapon(ItemObject weapon)
+		{
+			Debug.Assert(m_weapon == weapon);
+
+			m_weapon.Wearer = null;
+			m_weapon = null;
+
+			this.World.AddChange(new WieldChange(this, null));
+		}
+
 		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{
 			base.SerializeTo(data, visibility);
@@ -315,6 +340,8 @@ namespace Dwarrowdelf.Server
 
 				data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>((ArmorSlot)kvp.Key, kvp.Value.ObjectID)).ToArray();
 			}
+
+			data.WeaponID = m_weapon != null ? m_weapon.ObjectID : ObjectID.NullObjectID;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)

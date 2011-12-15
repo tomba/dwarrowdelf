@@ -342,6 +342,27 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+
+		void HandleChange(WieldChange change)
+		{
+			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			Debug.Assert(ob.IsInitialized);
+
+			if (change.WeaponID != ObjectID.NullObjectID)
+			{
+				var weapon = m_world.GetObject<ItemObject>(change.WeaponID);
+				ob.WieldWeapon(weapon);
+			}
+			else
+			{
+				ob.RemoveWeapon();
+			}
+		}
+
 		void HandleChange(ObjectDestructedChange change)
 		{
 			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
