@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Dwarrowdelf.Client"
-                    xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-                    x:Class="Dwarrowdelf.Client.UI.ListItemTemplateDictionary">
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:local="clr-namespace:Dwarrowdelf.Client"
+					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+					x:Class="Dwarrowdelf.Client.UI.ListItemEditTemplateDictionary">
 
 	<DataTemplate DataType="{x:Type local:ItemObject}">
 		<DataTemplate.Resources>
@@ -32,12 +32,12 @@
 			</Image>
 
 			<TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Description" />
-                            <Binding Path="ObjectID" />
-                        </MultiBinding>
-                    </TextBlock.Text>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1})">
+							<Binding Path="Description" />
+							<Binding Path="ObjectID" />
+						</MultiBinding>
+					</TextBlock.Text>
 			</TextBlock>
 
 			<DockPanel.ToolTip>
@@ -74,12 +74,12 @@
 			</Image>
 
 			<TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="Description" />
-                            <Binding Path="ObjectID" />
-                        </MultiBinding>
-                    </TextBlock.Text>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1})">
+							<Binding Path="Description" />
+							<Binding Path="ObjectID" />
+						</MultiBinding>
+					</TextBlock.Text>
 			</TextBlock>
 			<DockPanel.ToolTip>
 				<ui:LivingInfoControl />
@@ -99,12 +99,12 @@
 				<Image Source="/Images/eye.png" />
 			</Button>
 			<TextBlock>
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="{}{0} ({1})">
-                            <Binding Path="BuildingID" />
-                            <Binding Path="ObjectID" />
-                        </MultiBinding>
-                    </TextBlock.Text>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1})">
+							<Binding Path="BuildingID" />
+							<Binding Path="ObjectID" />
+						</MultiBinding>
+					</TextBlock.Text>
 			</TextBlock>
 
 			<DockPanel.ToolTip>

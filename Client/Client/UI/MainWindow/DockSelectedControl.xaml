@@ -20,7 +20,7 @@
 
 	<Grid x:Name="LayoutRoot">
 		<Grid.Resources>
-			<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+			<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
 		</Grid.Resources>
 
 		<DockPanel>

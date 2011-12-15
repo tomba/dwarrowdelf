@@ -8,7 +8,7 @@ using AvalonDock;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class ListItemTemplateDictionary
+	partial class ListItemEditTemplateDictionary
 	{
 		public void Button_Click(object sender, RoutedEventArgs e)
 		{

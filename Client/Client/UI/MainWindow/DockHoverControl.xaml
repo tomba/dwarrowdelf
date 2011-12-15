@@ -7,7 +7,7 @@
 			 d:DesignHeight="300" d:DesignWidth="300">
 
 	<UserControl.Resources>
-		<ResourceDictionary Source="/UI/ListItemTemplateDictionary.xaml" />
+		<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
 	</UserControl.Resources>
 
 	<DockPanel>

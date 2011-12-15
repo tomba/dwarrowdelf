@@ -119,6 +119,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\ListItemInfoTemplateDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\LivingEditControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\StockpileEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -187,7 +195,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\ListItemTemplateDictionary.xaml">
+    <Page Include="UI\ListItemEditTemplateDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -206,6 +214,9 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
+    <Compile Include="UI\LivingEditControl.xaml.cs">
+      <DependentUpon>LivingEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\DrawingConverter.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
     <Compile Include="ConcreteObject.cs" />
@@ -282,8 +293,8 @@
     </Compile>
     <Compile Include="UI\MapControl\TileAreaInfo.cs" />
     <Compile Include="UI\MapControl\TileInfo.cs" />
-    <Compile Include="UI\ListItemTemplateDictionary.xaml.cs">
-      <DependentUpon>ListItemTemplateDictionary.xaml</DependentUpon>
+    <Compile Include="UI\ListItemEditTemplateDictionary.xaml.cs">
+      <DependentUpon>ListItemEditTemplateDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\MapControl\MasterMapControl.cs" />
