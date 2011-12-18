@@ -115,76 +115,6 @@ namespace Dwarrowdelf
 		}
 	}
 
-	[Serializable]
-	[SaveGameObjectByRef]
-	public class DropAction : GameAction
-	{
-		[SaveGameProperty]
-		public ObjectID[] ItemObjectIDs { get; private set; }
-
-		public DropAction(IEnumerable<IMovableObject> items)
-		{
-			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
-		}
-
-		protected DropAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-
-		protected override string GetParams()
-		{
-			return String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray());
-		}
-	}
-
-	[Serializable]
-	[SaveGameObjectByRef]
-	public class GetAction : GameAction
-	{
-		[SaveGameProperty]
-		public ObjectID[] ItemObjectIDs { get; private set; }
-
-		public GetAction(IEnumerable<IMovableObject> items)
-		{
-			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
-		}
-
-		protected GetAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-
-		protected override string GetParams()
-		{
-			return String.Join(", ", this.ItemObjectIDs.Select(i => i.ToString()).ToArray());
-		}
-	}
-
-
-	[Serializable]
-	[SaveGameObjectByRef]
-	public class ConsumeAction : GameAction
-	{
-		[SaveGameProperty]
-		public ObjectID ItemObjectID { get; private set; }
-
-		public ConsumeAction(IMovableObject consumable)
-		{
-			this.ItemObjectID = consumable.ObjectID;
-		}
-
-		protected ConsumeAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-
-		protected override string GetParams()
-		{
-			return this.ItemObjectID.ToString();
-		}
-	}
-
 	public enum MineActionType
 	{
 		/// <summary>
@@ -370,6 +300,51 @@ namespace Dwarrowdelf
 		protected override string GetParams()
 		{
 			return this.ItemID.ToString();
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class DropAction : ItemAction
+	{
+		public DropAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected DropAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class GetAction : ItemAction
+	{
+		public GetAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected GetAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class ConsumeAction : ItemAction
+	{
+		public ConsumeAction(IItemObject consumable)
+			: base(consumable)
+		{
+		}
+
+		protected ConsumeAction(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 	}
 

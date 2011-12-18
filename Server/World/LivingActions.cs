@@ -64,26 +64,31 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(ConstructBuildingAction action)
 		{
 			var env = this.World.FindObject<EnvironmentObject>(action.EnvironmentID);
+
+			var report = new ConstructBuildingActionReport(this, action.BuildingID);
+
 			if (env == null)
 			{
-				SetActionError("no env");
+				SendFailReport(report, "no environment specified");
 				return false;
 			}
 
 			if (!action.Area.Contains(this.Location))
 			{
-				SetActionError("living not at the building site");
+				SendFailReport(report, "not at the construction site");
 				return false;
 			}
 
 			if (BuildingObject.VerifyBuildSite(env, action.Area) == false)
 			{
-				SetActionError("Build site not clean");
+				SendFailReport(report, "construction site not clean");
 				return false;
 			}
 
 			var builder = new BuildingObjectBuilder(action.BuildingID, action.Area);
 			var building = builder.Create(this.World, env);
+
+			SendReport(report);
 
 			return true;
 		}
@@ -96,19 +101,22 @@ namespace Dwarrowdelf.Server
 		bool PerformAction(DestructBuildingAction action)
 		{
 			var building = this.World.FindObject<BuildingObject>(action.BuildingID);
+
 			if (building == null)
 			{
-				SetActionError("no building");
+				SendFailReport(new DestructBuildingActionReport(this, null), "no such building");
 				return false;
 			}
 
 			if (!building.Area.Contains(this.Location))
 			{
-				SetActionError("living not at the building site");
+				SendFailReport(new DestructBuildingActionReport(this, building), "not at the building");
 				return false;
 			}
 
 			building.Destruct();
+
+			SendReport(new DestructBuildingActionReport(this, building));
 
 			return true;
 		}
@@ -122,33 +130,31 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.Environment == null)
 			{
-				SetActionError("no env");
+				SendFailReport(new GetActionReport(this, null), "no environment");
 				return false;
 			}
 
-			var list = this.Environment.GetContents(this.Location);
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
 
-			foreach (var itemID in action.ItemObjectIDs)
+			if (item == null)
 			{
-				if (itemID == this.ObjectID)
-				{
-					SetActionError("object cannot get itself");
-					return false;
-				}
-
-				var item = list.FirstOrDefault(o => o.ObjectID == itemID);
-				if (item == null)
-				{
-					SetActionError("{0} tried to pick up {1}, but it's not there", this, itemID);
-					return false;
-				}
-
-				if (item.MoveTo(this) == false)
-				{
-					SetActionError("{0} tried to pick up {1}, but it doesn't move", this, itemID);
-					return false;
-				}
+				SendFailReport(new GetActionReport(this, item), "item not found");
+				return false;
 			}
+
+			if (item.Environment != this.Environment || item.Location != this.Location)
+			{
+				SendFailReport(new GetActionReport(this, item), "item not there");
+				return false;
+			}
+
+			if (item.MoveTo(this) == false)
+			{
+				SendFailReport(new GetActionReport(this, item), "failed to move");
+				return false;
+			}
+
+			SendReport(new GetActionReport(this, item));
 
 			return true;
 		}
@@ -162,33 +168,31 @@ namespace Dwarrowdelf.Server
 		{
 			if (this.Environment == null)
 			{
-				SetActionError("no env");
+				SendFailReport(new DropActionReport(this, null), "no environment");
 				return false;
 			}
 
-			var list = this.Inventory;
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
 
-			foreach (var itemID in action.ItemObjectIDs)
+			if (item == null)
 			{
-				if (itemID == this.ObjectID)
-				{
-					SetActionError("object cannot drop itself");
-					return false;
-				}
-
-				var ob = list.FirstOrDefault(o => o.ObjectID == itemID);
-				if (ob == null)
-				{
-					SetActionError("{0} tried to drop {1}, but it's not in inventory", this, itemID);
-					return false;
-				}
-
-				if (ob.MoveTo(this.Environment, this.Location) == false)
-				{
-					SetActionError("{0} tried to drop {1}, but it doesn't move", this, itemID);
-					return false;
-				}
+				SendFailReport(new DropActionReport(this, item), "item not found");
+				return false;
 			}
+
+			if (item.Parent != this)
+			{
+				SendFailReport(new DropActionReport(this, item), "not in inventory");
+				return false;
+			}
+
+			if (item.MoveTo(this.Environment, this.Location) == false)
+			{
+				SendFailReport(new DropActionReport(this, item), "failed to move");
+				return false;
+			}
+
+			SendReport(new DropActionReport(this, item));
 
 			return true;
 		}
@@ -200,12 +204,12 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(ConsumeAction action)
 		{
-			var ob = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemObjectID);
+			var ob = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
 			var item = ob as ItemObject;
 
 			if (item == null)
 			{
-				SetActionError("{0} tried to eat {1}, but it't not in inventory", this, action.ItemObjectID);
+				SendFailReport(new ConsumeActionReport(this, null), "not in inventory");
 				return false;
 			}
 
@@ -214,7 +218,7 @@ namespace Dwarrowdelf.Server
 
 			if (refreshment == 0 && nutrition == 0)
 			{
-				SetActionError("cannot eat a non-digestible item");
+				SendFailReport(new ConsumeActionReport(this, item), "non-digestible");
 				return false;
 			}
 
@@ -222,6 +226,8 @@ namespace Dwarrowdelf.Server
 
 			this.WaterFullness += refreshment;
 			this.FoodFullness += nutrition;
+
+			SendReport(new ConsumeActionReport(this, item));
 
 			return true;
 		}
@@ -238,14 +244,11 @@ namespace Dwarrowdelf.Server
 
 			if (!ok)
 			{
-				SetActionError("could not move (blocked?)");
-				var report = new MoveActionReport(this, action.Direction, "could not move (blocked?)");
-				SetActionReport(report);
+				SendFailReport(new MoveActionReport(this, action.Direction), "could not move (blocked?)");
 			}
 			else
 			{
-				var report = new MoveActionReport(this, action.Direction);
-				SetActionReport(report);
+				SendReport(new MoveActionReport(this, action.Direction));
 			}
 
 			return ok;
@@ -266,9 +269,11 @@ namespace Dwarrowdelf.Server
 			var terrain = env.GetTerrain(p);
 			var id = terrain.ID;
 
+			var report = new MineActionReport(this, action.Direction, action.MineActionType);
+
 			if (!terrain.IsMinable)
 			{
-				SetActionError("{0} tried to mine {1}, but it's not minable", this, p);
+				SendFailReport(report, "not mineable");
 				return false;
 			}
 
@@ -278,14 +283,14 @@ namespace Dwarrowdelf.Server
 					{
 						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
-							SetActionError("Mine: not Planar or Up direction");
+							SendFailReport(report, "not not planar or up direction");
 							return false;
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
 						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
-							SetActionError("Mine: unable to move to {0}", action.Direction);
+							SendFailReport(report, "cannot reach");
 							return false;
 						}
 
@@ -352,13 +357,13 @@ namespace Dwarrowdelf.Server
 					{
 						if (!action.Direction.IsPlanarUpDown())
 						{
-							SetActionError("MineStairs: not PlanarUpDown direction");
+							SendFailReport(report, "not PlanarUpDown direction");
 							return false;
 						}
 
 						if (id != TerrainID.NaturalWall)
 						{
-							SetActionError("stairs can only be mined at a wall");
+							SendFailReport(report, "not natural wall");
 							return false;
 						}
 
@@ -367,7 +372,7 @@ namespace Dwarrowdelf.Server
 						if (action.Direction != Direction.Down &&
 							!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
-							SetActionError("MineStairs: unable to move to {0}", action.Direction);
+							SendFailReport(report, "cannot reach");
 							return false;
 						}
 
@@ -392,6 +397,8 @@ namespace Dwarrowdelf.Server
 					throw new Exception();
 			}
 
+			SendReport(report);
+
 			return true;
 		}
 
@@ -406,9 +413,11 @@ namespace Dwarrowdelf.Server
 
 			var id = this.Environment.GetInteriorID(p);
 
+			var report = new FellTreeActionReport(this, action.Direction);
+
 			if (id != InteriorID.Tree && id != InteriorID.Sapling)
 			{
-				SetActionError("{0} tried to fell tree {1}, but it't a tree", this, p);
+				SendFailReport(report, "not a tree");
 				return false;
 			}
 
@@ -429,6 +438,8 @@ namespace Dwarrowdelf.Server
 			{
 				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
+
+			SendReport(report);
 
 			return true;
 		}
@@ -452,9 +463,11 @@ namespace Dwarrowdelf.Server
 		{
 			var building = this.Environment.GetLargeObjectAt<BuildingObject>(this.Location);
 
+			var report = new BuildItemActionReport(this);
+
 			if (building == null)
 			{
-				SetActionError("cannot find building");
+				SendFailReport(report, "cannot find building");
 				return false;
 			}
 			/*
@@ -468,8 +481,12 @@ namespace Dwarrowdelf.Server
 			 */
 
 			var ok = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
-			if (!ok)
-				SetActionError("unable to build the item");
+
+			if (ok)
+				SendReport(report);
+			else
+				SendFailReport(report, "unable to build the item");
+
 			return ok;
 		}
 
@@ -487,13 +504,13 @@ namespace Dwarrowdelf.Server
 
 			if (target == null)
 			{
-				SetActionError("{0} tried to attack {1}, but it doesn't exist", attacker, action.Target);
+				SendFailReport(new AttackActionReport(this), "target doesn't exist");
 				return false;
 			}
 
 			if (!attacker.Location.IsAdjacentTo(target.Location, DirectionSet.Planar))
 			{
-				SetActionError("{0} tried to attack {1}, but it wasn't near", attacker, target);
+				SendFailReport(new AttackActionReport(this), "target isn't near");
 				return false;
 			}
 
@@ -532,6 +549,8 @@ namespace Dwarrowdelf.Server
 				target.ReceiveDamage(attacker, DamageCategory.Melee, damage);
 			}
 
+			SendReport(new AttackActionReport(this));
+
 			return true;
 		}
 
@@ -539,23 +558,37 @@ namespace Dwarrowdelf.Server
 		{
 			var itemID = action.ItemID;
 
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+			var item = this.World.FindObject<ItemObject>(itemID);
 
 			if (item == null)
 			{
-				SetActionError("{0} tried to wear {1}, but doesn't have the object", this, itemID);
+				var report = new WearArmorActionReport(this, null);
+				report.SetFail("object doesn't exist");
+				SendReport(report);
+				return false;
+			}
+
+			if (item.Parent != this)
+			{
+				var report = new WearArmorActionReport(this, item);
+				report.SetFail("doesn't have the object");
+				SendReport(report);
 				return false;
 			}
 
 			if (!item.IsArmor)
 			{
-				SetActionError("{0} tried to wear {1}, but it's not an armor", this, item);
+				var report = new WearArmorActionReport(this, item);
+				report.SetFail("not an armor");
+				SendReport(report);
 				return false;
 			}
 
 			if (item.Wearer != null)
 			{
-				SetActionError("{0} tried to wear {1}, but it's already worn", this, item);
+				var report = new WearArmorActionReport(this, item);
+				report.SetFail("already worn");
+				SendReport(report);
 				return false;
 			}
 
@@ -579,107 +612,203 @@ namespace Dwarrowdelf.Server
 
 			this.WearArmor(item);
 
+			var report = new WearArmorActionReport(this, item);
+			SendReport(report);
+
 			return true;
 		}
 
-		int GetTotalTicks(RemoveArmorAction action)
-		{
-			return 10;
-		}
 
-		bool PerformAction(RemoveArmorAction action)
+		bool CheckRemoveArmor(RemoveArmorAction action)
 		{
 			var itemID = action.ItemID;
 
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+			var item = this.World.FindObject<ItemObject>(itemID);
 
 			if (item == null)
 			{
-				SetActionError("{0} tried to remove {1}, but doesn't have the object", this, itemID);
+				var report = new RemoveArmorActionReport(this, null);
+				report.SetFail("object doesn't exist");
+				SendReport(report);
+				return false;
+			}
+
+			if (item.Parent != this)
+			{
+				var report = new RemoveArmorActionReport(this, item);
+				report.SetFail("doesn't have the object");
+				SendReport(report);
 				return false;
 			}
 
 			if (!item.IsArmor)
 			{
-				SetActionError("{0} tried to remove {1}, but it's not an armor", this, item);
+				var report = new RemoveArmorActionReport(this, item);
+				report.SetFail("not an armor");
+				SendReport(report);
 				return false;
 			}
 
 			if (item.Wearer == null)
 			{
-				SetActionError("{0} tried to remove {1}, but it's not worn", this, item);
+				var report = new RemoveArmorActionReport(this, item);
+				report.SetFail("not worn");
+				SendReport(report);
 				return false;
 			}
 
+			return true;
+		}
+
+		int GetTotalTicks(RemoveArmorAction action)
+		{
+			if (CheckRemoveArmor(action) == false)
+				return -1;
+
+			return 10;
+		}
+
+		bool PerformAction(RemoveArmorAction action)
+		{
+			if (CheckRemoveArmor(action) == false)
+				return false;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
+
 			this.RemoveArmor(item);
+
+			var report = new RemoveArmorActionReport(this, item);
+			SendReport(report);
+
+			return true;
+		}
+
+
+		bool CheckWieldWeapon(WieldWeaponAction action)
+		{
+			var itemID = action.ItemID;
+
+			var item = this.World.FindObject<ItemObject>(itemID);
+
+			if (item == null)
+			{
+				var report = new WieldWeaponActionReport(this, null);
+				report.SetFail("object doesn't exist");
+				SendReport(report);
+				return false;
+			}
+
+			if (item.Parent != this)
+			{
+				var report = new WieldWeaponActionReport(this, item);
+				report.SetFail("doesn't have the object");
+				SendReport(report);
+				return false;
+			}
+
+			if (!item.IsWeapon)
+			{
+				var report = new WieldWeaponActionReport(this, item);
+				report.SetFail("not a weapon");
+				SendReport(report);
+				return false;
+			}
+
+			if (item.Wearer != null)
+			{
+				var report = new WieldWeaponActionReport(this, item);
+				report.SetFail("already wielded");
+				SendReport(report);
+				return false;
+			}
 
 			return true;
 		}
 
 		int GetTotalTicks(WieldWeaponAction action)
 		{
+			if (CheckWieldWeapon(action) == false)
+				return -1;
+
 			return 3;
 		}
 
 		bool PerformAction(WieldWeaponAction action)
 		{
+			if (CheckWieldWeapon(action) == false)
+				return false;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
+
+			this.WieldWeapon(item);
+
+			var report = new WieldWeaponActionReport(this, item);
+			SendReport(report);
+
+			return true;
+		}
+
+
+		bool CheckRemoveWeapon(RemoveWeaponAction action)
+		{
 			var itemID = action.ItemID;
 
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+			var item = this.World.FindObject<ItemObject>(itemID);
 
 			if (item == null)
 			{
-				SetActionError("{0} tried to wield {1}, but doesn't have the object", this, itemID);
+				var report = new RemoveWeaponActionReport(this, null);
+				report.SetFail("object doesn't exist");
+				SendReport(report);
+				return false;
+			}
+
+			if (item.Parent != this)
+			{
+				var report = new RemoveWeaponActionReport(this, item);
+				report.SetFail("doesn't have the object");
+				SendReport(report);
 				return false;
 			}
 
 			if (!item.IsWeapon)
 			{
-				SetActionError("{0} tried to wield {1}, but it's not a weapon", this, item);
+				var report = new RemoveWeaponActionReport(this, item);
+				report.SetFail("not an weapon");
+				SendReport(report);
 				return false;
 			}
 
-			if (item.Wearer != null)
+			if (item.Wearer == null)
 			{
-				SetActionError("{0} tried to wield {1}, but it's already wielded", this, item);
+				var report = new RemoveWeaponActionReport(this, item);
+				report.SetFail("not wielded");
+				SendReport(report);
 				return false;
 			}
-
-			this.WieldWeapon(item);
 
 			return true;
 		}
 
 		int GetTotalTicks(RemoveWeaponAction action)
 		{
+			if (CheckRemoveWeapon(action) == false)
+				return -1;
+
 			return 2;
 		}
 
 		bool PerformAction(RemoveWeaponAction action)
 		{
-			var itemID = action.ItemID;
-
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
-
-			if (item == null)
-			{
-				SetActionError("{0} tried to remove {1}, but doesn't have the object", this, itemID);
+			if (CheckRemoveWeapon(action) == false)
 				return false;
-			}
 
-			if (!item.IsWeapon)
-			{
-				SetActionError("{0} tried to remove {1}, but it's not a weapon", this, item);
-				return false;
-			}
-
-			if (item.Wearer == null)
-			{
-				SetActionError("{0} tried to remove {1}, but it's not wielded", this, item);
-				return false;
-			}
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
 
 			this.RemoveWeapon(item);
+
+			var report = new RemoveWeaponActionReport(this, item);
+			SendReport(report);
 
 			return true;
 		}

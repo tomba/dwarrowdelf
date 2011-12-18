@@ -348,7 +348,6 @@ namespace Dwarrowdelf
 		public int MagicNumber { get; set; }
 		public int UserID { get; set; }
 		public ActionState State { get; set; }
-		public string Error { get; set; }
 
 		public ActionDoneChange(ILivingObject ob)
 			: base(ob)
@@ -357,8 +356,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("ActionDoneChange(UID({0}), {1}, state: {2}, error: {3})",
-				this.UserID, this.ObjectID, this.State, this.Error ?? "<none>");
+			return String.Format("ActionDoneChange(UID({0}), {1}, state: {2})",
+				this.UserID, this.ObjectID, this.State);
 		}
 	}
 

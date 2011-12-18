@@ -72,8 +72,11 @@ namespace Dwarrowdelf.Client.UI
 			if (inventoryListBox.SelectedItems.Count == 0)
 				return;
 
-			var action = new DropAction(inventoryListBox.SelectedItems.OfType<ItemObject>());
-			AddAction(action);
+			foreach (ItemObject item in inventoryListBox.SelectedItems)
+			{
+				var action = new DropAction(item);
+				AddAction(action);
+			}
 		}
 
 		private void GetButton_Click(object sender, RoutedEventArgs e)
@@ -91,8 +94,11 @@ namespace Dwarrowdelf.Client.UI
 
 			obs = wnd.SelectedItems;
 
-			var action = new GetAction(obs);
-			AddAction(action);
+			foreach (ItemObject item in obs)
+			{
+				var action = new GetAction(item);
+				AddAction(action);
+			}
 		}
 
 		private void WearButton_Click(object sender, RoutedEventArgs e)

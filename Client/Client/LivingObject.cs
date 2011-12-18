@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 						throw new Exception();
 				}
 
-				GameData.Data.AddGameEvent(this, "{0} {1} action {2}: {3}", name, failStr, this.CurrentAction, change.Error);
+				GameData.Data.AddGameEvent(this, "{0} {1} action {2}", name, failStr, this.CurrentAction);
 			}
 
 			if (this.AI != null)

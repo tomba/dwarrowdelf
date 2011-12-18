@@ -432,6 +432,17 @@ namespace Dwarrowdelf.Server
 			this.Destruct();
 		}
 
+		void SendReport(ActionReport report)
+		{
+			this.World.AddReport(report);
+		}
+
+		void SendFailReport(ActionReport report, string message)
+		{
+			report.SetFail(message);
+			this.World.AddReport(report);
+		}
+
 		// called during tick processing. the world state is not quite valid.
 		public void ProcessAction()
 		{
@@ -475,17 +486,9 @@ namespace Dwarrowdelf.Server
 				}
 				else
 				{
-					var error = m_actionError ?? "<no error str>";
+					D("Action Failed({0})", this.CurrentAction);
 
-					D("Action Failed({0}, err: {1})", this.CurrentAction, error);
-
-					HandleActionDone(ActionState.Fail, error);
-				}
-
-				if (m_report != null)
-				{
-					this.World.AddReport(m_report);
-					m_report = null;
+					HandleActionDone(ActionState.Fail);
 				}
 			}
 		}
@@ -508,17 +511,14 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(e);
 		}
 
-		void HandleActionDone(ActionState state, string error = null)
+		void HandleActionDone(ActionState state)
 		{
 			var e = new ActionDoneChange(this)
 			{
 				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
 				State = state,
-				Error = error,
 			};
-
-			m_actionError = null;
 
 			if (m_ai != null)
 				m_ai.ActionDone(e);
@@ -529,25 +529,6 @@ namespace Dwarrowdelf.Server
 			this.ActionUserID = 0;
 
 			this.World.AddChange(e);
-		}
-
-		string m_actionError;
-
-		void SetActionError(string format, params object[] args)
-		{
-			SetActionError(String.Format(format, args));
-		}
-
-		void SetActionError(string error)
-		{
-			Trace.TraceWarning("{0} SetActionError({1})", this, error);
-			m_actionError = error;
-		}
-
-		GameReport m_report;
-		void SetActionReport(GameReport report)
-		{
-			m_report = report;
 		}
 
 		// Actor stuff
@@ -603,7 +584,7 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			D("CancelAction({0}, uid: {1})", this.CurrentAction, this.ActionUserID);
-			HandleActionDone(ActionState.Abort, "aborted");
+			HandleActionDone(ActionState.Abort);
 		}
 
 		public void TurnStarted()
