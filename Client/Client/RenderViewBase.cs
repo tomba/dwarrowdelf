@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 		protected bool m_showVirtualSymbols = true;
 		protected EnvironmentObject m_environment;
 		protected IntPoint3D m_centerPos;
-		IntRectZ m_bounds;
+		IntCuboid m_bounds;
 
 		protected bool m_invalid;
 
@@ -66,7 +66,8 @@ namespace Dwarrowdelf.Client
 
 				var cp = CenterPos;
 				var s = m_renderData.Size;
-				m_bounds = new IntRectZ(new IntPoint(cp.X - s.Width / 2, cp.Y - s.Height / 2), s, cp.Z);
+				m_bounds = new IntCuboid(new IntPoint3D(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+					new IntSize3D(s, MAXLEVEL));
 			}
 		}
 

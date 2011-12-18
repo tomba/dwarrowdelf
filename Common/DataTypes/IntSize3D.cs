@@ -25,6 +25,13 @@ namespace Dwarrowdelf
 			m_depth = depth;
 		}
 
+		public IntSize3D(IntSize size, int depth)
+		{
+			m_width = size.Width;
+			m_height = size.Height;
+			m_depth = depth;
+		}
+
 		public bool IsEmpty
 		{
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }
