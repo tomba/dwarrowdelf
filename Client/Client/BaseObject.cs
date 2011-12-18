@@ -55,6 +55,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			this.IsInitialized = true;
+			Notify("IsInitialized");
 		}
 
 		public abstract void SetProperty(PropertyID propertyID, object value);
