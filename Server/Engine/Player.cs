@@ -183,10 +183,12 @@ namespace Dwarrowdelf.Server
 				if (m_connection != null)
 				{
 					m_world.WorldChanged += HandleWorldChange;
+					m_world.ReportReceived += HandleReport;
 				}
 				else
 				{
 					m_world.WorldChanged -= HandleWorldChange;
+					m_world.ReportReceived -= HandleReport;
 
 					this.IsInGame = false;
 				}
@@ -547,6 +549,22 @@ namespace Dwarrowdelf.Server
 		void ReceiveMessage(SaveClientDataReplyMessage msg)
 		{
 			m_engine.SaveClientData(this.UserID, msg.ID, msg.Data);
+		}
+
+
+		void HandleReport(GameReport report)
+		{
+			if (report is LivingReport)
+			{
+				var r = (LivingReport)report;
+
+				if (Sees(r.Living.Environment, r.Living.Location))
+					Send(new ReportMessage() { Report = report });
+			}
+			else
+			{
+				Send(new ReportMessage() { Report = report });
+			}
 		}
 
 

@@ -27,6 +27,12 @@ namespace Dwarrowdelf.Messages
 	{
 	}
 
+	[Serializable]
+	public class ReportMessage : InformativeMessage
+	{
+		public GameReport Report { get; set; }
+	}
+
 	/// <summary>
 	/// Message from Client to Server
 	/// </summary>

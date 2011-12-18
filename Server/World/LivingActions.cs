@@ -237,7 +237,16 @@ namespace Dwarrowdelf.Server
 			var ok = MoveDir(action.Direction);
 
 			if (!ok)
+			{
 				SetActionError("could not move (blocked?)");
+				var report = new MoveActionReport(this, action.Direction, "could not move (blocked?)");
+				SetActionReport(report);
+			}
+			else
+			{
+				var report = new MoveActionReport(this, action.Direction);
+				SetActionReport(report);
+			}
 
 			return ok;
 		}

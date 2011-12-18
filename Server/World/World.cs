@@ -32,6 +32,7 @@ namespace Dwarrowdelf.Server
 		int[] m_objectIDcounterArray;
 
 		public event Action<Change> WorldChanged;
+		public event Action<GameReport> ReportReceived;
 
 		InvokeList m_preTickInvokeList;
 		InvokeList m_instantInvokeList;
@@ -128,6 +129,13 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			if (WorldChanged != null)
 				WorldChanged(change);
+		}
+
+		public void AddReport(GameReport report)
+		{
+			VerifyAccess();
+			if (ReportReceived != null)
+				ReportReceived(report);
 		}
 
 		internal void AddGameObject(BaseObject ob)

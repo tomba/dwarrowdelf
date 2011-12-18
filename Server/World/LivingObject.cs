@@ -416,8 +416,7 @@ namespace Dwarrowdelf.Server
 		{
 			Trace.TraceInformation("{0} dies", this);
 
-			var c = new DeathChange(this);
-			this.World.AddChange(c);
+			this.World.AddReport(new DeathReport(this));
 
 			var builder = new ItemObjectBuilder(ItemID.Corpse, this.MaterialID);
 			builder.Name = this.Name ?? this.LivingInfo.Name;
@@ -482,6 +481,12 @@ namespace Dwarrowdelf.Server
 
 					HandleActionDone(ActionState.Fail, error);
 				}
+
+				if (m_report != null)
+				{
+					this.World.AddReport(m_report);
+					m_report = null;
+				}
 			}
 		}
 
@@ -537,6 +542,12 @@ namespace Dwarrowdelf.Server
 		{
 			Trace.TraceWarning("{0} SetActionError({1})", this, error);
 			m_actionError = error;
+		}
+
+		GameReport m_report;
+		void SetActionReport(GameReport report)
+		{
+			m_report = report;
 		}
 
 		// Actor stuff

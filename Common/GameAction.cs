@@ -357,7 +357,7 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID ItemID { get; private set; }
 
-		public ItemAction(IItemObject item)
+		protected ItemAction(IItemObject item)
 		{
 			this.ItemID = item.ObjectID;
 		}

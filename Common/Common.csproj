@@ -102,6 +102,7 @@
     <Compile Include="Json\JsonServices.cs" />
     <Compile Include="MyTraceSource.cs" />
     <Compile Include="ObjectType.cs" />
+    <Compile Include="Reports.cs" />
     <Compile Include="SaveFileManager.cs" />
     <Compile Include="Skills.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />

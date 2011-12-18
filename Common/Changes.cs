@@ -392,15 +392,6 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class DeathChange : ObjectChange
-	{
-		public DeathChange(IBaseObject ob)
-			: base(ob)
-		{
-		}
-	}
-
-	[Serializable]
 	public class WearChange : ObjectChange
 	{
 		[NonSerialized]

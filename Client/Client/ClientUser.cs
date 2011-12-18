@@ -11,6 +11,7 @@ namespace Dwarrowdelf.Client
 	{
 		static Dictionary<Type, Action<ClientUser, ClientMessage>> s_handlerMap;
 		static Dictionary<Type, Action<ClientUser, Change>> s_changeHandlerMap;
+		static Dictionary<Type, Action<ClientUser, GameReport>> s_reportHandlerMap;
 
 		static ClientUser()
 		{
@@ -34,6 +35,17 @@ namespace Dwarrowdelf.Client
 				var method = WrapperGenerator.CreateActionWrapper<ClientUser, ClientMessage>("HandleMessage", type);
 				if (method != null)
 					s_handlerMap[type] = method;
+			}
+
+			var reportTypes = Helpers.GetNonabstractSubclasses(typeof(GameReport));
+
+			s_reportHandlerMap = new Dictionary<Type, Action<ClientUser, GameReport>>(reportTypes.Count());
+
+			foreach (var type in reportTypes)
+			{
+				var method = WrapperGenerator.CreateActionWrapper<ClientUser, GameReport>("HandleReport", type);
+				if (method != null)
+					s_reportHandlerMap[type] = method;
 			}
 		}
 
@@ -176,10 +188,38 @@ namespace Dwarrowdelf.Client
 			GameData.Data.AddIPMessage(msg);
 		}
 
+		#region REPORTS
+
+		void HandleMessage(ReportMessage msg)
+		{
+			var report = msg.Report;
+			var method = s_reportHandlerMap[report.GetType()];
+			method(this, report);
+		}
+
+		void HandleReport(DeathReport report)
+		{
+			var target = m_world.GetObject<LivingObject>(report.LivingID);
+			GameData.Data.AddGameEvent(target, "{0} dies", target);
+		}
+
+		void HandleReport(MoveActionReport report)
+		{
+			var living = m_world.GetObject<LivingObject>(report.LivingID);
+
+			if (report.Success)
+				GameData.Data.AddGameEvent(living, "{0} moved {1}", living, report.Direction);
+			else
+				GameData.Data.AddGameEvent(living, "{0} failed to move {1}: {2}", living, report.Direction, report.FailReason);
+		}
+
+		#endregion
+
+		#region CHANGES
+
 		void HandleMessage(ChangeMessage msg)
 		{
 			var change = msg.Change;
-
 			var method = s_changeHandlerMap[change.GetType()];
 			method(this, change);
 		}
@@ -274,13 +314,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			GameData.Data.AddGameEvent(attacker, msg);
-		}
-
-		void HandleChange(DeathChange change)
-		{
-			var target = m_world.GetObject<LivingObject>(change.ObjectID);
-
-			GameData.Data.AddGameEvent(target, "{0} dies", target);
 		}
 
 		void HandleChange(PropertyObjectChange change)
@@ -519,5 +552,7 @@ namespace Dwarrowdelf.Client
 
 			ob.HandleActionDone(change);
 		}
+
+		#endregion
 	}
 }
