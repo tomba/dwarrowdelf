@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} builds item XXX", living, report);
+				GameData.Data.AddGameEvent(living, "{0} builds item XXX", living);
 			else
 				GameData.Data.AddGameEvent(living, "{0} fails to build item XXX: {1}", living, report.FailReason);
 		}
@@ -136,7 +136,7 @@ namespace Dwarrowdelf.Client
 		{
 			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} attacks XXX", living, report);
+				GameData.Data.AddGameEvent(living, "{0} attacks XXX", living);
 			else
 				GameData.Data.AddGameEvent(living, "{0} fails to attack XXX: {1}", living, report.FailReason);
 		}
@@ -145,16 +145,29 @@ namespace Dwarrowdelf.Client
 		{
 			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} mines", living, report);
+			{
+				switch (report.MineActionType)
+				{
+					case MineActionType.Mine:
+						GameData.Data.AddGameEvent(living, "{0} mines {1} {2}", living, report.MaterialID, report.TerrainID);
+						break;
+
+					case MineActionType.Stairs:
+						GameData.Data.AddGameEvent(living, "{0} creates stairs from {1} {2}", living, report.MaterialID, report.TerrainID);
+						break;
+				}
+			}
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to mine: {1}", living, report.FailReason);
+			{
+				GameData.Data.AddGameEvent(living, "{0} fails to mine {1} {2}: {3}", living, report.MaterialID, report.TerrainID, report.FailReason);
+			}
 		}
 
 		void HandleReport(FellTreeActionReport report)
 		{
 			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} fells tree", living, report);
+				GameData.Data.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.InteriorID);
 			else
 				GameData.Data.AddGameEvent(living, "{0} fails to fell tree: {1}", living, report.FailReason);
 		}

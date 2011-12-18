@@ -92,12 +92,15 @@ namespace Dwarrowdelf
 	{
 		public Direction Direction { get; private set; }
 		public MineActionType MineActionType { get; private set; }
+		public TerrainID TerrainID { get; private set; }
+		public MaterialID MaterialID { get; set; }
 
-		public MineActionReport(ILivingObject living, Direction direction, MineActionType mineActionType)
+		public MineActionReport(ILivingObject living, Direction direction, MineActionType mineActionType, TerrainID terrainID)
 			: base(living)
 		{
 			this.Direction = direction;
 			this.MineActionType = mineActionType;
+			this.TerrainID = terrainID;
 		}
 	}
 
@@ -105,6 +108,8 @@ namespace Dwarrowdelf
 	public class FellTreeActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }
+		public InteriorID InteriorID { get; set; }
+		public MaterialID MaterialID { get; set; }
 
 		public FellTreeActionReport(ILivingObject living, Direction direction)
 			: base(living)

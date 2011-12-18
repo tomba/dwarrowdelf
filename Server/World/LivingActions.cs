@@ -269,13 +269,15 @@ namespace Dwarrowdelf.Server
 			var terrain = env.GetTerrain(p);
 			var id = terrain.ID;
 
-			var report = new MineActionReport(this, action.Direction, action.MineActionType);
+			var report = new MineActionReport(this, action.Direction, action.MineActionType, id);
 
 			if (!terrain.IsMinable)
 			{
 				SendFailReport(report, "not mineable");
 				return false;
 			}
+
+			report.MaterialID = env.GetTerrainMaterialID(p);
 
 			switch (action.MineActionType)
 			{
@@ -421,9 +423,13 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			var material = this.Environment.GetInteriorMaterialID(p);
+
+			report.InteriorID = id;
+			report.MaterialID = material;
+
 			if (id == InteriorID.Tree)
 			{
-				var material = this.Environment.GetInteriorMaterialID(p);
 				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{
