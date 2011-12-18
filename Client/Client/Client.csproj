@@ -218,11 +218,13 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="BaseObject.cs" />
+    <Compile Include="ChangeHandler.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="ManualControlAI.cs" />
+    <Compile Include="ReportHandler.cs" />
     <Compile Include="UI\BooleanToVisibilityConverter.cs" />
     <Compile Include="UI\LivingEditControl.xaml.cs">
       <DependentUpon>LivingEditControl.xaml</DependentUpon>
