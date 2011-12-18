@@ -108,6 +108,9 @@ namespace Dwarrowdelf
 		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
 
+		bool IsArmor { get; }
+		bool IsWeapon { get; }
+
 		int NutritionalValue { get; }
 		int RefreshmentValue { get; }
 	}

@@ -1,0 +1,16 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.SelectItemsWindow"
+		x:ClassModifier="internal"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="SelectItemsWindow" Height="378" Width="322">
+	<Grid>
+		<ListBox Name="listBox" SelectionMode="Multiple" ItemsSource="{Binding}" Margin="12,12,12,54" HorizontalContentAlignment="Stretch">
+			<ListBox.Resources>
+				<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+			</ListBox.Resources>
+		</ListBox>
+
+		<Button Content="Ok" IsDefault="True" Margin="0,0,98,12" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Height="36" Width="80" Click="OkButton_Click" />
+		<Button Content="Cancel" IsCancel="True" Margin="0,0,12,12" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="36" Width="80" />
+	</Grid>
+</Window>

@@ -274,6 +274,7 @@ namespace Dwarrowdelf.Server
 
 		public void WearArmor(ItemObject wearable)
 		{
+			Debug.Assert(wearable.IsArmor);
 			Debug.Assert(this.Inventory.Contains(wearable));
 			Debug.Assert(wearable.ArmorInfo != null);
 			Debug.Assert(!m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
@@ -286,8 +287,10 @@ namespace Dwarrowdelf.Server
 
 		public void RemoveArmor(ItemObject wearable)
 		{
+			Debug.Assert(wearable.IsArmor);
 			Debug.Assert(m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
 			Debug.Assert(m_armorSlots[wearable.ArmorInfo.Slot] == wearable);
+			Debug.Assert(wearable.Wearer == this);
 
 			wearable.Wearer = null;
 			m_armorSlots.Remove(wearable.ArmorInfo.Slot);
@@ -297,6 +300,7 @@ namespace Dwarrowdelf.Server
 
 		public void WieldWeapon(ItemObject weapon)
 		{
+			Debug.Assert(weapon.IsWeapon);
 			Debug.Assert(this.Inventory.Contains(weapon));
 			Debug.Assert(weapon.WeaponInfo != null);
 			Debug.Assert(m_weapon == null);
@@ -309,7 +313,9 @@ namespace Dwarrowdelf.Server
 
 		public void RemoveWeapon(ItemObject weapon)
 		{
+			Debug.Assert(weapon.IsWeapon);
 			Debug.Assert(m_weapon == weapon);
+			Debug.Assert(weapon.Wearer == this);
 
 			m_weapon.Wearer = null;
 			m_weapon = null;

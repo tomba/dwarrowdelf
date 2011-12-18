@@ -17,6 +17,8 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty]
 		public ILivingObject Worker { get; private set; }
 
+		public abstract string Name { get; }
+
 		[SaveGameProperty("NeedToAbort")]
 		bool m_needToAbort;
 
@@ -28,6 +30,11 @@ namespace Dwarrowdelf.AI
 		public IAssignment CurrentAssignment { get { return m_currentAssignment; } }
 
 		public ActionPriority CurrentPriority { get { return m_currentPriority; } }
+
+		public void Abort()
+		{
+			ClearCurrentAssignment();
+		}
 
 		void SetCurrentAssignment(IAssignment assignment, ActionPriority priority)
 		{

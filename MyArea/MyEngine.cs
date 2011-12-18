@@ -31,7 +31,7 @@ namespace MyArea
 
 		public override LivingObject[] CreateControllables(Player player)
 		{
-			const int NUM_DWARVES = 5;
+			const int NUM_DWARVES = 1;
 
 			// XXX entry location
 			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.EnvironmentObject>().First();

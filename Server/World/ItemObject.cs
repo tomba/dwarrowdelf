@@ -40,6 +40,9 @@ namespace Dwarrowdelf.Server
 		public ArmorInfo ArmorInfo { get { return this.ItemInfo.ArmorInfo; } }
 		public WeaponInfo WeaponInfo { get { return this.ItemInfo.WeaponInfo; } }
 
+		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
+		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
+
 		[SaveGameProperty("ReservedBy")]
 		object m_reservedBy;
 		public object ReservedBy

@@ -139,6 +139,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\LivingControlWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\NetStatWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -183,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Windows\SelectItemsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\SetTerrainDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -214,6 +222,8 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
+    <Compile Include="ManualControlAI.cs" />
+    <Compile Include="UI\BooleanToVisibilityConverter.cs" />
     <Compile Include="UI\LivingEditControl.xaml.cs">
       <DependentUpon>LivingEditControl.xaml</DependentUpon>
     </Compile>
@@ -266,6 +276,9 @@
     <Compile Include="UI\ObjectInfoControl.xaml.cs">
       <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Windows\LivingControlWindow.xaml.cs">
+      <DependentUpon>LivingControlWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Windows\NetStatWindow.xaml.cs">
       <DependentUpon>NetStatWindow.xaml</DependentUpon>
     </Compile>
@@ -284,6 +297,9 @@
     </Compile>
     <Compile Include="UI\Windows\CreateItemDialog.xaml.cs">
       <DependentUpon>CreateItemDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\SelectItemsWindow.xaml.cs">
+      <DependentUpon>SelectItemsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SetTerrainDialog.xaml.cs">
       <DependentUpon>SetTerrainDialog.xaml</DependentUpon>

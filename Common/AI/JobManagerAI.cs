@@ -24,6 +24,8 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
+		public override string Name { get { return "JobManagerAI"; } }
+
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
 			if (this.CurrentAssignment != null)

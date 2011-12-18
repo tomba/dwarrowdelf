@@ -43,6 +43,8 @@ namespace Dwarrowdelf.AI
 			m_priorityAction = false;
 		}
 
+		public override string Name { get { return "HerbivoreAI"; } }
+
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{

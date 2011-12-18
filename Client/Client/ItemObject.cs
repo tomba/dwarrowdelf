@@ -33,6 +33,12 @@ namespace Dwarrowdelf.Client
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
 		public ItemID ItemID { get { return this.ItemInfo.ID; } }
 
+		public ArmorInfo ArmorInfo { get { return this.ItemInfo.ArmorInfo; } }
+		public WeaponInfo WeaponInfo { get { return this.ItemInfo.WeaponInfo; } }
+
+		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
+		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
+
 		int m_nutritionalValue;
 		public int NutritionalValue
 		{

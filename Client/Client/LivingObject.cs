@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 		IntPoint3D m_losLocation;
 		Grid2D<bool> m_visionMap;
 
-		Dwarrowdelf.AI.AssignmentAI m_ai;
+		Dwarrowdelf.AI.IAI m_ai;
 		bool m_isControllable;
 
 		public ReadOnlyObservableCollection<Tuple<SkillID, byte>> Skills { get; private set; }
@@ -75,6 +75,26 @@ namespace Dwarrowdelf.Client
 		public LivingInfo LivingInfo { get; private set; }
 		public LivingCategory LivingCategory { get { return this.LivingInfo.Category; } }
 
+		bool m_isManuallyControlled;
+		public bool IsManuallyControlled
+		{
+			get { return m_isManuallyControlled; }
+			set
+			{
+				if (value == m_isManuallyControlled)
+					return;
+
+				m_isManuallyControlled = value;
+
+				if (m_isManuallyControlled)
+					this.AI = new ManualControlAI(this);
+				else
+					this.AI = new Dwarrowdelf.AI.JobManagerAI(this);
+
+				Notify("IsManuallyControlled");
+			}
+		}
+
 		public bool IsControllable
 		{
 			get { return m_isControllable; }
@@ -101,22 +121,33 @@ namespace Dwarrowdelf.Client
 		}
 
 		[SaveGameProperty]
-		public Dwarrowdelf.AI.AssignmentAI AI
+		public Dwarrowdelf.AI.IAI AI
 		{
 			get { return m_ai; }
 
 			private set
 			{
 				if (m_ai != null)
-					m_ai.AssignmentChanged -= OnAIAssignmentChanged;
+				{
+					var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
+					if (aai != null)
+					{
+						aai.Abort();
+						aai.AssignmentChanged -= OnAIAssignmentChanged;
+					}
+				}
 
 				m_ai = value;
 
 				if (m_ai != null)
 				{
-					if (m_ai is Dwarrowdelf.AI.JobManagerAI)
-						((Dwarrowdelf.AI.JobManagerAI)m_ai).JobManager = this.World.JobManager;
-					m_ai.AssignmentChanged += OnAIAssignmentChanged;
+					var jmai = m_ai as Dwarrowdelf.AI.JobManagerAI;
+					if (jmai != null)
+						jmai.JobManager = this.World.JobManager;
+
+					var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
+					if (aai != null)
+						aai.AssignmentChanged += OnAIAssignmentChanged;
 				}
 
 				Notify("AI");

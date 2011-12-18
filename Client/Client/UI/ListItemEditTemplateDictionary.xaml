@@ -53,12 +53,16 @@
 			</Style>
 
 			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+			<ui:BooleanToVisibilityConverter x:Key="visibilityConverter"/>
 		</DataTemplate.Resources>
 
 		<DockPanel x:Name="dockPanel">
 			<Button DockPanel.Dock="Right" Click="Button_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
 				<Image Source="/Images/eye.png" />
 			</Button>
+
+			<Button DockPanel.Dock="Right" Click="ControlButton_Click" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}"
+					Visibility="{Binding IsControllable, Converter={StaticResource visibilityConverter}}" Content="C" />
 
 			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
 				<Image.Source>

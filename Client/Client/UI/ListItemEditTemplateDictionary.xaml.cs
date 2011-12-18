@@ -18,7 +18,19 @@ namespace Dwarrowdelf.Client.UI
 
 			var dlg = new ObjectEditDialog();
 			dlg.DataContext = ob;
+			dlg.Owner = App.MainWindow;
 			dlg.Show();
+		}
+
+		public void ControlButton_Click(object sender, RoutedEventArgs e)
+		{
+			var button = (Button)sender;
+			var living = (LivingObject)button.DataContext;
+
+			var wnd = new LivingControlWindow();
+			wnd.DataContext = living;
+			wnd.Owner = App.MainWindow;
+			wnd.Show();
 		}
 	}
 }

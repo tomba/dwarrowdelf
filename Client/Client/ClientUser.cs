@@ -335,10 +335,12 @@ namespace Dwarrowdelf.Client
 			{
 				var wearable = m_world.GetObject<ItemObject>(change.WearableID);
 				ob.WearArmor(change.Slot, wearable);
+				GameData.Data.AddGameEvent(ob, "{0} wears {1}", ob, wearable);
 			}
 			else
 			{
 				ob.RemoveArmor(change.Slot);
+				GameData.Data.AddGameEvent(ob, "{0} removes armor from slot {1}", ob, change.Slot);
 			}
 		}
 
@@ -356,10 +358,12 @@ namespace Dwarrowdelf.Client
 			{
 				var weapon = m_world.GetObject<ItemObject>(change.WeaponID);
 				ob.WieldWeapon(weapon);
+				GameData.Data.AddGameEvent(ob, "{0} wields {1}", ob, weapon);
 			}
 			else
 			{
 				ob.RemoveWeapon();
+				GameData.Data.AddGameEvent(ob, "{0} removes weapon", ob);
 			}
 		}
 

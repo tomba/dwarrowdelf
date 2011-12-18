@@ -24,6 +24,8 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
+		public override string Name { get { return "MonsterAI"; } }
+
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{

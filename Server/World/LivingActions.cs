@@ -525,5 +525,154 @@ namespace Dwarrowdelf.Server
 
 			return true;
 		}
+
+		bool CheckWearArmor(WearArmorAction action)
+		{
+			var itemID = action.ItemID;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+
+			if (item == null)
+			{
+				SetActionError("{0} tried to wear {1}, but doesn't have the object", this, itemID);
+				return false;
+			}
+
+			if (!item.IsArmor)
+			{
+				SetActionError("{0} tried to wear {1}, but it's not an armor", this, item);
+				return false;
+			}
+
+			if (item.Wearer != null)
+			{
+				SetActionError("{0} tried to wear {1}, but it's already worn", this, item);
+				return false;
+			}
+
+			return true;
+		}
+
+		int GetTotalTicks(WearArmorAction action)
+		{
+			if (CheckWearArmor(action) == false)
+				return -1;
+
+			return 10;
+		}
+
+		bool PerformAction(WearArmorAction action)
+		{
+			if (CheckWearArmor(action) == false)
+				return false;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
+
+			this.WearArmor(item);
+
+			return true;
+		}
+
+		int GetTotalTicks(RemoveArmorAction action)
+		{
+			return 10;
+		}
+
+		bool PerformAction(RemoveArmorAction action)
+		{
+			var itemID = action.ItemID;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+
+			if (item == null)
+			{
+				SetActionError("{0} tried to remove {1}, but doesn't have the object", this, itemID);
+				return false;
+			}
+
+			if (!item.IsArmor)
+			{
+				SetActionError("{0} tried to remove {1}, but it's not an armor", this, item);
+				return false;
+			}
+
+			if (item.Wearer == null)
+			{
+				SetActionError("{0} tried to remove {1}, but it's not worn", this, item);
+				return false;
+			}
+
+			this.RemoveArmor(item);
+
+			return true;
+		}
+
+		int GetTotalTicks(WieldWeaponAction action)
+		{
+			return 3;
+		}
+
+		bool PerformAction(WieldWeaponAction action)
+		{
+			var itemID = action.ItemID;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+
+			if (item == null)
+			{
+				SetActionError("{0} tried to wield {1}, but doesn't have the object", this, itemID);
+				return false;
+			}
+
+			if (!item.IsWeapon)
+			{
+				SetActionError("{0} tried to wield {1}, but it's not a weapon", this, item);
+				return false;
+			}
+
+			if (item.Wearer != null)
+			{
+				SetActionError("{0} tried to wield {1}, but it's already wielded", this, item);
+				return false;
+			}
+
+			this.WieldWeapon(item);
+
+			return true;
+		}
+
+		int GetTotalTicks(RemoveWeaponAction action)
+		{
+			return 2;
+		}
+
+		bool PerformAction(RemoveWeaponAction action)
+		{
+			var itemID = action.ItemID;
+
+			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == itemID);
+
+			if (item == null)
+			{
+				SetActionError("{0} tried to remove {1}, but doesn't have the object", this, itemID);
+				return false;
+			}
+
+			if (!item.IsWeapon)
+			{
+				SetActionError("{0} tried to remove {1}, but it's not a weapon", this, item);
+				return false;
+			}
+
+			if (item.Wearer == null)
+			{
+				SetActionError("{0} tried to remove {1}, but it's not wielded", this, item);
+				return false;
+			}
+
+			this.RemoveWeapon(item);
+
+			return true;
+		}
 	}
 }

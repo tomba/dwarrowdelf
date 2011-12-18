@@ -37,6 +37,8 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
+		public override string Name { get { return "FighterAI"; } }
+
 		[SaveGameProperty]
 		public bool OnDuty { get; set; }
 

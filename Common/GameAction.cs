@@ -349,4 +349,87 @@ namespace Dwarrowdelf
 			return this.BuildingID.ToString();
 		}
 	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public abstract class ItemAction : GameAction
+	{
+		[SaveGameProperty]
+		public ObjectID ItemID { get; private set; }
+
+		public ItemAction(IItemObject item)
+		{
+			this.ItemID = item.ObjectID;
+		}
+
+		protected ItemAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return this.ItemID.ToString();
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class WearArmorAction : ItemAction
+	{
+		public WearArmorAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected WearArmorAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class RemoveArmorAction : ItemAction
+	{
+		public RemoveArmorAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected RemoveArmorAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class WieldWeaponAction : ItemAction
+	{
+		public WieldWeaponAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected WieldWeaponAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public class RemoveWeaponAction : ItemAction
+	{
+		public RemoveWeaponAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		protected RemoveWeaponAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
 }

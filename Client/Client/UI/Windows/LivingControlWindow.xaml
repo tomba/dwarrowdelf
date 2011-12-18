@@ -1,0 +1,53 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.LivingControlWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:c="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
+		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+		Title="LivingControlWindow" Height="435" Width="574">
+	<Grid>
+		<GroupBox Header="Action Queue" Margin="0,0,421,98">
+			<ListBox ItemsSource="{Binding AI.Actions}" />
+		</GroupBox>
+
+		<GroupBox Header="Inventory" Margin="137,0,284,98">
+			<ListBox Name="inventoryListBox" ItemsSource="{Binding Inventory}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
+				<ListBox.Resources>
+					<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
+				</ListBox.Resources>
+			</ListBox>
+		</GroupBox>
+
+		<GroupBox Header="Inventory Cmds" Margin="268,0,153,98">
+			<StackPanel Orientation="Vertical">
+				<Button Content="Drop" Click="DropButton_Click" />
+				<Button Content="Get" Click="GetButton_Click" />
+				<Button Content="Wear" Click="WearButton_Click" />
+				<Button Content="Wield" Click="WieldButton_Click" />
+				<Button Content="Remove" Click="RemoveButton_Click" />
+			</StackPanel>
+		</GroupBox>
+
+		<Grid VerticalAlignment="Top" HorizontalAlignment="Right" Height="96" Width="96">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Button Grid.Column="0" Grid.Row="0" Content="NW" Tag="NorthWest" Click="MoveButton_Click" />
+			<Button Grid.Column="1" Grid.Row="0" Content="N" Tag="North" Click="MoveButton_Click" />
+			<Button Grid.Column="2" Grid.Row="0" Content="NE" Tag="NorthEast" Click="MoveButton_Click" />
+			<Button Grid.Column="0" Grid.Row="1" Content="W" Tag="West" Click="MoveButton_Click" />
+			<Button Grid.Column="2" Grid.Row="1" Content="E" Tag="East" Click="MoveButton_Click" />
+			<Button Grid.Column="0" Grid.Row="2" Content="SW" Tag="SouthWest" Click="MoveButton_Click" />
+			<Button Grid.Column="1" Grid.Row="2" Content="S" Tag="South" Click="MoveButton_Click" />
+			<Button Grid.Column="2" Grid.Row="2" Content="SE" Tag="SouthEast" Click="MoveButton_Click" />
+		</Grid>
+	</Grid>
+</Window>
