@@ -159,67 +159,6 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ObjectMoveChange : ObjectChange
-	{
-		[NonSerialized]
-		IContainerObject m_source;
-		ObjectID m_sourceID;
-		IntPoint3D m_sourceLocation;
-		[NonSerialized]
-		IContainerObject m_destination;
-		ObjectID m_destinationID;
-		IntPoint3D m_destinationLocation;
-
-		public IContainerObject Source { get { return m_source; } }
-		public ObjectID SourceID { get { return m_sourceID; } }
-		public IntPoint3D SourceLocation { get { return m_sourceLocation; } }
-
-		public IContainerObject Destination { get { return m_destination; } }
-		public ObjectID DestinationID { get { return m_destinationID; } }
-		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
-
-		public ObjectMoveChange(IMovableObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
-			IContainerObject destinationEnv, IntPoint3D destinationLocation)
-			: base(mover)
-		{
-			m_source = sourceEnv;
-			if (m_source != null)
-				m_sourceID = m_source.ObjectID;
-			m_sourceLocation = sourceLocation;
-			m_destination = destinationEnv;
-			if (m_destination != null)
-				m_destinationID = m_destination.ObjectID;
-			m_destinationLocation = destinationLocation;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("ObjectMoveChange {0} ({1}, {2}) -> ({3}, {4})",
-				this.ObjectID, this.SourceID, this.SourceLocation, this.DestinationID, this.DestinationLocation);
-		}
-	}
-
-	[Serializable]
-	public class ObjectMoveLocationChange : ObjectChange
-	{
-		public IntPoint3D SourceLocation;
-		public IntPoint3D DestinationLocation;
-
-		public ObjectMoveLocationChange(IMovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
-			: base(mover)
-		{
-			this.SourceLocation = sourceLocation;
-			this.DestinationLocation = destinationLocation;
-		}
-
-		public override string ToString()
-		{
-			return String.Format("ObjectMoveLocationChange {0} {1} -> {2}",
-				this.ObjectID, this.SourceLocation, this.DestinationLocation);
-		}
-	}
-
-	[Serializable]
 	public class FullObjectChange : ObjectChange
 	{
 		public FullObjectChange(IBaseObject ob)
@@ -281,13 +220,77 @@ namespace Dwarrowdelf
 		}
 	}
 
+
+	[Serializable]
+	public class ObjectMoveChange : ObjectChange
+	{
+		[NonSerialized]
+		IContainerObject m_source;
+		ObjectID m_sourceID;
+		IntPoint3D m_sourceLocation;
+		[NonSerialized]
+		IContainerObject m_destination;
+		ObjectID m_destinationID;
+		IntPoint3D m_destinationLocation;
+
+		public IContainerObject Source { get { return m_source; } }
+		public ObjectID SourceID { get { return m_sourceID; } }
+		public IntPoint3D SourceLocation { get { return m_sourceLocation; } }
+
+		public IContainerObject Destination { get { return m_destination; } }
+		public ObjectID DestinationID { get { return m_destinationID; } }
+		public IntPoint3D DestinationLocation { get { return m_destinationLocation; } }
+
+		public ObjectMoveChange(IMovableObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
+			IContainerObject destinationEnv, IntPoint3D destinationLocation)
+			: base(mover)
+		{
+			m_source = sourceEnv;
+			if (m_source != null)
+				m_sourceID = m_source.ObjectID;
+			m_sourceLocation = sourceLocation;
+			m_destination = destinationEnv;
+			if (m_destination != null)
+				m_destinationID = m_destination.ObjectID;
+			m_destinationLocation = destinationLocation;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ObjectMoveChange {0} ({1}, {2}) -> ({3}, {4})",
+				this.ObjectID, this.SourceID, this.SourceLocation, this.DestinationID, this.DestinationLocation);
+		}
+	}
+
+	[Serializable]
+	public class ObjectMoveLocationChange : ObjectChange
+	{
+		public IntPoint3D SourceLocation;
+		public IntPoint3D DestinationLocation;
+
+		public ObjectMoveLocationChange(IMovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
+			: base(mover)
+		{
+			this.SourceLocation = sourceLocation;
+			this.DestinationLocation = destinationLocation;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("ObjectMoveLocationChange {0} {1} -> {2}",
+				this.ObjectID, this.SourceLocation, this.DestinationLocation);
+		}
+	}
+
+
+
 	[Serializable]
 	public class SkillChange : ObjectChange
 	{
 		public SkillID SkillID { get; private set; }
 		public byte Level { get; private set; }
 
-		public SkillChange(IBaseObject ob, SkillID skillID, byte level)
+		public SkillChange(ILivingObject ob, SkillID skillID, byte level)
 			: base(ob)
 		{
 			this.SkillID = skillID;
@@ -307,7 +310,7 @@ namespace Dwarrowdelf
 		public ActionPriority Priority { get; set; }
 		public int UserID { get; set; }
 
-		public ActionStartedChange(IBaseObject ob)
+		public ActionStartedChange(ILivingObject ob)
 			: base(ob)
 		{
 		}
@@ -327,7 +330,7 @@ namespace Dwarrowdelf
 		public int TotalTicks { get; set; }
 		public int TicksUsed { get; set; }
 
-		public ActionProgressChange(IBaseObject ob)
+		public ActionProgressChange(ILivingObject ob)
 			: base(ob)
 		{
 		}
@@ -347,7 +350,7 @@ namespace Dwarrowdelf
 		public ActionState State { get; set; }
 		public string Error { get; set; }
 
-		public ActionDoneChange(IBaseObject ob)
+		public ActionDoneChange(ILivingObject ob)
 			: base(ob)
 		{
 		}
@@ -369,10 +372,10 @@ namespace Dwarrowdelf
 	public class DamageChange : ObjectChange
 	{
 		[NonSerialized]
-		IBaseObject m_attacker;
+		ILivingObject m_attacker;
 		ObjectID m_attackerID;
 
-		public IBaseObject Attacker { get { return m_attacker; } }
+		public ILivingObject Attacker { get { return m_attacker; } }
 		public ObjectID AttackerID { get { return m_attackerID; } }
 
 		public DamageCategory DamageCategory;
@@ -380,7 +383,7 @@ namespace Dwarrowdelf
 
 		public bool IsHit;
 
-		public DamageChange(IBaseObject target, IBaseObject attacker, DamageCategory cat, int damage)
+		public DamageChange(ILivingObject target, ILivingObject attacker, DamageCategory cat, int damage)
 			: base(target)
 		{
 			m_attacker = attacker;
