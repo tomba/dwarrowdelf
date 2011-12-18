@@ -114,9 +114,10 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			building.Destruct();
-
+			// send report before destruct
 			SendReport(new DestructBuildingActionReport(this, building));
+
+			building.Destruct();
 
 			return true;
 		}
@@ -222,12 +223,13 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			// Send report before destruct
+			SendReport(new ConsumeActionReport(this, item));
+
 			ob.Destruct();
 
 			this.WaterFullness += refreshment;
 			this.FoodFullness += nutrition;
-
-			SendReport(new ConsumeActionReport(this, item));
 
 			return true;
 		}
