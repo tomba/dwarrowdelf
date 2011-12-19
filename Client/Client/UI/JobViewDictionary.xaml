@@ -8,7 +8,7 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding}" />
             <TextBlock Text=", " />
-            <TextBlock Text="{Binding JobStatus}" />
+            <TextBlock Text="{Binding Status}" />
         </StackPanel>
     </HierarchicalDataTemplate>
 
@@ -17,7 +17,7 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding}" />
                 <TextBlock Text=", " />
-                <TextBlock Text="{Binding JobStatus}" />
+                <TextBlock Text="{Binding Status}" />
                 <TextBlock Text=", " />
                 <TextBlock Text="{Binding Worker.Name, FallbackValue=Nobody}" />
                 <TextBlock Text=", " />
@@ -35,7 +35,7 @@
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{Binding}" />
             <TextBlock Text=", " />
-            <TextBlock Text="{Binding JobStatus}" />
+            <TextBlock Text="{Binding Status}" />
             <TextBlock Text=" , " />
             <TextBlock Text="{Binding Worker.Name, FallbackValue=NoBody}" />
             <TextBlock Text=", " />
