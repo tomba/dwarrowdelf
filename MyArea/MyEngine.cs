@@ -62,6 +62,7 @@ namespace MyArea
 			var builder = new LivingObjectBuilder(LivingID.Dwarf)
 			{
 				Color = (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1,
+				Gender = LivingGender.Male,
 			};
 
 			switch (i)
