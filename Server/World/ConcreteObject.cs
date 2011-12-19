@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Server
 		public string Name
 		{
 			get { return m_name; }
-			set { if (m_name == value) return; m_name = value; NotifyObject(PropertyID.Name, value); }
+			set { if (m_name == value) return; m_name = value; NotifyString(PropertyID.Name, value); }
 		}
 
 		[SaveGameProperty("MaterialID")]
@@ -36,7 +36,12 @@ namespace Dwarrowdelf.Server
 		public MaterialID MaterialID
 		{
 			get { return m_materialID; }
-			set { if (m_materialID == value) return; m_materialID = value; NotifyObject(PropertyID.MaterialID, value); this.Color = Materials.GetMaterial(value).Color; } // XXX sets color?
+			set
+			{
+				if (m_materialID == value) return; m_materialID = value; NotifyValue(PropertyID.MaterialID, value);
+				// XXX sets color?
+				this.Color = Materials.GetMaterial(value).Color;
+			}
 		}
 
 		[SaveGameProperty("Color")]
@@ -44,7 +49,7 @@ namespace Dwarrowdelf.Server
 		public GameColor Color
 		{
 			get { return m_color; }
-			set { if (m_color == value) return; m_color = value; NotifyObject(PropertyID.Color, value); }
+			set { if (m_color == value) return; m_color = value; NotifyValue(PropertyID.Color, value); }
 		}
 
 		public MaterialCategory MaterialCategory { get { return Materials.GetMaterial(this.MaterialID).Category; } } // XXX

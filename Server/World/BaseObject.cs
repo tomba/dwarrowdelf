@@ -93,11 +93,12 @@ namespace Dwarrowdelf.Server
 			return new Dictionary<PropertyID, object>();
 		}
 
-		protected void NotifyObject(PropertyID id, object value)
+		protected void NotifyValue(PropertyID id, ValueType value)
 		{
 			Debug.Assert(this.IsInitialized);
+			Debug.Assert(value.GetType().IsValueType);
 
-			this.World.AddChange(new PropertyObjectChange(this, id, value));
+			this.World.AddChange(new PropertyValueChange(this, id, value));
 		}
 
 		protected void NotifyInt(PropertyID id, int value)
@@ -105,6 +106,13 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(this.IsInitialized);
 
 			this.World.AddChange(new PropertyIntChange(this, id, value));
+		}
+
+		protected void NotifyString(PropertyID id, string value)
+		{
+			Debug.Assert(this.IsInitialized);
+
+			this.World.AddChange(new PropertyStringChange(this, id, value));
 		}
 	}
 }

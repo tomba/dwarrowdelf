@@ -240,7 +240,7 @@ namespace Dwarrowdelf.Server
 		public string Assignment
 		{
 			get { return m_assignment; }
-			set { if (m_assignment == value) return; m_assignment = value; NotifyObject(PropertyID.Assignment, value); }
+			set { if (m_assignment == value) return; m_assignment = value; NotifyString(PropertyID.Assignment, value); }
 		}
 
 		[SaveGameProperty("Gender")]
@@ -248,7 +248,7 @@ namespace Dwarrowdelf.Server
 		public LivingGender Gender
 		{
 			get { return m_gender; }
-			set { if (m_gender == value) return; m_gender = value; NotifyObject(PropertyID.Gender, value); }
+			set { if (m_gender == value) return; m_gender = value; NotifyValue(PropertyID.Gender, value); }
 		}
 
 		public byte GetSkillLevel(SkillID skill)

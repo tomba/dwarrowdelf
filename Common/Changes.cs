@@ -187,11 +187,11 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class PropertyObjectChange : PropertyChange
+	public class PropertyValueChange : PropertyChange
 	{
-		public object Value { get; private set; }
+		public ValueType Value { get; private set; }
 
-		public PropertyObjectChange(IBaseObject ob, PropertyID propertyID, object value)
+		public PropertyValueChange(IBaseObject ob, PropertyID propertyID, ValueType value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -220,6 +220,22 @@ namespace Dwarrowdelf
 		}
 	}
 
+	[Serializable]
+	public class PropertyStringChange : PropertyChange
+	{
+		public string Value { get; private set; }
+
+		public PropertyStringChange(IBaseObject ob, PropertyID propertyID, string value)
+			: base(ob, propertyID)
+		{
+			this.Value = value;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("PropertyStringChange({0}, {1} : {2})", this.ObjectID, this.PropertyID, this.Value);
+		}
+	}
 
 	[Serializable]
 	public class ObjectMoveChange : ObjectChange

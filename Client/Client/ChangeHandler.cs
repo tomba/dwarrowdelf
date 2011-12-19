@@ -100,31 +100,31 @@ namespace Dwarrowdelf.Client
 			ob.MoveTo(change.DestinationLocation);
 		}
 
-		void HandleChange(PropertyObjectChange change)
+		void HandlePropertyChange(ObjectID objectID, PropertyID propertyID, object value)
 		{
-			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(objectID);
 
 			if (ob == null)
 				throw new Exception();
 
 			Debug.Assert(ob.IsInitialized);
 
-			ob.SetProperty(change.PropertyID, change.Value);
+			ob.SetProperty(propertyID, value);
+		}
+
+		void HandleChange(PropertyValueChange change)
+		{
+			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
 		}
 
 		void HandleChange(PropertyIntChange change)
 		{
-			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
+			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
+		}
 
-			if (ob == null)
-			{
-				trace.TraceWarning("Unknown object {0} for propertychange {1}", change.ObjectID, change.PropertyID);
-				return;
-			}
-
-			Debug.Assert(ob.IsInitialized);
-
-			ob.SetProperty(change.PropertyID, change.Value);
+		void HandleChange(PropertyStringChange change)
+		{
+			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
 		}
 
 		void HandleChange(SkillChange change)

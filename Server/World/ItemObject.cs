@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Server
 		public string ReservedByStr
 		{
 			get { return m_reservedByStr; }
-			set { if (m_reservedByStr == value) return; m_reservedByStr = value; NotifyObject(PropertyID.ReservedByStr, value); }
+			set { if (m_reservedByStr == value) return; m_reservedByStr = value; NotifyString(PropertyID.ReservedByStr, value); }
 		}
 
 		[SaveGameProperty("NutritionalValue")]
