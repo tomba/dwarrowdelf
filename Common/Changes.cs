@@ -361,38 +361,6 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public enum DamageCategory
-	{
-		None,
-		Melee,
-	}
-
-	[Serializable]
-	public class DamageChange : ObjectChange
-	{
-		[NonSerialized]
-		ILivingObject m_attacker;
-		ObjectID m_attackerID;
-
-		public ILivingObject Attacker { get { return m_attacker; } }
-		public ObjectID AttackerID { get { return m_attackerID; } }
-
-		public DamageCategory DamageCategory;
-		public int Damage;
-
-		public bool IsHit;
-
-		public DamageChange(ILivingObject target, ILivingObject attacker, DamageCategory cat, int damage)
-			: base(target)
-		{
-			m_attacker = attacker;
-			m_attackerID = attacker.ObjectID;
-
-			this.DamageCategory = cat;
-			this.Damage = damage;
-		}
-	}
-
 	[Serializable]
 	public class WearChange : ObjectChange
 	{

@@ -127,12 +127,26 @@ namespace Dwarrowdelf
 		}
 	}
 
+	public enum DamageCategory
+	{
+		None,
+		Melee,
+	}
+
 	[Serializable]
 	public class AttackActionReport : ActionReport
 	{
-		public AttackActionReport(ILivingObject living)
+		public ObjectID TargetObjectID { get; private set; }
+
+		public DamageCategory DamageCategory;
+		public int Damage;
+
+		public bool IsHit;
+
+		public AttackActionReport(ILivingObject living, ILivingObject target)
 			: base(living)
 		{
+			this.TargetObjectID = target != null ? target.ObjectID : ObjectID.NullObjectID;
 		}
 	}
 

@@ -512,13 +512,13 @@ namespace Dwarrowdelf.Server
 
 			if (target == null)
 			{
-				SendFailReport(new AttackActionReport(this), "target doesn't exist");
+				SendFailReport(new AttackActionReport(this, null), "target doesn't exist");
 				return false;
 			}
 
 			if (!attacker.Location.IsAdjacentTo(target.Location, DirectionSet.Planar))
 			{
-				SendFailReport(new AttackActionReport(this), "target isn't near");
+				SendFailReport(new AttackActionReport(this, target), "target isn't near");
 				return false;
 			}
 
@@ -538,26 +538,26 @@ namespace Dwarrowdelf.Server
 				hit = (roll - target.ArmorClass) > 0;
 			}
 
-			if (!hit)
-			{
-				Trace.TraceInformation("{0} misses {1}", attacker, target);
+			int damage;
+			DamageCategory damageCategory;
 
-				var c = new DamageChange(target, attacker, DamageCategory.Melee, 0) { IsHit = false };
-				this.World.AddChange(c);
+			if (hit)
+			{
+				damage = m_random.Next(attacker.Strength / 10) + 1;
+				damageCategory = DamageCategory.Melee;
+				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
 			}
 			else
 			{
-				var damage = m_random.Next(attacker.Strength / 10) + 1;
-
-				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
-
-				var c = new DamageChange(target, attacker, DamageCategory.Melee, damage) { IsHit = true };
-				this.World.AddChange(c);
-
-				target.ReceiveDamage(attacker, DamageCategory.Melee, damage);
+				damage = 0;
+				damageCategory = DamageCategory.None;
+				Trace.TraceInformation("{0} misses {1}", attacker, target);
 			}
 
-			SendReport(new AttackActionReport(this));
+			SendReport(new AttackActionReport(this, target) { IsHit = hit, Damage = damage, DamageCategory = damageCategory });
+
+			if (hit)
+				target.ReceiveDamage(attacker, damageCategory, damage);
 
 			return true;
 		}

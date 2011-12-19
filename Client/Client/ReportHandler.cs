@@ -134,11 +134,51 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(AttackActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
-			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} attacks XXX", living);
+			var attacker = m_world.FindObject<LivingObject>(report.LivingObjectID);
+			string aname = attacker != null ? attacker.ToString() : "somebody";
+
+			string tname;
+
+			if (report.TargetObjectID == ObjectID.NullObjectID)
+			{
+				tname = "nobody";
+			}
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to attack XXX: {1}", living, report.FailReason);
+			{
+				var target = m_world.FindObject<LivingObject>(report.TargetObjectID);
+				tname = target != null ? target.ToString() : "somebody";
+			}
+
+			if (!report.Success)
+			{
+				GameData.Data.AddGameEvent(attacker, "{0} fails to attack {1}: {2}", aname, tname, report.FailReason);
+				return;
+			}
+
+			string msg;
+
+			if (report.IsHit)
+			{
+				switch (report.DamageCategory)
+				{
+					case DamageCategory.None:
+						msg = String.Format("{0} hits {1}, dealing {2} damage", aname, tname, report.Damage);
+						break;
+
+					case DamageCategory.Melee:
+						msg = String.Format("{0} hits {1}, dealing {2} damage", aname, tname, report.Damage);
+						break;
+
+					default:
+						throw new Exception();
+				}
+			}
+			else
+			{
+				msg = String.Format("{0} misses {1}", aname, tname);
+			}
+
+			GameData.Data.AddGameEvent(attacker, msg);
 		}
 
 		void HandleReport(MineActionReport report)
