@@ -27,8 +27,10 @@ namespace Dwarrowdelf
 		Barrel,
 		Bucket,
 
+		Dagger,
 		ShortSword,
 		BattleAxe,
+		Mace,
 
 		ChainMail,
 		PlateMail,

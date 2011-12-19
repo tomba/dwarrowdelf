@@ -118,7 +118,11 @@ namespace MyArea
 				item.MoveTo(dwarf);
 			}
 
-			AddWeapon(dwarf, ItemID.ShortSword);
+			{
+				var itemIDs = Items.GetItemInfos(ItemCategory.Weapon).ToArray();
+				var itemID = itemIDs[m_random.Next(itemIDs.Length)].ID;
+				AddWeapon(dwarf, itemID);
+			}
 
 			AddArmor(dwarf, ItemID.ChainMail);
 			AddArmor(dwarf, ItemID.Gloves);

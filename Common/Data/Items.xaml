@@ -25,6 +25,12 @@
 
 	<!-- WEAPONS -->
 
+	<ItemInfo ID="Dagger" Category="Weapon">
+		<ItemInfo.WeaponInfo>
+			<WeaponInfo WC="3" IsTwoHanded="False" WeaponType="Edged" />
+		</ItemInfo.WeaponInfo>
+	</ItemInfo>
+
 	<ItemInfo ID="ShortSword" Category="Weapon">
 		<ItemInfo.WeaponInfo>
 			<WeaponInfo WC="10" IsTwoHanded="False" WeaponType="Edged" />
@@ -34,6 +40,12 @@
 	<ItemInfo ID="BattleAxe" Category="Weapon">
 		<ItemInfo.WeaponInfo>
 			<WeaponInfo WC="15" IsTwoHanded="True" WeaponType="Edged" />
+		</ItemInfo.WeaponInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="Mace" Category="Weapon">
+		<ItemInfo.WeaponInfo>
+			<WeaponInfo WC="7" IsTwoHanded="False" WeaponType="Blunt" />
 		</ItemInfo.WeaponInfo>
 	</ItemInfo>
 
