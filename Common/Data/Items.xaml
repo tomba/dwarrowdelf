@@ -23,6 +23,8 @@
 
 	<ItemInfo ID="Contraption" Category="Other" />
 
+	<!-- WEAPONS -->
+
 	<ItemInfo ID="ShortSword" Category="Weapon">
 		<ItemInfo.WeaponInfo>
 			<WeaponInfo WC="10" IsTwoHanded="False" WeaponType="Edged" />
@@ -34,6 +36,8 @@
 			<WeaponInfo WC="15" IsTwoHanded="True" WeaponType="Edged" />
 		</ItemInfo.WeaponInfo>
 	</ItemInfo>
+
+	<!-- ARMORS -->
 
 	<ItemInfo ID="ChainMail" Category="Armor">
 		<ItemInfo.ArmorInfo>
@@ -50,6 +54,18 @@
 	<ItemInfo ID="Skullcap" Category="Armor">
 		<ItemInfo.ArmorInfo>
 			<ArmorInfo AC="3" Slot="Head" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="Gloves" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="1" Slot="Hands" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="Boots" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="1" Slot="Feet" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 

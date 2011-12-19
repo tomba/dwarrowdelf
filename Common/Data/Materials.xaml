@@ -1,45 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <x:Array Type="MaterialInfo"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns="clr-namespace:Dwarrowdelf">
+		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		 xmlns="clr-namespace:Dwarrowdelf">
 
-    <!-- Alloys -->
-    <MaterialInfo ID="Steel" Category="Metal" Color="LightSteelBlue" />
+	<!-- Alloys -->
+	<MaterialInfo ID="Steel" Category="Metal" Color="LightSteelBlue" />
+	<MaterialInfo ID="Bronze" Category="Metal" Color="Brown" />
+	<MaterialInfo ID="Brass" Category="Metal" Color="DarkGoldenrod" />
 
-    <!-- Pure Metals -->
-    <MaterialInfo ID="Iron" Category="Metal" Color="SteelBlue" />
-    <MaterialInfo ID="Gold" Category="Metal" Color="Gold" />
-    <MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
-    <MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
+	<!-- Pure Metals -->
+	<MaterialInfo ID="Iron" Category="Metal" Color="SteelBlue" />
+	<MaterialInfo ID="Gold" Category="Metal" Color="Gold" />
+	<MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
+	<MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
+	<MaterialInfo ID="Silver" Category="Metal" Color="Silver" />
+	<MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
 
-    <!-- Rocks -->
-    <MaterialInfo ID="Granite" Category="Rock" Color="DarkGray" />
-    <MaterialInfo ID="Quartzite" Category="Rock" Color="Gray" />
-    <MaterialInfo ID="Sandstone" Category="Rock" Color="DimGray" />
-    <MaterialInfo ID="Diorite" Category="Rock" Color="LightGray" />
-    <MaterialInfo ID="Dolostone" Category="Rock" Color="LightGray" />
+	<!-- Rocks -->
+	<MaterialInfo ID="Granite" Category="Rock" Color="DarkGray" />
+	<MaterialInfo ID="Quartzite" Category="Rock" Color="Gray" />
+	<MaterialInfo ID="Sandstone" Category="Rock" Color="DimGray" />
+	<MaterialInfo ID="Diorite" Category="Rock" Color="LightGray" />
+	<MaterialInfo ID="Dolostone" Category="Rock" Color="LightGray" />
 
-    <!-- Minerals -->
-    <MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
-    <MaterialInfo ID="NativeGold" Name="native gold" Category="Mineral" Color="Gold" />
+	<!-- Minerals -->
+	<MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
+	<MaterialInfo ID="NativeGold" Name="native gold" Category="Mineral" Color="Gold" />
 
-    <!-- Gems (minerals) -->
-    <MaterialInfo ID="Diamond" Category="Gem" Color="LightCyan" />
-    <MaterialInfo ID="Ruby" Category="Gem" Color="Red" />
-    <MaterialInfo ID="Sapphire" Category="Gem" Color="Cyan" />
-    <MaterialInfo ID="Emerald" Category="Gem" Color="SpringGreen" />
-    <MaterialInfo ID="Chrysoprase" Category="Gem" Color="SpringGreen" />
+	<!-- Gems (minerals) -->
+	<MaterialInfo ID="Diamond" Category="Gem" Color="LightCyan" />
+	<MaterialInfo ID="Ruby" Category="Gem" Color="Red" />
+	<MaterialInfo ID="Sapphire" Category="Gem" Color="Cyan" />
+	<MaterialInfo ID="Emerald" Category="Gem" Color="SpringGreen" />
+	<MaterialInfo ID="Chrysoprase" Category="Gem" Color="SpringGreen" />
 
-    <!-- Woods -->
-    <MaterialInfo ID="Oak" Adjective="oaken" Category="Wood" Color="Sienna" />
-    <MaterialInfo ID="Birch" Adjective="birchen" Category="Wood" Color="Sienna" />
-    <MaterialInfo ID="Fir" Category="Wood" Color="Sienna" />
-    <MaterialInfo ID="Pine" Category="Wood" Color="Sienna" />
+	<!-- Woods -->
+	<MaterialInfo ID="Oak" Adjective="oaken" Category="Wood" Color="Sienna" />
+	<MaterialInfo ID="Birch" Adjective="birchen" Category="Wood" Color="Sienna" />
+	<MaterialInfo ID="Fir" Category="Wood" Color="Sienna" />
+	<MaterialInfo ID="Pine" Category="Wood" Color="Sienna" />
 
-    <MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
-    <MaterialInfo ID="Water" Category="Consumable" Color="Blue" />
+	<MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
+	<MaterialInfo ID="Water" Category="Consumable" Color="Blue" />
 
-    <!-- custom test material -->
-    <MaterialInfo ID="99" Name="MyMaterial" Category="Custom" Color="LightCyan" />
+	<!-- custom test material -->
+	<MaterialInfo ID="99" Name="MyMaterial" Category="Custom" Color="LightCyan" />
 
 </x:Array>

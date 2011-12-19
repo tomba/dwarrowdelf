@@ -118,43 +118,40 @@ namespace MyArea
 				item.MoveTo(dwarf);
 			}
 
-			{
-				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-				var material = materials[m_random.Next(materials.Length)].ID;
+			AddWeapon(dwarf, ItemID.ShortSword);
 
-				var itemBuilder = new ItemObjectBuilder(ItemID.ShortSword, material);
-				var item = itemBuilder.Create(this.World);
-
-				item.MoveTo(dwarf);
-
-				dwarf.WieldWeapon(item);
-			}
-
-			{
-				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-				var material = materials[m_random.Next(materials.Length)].ID;
-
-				var itemBuilder = new ItemObjectBuilder(ItemID.ChainMail, material);
-				var item = itemBuilder.Create(this.World);
-
-				item.MoveTo(dwarf);
-
-				dwarf.WearArmor(item);
-			}
-
-			{
-				var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-				var material = materials[m_random.Next(materials.Length)].ID;
-
-				var itemBuilder = new ItemObjectBuilder(ItemID.Skullcap, material);
-				var item = itemBuilder.Create(this.World);
-
-				item.MoveTo(dwarf);
-
-				dwarf.WearArmor(item);
-			}
+			AddArmor(dwarf, ItemID.ChainMail);
+			AddArmor(dwarf, ItemID.Gloves);
+			AddArmor(dwarf, ItemID.Boots);
+			AddArmor(dwarf, ItemID.Skullcap);
 
 			return dwarf;
+		}
+
+		void AddArmor(LivingObject dwarf, ItemID itemID)
+		{
+			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+			var material = materials[m_random.Next(materials.Length)].ID;
+
+			var itemBuilder = new ItemObjectBuilder(itemID, material);
+			var item = itemBuilder.Create(this.World);
+
+			item.MoveTo(dwarf);
+
+			dwarf.WearArmor(item);
+		}
+
+		void AddWeapon(LivingObject dwarf, ItemID itemID)
+		{
+			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+			var material = materials[m_random.Next(materials.Length)].ID;
+
+			var itemBuilder = new ItemObjectBuilder(itemID, material);
+			var item = itemBuilder.Create(this.World);
+
+			item.MoveTo(dwarf);
+
+			dwarf.WieldWeapon(item);
 		}
 	}
 }

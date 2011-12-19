@@ -35,6 +35,10 @@ namespace Dwarrowdelf
 
 		Skullcap,
 
+		Gloves,
+
+		Boots,
+
 		Contraption,
 	}
 
@@ -80,7 +84,16 @@ namespace Dwarrowdelf
 		Head,
 		Hands,
 		Torso,
+		Feet,
 	}
+
+	/* leather
+	 * scale
+	 * lamellar
+	 * brigandine
+	 * mail armor (chain mail)
+	 * plate armor (plate mail)
+	 */
 
 	public class ArmorInfo
 	{

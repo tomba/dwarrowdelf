@@ -14,12 +14,16 @@ namespace Dwarrowdelf
 
 		// Alloys
 		Steel,
+		Bronze,
+		Brass,
 
 		// Pure Metals
 		Iron,
 		Gold,
 		Copper,
 		Zinc,
+		Silver,
+		Lead,
 
 		// Rocks
 		Granite,
