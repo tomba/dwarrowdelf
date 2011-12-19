@@ -43,6 +43,14 @@ namespace Dwarrowdelf.Server
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
+		protected override bool OkToMove()
+		{
+			if (this.Wearer != null)
+				return false;
+
+			return true;
+		}
+
 		[SaveGameProperty("ReservedBy")]
 		object m_reservedBy;
 		public object ReservedBy

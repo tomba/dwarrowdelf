@@ -66,6 +66,11 @@ namespace Dwarrowdelf.Server
 
 		protected virtual void OnEnvironmentChanged(ContainerObject oldEnv, ContainerObject newEnv) { }
 
+		protected virtual bool OkToMove()
+		{
+			return true;
+		}
+
 		public bool MoveTo(ContainerObject parent)
 		{
 			if (this.Parent == parent)
@@ -77,6 +82,9 @@ namespace Dwarrowdelf.Server
 		public bool MoveTo(ContainerObject dst, IntPoint3D dstLoc)
 		{
 			Debug.Assert(this.World.IsWritable);
+
+			if (!OkToMove())
+				return false;
 
 			if (this.Parent == dst && this.Location == dstLoc)
 				return true;
@@ -97,7 +105,12 @@ namespace Dwarrowdelf.Server
 
 		public bool MoveTo(IntPoint3D location)
 		{
+			Debug.Assert(this.World.IsWritable);
+
 			if (this.Parent == null)
+				return false;
+
+			if (!OkToMove())
 				return false;
 
 			if (this.Location == location)

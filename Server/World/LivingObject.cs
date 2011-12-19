@@ -80,6 +80,11 @@ namespace Dwarrowdelf.Server
 			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
 				aai.AssignmentChanged += OnAIAssignmentChanged;
+
+			foreach (var kvp in m_armorSlots)
+				kvp.Value.Wearer = this;
+			if (m_weapon != null)
+				m_weapon.Wearer = this;
 		}
 
 		protected override void Initialize(World world)

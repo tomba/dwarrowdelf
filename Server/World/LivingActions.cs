@@ -187,6 +187,12 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			if (item.Wearer != null)
+			{
+				SendFailReport(new DropActionReport(this, item), "item worn/wielded");
+				return false;
+			}
+
 			if (item.MoveTo(this.Environment, this.Location) == false)
 			{
 				SendFailReport(new DropActionReport(this, item), "failed to move");
