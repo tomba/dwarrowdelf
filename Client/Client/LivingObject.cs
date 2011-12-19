@@ -238,36 +238,11 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(this.HasAction);
 
 			if (change.State != ActionState.Done)
-			{
-				string name;
-				string failStr;
-
-				if (this.Name != null)
-					name = this.Name;
-				else
-					name = ToString();
-
-				switch (change.State)
-				{
-					case ActionState.Fail:
-						failStr = "failed";
-						break;
-
-					case ActionState.Abort:
-						failStr = "aborted";
-						break;
-
-					default:
-						throw new Exception();
-				}
-
-				GameData.Data.AddGameEvent(this, "{0} {1} action {2}", name, failStr, this.CurrentAction);
-			}
+				Debug.Print("ActionDone({0}, {1}, {2})", this, change.State, this.CurrentAction);
 
 			if (this.AI != null)
 				this.AI.ActionDone(change);
 
-			//Debug.Print("ActionDone({0}: {1})", this, this.CurrentAction);
 			this.PreviousAction = this.CurrentAction;
 			this.CurrentAction = null;
 			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
