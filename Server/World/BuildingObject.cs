@@ -109,10 +109,10 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public bool PerformBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
+		public ItemObject PerformBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
 		{
 			if (!VerifyBuildItem(builder, sourceObjects, dstItemID))
-				return false;
+				return null;
 
 			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
 
@@ -125,7 +125,7 @@ namespace Dwarrowdelf.Server
 			if (item.MoveTo(builder.Environment, builder.Location) == false)
 				throw new Exception();
 
-			return true;
+			return item;
 		}
 
 		public static bool VerifyBuildSite(EnvironmentObject env, IntRectZ area)

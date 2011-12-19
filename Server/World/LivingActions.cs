@@ -471,7 +471,7 @@ namespace Dwarrowdelf.Server
 		{
 			var building = this.Environment.GetLargeObjectAt<BuildingObject>(this.Location);
 
-			var report = new BuildItemActionReport(this);
+			var report = new BuildItemActionReport(this, action.DstItemID);
 
 			if (building == null)
 			{
@@ -488,14 +488,19 @@ namespace Dwarrowdelf.Server
 						}
 			 */
 
-			var ok = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+			var item = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
 
-			if (ok)
+			if (item != null)
+			{
+				report.ItemObjectID = item.ObjectID;
 				SendReport(report);
+			}
 			else
+			{
 				SendFailReport(report, "unable to build the item");
+			}
 
-			return ok;
+			return item != null;
 		}
 
 		int GetTotalTicks(AttackAction action)

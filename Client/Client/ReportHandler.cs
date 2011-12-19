@@ -158,10 +158,12 @@ namespace Dwarrowdelf.Client
 		void HandleReport(BuildItemActionReport report)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
+			var item = m_world.FindObject<ItemObject>(report.ItemObjectID);
+
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} builds item XXX", living);
+				GameData.Data.AddGameEvent(living, "{0} builds item {1}", living, item);
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to build item XXX: {1}", living, report.FailReason);
+				GameData.Data.AddGameEvent(living, "{0} fails to build item {1}: {2}", living, report.ItemID, report.FailReason);
 		}
 
 		void HandleReport(AttackActionReport report)

@@ -121,9 +121,13 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class BuildItemActionReport : ActionReport
 	{
-		public BuildItemActionReport(ILivingObject living)
+		public ItemID ItemID { get; private set; }
+		public ObjectID ItemObjectID { get; set; }
+
+		public BuildItemActionReport(ILivingObject living, ItemID itemID)
 			: base(living)
 		{
+			this.ItemID = itemID;
 		}
 	}
 
@@ -138,10 +142,10 @@ namespace Dwarrowdelf
 	{
 		public ObjectID TargetObjectID { get; private set; }
 
-		public DamageCategory DamageCategory;
-		public int Damage;
+		public DamageCategory DamageCategory { get; set; }
+		public int Damage { get; set; }
 
-		public bool IsHit;
+		public bool IsHit { get; set; }
 
 		public AttackActionReport(ILivingObject living, ILivingObject target)
 			: base(living)
