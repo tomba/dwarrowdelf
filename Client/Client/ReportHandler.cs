@@ -32,6 +32,40 @@ namespace Dwarrowdelf.Client
 			m_world = world;
 		}
 
+
+		string GetPrintableItemName(ObjectID objectID)
+		{
+			if (objectID == ObjectID.NullObjectID)
+			{
+				return "nothing";
+			}
+			else
+			{
+				var ob = m_world.FindObject(objectID);
+				if (ob == null)
+					return "something";
+				else
+					return ob.ToString();
+			}
+		}
+
+		string GetPrintableLivingName(ObjectID objectID)
+		{
+			if (objectID == ObjectID.NullObjectID)
+			{
+				return "nobody";
+			}
+			else
+			{
+				var ob = m_world.FindObject(objectID);
+				if (ob == null)
+					return "somebody";
+				else
+					return ob.ToString();
+			}
+		}
+
+
 		public void HandleReportMessage(Dwarrowdelf.Messages.ReportMessage msg)
 		{
 			var report = msg.Report;
@@ -41,13 +75,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(DeathReport report)
 		{
-			var target = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var target = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			GameData.Data.AddGameEvent(target, "{0} dies", target);
 		}
 
 		void HandleReport(MoveActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 
 			if (report.Success == false && living.IsControllable)
 				GameData.Data.AddGameEvent(living, "{0} failed to move {1}: {2}", living, report.Direction, report.FailReason);
@@ -57,15 +91,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleItemActionReport(ItemActionReport report, string verb1, string verb2)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
-			var item = report.ItemObjectID != ObjectID.NullObjectID ? m_world.GetObject<ItemObject>(report.ItemObjectID) : null;
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
+			var itemName = GetPrintableItemName(report.ItemObjectID);
 
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} {1} {2}", living, verb1, item);
-			else if (item != null)
-				GameData.Data.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, item, report.FailReason);
+				GameData.Data.AddGameEvent(living, "{0} {1} {2}", living, verb1, itemName);
 			else
-				GameData.Data.AddGameEvent(living, "{0} failed to {1} something: {2}", living, verb2, report.FailReason);
+				GameData.Data.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, itemName, report.FailReason);
 		}
 
 		void HandleReport(WearArmorActionReport report)
@@ -105,7 +137,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(ConstructBuildingActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
 				GameData.Data.AddGameEvent(living, "{0} builds {1}", living, report.BuildingID);
 			else
@@ -114,7 +146,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(DestructBuildingActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			var building = m_world.FindObject<BuildingObject>(report.BuildingObjectID);
 
 			if (report.Success)
@@ -125,7 +157,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(BuildItemActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
 				GameData.Data.AddGameEvent(living, "{0} builds item XXX", living);
 			else
@@ -136,18 +168,7 @@ namespace Dwarrowdelf.Client
 		{
 			var attacker = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			string aname = attacker != null ? attacker.ToString() : "somebody";
-
-			string tname;
-
-			if (report.TargetObjectID == ObjectID.NullObjectID)
-			{
-				tname = "nobody";
-			}
-			else
-			{
-				var target = m_world.FindObject<LivingObject>(report.TargetObjectID);
-				tname = target != null ? target.ToString() : "somebody";
-			}
+			string tname = GetPrintableLivingName(report.TargetObjectID);
 
 			if (!report.Success)
 			{
@@ -183,7 +204,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(MineActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
 			{
 				switch (report.MineActionType)
@@ -205,7 +226,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(FellTreeActionReport report)
 		{
-			var living = m_world.GetObject<LivingObject>(report.LivingObjectID);
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
 				GameData.Data.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.InteriorID);
 			else
