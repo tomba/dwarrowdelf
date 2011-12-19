@@ -77,7 +77,13 @@ namespace Dwarrowdelf.Client
 					this.Environment.OnObjectVisualChanged(this);
 
 				Notify("Color");
+				Notify("EffectiveColor");
 			}
+		}
+
+		public GameColor EffectiveColor
+		{
+			get { return m_color != GameColor.None ? m_color : this.Material.Color; }
 		}
 
 		SymbolID m_symbolID;
@@ -113,6 +119,10 @@ namespace Dwarrowdelf.Client
 				m_materialInfo = Materials.GetMaterial(this.MaterialID);
 				Notify("MaterialID");
 				Notify("Material");
+
+				// If no color set, the material gives the effective color
+				if (m_color != GameColor.None)
+					Notify("EffectiveColor");
 			}
 		}
 

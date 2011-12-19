@@ -342,7 +342,7 @@ namespace Dwarrowdelf.Client
 				return;
 
 			tile.SymbolID = ob.SymbolID;
-			tile.Color = ob.Color;
+			tile.Color = ob.EffectiveColor;
 			tile.BgColor = GameColor.None;
 		}
 

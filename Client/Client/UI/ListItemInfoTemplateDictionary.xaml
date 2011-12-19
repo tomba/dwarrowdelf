@@ -19,7 +19,7 @@
 						<DrawingImage.Drawing>
 							<MultiBinding Converter="{StaticResource drawingConverter}">
 								<Binding Path="SymbolID" />
-								<Binding Path="Color" />
+								<Binding Path="EffectiveColor" />
 							</MultiBinding>
 						</DrawingImage.Drawing>
 					</DrawingImage>
@@ -53,7 +53,7 @@
 						<DrawingImage.Drawing>
 							<MultiBinding Converter="{StaticResource drawingConverter}">
 								<Binding Path="SymbolID" />
-								<Binding Path="Color" />
+								<Binding Path="EffectiveColor" />
 							</MultiBinding>
 						</DrawingImage.Drawing>
 					</DrawingImage>

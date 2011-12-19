@@ -14,8 +14,6 @@ namespace Dwarrowdelf.Server
 			m_name = builder.Name;
 			m_color = builder.Color;
 			m_materialID = builder.MaterialID;
-			if (m_color == GameColor.None)
-				m_color = Materials.GetMaterial(m_materialID).Color;
 		}
 
 		protected ConcreteObject(SaveGameContext ctx, ObjectType objectType)
@@ -36,12 +34,7 @@ namespace Dwarrowdelf.Server
 		public MaterialID MaterialID
 		{
 			get { return m_materialID; }
-			set
-			{
-				if (m_materialID == value) return; m_materialID = value; NotifyValue(PropertyID.MaterialID, value);
-				// XXX sets color?
-				this.Color = Materials.GetMaterial(value).Color;
-			}
+			set { if (m_materialID == value) return; m_materialID = value; NotifyValue(PropertyID.MaterialID, value); }
 		}
 
 		[SaveGameProperty("Color")]

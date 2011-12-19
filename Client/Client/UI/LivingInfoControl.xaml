@@ -17,7 +17,7 @@
 						<DrawingImage.Drawing>
 							<MultiBinding Converter="{StaticResource drawingConverter}">
 								<Binding Path="SymbolID" />
-								<Binding Path="Color" />
+								<Binding Path="EffectiveColor" />
 							</MultiBinding>
 						</DrawingImage.Drawing>
 					</DrawingImage>
@@ -41,6 +41,9 @@
 
 				<TextBlock>Color</TextBlock>
 				<TextBlock Text="{Binding Color}" />
+
+				<TextBlock>EffectiveColor</TextBlock>
+				<TextBlock Text="{Binding EffectiveColor}" />
 
 				<TextBlock>MaterialID</TextBlock>
 				<TextBlock Text="{Binding Material.ID}" />
