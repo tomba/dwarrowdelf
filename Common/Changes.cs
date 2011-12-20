@@ -381,7 +381,7 @@ namespace Dwarrowdelf
 	public class WearChange : ObjectChange
 	{
 		[NonSerialized]
-		public IItemObject m_wearable;
+		IItemObject m_wearable;
 		ObjectID m_wearableID;
 
 		public IItemObject Wearable { get { return m_wearable; } }
@@ -405,7 +405,7 @@ namespace Dwarrowdelf
 	public class WieldChange : ObjectChange
 	{
 		[NonSerialized]
-		public IItemObject m_weapon;
+		IItemObject m_weapon;
 		ObjectID m_weaponID;
 
 		public IItemObject Weapon { get { return m_weapon; } }
