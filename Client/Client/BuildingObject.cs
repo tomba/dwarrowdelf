@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			var env = this.World.FindObject<EnvironmentObject>(data.Environment);
+			var env = this.World.GetObject<EnvironmentObject>(data.Environment);
 
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;

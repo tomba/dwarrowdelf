@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 
 			ContainerObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)
-				env = this.World.FindObject<ContainerObject>(data.Environment);
+				env = this.World.FindOrCreateObject<ContainerObject>(data.Environment);
 
 			MoveTo(env, data.Location);
 		}

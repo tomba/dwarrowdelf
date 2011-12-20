@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var oid in msg.Controllables)
 			{
-				var l = m_world.GetObject<LivingObject>(oid);
+				var l = m_world.FindOrCreateObject<LivingObject>(oid);
 				l.IsControllable = b;
 			}
 		}
@@ -140,23 +140,19 @@ namespace Dwarrowdelf.Client
 
 		void HandleObjectData(BaseGameObjectData data)
 		{
-			var ob = m_world.GetObject<BaseObject>(data.ObjectID);
+			var ob = m_world.FindOrCreateObject<BaseObject>(data.ObjectID);
 			ob.Deserialize(data);
 		}
 
 		void HandleMessage(MapDataTerrainsMessage msg)
 		{
-			var env = m_world.FindObject<EnvironmentObject>(msg.Environment);
-			if (env == null)
-				throw new Exception();
+			var env = m_world.GetObject<EnvironmentObject>(msg.Environment);
 			env.SetTerrains(msg.Bounds, msg.TerrainData);
 		}
 
 		void HandleMessage(MapDataTerrainsListMessage msg)
 		{
-			var env = m_world.FindObject<EnvironmentObject>(msg.Environment);
-			if (env == null)
-				throw new Exception();
+			var env = m_world.GetObject<EnvironmentObject>(msg.Environment);
 			trace.TraceVerbose("Received TerrainData for {0} tiles", msg.TileDataList.Count());
 			env.SetTerrains(msg.TileDataList);
 		}
@@ -207,9 +203,7 @@ namespace Dwarrowdelf.Client
 			}
 			else
 			{
-				var living = m_world.FindObject<LivingObject>(livingID);
-				if (living == null)
-					throw new Exception();
+				var living = m_world.GetObject<LivingObject>(livingID);
 				m_activeLiving = living;
 			}
 		}

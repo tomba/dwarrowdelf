@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 
 			if (data.ArmorSlots != null)
 			{
-				var l = data.ArmorSlots.Select(t => new Tuple<ArmorSlot, ItemObject>(t.Item1, this.World.GetObject<ItemObject>(t.Item2)));
+				var l = data.ArmorSlots.Select(t => new Tuple<ArmorSlot, ItemObject>(t.Item1, this.World.FindOrCreateObject<ItemObject>(t.Item2)));
 				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>(l);
 			}
 			else
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 
 			if (data.WeaponID != ObjectID.NullObjectID)
-				this.Weapon = this.World.GetObject<ItemObject>(data.WeaponID);
+				this.Weapon = this.World.FindOrCreateObject<ItemObject>(data.WeaponID);
 		}
 
 		public LivingID LivingID { get { return this.LivingInfo.ID; } }

@@ -68,9 +68,7 @@ namespace Dwarrowdelf.Client
 			public object FromRef(int refID)
 			{
 				var oid = new ObjectID((uint)refID);
-				var ob = GameData.Data.World.FindObject(oid);
-				if (ob == null)
-					throw new Exception();
+				var ob = GameData.Data.World.GetObject(oid);
 				return ob;
 			}
 

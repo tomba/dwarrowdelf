@@ -145,15 +145,31 @@ namespace Dwarrowdelf.Client
 		public BaseObject GetObject(ObjectID objectID)
 		{
 			var ob = FindObject(objectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			return ob;
+		}
+
+		public T GetObject<T>(ObjectID objectID) where T : BaseObject
+		{
+			return (T)GetObject(objectID);
+		}
+
+		public BaseObject FindOrCreateObject(ObjectID objectID)
+		{
+			var ob = FindObject(objectID);
+
 			if (ob != null)
 				return ob;
 
 			return CreateObject(objectID);
 		}
 
-		public T GetObject<T>(ObjectID objectID) where T : BaseObject
+		public T FindOrCreateObject<T>(ObjectID objectID) where T : BaseObject
 		{
-			return (T)GetObject(objectID);
+			return (T)FindOrCreateObject(objectID);
 		}
 
 		#region INotifyPropertyChanged Members

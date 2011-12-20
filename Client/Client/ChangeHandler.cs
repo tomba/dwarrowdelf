@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client
 
 		World m_world;
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ChangeHandler");
-		
+
 		public event Action TurnEnded;
 
 		public ChangeHandler(World world)
@@ -50,9 +50,7 @@ namespace Dwarrowdelf.Client
 		// XXX check if this is needed
 		void HandleChange(FullObjectChange change)
 		{
-			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
 
 			ob.Deserialize(change.ObjectData);
 		}
@@ -75,7 +73,7 @@ namespace Dwarrowdelf.Client
 
 			ContainerObject env = null;
 			if (change.DestinationID != ObjectID.NullObjectID)
-				env = m_world.FindObject<ContainerObject>(change.DestinationID);
+				env = m_world.GetObject<ContainerObject>(change.DestinationID);
 
 			ob.MoveTo(env, change.DestinationLocation);
 		}
@@ -101,10 +99,7 @@ namespace Dwarrowdelf.Client
 
 		void HandlePropertyChange(ObjectID objectID, PropertyID propertyID, object value)
 		{
-			var ob = m_world.FindObject<BaseObject>(objectID);
-
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<BaseObject>(objectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -128,10 +123,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(SkillChange change)
 		{
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -140,16 +132,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(WearChange change)
 		{
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
 			if (change.WearableID != ObjectID.NullObjectID)
 			{
-				var wearable = m_world.GetObject<ItemObject>(change.WearableID);
+				var wearable = m_world.FindOrCreateObject<ItemObject>(change.WearableID);
 				ob.WearArmor(change.Slot, wearable);
 			}
 			else
@@ -161,16 +150,13 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(WieldChange change)
 		{
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
 			if (change.WeaponID != ObjectID.NullObjectID)
 			{
-				var weapon = m_world.GetObject<ItemObject>(change.WeaponID);
+				var weapon = m_world.FindOrCreateObject<ItemObject>(change.WeaponID);
 				ob.WieldWeapon(weapon);
 			}
 			else
@@ -181,7 +167,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectDestructedChange change)
 		{
-			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
+			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -190,9 +176,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(MapChange change)
 		{
-			var env = m_world.FindObject<EnvironmentObject>(change.EnvironmentID);
-			if (env == null)
-				throw new Exception();
+			var env = m_world.GetObject<EnvironmentObject>(change.EnvironmentID);
 
 			Debug.Assert(env.IsInitialized);
 
@@ -228,9 +212,7 @@ namespace Dwarrowdelf.Client
 		{
 			//Debug.WriteLine("ActionStartedChange({0})", change.ObjectID);
 
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -239,9 +221,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionProgressChange change)
 		{
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
@@ -250,10 +230,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ActionDoneChange change)
 		{
-			var ob = m_world.FindObject<LivingObject>(change.ObjectID);
-
-			if (ob == null)
-				throw new Exception();
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
