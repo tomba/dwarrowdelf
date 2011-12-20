@@ -187,9 +187,15 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Wearer != null)
+			if (item.IsWorn)
 			{
-				SendFailReport(new DropActionReport(this, item), "item worn/wielded");
+				SendFailReport(new DropActionReport(this, item), "item worn");
+				return false;
+			}
+
+			if (item.IsWielded)
+			{
+				SendFailReport(new DropActionReport(this, item), "item wielded");
 				return false;
 			}
 
@@ -603,7 +609,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Wearer != null)
+			if (item.IsWorn)
 			{
 				var report = new WearArmorActionReport(this, item);
 				report.SetFail("already worn");
@@ -668,7 +674,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Wearer == null)
+			if (item.IsWorn == false)
 			{
 				var report = new RemoveArmorActionReport(this, item);
 				report.SetFail("not worn");
@@ -733,7 +739,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Wearer != null)
+			if (item.IsWielded)
 			{
 				var report = new WieldWeaponActionReport(this, item);
 				report.SetFail("already wielded");
@@ -798,7 +804,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.Wearer == null)
+			if (item.IsWielded == false)
 			{
 				var report = new RemoveWeaponActionReport(this, item);
 				report.SetFail("not wielded");

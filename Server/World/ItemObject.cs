@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Server
 
 		protected override bool OkToMove()
 		{
-			if (this.Wearer != null)
+			if (this.IsWorn || this.IsWielded)
 				return false;
 
 			return true;
@@ -92,14 +92,41 @@ namespace Dwarrowdelf.Server
 			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
 		}
 
-		public LivingObject Wearer { get; internal set; }
-		public LivingObject Wielder { get { return this.Wearer; } }
+		LivingObject m_wearer;
+		public LivingObject Wearer
+		{
+			get
+			{
+				Debug.Assert(this.IsArmor);
+				return m_wearer;
+			}
+			internal set
+			{
+				Debug.Assert(this.IsArmor);
+				m_wearer = value;
+			}
+		}
+
+		LivingObject m_wielder;
+		public LivingObject Wielder
+		{
+			get
+			{
+				Debug.Assert(this.IsWeapon);
+				return m_wielder;
+			}
+			internal set
+			{
+				Debug.Assert(this.IsWeapon);
+				m_wielder = value;
+			}
+		}
 
 		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
 		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
 
-		public bool IsWorn { get { return this.Wearer != null; } }
-		public bool IsWielded { get { return this.Wielder != null; } }
+		public bool IsWorn { get { return this.IsArmor && this.Wearer != null; } }
+		public bool IsWielded { get { return this.IsWeapon && this.Wielder != null; } }
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{

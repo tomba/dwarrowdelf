@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Server
 			foreach (var kvp in m_armorSlots)
 				kvp.Value.Wearer = this;
 			if (m_weapon != null)
-				m_weapon.Wearer = this;
+				m_weapon.Wielder = this;
 		}
 
 		protected override void Initialize(World world)
@@ -311,7 +311,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(m_weapon == null);
 
 			m_weapon = weapon;
-			weapon.Wearer = this;
+			weapon.Wielder = this;
 
 			this.World.AddChange(new WieldChange(this, weapon));
 		}
@@ -320,9 +320,9 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(weapon.IsWeapon);
 			Debug.Assert(m_weapon == weapon);
-			Debug.Assert(weapon.Wearer == this);
+			Debug.Assert(weapon.Wielder == this);
 
-			m_weapon.Wearer = null;
+			m_weapon.Wielder = null;
 			m_weapon = null;
 
 			this.World.AddChange(new WieldChange(this, null));
