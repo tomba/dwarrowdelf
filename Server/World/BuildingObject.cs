@@ -50,9 +50,9 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
+		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(baseData, visibility);
+			base.CollectObjectData(baseData, visibility);
 
 			var data = (BuildingData)baseData;
 
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Server
 		{
 			var data = new BuildingData();
 
-			SerializeTo(data, visibility);
+			CollectObjectData(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage(data));
 		}

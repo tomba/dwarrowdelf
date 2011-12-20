@@ -328,9 +328,9 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new WieldChange(this, null));
 		}
 
-		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
+		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(baseData, visibility);
+			base.CollectObjectData(baseData, visibility);
 
 			var data = (LivingData)baseData;
 
@@ -355,7 +355,7 @@ namespace Dwarrowdelf.Server
 		{
 			var data = new LivingData();
 
-			SerializeTo(data, visibility);
+			CollectObjectData(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage(data));
 
