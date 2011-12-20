@@ -93,6 +93,10 @@ namespace Dwarrowdelf.Server
 		}
 
 		public LivingObject Wearer { get; internal set; }
+		public LivingObject Wielder { get { return this.Wearer; } }
+
+		public bool IsWorn { get { return this.Wearer != null; } }
+		public bool IsWielded { get { return this.Wielder != null; } }
 
 		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
 		{

@@ -22,8 +22,6 @@ namespace MyArea
 			area.InitializeWorld(this.World);
 		}
 
-		Random m_random = new Random();
-
 		public override void SetupControllable(LivingObject living)
 		{
 			living.SetAI(new DwarfAI(living));
@@ -43,7 +41,7 @@ namespace MyArea
 				IntPoint3D p;
 				do
 				{
-					p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), 9);
+					p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), 9);
 				} while (!EnvironmentHelpers.CanEnter(env, p));
 
 				var l = CreateDwarf(i);
@@ -61,7 +59,7 @@ namespace MyArea
 		{
 			var builder = new LivingObjectBuilder(LivingID.Dwarf)
 			{
-				Color = (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1,
+				Color = (GameColor)Helpers.MyRandom.Next(GameColorRGB.NUMCOLORS - 1) + 1,
 				Gender = LivingGender.Male,
 			};
 
@@ -110,7 +108,7 @@ namespace MyArea
 
 			{
 				var materials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
-				var material = materials[m_random.Next(materials.Length)].ID;
+				var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
 
 				var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
 				var item = itemBuilder.Create(this.World);
@@ -118,44 +116,9 @@ namespace MyArea
 				item.MoveTo(dwarf);
 			}
 
-			{
-				var itemIDs = Items.GetItemInfos(ItemCategory.Weapon).ToArray();
-				var itemID = itemIDs[m_random.Next(itemIDs.Length)].ID;
-				AddWeapon(dwarf, itemID);
-			}
-
-			AddArmor(dwarf, ItemID.ChainMail);
-			AddArmor(dwarf, ItemID.Gloves);
-			AddArmor(dwarf, ItemID.Boots);
-			AddArmor(dwarf, ItemID.Skullcap);
+			Helpers.AddBattleGear(dwarf);
 
 			return dwarf;
-		}
-
-		void AddArmor(LivingObject dwarf, ItemID itemID)
-		{
-			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-			var material = materials[m_random.Next(materials.Length)].ID;
-
-			var itemBuilder = new ItemObjectBuilder(itemID, material);
-			var item = itemBuilder.Create(this.World);
-
-			item.MoveTo(dwarf);
-
-			dwarf.WearArmor(item);
-		}
-
-		void AddWeapon(LivingObject dwarf, ItemID itemID)
-		{
-			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-			var material = materials[m_random.Next(materials.Length)].ID;
-
-			var itemBuilder = new ItemObjectBuilder(itemID, material);
-			var item = itemBuilder.Create(this.World);
-
-			item.MoveTo(dwarf);
-
-			dwarf.WieldWeapon(item);
 		}
 	}
 }

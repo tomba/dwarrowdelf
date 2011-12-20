@@ -14,6 +14,7 @@ namespace Dwarrowdelf
 		Sheep,
 		Wolf,
 		Dragon,
+		Orc,
 	}
 
 	[Flags]

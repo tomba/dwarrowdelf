@@ -431,8 +431,17 @@ namespace Dwarrowdelf.Server
 				Trace.TraceWarning("Failed to move corpse");
 
 			// make a copy, as the collection will be modified
-			foreach (var item in this.Inventory.ToList())
-				item.MoveTo(this.Environment, this.Location);
+			foreach (ItemObject item in this.Inventory.ToList())
+			{
+				if (item.IsArmor && item.IsWorn)
+					RemoveArmor(item);
+				else if (item.IsWeapon && item.IsWielded)
+					RemoveWeapon(item);
+
+				ok = item.MoveTo(this.Environment, this.Location);
+				if (!ok)
+					throw new Exception();
+			}
 
 			this.Destruct();
 		}

@@ -50,6 +50,7 @@ namespace Dwarrowdelf.Client
 		Sheep,
 		Wolf,
 		Dragon,
+		Orc,
 
 		/* items */
 		UncutGem,

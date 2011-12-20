@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />
     <Compile Include="MyEngine.cs" />

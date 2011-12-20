@@ -29,12 +29,7 @@ namespace Dwarrowdelf.Server
 		public override void Destruct()
 		{
 			if (this.Inventory.Count > 0)
-			{
-				Trace.TraceWarning("{0} contains items when being destructed", this);
-
-				foreach (var ob in this.Inventory.ToArray())
-					ob.Destruct();
-			}
+				throw new Exception("contains items when being destructed");
 
 			base.Destruct();
 		}

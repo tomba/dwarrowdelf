@@ -16,6 +16,7 @@ namespace MyArea
 	{
 		const int AREA_SIZE = 7;
 		const int NUM_SHEEP = 3;
+		const int NUM_ORCS = 3;
 
 		Environment m_map1;
 
@@ -23,8 +24,6 @@ namespace MyArea
 		{
 			m_map1 = CreateMap1(world);
 		}
-
-		Random m_random = new Random(1234);
 
 		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
 		{
@@ -36,7 +35,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+				p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), zLevel);
 			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
@@ -52,7 +51,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), m_random.Next(env.Depth));
+				p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), Helpers.MyRandom.Next(env.Depth));
 			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
 
 			return p;
@@ -112,7 +111,7 @@ namespace MyArea
 			for (int i = 0; i < 30; ++i)
 			{
 				var p = GetRandomSubterraneanLocation(envBuilder);
-				var idx = m_random.Next(oreMaterials.Length);
+				var idx = Helpers.MyRandom.Next(oreMaterials.Length);
 				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
@@ -143,25 +142,11 @@ namespace MyArea
 
 
 
-			for (int i = 0; i < 0; ++i)
-			{
-				// Add a monster
-				var builder = new LivingObjectBuilder(LivingID.Sheep)
-				{
-					Color = GetRandomColor(),
-				};
-				//monster.SetAI(new MonsterActor(monster));
-				var monster = builder.Create(world);
-
-				if (monster.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel)) == false)
-					throw new Exception();
-			}
-
 			// Add items
 			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
-				var material = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
+				var material = gemMaterials[Helpers.MyRandom.Next(gemMaterials.Length)].ID;
 
 				var builder = new ItemObjectBuilder(ItemID.Gem, material);
 				var item = builder.Create(world);
@@ -172,7 +157,7 @@ namespace MyArea
 			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
 			for (int i = 0; i < 6; ++i)
 			{
-				var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
+				var material = rockMaterials[Helpers.MyRandom.Next(rockMaterials.Length)].ID;
 				var builder = new ItemObjectBuilder(ItemID.Rock, material);
 				var item = builder.Create(world);
 
@@ -226,39 +211,42 @@ namespace MyArea
 				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, 9));
 			}
 
+			AddMonsters(env, surfaceLevel);
 
-			/* Add Monsters */
+			return env;
+		}
+
+		void AddMonsters(Environment env, int surfaceLevel)
+		{
+			var world = env.World;
 
 			for (int i = 0; i < NUM_SHEEP; ++i)
 			{
-				var sheepBuilder = new LivingObjectBuilder(LivingID.Sheep)
+				var livingBuilder = new LivingObjectBuilder(LivingID.Sheep)
 				{
 					Color = this.GetRandomColor(),
 				};
-				var sheep = sheepBuilder.Create(world);
-				sheep.SetAI(new Dwarrowdelf.AI.HerbivoreAI(sheep));
 
-				for (int j = 0; j < i; ++j)
-				{
-					var material = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-					var builder = new ItemObjectBuilder(ItemID.Rock, material);
-					var item = builder.Create(world);
+				var living = livingBuilder.Create(world);
+				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
 
-					for (int t = 0; t < j; ++t)
-					{
-						var material2 = rockMaterials[m_random.Next(rockMaterials.Length)].ID;
-						builder = new ItemObjectBuilder(ItemID.Rock, material2);
-						var item2 = builder.Create(world);
-						item2.MoveTo(item);
-					}
-
-					item.MoveTo(sheep);
-				}
-
-				sheep.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
 
-			return env;
+			for (int i = 0; i < NUM_ORCS; ++i)
+			{
+				var livingBuilder = new LivingObjectBuilder(LivingID.Orc)
+				{
+					Color = this.GetRandomColor(),
+				};
+
+				var living = livingBuilder.Create(world);
+				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
+
+				//Helpers.AddBattleGear(living);
+
+				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+			}
 		}
 
 		static int FindSurfaceLevel(EnvironmentObjectBuilder env)
@@ -328,12 +316,12 @@ namespace MyArea
 			var locations = env.Bounds.Range()
 				.Where(p => env.GetTerrainID(p) == TerrainID.NaturalFloor || env.GetTerrainID(p).IsSlope())
 				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
-				.Where(p => m_random.Next() % 8 == 0);
+				.Where(p => Helpers.MyRandom.Next() % 8 == 0);
 
 			foreach (var p in locations)
 			{
-				var material = materials[m_random.Next(materials.Length)].ID;
-				env.SetInterior(p, m_random.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
+				var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
+				env.SetInterior(p, Helpers.MyRandom.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
 			}
 		}
 
@@ -376,7 +364,7 @@ namespace MyArea
 
 		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID)
 		{
-			CreateOreCluster(env, p, oreMaterialID, m_random.Next(6) + 1);
+			CreateOreCluster(env, p, oreMaterialID, Helpers.MyRandom.Next(6) + 1);
 		}
 
 		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
@@ -401,7 +389,7 @@ namespace MyArea
 
 		GameColor GetRandomColor()
 		{
-			return (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1;
+			return (GameColor)Helpers.MyRandom.Next(GameColorRGB.NUMCOLORS - 1) + 1;
 		}
 
 
