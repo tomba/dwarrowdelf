@@ -11,6 +11,19 @@ namespace MyArea
 	{
 		public readonly static Random MyRandom = new Random(123);
 
+		public static void AddGem(LivingObject living)
+		{
+			var world = living.World;
+
+			var materials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
+			var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
+
+			var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
+			var item = itemBuilder.Create(world);
+
+			item.MoveTo(living);
+		}
+
 		public static void AddBattleGear(LivingObject living)
 		{
 			Helpers.AddRandomWeapon(living);

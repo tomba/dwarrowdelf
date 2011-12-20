@@ -105,17 +105,7 @@ namespace MyArea
 
 			dwarf.SetAI(new DwarfAI(dwarf));
 
-
-			{
-				var materials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
-				var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
-
-				var itemBuilder = new ItemObjectBuilder(ItemID.Gem, material);
-				var item = itemBuilder.Create(this.World);
-
-				item.MoveTo(dwarf);
-			}
-
+			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);
 
 			return dwarf;
