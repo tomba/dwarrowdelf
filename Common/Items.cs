@@ -36,10 +36,13 @@ namespace Dwarrowdelf
 		PlateMail,
 
 		Skullcap,
+		Helmet,
 
 		Gloves,
+		Gauntlets,
 
 		Boots,
+		Sandals,
 
 		Contraption,
 	}

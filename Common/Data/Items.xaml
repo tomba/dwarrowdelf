@@ -69,13 +69,31 @@
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
+	<ItemInfo ID="Helmet" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="5" Slot="Head" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+	
 	<ItemInfo ID="Gloves" Category="Armor">
 		<ItemInfo.ArmorInfo>
 			<ArmorInfo AC="1" Slot="Hands" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
+	<ItemInfo ID="Gauntlets" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="2" Slot="Hands" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
 	<ItemInfo ID="Boots" Category="Armor">
+		<ItemInfo.ArmorInfo>
+			<ArmorInfo AC="2" Slot="Feet" />
+		</ItemInfo.ArmorInfo>
+	</ItemInfo>
+
+	<ItemInfo ID="Sandals" Category="Armor">
 		<ItemInfo.ArmorInfo>
 			<ArmorInfo AC="1" Slot="Feet" />
 		</ItemInfo.ArmorInfo>
