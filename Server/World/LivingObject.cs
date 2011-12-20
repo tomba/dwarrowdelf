@@ -348,10 +348,9 @@ namespace Dwarrowdelf.Server
 				data.ActionUserID = this.ActionUserID;
 
 				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
-
-				data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>((ArmorSlot)kvp.Key, kvp.Value.ObjectID)).ToArray();
 			}
 
+			data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>((ArmorSlot)kvp.Key, kvp.Value.ObjectID)).ToArray();
 			data.WeaponID = m_weapon != null ? m_weapon.ObjectID : ObjectID.NullObjectID;
 		}
 

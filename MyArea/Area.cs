@@ -243,7 +243,8 @@ namespace MyArea
 				var living = livingBuilder.Create(world);
 				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
 
-				//Helpers.AddBattleGear(living);
+				Helpers.AddGem(living);
+				Helpers.AddBattleGear(living);
 
 				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}

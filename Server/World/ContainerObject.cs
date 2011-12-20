@@ -37,11 +37,14 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			if ((visibility & ObjectVisibility.Private) != 0)
-			{
-				foreach (var o in this.Inventory)
-					o.SendTo(player, visibility);
-			}
+			var items = this.Inventory.AsEnumerable();
+
+			// filter non-worn and non-wielded if not private visibility
+			if ((visibility & ObjectVisibility.Private) == 0)
+				items = items.OfType<ItemObject>().Where(o => o.IsWorn || o.IsWielded);
+
+			foreach (var o in items)
+				o.SendTo(player, visibility);
 		}
 
 		internal void RemoveChild(MovableObject ob)
