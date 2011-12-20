@@ -42,7 +42,7 @@
 	<CharSymbol ID="SlopeDownWest" Outline="False" Char="▼" />
 	<CharSymbol ID="SlopeDownNorthWest" Outline="False" Char="▼" />
 
-	<CharSymbol ID="Player" Char="☺" X="20" Y="40" W="60" H="60"/>
+	<CharSymbol ID="Player" Char="☺" />
 	<CharSymbol ID="Sheep" Char="b" X="20" Y="40" W="60" H="60"/>
 	<CharSymbol ID="Wolf" Char="w" X="20" Y="40" W="60" H="60"/>
 	<CharSymbol ID="Dragon" Char="D" />
