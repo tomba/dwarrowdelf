@@ -47,10 +47,10 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class GameObjectCollection : IdentifiableCollection<MovableObject> { }
-	class ReadOnlyGameObjectCollection : ReadOnlyIdentifiableCollection<MovableObject>
+	class MovableObjectCollection : IdentifiableCollection<MovableObject> { }
+	class ReadOnlyMovableObjectCollection : ReadOnlyIdentifiableCollection<MovableObject>
 	{
-		public ReadOnlyGameObjectCollection(GameObjectCollection collection)
+		public ReadOnlyMovableObjectCollection(MovableObjectCollection collection)
 			: base(collection)
 		{
 		}

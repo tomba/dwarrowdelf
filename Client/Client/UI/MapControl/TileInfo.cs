@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
 			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 
-			this.Objects = new GameObjectCollection();
+			this.Objects = new MovableObjectCollection();
 		}
 
 		void OnEnvironmentChanged(EnvironmentObject env)
@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public EnvironmentObject Environment { get; private set; }
 		public IntPoint3D Location { get; private set; }
-		public GameObjectCollection Objects { get; private set; }
+		public MovableObjectCollection Objects { get; private set; }
 
 		public InteriorInfo Interior
 		{

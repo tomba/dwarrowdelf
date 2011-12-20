@@ -12,11 +12,11 @@ namespace Dwarrowdelf.Client.UI
 		EnvironmentObject m_env;
 		MapSelection m_selection;
 
-		GameObjectCollection m_objects;
+		MovableObjectCollection m_objects;
 
 		public TileAreaInfo()
 		{
-			m_objects = new GameObjectCollection();
+			m_objects = new MovableObjectCollection();
 		}
 
 		void NotifyTileChanges()

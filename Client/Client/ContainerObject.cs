@@ -7,14 +7,14 @@ namespace Dwarrowdelf.Client
 {
 	abstract class ContainerObject : BaseObject, IContainerObject
 	{
-		GameObjectCollection m_inventory;
-		public ReadOnlyGameObjectCollection Inventory { get; private set; }
+		MovableObjectCollection m_inventory;
+		public ReadOnlyMovableObjectCollection Inventory { get; private set; }
 
 		public ContainerObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
-			m_inventory = new GameObjectCollection();
-			this.Inventory = new ReadOnlyGameObjectCollection(m_inventory);
+			m_inventory = new MovableObjectCollection();
+			this.Inventory = new ReadOnlyMovableObjectCollection(m_inventory);
 		}
 
 		protected virtual void ChildAdded(MovableObject child) { }
