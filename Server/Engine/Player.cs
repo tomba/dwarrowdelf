@@ -647,7 +647,9 @@ namespace Dwarrowdelf.Server
 				return ObjectVisibility.None;
 		}
 
-		/* does the player see location p in object ob */
+		/// <summary>
+		/// Does the player see location p in object ob
+		/// </summary>
 		public bool Sees(IBaseObject ob, IntPoint3D p)
 		{
 			if (m_seeAll)
@@ -768,7 +770,8 @@ namespace Dwarrowdelf.Server
 
 		public override void HandleWorldChange(Change change)
 		{
-			// XXX if the created object cannot be moved (i.e. not ServerGameObject), we need to send the object data manually here
+			// XXX if the created object cannot be moved (i.e. not ServerGameObject), we need to send the object data manually here.
+			// f.ex. buildings
 			var occ = change as ObjectCreatedChange;
 			if (occ != null)
 			{
@@ -783,16 +786,44 @@ namespace Dwarrowdelf.Server
 			if (!CanSeeChange(change, m_player.Controllables))
 				return;
 
-			// We don't collect newly visible terrains/objects on AllVisible maps.
-			// However, we still need to tell about newly created objects that come
-			// to AllVisible maps.
-			var c = change as ObjectMoveChange;
-			if (c != null && c.Source != c.Destination && c.Destination is EnvironmentObject &&
-				(((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 			{
-				var newObject = (MovableObject)c.Object;
-				var vis = m_player.GetObjectVisibility(newObject);
-				newObject.SendTo(m_player, vis);
+				// We don't collect newly visible terrains/objects on AllVisible maps.
+				// However, we still need to tell about newly created objects that come
+				// to AllVisible maps.
+				var c = change as ObjectMoveChange;
+				if (c != null && c.Source != c.Destination && c.Destination is EnvironmentObject &&
+					(((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
+				{
+					var newObject = (MovableObject)c.Object;
+					var vis = m_player.GetObjectVisibility(newObject);
+					newObject.SendTo(m_player, vis);
+				}
+			}
+
+			// When an armor is worn by a non-controllable, the armor isn't known to the client. Thus we need to send the data of the armor here.
+			if (change is WearChange)
+			{
+				var c = (WearChange)change;
+				var l = (LivingObject)c.Object;
+
+				if (m_player.IsController(c.Object) == false)
+				{
+					var item = (ItemObject)c.Wearable;
+					item.SendTo(m_player, ObjectVisibility.Public);
+				}
+			}
+
+			// The same for weapons
+			if (change is WieldChange)
+			{
+				var c = (WieldChange)change;
+				var l = (LivingObject)c.Object;
+
+				if (m_player.IsController(c.Object) == false)
+				{
+					var item = (ItemObject)c.Weapon;
+					item.SendTo(m_player, ObjectVisibility.Public);
+				}
 			}
 
 			var changeMsg = new ChangeMessage { Change = change };
