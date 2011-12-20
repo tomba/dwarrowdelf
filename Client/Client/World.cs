@@ -75,18 +75,47 @@ namespace Dwarrowdelf.Client
 
 		public event Action TickStarting;
 
-		internal void AddObject(BaseObject ob)
+		BaseObject ConstructObject(ObjectID objectID)
 		{
-			if (ob.ObjectID == ObjectID.NullObjectID)
-				throw new ArgumentException();
+			switch (objectID.ObjectType)
+			{
+				case ObjectType.Environment:
+					return new EnvironmentObject(this, objectID);
 
-			m_objects.Add(ob);
+				case ObjectType.Living:
+					return new LivingObject(this, objectID);
+
+				case ObjectType.Item:
+					return new ItemObject(this, objectID);
+
+				case ObjectType.Building:
+					return new BuildingObject(this, objectID);
+
+				default:
+					throw new Exception();
+			}
 		}
 
-		internal void RemoveObject(BaseObject ob)
+		public BaseObject CreateObject(ObjectID objectID)
 		{
-			if (ob.ObjectID == ObjectID.NullObjectID)
+			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
 				throw new ArgumentException();
+
+			if (m_objects.Contains(objectID))
+				throw new Exception();
+
+			var ob = ConstructObject(objectID);
+
+			m_objects.Add(ob);
+
+			ob.Destructed += ObjectDestructed;
+
+			return ob;
+		}
+
+		void ObjectDestructed(BaseObject ob)
+		{
+			ob.Destructed -= ObjectDestructed;
 
 			if (m_objects.Remove(ob) == false)
 				throw new Exception();
@@ -94,7 +123,7 @@ namespace Dwarrowdelf.Client
 
 		public BaseObject FindObject(ObjectID objectID)
 		{
-			if (objectID == ObjectID.NullObjectID)
+			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
 				throw new ArgumentException();
 
 			if (m_objects.Contains(objectID))
@@ -115,29 +144,11 @@ namespace Dwarrowdelf.Client
 
 		public BaseObject GetObject(ObjectID objectID)
 		{
-			if (objectID == ObjectID.NullObjectID || objectID == ObjectID.AnyObjectID)
-				throw new ArgumentException();
+			var ob = FindObject(objectID);
+			if (ob != null)
+				return ob;
 
-			if (m_objects.Contains(objectID))
-				return m_objects[objectID];
-
-			switch (objectID.ObjectType)
-			{
-				case ObjectType.Environment:
-					return new EnvironmentObject(this, objectID);
-
-				case ObjectType.Living:
-					return new LivingObject(this, objectID);
-
-				case ObjectType.Item:
-					return new ItemObject(this, objectID);
-
-				case ObjectType.Building:
-					return new BuildingObject(this, objectID);
-
-				default:
-					throw new Exception();
-			}
+			return CreateObject(objectID);
 		}
 
 		public T GetObject<T>(ObjectID objectID) where T : BaseObject

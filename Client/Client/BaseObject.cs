@@ -29,7 +29,6 @@ namespace Dwarrowdelf.Client
 		{
 			this.ObjectID = objectID;
 			this.World = world;
-			this.World.AddObject(this);
 		}
 
 		public virtual void Destruct()
@@ -42,8 +41,6 @@ namespace Dwarrowdelf.Client
 
 			if (this.Destructed != null)
 				this.Destructed(this);
-
-			this.World.RemoveObject(this);
 		}
 
 		public virtual void Deserialize(BaseGameObjectData data)

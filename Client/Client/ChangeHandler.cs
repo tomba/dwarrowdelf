@@ -44,8 +44,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectCreatedChange change)
 		{
-			// just create the object
-			var ob = m_world.GetObject(change.ObjectID);
+			var ob = m_world.CreateObject(change.ObjectID);
 		}
 
 		// XXX check if this is needed
