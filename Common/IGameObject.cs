@@ -38,7 +38,7 @@ namespace Dwarrowdelf
 
 	public interface IContainerObject : IBaseObject
 	{
-
+		IEnumerable<IMovableObject> Inventory { get; }
 	}
 
 	public interface IEnvironmentObject : IContainerObject, AStar.IAStarEnvironment
@@ -67,7 +67,6 @@ namespace Dwarrowdelf
 		bool GetHidden(IntPoint3D l);
 
 		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
-		IEnumerable<IMovableObject> Objects();
 	}
 
 	public interface IMovableObject : IContainerObject

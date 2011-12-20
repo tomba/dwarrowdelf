@@ -447,13 +447,6 @@ namespace Dwarrowdelf.Server
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<IMovableObject> Objects()
-		{
-			for (int z = 0; z < this.Depth; ++z)
-				foreach (var ob in m_contentArray[z].AsEnumerable())
-					yield return ob;
-		}
-
 		protected override void OnChildAdded(MovableObject child)
 		{
 			var list = m_contentArray[child.Z];
@@ -619,13 +612,10 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			for (int z = bounds.Z1; z < bounds.Z2; ++z)
+			foreach (var ob in this.Inventory)
 			{
-				foreach (var o in m_contentArray[z])
-				{
-					var vis = player.GetObjectVisibility(o);
-					o.SendTo(player, vis);
-				}
+				var vis = player.GetObjectVisibility(ob);
+				ob.SendTo(player, vis);
 			}
 
 			foreach (var o in m_largeObjectSet)

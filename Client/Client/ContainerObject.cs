@@ -9,6 +9,7 @@ namespace Dwarrowdelf.Client
 	{
 		MovableObjectCollection m_inventory;
 		public ReadOnlyMovableObjectCollection Inventory { get; private set; }
+		IEnumerable<IMovableObject> IContainerObject.Inventory { get { return this.Inventory; } }
 
 		public ContainerObject(World world, ObjectID objectID)
 			: base(world, objectID)

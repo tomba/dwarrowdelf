@@ -284,11 +284,6 @@ namespace Dwarrowdelf.Client
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}
 
-		public IEnumerable<IMovableObject> Objects()
-		{
-			return m_objectMap.SelectMany(kvp => kvp.Value);
-		}
-
 		public IList<MovableObject> GetContents(IntPoint3D l)
 		{
 			List<MovableObject> obs;

@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Inventory")]
 		KeyedObjectCollection m_children;
 		public ReadOnlyCollection<MovableObject> Inventory { get; private set; }
+		IEnumerable<IMovableObject> IContainerObject.Inventory { get { return this.Inventory; } }
 
 		protected ContainerObject(ObjectType objectType)
 			: base(objectType)
