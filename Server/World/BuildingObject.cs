@@ -50,15 +50,12 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
+		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, visibility);
+			base.SerializeTo(baseData, visibility);
 
-			SerializeToInternal((BuildingData)data, visibility);
-		}
+			var data = (BuildingData)baseData;
 
-		void SerializeToInternal(BuildingData data, ObjectVisibility visibility)
-		{
 			data.ID = this.BuildingInfo.ID;
 			data.Area = this.Area;
 			data.Environment = this.Environment.ObjectID;

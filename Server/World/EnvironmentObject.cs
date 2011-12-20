@@ -526,15 +526,22 @@ namespace Dwarrowdelf.Server
 			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
 		}
 
+		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
+		{
+			base.SerializeTo(baseData, visibility);
+
+			var data = (MapData)baseData;
+
+			data.VisibilityMode = this.VisibilityMode;
+			data.Bounds = this.Bounds;
+			data.HomeLocation = this.HomeLocation;
+		}
+
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			player.Send(new Messages.ObjectDataMessage(new MapData()
-			{
-				ObjectID = this.ObjectID,
-				VisibilityMode = this.VisibilityMode,
-				Bounds = this.Bounds,
-				HomeLocation = this.HomeLocation,
-			}));
+			var data = new MapData();
+			SerializeTo(data, visibility);
+			player.Send(new Messages.ObjectDataMessage(data));
 
 			SendMapTiles(player);
 

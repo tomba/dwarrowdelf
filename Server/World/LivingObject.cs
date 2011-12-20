@@ -328,15 +328,12 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new WieldChange(this, null));
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
+		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, visibility);
+			base.SerializeTo(baseData, visibility);
 
-			SerializeToInternal((LivingData)data, visibility);
-		}
+			var data = (LivingData)baseData;
 
-		void SerializeToInternal(LivingData data, ObjectVisibility visibility)
-		{
 			data.LivingID = this.LivingID;
 
 			if ((visibility & ObjectVisibility.Private) != 0)

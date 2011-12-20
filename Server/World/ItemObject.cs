@@ -98,15 +98,12 @@ namespace Dwarrowdelf.Server
 		public bool IsWorn { get { return this.Wearer != null; } }
 		public bool IsWielded { get { return this.Wielder != null; } }
 
-		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
+		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, visibility);
+			base.SerializeTo(baseData, visibility);
 
-			SerializeToInternal((ItemData)data, visibility);
-		}
+			var data = (ItemData)baseData;
 
-		void SerializeToInternal(ItemData data, ObjectVisibility visibility)
-		{
 			data.ItemID = this.ItemID;
 		}
 

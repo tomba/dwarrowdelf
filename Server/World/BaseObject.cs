@@ -79,10 +79,10 @@ namespace Dwarrowdelf.Server
 
 		public abstract void SendTo(IPlayer player, ObjectVisibility visibility);
 
-		protected virtual void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
+		protected virtual void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			data.ObjectID = this.ObjectID;
-			data.Properties = SerializeProperties().
+			baseData.ObjectID = this.ObjectID;
+			baseData.Properties = SerializeProperties().
 				Where(kvp => (PropertyVisibilities.GetPropertyVisibility(kvp.Key) & visibility) != 0).
 				Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).
 				ToArray();

@@ -44,15 +44,12 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		protected override void SerializeTo(BaseGameObjectData data, ObjectVisibility visibility)
+		protected override void SerializeTo(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
-			base.SerializeTo(data, visibility);
+			base.SerializeTo(baseData, visibility);
 
-			SerializeToInternal((LocatableGameObjectData)data, visibility);
-		}
+			var data = (LocatableGameObjectData)baseData;
 
-		void SerializeToInternal(LocatableGameObjectData data, ObjectVisibility visibility)
-		{
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 		}
