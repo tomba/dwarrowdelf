@@ -528,8 +528,6 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			var visionTracker = player.GetVisionTracker(this);
-
 			player.Send(new Messages.ObjectDataMessage(new MapData()
 			{
 				ObjectID = this.ObjectID,
@@ -537,6 +535,24 @@ namespace Dwarrowdelf.Server
 				Bounds = this.Bounds,
 				HomeLocation = this.HomeLocation,
 			}));
+
+			SendMapTiles(player);
+
+			foreach (var ob in this.Inventory)
+			{
+				var vis = player.GetObjectVisibility(ob);
+				ob.SendTo(player, vis);
+			}
+
+			foreach (var o in m_largeObjectSet)
+			{
+				o.SendTo(player, ObjectVisibility.All);
+			}
+		}
+
+		void SendMapTiles(IPlayer player)
+		{
+			var visionTracker = player.GetVisionTracker(this);
 
 			var bounds = this.Bounds;
 
@@ -610,17 +626,6 @@ namespace Dwarrowdelf.Server
 						player.Send(msg);
 					}
 				}
-			}
-
-			foreach (var ob in this.Inventory)
-			{
-				var vis = player.GetObjectVisibility(ob);
-				ob.SendTo(player, vis);
-			}
-
-			foreach (var o in m_largeObjectSet)
-			{
-				o.SendTo(player, ObjectVisibility.All);
 			}
 		}
 
