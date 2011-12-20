@@ -26,6 +26,19 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
+		public override void Deserialize(BaseGameObjectData _data)
+		{
+			var data = (MovableObjectData)_data;
+
+			base.Deserialize(_data);
+
+			ContainerObject env = null;
+			if (data.Environment != ObjectID.NullObjectID)
+				env = this.World.FindObject<ContainerObject>(data.Environment);
+
+			MoveTo(env, data.Location);
+		}
+
 		public void MoveTo(ContainerObject parent, IntPoint3D location)
 		{
 			var oldParent = this.Parent;

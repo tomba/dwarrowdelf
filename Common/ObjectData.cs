@@ -27,7 +27,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public abstract class LocatableGameObjectData : GameObjectData
+	public abstract class MovableObjectData : GameObjectData
 	{
 		public IntPoint3D Location { get; set; }
 		public ObjectID Environment { get; set; }
@@ -35,7 +35,7 @@ namespace Dwarrowdelf
 
 	/* Item in inventory or floor */
 	[Serializable]
-	public class ItemData : LocatableGameObjectData
+	public class ItemData : MovableObjectData
 	{
 		public ItemID ItemID { get; set; }
 
@@ -46,7 +46,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class LivingData : LocatableGameObjectData
+	public class LivingData : MovableObjectData
 	{
 		public LivingID LivingID { get; set; }
 		public GameAction CurrentAction { get; set; }

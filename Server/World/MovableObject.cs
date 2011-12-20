@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Server
 		{
 			base.CollectObjectData(baseData, visibility);
 
-			var data = (LocatableGameObjectData)baseData;
+			var data = (MovableObjectData)baseData;
 
 			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
