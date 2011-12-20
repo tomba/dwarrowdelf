@@ -95,6 +95,9 @@ namespace Dwarrowdelf.Server
 		public LivingObject Wearer { get; internal set; }
 		public LivingObject Wielder { get { return this.Wearer; } }
 
+		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
+		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
+
 		public bool IsWorn { get { return this.Wearer != null; } }
 		public bool IsWielded { get { return this.Wielder != null; } }
 

@@ -110,6 +110,15 @@ namespace Dwarrowdelf
 		bool IsArmor { get; }
 		bool IsWeapon { get; }
 
+		ArmorInfo ArmorInfo { get; }
+		WeaponInfo WeaponInfo { get; }
+
+		ILivingObject Wearer { get; }
+		ILivingObject Wielder { get; }
+
+		bool IsWorn { get; }
+		bool IsWielded { get; }
+
 		int NutritionalValue { get; }
 		int RefreshmentValue { get; }
 	}

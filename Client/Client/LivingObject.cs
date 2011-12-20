@@ -59,6 +59,8 @@ namespace Dwarrowdelf.Client
 			{
 				var l = data.ArmorSlots.Select(t => new Tuple<ArmorSlot, ItemObject>(t.Item1, this.World.FindOrCreateObject<ItemObject>(t.Item2)));
 				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>(l);
+				foreach (var tuple in m_armorSlots)
+					tuple.Item2.Wearer = this;
 			}
 			else
 			{
@@ -68,7 +70,10 @@ namespace Dwarrowdelf.Client
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 
 			if (data.WeaponID != ObjectID.NullObjectID)
+			{
 				this.Weapon = this.World.FindOrCreateObject<ItemObject>(data.WeaponID);
+				this.Weapon.Wielder = this;
+			}
 		}
 
 		public LivingID LivingID { get { return this.LivingInfo.ID; } }
@@ -556,6 +561,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_armorSlots.Add(new Tuple<ArmorSlot, ItemObject>(slot, wearable));
+			wearable.Wearer = this;
 		}
 
 		public void RemoveArmor(ArmorSlot slot)
@@ -564,6 +570,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (m_armorSlots[i].Item1 == slot)
 				{
+					m_armorSlots[i].Item2.Wearer = null;
 					m_armorSlots.RemoveAt(i);
 					return;
 				}
@@ -577,11 +584,13 @@ namespace Dwarrowdelf.Client
 		public void WieldWeapon(ItemObject weapon)
 		{
 			this.Weapon = weapon;
+			weapon.Wielder = this;
 			Notify("Weapon");
 		}
 
 		public void RemoveWeapon()
 		{
+			this.Weapon.Wielder = null;
 			this.Weapon = null;
 			Notify("Weapon");
 		}
