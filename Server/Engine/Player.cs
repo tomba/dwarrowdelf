@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Server
 		List<LivingObject> m_controllables;
 		public ReadOnlyCollection<LivingObject> Controllables { get; private set; }
 
-		public bool IsController(IBaseObject living) { return this.Controllables.Contains(living); }
+		public bool IsController(BaseObject living) { return this.Controllables.Contains(living); }
 
 		IPRunner m_ipRunner;
 
@@ -558,7 +558,7 @@ namespace Dwarrowdelf.Server
 			{
 				var r = (LivingReport)report;
 
-				if (Sees(r.Living.Environment, r.Living.Location))
+				if (Sees((EnvironmentObject)r.Living.Environment, r.Living.Location))
 					Send(new ReportMessage() { Report = report });
 			}
 			else
@@ -591,7 +591,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void SendProceedTurnRequest(ILivingObject living)
+		void SendProceedTurnRequest(LivingObject living)
 		{
 			ObjectID id;
 
@@ -618,7 +618,7 @@ namespace Dwarrowdelf.Server
 
 		Dictionary<EnvironmentObject, VisionTrackerBase> m_visionTrackers = new Dictionary<EnvironmentObject, VisionTrackerBase>();
 
-		public ObjectVisibility GetObjectVisibility(IBaseObject ob)
+		public ObjectVisibility GetObjectVisibility(BaseObject ob)
 		{
 			var mo = ob as MovableObject;
 
@@ -650,7 +650,7 @@ namespace Dwarrowdelf.Server
 		/// <summary>
 		/// Does the player see location p in object ob
 		/// </summary>
-		public bool Sees(IBaseObject ob, IntPoint3D p)
+		public bool Sees(BaseObject ob, IntPoint3D p)
 		{
 			if (m_seeAll)
 				return true;
@@ -675,9 +675,9 @@ namespace Dwarrowdelf.Server
 			return false;
 		}
 
-		public IVisionTracker GetVisionTracker(IEnvironmentObject env)
+		public IVisionTracker GetVisionTracker(EnvironmentObject env)
 		{
-			return GetVisionTrackerInternal((EnvironmentObject)env);
+			return GetVisionTrackerInternal(env);
 		}
 
 		VisionTrackerBase GetVisionTrackerInternal(EnvironmentObject env)
@@ -754,7 +754,7 @@ namespace Dwarrowdelf.Server
 			if (change is ObjectCreatedChange)
 			{
 				var c = (ObjectCreatedChange)change;
-				var newObject = (BaseObject)c.Object;
+				var newObject = c.Object;
 				newObject.SendTo(m_player, ObjectVisibility.All);
 			}
 		}
@@ -777,8 +777,7 @@ namespace Dwarrowdelf.Server
 			{
 				if (!(occ.Object is MovableObject))
 				{
-					var newObject = (BaseObject)occ.Object;
-					newObject.SendTo(m_player, ObjectVisibility.All);
+					occ.Object.SendTo(m_player, ObjectVisibility.All);
 				}
 			}
 
@@ -794,7 +793,7 @@ namespace Dwarrowdelf.Server
 				if (c != null && c.Source != c.Destination && c.Destination is EnvironmentObject &&
 					(((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
 				{
-					var newObject = (MovableObject)c.Object;
+					var newObject = c.Object;
 					var vis = m_player.GetObjectVisibility(newObject);
 					newObject.SendTo(m_player, vis);
 				}
@@ -808,8 +807,7 @@ namespace Dwarrowdelf.Server
 
 				if (m_player.IsController(c.Object) == false)
 				{
-					var item = (ItemObject)c.Wearable;
-					item.SendTo(m_player, ObjectVisibility.Public);
+					c.Wearable.SendTo(m_player, ObjectVisibility.Public);
 				}
 			}
 
@@ -821,8 +819,7 @@ namespace Dwarrowdelf.Server
 
 				if (m_player.IsController(c.Object) == false)
 				{
-					var item = (ItemObject)c.Weapon;
-					item.SendTo(m_player, ObjectVisibility.Public);
+					c.Weapon.SendTo(m_player, ObjectVisibility.Public);
 				}
 			}
 
@@ -878,7 +875,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				// XXX
-				var env = ((IMovableObject)c.Object).Parent;
+				var env = ((MovableObject)c.Object).Parent;
 
 				if (m_player.Sees(env, c.SourceLocation))
 					return true;

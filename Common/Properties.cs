@@ -44,6 +44,16 @@ namespace Dwarrowdelf
 		RefreshmentValue,
 	}
 
+	[Flags]
+	public enum ObjectVisibility
+	{
+		None = 0,
+		Private = 1 << 0,
+		Public = 1 << 1,
+		Debug = 2 << 1,
+		All = Private | Public | Debug,
+	}
+
 	public static class PropertyVisibilities
 	{
 		static ObjectVisibility[] s_visibilityArray;
@@ -92,8 +102,8 @@ namespace Dwarrowdelf
 				s_visibilityArray[(int)kvp.Key] = kvp.Value;
 
 			for (int i = 1; i < s_visibilityArray.Length; ++i)
-					if (s_visibilityArray[i] == ObjectVisibility.None)
-						throw new Exception("missing visibility for " + (PropertyID)i);
+				if (s_visibilityArray[i] == ObjectVisibility.None)
+					throw new Exception("missing visibility for " + (PropertyID)i);
 		}
 
 		// XXX Server's living has own checks for visibility

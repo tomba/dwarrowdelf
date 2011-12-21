@@ -52,9 +52,9 @@ namespace Dwarrowdelf.Server
 
 	public class TurnStartSequentialChange : Change
 	{
-		public ILivingObject Living { get; private set; }
+		public LivingObject Living { get; private set; }
 
-		public TurnStartSequentialChange(ILivingObject living)
+		public TurnStartSequentialChange(LivingObject living)
 		{
 			this.Living = living;
 		}
@@ -67,9 +67,9 @@ namespace Dwarrowdelf.Server
 
 	public class TurnEndSequentialChange : Change
 	{
-		public ILivingObject Living { get; private set; }
+		public LivingObject Living { get; private set; }
 
-		public TurnEndSequentialChange(ILivingObject living)
+		public TurnEndSequentialChange(LivingObject living)
 		{
 			this.Living = living;
 		}
@@ -82,9 +82,9 @@ namespace Dwarrowdelf.Server
 
 	public abstract class EnvironmentChange : Change
 	{
-		public IEnvironmentObject Environment { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
 
-		public EnvironmentChange(IEnvironmentObject env)
+		public EnvironmentChange(EnvironmentObject env)
 		{
 			this.Environment = env;
 		}
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Server
 		public IntPoint3D Location { get; private set; }
 		public TileData TileData { get; private set; }
 
-		public MapChange(IEnvironmentObject map, IntPoint3D l, TileData tileData)
+		public MapChange(EnvironmentObject map, IntPoint3D l, TileData tileData)
 			: base(map)
 		{
 			this.Location = l;
@@ -110,9 +110,9 @@ namespace Dwarrowdelf.Server
 
 	public abstract class ObjectChange : Change
 	{
-		public IBaseObject Object { get; private set; }
+		public BaseObject Object { get; private set; }
 
-		protected ObjectChange(IBaseObject ob)
+		protected ObjectChange(BaseObject ob)
 		{
 			this.Object = ob;
 		}
@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Server
 
 	public class ObjectCreatedChange : ObjectChange
 	{
-		public ObjectCreatedChange(IBaseObject ob)
+		public ObjectCreatedChange(BaseObject ob)
 			: base(ob)
 		{
 		}
@@ -133,7 +133,7 @@ namespace Dwarrowdelf.Server
 
 	public class ObjectDestructedChange : ObjectChange
 	{
-		public ObjectDestructedChange(IBaseObject ob)
+		public ObjectDestructedChange(BaseObject ob)
 			: base(ob)
 		{
 		}
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Server
 	{
 		public BaseGameObjectData ObjectData { get; set; }
 
-		public FullObjectChange(IBaseObject ob)
+		public FullObjectChange(BaseObject ob)
 			: base(ob)
 		{
 		}
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.Server
 	{
 		public PropertyID PropertyID { get; private set; }
 
-		protected PropertyChange(IBaseObject ob, PropertyID propertyID)
+		protected PropertyChange(BaseObject ob, PropertyID propertyID)
 			: base(ob)
 		{
 			this.PropertyID = propertyID;
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Server
 	{
 		public ValueType Value { get; private set; }
 
-		public PropertyValueChange(IBaseObject ob, PropertyID propertyID, ValueType value)
+		public PropertyValueChange(BaseObject ob, PropertyID propertyID, ValueType value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -190,7 +190,7 @@ namespace Dwarrowdelf.Server
 	{
 		public int Value { get; private set; }
 
-		public PropertyIntChange(IBaseObject ob, PropertyID propertyID, int value)
+		public PropertyIntChange(BaseObject ob, PropertyID propertyID, int value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -206,7 +206,7 @@ namespace Dwarrowdelf.Server
 	{
 		public string Value { get; private set; }
 
-		public PropertyStringChange(IBaseObject ob, PropertyID propertyID, string value)
+		public PropertyStringChange(BaseObject ob, PropertyID propertyID, string value)
 			: base(ob, propertyID)
 		{
 			this.Value = value;
@@ -220,14 +220,14 @@ namespace Dwarrowdelf.Server
 
 	public class ObjectMoveChange : ObjectChange
 	{
-		public IContainerObject Source { get; private set; }
+		public ContainerObject Source { get; private set; }
 		public IntPoint3D SourceLocation { get; private set; }
 
-		public IContainerObject Destination { get; private set; }
+		public ContainerObject Destination { get; private set; }
 		public IntPoint3D DestinationLocation { get; private set; }
 
-		public ObjectMoveChange(IMovableObject mover, IContainerObject sourceEnv, IntPoint3D sourceLocation,
-			IContainerObject destinationEnv, IntPoint3D destinationLocation)
+		public ObjectMoveChange(MovableObject mover, ContainerObject sourceEnv, IntPoint3D sourceLocation,
+			ContainerObject destinationEnv, IntPoint3D destinationLocation)
 			: base(mover)
 		{
 			this.Source = sourceEnv;
@@ -254,7 +254,7 @@ namespace Dwarrowdelf.Server
 		public IntPoint3D SourceLocation { get; private set; }
 		public IntPoint3D DestinationLocation { get; private set; }
 
-		public ObjectMoveLocationChange(IMovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
+		public ObjectMoveLocationChange(MovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
 			: base(mover)
 		{
 			this.SourceLocation = sourceLocation;
@@ -278,7 +278,7 @@ namespace Dwarrowdelf.Server
 		public SkillID SkillID { get; private set; }
 		public byte Level { get; private set; }
 
-		public SkillChange(ILivingObject ob, SkillID skillID, byte level)
+		public SkillChange(LivingObject ob, SkillID skillID, byte level)
 			: base(ob)
 		{
 			this.SkillID = skillID;
@@ -295,7 +295,7 @@ namespace Dwarrowdelf.Server
 	{
 		public ActionStartEvent ActionStartEvent { get; set; }
 
-		public ActionStartedChange(ILivingObject ob)
+		public ActionStartedChange(LivingObject ob)
 			: base(ob)
 		{
 		}
@@ -310,7 +310,7 @@ namespace Dwarrowdelf.Server
 	{
 		public ActionProgressEvent ActionProgressEvent { get; set; }
 
-		public ActionProgressChange(ILivingObject ob)
+		public ActionProgressChange(LivingObject ob)
 			: base(ob)
 		{
 		}
@@ -325,7 +325,7 @@ namespace Dwarrowdelf.Server
 	{
 		public ActionDoneEvent ActionDoneEvent { get; set; }
 
-		public ActionDoneChange(ILivingObject ob)
+		public ActionDoneChange(LivingObject ob)
 			: base(ob)
 		{
 		}
@@ -338,10 +338,10 @@ namespace Dwarrowdelf.Server
 
 	public class WearChange : ObjectChange
 	{
-		public IItemObject Wearable { get; private set; }
+		public ItemObject Wearable { get; private set; }
 		public ArmorSlot Slot { get; private set; }
 
-		public WearChange(ILivingObject wearer, ArmorSlot slot, IItemObject wearable)
+		public WearChange(LivingObject wearer, ArmorSlot slot, ItemObject wearable)
 			: base(wearer)
 		{
 			this.Wearable = wearable;
@@ -356,9 +356,9 @@ namespace Dwarrowdelf.Server
 
 	public class WieldChange : ObjectChange
 	{
-		public IItemObject Weapon { get; private set; }
+		public ItemObject Weapon { get; private set; }
 
-		public WieldChange(ILivingObject wearer, IItemObject weapon)
+		public WieldChange(LivingObject wearer, ItemObject weapon)
 			: base(wearer)
 		{
 			this.Weapon = weapon;

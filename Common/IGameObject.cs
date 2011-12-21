@@ -122,26 +122,4 @@ namespace Dwarrowdelf
 		int NutritionalValue { get; }
 		int RefreshmentValue { get; }
 	}
-
-	public interface IPlayer
-	{
-		void Send(Dwarrowdelf.Messages.ClientMessage message);
-		IVisionTracker GetVisionTracker(IEnvironmentObject env);
-		ObjectVisibility GetObjectVisibility(IBaseObject ob);
-	}
-
-	public interface IVisionTracker
-	{
-		bool Sees(IntPoint3D p);
-	}
-
-	[Flags]
-	public enum ObjectVisibility
-	{
-		None = 0,
-		Private = 1 << 0,
-		Public = 1 << 1,
-		Debug = 2 << 1,
-		All = Private | Public | Debug,
-	}
 }
