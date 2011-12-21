@@ -507,7 +507,7 @@ namespace Dwarrowdelf.Server
 		{
 			D("ActionProgress({0}, {1}/{2})", this.CurrentAction, this.ActionTicksUsed, this.ActionTotalTicks);
 
-			var e = new ActionProgressChange(this)
+			var e = new ActionProgressEvent()
 			{
 				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
@@ -518,12 +518,17 @@ namespace Dwarrowdelf.Server
 			if (m_ai != null)
 				m_ai.ActionProgress(e);
 
-			this.World.AddChange(e);
+			var c = new ActionProgressChange(this)
+			{
+				ActionProgressEvent = e,
+			};
+
+			this.World.AddChange(c);
 		}
 
 		void HandleActionDone(ActionState state)
 		{
-			var e = new ActionDoneChange(this)
+			var e = new ActionDoneEvent()
 			{
 				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
@@ -533,12 +538,17 @@ namespace Dwarrowdelf.Server
 			if (m_ai != null)
 				m_ai.ActionDone(e);
 
+			var c = new ActionDoneChange(this)
+			{
+				ActionDoneEvent = e,
+			};
+
 			this.CurrentAction = null;
 			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
 			this.ActionTotalTicks = this.ActionTicksUsed = 0;
 			this.ActionUserID = 0;
 
-			this.World.AddChange(e);
+			this.World.AddChange(c);
 		}
 
 		// Actor stuff
@@ -575,7 +585,7 @@ namespace Dwarrowdelf.Server
 			this.ActionTicksUsed = 0;
 			this.ActionUserID = userID;
 
-			var c = new ActionStartedChange(this)
+			var e = new ActionStartEvent()
 			{
 				Action = action,
 				Priority = priority,
@@ -583,7 +593,12 @@ namespace Dwarrowdelf.Server
 			};
 
 			if (m_ai != null)
-				m_ai.ActionStarted(c);
+				m_ai.ActionStarted(e);
+
+			var c = new ActionStartedChange(this)
+			{
+				ActionStartEvent = e,
+			};
 
 			this.World.AddChange(c);
 		}

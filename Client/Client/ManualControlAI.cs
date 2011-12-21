@@ -62,25 +62,25 @@ namespace Dwarrowdelf.Client
 			return m_currentAction;
 		}
 
-		public void ActionStarted(ActionStartedChange change)
+		public void ActionStarted(ActionStartEvent e)
 		{
 			if (m_currentAction == null)
 				return;
 
-			if (change.Action.MagicNumber != m_currentAction.MagicNumber)
+			if (e.Action.MagicNumber != m_currentAction.MagicNumber)
 				m_currentAction = null;
 		}
 
-		public void ActionProgress(ActionProgressChange change)
+		public void ActionProgress(ActionProgressEvent e)
 		{
 		}
 
-		public void ActionDone(ActionDoneChange change)
+		public void ActionDone(ActionDoneEvent e)
 		{
 			if (m_currentAction == null)
 				return;
 
-			if (change.MagicNumber == m_currentAction.MagicNumber)
+			if (e.MagicNumber == m_currentAction.MagicNumber)
 			{
 				Debug.Assert(m_actions[0] == m_currentAction);
 				m_currentAction = null;

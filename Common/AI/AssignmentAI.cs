@@ -219,10 +219,10 @@ namespace Dwarrowdelf.AI
 
 		protected virtual void JobStatusChangedOverride(IJob job, JobStatus status) { }
 
-		public void ActionStarted(ActionStartedChange change)
+		public void ActionStarted(ActionStartEvent e)
 		{
 			trace.TraceVerbose("ActionStarted({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
-				change.Action,
+				e.Action,
 				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
 				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
 				this.CurrentAssignment != null && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
@@ -241,7 +241,7 @@ namespace Dwarrowdelf.AI
 				return;
 			}
 
-			if (this.CurrentAssignment.CurrentAction.MagicNumber != change.Action.MagicNumber)
+			if (this.CurrentAssignment.CurrentAction.MagicNumber != e.Action.MagicNumber)
 			{
 				trace.TraceVerbose("ActionStarted: action started by someone else, cancel our current assignment");
 				throw new Exception();
@@ -250,7 +250,7 @@ namespace Dwarrowdelf.AI
 			// otherwise, it's an action started by us, all ok.
 		}
 
-		public void ActionProgress(ActionProgressChange e)
+		public void ActionProgress(ActionProgressEvent e)
 		{
 			var assignment = this.CurrentAssignment;
 
@@ -281,14 +281,12 @@ namespace Dwarrowdelf.AI
 				throw new NotImplementedException("implement cancel work");
 			}
 
-			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
-
 			var state = assignment.ActionProgress();
 
 			trace.TraceVerbose("ActionProgress: {0} in {1}", state, assignment);
 		}
 
-		public void ActionDone(ActionDoneChange e)
+		public void ActionDone(ActionDoneEvent e)
 		{
 			var assignment = this.CurrentAssignment;
 
@@ -325,8 +323,6 @@ namespace Dwarrowdelf.AI
 			{
 				throw new NotImplementedException("implement cancel work");
 			}
-
-			Debug.Assert(e.ObjectID == this.Worker.ObjectID);
 
 			var state = assignment.ActionDone(e.State);
 

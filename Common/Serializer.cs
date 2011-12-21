@@ -13,9 +13,11 @@ namespace Dwarrowdelf
 			var objectDataTypes = Helpers.GetSubclasses(typeof(BaseGameObjectData));
 			var changeTypes = Helpers.GetSubclasses(typeof(Change));
 			var actionTypes = Helpers.GetSubclasses(typeof(GameAction));
+			var events = Helpers.GetSubclasses(typeof(GameEvent));
 			var extra = new Type[] { typeof(GameColor), typeof(LivingGender) };
 			var reports = Helpers.GetSubclasses(typeof(GameReport));
-			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(extra).Concat(reports);
+			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
+				.Concat(extra).Concat(reports);
 			NetSerializer.Serializer.Initialize(types.ToArray());
 		}
 

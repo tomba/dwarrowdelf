@@ -216,7 +216,7 @@ namespace Dwarrowdelf.Client
 
 			Debug.Assert(ob.IsInitialized);
 
-			ob.HandleActionStarted(change);
+			ob.HandleActionStartEvent(change.ActionStartEvent);
 		}
 
 		void HandleChange(ActionProgressChange change)
@@ -225,7 +225,7 @@ namespace Dwarrowdelf.Client
 
 			Debug.Assert(ob.IsInitialized);
 
-			ob.HandleActionProgress(change);
+			ob.HandleActionProgressEvent(change.ActionProgressEvent);
 		}
 
 		void HandleChange(ActionDoneChange change)
@@ -234,7 +234,7 @@ namespace Dwarrowdelf.Client
 
 			Debug.Assert(ob.IsInitialized);
 
-			ob.HandleActionDone(change);
+			ob.HandleActionDone(change.ActionDoneEvent);
 		}
 	}
 }

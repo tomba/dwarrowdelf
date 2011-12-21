@@ -322,9 +322,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class ActionStartedChange : ObjectChange
 	{
-		public GameAction Action { get; set; }
-		public ActionPriority Priority { get; set; }
-		public int UserID { get; set; }
+		public ActionStartEvent ActionStartEvent { get; set; }
 
 		public ActionStartedChange(ILivingObject ob)
 			: base(ob)
@@ -334,17 +332,14 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return String.Format("ActionStartedChange({0}, {1}, uid: {2})",
-				this.ObjectID, this.Action, this.UserID);
+				this.ObjectID, this.ActionStartEvent.Action, this.ActionStartEvent.UserID);
 		}
 	}
 
 	[Serializable]
 	public class ActionProgressChange : ObjectChange
 	{
-		public int MagicNumber { get; set; }
-		public int UserID { get; set; }
-		public int TotalTicks { get; set; }
-		public int TicksUsed { get; set; }
+		public ActionProgressEvent ActionProgressEvent { get; set; }
 
 		public ActionProgressChange(ILivingObject ob)
 			: base(ob)
@@ -354,16 +349,14 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return String.Format("ActionProgressChange(UID({0}), {1}, ticks: {2}/{3})",
-				this.UserID, this.ObjectID, this.TicksUsed, this.TotalTicks);
+				this.ActionProgressEvent.UserID, this.ObjectID, this.ActionProgressEvent.TicksUsed, this.ActionProgressEvent.TotalTicks);
 		}
 	}
 
 	[Serializable]
 	public class ActionDoneChange : ObjectChange
 	{
-		public int MagicNumber { get; set; }
-		public int UserID { get; set; }
-		public ActionState State { get; set; }
+		public ActionDoneEvent ActionDoneEvent { get; set; }
 
 		public ActionDoneChange(ILivingObject ob)
 			: base(ob)
@@ -373,7 +366,7 @@ namespace Dwarrowdelf
 		public override string ToString()
 		{
 			return String.Format("ActionDoneChange(UID({0}), {1}, state: {2})",
-				this.UserID, this.ObjectID, this.State);
+				this.ActionDoneEvent.UserID, this.ObjectID, this.ActionDoneEvent.State);
 		}
 	}
 

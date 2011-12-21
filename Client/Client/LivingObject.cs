@@ -215,38 +215,38 @@ namespace Dwarrowdelf.Client
 				this.ClientAssignment = null;
 		}
 
-		public void HandleActionStarted(ActionStartedChange change)
+		public void HandleActionStartEvent(ActionStartEvent e)
 		{
 			Debug.Assert(!this.HasAction);
 
-			this.CurrentAction = change.Action;
-			this.ActionPriority = change.Priority;
-			this.ActionUserID = change.UserID;
+			this.CurrentAction = e.Action;
+			this.ActionPriority = e.Priority;
+			this.ActionUserID = e.UserID;
 
 			if (this.AI != null)
-				this.AI.ActionStarted(change);
+				this.AI.ActionStarted(e);
 		}
 
-		public void HandleActionProgress(ActionProgressChange change)
+		public void HandleActionProgressEvent(ActionProgressEvent e)
 		{
 			Debug.Assert(this.HasAction);
 
-			this.ActionTotalTicks = change.TotalTicks;
-			this.ActionTicksUsed = change.TicksUsed;
+			this.ActionTotalTicks = e.TotalTicks;
+			this.ActionTicksUsed = e.TicksUsed;
 
 			if (this.AI != null)
-				this.AI.ActionProgress(change);
+				this.AI.ActionProgress(e);
 		}
 
-		public void HandleActionDone(ActionDoneChange change)
+		public void HandleActionDone(ActionDoneEvent e)
 		{
 			Debug.Assert(this.HasAction);
 
-			if (change.State != ActionState.Done)
-				Debug.Print("ActionDone({0}, {1}, {2})", this, change.State, this.CurrentAction);
+			if (e.State != ActionState.Done)
+				Debug.Print("ActionDone({0}, {1}, {2})", this, e.State, this.CurrentAction);
 
 			if (this.AI != null)
-				this.AI.ActionDone(change);
+				this.AI.ActionDone(e);
 
 			this.PreviousAction = this.CurrentAction;
 			this.CurrentAction = null;

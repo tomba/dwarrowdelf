@@ -26,18 +26,18 @@ namespace Dwarrowdelf.AI
 		/// Called when worker starts a new action
 		/// Note: can be an action started by something else than this AI
 		/// </summary>
-		void ActionStarted(ActionStartedChange change);
+		void ActionStarted(ActionStartEvent e);
 
 		/// <summary>
 		/// Called when worker's current action's state changes.
 		/// Note: can be an action started by something else than this AI
 		/// </summary>
-		void ActionProgress(ActionProgressChange change);
+		void ActionProgress(ActionProgressEvent e);
 
 		/// <summary>
 		/// Called when worker's current action is done/failed.
 		/// Note: can be an action started by something else than this AI
 		/// </summary>
-		void ActionDone(ActionDoneChange change);
+		void ActionDone(ActionDoneEvent e);
 	}
 }

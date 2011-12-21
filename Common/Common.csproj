@@ -76,6 +76,7 @@
     <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
     <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />
