@@ -76,6 +76,7 @@
     <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="ChangeDatas.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
@@ -121,7 +122,6 @@
     <Compile Include="AI\IAI.cs" />
     <Compile Include="AI\AssignmentAI.cs" />
     <Compile Include="AStar\OpenList.cs" />
-    <Compile Include="Changes.cs" />
     <Compile Include="Jobs\Assignments\Assignment.cs" />
     <Compile Include="Jobs\Assignments\DropItemAssignment.cs" />
     <Compile Include="Jobs\IJob.cs" />

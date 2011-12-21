@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 			m_livingVisionMode = mode;
 		}
 
-		public void HandleChange(TickStartChange change)
+		public void HandleChange(TickStartChangeData change)
 		{
 			this.TickNumber = change.TickNumber;
 

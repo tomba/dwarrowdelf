@@ -747,7 +747,7 @@ namespace Dwarrowdelf.Server
 
 		public override void HandleWorldChange(Change change)
 		{
-			var changeMsg = new ChangeMessage { Change = change };
+			var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
 
 			Send(changeMsg);
 
@@ -826,7 +826,7 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			var changeMsg = new ChangeMessage { Change = change };
+			var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
 
 			Send(changeMsg);
 		}

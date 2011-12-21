@@ -8,17 +8,17 @@ namespace Dwarrowdelf.Client
 {
 	class ChangeHandler
 	{
-		static Dictionary<Type, Action<ChangeHandler, Change>> s_changeHandlerMap;
+		static Dictionary<Type, Action<ChangeHandler, ChangeData>> s_changeHandlerMap;
 
 		static ChangeHandler()
 		{
-			var changeTypes = Helpers.GetNonabstractSubclasses(typeof(Change));
+			var changeTypes = Helpers.GetNonabstractSubclasses(typeof(ChangeData));
 
-			s_changeHandlerMap = new Dictionary<Type, Action<ChangeHandler, Change>>(changeTypes.Count());
+			s_changeHandlerMap = new Dictionary<Type, Action<ChangeHandler, ChangeData>>(changeTypes.Count());
 
 			foreach (var type in changeTypes)
 			{
-				var method = WrapperGenerator.CreateActionWrapper<ChangeHandler, Change>("HandleChange", type);
+				var method = WrapperGenerator.CreateActionWrapper<ChangeHandler, ChangeData>("HandleChange", type);
 				if (method == null)
 					throw new NotImplementedException(String.Format("No HandleChange method found for {0}", type.Name));
 				s_changeHandlerMap[type] = method;
@@ -37,25 +37,25 @@ namespace Dwarrowdelf.Client
 
 		public void HandleChangeMessage(Dwarrowdelf.Messages.ChangeMessage msg)
 		{
-			var change = msg.Change;
+			var change = msg.ChangeData;
 			var method = s_changeHandlerMap[change.GetType()];
 			method(this, change);
 		}
 
-		void HandleChange(ObjectCreatedChange change)
+		void HandleChange(ObjectCreatedChangeData change)
 		{
 			var ob = m_world.CreateObject(change.ObjectID);
 		}
 
 		// XXX check if this is needed
-		void HandleChange(FullObjectChange change)
+		void HandleChange(FullObjectChangeData change)
 		{
 			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
 
 			ob.Deserialize(change.ObjectData);
 		}
 
-		void HandleChange(ObjectMoveChange change)
+		void HandleChange(ObjectMoveChangeData change)
 		{
 			var ob = m_world.FindObject<MovableObject>(change.ObjectID);
 
@@ -78,7 +78,7 @@ namespace Dwarrowdelf.Client
 			ob.MoveTo(env, change.DestinationLocation);
 		}
 
-		void HandleChange(ObjectMoveLocationChange change)
+		void HandleChange(ObjectMoveLocationChangeData change)
 		{
 			var ob = m_world.FindObject<MovableObject>(change.ObjectID);
 
@@ -106,22 +106,22 @@ namespace Dwarrowdelf.Client
 			ob.SetProperty(propertyID, value);
 		}
 
-		void HandleChange(PropertyValueChange change)
+		void HandleChange(PropertyValueChangeData change)
 		{
 			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
 		}
 
-		void HandleChange(PropertyIntChange change)
+		void HandleChange(PropertyIntChangeData change)
 		{
 			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
 		}
 
-		void HandleChange(PropertyStringChange change)
+		void HandleChange(PropertyStringChangeData change)
 		{
 			HandlePropertyChange(change.ObjectID, change.PropertyID, change.Value);
 		}
 
-		void HandleChange(SkillChange change)
+		void HandleChange(SkillChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Client
 			ob.SetSkillLevel(change.SkillID, change.Level);
 		}
 
-		void HandleChange(WearChange change)
+		void HandleChange(WearChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		void HandleChange(WieldChange change)
+		void HandleChange(WieldChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
@@ -165,7 +165,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void HandleChange(ObjectDestructedChange change)
+		void HandleChange(ObjectDestructedChangeData change)
 		{
 			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
 
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Client
 			ob.Destruct();
 		}
 
-		void HandleChange(MapChange change)
+		void HandleChange(MapChangeData change)
 		{
 			var env = m_world.GetObject<EnvironmentObject>(change.EnvironmentID);
 
@@ -183,32 +183,32 @@ namespace Dwarrowdelf.Client
 			env.SetTileData(change.Location, change.TileData);
 		}
 
-		void HandleChange(TickStartChange change)
+		void HandleChange(TickStartChangeData change)
 		{
 			m_world.HandleChange(change);
 		}
 
-		void HandleChange(TurnStartSimultaneousChange change)
+		void HandleChange(TurnStartSimultaneousChangeData change)
 		{
 		}
 
-		void HandleChange(TurnStartSequentialChange change)
+		void HandleChange(TurnStartSequentialChangeData change)
 		{
 		}
 
-		void HandleChange(TurnEndSimultaneousChange change)
-		{
-			if (TurnEnded != null)
-				TurnEnded();
-		}
-
-		void HandleChange(TurnEndSequentialChange change)
+		void HandleChange(TurnEndSimultaneousChangeData change)
 		{
 			if (TurnEnded != null)
 				TurnEnded();
 		}
 
-		void HandleChange(ActionStartedChange change)
+		void HandleChange(TurnEndSequentialChangeData change)
+		{
+			if (TurnEnded != null)
+				TurnEnded();
+		}
+
+		void HandleChange(ActionStartedChangeData change)
 		{
 			//Debug.WriteLine("ActionStartedChange({0})", change.ObjectID);
 
@@ -219,7 +219,7 @@ namespace Dwarrowdelf.Client
 			ob.HandleActionStartEvent(change.ActionStartEvent);
 		}
 
-		void HandleChange(ActionProgressChange change)
+		void HandleChange(ActionProgressChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
@@ -228,7 +228,7 @@ namespace Dwarrowdelf.Client
 			ob.HandleActionProgressEvent(change.ActionProgressEvent);
 		}
 
-		void HandleChange(ActionDoneChange change)
+		void HandleChange(ActionDoneChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 

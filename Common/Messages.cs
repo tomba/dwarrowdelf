@@ -174,11 +174,11 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public class ChangeMessage : StateMessage
 	{
-		public Change Change { get; set; }
+		public ChangeData ChangeData { get; set; }
 
 		public override string ToString()
 		{
-			return String.Format("ChangeMessage {0}", this.Change);
+			return String.Format("ChangeMessage {0}", this.ChangeData);
 		}
 	}
 

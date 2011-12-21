@@ -11,7 +11,7 @@ namespace Dwarrowdelf
 		{
 			var messageTypes = Helpers.GetSubclasses(typeof(Message));
 			var objectDataTypes = Helpers.GetSubclasses(typeof(BaseGameObjectData));
-			var changeTypes = Helpers.GetSubclasses(typeof(Change));
+			var changeTypes = Helpers.GetSubclasses(typeof(ChangeData));
 			var actionTypes = Helpers.GetSubclasses(typeof(GameAction));
 			var events = Helpers.GetSubclasses(typeof(GameEvent));
 			var extra = new Type[] { typeof(GameColor), typeof(LivingGender) };

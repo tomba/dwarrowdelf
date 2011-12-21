@@ -65,6 +65,14 @@ namespace Dwarrowdelf
 			return (int)m_value;
 		}
 
+		public static ObjectID GetID(IIdentifiable ob)
+		{
+			if (ob == null)
+				return ObjectID.NullObjectID;
+			else
+				return ob.ObjectID;
+		}
+
 		public override string ToString()
 		{
 			if (this == ObjectID.NullObjectID)
