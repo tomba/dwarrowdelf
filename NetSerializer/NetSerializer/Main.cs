@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 
 namespace NetSerializer
 {
-	public partial class Serializer
+	public static partial class Serializer
 	{
 		class TypeData
 		{
@@ -106,7 +106,7 @@ namespace NetSerializer
 
 			rootTypes = typeSet.ToArray();
 			// Sort the types so that we get the same typeID, regardless of the order in the HashSet
-			Array.Sort(rootTypes, (a, b) => String.Compare(a.FullName, b.FullName));
+			Array.Sort(rootTypes, (a, b) => String.Compare(a.FullName, b.FullName, StringComparison.Ordinal));
 
 			ushort typeID = 0;
 			foreach (var type in rootTypes)
@@ -282,7 +282,7 @@ namespace NetSerializer
 				.ToArray();
 
 			// Sort the fields so that they are in the same order, regardless how Type.GetFields works
-			Array.Sort(fields, (a, b) => String.Compare(a.Name, b.Name));
+			Array.Sort(fields, (a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal));
 
 			if (type.BaseType == null)
 			{

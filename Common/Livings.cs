@@ -20,7 +20,7 @@ namespace Dwarrowdelf
 	[Flags]
 	public enum LivingCategory
 	{
-		Undefined = 0,
+		None = 0,
 		Civilized = 1 << 0,
 		Herbivore = 1 << 1,
 		Carnivore = 1 << 2,

@@ -64,7 +64,6 @@ namespace MemoryMappedLog
 
 		static MemoryMappedFile s_mmf;
 		static MemoryMappedViewAccessor s_view;
-		static ASCIIEncoding s_encoding;
 		static EventWaitHandle s_writeEventHandle;
 		static Mutex s_indexMutex;
 
@@ -76,7 +75,6 @@ namespace MemoryMappedLog
 
 			s_mmf = MemoryMappedFile.CreateOrOpen("MMLog.File", s_logHeaderSize + EntryCount * EntrySize);
 			s_view = s_mmf.CreateViewAccessor(0, 0);
-			s_encoding = new ASCIIEncoding();
 			s_writeEventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, "MMLog.WaitHandle");
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
 		}

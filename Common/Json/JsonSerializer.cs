@@ -78,11 +78,39 @@ namespace Dwarrowdelf
 			m_globalResolvers = new SaveGameRefResolverCache(globalResolvers);
 		}
 
+
+		#region IDisposable Members
+
+		bool m_disposed;
+
+		~SaveGameSerializer()
+		{
+			Dispose(false);
+		}
+
 		public void Dispose()
 		{
-			m_writer.Close();
-			m_writer = null;
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
 		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				//TODO: Managed cleanup code here, while managed refs still valid
+				m_writer.Close();
+				m_writer = null;
+			}
+			//TODO: Unmanaged cleanup code here
+
+			m_disposed = true;
+		}
+
+		#endregion IDisposable Members
 
 		public void Serialize<T>(T ob)
 		{

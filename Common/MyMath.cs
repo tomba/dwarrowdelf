@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public class MyMath
+	public static class MyMath
 	{
 		/// <summary>
 		/// Divide signed integer m with positive integer n, rounding up for positive m and and down for negative m

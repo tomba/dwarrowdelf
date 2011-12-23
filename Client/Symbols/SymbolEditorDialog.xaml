@@ -8,7 +8,6 @@
 	xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
 	mc:Ignorable="d"
 	x:Class="Dwarrowdelf.Client.Symbols.SymbolEditorDialog"
-	x:Name="Window"
 	xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
 	Title="SymbolEditorDialog"
 	d:DataContext="{d:DesignData /SymbolInfosChar.xaml}" Height="574" Width="506">
@@ -21,7 +20,7 @@
 		</ObjectDataProvider>
 	</Window.Resources>
 
-	<Grid x:Name="LayoutRoot">
+	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="0.437*"/>
 			<ColumnDefinition Width="0.563*"/>
@@ -63,7 +62,7 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 		<Button Content="Update" Margin="6,0,197,106" Click="Button_Click" Grid.Column="1" />
-		<WindowsFormsHost Grid.Column="1" Name="windowsFormsHost1" Grid.Row="1">
+		<WindowsFormsHost Grid.Column="1" Grid.Row="1">
 			<wf:PropertyGrid x:Name="propGrid" />
 		</WindowsFormsHost>
 	</Grid>

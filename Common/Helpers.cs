@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public class Helpers
+	public static class Helpers
 	{
 		public static IEnumerable<Type> GetSubclasses(Type type)
 		{

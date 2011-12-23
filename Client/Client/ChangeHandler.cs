@@ -26,7 +26,6 @@ namespace Dwarrowdelf.Client
 		}
 
 		World m_world;
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ChangeHandler");
 
 		public event Action TurnEnded;
 

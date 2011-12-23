@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace NetSerializer
 {
-	public partial class Serializer
+	public static partial class Serializer
 	{
 		static DynamicMethod GenerateDynamicDeserializerStub(Type type)
 		{

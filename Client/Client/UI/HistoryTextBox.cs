@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Client.UI
 
 						for (int i = m_historyPos - 1; i >= 0; i--)
 						{
-							if (m_stringList[i].StartsWith(m_searchString))
+							if (m_stringList[i].StartsWith(m_searchString, StringComparison.CurrentCultureIgnoreCase))
 							{
 								foundIdx = i;
 								break;

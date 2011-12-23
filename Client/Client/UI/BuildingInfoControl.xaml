@@ -21,7 +21,7 @@
 		</UniformGrid>
 
 		<GroupBox Header="Build queue">
-			<ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100" MinHeight="100" Name="buildQueueListBox">
+			<ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100" MinHeight="100">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<DockPanel>

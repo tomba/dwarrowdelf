@@ -15,7 +15,7 @@ namespace Dwarrowdelf
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true)]
-	public class SaveGameObjectByRefAttribute : SaveGameObjectBaseAttribute
+	public sealed class SaveGameObjectByRefAttribute : SaveGameObjectBaseAttribute
 	{
 		public bool ClientObject { get; set; }
 
@@ -25,7 +25,7 @@ namespace Dwarrowdelf
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true)]
-	public class SaveGameObjectByValueAttribute : SaveGameObjectBaseAttribute
+	public sealed class SaveGameObjectByValueAttribute : SaveGameObjectBaseAttribute
 	{
 		public SaveGameObjectByValueAttribute()
 		{
@@ -33,9 +33,9 @@ namespace Dwarrowdelf
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property, Inherited = false)]
-	public class SaveGamePropertyAttribute : Attribute
+	public sealed class SaveGamePropertyAttribute : Attribute
 	{
-		public string Name { get; set; }
+		public string Name { get; private set; }
 		public Type Converter { get; set; }
 		public Type ReaderWriter { get; set; }
 		public bool UseOldList { get; set; }
@@ -51,27 +51,27 @@ namespace Dwarrowdelf
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnSaveGameSerializingAttribute : Attribute
+	public sealed class OnSaveGameSerializingAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnSaveGameSerializedAttribute : Attribute
+	public sealed class OnSaveGameSerializedAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnSaveGameDeserializingAttribute : Attribute
+	public sealed class OnSaveGameDeserializingAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnSaveGameDeserializedAttribute : Attribute
+	public sealed class OnSaveGameDeserializedAttribute : Attribute
 	{
 	}
 
 	[AttributeUsageAttribute(AttributeTargets.Method)]
-	public class OnSaveGamePostDeserializationAttribute : Attribute
+	public sealed class OnSaveGamePostDeserializationAttribute : Attribute
 	{
 	}
 }

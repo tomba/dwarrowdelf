@@ -159,7 +159,7 @@ namespace Dwarrowdelf
 	{
 		public ObjectID ItemObjectID { get; private set; }
 
-		public ItemActionReport(ILivingObject living, IItemObject item)
+		protected ItemActionReport(ILivingObject living, IItemObject item)
 			: base(living)
 		{
 			this.ItemObjectID = item != null ? item.ObjectID : ObjectID.NullObjectID;

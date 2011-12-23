@@ -7,7 +7,7 @@ namespace Dwarrowdelf.Client
 {
 	public abstract class ObservableKeyedCollection<TKey, TValue> : KeyedCollection<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
-		public ObservableKeyedCollection()
+		protected ObservableKeyedCollection()
 			: base(null, 20)
 		{
 		}

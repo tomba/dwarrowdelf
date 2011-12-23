@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Server
 	{
 		public EnvironmentObject Environment { get; private set; }
 
-		public EnvironmentChange(EnvironmentObject env)
+		protected EnvironmentChange(EnvironmentObject env)
 		{
 			this.Environment = env;
 		}

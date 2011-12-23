@@ -10,7 +10,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	public class MineAreaJob : JobGroup
 	{
 		readonly IEnvironmentObject m_environment;
-		readonly IntCuboid m_area;
 
 		IEnumerable<IntPoint3D> m_locs;
 
@@ -26,7 +25,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			: base(null)
 		{
 			m_environment = env;
-			m_area = area;
 
 			m_locs = area.Range().Where(p => env.GetTerrain(p).IsMinable || m_environment.GetHidden(p));
 			foreach (var p in m_locs)

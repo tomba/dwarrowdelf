@@ -378,7 +378,7 @@ namespace Dwarrowdelf
 			bool simpleB = TypeIsSimple(b.MemberType);
 
 			if ((simpleA && simpleB) || (!simpleA && !simpleB))
-				return string.Compare(a.Name, b.Name);
+				return string.Compare(a.Name, b.Name, StringComparison.Ordinal);
 			else if (simpleA)
 				return -1;
 			else

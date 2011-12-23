@@ -803,7 +803,6 @@ namespace Dwarrowdelf.Server
 			if (change is WearChange)
 			{
 				var c = (WearChange)change;
-				var l = (LivingObject)c.Object;
 
 				if (m_player.IsController(c.Object) == false)
 				{
@@ -815,7 +814,6 @@ namespace Dwarrowdelf.Server
 			if (change is WieldChange)
 			{
 				var c = (WieldChange)change;
-				var l = (LivingObject)c.Object;
 
 				if (m_player.IsController(c.Object) == false)
 				{

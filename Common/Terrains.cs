@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	class TerrainIDConsts
+	// Change to enum?
+	static class TerrainIDConsts
 	{
 		public const int SlopeBit = 1 << 7;
 		public const int SlopeDirMask = (1 << 7) - 1;
