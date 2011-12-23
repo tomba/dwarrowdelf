@@ -19,7 +19,7 @@ namespace Dwarrowdelf.AStar
 		void NodeUpdated(T node);
 	}
 
-	class BinaryHeap<T> : IOpenList<T> where T : class, IOpenListNode
+	sealed class BinaryHeap<T> : IOpenList<T> where T : class, IOpenListNode
 	{
 		T[] m_openList = new T[128];
 		int m_count;

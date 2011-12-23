@@ -33,7 +33,7 @@ namespace Dwarrowdelf
 	// http://sc.tri-bit.com/Computing_LOS_for_Large_Areas
 	public sealed class LOSShadowCast1 : ILOSAlgo
 	{
-		class LOSCell // xxx struct?
+		sealed class LOSCell // xxx struct?
 		{
 			public double upperShadowCount;
 			public double upperShadowMax;

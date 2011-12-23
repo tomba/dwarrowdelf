@@ -16,7 +16,7 @@ namespace Dwarrowdelf
 			public new T[,] Grid { get { return base.Grid; } }
 		}
 
-		class MainGrid : ArrayGrid2D<Block>
+		sealed class MainGrid : ArrayGrid2D<Block>
 		{
 			public MainGrid(int width, int height) : base(width, height) { }
 			public Block this[int x, int y]

@@ -66,7 +66,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	class SaveEntry
+	sealed class SaveEntry
 	{
 		public SaveEntry(Guid id, DateTime dateTime, int tick)
 		{

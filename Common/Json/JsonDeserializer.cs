@@ -19,7 +19,7 @@ namespace Dwarrowdelf
 
 	public sealed class SaveGameDeserializer : IDisposable
 	{
-		class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
+		sealed class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
 		{
 			Dictionary<int, object> m_refMap = new Dictionary<int, object>();
 

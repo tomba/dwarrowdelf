@@ -30,7 +30,7 @@ namespace Dwarrowdelf
 
 	public sealed class SaveGameSerializer : IDisposable
 	{
-		class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
+		sealed class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
 		{
 			Dictionary<object, int> m_refMap = new Dictionary<object, int>();
 			int m_refNum;

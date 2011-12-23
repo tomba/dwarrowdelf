@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty(Converter = typeof(QueueConverter))]
 		Queue<Direction> m_pathDirs;
 
-		class QueueConverter : ISaveGameConverter
+		sealed class QueueConverter : ISaveGameConverter
 		{
 			public object ConvertToSerializable(object value)
 			{

@@ -166,7 +166,7 @@ namespace Dwarrowdelf
 				this.ConnectEvent(err);
 		}
 
-		class ReadState
+		sealed class ReadState
 		{
 			public Socket Socket;
 			public RecvStream RecvStream;
@@ -437,7 +437,7 @@ namespace Dwarrowdelf
 				throw new Exception();
 		}
 
-		class RecvStream : Stream
+		sealed class RecvStream : Stream
 		{
 			byte[] m_buffer;
 			ArraySegment<byte>[] m_segments = new ArraySegment<byte>[2];

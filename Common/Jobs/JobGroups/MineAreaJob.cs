@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		IEnumerable<IntPoint3D> m_locs;
 
-		class MineData
+		sealed class MineData
 		{
 			public IAssignment Assignment;
 			public bool IsPossible;

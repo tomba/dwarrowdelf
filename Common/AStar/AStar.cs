@@ -37,7 +37,7 @@ namespace Dwarrowdelf.AStar
 
 	public static class AStarFinder
 	{
-		class AStarState
+		sealed class AStarState
 		{
 			public IAStarEnvironment Environment;
 			public IAStarTarget Target;

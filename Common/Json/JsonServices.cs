@@ -31,7 +31,7 @@ namespace Dwarrowdelf
 		object Read(JsonReader reader);
 	}
 
-	class MemberEntry
+	sealed class MemberEntry
 	{
 		public string Name { get; private set; }
 		public MemberInfo Member { get; private set; }
@@ -135,7 +135,7 @@ namespace Dwarrowdelf
 		Serializable,
 	}
 
-	class TypeInfo
+	sealed class TypeInfo
 	{
 		static Dictionary<Type, TypeInfo> s_typeInfoMap = new Dictionary<Type, TypeInfo>();
 
@@ -472,7 +472,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	class SaveGameConverterCache
+	sealed class SaveGameConverterCache
 	{
 		ISaveGameConverter[] m_converters;
 		Dictionary<Type, ISaveGameConverter> m_cache;
@@ -498,7 +498,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	class SaveGameRefResolverCache
+	sealed class SaveGameRefResolverCache
 	{
 		ISaveGameRefResolver[] m_resolvers;
 		Dictionary<Type, ISaveGameRefResolver> m_cache;
