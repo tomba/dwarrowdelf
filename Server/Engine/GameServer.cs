@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Dwarrowdelf.Server
 {
-	public class GameServer
+	public sealed class GameServer
 	{
 		GameEngine m_engine;
 		List<ServerConnection> m_connections = new List<ServerConnection>();

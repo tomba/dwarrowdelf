@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class EnvironmentObject : ContainerObject, IEnvironmentObject
+	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
 		internal static EnvironmentObject Create(World world, EnvironmentObjectBuilder builder)
 		{
@@ -841,7 +841,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class EnvironmentObjectBuilder
+	public sealed class EnvironmentObjectBuilder
 	{
 		TileGrid m_tileGrid;
 		IntSize3D m_size;

@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class Player : INotifyPropertyChanged, IPlayer
+	public sealed class Player : INotifyPropertyChanged, IPlayer
 	{
 		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
 
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Server
 				m_changeHandler = new PlayerChangeHandler(this);
 		}
 
-		protected Player(SaveGameContext ctx)
+		Player(SaveGameContext ctx)
 		{
 			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 

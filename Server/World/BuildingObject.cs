@@ -6,7 +6,7 @@ using System.Text;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public class BuildingObject : AreaObject, IBuildingObject
+	public sealed class BuildingObject : AreaObject, IBuildingObject
 	{
 		internal static BuildingObject Create(World world, EnvironmentObject env, BuildingObjectBuilder builder)
 		{
@@ -131,7 +131,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class BuildingObjectBuilder
+	public sealed class BuildingObjectBuilder
 	{
 		public BuildingID BuildingID { get; private set; }
 		public IntRectZ Area { get; private set; }

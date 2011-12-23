@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 		public abstract ChangeData ToChangeData();
 	}
 
-	public class TickStartChange : Change
+	public sealed class TickStartChange : Change
 	{
 		public int TickNumber { get; private set; }
 
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class TurnStartSimultaneousChange : Change
+	public sealed class TurnStartSimultaneousChange : Change
 	{
 		public TurnStartSimultaneousChange()
 		{
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class TurnEndSimultaneousChange : Change
+	public sealed class TurnEndSimultaneousChange : Change
 	{
 		public TurnEndSimultaneousChange()
 		{
@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class TurnStartSequentialChange : Change
+	public sealed class TurnStartSequentialChange : Change
 	{
 		public LivingObject Living { get; private set; }
 
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class TurnEndSequentialChange : Change
+	public sealed class TurnEndSequentialChange : Change
 	{
 		public LivingObject Living { get; private set; }
 
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class MapChange : EnvironmentChange
+	public sealed class MapChange : EnvironmentChange
 	{
 		public IntPoint3D Location { get; private set; }
 		public TileData TileData { get; private set; }
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ObjectCreatedChange : ObjectChange
+	public sealed class ObjectCreatedChange : ObjectChange
 	{
 		public ObjectCreatedChange(BaseObject ob)
 			: base(ob)
@@ -131,7 +131,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ObjectDestructedChange : ObjectChange
+	public sealed class ObjectDestructedChange : ObjectChange
 	{
 		public ObjectDestructedChange(BaseObject ob)
 			: base(ob)
@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class FullObjectChange : ObjectChange
+	public sealed class FullObjectChange : ObjectChange
 	{
 		public BaseGameObjectData ObjectData { get; set; }
 
@@ -170,7 +170,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class PropertyValueChange : PropertyChange
+	public sealed class PropertyValueChange : PropertyChange
 	{
 		public ValueType Value { get; private set; }
 
@@ -186,7 +186,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class PropertyIntChange : PropertyChange
+	public sealed class PropertyIntChange : PropertyChange
 	{
 		public int Value { get; private set; }
 
@@ -202,7 +202,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class PropertyStringChange : PropertyChange
+	public sealed class PropertyStringChange : PropertyChange
 	{
 		public string Value { get; private set; }
 
@@ -218,7 +218,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ObjectMoveChange : ObjectChange
+	public sealed class ObjectMoveChange : ObjectChange
 	{
 		public ContainerObject Source { get; private set; }
 		public IntPoint3D SourceLocation { get; private set; }
@@ -249,7 +249,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ObjectMoveLocationChange : ObjectChange
+	public sealed class ObjectMoveLocationChange : ObjectChange
 	{
 		public IntPoint3D SourceLocation { get; private set; }
 		public IntPoint3D DestinationLocation { get; private set; }
@@ -273,7 +273,7 @@ namespace Dwarrowdelf.Server
 
 
 
-	public class SkillChange : ObjectChange
+	public sealed class SkillChange : ObjectChange
 	{
 		public SkillID SkillID { get; private set; }
 		public byte Level { get; private set; }
@@ -291,7 +291,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ActionStartedChange : ObjectChange
+	public sealed class ActionStartedChange : ObjectChange
 	{
 		public ActionStartEvent ActionStartEvent { get; set; }
 
@@ -306,7 +306,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ActionProgressChange : ObjectChange
+	public sealed class ActionProgressChange : ObjectChange
 	{
 		public ActionProgressEvent ActionProgressEvent { get; set; }
 
@@ -321,7 +321,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ActionDoneChange : ObjectChange
+	public sealed class ActionDoneChange : ObjectChange
 	{
 		public ActionDoneEvent ActionDoneEvent { get; set; }
 
@@ -336,7 +336,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class WearChange : ObjectChange
+	public sealed class WearChange : ObjectChange
 	{
 		public ItemObject Wearable { get; private set; }
 		public ArmorSlot Slot { get; private set; }
@@ -354,7 +354,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class WieldChange : ObjectChange
+	public sealed class WieldChange : ObjectChange
 	{
 		public ItemObject Weapon { get; private set; }
 

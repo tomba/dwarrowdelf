@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	class ServerLauncher
+	static class ServerLauncher
 	{
 		static void Main(string[] args)
 		{

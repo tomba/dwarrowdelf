@@ -9,7 +9,7 @@ using Dwarrowdelf.AI;
 
 namespace MyArea
 {
-	public class MyEngine : GameEngine
+	public sealed class MyEngine : GameEngine
 	{
 		public MyEngine(string gameDir)
 			: base(gameDir)

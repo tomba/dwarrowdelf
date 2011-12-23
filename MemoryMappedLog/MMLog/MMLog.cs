@@ -9,7 +9,7 @@ using System.IO;
 
 namespace MemoryMappedLog
 {
-	public class LogEntry
+	public sealed class LogEntry
 	{
 		public DateTime DateTime { get; set; }
 		public string Component { get; set; }

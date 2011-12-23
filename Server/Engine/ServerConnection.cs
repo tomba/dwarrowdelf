@@ -7,7 +7,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Server
 {
-	public class ServerConnection
+	public sealed class ServerConnection
 	{
 		IConnection m_connection;
 		bool m_userLoggedIn;

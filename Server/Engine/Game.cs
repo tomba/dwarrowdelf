@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Dwarrowdelf.Server
 {
-	public class Game : MarshalByRefObject, IGame
+	public sealed class Game : MarshalByRefObject, IGame
 	{
 		public GameServer Server { get; private set; }
 		public GameEngine Engine { get; private set; }
@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class GameFactory : MarshalByRefObject, IGameFactory
+	public sealed class GameFactory : MarshalByRefObject, IGameFactory
 	{
 		public IGame CreateGame(string gameAreaName, string gameDir)
 		{

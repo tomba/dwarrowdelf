@@ -10,7 +10,7 @@ using Dwarrowdelf.AI;
 
 namespace MyArea
 {
-	public class Area
+	public sealed class Area
 	{
 		Random m_random = new Random(1234);
 

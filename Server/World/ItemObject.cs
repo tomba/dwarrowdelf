@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public class ItemObjectBuilder : ConcreteObjectBuilder
+	public sealed class ItemObjectBuilder : ConcreteObjectBuilder
 	{
 		public ItemID ItemID { get; set; }
 		public int NutritionalValue { get; set; }

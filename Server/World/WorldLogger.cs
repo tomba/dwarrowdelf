@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Dwarrowdelf.Server
 {
-	public class WorldLogger
+	public sealed class WorldLogger
 	{
 		World m_world;
 		TextWriter m_writer;

@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 {
 	/* Abstract game object, without inventory or location. */
 	[SaveGameObjectByRef]
-	abstract public class BaseObject : IBaseObject
+	public abstract class BaseObject : IBaseObject
 	{
 		[SaveGameProperty]
 		public ObjectID ObjectID { get; private set; }

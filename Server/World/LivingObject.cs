@@ -772,7 +772,7 @@ namespace Dwarrowdelf.Server
 	}
 
 
-	public class LivingObjectBuilder : ConcreteObjectBuilder
+	public sealed class LivingObjectBuilder : ConcreteObjectBuilder
 	{
 		public LivingID LivingID { get; set; }
 		public int VisionRange { get; set; }
