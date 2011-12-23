@@ -13,7 +13,7 @@ namespace Dwarrowdelf.AStar
 		Cancelled,
 	}
 
-	public class AStarResult
+	public sealed class AStarResult
 	{
 		public IDictionary<IntPoint3D, AStarNode> Nodes { get; private set; }
 		public AStarNode LastNode { get; private set; }

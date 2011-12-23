@@ -11,7 +11,7 @@ namespace Dwarrowdelf.AStar
 		ushort GetHeuristic(IntPoint3D location);
 	}
 
-	public class AStarDefaultTarget : IAStarTarget
+	public sealed class AStarDefaultTarget : IAStarTarget
 	{
 		IntPoint3D m_destination;
 		DirectionSet m_positioning;
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	public class AStarAreaTarget : IAStarTarget
+	public sealed class AStarAreaTarget : IAStarTarget
 	{
 		IntCuboid m_destination;
 
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	public class AStarDelegateTarget : IAStarTarget
+	public sealed class AStarDelegateTarget : IAStarTarget
 	{
 		Func<IntPoint3D, bool> m_func;
 

@@ -10,7 +10,7 @@ namespace Dwarrowdelf.AI
 	/// AI that takes jobs from a JobManager
 	/// </summary>
 	[SaveGameObjectByRef]
-	public class JobManagerAI : AssignmentAI
+	public sealed class JobManagerAI : AssignmentAI
 	{
 		public JobManager JobManager { get; set; }
 

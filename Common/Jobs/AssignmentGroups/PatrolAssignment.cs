@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class PatrolAssignment : AssignmentGroup
+	public sealed class PatrolAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]
 		readonly IEnvironmentObject m_environment;

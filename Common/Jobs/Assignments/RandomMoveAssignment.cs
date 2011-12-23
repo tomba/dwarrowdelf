@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class RandomMoveAssignment : Assignment
+	public sealed class RandomMoveAssignment : Assignment
 	{
 		[SaveGameProperty("Dir")]
 		Direction m_dir;

@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class MoveBuildItemAssignment : MoveBaseAssignment
+	public sealed class MoveBuildItemAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
 		IBuildingObject m_workplace;
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_dstItemID = dstItemID;
 		}
 
-		protected MoveBuildItemAssignment(SaveGameContext ctx)
+		MoveBuildItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

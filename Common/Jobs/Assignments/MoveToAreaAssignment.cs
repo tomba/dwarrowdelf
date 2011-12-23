@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	public class MoveToAreaAssignment : MoveAssignmentBase
+	public sealed class MoveToAreaAssignment : MoveAssignmentBase
 	{
 		readonly IntCuboid m_dest;
 

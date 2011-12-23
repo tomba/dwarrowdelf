@@ -19,7 +19,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class MapData : GameObjectData
+	public sealed class MapData : GameObjectData
 	{
 		public VisibilityMode VisibilityMode { get; set; }
 		public IntCuboid Bounds { get; set; }
@@ -35,7 +35,7 @@ namespace Dwarrowdelf
 
 	/* Item in inventory or floor */
 	[Serializable]
-	public class ItemData : MovableObjectData
+	public sealed class ItemData : MovableObjectData
 	{
 		public ItemID ItemID { get; set; }
 
@@ -46,7 +46,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class LivingData : MovableObjectData
+	public sealed class LivingData : MovableObjectData
 	{
 		public LivingID LivingID { get; set; }
 		public GameAction CurrentAction { get; set; }
@@ -68,7 +68,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class BuildingData : BaseGameObjectData
+	public sealed class BuildingData : BaseGameObjectData
 	{
 		public BuildingID ID { get; set; }
 		public ObjectID Environment { get; set; }

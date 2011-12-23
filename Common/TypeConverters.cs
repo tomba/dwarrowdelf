@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace Dwarrowdelf
 {
-	public class IntPointConverter : TypeConverter
+	public sealed class IntPointConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -42,7 +42,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntPoint3DConverter : TypeConverter
+	public sealed class IntPoint3DConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -77,7 +77,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntRectConverter : TypeConverter
+	public sealed class IntRectConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -112,7 +112,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntRectZConverter : TypeConverter
+	public sealed class IntRectZConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -147,7 +147,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntCuboidConverter : TypeConverter
+	public sealed class IntCuboidConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -182,7 +182,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class IntSize3DConverter : TypeConverter
+	public sealed class IntSize3DConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -217,7 +217,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class ObjectIDConverter : TypeConverter
+	public sealed class ObjectIDConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{

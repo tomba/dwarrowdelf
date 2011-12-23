@@ -6,7 +6,7 @@ using MemoryMappedLog;
 
 namespace Dwarrowdelf
 {
-	public class MMLogTraceListener : TraceListener
+	public sealed class MMLogTraceListener : TraceListener
 	{
 		string m_component;
 

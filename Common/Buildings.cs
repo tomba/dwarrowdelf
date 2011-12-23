@@ -16,7 +16,7 @@ namespace Dwarrowdelf
 	}
 
 	[ContentProperty("BuildableItems")]
-	public class BuildingInfo
+	public sealed class BuildingInfo
 	{
 		public BuildingID ID { get; internal set; }
 		public string Name { get; internal set; }
@@ -44,7 +44,7 @@ namespace Dwarrowdelf
 	}
 
 	[ContentProperty("BuildMaterials")]
-	public class BuildableItem
+	public sealed class BuildableItem
 	{
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
@@ -72,7 +72,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public class BuildableItemMaterialInfo
+	public sealed class BuildableItemMaterialInfo
 	{
 		public ItemID? ItemID { get; internal set; }
 		public ItemCategory? ItemCategory { get; internal set; }

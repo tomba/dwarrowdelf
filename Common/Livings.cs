@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 		Female,
 	}
 
-	public class LivingInfo
+	public sealed class LivingInfo
 	{
 		public LivingID ID { get; internal set; }
 		public string Name { get; internal set; }

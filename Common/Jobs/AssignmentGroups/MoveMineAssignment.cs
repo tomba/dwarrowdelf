@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class MoveMineAssignment : MoveBaseAssignment
+	public sealed class MoveMineAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
 		readonly MineActionType m_mineActionType;
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_mineActionType = mineActionType;
 		}
 
-		protected MoveMineAssignment(SaveGameContext ctx)
+		MoveMineAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

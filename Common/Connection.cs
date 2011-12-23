@@ -31,7 +31,7 @@ namespace Dwarrowdelf
 		void Disconnect();
 	}
 
-	public class Connection : IConnection
+	public sealed class Connection : IConnection
 	{
 		Socket m_socket;
 

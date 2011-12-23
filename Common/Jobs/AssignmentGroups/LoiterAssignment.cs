@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class LoiterAssignment : AssignmentGroup
+	public sealed class LoiterAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Environment")]
 		readonly IEnvironmentObject m_environment;

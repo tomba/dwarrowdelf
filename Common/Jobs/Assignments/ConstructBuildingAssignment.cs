@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class ConstructBuildingAssignment : Assignment
+	public sealed class ConstructBuildingAssignment : Assignment
 	{
 		[SaveGameProperty]
 		readonly IEnvironmentObject m_environment;
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_buildingID = buildingID;
 		}
 
-		protected ConstructBuildingAssignment(SaveGameContext ctx)
+		ConstructBuildingAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

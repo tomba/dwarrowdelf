@@ -71,7 +71,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class MoveAction : GameAction
+	public sealed class MoveAction : GameAction
 	{
 		[SaveGameProperty]
 		public Direction Direction { get; private set; }
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 			this.Direction = direction;
 		}
 
-		protected MoveAction(SaveGameContext ctx)
+		MoveAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -94,7 +94,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class WaitAction : GameAction
+	public sealed class WaitAction : GameAction
 	{
 		[SaveGameProperty]
 		public int WaitTicks { get; private set; }
@@ -104,7 +104,7 @@ namespace Dwarrowdelf
 			this.WaitTicks = ticks;
 		}
 
-		protected WaitAction(SaveGameContext ctx)
+		WaitAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -130,7 +130,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class MineAction : GameAction
+	public sealed class MineAction : GameAction
 	{
 		[SaveGameProperty]
 		public Direction Direction { get; private set; }
@@ -143,7 +143,7 @@ namespace Dwarrowdelf
 			this.MineActionType = mineActionType;
 		}
 
-		protected MineAction(SaveGameContext ctx)
+		MineAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -156,7 +156,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class FellTreeAction : GameAction
+	public sealed class FellTreeAction : GameAction
 	{
 		[SaveGameProperty]
 		public Direction Direction { get; private set; }
@@ -166,7 +166,7 @@ namespace Dwarrowdelf
 			this.Direction = dir;
 		}
 
-		protected FellTreeAction(SaveGameContext ctx)
+		FellTreeAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -179,7 +179,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class BuildItemAction : GameAction
+	public sealed class BuildItemAction : GameAction
 	{
 		// public object type etc
 
@@ -194,7 +194,7 @@ namespace Dwarrowdelf
 			this.DstItemID = dstItemID;
 		}
 
-		protected BuildItemAction(SaveGameContext ctx)
+		BuildItemAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -207,7 +207,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class AttackAction : GameAction
+	public sealed class AttackAction : GameAction
 	{
 		[SaveGameProperty]
 		public ObjectID Target { get; private set; }
@@ -217,7 +217,7 @@ namespace Dwarrowdelf
 			this.Target = target.ObjectID;
 		}
 
-		protected AttackAction(SaveGameContext ctx)
+		AttackAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -230,7 +230,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class ConstructBuildingAction : GameAction
+	public sealed class ConstructBuildingAction : GameAction
 	{
 		[SaveGameProperty]
 		public ObjectID EnvironmentID { get; private set; }
@@ -246,7 +246,7 @@ namespace Dwarrowdelf
 			this.BuildingID = buildingID;
 		}
 
-		protected ConstructBuildingAction(SaveGameContext ctx)
+		ConstructBuildingAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -259,7 +259,7 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class DestructBuildingAction : GameAction
+	public sealed class DestructBuildingAction : GameAction
 	{
 		[SaveGameProperty]
 		public ObjectID BuildingID { get; private set; }
@@ -269,7 +269,7 @@ namespace Dwarrowdelf
 			this.BuildingID = buildingID;
 		}
 
-		protected DestructBuildingAction(SaveGameContext ctx)
+		DestructBuildingAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -305,14 +305,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class DropAction : ItemAction
+	public sealed class DropAction : ItemAction
 	{
 		public DropAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected DropAction(SaveGameContext ctx)
+		DropAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -320,14 +320,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class GetAction : ItemAction
+	public sealed class GetAction : ItemAction
 	{
 		public GetAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected GetAction(SaveGameContext ctx)
+		GetAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -335,14 +335,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class ConsumeAction : ItemAction
+	public sealed class ConsumeAction : ItemAction
 	{
 		public ConsumeAction(IItemObject consumable)
 			: base(consumable)
 		{
 		}
 
-		protected ConsumeAction(SaveGameContext ctx)
+		ConsumeAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -350,14 +350,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class WearArmorAction : ItemAction
+	public sealed class WearArmorAction : ItemAction
 	{
 		public WearArmorAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected WearArmorAction(SaveGameContext ctx)
+		WearArmorAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -365,14 +365,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class RemoveArmorAction : ItemAction
+	public sealed class RemoveArmorAction : ItemAction
 	{
 		public RemoveArmorAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected RemoveArmorAction(SaveGameContext ctx)
+		RemoveArmorAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -380,14 +380,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class WieldWeaponAction : ItemAction
+	public sealed class WieldWeaponAction : ItemAction
 	{
 		public WieldWeaponAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected WieldWeaponAction(SaveGameContext ctx)
+		WieldWeaponAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -395,14 +395,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public class RemoveWeaponAction : ItemAction
+	public sealed class RemoveWeaponAction : ItemAction
 	{
 		public RemoveWeaponAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		protected RemoveWeaponAction(SaveGameContext ctx)
+		RemoveWeaponAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

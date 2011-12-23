@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public class Herd
+	public sealed class Herd
 	{
 		[SaveGameProperty]
 		List<IAI> m_members = new List<IAI>();

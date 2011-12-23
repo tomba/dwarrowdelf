@@ -26,7 +26,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class DeathReport : LivingReport
+	public sealed class DeathReport : LivingReport
 	{
 		public DeathReport(ILivingObject living)
 			: base(living)
@@ -52,7 +52,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ConstructBuildingActionReport : ActionReport
+	public sealed class ConstructBuildingActionReport : ActionReport
 	{
 		public BuildingID BuildingID { get; private set; }
 
@@ -64,7 +64,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class DestructBuildingActionReport : ActionReport
+	public sealed class DestructBuildingActionReport : ActionReport
 	{
 		public ObjectID BuildingObjectID { get; private set; }
 
@@ -76,7 +76,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class MoveActionReport : ActionReport
+	public sealed class MoveActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }
 
@@ -88,7 +88,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class MineActionReport : ActionReport
+	public sealed class MineActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }
 		public MineActionType MineActionType { get; private set; }
@@ -105,7 +105,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class FellTreeActionReport : ActionReport
+	public sealed class FellTreeActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }
 		public InteriorID InteriorID { get; set; }
@@ -119,7 +119,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class BuildItemActionReport : ActionReport
+	public sealed class BuildItemActionReport : ActionReport
 	{
 		public ItemID ItemID { get; private set; }
 		public ObjectID ItemObjectID { get; set; }
@@ -138,7 +138,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class AttackActionReport : ActionReport
+	public sealed class AttackActionReport : ActionReport
 	{
 		public ObjectID TargetObjectID { get; private set; }
 
@@ -167,7 +167,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class WearArmorActionReport : ItemActionReport
+	public sealed class WearArmorActionReport : ItemActionReport
 	{
 		public WearArmorActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -176,7 +176,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class RemoveArmorActionReport : ItemActionReport
+	public sealed class RemoveArmorActionReport : ItemActionReport
 	{
 		public RemoveArmorActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -185,7 +185,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class WieldWeaponActionReport : ItemActionReport
+	public sealed class WieldWeaponActionReport : ItemActionReport
 	{
 		public WieldWeaponActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -194,7 +194,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class RemoveWeaponActionReport : ItemActionReport
+	public sealed class RemoveWeaponActionReport : ItemActionReport
 	{
 		public RemoveWeaponActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -203,7 +203,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class GetActionReport : ItemActionReport
+	public sealed class GetActionReport : ItemActionReport
 	{
 		public GetActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -212,7 +212,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class DropActionReport : ItemActionReport
+	public sealed class DropActionReport : ItemActionReport
 	{
 		public DropActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
@@ -221,7 +221,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ConsumeActionReport : ItemActionReport
+	public sealed class ConsumeActionReport : ItemActionReport
 	{
 		public ConsumeActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)

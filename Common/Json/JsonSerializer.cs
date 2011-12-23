@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 		int Get(object ob);
 	}
 
-	public class SaveGameSerializer : IDisposable
+	public sealed class SaveGameSerializer : IDisposable
 	{
 		class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
 		{

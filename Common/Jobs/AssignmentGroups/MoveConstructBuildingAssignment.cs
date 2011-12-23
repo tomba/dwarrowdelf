@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class MoveConstructBuildingAssignment : MoveBaseAssignment
+	public sealed class MoveConstructBuildingAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
 		readonly IntRectZ m_area;
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_buildingID = buildingID;
 		}
 
-		protected MoveConstructBuildingAssignment(SaveGameContext ctx)
+		MoveConstructBuildingAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

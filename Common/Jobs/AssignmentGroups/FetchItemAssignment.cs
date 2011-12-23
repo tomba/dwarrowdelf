@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class FetchItemAssignment : AssignmentGroup
+	public sealed class FetchItemAssignment : AssignmentGroup
 	{
 		[SaveGameProperty]
 		public IItemObject Item { get; private set; }
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_state = 0;
 		}
 
-		protected FetchItemAssignment(SaveGameContext ctx)
+		FetchItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

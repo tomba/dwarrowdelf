@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class MoveConsumeAssignment : AssignmentGroup
+	public sealed class MoveConsumeAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Item")]
 		readonly IItemObject m_item;
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_state = 0;
 		}
 
-		protected MoveConsumeAssignment(SaveGameContext ctx)
+		MoveConsumeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

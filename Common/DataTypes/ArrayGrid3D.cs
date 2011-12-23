@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	public class ArrayGrid3D<T>
+	public sealed class ArrayGrid3D<T>
 	{
 		public int Width { get; private set; }
 		public int Height { get; private set; }

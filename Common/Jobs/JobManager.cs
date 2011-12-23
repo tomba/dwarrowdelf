@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Jobs
 		IAssignment FindAssignment(ILivingObject living);
 	}
 
-	public class JobManager
+	public sealed class JobManager
 	{
 		List<IJobSource> m_jobSources = new List<IJobSource>();
 

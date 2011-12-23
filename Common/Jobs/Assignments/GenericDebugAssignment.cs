@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 	/// For debug only
 	/// </summary>
 	[SaveGameObjectByRef]
-	public class GenericDebugAssignment : Assignment
+	public sealed class GenericDebugAssignment : Assignment
 	{
 		[SaveGameProperty("Action")]
 		readonly GameAction m_action;
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_action = action;
 		}
 
-		protected GenericDebugAssignment(SaveGameContext ctx)
+		GenericDebugAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

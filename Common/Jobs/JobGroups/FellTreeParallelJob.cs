@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	public class FellTreeParallelJob : JobGroup
+	public sealed class FellTreeParallelJob : JobGroup
 	{
 		readonly IEnvironmentObject m_environment;
 		readonly IntCuboid m_area;

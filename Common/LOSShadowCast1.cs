@@ -11,7 +11,7 @@ namespace Dwarrowdelf
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate);
 	}
 
-	public class LOSNull : ILOSAlgo
+	public sealed class LOSNull : ILOSAlgo
 	{
 		public void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
 			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
@@ -31,7 +31,7 @@ namespace Dwarrowdelf
 	}
 
 	// http://sc.tri-bit.com/Computing_LOS_for_Large_Areas
-	public class LOSShadowCast1 : ILOSAlgo
+	public sealed class LOSShadowCast1 : ILOSAlgo
 	{
 		class LOSCell // xxx struct?
 		{

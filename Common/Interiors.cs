@@ -23,7 +23,7 @@ namespace Dwarrowdelf
 		Blocker = 1 << 0,
 	}
 
-	public class InteriorInfo
+	public sealed class InteriorInfo
 	{
 		public InteriorID ID { get; internal set; }
 		public string Name { get; internal set; }

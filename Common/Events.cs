@@ -11,7 +11,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ActionStartEvent : GameEvent
+	public sealed class ActionStartEvent : GameEvent
 	{
 		public GameAction Action { get; set; }
 		public ActionPriority Priority { get; set; }
@@ -19,7 +19,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ActionProgressEvent : GameEvent
+	public sealed class ActionProgressEvent : GameEvent
 	{
 		public int MagicNumber { get; set; }
 		public int UserID { get; set; }
@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ActionDoneEvent : GameEvent
+	public sealed class ActionDoneEvent : GameEvent
 	{
 		public int MagicNumber { get; set; }
 		public int UserID { get; set; }

@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class AttackAssignment : Assignment
+	public sealed class AttackAssignment : Assignment
 	{
 		[SaveGameProperty("Target")]
 		readonly ILivingObject m_target;
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_target = target;
 		}
 
-		protected AttackAssignment(SaveGameContext ctx)
+		AttackAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

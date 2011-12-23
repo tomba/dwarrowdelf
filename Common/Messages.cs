@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ReportMessage : InformativeMessage
+	public sealed class ReportMessage : InformativeMessage
 	{
 		public GameReport Report { get; set; }
 	}
@@ -42,25 +42,25 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class IPCommandMessage : ServerMessage
+	public sealed class IPCommandMessage : ServerMessage
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class IPOutputMessage : ClientMessage
+	public sealed class IPOutputMessage : ClientMessage
 	{
 		public string Text { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnRequestMessage : ServerMessage
+	public sealed class LogOnRequestMessage : ServerMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class LogOnReplyBeginMessage : ClientMessage
+	public sealed class LogOnReplyBeginMessage : ClientMessage
 	{
 		public bool IsSeeAll { get; set; }
 		public int Tick { get; set; }
@@ -68,49 +68,49 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class LogOnReplyEndMessage : ClientMessage
+	public sealed class LogOnReplyEndMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOutRequestMessage : ServerMessage
+	public sealed class LogOutRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class LogOutReplyMessage : ClientMessage
+	public sealed class LogOutReplyMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class EnterGameRequestMessage : ServerMessage
+	public sealed class EnterGameRequestMessage : ServerMessage
 	{
 		public string Name { get; set; }
 	}
 
 	[Serializable]
-	public class EnterGameReplyBeginMessage : ClientMessage
+	public sealed class EnterGameReplyBeginMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class EnterGameReplyEndMessage : ClientMessage
+	public sealed class EnterGameReplyEndMessage : ClientMessage
 	{
 		public string ClientData { get; set; }
 	}
 
 	[Serializable]
-	public class ExitGameRequestMessage : ServerMessage
+	public sealed class ExitGameRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class ExitGameReplyMessage : ClientMessage
+	public sealed class ExitGameReplyMessage : ClientMessage
 	{
 	}
 
 	[Serializable]
-	public class SetTilesMessage : ServerMessage
+	public sealed class SetTilesMessage : ServerMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntCuboid Cube { get; set; }
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class CreateItemMessage : ServerMessage
+	public sealed class CreateItemMessage : ServerMessage
 	{
 		public ItemID ItemID;
 		public MaterialID MaterialID;
@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class CreateLivingMessage : ServerMessage
+	public sealed class CreateLivingMessage : ServerMessage
 	{
 		public ObjectID EnvironmentID;
 		public IntRectZ Area;
@@ -150,13 +150,13 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class SetWorldConfigMessage : ServerMessage
+	public sealed class SetWorldConfigMessage : ServerMessage
 	{
 		public TimeSpan? MinTickTime { get; set; }
 	}
 
 	[Serializable]
-	public class CreateBuildingMessage : ServerMessage
+	public sealed class CreateBuildingMessage : ServerMessage
 	{
 		public ObjectID MapID { get; set; }
 		public IntRectZ Area { get; set; }
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ChangeMessage : StateMessage
+	public sealed class ChangeMessage : StateMessage
 	{
 		public ChangeData ChangeData { get; set; }
 
@@ -183,7 +183,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ObjectDataMessage : StateMessage
+	public sealed class ObjectDataMessage : StateMessage
 	{
 		public BaseGameObjectData ObjectData { get; set; }
 
@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsMessage : StateMessage
+	public sealed class MapDataTerrainsMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class MapDataTerrainsListMessage : StateMessage
+	public sealed class MapDataTerrainsListMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
 		public Tuple<IntPoint3D, TileData>[] TileDataList { get; set; }
@@ -224,7 +224,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ControllablesDataMessage : ClientMessage
+	public sealed class ControllablesDataMessage : ClientMessage
 	{
 		public enum Op
 		{
@@ -243,7 +243,7 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ProceedTurnRequestMessage : ClientMessage
+	public sealed class ProceedTurnRequestMessage : ClientMessage
 	{
 		// Sequential : Living who's turn it is
 		// Simultaneous: AnyObjectID
@@ -251,24 +251,24 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public class ProceedTurnReplyMessage : ServerMessage
+	public sealed class ProceedTurnReplyMessage : ServerMessage
 	{
 		public Tuple<ObjectID, GameAction>[] Actions { get; set; }
 	}
 
 	[Serializable]
-	public class SaveRequestMessage : ServerMessage
+	public sealed class SaveRequestMessage : ServerMessage
 	{
 	}
 
 	[Serializable]
-	public class SaveClientDataRequestMessage : ClientMessage
+	public sealed class SaveClientDataRequestMessage : ClientMessage
 	{
 		public Guid ID;
 	}
 
 	[Serializable]
-	public class SaveClientDataReplyMessage : ServerMessage
+	public sealed class SaveClientDataReplyMessage : ServerMessage
 	{
 		public Guid ID;
 		public string Data;

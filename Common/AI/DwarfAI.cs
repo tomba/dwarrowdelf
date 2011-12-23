@@ -9,7 +9,7 @@ using Dwarrowdelf;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public class DwarfAI : AssignmentAI
+	public sealed class DwarfAI : AssignmentAI
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		protected DwarfAI(SaveGameContext ctx)
+		DwarfAI(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

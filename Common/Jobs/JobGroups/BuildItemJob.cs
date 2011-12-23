@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.JobGroups
 {
 	[SaveGameObjectByRef]
-	public class BuildItemJob : JobGroup
+	public sealed class BuildItemJob : JobGroup
 	{
 		[SaveGameProperty]
 		IBuildingObject m_workplace;
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			AddSubJob(new FetchItems(this, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
 		}
 
-		protected BuildItemJob(SaveGameContext ctx)
+		BuildItemJob(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

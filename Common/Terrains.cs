@@ -42,7 +42,7 @@ namespace Dwarrowdelf
 		SeeThroughDown = 1 << 6,// The tile below is visible
 	}
 
-	public class TerrainInfo
+	public sealed class TerrainInfo
 	{
 		public TerrainID ID { get; internal set; }
 		public string Name { get; internal set; }

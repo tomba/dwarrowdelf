@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public class MyTraceSource : TraceSource
+	public sealed class MyTraceSource : TraceSource
 	{
 		string m_header;
 		public string Header { set { m_header = "[" + value + "] "; } }

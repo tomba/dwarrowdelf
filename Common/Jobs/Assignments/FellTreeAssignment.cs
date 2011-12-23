@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class FellTreeAssignment : Assignment
+	public sealed class FellTreeAssignment : Assignment
 	{
 		[SaveGameProperty]
 		readonly IntPoint3D m_location;
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_location = location;
 		}
 
-		protected FellTreeAssignment(SaveGameContext ctx)
+		FellTreeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	public class MineAreaJob : JobGroup
+	public sealed class MineAreaJob : JobGroup
 	{
 		readonly IEnvironmentObject m_environment;
 

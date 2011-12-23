@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class MoveAssignment : MoveAssignmentBase
+	public sealed class MoveAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
 		readonly IntPoint3D m_dest;
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_dest = destination;
 		}
 
-		protected MoveAssignment(SaveGameContext ctx)
+		MoveAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

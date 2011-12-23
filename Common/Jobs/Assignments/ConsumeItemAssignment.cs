@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class ConsumeItemAssignment : Assignment
+	public sealed class ConsumeItemAssignment : Assignment
 	{
 		[SaveGameProperty("Item")]
 		readonly IItemObject m_item;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_item = item;
 		}
 
-		protected ConsumeItemAssignment(SaveGameContext ctx)
+		ConsumeItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

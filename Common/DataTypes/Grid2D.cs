@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 	 * 2D grid made of <T>s
 	 * Coordinates offset by Origin
 	 */
-	public class Grid2D<T> : IEnumerable<KeyValuePair<IntPoint, T>>
+	public sealed class Grid2D<T> : IEnumerable<KeyValuePair<IntPoint, T>>
 	{
 		ArrayGrid2D<T> m_grid;
 		public IntVector Origin { get; set; }

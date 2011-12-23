@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.JobGroups
 {
 	[SaveGameObjectByRef]
-	public class FetchItems : JobGroup
+	public sealed class FetchItems : JobGroup
 	{
 		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3D location, IEnumerable<IItemObject> items)
 			: base(parent)
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			Debug.Assert(this.SubJobs.Count > 0);
 		}
 
-		protected FetchItems(SaveGameContext ctx)
+		FetchItems(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

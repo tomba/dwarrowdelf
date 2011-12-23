@@ -17,7 +17,7 @@ namespace Dwarrowdelf
 		void Add(int id, object ob);
 	}
 
-	public class SaveGameDeserializer : IDisposable
+	public sealed class SaveGameDeserializer : IDisposable
 	{
 		class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
 		{

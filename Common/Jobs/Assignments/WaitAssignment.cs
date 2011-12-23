@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class WaitAssignment : Assignment
+	public sealed class WaitAssignment : Assignment
 	{
 		[SaveGameProperty("Turns")]
 		readonly int m_turns;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_turns = turns;
 		}
 
-		protected WaitAssignment(SaveGameContext ctx)
+		WaitAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public class CarnivoreAI : AssignmentAI
+	public sealed class CarnivoreAI : AssignmentAI
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;

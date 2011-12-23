@@ -9,14 +9,14 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public class MoveFellTreeAssignment : MoveBaseAssignment
+	public sealed class MoveFellTreeAssignment : MoveBaseAssignment
 	{
 		public MoveFellTreeAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D location)
 			: base(parent, environment, location)
 		{
 		}
 
-		protected MoveFellTreeAssignment(SaveGameContext ctx)
+		MoveFellTreeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

@@ -12,29 +12,29 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class TickStartChangeData : ChangeData
+	public sealed class TickStartChangeData : ChangeData
 	{
 		public int TickNumber;
 	}
 
 	[Serializable]
-	public class TurnStartSimultaneousChangeData : ChangeData
+	public sealed class TurnStartSimultaneousChangeData : ChangeData
 	{
 	}
 
 	[Serializable]
-	public class TurnEndSimultaneousChangeData : ChangeData
+	public sealed class TurnEndSimultaneousChangeData : ChangeData
 	{
 	}
 
 	[Serializable]
-	public class TurnStartSequentialChangeData : ChangeData
+	public sealed class TurnStartSequentialChangeData : ChangeData
 	{
 		public ObjectID LivingID;
 	}
 
 	[Serializable]
-	public class TurnEndSequentialChangeData : ChangeData
+	public sealed class TurnEndSequentialChangeData : ChangeData
 	{
 		public ObjectID LivingID;
 	}
@@ -46,7 +46,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class MapChangeData : EnvironmentChangeData
+	public sealed class MapChangeData : EnvironmentChangeData
 	{
 		public IntPoint3D Location;
 		public TileData TileData;
@@ -59,17 +59,17 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ObjectCreatedChangeData : ObjectChangeData
+	public sealed class ObjectCreatedChangeData : ObjectChangeData
 	{
 	}
 
 	[Serializable]
-	public class ObjectDestructedChangeData : ObjectChangeData
+	public sealed class ObjectDestructedChangeData : ObjectChangeData
 	{
 	}
 
 	[Serializable]
-	public class FullObjectChangeData : ObjectChangeData
+	public sealed class FullObjectChangeData : ObjectChangeData
 	{
 		public BaseGameObjectData ObjectData;
 	}
@@ -81,25 +81,25 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class PropertyValueChangeData : PropertyChangeData
+	public sealed class PropertyValueChangeData : PropertyChangeData
 	{
 		public ValueType Value;
 	}
 
 	[Serializable]
-	public class PropertyIntChangeData : PropertyChangeData
+	public sealed class PropertyIntChangeData : PropertyChangeData
 	{
 		public int Value;
 	}
 
 	[Serializable]
-	public class PropertyStringChangeData : PropertyChangeData
+	public sealed class PropertyStringChangeData : PropertyChangeData
 	{
 		public string Value;
 	}
 
 	[Serializable]
-	public class ObjectMoveChangeData : ObjectChangeData
+	public sealed class ObjectMoveChangeData : ObjectChangeData
 	{
 		public ObjectID SourceID;
 		public IntPoint3D SourceLocation;
@@ -109,7 +109,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public class ObjectMoveLocationChangeData : ObjectChangeData
+	public sealed class ObjectMoveLocationChangeData : ObjectChangeData
 	{
 		public IntPoint3D SourceLocation;
 		public IntPoint3D DestinationLocation;
@@ -118,39 +118,39 @@ namespace Dwarrowdelf
 
 
 	[Serializable]
-	public class SkillChangeData : ObjectChangeData
+	public sealed class SkillChangeData : ObjectChangeData
 	{
 		public SkillID SkillID;
 		public byte Level;
 	}
 
 	[Serializable]
-	public class ActionStartedChangeData : ObjectChangeData
+	public sealed class ActionStartedChangeData : ObjectChangeData
 	{
 		public ActionStartEvent ActionStartEvent;
 	}
 
 	[Serializable]
-	public class ActionProgressChangeData : ObjectChangeData
+	public sealed class ActionProgressChangeData : ObjectChangeData
 	{
 		public ActionProgressEvent ActionProgressEvent;
 	}
 
 	[Serializable]
-	public class ActionDoneChangeData : ObjectChangeData
+	public sealed class ActionDoneChangeData : ObjectChangeData
 	{
 		public ActionDoneEvent ActionDoneEvent;
 	}
 
 	[Serializable]
-	public class WearChangeData : ObjectChangeData
+	public sealed class WearChangeData : ObjectChangeData
 	{
 		public ObjectID WearableID;
 		public ArmorSlot Slot;
 	}
 
 	[Serializable]
-	public class WieldChangeData : ObjectChangeData
+	public sealed class WieldChangeData : ObjectChangeData
 	{
 		public ObjectID WeaponID;
 	}

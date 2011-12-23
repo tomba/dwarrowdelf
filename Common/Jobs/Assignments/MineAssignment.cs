@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public class MineAssignment : Assignment
+	public sealed class MineAssignment : Assignment
 	{
 		[SaveGameProperty]
 		readonly IntPoint3D m_location;
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_mineActionType = mineActionType;
 		}
 
-		protected MineAssignment(SaveGameContext ctx)
+		MineAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

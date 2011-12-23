@@ -61,7 +61,7 @@ namespace Dwarrowdelf
 		Other,
 	}
 
-	public class ItemInfo
+	public sealed class ItemInfo
 	{
 		public ItemID ID { get; internal set; }
 		public string Name { get; internal set; }
@@ -76,7 +76,7 @@ namespace Dwarrowdelf
 		Blunt,
 	}
 
-	public class WeaponInfo
+	public sealed class WeaponInfo
 	{
 		public int WC { get; internal set; }
 		public bool IsTwoHanded { get; internal set; }
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 	 * plate armor (plate mail)
 	 */
 
-	public class ArmorInfo
+	public sealed class ArmorInfo
 	{
 		public int AC { get; internal set; }
 		public ArmorSlot Slot { get; internal set; }

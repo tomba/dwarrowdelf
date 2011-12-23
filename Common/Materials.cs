@@ -65,7 +65,7 @@ namespace Dwarrowdelf
 		Custom,
 	}
 
-	public class MaterialInfo
+	public sealed class MaterialInfo
 	{
 		public MaterialID ID { get; internal set; }
 		public MaterialCategory Category { get; internal set; }

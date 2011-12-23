@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf
 {
 	// XXX mvoe to server
-	public class SaveManager
+	public sealed class SaveManager
 	{
 		public string GameDir { get; private set; }
 
