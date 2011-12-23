@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 			m_livings.Remove(living);
 		}
 
-		class LivingEnumerator
+		sealed class LivingEnumerator
 		{
 			IList<LivingObject> m_list;
 			int m_index;

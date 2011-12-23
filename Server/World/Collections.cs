@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Server
 {
-	class KeyedObjectCollection : KeyedCollection<ObjectID, MovableObject>
+	sealed class KeyedObjectCollection : KeyedCollection<ObjectID, MovableObject>
 	{
 		public KeyedObjectCollection() : base(null, 10) { }
 

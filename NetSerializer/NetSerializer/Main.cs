@@ -10,7 +10,7 @@ namespace NetSerializer
 {
 	public static partial class Serializer
 	{
-		class TypeData
+		sealed class TypeData
 		{
 			public TypeData(ushort typeID)
 			{

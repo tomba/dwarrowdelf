@@ -20,9 +20,9 @@ namespace Dwarrowdelf.Server
 			//SignalWorld(); // XXX
 		}
 
-		class InvokeList
+		sealed class InvokeList
 		{
-			class InvokeInfo
+			sealed class InvokeInfo
 			{
 				public Delegate Action;
 				public object[] Args;

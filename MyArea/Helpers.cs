@@ -7,7 +7,7 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
-	class Helpers
+	static class Helpers
 	{
 		public readonly static Random MyRandom = new Random(123);
 

@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Server
 {
 	[Serializable]
-	class GameConfig
+	sealed class GameConfig
 	{
 		// Require a player to be connected for ticks to proceed
 		public bool RequirePlayer;
@@ -422,7 +422,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		[Serializable]
-		class SaveData
+		sealed class SaveData
 		{
 			public World World;
 			public List<Player> Players;

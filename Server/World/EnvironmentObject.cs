@@ -660,7 +660,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		class LargeObjectSetConv : Dwarrowdelf.ISaveGameConverter
+		sealed class LargeObjectSetConv : Dwarrowdelf.ISaveGameConverter
 		{
 			public object ConvertToSerializable(object value)
 			{
@@ -679,7 +679,7 @@ namespace Dwarrowdelf.Server
 			public Type OutputType { get { return typeof(AreaObject[]); } }
 		}
 
-		class TileGridReaderWriter : ISaveGameReaderWriter
+		sealed class TileGridReaderWriter : ISaveGameReaderWriter
 		{
 			public void Write(Newtonsoft.Json.JsonWriter writer, object value)
 			{
@@ -741,7 +741,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	class TileGrid
+	sealed class TileGrid
 	{
 		TileData[, ,] m_grid;
 		public TileData[, ,] Grid { get { return m_grid; } }

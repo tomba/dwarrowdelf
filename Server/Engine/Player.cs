@@ -738,7 +738,7 @@ namespace Dwarrowdelf.Server
 		public abstract void HandleWorldChange(Change change);
 	}
 
-	class AdminChangeHandler : ChangeHandler
+	sealed class AdminChangeHandler : ChangeHandler
 	{
 		public AdminChangeHandler(Player player)
 			: base(player)
@@ -760,7 +760,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	class PlayerChangeHandler : ChangeHandler
+	sealed class PlayerChangeHandler : ChangeHandler
 	{
 		public PlayerChangeHandler(Player player)
 			: base(player)

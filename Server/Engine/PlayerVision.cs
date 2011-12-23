@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Server
 		public virtual void HandleNewControllable(LivingObject living) { } // XXX update vision map
 	}
 
-	class AdminVisionTracker : VisionTrackerBase
+	sealed class AdminVisionTracker : VisionTrackerBase
 	{
 		public static AdminVisionTracker Tracker = new AdminVisionTracker();
 
@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	class AllVisibleVisionTracker : VisionTrackerBase
+	sealed class AllVisibleVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
 		EnvironmentObject m_environment;
@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	class GlobalFOVVisionTracker : VisionTrackerBase
+	sealed class GlobalFOVVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
 		EnvironmentObject m_environment;
@@ -182,7 +182,7 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	class LOSVisionTracker : VisionTrackerBase
+	sealed class LOSVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
 		EnvironmentObject m_environment;

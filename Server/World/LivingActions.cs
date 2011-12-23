@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		class ActionData
+		sealed class ActionData
 		{
 			public Func<LivingObject, GameAction, bool> ActionHandler;
 			public Func<LivingObject, GameAction, int> GetTotalTicks;

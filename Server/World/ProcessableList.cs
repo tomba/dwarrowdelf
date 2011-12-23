@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByValue]
-	class ProcessableList<T>
+	sealed class ProcessableList<T>
 	{
 		[SaveGameProperty]
 		List<T> m_list;
