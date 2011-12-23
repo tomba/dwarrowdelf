@@ -148,8 +148,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			this.Status = status;
 
-			Debug.Assert(status == JobStatus.Done && this.SubJobs.Count == 0);
-
 			Cleanup();
 
 			foreach (var job in m_subJobs.ToArray())
