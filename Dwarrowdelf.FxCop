@@ -272,11 +272,6 @@
          <Item>'Dwarrowdelf.Client.Base.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.Base.dll'</Item>
-        </Issue>
-       </Message>
       </Messages>
       <Namespaces>
        <Namespace Name="Dwarrowdelf.Client">
@@ -798,11 +793,6 @@
          <Item>'Dwarrowdelf.Client.exe'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.exe'</Item>
-        </Issue>
-       </Message>
        <Message TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824" Created="2011-12-23 07:30:55Z">
         <Issue>
          <Item>'Dwarrowdelf.Client.exe'</Item>
@@ -814,14 +804,13 @@
         <Types>
          <Type Name="App">
           <Members>
-           <Member Name="#MainWindow">
+           <Member Name="#Current">
             <Accessors>
-             <Accessor Name="#get_MainWindow()">
+             <Accessor Name="#get_Current()">
               <Messages>
-               <Message TypeName="DoNotDecreaseInheritedMemberVisibility" Category="Microsoft.Usage" CheckId="CA2222" Created="2011-12-23 07:30:55Z">
+               <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
                 <Issue>
-                 <Item>'App.MainWindow.get()'</Item>
-                 <Item>'Application'</Item>
+                 <Item>'App.Current.get()'</Item>
                 </Issue>
                </Message>
               </Messages>
@@ -3235,6 +3224,13 @@
        <Namespace Name="Dwarrowdelf.Client.UI">
         <Types>
          <Type Name="BuildingEditControl">
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'BuildingEditControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
           <Members>
            <Member Name="#buildQueueListBox">
             <Messages>
@@ -3267,29 +3263,18 @@
                <Item>castclass</Item>
               </Issue>
              </Message>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'BuildingEditControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
             </Messages>
            </Member>
           </Members>
          </Type>
          <Type Name="BuildingInfoControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'BuildingInfoControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'BuildingInfoControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="BuildingStateToBoolConverter">
           <Members>
@@ -3388,12 +3373,6 @@
                <Item>'RadioButton'</Item>
                <Item>'ConsoleDialog.IComponentConnector.Connect(int, object)'</Item>
                <Item>castclass</Item>
-              </Issue>
-             </Message>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ConsoleDialog'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -3591,6 +3570,13 @@
           </Messages>
          </Type>
          <Type Name="DockHoverControl">
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'DockHoverControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
           <Members>
            <Member Name="#currentTileItems">
             <Messages>
@@ -3601,35 +3587,22 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'DockHoverControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
           </Members>
          </Type>
          <Type Name="DockSelectedControl">
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'DockSelectedControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
           <Members>
            <Member Name="#LayoutRoot">
             <Messages>
              <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2011-12-23 07:30:55Z">
               <Issue>
                <Item>'DockSelectedControl.LayoutRoot'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'DockSelectedControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -3725,18 +3698,13 @@
           </Messages>
          </Type>
          <Type Name="ItemInfoControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ItemInfoControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'ItemInfoControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="ListItemEditTemplateDictionary">
           <Members>
@@ -3754,16 +3722,6 @@
              <Message TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2011-12-23 07:30:55Z">
               <Issue Name="Member">
                <Item>'ListItemEditTemplateDictionary.ControlButton_Click(object, RoutedEventArgs)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ListItemEditTemplateDictionary'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -3788,12 +3746,6 @@
                <Item>'Button'</Item>
                <Item>'ListItemEditTemplateDictionary.IStyleConnector.Connect(int, object)'</Item>
                <Item>castclass</Item>
-              </Issue>
-             </Message>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ListItemEditTemplateDictionary'</Item>
-               <Item>'IStyleConnector.Connect(int, object)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -3889,12 +3841,6 @@
                <Item>castclass</Item>
               </Issue>
              </Message>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'LivingControlWindow'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
             </Messages>
            </Member>
            <Member Name="#WearButton_Click(System.Object,System.Windows.RoutedEventArgs)">
@@ -3922,46 +3868,22 @@
           </Members>
          </Type>
          <Type Name="LivingEditControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'LivingEditControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'LivingEditControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="LivingInfoControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'LivingInfoControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-         <Type Name="LogOnDialog">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'LogOnDialog'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'LivingInfoControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="MainWindow">
           <Messages>
@@ -4306,6 +4228,13 @@
           </Members>
          </Type>
          <Type Name="MainWindowStatusBar">
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'MainWindowStatusBar'</Item>
+            </Issue>
+           </Message>
+          </Messages>
           <Members>
            <Member Name="#m_timer">
             <Messages>
@@ -4325,16 +4254,6 @@
                <Item>'double.ToString(IFormatProvider)'</Item>
                <Item>'CultureInfo.CurrentCulture'</Item>
                <Item>'CultureInfo.InvariantCulture'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'MainWindowStatusBar'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -4769,34 +4688,6 @@
            </Message>
           </Messages>
          </Type>
-         <Type Name="ObjectEditDialog">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ObjectEditDialog'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
-         <Type Name="ObjectInfoControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'ObjectInfoControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
          <Type Name="SetTerrainDialog">
           <Members>
            <Member Name="#interiorIDListBox">
@@ -4862,41 +4753,22 @@
           </Members>
          </Type>
          <Type Name="StockpileEditControl">
-          <Members>
-           <Member Name="#_CreateDelegate(System.Type,System.String)">
-            <Messages>
-             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'StockpileEditControl._CreateDelegate(Type, string)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'StockpileEditControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'StockpileEditControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="StockpileInfoControl">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'StockpileInfoControl'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2011-12-23 14:42:50Z">
+            <Issue>
+             <Item>'StockpileInfoControl'</Item>
+            </Issue>
+           </Message>
+          </Messages>
          </Type>
          <Type Name="SymbolAndColorToDrawingConverter">
           <Messages>
@@ -5174,11 +5046,6 @@
          <Item>'Dwarrowdelf.Client.Symbols.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.Symbols.dll'</Item>
-        </Issue>
-       </Message>
        <Message TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824" Created="2011-12-23 07:30:55Z">
         <Issue>
          <Item>'Dwarrowdelf.Client.Symbols.dll'</Item>
@@ -5348,20 +5215,6 @@
            </Member>
           </Members>
          </Type>
-         <Type Name="SymbolEditorDialog">
-          <Members>
-           <Member Name="#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'SymbolEditorDialog'</Item>
-               <Item>'IComponentConnector.Connect(int, object)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-          </Members>
-         </Type>
          <Type Name="SymbolSet">
           <Members>
            <Member Name="#Symbols">
@@ -5402,11 +5255,6 @@
        <Message Id="Dwarrowdelf" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
         <Issue Name="Assembly">
          <Item>Dwarrowdelf</Item>
-         <Item>'Dwarrowdelf.Client.TileControl.dll'</Item>
-        </Issue>
-       </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
          <Item>'Dwarrowdelf.Client.TileControl.dll'</Item>
         </Issue>
        </Message>
@@ -5642,16 +5490,6 @@
        <Message Id="Dwarrowdelf" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
         <Issue Name="Assembly">
          <Item>Dwarrowdelf</Item>
-         <Item>'Dwarrowdelf.Client.TileControlCore.dll'</Item>
-        </Issue>
-       </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.TileControlCore.dll'</Item>
-        </Issue>
-       </Message>
-       <Message TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824" Created="2011-12-23 07:30:55Z">
-        <Issue>
          <Item>'Dwarrowdelf.Client.TileControlCore.dll'</Item>
         </Issue>
        </Message>
@@ -5963,11 +5801,6 @@
          <Item>'Dwarrowdelf.Client.TileControlD3D.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.TileControlD3D.dll'</Item>
-        </Issue>
-       </Message>
       </Messages>
       <Namespaces>
        <Namespace Name="Dwarrowdelf.Client.TileControl">
@@ -6101,11 +5934,6 @@
          <Item>'Dwarrowdelf.Client.TileControlWPF.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Client.TileControlWPF.dll'</Item>
-        </Issue>
-       </Message>
       </Messages>
       <Namespaces>
        <Namespace Name="Dwarrowdelf.Client.TileControl">
@@ -6189,11 +6017,6 @@
        <Message Id="Dwarrowdelf" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
         <Issue Name="Assembly">
          <Item>Dwarrowdelf</Item>
-         <Item>'Dwarrowdelf.Common.dll'</Item>
-        </Issue>
-       </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
          <Item>'Dwarrowdelf.Common.dll'</Item>
         </Issue>
        </Message>
@@ -6370,11 +6193,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'AttackAction.AttackAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -6653,11 +6474,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'BuildItemAction.BuildItemAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -6985,11 +6804,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'ConstructBuildingAction.ConstructBuildingAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -7049,11 +6866,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'ConsumeAction.ConsumeAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -7076,11 +6891,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'DestructBuildingAction.DestructBuildingAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -7444,11 +7257,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'DropAction.DropAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -7566,11 +7377,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'FellTreeAction.FellTreeAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -7796,11 +7605,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'GetAction.GetAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -9954,11 +9761,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MineAction.MineAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -10057,11 +9862,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveAction.MoveAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -10463,11 +10266,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'RemoveArmorAction.RemoveArmorAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -10478,11 +10279,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'RemoveWeaponAction.RemoveWeaponAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -11143,11 +10942,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'WaitAction.WaitAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -11214,11 +11011,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'WearArmorAction.WearArmorAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -11264,11 +11059,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'WieldWeaponAction.WieldWeaponAction(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -11440,11 +11233,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'DwarfAI.DwarfAI(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12033,11 +11824,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'FetchItemAssignment.FetchItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12137,11 +11926,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveBuildItemAssignment.MoveBuildItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12173,11 +11960,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveConstructBuildingAssignment.MoveConstructBuildingAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12188,11 +11973,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveConsumeAssignment.MoveConsumeAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12213,11 +11996,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveDestructBuildingAssignment.MoveDestructBuildingAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12228,11 +12009,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveFellTreeAssignment.MoveFellTreeAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12243,11 +12022,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveMineAssignment.MoveMineAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12345,11 +12122,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'AttackAssignment.AttackAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12360,18 +12135,6 @@
               <Issue Name="TooGeneric">
                <Item>'AttackAssignment.ActionDoneOverride(ActionState)'</Item>
                <Item>'Exception'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'AttackAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12407,23 +12170,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'BuildItemAssignment.BuildItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'BuildItemAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'BuildItemAssignment.BuildItemAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12446,23 +12195,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'ConstructBuildingAssignment.ConstructBuildingAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'ConstructBuildingAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'ConstructBuildingAssignment.ConstructBuildingAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12486,23 +12221,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'ConsumeItemAssignment.ConsumeItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'ConsumeItemAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'ConsumeItemAssignment.ConsumeItemAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12513,23 +12234,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'DestructBuildingAssignment.DestructBuildingAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'DestructBuildingAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'DestructBuildingAssignment.DestructBuildingAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12553,23 +12260,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'DropItemAssignment.DropItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'DropItemAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'DropItemAssignment.DropItemAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12580,11 +12273,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'FellTreeAssignment.FellTreeAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12599,41 +12290,15 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'FellTreeAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
           </Members>
          </Type>
          <Type Name="GenericDebugAssignment">
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'GenericDebugAssignment.GenericDebugAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'GenericDebugAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'GenericDebugAssignment.GenericDebugAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12644,23 +12309,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'GetItemAssignment.GetItemAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'GetItemAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'GetItemAssignment.GetItemAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12688,18 +12339,6 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'GrazeMoveAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
            <Member Name="#ToString()">
             <Messages>
              <Message Id="System.String.Format(System.String,System.Object[])" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2011-12-23 07:30:55Z">
@@ -12719,11 +12358,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MineAssignment.MineAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12738,29 +12375,15 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'MineAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
           </Members>
          </Type>
          <Type Name="MoveAssignment">
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'MoveAssignment.MoveAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12880,18 +12503,6 @@
              </Message>
             </Messages>
            </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'RandomMoveAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
            <Member Name="#ToString()">
             <Messages>
              <Message Id="System.String.Format(System.String,System.Object[])" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2011-12-23 07:30:55Z">
@@ -12911,23 +12522,9 @@
           <Members>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
-               <Item>'WaitAssignment.WaitAssignment(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#PrepareNextActionOverride(Dwarrowdelf.Jobs.JobStatus&amp;)">
-            <Messages>
-             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2011-12-23 07:30:55Z">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
               <Issue>
-               <Item>'WaitAssignment.PrepareNextActionOverride(out JobStatus)'</Item>
-               <Item>'progress'</Item>
-               <Item>'status'</Item>
-               <Item>'Assignment.PrepareNextActionOverride(out JobStatus)'</Item>
+               <Item>'WaitAssignment.WaitAssignment(SaveGameContext)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -12954,11 +12551,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'BuildItemJob.BuildItemJob(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -13005,11 +12600,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'FetchItems.FetchItems(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -13592,11 +13185,6 @@
          <Item>'Dwarrowdelf.Common.Win32.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Common.Win32.dll'</Item>
-        </Issue>
-       </Message>
       </Messages>
       <Namespaces>
        <Namespace Name="Win32">
@@ -13656,11 +13244,6 @@
        <Message Id="Dwarrowdelf" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
         <Issue Name="Assembly">
          <Item>Dwarrowdelf</Item>
-         <Item>'Dwarrowdelf.Server.Engine.dll'</Item>
-        </Issue>
-       </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
          <Item>'Dwarrowdelf.Server.Engine.dll'</Item>
         </Issue>
        </Message>
@@ -14000,11 +13583,9 @@
            </Member>
            <Member Name="#.ctor(Dwarrowdelf.SaveGameContext)">
             <Messages>
-             <Message Id="ctx" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2011-12-23 07:30:55Z">
-              <Issue Name="MemberParameter">
+             <Message TypeName="AvoidUncalledPrivateCode" Category="Microsoft.Performance" CheckId="CA1811" Created="2011-12-23 14:42:50Z">
+              <Issue>
                <Item>'Player.Player(SaveGameContext)'</Item>
-               <Item>ctx</Item>
-               <Item>'ctx'</Item>
               </Issue>
              </Message>
              <Message Id="ctx" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2011-12-23 07:30:55Z" FixCategory="DependsOnFix">
@@ -14588,11 +14169,6 @@
          <Item>'Dwarrowdelf.Server.World.dll'</Item>
         </Issue>
        </Message>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'Dwarrowdelf.Server.World.dll'</Item>
-        </Issue>
-       </Message>
       </Messages>
       <Namespaces>
        <Namespace Name="Dwarrowdelf.Server">
@@ -14907,46 +14483,6 @@
               <Issue Name="TooGeneric">
                <Item>'EnvironmentObject.CanWaterFlow(IntPoint3D, IntPoint3D)'</Item>
                <Item>'Exception'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Dwarrowdelf.AStar.IAStarEnvironment.Callback(System.Collections.Generic.IDictionary`2&lt;Dwarrowdelf.IntPoint3D,Dwarrowdelf.AStar.AStarNode&gt;)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'EnvironmentObject'</Item>
-               <Item>'IAStarEnvironment.Callback(IDictionary&lt;IntPoint3D, AStarNode&gt;)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(Dwarrowdelf.IntPoint3D)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'EnvironmentObject'</Item>
-               <Item>'IAStarEnvironment.CanEnter(IntPoint3D)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(Dwarrowdelf.IntPoint3D)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'EnvironmentObject'</Item>
-               <Item>'IAStarEnvironment.GetTileWeight(IntPoint3D)'</Item>
-              </Issue>
-             </Message>
-            </Messages>
-           </Member>
-           <Member Name="#Dwarrowdelf.AStar.IAStarEnvironment.GetValidDirs(Dwarrowdelf.IntPoint3D)">
-            <Messages>
-             <Message TypeName="InterfaceMethodsShouldBeCallableByChildTypes" Category="Microsoft.Design" CheckId="CA1033" Created="2011-12-23 07:30:55Z">
-              <Issue>
-               <Item>'EnvironmentObject'</Item>
-               <Item>'IAStarEnvironment.GetValidDirs(IntPoint3D)'</Item>
               </Issue>
              </Message>
             </Messages>
@@ -16965,13 +16501,6 @@
    <Target Name="$(ProjectDir)/Client/Client/bin/Debug/MemoryMappedLog.MMLog.dll">
     <Modules>
      <Module Name="memorymappedlog.mmlog.dll">
-      <Messages>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'MemoryMappedLog.MMLog.dll'</Item>
-        </Issue>
-       </Message>
-      </Messages>
       <Namespaces>
        <Namespace Name="MemoryMappedLog">
         <Types>
@@ -17055,13 +16584,6 @@
    <Target Name="$(ProjectDir)/Client/Client/bin/Debug/NetSerializer.dll">
     <Modules>
      <Module Name="netserializer.dll">
-      <Messages>
-       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2011-12-23 07:30:55Z">
-        <Issue>
-         <Item>'NetSerializer.dll'</Item>
-        </Issue>
-       </Message>
-      </Messages>
       <Namespaces>
        <Namespace Name="NetSerializer">
         <Types>
@@ -17347,9 +16869,6 @@
    <Rule TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051">
     <Resolution Name="Default">Because field {0} is visible outside of its declaring type, change its accessibility to private and add a property, with the same accessibility as the field has currently, to provide access to it.</Resolution>
    </Rule>
-   <Rule TypeName="DoNotDecreaseInheritedMemberVisibility" Category="Microsoft.Usage" CheckId="CA2222">
-    <Resolution Name="Default">Make {0} non-private, mark it as final, or seal its declaring type. This method was originally defined in base class {1}.</Resolution>
-   </Rule>
    <Rule TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002">
     <Resolution Name="Default">Change {0} in {1} to use Collection&lt;T&gt;, ReadOnlyCollection&lt;T&gt; or KeyedCollection&lt;K,V&gt;</Resolution>
    </Rule>
@@ -17429,9 +16948,6 @@
    </Rule>
    <Rule TypeName="MarkAllNonSerializableFields" Category="Microsoft.Usage" CheckId="CA2235">
     <Resolution Name="Default">Field {0} is a member of type {1}, which is serializable, but is of type {2}, which is not serializable. Add the NonSerializedAttribute to {0}.</Resolution>
-   </Rule>
-   <Rule TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014">
-    <Resolution Name="Default">Mark {0} with CLSCompliant(true) because it exposes externally visible types.</Resolution>
    </Rule>
    <Rule TypeName="MarkAssembliesWithNeutralResourcesLanguage" Category="Microsoft.Performance" CheckId="CA1824">
     <Resolution Name="Default">Because assembly {0} contains a ResX-based resource file, mark it with the NeutralResourcesLanguage attribute, specifying the language of the resources within the assembly. This could improve lookup performance the first time a resource is retrieved.</Resolution>
