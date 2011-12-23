@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 		#endregion
 	}
 
-	public class ReadOnlyObservableKeyedCollection<TKey, TValue> : ReadOnlyCollection<TValue>, INotifyCollectionChanged, INotifyPropertyChanged
+	public abstract class ReadOnlyObservableKeyedCollection<TKey, TValue> : ReadOnlyCollection<TValue>, INotifyCollectionChanged, INotifyPropertyChanged
 	{
 		ObservableKeyedCollection<TKey, TValue> m_collection;
 

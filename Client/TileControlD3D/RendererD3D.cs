@@ -5,7 +5,7 @@ using SlimDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class RendererD3D : ISymbolTileRenderer
+	public sealed class RendererD3D : ISymbolTileRenderer
 	{
 		D3DImageSlimDX m_interopImageSource;
 		SingleQuad11 m_scene;
@@ -154,7 +154,7 @@ namespace Dwarrowdelf.Client.TileControl
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		void Dispose(bool disposing)
 		{
 			if (!m_disposed)
 			{

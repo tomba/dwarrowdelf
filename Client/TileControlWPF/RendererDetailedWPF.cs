@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class RendererDetailedWPF : RendererBaseWPF
+	public sealed class RendererDetailedWPF : RendererBaseWPF
 	{
 		RenderData<RenderTileDetailed> m_renderData;
 

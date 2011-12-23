@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	public class ListConverter<T> : IValueConverter
+	public abstract class ListConverter<T> : IValueConverter
 	{
 		Func<T, string> m_converter;
 

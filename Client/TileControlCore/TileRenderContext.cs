@@ -7,7 +7,7 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class TileRenderContext
+	public sealed class TileRenderContext
 	{
 		public double TileSize;
 		public Point RenderOffset;

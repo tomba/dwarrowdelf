@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.Symbols
 {
-	public class SymbolCollection : KeyedCollection<SymbolID, BaseSymbol>
+	public sealed class SymbolCollection : KeyedCollection<SymbolID, BaseSymbol>
 	{
 		protected override SymbolID GetKeyForItem(BaseSymbol item)
 		{
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client.Symbols
 	}
 
 	[ContentProperty("Symbols")]
-	public class SymbolSet
+	public sealed class SymbolSet
 	{
 		public SymbolSet()
 		{
@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client.Symbols
 	}
 
 	[ContentProperty("Char")]
-	public class CharSymbol : BaseSymbol
+	public sealed class CharSymbol : BaseSymbol
 	{
 		public char Char { get; set; }
 		public bool? Outline { get; set; }
@@ -69,13 +69,13 @@ namespace Dwarrowdelf.Client.Symbols
 	}
 
 	[ContentProperty("DrawingName")]
-	public class DrawingSymbol : BaseSymbol
+	public sealed class DrawingSymbol : BaseSymbol
 	{
 		public string DrawingName { get; set; }
 	}
 
 	[ContentProperty("Symbols")]
-	public class CombinedSymbol : BaseSymbol
+	public sealed class CombinedSymbol : BaseSymbol
 	{
 		public CombinedSymbol()
 		{

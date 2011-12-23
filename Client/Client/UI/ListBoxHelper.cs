@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace Dwarrowdelf.Client
 {
-	public class ListBoxHelper
+	public sealed class ListBoxHelper
 	{
 		#region SelectedItems
 

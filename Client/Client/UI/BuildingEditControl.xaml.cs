@@ -79,7 +79,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	public class BuildingStateToBoolConverter : IValueConverter
+	public sealed class BuildingStateToBoolConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{

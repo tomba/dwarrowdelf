@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	public class GrowingTileGrid
+	public sealed class GrowingTileGrid
 	{
 		TileData[, ,] m_grid;
 		IntCuboid m_bounds;

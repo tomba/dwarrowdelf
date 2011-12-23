@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public class HistoryTextBox : TextBox
+	public sealed class HistoryTextBox : TextBox
 	{
 		public delegate void TextEnteredDelegate(string str);
 		public event TextEnteredDelegate TextEntered;

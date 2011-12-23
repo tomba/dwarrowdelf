@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.Symbols
 {
-	public class SymbolDrawingCache : ISymbolDrawingCache
+	public sealed class SymbolDrawingCache : ISymbolDrawingCache
 	{
 		// use char symbols as backup
 		static Symbols.SymbolSet s_charSymbolSet;

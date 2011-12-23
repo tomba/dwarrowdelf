@@ -6,7 +6,7 @@ using System.Windows.Data;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public class CapitalizeConverter : IValueConverter
+	public sealed class CapitalizeConverter : IValueConverter
 	{
 		#region IValueConverter Members
 

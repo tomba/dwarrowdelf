@@ -9,7 +9,7 @@ using System.Windows;
 namespace Win32
 {
 	[Serializable]
-	public class WindowPlacement
+	public sealed class WindowPlacement
 	{
 		public int MinX { get; set; }
 		public int MinY { get; set; }

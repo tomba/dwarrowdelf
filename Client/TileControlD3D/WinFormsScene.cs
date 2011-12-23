@@ -8,7 +8,7 @@ using DXGI = SlimDX.DXGI;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public class WinFormsScene : IDisposable
+	public sealed class WinFormsScene : IDisposable
 	{
 		IntPtr m_handle;
 		Texture2D m_renderTarget;
@@ -121,7 +121,7 @@ namespace Dwarrowdelf.Client.TileControl
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		void Dispose(bool disposing)
 		{
 			if (!m_disposed)
 			{

@@ -31,7 +31,7 @@ namespace Dwarrowdelf.Client
 
 		DispatcherTimer m_timer;
 
-		public class MessageCountStore : INotifyPropertyChanged
+		public sealed class MessageCountStore : INotifyPropertyChanged
 		{
 			int m_count;
 

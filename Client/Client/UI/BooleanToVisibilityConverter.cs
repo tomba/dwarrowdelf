@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public class BooleanToVisibilityConverter : IValueConverter
+	public sealed class BooleanToVisibilityConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{

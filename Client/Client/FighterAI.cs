@@ -11,7 +11,7 @@ using Dwarrowdelf.AI;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	public class FighterAI : AssignmentAI
+	public sealed class FighterAI : AssignmentAI
 	{
 		[SaveGameProperty]
 		ILivingObject m_target;
