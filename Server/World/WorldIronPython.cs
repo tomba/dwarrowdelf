@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	public partial class World : IWorld
+	public sealed partial class World : IWorld
 	{
 		/* helpers for ironpython */
 		public ItemObject[] IPItems

@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class CreateLivingDialog : Window
+	sealed partial class CreateLivingDialog : Window
 	{
 		public EnvironmentObject Environment { get; set; }
 		public IntRectZ Area { get; set; }

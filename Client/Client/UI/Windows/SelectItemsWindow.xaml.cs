@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class SelectItemsWindow : Window
+	sealed partial class SelectItemsWindow : Window
 	{
 		public SelectItemsWindow()
 		{

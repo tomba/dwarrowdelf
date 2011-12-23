@@ -39,7 +39,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class BuildingEditControl : UserControl
+	sealed partial class BuildingEditControl : UserControl
 	{
 		public BuildingEditControl()
 		{

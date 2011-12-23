@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class SetTerrainData
+	sealed class SetTerrainData
 	{
 		public TerrainID? TerrainID { get; set; }
 		public MaterialID? TerrainMaterialID { get; set; }
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.UI
 		public bool? Grass { get; set; }
 	}
 
-	partial class SetTerrainDialog : Window
+	sealed partial class SetTerrainDialog : Window
 	{
 		public SetTerrainDialog()
 		{

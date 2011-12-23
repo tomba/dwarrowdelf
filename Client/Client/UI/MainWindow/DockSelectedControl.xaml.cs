@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class DockSelectedControl : UserControl
+	sealed partial class DockSelectedControl : UserControl
 	{
 		public DockSelectedControl()
 		{
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	public abstract class ListConverter<T> : IValueConverter
+	abstract class ListConverter<T> : IValueConverter
 	{
 		Func<T, string> m_converter;
 

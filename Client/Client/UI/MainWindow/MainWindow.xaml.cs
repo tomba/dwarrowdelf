@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class MainWindow : Window, INotifyPropertyChanged
+	sealed partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		MovableObject m_followObject;
 		bool m_closing;

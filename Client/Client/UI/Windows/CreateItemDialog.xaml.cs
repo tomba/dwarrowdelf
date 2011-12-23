@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class CreateItemDialog : Window
+	sealed partial class CreateItemDialog : Window
 	{
 		public ItemID ItemID { get; set; }
 		public MaterialID MaterialID { get; set; }

@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for ObjectEditDialog.xaml
 	/// </summary>
-	public partial class ObjectEditDialog : Window
+	sealed partial class ObjectEditDialog : Window
 	{
 		public ObjectEditDialog()
 		{

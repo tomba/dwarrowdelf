@@ -15,7 +15,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class StockpileInfoControl : UserControl
+	sealed partial class StockpileInfoControl : UserControl
 	{
 		public StockpileInfoControl()
 		{

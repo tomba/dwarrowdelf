@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class StockpileEditControl : UserControl
+	sealed partial class StockpileEditControl : UserControl
 	{
 		public StockpileEditControl()
 		{

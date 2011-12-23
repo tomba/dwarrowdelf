@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	public partial class LivingObject
+	public sealed partial class LivingObject
 	{
 		class ActionData
 		{

@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for LogOnDialog.xaml
 	/// </summary>
-	public partial class LogOnDialog : Window
+	sealed partial class LogOnDialog : Window
 	{
 		public LogOnDialog()
 		{

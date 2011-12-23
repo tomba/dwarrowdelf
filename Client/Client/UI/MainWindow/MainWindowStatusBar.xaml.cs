@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for MainWindowStatusBar.xaml
 	/// </summary>
-	public partial class MainWindowStatusBar : UserControl
+	sealed partial class MainWindowStatusBar : UserControl
 	{
 		DispatcherTimer m_timer;
 

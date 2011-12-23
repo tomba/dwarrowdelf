@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class ConstructBuildingDialog : Window
+	sealed partial class ConstructBuildingDialog : Window
 	{
 		public BuildingID BuildingID { get; private set; }
 

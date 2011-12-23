@@ -14,7 +14,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class ConsoleDialog : Window
+	sealed partial class ConsoleDialog : Window
 	{
 		IPRunner m_ipRunner;
 

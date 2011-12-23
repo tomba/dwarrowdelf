@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for LivingInfoControl.xaml
 	/// </summary>
-	public partial class LivingInfoControl : UserControl
+	sealed partial class LivingInfoControl : UserControl
 	{
 		public LivingInfoControl()
 		{

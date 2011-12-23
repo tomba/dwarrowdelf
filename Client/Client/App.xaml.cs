@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Dwarrowdelf.Client
 {
-	public partial class App : Application
+	sealed partial class App : Application
 	{
 		public new static App Current { get { return (App)Application.Current; } }
 		internal new static UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }

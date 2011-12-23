@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class ObjectInfoControl : ContentControl
+	sealed partial class ObjectInfoControl : ContentControl
 	{
 		public ObjectInfoControl()
 		{

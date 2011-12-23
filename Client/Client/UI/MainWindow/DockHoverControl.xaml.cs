@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for DockHoverControl.xaml
 	/// </summary>
-	public partial class DockHoverControl : UserControl
+	sealed partial class DockHoverControl : UserControl
 	{
 		public DockHoverControl()
 		{

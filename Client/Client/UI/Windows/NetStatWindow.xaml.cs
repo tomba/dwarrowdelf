@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	partial class NetStatWindow : Window
+	sealed partial class NetStatWindow : Window
 	{
 		public NetStatWindow()
 		{
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client.UI
 		public GameData Data { get { return GameData.Data; } }
 	}
 
-	class NetStatWindowSample : ClientNetStatistics
+	sealed class NetStatWindowSample : ClientNetStatistics
 	{
 		public NetStatWindowSample()
 		{

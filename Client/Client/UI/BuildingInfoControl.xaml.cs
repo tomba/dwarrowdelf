@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Interaction logic for BuildingInfoControl.xaml
 	/// </summary>
-	public partial class BuildingInfoControl : UserControl
+	sealed partial class BuildingInfoControl : UserControl
 	{
 		public BuildingInfoControl()
 		{

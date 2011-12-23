@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	public partial class World
+	public sealed partial class World
 	{
 		[SaveGameProperty]
 		ProcessableList<LivingObject> m_livings;

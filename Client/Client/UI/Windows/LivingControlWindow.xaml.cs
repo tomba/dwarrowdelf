@@ -13,7 +13,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class LivingControlWindow : Window
+	sealed partial class LivingControlWindow : Window
 	{
 		ManualControlAI m_ai;
 

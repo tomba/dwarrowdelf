@@ -14,8 +14,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-
-	partial class MainWindowTools : UserControl
+	sealed partial class MainWindowTools : UserControl
 	{
 		public static readonly Dictionary<ClientToolMode, ToolData> ToolDatas;
 

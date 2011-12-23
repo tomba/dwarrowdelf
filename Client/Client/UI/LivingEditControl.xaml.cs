@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	public partial class LivingEditControl : UserControl
+	sealed partial class LivingEditControl : UserControl
 	{
 		public LivingEditControl()
 		{
