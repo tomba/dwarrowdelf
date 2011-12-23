@@ -11,6 +11,11 @@ namespace Dwarrowdelf.Client
 	{
 		public ObjectID ObjectID { get; private set; }
 		public ObjectType ObjectType { get { return this.ObjectID.ObjectType; } }
+
+		public DateTime CreationTime { get; private set; }
+		public int CreationTick { get; private set; }
+		public DateTime ClientCreationTime { get; private set; }
+
 		public World World { get; private set; }
 		IWorld IBaseObject.World { get { return this.World as IWorld; } }
 		public bool IsDestructed { get; private set; }
@@ -29,6 +34,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.ObjectID = objectID;
 			this.World = world;
+			this.ClientCreationTime = DateTime.Now;
 		}
 
 		public virtual void Destruct()
@@ -45,6 +51,9 @@ namespace Dwarrowdelf.Client
 
 		public virtual void Deserialize(BaseGameObjectData data)
 		{
+			this.CreationTime = data.CreationTime;
+			this.CreationTick = data.CreationTick;
+
 			if (data.Properties != null)
 			{
 				foreach (var tuple in data.Properties)

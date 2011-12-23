@@ -31,6 +31,15 @@
 				<TextBlock>Name</TextBlock>
 				<TextBlock Text="{Binding Name}" />
 
+				<TextBlock>CreationTime</TextBlock>
+				<TextBlock Text="{Binding CreationTime}" />
+
+				<TextBlock>CreationTick</TextBlock>
+				<TextBlock Text="{Binding CreationTick}" />
+
+				<TextBlock>ClientCreationTime</TextBlock>
+				<TextBlock Text="{Binding ClientCreationTime}" />
+
 				<TextBlock>LivingID</TextBlock>
 				<TextBlock Text="{Binding LivingID}" />
 

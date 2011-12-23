@@ -10,6 +10,9 @@ namespace Dwarrowdelf
 	{
 		public ObjectID ObjectID { get; set; }
 
+		public DateTime CreationTime { get; set; }
+		public int CreationTick { get; set; }
+
 		public Tuple<PropertyID, object>[] Properties { get; set; }
 	}
 

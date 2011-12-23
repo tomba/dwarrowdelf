@@ -16,6 +16,12 @@ namespace Dwarrowdelf.Server
 		public ObjectType ObjectType { get { return this.ObjectID.ObjectType; } }
 
 		[SaveGameProperty]
+		public DateTime CreationTime { get; private set; }
+
+		[SaveGameProperty]
+		public int CreationTick { get; private set; }
+
+		[SaveGameProperty]
 		public World World { get; private set; }
 		IWorld IBaseObject.World { get { return this.World as IWorld; } }
 
@@ -55,6 +61,9 @@ namespace Dwarrowdelf.Server
 			this.World = world;
 			this.ObjectID = world.GetNewObjectID(m_objectType);
 
+			this.CreationTime = DateTime.Now;
+			this.CreationTick = this.World.TickNumber;
+
 			this.World.AddGameObject(this);
 			this.IsInitialized = true;
 			this.World.AddChange(new ObjectCreatedChange(this));
@@ -82,6 +91,10 @@ namespace Dwarrowdelf.Server
 		protected virtual void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
 			baseData.ObjectID = this.ObjectID;
+
+			baseData.CreationTime = this.CreationTime;
+			baseData.CreationTick = this.CreationTick;
+
 			baseData.Properties = SerializeProperties().
 				Where(kvp => (PropertyVisibilities.GetPropertyVisibility(kvp.Key) & visibility) != 0).
 				Select(kvp => new Tuple<PropertyID, object>(kvp.Key, kvp.Value)).
