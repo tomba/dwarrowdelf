@@ -47,27 +47,27 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>
+	sealed class MyInteriorsConverter : ListConverter<Tuple<InteriorInfo, MaterialInfo>>
 	{
 		public MyInteriorsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
 	}
 
-	class MyTerrainsConverter : ListConverter<Tuple<TerrainInfo, MaterialInfo>>
+	sealed class MyTerrainsConverter : ListConverter<Tuple<TerrainInfo, MaterialInfo>>
 	{
 		public MyTerrainsConverter() : base(item => item.Item1.Name + " (" + item.Item2.Name + ")") { }
 	}
 
-	class MyWatersConverter : ListConverter<byte>
+	sealed class MyWatersConverter : ListConverter<byte>
 	{
 		public MyWatersConverter() : base(item => item.ToString()) { }
 	}
 
-	class MyBuildingsConverter : ListConverter<IDrawableElement>
+	sealed class MyBuildingsConverter : ListConverter<IDrawableElement>
 	{
 		public MyBuildingsConverter() : base(item => item.Description) { }
 	}
 
-	class MyGrassesConverter : ListConverter<bool>
+	sealed class MyGrassesConverter : ListConverter<bool>
 	{
 		public MyGrassesConverter() : base(item => item.ToString()) { }
 	}

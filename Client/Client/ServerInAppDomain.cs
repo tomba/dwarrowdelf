@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Dwarrowdelf.Client
 {
-	class ServerInAppDomain
+	sealed class ServerInAppDomain
 	{
 		EventWaitHandle m_serverStartWaitHandle;
 		RegisteredWaitHandle m_registeredWaitHandle;
@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Client
 				this.Started();
 		}
 
-		class EmbeddedServer
+		sealed class EmbeddedServer
 		{
 			IGame m_game;
 			Thread m_serverThread;

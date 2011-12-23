@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client.UI
 		Cuboid,
 	}
 
-	class MapControlSelectionService
+	sealed class MapControlSelectionService
 	{
 		MapSelection m_selection;
 		Rectangle m_selectionRect;

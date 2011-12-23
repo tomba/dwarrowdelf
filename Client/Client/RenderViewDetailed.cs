@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	class RenderViewDetailed : RenderViewBase<RenderTileDetailed>
+	sealed class RenderViewDetailed : RenderViewBase<RenderTileDetailed>
 	{
 		/* How many levels to show */
 		const int MAXLEVEL = 4;

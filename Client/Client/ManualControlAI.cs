@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	class ManualControlAI : AI.IAI, INotifyPropertyChanged
+	sealed class ManualControlAI : AI.IAI, INotifyPropertyChanged
 	{
 		LivingObject m_worker;
 		ObservableCollection<GameAction> m_actions;

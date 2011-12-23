@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	class World : IWorld, INotifyPropertyChanged
+	sealed class World : IWorld, INotifyPropertyChanged
 	{
 		BaseGameObjectCollection m_objects;
 		public ReadOnlyBaseGameObjectCollection Objects { get; private set; }

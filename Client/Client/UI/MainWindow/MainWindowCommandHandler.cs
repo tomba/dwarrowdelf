@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class MainWindowCommandHandler
+	sealed class MainWindowCommandHandler
 	{
 		MainWindow m_mainWindow;
 

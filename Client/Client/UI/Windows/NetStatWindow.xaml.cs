@@ -34,7 +34,6 @@ namespace Dwarrowdelf.Client.UI
 			AddReceivedMessages(new Messages.ChangeMessage());
 			AddReceivedMessages(new Messages.ChangeMessage());
 			AddReceivedMessages(new Messages.EnterGameReplyEndMessage());
-
 		}
 	}
 }

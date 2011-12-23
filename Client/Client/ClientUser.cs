@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	class ClientUser
+	sealed class ClientUser
 	{
 		static Dictionary<Type, Action<ClientUser, ClientMessage>> s_handlerMap;
 

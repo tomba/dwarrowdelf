@@ -13,7 +13,7 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	class SingleQuad11 : IDisposable
+	sealed class SingleQuad11 : IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		struct MyVertex
@@ -306,7 +306,7 @@ namespace Dwarrowdelf.Client.TileControl
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		void Dispose(bool disposing)
 		{
 			if (!m_disposed)
 			{

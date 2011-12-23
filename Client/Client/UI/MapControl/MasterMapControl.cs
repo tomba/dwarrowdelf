@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
-	class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
+	sealed class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
 		public TileInfo TileInfo { get; private set; }
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
@@ -192,7 +192,7 @@ namespace Dwarrowdelf.Client.UI
 		/// <summary>
 		/// Easing function to adjust map centerpos according to the tilesize change
 		/// </summary>
-		class MyEase : EasingFunctionBase
+		sealed class MyEase : EasingFunctionBase
 		{
 			double t0;
 			double tn;

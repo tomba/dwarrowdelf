@@ -7,7 +7,7 @@ using D3D11 = SlimDX.Direct3D11;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	class D3DImageSlimDX : D3DImage, IDisposable
+	sealed class D3DImageSlimDX : D3DImage, IDisposable
 	{
 		[DllImport("user32.dll", SetLastError = false)]
 		static extern IntPtr GetDesktopWindow();

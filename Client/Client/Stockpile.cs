@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	class StockpileCriteria
+	sealed class StockpileCriteria
 	{
 		public StockpileCriteria()
 		{
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef]
-	class Stockpile : IDrawableElement, IJobSource, IJobObserver
+	sealed class Stockpile : IDrawableElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }

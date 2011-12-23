@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client
 		#endregion
 	}
 
-	class ClientConnection
+	sealed class ClientConnection
 	{
 		public ClientNetStatistics Stats { get; private set; }
 

@@ -7,7 +7,7 @@ using Microsoft.Scripting.Hosting;
 
 namespace Dwarrowdelf.Client
 {
-	class IPRunner
+	sealed class IPRunner
 	{
 		ScriptEngine m_scriptEngine;
 		ScriptScope m_scriptScope;
@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		class MyStream : Stream
+		sealed class MyStream : Stream
 		{
 			Action<string> m_sender;
 			MemoryStream m_stream = new MemoryStream();

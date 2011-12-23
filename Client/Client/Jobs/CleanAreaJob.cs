@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	class CleanAreaJob : JobGroup
+	sealed class CleanAreaJob : JobGroup
 	{
 		EnvironmentObject m_environment;
 		IntRectZ m_area;

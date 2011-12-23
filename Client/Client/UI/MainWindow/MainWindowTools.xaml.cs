@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	class ToolData
+	sealed class ToolData
 	{
 		public ToolData(ClientToolMode mode, string name, char key, DrawingBrush brush)
 		{
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 		public DrawingBrush Brush { get; private set; }
 	}
 
-	class ClientToolModeToToolDataConverter : IValueConverter
+	sealed class ClientToolModeToToolDataConverter : IValueConverter
 	{
 		#region IValueConverter Members
 

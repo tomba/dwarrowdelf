@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Dwarrowdelf.Client
 {
-	class DrawingCache
+	sealed class DrawingCache
 	{
 		/* [ name of the drawing -> [ color -> drawing ] ] */
 		Dictionary<string, Dictionary<GameColor, Drawing>> m_drawingMap;

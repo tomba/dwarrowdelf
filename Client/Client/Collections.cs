@@ -38,8 +38,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class BaseGameObjectCollection : IdentifiableCollection<BaseObject> { }
-	class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<BaseObject>
+	sealed class BaseGameObjectCollection : IdentifiableCollection<BaseObject> { }
+	sealed class ReadOnlyBaseGameObjectCollection : ReadOnlyIdentifiableCollection<BaseObject>
 	{
 		public ReadOnlyBaseGameObjectCollection(BaseGameObjectCollection collection)
 			: base(collection)
@@ -47,8 +47,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class MovableObjectCollection : IdentifiableCollection<MovableObject> { }
-	class ReadOnlyMovableObjectCollection : ReadOnlyIdentifiableCollection<MovableObject>
+	sealed class MovableObjectCollection : IdentifiableCollection<MovableObject> { }
+	sealed class ReadOnlyMovableObjectCollection : ReadOnlyIdentifiableCollection<MovableObject>
 	{
 		public ReadOnlyMovableObjectCollection(MovableObjectCollection collection)
 			: base(collection)
@@ -56,8 +56,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class LivingCollection : IdentifiableCollection<LivingObject> { }
-	class ReadOnlyLivingCollection : ReadOnlyIdentifiableCollection<LivingObject>
+	sealed class LivingCollection : IdentifiableCollection<LivingObject> { }
+	sealed class ReadOnlyLivingCollection : ReadOnlyIdentifiableCollection<LivingObject>
 	{
 		public ReadOnlyLivingCollection(LivingCollection collection)
 			: base(collection)
@@ -65,8 +65,8 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class EnvironmentCollection : IdentifiableCollection<EnvironmentObject> { }
-	class ReadOnlyEnvironmentCollection : ReadOnlyIdentifiableCollection<EnvironmentObject>
+	sealed class EnvironmentCollection : IdentifiableCollection<EnvironmentObject> { }
+	sealed class ReadOnlyEnvironmentCollection : ReadOnlyIdentifiableCollection<EnvironmentObject>
 	{
 		public ReadOnlyEnvironmentCollection(EnvironmentCollection collection)
 			: base(collection)
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
+	sealed class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
 	{
 		protected override ObjectID GetKeyForItem(BuildingObject building)
 		{
@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class ReadOnlyBuildingCollection : ReadOnlyObservableKeyedCollection<ObjectID, BuildingObject>
+	sealed class ReadOnlyBuildingCollection : ReadOnlyObservableKeyedCollection<ObjectID, BuildingObject>
 	{
 		public ReadOnlyBuildingCollection(BuildingCollection collection)
 			: base(collection)

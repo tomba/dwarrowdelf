@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class TileAreaInfo : INotifyPropertyChanged
+	sealed class TileAreaInfo : INotifyPropertyChanged
 	{
 		EnvironmentObject m_env;
 		MapSelection m_selection;

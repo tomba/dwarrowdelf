@@ -8,7 +8,7 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	class BuildingObject : BaseObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
+	sealed class BuildingObject : BaseObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public EnvironmentObject Environment { get; set; }
@@ -435,7 +435,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef]
-	class BuildOrder : INotifyPropertyChanged
+	sealed class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;
 		bool m_isSuspended;
@@ -448,7 +448,7 @@ namespace Dwarrowdelf.Client
 			this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
 		}
 
-		protected BuildOrder(SaveGameContext context)
+		BuildOrder(SaveGameContext context)
 		{
 		}
 
@@ -472,7 +472,7 @@ namespace Dwarrowdelf.Client
 
 		#endregion
 
-		protected void Notify(string property)
+		void Notify(string property)
 		{
 			if (this.PropertyChanged != null)
 				this.PropertyChanged(this, new PropertyChangedEventArgs(property));

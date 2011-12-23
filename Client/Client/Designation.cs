@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef]
-	class Designation : IJobSource, IJobObserver
+	sealed class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 		bool m_checkStatus;
 
 		[Serializable]
-		class DesignationData
+		sealed class DesignationData
 		{
 			public DesignationData(DesignationType type)
 			{

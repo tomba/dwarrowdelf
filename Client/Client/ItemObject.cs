@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	class ItemObject : ConcreteObject, IItemObject
+	sealed class ItemObject : ConcreteObject, IItemObject
 	{
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)

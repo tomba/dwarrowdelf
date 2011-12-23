@@ -10,7 +10,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class MapControlElementsService
+	sealed class MapControlElementsService
 	{
 		MapControl m_mapControl;
 		Canvas m_canvas;

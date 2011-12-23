@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class MapControlDragService
+	sealed class MapControlDragService
 	{
 		MasterMapControl m_mapControl;
 

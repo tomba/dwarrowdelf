@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 		}
 
-		class ClientObjectRefResolver : ISaveGameRefResolver
+		sealed class ClientObjectRefResolver : ISaveGameRefResolver
 		{
 			public int ToRefID(object value)
 			{

@@ -12,7 +12,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	class StoreToStockpileJob : AssignmentGroup
+	sealed class StoreToStockpileJob : AssignmentGroup
 	{
 		enum State
 		{
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client
 			m_state = State.MoveToItem;
 		}
 
-		protected StoreToStockpileJob(SaveGameContext ctx)
+		StoreToStockpileJob(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

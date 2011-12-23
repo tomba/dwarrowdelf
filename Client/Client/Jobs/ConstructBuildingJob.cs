@@ -11,7 +11,7 @@ using Dwarrowdelf.Jobs.AssignmentGroups;
 
 namespace Dwarrowdelf.Client
 {
-	class ConstructBuildingJob : JobGroup
+	sealed class ConstructBuildingJob : JobGroup
 	{
 		EnvironmentObject m_environment;
 		IntRectZ m_area;

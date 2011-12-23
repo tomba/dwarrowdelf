@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 	}
 
-	class DesignStockpileSample
+	sealed class DesignStockpileSample
 	{
 		public ObservableCollection<StockpileCriteria> Criterias { get; set; }
 

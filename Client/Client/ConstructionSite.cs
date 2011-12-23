@@ -7,7 +7,7 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
+	sealed class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
 	{
 		public BuildingID BuildingID;
 		public EnvironmentObject Environment { get; private set; }

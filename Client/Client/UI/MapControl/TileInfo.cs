@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class TileInfo : INotifyPropertyChanged
+	sealed class TileInfo : INotifyPropertyChanged
 	{
 		MapControl m_mapControl;
 

@@ -7,7 +7,7 @@ using System.Windows.Data;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class SymbolAndColorToDrawingConverter : IMultiValueConverter
+	sealed class SymbolAndColorToDrawingConverter : IMultiValueConverter
 	{
 		#region IMultiValueConverter Members
 

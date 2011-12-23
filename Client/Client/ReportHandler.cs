@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	class ReportHandler
+	sealed class ReportHandler
 	{
 		static Dictionary<Type, Action<ReportHandler, GameReport>> s_reportHandlerMap;
 

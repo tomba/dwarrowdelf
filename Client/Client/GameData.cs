@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client
 {
-	class GameEvent
+	sealed class GameEvent
 	{
 		public string Message { get; private set; }
 		public EnvironmentObject Environment { get; private set; }
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	class GameData : DependencyObject
+	sealed class GameData : DependencyObject
 	{
 		public static readonly GameData Data = new GameData();
 

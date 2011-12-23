@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	class RenderViewSimple : RenderViewBase<RenderTileSimple>
+	sealed class RenderViewSimple : RenderViewBase<RenderTileSimple>
 	{
 		public RenderViewSimple()
 		{

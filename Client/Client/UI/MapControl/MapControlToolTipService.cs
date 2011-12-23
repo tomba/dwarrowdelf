@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.UI
 {
-	class MapControlToolTipService
+	sealed class MapControlToolTipService
 	{
 		MapControl m_mapControl;
 
