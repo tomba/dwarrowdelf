@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client.Symbols
 	/// <summary>
 	/// Interaction logic for SymbolEditorDialog.xaml
 	/// </summary>
-	public partial class SymbolEditorDialog : Window
+	public sealed partial class SymbolEditorDialog : Window
 	{
 		public SymbolEditorDialog()
 		{

@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Client
 	{
 		ObservableKeyedCollection<TKey, TValue> m_collection;
 
-		public ReadOnlyObservableKeyedCollection(ObservableKeyedCollection<TKey, TValue> collection)
+		protected ReadOnlyObservableKeyedCollection(ObservableKeyedCollection<TKey, TValue> collection)
 			: base(collection)
 		{
 			m_collection = collection;

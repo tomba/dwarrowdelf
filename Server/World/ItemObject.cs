@@ -6,6 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
+	// Inherited in Area projects. Could be sealed otherwise.
 	[SaveGameObjectByRef]
 	public class ItemObject : ConcreteObject, IItemObject
 	{
