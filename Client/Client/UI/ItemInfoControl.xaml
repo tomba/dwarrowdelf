@@ -9,45 +9,71 @@
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 	</UserControl.Resources>
 
-	<StackPanel Orientation="Vertical">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-		<Image Stretch="Uniform" Width="64" Height="64">
-			<Image.Source>
-				<DrawingImage>
-					<DrawingImage.Drawing>
-						<MultiBinding Converter="{StaticResource drawingConverter}">
-							<Binding Path="SymbolID" />
-							<Binding Path="EffectiveColor" />
-						</MultiBinding>
-					</DrawingImage.Drawing>
-				</DrawingImage>
-			</Image.Source>
-		</Image>
+		<UniformGrid Grid.Row="0" Columns="2">
+			<TextBlock Text="{Binding Description}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
-		<Separator />
-		<GroupBox Header="BaseObject">
-			<ui:BaseObjectPropertiesControl />
-		</GroupBox>
+			<Image Stretch="Uniform" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Image.Source>
+					<DrawingImage>
+						<DrawingImage.Drawing>
+							<MultiBinding Converter="{StaticResource drawingConverter}">
+								<Binding Path="SymbolID" />
+								<Binding Path="EffectiveColor" />
+							</MultiBinding>
+						</DrawingImage.Drawing>
+					</DrawingImage>
+				</Image.Source>
+			</Image>
+		</UniformGrid>
 
-		<GroupBox Header="MovableObject">
-			<ui:MovableObjectPropertiesControl />
-		</GroupBox>
+		<Separator Grid.Row="1"/>
 
-		<GroupBox Header="ConcreteObject">
-			<ui:ConcreteObjectPropertiesControl />
-		</GroupBox>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
 
-		<GroupBox Header="ItemObject">
-			<ui:ItemObjectPropertiesControl />
-		</GroupBox>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-		<GroupBox Header="Inventory">
-			<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch" MinHeight="50">
-				<ListBox.Resources>
-					<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
-				</ListBox.Resources>
-			</ListBox>
-		</GroupBox>
+				<GroupBox Grid.Row="0" Header="BaseObject">
+					<ui:BaseObjectPropertiesControl />
+				</GroupBox>
 
-	</StackPanel>
+				<GroupBox Grid.Row="1" Header="MovableObject">
+					<ui:MovableObjectPropertiesControl />
+				</GroupBox>
+
+				<GroupBox Grid.Row="2" Header="ConcreteObject">
+					<ui:ConcreteObjectPropertiesControl />
+				</GroupBox>
+
+				<GroupBox Grid.Row="3" Header="ItemObject">
+					<ui:ItemObjectPropertiesControl />
+				</GroupBox>
+			</Grid>
+
+			<GroupBox Grid.Column="1"  Header="Inventory">
+				<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch" MinHeight="50">
+					<ListBox.Resources>
+						<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
+					</ListBox.Resources>
+				</ListBox>
+			</GroupBox>
+		</Grid>
+
+	</Grid>
 </UserControl>

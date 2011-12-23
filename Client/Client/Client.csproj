@@ -135,10 +135,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\LivingEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\LivingObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -254,9 +250,6 @@
     </Compile>
     <Compile Include="UI\ItemObjectPropertiesControl.xaml.cs">
       <DependentUpon>ItemObjectPropertiesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\LivingEditControl.xaml.cs">
-      <DependentUpon>LivingEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\DrawingConverter.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
