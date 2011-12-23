@@ -4,15 +4,23 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 mc:Ignorable="d">
 	<UserControl.Resources>
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 	</UserControl.Resources>
 
-	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 
-			<Image Stretch="Uniform" Width="64" Height="64">
+		<UniformGrid Grid.Row="0" Columns="2">
+			<TextBlock Text="{Binding Desc}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+			<Image Stretch="Uniform" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<Image.Source>
 					<DrawingImage>
 						<DrawingImage.Drawing>
@@ -24,24 +32,99 @@
 					</DrawingImage>
 				</Image.Source>
 			</Image>
+		</UniformGrid>
 
-			<Separator />
+		<Separator Grid.Row="1"/>
 
-			<GroupBox Header="BaseObject">
-				<ui:BaseObjectPropertiesControl />
-			</GroupBox>
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
 
-			<GroupBox Header="MovableObject">
-				<ui:MovableObjectPropertiesControl />
-			</GroupBox>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
 
-			<GroupBox Header="ConcreteObject">
-				<ui:ConcreteObjectPropertiesControl />
-			</GroupBox>
 
-			<GroupBox Header="LivingObject">
-				<ui:LivingObjectPropertiesControl />
-			</GroupBox>
-		</StackPanel>
-	</DockPanel>
+				<GroupBox Grid.Row="0" Header="BaseObject">
+					<ui:BaseObjectPropertiesControl />
+				</GroupBox>
+
+				<GroupBox Grid.Row="1" Header="MovableObject">
+					<ui:MovableObjectPropertiesControl />
+				</GroupBox>
+
+				<GroupBox Grid.Row="2" Header="ConcreteObject">
+					<ui:ConcreteObjectPropertiesControl />
+				</GroupBox>
+
+				<GroupBox Grid.Row="3" Header="LivingObject">
+					<ui:LivingObjectPropertiesControl />
+				</GroupBox>
+			</Grid>
+
+			<Grid Grid.Column="1">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+				<GroupBox Grid.Row="0" Header="Inventory">
+					<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+						<ListBox.Resources>
+							<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
+						</ListBox.Resources>
+					</ListBox>
+				</GroupBox>
+
+				<GroupBox Grid.Row="1" Header="Skills">
+					<ListView ItemsSource="{Binding Skills}">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
+								<GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</GroupBox>
+
+				<GroupBox Grid.Row="2" DockPanel.Dock="Top" Header="Weapon">
+					<TextBlock Text="{Binding Weapon}" />
+				</GroupBox>
+
+				<GroupBox Grid.Row="3" Header="Worn">
+					<ListView ItemsSource="{Binding ArmorSlots}">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="Slot" DisplayMemberBinding="{Binding Item1}" />
+								<GridViewColumn Header="Item">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock DataContext="{Binding Item2}">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0} ({1})">
+													<Binding Path="Description" />
+													<Binding Path="ObjectID" />
+												</MultiBinding>
+											</TextBlock.Text>
+											</TextBlock>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</GroupBox>
+
+			</Grid>
+
+		</Grid>
+	</Grid>
 </UserControl>
