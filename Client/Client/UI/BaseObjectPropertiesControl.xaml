@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.BaseObjectPropertiesControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d">
+
+	<UniformGrid Columns="2">
+		<TextBlock>ObjectID</TextBlock>
+		<TextBlock Text="{Binding ObjectID}" />
+
+		<TextBlock>CreationTime</TextBlock>
+		<TextBlock Text="{Binding CreationTime}" />
+
+		<TextBlock>CreationTick</TextBlock>
+		<TextBlock Text="{Binding CreationTick}" />
+
+		<TextBlock>ClientCreationTime</TextBlock>
+		<TextBlock Text="{Binding ClientCreationTime}" />
+
+		<TextBlock>Destructed</TextBlock>
+		<TextBlock Text="{Binding IsDestructed}" />
+	</UniformGrid>
+</UserControl>

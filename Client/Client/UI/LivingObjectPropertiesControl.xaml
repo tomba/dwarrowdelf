@@ -1,0 +1,151 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.LivingObjectPropertiesControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d">
+
+	<StackPanel Orientation="Vertical">
+
+		<UniformGrid Columns="2">
+			<TextBlock>LivingID</TextBlock>
+			<TextBlock Text="{Binding LivingID}" />
+
+			<TextBlock>LivingCategory</TextBlock>
+			<TextBlock Text="{Binding LivingCategory}" />
+
+			<TextBlock>Client AI</TextBlock>
+			<TextBlock Text="{Binding AI}" />
+
+			<TextBlock>Server Assignment</TextBlock>
+			<TextBlock Text="{Binding ServerAssignment}" />
+
+			<TextBlock>Client Assignment</TextBlock>
+			<TextBlock Text="{Binding ClientAssignment}" />
+
+			<TextBlock>Action</TextBlock>
+			<TextBlock Text="{Binding CurrentAction}" />
+
+			<TextBlock>ActionPriority</TextBlock>
+			<TextBlock Text="{Binding ActionPriority}" />
+
+			<TextBlock>ActionTicksUsed</TextBlock>
+			<TextBlock Text="{Binding ActionTicksUsed}" />
+
+			<TextBlock>ActionTotalTicks</TextBlock>
+			<TextBlock Text="{Binding ActionTotalTicks}" />
+
+			<TextBlock>Previous Action</TextBlock>
+			<TextBlock Text="{Binding PreviousAction}" />
+
+			<TextBlock>Gender</TextBlock>
+			<TextBlock Text="{Binding Gender}" />
+		</UniformGrid>
+
+		<Separator />
+
+		<UniformGrid Columns="6">
+			<TextBlock Text="Str" />
+			<TextBlock Text="Dex" />
+			<TextBlock Text="Con" />
+			<TextBlock Text="Int" />
+			<TextBlock Text="Wis" />
+			<TextBlock Text="Cha" />
+
+			<TextBlock Text="{Binding Strength}" />
+			<TextBlock Text="{Binding Dexterity}" />
+			<TextBlock Text="{Binding Constitution}" />
+			<TextBlock Text="{Binding Intelligence}" />
+			<TextBlock Text="{Binding Wisdom}" />
+			<TextBlock Text="{Binding Charisma}" />
+		</UniformGrid>
+
+		<Separator />
+
+		<UniformGrid Columns="2">
+			<TextBlock Text="HP" />
+			<TextBlock Text="SP" />
+
+			<TextBlock>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0}/{1}">
+							<Binding Path="HitPoints" />
+							<Binding Path="MaxHitPoints" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock>
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0}/{1}">
+							<Binding Path="SpellPoints" />
+							<Binding Path="MaxSpellPoints" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock Text="Food Fullness" />
+			<TextBlock Text="Water Fullness" />
+			<TextBlock Text="{Binding FoodFullness}" />
+			<TextBlock Text="{Binding WaterFullness}" />
+		</UniformGrid>
+
+		<Separator />
+
+		<UniformGrid Columns="3" MinHeight="100">
+			<GroupBox Header="Skills">
+				<ListView ItemsSource="{Binding Skills}">
+					<ListView.View>
+						<GridView>
+							<GridViewColumn Header="Skill" DisplayMemberBinding="{Binding Item1}" />
+							<GridViewColumn Header="Level" DisplayMemberBinding="{Binding Item2}" />
+						</GridView>
+					</ListView.View>
+				</ListView>
+			</GroupBox>
+
+			<GroupBox Header="Inventory">
+				<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
+					<ListBox.Resources>
+						<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+					</ListBox.Resources>
+				</ListBox>
+			</GroupBox>
+
+			<StackPanel Orientation="Vertical">
+
+				<TextBlock>
+					<TextBlock Text="Weapon: " />
+					<TextBlock Text="{Binding Weapon}" />
+				</TextBlock>
+
+				<GroupBox Header="Worn">
+					<ListView ItemsSource="{Binding ArmorSlots}">
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="Slot" DisplayMemberBinding="{Binding Item1}" />
+								<GridViewColumn Header="Item">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock DataContext="{Binding Item2}">
+											<TextBlock.Text>
+												<MultiBinding StringFormat="{}{0} ({1})">
+													<Binding Path="Description" />
+													<Binding Path="ObjectID" />
+												</MultiBinding>
+											</TextBlock.Text>
+											</TextBlock>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</GroupBox>
+			</StackPanel>
+
+		</UniformGrid>
+
+	</StackPanel>
+
+</UserControl>

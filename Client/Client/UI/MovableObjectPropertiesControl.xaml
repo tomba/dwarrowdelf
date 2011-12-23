@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MovableObjectPropertiesControl"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 mc:Ignorable="d">
+	<UniformGrid Columns="2">
+		<TextBlock>Parent</TextBlock>
+		<TextBlock Text="{Binding Parent}" />
+
+		<TextBlock>Location</TextBlock>
+		<TextBlock Text="{Binding Location}" />
+	</UniformGrid>
+</UserControl>

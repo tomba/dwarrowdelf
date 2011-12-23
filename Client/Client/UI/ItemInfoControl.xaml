@@ -25,59 +25,21 @@
 		</Image>
 
 		<Separator />
+		<GroupBox Header="BaseObject">
+			<ui:BaseObjectPropertiesControl />
+		</GroupBox>
 
-		<UniformGrid Columns="2">
-			<TextBlock>Name</TextBlock>
-			<TextBlock Text="{Binding Name}" />
+		<GroupBox Header="MovableObject">
+			<ui:MovableObjectPropertiesControl />
+		</GroupBox>
 
-			<TextBlock>ItemID</TextBlock>
-			<TextBlock Text="{Binding ItemID}" />
+		<GroupBox Header="ConcreteObject">
+			<ui:ConcreteObjectPropertiesControl />
+		</GroupBox>
 
-			<TextBlock>ItemCategory</TextBlock>
-			<TextBlock Text="{Binding ItemCategory}" />
-
-			<TextBlock>Desc</TextBlock>
-			<TextBlock Text="{Binding Description}" />
-
-			<TextBlock>Color</TextBlock>
-			<TextBlock Text="{Binding Color}" />
-
-			<TextBlock>EffectiveColor</TextBlock>
-			<TextBlock Text="{Binding EffectiveColor}" />
-
-			<TextBlock>MaterialID</TextBlock>
-			<TextBlock Text="{Binding Material.ID}" />
-
-			<TextBlock>MaterialCategory</TextBlock>
-			<TextBlock Text="{Binding MaterialCategory}" />
-
-			<TextBlock>ObjectID</TextBlock>
-			<TextBlock Text="{Binding ObjectID}" />
-
-			<TextBlock>Parent</TextBlock>
-			<TextBlock Text="{Binding Parent}" />
-
-			<TextBlock>Location</TextBlock>
-			<TextBlock Text="{Binding Location}" />
-
-			<TextBlock>Nutritional Value</TextBlock>
-			<TextBlock Text="{Binding NutritionalValue}" />
-
-			<TextBlock>Refreshment Value</TextBlock>
-			<TextBlock Text="{Binding RefreshmentValue}" />
-
-			<TextBlock>Reserved By</TextBlock>
-			<TextBlock Text="{Binding ReservedBy}" />
-
-			<TextBlock>Server Reserved By</TextBlock>
-			<TextBlock Text="{Binding ServerReservedBy}" />
-
-			<TextBlock>Initialized</TextBlock>
-			<TextBlock Text="{Binding IsInitialized}" />
-
-			<TextBlock>Destructed</TextBlock>
-			<TextBlock Text="{Binding IsDestructed}" />
-		</UniformGrid>
+		<GroupBox Header="ItemObject">
+			<ui:ItemObjectPropertiesControl />
+		</GroupBox>
 
 		<GroupBox Header="Inventory">
 			<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch" MinHeight="50">

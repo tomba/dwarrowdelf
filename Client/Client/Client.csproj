@@ -111,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="UI\BaseObjectPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\BuildingInfoControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -119,6 +123,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\ConcreteObjectPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ItemObjectPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ListItemInfoTemplateDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,6 +138,14 @@
     <Page Include="UI\LivingEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\LivingObjectPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MovableObjectPropertiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\StockpileEditControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -225,7 +245,16 @@
     <Compile Include="IPRunner.cs" />
     <Compile Include="ManualControlAI.cs" />
     <Compile Include="ReportHandler.cs" />
+    <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
+      <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\BooleanToVisibilityConverter.cs" />
+    <Compile Include="UI\ConcreteObjectPropertiesControl.xaml.cs">
+      <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ItemObjectPropertiesControl.xaml.cs">
+      <DependentUpon>ItemObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\LivingEditControl.xaml.cs">
       <DependentUpon>LivingEditControl.xaml</DependentUpon>
     </Compile>
@@ -237,6 +266,12 @@
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\CapitalizeConverter.cs" />
+    <Compile Include="UI\LivingObjectPropertiesControl.xaml.cs">
+      <DependentUpon>LivingObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MovableObjectPropertiesControl.xaml.cs">
+      <DependentUpon>MovableObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\StockpileEditControl.xaml.cs">
       <DependentUpon>StockpileEditControl.xaml</DependentUpon>
     </Compile>
