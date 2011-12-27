@@ -10,6 +10,31 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class ItemObject : ConcreteObject, IItemObject
 	{
+		/// <summary>
+		/// For Design-time only
+		/// </summary>
+		public ItemObject()
+			: base(null, ObjectID.NullObjectID)
+		{
+			var r = new Random();
+
+			var props = new Tuple<PropertyID, object>[]
+			{
+				new Tuple<PropertyID, object>(PropertyID.MaterialID, MaterialID.Bronze),
+			};
+
+			var data = new ItemData()
+			{
+				ObjectID = new ObjectID(ObjectType.Item, (uint)r.Next(5000)),
+				ItemID = Dwarrowdelf.ItemID.ChainMail,
+				CreationTick = 123,
+				CreationTime = DateTime.Now,
+				Properties = props,
+			};
+
+			Deserialize(data);
+		}
+
 		public ItemObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{

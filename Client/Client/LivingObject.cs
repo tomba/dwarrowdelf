@@ -26,6 +26,36 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>> ArmorSlots { get; private set; }
 		ObservableCollection<Tuple<ArmorSlot, ItemObject>> m_armorSlots;
 
+		/// <summary>
+		/// For Design-time only
+		/// </summary>
+		public LivingObject()
+			: base(null, ObjectID.NullObjectID)
+		{
+			var r = new Random();
+
+			var props = new Tuple<PropertyID, object>[]
+			{
+				new Tuple<PropertyID, object>(PropertyID.Name, "Testname"),
+				new Tuple<PropertyID, object>(PropertyID.Gender, LivingGender.Male),
+			};
+
+			var data = new LivingData()
+			{
+				ObjectID = new ObjectID(ObjectType.Living, (uint)r.Next(5000)),
+				LivingID = Dwarrowdelf.LivingID.Dwarf,
+				CreationTick = r.Next(),
+				CreationTime = DateTime.Now,
+				Properties = props,
+			};
+
+			Deserialize(data);
+
+			var item = new ItemObject();
+			item.MoveTo(this, new IntPoint3D());
+
+		}
+
 		public LivingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
