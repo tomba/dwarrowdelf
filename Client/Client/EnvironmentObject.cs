@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client
 	{
 		Add,
 		Remove,
+		Update,
 	}
 
 	[SaveGameObjectByRef(ClientObject = true)]
@@ -384,11 +385,7 @@ namespace Dwarrowdelf.Client
 		internal void OnObjectVisualChanged(MovableObject ob)
 		{
 			if (MapTileObjectChanged != null)
-			{
-				// XXX
-				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Remove);
-				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Add);
-			}
+				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Update);
 		}
 
 		public override string ToString()

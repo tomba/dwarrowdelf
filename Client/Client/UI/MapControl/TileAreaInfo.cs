@@ -46,15 +46,23 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_selection.SelectionCuboid.Contains(l))
 				return;
 
-			if (changetype == MapTileObjectChangeType.Add)
+			switch (changetype)
 			{
-				Debug.Assert(!m_objects.Contains(ob));
-				m_objects.Add(ob);
-			}
-			else
-			{
-				bool ok = m_objects.Remove(ob);
-				Debug.Assert(ok);
+				case MapTileObjectChangeType.Add:
+					Debug.Assert(!m_objects.Contains(ob));
+					m_objects.Add(ob);
+					break;
+
+				case MapTileObjectChangeType.Remove:
+					bool ok = m_objects.Remove(ob);
+					Debug.Assert(ok);
+					break;
+
+				case MapTileObjectChangeType.Update:
+					break;
+
+				default:
+					throw new Exception();
 			}
 		}
 

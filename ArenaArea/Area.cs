@@ -95,15 +95,6 @@ namespace MyArea
 				var builder = new ItemObjectBuilder(ItemID.Gem, material);
 				var item = builder.Create(living.World);
 
-				for (int t = 0; t < i; ++t)
-				{
-					// XXX gems inside gems
-					var material2 = gemMaterials[m_random.Next(gemMaterials.Length)].ID;
-					builder = new ItemObjectBuilder(ItemID.Gem, material2);
-					var item2 = builder.Create(living.World);
-					item2.MoveTo(item);
-				}
-
 				item.MoveTo(living);
 			}
 		}

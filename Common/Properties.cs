@@ -106,7 +106,6 @@ namespace Dwarrowdelf
 					throw new Exception("missing visibility for " + (PropertyID)i);
 		}
 
-		// XXX Server's living has own checks for visibility
 		public static ObjectVisibility GetPropertyVisibility(PropertyID id)
 		{
 			return s_visibilityArray[(int)id];
