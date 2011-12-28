@@ -75,6 +75,10 @@
       <Project>{BCAE564B-8D06-4D7F-866E-EF9E10B27FE0}</Project>
       <Name>Server.Engine</Name>
     </ProjectReference>
+    <ProjectReference Include="..\World\Server.World.csproj">
+      <Project>{0C31C7C2-586F-4F67-8225-1C09E816695B}</Project>
+      <Name>Server.World</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
