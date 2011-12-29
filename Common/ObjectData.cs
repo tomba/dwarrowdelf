@@ -73,7 +73,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class BuildingData : BaseGameObjectData
 	{
-		public BuildingID ID { get; set; }
+		public BuildingID BuildingID { get; set; }
 		public ObjectID Environment { get; set; }
 		public IntRectZ Area { get; set; }
 

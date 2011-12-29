@@ -3,7 +3,7 @@
 		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		 xmlns="clr-namespace:Dwarrowdelf">
 
-	<BuildingInfo ID="Carpenter">
+	<BuildingInfo BuildingID="Carpenter">
 
 		<BuildableItem ItemID="Chair">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
@@ -36,7 +36,7 @@
 
 	</BuildingInfo>
 
-	<BuildingInfo ID="Mason">
+	<BuildingInfo BuildingID="Mason">
 		<BuildableItem ItemID="Block">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
@@ -59,7 +59,7 @@
 		</BuildableItem>
 	</BuildingInfo>
 
-	<BuildingInfo ID="Smith">
+	<BuildingInfo BuildingID="Smith">
 
 	</BuildingInfo>
 

@@ -18,7 +18,7 @@ namespace Dwarrowdelf
 	[ContentProperty("BuildableItems")]
 	public sealed class BuildingInfo
 	{
-		public BuildingID ID { get; internal set; }
+		public BuildingID BuildingID { get; internal set; }
 		public string Name { get; internal set; }
 		public List<BuildableItem> BuildableItems { get; internal set; }
 
@@ -118,23 +118,23 @@ namespace Dwarrowdelf
 					buildings = (BuildingInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = buildings.Max(bi => (int)bi.ID);
+			var max = buildings.Max(bi => (int)bi.BuildingID);
 			s_buildings = new BuildingInfo[max + 1];
 
 			foreach (var building in buildings)
 			{
-				if (s_buildings[(int)building.ID] != null)
+				if (s_buildings[(int)building.BuildingID] != null)
 					throw new Exception();
 
 				if (building.Name == null)
-					building.Name = building.ID.ToString();
+					building.Name = building.BuildingID.ToString();
 
-				s_buildings[(int)building.ID] = building;
+				s_buildings[(int)building.BuildingID] = building;
 			}
 
 			s_buildings[0] = new BuildingInfo()
 			{
-				ID = BuildingID.Undefined,
+				BuildingID = BuildingID.Undefined,
 				Name = "<undefined>",
 			};
 		}

@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Server
 
 			var data = (BuildingData)baseData;
 
-			data.ID = this.BuildingInfo.ID;
+			data.BuildingID = this.BuildingInfo.BuildingID;
 			data.Area = this.Area;
 			data.Environment = this.Environment.ObjectID;
 		}
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Server
 			if (srcArray.Any(o => o == null || !this.Contains(o.Location)))
 				return false;
 
-			switch (this.BuildingInfo.ID)
+			switch (this.BuildingInfo.BuildingID)
 			{
 				case BuildingID.Carpenter:
 					if (srcArray[0].MaterialCategory != MaterialCategory.Wood)

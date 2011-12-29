@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 
 		public IntRectZ Area { get; set; }
 
-		public BuildingID BuildingID { get { return this.BuildingInfo.ID; } }
+		public BuildingID BuildingID { get { return this.BuildingInfo.BuildingID; } }
 
 		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
 
@@ -58,7 +58,7 @@ namespace Dwarrowdelf.Client
 				CreationTime = DateTime.Now,
 				Properties = props,
 
-				ID = Dwarrowdelf.BuildingID.Carpenter,
+				BuildingID = Dwarrowdelf.BuildingID.Carpenter,
 				Area = new IntRectZ(new IntRect(0, 0, 4, 4), 9),
 			};
 
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
+			this.BuildingInfo = Buildings.GetBuildingInfo(data.BuildingID);
 			this.Area = data.Area;
 
 			// no env at design time
