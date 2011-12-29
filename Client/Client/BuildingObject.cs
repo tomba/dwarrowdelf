@@ -39,6 +39,32 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		BuildingState m_buildingState;
 
+		/// <summary>
+		/// For Design-time only
+		/// </summary>
+		public BuildingObject()
+			: this(null, ObjectID.NullObjectID)
+		{
+			var r = new Random();
+
+			var props = new Tuple<PropertyID, object>[]
+			{
+			};
+
+			var data = new BuildingData()
+			{
+				ObjectID = new ObjectID(ObjectType.Living, (uint)r.Next(5000)),
+				CreationTick = r.Next(),
+				CreationTime = DateTime.Now,
+				Properties = props,
+
+				ID = Dwarrowdelf.BuildingID.Carpenter,
+				Area = new IntRectZ(new IntRect(0, 0, 4, 4), 9),
+			};
+
+			Deserialize(data);
+		}
+
 		public BuildingObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -66,17 +92,22 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			var env = this.World.GetObject<EnvironmentObject>(data.Environment);
-
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.ID);
 			this.Area = data.Area;
-			this.Environment = env;
 
-			if (initialized == false)
+			// no env at design time
+			if (data.Environment != ObjectID.NullObjectID)
 			{
-				env.AddMapElement(this);
+				var env = this.World.GetObject<EnvironmentObject>(data.Environment);
 
-				this.Environment.World.JobManager.AddJobSource(this);
+				this.Environment = env;
+
+				if (initialized == false)
+				{
+					env.AddMapElement(this);
+
+					this.Environment.World.JobManager.AddJobSource(this);
+				}
 			}
 		}
 

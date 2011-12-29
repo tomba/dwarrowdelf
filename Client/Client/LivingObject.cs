@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		/// For Design-time only
 		/// </summary>
 		public LivingObject()
-			: base(null, ObjectID.NullObjectID)
+			: this(null, ObjectID.NullObjectID)
 		{
 			var r = new Random();
 

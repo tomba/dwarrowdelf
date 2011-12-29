@@ -5,8 +5,10 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="472" d:DesignWidth="748">
+			 d:DesignHeight="472" d:DesignWidth="748"
+			 d:DataContext="{d:DesignInstance Type=local:BuildingObject, IsDesignTimeCreatable=True}">
 
 	<UserControl.Resources>
 		<ui:CapitalizeConverter x:Key="converter" />
