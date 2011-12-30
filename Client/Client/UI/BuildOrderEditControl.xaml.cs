@@ -67,7 +67,6 @@ namespace Dwarrowdelf.Client.UI
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
-
 	}
 
 	sealed class BuildOrderEditable : INotifyPropertyChanged

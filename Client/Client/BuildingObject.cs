@@ -405,7 +405,10 @@ namespace Dwarrowdelf.Client
 
 			for (int i = 0; i < buildableItem.BuildMaterials.Count; ++i)
 			{
-				var ob = FindItem(buildableItem.BuildMaterials[i]);
+				var bimi = buildableItem.BuildMaterials[i];
+				var biis = order.BuildSpec.ItemSpecs[i];
+
+				var ob = FindItem(o => bimi.MatchItem(o) && biis.MatchItem(o));
 
 				if (ob == null)
 					break;
@@ -427,7 +430,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		ItemObject FindItem(BuildableItemMaterialInfo itemDef)
+		ItemObject FindItem(Func<ItemObject, bool> match)
 		{
 			ItemObject ob = null;
 
@@ -435,7 +438,7 @@ namespace Dwarrowdelf.Client
 			{
 				ob = this.Environment.GetContents(l)
 					.OfType<ItemObject>()
-					.Where(o => o.ReservedBy == null && itemDef.MatchItem(o))
+					.Where(o => o.ReservedBy == null && match(o))
 					.FirstOrDefault();
 
 				if (ob != null)
@@ -449,7 +452,6 @@ namespace Dwarrowdelf.Client
 			return ob;
 		}
 
-
 		public override string ToString()
 		{
 			return String.Format("Building({0:x})", this.ObjectID.Value);
@@ -460,6 +462,12 @@ namespace Dwarrowdelf.Client
 	{
 		public ItemID[] ItemIDs { get; set; }
 		public MaterialID[] MaterialIDs { get; set; }
+
+		public bool MatchItem(IItemObject ob)
+		{
+			return (this.ItemIDs.Length == 0 || this.ItemIDs.Contains(ob.ItemID)) &&
+				(this.MaterialIDs.Length == 0 || this.MaterialIDs.Contains(ob.MaterialID));
+		}
 	}
 
 	sealed class BuildSpec
@@ -471,6 +479,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		public BuildableItem BuildableItem { get; private set; }
+		// extra specs given by the user
 		public SourceItemSpec[] ItemSpecs { get; private set; }
 	}
 
@@ -483,7 +492,7 @@ namespace Dwarrowdelf.Client
 
 		public BuildOrder(BuildSpec spec)
 		{
-			m_spec = spec;
+			this.BuildSpec = spec;
 
 			this.Name = this.BuildableItem.ItemInfo.Name;
 
@@ -495,10 +504,10 @@ namespace Dwarrowdelf.Client
 		}
 
 		[SaveGameProperty]
-		public BuildSpec m_spec;
+		public BuildSpec BuildSpec { get; private set; }
 
-		public BuildableItem BuildableItem { get { return m_spec.BuildableItem; } }
-		public ItemID BuildableItemID { get { return m_spec.BuildableItem.ItemID; } }
+		public BuildableItem BuildableItem { get { return this.BuildSpec.BuildableItem; } }
+		public ItemID BuildableItemID { get { return this.BuildSpec.BuildableItem.ItemID; } }
 
 		[SaveGameProperty]
 		public string Name { get; private set; } // XXX just for UI
