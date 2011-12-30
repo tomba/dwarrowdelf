@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		public bool VerifyBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
+		public bool VerifyBuildItem(LivingObject builder, BuildableItem buildableItem, IEnumerable<ObjectID> sourceObjects)
 		{
 			if (!Contains(builder.Location))
 				return false;
@@ -86,34 +86,18 @@ namespace Dwarrowdelf.Server
 			if (srcArray.Any(o => o == null || !this.Contains(o.Location)))
 				return false;
 
-			switch (this.BuildingInfo.BuildingID)
-			{
-				case BuildingID.Carpenter:
-					if (srcArray[0].MaterialCategory != MaterialCategory.Wood)
-						return false;
-					break;
-
-				case BuildingID.Mason:
-					if (srcArray[0].MaterialCategory != MaterialCategory.Rock)
-						return false;
-					break;
-
-				default:
-					return false;
-			}
-
-			return this.BuildingInfo.ItemBuildableFrom(dstItemID, srcArray);
+			return buildableItem.MatchItems(srcArray);
 		}
 
-
-		public ItemObject PerformBuildItem(LivingObject builder, IEnumerable<ObjectID> sourceObjects, ItemID dstItemID)
+		public ItemObject PerformBuildItem(LivingObject builder, BuildableItem buildableItem, IEnumerable<ObjectID> sourceObjects)
 		{
-			if (!VerifyBuildItem(builder, sourceObjects, dstItemID))
+			if (!VerifyBuildItem(builder, buildableItem, sourceObjects))
 				return null;
 
 			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
 
-			var itemBuilder = new ItemObjectBuilder(dstItemID, obs.First().MaterialID);
+			// XXX material needs to be solved properly
+			var itemBuilder = new ItemObjectBuilder(buildableItem.ItemID, obs.First().MaterialID);
 			var item = itemBuilder.Create(this.World);
 
 			foreach (var ob in obs)

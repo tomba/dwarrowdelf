@@ -181,17 +181,15 @@ namespace Dwarrowdelf
 	[SaveGameObjectByRef]
 	public sealed class BuildItemAction : GameAction
 	{
-		// public object type etc
-
 		[SaveGameProperty]
 		public ObjectID[] SourceObjectIDs { get; private set; }
 		[SaveGameProperty]
-		public ItemID DstItemID { get; private set; }
+		public string BuildableItemKey { get; private set; }
 
-		public BuildItemAction(IEnumerable<IMovableObject> sourceItems, ItemID dstItemID)
+		public BuildItemAction(string buildableItemKey, IEnumerable<IMovableObject> sourceItems)
 		{
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
-			this.DstItemID = dstItemID;
+			this.BuildableItemKey = buildableItemKey;
 		}
 
 		BuildItemAction(SaveGameContext ctx)

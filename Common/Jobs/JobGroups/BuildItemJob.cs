@@ -15,17 +15,17 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		IItemObject[] m_sourceObjects;
 		[SaveGameProperty]
-		ItemID m_dstItemID;
+		string m_buildableItemKey;
 
 		[SaveGameProperty]
 		int m_state;
 
-		public BuildItemJob(IJobObserver parent, IBuildingObject workplace, IEnumerable<IItemObject> sourceObjects, ItemID dstItemID)
+		public BuildItemJob(IJobObserver parent, IBuildingObject workplace, string buildableItemKey, IEnumerable<IItemObject> sourceObjects)
 			: base(parent)
 		{
 			m_workplace = workplace;
 			m_sourceObjects = sourceObjects.ToArray();
-			m_dstItemID = dstItemID;
+			m_buildableItemKey = buildableItemKey;
 
 			foreach (var item in m_sourceObjects)
 				item.ReservedBy = this;
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (m_state == 0)
 			{
 				m_state = 1;
-				AddSubJob(new AssignmentGroups.MoveBuildItemAssignment(this, m_workplace, m_sourceObjects, m_dstItemID));
+				AddSubJob(new AssignmentGroups.MoveBuildItemAssignment(this, m_workplace, m_buildableItemKey, m_sourceObjects));
 			}
 			else if (m_state == 1)
 			{

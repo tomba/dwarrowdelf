@@ -121,13 +121,13 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class BuildItemActionReport : ActionReport
 	{
-		public ItemID ItemID { get; private set; }
+		public string BuildableItemKey { get; private set; }
 		public ObjectID ItemObjectID { get; set; }
 
-		public BuildItemActionReport(ILivingObject living, ItemID itemID)
+		public BuildItemActionReport(ILivingObject living, string buildableItemKey)
 			: base(living)
 		{
-			this.ItemID = itemID;
+			this.BuildableItemKey = buildableItemKey;
 		}
 	}
 

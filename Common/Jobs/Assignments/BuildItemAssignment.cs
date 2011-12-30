@@ -13,13 +13,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		readonly IItemObject[] m_items;
 		[SaveGameProperty]
-		readonly ItemID m_dstItemID;
+		readonly string m_buildableItemKey;
 
-		public BuildItemAssignment(IJobObserver parent, IItemObject[] items, ItemID dstItemID)
+		public BuildItemAssignment(IJobObserver parent, string buildableItemKey, IItemObject[] items)
 			: base(parent)
 		{
 			m_items = items;
-			m_dstItemID = dstItemID;
+			m_buildableItemKey = buildableItemKey;
 		}
 
 		BuildItemAssignment(SaveGameContext ctx)
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new BuildItemAction(m_items, m_dstItemID);
+			var action = new BuildItemAction(m_buildableItemKey, m_items);
 			progress = JobStatus.Ok;
 			return action;
 		}

@@ -28,25 +28,16 @@ namespace Dwarrowdelf
 			this.BuildableItems = new List<BuildableItem>();
 		}
 
-		public BuildableItem FindBuildableItem(ItemID itemID)
+		public BuildableItem FindBuildableItem(string buildableItemKey)
 		{
-			return this.BuildableItems.SingleOrDefault(i => i.ItemID == itemID);
-		}
-
-		public bool ItemBuildableFrom(ItemID itemID, IItemObject[] obs)
-		{
-			var item = FindBuildableItem(itemID);
-
-			if (item == null)
-				throw new Exception();
-
-			return item.MatchItems(obs);
+			return this.BuildableItems.SingleOrDefault(i => i.Key == buildableItemKey);
 		}
 	}
 
 	[ContentProperty("BuildMaterials")]
 	public sealed class BuildableItem
 	{
+		public string Key { get; internal set; }
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
 		public MaterialID MaterialID { get; internal set; }
@@ -130,6 +121,18 @@ namespace Dwarrowdelf
 
 				if (building.Name == null)
 					building.Name = building.BuildingID.ToString();
+
+				foreach (var bi in building.BuildableItems)
+				{
+					if (String.IsNullOrEmpty(bi.Key))
+						bi.Key = bi.ItemID.ToString();
+				}
+
+				// verify BuildableItem key uniqueness
+				var grouped = building.BuildableItems.GroupBy(bi => bi.Key);
+				foreach (var g in grouped)
+					if (g.Count() != 1)
+						throw new Exception();
 
 				s_buildings[(int)building.BuildingID] = building;
 			}

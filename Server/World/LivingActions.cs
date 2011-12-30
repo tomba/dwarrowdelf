@@ -483,7 +483,7 @@ namespace Dwarrowdelf.Server
 		{
 			var building = this.Environment.GetLargeObjectAt<BuildingObject>(this.Location);
 
-			var report = new BuildItemActionReport(this, action.DstItemID);
+			var report = new BuildItemActionReport(this, action.BuildableItemKey);
 
 			if (building == null)
 			{
@@ -500,7 +500,9 @@ namespace Dwarrowdelf.Server
 						}
 			 */
 
-			var item = building.PerformBuildItem(this, action.SourceObjectIDs, action.DstItemID);
+			var bi = building.BuildingInfo.FindBuildableItem(action.BuildableItemKey);
+
+			var item = building.PerformBuildItem(this, bi, action.SourceObjectIDs);
 
 			if (item != null)
 			{

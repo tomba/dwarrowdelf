@@ -16,14 +16,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IItemObject[] m_items;
 		[SaveGameProperty]
-		ItemID m_dstItemID;
+		string m_buildableItemKey;
 
-		public MoveBuildItemAssignment(IJobObserver parent, IBuildingObject workplace, IItemObject[] items, ItemID dstItemID)
+		public MoveBuildItemAssignment(IJobObserver parent, IBuildingObject workplace, string buildableItemKey, IItemObject[] items)
 			: base(parent, workplace.Environment, workplace.Area.Center)
 		{
 			m_workplace = workplace;
 			m_items = items;
-			m_dstItemID = dstItemID;
+			m_buildableItemKey = buildableItemKey;
 		}
 
 		MoveBuildItemAssignment(SaveGameContext ctx)
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new BuildItemAssignment(this, m_items, m_dstItemID);
+			return new BuildItemAssignment(this, m_buildableItemKey, m_items);
 		}
 
 		public override string ToString()

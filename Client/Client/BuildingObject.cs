@@ -332,7 +332,7 @@ namespace Dwarrowdelf.Client
 			if (!ok)
 				return null;
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, this, order.SourceItems, order.BuildableItemID);
+			var job = new Jobs.JobGroups.BuildItemJob(this, this, order.BuildableItem.Key, order.SourceItems);
 			GameData.Data.Jobs.Add(job);
 			return job;
 		}
@@ -397,8 +397,7 @@ namespace Dwarrowdelf.Client
 
 		bool FindMaterials(BuildOrder order)
 		{
-			// QWE
-			var buildableItem = this.BuildingInfo.FindBuildableItem(order.BuildableItemID);
+			var buildableItem = order.BuildableItem;
 
 			var numItems = buildableItem.BuildMaterials.Count;
 
