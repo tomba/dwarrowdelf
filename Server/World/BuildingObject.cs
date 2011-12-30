@@ -96,8 +96,14 @@ namespace Dwarrowdelf.Server
 
 			var obs = sourceObjects.Select(oid => this.World.FindObject<ItemObject>(oid));
 
-			// XXX material needs to be solved properly
-			var itemBuilder = new ItemObjectBuilder(buildableItem.ItemID, obs.First().MaterialID);
+			MaterialID materialID;
+
+			if (buildableItem.MaterialID.HasValue)
+				materialID = buildableItem.MaterialID.Value;
+			else
+				materialID = obs.First().MaterialID;
+
+			var itemBuilder = new ItemObjectBuilder(buildableItem.ItemID, materialID);
 			var item = itemBuilder.Create(this.World);
 
 			foreach (var ob in obs)

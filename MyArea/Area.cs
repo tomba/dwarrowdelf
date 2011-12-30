@@ -143,26 +143,12 @@ namespace MyArea
 
 
 			// Add items
-			var gemMaterials = Materials.GetMaterials(MaterialCategory.Gem).ToArray();
 			for (int i = 0; i < 6; ++i)
-			{
-				var material = gemMaterials[Helpers.MyRandom.Next(gemMaterials.Length)].ID;
+				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), GetRandomSurfaceLocation(env, surfaceLevel));
 
-				var builder = new ItemObjectBuilder(ItemID.Gem, material);
-				var item = builder.Create(world);
-
-				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-			}
-
-			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
 			for (int i = 0; i < 6; ++i)
-			{
-				var material = rockMaterials[Helpers.MyRandom.Next(rockMaterials.Length)].ID;
-				var builder = new ItemObjectBuilder(ItemID.Rock, material);
-				var item = builder.Create(world);
+				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), GetRandomSurfaceLocation(env, surfaceLevel));
 
-				item.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-			}
 
 			CreateWaterTest(env, surfaceLevel);
 
@@ -170,7 +156,7 @@ namespace MyArea
 			posy = env.Height / 10;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, 9));
+				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
 				foreach (var p in builder.Area.Range())
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
@@ -183,7 +169,7 @@ namespace MyArea
 			posx += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, 9));
+				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
 				foreach (var p in builder.Area.Range())
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
@@ -196,7 +182,7 @@ namespace MyArea
 			posx += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, 9));
+				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
 				foreach (var p in builder.Area.Range())
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
@@ -209,7 +195,7 @@ namespace MyArea
 			posy += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, 9));
+				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
 				foreach (var p in builder.Area.Range())
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
@@ -220,13 +206,40 @@ namespace MyArea
 			}
 
 			{
+				var p = new IntPoint3D(posx + 5, posy + 1, surfaceLevel);
+				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
+				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
+				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
+				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
+				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
+				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
+
+				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
+			}
+
+			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, 9));
+				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, surfaceLevel));
 			}
 
 			AddMonsters(env, surfaceLevel);
 
 			return env;
+		}
+
+		MaterialID GetRandomMaterial(MaterialCategory category)
+		{
+			var materials = Materials.GetMaterials(category).Select(mi => mi.ID).ToArray();
+			return materials[Helpers.MyRandom.Next(materials.Length)];
+		}
+
+		void CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3D p)
+		{
+			var builder = new ItemObjectBuilder(itemID, materialID);
+			var item = builder.Create(env.World);
+			item.MoveTo(env, p);
 		}
 
 		void AddMonsters(Environment env, int surfaceLevel)

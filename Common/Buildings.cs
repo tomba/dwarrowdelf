@@ -40,7 +40,7 @@ namespace Dwarrowdelf
 		public string Key { get; internal set; }
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
-		public MaterialID MaterialID { get; internal set; }
+		public MaterialID? MaterialID { get; internal set; }
 		public List<BuildableItemMaterialInfo> BuildMaterials { get; internal set; }
 
 		public BuildableItem()
