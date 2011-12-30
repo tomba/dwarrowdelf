@@ -65,6 +65,7 @@
 	<CharSymbol ID="Barrel" Char="÷" />
 	<CharSymbol ID="Bucket" Char="û" />
 	<CharSymbol ID="Block" X="20" Y="40" W="60" H="60" Char="■" />
+	<CharSymbol ID="Bar" X="20" Y="60" W="60" H="40" Char="■" />
 
 	<CharSymbol ID="Weapon" Char="/" X="20" Y="20" W="60" H="60" />
 	<CharSymbol ID="Armor" Char="[" X="30" Y="20" W="40" H="60" />

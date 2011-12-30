@@ -1,0 +1,140 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.BuildOrderEditControl"
+			 x:ClassModifier="internal"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
+			 mc:Ignorable="d" 
+			 d:DesignHeight="300" d:DesignWidth="300"
+			 DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+	<UserControl.Resources>
+		<ui:CapitalizeConverter x:Key="converter" />
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*" />
+			<RowDefinition Height="1*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<GroupBox Grid.Row="0" Header="Items">
+			<ListBox Name="itemListBox" 
+					 ItemsSource="{Binding BuildingInfo.BuildableItems}"
+					 SelectedItem="{Binding EditableBuildOrder.BuildableItem}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock>
+									<TextBlock.Text>
+										<MultiBinding StringFormat="{}{0} {1}">
+											<Binding Path="MaterialID" Converter="{StaticResource converter}"/>
+											<Binding Path="ItemInfo.Name" />
+										</MultiBinding>
+									</TextBlock.Text>
+						</TextBlock>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</GroupBox>
+
+		<GroupBox Grid.Row="1">
+			<GroupBox.Header>
+				<TextBlock DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}">
+						<TextBlock.Text>
+							<MultiBinding StringFormat="{}{0} {1} materials">
+								<Binding Path="MaterialID" Converter="{StaticResource converter}"/>
+								<Binding Path="ItemInfo.Name" />
+							</MultiBinding>
+						</TextBlock.Text>
+				</TextBlock>
+			</GroupBox.Header>
+
+			<ListView ItemsSource="{Binding EditableBuildOrder.BuildMaterialsView}">
+				<ListView.View>
+					<GridView AllowsColumnReorder="true">
+						<GridViewColumn Header="ItemID">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Grid>
+										<ToggleButton Name="qwe" Content="{Binding ItemString}" IsEnabled="{Binding HasMultipleItems}" />
+										<Popup IsOpen="{Binding ElementName=qwe, Path=IsChecked}" StaysOpen="True"
+													   PlacementTarget="{Binding ElementName=qwe}" Placement="Bottom">
+											<ItemsControl ItemsSource="{Binding Path=ItemIDs}">
+												<ItemsControl.Template>
+													<ControlTemplate TargetType="ItemsControl">
+														<Border BorderBrush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" 
+																		Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+																		BorderThickness="1">
+															<ItemsPresenter/>
+														</Border>
+													</ControlTemplate>
+												</ItemsControl.Template>
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<CheckBox Margin="4,2" Content="{Binding Value}" IsChecked="{Binding IsSelected}" />
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+												<ItemsControl.ItemsPanel>
+													<ItemsPanelTemplate>
+														<UniformGrid Columns="2" />
+													</ItemsPanelTemplate>
+												</ItemsControl.ItemsPanel>
+											</ItemsControl>
+										</Popup>
+									</Grid>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+
+						<GridViewColumn Header="MaterialID">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<Grid>
+										<ToggleButton Name="qwe" Content="{Binding MaterialString}" IsEnabled="{Binding HasMultipleMaterials}" />
+										<Popup IsOpen="{Binding ElementName=qwe, Path=IsChecked}" StaysOpen="True"
+													   PlacementTarget="{Binding ElementName=qwe}" Placement="Bottom">
+											<ItemsControl ItemsSource="{Binding Path=MaterialIDs}">
+												<ItemsControl.Template>
+													<ControlTemplate TargetType="ItemsControl">
+														<Border BorderBrush="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" 
+																		Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+																		BorderThickness="1">
+															<ItemsPresenter/>
+														</Border>
+													</ControlTemplate>
+												</ItemsControl.Template>
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<CheckBox Margin="4,2" Content="{Binding Value}" IsChecked="{Binding IsSelected}" />
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+												<ItemsControl.ItemsPanel>
+													<ItemsPanelTemplate>
+														<UniformGrid Columns="2" />
+													</ItemsPanelTemplate>
+												</ItemsControl.ItemsPanel>
+											</ItemsControl>
+										</Popup>
+									</Grid>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView>
+				</ListView.View>
+
+			</ListView>
+		</GroupBox>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
+			<Button Margin="2" Content="Add" Click="AddButton_Click" Width="75" />
+			<Button Margin="2" Content="Update" Click="UpdateButton_Click" Width="75" IsEnabled="False" />
+		</StackPanel>
+	</Grid>
+</UserControl>

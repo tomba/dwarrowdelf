@@ -63,4 +63,23 @@
 
 	</BuildingInfo>
 
+	<BuildingInfo BuildingID="Smelter">
+		<BuildableItem ItemID="Bar" MaterialID="Lead">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Lead" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
+		<BuildableItem ItemID="Bar" MaterialID="Tin">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
+		<BuildableItem ItemID="Bar" MaterialID="Steel">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Iron" />
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
+	</BuildingInfo>
+
 </x:Array>

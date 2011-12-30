@@ -123,6 +123,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\BuildOrderEditControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ConcreteObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -245,6 +249,9 @@
       <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\BooleanToVisibilityConverter.cs" />
+    <Compile Include="UI\BuildOrderEditControl.xaml.cs">
+      <DependentUpon>BuildOrderEditControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ConcreteObjectPropertiesControl.xaml.cs">
       <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
     </Compile>

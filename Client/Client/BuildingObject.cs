@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using Dwarrowdelf.Jobs;
+using System.Collections.Generic;
 
 namespace Dwarrowdelf.Client
 {
@@ -58,7 +59,7 @@ namespace Dwarrowdelf.Client
 				CreationTime = DateTime.Now,
 				Properties = props,
 
-				BuildingID = Dwarrowdelf.BuildingID.Carpenter,
+				BuildingID = Dwarrowdelf.BuildingID.Smelter,
 				Area = new IntRectZ(new IntRect(0, 0, 4, 4), 9),
 			};
 
@@ -166,16 +167,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void AddBuildOrder(BuildableItem buildableItem)
-		{
-			if (buildableItem == null)
-				throw new Exception();
-
-			var bo = new BuildOrder(buildableItem);
-
-			AddBuildOrder(bo);
-		}
-
 		BuildOrder CurrentBuildOrder
 		{
 			get { return m_currentBuildOrder; }
@@ -217,7 +208,7 @@ namespace Dwarrowdelf.Client
 			return null;
 		}
 
-		void AddBuildOrder(BuildOrder buildOrder)
+		public void AddBuildOrder(BuildOrder buildOrder)
 		{
 			buildOrder.PropertyChanged += OnBuildOrderPropertyChanged;
 			m_buildOrderQueue.Add(buildOrder);
@@ -406,6 +397,7 @@ namespace Dwarrowdelf.Client
 
 		bool FindMaterials(BuildOrder order)
 		{
+			// QWE
 			var buildableItem = this.BuildingInfo.FindBuildableItem(order.BuildableItemID);
 
 			var numItems = buildableItem.BuildMaterials.Count;
@@ -465,6 +457,24 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
+	sealed class SourceItemSpec
+	{
+		public ItemID[] ItemIDs { get; set; }
+		public MaterialID[] MaterialIDs { get; set; }
+	}
+
+	sealed class BuildSpec
+	{
+		public BuildSpec(BuildableItem buildableItem)
+		{
+			this.BuildableItem = buildableItem;
+			this.ItemSpecs = new SourceItemSpec[this.BuildableItem.BuildMaterials.Count];
+		}
+
+		public BuildableItem BuildableItem { get; private set; }
+		public SourceItemSpec[] ItemSpecs { get; private set; }
+	}
+
 	[SaveGameObjectByRef]
 	sealed class BuildOrder : INotifyPropertyChanged
 	{
@@ -472,11 +482,13 @@ namespace Dwarrowdelf.Client
 		bool m_isSuspended;
 		bool m_isUnderWork;
 
-		public BuildOrder(BuildableItem buildableItem)
+		public BuildOrder(BuildSpec spec)
 		{
-			this.BuildableItemID = buildableItem.ItemID;
-			this.Name = buildableItem.ItemInfo.Name;
-			this.SourceItems = new ItemObject[buildableItem.BuildMaterials.Count];
+			m_spec = spec;
+
+			this.Name = this.BuildableItem.ItemInfo.Name;
+
+			this.SourceItems = new ItemObject[this.BuildableItem.BuildMaterials.Count];
 		}
 
 		BuildOrder(SaveGameContext context)
@@ -484,7 +496,11 @@ namespace Dwarrowdelf.Client
 		}
 
 		[SaveGameProperty]
-		public ItemID BuildableItemID { get; private set; }
+		public BuildSpec m_spec;
+
+		public BuildableItem BuildableItem { get { return m_spec.BuildableItem; } }
+		public ItemID BuildableItemID { get { return m_spec.BuildableItem.ItemID; } }
+
 		[SaveGameProperty]
 		public string Name { get; private set; } // XXX just for UI
 		[SaveGameProperty]

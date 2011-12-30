@@ -18,6 +18,7 @@ namespace Dwarrowdelf
 		Gem,
 		UncutGem,
 		Block,
+		Bar,
 		Corpse,
 
 		Chair,
@@ -147,6 +148,11 @@ namespace Dwarrowdelf
 			Debug.Assert(s_items[(int)id] != null);
 
 			return s_items[(int)id];
+		}
+
+		public static IEnumerable<ItemInfo> GetItemInfos()
+		{
+			return s_items.Where(ii => ii != null);
 		}
 
 		public static IEnumerable<ItemInfo> GetItemInfos(ItemCategory category)

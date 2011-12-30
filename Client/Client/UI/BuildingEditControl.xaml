@@ -7,8 +7,9 @@
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="472" d:DesignWidth="748"
-			 d:DataContext="{d:DesignInstance Type=local:BuildingObject, IsDesignTimeCreatable=True}">
+			 d:DesignHeight="472" d:DesignWidth="900"
+			 d:DataContext="{d:DesignInstance Type=local:BuildingObject, IsDesignTimeCreatable=True}"
+			 x:Name="root">
 
 	<UserControl.Resources>
 		<ui:CapitalizeConverter x:Key="converter" />
@@ -66,7 +67,8 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 
-				<ListBox Name="buildQueueListBox" Grid.Column="0" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100" HorizontalContentAlignment="Stretch">
+				<ListBox Name="buildQueueListBox" Grid.Column="0" ItemsSource="{Binding BuildOrderQueue}" MinWidth="100" 
+						 HorizontalContentAlignment="Stretch" SelectionChanged="buildQueueListBox_SelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
 							<DockPanel>
@@ -94,49 +96,11 @@
 		</GroupBox>
 
 		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1"
-			IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
+				IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
 
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-				</Grid.ColumnDefinitions>
+			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" BuildingInfo="{Binding Path=DataContext.BuildingInfo, ElementName=root}"
+									  AddButtonClicked="buildOrderEditControl_AddButtonClicked" />
 
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="2*" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="1*" />
-				</Grid.RowDefinitions>
-
-				<Button Grid.Row="0" Content="Add" Click="Button_Click" />
-
-				<TextBlock Grid.Row="1" Text="Items" />
-
-				<ListBox Name="itemListBox" Grid.Row="2" ItemsSource="{Binding BuildingInfo.BuildableItems}" MouseDoubleClick="itemListBox_MouseDoubleClick">
-					<ListBox.ItemTemplate>
-						<DataTemplate>
-							<TextBlock Text="{Binding Path=ItemInfo.Name, Converter={StaticResource converter}}" />
-						</DataTemplate>
-					</ListBox.ItemTemplate>
-				</ListBox>
-
-				<TextBlock Grid.Row="3" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}">
-					<TextBlock Text="{Binding Path=ItemInfo.Name, Converter={StaticResource converter}}" />
-					<TextBlock Text=" materials" />
-				</TextBlock>
-
-				<ListView Grid.Row="4" DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}" ItemsSource="{Binding Path=BuildMaterials}">
-					<ListView.View>
-						<GridView AllowsColumnReorder="true">
-							<GridViewColumn DisplayMemberBinding="{Binding Path=ItemID}" Header="ItemID"/>
-							<GridViewColumn DisplayMemberBinding="{Binding Path=ItemCategory}" Header="ItemCategory"/>
-							<GridViewColumn DisplayMemberBinding="{Binding Path=MaterialID}" Header="MaterialID"/>
-							<GridViewColumn DisplayMemberBinding="{Binding Path=MaterialCategory}" Header="MaterialCategory"/>
-						</GridView>
-					</ListView.View>
-				</ListView>
-			</Grid>
 		</GroupBox>
 
 	</Grid>

@@ -13,6 +13,7 @@ namespace Dwarrowdelf
 		Carpenter,
 		Mason,
 		Smith,
+		Smelter,
 	}
 
 	[ContentProperty("BuildableItems")]
@@ -48,6 +49,7 @@ namespace Dwarrowdelf
 	{
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
+		public MaterialID MaterialID { get; internal set; }
 		public List<BuildableItemMaterialInfo> BuildMaterials { get; internal set; }
 
 		public BuildableItem()

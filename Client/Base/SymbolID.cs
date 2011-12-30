@@ -55,6 +55,7 @@ namespace Dwarrowdelf.Client
 		/* items */
 		UncutGem,
 		Block,
+		Bar,
 		Gem,
 		Key,
 		Rock,

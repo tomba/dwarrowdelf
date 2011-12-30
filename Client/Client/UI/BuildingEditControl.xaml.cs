@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 /// ITEM MANAGEMENT
 /// add
@@ -46,24 +47,6 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
-		{
-			var building = (BuildingObject)this.DataContext;
-
-			var item = (BuildableItem)itemListBox.SelectedItem;
-
-			building.AddBuildOrder(item);
-		}
-
-		private void itemListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			var building = (BuildingObject)this.DataContext;
-
-			var item = (BuildableItem)itemListBox.SelectedItem;
-
-			building.AddBuildOrder(item);
-		}
-
 		private void DestructButtonClick(object sender, RoutedEventArgs e)
 		{
 			var building = (BuildingObject)this.DataContext;
@@ -76,6 +59,28 @@ namespace Dwarrowdelf.Client.UI
 			var building = (BuildingObject)this.DataContext;
 
 			building.CancelDestructBuilding();
+		}
+
+		private void buildQueueListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count == 0)
+				return;
+
+			if (e.AddedItems.Count > 1)
+				throw new Exception();
+
+			var bo = (BuildOrder)e.AddedItems[0];
+
+			buildOrderEditControl.EditableBuildOrder = new BuildOrderEditable(bo);
+		}
+
+		private void buildOrderEditControl_AddButtonClicked()
+		{
+			var building = (BuildingObject)this.DataContext;
+
+			var bo = buildOrderEditControl.EditableBuildOrder.ToBuildOrder();
+
+			building.AddBuildOrder(bo);
 		}
 	}
 

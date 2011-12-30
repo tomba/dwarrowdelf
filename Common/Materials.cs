@@ -24,6 +24,7 @@ namespace Dwarrowdelf
 		Zinc,
 		Silver,
 		Lead,
+		Tin,
 
 		// Rocks
 		Granite,
@@ -125,6 +126,11 @@ namespace Dwarrowdelf
 			Debug.Assert(s_materials[(int)id] != null);
 
 			return s_materials[(int)id];
+		}
+
+		public static IEnumerable<MaterialInfo> GetMaterials()
+		{
+			return s_materials.Where(m => m != null);
 		}
 
 		public static IEnumerable<MaterialInfo> GetMaterials(MaterialCategory materialClass)

@@ -206,6 +206,19 @@ namespace MyArea
 				builder.Create(world, env);
 			}
 
+			posy += 4;
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, 9));
+				foreach (var p in builder.Area.Range())
+				{
+					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+					env.SetGrass(p, false);
+				}
+				builder.Create(world, env);
+			}
+
 			{
 				var gen = FoodGenerator.Create(env.World);
 				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, 9));

@@ -14,7 +14,8 @@
 	<MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
 	<MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
 	<MaterialInfo ID="Silver" Category="Metal" Color="Silver" />
-	<MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
+    <MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
+    <MaterialInfo ID="Tin" Category="Metal" Color="DarkGray" />
 
 	<!-- Rocks -->
 	<MaterialInfo ID="Granite" Category="Rock" Color="DarkGray" />
