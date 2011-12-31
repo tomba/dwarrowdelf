@@ -762,29 +762,17 @@ namespace Dwarrowdelf.Client.UI
 			if (e.AddedItems.Count == 0)
 				return;
 
-			var ob = (MovableObject)e.AddedItems[0];
+			if (e.AddedItems.Count != 1)
+				throw new Exception();
+
+			var movable = e.AddedItems[0] as MovableObject;
 
 			this.FollowObject = null;
 
-			map.ScrollTo(ob.Environment, ob.Location);
-		}
+			if (movable == null || movable.Environment == null)
+				return;
 
-		private void ObjectsListBoxItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			var item = (ListBoxItem)sender;
-			var ob = (MovableObject)item.Content;
-
-			this.FollowObject = null;
-
-			map.ScrollTo(ob.Environment, ob.Location);
-		}
-
-		private void ObjectsListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			var item = (ListBoxItem)sender;
-			var ob = (MovableObject)item.Content;
-
-			this.FollowObject = ob;
+			map.ScrollTo(movable.Environment, movable.Location);
 		}
 
 		private void MessageListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -12,8 +12,9 @@
 	DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
 	<Window.Resources>
-		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems"/>
-		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings"/>
+		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />
+		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
+		<CollectionViewSource Source="{Binding Data.World.Controllables}" x:Key="filterControllablesCvs" />
 
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 
@@ -68,60 +69,28 @@
 								<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
 							</ad:DockableContent.Resources>
 
-							<ListBox ItemsSource="{Binding Data.World.Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
-						</ad:DockableContent>
+							<DockPanel>
+								<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="0">
+									<ComboBoxItem Tag="{Binding Data.World.Objects}">All</ComboBoxItem>
+									<ComboBoxItem Tag="{Binding Source={StaticResource filterItemsCvs}}">Items</ComboBoxItem>
+									<ComboBoxItem Tag="{Binding Source={StaticResource filterLivingsCvs}}">Livings</ComboBoxItem>
+									<ComboBoxItem Tag="{Binding Source={StaticResource filterControllablesCvs}}">Controllables</ComboBoxItem>
+								</ComboBox>
 
-						<!-- Items -->
-						<ad:DockableContent Name="itemsContent" Title="Items">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
-
-							<ListBox ItemsSource="{Binding Source={StaticResource filterItemsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-								<ListBox.ItemContainerStyle>
-									<Style TargetType="{x:Type ListBoxItem}">
-										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-									</Style>
-								</ListBox.ItemContainerStyle>
-							</ListBox>
-
-						</ad:DockableContent>
-
-						<!-- Livings -->
-						<ad:DockableContent Name="livingsContent" Title="Livings">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
-
-							<ListBox ItemsSource="{Binding Source={StaticResource filterLivingsCvs}}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-								<ListBox.ItemContainerStyle>
-									<Style TargetType="{x:Type ListBoxItem}">
-										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-									</Style>
-								</ListBox.ItemContainerStyle>
-							</ListBox>
-
-						</ad:DockableContent>
-
-						<!-- Controllables -->
-						<ad:DockableContent Name="controllablesContent" Title="Controllables">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
-
-							<ListBox ItemsSource="{Binding Data.World.Controllables}" SelectionChanged="ObjectsListBox_SelectionChanged" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-								<ListBox.ItemContainerStyle>
-									<Style TargetType="{x:Type ListBoxItem}">
-										<EventSetter Event="PreviewMouseDown" Handler="ObjectsListBoxItem_PreviewMouseDown" />
-										<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-									</Style>
-								</ListBox.ItemContainerStyle>
-							</ListBox>
+								<ListBox ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
+										 SelectionChanged="ObjectsListBox_SelectionChanged"
+										 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									<!--
+									<ListBox.ItemContainerStyle>
+										<Style TargetType="{x:Type ListBoxItem}">
+											<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
+										</Style>
+									</ListBox.ItemContainerStyle>
+									-->
+								</ListBox>
+							</DockPanel>
 						</ad:DockableContent>
 					</ad:DockablePane>
-
 
 					<!-- MAP -->
 					<ad:DocumentPane>
