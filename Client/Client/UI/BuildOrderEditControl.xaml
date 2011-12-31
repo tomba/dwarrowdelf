@@ -26,9 +26,8 @@
 		</Grid.RowDefinitions>
 
 		<GroupBox Grid.Row="0" Header="Items">
-			<ListBox Name="itemListBox" 
-					 ItemsSource="{Binding BuildingInfo.BuildableItems}"
-					 SelectedItem="{Binding EditableBuildOrder.BuildableItem}">
+			<ListBox Name="itemListBox" ItemsSource="{Binding BuildingInfo.BuildableItems}" SelectedItem="{Binding EditableBuildOrder.BuildableItem}"
+					 MouseDoubleClick="itemListBox_MouseDoubleClick">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<TextBlock>

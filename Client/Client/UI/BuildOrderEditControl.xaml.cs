@@ -48,7 +48,12 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (AddButtonClicked != null)
 				AddButtonClicked();
+		}
 
+		private void itemListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (AddButtonClicked != null)
+				AddButtonClicked();
 		}
 
 		private void UpdateButton_Click(object sender, RoutedEventArgs e)
