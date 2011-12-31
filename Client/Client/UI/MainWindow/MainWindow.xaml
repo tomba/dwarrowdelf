@@ -14,7 +14,6 @@
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
-		<CollectionViewSource Source="{Binding Data.World.Controllables}" x:Key="filterControllablesCvs" />
 
 		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
@@ -65,18 +64,19 @@
 					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
 						<ad:DockableContent Name="allObjectsContent" Title="Objects">
 							<DockPanel>
-								<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="0">
+								<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="3">
 									<ComboBoxItem Tag="{Binding Data.World.Objects}">All</ComboBoxItem>
+									<ComboBoxItem Tag="{Binding Data.World.RootObjects}">Roots</ComboBoxItem>
 									<ComboBoxItem Tag="{Binding Source={StaticResource filterItemsCvs}}">Items</ComboBoxItem>
 									<ComboBoxItem Tag="{Binding Source={StaticResource filterLivingsCvs}}">Livings</ComboBoxItem>
-									<ComboBoxItem Tag="{Binding Source={StaticResource filterControllablesCvs}}">Controllables</ComboBoxItem>
+									<ComboBoxItem Tag="{Binding Data.World.Controllables}">Controllables</ComboBoxItem>
 								</ComboBox>
 
 								<TreeView ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
 										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
 									<TreeView.Resources>
-											<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+										<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
 									</TreeView.Resources>
 								</TreeView>
 							</DockPanel>

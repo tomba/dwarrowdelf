@@ -12,6 +12,9 @@ namespace Dwarrowdelf.Client
 		BaseGameObjectCollection m_objects;
 		public ReadOnlyBaseGameObjectCollection Objects { get; private set; }
 
+		BaseGameObjectCollection m_rootObjects;
+		public ReadOnlyBaseGameObjectCollection RootObjects { get; private set; }
+
 		EnvironmentCollection m_environments;
 		public ReadOnlyEnvironmentCollection Environments { get; private set; }
 
@@ -29,6 +32,9 @@ namespace Dwarrowdelf.Client
 		{
 			m_objects = new BaseGameObjectCollection();
 			this.Objects = new ReadOnlyBaseGameObjectCollection(m_objects);
+
+			m_rootObjects = new BaseGameObjectCollection();
+			this.RootObjects = new ReadOnlyBaseGameObjectCollection(m_rootObjects);
 
 			m_environments = new EnvironmentCollection();
 			this.Environments = new ReadOnlyEnvironmentCollection(m_environments);
@@ -108,14 +114,44 @@ namespace Dwarrowdelf.Client
 
 			m_objects.Add(ob);
 
+			m_rootObjects.Add(ob);
+			var movable = ob as MovableObject;
+			if (movable != null)
+				movable.PropertyChanged += MovablePropertyChanged;
+
 			ob.Destructed += ObjectDestructed;
 
 			return ob;
 		}
 
+		void MovablePropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != "Parent")
+				return;
+
+			var ob = (MovableObject)sender;
+			if (ob.Parent == null)
+			{
+				if (m_rootObjects.Contains(ob))
+					return;
+
+				m_rootObjects.Add(ob);
+			}
+			else
+			{
+				m_rootObjects.Remove(ob);
+			}
+		}
+
 		void ObjectDestructed(BaseObject ob)
 		{
 			ob.Destructed -= ObjectDestructed;
+
+			var movable = ob as MovableObject;
+			if (movable != null)
+				movable.PropertyChanged -= MovablePropertyChanged;
+
+			m_rootObjects.Remove(ob);
 
 			if (m_objects.Remove(ob) == false)
 				throw new Exception();

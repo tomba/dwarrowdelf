@@ -49,7 +49,6 @@
 
 	<HierarchicalDataTemplate DataType="{x:Type local:ConcreteObject}" ItemsSource="{Binding Inventory}">
 		<HierarchicalDataTemplate.Resources>
-			<BooleanToVisibilityConverter x:Key="visibilityConverter"/>
 			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 		</HierarchicalDataTemplate.Resources>
@@ -86,7 +85,7 @@
 			</DockPanel.ContextMenu>
 
 			<DockPanel.ToolTip>
-				<ui:LivingInfoControl />
+				<ui:ObjectInfoControl />
 			</DockPanel.ToolTip>
 		</DockPanel>
 	</HierarchicalDataTemplate>
