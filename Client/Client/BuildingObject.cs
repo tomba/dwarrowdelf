@@ -458,6 +458,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
+	[Serializable]
 	sealed class SourceItemSpec
 	{
 		public ItemID[] ItemIDs { get; set; }
@@ -470,16 +471,28 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
+	[SaveGameObjectByValue]
 	sealed class BuildSpec
 	{
 		public BuildSpec(BuildableItem buildableItem)
 		{
 			this.BuildableItem = buildableItem;
+			this.BuildableItemKey = this.BuildableItem.Key;
 			this.ItemSpecs = new SourceItemSpec[this.BuildableItem.BuildMaterials.Count];
 		}
 
+		BuildSpec(SaveGameContext context)
+		{
+			// XXX BuildableItem is not restored properly. Needs to know the building ID...
+		}
+
+		[SaveGameProperty]
+		string BuildableItemKey { get; set; }
+
 		public BuildableItem BuildableItem { get; private set; }
+
 		// extra specs given by the user
+		[SaveGameProperty]
 		public SourceItemSpec[] ItemSpecs { get; private set; }
 	}
 
@@ -501,7 +514,10 @@ namespace Dwarrowdelf.Client
 
 		BuildOrder(SaveGameContext context)
 		{
+			this.Name = this.BuildableItem.ItemInfo.Name;
 		}
+
+		public string Name { get; private set; } // XXX just for UI
 
 		[SaveGameProperty]
 		public BuildSpec BuildSpec { get; private set; }
@@ -509,8 +525,6 @@ namespace Dwarrowdelf.Client
 		public BuildableItem BuildableItem { get { return this.BuildSpec.BuildableItem; } }
 		public ItemID BuildableItemID { get { return this.BuildSpec.BuildableItem.ItemID; } }
 
-		[SaveGameProperty]
-		public string Name { get; private set; } // XXX just for UI
 		[SaveGameProperty]
 		public ItemObject[] SourceItems { get; private set; }
 
@@ -525,13 +539,13 @@ namespace Dwarrowdelf.Client
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		#endregion
-
 		void Notify(string property)
 		{
 			if (this.PropertyChanged != null)
 				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
+
+		#endregion
 	}
 
 	[Flags]
