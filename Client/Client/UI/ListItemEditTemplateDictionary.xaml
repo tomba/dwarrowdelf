@@ -53,7 +53,7 @@
 			</Style>
 
 			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-			<ui:BooleanToVisibilityConverter x:Key="visibilityConverter"/>
+			<BooleanToVisibilityConverter x:Key="visibilityConverter"/>
 		</DataTemplate.Resources>
 
 		<DockPanel x:Name="dockPanel">

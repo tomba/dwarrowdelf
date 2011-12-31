@@ -248,7 +248,6 @@
     <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
       <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\BooleanToVisibilityConverter.cs" />
     <Compile Include="UI\BuildOrderEditControl.xaml.cs">
       <DependentUpon>BuildOrderEditControl.xaml</DependentUpon>
     </Compile>
