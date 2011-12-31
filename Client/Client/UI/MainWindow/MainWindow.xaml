@@ -16,6 +16,7 @@
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
 		<CollectionViewSource Source="{Binding Data.World.Controllables}" x:Key="filterControllablesCvs" />
 
+		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 
 		<ContextMenu x:Key="objectSelectorContextMenu">
@@ -62,13 +63,7 @@
 				<ad:ResizingPanel Orientation="Horizontal">
 
 					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
-
-						<!-- All objects-->
 						<ad:DockableContent Name="allObjectsContent" Title="Objects">
-							<ad:DockableContent.Resources>
-								<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
-							</ad:DockableContent.Resources>
-
 							<DockPanel>
 								<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="0">
 									<ComboBoxItem Tag="{Binding Data.World.Objects}">All</ComboBoxItem>
@@ -77,17 +72,13 @@
 									<ComboBoxItem Tag="{Binding Source={StaticResource filterControllablesCvs}}">Controllables</ComboBoxItem>
 								</ComboBox>
 
-								<ListBox ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
-										 SelectionChanged="ObjectsListBox_SelectionChanged"
-										 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-									<!--
-									<ListBox.ItemContainerStyle>
-										<Style TargetType="{x:Type ListBoxItem}">
-											<EventSetter Event="MouseDoubleClick" Handler="ObjectsListBoxItem_MouseDoubleClick" />
-										</Style>
-									</ListBox.ItemContainerStyle>
-									-->
-								</ListBox>
+								<TreeView ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
+										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
+									<TreeView.Resources>
+											<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+									</TreeView.Resources>
+								</TreeView>
 							</DockPanel>
 						</ad:DockableContent>
 					</ad:DockablePane>
