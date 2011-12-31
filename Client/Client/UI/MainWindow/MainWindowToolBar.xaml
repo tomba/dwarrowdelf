@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MainWindowToolBar"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 mc:Ignorable="d" d:DesignHeight="98" d:DesignWidth="997">
+	<ToolBarTray>
+		<ToolBar Band="1">
+			<ToggleButton IsChecked="{Binding Data.DisableLOS}">Disable Client LOS</ToggleButton>
+			<Separator />
+			<ToggleButton IsChecked="{Binding Path=MapControl.ShowVirtualSymbols, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}">Show Virtual Symbols</ToggleButton>
+			<Separator />
+			<Button Content="Open NetStats" Click="Button_OpenNetStats_Click" />
+			<Separator />
+			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="100">
+				<ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
+				<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
+			</ComboBox>
+			<Separator />
+			<Button Click="Connect_Button_Click">Connect</Button>
+			<Separator />
+			<Button Click="Disconnect_Button_Click">Disconnect</Button>
+			<Separator />
+			<Button Click="EnterGame_Button_Click">Enter Game</Button>
+			<Separator />
+			<Button Click="ExitGame_Button_Click">Exit Game</Button>
+			<Separator />
+			<Button Click="Save_Button_Click">Save</Button>
+			<Button Click="Load_Button_Click">Load</Button>
+		</ToolBar>
+
+		<ToolBar Band="1">
+			<Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
+						ValueChanged="slider_ValueChanged"/>
+			<TextBox Text="{Binding Path=Value, ElementName=slider}" />
+		</ToolBar>
+
+		<ToolBar Band="2" BandIndex="1">
+			<Button Click="Button_Click_GC">GC</Button>
+			<Separator />
+			<Button Click="Button_Click_Break">Break</Button>
+			<Separator />
+			<ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
+			<Separator />
+			<Button Click="Button_Click_EditSymbols">Edit Symbols</Button>
+		</ToolBar>
+
+		<ToolBar Band="2" BandIndex="0">
+			<ToggleButton Content="AutoAdvanceTurn" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
+							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
+			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+		</ToolBar>
+
+	</ToolBarTray>
+</UserControl>

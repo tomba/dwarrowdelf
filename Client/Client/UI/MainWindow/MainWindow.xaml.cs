@@ -212,8 +212,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			base.OnInitialized(e);
 
-			PopulateMenus();
-
 			m_cmdHandler = new MainWindowCommandHandler(this);
 
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
@@ -266,46 +264,6 @@ namespace Dwarrowdelf.Client.UI
 			dlg.DataContext = ob;
 			dlg.Owner = this;
 			dlg.Show();
-		}
-
-		void PopulateMenus()
-		{
-			foreach (var content in dockingManager.DockableContents)
-			{
-				var item = new MenuItem()
-				{
-					Tag = content,
-					Header = content.Title,
-					IsChecked = true,
-				};
-
-				item.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(MenuItem_Click_ShowWindow));
-				contentMenu.Items.Add(item);
-
-				content.StateChanged += new RoutedEventHandler(dockableContent_StateChanged);
-			}
-		}
-
-		void dockableContent_StateChanged(object sender, RoutedEventArgs e)
-		{
-			var content = (AvalonDock.DockableContent)e.Source;
-			MenuItem item = null;
-			foreach (MenuItem i in contentMenu.Items)
-			{
-				if (i.Tag == content)
-				{
-					item = i;
-					break;
-				}
-			}
-
-			if (item == null)
-				throw new Exception();
-
-			if (content.State == AvalonDock.DockableContentState.Hidden)
-				item.IsChecked = false;
-			else
-				item.IsChecked = true;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -623,56 +581,8 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		private void Connect_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.Connection != null)
-				return;
 
-			Connect();
-		}
-
-		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.Connection == null)
-				return;
-
-			Disconnect();
-		}
-
-
-		private void EnterGame_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.User == null || GameData.Data.User.IsPlayerInGame)
-				return;
-
-			EnterGame();
-		}
-
-		private void ExitGame_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.User == null || !GameData.Data.User.IsPlayerInGame)
-				return;
-
-			ExitGame();
-		}
-
-		private void Save_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.Connection == null)
-				return;
-
-			var msg = new SaveRequestMessage();
-
-			GameData.Data.Connection.Send(msg);
-		}
-
-		private void Load_Button_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-
-		void Connect()
+		public void Connect()
 		{
 			if (m_serverInAppDomain)
 			{
@@ -726,7 +636,7 @@ namespace Dwarrowdelf.Client.UI
 
 
 
-		void Disconnect()
+		public void Disconnect()
 		{
 			if (GameData.Data.User.IsPlayerInGame)
 			{
@@ -791,7 +701,7 @@ namespace Dwarrowdelf.Client.UI
 
 
 
-		void EnterGame()
+		public void EnterGame()
 		{
 			SetLogOnText("Entering Game");
 
@@ -804,7 +714,7 @@ namespace Dwarrowdelf.Client.UI
 			GameData.Data.User.ExitedGameEvent += OnExitedGame;
 		}
 
-		void ExitGame()
+		public void ExitGame()
 		{
 			GameData.Data.User.SendExitGame();
 		}
@@ -829,17 +739,6 @@ namespace Dwarrowdelf.Client.UI
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
 		}
 
-		private void Button_Click_GC(object sender, RoutedEventArgs e)
-		{
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
-		}
-
-		private void Button_Click_Break(object sender, RoutedEventArgs e)
-		{
-			System.Diagnostics.Debugger.Break();
-		}
-
 		void SaveLayout()
 		{
 			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
@@ -856,42 +755,6 @@ namespace Dwarrowdelf.Client.UI
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "WindowLayout.xml");
 			if (System.IO.File.Exists(path))
 				dockingManager.RestoreLayout(path);
-		}
-
-		private void MenuItem_Click_ShowWindow(object sender, RoutedEventArgs e)
-		{
-			MenuItem item = (MenuItem)e.Source;
-			var content = (AvalonDock.DockableContent)item.Tag;
-			content.Show();
-		}
-
-		private void Button_Click_FullScreen(object sender, RoutedEventArgs e)
-		{
-			var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
-
-			if (button.IsChecked.Value)
-			{
-				this.WindowStyle = System.Windows.WindowStyle.None;
-				this.Topmost = true;
-				this.WindowState = System.Windows.WindowState.Maximized;
-			}
-			else
-			{
-				this.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-				this.Topmost = false;
-				this.WindowState = System.Windows.WindowState.Normal;
-			}
-		}
-
-		private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			if (GameData.Data.User != null)
-			{
-				GameData.Data.Connection.Send(new SetWorldConfigMessage()
-				{
-					MinTickTime = TimeSpan.FromMilliseconds(slider.Value),
-				});
-			}
 		}
 
 		private void ObjectsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -935,20 +798,6 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			map.ScrollTo(msg.Environment, msg.Location);
-		}
-
-		private void Button_Click(object sender, RoutedEventArgs e)
-		{
-			var dialog = new Dwarrowdelf.Client.Symbols.SymbolEditorDialog();
-			dialog.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
-			dialog.Show();
-		}
-
-		private void Button_OpenNetStats_Click(object sender, RoutedEventArgs e)
-		{
-			var netWnd = new UI.NetStatWindow();
-			netWnd.Owner = this;
-			netWnd.Show();
 		}
 	}
 }

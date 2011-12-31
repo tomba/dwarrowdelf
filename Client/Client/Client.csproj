@@ -143,6 +143,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainWindow\MainWindowToolBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MovableObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -267,6 +271,9 @@
     <Compile Include="UI\CapitalizeConverter.cs" />
     <Compile Include="UI\LivingObjectPropertiesControl.xaml.cs">
       <DependentUpon>LivingObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainWindow\MainWindowToolBar.xaml.cs">
+      <DependentUpon>MainWindowToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MovableObjectPropertiesControl.xaml.cs">
       <DependentUpon>MovableObjectPropertiesControl.xaml</DependentUpon>

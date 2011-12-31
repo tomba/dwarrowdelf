@@ -51,60 +51,7 @@
 	</Window.Resources>
 
 	<DockPanel>
-		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
-				<ToggleButton IsChecked="{Binding Data.DisableLOS}">Disable Client LOS</ToggleButton>
-				<Separator />
-				<ToggleButton IsChecked="{Binding Path=ShowVirtualSymbols, ElementName=map}">Show Virtual Symbols</ToggleButton>
-				<Separator />
-				<Button Content="Open NetStats" Click="Button_OpenNetStats_Click" />
-				<Separator />
-				<ComboBox Text="{Binding Path=TileSet, ElementName=map}" MinWidth="100">
-					<ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
-					<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
-				</ComboBox>
-				<Separator />
-				<Button Click="Connect_Button_Click">Connect</Button>
-				<Separator />
-				<Button Click="Disconnect_Button_Click">Disconnect</Button>
-				<Separator />
-				<Button Click="EnterGame_Button_Click">Enter Game</Button>
-				<Separator />
-				<Button Click="ExitGame_Button_Click">Exit Game</Button>
-				<Separator />
-				<Button Click="Save_Button_Click">Save</Button>
-				<Button Click="Load_Button_Click">Load</Button>
-			</ToolBar>
-			<ToolBar>
-				<Button Click="Button_Click_GC">GC</Button>
-				<Separator />
-				<Button Click="Button_Click_Break">Break</Button>
-				<Separator />
-				<ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
-				<Separator />
-				<Button Click="Button_Click">Edit Symbols</Button>
-			</ToolBar>
-
-			<ToolBar>
-				<Slider Name="slider" Value="50" Minimum="0" Maximum="1000" Width="100" TickFrequency="25" IsSnapToTickEnabled="True"
-						ValueChanged="slider_ValueChanged"/>
-				<TextBox Text="{Binding Path=Value, ElementName=slider}" />
-			</ToolBar>
-
-			<ToolBarTray.ContextMenu>
-				<ContextMenu Name="contentMenu">
-					<!-- Filled programmatically -->
-				</ContextMenu>
-			</ToolBarTray.ContextMenu>
-		</ToolBarTray>
-
-		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar>
-				<ToggleButton Content="AutoAdvanceTurn" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
-							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
-				<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
-			</ToolBar>
-		</ToolBarTray>
+		<ui:MainWindowToolBar DockPanel.Dock="Top" />
 
 		<!-- Statusbar -->
 		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />
