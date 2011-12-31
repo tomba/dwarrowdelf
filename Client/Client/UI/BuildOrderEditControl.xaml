@@ -11,7 +11,7 @@
 			 DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
 	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="converter" />
+		<ui:CapitalizeConverter x:Key="caseConverter" />
 	</UserControl.Resources>
 
 	<Grid>
@@ -33,7 +33,7 @@
 						<TextBlock>
 									<TextBlock.Text>
 										<MultiBinding StringFormat="{}{0} {1}">
-											<Binding Path="MaterialID" Converter="{StaticResource converter}"/>
+											<Binding Path="MaterialID" Converter="{StaticResource caseConverter}"/>
 											<Binding Path="ItemInfo.Name" />
 										</MultiBinding>
 									</TextBlock.Text>
@@ -48,7 +48,7 @@
 				<TextBlock DataContext="{Binding Path=SelectedValue, ElementName=itemListBox}">
 						<TextBlock.Text>
 							<MultiBinding StringFormat="{}{0} {1} materials">
-								<Binding Path="MaterialID" Converter="{StaticResource converter}"/>
+								<Binding Path="MaterialID" Converter="{StaticResource caseConverter}"/>
 								<Binding Path="ItemInfo.Name" />
 							</MultiBinding>
 						</TextBlock.Text>

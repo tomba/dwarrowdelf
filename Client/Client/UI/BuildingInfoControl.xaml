@@ -6,7 +6,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="converter" />
+		<ui:CapitalizeConverter x:Key="caseConverter" />
 	</UserControl.Resources>
 
 	<DockPanel>
@@ -26,7 +26,7 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<DockPanel>
-							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding Name, Converter={StaticResource converter}}" />
+							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding Name, Converter={StaticResource caseConverter}}" />
 							<!--
 							<Label Content="R" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsRepeat}" Padding="4,0" />
 							<Label Content="S" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsSuspended}" Padding="4,0" />

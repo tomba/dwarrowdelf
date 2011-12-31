@@ -14,8 +14,6 @@
 	d:DataContext="{d:DesignInstance Type=ui:DesignStockpileSample, IsDesignTimeCreatable=True}">
 
 	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="converter" />
-
 		<ObjectDataProvider x:Key="itemIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
 			<ObjectDataProvider.MethodParameters>
 				<x:Type TypeName="common:ItemID" />

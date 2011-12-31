@@ -10,10 +10,6 @@
 	DataContext="{Binding}"
 	d:DataContext="{d:DesignInstance Type=ui:DesignStockpileSample, IsDesignTimeCreatable=True}">
 
-	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="converter" />
-	</UserControl.Resources>
-
 	<DockPanel>
 		<UniformGrid DockPanel.Dock="Top" Columns="2">
 			<TextBlock><Run Text="Area"/></TextBlock>
