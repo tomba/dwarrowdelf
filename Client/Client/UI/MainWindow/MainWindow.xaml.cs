@@ -278,13 +278,6 @@ namespace Dwarrowdelf.Client.UI
 				Connect();
 		}
 
-		private void dockingManager_Loaded(object sender, RoutedEventArgs e)
-		{
-			RestoreLayout();
-		}
-
-		public AvalonDock.DockingManager Dock { get { return dockingManager; } }
-
 		public MasterMapControl MapControl { get { return map; } }
 
 		public GameData Data { get { return GameData.Data; } }
@@ -299,8 +292,6 @@ namespace Dwarrowdelf.Client.UI
 			var p = Win32.Helpers.SaveWindowPlacement(this);
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
-
-			SaveLayout();
 
 			if (GameData.Data.Connection != null)
 			{
@@ -737,24 +728,6 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(info));
-		}
-
-		void SaveLayout()
-		{
-			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-			path = System.IO.Path.Combine(path, "Dwarrowdelf");
-			if (!System.IO.Directory.Exists(path))
-				System.IO.Directory.CreateDirectory(path);
-			path = System.IO.Path.Combine(path, "WindowLayout.xml");
-			dockingManager.SaveLayout(path);
-		}
-
-		void RestoreLayout()
-		{
-			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-			path = System.IO.Path.Combine(path, "Dwarrowdelf", "WindowLayout.xml");
-			if (System.IO.File.Exists(path))
-				dockingManager.RestoreLayout(path);
 		}
 
 		private void ObjectsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -3,7 +3,6 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:Dwarrowdelf.Client"
 	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-	xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
 	Title="Dwarrowdelf" Height="785" Width="1173"
 	x:ClassModifier="internal"
 	x:Name="mainWindow"
@@ -54,95 +53,94 @@
 	<DockPanel>
 		<ui:MainWindowToolBar DockPanel.Dock="Top" />
 
-		<!-- Statusbar -->
 		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />
 
-		<ad:DockingManager x:Name="dockingManager" Loaded="dockingManager_Loaded">
-			<ad:ResizingPanel Orientation="Vertical">
-				<ad:ResizingPanel Orientation="Horizontal">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="4*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
 
-					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
-						<ad:DockableContent Name="allObjectsContent" Title="Objects">
-							<DockPanel>
-								<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="3">
-									<ComboBoxItem Tag="{Binding Data.World.Objects}">All</ComboBoxItem>
-									<ComboBoxItem Tag="{Binding Data.World.RootObjects}">Roots</ComboBoxItem>
-									<ComboBoxItem Tag="{Binding Source={StaticResource filterItemsCvs}}">Items</ComboBoxItem>
-									<ComboBoxItem Tag="{Binding Source={StaticResource filterLivingsCvs}}">Livings</ComboBoxItem>
-									<ComboBoxItem Tag="{Binding Data.World.Controllables}">Controllables</ComboBoxItem>
-								</ComboBox>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="200" />
+			</Grid.RowDefinitions>
 
-								<TreeView ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
+			<GridSplitter Grid.Column="1" Grid.RowSpan="2" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+			<GridSplitter Grid.Column="3" Grid.RowSpan="2" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+			<GridSplitter Grid.Column="2" Grid.Row="1" Height="4" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+
+			<!-- Object treeview -->
+			<DockPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3">
+				<ComboBox DockPanel.Dock="Top" Name="filteComboBox" SelectedIndex="3">
+					<ComboBoxItem Tag="{Binding Data.World.Objects}">All</ComboBoxItem>
+					<ComboBoxItem Tag="{Binding Data.World.RootObjects}">Roots</ComboBoxItem>
+					<ComboBoxItem Tag="{Binding Source={StaticResource filterItemsCvs}}">Items</ComboBoxItem>
+					<ComboBoxItem Tag="{Binding Source={StaticResource filterLivingsCvs}}">Livings</ComboBoxItem>
+					<ComboBoxItem Tag="{Binding Data.World.Controllables}">Controllables</ComboBoxItem>
+				</ComboBox>
+
+				<TreeView ItemsSource="{Binding Path=SelectedItem.Tag, ElementName=filteComboBox}"
 										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
-									<TreeView.Resources>
-										<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
-									</TreeView.Resources>
-								</TreeView>
-							</DockPanel>
-						</ad:DockableContent>
-					</ad:DockablePane>
-
-					<!-- MAP -->
-					<ad:DocumentPane>
-						<ad:DocumentContent Title="Map">
-
-							<DockPanel>
-								<ui:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
-								<ui:MasterMapControl x:Name="map" />
-							</DockPanel>
-
-						</ad:DocumentContent>
-					</ad:DocumentPane>
+					<TreeView.Resources>
+						<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+					</TreeView.Resources>
+				</TreeView>
+			</DockPanel>
 
 
-					<ad:DockablePane ad:ResizingPanel.ResizeWidth="250">
-						<!-- Selection -->
-						<ad:DockableContent Name="selectedTileContent" Title="Selection" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}">
-							<ui:DockSelectedControl />
-						</ad:DockableContent>
+			<!-- MAP -->
+			<DockPanel Grid.Column="2" Grid.Row="0">
+				<ui:MainWindowTools x:Name="mainWindowTools" DockPanel.Dock="Left" Focusable="False" />
+				<ui:MasterMapControl x:Name="map" />
+			</DockPanel>
 
-						<!-- Hover -->
-						<ad:DockableContent Name="hoverTileContent" Title="Hover" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}">
-							<ui:DockHoverControl />
-						</ad:DockableContent>
+			<!-- Events -->
+			<ListBox Grid.Column="2" Grid.Row="2"
+				ItemsSource="{Binding Data.GameEvents,Mode=OneWay}" SelectionMode="Single" ui:ListBoxExtenders.AutoScrollToEnd="True"
+				ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
+				SelectionChanged="MessageListBox_SelectionChanged">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
-						<!-- Jobs -->
-						<ad:DockableContent Name="jobsContent" Title="Jobs">
-							<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
-								<TreeView.Resources>
-									<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
-								</TreeView.Resources>
+			<Grid Grid.Column="4" Grid.RowSpan="3">
+				<Grid.RowDefinitions>
+					<RowDefinition />
+					<RowDefinition />
+					<RowDefinition />
+				</Grid.RowDefinitions>
 
-								<TreeView.ContextMenu>
-									<ContextMenu>
-										<MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
-									</ContextMenu>
-								</TreeView.ContextMenu>
-							</TreeView>
-						</ad:DockableContent>
+				<!-- Selection -->
+				<ui:DockSelectedControl Grid.Row="0" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}"/>
 
-					</ad:DockablePane>
-				</ad:ResizingPanel>
+				<!-- Hover -->
+				<ui:DockHoverControl Grid.Row="1" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}" />
 
-				<!-- Events -->
-				<ad:DockablePane ad:ResizingPanel.ResizeHeight="150">
+				<!-- Jobs -->
+				<TreeView Grid.Row="2" Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
+					<TreeView.Resources>
+						<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
+					</TreeView.Resources>
 
-					<ad:DockableContent Name="eventsContent" Title="Events">
-						<ListBox ItemsSource="{Binding Data.GameEvents,Mode=OneWay}" SelectionMode="Single" ui:ListBoxExtenders.AutoScrollToEnd="True"
-								 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
-								 SelectionChanged="MessageListBox_SelectionChanged">
-							<ListBox.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
-								</DataTemplate>
-							</ListBox.ItemTemplate>
-						</ListBox>
-					</ad:DockableContent>
-				</ad:DockablePane>
+					<TreeView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+						</ContextMenu>
+					</TreeView.ContextMenu>
+				</TreeView>
+			</Grid>
 
-			</ad:ResizingPanel>
-		</ad:DockingManager>
+		</Grid>
 
 	</DockPanel>
 
