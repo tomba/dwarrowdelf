@@ -107,37 +107,6 @@
 							<ui:DockHoverControl />
 						</ad:DockableContent>
 
-						<!-- Controllables' actions -->
-						<ad:DockableContent Name="actionsContent" Title="Actions">
-							<ListBox ItemsSource="{Binding Data.World.Controllables}">
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<StackPanel Orientation="Vertical">
-											<TextBlock>
-																		  <TextBlock.Text>
-												<MultiBinding StringFormat="{}{0}: {1} ({2}/{3})">
-													<Binding />
-													<Binding Path="CurrentAction" />
-													<Binding Path="ActionTicksUsed" />
-													<Binding Path="ActionTotalTicks" />
-												</MultiBinding>
-											   </TextBlock.Text>
-											</TextBlock>
-
-											<TextBlock Margin="20,0,0,0">
-																			<TextBlock.Text>
-												<MultiBinding StringFormat="Client: {0} / Server: {1}">
-													<Binding Path="ClientAssignment" TargetNullValue="none" />
-													<Binding Path="ServerAssignment" TargetNullValue="none" />
-													</MultiBinding>
-																				</TextBlock.Text>
-											</TextBlock>
-										</StackPanel>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
-						</ad:DockableContent>
-
 						<!-- Jobs -->
 						<ad:DockableContent Name="jobsContent" Title="Jobs">
 							<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
