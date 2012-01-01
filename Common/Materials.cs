@@ -20,9 +20,10 @@ namespace Dwarrowdelf
 		// Pure Metals
 		Iron,
 		Gold,
+		Silver,
+		Platinum,
 		Copper,
 		Zinc,
-		Silver,
 		Lead,
 		Tin,
 
@@ -36,6 +37,8 @@ namespace Dwarrowdelf
 		// Minerals
 		Magnetite,
 		NativeGold,
+		NativeSilver,
+		NativePlatinum,
 
 		// Gems (minerals)
 		Diamond,

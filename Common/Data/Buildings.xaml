@@ -89,6 +89,21 @@
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
+		<BuildableItem Key="GoldBar" ItemID="Bar" MaterialID="Gold">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeGold" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
+		<BuildableItem Key="SilverBar" ItemID="Bar" MaterialID="Silver">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeSilver" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
+		<BuildableItem Key="PlatinumBar" ItemID="Bar" MaterialID="Platinum">
+			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativePlatinum" />
+			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+		</BuildableItem>
+
 		<BuildableItem Key="SteelBar" ItemID="Bar" MaterialID="Steel">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Iron" />
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />

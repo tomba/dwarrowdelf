@@ -11,9 +11,10 @@
 	<!-- Pure Metals -->
 	<MaterialInfo ID="Iron" Category="Metal" Color="SteelBlue" />
 	<MaterialInfo ID="Gold" Category="Metal" Color="Gold" />
+	<MaterialInfo ID="Silver" Category="Metal" Color="Silver" />
+	<MaterialInfo ID="Platinum" Category="Metal" Color="Silver" />
 	<MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
 	<MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
-	<MaterialInfo ID="Silver" Category="Metal" Color="Silver" />
     <MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
     <MaterialInfo ID="Tin" Category="Metal" Color="DarkGray" />
 
@@ -27,6 +28,8 @@
 	<!-- Minerals -->
 	<MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
 	<MaterialInfo ID="NativeGold" Name="native gold" Category="Mineral" Color="Gold" />
+	<MaterialInfo ID="NativeSilver" Name="native silver" Category="Mineral" Color="Silver" />
+	<MaterialInfo ID="NativePlatinum" Name="native platinum" Category="Mineral" Color="Silver" />
 
 	<!-- Gems (minerals) -->
 	<MaterialInfo ID="Diamond" Category="Gem" Color="LightCyan" />
