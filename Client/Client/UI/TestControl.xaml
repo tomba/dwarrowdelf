@@ -6,27 +6,31 @@
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 			 mc:Ignorable="d" 
-			 d:DesignHeight="300" d:DesignWidth="300">
+			 d:DesignHeight="372" d:DesignWidth="714">
 	<UserControl.Resources>
-		<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+		<x:Array x:Key="list" Type="{x:Type local:BaseObject}">
+			<local:ItemObject />
+			<local:ItemObject />
+			<local:LivingObject />
+			<local:ItemObject />
+			<local:LivingObject />
+			<local:LivingObject />
+		</x:Array>
 	</UserControl.Resources>
 
-	<Grid>
-		<Grid.Resources>
-			<x:Array x:Key="list" Type="{x:Type local:BaseObject}">
-				<local:ItemObject />
-				<local:ItemObject />
-				<local:LivingObject />
-				<local:ItemObject />
-				<local:LivingObject />
-				<local:LivingObject />
-			</x:Array>
-		</Grid.Resources>
-
+	<UniformGrid Columns="2">
 		<TreeView ItemsSource="{StaticResource list}"
 										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
+			<TreeView.Resources>
+				<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+			</TreeView.Resources>
 		</TreeView>
 
-	</Grid>
+		<ListBox ItemsSource="{StaticResource list}">
+			<ListBox.Resources>
+				<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+			</ListBox.Resources>
+		</ListBox>
+	</UniformGrid>
 </UserControl>

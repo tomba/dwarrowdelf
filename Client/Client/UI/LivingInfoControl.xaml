@@ -10,6 +10,7 @@
 			 d:DataContext="{d:DesignInstance Type=local:LivingObject, IsDesignTimeCreatable=True}">
 	<UserControl.Resources>
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+		<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 	</UserControl.Resources>
 
 	<Grid>
@@ -20,7 +21,7 @@
 		</Grid.RowDefinitions>
 
 		<UniformGrid Grid.Row="0" Columns="2">
-			<TextBlock Text="{Binding Description}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+			<TextBlock Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
 			<Image Stretch="Uniform" Width="64" Height="64" HorizontalAlignment="Center" VerticalAlignment="Center">
 				<Image.Source>
@@ -79,11 +80,12 @@
 				</Grid.RowDefinitions>
 
 				<GroupBox Grid.Row="0" Header="Inventory">
-					<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch">
-						<ListBox.Resources>
-							<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
-						</ListBox.Resources>
-					</ListBox>
+					<TreeView ItemsSource="{Binding Inventory}" VirtualizingStackPanel.IsVirtualizing="True"
+						  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<TreeView.Resources>
+							<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+						</TreeView.Resources>
+					</TreeView>
 				</GroupBox>
 
 				<GroupBox Grid.Row="1" Header="Skills">

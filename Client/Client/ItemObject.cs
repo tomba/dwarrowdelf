@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 		/// For Design-time only
 		/// </summary>
 		public ItemObject()
-			: base(null, ObjectID.NullObjectID)
+			: base(null, new ObjectID(ObjectType.Item, 123456))
 		{
 			var r = new Random();
 

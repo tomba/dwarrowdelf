@@ -228,10 +228,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI\ListItemEditTemplateDictionary.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\LivingInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -358,10 +354,6 @@
     </Compile>
     <Compile Include="UI\MapControl\TileAreaInfo.cs" />
     <Compile Include="UI\MapControl\TileInfo.cs" />
-    <Compile Include="UI\ListItemEditTemplateDictionary.xaml.cs">
-      <DependentUpon>ListItemEditTemplateDictionary.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="UI\MapControl\MasterMapControl.cs" />
     <Compile Include="UI\MapControl\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />

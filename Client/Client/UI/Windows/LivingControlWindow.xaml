@@ -13,7 +13,7 @@
 		<GroupBox Header="Inventory" Margin="137,0,284,98">
 			<ListBox Name="inventoryListBox" ItemsSource="{Binding Inventory}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
 				<ListBox.Resources>
-					<ResourceDictionary Source="/UI/ListItemEditTemplateDictionary.xaml" />
+					<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
 				</ListBox.Resources>
 			</ListBox>
 		</GroupBox>

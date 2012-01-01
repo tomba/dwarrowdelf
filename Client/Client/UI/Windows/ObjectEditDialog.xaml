@@ -12,22 +12,24 @@
 		Height="740" Width="640">
 
 	<Window.Resources>
-		<DataTemplate DataType="{x:Type local:ItemObject}">
+		<DataTemplate x:Key="itemTemplate">
 			<ui:ItemInfoControl />
 		</DataTemplate>
 
-		<DataTemplate DataType="{x:Type local:LivingObject}">
+		<DataTemplate x:Key="livingTemplate">
 			<ui:LivingInfoControl />
 		</DataTemplate>
 
-		<DataTemplate DataType="{x:Type local:BuildingObject}">
-			<ui:BuildingEditControl />
+		<DataTemplate x:Key="buildingTemplate">
+			<ui:BuildingInfoControl />
 		</DataTemplate>
 
-		<DataTemplate DataType="{x:Type local:Stockpile}">
-			<ui:StockpileEditControl />
+		<DataTemplate x:Key="stockpileTemplate">
+			<ui:StockpileInfoControl />
 		</DataTemplate>
+
+		<ui:GameObjectTemplateSelector x:Key="objectTemplateSelector" />
 	</Window.Resources>
 
-	<ContentControl Content="{Binding}" />
+	<ContentControl Content="{Binding}" ContentTemplateSelector="{StaticResource objectTemplateSelector}" />
 </Window>
