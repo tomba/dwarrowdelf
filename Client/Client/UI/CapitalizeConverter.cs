@@ -12,9 +12,6 @@ namespace Dwarrowdelf.Client.UI
 
 		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
-			if (targetType != typeof(string))
-				return value;
-
 			var str = (string)value;
 			return str.Capitalize();
 		}

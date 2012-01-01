@@ -30,6 +30,13 @@
 					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
 				</MultiBinding>
 			</TextBlock.Text>
+			
+			<TextBlock.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+				</ContextMenu>
+			</TextBlock.ContextMenu>
 		</TextBlock>
 	</DataTemplate>
 
@@ -51,10 +58,11 @@
 		<HierarchicalDataTemplate.Resources>
 			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
+			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 		</HierarchicalDataTemplate.Resources>
 
-		<DockPanel x:Name="dockPanel">
-			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="{Binding ElementName=dockPanel,Path=ActualHeight,Mode=OneWay}">
+		<DockPanel>
+			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
 				<Image.Source>
 					<DrawingImage>
 						<DrawingImage.Drawing>
@@ -67,20 +75,19 @@
 				</Image.Source>
 			</Image>
 
-			<TextBlock Margin="5,3">
+			<TextBlock VerticalAlignment="Center">
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{}{0} ({1})">
-							<Binding Path="Description" />
+							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
 							<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
 						</MultiBinding>
 					</TextBlock.Text>
 			</TextBlock>
-			
+
 			<DockPanel.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
 					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
-					<MenuItem Header="Control..." Tag="Control" Click="MenuItem_Click" />
 				</ContextMenu>
 			</DockPanel.ContextMenu>
 
@@ -90,4 +97,78 @@
 		</DockPanel>
 	</HierarchicalDataTemplate>
 
+	<HierarchicalDataTemplate DataType="{x:Type local:LivingObject}" ItemsSource="{Binding Inventory}">
+		<HierarchicalDataTemplate.Resources>
+			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
+			<ui:AssignmentToStringConverter x:Key="assignmentConverter"/>
+			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
+		</HierarchicalDataTemplate.Resources>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
+				<Image.Source>
+					<DrawingImage>
+						<DrawingImage.Drawing>
+							<MultiBinding Converter="{StaticResource drawingConverter}">
+								<Binding Path="SymbolID" />
+								<Binding Path="EffectiveColor" />
+							</MultiBinding>
+						</DrawingImage.Drawing>
+					</DrawingImage>
+				</Image.Source>
+			</Image>
+
+			<TextBlock Grid.Column="1" Grid.Row="0">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1})">
+							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
+							<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Light">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1}/{2})">
+							<Binding Path="CurrentAction" TargetNullValue="No action" />
+							<Binding Path="ActionTicksUsed" />
+							<Binding Path="ActionTotalTicks" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock Grid.Row="2" Grid.Column="1" FontWeight="Light">
+					<TextBlock.Text>
+						<MultiBinding Converter="{StaticResource assignmentConverter}">
+							<Binding Path="ClientAssignment" />
+							<Binding Path="ServerAssignment" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<Grid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+					<MenuItem Header="Control..." Tag="Control" Click="MenuItem_Click" IsEnabled="{Binding IsControllable}" />
+				</ContextMenu>
+			</Grid.ContextMenu>
+
+			<Grid.ToolTip>
+				<ui:ObjectInfoControl />
+			</Grid.ToolTip>
+		</Grid>
+	</HierarchicalDataTemplate>
 </ResourceDictionary>

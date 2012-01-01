@@ -131,6 +131,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\TestControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\TreeViewTemplateDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -261,6 +265,10 @@
     </Compile>
     <Compile Include="UI\ConcreteObjectPropertiesControl.xaml.cs">
       <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\AssignmentToStringConverter.cs" />
+    <Compile Include="UI\TestControl.xaml.cs">
+      <DependentUpon>TestControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\TreeViewTemplateDictionary.xaml.cs">
       <DependentUpon>TreeViewTemplateDictionary.xaml</DependentUpon>

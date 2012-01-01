@@ -129,23 +129,23 @@ namespace Dwarrowdelf.Client
 			switch (this.ItemID)
 			{
 				case ItemID.UncutGem:
-					this.Description = "Uncut " + matInfo.Name.ToLowerInvariant();
+					this.Description = "uncut " + matInfo.Name;
 					break;
 
 				case ItemID.Rock:
 				case ItemID.Ore:
 					if (matInfo.ID == MaterialID.NativeGold)
 					{
-						this.Description = matInfo.Adjective.Capitalize() + " nugget";
+						this.Description = matInfo.Adjective + " nugget";
 					}
 					else
 					{
-						this.Description = matInfo.Adjective.Capitalize() + " rock";
+						this.Description = matInfo.Adjective + " rock";
 					}
 					break;
 
 				case ItemID.Gem:
-					this.Description = matInfo.Name.Capitalize();
+					this.Description = matInfo.Name;
 					break;
 
 				case ItemID.Corpse:
@@ -154,9 +154,9 @@ namespace Dwarrowdelf.Client
 
 				default:
 					if (this.Name != null)
-						this.Description = matInfo.Adjective.Capitalize() + " " + this.Name;
+						this.Description = matInfo.Adjective + " " + this.Name;
 					else
-						this.Description = matInfo.Adjective.Capitalize() + " " + this.ItemInfo.Name.ToLowerInvariant();
+						this.Description = matInfo.Adjective + " " + this.ItemInfo.Name;
 					break;
 			}
 		}

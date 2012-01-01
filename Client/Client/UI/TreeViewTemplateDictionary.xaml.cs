@@ -21,9 +21,9 @@ namespace Dwarrowdelf.Client.UI
 				obj = VisualTreeHelper.GetParent(obj);
 
 			var tvi = obj as TreeViewItem;
-			var concreteObject = tvi.Header as ConcreteObject;
+			var baseObject = tvi.Header as BaseObject;
 
-			if (concreteObject == null)
+			if (baseObject == null)
 				return;
 
 			var tag = (string)menuItem.Tag;
@@ -32,19 +32,26 @@ namespace Dwarrowdelf.Client.UI
 			{
 				case "Goto":
 					{
-						var movable = concreteObject as MovableObject;
-
-						if (movable == null || movable.Environment == null)
+						var movable = baseObject as MovableObject;
+						if (movable != null && movable.Environment != null)
+						{
+							App.MainWindow.MapControl.ScrollTo(movable.Environment, movable.Location);
 							return;
+						}
 
-						App.MainWindow.MapControl.ScrollTo(movable.Environment, movable.Location);
+						var building = baseObject as BuildingObject;
+						if (building != null && building.Environment != null)
+						{
+							App.MainWindow.MapControl.ScrollTo(building.Environment, building.Area.Center);
+							return;
+						}
 					}
 					break;
 
 				case "Info":
 					{
 						var dlg = new ObjectEditDialog();
-						dlg.DataContext = concreteObject;
+						dlg.DataContext = baseObject;
 						dlg.Owner = App.MainWindow;
 						dlg.Show();
 
@@ -53,7 +60,10 @@ namespace Dwarrowdelf.Client.UI
 
 				case "Control":
 					{
-						var living = concreteObject as LivingObject;
+						var living = baseObject as LivingObject;
+
+						if (living == null)
+							return;
 
 						var wnd = new LivingControlWindow();
 						wnd.DataContext = living;
