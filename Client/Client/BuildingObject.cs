@@ -330,7 +330,10 @@ namespace Dwarrowdelf.Client
 			var ok = FindMaterials(order);
 
 			if (!ok)
+			{
+				GameData.Data.AddGameEvent(this, "failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
 				return null;
+			}
 
 			var job = new Jobs.JobGroups.BuildItemJob(this, this, order.BuildableItem.Key, order.SourceItems);
 			GameData.Data.Jobs.Add(job);
