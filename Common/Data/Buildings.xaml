@@ -60,6 +60,21 @@
 	</BuildingInfo>
 
 	<BuildingInfo BuildingID="Smith">
+		<BuildableItem ItemID="BattleAxe">
+			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="ShortSword">
+			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="Gauntlets">
+			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+		</BuildableItem>
+
+		<BuildableItem ItemID="Gloves">
+			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+		</BuildableItem>
 
 	</BuildingInfo>
 
