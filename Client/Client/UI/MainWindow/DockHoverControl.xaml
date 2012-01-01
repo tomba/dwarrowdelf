@@ -11,18 +11,19 @@
 		<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
 	</UserControl.Resources>
 
-	<DockPanel>
+	<GroupBox Header="Hover">
 		<Grid DockPanel.Dock="Top">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
@@ -66,10 +67,12 @@
 			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Grass, Mode=OneWay}" Margin="2" />
 
 			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding MapElement.Description, Mode=OneWay}" Margin="2" />
+
+			<GroupBox Header="Objects" Grid.Row="6" Grid.ColumnSpan="2">
+				<ListBox BorderThickness="0" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+			</GroupBox>
 		</Grid>
 
-		<ListBox Name="currentTileItems" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
-
-	</DockPanel>
+	</GroupBox>
 
 </UserControl>

@@ -121,23 +121,25 @@
 				</Grid.RowDefinitions>
 
 				<!-- Selection -->
-				<ui:DockSelectedControl Grid.Row="0" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}"/>
+				<ui:DockSelectedControl Grid.Row="0" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}"  Margin="2"/>
 
 				<!-- Hover -->
-				<ui:DockHoverControl Grid.Row="1" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}" />
+				<ui:DockHoverControl Grid.Row="1" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}"  Margin="2" />
 
 				<!-- Jobs -->
-				<TreeView Grid.Row="2" Name="jobTreeView" ItemsSource="{Binding Data.Jobs}">
-					<TreeView.Resources>
-						<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
-					</TreeView.Resources>
+				<GroupBox Header="Jobs" Grid.Row="2" Margin="2" >
+					<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}" BorderThickness="0">
+						<TreeView.Resources>
+							<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
+						</TreeView.Resources>
 
-					<TreeView.ContextMenu>
-						<ContextMenu>
-							<MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
-						</ContextMenu>
-					</TreeView.ContextMenu>
-				</TreeView>
+						<TreeView.ContextMenu>
+							<ContextMenu>
+								<MenuItem Tag="Abort" Header="Abort" Click="MenuItem_Click_JobTreeView" />
+							</ContextMenu>
+						</TreeView.ContextMenu>
+					</TreeView>
+				</GroupBox>
 			</Grid>
 
 		</Grid>

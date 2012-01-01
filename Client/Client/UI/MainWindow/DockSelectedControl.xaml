@@ -19,10 +19,10 @@
 		<ui:MyGrassesConverter x:Key="myGrassesConverter" />
 	</UserControl.Resources>
 
-	<Grid x:Name="LayoutRoot">
-		<Grid.Resources>
+	<GroupBox Header="Selection">
+		<GroupBox.Resources>
 			<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
-		</Grid.Resources>
+		</GroupBox.Resources>
 
 		<DockPanel>
 
@@ -64,8 +64,11 @@
 					</InlineUIContainer></TextBlock>
 			</StackPanel>
 
-			<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+			<GroupBox Header="Objects">
+				<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+						 BorderThickness="0"/>
+			</GroupBox>
 
 		</DockPanel>
-	</Grid>
+	</GroupBox>
 </UserControl>
