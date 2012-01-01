@@ -132,16 +132,11 @@ namespace Dwarrowdelf.Client
 					this.Description = "uncut " + matInfo.Name;
 					break;
 
-				case ItemID.Rock:
 				case ItemID.Ore:
 					if (matInfo.ID == MaterialID.NativeGold)
-					{
 						this.Description = matInfo.Adjective + " nugget";
-					}
 					else
-					{
-						this.Description = matInfo.Adjective + " rock";
-					}
+						this.Description = matInfo.Adjective + " ore";
 					break;
 
 				case ItemID.Gem:
@@ -149,7 +144,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case ItemID.Corpse:
-					this.Description = String.Format("Corpse of {0}", this.Name);
+					this.Description = String.Format("corpse of {0}", this.Name);
 					break;
 
 				default:
