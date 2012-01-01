@@ -21,11 +21,11 @@
 		</DataTemplate>
 
 		<DataTemplate x:Key="buildingTemplate">
-			<ui:BuildingInfoControl />
+			<ui:BuildingEditControl />
 		</DataTemplate>
 
 		<DataTemplate x:Key="stockpileTemplate">
-			<ui:StockpileInfoControl />
+			<ui:StockpileEditControl />
 		</DataTemplate>
 
 		<ui:GameObjectTemplateSelector x:Key="objectTemplateSelector" />
