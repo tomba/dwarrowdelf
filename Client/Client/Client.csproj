@@ -212,10 +212,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow\MainWindowTools.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Windows\SelectItemsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -320,9 +316,6 @@
     </Compile>
     <Compile Include="UI\MapControl\MapControDragService.cs" />
     <Compile Include="UI\MainWindow\MainWindowCommandHandler.cs" />
-    <Compile Include="UI\MainWindow\MainWindowTools.xaml.cs">
-      <DependentUpon>MainWindowTools.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\MapControl\MapControlElementsService.cs" />
     <Compile Include="UI\MapControl\MapControlSelectionService.cs" />
     <Compile Include="UI\MapControl\MapControlToolTipService.cs" />

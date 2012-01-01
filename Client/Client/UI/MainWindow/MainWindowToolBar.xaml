@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MainWindowToolBar"
+			 x:ClassModifier="internal"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -50,6 +51,87 @@
 			<ToggleButton Content="AutoAdvanceTurn" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
 							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
 			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+		</ToolBar>
+
+		<ToolBar Band="2" BandIndex="2">
+			<ToolBar.Resources>
+				<ui:ClientToolModeToToolDataConverter x:Key="toolDataConverter" />
+
+				<DataTemplate x:Key="singleToolTemplate">
+					<Border Width="18" Height="18" Background="{Binding Brush}" />
+				</DataTemplate>
+
+				<DataTemplate x:Key="multiToolTemplate">
+					<Grid>
+						<Border Width="18" Height="18" Background="{Binding Brush}" />
+						<Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="Black" Points="6,6 0,6 6,0" />
+					</Grid>
+				</DataTemplate>
+
+				<Style x:Key="{x:Static ToolBar.RadioButtonStyleKey}" TargetType="RadioButton">
+					<Setter Property="Content" Value="{Binding}" />
+					<Setter Property="ToolTip" Value="{Binding ToolTip}" />
+					<Setter Property="GroupName" Value="Tools" />
+				</Style>
+
+				<Style x:Key="menuItemStyle" TargetType="MenuItem">
+					<Setter Property="ToolTip" Value="{Binding ToolTip}" />
+					<Setter Property="Header" Value="{Binding Name}" />
+				</Style>
+
+			</ToolBar.Resources>
+
+			<!-- Info -->
+			<RadioButton Name="infoButton" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[Info]}" />
+
+			<!-- Designation -->
+			<RadioButton Name="designationButton" ContentTemplate="{StaticResource multiToolTemplate}" Checked="RadioButton_Checked" ContextMenuService.Placement="Bottom"
+						 DataContext="{Binding Path=DesignationToolMode, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindowToolBar, AncestorLevel=1}, Converter={StaticResource toolDataConverter}}">
+
+				<RadioButton.ContextMenu>
+					<ContextMenu>
+						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationMine]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click">
+							<MenuItem.Icon>
+								<Border Background="{Binding Brush}" Width="24" Height="24" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationStairs]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click" >
+							<MenuItem.Icon>
+								<Border Background="{Binding Brush}" Width="24" Height="24" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationFellTree]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click" >
+							<MenuItem.Icon>
+								<Border Background="{Binding Brush}" Width="24" Height="24" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationRemove]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click" >
+							<MenuItem.Icon>
+								<Border Background="{Binding Brush}" Width="24" Height="24" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</RadioButton.ContextMenu>
+
+			</RadioButton>
+
+			<!-- Stockpile -->
+
+			<RadioButton Name="createStockpile" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[CreateStockpile]}" />
+
+			<Separator/>
+
+			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[CreateItem]}" />
+			<RadioButton Name="createLiving" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[CreateLiving]}" />
+			<RadioButton Name="setTerrain" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[SetTerrain]}" />
+			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[ConstructBuilding]}" />
+
 		</ToolBar>
 
 	</ToolBarTray>
