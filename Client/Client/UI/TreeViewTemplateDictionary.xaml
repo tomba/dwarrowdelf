@@ -61,8 +61,17 @@
 			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 		</HierarchicalDataTemplate.Resources>
 
-		<DockPanel>
-			<Image DockPanel.Dock="Left" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
 				<Image.Source>
 					<DrawingImage>
 						<DrawingImage.Drawing>
@@ -75,7 +84,7 @@
 				</Image.Source>
 			</Image>
 
-			<TextBlock VerticalAlignment="Center">
+			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{}{0} ({1})">
 							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
@@ -84,17 +93,17 @@
 					</TextBlock.Text>
 			</TextBlock>
 
-			<DockPanel.ContextMenu>
+			<Grid.ContextMenu>
 				<ContextMenu>
 					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
 					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
 				</ContextMenu>
-			</DockPanel.ContextMenu>
+			</Grid.ContextMenu>
 
-			<DockPanel.ToolTip>
+			<Grid.ToolTip>
 				<ui:ObjectInfoControl />
-			</DockPanel.ToolTip>
-		</DockPanel>
+			</Grid.ToolTip>
+		</Grid>
 	</HierarchicalDataTemplate>
 
 	<HierarchicalDataTemplate DataType="{x:Type local:LivingObject}" ItemsSource="{Binding Inventory}">
@@ -117,7 +126,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
+			<Image Grid.Column="0" Grid.Row="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
 				<Image.Source>
 					<DrawingImage>
 						<DrawingImage.Drawing>
@@ -130,7 +139,7 @@
 				</Image.Source>
 			</Image>
 
-			<TextBlock Grid.Column="1" Grid.Row="0">
+			<TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
 					<TextBlock.Text>
 						<MultiBinding StringFormat="{}{0} ({1})">
 							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
