@@ -64,8 +64,19 @@ namespace Dwarrowdelf.Client
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
-		public LivingObject Wearer { get; internal set; }
-		public LivingObject Wielder { get; internal set; }
+		LivingObject m_wearer;
+		public LivingObject Wearer
+		{
+			get { return m_wearer; }
+			internal set { m_wearer = value; Notify("Wearer"); Notify("IsWorn"); }
+		}
+
+		LivingObject m_wielder;
+		public LivingObject Wielder
+		{
+			get { return m_wielder; }
+			internal set { m_wielder = value; Notify("Wielder"); Notify("IsWielded"); }
+		}
 
 		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
 		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }

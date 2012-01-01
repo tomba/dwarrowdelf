@@ -57,6 +57,68 @@
 		</Grid>
 	</DataTemplate>
 
+	<DataTemplate DataType="{x:Type local:ItemObject}">
+		<DataTemplate.Resources>
+			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
+			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
+			<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
+		</DataTemplate.Resources>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
+				<Image.Source>
+					<DrawingImage>
+						<DrawingImage.Drawing>
+							<MultiBinding Converter="{StaticResource drawingConverter}">
+								<Binding Path="SymbolID" />
+								<Binding Path="EffectiveColor" />
+							</MultiBinding>
+						</DrawingImage.Drawing>
+					</DrawingImage>
+				</Image.Source>
+			</Image>
+
+			<TextBlock Grid.Column="1" VerticalAlignment="Center">
+					<TextBlock.Text>
+						<MultiBinding StringFormat="{}{0} ({1})">
+							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
+							<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+						</MultiBinding>
+					</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock Grid.Column="2" Visibility="{Binding IsWorn,Converter={StaticResource boolToVisConverter}}">
+				W
+			</TextBlock>
+
+			<TextBlock Grid.Column="2" Visibility="{Binding IsWielded,Converter={StaticResource boolToVisConverter}}">
+				w
+			</TextBlock>
+
+			<Grid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+				</ContextMenu>
+			</Grid.ContextMenu>
+
+			<Grid.ToolTip>
+				<ui:ObjectInfoControl />
+			</Grid.ToolTip>
+		</Grid>
+	</DataTemplate>
+
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
 		<DataTemplate.Resources>
 			<ui:ObjectIDConverter x:Key="objectIDConverter"/>

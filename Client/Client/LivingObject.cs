@@ -54,7 +54,6 @@ namespace Dwarrowdelf.Client
 
 			var item = new ItemObject();
 			item.MoveTo(this, new IntPoint3D());
-
 		}
 
 		public LivingObject(World world, ObjectID objectID)

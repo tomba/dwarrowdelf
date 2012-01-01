@@ -4,13 +4,20 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:c="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-		Title="LivingControlWindow" Height="435" Width="574">
+		Title="LivingControlWindow" Height="442" Width="779">
 	<Grid>
-		<GroupBox Header="Action Queue" Margin="0,0,421,98">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+
+		<GroupBox Header="Action Queue" Grid.Column="0">
 			<ListBox ItemsSource="{Binding AI.Actions}" />
 		</GroupBox>
 
-		<GroupBox Header="Inventory" Margin="137,0,284,98">
+		<GroupBox Header="Inventory" Grid.Column="1">
 			<ListBox Name="inventoryListBox" ItemsSource="{Binding Inventory}" SelectionMode="Extended" HorizontalContentAlignment="Stretch">
 				<ListBox.Resources>
 					<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
@@ -18,7 +25,7 @@
 			</ListBox>
 		</GroupBox>
 
-		<GroupBox Header="Inventory Cmds" Margin="268,0,153,98">
+		<GroupBox Header="Inventory Cmds" Grid.Column="2">
 			<StackPanel Orientation="Vertical">
 				<Button Content="Drop" Click="DropButton_Click" />
 				<Button Content="Get" Click="GetButton_Click" />
@@ -28,27 +35,29 @@
 			</StackPanel>
 		</GroupBox>
 
-		<Grid VerticalAlignment="Top" HorizontalAlignment="Right" Height="96" Width="96">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-				<ColumnDefinition />
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
+		<GroupBox Header="Move" Grid.Column="3">
+			<Grid VerticalAlignment="Top" HorizontalAlignment="Right" Height="96" Width="96">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
 
-			<Grid.RowDefinitions>
-				<RowDefinition />
-				<RowDefinition />
-				<RowDefinition />
-			</Grid.RowDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition />
+					<RowDefinition />
+					<RowDefinition />
+				</Grid.RowDefinitions>
 
-			<Button Grid.Column="0" Grid.Row="0" Content="NW" Tag="NorthWest" Click="MoveButton_Click" />
-			<Button Grid.Column="1" Grid.Row="0" Content="N" Tag="North" Click="MoveButton_Click" />
-			<Button Grid.Column="2" Grid.Row="0" Content="NE" Tag="NorthEast" Click="MoveButton_Click" />
-			<Button Grid.Column="0" Grid.Row="1" Content="W" Tag="West" Click="MoveButton_Click" />
-			<Button Grid.Column="2" Grid.Row="1" Content="E" Tag="East" Click="MoveButton_Click" />
-			<Button Grid.Column="0" Grid.Row="2" Content="SW" Tag="SouthWest" Click="MoveButton_Click" />
-			<Button Grid.Column="1" Grid.Row="2" Content="S" Tag="South" Click="MoveButton_Click" />
-			<Button Grid.Column="2" Grid.Row="2" Content="SE" Tag="SouthEast" Click="MoveButton_Click" />
-		</Grid>
+				<Button Grid.Column="0" Grid.Row="0" Content="NW" Tag="NorthWest" Click="MoveButton_Click" />
+				<Button Grid.Column="1" Grid.Row="0" Content="N" Tag="North" Click="MoveButton_Click" />
+				<Button Grid.Column="2" Grid.Row="0" Content="NE" Tag="NorthEast" Click="MoveButton_Click" />
+				<Button Grid.Column="0" Grid.Row="1" Content="W" Tag="West" Click="MoveButton_Click" />
+				<Button Grid.Column="2" Grid.Row="1" Content="E" Tag="East" Click="MoveButton_Click" />
+				<Button Grid.Column="0" Grid.Row="2" Content="SW" Tag="SouthWest" Click="MoveButton_Click" />
+				<Button Grid.Column="1" Grid.Row="2" Content="S" Tag="South" Click="MoveButton_Click" />
+				<Button Grid.Column="2" Grid.Row="2" Content="SE" Tag="SouthEast" Click="MoveButton_Click" />
+			</Grid>
+		</GroupBox>
 	</Grid>
 </Window>
