@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client
 		/// For Design-time only
 		/// </summary>
 		public LivingObject()
-			: this(null, ObjectID.NullObjectID)
+			: this(null, new ObjectID(ObjectType.Living, 1234))
 		{
 			var r = new Random();
 
@@ -38,6 +38,7 @@ namespace Dwarrowdelf.Client
 			{
 				new Tuple<PropertyID, object>(PropertyID.Name, "Testname"),
 				new Tuple<PropertyID, object>(PropertyID.Gender, LivingGender.Male),
+				new Tuple<PropertyID, object>(PropertyID.MaterialID, MaterialID.Flesh),
 			};
 
 			var data = new LivingData()

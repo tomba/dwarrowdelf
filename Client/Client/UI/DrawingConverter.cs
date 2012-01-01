@@ -13,17 +13,21 @@ namespace Dwarrowdelf.Client.UI
 
 		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
 		{
+			SymbolID symbolID;
+			GameColor color;
+
 			if (!(values[0] is SymbolID))
-				return null;
+				symbolID = SymbolID.Undefined;
+			else
+				symbolID = (SymbolID)values[0];
 
 			if (!(values[1] is GameColor))
-				return null;
+				color = GameColor.None;
+			else
+				color = (GameColor)values[1];
 
 			if (targetType != typeof(Drawing))
 				throw new ArgumentException();
-
-			var symbolID = (SymbolID)values[0];
-			var color = (GameColor)values[1];
 
 			return GameData.Data.SymbolDrawingCache.GetDrawing(symbolID, color);
 		}

@@ -5,7 +5,9 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-			 mc:Ignorable="d">
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
+			 mc:Ignorable="d"
+			 d:DataContext="{d:DesignInstance Type=local:LivingObject, IsDesignTimeCreatable=True}">
 	<UserControl.Resources>
 		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
 	</UserControl.Resources>
