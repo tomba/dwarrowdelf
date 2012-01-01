@@ -8,14 +8,21 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
+	[SaveGameObjectByRef]
 	public sealed class MoveToAreaAssignment : MoveAssignmentBase
 	{
+		[SaveGameProperty("Dest")]
 		readonly IntCuboid m_dest;
 
 		public MoveToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntCuboid destination, DirectionSet positioning)
 			: base(parent, environment, positioning)
 		{
 			m_dest = destination;
+		}
+
+		MoveToAreaAssignment(SaveGameContext ctx)
+			: base(ctx)
+		{
 		}
 
 		protected override Queue<Direction> GetPath(ILivingObject worker)
