@@ -510,7 +510,10 @@ namespace Dwarrowdelf.Client
 		{
 			this.BuildSpec = spec;
 
-			this.Name = this.BuildableItem.ItemInfo.Name;
+			if (this.BuildableItem.MaterialID.HasValue)
+				this.Name = String.Format("{0} {1}", this.BuildableItem.MaterialID, this.BuildableItem.ItemInfo.Name);
+			else
+				this.Name = this.BuildableItem.ItemInfo.Name;
 
 			this.SourceItems = new ItemObject[this.BuildableItem.BuildMaterials.Count];
 		}
