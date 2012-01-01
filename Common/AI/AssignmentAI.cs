@@ -38,6 +38,9 @@ namespace Dwarrowdelf.AI
 
 		void SetCurrentAssignment(IAssignment assignment, ActionPriority priority)
 		{
+			if (m_currentAssignment == assignment && m_currentPriority == priority)
+				return;
+
 			if (m_currentAssignment != null)
 			{
 				if (this.Worker.HasAction)
