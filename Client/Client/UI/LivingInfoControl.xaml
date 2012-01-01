@@ -80,12 +80,11 @@
 				</Grid.RowDefinitions>
 
 				<GroupBox Grid.Row="0" Header="Inventory">
-					<TreeView ItemsSource="{Binding Inventory}" VirtualizingStackPanel.IsVirtualizing="True"
-						  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-						<TreeView.Resources>
-							<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
-						</TreeView.Resources>
-					</TreeView>
+					<ListBox ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch"  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+						<ListBox.Resources>
+							<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+						</ListBox.Resources>
+					</ListBox>
 				</GroupBox>
 
 				<GroupBox Grid.Row="1" Header="Skills">

@@ -1,4 +1,6 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary x:Class="Dwarrowdelf.Client.UI.ListItemInfoTemplateDictionary"
+					x:ClassModifier="internal"
+					xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:local="clr-namespace:Dwarrowdelf.Client"
 					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
@@ -41,6 +43,17 @@
 						</MultiBinding>
 					</TextBlock.Text>
 			</TextBlock>
+
+			<Grid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+				</ContextMenu>
+			</Grid.ContextMenu>
+
+			<Grid.ToolTip>
+				<ui:ObjectInfoControl />
+			</Grid.ToolTip>
 		</Grid>
 	</DataTemplate>
 
@@ -56,6 +69,13 @@
 					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
 				</MultiBinding>
 			</TextBlock.Text>
+			
+			<TextBlock.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+				</ContextMenu>
+			</TextBlock.ContextMenu>
 		</TextBlock>
 	</DataTemplate>
 </ResourceDictionary>

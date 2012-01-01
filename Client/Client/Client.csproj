@@ -256,6 +256,10 @@
       <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\AssignmentToStringConverter.cs" />
+    <Compile Include="UI\ListItemInfoTemplateDictionary.cs">
+      <DependentUpon>ListItemInfoTemplateDictionary.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\TestControl.xaml.cs">
       <DependentUpon>TestControl.xaml</DependentUpon>
     </Compile>
