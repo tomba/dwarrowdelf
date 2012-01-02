@@ -6,6 +6,13 @@ using System.Runtime.Serialization;
 
 namespace Dwarrowdelf
 {
+	[Flags]
+	public enum TileFlags : ushort
+	{
+		None = 0,
+		Grass = 1 << 0,
+	}
+
 	[Serializable]
 	public struct TileData
 	{
@@ -16,11 +23,26 @@ namespace Dwarrowdelf
 		public MaterialID TerrainMaterialID { get; set; }
 
 		public byte WaterLevel { get; set; }
+
+		public TileFlags Flags { get; set; }
+
+
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
 
-		public bool Grass { get; set; }
+		public bool Grass
+		{
+			get { return (this.Flags & TileFlags.Grass) != 0; }
+
+			set
+			{
+				if (value)
+					this.Flags |= TileFlags.Grass;
+				else
+					this.Flags &= ~TileFlags.Grass;
+			}
+		}
 
 		public ulong ToUInt64()
 		{
@@ -30,7 +52,7 @@ namespace Dwarrowdelf
 				((ulong)this.InteriorID << 16) |
 				((ulong)this.InteriorMaterialID << 24) |
 				((ulong)this.WaterLevel << 32) |
-				((this.Grass ? 1LU : 0LU) << 40);
+				((ulong)this.Flags << 40);
 		}
 
 		public static TileData FromUInt64(ulong value)
@@ -42,7 +64,7 @@ namespace Dwarrowdelf
 				InteriorID = (InteriorID)((value >> 16) & 0xff),
 				InteriorMaterialID = (MaterialID)((value >> 24) & 0xff),
 				WaterLevel = (byte)((value >> 32) & 0xff),
-				Grass = ((value >> 40) & 0xff) != 0,
+				Flags = (TileFlags)((value >> 40) & 0xffff),
 			};
 		}
 	}
