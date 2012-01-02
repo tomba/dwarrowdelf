@@ -281,14 +281,4 @@ namespace Dwarrowdelf.Messages
 		public IntRectZ Area { get; set; }
 		public BuildingID ID { get; set; }
 	}
-
-	[Serializable]
-	public sealed class ItemDebugMessage : DebugMessage
-	{
-		public ObjectID ItemID { get; set; }
-		public bool Destruct { get; set; }
-		public Direction? MoveToDir { get; set; }
-		public IntPoint3D? MoveTo { get; set; }
-	}
-
 }

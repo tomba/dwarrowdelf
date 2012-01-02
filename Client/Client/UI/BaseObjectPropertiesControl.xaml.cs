@@ -28,10 +28,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var ob = (BaseObject)this.DataContext;
 
-			var msg = new Dwarrowdelf.Messages.ItemDebugMessage()
+			var msg = new Dwarrowdelf.Messages.IPCommandMessage()
 			{
-				ItemID = ob.ObjectID,
-				Destruct = true,
+				Text = String.Format("get({0}).Destruct()", ob.ObjectID.RawValue),
 			};
 
 			GameData.Data.Connection.Send(msg);

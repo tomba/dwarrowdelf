@@ -395,28 +395,6 @@ namespace Dwarrowdelf.Server
 			builder.Create(m_world, env);
 		}
 
-		void ReceiveMessage(ItemDebugMessage msg)
-		{
-			var ob = m_world.FindObject<BaseObject>(msg.ItemID);
-			if (ob == null)
-				throw new Exception();
-
-			if (msg.MoveToDir.HasValue)
-			{
-				var movable = (MovableObject)ob;
-				movable.MoveDir(msg.MoveToDir.Value);
-			}
-
-			if (msg.MoveTo.HasValue)
-			{
-				var movable = (MovableObject)ob;
-				movable.MoveTo(msg.MoveTo.Value);
-			}
-
-			if (msg.Destruct)
-				ob.Destruct();
-		}
-
 		void ReceiveMessage(SetWorldConfigMessage msg)
 		{
 			if (msg.MinTickTime.HasValue)
