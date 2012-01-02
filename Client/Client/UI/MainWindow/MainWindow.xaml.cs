@@ -249,6 +249,9 @@ namespace Dwarrowdelf.Client.UI
 
 				var env = this.MapControl.Environment;
 
+				if (env == null)
+					return;
+
 				List<object> obs = new List<object>();
 				obs.AddRange(env.GetContents(ml));
 				obs.AddRange(env.GetElementsAt(ml));
