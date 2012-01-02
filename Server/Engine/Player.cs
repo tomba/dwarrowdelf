@@ -533,12 +533,12 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(IPCommandMessage msg)
 		{
-			trace.TraceInformation("IronPythonCommand");
+			trace.TraceInformation("IronPythonCommand {0}", msg.Script);
 
 			if (m_ipRunner == null)
 				m_ipRunner = new IPRunner(m_world, Send);
 
-			m_ipRunner.Exec(msg.Text);
+			m_ipRunner.Exec(msg.Script, msg.Args);
 		}
 
 		void ReceiveMessage(SaveRequestMessage msg)

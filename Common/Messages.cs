@@ -44,7 +44,18 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class IPCommandMessage : ServerMessage
 	{
-		public string Text { get; set; }
+		public IPCommandMessage()
+		{
+		}
+
+		public IPCommandMessage(string script, Dictionary<string, object> args)
+		{
+			this.Script = script;
+			this.Args = args.Select(kvp => new Tuple<string, object>(kvp.Key, kvp.Value)).ToArray();
+		}
+
+		public string Script { get; set; }
+		public Tuple<string, object>[] Args { get; set; }
 	}
 
 	[Serializable]

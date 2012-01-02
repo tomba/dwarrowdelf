@@ -29,10 +29,15 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = IntPoint3D.Parse(txt);
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage()
+			var args = new Dictionary<string, object>()
 			{
-				Text = String.Format("get({0}).MoveTo(Dwarrowdelf.IntPoint3D({1},{2},{3}))", ob.ObjectID.RawValue, p.X, p.Y, p.Z),
+				{ "obid", ob.ObjectID },
+				{ "p", p },
 			};
+
+			var script = "world.GetObject(obid).MoveTo(p)";
+
+			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}
@@ -46,10 +51,15 @@ namespace Dwarrowdelf.Client.UI
 
 			var dir = (Direction)Enum.Parse(typeof(Direction), tag);
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage()
+			var args = new Dictionary<string, object>()
 			{
-				Text = String.Format("get({0}).MoveDir(Dwarrowdelf.Direction.{1})", ob.ObjectID.RawValue, dir),
+				{ "obid", ob.ObjectID },
+				{ "dir", dir },
 			};
+
+			var script = "world.GetObject(obid).MoveDir(dir)";
+
+			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}

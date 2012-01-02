@@ -28,10 +28,14 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var ob = (BaseObject)this.DataContext;
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage()
+			var args = new Dictionary<string, object>()
 			{
-				Text = String.Format("get({0}).Destruct()", ob.ObjectID.RawValue),
+				{ "obid", ob.ObjectID },
 			};
+
+			var script = "world.GetObject(obid).Destruct()";
+
+			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}

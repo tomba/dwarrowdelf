@@ -184,6 +184,22 @@ namespace Dwarrowdelf.Server
 			return (T)ob;
 		}
 
+
+		public BaseObject GetObject(ObjectID objectID)
+		{
+			var ob = FindObject(objectID);
+
+			if (ob == null)
+				throw new Exception();
+
+			return ob;
+		}
+
+		public T GetObject<T>(ObjectID objectID) where T : BaseObject
+		{
+			return (T)GetObject(objectID);
+		}
+
 		internal ObjectID GetNewObjectID(ObjectType objectType)
 		{
 			// XXX overflows

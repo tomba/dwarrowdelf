@@ -36,10 +36,14 @@ namespace Dwarrowdelf.Server
 			m_scriptEngine.Execute("import Dwarrowdelf", m_scriptScope);
 		}
 
-		public void Exec(string script)
+		public void Exec(string script, Tuple<string, object>[] args)
 		{
 			try
 			{
+				if (args != null)
+					foreach (var kvp in args)
+						m_scriptScope.SetVariable(kvp.Item1, kvp.Item2);
+
 				var r = m_scriptEngine.ExecuteAndWrap(script, m_scriptScope);
 				m_scriptScope.SetVariable("ret", r);
 				m_scriptEngine.Execute("print ret", m_scriptScope);
