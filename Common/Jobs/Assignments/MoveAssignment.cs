@@ -20,6 +20,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 			m_dest = destination;
 		}
 
+		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D destination, DirectionSet positioning,
+			IItemObject hauledItem)
+			: base(parent, environment, positioning, hauledItem)
+		{
+			m_dest = destination;
+		}
+
 		MoveAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
@@ -46,7 +53,10 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		public override string ToString()
 		{
-			return String.Format("Move({0} -> {1})", this.Src, m_dest);
+			if (this.HauledItem == null)
+				return String.Format("Move({0} -> {1})", this.Src, m_dest);
+			else
+				return String.Format("Haul({0} -> {1}, {2})", this.Src, m_dest, this.HauledItem);
 		}
 	}
 }

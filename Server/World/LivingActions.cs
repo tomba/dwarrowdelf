@@ -268,6 +268,51 @@ namespace Dwarrowdelf.Server
 			return ok;
 		}
 
+		int GetTotalTicks(HaulAction action)
+		{
+			var obs = this.Environment.GetContents(this.Location + action.Direction);
+			return obs.OfType<LivingObject>().Count() + 1;
+		}
+
+		bool PerformAction(HaulAction action)
+		{
+			var dir = action.Direction;
+			var itemID = action.ItemID;
+			var item = this.World.FindObject<ItemObject>(itemID);
+
+			if (item == null)
+			{
+				SendFailReport(new HaulActionReport(this, dir, null), "object doesn't exist");
+				return false;
+			}
+
+			if (item.Environment != this.Environment || item.Location != this.Location)
+			{
+				SendFailReport(new HaulActionReport(this, dir, item), "item not there");
+				return false;
+			}
+
+			var ok = MoveDir(dir);
+
+			if (!ok)
+			{
+				SendFailReport(new HaulActionReport(this, action.Direction, item), "could not move (blocked?)");
+				return false;
+			}
+
+			ok = item.MoveDir(dir);
+
+			if (!ok)
+			{
+				SendFailReport(new HaulActionReport(this, action.Direction, item), "could not move item");
+				return false;
+			}
+
+			SendReport(new HaulActionReport(this, action.Direction, item));
+
+			return true;
+		}
+
 		int GetTotalTicks(MineAction action)
 		{
 			var skill = GetSkillLevel(SkillID.Mining);

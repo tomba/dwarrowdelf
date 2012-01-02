@@ -23,6 +23,8 @@ namespace Dwarrowdelf.Jobs.Assignments
 		int m_numFails;
 		[SaveGameProperty(Converter = typeof(QueueConverter))]
 		Queue<Direction> m_pathDirs;
+		[SaveGameProperty]
+		public IItemObject HauledItem { get; private set; }
 
 		sealed class QueueConverter : ISaveGameConverter
 		{
@@ -54,6 +56,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			m_environment = environment;
 			m_positioning = positioning;
+		}
+
+		protected MoveAssignmentBase(IJobObserver parent, IEnvironmentObject environment, DirectionSet positioning, IItemObject hauledItem)
+			: this(parent, environment, positioning)
+		{
+			this.HauledItem = hauledItem;
 		}
 
 		protected MoveAssignmentBase(SaveGameContext ctx)
@@ -107,7 +115,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 			m_supposedLocation += new IntVector3D(dir);
 
-			var action = new MoveAction(dir);
+			GameAction action;
+
+			if (this.HauledItem == null)
+				action = new MoveAction(dir);
+			else
+				action = new HaulAction(dir, this.HauledItem);
+
 			progress = JobStatus.Ok;
 			return action;
 		}

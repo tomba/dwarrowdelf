@@ -88,6 +88,20 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public sealed class HaulActionReport : ActionReport
+	{
+		public Direction Direction { get; private set; }
+		public ObjectID ItemObjectID { get; private set; }
+
+		public HaulActionReport(ILivingObject living, Direction direction, IItemObject item)
+			: base(living)
+		{
+			this.Direction = direction;
+			this.ItemObjectID = item != null ? item.ObjectID : ObjectID.NullObjectID;
+		}
+	}
+
+	[Serializable]
 	public sealed class MineActionReport : ActionReport
 	{
 		public Direction Direction { get; private set; }

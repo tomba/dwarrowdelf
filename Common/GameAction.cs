@@ -94,6 +94,33 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
+	public sealed class HaulAction : GameAction
+	{
+		[SaveGameProperty]
+		public Direction Direction { get; private set; }
+
+		[SaveGameProperty]
+		public ObjectID ItemID { get; private set; }
+
+		public HaulAction(Direction direction, IItemObject item)
+		{
+			this.Direction = direction;
+			this.ItemID = item.ObjectID;
+		}
+
+		HaulAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return String.Format("{0}, {1}", this.Direction.ToString(), this.ItemID.ToString());
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
 	public sealed class WaitAction : GameAction
 	{
 		[SaveGameProperty]

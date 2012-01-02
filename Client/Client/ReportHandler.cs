@@ -89,6 +89,17 @@ namespace Dwarrowdelf.Client
 			//	GameData.Data.AddGameEvent(living, "{0} moved {1}", living, report.Direction);
 		}
 
+		void HandleReport(HaulActionReport report)
+		{
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
+			var itemName = GetPrintableItemName(report.ItemObjectID);
+
+			if (report.Success == false)
+				GameData.Data.AddGameEvent(living, "{0} failed to haul {1} to {2}: {3}", living, itemName, report.Direction, report.FailReason);
+			//else
+			//	GameData.Data.AddGameEvent(living, "{0} hauled {1} to {2}", living, itemName, report.Direction);
+		}
+
 		void HandleItemActionReport(ItemActionReport report, string verb1, string verb2)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);

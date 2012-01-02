@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			foreach (var item in items)
 			{
-				var job = new AssignmentGroups.FetchItemAssignment(this, env, location, item);
+				var job = new AssignmentGroups.HaulItemAssignment(this, env, location, item);
 				AddSubJob(job);
 			}
 
