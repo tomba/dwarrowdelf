@@ -39,7 +39,8 @@ namespace Dwarrowdelf.Server
 
 		public override void Destruct()
 		{
-			this.MoveTo(null);
+			// use MoveToLow to force the move
+			this.MoveToLow(null, new IntPoint3D());
 
 			base.Destruct();
 		}
