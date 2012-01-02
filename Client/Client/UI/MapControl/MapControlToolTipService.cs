@@ -103,6 +103,12 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
+			if (!m_mapControl.IsMouseOver)
+			{
+				CloseToolTip();
+				return;
+			}
+
 			var ml = m_mapControl.ScreenPointToMapLocation(mousePos);
 
 			object ob;
