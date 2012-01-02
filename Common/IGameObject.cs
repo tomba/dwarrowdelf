@@ -64,6 +64,7 @@ namespace Dwarrowdelf
 
 		TileData GetTileData(IntPoint3D l);
 
+		// Always false in server side
 		bool GetHidden(IntPoint3D l);
 
 		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
