@@ -1,14 +1,15 @@
 ﻿<Window x:Class="Dwarrowdelf.Client.UI.MainWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="clr-namespace:Dwarrowdelf.Client"
-	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-	Title="Dwarrowdelf" Height="785" Width="1173"
-	x:ClassModifier="internal"
-	x:Name="mainWindow"
-	TextOptions.TextFormattingMode="Display"
-	Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
-	DataContext="{Binding RelativeSource={RelativeSource Self}}">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Dwarrowdelf.Client"
+		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+		Title="Dwarrowdelf" Height="785" Width="1173"
+		x:ClassModifier="internal"
+		x:Name="mainWindow"
+		TextOptions.TextFormattingMode="Display"
+		Icon="/Dwarrowdelf.Client;component/Images/MainWindow.png"
+		DataContext="{Binding RelativeSource={RelativeSource Self}}"
+		FocusManager.FocusedElement="{Binding ElementName=map}">
 
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />

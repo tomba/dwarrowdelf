@@ -56,6 +56,9 @@ namespace Dwarrowdelf.Client.UI
 				this.FocusedElement = Keyboard.FocusedElement as UIElement;
 			};
 			m_focusDebugTimer.Start();
+
+			// for some reason this prevents the changing of focus from mapcontrol with cursor keys
+			KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Once);
 		}
 
 		UIElement m_focusedElement;
@@ -380,72 +383,11 @@ namespace Dwarrowdelf.Client.UI
 			map.ScrollTo(env, loc);
 		}
 
-		static bool KeyIsDir(Key key)
+		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			switch (key)
-			{
-				case Key.Up: break;
-				case Key.Down: break;
-				case Key.Left: break;
-				case Key.Right: break;
-				case Key.Home: break;
-				case Key.End: break;
-				case Key.PageUp: break;
-				case Key.PageDown: break;
-				default:
-					return false;
-			}
-			return true;
-		}
-
-		void SetScrollDirection()
-		{
-			var dir = Direction.None;
-
-			if (Keyboard.IsKeyDown(Key.Home))
-				dir |= Direction.NorthWest;
-			else if (Keyboard.IsKeyDown(Key.PageUp))
-				dir |= Direction.NorthEast;
-			if (Keyboard.IsKeyDown(Key.PageDown))
-				dir |= Direction.SouthEast;
-			else if (Keyboard.IsKeyDown(Key.End))
-				dir |= Direction.SouthWest;
-
-			if (Keyboard.IsKeyDown(Key.Up))
-				dir |= Direction.North;
-			else if (Keyboard.IsKeyDown(Key.Down))
-				dir |= Direction.South;
-
-			if (Keyboard.IsKeyDown(Key.Left))
-				dir |= Direction.West;
-			else if (Keyboard.IsKeyDown(Key.Right))
-				dir |= Direction.East;
-
-			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
-
-			var v = IntVector.FromDirection(dir);
-
-			if (fast)
-				v *= 4;
-
-			map.ScrollToDirection(v);
-		}
-
-		protected override void OnPreviewKeyDown(KeyEventArgs e)
-		{
-			if (GameData.Data.User == null)
-			{
-				base.OnPreviewKeyDown(e);
-				return;
-			}
-
 			e.Handled = true;
 
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
-			{
-				SetScrollDirection();
-			}
-			else if (e.Key == Key.OemPeriod)
+			if (e.Key == Key.OemPeriod && GameData.Data.User == null)
 			{
 				GameData.Data.User.SendProceedTurn();
 			}
@@ -485,63 +427,17 @@ namespace Dwarrowdelf.Client.UI
 			{
 				this.mainWindowTools.ToolMode = ClientToolMode.CreateItem;
 			}
-			else if (e.Key == Key.Add)
-			{
-				map.ZoomIn();
-			}
-			else if (e.Key == Key.Subtract)
-			{
-				map.ZoomOut();
-			}
 			if (e.Key == Key.Escape)
 			{
 				this.mainWindowTools.ToolMode = ClientToolMode.Info;
-				this.Focus(); // XXX focus mainwindow instead of mapcontrol, it works somehow better
+				map.Focus();
 			}
 			else
 			{
 				e.Handled = false;
 			}
 
-			base.OnPreviewKeyDown(e);
-		}
-
-		protected override void OnPreviewKeyUp(KeyEventArgs e)
-		{
-			e.Handled = true;
-
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
-			{
-				SetScrollDirection();
-			}
-			else
-			{
-				e.Handled = false;
-			}
-
-			base.OnPreviewKeyUp(e);
-		}
-
-		protected override void OnPreviewTextInput(TextCompositionEventArgs e)
-		{
-			string text = e.Text;
-
-			e.Handled = true;
-
-			if (text == ">")
-			{
-				map.Z--;
-			}
-			else if (text == "<")
-			{
-				map.Z++;
-			}
-			else
-			{
-				e.Handled = false;
-			}
-
-			base.OnPreviewTextInput(e);
+			base.OnKeyDown(e);
 		}
 
 		internal EnvironmentObject Map
