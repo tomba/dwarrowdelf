@@ -4,21 +4,27 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d">
+	<StackPanel Orientation="Vertical">
 
-	<UniformGrid Columns="2">
-		<TextBlock>ObjectID</TextBlock>
-		<TextBlock Text="{Binding ObjectID}" />
+		<UniformGrid Columns="2">
+			<TextBlock>ObjectID</TextBlock>
+			<TextBlock Text="{Binding ObjectID}" />
 
-		<TextBlock>CreationTime</TextBlock>
-		<TextBlock Text="{Binding CreationTime}" />
+			<TextBlock>CreationTime</TextBlock>
+			<TextBlock Text="{Binding CreationTime}" />
 
-		<TextBlock>CreationTick</TextBlock>
-		<TextBlock Text="{Binding CreationTick}" />
+			<TextBlock>CreationTick</TextBlock>
+			<TextBlock Text="{Binding CreationTick}" />
 
-		<TextBlock>ClientCreationTime</TextBlock>
-		<TextBlock Text="{Binding ClientCreationTime}" />
+			<TextBlock>ClientCreationTime</TextBlock>
+			<TextBlock Text="{Binding ClientCreationTime}" />
 
-		<TextBlock>Destructed</TextBlock>
-		<TextBlock Text="{Binding IsDestructed}" />
-	</UniformGrid>
+			<TextBlock>Destructed</TextBlock>
+			<TextBlock Text="{Binding IsDestructed}" />
+
+		</UniformGrid>
+
+		<Button Click="Destruct_Button_Click">Destruct</Button>
+	</StackPanel>
+
 </UserControl>

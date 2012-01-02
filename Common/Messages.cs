@@ -110,57 +110,9 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public sealed class SetTilesMessage : ServerMessage
-	{
-		public ObjectID MapID { get; set; }
-		public IntCuboid Cube { get; set; }
-
-		public InteriorID? InteriorID { get; set; }
-		public MaterialID? InteriorMaterialID { get; set; }
-
-		public TerrainID? TerrainID { get; set; }
-		public MaterialID? TerrainMaterialID { get; set; }
-
-		public byte? WaterLevel { get; set; }
-
-		public bool? Grass { get; set; }
-	}
-
-	[Serializable]
-	public sealed class CreateItemMessage : ServerMessage
-	{
-		public ItemID ItemID;
-		public MaterialID MaterialID;
-
-		public ObjectID EnvironmentID;
-		public IntCuboid Area;
-	}
-
-	[Serializable]
-	public sealed class CreateLivingMessage : ServerMessage
-	{
-		public ObjectID EnvironmentID;
-		public IntRectZ Area;
-
-		public string Name;
-		public LivingID LivingID;
-
-		public bool IsControllable;
-		public bool IsHerd;
-	}
-
-	[Serializable]
 	public sealed class SetWorldConfigMessage : ServerMessage
 	{
 		public TimeSpan? MinTickTime { get; set; }
-	}
-
-	[Serializable]
-	public sealed class CreateBuildingMessage : ServerMessage
-	{
-		public ObjectID MapID { get; set; }
-		public IntRectZ Area { get; set; }
-		public BuildingID ID { get; set; }
 	}
 
 	/// <summary>
@@ -273,4 +225,68 @@ namespace Dwarrowdelf.Messages
 		public Guid ID;
 		public string Data;
 	}
+
+	// Debugging / Testing messages
+
+	[Serializable]
+	public abstract class DebugMessage : ServerMessage
+	{
+
+	}
+
+	[Serializable]
+	public sealed class SetTilesMessage : DebugMessage
+	{
+		public ObjectID MapID { get; set; }
+		public IntCuboid Cube { get; set; }
+
+		public InteriorID? InteriorID { get; set; }
+		public MaterialID? InteriorMaterialID { get; set; }
+
+		public TerrainID? TerrainID { get; set; }
+		public MaterialID? TerrainMaterialID { get; set; }
+
+		public byte? WaterLevel { get; set; }
+
+		public bool? Grass { get; set; }
+	}
+
+	[Serializable]
+	public sealed class CreateItemMessage : DebugMessage
+	{
+		public ItemID ItemID;
+		public MaterialID MaterialID;
+
+		public ObjectID EnvironmentID;
+		public IntCuboid Area;
+	}
+
+	[Serializable]
+	public sealed class CreateLivingMessage : DebugMessage
+	{
+		public ObjectID EnvironmentID;
+		public IntRectZ Area;
+
+		public string Name;
+		public LivingID LivingID;
+
+		public bool IsControllable;
+		public bool IsHerd;
+	}
+
+	[Serializable]
+	public sealed class CreateBuildingMessage : DebugMessage
+	{
+		public ObjectID MapID { get; set; }
+		public IntRectZ Area { get; set; }
+		public BuildingID ID { get; set; }
+	}
+
+	[Serializable]
+	public sealed class ItemDebugMessage : DebugMessage
+	{
+		public ObjectID ItemID { get; set; }
+		public bool Destruct { get; set; }
+	}
+
 }

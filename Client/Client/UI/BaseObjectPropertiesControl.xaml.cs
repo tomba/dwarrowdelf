@@ -23,5 +23,18 @@ namespace Dwarrowdelf.Client.UI
 		{
 			InitializeComponent();
 		}
+
+		private void Destruct_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var ob = (BaseObject)this.DataContext;
+
+			var msg = new Dwarrowdelf.Messages.ItemDebugMessage()
+			{
+				ItemID = ob.ObjectID,
+				Destruct = true,
+			};
+
+			GameData.Data.Connection.Send(msg);
+		}
 	}
 }

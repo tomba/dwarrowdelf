@@ -375,12 +375,6 @@ namespace Dwarrowdelf.Server
 				AddControllable(l);
 		}
 
-		void ReceiveMessage(SetWorldConfigMessage msg)
-		{
-			if (msg.MinTickTime.HasValue)
-				m_engine.SetMinTickTime(msg.MinTickTime.Value);
-		}
-
 		void ReceiveMessage(CreateBuildingMessage msg)
 		{
 			ObjectID mapID = msg.MapID;
@@ -399,6 +393,22 @@ namespace Dwarrowdelf.Server
 
 			var builder = new BuildingObjectBuilder(id, r);
 			builder.Create(m_world, env);
+		}
+
+		void ReceiveMessage(ItemDebugMessage msg)
+		{
+			var ob = m_world.FindObject<BaseObject>(msg.ItemID);
+			if (ob == null)
+				throw new Exception();
+
+			if (msg.Destruct)
+				ob.Destruct();
+		}
+
+		void ReceiveMessage(SetWorldConfigMessage msg)
+		{
+			if (msg.MinTickTime.HasValue)
+				m_engine.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
 		Random m_random = new Random();
