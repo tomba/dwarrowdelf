@@ -95,7 +95,7 @@ namespace Dwarrowdelf
 			map[PropertyID.RefreshmentValue] = ObjectVisibility.Public;
 			map[PropertyID.ReservedByStr] = ObjectVisibility.Debug;
 
-			var max = map.Keys.Max(id => (int)id);
+			var max = ((PropertyID[])Enum.GetValues(typeof(PropertyID))).Max(id => (int)id);
 			s_visibilityArray = new ObjectVisibility[max + 1];
 
 			foreach (var kvp in map)
