@@ -78,24 +78,7 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray = new bool[bounds.Depth, bounds.Height, bounds.Width];
 
 			foreach (var p in bounds.Range())
-			{
-				bool visible = true;
-
-				if (env.GetTerrain(p).IsBlocker)
-				{
-					bool hidden = DirectionExtensions.PlanarDirections
-						.Select(d => p + d)
-						.Where(pp => env.Contains(pp))
-						.All(pp => !env.GetTerrain(pp).IsSeeThrough);
-
-					if (hidden && env.Contains(p + Direction.Up))
-						hidden = !env.GetTerrain(p + Direction.Up).IsSeeThroughDown;
-
-					visible = !hidden;
-				}
-
-				m_visibilityArray[p.Z, p.Y, p.X] = visible;
-			}
+				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanBeSeen(env, p);
 		}
 
 		public override void Start()
@@ -153,9 +136,7 @@ namespace Dwarrowdelf.Server
 					var msg = new Messages.MapDataTerrainsListMessage()
 					{
 						Environment = env.ObjectID,
-						TileDataList = revealed.Select(l =>
-							new Tuple<IntPoint3D, TileData>(l, env.GetTileData(l))
-							).ToArray(),
+						TileDataList = revealed.Select(l => new Tuple<IntPoint3D, TileData>(l, env.GetTileData(l))).ToArray(),
 					};
 
 					m_player.Send(msg);
