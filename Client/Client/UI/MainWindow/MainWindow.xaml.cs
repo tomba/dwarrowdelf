@@ -387,7 +387,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			e.Handled = true;
 
-			if (e.Key == Key.OemPeriod && GameData.Data.User == null)
+			if (e.Key == Key.OemPeriod && GameData.Data.User != null)
 			{
 				GameData.Data.User.SendProceedTurn();
 			}
