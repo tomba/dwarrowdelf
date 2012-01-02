@@ -24,7 +24,9 @@
 
 		</UniformGrid>
 
-		<Button Click="Destruct_Button_Click">Destruct</Button>
+		<GroupBox Header="Debug">
+			<Button Click="Destruct_Button_Click">Destruct</Button>
+		</GroupBox>
 	</StackPanel>
 
 </UserControl>

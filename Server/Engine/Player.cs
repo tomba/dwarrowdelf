@@ -401,6 +401,18 @@ namespace Dwarrowdelf.Server
 			if (ob == null)
 				throw new Exception();
 
+			if (msg.MoveToDir.HasValue)
+			{
+				var movable = (MovableObject)ob;
+				movable.MoveDir(msg.MoveToDir.Value);
+			}
+
+			if (msg.MoveTo.HasValue)
+			{
+				var movable = (MovableObject)ob;
+				movable.MoveTo(msg.MoveTo.Value);
+			}
+
 			if (msg.Destruct)
 				ob.Destruct();
 		}

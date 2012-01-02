@@ -287,6 +287,8 @@ namespace Dwarrowdelf.Messages
 	{
 		public ObjectID ItemID { get; set; }
 		public bool Destruct { get; set; }
+		public Direction? MoveToDir { get; set; }
+		public IntPoint3D? MoveTo { get; set; }
 	}
 
 }

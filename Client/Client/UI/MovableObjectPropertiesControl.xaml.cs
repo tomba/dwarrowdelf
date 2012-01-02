@@ -14,14 +14,44 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	/// <summary>
-	/// Interaction logic for MovableObjectPropertiesControl.xaml
-	/// </summary>
 	public partial class MovableObjectPropertiesControl : UserControl
 	{
 		public MovableObjectPropertiesControl()
 		{
 			InitializeComponent();
+		}
+
+		private void Move_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var ob = (MovableObject)this.DataContext;
+
+			var txt = dstTextBox.Text;
+
+			var p = IntPoint3D.Parse(txt);
+
+			var msg = new Dwarrowdelf.Messages.ItemDebugMessage()
+			{
+				ItemID = ob.ObjectID,
+				MoveTo = p,
+			};
+
+			GameData.Data.Connection.Send(msg);
+		}
+
+		private void MoveDir_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var button = (Button)sender;
+			var tag = (string)button.Tag;
+
+			var ob = (MovableObject)this.DataContext;
+
+			var msg = new Dwarrowdelf.Messages.ItemDebugMessage()
+			{
+				ItemID = ob.ObjectID,
+				MoveToDir = (Direction)Enum.Parse(typeof(Direction), tag),
+			};
+
+			GameData.Data.Connection.Send(msg);
 		}
 	}
 }
