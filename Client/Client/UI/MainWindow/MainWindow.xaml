@@ -128,11 +128,13 @@
 						<TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" HorizontalAlignment="Center"
 								   Text="{Binding FocusedElement, ElementName=mainWindow, Converter={StaticResource elemToDescConverter}}" />
 
-						<Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-							<Rectangle.Fill>
-								<VisualBrush Visual="{Binding FocusedElement, ElementName=mainWindow}" Stretch="Uniform"/>
-							</Rectangle.Fill>
-						</Rectangle>
+						<Expander IsExpanded="False">
+							<Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+								<Rectangle.Fill>
+									<VisualBrush Visual="{Binding FocusedElement, ElementName=mainWindow}" Stretch="Uniform"/>
+								</Rectangle.Fill>
+							</Rectangle>
+						</Expander>
 
 					</DockPanel>
 				</GroupBox>
