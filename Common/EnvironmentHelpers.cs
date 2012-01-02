@@ -146,5 +146,22 @@ namespace Dwarrowdelf
 
 			return dstTerrain.IsSupporting && !dstTerrain.IsBlocker && !dstInter.IsBlocker;
 		}
+
+		/// <summary>
+		/// Tile can be seen through
+		/// </summary>
+		public static bool CanSeeThrough(IEnvironmentObject env, IntPoint3D location)
+		{
+			if (!env.Contains(location))
+				return false;
+
+			var dstTerrain = env.GetTerrain(location);
+			var dstInter = env.GetInterior(location);
+
+			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
+				return false;
+
+			return !dstTerrain.IsBlocker && !dstInter.IsBlocker;
+		}
 	}
 }

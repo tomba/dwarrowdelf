@@ -679,7 +679,7 @@ namespace Dwarrowdelf.Server
 			int z = this.Z;
 			var env = this.Environment;
 			s_losAlgo.Calculate(new IntPoint(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Bounds.Plane,
-				l => !EnvironmentHelpers.CanEnter(env, new IntPoint3D(l, z))); // XXX
+				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3D(l, z)));
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;

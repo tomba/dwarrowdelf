@@ -12,6 +12,8 @@ namespace Dwarrowdelf.Client
 	{
 		// XXX not re-entrant
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
+		// XXX we need a global lock
+		static object m_visionMapLock = new object();
 
 		uint m_losMapVersion;
 		IntPoint3D m_losLocation;
@@ -297,6 +299,7 @@ namespace Dwarrowdelf.Client
 			return !this.HasAction || this.ActionPriority < ActionPriority.High;
 		}
 
+
 		public Grid2D<bool> VisionMap
 		{
 			get
@@ -313,27 +316,30 @@ namespace Dwarrowdelf.Client
 			if (this.Environment == null)
 				return;
 
-			if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version && m_visionMap != null)
-				return;
-
-			int visionRange = this.VisionRange;
-
-			if (m_visionMap == null)
+			lock (m_visionMapLock)
 			{
-				m_visionMap = new Grid2D<bool>(visionRange * 2 + 1, visionRange * 2 + 1,
-					visionRange, visionRange);
-				m_losMapVersion = 0;
+				if (m_losLocation == this.Location && m_losMapVersion == this.Environment.Version && m_visionMap != null)
+					return;
+
+				int visionRange = this.VisionRange;
+
+				if (m_visionMap == null)
+				{
+					m_visionMap = new Grid2D<bool>(visionRange * 2 + 1, visionRange * 2 + 1,
+						visionRange, visionRange);
+					m_losMapVersion = 0;
+				}
+
+				var env = this.Environment;
+				var z = this.Location.Z;
+
+				s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
+					m_visionMap, env.Bounds.Plane,
+					l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3D(l, z)));
+
+				m_losMapVersion = this.Environment.Version;
+				m_losLocation = this.Location;
 			}
-
-			var env = this.Environment;
-			var z = this.Location.Z;
-
-			s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
-				m_visionMap, env.Bounds.Plane,
-				l => env.GetInterior(new IntPoint3D(l, z)).IsBlocker);
-
-			m_losMapVersion = this.Environment.Version;
-			m_losLocation = this.Location;
 		}
 
 		public override string ToString()
