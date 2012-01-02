@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client.UI
 		void OnZChanged(int z)
 		{
 			Point pos = Mouse.GetPosition(m_mapControl);
-			UpdateToolTip(pos);
+			UpdateToolTip(pos, false);
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Client.UI
 			if (!m_isToolTipEnabled)
 				return;
 
-			UpdateToolTip(e.GetPosition(m_mapControl));
+			UpdateToolTip(e.GetPosition(m_mapControl), true);
 		}
 
 		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var pos = Mouse.GetPosition(m_mapControl);
-			UpdateToolTip(pos);
+			UpdateToolTip(pos, false);
 		}
 
 		void OnMouseLeave(object sender, MouseEventArgs e)
@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client.UI
 			m_toolTip = tt;
 		}
 
-		void UpdateToolTip(Point mousePos)
+		void UpdateToolTip(Point mousePos, bool isMouseMove)
 		{
 			if (m_mapControl.Environment == null)
 			{
@@ -122,13 +122,21 @@ namespace Dwarrowdelf.Client.UI
 			{
 				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
 				{
-					m_toolTip.DataContext = ob;
+					// open a new tooltip only if the user has moved the mouse to this location
+					if (isMouseMove)
+					{
+						m_toolTip.DataContext = ob;
 
-					var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
-					m_toolTip.PlacementRectangle = rect;
+						var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
+						m_toolTip.PlacementRectangle = rect;
 
-					m_toolTip.IsOpen = true;
-					m_tooltipMapLocation = ml;
+						m_toolTip.IsOpen = true;
+						m_tooltipMapLocation = ml;
+					}
+					else
+					{
+						CloseToolTip();
+					}
 				}
 			}
 			else
