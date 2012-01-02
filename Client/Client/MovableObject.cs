@@ -20,8 +20,7 @@ namespace Dwarrowdelf.Client
 
 		public override void Destruct()
 		{
-			if (this.Parent != null)
-				throw new Exception();
+			MoveTo(null, new IntPoint3D());
 
 			base.Destruct();
 		}
@@ -39,21 +38,35 @@ namespace Dwarrowdelf.Client
 			MoveTo(env, data.Location);
 		}
 
-		public void MoveTo(ContainerObject parent, IntPoint3D location)
+		public void MoveTo(ContainerObject dst, IntPoint3D dstLoc)
 		{
-			var oldParent = this.Parent;
+			var src = this.Parent;
+			var srcLoc = this.Location;
 
-			if (oldParent != null)
-				oldParent.RemoveChild(this);
+			if (src != dst)
+			{
+				if (src != null)
+					src.RemoveChild(this);
 
-			this.Parent = parent;
-			this.Location = location;
+				this.Parent = dst;
+			}
 
-			if (parent != null)
-				parent.AddChild(this);
+			if (srcLoc != dstLoc)
+			{
+				this.Location = dstLoc;
+				if (dst != null && src == dst)
+					dst.MoveChild(this, srcLoc, dstLoc);
+			}
 
-			if (ObjectMoved != null)
-				ObjectMoved(this, this.Parent, this.Location);
+			if (src != dst)
+			{
+				if (dst != null)
+					dst.AddChild(this);
+			}
+
+			if (src != dst || srcLoc != dstLoc)
+				if (ObjectMoved != null)
+					ObjectMoved(this, this.Parent, this.Location);
 		}
 
 		public void MoveTo(IntPoint3D location)

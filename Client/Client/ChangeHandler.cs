@@ -166,7 +166,10 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectDestructedChangeData change)
 		{
-			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
+			var ob = m_world.FindObject<BaseObject>(change.ObjectID);
+
+			if (ob == null)
+				return;
 
 			Debug.Assert(ob.IsInitialized);
 

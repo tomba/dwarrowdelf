@@ -29,8 +29,9 @@ namespace Dwarrowdelf.Server
 
 		public override void Destruct()
 		{
-			if (this.Inventory.Count > 0)
-				throw new Exception("contains items when being destructed");
+			// Make a copy of the inventory
+			foreach (var ob in this.Inventory.ToArray())
+				ob.Destruct();
 
 			base.Destruct();
 		}

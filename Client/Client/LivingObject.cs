@@ -630,6 +630,22 @@ namespace Dwarrowdelf.Client
 			this.Weapon = null;
 			Notify("Weapon");
 		}
+
+		protected override void ChildRemoved(MovableObject child)
+		{
+			var item = child as ItemObject;
+
+			if (item != null)
+			{
+				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.
+				if (item.IsArmor && item.IsWorn)
+					RemoveArmor(item.ArmorInfo.Slot);
+				else if (item.IsWeapon && item.IsWielded)
+					RemoveWeapon();
+			}
+
+			base.ChildRemoved(child);
+		}
 	}
 
 	static class LivingSymbols

@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Server
 				this.Parent = dst;
 			}
 
-			if (this.Location != dstLoc)
+			if (srcLoc != dstLoc)
 			{
 				this.Location = dstLoc;
 				if (dst != null && src == dst)
