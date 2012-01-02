@@ -38,6 +38,8 @@ namespace Dwarrowdelf.Client.UI
 
 		MainWindowCommandHandler m_cmdHandler;
 
+		DispatcherTimer m_focusDebugTimer;
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -46,6 +48,28 @@ namespace Dwarrowdelf.Client.UI
 			this.mainWindowTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
 
 			this.mainWindowTools.ToolMode = ClientToolMode.Info;
+
+			m_focusDebugTimer = new DispatcherTimer();
+			m_focusDebugTimer.Interval = TimeSpan.FromMilliseconds(250);
+			m_focusDebugTimer.Tick += (o, ea) =>
+			{
+				this.FocusedElement = Keyboard.FocusedElement as UIElement;
+			};
+			m_focusDebugTimer.Start();
+		}
+
+		UIElement m_focusedElement;
+		public UIElement FocusedElement
+		{
+			get { return m_focusedElement; }
+			set
+			{
+				if (m_focusedElement == value)
+					return;
+
+				m_focusedElement = value;
+				Notify("FocusedElement");
+			}
 		}
 
 		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)
