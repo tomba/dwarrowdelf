@@ -123,4 +123,35 @@ namespace Dwarrowdelf
 		int NutritionalValue { get; }
 		int RefreshmentValue { get; }
 	}
+
+	public enum LivingVisionMode
+	{
+		/// <summary>
+		/// everything inside VisionRange is visible
+		/// </summary>
+		SquareFOV,
+
+		/// <summary>
+		/// use LOS algorithm
+		/// </summary>
+		LOS,
+	}
+
+	public enum VisibilityMode
+	{
+		/// <summary>
+		/// Everything visible
+		/// </summary>
+		AllVisible,
+
+		/// <summary>
+		/// Areas inside the mountain are not visible
+		/// </summary>
+		GlobalFOV,
+
+		/// <summary>
+		/// Things seen by controllables are visible
+		/// </summary>
+		LivingLOS,
+	}
 }
