@@ -114,6 +114,13 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new PropertyValueChange(this, id, value));
 		}
 
+		protected void NotifyBool(PropertyID id, bool value)
+		{
+			Debug.Assert(this.IsInitialized);
+
+			this.World.AddChange(new PropertyValueChange(this, id, value));
+		}
+
 		protected void NotifyInt(PropertyID id, int value)
 		{
 			Debug.Assert(this.IsInitialized);

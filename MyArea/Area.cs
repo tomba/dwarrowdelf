@@ -107,6 +107,26 @@ namespace MyArea
 				}
 			}
 
+			{
+				// create a wall and a hole (with a door created later)
+
+				IntPoint3D p;
+
+				for (int y = 4; y < 12; ++y)
+				{
+					int x = 17;
+
+					p = new IntPoint3D(x, y, surfaceLevel);
+					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					envBuilder.SetInterior(p, InteriorID.Undefined, MaterialID.Undefined);
+				}
+
+				p = new IntPoint3D(17, 7, surfaceLevel);
+				envBuilder.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+				envBuilder.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+			}
+
+
 			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
 			for (int i = 0; i < 30; ++i)
 			{
@@ -226,6 +246,12 @@ namespace MyArea
 
 			AddMonsters(env, surfaceLevel);
 
+			{
+				var p = new IntPoint3D(17, 7, surfaceLevel);
+				var item = CreateItem(env, ItemID.Door, MaterialID.Birch, p);
+				item.IsInstalled = true;
+			}
+
 			return env;
 		}
 
@@ -235,11 +261,12 @@ namespace MyArea
 			return materials[Helpers.MyRandom.Next(materials.Length)];
 		}
 
-		void CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3D p)
+		ItemObject CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3D p)
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);
 			item.MoveTo(env, p);
+			return item;
 		}
 
 		void AddMonsters(Environment env, int surfaceLevel)

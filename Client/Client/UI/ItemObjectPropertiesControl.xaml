@@ -22,5 +22,11 @@
 
 		<TextBlock>Server Reserved By</TextBlock>
 		<TextBlock Text="{Binding ServerReservedBy}" />
+
+		<TextBlock>IsInstalled</TextBlock>
+		<TextBlock Text="{Binding IsInstalled}" />
+
+		<TextBlock>IsClosed</TextBlock>
+		<TextBlock Text="{Binding IsClosed}" />
 	</UniformGrid>
 </UserControl>

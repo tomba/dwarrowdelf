@@ -42,6 +42,9 @@ namespace Dwarrowdelf
 		// Item
 		NutritionalValue,
 		RefreshmentValue,
+
+		IsInstalled,
+		IsClosed,
 	}
 
 	[Flags]
@@ -94,6 +97,8 @@ namespace Dwarrowdelf
 			map[PropertyID.NutritionalValue] = ObjectVisibility.Public;
 			map[PropertyID.RefreshmentValue] = ObjectVisibility.Public;
 			map[PropertyID.ReservedByStr] = ObjectVisibility.Debug;
+			map[PropertyID.IsInstalled] = ObjectVisibility.Public;
+			map[PropertyID.IsClosed] = ObjectVisibility.Public;
 
 			var max = ((PropertyID[])Enum.GetValues(typeof(PropertyID))).Max(id => (int)id);
 			s_visibilityArray = new ObjectVisibility[max + 1];

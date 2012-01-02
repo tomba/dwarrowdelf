@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Server
 
 		protected override bool OkToMove()
 		{
-			if (this.IsWorn || this.IsWielded)
+			if (this.IsWorn || this.IsWielded || this.IsInstalled)
 				return false;
 
 			return true;
@@ -91,6 +91,22 @@ namespace Dwarrowdelf.Server
 		{
 			get { return m_refreshmentValue; }
 			set { if (m_refreshmentValue == value) return; m_refreshmentValue = value; NotifyInt(PropertyID.RefreshmentValue, value); }
+		}
+
+		[SaveGameProperty("IsInstalled")]
+		bool m_isInstalled;
+		public bool IsInstalled
+		{
+			get { return m_isInstalled; }
+			set { if (m_isInstalled == value) return; m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value); }
+		}
+
+		[SaveGameProperty("IsClosed")]
+		bool m_isClosed;
+		public bool IsClosed
+		{
+			get { return m_isClosed; }
+			set { if (m_isClosed == value) return; m_isClosed = value; NotifyBool(PropertyID.IsClosed, value); }
 		}
 
 		LivingObject m_wearer;
@@ -156,6 +172,8 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.NutritionalValue] = m_nutritionalValue;
 			props[PropertyID.RefreshmentValue] = m_refreshmentValue;
 			props[PropertyID.ReservedByStr] = m_reservedByStr;
+			props[PropertyID.IsInstalled] = m_isInstalled;
+			props[PropertyID.IsClosed] = m_isClosed;
 
 			return props;
 		}

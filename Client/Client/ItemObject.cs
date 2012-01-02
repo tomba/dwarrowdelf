@@ -98,6 +98,20 @@ namespace Dwarrowdelf.Client
 			private set { m_refreshmentValue = value; Notify("RefreshmentValue"); }
 		}
 
+		bool m_isInstalled;
+		public bool IsInstalled
+		{
+			get { return m_isInstalled; }
+			private set { m_isInstalled = value; Notify("IsInstalled"); }
+		}
+
+		bool m_isClosed;
+		public bool IsClosed
+		{
+			get { return m_isClosed; }
+			private set { m_isClosed = value; Notify("IsClosed"); }
+		}
+
 		string m_serverReservedBy;
 		public string ServerReservedBy
 		{
@@ -119,6 +133,14 @@ namespace Dwarrowdelf.Client
 
 				case PropertyID.ReservedByStr:
 					this.ServerReservedBy = (string)value;
+					break;
+
+				case PropertyID.IsInstalled:
+					this.IsInstalled = (bool)value;
+					break;
+
+				case PropertyID.IsClosed:
+					this.IsClosed = (bool)value;
 					break;
 
 				default:
