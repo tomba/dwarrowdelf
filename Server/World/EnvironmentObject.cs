@@ -450,6 +450,20 @@ namespace Dwarrowdelf.Server
 			return list.Where(o => o.Location == l);
 		}
 
+
+		public override bool OkToAddChild(MovableObject ob, IntPoint3D p)
+		{
+			Debug.Assert(this.World.IsWritable);
+
+			if (!this.Contains(p))
+				return false;
+
+			if (!EnvironmentHelpers.CanEnter(this, p))
+				return false;
+
+			return true;
+		}
+
 		protected override void OnChildAdded(MovableObject child)
 		{
 			var list = m_contentArray[child.Z];
@@ -464,18 +478,6 @@ namespace Dwarrowdelf.Server
 			list.Remove(child);
 		}
 
-		public override bool OkToAddChild(MovableObject ob, IntPoint3D p)
-		{
-			Debug.Assert(this.World.IsWritable);
-
-			if (!this.Contains(p))
-				return false;
-
-			if (!EnvironmentHelpers.CanEnter(this, p))
-				return false;
-
-			return true;
-		}
 
 		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3D dstLoc)
 		{
@@ -495,6 +497,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(!list.Contains(child));
 			list.Add(child);
 		}
+
 
 		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
 		{

@@ -63,7 +63,11 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		protected virtual void OnEnvironmentChanged(ContainerObject oldEnv, ContainerObject newEnv) { }
+		protected virtual void OnEnvironmentChanging() { }
+		protected virtual void OnEnvironmentChanged() { }
+
+		protected virtual void OnLocationChanging() { }
+		protected virtual void OnLocationChanged() { }
 
 		protected virtual bool OkToMove()
 		{
@@ -147,6 +151,8 @@ namespace Dwarrowdelf.Server
 			var src = this.Parent;
 			var srcLoc = this.Location;
 
+			this.OnEnvironmentChanging();
+
 			if (src != null)
 				src.RemoveChild(this);
 
@@ -156,7 +162,8 @@ namespace Dwarrowdelf.Server
 			if (dst != null)
 				dst.AddChild(this);
 
-			OnEnvironmentChanged(src, dst);
+			this.OnEnvironmentChanged();
+
 			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
 
@@ -171,9 +178,13 @@ namespace Dwarrowdelf.Server
 			if (oldLocation == location)
 				return;
 
+			this.OnLocationChanging();
+
 			this.Location = location;
 
 			this.Parent.MoveChild(this, oldLocation, location);
+
+			this.OnLocationChanged();
 
 			this.World.AddChange(new ObjectMoveLocationChange(this, oldLocation, location));
 		}

@@ -46,10 +46,25 @@ namespace Dwarrowdelf.Server
 
 		protected override bool OkToMove()
 		{
-			if (this.IsWorn || this.IsWielded || this.IsInstalled)
-				return false;
+			return !this.IsWorn && !this.IsWielded && !this.IsInstalled;
+		}
 
-			return true;
+		protected override void OnEnvironmentChanging()
+		{
+			// Ensure that the item is not installed when moved. This can happen when forcibly moved.
+			if (this.IsInstalled)
+				this.IsInstalled = false;
+
+			base.OnEnvironmentChanging();
+		}
+
+		protected override void OnLocationChanging()
+		{
+			// Ensure that the item is not installed when moved. This can happen when forcibly moved.
+			if (this.IsInstalled)
+				this.IsInstalled = false;
+
+			base.OnLocationChanging();
 		}
 
 		[SaveGameProperty("ReservedBy")]
@@ -105,7 +120,8 @@ namespace Dwarrowdelf.Server
 
 				Debug.Assert(this.Environment != null);
 
-				m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value);
+				m_isInstalled = value;
+				NotifyBool(PropertyID.IsInstalled, value);
 
 				CheckBlock();
 			}
