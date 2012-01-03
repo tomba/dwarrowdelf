@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case ClientToolMode.InstallFurniture:
-					this.MapControl.SelectionMode = MapSelectionMode.Rectangle; // XXX point
+					this.MapControl.SelectionMode = MapSelectionMode.Point;
 					break;
 
 				default:
@@ -146,6 +146,8 @@ namespace Dwarrowdelf.Client.UI
 
 				case ClientToolMode.InstallFurniture:
 					{
+						var p = selection.SelectionPoint;
+
 						var dlg = new InstallFurnitureDialog();
 						var res = dlg.ShowDialog();
 						if (res == true)
@@ -460,6 +462,10 @@ for p in area.Range():
 			else if (e.Key == Key.M)
 			{
 				this.mainWindowTools.ToolMode = ClientToolMode.DesignationMine;
+			}
+			else if (e.Key == Key.N)
+			{
+				this.mainWindowTools.ToolMode = ClientToolMode.InstallFurniture;
 			}
 			else if (e.Key == Key.R)
 			{

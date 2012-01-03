@@ -14,6 +14,7 @@ namespace Dwarrowdelf.Client.UI
 	enum MapSelectionMode
 	{
 		None,
+		Point,
 		Rectangle,
 		Cuboid,
 	}
@@ -66,31 +67,57 @@ namespace Dwarrowdelf.Client.UI
 				if (value == m_selectionMode)
 					return;
 
-				if (m_selectionMode != MapSelectionMode.None)
+				switch (m_selectionMode)
 				{
-					m_mapControl.MapControl.DragStarted -= OnDragStarted;
-					m_mapControl.MapControl.DragEnded -= OnDragEnded;
-					m_mapControl.MapControl.Dragging -= OnDragging;
-					m_mapControl.MapControl.DragAborted -= OnDragAborted;
+					case MapSelectionMode.Rectangle:
+					case MapSelectionMode.Cuboid:
 
-					m_mapControl.MapControl.TileLayoutChanged -= OnTileLayoutChanged;
-					m_mapControl.MapControl.ZChanged -= OnZChanged;
+						m_mapControl.MapControl.DragStarted -= OnDragStarted;
+						m_mapControl.MapControl.DragEnded -= OnDragEnded;
+						m_mapControl.MapControl.Dragging -= OnDragging;
+						m_mapControl.MapControl.DragAborted -= OnDragAborted;
+
+						m_mapControl.MapControl.TileLayoutChanged -= OnTileLayoutChanged;
+						m_mapControl.MapControl.ZChanged -= OnZChanged;
+
+						break;
+
+					case MapSelectionMode.Point:
+						m_mapControl.MapControl.MouseClicked -= OnMouseClicked;
+						break;
 				}
 
 				this.Selection = new MapSelection();
 				m_selectionMode = value;
 
-				if (m_selectionMode != MapSelectionMode.None)
+				switch (m_selectionMode)
 				{
-					m_mapControl.MapControl.DragStarted += OnDragStarted;
-					m_mapControl.MapControl.DragEnded += OnDragEnded;
-					m_mapControl.MapControl.Dragging += OnDragging;
-					m_mapControl.MapControl.DragAborted += OnDragAborted;
+					case MapSelectionMode.Rectangle:
+					case MapSelectionMode.Cuboid:
 
-					m_mapControl.MapControl.TileLayoutChanged += OnTileLayoutChanged;
-					m_mapControl.MapControl.ZChanged += OnZChanged;
+						m_mapControl.MapControl.DragStarted += OnDragStarted;
+						m_mapControl.MapControl.DragEnded += OnDragEnded;
+						m_mapControl.MapControl.Dragging += OnDragging;
+						m_mapControl.MapControl.DragAborted += OnDragAborted;
+
+						m_mapControl.MapControl.TileLayoutChanged += OnTileLayoutChanged;
+						m_mapControl.MapControl.ZChanged += OnZChanged;
+
+						break;
+
+					case MapSelectionMode.Point:
+						m_mapControl.MapControl.MouseClicked += OnMouseClicked;
+						break;
 				}
 			}
+		}
+
+		void OnMouseClicked(object sender, MouseButtonEventArgs e)
+		{
+			var ml = m_mapControl.MapControl.ScreenPointToMapLocation(e.GetPosition(m_mapControl.MapControl));
+			this.Selection = new MapSelection(ml, ml);
+			if (this.GotSelection != null)
+				this.GotSelection(this.Selection);
 		}
 
 		public MapSelection Selection
@@ -260,6 +287,14 @@ namespace Dwarrowdelf.Client.UI
 		public bool IsSelectionValid { get; set; }
 		public IntPoint3D SelectionStart { get; set; }
 		public IntPoint3D SelectionEnd { get; set; }
+
+		public IntPoint3D SelectionPoint
+		{
+			get
+			{
+				return this.SelectionStart;
+			}
+		}
 
 		public IntCuboid SelectionCuboid
 		{
