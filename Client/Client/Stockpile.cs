@@ -105,6 +105,8 @@ namespace Dwarrowdelf.Client
 
 				GameData.Data.Jobs.Add(job);
 
+				ob.ReservedBy = this;
+
 				return job;
 			}
 
@@ -117,6 +119,9 @@ namespace Dwarrowdelf.Client
 
 			if (status == JobStatus.Ok)
 				throw new Exception();
+
+			Debug.Assert(j.Item.ReservedBy == this);
+			j.Item.ReservedBy = null;
 
 			m_jobs.Remove(j);
 

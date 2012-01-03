@@ -27,9 +27,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_sourceObjects = sourceObjects.ToArray();
 			m_buildableItemKey = buildableItemKey;
 
-			foreach (var item in m_sourceObjects)
-				item.ReservedBy = this;
-
 			m_state = 0;
 
 			AddSubJob(new FetchItems(this, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
@@ -38,14 +35,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		BuildItemJob(SaveGameContext ctx)
 			: base(ctx)
 		{
-		}
-
-		protected override void OnStatusChanged(JobStatus status)
-		{
-			foreach (var item in m_sourceObjects)
-				item.ReservedBy = null;
-
-			base.OnStatusChanged(status);
 		}
 
 		protected override void OnSubJobDone(IJob job)

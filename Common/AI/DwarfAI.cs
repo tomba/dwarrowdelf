@@ -9,7 +9,7 @@ using Dwarrowdelf;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public sealed class DwarfAI : AssignmentAI
+	public sealed class DwarfAI : AssignmentAI, IJobObserver
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;
@@ -96,7 +96,8 @@ namespace Dwarrowdelf.AI
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(this, ob);
+				ob.ReservedBy = this;
 				return job;
 			}
 
@@ -123,7 +124,8 @@ namespace Dwarrowdelf.AI
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(null, ob);
+				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(this, ob);
+				ob.ReservedBy = this;
 				return job;
 			}
 
@@ -142,5 +144,20 @@ namespace Dwarrowdelf.AI
 				m_priorityAction = false;
 			}
 		}
+
+		#region IJobObserver Members
+
+		public void OnObservableJobStatusChanged(IJob job, JobStatus status)
+		{
+			var j = job as Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment;
+
+			if (j != null)
+			{
+				Debug.Assert(j.Item.ReservedBy == this);
+				j.Item.ReservedBy = null;
+			}
+		}
+
+		#endregion
 	}
 }

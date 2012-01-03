@@ -35,7 +35,6 @@ namespace Dwarrowdelf.Client
 			: base(parent)
 		{
 			this.Item = item;
-			this.Item.ReservedBy = this;
 			m_stockpile = stockpile;
 			m_state = State.MoveToItem;
 		}
@@ -43,12 +42,6 @@ namespace Dwarrowdelf.Client
 		StoreToStockpileJob(SaveGameContext ctx)
 			: base(ctx)
 		{
-		}
-
-		protected override void OnStatusChanged(JobStatus status)
-		{
-			this.Item.ReservedBy = null;
-			base.OnStatusChanged(status);
 		}
 
 		protected override void OnAssignmentDone()

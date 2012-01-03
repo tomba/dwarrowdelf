@@ -363,6 +363,14 @@ namespace Dwarrowdelf.Client
 		{
 			bool fail = false;
 
+			var sourceItems = this.CurrentBuildOrder.SourceItems;
+			for (int i = 0; i < sourceItems.Length; ++i)
+			{
+				Debug.Assert(sourceItems[i].ReservedBy == this);
+				sourceItems[i].ReservedBy = null;
+				sourceItems[i] = null;
+			}
+
 			switch (status)
 			{
 				case JobStatus.Done:
@@ -416,6 +424,8 @@ namespace Dwarrowdelf.Client
 				if (ob == null)
 					break;
 
+				ob.ReservedBy = this;
+
 				order.SourceItems[i] = ob;
 				numFound++;
 			}
@@ -424,7 +434,10 @@ namespace Dwarrowdelf.Client
 			{
 				trace.TraceInformation("Failed to find materials");
 				for (int i = 0; i < numFound; ++i)
+				{
+					order.SourceItems[i].ReservedBy = null;
 					order.SourceItems[i] = null;
+				}
 				return false;
 			}
 			else

@@ -13,30 +13,20 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	public sealed class MoveConsumeAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Item")]
-		readonly IItemObject m_item;
+		public IItemObject Item { get; private set; }
 		[SaveGameProperty("State")]
 		int m_state;
 
 		public MoveConsumeAssignment(IJobObserver parent, IItemObject item)
 			: base(parent)
 		{
-			m_item = item;
-			m_item.ReservedBy = this;
+			this.Item = item;
 			m_state = 0;
 		}
 
 		MoveConsumeAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
-		}
-
-		protected override void OnStatusChanged(JobStatus status)
-		{
-			Debug.Assert(status != JobStatus.Ok);
-
-			m_item.ReservedBy = null;
-
-			base.OnStatusChanged(status);
 		}
 
 		protected override void OnAssignmentDone()
@@ -54,15 +44,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			switch (m_state)
 			{
 				case 0:
-					assignment = new MoveAssignment(this, m_item.Environment, m_item.Location, DirectionSet.Exact);
+					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
 				case 1:
-					assignment = new GetItemAssignment(this, m_item);
+					assignment = new GetItemAssignment(this, this.Item);
 					break;
 
 				case 2:
-					assignment = new ConsumeItemAssignment(this, m_item);
+					assignment = new ConsumeItemAssignment(this, this.Item);
 					break;
 
 				default:

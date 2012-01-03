@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dwarrowdelf.Jobs;
 using Dwarrowdelf.Jobs.JobGroups;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
@@ -84,6 +85,7 @@ namespace Dwarrowdelf.Client
 
 			GameData.Data.Jobs.Remove(job);
 
+			Debug.Assert(data.Item.ReservedBy == this);
 			data.Item.ReservedBy = null;
 		}
 
