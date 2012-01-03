@@ -246,6 +246,42 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		int GetTotalTicks(InstallItemAction action)
+		{
+			return 6;
+		}
+
+		bool PerformAction(InstallItemAction action)
+		{
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
+
+			if (item == null)
+			{
+				SendFailReport(new InstallItemActionReport(this, null), "item doesn't exists");
+				return false;
+			}
+
+			var report = new InstallItemActionReport(this, item);
+
+			if (item.Environment != this.Environment || item.Location != this.Location)
+			{
+				SendFailReport(report, "item not here");
+				return false;
+			}
+
+			if (item.IsInstalled)
+			{
+				SendFailReport(report, "item already installed");
+				return false;
+			}
+
+			item.IsInstalled = true;
+
+			SendReport(report);
+
+			return true;
+		}
+
 		int GetTotalTicks(MoveAction action)
 		{
 			var obs = this.Environment.GetContents(this.Location + action.Direction);

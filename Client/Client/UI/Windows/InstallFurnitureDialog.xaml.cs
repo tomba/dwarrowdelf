@@ -19,5 +19,31 @@ namespace Dwarrowdelf.Client.UI
 		{
 			InitializeComponent();
 		}
+
+		private void Ok_Button_Click(object sender, RoutedEventArgs e)
+		{
+			this.DialogResult = true;
+		}
+
+		public ItemObject SelectedItem
+		{
+			get { return (ItemObject)listBox.SelectedItem; }
+		}
+
+		private void FilterItems(object sender, FilterEventArgs e)
+		{
+			var item = e.Item as ItemObject;
+
+			if (item == null)
+			{
+				e.Accepted = false;
+				return;
+			}
+
+			if (item.ItemCategory == ItemCategory.Furniture && item.IsInstalled == false)
+				e.Accepted = true;
+			else
+				e.Accepted = false;
+		}
 	}
 }

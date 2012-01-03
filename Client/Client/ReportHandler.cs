@@ -146,6 +146,11 @@ namespace Dwarrowdelf.Client
 			HandleItemActionReport(report, "consumes", "consume");
 		}
 
+		void HandleReport(InstallItemActionReport report)
+		{
+			HandleItemActionReport(report, "installs", "install");
+		}
+
 		void HandleReport(ConstructBuildingActionReport report)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);

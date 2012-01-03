@@ -40,6 +40,9 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public Designation Designations { get; private set; }
 
+		[SaveGameProperty]
+		public InstallFurnitureManager InstallFurnitureManager { get; private set; }
+
 		public EnvironmentObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -53,6 +56,7 @@ namespace Dwarrowdelf.Client
 			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
 
 			this.Designations = new Designation(this);
+			this.InstallFurnitureManager = new InstallFurnitureManager(this);
 
 			this.World.AddEnvironment(this);
 		}

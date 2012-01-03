@@ -149,10 +149,15 @@ namespace Dwarrowdelf.Client.UI
 						var p = selection.SelectionPoint;
 
 						var dlg = new InstallFurnitureDialog();
+						dlg.DataContext = env;
+
 						var res = dlg.ShowDialog();
+
 						if (res == true)
 						{
+							var item = dlg.SelectedItem;
 
+							env.InstallFurnitureManager.AddJob(item, p);
 						}
 					}
 					break;

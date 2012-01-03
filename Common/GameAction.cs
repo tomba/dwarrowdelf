@@ -375,6 +375,21 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
+	public sealed class InstallItemAction : ItemAction
+	{
+		public InstallItemAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		InstallItemAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
 	public sealed class WearArmorAction : ItemAction
 	{
 		public WearArmorAction(IItemObject item)

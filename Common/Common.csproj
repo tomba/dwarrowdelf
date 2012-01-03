@@ -78,13 +78,16 @@
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
+    <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
     <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
     <Compile Include="AI\HerbivoreAI.cs" />
     <Compile Include="AI\Herd.cs" />
+    <Compile Include="Jobs\JobGroups\InstallFurnitureJob.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />

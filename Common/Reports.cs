@@ -242,4 +242,13 @@ namespace Dwarrowdelf
 		{
 		}
 	}
+
+	[Serializable]
+	public sealed class InstallItemActionReport : ItemActionReport
+	{
+		public InstallItemActionReport(ILivingObject living, IItemObject item)
+			: base(living, item)
+		{
+		}
+	}
 }

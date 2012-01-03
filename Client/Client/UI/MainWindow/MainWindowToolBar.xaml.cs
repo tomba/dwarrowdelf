@@ -36,12 +36,12 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.DesignationRemove, "Remove", Key.R);
 
 			add(ClientToolMode.CreateStockpile, "Create stockpile", Key.P);
-			add(ClientToolMode.InstallFurniture, "Install furniture", Key.N);
+			add(ClientToolMode.InstallFurniture, "Install furniture", Key.I);
 
 			add(ClientToolMode.CreateLiving, "Create living", Key.L);
-			add(ClientToolMode.CreateItem, "Create item", Key.I);
+			add(ClientToolMode.CreateItem, "Create item", Key.C);
 			add(ClientToolMode.SetTerrain, "Set terrain", Key.T);
-			add(ClientToolMode.ConstructBuilding, "Construct building", Key.B);
+			add(ClientToolMode.ConstructBuilding, "Create building", Key.B);
 		}
 
 		public MainWindowToolBar()
