@@ -445,62 +445,56 @@ for p in area.Range():
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			switch (e.Key)
+			{
+				case Key.OemPeriod:
+					if (GameData.Data.User != null)
+						GameData.Data.User.SendProceedTurn();
+					break;
+
+				case Key.Space:
+					ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
+					break;
+
+				case Key.B:
+					this.mainWindowTools.ToolMode = ClientToolMode.ConstructBuilding;
+					break;
+				case Key.M:
+					this.mainWindowTools.ToolMode = ClientToolMode.DesignationMine;
+					break;
+				case Key.N:
+					this.mainWindowTools.ToolMode = ClientToolMode.InstallFurniture;
+					break;
+				case Key.R:
+					this.mainWindowTools.ToolMode = ClientToolMode.DesignationRemove;
+					break;
+				case Key.F:
+					this.mainWindowTools.ToolMode = ClientToolMode.DesignationFellTree;
+					break;
+				case Key.T:
+					this.mainWindowTools.ToolMode = ClientToolMode.SetTerrain;
+					break;
+				case Key.S:
+					this.mainWindowTools.ToolMode = ClientToolMode.CreateStockpile;
+					break;
+				case Key.L:
+					this.mainWindowTools.ToolMode = ClientToolMode.CreateLiving;
+					break;
+				case Key.I:
+					this.mainWindowTools.ToolMode = ClientToolMode.CreateItem;
+					break;
+
+				case Key.Escape:
+					this.mainWindowTools.ToolMode = ClientToolMode.Info;
+					map.Focus();
+					break;
+
+				default:
+					base.OnKeyDown(e);
+					return;
+			}
+
 			e.Handled = true;
-
-			if (e.Key == Key.OemPeriod && GameData.Data.User != null)
-			{
-				GameData.Data.User.SendProceedTurn();
-			}
-			else if (e.Key == Key.Space)
-			{
-				ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
-			}
-			else if (e.Key == Key.B)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.ConstructBuilding;
-			}
-			else if (e.Key == Key.M)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.DesignationMine;
-			}
-			else if (e.Key == Key.N)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.InstallFurniture;
-			}
-			else if (e.Key == Key.R)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.DesignationRemove;
-			}
-			else if (e.Key == Key.F)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.DesignationFellTree;
-			}
-			else if (e.Key == Key.T)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.SetTerrain;
-			}
-			else if (e.Key == Key.S)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.CreateStockpile;
-			}
-			else if (e.Key == Key.L)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.CreateLiving;
-			}
-			else if (e.Key == Key.I)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.CreateItem;
-			}
-			if (e.Key == Key.Escape)
-			{
-				this.mainWindowTools.ToolMode = ClientToolMode.Info;
-				map.Focus();
-			}
-			else
-			{
-				e.Handled = false;
-			}
-
 			base.OnKeyDown(e);
 		}
 
