@@ -181,7 +181,11 @@ for p in cube.Range():
 		td.InteriorMaterialID = interiorMaterialID
 
 	if grass != None:
-		td.Grass = grass
+		if grass:
+			td.Flags |= Dwarrowdelf.TileFlags.Grass
+		else:
+			td.Flags &= ~Dwarrowdelf.TileFlags.Grass
+
 	if waterLevel != None:
 		td.WaterLevel = waterLevel
 

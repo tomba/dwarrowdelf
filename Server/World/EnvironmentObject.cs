@@ -344,9 +344,9 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetGrass(IntPoint3D l)
+		public bool GetTileFlags(IntPoint3D l, TileFlags flags)
 		{
-			return m_tileGrid.GetGrass(l);
+			return (m_tileGrid.GetFlags(l) & flags) != 0;
 		}
 
 		public bool GetHidden(IntPoint3D l)
@@ -419,14 +419,17 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, data);
 		}
 
-		public void SetGrass(IntPoint3D l, bool grass)
+		public void SetTileFlags(IntPoint3D l, TileFlags flags, bool value)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
-			m_tileGrid.SetGrass(l, grass);
+			if (value)
+				m_tileGrid.SetFlags(l, flags);
+			else
+				m_tileGrid.ClearFlags(l, flags);
 
 			var d = m_tileGrid.GetTileData(l);
 
@@ -787,9 +790,9 @@ namespace Dwarrowdelf.Server
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public bool GetGrass(IntPoint3D p)
+		public TileFlags GetFlags(IntPoint3D p)
 		{
-			return m_grid[p.Z, p.Y, p.X].Grass;
+			return m_grid[p.Z, p.Y, p.X].Flags;
 		}
 
 
@@ -835,9 +838,14 @@ namespace Dwarrowdelf.Server
 			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 		}
 
-		public void SetGrass(IntPoint3D p, bool grass)
+		public void SetFlags(IntPoint3D p, TileFlags flags)
 		{
-			m_grid[p.Z, p.Y, p.X].Grass = grass;
+			m_grid[p.Z, p.Y, p.X].Flags |= flags;
+		}
+
+		public void ClearFlags(IntPoint3D p, TileFlags flags)
+		{
+			m_grid[p.Z, p.Y, p.X].Flags &= ~flags;
 		}
 	}
 
@@ -922,9 +930,9 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetGrass(IntPoint3D l)
+		public bool GetTileFlag(IntPoint3D l, TileFlags flag)
 		{
-			return m_tileGrid.GetGrass(l);
+			return (m_tileGrid.GetFlags(l) & flag) != 0;
 		}
 
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
@@ -942,9 +950,12 @@ namespace Dwarrowdelf.Server
 			m_tileGrid.SetTileData(p, data);
 		}
 
-		public void SetGrass(IntPoint3D l, bool grass)
+		public void SetTileFlags(IntPoint3D l, TileFlags flags, bool value)
 		{
-			m_tileGrid.SetGrass(l, grass);
+			if (value)
+				m_tileGrid.SetFlags(l, flags);
+			else
+				m_tileGrid.ClearFlags(l, flags);
 		}
 	}
 }

@@ -160,8 +160,14 @@ namespace Dwarrowdelf.Client
 
 		public bool GetGrass(IntPoint3D ml)
 		{
-			return m_tileGrid.GetGrass(ml);
+			return GetTileFlags(ml, TileFlags.Grass);
 		}
+
+		public bool GetTileFlags(IntPoint3D l, TileFlags flags)
+		{
+			return (m_tileGrid.GetFlags(l) & flags) != 0;
+		}
+
 
 		public bool GetHidden(IntPoint3D ml)
 		{

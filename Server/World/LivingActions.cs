@@ -399,7 +399,7 @@ namespace Dwarrowdelf.Server
 							TerrainMaterialID = env.GetTerrainMaterialID(p),
 							InteriorID = InteriorID.Empty,
 							InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined,
-							Grass = false,
+							Flags = TileFlags.None,
 							WaterLevel = 0,
 						};
 
@@ -443,7 +443,7 @@ namespace Dwarrowdelf.Server
 							TerrainMaterialID = env.GetTerrainMaterialID(p),
 							InteriorID = InteriorID.Stairs,
 							InteriorMaterialID = env.GetTerrainMaterialID(p),
-							Grass = false,
+							Flags = TileFlags.None,
 							WaterLevel = 0,
 						};
 

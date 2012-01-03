@@ -181,7 +181,7 @@ namespace MyArea
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetGrass(p, false);
+					env.SetTileFlags(p, TileFlags.Grass, false);
 				}
 				builder.Create(world, env);
 			}
@@ -194,7 +194,7 @@ namespace MyArea
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetGrass(p, false);
+					env.SetTileFlags(p, TileFlags.Grass, false);
 				}
 				builder.Create(world, env);
 			}
@@ -207,7 +207,7 @@ namespace MyArea
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetGrass(p, false);
+					env.SetTileFlags(p, TileFlags.Grass, false);
 				}
 				builder.Create(world, env);
 			}
@@ -220,7 +220,7 @@ namespace MyArea
 				{
 					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetGrass(p, false);
+					env.SetTileFlags(p, TileFlags.Grass, false);
 				}
 				builder.Create(world, env);
 			}
@@ -351,7 +351,7 @@ namespace MyArea
 							if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
 							{
 								env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-								env.SetGrass(p, true);
+								env.SetTileFlags(p, TileFlags.Grass, true);
 							}
 							else
 							{

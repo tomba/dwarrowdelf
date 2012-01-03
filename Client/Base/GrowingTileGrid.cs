@@ -210,17 +210,17 @@ namespace Dwarrowdelf.Client
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public void SetGrass(IntPoint3D p, bool grass)
+		public void SetFlags(IntPoint3D p, TileFlags flags)
 		{
 			Grow(ref p);
-			m_grid[p.Z, p.Y, p.X].Grass = grass;
+			m_grid[p.Z, p.Y, p.X].Flags = flags;
 		}
 
-		public bool GetGrass(IntPoint3D p)
+		public TileFlags GetFlags(IntPoint3D p)
 		{
 			if (!Adjust(ref p))
-				return false;
-			return m_grid[p.Z, p.Y, p.X].Grass;
+				return TileFlags.None;
+			return m_grid[p.Z, p.Y, p.X].Flags;
 		}
 	}
 }

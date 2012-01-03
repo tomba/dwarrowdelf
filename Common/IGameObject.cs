@@ -64,6 +64,8 @@ namespace Dwarrowdelf
 
 		TileData GetTileData(IntPoint3D l);
 
+		bool GetTileFlags(IntPoint3D l, TileFlags flags);
+
 		// Always false in server side
 		bool GetHidden(IntPoint3D l);
 

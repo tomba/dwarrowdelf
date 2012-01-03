@@ -26,23 +26,9 @@ namespace Dwarrowdelf
 
 		public TileFlags Flags { get; set; }
 
-
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
-
-		public bool Grass
-		{
-			get { return (this.Flags & TileFlags.Grass) != 0; }
-
-			set
-			{
-				if (value)
-					this.Flags |= TileFlags.Grass;
-				else
-					this.Flags &= ~TileFlags.Grass;
-			}
-		}
 
 		public ulong ToUInt64()
 		{
