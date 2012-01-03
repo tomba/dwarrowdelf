@@ -159,6 +159,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\InstallFurnitureDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\LivingControlWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -316,6 +320,9 @@
     </Compile>
     <Compile Include="UI\ObjectInfoControl.xaml.cs">
       <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\InstallFurnitureDialog.xaml.cs">
+      <DependentUpon>InstallFurnitureDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\LivingControlWindow.xaml.cs">
       <DependentUpon>LivingControlWindow.xaml</DependentUpon>

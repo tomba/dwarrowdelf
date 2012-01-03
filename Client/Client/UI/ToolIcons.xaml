@@ -29,6 +29,20 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="InstallFurniture" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FF000000" Geometry="F1 M 146.41,103.605L 146.41,105.098L 144.917,105.098L 144.917,117.045L 146.41,117.045L 146.41,118.538L 141.717,118.538L 141.717,117.045L 143.21,117.045L 143.21,105.098L 141.717,105.098L 141.717,103.605L 146.41,103.605 Z "/>
+					<GeometryDrawing Geometry="F1 M 132.423,99.1784L 156.423,99.1784L 156.423,123.178L 132.423,123.178L 132.423,99.1784 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF000000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 	<DrawingBrush x:Key="DesignationStairs" Stretch="Uniform">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>

@@ -121,6 +121,10 @@
 			<RadioButton Name="createStockpile" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
 						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[CreateStockpile]}" />
 
+			<!-- Install Furniture -->
+			<RadioButton Name="installFurniture" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+						  DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[InstallFurniture]}" />
+
 			<Separator/>
 
 			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"

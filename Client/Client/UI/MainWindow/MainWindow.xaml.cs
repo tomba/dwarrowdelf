@@ -98,6 +98,10 @@ namespace Dwarrowdelf.Client.UI
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
+				case ClientToolMode.InstallFurniture:
+					this.MapControl.SelectionMode = MapSelectionMode.Rectangle; // XXX point
+					break;
+
 				default:
 					throw new Exception();
 			}
@@ -137,6 +141,17 @@ namespace Dwarrowdelf.Client.UI
 						dlg.DataContext = stockpile;
 						dlg.Owner = this;
 						dlg.Show();
+					}
+					break;
+
+				case ClientToolMode.InstallFurniture:
+					{
+						var dlg = new InstallFurnitureDialog();
+						var res = dlg.ShowDialog();
+						if (res == true)
+						{
+
+						}
 					}
 					break;
 

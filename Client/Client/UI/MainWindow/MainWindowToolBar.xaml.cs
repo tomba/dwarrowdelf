@@ -36,6 +36,7 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.DesignationRemove, "Remove", 'r');
 
 			add(ClientToolMode.CreateStockpile, "Create stockpile", 'p');
+			add(ClientToolMode.InstallFurniture, "Install furniture", 'n');
 
 			add(ClientToolMode.CreateLiving, "Create living", 'l');
 			add(ClientToolMode.CreateItem, "Create item", 'i');
@@ -208,6 +209,10 @@ namespace Dwarrowdelf.Client.UI
 					ctrl.createStockpile.IsChecked = true;
 					break;
 
+				case ClientToolMode.InstallFurniture:
+					ctrl.installFurniture.IsChecked = true;
+					break;
+
 				case ClientToolMode.ConstructBuilding:
 					ctrl.constructBuilding.IsChecked = true;
 					break;
@@ -303,5 +308,6 @@ namespace Dwarrowdelf.Client.UI
 		CreateItem,
 		CreateLiving,
 		ConstructBuilding,
+		InstallFurniture,
 	}
 }
