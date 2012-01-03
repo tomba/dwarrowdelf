@@ -11,6 +11,7 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 		Grass = 1 << 0,
+		ItemBlocks = 1 << 1,	// an item in the tile blocks movement
 	}
 
 	[Serializable]

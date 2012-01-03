@@ -12,8 +12,9 @@ namespace Dwarrowdelf
 		{
 			var inter = env.GetInterior(p);
 			var terrain = env.GetTerrain(p);
+			var itemBlocks = env.GetTileFlags(p, TileFlags.ItemBlocks);
 
-			if (inter.IsBlocker || !terrain.IsSupporting)
+			if (inter.IsBlocker || !terrain.IsSupporting || itemBlocks)
 				yield break;
 
 			foreach (var dir in DirectionExtensions.PlanarDirections)
@@ -56,8 +57,9 @@ namespace Dwarrowdelf
 		{
 			var srcInter = env.GetInterior(srcLoc);
 			var srcTerrain = env.GetTerrain(srcLoc);
+			var itemBlocks = env.GetTileFlags(srcLoc, TileFlags.ItemBlocks);
 
-			if (srcInter.IsBlocker || srcTerrain.IsBlocker)
+			if (srcInter.IsBlocker || srcTerrain.IsBlocker || itemBlocks)
 				return false;
 
 			if (dir.IsPlanar())
@@ -98,8 +100,9 @@ namespace Dwarrowdelf
 
 			var dstTerrain = env.GetTerrain(dstLoc);
 			var dstInter = env.GetInterior(dstLoc);
+			var itemBlocks = env.GetTileFlags(dstLoc, TileFlags.ItemBlocks);
 
-			if (dstInter.IsBlocker || dstTerrain.IsBlocker || !dstTerrain.IsSupporting)
+			if (dstInter.IsBlocker || dstTerrain.IsBlocker || !dstTerrain.IsSupporting || itemBlocks)
 				return false;
 
 			if (dir.IsPlanar())
@@ -140,11 +143,12 @@ namespace Dwarrowdelf
 
 			var dstTerrain = env.GetTerrain(location);
 			var dstInter = env.GetInterior(location);
+			var itemBlocks = env.GetTileFlags(location, TileFlags.ItemBlocks);
 
 			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
 				return false;
 
-			return dstTerrain.IsSupporting && !dstTerrain.IsBlocker && !dstInter.IsBlocker;
+			return dstTerrain.IsSupporting && !dstTerrain.IsBlocker && !dstInter.IsBlocker && !itemBlocks;
 		}
 
 		/// <summary>
