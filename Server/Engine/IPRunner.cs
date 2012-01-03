@@ -10,6 +10,7 @@ namespace Dwarrowdelf.Server
 	sealed class IPRunner
 	{
 		ScriptEngine m_scriptEngine;
+		ScriptScope m_exprScope;
 		ScriptScope m_scriptScope;
 		MyStream m_scriptOutputStream;
 
@@ -24,29 +25,33 @@ namespace Dwarrowdelf.Server
 			m_scriptEngine.Runtime.IO.SetOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
 			m_scriptEngine.Runtime.IO.SetErrorOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
 
-			m_scriptScope = m_scriptEngine.CreateScope();
-			m_scriptScope.SetVariable("world", world);
-			m_scriptScope.SetVariable("get", new Func<object, BaseObject>(world.IPGet));
-			m_scriptScope.SetVariable("getitem", new Func<object, ItemObject>(world.IPGetItem));
-			m_scriptScope.SetVariable("getenv", new Func<object, EnvironmentObject>(world.IPGetEnv));
-			m_scriptScope.SetVariable("getliving", new Func<object, LivingObject>(world.IPGetLiving));
+			m_exprScope = m_scriptEngine.CreateScope();
+			InitScope(m_exprScope, world);
 
-			m_scriptEngine.Execute("import clr", m_scriptScope);
-			m_scriptEngine.Execute("clr.AddReference('Dwarrowdelf.Common')", m_scriptScope);
-			m_scriptEngine.Execute("import Dwarrowdelf", m_scriptScope);
+			m_scriptScope = m_scriptEngine.CreateScope();
+			InitScope(m_scriptScope, world);
 		}
 
-		public void Exec(string script, Tuple<string, object>[] args)
+		void InitScope(ScriptScope scope, World world)
+		{
+			scope.SetVariable("world", world);
+			scope.SetVariable("get", new Func<object, BaseObject>(world.IPGet));
+			scope.SetVariable("getitem", new Func<object, ItemObject>(world.IPGetItem));
+			scope.SetVariable("getenv", new Func<object, EnvironmentObject>(world.IPGetEnv));
+			scope.SetVariable("getliving", new Func<object, LivingObject>(world.IPGetLiving));
+
+			m_scriptEngine.Execute("import clr", scope);
+			m_scriptEngine.Execute("clr.AddReference('Dwarrowdelf.Common')", scope);
+			m_scriptEngine.Execute("import Dwarrowdelf", scope);
+		}
+
+		public void ExecExpr(string script)
 		{
 			try
 			{
-				if (args != null)
-					foreach (var kvp in args)
-						m_scriptScope.SetVariable(kvp.Item1, kvp.Item2);
-
-				var r = m_scriptEngine.ExecuteAndWrap(script, m_scriptScope);
-				m_scriptScope.SetVariable("ret", r);
-				m_scriptEngine.Execute("print ret", m_scriptScope);
+				var r = m_scriptEngine.ExecuteAndWrap(script, m_exprScope);
+				m_exprScope.SetVariable("ret", r);
+				m_scriptEngine.Execute("print ret", m_exprScope);
 			}
 			catch (Exception e)
 			{
@@ -55,6 +60,22 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		public void ExecScript(string script, Tuple<string, object>[] args)
+		{
+			try
+			{
+				if (args != null)
+					foreach (var kvp in args)
+						m_scriptScope.SetVariable(kvp.Item1, kvp.Item2);
+
+				m_scriptEngine.Execute(script, m_scriptScope);
+			}
+			catch (Exception e)
+			{
+				var str = "IP error:\n" + e.Message + "\n";
+				m_sender(new Messages.IPOutputMessage() { Text = str });
+			}
+		}
 		sealed class MyStream : Stream
 		{
 			Action<Messages.ClientMessage> m_sender;

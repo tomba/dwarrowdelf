@@ -531,14 +531,24 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void ReceiveMessage(IPCommandMessage msg)
+		void ReceiveMessage(IPExpressionMessage msg)
 		{
-			trace.TraceInformation("IronPythonCommand {0}", msg.Script);
+			trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
 
 			if (m_ipRunner == null)
 				m_ipRunner = new IPRunner(m_world, Send);
 
-			m_ipRunner.Exec(msg.Script, msg.Args);
+			m_ipRunner.ExecExpr(msg.Script);
+		}
+
+		void ReceiveMessage(IPScriptMessage msg)
+		{
+			trace.TraceInformation("IPScriptMessage {0}", msg.Script);
+
+			if (m_ipRunner == null)
+				m_ipRunner = new IPRunner(m_world, Send);
+
+			m_ipRunner.ExecScript(msg.Script, msg.Args);
 		}
 
 		void ReceiveMessage(SaveRequestMessage msg)

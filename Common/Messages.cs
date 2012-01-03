@@ -42,20 +42,33 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public sealed class IPCommandMessage : ServerMessage
+	public sealed class IPExpressionMessage : ServerMessage
 	{
-		public IPCommandMessage()
+		public string Script { get; private set; }
+
+		public IPExpressionMessage(string script)
 		{
+			this.Script = script;
+		}
+	}
+
+	[Serializable]
+	public sealed class IPScriptMessage : ServerMessage
+	{
+		public string Script { get; private set; }
+		public Tuple<string, object>[] Args { get; private set; }
+
+		public IPScriptMessage(string script)
+		{
+			this.Script = script;
+			this.Args = null;
 		}
 
-		public IPCommandMessage(string script, Dictionary<string, object> args)
+		public IPScriptMessage(string script, Dictionary<string, object> args)
 		{
 			this.Script = script;
 			this.Args = args.Select(kvp => new Tuple<string, object>(kvp.Key, kvp.Value)).ToArray();
 		}
-
-		public string Script { get; set; }
-		public Tuple<string, object>[] Args { get; set; }
 	}
 
 	[Serializable]

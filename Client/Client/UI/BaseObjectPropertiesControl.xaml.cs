@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var script = "world.GetObject(obid).Destruct()";
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
+			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}

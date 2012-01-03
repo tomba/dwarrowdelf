@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.serverButton.IsChecked == true)
 			{
-				var msg = new IPCommandMessage() { Script = str };
+				var msg = new IPExpressionMessage(str);
 				GameData.Data.Connection.Send(msg);
 			}
 			else if (this.clientButton.IsChecked == true)

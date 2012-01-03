@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var script = "world.GetObject(obid).MoveTo(p)";
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
+			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var script = "world.GetObject(obid).MoveDir(dir)";
 
-			var msg = new Dwarrowdelf.Messages.IPCommandMessage(script, args);
+			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
 		}
