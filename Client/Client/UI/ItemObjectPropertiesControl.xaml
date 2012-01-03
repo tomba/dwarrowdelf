@@ -4,29 +4,41 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 mc:Ignorable="d">
-	<UniformGrid Columns="2">
-		<TextBlock>ItemID</TextBlock>
-		<TextBlock Text="{Binding ItemID}" />
 
-		<TextBlock>ItemCategory</TextBlock>
-		<TextBlock Text="{Binding ItemCategory}" />
+	<StackPanel Orientation="Vertical">
 
-		<TextBlock>Nutritional Value</TextBlock>
-		<TextBlock Text="{Binding NutritionalValue}" />
+		<UniformGrid Columns="2">
+			<TextBlock>ItemID</TextBlock>
+			<TextBlock Text="{Binding ItemID}" />
 
-		<TextBlock>Refreshment Value</TextBlock>
-		<TextBlock Text="{Binding RefreshmentValue}" />
+			<TextBlock>ItemCategory</TextBlock>
+			<TextBlock Text="{Binding ItemCategory}" />
 
-		<TextBlock>Reserved By</TextBlock>
-		<TextBlock Text="{Binding ReservedBy}" />
+			<TextBlock>Nutritional Value</TextBlock>
+			<TextBlock Text="{Binding NutritionalValue}" />
 
-		<TextBlock>Server Reserved By</TextBlock>
-		<TextBlock Text="{Binding ServerReservedBy}" />
+			<TextBlock>Refreshment Value</TextBlock>
+			<TextBlock Text="{Binding RefreshmentValue}" />
 
-		<TextBlock>IsInstalled</TextBlock>
-		<TextBlock Text="{Binding IsInstalled}" />
+			<TextBlock>Reserved By</TextBlock>
+			<TextBlock Text="{Binding ReservedBy}" />
 
-		<TextBlock>IsClosed</TextBlock>
-		<TextBlock Text="{Binding IsClosed}" />
-	</UniformGrid>
+			<TextBlock>Server Reserved By</TextBlock>
+			<TextBlock Text="{Binding ServerReservedBy}" />
+
+			<TextBlock>IsInstalled</TextBlock>
+			<TextBlock Text="{Binding IsInstalled}" />
+
+			<TextBlock>IsClosed</TextBlock>
+			<TextBlock Text="{Binding IsClosed}" />
+		</UniformGrid>
+
+		<GroupBox Header="Debug">
+			<StackPanel Orientation="Vertical">
+				<ToggleButton IsChecked="{Binding IsInstalled, Mode=OneWay}" Click="Button_Click" Tag="IsInstalled">IsInstalled</ToggleButton>
+				<ToggleButton IsChecked="{Binding IsClosed, Mode=OneWay}" Click="Button_Click" Tag="IsClosed">IsClosed</ToggleButton>
+			</StackPanel>
+		</GroupBox>
+
+	</StackPanel>
 </UserControl>

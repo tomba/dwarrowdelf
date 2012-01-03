@@ -98,7 +98,17 @@ namespace Dwarrowdelf.Server
 		public bool IsInstalled
 		{
 			get { return m_isInstalled; }
-			set { if (m_isInstalled == value) return; m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value); }
+			set
+			{
+				if (m_isInstalled == value)
+					return;
+
+				Debug.Assert(this.Environment != null);
+
+				m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value);
+
+				CheckBlock();
+			}
 		}
 
 		[SaveGameProperty("IsClosed")]
@@ -106,7 +116,21 @@ namespace Dwarrowdelf.Server
 		public bool IsClosed
 		{
 			get { return m_isClosed; }
-			set { if (m_isClosed == value) return; m_isClosed = value; NotifyBool(PropertyID.IsClosed, value); }
+			set { if (m_isClosed == value) return; m_isClosed = value; NotifyBool(PropertyID.IsClosed, value); CheckBlock(); }
+		}
+
+		[SaveGameProperty("IsBlocking")]
+		bool m_isBlocking;
+
+		void CheckBlock()
+		{
+			var block = this.IsInstalled && this.IsClosed;
+
+			if (block != m_isBlocking)
+			{
+				this.Environment.SetTileFlag(this.Location, TileFlags.ItemBlocks, block);
+				m_isBlocking = block;
+			}
 		}
 
 		LivingObject m_wearer;

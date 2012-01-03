@@ -222,5 +222,12 @@ namespace Dwarrowdelf.Client
 				return false;
 			return m_grid[p.Z, p.Y, p.X].Grass;
 		}
+
+		public TileFlags GetFlags(IntPoint3D p)
+		{
+			if (!Adjust(ref p))
+				return TileFlags.None;
+			return m_grid[p.Z, p.Y, p.X].Flags;
+		}
 	}
 }

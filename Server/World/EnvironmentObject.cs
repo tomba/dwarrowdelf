@@ -349,6 +349,11 @@ namespace Dwarrowdelf.Server
 			return m_tileGrid.GetGrass(l);
 		}
 
+		public bool GetTileFlag(IntPoint3D l, TileFlags flag)
+		{
+			return (m_tileGrid.GetFlags(l) & flag) != 0;
+		}
+
 		public bool GetHidden(IntPoint3D l)
 		{
 			// WWW
@@ -427,6 +432,23 @@ namespace Dwarrowdelf.Server
 			this.Version += 1;
 
 			m_tileGrid.SetGrass(l, grass);
+
+			var d = m_tileGrid.GetTileData(l);
+
+			MapChanged(l, d);
+		}
+
+		public void SetTileFlag(IntPoint3D l, TileFlags flag, bool value)
+		{
+			Debug.Assert(this.IsInitialized);
+			Debug.Assert(this.World.IsWritable);
+
+			this.Version += 1;
+
+			if (value)
+				m_tileGrid.SetFlag(l, flag);
+			else
+				m_tileGrid.ClearFlag(l, flag);
 
 			var d = m_tileGrid.GetTileData(l);
 
@@ -792,6 +814,11 @@ namespace Dwarrowdelf.Server
 			return m_grid[p.Z, p.Y, p.X].Grass;
 		}
 
+		public TileFlags GetFlags(IntPoint3D p)
+		{
+			return m_grid[p.Z, p.Y, p.X].Flags;
+		}
+
 
 		public void SetTileData(IntPoint3D p, TileData data)
 		{
@@ -838,6 +865,16 @@ namespace Dwarrowdelf.Server
 		public void SetGrass(IntPoint3D p, bool grass)
 		{
 			m_grid[p.Z, p.Y, p.X].Grass = grass;
+		}
+
+		public void SetFlag(IntPoint3D p, TileFlags flag)
+		{
+			m_grid[p.Z, p.Y, p.X].Flags |= flag;
+		}
+
+		public void ClearFlag(IntPoint3D p, TileFlags flag)
+		{
+			m_grid[p.Z, p.Y, p.X].Flags &= ~flag;
 		}
 	}
 

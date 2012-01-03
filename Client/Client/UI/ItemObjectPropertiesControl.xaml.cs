@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Controls.Primitives;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -22,6 +23,27 @@ namespace Dwarrowdelf.Client.UI
 		public ItemObjectPropertiesControl()
 		{
 			InitializeComponent();
+		}
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			var button = (ToggleButton)sender;
+			var tag = (string)button.Tag;
+
+			var value = button.IsChecked.GetValueOrDefault();
+
+			var ob = (MovableObject)this.DataContext;
+
+			var args = new Dictionary<string, object>()
+			{
+				{ "obid", ob.ObjectID },
+			};
+
+			var script = String.Format("world.GetObject(obid).{0} = {1}", tag, value ? "True" : "False");
+
+			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
+
+			GameData.Data.Connection.Send(msg);
 		}
 	}
 }

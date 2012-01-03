@@ -11,6 +11,7 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 		Grass = 1 << 0,
+		ItemBlocks = 1 << 1,	// an item in the tile blocks movement
 	}
 
 	[Serializable]
@@ -41,6 +42,19 @@ namespace Dwarrowdelf
 					this.Flags |= TileFlags.Grass;
 				else
 					this.Flags &= ~TileFlags.Grass;
+			}
+		}
+
+		public bool ItemBlocks
+		{
+			get { return (this.Flags & TileFlags.ItemBlocks) != 0; }
+
+			set
+			{
+				if (value)
+					this.Flags |= TileFlags.ItemBlocks;
+				else
+					this.Flags &= ~TileFlags.ItemBlocks;
 			}
 		}
 
