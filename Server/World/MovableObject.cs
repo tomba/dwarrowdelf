@@ -40,7 +40,8 @@ namespace Dwarrowdelf.Server
 		public override void Destruct()
 		{
 			// use MoveToLow to force the move
-			this.MoveToLow(null, new IntPoint3D());
+			if (this.Parent != null)
+				MoveToLow(null, new IntPoint3D());
 
 			base.Destruct();
 		}
@@ -90,7 +91,10 @@ namespace Dwarrowdelf.Server
 			if (dst != null && !dst.OkToAddChild(this, dstLoc))
 				return false;
 
-			MoveToLow(dst, dstLoc);
+			if (dst != this.Parent)
+				MoveToLow(dst, dstLoc);
+			else
+				MoveToLow(dstLoc);
 
 			return true;
 		}
@@ -138,57 +142,38 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
+			Debug.Assert(this.Parent != dst);
 
 			var src = this.Parent;
 			var srcLoc = this.Location;
 
-#if DEBUG
-			if (src == dst)
-				Trace.TraceWarning("MoveToLow(env, pos) shouldn't be used when moving inside one environment");
-#endif
+			if (src != null)
+				src.RemoveChild(this);
 
-			if (src != dst)
-			{
-				if (src != null)
-					src.RemoveChild(this);
+			this.Parent = dst;
+			this.Location = dstLoc;
 
-				this.Parent = dst;
-			}
+			if (dst != null)
+				dst.AddChild(this);
 
-			if (srcLoc != dstLoc)
-			{
-				this.Location = dstLoc;
-				if (dst != null && src == dst)
-					dst.MoveChild(this, srcLoc, dstLoc);
-			}
-
-			if (src != dst)
-			{
-				if (dst != null)
-					dst.AddChild(this);
-			}
-
-			if (src == dst)
-			{
-				this.World.AddChange(new ObjectMoveLocationChange(this, srcLoc, dstLoc));
-			}
-			else
-			{
-				OnEnvironmentChanged(src, dst);
-				this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
-			}
+			OnEnvironmentChanged(src, dst);
+			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
 
 		void MoveToLow(IntPoint3D location)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(!this.IsDestructed);
+			Debug.Assert(this.Parent != null);
 
 			var oldLocation = this.Location;
 
+			if (oldLocation == location)
+				return;
+
 			this.Location = location;
-			if (this.Parent != null)
-				this.Parent.MoveChild(this, oldLocation, location);
+
+			this.Parent.MoveChild(this, oldLocation, location);
 
 			this.World.AddChange(new ObjectMoveLocationChange(this, oldLocation, location));
 		}
