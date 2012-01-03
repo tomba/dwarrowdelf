@@ -24,8 +24,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			m_item = item;
 			m_location = location;
 
-			m_item.ReservedBy = this;
-
 			m_state = 0;
 
 			AddSubJob(new AssignmentGroups.HaulItemAssignment(this, env, location, item));
@@ -38,8 +36,6 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		protected override void OnStatusChanged(JobStatus status)
 		{
-			m_item.ReservedBy = null;
-
 			base.OnStatusChanged(status);
 		}
 

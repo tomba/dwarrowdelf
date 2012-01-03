@@ -42,6 +42,8 @@ namespace Dwarrowdelf.Client
 				Location = location,
 			};
 
+			item.ReservedBy = this;
+
 			m_jobDataList.Add(data);
 		}
 
@@ -81,6 +83,8 @@ namespace Dwarrowdelf.Client
 			m_jobDataList.Remove(data);
 
 			GameData.Data.Jobs.Remove(job);
+
+			data.Item.ReservedBy = null;
 		}
 
 		#endregion
