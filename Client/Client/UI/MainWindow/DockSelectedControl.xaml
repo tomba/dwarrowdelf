@@ -16,7 +16,6 @@
 		<ui:MyInteriorsConverter x:Key="myInteriorsConverter" />
 		<ui:MyWatersConverter x:Key="myWatersConverter" />
 		<ui:MyBuildingsConverter x:Key="myBuildingsConverter" />
-		<ui:MyGrassesConverter x:Key="myGrassesConverter" />
 	</UserControl.Resources>
 
 	<GroupBox Header="Selection">
@@ -59,8 +58,8 @@
 				<TextBlock><Run Text="MapElements: "/><InlineUIContainer>
 						<TextBlock Text="{Binding MapElements, Converter={StaticResource myBuildingsConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="Grass: "/><InlineUIContainer>
-						<TextBlock Text="{Binding Grasses, Converter={StaticResource myGrassesConverter}}" />
+				<TextBlock><Run Text="Flags: "/><InlineUIContainer>
+						<TextBlock Text="{Binding Flags}" />
 					</InlineUIContainer></TextBlock>
 			</StackPanel>
 

@@ -163,6 +163,11 @@ namespace Dwarrowdelf.Client
 			return GetTileFlags(ml, TileFlags.Grass);
 		}
 
+		public TileFlags GetTileFlags(IntPoint3D l)
+		{
+			return m_tileGrid.GetFlags(l);
+		}
+
 		public bool GetTileFlags(IntPoint3D l, TileFlags flags)
 		{
 			return (m_tileGrid.GetFlags(l) & flags) != 0;

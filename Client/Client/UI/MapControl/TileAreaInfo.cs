@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("Terrains");
 			Notify("WaterLevels");
 			Notify("MapElements");
-			Notify("Grasses");
+			Notify("Flags");
 		}
 
 		void MapTerrainChanged(IntPoint3D l)
@@ -173,16 +173,16 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<bool> Grasses
+		public TileFlags Flags
 		{
 			get
 			{
 				if (m_env == null)
-					return null;
+					return TileFlags.None;
 
-				return m_selection.SelectionCuboid.Range().
-					Select(p => m_env.GetGrass(p)).
-					Distinct();
+				return m_selection.SelectionCuboid.Range()
+					.Select(p => m_env.GetTileFlags(p))
+					.Aggregate(TileFlags.None, (f, v) => f |= v);
 			}
 		}
 

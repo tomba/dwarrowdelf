@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("TerrainMaterial");
 			Notify("InteriorMaterial");
 			Notify("WaterLevel");
-			Notify("Grass");
+			Notify("Flags");
 			Notify("MapElement");
 		}
 
@@ -186,13 +186,13 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public bool Grass
+		public TileFlags Flags
 		{
 			get
 			{
 				if (this.Environment == null)
-					return false;
-				return this.Environment.GetGrass(this.Location);
+					return TileFlags.None;
+				return this.Environment.GetTileFlags(this.Location);
 			}
 		}
 

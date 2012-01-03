@@ -66,9 +66,4 @@ namespace Dwarrowdelf.Client.UI
 	{
 		public MyBuildingsConverter() : base(item => item.Description) { }
 	}
-
-	sealed class MyGrassesConverter : ListConverter<bool>
-	{
-		public MyGrassesConverter() : base(item => item.ToString()) { }
-	}
 }

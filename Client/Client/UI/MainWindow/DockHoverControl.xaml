@@ -31,7 +31,7 @@
 			<TextBlock Grid.Column="0" Grid.Row="1" Text="Terrain:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="2" Text="Interior:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="3" Text="Water:" Margin="2" />
-			<TextBlock Grid.Column="0" Grid.Row="4" Text="Grass:" Margin="2" />
+			<TextBlock Grid.Column="0" Grid.Row="4" Text="Flags:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="5" Text="Map Element:" Margin="2" />
 
 			<TextBlock Grid.Column="1" Grid.Row="0" Margin="2">
@@ -64,7 +64,7 @@
 
 			<TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding WaterLevel, Mode=OneWay}" Margin="2" />
 
-			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Grass, Mode=OneWay}" Margin="2" />
+			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Flags, Mode=OneWay}" Margin="2" />
 
 			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding MapElement.Description, Mode=OneWay}" Margin="2" />
 
