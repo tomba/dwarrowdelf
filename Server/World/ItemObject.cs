@@ -115,14 +115,9 @@ namespace Dwarrowdelf.Server
 			get { return m_isInstalled; }
 			set
 			{
-				if (m_isInstalled == value)
-					return;
-
 				Debug.Assert(this.Environment != null);
-
-				m_isInstalled = value;
-				NotifyBool(PropertyID.IsInstalled, value);
-
+				Debug.Assert(this.ItemCategory == Dwarrowdelf.ItemCategory.Furniture);
+				if (m_isInstalled == value) return; m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value);
 				CheckBlock();
 			}
 		}
@@ -132,7 +127,12 @@ namespace Dwarrowdelf.Server
 		public bool IsClosed
 		{
 			get { return m_isClosed; }
-			set { if (m_isClosed == value) return; m_isClosed = value; NotifyBool(PropertyID.IsClosed, value); CheckBlock(); }
+			set
+			{
+				Debug.Assert(this.ItemID == Dwarrowdelf.ItemID.Door);
+				if (m_isClosed == value) return; m_isClosed = value; NotifyBool(PropertyID.IsClosed, value);
+				CheckBlock();
+			}
 		}
 
 		[SaveGameProperty("IsBlocking")]
