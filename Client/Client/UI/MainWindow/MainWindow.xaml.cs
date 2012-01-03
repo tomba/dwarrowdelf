@@ -445,6 +445,20 @@ for p in area.Range():
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
+			var toolData = MainWindowToolBar.ToolDatas.Select(kvp => kvp.Value).FirstOrDefault(td => td.Key == e.Key);
+
+			if (toolData != null)
+			{
+				this.mainWindowTools.ToolMode = toolData.Mode;
+
+				if (e.Key == Key.Escape)
+					map.Focus();
+
+				e.Handled = true;
+				base.OnKeyDown(e);
+				return;
+			}
+
 			switch (e.Key)
 			{
 				case Key.OemPeriod:
@@ -454,39 +468,6 @@ for p in area.Range():
 
 				case Key.Space:
 					ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
-					break;
-
-				case Key.B:
-					this.mainWindowTools.ToolMode = ClientToolMode.ConstructBuilding;
-					break;
-				case Key.M:
-					this.mainWindowTools.ToolMode = ClientToolMode.DesignationMine;
-					break;
-				case Key.N:
-					this.mainWindowTools.ToolMode = ClientToolMode.InstallFurniture;
-					break;
-				case Key.R:
-					this.mainWindowTools.ToolMode = ClientToolMode.DesignationRemove;
-					break;
-				case Key.F:
-					this.mainWindowTools.ToolMode = ClientToolMode.DesignationFellTree;
-					break;
-				case Key.T:
-					this.mainWindowTools.ToolMode = ClientToolMode.SetTerrain;
-					break;
-				case Key.S:
-					this.mainWindowTools.ToolMode = ClientToolMode.CreateStockpile;
-					break;
-				case Key.L:
-					this.mainWindowTools.ToolMode = ClientToolMode.CreateLiving;
-					break;
-				case Key.I:
-					this.mainWindowTools.ToolMode = ClientToolMode.CreateItem;
-					break;
-
-				case Key.Escape:
-					this.mainWindowTools.ToolMode = ClientToolMode.Info;
-					map.Focus();
 					break;
 
 				default:

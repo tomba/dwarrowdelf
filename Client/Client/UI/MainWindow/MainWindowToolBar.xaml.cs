@@ -26,22 +26,22 @@ namespace Dwarrowdelf.Client.UI
 
 			ToolDatas = new Dictionary<ClientToolMode, ToolData>();
 
-			Action<ClientToolMode, string, char> add = (i, n, k) => ToolDatas[i] = new ToolData(i, n, k, (DrawingBrush)res[i.ToString()]);
+			Action<ClientToolMode, string, Key> add = (i, n, k) => ToolDatas[i] = new ToolData(i, n, k, (DrawingBrush)res[i.ToString()]);
 
-			add(ClientToolMode.Info, "Info", 'i');
+			add(ClientToolMode.Info, "Info", Key.Escape);
 
-			add(ClientToolMode.DesignationMine, "Mine", 'm');
-			add(ClientToolMode.DesignationStairs, "Mine stairs", 's');
-			add(ClientToolMode.DesignationFellTree, "Fell tree", 'f');
-			add(ClientToolMode.DesignationRemove, "Remove", 'r');
+			add(ClientToolMode.DesignationMine, "Mine", Key.M);
+			add(ClientToolMode.DesignationStairs, "Mine stairs", Key.S);
+			add(ClientToolMode.DesignationFellTree, "Fell tree", Key.F);
+			add(ClientToolMode.DesignationRemove, "Remove", Key.R);
 
-			add(ClientToolMode.CreateStockpile, "Create stockpile", 'p');
-			add(ClientToolMode.InstallFurniture, "Install furniture", 'n');
+			add(ClientToolMode.CreateStockpile, "Create stockpile", Key.P);
+			add(ClientToolMode.InstallFurniture, "Install furniture", Key.N);
 
-			add(ClientToolMode.CreateLiving, "Create living", 'l');
-			add(ClientToolMode.CreateItem, "Create item", 'i');
-			add(ClientToolMode.SetTerrain, "Set terrain", 't');
-			add(ClientToolMode.ConstructBuilding, "Construct building", 'b');
+			add(ClientToolMode.CreateLiving, "Create living", Key.L);
+			add(ClientToolMode.CreateItem, "Create item", Key.I);
+			add(ClientToolMode.SetTerrain, "Set terrain", Key.T);
+			add(ClientToolMode.ConstructBuilding, "Construct building", Key.B);
 		}
 
 		public MainWindowToolBar()
@@ -256,17 +256,19 @@ namespace Dwarrowdelf.Client.UI
 
 	sealed class ToolData
 	{
-		public ToolData(ClientToolMode mode, string name, char key, DrawingBrush brush)
+		public ToolData(ClientToolMode mode, string name, Key key, DrawingBrush brush)
 		{
 			this.Mode = mode;
 			this.Name = name;
-			this.ToolTip = String.Format("{0} ({1})", this.Name, char.ToUpper(key));
+			this.Key = key;
+			this.ToolTip = String.Format("{0} ({1})", this.Name, key);
 			this.Brush = brush;
 			this.Brush.Freeze();
 		}
 
 		public ClientToolMode Mode { get; private set; }
 		public string Name { get; private set; }
+		public Key Key { get; private set; }
 		public string ToolTip { get; private set; }
 		public DrawingBrush Brush { get; private set; }
 	}
