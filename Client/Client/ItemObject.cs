@@ -58,6 +58,19 @@ namespace Dwarrowdelf.Client
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }
 		public ItemID ItemID { get { return this.ItemInfo.ID; } }
 
+		bool UseAltSymbol()
+		{
+			if (this.ItemID == Dwarrowdelf.ItemID.Door)
+				return this.IsClosed;
+
+			return false;
+		}
+
+		void SetSymbol()
+		{
+			this.SymbolID = ItemSymbols.GetSymbol(this.ItemID, UseAltSymbol());
+		}
+
 		public ArmorInfo ArmorInfo { get { return this.ItemInfo.ArmorInfo; } }
 		public WeaponInfo WeaponInfo { get { return this.ItemInfo.WeaponInfo; } }
 
@@ -109,7 +122,7 @@ namespace Dwarrowdelf.Client
 		public bool IsClosed
 		{
 			get { return m_isClosed; }
-			private set { m_isClosed = value; Notify("IsClosed"); }
+			private set { m_isClosed = value; Notify("IsClosed"); SetSymbol(); }
 		}
 
 		string m_serverReservedBy;
@@ -154,7 +167,6 @@ namespace Dwarrowdelf.Client
 			var data = (ItemData)_data;
 
 			this.ItemInfo = Dwarrowdelf.Items.GetItemInfo(data.ItemID);
-			this.SymbolID = ItemSymbols.GetSymbol(this.ItemID);
 
 			base.Deserialize(_data);
 
@@ -187,6 +199,8 @@ namespace Dwarrowdelf.Client
 						this.Description = matInfo.Adjective + " " + this.ItemInfo.Name;
 					break;
 			}
+
+			SetSymbol();
 		}
 
 		public override string ToString()
@@ -210,12 +224,14 @@ namespace Dwarrowdelf.Client
 	{
 		// ItemID -> SymbolID
 		static SymbolID[] s_symbols;
+		static SymbolID[] s_altSymbols;
 
 		static ItemSymbols()
 		{
 			var arr = (ItemID[])Enum.GetValues(typeof(ItemID));
 			var max = arr.Max(i => (int)i);
 			s_symbols = new SymbolID[max + 1];
+			s_altSymbols = new SymbolID[max + 1];
 
 			var set = new Action<ItemID, SymbolID>((lid, sid) => s_symbols[(int)lid] = sid);
 
@@ -243,11 +259,18 @@ namespace Dwarrowdelf.Client
 				var symbolID = symbolIDs.Single(sid => sid.ToString() == itemID.ToString());
 				s_symbols[i] = symbolID;
 			}
+
+			// alternate symbols
+			set = new Action<ItemID, SymbolID>((lid, sid) => s_altSymbols[(int)lid] = sid);
+
+			set(ItemID.Door, SymbolID.DoorClosed);
 		}
 
-		public static SymbolID GetSymbol(ItemID id)
+		public static SymbolID GetSymbol(ItemID itemID, bool useAlt)
 		{
-			var sym = s_symbols[(int)id];
+			SymbolID[] symbols = useAlt ? s_altSymbols : s_symbols;
+
+			var sym = symbols[(int)itemID];
 
 			if (sym == SymbolID.Undefined)
 				return SymbolID.Unknown;

@@ -58,6 +58,9 @@ namespace Dwarrowdelf.Client
 			get { return m_color; }
 			private set
 			{
+				if (m_color == value)
+					return;
+
 				m_color = value;
 
 				if (this.Environment != null)
@@ -79,6 +82,9 @@ namespace Dwarrowdelf.Client
 			get { return m_symbolID; }
 			protected set
 			{
+				if (m_symbolID == value)
+					return;
+
 				m_symbolID = value;
 
 				if (this.Environment != null)
@@ -102,6 +108,9 @@ namespace Dwarrowdelf.Client
 			get { return m_materialID; }
 			private set
 			{
+				if (m_materialID == value)
+					return;
+
 				m_materialID = value;
 				m_materialInfo = Materials.GetMaterial(this.MaterialID);
 				Notify("MaterialID");

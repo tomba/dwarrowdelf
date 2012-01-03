@@ -61,6 +61,7 @@
 	<CharSymbol ID="Chair" X="20" Y="40" W="60" H="60" Char="╥" />
 	<CharSymbol ID="Table" Char="╤" />
 	<CharSymbol ID="Door" Char="O" />
+	<CharSymbol ID="DoorClosed" Char="O" Reverse="True" Opaque="True" />
 	<CharSymbol ID="Bed" Char="Θ" />
 	<CharSymbol ID="Barrel" Char="÷" />
 	<CharSymbol ID="Bucket" Char="û" />

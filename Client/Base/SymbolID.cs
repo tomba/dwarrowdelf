@@ -65,6 +65,7 @@ namespace Dwarrowdelf.Client
 		Chair,
 		Table,
 		Door,
+		DoorClosed,
 		Bed,
 		Barrel,
 		Bucket,
