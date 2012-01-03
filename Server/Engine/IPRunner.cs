@@ -22,8 +22,8 @@ namespace Dwarrowdelf.Server
 			m_scriptOutputStream = new MyStream(sender);
 
 			m_scriptEngine = IronPython.Hosting.Python.CreateEngine();
-			m_scriptEngine.Runtime.IO.SetOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
-			m_scriptEngine.Runtime.IO.SetErrorOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
+
+			InitRuntime(m_scriptEngine.Runtime);
 
 			m_exprScope = m_scriptEngine.CreateScope();
 			InitScope(m_exprScope, world);
@@ -32,16 +32,33 @@ namespace Dwarrowdelf.Server
 			InitScope(m_scriptScope, world);
 		}
 
+		void InitRuntime(ScriptRuntime runtime)
+		{
+			runtime.IO.SetOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
+			runtime.IO.SetErrorOutput(m_scriptOutputStream, System.Text.Encoding.Unicode);
+
+			foreach (var assemblyName in new string[] { "Dwarrowdelf.Common", "Dwarrowdelf.Server.World" })
+			{
+				var assembly = runtime.Host.PlatformAdaptationLayer.LoadAssembly(assemblyName);
+				runtime.LoadAssembly(assembly);
+			}
+		}
+
 		void InitScope(ScriptScope scope, World world)
 		{
-			scope.SetVariable("world", world);
-			scope.SetVariable("get", new Func<object, BaseObject>(world.IPGet));
-			scope.SetVariable("getitem", new Func<object, ItemObject>(world.IPGetItem));
-			scope.SetVariable("getenv", new Func<object, EnvironmentObject>(world.IPGetEnv));
-			scope.SetVariable("getliving", new Func<object, LivingObject>(world.IPGetLiving));
+			var globals = new Dictionary<string, object>()
+			{
+				{ "world", world },
+				{ "get", new Func<object, BaseObject>(world.IPGet) },
+				{ "getitem", new Func<object, ItemObject>(world.IPGetItem) },
+				{ "getenv", new Func<object, EnvironmentObject>(world.IPGetEnv) },
+				{ "getliving", new Func<object, LivingObject>(world.IPGetLiving) },
+			};
 
-			m_scriptEngine.Execute("import clr", scope);
-			m_scriptEngine.Execute("clr.AddReference('Dwarrowdelf.Common')", scope);
+			foreach (var kvp in globals)
+				scope.SetVariable(kvp.Key, kvp.Value);
+
+			// XXX perhaps this can also be done with C# somehow...
 			m_scriptEngine.Execute("import Dwarrowdelf", scope);
 		}
 

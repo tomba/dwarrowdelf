@@ -252,59 +252,6 @@ namespace Dwarrowdelf.Server
 			method(this, msg);
 		}
 
-		void ReceiveMessage(SetTilesMessage msg)
-		{
-			ObjectID mapID = msg.MapID;
-			IntCuboid r = msg.Cube;
-
-			var env = m_world.FindObject<EnvironmentObject>(mapID);
-			if (env == null)
-				throw new Exception();
-
-			foreach (var p in r.Range())
-			{
-				if (!env.Contains(p))
-					continue;
-
-				var tileData = env.GetTileData(p);
-
-				if (msg.InteriorID.HasValue)
-					tileData.InteriorID = msg.InteriorID.Value;
-				if (msg.InteriorMaterialID.HasValue)
-					tileData.InteriorMaterialID = msg.InteriorMaterialID.Value;
-
-				if (msg.TerrainID.HasValue)
-					tileData.TerrainID = msg.TerrainID.Value;
-				if (msg.TerrainMaterialID.HasValue)
-					tileData.TerrainMaterialID = msg.TerrainMaterialID.Value;
-
-				if (msg.WaterLevel.HasValue)
-					tileData.WaterLevel = msg.WaterLevel.Value;
-				if (msg.Grass.HasValue)
-					tileData.Grass = msg.Grass.Value;
-
-				env.SetTileData(p, tileData);
-			}
-
-			env.ScanWaterTiles();
-		}
-
-		void ReceiveMessage(CreateItemMessage msg)
-		{
-			var env = this.World.FindObject<EnvironmentObject>(msg.EnvironmentID);
-
-			if (env == null)
-				throw new Exception();
-
-			foreach (var p in msg.Area.Range())
-			{
-				var builder = new ItemObjectBuilder(msg.ItemID, msg.MaterialID);
-				var item = builder.Create(this.World);
-
-				item.MoveTo(env, p);
-			}
-		}
-
 		void ReceiveMessage(CreateLivingMessage msg)
 		{
 			var controllables = new List<LivingObject>();
@@ -373,26 +320,6 @@ namespace Dwarrowdelf.Server
 
 			foreach (var l in controllables)
 				AddControllable(l);
-		}
-
-		void ReceiveMessage(CreateBuildingMessage msg)
-		{
-			ObjectID mapID = msg.MapID;
-			var r = msg.Area;
-			var id = msg.ID;
-
-			var env = m_world.FindObject<EnvironmentObject>(mapID);
-			if (env == null)
-				throw new Exception();
-
-			if (BuildingObject.VerifyBuildSite(env, r) == false)
-			{
-				trace.TraceWarning("Bad site for building, ignoring CreateBuildingMessage");
-				return;
-			}
-
-			var builder = new BuildingObjectBuilder(id, r);
-			builder.Create(m_world, env);
 		}
 
 		void ReceiveMessage(SetWorldConfigMessage msg)

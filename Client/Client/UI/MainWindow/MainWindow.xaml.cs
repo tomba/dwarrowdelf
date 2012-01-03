@@ -125,34 +125,6 @@ namespace Dwarrowdelf.Client.UI
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.FellTree);
 					break;
 
-				case ClientToolMode.SetTerrain:
-					{
-						var dialog = new SetTerrainDialog();
-						dialog.Owner = this;
-						if (m_setTerrainData != null)
-							dialog.Data = m_setTerrainData;
-						var res = dialog.ShowDialog();
-
-						if (res == true)
-						{
-							var data = dialog.Data;
-							m_setTerrainData = data;
-
-							GameData.Data.Connection.Send(new SetTilesMessage()
-							{
-								MapID = map.Environment.ObjectID,
-								Cube = selection.SelectionCuboid,
-								TerrainID = data.TerrainID,
-								TerrainMaterialID = data.TerrainMaterialID,
-								InteriorID = data.InteriorID,
-								InteriorMaterialID = data.InteriorMaterialID,
-								Grass = data.Grass,
-								WaterLevel = data.Water.HasValue ? (data.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null,
-							});
-						}
-					}
-					break;
-
 				case ClientToolMode.CreateStockpile:
 					{
 						var stockpile = new Stockpile(env, selection.SelectionIntRectZ);
@@ -168,6 +140,62 @@ namespace Dwarrowdelf.Client.UI
 					}
 					break;
 
+				case ClientToolMode.SetTerrain:
+					{
+						var dialog = new SetTerrainDialog();
+						dialog.Owner = this;
+						if (m_setTerrainData != null)
+							dialog.Data = m_setTerrainData;
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							var data = dialog.Data;
+							m_setTerrainData = data;
+
+							var args = new Dictionary<string, object>()
+							{
+								{ "envID", map.Environment.ObjectID },
+								{ "cube", selection.SelectionCuboid },
+								{ "terrainID", data.TerrainID },
+								{ "terrainMaterialID", data.TerrainMaterialID },
+								{ "interiorID", data.InteriorID },
+								{ "interiorMaterialID", data.InteriorMaterialID },
+								{ "grass", data.Grass },
+								{ "waterLevel", data.Water.HasValue ? (data.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null },
+							};
+
+							var script =
+@"env = world.GetObject(envID)
+for p in cube.Range():
+	td = env.GetTileData(p)
+
+	if terrainID != None:
+		td.TerrainID = terrainID
+	if terrainMaterialID != None:
+		td.TerrainMaterialID = terrainMaterialID
+
+	if interiorID != None:
+		td.InteriorID = interiorID
+	if interiorMaterialID != None:
+		td.InteriorMaterialID = interiorMaterialID
+
+	if grass != None:
+		td.Grass = grass
+	if waterLevel != None:
+		td.WaterLevel = waterLevel
+
+	env.SetTileData(p, td)
+
+env.ScanWaterTiles()
+";
+							var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
+
+							GameData.Data.Connection.Send(msg);
+						}
+					}
+					break;
+
 				case ClientToolMode.CreateItem:
 					{
 						var dialog = new CreateItemDialog();
@@ -177,13 +205,24 @@ namespace Dwarrowdelf.Client.UI
 
 						if (res == true)
 						{
-							GameData.Data.Connection.Send(new CreateItemMessage()
+							var args = new Dictionary<string, object>()
 							{
-								ItemID = dialog.ItemID,
-								MaterialID = dialog.MaterialID,
-								EnvironmentID = dialog.Environment != null ? dialog.Environment.ObjectID : ObjectID.NullObjectID,
-								Area = dialog.Area,
-							});
+								{ "envID", dialog.Environment.ObjectID },
+								{ "area", dialog.Area },
+								{ "itemID", dialog.ItemID },
+								{ "materialID", dialog.MaterialID },
+							};
+
+							var script =
+@"env = world.GetObject(envID)
+for p in area.Range():
+	builder = Dwarrowdelf.Server.ItemObjectBuilder(itemID, materialID)
+	item = builder.Create(world)
+	item.MoveTo(env, p)";
+
+							var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
+
+							GameData.Data.Connection.Send(msg);
 						}
 					}
 					break;

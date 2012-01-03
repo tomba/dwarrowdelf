@@ -259,33 +259,6 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
-	public sealed class SetTilesMessage : DebugMessage
-	{
-		public ObjectID MapID { get; set; }
-		public IntCuboid Cube { get; set; }
-
-		public InteriorID? InteriorID { get; set; }
-		public MaterialID? InteriorMaterialID { get; set; }
-
-		public TerrainID? TerrainID { get; set; }
-		public MaterialID? TerrainMaterialID { get; set; }
-
-		public byte? WaterLevel { get; set; }
-
-		public bool? Grass { get; set; }
-	}
-
-	[Serializable]
-	public sealed class CreateItemMessage : DebugMessage
-	{
-		public ItemID ItemID;
-		public MaterialID MaterialID;
-
-		public ObjectID EnvironmentID;
-		public IntCuboid Area;
-	}
-
-	[Serializable]
 	public sealed class CreateLivingMessage : DebugMessage
 	{
 		public ObjectID EnvironmentID;
@@ -296,13 +269,5 @@ namespace Dwarrowdelf.Messages
 
 		public bool IsControllable;
 		public bool IsHerd;
-	}
-
-	[Serializable]
-	public sealed class CreateBuildingMessage : DebugMessage
-	{
-		public ObjectID MapID { get; set; }
-		public IntRectZ Area { get; set; }
-		public BuildingID ID { get; set; }
 	}
 }
