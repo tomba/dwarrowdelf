@@ -111,6 +111,12 @@ namespace Dwarrowdelf.Server
 			m_world = m_engine.World;
 
 			trace.Header = String.Format("Player({0})", m_userID);
+
+			// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
+			System.Threading.Tasks.Task.Factory.StartNew(delegate
+			{
+				m_ipRunner = new IPRunner(m_world, Send);
+			});
 		}
 
 		void AddControllable(LivingObject living)
@@ -462,18 +468,12 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("IPExpressionMessage {0}", msg.Script);
 
-			if (m_ipRunner == null)
-				m_ipRunner = new IPRunner(m_world, Send);
-
 			m_ipRunner.ExecExpr(msg.Script);
 		}
 
 		void ReceiveMessage(IPScriptMessage msg)
 		{
 			trace.TraceInformation("IPScriptMessage {0}", msg.Script);
-
-			if (m_ipRunner == null)
-				m_ipRunner = new IPRunner(m_world, Send);
 
 			m_ipRunner.ExecScript(msg.Script, msg.Args);
 		}
