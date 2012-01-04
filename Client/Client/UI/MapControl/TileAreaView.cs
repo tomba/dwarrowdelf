@@ -16,6 +16,7 @@ namespace Dwarrowdelf.Client.UI
 		public TileAreaView()
 		{
 			m_objects = new MovableObjectCollection();
+			this.Objects = new ReadOnlyMovableObjectCollection(m_objects);
 		}
 
 		public EnvironmentObject Environment
@@ -122,7 +123,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<MovableObject> Objects { get { return m_objects; } }
+		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
 		public IEnumerable<Tuple<InteriorInfo, MaterialInfo>> Interiors
 		{

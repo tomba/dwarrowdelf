@@ -16,56 +16,76 @@ namespace Dwarrowdelf.Client.UI
 		public TileView()
 		{
 			m_objects = new MovableObjectCollection();
+			this.Objects = new ReadOnlyMovableObjectCollection(m_objects);
+		}
+
+		public bool IsEnabled { get { return m_environment != null; } }
+
+		public void ClearTarget()
+		{
+			SetTarget(null, new IntPoint3D());
+		}
+
+		public void SetTarget(EnvironmentObject environment, IntPoint3D location)
+		{
+			bool update = false;
+
+			var oldEnv = m_environment;
+			var newEnv = environment;
+
+			if (oldEnv != newEnv)
+			{
+				if (oldEnv != null)
+				{
+					oldEnv.MapTileTerrainChanged -= OnMapTerrainChanged;
+					oldEnv.MapTileObjectChanged -= OnMapObjectChanged;
+				}
+
+				m_environment = newEnv;
+
+				if (newEnv != null)
+				{
+					newEnv.MapTileTerrainChanged += OnMapTerrainChanged;
+					newEnv.MapTileObjectChanged += OnMapObjectChanged;
+				}
+
+				update = true;
+			}
+
+			var newLoc = location;
+			var oldLoc = m_location;
+
+			if (oldLoc != newLoc)
+			{
+				m_location = newLoc;
+				update = true;
+			}
+
+			if (update)
+			{
+				UpdateObjectList();
+
+				if (oldEnv != newEnv)
+					Notify("Environment");
+
+				if (oldLoc != newLoc)
+					Notify("Location");
+
+				NotifyTileTerrainChanges();
+
+				if ((oldEnv == null) != (newEnv == null))
+					Notify("IsEnabled");
+			}
 		}
 
 		public EnvironmentObject Environment
 		{
 			get { return m_environment; }
-
-			set
-			{
-				if (m_environment == value)
-					return;
-
-				if (m_environment != null)
-				{
-					m_environment.MapTileTerrainChanged -= OnMapTerrainChanged;
-					m_environment.MapTileObjectChanged -= OnMapObjectChanged;
-				}
-
-				m_environment = value;
-
-				if (m_environment != null)
-				{
-					m_environment.MapTileTerrainChanged += OnMapTerrainChanged;
-					m_environment.MapTileObjectChanged += OnMapObjectChanged;
-				}
-
-				Notify("Environment");
-				NotifyTileChanges();
-			}
 		}
 
 		public IntPoint3D Location
 		{
 			get { return m_location; }
-
-			set
-			{
-				if (m_location == value)
-					return;
-
-				m_location = value;
-
-				Notify("Location");
-				NotifyTileChanges();
-			}
-		}
-
-		void NotifyTileChanges()
-		{
-			NotifyTileTerrainChanges();
-			NotifyTileObjectChanges();
 		}
 
 		void NotifyTileTerrainChanges()
@@ -79,9 +99,10 @@ namespace Dwarrowdelf.Client.UI
 			Notify("MapElement");
 		}
 
-		void NotifyTileObjectChanges()
+		void UpdateObjectList()
 		{
-			m_objects.Clear();
+			if (m_objects.Count > 0)
+				m_objects.Clear();
 
 			if (this.Environment != null)
 			{
@@ -124,7 +145,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<MovableObject> Objects { get { return m_objects; } }
+		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
 		public InteriorInfo Interior
 		{

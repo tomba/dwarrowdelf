@@ -100,43 +100,41 @@ namespace Dwarrowdelf.Client.UI
 
 		void m_mapControl_MouseLeave(object sender, MouseEventArgs e)
 		{
-			var p = e.GetPosition(m_mapControl);
-			UpdateHoverTileInfo(p);
+			UpdateHoverTileInfo();
 		}
 
 		void m_mapControl_MouseMove(object sender, MouseEventArgs e)
 		{
-			var p = e.GetPosition(m_mapControl);
-			UpdateHoverTileInfo(p);
+			UpdateHoverTileInfo();
 		}
 
 		void m_mapControl_TileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
 		{
-			var p = Mouse.GetPosition(m_mapControl);
-			UpdateHoverTileInfo(p);
+			UpdateHoverTileInfo();
 		}
 
 		public Point MousePos { get; private set; }
 		public IntPoint ScreenLocation { get; private set; }
 
-		void UpdateHoverTileInfo(Point p)
+		void UpdateHoverTileInfo()
 		{
+			Point p;
 			IntPoint sl;
-			IntPoint3D ml;
-			EnvironmentObject env;
 
 			if (!m_mapControl.IsMouseOver)
 			{
-				sl = new IntPoint();
-				ml = new IntPoint3D();
 				p = new Point();
-				env = null;
+				sl = new IntPoint();
+
+				this.HoverTileView.ClearTarget();
 			}
 			else
 			{
+				p = Mouse.GetPosition(m_mapControl);
 				sl = m_mapControl.ScreenPointToIntScreenTile(p);
-				ml = m_mapControl.ScreenPointToMapLocation(p);
-				env = m_mapControl.Environment;
+				var ml = m_mapControl.ScreenPointToMapLocation(p);
+
+				this.HoverTileView.SetTarget(m_mapControl.Environment, ml);
 			}
 
 			if (p != this.MousePos)
@@ -150,9 +148,6 @@ namespace Dwarrowdelf.Client.UI
 				this.ScreenLocation = sl;
 				Notify("ScreenLocation");
 			}
-
-			this.HoverTileView.Environment = env;
-			this.HoverTileView.Location = ml;
 		}
 
 		public void InvalidateTileData()
@@ -580,7 +575,7 @@ namespace Dwarrowdelf.Client.UI
 
 			this.Selection = new MapSelection();
 
-			this.HoverTileView.Environment = env;
+			UpdateHoverTileInfo();
 
 			Notify("Environment");
 		}
@@ -593,6 +588,8 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnZChanged(int z)
 		{
+			UpdateHoverTileInfo();
+
 			Notify("Z");
 		}
 
