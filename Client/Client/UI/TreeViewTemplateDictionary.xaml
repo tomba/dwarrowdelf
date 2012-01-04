@@ -4,11 +4,11 @@
 					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 					x:Class="Dwarrowdelf.Client.UI.TreeViewTemplateDictionary">
 
-	<DataTemplate DataType="{x:Type local:BaseObject}">
-		<DataTemplate.Resources>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-		</DataTemplate.Resources>
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/UI/BaseDictionary.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 
+	<DataTemplate DataType="{x:Type local:BaseObject}">
 		<TextBlock>
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
@@ -20,9 +20,6 @@
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<DataTemplate.Resources>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-		</DataTemplate.Resources>
 		<TextBlock>
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
@@ -41,9 +38,6 @@
 	</DataTemplate>
 
 	<HierarchicalDataTemplate DataType="{x:Type local:ContainerObject}" ItemsSource="{Binding Inventory}">
-		<DataTemplate.Resources>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-		</DataTemplate.Resources>
 		<TextBlock>
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
@@ -55,12 +49,6 @@
 	</HierarchicalDataTemplate>
 
 	<HierarchicalDataTemplate DataType="{x:Type local:ConcreteObject}" ItemsSource="{Binding Inventory}">
-		<HierarchicalDataTemplate.Resources>
-			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
-		</HierarchicalDataTemplate.Resources>
-
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -71,18 +59,8 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
-				<Image.Source>
-					<DrawingImage>
-						<DrawingImage.Drawing>
-							<MultiBinding Converter="{StaticResource drawingConverter}">
-								<Binding Path="SymbolID" />
-								<Binding Path="EffectiveColor" />
-							</MultiBinding>
-						</DrawingImage.Drawing>
-					</DrawingImage>
-				</Image.Source>
-			</Image>
+
+			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
@@ -108,10 +86,7 @@
 
 	<HierarchicalDataTemplate DataType="{x:Type local:LivingObject}" ItemsSource="{Binding Inventory}">
 		<HierarchicalDataTemplate.Resources>
-			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 			<ui:AssignmentToStringConverter x:Key="assignmentConverter"/>
-			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 		</HierarchicalDataTemplate.Resources>
 
 		<Grid>
@@ -126,18 +101,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Grid.Row="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
-				<Image.Source>
-					<DrawingImage>
-						<DrawingImage.Drawing>
-							<MultiBinding Converter="{StaticResource drawingConverter}">
-								<Binding Path="SymbolID" />
-								<Binding Path="EffectiveColor" />
-							</MultiBinding>
-						</DrawingImage.Drawing>
-					</DrawingImage>
-				</Image.Source>
-			</Image>
+			<Image Grid.Column="0" Grid.Row="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
 					<TextBlock.Text>

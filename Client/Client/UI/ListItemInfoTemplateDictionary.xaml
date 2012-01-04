@@ -5,13 +5,11 @@
 					xmlns:local="clr-namespace:Dwarrowdelf.Client"
 					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 
-	<DataTemplate DataType="{x:Type local:ConcreteObject}">
-		<DataTemplate.Resources>
-			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
-		</DataTemplate.Resources>
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/UI/BaseDictionary.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 
+	<DataTemplate DataType="{x:Type local:ConcreteObject}">
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
@@ -22,18 +20,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
-				<Image.Source>
-					<DrawingImage>
-						<DrawingImage.Drawing>
-							<MultiBinding Converter="{StaticResource drawingConverter}">
-								<Binding Path="SymbolID" />
-								<Binding Path="EffectiveColor" />
-							</MultiBinding>
-						</DrawingImage.Drawing>
-					</DrawingImage>
-				</Image.Source>
-			</Image>
+			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
@@ -59,9 +46,6 @@
 
 	<DataTemplate DataType="{x:Type local:ItemObject}">
 		<DataTemplate.Resources>
-			<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-			<ui:CapitalizeConverter x:Key="capitalizeConverter" />
 			<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
 		</DataTemplate.Resources>
 
@@ -76,18 +60,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center">
-				<Image.Source>
-					<DrawingImage>
-						<DrawingImage.Drawing>
-							<MultiBinding Converter="{StaticResource drawingConverter}">
-								<Binding Path="SymbolID" />
-								<Binding Path="EffectiveColor" />
-							</MultiBinding>
-						</DrawingImage.Drawing>
-					</DrawingImage>
-				</Image.Source>
-			</Image>
+			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
@@ -120,10 +93,6 @@
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<DataTemplate.Resources>
-			<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-		</DataTemplate.Resources>
-
 		<TextBlock>
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
