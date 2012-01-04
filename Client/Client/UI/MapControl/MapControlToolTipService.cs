@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client.UI
 
 		bool m_isToolTipEnabled;
 
-		Popup m_popup;
+		ToolTip m_popup;
 		TileToolTipControl m_content;
 
 		public MapControlToolTipService(MapControl mapControl, TileView tileView)
@@ -30,13 +30,18 @@ namespace Dwarrowdelf.Client.UI
 			m_content = new TileToolTipControl();
 			m_content.DataContext = m_hoverTileView;
 
-			var popup = new Popup();
-			popup.Child = m_content;
+			var popup = new ToolTip();
+			popup.Content = m_content;
 			popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 			popup.HorizontalOffset = 4;
 			popup.PlacementTarget = m_mapControl;
-			popup.AllowsTransparency = true;
 			m_popup = popup;
+
+			// Disable the animations, because we lose datacontext during fade-out animation.
+			// We need to override the default values in the PlacementTarget control
+			m_mapControl.Resources.Add(SystemParameters.ToolTipAnimationKey, false);
+			m_mapControl.Resources.Add(SystemParameters.ToolTipFadeKey, false);
+			m_mapControl.Resources.Add(SystemParameters.ToolTipPopupAnimationKey, PopupAnimation.None);
 		}
 
 		public bool IsToolTipEnabled
