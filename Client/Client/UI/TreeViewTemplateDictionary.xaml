@@ -8,6 +8,11 @@
 		<ResourceDictionary Source="/UI/BaseDictionary.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 
+	<ContextMenu x:Key="objectMenu">
+		<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
+		<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
+	</ContextMenu>
+
 	<DataTemplate DataType="{x:Type local:BaseObject}">
 		<TextBlock>
 			<TextBlock.Text>
@@ -20,20 +25,13 @@
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<TextBlock>
+		<TextBlock ContextMenu="{StaticResource objectMenu}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0} ({1})">
 					<Binding Path="BuildingID" />
 					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
 				</MultiBinding>
 			</TextBlock.Text>
-			
-			<TextBlock.ContextMenu>
-				<ContextMenu>
-					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
-					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
-				</ContextMenu>
-			</TextBlock.ContextMenu>
 		</TextBlock>
 	</DataTemplate>
 
@@ -49,7 +47,7 @@
 	</HierarchicalDataTemplate>
 
 	<HierarchicalDataTemplate DataType="{x:Type local:ConcreteObject}" ItemsSource="{Binding Inventory}">
-		<Grid>
+		<Grid ContextMenu="{StaticResource objectMenu}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="1*" />
@@ -58,7 +56,6 @@
 			<Grid.RowDefinitions>
 				<RowDefinition />
 			</Grid.RowDefinitions>
-
 
 			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
@@ -70,13 +67,6 @@
 						</MultiBinding>
 					</TextBlock.Text>
 			</TextBlock>
-
-			<Grid.ContextMenu>
-				<ContextMenu>
-					<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
-					<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
-				</ContextMenu>
-			</Grid.ContextMenu>
 
 			<Grid.ToolTip>
 				<ui:ObjectInfoControl />
