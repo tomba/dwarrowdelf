@@ -10,12 +10,10 @@
 
 		<Separator x:Name="separator" />
 
-		<ListBox x:Name="objectBox" ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch"
-					 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"
-					 BorderThickness="0" Background="Transparent">
-			<ListBox.Resources>
+		<ItemsControl x:Name="objectBox" ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch">
+			<ItemsControl.Resources>
 				<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
-			</ListBox.Resources>
-		</ListBox>
+			</ItemsControl.Resources>
+		</ItemsControl>
 	</StackPanel>
 </UserControl>
