@@ -357,7 +357,7 @@
     <Compile Include="UI\Windows\LogOnDialog.xaml.cs">
       <DependentUpon>LogOnDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MapControl\TileAreaInfo.cs" />
+    <Compile Include="UI\MapControl\TileAreaView.cs" />
     <Compile Include="UI\MapControl\MasterMapControl.cs" />
     <Compile Include="UI\MapControl\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />

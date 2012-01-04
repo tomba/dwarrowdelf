@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
 		public TileView HoverTileView { get; private set; }
-		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
+		public TileAreaView SelectionTileAreaView { get; private set; }
 
 		public MapControl MapControl { get { return m_mapControl; } }
 		MapControl m_mapControl;
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			this.Focusable = true;
 
-			this.SelectedTileAreaInfo = new TileAreaInfo();
+			this.SelectionTileAreaView = new TileAreaView();
 		}
 
 		protected override void OnInitialized(EventArgs e)
@@ -393,12 +393,12 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (!selection.IsSelectionValid)
 			{
-				this.SelectedTileAreaInfo.Environment = null;
+				this.SelectionTileAreaView.Environment = null;
 			}
 			else
 			{
-				this.SelectedTileAreaInfo.Environment = this.Environment;
-				this.SelectedTileAreaInfo.Selection = selection;
+				this.SelectionTileAreaView.Environment = this.Environment;
+				this.SelectionTileAreaView.Cuboid = selection.SelectionCuboid;
 			}
 
 			Notify("Selection");

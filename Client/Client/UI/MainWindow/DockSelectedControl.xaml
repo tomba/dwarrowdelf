@@ -31,16 +31,13 @@
 					</InlineUIContainer><Run Text=" "/><InlineUIContainer>
 						<TextBlock>
 							<TextBlock.Text>
-								<MultiBinding StringFormat="{}{0}, {1}, {2} -&gt; {3}, {4}, {5} ({6} x {7} x {8})">
-									<Binding Path="Selection.SelectionStart.X" Mode="OneWay" />
-									<Binding Path="Selection.SelectionStart.Y" Mode="OneWay" />
-									<Binding Path="Selection.SelectionStart.Z" Mode="OneWay" />
-									<Binding Path="Selection.SelectionEnd.X" Mode="OneWay" />
-									<Binding Path="Selection.SelectionEnd.Y" Mode="OneWay" />
-									<Binding Path="Selection.SelectionEnd.Z" Mode="OneWay" />
-									<Binding Path="Selection.SelectionCuboid.Width" Mode="OneWay" />
-									<Binding Path="Selection.SelectionCuboid.Height" Mode="OneWay" />
-									<Binding Path="Selection.SelectionCuboid.Depth" Mode="OneWay" />
+								<MultiBinding StringFormat="{}{0}, {1}, {2}  {3} x {4} x {5}">
+									<Binding Path="Cuboid.X" Mode="OneWay" />
+									<Binding Path="Cuboid.Y" Mode="OneWay" />
+									<Binding Path="Cuboid.Z" Mode="OneWay" />
+									<Binding Path="Cuboid.Width" Mode="OneWay" />
+									<Binding Path="Cuboid.Height" Mode="OneWay" />
+									<Binding Path="Cuboid.Depth" Mode="OneWay" />
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>

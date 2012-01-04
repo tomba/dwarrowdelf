@@ -7,13 +7,13 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed class TileView : INotifyPropertyChanged
+	sealed class TileAreaView : INotifyPropertyChanged
 	{
 		EnvironmentObject m_environment;
-		IntPoint3D m_location;
+		IntCuboid m_cuboid;
 		MovableObjectCollection m_objects;
 
-		public TileView()
+		public TileAreaView()
 		{
 			m_objects = new MovableObjectCollection();
 		}
@@ -46,18 +46,18 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntPoint3D Location
+		public IntCuboid Cuboid
 		{
-			get { return m_location; }
+			get { return m_cuboid; }
 
 			set
 			{
-				if (m_location == value)
+				if (m_cuboid == value)
 					return;
 
-				m_location = value;
+				m_cuboid = value;
 
-				Notify("Location");
+				Notify("Cuboid");
 				NotifyTileChanges();
 			}
 		}
@@ -70,13 +70,11 @@ namespace Dwarrowdelf.Client.UI
 
 		void NotifyTileTerrainChanges()
 		{
-			Notify("Interior");
-			Notify("Terrain");
-			Notify("TerrainMaterial");
-			Notify("InteriorMaterial");
-			Notify("WaterLevel");
+			Notify("Interiors");
+			Notify("Terrains");
+			Notify("WaterLevels");
+			Notify("MapElements");
 			Notify("Flags");
-			Notify("MapElement");
 		}
 
 		void NotifyTileObjectChanges()
@@ -85,7 +83,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.Environment != null)
 			{
-				var obs = this.Environment.GetContents(this.Location);
+				var obs = m_cuboid.Range().SelectMany(p => m_environment.GetContents(p));
 				foreach (var ob in obs)
 					m_objects.Add(ob);
 			}
@@ -93,7 +91,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMapTerrainChanged(IntPoint3D l)
 		{
-			if (l != this.Location)
+			if (!m_cuboid.Contains(l))
 				return;
 
 			NotifyTileTerrainChanges();
@@ -101,7 +99,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMapObjectChanged(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
 		{
-			if (l != this.Location)
+			if (!m_cuboid.Contains(l))
 				return;
 
 			switch (changeType)
@@ -126,58 +124,56 @@ namespace Dwarrowdelf.Client.UI
 
 		public IEnumerable<MovableObject> Objects { get { return m_objects; } }
 
-		public InteriorInfo Interior
+		public IEnumerable<Tuple<InteriorInfo, MaterialInfo>> Interiors
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (m_environment == null)
 					return null;
 
-				return this.Environment.GetInterior(this.Location);
+				return m_cuboid.Range().
+					Select(p => Tuple.Create(m_environment.GetInterior(p), m_environment.GetInteriorMaterial(p))).
+					Distinct();
 			}
 		}
 
-		public MaterialInfo InteriorMaterial
+		public IEnumerable<Tuple<TerrainInfo, MaterialInfo>> Terrains
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (m_environment == null)
 					return null;
 
-				return this.Environment.GetInteriorMaterial(this.Location);
+				return m_cuboid.Range().
+					Select(p => Tuple.Create(m_environment.GetTerrain(p), m_environment.GetTerrainMaterial(p))).
+					Distinct();
 			}
 		}
 
-		public MaterialInfo TerrainMaterial
+		public IEnumerable<byte> WaterLevels
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (m_environment == null)
 					return null;
 
-				return this.Environment.GetTerrainMaterial(this.Location);
+				return m_cuboid.Range().
+					Select(p => m_environment.GetWaterLevel(p)).
+					Distinct();
 			}
 		}
 
-		public TerrainInfo Terrain
+		public IEnumerable<IDrawableElement> MapElements
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (m_environment == null)
 					return null;
 
-				return this.Environment.GetTerrain(this.Location);
-			}
-		}
-
-		public byte WaterLevel
-		{
-			get
-			{
-				if (this.Environment == null)
-					return 0;
-
-				return this.Environment.GetWaterLevel(this.Location);
+				return m_cuboid.Range().
+					Select(p => m_environment.GetElementAt(p)).
+					Where(b => b != null).
+					Distinct();
 			}
 		}
 
@@ -185,21 +181,12 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (m_environment == null)
 					return TileFlags.None;
 
-				return this.Environment.GetTileFlags(this.Location);
-			}
-		}
-
-		public IDrawableElement MapElement
-		{
-			get
-			{
-				if (this.Environment == null)
-					return null;
-
-				return this.Environment.GetElementAt(this.Location);
+				return m_cuboid.Range()
+					.Select(p => m_environment.GetTileFlags(p))
+					.Aggregate(TileFlags.None, (f, v) => f |= v);
 			}
 		}
 
