@@ -35,6 +35,7 @@ namespace Dwarrowdelf.Client.UI
 			popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 			popup.HorizontalOffset = 4;
 			popup.PlacementTarget = m_mapControl;
+			popup.AllowsTransparency = true;
 			m_popup = popup;
 		}
 
