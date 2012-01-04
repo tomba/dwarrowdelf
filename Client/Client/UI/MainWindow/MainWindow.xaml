@@ -151,7 +151,7 @@
 				<ui:DockSelectedControl Grid.Row="0" DataContext="{Binding Path=SelectedTileAreaInfo, ElementName=map, Mode=OneTime}"  Margin="2"/>
 
 				<!-- Hover -->
-				<ui:DockHoverControl Grid.Row="1" DataContext="{Binding Path=TileInfo, ElementName=map, Mode=OneTime}"  Margin="2" />
+				<ui:DockHoverControl Grid.Row="1" DataContext="{Binding Path=HoverTileView, ElementName=map, Mode=OneTime}"  Margin="2" />
 
 				<!-- Jobs -->
 				<GroupBox Header="Jobs" Grid.Row="2" Margin="2" >

@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.UI
 	/// </summary>
 	sealed class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
 	{
-		public TileInfo TileInfo { get; private set; }
+		public TileView HoverTileView { get; private set; }
 		public TileAreaInfo SelectedTileAreaInfo { get; private set; }
 
 		public MapControl MapControl { get { return m_mapControl; } }
@@ -72,6 +72,8 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.ZChanged += OnZChanged;
 			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 			m_mapControl.CenterPosChanged += cp => Notify("CenterPos");
+			m_mapControl.TileLayoutChanged += new TileControl.TileLayoutChangedDelegate(m_mapControl_TileLayoutChanged);
+			m_mapControl.MouseMove += new MouseEventHandler(m_mapControl_MouseMove);
 
 			m_elementCanvas = new Canvas();
 			grid.Children.Add(m_elementCanvas);
@@ -80,6 +82,8 @@ namespace Dwarrowdelf.Client.UI
 			grid.Children.Add(m_selectionCanvas);
 
 			this.TileSize = 16;
+
+			this.HoverTileView = new TileView();
 
 			m_toolTipService = new MapControlToolTipService(m_mapControl);
 			m_toolTipService.IsToolTipEnabled = true;
@@ -91,8 +95,41 @@ namespace Dwarrowdelf.Client.UI
 			m_elementsService = new MapControlElementsService(m_mapControl, m_elementCanvas);
 
 			m_dragService = new MapControlDragService(this);
+		}
 
-			this.TileInfo = new TileInfo(m_mapControl);
+		void m_mapControl_MouseMove(object sender, MouseEventArgs e)
+		{
+			var p = e.GetPosition(m_mapControl);
+			UpdateHoverTileInfo(p);
+		}
+
+		void m_mapControl_TileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		{
+			var p = Mouse.GetPosition(m_mapControl);
+			UpdateHoverTileInfo(p);
+		}
+
+		public Point MousePos { get; private set; }
+		public IntPoint ScreenLocation { get; private set; }
+
+		void UpdateHoverTileInfo(Point p)
+		{
+			var sl = m_mapControl.ScreenPointToIntScreenTile(p);
+			var ml = m_mapControl.ScreenPointToMapLocation(p);
+
+			if (p != this.MousePos)
+			{
+				this.MousePos = p;
+				Notify("MousePos");
+			}
+
+			if (sl != this.ScreenLocation)
+			{
+				this.ScreenLocation = sl;
+				Notify("ScreenLocation");
+			}
+
+			this.HoverTileView.Location = ml;
 		}
 
 		public void InvalidateTileData()
@@ -519,6 +556,8 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			this.Selection = new MapSelection();
+
+			this.HoverTileView.Environment = env;
 
 			Notify("Environment");
 		}

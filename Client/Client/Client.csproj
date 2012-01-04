@@ -238,6 +238,7 @@
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="InstallFurnitureManager.cs" />
+    <Compile Include="UI\MapControl\TileView.cs" />
     <Compile Include="UI\UIElementToDescConverter.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
@@ -357,7 +358,6 @@
       <DependentUpon>LogOnDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MapControl\TileAreaInfo.cs" />
-    <Compile Include="UI\MapControl\TileInfo.cs" />
     <Compile Include="UI\MapControl\MasterMapControl.cs" />
     <Compile Include="UI\MapControl\MapControl.cs" />
     <Compile Include="UI\HistoryTextBox.cs" />

@@ -8,79 +8,55 @@ using System.Windows;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed class TileInfo : INotifyPropertyChanged
+	sealed class TileView : INotifyPropertyChanged
 	{
-		MapControl m_mapControl;
+		EnvironmentObject m_environment;
+		IntPoint3D m_location;
 
-		public Point MousePos { get; private set; }
-		public IntPoint ScreenLocation { get; private set; }
-
-		public TileInfo(MapControl mapControl)
+		public TileView()
 		{
-			m_mapControl = mapControl;
-
-			m_mapControl.MouseMove += OnMouseMove;
-			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
-			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
-
 			this.Objects = new MovableObjectCollection();
 		}
 
-		void OnEnvironmentChanged(EnvironmentObject env)
+		public EnvironmentObject Environment
 		{
-			if (this.Environment == env)
-				return;
+			get { return m_environment; }
 
-			if (this.Environment != null)
+			set
 			{
-				this.Environment.MapTileTerrainChanged -= MapTerrainChanged;
-				this.Environment.MapTileObjectChanged -= MapObjectChanged;
+				if (m_environment == value)
+					return;
+
+				if (m_environment != null)
+				{
+					m_environment.MapTileTerrainChanged -= MapTerrainChanged;
+					m_environment.MapTileObjectChanged -= MapObjectChanged;
+				}
+
+				m_environment = value;
+
+				if (m_environment != null)
+				{
+					m_environment.MapTileTerrainChanged += MapTerrainChanged;
+					m_environment.MapTileObjectChanged += MapObjectChanged;
+				}
+
+				Notify("Environment");
+				NotifyTileChanges();
 			}
-
-			this.Environment = env;
-
-			if (this.Environment != null)
-			{
-				this.Environment.MapTileTerrainChanged += MapTerrainChanged;
-				this.Environment.MapTileObjectChanged += MapObjectChanged;
-			}
-
-			Notify("Environment");
-			NotifyTileChanges();
 		}
 
-		void OnMouseMove(object sender, MouseEventArgs e)
+		public IntPoint3D Location
 		{
-			var p = e.GetPosition(m_mapControl);
-			UpdateHoverTileInfo(p);
-		}
+			get { return m_location; }
 
-		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
-		{
-			var p = Mouse.GetPosition(m_mapControl);
-			UpdateHoverTileInfo(p);
-		}
-
-		void UpdateHoverTileInfo(Point p)
-		{
-			var sl = m_mapControl.ScreenPointToIntScreenTile(p);
-			var ml = m_mapControl.ScreenPointToMapLocation(p);
-
-			if (p != this.MousePos)
+			set
 			{
-				this.MousePos = p;
-				Notify("MousePos");
-			}
+				if (m_location == value)
+					return;
 
-			if (sl != this.ScreenLocation)
-			{
-				this.ScreenLocation = sl;
-				Notify("ScreenLocation");
-			}
+				m_location = value;
 
-			if (ml != this.Location)
-			{
-				this.Location = ml;
 				Notify("Location");
 				NotifyTileChanges();
 			}
@@ -106,6 +82,7 @@ namespace Dwarrowdelf.Client.UI
 		void NotifyTileObjectChanges()
 		{
 			this.Objects.Clear();
+
 			if (this.Environment != null)
 			{
 				var list = this.Environment.GetContents(this.Location);
@@ -132,8 +109,6 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileObjectChanges();
 		}
 
-		public EnvironmentObject Environment { get; private set; }
-		public IntPoint3D Location { get; private set; }
 		public MovableObjectCollection Objects { get; private set; }
 
 		public InteriorInfo Interior

@@ -44,7 +44,7 @@
 		<Separator />
 
 		<TextBlock>ML</TextBlock>
-		<TextBlock Width="75" DataContext="{Binding MapControl.TileInfo}">
+		<TextBlock Width="75" DataContext="{Binding MapControl.HoverTileView}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0}, {1}, {2}">
 					<Binding Path="Location.X" />
@@ -57,7 +57,7 @@
 		<Separator />
 
 		<TextBlock>SL</TextBlock>
-		<TextBlock Width="50" DataContext="{Binding MapControl.TileInfo}">
+		<TextBlock Width="50" DataContext="{Binding MapControl}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0}, {1}">
 					<Binding Path="ScreenLocation.X" />
@@ -69,7 +69,7 @@
 		<Separator />
 
 		<TextBlock>MousePos</TextBlock>
-		<TextBlock Width="100" DataContext="{Binding MapControl.TileInfo}">
+		<TextBlock Width="100" DataContext="{Binding MapControl}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="{}{0:F2}, {1:F2}">
 					<Binding Path="MousePos.X" />
