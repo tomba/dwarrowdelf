@@ -6,22 +6,36 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Data;
+using System.Windows.Controls.Primitives;
+using System.Collections.Specialized;
 
 namespace Dwarrowdelf.Client.UI
 {
 	sealed class MapControlToolTipService
 	{
 		MapControl m_mapControl;
+		TileView m_hoverTileView;
 
-		IntPoint3D? m_tooltipMapLocation;
-		ToolTip m_toolTip;
 		bool m_isToolTipEnabled;
 
-		public MapControlToolTipService(MapControl mapControl)
+		Popup m_popup;
+		TileToolTipControl m_content;
+
+		public MapControlToolTipService(MapControl mapControl, TileView tileView)
 		{
 			m_mapControl = mapControl;
+			m_hoverTileView = tileView;
 
-			CreateToolTip();
+			m_content = new TileToolTipControl();
+			m_content.DataContext = m_hoverTileView;
+
+			var popup = new Popup();
+			popup.Child = m_content;
+			popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
+			popup.HorizontalOffset = 4;
+			popup.PlacementTarget = m_mapControl;
+			m_popup = popup;
 		}
 
 		public bool IsToolTipEnabled
@@ -35,17 +49,13 @@ namespace Dwarrowdelf.Client.UI
 
 				if (value == true)
 				{
-					m_mapControl.MouseLeave += OnMouseLeave;
-					m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
-					m_mapControl.MouseMove += OnMouseMove;
-					m_mapControl.ZChanged += OnZChanged;
+					m_hoverTileView.PropertyChanged += OnHoverTileView_PropertyChanged;
+					m_hoverTileView.Objects.CollectionChanged += OnHoverTileView_ObjectCollectionChanged;
 				}
 				else
 				{
-					m_mapControl.MouseLeave -= OnMouseLeave;
-					m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
-					m_mapControl.MouseMove -= OnMouseMove;
-					m_mapControl.ZChanged -= OnZChanged;
+					m_hoverTileView.PropertyChanged -= OnHoverTileView_PropertyChanged;
+					m_hoverTileView.Objects.CollectionChanged -= OnHoverTileView_ObjectCollectionChanged;
 
 					CloseToolTip();
 				}
@@ -54,101 +64,55 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnZChanged(int z)
+		void OnHoverTileView_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Point pos = Mouse.GetPosition(m_mapControl);
-			UpdateToolTip(pos, false);
+			switch (e.PropertyName)
+			{
+				case "Location":
+				case "MapElement":
+				case "IsEnabled":
+					UpdateToolTip();
+					break;
+			}
 		}
 
-		void OnMouseMove(object sender, MouseEventArgs e)
+		void OnHoverTileView_ObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (!m_isToolTipEnabled)
-				return;
-
-			UpdateToolTip(e.GetPosition(m_mapControl), true);
+			UpdateToolTip();
 		}
 
-		void OnTileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		void UpdateToolTip()
 		{
-			if (!m_isToolTipEnabled)
-				return;
-
-			var pos = Mouse.GetPosition(m_mapControl);
-			UpdateToolTip(pos, false);
-		}
-
-		void OnMouseLeave(object sender, MouseEventArgs e)
-		{
-			if (!m_isToolTipEnabled)
-				return;
-
-			CloseToolTip();
-		}
-
-		void CreateToolTip()
-		{
-			var tt = new ToolTip();
-			tt.Content = new ObjectInfoControl();
-			tt.IsOpen = false;
-			tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-			tt.PlacementTarget = m_mapControl;
-			m_toolTip = tt;
-		}
-
-		void UpdateToolTip(Point mousePos, bool isMouseMove)
-		{
-			if (m_mapControl.Environment == null)
+			if (m_hoverTileView.IsEnabled == false)
 			{
 				CloseToolTip();
 				return;
 			}
 
-			if (!m_mapControl.IsMouseOver)
+			bool hasObjects = m_hoverTileView.Objects.Count > 0;
+			var hasElement = m_hoverTileView.MapElement != null;
+
+			if (!hasObjects && !hasElement)
 			{
 				CloseToolTip();
 				return;
 			}
 
-			var ml = m_mapControl.ScreenPointToMapLocation(mousePos);
+			m_content.objectBox.Visibility = hasObjects ? Visibility.Visible : Visibility.Collapsed;
+			m_content.elementBox.Visibility = hasElement ? Visibility.Visible : Visibility.Collapsed;
+			m_content.separator.Visibility = hasObjects && hasElement ? Visibility.Visible : Visibility.Collapsed;
 
-			object ob;
+			var ml = m_hoverTileView.Location;
 
-			ob = m_mapControl.Environment.GetFirstObject(ml);
+			var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
 
-			if (ob == null)
-				ob = m_mapControl.Environment.GetElementAt(ml);
-
-			if (ob != null)
-			{
-				if (!m_tooltipMapLocation.HasValue || m_tooltipMapLocation != ml || ob != m_toolTip.DataContext)
-				{
-					// open a new tooltip only if the user has moved the mouse to this location
-					if (isMouseMove)
-					{
-						m_toolTip.DataContext = ob;
-
-						var rect = m_mapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize(1, 1)));
-						m_toolTip.PlacementRectangle = rect;
-
-						m_toolTip.IsOpen = true;
-						m_tooltipMapLocation = ml;
-					}
-					else
-					{
-						CloseToolTip();
-					}
-				}
-			}
-			else
-			{
-				CloseToolTip();
-			}
+			m_popup.PlacementRectangle = rect;
+			m_popup.IsOpen = true;
 		}
 
 		void CloseToolTip()
 		{
-			m_toolTip.IsOpen = false;
-			m_tooltipMapLocation = null;
+			m_popup.IsOpen = false;
 		}
 	}
 }

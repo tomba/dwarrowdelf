@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client.UI
 
 			this.HoverTileView = new TileView();
 
-			m_toolTipService = new MapControlToolTipService(m_mapControl);
+			m_toolTipService = new MapControlToolTipService(m_mapControl, this.HoverTileView);
 			m_toolTipService.IsToolTipEnabled = true;
 
 			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);

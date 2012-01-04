@@ -123,6 +123,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MapControl\TileToolTipControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\TreeViewTemplateDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -239,6 +243,9 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="InstallFurnitureManager.cs" />
     <Compile Include="UI\MapControl\TileView.cs" />
+    <Compile Include="UI\MapControl\TileToolTipControl.xaml.cs">
+      <DependentUpon>TileToolTipControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UIElementToDescConverter.cs" />
     <Compile Include="FighterAI.cs" />
     <Compile Include="IPRunner.cs" />
