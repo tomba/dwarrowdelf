@@ -83,14 +83,14 @@ namespace Dwarrowdelf.Server
 
 		public override void Start()
 		{
-			m_environment.TerrainChanged += OnTerrainChanged;
+			m_environment.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
 
 			m_environment.SendTo(m_player, ObjectVisibility.Public);
 		}
 
 		public override void Stop()
 		{
-			m_environment.TerrainChanged -= OnTerrainChanged;
+			m_environment.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
 		}
 
 		public override bool Sees(IntPoint3D p)
@@ -111,14 +111,31 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray[p.Z, p.Y, p.X] = true;
 		}
 
-		void OnTerrainChanged(IntPoint3D p, TileData oldData, TileData newData)
+		// XXX move to EnvironmentHelpers?
+		bool IsSeeThrough(TileData data)
+		{
+			var terrain = Terrains.GetTerrain(data.TerrainID);
+			var interior = Interiors.GetInterior(data.InteriorID);
+
+			return terrain.IsSeeThrough && interior.IsSeeThrough;
+		}
+
+		// XXX move to EnvironmentHelpers?
+		bool IsSeeThroughDown(TileData data)
+		{
+			var terrain = Terrains.GetTerrain(data.TerrainID);
+
+			return terrain.IsSeeThroughDown;
+		}
+
+		void OnTerrainOrInteriorChanged(IntPoint3D p, TileData oldData, TileData newData)
 		{
 			var env = m_environment;
 
-			var oldTerrain = Terrains.GetTerrain(oldData.TerrainID);
-			var newTerrain = Terrains.GetTerrain(newData.TerrainID);
+			bool revealPlanar = IsSeeThrough(oldData) == false && IsSeeThrough(newData) == true;
+			bool revealDown = IsSeeThroughDown(oldData) == false && IsSeeThroughDown(newData) == true;
 
-			if (oldTerrain.IsSeeThrough != newTerrain.IsSeeThrough)
+			if (revealPlanar)
 			{
 				var revealed = DirectionExtensions.PlanarDirections
 					.Select(dir => p + dir)
@@ -143,7 +160,7 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			if (oldTerrain.IsSeeThroughDown != newTerrain.IsSeeThroughDown)
+			if (revealDown)
 			{
 				var pp = p + Direction.Down;
 

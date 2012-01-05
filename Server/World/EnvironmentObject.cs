@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Server
 		HashSet<AreaObject> m_largeObjectSet;
 		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
 
-		public event Action<IntPoint3D, TileData, TileData> TerrainChanged;
+		public event Action<IntPoint3D, TileData, TileData> TerrainOrInteriorChanged;
 
 		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
@@ -370,8 +370,8 @@ namespace Dwarrowdelf.Server
 
 			MapChanged(p, data);
 
-			if (this.TerrainChanged != null)
-				this.TerrainChanged(p, oldData, data);
+			if (this.TerrainOrInteriorChanged != null)
+				this.TerrainOrInteriorChanged(p, oldData, data);
 		}
 
 		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
@@ -381,11 +381,16 @@ namespace Dwarrowdelf.Server
 
 			this.Version += 1;
 
+			var oldData = GetTileData(p);
+
 			m_tileGrid.SetInterior(p, interiorID, materialID);
 
 			var data = m_tileGrid.GetTileData(p);
 
 			MapChanged(p, data);
+
+			if (this.TerrainOrInteriorChanged != null)
+				this.TerrainOrInteriorChanged(p, oldData, data);
 		}
 
 		public void SetTileData(IntPoint3D p, TileData data)
@@ -401,8 +406,8 @@ namespace Dwarrowdelf.Server
 
 			MapChanged(p, data);
 
-			if (this.TerrainChanged != null)
-				this.TerrainChanged(p, oldData, data);
+			if (this.TerrainOrInteriorChanged != null)
+				this.TerrainOrInteriorChanged(p, oldData, data);
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
