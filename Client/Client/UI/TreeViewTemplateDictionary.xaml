@@ -9,6 +9,7 @@
 		<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
 	</ContextMenu>
 
+	<!-- BaseObject -->
 	<DataTemplate DataType="{x:Type local:BaseObject}">
 		<TextBlock>
 			<TextBlock.Text>
@@ -20,6 +21,7 @@
 		</TextBlock>
 	</DataTemplate>
 
+	<!-- Building Object -->
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
 		<TextBlock ContextMenu="{StaticResource objectMenu}">
 			<TextBlock.Text>
@@ -31,6 +33,7 @@
 		</TextBlock>
 	</DataTemplate>
 
+	<!-- Container Object -->
 	<HierarchicalDataTemplate DataType="{x:Type local:ContainerObject}" ItemsSource="{Binding Inventory}">
 		<TextBlock>
 			<TextBlock.Text>
@@ -42,6 +45,7 @@
 		</TextBlock>
 	</HierarchicalDataTemplate>
 
+	<!-- Concete Object -->
 	<HierarchicalDataTemplate DataType="{x:Type local:ConcreteObject}" ItemsSource="{Binding Inventory}">
 		<Grid ContextMenu="{StaticResource objectMenu}">
 			<Grid.ColumnDefinitions>
@@ -70,6 +74,7 @@
 		</Grid>
 	</HierarchicalDataTemplate>
 
+	<!-- Living Object -->
 	<HierarchicalDataTemplate DataType="{x:Type local:LivingObject}" ItemsSource="{Binding Inventory}">
 		<HierarchicalDataTemplate.Resources>
 			<ui:AssignmentToStringConverter x:Key="assignmentConverter"/>

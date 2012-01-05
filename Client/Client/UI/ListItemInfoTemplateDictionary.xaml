@@ -10,6 +10,31 @@
 		<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />
 	</ContextMenu>
 
+	<!-- BaseObject -->
+	<DataTemplate DataType="{x:Type local:BaseObject}">
+		<TextBlock>
+			<TextBlock.Text>
+				<MultiBinding StringFormat="{}{0} ({1})">
+					<Binding Path="ObjectID.ObjectType" />
+					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+				</MultiBinding>
+			</TextBlock.Text>
+		</TextBlock>
+	</DataTemplate>
+
+	<!-- Building Object -->
+	<DataTemplate DataType="{x:Type local:BuildingObject}">
+		<TextBlock ContextMenu="{StaticResource objectMenu}">
+			<TextBlock.Text>
+				<MultiBinding StringFormat="{}{0} ({1})">
+					<Binding Path="BuildingID" />
+					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+				</MultiBinding>
+			</TextBlock.Text>
+		</TextBlock>
+	</DataTemplate>
+
+	<!-- Concrete Object -->
 	<DataTemplate DataType="{x:Type local:ConcreteObject}">
 		<Grid ContextMenu="{StaticResource objectMenu}">
 			<Grid.ColumnDefinitions>
@@ -38,6 +63,7 @@
 		</Grid>
 	</DataTemplate>
 
+	<!-- Item Object -->
 	<DataTemplate DataType="{x:Type local:ItemObject}">
 		<DataTemplate.Resources>
 			<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
@@ -77,16 +103,5 @@
 				<ui:ObjectInfoControl />
 			</Grid.ToolTip>
 		</Grid>
-	</DataTemplate>
-
-	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<TextBlock ContextMenu="{StaticResource objectMenu}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0} ({1})">
-					<Binding Path="BuildingID" />
-					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
-				</MultiBinding>
-			</TextBlock.Text>
-		</TextBlock>
 	</DataTemplate>
 </ResourceDictionary>
