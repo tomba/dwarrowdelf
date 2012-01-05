@@ -75,7 +75,7 @@
 			<ArmorInfo AC="5" Slot="Head" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
-	
+
 	<ItemInfo ID="Gloves" Category="Armor">
 		<ItemInfo.ArmorInfo>
 			<ArmorInfo AC="1" Slot="Hands" />

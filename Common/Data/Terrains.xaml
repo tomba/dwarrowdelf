@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <x:Array Type="TerrainInfo"
-         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-         xmlns="clr-namespace:Dwarrowdelf">
+		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		 xmlns="clr-namespace:Dwarrowdelf">
 
-    <TerrainInfo ID="Empty" Flags="Permeable,SeeThroughDown" />
+	<TerrainInfo ID="Empty" Flags="Permeable,SeeThroughDown" />
 
-    <TerrainInfo ID="NaturalFloor" Flags="Supporting" />
-    <TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
-    <TerrainInfo ID="Hole" Flags="Supporting,Permeable" />
+	<TerrainInfo ID="NaturalFloor" Flags="Supporting" />
+	<TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
+	<TerrainInfo ID="Hole" Flags="Supporting,Permeable" />
 
-    <TerrainInfo ID="SlopeNorth" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeNorthEast" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeEast" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeSouthEast" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeSouth" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeSouthWest" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeWest" Flags="Supporting,Minable" />
-    <TerrainInfo ID="SlopeNorthWest" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeNorth" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeNorthEast" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeEast" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeSouthEast" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeSouth" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeSouthWest" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeWest" Flags="Supporting,Minable" />
+	<TerrainInfo ID="SlopeNorthWest" Flags="Supporting,Minable" />
 
 </x:Array>
