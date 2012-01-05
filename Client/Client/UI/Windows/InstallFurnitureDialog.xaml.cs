@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			if (item.ItemCategory == ItemCategory.Furniture && item.ReservedBy == null && item.IsInstalled == false)
+			if (item.ItemCategory == ItemCategory.Furniture && item.IsReserved == false && item.IsInstalled == false)
 				e.Accepted = true;
 			else
 				e.Accepted = false;

@@ -83,6 +83,8 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		public bool IsReserved { get { return m_reservedBy != null; } }
+
 		// String representation of ReservedBy, for client use
 		[SaveGameProperty("ReservedByStr")]
 		string m_reservedByStr;

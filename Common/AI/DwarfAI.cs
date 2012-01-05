@@ -89,7 +89,7 @@ namespace Dwarrowdelf.AI
 
 			ob = env.Inventory
 				.OfType<IItemObject>()
-				.Where(o => o.ReservedBy == null && o.NutritionalValue > 0)
+				.Where(o => o.IsReserved == false && o.NutritionalValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
 				.FirstOrDefault();
 
@@ -117,7 +117,7 @@ namespace Dwarrowdelf.AI
 
 			ob = env.Inventory
 				.OfType<IItemObject>()
-				.Where(o => o.ReservedBy == null && o.RefreshmentValue > 0)
+				.Where(o => o.IsReserved == false && o.RefreshmentValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
 				.FirstOrDefault();
 

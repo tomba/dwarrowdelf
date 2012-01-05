@@ -454,7 +454,7 @@ namespace Dwarrowdelf.Client
 			{
 				ob = this.Environment.GetContents(l)
 					.OfType<ItemObject>()
-					.Where(o => o.ReservedBy == null && match(o))
+					.Where(o => o.IsReserved == false && match(o))
 					.FirstOrDefault();
 
 				if (ob != null)

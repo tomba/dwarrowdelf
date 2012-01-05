@@ -109,6 +109,7 @@ namespace Dwarrowdelf
 		ItemCategory ItemCategory { get; }
 		ItemID ItemID { get; }
 		object ReservedBy { get; set; }
+		bool IsReserved { get; }
 
 		bool IsArmor { get; }
 		bool IsWeapon { get; }

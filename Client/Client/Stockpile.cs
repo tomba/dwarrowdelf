@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client
 
 			var obs = this.Environment.GetContents()
 				.OfType<ItemObject>()
-				.Where(o => o.ReservedBy == null)
+				.Where(o => o.IsReserved == false)
 				.Where(o => Match(o))
 				.Where(o => { var sp = this.Environment.GetStockpileAt(o.Location); return !(sp != null && sp.Match(o)); }); // XXX
 

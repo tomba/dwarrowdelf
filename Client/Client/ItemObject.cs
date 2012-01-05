@@ -51,8 +51,11 @@ namespace Dwarrowdelf.Client
 				Debug.Assert(value == null || m_reservedBy == null);
 				m_reservedBy = value;
 				Notify("ReservedBy");
+				Notify("IsReserved");
 			}
 		}
+
+		public bool IsReserved { get { return m_reservedBy != null; } }
 
 		public ItemInfo ItemInfo { get; private set; }
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }

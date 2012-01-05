@@ -20,6 +20,9 @@
 			<TextBlock>Refreshment Value</TextBlock>
 			<TextBlock Text="{Binding RefreshmentValue}" />
 
+			<TextBlock>IsReserved</TextBlock>
+			<TextBlock Text="{Binding IsReserved}" />
+
 			<TextBlock>Reserved By</TextBlock>
 			<TextBlock Text="{Binding ReservedBy}" />
 
