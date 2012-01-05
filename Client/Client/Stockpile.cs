@@ -120,6 +120,9 @@ namespace Dwarrowdelf.Client
 			if (status == JobStatus.Ok)
 				throw new Exception();
 
+			if (status != JobStatus.Done)
+				GameData.Data.AddGameEvent(j.Item, "failed to store item to stockpile");
+
 			Debug.Assert(j.Item.ReservedBy == this);
 			j.Item.ReservedBy = null;
 
