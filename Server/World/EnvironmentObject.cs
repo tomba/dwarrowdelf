@@ -408,6 +408,11 @@ namespace Dwarrowdelf.Server
 
 			if (this.TerrainOrInteriorChanged != null)
 				this.TerrainOrInteriorChanged(p, oldData, data);
+
+			if (data.WaterLevel > 0)
+				m_waterTiles.Add(p);
+			else
+				m_waterTiles.Remove(p);
 		}
 
 		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
@@ -422,6 +427,11 @@ namespace Dwarrowdelf.Server
 			var data = m_tileGrid.GetTileData(l);
 
 			MapChanged(l, data);
+
+			if (waterLevel > 0)
+				m_waterTiles.Add(l);
+			else
+				m_waterTiles.Remove(l);
 		}
 
 		public void SetTileFlags(IntPoint3D l, TileFlags flags, bool value)
