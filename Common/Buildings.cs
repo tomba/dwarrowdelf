@@ -14,6 +14,7 @@ namespace Dwarrowdelf
 		Mason,
 		Smith,
 		Smelter,
+		Gemcutter,
 	}
 
 	[ContentProperty("BuildableItems")]

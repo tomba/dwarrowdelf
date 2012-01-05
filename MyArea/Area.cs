@@ -172,61 +172,10 @@ namespace MyArea
 
 			CreateWaterTest(env, surfaceLevel);
 
-			posx = env.Width / 10;
-			posy = env.Height / 10;
+			CreateBuildings(env, surfaceLevel);
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				foreach (var p in builder.Area.Range())
-				{
-					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetTileFlags(p, TileFlags.Grass, false);
-				}
-				builder.Create(world, env);
-			}
-
-			posx += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				foreach (var p in builder.Area.Range())
-				{
-					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetTileFlags(p, TileFlags.Grass, false);
-				}
-				builder.Create(world, env);
-			}
-
-			posx += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				foreach (var p in builder.Area.Range())
-				{
-					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetTileFlags(p, TileFlags.Grass, false);
-				}
-				builder.Create(world, env);
-			}
-
-			posy += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				foreach (var p in builder.Area.Range())
-				{
-					env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-					env.SetTileFlags(p, TileFlags.Grass, false);
-				}
-				builder.Create(world, env);
-			}
-
-			{
-				var p = new IntPoint3D(posx + 5, posy + 1, surfaceLevel);
+				var p = new IntPoint3D(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
@@ -255,6 +204,61 @@ namespace MyArea
 			}
 
 			return env;
+		}
+
+		void CreateBuildings(EnvironmentObject env, int surfaceLevel)
+		{
+			var world = env.World;
+
+			int posx = env.Width / 10;
+			int posy = env.Height / 10;
+
+			var floorTile = new TileData()
+			{
+				TerrainID = TerrainID.NaturalFloor,
+				TerrainMaterialID = MaterialID.Granite,
+				InteriorID = InteriorID.Empty,
+				InteriorMaterialID = MaterialID.Undefined,
+			};
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
+				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				builder.Create(world, env);
+			}
+
+			posx += 4;
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
+				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				builder.Create(world, env);
+			}
+
+			posx += 4;
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
+				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				builder.Create(world, env);
+			}
+
+			posx = env.Width / 10;
+			posy += 4;
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
+				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				builder.Create(world, env);
+			}
+
+			posx += 4;
+
+			{
+				var builder = new BuildingObjectBuilder(BuildingID.Gemcutter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
+				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				builder.Create(world, env);
+			}
 		}
 
 		MaterialID GetRandomMaterial(MaterialCategory category)
@@ -459,6 +463,12 @@ namespace MyArea
 		{
 			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+		}
+
+		static void SetArea(Environment env, IntCuboid area, TileData data)
+		{
+			foreach (var p in area.Range())
+				env.SetTileData(p, data);
 		}
 
 		void CreateWalls(Environment env, IntRectZ area)

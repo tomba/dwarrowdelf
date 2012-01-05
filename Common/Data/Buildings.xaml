@@ -112,4 +112,10 @@
 
 	</BuildingInfo>
 
+	<BuildingInfo BuildingID="Gemcutter">
+		<BuildableItem ItemID="Gem">
+			<BuildableItemMaterialInfo ItemID="UncutGem" MaterialCategory="Gem" />
+		</BuildableItem>
+	</BuildingInfo>
+
 </x:Array>
