@@ -70,15 +70,24 @@
 						 HorizontalContentAlignment="Stretch" SelectionChanged="buildQueueListBox_SelectionChanged">
 					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<DockPanel>
-								<TextBlock Name="buildOrderName" DockPanel.Dock="Left" Text="{Binding Name, Converter={StaticResource capitalizeConverter}}" />
-								<ToggleButton DockPanel.Dock="Right" Content="R" IsChecked="{Binding IsRepeat}" Padding="4,0" HorizontalAlignment="Right" />
-								<ToggleButton DockPanel.Dock="Right" Content="S" IsChecked="{Binding IsSuspended}" Padding="4,0" HorizontalAlignment="Right" />
-							</DockPanel>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="1*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+
+								<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" DataContext="{Binding BuildableItem}" Source="{StaticResource buildableItemDrawingImage}" />
+
+								<TextBlock Name="buildOrderName" Grid.Column="1" Text="{Binding Name, Converter={StaticResource capitalizeConverter}}" />
+								<ToggleButton Grid.Column="2" Content="R" IsChecked="{Binding IsRepeat}" Padding="4,0" HorizontalAlignment="Right" />
+								<ToggleButton Grid.Column="3" Content="S" IsChecked="{Binding IsSuspended}" Padding="4,0" HorizontalAlignment="Right" />
+							</Grid>
 
 							<DataTemplate.Triggers>
 								<DataTrigger Binding="{Binding IsUnderWork}" Value="True">
-									<Setter TargetName="buildOrderName" Property="Background" Value="Green" />
+									<Setter TargetName="buildOrderName" Property="FontWeight" Value="Bold" />
 								</DataTrigger>
 							</DataTemplate.Triggers>
 						</DataTemplate>

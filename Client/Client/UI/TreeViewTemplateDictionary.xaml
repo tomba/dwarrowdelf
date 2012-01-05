@@ -30,6 +30,10 @@
 					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
 				</MultiBinding>
 			</TextBlock.Text>
+			
+			<TextBlock.ToolTip>
+				<ui:ObjectInfoControl />
+			</TextBlock.ToolTip>
 		</TextBlock>
 	</DataTemplate>
 

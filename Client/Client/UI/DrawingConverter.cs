@@ -39,4 +39,50 @@ namespace Dwarrowdelf.Client.UI
 
 		#endregion
 	}
+
+	sealed class ItemIDAndMaterialIDToDrawingConverter : IMultiValueConverter
+	{
+		#region IMultiValueConverter Members
+
+		public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			SymbolID symbolID;
+			GameColor color;
+
+			if (!(values[0] is ItemID))
+			{
+				symbolID = SymbolID.Undefined;
+				color = GameColor.None;
+			}
+			else
+			{
+				var itemID = (ItemID)values[0];
+
+				symbolID = ItemSymbols.GetSymbol(itemID, false);
+
+				if (values[1] is MaterialID)
+				{
+					var matID = (MaterialID)values[1];
+					var matInfo = Materials.GetMaterial(matID);
+					color = matInfo.Color;
+				}
+				else
+				{
+					color = GameColor.None;
+				}
+			}
+
+			if (targetType != typeof(Drawing))
+				throw new ArgumentException();
+
+			return GameData.Data.SymbolDrawingCache.GetDrawing(symbolID, color);
+		}
+
+		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
+	}
 }
