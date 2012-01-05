@@ -5,10 +5,6 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
-	<UserControl.Resources>
-		<ui:CapitalizeConverter x:Key="caseConverter" />
-	</UserControl.Resources>
-
 	<DockPanel>
 		<UniformGrid DockPanel.Dock="Top" Columns="2">
 			<TextBlock>BuildingID</TextBlock>
@@ -26,7 +22,7 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<DockPanel>
-							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding Name, Converter={StaticResource caseConverter}}" />
+							<TextBlock DockPanel.Dock="Left" Name="buildOrderName" Text="{Binding Name, Converter={StaticResource capitalizeConverter}}" />
 							<!--
 							<Label Content="R" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsRepeat}" Padding="4,0" />
 							<Label Content="S" DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding IsSuspended}" Padding="4,0" />

@@ -4,10 +4,6 @@
 					xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 					x:Class="Dwarrowdelf.Client.UI.TreeViewTemplateDictionary">
 
-	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="/UI/BaseDictionary.xaml" />
-	</ResourceDictionary.MergedDictionaries>
-
 	<ContextMenu x:Key="objectMenu">
 		<MenuItem Header="Go to" Tag="Goto" Click="MenuItem_Click" />
 		<MenuItem Header="Info..." Tag="Info" Click="MenuItem_Click" />

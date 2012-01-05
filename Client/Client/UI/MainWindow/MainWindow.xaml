@@ -15,26 +15,12 @@
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
 
-		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
-		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
-
 		<ContextMenu x:Key="objectSelectorContextMenu">
 			<ContextMenu.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
 
-						<Image Width="24" Height="24">
-							<Image.Source>
-								<DrawingImage>
-									<DrawingImage.Drawing>
-										<MultiBinding Converter="{StaticResource drawingConverter}">
-											<Binding Path="SymbolID" />
-											<Binding Path="EffectiveColor" />
-										</MultiBinding>
-									</DrawingImage.Drawing>
-								</DrawingImage>
-							</Image.Source>
-						</Image>
+						<Image Width="24" Height="24" Source="{StaticResource objectDrawingImage}" />
 
 						<TextBlock Text="{Binding Description}" />
 					</StackPanel>

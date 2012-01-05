@@ -4,8 +4,24 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	StartupUri="UI/MainWindow/MainWindow.xaml"
-	ShutdownMode="OnMainWindowClose">
+	ShutdownMode="OnMainWindowClose"
+	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 
 	<Application.Resources>
+
+		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
+		<ui:CapitalizeConverter x:Key="capitalizeConverter" />
+
+		<ui:SymbolAndColorToDrawingConverter x:Key="drawingConverter"/>
+
+		<DrawingImage x:Key="objectDrawingImage" x:Shared="False">
+			<DrawingImage.Drawing>
+				<MultiBinding Converter="{StaticResource drawingConverter}">
+					<Binding Path="SymbolID" />
+					<Binding Path="EffectiveColor" />
+				</MultiBinding>
+			</DrawingImage.Drawing>
+		</DrawingImage>
+
 	</Application.Resources>
 </Application>
