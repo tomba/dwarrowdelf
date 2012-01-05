@@ -9,6 +9,4 @@
 	<LivingInfo ID="Dragon" Category="Monster" Color="Red" Level="10" />
 	<LivingInfo ID="Orc" Category="Monster" Color="Red" Level="4" />
 
-	<LivingInfo ID="50" Name="MyItem" Category="Civilized" />
-
 </x:Array>

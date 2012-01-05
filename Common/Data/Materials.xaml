@@ -15,8 +15,8 @@
 	<MaterialInfo ID="Platinum" Category="Metal" Color="Silver" />
 	<MaterialInfo ID="Copper" Category="Metal" Color="DarkGoldenrod" />
 	<MaterialInfo ID="Zinc" Category="Metal" Color="DarkSlateGray" />
-    <MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
-    <MaterialInfo ID="Tin" Category="Metal" Color="DarkGray" />
+	<MaterialInfo ID="Lead" Category="Metal" Color="DarkGray" />
+	<MaterialInfo ID="Tin" Category="Metal" Color="DarkGray" />
 
 	<!-- Rocks -->
 	<MaterialInfo ID="Granite" Category="Rock" Color="DarkGray" />
@@ -44,10 +44,8 @@
 	<MaterialInfo ID="Fir" Category="Wood" Color="Sienna" />
 	<MaterialInfo ID="Pine" Category="Wood" Color="Sienna" />
 
+	<!-- Other -->
 	<MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
 	<MaterialInfo ID="Water" Category="Consumable" Color="Blue" />
-
-	<!-- custom test material -->
-	<MaterialInfo ID="99" Name="MyMaterial" Category="Custom" Color="LightCyan" />
 
 </x:Array>

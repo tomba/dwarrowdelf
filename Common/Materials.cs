@@ -66,7 +66,6 @@ namespace Dwarrowdelf
 		Gem,
 		Mineral,
 		Consumable,
-		Custom,
 	}
 
 	public sealed class MaterialInfo
