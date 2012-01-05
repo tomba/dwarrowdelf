@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (m_state == 0)
 			{
 				m_state = 1;
-				AddSubJob(new AssignmentGroups.MoveInstallFurnitureAssignment(this, m_item));
+				AddSubJob(new AssignmentGroups.MoveInstallFurnitureAssignment(this, m_item, InstallMode.Install));
 			}
 			else if (m_state == 1)
 			{

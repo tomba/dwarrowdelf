@@ -14,13 +14,16 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	{
 		[SaveGameProperty("Item")]
 		readonly IItemObject m_item;
+		[SaveGameProperty]
+		InstallMode m_mode;
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveInstallFurnitureAssignment(IJobObserver parent, IItemObject item)
+		public MoveInstallFurnitureAssignment(IJobObserver parent, IItemObject item, InstallMode mode)
 			: base(parent)
 		{
 			m_item = item;
+			m_mode = mode;
 			m_state = 0;
 		}
 
@@ -55,7 +58,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case 1:
-					assignment = new InstallItemAssignment(this, m_item);
+					assignment = new InstallItemAssignment(this, m_item, m_mode);
 					break;
 
 				default:

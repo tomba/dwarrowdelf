@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Client.UI
 							var item = dlg.SelectedItem;
 
 							if (item != null)
-								env.InstallFurnitureManager.AddJob(item, p);
+								env.InstallFurnitureManager.AddInstallJob(item, p);
 						}
 					}
 					break;

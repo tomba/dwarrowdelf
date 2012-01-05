@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
-		private void Button_Click(object sender, RoutedEventArgs e)
+		private void Debug_Button_Click(object sender, RoutedEventArgs e)
 		{
 			var button = (ToggleButton)sender;
 			var tag = (string)button.Tag;
@@ -44,6 +44,14 @@ namespace Dwarrowdelf.Client.UI
 			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
 			GameData.Data.Connection.Send(msg);
+		}
+
+		private void Uninstall_Button_Click(object sender, RoutedEventArgs e)
+		{
+			var env = App.MainWindow.Map;
+			var ob = (ItemObject)this.DataContext;
+
+			env.InstallFurnitureManager.AddUninstallJob(ob);
 		}
 	}
 }

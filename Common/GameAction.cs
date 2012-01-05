@@ -373,13 +373,24 @@ namespace Dwarrowdelf
 		}
 	}
 
+	public enum InstallMode
+	{
+		None = 0,
+		Install,
+		Uninstall,
+	}
+
 	[Serializable]
 	[SaveGameObjectByRef]
 	public sealed class InstallItemAction : ItemAction
 	{
-		public InstallItemAction(IItemObject item)
+		[SaveGameProperty]
+		public InstallMode Mode { get; private set; }
+
+		public InstallItemAction(IItemObject item, InstallMode mode)
 			: base(item)
 		{
+			this.Mode = mode;
 		}
 
 		InstallItemAction(SaveGameContext ctx)

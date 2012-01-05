@@ -257,11 +257,11 @@ namespace Dwarrowdelf.Server
 
 			if (item == null)
 			{
-				SendFailReport(new InstallItemActionReport(this, null), "item doesn't exists");
+				SendFailReport(new InstallItemActionReport(this, null, action.Mode), "item doesn't exists");
 				return false;
 			}
 
-			var report = new InstallItemActionReport(this, item);
+			var report = new InstallItemActionReport(this, item, action.Mode);
 
 			if (item.Environment != this.Environment || item.Location != this.Location)
 			{
@@ -269,13 +269,35 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.IsInstalled)
+			switch (action.Mode)
 			{
-				SendFailReport(report, "item already installed");
-				return false;
-			}
+				case InstallMode.Install:
 
-			item.IsInstalled = true;
+					if (item.IsInstalled)
+					{
+						SendFailReport(report, "item already installed");
+						return false;
+					}
+
+					item.IsInstalled = true;
+
+					break;
+
+				case InstallMode.Uninstall:
+
+					if (!item.IsInstalled)
+					{
+						SendFailReport(report, "item not installed");
+						return false;
+					}
+
+					item.IsInstalled = false;
+
+					break;
+
+				default:
+					throw new Exception();
+			}
 
 			SendReport(report);
 

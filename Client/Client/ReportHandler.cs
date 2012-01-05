@@ -148,7 +148,19 @@ namespace Dwarrowdelf.Client
 
 		void HandleReport(InstallItemActionReport report)
 		{
-			HandleItemActionReport(report, "installs", "install");
+			switch (report.Mode)
+			{
+				case InstallMode.Install:
+					HandleItemActionReport(report, "installs", "install");
+					break;
+
+				case InstallMode.Uninstall:
+					HandleItemActionReport(report, "uninstalls", "uninstall");
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		void HandleReport(ConstructBuildingActionReport report)

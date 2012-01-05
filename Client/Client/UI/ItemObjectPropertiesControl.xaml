@@ -33,10 +33,14 @@
 			<TextBlock Text="{Binding IsClosed}" />
 		</UniformGrid>
 
+		<GroupBox Header="Actions">
+			<Button Click="Uninstall_Button_Click" IsEnabled="{Binding IsInstalled}">Uninstall</Button>
+		</GroupBox>
+
 		<GroupBox Header="Debug">
 			<StackPanel Orientation="Vertical">
-				<ToggleButton IsChecked="{Binding IsInstalled, Mode=OneWay}" Click="Button_Click" Tag="IsInstalled">IsInstalled</ToggleButton>
-				<ToggleButton IsChecked="{Binding IsClosed, Mode=OneWay}" Click="Button_Click" Tag="IsClosed">IsClosed</ToggleButton>
+				<ToggleButton IsChecked="{Binding IsInstalled, Mode=OneWay}" Click="Debug_Button_Click" Tag="IsInstalled">IsInstalled</ToggleButton>
+				<ToggleButton IsChecked="{Binding IsClosed, Mode=OneWay}" Click="Debug_Button_Click" Tag="IsClosed">IsClosed</ToggleButton>
 			</StackPanel>
 		</GroupBox>
 

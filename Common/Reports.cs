@@ -246,9 +246,12 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class InstallItemActionReport : ItemActionReport
 	{
-		public InstallItemActionReport(ILivingObject living, IItemObject item)
+		public InstallMode Mode { get; private set; }
+
+		public InstallItemActionReport(ILivingObject living, IItemObject item, InstallMode mode)
 			: base(living, item)
 		{
+			this.Mode = mode;
 		}
 	}
 }
