@@ -349,12 +349,6 @@ namespace Dwarrowdelf.Server
 			return (m_tileGrid.GetFlags(l) & flags) != 0;
 		}
 
-		public bool GetHidden(IntPoint3D l)
-		{
-			// WWW
-			return false;
-		}
-
 		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
 		{
 			Debug.Assert(this.IsInitialized);

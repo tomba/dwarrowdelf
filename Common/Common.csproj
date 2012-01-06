@@ -133,7 +133,6 @@
     <Compile Include="Jobs\JobGroups\JobGroup.cs" />
     <Compile Include="Jobs\JobGroups\FetchItems.cs" />
     <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />
-    <Compile Include="Jobs\JobGroups\MineAreaJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="AI\JobManagerAI.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
