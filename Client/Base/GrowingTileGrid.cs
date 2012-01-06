@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
@@ -17,6 +18,14 @@ namespace Dwarrowdelf.Client
 
 		public GrowingTileGrid(IntCuboid bounds)
 		{
+			SetBounds(bounds);
+		}
+
+		public void SetBounds(IntCuboid bounds)
+		{
+			if (!m_bounds.IsNull)
+				throw new Exception();
+
 			int nx = bounds.X;
 			int ny = bounds.Y;
 			int nz = bounds.Z;
@@ -26,6 +35,8 @@ namespace Dwarrowdelf.Client
 
 			m_grid = new TileData[nd, nh, nw];
 			m_bounds = new IntCuboid(nx, ny, nz, nw, nh, nd);
+
+			Debug.Print("GrowingTileGrid.SetBounds({0})", m_bounds);
 		}
 
 		int Align256(int x)
@@ -129,6 +140,8 @@ namespace Dwarrowdelf.Client
 
 			m_grid = newGrid;
 			m_bounds = new IntCuboid(nx, ny, nz, nw, nh, nd);
+
+			Debug.Print("GrowingTileGrid.SetBounds({0})", m_bounds);
 		}
 
 		public void SetTileData(IntPoint3D p, TileData data)

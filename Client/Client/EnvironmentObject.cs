@@ -68,7 +68,10 @@ namespace Dwarrowdelf.Client
 			base.Deserialize(_data);
 
 			if (!data.Bounds.IsNull)
+			{
 				this.Bounds = data.Bounds;
+				m_tileGrid.SetBounds(this.Bounds);
+			}
 			this.HomeLocation = data.HomeLocation;
 			this.VisibilityMode = data.VisibilityMode;
 
