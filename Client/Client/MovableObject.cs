@@ -81,6 +81,9 @@ namespace Dwarrowdelf.Client
 				ObjectMoved(this, this.Parent, this.Location);
 		}
 
+		/// <summary>
+		/// Return Parent as EnvironmentObject
+		/// </summary>
 		public EnvironmentObject Environment
 		{
 			get { return this.Parent as EnvironmentObject; }

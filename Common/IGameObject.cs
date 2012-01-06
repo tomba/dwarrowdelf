@@ -71,6 +71,9 @@ namespace Dwarrowdelf
 
 	public interface IMovableObject : IContainerObject
 	{
+		/// <summary>
+		/// Return Parent as IEnvironmentObject
+		/// </summary>
 		IEnvironmentObject Environment { get; }
 		IContainerObject Parent { get; }
 		IntPoint3D Location { get; }

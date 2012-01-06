@@ -49,13 +49,13 @@ namespace Dwarrowdelf.Server
 			return !this.IsWorn && !this.IsWielded && !this.IsInstalled;
 		}
 
-		protected override void OnEnvironmentChanging()
+		protected override void OnParentChanging()
 		{
 			// Ensure that the item is not installed when moved. This can happen when forcibly moved.
 			if (this.IsInstalled)
 				this.IsInstalled = false;
 
-			base.OnEnvironmentChanging();
+			base.OnParentChanging();
 		}
 
 		protected override void OnLocationChanging()

@@ -13,6 +13,9 @@ namespace Dwarrowdelf.Server
 		public ContainerObject Parent { get; private set; }
 		IContainerObject IMovableObject.Parent { get { return this.Parent; } }
 
+		/// <summary>
+		/// Return Parent as EnvironmentObject
+		/// </summary>
 		public EnvironmentObject Environment { get { return this.Parent as EnvironmentObject; } }
 		IEnvironmentObject IMovableObject.Environment { get { return this.Parent as IEnvironmentObject; } }
 
@@ -63,8 +66,8 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
-		protected virtual void OnEnvironmentChanging() { }
-		protected virtual void OnEnvironmentChanged() { }
+		protected virtual void OnParentChanging() { }
+		protected virtual void OnParentChanged() { }
 
 		protected virtual void OnLocationChanging() { }
 		protected virtual void OnLocationChanged() { }
@@ -151,7 +154,7 @@ namespace Dwarrowdelf.Server
 			var src = this.Parent;
 			var srcLoc = this.Location;
 
-			this.OnEnvironmentChanging();
+			this.OnParentChanging();
 
 			if (src != null)
 				src.RemoveChild(this);
@@ -162,7 +165,7 @@ namespace Dwarrowdelf.Server
 			if (dst != null)
 				dst.AddChild(this);
 
-			this.OnEnvironmentChanged();
+			this.OnParentChanged();
 
 			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}
