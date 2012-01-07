@@ -107,7 +107,7 @@ namespace Dwarrowdelf.Client
 			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3D>(Environment_ObjectMoved);
 
 			m_itemObjectView = new ItemObjectView(this.Environment, this.Area.Center,
-				o => o.IsReserved == false && o.IsStockpiled == false && Match(o));
+				o => o.IsReserved == false && o.IsStockpiled == false && o.IsInstalled == false && Match(o));
 		}
 
 		Stockpile(SaveGameContext ctx)
@@ -179,28 +179,24 @@ namespace Dwarrowdelf.Client
 		{
 			m_itemObjectView.Enable();
 
-			ItemObject.IsReservedChanged += ItemObject_IsReservedChanged;
-			ItemObject.IsStockpiledChanged += ItemObject_IsStockpiledChanged;
+			ItemObject.IsReservedChanged += ItemObject_ParameterChanged;
+			ItemObject.IsStockpiledChanged += ItemObject_ParameterChanged;
+			ItemObject.IsInstalledChanged += ItemObject_ParameterChanged;
 		}
 
 		void DisableItemObjectView()
 		{
 			m_itemObjectView.Disable();
 
-			ItemObject.IsReservedChanged -= ItemObject_IsReservedChanged;
-			ItemObject.IsStockpiledChanged -= ItemObject_IsStockpiledChanged;
+			ItemObject.IsReservedChanged -= ItemObject_ParameterChanged;
+			ItemObject.IsStockpiledChanged -= ItemObject_ParameterChanged;
+			ItemObject.IsInstalledChanged -= ItemObject_ParameterChanged;
 		}
 
-		void ItemObject_IsStockpiledChanged(ItemObject ob)
+		void ItemObject_ParameterChanged(ItemObject ob)
 		{
 			m_itemObjectView.Update(ob);
 		}
-
-		void ItemObject_IsReservedChanged(ItemObject ob)
-		{
-			m_itemObjectView.Update(ob);
-		}
-
 
 
 		IAssignment IJobSource.FindAssignment(ILivingObject living)

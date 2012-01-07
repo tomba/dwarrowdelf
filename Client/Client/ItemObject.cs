@@ -144,11 +144,20 @@ namespace Dwarrowdelf.Client
 			private set { m_refreshmentValue = value; Notify("RefreshmentValue"); }
 		}
 
+		public static event Action<ItemObject> IsInstalledChanged;
+
 		bool m_isInstalled;
 		public bool IsInstalled
 		{
 			get { return m_isInstalled; }
-			private set { m_isInstalled = value; Notify("IsInstalled"); }
+
+			private set
+			{
+				m_isInstalled = value;
+				Notify("IsInstalled");
+				if (ItemObject.IsInstalledChanged != null)
+					ItemObject.IsInstalledChanged(this);
+			}
 		}
 
 		bool m_isClosed;
