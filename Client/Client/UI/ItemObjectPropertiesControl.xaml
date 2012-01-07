@@ -29,6 +29,12 @@
 			<TextBlock>Server Reserved By</TextBlock>
 			<TextBlock Text="{Binding ServerReservedBy}" />
 
+			<TextBlock>IsStockpiled</TextBlock>
+			<TextBlock Text="{Binding IsStockpiled}" />
+
+			<TextBlock>Stockpiled By</TextBlock>
+			<TextBlock Text="{Binding StockpiledBy}" />
+
 			<TextBlock>IsInstalled</TextBlock>
 			<TextBlock Text="{Binding IsInstalled}" />
 

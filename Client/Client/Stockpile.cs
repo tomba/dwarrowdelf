@@ -34,6 +34,15 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef]
 	sealed class StockpileCriteria
 	{
+		[SaveGameProperty]
+		public ItemID[] ItemIDs { get; set; }
+		[SaveGameProperty]
+		public ItemCategory[] ItemCategories { get; set; }
+		[SaveGameProperty]
+		public MaterialID[] MaterialIDs { get; set; }
+		[SaveGameProperty]
+		public MaterialCategory[] MaterialCategories { get; set; }
+
 		public StockpileCriteria()
 		{
 			this.ItemIDs = new ItemID[0];
@@ -54,14 +63,13 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		[SaveGameProperty]
-		public ItemID[] ItemIDs { get; set; }
-		[SaveGameProperty]
-		public ItemCategory[] ItemCategories { get; set; }
-		[SaveGameProperty]
-		public MaterialID[] MaterialIDs { get; set; }
-		[SaveGameProperty]
-		public MaterialCategory[] MaterialCategories { get; set; }
+		public bool IsEmpty
+		{
+			get
+			{
+				return this.ItemIDs.Length == 0 && this.ItemCategories.Length == 0 && this.MaterialIDs.Length == 0 && this.MaterialCategories.Length == 0;
+			}
+		}
 	}
 
 	[SaveGameObjectByRef]
@@ -83,6 +91,8 @@ namespace Dwarrowdelf.Client
 
 		public string Description { get { return "Stockpile"; } }
 
+		ItemObjectView m_itemObjectView;
+
 		public Stockpile(EnvironmentObject environment, IntRectZ area)
 		{
 			this.Environment = environment;
@@ -92,6 +102,12 @@ namespace Dwarrowdelf.Client
 			m_jobs = new List<StoreToStockpileJob>();
 
 			this.Environment.World.JobManager.AddJobSource(this);
+
+			this.Environment.ObjectRemoved += new Action<MovableObject>(Environment_ObjectRemoved);
+			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3D>(Environment_ObjectMoved);
+
+			m_itemObjectView = new ItemObjectView(this.Environment, this.Area.Center,
+				o => o.IsReserved == false && o.IsStockpiled == false && Match(o));
 		}
 
 		Stockpile(SaveGameContext ctx)
@@ -116,51 +132,116 @@ namespace Dwarrowdelf.Client
 				job.Abort();
 
 			m_jobs = null;
+
+			if (m_itemObjectView.IsEnabled)
+				DisableItemObjectView();
+
+			foreach (var item in this.Area.Range().SelectMany(p => this.Environment.GetContents(p)).OfType<ItemObject>())
+			{
+				if (item.StockpiledBy == this)
+					item.StockpiledBy = null;
+			}
+		}
+
+		void Environment_ObjectMoved(MovableObject ob, IntPoint3D oldPos)
+		{
+			if (this.Area.Contains(oldPos) == false)
+				return;
+
+			var item = ob as ItemObject;
+
+			if (item != null && item.StockpiledBy == this)
+				item.StockpiledBy = null;
+		}
+
+		void Environment_ObjectRemoved(MovableObject ob)
+		{
+			if (this.Area.Contains(ob.Location) == false)
+				return;
+
+			var item = ob as ItemObject;
+
+			if (item != null && item.StockpiledBy == this)
+				item.StockpiledBy = null;
 		}
 
 		public void SetCriteria(StockpileCriteriaEditable criteria)
 		{
 			this.Criteria = new StockpileCriteria(criteria);
+
+			if (this.Criteria.IsEmpty == false && m_itemObjectView.IsEnabled == false)
+				EnableItemObjectView();
+			else if (this.Criteria.IsEmpty && m_itemObjectView.IsEnabled)
+				DisableItemObjectView();
 		}
+
+		void EnableItemObjectView()
+		{
+			m_itemObjectView.Enable();
+
+			ItemObject.IsReservedChanged += ItemObject_IsReservedChanged;
+			ItemObject.IsStockpiledChanged += ItemObject_IsStockpiledChanged;
+		}
+
+		void DisableItemObjectView()
+		{
+			m_itemObjectView.Disable();
+
+			ItemObject.IsReservedChanged -= ItemObject_IsReservedChanged;
+			ItemObject.IsStockpiledChanged -= ItemObject_IsStockpiledChanged;
+		}
+
+		void ItemObject_IsStockpiledChanged(ItemObject ob)
+		{
+			m_itemObjectView.Update(ob);
+		}
+
+		void ItemObject_IsReservedChanged(ItemObject ob)
+		{
+			m_itemObjectView.Update(ob);
+		}
+
+
 
 		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
-			var c = this.Criteria;
-
-			if (c.ItemCategories.Length == 0 && c.ItemIDs.Length == 0 && c.MaterialCategories.Length == 0 && c.MaterialIDs.Length == 0)
+			if (m_itemObjectView.IsEnabled == false)
 				return null;
 
-			var obs = this.Environment.GetContents()
-				.OfType<ItemObject>()
-				.Where(o => o.IsReserved == false)
-				.Where(o => Match(o))
-				.Where(o => { var sp = this.Environment.GetStockpileAt(o.Location); return !(sp != null && sp.Match(o)); }); // XXX
+			var ob = m_itemObjectView.GetFirst();
 
-			foreach (var ob in obs)
-			{
-				var job = new StoreToStockpileJob(this, this, ob);
+			if (ob == null)
+				return null;
 
-				m_jobs.Add(job);
+			var job = new StoreToStockpileJob(this, this, ob);
 
-				GameData.Data.Jobs.Add(job);
+			m_jobs.Add(job);
 
-				ob.ReservedBy = this;
+			GameData.Data.Jobs.Add(job);
 
-				return job;
-			}
+			ob.ReservedBy = this;
 
-			return null;
+			return job;
 		}
 
 		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			var j = (StoreToStockpileJob)job;
 
-			if (status == JobStatus.Ok)
-				throw new Exception();
+			switch (status)
+			{
+				case JobStatus.Done:
+					j.Item.StockpiledBy = this;
+					break;
 
-			if (status != JobStatus.Done)
-				GameData.Data.AddGameEvent(j.Item, "failed to store item to stockpile");
+				case JobStatus.Abort:
+				case JobStatus.Fail:
+					GameData.Data.AddGameEvent(j.Item, "failed to store item to stockpile");
+					break;
+
+				default:
+					throw new Exception();
+			}
 
 			Debug.Assert(j.Item.ReservedBy == this);
 			j.Item.ReservedBy = null;
@@ -213,9 +294,7 @@ namespace Dwarrowdelf.Client
 		{
 			var c = this.Criteria;
 
-			Debug.Assert(c.ItemCategories != null || c.ItemIDs != null || c.MaterialCategories != null || c.MaterialIDs != null);
-
-			if (c.ItemCategories.Length == 0 && c.ItemIDs.Length == 0 && c.MaterialCategories.Length == 0 && c.MaterialIDs.Length == 0)
+			if (c.IsEmpty)
 				return false;
 
 			if (c.ItemCategories.Length != 0 && c.ItemCategories.Contains(item.ItemCategory) == false)

@@ -41,21 +41,51 @@ namespace Dwarrowdelf.Client
 
 		}
 
+		public static event Action<ItemObject> IsReservedChanged;
+
 		[SaveGameProperty]
 		object m_reservedBy;
 		public object ReservedBy
 		{
 			get { return m_reservedBy; }
+
 			set
 			{
 				Debug.Assert(value == null || m_reservedBy == null);
 				m_reservedBy = value;
 				Notify("ReservedBy");
 				Notify("IsReserved");
+
+				if (ItemObject.IsReservedChanged != null)
+					ItemObject.IsReservedChanged(this);
 			}
 		}
 
 		public bool IsReserved { get { return m_reservedBy != null; } }
+
+
+		public static event Action<ItemObject> IsStockpiledChanged;
+
+		[SaveGameProperty]
+		Stockpile m_stockpiledBy;
+		public Stockpile StockpiledBy
+		{
+			get { return m_stockpiledBy; }
+
+			set
+			{
+				Debug.Assert(value == null || m_stockpiledBy == null);
+				m_stockpiledBy = value;
+				Notify("StockpiledBy");
+				Notify("IsStockpiled");
+
+				if (ItemObject.IsStockpiledChanged != null)
+					ItemObject.IsStockpiledChanged(this);
+			}
+		}
+
+		public bool IsStockpiled { get { return m_stockpiledBy != null; } }
+
 
 		public ItemInfo ItemInfo { get; private set; }
 		public ItemCategory ItemCategory { get { return this.ItemInfo.Category; } }

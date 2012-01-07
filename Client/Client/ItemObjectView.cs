@@ -14,57 +14,81 @@ namespace Dwarrowdelf.Client
 
 		Func<ItemObject, bool> m_filter;
 
-		public ItemObjectView(EnvironmentObject env, IntPoint3D origin)
+		public bool IsEnabled { get; private set; }
+
+		public ItemObjectView(EnvironmentObject env, IntPoint3D center, Func<ItemObject, bool> filter)
 		{
 			m_env = env;
-
-			m_heap = new SortedDictionary<IntPoint3D, List<ItemObject>>(new LocationComparer(origin));
-			m_filter = o => true;
-
-			Reset();
-
-			{
-				foreach (var kvp in m_heap)
-					foreach (var o in kvp.Value)
-						Debug.Print("{0}  {1}", o, o.Location);
-
-				Debug.Print("");
-			}
-
-			{
-				foreach (var o in Get())
-					Debug.Print("{0}  {1}", o, o.Location);
-			}
-
-			env.ObjectAdded += new Action<MovableObject>(env_ObjectAdded);
-			env.ObjectRemoved += new Action<MovableObject>(env_ObjectRemoved);
-			env.ObjectMoved += new Action<MovableObject, IntPoint3D>(env_ObjectMoved);
-		}
-
-		public void Stop()
-		{
-			m_env.ObjectAdded -= new Action<MovableObject>(env_ObjectAdded);
-			m_env.ObjectRemoved -= new Action<MovableObject>(env_ObjectRemoved);
-			m_env.ObjectMoved -= new Action<MovableObject, IntPoint3D>(env_ObjectMoved);
-		}
-
-		public void SetFilter(Func<ItemObject, bool> filter)
-		{
 			m_filter = filter;
-			Reset();
+			m_heap = new SortedDictionary<IntPoint3D, List<ItemObject>>(new LocationComparer(center));
 		}
 
-		void Reset()
+		public void Enable()
 		{
+			if (this.IsEnabled)
+				throw new Exception();
+
+			Debug.Print("ItemObjectView: Enable");
+
+			ScanAll();
+
+			m_env.ObjectAdded += Environment_ObjectAdded;
+			m_env.ObjectRemoved += Environment_ObjectRemoved;
+			m_env.ObjectMoved += Environment_ObjectMoved;
+
+			this.IsEnabled = true;
+		}
+
+		public void Disable()
+		{
+			if (!this.IsEnabled)
+				throw new Exception();
+
+			Debug.Print("ItemObjectView: Disable");
+
+			m_env.ObjectAdded -= Environment_ObjectAdded;
+			m_env.ObjectRemoved -= Environment_ObjectRemoved;
+			m_env.ObjectMoved -= Environment_ObjectMoved;
+
 			m_heap.Clear();
+
+			this.IsEnabled = false;
+		}
+
+		void ScanAll()
+		{
+			Debug.Print("ItemObjectView: ScanAll");
 
 			foreach (var item in m_env.GetContents().OfType<ItemObject>())
 			{
 				if (m_filter(item) == false)
-					return;
+					continue;
 
 				Add(item);
 			}
+		}
+
+		public void Update(ItemObject item)
+		{
+			RemoveIfExists(item, item.Location);
+
+			if (m_filter(item) == false)
+				return;
+
+			Add(item);
+		}
+
+		void RemoveIfExists(ItemObject item, IntPoint3D pos)
+		{
+			List<ItemObject> l;
+
+			if (m_heap.TryGetValue(pos, out l) == false)
+				return;
+
+			l.Remove(item);
+
+			if (l.Count == 0)
+				m_heap.Remove(pos);
 		}
 
 		void Remove(ItemObject item, IntPoint3D pos)
@@ -72,6 +96,9 @@ namespace Dwarrowdelf.Client
 			List<ItemObject> l = m_heap[pos];
 			var ok = l.Remove(item);
 			Debug.Assert(ok);
+
+			if (l.Count == 0)
+				m_heap.Remove(pos);
 		}
 
 		void Add(ItemObject item)
@@ -87,7 +114,7 @@ namespace Dwarrowdelf.Client
 			l.Add(item);
 		}
 
-		void env_ObjectMoved(MovableObject obj, IntPoint3D oldPos)
+		void Environment_ObjectMoved(MovableObject obj, IntPoint3D oldPos)
 		{
 			var item = obj as ItemObject;
 
@@ -102,7 +129,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void env_ObjectRemoved(MovableObject obj)
+		void Environment_ObjectRemoved(MovableObject obj)
 		{
 			var item = obj as ItemObject;
 
@@ -115,7 +142,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void env_ObjectAdded(MovableObject obj)
+		void Environment_ObjectAdded(MovableObject obj)
 		{
 			var item = obj as ItemObject;
 
@@ -128,26 +155,31 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public IEnumerable<ItemObject> Get()
+		public ItemObject GetFirst()
+		{
+			return m_heap.SelectMany(kvp => kvp.Value).FirstOrDefault();
+		}
+
+		public IEnumerable<ItemObject> GetEnumerable()
 		{
 			return m_heap.SelectMany(kvp => kvp.Value);
 		}
 
 		class LocationComparer : IComparer<IntPoint3D>
 		{
-			IntPoint3D m_origin;
+			IntPoint3D m_center;
 
-			public LocationComparer(IntPoint3D origin)
+			public LocationComparer(IntPoint3D center)
 			{
-				m_origin = origin;
+				m_center = center;
 			}
 
 			#region IComparer<Obu> Members
 
 			public int Compare(IntPoint3D x, IntPoint3D y)
 			{
-				var d1 = x - m_origin;
-				var d2 = y - m_origin;
+				var d1 = x - m_center;
+				var d2 = y - m_center;
 
 				var l1 = d1.ManhattanLength;
 				var l2 = d2.ManhattanLength;
