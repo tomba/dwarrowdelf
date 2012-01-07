@@ -242,6 +242,7 @@
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="InstallFurnitureManager.cs" />
+    <Compile Include="ItemObjectView.cs" />
     <Compile Include="UI\MapControl\TileView.cs" />
     <Compile Include="UI\MapControl\TileToolTipControl.xaml.cs">
       <DependentUpon>TileToolTipControl.xaml</DependentUpon>
