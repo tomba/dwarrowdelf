@@ -134,9 +134,6 @@ namespace Dwarrowdelf.Client.UI
 						var stockpile = new Stockpile(env, selection.SelectionIntRectZ);
 						env.AddMapElement(stockpile);
 
-						// Add one empty, so StockpileEditor works...
-						stockpile.Criterias.Add(new StockpileCriteria());
-
 						var dlg = new ObjectEditDialog();
 						dlg.DataContext = stockpile;
 						dlg.Owner = this;

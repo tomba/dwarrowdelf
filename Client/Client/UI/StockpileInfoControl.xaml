@@ -17,19 +17,12 @@
 		</UniformGrid>
 
 		<GroupBox Header="Stockpiled types">
-			<ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding Criterias}" MinWidth="100" MinHeight="100">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<UniformGrid Columns="4">
-							<ListBox ItemsSource="{Binding ItemIDs}" />
-							<ListBox ItemsSource="{Binding ItemCategories}" />
-							<ListBox ItemsSource="{Binding MaterialIDs}" />
-							<ListBox ItemsSource="{Binding MaterialCategories}" />
-
-						</UniformGrid>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
+			<UniformGrid Columns="4" DataContext="{Binding Criteria}">
+				<ListBox ItemsSource="{Binding ItemIDs}" />
+				<ListBox ItemsSource="{Binding ItemCategories}" />
+				<ListBox ItemsSource="{Binding MaterialIDs}" />
+				<ListBox ItemsSource="{Binding MaterialCategories}" />
+			</UniformGrid>
 		</GroupBox>
 	</DockPanel>
 </UserControl>

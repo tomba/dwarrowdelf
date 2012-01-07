@@ -25,23 +25,17 @@ namespace Dwarrowdelf.Client.UI
 
 	sealed class DesignStockpileSample
 	{
-		public ObservableCollection<StockpileCriteria> Criterias { get; set; }
+		public StockpileCriteria Criteria { get; set; }
 
 		public DesignStockpileSample()
 		{
-			var criterias = new ObservableCollection<StockpileCriteria>();
+			var c = new StockpileCriteriaEditable();
 
-			var c1 = new StockpileCriteria();
-			c1.ItemIDs.Add(ItemID.Log);
-			c1.ItemIDs.Add(ItemID.Door);
-			c1.MaterialCategories.Add(MaterialCategory.Wood);
-			criterias.Add(c1);
+			c.ItemIDs.Add(ItemID.Log);
+			c.ItemIDs.Add(ItemID.Door);
+			c.MaterialCategories.Add(MaterialCategory.Wood);
 
-			var c2 = new StockpileCriteria();
-			c2.ItemIDs.Add(ItemID.Gem);
-			criterias.Add(c2);
-
-			this.Criterias = criterias;
+			this.Criteria = new StockpileCriteria(c);
 		}
 	}
 }

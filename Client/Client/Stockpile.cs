@@ -7,10 +7,9 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef]
-	sealed class StockpileCriteria
+	sealed class StockpileCriteriaEditable
 	{
-		public StockpileCriteria()
+		public StockpileCriteriaEditable()
 		{
 			this.ItemIDs = new ObservableCollection<ItemID>();
 			this.ItemCategories = new ObservableCollection<ItemCategory>();
@@ -18,19 +17,51 @@ namespace Dwarrowdelf.Client
 			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
 		}
 
+		public StockpileCriteriaEditable(StockpileCriteria source)
+		{
+			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
+			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
+			this.MaterialIDs = new ObservableCollection<MaterialID>(source.MaterialIDs);
+			this.MaterialCategories = new ObservableCollection<MaterialCategory>(source.MaterialCategories);
+		}
+
+		public ObservableCollection<ItemID> ItemIDs { get; set; }
+		public ObservableCollection<ItemCategory> ItemCategories { get; set; }
+		public ObservableCollection<MaterialID> MaterialIDs { get; set; }
+		public ObservableCollection<MaterialCategory> MaterialCategories { get; set; }
+	}
+
+	[SaveGameObjectByRef]
+	sealed class StockpileCriteria
+	{
+		public StockpileCriteria()
+		{
+			this.ItemIDs = new ItemID[0];
+			this.ItemCategories = new ItemCategory[0];
+			this.MaterialIDs = new MaterialID[0];
+			this.MaterialCategories = new MaterialCategory[0];
+		}
+
+		public StockpileCriteria(StockpileCriteriaEditable source)
+		{
+			this.ItemIDs = source.ItemIDs.ToArray();
+			this.ItemCategories = source.ItemCategories.ToArray();
+			this.MaterialIDs = source.MaterialIDs.ToArray();
+			this.MaterialCategories = source.MaterialCategories.ToArray();
+		}
+
 		StockpileCriteria(SaveGameContext ctx)
 		{
 		}
 
 		[SaveGameProperty]
-		public ObservableCollection<ItemID> ItemIDs { get; private set; }
+		public ItemID[] ItemIDs { get; set; }
 		[SaveGameProperty]
-		public ObservableCollection<ItemCategory> ItemCategories { get; private set; }
+		public ItemCategory[] ItemCategories { get; set; }
 		[SaveGameProperty]
-		public ObservableCollection<MaterialID> MaterialIDs { get; private set; }
+		public MaterialID[] MaterialIDs { get; set; }
 		[SaveGameProperty]
-		public ObservableCollection<MaterialCategory> MaterialCategories { get; private set; }
-		// quality
+		public MaterialCategory[] MaterialCategories { get; set; }
 	}
 
 	[SaveGameObjectByRef]
@@ -43,8 +74,9 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
+		// XXX Just one criteria for now. Could be multiple in the future.
 		[SaveGameProperty]
-		public ObservableCollection<StockpileCriteria> Criterias { get; private set; }
+		public StockpileCriteria Criteria { get; private set; }
 
 		[SaveGameProperty]
 		List<StoreToStockpileJob> m_jobs;
@@ -55,7 +87,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = environment;
 			this.Area = area;
-			this.Criterias = new ObservableCollection<StockpileCriteria>();
+			this.Criteria = new StockpileCriteria();
 
 			m_jobs = new List<StoreToStockpileJob>();
 
@@ -86,9 +118,16 @@ namespace Dwarrowdelf.Client
 			m_jobs = null;
 		}
 
+		public void SetCriteria(StockpileCriteriaEditable criteria)
+		{
+			this.Criteria = new StockpileCriteria(criteria);
+		}
+
 		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
-			if (this.Criterias.Count == 0)
+			var c = this.Criteria;
+
+			if (c.ItemCategories.Length == 0 && c.ItemIDs.Length == 0 && c.MaterialCategories.Length == 0 && c.MaterialIDs.Length == 0)
 				return null;
 
 			var obs = this.Environment.GetContents()
@@ -172,29 +211,26 @@ namespace Dwarrowdelf.Client
 
 		bool Match(ItemObject item)
 		{
-			foreach (var c in this.Criterias)
-			{
-				Debug.Assert(c.ItemCategories != null || c.ItemIDs != null || c.MaterialCategories != null || c.MaterialIDs != null);
+			var c = this.Criteria;
 
-				if (c.ItemCategories.Count == 0 && c.ItemIDs.Count == 0 && c.MaterialCategories.Count == 0 && c.MaterialIDs.Count == 0)
-					continue;
+			Debug.Assert(c.ItemCategories != null || c.ItemIDs != null || c.MaterialCategories != null || c.MaterialIDs != null);
 
-				if (c.ItemCategories.Count != 0 && c.ItemCategories.Contains(item.ItemCategory) == false)
-					continue;
+			if (c.ItemCategories.Length == 0 && c.ItemIDs.Length == 0 && c.MaterialCategories.Length == 0 && c.MaterialIDs.Length == 0)
+				return false;
 
-				if (c.ItemIDs.Count != 0 && c.ItemIDs.Contains(item.ItemID) == false)
-					continue;
+			if (c.ItemCategories.Length != 0 && c.ItemCategories.Contains(item.ItemCategory) == false)
+				return false;
 
-				if (c.MaterialCategories.Count != 0 && c.MaterialCategories.Contains(item.MaterialCategory) == false)
-					continue;
+			if (c.ItemIDs.Length != 0 && c.ItemIDs.Contains(item.ItemID) == false)
+				return false;
 
-				if (c.MaterialIDs.Count != 0 && c.MaterialIDs.Contains(item.MaterialID) == false)
-					continue;
+			if (c.MaterialCategories.Length != 0 && c.MaterialCategories.Contains(item.MaterialCategory) == false)
+				return false;
 
-				return true;
-			}
+			if (c.MaterialIDs.Length != 0 && c.MaterialIDs.Contains(item.MaterialID) == false)
+				return false;
 
-			return false;
+			return true;
 		}
 
 		public override string ToString()
