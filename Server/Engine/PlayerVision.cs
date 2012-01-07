@@ -304,6 +304,7 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in revealedObjects)
 			{
 				var vis = m_player.GetObjectVisibility(ob);
+				Debug.Assert(vis != ObjectVisibility.None);
 				ob.SendTo(m_player, vis);
 			}
 		}

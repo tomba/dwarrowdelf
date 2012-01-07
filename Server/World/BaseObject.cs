@@ -90,6 +90,8 @@ namespace Dwarrowdelf.Server
 
 		protected virtual void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
+			Debug.Assert(visibility != ObjectVisibility.None);
+
 			baseData.ObjectID = this.ObjectID;
 
 			baseData.CreationTime = this.CreationTime;

@@ -732,6 +732,7 @@ namespace Dwarrowdelf.Server
 				{
 					var newObject = c.Object;
 					var vis = m_player.GetObjectVisibility(newObject);
+					Debug.Assert(vis != ObjectVisibility.None);
 					newObject.SendTo(m_player, vis);
 				}
 			}

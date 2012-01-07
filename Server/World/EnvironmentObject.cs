@@ -554,6 +554,8 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
+			Debug.Assert(visibility != ObjectVisibility.None);
+
 			var data = new MapData();
 			CollectObjectData(data, visibility);
 			player.Send(new Messages.ObjectDataMessage(data));
@@ -563,7 +565,9 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in this.Inventory)
 			{
 				var vis = player.GetObjectVisibility(ob);
-				ob.SendTo(player, vis);
+
+				if (vis != ObjectVisibility.None)
+					ob.SendTo(player, vis);
 			}
 
 			foreach (var o in m_largeObjectSet)

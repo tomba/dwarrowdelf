@@ -353,6 +353,8 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
+			Debug.Assert(visibility != ObjectVisibility.None);
+
 			var data = new LivingData();
 
 			CollectObjectData(data, visibility);

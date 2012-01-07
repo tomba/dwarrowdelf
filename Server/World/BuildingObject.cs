@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
@@ -63,6 +64,8 @@ namespace Dwarrowdelf.Server
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
+			Debug.Assert(visibility != ObjectVisibility.None);
+
 			var data = new BuildingData();
 
 			CollectObjectData(data, visibility);
