@@ -25,6 +25,10 @@ namespace Dwarrowdelf.Client
 		Dictionary<IntPoint3D, List<MovableObject>> m_objectMap;
 		List<MovableObject> m_objectList;
 
+		public event Action<MovableObject> ObjectAdded;
+		public event Action<MovableObject> ObjectRemoved;
+		public event Action<MovableObject, IntPoint3D> ObjectMoved;
+
 		public uint Version { get; private set; }
 
 		public VisibilityMode VisibilityMode { get; private set; }
@@ -337,15 +341,21 @@ namespace Dwarrowdelf.Client
 				m_objectMap[l] = obs;
 			}
 
+			Debug.Assert(!obs.Contains(child));
+
 			if (child.IsLiving)
 				obs.Insert(0, child);
 			else
 				obs.Add(child);
 
+			Debug.Assert(!m_objectList.Contains(child));
 			m_objectList.Add(child);
 
 			if (MapTileObjectChanged != null)
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Add);
+
+			if (this.ObjectAdded != null)
+				this.ObjectAdded(child);
 		}
 
 		protected override void ChildRemoved(MovableObject child)
@@ -364,6 +374,9 @@ namespace Dwarrowdelf.Client
 
 			if (MapTileObjectChanged != null)
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Remove);
+
+			if (this.ObjectRemoved != null)
+				this.ObjectRemoved(child);
 		}
 
 		protected override void ChildMoved(MovableObject child, IntPoint3D from, IntPoint3D to)
@@ -390,6 +403,8 @@ namespace Dwarrowdelf.Client
 				m_objectMap[to] = obs;
 			}
 
+			Debug.Assert(!obs.Contains(child));
+
 			if (child.IsLiving)
 				obs.Insert(0, child);
 			else
@@ -397,6 +412,9 @@ namespace Dwarrowdelf.Client
 
 			if (MapTileObjectChanged != null)
 				MapTileObjectChanged(child, to, MapTileObjectChangeType.Add);
+
+			if (this.ObjectMoved != null)
+				this.ObjectMoved(child, from);
 		}
 
 		// called from object when its visual property changes
