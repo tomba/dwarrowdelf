@@ -70,6 +70,9 @@ namespace Dwarrowdelf.Client
 
 		public void Update(ItemObject item)
 		{
+			if (item.Parent != m_env)
+				return;
+
 			RemoveIfExists(item, item.Location);
 
 			if (m_filter(item) == false)
@@ -103,6 +106,8 @@ namespace Dwarrowdelf.Client
 
 		void Add(ItemObject item)
 		{
+			Debug.Assert(item.Parent == m_env);
+
 			List<ItemObject> l;
 
 			if (m_heap.TryGetValue(item.Location, out l) == false)
@@ -120,8 +125,12 @@ namespace Dwarrowdelf.Client
 
 			if (item != null)
 			{
+				// If the item doesn't pass the filter, it cannot be in our list.
 				if (m_filter(item) == false)
+				{
+					Debug.Assert(GetEnumerable().Contains(item) == false);
 					return;
+				}
 
 				Remove(item, oldPos);
 
@@ -135,8 +144,12 @@ namespace Dwarrowdelf.Client
 
 			if (item != null)
 			{
+				// If the item doesn't pass the filter, it cannot be in our list. But is it faster just to remove?
 				if (m_filter(item) == false)
+				{
+					Debug.Assert(GetEnumerable().Contains(item) == false);
 					return;
+				}
 
 				Remove(item, item.Location);
 			}
