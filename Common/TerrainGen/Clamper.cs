@@ -7,7 +7,7 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public static class Clamper
 	{
-		public static void Clamp(Grid2D<double> grid, double average)
+		public static void Clamp(SimpleGrid2D<double> grid, double average)
 		{
 			foreach (var kvp in grid)
 			{
@@ -19,12 +19,12 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					double d = average - v;
 					v = average - Math.Pow(d, 1.0 / 20);
-					grid[kvp.Key] = v;
+					grid[k] = v;
 				}
 			}
 		}
 
-		public static void MinMax(Grid2D<double> grid, out double min, out double max)
+		public static void MinMax(SimpleGrid2D<double> grid, out double min, out double max)
 		{
 			max = Double.MinValue;
 			min = Double.MaxValue;

@@ -62,7 +62,7 @@ namespace MyArea
 			int sizeExp = AREA_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
 
-			Grid2D<double> grid = new Grid2D<double>(size + 1, size + 1);
+			var grid = new SimpleGrid2D<double>(size + 1, size + 1);
 
 			DiamondSquare.Render(grid, 10, 5, 0.75);
 			Clamper.Clamp(grid, 10);
@@ -335,7 +335,7 @@ namespace MyArea
 			return surfaceLevel;
 		}
 
-		static void CreateTerrainFromHeightmap(Grid2D<double> heightMap, EnvironmentObjectBuilder env)
+		static void CreateTerrainFromHeightmap(SimpleGrid2D<double> heightMap, EnvironmentObjectBuilder env)
 		{
 			var plane = env.Bounds.Plane;
 
