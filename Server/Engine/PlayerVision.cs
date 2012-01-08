@@ -81,16 +81,9 @@ namespace Dwarrowdelf.Server
 
 			m_visibilityArray = new bool[bounds.Depth, bounds.Height, bounds.Width];
 
-			Parallel.For(0, bounds.Depth, z =>
+			bounds.Range().AsParallel().ForAll(p =>
 			{
-				for (int y = 0; y < bounds.Height; ++y)
-				{
-					for (int x = 0; x < bounds.Width; ++x)
-					{
-						var p = new IntPoint3D(x, y, z);
-						m_visibilityArray[z, y, x] = EnvironmentHelpers.CanSeeThrough(env, p) || EnvironmentHelpers.CanBeSeen(env, p);
-					}
-				}
+				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanSeeThrough(env, p) || EnvironmentHelpers.CanBeSeen(env, p);
 			});
 		}
 
