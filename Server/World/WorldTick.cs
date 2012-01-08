@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Server
 			this.TickNumber++;
 			AddChange(new TickStartChange(this.TickNumber));
 
-			trace.TraceInformation("-- Tick {0} started --", this.TickNumber);
+			//trace.TraceInformation("-- Tick {0} started --", this.TickNumber);
 
 			m_state = WorldState.TickOngoing;
 
@@ -262,7 +262,7 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
-			trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
+			//trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;
 
 			m_okToStartTick = false;
