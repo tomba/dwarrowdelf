@@ -10,9 +10,11 @@ namespace Dwarrowdelf
 		/* XXX some room for optimization... */
 		public static IEnumerable<Direction> GetDirectionsFrom(IEnvironmentObject env, IntPoint3D p)
 		{
-			var inter = env.GetInterior(p);
-			var terrain = env.GetTerrain(p);
-			var itemBlocks = env.GetTileFlags(p, TileFlags.ItemBlocks);
+			var td = env.GetTileData(p);
+
+			var terrain = Terrains.GetTerrain(td.TerrainID);
+			var inter = Interiors.GetInterior(td.InteriorID);
+			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
 
 			if (inter.IsBlocker || !terrain.IsSupporting || itemBlocks)
 				yield break;
@@ -55,9 +57,14 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanMoveFrom(IEnvironmentObject env, IntPoint3D srcLoc, Direction dir)
 		{
-			var srcInter = env.GetInterior(srcLoc);
-			var srcTerrain = env.GetTerrain(srcLoc);
-			var itemBlocks = env.GetTileFlags(srcLoc, TileFlags.ItemBlocks);
+			var td = env.GetTileData(srcLoc);
+
+			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+				return false;
+
+			var srcTerrain = Terrains.GetTerrain(td.TerrainID);
+			var srcInter = Interiors.GetInterior(td.InteriorID);
+			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
 
 			if (srcInter.IsBlocker || srcTerrain.IsBlocker || itemBlocks)
 				return false;
@@ -98,9 +105,14 @@ namespace Dwarrowdelf
 			if (!env.Contains(dstLoc))
 				return false;
 
-			var dstTerrain = env.GetTerrain(dstLoc);
-			var dstInter = env.GetInterior(dstLoc);
-			var itemBlocks = env.GetTileFlags(dstLoc, TileFlags.ItemBlocks);
+			var td = env.GetTileData(dstLoc);
+
+			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+				return false;
+
+			var dstTerrain = Terrains.GetTerrain(td.TerrainID);
+			var dstInter = Interiors.GetInterior(td.InteriorID);
+			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
 
 			if (dstInter.IsBlocker || dstTerrain.IsBlocker || !dstTerrain.IsSupporting || itemBlocks)
 				return false;
@@ -141,14 +153,16 @@ namespace Dwarrowdelf
 			if (!env.Contains(location))
 				return false;
 
-			var dstTerrain = env.GetTerrain(location);
-			var dstInter = env.GetInterior(location);
-			var itemBlocks = env.GetTileFlags(location, TileFlags.ItemBlocks);
+			var td = env.GetTileData(location);
 
-			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
+			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
 				return false;
 
-			return dstTerrain.IsSupporting && !dstTerrain.IsBlocker && !dstInter.IsBlocker && !itemBlocks;
+			var terrain = Terrains.GetTerrain(td.TerrainID);
+			var interior = Interiors.GetInterior(td.InteriorID);
+			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
+
+			return terrain.IsSupporting && !terrain.IsBlocker && !interior.IsBlocker && !itemBlocks;
 		}
 
 		/// <summary>
@@ -159,13 +173,15 @@ namespace Dwarrowdelf
 			if (!env.Contains(location))
 				return false;
 
-			var dstTerrain = env.GetTerrain(location);
-			var dstInter = env.GetInterior(location);
+			var td = env.GetTileData(location);
 
-			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
+			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
 				return false;
 
-			return dstTerrain.IsSeeThrough && dstInter.IsSeeThrough;
+			var terrain = Terrains.GetTerrain(td.TerrainID);
+			var interior = Interiors.GetInterior(td.InteriorID);
+
+			return terrain.IsSeeThrough && interior.IsSeeThrough;
 		}
 
 		/// <summary>
@@ -176,13 +192,15 @@ namespace Dwarrowdelf
 			if (!env.Contains(location))
 				return false;
 
-			var dstTerrain = env.GetTerrain(location);
-			var dstInter = env.GetInterior(location);
+			var td = env.GetTileData(location);
 
-			if (dstTerrain.ID == TerrainID.Undefined || dstInter.ID == InteriorID.Undefined)
+			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
 				return false;
 
-			return dstTerrain.IsSeeThroughDown && dstInter.IsSeeThrough;
+			var terrain = Terrains.GetTerrain(td.TerrainID);
+			var interior = Interiors.GetInterior(td.InteriorID);
+
+			return terrain.IsSeeThroughDown && interior.IsSeeThrough;
 		}
 
 		/// <summary>
