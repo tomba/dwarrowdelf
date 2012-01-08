@@ -348,25 +348,32 @@ namespace MyArea
 					for (int z = 0; z < env.Depth; ++z)
 					{
 						var p = new IntPoint3D(x, y, z);
+						var td = new TileData();
 
-						env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
 
 						if (d > p.Z)
 						{
-							env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+							td.TerrainID = TerrainID.NaturalWall;
+							td.TerrainMaterialID = MaterialID.Granite;
 						}
 						else
 						{
 							if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
 							{
-								env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-								env.SetTileFlags(p, TileFlags.Grass, true);
+								td.TerrainID = TerrainID.NaturalFloor;
+								td.TerrainMaterialID = MaterialID.Granite;
+								td.Flags = TileFlags.Grass;
 							}
 							else
 							{
-								env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
+								td.TerrainID = TerrainID.Empty;
+								td.TerrainMaterialID = MaterialID.Undefined;
 							}
 						}
+
+						env.SetTileData(p, td);
 					}
 				}
 			});
