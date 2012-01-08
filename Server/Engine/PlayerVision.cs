@@ -60,6 +60,9 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
+	/// <summary>
+	/// All "open" tiles, and all tiles adjacent to those tiles, can be seen
+	/// </summary>
 	sealed class GlobalFOVVisionTracker : VisionTrackerBase
 	{
 		Player m_player;
@@ -78,7 +81,7 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray = new bool[bounds.Depth, bounds.Height, bounds.Width];
 
 			foreach (var p in bounds.Range())
-				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanBeSeen(env, p);
+				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanSeeThrough(env, p) || EnvironmentHelpers.CanBeSeen(env, p);
 		}
 
 		public override void Start()
