@@ -337,8 +337,6 @@ namespace MyArea
 
 		static void CreateTerrainFromHeightmap(SimpleGrid2D<double> heightMap, EnvironmentObjectBuilder env)
 		{
-			var plane = env.Bounds.Plane;
-
 			Parallel.For(0, env.Height, y =>
 			{
 				for (int x = 0; x < env.Width; ++x)
