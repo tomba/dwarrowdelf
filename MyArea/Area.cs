@@ -395,41 +395,62 @@ namespace MyArea
 			}
 		}
 
+		static int GetSurfaceZ(EnvironmentObjectBuilder env, int x, int y)
+		{
+			for (int z = env.Bounds.Z2 - 1; z >= 0; --z)
+			{
+				var p = new IntPoint3D(x, y, z);
+
+				var terrainID = env.GetTerrainID(p);
+
+				if (terrainID != TerrainID.Empty)
+				{
+					if (terrainID == TerrainID.NaturalFloor)
+						return z;
+
+					break;
+				}
+			}
+
+			return -1;
+		}
+
 		static void CreateSlopes(EnvironmentObjectBuilder env)
 		{
-			/*
-			 * su t
-			 * s  td
-			 *
-			 *    ___
-			 *    |
-			 * ___|
-			 *
-			 */
-
 			var bounds = env.Bounds;
 
-			var locs = from s in bounds.Range()
-					   let su = s + Direction.Up
-					   where bounds.Contains(su)
-					   where env.GetTerrainID(s) == TerrainID.NaturalFloor && env.GetTerrainID(su) == TerrainID.Empty
-					   from d in DirectionExtensions.PlanarDirections
-					   let td = s + d
-					   let t = s + d + Direction.Up
-					   where bounds.Contains(t)
-					   where env.GetTerrainID(td) == TerrainID.NaturalWall && env.GetTerrainID(t) == TerrainID.NaturalFloor
-					   select new { Location = s, Direction = d };
-
-			foreach (var loc in locs)
+			Parallel.For(0, bounds.Height, y =>
 			{
-				// skip places surrounded by walls
-				if (DirectionExtensions.PlanarDirections
-					.Where(d => bounds.Contains(loc.Location + d))
-					.All(d => env.GetTerrainID(loc.Location + d) != TerrainID.NaturalWall))
-					continue;
+				Direction[] arr = new Direction[8];
 
-				env.SetTerrain(loc.Location, loc.Direction.ToSlope(), env.GetTerrainMaterialID(loc.Location));
-			}
+				for (int x = 0; x < bounds.Width; ++x)
+				{
+					int z = GetSurfaceZ(env, x, y);
+
+					if (z == -1)
+						continue;
+
+					var p = new IntPoint3D(x, y, z);
+
+					int count = 0;
+
+					foreach (var dir in DirectionExtensions.PlanarDirections)
+					{
+						var t = p + dir;
+
+						if (bounds.Contains(t) && env.GetTerrainID(t) == TerrainID.NaturalWall)
+							arr[count++] = dir;
+					}
+
+					// skip places surrounded by walls
+					if (count > 0 && count < 8)
+					{
+						// If there are multiple possible directions for the slope, use "random"
+						var idx = (x + y) % count;
+						env.SetTerrain(p, arr[idx].ToSlope(), env.GetTerrainMaterialID(p));
+					}
+				}
+			});
 		}
 
 		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID)
