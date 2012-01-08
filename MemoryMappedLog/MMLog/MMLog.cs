@@ -12,13 +12,15 @@ namespace MemoryMappedLog
 	public sealed class LogEntry
 	{
 		public DateTime DateTime { get; set; }
+		public int Tick { get; set; }
 		public string Component { get; set; }
 		public string Thread { get; set; }
 		public string Message { get; set; }
 
-		public LogEntry(DateTime dateTime, string component = "", string thread = "", string message = "")
+		public LogEntry(DateTime dateTime, int tick, string component = "", string thread = "", string message = "")
 		{
 			this.DateTime = dateTime;
+			this.Tick = tick;
 			this.Component = component;
 			this.Thread = thread;
 			this.Message = message;
@@ -27,14 +29,16 @@ namespace MemoryMappedLog
 		public LogEntry(BinaryReader reader)
 		{
 			this.DateTime = DateTime.FromBinary(reader.ReadInt64());
+			this.Tick = reader.ReadInt32();
 			this.Component = reader.ReadString();
 			this.Thread = reader.ReadString();
 			this.Message = reader.ReadString();
 		}
 
-		public static int Write(BinaryWriter writer, DateTime dateTime, string component, string thread, string message)
+		public static int Write(BinaryWriter writer, DateTime dateTime, int tick, string component, string thread, string message)
 		{
 			writer.Write(dateTime.ToBinary());
+			writer.Write(tick);
 			writer.Write(component);
 			writer.Write(thread);
 			writer.Write(message);
@@ -79,14 +83,14 @@ namespace MemoryMappedLog
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
 		}
 
-		public static void Append(string component, string thread, string message)
+		public static void Append(int tick, string component, string thread, string message)
 		{
 			var buffer = new byte[s_maxPayloadSize];
 			int len;
 
 			using (var w = new BinaryWriter(new MemoryStream(buffer)))
 			{
-				len = LogEntry.Write(w, DateTime.Now, component, thread, message);
+				len = LogEntry.Write(w, DateTime.Now, tick, component, thread, message);
 			}
 
 			int idx = IncrementCurrentIndex();

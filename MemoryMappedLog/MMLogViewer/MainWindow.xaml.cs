@@ -26,6 +26,7 @@ namespace MemoryMappedLog
 			public ViewableLogEntry(LogEntry logEntry)
 			{
 				this.DateTime = logEntry.DateTime;
+				this.Tick = logEntry.Tick;
 				this.Component = logEntry.Component;
 				this.Thread = logEntry.Thread;
 				this.Message = logEntry.Message;
@@ -33,6 +34,7 @@ namespace MemoryMappedLog
 
 			public DateTime DateTime { get; set; }
 			public TimeSpan TimeDiff { get; set; }
+			public int Tick { get; set; }
 			public string Component { get; set; }
 			public string Thread { get; set; }
 			public string Message { get; set; }
@@ -262,7 +264,7 @@ namespace MemoryMappedLog
 
 		void OnMarkClicked(object sender, RoutedEventArgs e)
 		{
-			var entry = new LogEntry(DateTime.Now, component: "Mark");
+			var entry = new LogEntry(DateTime.Now, 0, component: "Mark");
 			Add(entry);
 		}
 

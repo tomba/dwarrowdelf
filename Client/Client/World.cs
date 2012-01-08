@@ -53,7 +53,7 @@ namespace Dwarrowdelf.Client
 		public int TickNumber
 		{
 			get { return m_tickNumber; }
-			private set { m_tickNumber = value; Notify("TickNumber"); }
+			private set { m_tickNumber = value; MMLogTraceListener.Tick = this.TickNumber; Notify("TickNumber"); }
 		}
 
 		Random m_random = new Random();

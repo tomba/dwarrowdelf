@@ -8,6 +8,8 @@ namespace Dwarrowdelf
 {
 	public sealed class MMLogTraceListener : TraceListener
 	{
+		public static int Tick;
+
 		string m_component;
 
 		public MMLogTraceListener()
@@ -29,7 +31,7 @@ namespace Dwarrowdelf
 		public override void WriteLine(string message)
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
-			MMLog.Append(m_component ?? "", thread, message);
+			MMLog.Append(MMLogTraceListener.Tick, m_component ?? "", thread, message);
 		}
 
 		public override void Fail(string message)
