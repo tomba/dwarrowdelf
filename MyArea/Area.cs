@@ -271,7 +271,10 @@ namespace MyArea
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);
-			item.MoveTo(env, p);
+			var ok = item.MoveTo(env, p);
+			if (!ok)
+				throw new Exception();
+
 			return item;
 		}
 
