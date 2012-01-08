@@ -7,7 +7,7 @@
 
 	<TerrainInfo ID="NaturalFloor" Flags="Supporting" />
 	<TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
-	<TerrainInfo ID="Hole" Flags="Supporting,Permeable" />
+	<TerrainInfo ID="Hole" Flags="Supporting,SeeThroughDown,Permeable" />
 
 	<TerrainInfo ID="SlopeNorth" Flags="Supporting,Minable" />
 	<TerrainInfo ID="SlopeNorthEast" Flags="Supporting,Minable" />
