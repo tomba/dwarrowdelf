@@ -128,53 +128,53 @@ namespace Dwarrowdelf.Server
 			return terrain.IsSeeThroughDown;
 		}
 
-		void OnTerrainOrInteriorChanged(IntPoint3D p, TileData oldData, TileData newData)
+		void OnTerrainOrInteriorChanged(IntPoint3D location, TileData oldData, TileData newData)
 		{
 			var env = m_environment;
 
 			bool revealPlanar = IsSeeThrough(oldData) == false && IsSeeThrough(newData) == true;
 			bool revealDown = IsSeeThroughDown(oldData) == false && IsSeeThroughDown(newData) == true;
 
+			List<IntPoint3D> revealed = new List<IntPoint3D>();
+
 			if (revealPlanar)
 			{
-				var revealed = DirectionExtensions.PlanarDirections
-					.Select(dir => p + dir)
-					.Where(pp => env.Contains(pp))
-					.Where(pp => GetVisible(pp) == false)
-					.ToArray();
-
-				foreach (var pp in revealed)
-					SetVisible(pp);
-
-				if (revealed.Length > 0)
-				{
-					// XXX this should also send the objects in that tile
-
-					var msg = new Messages.MapDataTerrainsListMessage()
-					{
-						Environment = env.ObjectID,
-						TileDataList = revealed.Select(l => new Tuple<IntPoint3D, TileData>(l, env.GetTileData(l))).ToArray(),
-					};
-
-					m_player.Send(msg);
-				}
+				revealed.AddRange(DirectionExtensions.PlanarDirections
+					.Select(dir => location + dir)
+					.Where(p => env.Contains(p))
+					.Where(p => GetVisible(p) == false));
 			}
 
 			if (revealDown)
 			{
-				var pp = p + Direction.Down;
+				var p = location + Direction.Down;
 
-				if (env.Contains(pp) && GetVisible(pp) == false)
+				if (env.Contains(p) && GetVisible(p) == false)
+					revealed.Add(p);
+			}
+
+			if (revealed.Count > 0)
+			{
+				foreach (var p in revealed)
+					SetVisible(p);
+
+				// Send new tiles
+
+				var msg = new Messages.MapDataTerrainsListMessage()
 				{
-					SetVisible(pp);
+					Environment = env.ObjectID,
+					TileDataList = revealed.Select(l => new Tuple<IntPoint3D, TileData>(l, env.GetTileData(l))).ToArray(),
+				};
 
-					var msg = new Messages.MapDataTerrainsListMessage()
-					{
-						Environment = env.ObjectID,
-						TileDataList = new Tuple<IntPoint3D, TileData>[] { new Tuple<IntPoint3D, TileData>(pp, env.GetTileData(pp)) },
-					};
+				m_player.Send(msg);
 
-					m_player.Send(msg);
+				// Send new objects
+
+				foreach (var ob in revealed.SelectMany(p => env.GetContents(p)))
+				{
+					var vis = m_player.GetObjectVisibility(ob);
+					Debug.Assert(vis != ObjectVisibility.None);
+					ob.SendTo(m_player, vis);
 				}
 			}
 		}
