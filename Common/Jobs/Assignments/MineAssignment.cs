@@ -40,43 +40,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return null;
 			}
 
-			if (CheckProgress() == JobStatus.Done)
-			{
-				progress = JobStatus.Done;
-				return null;
-			}
-
 			var action = new MineAction(v.ToDirection(), m_mineActionType);
 			progress = JobStatus.Ok;
 			return action;
-		}
-
-		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
-		{
-			switch (actionStatus)
-			{
-				case ActionState.Done:
-					return CheckProgress();
-
-				case ActionState.Fail:
-					return JobStatus.Fail;
-
-				case ActionState.Abort:
-					return JobStatus.Abort;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		JobStatus CheckProgress()
-		{
-			var terrain = m_environment.GetTerrain(m_location);
-
-			if (terrain.ID == TerrainID.Undefined || terrain.IsMinable)
-				return JobStatus.Ok;
-			else
-				return JobStatus.Done;
 		}
 
 		public override string ToString()

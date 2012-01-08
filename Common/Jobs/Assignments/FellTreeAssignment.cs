@@ -37,41 +37,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return null;
 			}
 
-			if (CheckProgress() == JobStatus.Done)
-			{
-				progress = JobStatus.Done;
-				return null;
-			}
-
 			var action = new FellTreeAction(v.ToDirection());
 			progress = JobStatus.Ok;
 			return action;
-		}
-
-		protected override JobStatus ActionDoneOverride(ActionState actionStatus)
-		{
-			switch (actionStatus)
-			{
-				case ActionState.Done:
-					return CheckProgress();
-
-				case ActionState.Fail:
-					return JobStatus.Fail;
-
-				case ActionState.Abort:
-					return JobStatus.Abort;
-
-				default:
-					throw new Exception();
-			}
-		}
-
-		JobStatus CheckProgress()
-		{
-			if (m_environment.GetInterior(m_location).ID == InteriorID.Empty)
-				return JobStatus.Done;
-			else
-				return JobStatus.Ok;
 		}
 
 		public override string ToString()
