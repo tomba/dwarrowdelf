@@ -381,15 +381,35 @@ namespace MyArea
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
-			var locations = env.Bounds.Range()
-				.Where(p => env.GetTerrainID(p) == TerrainID.NaturalFloor || env.GetTerrainID(p).IsSlope())
-				.Where(p => env.GetInteriorID(p) == InteriorID.Empty)
-				.Where(p => Helpers.MyRandom.Next() % 8 == 0);
+			var bounds = env.Bounds;
 
-			foreach (var p in locations)
+			for (int y = 0; y < bounds.Height; ++y)
 			{
-				var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
-				env.SetInterior(p, Helpers.MyRandom.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
+				for (int x = 0; x < bounds.Width; ++x)
+				{
+					int z = GetSurfaceZ(env, x, y);
+
+					if (z == -1)
+						continue;
+
+					var p = new IntPoint3D(x, y, z);
+
+					var terrainID = env.GetTerrainID(p);
+
+					if (terrainID == TerrainID.NaturalFloor || terrainID.IsSlope())
+					{
+						var interiorID = env.GetInteriorID(p);
+
+						if (interiorID == InteriorID.Empty)
+						{
+							if (Helpers.MyRandom.Next(8) == 0)
+							{
+								var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
+								env.SetInterior(p, Helpers.MyRandom.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -403,7 +423,7 @@ namespace MyArea
 
 				if (terrainID != TerrainID.Empty)
 				{
-					if (terrainID == TerrainID.NaturalFloor)
+					if (terrainID != TerrainID.NaturalWall)
 						return z;
 
 					break;
