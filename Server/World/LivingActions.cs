@@ -495,6 +495,9 @@ namespace Dwarrowdelf.Server
 							return false;
 						}
 
+						if (env.GetTerrainID(p + Direction.Up) == TerrainID.NaturalFloor)
+							env.SetTerrain(p + Direction.Up, TerrainID.Hole, env.GetTerrainMaterialID(p + Direction.Up));
+
 						var td = new TileData()
 						{
 							TerrainID = TerrainID.NaturalFloor,
@@ -506,9 +509,6 @@ namespace Dwarrowdelf.Server
 						};
 
 						env.SetTileData(p, td);
-
-						if (env.GetTerrainID(p + Direction.Up) == TerrainID.NaturalFloor)
-							env.SetTerrain(p + Direction.Up, TerrainID.Hole, env.GetTerrainMaterialID(p + Direction.Up));
 					}
 					break;
 

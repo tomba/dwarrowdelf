@@ -133,6 +133,9 @@ namespace Dwarrowdelf.Server
 
 		void OnTerrainOrInteriorChanged(IntPoint3D location, TileData oldData, TileData newData)
 		{
+			if (GetVisible(location) == false)
+				return;
+
 			var env = m_environment;
 
 			bool revealPlanar = IsSeeThrough(oldData) == false && IsSeeThrough(newData) == true;
