@@ -87,7 +87,8 @@ namespace MemoryMappedLog
 			LogRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
 			LogRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
 
-			m_logFile = File.CreateText("test.log");
+			//m_logFile = File.CreateText("test.log");
+			m_logFile = null;
 
 			m_lastDateTime = new DateTime(0);
 
@@ -209,10 +210,15 @@ namespace MemoryMappedLog
 			m_debugCollection.Add(ve);
 
 			var str = String.Format("{0} | {1}: {2}", entry.DateTime, entry.Component, entry.Message);
-			m_logFile.WriteLine(str);
+
+			if (m_logFile != null)
+				m_logFile.WriteLine(str);
 
 			if (m_netWriter != null)
 				m_netWriter.WriteLine(str);
+
+			if (m_logFile != null)
+				m_logFile.Flush();
 
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
@@ -242,13 +248,16 @@ namespace MemoryMappedLog
 				last = ve;
 
 				var str = String.Format("{0} | {1}: {2}", e.DateTime, e.Component, e.Message);
-				m_logFile.WriteLine(str);
+
+				if (m_logFile != null)
+					m_logFile.WriteLine(str);
 
 				if (m_netWriter != null)
 					m_netWriter.WriteLine(str);
 			}
 
-			m_logFile.Flush();
+			if (m_logFile != null)
+				m_logFile.Flush();
 
 			while (m_debugCollection.Count > 500)
 				m_debugCollection.RemoveAt(0);
