@@ -9,7 +9,7 @@ namespace Dwarrowdelf
 	/// <summary>
 	/// 2D grid made of Ts
 	/// </summary>
-	public sealed class ArrayGrid2D<T> : IEnumerable<KeyValuePair<IntPoint, T>>
+	public sealed class ArrayGrid2D<T> : IEnumerable<T>
 	{
 		T[,] m_grid;
 
@@ -62,26 +62,26 @@ namespace Dwarrowdelf
 			Array.Clear(m_grid, 0, m_grid.Length);
 		}
 
-		public IEnumerable<IntPoint> GetLocations()
-		{
-			for (int x = 0; x < this.Width; x++)
-			{
-				for (int y = 0; y < this.Height; y++)
-				{
-					yield return new IntPoint(x, y);
-				}
-			}
-		}
-
-		#region IEnumerable<T> Members
-
-		public IEnumerator<KeyValuePair<IntPoint, T>> GetEnumerator()
+		public IEnumerable<KeyValuePair<IntPoint, T>> GetIndexValueEnumerable()
 		{
 			for (int y = 0; y < this.Height; y++)
 			{
 				for (int x = 0; x < this.Width; x++)
 				{
 					yield return new KeyValuePair<IntPoint, T>(new IntPoint(x, y), m_grid[y, x]);
+				}
+			}
+		}
+
+		#region IEnumerable<T> Members
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			for (int y = 0; y < this.Height; y++)
+			{
+				for (int x = 0; x < this.Width; x++)
+				{
+					yield return m_grid[y, x];
 				}
 			}
 		}

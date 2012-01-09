@@ -9,7 +9,7 @@ namespace Dwarrowdelf.TerrainGen
 	{
 		public static void Clamp(ArrayGrid2D<double> grid, double average)
 		{
-			foreach (var kvp in grid)
+			foreach (var kvp in grid.GetIndexValueEnumerable())
 			{
 				var k = kvp.Key;
 				var v = kvp.Value;
@@ -29,11 +29,8 @@ namespace Dwarrowdelf.TerrainGen
 			max = Double.MinValue;
 			min = Double.MaxValue;
 
-			foreach (var kvp in grid)
+			foreach (var v in grid)
 			{
-				var k = kvp.Key;
-				var v = kvp.Value;
-
 				if (v < min)
 					min = v;
 				if (v > max)
