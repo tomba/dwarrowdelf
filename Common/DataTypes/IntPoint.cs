@@ -76,6 +76,11 @@ namespace Dwarrowdelf
 			return new IntPoint(left.X * right, left.Y * right);
 		}
 
+		public static IntPoint operator +(IntPoint left, Direction right)
+		{
+			return left + new IntVector(right);
+		}
+
 		public override int GetHashCode()
 		{
 			return (this.Y << 16) | this.X;
@@ -84,6 +89,13 @@ namespace Dwarrowdelf
 		public static explicit operator IntPoint(IntVector vector)
 		{
 			return new IntPoint(vector.X, vector.Y);
+		}
+
+		public static IEnumerable<IntPoint> Range(int width, int height)
+		{
+			for (int y = 0; y < height; ++y)
+				for (int x = 0; x < width; ++x)
+					yield return new IntPoint(x, y);
 		}
 
 		public override string ToString()

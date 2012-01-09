@@ -114,6 +114,14 @@ namespace Dwarrowdelf
 						yield return new IntPoint3D(x, y, z);
 		}
 
+		public static IEnumerable<IntPoint3D> Range(int width, int height, int depth)
+		{
+			for (int z = 0; z < depth; ++z)
+				for (int y = 0; y < height; ++y)
+					for (int x = 0; x < width; ++x)
+						yield return new IntPoint3D(x, y, z);
+		}
+
 		public IntPoint ToIntPoint()
 		{
 			return new IntPoint(this.X, this.Y);

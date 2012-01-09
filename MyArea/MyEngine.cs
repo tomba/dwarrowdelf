@@ -41,7 +41,7 @@ namespace MyArea
 				IntPoint3D p;
 				do
 				{
-					p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), 9);
+					p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), 9);
 				} while (!EnvironmentHelpers.CanEnter(env, p));
 
 				var l = CreateDwarf(i);
@@ -59,7 +59,7 @@ namespace MyArea
 		{
 			var builder = new LivingObjectBuilder(LivingID.Dwarf)
 			{
-				Color = (GameColor)Helpers.MyRandom.Next(GameColorRGB.NUMCOLORS - 1) + 1,
+				Color = (GameColor)Helpers.GetRandomInt(GameColorRGB.NUMCOLORS - 1) + 1,
 				Gender = LivingGender.Male,
 			};
 

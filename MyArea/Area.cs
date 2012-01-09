@@ -9,6 +9,7 @@ using Environment = Dwarrowdelf.Server.EnvironmentObject;
 
 using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MyArea
 {
@@ -35,7 +36,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), zLevel);
+				p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), zLevel);
 			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
@@ -51,7 +52,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(Helpers.MyRandom.Next(env.Width), Helpers.MyRandom.Next(env.Height), Helpers.MyRandom.Next(env.Depth));
+				p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), Helpers.GetRandomInt(env.Depth));
 			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
 
 			return p;
@@ -62,22 +63,26 @@ namespace MyArea
 			int sizeExp = AREA_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
 
-			var grid = new ArrayGrid2D<double>(size + 1, size + 1);
+			// size + 1 for the DiamondSquare algorithm
+			var doubleHeightMap = new ArrayGrid2D<double>(size + 1, size + 1);
 
-			DiamondSquare.Render(grid, 10, 5, 0.75);
-			Clamper.Clamp(grid, 10);
+			DiamondSquare.Render(doubleHeightMap, 10, 5, 0.75);
+			Clamper.Clamp(doubleHeightMap, 10);
+
+			// integer heightmap. the number tells the z level where the floor is.
+			var intHeightMap = new ArrayGrid2D<int>(size, size);
+			foreach (var p in IntPoint.Range(size, size))
+				intHeightMap[p] = (int)Math.Truncate(doubleHeightMap[p]); // XXX perhaps Round is better
 
 			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
 
-			Random r = new Random(123);
+			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
 
-			CreateTerrainFromHeightmap(grid, envBuilder);
+			int surfaceLevel = FindSurfaceLevel(intHeightMap);
 
-			int surfaceLevel = FindSurfaceLevel(envBuilder);
+			CreateSlopes(envBuilder, intHeightMap);
 
-			CreateSlopes(envBuilder);
-
-			CreateTrees(envBuilder);
+			CreateTrees(envBuilder, intHeightMap);
 
 			int posx = envBuilder.Width / 10;
 			int posy = 1;
@@ -131,7 +136,7 @@ namespace MyArea
 			for (int i = 0; i < 30; ++i)
 			{
 				var p = GetRandomSubterraneanLocation(envBuilder);
-				var idx = Helpers.MyRandom.Next(oreMaterials.Length);
+				var idx = Helpers.GetRandomInt(oreMaterials.Length);
 				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
@@ -264,7 +269,7 @@ namespace MyArea
 		MaterialID GetRandomMaterial(MaterialCategory category)
 		{
 			var materials = Materials.GetMaterials(category).Select(mi => mi.ID).ToArray();
-			return materials[Helpers.MyRandom.Next(materials.Length)];
+			return materials[Helpers.GetRandomInt(materials.Length)];
 		}
 
 		ItemObject CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3D p)
@@ -312,36 +317,27 @@ namespace MyArea
 			}
 		}
 
-		static int FindSurfaceLevel(EnvironmentObjectBuilder env)
+		/// <summary>
+		/// return the z of the level with most ground
+		/// </summary>
+		/// <param name="heightMap"></param>
+		static int FindSurfaceLevel(ArrayGrid2D<int> heightMap)
 		{
-			int surfaceLevel = 0;
-			int numSurfaces = 0;
-
-			/* find the z level with most surface */
-			for (int z = 0; z < env.Depth; ++z)
-			{
-				int n = env.Bounds.Plane.Range()
-					.Select(p => new IntPoint3D(p, z))
-					.Where(p => env.GetTerrain(p).IsSupporting && !env.GetTerrain(p).IsBlocker && !env.GetInterior(p).IsBlocker)
-					.Count();
-
-				if (n > numSurfaces)
-				{
-					surfaceLevel = z;
-					numSurfaces = n;
-				}
-			}
-
-			return surfaceLevel;
+			return heightMap
+				.GroupBy(i => i)
+				.Select(g => new { H = g.Key, Count = g.Count() })
+				.OrderByDescending(c => c.Count)
+				.First()
+				.H;
 		}
 
-		static void CreateTerrainFromHeightmap(ArrayGrid2D<double> heightMap, EnvironmentObjectBuilder env)
+		static void CreateTerrainFromHeightmap(ArrayGrid2D<int> heightMap, EnvironmentObjectBuilder env)
 		{
 			Parallel.For(0, env.Height, y =>
 			{
 				for (int x = 0; x < env.Width; ++x)
 				{
-					double d = heightMap[x, y];
+					int surface = heightMap[x, y];
 
 					for (int z = 0; z < env.Depth; ++z)
 					{
@@ -351,24 +347,21 @@ namespace MyArea
 						td.InteriorID = InteriorID.Empty;
 						td.InteriorMaterialID = MaterialID.Undefined;
 
-						if (d > p.Z)
+						if (z < surface)
 						{
 							td.TerrainID = TerrainID.NaturalWall;
 							td.TerrainMaterialID = MaterialID.Granite;
 						}
+						else if (z == surface)
+						{
+							td.TerrainID = TerrainID.NaturalFloor;
+							td.TerrainMaterialID = MaterialID.Granite;
+							td.Flags = TileFlags.Grass;
+						}
 						else
 						{
-							if (env.GetTerrainID(p + Direction.Down) == TerrainID.NaturalWall)
-							{
-								td.TerrainID = TerrainID.NaturalFloor;
-								td.TerrainMaterialID = MaterialID.Granite;
-								td.Flags = TileFlags.Grass;
-							}
-							else
-							{
-								td.TerrainID = TerrainID.Empty;
-								td.TerrainMaterialID = MaterialID.Undefined;
-							}
+							td.TerrainID = TerrainID.Empty;
+							td.TerrainMaterialID = MaterialID.Undefined;
 						}
 
 						env.SetTileData(p, td);
@@ -377,103 +370,76 @@ namespace MyArea
 			});
 		}
 
-		void CreateTrees(EnvironmentObjectBuilder env)
+		void CreateTrees(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
-			var bounds = env.Bounds;
-
-			for (int y = 0; y < bounds.Height; ++y)
+			env.Bounds.Plane.Range().AsParallel().ForAll(p2d =>
 			{
-				for (int x = 0; x < bounds.Width; ++x)
-				{
-					int z = GetSurfaceZ(env, x, y);
+				int z = heightMap[p2d];
 
-					if (z == -1)
-						continue;
-
-					var p = new IntPoint3D(x, y, z);
-
-					var terrainID = env.GetTerrainID(p);
-
-					if (terrainID == TerrainID.NaturalFloor || terrainID.IsSlope())
-					{
-						var interiorID = env.GetInteriorID(p);
-
-						if (interiorID == InteriorID.Empty)
-						{
-							if (Helpers.MyRandom.Next(8) == 0)
-							{
-								var material = materials[Helpers.MyRandom.Next(materials.Length)].ID;
-								env.SetInterior(p, Helpers.MyRandom.Next() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling, material);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		static int GetSurfaceZ(EnvironmentObjectBuilder env, int x, int y)
-		{
-			for (int z = env.Bounds.Z2 - 1; z >= 0; --z)
-			{
-				var p = new IntPoint3D(x, y, z);
+				var p = new IntPoint3D(p2d, z);
 
 				var terrainID = env.GetTerrainID(p);
 
-				if (terrainID != TerrainID.Empty)
+				if (terrainID == TerrainID.NaturalFloor || terrainID.IsSlope())
 				{
-					if (terrainID != TerrainID.NaturalWall)
-						return z;
+					var interiorID = env.GetInteriorID(p);
 
-					break;
+					if (interiorID == InteriorID.Empty)
+					{
+						if (Helpers.GetRandomInt(8) == 0)
+						{
+							var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
+							var interior = Helpers.GetRandomInt() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling;
+							env.SetInterior(p, interior, material);
+						}
+					}
 				}
-			}
-
-			return -1;
+			});
 		}
 
-		static void CreateSlopes(EnvironmentObjectBuilder env)
+		static void CreateSlopes(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
 		{
-			var bounds = env.Bounds;
+			var arr = new ThreadLocal<Direction[]>(() => new Direction[8]);
 
-			Parallel.For(0, bounds.Height, y =>
+			var plane = env.Bounds.Plane;
+
+			plane.Range().AsParallel().ForAll(p =>
 			{
-				Direction[] arr = new Direction[8];
+				int z = heightMap[p];
 
-				for (int x = 0; x < bounds.Width; ++x)
+				int count = 0;
+				Direction dir = Direction.None;
+
+				int offset = Helpers.GetRandomInt(8);
+
+				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
+				// the slope if all 8 tiles are higher.
+				for (int i = 0; i < 8; ++i)
 				{
-					int z = GetSurfaceZ(env, x, y);
+					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
 
-					if (z == -1)
-						continue;
+					var t = p + d;
 
-					var p = new IntPoint3D(x, y, z);
-
-					int count = 0;
-
-					foreach (var dir in DirectionExtensions.PlanarDirections)
+					if (plane.Contains(t) && heightMap[t] > z)
 					{
-						var t = p + dir;
-
-						if (bounds.Contains(t) && env.GetTerrainID(t) == TerrainID.NaturalWall)
-							arr[count++] = dir;
+						dir = d;
+						count++;
 					}
+				}
 
-					// skip places surrounded by walls
-					if (count > 0 && count < 8)
-					{
-						// If there are multiple possible directions for the slope, use "random"
-						var idx = (x + y) % count;
-						env.SetTerrain(p, arr[idx].ToSlope(), env.GetTerrainMaterialID(p));
-					}
+				if (count > 0 && count < 8)
+				{
+					var p3d = new IntPoint3D(p, z);
+					env.SetTerrain(p3d, dir.ToSlope(), env.GetTerrainMaterialID(p3d));
 				}
 			});
 		}
 
 		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID)
 		{
-			CreateOreCluster(env, p, oreMaterialID, Helpers.MyRandom.Next(6) + 1);
+			CreateOreCluster(env, p, oreMaterialID, Helpers.GetRandomInt(6) + 1);
 		}
 
 		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
@@ -498,7 +464,7 @@ namespace MyArea
 
 		GameColor GetRandomColor()
 		{
-			return (GameColor)Helpers.MyRandom.Next(GameColorRGB.NUMCOLORS - 1) + 1;
+			return (GameColor)Helpers.GetRandomInt(GameColorRGB.NUMCOLORS - 1) + 1;
 		}
 
 

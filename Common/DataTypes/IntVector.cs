@@ -21,6 +21,17 @@ namespace Dwarrowdelf
 			m_y = y;
 		}
 
+		public IntVector(Direction dir)
+		{
+			m_x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			m_y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+
+			if (m_x == DirectionConsts.DirNeg)
+				m_x = -1;
+			if (m_y == DirectionConsts.DirNeg)
+				m_y = -1;
+		}
+
 		#region IEquatable<IntVector> Members
 
 		public bool Equals(IntVector other)
