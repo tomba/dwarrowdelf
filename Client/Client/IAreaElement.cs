@@ -8,7 +8,7 @@ namespace Dwarrowdelf.Client
 	interface IAreaElement
 	{
 		EnvironmentObject Environment { get; }
-		IntCuboid Area { get; }
+		IntRectZ Area { get; }
 		string Description { get; }
 	}
 }

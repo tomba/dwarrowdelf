@@ -15,7 +15,6 @@ namespace Dwarrowdelf.Client
 		public EnvironmentObject Environment { get; set; }
 
 		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
-		IntCuboid IAreaElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRectZ Area { get; set; }
 

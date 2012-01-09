@@ -77,7 +77,6 @@ namespace Dwarrowdelf.Client
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
-		IntCuboid IAreaElement.Area { get { return this.Area.ToCuboid(); } }
 
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
