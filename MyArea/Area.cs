@@ -139,6 +139,9 @@ namespace MyArea
 
 			{
 				var p = new IntPoint3D(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
+
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
