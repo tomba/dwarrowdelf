@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 		public IntCuboid Bounds { get; private set; }
 
 		[SaveGameProperty(UseOldList = true)]
-		ObservableCollection<IAreaElement> m_AreaElements;
+		ObservableCollection<IAreaElement> m_areaElements;
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
 		public IntPoint3D HomeLocation { get; private set; }
@@ -56,8 +56,8 @@ namespace Dwarrowdelf.Client
 			m_objectMap = new Dictionary<IntPoint3D, List<MovableObject>>();
 			m_objectList = new List<MovableObject>();
 
-			m_AreaElements = new ObservableCollection<IAreaElement>();
-			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_AreaElements);
+			m_areaElements = new ObservableCollection<IAreaElement>();
+			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
 
 			this.Designations = new Designation(this);
 			this.InstallFurnitureManager = new InstallFurnitureManager(this);
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client
 		[OnSaveGameDeserialized]
 		void OnDeserialized()
 		{
-			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_AreaElements);
+			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
@@ -452,7 +452,7 @@ namespace Dwarrowdelf.Client
 		// XXX
 		public Stockpile GetStockpileAt(IntPoint3D p)
 		{
-			return m_AreaElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
+			return m_areaElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
 		}
 
 		public void AddAreaElement(IAreaElement element)
@@ -460,27 +460,27 @@ namespace Dwarrowdelf.Client
 			this.Version++;
 
 			// XXX can the elements overlap?
-			Debug.Assert(m_AreaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
-			Debug.Assert(!m_AreaElements.Contains(element));
-			m_AreaElements.Add(element);
+			Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
+			Debug.Assert(!m_areaElements.Contains(element));
+			m_areaElements.Add(element);
 		}
 
 		public void RemoveAreaElement(IAreaElement element)
 		{
 			this.Version++;
 
-			var ok = m_AreaElements.Remove(element);
+			var ok = m_areaElements.Remove(element);
 			Debug.Assert(ok);
 		}
 
 		public IAreaElement GetElementAt(IntPoint3D p)
 		{
-			return m_AreaElements.FirstOrDefault(e => e.Area.Contains(p));
+			return m_areaElements.FirstOrDefault(e => e.Area.Contains(p));
 		}
 
 		public IEnumerable<IAreaElement> GetElementsAt(IntPoint3D p)
 		{
-			return m_AreaElements.Where(e => e.Area.Contains(p));
+			return m_areaElements.Where(e => e.Area.Contains(p));
 		}
 	}
 }
