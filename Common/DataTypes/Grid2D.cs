@@ -6,11 +6,11 @@ using System.Collections;
 
 namespace Dwarrowdelf
 {
-	/**
-	 * 2D grid made of <T>s
-	 * Coordinates offset by Origin
-	 */
-	public sealed class Grid2D<T> : IEnumerable<KeyValuePair<IntPoint, T>>
+	/// <summary>
+	/// 2D grid made of Ts
+	/// Coordinates offset by Origin
+	/// </summary>
+	public sealed class Grid2D<T> : IEnumerable<T>
 	{
 		ArrayGrid2D<T> m_grid;
 		public IntVector Origin { get; set; }
@@ -21,7 +21,8 @@ namespace Dwarrowdelf
 			this.Origin = new IntVector(0, 0);
 		}
 
-		public Grid2D(int width, int height, int originX, int originY) : this(width, height)
+		public Grid2D(int width, int height, int originX, int originY)
+			: this(width, height)
 		{
 			this.Origin = new IntVector(originX, originY);
 		}
@@ -43,54 +44,34 @@ namespace Dwarrowdelf
 				m_grid.Grid[l.Y, l.X] = value;
 			}
 		}
-		
+
 		public T this[int x, int y]
 		{
-			get
-			{
-				return this[new IntPoint(x, y)];
-			}
-
-			set
-			{
-				this[new IntPoint(x, y)] = value;
-			}
+			get { return this[new IntPoint(x, y)]; }
+			set { this[new IntPoint(x, y)] = value; }
 		}
 
 		public IntRect Bounds
 		{
-			get 
-			{
-				return new IntRect(0 - this.Origin.X, 0 - this.Origin.Y,
-					this.Width, this.Height);
-			}
+			get { return new IntRect(0 - this.Origin.X, 0 - this.Origin.Y, this.Width, this.Height); }
 		}
 
-		public IEnumerable<IntPoint> GetLocations()
+		public IEnumerable<KeyValuePair<IntPoint, T>> GetIndexValueEnumerable()
 		{
-			for (int x = 0; x < this.Width; x++)
+			for (int y = 0; y < this.Height; y++)
 			{
-				for (int y = 0; y < this.Height; y++)
+				for (int x = 0; x < this.Width; x++)
 				{
-					yield return new IntPoint(x - Origin.X, y - Origin.Y);
+					yield return new KeyValuePair<IntPoint, T>(new IntPoint(x - Origin.X, y - Origin.Y), m_grid.Grid[y, x]);
 				}
 			}
 		}
 
 		#region IEnumerable<T> Members
 
-		public IEnumerator<KeyValuePair<IntPoint, T>> GetEnumerator()
+		public IEnumerator<T> GetEnumerator()
 		{
-			for (int y = 0; y < this.Height; y++)
-			{
-				for (int x = 0; x < this.Width; x++)
-				{
-					yield return new KeyValuePair<IntPoint, T>(
-						new IntPoint(x - Origin.X, y - Origin.Y),
-						m_grid.Grid[y, x]
-						);
-				}
-			}
+			return m_grid.GetEnumerator();
 		}
 
 		#endregion

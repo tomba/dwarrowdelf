@@ -754,7 +754,7 @@ namespace Dwarrowdelf.Server
 
 		IEnumerable<IntPoint> GetVisibleLocationsLOS()
 		{
-			return this.VisionMap.
+			return this.VisionMap.GetIndexValueEnumerable().
 					Where(kvp => kvp.Value == true).
 					Select(kvp => kvp.Key + new IntVector(this.X, this.Y));
 		}
