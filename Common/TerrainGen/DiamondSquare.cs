@@ -10,7 +10,7 @@ namespace Dwarrowdelf.TerrainGen
 	{
 		static Random s_random = new Random(1);
 
-		public static void Render(SimpleGrid2D<double> grid, double average, double range, double h)
+		public static void Render(ArrayGrid2D<double> grid, double average, double range, double h)
 		{
 			if (grid.Width != grid.Height)
 				throw new Exception();
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.TerrainGen
 			return s_random.NextDouble() * range * 2 - range;
 		}
 
-		static void HeightMap(SimpleGrid2D<double> grid, double average, double range, double h)
+		static void HeightMap(ArrayGrid2D<double> grid, double average, double range, double h)
 		{
 			for (int pass = 0; pass < (int)Math.Log(grid.Width, 2); ++pass)
 			{
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		static void Rectangle(SimpleGrid2D<double> grid, IntPoint middle, int radius, double range)
+		static void Rectangle(ArrayGrid2D<double> grid, IntPoint middle, int radius, double range)
 		{
 			double v1, v2, v3, v4;
 			IntPoint p1, p2, p3, p4;
@@ -85,7 +85,7 @@ namespace Dwarrowdelf.TerrainGen
 			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(range);
 		}
 
-		static void Diamond(SimpleGrid2D<double> grid, IntPoint middle, int radius, double range, double average)
+		static void Diamond(ArrayGrid2D<double> grid, IntPoint middle, int radius, double range, double average)
 		{
 			double v1, v2, v3, v4;
 			IntPoint p1, p2, p3, p4;

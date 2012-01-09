@@ -77,7 +77,7 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
-    <Compile Include="DataTypes\SimpleGrid2D.cs" />
+    <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
@@ -146,10 +146,8 @@
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
-    <Compile Include="DataTypes\GrowingGrid3DBase.cs" />
     <Compile Include="DataTypes\IntVector3D.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
-    <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="Terrains.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />
@@ -161,7 +159,6 @@
     <Compile Include="DataTypes\IntVector.cs" />
     <Compile Include="DataTypes\IntSize.cs" />
     <Compile Include="DataTypes\Direction.cs" />
-    <Compile Include="DataTypes\GrowingGrid2DBase.cs" />
     <Compile Include="DataTypes\IntRect.cs" />
     <Compile Include="DataTypes\IntPoint3D.cs" />
     <Compile Include="IGame.cs" />
