@@ -27,7 +27,7 @@
 								<ColumnDefinition Width="1*" />
 							</Grid.ColumnDefinitions>
 
-							<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" DataContext="{Binding BuildableItem}" Source="{StaticResource buildableItemDrawingImage}" />
+							<Image Grid.Column="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" DataContext="{Binding BuildableItem}" Source="{StaticResource buildableItemDrawingImage}" />
 
 							<TextBlock Name="buildOrderName" Grid.Column="1" Text="{Binding Name, Converter={StaticResource capitalizeConverter}}" />
 						</Grid>

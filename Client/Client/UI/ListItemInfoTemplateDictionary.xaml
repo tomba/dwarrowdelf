@@ -50,7 +50,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
+			<Image Grid.Column="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
@@ -84,7 +84,7 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<Image Grid.Column="0" Stretch="Uniform" Height="18" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
+			<Image Grid.Column="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
 					<TextBlock.Text>
