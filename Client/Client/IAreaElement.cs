@@ -10,5 +10,7 @@ namespace Dwarrowdelf.Client
 		EnvironmentObject Environment { get; }
 		IntRectZ Area { get; }
 		string Description { get; }
+		SymbolID SymbolID { get; }
+		GameColor EffectiveColor { get; }
 	}
 }

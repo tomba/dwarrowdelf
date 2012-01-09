@@ -21,6 +21,8 @@ namespace Dwarrowdelf.Client
 		public BuildingID BuildingID { get { return this.BuildingInfo.BuildingID; } }
 
 		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
+		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
+		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
 		[SaveGameProperty]
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();

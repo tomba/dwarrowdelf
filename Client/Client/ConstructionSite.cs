@@ -14,6 +14,8 @@ namespace Dwarrowdelf.Client
 		public IntRectZ Area { get; private set; }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
+		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
+		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
 		public ConstructionSite(EnvironmentObject environment, BuildingID buildingID, IntRectZ area)
 		{

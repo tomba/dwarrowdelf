@@ -22,20 +22,26 @@
 		</TextBlock>
 	</DataTemplate>
 
-	<!-- Building Object -->
+	<!-- BuildingObject -->
 	<DataTemplate DataType="{x:Type local:BuildingObject}">
-		<TextBlock ContextMenu="{StaticResource objectMenu}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0} ({1})">
-					<Binding Path="BuildingID" />
-					<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
-				</MultiBinding>
-			</TextBlock.Text>
-			
-			<TextBlock.ToolTip>
+		<Grid ContextMenu="{StaticResource objectMenu}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Image Grid.Column="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
+
+			<TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" />
+
+			<Grid.ToolTip>
 				<ui:ObjectInfoControl />
-			</TextBlock.ToolTip>
-		</TextBlock>
+			</Grid.ToolTip>
+		</Grid>
 	</DataTemplate>
 
 	<!-- Concrete Object -->

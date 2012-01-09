@@ -89,6 +89,8 @@ namespace Dwarrowdelf.Client
 		List<StoreToStockpileJob> m_jobs;
 
 		public string Description { get { return "Stockpile"; } }
+		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
+		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
 		ItemObjectView m_itemObjectView;
 
