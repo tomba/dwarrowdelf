@@ -14,26 +14,25 @@
 	<Window.Resources>
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterItemsCvs" Filter="FilterItems" />
 		<CollectionViewSource Source="{Binding Data.World.Objects}" x:Key="filterLivingsCvs" Filter="FilterLivings" />
+		<Image Width="24" Height="24" x:Key="menuItemIconImage" x:Shared="False" Source="{StaticResource objectDrawingImage}" />
 
 		<ContextMenu x:Key="objectSelectorContextMenu">
+
 			<ContextMenu.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
-
-						<Image Width="24" Height="24" Source="{StaticResource objectDrawingImage}" />
-
-						<TextBlock Text="{Binding Description}" />
+						<TextBlock Text="{Binding Description, Converter={StaticResource capitalizeConverter}}" />
 					</StackPanel>
 				</DataTemplate>
-
 			</ContextMenu.ItemTemplate>
 
 			<ContextMenu.ItemContainerStyle>
-				<Style>
-					<!-- <Setter Property="MenuItem.Icon" Value="{Binding Drawing}" /> -->
-					<EventSetter Event="MenuItem.Click" Handler="OnObjectSelectContextMenuClick" />
+				<Style TargetType="MenuItem">
+					<Setter Property="Icon" Value="{StaticResource menuItemIconImage}" />
+					<EventSetter Event="Click" Handler="OnObjectSelectContextMenuClick" />
 				</Style>
 			</ContextMenu.ItemContainerStyle>
+
 		</ContextMenu>
 	</Window.Resources>
 

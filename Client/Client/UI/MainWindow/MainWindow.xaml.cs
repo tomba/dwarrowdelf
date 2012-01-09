@@ -316,16 +316,16 @@ for p in area.Range():
 		{
 			if (this.mainWindowTools.ToolMode == ClientToolMode.Info)
 			{
-				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
-
 				var env = this.MapControl.Environment;
 
 				if (env == null)
 					return;
 
-				List<object> obs = new List<object>();
-				obs.AddRange(env.GetContents(ml));
+				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
+
+				var obs = new List<object>();
 				obs.AddRange(env.GetElementsAt(ml));
+				obs.AddRange(env.GetContents(ml));
 
 				if (obs.Count == 1)
 				{
