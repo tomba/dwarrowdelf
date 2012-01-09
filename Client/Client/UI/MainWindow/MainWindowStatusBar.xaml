@@ -44,27 +44,12 @@
 		<Separator />
 
 		<TextBlock>ML</TextBlock>
-		<TextBlock Width="75" DataContext="{Binding MapControl.HoverTileView}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0}, {1}, {2}">
-					<Binding Path="Location.X" />
-					<Binding Path="Location.Y" />
-					<Binding Path="Location.Z" />
-				</MultiBinding>
-			</TextBlock.Text>
-		</TextBlock>
+		<TextBlock Width="75" DataContext="{Binding MapControl.HoverTileView}" Text="{Binding Location}" />
 
 		<Separator />
 
 		<TextBlock>SL</TextBlock>
-		<TextBlock Width="50" DataContext="{Binding MapControl}">
-			<TextBlock.Text>
-				<MultiBinding StringFormat="{}{0}, {1}">
-					<Binding Path="ScreenLocation.X" />
-					<Binding Path="ScreenLocation.Y" />
-				</MultiBinding>
-			</TextBlock.Text>
-		</TextBlock>
+		<TextBlock Width="50" DataContext="{Binding MapControl}" Text="{Binding ScreenLocation}" />
 
 		<Separator />
 

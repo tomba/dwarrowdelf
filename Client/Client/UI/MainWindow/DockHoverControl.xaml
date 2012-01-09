@@ -34,15 +34,7 @@
 			<TextBlock Grid.Column="0" Grid.Row="4" Text="Flags:" Margin="2" />
 			<TextBlock Grid.Column="0" Grid.Row="5" Text="Map Element:" Margin="2" />
 
-			<TextBlock Grid.Column="1" Grid.Row="0" Margin="2">
-				<TextBlock.Text>
-					<MultiBinding StringFormat="{}{0},{1},{2}">
-						<Binding Path="Location.X" Mode="OneWay" />
-						<Binding Path="Location.Y" Mode="OneWay" />
-						<Binding Path="Location.Z" Mode="OneWay" />
-					</MultiBinding>
-				</TextBlock.Text>
-			</TextBlock>
+			<TextBlock Grid.Column="1" Grid.Row="0" Margin="2" Text="{Binding Location}" />
 
 			<TextBlock Grid.Column="1" Grid.Row="1" Margin="2">
 				<TextBlock.Text>
