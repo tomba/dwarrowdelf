@@ -64,14 +64,13 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("IntSize({0}, {1})", Width, Height);
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1}", this.Width, this.Height);
 		}
-
 
 		public static explicit operator IntVector(IntSize size)
 		{
 			return new IntVector(size.Width, size.Height);
 		}
 	}
-
 }

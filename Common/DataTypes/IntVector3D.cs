@@ -121,8 +121,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-				"IntVector3D({0}, {1}, {2})", X, Y, Z);
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1},{2}", this.X, this.Y, this.Z);
 		}
 
 		public static explicit operator IntVector3D(IntPoint3D point)

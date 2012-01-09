@@ -138,14 +138,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-				"IntPoint3D({0}, {1}, {2})", X, Y, Z);
-		}
-
-		internal string ConvertToString()
-		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
-			return String.Format(info, "{0},{1},{2}", m_x, m_y, m_z);
+			return String.Format(info, "{0},{1},{2}", this.X, this.Y, this.Z);
 		}
 
 		public static IntPoint3D Parse(string str)

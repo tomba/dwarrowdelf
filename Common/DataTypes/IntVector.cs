@@ -69,7 +69,7 @@ namespace Dwarrowdelf
 
 		public static IntVector operator +(IntVector left, IntVector right)
 		{
-			return new IntVector(left.X + right.X, left.Y + right.Y);			
+			return new IntVector(left.X + right.X, left.Y + right.Y);
 		}
 
 		public static IntVector operator -(IntVector left, IntVector right)
@@ -94,8 +94,8 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-				"IntVector({0}, {1})", X, Y);
+			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
+			return String.Format(info, "{0},{1}", this.X, this.Y);
 		}
 
 		public static explicit operator IntVector(IntPoint point)

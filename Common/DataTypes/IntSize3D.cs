@@ -72,11 +72,6 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("IntSize3D({0}, {1}, {2})", Width, Height, Depth);
-		}
-
-		internal string ConvertToString()
-		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			return String.Format(info, "{0},{1},{2}", m_width, m_height, m_depth);
 		}

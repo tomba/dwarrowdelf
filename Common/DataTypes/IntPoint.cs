@@ -81,20 +81,15 @@ namespace Dwarrowdelf
 			return (this.Y << 16) | this.X;
 		}
 
-		public override string ToString()
-		{
-			return String.Format(System.Globalization.CultureInfo.InvariantCulture, "IntPoint({0}, {1})", X, Y);
-		}
-
 		public static explicit operator IntPoint(IntVector vector)
 		{
 			return new IntPoint(vector.X, vector.Y);
 		}
 
-		internal string ConvertToString()
+		public override string ToString()
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
-			return String.Format(info, "{0},{1}", m_x, m_y);
+			return String.Format(info, "{0},{1}", this.X, this.Y);
 		}
 
 		public static IntPoint Parse(string str)

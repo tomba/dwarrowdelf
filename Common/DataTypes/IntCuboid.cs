@@ -191,13 +191,6 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return String.Format("x={0},y={1},z={2},w={3},h={4},d={5}",
-				this.X, this.Y, this.Z, this.Width, this.Height, this.Depth);
-		}
-
-
-		internal string ConvertToString()
-		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			return String.Format(info, "{0},{1},{2},{3},{4},{5}", m_x, m_y, m_z, m_width, m_height, m_depth);
 		}

@@ -25,7 +25,7 @@ namespace Dwarrowdelf
 				return base.ConvertTo(context, culture, value, destinationType);
 
 			var rect = (IntPoint)value;
-			return rect.ConvertToString();
+			return rect.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -59,8 +59,8 @@ namespace Dwarrowdelf
 			if ((destinationType == null) || !(value is IntPoint3D) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntPoint3D)value;
-			return rect.ConvertToString();
+			var p = (IntPoint3D)value;
+			return p.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -95,7 +95,7 @@ namespace Dwarrowdelf
 				return base.ConvertTo(context, culture, value, destinationType);
 
 			var rect = (IntRect)value;
-			return rect.ConvertToString();
+			return rect.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -130,7 +130,7 @@ namespace Dwarrowdelf
 				return base.ConvertTo(context, culture, value, destinationType);
 
 			var rect = (IntRectZ)value;
-			return rect.ConvertToString();
+			return rect.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -165,7 +165,7 @@ namespace Dwarrowdelf
 				return base.ConvertTo(context, culture, value, destinationType);
 
 			var rect = (IntCuboid)value;
-			return rect.ConvertToString();
+			return rect.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -200,7 +200,7 @@ namespace Dwarrowdelf
 				return base.ConvertTo(context, culture, value, destinationType);
 
 			var rect = (IntSize3D)value;
-			return rect.ConvertToString();
+			return rect.ToString();
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)

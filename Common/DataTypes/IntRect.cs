@@ -171,11 +171,6 @@ namespace Dwarrowdelf
 
 		public override string ToString()
 		{
-			return ("{X=" + this.X + ",Y=" + this.Y + ",Width=" + this.Width + ",Height=" + this.Height + "}");
-		}
-
-		internal string ConvertToString()
-		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			return String.Format(info, "{0},{1},{2},{3}", m_x, m_y, m_width, m_height);
 		}
