@@ -88,6 +88,20 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="DesignationChannel" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FF000000" Geometry="F1 M 244.719,81.6592C 243.802,82.2869 242.661,82.6008 241.296,82.6008C 239.534,82.6008 238.123,81.8586 237.062,80.3741C 236.001,78.8898 235.471,76.9419 235.471,74.5306C 235.471,71.9374 236.068,69.8423 237.261,68.2452C 238.454,66.6481 239.966,65.8497 241.799,65.8497C 242.973,65.8497 243.947,66.0253 244.719,66.3768L 244.719,68.4088C 243.841,67.7884 242.871,67.4782 241.81,67.4782C 240.402,67.4782 239.26,68.1077 238.385,69.3667C 237.509,70.6257 237.072,72.3082 237.072,74.4142C 237.072,76.4136 237.481,78.0064 238.299,79.1927C 239.116,80.379 240.19,80.9722 241.521,80.9722C 242.753,80.9722 243.819,80.5844 244.719,79.8089L 244.719,81.6592 Z "/>
+					<GeometryDrawing Geometry="F1 M 229.173,62.9284L 253.173,62.9284L 253.173,86.9284L 229.173,86.9284L 229.173,62.9284 Z ">
+						<GeometryDrawing.Pen>
+							<Pen LineJoin="Round" Brush="#FF000000"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 	<DrawingBrush x:Key="CreateStockpile" Stretch="Uniform">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>

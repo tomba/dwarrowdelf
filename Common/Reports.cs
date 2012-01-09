@@ -104,17 +104,16 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class MineActionReport : ActionReport
 	{
+		public IntPoint3D Location { get; private set; }
 		public Direction Direction { get; private set; }
 		public MineActionType MineActionType { get; private set; }
-		public TerrainID TerrainID { get; private set; }
-		public MaterialID MaterialID { get; set; }
 
-		public MineActionReport(ILivingObject living, Direction direction, MineActionType mineActionType, TerrainID terrainID)
+		public MineActionReport(ILivingObject living, IntPoint3D location, Direction direction, MineActionType mineActionType)
 			: base(living)
 		{
+			this.Location = location;
 			this.Direction = direction;
 			this.MineActionType = mineActionType;
-			this.TerrainID = terrainID;
 		}
 	}
 

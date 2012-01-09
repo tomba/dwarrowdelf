@@ -86,6 +86,7 @@ namespace Dwarrowdelf.Client.UI
 				case ClientToolMode.CreateItem:
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
+				case ClientToolMode.DesignationChannel:
 				case ClientToolMode.DesignationFellTree:
 				case ClientToolMode.DesignationRemove:
 				case ClientToolMode.SetTerrain:
@@ -123,6 +124,10 @@ namespace Dwarrowdelf.Client.UI
 
 				case ClientToolMode.DesignationStairs:
 					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.CreateStairs);
+					break;
+
+				case ClientToolMode.DesignationChannel:
+					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Channel);
 					break;
 
 				case ClientToolMode.DesignationFellTree:

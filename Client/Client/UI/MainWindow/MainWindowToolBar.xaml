@@ -101,6 +101,11 @@
 								<Border Background="{Binding Brush}" Width="24" Height="24" />
 							</MenuItem.Icon>
 						</MenuItem>
+						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationChannel]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click" >
+							<MenuItem.Icon>
+								<Border Background="{Binding Brush}" Width="24" Height="24" />
+							</MenuItem.Icon>
+						</MenuItem>
 						<MenuItem DataContext="{Binding Source={x:Static ui:MainWindowToolBar.ToolDatas}, Path=.[DesignationFellTree]}" Style="{StaticResource menuItemStyle}" Click="MenuItem_Click" >
 							<MenuItem.Icon>
 								<Border Background="{Binding Brush}" Width="24" Height="24" />

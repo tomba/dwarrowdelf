@@ -381,25 +381,23 @@ namespace Dwarrowdelf.Server
 		{
 			var env = this.Environment;
 
-			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
+			var p = this.Location + action.Direction;
 
-			var terrain = env.GetTerrain(p);
-			var id = terrain.ID;
-
-			var report = new MineActionReport(this, action.Direction, action.MineActionType, id);
-
-			if (!terrain.IsMinable)
-			{
-				SendFailReport(report, "not mineable");
-				return false;
-			}
-
-			report.MaterialID = env.GetTerrainMaterialID(p);
+			var report = new MineActionReport(this, p, action.Direction, action.MineActionType);
 
 			switch (action.MineActionType)
 			{
 				case MineActionType.Mine:
 					{
+						var terrain = env.GetTerrain(p);
+						var id = terrain.ID;
+
+						if (!terrain.IsMinable)
+						{
+							SendFailReport(report, "not mineable");
+							return false;
+						}
+
 						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
 							SendFailReport(report, "not not planar or up direction");
@@ -474,6 +472,15 @@ namespace Dwarrowdelf.Server
 
 				case MineActionType.Stairs:
 					{
+						var terrain = env.GetTerrain(p);
+						var id = terrain.ID;
+
+						if (!terrain.IsMinable)
+						{
+							SendFailReport(report, "not mineable");
+							return false;
+						}
+
 						if (!action.Direction.IsPlanarUpDown())
 						{
 							SendFailReport(report, "not PlanarUpDown direction");
@@ -509,6 +516,68 @@ namespace Dwarrowdelf.Server
 						};
 
 						env.SetTileData(p, td);
+					}
+					break;
+
+				case MineActionType.Channel:
+					{
+						if (!action.Direction.IsPlanar())
+						{
+							SendFailReport(report, "not not planar or up direction");
+							return false;
+						}
+
+						// XXX is this necessary for planar dirs? we can always move in those dirs
+						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
+						{
+							SendFailReport(report, "cannot reach");
+							return false;
+						}
+
+						var td = env.GetTileData(p);
+
+						if (td.TerrainID != TerrainID.NaturalFloor || td.InteriorID != InteriorID.Empty)
+						{
+							SendFailReport(report, "wrong type of tile");
+							return false;
+						}
+
+						if (!env.Contains(p + Direction.Down))
+						{
+							SendFailReport(report, "tile not inside map");
+							return false;
+						}
+
+						var tdd = env.GetTileData(p + Direction.Down);
+
+						bool clearDown;
+
+						if (tdd.TerrainID == TerrainID.NaturalWall)
+						{
+							clearDown = true;
+						}
+						else if (tdd.InteriorID == InteriorID.Empty)
+						{
+							clearDown = false;
+						}
+						else
+						{
+							SendFailReport(report, "tile down not empty");
+							return false;
+						}
+
+						td.TerrainID = TerrainID.Empty;
+						td.TerrainMaterialID = Dwarrowdelf.MaterialID.Undefined;
+						td.Flags &= ~TileFlags.Grass;
+						env.SetTileData(p, td);
+
+						if (clearDown)
+						{
+							tdd.TerrainID = TerrainID.NaturalFloor;
+							tdd.InteriorID = InteriorID.Empty;
+							tdd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+							env.SetTileData(p + Direction.Down, tdd);
+						}
 					}
 					break;
 

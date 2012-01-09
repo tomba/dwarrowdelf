@@ -240,17 +240,21 @@ namespace Dwarrowdelf.Client
 				switch (report.MineActionType)
 				{
 					case MineActionType.Mine:
-						GameData.Data.AddGameEvent(living, "{0} mines {1} {2}", living, report.MaterialID, report.TerrainID);
+						GameData.Data.AddGameEvent(living, "{0} mines {1} ({2})", living, report.Location, report.Direction);
 						break;
 
 					case MineActionType.Stairs:
-						GameData.Data.AddGameEvent(living, "{0} creates stairs from {1} {2}", living, report.MaterialID, report.TerrainID);
+						GameData.Data.AddGameEvent(living, "{0} creates stairs {1} ({2})", living, report.Location, report.Direction);
+						break;
+
+					case MineActionType.Channel:
+						GameData.Data.AddGameEvent(living, "{0} channels {1} ({2})", living, report.Location, report.Direction);
 						break;
 				}
 			}
 			else
 			{
-				GameData.Data.AddGameEvent(living, "{0} fails to mine {1} {2}: {3}", living, report.MaterialID, report.TerrainID, report.FailReason);
+				GameData.Data.AddGameEvent(living, "{0} fails to mine {1} ({2}): {3}", living, report.Location, report.Direction, report.FailReason);
 			}
 		}
 

@@ -411,6 +411,9 @@ namespace Dwarrowdelf.Client
 				case DesignationType.CreateStairs:
 					return SymbolID.StairsUp;
 
+				case DesignationType.Channel:
+					return SymbolID.DesignationMine;
+
 				case DesignationType.FellTree:
 					return SymbolID.Log;
 

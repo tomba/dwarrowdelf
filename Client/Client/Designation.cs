@@ -11,6 +11,7 @@ namespace Dwarrowdelf.Client
 		Mine,
 		FellTree,
 		CreateStairs,
+		Channel,
 	}
 
 	[SaveGameObjectByRef]
@@ -113,6 +114,11 @@ namespace Dwarrowdelf.Client
 						.Where(p => (this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall) || this.Environment.GetHidden(p));
 					break;
 
+				case DesignationType.Channel:
+					locations = area.Range()
+						.Where(p => this.Environment.Contains(p));
+					break;
+
 				case DesignationType.FellTree:
 					locations = area.Range()
 						.Where(p => this.Environment.Contains(p))
@@ -173,12 +179,23 @@ namespace Dwarrowdelf.Client
 				{
 					case DesignationType.Mine:
 					case DesignationType.CreateStairs:
+					case DesignationType.Channel:
 						MineActionType mat;
 
-						if (dt.Type == DesignationType.Mine)
-							mat = MineActionType.Mine;
-						else
-							mat = MineActionType.Stairs;
+						switch (dt.Type)
+						{
+							case DesignationType.Mine:
+								mat = MineActionType.Mine;
+								break;
+							case DesignationType.CreateStairs:
+								mat = MineActionType.Stairs;
+								break;
+							case DesignationType.Channel:
+								mat = MineActionType.Channel;
+								break;
+							default:
+								throw new Exception();
+						}
 
 						job = new Jobs.AssignmentGroups.MoveMineAssignment(this, this.Environment, p, mat);
 
@@ -279,6 +296,10 @@ namespace Dwarrowdelf.Client
 					dirs = DirectionSet.Planar | DirectionSet.Up;
 					if (EnvironmentHelpers.CanMoveFrom(this.Environment, p + Direction.Down, Direction.Up))
 						dirs |= DirectionSet.Down;
+					break;
+
+				case DesignationType.Channel:
+					dirs = DirectionSet.Planar;
 					break;
 
 				case DesignationType.FellTree:

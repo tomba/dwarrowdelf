@@ -32,6 +32,7 @@ namespace Dwarrowdelf.Client.UI
 
 			add(ClientToolMode.DesignationMine, "Mine", Key.M);
 			add(ClientToolMode.DesignationStairs, "Mine stairs", Key.S);
+			add(ClientToolMode.DesignationChannel, "Channel", Key.C);
 			add(ClientToolMode.DesignationFellTree, "Fell tree", Key.F);
 			add(ClientToolMode.DesignationRemove, "Remove", Key.R);
 
@@ -39,7 +40,7 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.InstallFurniture, "Install furniture", Key.I);
 
 			add(ClientToolMode.CreateLiving, "Create living", Key.L);
-			add(ClientToolMode.CreateItem, "Create item", Key.C);
+			add(ClientToolMode.CreateItem, "Create item", Key.Z);
 			add(ClientToolMode.SetTerrain, "Set terrain", Key.T);
 			add(ClientToolMode.ConstructBuilding, "Create building", Key.B);
 		}
@@ -188,6 +189,7 @@ namespace Dwarrowdelf.Client.UI
 				case ClientToolMode.DesignationRemove:
 				case ClientToolMode.DesignationMine:
 				case ClientToolMode.DesignationStairs:
+				case ClientToolMode.DesignationChannel:
 				case ClientToolMode.DesignationFellTree:
 					ctrl.DesignationToolMode = mode;
 					ctrl.designationButton.IsChecked = true;
@@ -304,6 +306,7 @@ namespace Dwarrowdelf.Client.UI
 		DesignationRemove,
 		DesignationMine,
 		DesignationStairs,
+		DesignationChannel,
 		DesignationFellTree,
 		SetTerrain,
 		CreateStockpile,

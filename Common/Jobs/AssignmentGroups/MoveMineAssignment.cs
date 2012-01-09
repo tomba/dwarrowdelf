@@ -59,6 +59,10 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 					break;
 
+				case MineActionType.Channel:
+					pos = DirectionSet.Planar;
+					break;
+
 				default:
 					throw new Exception();
 			}
