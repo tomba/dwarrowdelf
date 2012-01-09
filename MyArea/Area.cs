@@ -19,11 +19,13 @@ namespace MyArea
 		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
 
-		Environment m_map1;
+		Environment m_environment;
 
 		public void InitializeWorld(World world)
 		{
-			m_map1 = CreateMap1(world);
+			int surfaceLevel;
+			m_environment = CreateEnv(world, out surfaceLevel);
+			FinalizeEnv(m_environment, surfaceLevel);
 		}
 
 		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
@@ -58,7 +60,7 @@ namespace MyArea
 			return p;
 		}
 
-		Environment CreateMap1(World world)
+		Environment CreateEnv(World world, out int surfaceLevel)
 		{
 			int sizeExp = AREA_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
@@ -78,59 +80,9 @@ namespace MyArea
 
 			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
 
-			int surfaceLevel = FindSurfaceLevel(intHeightMap);
-
 			CreateSlopes(envBuilder, intHeightMap);
 
 			CreateTrees(envBuilder, intHeightMap);
-
-			int posx = envBuilder.Width / 10;
-			int posy = 1;
-
-			for (int x = posx; x < posx + 4; ++x)
-			{
-				int y = posy;
-
-				IntPoint3D p;
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.NativeGold);
-				}
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.Magnetite);
-				}
-
-				{
-					p = new IntPoint3D(x, y++, surfaceLevel);
-					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					envBuilder.SetInterior(p, InteriorID.Ore, MaterialID.Chrysoprase);
-				}
-			}
-
-			{
-				// create a wall and a hole (with a door created later)
-
-				IntPoint3D p;
-
-				for (int y = 4; y < 12; ++y)
-				{
-					int x = 17;
-
-					p = new IntPoint3D(x, y, surfaceLevel);
-					envBuilder.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					envBuilder.SetInterior(p, InteriorID.Undefined, MaterialID.Undefined);
-				}
-
-				p = new IntPoint3D(17, 7, surfaceLevel);
-				envBuilder.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-				envBuilder.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-			}
-
 
 			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
 			for (int i = 0; i < 30; ++i)
@@ -140,7 +92,10 @@ namespace MyArea
 				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
 			}
 
+			surfaceLevel = FindSurfaceLevel(intHeightMap);
+
 			var env = envBuilder.Create(world);
+
 			for (int i = 0; i < 200; ++i)
 			{
 				var p = new IntPoint3D(i, i, surfaceLevel);
@@ -164,8 +119,12 @@ namespace MyArea
 			if (env.HomeLocation == new IntPoint3D())
 				throw new Exception();
 
+			return env;
+		}
 
-
+		void FinalizeEnv(EnvironmentObject env, int surfaceLevel)
+		{
+			var world = env.World;
 
 			// Add items
 			for (int i = 0; i < 6; ++i)
@@ -173,7 +132,6 @@ namespace MyArea
 
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), GetRandomSurfaceLocation(env, surfaceLevel));
-
 
 			CreateWaterTest(env, surfaceLevel);
 
@@ -202,13 +160,29 @@ namespace MyArea
 
 			AddMonsters(env, surfaceLevel);
 
+
 			{
-				var p = new IntPoint3D(17, 7, surfaceLevel);
+				// create a wall and a hole with door
+
+				IntPoint3D p;
+
+				for (int y = 4; y < 12; ++y)
+				{
+					int x = 17;
+
+					p = new IntPoint3D(x, y, surfaceLevel);
+					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
+					env.SetInterior(p, InteriorID.Undefined, MaterialID.Undefined);
+				}
+
+				p = new IntPoint3D(17, 7, surfaceLevel);
+				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+				p = new IntPoint3D(17, 7, surfaceLevel);
 				var item = CreateItem(env, ItemID.Door, MaterialID.Birch, p);
 				item.IsInstalled = true;
 			}
-
-			return env;
 		}
 
 		void CreateBuildings(EnvironmentObject env, int surfaceLevel)
