@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("Interiors");
 			Notify("Terrains");
 			Notify("WaterLevels");
-			Notify("MapElements");
+			Notify("AreaElements");
 			Notify("Flags");
 		}
 
@@ -164,7 +164,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IEnumerable<IDrawableElement> MapElements
+		public IEnumerable<IAreaElement> AreaElements
 		{
 			get
 			{

@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client.UI
 		MapControl m_mapControl;
 		Canvas m_canvas;
 
-		Dictionary<IDrawableElement, FrameworkElement> m_elementMap;
+		Dictionary<IAreaElement, FrameworkElement> m_elementMap;
 		ScaleTransform m_scaleTransform;
 		TranslateTransform m_translateTransform;
 
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client.UI
 			group.Children.Add(m_translateTransform);
 			m_canvas.RenderTransform = group;
 
-			m_elementMap = new Dictionary<IDrawableElement, FrameworkElement>();
+			m_elementMap = new Dictionary<IAreaElement, FrameworkElement>();
 
 			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
 			m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
@@ -46,12 +46,12 @@ namespace Dwarrowdelf.Client.UI
 		void OnEnvironmentChanged(EnvironmentObject env)
 		{
 			if (m_env != null)
-				((INotifyCollectionChanged)m_env.MapElements).CollectionChanged -= OnElementCollectionChanged;
+				((INotifyCollectionChanged)m_env.AreaElements).CollectionChanged -= OnElementCollectionChanged;
 
 			m_env = env;
 
 			if (m_env != null)
-				((INotifyCollectionChanged)m_env.MapElements).CollectionChanged += OnElementCollectionChanged;
+				((INotifyCollectionChanged)m_env.AreaElements).CollectionChanged += OnElementCollectionChanged;
 
 			UpdateElements();
 		}
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void AddElement(IDrawableElement element)
+		void AddElement(IAreaElement element)
 		{
 			var shape = new Rectangle();
 
@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Client.UI
 			m_elementMap[element] = shape;
 		}
 
-		void RemoveElement(IDrawableElement element)
+		void RemoveElement(IAreaElement element)
 		{
 			var e = m_elementMap[element];
 			m_canvas.Children.Remove(e);
@@ -125,7 +125,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (m_env != null)
 			{
-				foreach (IDrawableElement element in m_env.MapElements)
+				foreach (IAreaElement element in m_env.AreaElements)
 				{
 					if (element.Environment == m_env)
 						AddElement(element);
@@ -138,20 +138,20 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					foreach (IDrawableElement b in e.NewItems)
+					foreach (IAreaElement b in e.NewItems)
 						if (b.Environment == m_env)
 							AddElement(b);
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					foreach (IDrawableElement b in e.OldItems)
+					foreach (IAreaElement b in e.OldItems)
 						if (b.Environment == m_env)
 							RemoveElement(b);
 
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
-					foreach (IDrawableElement b in m_elementMap.Keys.ToArray())
+					foreach (IAreaElement b in m_elementMap.Keys.ToArray())
 						RemoveElement(b);
 
 					break;

@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Client.UI
 			Notify("InteriorMaterial");
 			Notify("WaterLevel");
 			Notify("Flags");
-			Notify("MapElement");
+			Notify("AreaElement");
 		}
 
 		void UpdateObjectList()
@@ -213,7 +213,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IDrawableElement MapElement
+		public IAreaElement AreaElement
 		{
 			get
 			{

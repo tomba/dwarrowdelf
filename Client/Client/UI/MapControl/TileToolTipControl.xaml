@@ -6,7 +6,7 @@
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300" Background="Transparent">
 	<StackPanel Orientation="Vertical" Margin="2">
-		<TextBlock x:Name="elementBox" Text="{Binding MapElement.Description}" HorizontalAlignment="Center" />
+		<TextBlock x:Name="elementBox" Text="{Binding AreaElement.Description}" HorizontalAlignment="Center" />
 
 		<Separator x:Name="separator" />
 

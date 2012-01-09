@@ -73,11 +73,11 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObjectByRef]
-	sealed class Stockpile : IDrawableElement, IJobSource, IJobObserver
+	sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
-		IntCuboid IDrawableElement.Area { get { return this.Area.ToCuboid(); } }
+		IntCuboid IAreaElement.Area { get { return this.Area.ToCuboid(); } }
 
 		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }

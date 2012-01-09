@@ -9,13 +9,13 @@ using System.Collections.Generic;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	sealed class BuildingObject : BaseObject, IBuildingObject, IDrawableElement, IJobSource, IJobObserver
+	sealed class BuildingObject : BaseObject, IBuildingObject, IAreaElement, IJobSource, IJobObserver
 	{
 		public BuildingInfo BuildingInfo { get; private set; }
 		public EnvironmentObject Environment { get; set; }
 
 		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
-		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
+		IntCuboid IAreaElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public IntRectZ Area { get; set; }
 
@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Client
 
 				if (initialized == false)
 				{
-					env.AddMapElement(this);
+					env.AddAreaElement(this);
 
 					this.Environment.World.JobManager.AddJobSource(this);
 				}
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client
 
 		public override void Destruct()
 		{
-			this.Environment.RemoveMapElement(this);
+			this.Environment.RemoveAreaElement(this);
 
 			this.Environment.World.JobManager.RemoveJobSource(this);
 

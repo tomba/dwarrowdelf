@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	interface IDrawableElement
+	interface IAreaElement
 	{
 		EnvironmentObject Environment { get; }
 		IntCuboid Area { get; }

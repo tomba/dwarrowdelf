@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.PropertyName)
 			{
 				case "Location":
-				case "MapElement":
+				case "AreaElement":
 				case "IsEnabled":
 					UpdateToolTip();
 					break;
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			bool hasObjects = m_hoverTileView.Objects.Count > 0;
-			var hasElement = m_hoverTileView.MapElement != null;
+			var hasElement = m_hoverTileView.AreaElement != null;
 
 			if (!hasObjects && !hasElement)
 			{

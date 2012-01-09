@@ -58,7 +58,7 @@
 
 			<TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Flags, Mode=OneWay}" Margin="2" />
 
-			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding MapElement.Description, Mode=OneWay}" Margin="2" />
+			<TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding AreaElement.Description, Mode=OneWay}" Margin="2" />
 
 			<GroupBox Header="Objects" Grid.Row="6" Grid.ColumnSpan="2">
 				<ListBox BorderThickness="0" ItemsSource="{Binding Objects}" SelectionMode="Extended" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>

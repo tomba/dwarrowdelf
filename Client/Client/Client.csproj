@@ -307,7 +307,7 @@
     <Compile Include="RenderViewDetailed.cs" />
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="Designation.cs" />
-    <Compile Include="IDrawableElement.cs" />
+    <Compile Include="IAreaElement.cs" />
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="ServerInAppDomain.cs" />
     <Compile Include="Stockpile.cs" />

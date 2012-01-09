@@ -52,8 +52,8 @@
 				<TextBlock><Run Text="Water: "/><InlineUIContainer>
 						<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="MapElements: "/><InlineUIContainer>
-						<TextBlock Text="{Binding MapElements, Converter={StaticResource myBuildingsConverter}}" />
+				<TextBlock><Run Text="AreaElements: "/><InlineUIContainer>
+						<TextBlock Text="{Binding AreaElements, Converter={StaticResource myBuildingsConverter}}" />
 					</InlineUIContainer></TextBlock>
 				<TextBlock><Run Text="Flags: "/><InlineUIContainer>
 						<TextBlock Text="{Binding Flags}" />

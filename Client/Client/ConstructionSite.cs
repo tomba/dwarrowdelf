@@ -7,12 +7,12 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	sealed class ConstructionSite : IJobSource, IDrawableElement, IJobObserver
+	sealed class ConstructionSite : IJobSource, IAreaElement, IJobObserver
 	{
 		public BuildingID BuildingID;
 		public EnvironmentObject Environment { get; private set; }
 		public IntRectZ Area { get; private set; }
-		IntCuboid IDrawableElement.Area { get { return new IntCuboid(this.Area); } }
+		IntCuboid IAreaElement.Area { get { return new IntCuboid(this.Area); } }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
 
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 
 			if (status == JobStatus.Done || status == JobStatus.Fail)
 			{
-				this.Environment.RemoveMapElement(this);
+				this.Environment.RemoveAreaElement(this);
 				this.Destruct();
 			}
 		}

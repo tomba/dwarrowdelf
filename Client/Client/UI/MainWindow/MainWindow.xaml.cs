@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Client.UI
 				case ClientToolMode.CreateStockpile:
 					{
 						var stockpile = new Stockpile(env, selection.SelectionIntRectZ);
-						env.AddMapElement(stockpile);
+						env.AddAreaElement(stockpile);
 
 						var dlg = new ObjectEditDialog();
 						dlg.DataContext = stockpile;
@@ -291,7 +291,7 @@ for p in area.Range():
 						{
 							var id = dialog.BuildingID;
 							var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
-							env.AddMapElement(site);
+							env.AddAreaElement(site);
 						}
 					}
 					break;

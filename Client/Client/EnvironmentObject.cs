@@ -36,8 +36,8 @@ namespace Dwarrowdelf.Client
 		public IntCuboid Bounds { get; private set; }
 
 		[SaveGameProperty(UseOldList = true)]
-		ObservableCollection<IDrawableElement> m_mapElements;
-		public ReadOnlyObservableCollection<IDrawableElement> MapElements { get; private set; }
+		ObservableCollection<IAreaElement> m_AreaElements;
+		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
 		public IntPoint3D HomeLocation { get; private set; }
 
@@ -56,8 +56,8 @@ namespace Dwarrowdelf.Client
 			m_objectMap = new Dictionary<IntPoint3D, List<MovableObject>>();
 			m_objectList = new List<MovableObject>();
 
-			m_mapElements = new ObservableCollection<IDrawableElement>();
-			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
+			m_AreaElements = new ObservableCollection<IAreaElement>();
+			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_AreaElements);
 
 			this.Designations = new Designation(this);
 			this.InstallFurnitureManager = new InstallFurnitureManager(this);
@@ -86,7 +86,7 @@ namespace Dwarrowdelf.Client
 		[OnSaveGameDeserialized]
 		void OnDeserialized()
 		{
-			this.MapElements = new ReadOnlyObservableCollection<IDrawableElement>(m_mapElements);
+			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_AreaElements);
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
@@ -452,35 +452,35 @@ namespace Dwarrowdelf.Client
 		// XXX
 		public Stockpile GetStockpileAt(IntPoint3D p)
 		{
-			return m_mapElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
+			return m_AreaElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
 		}
 
-		public void AddMapElement(IDrawableElement element)
+		public void AddAreaElement(IAreaElement element)
 		{
 			this.Version++;
 
 			// XXX can the elements overlap?
-			Debug.Assert(m_mapElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
-			Debug.Assert(!m_mapElements.Contains(element));
-			m_mapElements.Add(element);
+			Debug.Assert(m_AreaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
+			Debug.Assert(!m_AreaElements.Contains(element));
+			m_AreaElements.Add(element);
 		}
 
-		public void RemoveMapElement(IDrawableElement element)
+		public void RemoveAreaElement(IAreaElement element)
 		{
 			this.Version++;
 
-			var ok = m_mapElements.Remove(element);
+			var ok = m_AreaElements.Remove(element);
 			Debug.Assert(ok);
 		}
 
-		public IDrawableElement GetElementAt(IntPoint3D p)
+		public IAreaElement GetElementAt(IntPoint3D p)
 		{
-			return m_mapElements.FirstOrDefault(e => e.Area.Contains(p));
+			return m_AreaElements.FirstOrDefault(e => e.Area.Contains(p));
 		}
 
-		public IEnumerable<IDrawableElement> GetElementsAt(IntPoint3D p)
+		public IEnumerable<IAreaElement> GetElementsAt(IntPoint3D p)
 		{
-			return m_mapElements.Where(e => e.Area.Contains(p));
+			return m_AreaElements.Where(e => e.Area.Contains(p));
 		}
 	}
 }
