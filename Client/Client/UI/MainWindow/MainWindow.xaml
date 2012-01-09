@@ -83,9 +83,7 @@
 
 
 			<!-- MAP -->
-			<DockPanel Grid.Column="2" Grid.Row="0">
-				<ui:MasterMapControl x:Name="map" />
-			</DockPanel>
+			<ui:MasterMapControl Grid.Column="2" Grid.Row="0" UseLayoutRounding="True" x:Name="map" />
 
 			<!-- Events -->
 			<Grid Grid.Column="2" Grid.Row="2">
