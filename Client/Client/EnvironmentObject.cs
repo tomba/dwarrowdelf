@@ -449,19 +449,12 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		// XXX
-		public Stockpile GetStockpileAt(IntPoint3D p)
-		{
-			return m_areaElements.OfType<Stockpile>().SingleOrDefault(s => s.Area.Contains(p));
-		}
-
 		public void AddAreaElement(IAreaElement element)
 		{
 			this.Version++;
 
-			// XXX can the elements overlap?
-			Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
 			Debug.Assert(!m_areaElements.Contains(element));
+			Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
 			m_areaElements.Add(element);
 		}
 
@@ -476,11 +469,6 @@ namespace Dwarrowdelf.Client
 		public IAreaElement GetElementAt(IntPoint3D p)
 		{
 			return m_areaElements.FirstOrDefault(e => e.Area.Contains(p));
-		}
-
-		public IEnumerable<IAreaElement> GetElementsAt(IntPoint3D p)
-		{
-			return m_areaElements.Where(e => e.Area.Contains(p));
 		}
 	}
 }

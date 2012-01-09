@@ -324,7 +324,11 @@ for p in area.Range():
 				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
 
 				var obs = new List<object>();
-				obs.AddRange(env.GetElementsAt(ml));
+
+				var elem = env.GetElementAt(ml);
+				if (elem != null)
+					obs.Add(env.GetElementAt(ml));
+
 				obs.AddRange(env.GetContents(ml));
 
 				if (obs.Count == 1)
