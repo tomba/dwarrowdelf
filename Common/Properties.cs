@@ -40,6 +40,8 @@ namespace Dwarrowdelf
 		Gender,
 
 		// Item
+		Quality,
+
 		NutritionalValue,
 		RefreshmentValue,
 
@@ -94,6 +96,7 @@ namespace Dwarrowdelf
 			map[PropertyID.Assignment] = ObjectVisibility.Debug;
 
 			// Item
+			map[PropertyID.Quality] = ObjectVisibility.Public;
 			map[PropertyID.NutritionalValue] = ObjectVisibility.Public;
 			map[PropertyID.RefreshmentValue] = ObjectVisibility.Public;
 			map[PropertyID.ReservedByStr] = ObjectVisibility.Debug;

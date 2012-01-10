@@ -14,6 +14,9 @@
 			<TextBlock>ItemCategory</TextBlock>
 			<TextBlock Text="{Binding ItemCategory}" />
 
+			<TextBlock>Quality</TextBlock>
+			<TextBlock Text="{Binding Quality}" />
+
 			<TextBlock>Nutritional Value</TextBlock>
 			<TextBlock Text="{Binding NutritionalValue}" />
 

@@ -130,6 +130,13 @@ namespace Dwarrowdelf.Client
 		public bool IsWorn { get { return this.Wearer != null; } }
 		public bool IsWielded { get { return this.Wielder != null; } }
 
+		int m_quality;
+		public int Quality
+		{
+			get { return m_quality; }
+			private set { m_quality = value; Notify("Quality"); }
+		}
+
 		int m_nutritionalValue;
 		public int NutritionalValue
 		{
@@ -178,6 +185,10 @@ namespace Dwarrowdelf.Client
 		{
 			switch (propertyID)
 			{
+				case PropertyID.Quality:
+					this.Quality = (int)value;
+					break;
+
 				case PropertyID.NutritionalValue:
 					this.NutritionalValue = (int)value;
 					break;

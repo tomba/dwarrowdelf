@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(builder.MaterialID != Dwarrowdelf.MaterialID.Undefined);
 
 			this.ItemID = builder.ItemID;
+			m_quality = builder.Quality;
 			m_nutritionalValue = builder.NutritionalValue;
 			m_refreshmentValue = builder.RefreshmentValue;
 		}
@@ -92,6 +93,14 @@ namespace Dwarrowdelf.Server
 		{
 			get { return m_reservedByStr; }
 			set { if (m_reservedByStr == value) return; m_reservedByStr = value; NotifyString(PropertyID.ReservedByStr, value); }
+		}
+
+		[SaveGameProperty("Quality")]
+		int m_quality;
+		public int Quality
+		{
+			get { return m_quality; }
+			set { if (m_quality == value) return; m_quality = value; NotifyInt(PropertyID.Quality, value); }
 		}
 
 		[SaveGameProperty("NutritionalValue")]
@@ -213,6 +222,7 @@ namespace Dwarrowdelf.Server
 		{
 			var props = base.SerializeProperties();
 
+			props[PropertyID.Quality] = m_quality;
 			props[PropertyID.NutritionalValue] = m_nutritionalValue;
 			props[PropertyID.RefreshmentValue] = m_refreshmentValue;
 			props[PropertyID.ReservedByStr] = m_reservedByStr;
@@ -240,6 +250,7 @@ namespace Dwarrowdelf.Server
 	public sealed class ItemObjectBuilder : ConcreteObjectBuilder
 	{
 		public ItemID ItemID { get; set; }
+		public int Quality { get; set; }
 		public int NutritionalValue { get; set; }
 		public int RefreshmentValue { get; set; }
 

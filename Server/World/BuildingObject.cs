@@ -106,7 +106,12 @@ namespace Dwarrowdelf.Server
 			else
 				materialID = obs.First().MaterialID;
 
-			var itemBuilder = new ItemObjectBuilder(buildableItem.ItemID, materialID);
+			var skillLevel = builder.GetSkillLevel(buildableItem.SkillID);
+
+			var itemBuilder = new ItemObjectBuilder(buildableItem.ItemID, materialID)
+			{
+				Quality = skillLevel,
+			};
 			var item = itemBuilder.Create(this.World);
 
 			foreach (var ob in obs)
