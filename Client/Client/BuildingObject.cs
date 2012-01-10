@@ -295,6 +295,9 @@ namespace Dwarrowdelf.Client
 					if (this.CurrentBuildOrder == null)
 						return null;
 
+					if (living.GetSkillLevel(this.CurrentBuildOrder.BuildableItem.SkillID) == 0)
+						return null;
+
 					if (m_currentJob == null)
 					{
 						var job = CreateJob(this.CurrentBuildOrder);
