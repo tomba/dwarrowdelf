@@ -216,7 +216,6 @@ namespace Dwarrowdelf.Server
 			{
 				ObjectID = m_environment.ObjectID,
 				VisibilityMode = m_environment.VisibilityMode,
-				HomeLocation = m_environment.HomeLocation,
 			}));
 		}
 

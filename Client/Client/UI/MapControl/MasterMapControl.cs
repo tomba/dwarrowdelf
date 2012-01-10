@@ -567,12 +567,6 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnEnvironmentChanged(EnvironmentObject env)
 		{
-			if (env != null)
-			{
-				m_mapControl.CenterPos = new Point(env.HomeLocation.X, env.HomeLocation.Y);
-				this.Z = env.HomeLocation.Z;
-			}
-
 			this.Selection = new MapSelection();
 
 			UpdateHoverTileInfo();

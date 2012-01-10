@@ -39,7 +39,8 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<IAreaElement> m_areaElements;
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
-		public IntPoint3D HomeLocation { get; private set; }
+		// XXX remove when IEnvObject has this removed
+		public IntPoint3D HomeLocation { get { throw new Exception(); } }
 
 		[SaveGameProperty]
 		public Designation Designations { get; private set; }
@@ -76,11 +77,8 @@ namespace Dwarrowdelf.Client
 				this.Bounds = data.Bounds;
 				m_tileGrid.SetBounds(this.Bounds);
 			}
-			this.HomeLocation = data.HomeLocation;
-			this.VisibilityMode = data.VisibilityMode;
 
-			if (App.MainWindow.map.Environment == null)
-				App.MainWindow.map.Environment = this;
+			this.VisibilityMode = data.VisibilityMode;
 		}
 
 		[OnSaveGameDeserialized]

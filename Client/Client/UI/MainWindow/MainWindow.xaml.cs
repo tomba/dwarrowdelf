@@ -677,6 +677,14 @@ for p in area.Range():
 		{
 			CloseLoginDialog();
 			GameData.Data.User.ExitedGameEvent += OnExitedGame;
+
+			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
+			if (controllable != null && controllable.Environment != null)
+			{
+				this.MapControl.Environment = controllable.Environment;
+				this.MapControl.CenterPos = new Point(controllable.Location.X, controllable.Location.Y);
+				this.MapControl.Z = controllable.Location.Z;
+			}
 		}
 
 		public void ExitGame()

@@ -549,7 +549,6 @@ namespace Dwarrowdelf.Server
 
 			data.VisibilityMode = this.VisibilityMode;
 			data.Bounds = this.Bounds;
-			data.HomeLocation = this.HomeLocation;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
