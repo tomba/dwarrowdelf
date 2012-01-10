@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Server
 		int GetTicks(SkillID skillID)
 		{
 			var lvl = GetSkillLevel(skillID);
-			return 10 / (lvl / 26 + 1);
+			return 20 / (lvl / 26 + 1);
 		}
 
 		int GetActionTotalTicks(GameAction action)
