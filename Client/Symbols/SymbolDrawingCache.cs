@@ -133,6 +133,7 @@ namespace Dwarrowdelf.Client.Symbols
 			{
 				var s = (Symbols.DrawingSymbol)symbol;
 				drawing = m_drawingCache.GetDrawing(s.DrawingName, color).Clone();
+				RenderOptions.SetBitmapScalingMode(drawing, BitmapScalingMode.Fant);
 			}
 			else if (symbol is Symbols.CombinedSymbol)
 			{
