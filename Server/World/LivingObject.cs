@@ -55,6 +55,7 @@ namespace Dwarrowdelf.Server
 			m_intelligence = builder.Int;
 			m_wisdom = builder.Wis;
 			m_charisma = builder.Cha;
+			m_size = builder.Siz;
 
 			m_gender = builder.Gender;
 
@@ -205,6 +206,14 @@ namespace Dwarrowdelf.Server
 		{
 			get { return m_charisma; }
 			set { if (m_charisma == value) return; m_charisma = value; NotifyInt(PropertyID.Charisma, value); }
+		}
+
+		[SaveGameProperty("Size")]
+		int m_size;
+		public int Size
+		{
+			get { return m_size; }
+			set { if (m_size == value) return; m_size = value; NotifyInt(PropertyID.Size, value); }
 		}
 
 		[SaveGameProperty("ArmorClass")]
@@ -378,6 +387,7 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.Intelligence] = m_intelligence;
 			props[PropertyID.Wisdom] = m_wisdom;
 			props[PropertyID.Charisma] = m_charisma;
+			props[PropertyID.Size] = m_size;
 			props[PropertyID.ArmorClass] = m_armorClass;
 			props[PropertyID.VisionRange] = m_visionRange;
 			props[PropertyID.FoodFullness] = m_foodFullness;
@@ -801,7 +811,7 @@ namespace Dwarrowdelf.Server
 		public int HitPoints;
 		public int AC;
 
-		public int Str, Dex, Con, Int, Wis, Cha;
+		public int Str, Dex, Con, Int, Wis, Cha, Siz;
 
 		public LivingObjectBuilder(LivingID livingID)
 		{
@@ -814,6 +824,7 @@ namespace Dwarrowdelf.Server
 			this.AC = li.Level;
 
 			Str = Dex = Con = Int = Wis = Cha = li.Level * 10;
+			Siz = li.Size;
 
 			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
 			this.VisionRange = 10;

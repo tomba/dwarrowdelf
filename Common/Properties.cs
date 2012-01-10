@@ -27,6 +27,7 @@ namespace Dwarrowdelf
 		Intelligence,
 		Wisdom,
 		Charisma,
+		Size,
 
 		ArmorClass,
 
@@ -84,6 +85,7 @@ namespace Dwarrowdelf
 			map[PropertyID.Intelligence] = ObjectVisibility.Private;
 			map[PropertyID.Wisdom] = ObjectVisibility.Private;
 			map[PropertyID.Charisma] = ObjectVisibility.Private;
+			map[PropertyID.Size] = ObjectVisibility.Public;
 
 			map[PropertyID.ArmorClass] = ObjectVisibility.Private;
 

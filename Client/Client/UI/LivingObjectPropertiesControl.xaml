@@ -53,13 +53,14 @@
 
 		<Separator Grid.Row="1" />
 
-		<UniformGrid Grid.Row="2" Columns="6">
+		<UniformGrid Grid.Row="2" Columns="7">
 			<TextBlock Text="Str" />
 			<TextBlock Text="Dex" />
 			<TextBlock Text="Con" />
 			<TextBlock Text="Int" />
 			<TextBlock Text="Wis" />
 			<TextBlock Text="Cha" />
+			<TextBlock Text="Siz" />
 
 			<TextBlock Text="{Binding Strength}" />
 			<TextBlock Text="{Binding Dexterity}" />
@@ -67,6 +68,7 @@
 			<TextBlock Text="{Binding Intelligence}" />
 			<TextBlock Text="{Binding Wisdom}" />
 			<TextBlock Text="{Binding Charisma}" />
+			<TextBlock Text="{Binding Size}" />
 		</UniformGrid>
 
 		<Separator Grid.Row="3" />
