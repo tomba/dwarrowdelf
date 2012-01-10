@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server
 		Dictionary<ArmorSlot, ItemObject> m_armorSlots;
 
 		[SaveGameProperty("Weapon")]
-		ItemObject m_weapon;
+		public ItemObject Weapon { get; private set; }
 
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
@@ -83,8 +83,8 @@ namespace Dwarrowdelf.Server
 
 			foreach (var kvp in m_armorSlots)
 				kvp.Value.Wearer = this;
-			if (m_weapon != null)
-				m_weapon.Wielder = this;
+			if (this.Weapon != null)
+				this.Weapon.Wielder = this;
 		}
 
 		protected override void Initialize(World world)
@@ -308,9 +308,9 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(weapon.IsWeapon);
 			Debug.Assert(this.Inventory.Contains(weapon));
 			Debug.Assert(weapon.WeaponInfo != null);
-			Debug.Assert(m_weapon == null);
+			Debug.Assert(this.Weapon == null);
 
-			m_weapon = weapon;
+			this.Weapon = weapon;
 			weapon.Wielder = this;
 
 			this.World.AddChange(new WieldChange(this, weapon));
@@ -319,11 +319,11 @@ namespace Dwarrowdelf.Server
 		public void RemoveWeapon(ItemObject weapon)
 		{
 			Debug.Assert(weapon.IsWeapon);
-			Debug.Assert(m_weapon == weapon);
+			Debug.Assert(this.Weapon == weapon);
 			Debug.Assert(weapon.Wielder == this);
 
-			m_weapon.Wielder = null;
-			m_weapon = null;
+			this.Weapon.Wielder = null;
+			this.Weapon = null;
 
 			this.World.AddChange(new WieldChange(this, null));
 		}
@@ -348,7 +348,7 @@ namespace Dwarrowdelf.Server
 			}
 
 			data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>((ArmorSlot)kvp.Key, kvp.Value.ObjectID)).ToArray();
-			data.WeaponID = m_weapon != null ? m_weapon.ObjectID : ObjectID.NullObjectID;
+			data.WeaponID = this.Weapon != null ? this.Weapon.ObjectID : ObjectID.NullObjectID;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)

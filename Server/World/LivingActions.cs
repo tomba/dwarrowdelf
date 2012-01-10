@@ -728,6 +728,12 @@ namespace Dwarrowdelf.Server
 			var roll = m_random.Next(20) + 1;
 			bool hit;
 
+			var str = attacker.Strength;
+			str = (int)((20.0 / 100) * str);
+			var strBonus = (str / 2) - 5;
+			if (strBonus < 0)
+				strBonus = 0;
+
 			if (roll == 1)
 			{
 				hit = false;
@@ -738,7 +744,21 @@ namespace Dwarrowdelf.Server
 			}
 			else
 			{
-				hit = (roll - target.ArmorClass) > 0;
+				var dex = target.Dexterity;
+				dex = (int)((20.0 / 100) * dex);
+				var dexBonus = (dex / 2) - 5;
+				if (dexBonus < 0)
+					dexBonus = 0;
+
+				var ac = 10 + target.ArmorClass + dexBonus;
+
+				hit = roll + strBonus >= ac;
+
+				Trace.TraceInformation("{0} attacks {1}: {2} + {3} >= 10 + {4} + {5} == {6} >= {7}",
+					attacker, target,
+					roll, strBonus,
+					target.ArmorClass, dexBonus,
+					roll + strBonus, ac);
 			}
 
 			int damage;
@@ -746,7 +766,15 @@ namespace Dwarrowdelf.Server
 
 			if (hit)
 			{
-				damage = m_random.Next(attacker.Strength / 10) + 1;
+				var weapon = attacker.Weapon;
+				int dieSides;
+
+				if (weapon == null)
+					dieSides = 3;
+				else
+					dieSides = weapon.WeaponInfo.WC;
+
+				damage = m_random.Next(dieSides) + 1 + strBonus;
 				damageCategory = DamageCategory.Melee;
 				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
 			}

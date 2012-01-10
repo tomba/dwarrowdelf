@@ -34,19 +34,19 @@
 
 	<ItemInfo ID="ShortSword" Category="Weapon">
 		<ItemInfo.WeaponInfo>
-			<WeaponInfo WC="10" IsTwoHanded="False" WeaponType="Edged" />
+			<WeaponInfo WC="6" IsTwoHanded="False" WeaponType="Edged" />
 		</ItemInfo.WeaponInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="BattleAxe" Category="Weapon">
 		<ItemInfo.WeaponInfo>
-			<WeaponInfo WC="15" IsTwoHanded="True" WeaponType="Edged" />
+			<WeaponInfo WC="8" IsTwoHanded="True" WeaponType="Edged" />
 		</ItemInfo.WeaponInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="Mace" Category="Weapon">
 		<ItemInfo.WeaponInfo>
-			<WeaponInfo WC="7" IsTwoHanded="False" WeaponType="Blunt" />
+			<WeaponInfo WC="6" IsTwoHanded="False" WeaponType="Blunt" />
 		</ItemInfo.WeaponInfo>
 	</ItemInfo>
 
@@ -54,25 +54,25 @@
 
 	<ItemInfo ID="ChainMail" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="10" Slot="Torso" />
+			<ArmorInfo AC="7" Slot="Torso" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="PlateMail" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="20" Slot="Torso" />
+			<ArmorInfo AC="8" Slot="Torso" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="Skullcap" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="3" Slot="Head" />
+			<ArmorInfo AC="1" Slot="Head" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
 	<ItemInfo ID="Helmet" Category="Armor">
 		<ItemInfo.ArmorInfo>
-			<ArmorInfo AC="5" Slot="Head" />
+			<ArmorInfo AC="2" Slot="Head" />
 		</ItemInfo.ArmorInfo>
 	</ItemInfo>
 
