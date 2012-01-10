@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client.Symbols
 	public sealed class SymbolDrawingCache : ISymbolDrawingCache
 	{
 		// use char symbols as backup
-		static Symbols.SymbolSet s_charSymbolSet;
+		Symbols.SymbolSet m_charSymbolSet;
 
 		Symbols.SymbolSet m_symbolSet;
 		DrawingCache m_drawingCache;
@@ -21,15 +21,10 @@ namespace Dwarrowdelf.Client.Symbols
 
 		public event Action DrawingsChanged;
 
-		public SymbolDrawingCache(string symbolInfoName)
+		public SymbolDrawingCache()
 		{
-			if (s_charSymbolSet == null)
-			{
-				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + symbolInfoName, UriKind.Relative);
-				s_charSymbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
-			}
-
-			Load(symbolInfoName);
+			var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/SymbolInfosChar.xaml", UriKind.Relative);
+			m_charSymbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
 		}
 
 		public Symbols.SymbolSet SymbolSet { get { return m_symbolSet; } }
@@ -106,7 +101,7 @@ namespace Dwarrowdelf.Client.Symbols
 			if (m_symbolSet.Symbols.Contains(symbolID))
 				symbol = m_symbolSet.Symbols[symbolID];
 			else
-				symbol = s_charSymbolSet.Symbols[symbolID];
+				symbol = m_charSymbolSet.Symbols[symbolID];
 
 			return CreateDrawing(symbol, color);
 		}

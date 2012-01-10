@@ -37,7 +37,10 @@ namespace Dwarrowdelf.Client
 		public GameData()
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
-			this.SymbolDrawingCache = new Dwarrowdelf.Client.Symbols.SymbolDrawingCache("SymbolInfosChar.xaml");
+
+			this.SymbolDrawingCache = new Dwarrowdelf.Client.Symbols.SymbolDrawingCache();
+			this.SymbolDrawingCache.Load("SymbolInfosChar.xaml");
+
 			m_gameEvents = new ObservableCollection<GameEvent>();
 			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
 
