@@ -7,6 +7,9 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client.TileControl
 {
+	/// <summary>
+	/// Creates Bitmaps from Drawings.
+	/// </summary>
 	public sealed class SymbolBitmapCache
 	{
 		ISymbolDrawingCache m_symbolDrawingCache;

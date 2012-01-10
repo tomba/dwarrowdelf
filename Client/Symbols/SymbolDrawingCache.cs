@@ -10,6 +10,10 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.Symbols
 {
+	/// <summary>
+	/// Loads SymbolSet, and creates Drawings for each symbol.
+	/// Uses DrawingCache if the SymbolSet contains additional Drawings in resource dictionary
+	/// </summary>
 	public sealed class SymbolDrawingCache : ISymbolDrawingCache
 	{
 		// use char symbols as backup

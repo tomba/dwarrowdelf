@@ -9,6 +9,9 @@ using System.IO;
 
 namespace Dwarrowdelf.Client.Symbols
 {
+	/// <summary>
+	/// Loads Drawings from a ResourceDictionary
+	/// </summary>
 	sealed class DrawingCache
 	{
 		/* [ name of the drawing -> [ color -> drawing ] ] */
