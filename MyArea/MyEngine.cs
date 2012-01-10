@@ -68,36 +68,43 @@ namespace MyArea
 				case 0:
 					builder.Name = "Doc";
 					builder.SetSkillLevel(SkillID.Mining, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 1:
 					builder.Name = "Grumpy";
 					builder.SetSkillLevel(SkillID.Carpentry, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 2:
 					builder.Name = "Happy";
 					builder.SetSkillLevel(SkillID.WoodCutting, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 3:
 					builder.Name = "Sleepy";
 					builder.SetSkillLevel(SkillID.Masonry, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 4:
 					builder.Name = "Bashful";
-					builder.SetSkillLevel(SkillID.Fighting, 100);
+					builder.SetSkillLevel(SkillID.BlackSmithing, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 5:
 					builder.Name = "Sneezy";
-					builder.SetSkillLevel(SkillID.Fighting, 100);
+					builder.SetSkillLevel(SkillID.GemCutting, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 
 				case 6:
 					builder.Name = "Dopey";
-					builder.SetSkillLevel(SkillID.Fighting, 100);
+					builder.SetSkillLevel(SkillID.Smelting, 100);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
 					break;
 			}
 

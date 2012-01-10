@@ -40,6 +40,11 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		int GetTicks(SkillID skillID)
+		{
+			var lvl = GetSkillLevel(skillID);
+			return 10 / (lvl / 26 + 1);
+		}
 
 		int GetActionTotalTicks(GameAction action)
 		{
@@ -373,8 +378,7 @@ namespace Dwarrowdelf.Server
 
 		int GetTotalTicks(MineAction action)
 		{
-			var skill = GetSkillLevel(SkillID.Mining);
-			return 10 / (skill / 26 + 1);
+			return GetTicks(SkillID.Mining);
 		}
 
 		bool PerformAction(MineAction action)
@@ -592,7 +596,7 @@ namespace Dwarrowdelf.Server
 
 		int GetTotalTicks(FellTreeAction action)
 		{
-			return 5;
+			return GetTicks(SkillID.WoodCutting);
 		}
 
 		bool PerformAction(FellTreeAction action)
@@ -648,7 +652,15 @@ namespace Dwarrowdelf.Server
 
 		int GetTotalTicks(BuildItemAction action)
 		{
-			return 8;
+			var building = this.Environment.GetLargeObjectAt<BuildingObject>(this.Location);
+			if (building == null)
+				throw new Exception();
+
+			var buildableItem = building.BuildingInfo.FindBuildableItem(action.BuildableItemKey);
+			if (buildableItem == null)
+				throw new Exception();
+
+			return GetTicks(buildableItem.SkillID);
 		}
 
 		bool PerformAction(BuildItemAction action)

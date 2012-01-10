@@ -13,6 +13,9 @@ namespace Dwarrowdelf
 		WoodCutting,
 		Carpentry,
 		Masonry,
+		BlackSmithing,
+		GemCutting,
+		Smelting,
 
 		Fighting,
 	}

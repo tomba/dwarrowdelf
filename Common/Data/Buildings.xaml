@@ -5,31 +5,31 @@
 
 	<BuildingInfo BuildingID="Carpenter">
 
-		<BuildableItem ItemID="Chair">
+		<BuildableItem ItemID="Chair" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Table">
+		<BuildableItem ItemID="Table" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Door">
+		<BuildableItem ItemID="Door" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Bed">
+		<BuildableItem ItemID="Bed" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Barrel">
+		<BuildableItem ItemID="Barrel" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Bucket">
+		<BuildableItem ItemID="Bucket" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Contraption">
+		<BuildableItem ItemID="Contraption" SkillID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
 			<BuildableItemMaterialInfo MaterialCategory="Gem" />
 		</BuildableItem>
@@ -37,74 +37,74 @@
 	</BuildingInfo>
 
 	<BuildingInfo BuildingID="Mason">
-		<BuildableItem ItemID="Block">
+		<BuildableItem ItemID="Block" SkillID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Door">
+		<BuildableItem ItemID="Door" SkillID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Chair">
+		<BuildableItem ItemID="Chair" SkillID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Table">
+		<BuildableItem ItemID="Table" SkillID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Contraption">
+		<BuildableItem ItemID="Contraption" SkillID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 			<BuildableItemMaterialInfo MaterialCategory="Gem" />
 		</BuildableItem>
 	</BuildingInfo>
 
 	<BuildingInfo BuildingID="Smith">
-		<BuildableItem ItemID="BattleAxe">
+		<BuildableItem ItemID="BattleAxe" SkillID="BlackSmithing">
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="ShortSword">
+		<BuildableItem ItemID="ShortSword" SkillID="BlackSmithing">
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Gauntlets">
+		<BuildableItem ItemID="Gauntlets" SkillID="BlackSmithing">
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
-		<BuildableItem ItemID="Gloves">
+		<BuildableItem ItemID="Gloves" SkillID="BlackSmithing">
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
 	</BuildingInfo>
 
 	<BuildingInfo BuildingID="Smelter">
-		<BuildableItem Key="LeadBar" ItemID="Bar" MaterialID="Lead">
+		<BuildableItem Key="LeadBar" ItemID="Bar" MaterialID="Lead" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Lead" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-		<BuildableItem Key="TinBar" ItemID="Bar" MaterialID="Tin">
+		<BuildableItem Key="TinBar" ItemID="Bar" MaterialID="Tin" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-		<BuildableItem Key="GoldBar" ItemID="Bar" MaterialID="Gold">
+		<BuildableItem Key="GoldBar" ItemID="Bar" MaterialID="Gold" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeGold" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-		<BuildableItem Key="SilverBar" ItemID="Bar" MaterialID="Silver">
+		<BuildableItem Key="SilverBar" ItemID="Bar" MaterialID="Silver" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeSilver" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-		<BuildableItem Key="PlatinumBar" ItemID="Bar" MaterialID="Platinum">
+		<BuildableItem Key="PlatinumBar" ItemID="Bar" MaterialID="Platinum" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativePlatinum" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-		<BuildableItem Key="SteelBar" ItemID="Bar" MaterialID="Steel">
+		<BuildableItem Key="SteelBar" ItemID="Bar" MaterialID="Steel" SkillID="Smelting">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Iron" />
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
@@ -113,7 +113,7 @@
 	</BuildingInfo>
 
 	<BuildingInfo BuildingID="Gemcutter">
-		<BuildableItem ItemID="Gem">
+		<BuildableItem ItemID="Gem" SkillID="GemCutting">
 			<BuildableItemMaterialInfo ItemID="UncutGem" MaterialCategory="Gem" />
 		</BuildableItem>
 	</BuildingInfo>
