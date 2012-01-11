@@ -7,16 +7,16 @@ using System.Diagnostics;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public sealed class Herd
+	public sealed class Group
 	{
 		[SaveGameProperty]
 		List<IAI> m_members = new List<IAI>();
 
-		public Herd()
+		public Group()
 		{
 		}
 
-		Herd(SaveGameContext ctx)
+		Group(SaveGameContext ctx)
 		{
 		}
 
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.AI
 			RemoveMember(a);
 		}
 
-		public int HerdSize
+		public int GroupSize
 		{
 			get { return m_members.Count; }
 		}

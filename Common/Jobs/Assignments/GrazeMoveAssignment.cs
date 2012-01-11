@@ -12,12 +12,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 	[SaveGameObjectByRef]
 	public sealed class GrazeMoveAssignment : Assignment
 	{
-		Herd m_herd;
+		Group m_group;
 
-		public GrazeMoveAssignment(IJobObserver parent, Herd herd)
+		public GrazeMoveAssignment(IJobObserver parent, Group group)
 			: base(parent)
 		{
-			m_herd = herd;
+			m_group = group;
 		}
 
 		GrazeMoveAssignment(SaveGameContext ctx)
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			if (this.m_herd == null)
+			if (this.m_group == null)
 				return PrepareNextActionOverrideHerdless(out progress);
 			else
 				return PrepareNextActionOverrideHerd(out progress);
@@ -54,12 +54,12 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		GameAction PrepareNextActionOverrideHerd(out JobStatus progress)
 		{
-			var center = m_herd.GetCenter();
+			var center = m_group.GetCenter();
 
 			var centerVector = center - this.Worker.Location;
 
 			var r = this.Worker.World.Random;
-			int moveStrength = m_herd.HerdSize + 1;
+			int moveStrength = m_group.GroupSize + 1;
 
 			var l = centerVector.Length;
 

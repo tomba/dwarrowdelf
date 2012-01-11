@@ -274,7 +274,7 @@ for p in area.Range():
 								LivingID = dialog.LivingID,
 
 								IsControllable = dialog.IsControllable,
-								IsHerd = dialog.IsHerd,
+								IsGroup = dialog.IsGroup,
 							});
 						}
 					}

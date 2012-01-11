@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client.UI
 		public LivingID LivingID { get; set; }
 
 		public bool IsControllable { get; set; }
-		public bool IsHerd { get; set; }
+		public bool IsGroup { get; set; }
 
 		public CreateLivingDialog()
 		{

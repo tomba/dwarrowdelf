@@ -87,7 +87,7 @@
     <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
     <Compile Include="AI\HerbivoreAI.cs" />
-    <Compile Include="AI\Herd.cs" />
+    <Compile Include="AI\Group.cs" />
     <Compile Include="Jobs\JobGroups\InstallFurnitureJob.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />

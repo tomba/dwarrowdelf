@@ -262,10 +262,10 @@ namespace Dwarrowdelf.Server
 		{
 			var controllables = new List<LivingObject>();
 
-			Dwarrowdelf.AI.Herd herd = null;
+			Dwarrowdelf.AI.Group group = null;
 
-			if (msg.IsHerd)
-				herd = new Dwarrowdelf.AI.Herd();
+			if (msg.IsGroup)
+				group = new Dwarrowdelf.AI.Group();
 
 			var livingInfo = Livings.GetLivingInfo(msg.LivingID);
 
@@ -295,8 +295,8 @@ namespace Dwarrowdelf.Server
 								var ai = new Dwarrowdelf.AI.HerbivoreAI(living);
 								living.SetAI(ai);
 
-								if (msg.IsHerd)
-									ai.Herd = herd;
+								if (msg.IsGroup)
+									ai.Group = group;
 							}
 							break;
 

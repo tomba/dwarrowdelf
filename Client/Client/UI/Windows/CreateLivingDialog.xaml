@@ -29,7 +29,7 @@
 				<TextBox Name="areaTextBox" Width="75" IsReadOnly="True" />
 
 				<CheckBox IsChecked="{Binding Path=IsControllable,ElementName=wnd}">Controllable</CheckBox>
-				<CheckBox IsChecked="{Binding Path=IsHerd,ElementName=wnd}">Herd</CheckBox>
+				<CheckBox IsChecked="{Binding Path=IsGroup,ElementName=wnd}">Group</CheckBox>
 			</UniformGrid>
 
 			<DockPanel>

@@ -15,20 +15,20 @@ namespace Dwarrowdelf.AI
 		bool m_priorityAction;
 
 		[SaveGameProperty]
-		Herd m_herd;
+		Group m_group;
 
-		public Herd Herd {
-			get { return m_herd; }
+		public Group Group {
+			get { return m_group; }
 
 			set
 			{
-				if (m_herd != null)
-					m_herd.RemoveMember(this);
+				if (m_group != null)
+					m_group.RemoveMember(this);
 
-				m_herd = value;
+				m_group = value;
 
-				if (m_herd != null)
-					m_herd.AddMember(this);
+				if (m_group != null)
+					m_group.AddMember(this);
 			}
 		}
 
@@ -71,7 +71,7 @@ namespace Dwarrowdelf.AI
 				if (hasAssignment)
 					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(null, this.Herd);
+				return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(null, this.Group);
 			}
 			else
 			{
