@@ -30,13 +30,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public bool IsDestructed { get; private set; }
 
-		public event Action<BaseObject> Destructed;
-
-		event Action<IBaseObject> IBaseObject.Destructed
-		{
-			add { this.Destructed += value; }
-			remove { this.Destructed -= value; }
-		}
+		public event Action<IBaseObject> Destructed;
 
 		ObjectType m_objectType;
 

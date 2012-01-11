@@ -203,7 +203,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void OnControllableDestructed(BaseObject ob)
+		void OnControllableDestructed(IBaseObject ob)
 		{
 			var living = (LivingObject)ob;
 			RemoveControllable(living);
