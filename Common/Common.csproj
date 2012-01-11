@@ -78,10 +78,12 @@
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
+    <Compile Include="DataTypes\Vector3.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
+    <Compile Include="Jobs\Assignments\FleeMoveAssignment.cs" />
     <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
     <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />

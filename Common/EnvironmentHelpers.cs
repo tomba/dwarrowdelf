@@ -44,6 +44,17 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// Determine if a living can move from its current location to dir
+		/// </summary>
+		public static bool CanMoveFromTo(ILivingObject living, Direction dir)
+		{
+			var env = living.Environment;
+			var src = living.Location;
+			var dst = living.Location + dir;
+			return CanMoveFrom(env, src, dir) && CanMoveTo(env, dst, dir);
+		}
+
+		/// <summary>
 		/// Determine if a living can move from srcLoc to dir
 		/// </summary>
 		public static bool CanMoveFromTo(IEnvironmentObject env, IntPoint3D srcLoc, Direction dir)
