@@ -305,6 +305,15 @@ namespace Dwarrowdelf.Client
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}
 
+		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3D l)
+		{
+			List<MovableObject> obs;
+			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
+				return EmptyObjectList;
+
+			return obs.AsReadOnly();
+		}
+
 		public IList<MovableObject> GetContents(IntPoint3D l)
 		{
 			List<MovableObject> obs;

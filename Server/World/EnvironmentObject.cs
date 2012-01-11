@@ -452,7 +452,12 @@ namespace Dwarrowdelf.Server
 			return obs.Where(o => rect.Contains(o.Location));
 		}
 
-		// XXX not a good func. contents can be changed by the caller
+		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3D l)
+		{
+			var list = m_contentArray[l.Z];
+			return list.Where(o => o.Location == l);
+		}
+
 		public IEnumerable<MovableObject> GetContents(IntPoint3D l)
 		{
 			var list = m_contentArray[l.Z];

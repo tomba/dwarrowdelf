@@ -7,21 +7,16 @@ namespace Dwarrowdelf.AI
 {
 	public static class AIHelpers
 	{
-		public static ILivingObject FindNearbyEnemy(ILivingObject living, LivingCategory classMask)
+		public static ILivingObject FindNearbyEnemy(IEnvironmentObject env, IntPoint3D location, int range, LivingCategory categories)
 		{
-			var env = living.Environment;
-			var center = living.Location;
+			int maxSide = 2 * range + 1;
 
-			int r = living.VisionRange;
-			int maxSide = 2 * r + 1;
-
-			var rect = new IntRectZ(center.X - maxSide / 2, center.Y - maxSide / 2, maxSide, maxSide, living.Location.Z);
+			var rect = new IntRectZ(location.X - maxSide / 2, location.Y - maxSide / 2, maxSide, maxSide, location.Z);
 
 			var target = env.GetContents(rect)
-				.Where(o => o != living)
 				.OfType<ILivingObject>()
-				.Where(o => (o.LivingCategory & classMask) != 0)
-				.OrderBy(o => (center - o.Location).Length)
+				.Where(o => (o.LivingCategory & categories) != 0)
+				.OrderBy(o => (location - o.Location).Length)
 				.FirstOrDefault();
 
 			return target;

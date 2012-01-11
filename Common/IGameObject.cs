@@ -66,6 +66,7 @@ namespace Dwarrowdelf
 
 		bool GetTileFlags(IntPoint3D l, TileFlags flags);
 
+		IEnumerable<IMovableObject> GetContents(IntPoint3D pos);
 		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
 	}
 

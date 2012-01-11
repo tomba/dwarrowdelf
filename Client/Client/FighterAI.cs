@@ -49,7 +49,8 @@ namespace Dwarrowdelf.Client
 
 			if (m_target == null)
 			{
-				m_target = AIHelpers.FindNearbyEnemy(this.Worker, LivingCategory.Carnivore | LivingCategory.Monster);
+				m_target = AIHelpers.FindNearbyEnemy(this.Worker.Environment, this.Worker.Location, this.Worker.VisionRange,
+					LivingCategory.Carnivore | LivingCategory.Monster);
 
 				if (m_target == null)
 				{
