@@ -32,6 +32,14 @@ namespace Dwarrowdelf
 				m_y = -1;
 		}
 
+		public bool IsNull
+		{
+			get
+			{
+				return this.X == 0 && this.Y == 0;
+			}
+		}
+
 		#region IEquatable<IntVector> Members
 
 		public bool Equals(IntVector other)

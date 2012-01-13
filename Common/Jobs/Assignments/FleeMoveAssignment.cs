@@ -52,15 +52,18 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			IntVector ov = new IntVector(dir);
 
+			if (ov.IsNull)
+				return new WaitAction(1);
+
 			var env = this.Worker.Environment;
 
 			for (int i = 0; i < 7; ++i)
 			{
 				var v = ov.FastRotate(((i + 1) >> 1) * (((i % 2) << 1) - 1));
-				var d = TryPlanarDir(v.ToDirection());
+				var d = EnvironmentHelpers.AdjustMoveDir(env, this.Worker.Location, v.ToDirection());
 
-				if (d.HasValue)
-					return new MoveAction(d.Value);
+				if (d != Direction.None)
+					return new MoveAction(d);
 			}
 
 			if (EnvironmentHelpers.CanMoveFromTo(this.Worker, Direction.Up))
@@ -70,43 +73,6 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return new MoveAction(Direction.Down);
 
 			return new WaitAction(1);
-		}
-
-		Direction? TryPlanarDir(Direction d)
-		{
-			var env = this.Worker.Environment;
-
-			var srcTerrainID = env.GetTerrainID(this.Worker.Location);
-
-			if (srcTerrainID.IsSlope() && srcTerrainID.ToDir() == d)
-			{
-				d |= Direction.Up;
-				if (EnvironmentHelpers.CanMoveFromTo(this.Worker, d))
-					return d;
-				else
-					return null;
-			}
-
-			var p = this.Worker.Location + d + Direction.Down;
-
-			if (env.Contains(p))
-			{
-				var dstTerrainID = env.GetTerrainID(p);
-
-				if (dstTerrainID.IsSlope() && dstTerrainID.ToDir().Reverse() == d)
-				{
-					d |= Direction.Down;
-					if (EnvironmentHelpers.CanMoveFromTo(this.Worker, d))
-						return d;
-					else
-						return null;
-				}
-			}
-
-			if (EnvironmentHelpers.CanMoveFromTo(this.Worker, d))
-				return d;
-			else
-				return null;
 		}
 
 		protected override JobStatus ActionDoneOverride(ActionState actionStatus)

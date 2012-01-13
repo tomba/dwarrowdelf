@@ -2,43 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
 	public static class EnvironmentHelpers
 	{
-		/* XXX some room for optimization... */
+		/// <summary>
+		/// Return all possible move directions.
+		/// XXX Some room for optimization...
+		/// </summary>
 		public static IEnumerable<Direction> GetDirectionsFrom(IEnvironmentObject env, IntPoint3D p)
 		{
-			var td = env.GetTileData(p);
-
-			var terrain = Terrains.GetTerrain(td.TerrainID);
-			var inter = Interiors.GetInterior(td.InteriorID);
-			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
-
-			if (inter.IsBlocker || !terrain.IsSupporting || itemBlocks)
-				yield break;
-
-			foreach (var dir in DirectionExtensions.PlanarDirections)
+			foreach (var dir in DirectionExtensions.PlanarUpDownDirections)
 			{
-				if (CanMoveFromTo(env, p, dir))
-					yield return dir;
-			}
-
-			if (CanMoveFromTo(env, p, Direction.Up))
-				yield return Direction.Up;
-
-			if (CanMoveFromTo(env, p, Direction.Down))
-				yield return Direction.Down;
-
-			foreach (var dir in DirectionExtensions.PlanarDirections)
-			{
-				var d = dir | Direction.Down;
-				if (CanMoveFromTo(env, p, d))
-					yield return d;
-
-				d = dir | Direction.Up;
-				if (CanMoveFromTo(env, p, d))
+				var d = AdjustMoveDir(env, p, dir);
+				if (d != Direction.None)
 					yield return d;
 			}
 		}
@@ -227,6 +206,25 @@ namespace Dwarrowdelf
 				hidden = !EnvironmentHelpers.CanSeeThroughDown(env, location + Direction.Up);
 
 			return !hidden;
+		}
+
+		/// <summary>
+		/// For PlanarUpDown directions, return Direction.None if the direction cannot be entered,
+		/// or the direction, adjusted by slopes (i.e. or'ed with Up or Down)
+		/// </summary>
+		public static Direction AdjustMoveDir(IEnvironmentObject env, IntPoint3D location, Direction dir)
+		{
+			Debug.Assert(dir != Direction.None);
+			Debug.Assert(dir.IsPlanarUpDown());
+
+			if (EnvironmentHelpers.CanMoveFromTo(env, location, dir))
+				return dir;
+			else if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Up))
+				return dir | Direction.Up;
+			else if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Down))
+				return dir | Direction.Down;
+			else
+				return Direction.None;
 		}
 	}
 }
