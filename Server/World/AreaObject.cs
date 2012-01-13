@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public bool Contains(IntPoint3D point)
+		public bool Contains(IntPoint3 point)
 		{
 			return this.Area.Contains(point);
 		}

@@ -68,9 +68,9 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1}", this.Width, this.Height);
 		}
 
-		public static explicit operator IntVector(IntSize size)
+		public static explicit operator IntVector2(IntSize size)
 		{
-			return new IntVector(size.Width, size.Height);
+			return new IntVector2(size.Width, size.Height);
 		}
 	}
 }

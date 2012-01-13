@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		public DoubleVector3(IntVector3D vector)
+		public DoubleVector3(IntVector3 vector)
 		{
 			m_x = vector.X;
 			m_y = vector.Y;

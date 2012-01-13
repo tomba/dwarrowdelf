@@ -45,14 +45,14 @@ namespace Dwarrowdelf.TerrainGen
 						if (radius == 0)
 							throw new Exception();
 
-						var middle = rect.X1Y1 + new IntVector(radius, radius);
+						var middle = rect.X1Y1 + new IntVector2(radius, radius);
 
 						Rectangle(grid, middle, radius, range);
 
-						var mxy1 = new IntPoint(middle.X, rect.Y1);
-						var mxy2 = new IntPoint(middle.X, rect.Y2);
-						var x1my = new IntPoint(rect.X1, middle.Y);
-						var x2my = new IntPoint(rect.X2, middle.Y);
+						var mxy1 = new IntPoint2(middle.X, rect.Y1);
+						var mxy2 = new IntPoint2(middle.X, rect.Y2);
+						var x1my = new IntPoint2(rect.X1, middle.Y);
+						var x2my = new IntPoint2(rect.X2, middle.Y);
 
 						Diamond(grid, x1my, radius, range, average);
 						Diamond(grid, x2my, radius, range, average);
@@ -65,10 +65,10 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		static void Rectangle(ArrayGrid2D<double> grid, IntPoint middle, int radius, double range)
+		static void Rectangle(ArrayGrid2D<double> grid, IntPoint2 middle, int radius, double range)
 		{
 			double v1, v2, v3, v4;
-			IntPoint p1, p2, p3, p4;
+			IntPoint2 p1, p2, p3, p4;
 
 			p1 = middle.Offset(radius, radius);
 			v1 = grid[p1];
@@ -85,10 +85,10 @@ namespace Dwarrowdelf.TerrainGen
 			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(range);
 		}
 
-		static void Diamond(ArrayGrid2D<double> grid, IntPoint middle, int radius, double range, double average)
+		static void Diamond(ArrayGrid2D<double> grid, IntPoint2 middle, int radius, double range, double average)
 		{
 			double v1, v2, v3, v4;
-			IntPoint p1, p2, p3, p4;
+			IntPoint2 p1, p2, p3, p4;
 
 			p1 = middle.Offset(0, -radius);
 			v1 = grid.Bounds.Contains(p1) ? grid[p1] : average;

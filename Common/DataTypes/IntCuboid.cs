@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 			m_depth = depth;
 		}
 
-		public IntCuboid(IntPoint3D p, IntSize3D size)
+		public IntCuboid(IntPoint3 p, IntSize3D size)
 		{
 			m_x = p.X;
 			m_y = p.Y;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf
 			m_depth = size.Depth;
 		}
 
-		public IntCuboid(IntPoint3D point1, IntPoint3D point2)
+		public IntCuboid(IntPoint3 point1, IntPoint3 point2)
 		{
 			m_x = Math.Min(point1.X, point2.X);
 			m_y = Math.Min(point1.Y, point2.Y);
@@ -76,19 +76,19 @@ namespace Dwarrowdelf
 		public int Z1 { get { return this.Z; } }
 		public int Z2 { get { return this.Z + this.Depth; } }
 
-		public IntPoint3D Corner1
+		public IntPoint3 Corner1
 		{
-			get { return new IntPoint3D(this.X, this.Y, this.Z); }
+			get { return new IntPoint3(this.X, this.Y, this.Z); }
 		}
 
-		public IntPoint3D Corner2
+		public IntPoint3 Corner2
 		{
-			get { return new IntPoint3D(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
+			get { return new IntPoint3(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
 		}
 
-		public IntPoint3D Center
+		public IntPoint3 Center
 		{
-			get { return new IntPoint3D((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2, (this.Z1 + this.Z2) / 2); }
+			get { return new IntPoint3((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2, (this.Z1 + this.Z2) / 2); }
 		}
 
 		public int Volume
@@ -106,12 +106,12 @@ namespace Dwarrowdelf
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }
 		}
 
-		public int GetIndex(IntPoint3D p)
+		public int GetIndex(IntPoint3 p)
 		{
 			return p.X + p.Y * this.Width + p.Z * this.Width * this.Height;
 		}
 
-		public bool Contains(IntPoint3D l)
+		public bool Contains(IntPoint3 l)
 		{
 			if (l.X < this.X || l.Y < this.Y || l.Z < this.Z ||
 				l.X >= this.X + this.Width || l.Y >= this.Y + this.Height || l.Z >= this.Z + this.Depth)
@@ -147,12 +147,12 @@ namespace Dwarrowdelf
 			return new IntCuboid(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);
 		}
 
-		public IEnumerable<IntPoint3D> Range()
+		public IEnumerable<IntPoint3> Range()
 		{
 			for (int z = this.Z; z < this.Z + this.Depth; ++z)
 				for (int y = this.Y; y < this.Y + this.Height; ++y)
 					for (int x = this.X; x < this.X + this.Width; ++x)
-						yield return new IntPoint3D(x, y, z);
+						yield return new IntPoint3(x, y, z);
 		}
 
 		public IntRect ToIntRect()

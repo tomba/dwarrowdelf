@@ -11,14 +11,14 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public abstract class MoveAssignmentBase : Assignment
 	{
 		[SaveGameProperty]
-		protected IntPoint3D Src { get; private set; } // just for ToString()
+		protected IntPoint3 Src { get; private set; } // just for ToString()
 
 		[SaveGameProperty]
 		protected readonly IEnvironmentObject m_environment;
 		[SaveGameProperty]
 		DirectionSet m_positioning;
 		[SaveGameProperty]
-		IntPoint3D m_supposedLocation;
+		IntPoint3 m_supposedLocation;
 		[SaveGameProperty]
 		int m_numFails;
 		[SaveGameProperty(Converter = typeof(QueueConverter))]
@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 			if (m_pathDirs.Count == 0)
 				m_pathDirs = null;
 
-			m_supposedLocation += new IntVector3D(dir);
+			m_supposedLocation += new IntVector3(dir);
 
 			GameAction action;
 

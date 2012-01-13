@@ -11,11 +11,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public sealed class FellTreeAssignment : Assignment
 	{
 		[SaveGameProperty]
-		readonly IntPoint3D m_location;
+		readonly IntPoint3 m_location;
 		[SaveGameProperty]
 		readonly IEnvironmentObject m_environment;
 
-		public FellTreeAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D location)
+		public FellTreeAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 location)
 			: base(parent)
 		{
 			m_environment = environment;

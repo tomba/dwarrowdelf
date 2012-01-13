@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.TileControl
 			this.Size = size;
 		}
 
-		public bool Contains(IntPoint p)
+		public bool Contains(IntPoint2 p)
 		{
 			return p.X >= 0 && p.X < this.Width && p.Y >= 0 && p.Y < this.Height;
 		}

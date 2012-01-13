@@ -601,7 +601,7 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(FellTreeAction action)
 		{
-			IntPoint3D p = this.Location + new IntVector3D(action.Direction);
+			IntPoint3 p = this.Location + new IntVector3(action.Direction);
 
 			var id = this.Environment.GetInteriorID(p);
 

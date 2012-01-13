@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		protected override void MapChangedOverride(IntPoint3D ml)
+		protected override void MapChangedOverride(IntPoint3 ml)
 		{
 			// Note: invalidates the rendertile regardless of ml.Z
 			// invalidate only if the change is within resolve limits (MAXLEVEL?)
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 			var x = ml.X - m_centerPos.X + m_renderData.Width / 2;
 			var y = ml.Y - m_centerPos.Y + m_renderData.Height / 2;
 
-			if (m_renderData.Contains(new IntPoint(x, y)))
+			if (m_renderData.Contains(new IntPoint2(x, y)))
 				m_renderData.Grid[y, x].IsValid = false;
 		}
 
@@ -55,12 +55,12 @@ namespace Dwarrowdelf.Client
 			{
 				for (int x = 0; x < columns; ++x)
 				{
-					var p = new IntPoint(x, y);
+					var p = new IntPoint2(x, y);
 
 					if (m_renderData.Grid[y, x].IsValid)
 						continue;
 
-					var ml = new IntPoint3D(offsetX + x, offsetY + (rows - y - 1), offsetZ);
+					var ml = new IntPoint3(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
 					Resolve(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void Resolve(out RenderTileSimple tile, EnvironmentObject env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		static void Resolve(out RenderTileSimple tile, EnvironmentObject env, IntPoint3 ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTileSimple();
 			tile.IsValid = true;
@@ -87,12 +87,12 @@ namespace Dwarrowdelf.Client
 
 			int z = ml.Z;
 
-			var p = new IntPoint3D(ml.X, ml.Y, z);
+			var p = new IntPoint3(ml.X, ml.Y, z);
 
 			tile.SymbolID = GetTerrainTile(p, env, showVirtualSymbols);
 		}
 
-		static SymbolID GetTerrainTile(IntPoint3D ml, EnvironmentObject env, bool showVirtualSymbols)
+		static SymbolID GetTerrainTile(IntPoint3 ml, EnvironmentObject env, bool showVirtualSymbols)
 		{
 			var flrID = env.GetTerrainID(ml);
 

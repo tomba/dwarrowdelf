@@ -10,17 +10,17 @@ namespace Dwarrowdelf.AStar
 {
 	public interface IAStarEnvironment
 	{
-		int GetTileWeight(IntPoint3D p);
-		IEnumerable<Direction> GetValidDirs(IntPoint3D p);
-		bool CanEnter(IntPoint3D p);
+		int GetTileWeight(IntPoint3 p);
+		IEnumerable<Direction> GetValidDirs(IntPoint3 p);
+		bool CanEnter(IntPoint3 p);
 		// XXX Callback for single-stepping. Remove at some point.
-		void Callback(IDictionary<IntPoint3D, AStarNode> nodes);
+		void Callback(IDictionary<IntPoint3, AStarNode> nodes);
 	}
 
 	// tries to save some memory by using ushorts.
 	public sealed class AStarNode : IOpenListNode
 	{
-		public IntPoint3D Loc { get; private set; }
+		public IntPoint3 Loc { get; private set; }
 		public AStarNode Parent;
 		public ushort G { get; set; }
 		public ushort H { get; set; }
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.AStar
 
 		public int F { get { return G + H; } }
 
-		public AStarNode(IntPoint3D l, AStarNode parent)
+		public AStarNode(IntPoint3 l, AStarNode parent)
 		{
 			Loc = l;
 			Parent = parent;
@@ -41,15 +41,15 @@ namespace Dwarrowdelf.AStar
 		{
 			public IAStarEnvironment Environment;
 			public IAStarTarget Target;
-			public IntPoint3D Src;
+			public IntPoint3 Src;
 			public DirectionSet SrcPositioning;
 			public IOpenList<AStarNode> OpenList;
-			public IDictionary<IntPoint3D, AStarNode> NodeMap;
+			public IDictionary<IntPoint3, AStarNode> NodeMap;
 			public CancellationToken CancellationToken;
 		}
 
 
-		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3D src, IntPoint3D dest, DirectionSet positioning, out IntPoint3D finalLocation)
+		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning, out IntPoint3 finalLocation)
 		{
 			Debug.Assert(environment != null);
 
@@ -97,25 +97,25 @@ namespace Dwarrowdelf.AStar
 			else
 			{
 				dirs = null;
-				finalLocation = new IntPoint3D();
+				finalLocation = new IntPoint3();
 			}
 
 			return dirs;
 		}
 
 
-		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3D src, Func<IntPoint3D, bool> func, int maxNodeCount = 200000)
+		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
 		{
 			return Find(environment, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
 		}
 
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, DirectionSet srcPositioning, IntPoint3D dst, DirectionSet dstPositioning,
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), maxNodeCount, cancellationToken);
 		}
 
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3D src, DirectionSet srcPositioning, IAStarTarget target,
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var state = new AStarState()
@@ -124,7 +124,7 @@ namespace Dwarrowdelf.AStar
 				Src = src,
 				SrcPositioning = srcPositioning,
 				Target = target,
-				NodeMap = new Dictionary<IntPoint3D, AStarNode>(),
+				NodeMap = new Dictionary<IntPoint3, AStarNode>(),
 				OpenList = new BinaryHeap<AStarNode>(),
 				CancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None,
 			};
@@ -137,7 +137,7 @@ namespace Dwarrowdelf.AStar
 			var nodeMap = state.NodeMap;
 			var openList = state.OpenList;
 
-			IEnumerable<IntPoint3D> nodeList;
+			IEnumerable<IntPoint3> nodeList;
 
 			nodeList = state.SrcPositioning.ToDirections().Select(d => state.Src + d);
 
@@ -205,7 +205,7 @@ namespace Dwarrowdelf.AStar
 		public const int COST_DIAGONAL = 14;
 		public const int COST_STRAIGHT = 10;
 
-		static ushort CostBetweenNodes(IntPoint3D from, IntPoint3D to)
+		static ushort CostBetweenNodes(IntPoint3 from, IntPoint3 to)
 		{
 			ushort cost = (from - to).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
 			return cost;
@@ -215,7 +215,7 @@ namespace Dwarrowdelf.AStar
 		{
 			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 			{
-				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
+				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
 				AStarNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -255,7 +255,7 @@ namespace Dwarrowdelf.AStar
 
 			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 			{
-				IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
+				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
 				AStarNode child;
 				state.NodeMap.TryGetValue(childLoc, out child);
@@ -281,7 +281,7 @@ namespace Dwarrowdelf.AStar
 
 				foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
 				{
-					IntPoint3D childLoc = parent.Loc + new IntVector3D(dir);
+					IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
 					AStarNode child;
 					state.NodeMap.TryGetValue(childLoc, out child);

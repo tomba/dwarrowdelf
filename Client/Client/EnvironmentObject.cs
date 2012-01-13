@@ -18,16 +18,16 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		public event Action<MovableObject, IntPoint3D, MapTileObjectChangeType> MapTileObjectChanged;
-		public event Action<IntPoint3D> MapTileTerrainChanged;
+		public event Action<MovableObject, IntPoint3, MapTileObjectChangeType> MapTileObjectChanged;
+		public event Action<IntPoint3> MapTileTerrainChanged;
 
 		GrowingTileGrid m_tileGrid;
-		Dictionary<IntPoint3D, List<MovableObject>> m_objectMap;
+		Dictionary<IntPoint3, List<MovableObject>> m_objectMap;
 		List<MovableObject> m_objectList;
 
 		public event Action<MovableObject> ObjectAdded;
 		public event Action<MovableObject> ObjectRemoved;
-		public event Action<MovableObject, IntPoint3D> ObjectMoved;
+		public event Action<MovableObject, IntPoint3> ObjectMoved;
 
 		public uint Version { get; private set; }
 
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
 		// XXX remove when IEnvObject has this removed
-		public IntPoint3D HomeLocation { get { throw new Exception(); } }
+		public IntPoint3 HomeLocation { get { throw new Exception(); } }
 
 		[SaveGameProperty]
 		public Designation Designations { get; private set; }
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 			this.Version = 1;
 
 			m_tileGrid = new GrowingTileGrid();
-			m_objectMap = new Dictionary<IntPoint3D, List<MovableObject>>();
+			m_objectMap = new Dictionary<IntPoint3, List<MovableObject>>();
 			m_objectList = new List<MovableObject>();
 
 			m_areaElements = new ObservableCollection<IAreaElement>();
@@ -92,57 +92,57 @@ namespace Dwarrowdelf.Client
 			throw new NotImplementedException();
 		}
 
-		public bool Contains(IntPoint3D p)
+		public bool Contains(IntPoint3 p)
 		{
 			return this.Bounds.Contains(p);
 		}
 
-		public bool IsWalkable(IntPoint3D l)
+		public bool IsWalkable(IntPoint3 l)
 		{
 			return GetInterior(l).IsBlocker == false;
 		}
 
-		public TerrainID GetTerrainID(IntPoint3D l)
+		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3D l)
+		public MaterialID GetTerrainMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainMaterialID(l);
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D l)
+		public InteriorID GetInteriorID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorID(l);
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		public MaterialID GetInteriorMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3D l)
+		public TerrainInfo GetTerrain(IntPoint3 l)
 		{
 			return Terrains.GetTerrain(GetTerrainID(l));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3D l)
+		public InteriorInfo GetInterior(IntPoint3 l)
 		{
 			return Interiors.GetInterior(GetInteriorID(l));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
-		public void SetInteriorID(IntPoint3D l, InteriorID interiorID)
+		public void SetInteriorID(IntPoint3 l, InteriorID interiorID)
 		{
 			this.Version += 1;
 
@@ -152,7 +152,7 @@ namespace Dwarrowdelf.Client
 				MapTileTerrainChanged(l);
 		}
 
-		public void SetTerrainID(IntPoint3D l, TerrainID terrainID)
+		public void SetTerrainID(IntPoint3 l, TerrainID terrainID)
 		{
 			this.Version += 1;
 
@@ -162,38 +162,38 @@ namespace Dwarrowdelf.Client
 				MapTileTerrainChanged(l);
 		}
 
-		public byte GetWaterLevel(IntPoint3D l)
+		public byte GetWaterLevel(IntPoint3 l)
 		{
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetGrass(IntPoint3D ml)
+		public bool GetGrass(IntPoint3 ml)
 		{
 			return GetTileFlags(ml, TileFlags.Grass);
 		}
 
-		public TileFlags GetTileFlags(IntPoint3D l)
+		public TileFlags GetTileFlags(IntPoint3 l)
 		{
 			return m_tileGrid.GetFlags(l);
 		}
 
-		public bool GetTileFlags(IntPoint3D l, TileFlags flags)
+		public bool GetTileFlags(IntPoint3 l, TileFlags flags)
 		{
 			return (m_tileGrid.GetFlags(l) & flags) != 0;
 		}
 
 
-		public bool GetHidden(IntPoint3D ml)
+		public bool GetHidden(IntPoint3 ml)
 		{
 			return m_tileGrid.GetTerrainID(ml) == TerrainID.Undefined;
 		}
 
-		public TileData GetTileData(IntPoint3D p)
+		public TileData GetTileData(IntPoint3 p)
 		{
 			return m_tileGrid.GetTileData(p);
 		}
 
-		public void SetTileData(IntPoint3D l, TileData tileData)
+		public void SetTileData(IntPoint3 l, TileData tileData)
 		{
 			this.Version += 1;
 
@@ -203,7 +203,7 @@ namespace Dwarrowdelf.Client
 				MapTileTerrainChanged(l);
 		}
 
-		public void SetTerrains(Tuple<IntPoint3D, TileData>[] tileDataList)
+		public void SetTerrains(Tuple<IntPoint3, TileData>[] tileDataList)
 		{
 			this.Version += 1;
 
@@ -231,7 +231,7 @@ namespace Dwarrowdelf.Client
 			foreach (var kvp in tileDataList)
 			{
 				setNewBounds = true;
-				IntPoint3D p = kvp.Item1;
+				IntPoint3 p = kvp.Item1;
 				TileData data = kvp.Item2;
 
 				x1 = Math.Min(x1, p.X);
@@ -286,7 +286,7 @@ namespace Dwarrowdelf.Client
 			this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 
 			var iter = tileDataList.GetEnumerator();
-			foreach (IntPoint3D p in bounds.Range())
+			foreach (IntPoint3 p in bounds.Range())
 			{
 				iter.MoveNext();
 				TileData data = iter.Current;
@@ -305,7 +305,7 @@ namespace Dwarrowdelf.Client
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}
 
-		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3D l)
+		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3 l)
 		{
 			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
@@ -314,7 +314,7 @@ namespace Dwarrowdelf.Client
 			return obs.AsReadOnly();
 		}
 
-		public IList<MovableObject> GetContents(IntPoint3D l)
+		public IList<MovableObject> GetContents(IntPoint3 l)
 		{
 			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
@@ -328,7 +328,7 @@ namespace Dwarrowdelf.Client
 			return m_objectList.AsReadOnly();
 		}
 
-		public MovableObject GetFirstObject(IntPoint3D l)
+		public MovableObject GetFirstObject(IntPoint3 l)
 		{
 			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs) || obs == null)
@@ -339,7 +339,7 @@ namespace Dwarrowdelf.Client
 
 		protected override void ChildAdded(MovableObject child)
 		{
-			IntPoint3D l = child.Location;
+			IntPoint3 l = child.Location;
 
 			List<MovableObject> obs;
 			if (!m_objectMap.TryGetValue(l, out obs))
@@ -367,7 +367,7 @@ namespace Dwarrowdelf.Client
 
 		protected override void ChildRemoved(MovableObject child)
 		{
-			IntPoint3D l = child.Location;
+			IntPoint3 l = child.Location;
 
 			Debug.Assert(m_objectMap.ContainsKey(l));
 
@@ -386,7 +386,7 @@ namespace Dwarrowdelf.Client
 				this.ObjectRemoved(child);
 		}
 
-		protected override void ChildMoved(MovableObject child, IntPoint3D from, IntPoint3D to)
+		protected override void ChildMoved(MovableObject child, IntPoint3 from, IntPoint3 to)
 		{
 			List<MovableObject> obs;
 
@@ -436,22 +436,22 @@ namespace Dwarrowdelf.Client
 			return String.Format("Env({0:x})", this.ObjectID.Value);
 		}
 
-		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
+		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3 p)
 		{
 			return 0;
 		}
 
-		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
+		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3 p)
 		{
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		bool AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		bool AStar.IAStarEnvironment.CanEnter(IntPoint3 p)
 		{
 			return EnvironmentHelpers.CanEnter(this, p);
 		}
 
-		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, AStar.AStarNode> nodes)
+		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3, AStar.AStarNode> nodes)
 		{
 		}
 
@@ -473,7 +473,7 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(ok);
 		}
 
-		public IAreaElement GetElementAt(IntPoint3D p)
+		public IAreaElement GetElementAt(IntPoint3 p)
 		{
 			return m_areaElements.FirstOrDefault(e => e.Area.Contains(p));
 		}

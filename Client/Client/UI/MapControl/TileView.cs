@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed class TileView : INotifyPropertyChanged
 	{
 		EnvironmentObject m_environment;
-		IntPoint3D m_location;
+		IntPoint3 m_location;
 		MovableObjectCollection m_objects;
 
 		public TileView()
@@ -23,10 +23,10 @@ namespace Dwarrowdelf.Client.UI
 
 		public void ClearTarget()
 		{
-			SetTarget(null, new IntPoint3D());
+			SetTarget(null, new IntPoint3());
 		}
 
-		public void SetTarget(EnvironmentObject environment, IntPoint3D location)
+		public void SetTarget(EnvironmentObject environment, IntPoint3 location)
 		{
 			bool update = false;
 
@@ -83,7 +83,7 @@ namespace Dwarrowdelf.Client.UI
 			get { return m_environment; }
 		}
 
-		public IntPoint3D Location
+		public IntPoint3 Location
 		{
 			get { return m_location; }
 		}
@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnMapTerrainChanged(IntPoint3D l)
+		void OnMapTerrainChanged(IntPoint3 l)
 		{
 			if (l != this.Location)
 				return;
@@ -120,7 +120,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileTerrainChanges();
 		}
 
-		void OnMapObjectChanged(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
+		void OnMapObjectChanged(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changeType)
 		{
 			if (l != this.Location)
 				return;

@@ -148,7 +148,7 @@
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3D.cs" />
-    <Compile Include="DataTypes\IntVector3D.cs" />
+    <Compile Include="DataTypes\IntVector3.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="Terrains.cs" />
     <Compile Include="Interiors.cs" />
@@ -158,11 +158,11 @@
     <Compile Include="Properties.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="DataTypes\IntCuboid.cs" />
-    <Compile Include="DataTypes\IntVector.cs" />
+    <Compile Include="DataTypes\IntVector2.cs" />
     <Compile Include="DataTypes\IntSize.cs" />
     <Compile Include="DataTypes\Direction.cs" />
     <Compile Include="DataTypes\IntRect.cs" />
-    <Compile Include="DataTypes\IntPoint3D.cs" />
+    <Compile Include="DataTypes\IntPoint3.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />
     <Compile Include="LOSShadowCast1.cs" />
@@ -170,7 +170,7 @@
     <Compile Include="ObjectID.cs" />
     <Compile Include="GameAction.cs" />
     <Compile Include="IGameObject.cs" />
-    <Compile Include="DataTypes\IntPoint.cs" />
+    <Compile Include="DataTypes\IntPoint2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileData.cs" />
     <Compile Include="TypeConverters.cs" />

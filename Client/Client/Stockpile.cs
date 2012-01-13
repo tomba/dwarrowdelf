@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Client
 			this.Environment.World.JobManager.AddJobSource(this);
 
 			this.Environment.ObjectRemoved += new Action<MovableObject>(Environment_ObjectRemoved);
-			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3D>(Environment_ObjectMoved);
+			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3>(Environment_ObjectMoved);
 
 			m_itemObjectView = new ItemObjectView(this.Environment, this.Area.Center,
 				o => o.IsReserved == false && o.IsStockpiled == false && o.IsInstalled == false && Match(o));
@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void Environment_ObjectMoved(MovableObject ob, IntPoint3D oldPos)
+		void Environment_ObjectMoved(MovableObject ob, IntPoint3 oldPos)
 		{
 			if (this.Area.Contains(oldPos) == false)
 				return;
@@ -249,7 +249,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// XXX Silly algorithm. Fill the stockpile evenly.
-		public IntPoint3D FindEmptyLocation(out bool ok)
+		public IntPoint3 FindEmptyLocation(out bool ok)
 		{
 			var env = this.Environment;
 
@@ -257,17 +257,17 @@ namespace Dwarrowdelf.Client
 
 			var loc = this.Area.Range().FirstOrDefault(p => GetStack(p) == min);
 
-			if (loc != new IntPoint3D())
+			if (loc != new IntPoint3())
 			{
 				ok = true;
 				return loc;
 			}
 
 			ok = false;
-			return new IntPoint3D();
+			return new IntPoint3();
 		}
 
-		public bool LocationOk(IntPoint3D p, ItemObject ob)
+		public bool LocationOk(IntPoint3 p, ItemObject ob)
 		{
 			if (!this.Area.Contains(p))
 				throw new Exception();
@@ -282,7 +282,7 @@ namespace Dwarrowdelf.Client
 			return this.Area.Range().Min(p => GetStack(p));
 		}
 
-		int GetStack(IntPoint3D p)
+		int GetStack(IntPoint3 p)
 		{
 			return this.Environment.GetContents(p).OfType<ItemObject>().Count();
 		}

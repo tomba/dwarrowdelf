@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Server
 	{
 		public abstract void Start();
 		public abstract void Stop();
-		public abstract bool Sees(IntPoint3D p);
+		public abstract bool Sees(IntPoint3 p);
 		public virtual void HandleNewControllable(LivingObject living) { } // XXX update vision map
 	}
 
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Server
 	{
 		public static AdminVisionTracker Tracker = new AdminVisionTracker();
 
-		public override bool Sees(IntPoint3D p)
+		public override bool Sees(IntPoint3 p)
 		{
 			return true;
 		}
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public override bool Sees(IntPoint3D p)
+		public override bool Sees(IntPoint3 p)
 		{
 			return m_environment.Contains(p);
 		}
@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Server
 			m_environment.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
 		}
 
-		public override bool Sees(IntPoint3D p)
+		public override bool Sees(IntPoint3 p)
 		{
 			if (!m_environment.Contains(p))
 				return false;
@@ -107,12 +107,12 @@ namespace Dwarrowdelf.Server
 			return GetVisible(p);
 		}
 
-		bool GetVisible(IntPoint3D p)
+		bool GetVisible(IntPoint3 p)
 		{
 			return m_visibilityArray[p.Z, p.Y, p.X];
 		}
 
-		void SetVisible(IntPoint3D p)
+		void SetVisible(IntPoint3 p)
 		{
 			m_visibilityArray[p.Z, p.Y, p.X] = true;
 		}
@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Server
 			return terrain.IsSeeThroughDown;
 		}
 
-		void OnTerrainOrInteriorChanged(IntPoint3D location, TileData oldData, TileData newData)
+		void OnTerrainOrInteriorChanged(IntPoint3 location, TileData oldData, TileData newData)
 		{
 			if (GetVisible(location) == false)
 				return;
@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Server
 			bool revealPlanar = IsSeeThrough(oldData) == false && IsSeeThrough(newData) == true;
 			bool revealDown = IsSeeThroughDown(oldData) == false && IsSeeThroughDown(newData) == true;
 
-			List<IntPoint3D> revealed = new List<IntPoint3D>();
+			List<IntPoint3> revealed = new List<IntPoint3>();
 
 			if (revealPlanar)
 			{
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Server
 				var msg = new Messages.MapDataTerrainsListMessage()
 				{
 					Environment = env.ObjectID,
-					TileDataList = revealed.Select(l => new Tuple<IntPoint3D, TileData>(l, env.GetTileData(l))).ToArray(),
+					TileDataList = revealed.Select(l => new Tuple<IntPoint3, TileData>(l, env.GetTileData(l))).ToArray(),
 				};
 
 				m_player.Send(msg);
@@ -194,10 +194,10 @@ namespace Dwarrowdelf.Server
 		Player m_player;
 		EnvironmentObject m_environment;
 
-		HashSet<IntPoint3D> m_oldKnownLocations = new HashSet<IntPoint3D>();
+		HashSet<IntPoint3> m_oldKnownLocations = new HashSet<IntPoint3>();
 		HashSet<MovableObject> m_oldKnownObjects = new HashSet<MovableObject>();
 
-		HashSet<IntPoint3D> m_newKnownLocations = new HashSet<IntPoint3D>();
+		HashSet<IntPoint3> m_newKnownLocations = new HashSet<IntPoint3>();
 		HashSet<MovableObject> m_newKnownObjects = new HashSet<MovableObject>();
 
 		public LOSVisionTracker(Player player, EnvironmentObject env)
@@ -224,7 +224,7 @@ namespace Dwarrowdelf.Server
 			m_environment.World.WorkEnded -= HandleEndOfWork;
 		}
 
-		public override bool Sees(IntPoint3D p)
+		public override bool Sees(IntPoint3 p)
 		{
 			return m_player.Controllables.Any(l => l.Sees(m_environment, p));
 		}
@@ -251,16 +251,16 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all locations that friendlies see
-		HashSet<IntPoint3D> CollectLocations(IEnumerable<LivingObject> friendlies)
+		HashSet<IntPoint3> CollectLocations(IEnumerable<LivingObject> friendlies)
 		{
-			var knownLocs = new HashSet<IntPoint3D>();
+			var knownLocs = new HashSet<IntPoint3>();
 
 			foreach (var l in friendlies)
 			{
 				if (l.Environment != m_environment)
 					continue;
 
-				var locList = l.GetVisibleLocations().Select(p => new IntPoint3D(p.X, p.Y, l.Z));
+				var locList = l.GetVisibleLocations().Select(p => new IntPoint3(p.X, p.Y, l.Z));
 
 				knownLocs.UnionWith(locList);
 			}
@@ -269,7 +269,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all objects in the given location map
-		HashSet<MovableObject> CollectObjects(HashSet<IntPoint3D> knownLocs)
+		HashSet<MovableObject> CollectObjects(HashSet<IntPoint3> knownLocs)
 		{
 			var knownObs = new HashSet<MovableObject>();
 
@@ -285,9 +285,9 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect locations that are newly visible
-		static HashSet<IntPoint3D> CollectRevealedLocations(HashSet<IntPoint3D> oldLocs, HashSet<IntPoint3D> newLocs)
+		static HashSet<IntPoint3> CollectRevealedLocations(HashSet<IntPoint3> oldLocs, HashSet<IntPoint3> newLocs)
 		{
-			return new HashSet<IntPoint3D>(newLocs.Except(oldLocs));
+			return new HashSet<IntPoint3>(newLocs.Except(oldLocs));
 		}
 
 		// Collect objects that are newly visible
@@ -296,12 +296,12 @@ namespace Dwarrowdelf.Server
 			return newObjects.Except(oldObjects);
 		}
 
-		void SendNewTerrains(IEnumerable<IntPoint3D> revealedLocations)
+		void SendNewTerrains(IEnumerable<IntPoint3> revealedLocations)
 		{
 			var msg = new Messages.MapDataTerrainsListMessage()
 			{
 				Environment = m_environment.ObjectID,
-				TileDataList = revealedLocations.Select(l => new Tuple<IntPoint3D, TileData>(l, m_environment.GetTileData(l))).ToArray(),
+				TileDataList = revealedLocations.Select(l => new Tuple<IntPoint3, TileData>(l, m_environment.GetTileData(l))).ToArray(),
 			};
 
 			m_player.Send(msg);

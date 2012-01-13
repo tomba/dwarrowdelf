@@ -25,13 +25,13 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		public IntRectZ(IntPoint point1, IntPoint point2, int z)
+		public IntRectZ(IntPoint2 point1, IntPoint2 point2, int z)
 		{
 			m_rect = new IntRect(point1, point2);
 			m_z = z;
 		}
 
-		public IntRectZ(IntPoint point, IntSize size, int z)
+		public IntRectZ(IntPoint2 point, IntSize size, int z)
 			: this(point.X, point.Y, size.Width, size.Height, z)
 		{
 		}
@@ -47,19 +47,19 @@ namespace Dwarrowdelf
 		public int Y1 { get { return Y; } }
 		public int Y2 { get { return Y + Height; } }
 
-		public IntPoint3D X1Y1
+		public IntPoint3 X1Y1
 		{
-			get { return new IntPoint3D(m_rect.X1Y1, this.Z); }
+			get { return new IntPoint3(m_rect.X1Y1, this.Z); }
 		}
 
-		public IntPoint3D X2Y2
+		public IntPoint3 X2Y2
 		{
-			get { return new IntPoint3D(m_rect.X2Y2, this.Z); }
+			get { return new IntPoint3(m_rect.X2Y2, this.Z); }
 		}
 
-		public IntPoint3D Center
+		public IntPoint3 Center
 		{
-			get { return new IntPoint3D(m_rect.Center, this.Z); }
+			get { return new IntPoint3(m_rect.Center, this.Z); }
 		}
 
 		public int Area
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 			return Equals((IntRectZ)obj);
 		}
 
-		public bool Contains(IntPoint3D l)
+		public bool Contains(IntPoint3 l)
 		{
 			return m_rect.Contains(l.ToIntPoint()) && l.Z == m_z;
 		}
@@ -120,11 +120,11 @@ namespace Dwarrowdelf
 			return new IntRectZ(this.X, this.Y, this.Width + width, this.Height + height, this.Z);
 		}
 
-		public IEnumerable<IntPoint3D> Range()
+		public IEnumerable<IntPoint3> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Height; ++y)
 				for (int x = this.X; x < this.X + this.Width; ++x)
-					yield return new IntPoint3D(x, y, m_z);
+					yield return new IntPoint3(x, y, m_z);
 		}
 
 		public IntCuboid ToCuboid()

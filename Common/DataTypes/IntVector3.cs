@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	public struct IntVector3D : IEquatable<IntVector3D>
+	public struct IntVector3 : IEquatable<IntVector3>
 	{
 		// Note: this could be optimized by encoding all values into one int
 
@@ -19,14 +19,14 @@ namespace Dwarrowdelf
 		public int Y { get { return m_y; } }
 		public int Z { get { return m_z; } }
 
-		public IntVector3D(int x, int y, int z)
+		public IntVector3(int x, int y, int z)
 		{
 			m_x = x;
 			m_y = y;
 			m_z = z;
 		}
 
-		public IntVector3D(Direction dir)
+		public IntVector3(Direction dir)
 		{
 			int x, y, z;
 
@@ -46,9 +46,9 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		#region IEquatable<IntVector3D> Members
+		#region IEquatable<IntVector3> Members
 
-		public bool Equals(IntVector3D other)
+		public bool Equals(IntVector3 other)
 		{
 			return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
 		}
@@ -57,10 +57,10 @@ namespace Dwarrowdelf
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntVector3D))
+			if (!(obj is IntVector3))
 				return false;
 
-			IntVector3D l = (IntVector3D)obj;
+			IntVector3 l = (IntVector3)obj;
 			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
 		}
 
@@ -74,16 +74,16 @@ namespace Dwarrowdelf
 			get { return Math.Abs(this.X) + Math.Abs(this.Y) + Math.Abs(this.Z); }
 		}
 
-		public IntVector3D Normalize()
+		public IntVector3 Normalize()
 		{
 			if (this.IsNull)
-				return new IntVector3D();
+				return new IntVector3();
 
 			double len = this.Length;
 			var x = (int)Math.Round(this.X / len);
 			var y = (int)Math.Round(this.Y / len);
 			var z = (int)Math.Round(this.Z / len);
-			return new IntVector3D(x, y, z);
+			return new IntVector3(x, y, z);
 		}
 
 		public bool IsNormal
@@ -91,29 +91,29 @@ namespace Dwarrowdelf
 			get { return Math.Abs(this.X) <= 1 && Math.Abs(this.Y) <= 1 && Math.Abs(this.Z) <= 1; }
 		}
 
-		public static bool operator ==(IntVector3D left, IntVector3D right)
+		public static bool operator ==(IntVector3 left, IntVector3 right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
 		}
 
-		public static bool operator !=(IntVector3D left, IntVector3D right)
+		public static bool operator !=(IntVector3 left, IntVector3 right)
 		{
 			return !(left == right);
 		}
 
-		public static IntVector3D operator +(IntVector3D left, IntVector3D right)
+		public static IntVector3 operator +(IntVector3 left, IntVector3 right)
 		{
-			return new IntVector3D(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
+			return new IntVector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
 		}
 
-		public static IntVector3D operator -(IntVector3D left, IntVector3D right)
+		public static IntVector3 operator -(IntVector3 left, IntVector3 right)
 		{
-			return new IntVector3D(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
+			return new IntVector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
 		}
 
-		public static IntVector3D operator *(IntVector3D left, int number)
+		public static IntVector3 operator *(IntVector3 left, int number)
 		{
-			return new IntVector3D(left.X * number, left.Y * number, left.Z * number);
+			return new IntVector3(left.X * number, left.Y * number, left.Z * number);
 		}
 
 		public override int GetHashCode()
@@ -127,14 +127,14 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1},{2}", this.X, this.Y, this.Z);
 		}
 
-		public static explicit operator IntVector3D(IntPoint3D point)
+		public static explicit operator IntVector3(IntPoint3 point)
 		{
-			return new IntVector3D(point.X, point.Y, point.Z);
+			return new IntVector3(point.X, point.Y, point.Z);
 		}
 
 		public Direction ToDirection()
 		{
-			IntVector3D v = Normalize();
+			IntVector3 v = Normalize();
 
 			Direction dir = 0;
 
@@ -156,9 +156,9 @@ namespace Dwarrowdelf
 			return dir;
 		}
 
-		public IntVector3D Reverse()
+		public IntVector3 Reverse()
 		{
-			return new IntVector3D(-this.X, -this.Y, -this.Z);
+			return new IntVector3(-this.X, -this.Y, -this.Z);
 		}
 
 		static int FastCos(int rot)
@@ -198,7 +198,7 @@ namespace Dwarrowdelf
 		/// Rotate unit vector in 45 degree steps
 		/// </summary>
 		/// <param name="rotate">Rotation units, in 45 degree steps</param>
-		public IntVector3D FastRotate(int rotate)
+		public IntVector3 FastRotate(int rotate)
 		{
 			int x = FastMul(FastCos(rotate), this.X) - FastMul(FastSin(rotate), this.Y);
 			int y = FastMul(FastSin(rotate), this.X) + FastMul(FastCos(rotate), this.Y);
@@ -206,7 +206,7 @@ namespace Dwarrowdelf
 			var ix = x > 1 ? 1 : (x < -1 ? -1 : x);
 			var iy = y > 1 ? 1 : (y < -1 ? -1 : y);
 
-			return new IntVector3D(ix, iy, this.Z);
+			return new IntVector3(ix, iy, this.Z);
 		}
 
 		public static Direction RotateDir(Direction dir, int rotate)
@@ -220,7 +220,7 @@ namespace Dwarrowdelf
 			if (y == DirectionConsts.DirNeg)
 				y = -1;
 
-			var v = new IntVector3D(x, y, 0);
+			var v = new IntVector3(x, y, 0);
 			v.FastRotate(rotate);
 			return v.ToDirection();
 		}
@@ -233,9 +233,9 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public IntVector ToIntVector()
+		public IntVector2 ToIntVector()
 		{
-			return new IntVector(this.X, this.Y);
+			return new IntVector2(this.X, this.Y);
 		}
 	}
 }

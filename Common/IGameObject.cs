@@ -43,30 +43,30 @@ namespace Dwarrowdelf
 
 	public interface IEnvironmentObject : IContainerObject, AStar.IAStarEnvironment
 	{
-		IntPoint3D HomeLocation { get; }
+		IntPoint3 HomeLocation { get; }
 
 		VisibilityMode VisibilityMode { get; }
 
 		IntCuboid Bounds { get; }
-		bool Contains(IntPoint3D p);
+		bool Contains(IntPoint3 p);
 
-		TerrainID GetTerrainID(IntPoint3D l);
-		MaterialID GetTerrainMaterialID(IntPoint3D l);
+		TerrainID GetTerrainID(IntPoint3 l);
+		MaterialID GetTerrainMaterialID(IntPoint3 l);
 
-		InteriorID GetInteriorID(IntPoint3D l);
-		MaterialID GetInteriorMaterialID(IntPoint3D l);
+		InteriorID GetInteriorID(IntPoint3 l);
+		MaterialID GetInteriorMaterialID(IntPoint3 l);
 
-		TerrainInfo GetTerrain(IntPoint3D l);
-		MaterialInfo GetTerrainMaterial(IntPoint3D l);
+		TerrainInfo GetTerrain(IntPoint3 l);
+		MaterialInfo GetTerrainMaterial(IntPoint3 l);
 
-		InteriorInfo GetInterior(IntPoint3D l);
-		MaterialInfo GetInteriorMaterial(IntPoint3D l);
+		InteriorInfo GetInterior(IntPoint3 l);
+		MaterialInfo GetInteriorMaterial(IntPoint3 l);
 
-		TileData GetTileData(IntPoint3D l);
+		TileData GetTileData(IntPoint3 l);
 
-		bool GetTileFlags(IntPoint3D l, TileFlags flags);
+		bool GetTileFlags(IntPoint3 l, TileFlags flags);
 
-		IEnumerable<IMovableObject> GetContents(IntPoint3D pos);
+		IEnumerable<IMovableObject> GetContents(IntPoint3 pos);
 		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
 	}
 
@@ -77,7 +77,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		IEnvironmentObject Environment { get; }
 		IContainerObject Parent { get; }
-		IntPoint3D Location { get; }
+		IntPoint3 Location { get; }
 	}
 
 	public interface IConcreteObject : IMovableObject

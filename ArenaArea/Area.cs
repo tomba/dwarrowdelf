@@ -38,7 +38,7 @@ namespace MyArea
 			DrawRect(envBuilder, new IntRectZ(envBuilder.Bounds.Plane, 2), td);
 
 			var env = envBuilder.Create(world);
-			env.HomeLocation = new IntPoint3D(envBuilder.Width / 2, 4, surfaceLevel);
+			env.HomeLocation = new IntPoint3(envBuilder.Width / 2, 4, surfaceLevel);
 
 
 			/* Add Monsters */
@@ -122,9 +122,9 @@ namespace MyArea
 			return (GameColor)m_random.Next(GameColorRGB.NUMCOLORS - 1) + 1;
 		}
 
-		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		IntPoint3 GetRandomSurfaceLocation(Environment env, int zLevel)
 		{
-			IntPoint3D p;
+			IntPoint3 p;
 			int iter = 0;
 
 			do
@@ -132,7 +132,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+				p = new IntPoint3(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
 			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;

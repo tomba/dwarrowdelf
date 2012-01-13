@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
 
 		uint m_losMapVersion;
-		IntPoint3D m_losLocation;
+		IntPoint3 m_losLocation;
 		Grid2D<bool> m_visionMap;
 		[SaveGameProperty]
 		Dwarrowdelf.AI.IAI m_ai;
@@ -706,20 +706,20 @@ namespace Dwarrowdelf.Server
 
 			int z = this.Z;
 			var env = this.Environment;
-			s_losAlgo.Calculate(new IntPoint(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Bounds.Plane,
-				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3D(l, z)));
+			s_losAlgo.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Bounds.Plane,
+				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
 		}
 
 		// does this living see location l in env
-		public bool Sees(EnvironmentObject env, IntPoint3D l)
+		public bool Sees(EnvironmentObject env, IntPoint3 l)
 		{
 			if (env != this.Environment)
 				return false;
 
-			IntVector3D dl = l - this.Location;
+			IntVector3 dl = l - this.Location;
 
 			// XXX livings don't currently see up or down
 			if (dl.Z != 0)
@@ -735,7 +735,7 @@ namespace Dwarrowdelf.Server
 					return true;
 
 				case LivingVisionMode.LOS:
-					if (this.VisionMap[new IntPoint(dl.X, dl.Y)] == false)
+					if (this.VisionMap[new IntPoint2(dl.X, dl.Y)] == false)
 						return false;
 
 					return true;
@@ -745,7 +745,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		IEnumerable<IntPoint> GetVisibleLocationsSimpleFOV()
+		IEnumerable<IntPoint2> GetVisibleLocationsSimpleFOV()
 		{
 			var bounds2D = this.Environment.Bounds.Plane;
 
@@ -753,7 +753,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int x = this.X - this.VisionRange; x <= this.X + this.VisionRange; ++x)
 				{
-					IntPoint loc = new IntPoint(x, y);
+					IntPoint2 loc = new IntPoint2(x, y);
 					if (!bounds2D.Contains(loc))
 						continue;
 
@@ -762,14 +762,14 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		IEnumerable<IntPoint> GetVisibleLocationsLOS()
+		IEnumerable<IntPoint2> GetVisibleLocationsLOS()
 		{
 			return this.VisionMap.GetIndexValueEnumerable().
 					Where(kvp => kvp.Value == true).
-					Select(kvp => kvp.Key + new IntVector(this.X, this.Y));
+					Select(kvp => kvp.Key + new IntVector2(this.X, this.Y));
 		}
 
-		public IEnumerable<IntPoint> GetVisibleLocations()
+		public IEnumerable<IntPoint2> GetVisibleLocations()
 		{
 			switch (World.LivingVisionMode)
 			{

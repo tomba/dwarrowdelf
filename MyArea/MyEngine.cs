@@ -38,10 +38,10 @@ namespace MyArea
 
 			for (int i = 0; i < NUM_DWARVES; ++i)
 			{
-				IntPoint3D p;
+				IntPoint3 p;
 				do
 				{
-					p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), 9);
+					p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), 9);
 				} while (!EnvironmentHelpers.CanEnter(env, p));
 
 				var l = CreateDwarf(i);

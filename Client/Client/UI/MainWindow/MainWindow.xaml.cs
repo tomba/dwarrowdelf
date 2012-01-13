@@ -448,7 +448,7 @@ for p in area.Range():
 			}
 		}
 
-		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3D loc)
+		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
 		{
 			EnvironmentObject env = dst as EnvironmentObject;
 

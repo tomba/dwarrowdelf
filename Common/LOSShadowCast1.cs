@@ -7,21 +7,21 @@ namespace Dwarrowdelf
 {
 	public interface ILOSAlgo
 	{
-		void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate);
+		void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate);
 	}
 
 	public sealed class LOSNull : ILOSAlgo
 	{
-		public void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
+		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate)
 		{
 			for (int y = -visionRange; y <= visionRange; ++y)
 			{
 				for (int x = -visionRange; x <= visionRange; ++x)
 				{
-					var l = new IntPoint(x, y);
-					if (mapBounds.Contains(l + (IntVector)viewerLocation))
+					var l = new IntPoint2(x, y);
+					if (mapBounds.Contains(l + (IntVector2)viewerLocation))
 						visibilityMap[l] = true;
 					else
 						visibilityMap[l] = true;
@@ -59,8 +59,8 @@ namespace Dwarrowdelf
 		static bool s_tested;
 		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
-		public void Calculate(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap, 
-			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate)
+		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, 
+			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate)
 		{
 			if (s_tested == false)
 			{
@@ -81,8 +81,8 @@ namespace Dwarrowdelf
 				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
 		}
 
-		void CalculateLOS(IntPoint viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint, bool> blockerDelegate, int octant)
+		void CalculateLOS(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
+			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate, int octant)
 		{
 			// Cell (0,0) is assumed to be lit and visible in all cases.
 			m_cells[0].Initialize();
@@ -93,8 +93,8 @@ namespace Dwarrowdelf
 			{
 				for (int y = 0; y <= x; y++)
 				{
-					IntPoint translatedLocation = OctantTranslate(new IntPoint(x, y), octant);
-					IntPoint mapLocation = translatedLocation + (IntVector)viewerLocation;
+					IntPoint2 translatedLocation = OctantTranslate(new IntPoint2(x, y), octant);
+					IntPoint2 mapLocation = translatedLocation + (IntVector2)viewerLocation;
 
 					LOSCell cell = m_cells[y];
 					LOSCell cellS = null;
@@ -266,7 +266,7 @@ namespace Dwarrowdelf
 						visibilityMap[translatedLocation] = false;
 
 					// this makes the LOS area round
-					if (new IntVector(x, y).Length > visionRange)
+					if (new IntVector2(x, y).Length > visionRange)
 					{
 						// I'm sure this could be integrated better in the code above.
 						// perhaps this could even be in the beginning of the loop
@@ -301,12 +301,12 @@ namespace Dwarrowdelf
 		static readonly int[] yxcomp = { 0, 1, 1, 0, 0, -1, -1, 0 };
 		static readonly int[] yycomp = { 1, 0, 0, 1, -1, 0, 0, -1 };
 
-		static IntPoint OctantTranslate(IntPoint l, int octant)
+		static IntPoint2 OctantTranslate(IntPoint2 l, int octant)
 		{
 			int tx = l.X * xxcomp[octant] + l.Y * xycomp[octant];
 			int ty = l.X * yxcomp[octant] + l.Y * yycomp[octant];
 
-			return new IntPoint(tx, ty);
+			return new IntPoint2(tx, ty);
 		}
 
 		static void Test()
@@ -334,12 +334,12 @@ namespace Dwarrowdelf
 							};
 
 			Grid2D<bool> vis = new Grid2D<bool>(w, w, w/2, w/2);
-			IntPoint loc = new IntPoint(w/2, w/2);
+			IntPoint2 loc = new IntPoint2(w/2, w/2);
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 
 			los.Calculate(loc, 3, vis, bounds, l => blocks[l.Y, l.X] != 0);
-			vis.Origin = new IntVector(0, 0);
+			vis.Origin = new IntVector2(0, 0);
 			for (int y = 0; y < w; ++y)
 			{
 				for (int x = 0; x < w; ++x)
@@ -375,7 +375,7 @@ namespace Dwarrowdelf
 			}
 
 			Grid2D<bool> vis = new Grid2D<bool>(w, w, w / 2, w / 2);
-			IntPoint loc = new IntPoint(w / 2, w / 2);
+			IntPoint2 loc = new IntPoint2(w / 2, w / 2);
 			IntRect bounds = new IntRect(0, 0, w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 

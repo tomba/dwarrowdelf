@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	public struct IntVector : IEquatable<IntVector>
+	public struct IntVector2 : IEquatable<IntVector2>
 	{
 		readonly int m_x;
 		readonly int m_y;
@@ -15,13 +15,13 @@ namespace Dwarrowdelf
 		public int X { get { return m_x; } }
 		public int Y { get { return m_y; } }
 
-		public IntVector(int x, int y)
+		public IntVector2(int x, int y)
 		{
 			m_x = x;
 			m_y = y;
 		}
 
-		public IntVector(Direction dir)
+		public IntVector2(Direction dir)
 		{
 			m_x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
 			m_y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
@@ -40,9 +40,9 @@ namespace Dwarrowdelf
 			}
 		}
 
-		#region IEquatable<IntVector> Members
+		#region IEquatable<IntVector2> Members
 
-		public bool Equals(IntVector other)
+		public bool Equals(IntVector2 other)
 		{
 			return ((other.X == this.X) && (other.Y == this.Y));
 		}
@@ -51,10 +51,10 @@ namespace Dwarrowdelf
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntVector))
+			if (!(obj is IntVector2))
 				return false;
 
-			IntVector l = (IntVector)obj;
+			IntVector2 l = (IntVector2)obj;
 			return ((l.X == this.X) && (l.Y == this.Y));
 		}
 
@@ -68,42 +68,42 @@ namespace Dwarrowdelf
 			get { return Math.Abs(this.X) + Math.Abs(this.Y); }
 		}
 
-		public IntVector Normalize()
+		public IntVector2 Normalize()
 		{
 			double len = this.Length;
 			var x = (int)Math.Round(this.X / len);
 			var y = (int)Math.Round(this.Y / len);
-			return new IntVector(x, y);
+			return new IntVector2(x, y);
 		}
 
-		public static bool operator ==(IntVector left, IntVector right)
+		public static bool operator ==(IntVector2 left, IntVector2 right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y));
 		}
 
-		public static bool operator !=(IntVector left, IntVector right)
+		public static bool operator !=(IntVector2 left, IntVector2 right)
 		{
 			return !(left == right);
 		}
 
-		public static IntVector operator +(IntVector left, IntVector right)
+		public static IntVector2 operator +(IntVector2 left, IntVector2 right)
 		{
-			return new IntVector(left.X + right.X, left.Y + right.Y);
+			return new IntVector2(left.X + right.X, left.Y + right.Y);
 		}
 
-		public static IntVector operator -(IntVector left, IntVector right)
+		public static IntVector2 operator -(IntVector2 left, IntVector2 right)
 		{
-			return new IntVector(left.X - right.X, left.Y - right.Y);
+			return new IntVector2(left.X - right.X, left.Y - right.Y);
 		}
 
-		public static IntVector operator *(IntVector left, int number)
+		public static IntVector2 operator *(IntVector2 left, int number)
 		{
-			return new IntVector(left.X * number, left.Y * number);
+			return new IntVector2(left.X * number, left.Y * number);
 		}
 
-		public static IntVector operator /(IntVector left, int number)
+		public static IntVector2 operator /(IntVector2 left, int number)
 		{
-			return new IntVector(left.X / number, left.Y / number);
+			return new IntVector2(left.X / number, left.Y / number);
 		}
 
 		public override int GetHashCode()
@@ -117,19 +117,19 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1}", this.X, this.Y);
 		}
 
-		public static explicit operator IntVector(IntPoint point)
+		public static explicit operator IntVector2(IntPoint2 point)
 		{
-			return new IntVector(point.X, point.Y);
+			return new IntVector2(point.X, point.Y);
 		}
 
-		public static explicit operator IntSize(IntVector vector)
+		public static explicit operator IntSize(IntVector2 vector)
 		{
 			return new IntSize(vector.X, vector.Y);
 		}
 
 		public Direction ToDirection()
 		{
-			IntVector v = this.Normalize();
+			IntVector2 v = this.Normalize();
 
 			Direction dir = 0;
 
@@ -146,7 +146,7 @@ namespace Dwarrowdelf
 			return dir;
 		}
 
-		public static IntVector FromDirection(Direction dir)
+		public static IntVector2 FromDirection(Direction dir)
 		{
 			int x, y;
 
@@ -158,15 +158,15 @@ namespace Dwarrowdelf
 			if (y == DirectionConsts.DirNeg)
 				y = -1;
 
-			return new IntVector(x, y);
+			return new IntVector2(x, y);
 		}
 
-		public IntVector Reverse()
+		public IntVector2 Reverse()
 		{
-			return new IntVector(-this.X, -this.Y);
+			return new IntVector2(-this.X, -this.Y);
 		}
 
-		public IntVector Rotate(int angle)
+		public IntVector2 Rotate(int angle)
 		{
 			double rad = Math.PI * angle / 180.0;
 			double x = Math.Cos(rad) * this.X - Math.Sin(rad) * this.Y;
@@ -175,14 +175,14 @@ namespace Dwarrowdelf
 			var ix = (int)Math.Round(x);
 			var iy = (int)Math.Round(y);
 
-			return new IntVector(ix, iy);
+			return new IntVector2(ix, iy);
 		}
 
 		/// <summary>
 		/// Return 8 IntVectors pointing to main directions on X-Y plane, each rotated 45 degrees
 		/// </summary>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllXYDirections()
+		public static IEnumerable<IntVector2> GetAllXYDirections()
 		{
 			return GetAllXYDirections(Direction.North);
 		}
@@ -192,7 +192,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		/// <param name="startDir">Start direction</param>
 		/// <returns></returns>
-		public static IEnumerable<IntVector> GetAllXYDirections(Direction startDir)
+		public static IEnumerable<IntVector2> GetAllXYDirections(Direction startDir)
 		{
 			var v = FromDirection(startDir);
 			for (int i = 0; i < 8; ++i)
@@ -242,7 +242,7 @@ namespace Dwarrowdelf
 		/// Rotate unit vector in 45 degree steps
 		/// </summary>
 		/// <param name="rotate">Rotation units, in 45 degree steps</param>
-		public IntVector FastRotate(int rotate)
+		public IntVector2 FastRotate(int rotate)
 		{
 			int x = FastMul(FastCos(rotate), this.X) - FastMul(FastSin(rotate), this.Y);
 			int y = FastMul(FastSin(rotate), this.X) + FastMul(FastCos(rotate), this.Y);
@@ -250,7 +250,7 @@ namespace Dwarrowdelf
 			var ix = x > 1 ? 1 : (x < -1 ? -1 : x);
 			var iy = y > 1 ? 1 : (y < -1 ? -1 : y);
 
-			return new IntVector(ix, iy);
+			return new IntVector2(ix, iy);
 		}
 
 		public static Direction RotateDir(Direction dir, int rotate)
@@ -264,7 +264,7 @@ namespace Dwarrowdelf
 			if (y == DirectionConsts.DirNeg)
 				y = -1;
 
-			IntVector v = new IntVector(x, y);
+			IntVector2 v = new IntVector2(x, y);
 			v = v.FastRotate(rotate);
 			return v.ToDirection();
 		}

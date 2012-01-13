@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Client
 				GameData.Data.Jobs.Add(m_destructJob);
 		}
 
-		public bool Contains(IntPoint3D point)
+		public bool Contains(IntPoint3 point)
 		{
 			return this.Area.Contains(point);
 		}
@@ -454,7 +454,7 @@ namespace Dwarrowdelf.Client
 		{
 			ItemObject ob = null;
 
-			Func<IntPoint3D, bool> func = delegate(IntPoint3D l)
+			Func<IntPoint3, bool> func = delegate(IntPoint3 l)
 			{
 				ob = this.Environment.GetContents(l)
 					.OfType<ItemObject>()

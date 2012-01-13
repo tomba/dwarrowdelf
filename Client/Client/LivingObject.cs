@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 		static object m_visionMapLock = new object();
 
 		uint m_losMapVersion;
-		IntPoint3D m_losLocation;
+		IntPoint3 m_losLocation;
 		Grid2D<bool> m_visionMap;
 
 		Dwarrowdelf.AI.IAI m_ai;
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Client
 			Deserialize(data);
 
 			var item = new ItemObject();
-			item.MoveTo(this, new IntPoint3D());
+			item.MoveTo(this, new IntPoint3());
 		}
 
 		public LivingObject(World world, ObjectID objectID)
@@ -335,7 +335,7 @@ namespace Dwarrowdelf.Client
 
 				s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
 					m_visionMap, env.Bounds.Plane,
-					l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3D(l, z)));
+					l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
 				m_losMapVersion = this.Environment.Version;
 				m_losLocation = this.Location;

@@ -335,9 +335,9 @@ namespace Dwarrowdelf.Server
 		}
 
 		Random m_random = new Random();
-		IntPoint3D GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
+		IntPoint3 GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
 		{
-			IntPoint3D p;
+			IntPoint3 p;
 			int iter = 0;
 
 			do
@@ -345,7 +345,7 @@ namespace Dwarrowdelf.Server
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
+				p = new IntPoint3(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
 			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
@@ -587,7 +587,7 @@ namespace Dwarrowdelf.Server
 		/// <summary>
 		/// Does the player see location p in object ob
 		/// </summary>
-		public bool Sees(BaseObject ob, IntPoint3D p)
+		public bool Sees(BaseObject ob, IntPoint3 p)
 		{
 			if (m_seeAll)
 				return true;

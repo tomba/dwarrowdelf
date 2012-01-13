@@ -14,6 +14,6 @@ namespace Dwarrowdelf.Server
 
 	public interface IVisionTracker
 	{
-		bool Sees(IntPoint3D p);
+		bool Sees(IntPoint3 p);
 	}
 }

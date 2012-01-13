@@ -12,15 +12,15 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public sealed class MoveAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
-		readonly IntPoint3D m_dest;
+		readonly IntPoint3 m_dest;
 
-		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D destination, DirectionSet positioning)
+		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 destination, DirectionSet positioning)
 			: base(parent, environment, positioning)
 		{
 			m_dest = destination;
 		}
 
-		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D destination, DirectionSet positioning,
+		public MoveAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 destination, DirectionSet positioning,
 			IItemObject hauledItem)
 			: base(parent, environment, positioning, hauledItem)
 		{
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override Queue<Direction> GetPath(ILivingObject worker)
 		{
-			IntPoint3D finalPos;
+			IntPoint3 finalPos;
 			var path = AStar.AStarFinder.Find(m_environment, worker.Location, m_dest, this.Positioning, out finalPos);
 
 			if (path == null)

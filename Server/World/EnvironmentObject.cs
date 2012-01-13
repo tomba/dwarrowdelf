@@ -36,13 +36,13 @@ namespace Dwarrowdelf.Server
 		public int Depth { get; private set; }
 
 		[SaveGameProperty]
-		public IntPoint3D HomeLocation { get; set; }
+		public IntPoint3 HomeLocation { get; set; }
 
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
 		HashSet<AreaObject> m_largeObjectSet;
-		HashSet<IntPoint3D> m_waterTiles = new HashSet<IntPoint3D>();
+		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
 
-		public event Action<IntPoint3D, TileData, TileData> TerrainOrInteriorChanged;
+		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
 
 		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Server
 			base.Destruct();
 		}
 
-		void MapChanged(IntPoint3D l, TileData tileData)
+		void MapChanged(IntPoint3 l, TileData tileData)
 		{
 			this.World.AddChange(new MapChange(this, l, tileData));
 		}
@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Server
 			get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); }
 		}
 
-		public bool Contains(IntPoint3D p)
+		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
@@ -141,12 +141,12 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		bool CanWaterFlow(IntPoint3D from, IntPoint3D to)
+		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
 		{
 			if (!this.Contains(to))
 				return false;
 
-			IntVector3D v = to - from;
+			IntVector3 v = to - from;
 
 			Debug.Assert(v.IsNormal);
 
@@ -172,7 +172,7 @@ namespace Dwarrowdelf.Server
 			throw new Exception();
 		}
 
-		void HandleWaterAt(IntPoint3D p, Dictionary<IntPoint3D, int> waterChangeMap)
+		void HandleWaterAt(IntPoint3 p, Dictionary<IntPoint3, int> waterChangeMap)
 		{
 			int curLevel;
 
@@ -260,8 +260,8 @@ namespace Dwarrowdelf.Server
 
 		void HandleWater()
 		{
-			IntPoint3D[] waterTiles = m_waterTiles.ToArray();
-			Dictionary<IntPoint3D, int> waterChangeMap = new Dictionary<IntPoint3D, int>();
+			IntPoint3[] waterTiles = m_waterTiles.ToArray();
+			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
 
 			foreach (var p in waterTiles)
 			{
@@ -294,62 +294,62 @@ namespace Dwarrowdelf.Server
 			HandleWater();
 		}
 
-		public TerrainID GetTerrainID(IntPoint3D l)
+		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3D l)
+		public MaterialID GetTerrainMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainMaterialID(l);
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D l)
+		public InteriorID GetInteriorID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorID(l);
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		public MaterialID GetInteriorMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3D l)
+		public TerrainInfo GetTerrain(IntPoint3 l)
 		{
 			return Terrains.GetTerrain(GetTerrainID(l));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3D l)
+		public InteriorInfo GetInterior(IntPoint3 l)
 		{
 			return Interiors.GetInterior(GetInteriorID(l));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
-		public TileData GetTileData(IntPoint3D l)
+		public TileData GetTileData(IntPoint3 l)
 		{
 			return m_tileGrid.GetTileData(l);
 		}
 
-		public byte GetWaterLevel(IntPoint3D l)
+		public byte GetWaterLevel(IntPoint3 l)
 		{
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetTileFlags(IntPoint3D l, TileFlags flags)
+		public bool GetTileFlags(IntPoint3 l, TileFlags flags)
 		{
 			return (m_tileGrid.GetFlags(l) & flags) != 0;
 		}
 
-		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
+		public void SetTerrain(IntPoint3 p, TerrainID terrainID, MaterialID materialID)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -368,7 +368,7 @@ namespace Dwarrowdelf.Server
 				this.TerrainOrInteriorChanged(p, oldData, data);
 		}
 
-		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		public void SetInterior(IntPoint3 p, InteriorID interiorID, MaterialID materialID)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -387,7 +387,7 @@ namespace Dwarrowdelf.Server
 				this.TerrainOrInteriorChanged(p, oldData, data);
 		}
 
-		public void SetTileData(IntPoint3D p, TileData data)
+		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -409,7 +409,7 @@ namespace Dwarrowdelf.Server
 				m_waterTiles.Remove(p);
 		}
 
-		public void SetWaterLevel(IntPoint3D l, byte waterLevel)
+		public void SetWaterLevel(IntPoint3 l, byte waterLevel)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -428,7 +428,7 @@ namespace Dwarrowdelf.Server
 				m_waterTiles.Remove(l);
 		}
 
-		public void SetTileFlags(IntPoint3D l, TileFlags flags, bool value)
+		public void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
@@ -452,20 +452,20 @@ namespace Dwarrowdelf.Server
 			return obs.Where(o => rect.Contains(o.Location));
 		}
 
-		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3D l)
+		IEnumerable<IMovableObject> IEnvironmentObject.GetContents(IntPoint3 l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
-		public IEnumerable<MovableObject> GetContents(IntPoint3D l)
+		public IEnumerable<MovableObject> GetContents(IntPoint3 l)
 		{
 			var list = m_contentArray[l.Z];
 			return list.Where(o => o.Location == l);
 		}
 
 
-		public override bool OkToAddChild(MovableObject ob, IntPoint3D p)
+		public override bool OkToAddChild(MovableObject ob, IntPoint3 p)
 		{
 			Debug.Assert(this.World.IsWritable);
 
@@ -493,12 +493,12 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3D dstLoc)
+		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3 dstLoc)
 		{
 			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
 		}
 
-		protected override void OnChildMoved(MovableObject child, IntPoint3D srcLoc, IntPoint3D dstLoc)
+		protected override void OnChildMoved(MovableObject child, IntPoint3 srcLoc, IntPoint3 dstLoc)
 		{
 			if (srcLoc.Z == dstLoc.Z)
 				return;
@@ -513,7 +513,7 @@ namespace Dwarrowdelf.Server
 		}
 
 
-		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3D p)
+		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3 p)
 		{
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
@@ -536,12 +536,12 @@ namespace Dwarrowdelf.Server
 			m_largeObjectSet.Remove(ob);
 		}
 
-		public AreaObject GetLargeObjectAt(IntPoint3D p)
+		public AreaObject GetLargeObjectAt(IntPoint3 p)
 		{
 			return m_largeObjectSet.SingleOrDefault(b => b.Contains(p));
 		}
 
-		public T GetLargeObjectAt<T>(IntPoint3D p) where T : AreaObject
+		public T GetLargeObjectAt<T>(IntPoint3 p) where T : AreaObject
 		{
 			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
 		}
@@ -618,7 +618,7 @@ namespace Dwarrowdelf.Server
 					foreach (var p2d in plane.Range())
 					{
 						int idx = plane.GetIndex(p2d);
-						var p = new IntPoint3D(p2d, z);
+						var p = new IntPoint3(p2d, z);
 						if (!visionTracker.Sees(p))
 							arr[idx] = new TileData();
 						else
@@ -643,7 +643,7 @@ namespace Dwarrowdelf.Server
 					{
 						for (int x = bounds.X1; x < bounds.X2; ++x)
 						{
-							IntPoint3D p = new IntPoint3D(x, y, z);
+							IntPoint3 p = new IntPoint3(x, y, z);
 							if (!visionTracker.Sees(p))
 								arr[x] = new TileData();
 							else
@@ -664,22 +664,22 @@ namespace Dwarrowdelf.Server
 			return String.Format("Environment({0})", this.ObjectID);
 		}
 
-		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
+		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3 p)
 		{
 			return 0;
 		}
 
-		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
+		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3 p)
 		{
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		bool AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		bool AStar.IAStarEnvironment.CanEnter(IntPoint3 p)
 		{
 			return EnvironmentHelpers.CanEnter(this, p);
 		}
 
-		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3D, AStar.AStarNode> nodes)
+		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3, AStar.AStarNode> nodes)
 		{
 		}
 
@@ -780,90 +780,90 @@ namespace Dwarrowdelf.Server
 			m_grid = new TileData[size.Depth, size.Height, size.Width];
 		}
 
-		public TileData GetTileData(IntPoint3D p)
+		public TileData GetTileData(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
-		public TerrainID GetTerrainID(IntPoint3D p)
+		public TerrainID GetTerrainID(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3D p)
+		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D p)
+		public InteriorID GetInteriorID(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D p)
+		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public byte GetWaterLevel(IntPoint3D p)
+		public byte GetWaterLevel(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public TileFlags GetFlags(IntPoint3D p)
+		public TileFlags GetFlags(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X].Flags;
 		}
 
 
-		public void SetTileData(IntPoint3D p, TileData data)
+		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			m_grid[p.Z, p.Y, p.X] = data;
 		}
 
-		public void SetTerrain(IntPoint3D p, TerrainID id, MaterialID matID)
+		public void SetTerrain(IntPoint3 p, TerrainID id, MaterialID matID)
 		{
 			m_grid[p.Z, p.Y, p.X].TerrainID = id;
 			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = matID;
 		}
 
-		public void SetTerrainID(IntPoint3D p, TerrainID id)
+		public void SetTerrainID(IntPoint3 p, TerrainID id)
 		{
 			m_grid[p.Z, p.Y, p.X].TerrainID = id;
 		}
 
-		public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
+		public void SetTerrainMaterialID(IntPoint3 p, MaterialID id)
 		{
 			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
 		}
 
-		public void SetInterior(IntPoint3D p, InteriorID id, MaterialID matID)
+		public void SetInterior(IntPoint3 p, InteriorID id, MaterialID matID)
 		{
 			m_grid[p.Z, p.Y, p.X].InteriorID = id;
 			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
 		}
 
-		public void SetInteriorID(IntPoint3D p, InteriorID id)
+		public void SetInteriorID(IntPoint3 p, InteriorID id)
 		{
 			m_grid[p.Z, p.Y, p.X].InteriorID = id;
 		}
 
-		public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
+		public void SetInteriorMaterialID(IntPoint3 p, MaterialID id)
 		{
 			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
 		}
 
-		public void SetWaterLevel(IntPoint3D p, byte waterLevel)
+		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
 		{
 			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 		}
 
-		public void SetFlags(IntPoint3D p, TileFlags flags)
+		public void SetFlags(IntPoint3 p, TileFlags flags)
 		{
 			m_grid[p.Z, p.Y, p.X].Flags |= flags;
 		}
 
-		public void ClearFlags(IntPoint3D p, TileFlags flags)
+		public void ClearFlags(IntPoint3 p, TileFlags flags)
 		{
 			m_grid[p.Z, p.Y, p.X].Flags &= ~flags;
 		}
@@ -895,82 +895,82 @@ namespace Dwarrowdelf.Server
 			return EnvironmentObject.Create(world, this);
 		}
 
-		public bool Contains(IntPoint3D p)
+		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
 
-		public TerrainID GetTerrainID(IntPoint3D l)
+		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3D l)
+		public MaterialID GetTerrainMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainMaterialID(l);
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D l)
+		public InteriorID GetInteriorID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorID(l);
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D l)
+		public MaterialID GetInteriorMaterialID(IntPoint3 l)
 		{
 			return m_tileGrid.GetInteriorMaterialID(l);
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3D l)
+		public TerrainInfo GetTerrain(IntPoint3 l)
 		{
 			return Terrains.GetTerrain(GetTerrainID(l));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3D l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3D l)
+		public InteriorInfo GetInterior(IntPoint3 l)
 		{
 			return Interiors.GetInterior(GetInteriorID(l));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3D l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3 l)
 		{
 			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
-		public TileData GetTileData(IntPoint3D l)
+		public TileData GetTileData(IntPoint3 l)
 		{
 			return m_tileGrid.GetTileData(l);
 		}
 
-		public byte GetWaterLevel(IntPoint3D l)
+		public byte GetWaterLevel(IntPoint3 l)
 		{
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetTileFlag(IntPoint3D l, TileFlags flag)
+		public bool GetTileFlag(IntPoint3 l, TileFlags flag)
 		{
 			return (m_tileGrid.GetFlags(l) & flag) != 0;
 		}
 
-		public void SetTerrain(IntPoint3D p, TerrainID terrainID, MaterialID materialID)
+		public void SetTerrain(IntPoint3 p, TerrainID terrainID, MaterialID materialID)
 		{
 			m_tileGrid.SetTerrain(p, terrainID, materialID);
 		}
 
-		public void SetInterior(IntPoint3D p, InteriorID interiorID, MaterialID materialID)
+		public void SetInterior(IntPoint3 p, InteriorID interiorID, MaterialID materialID)
 		{
 			m_tileGrid.SetInterior(p, interiorID, materialID);
 		}
 
-		public void SetTileData(IntPoint3D p, TileData data)
+		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			m_tileGrid.SetTileData(p, data);
 		}
 
-		public void SetTileFlags(IntPoint3D l, TileFlags flags, bool value)
+		public void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
 		{
 			if (value)
 				m_tileGrid.SetFlags(l, flags);

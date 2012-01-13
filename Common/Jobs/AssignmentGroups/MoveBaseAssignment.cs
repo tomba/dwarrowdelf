@@ -14,11 +14,11 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		public IEnvironmentObject Environment { get; private set; }
 		[SaveGameProperty]
-		public IntPoint3D Location { get; private set; }
+		public IntPoint3 Location { get; private set; }
 		[SaveGameProperty("State")]
 		int m_state;
 
-		protected MoveBaseAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3D location)
+		protected MoveBaseAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 location)
 			: base(parent)
 		{
 			this.Environment = environment;

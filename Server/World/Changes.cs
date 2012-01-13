@@ -92,10 +92,10 @@ namespace Dwarrowdelf.Server
 
 	public sealed class MapChange : EnvironmentChange
 	{
-		public IntPoint3D Location { get; private set; }
+		public IntPoint3 Location { get; private set; }
 		public TileData TileData { get; private set; }
 
-		public MapChange(EnvironmentObject map, IntPoint3D l, TileData tileData)
+		public MapChange(EnvironmentObject map, IntPoint3 l, TileData tileData)
 			: base(map)
 		{
 			this.Location = l;
@@ -221,13 +221,13 @@ namespace Dwarrowdelf.Server
 	public sealed class ObjectMoveChange : ObjectChange
 	{
 		public ContainerObject Source { get; private set; }
-		public IntPoint3D SourceLocation { get; private set; }
+		public IntPoint3 SourceLocation { get; private set; }
 
 		public ContainerObject Destination { get; private set; }
-		public IntPoint3D DestinationLocation { get; private set; }
+		public IntPoint3 DestinationLocation { get; private set; }
 
-		public ObjectMoveChange(MovableObject mover, ContainerObject sourceEnv, IntPoint3D sourceLocation,
-			ContainerObject destinationEnv, IntPoint3D destinationLocation)
+		public ObjectMoveChange(MovableObject mover, ContainerObject sourceEnv, IntPoint3 sourceLocation,
+			ContainerObject destinationEnv, IntPoint3 destinationLocation)
 			: base(mover)
 		{
 			this.Source = sourceEnv;
@@ -251,10 +251,10 @@ namespace Dwarrowdelf.Server
 
 	public sealed class ObjectMoveLocationChange : ObjectChange
 	{
-		public IntPoint3D SourceLocation { get; private set; }
-		public IntPoint3D DestinationLocation { get; private set; }
+		public IntPoint3 SourceLocation { get; private set; }
+		public IntPoint3 DestinationLocation { get; private set; }
 
-		public ObjectMoveLocationChange(MovableObject mover, IntPoint3D sourceLocation, IntPoint3D destinationLocation)
+		public ObjectMoveLocationChange(MovableObject mover, IntPoint3 sourceLocation, IntPoint3 destinationLocation)
 			: base(mover)
 		{
 			this.SourceLocation = sourceLocation;

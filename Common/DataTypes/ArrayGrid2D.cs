@@ -29,7 +29,7 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public T this[IntPoint l]
+		public T this[IntPoint2 l]
 		{
 			get { return m_grid[l.Y, l.X]; }
 			set { m_grid[l.Y, l.X] = value; }
@@ -62,13 +62,13 @@ namespace Dwarrowdelf
 			Array.Clear(m_grid, 0, m_grid.Length);
 		}
 
-		public IEnumerable<KeyValuePair<IntPoint, T>> GetIndexValueEnumerable()
+		public IEnumerable<KeyValuePair<IntPoint2, T>> GetIndexValueEnumerable()
 		{
 			for (int y = 0; y < this.Height; y++)
 			{
 				for (int x = 0; x < this.Width; x++)
 				{
-					yield return new KeyValuePair<IntPoint, T>(new IntPoint(x, y), m_grid[y, x]);
+					yield return new KeyValuePair<IntPoint2, T>(new IntPoint2(x, y), m_grid[y, x]);
 				}
 			}
 		}

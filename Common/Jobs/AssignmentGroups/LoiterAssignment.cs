@@ -17,19 +17,19 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		int m_state;
 
 		[SaveGameProperty]
-		IntPoint3D[] m_corners;
+		IntPoint3[] m_corners;
 
 		public LoiterAssignment(IJobObserver parent, IEnvironmentObject environment)
 			: base(parent)
 		{
 			m_environment = environment;
 
-			m_corners = new IntPoint3D[4];
+			m_corners = new IntPoint3[4];
 
-			m_corners[0] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(-10, -10, 0));
-			m_corners[1] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, -10, 0));
-			m_corners[2] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(10, 10, 0));
-			m_corners[3] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3D(-10, 10, 0));
+			m_corners[0] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3(-10, -10, 0));
+			m_corners[1] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3(10, -10, 0));
+			m_corners[2] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3(10, 10, 0));
+			m_corners[3] = FindCorner(m_environment, m_environment.HomeLocation, new IntVector3(-10, 10, 0));
 
 			m_state = 0;
 		}
@@ -39,9 +39,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
-		static IntPoint3D FindCorner(IEnvironmentObject env, IntPoint3D hl, IntVector3D v)
+		static IntPoint3 FindCorner(IEnvironmentObject env, IntPoint3 hl, IntVector3 v)
 		{
-			IntPoint3D p = hl + v;
+			IntPoint3 p = hl + v;
 
 			int steps = Math.Max(Math.Abs(v.X), Math.Abs(v.Y));
 
@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				x -= xd;
 				y -= yd;
 
-				p = new IntPoint3D((int)x, (int)y, p.Z);
+				p = new IntPoint3((int)x, (int)y, p.Z);
 			}
 
 			throw new Exception();

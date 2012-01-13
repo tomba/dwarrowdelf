@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Dwarrowdelf.Client
 {
-	delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3D loc);
+	delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc);
 
 	[SaveGameObjectByRef(ClientObject = true)]
 	abstract class MovableObject : ContainerObject, IMovableObject
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client
 
 		public override void Destruct()
 		{
-			MoveTo(null, new IntPoint3D());
+			MoveTo(null, new IntPoint3());
 
 			base.Destruct();
 		}
@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Client
 			MoveTo(env, data.Location);
 		}
 
-		public void MoveTo(ContainerObject dst, IntPoint3D dstLoc)
+		public void MoveTo(ContainerObject dst, IntPoint3 dstLoc)
 		{
 			var src = this.Parent;
 			var srcLoc = this.Location;
@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Client
 					ObjectMoved(this, this.Parent, this.Location);
 		}
 
-		public void MoveTo(IntPoint3D location)
+		public void MoveTo(IntPoint3 location)
 		{
 			var oldLocation = this.Location;
 
@@ -108,8 +108,8 @@ namespace Dwarrowdelf.Client
 
 		IContainerObject IMovableObject.Parent { get { return this.Parent; } }
 
-		IntPoint3D m_location;
-		public IntPoint3D Location
+		IntPoint3 m_location;
+		public IntPoint3 Location
 		{
 			get { return m_location; }
 			private set { m_location = value; Notify("Location"); }

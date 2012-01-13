@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 			m_environment.World.JobManager.AddJobSource(this);
 		}
 
-		public void AddInstallJob(ItemObject item, IntPoint3D location)
+		public void AddInstallJob(ItemObject item, IntPoint3 location)
 		{
 			var data = new InstallJobData()
 			{
@@ -137,7 +137,7 @@ namespace Dwarrowdelf.Client
 		{
 			public InstallMode Mode;
 			public ItemObject Item;
-			public IntPoint3D Location;
+			public IntPoint3 Location;
 			public IJob Job;
 		}
 	}

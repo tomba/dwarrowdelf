@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client.UI
 
 			m_renderView.RenderData.SetSize(gridSize);
 
-			m_renderView.CenterPos = new IntPoint3D((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
+			m_renderView.CenterPos = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
 		}
 
 		void OnAboutToRender()
@@ -173,10 +173,10 @@ namespace Dwarrowdelf.Client.UI
 			return r;
 		}
 
-		public IntPoint3D ScreenPointToMapLocation(Point p)
+		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
 			var ml = ScreenPointToMapTile(p);
-			return new IntPoint3D((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
+			return new IntPoint3((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
 		}
 
 		public int Z
@@ -195,7 +195,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = mc.CenterPos;
 
-			mc.m_renderView.CenterPos = new IntPoint3D((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
+			mc.m_renderView.CenterPos = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), val);
 
 			mc.InvalidateTileData();
 
@@ -204,7 +204,7 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 
-		void MapChangedCallback(IntPoint3D l)
+		void MapChangedCallback(IntPoint3 l)
 		{
 			if (!m_renderView.Contains(l))
 				return;
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileData();
 		}
 
-		void MapObjectChangedCallback(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changetype)
+		void MapObjectChangedCallback(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changetype)
 		{
 			if (!m_renderView.Contains(l))
 				return;

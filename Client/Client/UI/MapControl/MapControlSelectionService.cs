@@ -175,7 +175,7 @@ namespace Dwarrowdelf.Client.UI
 			else if (pos.Y < limit)
 				dy = speed;
 
-			var v = new IntVector(dx, dy);
+			var v = new IntVector2(dx, dy);
 
 			m_mapControl.ScrollToDirection(v);
 
@@ -210,14 +210,14 @@ namespace Dwarrowdelf.Client.UI
 
 		void UpdateSelection(Point mousePos)
 		{
-			IntPoint3D start;
+			IntPoint3 start;
 
 			var end = m_mapControl.MapControl.ScreenPointToMapLocation(mousePos);
 
 			switch (m_selectionMode)
 			{
 				case MapSelectionMode.Rectangle:
-					start = new IntPoint3D(this.Selection.SelectionStart.ToIntPoint(), end.Z);
+					start = new IntPoint3(this.Selection.SelectionStart.ToIntPoint(), end.Z);
 					break;
 
 				case MapSelectionMode.Cuboid:
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client.UI
 
 	struct MapSelection
 	{
-		public MapSelection(IntPoint3D start, IntPoint3D end)
+		public MapSelection(IntPoint3 start, IntPoint3 end)
 			: this()
 		{
 			this.SelectionStart = start;
@@ -279,16 +279,16 @@ namespace Dwarrowdelf.Client.UI
 			else
 			{
 				this.SelectionStart = cuboid.Corner1;
-				this.SelectionEnd = cuboid.Corner2 - new IntVector3D(1, 1, 1);
+				this.SelectionEnd = cuboid.Corner2 - new IntVector3(1, 1, 1);
 				this.IsSelectionValid = true;
 			}
 		}
 
 		public bool IsSelectionValid { get; set; }
-		public IntPoint3D SelectionStart { get; set; }
-		public IntPoint3D SelectionEnd { get; set; }
+		public IntPoint3 SelectionStart { get; set; }
+		public IntPoint3 SelectionEnd { get; set; }
 
-		public IntPoint3D SelectionPoint
+		public IntPoint3 SelectionPoint
 		{
 			get
 			{

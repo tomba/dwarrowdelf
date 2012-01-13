@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 		EnvironmentObject m_environment;
 		IntRectZ m_area;
 
-		Dictionary<IntPoint3D, IJob> m_map;
+		Dictionary<IntPoint3, IJob> m_map;
 
 		public CleanAreaJob(IJobObserver parent, EnvironmentObject env, IntRectZ area)
 			: base(parent)
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client
 			m_environment = env;
 			m_area = area;
 
-			m_map = new Dictionary<IntPoint3D, IJob>();
+			m_map = new Dictionary<IntPoint3, IJob>();
 
 			foreach (var p in m_area.Range())
 				m_map[p] = null;

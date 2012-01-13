@@ -10,17 +10,17 @@ namespace Dwarrowdelf.Client
 	{
 		EnvironmentObject m_env;
 
-		SortedDictionary<IntPoint3D, List<ItemObject>> m_heap;
+		SortedDictionary<IntPoint3, List<ItemObject>> m_heap;
 
 		Func<ItemObject, bool> m_filter;
 
 		public bool IsEnabled { get; private set; }
 
-		public ItemObjectView(EnvironmentObject env, IntPoint3D center, Func<ItemObject, bool> filter)
+		public ItemObjectView(EnvironmentObject env, IntPoint3 center, Func<ItemObject, bool> filter)
 		{
 			m_env = env;
 			m_filter = filter;
-			m_heap = new SortedDictionary<IntPoint3D, List<ItemObject>>(new LocationComparer(center));
+			m_heap = new SortedDictionary<IntPoint3, List<ItemObject>>(new LocationComparer(center));
 		}
 
 		public void Enable()
@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Client
 			Add(item);
 		}
 
-		void RemoveIfExists(ItemObject item, IntPoint3D pos)
+		void RemoveIfExists(ItemObject item, IntPoint3 pos)
 		{
 			List<ItemObject> l;
 
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Client
 				m_heap.Remove(pos);
 		}
 
-		void Remove(ItemObject item, IntPoint3D pos)
+		void Remove(ItemObject item, IntPoint3 pos)
 		{
 			List<ItemObject> l = m_heap[pos];
 			var ok = l.Remove(item);
@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client
 			l.Add(item);
 		}
 
-		void Environment_ObjectMoved(MovableObject obj, IntPoint3D oldPos)
+		void Environment_ObjectMoved(MovableObject obj, IntPoint3 oldPos)
 		{
 			var item = obj as ItemObject;
 
@@ -178,18 +178,18 @@ namespace Dwarrowdelf.Client
 			return m_heap.SelectMany(kvp => kvp.Value);
 		}
 
-		class LocationComparer : IComparer<IntPoint3D>
+		class LocationComparer : IComparer<IntPoint3>
 		{
-			IntPoint3D m_center;
+			IntPoint3 m_center;
 
-			public LocationComparer(IntPoint3D center)
+			public LocationComparer(IntPoint3 center)
 			{
 				m_center = center;
 			}
 
 			#region IComparer<Obu> Members
 
-			public int Compare(IntPoint3D x, IntPoint3D y)
+			public int Compare(IntPoint3 x, IntPoint3 y)
 			{
 				var d1 = x - m_center;
 				var d2 = y - m_center;

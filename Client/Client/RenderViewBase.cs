@@ -11,8 +11,8 @@ namespace Dwarrowdelf.Client
 {
 	interface IRenderView
 	{
-		IntPoint3D CenterPos { get; set; }
-		bool Contains(IntPoint3D ml);
+		IntPoint3 CenterPos { get; set; }
+		bool Contains(IntPoint3 ml);
 		bool ShowVirtualSymbols { get; set; }
 		EnvironmentObject Environment { get; set; }
 		IRenderData RenderData { get; }
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client
 
 		protected bool m_showVirtualSymbols = true;
 		protected EnvironmentObject m_environment;
-		protected IntPoint3D m_centerPos;
+		protected IntPoint3 m_centerPos;
 		IntCuboid m_bounds;
 
 		protected bool m_invalid;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client
 
 		public abstract void Resolve();
 
-		public IntPoint3D CenterPos
+		public IntPoint3 CenterPos
 		{
 			get { return m_centerPos; }
 			set
@@ -66,12 +66,12 @@ namespace Dwarrowdelf.Client
 
 				var cp = CenterPos;
 				var s = m_renderData.Size;
-				m_bounds = new IntCuboid(new IntPoint3D(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3D(s, MAXLEVEL));
 			}
 		}
 
-		public bool Contains(IntPoint3D ml)
+		public bool Contains(IntPoint3 ml)
 		{
 			return m_bounds.Contains(ml);
 		}
@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
-		void ScrollTiles(IntVector scrollVector)
+		void ScrollTiles(IntVector2 scrollVector)
 		{
 			//Debug.WriteLine("RenderView.ScrollTiles");
 
@@ -160,19 +160,19 @@ namespace Dwarrowdelf.Client
 			Array.Clear(grid, yClrIdx * columns, columns * ay);
 		}
 
-		void MapChangedCallback(IntPoint3D ml)
+		void MapChangedCallback(IntPoint3 ml)
 		{
 			MapChangedOverride(ml);
 		}
 
-		void MapObjectChangedCallback(MovableObject ob, IntPoint3D ml, MapTileObjectChangeType changeType)
+		void MapObjectChangedCallback(MovableObject ob, IntPoint3 ml, MapTileObjectChangeType changeType)
 		{
 			MapChangedOverride(ml);
 		}
 
-		protected abstract void MapChangedOverride(IntPoint3D ml);
+		protected abstract void MapChangedOverride(IntPoint3 ml);
 
-		protected static bool TileVisible(IntPoint3D ml, EnvironmentObject env)
+		protected static bool TileVisible(IntPoint3 ml, EnvironmentObject env)
 		{
 			switch (env.VisibilityMode)
 			{
@@ -194,7 +194,7 @@ namespace Dwarrowdelf.Client
 								if (l.Environment != env || l.Location.Z != ml.Z)
 									continue;
 
-								IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
+								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange &&
 									l.VisionMap[vp] == true)
@@ -209,7 +209,7 @@ namespace Dwarrowdelf.Client
 								if (l.Environment != env || l.Location.Z != ml.Z)
 									continue;
 
-								IntPoint vp = new IntPoint(ml.X - l.Location.X, ml.Y - l.Location.Y);
+								IntPoint2 vp = new IntPoint2(ml.X - l.Location.X, ml.Y - l.Location.Y);
 
 								if (Math.Abs(vp.X) <= l.VisionRange && Math.Abs(vp.Y) <= l.VisionRange)
 									return true;

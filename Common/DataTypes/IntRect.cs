@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 			m_height = height;
 		}
 
-		public IntRect(IntPoint point1, IntPoint point2)
+		public IntRect(IntPoint2 point1, IntPoint2 point2)
 		{
 			m_x = Math.Min(point1.X, point2.X);
 			m_y = Math.Min(point1.Y, point2.Y);
@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 			m_height = Math.Max((Math.Max(point1.Y, point2.Y) - m_y), 0);
 		}
 
-		public IntRect(IntPoint point, IntSize size)
+		public IntRect(IntPoint2 point, IntSize size)
 			: this(point.X, point.Y, size.Width, size.Height)
 		{
 		}
@@ -46,19 +46,19 @@ namespace Dwarrowdelf
 		public int Y1 { get { return Y; } }
 		public int Y2 { get { return Y + Height; } }
 
-		public IntPoint X1Y1
+		public IntPoint2 X1Y1
 		{
-			get { return new IntPoint(this.X, this.Y); }
+			get { return new IntPoint2(this.X, this.Y); }
 		}
 
-		public IntPoint X2Y2
+		public IntPoint2 X2Y2
 		{
-			get { return new IntPoint(this.X + this.Width, this.Y + this.Height); }
+			get { return new IntPoint2(this.X + this.Width, this.Y + this.Height); }
 		}
 
-		public IntPoint Center
+		public IntPoint2 Center
 		{
-			get { return new IntPoint((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2); }
+			get { return new IntPoint2((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2); }
 		}
 
 		public int Area
@@ -99,7 +99,7 @@ namespace Dwarrowdelf
 			return Equals((IntRect)obj);
 		}
 
-		public int GetIndex(IntPoint p)
+		public int GetIndex(IntPoint2 p)
 		{
 			return p.X + p.Y * this.Width;
 		}
@@ -124,7 +124,7 @@ namespace Dwarrowdelf
 			return new IntRect(this.X, this.Y, this.Width + width, this.Height + height);
 		}
 
-		public bool Contains(IntPoint l)
+		public bool Contains(IntPoint2 l)
 		{
 			if (l.X < this.X || l.Y < this.Y || l.X >= this.X + this.Width || l.Y >= this.Y + this.Height)
 				return false;
@@ -142,26 +142,26 @@ namespace Dwarrowdelf
 			return rect.X1 <= this.X2 && rect.X2 >= this.X1 && rect.Y1 <= this.Y2 && rect.Y2 >= this.Y1;
 		}
 
-		public IEnumerable<IntPoint> Range()
+		public IEnumerable<IntPoint2> Range()
 		{
 			for (int y = this.Y; y < this.Y + this.Height; ++y)
 				for (int x = this.X; x < this.X + this.Width; ++x)
-					yield return new IntPoint(x, y);
+					yield return new IntPoint2(x, y);
 		}
 
-		public IEnumerable<IntPoint> Perimeter()
+		public IEnumerable<IntPoint2> Perimeter()
 		{
 			for (int x = this.X1; x < this.X2; ++x)
-				yield return new IntPoint(x, this.Y1);
+				yield return new IntPoint2(x, this.Y1);
 
 			for (int y = this.Y1 + 1; y < this.Y2 - 1; ++y)
-				yield return new IntPoint(this.X2 - 1, y);
+				yield return new IntPoint2(this.X2 - 1, y);
 
 			for (int x = this.X2 - 1; x >= this.X1; --x)
-				yield return new IntPoint(x, this.Y2 - 1);
+				yield return new IntPoint2(x, this.Y2 - 1);
 
 			for (int y = this.Y2 - 2; y > this.Y1; --y)
-				yield return new IntPoint(this.X1, y);
+				yield return new IntPoint2(this.X1, y);
 		}
 
 		public override int GetHashCode()

@@ -15,11 +15,11 @@ namespace Dwarrowdelf.AStar
 
 	public sealed class AStarResult
 	{
-		public IDictionary<IntPoint3D, AStarNode> Nodes { get; private set; }
+		public IDictionary<IntPoint3, AStarNode> Nodes { get; private set; }
 		public AStarNode LastNode { get; private set; }
 		public AStarStatus Status { get; private set; }
 
-		internal AStarResult(IDictionary<IntPoint3D, AStarNode> nodes, AStarNode lastNode, AStarStatus status)
+		internal AStarResult(IDictionary<IntPoint3, AStarNode> nodes, AStarNode lastNode, AStarStatus status)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();

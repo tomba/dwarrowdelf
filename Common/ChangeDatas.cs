@@ -48,7 +48,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class MapChangeData : EnvironmentChangeData
 	{
-		public IntPoint3D Location;
+		public IntPoint3 Location;
 		public TileData TileData;
 	}
 
@@ -102,17 +102,17 @@ namespace Dwarrowdelf
 	public sealed class ObjectMoveChangeData : ObjectChangeData
 	{
 		public ObjectID SourceID;
-		public IntPoint3D SourceLocation;
+		public IntPoint3 SourceLocation;
 
 		public ObjectID DestinationID;
-		public IntPoint3D DestinationLocation;
+		public IntPoint3 DestinationLocation;
 	}
 
 	[Serializable]
 	public sealed class ObjectMoveLocationChangeData : ObjectChangeData
 	{
-		public IntPoint3D SourceLocation;
-		public IntPoint3D DestinationLocation;
+		public IntPoint3 SourceLocation;
+		public IntPoint3 DestinationLocation;
 	}
 
 

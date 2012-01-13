@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Client
 		}
 		*/
 
-		protected override void MapChangedOverride(IntPoint3D ml)
+		protected override void MapChangedOverride(IntPoint3 ml)
 		{
 			// Note: invalidates the rendertile regardless of ml.Z
 			// invalidate only if the change is within resolve limits (MAXLEVEL?)
@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Client
 			var x = ml.X - m_centerPos.X + m_renderData.Width / 2;
 			var y = ml.Y - m_centerPos.Y + m_renderData.Height / 2;
 
-			if (m_renderData.Contains(new IntPoint(x, y)))
+			if (m_renderData.Contains(new IntPoint2(x, y)))
 				m_renderData.Grid[y, x].IsValid = false;
 		}
 
@@ -85,12 +85,12 @@ namespace Dwarrowdelf.Client
 			{
 				for (int x = 0; x < columns; ++x)
 				{
-					var p = new IntPoint(x, y);
+					var p = new IntPoint2(x, y);
 
 					if (m_renderData.Grid[y, x].IsValid)
 						continue;
 
-					var ml = new IntPoint3D(offsetX + x, offsetY + (rows - y - 1), offsetZ);
+					var ml = new IntPoint3(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
 					ResolveDetailed(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3D ml, bool showVirtualSymbols, bool isSeeAll)
+		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml, bool showVirtualSymbols, bool isSeeAll)
 		{
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client
 			{
 				bool seeThrough;
 
-				var p = new IntPoint3D(ml.X, ml.Y, z);
+				var p = new IntPoint3(ml.X, ml.Y, z);
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
@@ -167,7 +167,7 @@ namespace Dwarrowdelf.Client
 				tile.TerrainDarknessLevel = tile.InteriorDarknessLevel;
 		}
 
-		static void GetTerrainTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetTerrainTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			seeThrough = false;
 
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetInteriorTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
 			var intID = env.GetInteriorID(ml);
 			var intID2 = env.GetInteriorID(ml + Direction.Down);
@@ -334,7 +334,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetObjectTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetObjectTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
 			var ob = (ConcreteObject)env.GetFirstObject(ml);
 
@@ -346,7 +346,7 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.None;
 		}
 
-		static void GetTopTile(IntPoint3D ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
 		{
 			SymbolID id;
 
@@ -396,7 +396,7 @@ namespace Dwarrowdelf.Client
 			tile.SymbolID = id;
 		}
 
-		public static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3D p)
+		public static SymbolID GetDesignationSymbolAt(Designation designation, IntPoint3 p)
 		{
 			var dt = designation.ContainsPoint(p);
 

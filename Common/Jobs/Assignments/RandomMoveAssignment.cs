@@ -57,13 +57,13 @@ namespace Dwarrowdelf.Jobs.Assignments
 			}
 			else if (i < 75)
 			{
-				var v = new IntVector3D(dir);
+				var v = new IntVector3(dir);
 				v = v.FastRotate(random.Next() % 2 == 0 ? 1 : -1);
 				dir = v.ToDirection();
 			}
 			else
 			{
-				var v = new IntVector3D(dir);
+				var v = new IntVector3(dir);
 				v = v.FastRotate(random.Next() % 2 == 0 ? 2 : -2);
 				dir = v.ToDirection();
 			}

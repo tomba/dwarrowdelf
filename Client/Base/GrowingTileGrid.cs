@@ -55,24 +55,24 @@ namespace Dwarrowdelf.Client
 				return x & ~0xf;
 		}
 
-		bool Adjust(ref IntPoint3D p)
+		bool Adjust(ref IntPoint3 p)
 		{
 			if (!m_bounds.Contains(p))
 				return false;
 
-			p += new IntVector3D(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
+			p += new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
 			return true;
 		}
 
-		void Grow(ref IntPoint3D p)
+		void Grow(ref IntPoint3 p)
 		{
 			if (!m_bounds.Contains(p))
 				DoGrow(p);
 
-			p += new IntVector3D(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
+			p += new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
 		}
 
-		void DoGrow(IntPoint3D p)
+		void DoGrow(IntPoint3 p)
 		{
 			int nx, ny, nz;
 			int nw, nh, nd;
@@ -125,8 +125,8 @@ namespace Dwarrowdelf.Client
 				nz = m_bounds.Z1;
 			}
 
-			var oldOrigin = new IntVector3D(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
-			var newOrigin = new IntVector3D(-nx, -ny, -nz);
+			var oldOrigin = new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
+			var newOrigin = new IntVector3(-nx, -ny, -nz);
 			var newGrid = new TileData[nd, nh, nw];
 
 			/* XXX Array.Copy will probably give better speed */
@@ -144,39 +144,39 @@ namespace Dwarrowdelf.Client
 			Debug.Print("GrowingTileGrid.SetBounds({0})", m_bounds);
 		}
 
-		public void SetTileData(IntPoint3D p, TileData data)
+		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X] = data;
 		}
 
-		public TileData GetTileData(IntPoint3D p)
+		public TileData GetTileData(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return new TileData();
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
-		public void SetInteriorID(IntPoint3D p, InteriorID id)
+		public void SetInteriorID(IntPoint3 p, InteriorID id)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].InteriorID = id;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3D p)
+		public InteriorID GetInteriorID(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return InteriorID.Undefined;
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public void SetTerrainID(IntPoint3D p, TerrainID id)
+		public void SetTerrainID(IntPoint3 p, TerrainID id)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].TerrainID = id;
 		}
 
-		public TerrainID GetTerrainID(IntPoint3D p)
+		public TerrainID GetTerrainID(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return TerrainID.Undefined;
@@ -184,52 +184,52 @@ namespace Dwarrowdelf.Client
 		}
 
 
-		public void SetInteriorMaterialID(IntPoint3D p, MaterialID id)
+		public void SetInteriorMaterialID(IntPoint3 p, MaterialID id)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3D p)
+		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return MaterialID.Undefined;
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public void SetTerrainMaterialID(IntPoint3D p, MaterialID id)
+		public void SetTerrainMaterialID(IntPoint3 p, MaterialID id)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3D p)
+		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return MaterialID.Undefined;
 			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public void SetWaterLevel(IntPoint3D p, byte waterLevel)
+		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 		}
 
-		public byte GetWaterLevel(IntPoint3D p)
+		public byte GetWaterLevel(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return 0;
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public void SetFlags(IntPoint3D p, TileFlags flags)
+		public void SetFlags(IntPoint3 p, TileFlags flags)
 		{
 			Grow(ref p);
 			m_grid[p.Z, p.Y, p.X].Flags = flags;
 		}
 
-		public TileFlags GetFlags(IntPoint3D p)
+		public TileFlags GetFlags(IntPoint3 p)
 		{
 			if (!Adjust(ref p))
 				return TileFlags.None;

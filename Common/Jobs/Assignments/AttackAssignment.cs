@@ -17,9 +17,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 		[SaveGameProperty]
 		Queue<Direction> m_pathDirs;
 		[SaveGameProperty]
-		IntPoint3D m_supposedLocation;
+		IntPoint3 m_supposedLocation;
 		[SaveGameProperty]
-		IntPoint3D m_dest;
+		IntPoint3 m_dest;
 
 		public AttackAssignment(IJobObserver parent, ILivingObject target)
 			: base(parent)
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				if (m_pathDirs.Count == 0)
 					m_pathDirs = null;
 
-				m_supposedLocation += new IntVector3D(dir);
+				m_supposedLocation += new IntVector3(dir);
 
 				var action = new MoveAction(dir);
 				progress = JobStatus.Ok;
@@ -122,7 +122,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return JobStatus.Done;
 			}
 
-			IntPoint3D finalPos;
+			IntPoint3 finalPos;
 			var path = AStar.AStarFinder.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar, out finalPos);
 
 			if (path == null)

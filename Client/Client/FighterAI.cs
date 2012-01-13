@@ -17,19 +17,19 @@ namespace Dwarrowdelf.Client
 		ILivingObject m_target;
 
 		[SaveGameProperty]
-		List<IntPoint3D> m_patrolRoute;
+		List<IntPoint3> m_patrolRoute;
 
 		public FighterAI(ILivingObject worker)
 			: base(worker)
 		{
 			this.OnDuty = true;
-			m_patrolRoute = new List<IntPoint3D>();
+			m_patrolRoute = new List<IntPoint3>();
 
 			// XXX
-			m_patrolRoute.Add(new IntPoint3D(2, 2, 2));
-			m_patrolRoute.Add(new IntPoint3D(50, 2, 2));
-			m_patrolRoute.Add(new IntPoint3D(50, 50, 2));
-			m_patrolRoute.Add(new IntPoint3D(2, 50, 2));
+			m_patrolRoute.Add(new IntPoint3(2, 2, 2));
+			m_patrolRoute.Add(new IntPoint3(50, 2, 2));
+			m_patrolRoute.Add(new IntPoint3(50, 50, 2));
+			m_patrolRoute.Add(new IntPoint3(2, 50, 2));
 		}
 
 		FighterAI(SaveGameContext ctx)
@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Client
 
 				foreach (var p2d in range)
 				{
-					var p = new IntPoint3D(p2d, center.Z);
+					var p = new IntPoint3(p2d, center.Z);
 
 					if (!env.Contains(p))
 						continue;

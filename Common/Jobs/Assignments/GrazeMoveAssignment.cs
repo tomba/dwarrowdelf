@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return new WaitAction(r.Next(4) + 1);
 			}
 
-			var moveVector = new IntVector3D(r.Next(-moveStrength, moveStrength + 1), r.Next(-moveStrength, moveStrength + 1), 0);
+			var moveVector = new IntVector3(r.Next(-moveStrength, moveStrength + 1), r.Next(-moveStrength, moveStrength + 1), 0);
 
 			var v = centerVector + moveVector;
 

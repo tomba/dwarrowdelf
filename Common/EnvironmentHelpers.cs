@@ -12,7 +12,7 @@ namespace Dwarrowdelf
 		/// Return all possible move directions.
 		/// XXX Some room for optimization...
 		/// </summary>
-		public static IEnumerable<Direction> GetDirectionsFrom(IEnvironmentObject env, IntPoint3D p)
+		public static IEnumerable<Direction> GetDirectionsFrom(IEnvironmentObject env, IntPoint3 p)
 		{
 			foreach (var dir in DirectionExtensions.PlanarUpDownDirections)
 			{
@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move from srcLoc to dir
 		/// </summary>
-		public static bool CanMoveFromTo(IEnvironmentObject env, IntPoint3D srcLoc, Direction dir)
+		public static bool CanMoveFromTo(IEnvironmentObject env, IntPoint3 srcLoc, Direction dir)
 		{
 			var dstLoc = srcLoc + dir;
 			return CanMoveFrom(env, srcLoc, dir) && CanMoveTo(env, dstLoc, dir);
@@ -45,7 +45,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move from srcLoc to dir, without considering the destination
 		/// </summary>
-		public static bool CanMoveFrom(IEnvironmentObject env, IntPoint3D srcLoc, Direction dir)
+		public static bool CanMoveFrom(IEnvironmentObject env, IntPoint3 srcLoc, Direction dir)
 		{
 			var td = env.GetTileData(srcLoc);
 
@@ -90,7 +90,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Determine if a living can move to dir to dstLoc, without considering the source
 		/// </summary>
-		public static bool CanMoveTo(IEnvironmentObject env, IntPoint3D dstLoc, Direction dir)
+		public static bool CanMoveTo(IEnvironmentObject env, IntPoint3 dstLoc, Direction dir)
 		{
 			if (!env.Contains(dstLoc))
 				return false;
@@ -138,7 +138,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Tile can be entered and stood upon
 		/// </summary>
-		public static bool CanEnter(IEnvironmentObject env, IntPoint3D location)
+		public static bool CanEnter(IEnvironmentObject env, IntPoint3 location)
 		{
 			if (!env.Contains(location))
 				return false;
@@ -158,7 +158,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Can the tiles around the given tile be seen
 		/// </summary>
-		public static bool CanSeeThrough(IEnvironmentObject env, IntPoint3D location)
+		public static bool CanSeeThrough(IEnvironmentObject env, IntPoint3 location)
 		{
 			if (!env.Contains(location))
 				return false;
@@ -177,7 +177,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Can the tile below the given tile be seen
 		/// </summary>
-		public static bool CanSeeThroughDown(IEnvironmentObject env, IntPoint3D location)
+		public static bool CanSeeThroughDown(IEnvironmentObject env, IntPoint3 location)
 		{
 			if (!env.Contains(location))
 				return false;
@@ -196,7 +196,7 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Can the given tile be seen from any direction
 		/// </summary>
-		public static bool CanBeSeen(IEnvironmentObject env, IntPoint3D location)
+		public static bool CanBeSeen(IEnvironmentObject env, IntPoint3 location)
 		{
 			bool hidden = DirectionExtensions.PlanarDirections
 				.Select(d => location + d)
@@ -212,7 +212,7 @@ namespace Dwarrowdelf
 		/// For PlanarUpDown directions, return Direction.None if the direction cannot be entered,
 		/// or the direction, adjusted by slopes (i.e. or'ed with Up or Down)
 		/// </summary>
-		public static Direction AdjustMoveDir(IEnvironmentObject env, IntPoint3D location, Direction dir)
+		public static Direction AdjustMoveDir(IEnvironmentObject env, IntPoint3 location, Direction dir)
 		{
 			Debug.Assert(dir != Direction.None);
 			Debug.Assert(dir.IsPlanarUpDown());

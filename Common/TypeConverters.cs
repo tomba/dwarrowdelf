@@ -21,10 +21,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntPoint) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntPoint2) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntPoint)value;
+			var rect = (IntPoint2)value;
 			return rect.ToString();
 		}
 
@@ -38,7 +38,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntPoint.Parse(source);
+			return IntPoint2.Parse(source);
 		}
 	}
 
@@ -56,10 +56,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntPoint3D) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntPoint3) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var p = (IntPoint3D)value;
+			var p = (IntPoint3)value;
 			return p.ToString();
 		}
 
@@ -73,7 +73,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntPoint3D.Parse(source);
+			return IntPoint3.Parse(source);
 		}
 	}
 

@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client
 
 		protected virtual void ChildAdded(MovableObject child) { }
 		protected virtual void ChildRemoved(MovableObject child) { }
-		protected virtual void ChildMoved(MovableObject child, IntPoint3D from, IntPoint3D to) { }
+		protected virtual void ChildMoved(MovableObject child, IntPoint3 from, IntPoint3 to) { }
 
 		public void AddChild(MovableObject ob)
 		{
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 			ChildRemoved(ob);
 		}
 
-		public void MoveChild(MovableObject ob, IntPoint3D from, IntPoint3D to)
+		public void MoveChild(MovableObject ob, IntPoint3 from, IntPoint3 to)
 		{
 			ChildMoved(ob, from, to);
 		}

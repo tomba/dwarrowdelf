@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnMapTerrainChanged(IntPoint3D l)
+		void OnMapTerrainChanged(IntPoint3 l)
 		{
 			if (!m_cuboid.Contains(l))
 				return;
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Client.UI
 			NotifyTileTerrainChanges();
 		}
 
-		void OnMapObjectChanged(MovableObject ob, IntPoint3D l, MapTileObjectChangeType changeType)
+		void OnMapObjectChanged(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changeType)
 		{
 			if (!m_cuboid.Contains(l))
 				return;

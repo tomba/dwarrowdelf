@@ -60,16 +60,16 @@ namespace Dwarrowdelf.Server
 			OnChildAdded(ob);
 		}
 
-		internal void MoveChild(MovableObject ob, IntPoint3D srcLoc, IntPoint3D dstLoc)
+		internal void MoveChild(MovableObject ob, IntPoint3 srcLoc, IntPoint3 dstLoc)
 		{
 			OnChildMoved(ob, srcLoc, dstLoc);
 		}
 
-		public virtual bool OkToAddChild(MovableObject ob, IntPoint3D dstLoc) { return true; }
-		public virtual bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3D dstLoc) { return true; }
+		public virtual bool OkToAddChild(MovableObject ob, IntPoint3 dstLoc) { return true; }
+		public virtual bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3 dstLoc) { return true; }
 
 		protected virtual void OnChildAdded(MovableObject child) { }
 		protected virtual void OnChildRemoved(MovableObject child) { }
-		protected virtual void OnChildMoved(MovableObject child, IntPoint3D srcLoc, IntPoint3D dstLoc) { }
+		protected virtual void OnChildMoved(MovableObject child, IntPoint3 srcLoc, IntPoint3 dstLoc) { }
 	}
 }

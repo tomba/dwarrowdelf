@@ -12,7 +12,7 @@ namespace Dwarrowdelf.AI
 			return FindNearestEnemy(living.Environment, living.Location, living.VisionRange, categories);
 		}
 
-		public static ILivingObject FindNearestEnemy(IEnvironmentObject env, IntPoint3D location, int range, LivingCategory categories)
+		public static ILivingObject FindNearestEnemy(IEnvironmentObject env, IntPoint3 location, int range, LivingCategory categories)
 		{
 			int maxSide = 2 * range + 1;
 
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.AI
 			return FindEnemies(living.Environment, living.Location, living.VisionRange, categories);
 		}
 
-		public static IEnumerable<ILivingObject> FindEnemies(IEnvironmentObject env, IntPoint3D location, int range, LivingCategory categories)
+		public static IEnumerable<ILivingObject> FindEnemies(IEnvironmentObject env, IntPoint3 location, int range, LivingCategory categories)
 		{
 			int maxSide = 2 * range + 1;
 

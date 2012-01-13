@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.UI
 		const double MINTILESIZE = 2;
 
 		double? m_targetTileSize;
-		IntVector m_scrollVector;
+		IntVector2 m_scrollVector;
 
 		MapControlToolTipService m_toolTipService;
 		MapControlSelectionService m_selectionService;
@@ -114,17 +114,17 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 		public Point MousePos { get; private set; }
-		public IntPoint ScreenLocation { get; private set; }
+		public IntPoint2 ScreenLocation { get; private set; }
 
 		void UpdateHoverTileInfo()
 		{
 			Point p;
-			IntPoint sl;
+			IntPoint2 sl;
 
 			if (!m_mapControl.IsMouseOver)
 			{
 				p = new Point();
-				sl = new IntPoint();
+				sl = new IntPoint2();
 
 				this.HoverTileView.ClearTarget();
 			}
@@ -240,7 +240,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
-			var v = IntVector.FromDirection(dir);
+			var v = IntVector2.FromDirection(dir);
 
 			if (fast)
 				v *= 4;
@@ -446,7 +446,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public void ScrollTo(EnvironmentObject env, IntPoint3D p)
+		public void ScrollTo(EnvironmentObject env, IntPoint3 p)
 		{
 			this.Environment = env;
 			this.Z = p.Z;
@@ -476,12 +476,12 @@ namespace Dwarrowdelf.Client.UI
 			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		public void ScrollToDirection(IntVector vector)
+		public void ScrollToDirection(IntVector2 vector)
 		{
 			if (vector == m_scrollVector)
 				return;
 
-			if (vector == new IntVector())
+			if (vector == new IntVector2())
 			{
 				StopScrollToDir();
 			}
@@ -502,7 +502,7 @@ namespace Dwarrowdelf.Client.UI
 			var anim = new PointAnimation(cp, new Duration(TimeSpan.FromMilliseconds(1000)), FillBehavior.HoldEnd);
 			anim.Completed += (o, args) =>
 			{
-				if (m_scrollVector != new IntVector())
+				if (m_scrollVector != new IntVector2())
 					BeginScrollToDir();
 			};
 			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
@@ -510,9 +510,9 @@ namespace Dwarrowdelf.Client.UI
 
 		void StopScrollToDir()
 		{
-			if (m_scrollVector != new IntVector())
+			if (m_scrollVector != new IntVector2())
 			{
-				m_scrollVector = new IntVector();
+				m_scrollVector = new IntVector2();
 				var cp = this.CenterPos;
 				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
 				this.CenterPos = cp;

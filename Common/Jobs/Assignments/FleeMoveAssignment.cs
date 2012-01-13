@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		GameAction DoMove(Direction dir)
 		{
-			IntVector ov = new IntVector(dir);
+			IntVector2 ov = new IntVector2(dir);
 
 			if (ov.IsNull)
 				return new WaitAction(1);

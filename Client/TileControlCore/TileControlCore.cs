@@ -405,10 +405,10 @@ namespace Dwarrowdelf.Client.TileControl
 			return ScreenTileToScreenPoint(st);
 		}
 
-		public IntPoint ScreenPointToIntScreenTile(Point p)
+		public IntPoint2 ScreenPointToIntScreenTile(Point p)
 		{
 			p -= new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return new IntPoint((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
+			return new IntPoint2((int)Math.Round(p.X / this.TileSize - 0.5), (int)Math.Round(p.Y / this.TileSize - 0.5));
 		}
 	}
 }

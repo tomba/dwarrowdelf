@@ -28,9 +28,9 @@ namespace MyArea
 			FinalizeEnv(m_environment, surfaceLevel);
 		}
 
-		IntPoint3D GetRandomSurfaceLocation(Environment env, int zLevel)
+		IntPoint3 GetRandomSurfaceLocation(Environment env, int zLevel)
 		{
-			IntPoint3D p;
+			IntPoint3 p;
 			int iter = 0;
 
 			do
@@ -38,15 +38,15 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), zLevel);
+				p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), zLevel);
 			} while (!EnvironmentHelpers.CanEnter(env, p));
 
 			return p;
 		}
 
-		IntPoint3D GetRandomSubterraneanLocation(EnvironmentObjectBuilder env)
+		IntPoint3 GetRandomSubterraneanLocation(EnvironmentObjectBuilder env)
 		{
-			IntPoint3D p;
+			IntPoint3 p;
 			int iter = 0;
 
 			do
@@ -54,7 +54,7 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3D(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), Helpers.GetRandomInt(env.Depth));
+				p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), Helpers.GetRandomInt(env.Depth));
 			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
 
 			return p;
@@ -73,7 +73,7 @@ namespace MyArea
 
 			// integer heightmap. the number tells the z level where the floor is.
 			var intHeightMap = new ArrayGrid2D<int>(size, size);
-			foreach (var p in IntPoint.Range(size, size))
+			foreach (var p in IntPoint2.Range(size, size))
 				intHeightMap[p] = (int)Math.Truncate(doubleHeightMap[p]); // XXX perhaps Round is better
 
 			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
@@ -98,17 +98,17 @@ namespace MyArea
 
 			for (int i = 0; i < 200; ++i)
 			{
-				var p = new IntPoint3D(i, i, surfaceLevel);
+				var p = new IntPoint3(i, i, surfaceLevel);
 				if (!EnvironmentHelpers.CanEnter(env, p))
 					continue;
 
 				for (i = i + 5; i < 200; ++i)
 				{
-					p = new IntPoint3D(i, i, surfaceLevel);
+					p = new IntPoint3(i, i, surfaceLevel);
 					if (!EnvironmentHelpers.CanEnter(env, p))
 						continue;
 
-					env.HomeLocation = new IntPoint3D(i, i, surfaceLevel);
+					env.HomeLocation = new IntPoint3(i, i, surfaceLevel);
 
 					break;
 				}
@@ -116,7 +116,7 @@ namespace MyArea
 				break;
 			}
 
-			if (env.HomeLocation == new IntPoint3D())
+			if (env.HomeLocation == new IntPoint3())
 				throw new Exception();
 
 			return env;
@@ -138,7 +138,7 @@ namespace MyArea
 			CreateBuildings(env, surfaceLevel);
 
 			{
-				var p = new IntPoint3D(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
+				var p = new IntPoint3(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
 
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
@@ -158,7 +158,7 @@ namespace MyArea
 
 			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, new IntPoint3D(env.Width / 10 - 2, env.Height / 10 - 2, surfaceLevel));
+				gen.MoveTo(env, new IntPoint3(env.Width / 10 - 2, env.Height / 10 - 2, surfaceLevel));
 			}
 
 			AddMonsters(env, surfaceLevel);
@@ -167,22 +167,22 @@ namespace MyArea
 			{
 				// create a wall and a hole with door
 
-				IntPoint3D p;
+				IntPoint3 p;
 
 				for (int y = 4; y < 12; ++y)
 				{
 					int x = 17;
 
-					p = new IntPoint3D(x, y, surfaceLevel);
+					p = new IntPoint3(x, y, surfaceLevel);
 					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Undefined, MaterialID.Undefined);
 				}
 
-				p = new IntPoint3D(17, 7, surfaceLevel);
+				p = new IntPoint3(17, 7, surfaceLevel);
 				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
-				p = new IntPoint3D(17, 7, surfaceLevel);
+				p = new IntPoint3(17, 7, surfaceLevel);
 				var item = CreateItem(env, ItemID.Door, MaterialID.Birch, p);
 				item.IsInstalled = true;
 			}
@@ -249,7 +249,7 @@ namespace MyArea
 			return materials[Helpers.GetRandomInt(materials.Length)];
 		}
 
-		ItemObject CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3D p)
+		ItemObject CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3 p)
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);
@@ -318,7 +318,7 @@ namespace MyArea
 
 					for (int z = 0; z < env.Depth; ++z)
 					{
-						var p = new IntPoint3D(x, y, z);
+						var p = new IntPoint3(x, y, z);
 						var td = new TileData();
 
 						td.InteriorID = InteriorID.Empty;
@@ -355,7 +355,7 @@ namespace MyArea
 			{
 				int z = heightMap[p2d];
 
-				var p = new IntPoint3D(p2d, z);
+				var p = new IntPoint3(p2d, z);
 
 				var terrainID = env.GetTerrainID(p);
 
@@ -408,18 +408,18 @@ namespace MyArea
 
 				if (count > 0 && count < 8)
 				{
-					var p3d = new IntPoint3D(p, z);
+					var p3d = new IntPoint3(p, z);
 					env.SetTerrain(p3d, dir.ToSlope(), env.GetTerrainMaterialID(p3d));
 				}
 			});
 		}
 
-		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID)
+		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID)
 		{
 			CreateOreCluster(env, p, oreMaterialID, Helpers.GetRandomInt(6) + 1);
 		}
 
-		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3D p, MaterialID oreMaterialID, int count)
+		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID, int count)
 		{
 			if (!env.Contains(p))
 				return;
@@ -445,13 +445,13 @@ namespace MyArea
 		}
 
 
-		static void ClearTile(Environment env, IntPoint3D p)
+		static void ClearTile(Environment env, IntPoint3 p)
 		{
 			env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
-		static void ClearInside(Environment env, IntPoint3D p)
+		static void ClearInside(Environment env, IntPoint3 p)
 		{
 			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
@@ -473,7 +473,7 @@ namespace MyArea
 						(x != area.X1 && x != area.X2 - 1))
 						continue;
 
-					var p = new IntPoint3D(x, y, area.Z);
+					var p = new IntPoint3(x, y, area.Z);
 					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
 					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				}
@@ -486,7 +486,7 @@ namespace MyArea
 			{
 				for (int y = area.Y1; y < area.Y2; ++y)
 				{
-					var p = new IntPoint3D(x, y, area.Z);
+					var p = new IntPoint3(x, y, area.Z);
 					env.SetWaterLevel(p, TileData.MaxWaterLevel);
 				}
 			}
@@ -494,7 +494,7 @@ namespace MyArea
 
 		void CreateWaterTest(Environment env, int surfaceLevel)
 		{
-			var pos = new IntPoint3D(10, 30, surfaceLevel);
+			var pos = new IntPoint3(10, 30, surfaceLevel);
 
 			CreateWalls(env, new IntRectZ(pos.X, pos.Y, 3, 8, surfaceLevel));
 			CreateWater(env, new IntRectZ(pos.X + 1, pos.Y + 1, 1, 6, surfaceLevel));
@@ -502,28 +502,28 @@ namespace MyArea
 			int x = 15;
 			int y = 30;
 
-			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 0));
-			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3D(x, y, surfaceLevel - 4));
-			ClearInside(env, new IntPoint3D(x + 0, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(x + 1, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(x + 2, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(x + 3, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3D(x + 4, y, surfaceLevel - 5));
-			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 4));
-			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3D(x + 4, y, surfaceLevel - 0));
+			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 0));
+			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 4));
+			ClearInside(env, new IntPoint3(x + 0, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3(x + 1, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3(x + 2, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3(x + 3, y, surfaceLevel - 5));
+			ClearInside(env, new IntPoint3(x + 4, y, surfaceLevel - 5));
+			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 4));
+			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 3));
+			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 2));
+			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 1));
+			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 0));
 
 			env.ScanWaterTiles();
 
 			{
 				// Add a water generator
 				var item = WaterGenerator.Create(env.World);
-				item.MoveTo(env, new IntPoint3D(pos.X + 1, pos.Y + 2, surfaceLevel));
+				item.MoveTo(env, new IntPoint3(pos.X + 1, pos.Y + 2, surfaceLevel));
 			}
 		}
 	}

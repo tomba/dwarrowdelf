@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client
 		public EnvironmentObject Environment { get; private set; }
 
 		[SaveGameProperty]
-		Dictionary<IntPoint3D, DesignationData> m_map;
+		Dictionary<IntPoint3, DesignationData> m_map;
 		[SaveGameProperty]
 		bool m_checkStatus;
 
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = env;
 
-			m_map = new Dictionary<IntPoint3D, DesignationData>();
+			m_map = new Dictionary<IntPoint3, DesignationData>();
 
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
@@ -70,12 +70,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void OnEnvironmentMapTileTerrainChanged(IntPoint3D obj)
+		void OnEnvironmentMapTileTerrainChanged(IntPoint3 obj)
 		{
 			m_checkStatus = true;
 		}
 
-		public DesignationType ContainsPoint(IntPoint3D p)
+		public DesignationType ContainsPoint(IntPoint3 p)
 		{
 			DesignationData data;
 			if (m_map.TryGetValue(p, out data))
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Client
 		{
 			int origCount = m_map.Count;
 
-			IEnumerable<IntPoint3D> locations;
+			IEnumerable<IntPoint3> locations;
 
 			switch (type)
 			{
@@ -240,7 +240,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void RemoveDesignation(IntPoint3D p)
+		void RemoveDesignation(IntPoint3 p)
 		{
 			RemoveJob(p);
 
@@ -256,7 +256,7 @@ namespace Dwarrowdelf.Client
 			GameData.Data.MainWindow.MapControl.InvalidateTileData();
 		}
 
-		void RemoveJob(IntPoint3D p)
+		void RemoveJob(IntPoint3 p)
 		{
 			var job = m_map[p].Job;
 
@@ -270,12 +270,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IntPoint3D FindLocationFromJob(IJob job)
+		IntPoint3 FindLocationFromJob(IJob job)
 		{
 			return m_map.First(e => e.Value.Job == job).Key;
 		}
 
-		void CheckTile(IntPoint3D p)
+		void CheckTile(IntPoint3 p)
 		{
 			var data = m_map[p];
 
