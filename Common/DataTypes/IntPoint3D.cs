@@ -10,6 +10,8 @@ namespace Dwarrowdelf
 	[System.ComponentModel.TypeConverter(typeof(IntPoint3DConverter))]
 	public struct IntPoint3D : IEquatable<IntPoint3D>
 	{
+		// Note: this could be optimized by encoding all values into one int
+
 		readonly int m_x;
 		readonly int m_y;
 		readonly int m_z;

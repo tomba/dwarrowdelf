@@ -163,7 +163,7 @@ namespace Dwarrowdelf
 
 		public IntVector Reverse()
 		{
-			return new IntVector(-m_x, -m_y);
+			return new IntVector(-this.X, -this.Y);
 		}
 
 		public IntVector Rotate(int angle)

@@ -9,6 +9,8 @@ namespace Dwarrowdelf
 	[Serializable]
 	public struct IntVector3D : IEquatable<IntVector3D>
 	{
+		// Note: this could be optimized by encoding all values into one int
+
 		readonly int m_x;
 		readonly int m_y;
 		readonly int m_z;
@@ -156,7 +158,7 @@ namespace Dwarrowdelf
 
 		public IntVector3D Reverse()
 		{
-			return new IntVector3D(-m_x, -m_y, -m_z);
+			return new IntVector3D(-this.X, -this.Y, -this.Z);
 		}
 
 		static int FastCos(int rot)
