@@ -11,11 +11,17 @@ namespace PerfTest
 	{
 		static void Main(string[] args)
 		{
-			RunSuite(new StructAccessTestSuite());
-			//RunSuite(new SkillMapTestSuite());
+			var tests = new TestSuite[] 
+			{
+				new ArrayAccessTestSuite(),
+				//new StructAccessTestSuite(),
+				//new SkillMapTestSuite(),
+				//new LocalMethodCallTestSuite(),
+				//new RemoteMethodCallTestSuite(),
+			};
 
-		//	RunSuite(new LocalMethodCallTestSuite());
-		//	RunSuite(new RemoteMethodCallTestSuite());
+			foreach (var test in tests)
+				RunSuite(test);
 
 			//Console.WriteLine("Done. Press enter to quit.");
 			//Console.ReadLine();
