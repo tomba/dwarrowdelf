@@ -8,7 +8,7 @@ namespace Dwarrowdelf
 {
 	[Serializable]
 	[System.ComponentModel.TypeConverter(typeof(IntSize3DConverter))]
-	public struct IntSize3D : IEquatable<IntSize3D>
+	public struct IntSize3 : IEquatable<IntSize3>
 	{
 		readonly int m_width;
 		readonly int m_height;
@@ -18,14 +18,14 @@ namespace Dwarrowdelf
 		public int Height { get { return m_height; } }
 		public int Depth { get { return m_depth; } }
 
-		public IntSize3D(int width, int height, int depth)
+		public IntSize3(int width, int height, int depth)
 		{
 			m_width = width;
 			m_height = height;
 			m_depth = depth;
 		}
 
-		public IntSize3D(IntSize size, int depth)
+		public IntSize3(IntSize2 size, int depth)
 		{
 			m_width = size.Width;
 			m_height = size.Height;
@@ -37,9 +37,9 @@ namespace Dwarrowdelf
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }
 		}
 
-		#region IEquatable<IntSize3D> Members
+		#region IEquatable<IntSize3> Members
 
-		public bool Equals(IntSize3D s)
+		public bool Equals(IntSize3 s)
 		{
 			return ((s.Width == this.Width) && (s.Height == this.Height) && (s.Depth == this.Depth));
 		}
@@ -48,19 +48,19 @@ namespace Dwarrowdelf
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntSize3D))
+			if (!(obj is IntSize3))
 				return false;
 
-			IntSize3D s = (IntSize3D)obj;
+			IntSize3 s = (IntSize3)obj;
 			return ((s.Width == this.Width) && (s.Height == this.Height) && (s.Depth == this.Depth));
 		}
 
-		public static bool operator ==(IntSize3D left, IntSize3D right)
+		public static bool operator ==(IntSize3 left, IntSize3 right)
 		{
 			return ((left.Width == right.Width) && (left.Height == right.Height) && (left.Depth == right.Depth));
 		}
 
-		public static bool operator !=(IntSize3D left, IntSize3D right)
+		public static bool operator !=(IntSize3 left, IntSize3 right)
 		{
 			return !(left == right);
 		}
@@ -76,11 +76,11 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1},{2}", m_width, m_height, m_depth);
 		}
 
-		public static IntSize3D Parse(string str)
+		public static IntSize3 Parse(string str)
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			var arr = str.Split(',');
-			return new IntSize3D(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info));
+			return new IntSize3(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info));
 		}
 	}
 }

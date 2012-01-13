@@ -18,7 +18,7 @@ namespace MyArea
 
 		public void InitializeWorld(World world)
 		{
-			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(64, 64, 4), VisibilityMode.AllVisible);
+			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(64, 64, 4), VisibilityMode.AllVisible);
 
 			TileData td;
 

@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client.TileControl
 	{
 		public double TileSize;
 		public Point RenderOffset;
-		public IntSize RenderGridSize;
+		public IntSize2 RenderGridSize;
 
 		public bool TileDataInvalid;
 		public bool TileRenderInvalid;

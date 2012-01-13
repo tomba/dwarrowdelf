@@ -8,13 +8,13 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public delegate void TileLayoutChangedDelegate(IntSize gridSize, double tileSize, Point centerPos);
+	public delegate void TileLayoutChangedDelegate(IntSize2 gridSize, double tileSize, Point centerPos);
 
 	public abstract class TileControlCore : FrameworkElement, IDisposable
 	{
 		ITileRenderer m_renderer;
 
-		IntSize m_gridSize;
+		IntSize2 m_gridSize;
 		Point m_renderOffset;
 
 		Size m_oldRenderSize;
@@ -65,7 +65,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderer = renderer;
 		}
 
-		public IntSize GridSize
+		public IntSize2 GridSize
 		{
 			get { return m_gridSize; }
 		}
@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var columns = (int)Math.Ceiling(renderSize.Width / tileSize + 1) | 1;
 			var rows = (int)Math.Ceiling(renderSize.Height / tileSize + 1) | 1;
 
-			var gridSize = new IntSize(columns, rows);
+			var gridSize = new IntSize2(columns, rows);
 
 			if (gridSize != m_gridSize)
 				InvalidateTileData();

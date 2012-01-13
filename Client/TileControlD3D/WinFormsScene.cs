@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Client.TileControl
 		RenderData<RenderTileDetailed> m_renderData;
 
 		int m_tileSize = 32;
-		IntSize m_gridSize;
+		IntSize2 m_gridSize;
 
 		public WinFormsScene(IntPtr handle)
 		{
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.Client.TileControl
 				var columns = (int)Math.Ceiling((double)m_renderTarget.Description.Width / m_tileSize) | 1;
 				var rows = (int)Math.Ceiling((double)m_renderTarget.Description.Height / m_tileSize) | 1;
 
-				m_gridSize = new IntSize(columns, rows);
+				m_gridSize = new IntSize2(columns, rows);
 				m_renderData.SetSize(m_gridSize);
 			}
 		}
@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var columns = (int)Math.Ceiling((double)width / m_tileSize) | 1;
 			var rows = (int)Math.Ceiling((double)height / m_tileSize) | 1;
 
-			m_gridSize = new IntSize(columns, rows);
+			m_gridSize = new IntSize2(columns, rows);
 			m_renderData.SetSize(m_gridSize);
 		}
 

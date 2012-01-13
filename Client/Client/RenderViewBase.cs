@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Client
 				var cp = CenterPos;
 				var s = m_renderData.Size;
 				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
-					new IntSize3D(s, MAXLEVEL));
+					new IntSize3(s, MAXLEVEL));
 			}
 		}
 

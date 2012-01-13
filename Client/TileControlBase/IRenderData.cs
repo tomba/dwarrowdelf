@@ -9,10 +9,10 @@ namespace Dwarrowdelf.Client.TileControl
 	{
 		int Width { get; }
 		int Height { get; }
-		IntSize Size { get; }
+		IntSize2 Size { get; }
 
 		bool Contains(IntPoint2 p);
-		void SetSize(IntSize size);
+		void SetSize(IntSize2 size);
 		void Clear();
 	}
 }

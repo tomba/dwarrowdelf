@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.TileControl
 		Device m_device;
 		Texture2D m_renderTarget;
 		RenderTargetView m_renderTargetView;
-		IntSize m_renderTargetSize;
+		IntSize2 m_renderTargetSize;
 		RasterizerState m_rasterizerState;
 
 		InputLayout m_layout;
@@ -157,7 +157,7 @@ namespace Dwarrowdelf.Client.TileControl
 			/* Setup render target */
 
 			m_renderTarget = renderTexture;
-			m_renderTargetSize = new IntSize(renderWidth, renderHeight);
+			m_renderTargetSize = new IntSize2(renderWidth, renderHeight);
 
 			m_renderTargetView = new RenderTargetView(device, renderTexture);
 

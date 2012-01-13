@@ -744,7 +744,7 @@ namespace Dwarrowdelf.Server
 				reader.Read();
 				int d = (int)(long)reader.Value;
 
-				var grid = new TileGrid(new IntSize3D(w, h, d));
+				var grid = new TileGrid(new IntSize3(w, h, d));
 				var dstArr = grid.Grid;
 
 				for (int z = 0; z < d; ++z)
@@ -768,13 +768,13 @@ namespace Dwarrowdelf.Server
 	{
 		TileData[, ,] m_grid;
 		public TileData[, ,] Grid { get { return m_grid; } }
-		public IntSize3D Size { get; private set; }
+		public IntSize3 Size { get; private set; }
 
 		TileGrid()
 		{
 		}
 
-		public TileGrid(IntSize3D size)
+		public TileGrid(IntSize3 size)
 		{
 			this.Size = size;
 			m_grid = new TileData[size.Depth, size.Height, size.Width];
@@ -872,7 +872,7 @@ namespace Dwarrowdelf.Server
 	public sealed class EnvironmentObjectBuilder
 	{
 		TileGrid m_tileGrid;
-		IntSize3D m_size;
+		IntSize3 m_size;
 
 		public IntCuboid Bounds { get { return new IntCuboid(m_size); } }
 		public int Width { get { return m_size.Width; } }
@@ -883,7 +883,7 @@ namespace Dwarrowdelf.Server
 
 		internal TileGrid Grid { get { return m_tileGrid; } }
 
-		public EnvironmentObjectBuilder(IntSize3D size, VisibilityMode visibilityMode)
+		public EnvironmentObjectBuilder(IntSize3 size, VisibilityMode visibilityMode)
 		{
 			m_size = size;
 			m_tileGrid = new TileGrid(size);

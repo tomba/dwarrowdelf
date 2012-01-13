@@ -196,10 +196,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntSize3D) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntSize3) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntSize3D)value;
+			var rect = (IntSize3)value;
 			return rect.ToString();
 		}
 
@@ -213,7 +213,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntSize3D.Parse(source);
+			return IntSize3.Parse(source);
 		}
 	}
 

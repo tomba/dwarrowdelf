@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo();
 		}
 
-		void m_mapControl_TileLayoutChanged(IntSize gridSize, double tileSize, Point centerPos)
+		void m_mapControl_TileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			UpdateHoverTileInfo();
 		}

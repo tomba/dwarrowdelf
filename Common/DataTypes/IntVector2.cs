@@ -122,9 +122,9 @@ namespace Dwarrowdelf
 			return new IntVector2(point.X, point.Y);
 		}
 
-		public static explicit operator IntSize(IntVector2 vector)
+		public static explicit operator IntSize2(IntVector2 vector)
 		{
-			return new IntSize(vector.X, vector.Y);
+			return new IntSize2(vector.X, vector.Y);
 		}
 
 		public Direction ToDirection()

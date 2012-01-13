@@ -76,7 +76,7 @@ namespace MyArea
 			foreach (var p in IntPoint2.Range(size, size))
 				intHeightMap[p] = (int)Math.Truncate(doubleHeightMap[p]); // XXX perhaps Round is better
 
-			var envBuilder = new EnvironmentObjectBuilder(new IntSize3D(size, size, 20), VisibilityMode.GlobalFOV);
+			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(size, size, 20), VisibilityMode.GlobalFOV);
 
 			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
 

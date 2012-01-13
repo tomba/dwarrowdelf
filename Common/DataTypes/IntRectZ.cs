@@ -31,7 +31,7 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
-		public IntRectZ(IntPoint2 point, IntSize size, int z)
+		public IntRectZ(IntPoint2 point, IntSize2 size, int z)
 			: this(point.X, point.Y, size.Width, size.Height, z)
 		{
 		}
@@ -67,7 +67,7 @@ namespace Dwarrowdelf
 			get { return m_rect.Area; }
 		}
 
-		public IntSize Size
+		public IntSize2 Size
 		{
 			get { return m_rect.Size; }
 		}

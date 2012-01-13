@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileRender();
 		}
 
-		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
+		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 

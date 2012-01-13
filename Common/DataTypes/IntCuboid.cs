@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 			m_depth = depth;
 		}
 
-		public IntCuboid(IntPoint3 p, IntSize3D size)
+		public IntCuboid(IntPoint3 p, IntSize3 size)
 		{
 			m_x = p.X;
 			m_y = p.Y;
@@ -64,7 +64,7 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public IntCuboid(IntSize3D size)
+		public IntCuboid(IntSize3 size)
 			: this(0, 0, 0, size.Width, size.Height, size.Depth)
 		{
 		}

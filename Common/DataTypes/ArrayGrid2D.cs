@@ -15,7 +15,7 @@ namespace Dwarrowdelf
 
 		public int Width { get { return m_grid.GetLength(1); } }
 		public int Height { get { return m_grid.GetLength(0); } }
-		public IntSize Size { get { return new IntSize(this.Width, this.Height); } }
+		public IntSize2 Size { get { return new IntSize2(this.Width, this.Height); } }
 
 		public T[,] Grid { get { return m_grid; } }
 
@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 			m_grid = new T[height, width];
 		}
 
-		public ArrayGrid2D(IntSize size)
+		public ArrayGrid2D(IntSize2 size)
 			: this(size.Width, size.Height)
 		{
 		}

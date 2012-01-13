@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	public struct IntSize : IEquatable<IntSize>
+	public struct IntSize2 : IEquatable<IntSize2>
 	{
 		readonly int m_width;
 		readonly int m_height;
@@ -15,7 +15,7 @@ namespace Dwarrowdelf
 		public int Width { get { return m_width; } }
 		public int Height { get { return m_height; } }
 
-		public IntSize(int width, int height)
+		public IntSize2(int width, int height)
 		{
 			m_width = width;
 			m_height = height;
@@ -29,9 +29,9 @@ namespace Dwarrowdelf
 			}
 		}
 
-		#region IEquatable<IntSize> Members
+		#region IEquatable<IntSize2> Members
 
-		public bool Equals(IntSize s)
+		public bool Equals(IntSize2 s)
 		{
 			return ((s.Width == this.Width) && (s.Height == this.Height));
 		}
@@ -40,19 +40,19 @@ namespace Dwarrowdelf
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntSize))
+			if (!(obj is IntSize2))
 				return false;
 
-			IntSize s = (IntSize)obj;
+			IntSize2 s = (IntSize2)obj;
 			return ((s.Width == this.Width) && (s.Height == this.Height));
 		}
 
-		public static bool operator ==(IntSize left, IntSize right)
+		public static bool operator ==(IntSize2 left, IntSize2 right)
 		{
 			return ((left.Width == right.Width) && (left.Height == right.Height));
 		}
 
-		public static bool operator !=(IntSize left, IntSize right)
+		public static bool operator !=(IntSize2 left, IntSize2 right)
 		{
 			return !(left == right);
 		}
@@ -68,7 +68,7 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1}", this.Width, this.Height);
 		}
 
-		public static explicit operator IntVector2(IntSize size)
+		public static explicit operator IntVector2(IntSize2 size)
 		{
 			return new IntVector2(size.Width, size.Height);
 		}

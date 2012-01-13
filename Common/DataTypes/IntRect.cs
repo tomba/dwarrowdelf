@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 			m_height = Math.Max((Math.Max(point1.Y, point2.Y) - m_y), 0);
 		}
 
-		public IntRect(IntPoint2 point, IntSize size)
+		public IntRect(IntPoint2 point, IntSize2 size)
 			: this(point.X, point.Y, size.Width, size.Height)
 		{
 		}
@@ -66,9 +66,9 @@ namespace Dwarrowdelf
 			get { return this.Width * this.Height; }
 		}
 
-		public IntSize Size
+		public IntSize2 Size
 		{
-			get { return new IntSize(this.Width, this.Height); }
+			get { return new IntSize2(this.Width, this.Height); }
 		}
 
 		public bool IsNull
