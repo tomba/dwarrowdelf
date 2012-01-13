@@ -27,6 +27,58 @@ namespace MyArea
 			living.SetAI(new DwarfAI(living));
 		}
 
+		int FindSurface(EnvironmentObject env, IntPoint2 p2)
+		{
+			for (int z = env.Depth - 1; z > 0; --z)
+			{
+				var p = new IntPoint3(p2.X, p2.Y, z);
+
+				var terrainID = env.GetTerrainID(p);
+				var interiorID = env.GetInteriorID(p);
+
+				if (terrainID != TerrainID.Empty || interiorID != InteriorID.Empty)
+					return z;
+			}
+
+			throw new Exception();
+		}
+
+		bool TestStartArea(EnvironmentObject env, IntRectZ r)
+		{
+			foreach (var p in r.Range())
+			{
+				var terrainID = env.GetTerrainID(p);
+				var interiorID = env.GetInteriorID(p);
+
+				if (terrainID == TerrainID.NaturalFloor &&
+					(interiorID == InteriorID.Empty || interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling))
+					continue;
+				else
+					return false;
+			}
+
+			return true;
+		}
+
+		IntRectZ? FindStartLocation(EnvironmentObject env)
+		{
+			const int size = 3;
+
+			var center = env.Bounds.Plane.Center;
+
+			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
+			{
+				var z = FindSurface(env, p);
+
+				var r = new IntRectZ(p.X - size, p.Y - size, size * 2, size * 2, z);
+
+				if (TestStartArea(env, r))
+					return r;
+			}
+
+			return null;
+		}
+
 		public override LivingObject[] SetupWorldForNewPlayer(Player player)
 		{
 			const int NUM_DWARVES = 7;
@@ -34,15 +86,22 @@ namespace MyArea
 			// XXX entry location
 			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.EnvironmentObject>().First();
 
+			var startRect = FindStartLocation(env);
+
+			if (!startRect.HasValue)
+				throw new Exception();
+
+			var startLocs = startRect.Value.Range().ToArray();
+
+			// clear trees
+			foreach (var p in startLocs)
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
 			var list = new List<LivingObject>();
 
 			for (int i = 0; i < NUM_DWARVES; ++i)
 			{
-				IntPoint3 p;
-				do
-				{
-					p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), 9);
-				} while (!EnvironmentHelpers.CanEnter(env, p));
+				var p = startLocs[Helpers.GetRandomInt(startLocs.Length - 1)];
 
 				var l = CreateDwarf(i);
 
