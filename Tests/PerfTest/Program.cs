@@ -13,7 +13,8 @@ namespace PerfTest
 		{
 			var tests = new TestSuite[] 
 			{
-				new ArrayAccessTestSuite(),
+				new IntPointTestSuite(),
+				//new ArrayAccessTestSuite(),
 				//new StructAccessTestSuite(),
 				//new SkillMapTestSuite(),
 				//new LocalMethodCallTestSuite(),
@@ -46,7 +47,7 @@ namespace PerfTest
 
 		protected static void RunTest(ITest test)
 		{
-			int loops = Calibrate(test, TimeSpan.FromMilliseconds(400));
+			int loops = Calibrate(test, TimeSpan.FromMilliseconds(1000));
 
 			var sw = new Stopwatch();
 
@@ -74,23 +75,26 @@ namespace PerfTest
 
 		static int Calibrate(ITest test, TimeSpan time)
 		{
-			int loops = 512;
+			int loops = 4;
 			var sw = new Stopwatch();
 
 			test.DoTest(1);
 
-			while (sw.ElapsedMilliseconds < 100)
+			while (true)
 			{
+				sw.Restart();
+				test.DoTest(loops);
+				sw.Stop();
+
+				if (sw.ElapsedMilliseconds > 250)
+					break;
+
 				if (sw.ElapsedMilliseconds <= 1)
 					loops *= 128;
 				else if (sw.ElapsedMilliseconds <= 10)
 					loops *= 16;
 				else
 					loops *= 2;
-
-				sw.Restart();
-				test.DoTest(loops);
-				sw.Stop();
 			}
 
 			var lps = loops / (sw.ElapsedMilliseconds / 1000.0);

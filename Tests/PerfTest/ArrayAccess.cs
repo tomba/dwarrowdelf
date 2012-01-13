@@ -14,8 +14,6 @@ namespace PerfTest
 		const int c_height = 1 << c_heightExp;
 		const int c_depth = 32;
 
-		const int c_loops = 10;
-
 		public override void DoTests()
 		{
 			RunTest(new Safe1DimArrayAccessTest());
@@ -30,7 +28,7 @@ namespace PerfTest
 
 			public void DoTest(int loops)
 			{
-				for (int test = 0; test < c_loops; test++)
+				for (int test = 0; test < loops; test++)
 					ArrayAccess(m_array);
 			}
 
@@ -62,7 +60,7 @@ namespace PerfTest
 
 			public void DoTest(int loops)
 			{
-				for (int test = 0; test < c_loops; test++)
+				for (int test = 0; test < loops; test++)
 					ArrayAccess(m_array);
 			}
 
@@ -85,7 +83,7 @@ namespace PerfTest
 
 			public void DoTest(int loops)
 			{
-				for (int test = 0; test < c_loops; test++)
+				for (int test = 0; test < loops; test++)
 					ArrayAccess(m_array);
 			}
 
@@ -120,7 +118,7 @@ namespace PerfTest
 
 			public void DoTest(int loops)
 			{
-				for (int test = 0; test < c_loops; test++)
+				for (int test = 0; test < loops; test++)
 					ArrayAccess(m_array);
 			}
 
