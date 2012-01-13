@@ -98,6 +98,33 @@ namespace Dwarrowdelf
 					yield return new IntPoint2(x, y);
 		}
 
+		/// <summary>
+		/// Returns a square spiral, centered at center, covering an area of size * size
+		/// </summary>
+		public static IEnumerable<IntPoint2> SquareSpiral(IntPoint2 center, int size)
+		{
+			var p = center;
+			var v = new IntVector2(1, 0);
+
+			int loop = 0;
+
+			while (true)
+			{
+				for (int i = 0; i < loop / 2 + 1; ++i)
+				{
+					yield return p;
+					p += v;
+				}
+
+				v = v.FastRotate(2);
+
+				loop++;
+
+				if (loop == size * 2 - 1)
+					break;
+			}
+		}
+
 		public override string ToString()
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;

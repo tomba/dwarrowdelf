@@ -58,7 +58,7 @@ namespace Dwarrowdelf
 
 		public IntPoint2 Center
 		{
-			get { return new IntPoint2((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2); }
+			get { return new IntPoint2((this.X1 + this.X2 - 1) / 2, (this.Y1 + this.Y2 - 1) / 2); }
 		}
 
 		public int Area
