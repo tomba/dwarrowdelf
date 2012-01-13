@@ -36,8 +36,8 @@ namespace Dwarrowdelf.Server
 
 		public World World { get { return m_world; } }
 
-		[SaveGameProperty("HasControllablesBeenCreated")]
-		bool m_hasControllablesBeenCreated;
+		[SaveGameProperty("HasPlayerBeenInGame")]
+		bool m_hasPlayerBeenInGame;
 
 		bool m_isInGame;
 		public bool IsInGame
@@ -284,7 +284,7 @@ namespace Dwarrowdelf.Server
 
 				if (msg.IsControllable)
 				{
-					m_engine.SetupControllable(living);
+					m_engine.SetupLivingAsControllable(living);
 				}
 				else
 				{
@@ -354,7 +354,7 @@ namespace Dwarrowdelf.Server
 		/* functions for livings */
 		void ReceiveMessage(EnterGameRequestMessage msg)
 		{
-			if (m_hasControllablesBeenCreated)
+			if (m_hasPlayerBeenInGame)
 			{
 				Send(new Messages.EnterGameReplyBeginMessage());
 
@@ -386,14 +386,14 @@ namespace Dwarrowdelf.Server
 
 			Send(new Messages.EnterGameReplyBeginMessage());
 
-			if (!m_hasControllablesBeenCreated)
+			if (!m_hasPlayerBeenInGame)
 			{
 				trace.TraceInformation("Creating controllables");
-				var controllables = m_engine.CreateControllables(this);
+				var controllables = m_engine.SetupWorldForNewPlayer(this);
 				foreach (var l in controllables)
 					AddControllable(l);
 
-				m_hasControllablesBeenCreated = true;
+				m_hasPlayerBeenInGame = true;
 			}
 
 			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });

@@ -388,8 +388,8 @@ namespace Dwarrowdelf.Server
 			return player;
 		}
 
-		public abstract LivingObject[] CreateControllables(Player player);
-		public abstract void SetupControllable(LivingObject living);
+		public abstract LivingObject[] SetupWorldForNewPlayer(Player player);
+		public abstract void SetupLivingAsControllable(LivingObject living);
 
 		static void SaveWorld(SaveData saveData, string savePath)
 		{
