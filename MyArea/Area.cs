@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace MyArea
 {
-	public sealed class Area
+	sealed class Area
 	{
 		const int AREA_SIZE = 7;
 		const int NUM_SHEEP = 3;
