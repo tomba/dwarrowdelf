@@ -12,11 +12,20 @@ namespace Dwarrowdelf.Server
 	{
 		public GameServer Server { get; private set; }
 		public GameEngine Engine { get; private set; }
+		public IArea Area { get; private set; }
 
-		public Game(GameServer server, GameEngine engine)
+		public string GameAreaName { get; private set; }
+		public string GameDir { get; private set; }
+
+		public Game(string gameAreaName, string gameDir)
 		{
-			this.Server = server;
-			this.Engine = engine;
+			var assembly = LoadGameAssembly(gameAreaName);
+
+			this.Area = (IArea)assembly.CreateInstance("MyArea.Area");
+
+			this.Engine = new GameEngine(this, gameDir);
+
+			this.Server = new GameServer(this.Engine);
 		}
 
 		public void CreateWorld()
@@ -42,22 +51,6 @@ namespace Dwarrowdelf.Server
 		public override object InitializeLifetimeService()
 		{
 			return null;
-		}
-	}
-
-	public sealed class GameFactory : MarshalByRefObject, IGameFactory
-	{
-		public IGame CreateGame(string gameAreaName, string gameDir)
-		{
-			var assembly = LoadGameAssembly(gameAreaName);
-
-			var engine = (GameEngine)assembly.CreateInstance("MyArea.MyEngine", false, BindingFlags.Public | BindingFlags.Instance, null, new object[] { gameDir }, null, null);
-
-			var server = new GameServer(engine);
-
-			var game = new Game(server, engine);
-
-			return game;
 		}
 
 		Assembly LoadGameAssembly(string gameAreaName)
@@ -88,6 +81,15 @@ namespace Dwarrowdelf.Server
 
 			var assembly = Assembly.LoadFile(path);
 			return assembly;
+		}
+
+	}
+
+	public sealed class GameFactory : MarshalByRefObject, IGameFactory
+	{
+		public IGame CreateGame(string gameAreaName, string gameDir)
+		{
+			return new Game(gameAreaName, gameDir);
 		}
 
 		public override object InitializeLifetimeService()

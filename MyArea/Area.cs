@@ -2,503 +2,196 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Dwarrowdelf;
 using Dwarrowdelf.Server;
-
-using Dwarrowdelf.TerrainGen;
-using System.Threading.Tasks;
-using System.Threading;
+using Dwarrowdelf;
 
 namespace MyArea
 {
-	sealed class Area
+	public sealed class Area : IArea
 	{
-		const int AREA_SIZE = 7;
-		const int NUM_SHEEP = 3;
-		const int NUM_ORCS = 3;
+		public World World { get; private set; }
 
-		EnvironmentObject m_environment;
+		EnvObserver m_envObserver;
 
-		public void InitializeWorld(World world)
+		public Area()
 		{
-			int surfaceLevel;
-			m_environment = CreateEnv(world, out surfaceLevel);
-			FinalizeEnv(m_environment, surfaceLevel);
 		}
 
-		IntPoint3 GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
+		#region IArea Members
+
+		public World CreateWorld()
 		{
-			IntPoint3 p;
-			int iter = 0;
-
-			do
-			{
-				if (iter++ > 10000)
-					throw new Exception();
-
-				p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), zLevel);
-			} while (!EnvironmentHelpers.CanEnter(env, p));
-
-			return p;
-		}
-
-		IntPoint3 GetRandomSubterraneanLocation(EnvironmentObjectBuilder env)
-		{
-			IntPoint3 p;
-			int iter = 0;
-
-			do
-			{
-				if (iter++ > 10000)
-					throw new Exception();
-
-				p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), Helpers.GetRandomInt(env.Depth));
-			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
-
-			return p;
-		}
-
-		EnvironmentObject CreateEnv(World world, out int surfaceLevel)
-		{
-			int sizeExp = AREA_SIZE;
-			int size = (int)Math.Pow(2, sizeExp);
-
-			// size + 1 for the DiamondSquare algorithm
-			var doubleHeightMap = new ArrayGrid2D<double>(size + 1, size + 1);
-
-			DiamondSquare.Render(doubleHeightMap, 10, 5, 0.75);
-			Clamper.Clamp(doubleHeightMap, 10);
-
-			// integer heightmap. the number tells the z level where the floor is.
-			var intHeightMap = new ArrayGrid2D<int>(size, size);
-			foreach (var p in IntPoint2.Range(size, size))
-				intHeightMap[p] = (int)Math.Truncate(doubleHeightMap[p]); // XXX perhaps Round is better
-
-			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(size, size, 20), VisibilityMode.GlobalFOV);
-
-			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
-
-			CreateSlopes(envBuilder, intHeightMap);
-
-			CreateTrees(envBuilder, intHeightMap);
-
-			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 30; ++i)
-			{
-				var p = GetRandomSubterraneanLocation(envBuilder);
-				var idx = Helpers.GetRandomInt(oreMaterials.Length);
-				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
-			}
-
-			surfaceLevel = FindSurfaceLevel(intHeightMap);
-
-			return envBuilder.Create(world);
-		}
-
-		void FinalizeEnv(EnvironmentObject env, int surfaceLevel)
-		{
-			var world = env.World;
-
-			// Add items
-			for (int i = 0; i < 6; ++i)
-				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), GetRandomSurfaceLocation(env, surfaceLevel));
-
-			for (int i = 0; i < 6; ++i)
-				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), GetRandomSurfaceLocation(env, surfaceLevel));
-
-			CreateWaterTest(env, surfaceLevel);
-
-			CreateBuildings(env, surfaceLevel);
-
-			{
-				var p = new IntPoint3(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
-
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Lead, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
-				CreateItem(env, ItemID.Ore, MaterialID.Iron, p);
-
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
-
-				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
-			}
-
-			{
-				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, new IntPoint3(env.Width / 10 - 2, env.Height / 10 - 2, surfaceLevel));
-			}
-
-			AddMonsters(env, surfaceLevel);
-
-
-			{
-				// create a wall and a hole with door
-
-				IntPoint3 p;
-
-				for (int y = 4; y < 12; ++y)
+			this.World = new World(WorldTickMethod.Simultaneous);
+			this.World.Initialize(delegate
 				{
-					int x = 17;
+					WorldCreator.InitializeWorld(this.World);
+				});
 
-					p = new IntPoint3(x, y, surfaceLevel);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Undefined, MaterialID.Undefined);
-				}
+			// XXX
+			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+			m_envObserver = new EnvObserver(env);
 
-				p = new IntPoint3(17, 7, surfaceLevel);
-				env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-
-				p = new IntPoint3(17, 7, surfaceLevel);
-				var item = CreateItem(env, ItemID.Door, MaterialID.Birch, p);
-				item.IsInstalled = true;
-			}
+			return this.World;
 		}
 
-		void CreateBuildings(EnvironmentObject env, int surfaceLevel)
+		public void SetupLivingAsControllable(LivingObject living)
 		{
-			var world = env.World;
-
-			int posx = env.Width / 10;
-			int posy = env.Height / 10;
-
-			var floorTile = new TileData()
-			{
-				TerrainID = TerrainID.NaturalFloor,
-				TerrainMaterialID = MaterialID.Granite,
-				InteriorID = InteriorID.Empty,
-				InteriorMaterialID = MaterialID.Undefined,
-			};
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
-				builder.Create(world, env);
-			}
-
-			posx += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
-				builder.Create(world, env);
-			}
-
-			posx += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
-				builder.Create(world, env);
-			}
-
-			posx = env.Width / 10;
-			posy += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
-				builder.Create(world, env);
-			}
-
-			posx += 4;
-
-			{
-				var builder = new BuildingObjectBuilder(BuildingID.Gemcutter, new IntRectZ(posx, posy, 3, 3, surfaceLevel));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
-				builder.Create(world, env);
-			}
+			living.SetAI(new DwarfAI(living, m_envObserver));
 		}
 
-		MaterialID GetRandomMaterial(MaterialCategory category)
+		public LivingObject[] SetupWorldForNewPlayer(Player player)
 		{
-			var materials = Materials.GetMaterials(category).Select(mi => mi.ID).ToArray();
-			return materials[Helpers.GetRandomInt(materials.Length)];
-		}
+			const int NUM_DWARVES = 7;
 
-		ItemObject CreateItem(EnvironmentObject env, ItemID itemID, MaterialID materialID, IntPoint3 p)
-		{
-			var builder = new ItemObjectBuilder(itemID, materialID);
-			var item = builder.Create(env.World);
-			var ok = item.MoveTo(env, p);
-			if (!ok)
+			// XXX entry location
+			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+
+			var startRect = FindStartLocation(env);
+
+			if (!startRect.HasValue)
 				throw new Exception();
 
-			return item;
-		}
+			var startLocs = startRect.Value.Range().ToArray();
 
-		void AddMonsters(EnvironmentObject env, int surfaceLevel)
-		{
-			var world = env.World;
+			// clear trees
+			foreach (var p in startLocs)
+				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
-			for (int i = 0; i < NUM_SHEEP; ++i)
+			var list = new List<LivingObject>();
+
+			for (int i = 0; i < NUM_DWARVES; ++i)
 			{
-				var livingBuilder = new LivingObjectBuilder(LivingID.Sheep)
-				{
-					Color = this.GetRandomColor(),
-				};
+				var p = startLocs[Helpers.GetRandomInt(startLocs.Length - 1)];
 
-				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
+				var l = CreateDwarf(i);
 
-				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
+				if (!l.MoveTo(env, p))
+					throw new Exception();
+
+				list.Add(l);
 			}
 
-			for (int i = 0; i < NUM_ORCS; ++i)
-			{
-				var livingBuilder = new LivingObjectBuilder(LivingID.Orc)
-				{
-					Color = this.GetRandomColor(),
-				};
-
-				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
-
-				Helpers.AddGem(living);
-				Helpers.AddBattleGear(living);
-
-				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
-			}
+			return list.ToArray();
 		}
 
-		/// <summary>
-		/// return the z of the level with most ground
-		/// </summary>
-		/// <param name="heightMap"></param>
-		static int FindSurfaceLevel(ArrayGrid2D<int> heightMap)
-		{
-			return heightMap
-				.GroupBy(i => i)
-				.Select(g => new { H = g.Key, Count = g.Count() })
-				.OrderByDescending(c => c.Count)
-				.First()
-				.H;
-		}
+		#endregion
 
-		static void CreateTerrainFromHeightmap(ArrayGrid2D<int> heightMap, EnvironmentObjectBuilder env)
+
+
+		int FindSurface(EnvironmentObject env, IntPoint2 p2)
 		{
-			Parallel.For(0, env.Height, y =>
+			for (int z = env.Depth - 1; z > 0; --z)
 			{
-				for (int x = 0; x < env.Width; ++x)
-				{
-					int surface = heightMap[x, y];
-
-					for (int z = 0; z < env.Depth; ++z)
-					{
-						var p = new IntPoint3(x, y, z);
-						var td = new TileData();
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
-						if (z < surface)
-						{
-							td.TerrainID = TerrainID.NaturalWall;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else if (z == surface)
-						{
-							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = MaterialID.Granite;
-							td.Flags = TileFlags.Grass;
-						}
-						else
-						{
-							td.TerrainID = TerrainID.Empty;
-							td.TerrainMaterialID = MaterialID.Undefined;
-						}
-
-						env.SetTileData(p, td);
-					}
-				}
-			});
-		}
-
-		void CreateTrees(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
-		{
-			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
-
-			env.Bounds.Plane.Range().AsParallel().ForAll(p2d =>
-			{
-				int z = heightMap[p2d];
-
-				var p = new IntPoint3(p2d, z);
+				var p = new IntPoint3(p2.X, p2.Y, z);
 
 				var terrainID = env.GetTerrainID(p);
+				var interiorID = env.GetInteriorID(p);
 
-				if (terrainID == TerrainID.NaturalFloor || terrainID.IsSlope())
-				{
-					var interiorID = env.GetInteriorID(p);
-
-					if (interiorID == InteriorID.Empty)
-					{
-						if (Helpers.GetRandomInt(8) == 0)
-						{
-							var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
-							var interior = Helpers.GetRandomInt() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling;
-							env.SetInterior(p, interior, material);
-						}
-					}
-				}
-			});
-		}
-
-		static void CreateSlopes(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
-		{
-			var arr = new ThreadLocal<Direction[]>(() => new Direction[8]);
-
-			var plane = env.Bounds.Plane;
-
-			plane.Range().AsParallel().ForAll(p =>
-			{
-				int z = heightMap[p];
-
-				int count = 0;
-				Direction dir = Direction.None;
-
-				int offset = Helpers.GetRandomInt(8);
-
-				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
-				// the slope if all 8 tiles are higher.
-				for (int i = 0; i < 8; ++i)
-				{
-					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
-
-					var t = p + d;
-
-					if (plane.Contains(t) && heightMap[t] > z)
-					{
-						dir = d;
-						count++;
-					}
-				}
-
-				if (count > 0 && count < 8)
-				{
-					var p3d = new IntPoint3(p, z);
-					env.SetTerrain(p3d, dir.ToSlope(), env.GetTerrainMaterialID(p3d));
-				}
-			});
-		}
-
-		void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID)
-		{
-			CreateOreCluster(env, p, oreMaterialID, Helpers.GetRandomInt(6) + 1);
-		}
-
-		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID, int count)
-		{
-			if (!env.Contains(p))
-				return;
-
-			if (env.GetTerrainID(p) != TerrainID.NaturalWall)
-				return;
-
-			if (env.GetInteriorID(p) == InteriorID.Ore)
-				return;
-
-			env.SetInterior(p, InteriorID.Ore, oreMaterialID);
-
-			if (count > 0)
-			{
-				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
-					CreateOreCluster(env, p + d, oreMaterialID, count - 1);
+				if (terrainID != TerrainID.Empty || interiorID != InteriorID.Empty)
+					return z;
 			}
+
+			throw new Exception();
 		}
 
-		GameColor GetRandomColor()
+		bool TestStartArea(EnvironmentObject env, IntRectZ r)
 		{
-			return (GameColor)Helpers.GetRandomInt(GameColorRGB.NUMCOLORS - 1) + 1;
-		}
-
-
-		static void ClearTile(EnvironmentObject env, IntPoint3 p)
-		{
-			env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-		}
-
-		static void ClearInside(EnvironmentObject env, IntPoint3 p)
-		{
-			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-		}
-
-		static void SetArea(EnvironmentObject env, IntCuboid area, TileData data)
-		{
-			foreach (var p in area.Range())
-				env.SetTileData(p, data);
-		}
-
-		void CreateWalls(EnvironmentObject env, IntRectZ area)
-		{
-			for (int x = area.X1; x < area.X2; ++x)
+			foreach (var p in r.Range())
 			{
-				for (int y = area.Y1; y < area.Y2; ++y)
-				{
-					if ((y != area.Y1 && y != area.Y2 - 1) &&
-						(x != area.X1 && x != area.X2 - 1))
-						continue;
+				var terrainID = env.GetTerrainID(p);
+				var interiorID = env.GetInteriorID(p);
 
-					var p = new IntPoint3(x, y, area.Z);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
-				}
+				if (terrainID == TerrainID.NaturalFloor &&
+					(interiorID == InteriorID.Empty || interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling))
+					continue;
+				else
+					return false;
 			}
+
+			return true;
 		}
 
-		void CreateWater(EnvironmentObject env, IntRectZ area)
+		IntRectZ? FindStartLocation(EnvironmentObject env)
 		{
-			for (int x = area.X1; x < area.X2; ++x)
+			const int size = 3;
+
+			var center = env.Bounds.Plane.Center;
+
+			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
 			{
-				for (int y = area.Y1; y < area.Y2; ++y)
-				{
-					var p = new IntPoint3(x, y, area.Z);
-					env.SetWaterLevel(p, TileData.MaxWaterLevel);
-				}
+				var z = FindSurface(env, p);
+
+				var r = new IntRectZ(p.X - size, p.Y - size, size * 2, size * 2, z);
+
+				if (TestStartArea(env, r))
+					return r;
 			}
+
+			return null;
 		}
 
-		void CreateWaterTest(EnvironmentObject env, int surfaceLevel)
+		LivingObject CreateDwarf(int i)
 		{
-			var pos = new IntPoint3(10, 30, surfaceLevel);
-
-			CreateWalls(env, new IntRectZ(pos.X, pos.Y, 3, 8, surfaceLevel));
-			CreateWater(env, new IntRectZ(pos.X + 1, pos.Y + 1, 1, 6, surfaceLevel));
-
-			int x = 15;
-			int y = 30;
-
-			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 0));
-			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3(x, y, surfaceLevel - 4));
-			ClearInside(env, new IntPoint3(x + 0, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3(x + 1, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3(x + 2, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3(x + 3, y, surfaceLevel - 5));
-			ClearInside(env, new IntPoint3(x + 4, y, surfaceLevel - 5));
-			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 4));
-			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 3));
-			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 2));
-			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 1));
-			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 0));
-
-			env.ScanWaterTiles();
-
+			var builder = new LivingObjectBuilder(LivingID.Dwarf)
 			{
-				// Add a water generator
-				var item = WaterGenerator.Create(env.World);
-				item.MoveTo(env, new IntPoint3(pos.X + 1, pos.Y + 2, surfaceLevel));
+				Color = (GameColor)Helpers.GetRandomInt(GameColorRGB.NUMCOLORS - 1) + 1,
+				Gender = LivingGender.Male,
+			};
+
+			switch (i)
+			{
+				case 0:
+					builder.Name = "Doc";
+					builder.SetSkillLevel(SkillID.Mining, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 1:
+					builder.Name = "Grumpy";
+					builder.SetSkillLevel(SkillID.Carpentry, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 2:
+					builder.Name = "Happy";
+					builder.SetSkillLevel(SkillID.WoodCutting, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 3:
+					builder.Name = "Sleepy";
+					builder.SetSkillLevel(SkillID.Masonry, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 4:
+					builder.Name = "Bashful";
+					builder.SetSkillLevel(SkillID.BlackSmithing, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 5:
+					builder.Name = "Sneezy";
+					builder.SetSkillLevel(SkillID.GemCutting, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
+
+				case 6:
+					builder.Name = "Dopey";
+					builder.SetSkillLevel(SkillID.Smelting, 80);
+					builder.SetSkillLevel(SkillID.Fighting, 40);
+					break;
 			}
+
+			var dwarf = builder.Create(this.World);
+
+			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver));
+
+			Helpers.AddGem(dwarf);
+			Helpers.AddBattleGear(dwarf);
+
+			return dwarf;
 		}
+
 	}
 }

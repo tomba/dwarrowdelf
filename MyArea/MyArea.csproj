@@ -63,12 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area.cs" />
+    <Compile Include="WorldCreator.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="EnvObserver.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />
-    <Compile Include="MyEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -284,7 +284,7 @@ namespace Dwarrowdelf.Server
 
 				if (msg.IsControllable)
 				{
-					m_engine.SetupLivingAsControllable(living);
+					m_engine.Game.Area.SetupLivingAsControllable(living);
 				}
 				else
 				{
@@ -389,7 +389,7 @@ namespace Dwarrowdelf.Server
 			if (!m_hasPlayerBeenInGame)
 			{
 				trace.TraceInformation("Creating controllables");
-				var controllables = m_engine.SetupWorldForNewPlayer(this);
+				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
 				foreach (var l in controllables)
 					AddControllable(l);
 

@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Server
 		public TimeSpan MinTickTime;
 	}
 
-	public abstract class GameEngine
+	public class GameEngine
 	{
 		string m_gameDir;
 		World m_world;
@@ -68,8 +68,11 @@ namespace Dwarrowdelf.Server
 		/// </summary>
 		Thread m_gameThread;
 
-		protected GameEngine(string gameDir)
+		public Game Game { get; private set; }
+
+		public GameEngine(Game game, string gameDir)
 		{
+			this.Game = game;
 			m_gameDir = gameDir;
 
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
@@ -84,12 +87,8 @@ namespace Dwarrowdelf.Server
 			this.LastSaveID = Guid.Empty;
 			this.LastLoadID = Guid.Empty;
 
-			m_world = new World(WorldTickMethod.Simultaneous);
-
-			this.World.Initialize(InitializeWorld);
+			m_world = this.Game.Area.CreateWorld();
 		}
-
-		protected abstract void InitializeWorld();
 
 		public Guid LastSaveID { get; private set; }
 		public Guid LastLoadID { get; private set; }
@@ -387,9 +386,6 @@ namespace Dwarrowdelf.Server
 
 			return player;
 		}
-
-		public abstract LivingObject[] SetupWorldForNewPlayer(Player player);
-		public abstract void SetupLivingAsControllable(LivingObject living);
 
 		static void SaveWorld(SaveData saveData, string savePath)
 		{
