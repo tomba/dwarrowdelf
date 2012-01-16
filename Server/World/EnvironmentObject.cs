@@ -35,9 +35,6 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public int Depth { get; private set; }
 
-		[SaveGameProperty]
-		public IntPoint3 HomeLocation { get; set; }
-
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
 		HashSet<AreaObject> m_largeObjectSet;
 

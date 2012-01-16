@@ -39,9 +39,6 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<IAreaElement> m_areaElements;
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
-		// XXX remove when IEnvObject has this removed
-		public IntPoint3 HomeLocation { get { throw new Exception(); } }
-
 		[SaveGameProperty]
 		public Designation Designations { get; private set; }
 
