@@ -42,20 +42,20 @@ namespace Dwarrowdelf.Jobs.Assignments
 		{
 			var random = this.Worker.World.Random;
 
-			int i = random.Next(100);
+			int rand = random.Next(100);
 
-			GameAction action;
+			GameAction action = null;
 
 			Direction dir = m_dir;
 
-			if (i < 25)
+			if (rand < 25)
 			{
 				dir = Direction.None;
 			}
-			else if (i < 50)
+			else if (rand < 50)
 			{
 			}
-			else if (i < 75)
+			else if (rand < 75)
 			{
 				var v = new IntVector3(dir);
 				v = v.FastRotate(random.Next() % 2 == 0 ? 1 : -1);
@@ -77,22 +77,25 @@ namespace Dwarrowdelf.Jobs.Assignments
 				var env = this.Worker.Environment;
 				m_dir = dir;
 
-				var flr = env.GetTerrainID(this.Worker.Location);
+				IntVector2 ov = new IntVector2(dir);
 
-				if (flr.IsSlope() && flr.ToDir() == dir)
-					dir |= Direction.Up;
-				else
+				for (int i = 0; i < 7; ++i)
 				{
-					var p = this.Worker.Location + dir + Direction.Down;
-					if (env.Contains(p))
-					{
-						flr = env.GetTerrainID(this.Worker.Location + dir + Direction.Down);
-						if (flr.IsSlope() && flr.ToDir().Reverse() == dir)
-							dir |= Direction.Down;
-					}
+					var v = ov.FastRotate(((i + 1) >> 1) * (((i % 2) << 1) - 1));
+					var d = EnvironmentHelpers.AdjustMoveDir(env, this.Worker.Location, v.ToDirection());
+
+					if (d != Direction.None)
+						action = new MoveAction(d);
 				}
 
-				action = new MoveAction(dir);
+				if (action == null && EnvironmentHelpers.CanMoveFromTo(this.Worker, Direction.Up))
+					action = new MoveAction(Direction.Up);
+
+				if (action == null && EnvironmentHelpers.CanMoveFromTo(this.Worker, Direction.Down))
+					action = new MoveAction(Direction.Down);
+
+				if (action == null)
+					action = new WaitAction(random.Next(4) + 1);
 			}
 
 			progress = JobStatus.Ok;

@@ -40,6 +40,10 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
 		HashSet<AreaObject> m_largeObjectSet;
+
+		public event Action<AreaObject> LargeObjectAdded;
+		public event Action<AreaObject> LargeObjectRemoved;
+
 		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
 
 		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
@@ -526,6 +530,9 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(ob.IsInitialized == false);
 
 			m_largeObjectSet.Add(ob);
+
+			if (this.LargeObjectAdded != null)
+				LargeObjectAdded(ob);
 		}
 
 		public void RemoveLargeObject(AreaObject ob)
@@ -534,6 +541,9 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(m_largeObjectSet.Contains(ob));
 
 			m_largeObjectSet.Remove(ob);
+
+			if (this.LargeObjectRemoved != null)
+				LargeObjectRemoved(ob);
 		}
 
 		public AreaObject GetLargeObjectAt(IntPoint3 p)
@@ -544,6 +554,11 @@ namespace Dwarrowdelf.Server
 		public T GetLargeObjectAt<T>(IntPoint3 p) where T : AreaObject
 		{
 			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
+		}
+
+		public IEnumerable<AreaObject> GetLargeObjects()
+		{
+			return m_largeObjectSet;
 		}
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)

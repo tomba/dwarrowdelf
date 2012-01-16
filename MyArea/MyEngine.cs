@@ -11,6 +11,8 @@ namespace MyArea
 {
 	public sealed class MyEngine : GameEngine
 	{
+		EnvObserver m_envObserver;
+
 		public MyEngine(string gameDir)
 			: base(gameDir)
 		{
@@ -20,11 +22,15 @@ namespace MyArea
 		{
 			var area = new Area();
 			area.InitializeWorld(this.World);
+
+			// XXX
+			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+			m_envObserver = new EnvObserver(env);
 		}
 
 		public override void SetupLivingAsControllable(LivingObject living)
 		{
-			living.SetAI(new DwarfAI(living));
+			living.SetAI(new DwarfAI(living, m_envObserver));
 		}
 
 		int FindSurface(EnvironmentObject env, IntPoint2 p2)
@@ -84,7 +90,7 @@ namespace MyArea
 			const int NUM_DWARVES = 7;
 
 			// XXX entry location
-			var env = this.World.AllObjects.OfType<Dwarrowdelf.Server.EnvironmentObject>().First();
+			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
 
 			var startRect = FindStartLocation(env);
 
@@ -169,7 +175,7 @@ namespace MyArea
 
 			var dwarf = builder.Create(this.World);
 
-			dwarf.SetAI(new DwarfAI(dwarf));
+			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver));
 
 			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);

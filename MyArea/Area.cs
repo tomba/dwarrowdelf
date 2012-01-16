@@ -5,7 +5,6 @@ using System.Text;
 
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
-using Environment = Dwarrowdelf.Server.EnvironmentObject;
 
 using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace MyArea
 		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
 
-		Environment m_environment;
+		EnvironmentObject m_environment;
 
 		public void InitializeWorld(World world)
 		{
@@ -28,7 +27,7 @@ namespace MyArea
 			FinalizeEnv(m_environment, surfaceLevel);
 		}
 
-		IntPoint3 GetRandomSurfaceLocation(Environment env, int zLevel)
+		IntPoint3 GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
 		{
 			IntPoint3 p;
 			int iter = 0;
@@ -60,7 +59,7 @@ namespace MyArea
 			return p;
 		}
 
-		Environment CreateEnv(World world, out int surfaceLevel)
+		EnvironmentObject CreateEnv(World world, out int surfaceLevel)
 		{
 			int sizeExp = AREA_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
@@ -249,7 +248,7 @@ namespace MyArea
 			return materials[Helpers.GetRandomInt(materials.Length)];
 		}
 
-		ItemObject CreateItem(Environment env, ItemID itemID, MaterialID materialID, IntPoint3 p)
+		ItemObject CreateItem(EnvironmentObject env, ItemID itemID, MaterialID materialID, IntPoint3 p)
 		{
 			var builder = new ItemObjectBuilder(itemID, materialID);
 			var item = builder.Create(env.World);
@@ -260,7 +259,7 @@ namespace MyArea
 			return item;
 		}
 
-		void AddMonsters(Environment env, int surfaceLevel)
+		void AddMonsters(EnvironmentObject env, int surfaceLevel)
 		{
 			var world = env.World;
 
@@ -445,25 +444,25 @@ namespace MyArea
 		}
 
 
-		static void ClearTile(Environment env, IntPoint3 p)
+		static void ClearTile(EnvironmentObject env, IntPoint3 p)
 		{
 			env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
-		static void ClearInside(Environment env, IntPoint3 p)
+		static void ClearInside(EnvironmentObject env, IntPoint3 p)
 		{
 			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
 			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 		}
 
-		static void SetArea(Environment env, IntCuboid area, TileData data)
+		static void SetArea(EnvironmentObject env, IntCuboid area, TileData data)
 		{
 			foreach (var p in area.Range())
 				env.SetTileData(p, data);
 		}
 
-		void CreateWalls(Environment env, IntRectZ area)
+		void CreateWalls(EnvironmentObject env, IntRectZ area)
 		{
 			for (int x = area.X1; x < area.X2; ++x)
 			{
@@ -480,7 +479,7 @@ namespace MyArea
 			}
 		}
 
-		void CreateWater(Environment env, IntRectZ area)
+		void CreateWater(EnvironmentObject env, IntRectZ area)
 		{
 			for (int x = area.X1; x < area.X2; ++x)
 			{
@@ -492,7 +491,7 @@ namespace MyArea
 			}
 		}
 
-		void CreateWaterTest(Environment env, int surfaceLevel)
+		void CreateWaterTest(EnvironmentObject env, int surfaceLevel)
 		{
 			var pos = new IntPoint3(10, 30, surfaceLevel);
 

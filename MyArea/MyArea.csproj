@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Area.cs" />
+    <Compile Include="DwarfAI.cs" />
+    <Compile Include="EnvObserver.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />

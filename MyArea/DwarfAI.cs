@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using Dwarrowdelf.Jobs;
 using Dwarrowdelf;
+using Dwarrowdelf.Jobs;
+using Dwarrowdelf.AI;
+using Dwarrowdelf.Jobs.Assignments;
+using Dwarrowdelf.Jobs.AssignmentGroups;
 
-namespace Dwarrowdelf.AI
+namespace MyArea
 {
 	[SaveGameObjectByRef]
-	public sealed class DwarfAI : AssignmentAI, IJobObserver
+	sealed class DwarfAI : AssignmentAI, IJobObserver
 	{
 		[SaveGameProperty]
 		bool m_priorityAction;
 
-		public DwarfAI(ILivingObject ob)
+		EnvObserver m_envObserver;
+
+		public DwarfAI(ILivingObject ob, EnvObserver envObserver)
 			: base(ob)
 		{
+			m_envObserver = envObserver;
 		}
 
 		DwarfAI(SaveGameContext ctx)
@@ -65,10 +71,31 @@ namespace Dwarrowdelf.AI
 				if (assignment != null)
 					return assignment;
 
-				if (hasAssignment)
-					return this.CurrentAssignment;
 
-				return new Dwarrowdelf.Jobs.AssignmentGroups.LoiterAssignment(null, worker.Environment);
+				// loiter around
+
+
+				if (m_envObserver.Contains(worker.Location))
+				{
+					if (hasAssignment && this.CurrentAssignment is RandomMoveAssignment)
+						return this.CurrentAssignment;
+					else
+						return new RandomMoveAssignment(this);
+				}
+				else
+				{
+					var c = m_envObserver.Center;
+
+					if (hasAssignment && c.HasValue && this.CurrentAssignment is MoveAssignment)
+						return this.CurrentAssignment;
+					else
+					{
+						if (c.HasValue)
+							return new MoveAssignment(this, worker.Environment, c.Value, DirectionSet.Planar | DirectionSet.Exact);
+						else
+							return new RandomMoveAssignment(this);
+					}
+				}
 			}
 			else
 			{
@@ -96,7 +123,7 @@ namespace Dwarrowdelf.AI
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(this, ob);
+				var job = new MoveConsumeAssignment(this, ob);
 				ob.ReservedBy = this;
 				return job;
 			}
@@ -124,7 +151,7 @@ namespace Dwarrowdelf.AI
 			if (ob != null)
 			{
 				m_priorityAction = true;
-				var job = new Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment(this, ob);
+				var job = new MoveConsumeAssignment(this, ob);
 				ob.ReservedBy = this;
 				return job;
 			}
@@ -136,7 +163,7 @@ namespace Dwarrowdelf.AI
 		{
 			// XXX hacksor. Will get called when loiterjob is aborted, because we're gonne add a eating job. and at that point we've marked the consumeobject and priorityaction
 
-			if (!(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveConsumeAssignment))
+			if (!(job is MoveConsumeAssignment))
 				return;
 
 			if (m_priorityAction)
