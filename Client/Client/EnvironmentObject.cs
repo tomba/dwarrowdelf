@@ -461,7 +461,8 @@ namespace Dwarrowdelf.Client
 			this.Version++;
 
 			Debug.Assert(!m_areaElements.Contains(element));
-			Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
+			// XXX when constructing a building, there's a construction site at the location of the building
+			//Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
 			m_areaElements.Add(element);
 		}
 

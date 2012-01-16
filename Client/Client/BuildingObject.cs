@@ -320,7 +320,7 @@ namespace Dwarrowdelf.Client
 					if (m_destructJob != null)
 						return null;
 
-					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(null, this);
+					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(this, this);
 					GameData.Data.Jobs.Add(m_destructJob);
 					return m_destructJob;
 
