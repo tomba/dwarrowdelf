@@ -26,6 +26,13 @@ namespace Dwarrowdelf
 			m_z = z;
 		}
 
+		public IntVector3(IntPoint3 p)
+		{
+			m_x = p.X;
+			m_y = p.Y;
+			m_z = p.Z;
+		}
+
 		public IntVector3(Direction dir)
 		{
 			int x, y, z;
@@ -114,6 +121,11 @@ namespace Dwarrowdelf
 		public static IntVector3 operator *(IntVector3 left, int number)
 		{
 			return new IntVector3(left.X * number, left.Y * number, left.Z * number);
+		}
+
+		public static IntVector3 operator /(IntVector3 left, int number)
+		{
+			return new IntVector3(left.X / number, left.Y / number, left.Z / number);
 		}
 
 		public override int GetHashCode()

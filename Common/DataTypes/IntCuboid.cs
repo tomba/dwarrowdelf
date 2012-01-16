@@ -88,7 +88,7 @@ namespace Dwarrowdelf
 
 		public IntPoint3 Center
 		{
-			get { return new IntPoint3((this.X1 + this.X2) / 2, (this.Y1 + this.Y2) / 2, (this.Z1 + this.Z2) / 2); }
+			get { return new IntPoint3((this.X1 + this.X2 - 1) / 2, (this.Y1 + this.Y2 - 1) / 2, (this.Z1 + this.Z2 - 1) / 2); }
 		}
 
 		public int Volume
@@ -172,8 +172,8 @@ namespace Dwarrowdelf
 
 		public bool Equals(IntCuboid other)
 		{
-			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_z == other.m_x &&
-				this.m_width == other.m_width && this.m_height == other.m_height && this.m_width == other.m_width;
+			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_z == other.m_z &&
+				this.m_width == other.m_width && this.m_height == other.m_height && this.m_depth == other.m_depth;
 		}
 
 		public override bool Equals(object obj)
