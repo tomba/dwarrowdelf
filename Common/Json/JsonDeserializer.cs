@@ -380,7 +380,7 @@ namespace Dwarrowdelf
 				return v;
 
 			var typeConverter = TypeDescriptor.GetConverter(expectedType);
-			return typeConverter.ConvertFromString(v);
+			return typeConverter.ConvertFromInvariantString(v);
 		}
 
 		object DeserializeInteger(Type expectedType)
@@ -603,7 +603,7 @@ namespace Dwarrowdelf
 
 				Trace.Assert(m_reader.TokenType == JsonToken.PropertyName);
 
-				object key = typeConverter.ConvertFromString((string)m_reader.Value);
+				object key = typeConverter.ConvertFromInvariantString((string)m_reader.Value);
 
 				Read();
 
