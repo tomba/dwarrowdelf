@@ -744,7 +744,9 @@ namespace Dwarrowdelf.Server
 
 				if (m_player.IsController(c.Object) == false)
 				{
-					c.Wearable.SendTo(m_player, ObjectVisibility.Public);
+					if (c.Wearable != null)
+						c.Wearable.SendTo(m_player, ObjectVisibility.Public);
+					// else it's being removed
 				}
 			}
 
@@ -755,7 +757,9 @@ namespace Dwarrowdelf.Server
 
 				if (m_player.IsController(c.Object) == false)
 				{
-					c.Weapon.SendTo(m_player, ObjectVisibility.Public);
+					if (c.Weapon != null)
+						c.Weapon.SendTo(m_player, ObjectVisibility.Public);
+					// else it's being removed
 				}
 			}
 
