@@ -296,7 +296,7 @@ namespace Dwarrowdelf.Server
 			wearable.Wearer = this;
 			m_armorSlots[wearable.ArmorInfo.Slot] = wearable;
 
-			this.World.AddChange(new WearChange(this, wearable.ArmorInfo.Slot, wearable));
+			this.World.AddChange(new WearArmorChange(this, wearable.ArmorInfo.Slot, wearable));
 		}
 
 		public void RemoveArmor(ItemObject wearable)
@@ -309,7 +309,7 @@ namespace Dwarrowdelf.Server
 			wearable.Wearer = null;
 			m_armorSlots.Remove(wearable.ArmorInfo.Slot);
 
-			this.World.AddChange(new WearChange(this, wearable.ArmorInfo.Slot, null));
+			this.World.AddChange(new RemoveArmorChange(this, wearable.ArmorInfo.Slot));
 		}
 
 		public void WieldWeapon(ItemObject weapon)
@@ -322,7 +322,7 @@ namespace Dwarrowdelf.Server
 			this.Weapon = weapon;
 			weapon.Wielder = this;
 
-			this.World.AddChange(new WieldChange(this, weapon));
+			this.World.AddChange(new WieldWeaponChange(this, weapon));
 		}
 
 		public void RemoveWeapon(ItemObject weapon)
@@ -334,7 +334,7 @@ namespace Dwarrowdelf.Server
 			this.Weapon.Wielder = null;
 			this.Weapon = null;
 
-			this.World.AddChange(new WieldChange(this, null));
+			this.World.AddChange(new RemoveWeaponChange(this));
 		}
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)

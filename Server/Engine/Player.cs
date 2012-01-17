@@ -738,9 +738,9 @@ namespace Dwarrowdelf.Server
 			}
 
 			// When an armor is worn by a non-controllable, the armor isn't known to the client. Thus we need to send the data of the armor here.
-			if (change is WearChange)
+			if (change is WearArmorChange)
 			{
-				var c = (WearChange)change;
+				var c = (WearArmorChange)change;
 
 				if (m_player.IsController(c.Object) == false)
 				{
@@ -751,9 +751,9 @@ namespace Dwarrowdelf.Server
 			}
 
 			// The same for weapons
-			if (change is WieldChange)
+			if (change is WieldWeaponChange)
 			{
-				var c = (WieldChange)change;
+				var c = (WieldWeaponChange)change;
 
 				if (m_player.IsController(c.Object) == false)
 				{

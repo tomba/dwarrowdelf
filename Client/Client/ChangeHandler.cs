@@ -129,39 +129,44 @@ namespace Dwarrowdelf.Client
 			ob.SetSkillLevel(change.SkillID, change.Level);
 		}
 
-		void HandleChange(WearChangeData change)
+		void HandleChange(WearArmorChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
-			if (change.WearableID != ObjectID.NullObjectID)
-			{
-				var wearable = m_world.FindOrCreateObject<ItemObject>(change.WearableID);
-				ob.WearArmor(change.Slot, wearable);
-			}
-			else
-			{
-				ob.RemoveArmor(change.Slot);
-			}
+			var wearable = m_world.FindOrCreateObject<ItemObject>(change.WearableID);
+			ob.WearArmor(change.Slot, wearable);
 		}
 
 
-		void HandleChange(WieldChangeData change)
+		void HandleChange(WieldWeaponChangeData change)
 		{
 			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
 
 			Debug.Assert(ob.IsInitialized);
 
-			if (change.WeaponID != ObjectID.NullObjectID)
-			{
-				var weapon = m_world.FindOrCreateObject<ItemObject>(change.WeaponID);
-				ob.WieldWeapon(weapon);
-			}
-			else
-			{
-				ob.RemoveWeapon();
-			}
+			var weapon = m_world.FindOrCreateObject<ItemObject>(change.WeaponID);
+			ob.WieldWeapon(weapon);
+		}
+
+		void HandleChange(RemoveArmorChangeData change)
+		{
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
+
+			Debug.Assert(ob.IsInitialized);
+
+			ob.RemoveArmor(change.Slot);
+		}
+
+
+		void HandleChange(RemoveWeaponChangeData change)
+		{
+			var ob = m_world.GetObject<LivingObject>(change.ObjectID);
+
+			Debug.Assert(ob.IsInitialized);
+
+			ob.RemoveWeapon();
 		}
 
 		void HandleChange(ObjectDestructedChangeData change)

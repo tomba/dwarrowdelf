@@ -143,15 +143,26 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class WearChangeData : ObjectChangeData
+	public sealed class WearArmorChangeData : ObjectChangeData
 	{
 		public ObjectID WearableID;
 		public ArmorSlot Slot;
 	}
 
 	[Serializable]
-	public sealed class WieldChangeData : ObjectChangeData
+	public sealed class WieldWeaponChangeData : ObjectChangeData
 	{
 		public ObjectID WeaponID;
+	}
+
+	[Serializable]
+	public sealed class RemoveArmorChangeData : ObjectChangeData
+	{
+		public ArmorSlot Slot;
+	}
+
+	[Serializable]
+	public sealed class RemoveWeaponChangeData : ObjectChangeData
+	{
 	}
 }

@@ -336,12 +336,12 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public sealed class WearChange : ObjectChange
+	public sealed class WearArmorChange : ObjectChange
 	{
 		public ItemObject Wearable { get; private set; }
 		public ArmorSlot Slot { get; private set; }
 
-		public WearChange(LivingObject wearer, ArmorSlot slot, ItemObject wearable)
+		public WearArmorChange(LivingObject wearer, ArmorSlot slot, ItemObject wearable)
 			: base(wearer)
 		{
 			this.Wearable = wearable;
@@ -350,15 +350,15 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new WearChangeData() { ObjectID = ObjectID.GetID(this.Object), Slot = this.Slot, WearableID = ObjectID.GetID(this.Wearable) };
+			return new WearArmorChangeData() { ObjectID = ObjectID.GetID(this.Object), Slot = this.Slot, WearableID = ObjectID.GetID(this.Wearable) };
 		}
 	}
 
-	public sealed class WieldChange : ObjectChange
+	public sealed class WieldWeaponChange : ObjectChange
 	{
 		public ItemObject Weapon { get; private set; }
 
-		public WieldChange(LivingObject wearer, ItemObject weapon)
+		public WieldWeaponChange(LivingObject wearer, ItemObject weapon)
 			: base(wearer)
 		{
 			this.Weapon = weapon;
@@ -366,7 +366,36 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new WieldChangeData() { ObjectID = ObjectID.GetID(this.Object), WeaponID = ObjectID.GetID(this.Weapon) };
+			return new WieldWeaponChangeData() { ObjectID = ObjectID.GetID(this.Object), WeaponID = ObjectID.GetID(this.Weapon) };
+		}
+	}
+
+	public sealed class RemoveArmorChange : ObjectChange
+	{
+		public ArmorSlot Slot { get; private set; }
+
+		public RemoveArmorChange(LivingObject wearer, ArmorSlot slot)
+			: base(wearer)
+		{
+			this.Slot = slot;
+		}
+
+		public override ChangeData ToChangeData()
+		{
+			return new RemoveArmorChangeData() { ObjectID = ObjectID.GetID(this.Object), Slot = this.Slot };
+		}
+	}
+
+	public sealed class RemoveWeaponChange : ObjectChange
+	{
+		public RemoveWeaponChange(LivingObject wearer)
+			: base(wearer)
+		{
+		}
+
+		public override ChangeData ToChangeData()
+		{
+			return new RemoveWeaponChangeData() { ObjectID = ObjectID.GetID(this.Object) };
 		}
 	}
 }
