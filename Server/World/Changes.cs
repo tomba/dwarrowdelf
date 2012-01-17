@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new TurnStartSequentialChangeData() { LivingID = ObjectID.GetID(this.Living) };
+			return new TurnStartSequentialChangeData() { LivingID = this.Living.ObjectID };
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new TurnEndSequentialChangeData() { LivingID = ObjectID.GetID(this.Living) };
+			return new TurnEndSequentialChangeData() { LivingID = this.Living.ObjectID };
 		}
 	}
 
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new MapChangeData() { EnvironmentID = ObjectID.GetID(this.Environment), Location = this.Location, TileData = this.TileData };
+			return new MapChangeData() { EnvironmentID = this.Environment.ObjectID, Location = this.Location, TileData = this.TileData };
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new ObjectCreatedChangeData() { ObjectID = ObjectID.GetID(this.Object) };
+			return new ObjectCreatedChangeData() { ObjectID = this.Object.ObjectID };
 		}
 	}
 
@@ -140,7 +140,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new ObjectDestructedChangeData() { ObjectID = ObjectID.GetID(this.Object) };
+			return new ObjectDestructedChangeData() { ObjectID = this.Object.ObjectID };
 		}
 	}
 
@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new FullObjectChangeData() { ObjectID = ObjectID.GetID(this.Object), ObjectData = this.ObjectData };
+			return new FullObjectChangeData() { ObjectID = this.Object.ObjectID, ObjectData = this.ObjectData };
 		}
 	}
 
@@ -182,7 +182,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new PropertyValueChangeData() { ObjectID = ObjectID.GetID(this.Object), PropertyID = this.PropertyID, Value = this.Value };
+			return new PropertyValueChangeData() { ObjectID = this.Object.ObjectID, PropertyID = this.PropertyID, Value = this.Value };
 		}
 	}
 
@@ -198,7 +198,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new PropertyIntChangeData() { ObjectID = ObjectID.GetID(this.Object), PropertyID = this.PropertyID, Value = this.Value };
+			return new PropertyIntChangeData() { ObjectID = this.Object.ObjectID, PropertyID = this.PropertyID, Value = this.Value };
 		}
 	}
 
@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new PropertyStringChangeData() { ObjectID = ObjectID.GetID(this.Object), PropertyID = this.PropertyID, Value = this.Value };
+			return new PropertyStringChangeData() { ObjectID = this.Object.ObjectID, PropertyID = this.PropertyID, Value = this.Value };
 		}
 	}
 
@@ -240,7 +240,7 @@ namespace Dwarrowdelf.Server
 		{
 			return new ObjectMoveChangeData()
 			{
-				ObjectID = ObjectID.GetID(this.Object),
+				ObjectID = this.Object.ObjectID,
 				SourceID = ObjectID.GetID(this.Source),
 				SourceLocation = this.SourceLocation,
 				DestinationID = ObjectID.GetID(this.Destination),
@@ -264,7 +264,7 @@ namespace Dwarrowdelf.Server
 		{
 			return new ObjectMoveLocationChangeData()
 			{
-				ObjectID = ObjectID.GetID(this.Object),
+				ObjectID = this.Object.ObjectID,
 				SourceLocation = this.SourceLocation,
 				DestinationLocation = this.DestinationLocation
 			};
@@ -287,7 +287,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new SkillChangeData() { ObjectID = ObjectID.GetID(this.Object), SkillID = this.SkillID, Level = this.Level };
+			return new SkillChangeData() { ObjectID = this.Object.ObjectID, SkillID = this.SkillID, Level = this.Level };
 		}
 	}
 
@@ -302,7 +302,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new ActionStartedChangeData() { ObjectID = ObjectID.GetID(this.Object), ActionStartEvent = this.ActionStartEvent };
+			return new ActionStartedChangeData() { ObjectID = this.Object.ObjectID, ActionStartEvent = this.ActionStartEvent };
 		}
 	}
 
@@ -317,7 +317,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new ActionProgressChangeData() { ObjectID = ObjectID.GetID(this.Object), ActionProgressEvent = this.ActionProgressEvent };
+			return new ActionProgressChangeData() { ObjectID = this.Object.ObjectID, ActionProgressEvent = this.ActionProgressEvent };
 		}
 	}
 
@@ -332,7 +332,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new ActionDoneChangeData() { ObjectID = ObjectID.GetID(this.Object), ActionDoneEvent = this.ActionDoneEvent };
+			return new ActionDoneChangeData() { ObjectID = this.Object.ObjectID, ActionDoneEvent = this.ActionDoneEvent };
 		}
 	}
 
@@ -350,7 +350,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new WearArmorChangeData() { ObjectID = ObjectID.GetID(this.Object), Slot = this.Slot, WearableID = ObjectID.GetID(this.Wearable) };
+			return new WearArmorChangeData() { ObjectID = this.Object.ObjectID, Slot = this.Slot, WearableID = this.Wearable.ObjectID };
 		}
 	}
 
@@ -366,7 +366,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new WieldWeaponChangeData() { ObjectID = ObjectID.GetID(this.Object), WeaponID = ObjectID.GetID(this.Weapon) };
+			return new WieldWeaponChangeData() { ObjectID = this.Object.ObjectID, WeaponID = this.Weapon.ObjectID };
 		}
 	}
 
@@ -382,7 +382,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new RemoveArmorChangeData() { ObjectID = ObjectID.GetID(this.Object), Slot = this.Slot };
+			return new RemoveArmorChangeData() { ObjectID = this.Object.ObjectID, Slot = this.Slot };
 		}
 	}
 
@@ -395,7 +395,7 @@ namespace Dwarrowdelf.Server
 
 		public override ChangeData ToChangeData()
 		{
-			return new RemoveWeaponChangeData() { ObjectID = ObjectID.GetID(this.Object) };
+			return new RemoveWeaponChangeData() { ObjectID = this.Object.ObjectID };
 		}
 	}
 }
