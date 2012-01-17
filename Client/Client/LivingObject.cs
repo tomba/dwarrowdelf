@@ -126,7 +126,7 @@ namespace Dwarrowdelf.Client
 				if (m_isManuallyControlled)
 					this.AI = new ManualControlAI(this);
 				else
-					this.AI = new Dwarrowdelf.AI.JobManagerAI(this);
+					this.AI = new DwarfAI(this);
 
 				Notify("IsManuallyControlled");
 			}
@@ -144,8 +144,7 @@ namespace Dwarrowdelf.Client
 				if (value == true)
 				{
 					GameData.Data.World.Controllables.Add(this);
-					this.AI = new Dwarrowdelf.AI.JobManagerAI(this);
-					//this.AI = new FighterAI(this);
+					this.AI = new DwarfAI(this);
 				}
 				else
 				{
@@ -178,7 +177,7 @@ namespace Dwarrowdelf.Client
 
 				if (m_ai != null)
 				{
-					var jmai = m_ai as Dwarrowdelf.AI.JobManagerAI;
+					var jmai = m_ai as DwarfAI;
 					if (jmai != null)
 						jmai.JobManager = this.World.JobManager;
 
