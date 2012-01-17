@@ -73,6 +73,8 @@ namespace Dwarrowdelf.Client
 		Weapon,
 		Armor,
 
+		Corpse,
+
 		/* top */
 		Water,
 

@@ -290,7 +290,6 @@ namespace Dwarrowdelf.Client
 
 			set(ItemID.Food, SymbolID.Consumable);
 			set(ItemID.Drink, SymbolID.Consumable);
-			set(ItemID.Corpse, SymbolID.Rock);
 
 			set(ItemID.Ore, SymbolID.Rock);
 
