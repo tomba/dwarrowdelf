@@ -10,7 +10,7 @@ using Dwarrowdelf.Jobs.Assignments;
 namespace Dwarrowdelf.AI
 {
 	[SaveGameObjectByRef]
-	public sealed class MonsterAI : AssignmentAI
+	public sealed class MonsterAI : AssignmentAI, IJobObserver
 	{
 		ILivingObject m_target;
 
@@ -22,8 +22,10 @@ namespace Dwarrowdelf.AI
 		public MonsterAI(ILivingObject ob)
 			: base(ob)
 		{
+			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
 		}
 
+		new MyTraceSource trace;
 		public override string Name { get { return "MonsterAI"; } }
 
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
@@ -46,37 +48,39 @@ namespace Dwarrowdelf.AI
 					}
 					else
 					{
-						trace.TraceInformation("Continue patrolling");
+						trace.TraceVerbose("Continue patrolling");
 						return this.CurrentAssignment;
 					}
 				}
 
-				trace.TraceInformation("Found target");
+				trace.TraceInformation("Found target: {0}", m_target);
 			}
 
 			Debug.Assert(m_target != null);
 
 			if (this.CurrentAssignment == null || (this.CurrentAssignment is AttackAssignment) == false)
 			{
-				trace.TraceInformation("Start attacking");
+				trace.TraceInformation("Start attacking: {0}", m_target);
 
-				var assignment = new AttackAssignment(null, m_target);
-				assignment.StatusChanged += OnAttackStatusChanged;
+				var assignment = new AttackAssignment(this, m_target);
 				return assignment;
 			}
 			else
 			{
-				trace.TraceInformation("Continue attacking");
+				trace.TraceInformation("Continue attacking: {0}", m_target);
 				return this.CurrentAssignment;
 			}
 		}
 
-		void OnAttackStatusChanged(IJob job, JobStatus status)
-		{
-			trace.TraceInformation("Attack finished: {0}", status);
+		#region IJobObserver Members
 
-			job.StatusChanged -= OnAttackStatusChanged;
+		public void OnObservableJobStatusChanged(IJob job, JobStatus status)
+		{
+			trace.TraceInformation("Attack finished: {0} ({1})", m_target, status);
+
 			m_target = null;
 		}
+
+		#endregion
 	}
 }
