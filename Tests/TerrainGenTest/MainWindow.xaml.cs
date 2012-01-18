@@ -47,17 +47,17 @@ namespace TerrainGenTest
 
 			var corners = new DiamondSquare.CornerData()
 			{
-				NW = ParseDouble(corner1TextBox.Text),
-				NE = ParseDouble(corner2TextBox.Text),
-				SE = ParseDouble(corner3TextBox.Text),
-				SW = ParseDouble(corner4TextBox.Text),
+				NW = ParseDouble(cornerNWTextBox.Text),
+				NE = ParseDouble(cornerNETextBox.Text),
+				SE = ParseDouble(cornerSETextBox.Text),
+				SW = ParseDouble(cornerSWTextBox.Text),
 			};
 
 			m_terrain.Generate(corners, range, h, seed);
 
-			timeTextBox.Text = m_terrain.Time.TotalMilliseconds.ToString();
-			minTextBox.Text = m_terrain.Min.ToString();
-			maxTextBox.Text = m_terrain.Max.ToString();
+			avgTextBox.Text = m_terrain.Average.ToString();
+			//minTextBox.Text = m_terrain.Min.ToString();
+			//maxTextBox.Text = m_terrain.Max.ToString();
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -37,5 +37,24 @@ namespace Dwarrowdelf.TerrainGen
 					max = v;
 			}
 		}
+
+		public static void Normalize(ArrayGrid2D<double> grid)
+		{
+			double min, max;
+
+			MinMax(grid, out min, out max);
+
+			double d = max - min;
+
+			foreach (var kvp in grid.GetIndexValueEnumerable())
+			{
+				var k = kvp.Key;
+				var v = kvp.Value;
+
+				v -= min;
+				v /= d;
+				grid[k] = v;
+			}
+		}
 	}
 }

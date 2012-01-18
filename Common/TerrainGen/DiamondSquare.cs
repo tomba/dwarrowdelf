@@ -47,9 +47,8 @@ namespace Dwarrowdelf.TerrainGen
 			HeightMap(ctx);
 		}
 
-		static double GetRandom(Context ctx)
+		static double GetRandom(Context ctx, double range)
 		{
-			var range = ctx.Range;
 			return ctx.Random.NextDouble() * range * 2 - range;
 		}
 
@@ -114,7 +113,8 @@ namespace Dwarrowdelf.TerrainGen
 			p4 = middle.Offset(-radius, -radius);
 			v4 = grid[p4];
 
-			grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(ctx);
+			var avg = (v1 + v2 + v3 + v4) / 4;
+			grid[middle] = avg + GetRandom(ctx, ctx.Range);
 		}
 
 		static void Diamond(Context ctx, IntPoint2 middle, int radius)
@@ -134,7 +134,8 @@ namespace Dwarrowdelf.TerrainGen
 			p4 = middle.Offset(radius, 0);
 			v4 = GetGridValue(ctx, p4);
 
-			ctx.Grid[middle] = (v1 + v2 + v3 + v4) / 4 + GetRandom(ctx);
+			var avg = (v1 + v2 + v3 + v4) / 4;
+			ctx.Grid[middle] = avg + GetRandom(ctx, ctx.Range);
 		}
 
 		/// <summary>

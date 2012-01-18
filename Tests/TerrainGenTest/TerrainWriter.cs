@@ -27,15 +27,15 @@ namespace TerrainGenTest
 			m_bmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgr32, null);
 		}
 
-		public TimeSpan Time { get; private set; }
-		public double Min { get; private set; }
-		public double Max { get; private set; }
+		public double Average { get; private set; }
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed)
 		{
 			m_grid.Clear();
 
 			GenerateTerrain(m_grid, corners, range, h, seed);
+
+			AnalyzeTerrain(m_grid);
 
 			RenderTerrain(m_grid);
 		}
@@ -47,17 +47,14 @@ namespace TerrainGenTest
 			//Clamper.Clamp(grid, 10);
 		}
 
+		void AnalyzeTerrain(ArrayGrid2D<double> grid)
+		{
+			Clamper.Normalize(grid);
+			this.Average = grid.Average();
+		}
+
 		void RenderTerrain(ArrayGrid2D<double> grid)
 		{
-			double min, max;
-			Clamper.MinMax(grid, out min, out max);
-
-			this.Min = min;
-			this.Max = max;
-
-			var diff = max - min;
-			var mul = 255 / diff;
-
 			uint[] array = new uint[grid.Width];
 
 			m_bmp.Lock();
@@ -68,17 +65,9 @@ namespace TerrainGenTest
 				{
 					var v = grid[x, y];
 
-					v -= min;
-					v *= mul;
-					v = Math.Round(v);
-					if (v < 0 || v > 255)
-						throw new Exception();
+					var c = GetColor(v);
 
-					var r = (uint)v;
-					var g = (uint)v;
-					var b = (uint)v;
-
-					array[x] = (r << 16) | (g << 8) | (b << 0);
+					array[x] = c;
 				}
 
 				m_bmp.WritePixels(new Int32Rect(0, y, grid.Width, 1), array, grid.Width * 4, 0);
@@ -88,5 +77,35 @@ namespace TerrainGenTest
 			m_bmp.Unlock();
 		}
 
+		uint GetColor(double v)
+		{
+			uint c = (uint)(v * 255);
+
+			if (c < 0 || c > 255)
+				throw new Exception();
+
+			uint r, g, b;
+
+			if (v >= 0.50)
+			{
+				r = c;
+				g = c;
+				b = c;
+			}
+			else if (v >= 0.20)
+			{
+				r = 0;
+				g = c;
+				b = 0;
+			}
+			else
+			{
+				r = 0;
+				g = 0;
+				b = 150;
+			}
+
+			return (r << 16) | (g << 8) | (b << 0);
+		}
 	}
 }

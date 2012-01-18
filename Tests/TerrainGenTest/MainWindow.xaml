@@ -38,7 +38,7 @@
 		<GroupBox Header="H" Grid.Column="1" Grid.Row="0">
 			<DockPanel LastChildFill="True">
 				<TextBox DockPanel.Dock="Right" Width="50" Text="{Binding Value, ElementName=hSlider}" />
-				<Slider Name="hSlider" Minimum="0" Maximum="2" ValueChanged="hSlider_ValueChanged" Value="1.0" />
+				<Slider Name="hSlider" Minimum="0" Maximum="2" ValueChanged="hSlider_ValueChanged" Value="0.75" />
 			</DockPanel>
 		</GroupBox>
 
@@ -46,12 +46,12 @@
 			<DockPanel LastChildFill="True">
 				<TextBox DockPanel.Dock="Right" Width="50" Text="{Binding Value, ElementName=rangeSlider}" />
 				<Slider Name="rangeSlider"
-							Minimum="0" Maximum="20" ValueChanged="rangeSlider_ValueChanged" Value="5.0" />
+							Minimum="0" Maximum="100" ValueChanged="rangeSlider_ValueChanged" Value="5.0" />
 			</DockPanel>
 		</GroupBox>
 
-		<GroupBox Header="Time" Grid.Column="0" Grid.Row="1">
-			<TextBox IsReadOnly="True" Name="timeTextBox" />
+		<GroupBox Header="Avg" Grid.Column="0" Grid.Row="1">
+			<TextBox IsReadOnly="True" Name="avgTextBox" />
 		</GroupBox>
 
 		<GroupBox Header="Min" Grid.Column="1" Grid.Row="1">
@@ -64,15 +64,15 @@
 
 		<GroupBox Header="Corners" Grid.Column="0" Grid.Row="2">
 			<UniformGrid Margin="2">
-				<TextBox Text="10" Name="corner1TextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="10" Name="corner2TextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="10" Name="corner3TextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="10" Name="corner4TextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="cornerNWTextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="cornerNETextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="cornerSWTextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="cornerSETextBox" TextChanged="cornerTextBox_TextChanged" />
 			</UniformGrid>
 		</GroupBox>
 
 		<GroupBox Header="Seed" Grid.Column="1" Grid.Row="2">
-			<TextBox Name="seedTextBox" TextChanged="seedTextBox_TextChanged"  />
+			<TextBox Name="seedTextBox" Text="1" TextChanged="seedTextBox_TextChanged"  />
 		</GroupBox>
 	</Grid>
 </Window>
