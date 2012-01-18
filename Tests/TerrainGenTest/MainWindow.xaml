@@ -1,46 +1,64 @@
 ﻿<Window x:Class="TerrainGenTest.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="800" Width="800">
-    <Canvas>
-        <Image Name="image" Stretch="Uniform" SnapsToDevicePixels="True" UseLayoutRounding="True" HorizontalAlignment="Center" VerticalAlignment="Center"
-               Canvas.Left="0" Canvas.Top="0"/>
-        <UniformGrid Columns="2">
-            <GroupBox Header="Zoom" Background="White">
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="slider1" Width="100"
-                            Minimum="1" Maximum="16" Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
-                            ValueChanged="slider1_ValueChanged" />
-                    <TextBox Width="50" Text="{Binding Value, ElementName=slider1}" />
-                </StackPanel>
-            </GroupBox>
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="MainWindow" UseLayoutRounding="True"
+		Name="root"
+		mc:Ignorable="d"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		d:DesignHeight="471" d:DesignWidth="725"
+		SizeToContent="WidthAndHeight">
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="1*" />
+			<ColumnDefinition Width="1*" />
+		</Grid.ColumnDefinitions>
 
-            <GroupBox Header="H" Background="White">
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="slider2" Width="300"
-                            Minimum="0" Maximum="2" ValueChanged="slider2_ValueChanged" Value="1.0" />
-                    <TextBox Width="50" Text="{Binding Value, ElementName=slider2}" />
-                </StackPanel>
-            </GroupBox>
+		<Image Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="image" Stretch="Uniform" Source="{Binding Bmp, ElementName=root}"
+			   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
-            <GroupBox Header="Range" Background="White">
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="slider3" Width="300"
-                            Minimum="0" Maximum="20" ValueChanged="slider2_ValueChanged" Value="5.0" />
-                    <TextBox Width="50" Text="{Binding Value, ElementName=slider3}" />
-                </StackPanel>
-            </GroupBox>
+		<GroupBox Header="Zoom" Grid.Column="0" Grid.Row="0">
+			<DockPanel LastChildFill="True">
+				<TextBox DockPanel.Dock="Right" Width="50" Text="{Binding Value, ElementName=zoomSlider}" />
+				<Slider Name="zoomSlider"
+							Minimum="1" Maximum="16" Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
+							ValueChanged="zoomSlider_ValueChanged" />
+			</DockPanel>
+		</GroupBox>
 
-            <TextBox IsReadOnly="True" Name="timeTextBox" />
+		<GroupBox Header="H" Grid.Column="1" Grid.Row="0">
+			<DockPanel LastChildFill="True">
+				<TextBox DockPanel.Dock="Right" Width="50" Text="{Binding Value, ElementName=hSlider}" />
+				<Slider Name="hSlider" Minimum="0" Maximum="2" ValueChanged="hSlider_ValueChanged" Value="1.0" />
+			</DockPanel>
+		</GroupBox>
 
-            <GroupBox Header="Min">
-                <TextBox IsReadOnly="True" Name="minTextBox" />
-            </GroupBox>
+		<GroupBox Header="Range" Grid.Column="2" Grid.Row="0">
+			<DockPanel LastChildFill="True">
+				<TextBox DockPanel.Dock="Right" Width="50" Text="{Binding Value, ElementName=rangeSlider}" />
+				<Slider Name="rangeSlider"
+							Minimum="0" Maximum="20" ValueChanged="rangeSlider_ValueChanged" Value="5.0" />
+			</DockPanel>
+		</GroupBox>
 
-            <GroupBox Header="Max">
-                <TextBox IsReadOnly="True" Name="maxTextBox" />
-            </GroupBox>
+		<GroupBox Header="Time" Grid.Column="0" Grid.Row="1">
+			<TextBox IsReadOnly="True" Name="timeTextBox" />
+		</GroupBox>
 
-        </UniformGrid>
-    </Canvas>
+		<GroupBox Header="Min" Grid.Column="1" Grid.Row="1">
+			<TextBox IsReadOnly="True" Name="minTextBox" />
+		</GroupBox>
+
+		<GroupBox Header="Max" Grid.Column="2" Grid.Row="1">
+			<TextBox IsReadOnly="True" Name="maxTextBox" />
+		</GroupBox>
+
+	</Grid>
 </Window>
