@@ -62,6 +62,17 @@ namespace Dwarrowdelf
 			Array.Clear(m_grid, 0, m_grid.Length);
 		}
 
+		public void ForEach(Func<T, T> action)
+		{
+			for (int y = 0; y < this.Height; y++)
+			{
+				for (int x = 0; x < this.Width; x++)
+				{
+					m_grid[y, x] = action(m_grid[y, x]);
+				}
+			}
+		}
+
 		public IEnumerable<KeyValuePair<IntPoint2, T>> GetIndexValueEnumerable()
 		{
 			for (int y = 0; y < this.Height; y++)

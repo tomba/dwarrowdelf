@@ -9,19 +9,16 @@ namespace Dwarrowdelf.TerrainGen
 	{
 		public static void Clamp(ArrayGrid2D<double> grid, double average)
 		{
-			foreach (var kvp in grid.GetIndexValueEnumerable())
+			grid.ForEach(v =>
 			{
-				var k = kvp.Key;
-				var v = kvp.Value;
-
-				/* clamp */
 				if (v < average)
 				{
 					double d = average - v;
 					v = average - Math.Pow(d, 1.0 / 20);
-					grid[k] = v;
 				}
-			}
+
+				return v;
+			});
 		}
 
 		public static void MinMax(ArrayGrid2D<double> grid, out double min, out double max)
@@ -46,15 +43,12 @@ namespace Dwarrowdelf.TerrainGen
 
 			double d = max - min;
 
-			foreach (var kvp in grid.GetIndexValueEnumerable())
+			grid.ForEach(v =>
 			{
-				var k = kvp.Key;
-				var v = kvp.Value;
-
 				v -= min;
 				v /= d;
-				grid[k] = v;
-			}
+				return v;
+			});
 		}
 	}
 }
