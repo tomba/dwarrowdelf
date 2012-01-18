@@ -7,10 +7,12 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		d:DesignHeight="471" d:DesignWidth="725"
-		SizeToContent="WidthAndHeight">
-	
+		SizeToContent="WidthAndHeight"
+		WindowStartupLocation="CenterScreen">
+
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
@@ -21,7 +23,7 @@
 			<ColumnDefinition Width="1*" />
 		</Grid.ColumnDefinitions>
 
-		<Image Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Name="image" Stretch="Uniform" Source="{Binding Bmp, ElementName=root}"
+		<Image Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Name="image" Stretch="Uniform" Source="{Binding Bmp, ElementName=root}"
 			   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4" RenderOptions.BitmapScalingMode="NearestNeighbor" />
 
 		<GroupBox Header="Zoom" Grid.Column="0" Grid.Row="0">
@@ -60,5 +62,17 @@
 			<TextBox IsReadOnly="True" Name="maxTextBox" />
 		</GroupBox>
 
+		<GroupBox Header="Corners" Grid.Column="0" Grid.Row="2">
+			<UniformGrid Margin="2">
+				<TextBox Text="10" Name="corner1TextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="corner2TextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="corner3TextBox" TextChanged="cornerTextBox_TextChanged" />
+				<TextBox Text="10" Name="corner4TextBox" TextChanged="cornerTextBox_TextChanged" />
+			</UniformGrid>
+		</GroupBox>
+
+		<GroupBox Header="Seed" Grid.Column="1" Grid.Row="2">
+			<TextBox Name="seedTextBox" TextChanged="seedTextBox_TextChanged"  />
+		</GroupBox>
 	</Grid>
 </Window>

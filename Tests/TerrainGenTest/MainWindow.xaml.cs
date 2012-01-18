@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dwarrowdelf;
+using Dwarrowdelf.TerrainGen;
 
 namespace TerrainGenTest
 {
@@ -42,8 +43,17 @@ namespace TerrainGenTest
 
 			double range = rangeSlider.Value;
 			double h = hSlider.Value;
+			int seed = ParseInt(seedTextBox.Text);
 
-			m_terrain.Generate(range, h);
+			var corners = new DiamondSquare.CornerData()
+			{
+				NW = ParseDouble(corner1TextBox.Text),
+				NE = ParseDouble(corner2TextBox.Text),
+				SE = ParseDouble(corner3TextBox.Text),
+				SW = ParseDouble(corner4TextBox.Text),
+			};
+
+			m_terrain.Generate(corners, range, h, seed);
 
 			timeTextBox.Text = m_terrain.Time.TotalMilliseconds.ToString();
 			minTextBox.Text = m_terrain.Min.ToString();
@@ -67,6 +77,40 @@ namespace TerrainGenTest
 		private void rangeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			Render();
+		}
+
+		private void seedTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!this.IsInitialized)
+				return;
+
+			Render();
+		}
+
+		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!this.IsInitialized)
+				return;
+
+			Render();
+		}
+
+		int ParseInt(string str)
+		{
+			int r;
+			if (int.TryParse(str, out r))
+				return r;
+			else
+				return 0;
+		}
+
+		double ParseDouble(string str)
+		{
+			double r;
+			if (double.TryParse(str, out r))
+				return r;
+			else
+				return 0;
 		}
 	}
 }

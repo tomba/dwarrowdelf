@@ -31,22 +31,20 @@ namespace TerrainGenTest
 		public double Min { get; private set; }
 		public double Max { get; private set; }
 
-		public void Generate(double range, double h)
+		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed)
 		{
 			m_grid.Clear();
 
-			GenerateTerrain(m_grid, range, h);
+			GenerateTerrain(m_grid, corners, range, h, seed);
 
 			RenderTerrain(m_grid);
 		}
 
-		void GenerateTerrain(ArrayGrid2D<double> grid, double range, double h)
+		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h, int seed)
 		{
-			double average = 10;
+			DiamondSquare.Render(grid, corners, range, h, seed);
 
-			DiamondSquare.Render(grid, average, range, h);
-
-			Clamper.Clamp(grid, average);
+			//Clamper.Clamp(grid, 10);
 		}
 
 		void RenderTerrain(ArrayGrid2D<double> grid)
