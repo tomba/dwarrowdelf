@@ -10,10 +10,10 @@ namespace Dwarrowdelf.TerrainGen
 	{
 		public class CornerData
 		{
-			public double NW;
-			public double NE;
 			public double SW;
 			public double SE;
+			public double NW;
+			public double NE;
 		}
 
 		sealed class Context
@@ -39,10 +39,10 @@ namespace Dwarrowdelf.TerrainGen
 				H = h,
 			};
 
-			grid[0, 0] = corners.NW;
-			grid[grid.Width - 1, 0] = corners.NE;
-			grid[grid.Width - 1, grid.Height - 1] = corners.SE;
-			grid[0, grid.Height - 1] = corners.SW;
+			grid[0, 0] = corners.SW;
+			grid[grid.Width - 1, 0] = corners.SE;
+			grid[grid.Width - 1, grid.Height - 1] = corners.NE;
+			grid[0, grid.Height - 1] = corners.NW;
 
 			HeightMap(ctx);
 		}
@@ -153,40 +153,40 @@ namespace Dwarrowdelf.TerrainGen
 			if (p.X < 0)
 			{
 				x1 = 0;
-				y1 = corners.NW;
+				y1 = corners.SW;
 
 				x2 = grid.Height;
-				y2 = corners.SW;
+				y2 = corners.NW;
 
 				x = p.Y;
 			}
 			else if (p.Y < 0)
 			{
 				x1 = 0;
-				y1 = corners.NW;
+				y1 = corners.SW;
 
 				x2 = grid.Width;
-				y2 = corners.NE;
+				y2 = corners.SE;
 
 				x = p.X;
 			}
 			else if (p.X >= grid.Width)
 			{
 				x1 = 0;
-				y1 = corners.NE;
+				y1 = corners.SE;
 
 				x2 = grid.Height;
-				y2 = corners.SE;
+				y2 = corners.NE;
 
 				x = p.Y;
 			}
 			else if (p.Y >= grid.Height)
 			{
 				x1 = 0;
-				y1 = corners.SE;
+				y1 = corners.NE;
 
 				x2 = grid.Width;
-				y2 = corners.SW;
+				y2 = corners.NW;
 
 				x = p.X;
 			}

@@ -53,6 +53,8 @@ namespace TerrainGenTest
 				SW = ParseDouble(cornerSWTextBox.Text),
 			};
 
+			m_terrain.Amplify = ParseInt(amplifyTextBox.Text);
+
 			m_terrain.Generate(corners, range, h, seed);
 
 			avgTextBox.Text = m_terrain.Average.ToString();

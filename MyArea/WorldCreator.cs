@@ -14,7 +14,8 @@ namespace MyArea
 {
 	static class WorldCreator
 	{
-		const int AREA_SIZE = 7;
+		const int MAP_SIZE = 7;	// 2^AREA_SIZE
+		const int MAP_DEPTH = 20;
 		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
 
@@ -59,21 +60,41 @@ namespace MyArea
 
 		static EnvironmentObject CreateEnv(World world, out int surfaceLevel)
 		{
-			int sizeExp = AREA_SIZE;
+			int sizeExp = MAP_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
 
 			// size + 1 for the DiamondSquare algorithm
 			var doubleHeightMap = new ArrayGrid2D<double>(size + 1, size + 1);
 
-			DiamondSquare.Render(doubleHeightMap, 10, 5, 0.75);
-			Clamper.Clamp(doubleHeightMap, 10);
+			var corners = new DiamondSquare.CornerData()
+			{
+				NE = 15,
+				NW = 10,
+				SW = 10,
+				SE = 10,
+			};
+
+			DiamondSquare.Render(doubleHeightMap, corners, 5, 0.75, 1);
+
+			// Normalize the heightmap to 0.0 - 1.0
+			Clamper.Normalize(doubleHeightMap);
+
+			// square each value, to smoothen the lower parts
+			doubleHeightMap.ForEach(v => Math.Pow(v, 2));
 
 			// integer heightmap. the number tells the z level where the floor is.
 			var intHeightMap = new ArrayGrid2D<int>(size, size);
 			foreach (var p in IntPoint2.Range(size, size))
-				intHeightMap[p] = (int)Math.Truncate(doubleHeightMap[p]); // XXX perhaps Round is better
+			{
+				var d = doubleHeightMap[p];
 
-			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(size, size, 20), VisibilityMode.GlobalFOV);
+				d *= MAP_DEPTH / 2;
+				d += (MAP_DEPTH / 2) - 1;
+
+				intHeightMap[p] = (int)Math.Round(d);
+			}
+
+			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(size, size, MAP_DEPTH), VisibilityMode.GlobalFOV);
 
 			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
 
@@ -105,12 +126,12 @@ namespace MyArea
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), GetRandomSurfaceLocation(env, surfaceLevel));
 
-			CreateWaterTest(env, surfaceLevel);
+			//CreateWaterTest(env, surfaceLevel);
 
 			CreateBuildings(env, surfaceLevel);
 
 			{
-				var p = new IntPoint3(env.Width / 10 - 1, env.Height / 10 - 2, surfaceLevel);
+				var p = new IntPoint3(env.Width / 2 - 1, env.Height / 2 - 2, surfaceLevel);
 
 				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 
@@ -130,12 +151,12 @@ namespace MyArea
 
 			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, new IntPoint3(env.Width / 10 - 2, env.Height / 10 - 2, surfaceLevel));
+				gen.MoveTo(env, new IntPoint3(env.Width / 2 - 2, env.Height / 2 - 2, surfaceLevel));
 			}
 
 			AddMonsters(env, surfaceLevel);
 
-
+			/*
 			{
 				// create a wall and a hole with door
 
@@ -157,15 +178,15 @@ namespace MyArea
 				p = new IntPoint3(17, 7, surfaceLevel);
 				var item = CreateItem(env, ItemID.Door, MaterialID.Birch, p);
 				item.IsInstalled = true;
-			}
+			}*/
 		}
 
 		static void CreateBuildings(EnvironmentObject env, int surfaceLevel)
 		{
 			var world = env.World;
 
-			int posx = env.Width / 10;
-			int posy = env.Height / 10;
+			int posx = env.Width / 2 - 16;
+			int posy = env.Height / 2 - 10;
 
 			var floorTile = new TileData()
 			{
@@ -197,7 +218,8 @@ namespace MyArea
 				builder.Create(world, env);
 			}
 
-			posx = env.Width / 10;
+			posx = env.Width / 2 - 16;
+
 			posy += 4;
 
 			{

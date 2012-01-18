@@ -28,6 +28,7 @@ namespace TerrainGenTest
 		}
 
 		public double Average { get; private set; }
+		public int Amplify { get; set; }
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed)
 		{
@@ -50,6 +51,11 @@ namespace TerrainGenTest
 		void AnalyzeTerrain(ArrayGrid2D<double> grid)
 		{
 			Clamper.Normalize(grid);
+
+			grid.ForEach(v => Math.Pow(v, this.Amplify));
+
+			Clamper.Normalize(grid);
+
 			this.Average = grid.Average();
 		}
 
@@ -70,7 +76,7 @@ namespace TerrainGenTest
 					array[x] = c;
 				}
 
-				m_bmp.WritePixels(new Int32Rect(0, y, grid.Width, 1), array, grid.Width * 4, 0);
+				m_bmp.WritePixels(new Int32Rect(0, m_bmp.PixelHeight - y - 1, grid.Width, 1), array, grid.Width * 4, 0);
 			}
 
 			m_bmp.AddDirtyRect(new Int32Rect(0, 0, m_bmp.PixelWidth, m_bmp.PixelHeight));
@@ -79,31 +85,39 @@ namespace TerrainGenTest
 
 		uint GetColor(double v)
 		{
-			uint c = (uint)(v * 255);
-
-			if (c < 0 || c > 255)
-				throw new Exception();
 
 			uint r, g, b;
 
-			if (v >= 0.50)
+			double mountain_min = 0.5;
+			double grass_min = 0.0;
+
+			if (v >= mountain_min)
 			{
+				v = (v - mountain_min) / (1.0 - mountain_min);
+
+				Debug.Assert(v >= 0 && v <= 1);
+
+				uint c = 127 + (uint)(v * 127);
+
 				r = c;
 				g = c;
 				b = c;
 			}
-			else if (v >= 0.20)
+			else
 			{
+				v = (v - grass_min) / (mountain_min - grass_min);
+
+				Debug.Assert(v >= 0 && v <= 1);
+
+				uint c = 127 / 2 + (uint)(v * 127);
+
 				r = 0;
 				g = c;
 				b = 0;
 			}
-			else
-			{
-				r = 0;
-				g = 0;
-				b = 150;
-			}
+
+			if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+				throw new Exception();
 
 			return (r << 16) | (g << 8) | (b << 0);
 		}
