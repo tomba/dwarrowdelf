@@ -16,6 +16,8 @@ namespace MyArea
 	{
 		const int MAP_SIZE = 7;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
+		const int GRASS_LIMIT = 15;	// No grass if z >= GRASS_LIMIT
+
 		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
 
@@ -327,7 +329,8 @@ namespace MyArea
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
 							td.TerrainMaterialID = MaterialID.Granite;
-							td.Flags = TileFlags.Grass;
+							if (z < GRASS_LIMIT)
+								td.Flags = TileFlags.Grass;
 						}
 						else
 						{
