@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Client
 			if (!m_bounds.Contains(p))
 				return false;
 
-			p += new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
+			p = new IntPoint3(p.X - m_bounds.X1, p.Y - m_bounds.Y1, p.Z - m_bounds.Z1);
 			return true;
 		}
 
@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Client
 			if (!m_bounds.Contains(p))
 				DoGrow(p);
 
-			p += new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
+			p = new IntPoint3(p.X - m_bounds.X1, p.Y - m_bounds.Y1, p.Z - m_bounds.Z1);
 		}
 
 		void DoGrow(IntPoint3 p)
