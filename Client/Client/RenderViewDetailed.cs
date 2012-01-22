@@ -25,24 +25,6 @@ namespace Dwarrowdelf.Client
 			m_symbolToggler = !m_symbolToggler;
 		}
 
-		/*
-		ISymbolDrawingCache m_symbolDrawingCache;
-		public ISymbolDrawingCache SymbolDrawingCache
-		{
-			get { return m_symbolDrawingCache; }
-			set
-			{
-				m_symbolDrawingCache = value;
-				m_renderer.SymbolDrawingCache = value;
-			}
-		}
-
-		public void InvalidateSymbols()
-		{
-			m_renderer.InvalidateSymbols();
-		}
-		*/
-
 		protected override void MapChangedOverride(IntPoint3 ml)
 		{
 			// Note: invalidates the rendertile regardless of ml.Z
@@ -171,25 +153,25 @@ namespace Dwarrowdelf.Client
 		{
 			seeThrough = false;
 
-			var flrID = env.GetTerrainID(ml);
+			var td = env.GetTileData(ml);
 
-			if (flrID == TerrainID.Undefined)
+			if (td.TerrainID == TerrainID.Undefined)
 				return;
 
-			if (flrID == TerrainID.Empty)
+			if (td.TerrainID == TerrainID.Empty)
 			{
 				seeThrough = true;
 				return;
 			}
 
-			var matInfo = env.GetTerrainMaterial(ml);
+			var matInfo = Materials.GetMaterial(td.TerrainMaterialID);
 			tile.Color = matInfo.Color;
 			tile.BgColor = GameColor.None;
 
-			switch (flrID)
+			switch (td.TerrainID)
 			{
 				case TerrainID.NaturalFloor:
-					if (env.GetGrass(ml))
+					if ((td.Flags & TileFlags.Grass) != 0)
 					{
 						tile.SymbolID = SymbolID.Grass;
 						// Grass color should come from the symbol definition
@@ -221,7 +203,7 @@ namespace Dwarrowdelf.Client
 				case TerrainID.SlopeSouthWest:
 				case TerrainID.SlopeWest:
 				case TerrainID.SlopeNorthWest:
-					switch (flrID.ToDir())
+					switch (td.TerrainID.ToDir())
 					{
 						case Direction.North:
 							tile.SymbolID = SymbolID.SlopeUpNorth;
@@ -251,7 +233,7 @@ namespace Dwarrowdelf.Client
 							throw new Exception();
 					}
 
-					if (env.GetGrass(ml))
+					if ((td.Flags & TileFlags.Grass) != 0)
 					{
 						// override the material color
 						tile.Color = GameColor.DarkGreen;
@@ -267,19 +249,18 @@ namespace Dwarrowdelf.Client
 
 		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
 		{
-			var intID = env.GetInteriorID(ml);
-			var intID2 = env.GetInteriorID(ml + Direction.Down);
+			var td = env.GetTileData(ml);
 
 			seeThrough = true;
 
-			if (intID == InteriorID.Undefined)
+			if (td.InteriorID == InteriorID.Undefined)
 				return;
 
-			var matInfo = env.GetInteriorMaterial(ml);
+			var matInfo = Materials.GetMaterial(td.InteriorMaterialID);
 			tile.Color = matInfo.Color;
 			tile.BgColor = GameColor.None;
 
-			switch (intID)
+			switch (td.InteriorID)
 			{
 				case InteriorID.Stairs:
 					tile.SymbolID = SymbolID.StairsUp;
@@ -332,16 +313,18 @@ namespace Dwarrowdelf.Client
 
 			if (showVirtualSymbols)
 			{
-				if (intID2 == InteriorID.Stairs)
+				var td2 = env.GetTileData(ml + Direction.Down);
+
+				if (td2.InteriorID == InteriorID.Stairs)
 				{
-					if (intID == InteriorID.Stairs)
+					if (td.InteriorID == InteriorID.Stairs)
 					{
 						tile.SymbolID = SymbolID.StairsUpDown;
 					}
-					else if (intID == InteriorID.Empty)
+					else if (td.InteriorID == InteriorID.Empty)
 					{
 						tile.SymbolID = SymbolID.StairsDown;
-						var downMatInfo = env.GetInteriorMaterial(ml + Direction.Down);
+						var downMatInfo = Materials.GetMaterial(td2.InteriorMaterialID);
 						tile.Color = downMatInfo.Color;
 					}
 				}
