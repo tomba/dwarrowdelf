@@ -10,6 +10,8 @@ namespace Dwarrowdelf
 	{
 		Undefined,
 		Empty,
+		BuiltWall,
+		Pavement,
 		Stairs,
 		Sapling,
 		Tree,

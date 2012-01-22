@@ -17,6 +17,7 @@ namespace Dwarrowdelf
 		Undefined,
 		Empty,
 		NaturalFloor,
+		BuiltFloor,
 		NaturalWall,
 		Hole,	// used for stairs down
 

@@ -6,6 +6,7 @@
 	<TerrainInfo ID="Empty" Flags="Permeable,SeeThroughDown" />
 
 	<TerrainInfo ID="NaturalFloor" Flags="Supporting" />
+	<TerrainInfo ID="BuiltFloor" Flags="Supporting" />
 	<TerrainInfo ID="NaturalWall" Flags="Blocker,Minable,BlocksVision" />
 	<TerrainInfo ID="Hole" Flags="Supporting,SeeThroughDown,Permeable" />
 

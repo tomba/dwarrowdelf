@@ -201,6 +201,10 @@ namespace Dwarrowdelf.Client
 					}
 					break;
 
+				case TerrainID.BuiltFloor:
+					tile.SymbolID = SymbolID.Floor;
+					break;
+
 				case TerrainID.NaturalWall:
 					tile.SymbolID = SymbolID.Wall;
 					break;
@@ -279,6 +283,16 @@ namespace Dwarrowdelf.Client
 			{
 				case InteriorID.Stairs:
 					tile.SymbolID = SymbolID.StairsUp;
+					break;
+
+				case InteriorID.BuiltWall:
+					tile.SymbolID = SymbolID.Wall;
+					seeThrough = false;
+					break;
+
+				case InteriorID.Pavement:
+					tile.SymbolID = SymbolID.Floor;
+					seeThrough = false;
 					break;
 
 				case InteriorID.Empty:

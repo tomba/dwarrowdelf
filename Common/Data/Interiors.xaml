@@ -4,6 +4,8 @@
 		 xmlns="clr-namespace:Dwarrowdelf">
 
 	<InteriorInfo ID="Empty" />
+	<InteriorInfo ID="BuiltWall" Flags="Blocker" />
+	<InteriorInfo ID="Pavement" />
 	<InteriorInfo ID="Stairs" />
 	<InteriorInfo ID="Sapling" />
 	<InteriorInfo ID="Tree" Flags="Blocker" />
