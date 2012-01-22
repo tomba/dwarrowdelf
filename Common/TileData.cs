@@ -27,6 +27,8 @@ namespace Dwarrowdelf
 
 		public TileFlags Flags { get; set; }
 
+		public bool HasGrass { get { return (this.Flags & TileFlags.Grass) != 0; } }
+
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;

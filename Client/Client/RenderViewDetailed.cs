@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Client
 			switch (td.TerrainID)
 			{
 				case TerrainID.NaturalFloor:
-					if ((td.Flags & TileFlags.Grass) != 0)
+					if (td.HasGrass)
 					{
 						tile.SymbolID = SymbolID.Grass;
 						// Grass color should come from the symbol definition
@@ -233,7 +233,7 @@ namespace Dwarrowdelf.Client
 							throw new Exception();
 					}
 
-					if ((td.Flags & TileFlags.Grass) != 0)
+					if (td.HasGrass)
 					{
 						// override the material color
 						tile.Color = GameColor.DarkGreen;
