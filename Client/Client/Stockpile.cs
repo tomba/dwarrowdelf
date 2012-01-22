@@ -170,6 +170,22 @@ namespace Dwarrowdelf.Client
 		{
 			this.Criteria = new StockpileCriteria(criteria);
 
+			foreach (var ob in this.Environment.GetContents(this.Area).OfType<ItemObject>())
+			{
+				Debug.Assert(ob.StockpiledBy == null || ob.StockpiledBy == this);
+
+				if (ob.IsReserved == false && ob.IsStockpiled == false && ob.IsInstalled == false && Match(ob))
+				{
+					if (ob.StockpiledBy == null)
+						ob.StockpiledBy = this;
+				}
+				else
+				{
+					if (ob.StockpiledBy != null)
+						ob.StockpiledBy = null;
+				}
+			}
+
 			if (this.Criteria.IsEmpty == false && m_itemObjectView.IsEnabled == false)
 				EnableItemObjectView();
 			else if (this.Criteria.IsEmpty && m_itemObjectView.IsEnabled)
