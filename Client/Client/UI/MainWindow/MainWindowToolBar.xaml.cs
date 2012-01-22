@@ -22,27 +22,25 @@ namespace Dwarrowdelf.Client.UI
 	{
 		static MainWindowToolBar()
 		{
-			var res = (ResourceDictionary)Application.LoadComponent(new Uri("/UI/ToolIcons.xaml", UriKind.Relative));
-
 			ToolDatas = new Dictionary<ClientToolMode, ToolData>();
 
-			Action<ClientToolMode, string, Key> add = (i, n, k) => ToolDatas[i] = new ToolData(i, n, k, (DrawingBrush)res[i.ToString()]);
+			Action<ClientToolMode, string, Key, string> add = (i, n, k, g) => ToolDatas[i] = new ToolData(i, n, k, g);
 
-			add(ClientToolMode.Info, "Info", Key.Escape);
+			add(ClientToolMode.Info, "Info", Key.Escape, "");
 
-			add(ClientToolMode.DesignationMine, "Mine", Key.M);
-			add(ClientToolMode.DesignationStairs, "Mine stairs", Key.S);
-			add(ClientToolMode.DesignationChannel, "Channel", Key.C);
-			add(ClientToolMode.DesignationFellTree, "Fell tree", Key.F);
-			add(ClientToolMode.DesignationRemove, "Remove", Key.R);
+			add(ClientToolMode.DesignationMine, "Mine", Key.M, "Designate");
+			add(ClientToolMode.DesignationStairs, "Mine stairs", Key.S, "Designate");
+			add(ClientToolMode.DesignationChannel, "Channel", Key.C, "Designate");
+			add(ClientToolMode.DesignationFellTree, "Fell tree", Key.F, "Designate");
+			add(ClientToolMode.DesignationRemove, "Remove", Key.R, "Designate");
 
-			add(ClientToolMode.CreateStockpile, "Create stockpile", Key.P);
-			add(ClientToolMode.InstallFurniture, "Install furniture", Key.I);
+			add(ClientToolMode.CreateStockpile, "Create stockpile", Key.P, "");
+			add(ClientToolMode.InstallFurniture, "Install furniture", Key.I, "");
 
-			add(ClientToolMode.CreateLiving, "Create living", Key.L);
-			add(ClientToolMode.CreateItem, "Create item", Key.Z);
-			add(ClientToolMode.SetTerrain, "Set terrain", Key.T);
-			add(ClientToolMode.ConstructBuilding, "Create building", Key.B);
+			add(ClientToolMode.CreateLiving, "Create living", Key.L, "");
+			add(ClientToolMode.CreateItem, "Create item", Key.Z, "");
+			add(ClientToolMode.SetTerrain, "Set terrain", Key.T, "");
+			add(ClientToolMode.ConstructBuilding, "Create building", Key.B, "");
 		}
 
 		public MainWindowToolBar()
@@ -258,21 +256,20 @@ namespace Dwarrowdelf.Client.UI
 
 	sealed class ToolData
 	{
-		public ToolData(ClientToolMode mode, string name, Key key, DrawingBrush brush)
+		public ToolData(ClientToolMode mode, string name, Key key, string groupName)
 		{
 			this.Mode = mode;
 			this.Name = name;
 			this.Key = key;
 			this.ToolTip = String.Format("{0} ({1})", this.Name, key);
-			this.Brush = brush;
-			this.Brush.Freeze();
+			this.GroupName = groupName;
 		}
 
 		public ClientToolMode Mode { get; private set; }
 		public string Name { get; private set; }
+		public string GroupName { get; private set; }
 		public Key Key { get; private set; }
 		public string ToolTip { get; private set; }
-		public DrawingBrush Brush { get; private set; }
 	}
 
 	sealed class ClientToolModeToToolDataConverter : IValueConverter
