@@ -5,13 +5,6 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
-	// Change to enum?
-	static class TerrainIDConsts
-	{
-		public const int SlopeBit = 1 << 7;
-		public const int SlopeDirMask = (1 << 7) - 1;
-	}
-
 	public enum TerrainID : byte
 	{
 		Undefined,
@@ -21,14 +14,14 @@ namespace Dwarrowdelf
 		NaturalWall,
 		Hole,	// used for stairs down
 
-		SlopeNorth = TerrainIDConsts.SlopeBit | Direction.North,
-		SlopeNorthEast = TerrainIDConsts.SlopeBit | Direction.NorthEast,
-		SlopeEast = TerrainIDConsts.SlopeBit | Direction.East,
-		SlopeSouthEast = TerrainIDConsts.SlopeBit | Direction.SouthEast,
-		SlopeSouth = TerrainIDConsts.SlopeBit | Direction.South,
-		SlopeSouthWest = TerrainIDConsts.SlopeBit | Direction.SouthWest,
-		SlopeWest = TerrainIDConsts.SlopeBit | Direction.West,
-		SlopeNorthWest = TerrainIDConsts.SlopeBit | Direction.NorthWest,
+		SlopeNorth,
+		SlopeNorthEast,
+		SlopeEast,
+		SlopeSouthEast,
+		SlopeSouth,
+		SlopeSouthWest,
+		SlopeWest,
+		SlopeNorthWest,
 	}
 
 	[Flags]
@@ -120,17 +113,70 @@ namespace Dwarrowdelf
 
 		public static bool IsSlope(this TerrainID id)
 		{
-			return ((int)id & TerrainIDConsts.SlopeBit) != 0;
+			switch (id)
+			{
+				case TerrainID.SlopeNorth:
+				case TerrainID.SlopeNorthEast:
+				case TerrainID.SlopeEast:
+				case TerrainID.SlopeSouthEast:
+				case TerrainID.SlopeSouth:
+				case TerrainID.SlopeSouthWest:
+				case TerrainID.SlopeWest:
+				case TerrainID.SlopeNorthWest:
+					return true;
+			}
+
+			return false;
 		}
 
 		public static TerrainID ToSlope(this Direction dir)
 		{
-			return (TerrainID)(TerrainIDConsts.SlopeBit | (int)dir);
+			switch (dir)
+			{
+				case Direction.North:
+					return TerrainID.SlopeNorth;
+				case Direction.NorthEast:
+					return TerrainID.SlopeNorthEast;
+				case Direction.East:
+					return TerrainID.SlopeEast;
+				case Direction.SouthEast:
+					return TerrainID.SlopeSouthEast;
+				case Direction.South:
+					return TerrainID.SlopeSouth;
+				case Direction.SouthWest:
+					return TerrainID.SlopeSouthWest;
+				case Direction.West:
+					return TerrainID.SlopeWest;
+				case Direction.NorthWest:
+					return TerrainID.SlopeNorthWest;
+				default:
+					throw new Exception();
+			}
 		}
 
 		public static Direction ToDir(this TerrainID id)
 		{
-			return (Direction)((int)id & TerrainIDConsts.SlopeDirMask);
+			switch (id)
+			{
+				case TerrainID.SlopeNorth:
+					return Direction.North;
+				case TerrainID.SlopeNorthEast:
+					return Direction.NorthEast;
+				case TerrainID.SlopeEast:
+					return Direction.East;
+				case TerrainID.SlopeSouthEast:
+					return Direction.SouthEast;
+				case TerrainID.SlopeSouth:
+					return Direction.South;
+				case TerrainID.SlopeSouthWest:
+					return Direction.SouthWest;
+				case TerrainID.SlopeWest:
+					return Direction.West;
+				case TerrainID.SlopeNorthWest:
+					return Direction.NorthWest;
+				default:
+					throw new Exception();
+			}
 		}
 
 		public static TerrainInfo GetTerrain(TerrainID id)
