@@ -210,6 +210,41 @@ namespace Dwarrowdelf
 		}
 	}
 
+
+	public enum ConstructMode
+	{
+		None = 0,
+		Wall,
+		Floor,
+		Pavement,
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
+	public sealed class ConstructAction : GameAction
+	{
+		public ConstructMode Mode { get; private set; }
+		public IntPoint3 Location { get; private set; }
+		public ObjectID[] ItemObjectIDs { get; private set; }
+
+		public ConstructAction(ConstructMode mode, IntPoint3 location, IEnumerable<IItemObject> items)
+		{
+			this.Mode = mode;
+			this.Location = location;
+			this.ItemObjectIDs = items.Select(i => i.ObjectID).ToArray();
+		}
+
+		ConstructAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return String.Format("{0}", this.Mode);
+		}
+	}
+
 	[Serializable]
 	[SaveGameObjectByRef]
 	public sealed class BuildItemAction : GameAction

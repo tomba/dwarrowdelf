@@ -640,6 +640,158 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		int GetTotalTicks(ConstructAction action)
+		{
+			return 6;
+			//return GetTicks(SkillID.WoodCutting);
+		}
+
+		bool PerformAction(ConstructAction action)
+		{
+			var obs = action.ItemObjectIDs.Select(oid => this.World.FindObject<ItemObject>(oid)).ToArray();
+
+			var report = new ConstructActionReport(this, action.Mode);
+
+			if (obs.Any(ob => ob == null))
+			{
+				SendFailReport(report, "object not found");
+				return false;
+			}
+
+			if (obs.Length == 0)
+			{
+				SendFailReport(report, "no objects given");
+				return false;
+			}
+
+			if (obs.Length != 1)
+			{
+				SendFailReport(report, "too many objects given");
+				return false;
+			}
+
+			if (obs.Any(ob => ob.Location != this.Location))
+			{
+				SendFailReport(report, "objects somewhere else");
+				return false;
+			}
+
+			var item = obs[0];
+
+			var env = this.Environment;
+
+			var td = env.GetTileData(action.Location);
+
+			DirectionSet positioning;
+
+			switch (action.Mode)
+			{
+				case ConstructMode.Floor:
+					if (td.TerrainID != TerrainID.Empty || td.InteriorID != InteriorID.Empty)
+					{
+						SendFailReport(report, "tile not empty");
+						return false;
+					}
+
+					if (item.ItemID != ItemID.Block)
+					{
+						SendFailReport(report, "bad materials");
+						return false;
+					}
+
+					positioning = DirectionSet.Planar;
+
+					break;
+
+				case ConstructMode.Pavement:
+					if (td.TerrainID != TerrainID.NaturalFloor && td.TerrainID != TerrainID.BuiltFloor)
+					{
+						SendFailReport(report, "unsuitable terrain");
+						return false;
+					}
+
+					if (td.InteriorID != InteriorID.Empty)
+					{
+						SendFailReport(report, "interior not empty");
+						return false;
+					}
+
+					if (item.ItemID != ItemID.Block && item.ItemID != ItemID.Log)
+					{
+						SendFailReport(report, "bad materials");
+						return false;
+					}
+
+					positioning = DirectionSet.Exact;
+
+					break;
+
+				case ConstructMode.Wall:
+					if (td.TerrainID != TerrainID.NaturalFloor && td.TerrainID != TerrainID.BuiltFloor)
+					{
+						SendFailReport(report, "unsuitable terrain");
+						return false;
+					}
+
+					if (td.InteriorID != InteriorID.Empty)
+					{
+						SendFailReport(report, "interior not empty");
+						return false;
+					}
+
+					if (item.ItemID != ItemID.Block)
+					{
+						SendFailReport(report, "bad materials");
+						return false;
+					}
+
+					positioning = DirectionSet.Planar;
+
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			if (this.Location.IsAdjacentTo(action.Location, positioning) == false)
+			{
+				SendFailReport(report, "bad location");
+				return false;
+			}
+
+
+
+			foreach (var ob in obs)
+				ob.Destruct();
+
+			switch (action.Mode)
+			{
+				case ConstructMode.Floor:
+					td.TerrainID = TerrainID.BuiltFloor;
+					td.TerrainMaterialID = item.MaterialID;
+					break;
+
+				case ConstructMode.Pavement:
+					td.InteriorID = InteriorID.Pavement;
+					td.InteriorMaterialID = item.MaterialID;
+					td.Flags &= ~TileFlags.Grass;
+					break;
+
+				case ConstructMode.Wall:
+					td.InteriorID = InteriorID.BuiltWall;
+					td.InteriorMaterialID = item.MaterialID;
+					td.Flags &= ~TileFlags.Grass;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			env.SetTileData(action.Location, td);
+
+			return true;
+		}
+
 		int GetTotalTicks(WaitAction action)
 		{
 			return action.WaitTicks;

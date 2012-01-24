@@ -194,6 +194,16 @@ namespace Dwarrowdelf.Client
 				GameData.Data.AddGameEvent(living, "{0} fails to build item {1}: {2}", living, report.BuildableItemKey, report.FailReason);
 		}
 
+		void HandleReport(ConstructActionReport report)
+		{
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
+
+			if (report.Success)
+				GameData.Data.AddGameEvent(living, "{0} constructs {1}", living, report.Mode);
+			else
+				GameData.Data.AddGameEvent(living, "{0} fails to construct {1}: {2}", living, report.Mode, report.FailReason);
+		}
+
 		void HandleReport(AttackActionReport report)
 		{
 			var attacker = m_world.FindObject<LivingObject>(report.LivingObjectID);

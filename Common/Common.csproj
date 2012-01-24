@@ -80,9 +80,11 @@
     <Compile Include="DataTypes\DoubleVector3.cs" />
     <Compile Include="DataTypes\Region.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
+    <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\FleeMoveAssignment.cs" />
     <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
     <Compile Include="AI\HerbivoreAI.cs" />
     <Compile Include="AI\Group.cs" />
+    <Compile Include="Jobs\JobGroups\ConstructJob.cs" />
     <Compile Include="Jobs\JobGroups\InstallFurnitureJob.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />

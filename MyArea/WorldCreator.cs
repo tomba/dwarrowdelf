@@ -149,6 +149,12 @@ namespace MyArea
 				CreateItem(env, ItemID.Log, GetRandomMaterial(MaterialCategory.Wood), p);
 
 				CreateItem(env, ItemID.Door, GetRandomMaterial(MaterialCategory.Wood), p);
+
+				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 			}
 
 			{

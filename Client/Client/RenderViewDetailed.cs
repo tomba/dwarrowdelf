@@ -358,6 +358,17 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
+			id = GetConstructSymbolAt(env.ConstructManager, ml);
+			if (id != SymbolID.Undefined)
+			{
+				tile.SymbolID = id;
+				if (m_symbolToggler)
+					tile.Color = GameColor.DarkGray;
+				else
+					tile.Color = GameColor.LightGray;
+				return;
+			}
+
 			int wl = env.GetWaterLevel(ml);
 
 			if (wl == 0)
@@ -413,6 +424,29 @@ namespace Dwarrowdelf.Client
 
 				case DesignationType.FellTree:
 					return SymbolID.Log;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		public static SymbolID GetConstructSymbolAt(ConstructManager mgr, IntPoint3 p)
+		{
+			var dt = mgr.ContainsPoint(p);
+
+			switch (dt)
+			{
+				case ConstructMode.None:
+					return SymbolID.Undefined;
+
+				case ConstructMode.Pavement:
+					return SymbolID.Floor;
+
+				case ConstructMode.Floor:
+					return SymbolID.Floor;
+
+				case ConstructMode.Wall:
+					return SymbolID.Wall;
 
 				default:
 					throw new Exception();

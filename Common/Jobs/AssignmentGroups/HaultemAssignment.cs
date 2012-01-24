@@ -19,14 +19,22 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
 		int m_state;
+		[SaveGameProperty]
+		DirectionSet m_positioning;
 
 		public HaulItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item)
+			: this(parent, env, location, item, DirectionSet.Exact)
+		{
+		}
+
+		public HaulItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item, DirectionSet positioning)
 			: base(parent)
 		{
 			this.Item = item;
 			m_environment = env;
 			m_location = location;
 			m_state = 0;
+			m_positioning = positioning;
 		}
 
 		HaulItemAssignment(SaveGameContext ctx)
@@ -53,7 +61,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case 1:
-					assignment = new MoveAssignment(this, m_environment, m_location, DirectionSet.Exact, this.Item);
+					assignment = new MoveAssignment(this, m_environment, m_location, m_positioning, this.Item);
 					break;
 
 				default:
@@ -65,7 +73,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "FetchItemAssignment";
+			return "HaulItemAssignment";
 		}
 	}
 }

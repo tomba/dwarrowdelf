@@ -163,6 +163,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\ConstructDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\InstallFurnitureDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -237,6 +241,7 @@
     <Compile Include="ChangeHandler.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
+    <Compile Include="ConstructManager.cs" />
     <Compile Include="InstallFurnitureManager.cs" />
     <Compile Include="ItemObjectView.cs" />
     <Compile Include="DwarfAI.cs" />
@@ -326,6 +331,9 @@
     </Compile>
     <Compile Include="UI\ObjectInfoControl.xaml.cs">
       <DependentUpon>ObjectInfoControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
+      <DependentUpon>ConstructDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\InstallFurnitureDialog.xaml.cs">
       <DependentUpon>InstallFurnitureDialog.xaml</DependentUpon>

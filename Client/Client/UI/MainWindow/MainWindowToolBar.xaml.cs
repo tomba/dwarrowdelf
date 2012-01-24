@@ -41,6 +41,11 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.CreateItem, "Create item", Key.Z, "");
 			add(ClientToolMode.SetTerrain, "Set terrain", Key.T, "");
 			add(ClientToolMode.ConstructBuilding, "Create building", Key.B, "");
+
+			add(ClientToolMode.ConstructWall, "Wall", Key.W, "Construct");
+			add(ClientToolMode.ConstructFloor, "Floor", Key.O, "Construct");
+			add(ClientToolMode.ConstructPavement, "Pavement", Key.A, "Construct");
+			add(ClientToolMode.ConstructRemove, "Remove", Key.E, "Construct");
 		}
 
 		public MainWindowToolBar()
@@ -193,6 +198,14 @@ namespace Dwarrowdelf.Client.UI
 					ctrl.designationButton.IsChecked = true;
 					break;
 
+				case ClientToolMode.ConstructWall:
+				case ClientToolMode.ConstructFloor:
+				case ClientToolMode.ConstructPavement:
+				case ClientToolMode.ConstructRemove:
+					ctrl.ConstructToolMode = mode;
+					ctrl.constructButton.IsChecked = true;
+					break;
+
 				case ClientToolMode.SetTerrain:
 					ctrl.setTerrain.IsChecked = true;
 					break;
@@ -243,6 +256,27 @@ namespace Dwarrowdelf.Client.UI
 			this.DesignationToolMode = toolData.Mode;
 
 			if (this.designationButton.IsChecked == true)
+				this.ToolMode = toolData.Mode;
+		}
+
+		public ClientToolMode ConstructToolMode
+		{
+			get { return (ClientToolMode)GetValue(ConstructToolModeProperty); }
+			set { SetValue(ConstructToolModeProperty, value); }
+		}
+
+		public static readonly DependencyProperty ConstructToolModeProperty =
+			DependencyProperty.Register("ConstructToolMode", typeof(ClientToolMode), typeof(MainWindowToolBar), new UIPropertyMetadata(ClientToolMode.ConstructWall));
+
+
+		private void Construct_MenuItem_Click(object sender, RoutedEventArgs e)
+		{
+			var item = (MenuItem)sender;
+			var toolData = (ToolData)item.DataContext;
+
+			this.ConstructToolMode = toolData.Mode;
+
+			if (this.constructButton.IsChecked == true)
 				this.ToolMode = toolData.Mode;
 		}
 
@@ -311,5 +345,9 @@ namespace Dwarrowdelf.Client.UI
 		CreateLiving,
 		ConstructBuilding,
 		InstallFurniture,
+		ConstructWall,
+		ConstructFloor,
+		ConstructPavement,
+		ConstructRemove,
 	}
 }

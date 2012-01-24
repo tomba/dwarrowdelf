@@ -12,11 +12,16 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	public sealed class FetchItems : JobGroup
 	{
 		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IEnumerable<IItemObject> items)
+			: this(parent, env, location, items, DirectionSet.Exact)
+		{
+		}
+
+		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IEnumerable<IItemObject> items, DirectionSet positioning)
 			: base(parent)
 		{
 			foreach (var item in items)
 			{
-				var job = new AssignmentGroups.HaulItemAssignment(this, env, location, item);
+				var job = new AssignmentGroups.HaulItemAssignment(this, env, location, item, positioning);
 				AddSubJob(job);
 			}
 

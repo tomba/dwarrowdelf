@@ -99,6 +99,14 @@ namespace Dwarrowdelf.Client.UI
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
+
+				case ClientToolMode.ConstructWall:
+				case ClientToolMode.ConstructFloor:
+				case ClientToolMode.ConstructPavement:
+				case ClientToolMode.ConstructRemove:
+					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
+					break;
+
 				case ClientToolMode.InstallFurniture:
 					this.MapControl.SelectionMode = MapSelectionMode.Point;
 					break;
@@ -292,6 +300,49 @@ for p in area.Range():
 							var id = dialog.BuildingID;
 							var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
 							env.AddAreaElement(site);
+						}
+					}
+					break;
+
+				case ClientToolMode.ConstructRemove:
+					env.ConstructManager.RemoveArea(selection.SelectionIntRectZ);
+					break;
+
+				case ClientToolMode.ConstructWall:
+				case ClientToolMode.ConstructFloor:
+				case ClientToolMode.ConstructPavement:
+					{
+						ConstructMode mode;
+
+						switch (this.mainWindowTools.ToolMode)
+						{
+							case ClientToolMode.ConstructWall:
+								mode = ConstructMode.Wall;
+								break;
+
+							case ClientToolMode.ConstructFloor:
+								mode = ConstructMode.Floor;
+								break;
+
+							case ClientToolMode.ConstructPavement:
+								mode = ConstructMode.Pavement;
+								break;
+
+							default:
+								throw new Exception();
+						}
+
+						var dialog = new ConstructDialog();
+						dialog.Owner = this;
+						var res = dialog.ShowDialog();
+
+						if (res == true)
+						{
+							var area = selection.SelectionIntRectZ;
+
+
+							env.ConstructManager.AddConstructJob(mode, area);
+
 						}
 					}
 					break;

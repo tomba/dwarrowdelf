@@ -144,6 +144,19 @@ namespace Dwarrowdelf
 		}
 	}
 
+
+	[Serializable]
+	public sealed class ConstructActionReport : ActionReport
+	{
+		public ConstructMode Mode { get; private set; }
+
+		public ConstructActionReport(ILivingObject living, ConstructMode mode)
+			: base(living)
+		{
+			this.Mode = mode;
+		}
+	}
+
 	public enum DamageCategory
 	{
 		None,
