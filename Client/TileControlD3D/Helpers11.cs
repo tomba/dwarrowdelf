@@ -68,9 +68,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public static Texture2D CreateTextures11(Device device, ISymbolDrawingCache symbolDrawingCache)
 		{
-			var symbolIDArr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-			var numDistinctBitmaps = (int)symbolIDArr.Max() + 1;
-			int numTiles = numDistinctBitmaps;
+			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
 			Texture2D atlasTexture = null;
 			int maxTileSize = 64;

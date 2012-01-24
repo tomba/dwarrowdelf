@@ -31,7 +31,7 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			livingIDListBox.ItemsSource = Enum.GetValues(typeof(LivingID)).Cast<LivingID>().OrderBy(id => id.ToString()).ToArray();
+			livingIDListBox.ItemsSource = EnumHelpers.GetEnumValues<LivingID>().OrderBy(id => id.ToString()).ToArray();
 
 			base.OnInitialized(e);
 		}

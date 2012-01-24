@@ -28,9 +28,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_symbolDrawingCache = symbolDrawingCache;
 			m_size = size;
 
-			var arr = (SymbolID[])Enum.GetValues(typeof(SymbolID));
-			var max = (int)arr.Max() + 1;
-			m_numDistinctBitmaps = max;
+			m_numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
 			m_nonColoredBitmapList = new BitmapSource[m_numDistinctBitmaps];
 			m_coloredBitmapMap = new Dictionary<GameColor, BitmapSource>[m_numDistinctBitmaps];

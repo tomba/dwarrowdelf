@@ -68,8 +68,7 @@ namespace Dwarrowdelf.Server
 			m_livings = new ProcessableList<LivingObject>();
 			m_random = new Random();
 
-			var maxType = Enum.GetValues(typeof(ObjectType)).Cast<int>().Max();
-			m_objectIDcounterArray = new int[maxType + 1];
+			m_objectIDcounterArray = new int[EnumHelpers.GetEnumMax<ObjectType>() + 1];
 
 			m_state = WorldState.Idle;
 		}

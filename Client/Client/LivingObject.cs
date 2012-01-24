@@ -664,15 +664,13 @@ namespace Dwarrowdelf.Client
 
 		static LivingSymbols()
 		{
-			var arr = (LivingID[])Enum.GetValues(typeof(LivingID));
-			var max = arr.Max(i => (int)i);
-			s_symbols = new SymbolID[max + 1];
+			s_symbols = new SymbolID[EnumHelpers.GetEnumMax<LivingID>() + 1];
 
 			var set = new Action<LivingID, SymbolID>((lid, sid) => s_symbols[(int)lid] = sid);
 
 			set(LivingID.Dwarf, SymbolID.Player);
 
-			var symbolIDs = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+			var symbolIDs = EnumHelpers.GetEnumValues<SymbolID>();
 
 			for (int i = 1; i < s_symbols.Length; ++i)
 			{

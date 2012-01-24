@@ -281,8 +281,7 @@ namespace Dwarrowdelf.Client
 
 		static ItemSymbols()
 		{
-			var arr = (ItemID[])Enum.GetValues(typeof(ItemID));
-			var max = arr.Max(i => (int)i);
+			var max = EnumHelpers.GetEnumMax<ItemID>();
 			s_symbols = new SymbolID[max + 1];
 			s_altSymbols = new SymbolID[max + 1];
 
@@ -299,7 +298,7 @@ namespace Dwarrowdelf.Client
 			foreach (var ii in Items.GetItemInfos(ItemCategory.Armor))
 				set(ii.ID, SymbolID.Armor);
 
-			var symbolIDs = (SymbolID[])Enum.GetValues(typeof(SymbolID));
+			var symbolIDs = EnumHelpers.GetEnumValues<SymbolID>();
 
 			for (int i = 1; i < s_symbols.Length; ++i)
 			{

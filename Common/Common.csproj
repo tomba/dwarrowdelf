@@ -79,6 +79,7 @@
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="DataTypes\DoubleVector3.cs" />
     <Compile Include="DataTypes\Region.cs" />
+    <Compile Include="EnumHelpers.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />

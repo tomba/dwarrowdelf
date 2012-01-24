@@ -28,8 +28,8 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			itemIDListBox.ItemsSource = Enum.GetValues(typeof(ItemID)).Cast<ItemID>().OrderBy(id => id.ToString()).ToArray();
-			materialIDListBox.ItemsSource = Enum.GetValues(typeof(MaterialID)).Cast<MaterialID>().OrderBy(id => id.ToString()).ToArray();
+			itemIDListBox.ItemsSource = EnumHelpers.GetEnumValues<ItemID>().OrderBy(id => id.ToString()).ToArray();
+			materialIDListBox.ItemsSource = EnumHelpers.GetEnumValues<MaterialID>().OrderBy(id => id.ToString()).ToArray();
 
 			base.OnInitialized(e);
 		}
