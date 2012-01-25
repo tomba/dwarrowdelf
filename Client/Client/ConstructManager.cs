@@ -49,32 +49,27 @@ namespace Dwarrowdelf.Client
 		{
 			var locations = area.Range().Where(p => m_environment.Contains(p));
 
+			ITerrainFilter filter;
+
 			switch (mode)
 			{
 				case ConstructMode.Floor:
-					locations = locations.Where(p => m_environment.GetTerrainID(p) == TerrainID.Empty &&
-						m_environment.GetInteriorID(p) == InteriorID.Empty);
+					filter = WorkHelpers.ConstructFloorFilter;
 					break;
 
 				case ConstructMode.Pavement:
-					locations = locations.Where(p =>
-					{
-						var id = m_environment.GetTerrainID(p);
-						return id == TerrainID.NaturalFloor || id == TerrainID.BuiltFloor;
-					}).Where(p => m_environment.GetInteriorID(p) == InteriorID.Empty);
+					filter = WorkHelpers.ConstructPavementFilter;
 					break;
 
 				case ConstructMode.Wall:
-					locations = locations.Where(p =>
-					{
-						var id = m_environment.GetTerrainID(p);
-						return id == TerrainID.NaturalFloor || id == TerrainID.BuiltFloor;
-					}).Where(p => m_environment.GetInteriorID(p) == InteriorID.Empty);
+					filter = WorkHelpers.ConstructWallFilter;
 					break;
 
 				default:
 					throw new Exception();
 			}
+
+			locations = locations.Where(p => filter.Match(m_environment.GetTileData(p)));
 
 			foreach (var l in locations)
 			{
@@ -112,7 +107,27 @@ namespace Dwarrowdelf.Client
 			{
 				if (data.Job == null)
 				{
-					var item = FindItem(living.Location, i => i.ItemID == ItemID.Block);
+					IItemFilter filter;
+
+					switch (data.Mode)
+					{
+						case ConstructMode.Floor:
+							filter = WorkHelpers.ConstructFloorItemFilter;
+							break;
+
+						case ConstructMode.Pavement:
+							filter = WorkHelpers.ConstructPavementItemFilter;
+							break;
+
+						case ConstructMode.Wall:
+							filter = WorkHelpers.ConstructWallItemFilter;
+							break;
+
+						default:
+							throw new Exception();
+					}
+
+					var item = FindItem(living.Location, i => filter.Match(i));
 
 					if (item == null)
 					{

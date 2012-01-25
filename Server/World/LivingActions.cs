@@ -687,13 +687,13 @@ namespace Dwarrowdelf.Server
 			switch (action.Mode)
 			{
 				case ConstructMode.Floor:
-					if (td.TerrainID != TerrainID.Empty || td.InteriorID != InteriorID.Empty)
+					if (WorkHelpers.ConstructFloorFilter.Match(td) == false)
 					{
-						SendFailReport(report, "tile not empty");
+						SendFailReport(report, "unsuitable terrain");
 						return false;
 					}
 
-					if (item.ItemID != ItemID.Block)
+					if (WorkHelpers.ConstructFloorItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
 						return false;
@@ -704,19 +704,13 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case ConstructMode.Pavement:
-					if (td.TerrainID != TerrainID.NaturalFloor && td.TerrainID != TerrainID.BuiltFloor)
+					if (WorkHelpers.ConstructPavementFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
 						return false;
 					}
 
-					if (td.InteriorID != InteriorID.Empty)
-					{
-						SendFailReport(report, "interior not empty");
-						return false;
-					}
-
-					if (item.ItemID != ItemID.Block && item.ItemID != ItemID.Log)
+					if (WorkHelpers.ConstructPavementItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
 						return false;
@@ -727,19 +721,13 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case ConstructMode.Wall:
-					if (td.TerrainID != TerrainID.NaturalFloor && td.TerrainID != TerrainID.BuiltFloor)
+					if (WorkHelpers.ConstructWallFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
 						return false;
 					}
 
-					if (td.InteriorID != InteriorID.Empty)
-					{
-						SendFailReport(report, "interior not empty");
-						return false;
-					}
-
-					if (item.ItemID != ItemID.Block)
+					if (WorkHelpers.ConstructWallItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
 						return false;
