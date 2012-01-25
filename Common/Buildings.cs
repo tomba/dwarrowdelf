@@ -86,7 +86,7 @@ namespace Dwarrowdelf
 			if (this.MaterialID.HasValue && this.MaterialID.Value != ob.MaterialID)
 				return false;
 
-			if (this.MaterialCategory.HasValue && this.MaterialCategory.Value != Dwarrowdelf.Materials.GetMaterial(ob.MaterialID).Category)
+			if (this.MaterialCategory.HasValue && this.MaterialCategory.Value != ob.MaterialCategory)
 				return false;
 
 			return true;

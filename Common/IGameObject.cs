@@ -82,6 +82,7 @@ namespace Dwarrowdelf
 	{
 		string Name { get; }
 		GameColor Color { get; }
+		MaterialInfo Material { get; }
 		MaterialCategory MaterialCategory { get; }
 		MaterialID MaterialID { get; }
 	}
@@ -105,8 +106,10 @@ namespace Dwarrowdelf
 
 	public interface IItemObject : IConcreteObject
 	{
+		ItemInfo ItemInfo { get; }
 		ItemCategory ItemCategory { get; }
 		ItemID ItemID { get; }
+
 		object ReservedBy { get; set; }
 		bool IsReserved { get; }
 

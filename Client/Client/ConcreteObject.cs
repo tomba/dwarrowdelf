@@ -112,9 +112,9 @@ namespace Dwarrowdelf.Client
 					return;
 
 				m_materialID = value;
-				m_materialInfo = Materials.GetMaterial(this.MaterialID);
 				Notify("MaterialID");
 				Notify("Material");
+				Notify("MaterialCategory");
 
 				// If no color set, the material gives the effective color
 				if (m_color != GameColor.None)
@@ -122,13 +122,8 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		MaterialInfo m_materialInfo;
-		public MaterialInfo Material
-		{
-			get { return m_materialInfo; }
-		}
-
-		public MaterialCategory MaterialCategory { get { return m_materialInfo.Category; } } // XXX
+		public MaterialInfo Material { get { return Materials.GetMaterial(this.MaterialID); } }
+		public MaterialCategory MaterialCategory { get { return this.Material.Category; } }
 
 		string m_desc;
 		public string Description
