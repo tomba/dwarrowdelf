@@ -59,7 +59,7 @@ namespace Dwarrowdelf
 
 			for (int i = 0; i < materials.Count; ++i)
 			{
-				if (!materials[i].MatchItem(obs[i]))
+				if (!materials[i].Match(obs[i]))
 					return false;
 			}
 
@@ -67,7 +67,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class BuildableItemMaterialInfo
+	public sealed class BuildableItemMaterialInfo : IItemFilter
 	{
 		public ItemID? ItemID { get; internal set; }
 		public ItemCategory? ItemCategory { get; internal set; }
@@ -75,7 +75,7 @@ namespace Dwarrowdelf
 		public MaterialCategory? MaterialCategory { get; internal set; }
 		public MaterialID? MaterialID { get; internal set; }
 
-		public bool MatchItem(IItemObject ob)
+		public bool Match(IItemObject ob)
 		{
 			if (this.ItemID.HasValue && this.ItemID.Value != ob.ItemID)
 				return false;

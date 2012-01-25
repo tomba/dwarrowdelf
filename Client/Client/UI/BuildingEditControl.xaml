@@ -95,10 +95,10 @@
 				</ListBox>
 
 				<StackPanel Grid.Column="1" Orientation="Vertical" DataContext="{Binding Path=SelectedValue, ElementName=buildQueueListBox}">
-					<Button Content="Up" />
-					<Button Content="Down" />
+					<Button Content="Up" IsEnabled="False" />
+					<Button Content="Down" IsEnabled="False" />
 					<Separator />
-					<Button Content="Cancel" />
+					<Button Content="Cancel" IsEnabled="False" />
 				</StackPanel>
 			</Grid>
 		</GroupBox>

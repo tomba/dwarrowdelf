@@ -423,7 +423,7 @@ namespace Dwarrowdelf.Client
 				var bimi = buildableItem.BuildMaterials[i];
 				var biis = order.BuildSpec.ItemSpecs[i];
 
-				var ob = FindItem(o => bimi.MatchItem(o) && biis.MatchItem(o));
+				var ob = FindItem(o => bimi.Match(o) && biis.Match(o));
 
 				if (ob == null)
 					break;
@@ -478,19 +478,6 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	[Serializable]
-	sealed class SourceItemSpec
-	{
-		public ItemID[] ItemIDs { get; set; }
-		public MaterialID[] MaterialIDs { get; set; }
-
-		public bool MatchItem(IItemObject ob)
-		{
-			return (this.ItemIDs.Length == 0 || this.ItemIDs.Contains(ob.ItemID)) &&
-				(this.MaterialIDs.Length == 0 || this.MaterialIDs.Contains(ob.MaterialID));
-		}
-	}
-
 	[SaveGameObjectByValue]
 	sealed class BuildSpec
 	{
@@ -498,7 +485,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.BuildableItem = buildableItem;
 			this.BuildableItemKey = this.BuildableItem.Key;
-			this.ItemSpecs = new SourceItemSpec[this.BuildableItem.BuildMaterials.Count];
+			this.ItemSpecs = new IItemFilter[this.BuildableItem.BuildMaterials.Count];
 		}
 
 		BuildSpec(SaveGameContext context)
@@ -513,7 +500,7 @@ namespace Dwarrowdelf.Client
 
 		// extra specs given by the user
 		[SaveGameProperty]
-		public SourceItemSpec[] ItemSpecs { get; private set; }
+		public IItemFilter[] ItemSpecs { get; private set; }
 	}
 
 	[SaveGameObjectByRef]

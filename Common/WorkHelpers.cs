@@ -11,6 +11,7 @@ namespace Dwarrowdelf
 		bool Match(TileData td);
 	}
 
+	[Serializable]
 	public sealed class TerrainFilter : ITerrainFilter
 	{
 		uint m_terrainMask;
@@ -52,6 +53,7 @@ namespace Dwarrowdelf
 		bool Match(IItemObject item);
 	}
 
+	[Serializable]
 	public sealed class CompoundItemFilter : IItemFilter
 	{
 		IItemFilter[] m_filters;
@@ -77,6 +79,7 @@ namespace Dwarrowdelf
 		}
 	}
 
+	[Serializable]
 	public sealed class ItemFilter : IItemFilter
 	{
 		BitArray m_itemIDMask;
@@ -108,6 +111,12 @@ namespace Dwarrowdelf
 			m_itemCategoryMask = FilterHelpers.CreateMask32(itemCategories);
 			m_materialIDMask = FilterHelpers.CreateMask64(materialIDs);
 			m_materialCategoryMask = FilterHelpers.CreateMask32(materialCategories);
+		}
+
+		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<MaterialID> materialIDs)
+		{
+			m_itemIDMask = FilterHelpers.CreateMaskArray(itemIDs);
+			m_materialIDMask = FilterHelpers.CreateMask64(materialIDs);
 		}
 
 		public ItemFilter(ItemID itemID, MaterialCategory materialCategory)

@@ -119,11 +119,10 @@ namespace Dwarrowdelf.Client.UI
 
 			for (int idx = 0; idx < spec.BuildableItem.BuildMaterials.Count; ++idx)
 			{
-				spec.ItemSpecs[idx] = new SourceItemSpec()
-				{
-					ItemIDs = this.BuildMaterialsView[idx].ItemIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray(),
-					MaterialIDs = this.BuildMaterialsView[idx].MaterialIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray(),
-				};
+				var itemIDs = this.BuildMaterialsView[idx].ItemIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
+				var materialIDs = this.BuildMaterialsView[idx].MaterialIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
+
+				spec.ItemSpecs[idx] = new ItemFilter(itemIDs, materialIDs);
 			}
 
 			var bo = new BuildOrder(spec);
