@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client
 							throw new Exception();
 					}
 
-					var item = FindItem(living.Location, i => filter.Match(i));
+					var item = FindItem(living.Location, filter);
 
 					if (item == null)
 					{
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Client
 
 		#endregion
 
-		ItemObject FindItem(IntPoint3 location, Func<ItemObject, bool> match)
+		ItemObject FindItem(IntPoint3 location, IItemFilter filter)
 		{
 			ItemObject ob = null;
 
@@ -182,7 +182,7 @@ namespace Dwarrowdelf.Client
 			{
 				ob = m_environment.GetContents(l)
 					.OfType<ItemObject>()
-					.Where(o => o.IsReserved == false && match(o))
+					.Where(o => o.IsReserved == false && filter.Match(o))
 					.FirstOrDefault();
 
 				if (ob != null)
