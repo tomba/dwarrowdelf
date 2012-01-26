@@ -25,6 +25,7 @@ namespace PerfTest
 			RunTest(new ConvertConvTest());
 			RunTest(new ObjConvTest());
 			RunTest(new AbstrTest());
+			RunTest(new ILConvTest());
 		}
 
 		class DirectConvTest : ITest
@@ -149,6 +150,26 @@ namespace PerfTest
 			}
 		}
 
+		class ILConvTest : ITest
+		{
+			public static uint Value;
+
+			public void DoTest(int loops)
+			{
+				var arr = EnumConvTestSuite.s_arr;
+
+				while (loops-- > 0)
+				{
+					for (int i = 0; i < arr.Length; ++i)
+					{
+						Value |= 1U << Dwarrowdelf.EnumConv.ToInt32(arr[i]);
+					}
+				}
+
+				if (Value != s_comp)
+					throw new Exception();
+			}
+		}
 
 		public enum MyEnum
 		{
