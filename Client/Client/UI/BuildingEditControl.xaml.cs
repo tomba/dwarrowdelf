@@ -76,10 +76,12 @@ namespace Dwarrowdelf.Client.UI
 
 		private void buildOrderEditControl_AddButtonClicked()
 		{
-			var building = (BuildingObject)this.DataContext;
+			if (buildOrderEditControl.EditableBuildOrder.BuildableItem == null)
+				return;
 
 			var bo = buildOrderEditControl.EditableBuildOrder.ToBuildOrder();
 
+			var building = (BuildingObject)this.DataContext;
 			building.AddBuildOrder(bo);
 		}
 	}
