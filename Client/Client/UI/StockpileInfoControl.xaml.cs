@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.UI
 
 	sealed class DesignStockpileSample
 	{
-		public StockpileCriteria Criteria { get; set; }
+		public IItemFilter Criteria { get; set; }
 
 		public DesignStockpileSample()
 		{
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client.UI
 			c.ItemIDs.Add(ItemID.Door);
 			c.MaterialCategories.Add(MaterialCategory.Wood);
 
-			this.Criteria = new StockpileCriteria(c);
+			this.Criteria = c.ToItemFilter();
 		}
 	}
 }

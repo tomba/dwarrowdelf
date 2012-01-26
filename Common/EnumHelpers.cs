@@ -7,14 +7,14 @@ namespace Dwarrowdelf
 {
 	public static class EnumHelpers
 	{
-		public static int GetEnumMax<T>() where T : IConvertible
+		public static int GetEnumMax<TEnum>()
 		{
-			return GetEnumValues<T>().Max().ToInt32(null);
+			return EnumConv.ToInt32(GetEnumValues<TEnum>().Max());
 		}
 
-		public static T[] GetEnumValues<T>()
+		public static TEnum[] GetEnumValues<TEnum>()
 		{
-			return (T[])Enum.GetValues(typeof(T));
+			return (TEnum[])Enum.GetValues(typeof(TEnum));
 		}
 	}
 }

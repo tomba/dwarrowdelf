@@ -55,6 +55,12 @@ namespace Dwarrowdelf.Client
 			this.IsEnabled = false;
 		}
 
+		public void Refresh()
+		{
+			m_heap.Clear();
+			ScanAll();
+		}
+
 		void ScanAll()
 		{
 			Debug.Print("ItemObjectView: ScanAll");

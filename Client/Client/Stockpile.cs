@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client
 			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
 		}
 
-		public StockpileCriteriaEditable(StockpileCriteria source)
+		public StockpileCriteriaEditable(IItemMaterialFilter source)
 		{
 			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
 			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
@@ -29,46 +29,18 @@ namespace Dwarrowdelf.Client
 		public ObservableCollection<ItemCategory> ItemCategories { get; set; }
 		public ObservableCollection<MaterialID> MaterialIDs { get; set; }
 		public ObservableCollection<MaterialCategory> MaterialCategories { get; set; }
-	}
 
-	[SaveGameObjectByRef]
-	sealed class StockpileCriteria
-	{
-		[SaveGameProperty]
-		public ItemID[] ItemIDs { get; set; }
-		[SaveGameProperty]
-		public ItemCategory[] ItemCategories { get; set; }
-		[SaveGameProperty]
-		public MaterialID[] MaterialIDs { get; set; }
-		[SaveGameProperty]
-		public MaterialCategory[] MaterialCategories { get; set; }
-
-		public StockpileCriteria()
-		{
-			this.ItemIDs = new ItemID[0];
-			this.ItemCategories = new ItemCategory[0];
-			this.MaterialIDs = new MaterialID[0];
-			this.MaterialCategories = new MaterialCategory[0];
-		}
-
-		public StockpileCriteria(StockpileCriteriaEditable source)
-		{
-			this.ItemIDs = source.ItemIDs.ToArray();
-			this.ItemCategories = source.ItemCategories.ToArray();
-			this.MaterialIDs = source.MaterialIDs.ToArray();
-			this.MaterialCategories = source.MaterialCategories.ToArray();
-		}
-
-		StockpileCriteria(SaveGameContext ctx)
-		{
-		}
-
-		public bool IsEmpty
+		public bool IsNotEmpty
 		{
 			get
 			{
-				return this.ItemIDs.Length == 0 && this.ItemCategories.Length == 0 && this.MaterialIDs.Length == 0 && this.MaterialCategories.Length == 0;
+				return this.ItemIDs.Any() || this.ItemCategories.Any() || this.MaterialIDs.Any() || this.MaterialCategories.Any();
 			}
+		}
+
+		public IItemMaterialFilter ToItemFilter()
+		{
+			return new ItemFilter(this.ItemIDs, this.ItemCategories, this.MaterialIDs, this.MaterialCategories);
 		}
 	}
 
@@ -83,7 +55,7 @@ namespace Dwarrowdelf.Client
 
 		// XXX Just one criteria for now. Could be multiple in the future.
 		[SaveGameProperty]
-		public StockpileCriteria Criteria { get; private set; }
+		public IItemMaterialFilter Criteria { get; private set; }
 
 		[SaveGameProperty]
 		List<StoreToStockpileJob> m_jobs;
@@ -98,7 +70,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = environment;
 			this.Area = area;
-			this.Criteria = new StockpileCriteria();
+			this.Criteria = null;
 
 			m_jobs = new List<StoreToStockpileJob>();
 
@@ -168,13 +140,19 @@ namespace Dwarrowdelf.Client
 
 		public void SetCriteria(StockpileCriteriaEditable criteria)
 		{
-			this.Criteria = new StockpileCriteria(criteria);
+			if (criteria.IsNotEmpty)
+				this.Criteria = criteria.ToItemFilter();
+			else
+				this.Criteria = null;
 
 			foreach (var ob in this.Environment.GetContents(this.Area).OfType<ItemObject>())
 			{
 				Debug.Assert(ob.StockpiledBy == null || ob.StockpiledBy == this);
 
-				if (ob.IsReserved == false && ob.IsStockpiled == false && ob.IsInstalled == false && Match(ob))
+				if (ob.IsInstalled)
+					continue;
+
+				if (Match(ob))
 				{
 					if (ob.StockpiledBy == null)
 						ob.StockpiledBy = this;
@@ -186,10 +164,12 @@ namespace Dwarrowdelf.Client
 				}
 			}
 
-			if (this.Criteria.IsEmpty == false && m_itemObjectView.IsEnabled == false)
+			if (this.Criteria != null && m_itemObjectView.IsEnabled == false)
 				EnableItemObjectView();
-			else if (this.Criteria.IsEmpty && m_itemObjectView.IsEnabled)
+			else if (this.Criteria == null && m_itemObjectView.IsEnabled)
 				DisableItemObjectView();
+			else
+				m_itemObjectView.Refresh();
 		}
 
 		void EnableItemObjectView()
@@ -307,22 +287,10 @@ namespace Dwarrowdelf.Client
 		{
 			var c = this.Criteria;
 
-			if (c.IsEmpty)
+			if (c == null)
 				return false;
 
-			if (c.ItemCategories.Length != 0 && c.ItemCategories.Contains(item.ItemCategory) == false)
-				return false;
-
-			if (c.ItemIDs.Length != 0 && c.ItemIDs.Contains(item.ItemID) == false)
-				return false;
-
-			if (c.MaterialCategories.Length != 0 && c.MaterialCategories.Contains(item.MaterialCategory) == false)
-				return false;
-
-			if (c.MaterialIDs.Length != 0 && c.MaterialIDs.Contains(item.MaterialID) == false)
-				return false;
-
-			return true;
+			return c.Match(item);
 		}
 
 		public override string ToString()

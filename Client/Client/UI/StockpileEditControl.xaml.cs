@@ -30,7 +30,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var stockpile = (Stockpile)this.DataContext;
 
-			if (stockpile == null)
+			if (stockpile == null || stockpile.Criteria == null)
 			{
 				this.Criteria = new StockpileCriteriaEditable();
 			}

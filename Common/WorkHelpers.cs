@@ -14,32 +14,18 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class TerrainFilter : ITerrainFilter
 	{
-		uint m_terrainMask;
-		uint m_interiorMask;
-
-		static TerrainFilter()
-		{
-			int max;
-
-			max = EnumHelpers.GetEnumMax<TerrainID>() + 1;
-			if (max > 32)
-				throw new Exception();
-
-			max = EnumHelpers.GetEnumMax<InteriorID>() + 1;
-			if (max > 32)
-				throw new Exception();
-		}
+		EnumBitMask32<TerrainID> m_terrainMask;
+		EnumBitMask32<InteriorID> m_interiorMask;
 
 		public TerrainFilter(IEnumerable<TerrainID> terrains, IEnumerable<InteriorID> interiors)
 		{
-			m_terrainMask = FilterHelpers.CreateMask32(terrains);
-			m_interiorMask = FilterHelpers.CreateMask32(interiors);
+			m_terrainMask = new EnumBitMask32<TerrainID>(terrains);
+			m_interiorMask = new EnumBitMask32<InteriorID>(interiors);
 		}
 
 		public bool Match(TerrainID terrain, InteriorID interior)
 		{
-			return FilterHelpers.Check(m_terrainMask, (int)terrain) &&
-				FilterHelpers.Check(m_interiorMask, (int)interior);
+			return m_terrainMask.Get(terrain) && m_interiorMask.Get(interior);
 		}
 
 		public bool Match(TileData td)
@@ -51,6 +37,14 @@ namespace Dwarrowdelf
 	public interface IItemFilter
 	{
 		bool Match(IItemObject item);
+	}
+
+	public interface IItemMaterialFilter : IItemFilter
+	{
+		IEnumerable<ItemID> ItemIDs { get; }
+		IEnumerable<ItemCategory> ItemCategories { get; }
+		IEnumerable<MaterialID> MaterialIDs { get; }
+		IEnumerable<MaterialCategory> MaterialCategories { get; }
 	}
 
 	[Serializable]
@@ -80,120 +74,197 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class ItemFilter : IItemFilter
+	public sealed class ItemFilter : IItemMaterialFilter
 	{
-		BitArray m_itemIDMask;
-		uint m_itemCategoryMask;
-		ulong m_materialIDMask;
-		uint m_materialCategoryMask;
-
-		static ItemFilter()
-		{
-			int max;
-
-			max = EnumHelpers.GetEnumMax<ItemCategory>() + 1;
-			if (max > 32)
-				throw new Exception();
-
-			max = EnumHelpers.GetEnumMax<MaterialID>() + 1;
-			if (max > 64)
-				throw new Exception();
-
-			max = EnumHelpers.GetEnumMax<MaterialCategory>() + 1;
-			if (max > 32)
-				throw new Exception();
-		}
+		EnumBitMask<ItemID> m_itemIDMask;
+		EnumBitMask32<ItemCategory> m_itemCategoryMask;
+		EnumBitMask64<MaterialID> m_materialIDMask;
+		EnumBitMask32<MaterialCategory> m_materialCategoryMask;
 
 		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<ItemCategory> itemCategories,
 			IEnumerable<MaterialID> materialIDs, IEnumerable<MaterialCategory> materialCategories)
 		{
-			m_itemIDMask = FilterHelpers.CreateMaskArray(itemIDs);
-			m_itemCategoryMask = FilterHelpers.CreateMask32(itemCategories);
-			m_materialIDMask = FilterHelpers.CreateMask64(materialIDs);
-			m_materialCategoryMask = FilterHelpers.CreateMask32(materialCategories);
+			m_itemIDMask = new EnumBitMask<ItemID>(itemIDs);
+			m_itemCategoryMask = new EnumBitMask32<ItemCategory>(itemCategories);
+			m_materialIDMask = new EnumBitMask64<MaterialID>(materialIDs);
+			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>(materialCategories);
 		}
 
 		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<MaterialID> materialIDs)
 		{
-			m_itemIDMask = FilterHelpers.CreateMaskArray(itemIDs);
-			m_materialIDMask = FilterHelpers.CreateMask64(materialIDs);
+			m_itemIDMask = new EnumBitMask<ItemID>(itemIDs);
+			m_materialIDMask = new EnumBitMask64<MaterialID>(materialIDs);
 		}
 
 		public ItemFilter(ItemID itemID, MaterialCategory materialCategory)
 		{
-			m_itemIDMask = FilterHelpers.CreateMaskArray(new ItemID[] { itemID });
-			m_materialCategoryMask = FilterHelpers.CreateMask32(new MaterialCategory[] { materialCategory });
+			m_itemIDMask = new EnumBitMask<ItemID>(itemID);
+			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>(materialCategory);
 		}
 
 		public bool Match(ItemID itemID, ItemCategory itemCategory, MaterialID materialID, MaterialCategory materialCategory)
 		{
-			return FilterHelpers.Check(m_itemIDMask, (int)itemID) &&
-				FilterHelpers.Check(m_itemCategoryMask, (int)itemCategory) &&
-				FilterHelpers.Check(m_materialIDMask, (int)materialID) &&
-				FilterHelpers.Check(m_materialCategoryMask, (int)materialCategory);
+			return
+				(m_itemIDMask == null || m_itemIDMask.Get(itemID)) &&
+				(m_itemCategoryMask == null || m_itemCategoryMask.Get(itemCategory)) &&
+				(m_materialIDMask == null || m_materialIDMask.Get(materialID)) &&
+				(m_materialCategoryMask == null || m_materialCategoryMask.Get(materialCategory));
 		}
 
 		public bool Match(IItemObject item)
 		{
 			return Match(item.ItemID, item.ItemCategory, item.MaterialID, item.MaterialCategory);
 		}
+
+		public IEnumerable<ItemID> ItemIDs { get { return m_itemIDMask.EnumValues; } }
+		public IEnumerable<ItemCategory> ItemCategories { get { return m_itemCategoryMask.EnumValues; } }
+		public IEnumerable<MaterialID> MaterialIDs { get { return m_materialIDMask.EnumValues; } }
+		public IEnumerable<MaterialCategory> MaterialCategories { get { return m_materialCategoryMask.EnumValues; } }
 	}
 
-	static class FilterHelpers
+	[Serializable]
+	public class EnumBitMask32<TEnum>
 	{
-		public static BitArray CreateMaskArray<T>(IEnumerable<T> bits) where T : IConvertible
+		uint m_mask;
+
+		static EnumBitMask32()
 		{
-			BitArray mask = null;
-
-			if (bits == null || bits.Any())
-			{
-				mask = new BitArray(EnumHelpers.GetEnumMax<T>() + 1);
-				foreach (int v in bits.Select(b => b.ToInt32(null)))
-					mask.Set(v, true);
-			}
-
-			return mask;
+			var max = EnumHelpers.GetEnumMax<TEnum>() + 1;
+			if (max > 32)
+				throw new Exception();
 		}
 
-		public static uint CreateMask32<T>(IEnumerable<T> bits) where T : IConvertible
+		public EnumBitMask32(TEnum enumValue)
+		{
+			m_mask = 1U << EnumConv.ToInt32(enumValue);
+		}
+
+		public EnumBitMask32(IEnumerable<TEnum> enumValues)
 		{
 			uint mask = 0;
 
-			if (bits != null)
+			if (enumValues != null)
 			{
-				foreach (int v in bits.Select(b => b.ToInt32(null)))
-					mask |= 1U << v;
+				foreach (TEnum e in enumValues)
+					mask |= 1U << EnumConv.ToInt32(e);
 			}
 
-			return mask;
+			m_mask = mask;
 		}
 
-		public static ulong CreateMask64<T>(IEnumerable<T> bits) where T : IConvertible
+		public bool Get(TEnum enumValue)
+		{
+			return m_mask == 0 || (m_mask & (1U << EnumConv.ToInt32(enumValue))) != 0;
+		}
+
+		public IEnumerable<TEnum> EnumValues
+		{
+			get
+			{
+				for (int i = 0; i < 32; ++i)
+				{
+					var b = ((m_mask >> i) & 1) == 1;
+					if (b)
+						yield return EnumConv.ToEnum<TEnum>(i);
+				}
+			}
+		}
+	}
+
+	[Serializable]
+	public class EnumBitMask64<TEnum>
+	{
+		ulong m_mask;
+
+		static EnumBitMask64()
+		{
+			var max = EnumHelpers.GetEnumMax<TEnum>() + 1;
+			if (max > 64)
+				throw new Exception();
+		}
+
+		public EnumBitMask64(TEnum enumValue)
+		{
+			m_mask = 1UL << EnumConv.ToInt32(enumValue);
+		}
+
+		public EnumBitMask64(IEnumerable<TEnum> enumValues)
 		{
 			ulong mask = 0;
 
-			if (bits != null)
+			if (enumValues != null)
 			{
-				foreach (int v in bits.Select(b => b.ToInt32(null)))
-					mask |= 1UL << v;
+				foreach (TEnum e in enumValues)
+					mask |= 1UL << EnumConv.ToInt32(e);
 			}
 
-			return mask;
+			m_mask = mask;
 		}
 
-		public static bool Check(BitArray mask, int bit)
+		public bool Get(TEnum enumValue)
 		{
-			return mask == null || mask.Get(bit);
+			return m_mask == 0 || (m_mask & (1UL << EnumConv.ToInt32(enumValue))) != 0;
 		}
 
-		public static bool Check(ulong mask, int bit)
+		public IEnumerable<TEnum> EnumValues
 		{
-			return (mask == 0 || (mask & (1UL << bit)) != 0);
+			get
+			{
+				for (int i = 0; i < 32; ++i)
+				{
+					var b = ((m_mask >> i) & 1) == 1;
+					if (b)
+						yield return EnumConv.ToEnum<TEnum>(i);
+				}
+			}
+		}
+	}
+
+	[Serializable]
+	public class EnumBitMask<TEnum>
+	{
+		BitArray m_mask;
+
+		public EnumBitMask(TEnum enumValue)
+		{
+			BitArray mask = null;
+
+			mask = new BitArray(EnumHelpers.GetEnumMax<TEnum>() + 1);
+			mask.Set(EnumConv.ToInt32(enumValue), true);
+
+			m_mask = mask;
 		}
 
-		public static bool Check(uint mask, int bit)
+		public EnumBitMask(IEnumerable<TEnum> enumValues)
 		{
-			return (mask == 0 || (mask & (1U << bit)) != 0);
+			BitArray mask = null;
+
+			if (enumValues != null && enumValues.Any())
+			{
+				mask = new BitArray(EnumHelpers.GetEnumMax<TEnum>() + 1);
+				foreach (TEnum e in enumValues)
+					mask.Set(EnumConv.ToInt32(e), true);
+			}
+
+			m_mask = mask;
+		}
+
+		public bool Get(TEnum enumValue)
+		{
+			return m_mask == null || m_mask.Get(EnumConv.ToInt32(enumValue));
+		}
+
+		public IEnumerable<TEnum> EnumValues
+		{
+			get
+			{
+				for (int i = 0; i < m_mask.Length; ++i)
+				{
+					var b = m_mask.Get(i);
+					if (b)
+						yield return EnumConv.ToEnum<TEnum>(i);
+				}
+			}
 		}
 	}
 

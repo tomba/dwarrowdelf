@@ -67,7 +67,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class BuildableItemMaterialInfo : IItemFilter
+	public sealed class BuildableItemMaterialInfo : IItemMaterialFilter
 	{
 		public ItemID? ItemID { get; internal set; }
 		public ItemCategory? ItemCategory { get; internal set; }
@@ -91,6 +91,11 @@ namespace Dwarrowdelf
 
 			return true;
 		}
+
+		public IEnumerable<ItemID> ItemIDs { get { if (this.ItemID.HasValue) yield return this.ItemID.Value; } }
+		public IEnumerable<ItemCategory> ItemCategories { get { if (this.ItemCategory.HasValue) yield return this.ItemCategory.Value; } }
+		public IEnumerable<MaterialID> MaterialIDs { get { if (this.MaterialID.HasValue) yield return this.MaterialID.Value; } }
+		public IEnumerable<MaterialCategory> MaterialCategories { get { if (this.MaterialCategory.HasValue) yield return this.MaterialCategory.Value; } }
 	}
 
 	public static class Buildings
