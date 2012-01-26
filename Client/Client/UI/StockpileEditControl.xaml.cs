@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -63,7 +64,14 @@ namespace Dwarrowdelf.Client.UI
 
 			var stockpile = (Stockpile)this.DataContext;
 
-			stockpile.SetCriteria(this.Criteria);
+			IItemMaterialFilter itemFillter;
+
+			if (this.Criteria.IsNotEmpty)
+				itemFillter = this.Criteria.ToItemFilter();
+			else
+				itemFillter = null;
+
+			stockpile.SetCriteria(itemFillter);
 		}
 
 		#region INotifyPropertyChanged Members
@@ -78,4 +86,42 @@ namespace Dwarrowdelf.Client.UI
 
 		#endregion
 	}
+
+	sealed class StockpileCriteriaEditable
+	{
+		public StockpileCriteriaEditable()
+		{
+			this.ItemIDs = new ObservableCollection<ItemID>();
+			this.ItemCategories = new ObservableCollection<ItemCategory>();
+			this.MaterialIDs = new ObservableCollection<MaterialID>();
+			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
+		}
+
+		public StockpileCriteriaEditable(IItemMaterialFilter source)
+		{
+			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
+			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
+			this.MaterialIDs = new ObservableCollection<MaterialID>(source.MaterialIDs);
+			this.MaterialCategories = new ObservableCollection<MaterialCategory>(source.MaterialCategories);
+		}
+
+		public ObservableCollection<ItemID> ItemIDs { get; set; }
+		public ObservableCollection<ItemCategory> ItemCategories { get; set; }
+		public ObservableCollection<MaterialID> MaterialIDs { get; set; }
+		public ObservableCollection<MaterialCategory> MaterialCategories { get; set; }
+
+		public bool IsNotEmpty
+		{
+			get
+			{
+				return this.ItemIDs.Any() || this.ItemCategories.Any() || this.MaterialIDs.Any() || this.MaterialCategories.Any();
+			}
+		}
+
+		public IItemMaterialFilter ToItemFilter()
+		{
+			return new ItemFilter(this.ItemIDs, this.ItemCategories, this.MaterialIDs, this.MaterialCategories);
+		}
+	}
+
 }

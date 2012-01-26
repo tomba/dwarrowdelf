@@ -1,49 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class StockpileCriteriaEditable
-	{
-		public StockpileCriteriaEditable()
-		{
-			this.ItemIDs = new ObservableCollection<ItemID>();
-			this.ItemCategories = new ObservableCollection<ItemCategory>();
-			this.MaterialIDs = new ObservableCollection<MaterialID>();
-			this.MaterialCategories = new ObservableCollection<MaterialCategory>();
-		}
-
-		public StockpileCriteriaEditable(IItemMaterialFilter source)
-		{
-			this.ItemIDs = new ObservableCollection<ItemID>(source.ItemIDs);
-			this.ItemCategories = new ObservableCollection<ItemCategory>(source.ItemCategories);
-			this.MaterialIDs = new ObservableCollection<MaterialID>(source.MaterialIDs);
-			this.MaterialCategories = new ObservableCollection<MaterialCategory>(source.MaterialCategories);
-		}
-
-		public ObservableCollection<ItemID> ItemIDs { get; set; }
-		public ObservableCollection<ItemCategory> ItemCategories { get; set; }
-		public ObservableCollection<MaterialID> MaterialIDs { get; set; }
-		public ObservableCollection<MaterialCategory> MaterialCategories { get; set; }
-
-		public bool IsNotEmpty
-		{
-			get
-			{
-				return this.ItemIDs.Any() || this.ItemCategories.Any() || this.MaterialIDs.Any() || this.MaterialCategories.Any();
-			}
-		}
-
-		public IItemMaterialFilter ToItemFilter()
-		{
-			return new ItemFilter(this.ItemIDs, this.ItemCategories, this.MaterialIDs, this.MaterialCategories);
-		}
-	}
-
 	[SaveGameObjectByRef]
 	sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
 	{
@@ -138,12 +100,9 @@ namespace Dwarrowdelf.Client
 				item.StockpiledBy = null;
 		}
 
-		public void SetCriteria(StockpileCriteriaEditable criteria)
+		public void SetCriteria(IItemMaterialFilter itemFilter)
 		{
-			if (criteria.IsNotEmpty)
-				this.Criteria = criteria.ToItemFilter();
-			else
-				this.Criteria = null;
+			this.Criteria = itemFilter;
 
 			foreach (var ob in this.Environment.GetContents(this.Area).OfType<ItemObject>())
 			{
