@@ -17,232 +17,10 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
-
-	public interface ISelectable<TItem>
-	{
-		bool? IsSelected { get; set; }
-		event Action IsSelectedChanged;
-		TItem Value { get; }
-	}
-
-	public class SelectableValue<T> : ISelectable<T>, INotifyPropertyChanged
-	{
-		public T Value { get; private set; }
-		public event Action IsSelectedChanged;
-
-		public SelectableValue(T value)
-		{
-			this.Value = value;
-			m_isSelected = false;
-		}
-
-		public SelectableValue(T value, bool selected)
-		{
-			this.Value = value;
-			m_isSelected = selected;
-		}
-
-		bool? m_isSelected;
-
-		public bool? IsSelected
-		{
-			get
-			{
-				return m_isSelected;
-			}
-
-			set
-			{
-				if (value == m_isSelected)
-					return;
-
-				m_isSelected = value;
-				Notify("IsSelected");
-				if (this.IsSelectedChanged != null)
-					this.IsSelectedChanged();
-			}
-		}
-
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void Notify(string property)
-		{
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
-		}
-
-		#endregion
-
-	}
-
-	public class SelectableValueCollection<TItem>
-	{
-		public SelectableValue<TItem>[] SelectableItems { get; private set; }
-
-		public SelectableValueCollection(IEnumerable<TItem> items)
-		{
-			this.SelectableItems = items.Select(i => new SelectableValue<TItem>(i)).ToArray();
-		}
-	}
-
-
-
-
-
-	public class SelectableCollection<THeader, TItem> : ISelectable<THeader>, INotifyPropertyChanged
-	{
-		public event Action IsSelectedChanged;
-
-		public ObservableCollection<ISelectable<TItem>> Items { get; private set; }
-
-		public SelectableCollection(THeader value)
-		{
-			this.Value = value;
-
-			this.Items = new ObservableCollection<ISelectable<TItem>>();
-			this.Items.CollectionChanged += Items_CollectionChanged;
-
-			m_isSelected = false;
-		}
-
-		public SelectableCollection(THeader value, IEnumerable<ISelectable<TItem>> materials)
-		{
-			this.Value = value;
-
-			this.Items = new ObservableCollection<ISelectable<TItem>>(materials);
-			foreach (var i in this.Items)
-				i.IsSelectedChanged += ItemIsSelectedChanged;
-
-			this.Items.CollectionChanged += Items_CollectionChanged;
-
-			CheckCollection();
-		}
-
-		void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			switch (e.Action)
-			{
-				case NotifyCollectionChangedAction.Add:
-					foreach (ISelectable<TItem> item in e.NewItems)
-						item.IsSelectedChanged += ItemIsSelectedChanged;
-
-					break;
-
-				case NotifyCollectionChangedAction.Remove:
-					foreach (ISelectable<TItem> item in e.OldItems)
-						item.IsSelectedChanged -= ItemIsSelectedChanged;
-
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			CheckCollection();
-		}
-
-		public THeader Value { get; private set; }
-
-		bool m_updatingIsSelected;
-
-		void ItemIsSelectedChanged()
-		{
-			if (m_updatingIsSelected)
-				return;
-
-			CheckCollection();
-		}
-
-		void CheckCollection()
-		{
-			int undetermined = 0;
-			int selected = 0;
-			int unselected = 0;
-
-			foreach (var item in this.Items)
-			{
-				if (item.IsSelected.HasValue == false)
-				{
-					undetermined++;
-					break;
-				}
-				else if (item.IsSelected.Value == true)
-				{
-					selected++;
-					if (unselected > 0)
-						break;
-				}
-				else
-				{
-					unselected++;
-					if (selected > 0)
-						break;
-				}
-			}
-
-			if (undetermined > 0 || (selected > 0 && unselected > 0))
-				this.IsSelected = null;
-			else if (selected == this.Items.Count)
-				this.IsSelected = true;
-			else
-			{
-				Debug.Assert(unselected == this.Items.Count);
-				this.IsSelected = false;
-			}
-		}
-
-		bool? m_isSelected;
-		public bool? IsSelected
-		{
-			get
-			{
-				return m_isSelected;
-			}
-
-			set
-			{
-				if (m_isSelected == value)
-					return;
-
-				m_isSelected = value;
-
-				if (m_isSelected.HasValue)
-				{
-					m_updatingIsSelected = true;
-					foreach (var m in this.Items)
-						m.IsSelected = m_isSelected.Value;
-					m_updatingIsSelected = false;
-				}
-
-				Notify("IsSelected");
-				if (this.IsSelectedChanged != null)
-					this.IsSelectedChanged();
-
-			}
-		}
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void Notify(string property)
-		{
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
-		}
-
-		#endregion
-	}
-
-
-
-
-
 	public partial class ConstructDialog : Window
 	{
+		List<SelectableMaterialCategory> m_categories;
+
 		public ConstructDialog()
 		{
 			InitializeComponent();
@@ -258,19 +36,22 @@ namespace Dwarrowdelf.Client.UI
 		{
 			set
 			{
-				IItemMaterialFilter filter;
+				IItemFilter filter;
 
 				switch (value)
 				{
 					case ConstructMode.Floor:
+						this.Title = "Construct Floor";
 						filter = WorkHelpers.ConstructFloorItemFilter;
 						break;
-					/*
-										case ConstructMode.Pavement:
-											filter = WorkHelpers.ConstructPavementItemFilter;
-											break;
-											*/
+
+					case ConstructMode.Pavement:
+						this.Title = "Construct Pavement";
+						filter = WorkHelpers.ConstructPavementItemFilter;
+						break;
+
 					case ConstructMode.Wall:
+						this.Title = "Construct Wall";
 						filter = WorkHelpers.ConstructWallItemFilter;
 						break;
 
@@ -278,77 +59,90 @@ namespace Dwarrowdelf.Client.UI
 						throw new Exception();
 				}
 
+				IEnumerable<MaterialID> allowedMaterials;
+				IEnumerable<MaterialCategory> allowedCategories;
 
-				IEnumerable<MaterialID> allowedMaterials = filter.MaterialIDs;
-				IEnumerable<MaterialCategory> allowedMaterialCategories = filter.MaterialCategories;
+				if (filter is ItemFilter)
+				{
+					var f = (ItemFilter)filter;
 
-				// XXX
-				allowedMaterialCategories = allowedMaterialCategories.Concat(new MaterialCategory[] { MaterialCategory.Wood });
+					allowedMaterials = f.MaterialIDs;
+					allowedCategories = f.MaterialCategories;
+				}
+				else if (filter is OrItemFilter)
+				{
+					// XXX
+
+					var f = (OrItemFilter)filter;
+
+					var f1 = (ItemFilter)f[0];
+					var f2 = (ItemFilter)f[1];
+
+					allowedMaterials = f1.MaterialIDs.Concat(f2.MaterialIDs);
+					allowedCategories = f1.MaterialCategories.Concat(f2.MaterialCategories);
+				}
+				else
+				{
+					throw new Exception();
+				}
 
 				var allMaterials = allowedMaterials.Select(id => Materials.GetMaterial(id))
-					.Concat(allowedMaterialCategories.SelectMany(c => Materials.GetMaterials(c)))
+					.Concat(allowedCategories.SelectMany(c => Materials.GetMaterials(c)))
 					.Distinct();
 
-				var distinctCategories = allMaterials.Select(m => m.Category).Distinct();
-				/*
-				m_categoryCollection = distinctCategories.Select(c =>
+				var categories = allMaterials.Select(m => m.Category).Distinct();
+
+				List<SelectableMaterialCategory> scats = new List<SelectableMaterialCategory>();
+				foreach (var c in categories)
+				{
+					var scat = new SelectableMaterialCategory(c);
+
+					foreach (var mat in allMaterials.Where(mi => mi.Category == c).Select(mi => mi.ID))
 					{
-						var materials = allMaterials.Where(mi => mi.Category == c).Select(mi => mi.ID);
-						return new MaterialCategoryEntry(c, materials, true);
-					})
-					.ToArray();
-				*/
-				//materialCategoriesListBox.ItemsSource = m_categoryCollection;
+						var smat = new SelectableMaterial(mat, true);
+						scat.Items.Add(smat);
+					}
 
-
-				var item1 = new SelectableCollection<ItemID, MaterialCategory>(ItemID.Block);
-
-				{
-					var materials1 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Mineral);
-					var materials2 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Rock);
-
-					item1.Items.Add(materials1);
-					item1.Items.Add(materials2);
-
-					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Birch));
-					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Chrysoprase));
-
-					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Diorite));
-					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Gold));
+					scats.Add(scat);
 				}
 
-
-				var item2 = new SelectableCollection<ItemID, MaterialCategory>(ItemID.Log);
-
-				{
-					var materials1 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Wood);
-					var materials2 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Gem);
-
-					item2.Items.Add(materials1);
-					item2.Items.Add(materials2);
-
-					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Copper, true));
-					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Chrysoprase, true));
-
-					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Emerald));
-					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Gold));
-				}
-
-
-				var arr = new ISelectable<ItemID>[] { item1, item2 };
-
-
-				itemIDListBox.ItemsSource = arr;
+				m_categories = scats;
+				materialCategoriesListBox.ItemsSource = scats;
 			}
 		}
 
-		public IItemFilter ItemFilter
+		public IItemMaterialFilter GetItemFilter()
 		{
-			get
+			var materials = m_categories
+				.Where(c => c.IsSelected != false)
+				.SelectMany(c => c.Items.Where(m => m.IsSelected == true))
+				.Select(s => s.Value);
+
+			return new ItemFilter(null, materials);
+		}
+
+
+		sealed class SelectableMaterial : SelectableValue<MaterialID>
+		{
+			public SelectableMaterial(MaterialID material, bool selected)
+				: base(material, selected)
 			{
-				return null;
-				//var materials = m_categoryCollection.SelectMany(c => c.MaterialCollection).Select(s => s.Value);
-				//return new ItemFilter(null, materials);
+			}
+		}
+
+		sealed class SelectableMaterialCategory : SelectableCollection<MaterialCategory, SelectableMaterial>
+		{
+			public SelectableMaterialCategory(MaterialCategory category)
+				: base(category)
+			{
+			}
+		}
+
+		sealed class SelectableItemID : SelectableCollection<ItemID, SelectableMaterialCategory>
+		{
+			public SelectableItemID(ItemID itemID)
+				: base(itemID)
+			{
 			}
 		}
 	}

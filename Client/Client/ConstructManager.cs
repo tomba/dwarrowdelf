@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Client
 				return data.Mode;
 		}
 
-		public void AddConstructJob(ConstructMode mode, IntRectZ area, IItemFilter userItemFilter)
+		public void AddConstructJob(ConstructMode mode, IntRectZ area, IItemMaterialFilter userItemFilter)
 		{
 			var locations = area.Range().Where(p => m_environment.Contains(p));
 

@@ -340,7 +340,7 @@ for p in area.Range():
 						if (res == true)
 						{
 							var area = selection.SelectionIntRectZ;
-							var filter = dialog.ItemFilter;
+							var filter = dialog.GetItemFilter();
 
 							env.ConstructManager.AddConstructJob(mode, area, filter);
 						}

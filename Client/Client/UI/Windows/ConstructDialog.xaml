@@ -5,27 +5,12 @@
 		xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
 		xmlns:client="clr-namespace:Dwarrowdelf.Client"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-		Title="ConstructDialog" Height="452" Width="710"
+		Title="ConstructDialog" Height="429" Width="450"
 		Name="root">
 
 	<Grid>
-		<TextBox Margin="0,0,517,383">Type</TextBox>
-		<TextBox Margin="57,0,454,383">xTypex</TextBox>
-
-		<ListBox Name="itemIDListBox" HorizontalAlignment="Left" Margin="26,37,0,137" SelectionMode="Single" Width="155">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<DockPanel>
-						<CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsSelected}" Margin="4,2" VerticalAlignment="Center" />
-						<TextBlock Text="{Binding Value}" VerticalAlignment="Center" />
-					</DockPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-
 		<ListBox Name="materialCategoriesListBox"
-				 ItemsSource="{Binding SelectedItem.Items, ElementName=itemIDListBox}"
-				 SelectionMode="Single" Margin="257,37,0,137" HorizontalAlignment="Left" Width="155">
+				 SelectionMode="Single" Margin="12,46,0,41" HorizontalAlignment="Left" Width="200">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel>
@@ -38,7 +23,7 @@
 
 		<ListBox Name="materialIDListBox" 
 				 ItemsSource="{Binding SelectedItem.Items, ElementName=materialCategoriesListBox}"
-				 SelectionMode="Single" Margin="451,37,0,91" HorizontalAlignment="Left" Width="188">
+				 SelectionMode="Single" Margin="218,46,0,41" HorizontalAlignment="Left" Width="200">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel>
