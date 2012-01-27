@@ -67,6 +67,14 @@ namespace Dwarrowdelf
 			m_filters = args.Cast<IItemFilter>().ToArray();
 		}
 
+		public IItemFilter this[int i]
+		{
+			get
+			{
+				return m_filters[i];
+			}
+		}
+
 		public bool Match(IItemObject item)
 		{
 			return m_filters.Any(f => f.Match(item));
