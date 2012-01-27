@@ -5,30 +5,38 @@
 		xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
 		xmlns:client="clr-namespace:Dwarrowdelf.Client"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-		Title="ConstructDialog" Height="452" Width="590">
-	<Window.Resources>
-		<ObjectDataProvider x:Key="materialIDs" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-			<ObjectDataProvider.MethodParameters>
-				<x:Type TypeName="common:MaterialID" />
-			</ObjectDataProvider.MethodParameters>
-		</ObjectDataProvider>
-
-		<ObjectDataProvider x:Key="materialCategories" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-			<ObjectDataProvider.MethodParameters>
-				<x:Type TypeName="common:MaterialCategory" />
-			</ObjectDataProvider.MethodParameters>
-		</ObjectDataProvider>
-	</Window.Resources>
+		Title="ConstructDialog" Height="452" Width="457"
+		Name="root">
 
 	<Grid>
-
 		<TextBox Margin="0,0,517,383">Type</TextBox>
 		<TextBox Margin="57,0,454,383">xTypex</TextBox>
+		
+		<ListBox Name="materialCategoriesListBox"
+				 SelectionMode="Single" Margin="12,50,0,124" HorizontalAlignment="Left" Width="155">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<DockPanel>
+						<CheckBox Margin="4,2" DockPanel.Dock="Left" IsChecked="{Binding IsSelected}"  VerticalAlignment="Center" />
+						<TextBlock Text="{Binding Value}" VerticalAlignment="Center" />
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
 
-		<ListBox ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding MaterialIDs}" Margin="26,48,382,80" />
-		<ListBox ItemsSource="{Binding Source={StaticResource materialCategories}}" SelectionMode="Multiple"
-					 client:ListBoxHelper.SelectedItems="{Binding MaterialCategories}" Margin="238,48,182,197" />
+		<ListBox Name="materialIDListBox" 
+				 ItemsSource="{Binding SelectedItem.Items, ElementName=materialCategoriesListBox}"
+				 SelectionMode="Single" Margin="206,50,0,78" HorizontalAlignment="Left" Width="188">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<DockPanel>
+						<CheckBox Margin="4,2" DockPanel.Dock="Left" IsChecked="{Binding IsSelected}"  VerticalAlignment="Center" />
+						<TextBlock Text="{Binding Value}" VerticalAlignment="Center" />
+					</DockPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
 		<Button Content="Cancel" Height="23" HorizontalAlignment="Right" IsCancel="True" Margin="0,0,12,12" VerticalAlignment="Bottom" Width="75" />
 		<Button Content="Ok" Height="23" HorizontalAlignment="Right" IsDefault="True" Margin="0,0,93,12" VerticalAlignment="Bottom" Width="75" Click="Ok_Button_Click" />
 	</Grid>

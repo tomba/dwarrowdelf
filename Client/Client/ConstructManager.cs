@@ -45,29 +45,40 @@ namespace Dwarrowdelf.Client
 				return data.Mode;
 		}
 
-		public void AddConstructJob(ConstructMode mode, IntRectZ area)
+		public void AddConstructJob(ConstructMode mode, IntRectZ area, IItemFilter userItemFilter)
 		{
 			var locations = area.Range().Where(p => m_environment.Contains(p));
 
 			ITerrainFilter filter;
+			IItemFilter coreItemFilter;
 
 			switch (mode)
 			{
 				case ConstructMode.Floor:
 					filter = WorkHelpers.ConstructFloorFilter;
+					coreItemFilter = WorkHelpers.ConstructFloorItemFilter;
 					break;
 
 				case ConstructMode.Pavement:
 					filter = WorkHelpers.ConstructPavementFilter;
+					coreItemFilter = WorkHelpers.ConstructPavementItemFilter;
 					break;
 
 				case ConstructMode.Wall:
 					filter = WorkHelpers.ConstructWallFilter;
+					coreItemFilter = WorkHelpers.ConstructWallItemFilter;
 					break;
 
 				default:
 					throw new Exception();
 			}
+
+			IItemFilter itemFilter;
+
+			if (userItemFilter != null)
+				itemFilter = new AndItemFilter(coreItemFilter, userItemFilter);
+			else
+				itemFilter = coreItemFilter;
 
 			locations = locations.Where(p => filter.Match(m_environment.GetTileData(p)));
 
@@ -77,6 +88,7 @@ namespace Dwarrowdelf.Client
 				{
 					Mode = mode,
 					Location = l,
+					ItemFilter = itemFilter,
 				};
 
 				m_jobDataList.Add(data);
@@ -107,27 +119,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (data.Job == null)
 				{
-					IItemFilter filter;
-
-					switch (data.Mode)
-					{
-						case ConstructMode.Floor:
-							filter = WorkHelpers.ConstructFloorItemFilter;
-							break;
-
-						case ConstructMode.Pavement:
-							filter = WorkHelpers.ConstructPavementItemFilter;
-							break;
-
-						case ConstructMode.Wall:
-							filter = WorkHelpers.ConstructWallItemFilter;
-							break;
-
-						default:
-							throw new Exception();
-					}
-
-					var item = FindItem(living.Location, filter);
+					var item = FindItem(living.Location, data.ItemFilter);
 
 					if (item == null)
 					{
@@ -201,6 +193,7 @@ namespace Dwarrowdelf.Client
 		{
 			public ConstructMode Mode;
 			public IntPoint3 Location;
+			public IItemFilter ItemFilter;
 			// XXX item criteria
 			public ItemObject Item;
 			public ConstructJob Job;

@@ -334,15 +334,15 @@ for p in area.Range():
 
 						var dialog = new ConstructDialog();
 						dialog.Owner = this;
+						dialog.ConstructMode = mode;
 						var res = dialog.ShowDialog();
 
 						if (res == true)
 						{
 							var area = selection.SelectionIntRectZ;
+							var filter = dialog.ItemFilter;
 
-
-							env.ConstructManager.AddConstructJob(mode, area);
-
+							env.ConstructManager.AddConstructJob(mode, area, filter);
 						}
 					}
 					break;

@@ -270,16 +270,28 @@ namespace Dwarrowdelf.Client.UI
 		#endregion
 	}
 
-	sealed class SelectableItem<T>
+	public class SelectableItem<T> : INotifyPropertyChanged
 	{
 		Action<T> m_callback;
 
 		public T Value { get; private set; }
 
+		public SelectableItem(T value)
+		{
+			this.Value = value;
+		}
+
 		public SelectableItem(Action<T> callback, T value)
 		{
 			m_callback = callback;
 			this.Value = value;
+		}
+
+		public SelectableItem(Action<T> callback, T value, bool selected)
+		{
+			m_callback = callback;
+			this.Value = value;
+			m_isSelected = selected;
 		}
 
 		bool m_isSelected;
@@ -294,9 +306,23 @@ namespace Dwarrowdelf.Client.UI
 			set
 			{
 				m_isSelected = value;
-				m_callback(this.Value);
+				if (m_callback != null)
+					m_callback(this.Value);
+				Notify("IsSelected");
 			}
 		}
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		void Notify(string property)
+		{
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+		}
+
+		#endregion
 	}
 
 
