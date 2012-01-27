@@ -48,21 +48,21 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class CompoundItemFilter : IItemFilter
+	public sealed class OrItemFilter : IItemFilter
 	{
 		IItemFilter[] m_filters;
 
-		public CompoundItemFilter(IItemFilter filter1, IItemFilter filter2)
+		public OrItemFilter(IItemFilter filter1, IItemFilter filter2)
 		{
 			m_filters = new IItemFilter[] { filter1, filter2 };
 		}
 
-		public CompoundItemFilter(IItemFilter filter1, IItemFilter filter2, IItemFilter filter3)
+		public OrItemFilter(IItemFilter filter1, IItemFilter filter2, IItemFilter filter3)
 		{
 			m_filters = new IItemFilter[] { filter1, filter2, filter3 };
 		}
 
-		public CompoundItemFilter(params object[] args)
+		public OrItemFilter(params object[] args)
 		{
 			m_filters = args.Cast<IItemFilter>().ToArray();
 		}
@@ -70,6 +70,32 @@ namespace Dwarrowdelf
 		public bool Match(IItemObject item)
 		{
 			return m_filters.Any(f => f.Match(item));
+		}
+	}
+
+	[Serializable]
+	public sealed class AndItemFilter : IItemFilter
+	{
+		IItemFilter[] m_filters;
+
+		public AndItemFilter(IItemFilter filter1, IItemFilter filter2)
+		{
+			m_filters = new IItemFilter[] { filter1, filter2 };
+		}
+
+		public AndItemFilter(IItemFilter filter1, IItemFilter filter2, IItemFilter filter3)
+		{
+			m_filters = new IItemFilter[] { filter1, filter2, filter3 };
+		}
+
+		public AndItemFilter(params object[] args)
+		{
+			m_filters = args.Cast<IItemFilter>().ToArray();
+		}
+
+		public bool Match(IItemObject item)
+		{
+			return m_filters.All(f => f.Match(item));
 		}
 	}
 
@@ -93,22 +119,25 @@ namespace Dwarrowdelf
 		public ItemFilter(IEnumerable<ItemID> itemIDs, IEnumerable<MaterialID> materialIDs)
 		{
 			m_itemIDMask = new EnumBitMask<ItemID>(itemIDs);
+			m_itemCategoryMask = new EnumBitMask32<ItemCategory>();
 			m_materialIDMask = new EnumBitMask64<MaterialID>(materialIDs);
+			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>();
 		}
 
 		public ItemFilter(ItemID itemID, MaterialCategory materialCategory)
 		{
 			m_itemIDMask = new EnumBitMask<ItemID>(itemID);
+			m_itemCategoryMask = new EnumBitMask32<ItemCategory>();
+			m_materialIDMask = new EnumBitMask64<MaterialID>();
 			m_materialCategoryMask = new EnumBitMask32<MaterialCategory>(materialCategory);
 		}
 
 		public bool Match(ItemID itemID, ItemCategory itemCategory, MaterialID materialID, MaterialCategory materialCategory)
 		{
-			return
-				(m_itemIDMask == null || m_itemIDMask.Get(itemID)) &&
-				(m_itemCategoryMask == null || m_itemCategoryMask.Get(itemCategory)) &&
-				(m_materialIDMask == null || m_materialIDMask.Get(materialID)) &&
-				(m_materialCategoryMask == null || m_materialCategoryMask.Get(materialCategory));
+			return m_itemIDMask.Get(itemID) &&
+				m_itemCategoryMask.Get(itemCategory) &&
+				m_materialIDMask.Get(materialID) &&
+				m_materialCategoryMask.Get(materialCategory);
 		}
 
 		public bool Match(IItemObject item)
@@ -132,6 +161,11 @@ namespace Dwarrowdelf
 			var max = EnumHelpers.GetEnumMax<TEnum>() + 1;
 			if (max > 32)
 				throw new Exception();
+		}
+
+		public EnumBitMask32()
+		{
+			m_mask = 0;
 		}
 
 		public EnumBitMask32(TEnum enumValue)
@@ -183,6 +217,11 @@ namespace Dwarrowdelf
 				throw new Exception();
 		}
 
+		public EnumBitMask64()
+		{
+			m_mask = 0;
+		}
+
 		public EnumBitMask64(TEnum enumValue)
 		{
 			m_mask = 1UL << EnumConv.ToInt32(enumValue);
@@ -224,6 +263,11 @@ namespace Dwarrowdelf
 	public class EnumBitMask<TEnum>
 	{
 		BitArray m_mask;
+
+		public EnumBitMask()
+		{
+			m_mask = new BitArray(EnumHelpers.GetEnumMax<TEnum>() + 1);
+		}
 
 		public EnumBitMask(TEnum enumValue)
 		{
@@ -281,8 +325,8 @@ namespace Dwarrowdelf
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
 			new InteriorID[] { InteriorID.Empty });
 
-		public static readonly CompoundItemFilter ConstructPavementItemFilter =
-			new CompoundItemFilter(
+		public static readonly OrItemFilter ConstructPavementItemFilter =
+			new OrItemFilter(
 				new ItemFilter(ItemID.Block, MaterialCategory.Rock),
 				new ItemFilter(ItemID.Log, MaterialCategory.Wood)
 			);
