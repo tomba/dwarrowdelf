@@ -13,32 +13,19 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace Dwarrowdelf.Client.UI
 {
 
-	public interface ISelectableCollection : ISelectable
-	{
-
-	}
-
-	public interface ISelectable
+	public interface ISelectable<TItem>
 	{
 		bool? IsSelected { get; set; }
 		event Action IsSelectedChanged;
+		TItem Value { get; }
 	}
 
-
-
-	public class SelectableMaterialID : SelectableValue<MaterialID>
-	{
-		public SelectableMaterialID(MaterialID materialID)
-			: base(materialID)
-		{
-		}
-	}
-
-	public class SelectableValue<T> : ISelectable, INotifyPropertyChanged
+	public class SelectableValue<T> : ISelectable<T>, INotifyPropertyChanged
 	{
 		public T Value { get; private set; }
 		public event Action IsSelectedChanged;
@@ -46,6 +33,7 @@ namespace Dwarrowdelf.Client.UI
 		public SelectableValue(T value)
 		{
 			this.Value = value;
+			m_isSelected = false;
 		}
 
 		public SelectableValue(T value, bool selected)
@@ -54,7 +42,7 @@ namespace Dwarrowdelf.Client.UI
 			m_isSelected = selected;
 		}
 
-		bool m_isSelected;
+		bool? m_isSelected;
 
 		public bool? IsSelected
 		{
@@ -65,9 +53,10 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				var b = value.GetValueOrDefault();
+				if (value == m_isSelected)
+					return;
 
-				m_isSelected = b;
+				m_isSelected = value;
 				Notify("IsSelected");
 				if (this.IsSelectedChanged != null)
 					this.IsSelectedChanged();
@@ -103,17 +92,27 @@ namespace Dwarrowdelf.Client.UI
 
 
 
-	public class SelectableCollection<T> : ISelectable, INotifyPropertyChanged
+	public class SelectableCollection<THeader, TItem> : ISelectable<THeader>, INotifyPropertyChanged
 	{
 		public event Action IsSelectedChanged;
 
-		public ObservableCollection<ISelectable> Items { get; private set; }
+		public ObservableCollection<ISelectable<TItem>> Items { get; private set; }
 
-		public SelectableCollection(T value, IEnumerable<ISelectable> materials)
+		public SelectableCollection(THeader value)
 		{
 			this.Value = value;
 
-			this.Items = new ObservableCollection<ISelectable>(materials);
+			this.Items = new ObservableCollection<ISelectable<TItem>>();
+			this.Items.CollectionChanged += Items_CollectionChanged;
+
+			m_isSelected = false;
+		}
+
+		public SelectableCollection(THeader value, IEnumerable<ISelectable<TItem>> materials)
+		{
+			this.Value = value;
+
+			this.Items = new ObservableCollection<ISelectable<TItem>>(materials);
 			foreach (var i in this.Items)
 				i.IsSelectedChanged += ItemIsSelectedChanged;
 
@@ -127,13 +126,13 @@ namespace Dwarrowdelf.Client.UI
 			switch (e.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					foreach (ISelectable item in e.NewItems)
+					foreach (ISelectable<TItem> item in e.NewItems)
 						item.IsSelectedChanged += ItemIsSelectedChanged;
 
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					foreach (ISelectable item in e.OldItems)
+					foreach (ISelectable<TItem> item in e.OldItems)
 						item.IsSelectedChanged -= ItemIsSelectedChanged;
 
 					break;
@@ -141,9 +140,11 @@ namespace Dwarrowdelf.Client.UI
 				default:
 					throw new Exception();
 			}
+
+			CheckCollection();
 		}
 
-		public T Value { get; private set; }
+		public THeader Value { get; private set; }
 
 		bool m_updatingIsSelected;
 
@@ -157,14 +158,40 @@ namespace Dwarrowdelf.Client.UI
 
 		void CheckCollection()
 		{
-			var c = this.Items.Count(m => m.IsSelected.GetValueOrDefault());
+			int undetermined = 0;
+			int selected = 0;
+			int unselected = 0;
 
-			if (c == this.Items.Count)
-				this.IsSelected = true;
-			else if (c > 0)
+			foreach (var item in this.Items)
+			{
+				if (item.IsSelected.HasValue == false)
+				{
+					undetermined++;
+					break;
+				}
+				else if (item.IsSelected.Value == true)
+				{
+					selected++;
+					if (unselected > 0)
+						break;
+				}
+				else
+				{
+					unselected++;
+					if (selected > 0)
+						break;
+				}
+			}
+
+			if (undetermined > 0 || (selected > 0 && unselected > 0))
 				this.IsSelected = null;
+			else if (selected == this.Items.Count)
+				this.IsSelected = true;
 			else
+			{
+				Debug.Assert(unselected == this.Items.Count);
 				this.IsSelected = false;
+			}
 		}
 
 		bool? m_isSelected;
@@ -177,27 +204,23 @@ namespace Dwarrowdelf.Client.UI
 
 			set
 			{
-				if (m_updatingIsSelected)
-					return;
-
 				if (m_isSelected == value)
 					return;
 
-				m_updatingIsSelected = true;
-
 				m_isSelected = value;
+
+				if (m_isSelected.HasValue)
+				{
+					m_updatingIsSelected = true;
+					foreach (var m in this.Items)
+						m.IsSelected = m_isSelected.Value;
+					m_updatingIsSelected = false;
+				}
+
 				Notify("IsSelected");
 				if (this.IsSelectedChanged != null)
 					this.IsSelectedChanged();
 
-
-				if (m_isSelected.HasValue)
-				{
-					foreach (var m in this.Items)
-						m.IsSelected = m_isSelected.Value;
-				}
-
-				m_updatingIsSelected = false;
 			}
 		}
 
@@ -278,18 +301,44 @@ namespace Dwarrowdelf.Client.UI
 				//materialCategoriesListBox.ItemsSource = m_categoryCollection;
 
 
-				var materials1 = new MaterialID[] { MaterialID.Birch, MaterialID.Chrysoprase }.Select(m => new SelectableValue<MaterialID>(m));
-				var materials2 = new MaterialID[] { MaterialID.Diorite, MaterialID.Gold }.Select(m => new SelectableValue<MaterialID>(m));
+				var item1 = new SelectableCollection<ItemID, MaterialCategory>(ItemID.Block);
+
+				{
+					var materials1 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Mineral);
+					var materials2 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Rock);
+
+					item1.Items.Add(materials1);
+					item1.Items.Add(materials2);
+
+					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Birch));
+					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Chrysoprase));
+
+					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Diorite));
+					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Gold));
+				}
 
 
+				var item2 = new SelectableCollection<ItemID, MaterialCategory>(ItemID.Log);
 
-				var selectableMaterials1 = new SelectableCollection<MaterialCategory>(MaterialCategory.Mineral, materials1);
-				var selectableMaterials2 = new SelectableCollection<MaterialCategory>(MaterialCategory.Rock, materials2);
+				{
+					var materials1 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Wood);
+					var materials2 = new SelectableCollection<MaterialCategory, MaterialID>(MaterialCategory.Gem);
+
+					item2.Items.Add(materials1);
+					item2.Items.Add(materials2);
+
+					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Copper, true));
+					materials1.Items.Add(new SelectableValue<MaterialID>(MaterialID.Chrysoprase, true));
+
+					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Emerald));
+					materials2.Items.Add(new SelectableValue<MaterialID>(MaterialID.Gold));
+				}
 
 
-				var arr = new ISelectable[] { selectableMaterials1, selectableMaterials2 };
+				var arr = new ISelectable<ItemID>[] { item1, item2 };
 
-				materialCategoriesListBox.ItemsSource = arr;
+
+				itemIDListBox.ItemsSource = arr;
 			}
 		}
 
