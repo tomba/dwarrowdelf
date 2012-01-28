@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client
 		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
 		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
-		ItemObjectView m_itemObjectView;
+		TargetItemTracker m_itemTracker;
 
 		public Stockpile(EnvironmentObject environment, IntRectZ area)
 		{
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 			this.Environment.ObjectRemoved += new Action<MovableObject>(Environment_ObjectRemoved);
 			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3>(Environment_ObjectMoved);
 
-			m_itemObjectView = new ItemObjectView(this.Environment, this.Area.Center,
+			m_itemTracker = new TargetItemTracker(this.Environment, this.Area.Center,
 				o => o.IsReserved == false && o.IsStockpiled == false && o.IsInstalled == false && Match(o));
 		}
 
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client
 
 			m_jobs = null;
 
-			if (m_itemObjectView.IsEnabled)
+			if (m_itemTracker.IsEnabled)
 				DisableItemObjectView();
 
 			foreach (var item in this.Area.Range().SelectMany(p => this.Environment.GetContents(p)).OfType<ItemObject>())
@@ -123,17 +123,17 @@ namespace Dwarrowdelf.Client
 				}
 			}
 
-			if (this.Criteria != null && m_itemObjectView.IsEnabled == false)
+			if (this.Criteria != null && m_itemTracker.IsEnabled == false)
 				EnableItemObjectView();
-			else if (this.Criteria == null && m_itemObjectView.IsEnabled)
+			else if (this.Criteria == null && m_itemTracker.IsEnabled)
 				DisableItemObjectView();
 			else
-				m_itemObjectView.Refresh();
+				m_itemTracker.Refresh();
 		}
 
 		void EnableItemObjectView()
 		{
-			m_itemObjectView.Enable();
+			m_itemTracker.Enable();
 
 			ItemObject.IsReservedChanged += ItemObject_ParameterChanged;
 			ItemObject.IsStockpiledChanged += ItemObject_ParameterChanged;
@@ -142,7 +142,7 @@ namespace Dwarrowdelf.Client
 
 		void DisableItemObjectView()
 		{
-			m_itemObjectView.Disable();
+			m_itemTracker.Disable();
 
 			ItemObject.IsReservedChanged -= ItemObject_ParameterChanged;
 			ItemObject.IsStockpiledChanged -= ItemObject_ParameterChanged;
@@ -151,16 +151,16 @@ namespace Dwarrowdelf.Client
 
 		void ItemObject_ParameterChanged(ItemObject ob)
 		{
-			m_itemObjectView.Update(ob);
+			m_itemTracker.Update(ob);
 		}
 
 
 		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
-			if (m_itemObjectView.IsEnabled == false)
+			if (m_itemTracker.IsEnabled == false)
 				return null;
 
-			var ob = m_itemObjectView.GetFirst();
+			var ob = m_itemTracker.GetFirst();
 
 			if (ob == null)
 				return null;

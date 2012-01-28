@@ -423,7 +423,9 @@ namespace Dwarrowdelf.Client
 				var bimi = buildableItem.BuildMaterials[i];
 				var biis = order.BuildSpec.ItemSpecs[i];
 
-				var ob = FindItem(o => bimi.Match(o) && biis.Match(o));
+				var filter = new AndItemFilter(bimi, biis);
+
+				var ob = this.Environment.ItemTracker.FindNearItem(this.Area.Center, filter);
 
 				if (ob == null)
 					break;
@@ -448,28 +450,6 @@ namespace Dwarrowdelf.Client
 			{
 				return true;
 			}
-		}
-
-		ItemObject FindItem(Func<ItemObject, bool> match)
-		{
-			ItemObject ob = null;
-
-			Func<IntPoint3, bool> func = delegate(IntPoint3 l)
-			{
-				ob = this.Environment.GetContents(l)
-					.OfType<ItemObject>()
-					.Where(o => o.IsReserved == false && match(o))
-					.FirstOrDefault();
-
-				if (ob != null)
-					return true;
-				else
-					return false;
-			};
-
-			var res = AStar.AStarFinder.FindNearest(this.Environment, this.Area.Center, func);
-
-			return ob;
 		}
 
 		public override string ToString()

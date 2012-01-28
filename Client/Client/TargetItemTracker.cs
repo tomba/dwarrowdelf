@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	class ItemObjectView
+	class TargetItemTracker
 	{
 		EnvironmentObject m_env;
 
@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 
 		public bool IsEnabled { get; private set; }
 
-		public ItemObjectView(EnvironmentObject env, IntPoint3 center, Func<ItemObject, bool> filter)
+		public TargetItemTracker(EnvironmentObject env, IntPoint3 center, Func<ItemObject, bool> filter)
 		{
 			m_env = env;
 			m_filter = filter;

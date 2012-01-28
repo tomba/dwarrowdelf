@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (data.Job == null)
 				{
-					var item = FindItem(living.Location, data.ItemFilter);
+					var item = m_environment.ItemTracker.FindNearItem(living.Location, data.ItemFilter);
 
 					if (item == null)
 					{
@@ -166,27 +166,6 @@ namespace Dwarrowdelf.Client
 
 		#endregion
 
-		ItemObject FindItem(IntPoint3 location, IItemFilter filter)
-		{
-			ItemObject ob = null;
-
-			Func<IntPoint3, bool> func = delegate(IntPoint3 l)
-			{
-				ob = m_environment.GetContents(l)
-					.OfType<ItemObject>()
-					.Where(o => o.IsReserved == false && filter.Match(o))
-					.FirstOrDefault();
-
-				if (ob != null)
-					return true;
-				else
-					return false;
-			};
-
-			var res = AStar.AStarFinder.FindNearest(m_environment, location, func);
-
-			return ob;
-		}
 
 		[Serializable]
 		class ConstructJobData

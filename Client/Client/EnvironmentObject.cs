@@ -48,6 +48,8 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public ConstructManager ConstructManager { get; private set; }
 
+		public ItemTracker ItemTracker { get; private set; }
+
 		public EnvironmentObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -63,6 +65,8 @@ namespace Dwarrowdelf.Client
 			this.Designations = new Designation(this);
 			this.InstallFurnitureManager = new InstallFurnitureManager(this);
 			this.ConstructManager = new ConstructManager(this);
+
+			this.ItemTracker = new ItemTracker(this);
 
 			this.World.AddEnvironment(this);
 		}
