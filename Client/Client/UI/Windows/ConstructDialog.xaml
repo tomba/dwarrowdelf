@@ -5,12 +5,25 @@
 		xmlns:common="clr-namespace:Dwarrowdelf;assembly=Dwarrowdelf.Common"
 		xmlns:client="clr-namespace:Dwarrowdelf.Client"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-		Title="ConstructDialog" Height="429" Width="450"
+		Title="ConstructDialog" Height="372" Width="382"
 		Name="root">
 
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Name="textBlock1" Text="Material Category" Margin="2" />
+		<TextBlock Name="textBlock2" Text="Material" Grid.Column="1" Margin="2" />
+
 		<ListBox Name="materialCategoriesListBox"
-				 SelectionMode="Single" Margin="12,46,0,41" HorizontalAlignment="Left" Width="200">
+				 SelectionMode="Single" Grid.Row="1" Margin="2">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel>
@@ -23,7 +36,7 @@
 
 		<ListBox Name="materialIDListBox" 
 				 ItemsSource="{Binding SelectedItem.Items, ElementName=materialCategoriesListBox}"
-				 SelectionMode="Single" Margin="218,46,0,41" HorizontalAlignment="Left" Width="200">
+				 SelectionMode="Single" Grid.Row="1" Grid.Column="1" Margin="2">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<DockPanel>
@@ -34,7 +47,7 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-		<Button Content="Cancel" Height="23" HorizontalAlignment="Right" IsCancel="True" Margin="0,0,12,12" VerticalAlignment="Bottom" Width="75" />
-		<Button Content="Ok" Height="23" HorizontalAlignment="Right" IsDefault="True" Margin="0,0,93,12" VerticalAlignment="Bottom" Width="75" Click="Ok_Button_Click" />
+		<Button Content="Cancel" Height="23" HorizontalAlignment="Right" IsCancel="True" Margin="0,0,2,2" VerticalAlignment="Bottom" Width="75" Grid.Row="2" Grid.Column="1" />
+		<Button Content="Ok" Height="23" HorizontalAlignment="Right" IsDefault="True" Margin="0,0,83,2" VerticalAlignment="Bottom" Width="75" Click="Ok_Button_Click" Grid.Row="2" Grid.Column="1" />
 	</Grid>
 </Window>
