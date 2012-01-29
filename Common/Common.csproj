@@ -86,7 +86,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\CarryItemAssignment.cs" />
@@ -149,7 +149,6 @@
     <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />
     <Compile Include="Jobs\JobManager.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Connection.cs" />

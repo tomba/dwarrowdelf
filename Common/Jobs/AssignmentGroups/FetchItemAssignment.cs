@@ -11,6 +11,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	[SaveGameObjectByRef]
 	public sealed class FetchItemAssignment : AssignmentGroup
 	{
+		enum State
+		{
+			None,
+			MoveToItem,
+			CarryItem,
+			Haul,
+			DropItem,
+		}
+
 		[SaveGameProperty]
 		public IItemObject Item { get; private set; }
 		[SaveGameProperty]
@@ -18,15 +27,23 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
-		int m_state;
+		State m_state;
+		[SaveGameProperty]
+		DirectionSet m_positioning;
 
 		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item)
+			: this(parent, env, location, item, DirectionSet.Exact)
+		{
+		}
+
+		public FetchItemAssignment(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IItemObject item, DirectionSet positioning)
 			: base(parent)
 		{
 			this.Item = item;
 			m_environment = env;
 			m_location = location;
-			m_state = 0;
+			m_state = State.None;
+			m_positioning = positioning;
 		}
 
 		FetchItemAssignment(SaveGameContext ctx)
@@ -34,9 +51,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
+		protected override void AssignOverride(ILivingObject worker)
+		{
+			m_state = State.MoveToItem;
+		}
+
 		protected override void OnAssignmentDone()
 		{
-			if (m_state == 3)
+			if (m_state == State.DropItem)
 				SetStatus(JobStatus.Done);
 			else
 				m_state = m_state + 1;
@@ -48,19 +70,19 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			switch (m_state)
 			{
-				case 0:
+				case State.MoveToItem:
 					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
-				case 1:
-					assignment = new GetItemAssignment(this, this.Item);
+				case State.CarryItem:
+					assignment = new CarryItemAssignment(this, this.Item);
 					break;
 
-				case 2:
-					assignment = new MoveAssignment(this, m_environment, m_location, DirectionSet.Exact);
+				case State.Haul:
+					assignment = new HaulAssignment(this, m_environment, m_location, m_positioning, this.Item);
 					break;
 
-				case 3:
+				case State.DropItem:
 					assignment = new DropItemAssignment(this, this.Item);
 					break;
 
@@ -73,7 +95,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "FetchItemAssignment";
+			return "HaulItemAssignment";
 		}
 	}
 }

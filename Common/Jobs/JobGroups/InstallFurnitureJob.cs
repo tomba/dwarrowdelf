@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			m_state = 0;
 
-			AddSubJob(new AssignmentGroups.HaulItemAssignment(this, env, location, item));
+			AddSubJob(new AssignmentGroups.FetchItemAssignment(this, env, location, item));
 		}
 
 		InstallFurnitureJob(SaveGameContext ctx)
