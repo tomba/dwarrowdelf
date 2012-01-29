@@ -88,33 +88,35 @@ namespace Dwarrowdelf.AStar
 		/// <summary>
 		/// Find route from src to dest, finding the route in parallel from both directions
 		/// </summary>
-		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning, out IntPoint3 finalLocation)
+		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning)
 		{
-			Debug.Assert(environment != null);
+			AStarResult resBackward;
+			AStarResult resForward;
 
-			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
-			CancellationTokenSource cts = new CancellationTokenSource();
+			ParallelFind(environment, src, dest, positioning, out resBackward, out resForward);
 
-			AStarResult resBackward = null;
-			AStarResult resForward = null;
+			IEnumerable<Direction> dirs;
 
-			var taskForward = new Task(delegate
-			{
-				resForward = Find(environment, src, DirectionSet.Exact, dest, positioning, 200000, cts.Token);
-			});
-			taskForward.Start();
+			if (resForward.Status == AStarStatus.Found)
+				dirs = resForward.GetPath();
+			else if (resBackward.Status == AStarStatus.Found)
+				dirs = resBackward.GetPathReverse();
+			else
+				dirs = null;
 
-			var taskBackward = new Task(delegate
-			{
-				resBackward = Find(environment, dest, positioning, src, DirectionSet.Exact, 200000, cts.Token);
-			});
-			taskBackward.Start();
+			return dirs;
+		}
 
-			Task.WaitAny(taskBackward, taskForward);
+		/// <summary>
+		/// Find route from src to dest, finding the route in parallel from both directions
+		/// </summary>
+		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning,
+			out IntPoint3 finalLocation)
+		{
+			AStarResult resBackward;
+			AStarResult resForward;
 
-			cts.Cancel();
-
-			Task.WaitAll(taskBackward, taskForward);
+			ParallelFind(environment, src, dest, positioning, out resBackward, out resForward);
 
 			IEnumerable<Direction> dirs;
 
@@ -140,6 +142,38 @@ namespace Dwarrowdelf.AStar
 			}
 
 			return dirs;
+		}
+
+		static void ParallelFind(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning, out AStarResult resBackward, out AStarResult resForward)
+		{
+			Debug.Assert(environment != null);
+
+			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
+			CancellationTokenSource cts = new CancellationTokenSource();
+
+			AStarResult rb = null;
+			AStarResult rf = null;
+
+			var taskForward = new Task(delegate
+			{
+				rf = Find(environment, src, DirectionSet.Exact, dest, positioning, 200000, cts.Token);
+			});
+			taskForward.Start();
+
+			var taskBackward = new Task(delegate
+			{
+				rb = Find(environment, dest, positioning, src, DirectionSet.Exact, 200000, cts.Token);
+			});
+			taskBackward.Start();
+
+			Task.WaitAny(taskBackward, taskForward);
+
+			cts.Cancel();
+
+			Task.WaitAll(taskBackward, taskForward);
+
+			resForward = rf;
+			resBackward = rb;
 		}
 
 		/// <summary>
