@@ -733,6 +733,12 @@ namespace Dwarrowdelf.Server
 						return false;
 					}
 
+					if (env.GetContents(action.Location).Any())
+					{
+						SendFailReport(report, "location not empty");
+						return false;
+					}
+
 					positioning = DirectionSet.Planar;
 
 					break;
