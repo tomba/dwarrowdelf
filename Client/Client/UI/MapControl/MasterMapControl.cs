@@ -134,7 +134,17 @@ namespace Dwarrowdelf.Client.UI
 				sl = m_mapControl.ScreenPointToIntScreenTile(p);
 				var ml = m_mapControl.ScreenPointToMapLocation(p);
 
-				this.HoverTileView.SetTarget(m_mapControl.Environment, ml);
+				if (m_mapControl.Environment.Contains(ml))
+				{
+					this.HoverTileView.SetTarget(m_mapControl.Environment, ml);
+				}
+				else
+				{
+					p = new Point();
+					sl = new IntPoint2();
+
+					this.HoverTileView.ClearTarget();
+				}
 			}
 
 			if (p != this.MousePos)
