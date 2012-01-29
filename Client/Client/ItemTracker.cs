@@ -28,12 +28,19 @@ namespace Dwarrowdelf.Client
 
 		public ItemObject FindNearItem(IntPoint3 location, IItemFilter filter)
 		{
-			var item = m_items
+			var items = m_items
 				.Where(i => i.IsReserved == false && i.IsInstalled == false && filter.Match(i))
-				.OrderBy(i => (i.Location - location).ManhattanLength)
-				.FirstOrDefault();
+				.OrderBy(i => (i.Location - location).ManhattanLength);
 
-			return item;
+			foreach (var item in items)
+			{
+				var found = AStar.AStarFinder.CanReach(m_env, location, item.Location, DirectionSet.Exact);
+
+				if (found)
+					return item;
+			}
+
+			return null;
 		}
 
 

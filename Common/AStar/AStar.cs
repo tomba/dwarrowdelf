@@ -48,7 +48,46 @@ namespace Dwarrowdelf.AStar
 			public CancellationToken CancellationToken;
 		}
 
+		/// <summary>
+		/// Returns if dst can be reached from src
+		/// </summary>
+		public static bool CanReach(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dst, DirectionSet dstPositioning)
+		{
+			Debug.Assert(environment != null);
 
+			// Do pathfinding to both directions simultaneously to detect faster if the destination is blocked
+			CancellationTokenSource cts = new CancellationTokenSource();
+
+			AStarResult resBackward = null;
+			AStarResult resForward = null;
+
+			var taskForward = new Task(delegate
+			{
+				resForward = Find(environment, src, DirectionSet.Exact, dst, dstPositioning, 200000, cts.Token);
+			});
+			taskForward.Start();
+
+			var taskBackward = new Task(delegate
+			{
+				resBackward = Find(environment, dst, dstPositioning, src, DirectionSet.Exact, 200000, cts.Token);
+			});
+			taskBackward.Start();
+
+			Task.WaitAny(taskBackward, taskForward);
+
+			cts.Cancel();
+
+			Task.WaitAll(taskBackward, taskForward);
+
+			if (resForward.Status == AStarStatus.Found || resBackward.Status == AStarStatus.Found)
+				return true;
+			else
+				return false;
+		}
+
+		/// <summary>
+		/// Find route from src to dest, finding the route in parallel from both directions
+		/// </summary>
 		public static IEnumerable<Direction> Find(IAStarEnvironment environment, IntPoint3 src, IntPoint3 dest, DirectionSet positioning, out IntPoint3 finalLocation)
 		{
 			Debug.Assert(environment != null);
@@ -103,18 +142,26 @@ namespace Dwarrowdelf.AStar
 			return dirs;
 		}
 
-
+		/// <summary>
+		/// Flood-find the nearest location for which func returns true
+		/// </summary>
 		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
 		{
 			return Find(environment, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
 		}
 
+		/// <summary>
+		/// Find route from src to dst, using the given positionings
+		/// </summary>
 		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), maxNodeCount, cancellationToken);
 		}
 
+		/// <summary>
+		/// Find route from src to destination defined by IAstarTarget
+		/// </summary>
 		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
