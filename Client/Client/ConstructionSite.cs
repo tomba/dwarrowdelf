@@ -9,8 +9,11 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef]
 	sealed class ConstructionSite : IJobSource, IAreaElement, IJobObserver
 	{
+		[SaveGameProperty]
 		public BuildingID BuildingID;
+		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
+		[SaveGameProperty]
 		public IntRectZ Area { get; private set; }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
@@ -26,8 +29,9 @@ namespace Dwarrowdelf.Client
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
-		void ConstructionSize(SaveGameContext ctx)
+		ConstructionSite(SaveGameContext ctx)
 		{
+			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
 		public void Destruct()
