@@ -141,6 +141,11 @@ namespace Dwarrowdelf.Client
 			HandleItemActionReport(report, "drops", "drop");
 		}
 
+		void HandleReport(CarryItemActionReport report)
+		{
+			HandleItemActionReport(report, "starts carrying", "start carrying");
+		}
+
 		void HandleReport(ConsumeActionReport report)
 		{
 			HandleItemActionReport(report, "consumes", "consume");

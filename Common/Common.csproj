@@ -89,6 +89,7 @@
     <Compile Include="Jobs\AssignmentGroups\HaultemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
+    <Compile Include="Jobs\Assignments\CarryItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\FleeMoveAssignment.cs" />
     <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />

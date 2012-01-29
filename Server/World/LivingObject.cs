@@ -337,6 +337,14 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new RemoveWeaponChange(this));
 		}
 
+		[SaveGameProperty("CarriedItem")]
+		ItemObject m_carriedItem;
+		public ItemObject CarriedItem
+		{
+			get { return m_carriedItem; }
+			set { m_carriedItem = value; }
+		}
+
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
 			base.CollectObjectData(baseData, visibility);

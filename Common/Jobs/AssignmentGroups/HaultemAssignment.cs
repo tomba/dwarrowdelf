@@ -11,6 +11,15 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	[SaveGameObjectByRef]
 	public sealed class HaulItemAssignment : AssignmentGroup
 	{
+		enum State
+		{
+			None,
+			MoveToItem,
+			CarryItem,
+			Haul,
+			DropItem,
+		}
+
 		[SaveGameProperty]
 		public IItemObject Item { get; private set; }
 		[SaveGameProperty]
@@ -18,7 +27,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty]
 		IEnvironmentObject m_environment;
 		[SaveGameProperty("State")]
-		int m_state;
+		State m_state;
 		[SaveGameProperty]
 		DirectionSet m_positioning;
 
@@ -33,7 +42,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			this.Item = item;
 			m_environment = env;
 			m_location = location;
-			m_state = 0;
+			m_state = State.None;
 			m_positioning = positioning;
 		}
 
@@ -42,9 +51,14 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		{
 		}
 
+		protected override void AssignOverride(ILivingObject worker)
+		{
+			m_state = State.MoveToItem;
+		}
+
 		protected override void OnAssignmentDone()
 		{
-			if (m_state == 1)
+			if (m_state == State.DropItem)
 				SetStatus(JobStatus.Done);
 			else
 				m_state = m_state + 1;
@@ -56,12 +70,20 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 			switch (m_state)
 			{
-				case 0:
+				case State.MoveToItem:
 					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
-				case 1:
+				case State.CarryItem:
+					assignment = new CarryItemAssignment(this, this.Item);
+					break;
+
+				case State.Haul:
 					assignment = new MoveAssignment(this, m_environment, m_location, m_positioning, this.Item);
+					break;
+
+				case State.DropItem:
+					assignment = new DropItemAssignment(this, this.Item);
 					break;
 
 				default:

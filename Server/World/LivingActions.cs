@@ -210,7 +210,52 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			if (this.CarriedItem == item)
+				this.CarriedItem = null;
+
 			SendReport(new DropActionReport(this, item));
+
+			return true;
+		}
+
+		int GetTotalTicks(CarryItemAction action)
+		{
+			return 1;
+		}
+
+		bool PerformAction(CarryItemAction action)
+		{
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
+
+			var report = new CarryItemActionReport(this, item);
+
+			if (item == null)
+			{
+				SendFailReport(report, "item not found");
+				return false;
+			}
+
+			if (this.CarriedItem != null)
+			{
+				SendFailReport(report, "already carrying an item");
+				return false;
+			}
+
+			if (item.Environment != this.Environment || item.Location != this.Location)
+			{
+				SendFailReport(report, "item not there");
+				return false;
+			}
+
+			if (item.MoveTo(this) == false)
+			{
+				SendFailReport(report, "failed to move");
+				return false;
+			}
+
+			this.CarriedItem = item;
+
+			SendReport(report);
 
 			return true;
 		}
@@ -317,6 +362,18 @@ namespace Dwarrowdelf.Server
 
 		bool PerformAction(MoveAction action)
 		{
+			if (this.CarriedItem != null)
+			{
+				var moveOk = this.CarriedItem.MoveTo(this.Environment, this.Location);
+
+				Debug.Assert(moveOk);
+
+				if (!moveOk)
+					Trace.TraceWarning("unable to drop carried item");
+
+				this.CarriedItem = null;
+			}
+
 			var ok = MoveDir(action.Direction);
 
 			if (!ok)
@@ -333,7 +390,9 @@ namespace Dwarrowdelf.Server
 
 		int GetTotalTicks(HaulAction action)
 		{
-			var obs = this.Environment.GetContents(this.Location + action.Direction);
+			var dir = action.Direction;
+
+			var obs = this.Environment.GetContents(this.Location + dir);
 			return obs.OfType<LivingObject>().Count() + 1;
 		}
 
@@ -343,15 +402,25 @@ namespace Dwarrowdelf.Server
 			var itemID = action.ItemID;
 			var item = this.World.FindObject<ItemObject>(itemID);
 
+			var report = new HaulActionReport(this, dir, item);
+
 			if (item == null)
 			{
-				SendFailReport(new HaulActionReport(this, dir, null), "object doesn't exist");
+				SendFailReport(report, "object doesn't exist");
 				return false;
 			}
 
-			if (item.Environment != this.Environment || item.Location != this.Location)
+			if (this.CarriedItem == null)
 			{
-				SendFailReport(new HaulActionReport(this, dir, item), "item not there");
+				SendFailReport(report, "not carrying anything");
+				return false;
+			}
+
+			Debug.Assert(this.CarriedItem.Parent == this);
+
+			if (this.CarriedItem != item)
+			{
+				SendFailReport(report, "already carrying another item");
 				return false;
 			}
 
@@ -363,15 +432,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			ok = item.MoveDir(dir);
-
-			if (!ok)
-			{
-				SendFailReport(new HaulActionReport(this, action.Direction, item), "could not move item");
-				return false;
-			}
-
-			SendReport(new HaulActionReport(this, action.Direction, item));
+			SendReport(report);
 
 			return true;
 		}

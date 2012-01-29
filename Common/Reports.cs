@@ -247,6 +247,15 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public sealed class CarryItemActionReport : ItemActionReport
+	{
+		public CarryItemActionReport(ILivingObject living, IItemObject item)
+			: base(living, item)
+		{
+		}
+	}
+
+	[Serializable]
 	public sealed class ConsumeActionReport : ItemActionReport
 	{
 		public ConsumeActionReport(ILivingObject living, IItemObject item)

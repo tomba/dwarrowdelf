@@ -401,6 +401,21 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
+	public sealed class CarryItemAction : ItemAction
+	{
+		public CarryItemAction(IItemObject item)
+			: base(item)
+		{
+		}
+
+		CarryItemAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+	}
+
+	[Serializable]
+	[SaveGameObjectByRef]
 	public sealed class ConsumeAction : ItemAction
 	{
 		public ConsumeAction(IItemObject consumable)
