@@ -9,37 +9,35 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public sealed class MoveToAreaAssignment : MoveAssignmentBase
+	public sealed class HaulAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
-		readonly IntCuboid m_dest;
+		readonly IntPoint3 m_dest;
 
-		public MoveToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntCuboid destination, DirectionSet positioning)
-			: base(parent, environment, positioning)
+		public HaulAssignment(IJobObserver parent, IEnvironmentObject environment, IntPoint3 destination, DirectionSet positioning, IItemObject hauledItem)
+			: base(parent, environment, positioning, hauledItem)
 		{
 			m_dest = destination;
 		}
 
-		MoveToAreaAssignment(SaveGameContext ctx)
+		HaulAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
 
 		protected override Queue<Direction> GetPath(ILivingObject worker)
 		{
-			var res = AStar.AStarFinder.Find(m_environment, worker.Location, DirectionSet.Exact, new AStar.AStarAreaTarget(m_dest));
+			var path = AStar.AStarFinder.Find(m_environment, worker.Location, m_dest, this.Positioning);
 
-			if (res.Status != AStar.AStarStatus.Found)
+			if (path == null)
 				return null;
-
-			var path = res.GetPath();
 
 			return new Queue<Direction>(path);
 		}
 
 		protected override JobStatus CheckProgress(ILivingObject worker)
 		{
-			if (m_dest.Contains(worker.Location))
+			if (worker.Location.IsAdjacentTo(m_dest, this.Positioning))
 				return JobStatus.Done;
 			else
 				return JobStatus.Ok;
@@ -47,7 +45,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		public override string ToString()
 		{
-			return String.Format("Move({0} -> {1})", this.Src, m_dest);
+			return String.Format("Haul({0} -> {1}, {2})", this.Src, m_dest, this.HauledItem);
 		}
 	}
 }

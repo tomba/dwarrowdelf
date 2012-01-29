@@ -9,18 +9,18 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.Assignments
 {
 	[SaveGameObjectByRef]
-	public sealed class MoveToAreaAssignment : MoveAssignmentBase
+	public sealed class HaulToAreaAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
 		readonly IntCuboid m_dest;
 
-		public MoveToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntCuboid destination, DirectionSet positioning)
-			: base(parent, environment, positioning)
+		public HaulToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntCuboid destination, DirectionSet positioning, IItemObject hauledItem)
+			: base(parent, environment, positioning, hauledItem)
 		{
 			m_dest = destination;
 		}
 
-		MoveToAreaAssignment(SaveGameContext ctx)
+		HaulToAreaAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		public override string ToString()
 		{
-			return String.Format("Move({0} -> {1})", this.Src, m_dest);
+			return String.Format("Haul({0} -> {1}, {2})", this.Src, m_dest, this.HauledItem);
 		}
 	}
 }

@@ -79,7 +79,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case State.Haul:
-					assignment = new MoveAssignment(this, m_environment, m_location, m_positioning, this.Item);
+					assignment = new HaulAssignment(this, m_environment, m_location, m_positioning, this.Item);
 					break;
 
 				case State.DropItem:

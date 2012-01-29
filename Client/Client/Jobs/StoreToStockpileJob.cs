@@ -18,8 +18,8 @@ namespace Dwarrowdelf.Client
 		{
 			None = 0,
 			MoveToItem,
-			GetItem,
-			MoveToStockpile,
+			CarryItem,
+			HaulToStockpile,
 			DropItem,
 			Done,
 		}
@@ -51,16 +51,16 @@ namespace Dwarrowdelf.Client
 				case State.MoveToItem:
 					Debug.Assert(this.Item.Location == this.Worker.Location);
 
-					m_state = State.GetItem;
+					m_state = State.CarryItem;
 					break;
 
-				case State.GetItem:
+				case State.CarryItem:
 					Debug.Assert(this.Item.Parent == this.Worker);
 
-					m_state = State.MoveToStockpile;
+					m_state = State.HaulToStockpile;
 					break;
 
-				case State.MoveToStockpile:
+				case State.HaulToStockpile:
 					if (m_stockpile.Area.Contains(this.Worker.Location) && m_stockpile.LocationOk(this.Worker.Location, this.Item))
 						m_state = State.DropItem;
 					break;
@@ -85,14 +85,14 @@ namespace Dwarrowdelf.Client
 					assignment = new MoveAssignment(this, this.Item.Environment, this.Item.Location, DirectionSet.Exact);
 					break;
 
-				case State.GetItem:
-					assignment = new GetItemAssignment(this, this.Item);
+				case State.CarryItem:
+					assignment = new CarryItemAssignment(this, this.Item);
 					break;
 
-				case State.MoveToStockpile:
+				case State.HaulToStockpile:
 					if (!m_stockpile.Area.Contains(this.Worker.Location))
 					{
-						assignment = new MoveToAreaAssignment(this, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact);
+						assignment = new HaulToAreaAssignment(this, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact, this.Item);
 					}
 					else
 					{
@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Client
 						if (!ok)
 							throw new Exception();
 
-						assignment = new MoveAssignment(this, m_stockpile.Environment, l, DirectionSet.Exact);
+						assignment = new HaulAssignment(this, m_stockpile.Environment, l, DirectionSet.Exact, this.Item);
 					}
 					break;
 

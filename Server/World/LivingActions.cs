@@ -393,7 +393,7 @@ namespace Dwarrowdelf.Server
 			var dir = action.Direction;
 
 			var obs = this.Environment.GetContents(this.Location + dir);
-			return obs.OfType<LivingObject>().Count() + 1;
+			return obs.OfType<LivingObject>().Count() + 2;
 		}
 
 		bool PerformAction(HaulAction action)
