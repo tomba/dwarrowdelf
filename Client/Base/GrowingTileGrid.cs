@@ -150,22 +150,10 @@ namespace Dwarrowdelf.Client
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
-		public void SetInteriorID(IntPoint3 p, InteriorID id)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].InteriorID = id;
-		}
-
 		public InteriorID GetInteriorID(IntPoint3 p)
 		{
 			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
-		}
-
-		public void SetTerrainID(IntPoint3 p, TerrainID id)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].TerrainID = id;
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 p)
@@ -174,23 +162,10 @@ namespace Dwarrowdelf.Client
 			return m_grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-
-		public void SetInteriorMaterialID(IntPoint3 p, MaterialID id)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
-		}
-
 		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
 			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
-		}
-
-		public void SetTerrainMaterialID(IntPoint3 p, MaterialID id)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
 		}
 
 		public MaterialID GetTerrainMaterialID(IntPoint3 p)
@@ -199,22 +174,10 @@ namespace Dwarrowdelf.Client
 			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
-		}
-
 		public byte GetWaterLevel(IntPoint3 p)
 		{
 			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
-		}
-
-		public void SetFlags(IntPoint3 p, TileFlags flags)
-		{
-			Adjust(ref p);
-			m_grid[p.Z, p.Y, p.X].Flags = flags;
 		}
 
 		public TileFlags GetFlags(IntPoint3 p)

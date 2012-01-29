@@ -147,26 +147,6 @@ namespace Dwarrowdelf.Client
 			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
 		}
 
-		public void SetInteriorID(IntPoint3 l, InteriorID interiorID)
-		{
-			this.Version += 1;
-
-			m_tileGrid.SetInteriorID(l, interiorID);
-
-			if (MapTileTerrainChanged != null)
-				MapTileTerrainChanged(l);
-		}
-
-		public void SetTerrainID(IntPoint3 l, TerrainID terrainID)
-		{
-			this.Version += 1;
-
-			m_tileGrid.SetTerrainID(l, terrainID);
-
-			if (MapTileTerrainChanged != null)
-				MapTileTerrainChanged(l);
-		}
-
 		public byte GetWaterLevel(IntPoint3 l)
 		{
 			return m_tileGrid.GetWaterLevel(l);
