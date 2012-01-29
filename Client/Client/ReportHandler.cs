@@ -131,12 +131,12 @@ namespace Dwarrowdelf.Client
 			HandleItemActionReport(report, "removes", "remove");
 		}
 
-		void HandleReport(GetActionReport report)
+		void HandleReport(GetItemActionReport report)
 		{
 			HandleItemActionReport(report, "gets", "get");
 		}
 
-		void HandleReport(DropActionReport report)
+		void HandleReport(DropItemActionReport report)
 		{
 			HandleItemActionReport(report, "drops", "drop");
 		}

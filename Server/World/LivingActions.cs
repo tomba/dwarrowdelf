@@ -127,16 +127,16 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int GetTotalTicks(GetAction action)
+		int GetTotalTicks(GetItemAction action)
 		{
 			return 1;
 		}
 
-		bool PerformAction(GetAction action)
+		bool PerformAction(GetItemAction action)
 		{
 			if (this.Environment == null)
 			{
-				SendFailReport(new GetActionReport(this, null), "no environment");
+				SendFailReport(new GetItemActionReport(this, null), "no environment");
 				return false;
 			}
 
@@ -144,37 +144,37 @@ namespace Dwarrowdelf.Server
 
 			if (item == null)
 			{
-				SendFailReport(new GetActionReport(this, item), "item not found");
+				SendFailReport(new GetItemActionReport(this, item), "item not found");
 				return false;
 			}
 
 			if (item.Environment != this.Environment || item.Location != this.Location)
 			{
-				SendFailReport(new GetActionReport(this, item), "item not there");
+				SendFailReport(new GetItemActionReport(this, item), "item not there");
 				return false;
 			}
 
 			if (item.MoveTo(this) == false)
 			{
-				SendFailReport(new GetActionReport(this, item), "failed to move");
+				SendFailReport(new GetItemActionReport(this, item), "failed to move");
 				return false;
 			}
 
-			SendReport(new GetActionReport(this, item));
+			SendReport(new GetItemActionReport(this, item));
 
 			return true;
 		}
 
-		int GetTotalTicks(DropAction action)
+		int GetTotalTicks(DropItemAction action)
 		{
 			return 1;
 		}
 
-		bool PerformAction(DropAction action)
+		bool PerformAction(DropItemAction action)
 		{
 			if (this.Environment == null)
 			{
-				SendFailReport(new DropActionReport(this, null), "no environment");
+				SendFailReport(new DropItemActionReport(this, null), "no environment");
 				return false;
 			}
 
@@ -182,38 +182,38 @@ namespace Dwarrowdelf.Server
 
 			if (item == null)
 			{
-				SendFailReport(new DropActionReport(this, item), "item not found");
+				SendFailReport(new DropItemActionReport(this, item), "item not found");
 				return false;
 			}
 
 			if (item.Parent != this)
 			{
-				SendFailReport(new DropActionReport(this, item), "not in inventory");
+				SendFailReport(new DropItemActionReport(this, item), "not in inventory");
 				return false;
 			}
 
 			if (item.IsWorn)
 			{
-				SendFailReport(new DropActionReport(this, item), "item worn");
+				SendFailReport(new DropItemActionReport(this, item), "item worn");
 				return false;
 			}
 
 			if (item.IsWielded)
 			{
-				SendFailReport(new DropActionReport(this, item), "item wielded");
+				SendFailReport(new DropItemActionReport(this, item), "item wielded");
 				return false;
 			}
 
 			if (item.MoveTo(this.Environment, this.Location) == false)
 			{
-				SendFailReport(new DropActionReport(this, item), "failed to move");
+				SendFailReport(new DropItemActionReport(this, item), "failed to move");
 				return false;
 			}
 
 			if (this.CarriedItem == item)
 				this.CarriedItem = null;
 
-			SendReport(new DropActionReport(this, item));
+			SendReport(new DropItemActionReport(this, item));
 
 			return true;
 		}

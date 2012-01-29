@@ -229,18 +229,18 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class GetActionReport : ItemActionReport
+	public sealed class GetItemActionReport : ItemActionReport
 	{
-		public GetActionReport(ILivingObject living, IItemObject item)
+		public GetItemActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
 		{
 		}
 	}
 
 	[Serializable]
-	public sealed class DropActionReport : ItemActionReport
+	public sealed class DropItemActionReport : ItemActionReport
 	{
-		public DropActionReport(ILivingObject living, IItemObject item)
+		public DropItemActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
 		{
 		}

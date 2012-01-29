@@ -371,14 +371,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public sealed class DropAction : ItemAction
+	public sealed class DropItemAction : ItemAction
 	{
-		public DropAction(IItemObject item)
+		public DropItemAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		DropAction(SaveGameContext ctx)
+		DropItemAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -386,14 +386,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public sealed class GetAction : ItemAction
+	public sealed class GetItemAction : ItemAction
 	{
-		public GetAction(IItemObject item)
+		public GetItemAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		GetAction(SaveGameContext ctx)
+		GetItemAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

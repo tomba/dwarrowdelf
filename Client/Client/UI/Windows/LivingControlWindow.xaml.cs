@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (ItemObject item in inventoryListBox.SelectedItems)
 			{
-				var action = new DropAction(item);
+				var action = new DropItemAction(item);
 				AddAction(action);
 			}
 		}
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (ItemObject item in obs)
 			{
-				var action = new GetAction(item);
+				var action = new GetItemAction(item);
 				AddAction(action);
 			}
 		}
