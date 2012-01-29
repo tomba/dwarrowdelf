@@ -20,48 +20,20 @@ namespace Dwarrowdelf.Client.UI
 		public ConstructBuildingDialog()
 		{
 			InitializeComponent();
+
+			var buildings = Enum.GetValues(typeof(BuildingID)).Cast<BuildingID>().Where(id => id != Dwarrowdelf.BuildingID.Undefined);
+
+			buildingItemsControl.ItemsSource = buildings;
 		}
 
 		public void SetContext(EnvironmentObject env, IntRectZ area)
 		{
 		}
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			BuildingID? type = null;
-
-			switch (e.Key)
-			{
-				case Key.C:
-					type = BuildingID.Carpenter;
-					break;
-
-				case Key.M:
-					type = BuildingID.Mason;
-					break;
-
-				case Key.S:
-					type = BuildingID.Smith;
-					break;
-			}
-
-			if (type.HasValue)
-			{
-				this.BuildingID = type.Value;
-				this.DialogResult = true;
-				Close();
-				return;
-			}
-
-			base.OnKeyDown(e);
-		}
-
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
 			var button = (Button)sender;
-			var tag = (string)button.Tag;
-
-			var type = (BuildingID)Enum.Parse(typeof(BuildingID), tag);
+			var type = (BuildingID)button.Content;
 
 			this.BuildingID = type;
 
