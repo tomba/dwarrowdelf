@@ -601,27 +601,24 @@ namespace Dwarrowdelf.Server
 
 			var bounds = this.Bounds;
 
-#if !old_impl
 			const int maxMsgSize = 1 << 15;
 
 			const int itemSize = 4; // TileData is 64 bits
 
-			TileData[] arr;
 			IntSize3 size;
-			int itemsPerMsg;
+
+			int linesPerMsg;
 
 			int planesPerMsg = maxMsgSize / (bounds.Plane.Area * itemSize);
 			if (planesPerMsg > 0)
 			{
-				itemsPerMsg = planesPerMsg * bounds.Plane.Area;
-
-				arr = new TileData[itemsPerMsg];
+				linesPerMsg = planesPerMsg * bounds.Plane.Height;
 
 				size = new IntSize3(bounds.Width, bounds.Height, planesPerMsg);
 			}
 			else
 			{
-				int linesPerMsg = maxMsgSize / (bounds.Width * itemSize);
+				linesPerMsg = maxMsgSize / (bounds.Width * itemSize);
 
 				if (linesPerMsg == 0)
 					throw new Exception("too small max msg size");
@@ -636,21 +633,21 @@ namespace Dwarrowdelf.Server
 					linesPerMsg--;
 				}
 
-				itemsPerMsg = linesPerMsg * bounds.Width;
-
-				arr = new TileData[itemsPerMsg];
-
 				size = new IntSize3(bounds.Width, linesPerMsg, 1);
 			}
 
+			int itemsPerMsg = linesPerMsg * bounds.Width;
 			int totalMsgs = bounds.Volume / itemsPerMsg;
 
+			var arr = new TileData[itemsPerMsg];
 			var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
-			var p1 = new IntPoint3();
 
 			for (int i = 0; i < totalMsgs; ++i)
 			{
-				var range = IntPoint3.Range(p1.X, p1.Y, p1.Z, size.Width, size.Height, size.Depth);
+				int y = (i * linesPerMsg) % bounds.Height;
+				int z = (i * linesPerMsg) / bounds.Height;
+
+				var range = IntPoint3.Range(0, y, z, size.Width, size.Height, size.Depth);
 
 				int idx = 0;
 				foreach (var p in range)
@@ -661,95 +658,10 @@ namespace Dwarrowdelf.Server
 						arr[idx++] = m_tileGrid.GetTileData(p);
 				}
 
-				msg.Bounds = new IntCuboid(p1, size);
+				msg.Bounds = new IntCuboid(0, y, z, size.Width, size.Height, size.Depth);
 				msg.TerrainData = arr;
 				player.Send(msg);
-
-				int y = p1.Y + size.Height;
-				int z = p1.Z;
-				if (y == bounds.Height)
-				{
-					y = 0;
-					z++;
-				}
-
-				p1 = new IntPoint3(0, y, z);
 			}
-
-#else
-
-			if (bounds.Volume < 2000)
-			{
-				// Send everything in one message
-				var arr = new TileData[bounds.Volume];
-				foreach (var p in this.Bounds.Range())
-				{
-					int idx = bounds.GetIndex(p);
-					if (!visionTracker.Sees(p))
-						arr[idx] = new TileData();
-					else
-						arr[idx] = m_tileGrid.GetTileData(p);
-				}
-
-				player.Send(new Messages.MapDataTerrainsMessage()
-				{
-					Environment = this.ObjectID,
-					Bounds = bounds,
-					TerrainData = arr,
-				});
-			}
-			else if (bounds.Plane.Area < 2000)
-			{
-				var plane = bounds.Plane;
-				// Send every 2D plane in one message
-				var arr = new TileData[plane.Area];
-				var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
-
-				for (int z = bounds.Z1; z < bounds.Z2; ++z)
-				{
-					foreach (var p2d in plane.Range())
-					{
-						int idx = plane.GetIndex(p2d);
-						var p = new IntPoint3(p2d, z);
-						if (!visionTracker.Sees(p))
-							arr[idx] = new TileData();
-						else
-							arr[idx] = m_tileGrid.GetTileData(p);
-					}
-
-					msg.Bounds = new IntCuboid(bounds.X1, bounds.Y1, z, bounds.Width, bounds.Height, 1);
-					msg.TerrainData = arr;
-
-					player.Send(msg);
-				}
-			}
-			else
-			{
-				// Send every line in one message
-				var arr = new TileData[this.Width];
-				var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
-
-				for (int z = bounds.Z1; z < bounds.Z2; ++z)
-				{
-					for (int y = bounds.Y1; y < bounds.Y2; ++y)
-					{
-						for (int x = bounds.X1; x < bounds.X2; ++x)
-						{
-							IntPoint3 p = new IntPoint3(x, y, z);
-							if (!visionTracker.Sees(p))
-								arr[x] = new TileData();
-							else
-								arr[x] = m_tileGrid.GetTileData(p);
-						}
-
-						msg.Bounds = new IntCuboid(bounds.X1, y, z, bounds.Width, 1, 1);
-						msg.TerrainData = arr;
-
-						player.Send(msg);
-					}
-				}
-			}
-#endif
 		}
 
 		public override string ToString()
