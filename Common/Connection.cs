@@ -55,8 +55,8 @@ namespace Dwarrowdelf
 
 		const uint MAGIC = 0x12345678;
 
-		const int RECV_BUF_CAP = 16;
-		const int SEND_BUF_CAP = 16;
+		const int RECV_BUF_SIZEEXP = 16;
+		const int SEND_BUF_SIZEEXP = 16;
 
 		Thread m_deserializerThread;
 
@@ -86,7 +86,7 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = client;
-			m_sendStream = new SendStream(client, SEND_BUF_CAP);
+			m_sendStream = new SendStream(client, SEND_BUF_SIZEEXP);
 
 			m_state = State.Connected;
 		}
@@ -160,7 +160,7 @@ namespace Dwarrowdelf
 
 					m_state = State.Connected;
 
-					m_sendStream = new SendStream(socket, SEND_BUF_CAP);
+					m_sendStream = new SendStream(socket, SEND_BUF_SIZEEXP);
 				}
 			}
 			catch (Exception e)
@@ -188,7 +188,7 @@ namespace Dwarrowdelf
 
 				m_state = State.Operational;
 
-				var recvStream = new RecvStream(m_socket, RECV_BUF_CAP, trace);
+				var recvStream = new RecvStream(m_socket, RECV_BUF_SIZEEXP, trace);
 
 				if (m_deserializerThread != null)
 					throw new Exception();
