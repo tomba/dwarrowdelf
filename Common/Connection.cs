@@ -34,8 +34,7 @@ namespace Dwarrowdelf
 	public sealed class Connection : IConnection
 	{
 		Socket m_socket;
-
-		byte[] m_sendBuffer = new byte[1024 * 128];
+		SendStream m_sendStream;
 
 		public int SentMessages { get; private set; }
 		public int SentBytes { get; private set; }
@@ -53,6 +52,8 @@ namespace Dwarrowdelf
 		object m_lock = new object();
 
 		const int PORT = 9999;
+
+		const uint MAGIC = 0x12345678;
 
 		Thread m_deserializerThread;
 
@@ -82,6 +83,7 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = client;
+			m_sendStream = new SendStream(client);
 
 			m_state = State.Connected;
 		}
@@ -152,6 +154,8 @@ namespace Dwarrowdelf
 					socket.EndConnect(ar);
 
 					m_state = State.Connected;
+
+					m_sendStream = new SendStream(socket);
 				}
 			}
 			catch (Exception e)
@@ -195,36 +199,30 @@ namespace Dwarrowdelf
 
 			while (true)
 			{
-				int magic = recvStream.ReadByte();
-				magic |= recvStream.ReadByte() << 8;
-				magic |= recvStream.ReadByte() << 16;
-				magic |= recvStream.ReadByte() << 24;
+				uint len = recvStream.ReadBytes;
 
-				if (magic != 0x12345678)
+				uint magic =
+					(uint)recvStream.ReadByte() |
+					(uint)recvStream.ReadByte() << 8 |
+					(uint)recvStream.ReadByte() << 16 |
+					(uint)recvStream.ReadByte() << 24;
+
+				if (magic != MAGIC)
 					throw new Exception();
 
-				int len = recvStream.ReadByte();
-				len |= recvStream.ReadByte() << 8;
-				len |= recvStream.ReadByte() << 16;
-				len |= recvStream.ReadByte() << 24;
-
-				len -= 8;
-
-				trace.TraceVerbose("[RX D] Expecting msg of {0} bytes", len);
+				trace.TraceVerbose("[RX D] Deserializing");
 
 				var msg = Serializer.Deserialize(recvStream);
 
+				len = recvStream.ReadBytes - len;
+
+				trace.TraceVerbose("[RX D] Deserialized {0} bytes, {1}", len, msg.GetType().Name);
+
 				this.ReceivedMessages++;
-				this.ReceivedBytes += len + 8;
-
-				trace.TraceVerbose("[RX D] Deserialized {0}", msg);
-
-				//Thread.Sleep(100);
+				this.ReceivedBytes += (int)len;
 
 				if (ReceiveEvent != null)
 					ReceiveEvent(msg);
-
-				//Thread.Sleep(100);
 			}
 		}
 
@@ -250,9 +248,7 @@ namespace Dwarrowdelf
 
 		public void Send(Message msg)
 		{
-			trace.TraceVerbose("[TX] {0}", msg);
-
-			int len;
+			trace.TraceVerbose("[TX] sending {0}", msg.GetType().Name);
 
 			Socket socket;
 
@@ -264,25 +260,25 @@ namespace Dwarrowdelf
 				socket = m_socket;
 			}
 
-			lock (m_sendBuffer)
+			lock (m_sendStream)
 			{
-				using (var stream = new MemoryStream(m_sendBuffer))
-				{
-					// Write the object starting at byte 8
-					stream.Seek(8, SeekOrigin.Begin);
-					Serializer.Serialize(stream, msg);
-					len = (int)stream.Position;
+				var stream = m_sendStream;
 
-					// Prepend the object data with magic and object len
-					stream.Seek(0, SeekOrigin.Begin);
-					using (var bw = new BinaryWriter(stream))
-					{
-						bw.Write((int)0x12345678);
-						bw.Write(len);
-					}
-				}
+				int len = stream.SentBytes;
 
-				trace.TraceVerbose("[TX] sending {0} bytes", len);
+				stream.WriteByte((byte)((MAGIC >> 0) & 0xff));
+				stream.WriteByte((byte)((MAGIC >> 8) & 0xff));
+				stream.WriteByte((byte)((MAGIC >> 16) & 0xff));
+				stream.WriteByte((byte)((MAGIC >> 24) & 0xff));
+
+				Serializer.Serialize(stream, msg);
+
+				stream.Flush();
+
+				len = stream.SentBytes - len;
+
+				trace.TraceVerbose("[TX] sent {0} bytes", len);
+				/*
 				SocketError error;
 				int sent = socket.Send(m_sendBuffer, 0, len, SocketFlags.None, out error);
 
@@ -298,7 +294,7 @@ namespace Dwarrowdelf
 					Cleanup();
 					return;
 				}
-
+				*/
 				this.SentMessages++;
 				this.SentBytes += len;
 			}
@@ -377,8 +373,8 @@ namespace Dwarrowdelf
 			byte[] m_buffer;
 			uint m_lenMask;
 
-			volatile uint m_produced;
-			volatile uint m_consumed;
+			volatile uint m_received;
+			volatile uint m_read;
 
 			ArraySegment<byte>[] m_segments = new ArraySegment<byte>[2];
 
@@ -405,15 +401,18 @@ namespace Dwarrowdelf
 				m_receiveThread.Start();
 			}
 
+			public uint ReceivedBytes { get { return m_received; } }
+			public uint ReadBytes { get { return m_read; } }
+
 			void ReceiveMain()
 			{
-				uint produced = 0;
+				uint received = 0;
 
 				while (true)
 				{
 					// Stall if rx buffer full
 
-					while (produced - m_consumed == m_buffer.Length)
+					while (received - m_read == m_buffer.Length)
 					{
 						trace.TraceVerbose("rx buf full, stall");
 						m_readEvent.WaitOne();
@@ -421,11 +420,11 @@ namespace Dwarrowdelf
 
 					// create array segments
 
-					uint consumed = m_consumed;
+					uint consumed = m_read;
 
-					var used = produced - consumed;
+					var used = received - consumed;
 
-					var tail = (int)(produced & m_lenMask);
+					var tail = (int)(received & m_lenMask);
 					var head = (int)(consumed & m_lenMask);
 
 					int count;
@@ -462,26 +461,25 @@ namespace Dwarrowdelf
 						return;
 					}
 
-					produced += (uint)len;
-					m_produced = produced;
+					received += (uint)len;
+					m_received = received;
 
 					m_receiveEvent.Set();
-
 				}
 			}
 
 			public override int ReadByte()
 			{
-				uint consumed = m_consumed;
+				uint read = m_read;
 
-				while (m_produced - consumed == 0)
+				while (m_received - read == 0)
 				{
 					trace.TraceVerbose("rx buf empty, stall");
 					m_receiveEvent.WaitOne();
 				}
 
-				var b = m_buffer[consumed & m_lenMask];
-				m_consumed = consumed + 1;
+				var b = m_buffer[read & m_lenMask];
+				m_read = read + 1;
 
 				m_readEvent.Set();
 
@@ -493,20 +491,9 @@ namespace Dwarrowdelf
 				throw new NotImplementedException();
 			}
 
-			public override bool CanRead
-			{
-				get { return true; }
-			}
-
-			public override bool CanSeek
-			{
-				get { return false; }
-			}
-
-			public override bool CanWrite
-			{
-				get { return true; }
-			}
+			public override bool CanRead { get { return true; } }
+			public override bool CanSeek { get { return false; } }
+			public override bool CanWrite { get { return false; } }
 
 			public override void Flush()
 			{
@@ -540,6 +527,76 @@ namespace Dwarrowdelf
 			}
 
 			public override void WriteByte(byte value)
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		sealed class SendStream : Stream
+		{
+			byte[] m_buffer;
+			int m_used;
+			Socket m_socket;
+			int m_sent;
+
+			public SendStream(Socket socket)
+			{
+				m_socket = socket;
+				m_buffer = new byte[4096];
+			}
+
+			public int SentBytes { get { return m_sent; } }
+
+			public override bool CanRead { get { return false; } }
+			public override bool CanSeek { get { return false; } }
+			public override bool CanWrite { get { return true; } }
+
+			public override void Flush()
+			{
+				int len = m_socket.Send(m_buffer, m_used, SocketFlags.None);
+				if (len != m_used)
+					throw new Exception("short write");
+
+				m_sent += len;
+
+				m_used = 0;
+			}
+
+			public override void Write(byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void WriteByte(byte value)
+			{
+				if (m_used == m_buffer.Length)
+					Flush();
+
+				m_buffer[m_used++] = value;
+			}
+
+			public override long Length
+			{
+				get { return m_buffer.LongLength; }
+			}
+
+			public override long Position
+			{
+				get { throw new NotImplementedException(); }
+				set { throw new NotImplementedException(); }
+			}
+
+			public override int Read(byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override long Seek(long offset, SeekOrigin origin)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override void SetLength(long value)
 			{
 				throw new NotImplementedException();
 			}
