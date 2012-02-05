@@ -54,7 +54,6 @@ namespace Dwarrowdelf
 
 		const int PORT = 9999;
 
-		Thread m_receiveThread;
 		Thread m_deserializerThread;
 
 		enum State
@@ -180,47 +179,13 @@ namespace Dwarrowdelf
 
 				m_state = State.Receiving;
 
-				var recvStream = new RecvStream(1024 * 128);
-
-				if (m_receiveThread != null)
-					throw new Exception();
-				m_receiveThread = new Thread(ReceiveMain);
+				var recvStream = new RecvStream(m_socket, 16, trace);
 
 				if (m_deserializerThread != null)
 					throw new Exception();
 				m_deserializerThread = new Thread(DeserializerMain);
 
-				m_receiveThread.Start(recvStream);
 				m_deserializerThread.Start(recvStream);
-			}
-		}
-
-		void ReceiveMain(object data)
-		{
-			RecvStream recvStream = (RecvStream)data;
-
-			int len = 0;
-
-			while (true)
-			{
-				var segList = recvStream.PutGet(len);
-
-				len = m_socket.Receive(segList);
-
-				trace.TraceVerbose("[RX R] Receive() = {0}", len);
-
-				if (len == 0)
-				{
-					lock (m_lock)
-						Cleanup();
-
-					trace.TraceWarning("ReadCallback: empty read");
-
-					if (DisconnectEvent != null)
-						DisconnectEvent();
-
-					return;
-				}
 			}
 		}
 
@@ -410,64 +375,70 @@ namespace Dwarrowdelf
 		sealed class RecvStream : Stream
 		{
 			byte[] m_buffer;
+			uint m_lenMask;
+
+			volatile uint m_produced;
+			volatile uint m_consumed;
+
 			ArraySegment<byte>[] m_segments = new ArraySegment<byte>[2];
 
-			int m_head;
-			int m_tail;
-			int m_used;
+			Socket m_socket;
+			Thread m_receiveThread;
 
-			object m_lock = new object();
+			AutoResetEvent m_receiveEvent = new AutoResetEvent(false);
+			AutoResetEvent m_readEvent = new AutoResetEvent(false);
 
-			public RecvStream(int capacity)
+			MyTraceSource trace;
+
+			public RecvStream(Socket socket, int capacity, MyTraceSource traceSource)
 			{
-				m_buffer = new byte[capacity];
+				m_socket = socket;
+
+				int len = 1 << capacity;
+				m_buffer = new byte[len];
+				m_lenMask = (uint)len - 1;
+
+				trace = traceSource;
+
+				m_receiveThread = new Thread(ReceiveMain);
+				m_receiveThread.Name = "Receive";
+				m_receiveThread.Start();
 			}
 
-			public int FreeBytes { get { return m_buffer.Length - m_used; } }
-
-			public IList<ArraySegment<byte>> PutGet(int len)
+			void ReceiveMain()
 			{
-				lock (m_lock)
-				{
-					if (len > m_buffer.Length - m_used)
-						throw new Exception();
-
-					m_tail = (m_tail + len) % m_buffer.Length;
-					m_used += len;
-				}
+				uint produced = 0;
 
 				while (true)
 				{
-					bool full;
+					// Stall if rx buffer full
 
-					lock (m_lock)
-						full = m_used == m_buffer.Length;
-
-					if (full)
+					while (produced - m_consumed == m_buffer.Length)
 					{
-						Debug.Print("rx buf full, stall");
-						Thread.Sleep(10);
+						trace.TraceVerbose("rx buf full, stall");
+						m_readEvent.WaitOne();
 					}
-					else
-						break;
-				}
 
-				lock (m_lock)
-				{
-					if (m_used == m_buffer.Length)
-						throw new Exception();
+					// create array segments
+
+					uint consumed = m_consumed;
+
+					var used = produced - consumed;
+
+					var tail = (int)(produced & m_lenMask);
+					var head = (int)(consumed & m_lenMask);
 
 					int count;
 
-					if (m_tail >= m_head)
-						count = m_buffer.Length - m_tail;
+					if (tail >= head)
+						count = m_buffer.Length - tail;
 					else
-						count = m_head - m_tail;
+						count = head - tail;
 
-					m_segments[0] = new ArraySegment<byte>(m_buffer, m_tail, count);
+					m_segments[0] = new ArraySegment<byte>(m_buffer, tail, count);
 
-					if (m_tail >= m_head)
-						count = m_head;
+					if (tail >= head)
+						count = head;
 					else
 						count = 0;
 
@@ -475,42 +446,51 @@ namespace Dwarrowdelf
 
 					//Debug.WriteLine("ARRAYSEG {0}/{1}, {2}/{3}", m_segments[0].Offset, m_segments[0].Count, m_segments[1].Offset, m_segments[1].Count);
 
-					return m_segments;
+					// receive
+
+					int len = m_socket.Receive(m_segments);
+
+					trace.TraceVerbose("[RX R] Receive() = {0}", len);
+
+					if (len == 0)
+					{
+						trace.TraceInformation("ReadCallback: empty read");
+
+						//if (DisconnectEvent != null)
+						//	DisconnectEvent();
+
+						return;
+					}
+
+					produced += (uint)len;
+					m_produced = produced;
+
+					m_receiveEvent.Set();
+
 				}
 			}
 
 			public override int ReadByte()
 			{
-				while (true)
+				uint consumed = m_consumed;
+
+				while (m_produced - consumed == 0)
 				{
-					bool notEnough;
-
-					lock (m_lock)
-						notEnough = m_used == 0;
-
-					if (notEnough)
-					{
-						Debug.Print("rx buf empty, stall");
-						Thread.Sleep(10);
-					}
-					else
-						break;
+					trace.TraceVerbose("rx buf empty, stall");
+					m_receiveEvent.WaitOne();
 				}
 
-				lock (m_lock)
-				{
-					if (m_used == 0)
-						throw new Exception();
+				var b = m_buffer[consumed & m_lenMask];
+				m_consumed = consumed + 1;
 
-					var b = m_buffer[m_head];
+				m_readEvent.Set();
 
-					//Debug.WriteLine("READ {0}/{1} : {2:x2}", m_head, 1, b);
+				return b;
+			}
 
-					m_head = (m_head + 1) % m_buffer.Length;
-					--m_used;
-
-					return b;
-				}
+			public override int Read(byte[] buffer, int offset, int count)
+			{
+				throw new NotImplementedException();
 			}
 
 			public override bool CanRead
@@ -542,11 +522,6 @@ namespace Dwarrowdelf
 			{
 				get { throw new NotImplementedException(); }
 				set { throw new NotImplementedException(); }
-			}
-
-			public override int Read(byte[] buffer, int offset, int count)
-			{
-				throw new Exception();
 			}
 
 			public override long Seek(long offset, SeekOrigin origin)
