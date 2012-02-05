@@ -6,7 +6,7 @@ using System.Reflection;
 using System.IO;
 using System.Diagnostics;
 
-namespace NetSerializer
+namespace Dwarrowdelf.NetSerializer
 {
 	public static class Primitives
 	{

@@ -18,17 +18,18 @@ namespace Dwarrowdelf
 			var reports = Helpers.GetSubclasses(typeof(GameReport));
 			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
 				.Concat(extra).Concat(reports);
-			NetSerializer.Serializer.Initialize(types.ToArray());
+
+			Dwarrowdelf.NetSerializer.Serializer.Initialize(types.ToArray());
 		}
 
 		public static void Serialize(Stream stream, Message msg)
 		{
-			NetSerializer.Serializer.Serialize(stream, msg);
+			Dwarrowdelf.NetSerializer.Serializer.Serialize(stream, msg);
 		}
 
 		public static Message Deserialize(Stream stream)
 		{
-			object ob = NetSerializer.Serializer.Deserialize(stream);
+			object ob = Dwarrowdelf.NetSerializer.Serializer.Deserialize(stream);
 			return (Message)ob;
 		}
 	}

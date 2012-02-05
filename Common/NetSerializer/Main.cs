@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace NetSerializer
+namespace Dwarrowdelf.NetSerializer
 {
 	public static partial class Serializer
 	{

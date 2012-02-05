@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win32", "Client\Win32\Win32
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server\Server.csproj", "{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "NetSerializer\NetSerializer\NetSerializer.csproj", "{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlBase", "Client\TileControlBase\TileControlBase.csproj", "{DFB171DC-7857-4172-A458-95A251AEAB21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlD3D", "Client\TileControlD3D\TileControlD3D.csproj", "{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}"
@@ -65,10 +63,6 @@ Global
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Debug|Any CPU.Build.0 = Release|Any CPU
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C61E5F15-CB1F-4BAE-B28D-EC01ED9EF681}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
