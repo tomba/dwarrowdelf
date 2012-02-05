@@ -598,6 +598,83 @@ namespace Dwarrowdelf.Server
 
 			var bounds = this.Bounds;
 
+#if !old_impl
+			const int maxMsgSize = 1 << 15;
+
+			const int itemSize = 4; // TileData is 64 bits
+
+			TileData[] arr;
+			IntSize3 size;
+			int itemsPerMsg;
+
+			int planesPerMsg = maxMsgSize / (bounds.Plane.Area * itemSize);
+			if (planesPerMsg > 0)
+			{
+				itemsPerMsg = planesPerMsg * bounds.Plane.Area;
+
+				arr = new TileData[itemsPerMsg];
+
+				size = new IntSize3(bounds.Width, bounds.Height, planesPerMsg);
+			}
+			else
+			{
+				int linesPerMsg = maxMsgSize / (bounds.Width * itemSize);
+
+				if (linesPerMsg == 0)
+					throw new Exception("too small max msg size");
+
+				while (linesPerMsg > 0)
+				{
+					int m = bounds.Height % linesPerMsg;
+
+					if (m == 0)
+						break;
+
+					linesPerMsg--;
+				}
+
+				itemsPerMsg = linesPerMsg * bounds.Width;
+
+				arr = new TileData[itemsPerMsg];
+
+				size = new IntSize3(bounds.Width, linesPerMsg, 1);
+			}
+
+			int totalMsgs = bounds.Volume / itemsPerMsg;
+
+			var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
+			var p1 = new IntPoint3();
+
+			for (int i = 0; i < totalMsgs; ++i)
+			{
+				var range = IntPoint3.Range(p1.X, p1.Y, p1.Z, size.Width, size.Height, size.Depth);
+
+				int idx = 0;
+				foreach (var p in range)
+				{
+					if (!visionTracker.Sees(p))
+						arr[idx++] = new TileData();
+					else
+						arr[idx++] = m_tileGrid.GetTileData(p);
+				}
+
+				msg.Bounds = new IntCuboid(p1, size);
+				msg.TerrainData = arr;
+				player.Send(msg);
+
+				int y = p1.Y + size.Height;
+				int z = p1.Z;
+				if (y == bounds.Height)
+				{
+					y = 0;
+					z++;
+				}
+
+				p1 = new IntPoint3(0, y, z);
+			}
+
+#else
+
 			if (bounds.Volume < 2000)
 			{
 				// Send everything in one message
@@ -669,6 +746,7 @@ namespace Dwarrowdelf.Server
 					}
 				}
 			}
+#endif
 		}
 
 		public override string ToString()
