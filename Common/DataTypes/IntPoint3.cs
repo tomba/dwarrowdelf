@@ -105,14 +105,15 @@ namespace Dwarrowdelf
 			return (this.Z << 24) | (this.Y << 12) | (this.X << 0);
 		}
 
-		public static IEnumerable<IntPoint3> Range(int x, int y, int z, int width, int height, int depth)
+		public static IEnumerable<IntPoint3> Range(int start_x, int start_y, int start_z, int width, int height, int depth)
 		{
-			int max_x = x + width;
-			int max_y = y + height;
-			int max_z = z + depth;
-			for (; z < max_z; ++z)
-				for (; y < max_y; ++y)
-					for (; x < max_x; ++x)
+			int max_x = start_x + width;
+			int max_y = start_y + height;
+			int max_z = start_z + depth;
+
+			for (int z = start_z; z < max_z; ++z)
+				for (int y = start_y; y < max_y; ++y)
+					for (int x = start_x; x < max_x; ++x)
 						yield return new IntPoint3(x, y, z);
 		}
 
