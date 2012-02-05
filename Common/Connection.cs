@@ -41,7 +41,7 @@ namespace Dwarrowdelf
 		public int ReceivedMessages { get; private set; }
 		public int ReceivedBytes { get; private set; }
 
-		public bool IsConnected { get { return m_socket != null && m_socket.Connected; } }
+		public bool IsConnected { get { lock (m_lock) { return m_socket != null && m_socket.Connected; } } }
 
 		public event Action<string> ConnectEvent;
 		public event Action DisconnectEvent;
@@ -62,7 +62,7 @@ namespace Dwarrowdelf
 			Uninitialized,
 			Connecting,
 			Connected,
-			Receiving,
+			Operational,
 			Disconnected,
 		}
 
@@ -93,6 +93,8 @@ namespace Dwarrowdelf
 		/// </summary>
 		void Cleanup()
 		{
+			trace.TraceVerbose("Cleanup");
+
 			if (m_socket != null)
 			{
 				m_socket.Shutdown(SocketShutdown.Both);
@@ -181,7 +183,7 @@ namespace Dwarrowdelf
 
 				Debug.Assert(m_socket != null);
 
-				m_state = State.Receiving;
+				m_state = State.Operational;
 
 				var recvStream = new RecvStream(m_socket, 16, trace);
 
@@ -197,33 +199,48 @@ namespace Dwarrowdelf
 		{
 			RecvStream recvStream = (RecvStream)data;
 
-			while (true)
+			try
 			{
-				uint len = recvStream.ReadBytes;
+				while (true)
+				{
+					uint len = recvStream.ReadBytes;
 
-				uint magic =
-					(uint)recvStream.ReadByte() |
-					(uint)recvStream.ReadByte() << 8 |
-					(uint)recvStream.ReadByte() << 16 |
-					(uint)recvStream.ReadByte() << 24;
+					uint magic =
+						(uint)recvStream.ReadByte() |
+						(uint)recvStream.ReadByte() << 8 |
+						(uint)recvStream.ReadByte() << 16 |
+						(uint)recvStream.ReadByte() << 24;
 
-				if (magic != MAGIC)
-					throw new Exception();
+					if (magic != MAGIC)
+						throw new Exception();
 
-				trace.TraceVerbose("[RX D] Deserializing");
+					trace.TraceVerbose("[RX D] Deserializing");
 
-				var msg = Serializer.Deserialize(recvStream);
+					var msg = Serializer.Deserialize(recvStream);
 
-				len = recvStream.ReadBytes - len;
+					len = recvStream.ReadBytes - len;
 
-				trace.TraceVerbose("[RX D] Deserialized {0} bytes, {1}", len, msg.GetType().Name);
+					trace.TraceVerbose("[RX D] Deserialized {0} bytes, {1}", len, msg.GetType().Name);
 
-				this.ReceivedMessages++;
-				this.ReceivedBytes += (int)len;
+					this.ReceivedMessages++;
+					this.ReceivedBytes += (int)len;
 
-				if (ReceiveEvent != null)
-					ReceiveEvent(msg);
+					if (ReceiveEvent != null)
+						ReceiveEvent(msg);
+				}
 			}
+			catch (SocketException)
+			{
+				lock (m_lock)
+				{
+					if (DisconnectEvent != null)
+						DisconnectEvent();
+
+					Cleanup();
+				}
+			}
+
+			trace.TraceVerbose("Deserializer thread ending");
 		}
 
 		public void Disconnect()
@@ -250,53 +267,42 @@ namespace Dwarrowdelf
 		{
 			trace.TraceVerbose("[TX] sending {0}", msg.GetType().Name);
 
-			Socket socket;
-
-			lock (m_lock)
-			{
-				if (m_state != State.Receiving)
-					throw new Exception();
-
-				socket = m_socket;
-			}
+			if (this.IsConnected == false)
+				throw new Exception();
 
 			lock (m_sendStream)
 			{
-				var stream = m_sendStream;
-
-				int len = stream.SentBytes;
-
-				stream.WriteByte((byte)((MAGIC >> 0) & 0xff));
-				stream.WriteByte((byte)((MAGIC >> 8) & 0xff));
-				stream.WriteByte((byte)((MAGIC >> 16) & 0xff));
-				stream.WriteByte((byte)((MAGIC >> 24) & 0xff));
-
-				Serializer.Serialize(stream, msg);
-
-				stream.Flush();
-
-				len = stream.SentBytes - len;
-
-				trace.TraceVerbose("[TX] sent {0} bytes", len);
-				/*
-				SocketError error;
-				int sent = socket.Send(m_sendBuffer, 0, len, SocketFlags.None, out error);
-
-				if (sent != len)
+				try
 				{
-					trace.TraceError("[TX]: Short send {0} != {1}", sent, len);
-					Cleanup();
-					return;
+					var stream = m_sendStream;
+
+					int len = stream.SentBytes;
+
+					stream.WriteByte((byte)((MAGIC >> 0) & 0xff));
+					stream.WriteByte((byte)((MAGIC >> 8) & 0xff));
+					stream.WriteByte((byte)((MAGIC >> 16) & 0xff));
+					stream.WriteByte((byte)((MAGIC >> 24) & 0xff));
+
+					Serializer.Serialize(stream, msg);
+
+					stream.Flush();
+
+					len = stream.SentBytes - len;
+
+					trace.TraceVerbose("[TX] sent {0} bytes", len);
+
+					this.SentMessages++;
+					this.SentBytes += len;
 				}
-				else if (error != SocketError.Success)
+				catch (SocketException e)
 				{
-					trace.TraceError("[TX]: error {0}", error);
-					Cleanup();
-					return;
+					var error = e.SocketErrorCode;
+
+					trace.TraceError("[TX]: socket error {0}", error);
+
+					lock (m_lock)
+						Cleanup();
 				}
-				*/
-				this.SentMessages++;
-				this.SentBytes += len;
 			}
 		}
 
@@ -376,8 +382,6 @@ namespace Dwarrowdelf
 			volatile uint m_received;
 			volatile uint m_read;
 
-			ArraySegment<byte>[] m_segments = new ArraySegment<byte>[2];
-
 			Socket m_socket;
 			Thread m_receiveThread;
 
@@ -385,6 +389,8 @@ namespace Dwarrowdelf
 			AutoResetEvent m_readEvent = new AutoResetEvent(false);
 
 			MyTraceSource trace;
+
+			volatile bool m_closed;
 
 			public RecvStream(Socket socket, int capacity, MyTraceSource traceSource)
 			{
@@ -407,6 +413,7 @@ namespace Dwarrowdelf
 			void ReceiveMain()
 			{
 				uint received = 0;
+				ArraySegment<byte>[] segments = new ArraySegment<byte>[2];
 
 				while (true)
 				{
@@ -434,31 +441,35 @@ namespace Dwarrowdelf
 					else
 						count = head - tail;
 
-					m_segments[0] = new ArraySegment<byte>(m_buffer, tail, count);
+					segments[0] = new ArraySegment<byte>(m_buffer, tail, count);
 
 					if (tail >= head)
 						count = head;
 					else
 						count = 0;
 
-					m_segments[1] = new ArraySegment<byte>(m_buffer, 0, count);
+					segments[1] = new ArraySegment<byte>(m_buffer, 0, count);
 
 					//Debug.WriteLine("ARRAYSEG {0}/{1}, {2}/{3}", m_segments[0].Offset, m_segments[0].Count, m_segments[1].Offset, m_segments[1].Count);
 
 					// receive
 
-					int len = m_socket.Receive(m_segments);
+					SocketError error;
+
+					int len = m_socket.Receive(segments, SocketFlags.None, out error);
 
 					trace.TraceVerbose("[RX R] Receive() = {0}", len);
 
+					if (error != SocketError.Success)
+					{
+						trace.TraceWarning("Receive: socket error {0}", error);
+						break;
+					}
+
 					if (len == 0)
 					{
-						trace.TraceInformation("ReadCallback: empty read");
-
-						//if (DisconnectEvent != null)
-						//	DisconnectEvent();
-
-						return;
+						trace.TraceInformation("Receive: empty read");
+						break;
 					}
 
 					received += (uint)len;
@@ -466,6 +477,11 @@ namespace Dwarrowdelf
 
 					m_receiveEvent.Set();
 				}
+
+				m_closed = true;
+				m_receiveEvent.Set();
+
+				trace.TraceVerbose("Receive thread ending");
 			}
 
 			public override int ReadByte()
@@ -474,6 +490,12 @@ namespace Dwarrowdelf
 
 				while (m_received - read == 0)
 				{
+					if (m_closed)
+					{
+						trace.TraceInformation("Receive: socket closed, throwing exception");
+						throw new SocketException();
+					}
+
 					trace.TraceVerbose("rx buf empty, stall");
 					m_receiveEvent.WaitOne();
 				}
