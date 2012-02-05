@@ -54,6 +54,9 @@ namespace Dwarrowdelf
 
 		const int PORT = 9999;
 
+		Thread m_receiveThread;
+		Thread m_deserializerThread;
+
 		enum State
 		{
 			Uninitialized,
@@ -166,13 +169,6 @@ namespace Dwarrowdelf
 				this.ConnectEvent(err);
 		}
 
-		sealed class ReadState
-		{
-			public Socket Socket;
-			public RecvStream RecvStream;
-			public int ExpectedLen;
-		}
-
 		public void BeginRead()
 		{
 			lock (m_lock)
@@ -184,113 +180,87 @@ namespace Dwarrowdelf
 
 				m_state = State.Receiving;
 
-				using (var recvStream = new RecvStream(1024 * 128))
+				var recvStream = new RecvStream(1024 * 128);
+
+				if (m_receiveThread != null)
+					throw new Exception();
+				m_receiveThread = new Thread(ReceiveMain);
+
+				if (m_deserializerThread != null)
+					throw new Exception();
+				m_deserializerThread = new Thread(DeserializerMain);
+
+				m_receiveThread.Start(recvStream);
+				m_deserializerThread.Start(recvStream);
+			}
+		}
+
+		void ReceiveMain(object data)
+		{
+			RecvStream recvStream = (RecvStream)data;
+
+			int len = 0;
+
+			while (true)
+			{
+				var segList = recvStream.PutGet(len);
+
+				len = m_socket.Receive(segList);
+
+				trace.TraceVerbose("[RX R] Receive() = {0}", len);
+
+				if (len == 0)
 				{
+					lock (m_lock)
+						Cleanup();
 
-					var state = new ReadState()
-					{
-						Socket = m_socket,
-						RecvStream = recvStream,
-					};
+					trace.TraceWarning("ReadCallback: empty read");
 
-					m_socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
+					if (DisconnectEvent != null)
+						DisconnectEvent();
+
+					return;
 				}
 			}
 		}
 
-		void ReadCallback(IAsyncResult ar)
+		void DeserializerMain(object data)
 		{
-			try
+			RecvStream recvStream = (RecvStream)data;
+
+			while (true)
 			{
-				DoRead(ar);
+				int magic = recvStream.ReadByte();
+				magic |= recvStream.ReadByte() << 8;
+				magic |= recvStream.ReadByte() << 16;
+				magic |= recvStream.ReadByte() << 24;
+
+				if (magic != 0x12345678)
+					throw new Exception();
+
+				int len = recvStream.ReadByte();
+				len |= recvStream.ReadByte() << 8;
+				len |= recvStream.ReadByte() << 16;
+				len |= recvStream.ReadByte() << 24;
+
+				len -= 8;
+
+				trace.TraceVerbose("[RX D] Expecting msg of {0} bytes", len);
+
+				var msg = Serializer.Deserialize(recvStream);
+
+				this.ReceivedMessages++;
+				this.ReceivedBytes += len + 8;
+
+				trace.TraceVerbose("[RX D] Deserialized {0}", msg);
+
+				//Thread.Sleep(100);
+
+				if (ReceiveEvent != null)
+					ReceiveEvent(msg);
+
+				//Thread.Sleep(100);
 			}
-			catch (Exception e)
-			{
-				lock (m_lock)
-					Cleanup();
-
-				trace.TraceWarning("ReadCallback: {0}", e.Message);
-
-				if (DisconnectEvent != null)
-					DisconnectEvent();
-			}
-		}
-
-		void DoRead(IAsyncResult ar)
-		{
-			var state = (ReadState)ar.AsyncState;
-
-			var socket = state.Socket;
-			var recvStream = state.RecvStream;
-
-			int len = socket.EndReceive(ar);
-
-			if (len == 0)
-			{
-				lock (m_lock)
-					Cleanup();
-
-				trace.TraceWarning("ReadCallback: empty read");
-
-				if (DisconnectEvent != null)
-					DisconnectEvent();
-
-				return;
-			}
-
-			trace.TraceVerbose("[RX] {0} bytes", len);
-
-			recvStream.WriteNotify(len);
-
-			if (recvStream.UsedBytes < 8)
-			{
-				socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
-				return;
-			}
-
-			while (recvStream.UsedBytes > 8)
-			{
-				if (state.ExpectedLen == 0)
-				{
-					using (var reader = new BinaryReader(recvStream))
-					{
-						var magic = reader.ReadInt32();
-
-						if (magic != 0x12345678)
-							throw new Exception();
-
-						state.ExpectedLen = reader.ReadInt32() - 8;
-					}
-
-					trace.TraceVerbose("[RX] Expecting msg of {0} bytes", state.ExpectedLen);
-
-					if (recvStream.UsedBytes < state.ExpectedLen && state.ExpectedLen > recvStream.FreeBytes)
-						throw new Exception("message bigger than the receive buffer");
-				}
-
-				if (recvStream.UsedBytes >= state.ExpectedLen)
-				{
-					Message msg;
-
-					msg = Serializer.Deserialize(recvStream);
-
-					this.ReceivedMessages++;
-					this.ReceivedBytes += state.ExpectedLen + 8;
-
-					trace.TraceVerbose("[RX] {0} bytes, {1}", state.ExpectedLen, msg);
-					if (ReceiveEvent != null)
-						ReceiveEvent(msg);
-
-					state.ExpectedLen = 0;
-				}
-				else
-				{
-					trace.TraceVerbose("[RX] {0} != {1}", state.ExpectedLen, recvStream.UsedBytes);
-					break;
-				}
-			}
-
-			socket.BeginReceive(recvStream.ArraySegmentList, SocketFlags.None, ReadCallback, state);
 		}
 
 		public void Disconnect()
@@ -446,35 +416,43 @@ namespace Dwarrowdelf
 			int m_tail;
 			int m_used;
 
+			object m_lock = new object();
+
 			public RecvStream(int capacity)
 			{
 				m_buffer = new byte[capacity];
 			}
 
-			public int UsedBytes { get { return m_used; } }
 			public int FreeBytes { get { return m_buffer.Length - m_used; } }
 
-			public void WriteNotify(int count)
+			public IList<ArraySegment<byte>> PutGet(int len)
 			{
-				if (count > m_buffer.Length - m_used)
-					throw new Exception();
+				lock (m_lock)
+				{
+					if (len > m_buffer.Length - m_used)
+						throw new Exception();
 
-				m_tail = (m_tail + count) % m_buffer.Length;
-				m_used += count;
-			}
+					m_tail = (m_tail + len) % m_buffer.Length;
+					m_used += len;
+				}
 
-			public void ReadNotify(int count)
-			{
-				if (count > m_used)
-					throw new Exception();
+				while (true)
+				{
+					bool full;
 
-				m_head = (m_head + count) % m_buffer.Length;
-				m_used -= count;
-			}
+					lock (m_lock)
+						full = m_used == m_buffer.Length;
 
-			public IList<ArraySegment<byte>> ArraySegmentList
-			{
-				get
+					if (full)
+					{
+						Debug.Print("rx buf full, stall");
+						Thread.Sleep(10);
+					}
+					else
+						break;
+				}
+
+				lock (m_lock)
 				{
 					if (m_used == m_buffer.Length)
 						throw new Exception();
@@ -495,9 +473,43 @@ namespace Dwarrowdelf
 
 					m_segments[1] = new ArraySegment<byte>(m_buffer, 0, count);
 
-					//MyDebug.WriteLine("ARRAYSEG {0}/{1}, {2}/{3}", m_segments[0].Offset, m_segments[0].Count, m_segments[1].Offset, m_segments[1].Count);
+					//Debug.WriteLine("ARRAYSEG {0}/{1}, {2}/{3}", m_segments[0].Offset, m_segments[0].Count, m_segments[1].Offset, m_segments[1].Count);
 
 					return m_segments;
+				}
+			}
+
+			public override int ReadByte()
+			{
+				while (true)
+				{
+					bool notEnough;
+
+					lock (m_lock)
+						notEnough = m_used == 0;
+
+					if (notEnough)
+					{
+						Debug.Print("rx buf empty, stall");
+						Thread.Sleep(10);
+					}
+					else
+						break;
+				}
+
+				lock (m_lock)
+				{
+					if (m_used == 0)
+						throw new Exception();
+
+					var b = m_buffer[m_head];
+
+					//Debug.WriteLine("READ {0}/{1} : {2:x2}", m_head, 1, b);
+
+					m_head = (m_head + 1) % m_buffer.Length;
+					--m_used;
+
+					return b;
 				}
 			}
 
@@ -534,62 +546,7 @@ namespace Dwarrowdelf
 
 			public override int Read(byte[] buffer, int offset, int count)
 			{
-				if (count > m_used)
-					throw new Exception();
-
-				int c = count;
-
-				int c1;
-				if (m_tail > m_head)
-					c1 = m_tail - m_head;
-				else
-					c1 = m_buffer.Length - m_head;
-
-				c1 = Math.Min(c1, c);
-
-				if (c1 > 0)
-					Array.Copy(m_buffer, m_head, buffer, offset, c1);
-
-				c -= c1;
-
-				int c2;
-				if (m_tail > m_head)
-					c2 = 0;
-				else
-					c2 = m_tail;
-
-				c2 = Math.Min(c2, c);
-
-				if (c2 > 0)
-					Array.Copy(m_buffer, 0, buffer, offset + c1, c2);
-
-				//MyDebug.WriteLine("READ {0}/{1}, {2}/{3}", m_head, c1, 0, c2);
-
-				m_head = (m_head + count) % m_buffer.Length;
-				m_used -= count;
-
-				if (m_used == 0)
-					m_head = m_tail = 0;
-
-				return count;
-			}
-
-			public override int ReadByte()
-			{
-				if (m_used == 0)
-					return -1;
-
-				var b = m_buffer[m_head];
-
-				//MyDebug.WriteLine("READ {0}/{1} : {2:x2}", m_head, 1, b);
-
-				m_head = (m_head + 1) % m_buffer.Length;
-				--m_used;
-
-				if (m_used == 0)
-					m_head = m_tail = 0;
-
-				return b;
+				throw new Exception();
 			}
 
 			public override long Seek(long offset, SeekOrigin origin)
