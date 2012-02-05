@@ -356,11 +356,14 @@ namespace Dwarrowdelf.Server
 		{
 			if (m_hasPlayerBeenInGame)
 			{
+				var enterGameSW = Stopwatch.StartNew();
 				Send(new Messages.EnterGameReplyBeginMessage());
 
 				SendControllables();
 
 				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
+				enterGameSW.Stop();
+				trace.TraceInformation("Sending Enter Game took {0} ms", enterGameSW.ElapsedMilliseconds);
 
 				this.IsInGame = true;
 
@@ -384,6 +387,7 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("EnterGameRequestMessage {0}", name);
 
+			var enterGameSW = Stopwatch.StartNew();
 			Send(new Messages.EnterGameReplyBeginMessage());
 
 			if (!m_hasPlayerBeenInGame)
@@ -397,6 +401,8 @@ namespace Dwarrowdelf.Server
 			}
 
 			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
+			enterGameSW.Stop();
+			trace.TraceInformation("Sending Enter Game took {0} ms", enterGameSW.ElapsedMilliseconds);
 
 			this.IsInGame = true;
 		}

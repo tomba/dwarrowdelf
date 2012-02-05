@@ -71,16 +71,25 @@ namespace Dwarrowdelf.Client
 			method(this, msg);
 		}
 
+		Stopwatch m_enterGameSW;
+
 		void HandleMessage(EnterGameReplyBeginMessage msg)
 		{
 			trace.TraceInformation("EnterGameReplyBeginMessage");
 
 			Debug.Assert(!this.IsPlayerInGame);
+
+			m_enterGameSW = Stopwatch.StartNew();
 		}
 
 		void HandleMessage(EnterGameReplyEndMessage msg)
 		{
+			m_enterGameSW.Stop();
+
 			trace.TraceInformation("EnterGameReplyEndMessage");
+
+			trace.TraceInformation("Enter Game took {0} ms", m_enterGameSW.ElapsedMilliseconds);
+			m_enterGameSW = null;
 
 			this.IsPlayerInGame = true;
 
