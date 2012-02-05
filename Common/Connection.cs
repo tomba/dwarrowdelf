@@ -55,6 +55,9 @@ namespace Dwarrowdelf
 
 		const uint MAGIC = 0x12345678;
 
+		const int RECV_BUF_CAP = 16;
+		const int SEND_BUF_CAP = 16;
+
 		Thread m_deserializerThread;
 
 		enum State
@@ -83,7 +86,7 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = client;
-			m_sendStream = new SendStream(client);
+			m_sendStream = new SendStream(client, SEND_BUF_CAP);
 
 			m_state = State.Connected;
 		}
@@ -157,7 +160,7 @@ namespace Dwarrowdelf
 
 					m_state = State.Connected;
 
-					m_sendStream = new SendStream(socket);
+					m_sendStream = new SendStream(socket, SEND_BUF_CAP);
 				}
 			}
 			catch (Exception e)
@@ -185,7 +188,7 @@ namespace Dwarrowdelf
 
 				m_state = State.Operational;
 
-				var recvStream = new RecvStream(m_socket, 16, trace);
+				var recvStream = new RecvStream(m_socket, RECV_BUF_CAP, trace);
 
 				if (m_deserializerThread != null)
 					throw new Exception();
@@ -386,7 +389,6 @@ namespace Dwarrowdelf
 			Thread m_receiveThread;
 
 			AutoResetEvent m_receiveEvent = new AutoResetEvent(false);
-			AutoResetEvent m_readEvent = new AutoResetEvent(false);
 
 			MyTraceSource trace;
 
@@ -421,18 +423,19 @@ namespace Dwarrowdelf
 
 					while (received - m_read == m_buffer.Length)
 					{
+						// this should rarely happen, and the buffer should very soon have free space. 
 						trace.TraceVerbose("rx buf full, stall");
-						m_readEvent.WaitOne();
+						Thread.Sleep(1);
 					}
 
 					// create array segments
 
-					uint consumed = m_read;
+					uint read = m_read;
 
-					var used = received - consumed;
+					var used = received - read;
 
 					var tail = (int)(received & m_lenMask);
-					var head = (int)(consumed & m_lenMask);
+					var head = (int)(read & m_lenMask);
 
 					int count;
 
@@ -503,8 +506,6 @@ namespace Dwarrowdelf
 				var b = m_buffer[read & m_lenMask];
 				m_read = read + 1;
 
-				m_readEvent.Set();
-
 				return b;
 			}
 
@@ -561,10 +562,11 @@ namespace Dwarrowdelf
 			Socket m_socket;
 			int m_sent;
 
-			public SendStream(Socket socket)
+			public SendStream(Socket socket, int capacity)
 			{
+				int len = 1 << capacity;
 				m_socket = socket;
-				m_buffer = new byte[4096];
+				m_buffer = new byte[len];
 			}
 
 			public int SentBytes { get { return m_sent; } }
