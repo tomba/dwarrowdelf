@@ -81,10 +81,16 @@ namespace Dwarrowdelf.Server
 
 			m_visibilityArray = new bool[bounds.Depth, bounds.Height, bounds.Width];
 
+			var sw = Stopwatch.StartNew();
+
 			bounds.Range().AsParallel().ForAll(p =>
 			{
 				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanSeeThrough(env, p) || EnvironmentHelpers.CanBeSeen(env, p);
 			});
+
+			sw.Stop();
+
+			Trace.TraceInformation("Initialize visibilityarray took {0} ms", sw.ElapsedMilliseconds);
 		}
 
 		public override void Start()

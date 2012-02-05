@@ -576,7 +576,10 @@ namespace Dwarrowdelf.Server
 			CollectObjectData(data, visibility);
 			player.Send(new Messages.ObjectDataMessage(data));
 
+			var sw = Stopwatch.StartNew();
 			SendMapTiles(player);
+			sw.Stop();
+			Trace.TraceInformation("Sending MapTiles took {0} ms", sw.ElapsedMilliseconds);
 
 			foreach (var ob in this.Inventory)
 			{
