@@ -137,41 +137,41 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Cardinal Directions (4)
 		/// </summary>
-		public static readonly ReadOnlyCollection<Direction> CardinalDirections;
+		public static readonly ReadOnlyArray<Direction> CardinalDirections;
 		/// <summary>
 		/// Intercardinal Directions (4)
 		/// </summary>
-		public static readonly ReadOnlyCollection<Direction> IntercardinalDirections;
+		public static readonly ReadOnlyArray<Direction> IntercardinalDirections;
 		/// <summary>
 		/// Planar Directions (8)
 		/// </summary>
-		public static readonly ReadOnlyCollection<Direction> PlanarDirections;
+		public static readonly ReadOnlyArray<Direction> PlanarDirections;
 		/// <summary>
 		/// Cardinal + Up & Down (6)
 		/// </summary>
-		public static readonly ReadOnlyCollection<Direction> CardinalUpDownDirections;
+		public static readonly ReadOnlyArray<Direction> CardinalUpDownDirections;
 		/// <summary>
 		/// Planar Directions + Up & Down (10)
 		/// </summary>
-		public static readonly ReadOnlyCollection<Direction> PlanarUpDownDirections;
+		public static readonly ReadOnlyArray<Direction> PlanarUpDownDirections;
 
 		static DirectionExtensions()
 		{
-			CardinalDirections = Array.AsReadOnly(new Direction[] {
+			CardinalDirections = new ReadOnlyArray<Direction>(new Direction[] {
 				Direction.North,
 				Direction.East,
 				Direction.South,
 				Direction.West,
 			});
 
-			IntercardinalDirections = Array.AsReadOnly(new Direction[] {
+			IntercardinalDirections = new ReadOnlyArray<Direction>(new Direction[] {
 				Direction.NorthEast,
 				Direction.SouthEast,
 				Direction.SouthWest,
 				Direction.NorthWest,
 			});
 
-			PlanarDirections = Array.AsReadOnly(new Direction[] {
+			PlanarDirections = new ReadOnlyArray<Direction>(new Direction[] {
 				Direction.North,
 				Direction.NorthEast,
 				Direction.East,
@@ -182,7 +182,7 @@ namespace Dwarrowdelf
 				Direction.NorthWest,
 			});
 
-			CardinalUpDownDirections = Array.AsReadOnly(new Direction[] {
+			CardinalUpDownDirections = new ReadOnlyArray<Direction>(new Direction[] {
 				Direction.North,
 				Direction.East,
 				Direction.South,
@@ -191,7 +191,7 @@ namespace Dwarrowdelf
 				Direction.Down,
 			});
 
-			PlanarUpDownDirections = Array.AsReadOnly(new Direction[] {
+			PlanarUpDownDirections = new ReadOnlyArray<Direction>(new Direction[] {
 				Direction.North,
 				Direction.NorthEast,
 				Direction.East,
@@ -202,7 +202,7 @@ namespace Dwarrowdelf
 				Direction.NorthWest,
 				Direction.Up,
 				Direction.Down,
-	});
+			});
 		}
 
 		public static Direction Reverse(this Direction dir)

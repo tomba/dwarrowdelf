@@ -127,6 +127,7 @@
     <Compile Include="NetSerializer\Primitives.cs" />
     <Compile Include="NetSerializer\Serializer.cs" />
     <Compile Include="ObjectType.cs" />
+    <Compile Include="ReadOnlyArray.cs" />
     <Compile Include="Reports.cs" />
     <Compile Include="SaveFileManager.cs" />
     <Compile Include="Skills.cs" />
