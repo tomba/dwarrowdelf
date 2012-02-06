@@ -198,9 +198,18 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanBeSeen(IEnvironmentObject env, IntPoint3 location)
 		{
-			bool hidden = DirectionExtensions.PlanarDirections
-				.Select(d => location + d)
-				.All(p => !EnvironmentHelpers.CanSeeThrough(env, p));
+			bool hidden = true;
+
+			foreach (var d in DirectionExtensions.PlanarDirections)
+			{
+				var p = location + d;
+
+				if (EnvironmentHelpers.CanSeeThrough(env, p))
+				{
+					hidden = false;
+					break;
+				}
+			}
 
 			if (hidden)
 				hidden = !EnvironmentHelpers.CanSeeThroughDown(env, location + Direction.Up);
