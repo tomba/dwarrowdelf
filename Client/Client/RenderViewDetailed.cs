@@ -27,14 +27,11 @@ namespace Dwarrowdelf.Client
 
 		protected override void MapChangedOverride(IntPoint3 ml)
 		{
-			// Note: invalidates the rendertile regardless of ml.Z
-			// invalidate only if the change is within resolve limits (MAXLEVEL?)
-
-			var x = ml.X - m_centerPos.X + m_renderData.Width / 2;
-			var y = ml.Y - m_centerPos.Y + m_renderData.Height / 2;
-
-			if (m_renderData.Contains(new IntPoint2(x, y)))
-				m_renderData.Grid[y, x].IsValid = false;
+			if (Contains(ml))
+			{
+				var p = MapLocationToRenderDataLocation(ml);
+				m_renderData.Grid[p.Y, p.X].IsValid = false;
+			}
 		}
 
 
@@ -47,9 +44,12 @@ namespace Dwarrowdelf.Client
 
 			var columns = m_renderData.Width;
 			var rows = m_renderData.Height;
-			var grid = m_renderData.Grid;
 
-			if (m_invalid || (m_environment != null && (m_environment.VisibilityMode != VisibilityMode.AllVisible || m_environment.VisibilityMode != VisibilityMode.GlobalFOV)))
+			// render everything when using LOS
+			if (m_environment != null && m_environment.VisibilityMode == VisibilityMode.LivingLOS)
+				m_invalid = true;
+
+			if (m_invalid)
 			{
 				//Debug.WriteLine("RenderView.Resolve All");
 				m_renderData.Clear();
@@ -58,21 +58,15 @@ namespace Dwarrowdelf.Client
 
 			bool isSeeAll = GameData.Data.User.IsSeeAll;
 
-			int offsetX = m_centerPos.X - columns / 2;
-			int offsetY = m_centerPos.Y - rows / 2;
-			int offsetZ = m_centerPos.Z;
-
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
 			{
 				for (int x = 0; x < columns; ++x)
 				{
-					var p = new IntPoint2(x, y);
-
 					if (m_renderData.Grid[y, x].IsValid)
 						continue;
 
-					var ml = new IntPoint3(offsetX + x, offsetY + (rows - y - 1), offsetZ);
+					var ml = RenderDataLocationToMapLocation(x, y);
 
 					ResolveDetailed(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}

@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			//System.Diagnostics.Debug.Print("OnTileArrangementChanged( gs {0}, ts {1:F2}, cp {2:F2} )", gridSize, tileSize, centerPos);
 
-			m_renderView.RenderData.SetSize(gridSize);
+			m_renderView.SetSize(gridSize);
 
 			m_renderView.CenterPos = new IntPoint3((int)Math.Round(centerPos.X), (int)Math.Round(centerPos.Y), this.Z);
 		}

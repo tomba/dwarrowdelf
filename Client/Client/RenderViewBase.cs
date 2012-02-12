@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client
 	interface IRenderView
 	{
 		IntPoint3 CenterPos { get; set; }
+		void SetSize(IntSize2 size);
 		bool Contains(IntPoint3 ml);
 		bool ShowVirtualSymbols { get; set; }
 		EnvironmentObject Environment { get; set; }
@@ -61,7 +62,7 @@ namespace Dwarrowdelf.Client
 					if (diff.Z != 0)
 						m_invalid = true;
 					else
-						ScrollTiles(diff.ToIntVector());
+						ScrollTiles(new IntVector2(diff.X, -diff.Y));
 				}
 
 				var cp = CenterPos;
@@ -69,6 +70,38 @@ namespace Dwarrowdelf.Client
 				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3(s, MAXLEVEL));
 			}
+		}
+
+		public void SetSize(IntSize2 size)
+		{
+			m_renderData.SetSize(size);
+
+			var cp = CenterPos;
+			var s = m_renderData.Size;
+			m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				new IntSize3(s, MAXLEVEL));
+		}
+
+		protected IntPoint3 RenderDataLocationToMapLocation(int x, int y)
+		{
+			int columns = m_renderData.Width;
+			int rows = m_renderData.Height;
+
+			int sx = x + m_bounds.X1;
+			int sy = rows - y - 1 + m_bounds.Y1;
+
+			return new IntPoint3(sx, sy, m_centerPos.Z);
+		}
+
+		protected IntPoint2 MapLocationToRenderDataLocation(IntPoint3 p)
+		{
+			int columns = m_renderData.Width;
+			int rows = m_renderData.Height;
+
+			var x = p.X - m_bounds.X1;
+			var y = rows - p.Y - 1 + m_bounds.Y1;
+
+			return new IntPoint2(x, y);
 		}
 
 		public bool Contains(IntPoint3 ml)
