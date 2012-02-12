@@ -38,11 +38,13 @@ namespace Dwarrowdelf.Client
 
 		public ConstructMode ContainsPoint(IntPoint3 p)
 		{
-			var data = m_jobDataList.FirstOrDefault(d => d.Location == p);
-			if (data == null)
-				return ConstructMode.None;
-			else
-				return data.Mode;
+			foreach (var d in m_jobDataList)
+			{
+				if (d.Location == p)
+					return d.Mode;
+			}
+
+			return ConstructMode.None;
 		}
 
 		public void AddConstructJob(ConstructMode mode, IntRectZ area, IItemMaterialFilter userItemFilter)
