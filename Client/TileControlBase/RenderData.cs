@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			int len = size.Width * size.Height;
 
-			if (len < this.Grid.Length)
+			if (len <= this.Grid.Length)
 				return;
 
 			this.Grid = new T[size.Width * size.Height];
