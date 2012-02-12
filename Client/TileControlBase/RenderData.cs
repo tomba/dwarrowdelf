@@ -50,7 +50,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Clear()
 		{
-			Array.Clear(this.Grid, 0, this.Grid.Length);
+			Array.Clear(this.Grid, 0, this.Size.Width * this.Size.Height);
 		}
 	}
 }
