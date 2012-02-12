@@ -74,12 +74,17 @@ namespace Dwarrowdelf.Client
 
 		public void SetSize(IntSize2 size)
 		{
-			m_renderData.SetSize(size);
+			if (size != m_renderData.Size)
+			{
+				m_renderData.SetSize(size);
 
-			var cp = CenterPos;
-			var s = m_renderData.Size;
-			m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
-				new IntSize3(s, MAXLEVEL));
+				var cp = CenterPos;
+				var s = m_renderData.Size;
+				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+					new IntSize3(s, MAXLEVEL));
+
+				m_invalid = true;
+			}
 		}
 
 		protected IntPoint3 RenderDataLocationToMapLocation(int x, int y)
