@@ -22,6 +22,8 @@ namespace Dwarrowdelf.Client
 
 		void OnBlink()
 		{
+			// XXX we should invalidate only the needed tiles
+			Invalidate();
 			m_symbolToggler = !m_symbolToggler;
 		}
 
