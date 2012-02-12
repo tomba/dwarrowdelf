@@ -24,7 +24,10 @@ namespace Dwarrowdelf.Client
 			var y = ml.Y - m_centerPos.Y + m_renderData.Height / 2;
 
 			if (m_renderData.Contains(new IntPoint2(x, y)))
-				m_renderData.Grid[y, x].IsValid = false;
+			{
+				int idx = m_renderData.GetIdx(x, y);
+				m_renderData.Grid[idx].IsValid = false;
+			}
 		}
 
 		public override void Resolve()
@@ -57,12 +60,14 @@ namespace Dwarrowdelf.Client
 				{
 					var p = new IntPoint2(x, y);
 
-					if (m_renderData.Grid[y, x].IsValid)
+					int idx = m_renderData.GetIdx(x, y);
+
+					if (m_renderData.Grid[idx].IsValid)
 						continue;
 
 					var ml = new IntPoint3(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
-					Resolve(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					Resolve(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
 			});
 

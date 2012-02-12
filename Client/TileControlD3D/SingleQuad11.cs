@@ -236,37 +236,12 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			m_colrowVariable.Set(new Vector2(columns, rows));
 
-			var arr = mapData.Grid;
-			var arrLen = arr.Length;
-			var elemSize = Marshal.SizeOf(arr.GetType().GetElementType());
-
-#if asd
-				unsafe
-				{
-					fixed (RenderTileDetailedD3D* p = mapData.ArrayGrid.Grid)
-					{
-						using (var stream = new DataStream((IntPtr)p, arrLen * elemSize, true, false))
-						{
-							var dataBox = new DataBox(elemSize * arrLen, elemSize * arrLen, stream);
-							var region = new ResourceRegion(0, 0, 0, arrLen * elemSize, 1, 1);
-							m_device.ImmediateContext.UpdateSubresource(dataBox, m_tileBuffer, 0, region);
-						}
-					}
-				}
-#else
 			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, MapMode.WriteDiscard, SlimDX.Direct3D11.MapFlags.None);
 			var stream = box.Data;
 
-			unsafe
-			{
-				fixed (RenderTileDetailed* p = mapData.Grid)
-				{
-					stream.WriteRange((IntPtr)p, arrLen * elemSize);
-				}
-			}
+			stream.WriteRange(mapData.Grid, 0, mapData.Width * mapData.Height);
 
 			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
-#endif
 		}
 
 		public void Render(float tileSize, System.Windows.Point renderOffset)

@@ -19,7 +19,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void RenderTile(DrawingContext dc, int x, int y)
 		{
-			var sid = m_renderData.Grid[y, x].SymbolID;
+			int idx = m_renderData.GetIdx(x, y);
+			var sid = m_renderData.Grid[idx].SymbolID;
 
 			if (sid == SymbolID.Undefined)
 				return;

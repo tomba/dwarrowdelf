@@ -30,7 +30,8 @@ namespace Dwarrowdelf.Client
 			if (Contains(ml))
 			{
 				var p = MapLocationToRenderDataLocation(ml);
-				m_renderData.Grid[p.Y, p.X].IsValid = false;
+				int idx = m_renderData.GetIdx(p);
+				m_renderData.Grid[idx].IsValid = false;
 			}
 		}
 
@@ -61,14 +62,16 @@ namespace Dwarrowdelf.Client
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
 			{
-				for (int x = 0; x < columns; ++x)
+				int idx = m_renderData.GetIdx(0, y);
+
+				for (int x = 0; x < columns; ++x, ++idx)
 				{
-					if (m_renderData.Grid[y, x].IsValid)
+					if (m_renderData.Grid[idx].IsValid)
 						continue;
 
 					var ml = RenderDataLocationToMapLocation(x, y);
 
-					ResolveDetailed(out m_renderData.Grid[y, x], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
 				}
 			});
 

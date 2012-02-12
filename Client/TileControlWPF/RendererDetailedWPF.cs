@@ -21,10 +21,11 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			var rect = new Rect(x, y, 1, 1);
 			var grid = m_renderData.Grid;
-			Render(dc, ref grid[y, x].Terrain, rect);
-			Render(dc, ref grid[y, x].Interior, rect);
-			Render(dc, ref grid[y, x].Object, rect);
-			Render(dc, ref grid[y, x].Top, rect);
+			int idx = m_renderData.GetIdx(x, y);
+			Render(dc, ref grid[idx].Terrain, rect);
+			Render(dc, ref grid[idx].Interior, rect);
+			Render(dc, ref grid[idx].Object, rect);
+			Render(dc, ref grid[idx].Top, rect);
 		}
 
 		void Render(DrawingContext dc, ref RenderTileLayer layer, Rect rect)
