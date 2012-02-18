@@ -180,8 +180,11 @@ namespace MyArea
 
 			if (j != null)
 			{
-				Debug.Assert(j.Item.ReservedBy == this);
-				j.Item.ReservedBy = null;
+				if (!j.Item.IsDestructed)
+				{
+					Debug.Assert(j.Item.ReservedBy == this);
+					j.Item.ReservedBy = null;
+				}
 			}
 		}
 
