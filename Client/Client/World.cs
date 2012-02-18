@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if DEBUG
+#define TRACK_DESTRUCTED_OBJECTS
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -27,6 +31,10 @@ namespace Dwarrowdelf.Client
 
 		LivingVisionMode m_livingVisionMode;
 		public LivingVisionMode LivingVisionMode { get { return m_livingVisionMode; } }
+
+#if TRACK_DESTRUCTED_OBJECTS
+		BaseGameObjectCollection m_destructedObjects = new BaseGameObjectCollection();
+#endif
 
 		public World()
 		{
@@ -155,6 +163,10 @@ namespace Dwarrowdelf.Client
 
 			if (m_objects.Remove(ob) == false)
 				throw new Exception();
+
+#if TRACK_DESTRUCTED_OBJECTS
+			m_destructedObjects.Add(ob);
+#endif
 		}
 
 		public BaseObject FindObject(ObjectID objectID)
@@ -183,7 +195,14 @@ namespace Dwarrowdelf.Client
 			var ob = FindObject(objectID);
 
 			if (ob == null)
+			{
+#if TRACK_DESTRUCTED_OBJECTS
+				ob = m_destructedObjects[objectID];
+				if (ob != null)
+					throw new Exception(String.Format("Getting destructed object {0}", ob));
+#endif
 				throw new Exception();
+			}
 
 			return ob;
 		}
