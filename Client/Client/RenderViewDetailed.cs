@@ -312,19 +312,24 @@ namespace Dwarrowdelf.Client
 
 			if (showVirtualSymbols)
 			{
-				var td2 = env.GetTileData(ml + Direction.Down);
+				var pdown = ml + Direction.Down;
 
-				if (td2.InteriorID == InteriorID.Stairs)
+				if (env.Contains(pdown))
 				{
-					if (td.InteriorID == InteriorID.Stairs)
+					var tddown = env.GetTileData(pdown);
+
+					if (tddown.InteriorID == InteriorID.Stairs)
 					{
-						tile.SymbolID = SymbolID.StairsUpDown;
-					}
-					else if (td.InteriorID == InteriorID.Empty)
-					{
-						tile.SymbolID = SymbolID.StairsDown;
-						var downMatInfo = Materials.GetMaterial(td2.InteriorMaterialID);
-						tile.Color = downMatInfo.Color;
+						if (td.InteriorID == InteriorID.Stairs)
+						{
+							tile.SymbolID = SymbolID.StairsUpDown;
+						}
+						else if (td.InteriorID == InteriorID.Empty)
+						{
+							tile.SymbolID = SymbolID.StairsDown;
+							var downMatInfo = Materials.GetMaterial(tddown.InteriorMaterialID);
+							tile.Color = downMatInfo.Color;
+						}
 					}
 				}
 			}
