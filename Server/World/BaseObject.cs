@@ -99,6 +99,7 @@ namespace Dwarrowdelf.Server
 
 		protected virtual Dictionary<PropertyID, object> SerializeProperties()
 		{
+			Debug.Assert(!this.IsDestructed);
 			return new Dictionary<PropertyID, object>();
 		}
 
@@ -106,6 +107,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(value.GetType().IsValueType);
+			Debug.Assert(!this.IsDestructed);
 
 			this.World.AddChange(new PropertyValueChange(this, id, value));
 		}
@@ -113,6 +115,7 @@ namespace Dwarrowdelf.Server
 		protected void NotifyBool(PropertyID id, bool value)
 		{
 			Debug.Assert(this.IsInitialized);
+			Debug.Assert(!this.IsDestructed);
 
 			this.World.AddChange(new PropertyValueChange(this, id, value));
 		}
@@ -120,6 +123,7 @@ namespace Dwarrowdelf.Server
 		protected void NotifyInt(PropertyID id, int value)
 		{
 			Debug.Assert(this.IsInitialized);
+			Debug.Assert(!this.IsDestructed);
 
 			this.World.AddChange(new PropertyIntChange(this, id, value));
 		}
@@ -127,6 +131,7 @@ namespace Dwarrowdelf.Server
 		protected void NotifyString(PropertyID id, string value)
 		{
 			Debug.Assert(this.IsInitialized);
+			Debug.Assert(!this.IsDestructed);
 
 			this.World.AddChange(new PropertyStringChange(this, id, value));
 		}
