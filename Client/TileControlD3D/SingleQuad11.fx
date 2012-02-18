@@ -22,9 +22,9 @@ bool g_simpleTint;
 
 SamplerState linearSampler
 {
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Wrap;
-    AddressV = Wrap;
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
 };
 
 struct VS_IN
@@ -249,10 +249,10 @@ float4 PS( PS_IN input ) : SV_Target
 
 technique10 full
 {
-    pass P0
-    {
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
-        SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS() ) );
-    }
+	pass P0
+	{
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetGeometryShader( NULL );
+		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+	}
 }
