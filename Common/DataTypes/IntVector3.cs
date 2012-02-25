@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
@@ -35,6 +36,8 @@ namespace Dwarrowdelf
 
 		public IntVector3(Direction dir)
 		{
+			Debug.Assert(dir.IsValid());
+
 			int x, y, z;
 
 			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;

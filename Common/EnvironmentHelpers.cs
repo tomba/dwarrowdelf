@@ -47,6 +47,8 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanMoveFrom(IEnvironmentObject env, IntPoint3 srcLoc, Direction dir)
 		{
+			Debug.Assert(dir.IsValid());
+
 			var td = env.GetTileData(srcLoc);
 
 			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
@@ -92,6 +94,8 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static bool CanMoveTo(IEnvironmentObject env, IntPoint3 dstLoc, Direction dir)
 		{
+			Debug.Assert(dir.IsValid());
+
 			if (!env.Contains(dstLoc))
 				return false;
 
@@ -223,6 +227,7 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static Direction AdjustMoveDir(IEnvironmentObject env, IntPoint3 location, Direction dir)
 		{
+			Debug.Assert(dir.IsValid());
 			Debug.Assert(dir != Direction.None);
 			Debug.Assert(dir.IsPlanarUpDown());
 

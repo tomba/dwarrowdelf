@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
@@ -261,6 +262,17 @@ namespace Dwarrowdelf
 			int d = (int)dir;
 			d &= ~(DirectionConsts.Mask << DirectionConsts.ZShift);
 			return (Direction)d;
+		}
+
+		public static bool IsValid(this Direction dir)
+		{
+			int x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+
+			int pn = DirectionConsts.DirNeg | DirectionConsts.DirPos;
+
+			return x != pn && y != pn && z != pn;
 		}
 	}
 }
