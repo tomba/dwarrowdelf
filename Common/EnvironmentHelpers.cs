@@ -233,12 +233,17 @@ namespace Dwarrowdelf
 
 			if (EnvironmentHelpers.CanMoveFromTo(env, location, dir))
 				return dir;
-			else if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Up))
-				return dir | Direction.Up;
-			else if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Down))
-				return dir | Direction.Down;
-			else
+
+			if (dir == Direction.Up || dir == Direction.Down)
 				return Direction.None;
+
+			if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Up))
+				return dir | Direction.Up;
+
+			if (EnvironmentHelpers.CanMoveFromTo(env, location, dir | Direction.Down))
+				return dir | Direction.Down;
+
+			return Direction.None;
 		}
 	}
 }
