@@ -99,6 +99,26 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			return this.SubJobs.Where(j => j.Status == JobStatus.Ok);
 		}
 
+		public IEnumerable<IAssignment> GetAssignments(ILivingObject living)
+		{
+			foreach (var job in GetJobs(living))
+			{
+				var assignment = job as IAssignment;
+				if (assignment != null)
+				{
+					if (assignment.IsAssigned == false)
+						yield return assignment;
+				}
+				else
+				{
+					var jobGroup = (IJobGroup)job;
+
+					foreach (var a in jobGroup.GetAssignments(living))
+						yield return a;
+				}
+			}
+		}
+
 		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
 			switch (status)

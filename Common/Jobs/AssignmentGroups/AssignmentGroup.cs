@@ -80,6 +80,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			get { return this.CurrentAssignment != null ? this.CurrentAssignment.CurrentAction : null; }
 		}
 
+		[SaveGameProperty]
+		public LaborID LaborID { get; protected set; }
+
 		public void Assign(ILivingObject worker)
 		{
 			Debug.Assert(this.IsAssigned == false);

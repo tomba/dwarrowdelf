@@ -285,17 +285,15 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		IAssignment IJobSource.FindAssignment(ILivingObject living)
+		IAssignment IJobSource.FindAssignment(ILivingObject _living)
 		{
 			var env = this.Environment;
+			var living = (LivingObject)_living;
 
 			switch (this.BuildingState)
 			{
 				case Client.BuildingState.Functional:
 					if (this.CurrentBuildOrder == null)
-						return null;
-
-					if (living.GetSkillLevel(this.CurrentBuildOrder.BuildableItem.SkillID) == 0)
 						return null;
 
 					if (m_currentJob == null)
@@ -314,7 +312,13 @@ namespace Dwarrowdelf.Client
 						trace.TraceInformation("new build job created");
 					}
 
-					return m_currentJob.FindAssignment(living);
+					foreach (var a in m_currentJob.GetAssignments(living))
+					{
+						if (a.LaborID == LaborID.None || living.GetLaborEnabled(a.LaborID))
+							return m_currentJob.FindAssignment(living);
+					}
+
+					return null;
 
 				case Client.BuildingState.Destructing:
 					if (m_destructJob != null)

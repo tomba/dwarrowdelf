@@ -44,6 +44,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_location = location;
 			m_state = State.None;
 			m_positioning = positioning;
+			this.LaborID = Dwarrowdelf.LaborID.Hauling;
 		}
 
 		FetchItemAssignment(SaveGameContext ctx)

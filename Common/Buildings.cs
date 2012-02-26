@@ -44,6 +44,7 @@ namespace Dwarrowdelf
 		public MaterialID? MaterialID { get; internal set; }
 		public List<BuildableItemMaterialInfo> BuildMaterials { get; internal set; }
 		public SkillID SkillID { get; internal set; }
+		public LaborID LaborID { get; internal set; }
 
 		public BuildableItem()
 		{

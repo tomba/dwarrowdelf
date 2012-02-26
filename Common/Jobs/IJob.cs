@@ -44,6 +44,7 @@ namespace Dwarrowdelf.Jobs
 	public interface IJobGroup : IJob
 	{
 		IAssignment FindAssignment(ILivingObject living);
+		IEnumerable<IAssignment> GetAssignments(ILivingObject living);
 	}
 
 	public interface IAssignment : IJob
@@ -51,6 +52,7 @@ namespace Dwarrowdelf.Jobs
 		bool IsAssigned { get; }
 		ILivingObject Worker { get; }
 		GameAction CurrentAction { get; }
+		LaborID LaborID { get; }
 
 		void Assign(ILivingObject worker);
 		JobStatus PrepareNextAction();

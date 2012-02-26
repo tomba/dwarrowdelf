@@ -101,6 +101,7 @@
     <Compile Include="AI\Group.cs" />
     <Compile Include="Jobs\JobGroups\ConstructJob.cs" />
     <Compile Include="Jobs\JobGroups\InstallFurnitureJob.cs" />
+    <Compile Include="Labors.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />

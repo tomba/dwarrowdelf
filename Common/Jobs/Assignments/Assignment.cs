@@ -56,6 +56,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 			private set { if (m_action == value) return; m_action = value; Notify("CurrentAction"); }
 		}
 
+		[SaveGameProperty]
+		public LaborID LaborID { get; protected set; }
+
 		public void Assign(ILivingObject worker)
 		{
 			Debug.Assert(this.IsAssigned == false);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Collections;
 
 namespace Dwarrowdelf.Client
 {
@@ -27,6 +28,9 @@ namespace Dwarrowdelf.Client
 
 		public ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>> ArmorSlots { get; private set; }
 		ObservableCollection<Tuple<ArmorSlot, ItemObject>> m_armorSlots;
+
+		[SaveGameProperty]
+		BitArray m_enabledLabors;
 
 		/// <summary>
 		/// For Design-time only
@@ -62,6 +66,10 @@ namespace Dwarrowdelf.Client
 			: base(world, objectID)
 		{
 			this.IsLiving = true;
+
+			// XXX Create only for dwarves
+			m_enabledLabors = new BitArray(EnumHelpers.GetEnumMax<LaborID>() + 1);
+			m_enabledLabors.SetAll(true);
 		}
 
 		public override void Deserialize(BaseGameObjectData _data)
@@ -655,6 +663,16 @@ namespace Dwarrowdelf.Client
 			}
 
 			base.ChildRemoved(child);
+		}
+
+		public void SetLaborEnabled(LaborID labor, bool set)
+		{
+			m_enabledLabors.Set((int)labor, set);
+		}
+
+		public bool GetLaborEnabled(LaborID labor)
+		{
+			return m_enabledLabors.Get((int)labor);
 		}
 	}
 
