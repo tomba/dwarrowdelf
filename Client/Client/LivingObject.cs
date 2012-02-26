@@ -32,6 +32,8 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		BitArray m_enabledLabors;
 
+		public BitArray EnabledLabors { get { return m_enabledLabors; } }
+
 		/// <summary>
 		/// For Design-time only
 		/// </summary>

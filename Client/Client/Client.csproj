@@ -59,6 +59,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="IronPython, Version=2.7.0.40, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Scripting, Version=1.1.0.20, Culture=neutral, PublicKeyToken=7f709c5b713576e1, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -164,6 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Windows\InstallFurnitureDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Windows\LaborManagerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -335,6 +340,9 @@
     </Compile>
     <Compile Include="UI\Windows\InstallFurnitureDialog.xaml.cs">
       <DependentUpon>InstallFurnitureDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\LaborManagerDialog.xaml.cs">
+      <DependentUpon>LaborManagerDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\LivingControlWindow.xaml.cs">
       <DependentUpon>LivingControlWindow.xaml</DependentUpon>

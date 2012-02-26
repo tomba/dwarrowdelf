@@ -159,10 +159,16 @@ namespace Dwarrowdelf.Client.UI
 			dialog.Show();
 		}
 
+
+		void Button_LaborManager_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = new LaborManagerDialog();
+			dialog.Show();
+		}
+
 		/**
 		 * TOOLS
 		 */
-
 
 		public static readonly Dictionary<ClientToolMode, ToolData> ToolDatas;
 

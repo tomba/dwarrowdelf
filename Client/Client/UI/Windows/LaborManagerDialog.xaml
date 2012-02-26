@@ -1,0 +1,43 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.LaborManagerDialog"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="clr-namespace:Dwarrowdelf.Client"
+		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+		Title="LaborManagerDialog" Height="398" Width="830">
+
+	<Window.Resources>
+
+		<DataTemplate x:Key="dataGridHeaderTemplate" DataType="DataGridColumnHeader">
+			<TextBlock Text="{Binding}">
+					<TextBlock.LayoutTransform>
+						<RotateTransform Angle="90" />
+					</TextBlock.LayoutTransform>
+			</TextBlock>
+		</DataTemplate>
+
+	</Window.Resources>
+
+	<Grid UseLayoutRounding="True">
+		<DataGrid Name="grid" AutoGenerateColumns="False" Margin="12,12,12,41"
+				  CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeColumns="False" IsReadOnly="True"
+				  SelectionMode="Single" SelectionUnit="FullRow" CanUserReorderColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" 
+				  GridLinesVisibility="Horizontal">
+
+			<DataGrid.RowHeaderStyle>
+				<Style TargetType="DataGridRowHeader">
+					<Setter Property="Content" Value="{Binding Name}" />
+				</Style>
+			</DataGrid.RowHeaderStyle>
+
+			<DataGrid.ColumnHeaderStyle>
+				<Style TargetType="DataGridColumnHeader">
+					<Setter Property="VerticalContentAlignment" Value="Bottom" />
+				</Style>
+			</DataGrid.ColumnHeaderStyle>
+		</DataGrid>
+
+		<Button Content="Ok" IsDefault="True" Margin="0,0,93,12" Name="button2" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="OkButton_Click" />
+		<Button Content="Cancel" IsCancel="True" Margin="0,0,12,12" Name="button1" Height="23" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="CloseButton_Click" />
+
+	</Grid>
+</Window>
