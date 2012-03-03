@@ -21,11 +21,9 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
-		event Action<string> ConnectEvent;
 		event Action DisconnectEvent;
 		event Action<Message> ReceiveEvent;
 
-		void BeginConnect();
 		void BeginRead();
 		void Send(Message msg);
 		void Disconnect();
@@ -43,7 +41,6 @@ namespace Dwarrowdelf
 
 		public bool IsConnected { get { lock (m_lock) { return m_socket != null && m_socket.Connected; } } }
 
-		public event Action<string> ConnectEvent;
 		public event Action DisconnectEvent;
 		public event Action<Message> ReceiveEvent;
 
@@ -51,7 +48,7 @@ namespace Dwarrowdelf
 
 		object m_lock = new object();
 
-		const int PORT = 9999;
+		public const int PORT = 9999;
 
 		const uint MAGIC = 0x12345678;
 
@@ -62,8 +59,6 @@ namespace Dwarrowdelf
 
 		enum State
 		{
-			Uninitialized,
-			Connecting,
 			Connected,
 			Operational,
 			Disconnected,
@@ -71,22 +66,17 @@ namespace Dwarrowdelf
 
 		State m_state;
 
-		public Connection()
+		public Connection(Socket socket)
 		{
-			m_state = State.Uninitialized;
-		}
-
-		public Connection(Socket client)
-		{
-			trace.Header = client.RemoteEndPoint.ToString();
+			trace.Header = socket.RemoteEndPoint.ToString();
 
 			trace.TraceInformation("New Connection");
 
-			if (client.Connected == false)
+			if (socket.Connected == false)
 				throw new Exception();
 
-			m_socket = client;
-			m_sendStream = new SendStream(client, SEND_BUF_SIZEEXP);
+			m_socket = socket;
+			m_sendStream = new SendStream(socket, SEND_BUF_SIZEEXP);
 
 			m_state = State.Connected;
 		}
@@ -107,74 +97,6 @@ namespace Dwarrowdelf
 			m_socket = null;
 
 			m_state = State.Disconnected;
-		}
-
-		public void BeginConnect()
-		{
-			lock (m_lock)
-			{
-				if (m_state != State.Uninitialized)
-					throw new Exception();
-
-				Debug.Assert(m_socket == null);
-
-				m_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-				var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
-				m_socket.Bind(localEndPoint);
-
-				var port = PORT;
-
-				var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
-
-				trace.Header = m_socket.LocalEndPoint.ToString();
-				trace.TraceInformation("BeginConnect to {0}", remoteEndPoint);
-
-				m_state = State.Connecting;
-
-				try
-				{
-					m_socket.BeginConnect(remoteEndPoint, ConnectCallback, m_socket);
-				}
-				catch
-				{
-					Cleanup();
-					throw;
-				}
-			}
-		}
-
-		void ConnectCallback(IAsyncResult ar)
-		{
-			trace.TraceInformation("ConnectCallback");
-
-			var socket = (Socket)ar.AsyncState;
-
-			string err = null;
-
-			try
-			{
-				lock (m_lock)
-				{
-					socket.EndConnect(ar);
-
-					m_state = State.Connected;
-
-					m_sendStream = new SendStream(socket, SEND_BUF_SIZEEXP);
-				}
-			}
-			catch (Exception e)
-			{
-				lock (m_lock)
-					Cleanup();
-
-				trace.TraceWarning("Connect failed: {0}", e.Message);
-
-				err = e.Message;
-			}
-
-			if (this.ConnectEvent != null)
-				this.ConnectEvent(err);
 		}
 
 		public void BeginRead()
@@ -252,9 +174,6 @@ namespace Dwarrowdelf
 
 			lock (m_lock)
 			{
-				if (m_state == State.Uninitialized)
-					return;
-
 				if (m_state == State.Disconnected)
 					return;
 

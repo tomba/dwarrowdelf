@@ -188,7 +188,6 @@ namespace Dwarrowdelf.Client
 
 			if (m_connection != null)
 			{
-				m_connection.ConnectEvent -= OnConnect;
 				m_connection.ReceiveEvent -= _OnReceiveMessage;
 				m_connection.DisconnectEvent -= _OnDisconnected;
 				m_connection = null;
@@ -197,29 +196,55 @@ namespace Dwarrowdelf.Client
 
 		public void BeginLogOn(string name, Action<ClientUser, string> callback)
 		{
-			m_connection = new Connection();
-			m_connection.ConnectEvent += OnConnect;
-			m_connection.ReceiveEvent += _OnReceiveMessage;
-			m_connection.DisconnectEvent += _OnDisconnected;
-
 			trace.Header = String.Format("ClientConnection({0})", name);
 
 			m_logOnCallback = callback;
 			m_logOnName = name;
-			m_connection.BeginConnect();
+
+			try
+			{
+				var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+				var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
+				socket.Bind(localEndPoint);
+
+				var port = Connection.PORT;
+
+				var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+				trace.Header = socket.LocalEndPoint.ToString();
+				trace.TraceInformation("BeginConnect to {0}", remoteEndPoint);
+
+				socket.BeginConnect(remoteEndPoint, ConnectCallback, socket);
+			}
+			catch (Exception e)
+			{
+				Cleanup();
+				m_logOnCallback(null, e.Message);
+			}
 		}
 
-		void OnConnect(string error)
+		void ConnectCallback(IAsyncResult ar)
 		{
-			if (error != null)
+			trace.TraceInformation("ConnectCallback");
+
+			var socket = (Socket)ar.AsyncState;
+
+			try
 			{
-				m_logOnCallback(null, error);
-				Cleanup();
-			}
-			else
-			{
+				socket.EndConnect(ar);
+
+				m_connection = new Connection(socket);
+				m_connection.ReceiveEvent += _OnReceiveMessage;
+				m_connection.DisconnectEvent += _OnDisconnected;
+
 				m_connection.BeginRead();
 				Send(new Messages.LogOnRequestMessage() { Name = m_logOnName });
+			}
+			catch (Exception e)
+			{
+				Cleanup();
+				m_logOnCallback(null, e.Message);
 			}
 		}
 
