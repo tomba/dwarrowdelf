@@ -21,10 +21,7 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
-		event Action DisconnectEvent;
-		event Action<Message> ReceiveEvent;
-
-		void BeginRead();
+		void Start(Action<Message> receiveCallback, Action disconnectCallback);
 		void Send(Message msg);
 		void Disconnect();
 	}
@@ -33,16 +30,17 @@ namespace Dwarrowdelf
 	{
 		Socket m_socket;
 		SendStream m_sendStream;
+		RecvStream m_recvStream;
+
+		public bool IsConnected { get { lock (m_lock) { return m_socket != null && m_socket.Connected; } } }
+
+		Action<Message> m_receiveCallback;
+		Action m_disconnectCallback;
 
 		public int SentMessages { get; private set; }
 		public int SentBytes { get; private set; }
 		public int ReceivedMessages { get; private set; }
 		public int ReceivedBytes { get; private set; }
-
-		public bool IsConnected { get { lock (m_lock) { return m_socket != null && m_socket.Connected; } } }
-
-		public event Action DisconnectEvent;
-		public event Action<Message> ReceiveEvent;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
@@ -77,6 +75,7 @@ namespace Dwarrowdelf
 
 			m_socket = socket;
 			m_sendStream = new SendStream(socket, SEND_BUF_SIZEEXP);
+			m_recvStream = new RecvStream(socket, RECV_BUF_SIZEEXP, trace);
 
 			m_state = State.Connected;
 		}
@@ -99,7 +98,7 @@ namespace Dwarrowdelf
 			m_state = State.Disconnected;
 		}
 
-		public void BeginRead()
+		public void Start(Action<Message> receiveCallback, Action disconnectCallback)
 		{
 			lock (m_lock)
 			{
@@ -107,22 +106,21 @@ namespace Dwarrowdelf
 					throw new Exception();
 
 				Debug.Assert(m_socket != null);
+				Debug.Assert(m_deserializerThread == null);
+
+				m_receiveCallback = receiveCallback;
+				m_disconnectCallback = disconnectCallback;
 
 				m_state = State.Operational;
 
-				var recvStream = new RecvStream(m_socket, RECV_BUF_SIZEEXP, trace);
-
-				if (m_deserializerThread != null)
-					throw new Exception();
 				m_deserializerThread = new Thread(DeserializerMain);
-
-				m_deserializerThread.Start(recvStream);
+				m_deserializerThread.Start();
 			}
 		}
 
-		void DeserializerMain(object data)
+		void DeserializerMain()
 		{
-			RecvStream recvStream = (RecvStream)data;
+			var recvStream = m_recvStream;
 
 			try
 			{
@@ -150,16 +148,14 @@ namespace Dwarrowdelf
 					this.ReceivedMessages++;
 					this.ReceivedBytes += (int)len;
 
-					if (ReceiveEvent != null)
-						ReceiveEvent(msg);
+					m_receiveCallback(msg);
 				}
 			}
 			catch (SocketException)
 			{
 				lock (m_lock)
 				{
-					if (DisconnectEvent != null)
-						DisconnectEvent();
+					m_disconnectCallback();
 
 					Cleanup();
 				}

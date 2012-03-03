@@ -26,20 +26,15 @@ namespace Dwarrowdelf.Server
 
 			trace.Header = "ServerConnection";
 			trace.TraceInformation("New ServerConnection");
-
-			m_connection.ReceiveEvent += OnReceiveMessage;
-			m_connection.DisconnectEvent += OnDisconnect;
 		}
 
 		public void Start()
 		{
-			m_connection.BeginRead();
+			m_connection.Start(OnReceiveMessage, OnDisconnect);
 		}
 
 		void Cleanup()
 		{
-			m_connection.ReceiveEvent -= OnReceiveMessage;
-			m_connection.DisconnectEvent -= OnDisconnect;
 			m_connection = null;
 		}
 

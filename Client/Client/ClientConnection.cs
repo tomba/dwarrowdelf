@@ -188,8 +188,6 @@ namespace Dwarrowdelf.Client
 
 			if (m_connection != null)
 			{
-				m_connection.ReceiveEvent -= _OnReceiveMessage;
-				m_connection.DisconnectEvent -= _OnDisconnected;
 				m_connection = null;
 			}
 		}
@@ -235,10 +233,7 @@ namespace Dwarrowdelf.Client
 				socket.EndConnect(ar);
 
 				m_connection = new Connection(socket);
-				m_connection.ReceiveEvent += _OnReceiveMessage;
-				m_connection.DisconnectEvent += _OnDisconnected;
-
-				m_connection.BeginRead();
+				m_connection.Start(_OnReceiveMessage, _OnDisconnected);
 				Send(new Messages.LogOnRequestMessage() { Name = m_logOnName });
 			}
 			catch (Exception e)
