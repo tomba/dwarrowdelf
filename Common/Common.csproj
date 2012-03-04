@@ -79,6 +79,7 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
+    <Compile Include="Net\ConnectionListener.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="DataTypes\DoubleVector3.cs" />
     <Compile Include="DataTypes\Region.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="NetSerializer\Main.cs" />
     <Compile Include="NetSerializer\Primitives.cs" />
     <Compile Include="NetSerializer\Serializer.cs" />
+    <Compile Include="Net\GameNetStream.cs" />
     <Compile Include="ObjectType.cs" />
     <Compile Include="ReadOnlyArray.cs" />
     <Compile Include="Reports.cs" />
@@ -157,7 +159,7 @@
     <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="Connection.cs" />
+    <Compile Include="Net\Connection.cs" />
     <Compile Include="Buildings.cs" />
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />

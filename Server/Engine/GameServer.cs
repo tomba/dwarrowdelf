@@ -28,8 +28,8 @@ namespace Dwarrowdelf.Server
 
 			m_engine.World.HandleMessagesEvent += OnHandleMessages; // XXX
 
-			Connection.NewConnectionEvent += OnNewConnection;
-			Connection.StartListening();
+			ConnectionListener.NewConnectionEvent += OnNewConnection;
+			ConnectionListener.StartListening();
 
 			Debug.Print("The server is ready.");
 
@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Server
 
 			Debug.Print("Server exiting");
 
-			Connection.StopListening();
+			ConnectionListener.StopListening();
 
 			Debug.Print("Server exit");
 		}
