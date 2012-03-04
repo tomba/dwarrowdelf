@@ -138,8 +138,6 @@ namespace Dwarrowdelf.NetSerializer
 		public static void ReadPrimitive(GameNetStream stream, out bool value)
 		{
 			var b = stream.ReadByte();
-			if (b == -1)
-				throw new Exception();
 			value = b != 0;
 		}
 
@@ -150,10 +148,7 @@ namespace Dwarrowdelf.NetSerializer
 
 		public static void ReadPrimitive(GameNetStream stream, out byte value)
 		{
-			var b = stream.ReadByte();
-			if (b == -1)
-				throw new Exception();
-			value = (byte)b;
+			value = stream.ReadByte();
 		}
 
 		public static void WritePrimitive(GameNetStream stream, char value)

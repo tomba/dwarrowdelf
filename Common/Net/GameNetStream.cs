@@ -32,7 +32,7 @@ namespace Dwarrowdelf
 		public int ReadBytes { get { return m_totalRead; } }
 		public int SentBytes { get { return m_totalSent; } }
 
-		public int ReadByte()
+		public byte ReadByte()
 		{
 			if (m_received == m_read)
 			{
