@@ -9,12 +9,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Dwarrowdelf.NetSerializer
 {
-	public static partial class Serializer
+	static partial class Serializer
 	{
 		static DynamicMethod GenerateDynamicDeserializerStub(Type type)
 		{
 			var dm = new DynamicMethod("Deserialize", null,
-				new Type[] { typeof(Stream), type.MakeByRefType() },
+				new Type[] { typeof(GameNetStream), type.MakeByRefType() },
 				typeof(Serializer), true);
 			dm.DefineParameter(1, ParameterAttributes.None, "stream");
 			dm.DefineParameter(2, ParameterAttributes.Out, "value");
@@ -24,7 +24,7 @@ namespace Dwarrowdelf.NetSerializer
 
 		static MethodBuilder GenerateStaticDeserializerStub(TypeBuilder tb, Type type)
 		{
-			var mb = tb.DefineMethod("Deserialize", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), type.MakeByRefType() });
+			var mb = tb.DefineMethod("Deserialize", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(GameNetStream), type.MakeByRefType() });
 			mb.DefineParameter(1, ParameterAttributes.None, "stream");
 			mb.DefineParameter(2, ParameterAttributes.Out, "value");
 			return mb;

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-	sealed class GameNetStream : Stream
+	sealed class GameNetStream
 	{
 		Socket m_socket;
 
@@ -32,7 +32,7 @@ namespace Dwarrowdelf
 		public int ReadBytes { get { return m_totalRead; } }
 		public int SentBytes { get { return m_totalSent; } }
 
-		public override int ReadByte()
+		public int ReadByte()
 		{
 			if (m_received == m_read)
 			{
@@ -51,13 +51,8 @@ namespace Dwarrowdelf
 			return m_receiveBuffer[m_read++];
 		}
 
-		public override int Read(byte[] buffer, int offset, int count)
-		{
-			throw new NotImplementedException();
-		}
 
-
-		public override void Flush()
+		public void Flush()
 		{
 			int len = m_socket.Send(m_sendBuffer, m_used, SocketFlags.None);
 			if (len != m_used)
@@ -68,42 +63,12 @@ namespace Dwarrowdelf
 			m_used = 0;
 		}
 
-		public override void WriteByte(byte value)
+		public void WriteByte(byte value)
 		{
 			if (m_used == m_sendBuffer.Length)
 				Flush();
 
 			m_sendBuffer[m_used++] = value;
-		}
-
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override bool CanRead { get { return true; } }
-		public override bool CanSeek { get { return false; } }
-		public override bool CanWrite { get { return false; } }
-
-		public override long Length
-		{
-			get { return m_receiveBuffer.LongLength; }
-		}
-
-		public override long Position
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
-
-		public override long Seek(long offset, SeekOrigin origin)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void SetLength(long value)
-		{
-			throw new NotImplementedException();
 		}
 
 	}

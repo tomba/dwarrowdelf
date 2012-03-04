@@ -9,12 +9,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Dwarrowdelf.NetSerializer
 {
-	public static partial class Serializer
+	static partial class Serializer
 	{
 		static DynamicMethod GenerateDynamicSerializerStub(Type type)
 		{
 			var dm = new DynamicMethod("Serialize", null,
-				new Type[] { typeof(Stream), type },
+				new Type[] { typeof(GameNetStream), type },
 				typeof(Serializer), true);
 
 			dm.DefineParameter(1, ParameterAttributes.None, "stream");
@@ -25,7 +25,7 @@ namespace Dwarrowdelf.NetSerializer
 
 		static MethodBuilder GenerateStaticSerializerStub(TypeBuilder tb, Type type)
 		{
-			var mb = tb.DefineMethod("Serialize", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), type });
+			var mb = tb.DefineMethod("Serialize", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(GameNetStream), type });
 			mb.DefineParameter(1, ParameterAttributes.None, "stream");
 			mb.DefineParameter(2, ParameterAttributes.None, "value");
 			return mb;
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.NetSerializer
 
 		static void GenerateSerializerBody(Type type, ILGenerator il)
 		{
-			// arg0: Stream, arg1: value
+			// arg0: GameNetStream, arg1: value
 
 			D(il, "ser {0}", type.Name);
 
@@ -120,7 +120,7 @@ namespace Dwarrowdelf.NetSerializer
 
 		static void GenerateSerializerSwitch(ILGenerator il, IDictionary<Type, TypeData> map)
 		{
-			// arg0: Stream, arg1: object
+			// arg0: GameNetStream, arg1: object
 
 			var idLocal = il.DeclareLocal(typeof(ushort));
 			var notNullLabel = il.DefineLabel();

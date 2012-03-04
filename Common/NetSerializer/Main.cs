@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 
 namespace Dwarrowdelf.NetSerializer
 {
-	public static partial class Serializer
+	static partial class Serializer
 	{
 		sealed class TypeData
 		{
@@ -36,11 +36,11 @@ namespace Dwarrowdelf.NetSerializer
 
 		static Dictionary<Type, TypeData> s_map;
 
-		delegate void SerializerSwitch(Stream stream, object ob);
+		delegate void SerializerSwitch(GameNetStream stream, object ob);
 		static MethodInfo s_serializerSwitchMethodInfo;
 		static SerializerSwitch s_serializerSwitch;
 
-		delegate void DeserializerSwitch(Stream stream, out object ob);
+		delegate void DeserializerSwitch(GameNetStream stream, out object ob);
 		static MethodInfo s_deserializerSwitchMethodInfo;
 		static DeserializerSwitch s_deserializerSwitch;
 
@@ -56,7 +56,7 @@ namespace Dwarrowdelf.NetSerializer
 			GenerateDynamic(rootTypes);
 		}
 
-		public static void Serialize(Stream stream, object data)
+		public static void Serialize(GameNetStream stream, object data)
 		{
 			if (!s_map.ContainsKey(data.GetType()))
 				throw new ArgumentException("Type is not known");
@@ -68,7 +68,7 @@ namespace Dwarrowdelf.NetSerializer
 			s_serializerSwitch(stream, data);
 		}
 
-		public static object Deserialize(Stream stream)
+		public static object Deserialize(GameNetStream stream)
 		{
 			D("Deserializing");
 
@@ -175,14 +175,14 @@ namespace Dwarrowdelf.NetSerializer
 			}
 
 			var serializerSwitchMethod = new DynamicMethod("SerializerSwitch", null,
-				new Type[] { typeof(Stream), typeof(object) },
+				new Type[] { typeof(GameNetStream), typeof(object) },
 				typeof(Serializer), true);
 			serializerSwitchMethod.DefineParameter(1, ParameterAttributes.None, "stream");
 			serializerSwitchMethod.DefineParameter(2, ParameterAttributes.None, "value");
 			s_serializerSwitchMethodInfo = serializerSwitchMethod;
 
 			var deserializerSwitchMethod = new DynamicMethod("DeserializerSwitch", null,
-				new Type[] { typeof(Stream), typeof(object).MakeByRefType() },
+				new Type[] { typeof(GameNetStream), typeof(object).MakeByRefType() },
 				typeof(Serializer), true);
 			deserializerSwitchMethod.DefineParameter(1, ParameterAttributes.None, "stream");
 			deserializerSwitchMethod.DefineParameter(2, ParameterAttributes.None, "value");
@@ -230,12 +230,12 @@ namespace Dwarrowdelf.NetSerializer
 				s_map[type].ReaderILGen = dm.GetILGenerator();
 			}
 
-			var serializerSwitchMethod = tb.DefineMethod("SerializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object) });
+			var serializerSwitchMethod = tb.DefineMethod("SerializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(GameNetStream), typeof(object) });
 			serializerSwitchMethod.DefineParameter(1, ParameterAttributes.None, "stream");
 			serializerSwitchMethod.DefineParameter(2, ParameterAttributes.None, "value");
 			s_serializerSwitchMethodInfo = serializerSwitchMethod;
 
-			var deserializerSwitchMethod = tb.DefineMethod("DeserializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(Stream), typeof(object).MakeByRefType() });
+			var deserializerSwitchMethod = tb.DefineMethod("DeserializerSwitch", MethodAttributes.Public | MethodAttributes.Static, null, new Type[] { typeof(GameNetStream), typeof(object).MakeByRefType() });
 			deserializerSwitchMethod.DefineParameter(1, ParameterAttributes.None, "stream");
 			deserializerSwitchMethod.DefineParameter(2, ParameterAttributes.None, "value");
 			s_deserializerSwitchMethodInfo = deserializerSwitchMethod;
