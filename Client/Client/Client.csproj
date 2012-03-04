@@ -457,9 +457,9 @@
       <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
       <Name>TileControlCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TileControlD3D\TileControlD3D.csproj">
-      <Project>{EFD53C89-AC2A-4111-A32A-C49C9B5B0A48}</Project>
-      <Name>TileControlD3D</Name>
+    <ProjectReference Include="..\TileControlSharpDX\TileControlSharpDX.csproj">
+      <Project>{8880cd2d-b30a-495e-9598-25a8dde1ce7a}</Project>
+      <Name>TileControlSharpDX</Name>
     </ProjectReference>
     <ProjectReference Include="..\TileControlWPF\TileControlWPF.csproj">
       <Project>{D93CC3AE-060C-4095-94EA-1944A916547E}</Project>
