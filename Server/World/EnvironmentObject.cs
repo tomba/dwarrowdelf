@@ -603,7 +603,7 @@ namespace Dwarrowdelf.Server
 
 			const int maxMsgSize = 1 << 15;
 
-			const int itemSize = 4; // TileData is 64 bits
+			const int itemSize = 8; // TileData is 64 bits
 
 			IntSize3 size;
 
