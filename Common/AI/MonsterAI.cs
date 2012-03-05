@@ -25,6 +25,12 @@ namespace Dwarrowdelf.AI
 			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
 		}
 
+		[OnSaveGamePostDeserialization]
+		void OnPostDeserialization()
+		{
+			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
+		}
+
 		new MyTraceSource trace;
 		public override string Name { get { return "MonsterAI"; } }
 

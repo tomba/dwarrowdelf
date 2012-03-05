@@ -19,10 +19,12 @@ namespace Dwarrowdelf.Client
 			Fighting,
 		}
 
+		[SaveGameProperty]
 		DwarfState State { get; set; }
 
 		public JobManager JobManager { get; set; }
 
+		[SaveGameProperty]
 		ILivingObject m_target;
 
 		public DwarfAI(ILivingObject worker)

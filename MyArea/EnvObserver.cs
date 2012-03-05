@@ -7,8 +7,10 @@ using Dwarrowdelf.Server;
 
 namespace MyArea
 {
+	[SaveGameObjectByRef]
 	class EnvObserver
 	{
+		[SaveGameProperty]
 		Region m_region;
 
 		public EnvObserver(EnvironmentObject env)
@@ -20,6 +22,10 @@ namespace MyArea
 
 			env.LargeObjectAdded += OnLargeObjectAdded;
 			env.LargeObjectRemoved += OnLargeObjectRemoved;
+		}
+
+		EnvObserver(SaveGameContext ctx)
+		{
 		}
 
 		public bool Contains(IntPoint3 p)

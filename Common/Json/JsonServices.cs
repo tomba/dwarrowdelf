@@ -460,6 +460,7 @@ namespace Dwarrowdelf
 			var typeConverter = TypeDescriptor.GetConverter(type);
 			if (typeConverter != null &&
 				typeConverter.GetType() != typeof(TypeConverter) &&
+				typeConverter.GetType() != typeof(CollectionConverter) &&
 				typeConverter.CanConvertTo(typeof(string)))
 				return typeConverter;
 

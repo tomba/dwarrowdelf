@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf
 {
+	[Serializable]
 	public class Region
 	{
 		List<IntCuboid> m_cuboids = new List<IntCuboid>();

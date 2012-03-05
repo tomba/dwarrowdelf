@@ -17,6 +17,7 @@ namespace MyArea
 		[SaveGameProperty]
 		bool m_priorityAction;
 
+		[SaveGameProperty]
 		EnvObserver m_envObserver;
 
 		public DwarfAI(ILivingObject ob, EnvObserver envObserver)
