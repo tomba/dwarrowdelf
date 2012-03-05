@@ -19,6 +19,9 @@ namespace Dwarrowdelf.Client.TileControl
 			return new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
 		}
 
+		/// <summary>
+		/// Create the texture that is used to render the scene
+		/// </summary>
 		public static Texture2D CreateTextureRenderSurface(Device device, int width, int height)
 		{
 			var texDesc = new Texture2DDescription()
@@ -38,7 +41,7 @@ namespace Dwarrowdelf.Client.TileControl
 			return new Texture2D(device, texDesc);
 		}
 
-
+		// For WinForms tests
 		public static void CreateHwndRenderSurface(IntPtr windowHandle, Device device, int width, int height, out Texture2D renderTexture, out SwapChain swapChain)
 		{
 			var swapChainDesc = new SwapChainDescription()
@@ -62,36 +65,38 @@ namespace Dwarrowdelf.Client.TileControl
 			renderTexture = Texture2D.FromSwapChain<Texture2D>(swapChain, 0);
 		}
 
+		/// <summary>
+		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
+		/// </summary>
 		public static Texture2D CreateTextures11(Device device, ISymbolDrawingCache symbolDrawingCache)
 		{
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
-			Texture2D atlasTexture = null;
 			int maxTileSize = 64;
 			int mipLevels = (int)Math.Log(maxTileSize, 2);
 
-			SymbolBitmapCache sbc;
+			var atlasTexture = new Texture2D(device, new Texture2DDescription()
+			{
+				Usage = ResourceUsage.Default,
+				BindFlags = BindFlags.ShaderResource,
+				CpuAccessFlags = CpuAccessFlags.None,
+
+				Format = Format.B8G8R8A8_UNorm,
+				Width = maxTileSize,
+				Height = maxTileSize,
+				SampleDescription = new SampleDescription(1, 0),
+
+				ArraySize = numDistinctBitmaps,
+				MipLevels = mipLevels,
+			});
 
 			for (int mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
 			{
 				int tileSize = maxTileSize >> mipLevel;
 
-				sbc = new SymbolBitmapCache(symbolDrawingCache, tileSize);
+				var sbc = new SymbolBitmapCache(symbolDrawingCache, tileSize);
 
 				var pixelArray = new byte[tileSize * tileSize * 4];
-
-				var texDesc = new Texture2DDescription()
-				{
-					CpuAccessFlags = CpuAccessFlags.Read,
-					Format = Format.B8G8R8A8_UNorm,
-					Width = tileSize,
-					Height = tileSize,
-					Usage = ResourceUsage.Staging,
-					MipLevels = 1,
-					BindFlags = BindFlags.None,
-					ArraySize = 1,
-					SampleDescription = new SampleDescription(1, 0),
-				};
 
 				for (int i = 0; i < numDistinctBitmaps; ++i)
 				{
@@ -139,26 +144,10 @@ namespace Dwarrowdelf.Client.TileControl
 					}
 #endif
 
-					using (var dataStream = DataStream.Create(pixelArray, true, true))
+					using (var dataStream = DataStream.Create(pixelArray, true, false))
 					{
-						var dataRectangle = new DataRectangle(dataStream.DataPointer, tileSize * 4);
-
-						using (var tileTex = new Texture2D(device, texDesc, dataRectangle))
-						using (var tileSurface = new Surface(tileTex.NativePointer))
-						{
-							if (atlasTexture == null)
-							{
-								Texture2DDescription desc = tileTex.Description;
-								desc.ArraySize = numDistinctBitmaps;
-								desc.Usage = ResourceUsage.Default;
-								desc.BindFlags = BindFlags.ShaderResource;
-								desc.CpuAccessFlags = CpuAccessFlags.None;
-								desc.MipLevels = mipLevels;
-								atlasTexture = new Texture2D(device, desc);
-							}
-
-							device.ImmediateContext.CopySubresourceRegion(tileTex, 0, null, atlasTexture, Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels), 0, 0, 0);
-						}
+						var box = new DataBox(dataStream.DataPointer, tileSize * 4, 0);
+						device.ImmediateContext.UpdateSubresource(box, atlasTexture, Texture2D.CalculateSubResourceIndex(mipLevel, i, mipLevels));
 					}
 				}
 			}
@@ -166,6 +155,9 @@ namespace Dwarrowdelf.Client.TileControl
 			return atlasTexture;
 		}
 
+		/// <summary>
+		/// Create a buffer containing all GameColors
+		/// </summary>
 		public static SharpDX.Direct3D11.Buffer CreateGameColorBuffer(Device device)
 		{
 			int numcolors = GameColorRGB.NUMCOLORS;
