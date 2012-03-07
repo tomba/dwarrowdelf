@@ -5,6 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Dwarrowdelf.Messages;
+using System.IO;
+using System.IO.Compression;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -238,7 +241,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void SetTerrains(IntCuboid bounds, TileData[] tileDataList)
+		public void SetTerrains(IntCuboid bounds, byte[] tileDataList)
 		{
 			this.Version += 1;
 
@@ -270,15 +273,62 @@ namespace Dwarrowdelf.Client
 
 			this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 
-			int idx = 0;
+			Trace.TraceError("Recv {0}", bounds.Z);
 
-			foreach (IntPoint3 p in bounds.Range())
+#if asd
+			using (var memStream = new MemoryStream(tileDataList))
 			{
-				m_tileGrid.SetTileData(p, tileDataList[idx++]);
+				using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
+				using (var streamReader = new BinaryReader(decompressStream))
+				{
+					foreach (IntPoint3 p in bounds.Range())
+					{
+						TileData td = new TileData();
+						td.Raw = streamReader.ReadUInt64();
+						m_tileGrid.SetTileData(p, td);
 
-				if (MapTileTerrainChanged != null)
-					MapTileTerrainChanged(p);
+						if (MapTileTerrainChanged != null)
+							MapTileTerrainChanged(p);
+					}
+				}
 			}
+#endif
+
+#if !asd
+			Task.Factory.StartNew(() =>
+			{
+				var dstStream = new MemoryStream();
+
+				using (var memStream = new MemoryStream(tileDataList))
+				using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
+					decompressStream.CopyTo(dstStream);
+
+				dstStream.Position = 0;
+				return dstStream;
+			}).ContinueWith(t =>
+			{
+				var stream = t.Result;
+
+				using (var streamReader = new BinaryReader(stream))
+				{
+					TileData td = new TileData();
+					foreach (IntPoint3 p in bounds.Range())
+					{
+						td.Raw = streamReader.ReadUInt64();
+						m_tileGrid.SetTileData(p, td);
+
+						if (MapTileTerrainChanged != null)
+							MapTileTerrainChanged(p);
+					}
+				}
+
+				stream.Dispose();
+
+				Trace.TraceError("done {0}", bounds.Z);
+
+			}, TaskScheduler.FromCurrentSynchronizationContext());
+
+#endif
 		}
 
 

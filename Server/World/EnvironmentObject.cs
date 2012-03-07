@@ -603,69 +603,103 @@ namespace Dwarrowdelf.Server
 		{
 			var visionTracker = player.GetVisionTracker(this);
 
-			var bounds = this.Bounds;
+			int w = this.Width;
+			int h = this.Height;
+			int d = this.Depth;
 
-			const int maxMsgSize = 1 << 15;
+#if !asd
+			var queue = new BlockingCollection<Tuple<int, byte[]>>();
 
-			const int itemSize = 8; // TileData is 64 bits
-
-			IntSize3 size;
-
-			int linesPerMsg;
-
-			int planesPerMsg = maxMsgSize / (bounds.Plane.Area * itemSize);
-			if (planesPerMsg > 0)
-			{
-				linesPerMsg = planesPerMsg * bounds.Plane.Height;
-
-				size = new IntSize3(bounds.Width, bounds.Height, planesPerMsg);
-			}
-			else
-			{
-				linesPerMsg = maxMsgSize / (bounds.Width * itemSize);
-
-				if (linesPerMsg == 0)
-					throw new Exception("too small max msg size");
-
-				while (linesPerMsg > 0)
+			var writerTask = Task.Factory.StartNew(() =>
 				{
-					int m = bounds.Height % linesPerMsg;
+					foreach (var tuple in queue.GetConsumingEnumerable())
+					{
+						int z = tuple.Item1;
+						var arr = tuple.Item2;
 
-					if (m == 0)
-						break;
+						var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
+						msg.Bounds = new IntCuboid(0, 0, z, w, h, 1);
 
-					linesPerMsg--;
+						msg.TerrainData = arr;
+						player.Send(msg);
+						Trace.TraceError("Sent {0}", z);
+					}
+				});
+
+
+			Parallel.For(0, d, z =>
+			{
+				using (var memStream = new MemoryStream())
+				{
+					using (var compStream = new System.IO.Compression.DeflateStream(memStream, CompressionMode.Compress))
+					using (var bufferStream = new BufferedStream(compStream))
+					using (var writer = new BinaryWriter(bufferStream))
+					{
+						for (int y = 0; y < h; ++y)
+						{
+							for (int x = 0; x < w; ++x)
+							{
+								var p = new IntPoint3(x, y, z);
+
+								ulong v;
+
+								if (!visionTracker.Sees(p))
+									v = 0;
+								else
+									v = m_tileGrid.GetTileData(p).Raw;
+
+								writer.Write(v);
+							}
+						}
+					}
+
+					queue.Add(new Tuple<int, byte[]>(z, memStream.ToArray()));
 				}
+			});
 
-				size = new IntSize3(bounds.Width, linesPerMsg, 1);
-			}
+			queue.CompleteAdding();
 
-			int itemsPerMsg = linesPerMsg * bounds.Width;
-			int totalMsgs = bounds.Volume / itemsPerMsg;
+			writerTask.Wait();
+#endif
+#if asd
 
-			var arr = new TileData[itemsPerMsg];
-			var msg = new Messages.MapDataTerrainsMessage() { Environment = this.ObjectID };
 
 			for (int i = 0; i < totalMsgs; ++i)
 			{
-				int y = (i * linesPerMsg) % bounds.Height;
-				int z = (i * linesPerMsg) / bounds.Height;
+				int z = i * planesPerMsg;
 
-				var range = IntPoint3.Range(0, y, z, size.Width, size.Height, size.Depth);
-
-				int idx = 0;
-				foreach (var p in range)
+				using (var memStream = new MemoryStream())
 				{
-					if (!visionTracker.Sees(p))
-						arr[idx++] = new TileData();
-					else
-						arr[idx++] = m_tileGrid.GetTileData(p);
-				}
+					using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
+					using (var bufferedStream = new BufferedStream(compressStream))
+					using (var streamWriter = new BinaryWriter(bufferedStream))
+					{
+						var range = IntPoint3.Range(0, 0, z, size.Width, size.Height, size.Depth);
 
-				msg.Bounds = new IntCuboid(0, y, z, size.Width, size.Height, size.Depth);
-				msg.TerrainData = arr;
-				player.Send(msg);
+						foreach (var p in range)
+						{
+							ulong v;
+
+							if (!visionTracker.Sees(p))
+								v = 0;
+							else
+								v = m_tileGrid.GetTileData(p).Raw;
+
+							streamWriter.Write(v);
+						}
+					}
+
+					var msg = new Messages.MapDataTerrainsMessage()
+					{
+						Environment = this.ObjectID,
+						Bounds = new IntCuboid(0, 0, z, size.Width, size.Height, size.Depth),
+						TerrainData = memStream.ToArray(),
+					};
+					player.Send(msg);
+					Trace.TraceError("Sent {0}", z);
+				}
 			}
+#endif
 		}
 
 		public override string ToString()
