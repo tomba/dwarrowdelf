@@ -731,7 +731,7 @@ namespace Dwarrowdelf.Server
 				for (int z = 0; z < d; ++z)
 					for (int y = 0; y < h; ++y)
 						for (int x = 0; x < w; ++x)
-							writer.WriteValue(srcArr[z, y, x].ToUInt64());
+							writer.WriteValue(srcArr[z, y, x].Raw);
 
 				writer.Formatting = oldFormatting;
 
@@ -757,8 +757,7 @@ namespace Dwarrowdelf.Server
 						for (int x = 0; x < w; ++x)
 						{
 							reader.Read();
-							var td = TileData.FromUInt64((ulong)(long)reader.Value);
-							dstArr[z, y, x] = td;
+							dstArr[z, y, x].Raw = (ulong)(long)reader.Value;
 						}
 
 				reader.Read();

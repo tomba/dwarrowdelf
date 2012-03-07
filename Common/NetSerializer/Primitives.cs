@@ -257,7 +257,7 @@ namespace Dwarrowdelf.NetSerializer
 		{
 			WriteVarint32(stream, (uint)value.Length);
 			for (int i = 0; i < value.Length; ++i)
-				WriteVarint64(stream, value[i].ToUInt64());
+				WriteVarint64(stream, value[i].Raw);
 		}
 
 		public static void ReadPrimitive(GameNetStream stream, out TileData[] value)
@@ -265,7 +265,7 @@ namespace Dwarrowdelf.NetSerializer
 			var len = ReadVarint32(stream);
 			var arr = new TileData[len];
 			for (int i = 0; i < len; ++i)
-				arr[i] = TileData.FromUInt64(ReadVarint64(stream));
+				arr[i].Raw = ReadVarint64(stream);
 			value = arr;
 		}
 	}
