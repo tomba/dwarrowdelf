@@ -115,10 +115,19 @@ namespace Dwarrowdelf.Client.UI
 		{
 			//System.Diagnostics.Debug.Print("OnAboutToRender");
 
-			if (m_env == null)
-				return;
-
 			m_renderView.Resolve();
+		}
+
+		public bool IsVisibilityCheckEnabled
+		{
+			get { return m_renderView.IsVisibilityCheckEnabled; }
+
+			set
+			{
+				m_renderView.IsVisibilityCheckEnabled = value;
+				InvalidateTileData();
+				Notify("IsVisibilityCheckEnabled");
+			}
 		}
 
 		public bool ShowVirtualSymbols

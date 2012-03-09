@@ -59,7 +59,8 @@ namespace Dwarrowdelf.Client
 				m_invalid = false;
 			}
 
-			bool isSeeAll = GameData.Data.User.IsSeeAll;
+			if (m_environment == null)
+				return;
 
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
@@ -73,7 +74,7 @@ namespace Dwarrowdelf.Client
 
 					var ml = RenderDataLocationToMapLocation(x, y);
 
-					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, this.IsVisibilityCheckEnabled);
 				}
 			});
 
@@ -86,7 +87,7 @@ namespace Dwarrowdelf.Client
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
 
-			if (env == null || !env.Contains(ml))
+			if (!env.Contains(ml))
 				return;
 
 			bool visible;

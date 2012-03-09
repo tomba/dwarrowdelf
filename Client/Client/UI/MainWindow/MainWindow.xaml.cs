@@ -682,6 +682,8 @@ for p in area.Range():
 
 		void OnLoggedOut()
 		{
+			this.MapControl.Environment = null;
+
 			CloseLoginDialog();
 			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
@@ -699,6 +701,8 @@ for p in area.Range():
 
 		void OnDisconnected()
 		{
+			this.MapControl.Environment = null;
+
 			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
@@ -732,6 +736,7 @@ for p in area.Range():
 			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
 			if (controllable != null && controllable.Environment != null)
 			{
+				this.MapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
 				this.MapControl.Environment = controllable.Environment;
 				this.MapControl.AnimatedCenterPos = new Point(controllable.Location.X, controllable.Location.Y);
 				this.MapControl.Z = controllable.Location.Z;
@@ -745,6 +750,7 @@ for p in area.Range():
 
 		void OnExitedGame()
 		{
+			this.MapControl.Environment = null;
 			GameData.Data.User.ExitedGameEvent -= OnExitedGame;
 		}
 

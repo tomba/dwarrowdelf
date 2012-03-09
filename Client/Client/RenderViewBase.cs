@@ -14,6 +14,7 @@ namespace Dwarrowdelf.Client
 		IntPoint3 CenterPos { get; set; }
 		void SetSize(IntSize2 size);
 		bool Contains(IntPoint3 ml);
+		bool IsVisibilityCheckEnabled { get; set; }
 		bool ShowVirtualSymbols { get; set; }
 		EnvironmentObject Environment { get; set; }
 		IRenderData RenderData { get; }
@@ -25,6 +26,7 @@ namespace Dwarrowdelf.Client
 	{
 		protected readonly RenderData<T> m_renderData;
 
+		bool m_isVisibilityCheckEnabled;
 		protected bool m_showVirtualSymbols = true;
 		protected EnvironmentObject m_environment;
 		protected IntPoint3 m_centerPos;
@@ -121,6 +123,17 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				m_showVirtualSymbols = value;
+				m_invalid = true;
+			}
+		}
+
+		public bool IsVisibilityCheckEnabled
+		{
+			get { return m_isVisibilityCheckEnabled; }
+
+			set
+			{
+				m_isVisibilityCheckEnabled = value;
 				m_invalid = true;
 			}
 		}
