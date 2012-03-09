@@ -31,27 +31,27 @@ namespace Dwarrowdelf.Client.UI
 			{
 				if (m_enabled)
 				{
-					m_mapControl.MapControl.DragStarted -= OnDragStarted;
-					m_mapControl.MapControl.DragEnded -= OnDragEnded;
-					m_mapControl.MapControl.Dragging -= OnDragging;
-					m_mapControl.MapControl.DragAborted -= OnDragAborted;
+					m_mapControl.DragStarted -= OnDragStarted;
+					m_mapControl.DragEnded -= OnDragEnded;
+					m_mapControl.Dragging -= OnDragging;
+					m_mapControl.DragAborted -= OnDragAborted;
 				}
 
 				m_enabled = value;
 
 				if (m_enabled)
 				{
-					m_mapControl.MapControl.DragStarted += OnDragStarted;
-					m_mapControl.MapControl.DragEnded += OnDragEnded;
-					m_mapControl.MapControl.Dragging += OnDragging;
-					m_mapControl.MapControl.DragAborted += OnDragAborted;
+					m_mapControl.DragStarted += OnDragStarted;
+					m_mapControl.DragEnded += OnDragEnded;
+					m_mapControl.Dragging += OnDragging;
+					m_mapControl.DragAborted += OnDragAborted;
 				}
 			}
 		}
 
 		void OnDragStarted(Point pos)
 		{
-			m_mapTile = m_mapControl.MapControl.ScreenPointToMapTile(pos);
+			m_mapTile = m_mapControl.ScreenPointToMapTile(pos);
 			m_mapControl.Cursor = Cursors.ScrollAll;
 		}
 
@@ -62,13 +62,14 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnDragging(Point pos)
 		{
-			var v = m_mapControl.MapControl.MapTileToScreenPoint(m_mapTile) - pos;
+			var v = m_mapControl.MapTileToScreenPoint(m_mapTile) - pos;
 
-			var sp = m_mapControl.MapControl.MapTileToScreenPoint(m_mapControl.CenterPos) + v;
+			var sp = m_mapControl.MapTileToScreenPoint(m_mapControl.CenterPos) + v;
 
-			var mt = m_mapControl.MapControl.ScreenPointToMapTile(sp);
+			var mt = m_mapControl.ScreenPointToMapTile(sp);
 
-			m_mapControl.CenterPos = mt;
+			//m_mapControl.ScrollTo(mt);
+			m_mapControl.AnimatedCenterPos = mt;
 		}
 
 		void OnDragAborted()

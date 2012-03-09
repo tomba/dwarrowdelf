@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	sealed class MapControl : TileControl.TileControlBase, INotifyPropertyChanged
+	class MapControl : TileControl.TileControlBase, INotifyPropertyChanged
 	{
 		IRenderView m_renderView;
 
@@ -220,7 +220,7 @@ namespace Dwarrowdelf.Client.UI
 			InvalidateTileData();
 		}
 
-		void Notify(string name)
+		protected void Notify(string name)
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(name));

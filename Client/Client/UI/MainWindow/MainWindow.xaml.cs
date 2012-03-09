@@ -372,7 +372,7 @@ for p in area.Range():
 				if (env == null)
 					return;
 
-				var ml = this.MapControl.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
+				var ml = this.MapControl.ScreenPointToMapLocation(ev.GetPosition(this.MapControl));
 
 				var obs = new List<object>();
 
@@ -393,8 +393,8 @@ for p in area.Range():
 
 					ctxMenu.ItemsSource = obs;
 					ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
-					ctxMenu.PlacementTarget = this.MapControl.MapControl;
-					var rect = this.MapControl.MapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize2(1, 1)));
+					ctxMenu.PlacementTarget = this.MapControl;
+					var rect = this.MapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize2(1, 1)));
 					ctxMenu.PlacementRectangle = rect;
 
 					ctxMenu.IsOpen = true;
@@ -733,7 +733,7 @@ for p in area.Range():
 			if (controllable != null && controllable.Environment != null)
 			{
 				this.MapControl.Environment = controllable.Environment;
-				this.MapControl.CenterPos = new Point(controllable.Location.X, controllable.Location.Y);
+				this.MapControl.AnimatedCenterPos = new Point(controllable.Location.X, controllable.Location.Y);
 				this.MapControl.Z = controllable.Location.Z;
 			}
 		}

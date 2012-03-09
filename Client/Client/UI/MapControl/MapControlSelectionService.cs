@@ -72,18 +72,18 @@ namespace Dwarrowdelf.Client.UI
 					case MapSelectionMode.Rectangle:
 					case MapSelectionMode.Cuboid:
 
-						m_mapControl.MapControl.DragStarted -= OnDragStarted;
-						m_mapControl.MapControl.DragEnded -= OnDragEnded;
-						m_mapControl.MapControl.Dragging -= OnDragging;
-						m_mapControl.MapControl.DragAborted -= OnDragAborted;
+						m_mapControl.DragStarted -= OnDragStarted;
+						m_mapControl.DragEnded -= OnDragEnded;
+						m_mapControl.Dragging -= OnDragging;
+						m_mapControl.DragAborted -= OnDragAborted;
 
-						m_mapControl.MapControl.TileLayoutChanged -= OnTileLayoutChanged;
-						m_mapControl.MapControl.ZChanged -= OnZChanged;
+						m_mapControl.TileLayoutChanged -= OnTileLayoutChanged;
+						m_mapControl.ZChanged -= OnZChanged;
 
 						break;
 
 					case MapSelectionMode.Point:
-						m_mapControl.MapControl.MouseClicked -= OnMouseClicked;
+						m_mapControl.MouseClicked -= OnMouseClicked;
 						break;
 				}
 
@@ -95,18 +95,18 @@ namespace Dwarrowdelf.Client.UI
 					case MapSelectionMode.Rectangle:
 					case MapSelectionMode.Cuboid:
 
-						m_mapControl.MapControl.DragStarted += OnDragStarted;
-						m_mapControl.MapControl.DragEnded += OnDragEnded;
-						m_mapControl.MapControl.Dragging += OnDragging;
-						m_mapControl.MapControl.DragAborted += OnDragAborted;
+						m_mapControl.DragStarted += OnDragStarted;
+						m_mapControl.DragEnded += OnDragEnded;
+						m_mapControl.Dragging += OnDragging;
+						m_mapControl.DragAborted += OnDragAborted;
 
-						m_mapControl.MapControl.TileLayoutChanged += OnTileLayoutChanged;
-						m_mapControl.MapControl.ZChanged += OnZChanged;
+						m_mapControl.TileLayoutChanged += OnTileLayoutChanged;
+						m_mapControl.ZChanged += OnZChanged;
 
 						break;
 
 					case MapSelectionMode.Point:
-						m_mapControl.MapControl.MouseClicked += OnMouseClicked;
+						m_mapControl.MouseClicked += OnMouseClicked;
 						break;
 				}
 			}
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs e)
 		{
-			var ml = m_mapControl.MapControl.ScreenPointToMapLocation(e.GetPosition(m_mapControl.MapControl));
+			var ml = m_mapControl.ScreenPointToMapLocation(e.GetPosition(m_mapControl));
 			this.Selection = new MapSelection(ml, ml);
 			if (this.GotSelection != null)
 				this.GotSelection(this.Selection);
@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Client.UI
 		void OnDragStarted(Point pos)
 		{
 			m_selecting = true;
-			var ml = m_mapControl.MapControl.ScreenPointToMapLocation(pos);
+			var ml = m_mapControl.ScreenPointToMapLocation(pos);
 			this.Selection = new MapSelection(ml, ml);
 		}
 
@@ -212,7 +212,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			IntPoint3 start;
 
-			var end = m_mapControl.MapControl.ScreenPointToMapLocation(mousePos);
+			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
 
 			switch (m_selectionMode)
 			{
@@ -248,7 +248,7 @@ namespace Dwarrowdelf.Client.UI
 			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
 			ir = ir.Inflate(1, 1);
 
-			var r = m_mapControl.MapControl.MapRectToScreenPointRect(ir);
+			var r = m_mapControl.MapRectToScreenPointRect(ir);
 
 			Canvas.SetLeft(m_selectionRect, r.Left);
 			Canvas.SetTop(m_selectionRect, r.Top);

@@ -24,14 +24,12 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Handles selection rectangles etc. extra stuff
 	/// </summary>
-	sealed class MasterMapControl : UserControl, INotifyPropertyChanged, IDisposable
+	sealed class MasterMapControl : MapControl
 	{
 		public TileView HoverTileView { get; private set; }
 		public TileAreaView SelectionTileAreaView { get; private set; }
 
-		public MapControl MapControl { get { return m_mapControl; } }
-		MapControl m_mapControl;
-
+		Grid m_overlayGrid;
 		Canvas m_selectionCanvas;
 		Canvas m_elementCanvas;
 
@@ -52,63 +50,93 @@ namespace Dwarrowdelf.Client.UI
 
 		public MasterMapControl()
 		{
+			m_vc = new VisualCollection(this);
+
 			this.Focusable = true;
 
 			this.SelectionTileAreaView = new TileAreaView();
+		}
+
+		VisualCollection m_vc;
+
+		protected override Visual GetVisualChild(int index)
+		{
+			if (index != 0)
+				throw new Exception();
+
+			return m_overlayGrid;
+		}
+
+		protected override int VisualChildrenCount
+		{
+			get { return 1; }
+		}
+
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+			m_overlayGrid.Arrange(new Rect(arrangeBounds));
+
+			return base.ArrangeOverride(arrangeBounds);
 		}
 
 		protected override void OnInitialized(EventArgs e)
 		{
 			base.OnInitialized(e);
 
-			var grid = new Grid();
-			grid.ClipToBounds = true;
-			AddChild(grid);
-
-			MapControl mc = new MapControl();
-
-			grid.Children.Add(mc);
-			m_mapControl = mc;
-			m_mapControl.ZChanged += OnZChanged;
-			m_mapControl.EnvironmentChanged += OnEnvironmentChanged;
-			m_mapControl.CenterPosChanged += cp => Notify("CenterPos");
-			m_mapControl.TileLayoutChanged += m_mapControl_TileLayoutChanged;
-			m_mapControl.MouseMove += m_mapControl_MouseMove;
-			m_mapControl.MouseLeave += m_mapControl_MouseLeave;
-
-			m_elementCanvas = new Canvas();
-			grid.Children.Add(m_elementCanvas);
-
-			m_selectionCanvas = new Canvas();
-			grid.Children.Add(m_selectionCanvas);
+			this.ZChanged += OnZChanged;
+			this.EnvironmentChanged += OnEnvironmentChanged;
+			this.TileLayoutChanged += OnTileLayoutChanged;
+			this.MouseMove += OnMouseMove;
+			this.MouseLeave += OnMouseLeave;
 
 			this.TileSize = 16;
 
 			this.HoverTileView = new TileView();
 
-			m_toolTipService = new MapControlToolTipService(m_mapControl, this.HoverTileView);
+			m_overlayGrid = new Grid();
+			m_overlayGrid.ClipToBounds = true;
+			AddVisualChild(m_overlayGrid);
+
+			m_elementCanvas = new Canvas();
+			m_overlayGrid.Children.Add(m_elementCanvas);
+
+			m_selectionCanvas = new Canvas();
+			m_overlayGrid.Children.Add(m_selectionCanvas);
+
+			m_toolTipService = new MapControlToolTipService(this, this.HoverTileView);
 			m_toolTipService.IsToolTipEnabled = true;
 
 			m_selectionService = new MapControlSelectionService(this, m_selectionCanvas);
 			m_selectionService.GotSelection += s => { if (this.GotSelection != null) this.GotSelection(s); };
 			m_selectionService.SelectionChanged += OnSelectionChanged;
 
-			m_elementsService = new MapControlElementsService(m_mapControl, m_elementCanvas);
+			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
 
 			m_dragService = new MapControlDragService(this);
 		}
 
-		void m_mapControl_MouseLeave(object sender, MouseEventArgs e)
+		void OnEnvironmentChanged(EnvironmentObject env)
+		{
+			this.Selection = new MapSelection();
+			UpdateHoverTileInfo();
+		}
+
+		void OnZChanged(int z)
 		{
 			UpdateHoverTileInfo();
 		}
 
-		void m_mapControl_MouseMove(object sender, MouseEventArgs e)
+		void OnMouseLeave(object sender, MouseEventArgs e)
 		{
 			UpdateHoverTileInfo();
 		}
 
-		void m_mapControl_TileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
+		void OnMouseMove(object sender, MouseEventArgs e)
+		{
+			UpdateHoverTileInfo();
+		}
+
+		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			UpdateHoverTileInfo();
 		}
@@ -121,7 +149,7 @@ namespace Dwarrowdelf.Client.UI
 			Point p;
 			IntPoint2 sl;
 
-			if (!m_mapControl.IsMouseOver)
+			if (!this.IsMouseOver)
 			{
 				p = new Point();
 				sl = new IntPoint2();
@@ -130,13 +158,13 @@ namespace Dwarrowdelf.Client.UI
 			}
 			else
 			{
-				p = Mouse.GetPosition(m_mapControl);
-				sl = m_mapControl.ScreenPointToIntScreenTile(p);
-				var ml = m_mapControl.ScreenPointToMapLocation(p);
+				p = Mouse.GetPosition(this);
+				sl = ScreenPointToIntScreenTile(p);
+				var ml = ScreenPointToMapLocation(p);
 
-				if (m_mapControl.Environment.Contains(ml))
+				if (this.Environment.Contains(ml))
 				{
-					this.HoverTileView.SetTarget(m_mapControl.Environment, ml);
+					this.HoverTileView.SetTarget(this.Environment, ml);
 				}
 				else
 				{
@@ -160,26 +188,20 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public void InvalidateTileData()
-		{
-			if (m_mapControl != null)
-				m_mapControl.InvalidateTileData();
-		}
+		public int Columns { get { return this.GridSize.Width; } }
+		public int Rows { get { return this.GridSize.Height; } }
 
-		public int Columns { get { return m_mapControl.GridSize.Width; } }
-		public int Rows { get { return m_mapControl.GridSize.Height; } }
-
-		public double TileSize
+		public double AnimatedTileSize	// XXX
 		{
-			get { return m_mapControl.TileSize; }
+			get { return this.TileSize; }
 
 			set
 			{
 				m_targetTileSize = null;
-				m_mapControl.BeginAnimation(MapControl.TileSizeProperty, null);
+				BeginAnimation(MapControl.TileSizeProperty, null);
 
 				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
-				m_mapControl.TileSize = value;
+				this.TileSize = value;
 			}
 		}
 
@@ -204,7 +226,7 @@ namespace Dwarrowdelf.Client.UI
 			m_targetTileSize = tileSize;
 
 			var anim = new DoubleAnimation(tileSize, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			m_mapControl.BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		static bool KeyIsDir(Key key)
@@ -348,11 +370,11 @@ namespace Dwarrowdelf.Client.UI
 
 			var p = e.GetPosition(this);
 
-			Vector v = p - new Point(m_mapControl.ActualWidth / 2, m_mapControl.ActualHeight / 2);
+			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
 			v /= targetTileSize;
 			v.Y = -v.Y;
 
-			var ml = m_mapControl.ScreenPointToMapTile(p);
+			var ml = ScreenPointToMapTile(p);
 			var targetCenterPos = ml - v;
 
 			ZoomTo(targetTileSize);
@@ -445,14 +467,14 @@ namespace Dwarrowdelf.Client.UI
 			base.OnLostMouseCapture(e);
 		}
 
-		public Point CenterPos
+		public Point AnimatedCenterPos	// XXX
 		{
-			get { return m_mapControl.CenterPos; }
+			get { return this.CenterPos; }
 
 			set
 			{
-				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
-				m_mapControl.CenterPos = value;
+				BeginAnimation(MapControl.CenterPosProperty, null);
+				this.CenterPos = value;
 			}
 		}
 
@@ -463,7 +485,7 @@ namespace Dwarrowdelf.Client.UI
 			ScrollTo(new Point(p.X, p.Y));
 		}
 
-		void ScrollTo(Point target)
+		public void ScrollTo(Point target)
 		{
 			StopScrollToDir();
 
@@ -471,7 +493,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		void ScrollTo(Point target, double targetTileSize)
@@ -482,8 +504,8 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var anim = new PointAnimation(target, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
-			anim.EasingFunction = new MyEase(m_mapControl.TileSize, targetTileSize);
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			anim.EasingFunction = new MyEase(this.TileSize, targetTileSize);
+			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public void ScrollToDirection(IntVector2 vector)
@@ -515,7 +537,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_scrollVector != new IntVector2())
 					BeginScrollToDir();
 			};
-			m_mapControl.BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(MapControl.CenterPosProperty, anim, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		void StopScrollToDir()
@@ -524,18 +546,8 @@ namespace Dwarrowdelf.Client.UI
 			{
 				m_scrollVector = new IntVector2();
 				var cp = this.CenterPos;
-				m_mapControl.BeginAnimation(MapControl.CenterPosProperty, null);
+				BeginAnimation(MapControl.CenterPosProperty, null);
 				this.CenterPos = cp;
-			}
-		}
-
-		public bool ShowVirtualSymbols
-		{
-			get { return m_mapControl.ShowVirtualSymbols; }
-			set
-			{
-				m_mapControl.ShowVirtualSymbols = value;
-				Notify("ShowVirtualSymbols");
 			}
 		}
 
@@ -569,53 +581,5 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public EnvironmentObject Environment
-		{
-			get { return m_mapControl.Environment; }
-			set { m_mapControl.Environment = value; }
-		}
-
-		void OnEnvironmentChanged(EnvironmentObject env)
-		{
-			this.Selection = new MapSelection();
-
-			UpdateHoverTileInfo();
-
-			Notify("Environment");
-		}
-
-		public int Z
-		{
-			get { return m_mapControl.Z; }
-			set { m_mapControl.Z = value; }
-		}
-
-		void OnZChanged(int z)
-		{
-			UpdateHoverTileInfo();
-
-			Notify("Z");
-		}
-
-		void Notify(string name)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(name));
-		}
-
-		#region INotifyPropertyChanged Members
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
-
-		#region IDispobable
-		public void Dispose()
-		{
-			if (m_mapControl != null)
-			{
-				m_mapControl.Dispose();
-				m_mapControl = null;
-			}
-		}
-		#endregion
 	}
 }
