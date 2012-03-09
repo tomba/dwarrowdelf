@@ -60,6 +60,37 @@ namespace Dwarrowdelf.Client.TileControl
 			this.MinWidth = 64;
 		}
 
+		#region IDisposable
+
+		bool m_disposed;
+
+		~TileControlCore()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			this.Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				//TODO: Managed cleanup code here, while managed refs still valid
+			}
+
+			m_renderer.Dispose();
+
+			m_disposed = true;
+		}
+		#endregion
+
 		protected void SetRenderer(ITileRenderer renderer)
 		{
 			m_renderer = renderer;
@@ -68,11 +99,6 @@ namespace Dwarrowdelf.Client.TileControl
 		public IntSize2 GridSize
 		{
 			get { return m_gridSize; }
-		}
-
-		public void Dispose()
-		{
-			m_renderer.Dispose();
 		}
 
 		public double TileSize

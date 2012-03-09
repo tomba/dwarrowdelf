@@ -156,53 +156,53 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void Dispose(bool disposing)
 		{
-			if (!m_disposed)
+			if (m_disposed)
+				return;
+
+			if (disposing)
 			{
-				if (disposing)
-				{
-					// Dispose managed resources.
-				}
-
-				// Dispose unmanaged resources
-
-				if (m_scene != null)
-				{
-					m_scene.Dispose();
-					m_scene = null;
-				}
-
-				if (m_interopImageSource != null)
-				{
-					m_interopImageSource.Dispose();
-					m_interopImageSource = null;
-				}
-
-				if (m_renderTexture != null)
-				{
-					m_renderTexture.Dispose();
-					m_renderTexture = null;
-				}
-
-				if (m_tileTextureArray != null)
-				{
-					m_tileTextureArray.Dispose();
-					m_tileTextureArray = null;
-				}
-
-				if (m_colorBuffer != null)
-				{
-					m_colorBuffer.Dispose();
-					m_colorBuffer = null;
-				}
-
-				if (m_device != null)
-				{
-					m_device.Dispose();
-					m_device = null;
-				}
-
-				m_disposed = true;
+				// Dispose managed resources.
 			}
+
+			// Dispose unmanaged resources
+
+			if (m_scene != null)
+			{
+				m_scene.Dispose();
+				m_scene = null;
+			}
+
+			if (m_interopImageSource != null)
+			{
+				m_interopImageSource.Dispose();
+				m_interopImageSource = null;
+			}
+
+			if (m_renderTexture != null)
+			{
+				m_renderTexture.Dispose();
+				m_renderTexture = null;
+			}
+
+			if (m_tileTextureArray != null)
+			{
+				m_tileTextureArray.Dispose();
+				m_tileTextureArray = null;
+			}
+
+			if (m_colorBuffer != null)
+			{
+				m_colorBuffer.Dispose();
+				m_colorBuffer = null;
+			}
+
+			if (m_device != null)
+			{
+				m_device.Dispose();
+				m_device = null;
+			}
+
+			m_disposed = true;
 		}
 		#endregion
 	}
