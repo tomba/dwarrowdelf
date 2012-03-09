@@ -162,15 +162,12 @@ namespace Dwarrowdelf.Client.UI
 				sl = ScreenPointToIntScreenTile(p);
 				var ml = ScreenPointToMapLocation(p);
 
-				if (this.Environment.Contains(ml))
+				if (this.Environment != null && this.Environment.Contains(ml))
 				{
 					this.HoverTileView.SetTarget(this.Environment, ml);
 				}
 				else
 				{
-					p = new Point();
-					sl = new IntPoint2();
-
 					this.HoverTileView.ClearTarget();
 				}
 			}
