@@ -141,6 +141,7 @@ namespace Dwarrowdelf.Client.UI
 			UpdateHoverTileInfo();
 		}
 
+		// used when tracking mouse position
 		public Point MousePos { get; private set; }
 		public IntPoint2 ScreenLocation { get; private set; }
 
@@ -172,16 +173,19 @@ namespace Dwarrowdelf.Client.UI
 				}
 			}
 
-			if (p != this.MousePos)
+			if (ClientConfig.ShowMousePos)
 			{
-				this.MousePos = p;
-				Notify("MousePos");
-			}
+				if (p != this.MousePos)
+				{
+					this.MousePos = p;
+					Notify("MousePos");
+				}
 
-			if (sl != this.ScreenLocation)
-			{
-				this.ScreenLocation = sl;
-				Notify("ScreenLocation");
+				if (sl != this.ScreenLocation)
+				{
+					this.ScreenLocation = sl;
+					Notify("ScreenLocation");
+				}
 			}
 		}
 

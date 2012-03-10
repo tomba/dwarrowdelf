@@ -12,6 +12,8 @@ namespace Dwarrowdelf.Client
 		public static bool AutoEnterGame = true;
 
 		public static bool ShowFps = false;
+		public static bool ShowMousePos = false;
+		public static bool ShowCenterPos = false;
 
 	}
 }
