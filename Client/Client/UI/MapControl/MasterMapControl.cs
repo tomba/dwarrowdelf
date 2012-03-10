@@ -141,8 +141,18 @@ namespace Dwarrowdelf.Client.UI
 		// used when tracking mouse position
 		public Point MousePos { get; private set; }
 		public IntPoint2 ScreenLocation { get; private set; }
+		bool m_updateHoverTileInfoQueued;
 
 		void UpdateHoverTileInfo()
+		{
+			if (m_updateHoverTileInfoQueued)
+				return;
+
+			m_updateHoverTileInfoQueued = true;
+			Dispatcher.BeginInvoke(new Action(_UpdateHoverTileInfo));
+		}
+
+		void _UpdateHoverTileInfo()
 		{
 			Point p;
 			IntPoint2 sl;
@@ -184,6 +194,8 @@ namespace Dwarrowdelf.Client.UI
 					Notify("ScreenLocation");
 				}
 			}
+
+			m_updateHoverTileInfoQueued = false;
 		}
 
 		public int Columns { get { return this.GridSize.Width; } }
