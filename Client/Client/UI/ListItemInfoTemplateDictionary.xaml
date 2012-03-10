@@ -75,10 +75,6 @@
 
 	<!-- Item Object -->
 	<DataTemplate DataType="{x:Type local:ItemObject}">
-		<DataTemplate.Resources>
-			<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
-		</DataTemplate.Resources>
-
 		<Grid ContextMenu="{StaticResource objectMenu}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />

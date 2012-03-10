@@ -8,6 +8,7 @@
 	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 
 	<Application.Resources>
+		<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
 
 		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 		<ui:CapitalizeConverter x:Key="capitalizeConverter" />

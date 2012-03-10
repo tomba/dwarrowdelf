@@ -3,7 +3,8 @@
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client">
 
 	<StatusBar>
 		<TextBlock>Tick</TextBlock>
@@ -65,10 +66,12 @@
 
 		<Separator />
 
-		<TextBlock>FPS</TextBlock>
-		<TextBlock Name="fpsTextBlock" Width="50" />
+		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowFps}, Converter={StaticResource boolToVisConverter}}">
+			<TextBlock>FPS</TextBlock>
+			<TextBlock Name="fpsTextBlock" Width="50" />
 
-		<Separator />
+			<Separator />
+		</StatusBar>
 
 		<TextBlock>CenterPos</TextBlock>
 		<TextBlock Width="100" DataContext="{Binding MapControl}">

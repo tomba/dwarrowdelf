@@ -31,8 +31,11 @@ namespace Dwarrowdelf.Client.UI
 		{
 			base.OnInitialized(e);
 
-			CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
-			m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+			if (ClientConfig.ShowFps)
+			{
+				CompositionTarget.Rendering += new EventHandler(CompositionTarget_Rendering);
+				m_timer = new DispatcherTimer(TimeSpan.FromSeconds(1), DispatcherPriority.Normal, OnTimerCallback, this.Dispatcher);
+			}
 		}
 
 		int m_fpsCounter;

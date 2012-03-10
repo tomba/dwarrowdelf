@@ -11,5 +11,7 @@ namespace Dwarrowdelf.Client
 		public static bool AutoConnect = true;
 		public static bool AutoEnterGame = true;
 
+		public static bool ShowFps = false;
+
 	}
 }
