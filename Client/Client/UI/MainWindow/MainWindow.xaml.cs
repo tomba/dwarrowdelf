@@ -24,11 +24,6 @@ namespace Dwarrowdelf.Client.UI
 		MovableObject m_followObject;
 		bool m_closing;
 
-		bool m_serverInAppDomain = true;
-
-		bool m_autoConnect = true;
-		bool m_autoEnterGame = true;
-
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
 
@@ -427,7 +422,7 @@ for p in area.Range():
 			if (p != null)
 				Win32.Helpers.LoadWindowPlacement(this, p);
 
-			if (m_autoConnect)
+			if (ClientConfig.AutoConnect)
 				Connect();
 		}
 
@@ -600,7 +595,7 @@ for p in area.Range():
 
 		public void Connect()
 		{
-			if (m_serverInAppDomain)
+			if (ClientConfig.ServerInAppDomain)
 			{
 				SetLogOnText("Starting server");
 
@@ -641,7 +636,7 @@ for p in area.Range():
 
 			GameData.Data.User = user;
 
-			if (user.IsPlayerInGame || !m_autoEnterGame)
+			if (user.IsPlayerInGame || !ClientConfig.AutoEnterGame)
 			{
 				CloseLoginDialog();
 				return;

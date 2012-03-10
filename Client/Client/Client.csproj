@@ -240,6 +240,7 @@
     </Page>
     <Compile Include="BaseObject.cs" />
     <Compile Include="ChangeHandler.cs" />
+    <Compile Include="ClientConfig.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="ConstructManager.cs" />
