@@ -64,6 +64,9 @@ namespace Dwarrowdelf.Client.UI
 			}
 			else
 			{
+				// WPF renderer needs clipping
+				this.ClipToBounds = true;
+
 				bool detailed = true;
 
 				if (detailed)
