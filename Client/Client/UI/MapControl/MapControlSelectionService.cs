@@ -279,7 +279,7 @@ namespace Dwarrowdelf.Client.UI
 			else
 			{
 				this.SelectionStart = cuboid.Corner1;
-				this.SelectionEnd = cuboid.Corner2 - new IntVector3(1, 1, 1);
+				this.SelectionEnd = cuboid.Corner2;
 				this.IsSelectionValid = true;
 			}
 		}

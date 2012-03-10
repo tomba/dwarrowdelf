@@ -83,7 +83,7 @@ namespace Dwarrowdelf
 
 		public IntPoint3 Corner2
 		{
-			get { return new IntPoint3(this.X + this.Width, this.Y + this.Height, this.Z + this.Depth); }
+			get { return new IntPoint3(this.X + this.Width - 1, this.Y + this.Height - 1, this.Z + this.Depth - 1); }
 		}
 
 		public IntPoint3 Center

@@ -343,7 +343,7 @@ namespace Dwarrowdelf.Client
 				var z = this.Location.Z;
 
 				s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
-					m_visionMap, env.Bounds.Plane,
+					m_visionMap, env.Size.Plane,
 					l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
 				m_losMapVersion = this.Environment.Version;

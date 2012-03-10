@@ -23,10 +23,17 @@ namespace Dwarrowdelf
 
 		public bool IsEmpty
 		{
-			get
-			{
-				return this.Width == 0 && this.Height == 0;
-			}
+			get { return this.Width == 0 && this.Height == 0; }
+		}
+
+		public bool Contains(IntPoint2 p)
+		{
+			return p.X >= 0 && p.Y >= 0 && p.X < this.Width && p.Y < this.Height;
+		}
+
+		public IntPoint2 Center
+		{
+			get { return new IntPoint2((this.Width - 1) / 2, (this.Height - 1) / 2); }
 		}
 
 		#region IEquatable<IntSize2> Members

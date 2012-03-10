@@ -9,39 +9,32 @@ namespace Dwarrowdelf.Client
 	public sealed class GrowingTileGrid
 	{
 		TileData[, ,] m_grid;
-		IntCuboid m_bounds;
+		public IntSize3 Size { get; private set; }
 
 		public GrowingTileGrid()
-			: this(new IntCuboid())
+			: this(new IntSize3())
 		{
 		}
 
-		public GrowingTileGrid(IntCuboid bounds)
+		public GrowingTileGrid(IntSize3 size)
 		{
-			SetBounds(bounds);
+			SetSize(size);
 		}
 
-		public void SetBounds(IntCuboid bounds)
+		public void SetSize(IntSize3 size)
 		{
-			if (!m_bounds.IsNull)
+			if (!this.Size.IsEmpty)
 				throw new Exception();
 
-			int nx = bounds.X;
-			int ny = bounds.Y;
-			int nz = bounds.Z;
-			int nw = bounds.Width;
-			int nh = bounds.Height;
-			int nd = bounds.Depth;
+			this.Size = size;
+			m_grid = new TileData[size.Depth, size.Height, size.Width];
 
-			m_grid = new TileData[nd, nh, nw];
-			m_bounds = new IntCuboid(nx, ny, nz, nw, nh, nd);
-
-			Debug.Print("GrowingTileGrid.SetBounds({0})", m_bounds);
+			Debug.Print("GrowingTileGrid.SetSize({0})", this.Size);
 		}
 
 		public void Grow(IntPoint3 p)
 		{
-			if (!m_bounds.Contains(p))
+			if (!this.Size.Contains(p))
 				DoGrow(p);
 		}
 
@@ -63,126 +56,67 @@ namespace Dwarrowdelf.Client
 
 		void DoGrow(IntPoint3 p)
 		{
-			int nx, ny, nz;
 			int nw, nh, nd;
 
-			if (p.X >= m_bounds.X2)
-			{
-				nw = Align256(m_bounds.Width + (p.X - (m_bounds.X2 - 1)));
-				nx = m_bounds.X1;
-			}
-			else if (p.X < m_bounds.X1)
-			{
-				nw = Align256(m_bounds.Width + (m_bounds.X1 - p.X));
-				nx = m_bounds.X1 - (nw - m_bounds.Width);
-			}
-			else
-			{
-				nw = m_bounds.Width;
-				nx = m_bounds.X1;
-			}
+			if (p.X < 0 || p.Y < 0 || p.Z < 0)
+				throw new Exception();
 
-			if (p.Y >= m_bounds.Y2)
-			{
-				nh = Align256(m_bounds.Height + (p.Y - (m_bounds.Y2 - 1)));
-				ny = m_bounds.Y1;
-			}
-			else if (p.Y < m_bounds.Y1)
-			{
-				nh = Align256(m_bounds.Height + (m_bounds.Y1 - p.Y));
-				ny = m_bounds.Y1 - (nh - m_bounds.Height);
-			}
-			else
-			{
-				nh = m_bounds.Height;
-				ny = m_bounds.Y1;
-			}
+			nw = Align256(Math.Max(this.Size.Width, p.X + 1));
+			nh = Align256(Math.Max(this.Size.Height, p.Y + 1));
+			nd = Align16(Math.Max(this.Size.Depth, p.Z + 1));
 
-			if (p.Z >= m_bounds.Z2)
-			{
-				nd = Align16(m_bounds.Depth + (p.Z - (m_bounds.Z2 - 1)));
-				nz = m_bounds.Z1;
-			}
-			else if (p.Z < m_bounds.Z1)
-			{
-				nd = Align16(m_bounds.Depth + (m_bounds.Z1 - p.Z));
-				nz = m_bounds.Z1 - (nd - m_bounds.Depth);
-			}
-			else
-			{
-				nd = m_bounds.Depth;
-				nz = m_bounds.Z1;
-			}
-
-			var oldOrigin = new IntVector3(-m_bounds.X1, -m_bounds.Y1, -m_bounds.Z1);
-			var newOrigin = new IntVector3(-nx, -ny, -nz);
 			var newGrid = new TileData[nd, nh, nw];
 
 			/* XXX Array.Copy will probably give better speed */
-			foreach (var l in m_bounds.Range())
+			foreach (var l in this.Size.Range())
 			{
-				var sp = l + oldOrigin;
-				var dp = l + newOrigin;
-				var src = m_grid[sp.Z, sp.Y, sp.X];
-				newGrid[dp.Z, dp.Y, dp.X] = src;
+				var src = m_grid[l.Z, l.Y, l.X];
+				newGrid[l.Z, l.Y, l.X] = src;
 			}
 
 			m_grid = newGrid;
-			m_bounds = new IntCuboid(nx, ny, nz, nw, nh, nd);
+			this.Size = new IntSize3(nw, nh, nd);
 
-			Debug.Print("GrowingTileGrid.SetBounds({0})", m_bounds);
-		}
-
-		void Adjust(ref IntPoint3 p)
-		{
-			p = new IntPoint3(p.X - m_bounds.X1, p.Y - m_bounds.Y1, p.Z - m_bounds.Z1);
+			Debug.Print("GrowingTileGrid.Grow({0})", this.Size);
 		}
 
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
-			Adjust(ref p);
 			m_grid[p.Z, p.Y, p.X] = data;
 		}
 
 		public TileData GetTileData(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X];
 		}
 
 		public InteriorID GetInteriorID(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].InteriorID;
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].TerrainID;
 		}
 
 		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
 		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
 		public byte GetWaterLevel(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
 		public TileFlags GetFlags(IntPoint3 p)
 		{
-			Adjust(ref p);
 			return m_grid[p.Z, p.Y, p.X].Flags;
 		}
 	}

@@ -45,7 +45,7 @@ namespace Dwarrowdelf
 	{
 		VisibilityMode VisibilityMode { get; }
 
-		IntCuboid Bounds { get; }
+		IntSize3 Size { get; }
 		bool Contains(IntPoint3 p);
 
 		TerrainID GetTerrainID(IntPoint3 l);

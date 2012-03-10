@@ -53,7 +53,7 @@ namespace Dwarrowdelf
 
 		public IntPoint2 X2Y2
 		{
-			get { return new IntPoint2(this.X + this.Width, this.Y + this.Height); }
+			get { return new IntPoint2(this.X + this.Width - 1, this.Y + this.Height - 1); }
 		}
 
 		public IntPoint2 Center

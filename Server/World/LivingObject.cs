@@ -714,7 +714,7 @@ namespace Dwarrowdelf.Server
 
 			int z = this.Z;
 			var env = this.Environment;
-			s_losAlgo.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Bounds.Plane,
+			s_losAlgo.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
 				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
 			m_losMapVersion = this.Environment.Version;
@@ -755,7 +755,7 @@ namespace Dwarrowdelf.Server
 
 		IEnumerable<IntPoint2> GetVisibleLocationsSimpleFOV()
 		{
-			var bounds2D = this.Environment.Bounds.Plane;
+			var bounds2D = this.Environment.Size.Plane;
 
 			for (int y = this.Y - this.VisionRange; y <= this.Y + this.VisionRange; ++y)
 			{

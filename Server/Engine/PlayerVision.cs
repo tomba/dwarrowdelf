@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Server
 			m_player = player;
 			m_environment = env;
 
-			var bounds = env.Bounds;
+			var bounds = env.Size;
 
 			m_visibilityArray = new bool[bounds.Depth, bounds.Height, bounds.Width];
 

@@ -37,6 +37,24 @@ namespace Dwarrowdelf
 			get { return this.Width == 0 && this.Height == 0 && this.Depth == 0; }
 		}
 
+		public bool Contains(IntPoint3 p)
+		{
+			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
+		}
+
+		public IntSize2 Plane
+		{
+			get { return new IntSize2(this.Width, this.Height); }
+		}
+
+		public IEnumerable<IntPoint3> Range()
+		{
+			for (int z = 0; z < this.Depth; ++z)
+				for (int y = 0; y < this.Height; ++y)
+					for (int x = 0; x < this.Width; ++x)
+						yield return new IntPoint3(x, y, z);
+		}
+
 		#region IEquatable<IntSize3> Members
 
 		public bool Equals(IntSize3 s)

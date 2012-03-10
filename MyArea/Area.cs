@@ -115,7 +115,7 @@ namespace MyArea
 		{
 			const int size = 3;
 
-			var center = env.Bounds.Plane.Center;
+			var center = env.Size.Plane.Center;
 
 			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
 			{

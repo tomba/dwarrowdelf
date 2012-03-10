@@ -32,12 +32,15 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public VisibilityMode VisibilityMode { get; private set; }
+
 		[SaveGameProperty]
 		public int Width { get; private set; }
 		[SaveGameProperty]
 		public int Height { get; private set; }
 		[SaveGameProperty]
 		public int Depth { get; private set; }
+
+		public IntSize3 Size { get { return new IntSize3(this.Width, this.Height, this.Depth); } }
 
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
 		HashSet<AreaObject> m_largeObjectSet;
@@ -106,11 +109,6 @@ namespace Dwarrowdelf.Server
 			this.World.AddChange(new MapChange(this, l, tileData));
 		}
 
-		public IntCuboid Bounds
-		{
-			get { return new IntCuboid(0, 0, 0, this.Width, this.Height, this.Depth); }
-		}
-
 		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
@@ -118,7 +116,7 @@ namespace Dwarrowdelf.Server
 
 		public void ScanWaterTiles()
 		{
-			foreach (var p in this.Bounds.Range())
+			foreach (var p in this.Size.Range())
 			{
 				if (m_tileGrid.GetWaterLevel(p) > 0)
 					m_waterTiles.Add(p);
@@ -569,7 +567,7 @@ namespace Dwarrowdelf.Server
 			var data = (MapData)baseData;
 
 			data.VisibilityMode = this.VisibilityMode;
-			data.Bounds = this.Bounds;
+			data.Size = this.Size;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)

@@ -25,7 +25,7 @@ namespace Dwarrowdelf
 	public sealed class MapData : GameObjectData
 	{
 		public VisibilityMode VisibilityMode { get; set; }
-		public IntCuboid Bounds { get; set; }
+		public IntSize3 Size { get; set; }
 	}
 
 	[Serializable]

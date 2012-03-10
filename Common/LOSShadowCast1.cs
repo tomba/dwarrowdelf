@@ -8,20 +8,20 @@ namespace Dwarrowdelf
 	public interface ILOSAlgo
 	{
 		void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate);
+			IntSize2 mapSize, Func<IntPoint2, bool> blockerDelegate);
 	}
 
 	public sealed class LOSNull : ILOSAlgo
 	{
 		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate)
+			IntSize2 mapSize, Func<IntPoint2, bool> blockerDelegate)
 		{
 			for (int y = -visionRange; y <= visionRange; ++y)
 			{
 				for (int x = -visionRange; x <= visionRange; ++x)
 				{
 					var l = new IntPoint2(x, y);
-					if (mapBounds.Contains(l + (IntVector2)viewerLocation))
+					if (mapSize.Contains(l + (IntVector2)viewerLocation))
 						visibilityMap[l] = true;
 					else
 						visibilityMap[l] = true;
@@ -60,7 +60,7 @@ namespace Dwarrowdelf
 		
 		// blockerDelegate(location) returns if tile at location is a blocker. slow?
 		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, 
-			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate)
+			IntSize2 mapSize, Func<IntPoint2, bool> blockerDelegate)
 		{
 			if (s_tested == false)
 			{
@@ -78,11 +78,11 @@ namespace Dwarrowdelf
 			}
 
 			for (int i = 0; i < 8; i++)
-				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapBounds, blockerDelegate, i);
+				CalculateLOS(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate, i);
 		}
 
 		void CalculateLOS(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap,
-			IntRect mapBounds, Func<IntPoint2, bool> blockerDelegate, int octant)
+			IntSize2 mapSize, Func<IntPoint2, bool> blockerDelegate, int octant)
 		{
 			// Cell (0,0) is assumed to be lit and visible in all cases.
 			m_cells[0].Initialize();
@@ -104,7 +104,7 @@ namespace Dwarrowdelf
 					// does the current cell represent a grid square that blocks LOS?
 					bool blocker;
 
-					if (mapBounds.Contains(mapLocation))
+					if (mapSize.Contains(mapLocation))
 					{
 						if (blockerDelegate(mapLocation))
 							blocker = true;
@@ -255,7 +255,7 @@ namespace Dwarrowdelf
 						cell.lit = true;
 
 					// STEP 7 - apply 'lit' value
-					if (mapBounds.Contains(mapLocation))
+					if (mapSize.Contains(mapLocation))
 					{
 						if (cell.lit || (blocker && cell.visible))
 							visibilityMap[translatedLocation] = true;
@@ -335,10 +335,10 @@ namespace Dwarrowdelf
 
 			Grid2D<bool> vis = new Grid2D<bool>(w, w, w/2, w/2);
 			IntPoint2 loc = new IntPoint2(w/2, w/2);
-			IntRect bounds = new IntRect(0, 0, w, w);
+			IntSize2 size = new IntSize2(w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 
-			los.Calculate(loc, 3, vis, bounds, l => blocks[l.Y, l.X] != 0);
+			los.Calculate(loc, 3, vis, size, l => blocks[l.Y, l.X] != 0);
 			vis.Origin = new IntVector2(0, 0);
 			for (int y = 0; y < w; ++y)
 			{
@@ -376,12 +376,12 @@ namespace Dwarrowdelf
 
 			Grid2D<bool> vis = new Grid2D<bool>(w, w, w / 2, w / 2);
 			IntPoint2 loc = new IntPoint2(w / 2, w / 2);
-			IntRect bounds = new IntRect(0, 0, w, w);
+			IntSize2 size = new IntSize2(w, w);
 			LOSShadowCast1 los = new LOSShadowCast1();
 
 			// 1.4M ticks
 			for (int i = 0; i < 5000; ++i)
-				los.Calculate(loc, w / 2, vis, bounds, l => blocks[l.Y, l.X]);
+				los.Calculate(loc, w / 2, vis, size, l => blocks[l.Y, l.X]);
 		}
 	}
 }

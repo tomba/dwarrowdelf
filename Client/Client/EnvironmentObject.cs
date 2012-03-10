@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 
 		public VisibilityMode VisibilityMode { get; private set; }
 
-		public IntCuboid Bounds { get; private set; }
+		public IntSize3 Size { get { return m_tileGrid.Size; } }
 
 		[SaveGameProperty(UseOldList = true)]
 		ObservableCollection<IAreaElement> m_areaElements;
@@ -80,11 +80,8 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
-			if (!data.Bounds.IsNull)
-			{
-				this.Bounds = data.Bounds;
-				m_tileGrid.SetBounds(this.Bounds);
-			}
+			if (!data.Size.IsEmpty)
+				m_tileGrid.SetSize(data.Size);
 
 			this.VisibilityMode = data.VisibilityMode;
 		}
@@ -102,7 +99,7 @@ namespace Dwarrowdelf.Client
 
 		public bool Contains(IntPoint3 p)
 		{
-			return this.Bounds.Contains(p);
+			return this.Size.Contains(p);
 		}
 
 		public bool IsWalkable(IntPoint3 l)
@@ -195,49 +192,15 @@ namespace Dwarrowdelf.Client
 		{
 			this.Version += 1;
 
-			int x1; int x2;
-			int y1; int y2;
-			int z1; int z2;
-
-			if (this.Bounds.IsNull)
-			{
-				x1 = y1 = z1 = Int32.MaxValue;
-				x2 = y2 = z2 = Int32.MinValue;
-			}
-			else
-			{
-				x1 = this.Bounds.X1;
-				x2 = this.Bounds.X2;
-				y1 = this.Bounds.Y1;
-				y2 = this.Bounds.Y2;
-				z1 = this.Bounds.Z1;
-				z2 = this.Bounds.Z2;
-			}
-
-			bool setNewBounds = false;
-
 			foreach (var kvp in tileDataList)
 			{
-				setNewBounds = true;
 				IntPoint3 p = kvp.Item1;
 				TileData data = kvp.Item2;
-
-				x1 = Math.Min(x1, p.X);
-				x2 = Math.Max(x2, p.X + 1);
-				y1 = Math.Min(y1, p.Y);
-				y2 = Math.Max(y2, p.Y + 1);
-				z1 = Math.Min(z1, p.Z);
-				z2 = Math.Max(z2, p.Z + 1);
 
 				m_tileGrid.SetTileData(p, data);
 
 				if (MapTileTerrainChanged != null)
 					MapTileTerrainChanged(p);
-			}
-
-			if (setNewBounds)
-			{
-				this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
 			}
 		}
 
@@ -245,33 +208,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Version += 1;
 
-			int x1; int x2;
-			int y1; int y2;
-			int z1; int z2;
-
-			if (this.Bounds.IsNull)
-			{
-				x1 = y1 = z1 = Int32.MaxValue;
-				x2 = y2 = z2 = Int32.MinValue;
-			}
-			else
-			{
-				x1 = this.Bounds.X1;
-				x2 = this.Bounds.X2;
-				y1 = this.Bounds.Y1;
-				y2 = this.Bounds.Y2;
-				z1 = this.Bounds.Z1;
-				z2 = this.Bounds.Z2;
-			}
-
-			x1 = Math.Min(x1, bounds.X1);
-			x2 = Math.Max(x2, bounds.X2);
-			y1 = Math.Min(y1, bounds.Y1);
-			y2 = Math.Max(y2, bounds.Y2);
-			z1 = Math.Min(z1, bounds.Z1);
-			z2 = Math.Max(z2, bounds.Z2);
-
-			this.Bounds = new IntCuboid(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
+			m_tileGrid.Grow(bounds.Corner2);
 
 			Trace.TraceError("Recv {0}", bounds.Z);
 
