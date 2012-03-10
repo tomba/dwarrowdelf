@@ -35,9 +35,6 @@ namespace Dwarrowdelf.Client.UI
 
 		const int ANIM_TIME_MS = 200;
 
-		const double MAXTILESIZE = 64;
-		const double MINTILESIZE = 2;
-
 		double? m_targetTileSize;
 		IntVector2 m_scrollVector;
 

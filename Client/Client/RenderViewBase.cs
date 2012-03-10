@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client
 	interface IRenderView
 	{
 		IntPoint3 CenterPos { get; set; }
+		void SetMaxSize(IntSize2 size);
 		void SetSize(IntSize2 size);
 		bool Contains(IntPoint3 ml);
 		bool IsVisibilityCheckEnabled { get; set; }
@@ -31,8 +32,6 @@ namespace Dwarrowdelf.Client
 		protected EnvironmentObject m_environment;
 		protected IntPoint3 m_centerPos;
 		IntCuboid m_bounds;
-
-		protected bool m_invalid;
 
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
@@ -59,10 +58,10 @@ namespace Dwarrowdelf.Client
 
 				m_centerPos = value;
 
-				if (!m_invalid)
+				if (!m_renderData.Invalid)
 				{
 					if (diff.Z != 0)
-						m_invalid = true;
+						m_renderData.Invalid = true;
 					else
 						ScrollTiles(new IntVector2(diff.X, -diff.Y));
 				}
@@ -72,6 +71,11 @@ namespace Dwarrowdelf.Client
 				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3(s, MAXLEVEL));
 			}
+		}
+
+		public void SetMaxSize(IntSize2 size)
+		{
+			m_renderData.SetMaxSize(size);
 		}
 
 		public void SetSize(IntSize2 size)
@@ -84,8 +88,6 @@ namespace Dwarrowdelf.Client
 				var s = m_renderData.Size;
 				m_bounds = new IntCuboid(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3(s, MAXLEVEL));
-
-				m_invalid = true;
 			}
 		}
 
@@ -123,7 +125,7 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				m_showVirtualSymbols = value;
-				m_invalid = true;
+				m_renderData.Invalid = true;
 			}
 		}
 
@@ -134,7 +136,7 @@ namespace Dwarrowdelf.Client
 			set
 			{
 				m_isVisibilityCheckEnabled = value;
-				m_invalid = true;
+				m_renderData.Invalid = true;
 			}
 		}
 
@@ -154,7 +156,7 @@ namespace Dwarrowdelf.Client
 				}
 
 				m_environment = value;
-				m_invalid = true;
+				m_renderData.Invalid = true;
 
 				if (m_environment != null)
 				{
@@ -166,7 +168,7 @@ namespace Dwarrowdelf.Client
 
 		public void Invalidate()
 		{
-			m_invalid = true;
+			m_renderData.Invalid = true;
 		}
 
 		// Note: this is used to scroll the rendermap immediately when setting the centerpos. Could be used only when GetRenderMap is called
@@ -183,7 +185,7 @@ namespace Dwarrowdelf.Client
 
 			if (ax >= columns || ay >= rows)
 			{
-				m_invalid = true;
+				m_renderData.Invalid = true;
 				return;
 			}
 

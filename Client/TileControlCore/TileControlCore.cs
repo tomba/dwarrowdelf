@@ -211,7 +211,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
 		{
-			trace.TraceVerbose("OnRenderSizeChanged({0})", sizeInfo);
+			trace.TraceVerbose("OnRenderSizeChanged({0})", sizeInfo.NewSize);
 			base.OnRenderSizeChanged(sizeInfo);
 		}
 

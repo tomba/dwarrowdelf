@@ -52,13 +52,13 @@ namespace Dwarrowdelf.Client
 
 			// render everything when using LOS
 			if (m_environment != null && m_environment.VisibilityMode == VisibilityMode.LivingLOS)
-				m_invalid = true;
+				m_renderData.Invalid = true;
 
-			if (m_invalid)
+			if (m_renderData.Invalid)
 			{
 				//Debug.WriteLine("RenderView.Resolve All");
 				m_renderData.Clear();
-				m_invalid = false;
+				m_renderData.Invalid = false;
 			}
 
 			if (m_environment == null)

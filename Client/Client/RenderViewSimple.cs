@@ -40,11 +40,11 @@ namespace Dwarrowdelf.Client
 			var rows = m_renderData.Height;
 			var grid = m_renderData.Grid;
 
-			if (m_invalid || (m_environment != null && (m_environment.VisibilityMode != VisibilityMode.AllVisible || m_environment.VisibilityMode != VisibilityMode.GlobalFOV)))
+			if (m_renderData.Invalid || (m_environment != null && (m_environment.VisibilityMode != VisibilityMode.AllVisible || m_environment.VisibilityMode != VisibilityMode.GlobalFOV)))
 			{
 				//Debug.WriteLine("RenderView.Resolve All");
 				m_renderData.Clear();
-				m_invalid = false;
+				m_renderData.Invalid = false;
 			}
 
 			bool isSeeAll = GameData.Data.User.IsSeeAll;

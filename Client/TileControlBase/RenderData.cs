@@ -10,6 +10,7 @@ namespace Dwarrowdelf.Client.TileControl
 		public int Width { get { return this.Size.Width; } }
 		public int Height { get { return this.Size.Height; } }
 		public IntSize2 Size { get; private set; }
+		public bool Invalid { get; set; }
 
 		public T[] Grid { get; private set; }
 
@@ -18,19 +19,28 @@ namespace Dwarrowdelf.Client.TileControl
 			this.Grid = new T[0];
 		}
 
+		public void SetMaxSize(IntSize2 size)
+		{
+			int len = size.Width * size.Height;
+
+			if (len == this.Grid.Length)
+				return;
+
+			this.Grid = new T[size.Width * size.Height];
+			this.Invalid = true;
+		}
+
 		public void SetSize(IntSize2 size)
 		{
 			if (this.Size == size)
 				return;
 
-			this.Size = size;
-
 			int len = size.Width * size.Height;
+			if (len > this.Grid.Length)
+				throw new Exception();
 
-			if (len <= this.Grid.Length)
-				return;
-
-			this.Grid = new T[size.Width * size.Height];
+			this.Size = size;
+			this.Invalid = true;
 		}
 
 		public int GetIdx(int x, int y)

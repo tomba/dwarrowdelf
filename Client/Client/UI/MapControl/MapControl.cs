@@ -31,6 +31,9 @@ namespace Dwarrowdelf.Client.UI
 
 		TileControl.ISymbolTileRenderer m_renderer;
 
+		public const double MAXTILESIZE = 64;
+		public const double MINTILESIZE = 2;
+
 		public MapControl()
 		{
 		}
@@ -98,6 +101,18 @@ namespace Dwarrowdelf.Client.UI
 			m_renderer.SymbolDrawingCache = symbolDrawingCache;
 
 			base.OnInitialized(e);
+		}
+
+		protected override Size ArrangeOverride(Size arrangeBounds)
+		{
+			var renderSize = arrangeBounds;
+
+			var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
+			var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
+
+			m_renderView.SetMaxSize(new IntSize2(columns, rows));
+
+			return base.ArrangeOverride(arrangeBounds);
 		}
 
 		void OnSymbolDrawingCacheChanged()
