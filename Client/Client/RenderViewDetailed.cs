@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define NONPARALLEL
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,8 +64,12 @@ namespace Dwarrowdelf.Client
 			if (m_environment == null)
 				return;
 
+#if NONPARALLEL
+			for(int y = 0; y < rows; ++y)
+#else
 			// Note: we cannot access WPF stuff from different threads
 			Parallel.For(0, rows, y =>
+#endif
 			{
 				int idx = m_renderData.GetIdx(0, y);
 
@@ -76,7 +82,10 @@ namespace Dwarrowdelf.Client
 
 					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, this.IsVisibilityCheckEnabled);
 				}
-			});
+			}
+#if !NONPARALLEL
+			);
+#endif
 
 			//sw.Stop();
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
