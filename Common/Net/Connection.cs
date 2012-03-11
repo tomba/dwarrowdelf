@@ -21,6 +21,8 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
+		Message Receive();
+
 		void Start(Action<Message> receiveCallback, Action disconnectCallback);
 		void Send(Message msg);
 		void Disconnect();
@@ -103,7 +105,7 @@ namespace Dwarrowdelf
 			trace.TraceVerbose("Deserializer thread ending");
 		}
 
-		Message Receive()
+		public Message Receive()
 		{
 			var recvStream = m_netStream;
 

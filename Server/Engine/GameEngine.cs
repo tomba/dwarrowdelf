@@ -77,6 +77,9 @@ namespace Dwarrowdelf.Server
 
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
+
+			int magic = 0;
+			GameAction.MagicNumberGenerator = () => -Math.Abs(Interlocked.Increment(ref magic));	// XXX
 		}
 
 		public void Create()
@@ -186,14 +189,22 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 		}
 
-		public void Run()
+		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
 			m_gameThread = Thread.CurrentThread;
 
-			bool again = true;
-
+			this.World.HandleMessagesEvent += OnHandleMessages;
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
+
+			ConnectionListener.StartListening(_OnNewConnection);
+
+			trace.TraceInformation("The server is ready.");
+
+			if (serverStartWaitHandle != null)
+				serverStartWaitHandle.Set();
+
+			bool again = true;
 
 			while (m_exit == false)
 			{
@@ -203,8 +214,15 @@ namespace Dwarrowdelf.Server
 				again = this.World.Work();
 			}
 
+			trace.TraceInformation("Server exiting");
+
+			ConnectionListener.StopListening();
+
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
+			this.World.HandleMessagesEvent -= OnHandleMessages;
+
+			trace.TraceInformation("Server exit");
 		}
 
 		public void Stop()
@@ -212,6 +230,72 @@ namespace Dwarrowdelf.Server
 			m_exit = true;
 			Thread.MemoryBarrier();
 			SignalWorld();
+		}
+
+		void _OnNewConnection(IConnection connection)
+		{
+			trace.TraceInformation("New connection");
+
+			// XXX timeout
+			var msg = connection.Receive();
+
+			var request = msg as Messages.LogOnRequestMessage;
+
+			if (request == null)
+				throw new Exception();
+
+			m_world.BeginInvokeInstant(new Action<IConnection, Messages.LogOnRequestMessage>(OnNewConnection), connection, request);
+			SignalWorld();
+		}
+
+		void OnNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
+		{
+			VerifyAccess();
+
+			var name = request.Name;
+
+			int userID; // from universal user object
+
+			if (name == "tomba")
+				userID = 1;
+			else
+				throw new Exception();
+
+			var player = FindPlayer(userID);
+
+			if (player == null)
+			{
+				player = CreatePlayer(userID);
+				player.SetConnection(connection);
+
+				m_world.BeginInvoke(new Action<Player>(OnNewPlayer), player);
+				SignalWorld();
+			}
+			else
+			{
+				player.SetConnection(connection);
+				player.Start();
+				player.HandleLogOn();	// XXX
+				CheckForStartTick();
+			}
+		}
+
+		void OnNewPlayer(Player player)
+		{
+			player.Start();
+			player.HandleLogOn();	// XXX
+			CheckForStartTick();
+		}
+
+		void OnHandleMessages()
+		{
+			VerifyAccess();
+
+			foreach (var player in m_players)
+			{
+				if (player.IsConnected)
+					player.HandleNewMessages();
+			}
 		}
 
 		bool _IsTimeToStartTick()
@@ -369,12 +453,12 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public Player FindPlayer(int userID)
+		Player FindPlayer(int userID)
 		{
 			return m_players.SingleOrDefault(u => u.UserID == userID);
 		}
 
-		public Player CreatePlayer(int userID)
+		Player CreatePlayer(int userID)
 		{
 			var player = FindPlayer(userID);
 

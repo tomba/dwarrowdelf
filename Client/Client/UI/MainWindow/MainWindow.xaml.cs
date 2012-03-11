@@ -612,10 +612,7 @@ for p in area.Range():
 
 		void OnServerStarted()
 		{
-			var world = new World();
-			GameData.Data.World = world;
-
-			GameData.Data.Connection = new ClientConnection(world);
+			GameData.Data.Connection = new ClientConnection();
 			GameData.Data.Connection.DisconnectEvent += OnDisconnected;
 
 			SetLogOnText("Connecting");
@@ -625,8 +622,6 @@ for p in area.Range():
 
 		void OnConnected(ClientUser user, string error)
 		{
-			GameData.Data.Connection.LogOutEvent += OnLoggedOut;
-
 			if (error != null)
 			{
 				CloseLoginDialog();
@@ -642,7 +637,7 @@ for p in area.Range():
 				return;
 			}
 
-			EnterGame();
+			CloseLoginDialog();
 		}
 
 
@@ -675,12 +670,11 @@ for p in area.Range():
 			GameData.Data.Connection.SendLogOut();
 		}
 
-		void OnLoggedOut()
+		void OnDisconnected()
 		{
 			this.MapControl.Environment = null;
 
 			CloseLoginDialog();
-			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
 			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
 			GameData.Data.Connection = null;
 
@@ -694,60 +688,6 @@ for p in area.Range():
 				Close();
 		}
 
-		void OnDisconnected()
-		{
-			this.MapControl.Environment = null;
-
-			GameData.Data.Connection.LogOutEvent -= OnLoggedOut;
-			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
-			GameData.Data.Connection = null;
-
-			if (m_server != null)
-			{
-				m_server.Stop();
-				m_server = null;
-			}
-		}
-
-
-
-
-
-
-
-
-		public void EnterGame()
-		{
-			SetLogOnText("Entering Game");
-
-			GameData.Data.User.SendEnterGame(OnEnteredGame);
-		}
-
-		void OnEnteredGame()
-		{
-			CloseLoginDialog();
-			GameData.Data.User.ExitedGameEvent += OnExitedGame;
-
-			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-			if (controllable != null && controllable.Environment != null)
-			{
-				this.MapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-				this.MapControl.Environment = controllable.Environment;
-				this.MapControl.AnimatedCenterPos = new Point(controllable.Location.X, controllable.Location.Y);
-				this.MapControl.Z = controllable.Location.Z;
-			}
-		}
-
-		public void ExitGame()
-		{
-			GameData.Data.User.SendExitGame();
-		}
-
-		void OnExitedGame()
-		{
-			this.MapControl.Environment = null;
-			GameData.Data.User.ExitedGameEvent -= OnExitedGame;
-		}
 
 
 

@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Server
 		GameEngine m_engine;
 		World m_world;
 
-		ServerConnection m_connection;
+		IConnection m_connection;
 
 		public World World { get { return m_world; } }
 
@@ -61,6 +61,8 @@ namespace Dwarrowdelf.Server
 		// does this player sees all
 		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
+
+		public bool IsSeeAll { get { return m_seeAll; } }
 
 		[SaveGameProperty("Controllables")]
 		List<LivingObject> m_controllables;
@@ -119,6 +121,101 @@ namespace Dwarrowdelf.Server
 			});
 		}
 
+		public void SetConnection(IConnection connection)
+		{
+			Debug.Assert(m_connection == null);
+			m_connection = connection;
+
+			Notify("IsConnected");
+		}
+
+		public void Start()
+		{
+			m_world.WorldChanged += HandleWorldChange;
+			m_world.ReportReceived += HandleReport;
+
+			m_connection.Start(_OnReceiveMessage, _OnDisconnect);
+		}
+
+		public void Stop()
+		{
+			m_world.WorldChanged -= HandleWorldChange;
+			m_world.ReportReceived -= HandleReport;
+		}
+
+		void _OnDisconnect()
+		{
+			trace.TraceInformation("OnDisconnect");
+			m_engine.SignalWorld();
+		}
+
+		void _OnReceiveMessage(Message m)
+		{
+			trace.TraceVerbose("OnReceiveMessage");
+			m_msgQueue.Enqueue(m);
+			m_engine.SignalWorld();
+		}
+
+		System.Collections.Concurrent.ConcurrentQueue<Message> m_msgQueue = new System.Collections.Concurrent.ConcurrentQueue<Message>();
+
+		public void HandleNewMessages()
+		{
+			trace.TraceVerbose("HandleNewMessages, count = {0}", m_msgQueue.Count);
+
+			Message msg;
+			while (m_msgQueue.TryDequeue(out msg))
+				OnReceiveMessage(msg);
+
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceInformation("HandleNewMessages, disconnected");
+
+				/*
+				if (m_userLoggedIn)
+				{
+					m_user.Connection = null;
+					m_user = null;
+					m_userLoggedIn = false;
+				}
+
+				Cleanup();*/
+
+				m_connection = null;
+			}
+		}
+
+		public bool IsConnected { get { return m_connection != null; } }
+
+#if asd
+		public Connection Connection
+		{
+			get { return m_connection; }
+			set
+			{
+				if (m_connection == value)
+					return;
+
+				m_connection = value;
+
+				if (m_connection != null)
+				{
+					m_world.WorldChanged += HandleWorldChange;
+					m_world.ReportReceived += HandleReport;
+				}
+				else
+				{
+					m_world.WorldChanged -= HandleWorldChange;
+					m_world.ReportReceived -= HandleReport;
+
+					this.IsInGame = false;
+				}
+
+				Notify("IsConnected");
+			}
+		}
+#endif
+
+
 		void AddControllable(LivingObject living)
 		{
 			m_controllables.Add(living);
@@ -174,55 +271,21 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public bool IsConnected { get { return m_connection != null; } }
-
-		public ServerConnection Connection
-		{
-			get { return m_connection; }
-			set
-			{
-				if (m_connection == value)
-					return;
-
-				m_connection = value;
-
-				if (m_connection != null)
-				{
-					m_world.WorldChanged += HandleWorldChange;
-					m_world.ReportReceived += HandleReport;
-				}
-				else
-				{
-					m_world.WorldChanged -= HandleWorldChange;
-					m_world.ReportReceived -= HandleReport;
-
-					this.IsInGame = false;
-				}
-
-				Notify("IsConnected");
-			}
-		}
-
 		void OnControllableDestructed(IBaseObject ob)
 		{
 			var living = (LivingObject)ob;
 			RemoveControllable(living);
 		}
 
-		public void Send(ClientMessage msg)
+		// XXX
+		public void HandleLogOn()
 		{
-			m_connection.Send(msg);
-		}
-
-		public void Send(IEnumerable<ClientMessage> msgs)
-		{
-			foreach (var msg in msgs)
-				Send(msg);
-		}
-
-		public void ReceiveLogOnMessage(LogOnRequestMessage msg)
-		{
-			Send(new Messages.LogOnReplyBeginMessage() { IsSeeAll = m_seeAll, Tick = m_engine.World.TickNumber, LivingVisionMode = m_engine.World.LivingVisionMode, });
+			Send(new Messages.LogOnReplyBeginMessage()
+			{
+				IsSeeAll = this.IsSeeAll,
+				Tick = m_world.TickNumber,
+				LivingVisionMode = m_world.LivingVisionMode,
+			});
 
 			if (m_seeAll)
 			{
@@ -236,16 +299,54 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			Send(new Messages.LogOnReplyEndMessage());
+			if (m_hasPlayerBeenInGame)
+			{
+				SendControllables();
+
+				Send(new Messages.LogOnReplyEndMessage()
+				{
+					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+				});
+
+				this.IsInGame = true;
+
+				if (this.World.IsTickOnGoing)
+				{
+					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
+						SendProceedTurnRequest(null);
+					else
+						throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				trace.TraceInformation("Creating controllables");
+
+				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
+				foreach (var l in controllables)
+					AddControllable(l);
+
+				m_hasPlayerBeenInGame = true;
+
+				Send(new Messages.LogOnReplyEndMessage()
+				{
+					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+				});
+
+				this.IsInGame = true;
+			}
 		}
 
-		public void ReceiveLogOutMessage(LogOutRequestMessage msg)
-		{
-			Send(new Messages.LogOutReplyMessage());
 
-			foreach (var kvp in m_visionTrackers)
-				kvp.Value.Stop();
-			m_visionTrackers.Clear();
+		public void Send(ClientMessage msg)
+		{
+			m_connection.Send(msg);
+		}
+
+		public void Send(IEnumerable<ClientMessage> msgs)
+		{
+			foreach (var msg in msgs)
+				Send(msg);
 		}
 
 		public void OnReceiveMessage(Message m)
@@ -256,6 +357,17 @@ namespace Dwarrowdelf.Server
 
 			Action<Player, ServerMessage> method = s_handlerMap[msg.GetType()];
 			method(this, msg);
+		}
+
+		void ReceiveMessage(LogOutRequestMessage msg)
+		{
+			Send(new Messages.LogOutReplyMessage());
+
+			foreach (var kvp in m_visionTrackers)
+				kvp.Value.Stop();
+			m_visionTrackers.Clear();
+
+			m_connection.Disconnect();
 		}
 
 		void ReceiveMessage(CreateLivingMessage msg)
@@ -352,71 +464,6 @@ namespace Dwarrowdelf.Server
 		}
 
 		/* functions for livings */
-		void ReceiveMessage(EnterGameRequestMessage msg)
-		{
-			if (m_hasPlayerBeenInGame)
-			{
-				var enterGameSW = Stopwatch.StartNew();
-				Send(new Messages.EnterGameReplyBeginMessage());
-
-				SendControllables();
-
-				Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
-				enterGameSW.Stop();
-				trace.TraceInformation("Sending Enter Game took {0} ms", enterGameSW.ElapsedMilliseconds);
-
-				this.IsInGame = true;
-
-				if (this.World.IsTickOnGoing)
-				{
-					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
-						SendProceedTurnRequest(null);
-					else
-						throw new NotImplementedException();
-				}
-			}
-			else
-			{
-				m_world.BeginInvoke(new Action<EnterGameRequestMessage>(HandleEnterGame), msg);
-			}
-		}
-
-		void HandleEnterGame(EnterGameRequestMessage msg)
-		{
-			string name = msg.Name;
-
-			trace.TraceInformation("EnterGameRequestMessage {0}", name);
-
-			var enterGameSW = Stopwatch.StartNew();
-			Send(new Messages.EnterGameReplyBeginMessage());
-
-			if (!m_hasPlayerBeenInGame)
-			{
-				trace.TraceInformation("Creating controllables");
-				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
-				foreach (var l in controllables)
-					AddControllable(l);
-
-				m_hasPlayerBeenInGame = true;
-			}
-
-			Send(new Messages.EnterGameReplyEndMessage() { ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID) });
-			enterGameSW.Stop();
-			trace.TraceInformation("Sending Enter Game took {0} ms", enterGameSW.ElapsedMilliseconds);
-
-			this.IsInGame = true;
-		}
-
-		void ReceiveMessage(ExitGameRequestMessage msg)
-		{
-			trace.TraceInformation("ExitGameRequestMessage");
-
-			Send(new Messages.ControllablesDataMessage() { Operation = ControllablesDataMessage.Op.Remove, Controllables = this.Controllables.Select(l => l.ObjectID).ToArray() });
-			Send(new Messages.ExitGameReplyMessage());
-
-			this.IsInGame = false;
-		}
-
 		void ReceiveMessage(ProceedTurnReplyMessage msg)
 		{
 			try

@@ -94,6 +94,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class LogOnReplyEndMessage : ClientMessage
 	{
+		public string ClientData { get; set; }
 	}
 
 	[Serializable]
@@ -103,33 +104,6 @@ namespace Dwarrowdelf.Messages
 
 	[Serializable]
 	public sealed class LogOutReplyMessage : ClientMessage
-	{
-	}
-
-	[Serializable]
-	public sealed class EnterGameRequestMessage : ServerMessage
-	{
-		public string Name { get; set; }
-	}
-
-	[Serializable]
-	public sealed class EnterGameReplyBeginMessage : ClientMessage
-	{
-	}
-
-	[Serializable]
-	public sealed class EnterGameReplyEndMessage : ClientMessage
-	{
-		public string ClientData { get; set; }
-	}
-
-	[Serializable]
-	public sealed class ExitGameRequestMessage : ServerMessage
-	{
-	}
-
-	[Serializable]
-	public sealed class ExitGameReplyMessage : ClientMessage
 	{
 	}
 

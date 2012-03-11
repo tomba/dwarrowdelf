@@ -11,15 +11,18 @@ namespace Dwarrowdelf
 {
 	public static class ConnectionListener
 	{
-		public static event Action<Connection> NewConnectionEvent;
 		static Socket s_listenSocket;
 		static ManualResetEvent s_acceptStopEvent;
 		volatile static bool s_stopListen;
 		static MyTraceSource s_trace = new MyTraceSource("Dwarrowdelf.Connection", "Connection");
 
-		public static void StartListening()
+		static Action<Connection> s_callback;
+
+		public static void StartListening(Action<Connection> callback)
 		{
 			s_trace.TraceInformation("StartListening");
+
+			s_callback = callback;
 
 			int port = Connection.PORT;
 
@@ -71,8 +74,7 @@ namespace Dwarrowdelf
 			var socket = listenSocket.EndAccept(ar);
 
 			var conn = new Connection(socket);
-			if (NewConnectionEvent != null)
-				NewConnectionEvent(conn);
+			s_callback(conn);
 
 			ar = s_listenSocket.BeginAccept(AcceptCallback, listenSocket);
 			if (ar.CompletedSynchronously == true)

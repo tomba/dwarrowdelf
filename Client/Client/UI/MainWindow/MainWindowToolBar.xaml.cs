@@ -81,22 +81,6 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 
-		private void EnterGame_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.User == null || GameData.Data.User.IsPlayerInGame)
-				return;
-
-			App.MainWindow.EnterGame();
-		}
-
-		private void ExitGame_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.User == null || !GameData.Data.User.IsPlayerInGame)
-				return;
-
-			App.MainWindow.ExitGame();
-		}
-
 		private void Save_Button_Click(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.Connection == null)

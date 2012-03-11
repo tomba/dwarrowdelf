@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Client
 	{
 		public static bool ServerInAppDomain = true;
 		public static bool AutoConnect = true;
-		public static bool AutoEnterGame = true;
+		public static bool AutoEnterGame = false;
 
 		public static bool ShowFps = false;
 		public static bool ShowMousePos = false;

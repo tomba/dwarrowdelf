@@ -35,10 +35,6 @@ namespace Dwarrowdelf.Client
 
 		World m_world;
 
-		Action m_enterGameCallback;
-
-		public event Action ExitedGameEvent;
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
 		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
@@ -52,17 +48,6 @@ namespace Dwarrowdelf.Client
 			m_changeHandler.TurnEnded += OnTurnEnded;
 		}
 
-		public void SendEnterGame(Action callback)
-		{
-			m_enterGameCallback = callback;
-			m_connection.Send(new Messages.EnterGameRequestMessage() { Name = "tomba" });
-		}
-
-		public void SendExitGame()
-		{
-			m_connection.Send(new Messages.ExitGameRequestMessage());
-		}
-
 		public void OnReceiveMessage(ClientMessage msg)
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
@@ -71,32 +56,24 @@ namespace Dwarrowdelf.Client
 			method(this, msg);
 		}
 
-		Stopwatch m_enterGameSW;
-
-		void HandleMessage(EnterGameReplyBeginMessage msg)
+		void HandleMessage(LogOnReplyEndMessage msg)
 		{
-			trace.TraceInformation("EnterGameReplyBeginMessage");
-
-			Debug.Assert(!this.IsPlayerInGame);
-
-			m_enterGameSW = Stopwatch.StartNew();
-		}
-
-		void HandleMessage(EnterGameReplyEndMessage msg)
-		{
-			m_enterGameSW.Stop();
-
-			trace.TraceInformation("EnterGameReplyEndMessage");
-
-			trace.TraceInformation("Enter Game took {0} ms", m_enterGameSW.ElapsedMilliseconds);
-			m_enterGameSW = null;
-
-			this.IsPlayerInGame = true;
-
 			if (msg.ClientData != null)
 				ClientSaveManager.Load(msg.ClientData);
 
-			m_enterGameCallback();
+			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
+			if (controllable != null && controllable.Environment != null)
+			{
+				var mapControl = App.MainWindow.MapControl;
+				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
+				mapControl.Environment = controllable.Environment;
+				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
+				mapControl.Z = controllable.Location.Z;
+			}
+		}
+
+		void HandleMessage(LogOutReplyMessage msg)
+		{
 		}
 
 		void HandleMessage(ControllablesDataMessage msg)
@@ -122,19 +99,6 @@ namespace Dwarrowdelf.Client
 				var l = m_world.FindOrCreateObject<LivingObject>(oid);
 				l.IsControllable = b;
 			}
-		}
-
-		void HandleMessage(ExitGameReplyMessage msg)
-		{
-			Debug.Assert(this.IsPlayerInGame);
-
-			this.IsPlayerInGame = false;
-
-			if (ExitedGameEvent != null)
-				ExitedGameEvent();
-
-			m_world.Controllables.Clear();
-			//App.MainWindow.FollowObject = null;
 		}
 
 		void HandleMessage(SaveClientDataRequestMessage msg)

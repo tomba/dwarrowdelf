@@ -10,7 +10,6 @@ namespace Dwarrowdelf.Server
 {
 	public sealed class Game : MarshalByRefObject, IGame
 	{
-		public GameServer Server { get; private set; }
 		public GameEngine Engine { get; private set; }
 		public IArea Area { get; private set; }
 
@@ -24,8 +23,6 @@ namespace Dwarrowdelf.Server
 			this.Area = (IArea)assembly.CreateInstance("MyArea.Area");
 
 			this.Engine = new GameEngine(this, gameDir);
-
-			this.Server = new GameServer(this.Engine);
 		}
 
 		public void CreateWorld()
@@ -40,12 +37,12 @@ namespace Dwarrowdelf.Server
 
 		public void Run(EventWaitHandle serverStartWaitHandle)
 		{
-			this.Server.Run(serverStartWaitHandle);
+			this.Engine.Run(serverStartWaitHandle);
 		}
 
 		public void Stop()
 		{
-			this.Server.Stop();
+			this.Engine.Stop();
 		}
 
 		public override object InitializeLifetimeService()
