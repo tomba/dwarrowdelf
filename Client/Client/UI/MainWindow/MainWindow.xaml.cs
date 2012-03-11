@@ -223,7 +223,7 @@ env.ScanWaterTiles()
 ";
 							var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
-							GameData.Data.Connection.Send(msg);
+							GameData.Data.User.Send(msg);
 						}
 					}
 					break;
@@ -254,7 +254,7 @@ for p in area.Range():
 
 							var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
-							GameData.Data.Connection.Send(msg);
+							GameData.Data.User.Send(msg);
 						}
 					}
 					break;
@@ -268,7 +268,7 @@ for p in area.Range():
 
 						if (res == true)
 						{
-							GameData.Data.Connection.Send(new CreateLivingMessage()
+							GameData.Data.User.Send(new CreateLivingMessage()
 							{
 								EnvironmentID = dialog.Environment.ObjectID,
 								Area = dialog.Area,
@@ -441,7 +441,7 @@ for p in area.Range():
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
 
-			if (GameData.Data.Connection != null)
+			if (GameData.Data.User != null)
 			{
 				e.Cancel = true;
 				m_closing = true;
@@ -612,28 +612,22 @@ for p in area.Range():
 
 		void OnServerStarted()
 		{
-			GameData.Data.Connection = new ClientConnection();
-			GameData.Data.Connection.DisconnectEvent += OnDisconnected;
+			var player = new ClientUser();
+			player.DisconnectEvent += OnDisconnected;
 
 			SetLogOnText("Connecting");
 
-			GameData.Data.Connection.BeginLogOn("tomba", OnConnected);
+			GameData.Data.User = player;
+
+			player.LogOnSync("tomba", OnConnected);
 		}
 
-		void OnConnected(ClientUser user, string error)
+		void OnConnected(string error)
 		{
 			if (error != null)
 			{
 				CloseLoginDialog();
 				MessageBox.Show(error, "Connection Failed");
-				return;
-			}
-
-			GameData.Data.User = user;
-
-			if (user.IsPlayerInGame || !ClientConfig.AutoEnterGame)
-			{
-				CloseLoginDialog();
 				return;
 			}
 
@@ -650,24 +644,21 @@ for p in area.Range():
 
 				ClientSaveManager.SaveEvent += OnGameSaved;
 
-				GameData.Data.Connection.Send(new SaveRequestMessage());
+				GameData.Data.User.Send(new SaveRequestMessage());
 			}
 			else
 			{
-				GameData.Data.User = null;
 				SetLogOnText("Logging Out");
-				GameData.Data.Connection.SendLogOut();
+				GameData.Data.User.SendLogOut();
 			}
 		}
 
 		void OnGameSaved()
 		{
-			GameData.Data.User = null;
-
 			ClientSaveManager.SaveEvent -= OnGameSaved;
 
 			SetLogOnText("Logging Out");
-			GameData.Data.Connection.SendLogOut();
+			GameData.Data.User.SendLogOut();
 		}
 
 		void OnDisconnected()
@@ -675,8 +666,8 @@ for p in area.Range():
 			this.MapControl.Environment = null;
 
 			CloseLoginDialog();
-			GameData.Data.Connection.DisconnectEvent -= OnDisconnected;
-			GameData.Data.Connection = null;
+			GameData.Data.User.DisconnectEvent -= OnDisconnected;
+			GameData.Data.User = null;
 
 			if (m_server != null)
 			{

@@ -188,5 +188,21 @@ namespace Dwarrowdelf
 				trace.TraceError("[TX]: socket error {0}", error);
 			}
 		}
+
+		public static Connection Connect()
+		{
+			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+			var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
+			socket.Bind(localEndPoint);
+
+			var port = Connection.PORT;
+
+			var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
+
+			socket.Connect(remoteEndPoint);
+
+			return new Connection(socket);
+		}
 	}
 }

@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Client
 			Trace.TraceInformation("Saving client data took {0}", watch.Elapsed);
 
 			var msg = new Messages.SaveClientDataReplyMessage() { ID = id, Data = data };
-			GameData.Data.Connection.Send(msg);
+			GameData.Data.User.Send(msg);
 
 			if (SaveEvent != null)
 				SaveEvent();

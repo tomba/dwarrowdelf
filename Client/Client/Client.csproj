@@ -399,7 +399,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuildingObject.cs" />
-    <Compile Include="ClientConnection.cs" />
+    <Compile Include="ClientNetStatistics.cs" />
     <Compile Include="LivingObject.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />

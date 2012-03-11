@@ -43,7 +43,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
 
-			GameData.Data.Connection.Send(msg);
+			GameData.Data.User.Send(msg);
 		}
 
 		private void Uninstall_Button_Click(object sender, RoutedEventArgs e)

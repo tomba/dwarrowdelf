@@ -154,16 +154,6 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> m_ipMessages;
 		public ReadOnlyObservableCollection<Dwarrowdelf.Messages.IPOutputMessage> IPMessages { get; private set; }
 
-		public ClientConnection Connection
-		{
-			get { return (ClientConnection)GetValue(ConnectionProperty); }
-			set { SetValue(ConnectionProperty, value); }
-		}
-
-		public static readonly DependencyProperty ConnectionProperty =
-			DependencyProperty.Register("Connection", typeof(ClientConnection), typeof(GameData), new UIPropertyMetadata(null));
-
-
 		public ClientUser User
 		{
 			get { return (ClientUser)GetValue(UserProperty); }

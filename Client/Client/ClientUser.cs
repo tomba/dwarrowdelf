@@ -25,10 +25,12 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public event Action DisconnectEvent;
+
 		ReportHandler m_reportHandler;
 		ChangeHandler m_changeHandler;
 
-		ClientConnection m_connection;
+		Connection m_connection;
 
 		public bool IsSeeAll { get; private set; }
 		public bool IsPlayerInGame { get; private set; }
@@ -37,20 +39,99 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
-		public ClientUser(ClientConnection connection, World world, bool isSeeAll)
-		{
-			m_connection = connection;
-			m_world = world;
-			this.IsSeeAll = isSeeAll;
+		public ClientNetStatistics Stats { get; private set; }
 
-			m_reportHandler = new ReportHandler(m_world);
-			m_changeHandler = new ChangeHandler(m_world);
-			m_changeHandler.TurnEnded += OnTurnEnded;
+		public ClientUser()
+		{
+			this.Stats = new ClientNetStatistics();
 		}
 
+		public void LogOnSync(string name, Action<string> callback)
+		{
+			try
+			{
+				m_connection = Connection.Connect();
+
+				m_connection.Send(new Messages.LogOnRequestMessage() { Name = name });
+
+				var msg = m_connection.Receive();
+
+				var reply = msg as Messages.LogOnReplyBeginMessage;
+
+				if (reply == null)
+					throw new Exception();
+
+				m_world = new World();
+				GameData.Data.World = m_world;
+
+				m_reportHandler = new ReportHandler(m_world);
+				m_changeHandler = new ChangeHandler(m_world);
+				m_changeHandler.TurnEnded += OnTurnEnded;
+
+				m_world.SetLivingVisionMode(reply.LivingVisionMode);
+				m_world.SetTick(reply.Tick);
+				this.IsSeeAll = reply.IsSeeAll;
+
+				callback(null);
+
+				m_connection.Start(_OnReceiveMessage, _OnDisconnected);
+			}
+			catch (Exception e)
+			{
+				callback(e.Message);
+			}
+		}
+
+		public void Send(ServerMessage msg)
+		{
+			if (m_connection == null)
+			{
+				trace.TraceWarning("Send: m_connection == null");
+				return;
+			}
+
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceWarning("Send: m_connection.IsConnected == false");
+				return;
+			}
+
+			m_connection.Send(msg);
+
+			this.Stats.SentBytes = m_connection.SentBytes;
+			this.Stats.SentMessages = m_connection.SentMessages;
+			this.Stats.AddSentMessages(msg);
+		}
+
+		public void SendLogOut()
+		{
+			m_connection.Send(new Messages.LogOutRequestMessage());
+		}
+
+		void _OnDisconnected()
+		{
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(OnDisconnected));
+		}
+
+		void OnDisconnected()
+		{
+			trace.TraceInformation("OnDisconnect");
+
+			if (DisconnectEvent != null)
+				DisconnectEvent();
+		}
+
+		void _OnReceiveMessage(Message msg)
+		{
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ClientMessage>(OnReceiveMessage), msg);
+		}
 		public void OnReceiveMessage(ClientMessage msg)
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
+
+			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
+			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
+			this.Stats.AddReceivedMessages(msg);
 
 			var method = s_handlerMap[msg.GetType()];
 			method(this, msg);

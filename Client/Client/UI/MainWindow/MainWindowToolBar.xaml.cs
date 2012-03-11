@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (GameData.Data.User != null)
 			{
-				GameData.Data.Connection.Send(new SetWorldConfigMessage()
+				GameData.Data.User.Send(new SetWorldConfigMessage()
 				{
 					MinTickTime = TimeSpan.FromMilliseconds(slider.Value),
 				});
@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Connect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection != null)
+			if (GameData.Data.User != null)
 				return;
 
 			App.MainWindow.Connect();
@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection == null)
+			if (GameData.Data.User == null)
 				return;
 
 			App.MainWindow.Disconnect();
@@ -83,12 +83,12 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Save_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.Connection == null)
+			if (GameData.Data.User == null)
 				return;
 
 			var msg = new SaveRequestMessage();
 
-			GameData.Data.Connection.Send(msg);
+			GameData.Data.User.Send(msg);
 		}
 
 		private void Load_Button_Click(object sender, RoutedEventArgs e)
