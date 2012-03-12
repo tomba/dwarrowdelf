@@ -8,7 +8,7 @@
 		mc:Ignorable="d"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		Title="NetStatWindow" Height="426" Width="291"
-		DataContext="{Binding RelativeSource={RelativeSource Self}, Path=Data.Connection.Stats}"
+		DataContext="{Binding RelativeSource={RelativeSource Self}, Path=Data.User.NetStats}"
 		d:DataContext="{d:DesignInstance Type=ui:NetStatWindowSample, IsDesignTimeCreatable=True}">
 
 	<StackPanel Orientation="Vertical">

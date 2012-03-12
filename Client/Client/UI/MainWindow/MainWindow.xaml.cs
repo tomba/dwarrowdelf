@@ -16,6 +16,7 @@ using System.ComponentModel;
 using Dwarrowdelf.Messages;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -619,16 +620,30 @@ for p in area.Range():
 
 			GameData.Data.User = player;
 
-			player.LogOnSync("tomba", OnConnected);
+			var task = player.LogOnAsync("tomba");
+			task.ContinueWith(OnConnected, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		void OnConnected(string error)
+		void OnConnected(Task task)
 		{
-			if (error != null)
+			if (task.Status != TaskStatus.RanToCompletion)
 			{
 				CloseLoginDialog();
-				MessageBox.Show(error, "Connection Failed");
+				if (task.Exception != null)
+					MessageBox.Show(task.Exception.Message, "Connection Failed");
+				else
+					MessageBox.Show("Connection Cancelled");
 				return;
+			}
+
+			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
+			if (controllable != null && controllable.Environment != null)
+			{
+				var mapControl = App.MainWindow.MapControl;
+				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
+				mapControl.Environment = controllable.Environment;
+				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
+				mapControl.Z = controllable.Location.Z;
 			}
 
 			CloseLoginDialog();
@@ -665,7 +680,6 @@ for p in area.Range():
 		{
 			this.MapControl.Environment = null;
 
-			CloseLoginDialog();
 			GameData.Data.User.DisconnectEvent -= OnDisconnected;
 			GameData.Data.User = null;
 
@@ -675,8 +689,10 @@ for p in area.Range():
 				m_server = null;
 			}
 
+			CloseLoginDialog();
+
 			if (m_closing)
-				Close();
+				Dispatcher.BeginInvoke(new Action(() => Close()));
 		}
 
 

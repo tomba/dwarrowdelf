@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Dwarrowdelf.Messages;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
@@ -39,47 +40,48 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
-		public ClientNetStatistics Stats { get; private set; }
+		public ClientNetStatistics NetStats { get; private set; }
 
 		public ClientUser()
 		{
-			this.Stats = new ClientNetStatistics();
+			this.NetStats = new ClientNetStatistics();
 		}
 
-		public void LogOnSync(string name, Action<string> callback)
+		// XXX add cancellationtoken
+		public Task LogOnAsync(string name)
 		{
-			try
+			var ui = TaskScheduler.FromCurrentSynchronizationContext();
+
+			return Task.Factory.StartNew(() =>
 			{
 				m_connection = Connection.Connect();
 
-				m_connection.Send(new Messages.LogOnRequestMessage() { Name = name });
+				Send(new Messages.LogOnRequestMessage() { Name = name });
 
-				var msg = m_connection.Receive();
+				bool first = true;
 
-				var reply = msg as Messages.LogOnReplyBeginMessage;
+				/* read messages from LogOnReplyBeginMessage to LogOnReplyEndMessage */
+				while (true)
+				{
+					var msg = m_connection.Receive();
 
-				if (reply == null)
-					throw new Exception();
+					if (first)
+					{
+						if ((msg is LogOnReplyBeginMessage) == false)
+							throw new Exception();
+						first = false;
+					}
 
-				m_world = new World();
-				GameData.Data.World = m_world;
+					_OnReceiveMessageSync(msg);
 
-				m_reportHandler = new ReportHandler(m_world);
-				m_changeHandler = new ChangeHandler(m_world);
-				m_changeHandler.TurnEnded += OnTurnEnded;
+					if (msg is LogOnReplyEndMessage)
+						break;
+				}
 
-				m_world.SetLivingVisionMode(reply.LivingVisionMode);
-				m_world.SetTick(reply.Tick);
-				this.IsSeeAll = reply.IsSeeAll;
-
-				callback(null);
+				this.IsPlayerInGame = true;
 
 				m_connection.Start(_OnReceiveMessage, _OnDisconnected);
-			}
-			catch (Exception e)
-			{
-				callback(e.Message);
-			}
+			});
 		}
 
 		public void Send(ServerMessage msg)
@@ -98,9 +100,9 @@ namespace Dwarrowdelf.Client
 
 			m_connection.Send(msg);
 
-			this.Stats.SentBytes = m_connection.SentBytes;
-			this.Stats.SentMessages = m_connection.SentMessages;
-			this.Stats.AddSentMessages(msg);
+			this.NetStats.SentBytes = m_connection.SentBytes;
+			this.NetStats.SentMessages = m_connection.SentMessages;
+			this.NetStats.AddSentMessages(msg);
 		}
 
 		public void SendLogOut()
@@ -117,6 +119,9 @@ namespace Dwarrowdelf.Client
 		{
 			trace.TraceInformation("OnDisconnect");
 
+			GameData.Data.Jobs.Clear();
+			GameData.Data.World = null;
+
 			if (DisconnectEvent != null)
 				DisconnectEvent();
 		}
@@ -125,32 +130,42 @@ namespace Dwarrowdelf.Client
 		{
 			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ClientMessage>(OnReceiveMessage), msg);
 		}
+
+		void _OnReceiveMessageSync(Message msg)
+		{
+			System.Windows.Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
+		}
+
 		public void OnReceiveMessage(ClientMessage msg)
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
 
-			this.Stats.ReceivedBytes = m_connection.ReceivedBytes;
-			this.Stats.ReceivedMessages = m_connection.ReceivedMessages;
-			this.Stats.AddReceivedMessages(msg);
+			this.NetStats.ReceivedBytes = m_connection.ReceivedBytes;
+			this.NetStats.ReceivedMessages = m_connection.ReceivedMessages;
+			this.NetStats.AddReceivedMessages(msg);
 
 			var method = s_handlerMap[msg.GetType()];
 			method(this, msg);
+		}
+
+		void HandleMessage(LogOnReplyBeginMessage msg)
+		{
+			m_world = new World();
+			GameData.Data.World = m_world;
+
+			m_reportHandler = new ReportHandler(m_world);
+			m_changeHandler = new ChangeHandler(m_world);
+			m_changeHandler.TurnEnded += OnTurnEnded;
+
+			m_world.SetLivingVisionMode(msg.LivingVisionMode);
+			m_world.SetTick(msg.Tick);
+			this.IsSeeAll = msg.IsSeeAll;
 		}
 
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
 			if (msg.ClientData != null)
 				ClientSaveManager.Load(msg.ClientData);
-
-			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-			if (controllable != null && controllable.Environment != null)
-			{
-				var mapControl = App.MainWindow.MapControl;
-				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-				mapControl.Environment = controllable.Environment;
-				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
-				mapControl.Z = controllable.Location.Z;
-			}
 		}
 
 		void HandleMessage(LogOutReplyMessage msg)

@@ -22,7 +22,7 @@
 
 		<Separator />
 
-		<TextBlock Width="150" DataContext="{Binding Data.User.Stats}">
+		<TextBlock Width="150" DataContext="{Binding Data.User.NetStats}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="Sent: {0} / {1:N0}">
 					<Binding Path="SentMessages" FallbackValue="0" />
@@ -33,7 +33,7 @@
 
 		<Separator />
 
-		<TextBlock Width="150" DataContext="{Binding Data.User.Stats}">
+		<TextBlock Width="150" DataContext="{Binding Data.User.NetStats}">
 			<TextBlock.Text>
 				<MultiBinding StringFormat="Recv: {0} / {1:N0}">
 					<Binding Path="ReceivedMessages" FallbackValue="0" />

@@ -161,18 +161,7 @@ namespace Dwarrowdelf.Client
 		}
 
 		public static readonly DependencyProperty UserProperty =
-			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null, (o, v) => { GameData.Data.IsUserConnected = v.NewValue != null; }));
-
-
-		public bool IsUserConnected
-		{
-			get { return (bool)GetValue(IsUserConnectedProperty); }
-			set { SetValue(IsUserConnectedProperty, value); }
-		}
-
-		public static readonly DependencyProperty IsUserConnectedProperty =
-			DependencyProperty.Register("IsUserConnected", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
-
+			DependencyProperty.Register("User", typeof(ClientUser), typeof(GameData), new UIPropertyMetadata(null));
 
 
 		public World World
