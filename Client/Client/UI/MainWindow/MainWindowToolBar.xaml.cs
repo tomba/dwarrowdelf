@@ -64,19 +64,23 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
+		private void StartServer_Button_Click(object sender, RoutedEventArgs e)
+		{
+			App.MainWindow.StartServer();
+		}
+
+		private void StopServer_Button_Click(object sender, RoutedEventArgs e)
+		{
+			App.MainWindow.StopServer();
+		}
+
 		private void Connect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.User != null)
-				return;
-
 			App.MainWindow.Connect();
 		}
 
 		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			if (GameData.Data.User == null)
-				return;
-
 			App.MainWindow.Disconnect();
 		}
 

@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
 	sealed class ServerInAppDomain
 	{
-		EventWaitHandle m_serverStartWaitHandle;
-		RegisteredWaitHandle m_registeredWaitHandle;
-
 		SaveManager m_saveManager;
 
 		EmbeddedServer m_embeddedServer;
 
-		public event Action Started;
 		public event Action<string> StatusChanged;
 
-		public void Start()
+		public Task StartAsync()
 		{
 			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
@@ -37,14 +34,19 @@ namespace Dwarrowdelf.Client
 			else
 				save = m_saveManager.GetLatestSaveFile();
 
-			m_serverStartWaitHandle = new AutoResetEvent(false);
+			return Task.Factory.StartNew(() =>
+			{
+				using (var serverStartWaitHandle = new AutoResetEvent(false))
+				{
+					m_embeddedServer = new EmbeddedServer(gameDir, save);
+					m_embeddedServer.ServerStatusChangeEvent += OnServerStatusChange;
+					m_embeddedServer.Start(serverStartWaitHandle);
 
-			m_registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(m_serverStartWaitHandle,
-				ServerStartedCallback, null, TimeSpan.FromMinutes(1), true);
-
-			m_embeddedServer = new EmbeddedServer(gameDir, save);
-			m_embeddedServer.ServerStatusChangeEvent += OnServerStatusChange;
-			m_embeddedServer.Start(m_serverStartWaitHandle);
+					var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(5));
+					if (!ok)
+						throw new Exception();
+				}
+			});
 		}
 
 		public void Stop()
@@ -56,20 +58,6 @@ namespace Dwarrowdelf.Client
 		{
 			if (this.StatusChanged != null)
 				this.StatusChanged(status);
-		}
-
-		void ServerStartedCallback(object state, bool timedOut)
-		{
-			if (timedOut)
-				throw new Exception();
-
-			m_registeredWaitHandle.Unregister(m_serverStartWaitHandle);
-			m_registeredWaitHandle = null;
-			m_serverStartWaitHandle.Close();
-			m_serverStartWaitHandle = null;
-
-			if (this.Started != null)
-				this.Started();
 		}
 
 		sealed class EmbeddedServer

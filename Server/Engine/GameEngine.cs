@@ -222,6 +222,13 @@ namespace Dwarrowdelf.Server
 			this.World.TurnStarting -= OnTurnStart;
 			this.World.HandleMessagesEvent -= OnHandleMessages;
 
+			// Need to disconnect the sockets
+			foreach (var player in m_players)
+			{
+				if (player.IsConnected)
+					player.Stop();
+			}
+
 			trace.TraceInformation("Server exit");
 		}
 

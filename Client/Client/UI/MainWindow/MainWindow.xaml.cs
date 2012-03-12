@@ -424,7 +424,7 @@ for p in area.Range():
 				Win32.Helpers.LoadWindowPlacement(this, p);
 
 			if (ClientConfig.AutoConnect)
-				Connect();
+				StartAndConnect();
 		}
 
 		public MasterMapControl MapControl { get { return map; } }
@@ -442,17 +442,20 @@ for p in area.Range():
 			Properties.Settings.Default.MainWindowPlacement = p;
 			Properties.Settings.Default.Save();
 
-			if (GameData.Data.User != null)
+			if (GameData.Data.User != null || m_server != null)
 			{
 				e.Cancel = true;
 				m_closing = true;
 
-				Disconnect();
+				DisconnectAndStop();
 			}
+		}
 
-			this.FollowObject = null;
-			map.Environment = null;
+		protected override void OnClosed(EventArgs e)
+		{
 			map.Dispose();
+
+			base.OnClosed(e);
 		}
 
 		private void FilterItems(object sender, FilterEventArgs e)
@@ -593,35 +596,69 @@ for p in area.Range():
 			}
 		}
 
-
-		public void Connect()
+		public void StartAndConnect()
 		{
-			if (ClientConfig.ServerInAppDomain)
-			{
-				SetLogOnText("Starting server");
+			var task = StartServer();
 
-				m_server = new ServerInAppDomain();
-				m_server.Started += () => this.Dispatcher.BeginInvoke(new Action(OnServerStarted));
-				m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string>(SetLogOnText), str);
-				m_server.Start();
-			}
+			if (task != null)
+				task.ContinueWith((t) => Connect(), TaskScheduler.FromCurrentSynchronizationContext());
 			else
-			{
-				OnServerStarted();
-			}
+				Connect();
 		}
 
-		void OnServerStarted()
+		public void DisconnectAndStop()
 		{
-			var player = new ClientUser();
-			player.DisconnectEvent += OnDisconnected;
+			Disconnect();
+		}
+
+		public Task StartServer()
+		{
+			if (!ClientConfig.ServerInAppDomain || m_server != null)
+				return null;
+
+			SetLogOnText("Starting server");
+
+			m_server = new ServerInAppDomain();
+			m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string>(SetLogOnText), str);
+			var task = m_server.StartAsync()
+				.ContinueWith((t) => CloseLoginDialog(), TaskScheduler.FromCurrentSynchronizationContext());
+
+			return task;
+		}
+
+		public void StopServer()
+		{
+			if (!ClientConfig.ServerInAppDomain || m_server == null)
+				return;
+
+			SetLogOnText("Stopping server");
+
+			m_server.Stop();
+			m_server = null;
+
+			CloseLoginDialog();
+		}
+
+
+		public Task Connect()
+		{
+			if (ClientConfig.ServerInAppDomain && m_server == null)
+				return null;
+
+			if (GameData.Data.User != null)
+				return null;
 
 			SetLogOnText("Connecting");
 
+			var player = new ClientUser();
+			player.DisconnectEvent += OnDisconnected;
+
 			GameData.Data.User = player;
 
-			var task = player.LogOnAsync("tomba");
-			task.ContinueWith(OnConnected, TaskScheduler.FromCurrentSynchronizationContext());
+			var task = player.LogOnAsync("tomba")
+				.ContinueWith(OnConnected, TaskScheduler.FromCurrentSynchronizationContext());
+
+			return task;
 		}
 
 		void OnConnected(Task task)
@@ -653,6 +690,9 @@ for p in area.Range():
 
 		public void Disconnect()
 		{
+			if (GameData.Data.User == null)
+				return;
+
 			if (GameData.Data.User.IsPlayerInGame)
 			{
 				SetLogOnText("Saving");
@@ -683,16 +723,13 @@ for p in area.Range():
 			GameData.Data.User.DisconnectEvent -= OnDisconnected;
 			GameData.Data.User = null;
 
-			if (m_server != null)
-			{
-				m_server.Stop();
-				m_server = null;
-			}
-
 			CloseLoginDialog();
 
 			if (m_closing)
+			{
+				StopServer();
 				Dispatcher.BeginInvoke(new Action(() => Close()));
+			}
 		}
 
 

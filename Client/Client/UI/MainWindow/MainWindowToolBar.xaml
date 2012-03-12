@@ -22,6 +22,10 @@
 				<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
 			</ComboBox>
 			<Separator />
+			<Button Click="StartServer_Button_Click">Start Server</Button>
+			<Separator />
+			<Button Click="StopServer_Button_Click">Stop Server</Button>
+			<Separator />
 			<Button Click="Connect_Button_Click">Connect</Button>
 			<Separator />
 			<Button Click="Disconnect_Button_Click">Disconnect</Button>

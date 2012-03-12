@@ -141,6 +141,8 @@ namespace Dwarrowdelf.Server
 		{
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
+
+			m_connection.Disconnect();
 		}
 
 		void _OnDisconnect()
