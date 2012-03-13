@@ -15,9 +15,6 @@ namespace Dwarrowdelf.Server
 		// Require a player to be connected for ticks to proceed
 		public bool RequirePlayer;
 
-		// Require a player to be in game for ticks to proceed
-		public bool RequirePlayerInGame;
-
 		// Maximum time for one living to make its move. After this time has passed, the living
 		// will be skipped
 		public TimeSpan MaxMoveTime;
@@ -35,7 +32,6 @@ namespace Dwarrowdelf.Server
 		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
 
 		int m_playersConnected;
-		int m_playersInGame;
 
 		List<Player> m_players = new List<Player>();
 
@@ -44,7 +40,6 @@ namespace Dwarrowdelf.Server
 		GameConfig m_config = new GameConfig
 		{
 			RequirePlayer = true,
-			RequirePlayerInGame = true,
 			MaxMoveTime = TimeSpan.Zero,
 			MinTickTime = TimeSpan.FromMilliseconds(50),
 		};
@@ -103,7 +98,7 @@ namespace Dwarrowdelf.Server
 			var id = new Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 
 			var msg = new Dwarrowdelf.Messages.SaveClientDataRequestMessage() { ID = id };
-			foreach (var p in m_players.Where(p => p.IsConnected && p.IsInGame))
+			foreach (var p in m_players.Where(p => p.IsConnected))
 				p.Send(msg);
 
 			int tick = m_world.TickNumber;
@@ -124,8 +119,7 @@ namespace Dwarrowdelf.Server
 				writer.WriteLine("players");
 				foreach (var p in m_players)
 				{
-					writer.WriteLine("\t{0}: {1}, {2}", p.UserID, p.IsConnected ? "connected" : "not connected",
-						p.IsInGame ? "in game" : "not in game");
+					writer.WriteLine("\t{0}: {1}", p.UserID, p.IsConnected ? "connected" : "not connected");
 				}
 			}
 
@@ -193,7 +187,6 @@ namespace Dwarrowdelf.Server
 		{
 			m_gameThread = Thread.CurrentThread;
 
-			this.World.HandleMessagesEvent += OnHandleMessages;
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
 
@@ -220,13 +213,12 @@ namespace Dwarrowdelf.Server
 
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
-			this.World.HandleMessagesEvent -= OnHandleMessages;
 
 			// Need to disconnect the sockets
 			foreach (var player in m_players)
 			{
 				if (player.IsConnected)
-					player.Stop();
+					player.Disconnect();
 			}
 
 			trace.TraceInformation("Server exit");
@@ -261,48 +253,84 @@ namespace Dwarrowdelf.Server
 
 			var name = request.Name;
 
-			int userID; // from universal user object
-
-			if (name == "tomba")
-				userID = 1;
-			else
-				throw new Exception();
+			// from universal user object
+			int userID = GetUserID(name);
 
 			var player = FindPlayer(userID);
 
 			if (player == null)
 			{
-				player = CreatePlayer(userID);
-				player.SetConnection(connection);
-
-				m_world.BeginInvoke(new Action<Player>(OnNewPlayer), player);
+				m_world.BeginInvoke(new Action<IConnection, Messages.LogOnRequestMessage>(OnNewPlayer), connection, request);
 				SignalWorld();
 			}
 			else
 			{
-				player.SetConnection(connection);
-				player.Start();
-				player.HandleLogOn();	// XXX
+				player.Connect(connection);
+				m_playersConnected++;
+
 				CheckForStartTick();
 			}
 		}
 
-		void OnNewPlayer(Player player)
+		void OnNewPlayer(IConnection connection, Messages.LogOnRequestMessage request)
 		{
-			player.Start();
-			player.HandleLogOn();	// XXX
+			var name = request.Name;
+
+			int userID = GetUserID(name);
+
+			var player = CreatePlayer(userID);
+
+			player.Connect(connection);
+			m_playersConnected++;
+
 			CheckForStartTick();
 		}
 
-		void OnHandleMessages()
+		int GetUserID(string name)
+		{
+			if (name == "tomba")
+				return 1;
+			else
+				throw new Exception();
+		}
+
+		void AddPlayer(Player player)
 		{
 			VerifyAccess();
+			m_players.Add(player);
+			player.Init(this);
+			player.ProceedTurnReceived += OnPlayerProceedTurnReceived;
+			player.DisconnectEvent += OnPlayerDisconnected;
+		}
 
-			foreach (var player in m_players)
-			{
-				if (player.IsConnected)
-					player.HandleNewMessages();
-			}
+		void RemovePlayer(Player player)
+		{
+			VerifyAccess();
+			bool ok = m_players.Remove(player);
+			Debug.Assert(ok);
+
+			player.ProceedTurnReceived -= OnPlayerProceedTurnReceived;
+			player.DisconnectEvent -= OnPlayerDisconnected;
+		}
+
+		Player FindPlayer(int userID)
+		{
+			return m_players.SingleOrDefault(u => u.UserID == userID);
+		}
+
+		Player CreatePlayer(int userID)
+		{
+			var player = FindPlayer(userID);
+
+			if (player != null)
+				throw new Exception();
+
+			trace.TraceInformation("Creating new player {0}", userID);
+			player = new Player(userID);
+
+			AddPlayer(player);
+
+			return player;
 		}
 
 		bool _IsTimeToStartTick()
@@ -310,9 +338,6 @@ namespace Dwarrowdelf.Server
 			// XXX check if this.UseMinTickTime && enough time passed
 
 			if (m_config.RequirePlayer && m_playersConnected == 0)
-				return false;
-
-			if (m_config.RequirePlayerInGame && m_playersInGame == 0)
 				return false;
 
 			return true;
@@ -383,34 +408,11 @@ namespace Dwarrowdelf.Server
 			m_config.MinTickTime = minTickTime;
 		}
 
-
-		void AddPlayer(Player player)
+		void OnPlayerDisconnected(Player player)
 		{
-			VerifyAccess();
-			m_players.Add(player);
-			player.Init(this);
-			player.PropertyChanged += OnPlayerPropertyChanged;
-			player.ProceedTurnReceived += OnPlayerProceedTurnReceived;
+			m_playersConnected--;
 
-			if (player.IsConnected)
-				++m_playersConnected;
-			if (player.IsInGame)
-				++m_playersInGame;
-		}
-
-		void RemovePlayer(Player player)
-		{
-			VerifyAccess();
-			bool ok = m_players.Remove(player);
-			Debug.Assert(ok);
-
-			player.ProceedTurnReceived -= OnPlayerProceedTurnReceived;
-			player.PropertyChanged -= OnPlayerPropertyChanged;
-
-			if (player.IsConnected)
-				--m_playersConnected;
-			if (player.IsInGame)
-				--m_playersInGame;
+			Debug.Assert(m_players.Count(p => p.IsConnected) == m_playersConnected);
 		}
 
 		void OnPlayerProceedTurnReceived(Player player)
@@ -420,64 +422,6 @@ namespace Dwarrowdelf.Server
 				this.World.SetProceedTurn();
 				SignalWorld();
 			}
-		}
-
-		void OnPlayerPropertyChanged(object ob, PropertyChangedEventArgs args)
-		{
-			var player = (Player)ob;
-
-			if (args.PropertyName == "IsConnected")
-			{
-				if (player.IsConnected)
-				{
-					++m_playersConnected;
-					CheckForStartTick();
-				}
-				else
-				{
-					--m_playersConnected;
-				}
-
-				Debug.Assert(m_playersConnected >= 0);
-			}
-			else if (args.PropertyName == "IsInGame")
-			{
-				if (player.IsInGame)
-				{
-					++m_playersInGame;
-					CheckForStartTick();
-				}
-				else
-				{
-					--m_playersInGame;
-				}
-
-				Debug.Assert(m_playersInGame >= 0);
-			}
-			else
-			{
-				throw new Exception();
-			}
-		}
-
-		Player FindPlayer(int userID)
-		{
-			return m_players.SingleOrDefault(u => u.UserID == userID);
-		}
-
-		Player CreatePlayer(int userID)
-		{
-			var player = FindPlayer(userID);
-
-			if (player != null)
-				throw new Exception();
-
-			trace.TraceInformation("Creating new player {0}", userID);
-			player = new Player(userID);
-
-			AddPlayer(player);
-
-			return player;
 		}
 
 		static void SaveWorld(SaveData saveData, string savePath)

@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Server
 {
 	[SaveGameObjectByRef]
-	public sealed class Player : INotifyPropertyChanged, IPlayer
+	public sealed class Player : IPlayer
 	{
 		static Dictionary<Type, Action<Player, ServerMessage>> s_handlerMap;
 
@@ -33,26 +33,12 @@ namespace Dwarrowdelf.Server
 		World m_world;
 
 		IConnection m_connection;
+		public bool IsConnected { get { return m_connection != null; } }
 
 		public World World { get { return m_world; } }
 
 		[SaveGameProperty("HasPlayerBeenInGame")]
 		bool m_hasPlayerBeenInGame;
-
-		bool m_isInGame;
-		public bool IsInGame
-		{
-			get { return m_isInGame; }
-
-			private set
-			{
-				if (m_isInGame == value)
-					return;
-
-				m_isInGame = value;
-				Notify("IsInGame");
-			}
-		}
 
 		[SaveGameProperty("UserID")]
 		int m_userID;
@@ -79,6 +65,8 @@ namespace Dwarrowdelf.Server
 		bool IsProceedTurnRequestSent { get; set; }
 		public bool IsProceedTurnReplyReceived { get; private set; }
 		public event Action<Player> ProceedTurnReceived;
+
+		public event Action<Player> DisconnectEvent;
 
 		public Player(int userID)
 		{
@@ -121,27 +109,85 @@ namespace Dwarrowdelf.Server
 			});
 		}
 
-		public void SetConnection(IConnection connection)
+		public void Connect(IConnection connection)
 		{
 			Debug.Assert(m_connection == null);
-			m_connection = connection;
 
-			Notify("IsConnected");
-		}
-
-		public void Start()
-		{
+			m_world.HandleMessagesEvent += HandleNewMessages;
 			m_world.WorldChanged += HandleWorldChange;
 			m_world.ReportReceived += HandleReport;
 
+			m_connection = connection;
 			m_connection.Start(_OnReceiveMessage, _OnDisconnect);
+
+
+			Send(new Messages.LogOnReplyBeginMessage()
+			{
+				IsSeeAll = this.IsSeeAll,
+				Tick = m_world.TickNumber,
+				LivingVisionMode = m_world.LivingVisionMode,
+			});
+
+			if (m_seeAll)
+			{
+				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
+				foreach (var ob in this.World.AllObjects)
+				{
+					var sob = ob as MovableObject;
+
+					if (sob == null || sob.Parent == null)
+						ob.SendTo(this, ObjectVisibility.All);
+				}
+			}
+
+			if (m_hasPlayerBeenInGame)
+			{
+				SendControllables();
+
+				Send(new Messages.LogOnReplyEndMessage()
+				{
+					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+				});
+
+				if (this.World.IsTickOnGoing)
+				{
+					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
+						SendProceedTurnRequest(null);
+					else
+						throw new NotImplementedException();
+				}
+			}
+			else
+			{
+				trace.TraceInformation("Creating controllables");
+
+				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
+				foreach (var l in controllables)
+					AddControllable(l);
+
+				m_hasPlayerBeenInGame = true;
+
+				Send(new Messages.LogOnReplyEndMessage()
+				{
+					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+				});
+			}
 		}
 
-		public void Stop()
+		void HandleDisconnect()
 		{
+			m_world.HandleMessagesEvent -= HandleNewMessages;
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
 
+			m_connection = null;
+
+			if (DisconnectEvent != null)
+				DisconnectEvent(this);
+		}
+
+		public void Disconnect()
+		{
 			m_connection.Disconnect();
 		}
 
@@ -172,50 +218,10 @@ namespace Dwarrowdelf.Server
 			{
 				trace.TraceInformation("HandleNewMessages, disconnected");
 
-				/*
-				if (m_userLoggedIn)
-				{
-					m_user.Connection = null;
-					m_user = null;
-					m_userLoggedIn = false;
-				}
-
-				Cleanup();*/
-
-				m_connection = null;
+				HandleDisconnect();
 			}
 		}
 
-		public bool IsConnected { get { return m_connection != null; } }
-
-#if asd
-		public Connection Connection
-		{
-			get { return m_connection; }
-			set
-			{
-				if (m_connection == value)
-					return;
-
-				m_connection = value;
-
-				if (m_connection != null)
-				{
-					m_world.WorldChanged += HandleWorldChange;
-					m_world.ReportReceived += HandleReport;
-				}
-				else
-				{
-					m_world.WorldChanged -= HandleWorldChange;
-					m_world.ReportReceived -= HandleReport;
-
-					this.IsInGame = false;
-				}
-
-				Notify("IsConnected");
-			}
-		}
-#endif
 
 
 		void AddControllable(LivingObject living)
@@ -278,67 +284,6 @@ namespace Dwarrowdelf.Server
 			var living = (LivingObject)ob;
 			RemoveControllable(living);
 		}
-
-		// XXX
-		public void HandleLogOn()
-		{
-			Send(new Messages.LogOnReplyBeginMessage()
-			{
-				IsSeeAll = this.IsSeeAll,
-				Tick = m_world.TickNumber,
-				LivingVisionMode = m_world.LivingVisionMode,
-			});
-
-			if (m_seeAll)
-			{
-				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
-				foreach (var ob in this.World.AllObjects)
-				{
-					var sob = ob as MovableObject;
-
-					if (sob == null || sob.Parent == null)
-						ob.SendTo(this, ObjectVisibility.All);
-				}
-			}
-
-			if (m_hasPlayerBeenInGame)
-			{
-				SendControllables();
-
-				Send(new Messages.LogOnReplyEndMessage()
-				{
-					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
-				});
-
-				this.IsInGame = true;
-
-				if (this.World.IsTickOnGoing)
-				{
-					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
-						SendProceedTurnRequest(null);
-					else
-						throw new NotImplementedException();
-				}
-			}
-			else
-			{
-				trace.TraceInformation("Creating controllables");
-
-				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
-				foreach (var l in controllables)
-					AddControllable(l);
-
-				m_hasPlayerBeenInGame = true;
-
-				Send(new Messages.LogOnReplyEndMessage()
-				{
-					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
-				});
-
-				this.IsInGame = true;
-			}
-		}
-
 
 		public void Send(ClientMessage msg)
 		{
@@ -596,16 +541,6 @@ namespace Dwarrowdelf.Server
 
 			var msg = new ProceedTurnRequestMessage() { LivingID = id };
 			Send(msg);
-		}
-
-		#region INotifyPropertyChanged Members
-		public event PropertyChangedEventHandler PropertyChanged;
-		#endregion
-
-		void Notify(string property)
-		{
-			if (this.PropertyChanged != null)
-				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 
 		Dictionary<EnvironmentObject, VisionTrackerBase> m_visionTrackers = new Dictionary<EnvironmentObject, VisionTrackerBase>();
