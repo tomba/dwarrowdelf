@@ -620,7 +620,7 @@ namespace Dwarrowdelf.Server
 
 						msg.TerrainData = arr;
 						player.Send(msg);
-						Trace.TraceError("Sent {0}", z);
+						//Trace.TraceError("Sent {0}", z);
 					}
 				});
 

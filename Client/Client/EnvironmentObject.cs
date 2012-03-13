@@ -210,7 +210,7 @@ namespace Dwarrowdelf.Client
 
 			m_tileGrid.Grow(bounds.Corner2);
 
-			Trace.TraceError("Recv {0}", bounds.Z);
+			//Trace.TraceError("Recv {0}", bounds.Z);
 
 #if asd
 			using (var memStream = new MemoryStream(tileDataList))
@@ -261,7 +261,7 @@ namespace Dwarrowdelf.Client
 
 				stream.Dispose();
 
-				Trace.TraceError("done {0}", bounds.Z);
+				//Trace.TraceError("done {0}", bounds.Z);
 
 			}, TaskScheduler.FromCurrentSynchronizationContext());
 
