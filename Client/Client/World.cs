@@ -197,9 +197,11 @@ namespace Dwarrowdelf.Client
 			if (ob == null)
 			{
 #if TRACK_DESTRUCTED_OBJECTS
-				ob = m_destructedObjects[objectID];
-				if (ob != null)
+				if (m_destructedObjects.Contains(objectID))
+				{
+					ob = m_destructedObjects[objectID];
 					throw new Exception(String.Format("Getting destructed object {0}", ob));
+				}
 #endif
 				throw new Exception();
 			}
