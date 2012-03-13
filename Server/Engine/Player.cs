@@ -161,6 +161,9 @@ namespace Dwarrowdelf.Server
 
 			m_connection = null;
 
+			this.IsProceedTurnRequestSent = false;
+			this.IsProceedTurnReplyReceived = false;
+
 			if (DisconnectEvent != null)
 				DisconnectEvent(this);
 		}
