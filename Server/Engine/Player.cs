@@ -37,9 +37,6 @@ namespace Dwarrowdelf.Server
 
 		public World World { get { return m_world; } }
 
-		[SaveGameProperty("HasPlayerBeenInGame")]
-		bool m_hasPlayerBeenInGame;
-
 		[SaveGameProperty("UserID")]
 		int m_userID;
 		public int UserID { get { return m_userID; } }
@@ -140,37 +137,19 @@ namespace Dwarrowdelf.Server
 				}
 			}
 
-			if (m_hasPlayerBeenInGame)
+			SendControllables();
+
+			Send(new Messages.LogOnReplyEndMessage()
 			{
-				SendControllables();
+				ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+			});
 
-				Send(new Messages.LogOnReplyEndMessage()
-				{
-					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
-				});
-
-				if (this.World.IsTickOnGoing)
-				{
-					if (this.World.TickMethod == WorldTickMethod.Simultaneous)
-						SendProceedTurnRequest(null);
-					else
-						throw new NotImplementedException();
-				}
-			}
-			else
+			if (this.World.IsTickOnGoing)
 			{
-				trace.TraceInformation("Creating controllables");
-
-				var controllables = m_engine.Game.Area.SetupWorldForNewPlayer(this);
-				foreach (var l in controllables)
-					AddControllable(l);
-
-				m_hasPlayerBeenInGame = true;
-
-				Send(new Messages.LogOnReplyEndMessage()
-				{
-					ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
-				});
+				if (this.World.TickMethod == WorldTickMethod.Simultaneous)
+					SendProceedTurnRequest(null);
+				else
+					throw new NotImplementedException();
 			}
 		}
 
@@ -222,27 +201,28 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-
-
-		void AddControllable(LivingObject living)
+		public void AddControllable(LivingObject living)
 		{
 			m_controllables.Add(living);
 			living.Destructed += OnControllableDestructed;
 
-			// Always send object data when the living has became a controllable
-			living.SendTo(this, ObjectVisibility.All);
-
-			Send(new Messages.ControllablesDataMessage()
+			if (this.IsConnected)
 			{
-				Operation = ControllablesDataMessage.Op.Add,
-				Controllables = new ObjectID[] { living.ObjectID }
-			});
+				// Always send object data when the living has became a controllable
+				living.SendTo(this, ObjectVisibility.All);
 
-			// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
-			if (living.Environment != null)
-			{
-				var tracker = GetVisionTrackerInternal(living.Environment);
-				tracker.HandleNewControllable(living);
+				Send(new Messages.ControllablesDataMessage()
+				{
+					Operation = ControllablesDataMessage.Op.Add,
+					Controllables = new ObjectID[] { living.ObjectID }
+				});
+
+				// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
+				if (living.Environment != null)
+				{
+					var tracker = GetVisionTrackerInternal(living.Environment);
+					tracker.HandleNewControllable(living);
+				}
 			}
 		}
 
@@ -260,6 +240,8 @@ namespace Dwarrowdelf.Server
 
 		void SendControllables()
 		{
+			Debug.Assert(this.IsConnected);
+
 			foreach (var living in this.Controllables)
 				living.SendTo(this, ObjectVisibility.All);
 
@@ -287,7 +269,8 @@ namespace Dwarrowdelf.Server
 
 		public void Send(ClientMessage msg)
 		{
-			m_connection.Send(msg);
+			if (m_connection != null)
+				m_connection.Send(msg);
 		}
 
 		public void Send(IEnumerable<ClientMessage> msgs)
@@ -609,6 +592,10 @@ namespace Dwarrowdelf.Server
 
 		VisionTrackerBase GetVisionTrackerInternal(EnvironmentObject env)
 		{
+			// XXX we send the initial mapdata in tracker.Start(). So if the player is not connected yet, we don't send the mapdata
+			if (!IsConnected)
+				throw new Exception();
+
 			if (m_seeAll)
 				return AdminVisionTracker.Tracker;
 

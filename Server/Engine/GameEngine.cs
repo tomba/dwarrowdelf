@@ -276,9 +276,15 @@ namespace Dwarrowdelf.Server
 		{
 			var name = request.Name;
 
+			trace.TraceInformation("New player {0}", name);
+
 			int userID = GetUserID(name);
 
 			var player = CreatePlayer(userID);
+
+			var controllables = this.Game.Area.SetupWorldForNewPlayer(player);
+			foreach (var l in controllables)
+				player.AddControllable(l);
 
 			player.Connect(connection);
 			m_playersConnected++;
