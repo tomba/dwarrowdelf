@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client.UI
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
 
-		ServerInAppDomain m_server;
+		EmbeddedServer m_server;
 
 		LogOnDialog m_logOnDialog;
 
@@ -618,7 +618,7 @@ for p in area.Range():
 
 			SetLogOnText("Starting server");
 
-			m_server = new ServerInAppDomain();
+			m_server = new EmbeddedServer();
 			m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string>(SetLogOnText), str);
 			var task = m_server.StartAsync()
 				.ContinueWith((t) => CloseLoginDialog(), TaskScheduler.FromCurrentSynchronizationContext());

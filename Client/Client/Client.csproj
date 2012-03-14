@@ -314,7 +314,7 @@
     <Compile Include="Designation.cs" />
     <Compile Include="IAreaElement.cs" />
     <Compile Include="ClientSaveManager.cs" />
-    <Compile Include="ServerInAppDomain.cs" />
+    <Compile Include="EmbeddedServer.cs" />
     <Compile Include="Stockpile.cs" />
     <Compile Include="UI\MainWindow\DockHoverControl.xaml.cs">
       <DependentUpon>DockHoverControl.xaml</DependentUpon>
