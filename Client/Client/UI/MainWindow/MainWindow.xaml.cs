@@ -613,7 +613,7 @@ for p in area.Range():
 
 		public Task StartServer()
 		{
-			if (!ClientConfig.ServerInAppDomain || m_server != null)
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
 				return null;
 
 			SetLogOnText("Starting server");
@@ -628,7 +628,7 @@ for p in area.Range():
 
 		public void StopServer()
 		{
-			if (!ClientConfig.ServerInAppDomain || m_server == null)
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
 				return;
 
 			SetLogOnText("Stopping server");
@@ -642,7 +642,7 @@ for p in area.Range():
 
 		public Task Connect()
 		{
-			if (ClientConfig.ServerInAppDomain && m_server == null)
+			if (ClientConfig.EmbeddedServer != EmbeddedServerMode.None && m_server == null)
 				return null;
 
 			if (GameData.Data.User != null)

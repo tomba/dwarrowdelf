@@ -5,9 +5,16 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
+	enum EmbeddedServerMode
+	{
+		None,
+		SameAppDomain,
+		SeparateAppDomain,
+	}
+
 	static class ClientConfig
 	{
-		public static bool ServerInAppDomain = true;
+		public static EmbeddedServerMode EmbeddedServer = EmbeddedServerMode.SeparateAppDomain;
 		public static bool AutoConnect = true;
 
 		public static bool ShowFps = false;

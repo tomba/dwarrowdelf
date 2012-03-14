@@ -20,6 +20,9 @@ namespace Dwarrowdelf.Client
 
 		public Task StartAsync()
 		{
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
+				throw new Exception();
+
 			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");
 			if (!System.IO.Directory.Exists(path))
@@ -75,25 +78,35 @@ namespace Dwarrowdelf.Client
 		{
 			m_save = save;
 
-			var di = AppDomain.CurrentDomain.SetupInformation;
-
-			var domainSetup = new AppDomainSetup()
-			{
-				ApplicationBase = di.ApplicationBase,
-				ConfigurationFile = di.ApplicationBase + "Dwarrowdelf.Server.exe.config",
-			};
-
-			m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
-
 			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			var baseDir = System.IO.Path.GetDirectoryName(exePath);
-
 			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
 
-			UpdateStatus("Creating Game");
+			AppDomain appDomain;
 
-			var gameFactory = (IGameFactory)m_serverDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.SeparateAppDomain)
+			{
+				var di = AppDomain.CurrentDomain.SetupInformation;
 
+				var domainSetup = new AppDomainSetup()
+				{
+					ApplicationBase = di.ApplicationBase,
+					ConfigurationFile = di.ApplicationBase + "Dwarrowdelf.Server.exe.config",
+				};
+
+				m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
+
+				appDomain = m_serverDomain;
+
+				UpdateStatus("Creating Game");
+
+			}
+			else
+			{
+				appDomain = AppDomain.CurrentDomain;
+			}
+
+			var gameFactory = (IGameFactory)appDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
 			m_game = gameFactory.CreateGame("MyArea", gameDir);
 			//m_game = gameFactory.CreateGame("ArenaArea", gameDir);
 
@@ -124,7 +137,8 @@ namespace Dwarrowdelf.Client
 
 			m_game.Run(serverStartWaitHandle);
 
-			AppDomain.Unload(m_serverDomain);
+			if (m_serverDomain != null)
+				AppDomain.Unload(m_serverDomain);
 		}
 	}
 }
