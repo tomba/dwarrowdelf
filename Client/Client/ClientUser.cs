@@ -54,6 +54,10 @@ namespace Dwarrowdelf.Client
 
 			return Task.Factory.StartNew(() =>
 			{
+				// XXX
+				if (App.Current.Dispatcher.CheckAccess() == true)
+					Trace.TraceError("TASK IN WPF THREAD, FIX!");
+
 				m_connection = Connection.Connect();
 
 				Send(new Messages.LogOnRequestMessage() { Name = name });
