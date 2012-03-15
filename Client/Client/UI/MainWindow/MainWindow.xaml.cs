@@ -29,6 +29,7 @@ namespace Dwarrowdelf.Client.UI
 		SetTerrainData m_setTerrainData;
 
 		EmbeddedServer m_server;
+		public EmbeddedServer Server { get { return m_server; } }
 
 		LogOnDialog m_logOnDialog;
 

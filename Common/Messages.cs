@@ -153,6 +153,7 @@ namespace Dwarrowdelf.Messages
 	{
 		public ObjectID Environment { get; set; }
 		public IntCuboid Bounds { get; set; }
+		public bool IsTerrainDataCompressed { get; set; }
 		public byte[] TerrainData { get; set; }
 
 		public override string ToString()

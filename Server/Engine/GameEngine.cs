@@ -102,7 +102,10 @@ namespace Dwarrowdelf.Server
 				p.Send(msg);
 
 			if (ServerConfig.DisableSaving)
+			{
+				Trace.TraceError("Warning: Saving is disabled");
 				return;
+			}
 
 			int tick = m_world.TickNumber;
 
@@ -235,6 +238,12 @@ namespace Dwarrowdelf.Server
 			m_exit = true;
 			Thread.MemoryBarrier();
 			SignalWorld();
+		}
+
+		public void DirectConnect(DirectConnection clientConnection)
+		{
+			var connection = new DirectConnection(clientConnection);
+			System.Threading.Tasks.Task.Factory.StartNew(() => _OnNewConnection(connection));
 		}
 
 		void _OnNewConnection(IConnection connection)

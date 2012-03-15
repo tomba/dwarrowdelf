@@ -128,7 +128,9 @@
     <Compile Include="NetSerializer\Main.cs" />
     <Compile Include="NetSerializer\Primitives.cs" />
     <Compile Include="NetSerializer\Serializer.cs" />
+    <Compile Include="Net\DirectConnection.cs" />
     <Compile Include="Net\GameNetStream.cs" />
+    <Compile Include="Net\IConnection.cs" />
     <Compile Include="ObjectType.cs" />
     <Compile Include="ReadOnlyArray.cs" />
     <Compile Include="Reports.cs" />

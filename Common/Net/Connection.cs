@@ -12,22 +12,6 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public interface IConnection
-	{
-		int SentMessages { get; }
-		int SentBytes { get; }
-		int ReceivedMessages { get; }
-		int ReceivedBytes { get; }
-
-		bool IsConnected { get; }
-
-		Message Receive();
-
-		void Start(Action<Message> receiveCallback, Action disconnectCallback);
-		void Send(Message msg);
-		void Disconnect();
-	}
-
 	public sealed class Connection : IConnection
 	{
 		Socket m_socket;

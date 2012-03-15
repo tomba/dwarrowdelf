@@ -18,6 +18,8 @@ namespace Dwarrowdelf.Client
 		AppDomain m_serverDomain;
 		Guid m_save;
 
+		public IGame Game { get { return m_game; } }
+
 		public Task StartAsync()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
@@ -49,7 +51,7 @@ namespace Dwarrowdelf.Client
 					m_serverThread = new Thread(ServerMain);
 					m_serverThread.Start(serverStartWaitHandle);
 
-					var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(5));
+					var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(15));
 					if (!ok)
 						throw new Exception();
 				}

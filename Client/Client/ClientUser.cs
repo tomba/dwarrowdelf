@@ -31,7 +31,7 @@ namespace Dwarrowdelf.Client
 		ReportHandler m_reportHandler;
 		ChangeHandler m_changeHandler;
 
-		Connection m_connection;
+		IConnection m_connection;
 
 		public bool IsSeeAll { get; private set; }
 		public bool IsPlayerInGame { get; private set; }
@@ -51,6 +51,7 @@ namespace Dwarrowdelf.Client
 		public Task LogOnAsync(string name)
 		{
 			var ui = TaskScheduler.FromCurrentSynchronizationContext();
+			var game = App.MainWindow.Server.Game;
 
 			return Task.Factory.StartNew(() =>
 			{
@@ -58,7 +59,10 @@ namespace Dwarrowdelf.Client
 				if (App.Current.Dispatcher.CheckAccess() == true)
 					Trace.TraceError("TASK IN WPF THREAD, FIX!");
 
-				m_connection = Connection.Connect();
+				if (DirectConnection.UseDirectXXX)
+					m_connection = DirectConnection.Connect(game);
+				else
+					m_connection = Connection.Connect();
 
 				Send(new Messages.LogOnRequestMessage() { Name = name });
 

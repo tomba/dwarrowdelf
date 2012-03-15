@@ -25,6 +25,11 @@ namespace Dwarrowdelf.Server
 			this.Engine = new GameEngine(this, gameDir);
 		}
 
+		public void Connect(DirectConnection clientConnection)
+		{
+			this.Engine.DirectConnect(clientConnection);
+		}
+
 		public void CreateWorld()
 		{
 			this.Engine.Create();

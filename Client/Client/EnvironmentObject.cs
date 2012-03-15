@@ -212,6 +212,24 @@ namespace Dwarrowdelf.Client
 
 			//Trace.TraceError("Recv {0}", bounds.Z);
 
+#if !asd
+			using (var memStream = new MemoryStream(tileDataList))
+			{
+				using (var streamReader = new BinaryReader(memStream))
+				{
+					foreach (IntPoint3 p in bounds.Range())
+					{
+						TileData td = new TileData();
+						td.Raw = streamReader.ReadUInt64();
+						m_tileGrid.SetTileData(p, td);
+
+						if (MapTileTerrainChanged != null)
+							MapTileTerrainChanged(p);
+					}
+				}
+			}
+#endif
+
 #if asd
 			using (var memStream = new MemoryStream(tileDataList))
 			{
@@ -231,7 +249,7 @@ namespace Dwarrowdelf.Client
 			}
 #endif
 
-#if !asd
+#if asd
 			Task.Factory.StartNew(() =>
 			{
 				var dstStream = new MemoryStream();
