@@ -101,6 +101,9 @@ namespace Dwarrowdelf.Server
 			foreach (var p in m_players.Where(p => p.IsConnected))
 				p.Send(msg);
 
+			if (ServerConfig.DisableSaving)
+				return;
+
 			int tick = m_world.TickNumber;
 
 			var saveDir = Path.Combine(m_gameDir, id.ToString());
@@ -137,6 +140,9 @@ namespace Dwarrowdelf.Server
 
 		public void SaveClientData(int userID, Guid id, string data)
 		{
+			if (ServerConfig.DisableSaving)
+				return;
+
 			var saveDir = Path.Combine(m_gameDir, id.ToString());
 
 			if (!Directory.Exists(saveDir))

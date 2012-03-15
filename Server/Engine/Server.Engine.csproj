@@ -49,6 +49,7 @@
     <Compile Include="PlayerVision.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="ServerConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
