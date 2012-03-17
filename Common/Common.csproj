@@ -124,10 +124,6 @@
     <Compile Include="Json\JsonServices.cs" />
     <Compile Include="MarkovNameGenerator.cs" />
     <Compile Include="MyTraceSource.cs" />
-    <Compile Include="NetSerializer\Deserializer.cs" />
-    <Compile Include="NetSerializer\Main.cs" />
-    <Compile Include="NetSerializer\Primitives.cs" />
-    <Compile Include="NetSerializer\Serializer.cs" />
     <Compile Include="Net\DirectConnection.cs" />
     <Compile Include="Net\GameNetStream.cs" />
     <Compile Include="Net\IConnection.cs" />
@@ -221,6 +217,10 @@
     <ProjectReference Include="..\MemoryMappedLog\MMLog\MMLog.csproj">
       <Project>{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}</Project>
       <Name>MMLog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetSerializer\NetSerializer\NetSerializer.csproj">
+      <Project>{85A11D07-8D18-42D5-ACCF-EF9744EFE825}</Project>
+      <Name>NetSerializer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

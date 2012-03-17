@@ -19,17 +19,17 @@ namespace Dwarrowdelf
 			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
 				.Concat(extra).Concat(reports);
 
-			Dwarrowdelf.NetSerializer.Serializer.Initialize(types.ToArray());
+			NetSerializer.Serializer.Initialize(types.ToArray());
 		}
 
 		public static void Serialize(Stream stream, Message msg)
 		{
-			Dwarrowdelf.NetSerializer.Serializer.Serialize(stream, msg);
+			NetSerializer.Serializer.Serialize(stream, msg);
 		}
 
 		public static Message Deserialize(Stream stream)
 		{
-			object ob = Dwarrowdelf.NetSerializer.Serializer.Deserialize(stream);
+			object ob = NetSerializer.Serializer.Deserialize(stream);
 			return (Message)ob;
 		}
 	}
