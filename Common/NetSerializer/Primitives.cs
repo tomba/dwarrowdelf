@@ -16,7 +16,7 @@ namespace Dwarrowdelf.NetSerializer
 				type = type.GetEnumUnderlyingType();
 
 			var mi = typeof(Primitives).GetMethod("WritePrimitive", BindingFlags.Static | BindingFlags.Public, null,
-				new Type[] { typeof(GameNetStream), type }, null);
+				new Type[] { typeof(Stream), type }, null);
 
 			return mi;
 		}
@@ -30,7 +30,7 @@ namespace Dwarrowdelf.NetSerializer
 				type = type.GetElementType().GetEnumUnderlyingType().MakeByRefType();
 
 			MethodInfo mi = typeof(Primitives).GetMethod("ReadPrimitive", BindingFlags.Static | BindingFlags.Public, null,
-				new Type[] { typeof(GameNetStream), type }, null);
+				new Type[] { typeof(Stream), type }, null);
 
 			return mi;
 		}
@@ -55,7 +55,7 @@ namespace Dwarrowdelf.NetSerializer
 			return (long)(n >> 1) ^ -(long)(n & 1);
 		}
 
-		static uint ReadVarint32(GameNetStream stream)
+		static uint ReadVarint32(Stream stream)
 		{
 			int result = 0;
 			int offset = 0;
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.NetSerializer
 			throw new Exception();
 		}
 
-		static void WriteVarint32(GameNetStream stream, uint value)
+		static void WriteVarint32(Stream stream, uint value)
 		{
 			while (true)
 			{
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.NetSerializer
 			}
 		}
 
-		static ulong ReadVarint64(GameNetStream stream)
+		static ulong ReadVarint64(Stream stream)
 		{
 			long result = 0;
 			int offset = 0;
@@ -112,7 +112,7 @@ namespace Dwarrowdelf.NetSerializer
 			throw new Exception();
 		}
 
-		static void WriteVarint64(GameNetStream stream, ulong value)
+		static void WriteVarint64(Stream stream, ulong value)
 		{
 			while (true)
 			{
@@ -130,98 +130,98 @@ namespace Dwarrowdelf.NetSerializer
 		}
 
 
-		public static void WritePrimitive(GameNetStream stream, bool value)
+		public static void WritePrimitive(Stream stream, bool value)
 		{
 			stream.WriteByte(value ? (byte)1 : (byte)0);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out bool value)
+		public static void ReadPrimitive(Stream stream, out bool value)
 		{
 			var b = stream.ReadByte();
 			value = b != 0;
 		}
 
-		public static void WritePrimitive(GameNetStream stream, byte value)
+		public static void WritePrimitive(Stream stream, byte value)
 		{
 			stream.WriteByte(value);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out byte value)
+		public static void ReadPrimitive(Stream stream, out byte value)
 		{
-			value = stream.ReadByte();
+			value = (byte)stream.ReadByte();
 		}
 
-		public static void WritePrimitive(GameNetStream stream, char value)
+		public static void WritePrimitive(Stream stream, char value)
 		{
 			WriteVarint32(stream, value);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out char value)
+		public static void ReadPrimitive(Stream stream, out char value)
 		{
 			value = (char)ReadVarint32(stream);
 		}
 
-		public static void WritePrimitive(GameNetStream stream, ushort value)
+		public static void WritePrimitive(Stream stream, ushort value)
 		{
 			WriteVarint32(stream, value);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out ushort value)
+		public static void ReadPrimitive(Stream stream, out ushort value)
 		{
 			value = (ushort)ReadVarint32(stream);
 		}
 
-		public static void WritePrimitive(GameNetStream stream, short value)
+		public static void WritePrimitive(Stream stream, short value)
 		{
 			WriteVarint32(stream, EncodeZigZag32(value));
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out short value)
+		public static void ReadPrimitive(Stream stream, out short value)
 		{
 			value = (short)DecodeZigZag32(ReadVarint32(stream));
 		}
 
-		public static void WritePrimitive(GameNetStream stream, uint value)
+		public static void WritePrimitive(Stream stream, uint value)
 		{
 			WriteVarint32(stream, value);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out uint value)
+		public static void ReadPrimitive(Stream stream, out uint value)
 		{
 			value = ReadVarint32(stream);
 		}
 
-		public static void WritePrimitive(GameNetStream stream, int value)
+		public static void WritePrimitive(Stream stream, int value)
 		{
 			WriteVarint32(stream, EncodeZigZag32(value));
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out int value)
+		public static void ReadPrimitive(Stream stream, out int value)
 		{
 			value = DecodeZigZag32(ReadVarint32(stream));
 		}
 
-		public static void WritePrimitive(GameNetStream stream, ulong value)
+		public static void WritePrimitive(Stream stream, ulong value)
 		{
 			WriteVarint64(stream, value);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out ulong value)
+		public static void ReadPrimitive(Stream stream, out ulong value)
 		{
 			value = ReadVarint64(stream);
 		}
 
-		public static void WritePrimitive(GameNetStream stream, long value)
+		public static void WritePrimitive(Stream stream, long value)
 		{
 			WriteVarint64(stream, EncodeZigZag64(value));
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out long value)
+		public static void ReadPrimitive(Stream stream, out long value)
 		{
 			value = DecodeZigZag64(ReadVarint32(stream));
 		}
 
-		public static void WritePrimitive(GameNetStream stream, string value)
+		public static void WritePrimitive(Stream stream, string value)
 		{
 			if (value == null)
 			{
@@ -235,7 +235,7 @@ namespace Dwarrowdelf.NetSerializer
 				WritePrimitive(stream, c);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out string value)
+		public static void ReadPrimitive(Stream stream, out string value)
 		{
 			uint len;
 			ReadPrimitive(stream, out len);
@@ -253,14 +253,14 @@ namespace Dwarrowdelf.NetSerializer
 			value = new string(arr);
 		}
 
-		public static void WritePrimitive(GameNetStream stream, TileData[] value)
+		public static void WritePrimitive(Stream stream, TileData[] value)
 		{
 			WriteVarint32(stream, (uint)value.Length);
 			for (int i = 0; i < value.Length; ++i)
 				WriteVarint64(stream, value[i].Raw);
 		}
 
-		public static void ReadPrimitive(GameNetStream stream, out TileData[] value)
+		public static void ReadPrimitive(Stream stream, out TileData[] value)
 		{
 			var len = ReadVarint32(stream);
 			var arr = new TileData[len];

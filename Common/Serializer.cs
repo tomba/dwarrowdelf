@@ -22,12 +22,12 @@ namespace Dwarrowdelf
 			Dwarrowdelf.NetSerializer.Serializer.Initialize(types.ToArray());
 		}
 
-		public static void Serialize(GameNetStream stream, Message msg)
+		public static void Serialize(Stream stream, Message msg)
 		{
 			Dwarrowdelf.NetSerializer.Serializer.Serialize(stream, msg);
 		}
 
-		public static Message Deserialize(GameNetStream stream)
+		public static Message Deserialize(Stream stream)
 		{
 			object ob = Dwarrowdelf.NetSerializer.Serializer.Deserialize(stream);
 			return (Message)ob;
