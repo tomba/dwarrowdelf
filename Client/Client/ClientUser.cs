@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Client
 				this.IsPlayerInGame = true;
 
 				m_connection.Start(_OnReceiveMessage, _OnDisconnected);
-			});
+			}, System.Threading.CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 
 		public void Send(ServerMessage msg)
