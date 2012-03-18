@@ -61,14 +61,18 @@ namespace Dwarrowdelf
 
 		void Enqueue(Message msg)
 		{
-			m_msgQueue.Add(msg);
+			this.ReceivedMessages++;
 
 			if (m_receiveCallback != null)
 				m_receiveCallback(msg);
+			else
+				m_msgQueue.Add(msg);
 		}
 
 		public void Send(Message msg)
 		{
+			this.SentMessages++;
+
 			m_remoteConnection.Enqueue(msg);
 		}
 
@@ -93,7 +97,7 @@ namespace Dwarrowdelf
 
 			while (connection.m_remoteConnection == null)
 			{
-				System.Threading.Thread.Sleep(10);				
+				System.Threading.Thread.Sleep(10);
 			}
 
 			return connection;
