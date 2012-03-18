@@ -18,13 +18,13 @@ namespace Dwarrowdelf
 		BufferedStream m_recvStream;
 		BufferedStream m_sendStream;
 
-		public GameNetStream(Socket socket, int receiveBufferLen, int sendBufferLen)
+		public GameNetStream(Socket socket)
 		{
 			m_socket = socket;
 
 			var netStream = new NetworkStream(socket, false);
-			m_recvStream = new BufferedStream(netStream, receiveBufferLen);
-			m_sendStream = new BufferedStream(netStream, sendBufferLen);
+			m_recvStream = new BufferedStream(netStream);
+			m_sendStream = new BufferedStream(netStream);
 		}
 
 		public override bool CanRead { get { return true; } }

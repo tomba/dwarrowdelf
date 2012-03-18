@@ -35,9 +35,6 @@ namespace Dwarrowdelf
 
 		const uint MAGIC = 0x12345678;
 
-		const int RECV_BUF = 65536;
-		const int SEND_BUF = 65536;
-
 		Thread m_deserializerThread;
 
 		public Connection(Socket socket)
@@ -50,7 +47,7 @@ namespace Dwarrowdelf
 				throw new Exception();
 
 			m_socket = socket;
-			m_netStream = new GameNetStream(socket, RECV_BUF, SEND_BUF);
+			m_netStream = new GameNetStream(socket);
 		}
 
 		public void Start(Action<Message> receiveCallback, Action disconnectCallback)
