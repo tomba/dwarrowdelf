@@ -36,13 +36,18 @@ namespace Dwarrowdelf
 
 		public override int ReadByte()
 		{
+			int b = m_recvStream.ReadByte();
+			if (b == -1)
+				throw new SocketException((int)SocketError.Success);
 			m_totalRead++;
-			return m_recvStream.ReadByte();
+			return b;
 		}
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			var len = m_recvStream.Read(buffer, offset, count);
+			if (len == 0)
+				throw new SocketException((int)SocketError.Success);
 			m_totalRead += len;
 			return len;
 		}
