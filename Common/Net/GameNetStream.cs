@@ -55,6 +55,27 @@ namespace Dwarrowdelf
 			return m_receiveBuffer[m_read++];
 		}
 
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			int len;
+
+			if (m_received == m_read)
+			{
+				len = m_socket.Receive(buffer, offset, count, SocketFlags.None);
+			}
+			else
+			{
+				len = Math.Min(count, m_received - m_read);
+
+				Buffer.BlockCopy(m_receiveBuffer, m_read, buffer, offset, len);
+
+				m_read += len;
+			}
+
+			m_totalRead += len;
+			return len;
+		}
+
 
 		public override void Flush()
 		{
@@ -75,6 +96,18 @@ namespace Dwarrowdelf
 			m_sendBuffer[m_used++] = value;
 		}
 
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			if (m_used > 0)
+				Flush();
+
+			int len = m_socket.Send(buffer, 0, count, SocketFlags.None);
+			if (len != count)
+				throw new Exception("short write");
+
+			m_totalSent += len;
+		}
+
 
 		public override long Length
 		{
@@ -93,22 +126,12 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public override int Read(byte[] buffer, int offset, int count)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override long Seek(long offset, SeekOrigin origin)
 		{
 			throw new NotImplementedException();
 		}
 
 		public override void SetLength(long value)
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void Write(byte[] buffer, int offset, int count)
 		{
 			throw new NotImplementedException();
 		}
