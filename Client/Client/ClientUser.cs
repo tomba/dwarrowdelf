@@ -55,9 +55,8 @@ namespace Dwarrowdelf.Client
 
 			return Task.Factory.StartNew(() =>
 			{
-				// XXX
 				if (App.Current.Dispatcher.CheckAccess() == true)
-					Trace.TraceError("TASK IN WPF THREAD, FIX!");
+					throw new Exception();
 
 				if (DirectConnection.UseDirectXXX)
 					m_connection = DirectConnection.Connect(game);
