@@ -201,23 +201,25 @@ for p in cube.Range():
 	td = env.GetTileData(p)
 
 	if terrainID != None:
-		td.TerrainID = terrainID
+		Dwarrowdelf.TileData.TerrainID.SetValue(td, terrainID)
 	if terrainMaterialID != None:
-		td.TerrainMaterialID = terrainMaterialID
+		Dwarrowdelf.TileData.TerrainMaterialID.SetValue(td, terrainMaterialID)
 
 	if interiorID != None:
-		td.InteriorID = interiorID
+		Dwarrowdelf.TileData.InteriorID.SetValue(td, interiorID)
 	if interiorMaterialID != None:
-		td.InteriorMaterialID = interiorMaterialID
+		Dwarrowdelf.TileData.InteriorMaterialID.SetValue(td, interiorMaterialID)
 
 	if grass != None:
+		flags = td.Flags
 		if grass:
-			td.Flags |= Dwarrowdelf.TileFlags.Grass
+			flags |= Dwarrowdelf.TileFlags.Grass
 		else:
-			td.Flags &= ~Dwarrowdelf.TileFlags.Grass
+			flags &= ~Dwarrowdelf.TileFlags.Grass
+		Dwarrowdelf.TileData.Flags.SetValue(td, flags)
 
 	if waterLevel != None:
-		td.WaterLevel = waterLevel
+		Dwarrowdelf.TileData.WaterLevel.SetValue(td, waterLevel)
 
 	env.SetTileData(p, td)
 
