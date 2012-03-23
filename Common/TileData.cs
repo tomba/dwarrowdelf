@@ -22,19 +22,25 @@ namespace Dwarrowdelf
 		[FieldOffset(0)]
 		public ulong Raw;
 
+		[NonSerialized]
 		[FieldOffset(0)]
 		public TerrainID TerrainID;
+		[NonSerialized]
 		[FieldOffset(1)]
 		public MaterialID TerrainMaterialID;
 
+		[NonSerialized]
 		[FieldOffset(2)]
 		public InteriorID InteriorID;
+		[NonSerialized]
 		[FieldOffset(3)]
 		public MaterialID InteriorMaterialID;
 
+		[NonSerialized]
 		[FieldOffset(4)]
 		public TileFlags Flags;
 
+		[NonSerialized]
 		[FieldOffset(6)]
 		public byte WaterLevel;
 
