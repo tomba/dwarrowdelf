@@ -72,9 +72,6 @@ namespace Dwarrowdelf.Server
 
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
-
-			int magic = 0;
-			GameAction.MagicNumberGenerator = () => -Math.Abs(Interlocked.Increment(ref magic));	// XXX
 		}
 
 		public void Create()

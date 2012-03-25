@@ -19,8 +19,8 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		public CarnivoreAI(ILivingObject ob)
-			: base(ob)
+		public CarnivoreAI(ILivingObject ob, byte aiID)
+			: base(ob, aiID)
 		{
 			m_priorityAction = false;
 		}

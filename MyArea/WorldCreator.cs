@@ -274,7 +274,7 @@ namespace MyArea
 				};
 
 				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living));
+				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living, 0));
 
 				living.MoveTo(env, GetRandomSurfaceLocation(env, surfaceLevel));
 			}
@@ -287,7 +287,7 @@ namespace MyArea
 				};
 
 				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.MonsterAI(living));
+				living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
 
 				Helpers.AddGem(living);
 				Helpers.AddBattleGear(living);

@@ -19,9 +19,6 @@ namespace Dwarrowdelf.Client
 
 			Trace.TraceInformation("Start");
 
-			int magic = 0;
-			GameAction.MagicNumberGenerator = () => Math.Abs(Interlocked.Increment(ref magic));
-
 			base.OnStartup(e);
 		}
 	}

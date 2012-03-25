@@ -322,6 +322,8 @@ namespace Dwarrowdelf.Client
 				else
 					action = living.DecideAction();
 
+				Debug.Assert(action == null || action.MagicNumber != 0);
+
 				if (action != living.CurrentAction)
 					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 			}

@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client
 		ILivingObject m_target;
 
 		public DwarfAI(ILivingObject worker)
-			: base(worker)
+			: base(worker, 1)
 		{
 			this.State = DwarfState.Working;
 		}

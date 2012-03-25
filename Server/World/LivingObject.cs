@@ -569,6 +569,7 @@ namespace Dwarrowdelf.Server
 				MagicNumber = this.CurrentAction.MagicNumber,
 				UserID = this.ActionUserID,
 				State = state,
+				Action = this.CurrentAction,
 			};
 
 			if (m_ai != null)
@@ -614,6 +615,7 @@ namespace Dwarrowdelf.Server
 
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(priority != ActionPriority.Undefined);
+			Debug.Assert(action.MagicNumber != 0);
 
 			this.CurrentAction = action;
 			this.ActionPriority = priority;

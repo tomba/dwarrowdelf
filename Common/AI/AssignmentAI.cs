@@ -27,6 +27,11 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty]
 		ActionPriority m_currentPriority;
 
+		[SaveGameProperty]
+		byte m_id;
+		[SaveGameProperty]
+		ushort m_magicNumber;
+
 		public IAssignment CurrentAssignment { get { return m_currentAssignment; } }
 
 		public ActionPriority CurrentPriority { get { return m_currentPriority; } }
@@ -73,8 +78,10 @@ namespace Dwarrowdelf.AI
 				m_currentAssignment.StatusChanged += OnJobStatusChanged;
 		}
 
-		protected AssignmentAI(ILivingObject worker)
+		protected AssignmentAI(ILivingObject worker, byte aiID)
 		{
+			m_id = aiID;
+
 			this.Worker = worker;
 			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
 		}
@@ -191,6 +198,12 @@ namespace Dwarrowdelf.AI
 					var action = assignment.CurrentAction;
 					if (action == null)
 						throw new Exception();
+
+					m_magicNumber++;
+					if (m_magicNumber == 0)
+						m_magicNumber++;
+
+					action.MagicNumber = m_magicNumber | (m_id << 16);
 
 					trace.TraceVerbose("DecideAction: new action {0}", action);
 					return action;

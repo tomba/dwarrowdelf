@@ -20,8 +20,8 @@ namespace MyArea
 		[SaveGameProperty]
 		EnvObserver m_envObserver;
 
-		public DwarfAI(ILivingObject ob, EnvObserver envObserver)
-			: base(ob)
+		public DwarfAI(ILivingObject ob, EnvObserver envObserver, byte aiID)
+			: base(ob, aiID)
 		{
 			m_envObserver = envObserver;
 		}

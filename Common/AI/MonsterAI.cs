@@ -19,8 +19,8 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		public MonsterAI(ILivingObject ob)
-			: base(ob)
+		public MonsterAI(ILivingObject ob, byte aiID)
+			: base(ob, aiID)
 		{
 			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
 		}

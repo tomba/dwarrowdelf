@@ -337,7 +337,7 @@ namespace Dwarrowdelf.Server
 					{
 						case LivingCategory.Herbivore:
 							{
-								var ai = new Dwarrowdelf.AI.HerbivoreAI(living);
+								var ai = new Dwarrowdelf.AI.HerbivoreAI(living, 0);
 								living.SetAI(ai);
 
 								if (msg.IsGroup)
@@ -347,14 +347,14 @@ namespace Dwarrowdelf.Server
 
 						case LivingCategory.Carnivore:
 							{
-								var ai = new Dwarrowdelf.AI.CarnivoreAI(living);
+								var ai = new Dwarrowdelf.AI.CarnivoreAI(living, 0);
 								living.SetAI(ai);
 							}
 							break;
 
 						case LivingCategory.Monster:
 							{
-								var ai = new Dwarrowdelf.AI.MonsterAI(living);
+								var ai = new Dwarrowdelf.AI.MonsterAI(living, 0);
 								living.SetAI(ai);
 							}
 							break;

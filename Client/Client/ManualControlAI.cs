@@ -16,9 +16,13 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<GameAction> Actions { get; private set; }
 		GameAction m_currentAction;
 
-		public ManualControlAI(LivingObject worker)
+		byte m_id;
+		ushort m_magicNumber;
+
+		public ManualControlAI(LivingObject worker, byte aiID)
 		{
 			m_worker = worker;
+			m_id = aiID;
 			m_actions = new ObservableCollection<GameAction>();
 			this.Actions = new ReadOnlyObservableCollection<GameAction>(m_actions);
 		}
@@ -59,6 +63,13 @@ namespace Dwarrowdelf.Client
 			}
 
 			m_currentAction = m_actions[0];
+
+			m_magicNumber++;
+			if (m_magicNumber == 0)
+				m_magicNumber++;
+
+			m_currentAction.MagicNumber = m_magicNumber | (m_id << 16);
+
 			return m_currentAction;
 		}
 

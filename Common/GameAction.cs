@@ -46,15 +46,11 @@ namespace Dwarrowdelf
 	[SaveGameObjectByRef]
 	public abstract class GameAction
 	{
-		// XXX. Server gen creates negative numbers, client positive
-		public static Func<int> MagicNumberGenerator;
-
 		[SaveGameProperty]
-		public int MagicNumber { get; private set; }
+		public int MagicNumber { get; set; }
 
 		protected GameAction()
 		{
-			this.MagicNumber = MagicNumberGenerator();
 		}
 
 		protected GameAction(SaveGameContext ctx)

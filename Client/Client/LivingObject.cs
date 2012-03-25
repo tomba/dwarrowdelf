@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Client
 				m_isManuallyControlled = value;
 
 				if (m_isManuallyControlled)
-					this.AI = new ManualControlAI(this);
+					this.AI = new ManualControlAI(this, 1);
 				else
 					this.AI = new DwarfAI(this);
 

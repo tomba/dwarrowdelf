@@ -33,5 +33,6 @@ namespace Dwarrowdelf
 		public int MagicNumber { get; set; }
 		public int UserID { get; set; }
 		public ActionState State { get; set; }
+		public GameAction Action { get; set; }
 	}
 }

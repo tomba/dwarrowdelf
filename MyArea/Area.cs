@@ -36,7 +36,7 @@ namespace MyArea
 
 		public void SetupLivingAsControllable(LivingObject living)
 		{
-			living.SetAI(new DwarfAI(living, m_envObserver));
+			living.SetAI(new DwarfAI(living, m_envObserver, 0));
 		}
 
 		public LivingObject[] SetupWorldForNewPlayer(Player player)
@@ -185,7 +185,7 @@ namespace MyArea
 
 			var dwarf = builder.Create(this.World);
 
-			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver));
+			dwarf.SetAI(new DwarfAI(dwarf, m_envObserver, 0));
 
 			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);
