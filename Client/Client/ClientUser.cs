@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 				if (DirectConnection.UseDirectXXX)
 					m_connection = DirectConnection.Connect(game);
 				else
-					m_connection = Connection.Connect();
+					m_connection = TcpConnection.Connect();
 
 				Send(new Messages.LogOnRequestMessage() { Name = name });
 

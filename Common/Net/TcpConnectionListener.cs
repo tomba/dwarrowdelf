@@ -9,22 +9,22 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-	public static class ConnectionListener
+	public static class TcpConnectionListener
 	{
 		static Socket s_listenSocket;
 		static ManualResetEvent s_acceptStopEvent;
 		volatile static bool s_stopListen;
 		static MyTraceSource s_trace = new MyTraceSource("Dwarrowdelf.Connection", "Connection");
 
-		static Action<Connection> s_callback;
+		static Action<TcpConnection> s_callback;
 
-		public static void StartListening(Action<Connection> callback)
+		public static void StartListening(Action<TcpConnection> callback)
 		{
 			s_trace.TraceInformation("StartListening");
 
 			s_callback = callback;
 
-			int port = Connection.PORT;
+			int port = TcpConnection.PORT;
 
 			if (s_listenSocket != null)
 				throw new Exception();
@@ -73,7 +73,7 @@ namespace Dwarrowdelf
 
 			var socket = listenSocket.EndAccept(ar);
 
-			var conn = new Connection(socket);
+			var conn = new TcpConnection(socket);
 			s_callback(conn);
 
 			ar = s_listenSocket.BeginAccept(AcceptCallback, listenSocket);

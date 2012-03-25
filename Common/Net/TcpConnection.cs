@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public sealed class Connection : IConnection
+	public sealed class TcpConnection : IConnection
 	{
 		Socket m_socket;
 		GameNetStream m_netStream;
@@ -37,7 +37,7 @@ namespace Dwarrowdelf
 
 		Thread m_deserializerThread;
 
-		public Connection(Socket socket)
+		public TcpConnection(Socket socket)
 		{
 			trace.Header = socket.RemoteEndPoint.ToString();
 
@@ -177,20 +177,20 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public static Connection Connect()
+		public static TcpConnection Connect()
 		{
 			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 			var localEndPoint = new IPEndPoint(IPAddress.Loopback, 0);
 			socket.Bind(localEndPoint);
 
-			var port = Connection.PORT;
+			var port = TcpConnection.PORT;
 
 			var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
 
 			socket.Connect(remoteEndPoint);
 
-			return new Connection(socket);
+			return new TcpConnection(socket);
 		}
 	}
 }

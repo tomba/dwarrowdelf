@@ -78,7 +78,7 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
-    <Compile Include="Net\ConnectionListener.cs" />
+    <Compile Include="Net\TcpConnectionListener.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />
     <Compile Include="DataTypes\DoubleVector3.cs" />
     <Compile Include="DataTypes\Region.cs" />
@@ -156,7 +156,7 @@
     <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="Net\Connection.cs" />
+    <Compile Include="Net\TcpConnection.cs" />
     <Compile Include="Buildings.cs" />
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
