@@ -119,8 +119,15 @@ namespace Dwarrowdelf
 		{
 			trace.TraceInformation("Disconnect");
 
-			m_socket.Shutdown(SocketShutdown.Both);
-			m_socket.Disconnect(false);
+			try
+			{
+				m_socket.Shutdown(SocketShutdown.Both);
+				m_socket.Disconnect(false);
+			}
+			catch (SocketException e)
+			{
+				trace.TraceError("Error when disconnecting: {0}", e.Message);
+			}
 
 			m_deserializerThread.Join();
 
