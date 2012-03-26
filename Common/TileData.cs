@@ -49,5 +49,7 @@ namespace Dwarrowdelf
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
+
+		public const int SizeOf = 8;
 	}
 }

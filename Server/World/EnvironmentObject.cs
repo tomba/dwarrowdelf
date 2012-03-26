@@ -616,7 +616,7 @@ namespace Dwarrowdelf.Server
 
 					byte[] arr;
 
-					using (var memStream = new MemoryStream())
+					using (var memStream = new MemoryStream(bounds.Volume * TileData.SizeOf))
 					{
 						WriteTileData(memStream, bounds, visionTracker);
 						arr = memStream.ToArray();
