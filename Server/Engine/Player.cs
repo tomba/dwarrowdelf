@@ -155,10 +155,14 @@ namespace Dwarrowdelf.Server
 
 		void HandleDisconnect()
 		{
+			trace.TraceInformation("HandleDisconnect");
+
 			m_world.HandleMessagesEvent -= HandleNewMessages;
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
 
+			m_connection.NewMessageEvent -= _OnNewMessage;
+			m_connection.DisconnectEvent -= _OnDisconnect;
 			m_connection = null;
 
 			this.IsProceedTurnRequestSent = false;
