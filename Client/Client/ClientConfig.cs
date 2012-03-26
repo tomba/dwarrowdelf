@@ -12,9 +12,18 @@ namespace Dwarrowdelf.Client
 		SeparateAppDomain,
 	}
 
+	enum ConnectionType
+	{
+		None,
+		Tcp,
+		Pipe,
+		Direct,
+	}
+
 	static class ClientConfig
 	{
 		public static EmbeddedServerMode EmbeddedServer = EmbeddedServerMode.SeparateAppDomain;
+		public static ConnectionType ConnectionType = ConnectionType.Tcp;
 		public static bool AutoConnect = true;
 
 		public static bool ShowFps = false;
