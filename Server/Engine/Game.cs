@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server
 
 		public void Connect(DirectConnection clientConnection)
 		{
-			this.Engine.DirectConnect(clientConnection);
+			DirectConnectionListener.NewConnection(clientConnection);
 		}
 
 		public void CreateWorld()

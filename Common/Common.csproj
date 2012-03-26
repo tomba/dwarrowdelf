@@ -78,6 +78,7 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
+    <Compile Include="Net\DirectConnectionListener.cs" />
     <Compile Include="Net\PipeConnectionListener.cs" />
     <Compile Include="Net\TcpConnectionListener.cs" />
     <Compile Include="DataTypes\ArrayGrid2D.cs" />

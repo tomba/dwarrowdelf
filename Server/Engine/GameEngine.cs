@@ -198,6 +198,7 @@ namespace Dwarrowdelf.Server
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
+			DirectConnectionListener.StartListening(_OnNewConnection);
 
 			trace.TraceInformation("The server is ready.");
 
@@ -216,6 +217,7 @@ namespace Dwarrowdelf.Server
 
 			trace.TraceInformation("Server exiting");
 
+			DirectConnectionListener.StopListening();
 			TcpConnectionListener.StopListening();
 			PipeConnectionListener.StopListening();
 
@@ -237,12 +239,6 @@ namespace Dwarrowdelf.Server
 			m_exit = true;
 			Thread.MemoryBarrier();
 			SignalWorld();
-		}
-
-		public void DirectConnect(DirectConnection clientConnection)
-		{
-			var connection = new DirectConnection(clientConnection);
-			System.Threading.Tasks.Task.Factory.StartNew(() => _OnNewConnection(connection));
 		}
 
 		void _OnNewConnection(IConnection connection)
