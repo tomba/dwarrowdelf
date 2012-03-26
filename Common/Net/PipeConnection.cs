@@ -6,6 +6,7 @@ using System.IO.Pipes;
 using Dwarrowdelf.Messages;
 using System.Threading;
 using System.IO;
+using System.Collections.Concurrent;
 
 namespace Dwarrowdelf
 {
@@ -14,12 +15,14 @@ namespace Dwarrowdelf
 		PipeStream m_pipeStream;
 		BufferedStream m_stream;
 
-		Action<Message> m_receiveCallback;
-		Action m_disconnectCallback;
-
 		Thread m_deserializerThread;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
+
+		public event Action NewMessageEvent;
+		public event Action DisconnectEvent;
+
+		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
 
 		public PipeConnection(PipeStream stream)
 		{
@@ -29,6 +32,9 @@ namespace Dwarrowdelf
 
 			m_pipeStream = stream;
 			m_stream = new BufferedStream(m_pipeStream);
+
+			m_deserializerThread = new Thread(DeserializerMain);
+			m_deserializerThread.Start();
 		}
 
 		public int SentMessages { get; private set; }
@@ -38,20 +44,14 @@ namespace Dwarrowdelf
 
 		public bool IsConnected { get { return m_pipeStream.IsConnected; } }
 
-		public void Start(Action<Message> receiveCallback, Action disconnectCallback)
+		public Message GetMessage()
 		{
-			m_receiveCallback = receiveCallback;
-			m_disconnectCallback = disconnectCallback;
-
-			m_deserializerThread = new Thread(DeserializerMain);
-			m_deserializerThread.Start();
+			return m_msgQueue.Take();
 		}
 
-		public Message Receive()
+		public bool TryGetMessage(out Message msg)
 		{
-			var msg = Serializer.Deserialize(m_stream);
-
-			return msg;
+			return m_msgQueue.TryTake(out msg);
 		}
 
 		void DeserializerMain()
@@ -60,17 +60,27 @@ namespace Dwarrowdelf
 			{
 				while (true)
 				{
-					var msg = Receive();
+					var msg = Serializer.Deserialize(m_stream);
 					this.ReceivedMessages++;
 
-					m_receiveCallback(msg);
+					m_msgQueue.Add(msg);
+
+					var ev = this.NewMessageEvent;
+					if (ev != null)
+						ev();
 				}
 			}
 			catch (Exception e)
 			{
 				trace.TraceInformation("[RX]: error {0}", e.Message);
 
-				m_disconnectCallback();
+				if (this.DisconnectEvent != null)
+					DisconnectEvent();
+
+				// XXX this is to wake up possible waiters in GetMessage()
+				var ev = this.NewMessageEvent;
+				if (ev != null)
+					ev();
 			}
 
 			trace.TraceVerbose("Deserializer thread ending");

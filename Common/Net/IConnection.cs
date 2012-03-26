@@ -15,10 +15,14 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
-		Message Receive();
+		Message GetMessage();
+		bool TryGetMessage(out Message msg);
 
-		void Start(Action<Message> receiveCallback, Action disconnectCallback);
 		void Send(Message msg);
+
 		void Disconnect();
+
+		event Action NewMessageEvent;
+		event Action DisconnectEvent;
 	}
 }

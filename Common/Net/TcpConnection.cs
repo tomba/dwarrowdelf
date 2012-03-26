@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 
 namespace Dwarrowdelf
 {
@@ -18,9 +19,6 @@ namespace Dwarrowdelf
 		GameNetStream m_netStream;
 
 		public bool IsConnected { get { return m_socket.Connected; } }
-
-		Action<Message> m_receiveCallback;
-		Action m_disconnectCallback;
 
 		public int SentMessages { get; private set; }
 		public int SentBytes { get; private set; }
@@ -37,6 +35,11 @@ namespace Dwarrowdelf
 
 		Thread m_deserializerThread;
 
+		ConcurrentQueue<Message> m_msgQueue = new ConcurrentQueue<Message>();
+
+		public event Action NewMessageEvent;
+		public event Action DisconnectEvent;
+
 		public TcpConnection(Socket socket)
 		{
 			trace.Header = socket.RemoteEndPoint.ToString();
@@ -48,18 +51,46 @@ namespace Dwarrowdelf
 
 			m_socket = socket;
 			m_netStream = new GameNetStream(socket);
-		}
-
-		public void Start(Action<Message> receiveCallback, Action disconnectCallback)
-		{
-			Debug.Assert(m_socket != null);
-			Debug.Assert(m_deserializerThread == null);
-
-			m_receiveCallback = receiveCallback;
-			m_disconnectCallback = disconnectCallback;
 
 			m_deserializerThread = new Thread(DeserializerMain);
 			m_deserializerThread.Start();
+		}
+
+		public Message GetMessage()
+		{
+			Message msg;
+
+			if (TryGetMessage(out msg))
+				return msg;
+
+			using (ManualResetEventSlim ev = new ManualResetEventSlim(false))
+			{
+				Action handler = () => { ev.Set(); };
+
+				this.NewMessageEvent += handler;
+
+				if (TryGetMessage(out msg) == false)
+				{
+					ev.Wait();
+
+					if (TryGetMessage(out msg) == false)
+					{
+						if (this.IsConnected == false)
+							return null;
+
+						throw new Exception();
+					}
+				}
+
+				this.NewMessageEvent -= handler;
+			}
+
+			return msg;
+		}
+
+		public bool TryGetMessage(out Message msg)
+		{
+			return m_msgQueue.TryDequeue(out msg);
 		}
 
 		void DeserializerMain()
@@ -68,9 +99,13 @@ namespace Dwarrowdelf
 			{
 				while (true)
 				{
-					var msg = Receive();
+					var msg = ReceiveInternal();
 
-					m_receiveCallback(msg);
+					m_msgQueue.Enqueue(msg);
+
+					var ev = this.NewMessageEvent;
+					if (ev != null)
+						ev();
 				}
 			}
 			catch (Exception e)
@@ -80,13 +115,19 @@ namespace Dwarrowdelf
 				m_socket.Shutdown(SocketShutdown.Both);
 				m_socket.Close();
 
-				m_disconnectCallback();
+				if (this.DisconnectEvent != null)
+					DisconnectEvent();
+
+				// XXX this is to wake up possible waiters in GetMessage()
+				var ev = this.NewMessageEvent;
+				if (ev != null)
+					ev();
 			}
 
 			trace.TraceVerbose("Deserializer thread ending");
 		}
 
-		public Message Receive()
+		Message ReceiveInternal()
 		{
 			var recvStream = m_netStream;
 

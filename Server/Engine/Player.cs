@@ -115,8 +115,8 @@ namespace Dwarrowdelf.Server
 			m_world.ReportReceived += HandleReport;
 
 			m_connection = connection;
-			m_connection.Start(_OnReceiveMessage, _OnDisconnect);
-
+			m_connection.NewMessageEvent += _OnNewMessage;
+			m_connection.DisconnectEvent += _OnDisconnect;
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
@@ -179,21 +179,18 @@ namespace Dwarrowdelf.Server
 			m_engine.SignalWorld();
 		}
 
-		void _OnReceiveMessage(Message m)
+		void _OnNewMessage()
 		{
-			trace.TraceVerbose("OnReceiveMessage");
-			m_msgQueue.Enqueue(m);
+			trace.TraceVerbose("_OnNewMessage");
 			m_engine.SignalWorld();
 		}
 
-		System.Collections.Concurrent.ConcurrentQueue<Message> m_msgQueue = new System.Collections.Concurrent.ConcurrentQueue<Message>();
-
 		public void HandleNewMessages()
 		{
-			trace.TraceVerbose("HandleNewMessages, count = {0}", m_msgQueue.Count);
+			trace.TraceVerbose("HandleNewMessages");
 
 			Message msg;
-			while (m_msgQueue.TryDequeue(out msg))
+			while (m_connection.TryGetMessage(out msg))
 				OnReceiveMessage(msg);
 
 			if (!m_connection.IsConnected)

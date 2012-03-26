@@ -15,6 +15,9 @@ namespace Dwarrowdelf
 
 		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
 
+		public event Action NewMessageEvent;
+		public event Action DisconnectEvent;
+
 		public DirectConnection()
 		{
 
@@ -41,32 +44,26 @@ namespace Dwarrowdelf
 			get { return m_remoteConnection != null; }
 		}
 
-		public Message Receive()
+		public Message GetMessage()
 		{
-			Message msg;
-
-			msg = m_msgQueue.Take();
-
-			return msg;
+			return m_msgQueue.Take();
 		}
 
-		Action<Message> m_receiveCallback;
-		Action m_disconnectCallback;
-
-		public void Start(Action<Message> receiveCallback, Action disconnectCallback)
+		public bool TryGetMessage(out Message msg)
 		{
-			m_receiveCallback = receiveCallback;
-			m_disconnectCallback = disconnectCallback;
+			return m_msgQueue.TryTake(out msg);
 		}
 
 		void Enqueue(Message msg)
 		{
 			this.ReceivedMessages++;
 
-			if (m_receiveCallback != null)
-				m_receiveCallback(msg);
-			else
-				m_msgQueue.Add(msg);
+			m_msgQueue.Add(msg);
+
+			var ev = this.NewMessageEvent;
+
+			if (ev != null)
+				ev();
 		}
 
 		public void Send(Message msg)
@@ -78,15 +75,15 @@ namespace Dwarrowdelf
 
 		void RemoteDisconnect()
 		{
-			if (m_disconnectCallback != null)
-				m_disconnectCallback();
+			if (this.DisconnectEvent != null)
+				DisconnectEvent();
 		}
 
 		public void Disconnect()
 		{
 			m_remoteConnection.RemoteDisconnect();
-			if (m_disconnectCallback != null)
-				m_disconnectCallback();
+			if (this.DisconnectEvent != null)
+				DisconnectEvent();
 		}
 
 		public static DirectConnection Connect(IGame game)

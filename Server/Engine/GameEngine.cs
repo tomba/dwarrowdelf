@@ -250,7 +250,7 @@ namespace Dwarrowdelf.Server
 			trace.TraceInformation("New connection");
 
 			// XXX timeout
-			var msg = connection.Receive();
+			var msg = connection.GetMessage();
 
 			var request = msg as Messages.LogOnRequestMessage;
 

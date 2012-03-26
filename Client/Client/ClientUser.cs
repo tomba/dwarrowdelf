@@ -5,6 +5,7 @@ using System.Text;
 using Dwarrowdelf.Messages;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Dwarrowdelf.Client
 {
@@ -93,7 +94,7 @@ namespace Dwarrowdelf.Client
 				/* read messages from LogOnReplyBeginMessage to LogOnReplyEndMessage */
 				while (true)
 				{
-					var msg = m_connection.Receive();
+					var msg = m_connection.GetMessage();
 
 					if (first)
 					{
@@ -102,7 +103,7 @@ namespace Dwarrowdelf.Client
 						first = false;
 					}
 
-					_OnReceiveMessageSync(msg);
+					Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
 
 					if (msg is LogOnReplyEndMessage)
 						break;
@@ -110,7 +111,12 @@ namespace Dwarrowdelf.Client
 
 				this.IsPlayerInGame = true;
 
-				m_connection.Start(_OnReceiveMessage, _OnDisconnected);
+				m_connection.NewMessageEvent += _OnNewMessages;
+				m_connection.DisconnectEvent += _OnDisconnected;
+
+				// Invoke to flush possible messages in the queue
+				Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
+
 			}, System.Threading.CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 
@@ -156,14 +162,17 @@ namespace Dwarrowdelf.Client
 				DisconnectEvent();
 		}
 
-		void _OnReceiveMessage(Message msg)
+		void _OnNewMessages()
 		{
-			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action<ClientMessage>(OnReceiveMessage), msg);
+			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
 		}
 
-		void _OnReceiveMessageSync(Message msg)
+		void OnNewMessages()
 		{
-			System.Windows.Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
+			Message msg;
+
+			while (m_connection.TryGetMessage(out msg))
+				OnReceiveMessage((ClientMessage)msg);
 		}
 
 		public void OnReceiveMessage(ClientMessage msg)
