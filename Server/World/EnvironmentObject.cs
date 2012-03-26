@@ -605,28 +605,88 @@ namespace Dwarrowdelf.Server
 			int h = this.Height;
 			int d = this.Depth;
 
-#if asd
+#if !parallel
+			bool useCompression = false;
+
+			if (useCompression == false)
+			{
+				for (int z = 0; z < d; ++z)
+				{
+					var bounds = new IntCuboid(0, 0, z, w, h, 1);
+
+					byte[] arr;
+
+					using (var memStream = new MemoryStream())
+					{
+						WriteTileData(memStream, bounds, visionTracker);
+						arr = memStream.ToArray();
+					}
+
+					var msg = new Messages.MapDataTerrainsMessage()
+					{
+						Environment = this.ObjectID,
+						Bounds = bounds,
+						IsTerrainDataCompressed = false,
+						TerrainData = arr,
+					};
+
+					player.Send(msg);
+					//Trace.TraceError("Sent {0}", z);
+				}
+			}
+			else
+			{
+				for (int z = 0; z < d; ++z)
+				{
+					var bounds = new IntCuboid(0, 0, z, w, h, 1);
+
+					byte[] arr;
+
+					using (var memStream = new MemoryStream())
+					{
+						using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
+						using (var bufferedStream = new BufferedStream(compressStream))
+						{
+							WriteTileData(bufferedStream, bounds, visionTracker);
+						}
+
+						arr = memStream.ToArray();
+					}
+
+					var msg = new Messages.MapDataTerrainsMessage()
+					{
+						Environment = this.ObjectID,
+						Bounds = bounds,
+						IsTerrainDataCompressed = true,
+						TerrainData = arr,
+					};
+
+					player.Send(msg);
+					//Trace.TraceError("Sent {0}", z);
+				}
+			}
+#else
 			var queue = new BlockingCollection<Tuple<int, byte[]>>();
 
 			var writerTask = Task.Factory.StartNew(() =>
+			{
+				foreach (var tuple in queue.GetConsumingEnumerable())
 				{
-					foreach (var tuple in queue.GetConsumingEnumerable())
+					int z = tuple.Item1;
+					var arr = tuple.Item2;
+
+					var msg = new Messages.MapDataTerrainsMessage()
 					{
-						int z = tuple.Item1;
-						var arr = tuple.Item2;
+						Environment = this.ObjectID,
+						Bounds = new IntCuboid(0, 0, z, w, h, 1),
+						IsTerrainDataCompressed = true,
+						TerrainData = arr,
+					};
 
-						var msg = new Messages.MapDataTerrainsMessage()
-						{
-							Environment = this.ObjectID,
-							Bounds = new IntCuboid(0, 0, z, w, h, 1),
-							IsTerrainDataCompressed = true,
-							TerrainData = arr,
-						};
-
-						player.Send(msg);
-						//Trace.TraceError("Sent {0}", z);
-					}
-				});
+					player.Send(msg);
+					//Trace.TraceError("Sent {0}", z);
+				}
+			});
 
 
 			Parallel.For(0, d, z =>
@@ -663,83 +723,24 @@ namespace Dwarrowdelf.Server
 
 			writerTask.Wait();
 #endif
+		}
 
-#if !asd
-			for (int z = 0; z < d; ++z)
+		void WriteTileData(Stream memStream, IntCuboid bounds, IVisionTracker visionTracker)
+		{
+			using (var streamWriter = new BinaryWriter(memStream))
 			{
-				using (var memStream = new MemoryStream())
+				foreach (var p in bounds.Range())
 				{
-					using (var streamWriter = new BinaryWriter(memStream))
-					{
-						var range = IntPoint3.Range(0, 0, z, w, h, 1);
+					ulong v;
 
-						foreach (var p in range)
-						{
-							ulong v;
+					if (!visionTracker.Sees(p))
+						v = 0;
+					else
+						v = m_tileGrid.GetTileData(p).Raw;
 
-							if (!visionTracker.Sees(p))
-								v = 0;
-							else
-								v = m_tileGrid.GetTileData(p).Raw;
-
-							streamWriter.Write(v);
-						}
-					}
-
-					var msg = new Messages.MapDataTerrainsMessage()
-					{
-						Environment = this.ObjectID,
-						Bounds = new IntCuboid(0, 0, z, w, h, 1),
-						IsTerrainDataCompressed = false,
-						TerrainData = memStream.ToArray(),
-					};
-
-					player.Send(msg);
-					//Trace.TraceError("Sent {0}", z);
+					streamWriter.Write(v);
 				}
 			}
-#endif
-
-#if asd
-
-
-			for (int i = 0; i < totalMsgs; ++i)
-			{
-				int z = i * planesPerMsg;
-
-				using (var memStream = new MemoryStream())
-				{
-					using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
-					using (var bufferedStream = new BufferedStream(compressStream))
-					using (var streamWriter = new BinaryWriter(bufferedStream))
-					{
-						var range = IntPoint3.Range(0, 0, z, size.Width, size.Height, size.Depth);
-
-						foreach (var p in range)
-						{
-							ulong v;
-
-							if (!visionTracker.Sees(p))
-								v = 0;
-							else
-								v = m_tileGrid.GetTileData(p).Raw;
-
-							streamWriter.Write(v);
-						}
-					}
-
-					var msg = new Messages.MapDataTerrainsMessage()
-					{
-						Environment = this.ObjectID,
-						Bounds = new IntCuboid(0, 0, z, size.Width, size.Height, size.Depth),
-						IsTerrainDataCompressed = true,
-						TerrainData = memStream.ToArray(),
-					};
-					player.Send(msg);
-					Trace.TraceError("Sent {0}", z);
-				}
-			}
-#endif
 		}
 
 		public override string ToString()

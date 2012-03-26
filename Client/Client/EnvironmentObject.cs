@@ -204,7 +204,23 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void SetTerrains(IntCuboid bounds, byte[] tileDataList)
+		void ReadAndSetTileData(Stream stream, IntCuboid bounds)
+		{
+			using (var reader = new BinaryReader(stream))
+			{
+				foreach (IntPoint3 p in bounds.Range())
+				{
+					TileData td = new TileData();
+					td.Raw = reader.ReadUInt64();
+					m_tileGrid.SetTileData(p, td);
+
+					if (MapTileTerrainChanged != null)
+						MapTileTerrainChanged(p);
+				}
+			}
+		}
+
+		public void SetTerrains(IntCuboid bounds, byte[] tileDataList, bool isCompressed)
 		{
 			this.Version += 1;
 
@@ -212,43 +228,18 @@ namespace Dwarrowdelf.Client
 
 			//Trace.TraceError("Recv {0}", bounds.Z);
 
-#if !asd
 			using (var memStream = new MemoryStream(tileDataList))
 			{
-				using (var streamReader = new BinaryReader(memStream))
+				if (isCompressed == false)
 				{
-					foreach (IntPoint3 p in bounds.Range())
-					{
-						TileData td = new TileData();
-						td.Raw = streamReader.ReadUInt64();
-						m_tileGrid.SetTileData(p, td);
-
-						if (MapTileTerrainChanged != null)
-							MapTileTerrainChanged(p);
-					}
+					ReadAndSetTileData(memStream, bounds);
+				}
+				else
+				{
+					using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
+						ReadAndSetTileData(decompressStream, bounds);
 				}
 			}
-#endif
-
-#if asd
-			using (var memStream = new MemoryStream(tileDataList))
-			{
-				using (var decompressStream = new DeflateStream(memStream, CompressionMode.Decompress))
-				using (var streamReader = new BinaryReader(decompressStream))
-				{
-					foreach (IntPoint3 p in bounds.Range())
-					{
-						TileData td = new TileData();
-						td.Raw = streamReader.ReadUInt64();
-						m_tileGrid.SetTileData(p, td);
-
-						if (MapTileTerrainChanged != null)
-							MapTileTerrainChanged(p);
-					}
-				}
-			}
-#endif
-
 #if asd
 			Task.Factory.StartNew(() =>
 			{
