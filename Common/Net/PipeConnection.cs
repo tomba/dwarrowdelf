@@ -77,10 +77,7 @@ namespace Dwarrowdelf
 				if (this.DisconnectEvent != null)
 					DisconnectEvent();
 
-				// XXX this is to wake up possible waiters in GetMessage()
-				var ev = this.NewMessageEvent;
-				if (ev != null)
-					ev();
+				m_msgQueue.CompleteAdding();
 			}
 
 			trace.TraceVerbose("Deserializer thread ending");
