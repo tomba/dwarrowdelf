@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 			{
 				ConnectionType ctype = ConnectionType.Tcp;
 
-				if (App.Current.Dispatcher.CheckAccess() == true)
+				if (Application.Current.Dispatcher.CheckAccess() == true)
 					throw new Exception();
 
 				switch (ctype)
@@ -114,8 +114,8 @@ namespace Dwarrowdelf.Client
 				m_connection.NewMessageEvent += _OnNewMessages;
 				m_connection.DisconnectEvent += _OnDisconnected;
 
-				// Invoke to flush possible messages in the queue
-				Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
+				// Invoke manually to flush possible messages in the queue
+				_OnNewMessages();
 
 			}, System.Threading.CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Client
 
 		void _OnDisconnected()
 		{
-			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(OnDisconnected));
+			Application.Current.Dispatcher.BeginInvoke(new Action(OnDisconnected));
 		}
 
 		void OnDisconnected()
@@ -162,14 +162,27 @@ namespace Dwarrowdelf.Client
 				DisconnectEvent();
 		}
 
+
+		volatile bool m_onNewMessagesInvoked;
+
 		void _OnNewMessages()
 		{
-			System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
+			if (m_onNewMessagesInvoked)
+				return;
+
+			m_onNewMessagesInvoked = true;
+
+			Application.Current.Dispatcher.BeginInvoke(new Action(OnNewMessages));
 		}
 
 		void OnNewMessages()
 		{
 			Message msg;
+
+			while (m_connection.TryGetMessage(out msg))
+				OnReceiveMessage((ClientMessage)msg);
+
+			m_onNewMessagesInvoked = false;
 
 			while (m_connection.TryGetMessage(out msg))
 				OnReceiveMessage((ClientMessage)msg);
