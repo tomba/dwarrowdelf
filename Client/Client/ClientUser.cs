@@ -10,6 +10,14 @@ namespace Dwarrowdelf.Client
 {
 	sealed class ClientUser
 	{
+		enum ConnectionType
+		{
+			None,
+			Tcp,
+			Pipe,
+			Direct,
+		}
+
 		static Dictionary<Type, Action<ClientUser, ClientMessage>> s_handlerMap;
 
 		static ClientUser()
@@ -55,13 +63,28 @@ namespace Dwarrowdelf.Client
 
 			return Task.Factory.StartNew(() =>
 			{
+				ConnectionType ctype = ConnectionType.Tcp;
+
 				if (App.Current.Dispatcher.CheckAccess() == true)
 					throw new Exception();
 
-				if (DirectConnection.UseDirectXXX)
-					m_connection = DirectConnection.Connect(game);
-				else
-					m_connection = TcpConnection.Connect();
+				switch (ctype)
+				{
+					case ConnectionType.Tcp:
+						m_connection = TcpConnection.Connect();
+						break;
+
+					case ConnectionType.Direct:
+						m_connection = DirectConnection.Connect(game);
+						break;
+
+					case ConnectionType.Pipe:
+						m_connection = PipeConnection.Connect();
+						break;
+
+					default:
+						throw new Exception();
+				}
 
 				Send(new Messages.LogOnRequestMessage() { Name = name });
 

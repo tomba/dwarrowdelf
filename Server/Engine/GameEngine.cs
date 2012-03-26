@@ -196,6 +196,7 @@ namespace Dwarrowdelf.Server
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
 
+			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
 
 			trace.TraceInformation("The server is ready.");
@@ -216,6 +217,7 @@ namespace Dwarrowdelf.Server
 			trace.TraceInformation("Server exiting");
 
 			TcpConnectionListener.StopListening();
+			PipeConnectionListener.StopListening();
 
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
