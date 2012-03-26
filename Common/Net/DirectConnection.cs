@@ -9,8 +9,6 @@ namespace Dwarrowdelf
 {
 	public class DirectConnection : MarshalByRefObject, IConnection
 	{
-		public static bool UseDirectXXX = false;
-
 		DirectConnection m_remoteConnection;
 
 		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
@@ -61,7 +59,6 @@ namespace Dwarrowdelf
 			m_msgQueue.Add(msg);
 
 			var ev = this.NewMessageEvent;
-
 			if (ev != null)
 				ev();
 		}
@@ -92,13 +89,10 @@ namespace Dwarrowdelf
 
 			game.Connect(connection);
 
-			while (connection.m_remoteConnection == null)
-			{
-				System.Threading.Thread.Sleep(10);
-			}
+			if (connection.m_remoteConnection == null)
+				throw new Exception();
 
 			return connection;
 		}
 	}
-
 }
