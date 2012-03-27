@@ -72,13 +72,20 @@ namespace Dwarrowdelf
 
 		void RemoteDisconnect()
 		{
+			m_remoteConnection = null;
+
 			if (this.DisconnectEvent != null)
 				DisconnectEvent();
 		}
 
 		public void Disconnect()
 		{
-			m_remoteConnection.RemoteDisconnect();
+			var remote = m_remoteConnection;
+
+			m_remoteConnection = null;
+
+			remote.RemoteDisconnect();
+
 			if (this.DisconnectEvent != null)
 				DisconnectEvent();
 		}
