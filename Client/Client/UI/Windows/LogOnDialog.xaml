@@ -1,25 +1,29 @@
 ﻿<Window x:Class="Dwarrowdelf.Client.UI.LogOnDialog"
 		x:ClassModifier="internal"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
-        WindowStyle="None"
-        ShowInTaskbar="False"
-        Title="LogOnDialog" Height="200" Width="200">
-    <Border BorderThickness="4" Padding="10">
-        <Border.BorderBrush>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FF00CAFF" Offset="0"/>
-                <GradientStop Color="White" Offset="1"/>
-            </LinearGradientBrush>
-        </Border.BorderBrush>
-        <Border.Background>
-            <RadialGradientBrush>
-                <GradientStop Color="#FF1FD8BA" Offset="1"/>
-                <GradientStop Color="#FF8FE4D6"/>
-            </RadialGradientBrush>
-        </Border.Background>
-        <Label Name="label" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Test"/>
-    </Border>
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		WindowStartupLocation="CenterOwner"
+		ResizeMode="NoResize"
+		WindowStyle="None"
+		ShowInTaskbar="False"
+		Title="LogOnDialog" Height="200" Width="200">
+	<Border BorderThickness="4" Padding="10">
+		<Border.BorderBrush>
+			<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+				<GradientStop Color="#FF00CAFF" Offset="0"/>
+				<GradientStop Color="White" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Border.Background>
+			<RadialGradientBrush>
+				<GradientStop Color="#FF1FD8BA" Offset="1"/>
+				<GradientStop Color="#FF8FE4D6"/>
+			</RadialGradientBrush>
+		</Border.Background>
+
+		<StackPanel Orientation="Vertical" VerticalAlignment="Center">
+			<Label Name="label1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Test"/>
+			<Label Name="label2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Test"/>
+		</StackPanel>
+	</Border>
 </Window>

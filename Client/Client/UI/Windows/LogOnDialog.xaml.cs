@@ -21,11 +21,18 @@ namespace Dwarrowdelf.Client.UI
 		public LogOnDialog()
 		{
 			InitializeComponent();
+			label1.Content = "";
+			label2.Content = "";
 		}
 
-		public void SetText(string text)
+		public void SetText1(string text)
 		{
-			label.Content = text;
+			label1.Content = text;
+		}
+
+		public void SetText2(string text)
+		{
+			label2.Content = text;
 		}
 	}
 }

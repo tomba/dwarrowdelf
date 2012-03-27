@@ -27,6 +27,36 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public enum ClientUserState
+		{
+			None,
+			Connecting,
+			LoggingIn,
+			ReceivingLoginData,
+			LoggedIn,
+		}
+
+		ClientUserState m_state;
+		public ClientUserState State
+		{
+			get { return m_state; }
+
+			private set
+			{
+				m_state = value;
+
+				if (this.StateChangedEvent != null)
+				{
+					if (App.Current.Dispatcher.CheckAccess())
+						this.StateChangedEvent(m_state);
+					else
+						App.Current.Dispatcher.BeginInvoke(this.StateChangedEvent, m_state);
+				}
+			}
+		}
+
+		public event Action<ClientUserState> StateChangedEvent;
+
 		public event Action DisconnectEvent;
 
 		ReportHandler m_reportHandler;
@@ -46,6 +76,7 @@ namespace Dwarrowdelf.Client
 		public ClientUser()
 		{
 			this.NetStats = new ClientNetStatistics();
+			this.State = ClientUserState.None;
 		}
 
 		// XXX add cancellationtoken
@@ -60,6 +91,8 @@ namespace Dwarrowdelf.Client
 
 				if (Application.Current.Dispatcher.CheckAccess() == true)
 					throw new Exception();
+
+				this.State = ClientUserState.Connecting;
 
 				switch (ClientConfig.ConnectionType)
 				{
@@ -79,6 +112,8 @@ namespace Dwarrowdelf.Client
 						throw new Exception();
 				}
 
+				this.State = ClientUserState.LoggingIn;
+
 				Send(new Messages.LogOnRequestMessage() { Name = name });
 
 				bool first = true;
@@ -93,6 +128,7 @@ namespace Dwarrowdelf.Client
 						if ((msg is LogOnReplyBeginMessage) == false)
 							throw new Exception();
 						first = false;
+						this.State = ClientUserState.ReceivingLoginData;
 					}
 
 					Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
@@ -101,6 +137,7 @@ namespace Dwarrowdelf.Client
 						break;
 				}
 
+				this.State = ClientUserState.LoggedIn;
 				this.IsPlayerInGame = true;
 
 				m_connection.NewMessageEvent += _OnNewMessages;

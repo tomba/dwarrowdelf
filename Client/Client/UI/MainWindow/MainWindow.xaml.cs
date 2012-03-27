@@ -570,7 +570,7 @@ for p in area.Range():
 			}
 		}
 
-		void SetLogOnText(string text)
+		void SetLogOnText(string text, int idx)
 		{
 			if (m_logOnDialog == null)
 			{
@@ -578,12 +578,18 @@ for p in area.Range():
 
 				m_logOnDialog = new LogOnDialog();
 				m_logOnDialog.Owner = this;
-				m_logOnDialog.SetText(text);
+				if (idx == 0)
+					m_logOnDialog.SetText1(text);
+				else
+					m_logOnDialog.SetText2(text);
 				m_logOnDialog.Show();
 			}
 			else
 			{
-				m_logOnDialog.SetText(text);
+				if (idx == 0)
+					m_logOnDialog.SetText1(text);
+				else
+					m_logOnDialog.SetText2(text);
 			}
 		}
 
@@ -601,12 +607,9 @@ for p in area.Range():
 
 		public void StartAndConnect()
 		{
-			var task = StartServer();
+			var task = StartServerInternal();
 
-			if (task != null)
-				task.ContinueWith((t) => Connect(), TaskScheduler.FromCurrentSynchronizationContext());
-			else
-				Connect();
+			task.ContinueWith((t) => Connect(), TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		public void DisconnectAndStop()
@@ -617,16 +620,24 @@ for p in area.Range():
 		public Task StartServer()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
-				return null;
+				return Task.Factory.StartNew(() => { });
 
-			SetLogOnText("Starting server");
-
-			m_server = new EmbeddedServer();
-			m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string>(SetLogOnText), str);
-			var task = m_server.StartAsync()
+			var task = StartServerInternal()
 				.ContinueWith((t) => CloseLoginDialog(), TaskScheduler.FromCurrentSynchronizationContext());
 
 			return task;
+		}
+
+		Task StartServerInternal()
+		{
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
+				return Task.Factory.StartNew(() => { });
+
+			SetLogOnText("Starting server", 0);
+
+			m_server = new EmbeddedServer();
+			m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string, int>(SetLogOnText), str, 1);
+			return m_server.StartAsync();
 		}
 
 		public void StopServer()
@@ -634,7 +645,7 @@ for p in area.Range():
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
 				return;
 
-			SetLogOnText("Stopping server");
+			SetLogOnText("Stopping server", 0);
 
 			m_server.Stop();
 			m_server = null;
@@ -651,10 +662,9 @@ for p in area.Range():
 			if (GameData.Data.User != null)
 				return null;
 
-			SetLogOnText("Connecting");
-
 			var player = new ClientUser();
 			player.DisconnectEvent += OnDisconnected;
+			player.StateChangedEvent += OnClientUserStateChanged;
 
 			GameData.Data.User = player;
 
@@ -664,11 +674,18 @@ for p in area.Range():
 			return task;
 		}
 
+		void OnClientUserStateChanged(ClientUser.ClientUserState state)
+		{
+			this.Dispatcher.VerifyAccess();
+			SetLogOnText(state.ToString(), 0);
+		}
+
 		void OnConnected(Task task)
 		{
+			CloseLoginDialog();
+
 			if (task.Status != TaskStatus.RanToCompletion)
 			{
-				CloseLoginDialog();
 				if (task.Exception != null)
 					MessageBox.Show(task.Exception.Message, "Connection Failed");
 				else
@@ -685,8 +702,6 @@ for p in area.Range():
 				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
 				mapControl.Z = controllable.Location.Z;
 			}
-
-			CloseLoginDialog();
 		}
 
 
@@ -698,7 +713,7 @@ for p in area.Range():
 
 			if (GameData.Data.User.IsPlayerInGame)
 			{
-				SetLogOnText("Saving");
+				SetLogOnText("Saving", 0);
 
 				ClientSaveManager.SaveEvent += OnGameSaved;
 
@@ -706,7 +721,7 @@ for p in area.Range():
 			}
 			else
 			{
-				SetLogOnText("Logging Out");
+				SetLogOnText("Logging Out", 0);
 				GameData.Data.User.SendLogOut();
 			}
 		}
@@ -715,7 +730,7 @@ for p in area.Range():
 		{
 			ClientSaveManager.SaveEvent -= OnGameSaved;
 
-			SetLogOnText("Logging Out");
+			SetLogOnText("Logging Out", 0);
 			GameData.Data.User.SendLogOut();
 		}
 
