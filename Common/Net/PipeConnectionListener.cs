@@ -8,29 +8,37 @@ namespace Dwarrowdelf
 {
 	public static class PipeConnectionListener
 	{
-		static NamedPipeServerStream s_stream;
 		static Action<PipeConnection> s_callback;
 
 		public static void StartListening(Action<PipeConnection> callback)
 		{
 			s_callback = callback;
 
-			s_stream = new NamedPipeServerStream("Dwarrowdelf.Pipe", PipeDirection.InOut, 1, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
-
-			s_stream.BeginWaitForConnection(AcceptCallback, null);
+			NewAccept();
 		}
 
 		public static void StopListening()
 		{
 		}
 
+		static void NewAccept()
+		{
+			var stream = new NamedPipeServerStream("Dwarrowdelf.Pipe", PipeDirection.InOut, 4, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+
+			stream.BeginWaitForConnection(AcceptCallback, stream);
+		}
+
 		static void AcceptCallback(IAsyncResult ar)
 		{
-			s_stream.EndWaitForConnection(ar);
+			var stream = (NamedPipeServerStream)ar.AsyncState;
 
-			var conn = new PipeConnection(s_stream);
+			stream.EndWaitForConnection(ar);
+
+			var conn = new PipeConnection(stream);
 
 			s_callback(conn);
+
+			NewAccept();
 		}
 	}
 }
