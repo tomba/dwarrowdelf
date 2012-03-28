@@ -531,8 +531,6 @@ namespace MyArea
 			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 1));
 			ClearTile(env, new IntPoint3(x + 4, y, surfaceLevel - 0));
 
-			env.ScanWaterTiles();
-
 			{
 				// Add a water generator
 				var item = WaterGenerator.Create(env.World);
