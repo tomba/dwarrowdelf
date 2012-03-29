@@ -111,7 +111,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return Helpers.Hash2D(this.X, this.Y);
+			return Hash.Hash2D(this.X, this.Y);
 		}
 
 		public override string ToString()

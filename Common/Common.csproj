@@ -78,6 +78,8 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="MWCRandom.cs" />
     <Compile Include="Net\DirectConnectionListener.cs" />
     <Compile Include="Net\PipeConnectionListener.cs" />
     <Compile Include="Net\TcpConnectionListener.cs" />
