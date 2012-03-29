@@ -14,7 +14,7 @@ namespace MyArea
 {
 	static class WorldCreator
 	{
-		const int MAP_SIZE = 7;	// 2^AREA_SIZE
+		const int MAP_SIZE = 8;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
 		const int GRASS_LIMIT = 15;	// No grass if z >= GRASS_LIMIT
 
