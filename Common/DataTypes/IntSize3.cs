@@ -85,7 +85,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return (this.Width ^ this.Height ^ this.Depth);
+			return Helpers.Hash3D(this.Width, this.Height, this.Depth);
 		}
 
 		public override string ToString()

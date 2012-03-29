@@ -101,8 +101,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			// 8 bits for Z, 12 bits for X/Y
-			return (this.Z << 24) | (this.Y << 12) | (this.X << 0);
+			return Helpers.Hash3D(this.X, this.Y, this.Z);
 		}
 
 		public static IEnumerable<IntPoint3> Range(int start_x, int start_y, int start_z, int width, int height, int depth)

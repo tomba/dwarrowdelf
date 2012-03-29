@@ -133,7 +133,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return (this.X << 20) | (this.Y << 10) | this.Z;
+			return Helpers.Hash3D(this.X, this.Y, this.Z);
 		}
 
 		public override string ToString()

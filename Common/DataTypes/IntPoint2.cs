@@ -83,7 +83,7 @@ namespace Dwarrowdelf
 
 		public override int GetHashCode()
 		{
-			return (this.Y << 16) | this.X;
+			return Helpers.Hash2D(this.X, this.Y);
 		}
 
 		public static explicit operator IntPoint2(IntVector2 vector)
