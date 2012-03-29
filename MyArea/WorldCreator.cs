@@ -354,6 +354,10 @@ namespace MyArea
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
+			int baseSeed = Helpers.GetRandomInt();
+			if (baseSeed == 0)
+				baseSeed = 1;
+
 			env.Bounds.Plane.Range().AsParallel().ForAll(p2d =>
 			{
 				int z = heightMap[p2d];
@@ -368,10 +372,12 @@ namespace MyArea
 
 					if (interiorID == InteriorID.Empty)
 					{
-						if (Helpers.GetRandomInt(8) == 0)
+						var r = new MWCRandom(p, baseSeed);
+
+						if (r.Next(8) == 0)
 						{
-							var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
-							var interior = Helpers.GetRandomInt() % 2 == 0 ? InteriorID.Tree : InteriorID.Sapling;
+							var material = materials[r.Next(materials.Length)].ID;
+							var interior = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
 							env.SetInterior(p, interior, material);
 						}
 					}
@@ -385,6 +391,8 @@ namespace MyArea
 
 			var plane = env.Bounds.Plane;
 
+			var baseSeed = Helpers.GetRandomInt();
+
 			plane.Range().AsParallel().ForAll(p =>
 			{
 				int z = heightMap[p];
@@ -392,7 +400,9 @@ namespace MyArea
 				int count = 0;
 				Direction dir = Direction.None;
 
-				int offset = Helpers.GetRandomInt(8);
+				var r = new MWCRandom(p, baseSeed);
+
+				int offset = r.Next(8);
 
 				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
 				// the slope if all 8 tiles are higher.
