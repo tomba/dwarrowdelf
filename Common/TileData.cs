@@ -46,6 +46,8 @@ namespace Dwarrowdelf
 
 		public bool HasGrass { get { return (this.Flags & TileFlags.Grass) != 0; } }
 
+		public bool HasTree { get { return this.InteriorID == InteriorID.Tree || this.InteriorID == InteriorID.Sapling; } }
+
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;

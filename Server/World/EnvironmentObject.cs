@@ -50,6 +50,9 @@ namespace Dwarrowdelf.Server
 
 		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
 
+		C5.IntervalHeap<SaplingNode> m_saplingPriorityQueue = new C5.IntervalHeap<SaplingNode>();
+		int m_numTrees;
+
 		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
 
 		EnvironmentObject(SaveGameContext ctx)
@@ -75,8 +78,6 @@ namespace Dwarrowdelf.Server
 				m_contentArray[i] = new KeyedObjectCollection();
 
 			m_largeObjectSet = new HashSet<AreaObject>();
-
-			ScanWaterTiles();
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -89,6 +90,8 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in this.Inventory)
 				m_contentArray[ob.Z].Add(ob);
 
+			this.World.TickStarting += Tick;
+
 			ScanWaterTiles();
 		}
 
@@ -97,6 +100,9 @@ namespace Dwarrowdelf.Server
 			base.Initialize(world);
 
 			world.TickStarting += Tick;
+
+			ScanTreeTiles();
+			ScanWaterTiles();
 		}
 
 		public override void Destruct()
@@ -114,6 +120,92 @@ namespace Dwarrowdelf.Server
 		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
+		}
+
+		class SaplingNode : IComparable<SaplingNode>
+		{
+			public int Time { get; private set; }
+			public IntPoint3 Location { get; private set; }
+
+			public SaplingNode(int time, IntPoint3 p)
+			{
+				this.Time = time;
+				this.Location = p;
+			}
+
+			public int CompareTo(SaplingNode other)
+			{
+				return Comparer<int>.Default.Compare(this.Time, other.Time);
+			}
+		}
+
+		int GetTimeToGrowTree()
+		{
+			return this.World.Random.Next(100) + 10;
+		}
+
+		void ScanTreeTiles()
+		{
+			int now = this.World.TickNumber;
+
+			m_numTrees = 0;
+
+			foreach (var p in this.Size.Range())
+			{
+				var interior = GetInteriorID(p);
+
+				switch (interior)
+				{
+					case InteriorID.Tree:
+						m_numTrees++;
+						break;
+
+					case InteriorID.Sapling:
+						m_numTrees++;
+
+						int t = GetTimeToGrowTree();
+						m_saplingPriorityQueue.Add(new SaplingNode(now + t, p));
+						break;
+				}
+			}
+		}
+
+		void HandleTrees()
+		{
+			int now = this.World.TickNumber;
+
+			while (m_saplingPriorityQueue.Count > 0)
+			{
+				var node = m_saplingPriorityQueue.FindMin();
+
+				if (node.Time > now)
+					break;
+
+				m_saplingPriorityQueue.DeleteMin();
+
+				var td = GetTileData(node.Location);
+
+				if (td.InteriorID == InteriorID.Sapling)
+				{
+					if (HasContents(node.Location))
+					{
+						int t = GetTimeToGrowTree();
+						m_saplingPriorityQueue.Add(new SaplingNode(now + t, node.Location));
+					}
+					else
+					{
+						td.InteriorID = InteriorID.Tree;
+						SetTileData(node.Location, td);
+					}
+				}
+			}
+
+			int normalNumTrees = this.Width * this.Height / 10;
+
+			if (m_numTrees < normalNumTrees)
+			{
+				// XXX add saplings
+			}
 		}
 
 		void ScanWaterTiles()
@@ -297,6 +389,7 @@ namespace Dwarrowdelf.Server
 		void Tick()
 		{
 			HandleWater();
+			HandleTrees();
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 l)
@@ -365,6 +458,16 @@ namespace Dwarrowdelf.Server
 
 			m_tileGrid.SetTileData(p, data);
 
+			if (oldData.HasTree != data.HasTree)
+			{
+				if (data.HasTree)
+					m_numTrees++;
+				else
+					m_numTrees--;
+
+				Debug.Assert(m_numTrees >= 0);
+			}
+
 			MapChanged(p, data);
 
 			if (this.TerrainOrInteriorChanged != null)
@@ -431,6 +534,11 @@ namespace Dwarrowdelf.Server
 			return list.Where(o => o.Location == l);
 		}
 
+		public bool HasContents(IntPoint3 l)
+		{
+			var list = m_contentArray[l.Z];
+			return list.Any(o => o.Location == l);
+		}
 
 		public override bool OkToAddChild(MovableObject ob, IntPoint3 p)
 		{
