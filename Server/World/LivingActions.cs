@@ -567,8 +567,12 @@ namespace Dwarrowdelf.Server
 							return false;
 						}
 
-						if (env.GetTerrainID(p + Direction.Up) == TerrainID.NaturalFloor)
-							env.SetTerrain(p + Direction.Up, TerrainID.Hole, env.GetTerrainMaterialID(p + Direction.Up));
+						var td2 = env.GetTileData(p + Direction.Up);
+						if (td2.TerrainID == TerrainID.NaturalFloor)
+						{
+							td2.TerrainID = TerrainID.Hole;
+							env.SetTileData(p + Direction.Up, td2);
+						}
 
 						var td = new TileData()
 						{
@@ -664,7 +668,8 @@ namespace Dwarrowdelf.Server
 		{
 			IntPoint3 p = this.Location + new IntVector3(action.Direction);
 
-			var id = this.Environment.GetInteriorID(p);
+			var td = this.Environment.GetTileData(p);
+			var id = td.InteriorID;
 
 			var report = new FellTreeActionReport(this, action.Direction);
 
@@ -674,14 +679,18 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			var material = this.Environment.GetInteriorMaterialID(p);
+			var material = td.InteriorMaterialID;
 
 			report.InteriorID = id;
 			report.MaterialID = material;
 
+			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+
+			this.Environment.SetTileData(p, td);
+
 			if (id == InteriorID.Tree)
 			{
-				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{
 					Name = "Log",
@@ -690,10 +699,6 @@ namespace Dwarrowdelf.Server
 				var log = builder.Create(this.World);
 				var ok = log.MoveTo(this.Environment, p);
 				Debug.Assert(ok);
-			}
-			else
-			{
-				this.Environment.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
 			}
 
 			SendReport(report);

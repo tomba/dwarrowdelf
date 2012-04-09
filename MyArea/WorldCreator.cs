@@ -135,7 +135,10 @@ namespace MyArea
 			{
 				var p = new IntPoint3(env.Width / 2 - 1, env.Height / 2 - 2, surfaceLevel);
 
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+				var td = env.GetTileData(p);
+				td.InteriorID = InteriorID.Empty;
+				td.InteriorMaterialID = MaterialID.Undefined;
+				env.SetTileData(p, td);
 
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
 				CreateItem(env, ItemID.Ore, MaterialID.Tin, p);
@@ -460,14 +463,26 @@ namespace MyArea
 
 		static void ClearTile(EnvironmentObject env, IntPoint3 p)
 		{
-			env.SetTerrain(p, TerrainID.Empty, MaterialID.Undefined);
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+			var td = env.GetTileData(p);
+
+			td.TerrainID = TerrainID.Empty;
+			td.TerrainMaterialID = MaterialID.Undefined;
+			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = MaterialID.Undefined;
+
+			env.SetTileData(p, td);
 		}
 
 		static void ClearInside(EnvironmentObject env, IntPoint3 p)
 		{
-			env.SetTerrain(p, TerrainID.NaturalFloor, MaterialID.Granite);
-			env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+			var td = env.GetTileData(p);
+
+			td.TerrainID = TerrainID.NaturalFloor;
+			td.TerrainMaterialID = MaterialID.Granite;
+			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = MaterialID.Undefined;
+
+			env.SetTileData(p, td);
 		}
 
 		static void SetArea(EnvironmentObject env, IntCuboid area, TileData data)
@@ -487,8 +502,15 @@ namespace MyArea
 						continue;
 
 					var p = new IntPoint3(x, y, area.Z);
-					env.SetTerrain(p, TerrainID.NaturalWall, MaterialID.Granite);
-					env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+
+					var td = env.GetTileData(p);
+
+					td.TerrainID = TerrainID.NaturalWall;
+					td.TerrainMaterialID = MaterialID.Granite;
+					td.InteriorID = InteriorID.Empty;
+					td.InteriorMaterialID = MaterialID.Undefined;
+
+					env.SetTileData(p, td);
 				}
 			}
 		}

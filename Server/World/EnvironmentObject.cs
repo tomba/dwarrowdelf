@@ -354,44 +354,6 @@ namespace Dwarrowdelf.Server
 			return (m_tileGrid.GetFlags(l) & flags) != 0;
 		}
 
-		public void SetTerrain(IntPoint3 p, TerrainID terrainID, MaterialID materialID)
-		{
-			Debug.Assert(this.IsInitialized);
-			Debug.Assert(this.World.IsWritable);
-
-			this.Version += 1;
-
-			var oldData = GetTileData(p);
-
-			m_tileGrid.SetTerrain(p, terrainID, materialID);
-
-			var data = m_tileGrid.GetTileData(p);
-
-			MapChanged(p, data);
-
-			if (this.TerrainOrInteriorChanged != null)
-				this.TerrainOrInteriorChanged(p, oldData, data);
-		}
-
-		public void SetInterior(IntPoint3 p, InteriorID interiorID, MaterialID materialID)
-		{
-			Debug.Assert(this.IsInitialized);
-			Debug.Assert(this.World.IsWritable);
-
-			this.Version += 1;
-
-			var oldData = GetTileData(p);
-
-			m_tileGrid.SetInterior(p, interiorID, materialID);
-
-			var data = m_tileGrid.GetTileData(p);
-
-			MapChanged(p, data);
-
-			if (this.TerrainOrInteriorChanged != null)
-				this.TerrainOrInteriorChanged(p, oldData, data);
-		}
-
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			Debug.Assert(this.IsInitialized);

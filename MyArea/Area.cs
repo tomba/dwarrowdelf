@@ -55,7 +55,12 @@ namespace MyArea
 
 			// clear trees
 			foreach (var p in startLocs)
-				env.SetInterior(p, InteriorID.Empty, MaterialID.Undefined);
+			{
+				var td = env.GetTileData(p);
+				td.InteriorID = InteriorID.Empty;
+				td.InteriorMaterialID = MaterialID.Undefined;
+				env.SetTileData(p, td);
+			}
 
 			var list = new List<LivingObject>();
 
