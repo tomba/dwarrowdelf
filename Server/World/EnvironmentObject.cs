@@ -50,10 +50,9 @@ namespace Dwarrowdelf.Server
 
 		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
 
-		C5.IntervalHeap<SaplingNode> m_saplingPriorityQueue = new C5.IntervalHeap<SaplingNode>();
-		int m_numTrees;
-
 		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
+
+		EnvTreeHandler m_treeHandler;
 
 		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
@@ -101,7 +100,8 @@ namespace Dwarrowdelf.Server
 
 			world.TickStarting += Tick;
 
-			ScanTreeTiles();
+			m_treeHandler = new EnvTreeHandler(this);
+
 			ScanWaterTiles();
 		}
 
@@ -121,93 +121,6 @@ namespace Dwarrowdelf.Server
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
-
-		class SaplingNode : IComparable<SaplingNode>
-		{
-			public int Time { get; private set; }
-			public IntPoint3 Location { get; private set; }
-
-			public SaplingNode(int time, IntPoint3 p)
-			{
-				this.Time = time;
-				this.Location = p;
-			}
-
-			public int CompareTo(SaplingNode other)
-			{
-				return Comparer<int>.Default.Compare(this.Time, other.Time);
-			}
-		}
-
-		int GetTimeToGrowTree()
-		{
-			return this.World.Random.Next(100) + 10;
-		}
-
-		void ScanTreeTiles()
-		{
-			int now = this.World.TickNumber;
-
-			m_numTrees = 0;
-
-			foreach (var p in this.Size.Range())
-			{
-				var interior = GetInteriorID(p);
-
-				switch (interior)
-				{
-					case InteriorID.Tree:
-						m_numTrees++;
-						break;
-
-					case InteriorID.Sapling:
-						m_numTrees++;
-
-						int t = GetTimeToGrowTree();
-						m_saplingPriorityQueue.Add(new SaplingNode(now + t, p));
-						break;
-				}
-			}
-		}
-
-		void HandleTrees()
-		{
-			int now = this.World.TickNumber;
-
-			while (m_saplingPriorityQueue.Count > 0)
-			{
-				var node = m_saplingPriorityQueue.FindMin();
-
-				if (node.Time > now)
-					break;
-
-				m_saplingPriorityQueue.DeleteMin();
-
-				var td = GetTileData(node.Location);
-
-				if (td.InteriorID == InteriorID.Sapling)
-				{
-					if (HasContents(node.Location))
-					{
-						int t = GetTimeToGrowTree();
-						m_saplingPriorityQueue.Add(new SaplingNode(now + t, node.Location));
-					}
-					else
-					{
-						td.InteriorID = InteriorID.Tree;
-						SetTileData(node.Location, td);
-					}
-				}
-			}
-
-			int normalNumTrees = this.Width * this.Height / 10;
-
-			if (m_numTrees < normalNumTrees)
-			{
-				// XXX add saplings
-			}
-		}
-
 		void ScanWaterTiles()
 		{
 			foreach (var p in this.Size.Range())
@@ -389,7 +302,7 @@ namespace Dwarrowdelf.Server
 		void Tick()
 		{
 			HandleWater();
-			HandleTrees();
+			m_treeHandler.Tick();
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 l)
@@ -461,11 +374,9 @@ namespace Dwarrowdelf.Server
 			if (oldData.HasTree != data.HasTree)
 			{
 				if (data.HasTree)
-					m_numTrees++;
+					m_treeHandler.AddTree();
 				else
-					m_numTrees--;
-
-				Debug.Assert(m_numTrees >= 0);
+					m_treeHandler.RemoveTree();
 			}
 
 			MapChanged(p, data);
