@@ -176,10 +176,9 @@ namespace Dwarrowdelf.Server
 
 		public void HandleWater()
 		{
-			IntPoint3[] waterTiles = m_waterTiles.ToArray();
 			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
 
-			foreach (var p in waterTiles)
+			foreach (var p in m_waterTiles)
 			{
 				if (m_env.GetWaterLevel(p) == 0)
 					throw new Exception();
