@@ -48,10 +48,9 @@ namespace Dwarrowdelf.Server
 		public event Action<AreaObject> LargeObjectAdded;
 		public event Action<AreaObject> LargeObjectRemoved;
 
-		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
-
 		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
 
+		EnvWaterHandler m_waterHandler;
 		EnvTreeHandler m_treeHandler;
 
 		EnvironmentObject(SaveGameContext ctx)
@@ -91,7 +90,7 @@ namespace Dwarrowdelf.Server
 
 			this.World.TickStarting += Tick;
 
-			ScanWaterTiles();
+			m_waterHandler = new EnvWaterHandler(this);
 		}
 
 		protected override void Initialize(World world)
@@ -102,7 +101,7 @@ namespace Dwarrowdelf.Server
 
 			m_treeHandler = new EnvTreeHandler(this);
 
-			ScanWaterTiles();
+			m_waterHandler = new EnvWaterHandler(this);
 		}
 
 		public override void Destruct()
@@ -121,187 +120,10 @@ namespace Dwarrowdelf.Server
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
-		void ScanWaterTiles()
-		{
-			foreach (var p in this.Size.Range())
-			{
-				if (m_tileGrid.GetWaterLevel(p) > 0)
-					m_waterTiles.Add(p);
-				else
-					m_waterTiles.Remove(p);
-			}
-		}
-
-		// XXX bad shuffle
-		static Random s_waterRandom = new Random();
-		static void ShuffleArray(Direction[] array)
-		{
-			if (array.Length == 0)
-				return;
-
-			for (int i = array.Length - 1; i >= 0; i--)
-			{
-				var tmp = array[i];
-				int randomIndex = s_waterRandom.Next(i + 1);
-
-				//Swap elements
-				array[i] = array[randomIndex];
-				array[randomIndex] = tmp;
-			}
-		}
-
-
-		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
-		{
-			if (!this.Contains(to))
-				return false;
-
-			IntVector3 v = to - from;
-
-			Debug.Assert(v.IsNormal);
-
-			var dstTerrain = GetTerrain(to);
-			var dstInter = GetInterior(to);
-
-			if (dstTerrain.IsBlocker || dstInter.IsBlocker)
-				return false;
-
-			if (v.Z == 0)
-				return true;
-
-			Direction dir = v.ToDirection();
-
-			if (dir == Direction.Up)
-				return dstTerrain.IsPermeable == true;
-
-			var srcTerrain = GetTerrain(from);
-
-			if (dir == Direction.Down)
-				return srcTerrain.IsPermeable == true;
-
-			throw new Exception();
-		}
-
-		void HandleWaterAt(IntPoint3 p, Dictionary<IntPoint3, int> waterChangeMap)
-		{
-			int curLevel;
-
-			if (!waterChangeMap.TryGetValue(p, out curLevel))
-			{
-				curLevel = m_tileGrid.GetWaterLevel(p);
-				/* water evaporates */
-				/*
-				if (curLevel == 1 && s_waterRandom.Next(100) == 0)
-				{
-					waterChangeMap[p] = 0;
-					return;
-				}
-				 */
-			}
-
-			var dirs = DirectionExtensions.CardinalUpDownDirections.ToArray();
-			ShuffleArray(dirs);
-			bool curLevelChanged = false;
-
-			for (int i = 0; i < dirs.Length; ++i)
-			{
-				var d = dirs[i];
-				var pp = p + d;
-
-				if (!CanWaterFlow(p, pp))
-					continue;
-
-				int neighLevel;
-				if (!waterChangeMap.TryGetValue(pp, out neighLevel))
-					neighLevel = m_tileGrid.GetWaterLevel(pp);
-
-				int flow;
-				if (d == Direction.Up)
-				{
-					if (curLevel > TileData.MaxWaterLevel)
-					{
-						flow = curLevel - (neighLevel + TileData.MaxCompress) - 1;
-						flow = MyMath.Clamp(flow, curLevel - TileData.MaxWaterLevel, 0);
-					}
-					else
-						flow = 0;
-
-				}
-				else if (d == Direction.Down)
-				{
-					if (neighLevel < TileData.MaxWaterLevel)
-						flow = TileData.MaxWaterLevel - neighLevel;
-					else if (curLevel >= TileData.MaxWaterLevel)
-						flow = curLevel - neighLevel + TileData.MaxCompress;
-					else
-						flow = 0;
-
-					flow = MyMath.Clamp(flow, curLevel, 0);
-				}
-				else
-				{
-					if (curLevel > TileData.MinWaterLevel && curLevel > neighLevel)
-					{
-						int diff = curLevel - neighLevel;
-						flow = (diff + 5) / 6;
-						Debug.Assert(flow < curLevel);
-						//flow = Math.Min(flow, curLevel - 1);
-						//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
-					}
-					else
-					{
-						flow = 0;
-					}
-				}
-
-				if (flow == 0)
-					continue;
-
-				curLevel -= flow;
-				neighLevel += flow;
-
-				waterChangeMap[pp] = neighLevel;
-				curLevelChanged = true;
-			}
-
-			if (curLevelChanged)
-				waterChangeMap[p] = curLevel;
-		}
-
-		void HandleWater()
-		{
-			IntPoint3[] waterTiles = m_waterTiles.ToArray();
-			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
-
-			foreach (var p in waterTiles)
-			{
-				if (m_tileGrid.GetWaterLevel(p) == 0)
-					throw new Exception();
-
-				HandleWaterAt(p, waterChangeMap);
-			}
-
-			foreach (var kvp in waterChangeMap)
-			{
-				var p = kvp.Key;
-				int level = kvp.Value;
-
-				var td = m_tileGrid.GetTileData(p);
-				td.WaterLevel = (byte)level;
-				m_tileGrid.SetWaterLevel(p, (byte)level);
-
-				MapChanged(p, td);
-
-				if (level > 0)
-					m_waterTiles.Add(p);
-				else
-					m_waterTiles.Remove(p);
-			}
-		}
 
 		void Tick()
 		{
-			HandleWater();
+			m_waterHandler.HandleWater();
 			m_treeHandler.Tick();
 		}
 
@@ -385,9 +207,9 @@ namespace Dwarrowdelf.Server
 				this.TerrainOrInteriorChanged(p, oldData, data);
 
 			if (data.WaterLevel > 0)
-				m_waterTiles.Add(p);
+				m_waterHandler.AddWater(p);
 			else
-				m_waterTiles.Remove(p);
+				m_waterHandler.RemoveWater(p);
 		}
 
 		public void SetWaterLevel(IntPoint3 l, byte waterLevel)
@@ -403,10 +225,10 @@ namespace Dwarrowdelf.Server
 
 			MapChanged(l, data);
 
-			if (waterLevel > 0)
-				m_waterTiles.Add(l);
+			if (data.WaterLevel > 0)
+				m_waterHandler.AddWater(l);
 			else
-				m_waterTiles.Remove(l);
+				m_waterHandler.RemoveWater(l);
 		}
 
 		public void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)

@@ -68,6 +68,7 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="AreaObject.cs" />
     <Compile Include="EnvTreeHandler.cs" />
+    <Compile Include="EnvWaterHandler.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="LivingActions.cs" />
     <Compile Include="ConcreteObject.cs" />
