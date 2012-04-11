@@ -162,8 +162,8 @@ namespace Dwarrowdelf
 
 			try
 			{
+				// this will cause the deserializer thread to wake up
 				m_socket.Shutdown(SocketShutdown.Both);
-				m_socket.Disconnect(false);
 			}
 			catch (SocketException e)
 			{
