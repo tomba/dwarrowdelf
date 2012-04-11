@@ -83,7 +83,7 @@ namespace Dwarrowdelf.Server
 			initializer();
 
 			m_initSw.Stop();
-			trace.TraceInformation("Initializing area took {0}", m_initSw.Elapsed);
+			trace.TraceInformation("Initializing area took {0} ms", m_initSw.ElapsedMilliseconds);
 
 			ExitWriteLock();
 		}
