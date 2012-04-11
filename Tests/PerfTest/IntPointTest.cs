@@ -360,7 +360,7 @@ namespace PerfTest
 
 				public bool Equals(IntPoint3D other)
 				{
-					return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
+					return m_value == other.m_value;
 				}
 
 				#endregion
@@ -371,12 +371,12 @@ namespace PerfTest
 						return false;
 
 					IntPoint3D l = (IntPoint3D)obj;
-					return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+					return m_value == l.m_value;
 				}
 
 				public static bool operator ==(IntPoint3D left, IntPoint3D right)
 				{
-					return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
+					return left.m_value == right.m_value;
 				}
 
 				public static bool operator !=(IntPoint3D left, IntPoint3D right)
@@ -486,7 +486,7 @@ namespace PerfTest
 
 				public bool Equals(IntPoint3D other)
 				{
-					return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
+					return m_value == other.m_value;
 				}
 
 				#endregion
@@ -497,12 +497,12 @@ namespace PerfTest
 						return false;
 
 					IntPoint3D l = (IntPoint3D)obj;
-					return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+					return m_value == l.m_value;
 				}
 
 				public static bool operator ==(IntPoint3D left, IntPoint3D right)
 				{
-					return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
+					return left.m_value == right.m_value;
 				}
 
 				public static bool operator !=(IntPoint3D left, IntPoint3D right)
@@ -606,7 +606,7 @@ namespace PerfTest
 
 				public bool Equals(IntPoint3D other)
 				{
-					return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
+					return (m_value1 == other.m_value1) && (m_value2 == other.m_value2);
 				}
 
 				#endregion
@@ -617,12 +617,12 @@ namespace PerfTest
 						return false;
 
 					IntPoint3D l = (IntPoint3D)obj;
-					return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+					return (m_value1 == l.m_value1) && (m_value2 == l.m_value2);
 				}
 
 				public static bool operator ==(IntPoint3D left, IntPoint3D right)
 				{
-					return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
+					return (left.m_value1 == right.m_value1) && (left.m_value2 == right.m_value2);
 				}
 
 				public static bool operator !=(IntPoint3D left, IntPoint3D right)
