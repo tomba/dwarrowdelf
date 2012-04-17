@@ -36,6 +36,13 @@ namespace Dwarrowdelf
 			get { return new IntPoint2((this.Width - 1) / 2, (this.Height - 1) / 2); }
 		}
 
+		public IEnumerable<IntPoint2> Range()
+		{
+			for (int y = 0; y < this.Height; ++y)
+				for (int x = 0; x < this.Width; ++x)
+					yield return new IntPoint2(x, y);
+		}
+
 		#region IEquatable<IntSize2> Members
 
 		public bool Equals(IntSize2 s)
