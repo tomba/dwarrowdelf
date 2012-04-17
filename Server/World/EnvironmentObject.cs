@@ -24,6 +24,8 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 
+		ArrayGrid2D<int> m_depthMap;
+
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
 
@@ -65,8 +67,9 @@ namespace Dwarrowdelf.Server
 			this.VisibilityMode = builder.VisibilityMode;
 
 			m_tileGrid = builder.Grid;
-			var size = m_tileGrid.Size;
+			m_depthMap = builder.DepthMap;
 
+			var size = m_tileGrid.Size;
 			this.Width = size.Width;
 			this.Height = size.Height;
 			this.Depth = size.Depth;
@@ -91,6 +94,27 @@ namespace Dwarrowdelf.Server
 			this.World.TickStarting += Tick;
 
 			m_waterHandler = new EnvWaterHandler(this);
+
+			CreateDepthMap();
+		}
+
+		void CreateDepthMap()
+		{
+			m_depthMap = new ArrayGrid2D<int>(this.Size.Plane);
+
+			Parallel.ForEach(this.Size.Plane.Range(), p =>
+			{
+				for (int z = this.Size.Depth - 1; z >= 0; --z)
+				{
+					var p3 = new IntPoint3(p, z);
+
+					if (m_tileGrid.GetTileData(p3).IsEmpty == false)
+					{
+						m_depthMap[p] = z;
+						break;
+					}
+				}
+			});
 		}
 
 		protected override void Initialize(World world)
@@ -199,6 +223,27 @@ namespace Dwarrowdelf.Server
 					m_treeHandler.AddTree();
 				else
 					m_treeHandler.RemoveTree();
+			}
+
+			var p2d = p.ToIntPoint();
+
+			if (data.IsEmpty == false && m_depthMap[p2d] < p.Z)
+			{
+				m_depthMap[p2d] = p.Z;
+			}
+			else if (data.IsEmpty && m_depthMap[p2d] == p.Z)
+			{
+				if (p.Z == 0)
+					throw new Exception();
+
+				for (int z = p.Z - 1; z >= 0; --z)
+				{
+					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
+					{
+						m_depthMap[p2d] = z;
+						break;
+					}
+				}
 			}
 
 			MapChanged(p, data);
@@ -792,38 +837,6 @@ namespace Dwarrowdelf.Server
 			m_grid[p.Z, p.Y, p.X] = data;
 		}
 
-		public void SetTerrain(IntPoint3 p, TerrainID id, MaterialID matID)
-		{
-			m_grid[p.Z, p.Y, p.X].TerrainID = id;
-			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = matID;
-		}
-
-		public void SetTerrainID(IntPoint3 p, TerrainID id)
-		{
-			m_grid[p.Z, p.Y, p.X].TerrainID = id;
-		}
-
-		public void SetTerrainMaterialID(IntPoint3 p, MaterialID id)
-		{
-			m_grid[p.Z, p.Y, p.X].TerrainMaterialID = id;
-		}
-
-		public void SetInterior(IntPoint3 p, InteriorID id, MaterialID matID)
-		{
-			m_grid[p.Z, p.Y, p.X].InteriorID = id;
-			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = matID;
-		}
-
-		public void SetInteriorID(IntPoint3 p, InteriorID id)
-		{
-			m_grid[p.Z, p.Y, p.X].InteriorID = id;
-		}
-
-		public void SetInteriorMaterialID(IntPoint3 p, MaterialID id)
-		{
-			m_grid[p.Z, p.Y, p.X].InteriorMaterialID = id;
-		}
-
 		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
 		{
 			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
@@ -842,8 +855,12 @@ namespace Dwarrowdelf.Server
 
 	public sealed class EnvironmentObjectBuilder
 	{
-		TileGrid m_tileGrid;
 		IntSize3 m_size;
+		TileGrid m_tileGrid;
+		ArrayGrid2D<int> m_depthMap;
+
+		internal TileGrid Grid { get { return m_tileGrid; } }
+		internal ArrayGrid2D<int> DepthMap { get { return m_depthMap; } }
 
 		public IntCuboid Bounds { get { return new IntCuboid(m_size); } }
 		public int Width { get { return m_size.Width; } }
@@ -852,13 +869,56 @@ namespace Dwarrowdelf.Server
 
 		public VisibilityMode VisibilityMode { get; set; }
 
-		internal TileGrid Grid { get { return m_tileGrid; } }
-
-		public EnvironmentObjectBuilder(IntSize3 size, VisibilityMode visibilityMode)
+		public EnvironmentObjectBuilder(ArrayGrid2D<int> depthMap, int depth, VisibilityMode visibilityMode)
 		{
-			m_size = size;
-			m_tileGrid = new TileGrid(size);
+			const int GRASS_LIMIT = 15;	// XXX No grass if z >= GRASS_LIMIT
+
+			m_depthMap = depthMap;
+
 			this.VisibilityMode = visibilityMode;
+
+			int width = depthMap.Width;
+			int height = depthMap.Height;
+
+			m_size = new IntSize3(width, height, depth);
+			m_tileGrid = new TileGrid(m_size);
+
+			Parallel.For(0, height, y =>
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					int surface = depthMap[x, y];
+
+					for (int z = 0; z < depth; ++z)
+					{
+						var p = new IntPoint3(x, y, z);
+						var td = new TileData();
+
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
+
+						if (z < surface)
+						{
+							td.TerrainID = TerrainID.NaturalWall;
+							td.TerrainMaterialID = MaterialID.Granite;
+						}
+						else if (z == surface)
+						{
+							td.TerrainID = TerrainID.NaturalFloor;
+							td.TerrainMaterialID = MaterialID.Granite;
+							if (z < GRASS_LIMIT)
+								td.Flags = TileFlags.Grass;
+						}
+						else
+						{
+							td.TerrainID = TerrainID.Empty;
+							td.TerrainMaterialID = MaterialID.Undefined;
+						}
+
+						m_tileGrid.SetTileData(p, td);
+					}
+				}
+			});
 		}
 
 		public EnvironmentObject Create(World world)
@@ -926,18 +986,29 @@ namespace Dwarrowdelf.Server
 			return (m_tileGrid.GetFlags(l) & flag) != 0;
 		}
 
-		public void SetTerrain(IntPoint3 p, TerrainID terrainID, MaterialID materialID)
-		{
-			m_tileGrid.SetTerrain(p, terrainID, materialID);
-		}
-
-		public void SetInterior(IntPoint3 p, InteriorID interiorID, MaterialID materialID)
-		{
-			m_tileGrid.SetInterior(p, interiorID, materialID);
-		}
-
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
+			var p2d = p.ToIntPoint();
+
+			if (data.IsEmpty == false && m_depthMap[p2d] < p.Z)
+			{
+				m_depthMap[p2d] = p.Z;
+			}
+			else if (data.IsEmpty && m_depthMap[p2d] == p.Z)
+			{
+				if (p.Z == 0)
+					throw new Exception();
+
+				for (int z = p.Z - 1; z >= 0; --z)
+				{
+					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
+					{
+						m_depthMap[p2d] = z;
+						break;
+					}
+				}
+			}
+
 			m_tileGrid.SetTileData(p, data);
 		}
 

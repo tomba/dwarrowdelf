@@ -16,7 +16,6 @@ namespace MyArea
 	{
 		const int MAP_SIZE = 8;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
-		const int GRASS_LIMIT = 15;	// No grass if z >= GRASS_LIMIT
 
 		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
@@ -96,9 +95,7 @@ namespace MyArea
 				intHeightMap[p] = (int)Math.Round(d);
 			}
 
-			var envBuilder = new EnvironmentObjectBuilder(new IntSize3(size, size, MAP_DEPTH), VisibilityMode.GlobalFOV);
-
-			CreateTerrainFromHeightmap(intHeightMap, envBuilder);
+			var envBuilder = new EnvironmentObjectBuilder(intHeightMap, MAP_DEPTH, VisibilityMode.GlobalFOV);
 
 			CreateSlopes(envBuilder, intHeightMap);
 
@@ -313,46 +310,6 @@ namespace MyArea
 				.H;
 		}
 
-		static void CreateTerrainFromHeightmap(ArrayGrid2D<int> heightMap, EnvironmentObjectBuilder env)
-		{
-			Parallel.For(0, env.Height, y =>
-			{
-				for (int x = 0; x < env.Width; ++x)
-				{
-					int surface = heightMap[x, y];
-
-					for (int z = 0; z < env.Depth; ++z)
-					{
-						var p = new IntPoint3(x, y, z);
-						var td = new TileData();
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
-						if (z < surface)
-						{
-							td.TerrainID = TerrainID.NaturalWall;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else if (z == surface)
-						{
-							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = MaterialID.Granite;
-							if (z < GRASS_LIMIT)
-								td.Flags = TileFlags.Grass;
-						}
-						else
-						{
-							td.TerrainID = TerrainID.Empty;
-							td.TerrainMaterialID = MaterialID.Undefined;
-						}
-
-						env.SetTileData(p, td);
-					}
-				}
-			});
-		}
-
 		static void CreateTrees(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
@@ -367,22 +324,17 @@ namespace MyArea
 
 				var p = new IntPoint3(p2d, z);
 
-				var terrainID = env.GetTerrainID(p);
+				var td = env.GetTileData(p);
 
-				if (terrainID == TerrainID.NaturalFloor || terrainID.IsSlope())
+				if ((td.TerrainID == TerrainID.NaturalFloor || td.TerrainID.IsSlope()) && td.InteriorID == InteriorID.Empty)
 				{
-					var interiorID = env.GetInteriorID(p);
+					var r = new MWCRandom(p, baseSeed);
 
-					if (interiorID == InteriorID.Empty)
+					if (r.Next(8) == 0)
 					{
-						var r = new MWCRandom(p, baseSeed);
-
-						if (r.Next(8) == 0)
-						{
-							var material = materials[r.Next(materials.Length)].ID;
-							var interior = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
-							env.SetInterior(p, interior, material);
-						}
+						td.InteriorID = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
+						td.InteriorMaterialID = materials[r.Next(materials.Length)].ID;
+						env.SetTileData(p, td);
 					}
 				}
 			});
@@ -425,7 +377,10 @@ namespace MyArea
 				if (count > 0 && count < 8)
 				{
 					var p3d = new IntPoint3(p, z);
-					env.SetTerrain(p3d, dir.ToSlope(), env.GetTerrainMaterialID(p3d));
+
+					var td = env.GetTileData(p3d);
+					td.TerrainID = dir.ToSlope();
+					env.SetTileData(p3d, td);
 				}
 			});
 		}
@@ -440,13 +395,17 @@ namespace MyArea
 			if (!env.Contains(p))
 				return;
 
-			if (env.GetTerrainID(p) != TerrainID.NaturalWall)
+			var td = env.GetTileData(p);
+
+			if (td.TerrainID != TerrainID.NaturalWall)
 				return;
 
-			if (env.GetInteriorID(p) == InteriorID.Ore)
+			if (td.InteriorID == InteriorID.Ore)
 				return;
 
-			env.SetInterior(p, InteriorID.Ore, oreMaterialID);
+			td.InteriorID = InteriorID.Ore;
+			td.InteriorMaterialID = oreMaterialID;
+			env.SetTileData(p, td);
 
 			if (count > 0)
 			{
