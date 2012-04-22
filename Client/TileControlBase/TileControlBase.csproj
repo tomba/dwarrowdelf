@@ -49,7 +49,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderData.cs" />
     <Compile Include="RenderTileDetailed.cs" />
-    <Compile Include="SymbolBitmapCache.cs" />
     <Compile Include="TileControlBase.cs" />
   </ItemGroup>
   <ItemGroup>

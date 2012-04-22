@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Client.UI
 			if (targetType != typeof(Drawing))
 				throw new ArgumentException();
 
-			return GameData.Data.SymbolDrawingCache.GetDrawing(symbolID, color);
+			return GameData.Data.TileSet.GetDrawing(symbolID, color);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
@@ -75,7 +75,7 @@ namespace Dwarrowdelf.Client.UI
 			if (targetType != typeof(Drawing))
 				throw new ArgumentException();
 
-			return GameData.Data.SymbolDrawingCache.GetDrawing(symbolID, color);
+			return GameData.Data.TileSet.GetDrawing(symbolID, color);
 		}
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)

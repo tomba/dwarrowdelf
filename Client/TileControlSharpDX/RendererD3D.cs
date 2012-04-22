@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		SharpDX.Direct3D11.Buffer m_colorBuffer;
 
-		ISymbolDrawingCache m_symbolDrawingCache;
+		ITileSet m_tileSet;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
@@ -108,20 +108,13 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public RenderData<RenderTileDetailed> RenderData { get; set; }
 
-		public ISymbolDrawingCache SymbolDrawingCache
+		public ITileSet TileSet
 		{
-			get { return m_symbolDrawingCache; }
+			get { return m_tileSet; }
 
 			set
 			{
-				if (m_symbolDrawingCache != null)
-					m_symbolDrawingCache.DrawingsChanged -= OnDrawingsChanged;
-
-				m_symbolDrawingCache = value;
-
-				if (m_symbolDrawingCache != null)
-					m_symbolDrawingCache.DrawingsChanged += OnDrawingsChanged;
-
+				m_tileSet = value;
 				OnDrawingsChanged();
 			}
 		}
@@ -134,7 +127,7 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileTextureArray = null;
 			}
 
-			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_symbolDrawingCache);
+			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_tileSet);
 
 			if (m_scene != null)
 				m_scene.SetTileTextures(m_tileTextureArray);

@@ -140,13 +140,6 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 
-		private void Button_Click_EditSymbols(object sender, RoutedEventArgs e)
-		{
-			var dialog = new Dwarrowdelf.Client.Symbols.SymbolEditorDialog();
-			dialog.SymbolDrawingCache = GameData.Data.SymbolDrawingCache;
-			dialog.Show();
-		}
-
 
 		void Button_LaborManager_Click(object sender, RoutedEventArgs e)
 		{

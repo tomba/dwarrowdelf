@@ -17,7 +17,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderData = renderData;
 		}
 
-		protected override void RenderTile(DrawingContext dc, int x, int y)
+		protected override void RenderTile(DrawingContext dc, int x, int y, int size)
 		{
 			int idx = m_renderData.GetIdx(x, y);
 			var sid = m_renderData.Grid[idx].SymbolID;
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var rect = new Rect(x, y, 1, 1);
 
-			var bitmap = this.SymbolBitmapCache.GetBitmap(sid, GameColor.None);
+			var bitmap = this.TileSet.GetBitmap(sid, GameColor.None, size);
 			dc.DrawImage(bitmap, rect);
 		}
 	}

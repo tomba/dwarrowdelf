@@ -9,6 +9,6 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ISymbolTileRenderer : ITileRenderer
 	{
-		ISymbolDrawingCache SymbolDrawingCache { get; set; }
+		ITileSet TileSet { get; set; }
 	}
 }

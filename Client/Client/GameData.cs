@@ -38,8 +38,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 
-			this.SymbolDrawingCache = new Dwarrowdelf.Client.Symbols.SymbolDrawingCache();
-			this.SymbolDrawingCache.Load("SymbolInfosChar.xaml");
+			this.TileSet = new Symbols.VectorTileSet("SymbolInfosChar.xaml");
 
 			m_gameEvents = new ObservableCollection<GameEvent>();
 			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
@@ -83,7 +82,15 @@ namespace Dwarrowdelf.Client
 
 		public UI.MainWindow MainWindow { get { return (UI.MainWindow)Application.Current.MainWindow; } }
 
-		public Dwarrowdelf.Client.Symbols.SymbolDrawingCache SymbolDrawingCache { get; private set; }
+		Dwarrowdelf.Client.ITileSet m_tileSet;
+
+		public Dwarrowdelf.Client.ITileSet TileSet
+		{
+			get { return m_tileSet; }
+			set { m_tileSet = value; if (this.TileSetChanged != null) this.TileSetChanged(); }
+		}
+
+		public event Action TileSetChanged;
 
 		bool m_previousWasTickEvent = true;
 

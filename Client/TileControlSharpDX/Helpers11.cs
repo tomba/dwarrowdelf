@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client.TileControl
 		/// <summary>
 		/// Create a Texture2D array which contains mipmapped versions of all symbol drawings
 		/// </summary>
-		public static Texture2D CreateTextures11(Device device, ISymbolDrawingCache symbolDrawingCache)
+		public static Texture2D CreateTextures11(Device device, ITileSet tileSet)
 		{
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
@@ -94,13 +94,11 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				int tileSize = maxTileSize >> mipLevel;
 
-				var sbc = new SymbolBitmapCache(symbolDrawingCache, tileSize);
-
 				var pixelArray = new byte[tileSize * tileSize * 4];
 
 				for (int i = 0; i < numDistinctBitmaps; ++i)
 				{
-					var bmp = sbc.GetBitmap((SymbolID)i, GameColor.None);
+					var bmp = tileSet.GetBitmap((SymbolID)i, GameColor.None, tileSize);
 					bmp.CopyPixels(pixelArray, tileSize * 4, 0);
 #if COLORMIPMAPS
 					byte r, g, b;

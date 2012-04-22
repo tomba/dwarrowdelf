@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public abstract class RendererBaseWPF : ISymbolTileRenderer
 	{
-		ISymbolDrawingCache m_symbolDrawingCache;
+		ITileSet m_tileSet;
 		IRenderData m_renderData;
 
 		protected RendererBaseWPF(IRenderData renderData)
@@ -17,48 +17,34 @@ namespace Dwarrowdelf.Client.TileControl
 			m_renderData = renderData;
 		}
 
-		public ISymbolDrawingCache SymbolDrawingCache
+		public ITileSet TileSet
 		{
-			get { return m_symbolDrawingCache; }
+			get { return m_tileSet; }
 
 			set
 			{
-				if (m_symbolDrawingCache != null)
-					m_symbolDrawingCache.DrawingsChanged -= OnDrawingsChanged;
-
-				m_symbolDrawingCache = value;
-				this.SymbolBitmapCache = null;
-
-				if (m_symbolDrawingCache != null)
-					m_symbolDrawingCache.DrawingsChanged += OnDrawingsChanged;
+				m_tileSet = value;
 			}
 		}
 
 		void OnDrawingsChanged()
 		{
-			this.SymbolBitmapCache = null;
 		}
-
-		protected SymbolBitmapCache SymbolBitmapCache { get; private set; }
 
 		public void Render(DrawingContext dc, Size renderSize, TileRenderContext ctx)
 		{
 			dc.DrawRectangle(Brushes.Black, null, new Rect(0, 0, renderSize.Width, renderSize.Height));
 
-			if (this.SymbolBitmapCache == null)
-				this.SymbolBitmapCache = new SymbolBitmapCache(m_symbolDrawingCache, (int)ctx.TileSize);
-
-			if (this.SymbolBitmapCache.TileSize != (int)ctx.TileSize)
-				this.SymbolBitmapCache.TileSize = (int)ctx.TileSize;
-
 			dc.PushTransform(new TranslateTransform(ctx.RenderOffset.X, ctx.RenderOffset.Y));
 			dc.PushTransform(new ScaleTransform(ctx.TileSize, ctx.TileSize));
+
+			int size = (int)ctx.TileSize;
 
 			for (int y = 0; y < ctx.RenderGridSize.Height && y < m_renderData.Height; ++y)
 			{
 				for (int x = 0; x < ctx.RenderGridSize.Width && x < m_renderData.Width; ++x)
 				{
-					RenderTile(dc, x, y);
+					RenderTile(dc, x, y, size);
 				}
 			}
 
@@ -66,7 +52,7 @@ namespace Dwarrowdelf.Client.TileControl
 			dc.Pop();
 		}
 
-		protected abstract void RenderTile(DrawingContext dc, int x, int y);
+		protected abstract void RenderTile(DrawingContext dc, int x, int y, int size);
 
 		public void Dispose()
 		{

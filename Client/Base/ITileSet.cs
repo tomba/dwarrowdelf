@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client
 {
-	public interface ISymbolDrawingCache
+	public interface ITileSet
 	{
-		event Action DrawingsChanged;
 		Drawing GetDrawing(SymbolID symbolID, GameColor color);
+		BitmapSource GetBitmap(SymbolID symbolID, GameColor color, int size);
 	}
 }

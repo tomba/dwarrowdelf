@@ -584,7 +584,9 @@ namespace Dwarrowdelf.Client.UI
 						throw new Exception();
 				}
 
-				GameData.Data.SymbolDrawingCache.Load(xaml);
+				var tileSet = new Dwarrowdelf.Client.Symbols.VectorTileSet(xaml);
+				GameData.Data.TileSet = tileSet;
+
 				m_tileSet = value;
 
 				Notify("TileSet");

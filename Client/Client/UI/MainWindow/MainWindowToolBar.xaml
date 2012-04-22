@@ -46,8 +46,6 @@
 			<Button Click="Button_Click_Break">Break</Button>
 			<Separator />
 			<ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
-			<Separator />
-			<Button Click="Button_Click_EditSymbols">Edit Symbols</Button>
 		</ToolBar>
 
 		<ToolBar Band="2" BandIndex="0">

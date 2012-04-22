@@ -96,9 +96,8 @@ namespace Dwarrowdelf.Client.UI
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
 
-			var symbolDrawingCache = GameData.Data.SymbolDrawingCache;
-			symbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
-			m_renderer.SymbolDrawingCache = symbolDrawingCache;
+			m_renderer.TileSet = GameData.Data.TileSet;
+			GameData.Data.TileSetChanged += OnTileSetChanged;
 
 			base.OnInitialized(e);
 		}
@@ -115,8 +114,9 @@ namespace Dwarrowdelf.Client.UI
 			return base.ArrangeOverride(arrangeBounds);
 		}
 
-		void OnSymbolDrawingCacheChanged()
+		void OnTileSetChanged()
 		{
+			m_renderer.TileSet = GameData.Data.TileSet;
 			InvalidateTileRender();
 		}
 

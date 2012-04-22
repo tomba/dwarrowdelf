@@ -9,10 +9,10 @@ namespace Dwarrowdelf.Client
 	{
 		static ConcreteObject()
 		{
-			GameData.Data.SymbolDrawingCache.DrawingsChanged += OnSymbolDrawingCacheChanged;
+			GameData.Data.TileSetChanged += OnTileSetChanged;
 		}
 
-		static void OnSymbolDrawingCacheChanged()
+		static void OnTileSetChanged()
 		{
 			foreach (var ob in GameData.Data.World.Objects.OfType<ConcreteObject>())
 				ob.ReloadDrawing();
