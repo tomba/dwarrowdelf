@@ -9,7 +9,8 @@ namespace Dwarrowdelf.Client
 {
 	public interface ITileSet
 	{
-		Drawing GetDrawing(SymbolID symbolID, GameColor color);
-		BitmapSource GetBitmap(SymbolID symbolID, GameColor color, int size);
+		Drawing GetDetailedDrawing(SymbolID symbolID, GameColor color);
+		BitmapSource GetTileBitmap(SymbolID symbolID, GameColor color, int size);
+		byte[] GetTileRawBitmap(SymbolID symbolID, int size);
 	}
 }

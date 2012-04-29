@@ -45,12 +45,10 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachedTileSet.cs" />
+    <Compile Include="TileSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Symbols.cs" />
-    <Compile Include="TestControl.xaml.cs">
-      <DependentUpon>TestControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="VectorTileSet.cs" />
     <Compile Include="TileSetHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,24 +62,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SymbolDrawings.design" />
+    <None Include="BitmapSymbols.pdn" />
+    <None Include="VectorSymbols.design" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SymbolDrawings.xaml">
+    <Page Include="VectorSymbols.xaml">
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="TestControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SymbolInfosChar.xaml">
+    <Page Include="DefaultTileSet.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SymbolInfosGfx.xaml">
-      <SubType>Designer</SubType>
-    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="BitmapSymbols.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

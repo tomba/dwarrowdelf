@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.TileControl
 				dc.DrawRectangle(new SolidColorBrush(Color.FromRgb(rgb.R, rgb.G, rgb.B)), null, rect);
 			}
 
-			var bitmap = this.TileSet.GetBitmap(s, layer.Color, size);
+			var bitmap = this.TileSet.GetTileBitmap(s, layer.Color, size);
 			dc.DrawImage(bitmap, rect);
 		}
 	}

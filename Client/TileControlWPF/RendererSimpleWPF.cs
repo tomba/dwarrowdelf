@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var rect = new Rect(x, y, 1, 1);
 
-			var bitmap = this.TileSet.GetBitmap(sid, GameColor.None, size);
+			var bitmap = this.TileSet.GetTileBitmap(sid, GameColor.None, size);
 			dc.DrawImage(bitmap, rect);
 		}
 	}

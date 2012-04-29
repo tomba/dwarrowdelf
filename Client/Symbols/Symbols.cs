@@ -9,9 +9,9 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.Symbols
 {
-	sealed class SymbolCollection : KeyedCollection<SymbolID, BaseSymbol>
+	sealed class SymbolCollection : KeyedCollection<SymbolID, Symbol>
 	{
-		protected override SymbolID GetKeyForItem(BaseSymbol item)
+		protected override SymbolID GetKeyForItem(Symbol item)
 		{
 			return item.ID;
 		}
@@ -25,26 +25,45 @@ namespace Dwarrowdelf.Client.Symbols
 			Symbols = new SymbolCollection();
 		}
 
+		public string Name { get; set; }
+
 		public FontFamily FontFamily { get; set; }
 		public double FontSize { get; set; }
 		public bool Outline { get; set; }
 		public double OutlineThickness { get; set; }
 		public string Drawings { get; set; }
+		public string BitmapFile { get; set; }
+		public string BitmapSizes { get; set; }
 
 		public SymbolCollection Symbols { get; set; }
 	}
 
-	abstract class BaseSymbol
+	[ContentProperty("Graphics")]
+	sealed class Symbol
 	{
-		protected BaseSymbol()
+		public Symbol()
+		{
+			Graphics = new List<GfxBase>();
+		}
+
+		public SymbolID ID { get; set; }
+
+		public List<GfxBase> Graphics { get; set; }
+	}
+
+	abstract class GfxBase
+	{
+	}
+
+	abstract class VectorGfxBase : GfxBase
+	{
+		protected VectorGfxBase()
 		{
 			this.X = 0;
 			this.Y = 0;
 			this.W = 100;
 			this.H = 100;
 		}
-
-		public SymbolID ID { get; set; }
 
 		public int X { get; set; }
 		public int Y { get; set; }
@@ -55,8 +74,13 @@ namespace Dwarrowdelf.Client.Symbols
 		public double? Opacity { get; set; }
 	}
 
-	[ContentProperty("Char")]
-	sealed class CharSymbol : BaseSymbol
+
+	sealed class BitmapGfx : GfxBase
+	{
+		public int BitmapIndex { get; set; }
+	}
+
+	sealed class CharGfx : VectorGfxBase
 	{
 		public char Char { get; set; }
 		public bool? Outline { get; set; }
@@ -68,20 +92,19 @@ namespace Dwarrowdelf.Client.Symbols
 		public bool Reverse { get; set; }
 	}
 
-	[ContentProperty("DrawingName")]
-	sealed class DrawingSymbol : BaseSymbol
+	sealed class DrawingGfx : VectorGfxBase
 	{
 		public string DrawingName { get; set; }
 	}
 
 	[ContentProperty("Symbols")]
-	sealed class CombinedSymbol : BaseSymbol
+	sealed class CombinedGfx : VectorGfxBase
 	{
-		public CombinedSymbol()
+		public CombinedGfx()
 		{
-			Symbols = new List<BaseSymbol>();
+			Symbols = new List<VectorGfxBase>();
 		}
 
-		public List<BaseSymbol> Symbols { get; set; }
+		public List<VectorGfxBase> Symbols { get; set; }
 	}
 }

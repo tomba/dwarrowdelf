@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client.Symbols
 {
@@ -151,7 +152,7 @@ namespace Dwarrowdelf.Client.Symbols
 			}
 		}
 
-		static Color TintColor(Color c, Color tint)
+		public static Color TintColor(Color c, Color tint)
 		{
 			return SimpleTint(c, tint);
 #if asd
@@ -175,6 +176,71 @@ namespace Dwarrowdelf.Client.Symbols
 				c.ScR * tint.ScR,
 				c.ScG * tint.ScG,
 				c.ScB * tint.ScB);
+		}
+
+		public static BitmapSource DrawingToBitmap(Drawing drawing, int size)
+		{
+			DrawingVisual drawingVisual = new DrawingVisual();
+			DrawingContext drawingContext = drawingVisual.RenderOpen();
+
+			drawingContext.PushTransform(new ScaleTransform((double)size / 100, (double)size / 100));
+			drawingContext.DrawDrawing(drawing);
+			drawingContext.Pop();
+			drawingContext.Close();
+
+			RenderTargetBitmap bmp = new RenderTargetBitmap(size, size, 96, 96, PixelFormats.Default);
+			bmp.Render(drawingVisual);
+			bmp.Freeze();
+
+			return bmp;
+		}
+
+		public static Drawing BitmapToDrawing(BitmapSource bitmap)
+		{
+			var dg = new DrawingGroup();
+
+			using (var dc = dg.Open())
+			{
+				dc.DrawImage(bitmap, new Rect(0, 0, 100, 100));
+			}
+
+			return dg;
+		}
+
+		public static byte[] BitmapToRaw(BitmapSource bitmap)
+		{
+			int size = bitmap.PixelWidth;
+
+			int bytesPerPixel = 4;
+			var arr = new byte[size * size * 4];
+			bitmap.CopyPixels(arr, size * bytesPerPixel, 0);
+
+			return arr;
+		}
+
+		public static BitmapSource ColorizeBitmap(BitmapSource bmp, Color tint)
+		{
+			var wbmp = new WriteableBitmap(bmp);
+			var arr = new uint[wbmp.PixelWidth * wbmp.PixelHeight];
+
+			wbmp.CopyPixels(arr, wbmp.PixelWidth * 4, 0);
+
+			for (int i = 0; i < arr.Length; ++i)
+			{
+				byte a = (byte)((arr[i] >> 24) & 0xff);
+				byte r = (byte)((arr[i] >> 16) & 0xff);
+				byte g = (byte)((arr[i] >> 8) & 0xff);
+				byte b = (byte)((arr[i] >> 0) & 0xff);
+
+				var c = Color.FromArgb(a, r, g, b);
+				c = TileSetHelpers.TintColor(c, tint);
+
+				arr[i] = (uint)((c.A << 24) | (c.R << 16) | (c.G << 8) | (c.B << 0));
+			}
+
+			wbmp.WritePixels(new Int32Rect(0, 0, wbmp.PixelWidth, wbmp.PixelHeight), arr, wbmp.PixelWidth * 4, 0);
+
+			return wbmp;
 		}
 	}
 }
