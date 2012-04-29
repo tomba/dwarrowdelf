@@ -149,6 +149,8 @@ namespace Dwarrowdelf.Client.Symbols
 					TileSetHelpers.ColorizeDrawing(drawing, color.ToWindowsColor());
 				}
 
+				drawing.Freeze();
+
 				return drawing;
 			}
 			else if (gfx is BitmapGfx)
@@ -161,6 +163,8 @@ namespace Dwarrowdelf.Client.Symbols
 					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
 
 				var drawing = TileSetHelpers.BitmapToDrawing(bmp);
+
+				drawing.Freeze();
 
 				return drawing;
 			}
