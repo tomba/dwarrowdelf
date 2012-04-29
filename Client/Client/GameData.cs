@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 
-			this.TileSet = Dwarrowdelf.Client.Symbols.TileSet.Default;
+			this.TileSet = new Dwarrowdelf.Client.Symbols.CachedTileSet(Dwarrowdelf.Client.Symbols.TileSet.Default);
 
 			m_gameEvents = new ObservableCollection<GameEvent>();
 			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
