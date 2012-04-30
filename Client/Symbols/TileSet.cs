@@ -342,20 +342,16 @@ namespace Dwarrowdelf.Client.Symbols
 
 			switch (size)
 			{
-				case 4:
+				case 8:
 					xoff = 1;
 					break;
 
-				case 8:
-					xoff = 8;
-					break;
-
 				case 16:
-					xoff = 19;
+					xoff = 12;
 					break;
 
 				case 32:
-					xoff = 38;
+					xoff = 31;
 					break;
 
 				default:
