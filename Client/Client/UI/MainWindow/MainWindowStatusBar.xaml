@@ -87,5 +87,12 @@
 			<TextBlock Name="fpsTextBlock" Width="50" />
 		</StatusBar>
 
-	</StatusBar>
+        <StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowTileSize}, Converter={StaticResource boolToVisConverter}}">
+            <Separator />
+
+            <TextBlock>TileSize</TextBlock>
+            <TextBlock Width="50" Text="{Binding MapControl.TileSize}" />
+        </StatusBar>
+
+    </StatusBar>
 </UserControl>
