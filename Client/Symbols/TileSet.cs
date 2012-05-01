@@ -209,12 +209,22 @@ namespace Dwarrowdelf.Client.Symbols
 
 				var drawing = GetVectorGfx(g);
 
-				return TileSetHelpers.DrawingToBitmap(drawing, size);
+				var bmp = TileSetHelpers.DrawingToBitmap(drawing, size);
+
+				if (color != GameColor.None)
+					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
+
+				return bmp;
 			}
 			else if (gfx is BitmapGfx)
 			{
 				var g = (BitmapGfx)gfx;
-				return GetBitmapGfx(g, size);
+				var bmp = GetBitmapGfx(g, size);
+
+				if (color != GameColor.None)
+					bmp = TileSetHelpers.ColorizeBitmap(bmp, color.ToWindowsColor());
+
+				return bmp;
 			}
 			else
 			{
@@ -335,9 +345,11 @@ namespace Dwarrowdelf.Client.Symbols
 
 			int outSize = size;
 
-			if (size < 8)
+			if (size <= 8)
 				size = 8;
-			else if (size > 16)
+			else if (size <= 16)
+				size = 16;
+			else
 				size = 16;
 
 			switch (size)
