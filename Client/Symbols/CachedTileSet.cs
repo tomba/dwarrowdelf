@@ -12,6 +12,9 @@ namespace Dwarrowdelf.Client.Symbols
 		TileSet m_tileSet;
 		Dictionary<int, Drawing> m_drawingCache = new Dictionary<int, Drawing>();
 
+		int m_bitmapCacheTileSize;
+		Dictionary<int, BitmapSource> m_bitmapCache = new Dictionary<int, BitmapSource>();
+
 		public CachedTileSet(TileSet tileSet)
 		{
 			m_tileSet = tileSet;
@@ -33,7 +36,22 @@ namespace Dwarrowdelf.Client.Symbols
 
 		public BitmapSource GetTileBitmap(SymbolID symbolID, GameColor color, int size)
 		{
-			return m_tileSet.GetTileBitmap(symbolID, color, size);
+			if (m_bitmapCacheTileSize != size)
+			{
+				m_bitmapCacheTileSize = size;
+				m_bitmapCache = new Dictionary<int,BitmapSource>();
+			}
+
+			int key = ((int)symbolID << 16) | (int)color;
+
+			BitmapSource bmp;
+
+			if (m_bitmapCache.TryGetValue(key, out bmp))
+				return bmp;
+
+			bmp = m_tileSet.GetTileBitmap(symbolID, color, size);
+			m_bitmapCache[key] = bmp;
+			return bmp;
 		}
 
 		public byte[] GetTileRawBitmap(SymbolID symbolID, int size)
