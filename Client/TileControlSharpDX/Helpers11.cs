@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var numDistinctBitmaps = EnumHelpers.GetEnumMax<SymbolID>() + 1;
 
 			int maxTileSize = 64;
-			int mipLevels = (int)Math.Log(maxTileSize, 2);
+			int mipLevels = 4; // 64, 32, 16, 8
 
 			var atlasTexture = new Texture2D(device, new Texture2DDescription()
 			{
