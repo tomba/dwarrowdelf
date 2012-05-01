@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Client.Symbols
 		SymbolSet m_symbolSet;
 		Dictionary<string, Drawing> m_drawingResources;
 		BitmapSource m_bitmap;
+		int[] m_bitmapSizes;
 
 		public TileSet(string symbolInfoName)
 		{
@@ -39,6 +40,8 @@ namespace Dwarrowdelf.Client.Symbols
 
 			if (m_symbolSet.BitmapFile != null)
 				m_bitmap = LoadBitmapResource(m_symbolSet.BitmapFile);
+
+			m_bitmapSizes = m_symbolSet.BitmapSizes.Split(',').Select(s => int.Parse(s)).ToArray();
 		}
 
 		static SymbolSet LoadSymbolSet(string symbolInfoName)
@@ -252,10 +255,7 @@ namespace Dwarrowdelf.Client.Symbols
 			gfx = gfxs.OfType<BitmapGfx>().FirstOrDefault();
 			if (gfx != null)
 			{
-				//if ((ParseSizes(m_symbolSet.BitmapSizes) & size) != 0)
-
-				// XXX
-				if (size <= 16)
+				if (size <= m_bitmapSizes.Max())
 					return gfx;
 			}
 
@@ -341,39 +341,35 @@ namespace Dwarrowdelf.Client.Symbols
 		BitmapSource GetBitmapGfx(BitmapGfx gfx, int size)
 		{
 			int xoff;
+			int tileSize = 0;
 
-			int outSize = size;
-
-			if (size <= 8)
-				size = 8;
-			else if (size <= 16)
-				size = 16;
-			else
-				size = 16;
-
-			switch (size)
+			for (int i = 0; i < m_bitmapSizes.Length; ++i)
 			{
-				case 8:
-					xoff = 1;
+				if (size <= m_bitmapSizes[i])
+				{
+					tileSize = m_bitmapSizes[i];
 					break;
-
-				case 16:
-					xoff = 12;
-					break;
-
-				case 32:
-					xoff = 31;
-					break;
-
-				default:
-					throw new NotImplementedException();
+				}
 			}
 
-			BitmapSource bmp = new CroppedBitmap(m_bitmap, new Int32Rect(xoff, 1 + 35 * gfx.BitmapIndex, size, size));
+			if (tileSize == 0)
+				tileSize = m_bitmapSizes.Max();
 
-			if (size != outSize)
+			xoff = 1;
+
+			for (int i = 0; i < m_bitmapSizes.Length; ++i)
 			{
-				double scale = (double)outSize / size;
+				if (tileSize == m_bitmapSizes[i])
+					break;
+
+				xoff += m_bitmapSizes[i] + 3;
+			}
+
+			BitmapSource bmp = new CroppedBitmap(m_bitmap, new Int32Rect(xoff, 1 + 35 * gfx.BitmapIndex, tileSize, tileSize));
+
+			if (size != tileSize)
+			{
+				double scale = (double)size / tileSize;
 				bmp = new TransformedBitmap(bmp, new ScaleTransform(scale, scale));
 			}
 
