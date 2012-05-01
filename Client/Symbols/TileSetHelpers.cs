@@ -207,17 +207,6 @@ namespace Dwarrowdelf.Client.Symbols
 			return dg;
 		}
 
-		public static byte[] BitmapToRaw(BitmapSource bitmap)
-		{
-			int size = bitmap.PixelWidth;
-
-			int bytesPerPixel = 4;
-			var arr = new byte[size * size * 4];
-			bitmap.CopyPixels(arr, size * bytesPerPixel, 0);
-
-			return arr;
-		}
-
 		public static BitmapSource ColorizeBitmap(BitmapSource bmp, Color tint)
 		{
 			var wbmp = new WriteableBitmap(bmp);

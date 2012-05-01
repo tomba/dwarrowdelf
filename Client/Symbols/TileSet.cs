@@ -232,13 +232,12 @@ namespace Dwarrowdelf.Client.Symbols
 			}
 		}
 
-		public byte[] GetTileRawBitmap(SymbolID symbolID, int size)
+		public void GetTileRawBitmap(SymbolID symbolID, int size, byte[] array)
 		{
 			var bmp = GetTileBitmap(symbolID, GameColor.None, size);
 
-			var raw = TileSetHelpers.BitmapToRaw(bmp);
-
-			return raw;
+			const int bytesPerPixel = 4;
+			bmp.CopyPixels(array, size * bytesPerPixel, 0);
 		}
 
 		GfxBase DecideTileGfx(Symbol symbol, int size)

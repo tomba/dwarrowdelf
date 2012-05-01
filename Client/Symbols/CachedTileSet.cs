@@ -39,7 +39,7 @@ namespace Dwarrowdelf.Client.Symbols
 			if (m_bitmapCacheTileSize != size)
 			{
 				m_bitmapCacheTileSize = size;
-				m_bitmapCache = new Dictionary<int,BitmapSource>();
+				m_bitmapCache = new Dictionary<int, BitmapSource>();
 			}
 
 			int key = ((int)symbolID << 16) | (int)color;
@@ -54,9 +54,9 @@ namespace Dwarrowdelf.Client.Symbols
 			return bmp;
 		}
 
-		public byte[] GetTileRawBitmap(SymbolID symbolID, int size)
+		public void GetTileRawBitmap(SymbolID symbolID, int size, byte[] array)
 		{
-			return m_tileSet.GetTileRawBitmap(symbolID, size);
+			m_tileSet.GetTileRawBitmap(symbolID, size, array);
 		}
 	}
 }

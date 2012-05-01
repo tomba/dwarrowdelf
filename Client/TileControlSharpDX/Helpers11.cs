@@ -94,13 +94,12 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				int tileSize = maxTileSize >> mipLevel;
 
-				//var pixelArray = new byte[tileSize * tileSize * 4];
+				const int bytesPerPixel = 4;
+				var pixelArray = new byte[tileSize * tileSize * bytesPerPixel];
 
 				for (int i = 0; i < numDistinctBitmaps; ++i)
 				{
-					//var bmp = tileSet.GetBitmap((SymbolID)i, GameColor.None, tileSize);
-					//bmp.CopyPixels(pixelArray, tileSize * 4, 0);
-					var pixelArray = tileSet.GetTileRawBitmap((SymbolID)i, tileSize);
+					tileSet.GetTileRawBitmap((SymbolID)i, tileSize, pixelArray);
 #if COLORMIPMAPS
 					byte r, g, b;
 					switch (mipLevel)

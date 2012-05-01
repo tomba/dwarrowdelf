@@ -11,6 +11,6 @@ namespace Dwarrowdelf.Client
 	{
 		Drawing GetDetailedDrawing(SymbolID symbolID, GameColor color);
 		BitmapSource GetTileBitmap(SymbolID symbolID, GameColor color, int size);
-		byte[] GetTileRawBitmap(SymbolID symbolID, int size);
+		void GetTileRawBitmap(SymbolID symbolID, int size, byte[] array);
 	}
 }
