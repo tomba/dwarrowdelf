@@ -128,6 +128,12 @@ namespace Dwarrowdelf.Client.UI
 			netWnd.Show();
 		}
 
+		private void Button_Click_Step(object sender, RoutedEventArgs e)
+		{
+			if (GameData.Data.User != null)
+				GameData.Data.User.SendProceedTurn();
+		}
+
 		private void Button_Click_GC(object sender, RoutedEventArgs e)
 		{
 			GC.Collect();

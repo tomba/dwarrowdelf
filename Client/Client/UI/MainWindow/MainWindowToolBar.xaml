@@ -41,6 +41,8 @@
 		</ToolBar>
 
 		<ToolBar Band="2" BandIndex="1">
+			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+			<Separator />
 			<Button Click="Button_Click_GC">GC</Button>
 			<Separator />
 			<Button Click="Button_Click_Break">Break</Button>
@@ -49,9 +51,10 @@
 		</ToolBar>
 
 		<ToolBar Band="2" BandIndex="0">
-			<ToggleButton Content="AutoAdvanceTurn" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
+			<ToggleButton Content="Run" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
 							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
-			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+			<Separator />
+			<Button Click="Button_Click_Step" ToolTip="Shortcut: .">Step</Button>
 		</ToolBar>
 
 		<ToolBar Band="2" BandIndex="2">
