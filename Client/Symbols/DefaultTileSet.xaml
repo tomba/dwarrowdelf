@@ -1,187 +1,187 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <SymbolSet xmlns="clr-namespace:Dwarrowdelf.Client.Symbols"
-           Name="Default"
+		   Name="Default"
 		   FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5"
-           Drawings="VectorSymbols.xaml" BitmapFile="BitmapSymbols.png" BitmapSizes="8,10,12,16,20,24">
+		   Drawings="VectorSymbols.xaml" BitmapFile="BitmapSymbols.png" BitmapSizes="8,10,12,16,20,24">
 
-    <Symbol ID="Undefined">
-        <CharGfx Char="?" />
-    </Symbol>
+	<Symbol ID="Undefined">
+		<CharGfx Char="?" />
+	</Symbol>
 
-    <Symbol ID="Unknown">
-        <CharGfx Char="?" />
-    </Symbol>
+	<Symbol ID="Unknown">
+		<CharGfx Char="?" />
+	</Symbol>
 
-    <Symbol ID="Floor">
-        <CharGfx Char="▓" Reverse="True" Outline="False" />
-    </Symbol>
-    <Symbol ID="Grass">
-        <CharGfx Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
-    </Symbol>
-    <Symbol ID="Wall">
-        <CharGfx Outline="False" Char="▓" />
-    </Symbol>
+	<Symbol ID="Floor">
+		<CharGfx Char="▓" Reverse="True" Outline="False" />
+	</Symbol>
+	<Symbol ID="Grass">
+		<CharGfx Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
+	</Symbol>
+	<Symbol ID="Wall">
+		<CharGfx Outline="False" Char="▓" />
+	</Symbol>
 
-    <Symbol ID="DesignationMine">
-        <CombinedGfx Opacity="0.75" >
-            <CharGfx Reverse="True" Outline="False" Char="▓" />
-            <CharGfx X="20" Y="40" W="60" H="60" Char="●" />
-        </CombinedGfx>
-    </Symbol>
+	<Symbol ID="DesignationMine">
+		<CombinedGfx Opacity="0.75" >
+			<CharGfx Reverse="True" Outline="False" Char="▓" />
+			<CharGfx X="20" Y="40" W="60" H="60" Char="●" />
+		</CombinedGfx>
+	</Symbol>
 
-    <Symbol ID="ValuableOre">
-        <CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
-    </Symbol>
-    <Symbol ID="GemOre">
-        <CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />
-    </Symbol>
+	<Symbol ID="ValuableOre">
+		<CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
+	</Symbol>
+	<Symbol ID="GemOre">
+		<CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="☼" />
+	</Symbol>
 
-    <Symbol ID="Water">
-        <CharGfx X="10" Y="30" W="80" H="40" Char="~" />
-    </Symbol>
+	<Symbol ID="Water">
+		<CharGfx X="10" Y="30" W="80" H="40" Char="~" />
+	</Symbol>
 
-    <Symbol ID="StairsUp">
-        <CharGfx Char="&lt;" />
-    </Symbol>
-    <Symbol ID="StairsDown">
-        <CharGfx Char="&gt;" />
-    </Symbol>
-    <Symbol ID="StairsUpDown">
-        <CharGfx Char="X" />
-    </Symbol>
+	<Symbol ID="StairsUp">
+		<CharGfx Char="&lt;" />
+	</Symbol>
+	<Symbol ID="StairsDown">
+		<CharGfx Char="&gt;" />
+	</Symbol>
+	<Symbol ID="StairsUpDown">
+		<CharGfx Char="X" />
+	</Symbol>
 
-    <Symbol ID="SlopeUpNorth">
-        <CharGfx Outline="False" Char="▲" Rotate="0" />
-    </Symbol>
-    <Symbol ID="SlopeUpNorthEast">
-        <CharGfx Outline="False" Char="▲" Rotate="45" />
-    </Symbol>
-    <Symbol ID="SlopeUpEast">
-        <CharGfx Outline="False" Char="▲" Rotate="90" />
-    </Symbol>
-    <Symbol ID="SlopeUpSouthEast">
-        <CharGfx Outline="False" Char="▲" Rotate="135" />
-    </Symbol>
-    <Symbol ID="SlopeUpSouth">
-        <CharGfx Outline="False" Char="▲" Rotate="180" />
-    </Symbol>
-    <Symbol ID="SlopeUpSouthWest">
-        <CharGfx Outline="False" Char="▲" Rotate="225" />
-    </Symbol>
-    <Symbol ID="SlopeUpWest">
-        <CharGfx Outline="False" Char="▲" Rotate="270" />
-    </Symbol>
-    <Symbol ID="SlopeUpNorthWest">
-        <CharGfx Outline="False" Char="▲" Rotate="315" />
-    </Symbol>
+	<Symbol ID="SlopeUpNorth">
+		<CharGfx Outline="False" Char="▲" Rotate="0" />
+	</Symbol>
+	<Symbol ID="SlopeUpNorthEast">
+		<CharGfx Outline="False" Char="▲" Rotate="45" />
+	</Symbol>
+	<Symbol ID="SlopeUpEast">
+		<CharGfx Outline="False" Char="▲" Rotate="90" />
+	</Symbol>
+	<Symbol ID="SlopeUpSouthEast">
+		<CharGfx Outline="False" Char="▲" Rotate="135" />
+	</Symbol>
+	<Symbol ID="SlopeUpSouth">
+		<CharGfx Outline="False" Char="▲" Rotate="180" />
+	</Symbol>
+	<Symbol ID="SlopeUpSouthWest">
+		<CharGfx Outline="False" Char="▲" Rotate="225" />
+	</Symbol>
+	<Symbol ID="SlopeUpWest">
+		<CharGfx Outline="False" Char="▲" Rotate="270" />
+	</Symbol>
+	<Symbol ID="SlopeUpNorthWest">
+		<CharGfx Outline="False" Char="▲" Rotate="315" />
+	</Symbol>
 
-    <Symbol ID="SlopeDownNorth">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownNorthEast">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownEast">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownSouthEast">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownSouth">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownSouthWest">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownWest">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
-    <Symbol ID="SlopeDownNorthWest">
-        <CharGfx Outline="False" Char="▼" />
-    </Symbol>
+	<Symbol ID="SlopeDownNorth">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownNorthEast">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownEast">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownSouthEast">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownSouth">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownSouthWest">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownWest">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
+	<Symbol ID="SlopeDownNorthWest">
+		<CharGfx Outline="False" Char="▼" />
+	</Symbol>
 
-    <Symbol ID="Player">
-        <BitmapGfx BitmapIndex="0" />
-        <CharGfx Char="☻" Outline="True" OutlineThickness="2" />
-    </Symbol>
+	<Symbol ID="Player">
+		<BitmapGfx BitmapIndex="0" />
+		<CharGfx Char="☻" Outline="True" OutlineThickness="2" />
+	</Symbol>
 
-    <Symbol ID="Sheep">
-        <CharGfx Char="b" X="20" Y="40" W="60" H="60"/>
-    </Symbol>
-    <Symbol ID="Wolf">
-        <CharGfx Char="w" X="20" Y="40" W="60" H="60"/>
-    </Symbol>
-    <Symbol ID="Dragon">
-        <CharGfx Char="D" />
-    </Symbol>
-    <Symbol ID="Orc">
-        <CharGfx Char="o" X="20" Y="40" W="60" H="60" />
-    </Symbol>
+	<Symbol ID="Sheep">
+		<CharGfx Char="b" X="20" Y="40" W="60" H="60"/>
+	</Symbol>
+	<Symbol ID="Wolf">
+		<CharGfx Char="w" X="20" Y="40" W="60" H="60"/>
+	</Symbol>
+	<Symbol ID="Dragon">
+		<CharGfx Char="D" />
+	</Symbol>
+	<Symbol ID="Orc">
+		<CharGfx Char="o" X="20" Y="40" W="60" H="60" />
+	</Symbol>
 
-    <Symbol ID="UncutGem">
-        <CharGfx X="30" Y="50" W="40" H="40" Char="☼" />
-    </Symbol>
-    <Symbol ID="Gem">
-        <CharGfx X="30" Y="50" W="40" H="40" Char="♦" />
-    </Symbol>
-    <Symbol ID="Sapling">
-        <CharGfx X="20" Y="30" W="60" H="70" Char="♠" />
-    </Symbol>
-    <Symbol ID="Tree">
-        <CharGfx Char="♣" />
-    </Symbol>
-    <Symbol ID="Key">
-        <CharGfx Char="Ⱡ" />
-    </Symbol>
-    <Symbol ID="Rock">
-        <DrawingGfx X="10" Y="10" W="80" H="80" DrawingName="Rock" />
-    </Symbol>
-    <Symbol ID="Log">
-        <CharGfx X="5" Y="60" W="90" H="20" Char="▬" />
-    </Symbol>
-    <Symbol ID="Contraption">
-        <CharGfx Outline="False" Char="۩" />
-    </Symbol>
-    <Symbol ID="Consumable">
-        <CharGfx Char="%" />
-    </Symbol>
+	<Symbol ID="UncutGem">
+		<CharGfx X="30" Y="50" W="40" H="40" Char="☼" />
+	</Symbol>
+	<Symbol ID="Gem">
+		<CharGfx X="30" Y="50" W="40" H="40" Char="♦" />
+	</Symbol>
+	<Symbol ID="Sapling">
+		<CharGfx X="20" Y="30" W="60" H="70" Char="♠" />
+	</Symbol>
+	<Symbol ID="Tree">
+		<CharGfx Char="♣" />
+	</Symbol>
+	<Symbol ID="Key">
+		<CharGfx Char="Ⱡ" />
+	</Symbol>
+	<Symbol ID="Rock">
+		<DrawingGfx X="10" Y="10" W="80" H="80" DrawingName="Rock" />
+	</Symbol>
+	<Symbol ID="Log">
+		<CharGfx X="5" Y="60" W="90" H="20" Char="▬" />
+	</Symbol>
+	<Symbol ID="Contraption">
+		<CharGfx Outline="False" Char="۩" />
+	</Symbol>
+	<Symbol ID="Consumable">
+		<CharGfx Char="%" />
+	</Symbol>
 
-    <Symbol ID="Chair">
-        <CharGfx X="20" Y="40" W="60" H="60" Char="╥" />
-    </Symbol>
-    <Symbol ID="Table">
-        <CharGfx Char="╤" />
-    </Symbol>
-    <Symbol ID="Door">
-        <CharGfx Char="O" />
-    </Symbol>
-    <Symbol ID="DoorClosed">
-        <CharGfx Char="O" Reverse="True" Opaque="True" />
-    </Symbol>
-    <Symbol ID="Bed">
-        <CharGfx Char="Θ" />
-    </Symbol>
-    <Symbol ID="Barrel">
-        <CharGfx Char="÷" />
-    </Symbol>
-    <Symbol ID="Bucket">
-        <CharGfx Char="û" />
-    </Symbol>
-    <Symbol ID="Block">
-        <CharGfx X="20" Y="40" W="60" H="60" Char="■" />
-    </Symbol>
-    <Symbol ID="Bar">
-        <CharGfx X="20" Y="60" W="60" H="40" Char="■" />
-    </Symbol>
+	<Symbol ID="Chair">
+		<CharGfx X="20" Y="40" W="60" H="60" Char="╥" />
+	</Symbol>
+	<Symbol ID="Table">
+		<CharGfx Char="╤" />
+	</Symbol>
+	<Symbol ID="Door">
+		<CharGfx Char="O" />
+	</Symbol>
+	<Symbol ID="DoorClosed">
+		<CharGfx Char="O" Reverse="True" Opaque="True" />
+	</Symbol>
+	<Symbol ID="Bed">
+		<CharGfx Char="Θ" />
+	</Symbol>
+	<Symbol ID="Barrel">
+		<CharGfx Char="÷" />
+	</Symbol>
+	<Symbol ID="Bucket">
+		<CharGfx Char="û" />
+	</Symbol>
+	<Symbol ID="Block">
+		<CharGfx X="20" Y="40" W="60" H="60" Char="■" />
+	</Symbol>
+	<Symbol ID="Bar">
+		<CharGfx X="20" Y="60" W="60" H="40" Char="■" />
+	</Symbol>
 
-    <Symbol ID="Corpse">
-        <CharGfx Char="%" />
-    </Symbol>
+	<Symbol ID="Corpse">
+		<CharGfx Char="%" />
+	</Symbol>
 
-    <Symbol ID="Weapon">
-        <CharGfx Char="/" X="20" Y="20" W="60" H="60" />
-    </Symbol>
-    <Symbol ID="Armor">
-        <CharGfx Char="[" X="30" Y="20" W="40" H="60" />
-    </Symbol>
+	<Symbol ID="Weapon">
+		<CharGfx Char="/" X="20" Y="20" W="60" H="60" />
+	</Symbol>
+	<Symbol ID="Armor">
+		<CharGfx Char="[" X="30" Y="20" W="40" H="60" />
+	</Symbol>
 </SymbolSet>
