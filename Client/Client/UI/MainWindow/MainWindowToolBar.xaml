@@ -5,12 +5,10 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-			 mc:Ignorable="d" d:DesignHeight="98" d:DesignWidth="997">
+			 mc:Ignorable="d" d:DesignHeight="98" d:DesignWidth="800">
 
 	<ToolBarTray>
 		<ToolBar Band="1">
-			<ToggleButton IsChecked="{Binding Data.DisableLOS}">Disable Client LOS</ToggleButton>
-			<Separator />
 			<ToggleButton IsChecked="{Binding Path=MapControl.ShowVirtualSymbols, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}">Show Virtual Symbols</ToggleButton>
 			<Separator />
 			<Button Content="Open NetStats" Click="Button_OpenNetStats_Click" />

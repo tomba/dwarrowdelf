@@ -182,17 +182,6 @@ namespace Dwarrowdelf.Client
 
 
 
-		public bool DisableLOS
-		{
-			get { return (bool)GetValue(DisableLOSProperty); }
-			set { SetValue(DisableLOSProperty, value); }
-		}
-
-		public static readonly DependencyProperty DisableLOSProperty =
-			DependencyProperty.Register("DisableLOS", typeof(bool), typeof(GameData), new UIPropertyMetadata(false));
-
-
-
 		public bool IsAutoAdvanceTurn
 		{
 			get { return (bool)GetValue(IsAutoAdvanceTurnProperty); }
