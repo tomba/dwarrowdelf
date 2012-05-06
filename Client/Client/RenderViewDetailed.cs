@@ -290,13 +290,41 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case InteriorID.Sapling:
-					tile.SymbolID = SymbolID.Sapling;
-					tile.Color = GameColor.ForestGreen;
+					{
+						var wmid = Materials.GetWoodMaterialCategory(td.InteriorMaterialID);
+						switch (wmid)
+						{
+							case WoodMaterialCategory.Coniferous:
+								tile.SymbolID = SymbolID.ConiferousSapling;
+								break;
+							case WoodMaterialCategory.Deciduous:
+								tile.SymbolID = SymbolID.DeciduousSapling;
+								break;
+							default:
+								throw new Exception();
+						}
+
+						tile.Color = GameColor.ForestGreen;
+					}
 					break;
 
 				case InteriorID.Tree:
-					tile.SymbolID = SymbolID.Tree;
-					tile.Color = GameColor.ForestGreen;
+					{
+						var wmid = Materials.GetWoodMaterialCategory(td.InteriorMaterialID);
+						switch (wmid)
+						{
+							case WoodMaterialCategory.Coniferous:
+								tile.SymbolID = SymbolID.ConiferousTree;
+								break;
+							case WoodMaterialCategory.Deciduous:
+								tile.SymbolID = SymbolID.DeciduousTree;
+								break;
+							default:
+								throw new Exception();
+						}
+
+						tile.Color = GameColor.ForestGreen;
+					}
 					break;
 
 				case InteriorID.Ore:

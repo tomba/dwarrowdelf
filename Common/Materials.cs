@@ -68,6 +68,13 @@ namespace Dwarrowdelf
 		Consumable,
 	}
 
+	public enum WoodMaterialCategory
+	{
+		Undefined,
+		Coniferous,
+		Deciduous,
+	}
+
 	public sealed class MaterialInfo
 	{
 		public MaterialID ID { get; internal set; }
@@ -138,6 +145,23 @@ namespace Dwarrowdelf
 		public static IEnumerable<MaterialInfo> GetMaterials(MaterialCategory materialClass)
 		{
 			return s_materials.Where(m => m != null && m.Category == materialClass);
+		}
+
+		public static WoodMaterialCategory GetWoodMaterialCategory(MaterialID materialID)
+		{
+			switch (materialID)
+			{
+				case MaterialID.Fir:
+				case MaterialID.Pine:
+					return WoodMaterialCategory.Coniferous;
+
+				case MaterialID.Birch:
+				case MaterialID.Oak:
+					return WoodMaterialCategory.Deciduous;
+
+				default:
+					throw new Exception();
+			}
 		}
 	}
 }

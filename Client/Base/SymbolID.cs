@@ -41,8 +41,10 @@ namespace Dwarrowdelf.Client
 		SlopeDownWest,
 		SlopeDownNorthWest,
 
-		Sapling,
-		Tree,
+		ConiferousSapling,
+		DeciduousSapling,
+		ConiferousTree,
+		DeciduousTree,
 		Grass,
 
 		/* Livings */

@@ -124,11 +124,17 @@
 	<Symbol ID="Gem">
 		<CharGfx X="30" Y="50" W="40" H="40" Char="♦" />
 	</Symbol>
-	<Symbol ID="Sapling">
-		<CharGfx X="20" Y="30" W="60" H="70" Char="♠" />
+	<Symbol ID="ConiferousSapling">
+		<DrawingGfx X="20" Y="30" W="60" H="70" DrawingName="ConiferousTree" />
 	</Symbol>
-	<Symbol ID="Tree">
-		<CharGfx Char="♣" />
+	<Symbol ID="DeciduousSapling">
+		<DrawingGfx X="20" Y="30" W="60" H="70" DrawingName="DeciduousTree" />
+	</Symbol>
+	<Symbol ID="ConiferousTree">
+		<DrawingGfx DrawingName="ConiferousTree" />
+	</Symbol>
+	<Symbol ID="DeciduousTree">
+		<DrawingGfx DrawingName="DeciduousTree" />
 	</Symbol>
 	<Symbol ID="Key">
 		<CharGfx Char="Ⱡ" />
