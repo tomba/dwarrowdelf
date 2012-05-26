@@ -166,6 +166,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\FocusDebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\InstallFurnitureDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -341,6 +345,9 @@
     </Compile>
     <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
       <DependentUpon>ConstructDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\FocusDebugWindow.xaml.cs">
+      <DependentUpon>FocusDebugWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\InstallFurnitureDialog.xaml.cs">
       <DependentUpon>InstallFurnitureDialog.xaml</DependentUpon>

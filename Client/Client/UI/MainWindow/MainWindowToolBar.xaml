@@ -41,6 +41,8 @@
 		<ToolBar Band="2" BandIndex="1">
 			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
 			<Separator />
+			<Button Content="Open FocusDebug" Command="ui:ClientCommands.OpenFocusDebugCommand" />
+			<Separator />
 			<Button Click="Button_Click_GC">GC</Button>
 			<Separator />
 			<Button Click="Button_Click_Break">Break</Button>

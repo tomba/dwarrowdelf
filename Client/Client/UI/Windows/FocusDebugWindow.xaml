@@ -1,0 +1,27 @@
+﻿<Window x:Class="Dwarrowdelf.Client.UI.Windows.FocusDebugWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+		Title="FocusDebugWindow" Height="300" Width="300"
+		x:Name="root"
+		WindowStyle="ToolWindow">
+	<Grid>
+		<GroupBox Header="Focus debug" Grid.Column="1" Margin="2">
+			<DockPanel>
+				<DockPanel.Resources>
+					<ui:UIElementToDescConverter x:Key="elemToDescConverter" />
+				</DockPanel.Resources>
+
+				<TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" HorizontalAlignment="Center"
+								   Text="{Binding FocusedElement, ElementName=root, Converter={StaticResource elemToDescConverter}}" />
+
+				<Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+					<Rectangle.Fill>
+						<VisualBrush Visual="{Binding FocusedElement, ElementName=root}" Stretch="Uniform"/>
+					</Rectangle.Fill>
+				</Rectangle>
+
+			</DockPanel>
+		</GroupBox>
+	</Grid>
+</Window>
