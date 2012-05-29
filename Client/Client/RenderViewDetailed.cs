@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client
 				}
 			}
 #if !NONPARALLEL
-			);
+);
 #endif
 
 			//sw.Stop();
@@ -411,6 +411,17 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
+			if (m_symbolToggler)
+			{
+				id = GetInstallSymbolAt(env.InstallFurnitureManager, ml);
+				if (id != SymbolID.Undefined)
+				{
+					tile.SymbolID = id;
+					tile.Color = GameColor.DarkGray;
+					return;
+				}
+			}
+
 			int wl = env.GetWaterLevel(ml);
 
 			if (wl == 0)
@@ -493,6 +504,16 @@ namespace Dwarrowdelf.Client
 				default:
 					throw new Exception();
 			}
+		}
+
+		static SymbolID GetInstallSymbolAt(InstallFurnitureManager mgr, IntPoint3 p)
+		{
+			var item = mgr.ContainsPoint(p);
+
+			if (item == null)
+				return SymbolID.Undefined;
+
+			return item.SymbolID;
 		}
 	}
 }

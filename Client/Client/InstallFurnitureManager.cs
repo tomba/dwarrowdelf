@@ -63,6 +63,14 @@ namespace Dwarrowdelf.Client
 			m_jobDataList.Add(data);
 		}
 
+		public ItemObject ContainsPoint(IntPoint3 p)
+		{
+			var data = m_jobDataList.Where(d => d.Mode == InstallMode.Install && d.Location == p).FirstOrDefault();
+			if (data == null)
+				return null;
+			return data.Item;
+		}
+
 		#region IJobSource Members
 
 		public IAssignment FindAssignment(ILivingObject living)
