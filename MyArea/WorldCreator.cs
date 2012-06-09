@@ -392,7 +392,9 @@ namespace MyArea
 
 				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
 				// the slope if all 8 tiles are higher.
-				for (int i = 0; i < 8; ++i)
+				// Count to 10. If 3 successive slopes, create one in the middle
+				int successive = 0;
+				for (int i = 0; i < 10; ++i)
 				{
 					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
 
@@ -400,8 +402,22 @@ namespace MyArea
 
 					if (plane.Contains(t) && heightMap[t] > z)
 					{
-						dir = d;
-						count++;
+						if (i < 8)
+							count++;
+						successive++;
+
+						if (successive == 3)
+						{
+							dir = DirectionExtensions.PlanarDirections[((i - 1) + offset) % 8];
+						}
+						else if (dir == Direction.None)
+						{
+							dir = d;
+						}
+					}
+					else
+					{
+						successive = 0;
 					}
 				}
 
