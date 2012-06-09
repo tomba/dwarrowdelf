@@ -16,6 +16,7 @@ namespace Dwarrowdelf
 		Sapling,
 		Tree,
 		Ore,
+		Grass,
 	}
 
 	[Flags]

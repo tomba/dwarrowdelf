@@ -637,7 +637,6 @@ namespace Dwarrowdelf.Server
 
 						td.TerrainID = TerrainID.Empty;
 						td.TerrainMaterialID = Dwarrowdelf.MaterialID.Undefined;
-						td.Flags &= ~TileFlags.Grass;
 						env.SetTileData(p, td);
 
 						if (clearDown)
@@ -834,13 +833,11 @@ namespace Dwarrowdelf.Server
 				case ConstructMode.Pavement:
 					td.InteriorID = InteriorID.Pavement;
 					td.InteriorMaterialID = item.MaterialID;
-					td.Flags &= ~TileFlags.Grass;
 					break;
 
 				case ConstructMode.Wall:
 					td.InteriorID = InteriorID.BuiltWall;
 					td.InteriorMaterialID = item.MaterialID;
-					td.Flags &= ~TileFlags.Grass;
 					break;
 
 				default:

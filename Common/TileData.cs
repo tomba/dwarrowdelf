@@ -11,8 +11,7 @@ namespace Dwarrowdelf
 	public enum TileFlags : ushort
 	{
 		None = 0,
-		Grass = 1 << 0,
-		ItemBlocks = 1 << 1,	// an item in the tile blocks movement
+		ItemBlocks = 1 << 0,	// an item in the tile blocks movement
 	}
 
 	[Serializable]
@@ -43,8 +42,6 @@ namespace Dwarrowdelf
 		[NonSerialized]
 		[FieldOffset(6)]
 		public byte WaterLevel;
-
-		public bool HasGrass { get { return (this.Flags & TileFlags.Grass) != 0; } }
 
 		public bool HasTree { get { return this.InteriorID == InteriorID.Tree || this.InteriorID == InteriorID.Sapling; } }
 

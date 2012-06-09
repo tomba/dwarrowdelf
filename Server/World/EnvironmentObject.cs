@@ -871,8 +871,6 @@ namespace Dwarrowdelf.Server
 
 		public EnvironmentObjectBuilder(ArrayGrid2D<int> depthMap, int depth, VisibilityMode visibilityMode)
 		{
-			const int GRASS_LIMIT = 15;	// XXX No grass if z >= GRASS_LIMIT
-
 			m_depthMap = depthMap;
 
 			this.VisibilityMode = visibilityMode;
@@ -894,9 +892,6 @@ namespace Dwarrowdelf.Server
 						var p = new IntPoint3(x, y, z);
 						var td = new TileData();
 
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
 						if (z < surface)
 						{
 							td.TerrainID = TerrainID.NaturalWall;
@@ -906,14 +901,15 @@ namespace Dwarrowdelf.Server
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
 							td.TerrainMaterialID = MaterialID.Granite;
-							if (z < GRASS_LIMIT)
-								td.Flags = TileFlags.Grass;
 						}
 						else
 						{
 							td.TerrainID = TerrainID.Empty;
 							td.TerrainMaterialID = MaterialID.Undefined;
 						}
+
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
 
 						m_tileGrid.SetTileData(p, td);
 					}

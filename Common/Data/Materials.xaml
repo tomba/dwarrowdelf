@@ -44,6 +44,12 @@
 	<MaterialInfo ID="Fir" Category="Wood" Color="Sienna" />
 	<MaterialInfo ID="Pine" Category="Wood" Color="Sienna" />
 
+	<!-- Grass -->
+	<MaterialInfo ID="ReedGrass" Category="Grass" Color="Green" />
+	<MaterialInfo ID="MeadowGrass" Category="Grass" Color="Green" />
+	<MaterialInfo ID="HairGrass" Category="Grass" Color="Green" />
+	<MaterialInfo ID="RyeGrass" Category="Grass" Color="Green" />
+
 	<!-- Other -->
 	<MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
 	<MaterialInfo ID="Water" Category="Consumable" Color="Blue" />

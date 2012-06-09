@@ -180,16 +180,16 @@ namespace Dwarrowdelf.Client
 			switch (td.TerrainID)
 			{
 				case TerrainID.NaturalFloor:
-					if (td.HasGrass)
+					tile.SymbolID = SymbolID.Floor;
+
+					// If the interior is "green", override the color to make the terrain greenish
+					if (InteriorIsGreen(td.InteriorID))
 					{
-						tile.SymbolID = SymbolID.Grass;
-						// Grass color should come from the symbol definition
-						tile.Color = GameColor.None;
+						tile.SymbolID = SymbolID.Empty;
+						tile.BgColor = GameColor.Green;
+						return;
 					}
-					else
-					{
-						tile.SymbolID = SymbolID.Floor;
-					}
+
 					break;
 
 				case TerrainID.BuiltFloor:
@@ -242,7 +242,8 @@ namespace Dwarrowdelf.Client
 							throw new Exception();
 					}
 
-					if (td.HasGrass)
+					// If the interior is "green", override the color to make the terrain greenish
+					if (InteriorIsGreen(td.InteriorID))
 					{
 						// override the material color
 						tile.Color = GameColor.DarkGreen;
@@ -253,6 +254,20 @@ namespace Dwarrowdelf.Client
 
 				default:
 					throw new Exception();
+			}
+		}
+
+		static bool InteriorIsGreen(InteriorID id)
+		{
+			switch (id)
+			{
+				case InteriorID.Grass:
+				case InteriorID.Tree:
+				case InteriorID.Sapling:
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
@@ -287,6 +302,15 @@ namespace Dwarrowdelf.Client
 
 				case InteriorID.Empty:
 					tile.SymbolID = SymbolID.Undefined;
+					break;
+
+				case InteriorID.Grass:
+					if (matInfo.ID == MaterialID.ReedGrass || matInfo.ID == MaterialID.RyeGrass)
+						tile.SymbolID = SymbolID.Grass2;
+					else
+						tile.SymbolID = SymbolID.Grass;
+					// Grass color should come from the symbol definition
+					tile.Color = GameColor.None;
 					break;
 
 				case InteriorID.Sapling:
@@ -324,6 +348,7 @@ namespace Dwarrowdelf.Client
 						}
 
 						tile.Color = GameColor.ForestGreen;
+						tile.BgColor = GameColor.Green;
 					}
 					break;
 

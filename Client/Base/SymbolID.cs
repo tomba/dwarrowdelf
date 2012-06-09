@@ -12,6 +12,8 @@ namespace Dwarrowdelf.Client
 
 		Unknown,
 
+		Empty,
+
 		/* floors */
 		Floor,
 
@@ -46,6 +48,7 @@ namespace Dwarrowdelf.Client
 		ConiferousTree,
 		DeciduousTree,
 		Grass,
+		Grass2,
 
 		/* Livings */
 		Player,

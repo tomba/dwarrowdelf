@@ -12,11 +12,18 @@
 		<CharGfx Char="?" />
 	</Symbol>
 
+	<Symbol ID="Empty">
+		<CharGfx Char=" " />
+	</Symbol>
+
 	<Symbol ID="Floor">
 		<CharGfx Char="▓" Reverse="True" Outline="False" />
 	</Symbol>
 	<Symbol ID="Grass">
-		<CharGfx Outline="False" Color="DarkGreen" Background="Green" Char="▒" />
+		<DrawingGfx DrawingName="Grass" />
+	</Symbol>
+	<Symbol ID="Grass2">
+		<DrawingGfx DrawingName="Grass2" />
 	</Symbol>
 	<Symbol ID="Wall">
 		<CharGfx Outline="False" Char="▓" />

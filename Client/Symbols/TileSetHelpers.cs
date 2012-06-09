@@ -74,6 +74,9 @@ namespace Dwarrowdelf.Client.Symbols
 
 		static Transform CreateNormalizeTransform(Rect bounds, Point location, Size size, double angle)
 		{
+			if (bounds.IsEmpty)
+				return Transform.Identity;
+
 			var t = new TransformGroup();
 
 			var b = bounds;

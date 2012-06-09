@@ -144,10 +144,7 @@ namespace Dwarrowdelf.Client
 			switch (flrID)
 			{
 				case TerrainID.NaturalFloor:
-					if (env.GetGrass(ml))
-						return SymbolID.Grass;
-					else
-						return SymbolID.Floor;
+					return SymbolID.Floor;
 
 				case TerrainID.NaturalWall:
 					return SymbolID.Wall;

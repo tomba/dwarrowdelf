@@ -97,6 +97,8 @@ namespace MyArea
 
 			var envBuilder = new EnvironmentObjectBuilder(intHeightMap, MAP_DEPTH, VisibilityMode.GlobalFOV);
 
+			CreateGrass(envBuilder, intHeightMap);
+
 			CreateSlopes(envBuilder, intHeightMap);
 
 			CreateTrees(envBuilder, intHeightMap);
@@ -112,6 +114,35 @@ namespace MyArea
 			surfaceLevel = FindSurfaceLevel(intHeightMap);
 
 			return envBuilder.Create(world);
+		}
+
+		static void CreateGrass(EnvironmentObjectBuilder envBuilder, ArrayGrid2D<int> intHeightMap)
+		{
+			const int GRASS_LIMIT = 15;	// XXX No grass if z >= GRASS_LIMIT
+
+			int w = envBuilder.Width;
+			int h = envBuilder.Height;
+
+			var materials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
+			for (int y = 0; y < h; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					int z = intHeightMap[x, y];
+
+					var p = new IntPoint3(x, y, z);
+
+					if (z < GRASS_LIMIT)
+					{
+						var td = envBuilder.GetTileData(p);
+
+						td.InteriorID = InteriorID.Grass;
+						td.InteriorMaterialID = materials[Helpers.GetRandomInt(materials.Length)].ID;
+
+						envBuilder.SetTileData(p, td);
+					}
+				}
+			}
 		}
 
 		static void FinalizeEnv(EnvironmentObject env, int surfaceLevel)
@@ -326,7 +357,7 @@ namespace MyArea
 
 				var td = env.GetTileData(p);
 
-				if ((td.TerrainID == TerrainID.NaturalFloor || td.TerrainID.IsSlope()) && td.InteriorID == InteriorID.Empty)
+				if (td.InteriorID == InteriorID.Grass)
 				{
 					var r = new MWCRandom(p, baseSeed);
 

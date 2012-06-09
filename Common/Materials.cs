@@ -53,6 +53,13 @@ namespace Dwarrowdelf
 		Fir,
 		Pine,
 
+		// Grass
+		ReedGrass,
+		MeadowGrass,
+		HairGrass,
+		RyeGrass,
+
+		// Other
 		Flesh,
 		Water,
 	}
@@ -65,6 +72,7 @@ namespace Dwarrowdelf
 		Metal,
 		Gem,
 		Mineral,
+		Grass,
 		Consumable,
 	}
 

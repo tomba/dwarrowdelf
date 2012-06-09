@@ -152,11 +152,6 @@ namespace Dwarrowdelf.Client
 			return m_tileGrid.GetWaterLevel(l);
 		}
 
-		public bool GetGrass(IntPoint3 ml)
-		{
-			return GetTileFlags(ml, TileFlags.Grass);
-		}
-
 		public TileFlags GetTileFlags(IntPoint3 l)
 		{
 			return m_tileGrid.GetFlags(l);

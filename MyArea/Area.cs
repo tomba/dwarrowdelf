@@ -57,9 +57,12 @@ namespace MyArea
 			foreach (var p in startLocs)
 			{
 				var td = env.GetTileData(p);
-				td.InteriorID = InteriorID.Empty;
-				td.InteriorMaterialID = MaterialID.Undefined;
-				env.SetTileData(p, td);
+				if (td.InteriorID == InteriorID.Tree)
+				{
+					td.InteriorID = InteriorID.Grass;
+					td.InteriorMaterialID = MaterialID.RyeGrass;
+					env.SetTileData(p, td);
+				}
 			}
 
 			var list = new List<LivingObject>();
@@ -106,8 +109,7 @@ namespace MyArea
 				var terrainID = env.GetTerrainID(p);
 				var interiorID = env.GetInteriorID(p);
 
-				if (terrainID == TerrainID.NaturalFloor &&
-					(interiorID == InteriorID.Empty || interiorID == InteriorID.Tree || interiorID == InteriorID.Sapling))
+				if (terrainID == TerrainID.NaturalFloor)
 					continue;
 				else
 					return false;
