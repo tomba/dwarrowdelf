@@ -20,30 +20,54 @@ namespace ColorTest
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		public GameColor[] ColorArray { get; private set; }
+
 		public MainWindow()
 		{
+			ColorArray = EnumHelpers.GetEnumValues<GameColor>();
+
 			InitializeComponent();
+
+			var view = CollectionViewSource.GetDefaultView(grid.Items);
+			view.Filter = Filter;
 		}
 
-		protected override void OnInitialized(EventArgs e)
+		string m_filterStr = "";
+
+		bool Filter(object ob)
 		{
-			base.OnInitialized(e);
+			if (string.IsNullOrWhiteSpace(m_filterStr))
+				return true;
 
-			for (int i = 1; i < (int)GameColor.NumColors; ++i)
-			{
-				GameColor gc = (GameColor)i;
-				GameColorRGB gcrgb = GameColorRGB.FromGameColor(gc);
-				var brush = new SolidColorBrush(Color.FromRgb(gcrgb.R, gcrgb.G, gcrgb.B));
-				var fgbrush = new SolidColorBrush(Color.FromRgb((byte)(255 - gcrgb.R), (byte)(255 - gcrgb.G), (byte)(255 - gcrgb.B)));
+			var gc = (GameColor)ob;
 
-				var label = new Label();
-				label.Content = Enum.GetName(typeof(GameColor), gc);
-				label.HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center;
-				label.VerticalContentAlignment = System.Windows.VerticalAlignment.Center;
-				label.Background = brush;
-				label.Foreground = fgbrush;
-				grid.Children.Add(label);
-			}
+			var str = gc.ToString().ToLowerInvariant();
+
+			return str.ToLowerInvariant().Contains(m_filterStr);
+		}
+
+		private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			m_filterStr = textBox.Text.ToLowerInvariant();
+
+			var view = CollectionViewSource.GetDefaultView(grid.Items);
+			view.Filter = Filter;
 		}
 	}
+
+	public class GameColorToBrushConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			var gc = (GameColor)value;
+			var rgb = gc.ToGameColorRGB();
+			return new SolidColorBrush(Color.FromRgb(rgb.R, rgb.G, rgb.B));
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
 }
