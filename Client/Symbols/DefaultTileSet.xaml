@@ -17,7 +17,7 @@
 	</Symbol>
 
 	<Symbol ID="Floor">
-		<CharGfx Char="▓" Reverse="True" Outline="False" />
+		<DrawingGfx DrawingName="Ground" />
 	</Symbol>
 	<Symbol ID="Grass">
 		<DrawingGfx DrawingName="Grass" />
@@ -26,7 +26,7 @@
 		<DrawingGfx DrawingName="Grass2" />
 	</Symbol>
 	<Symbol ID="Wall">
-		<CharGfx Outline="False" Char="▓" />
+		<DrawingGfx DrawingName="Wall" />
 	</Symbol>
 
 	<Symbol ID="DesignationMine">

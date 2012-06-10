@@ -181,6 +181,7 @@ namespace Dwarrowdelf.Client
 			{
 				case TerrainID.NaturalFloor:
 					tile.SymbolID = SymbolID.Floor;
+					tile.BgColor = GameColor.DarkSlateGray;
 
 					// If the interior is "green", override the color to make the terrain greenish
 					if (InteriorIsGreen(td.InteriorID))
@@ -198,6 +199,7 @@ namespace Dwarrowdelf.Client
 
 				case TerrainID.NaturalWall:
 					tile.SymbolID = SymbolID.Wall;
+					tile.BgColor = GameColor.SlateGray;
 					break;
 
 				case TerrainID.Hole:
@@ -248,6 +250,10 @@ namespace Dwarrowdelf.Client
 						// override the material color
 						tile.Color = GameColor.DarkGreen;
 						tile.BgColor = GameColor.Green;
+					}
+					else
+					{
+						tile.BgColor = GameColor.DarkSlateGray;
 					}
 
 					break;
