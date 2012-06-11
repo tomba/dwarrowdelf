@@ -97,9 +97,11 @@ namespace MyArea
 
 			var envBuilder = new EnvironmentObjectBuilder(intHeightMap, MAP_DEPTH, VisibilityMode.GlobalFOV);
 
-			CreateGrass(envBuilder, intHeightMap);
-
 			CreateSlopes(envBuilder, intHeightMap);
+
+			CreateSoil(envBuilder, intHeightMap);
+
+			CreateGrass(envBuilder, intHeightMap);
 
 			CreateTrees(envBuilder, intHeightMap);
 
@@ -116,9 +118,36 @@ namespace MyArea
 			return envBuilder.Create(world);
 		}
 
+		static void CreateSoil(EnvironmentObjectBuilder envBuilder, ArrayGrid2D<int> intHeightMap)
+		{
+			const int SOIL_LIMIT = 15;	// XXX
+
+			int w = envBuilder.Width;
+			int h = envBuilder.Height;
+
+			for (int y = 0; y < h; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					int z = intHeightMap[x, y];
+
+					var p = new IntPoint3(x, y, z);
+
+					if (z < SOIL_LIMIT)
+					{
+						var td = envBuilder.GetTileData(p);
+
+						td.TerrainMaterialID = MaterialID.Loam;
+
+						envBuilder.SetTileData(p, td);
+					}
+				}
+			}
+		}
+
 		static void CreateGrass(EnvironmentObjectBuilder envBuilder, ArrayGrid2D<int> intHeightMap)
 		{
-			const int GRASS_LIMIT = 15;	// XXX No grass if z >= GRASS_LIMIT
+			const int GRASS_LIMIT = 13;	// XXX
 
 			int w = envBuilder.Width;
 			int h = envBuilder.Height;
@@ -136,10 +165,13 @@ namespace MyArea
 					{
 						var td = envBuilder.GetTileData(p);
 
-						td.InteriorID = InteriorID.Grass;
-						td.InteriorMaterialID = materials[Helpers.GetRandomInt(materials.Length)].ID;
+						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil)
+						{
+							td.InteriorID = InteriorID.Grass;
+							td.InteriorMaterialID = materials[Helpers.GetRandomInt(materials.Length)].ID;
 
-						envBuilder.SetTileData(p, td);
+							envBuilder.SetTileData(p, td);
+						}
 					}
 				}
 			}
