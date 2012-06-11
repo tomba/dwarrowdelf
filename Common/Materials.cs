@@ -34,6 +34,9 @@ namespace Dwarrowdelf
 		Diorite,
 		Dolostone,	// mostly Dolomite
 
+		// Soils
+		Loam,
+
 		// Minerals
 		Magnetite,
 		NativeGold,
@@ -69,6 +72,7 @@ namespace Dwarrowdelf
 		Undefined,
 		Wood,
 		Rock,
+		Soil,
 		Metal,
 		Gem,
 		Mineral,

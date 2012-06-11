@@ -181,7 +181,8 @@ namespace Dwarrowdelf.Client
 			{
 				case TerrainID.NaturalFloor:
 					tile.SymbolID = SymbolID.Floor;
-					tile.BgColor = GameColor.DarkSlateGray;
+
+					tile.BgColor = GetTerrainBackgroundColor(matInfo);
 
 					// If the interior is "green", override the color to make the terrain greenish
 					if (InteriorIsGreen(td.InteriorID))
@@ -253,7 +254,7 @@ namespace Dwarrowdelf.Client
 					}
 					else
 					{
-						tile.BgColor = GameColor.DarkSlateGray;
+						tile.BgColor = GetTerrainBackgroundColor(matInfo);
 					}
 
 					break;
@@ -261,6 +262,16 @@ namespace Dwarrowdelf.Client
 				default:
 					throw new Exception();
 			}
+		}
+
+		static GameColor GetTerrainBackgroundColor(MaterialInfo matInfo)
+		{
+			if (matInfo.Category == MaterialCategory.Rock)
+				return GameColor.DarkSlateGray;
+			else if (matInfo.Category == MaterialCategory.Soil)
+				return GameColor.Peru;
+			else
+				throw new Exception();
 		}
 
 		static bool InteriorIsGreen(InteriorID id)

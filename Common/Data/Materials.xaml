@@ -25,6 +25,9 @@
 	<MaterialInfo ID="Diorite" Category="Rock" Color="LightGray" />
 	<MaterialInfo ID="Dolostone" Category="Rock" Color="LightGray" />
 
+	<!-- Soils -->
+	<MaterialInfo ID="Loam" Category="Soil" Color="Brown" />
+
 	<!-- Minerals -->
 	<MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
 	<MaterialInfo ID="NativeGold" Name="native gold" Category="Mineral" Color="Gold" />
