@@ -322,10 +322,28 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case InteriorID.Grass:
-					if (matInfo.ID == MaterialID.ReedGrass || matInfo.ID == MaterialID.RyeGrass)
-						tile.SymbolID = SymbolID.Grass2;
-					else
-						tile.SymbolID = SymbolID.Grass;
+					switch (matInfo.ID)
+					{
+						case MaterialID.ReedGrass:
+							tile.SymbolID = SymbolID.Grass4;
+							break;
+
+						case MaterialID.RyeGrass:
+							tile.SymbolID = SymbolID.Grass2;
+							break;
+
+						case MaterialID.MeadowGrass:
+							tile.SymbolID = SymbolID.Grass3;
+							break;
+
+						case MaterialID.HairGrass:
+							tile.SymbolID = SymbolID.Grass;
+							break;
+
+						default:
+							throw new Exception();
+					}
+
 					// Grass color should come from the symbol definition
 					tile.Color = GameColor.None;
 					break;

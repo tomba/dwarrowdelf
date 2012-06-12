@@ -49,6 +49,8 @@ namespace Dwarrowdelf.Client
 		DeciduousTree,
 		Grass,
 		Grass2,
+		Grass3,
+		Grass4,
 
 		/* Livings */
 		Player,

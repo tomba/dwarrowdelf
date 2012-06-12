@@ -25,6 +25,12 @@
 	<Symbol ID="Grass2">
 		<DrawingGfx DrawingName="Grass2" />
 	</Symbol>
+	<Symbol ID="Grass3">
+		<DrawingGfx DrawingName="Grass3" />
+	</Symbol>
+	<Symbol ID="Grass4">
+		<DrawingGfx DrawingName="Grass4" />
+	</Symbol>
 	<Symbol ID="Wall">
 		<DrawingGfx DrawingName="Wall" />
 	</Symbol>
