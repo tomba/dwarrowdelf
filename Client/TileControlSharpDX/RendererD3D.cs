@@ -15,8 +15,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		Texture2D m_tileTextureArray;
 
-		SharpDX.Direct3D11.Buffer m_colorBuffer;
-
 		ITileSet m_tileSet;
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
@@ -27,8 +25,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
 			m_device = Helpers11.CreateDevice();
-			m_colorBuffer = Helpers11.CreateGameColorBuffer(m_device);
-			m_scene = new SingleQuad11(m_device, m_colorBuffer);
+			m_scene = new SingleQuad11(m_device);
 		}
 
 		void OnIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -181,12 +178,6 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				m_tileTextureArray.Dispose();
 				m_tileTextureArray = null;
-			}
-
-			if (m_colorBuffer != null)
-			{
-				m_colorBuffer.Dispose();
-				m_colorBuffer = null;
 			}
 
 			if (m_device != null)
