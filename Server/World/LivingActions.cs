@@ -683,8 +683,9 @@ namespace Dwarrowdelf.Server
 			report.InteriorID = id;
 			report.MaterialID = material;
 
-			td.InteriorID = InteriorID.Empty;
-			td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
+			td.InteriorID = InteriorID.Grass;
+			td.InteriorMaterialID = grassMaterials[this.World.Random.Next(grassMaterials.Length)].ID;
 
 			this.Environment.SetTileData(p, td);
 
