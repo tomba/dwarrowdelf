@@ -350,15 +350,24 @@ namespace Dwarrowdelf.Client
 
 				case InteriorID.Sapling:
 					{
-						var wmid = Materials.GetWoodMaterialCategory(td.InteriorMaterialID);
-						switch (wmid)
+						switch (td.InteriorMaterialID)
 						{
-							case WoodMaterialCategory.Coniferous:
+							case MaterialID.Fir:
 								tile.SymbolID = SymbolID.ConiferousSapling;
 								break;
-							case WoodMaterialCategory.Deciduous:
+
+							case MaterialID.Pine:
+								tile.SymbolID = SymbolID.ConiferousSapling2;
+								break;
+
+							case MaterialID.Birch:
 								tile.SymbolID = SymbolID.DeciduousSapling;
 								break;
+
+							case MaterialID.Oak:
+								tile.SymbolID = SymbolID.DeciduousSapling2;
+								break;
+
 							default:
 								throw new Exception();
 						}
@@ -369,15 +378,24 @@ namespace Dwarrowdelf.Client
 
 				case InteriorID.Tree:
 					{
-						var wmid = Materials.GetWoodMaterialCategory(td.InteriorMaterialID);
-						switch (wmid)
+						switch (td.InteriorMaterialID)
 						{
-							case WoodMaterialCategory.Coniferous:
+							case MaterialID.Fir:
 								tile.SymbolID = SymbolID.ConiferousTree;
 								break;
-							case WoodMaterialCategory.Deciduous:
+
+							case MaterialID.Pine:
+								tile.SymbolID = SymbolID.ConiferousTree2;
+								break;
+
+							case MaterialID.Birch:
 								tile.SymbolID = SymbolID.DeciduousTree;
 								break;
+
+							case MaterialID.Oak:
+								tile.SymbolID = SymbolID.DeciduousTree2;
+								break;
+
 							default:
 								throw new Exception();
 						}

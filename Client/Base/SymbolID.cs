@@ -45,8 +45,12 @@ namespace Dwarrowdelf.Client
 
 		ConiferousSapling,
 		DeciduousSapling,
+		ConiferousSapling2,
+		DeciduousSapling2,
 		ConiferousTree,
+		ConiferousTree2,
 		DeciduousTree,
+		DeciduousTree2,
 		Grass,
 		Grass2,
 		Grass3,
