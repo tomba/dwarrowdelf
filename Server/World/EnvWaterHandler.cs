@@ -28,6 +28,11 @@ namespace Dwarrowdelf.Server
 			m_waterTiles.Remove(p);
 		}
 
+		public void Rescan()
+		{
+			ScanWaterTiles();
+		}
+
 		void ScanWaterTiles()
 		{
 			foreach (var p in m_env.Size.Range())

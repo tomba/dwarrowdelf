@@ -151,6 +151,12 @@ namespace Dwarrowdelf.Server
 			m_treeHandler.Tick();
 		}
 
+		// XXX called by SetTerrain script
+		public void ScanWaterTiles()
+		{
+			m_waterHandler.Rescan();
+		}
+
 		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);
