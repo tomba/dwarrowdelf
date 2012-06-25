@@ -16,6 +16,7 @@ namespace Dwarrowdelf.Client
 
 		/* floors */
 		Floor,
+		Sand,
 
 		/* interiors */
 		Wall,

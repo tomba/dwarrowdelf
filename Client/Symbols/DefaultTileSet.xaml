@@ -19,6 +19,9 @@
 	<Symbol ID="Floor">
 		<DrawingGfx DrawingName="Ground" />
 	</Symbol>
+	<Symbol ID="Sand">
+		<DrawingGfx DrawingName="Sand" />
+	</Symbol>
 	<Symbol ID="Grass">
 		<DrawingGfx DrawingName="Grass" />
 	</Symbol>

@@ -182,6 +182,9 @@ namespace Dwarrowdelf.Client
 				case TerrainID.NaturalFloor:
 					tile.SymbolID = SymbolID.Floor;
 
+					if (matInfo.Category == MaterialCategory.Soil)
+						tile.SymbolID = SymbolID.Sand;
+
 					tile.BgColor = GetTerrainBackgroundColor(matInfo);
 
 					// If the interior is "green", override the color to make the terrain greenish
@@ -269,7 +272,7 @@ namespace Dwarrowdelf.Client
 			if (matInfo.Category == MaterialCategory.Rock)
 				return GameColor.DarkSlateGray;
 			else if (matInfo.Category == MaterialCategory.Soil)
-				return GameColor.Peru;
+				return GameColor.Sienna;
 			else
 				throw new Exception();
 		}
