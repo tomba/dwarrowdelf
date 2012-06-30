@@ -31,15 +31,23 @@ namespace Dwarrowdelf.Client
 
 		protected override void MapChangedOverride(IntPoint3 ml)
 		{
+			Invalidate(ml);
+		}
+
+		public override bool Invalidate(IntPoint3 ml)
+		{
 			if (Contains(ml))
 			{
 				var p = MapLocationToRenderDataLocation(ml);
 				int idx = m_renderData.GetIdx(p);
 				m_renderData.Grid[idx].IsValid = false;
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
-
-
 
 		public override void Resolve()
 		{
@@ -492,7 +500,7 @@ namespace Dwarrowdelf.Client
 				return;
 			}
 
-			if (m_symbolToggler)
+			if (!m_symbolToggler)
 			{
 				id = GetInstallSymbolAt(env.InstallFurnitureManager, ml);
 				if (id != SymbolID.Undefined)

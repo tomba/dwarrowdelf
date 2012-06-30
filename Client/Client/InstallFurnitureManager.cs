@@ -48,6 +48,8 @@ namespace Dwarrowdelf.Client
 			item.ReservedBy = this;
 
 			m_jobDataList.Add(data);
+
+			GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(location);
 		}
 
 		public void AddUninstallJob(ItemObject item)

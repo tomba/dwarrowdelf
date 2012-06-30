@@ -136,6 +136,26 @@ namespace Dwarrowdelf.Client.UI
 			m_renderView.Resolve();
 		}
 
+		/// <summary>
+		/// Mark the all tile's datacontent as invalid.
+		/// Use when tile's visual changes from other reason than normal TileData change.
+		/// </summary>
+		public void InvalidateRenderViewTiles()
+		{
+			m_renderView.Invalidate();
+			InvalidateTileData();
+		}
+
+		/// <summary>
+		/// Mark the tile's datacontent as invalid.
+		/// Use when tile's visual changes from other reason than normal TileData change.
+		/// </summary>
+		public void InvalidateRenderViewTile(IntPoint3 ml)
+		{
+			if (m_renderView.Invalidate(ml))
+				InvalidateTileData();
+		}
+
 		public bool IsVisibilityCheckEnabled
 		{
 			get { return m_renderView.IsVisibilityCheckEnabled; }

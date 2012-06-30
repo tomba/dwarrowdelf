@@ -143,6 +143,8 @@ namespace Dwarrowdelf.Client
 
 				m_map[p] = new DesignationData(type);
 				CheckTile(p);
+
+				GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(p);
 			}
 
 			if (origCount == 0 && m_map.Count > 0)
@@ -150,9 +152,6 @@ namespace Dwarrowdelf.Client
 				this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
 				this.Environment.World.TickStarting += OnTickStartEvent;
 			}
-
-			// XXX
-			GameData.Data.MainWindow.MapControl.InvalidateTileData();
 		}
 
 		public void RemoveArea(IntCuboid area)
@@ -252,8 +251,7 @@ namespace Dwarrowdelf.Client
 				this.Environment.World.TickStarting -= OnTickStartEvent;
 			}
 
-			// XXX
-			GameData.Data.MainWindow.MapControl.InvalidateTileData();
+			GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(p);
 		}
 
 		void RemoveJob(IntPoint3 p)

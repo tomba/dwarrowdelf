@@ -20,6 +20,9 @@ namespace Dwarrowdelf.Client
 		EnvironmentObject Environment { get; set; }
 		IRenderData RenderData { get; }
 
+		void Invalidate();
+		bool Invalidate(IntPoint3 ml);
+
 		void Resolve();
 	}
 
@@ -165,6 +168,8 @@ namespace Dwarrowdelf.Client
 				}
 			}
 		}
+
+		public abstract bool Invalidate(IntPoint3 ml);
 
 		public void Invalidate()
 		{

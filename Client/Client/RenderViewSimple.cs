@@ -30,6 +30,21 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
+		public override bool Invalidate(IntPoint3 ml)
+		{
+			if (Contains(ml))
+			{
+				var p = MapLocationToRenderDataLocation(ml);
+				int idx = m_renderData.GetIdx(p);
+				m_renderData.Grid[idx].IsValid = false;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
 		public override void Resolve()
 		{
 			//Debug.WriteLine("RenderView.Resolve");

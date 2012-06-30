@@ -251,6 +251,9 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceVerbose("OnRender End");
 		}
 
+		/// <summary>
+		/// Forces render, without resolving the tile data
+		/// </summary>
 		public void InvalidateTileRender()
 		{
 			if (m_tileRenderInvalid == false)
@@ -261,6 +264,10 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
+		/// <summary>
+		/// Forces render, resolving the tile data
+		/// Note: Does NOT invalidate the tile data of RenderView
+		/// </summary>
 		public void InvalidateTileData()
 		{
 			if (m_tileDataInvalid == false)
