@@ -331,7 +331,7 @@ namespace Dwarrowdelf
 
 		public static readonly TerrainFilter ConstructPavementFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
-			new InteriorID[] { InteriorID.Empty });
+			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
 
 		public static readonly OrItemFilter ConstructPavementItemFilter =
 			new OrItemFilter(
