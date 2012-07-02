@@ -35,7 +35,18 @@ namespace Dwarrowdelf
 		Dolostone,	// mostly Dolomite
 
 		// Soils
+		Sand,
+		LoamySand,
+		SandyLoam,
+		SandyClayLoam,
+		SandyClay,
+		Clay,
+		SiltyClay,
+		SiltyClayLoam,
+		SiltLoam,
+		Silt,
 		Loam,
+		ClayLoam,
 
 		// Minerals
 		Magnetite,

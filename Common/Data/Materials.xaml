@@ -26,7 +26,18 @@
 	<MaterialInfo ID="Dolostone" Category="Rock" Color="LightGray" />
 
 	<!-- Soils -->
+	<MaterialInfo ID="Sand" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="LoamySand" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SandyLoam" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SandyClayLoam" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SandyClay" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="Clay" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SiltyClay" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SiltyClayLoam" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="SiltLoam" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="Silt" Category="Soil" Color="Brown" />
 	<MaterialInfo ID="Loam" Category="Soil" Color="Brown" />
+	<MaterialInfo ID="ClayLoam" Category="Soil" Color="Brown" />
 
 	<!-- Minerals -->
 	<MaterialInfo ID="Magnetite" Category="Mineral" Color="LightGray" />
