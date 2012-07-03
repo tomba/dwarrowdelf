@@ -8,23 +8,40 @@ using System.Windows;
 using System.Windows.Media;
 using Dwarrowdelf.TerrainGen;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TerrainGenTest
 {
 	class TerrainWriter
 	{
-		WriteableBitmap m_bmp;
-		ArrayGrid2D<double> m_grid;
+		const int MAP_DEPTH = 20;
 
-		public BitmapSource Bmp { get { return m_bmp; } }
+		WriteableBitmap m_surfaceBmp;
+		WriteableBitmap m_sliceBmp;
+
+		TileData[, ,] m_grid;
+		ArrayGrid2D<double> m_doubleHeightMap;
+		ArrayGrid2D<int> m_heightMap;
+
+		IntSize3 m_size;
+
+		public BitmapSource SurfaceBmp { get { return m_surfaceBmp; } }
+		public BitmapSource SliceBmp { get { return m_sliceBmp; } }
 
 		public TerrainWriter()
 		{
-			int sizeExp = 9;
+			const int depth = 20;
+			const int sizeExp = 9;
 			int size = (int)Math.Pow(2, sizeExp) + 1;
-			m_grid = new ArrayGrid2D<double>(size, size);
 
-			m_bmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgr32, null);
+			m_size = new IntSize3(size, size, depth);
+
+			m_doubleHeightMap = new ArrayGrid2D<double>(size, size);
+			m_heightMap = new ArrayGrid2D<int>(size, size);
+			m_grid = new TileData[depth, size, size];
+
+			m_surfaceBmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgr32, null);
+			m_sliceBmp = new WriteableBitmap(size, size, 96, 96, PixelFormats.Bgr32, null);
 		}
 
 		public double Average { get; private set; }
@@ -32,13 +49,24 @@ namespace TerrainGenTest
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed)
 		{
-			m_grid.Clear();
+			m_doubleHeightMap.Clear();
 
-			GenerateTerrain(m_grid, corners, range, h, seed);
+			GenerateTerrain(m_doubleHeightMap, corners, range, h, seed);
 
-			AnalyzeTerrain(m_grid);
+			AnalyzeTerrain(m_doubleHeightMap);
 
-			RenderTerrain(m_grid);
+			// integer heightmap. the number tells the z level where the floor is.
+			foreach (var p in IntPoint2.Range(m_size.Width, m_size.Height))
+			{
+				var d = m_doubleHeightMap[p];
+
+				d *= MAP_DEPTH / 2;
+				d += (MAP_DEPTH / 2) - 1;
+
+				m_heightMap[p] = (int)Math.Round(d);
+			}
+
+			CreateTileGrid();
 		}
 
 		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h, int seed)
@@ -46,58 +74,64 @@ namespace TerrainGenTest
 			DiamondSquare.Render(grid, corners, range, h, seed);
 
 			//Clamper.Clamp(grid, 10);
-		}
 
-		void AnalyzeTerrain(ArrayGrid2D<double> grid)
-		{
 			Clamper.Normalize(grid);
 
 			grid.ForEach(v => Math.Pow(v, this.Amplify));
 
-			Clamper.Normalize(grid);
+			//Clamper.Normalize(grid);
+		}
 
+		void AnalyzeTerrain(ArrayGrid2D<double> grid)
+		{
 			this.Average = grid.Average();
 		}
 
-		void RenderTerrain(ArrayGrid2D<double> grid)
+		public void RenderTerrain()
 		{
-			uint[] array = new uint[grid.Width];
+			int w = m_size.Width;
+			int h = m_size.Height;
 
-			m_bmp.Lock();
+			m_surfaceBmp.Lock();
 
-			for (int y = 0; y < grid.Height && y < m_bmp.PixelHeight; ++y)
+			unsafe
 			{
-				for (int x = 0; x < grid.Width && x < m_bmp.PixelWidth; ++x)
+				var pBackBuffer = (uint*)m_surfaceBmp.BackBuffer;
+				int stride = m_surfaceBmp.BackBufferStride / 4;
+
+				Parallel.For(0, h, y =>
 				{
-					var v = grid[x, y];
+					for (int x = 0; x < w; ++x)
+					{
+						var v = m_heightMap[x, y];
 
-					var c = GetColor(v);
+						var c = GetColor(v);
 
-					array[x] = c;
-				}
+						var ptr = pBackBuffer + y * stride + x;
 
-				m_bmp.WritePixels(new Int32Rect(0, m_bmp.PixelHeight - y - 1, grid.Width, 1), array, grid.Width * 4, 0);
+						*ptr = c;
+					}
+				});
 			}
 
-			m_bmp.AddDirtyRect(new Int32Rect(0, 0, m_bmp.PixelWidth, m_bmp.PixelHeight));
-			m_bmp.Unlock();
+			m_surfaceBmp.AddDirtyRect(new Int32Rect(0, 0, m_surfaceBmp.PixelWidth, m_surfaceBmp.PixelHeight));
+			m_surfaceBmp.Unlock();
 		}
 
-		uint GetColor(double v)
+		uint GetColor(int v)
 		{
-
 			uint r, g, b;
 
-			double mountain_min = 0.5;
-			double grass_min = 0.0;
+			int mountain_min = 10;
+			int grass_min = 0;
 
 			if (v >= mountain_min)
 			{
-				v = (v - mountain_min) / (1.0 - mountain_min);
+				var d = (double)(v - mountain_min) / (MAP_DEPTH - mountain_min);
 
-				Debug.Assert(v >= 0 && v <= 1);
+				Debug.Assert(d >= 0 && d <= 1);
 
-				uint c = 127 + (uint)(v * 127);
+				uint c = 127 + (uint)(d * 127);
 
 				r = c;
 				g = c;
@@ -105,11 +139,11 @@ namespace TerrainGenTest
 			}
 			else
 			{
-				v = (v - grass_min) / (mountain_min - grass_min);
+				var d = (double)(v - grass_min) / (mountain_min - grass_min);
 
-				Debug.Assert(v >= 0 && v <= 1);
+				Debug.Assert(d >= 0 && d <= 1);
 
-				uint c = 127 / 2 + (uint)(v * 127);
+				uint c = 127 / 2 + (uint)(d * 127);
 
 				r = 0;
 				g = c;
@@ -120,6 +154,113 @@ namespace TerrainGenTest
 				throw new Exception();
 
 			return (r << 16) | (g << 8) | (b << 0);
+		}
+
+		public int Level { get; set; }
+
+		public void RenderSlice()
+		{
+			int w = m_size.Width;
+			int h = m_size.Height;
+
+			m_sliceBmp.Lock();
+
+			unsafe
+			{
+				var pBackBuffer = (uint*)m_sliceBmp.BackBuffer;
+				int stride = m_sliceBmp.BackBufferStride / 4;
+
+				Parallel.For(0, h, y =>
+				{
+					for (int x = 0; x < w; ++x)
+					{
+						var p = new IntPoint3(x, y, this.Level);
+						var td = GetTile(p);
+
+						uint c = GetTileColor(td);
+
+						var ptr = pBackBuffer + y * stride + x;
+
+						*ptr = c;
+					}
+				});
+			}
+
+			m_sliceBmp.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmp.PixelWidth, m_sliceBmp.PixelHeight));
+			m_sliceBmp.Unlock();
+		}
+
+		uint GetTileColor(TileData td)
+		{
+			byte r, g, b;
+
+			if (td.IsEmpty)
+			{
+				r = 0;
+				g = 0;
+				b = 0;
+			}
+			else
+			{
+				r = 128;
+				g = 128;
+				b = 128;
+			}
+
+			return (uint)((r << 16) | (g << 8) | (b << 0));
+		}
+
+		void CreateTileGrid()
+		{
+			int width = m_doubleHeightMap.Width;
+			int height = m_doubleHeightMap.Height;
+			int depth = m_size.Depth;
+
+			//Parallel.For(0, height, y =>
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					int surface = m_heightMap[x, y];
+
+					for (int z = 0; z < depth; ++z)
+					{
+						var p = new IntPoint3(x, y, z);
+						var td = new TileData();
+
+						if (z < surface)
+						{
+							td.TerrainID = TerrainID.NaturalWall;
+							td.TerrainMaterialID = MaterialID.Granite;
+						}
+						else if (z == surface)
+						{
+							td.TerrainID = TerrainID.NaturalFloor;
+							td.TerrainMaterialID = MaterialID.Granite;
+						}
+						else
+						{
+							td.TerrainID = TerrainID.Empty;
+							td.TerrainMaterialID = MaterialID.Undefined;
+						}
+
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
+
+						SetTile(p, td);
+					}
+				}
+			} //);
+		}
+
+		void SetTile(IntPoint3 p, TileData td)
+		{
+			m_grid[p.Z, p.Y, p.X] = td;
+		}
+
+		TileData GetTile(IntPoint3 p)
+		{
+			return m_grid[p.Z, p.Y, p.X];
 		}
 	}
 }

@@ -20,11 +20,14 @@ namespace TerrainGenTest
 	{
 		TerrainWriter m_terrain;
 
-		public BitmapSource Bmp { get { return m_terrain.Bmp; } }
+		public BitmapSource SurfaceBmp { get; private set; }
+		public BitmapSource SliceBmp { get; private set; }
 
 		public MainWindow()
 		{
 			m_terrain = new TerrainWriter();
+			this.SurfaceBmp = m_terrain.SurfaceBmp;
+			this.SliceBmp = m_terrain.SliceBmp;
 
 			InitializeComponent();
 		}
@@ -33,10 +36,12 @@ namespace TerrainGenTest
 		{
 			base.OnSourceInitialized(e);
 
-			Render();
+			Generate();
+			RenderTerrain();
+			RenderSlice();
 		}
 
-		void Render()
+		void Generate()
 		{
 			if (!this.IsInitialized)
 				return;
@@ -62,23 +67,53 @@ namespace TerrainGenTest
 			//maxTextBox.Text = m_terrain.Max.ToString();
 		}
 
+		void RenderTerrain()
+		{
+			m_terrain.RenderTerrain();
+		}
+
+		void RenderSlice()
+		{
+			m_terrain.Level = (int)levelSlider.Value;
+
+			m_terrain.RenderSlice();
+		}
+
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			var v = zoomSlider.Value;
+			var v = surfaceZoomSlider.Value;
+			int m = (int)Math.Pow(2, v - 1);
 
-			image.Width = m_terrain.Bmp.PixelWidth * v;
-			image.Height = m_terrain.Bmp.PixelHeight * v;
+			surfaceImage.Width = this.SurfaceBmp.PixelWidth * m;
+			surfaceImage.Height = this.SurfaceBmp.PixelHeight * m;
+		}
 
+		private void sliceZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			var v = sliceZoomSlider.Value;
+			int m = (int)Math.Pow(2, v - 1);
+
+			sliceImage.Width = this.SliceBmp.PixelWidth * m;
+			sliceImage.Height = this.SliceBmp.PixelHeight * m;
+		}
+
+		private void levelSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		{
+			RenderSlice();
 		}
 
 		private void hSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			Render();
+			Generate();
+			RenderTerrain();
+			RenderSlice();
 		}
 
 		private void rangeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			Render();
+			Generate();
+			RenderTerrain();
+			RenderSlice();
 		}
 
 		private void seedTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -86,7 +121,9 @@ namespace TerrainGenTest
 			if (!this.IsInitialized)
 				return;
 
-			Render();
+			Generate();
+			RenderTerrain();
+			RenderSlice();
 		}
 
 		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -94,7 +131,9 @@ namespace TerrainGenTest
 			if (!this.IsInitialized)
 				return;
 
-			Render();
+			Generate();
+			RenderTerrain();
+			RenderSlice();
 		}
 
 		int ParseInt(string str)
