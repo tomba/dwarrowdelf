@@ -18,16 +18,24 @@ namespace TerrainGenTest
 {
 	public partial class MainWindow : Window
 	{
-		TerrainWriter m_terrain;
+		Generator m_terrain;
+		Renderer m_renderer;
 
 		public BitmapSource SurfaceBmp { get; private set; }
 		public BitmapSource SliceBmp { get; private set; }
 
 		public MainWindow()
 		{
-			m_terrain = new TerrainWriter();
-			this.SurfaceBmp = m_terrain.SurfaceBmp;
-			this.SliceBmp = m_terrain.SliceBmp;
+			const int depth = 20;
+			const int sizeExp = 9;
+			int size = (int)Math.Pow(2, sizeExp) + 1;
+
+			var s = new IntSize3(size, size, depth);
+			m_terrain = new Generator(s);
+			m_renderer = new Renderer(s);
+
+			this.SurfaceBmp = m_renderer.SurfaceBmp;
+			this.SliceBmp = m_renderer.SliceBmp;
 
 			InitializeComponent();
 		}
@@ -69,14 +77,14 @@ namespace TerrainGenTest
 
 		void RenderTerrain()
 		{
-			m_terrain.RenderTerrain();
+			m_renderer.RenderTerrain(m_terrain.HeightMap);
 		}
 
 		void RenderSlice()
 		{
-			m_terrain.Level = (int)levelSlider.Value;
+			m_renderer.Level = (int)levelSlider.Value;
 
-			m_terrain.RenderSlice();
+			m_renderer.RenderSlice(m_terrain.TileGrid);
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
