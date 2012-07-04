@@ -22,7 +22,6 @@ namespace TerrainGenTest
 		public TileData[, ,] TileGrid { get { return m_grid; } }
 
 		public double Average { get; private set; }
-		public int Amplify { get; set; }
 
 		public Generator(IntSize3 size)
 		{
@@ -37,11 +36,11 @@ namespace TerrainGenTest
 			m_grid = new TileData[d, h, w];
 		}
 
-		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed)
+		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
 		{
 			m_doubleHeightMap.Clear();
 
-			GenerateTerrain(m_doubleHeightMap, corners, range, h, seed);
+			GenerateTerrain(m_doubleHeightMap, corners, range, h, seed, amplify);
 
 			AnalyzeTerrain(m_doubleHeightMap);
 
@@ -59,7 +58,8 @@ namespace TerrainGenTest
 			CreateTileGrid();
 		}
 
-		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h, int seed)
+		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h,
+			int seed, double amplify)
 		{
 			DiamondSquare.Render(grid, corners, range, h, seed);
 
@@ -67,7 +67,7 @@ namespace TerrainGenTest
 
 			Clamper.Normalize(grid);
 
-			grid.ForEach(v => Math.Pow(v, this.Amplify));
+			grid.ForEach(v => Math.Pow(v, amplify));
 
 			//Clamper.Normalize(grid);
 		}

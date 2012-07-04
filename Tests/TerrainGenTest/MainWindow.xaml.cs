@@ -28,6 +28,68 @@ namespace TerrainGenTest
 		IntSize3 m_size;
 		IntPoint2 m_pos;
 
+
+		public double Amplify
+		{
+			get { return (double)GetValue(AmplifyProperty); }
+			set { SetValue(AmplifyProperty, value); }
+		}
+
+		public static readonly DependencyProperty AmplifyProperty =
+			DependencyProperty.Register("Amplify", typeof(double), typeof(MainWindow),
+				new UIPropertyMetadata(2.0, ReGenerate));
+
+		public double HValue
+		{
+			get { return (double)GetValue(HValueProperty); }
+			set { SetValue(HValueProperty, value); }
+		}
+
+		public static readonly DependencyProperty HValueProperty =
+			DependencyProperty.Register("HValue", typeof(double), typeof(MainWindow),
+			new UIPropertyMetadata(0.75, ReGenerate));
+
+		public double RangeValue
+		{
+			get { return (double)GetValue(RangeValueProperty); }
+			set { SetValue(RangeValueProperty, value); }
+		}
+
+		public static readonly DependencyProperty RangeValueProperty =
+			DependencyProperty.Register("RangeValue", typeof(double), typeof(MainWindow),
+			new UIPropertyMetadata(5.0, ReGenerate));
+
+		public int Seed
+		{
+			get { return (int)GetValue(SeedProperty); }
+			set { SetValue(SeedProperty, value); }
+		}
+
+		public static readonly DependencyProperty SeedProperty =
+			DependencyProperty.Register("Seed", typeof(int), typeof(MainWindow), new UIPropertyMetadata(1, ReGenerate));
+
+
+
+		static void ReGenerate(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var mw = (MainWindow)d;
+			mw.Generate();
+			mw.Render();
+		}
+
+
+		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (!this.IsInitialized)
+				return;
+
+			Generate();
+			Render();
+		}
+
+
+
+
 		public MainWindow()
 		{
 			const int depth = 20;
@@ -67,10 +129,6 @@ namespace TerrainGenTest
 			if (!this.IsInitialized)
 				return;
 
-			double range = rangeSlider.Value;
-			double h = hSlider.Value;
-			int seed = ParseInt(seedTextBox.Text);
-
 			var corners = new DiamondSquare.CornerData()
 			{
 				NW = ParseDouble(cornerNWTextBox.Text),
@@ -79,13 +137,9 @@ namespace TerrainGenTest
 				SW = ParseDouble(cornerSWTextBox.Text),
 			};
 
-			m_terrain.Amplify = ParseInt(amplifyTextBox.Text);
-
-			m_terrain.Generate(corners, range, h, seed);
+			m_terrain.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
 
 			avgTextBox.Text = m_terrain.Average.ToString();
-			//minTextBox.Text = m_terrain.Min.ToString();
-			//maxTextBox.Text = m_terrain.Max.ToString();
 		}
 
 		void Render()
@@ -109,36 +163,6 @@ namespace TerrainGenTest
 
 		private void levelSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			Render();
-		}
-
-		private void hSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			Generate();
-			Render();
-		}
-
-		private void rangeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			Generate();
-			Render();
-		}
-
-		private void seedTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (!this.IsInitialized)
-				return;
-
-			Generate();
-			Render();
-		}
-
-		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (!this.IsInitialized)
-				return;
-
-			Generate();
 			Render();
 		}
 
