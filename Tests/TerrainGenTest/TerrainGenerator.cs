@@ -10,7 +10,7 @@ using Dwarrowdelf.TerrainGen;
 
 namespace TerrainGenTest
 {
-	class Generator
+	public class TerrainGenerator
 	{
 		TileData[, ,] m_grid;
 		ArrayGrid2D<double> m_doubleHeightMap;
@@ -23,7 +23,7 @@ namespace TerrainGenTest
 
 		public double Average { get; private set; }
 
-		public Generator(IntSize3 size)
+		public TerrainGenerator(IntSize3 size)
 		{
 			m_size = size;
 
@@ -83,6 +83,27 @@ namespace TerrainGenTest
 			int height = m_doubleHeightMap.Height;
 			int depth = m_size.Depth;
 
+			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
+			var layers = new MaterialID[20];
+
+			var r = new Random();
+			int rep = 0;
+			MaterialID mat = MaterialID.Undefined;
+			for (int z = 0; z < layers.Length; ++z)
+			{
+				if (rep == 0)
+				{
+					rep = r.Next(4) + 1;
+					mat = rockMaterials[r.Next(rockMaterials.Length - 1)].ID;
+				}
+
+				layers[z] = mat;
+				rep--;
+			}
+
+			double xk = (r.NextDouble() * 2 - 1) * 0.01;
+			double yk = (r.NextDouble() * 2 - 1) * 0.01;
+
 			Parallel.For(0, height, y =>
 			{
 				for (int x = 0; x < width; ++x)
@@ -97,12 +118,20 @@ namespace TerrainGenTest
 						if (z < surface)
 						{
 							td.TerrainID = TerrainID.NaturalWall;
-							td.TerrainMaterialID = MaterialID.Granite;
+
+							int _z = (int)Math.Round(z + x * xk + y * yk);
+
+							_z = _z % layers.Length;
+
+							if (_z < 0)
+								_z += layers.Length;
+
+							td.TerrainMaterialID = layers[_z];
 						}
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = MaterialID.Granite;
+							td.TerrainMaterialID = GetTile(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
 						}
 						else
 						{

@@ -19,7 +19,7 @@ namespace TerrainGenTest
 {
 	public partial class MainWindow : Window
 	{
-		Generator m_terrain;
+		TerrainGenerator m_terrain;
 		Renderer m_renderer;
 
 		public BitmapSource SliceBmpXY { get; private set; }
@@ -40,7 +40,7 @@ namespace TerrainGenTest
 			int size = (int)Math.Pow(2, sizeExp) + 1;
 
 			m_size = new IntSize3(size, size, depth);
-			m_terrain = new Generator(m_size);
+			m_terrain = new TerrainGenerator(m_size);
 			m_renderer = new Renderer(m_size);
 
 			this.SliceBmpXY = m_renderer.SliceBmpXY;

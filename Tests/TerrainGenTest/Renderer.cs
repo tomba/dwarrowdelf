@@ -214,14 +214,15 @@ namespace TerrainGenTest
 		uint GetTileColor(TileData td)
 		{
 			byte r, g, b;
-
+			/*
 			if (td.IsEmpty)
 			{
 				r = 0;
 				g = 0;
 				b = 0;
 			}
-			else
+			*/
+			if (td.TerrainID == TerrainID.NaturalWall)
 			{
 				var mat = Materials.GetMaterial(td.TerrainMaterialID);
 				var rgb = mat.Color.ToGameColorRGB();
@@ -229,6 +230,12 @@ namespace TerrainGenTest
 				r = rgb.R;
 				g = rgb.G;
 				b = rgb.B;
+			}
+			else
+			{
+				r = 0;
+				g = 0;
+				b = 0;
 			}
 
 			return (uint)((r << 16) | (g << 8) | (b << 0));

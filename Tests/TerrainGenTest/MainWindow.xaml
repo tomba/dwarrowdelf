@@ -53,6 +53,20 @@
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"/>
 
+				<Rectangle Grid.Row="1" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1" StrokeDashArray="4,16"
+						   Height="1" Opacity="0.5" VerticalAlignment="Top">
+					<Rectangle.RenderTransform>
+						<TranslateTransform Y="{Binding ElementName=root,Path=Y}" />
+					</Rectangle.RenderTransform>
+				</Rectangle>
+
+				<Rectangle Grid.RowSpan="2" Stroke="Blue" StrokeThickness="1" StrokeDashArray="4,16"
+						   Width="1" Opacity="0.5" HorizontalAlignment="Left">
+					<Rectangle.RenderTransform>
+						<TranslateTransform X="{Binding ElementName=root,Path=X}" />
+					</Rectangle.RenderTransform>
+				</Rectangle>
+
 				<Slider Name="zoomSlider" Grid.Column="0" Grid.Row="1" Visibility="Hidden"
 						Orientation="Vertical" Height="75" HorizontalAlignment="Center"
 							IsDirectionReversed="True" Margin="4"
@@ -64,6 +78,8 @@
 							Margin="4"
 							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
 							Value="{Binding ElementName=root, Path=Z, UpdateSourceTrigger=PropertyChanged}"/>
+
+
 			</Grid>
 		</GroupBox>
 
