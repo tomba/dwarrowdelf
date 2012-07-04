@@ -43,12 +43,14 @@
 				<Image Name="imageXZ" Grid.Column="0" Grid.Row="0" MinHeight="10"  Margin="1"
 					   HorizontalAlignment="Left"
 					   Stretch="None" Source="{Binding SliceBmpXZ, ElementName=root}"
-						RenderOptions.BitmapScalingMode="NearestNeighbor" />
+						RenderOptions.BitmapScalingMode="NearestNeighbor"
+					   MouseLeftButtonDown="imageXZ_MouseLeftButtonDown"/>
 
 				<Image Name="imageYZ" Grid.Column="1" Grid.Row="1" MinWidth="10"  Margin="1"
 					   HorizontalAlignment="Left" VerticalAlignment="Top"
 					   Stretch="None" Source="{Binding SliceBmpYZ, ElementName=root}"
-						RenderOptions.BitmapScalingMode="NearestNeighbor" />
+						RenderOptions.BitmapScalingMode="NearestNeighbor"
+					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"/>
 
 				<Slider Name="zoomSlider" Grid.Column="0" Grid.Row="1" Visibility="Hidden"
 						Orientation="Vertical" Height="75" HorizontalAlignment="Center"
@@ -60,7 +62,7 @@
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 							Margin="4"
 							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
-							ValueChanged="levelSlider_ValueChanged" />
+							Value="{Binding ElementName=root, Path=Level, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</GroupBox>
 

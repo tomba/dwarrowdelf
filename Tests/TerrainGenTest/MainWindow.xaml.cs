@@ -26,7 +26,6 @@ namespace TerrainGenTest
 		public BitmapSource SliceBmpYZ { get; private set; }
 
 		IntSize3 m_size;
-		IntPoint2 m_pos;
 
 
 		public double Amplify
@@ -70,10 +69,48 @@ namespace TerrainGenTest
 
 
 
+		public int Level
+		{
+			get { return (int)GetValue(LevelProperty); }
+			set { SetValue(LevelProperty, value); }
+		}
+
+		public static readonly DependencyProperty LevelProperty =
+			DependencyProperty.Register("Level", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+
+
+
+		public int X
+		{
+			get { return (int)GetValue(XProperty); }
+			set { SetValue(XProperty, value); }
+		}
+
+		public static readonly DependencyProperty XProperty =
+			DependencyProperty.Register("X", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+
+		public int Y
+		{
+			get { return (int)GetValue(YProperty); }
+			set { SetValue(YProperty, value); }
+		}
+
+		public static readonly DependencyProperty YProperty =
+			DependencyProperty.Register("Y", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+
+
+
+
 		static void ReGenerate(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
 			mw.Generate();
+			mw.Render();
+		}
+
+		static void ReRender(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var mw = (MainWindow)d;
 			mw.Render();
 		}
 
@@ -113,7 +150,7 @@ namespace TerrainGenTest
 
 			levelSlider.Minimum = 0;
 			levelSlider.Maximum = m_size.Depth;
-			levelSlider.Value = levelSlider.Maximum;
+			this.Level = m_size.Depth;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -147,7 +184,7 @@ namespace TerrainGenTest
 			if (!this.IsInitialized)
 				return;
 
-			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, (int)levelSlider.Value, m_pos);
+			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, new IntPoint3(this.X, this.Y, this.Level));
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -159,11 +196,6 @@ namespace TerrainGenTest
 			surfaceImage.Width = this.SurfaceBmp.PixelWidth * m;
 			surfaceImage.Height = this.SurfaceBmp.PixelHeight * m;
 			 */
-		}
-
-		private void levelSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			Render();
 		}
 
 		int ParseInt(string str)
@@ -194,9 +226,42 @@ namespace TerrainGenTest
 			if (m_size.Plane.Contains(pos) == false)
 				return;
 
-			m_pos = pos;
-
-			Render();
+			this.X = pos.X;
+			this.Y = pos.Y;
 		}
+
+		private void imageXZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			int z = (int)Math.Round(p.Y);
+			z = m_size.Depth - z - 1;
+
+			if (z >= 0 && z < m_size.Depth)
+				this.Level = z;
+
+			int x = (int)Math.Round(p.X);
+
+			if (x >= 0 && x < m_size.Width)
+				this.X = x;
+		}
+
+		private void imageYZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			int z = (int)Math.Round(p.X);
+
+			if (z >= 0 && z < m_size.Depth)
+				this.Level = z;
+
+			int y = (int)Math.Round(p.Y);
+
+			if (y >= 0 && y < m_size.Height)
+				this.Y = y;
+		}
+
 	}
 }
