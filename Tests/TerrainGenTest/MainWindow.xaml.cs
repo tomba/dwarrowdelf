@@ -21,8 +21,12 @@ namespace TerrainGenTest
 		Generator m_terrain;
 		Renderer m_renderer;
 
-		public BitmapSource SurfaceBmp { get; private set; }
-		public BitmapSource SliceBmp { get; private set; }
+		public BitmapSource SliceBmpXY { get; private set; }
+		public BitmapSource SliceBmpXZ { get; private set; }
+		public BitmapSource SliceBmpYZ { get; private set; }
+
+		IntSize3 m_size;
+		IntPoint2 m_pos;
 
 		public MainWindow()
 		{
@@ -30,14 +34,24 @@ namespace TerrainGenTest
 			const int sizeExp = 9;
 			int size = (int)Math.Pow(2, sizeExp) + 1;
 
-			var s = new IntSize3(size, size, depth);
-			m_terrain = new Generator(s);
-			m_renderer = new Renderer(s);
+			m_size = new IntSize3(size, size, depth);
+			m_terrain = new Generator(m_size);
+			m_renderer = new Renderer(m_size);
 
-			this.SurfaceBmp = m_renderer.SurfaceBmp;
-			this.SliceBmp = m_renderer.SliceBmp;
+			this.SliceBmpXY = m_renderer.SliceBmpXY;
+			this.SliceBmpXZ = m_renderer.SliceBmpXZ;
+			this.SliceBmpYZ = m_renderer.SliceBmpYZ;
 
 			InitializeComponent();
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			levelSlider.Minimum = 0;
+			levelSlider.Maximum = m_size.Depth;
+			levelSlider.Value = levelSlider.Maximum;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -45,8 +59,7 @@ namespace TerrainGenTest
 			base.OnSourceInitialized(e);
 
 			Generate();
-			RenderTerrain();
-			RenderSlice();
+			Render();
 		}
 
 		void Generate()
@@ -75,53 +88,40 @@ namespace TerrainGenTest
 			//maxTextBox.Text = m_terrain.Max.ToString();
 		}
 
-		void RenderTerrain()
+		void Render()
 		{
-			m_renderer.RenderTerrain(m_terrain.HeightMap);
-		}
+			if (!this.IsInitialized)
+				return;
 
-		void RenderSlice()
-		{
-			m_renderer.Level = (int)levelSlider.Value;
-
-			m_renderer.RenderSlice(m_terrain.TileGrid);
+			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, (int)levelSlider.Value, m_pos);
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
+			/*
 			var v = surfaceZoomSlider.Value;
 			int m = (int)Math.Pow(2, v - 1);
 
 			surfaceImage.Width = this.SurfaceBmp.PixelWidth * m;
 			surfaceImage.Height = this.SurfaceBmp.PixelHeight * m;
-		}
-
-		private void sliceZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			var v = sliceZoomSlider.Value;
-			int m = (int)Math.Pow(2, v - 1);
-
-			sliceImage.Width = this.SliceBmp.PixelWidth * m;
-			sliceImage.Height = this.SliceBmp.PixelHeight * m;
+			 */
 		}
 
 		private void levelSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			RenderSlice();
+			Render();
 		}
 
 		private void hSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			Generate();
-			RenderTerrain();
-			RenderSlice();
+			Render();
 		}
 
 		private void rangeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			Generate();
-			RenderTerrain();
-			RenderSlice();
+			Render();
 		}
 
 		private void seedTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -130,8 +130,7 @@ namespace TerrainGenTest
 				return;
 
 			Generate();
-			RenderTerrain();
-			RenderSlice();
+			Render();
 		}
 
 		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -140,8 +139,7 @@ namespace TerrainGenTest
 				return;
 
 			Generate();
-			RenderTerrain();
-			RenderSlice();
+			Render();
 		}
 
 		int ParseInt(string str)
@@ -160,6 +158,21 @@ namespace TerrainGenTest
 				return r;
 			else
 				return 0;
+		}
+
+		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			var pos = new IntPoint2((int)Math.Round(p.X), (int)Math.Round(p.Y));
+
+			if (m_size.Plane.Contains(pos) == false)
+				return;
+
+			m_pos = pos;
+
+			Render();
 		}
 	}
 }
