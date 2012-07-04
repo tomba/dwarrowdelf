@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dwarrowdelf;
 using Dwarrowdelf.TerrainGen;
+using System.Windows.Threading;
 
 namespace TerrainGenTest
 {
@@ -26,6 +27,58 @@ namespace TerrainGenTest
 		public BitmapSource SliceBmpYZ { get; private set; }
 
 		IntSize3 m_size;
+
+		DispatcherTimer m_timer;
+
+		bool m_needGenerate;
+		bool m_needRender;
+
+		public MainWindow()
+		{
+			const int depth = 20;
+			const int sizeExp = 9;
+			int size = (int)Math.Pow(2, sizeExp) + 1;
+
+			m_size = new IntSize3(size, size, depth);
+			m_terrain = new Generator(m_size);
+			m_renderer = new Renderer(m_size);
+
+			this.SliceBmpXY = m_renderer.SliceBmpXY;
+			this.SliceBmpXZ = m_renderer.SliceBmpXZ;
+			this.SliceBmpYZ = m_renderer.SliceBmpYZ;
+
+			InitializeComponent();
+		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			m_timer = new DispatcherTimer();
+			m_timer.Interval = TimeSpan.FromMilliseconds(20);
+			m_timer.Tick += new EventHandler(OnTimerTick);
+
+			levelSlider.Minimum = 0;
+			levelSlider.Maximum = m_size.Depth;
+			this.Z = m_size.Depth;
+
+			Generate();
+			Render();
+		}
+
+		void OnTimerTick(object sender, EventArgs e)
+		{
+			m_timer.IsEnabled = false;
+
+			if (m_needGenerate)
+				Generate();
+
+			if (m_needRender)
+				Render();
+
+			m_needGenerate = false;
+			m_needRender = false;
+		}
 
 
 		public double Amplify
@@ -69,16 +122,14 @@ namespace TerrainGenTest
 
 
 
-		public int Level
+		public int Z
 		{
-			get { return (int)GetValue(LevelProperty); }
-			set { SetValue(LevelProperty, value); }
+			get { return (int)GetValue(ZProperty); }
+			set { SetValue(ZProperty, value); }
 		}
 
-		public static readonly DependencyProperty LevelProperty =
-			DependencyProperty.Register("Level", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
-
-
+		public static readonly DependencyProperty ZProperty =
+			DependencyProperty.Register("Z", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
 
 		public int X
 		{
@@ -99,21 +150,26 @@ namespace TerrainGenTest
 			DependencyProperty.Register("Y", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
 
 
-
-
 		static void ReGenerate(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
-			mw.Generate();
-			mw.Render();
+
+			mw.m_needGenerate = true;
+			mw.m_needRender = true;
+
+			if (mw.m_timer.IsEnabled == false)
+				mw.m_timer.IsEnabled = true;
 		}
 
 		static void ReRender(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
-			mw.Render();
-		}
 
+			mw.m_needRender = true;
+
+			if (mw.m_timer.IsEnabled == false)
+				mw.m_timer.IsEnabled = true;
+		}
 
 		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
@@ -127,45 +183,8 @@ namespace TerrainGenTest
 
 
 
-		public MainWindow()
-		{
-			const int depth = 20;
-			const int sizeExp = 9;
-			int size = (int)Math.Pow(2, sizeExp) + 1;
-
-			m_size = new IntSize3(size, size, depth);
-			m_terrain = new Generator(m_size);
-			m_renderer = new Renderer(m_size);
-
-			this.SliceBmpXY = m_renderer.SliceBmpXY;
-			this.SliceBmpXZ = m_renderer.SliceBmpXZ;
-			this.SliceBmpYZ = m_renderer.SliceBmpYZ;
-
-			InitializeComponent();
-		}
-
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
-
-			levelSlider.Minimum = 0;
-			levelSlider.Maximum = m_size.Depth;
-			this.Level = m_size.Depth;
-		}
-
-		protected override void OnSourceInitialized(EventArgs e)
-		{
-			base.OnSourceInitialized(e);
-
-			Generate();
-			Render();
-		}
-
 		void Generate()
 		{
-			if (!this.IsInitialized)
-				return;
-
 			var corners = new DiamondSquare.CornerData()
 			{
 				NW = ParseDouble(cornerNWTextBox.Text),
@@ -181,10 +200,7 @@ namespace TerrainGenTest
 
 		void Render()
 		{
-			if (!this.IsInitialized)
-				return;
-
-			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, new IntPoint3(this.X, this.Y, this.Level));
+			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, new IntPoint3(this.X, this.Y, this.Z));
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -239,7 +255,7 @@ namespace TerrainGenTest
 			z = m_size.Depth - z - 1;
 
 			if (z >= 0 && z < m_size.Depth)
-				this.Level = z;
+				this.Z = z;
 
 			int x = (int)Math.Round(p.X);
 
@@ -255,7 +271,7 @@ namespace TerrainGenTest
 			int z = (int)Math.Round(p.X);
 
 			if (z >= 0 && z < m_size.Depth)
-				this.Level = z;
+				this.Z = z;
 
 			int y = (int)Math.Round(p.Y);
 

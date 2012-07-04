@@ -34,19 +34,20 @@
 				</Grid.RowDefinitions>
 
 				<Image Name="imageXY" Grid.Column="0" Grid.Row="1" Margin="1"
+					   MinHeight="128" MinWidth="128"
 					   HorizontalAlignment="Left" VerticalAlignment="Top"
 					   Stretch="None" Source="{Binding SliceBmpXY, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown"
 					   />
 
-				<Image Name="imageXZ" Grid.Column="0" Grid.Row="0" MinHeight="10"  Margin="1"
+				<Image Name="imageXZ" Grid.Column="0" Grid.Row="0" MinHeight="20"  Margin="1"
 					   HorizontalAlignment="Left"
 					   Stretch="None" Source="{Binding SliceBmpXZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXZ_MouseLeftButtonDown"/>
 
-				<Image Name="imageYZ" Grid.Column="1" Grid.Row="1" MinWidth="10"  Margin="1"
+				<Image Name="imageYZ" Grid.Column="1" Grid.Row="1" MinWidth="20"  Margin="1"
 					   HorizontalAlignment="Left" VerticalAlignment="Top"
 					   Stretch="None" Source="{Binding SliceBmpYZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -62,7 +63,7 @@
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 							Margin="4"
 							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
-							Value="{Binding ElementName=root, Path=Level, UpdateSourceTrigger=PropertyChanged}"/>
+							Value="{Binding ElementName=root, Path=Z, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</GroupBox>
 
