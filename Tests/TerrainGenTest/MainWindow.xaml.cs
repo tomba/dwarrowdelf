@@ -279,5 +279,14 @@ namespace TerrainGenTest
 				this.Y = y;
 		}
 
+		private void mapGrid_MouseMove(object sender, MouseEventArgs e)
+		{
+			var v = VisualTreeHelper.GetOffset(mapGrid);
+			var pos = e.GetPosition(mapGrid);
+			var vb = magnifierBrush.Viewbox;
+			vb.X = pos.X - vb.Width / 2 + v.X;
+			vb.Y = pos.Y - vb.Height / 2 + v.Y;
+			magnifierBrush.Viewbox = vb;
+		}
 	}
 }
