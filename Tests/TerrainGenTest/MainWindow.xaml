@@ -64,15 +64,15 @@
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"/>
 
-				<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1" StrokeDashArray="4,16"
-						   Height="1" Opacity="0.5" VerticalAlignment="Top" IsHitTestVisible="False">
+				<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1"
+						   Height="1" Opacity="0.2" VerticalAlignment="Top" IsHitTestVisible="False">
 					<Rectangle.RenderTransform>
 						<TranslateTransform Y="{Binding ElementName=root,Path=Y}" />
 					</Rectangle.RenderTransform>
 				</Rectangle>
 
-				<Rectangle Grid.RowSpan="3" Stroke="Blue" StrokeThickness="1" StrokeDashArray="4,16"
-						   Width="1" Opacity="0.5" HorizontalAlignment="Left" IsHitTestVisible="False">
+				<Rectangle Grid.RowSpan="3" Stroke="Blue" StrokeThickness="1" 
+						   Width="1" Opacity="0.2" HorizontalAlignment="Left" IsHitTestVisible="False">
 					<Rectangle.RenderTransform>
 						<TranslateTransform X="{Binding ElementName=root,Path=X}" />
 					</Rectangle.RenderTransform>
@@ -84,7 +84,7 @@
 							Minimum="1" Maximum="4" Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
 							ValueChanged="zoomSlider_ValueChanged" />
 
-				<Slider Grid.Column="0" Grid.Row="1" Name="levelSlider" Orientation="Vertical" Height="150"
+				<Slider Grid.Column="0" Grid.Row="2" Name="levelSlider" Orientation="Vertical" Height="150"
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 							Margin="4"
 							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
