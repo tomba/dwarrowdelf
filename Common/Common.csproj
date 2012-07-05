@@ -78,6 +78,7 @@
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
     <Compile Include="ChangeDatas.cs" />
+    <Compile Include="DataTypes\DoublePoint3.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="MWCRandom.cs" />
     <Compile Include="Net\DirectConnectionListener.cs" />
