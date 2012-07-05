@@ -23,6 +23,8 @@ namespace TerrainGenTest
 
 		public double Average { get; private set; }
 
+		Random m_random = new Random(1);
+
 		public TerrainGenerator(IntSize3 size)
 		{
 			m_size = size;
@@ -58,6 +60,11 @@ namespace TerrainGenTest
 			CreateTileGrid();
 		}
 
+		int GetRandomInt(int max)
+		{
+			return m_random.Next(max);
+		}
+
 		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h,
 			int seed, double amplify)
 		{
@@ -87,18 +94,21 @@ namespace TerrainGenTest
 			var layers = new MaterialID[20];
 
 			var r = new Random();
-			int rep = 0;
-			MaterialID mat = MaterialID.Undefined;
-			for (int z = 0; z < layers.Length; ++z)
-			{
-				if (rep == 0)
-				{
-					rep = r.Next(4) + 1;
-					mat = rockMaterials[r.Next(rockMaterials.Length - 1)].ID;
-				}
 
-				layers[z] = mat;
-				rep--;
+			{
+				int rep = 0;
+				MaterialID mat = MaterialID.Undefined;
+				for (int z = 0; z < layers.Length; ++z)
+				{
+					if (rep == 0)
+					{
+						rep = r.Next(4) + 1;
+						mat = rockMaterials[r.Next(rockMaterials.Length - 1)].ID;
+					}
+
+					layers[z] = mat;
+					rep--;
+				}
 			}
 
 			double xk = (r.NextDouble() * 2 - 1) * 0.01;
@@ -131,7 +141,7 @@ namespace TerrainGenTest
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = GetTile(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
+							td.TerrainMaterialID = GetTileData(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
 						}
 						else
 						{
@@ -142,20 +152,107 @@ namespace TerrainGenTest
 						td.InteriorID = InteriorID.Empty;
 						td.InteriorMaterialID = MaterialID.Undefined;
 
-						SetTile(p, td);
+						SetTileData(p, td);
 					}
 				}
 			});
+
+
+			{
+				var ip = GetRandomSubterraneanLocation();
+				ip = new IntPoint3(128, 128, 0);
+				var mat = MaterialID.Bronze;
+
+				int len = 20;
+
+				var v = new DoubleVector3(1, 0.0, 0.5);
+				var p = new DoublePoint3(ip.X, ip.Y, ip.Z);
+
+				for (double t = 0.0; t < len; t += 0.5)
+				{
+					p += v * 0.5;
+
+					var _ip = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), (int)Math.Round(p.Z));
+
+					if (_ip == ip)
+						continue;
+
+					CreateOre(_ip, mat);
+				}
+			}
+
+			/*
+			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 100; ++i)
+			{
+				var p = GetRandomSubterraneanLocation();
+				var idx = GetRandomInt(oreMaterials.Length);
+				CreateOreCluster(p, oreMaterials[idx]);
+			}*/
 		}
 
-		void SetTile(IntPoint3 p, TileData td)
+		void CreateOre(IntPoint3 p, MaterialID oreMaterialID)
+		{
+			if (!m_size.Contains(p))
+				return;
+
+			var td = GetTileData(p);
+
+			if (td.TerrainID != TerrainID.NaturalWall)
+				return;
+
+			td.InteriorID = InteriorID.Ore;
+			td.InteriorMaterialID = oreMaterialID;
+			SetTileData(p, td);
+		}
+
+		void SetTileData(IntPoint3 p, TileData td)
 		{
 			m_grid[p.Z, p.Y, p.X] = td;
 		}
 
-		TileData GetTile(IntPoint3 p)
+		TileData GetTileData(IntPoint3 p)
 		{
 			return m_grid[p.Z, p.Y, p.X];
+		}
+
+		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)
+		{
+			CreateOreCluster(p, oreMaterialID, GetRandomInt(6) + 1);
+		}
+
+		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID, int count)
+		{
+			if (!m_size.Contains(p))
+				return;
+
+			var td = GetTileData(p);
+
+			if (td.TerrainID != TerrainID.NaturalWall)
+				return;
+
+			if (td.InteriorID == InteriorID.Ore)
+				return;
+
+			td.InteriorID = InteriorID.Ore;
+			td.InteriorMaterialID = oreMaterialID;
+			SetTileData(p, td);
+
+			if (count > 0)
+			{
+				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
+					CreateOreCluster(p + d, oreMaterialID, count - 1);
+			}
+		}
+
+		IntPoint3 GetRandomSubterraneanLocation()
+		{
+			int x = GetRandomInt(m_size.Width);
+			int y = GetRandomInt(m_size.Height);
+			int maxZ = m_heightMap[x, y];
+			int z = GetRandomInt(maxZ);
+
+			return new IntPoint3(x, y, z);
 		}
 	}
 }
