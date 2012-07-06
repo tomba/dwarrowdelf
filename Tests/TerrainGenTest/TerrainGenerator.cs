@@ -65,6 +65,11 @@ namespace TerrainGenTest
 			return m_random.Next(max);
 		}
 
+		double GetRandomDouble()
+		{
+			return m_random.NextDouble();
+		}
+
 		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h,
 			int seed, double amplify)
 		{
@@ -111,8 +116,8 @@ namespace TerrainGenTest
 				}
 			}
 
-			double xk = (random.NextDouble() * 2 - 1) * 0.01;
-			double yk = (random.NextDouble() * 2 - 1) * 0.01;
+			double xk = (GetRandomDouble() * 2 - 1) * 0.01;
+			double yk = (GetRandomDouble() * 2 - 1) * 0.01;
 
 			Parallel.For(0, height, y =>
 			{
@@ -162,22 +167,21 @@ namespace TerrainGenTest
 			for (int i = 0; i < 100; ++i)
 			{
 				var start = GetRandomSubterraneanLocation();
-
 				var mat = veinMaterials[GetRandomInt(veinMaterials.Length)];
+				int len = GetRandomInt(20) + 3;
+				int thickness = GetRandomInt(4) + 1;
 
-				int l = GetRandomInt(20) + 3;
-
-				var vx = m_random.NextDouble() * 2 - 1;
-				var vy = m_random.NextDouble() * 2 - 1;
+				var vx = GetRandomDouble() * 2 - 1;
+				var vy = GetRandomDouble() * 2 - 1;
 				var vz = vx * xk + vy * yk;
 
 				var v = new DoubleVector3(vx, vy, -vz).Normalize();
 
-				for (double t = 0.0; t < l; t += 1)
+				for (double t = 0.0; t < len; t += 1)
 				{
 					var p = start + (v * t).ToIntVector3();
 
-					CreateOreSphere(p, 2, mat);
+					CreateOreSphere(p, thickness, mat, GetRandomDouble() * 0.75, 0);
 				}
 			}
 
@@ -189,23 +193,39 @@ namespace TerrainGenTest
 			}
 		}
 
-		void CreateOreSphere(IntPoint3 center, int r, MaterialID oreMaterialID)
+		void CreateOreSphere(IntPoint3 center, int r, MaterialID oreMaterialID, double probIn, double probOut)
 		{
-			var bb = new IntCuboid(center.X - r, center.Y - r, center.Z - r, r * 2, r * 2, r * 2);
+			// adjust r, so that r == 1 gives sphere of one tile
+			r -= 1;
+
+			// XXX split the sphere into 8 parts, and mirror
+
+			var bb = new IntCuboid(center.X - r, center.Y - r, center.Z - r, r * 2 + 1, r * 2 + 1, r * 2 + 1);
 
 			var rs = Math.Pow(r, 2);
 
 			foreach (var p in bb.Range())
 			{
-				var x = p.X + 0.5;
-				var y = p.Y + 0.5;
-				var z = p.Z + 0.5;
+				var y = p.Y;
+				var x = p.X;
+				var z = p.Z;
 
 				var v = Math.Pow((x - center.X), 2) + Math.Pow((y - center.Y), 2) + Math.Pow((z - center.Z), 2);
 
 				if (rs >= v)
 				{
-					if (m_random.Next(100) < 25)
+					var rr = Math.Sqrt(v);
+
+					double rel;
+
+					if (r == 0)
+						rel = 1;
+					else
+						rel = 1 - rr / r;
+
+					var prob = (probIn - probOut) * rel + probOut;
+
+					if (GetRandomDouble() <= prob)
 						CreateOre(p, oreMaterialID);
 				}
 			}
