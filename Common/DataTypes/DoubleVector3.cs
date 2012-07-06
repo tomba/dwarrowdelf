@@ -137,6 +137,11 @@ namespace Dwarrowdelf
 			return new DoubleVector3(v.X / number, v.Y / number, v.Z / number);
 		}
 
+		public IntVector3 ToIntVector3()
+		{
+			return new IntVector3((int)Math.Round(this.X), (int)Math.Round(this.Y), (int)Math.Round(this.Z));
+		}
+
 		public override int GetHashCode()
 		{
 			// XXX bad hash

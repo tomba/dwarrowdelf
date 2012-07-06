@@ -50,7 +50,9 @@
 					   HorizontalAlignment="Left" VerticalAlignment="Top"
 					   Stretch="None" Source="{Binding SliceBmpXY, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
-					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown" />
+					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown"
+					   MouseMove="imageXY_MouseMove"
+					   />
 
 				<Image Name="imageXZ" Grid.Column="0" Grid.Row="0" MinHeight="20"
 					   HorizontalAlignment="Left"

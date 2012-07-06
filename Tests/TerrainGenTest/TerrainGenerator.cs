@@ -93,7 +93,7 @@ namespace TerrainGenTest
 			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
 			var layers = new MaterialID[20];
 
-			var r = new Random();
+			var random = new Random();
 
 			{
 				int rep = 0;
@@ -102,8 +102,8 @@ namespace TerrainGenTest
 				{
 					if (rep == 0)
 					{
-						rep = r.Next(4) + 1;
-						mat = rockMaterials[r.Next(rockMaterials.Length - 1)].ID;
+						rep = random.Next(4) + 1;
+						mat = rockMaterials[random.Next(rockMaterials.Length - 1)].ID;
 					}
 
 					layers[z] = mat;
@@ -111,8 +111,8 @@ namespace TerrainGenTest
 				}
 			}
 
-			double xk = (r.NextDouble() * 2 - 1) * 0.01;
-			double yk = (r.NextDouble() * 2 - 1) * 0.01;
+			double xk = (random.NextDouble() * 2 - 1) * 0.01;
+			double yk = (random.NextDouble() * 2 - 1) * 0.01;
 
 			Parallel.For(0, height, y =>
 			{
@@ -157,38 +157,58 @@ namespace TerrainGenTest
 				}
 			});
 
+			var veinMaterials = Materials.GetMaterials(MaterialCategory.Mineral).Select(mi => mi.ID).ToArray();
 
+			for (int i = 0; i < 100; ++i)
 			{
-				var ip = GetRandomSubterraneanLocation();
-				ip = new IntPoint3(128, 128, 0);
-				var mat = MaterialID.Bronze;
+				var start = GetRandomSubterraneanLocation();
 
-				int len = 20;
+				var mat = veinMaterials[GetRandomInt(veinMaterials.Length)];
 
-				var v = new DoubleVector3(1, 0.0, 0.5);
-				var p = new DoublePoint3(ip.X, ip.Y, ip.Z);
+				int l = GetRandomInt(20) + 3;
 
-				for (double t = 0.0; t < len; t += 0.5)
+				var vx = m_random.NextDouble() * 2 - 1;
+				var vy = m_random.NextDouble() * 2 - 1;
+				var vz = vx * xk + vy * yk;
+
+				var v = new DoubleVector3(vx, vy, -vz).Normalize();
+
+				for (double t = 0.0; t < l; t += 1)
 				{
-					p += v * 0.5;
+					var p = start + (v * t).ToIntVector3();
 
-					var _ip = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), (int)Math.Round(p.Z));
-
-					if (_ip == ip)
-						continue;
-
-					CreateOre(_ip, mat);
+					CreateOreSphere(p, 2, mat);
 				}
 			}
 
-			/*
-			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
+			var clusterMaterials = Materials.GetMaterials(MaterialCategory.Gem).Select(mi => mi.ID).ToArray();
 			for (int i = 0; i < 100; ++i)
 			{
 				var p = GetRandomSubterraneanLocation();
-				var idx = GetRandomInt(oreMaterials.Length);
-				CreateOreCluster(p, oreMaterials[idx]);
-			}*/
+				CreateOreCluster(p, clusterMaterials[GetRandomInt(clusterMaterials.Length)]);
+			}
+		}
+
+		void CreateOreSphere(IntPoint3 center, int r, MaterialID oreMaterialID)
+		{
+			var bb = new IntCuboid(center.X - r, center.Y - r, center.Z - r, r * 2, r * 2, r * 2);
+
+			var rs = Math.Pow(r, 2);
+
+			foreach (var p in bb.Range())
+			{
+				var x = p.X + 0.5;
+				var y = p.Y + 0.5;
+				var z = p.Z + 0.5;
+
+				var v = Math.Pow((x - center.X), 2) + Math.Pow((y - center.Y), 2) + Math.Pow((z - center.Z), 2);
+
+				if (rs >= v)
+				{
+					if (m_random.Next(100) < 25)
+						CreateOre(p, oreMaterialID);
+				}
+			}
 		}
 
 		void CreateOre(IntPoint3 p, MaterialID oreMaterialID)

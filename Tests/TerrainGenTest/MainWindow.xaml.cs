@@ -66,6 +66,30 @@ namespace TerrainGenTest
 			Render();
 		}
 
+		protected override void OnTextInput(TextCompositionEventArgs e)
+		{
+			string text = e.Text;
+
+			e.Handled = true;
+
+			if (text == ">")
+			{
+				if (this.Z > 0)
+					this.Z--;
+			}
+			else if (text == "<")
+			{
+				if (this.Z < m_size.Depth)
+					this.Z++;
+			}
+			else
+			{
+				e.Handled = false;
+			}
+
+			base.OnTextInput(e);
+		}
+
 		void OnTimerTick(object sender, EventArgs e)
 		{
 			m_timer.IsEnabled = false;
@@ -232,18 +256,33 @@ namespace TerrainGenTest
 				return 0;
 		}
 
+		void UpdatePos(IntPoint3 pos)
+		{
+			if (m_size.Contains(pos) == false)
+				return;
+
+			this.X = pos.X;
+			this.Y = pos.Y;
+			this.Z = pos.Z;
+		}
+
 		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			var pos = new IntPoint2((int)Math.Round(p.X), (int)Math.Round(p.Y));
+			UpdatePos(new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z));
+		}
 
-			if (m_size.Plane.Contains(pos) == false)
+		private void imageXY_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.LeftButton == MouseButtonState.Released)
 				return;
 
-			this.X = pos.X;
-			this.Y = pos.Y;
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			UpdatePos(new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z));
 		}
 
 		private void imageXZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -251,16 +290,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			int z = (int)Math.Round(p.Y);
-			z = m_size.Depth - z - 1;
-
-			if (z >= 0 && z < m_size.Depth)
-				this.Z = z;
-
-			int x = (int)Math.Round(p.X);
-
-			if (x >= 0 && x < m_size.Width)
-				this.X = x;
+			UpdatePos(new IntPoint3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
 		}
 
 		private void imageYZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -268,15 +298,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			int z = (int)Math.Round(p.X);
-
-			if (z >= 0 && z < m_size.Depth)
-				this.Z = z;
-
-			int y = (int)Math.Round(p.Y);
-
-			if (y >= 0 && y < m_size.Height)
-				this.Y = y;
+			UpdatePos(new IntPoint3(this.X, (int)Math.Round(p.Y), (int)Math.Round(p.X)));
 		}
 
 		private void mapGrid_MouseMove(object sender, MouseEventArgs e)
@@ -288,5 +310,6 @@ namespace TerrainGenTest
 			vb.Y = pos.Y - vb.Height / 2 + v.Y;
 			magnifierBrush.Viewbox = vb;
 		}
+
 	}
 }
