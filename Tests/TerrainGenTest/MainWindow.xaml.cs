@@ -35,7 +35,7 @@ namespace TerrainGenTest
 
 		public MainWindow()
 		{
-			const int depth = 20;
+			const int depth = 60;
 			const int sizeExp = 9;
 			int size = (int)Math.Pow(2, sizeExp) + 1;
 

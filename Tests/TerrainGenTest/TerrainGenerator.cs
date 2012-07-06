@@ -44,18 +44,18 @@ namespace TerrainGenTest
 
 			GenerateTerrain(m_doubleHeightMap, corners, range, h, seed, amplify);
 
-			AnalyzeTerrain(m_doubleHeightMap);
-
 			// integer heightmap. the number tells the z level where the floor is.
 			foreach (var p in IntPoint2.Range(m_size.Width, m_size.Height))
 			{
 				var d = m_doubleHeightMap[p];
 
 				d *= m_size.Depth / 2;
-				d += (m_size.Depth / 2) - 1;
+				d += m_size.Depth / 2 - 1;
 
 				m_heightMap[p] = (int)Math.Round(d);
 			}
+
+			AnalyzeTerrain(m_heightMap);
 
 			CreateTileGrid();
 		}
@@ -84,7 +84,7 @@ namespace TerrainGenTest
 			//Clamper.Normalize(grid);
 		}
 
-		void AnalyzeTerrain(ArrayGrid2D<double> grid)
+		void AnalyzeTerrain(ArrayGrid2D<int> grid)
 		{
 			this.Average = grid.Average();
 		}

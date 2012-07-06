@@ -47,6 +47,9 @@ namespace TerrainGenTest
 			int w = m_size.Width;
 			int h = m_size.Height;
 
+			int min = m_heightMap.Min();
+			int max = m_heightMap.Max();
+
 			m_sliceBmpXY.Lock();
 
 			unsafe
@@ -60,7 +63,12 @@ namespace TerrainGenTest
 					{
 						var v = m_heightMap[x, y];
 
-						var c = GetTerrainColor(v);
+						int d = v - min;
+						double a = (double)d / (max - min);
+
+						uint c = 31 + (uint)(a * (255 - 31));
+
+						c = (c << 16) | (c << 8) | (c << 0);
 
 						var ptr = pBackBuffer + y * stride + x;
 
@@ -71,44 +79,6 @@ namespace TerrainGenTest
 
 			m_sliceBmpXY.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmpXY.PixelWidth, m_sliceBmpXY.PixelHeight));
 			m_sliceBmpXY.Unlock();
-		}
-
-		uint GetTerrainColor(int v)
-		{
-			uint r, g, b;
-
-			int mountain_min = 10;
-			int grass_min = 0;
-
-			if (v >= mountain_min)
-			{
-				var d = (double)(v - mountain_min) / (m_size.Depth - mountain_min);
-
-				Debug.Assert(d >= 0 && d <= 1);
-
-				uint c = 127 + (uint)(d * 127);
-
-				r = c;
-				g = c;
-				b = c;
-			}
-			else
-			{
-				var d = (double)(v - grass_min) / (mountain_min - grass_min);
-
-				Debug.Assert(d >= 0 && d <= 1);
-
-				uint c = 127 / 2 + (uint)(d * 127);
-
-				r = 0;
-				g = c;
-				b = 0;
-			}
-
-			if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-				throw new Exception();
-
-			return (r << 16) | (g << 8) | (b << 0);
 		}
 
 		void RenderSliceXY(TileData[, ,] grid, int level)
