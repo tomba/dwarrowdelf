@@ -6,139 +6,161 @@
 		mc:Ignorable="d"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		d:DesignHeight="378" d:DesignWidth="805"
-		WindowState="Maximized">
+		d:DesignHeight="356" d:DesignWidth="581"
+		WindowState="Normal">
 
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
+			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
-		<Rectangle Name="magnifier" Grid.Column="0" Grid.Row="3" Width="128" Height="128" Stroke="Red" StrokeThickness="2">
-			<Rectangle.Fill>
-				<VisualBrush x:Name="magnifierBrush" Stretch="Fill"
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+				<ColumnDefinition Width="1*" />
+			</Grid.ColumnDefinitions>
+
+			<GroupBox Header="Seed" Grid.Column="0" Grid.Row="0">
+				<TextBox Text="{Binding ElementName=root, Path=Seed, UpdateSourceTrigger=PropertyChanged}"/>
+			</GroupBox>
+
+			<GroupBox Header="H" Grid.Column="1" Grid.Row="0">
+				<DockPanel LastChildFill="True">
+					<TextBox DockPanel.Dock="Right" Width="50"
+					Text="{Binding ElementName=root, Path=HValue, UpdateSourceTrigger=PropertyChanged}"/>
+					<Slider Minimum="0" Maximum="2"
+					Value="{Binding ElementName=root, Path=HValue, UpdateSourceTrigger=PropertyChanged}"/>
+				</DockPanel>
+			</GroupBox>
+
+			<GroupBox Header="Range" Grid.Column="2" Grid.Row="0">
+				<DockPanel LastChildFill="True">
+					<TextBox DockPanel.Dock="Right" Width="50"
+					Text="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
+					<Slider Minimum="0" Maximum="100" 
+							Value="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
+				</DockPanel>
+			</GroupBox>
+
+			<GroupBox Header="Avg" Grid.Column="0" Grid.Row="1">
+				<TextBox IsReadOnly="True" Name="avgTextBox" />
+			</GroupBox>
+
+			<GroupBox Header="Amplify" Grid.Column="1" Grid.Row="1">
+				<TextBox Text="{Binding ElementName=root, Path=Amplify, UpdateSourceTrigger=PropertyChanged}" />
+			</GroupBox>
+
+			<GroupBox Header="Max" Grid.Column="2" Grid.Row="1">
+				<TextBox IsReadOnly="True" Name="maxTextBox" />
+			</GroupBox>
+
+			<GroupBox Header="Corners" Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
+				<UniformGrid Margin="2">
+					<TextBox Text="10" Name="cornerSWTextBox" TextChanged="cornerTextBox_TextChanged" />
+					<TextBox Text="10" Name="cornerSETextBox" TextChanged="cornerTextBox_TextChanged" />
+					<TextBox Text="10" Name="cornerNWTextBox" TextChanged="cornerTextBox_TextChanged" />
+					<TextBox Text="15" Name="cornerNETextBox" TextChanged="cornerTextBox_TextChanged" />
+				</UniformGrid>
+			</GroupBox>
+
+			<Rectangle Name="magnifier" Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
+					   Width="128" Height="128" Stroke="Red" StrokeThickness="2">
+				<Rectangle.Fill>
+					<VisualBrush x:Name="magnifierBrush" Stretch="Fill"
 							 ViewboxUnits="Absolute" Viewbox="0,0,32,32"
 							 ViewportUnits="RelativeToBoundingBox" Viewport="0,0,1,1"
 							 Visual="{Binding ElementName=mapGrid}" />
-			</Rectangle.Fill>
-		</Rectangle>
+				</Rectangle.Fill>
+			</Rectangle>
 
-		<GroupBox Header="Map" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="4">
-			<Grid Name="mapGrid" HorizontalAlignment="Center" MouseMove="mapGrid_MouseMove">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="4" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="4" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+		</Grid>
 
-				<Image Name="imageXY" Grid.Column="0" Grid.Row="2"
-					   MinHeight="128" MinWidth="128"
-					   HorizontalAlignment="Left" VerticalAlignment="Top"
-					   Stretch="None" Source="{Binding SliceBmpXY, ElementName=root}"
-						RenderOptions.BitmapScalingMode="NearestNeighbor"
+		<Grid Name="mapGrid" MouseMove="mapGrid_MouseMove" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" >
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="4" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+
+			<ScrollViewer Grid.Column="2" Grid.Row="2" Name="scrollViewerXY"
+							  MinHeight="128" MinWidth="128"
+						  HorizontalAlignment="Left" VerticalAlignment="Top"
+							  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
+							  ScrollChanged="scrollViewerXY_ScrollChanged">
+				<Grid>
+					<Image Name="imageXY"
+						   Stretch="None" Source="{Binding SliceBmpXY, ElementName=root}"
+						   RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown"
-					   MouseMove="imageXY_MouseMove"
-					   />
+					   MouseMove="imageXY_MouseMove" />
 
-				<Image Name="imageXZ" Grid.Column="0" Grid.Row="0" MinHeight="20"
-					   HorizontalAlignment="Left"
+					<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1"
+						   Height="1" Opacity="0.2" VerticalAlignment="Top" IsHitTestVisible="False">
+						<Rectangle.RenderTransform>
+							<TranslateTransform Y="{Binding ElementName=root,Path=Y}" />
+						</Rectangle.RenderTransform>
+					</Rectangle>
+
+					<Rectangle Grid.RowSpan="3" Stroke="Blue" StrokeThickness="1" 
+						   Width="1" Opacity="0.2" HorizontalAlignment="Left" IsHitTestVisible="False">
+						<Rectangle.RenderTransform>
+							<TranslateTransform X="{Binding ElementName=root,Path=X}" />
+						</Rectangle.RenderTransform>
+					</Rectangle>
+
+				</Grid>
+			</ScrollViewer>
+
+			<ScrollViewer Grid.Column="2" Grid.Row="0" MinHeight="20" Name="scrollViewerXZ"
+							  HorizontalAlignment="Left"
+							  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+							  Width="{Binding ElementName=scrollViewerXY,Path=ViewportWidth}">
+				<Image Name="imageXZ"
 					   Stretch="None" Source="{Binding SliceBmpXZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXZ_MouseLeftButtonDown"/>
+			</ScrollViewer>
 
-				<Image Name="imageYZ" Grid.Column="2" Grid.Row="2" MinWidth="20"
-					   HorizontalAlignment="Left" VerticalAlignment="Top"
+			<ScrollViewer Grid.Column="0" Grid.Row="2" MinWidth="20" Name="scrollViewerYZ"
+							  VerticalAlignment="Top"
+							  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+							  Height="{Binding ElementName=scrollViewerXY,Path=ViewportHeight}">
+				<Image Name="imageYZ"
 					   Stretch="None" Source="{Binding SliceBmpYZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"/>
+			</ScrollViewer>
 
-				<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1"
-						   Height="1" Opacity="0.2" VerticalAlignment="Top" IsHitTestVisible="False">
-					<Rectangle.RenderTransform>
-						<TranslateTransform Y="{Binding ElementName=root,Path=Y}" />
-					</Rectangle.RenderTransform>
-				</Rectangle>
-
-				<Rectangle Grid.RowSpan="3" Stroke="Blue" StrokeThickness="1" 
-						   Width="1" Opacity="0.2" HorizontalAlignment="Left" IsHitTestVisible="False">
-					<Rectangle.RenderTransform>
-						<TranslateTransform X="{Binding ElementName=root,Path=X}" />
-					</Rectangle.RenderTransform>
-				</Rectangle>
-
-				<Slider Name="zoomSlider" Grid.Column="0" Grid.Row="2" Visibility="Hidden"
+			<Slider Name="zoomSlider" Grid.Column="0" Grid.Row="2" Visibility="Collapsed"
 						Orientation="Vertical" Height="75" HorizontalAlignment="Center"
 							IsDirectionReversed="True" Margin="4"
 							Minimum="1" Maximum="4" Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
 							ValueChanged="zoomSlider_ValueChanged" />
 
-				<Slider Grid.Column="0" Grid.Row="2" Name="levelSlider" Orientation="Vertical" Height="150"
+		</Grid>
+
+		<Slider Grid.Column="0" Grid.Row="1" Name="levelSlider" Orientation="Vertical" Height="150"
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 							Margin="4"
 							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
 							Value="{Binding ElementName=root, Path=Z, UpdateSourceTrigger=PropertyChanged}"/>
 
-
-			</Grid>
-		</GroupBox>
-
-
-		<GroupBox Header="Seed" Grid.Column="0" Grid.Row="0">
-			<TextBox Text="{Binding ElementName=root, Path=Seed, UpdateSourceTrigger=PropertyChanged}"/>
-		</GroupBox>
-
-		<GroupBox Header="H" Grid.Column="1" Grid.Row="0">
-			<DockPanel LastChildFill="True">
-				<TextBox DockPanel.Dock="Right" Width="50"
-					Text="{Binding ElementName=root, Path=HValue, UpdateSourceTrigger=PropertyChanged}"/>
-				<Slider Minimum="0" Maximum="2"
-					Value="{Binding ElementName=root, Path=HValue, UpdateSourceTrigger=PropertyChanged}"/>
-			</DockPanel>
-		</GroupBox>
-
-		<GroupBox Header="Range" Grid.Column="2" Grid.Row="0">
-			<DockPanel LastChildFill="True">
-				<TextBox DockPanel.Dock="Right" Width="50"
-					Text="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
-				<Slider Minimum="0" Maximum="100" 
-							Value="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
-			</DockPanel>
-		</GroupBox>
-
-		<GroupBox Header="Avg" Grid.Column="0" Grid.Row="1">
-			<TextBox IsReadOnly="True" Name="avgTextBox" />
-		</GroupBox>
-
-		<GroupBox Header="Amplify" Grid.Column="1" Grid.Row="1">
-			<TextBox Text="{Binding ElementName=root, Path=Amplify, UpdateSourceTrigger=PropertyChanged}" />
-		</GroupBox>
-
-		<GroupBox Header="Max" Grid.Column="2" Grid.Row="1">
-			<TextBox IsReadOnly="True" Name="maxTextBox" />
-		</GroupBox>
-
-		<GroupBox Header="Corners" Grid.Column="3" Grid.Row="0" Grid.RowSpan="2">
-			<UniformGrid Margin="2">
-				<TextBox Text="10" Name="cornerSWTextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="10" Name="cornerSETextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="10" Name="cornerNWTextBox" TextChanged="cornerTextBox_TextChanged" />
-				<TextBox Text="15" Name="cornerNETextBox" TextChanged="cornerTextBox_TextChanged" />
-			</UniformGrid>
-		</GroupBox>
-
 	</Grid>
+
 </Window>

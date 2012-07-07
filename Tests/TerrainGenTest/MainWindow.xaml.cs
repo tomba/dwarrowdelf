@@ -35,7 +35,7 @@ namespace TerrainGenTest
 
 		public MainWindow()
 		{
-			const int depth = 60;
+			const int depth = 20;
 			const int sizeExp = 9;
 			int size = (int)Math.Pow(2, sizeExp);
 
@@ -258,12 +258,14 @@ namespace TerrainGenTest
 
 		void UpdatePos(IntPoint3 pos)
 		{
-			if (m_size.Contains(pos) == false)
-				return;
+			if (pos.X < m_size.Width)
+				this.X = pos.X;
 
-			this.X = pos.X;
-			this.Y = pos.Y;
-			this.Z = pos.Z;
+			if (pos.Y < m_size.Height)
+				this.Y = pos.Y;
+
+			if (pos.Z < m_size.Depth)
+				this.Z = pos.Z;
 		}
 
 		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -309,6 +311,12 @@ namespace TerrainGenTest
 			vb.X = pos.X - vb.Width / 2 + v.X;
 			vb.Y = pos.Y - vb.Height / 2 + v.Y;
 			magnifierBrush.Viewbox = vb;
+		}
+
+		private void scrollViewerXY_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			scrollViewerXZ.ScrollToHorizontalOffset(((ScrollViewer)sender).HorizontalOffset);
+			scrollViewerYZ.ScrollToVerticalOffset(((ScrollViewer)sender).VerticalOffset);
 		}
 
 	}
