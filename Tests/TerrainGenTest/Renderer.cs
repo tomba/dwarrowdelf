@@ -126,7 +126,7 @@ namespace TerrainGenTest
 				var pBackBuffer = (uint*)m_sliceBmpXZ.BackBuffer;
 				int stride = m_sliceBmpXZ.BackBufferStride / 4;
 
-				for (int z = 0; z < d; ++z)
+				Parallel.For(0, d, z =>
 				{
 					for (int x = 0; x < w; ++x)
 					{
@@ -141,7 +141,7 @@ namespace TerrainGenTest
 
 						*ptr = c;
 					}
-				}
+				});
 			}
 
 			m_sliceBmpXZ.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmpXZ.PixelWidth, m_sliceBmpXZ.PixelHeight));
@@ -161,7 +161,7 @@ namespace TerrainGenTest
 				var pBackBuffer = (uint*)m_sliceBmpYZ.BackBuffer;
 				int stride = m_sliceBmpYZ.BackBufferStride / 4;
 
-				for (int z = 0; z < d; ++z)
+				Parallel.For(0, d, z =>
 				{
 					for (int y = 0; y < h; ++y)
 					{
@@ -176,7 +176,7 @@ namespace TerrainGenTest
 
 						*ptr = c;
 					}
-				}
+				});
 			}
 
 			m_sliceBmpYZ.AddDirtyRect(new Int32Rect(0, 0, m_sliceBmpYZ.PixelWidth, m_sliceBmpYZ.PixelHeight));
