@@ -74,10 +74,9 @@
 				</UniformGrid>
 			</GroupBox>
 
-			<Rectangle Name="magnifier" Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
-					   Width="128" Height="128" Stroke="Red" StrokeThickness="2">
+			<Rectangle Name="magnifier" Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" Stroke="Red" StrokeThickness="2">
 				<Rectangle.Fill>
-					<VisualBrush x:Name="magnifierBrush" Stretch="Fill"
+					<VisualBrush x:Name="magnifierBrush" Stretch="UniformToFill"
 							 ViewboxUnits="Absolute" Viewbox="0,0,32,32"
 							 ViewportUnits="RelativeToBoundingBox" Viewport="0,0,1,1"
 							 Visual="{Binding ElementName=mapGrid}" />
