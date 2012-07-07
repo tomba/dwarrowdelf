@@ -37,7 +37,7 @@ namespace TerrainGenTest
 		{
 			const int depth = 60;
 			const int sizeExp = 9;
-			int size = (int)Math.Pow(2, sizeExp) + 1;
+			int size = (int)Math.Pow(2, sizeExp);
 
 			m_size = new IntSize3(size, size, depth);
 			m_terrain = new TerrainGenerator(m_size);

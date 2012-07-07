@@ -32,7 +32,8 @@ namespace TerrainGenTest
 			int h = size.Height;
 			int d = size.Depth;
 
-			m_doubleHeightMap = new ArrayGrid2D<double>(w, h);
+			// +1 for diamond square
+			m_doubleHeightMap = new ArrayGrid2D<double>(w + 1, h + 1);
 			m_heightMap = new ArrayGrid2D<int>(w, h);
 			this.TileGrid = new TileGrid(size);
 		}
@@ -90,8 +91,8 @@ namespace TerrainGenTest
 
 		void CreateTileGrid()
 		{
-			int width = m_doubleHeightMap.Width;
-			int height = m_doubleHeightMap.Height;
+			int width = m_size.Width;
+			int height = m_size.Height;
 			int depth = m_size.Depth;
 
 			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
