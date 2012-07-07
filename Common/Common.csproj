@@ -192,6 +192,7 @@
     <Compile Include="DataTypes\IntPoint2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TileData.cs" />
+    <Compile Include="TileGrid.cs" />
     <Compile Include="TypeConverters.cs" />
     <Compile Include="WorkHelpers.cs" />
     <Compile Include="WrapperGenerator.cs" />

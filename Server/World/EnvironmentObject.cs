@@ -786,79 +786,6 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	sealed class TileGrid
-	{
-		TileData[, ,] m_grid;
-		public TileData[, ,] Grid { get { return m_grid; } }
-		public IntSize3 Size { get; private set; }
-
-		TileGrid()
-		{
-		}
-
-		public TileGrid(IntSize3 size)
-		{
-			this.Size = size;
-			m_grid = new TileData[size.Depth, size.Height, size.Width];
-		}
-
-		public TileData GetTileData(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X];
-		}
-
-		public TerrainID GetTerrainID(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].TerrainID;
-		}
-
-		public MaterialID GetTerrainMaterialID(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].TerrainMaterialID;
-		}
-
-		public InteriorID GetInteriorID(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].InteriorID;
-		}
-
-		public MaterialID GetInteriorMaterialID(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].InteriorMaterialID;
-		}
-
-		public byte GetWaterLevel(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].WaterLevel;
-		}
-
-		public TileFlags GetFlags(IntPoint3 p)
-		{
-			return m_grid[p.Z, p.Y, p.X].Flags;
-		}
-
-
-		public void SetTileData(IntPoint3 p, TileData data)
-		{
-			m_grid[p.Z, p.Y, p.X] = data;
-		}
-
-		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
-		{
-			m_grid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
-		}
-
-		public void SetFlags(IntPoint3 p, TileFlags flags)
-		{
-			m_grid[p.Z, p.Y, p.X].Flags |= flags;
-		}
-
-		public void ClearFlags(IntPoint3 p, TileFlags flags)
-		{
-			m_grid[p.Z, p.Y, p.X].Flags &= ~flags;
-		}
-	}
-
 	public sealed class EnvironmentObjectBuilder
 	{
 		IntSize3 m_size;
@@ -875,52 +802,13 @@ namespace Dwarrowdelf.Server
 
 		public VisibilityMode VisibilityMode { get; set; }
 
-		public EnvironmentObjectBuilder(ArrayGrid2D<int> depthMap, int depth, VisibilityMode visibilityMode)
+		public EnvironmentObjectBuilder(TileGrid grid, ArrayGrid2D<int> depthMap, VisibilityMode visibilityMode)
 		{
 			m_depthMap = depthMap;
+			m_tileGrid = grid;
+			m_size = grid.Size;
 
 			this.VisibilityMode = visibilityMode;
-
-			int width = depthMap.Width;
-			int height = depthMap.Height;
-
-			m_size = new IntSize3(width, height, depth);
-			m_tileGrid = new TileGrid(m_size);
-
-			Parallel.For(0, height, y =>
-			{
-				for (int x = 0; x < width; ++x)
-				{
-					int surface = depthMap[x, y];
-
-					for (int z = 0; z < depth; ++z)
-					{
-						var p = new IntPoint3(x, y, z);
-						var td = new TileData();
-
-						if (z < surface)
-						{
-							td.TerrainID = TerrainID.NaturalWall;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else if (z == surface)
-						{
-							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else
-						{
-							td.TerrainID = TerrainID.Empty;
-							td.TerrainMaterialID = MaterialID.Undefined;
-						}
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
-						m_tileGrid.SetTileData(p, td);
-					}
-				}
-			});
 		}
 
 		public EnvironmentObject Create(World world)

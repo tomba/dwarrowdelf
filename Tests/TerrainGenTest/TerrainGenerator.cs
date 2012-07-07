@@ -12,14 +12,13 @@ namespace TerrainGenTest
 {
 	public class TerrainGenerator
 	{
-		TileData[, ,] m_grid;
 		ArrayGrid2D<double> m_doubleHeightMap;
 		ArrayGrid2D<int> m_heightMap;
 
 		IntSize3 m_size;
 
 		public ArrayGrid2D<int> HeightMap { get { return m_heightMap; } }
-		public TileData[, ,] TileGrid { get { return m_grid; } }
+		public TileGrid TileGrid { get; private set; }
 
 		public double Average { get; private set; }
 
@@ -35,7 +34,7 @@ namespace TerrainGenTest
 
 			m_doubleHeightMap = new ArrayGrid2D<double>(w, h);
 			m_heightMap = new ArrayGrid2D<int>(w, h);
-			m_grid = new TileData[d, h, w];
+			this.TileGrid = new TileGrid(size);
 		}
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
@@ -248,12 +247,12 @@ namespace TerrainGenTest
 
 		void SetTileData(IntPoint3 p, TileData td)
 		{
-			m_grid[p.Z, p.Y, p.X] = td;
+			this.TileGrid.SetTileData(p, td);
 		}
 
 		TileData GetTileData(IntPoint3 p)
 		{
-			return m_grid[p.Z, p.Y, p.X];
+			return this.TileGrid.GetTileData(p);
 		}
 
 		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)

@@ -43,7 +43,7 @@ namespace MyArea
 			return p;
 		}
 
-		static IntPoint3 GetRandomSubterraneanLocation(EnvironmentObjectBuilder env)
+		static IntPoint3 GetRandomSubterraneanLocation(TileGrid grid)
 		{
 			IntPoint3 p;
 			int iter = 0;
@@ -53,17 +53,47 @@ namespace MyArea
 				if (iter++ > 10000)
 					throw new Exception();
 
-				p = new IntPoint3(Helpers.GetRandomInt(env.Width), Helpers.GetRandomInt(env.Height), Helpers.GetRandomInt(env.Depth));
-			} while (env.GetTerrainID(p) != TerrainID.NaturalWall);
+				p = new IntPoint3(Helpers.GetRandomInt(grid.Width), Helpers.GetRandomInt(grid.Height), Helpers.GetRandomInt(grid.Depth));
+			} while (grid.GetTerrainID(p) != TerrainID.NaturalWall);
 
 			return p;
 		}
-
 		static EnvironmentObject CreateEnv(World world, out int surfaceLevel)
 		{
 			int sizeExp = MAP_SIZE;
 			int size = (int)Math.Pow(2, sizeExp);
 
+			var heightMap = CreateHeightMap(size);
+
+			var grid = new TileGrid(new IntSize3(size, size, MAP_DEPTH));
+
+			FillGrid(grid, heightMap);
+
+			CreateSlopes(grid, heightMap);
+
+			CreateSoil(grid, heightMap);
+
+			CreateGrass(grid, heightMap);
+
+			CreateTrees(grid, heightMap);
+
+			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 30; ++i)
+			{
+				var p = GetRandomSubterraneanLocation(grid);
+				var idx = Helpers.GetRandomInt(oreMaterials.Length);
+				CreateOreCluster(grid, p, oreMaterials[idx]);
+			}
+
+			surfaceLevel = FindSurfaceLevel(heightMap);
+
+			var envBuilder = new EnvironmentObjectBuilder(grid, heightMap, VisibilityMode.GlobalFOV);
+
+			return envBuilder.Create(world);
+		}
+
+		static ArrayGrid2D<int> CreateHeightMap(int size)
+		{
 			// size + 1 for the DiamondSquare algorithm
 			var doubleHeightMap = new ArrayGrid2D<double>(size + 1, size + 1);
 
@@ -95,35 +125,57 @@ namespace MyArea
 				intHeightMap[p] = (int)Math.Round(d);
 			}
 
-			var envBuilder = new EnvironmentObjectBuilder(intHeightMap, MAP_DEPTH, VisibilityMode.GlobalFOV);
-
-			CreateSlopes(envBuilder, intHeightMap);
-
-			CreateSoil(envBuilder, intHeightMap);
-
-			CreateGrass(envBuilder, intHeightMap);
-
-			CreateTrees(envBuilder, intHeightMap);
-
-			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 30; ++i)
-			{
-				var p = GetRandomSubterraneanLocation(envBuilder);
-				var idx = Helpers.GetRandomInt(oreMaterials.Length);
-				CreateOreCluster(envBuilder, p, oreMaterials[idx]);
-			}
-
-			surfaceLevel = FindSurfaceLevel(intHeightMap);
-
-			return envBuilder.Create(world);
+			return intHeightMap;
 		}
 
-		static void CreateSoil(EnvironmentObjectBuilder envBuilder, ArrayGrid2D<int> intHeightMap)
+		static void FillGrid(TileGrid grid, ArrayGrid2D<int> depthMap)
+		{
+			int width = grid.Width;
+			int height = grid.Height;
+			int depth = grid.Depth;
+
+			Parallel.For(0, height, y =>
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					int surface = depthMap[x, y];
+
+					for (int z = 0; z < depth; ++z)
+					{
+						var p = new IntPoint3(x, y, z);
+						var td = new TileData();
+
+						if (z < surface)
+						{
+							td.TerrainID = TerrainID.NaturalWall;
+							td.TerrainMaterialID = MaterialID.Granite;
+						}
+						else if (z == surface)
+						{
+							td.TerrainID = TerrainID.NaturalFloor;
+							td.TerrainMaterialID = MaterialID.Granite;
+						}
+						else
+						{
+							td.TerrainID = TerrainID.Empty;
+							td.TerrainMaterialID = MaterialID.Undefined;
+						}
+
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
+
+						grid.SetTileData(p, td);
+					}
+				}
+			});
+		}
+
+		static void CreateSoil(TileGrid grid, ArrayGrid2D<int> intHeightMap)
 		{
 			const int SOIL_LIMIT = 15;	// XXX
 
-			int w = envBuilder.Width;
-			int h = envBuilder.Height;
+			int w = grid.Width;
+			int h = grid.Height;
 
 			for (int y = 0; y < h; ++y)
 			{
@@ -135,22 +187,22 @@ namespace MyArea
 
 					if (z < SOIL_LIMIT)
 					{
-						var td = envBuilder.GetTileData(p);
+						var td = grid.GetTileData(p);
 
 						td.TerrainMaterialID = MaterialID.Loam;
 
-						envBuilder.SetTileData(p, td);
+						grid.SetTileData(p, td);
 					}
 				}
 			}
 		}
 
-		static void CreateGrass(EnvironmentObjectBuilder envBuilder, ArrayGrid2D<int> intHeightMap)
+		static void CreateGrass(TileGrid grid, ArrayGrid2D<int> intHeightMap)
 		{
 			const int GRASS_LIMIT = 13;	// XXX
 
-			int w = envBuilder.Width;
-			int h = envBuilder.Height;
+			int w = grid.Width;
+			int h = grid.Height;
 
 			var materials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
 			for (int y = 0; y < h; ++y)
@@ -163,14 +215,14 @@ namespace MyArea
 
 					if (z < GRASS_LIMIT)
 					{
-						var td = envBuilder.GetTileData(p);
+						var td = grid.GetTileData(p);
 
 						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil)
 						{
 							td.InteriorID = InteriorID.Grass;
 							td.InteriorMaterialID = materials[Helpers.GetRandomInt(materials.Length)].ID;
 
-							envBuilder.SetTileData(p, td);
+							grid.SetTileData(p, td);
 						}
 					}
 				}
@@ -373,7 +425,7 @@ namespace MyArea
 				.H;
 		}
 
-		static void CreateTrees(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
+		static void CreateTrees(TileGrid grid, ArrayGrid2D<int> heightMap)
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
@@ -381,13 +433,13 @@ namespace MyArea
 			if (baseSeed == 0)
 				baseSeed = 1;
 
-			env.Bounds.Plane.Range().AsParallel().ForAll(p2d =>
+			grid.Size.Plane.Range().AsParallel().ForAll(p2d =>
 			{
 				int z = heightMap[p2d];
 
 				var p = new IntPoint3(p2d, z);
 
-				var td = env.GetTileData(p);
+				var td = grid.GetTileData(p);
 
 				if (td.InteriorID == InteriorID.Grass)
 				{
@@ -397,17 +449,17 @@ namespace MyArea
 					{
 						td.InteriorID = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
 						td.InteriorMaterialID = materials[r.Next(materials.Length)].ID;
-						env.SetTileData(p, td);
+						grid.SetTileData(p, td);
 					}
 				}
 			});
 		}
 
-		static void CreateSlopes(EnvironmentObjectBuilder env, ArrayGrid2D<int> heightMap)
+		static void CreateSlopes(TileGrid grid, ArrayGrid2D<int> heightMap)
 		{
 			var arr = new ThreadLocal<Direction[]>(() => new Direction[8]);
 
-			var plane = env.Bounds.Plane;
+			var plane = grid.Size.Plane;
 
 			var baseSeed = Helpers.GetRandomInt();
 
@@ -457,24 +509,24 @@ namespace MyArea
 				{
 					var p3d = new IntPoint3(p, z);
 
-					var td = env.GetTileData(p3d);
+					var td = grid.GetTileData(p3d);
 					td.TerrainID = dir.ToSlope();
-					env.SetTileData(p3d, td);
+					grid.SetTileData(p3d, td);
 				}
 			});
 		}
 
-		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID)
+		static void CreateOreCluster(TileGrid grid, IntPoint3 p, MaterialID oreMaterialID)
 		{
-			CreateOreCluster(env, p, oreMaterialID, Helpers.GetRandomInt(6) + 1);
+			CreateOreCluster(grid, p, oreMaterialID, Helpers.GetRandomInt(6) + 1);
 		}
 
-		static void CreateOreCluster(EnvironmentObjectBuilder env, IntPoint3 p, MaterialID oreMaterialID, int count)
+		static void CreateOreCluster(TileGrid grid, IntPoint3 p, MaterialID oreMaterialID, int count)
 		{
-			if (!env.Contains(p))
+			if (!grid.Contains(p))
 				return;
 
-			var td = env.GetTileData(p);
+			var td = grid.GetTileData(p);
 
 			if (td.TerrainID != TerrainID.NaturalWall)
 				return;
@@ -484,12 +536,12 @@ namespace MyArea
 
 			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
-			env.SetTileData(p, td);
+			grid.SetTileData(p, td);
 
 			if (count > 0)
 			{
 				foreach (var d in DirectionExtensions.CardinalUpDownDirections)
-					CreateOreCluster(env, p + d, oreMaterialID, count - 1);
+					CreateOreCluster(grid, p + d, oreMaterialID, count - 1);
 			}
 		}
 
