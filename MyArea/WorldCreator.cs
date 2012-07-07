@@ -58,44 +58,15 @@ namespace MyArea
 
 			return p;
 		}
+
 		static EnvironmentObject CreateEnv(World world, out int surfaceLevel)
 		{
 			int sizeExp = MAP_SIZE;
-			int size = (int)Math.Pow(2, sizeExp);
+			int s = (int)Math.Pow(2, sizeExp);
 
-			var heightMap = CreateHeightMap(size);
+			var size = new IntSize3(s, s, MAP_DEPTH);
 
-			var grid = new TileGrid(new IntSize3(size, size, MAP_DEPTH));
-
-			FillGrid(grid, heightMap);
-
-			CreateSlopes(grid, heightMap);
-
-			CreateSoil(grid, heightMap);
-
-			CreateGrass(grid, heightMap);
-
-			CreateTrees(grid, heightMap);
-
-			var oreMaterials = Materials.GetMaterials(MaterialCategory.Gem).Concat(Materials.GetMaterials(MaterialCategory.Mineral)).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 30; ++i)
-			{
-				var p = GetRandomSubterraneanLocation(grid);
-				var idx = Helpers.GetRandomInt(oreMaterials.Length);
-				CreateOreCluster(grid, p, oreMaterials[idx]);
-			}
-
-			surfaceLevel = FindSurfaceLevel(heightMap);
-
-			var envBuilder = new EnvironmentObjectBuilder(grid, heightMap, VisibilityMode.GlobalFOV);
-
-			return envBuilder.Create(world);
-		}
-
-		static ArrayGrid2D<int> CreateHeightMap(int size)
-		{
-			// size + 1 for the DiamondSquare algorithm
-			var doubleHeightMap = new ArrayGrid2D<double>(size + 1, size + 1);
+			var tg = new TerrainGenerator(size);
 
 			var corners = new DiamondSquare.CornerData()
 			{
@@ -105,74 +76,29 @@ namespace MyArea
 				SE = 10,
 			};
 
-			DiamondSquare.Render(doubleHeightMap, corners, 5, 0.75, 1);
+			tg.Generate(corners, 5, 0.75, 1, 2);
 
-			// Normalize the heightmap to 0.0 - 1.0
-			Clamper.Normalize(doubleHeightMap);
+			var grid = tg.TileGrid;
+			var heightMap = tg.HeightMap;
 
-			// square each value, to smoothen the lower parts
-			doubleHeightMap.ForEach(v => Math.Pow(v, 2));
+			CreateSlopes(grid, heightMap);
 
-			// integer heightmap. the number tells the z level where the floor is.
-			var intHeightMap = new ArrayGrid2D<int>(size, size);
-			foreach (var p in IntPoint2.Range(size, size))
-			{
-				var d = doubleHeightMap[p];
+			CreateSoil(grid, heightMap);
 
-				d *= MAP_DEPTH / 2;
-				d += (MAP_DEPTH / 2) - 1;
+			CreateGrass(grid, heightMap);
 
-				intHeightMap[p] = (int)Math.Round(d);
-			}
+			CreateTrees(grid, heightMap);
 
-			return intHeightMap;
-		}
+			surfaceLevel = FindSurfaceLevel(heightMap);
 
-		static void FillGrid(TileGrid grid, ArrayGrid2D<int> depthMap)
-		{
-			int width = grid.Width;
-			int height = grid.Height;
-			int depth = grid.Depth;
+			var envBuilder = new EnvironmentObjectBuilder(grid, heightMap, VisibilityMode.GlobalFOV);
 
-			Parallel.For(0, height, y =>
-			{
-				for (int x = 0; x < width; ++x)
-				{
-					int surface = depthMap[x, y];
-
-					for (int z = 0; z < depth; ++z)
-					{
-						var p = new IntPoint3(x, y, z);
-						var td = new TileData();
-
-						if (z < surface)
-						{
-							td.TerrainID = TerrainID.NaturalWall;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else if (z == surface)
-						{
-							td.TerrainID = TerrainID.NaturalFloor;
-							td.TerrainMaterialID = MaterialID.Granite;
-						}
-						else
-						{
-							td.TerrainID = TerrainID.Empty;
-							td.TerrainMaterialID = MaterialID.Undefined;
-						}
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
-						grid.SetTileData(p, td);
-					}
-				}
-			});
+			return envBuilder.Create(world);
 		}
 
 		static void CreateSoil(TileGrid grid, ArrayGrid2D<int> intHeightMap)
 		{
-			const int SOIL_LIMIT = 15;	// XXX
+			int soilLimit = grid.Depth * 4 / 5;
 
 			int w = grid.Width;
 			int h = grid.Height;
@@ -185,7 +111,7 @@ namespace MyArea
 
 					var p = new IntPoint3(x, y, z);
 
-					if (z < SOIL_LIMIT)
+					if (z < soilLimit)
 					{
 						var td = grid.GetTileData(p);
 
@@ -199,7 +125,7 @@ namespace MyArea
 
 		static void CreateGrass(TileGrid grid, ArrayGrid2D<int> intHeightMap)
 		{
-			const int GRASS_LIMIT = 13;	// XXX
+			int grassLimit = grid.Depth * 4 / 5;
 
 			int w = grid.Width;
 			int h = grid.Height;
@@ -213,7 +139,7 @@ namespace MyArea
 
 					var p = new IntPoint3(x, y, z);
 
-					if (z < GRASS_LIMIT)
+					if (z < grassLimit)
 					{
 						var td = grid.GetTileData(p);
 

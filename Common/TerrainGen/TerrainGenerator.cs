@@ -8,7 +8,7 @@ using System.Windows;
 using Dwarrowdelf;
 using Dwarrowdelf.TerrainGen;
 
-namespace TerrainGenTest
+namespace Dwarrowdelf.TerrainGen
 {
 	public class TerrainGenerator
 	{
