@@ -300,7 +300,7 @@ namespace TerrainGenTest
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdatePos(new IntPoint3(this.X, (int)Math.Round(p.Y), (int)Math.Round(p.X)));
+			UpdatePos(new IntPoint3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
 		}
 
 		private void mapGrid_MouseMove(object sender, MouseEventArgs e)

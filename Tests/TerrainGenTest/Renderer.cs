@@ -165,7 +165,9 @@ namespace TerrainGenTest
 				{
 					for (int y = 0; y < h; ++y)
 					{
-						var p = new IntPoint3(x, y, z);
+						int mz = d - z - 1;
+
+						var p = new IntPoint3(x, y, mz);
 						var td = grid.GetTileData(p);
 
 						uint c = GetTileColor(td);
