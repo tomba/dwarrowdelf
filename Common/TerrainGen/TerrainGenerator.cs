@@ -21,8 +21,6 @@ namespace Dwarrowdelf.TerrainGen
 
 		Tuple<double, double> m_rockLayerSlant;
 
-		public double Average { get; private set; }
-
 		Random m_random = new Random(1);
 
 		public TerrainGenerator(IntSize3 size)
@@ -76,14 +74,7 @@ namespace Dwarrowdelf.TerrainGen
 					}
 				});
 
-			AnalyzeTerrain(heightMap);
-
 			return heightMap;
-		}
-
-		void AnalyzeTerrain(ArrayGrid2D<int> grid)
-		{
-			this.Average = grid.Average();
 		}
 
 		void CreateTileGrid()

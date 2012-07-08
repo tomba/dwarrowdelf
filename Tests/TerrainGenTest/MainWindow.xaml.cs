@@ -220,7 +220,7 @@ namespace TerrainGenTest
 
 			m_terrain.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
 
-			avgTextBox.Text = m_terrain.Average.ToString();
+			avgTextBox.Text = m_terrain.HeightMap.Average().ToString();
 		}
 
 		void Render()
