@@ -157,6 +157,21 @@ namespace Dwarrowdelf.Server
 			m_waterHandler.Rescan();
 		}
 
+		public int GetDepth(IntPoint2 p)
+		{
+			return m_depthMap[p];
+		}
+
+		public IntPoint3 GetSurface(int x, int y)
+		{
+			return new IntPoint3(x, y, m_depthMap[x, y]);
+		}
+
+		public IntPoint3 GetSurface(IntPoint2 p)
+		{
+			return new IntPoint3(p.X, p.Y, m_depthMap[p.X, p.Y]);
+		}
+
 		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);
@@ -819,6 +834,11 @@ namespace Dwarrowdelf.Server
 		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
+		}
+
+		public int GetDepth(IntPoint2 p)
+		{
+			return m_depthMap[p];
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 l)

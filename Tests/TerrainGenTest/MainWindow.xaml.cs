@@ -41,7 +41,7 @@ namespace TerrainGenTest
 			int size = (int)Math.Pow(2, sizeExp);
 
 			m_size = new IntSize3(size, size, depth);
-			m_terrain = new TerrainGenerator(m_size);
+			m_terrain = new TerrainGenerator(m_size, new Random(1));
 			m_renderer = new Renderer(m_size);
 
 			this.SliceBmpXY = m_renderer.SliceBmpXY;

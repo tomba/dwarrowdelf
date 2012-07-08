@@ -10,16 +10,18 @@ namespace MyArea
 {
 	static class Helpers
 	{
-		readonly static ThreadLocal<Random> s_random = new ThreadLocal<Random>(() => new Random(123));
+		readonly static Random s_random = new Random(123);
+
+		public static Random Random { get { return s_random; } }
 
 		public static int GetRandomInt()
 		{
-			return s_random.Value.Next();
+			return s_random.Next();
 		}
 
 		public static int GetRandomInt(int exclusiveMax)
 		{
-			return s_random.Value.Next(exclusiveMax);
+			return s_random.Next(exclusiveMax);
 		}
 
 		public static void AddGem(LivingObject living)

@@ -21,17 +21,12 @@ namespace Dwarrowdelf.TerrainGen
 
 		Tuple<double, double> m_rockLayerSlant;
 
-		Random m_random = new Random(1);
+		Random m_random;
 
-		public TerrainGenerator(IntSize3 size)
+		public TerrainGenerator(IntSize3 size, Random random)
 		{
 			m_size = size;
-
-			int w = size.Width;
-			int h = size.Height;
-			int d = size.Depth;
-
-			this.TileGrid = new TileGrid(size);
+			m_random = random;
 		}
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
@@ -67,6 +62,7 @@ namespace Dwarrowdelf.TerrainGen
 						// amplify
 						v = Math.Pow(v, amplify);
 
+						// adjust
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
@@ -79,6 +75,8 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateTileGrid()
 		{
+			this.TileGrid = new TileGrid(m_size);
+
 			CreateBaseGrid();
 
 			CreateOreVeins();
