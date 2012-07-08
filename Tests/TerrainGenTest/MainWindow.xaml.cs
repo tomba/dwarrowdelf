@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Dwarrowdelf;
 using Dwarrowdelf.TerrainGen;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace TerrainGenTest
 {

@@ -12,13 +12,14 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class TerrainGenerator
 	{
-		ArrayGrid2D<double> m_doubleHeightMap;
 		ArrayGrid2D<int> m_heightMap;
 
 		IntSize3 m_size;
 
 		public ArrayGrid2D<int> HeightMap { get { return m_heightMap; } }
 		public TileGrid TileGrid { get; private set; }
+
+		Tuple<double, double> m_rockLayerSlant;
 
 		public double Average { get; private set; }
 
@@ -32,56 +33,52 @@ namespace Dwarrowdelf.TerrainGen
 			int h = size.Height;
 			int d = size.Depth;
 
-			// +1 for diamond square
-			m_doubleHeightMap = new ArrayGrid2D<double>(w + 1, h + 1);
-			m_heightMap = new ArrayGrid2D<int>(w, h);
 			this.TileGrid = new TileGrid(size);
 		}
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
 		{
-			m_doubleHeightMap.Clear();
-
-			GenerateTerrain(m_doubleHeightMap, corners, range, h, seed, amplify);
-
-			// integer heightmap. the number tells the z level where the floor is.
-			foreach (var p in IntPoint2.Range(m_size.Width, m_size.Height))
-			{
-				var d = m_doubleHeightMap[p];
-
-				d *= m_size.Depth / 2;
-				d += m_size.Depth / 2 - 1;
-
-				m_heightMap[p] = (int)Math.Round(d);
-			}
-
-			AnalyzeTerrain(m_heightMap);
+			m_heightMap = GenerateTerrain(corners, range, h, seed, amplify);
 
 			CreateTileGrid();
 		}
 
-		int GetRandomInt(int max)
-		{
-			return m_random.Next(max);
-		}
-
-		double GetRandomDouble()
-		{
-			return m_random.NextDouble();
-		}
-
-		void GenerateTerrain(ArrayGrid2D<double> grid, DiamondSquare.CornerData corners, double range, double h,
+		ArrayGrid2D<int> GenerateTerrain(DiamondSquare.CornerData corners, double range, double h,
 			int seed, double amplify)
 		{
-			DiamondSquare.Render(grid, corners, range, h, seed);
+			// +1 for diamond square
+			var doubleHeightMap = new ArrayGrid2D<double>(m_size.Width + 1, m_size.Height + 1);
 
-			//Clamper.Clamp(grid, 10);
+			double min, max;
 
-			Clamper.Normalize(grid);
+			DiamondSquare.Render(doubleHeightMap, corners, range, h, seed, out min, out max);
 
-			grid.ForEach(v => Math.Pow(v, amplify));
+			var heightMap = new ArrayGrid2D<int>(m_size.Width, m_size.Height);
 
-			//Clamper.Normalize(grid);
+			Parallel.For(0, m_size.Height, y =>
+				{
+					double d = max - min;
+
+					for (int x = 0; x < m_size.Width; ++x)
+					{
+						var v = doubleHeightMap[x, y];
+
+						// normalize to 0.0 - 1.0
+						v = (v - min) / d;
+
+						// amplify
+						v = Math.Pow(v, amplify);
+
+						v *= m_size.Depth / 2;
+						v += m_size.Depth / 2 - 1;
+
+						heightMap[x, y] = (int)Math.Round(v);
+					}
+				});
+
+			AnalyzeTerrain(heightMap);
+
+			return heightMap;
 		}
 
 		void AnalyzeTerrain(ArrayGrid2D<int> grid)
@@ -91,14 +88,25 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateTileGrid()
 		{
+			CreateBaseGrid();
+
+			CreateOreVeins();
+
+			CreateOreClusters();
+
+			CreateSoil(this.TileGrid, this.HeightMap);
+
+			CreateSlopes(this.TileGrid, this.HeightMap, m_random.Next());
+		}
+
+		void CreateBaseGrid()
+		{
 			int width = m_size.Width;
 			int height = m_size.Height;
 			int depth = m_size.Depth;
 
 			var rockMaterials = Materials.GetMaterials(MaterialCategory.Rock).ToArray();
 			var layers = new MaterialID[20];
-
-			var random = new Random();
 
 			{
 				int rep = 0;
@@ -107,8 +115,8 @@ namespace Dwarrowdelf.TerrainGen
 				{
 					if (rep == 0)
 					{
-						rep = random.Next(4) + 1;
-						mat = rockMaterials[random.Next(rockMaterials.Length - 1)].ID;
+						rep = m_random.Next(4) + 1;
+						mat = rockMaterials[m_random.Next(rockMaterials.Length - 1)].ID;
 					}
 
 					layers[z] = mat;
@@ -118,6 +126,8 @@ namespace Dwarrowdelf.TerrainGen
 
 			double xk = (GetRandomDouble() * 2 - 1) * 0.01;
 			double yk = (GetRandomDouble() * 2 - 1) * 0.01;
+
+			m_rockLayerSlant = new Tuple<double, double>(xk, yk);
 
 			Parallel.For(0, height, y =>
 			{
@@ -161,6 +171,108 @@ namespace Dwarrowdelf.TerrainGen
 					}
 				}
 			});
+		}
+
+		static void CreateSoil(TileGrid grid, ArrayGrid2D<int> heightMap)
+		{
+			int soilLimit = grid.Depth * 4 / 5;
+
+			int w = grid.Width;
+			int h = grid.Height;
+
+			for (int y = 0; y < h; ++y)
+			{
+				for (int x = 0; x < w; ++x)
+				{
+					int z = heightMap[x, y];
+
+					var p = new IntPoint3(x, y, z);
+
+					if (z < soilLimit)
+					{
+						var td = grid.GetTileData(p);
+
+						td.TerrainMaterialID = MaterialID.Loam;
+
+						grid.SetTileData(p, td);
+					}
+				}
+			}
+		}
+
+		static void CreateSlopes(TileGrid grid, ArrayGrid2D<int> heightMap, int baseSeed)
+		{
+			var arr = new System.Threading.ThreadLocal<Direction[]>(() => new Direction[8]);
+
+			var plane = grid.Size.Plane;
+
+			plane.Range().AsParallel().ForAll(p =>
+			{
+				int z = heightMap[p];
+
+				int count = 0;
+				Direction dir = Direction.None;
+
+				var r = new MWCRandom(p, baseSeed);
+
+				int offset = r.Next(8);
+
+				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
+				// the slope if all 8 tiles are higher.
+				// Count to 10. If 3 successive slopes, create one in the middle
+				int successive = 0;
+				for (int i = 0; i < 10; ++i)
+				{
+					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
+
+					var t = p + d;
+
+					if (plane.Contains(t) && heightMap[t] > z)
+					{
+						if (i < 8)
+							count++;
+						successive++;
+
+						if (successive == 3)
+						{
+							dir = DirectionExtensions.PlanarDirections[((i - 1) + offset) % 8];
+						}
+						else if (dir == Direction.None)
+						{
+							dir = d;
+						}
+					}
+					else
+					{
+						successive = 0;
+					}
+				}
+
+				if (count > 0 && count < 8)
+				{
+					var p3d = new IntPoint3(p, z);
+
+					var td = grid.GetTileData(p3d);
+					td.TerrainID = dir.ToSlope();
+					grid.SetTileData(p3d, td);
+				}
+			});
+		}
+
+		void CreateOreClusters()
+		{
+			var clusterMaterials = Materials.GetMaterials(MaterialCategory.Gem).Select(mi => mi.ID).ToArray();
+			for (int i = 0; i < 100; ++i)
+			{
+				var p = GetRandomSubterraneanLocation();
+				CreateOreCluster(p, clusterMaterials[GetRandomInt(clusterMaterials.Length)]);
+			}
+		}
+
+		void CreateOreVeins()
+		{
+			double xk = m_rockLayerSlant.Item1;
+			double yk = m_rockLayerSlant.Item2;
 
 			var veinMaterials = Materials.GetMaterials(MaterialCategory.Mineral).Select(mi => mi.ID).ToArray();
 
@@ -183,13 +295,6 @@ namespace Dwarrowdelf.TerrainGen
 
 					CreateOreSphere(p, thickness, mat, GetRandomDouble() * 0.75, 0);
 				}
-			}
-
-			var clusterMaterials = Materials.GetMaterials(MaterialCategory.Gem).Select(mi => mi.ID).ToArray();
-			for (int i = 0; i < 100; ++i)
-			{
-				var p = GetRandomSubterraneanLocation();
-				CreateOreCluster(p, clusterMaterials[GetRandomInt(clusterMaterials.Length)]);
 			}
 		}
 
@@ -244,6 +349,16 @@ namespace Dwarrowdelf.TerrainGen
 			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
 			SetTileData(p, td);
+		}
+
+		int GetRandomInt(int max)
+		{
+			return m_random.Next(max);
+		}
+
+		double GetRandomDouble()
+		{
+			return m_random.NextDouble();
 		}
 
 		void SetTileData(IntPoint3 p, TileData td)

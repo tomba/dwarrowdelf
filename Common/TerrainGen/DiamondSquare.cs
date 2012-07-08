@@ -23,9 +23,12 @@ namespace Dwarrowdelf.TerrainGen
 			public CornerData Corners;
 			public double Range;
 			public double H;
+			public double Max;
+			public double Min;
 		}
 
-		public static void Render(ArrayGrid2D<double> grid, CornerData corners, double range, double h, int randomSeed)
+		public static void Render(ArrayGrid2D<double> grid, CornerData corners, double range, double h, int randomSeed,
+			out double min, out double max)
 		{
 			if (grid.Width != grid.Height)
 				throw new Exception();
@@ -37,6 +40,8 @@ namespace Dwarrowdelf.TerrainGen
 				Corners = corners,
 				Range = range,
 				H = h,
+				Min = Math.Min(Math.Min(Math.Min(corners.SW, corners.SE), corners.NE), corners.NW),
+				Max = Math.Max(Math.Max(Math.Max(corners.SW, corners.SE), corners.NE), corners.NW),
 			};
 
 			grid[0, 0] = corners.SW;
@@ -45,6 +50,9 @@ namespace Dwarrowdelf.TerrainGen
 			grid[0, grid.Height - 1] = corners.NW;
 
 			HeightMap(ctx);
+
+			min = ctx.Min;
+			max = ctx.Max;
 		}
 
 		static double GetRandom(Context ctx, double range)
@@ -61,34 +69,30 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				var parts = (int)Math.Pow(2, pass);
 				var size = (grid.Width - 1) / parts;
+				int half = size / 2;
 
-				if (size == 0)
-					throw new Exception();
+				Debug.Assert(half != 0);
 
-				for (int y = 0; y < parts; ++y)
+				for (int y = half; y < grid.Height; y += size)
 				{
-					for (int x = 0; x < parts; ++x)
+					for (int x = half; x < grid.Width; x += size)
 					{
-						var rect = new IntRect(size * x, size * y, size, size);
-						int radius = rect.Width / 2;
-
-						if (radius == 0)
-							throw new Exception();
-
-						var middle = rect.X1Y1 + new IntVector2(radius, radius);
-
-						Rectangle(ctx, middle, radius);
-
-						var mxy1 = new IntPoint2(middle.X, rect.Y1);
-						var mxy2 = new IntPoint2(middle.X, rect.Y2);
-						var x1my = new IntPoint2(rect.X1, middle.Y);
-						var x2my = new IntPoint2(rect.X2, middle.Y);
-
-						Diamond(ctx, x1my, radius);
-						Diamond(ctx, x2my, radius);
-						Diamond(ctx, mxy1, radius);
-						Diamond(ctx, mxy2, radius);
+						var p = new IntPoint2(x, y);
+						Rectangle(ctx, p, half);
 					}
+				}
+
+				bool odd = true;
+
+				for (int y = 0; y < grid.Height; y += half)
+				{
+					for (int x = odd ? half : 0; x < grid.Width; x += size)
+					{
+						var p = new IntPoint2(x, y);
+						Diamond(ctx, p, half);
+					}
+
+					odd = !odd;
 				}
 
 				ctx.Range *= Math.Pow(2, -ctx.H);
@@ -114,7 +118,14 @@ namespace Dwarrowdelf.TerrainGen
 			v4 = grid[p4];
 
 			var avg = (v1 + v2 + v3 + v4) / 4;
-			grid[middle] = avg + GetRandom(ctx, ctx.Range);
+			var val = avg + GetRandom(ctx, ctx.Range);
+
+			grid[middle] = val;
+
+			if (val < ctx.Min)
+				ctx.Min = val;
+			if (val > ctx.Max)
+				ctx.Max = val;
 		}
 
 		static void Diamond(Context ctx, IntPoint2 middle, int radius)
@@ -135,7 +146,14 @@ namespace Dwarrowdelf.TerrainGen
 			v4 = GetGridValue(ctx, p4);
 
 			var avg = (v1 + v2 + v3 + v4) / 4;
-			ctx.Grid[middle] = avg + GetRandom(ctx, ctx.Range);
+			var val = avg + GetRandom(ctx, ctx.Range);
+
+			ctx.Grid[middle] = val;
+
+			if (val < ctx.Min)
+				ctx.Min = val;
+			if (val > ctx.Max)
+				ctx.Max = val;
 		}
 
 		/// <summary>
@@ -146,60 +164,47 @@ namespace Dwarrowdelf.TerrainGen
 			var grid = ctx.Grid;
 			var corners = ctx.Corners;
 
-			double y1, y2;
-			double x1, x2;
-			double x, y;
+			double v1, v2;
+			double len;
+			int pos;
 
 			if (p.X < 0)
 			{
-				x1 = 0;
-				y1 = corners.SW;
-
-				x2 = grid.Height;
-				y2 = corners.NW;
-
-				x = p.Y;
+				len = grid.Height;
+				v1 = corners.SW;
+				v2 = corners.NW;
+				pos = p.Y;
 			}
 			else if (p.Y < 0)
 			{
-				x1 = 0;
-				y1 = corners.SW;
-
-				x2 = grid.Width;
-				y2 = corners.SE;
-
-				x = p.X;
+				len = grid.Width;
+				v1 = corners.SW;
+				v2 = corners.SE;
+				pos = p.X;
 			}
 			else if (p.X >= grid.Width)
 			{
-				x1 = 0;
-				y1 = corners.SE;
-
-				x2 = grid.Height;
-				y2 = corners.NE;
-
-				x = p.Y;
+				len = grid.Height;
+				v1 = corners.SE;
+				v2 = corners.NE;
+				pos = p.Y;
 			}
 			else if (p.Y >= grid.Height)
 			{
-				x1 = 0;
-				y1 = corners.NE;
-
-				x2 = grid.Width;
-				y2 = corners.NW;
-
-				x = p.X;
+				len = grid.Width;
+				v1 = corners.NW;
+				v2 = corners.NE;
+				pos = p.X;
 			}
 			else
 			{
 				return grid[p];
 			}
 
-			var m = (y1 - y2) / (x1 - x2);
+			var m = (v2 - v1) / len;
+			var h = m * pos + v1;
 
-			y = m * x + y1;
-
-			return y;
+			return h;
 		}
 	}
 }

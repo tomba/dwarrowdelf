@@ -81,10 +81,6 @@ namespace MyArea
 			var grid = tg.TileGrid;
 			var heightMap = tg.HeightMap;
 
-			CreateSlopes(grid, heightMap);
-
-			CreateSoil(grid, heightMap);
-
 			CreateGrass(grid, heightMap);
 
 			CreateTrees(grid, heightMap);
@@ -94,33 +90,6 @@ namespace MyArea
 			var envBuilder = new EnvironmentObjectBuilder(grid, heightMap, VisibilityMode.GlobalFOV);
 
 			return envBuilder.Create(world);
-		}
-
-		static void CreateSoil(TileGrid grid, ArrayGrid2D<int> intHeightMap)
-		{
-			int soilLimit = grid.Depth * 4 / 5;
-
-			int w = grid.Width;
-			int h = grid.Height;
-
-			for (int y = 0; y < h; ++y)
-			{
-				for (int x = 0; x < w; ++x)
-				{
-					int z = intHeightMap[x, y];
-
-					var p = new IntPoint3(x, y, z);
-
-					if (z < soilLimit)
-					{
-						var td = grid.GetTileData(p);
-
-						td.TerrainMaterialID = MaterialID.Loam;
-
-						grid.SetTileData(p, td);
-					}
-				}
-			}
 		}
 
 		static void CreateGrass(TileGrid grid, ArrayGrid2D<int> intHeightMap)
@@ -234,7 +203,7 @@ namespace MyArea
 		{
 			var world = env.World;
 
-			int posx = env.Width / 2 - 16;
+			int posx = env.Width / 2 - 10;
 			int posy = env.Height / 2 - 10;
 
 			var floorTile = new TileData()
@@ -267,7 +236,7 @@ namespace MyArea
 				builder.Create(world, env);
 			}
 
-			posx = env.Width / 2 - 16;
+			posx = env.Width / 2 - 10;
 
 			posy += 4;
 
@@ -381,66 +350,6 @@ namespace MyArea
 			});
 		}
 
-		static void CreateSlopes(TileGrid grid, ArrayGrid2D<int> heightMap)
-		{
-			var arr = new ThreadLocal<Direction[]>(() => new Direction[8]);
-
-			var plane = grid.Size.Plane;
-
-			var baseSeed = Helpers.GetRandomInt();
-
-			plane.Range().AsParallel().ForAll(p =>
-			{
-				int z = heightMap[p];
-
-				int count = 0;
-				Direction dir = Direction.None;
-
-				var r = new MWCRandom(p, baseSeed);
-
-				int offset = r.Next(8);
-
-				// Count the tiles around this tile which are higher. Create slope to a random direction, but skip
-				// the slope if all 8 tiles are higher.
-				// Count to 10. If 3 successive slopes, create one in the middle
-				int successive = 0;
-				for (int i = 0; i < 10; ++i)
-				{
-					var d = DirectionExtensions.PlanarDirections[(i + offset) % 8];
-
-					var t = p + d;
-
-					if (plane.Contains(t) && heightMap[t] > z)
-					{
-						if (i < 8)
-							count++;
-						successive++;
-
-						if (successive == 3)
-						{
-							dir = DirectionExtensions.PlanarDirections[((i - 1) + offset) % 8];
-						}
-						else if (dir == Direction.None)
-						{
-							dir = d;
-						}
-					}
-					else
-					{
-						successive = 0;
-					}
-				}
-
-				if (count > 0 && count < 8)
-				{
-					var p3d = new IntPoint3(p, z);
-
-					var td = grid.GetTileData(p3d);
-					td.TerrainID = dir.ToSlope();
-					grid.SetTileData(p3d, td);
-				}
-			});
-		}
 
 		static void CreateOreCluster(TileGrid grid, IntPoint3 p, MaterialID oreMaterialID)
 		{
