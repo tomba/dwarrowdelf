@@ -219,8 +219,6 @@ namespace TerrainGenTest
 			};
 
 			m_terrain.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
-
-			avgTextBox.Text = m_terrain.HeightMap.Average().ToString();
 		}
 
 		void Render()
@@ -269,6 +267,37 @@ namespace TerrainGenTest
 				this.Z = pos.Z;
 		}
 
+		void UpdateTileInfo(IntPoint3 p)
+		{
+			int h = m_terrain.HeightMap[p.ToIntPoint()];
+
+			zTextBlock.Text = String.Format("{0}/{1}", p, h);
+
+			TileData td;
+
+			IntPoint3 mp;
+
+			if (p.Z == m_size.Depth)
+				mp = new IntPoint3(p.X, p.Y, h);
+			else if (p.Z >= 0)
+				mp = p;
+			else
+				return;
+
+			var terrainMat = m_terrain.TileGrid.GetTerrainMaterialID(mp);
+			var interiorMat = m_terrain.TileGrid.GetInteriorMaterialID(mp);
+
+			if (terrainMat == MaterialID.Undefined)
+				materialTextBlock.Text = "";
+			else
+				materialTextBlock.Text = terrainMat.ToString();
+
+			if (interiorMat == MaterialID.Undefined)
+				oreTextBlock.Text = "";
+			else
+				oreTextBlock.Text = interiorMat.ToString();
+		}
+
 		private void imageXY_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			var img = (Image)sender;
@@ -279,13 +308,33 @@ namespace TerrainGenTest
 
 		private void imageXY_MouseMove(object sender, MouseEventArgs e)
 		{
-			if (e.LeftButton == MouseButtonState.Released)
-				return;
-
 			var img = (Image)sender;
 			var p = e.GetPosition(img);
 
-			UpdatePos(new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z));
+			var mp = new IntPoint3((int)Math.Round(p.X), (int)Math.Round(p.Y), this.Z);
+
+			UpdateTileInfo(mp);
+
+			if (e.LeftButton == MouseButtonState.Released)
+				return;
+
+			UpdatePos(mp);
+		}
+
+		private void imageXZ_MouseMove(object sender, MouseEventArgs e)
+		{
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			UpdateTileInfo(new IntPoint3((int)Math.Round(p.X), this.Y, m_size.Depth - (int)Math.Round(p.Y) - 1));
+		}
+
+		private void imageYZ_MouseMove(object sender, MouseEventArgs e)
+		{
+			var img = (Image)sender;
+			var p = e.GetPosition(img);
+
+			UpdateTileInfo(new IntPoint3(this.X, (int)Math.Round(p.Y), m_size.Depth - (int)Math.Round(p.X) - 1));
 		}
 
 		private void imageXZ_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -309,8 +358,8 @@ namespace TerrainGenTest
 			var v = VisualTreeHelper.GetOffset(mapGrid);
 			var pos = e.GetPosition(mapGrid);
 			var vb = magnifierBrush.Viewbox;
-			vb.X = pos.X - vb.Width / 2 + v.X;
-			vb.Y = pos.Y - vb.Height / 2 + v.Y;
+			vb.X = pos.X - vb.Width / 2 + v.X + 0.5;
+			vb.Y = pos.Y - vb.Height / 2 + v.Y + 0.5;
 			magnifierBrush.Viewbox = vb;
 		}
 
@@ -319,6 +368,5 @@ namespace TerrainGenTest
 			scrollViewerXZ.ScrollToHorizontalOffset(((ScrollViewer)sender).HorizontalOffset);
 			scrollViewerYZ.ScrollToVerticalOffset(((ScrollViewer)sender).VerticalOffset);
 		}
-
 	}
 }
