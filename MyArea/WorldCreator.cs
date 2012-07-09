@@ -55,7 +55,7 @@ namespace MyArea
 			return envBuilder.Create(world);
 		}
 
-		static void CreateGrass(TileGrid grid, ArrayGrid2D<int> intHeightMap)
+		static void CreateGrass(TileGrid grid, ArrayGrid2D<byte> intHeightMap)
 		{
 			int grassLimit = grid.Depth * 4 / 5;
 
@@ -87,7 +87,7 @@ namespace MyArea
 			}
 		}
 
-		static void CreateTrees(TileGrid grid, ArrayGrid2D<int> heightMap)
+		static void CreateTrees(TileGrid grid, ArrayGrid2D<byte> heightMap)
 		{
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 

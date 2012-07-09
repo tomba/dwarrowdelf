@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 
-		ArrayGrid2D<int> m_depthMap;
+		ArrayGrid2D<byte> m_depthMap;
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Server
 
 		void CreateDepthMap()
 		{
-			m_depthMap = new ArrayGrid2D<int>(this.Size.Plane);
+			m_depthMap = new ArrayGrid2D<byte>(this.Size.Plane);
 
 			Parallel.ForEach(this.Size.Plane.Range(), p =>
 			{
@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Server
 
 					if (m_tileGrid.GetTileData(p3).IsEmpty == false)
 					{
-						m_depthMap[p] = z;
+						m_depthMap[p] = (byte)z;
 						break;
 					}
 				}
@@ -250,7 +250,8 @@ namespace Dwarrowdelf.Server
 
 			if (data.IsEmpty == false && m_depthMap[p2d] < p.Z)
 			{
-				m_depthMap[p2d] = p.Z;
+				Debug.Assert(p.Z >= 0 && p.Z < 256);
+				m_depthMap[p2d] = (byte)p.Z;
 			}
 			else if (data.IsEmpty && m_depthMap[p2d] == p.Z)
 			{
@@ -261,7 +262,8 @@ namespace Dwarrowdelf.Server
 				{
 					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
 					{
-						m_depthMap[p2d] = z;
+						Debug.Assert(z >= 0 && z < 256);
+						m_depthMap[p2d] = (byte)z;
 						break;
 					}
 				}
@@ -805,10 +807,10 @@ namespace Dwarrowdelf.Server
 	{
 		IntSize3 m_size;
 		TileGrid m_tileGrid;
-		ArrayGrid2D<int> m_depthMap;
+		ArrayGrid2D<byte> m_depthMap;
 
 		internal TileGrid Grid { get { return m_tileGrid; } }
-		internal ArrayGrid2D<int> DepthMap { get { return m_depthMap; } }
+		internal ArrayGrid2D<byte> DepthMap { get { return m_depthMap; } }
 
 		public IntCuboid Bounds { get { return new IntCuboid(m_size); } }
 		public int Width { get { return m_size.Width; } }
@@ -817,7 +819,7 @@ namespace Dwarrowdelf.Server
 
 		public VisibilityMode VisibilityMode { get; set; }
 
-		public EnvironmentObjectBuilder(TileGrid grid, ArrayGrid2D<int> depthMap, VisibilityMode visibilityMode)
+		public EnvironmentObjectBuilder(TileGrid grid, ArrayGrid2D<byte> depthMap, VisibilityMode visibilityMode)
 		{
 			m_depthMap = depthMap;
 			m_tileGrid = grid;
@@ -902,7 +904,8 @@ namespace Dwarrowdelf.Server
 
 			if (data.IsEmpty == false && m_depthMap[p2d] < p.Z)
 			{
-				m_depthMap[p2d] = p.Z;
+				Debug.Assert(p.Z >= 0 && p.Z < 256);
+				m_depthMap[p2d] = (byte)p.Z;
 			}
 			else if (data.IsEmpty && m_depthMap[p2d] == p.Z)
 			{
@@ -913,7 +916,8 @@ namespace Dwarrowdelf.Server
 				{
 					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
 					{
-						m_depthMap[p2d] = z;
+						Debug.Assert(z >= 0 && z < 256);
+						m_depthMap[p2d] = (byte)z;
 						break;
 					}
 				}

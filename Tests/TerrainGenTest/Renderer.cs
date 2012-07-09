@@ -32,7 +32,7 @@ namespace TerrainGenTest
 			m_sliceBmpYZ = new WriteableBitmap(size.Depth, size.Height, 96, 96, PixelFormats.Bgr32, null);
 		}
 
-		public void Render(ArrayGrid2D<int> heightMap, TileGrid grid, IntPoint3 pos)
+		public void Render(ArrayGrid2D<byte> heightMap, TileGrid grid, IntPoint3 pos)
 		{
 			if (pos.Z == m_size.Depth)
 				RenderTerrain(heightMap);
@@ -42,7 +42,7 @@ namespace TerrainGenTest
 			RenderSliceYZ(grid, pos.X);
 		}
 
-		void RenderTerrain(ArrayGrid2D<int> m_heightMap)
+		void RenderTerrain(ArrayGrid2D<byte> m_heightMap)
 		{
 			int w = m_size.Width;
 			int h = m_size.Height;

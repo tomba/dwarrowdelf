@@ -12,11 +12,11 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class TerrainGenerator
 	{
-		ArrayGrid2D<int> m_heightMap;
+		ArrayGrid2D<byte> m_heightMap;
 
 		IntSize3 m_size;
 
-		public ArrayGrid2D<int> HeightMap { get { return m_heightMap; } }
+		public ArrayGrid2D<byte> HeightMap { get { return m_heightMap; } }
 		public TileGrid TileGrid { get; private set; }
 
 		Tuple<double, double> m_rockLayerSlant;
@@ -36,7 +36,7 @@ namespace Dwarrowdelf.TerrainGen
 			CreateTileGrid();
 		}
 
-		ArrayGrid2D<int> GenerateTerrain(DiamondSquare.CornerData corners, double range, double h,
+		ArrayGrid2D<byte> GenerateTerrain(DiamondSquare.CornerData corners, double range, double h,
 			int seed, double amplify)
 		{
 			// +1 for diamond square
@@ -46,7 +46,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			DiamondSquare.Render(doubleHeightMap, corners, range, h, seed, out min, out max);
 
-			var heightMap = new ArrayGrid2D<int>(m_size.Width, m_size.Height);
+			var heightMap = new ArrayGrid2D<byte>(m_size.Width, m_size.Height);
 
 			Parallel.For(0, m_size.Height, y =>
 				{
@@ -66,7 +66,7 @@ namespace Dwarrowdelf.TerrainGen
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
-						heightMap[x, y] = (int)Math.Round(v);
+						heightMap[x, y] = (byte)Math.Round(v);
 					}
 				});
 
@@ -162,7 +162,7 @@ namespace Dwarrowdelf.TerrainGen
 			});
 		}
 
-		static void CreateSoil(TileGrid grid, ArrayGrid2D<int> heightMap)
+		static void CreateSoil(TileGrid grid, ArrayGrid2D<byte> heightMap)
 		{
 			int soilLimit = grid.Depth * 4 / 5;
 
@@ -189,7 +189,7 @@ namespace Dwarrowdelf.TerrainGen
 			}
 		}
 
-		static void CreateSlopes(TileGrid grid, ArrayGrid2D<int> heightMap, int baseSeed)
+		static void CreateSlopes(TileGrid grid, ArrayGrid2D<byte> heightMap, int baseSeed)
 		{
 			var arr = new System.Threading.ThreadLocal<Direction[]>(() => new Direction[8]);
 
