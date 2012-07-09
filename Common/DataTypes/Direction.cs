@@ -22,8 +22,8 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 
-		North = DirectionConsts.DirPos << DirectionConsts.YShift,
-		South = DirectionConsts.DirNeg << DirectionConsts.YShift,
+		North = DirectionConsts.DirNeg << DirectionConsts.YShift,
+		South = DirectionConsts.DirPos << DirectionConsts.YShift,
 		West = DirectionConsts.DirNeg << DirectionConsts.XShift,
 		East = DirectionConsts.DirPos << DirectionConsts.XShift,
 		Up = DirectionConsts.DirPos << DirectionConsts.ZShift,

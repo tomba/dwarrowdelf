@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Client.UI
 
 		public Rect MapRectToScreenPointRect(IntRect ir)
 		{
-			Rect r = new Rect(MapTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y2 - 0.5)),
+			Rect r = new Rect(MapTileToScreenPoint(new Point(ir.X1 - 0.5, ir.Y1 - 0.5)),
 				new Size(ir.Width * this.TileSize, ir.Height * this.TileSize));
 			return r;
 		}

@@ -382,7 +382,6 @@ namespace Dwarrowdelf.Client.UI
 
 			Vector v = p - new Point(this.ActualWidth / 2, this.ActualHeight / 2);
 			v /= targetTileSize;
-			v.Y = -v.Y;
 
 			var ml = ScreenPointToMapTile(p);
 			var targetCenterPos = ml - v;

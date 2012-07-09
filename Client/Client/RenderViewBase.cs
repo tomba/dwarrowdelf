@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 					if (diff.Z != 0)
 						m_renderData.Invalid = true;
 					else
-						ScrollTiles(new IntVector2(diff.X, -diff.Y));
+						ScrollTiles(new IntVector2(diff.X, diff.Y));
 				}
 
 				var cp = CenterPos;
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Client
 			int rows = m_renderData.Height;
 
 			int sx = x + m_bounds.X1;
-			int sy = rows - y - 1 + m_bounds.Y1;
+			int sy = y + m_bounds.Y1;
 
 			return new IntPoint3(sx, sy, m_centerPos.Z);
 		}
@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Client
 			int rows = m_renderData.Height;
 
 			var x = p.X - m_bounds.X1;
-			var y = rows - p.Y - 1 + m_bounds.Y1;
+			var y = p.Y - m_bounds.Y1;
 
 			return new IntPoint2(x, y);
 		}

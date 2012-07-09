@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Client.UI
 		void UpdateScaleTransform()
 		{
 			m_scaleTransform.ScaleX = m_mapControl.TileSize;
-			m_scaleTransform.ScaleY = -m_mapControl.TileSize;
+			m_scaleTransform.ScaleY = m_mapControl.TileSize;
 		}
 
 		void OnZChanged(int z)

@@ -171,9 +171,9 @@ namespace Dwarrowdelf.Client.UI
 				dx = -speed;
 
 			if (m_mapControl.ActualHeight - pos.Y < limit)
-				dy = -speed;
-			else if (pos.Y < limit)
 				dy = speed;
+			else if (pos.Y < limit)
+				dy = -speed;
 
 			var v = new IntVector2(dx, dy);
 

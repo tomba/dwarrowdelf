@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client.TileControl
 			var renderOffsetY = (renderHeight - tileSize * m_gridSize.Height) / 2;
 
 			var cx = -(this.CenterPos.X - Math.Round(this.CenterPos.X)) * this.TileSize;
-			var cy = (this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
+			var cy = -(this.CenterPos.Y - Math.Round(this.CenterPos.Y)) * this.TileSize;
 
 			m_renderOffset = new Point(Math.Round(renderOffsetX + cx), Math.Round(renderOffsetY + cy));
 
@@ -396,10 +396,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public Point ScreenTileToScreenPoint(Point t)
 		{
-			t.Offset(0.5, 0.5);
-			var p = new Point(t.X * this.TileSize, t.Y * this.TileSize);
-			p += new Vector(m_renderOffset.X, m_renderOffset.Y);
-			return p;
+			var p = new Point((t.X + 0.5) * this.TileSize, (t.Y + 0.5) * this.TileSize);
+			return p + new Vector(m_renderOffset.X, m_renderOffset.Y);
 		}
 
 		Vector ScreenMapDiff { get { return new Vector(Math.Round(this.CenterPos.X), Math.Round(this.CenterPos.Y)); } }
@@ -409,7 +407,6 @@ namespace Dwarrowdelf.Client.TileControl
 			var gridSize = this.GridSize;
 
 			var v = st - new Vector(gridSize.Width / 2, gridSize.Height / 2);
-			v = new Point(v.X, -v.Y);
 			v += this.ScreenMapDiff;
 
 			return v;
@@ -420,7 +417,6 @@ namespace Dwarrowdelf.Client.TileControl
 			var gridSize = this.GridSize;
 
 			var st = mt - this.ScreenMapDiff;
-			st = new Point(st.X, -st.Y);
 			st += new Vector(gridSize.Width / 2, gridSize.Height / 2);
 
 			return st;

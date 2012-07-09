@@ -159,9 +159,9 @@ namespace Dwarrowdelf
 				dir |= Direction.West;
 
 			if (v.Y > 0)
-				dir |= Direction.North;
-			else if (v.Y < 0)
 				dir |= Direction.South;
+			else if (v.Y < 0)
+				dir |= Direction.North;
 
 			if (v.Z > 0)
 				dir |= Direction.Up;
