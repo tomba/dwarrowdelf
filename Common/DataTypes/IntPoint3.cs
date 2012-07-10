@@ -210,26 +210,6 @@ namespace Dwarrowdelf
 			return Hash.Hash3D(this.X, this.Y, this.Z);
 		}
 
-		public static IEnumerable<IntPoint3> Range(int start_x, int start_y, int start_z, int width, int height, int depth)
-		{
-			int max_x = start_x + width;
-			int max_y = start_y + height;
-			int max_z = start_z + depth;
-
-			for (int z = start_z; z < max_z; ++z)
-				for (int y = start_y; y < max_y; ++y)
-					for (int x = start_x; x < max_x; ++x)
-						yield return new IntPoint3(x, y, z);
-		}
-
-		public static IEnumerable<IntPoint3> Range(int width, int height, int depth)
-		{
-			for (int z = 0; z < depth; ++z)
-				for (int y = 0; y < height; ++y)
-					for (int x = 0; x < width; ++x)
-						yield return new IntPoint3(x, y, z);
-		}
-
 		public IntPoint2 ToIntPoint()
 		{
 			return new IntPoint2(this.X, this.Y);

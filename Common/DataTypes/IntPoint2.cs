@@ -91,13 +91,6 @@ namespace Dwarrowdelf
 			return new IntPoint2(vector.X, vector.Y);
 		}
 
-		public static IEnumerable<IntPoint2> Range(int width, int height)
-		{
-			for (int y = 0; y < height; ++y)
-				for (int x = 0; x < width; ++x)
-					yield return new IntPoint2(x, y);
-		}
-
 		/// <summary>
 		/// Returns a square spiral, centered at center, covering an area of size * size
 		/// </summary>
