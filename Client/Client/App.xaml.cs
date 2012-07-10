@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Diagnostics;
 using System.Threading;
+using System.IO;
+using System.Text;
 
 namespace Dwarrowdelf.Client
 {
@@ -14,11 +16,40 @@ namespace Dwarrowdelf.Client
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			if (Debugger.IsAttached == false)
+				AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
 			Thread.CurrentThread.Name = "Main";
 
 			Trace.TraceInformation("Start");
 
 			base.OnStartup(e);
+		}
+
+		void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{
+			var exc = (Exception)e.ExceptionObject;
+
+			DumpException(exc);
+
+			if (e.IsTerminating == false)
+				Environment.Exit(0);
+		}
+
+		void DumpException(Exception e)
+		{
+			var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+				"dwarrowdelf-crash.txt");
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.AppendLine(DateTime.Now.ToString());
+
+			sb.AppendLine("---");
+
+			sb.Append(e.ToString());
+
+			File.WriteAllText(path, sb.ToString());
 		}
 	}
 }
