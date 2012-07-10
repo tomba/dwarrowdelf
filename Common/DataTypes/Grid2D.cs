@@ -51,9 +51,9 @@ namespace Dwarrowdelf
 			set { this[new IntPoint2(x, y)] = value; }
 		}
 
-		public IntRect Bounds
+		public IntGrid2 Bounds
 		{
-			get { return new IntRect(0 - this.Origin.X, 0 - this.Origin.Y, this.Width, this.Height); }
+			get { return new IntGrid2(0 - this.Origin.X, 0 - this.Origin.Y, this.Width, this.Height); }
 		}
 
 		public IEnumerable<KeyValuePair<IntPoint2, T>> GetIndexValueEnumerable()

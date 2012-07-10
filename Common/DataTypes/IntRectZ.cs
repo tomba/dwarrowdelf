@@ -10,24 +10,24 @@ namespace Dwarrowdelf
 	[System.ComponentModel.TypeConverter(typeof(IntRectZConverter))]
 	public struct IntRectZ : IEquatable<IntRectZ>
 	{
-		readonly IntRect m_rect;
+		readonly IntGrid2 m_rect;
 		readonly int m_z;
 
 		public int X { get { return m_rect.X; } }
 		public int Y { get { return m_rect.Y; } }
-		public int Width { get { return m_rect.Width; } }
-		public int Height { get { return m_rect.Height; } }
+		public int Width { get { return m_rect.Columns; } }
+		public int Height { get { return m_rect.Rows; } }
 		public int Z { get { return m_z; } }
 
 		public IntRectZ(int x, int y, int width, int height, int z)
 		{
-			m_rect = new IntRect(x, y, width, height);
+			m_rect = new IntGrid2(x, y, width, height);
 			m_z = z;
 		}
 
 		public IntRectZ(IntPoint2 point1, IntPoint2 point2, int z)
 		{
-			m_rect = new IntRect(point1, point2);
+			m_rect = new IntGrid2(point1, point2);
 			m_z = z;
 		}
 
@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public IntRectZ(IntRect rect, int z)
+		public IntRectZ(IntGrid2 rect, int z)
 		{
 			m_rect = rect;
 			m_z = z;
@@ -108,11 +108,6 @@ namespace Dwarrowdelf
 		public bool IntersectsWith(IntRectZ rect)
 		{
 			return rect.Z == this.Z && m_rect.IntersectsWith(rect.m_rect);
-		}
-
-		public bool IntersectsWithInclusive(IntRectZ rect)
-		{
-			return rect.Z == this.Z && m_rect.IntersectsWithInclusive(rect.m_rect);
 		}
 
 		public IntRectZ Inflate(int width, int height)

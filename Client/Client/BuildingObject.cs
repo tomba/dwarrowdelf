@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 				Properties = props,
 
 				BuildingID = Dwarrowdelf.BuildingID.Smelter,
-				Area = new IntRectZ(new IntRect(0, 0, 4, 4), 9),
+				Area = new IntRectZ(new IntGrid2(0, 0, 4, 4), 9),
 			};
 
 			Deserialize(data);

@@ -369,7 +369,7 @@ for p in area.Range():
 					ctxMenu.ItemsSource = obs;
 					ctxMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
 					ctxMenu.PlacementTarget = this.MapControl;
-					var rect = this.MapControl.MapRectToScreenPointRect(new IntRect(ml.ToIntPoint(), new IntSize2(1, 1)));
+					var rect = this.MapControl.MapRectToScreenPointRect(new IntGrid2(ml.ToIntPoint(), new IntSize2(1, 1)));
 					ctxMenu.PlacementRectangle = rect;
 
 					ctxMenu.IsOpen = true;

@@ -41,9 +41,9 @@ namespace Dwarrowdelf
 			set { m_grid[y, x] = value; }
 		}
 
-		public IntRect Bounds
+		public IntGrid2 Bounds
 		{
-			get { return new IntRect(0, 0, this.Width, this.Height); }
+			get { return new IntGrid2(0, 0, this.Width, this.Height); }
 		}
 
 		public void Fill(T data)

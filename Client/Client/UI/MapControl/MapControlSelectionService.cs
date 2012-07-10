@@ -247,8 +247,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			var ir = new IntRect(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
-			ir = ir.Inflate(1, 1);
+			var ir = new IntGrid2(this.Selection.SelectionStart.ToIntPoint(), this.Selection.SelectionEnd.ToIntPoint());
 
 			var r = m_mapControl.MapRectToScreenPointRect(ir);
 
@@ -319,7 +318,7 @@ namespace Dwarrowdelf.Client.UI
 				if (this.SelectionStart.Z != this.SelectionEnd.Z)
 					throw new Exception();
 
-				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z).Inflate(1, 1);
+				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z);
 			}
 		}
 	}

@@ -151,7 +151,7 @@
     <Compile Include="DataTypes\IntVector2.cs" />
     <Compile Include="DataTypes\IntSize2.cs" />
     <Compile Include="DataTypes\Direction.cs" />
-    <Compile Include="DataTypes\IntRect.cs" />
+    <Compile Include="DataTypes\IntGrid2.cs" />
     <Compile Include="DataTypes\IntPoint3.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />

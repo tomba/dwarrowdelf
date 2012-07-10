@@ -54,8 +54,8 @@ namespace Dwarrowdelf
 			m_depth = Math.Max((Math.Max(point1.Z, point2.Z) - m_z), 0);
 		}
 
-		public IntBox(IntRect rect, int z)
-			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
+		public IntBox(IntGrid2 rect, int z)
+			: this(rect.X, rect.Y, z, rect.Columns, rect.Rows, 1)
 		{
 		}
 
@@ -96,9 +96,9 @@ namespace Dwarrowdelf
 			get { return this.Width * this.Height * this.Depth; }
 		}
 
-		public IntRect Plane
+		public IntGrid2 Plane
 		{
-			get { return new IntRect(this.X, this.Y, this.Width, this.Height); }
+			get { return new IntGrid2(this.X, this.Y, this.Width, this.Height); }
 		}
 
 		public bool IsNull
@@ -155,9 +155,9 @@ namespace Dwarrowdelf
 						yield return new IntPoint3(x, y, z);
 		}
 
-		public IntRect ToIntRect()
+		public IntGrid2 ToIntRect()
 		{
-			return new IntRect(this.X, this.Y, this.Width, this.Height);
+			return new IntGrid2(this.X, this.Y, this.Width, this.Height);
 		}
 
 		public static bool operator ==(IntBox left, IntBox right)
