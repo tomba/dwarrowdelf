@@ -214,6 +214,8 @@ namespace Dwarrowdelf.Client.UI
 
 			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
 
+			end = end.Truncate(new IntCuboid(this.m_mapControl.Environment.Size));
+
 			switch (m_selectionMode)
 			{
 				case MapSelectionMode.Rectangle:

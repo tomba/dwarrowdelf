@@ -235,6 +235,15 @@ namespace Dwarrowdelf
 			return new IntPoint2(this.X, this.Y);
 		}
 
+		public IntPoint3 Truncate(IntCuboid cuboid)
+		{
+			int x = Math.Min(Math.Max(this.X, cuboid.X1), cuboid.X2 - 1);
+			int y = Math.Min(Math.Max(this.Y, cuboid.Y1), cuboid.Y2 - 1);
+			int z = Math.Min(Math.Max(this.Z, cuboid.Z1), cuboid.Z2 - 1);
+
+			return new IntPoint3(x, y, z);
+		}
+
 		public static IntPoint3 Center(IEnumerable<IntPoint3> points)
 		{
 			int x, y, z;
