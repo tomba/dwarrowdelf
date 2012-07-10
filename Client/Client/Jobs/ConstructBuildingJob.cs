@@ -14,11 +14,11 @@ namespace Dwarrowdelf.Client
 	sealed class ConstructBuildingJob : JobGroup
 	{
 		EnvironmentObject m_environment;
-		IntRectZ m_area;
+		IntGrid2Z m_area;
 		BuildingID m_buildingID;
 		int m_state;
 
-		public ConstructBuildingJob(IJobObserver parent, EnvironmentObject env, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingJob(IJobObserver parent, EnvironmentObject env, IntGrid2Z area, BuildingID buildingID)
 			: base(parent)
 		{
 			m_environment = env;

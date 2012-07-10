@@ -275,7 +275,7 @@ namespace Dwarrowdelf.Client
 
 		static IList<MovableObject> EmptyObjectList = new MovableObject[0];
 
-		public IEnumerable<IMovableObject> GetContents(IntRectZ rect)
+		public IEnumerable<IMovableObject> GetContents(IntGrid2Z rect)
 		{
 			return m_objectMap.Where(kvp => rect.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
 		}

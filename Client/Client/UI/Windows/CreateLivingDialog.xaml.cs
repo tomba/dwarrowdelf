@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class CreateLivingDialog : Window
 	{
 		public EnvironmentObject Environment { get; set; }
-		public IntRectZ Area { get; set; }
+		public IntGrid2Z Area { get; set; }
 
 		public string LivingName { get; set; }
 		public LivingID LivingID { get; set; }
@@ -36,12 +36,12 @@ namespace Dwarrowdelf.Client.UI
 			base.OnInitialized(e);
 		}
 
-		public void SetContext(EnvironmentObject env, IntRectZ area)
+		public void SetContext(EnvironmentObject env, IntGrid2Z area)
 		{
 			this.Environment = env;
 			this.Area = area;
 
-			areaTextBox.Text = String.Format("{0},{1} {2}x{3}", area.X, area.Y, area.Width, area.Height);
+			areaTextBox.Text = String.Format("{0},{1} {2}x{3}", area.X, area.Y, area.Columns, area.Rows);
 		}
 
 		private void OkButton_Click(object sender, RoutedEventArgs e)

@@ -74,7 +74,7 @@ namespace Dwarrowdelf
 	{
 		public BuildingID BuildingID { get; set; }
 		public ObjectID Environment { get; set; }
-		public IntRectZ Area { get; set; }
+		public IntGrid2Z Area { get; set; }
 
 		public override string ToString()
 		{

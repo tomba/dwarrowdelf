@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client
 		public EnvironmentObject Environment { get; private set; }
 
 		[SaveGameProperty]
-		public IntRectZ Area { get; private set; }
+		public IntGrid2Z Area { get; private set; }
 
 		// XXX Just one criteria for now. Could be multiple in the future.
 		[SaveGameProperty]
@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client
 
 		TargetItemTracker m_itemTracker;
 
-		public Stockpile(EnvironmentObject environment, IntRectZ area)
+		public Stockpile(EnvironmentObject environment, IntGrid2Z area)
 		{
 			this.Environment = environment;
 			this.Area = area;

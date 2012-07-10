@@ -99,8 +99,8 @@ namespace Dwarrowdelf.Client.UI
 
 			shape.StrokeThickness = 0.1;
 			shape.IsHitTestVisible = false;
-			shape.Width = element.Area.Width;
-			shape.Height = element.Area.Height;
+			shape.Width = element.Area.Columns;
+			shape.Height = element.Area.Rows;
 
 			var r = element.Area;
 			Canvas.SetLeft(shape, r.X);

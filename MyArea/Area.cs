@@ -102,7 +102,7 @@ namespace MyArea
 			throw new Exception();
 		}
 
-		bool TestStartArea(EnvironmentObject env, IntRectZ r)
+		bool TestStartArea(EnvironmentObject env, IntGrid2Z r)
 		{
 			foreach (var p in r.Range())
 			{
@@ -118,7 +118,7 @@ namespace MyArea
 			return true;
 		}
 
-		IntRectZ? FindStartLocation(EnvironmentObject env)
+		IntGrid2Z? FindStartLocation(EnvironmentObject env)
 		{
 			const int size = 3;
 
@@ -128,7 +128,7 @@ namespace MyArea
 			{
 				var z = FindSurface(env, p);
 
-				var r = new IntRectZ(p.X - size, p.Y - size, size * 2, size * 2, z);
+				var r = new IntGrid2Z(p.X - size, p.Y - size, size * 2, size * 2, z);
 
 				if (TestStartArea(env, r))
 					return r;

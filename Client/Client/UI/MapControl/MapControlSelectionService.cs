@@ -308,17 +308,17 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntRectZ SelectionIntRectZ
+		public IntGrid2Z SelectionIntRectZ
 		{
 			get
 			{
 				if (!this.IsSelectionValid)
-					return new IntRectZ();
+					return new IntGrid2Z();
 
 				if (this.SelectionStart.Z != this.SelectionEnd.Z)
 					throw new Exception();
 
-				return new IntRectZ(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z);
+				return new IntGrid2Z(this.SelectionStart.ToIntPoint(), this.SelectionEnd.ToIntPoint(), this.SelectionStart.Z);
 			}
 		}
 	}

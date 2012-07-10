@@ -28,7 +28,7 @@ namespace Dwarrowdelf
 	public interface IAreaObject : IBaseObject
 	{
 		IEnvironmentObject Environment { get; }
-		IntRectZ Area { get; }
+		IntGrid2Z Area { get; }
 	}
 
 	public interface IBuildingObject : IAreaObject
@@ -65,7 +65,7 @@ namespace Dwarrowdelf
 		bool GetTileFlags(IntPoint3 l, TileFlags flags);
 
 		IEnumerable<IMovableObject> GetContents(IntPoint3 pos);
-		IEnumerable<IMovableObject> GetContents(IntRectZ rect);
+		IEnumerable<IMovableObject> GetContents(IntGrid2Z rect);
 	}
 
 	public interface IMovableObject : IContainerObject

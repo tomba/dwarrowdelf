@@ -59,8 +59,8 @@ namespace Dwarrowdelf
 		{
 		}
 
-		public IntBox(IntRectZ rect)
-			: this(rect.X, rect.Y, rect.Z, rect.Width, rect.Height, 1)
+		public IntBox(IntGrid2Z rect)
+			: this(rect.X, rect.Y, rect.Z, rect.Columns, rect.Rows, 1)
 		{
 		}
 

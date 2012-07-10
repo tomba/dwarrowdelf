@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client
 
 		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
 
-		public IntRectZ Area { get; set; }
+		public IntGrid2Z Area { get; set; }
 
 		public BuildingID BuildingID { get { return this.BuildingInfo.BuildingID; } }
 
@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 				Properties = props,
 
 				BuildingID = Dwarrowdelf.BuildingID.Smelter,
-				Area = new IntRectZ(new IntGrid2(0, 0, 4, 4), 9),
+				Area = new IntGrid2Z(new IntGrid2(0, 0, 4, 4), 9),
 			};
 
 			Deserialize(data);

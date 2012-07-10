@@ -13,11 +13,11 @@ namespace Dwarrowdelf.Client
 	sealed class CleanAreaJob : JobGroup
 	{
 		EnvironmentObject m_environment;
-		IntRectZ m_area;
+		IntGrid2Z m_area;
 
 		Dictionary<IntPoint3, IJob> m_map;
 
-		public CleanAreaJob(IJobObserver parent, EnvironmentObject env, IntRectZ area)
+		public CleanAreaJob(IJobObserver parent, EnvironmentObject env, IntGrid2Z area)
 			: base(parent)
 		{
 			m_environment = env;

@@ -123,7 +123,7 @@ namespace Dwarrowdelf.Server
 			return item;
 		}
 
-		public static bool VerifyBuildSite(EnvironmentObject env, IntRectZ area)
+		public static bool VerifyBuildSite(EnvironmentObject env, IntGrid2Z area)
 		{
 			return area.Range().All(p => env.GetTerrainID(p) == TerrainID.NaturalFloor);
 		}
@@ -132,9 +132,9 @@ namespace Dwarrowdelf.Server
 	public sealed class BuildingObjectBuilder
 	{
 		public BuildingID BuildingID { get; private set; }
-		public IntRectZ Area { get; private set; }
+		public IntGrid2Z Area { get; private set; }
 
-		public BuildingObjectBuilder(BuildingID id, IntRectZ area)
+		public BuildingObjectBuilder(BuildingID id, IntGrid2Z area)
 		{
 			this.BuildingID = id;
 			this.Area = area;

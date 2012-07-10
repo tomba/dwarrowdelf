@@ -141,14 +141,13 @@ namespace MyArea
 			env.SetTileData(p, td);
 		}
 
-		static void CreateWalls(EnvironmentObject env, IntRectZ area)
+		static void CreateWalls(EnvironmentObject env, IntGrid2Z area)
 		{
-			for (int x = area.X1; x < area.X2; ++x)
+			for (int x = area.X1; x <= area.X2; ++x)
 			{
-				for (int y = area.Y1; y < area.Y2; ++y)
+				for (int y = area.Y1; y <= area.Y2; ++y)
 				{
-					if ((y != area.Y1 && y != area.Y2 - 1) &&
-						(x != area.X1 && x != area.X2 - 1))
+					if (y != area.Y1 && y != area.Y2 && x != area.X1 && x != area.X2)
 						continue;
 
 					var p = new IntPoint3(x, y, area.Z);
@@ -165,11 +164,11 @@ namespace MyArea
 			}
 		}
 
-		static void CreateWater(EnvironmentObject env, IntRectZ area)
+		static void CreateWater(EnvironmentObject env, IntGrid2Z area)
 		{
-			for (int x = area.X1; x < area.X2; ++x)
+			for (int x = area.X1; x <= area.X2; ++x)
 			{
-				for (int y = area.Y1; y < area.Y2; ++y)
+				for (int y = area.Y1; y <= area.Y2; ++y)
 				{
 					var p = new IntPoint3(x, y, area.Z);
 					env.SetWaterLevel(p, TileData.MaxWaterLevel);
@@ -182,8 +181,8 @@ namespace MyArea
 			var pos = env.GetSurface(10, 30);
 			int surface = pos.Z;
 
-			CreateWalls(env, new IntRectZ(pos.X, pos.Y, 3, 8, surface));
-			CreateWater(env, new IntRectZ(pos.X + 1, pos.Y + 1, 1, 6, surface));
+			CreateWalls(env, new IntGrid2Z(pos.X, pos.Y, 3, 8, surface));
+			CreateWater(env, new IntGrid2Z(pos.X + 1, pos.Y + 1, 1, 6, surface));
 
 			int x = 15;
 			int y = 30;

@@ -112,7 +112,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class IntRectZConverter : TypeConverter
+	public sealed class IntGrid2ZConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -126,10 +126,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntRectZ) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntGrid2Z) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntRectZ)value;
+			var rect = (IntGrid2Z)value;
 			return rect.ToString();
 		}
 
@@ -143,7 +143,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntRectZ.Parse(source);
+			return IntGrid2Z.Parse(source);
 		}
 	}
 

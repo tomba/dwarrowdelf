@@ -316,7 +316,7 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, d);
 		}
 
-		public IEnumerable<IMovableObject> GetContents(IntRectZ rect)
+		public IEnumerable<IMovableObject> GetContents(IntGrid2Z rect)
 		{
 			var obs = m_contentArray[rect.Z];
 

@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 	{
 		List<IntBox> m_boxs = new List<IntBox>();
 
-		public void Add(IntRectZ rect)
+		public void Add(IntGrid2Z rect)
 		{
 			Add(new IntBox(rect));
 		}

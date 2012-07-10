@@ -14,13 +14,13 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
 		[SaveGameProperty]
-		public IntRectZ Area { get; private set; }
+		public IntGrid2Z Area { get; private set; }
 
 		public string Description { get { return "Construction (" + Buildings.GetBuildingInfo(this.BuildingID).Name + ")"; } }
 		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
 		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
-		public ConstructionSite(EnvironmentObject environment, BuildingID buildingID, IntRectZ area)
+		public ConstructionSite(EnvironmentObject environment, BuildingID buildingID, IntGrid2Z area)
 		{
 			this.Environment = environment;
 			this.BuildingID = buildingID;

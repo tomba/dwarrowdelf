@@ -16,7 +16,7 @@ namespace Dwarrowdelf.AI
 		{
 			int maxSide = 2 * range + 1;
 
-			var rect = new IntRectZ(location.X - maxSide / 2, location.Y - maxSide / 2, maxSide, maxSide, location.Z);
+			var rect = new IntGrid2Z(location.X - maxSide / 2, location.Y - maxSide / 2, maxSide, maxSide, location.Z);
 
 			return env.GetContents(rect)
 				.OfType<ILivingObject>()
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.AI
 		{
 			int maxSide = 2 * range + 1;
 
-			var rect = new IntRectZ(location.X - maxSide / 2, location.Y - maxSide / 2, maxSide, maxSide, location.Z);
+			var rect = new IntGrid2Z(location.X - maxSide / 2, location.Y - maxSide / 2, maxSide, maxSide, location.Z);
 
 			return env.GetContents(rect)
 				.OfType<ILivingObject>()

@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.UI
 			buildingItemsControl.ItemsSource = buildings;
 		}
 
-		public void SetContext(EnvironmentObject env, IntRectZ area)
+		public void SetContext(EnvironmentObject env, IntGrid2Z area)
 		{
 		}
 

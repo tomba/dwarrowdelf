@@ -297,11 +297,11 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public ObjectID EnvironmentID { get; private set; }
 		[SaveGameProperty]
-		public IntRectZ Area { get; private set; }
+		public IntGrid2Z Area { get; private set; }
 		[SaveGameProperty]
 		public BuildingID BuildingID { get; private set; }
 
-		public ConstructBuildingAction(IEnvironmentObject env, IntRectZ area, BuildingID buildingID)
+		public ConstructBuildingAction(IEnvironmentObject env, IntGrid2Z area, BuildingID buildingID)
 		{
 			this.EnvironmentID = env.ObjectID;
 			this.Area = area;

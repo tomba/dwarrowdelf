@@ -237,7 +237,7 @@ namespace Dwarrowdelf.Messages
 	public sealed class CreateLivingMessage : DebugMessage
 	{
 		public ObjectID EnvironmentID;
-		public IntRectZ Area;
+		public IntGrid2Z Area;
 
 		public string Name;
 		public LivingID LivingID;

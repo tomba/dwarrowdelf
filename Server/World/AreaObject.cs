@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Server
 		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
 
 		[SaveGameProperty]
-		public IntRectZ Area { get; private set; }
+		public IntGrid2Z Area { get; private set; }
 
-		protected AreaObject(ObjectType objectType, IntRectZ area)
+		protected AreaObject(ObjectType objectType, IntGrid2Z area)
 			: base(objectType)
 		{
 			this.Area = area;
