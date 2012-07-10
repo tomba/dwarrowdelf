@@ -152,7 +152,7 @@ namespace Dwarrowdelf.Messages
 	public sealed class MapDataTerrainsMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }
-		public IntBox Bounds { get; set; }
+		public IntGrid3 Bounds { get; set; }
 		public bool IsTerrainDataCompressed { get; set; }
 		public byte[] TerrainData { get; set; }
 

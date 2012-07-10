@@ -235,11 +235,11 @@ namespace Dwarrowdelf
 			return new IntPoint2(this.X, this.Y);
 		}
 
-		public IntPoint3 Truncate(IntBox box)
+		public IntPoint3 Truncate(IntGrid3 box)
 		{
-			int x = Math.Min(Math.Max(this.X, box.X1), box.X2 - 1);
-			int y = Math.Min(Math.Max(this.Y, box.Y1), box.Y2 - 1);
-			int z = Math.Min(Math.Max(this.Z, box.Z1), box.Z2 - 1);
+			int x = Math.Min(Math.Max(this.X, box.X1), box.X2);
+			int y = Math.Min(Math.Max(this.Y, box.Y1), box.Y2);
+			int z = Math.Min(Math.Max(this.Z, box.Z1), box.Z2);
 
 			return new IntPoint3(x, y, z);
 		}

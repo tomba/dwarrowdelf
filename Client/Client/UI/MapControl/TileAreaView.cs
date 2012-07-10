@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed class TileAreaView : INotifyPropertyChanged
 	{
 		EnvironmentObject m_environment;
-		IntBox m_box;
+		IntGrid3 m_box;
 		MovableObjectCollection m_objects;
 
 		public TileAreaView()
@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntBox Box
+		public IntGrid3 Box
 		{
 			get { return m_box; }
 

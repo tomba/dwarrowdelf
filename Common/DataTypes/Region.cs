@@ -8,20 +8,20 @@ namespace Dwarrowdelf
 	[Serializable]
 	public class Region
 	{
-		List<IntBox> m_boxs = new List<IntBox>();
+		List<IntGrid3> m_boxs = new List<IntGrid3>();
 
 		public void Add(IntGrid2Z rect)
 		{
-			Add(new IntBox(rect));
+			Add(new IntGrid3(rect));
 		}
 
-		public void Add(IntBox box)
+		public void Add(IntGrid3 box)
 		{
 			m_boxs.Add(box);
 
 		}
 
-		public void Remove(IntBox box)
+		public void Remove(IntGrid3 box)
 		{
 			m_boxs.Remove(box);
 		}

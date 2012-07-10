@@ -12,9 +12,9 @@ namespace Dwarrowdelf.Jobs.Assignments
 	public sealed class HaulToAreaAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]
-		readonly IntBox m_dest;
+		readonly IntGrid3 m_dest;
 
-		public HaulToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntBox destination, DirectionSet positioning, IItemObject hauledItem)
+		public HaulToAreaAssignment(IJobObserver parent, IEnvironmentObject environment, IntGrid3 destination, DirectionSet positioning, IItemObject hauledItem)
 			: base(parent, environment, positioning, hauledItem)
 		{
 			m_dest = destination;

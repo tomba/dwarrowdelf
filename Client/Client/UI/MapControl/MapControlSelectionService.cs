@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
 
-			end = end.Truncate(new IntBox(this.m_mapControl.Environment.Size));
+			end = end.Truncate(new IntGrid3(this.m_mapControl.Environment.Size));
 
 			switch (m_selectionMode)
 			{
@@ -241,7 +241,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			if (this.Selection.SelectionBox.Z1 > m_mapControl.Z || this.Selection.SelectionBox.Z2 - 1 < m_mapControl.Z)
+			if (this.Selection.SelectionBox.Z1 > m_mapControl.Z || this.Selection.SelectionBox.Z2 < m_mapControl.Z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
@@ -270,10 +270,10 @@ namespace Dwarrowdelf.Client.UI
 			this.IsSelectionValid = true;
 		}
 
-		public MapSelection(IntBox box)
+		public MapSelection(IntGrid3 box)
 			: this()
 		{
-			if (box.Width == 0 || box.Height == 0 || box.Depth == 0)
+			if (box.Columns == 0 || box.Rows == 0 || box.Depth == 0)
 			{
 				this.IsSelectionValid = false;
 			}
@@ -297,14 +297,14 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntBox SelectionBox
+		public IntGrid3 SelectionBox
 		{
 			get
 			{
 				if (!this.IsSelectionValid)
-					return new IntBox();
+					return new IntGrid3();
 
-				return new IntBox(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
+				return new IntGrid3(this.SelectionStart, this.SelectionEnd);
 			}
 		}
 

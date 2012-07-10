@@ -35,8 +35,8 @@
 									<Binding Path="Box.X" Mode="OneWay" />
 									<Binding Path="Box.Y" Mode="OneWay" />
 									<Binding Path="Box.Z" Mode="OneWay" />
-									<Binding Path="Box.Width" Mode="OneWay" />
-									<Binding Path="Box.Height" Mode="OneWay" />
+									<Binding Path="Box.Columns" Mode="OneWay" />
+									<Binding Path="Box.Rows" Mode="OneWay" />
 									<Binding Path="Box.Depth" Mode="OneWay" />
 								</MultiBinding>
 							</TextBlock.Text>

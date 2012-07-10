@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client.UI
 		public MaterialID MaterialID { get; set; }
 
 		public EnvironmentObject Environment { get; set; }
-		public IntBox Area { get; set; }
+		public IntGrid3 Area { get; set; }
 
 		public CreateItemDialog()
 		{
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client.UI
 			base.OnInitialized(e);
 		}
 
-		public void SetContext(EnvironmentObject env, IntBox area)
+		public void SetContext(EnvironmentObject env, IntGrid3 area)
 		{
 			this.Environment = env;
 			this.Area = area;

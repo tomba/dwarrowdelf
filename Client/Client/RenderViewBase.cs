@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Client
 		protected bool m_showVirtualSymbols = true;
 		protected EnvironmentObject m_environment;
 		protected IntPoint3 m_centerPos;
-		IntBox m_bounds;
+		IntGrid3 m_bounds;
 
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client
 
 				var cp = CenterPos;
 				var s = m_renderData.Size;
-				m_bounds = new IntBox(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3(s, MAXLEVEL));
 			}
 		}
@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Client
 
 				var cp = CenterPos;
 				var s = m_renderData.Size;
-				m_bounds = new IntBox(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
+				m_bounds = new IntGrid3(new IntPoint3(cp.X - s.Width / 2, cp.Y - s.Height / 2, cp.Z - MAXLEVEL + 1),
 					new IntSize3(s, MAXLEVEL));
 			}
 		}

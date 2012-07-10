@@ -11,13 +11,13 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	public sealed class FellTreeParallelJob : JobGroup
 	{
 		readonly IEnvironmentObject m_environment;
-		readonly IntBox m_area;
+		readonly IntGrid3 m_area;
 
 		IEnumerable<IntPoint3> m_locs;
 
 		List<Tuple<IntPoint3, IJob>> m_jobs = new List<Tuple<IntPoint3, IJob>>();
 
-		public FellTreeParallelJob(IEnvironmentObject env, IntBox area)
+		public FellTreeParallelJob(IEnvironmentObject env, IntGrid3 area)
 			: base(null)
 		{
 			m_environment = env;

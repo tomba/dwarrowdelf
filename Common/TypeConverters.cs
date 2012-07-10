@@ -147,7 +147,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class IntBoxConverter : TypeConverter
+	public sealed class IntGrid3Converter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -161,10 +161,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntBox) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntGrid3) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntBox)value;
+			var rect = (IntGrid3)value;
 			return rect.ToString();
 		}
 
@@ -178,7 +178,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntBox.Parse(source);
+			return IntGrid3.Parse(source);
 		}
 	}
 

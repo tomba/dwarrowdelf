@@ -35,12 +35,12 @@ namespace MyArea
 
 		public IntPoint3? Center { get { return m_region.Center; } }
 
-		IntBox LargeObjectToBox(AreaObject ob)
+		IntGrid3 LargeObjectToBox(AreaObject ob)
 		{
 			var area = ob.Area;
 
 			int d = 2;
-			return new IntBox(new IntPoint3(area.X1 - d, area.Y1 - d, area.Z), new IntPoint3(area.X2 + d, area.Y2 + d, area.Z + 1));
+			return new IntGrid3(new IntPoint3(area.X1 - d, area.Y1 - d, area.Z), new IntPoint3(area.X2 + d, area.Y2 + d, area.Z + 1));
 		}
 
 		void AddLargeObject(AreaObject ob)

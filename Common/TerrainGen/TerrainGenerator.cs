@@ -294,7 +294,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			// XXX split the sphere into 8 parts, and mirror
 
-			var bb = new IntBox(center.X - r, center.Y - r, center.Z - r, r * 2 + 1, r * 2 + 1, r * 2 + 1);
+			var bb = new IntGrid3(center.X - r, center.Y - r, center.Z - r, r * 2 + 1, r * 2 + 1, r * 2 + 1);
 
 			var rs = Math.Pow(r, 2);
 

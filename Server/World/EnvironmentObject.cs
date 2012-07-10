@@ -485,7 +485,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = 0; z < d; ++z)
 				{
-					var bounds = new IntBox(0, 0, z, w, h, 1);
+					var bounds = new IntGrid3(0, 0, z, w, h, 1);
 
 					byte[] arr;
 
@@ -511,7 +511,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = 0; z < d; ++z)
 				{
-					var bounds = new IntBox(0, 0, z, w, h, 1);
+					var bounds = new IntGrid3(0, 0, z, w, h, 1);
 
 					byte[] arr;
 
@@ -598,7 +598,7 @@ namespace Dwarrowdelf.Server
 #endif
 		}
 
-		void WriteTileData(Stream memStream, IntBox bounds, IVisionTracker visionTracker)
+		void WriteTileData(Stream memStream, IntGrid3 bounds, IVisionTracker visionTracker)
 		{
 			using (var streamWriter = new BinaryWriter(memStream))
 			{
@@ -812,7 +812,7 @@ namespace Dwarrowdelf.Server
 		internal TileGrid Grid { get { return m_tileGrid; } }
 		internal ArrayGrid2D<byte> DepthMap { get { return m_depthMap; } }
 
-		public IntBox Bounds { get { return new IntBox(m_size); } }
+		public IntGrid3 Bounds { get { return new IntGrid3(m_size); } }
 		public int Width { get { return m_size.Width; } }
 		public int Height { get { return m_size.Height; } }
 		public int Depth { get { return m_size.Depth; } }

@@ -43,9 +43,9 @@ namespace Dwarrowdelf.AStar
 
 	public sealed class AStarAreaTarget : IAStarTarget
 	{
-		IntBox m_destination;
+		IntGrid3 m_destination;
 
-		public AStarAreaTarget(IntBox destination)
+		public AStarAreaTarget(IntGrid3 destination)
 		{
 			m_destination = destination;
 		}
@@ -57,7 +57,7 @@ namespace Dwarrowdelf.AStar
 
 		public ushort GetHeuristic(IntPoint3 location)
 		{
-			var dst = new IntPoint3((m_destination.X1 + m_destination.X2) / 2, (m_destination.Y1 + m_destination.Y2) / 2, (m_destination.Z1 + m_destination.Z2) / 2);
+			var dst = m_destination.Center;
 			return (ushort)((dst - location).ManhattanLength * 10);
 		}
 	}
