@@ -342,7 +342,7 @@ namespace Dwarrowdelf
 
 		public static readonly TerrainFilter ConstructWallFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
-			new InteriorID[] { InteriorID.Empty });
+			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
 
 		public static readonly ItemFilter ConstructWallItemFilter = new ItemFilter(ItemID.Block, MaterialCategory.Rock);
 	}
