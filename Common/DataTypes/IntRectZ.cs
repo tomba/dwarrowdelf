@@ -127,9 +127,9 @@ namespace Dwarrowdelf
 					yield return new IntPoint3(x, y, m_z);
 		}
 
-		public IntCuboid ToCuboid()
+		public IntBox ToBox()
 		{
-			return new IntCuboid(m_rect, m_z);
+			return new IntBox(m_rect, m_z);
 		}
 
 		public override int GetHashCode()

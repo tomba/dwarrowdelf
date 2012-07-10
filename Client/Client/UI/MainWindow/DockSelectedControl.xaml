@@ -32,12 +32,12 @@
 						<TextBlock>
 							<TextBlock.Text>
 								<MultiBinding StringFormat="{}{0}, {1}, {2}  {3} x {4} x {5}">
-									<Binding Path="Cuboid.X" Mode="OneWay" />
-									<Binding Path="Cuboid.Y" Mode="OneWay" />
-									<Binding Path="Cuboid.Z" Mode="OneWay" />
-									<Binding Path="Cuboid.Width" Mode="OneWay" />
-									<Binding Path="Cuboid.Height" Mode="OneWay" />
-									<Binding Path="Cuboid.Depth" Mode="OneWay" />
+									<Binding Path="Box.X" Mode="OneWay" />
+									<Binding Path="Box.Y" Mode="OneWay" />
+									<Binding Path="Box.Z" Mode="OneWay" />
+									<Binding Path="Box.Width" Mode="OneWay" />
+									<Binding Path="Box.Height" Mode="OneWay" />
+									<Binding Path="Box.Depth" Mode="OneWay" />
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>

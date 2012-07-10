@@ -147,7 +147,7 @@
     <Compile Include="ObjectData.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="DataTypes\IntCuboid.cs" />
+    <Compile Include="DataTypes\IntBox.cs" />
     <Compile Include="DataTypes\IntVector2.cs" />
     <Compile Include="DataTypes\IntSize2.cs" />
     <Compile Include="DataTypes\Direction.cs" />

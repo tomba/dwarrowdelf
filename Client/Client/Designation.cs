@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void AddArea(IntCuboid area, DesignationType type)
+		public void AddArea(IntBox area, DesignationType type)
 		{
 			int origCount = m_map.Count;
 
@@ -154,7 +154,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void RemoveArea(IntCuboid area)
+		public void RemoveArea(IntBox area)
 		{
 			var removes = m_map.Where(kvp => area.Contains(kvp.Key)).ToArray();
 			foreach (var kvp in removes)

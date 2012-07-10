@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Client.UI
 				case ClientToolMode.DesignationRemove:
 				case ClientToolMode.SetTerrain:
 				case ClientToolMode.CreateLiving:
-					this.MapControl.SelectionMode = MapSelectionMode.Cuboid;
+					this.MapControl.SelectionMode = MapSelectionMode.Box;
 					break;
 
 				case ClientToolMode.CreateStockpile:
@@ -96,23 +96,23 @@ namespace Dwarrowdelf.Client.UI
 			switch (this.mainWindowTools.ToolMode)
 			{
 				case ClientToolMode.DesignationRemove:
-					env.Designations.RemoveArea(selection.SelectionCuboid);
+					env.Designations.RemoveArea(selection.SelectionBox);
 					break;
 
 				case ClientToolMode.DesignationMine:
-					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Mine);
+					env.Designations.AddArea(selection.SelectionBox, DesignationType.Mine);
 					break;
 
 				case ClientToolMode.DesignationStairs:
-					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.CreateStairs);
+					env.Designations.AddArea(selection.SelectionBox, DesignationType.CreateStairs);
 					break;
 
 				case ClientToolMode.DesignationChannel:
-					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.Channel);
+					env.Designations.AddArea(selection.SelectionBox, DesignationType.Channel);
 					break;
 
 				case ClientToolMode.DesignationFellTree:
-					env.Designations.AddArea(selection.SelectionCuboid, DesignationType.FellTree);
+					env.Designations.AddArea(selection.SelectionBox, DesignationType.FellTree);
 					break;
 
 				case ClientToolMode.CreateStockpile:
@@ -162,7 +162,7 @@ namespace Dwarrowdelf.Client.UI
 							var args = new Dictionary<string, object>()
 							{
 								{ "envID", map.Environment.ObjectID },
-								{ "cube", selection.SelectionCuboid },
+								{ "cube", selection.SelectionBox },
 								{ "terrainID", data.TerrainID },
 								{ "terrainMaterialID", data.TerrainMaterialID },
 								{ "interiorID", data.InteriorID },
@@ -212,7 +212,7 @@ env.ScanWaterTiles()
 					{
 						var dialog = new CreateItemDialog();
 						dialog.Owner = this;
-						dialog.SetContext(env, selection.SelectionCuboid);
+						dialog.SetContext(env, selection.SelectionBox);
 						var res = dialog.ShowDialog();
 
 						if (res == true)

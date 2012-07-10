@@ -82,7 +82,7 @@ namespace MyArea
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntRectZ(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				SetArea(env, builder.Area.ToBox(), floorTile);
 				builder.Create(world, env);
 			}
 
@@ -90,7 +90,7 @@ namespace MyArea
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntRectZ(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				SetArea(env, builder.Area.ToBox(), floorTile);
 				builder.Create(world, env);
 			}
 
@@ -98,7 +98,7 @@ namespace MyArea
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntRectZ(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				SetArea(env, builder.Area.ToBox(), floorTile);
 				builder.Create(world, env);
 			}
 
@@ -108,7 +108,7 @@ namespace MyArea
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntRectZ(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				SetArea(env, builder.Area.ToBox(), floorTile);
 				builder.Create(world, env);
 			}
 
@@ -116,7 +116,7 @@ namespace MyArea
 
 			{
 				var builder = new BuildingObjectBuilder(BuildingID.Gemcutter, new IntRectZ(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToCuboid(), floorTile);
+				SetArea(env, builder.Area.ToBox(), floorTile);
 				builder.Create(world, env);
 			}
 		}
@@ -166,7 +166,7 @@ namespace MyArea
 			}
 		}
 
-		static void SetArea(EnvironmentObject env, IntCuboid area, TileData data)
+		static void SetArea(EnvironmentObject env, IntBox area, TileData data)
 		{
 			foreach (var p in area.Range())
 				env.SetTileData(p, data);

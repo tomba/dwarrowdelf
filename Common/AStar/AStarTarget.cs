@@ -43,9 +43,9 @@ namespace Dwarrowdelf.AStar
 
 	public sealed class AStarAreaTarget : IAStarTarget
 	{
-		IntCuboid m_destination;
+		IntBox m_destination;
 
-		public AStarAreaTarget(IntCuboid destination)
+		public AStarAreaTarget(IntBox destination)
 		{
 			m_destination = destination;
 		}

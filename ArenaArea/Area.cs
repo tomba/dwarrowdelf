@@ -25,14 +25,14 @@ namespace MyArea
 			int surfaceLevel = 2;
 
 			td = new TileData() { TerrainID = TerrainID.NaturalWall, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
-			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 0), td);
-			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 1), td);
+			FillVolume(envBuilder, new IntBox(envBuilder.Bounds.Plane, 0), td);
+			FillVolume(envBuilder, new IntBox(envBuilder.Bounds.Plane, 1), td);
 
 			td = new TileData() { TerrainID = TerrainID.NaturalFloor, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
-			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 2), td);
+			FillVolume(envBuilder, new IntBox(envBuilder.Bounds.Plane, 2), td);
 
 			td = new TileData() { TerrainID = TerrainID.Empty, InteriorID = InteriorID.Empty };
-			FillVolume(envBuilder, new IntCuboid(envBuilder.Bounds.Plane, 3), td);
+			FillVolume(envBuilder, new IntBox(envBuilder.Bounds.Plane, 3), td);
 
 			td = new TileData() { TerrainID = TerrainID.NaturalWall, TerrainMaterialID = MaterialID.Granite, InteriorID = InteriorID.Empty };
 			DrawRect(envBuilder, new IntRectZ(envBuilder.Bounds.Plane, 2), td);
@@ -99,7 +99,7 @@ namespace MyArea
 			}
 		}
 
-		static void FillVolume(EnvironmentObjectBuilder env, IntCuboid volume, TileData data)
+		static void FillVolume(EnvironmentObjectBuilder env, IntBox volume, TileData data)
 		{
 			foreach (var p in volume.Range())
 				env.SetTileData(p, data);

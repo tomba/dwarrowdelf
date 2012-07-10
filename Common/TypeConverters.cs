@@ -147,7 +147,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class IntCuboidConverter : TypeConverter
+	public sealed class IntBoxConverter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
@@ -161,10 +161,10 @@ namespace Dwarrowdelf
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == null) || !(value is IntCuboid) || destinationType != typeof(string))
+			if ((destinationType == null) || !(value is IntBox) || destinationType != typeof(string))
 				return base.ConvertTo(context, culture, value, destinationType);
 
-			var rect = (IntCuboid)value;
+			var rect = (IntBox)value;
 			return rect.ToString();
 		}
 
@@ -178,7 +178,7 @@ namespace Dwarrowdelf
 			if (source == null)
 				return base.ConvertFrom(context, culture, value);
 
-			return IntCuboid.Parse(source);
+			return IntBox.Parse(source);
 		}
 	}
 

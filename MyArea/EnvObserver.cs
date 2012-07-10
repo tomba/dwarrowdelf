@@ -35,23 +35,23 @@ namespace MyArea
 
 		public IntPoint3? Center { get { return m_region.Center; } }
 
-		IntCuboid LargeObjectToCuboid(AreaObject ob)
+		IntBox LargeObjectToBox(AreaObject ob)
 		{
 			var area = ob.Area;
 
 			int d = 2;
-			return new IntCuboid(new IntPoint3(area.X1 - d, area.Y1 - d, area.Z), new IntPoint3(area.X2 + d, area.Y2 + d, area.Z + 1));
+			return new IntBox(new IntPoint3(area.X1 - d, area.Y1 - d, area.Z), new IntPoint3(area.X2 + d, area.Y2 + d, area.Z + 1));
 		}
 
 		void AddLargeObject(AreaObject ob)
 		{
-			var c = LargeObjectToCuboid(ob);
+			var c = LargeObjectToBox(ob);
 			m_region.Add(c);
 		}
 
 		void RemoveLargeObject(AreaObject ob)
 		{
-			var c = LargeObjectToCuboid(ob);
+			var c = LargeObjectToBox(ob);
 			m_region.Remove(c);
 		}
 

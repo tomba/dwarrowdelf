@@ -457,7 +457,7 @@ namespace Dwarrowdelf.Client.UI
 			else
 			{
 				this.SelectionTileAreaView.Environment = this.Environment;
-				this.SelectionTileAreaView.Cuboid = selection.SelectionCuboid;
+				this.SelectionTileAreaView.Box = selection.SelectionBox;
 			}
 
 			Notify("Selection");

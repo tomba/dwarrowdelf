@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client
 				case State.HaulToStockpile:
 					if (!m_stockpile.Area.Contains(this.Worker.Location))
 					{
-						assignment = new HaulToAreaAssignment(this, m_stockpile.Environment, m_stockpile.Area.ToCuboid(), DirectionSet.Exact, this.Item);
+						assignment = new HaulToAreaAssignment(this, m_stockpile.Environment, m_stockpile.Area.ToBox(), DirectionSet.Exact, this.Item);
 					}
 					else
 					{

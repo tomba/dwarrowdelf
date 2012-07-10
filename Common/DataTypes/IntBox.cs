@@ -7,8 +7,8 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	[System.ComponentModel.TypeConverter(typeof(IntCuboidConverter))]
-	public struct IntCuboid : IEquatable<IntCuboid>
+	[System.ComponentModel.TypeConverter(typeof(IntBoxConverter))]
+	public struct IntBox : IEquatable<IntBox>
 	{
 		readonly int m_x;
 		readonly int m_y;
@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 		public int Height { get { return m_height; } }
 		public int Depth { get { return m_depth; } }
 
-		public IntCuboid(int x, int y, int z, int width, int height, int depth)
+		public IntBox(int x, int y, int z, int width, int height, int depth)
 		{
 			m_x = x;
 			m_y = y;
@@ -34,7 +34,7 @@ namespace Dwarrowdelf
 			m_depth = depth;
 		}
 
-		public IntCuboid(IntPoint3 p, IntSize3 size)
+		public IntBox(IntPoint3 p, IntSize3 size)
 		{
 			m_x = p.X;
 			m_y = p.Y;
@@ -44,7 +44,7 @@ namespace Dwarrowdelf
 			m_depth = size.Depth;
 		}
 
-		public IntCuboid(IntPoint3 point1, IntPoint3 point2)
+		public IntBox(IntPoint3 point1, IntPoint3 point2)
 		{
 			m_x = Math.Min(point1.X, point2.X);
 			m_y = Math.Min(point1.Y, point2.Y);
@@ -54,17 +54,17 @@ namespace Dwarrowdelf
 			m_depth = Math.Max((Math.Max(point1.Z, point2.Z) - m_z), 0);
 		}
 
-		public IntCuboid(IntRect rect, int z)
+		public IntBox(IntRect rect, int z)
 			: this(rect.X, rect.Y, z, rect.Width, rect.Height, 1)
 		{
 		}
 
-		public IntCuboid(IntRectZ rect)
+		public IntBox(IntRectZ rect)
 			: this(rect.X, rect.Y, rect.Z, rect.Width, rect.Height, 1)
 		{
 		}
 
-		public IntCuboid(IntSize3 size)
+		public IntBox(IntSize3 size)
 			: this(0, 0, 0, size.Width, size.Height, size.Depth)
 		{
 		}
@@ -128,23 +128,23 @@ namespace Dwarrowdelf
 				return true;
 		}
 
-		public bool IntersectsWith(IntCuboid rect)
+		public bool IntersectsWith(IntBox rect)
 		{
 			return rect.X1 < this.X2 && rect.X2 > this.X1 &&
 				rect.Y1 < this.Y2 && rect.Y2 > this.Y1 &&
 				rect.Z1 < this.Z1 && rect.Z2 > this.Z1;
 		}
 
-		public bool IntersectsWithInclusive(IntCuboid rect)
+		public bool IntersectsWithInclusive(IntBox rect)
 		{
 			return rect.X1 <= this.X2 && rect.X2 >= this.X1 &&
 				rect.Y1 <= this.Y2 && rect.Y2 >= this.Y1 &&
 				rect.Z1 <= this.Z1 && rect.Z2 >= this.Z1;
 		}
 
-		public IntCuboid Inflate(int width, int height, int depth)
+		public IntBox Inflate(int width, int height, int depth)
 		{
-			return new IntCuboid(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);
+			return new IntBox(this.X, this.Y, this.Z, this.Width + width, this.Height + height, this.Depth + depth);
 		}
 
 		public IEnumerable<IntPoint3> Range()
@@ -160,17 +160,17 @@ namespace Dwarrowdelf
 			return new IntRect(this.X, this.Y, this.Width, this.Height);
 		}
 
-		public static bool operator ==(IntCuboid left, IntCuboid right)
+		public static bool operator ==(IntBox left, IntBox right)
 		{
 			return left.Equals(right);
 		}
 
-		public static bool operator !=(IntCuboid left, IntCuboid right)
+		public static bool operator !=(IntBox left, IntBox right)
 		{
 			return !left.Equals(right);
 		}
 
-		public bool Equals(IntCuboid other)
+		public bool Equals(IntBox other)
 		{
 			return this.m_x == other.m_x && this.m_y == other.m_y && this.m_z == other.m_z &&
 				this.m_width == other.m_width && this.m_height == other.m_height && this.m_depth == other.m_depth;
@@ -178,10 +178,10 @@ namespace Dwarrowdelf
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is IntCuboid))
+			if (!(obj is IntBox))
 				return false;
 
-			return Equals((IntCuboid)obj);
+			return Equals((IntBox)obj);
 		}
 
 		public override int GetHashCode()
@@ -195,11 +195,11 @@ namespace Dwarrowdelf
 			return String.Format(info, "{0},{1},{2},{3},{4},{5}", m_x, m_y, m_z, m_width, m_height, m_depth);
 		}
 
-		public static IntCuboid Parse(string str)
+		public static IntBox Parse(string str)
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;
 			var arr = str.Split(',');
-			return new IntCuboid(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info),
+			return new IntBox(Convert.ToInt32(arr[0], info), Convert.ToInt32(arr[1], info), Convert.ToInt32(arr[2], info),
 				Convert.ToInt32(arr[3], info), Convert.ToInt32(arr[4], info), Convert.ToInt32(arr[5], info));
 		}
 	}

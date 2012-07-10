@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Client.UI
 		None,
 		Point,
 		Rectangle,
-		Cuboid,
+		Box,
 	}
 
 	sealed class MapControlSelectionService
@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Client.UI
 				switch (m_selectionMode)
 				{
 					case MapSelectionMode.Rectangle:
-					case MapSelectionMode.Cuboid:
+					case MapSelectionMode.Box:
 
 						m_mapControl.DragStarted -= OnDragStarted;
 						m_mapControl.DragEnded -= OnDragEnded;
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client.UI
 				switch (m_selectionMode)
 				{
 					case MapSelectionMode.Rectangle:
-					case MapSelectionMode.Cuboid:
+					case MapSelectionMode.Box:
 
 						m_mapControl.DragStarted += OnDragStarted;
 						m_mapControl.DragEnded += OnDragEnded;
@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var end = m_mapControl.ScreenPointToMapLocation(mousePos);
 
-			end = end.Truncate(new IntCuboid(this.m_mapControl.Environment.Size));
+			end = end.Truncate(new IntBox(this.m_mapControl.Environment.Size));
 
 			switch (m_selectionMode)
 			{
@@ -222,7 +222,7 @@ namespace Dwarrowdelf.Client.UI
 					start = new IntPoint3(this.Selection.SelectionStart.ToIntPoint(), end.Z);
 					break;
 
-				case MapSelectionMode.Cuboid:
+				case MapSelectionMode.Box:
 					start = this.Selection.SelectionStart;
 					break;
 
@@ -241,7 +241,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			if (this.Selection.SelectionCuboid.Z1 > m_mapControl.Z || this.Selection.SelectionCuboid.Z2 - 1 < m_mapControl.Z)
+			if (this.Selection.SelectionBox.Z1 > m_mapControl.Z || this.Selection.SelectionBox.Z2 - 1 < m_mapControl.Z)
 			{
 				m_selectionRect.Visibility = Visibility.Hidden;
 				return;
@@ -271,17 +271,17 @@ namespace Dwarrowdelf.Client.UI
 			this.IsSelectionValid = true;
 		}
 
-		public MapSelection(IntCuboid cuboid)
+		public MapSelection(IntBox box)
 			: this()
 		{
-			if (cuboid.Width == 0 || cuboid.Height == 0 || cuboid.Depth == 0)
+			if (box.Width == 0 || box.Height == 0 || box.Depth == 0)
 			{
 				this.IsSelectionValid = false;
 			}
 			else
 			{
-				this.SelectionStart = cuboid.Corner1;
-				this.SelectionEnd = cuboid.Corner2;
+				this.SelectionStart = box.Corner1;
+				this.SelectionEnd = box.Corner2;
 				this.IsSelectionValid = true;
 			}
 		}
@@ -298,14 +298,14 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntCuboid SelectionCuboid
+		public IntBox SelectionBox
 		{
 			get
 			{
 				if (!this.IsSelectionValid)
-					return new IntCuboid();
+					return new IntBox();
 
-				return new IntCuboid(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
+				return new IntBox(this.SelectionStart, this.SelectionEnd).Inflate(1, 1, 1);
 			}
 		}
 

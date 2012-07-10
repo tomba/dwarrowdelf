@@ -199,7 +199,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void ReadAndSetTileData(Stream stream, IntCuboid bounds)
+		void ReadAndSetTileData(Stream stream, IntBox bounds)
 		{
 			using (var reader = new BinaryReader(stream))
 			{
@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public void SetTerrains(IntCuboid bounds, byte[] tileDataList, bool isCompressed)
+		public void SetTerrains(IntBox bounds, byte[] tileDataList, bool isCompressed)
 		{
 			this.Version += 1;
 

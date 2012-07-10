@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed class TileAreaView : INotifyPropertyChanged
 	{
 		EnvironmentObject m_environment;
-		IntCuboid m_cuboid;
+		IntBox m_box;
 		MovableObjectCollection m_objects;
 
 		public TileAreaView()
@@ -47,18 +47,18 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public IntCuboid Cuboid
+		public IntBox Box
 		{
-			get { return m_cuboid; }
+			get { return m_box; }
 
 			set
 			{
-				if (m_cuboid == value)
+				if (m_box == value)
 					return;
 
-				m_cuboid = value;
+				m_box = value;
 
-				Notify("Cuboid");
+				Notify("Box");
 				NotifyTileChanges();
 			}
 		}
@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.Environment != null)
 			{
-				var obs = m_cuboid.Range().SelectMany(p => m_environment.GetContents(p));
+				var obs = m_box.Range().SelectMany(p => m_environment.GetContents(p));
 				foreach (var ob in obs)
 					m_objects.Add(ob);
 			}
@@ -92,7 +92,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMapTerrainChanged(IntPoint3 l)
 		{
-			if (!m_cuboid.Contains(l))
+			if (!m_box.Contains(l))
 				return;
 
 			NotifyTileTerrainChanges();
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMapObjectChanged(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changeType)
 		{
-			if (!m_cuboid.Contains(l))
+			if (!m_box.Contains(l))
 				return;
 
 			switch (changeType)
@@ -132,7 +132,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_cuboid.Range().
+				return m_box.Range().
 					Select(p => Tuple.Create(m_environment.GetInterior(p), m_environment.GetInteriorMaterial(p))).
 					Distinct();
 			}
@@ -145,7 +145,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_cuboid.Range().
+				return m_box.Range().
 					Select(p => Tuple.Create(m_environment.GetTerrain(p), m_environment.GetTerrainMaterial(p))).
 					Distinct();
 			}
@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_cuboid.Range().
+				return m_box.Range().
 					Select(p => m_environment.GetWaterLevel(p)).
 					Distinct();
 			}
@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return null;
 
-				return m_cuboid.Range().
+				return m_box.Range().
 					Select(p => m_environment.GetElementAt(p)).
 					Where(b => b != null).
 					Distinct();
@@ -185,7 +185,7 @@ namespace Dwarrowdelf.Client.UI
 				if (m_environment == null)
 					return TileFlags.None;
 
-				return m_cuboid.Range()
+				return m_box.Range()
 					.Select(p => m_environment.GetTileFlags(p))
 					.Aggregate(TileFlags.None, (f, v) => f |= v);
 			}
