@@ -47,7 +47,7 @@ using System.Runtime.Serialization;
 
 namespace Dwarrowdelf
 {
-	// Stored in render tile data, needs to be short
+	// Stored in render tile data, needs to be byte
 	public enum GameColor : byte
 	{
 		None = 0,
@@ -196,7 +196,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public struct GameColorRGB : IEquatable<GameColorRGB>
 	{
-		public static readonly int NUMCOLORS;
+		public static readonly int NUMCOLORS = Enum.GetNames(typeof(GameColor)).Length;
 
 		readonly byte m_r;
 		readonly byte m_g;
@@ -346,12 +346,6 @@ namespace Dwarrowdelf
 			new GameColorRGB(255,255,0),
 			new GameColorRGB(154,205,50),
 		};
-
-		static GameColorRGB()
-		{
-			var array = Enum.GetNames(typeof(GameColor));
-			NUMCOLORS = array.Length;
-		}
 
 		GameColorRGB(byte r, byte g, byte b)
 		{

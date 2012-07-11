@@ -191,8 +191,6 @@ namespace Dwarrowdelf.TerrainGen
 
 		static void CreateSlopes(TileGrid grid, ArrayGrid2D<byte> heightMap, int baseSeed)
 		{
-			var arr = new System.Threading.ThreadLocal<Direction[]>(() => new Direction[8]);
-
 			var plane = grid.Size.Plane;
 
 			plane.Range().AsParallel().ForAll(p =>

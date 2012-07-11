@@ -48,10 +48,11 @@ namespace Dwarrowdelf.Client
 			Trace.TraceInformation("Loading client data");
 			var watch = Stopwatch.StartNew();
 
-			var reader = new StringReader(dataStr);
-
-			var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
-			var data = deserializer.Deserialize<BaseObject[]>();
+			using (var reader = new StringReader(dataStr))
+			{
+				var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
+				var data = deserializer.Deserialize<BaseObject[]>();
+			}
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
