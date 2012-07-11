@@ -270,7 +270,7 @@ namespace Dwarrowdelf
 			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			int pn = DirectionConsts.DirNeg | DirectionConsts.DirPos;
+			const int pn = DirectionConsts.DirNeg | DirectionConsts.DirPos;
 
 			return x != pn && y != pn && z != pn;
 		}

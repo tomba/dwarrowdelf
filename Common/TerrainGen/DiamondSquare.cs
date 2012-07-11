@@ -63,7 +63,6 @@ namespace Dwarrowdelf.TerrainGen
 		static void HeightMap(Context ctx)
 		{
 			var grid = ctx.Grid;
-			var corners = ctx.Corners;
 
 			for (int pass = 0; pass < (int)Math.Log(grid.Width, 2); ++pass)
 			{

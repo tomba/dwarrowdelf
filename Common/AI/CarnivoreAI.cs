@@ -30,8 +30,6 @@ namespace Dwarrowdelf.AI
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
-			var worker = this.Worker;
-
 			bool hasAssignment = this.CurrentAssignment != null;
 			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
 

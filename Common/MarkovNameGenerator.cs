@@ -64,7 +64,7 @@ namespace Dwarrowdelf
 				for (int letter = 0; letter < word.Length - order; letter++)
 				{
 					string token = word.Substring(letter, order);
-					List<char> entry = null;
+					List<char> entry;
 					if (m_chains.ContainsKey(token))
 						entry = m_chains[token];
 					else
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 		public string GetNextName()
 		{
 			//get a random token somewhere in middle of sample word
-			string s = "";
+			string s;
 
 			do
 			{

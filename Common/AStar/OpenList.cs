@@ -26,9 +26,9 @@ namespace Dwarrowdelf.AStar
 
 		public bool IsEmpty { get { return m_count == 0; } }
 
-		int Parent(int idx) { return idx / 2; }
-		int Left(int idx) { return idx * 2; }
-		int Right(int idx) { return idx * 2 + 1; }
+		static int Parent(int idx) { return idx / 2; }
+		static int Left(int idx) { return idx * 2; }
+		static int Right(int idx) { return idx * 2 + 1; }
 
 		public void Add(T node)
 		{

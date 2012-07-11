@@ -279,9 +279,7 @@ namespace Dwarrowdelf
 
 		public EnumBitMask(TEnum enumValue)
 		{
-			BitArray mask = null;
-
-			mask = new BitArray(EnumHelpers.GetEnumMax<TEnum>() + 1);
+			BitArray mask = new BitArray(EnumHelpers.GetEnumMax<TEnum>() + 1);
 			mask.Set(EnumConv.ToInt32(enumValue), true);
 
 			m_mask = mask;

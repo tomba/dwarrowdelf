@@ -26,9 +26,7 @@ namespace Dwarrowdelf
 			public object Get(int id)
 			{
 				object ob;
-				if (m_refMap.TryGetValue(id, out ob) == false)
-					return null;
-				return ob;
+				return m_refMap.TryGetValue(id, out ob) ? ob : null;
 			}
 
 			public void Add(int id, object ob)
@@ -239,10 +237,7 @@ namespace Dwarrowdelf
 			{
 				var id = ReadID();
 
-				var type = ReadType();
-
-				if (type == null)
-					type = expectedType;
+				var type = ReadType() ?? expectedType;
 
 				if (type == null)
 					throw new SerializationException("No type for object");
