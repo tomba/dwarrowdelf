@@ -9,7 +9,7 @@ namespace Dwarrowdelf.Server
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
-		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
+		IEnvironmentObject IAreaObject.Environment { get { return this.Environment; } }
 
 		[SaveGameProperty]
 		public IntGrid2Z Area { get; private set; }

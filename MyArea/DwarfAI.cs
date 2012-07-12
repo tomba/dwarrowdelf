@@ -36,7 +36,7 @@ namespace MyArea
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment
 		protected override IAssignment GetNewOrCurrentAssignment(ActionPriority priority)
 		{
-			var worker = (ILivingObject)this.Worker;
+			var worker = this.Worker;
 
 			bool hasAssignment = this.CurrentAssignment != null;
 			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
@@ -112,10 +112,9 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.FoodFullness > 300)
 				return null;
 
-			IItemObject ob = null;
 			var env = worker.Environment;
 
-			ob = env.Inventory
+			var ob = env.Inventory
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.NutritionalValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
@@ -140,10 +139,9 @@ namespace MyArea
 			if (priority == ActionPriority.Idle && worker.WaterFullness > 300)
 				return null;
 
-			IItemObject ob = null;
 			var env = worker.Environment;
 
-			ob = env.Inventory
+			var ob = env.Inventory
 				.OfType<IItemObject>()
 				.Where(o => o.IsReserved == false && o.RefreshmentValue > 0)
 				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)

@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty]
 		public World World { get; private set; }
-		IWorld IBaseObject.World { get { return this.World as IWorld; } }
+		IWorld IBaseObject.World { get { return this.World; } }
 
 		[SaveGameProperty]
 		public bool IsInitialized { get; private set; }

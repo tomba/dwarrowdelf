@@ -154,7 +154,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// XXX move to EnvironmentHelpers?
-		bool IsSeeThrough(TileData data)
+		static bool IsSeeThrough(TileData data)
 		{
 			var terrain = Terrains.GetTerrain(data.TerrainID);
 			var interior = Interiors.GetInterior(data.InteriorID);
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// XXX move to EnvironmentHelpers?
-		bool IsSeeThroughDown(TileData data)
+		static bool IsSeeThroughDown(TileData data)
 		{
 			var terrain = Terrains.GetTerrain(data.TerrainID);
 
@@ -186,7 +186,7 @@ namespace Dwarrowdelf.Server
 			{
 				revealed.AddRange(DirectionExtensions.PlanarDirections
 					.Select(dir => location + dir)
-					.Where(p => env.Contains(p))
+					.Where(env.Contains)
 					.Where(p => GetVisible(p) == false));
 			}
 
@@ -215,7 +215,7 @@ namespace Dwarrowdelf.Server
 
 				// Send new objects
 
-				foreach (var ob in revealed.SelectMany(p => env.GetContents(p)))
+				foreach (var ob in revealed.SelectMany(env.GetContents))
 				{
 					var vis = m_player.GetObjectVisibility(ob);
 					Debug.Assert(vis != ObjectVisibility.None);
@@ -311,8 +311,7 @@ namespace Dwarrowdelf.Server
 
 			foreach (var p in knownLocs)
 			{
-				// XXX
-				var obList = ((EnvironmentObject)m_environment).GetContents(p);
+				var obList = m_environment.GetContents(p);
 				if (obList != null)
 					knownObs.UnionWith(obList);
 			}

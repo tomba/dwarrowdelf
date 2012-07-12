@@ -164,12 +164,8 @@ namespace Dwarrowdelf.Server
 
 			lock (m_objectMap)
 			{
-				BaseObject ob = null;
-
-				if (m_objectMap.TryGetValue(objectID, out ob))
-					return ob;
-				else
-					return null;
+				BaseObject ob;
+				return m_objectMap.TryGetValue(objectID, out ob) ? ob : null;
 			}
 		}
 

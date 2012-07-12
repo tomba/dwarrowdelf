@@ -14,8 +14,6 @@ namespace MyArea
 
 		public static void FinalizeEnv(EnvironmentObject env)
 		{
-			var world = env.World;
-
 			// Add items
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), GetRandomSurfaceLocation(env));

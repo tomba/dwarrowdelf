@@ -114,9 +114,8 @@ namespace Dwarrowdelf.Server
 			ShuffleArray(dirs);
 			bool curLevelChanged = false;
 
-			for (int i = 0; i < dirs.Length; ++i)
+			foreach (var d in dirs)
 			{
-				var d = dirs[i];
 				var pp = p + d;
 
 				if (!CanWaterFlow(p, pp))
