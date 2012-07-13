@@ -50,9 +50,6 @@ namespace Dwarrowdelf.Server
 			{
 				{ "world", world },
 				{ "get", new Func<object, BaseObject>(world.IPGet) },
-				{ "getitem", new Func<object, ItemObject>(world.IPGetItem) },
-				{ "getenv", new Func<object, EnvironmentObject>(world.IPGetEnv) },
-				{ "getliving", new Func<object, LivingObject>(world.IPGetLiving) },
 			};
 
 			foreach (var kvp in globals)

@@ -8,7 +8,7 @@
 
 		<UniformGrid Columns="2">
 			<TextBlock>ObjectID</TextBlock>
-			<TextBlock Text="{Binding ObjectID}" />
+			<TextBlock Text="{Binding ObjectID, Converter={StaticResource objectIDConverter}}" />
 
 			<TextBlock>CreationTime</TextBlock>
 			<TextBlock Text="{Binding CreationTime}" />

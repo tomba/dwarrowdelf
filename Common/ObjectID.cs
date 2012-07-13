@@ -73,6 +73,47 @@ namespace Dwarrowdelf
 				return ob.ObjectID;
 		}
 
+		public static bool TryParse(string str, out ObjectID oid)
+		{
+			oid = ObjectID.NullObjectID;
+
+			if (str.Length < 2)
+				return false;
+
+			if (string.Compare(str, "NULL", true) == 0)
+			{
+				oid = ObjectID.NullObjectID;
+				return true;
+			}
+
+			if (string.Compare(str, "ANY", true) == 0)
+			{
+				oid = ObjectID.AnyObjectID;
+				return true;
+			}
+
+			char c = str[0];
+			c = char.ToUpper(c);
+
+			uint value;
+			if (uint.TryParse(str.Substring(1), out value) == false)
+				return false;
+
+			ObjectType ot = Dwarrowdelf.ObjectType.None;
+
+			switch (c)
+			{
+				case 'B': ot = Dwarrowdelf.ObjectType.Building; break;
+				case 'E': ot = Dwarrowdelf.ObjectType.Environment; break;
+				case 'I': ot = Dwarrowdelf.ObjectType.Item; break;
+				case 'L': ot = Dwarrowdelf.ObjectType.Living; break;
+				default: return false;
+			}
+
+			oid = new ObjectID(ot, value);
+			return true;
+		}
+
 		public override string ToString()
 		{
 			if (this == ObjectID.NullObjectID)
@@ -94,7 +135,5 @@ namespace Dwarrowdelf
 				return String.Format("{0}{1}", c, this.Value);
 			}
 		}
-
 	}
-
 }
