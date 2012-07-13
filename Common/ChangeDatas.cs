@@ -69,12 +69,6 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class FullObjectChangeData : ObjectChangeData
-	{
-		public BaseGameObjectData ObjectData;
-	}
-
-	[Serializable]
 	public abstract class PropertyChangeData : ObjectChangeData
 	{
 		public PropertyID PropertyID;

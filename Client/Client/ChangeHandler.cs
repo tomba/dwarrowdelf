@@ -46,14 +46,6 @@ namespace Dwarrowdelf.Client
 			var ob = m_world.CreateObject(change.ObjectID);
 		}
 
-		// XXX check if this is needed
-		void HandleChange(FullObjectChangeData change)
-		{
-			var ob = m_world.GetObject<BaseObject>(change.ObjectID);
-
-			ob.Deserialize(change.ObjectData);
-		}
-
 		void HandleChange(ObjectMoveChangeData change)
 		{
 			var ob = m_world.FindObject<MovableObject>(change.ObjectID);

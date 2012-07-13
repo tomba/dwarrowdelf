@@ -811,11 +811,6 @@ namespace Dwarrowdelf.Server
 				var c = (MapChange)change;
 				return m_player.Sees(c.Environment, c.Location);
 			}
-			else if (change is FullObjectChange)
-			{
-				var c = (FullObjectChange)change;
-				return controllables.Contains(c.Object);
-			}
 			else if (change is PropertyChange)
 			{
 				var c = (PropertyChange)change;

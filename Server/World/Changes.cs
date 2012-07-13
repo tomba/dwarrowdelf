@@ -144,21 +144,6 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public sealed class FullObjectChange : ObjectChange
-	{
-		public BaseGameObjectData ObjectData { get; set; }
-
-		public FullObjectChange(BaseObject ob)
-			: base(ob)
-		{
-		}
-
-		public override ChangeData ToChangeData()
-		{
-			return new FullObjectChangeData() { ObjectID = this.Object.ObjectID, ObjectData = this.ObjectData };
-		}
-	}
-
 	public abstract class PropertyChange : ObjectChange
 	{
 		public PropertyID PropertyID { get; private set; }
