@@ -16,6 +16,14 @@
 		<CharGfx Char=" " />
 	</Symbol>
 
+	<Symbol ID="Hidden">
+		<CharGfx Char="▒" />
+	</Symbol>
+
+	<Symbol ID="Air">
+		<CharGfx Char="▒" />
+	</Symbol>
+
 	<Symbol ID="Floor">
 		<DrawingGfx DrawingName="Ground" />
 	</Symbol>

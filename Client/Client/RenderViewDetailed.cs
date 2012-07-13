@@ -173,10 +173,18 @@ namespace Dwarrowdelf.Client
 			var td = env.GetTileData(ml);
 
 			if (td.TerrainID == TerrainID.Undefined)
+			{
+				tile.SymbolID = SymbolID.Hidden;
+				tile.Color = GameColor.None;
+				tile.BgColor = GameColor.None;
 				return;
+			}
 
 			if (td.TerrainID == TerrainID.Empty)
 			{
+				tile.SymbolID = SymbolID.Air;
+				tile.Color = GameColor.LightCyan;
+				tile.BgColor = GameColor.None;
 				seeThrough = true;
 				return;
 			}

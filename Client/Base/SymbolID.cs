@@ -12,7 +12,14 @@ namespace Dwarrowdelf.Client
 
 		Unknown,
 
+		// Empty symbol, e.g. to show only bg color
 		Empty,
+
+		// Tile that has not been visible
+		Hidden,
+
+		// Empty tile above ground
+		Air,
 
 		/* floors */
 		Floor,
