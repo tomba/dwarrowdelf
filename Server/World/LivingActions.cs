@@ -605,7 +605,8 @@ namespace Dwarrowdelf.Server
 
 						var td = env.GetTileData(p);
 
-						if (td.TerrainID != TerrainID.NaturalFloor || td.InteriorID != InteriorID.Empty)
+						if (td.TerrainID != TerrainID.NaturalFloor ||
+							(td.InteriorID != InteriorID.Empty && td.InteriorID != InteriorID.Grass))
 						{
 							SendFailReport(report, "wrong type of tile");
 							return false;
@@ -637,6 +638,8 @@ namespace Dwarrowdelf.Server
 
 						td.TerrainID = TerrainID.Empty;
 						td.TerrainMaterialID = Dwarrowdelf.MaterialID.Undefined;
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
 						env.SetTileData(p, td);
 
 						if (clearDown)
