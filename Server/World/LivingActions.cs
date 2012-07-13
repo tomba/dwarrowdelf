@@ -571,6 +571,11 @@ namespace Dwarrowdelf.Server
 						if (td2.TerrainID == TerrainID.NaturalFloor)
 						{
 							td2.TerrainID = TerrainID.Hole;
+							if (td2.InteriorID == InteriorID.Grass)
+							{
+								td2.InteriorID = InteriorID.Empty;
+								td2.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+							}
 							env.SetTileData(p + Direction.Up, td2);
 						}
 
