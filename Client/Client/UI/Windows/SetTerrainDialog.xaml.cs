@@ -22,7 +22,6 @@ namespace Dwarrowdelf.Client.UI
 		public MaterialID? InteriorMaterialID { get; set; }
 
 		public bool? Water { get; set; }
-		public bool? Grass { get; set; }
 	}
 
 	sealed partial class SetTerrainDialog : Window

@@ -167,7 +167,6 @@ namespace Dwarrowdelf.Client.UI
 								{ "terrainMaterialID", data.TerrainMaterialID },
 								{ "interiorID", data.InteriorID },
 								{ "interiorMaterialID", data.InteriorMaterialID },
-								{ "grass", data.Grass },
 								{ "waterLevel", data.Water.HasValue ? (data.Water == true ? (byte?)TileData.MaxWaterLevel : (byte?)0) : null },
 							};
 
@@ -185,14 +184,6 @@ for p in cube.Range():
 		Dwarrowdelf.TileData.InteriorID.SetValue(td, interiorID)
 	if interiorMaterialID != None:
 		Dwarrowdelf.TileData.InteriorMaterialID.SetValue(td, interiorMaterialID)
-
-	if grass != None:
-		flags = td.Flags
-		if grass:
-			flags |= Dwarrowdelf.TileFlags.Grass
-		else:
-			flags &= ~Dwarrowdelf.TileFlags.Grass
-		Dwarrowdelf.TileData.Flags.SetValue(td, flags)
 
 	if waterLevel != None:
 		Dwarrowdelf.TileData.WaterLevel.SetValue(td, waterLevel)

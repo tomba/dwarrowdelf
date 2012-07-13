@@ -8,13 +8,10 @@
 		mc:Ignorable="d" 
 		x:Class="Dwarrowdelf.Client.UI.SetTerrainDialog"
 		x:ClassModifier="internal"
-		Title="Set Terrain"
-		SizeToContent="WidthAndHeight"
-		WindowStartupLocation="CenterOwner"
-		WindowStyle="SingleBorderWindow"
+		Title="Set Terrain" WindowStartupLocation="CenterOwner"
 		ShowInTaskbar="False"
-		ResizeMode="NoResize"
-		DataContext="{Binding Data, RelativeSource={RelativeSource Self}}">
+		DataContext="{Binding Data, RelativeSource={RelativeSource Self}}"
+		Width="525" Height="600">
 
 	<Window.Resources>
 		<Style TargetType="{x:Type Button}">
@@ -56,38 +53,38 @@
 		</Grid>
 
 		<UniformGrid DockPanel.Dock="Bottom">
-			<CheckBox IsThreeState="True" IsChecked="{Binding Grass}" Content="Grass"/>
 			<CheckBox IsThreeState="True" IsChecked="{Binding Water}" Content="Water"/>
 		</UniformGrid>
 
-		<UniformGrid Columns="4">
-			<UniformGrid.Resources>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Grid.Resources>
 				<Style TargetType="{x:Type ListBox}">
 					<Setter Property="SelectionMode" Value="Single" />
 				</Style>
-			</UniformGrid.Resources>
+			</Grid.Resources>
 
-			<StackPanel Orientation="Vertical">
-				<TextBlock Text="TerrainID" />
-				<ListBox x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
-			</StackPanel>
+			<TextBlock Grid.Column="0" Grid.Row="0" Text="TerrainID" />
+			<TextBlock Grid.Column="1" Grid.Row="0" Text="TerrainMaterial" />
+			<TextBlock Grid.Column="2" Grid.Row="0" Text="InteriorID" />
+			<TextBlock Grid.Column="3" Grid.Row="0" Text="InteriorMaterial" />
 
-			<StackPanel Orientation="Vertical">
-				<TextBlock Text="TerrainMaterial" />
-				<ListBox x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
-			</StackPanel>
-
-			<StackPanel Orientation="Vertical">
-				<TextBlock Text="InteriorID" />
-				<ListBox x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
-			</StackPanel>
-
-			<StackPanel Orientation="Vertical">
-				<TextBlock Text="InteriorMaterial" />
-				<ListBox x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
-			</StackPanel>
-
-		</UniformGrid>
+			<ListBox Grid.Column="0" Grid.Row="1" x:Name="terrainIDListBox" ItemsSource="{Binding Source={StaticResource terrainIDs}}" SelectedValue="{Binding TerrainID}" />
+			<ListBox Grid.Column="1" Grid.Row="1" x:Name="terrainMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding TerrainMaterialID}" />
+			<ListBox Grid.Column="2" Grid.Row="1" x:Name="interiorIDListBox" ItemsSource="{Binding Source={StaticResource interiorIDs}}" SelectedValue="{Binding InteriorID}" />
+			<ListBox Grid.Column="3" Grid.Row="1" x:Name="interiorMaterialListBox" ItemsSource="{Binding Source={StaticResource materialIDs}}" SelectedValue="{Binding InteriorMaterialID}" />
+		</Grid>
 
 	</DockPanel>
 
