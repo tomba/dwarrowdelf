@@ -610,8 +610,7 @@ namespace Dwarrowdelf.Server
 
 						var td = env.GetTileData(p);
 
-						if (td.TerrainID != TerrainID.NaturalFloor ||
-							(td.InteriorID != InteriorID.Empty && td.InteriorID != InteriorID.Grass))
+						if (td.IsClear == false)
 						{
 							SendFailReport(report, "wrong type of tile");
 							return false;

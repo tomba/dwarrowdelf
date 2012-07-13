@@ -53,6 +53,41 @@ namespace Dwarrowdelf
 
 		public const int SizeOf = 8;
 
-		public static readonly TileData EmptyTileData = new TileData() { TerrainID = TerrainID.Empty, InteriorID = InteriorID.Empty };
+		public static readonly TileData EmptyTileData = new TileData()
+		{
+			TerrainID = TerrainID.Empty,
+			TerrainMaterialID = MaterialID.Undefined,
+			InteriorID = InteriorID.Empty,
+			InteriorMaterialID = MaterialID.Undefined,
+			WaterLevel = 0,
+		};
+
+		public bool IsTerrainFloor
+		{
+			get
+			{
+				return this.TerrainID == Dwarrowdelf.TerrainID.NaturalFloor || this.TerrainID == Dwarrowdelf.TerrainID.BuiltFloor;
+			}
+		}
+
+		/// <summary>
+		/// Is Interior empty or a "soft" item that can be removed automatically
+		/// </summary>
+		public bool IsInteriorClear
+		{
+			get
+			{
+				return this.InteriorID == InteriorID.Empty || this.InteriorID == InteriorID.Grass ||
+					this.InteriorID == Dwarrowdelf.InteriorID.Sapling;
+			}
+		}
+
+		public bool IsClear
+		{
+			get
+			{
+				return this.IsTerrainFloor && this.IsInteriorClear;
+			}
+		}
 	}
 }
