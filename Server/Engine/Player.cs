@@ -703,13 +703,14 @@ namespace Dwarrowdelf.Server
 			if (!CanSeeChange(change, m_player.Controllables))
 				return;
 
+			// Send object data for an object that comes to the environment
+			if (change is ObjectMoveChange)
 			{
-				// We don't collect newly visible terrains/objects on AllVisible maps.
-				// However, we still need to tell about newly created objects that come
-				// to AllVisible maps.
-				var c = change as ObjectMoveChange;
-				if (c != null && c.Source != c.Destination && c.Destination is EnvironmentObject &&
-					(((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.AllVisible || ((EnvironmentObject)c.Destination).VisibilityMode == VisibilityMode.GlobalFOV))
+				var c = (ObjectMoveChange)change;
+				var dst = c.Destination as EnvironmentObject;
+
+				if (dst != null && c.Source != c.Destination &&
+					(dst.VisibilityMode == VisibilityMode.AllVisible || dst.VisibilityMode == VisibilityMode.GlobalFOV))
 				{
 					var newObject = c.Object;
 					var vis = m_player.GetObjectVisibility(newObject);
