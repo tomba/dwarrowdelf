@@ -6,9 +6,15 @@ using System.Threading;
 
 namespace Dwarrowdelf
 {
+	public enum GameMode
+	{
+		Undefined,
+		Fortress,
+	}
+
 	public interface IGameFactory
 	{
-		IGame CreateGame(string gameDll, string gameDir);
+		IGame CreateGame(GameMode mode, string gameDir);
 	}
 
 	public interface IGame

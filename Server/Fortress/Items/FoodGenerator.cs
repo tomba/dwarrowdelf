@@ -5,7 +5,7 @@ using System.Text;
 using Dwarrowdelf;
 using Dwarrowdelf.Server;
 
-namespace MyArea
+namespace Dwarrowdelf.Server.Fortress
 {
 	[SaveGameObjectByRef]
 	public sealed class FoodGenerator : ItemObject

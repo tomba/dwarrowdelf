@@ -10,7 +10,7 @@ using Dwarrowdelf.TerrainGen;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace MyArea
+namespace Dwarrowdelf.Server.Fortress
 {
 	static class WorldCreator
 	{

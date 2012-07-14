@@ -32,6 +32,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -48,6 +49,10 @@
     <ProjectReference Include="..\Engine\Server.Engine.csproj">
       <Project>{BCAE564B-8D06-4D7F-866E-EF9E10B27FE0}</Project>
       <Name>Server.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fortress\Server.Fortress.csproj">
+      <Project>{982A809E-67C3-41EF-BF7B-C8CAFD288ADC}</Project>
+      <Name>Server.Fortress</Name>
     </ProjectReference>
     <ProjectReference Include="..\World\Server.World.csproj">
       <Project>{0C31C7C2-586F-4F67-8225-1C09E816695B}</Project>

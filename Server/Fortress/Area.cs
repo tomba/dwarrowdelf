@@ -5,7 +5,7 @@ using System.Text;
 using Dwarrowdelf.Server;
 using Dwarrowdelf;
 
-namespace MyArea
+namespace Dwarrowdelf.Server.Fortress
 {
 	public sealed class Area : IArea
 	{

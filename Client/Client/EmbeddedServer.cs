@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Client
 
 			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
 			var baseDir = System.IO.Path.GetDirectoryName(exePath);
-			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.Engine.dll");
+			var serverPath = System.IO.Path.Combine(baseDir, "Dwarrowdelf.Server.exe");
 
 			AppDomain appDomain;
 
@@ -109,8 +109,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			var gameFactory = (IGameFactory)appDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
-			m_game = gameFactory.CreateGame("MyArea", gameDir);
-			//m_game = gameFactory.CreateGame("ArenaArea", gameDir);
+			m_game = gameFactory.CreateGame(GameMode.Fortress, gameDir);
 
 			UpdateStatus("Game Created");
 		}

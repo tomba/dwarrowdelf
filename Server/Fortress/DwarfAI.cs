@@ -9,7 +9,7 @@ using Dwarrowdelf.AI;
 using Dwarrowdelf.Jobs.Assignments;
 using Dwarrowdelf.Jobs.AssignmentGroups;
 
-namespace MyArea
+namespace Dwarrowdelf.Server.Fortress
 {
 	[SaveGameObjectByRef]
 	sealed class DwarfAI : AssignmentAI, IJobObserver

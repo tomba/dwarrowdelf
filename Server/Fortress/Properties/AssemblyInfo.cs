@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MyArea")]
+[assembly: AssemblyTitle("Fortress")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MyArea")]
-[assembly: AssemblyCopyright("Copyright © Tomi Valkeinen 2012")]
+[assembly: AssemblyProduct("Fortress")]
+[assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,9 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("72fad9b6-67e8-4072-ae24-5ca1e09c12e0")]
-
-[assembly: System.CLSCompliant(false)]
+[assembly: Guid("8b37f994-4619-41e6-a67a-703c8c973a43")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -6,7 +6,7 @@ using Dwarrowdelf;
 using Dwarrowdelf.Server;
 using System.Threading;
 
-namespace MyArea
+namespace Dwarrowdelf.Server.Fortress
 {
 	static class Helpers
 	{

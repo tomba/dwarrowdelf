@@ -34,8 +34,7 @@ namespace Dwarrowdelf.Server
 				save = saveManager.GetLatestSaveFile();
 
 			var gf = new GameFactory();
-			// Typecast to Game to allow direct manipulation
-			var game = (Game)gf.CreateGame("MyArea", gameDir);
+			var game = (Game)gf.CreateGame(GameMode.Fortress, gameDir);
 
 			if (save == Guid.Empty)
 				game.CreateWorld();
