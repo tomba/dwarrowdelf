@@ -654,9 +654,14 @@ for p in area.Range():
 			if (task.Status != TaskStatus.RanToCompletion)
 			{
 				if (task.Exception != null)
-					MessageBox.Show(task.Exception.Message, "Connection Failed");
+					MessageBox.Show(task.Exception.ToString(), "Connection Failed");
 				else
 					MessageBox.Show("Connection Cancelled");
+
+				GameData.Data.User.DisconnectEvent -= OnDisconnected;
+				GameData.Data.User.StateChangedEvent -= OnClientUserStateChanged;
+				GameData.Data.User = null;
+
 				return;
 			}
 
@@ -705,6 +710,7 @@ for p in area.Range():
 		{
 			this.MapControl.Environment = null;
 
+			GameData.Data.User.StateChangedEvent -= OnClientUserStateChanged;
 			GameData.Data.User.DisconnectEvent -= OnDisconnected;
 			GameData.Data.User = null;
 
