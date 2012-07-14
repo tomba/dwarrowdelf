@@ -44,8 +44,9 @@
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="AreaObject.cs" />
-    <Compile Include="EnvTreeHandler.cs" />
-    <Compile Include="EnvWaterHandler.cs" />
+    <Compile Include="Environment\EnvironmentObjectBuilder.cs" />
+    <Compile Include="Environment\EnvTreeHandler.cs" />
+    <Compile Include="Environment\EnvWaterHandler.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="Living\Actions\ConstructBuilding.cs" />
     <Compile Include="Living\Actions\WearArmor.cs" />
@@ -71,7 +72,7 @@
     <Compile Include="ProcessableList.cs" />
     <Compile Include="ItemObject.cs" />
     <Compile Include="Living\LivingObject.cs" />
-    <Compile Include="EnvironmentObject.cs" />
+    <Compile Include="Environment\EnvironmentObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MovableObject.cs" />
     <Compile Include="World.cs" />
