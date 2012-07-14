@@ -3,4 +3,4 @@ bin
 obj
 *.csproj.user
 save
-
+Client/Client/publish
