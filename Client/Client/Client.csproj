@@ -399,10 +399,10 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Dwarrowdelf.Server.exe.config">
+    <Content Include="Dwarrowdelf.Server.exe.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
