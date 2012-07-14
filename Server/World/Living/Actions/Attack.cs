@@ -13,8 +13,6 @@ namespace Dwarrowdelf.Server
 			return 1;
 		}
 
-		Random m_random = new Random();
-
 		bool PerformAction(AttackAction action)
 		{
 			var attacker = this;
@@ -32,7 +30,7 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			var roll = m_random.Next(20) + 1;
+			var roll = this.World.Random.Next(20) + 1;
 			bool hit;
 
 			var str = attacker.Strength;
@@ -81,7 +79,7 @@ namespace Dwarrowdelf.Server
 				else
 					dieSides = weapon.WeaponInfo.WC;
 
-				damage = m_random.Next(dieSides) + 1 + strBonus;
+				damage = this.World.Random.Next(dieSides) + 1 + strBonus;
 				damageCategory = DamageCategory.Melee;
 				Trace.TraceInformation("{0} hits {1}, {2} damage", attacker, target, damage);
 			}

@@ -45,8 +45,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		// XXX bad shuffle
-		static Random s_waterRandom = new Random();
-		static void ShuffleArray(Direction[] array)
+		void ShuffleArray(Direction[] array)
 		{
 			if (array.Length == 0)
 				return;
@@ -54,7 +53,7 @@ namespace Dwarrowdelf.Server
 			for (int i = array.Length - 1; i >= 0; i--)
 			{
 				var tmp = array[i];
-				int randomIndex = s_waterRandom.Next(i + 1);
+				int randomIndex = m_env.World.Random.Next(i + 1);
 
 				//Swap elements
 				array[i] = array[randomIndex];

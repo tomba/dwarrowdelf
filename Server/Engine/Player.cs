@@ -380,23 +380,6 @@ namespace Dwarrowdelf.Server
 				m_engine.SetMinTickTime(msg.MinTickTime.Value);
 		}
 
-		Random m_random = new Random();
-		IntPoint3 GetRandomSurfaceLocation(EnvironmentObject env, int zLevel)
-		{
-			IntPoint3 p;
-			int iter = 0;
-
-			do
-			{
-				if (iter++ > 10000)
-					throw new Exception();
-
-				p = new IntPoint3(m_random.Next(env.Width), m_random.Next(env.Height), zLevel);
-			} while (!EnvironmentHelpers.CanEnter(env, p));
-
-			return p;
-		}
-
 		/* functions for livings */
 		void ReceiveMessage(ProceedTurnReplyMessage msg)
 		{
