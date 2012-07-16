@@ -674,6 +674,10 @@ for p in area.Range():
 				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
 				mapControl.Z = controllable.Location.Z;
 			}
+
+			Program.StartupStopwatch.Stop();
+			Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
+			Program.StartupStopwatch = null;
 		}
 
 
