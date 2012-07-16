@@ -11,6 +11,9 @@ namespace Dwarrowdelf.Client
 		[LoaderOptimization(LoaderOptimization.MultiDomain)]
 		public static void Main()
 		{
+			var splashScreen = new System.Windows.SplashScreen("Images/splash.png");
+			splashScreen.Show(true, true);
+
 			var app = new App();
 			app.InitializeComponent();
 			app.Run();

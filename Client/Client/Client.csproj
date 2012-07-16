@@ -394,6 +394,7 @@
     </Compile>
     <Compile Include="ClientUser.cs" />
     <Compile Include="World.cs" />
+    <Resource Include="Images\splash.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
