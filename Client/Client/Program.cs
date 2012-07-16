@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Dwarrowdelf.Client
 {
@@ -14,6 +15,10 @@ namespace Dwarrowdelf.Client
 		[LoaderOptimization(LoaderOptimization.MultiDomain)]
 		public static void Main()
 		{
+			Thread.CurrentThread.Name = "CMain";
+
+			Trace.TraceInformation("Start");
+
 			StartupStopwatch = Stopwatch.StartNew();
 
 			var splashScreen = new System.Windows.SplashScreen("Images/splash.png");

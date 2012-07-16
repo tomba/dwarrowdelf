@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
-using System.Threading;
 using System.IO;
 using System.Text;
 
@@ -18,10 +17,6 @@ namespace Dwarrowdelf.Client
 		{
 			if (Debugger.IsAttached == false)
 				AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-
-			Thread.CurrentThread.Name = "Main";
-
-			Trace.TraceInformation("Start");
 
 			base.OnStartup(e);
 		}

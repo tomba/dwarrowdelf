@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Server
 	{
 		static void Main(string[] args)
 		{
-			Thread.CurrentThread.Name = "Main";
+			Thread.CurrentThread.Name = "SMain";
 
 			var path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
 			path = System.IO.Path.Combine(path, "Dwarrowdelf", "save");

@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Client
 			EventWaitHandle serverStartWaitHandle = (EventWaitHandle)arg;
 
 			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
-			Thread.CurrentThread.Name = "Main";
+			Thread.CurrentThread.Name = "SMain";
 
 			if (m_save == Guid.Empty)
 			{
