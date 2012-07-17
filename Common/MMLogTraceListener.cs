@@ -8,6 +8,7 @@ namespace Dwarrowdelf
 {
 	public sealed class MMLogTraceListener : TraceListener
 	{
+		// XXX written by both server and client World
 		public static int Tick;
 
 		string m_component;
