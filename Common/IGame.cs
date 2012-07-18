@@ -19,6 +19,7 @@ namespace Dwarrowdelf
 
 	public interface IGame
 	{
+		void Init();
 		void CreateWorld();
 		void LoadWorld(Guid id);
 

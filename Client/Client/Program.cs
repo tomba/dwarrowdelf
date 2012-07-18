@@ -12,10 +12,12 @@ namespace Dwarrowdelf.Client
 		public static Stopwatch StartupStopwatch;
 
 		[STAThread]
+		// XXX Note: MultiDomain doesn't seem to work with ClickOnce web install
 		[LoaderOptimization(LoaderOptimization.MultiDomain)]
 		public static void Main()
 		{
 			Thread.CurrentThread.Name = "CMain";
+			MyTraceContext.ThreadTraceContext = new MyTraceContext("Client");
 
 			Trace.TraceInformation("Start");
 

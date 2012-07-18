@@ -121,6 +121,8 @@ namespace Dwarrowdelf.Client
 			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 			Thread.CurrentThread.Name = "SMain";
 
+			m_game.Init();
+
 			if (m_save == Guid.Empty)
 			{
 				UpdateStatus("Creating World");

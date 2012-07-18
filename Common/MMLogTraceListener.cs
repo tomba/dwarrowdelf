@@ -6,23 +6,27 @@ using MemoryMappedLog;
 
 namespace Dwarrowdelf
 {
+	public sealed class MyTraceContext
+	{
+		[ThreadStatic]
+		public static MyTraceContext ThreadTraceContext;
+
+		public MyTraceContext(string component)
+		{
+			this.Component = component;
+		}
+
+		public readonly string Component;
+		public int Tick;
+	}
+
 	public sealed class MMLogTraceListener : TraceListener
 	{
-		// XXX written by both server and client World
-		public static int Tick;
-
-		string m_component;
-
 		public MMLogTraceListener()
 		{
 		}
 
 		public override bool IsThreadSafe { get { return true; } }
-
-		public MMLogTraceListener(string component)
-		{
-			m_component = component;
-		}
 
 		public override void Write(string message)
 		{
@@ -32,7 +36,18 @@ namespace Dwarrowdelf
 		public override void WriteLine(string message)
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
-			MMLog.Append(MMLogTraceListener.Tick, m_component ?? "", thread, message);
+
+			string component = "";
+			int tick = -1;
+
+			var ctx = MyTraceContext.ThreadTraceContext;
+			if (ctx != null)
+			{
+				component = ctx.Component;
+				tick = ctx.Tick;
+			}
+
+			MMLog.Append(tick, component, thread, message);
 		}
 
 		public override void Fail(string message)

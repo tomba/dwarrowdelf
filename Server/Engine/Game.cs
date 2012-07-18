@@ -27,6 +27,11 @@ namespace Dwarrowdelf.Server
 			DirectConnectionListener.NewConnection(clientConnection);
 		}
 
+		public void Init()
+		{
+			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
+		}
+
 		public void CreateWorld()
 		{
 			this.Engine.Create();

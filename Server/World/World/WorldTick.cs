@@ -197,7 +197,7 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 
 			this.TickNumber++;
-			MMLogTraceListener.Tick = this.TickNumber;
+			MyTraceContext.ThreadTraceContext.Tick = this.TickNumber;
 			AddChange(new TickStartChange(this.TickNumber));
 
 			//trace.TraceInformation("-- Tick {0} started --", this.TickNumber);

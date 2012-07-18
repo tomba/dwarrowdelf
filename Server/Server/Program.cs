@@ -36,6 +36,8 @@ namespace Dwarrowdelf.Server
 			var gf = new GameFactory();
 			var game = (Game)gf.CreateGame(GameMode.Fortress, gameDir);
 
+			game.Init();
+
 			if (save == Guid.Empty)
 				game.CreateWorld();
 			else

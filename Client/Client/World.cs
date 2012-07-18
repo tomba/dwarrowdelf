@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client
 		public int TickNumber
 		{
 			get { return m_tickNumber; }
-			private set { m_tickNumber = value; MMLogTraceListener.Tick = this.TickNumber; Notify("TickNumber"); }
+			private set { m_tickNumber = value; MyTraceContext.ThreadTraceContext.Tick = this.TickNumber; Notify("TickNumber"); }
 		}
 
 		// XXX this could perhaps be removed
