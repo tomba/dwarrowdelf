@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dwarrowdelf.Messages;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -66,7 +68,11 @@ namespace Dwarrowdelf.Client.UI
 
 		private void StartServer_Button_Click(object sender, RoutedEventArgs e)
 		{
-			App.MainWindow.StartServer();
+			var task = App.MainWindow.StartServer();
+			task.ContinueWith((t) =>
+			{
+				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Start Server Failed");
+			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void StopServer_Button_Click(object sender, RoutedEventArgs e)
@@ -76,7 +82,11 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Connect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			App.MainWindow.Connect();
+			var task = App.MainWindow.ConnectPlayer();
+			task.ContinueWith((t) =>
+			{
+				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Connect Player Failed");
+			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)

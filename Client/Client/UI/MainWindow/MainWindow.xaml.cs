@@ -17,6 +17,7 @@ using Dwarrowdelf.Messages;
 using Dwarrowdelf.Jobs;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Dwarrowdelf.Client.UI
 {
@@ -394,7 +395,13 @@ for p in area.Range():
 				Win32.Helpers.LoadWindowPlacement(this, p);
 
 			if (ClientConfig.AutoConnect)
-				StartAndConnect();
+			{
+				var task = StartServerAndConnectPlayer();
+				task.ContinueWith((t) =>
+				{
+					MessageBox.Show(this, t.Exception.ToString(), "Start and Connect failed");
+				}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+			}
 		}
 
 		public MasterMapControl MapControl { get { return map; } }
@@ -539,6 +546,12 @@ for p in area.Range():
 
 		void SetLogOnText(string text, int idx)
 		{
+			if (this.Dispatcher.CheckAccess() == false)
+			{
+				this.Dispatcher.Invoke(new Action<string, int>(SetLogOnText), text, idx);
+				return;
+			}
+
 			if (m_logOnDialog == null)
 			{
 				this.IsEnabled = false;
@@ -562,6 +575,12 @@ for p in area.Range():
 
 		void CloseLoginDialog()
 		{
+			if (this.Dispatcher.CheckAccess() == false)
+			{
+				this.Dispatcher.Invoke(new Action(CloseLoginDialog));
+				return;
+			}
+
 			if (m_logOnDialog != null)
 			{
 				m_logOnDialog.Close();
@@ -572,16 +591,32 @@ for p in area.Range():
 			}
 		}
 
-		public void StartAndConnect()
+		public Task StartServerAndConnectPlayer()
 		{
-			var task = StartServerInternal();
+			if ((ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null) && GameData.Data.User != null)
+				return Task.Factory.StartNew(() => { });
 
-			task.ContinueWith((t) => Connect(), TaskScheduler.FromCurrentSynchronizationContext());
-		}
+			return Task.Factory.StartNew(() =>
+			{
+				try
+				{
+					StartServerSync();
 
-		public void DisconnectAndStop()
-		{
-			Disconnect();
+					try
+					{
+						ConnectPlayerSync();
+					}
+					catch
+					{
+						StopServer();
+						throw;
+					}
+				}
+				finally
+				{
+					CloseLoginDialog();
+				}
+			}, TaskCreationOptions.LongRunning);
 		}
 
 		public Task StartServer()
@@ -589,22 +624,91 @@ for p in area.Range():
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
 				return Task.Factory.StartNew(() => { });
 
-			var task = StartServerInternal()
-				.ContinueWith((t) => CloseLoginDialog(), TaskScheduler.FromCurrentSynchronizationContext());
-
-			return task;
+			return Task.Factory.StartNew(() =>
+			{
+				try
+				{
+					StartServerSync();
+				}
+				finally
+				{
+					CloseLoginDialog();
+				}
+			}, TaskCreationOptions.LongRunning);
 		}
 
-		Task StartServerInternal()
+		public Task ConnectPlayer()
 		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
+			if (GameData.Data.User != null)
 				return Task.Factory.StartNew(() => { });
+
+			return Task.Factory.StartNew(() =>
+			{
+				try
+				{
+					ConnectPlayerSync();
+				}
+				finally
+				{
+					CloseLoginDialog();
+				}
+			}, TaskCreationOptions.LongRunning);
+		}
+
+		void StartServerSync()
+		{
+			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
+				return;
+
+			var server = new EmbeddedServer();
+			server.StatusChanged += (str) => SetLogOnText(str, 1);
 
 			SetLogOnText("Starting server", 0);
 
-			m_server = new EmbeddedServer();
-			m_server.StatusChanged += (str) => this.Dispatcher.BeginInvoke(new Action<string, int>(SetLogOnText), str, 1);
-			return m_server.StartAsync();
+			server.Start();
+
+			this.Dispatcher.Invoke(new Action(() =>
+			{
+				m_server = server;
+			}));
+		}
+
+		void ConnectPlayerSync()
+		{
+			var player = new ClientUser();
+			player.DisconnectEvent += OnDisconnected;
+			player.StateChangedEvent += (state) => SetLogOnText(state.ToString(), 0);
+
+			player.LogOn("tomba");
+
+			this.Dispatcher.Invoke(new Action(() =>
+			{
+				GameData.Data.User = player;
+
+				var controllable = GameData.Data.World.Controllables.FirstOrDefault();
+				if (controllable != null && controllable.Environment != null)
+				{
+					var mapControl = App.MainWindow.MapControl;
+					mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
+					mapControl.Environment = controllable.Environment;
+					mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
+					mapControl.Z = controllable.Location.Z;
+				}
+
+				if (Program.StartupStopwatch != null)
+				{
+					Program.StartupStopwatch.Stop();
+					Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
+					Program.StartupStopwatch = null;
+				}
+			}));
+		}
+
+
+
+		public void DisconnectAndStop()
+		{
+			Disconnect();
 		}
 
 		public void StopServer()
@@ -621,66 +725,11 @@ for p in area.Range():
 		}
 
 
-		public Task Connect()
-		{
-			if (ClientConfig.EmbeddedServer != EmbeddedServerMode.None && m_server == null)
-				return null;
-
-			if (GameData.Data.User != null)
-				return null;
-
-			var player = new ClientUser();
-			player.DisconnectEvent += OnDisconnected;
-			player.StateChangedEvent += OnClientUserStateChanged;
-
-			GameData.Data.User = player;
-
-			var task = player.LogOnAsync("tomba")
-				.ContinueWith(OnConnected, TaskScheduler.FromCurrentSynchronizationContext());
-
-			return task;
-		}
-
 		void OnClientUserStateChanged(ClientUser.ClientUserState state)
 		{
 			this.Dispatcher.VerifyAccess();
 			SetLogOnText(state.ToString(), 0);
 		}
-
-		void OnConnected(Task task)
-		{
-			CloseLoginDialog();
-
-			if (task.Status != TaskStatus.RanToCompletion)
-			{
-				if (task.Exception != null)
-					MessageBox.Show(task.Exception.ToString(), "Connection Failed");
-				else
-					MessageBox.Show("Connection Cancelled");
-
-				GameData.Data.User.DisconnectEvent -= OnDisconnected;
-				GameData.Data.User.StateChangedEvent -= OnClientUserStateChanged;
-				GameData.Data.User = null;
-
-				return;
-			}
-
-			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-			if (controllable != null && controllable.Environment != null)
-			{
-				var mapControl = App.MainWindow.MapControl;
-				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-				mapControl.Environment = controllable.Environment;
-				mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
-				mapControl.Z = controllable.Location.Z;
-			}
-
-			Program.StartupStopwatch.Stop();
-			Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
-			Program.StartupStopwatch = null;
-		}
-
-
 
 		public void Disconnect()
 		{
@@ -714,7 +763,6 @@ for p in area.Range():
 		{
 			this.MapControl.Environment = null;
 
-			GameData.Data.User.StateChangedEvent -= OnClientUserStateChanged;
 			GameData.Data.User.DisconnectEvent -= OnDisconnected;
 			GameData.Data.User = null;
 

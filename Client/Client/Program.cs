@@ -24,8 +24,11 @@ namespace Dwarrowdelf.Client
 
 			StartupStopwatch = Stopwatch.StartNew();
 
-			var splashScreen = new System.Windows.SplashScreen("Images/splash.png");
-			splashScreen.Show(true, true);
+			if (Debugger.IsAttached == false)
+			{
+				var splashScreen = new System.Windows.SplashScreen("Images/splash.png");
+				splashScreen.Show(true, true);
+			}
 
 			var app = new App();
 			app.InitializeComponent();

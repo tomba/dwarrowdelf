@@ -80,73 +80,65 @@ namespace Dwarrowdelf.Client
 		}
 
 		// XXX add cancellationtoken
-		public Task LogOnAsync(string name)
+		public void LogOn(string name)
 		{
-			var ui = TaskScheduler.FromCurrentSynchronizationContext();
+			if (Application.Current.Dispatcher.CheckAccess() == true)
+				throw new Exception();
 
-			var server = App.MainWindow.Server;
+			this.State = ClientUserState.Connecting;
 
-			return Task.Factory.StartNew(() =>
+			switch (ClientConfig.ConnectionType)
 			{
+				case ConnectionType.Tcp:
+					m_connection = TcpConnection.Connect();
+					break;
 
-				if (Application.Current.Dispatcher.CheckAccess() == true)
+				case ConnectionType.Direct:
+					var server = (EmbeddedServer)App.Current.Dispatcher.Invoke(new Func<EmbeddedServer>(() => App.MainWindow.Server));
+					m_connection = DirectConnection.Connect(server.Game);
+					break;
+
+				case ConnectionType.Pipe:
+					m_connection = PipeConnection.Connect();
+					break;
+
+				default:
 					throw new Exception();
+			}
 
-				this.State = ClientUserState.Connecting;
+			this.State = ClientUserState.LoggingIn;
 
-				switch (ClientConfig.ConnectionType)
+			Send(new Messages.LogOnRequestMessage() { Name = name });
+
+			bool first = true;
+
+			/* read messages from LogOnReplyBeginMessage to LogOnReplyEndMessage */
+			while (true)
+			{
+				var msg = m_connection.GetMessage();
+
+				if (first)
 				{
-					case ConnectionType.Tcp:
-						m_connection = TcpConnection.Connect();
-						break;
-
-					case ConnectionType.Direct:
-						m_connection = DirectConnection.Connect(server.Game);
-						break;
-
-					case ConnectionType.Pipe:
-						m_connection = PipeConnection.Connect();
-						break;
-
-					default:
+					if ((msg is LogOnReplyBeginMessage) == false)
 						throw new Exception();
+					first = false;
+					this.State = ClientUserState.ReceivingLoginData;
 				}
 
-				this.State = ClientUserState.LoggingIn;
+				Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
 
-				Send(new Messages.LogOnRequestMessage() { Name = name });
+				if (msg is LogOnReplyEndMessage)
+					break;
+			}
 
-				bool first = true;
+			this.State = ClientUserState.LoggedIn;
+			this.IsPlayerInGame = true;
 
-				/* read messages from LogOnReplyBeginMessage to LogOnReplyEndMessage */
-				while (true)
-				{
-					var msg = m_connection.GetMessage();
+			m_connection.NewMessageEvent += _OnNewMessages;
+			m_connection.DisconnectEvent += _OnDisconnected;
 
-					if (first)
-					{
-						if ((msg is LogOnReplyBeginMessage) == false)
-							throw new Exception();
-						first = false;
-						this.State = ClientUserState.ReceivingLoginData;
-					}
-
-					Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
-
-					if (msg is LogOnReplyEndMessage)
-						break;
-				}
-
-				this.State = ClientUserState.LoggedIn;
-				this.IsPlayerInGame = true;
-
-				m_connection.NewMessageEvent += _OnNewMessages;
-				m_connection.DisconnectEvent += _OnDisconnected;
-
-				// Invoke manually to flush possible messages in the queue
-				_OnNewMessages();
-
-			}, System.Threading.CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+			// Invoke manually to flush possible messages in the queue
+			_OnNewMessages();
 		}
 
 		public void Send(ServerMessage msg)

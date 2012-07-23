@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Client
 
 		public IGame Game { get { return m_game; } }
 
-		public Task StartAsync()
+		public void Start()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
 				throw new Exception();
@@ -42,20 +42,20 @@ namespace Dwarrowdelf.Client
 			else
 				save = m_saveManager.GetLatestSaveFile();
 
-			return Task.Factory.StartNew(() =>
+			using (var serverStartWaitHandle = new AutoResetEvent(false))
 			{
-				using (var serverStartWaitHandle = new AutoResetEvent(false))
+				CreateEmbeddedServer(gameDir, save);
+
+				m_serverThread = new Thread(ServerMain);
+				m_serverThread.Start(serverStartWaitHandle);
+
+				var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(15));
+				if (!ok)
 				{
-					CreateEmbeddedServer(gameDir, save);
-
-					m_serverThread = new Thread(ServerMain);
-					m_serverThread.Start(serverStartWaitHandle);
-
-					var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(15));
-					if (!ok)
-						throw new Exception();
+					System.Diagnostics.Trace.TraceError("FAIL");
+					throw new Exception();
 				}
-			});
+			}
 		}
 
 		public void Stop()
