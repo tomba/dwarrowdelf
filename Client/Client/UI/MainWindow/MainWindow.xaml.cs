@@ -24,15 +24,18 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		MovableObject m_followObject;
-		bool m_closing;
+
+		enum CloseStatus
+		{
+			None,
+			ShuttingDown,
+			Ready,
+		}
+
+		CloseStatus m_closeStatus;
 
 		// Stores previous user values for setTerrainData
 		SetTerrainData m_setTerrainData;
-
-		EmbeddedServer m_server;
-		public EmbeddedServer Server { get { return m_server; } }
-
-		LogOnDialog m_logOnDialog;
 
 		MainWindowCommandHandler m_cmdHandler;
 
@@ -396,7 +399,7 @@ for p in area.Range():
 
 			if (ClientConfig.AutoConnect)
 			{
-				var task = StartServerAndConnectPlayer();
+				var task = GameData.Data.ConnectManager.StartServerAndConnectPlayer();
 				task.ContinueWith((t) =>
 				{
 					MessageBox.Show(this, t.Exception.ToString(), "Start and Connect failed");
@@ -412,19 +415,45 @@ for p in area.Range():
 		{
 			base.OnClosing(e);
 
-			if (m_closing)
-				return;
-
-			var p = Win32.Helpers.SaveWindowPlacement(this);
-			Properties.Settings.Default.MainWindowPlacement = p;
-			Properties.Settings.Default.Save();
-
-			if (GameData.Data.User != null || m_server != null)
+			switch (m_closeStatus)
 			{
-				e.Cancel = true;
-				m_closing = true;
+				case CloseStatus.None:
+					m_closeStatus = CloseStatus.ShuttingDown;
 
-				DisconnectAndStop();
+					e.Cancel = true;
+
+					var p = Win32.Helpers.SaveWindowPlacement(this);
+					Properties.Settings.Default.MainWindowPlacement = p;
+					Properties.Settings.Default.Save();
+
+					var task = GameData.Data.ConnectManager.DisconnectAndStop();
+					task.ContinueWith((t) =>
+					{
+						if (t.Status != TaskStatus.RanToCompletion)
+						{
+							this.Dispatcher.BeginInvoke(new Action<Exception>((exc) =>
+							{
+								m_closeStatus = CloseStatus.None;
+								MessageBox.Show(exc.ToString(), "Error closing down");
+								Application.Current.Shutdown();
+							}
+							), t.Exception);
+						}
+						else
+						{
+							m_closeStatus = CloseStatus.Ready;
+							this.Dispatcher.BeginInvoke(new Action(() => Close()));
+						}
+					});
+
+					break;
+
+				case CloseStatus.ShuttingDown:
+					e.Cancel = true;
+					break;
+
+				case CloseStatus.Ready:
+					break;
 			}
 		}
 
@@ -543,241 +572,6 @@ for p in area.Range():
 					throw new Exception();
 			}
 		}
-
-		void SetLogOnText(string text, int idx)
-		{
-			if (this.Dispatcher.CheckAccess() == false)
-			{
-				this.Dispatcher.Invoke(new Action<string, int>(SetLogOnText), text, idx);
-				return;
-			}
-
-			if (m_logOnDialog == null)
-			{
-				this.IsEnabled = false;
-
-				m_logOnDialog = new LogOnDialog();
-				m_logOnDialog.Owner = this;
-				if (idx == 0)
-					m_logOnDialog.SetText1(text);
-				else
-					m_logOnDialog.SetText2(text);
-				m_logOnDialog.Show();
-			}
-			else
-			{
-				if (idx == 0)
-					m_logOnDialog.SetText1(text);
-				else
-					m_logOnDialog.SetText2(text);
-			}
-		}
-
-		void CloseLoginDialog()
-		{
-			if (this.Dispatcher.CheckAccess() == false)
-			{
-				this.Dispatcher.Invoke(new Action(CloseLoginDialog));
-				return;
-			}
-
-			if (m_logOnDialog != null)
-			{
-				m_logOnDialog.Close();
-				m_logOnDialog = null;
-
-				this.IsEnabled = true;
-				this.Focus();
-			}
-		}
-
-		public Task StartServerAndConnectPlayer()
-		{
-			if ((ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null) && GameData.Data.User != null)
-				return Task.Factory.StartNew(() => { });
-
-			return Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					StartServerSync();
-
-					try
-					{
-						ConnectPlayerSync();
-					}
-					catch
-					{
-						StopServer();
-						throw;
-					}
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
-		}
-
-		public Task StartServer()
-		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
-				return Task.Factory.StartNew(() => { });
-
-			return Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					StartServerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
-		}
-
-		public Task ConnectPlayer()
-		{
-			if (GameData.Data.User != null)
-				return Task.Factory.StartNew(() => { });
-
-			return Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					ConnectPlayerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
-		}
-
-		void StartServerSync()
-		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
-				return;
-
-			var server = new EmbeddedServer();
-			server.StatusChanged += (str) => SetLogOnText(str, 1);
-
-			SetLogOnText("Starting server", 0);
-
-			server.Start();
-
-			this.Dispatcher.Invoke(new Action(() =>
-			{
-				m_server = server;
-			}));
-		}
-
-		void ConnectPlayerSync()
-		{
-			var player = new ClientUser();
-			player.DisconnectEvent += OnDisconnected;
-			player.StateChangedEvent += (state) => SetLogOnText(state.ToString(), 0);
-
-			player.LogOn("tomba");
-
-			this.Dispatcher.Invoke(new Action(() =>
-			{
-				GameData.Data.User = player;
-
-				var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-				if (controllable != null && controllable.Environment != null)
-				{
-					var mapControl = App.MainWindow.MapControl;
-					mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-					mapControl.Environment = controllable.Environment;
-					mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
-					mapControl.Z = controllable.Location.Z;
-				}
-
-				if (Program.StartupStopwatch != null)
-				{
-					Program.StartupStopwatch.Stop();
-					Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
-					Program.StartupStopwatch = null;
-				}
-			}));
-		}
-
-
-
-		public void DisconnectAndStop()
-		{
-			Disconnect();
-		}
-
-		public void StopServer()
-		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
-				return;
-
-			SetLogOnText("Stopping server", 0);
-
-			m_server.Stop();
-			m_server = null;
-
-			CloseLoginDialog();
-		}
-
-
-		void OnClientUserStateChanged(ClientUser.ClientUserState state)
-		{
-			this.Dispatcher.VerifyAccess();
-			SetLogOnText(state.ToString(), 0);
-		}
-
-		public void Disconnect()
-		{
-			if (GameData.Data.User == null)
-				return;
-
-			if (GameData.Data.User.IsPlayerInGame)
-			{
-				SetLogOnText("Saving", 0);
-
-				ClientSaveManager.SaveEvent += OnGameSaved;
-
-				GameData.Data.User.Send(new SaveRequestMessage());
-			}
-			else
-			{
-				SetLogOnText("Logging Out", 0);
-				GameData.Data.User.SendLogOut();
-			}
-		}
-
-		void OnGameSaved()
-		{
-			ClientSaveManager.SaveEvent -= OnGameSaved;
-
-			SetLogOnText("Logging Out", 0);
-			GameData.Data.User.SendLogOut();
-		}
-
-		void OnDisconnected()
-		{
-			this.MapControl.Environment = null;
-
-			GameData.Data.User.DisconnectEvent -= OnDisconnected;
-			GameData.Data.User = null;
-
-			CloseLoginDialog();
-
-			if (m_closing)
-			{
-				StopServer();
-				Dispatcher.BeginInvoke(new Action(() => Close()));
-			}
-		}
-
-
-
-
 
 		#region INotifyPropertyChanged Members
 

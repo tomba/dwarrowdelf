@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Client.UI
 
 		private void StartServer_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var task = App.MainWindow.StartServer();
+			var task = GameData.Data.ConnectManager.StartServer();
 			task.ContinueWith((t) =>
 			{
 				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Start Server Failed");
@@ -77,12 +77,16 @@ namespace Dwarrowdelf.Client.UI
 
 		private void StopServer_Button_Click(object sender, RoutedEventArgs e)
 		{
-			App.MainWindow.StopServer();
+			var task = GameData.Data.ConnectManager.StopServer();
+			task.ContinueWith((t) =>
+			{
+				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Stop Server Failed");
+			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 		private void Connect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			var task = App.MainWindow.ConnectPlayer();
+			var task = GameData.Data.ConnectManager.ConnectPlayer();
 			task.ContinueWith((t) =>
 			{
 				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Connect Player Failed");
@@ -91,7 +95,11 @@ namespace Dwarrowdelf.Client.UI
 
 		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
 		{
-			App.MainWindow.Disconnect();
+			var task = GameData.Data.ConnectManager.Disconnect();
+			task.ContinueWith((t) =>
+			{
+				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Disconnect Failed");
+			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
 

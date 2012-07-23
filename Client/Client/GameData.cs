@@ -49,7 +49,11 @@ namespace Dwarrowdelf.Client
 			m_timer = new DispatcherTimer(DispatcherPriority.Background);
 			m_timer.Interval = TimeSpan.FromMilliseconds(500);
 			m_timer.Tick += delegate { if (_Blink != null) _Blink(); MainWindow.MapControl.InvalidateTileData(); };
+
+			this.ConnectManager = new ConnectManager(this.Dispatcher);
 		}
+
+		public ConnectManager ConnectManager { get; private set; }
 
 		event Action _Blink;
 

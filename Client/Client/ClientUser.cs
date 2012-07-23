@@ -65,7 +65,6 @@ namespace Dwarrowdelf.Client
 		IConnection m_connection;
 
 		public bool IsSeeAll { get; private set; }
-		public bool IsPlayerInGame { get; private set; }
 
 		World m_world;
 
@@ -94,7 +93,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case ConnectionType.Direct:
-					var server = (EmbeddedServer)App.Current.Dispatcher.Invoke(new Func<EmbeddedServer>(() => App.MainWindow.Server));
+					var server = GameData.Data.ConnectManager.Server;
 					m_connection = DirectConnection.Connect(server.Game);
 					break;
 
@@ -132,7 +131,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			this.State = ClientUserState.LoggedIn;
-			this.IsPlayerInGame = true;
 
 			m_connection.NewMessageEvent += _OnNewMessages;
 			m_connection.DisconnectEvent += _OnDisconnected;

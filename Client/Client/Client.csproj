@@ -209,6 +209,7 @@
     <Compile Include="ChangeHandler.cs" />
     <Compile Include="ClientConfig.cs" />
     <Compile Include="Collections.cs" />
+    <Compile Include="ConnectManager.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="ConstructManager.cs" />
     <Compile Include="InstallFurnitureManager.cs" />

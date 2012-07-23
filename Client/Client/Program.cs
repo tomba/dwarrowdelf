@@ -33,6 +33,8 @@ namespace Dwarrowdelf.Client
 			var app = new App();
 			app.InitializeComponent();
 			app.Run();
+
+			Trace.TraceInformation("Stop");
 		}
 	}
 }
