@@ -49,11 +49,11 @@ namespace Dwarrowdelf.Client
 				m_serverThread = new Thread(ServerMain);
 				m_serverThread.Start(serverStartWaitHandle);
 
-				var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(15));
+				var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(60));
 				if (!ok)
 				{
-					System.Diagnostics.Trace.TraceError("FAIL");
-					throw new Exception();
+					m_serverThread.Abort();
+					throw new Exception("Timeout waiting for server");
 				}
 			}
 		}
