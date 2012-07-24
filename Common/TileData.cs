@@ -20,6 +20,8 @@ namespace Dwarrowdelf
 	{
 		[FieldOffset(0)]
 		public ulong Raw;
+		[FieldOffset(0)]
+		public uint RawTile;	// contains only terrain & interior data
 
 		[NonSerialized]
 		[FieldOffset(0)]
@@ -45,7 +47,10 @@ namespace Dwarrowdelf
 
 		public bool HasTree { get { return this.InteriorID == InteriorID.Tree || this.InteriorID == InteriorID.Sapling; } }
 
-		public bool IsEmpty { get { return this.Raw == EmptyTileData.Raw; } }
+		/// <summary>
+		/// Check if tile is TerrainID.Empty, MaterialID.Undefined, InteriorID.Empty, MaterialID.Undefined
+		/// </summary>
+		public bool IsEmpty { get { return this.RawTile == EmptyTileData.RawTile; } }
 
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
@@ -53,7 +58,7 @@ namespace Dwarrowdelf
 
 		public const int SizeOf = 8;
 
-		public static readonly TileData EmptyTileData = new TileData()
+		static readonly TileData EmptyTileData = new TileData()
 		{
 			TerrainID = TerrainID.Empty,
 			TerrainMaterialID = MaterialID.Undefined,
