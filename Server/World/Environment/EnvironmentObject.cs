@@ -74,6 +74,8 @@ namespace Dwarrowdelf.Server
 			this.Height = size.Height;
 			this.Depth = size.Depth;
 
+			SetSubterraneanFlags();
+
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
@@ -113,6 +115,24 @@ namespace Dwarrowdelf.Server
 						m_depthMap[p] = (byte)z;
 						break;
 					}
+				}
+			});
+		}
+
+		void SetSubterraneanFlags()
+		{
+			Parallel.ForEach(this.Size.Plane.Range(), p =>
+			{
+				int d = m_depthMap[p];
+
+				for (int z = this.Size.Depth - 1; z >= 0; --z)
+				{
+					var p3 = new IntPoint3(p, z);
+
+					if (z < d)
+						m_tileGrid.SetFlags(p3, TileFlags.Subterranean);
+					else
+						m_tileGrid.ClearFlags(p3, TileFlags.Subterranean);
 				}
 			});
 		}
@@ -236,6 +256,9 @@ namespace Dwarrowdelf.Server
 
 			var oldData = GetTileData(p);
 
+			// retain the old flags
+			data.Flags = oldData.Flags;
+
 			m_tileGrid.SetTileData(p, data);
 
 			if (oldData.HasTree != data.HasTree)
@@ -247,14 +270,20 @@ namespace Dwarrowdelf.Server
 			}
 
 			var p2d = p.ToIntPoint();
+			int oldSurfaceLevel = m_depthMap[p2d];
+			int newSurfaceLevel = oldSurfaceLevel;
 
-			if (data.IsEmpty == false && m_depthMap[p2d] < p.Z)
+			if (data.IsEmpty == false && oldSurfaceLevel < p.Z)
 			{
+				// surface level has risen
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
 				m_depthMap[p2d] = (byte)p.Z;
+				newSurfaceLevel = p.Z;
 			}
-			else if (data.IsEmpty && m_depthMap[p2d] == p.Z)
+			else if (data.IsEmpty && oldSurfaceLevel == p.Z)
 			{
+				// surface level has lowered
+
 				if (p.Z == 0)
 					throw new Exception();
 
@@ -264,6 +293,7 @@ namespace Dwarrowdelf.Server
 					{
 						Debug.Assert(z >= 0 && z < 256);
 						m_depthMap[p2d] = (byte)z;
+						newSurfaceLevel = z;
 						break;
 					}
 				}
@@ -278,6 +308,17 @@ namespace Dwarrowdelf.Server
 				m_waterHandler.AddWater(p);
 			else
 				m_waterHandler.RemoveWater(p);
+
+			if (newSurfaceLevel > oldSurfaceLevel)
+			{
+				for (int z = oldSurfaceLevel; z < newSurfaceLevel; ++z)
+					SetTileFlags(new IntPoint3(p2d, z), TileFlags.Subterranean, true);
+			}
+			else if (newSurfaceLevel < oldSurfaceLevel)
+			{
+				for (int z = oldSurfaceLevel - 1; z >= newSurfaceLevel; --z)
+					SetTileFlags(new IntPoint3(p2d, z), TileFlags.Subterranean, false);
+			}
 		}
 
 		public void SetWaterLevel(IntPoint3 l, byte waterLevel)
@@ -299,7 +340,7 @@ namespace Dwarrowdelf.Server
 				m_waterHandler.RemoveWater(l);
 		}
 
-		public void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
+		void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);

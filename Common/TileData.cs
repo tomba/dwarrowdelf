@@ -7,11 +7,15 @@ using System.Runtime.InteropServices;
 
 namespace Dwarrowdelf
 {
+	/// <summary>
+	/// Maintained by EnvironmentObject internally
+	/// </summary>
 	[Flags]
 	public enum TileFlags : ushort
 	{
 		None = 0,
 		ItemBlocks = 1 << 0,	// an item in the tile blocks movement
+		Subterranean = 1 << 1,
 	}
 
 	[Serializable]
