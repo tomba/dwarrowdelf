@@ -56,6 +56,11 @@ namespace Dwarrowdelf
 		/// </summary>
 		public bool IsEmpty { get { return this.RawTile == EmptyTileData.RawTile; } }
 
+		/// <summary>
+		/// Check if tile is TerrainID.Undefined, MaterialID.Undefined, InteriorID.Undefined, MaterialID.Undefined
+		/// </summary>
+		public bool IsUndefined { get { return this.RawTile == UndefinedTileData.RawTile; } }
+
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
 		public const int MaxCompress = 1;
@@ -69,6 +74,14 @@ namespace Dwarrowdelf
 			InteriorID = InteriorID.Empty,
 			InteriorMaterialID = MaterialID.Undefined,
 			WaterLevel = 0,
+		};
+
+		public static readonly TileData UndefinedTileData = new TileData()
+		{
+			TerrainID = TerrainID.Undefined,
+			TerrainMaterialID = MaterialID.Undefined,
+			InteriorID = InteriorID.Undefined,
+			InteriorMaterialID = MaterialID.Undefined,
 		};
 
 		public bool IsTerrainFloor

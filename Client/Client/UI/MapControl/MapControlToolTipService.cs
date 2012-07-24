@@ -108,7 +108,7 @@ namespace Dwarrowdelf.Client.UI
 			m_content.elementBox.Visibility = hasElement ? Visibility.Visible : Visibility.Collapsed;
 			m_content.separator.Visibility = hasObjects && hasElement ? Visibility.Visible : Visibility.Collapsed;
 
-			var ml = m_hoverTileView.Location;
+			var ml = m_hoverTileView.Location.Value;
 
 			var rect = m_mapControl.MapRectToScreenPointRect(new IntGrid2(ml.ToIntPoint(), new IntSize2(1, 1)));
 

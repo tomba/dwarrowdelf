@@ -12,6 +12,7 @@ namespace Dwarrowdelf.Client.UI
 		EnvironmentObject m_environment;
 		IntPoint3 m_location;
 		MovableObjectCollection m_objects;
+		TileData m_tileData;
 
 		public TileView()
 		{
@@ -65,6 +66,11 @@ namespace Dwarrowdelf.Client.UI
 			{
 				UpdateObjectList();
 
+				if (newEnv != null)
+					m_tileData = newEnv.GetTileData(newLoc);
+				else
+					m_tileData = TileData.UndefinedTileData;
+
 				if (oldEnv != newEnv)
 					Notify("Environment");
 
@@ -83,9 +89,9 @@ namespace Dwarrowdelf.Client.UI
 			get { return m_environment; }
 		}
 
-		public IntPoint3 Location
+		public IntPoint3? Location
 		{
-			get { return m_location; }
+			get { if (m_tileData.IsUndefined) return null; else return m_location; }
 		}
 
 		void NotifyTileTerrainChanges()
@@ -106,7 +112,7 @@ namespace Dwarrowdelf.Client.UI
 
 			if (this.Environment != null)
 			{
-				var obs = this.Environment.GetContents(this.Location);
+				var obs = this.Environment.GetContents(m_location);
 				foreach (var ob in obs)
 					m_objects.Add(ob);
 			}
@@ -116,6 +122,8 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (l != this.Location)
 				return;
+
+			m_tileData = m_environment.GetTileData(l);
 
 			NotifyTileTerrainChanges();
 		}
@@ -147,25 +155,14 @@ namespace Dwarrowdelf.Client.UI
 
 		public ReadOnlyMovableObjectCollection Objects { get; private set; }
 
-		public InteriorInfo Interior
+		public TerrainInfo Terrain
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (this.Environment == null || m_tileData.IsUndefined)
 					return null;
 
-				return this.Environment.GetInterior(this.Location);
-			}
-		}
-
-		public MaterialInfo InteriorMaterial
-		{
-			get
-			{
-				if (this.Environment == null)
-					return null;
-
-				return this.Environment.GetInteriorMaterial(this.Location);
+				return Terrains.GetTerrain(m_tileData.TerrainID);
 			}
 		}
 
@@ -173,43 +170,54 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (this.Environment == null || m_tileData.IsUndefined)
 					return null;
 
-				return this.Environment.GetTerrainMaterial(this.Location);
+				return Materials.GetMaterial(m_tileData.TerrainMaterialID);
 			}
 		}
 
-		public TerrainInfo Terrain
+		public InteriorInfo Interior
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (this.Environment == null || m_tileData.IsUndefined)
 					return null;
 
-				return this.Environment.GetTerrain(this.Location);
+				return Interiors.GetInterior(m_tileData.InteriorID);
 			}
 		}
 
-		public byte WaterLevel
+		public MaterialInfo InteriorMaterial
 		{
 			get
 			{
-				if (this.Environment == null)
-					return 0;
+				if (this.Environment == null || m_tileData.IsUndefined)
+					return null;
 
-				return this.Environment.GetWaterLevel(this.Location);
+				return Materials.GetMaterial(m_tileData.InteriorMaterialID);
 			}
 		}
 
-		public TileFlags Flags
+		public byte? WaterLevel
 		{
 			get
 			{
-				if (this.Environment == null)
-					return TileFlags.None;
+				if (this.Environment == null || m_tileData.IsUndefined)
+					return null;
 
-				return this.Environment.GetTileFlags(this.Location);
+				return m_tileData.WaterLevel;
+			}
+		}
+
+		public TileFlags? Flags
+		{
+			get
+			{
+				if (this.Environment == null || m_tileData.IsUndefined)
+					return null;
+
+				return m_tileData.Flags;
 			}
 		}
 
@@ -217,10 +225,10 @@ namespace Dwarrowdelf.Client.UI
 		{
 			get
 			{
-				if (this.Environment == null)
+				if (this.Environment == null || m_tileData.IsUndefined)
 					return null;
 
-				return this.Environment.GetElementAt(this.Location);
+				return this.Environment.GetElementAt(m_location);
 			}
 		}
 
