@@ -149,14 +149,16 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("IsBlocking")]
 		bool m_isBlocking;
 
+		public bool IsBlocking { get { return m_isBlocking; } }
+
 		void CheckBlock()
 		{
 			var block = this.IsInstalled && this.IsClosed;
 
 			if (block != m_isBlocking)
 			{
-				this.Environment.SetTileFlags(this.Location, TileFlags.ItemBlocks, block);
 				m_isBlocking = block;
+				this.Environment.ItemBlockChanged(this.Location);
 			}
 		}
 

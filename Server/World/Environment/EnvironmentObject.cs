@@ -316,6 +316,15 @@ namespace Dwarrowdelf.Server
 			MapChanged(l, d);
 		}
 
+		public void ItemBlockChanged(IntPoint3 p)
+		{
+			bool oldBlocking = GetTileFlags(p, TileFlags.ItemBlocks);
+			bool newBlocking = GetContents(p).OfType<ItemObject>().Any(item => item.IsBlocking);
+
+			if (oldBlocking != newBlocking)
+				SetTileFlags(p, TileFlags.ItemBlocks, newBlocking);
+		}
+
 		public IEnumerable<IMovableObject> GetContents(IntGrid2Z rect)
 		{
 			var obs = m_contentArray[rect.Z];
