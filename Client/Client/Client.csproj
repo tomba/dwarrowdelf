@@ -222,7 +222,7 @@
     <Compile Include="UI\MapControl\TileToolTipControl.xaml.cs">
       <DependentUpon>TileToolTipControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\UIElementToDescConverter.cs" />
+    <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="ManualControlAI.cs" />
     <Compile Include="ReportHandler.cs" />
@@ -235,7 +235,7 @@
     <Compile Include="UI\ConcreteObjectPropertiesControl.xaml.cs">
       <DependentUpon>ConcreteObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\AssignmentToStringConverter.cs" />
+    <Compile Include="UI\Converters\AssignmentToStringConverter.cs" />
     <Compile Include="UI\ListItemInfoTemplateDictionary.cs">
       <DependentUpon>ListItemInfoTemplateDictionary.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -246,18 +246,18 @@
     <Compile Include="UI\TreeViewTemplateDictionary.xaml.cs">
       <DependentUpon>TreeViewTemplateDictionary.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ObjectIDConverter.cs" />
+    <Compile Include="UI\Converters\ObjectIDConverter.cs" />
     <Compile Include="UI\ItemObjectPropertiesControl.xaml.cs">
       <DependentUpon>ItemObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\DrawingConverter.cs" />
+    <Compile Include="UI\Converters\DrawingConverter.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
     <Compile Include="ConcreteObject.cs" />
     <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\CapitalizeConverter.cs" />
+    <Compile Include="UI\Converters\CapitalizeConverter.cs" />
     <Compile Include="UI\LivingObjectPropertiesControl.xaml.cs">
       <DependentUpon>LivingObjectPropertiesControl.xaml</DependentUpon>
     </Compile>
