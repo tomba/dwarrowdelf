@@ -6,6 +6,10 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	/// <summary>
+	/// Tracks all items in an env. XXX this class seems rather bad.
+	/// FindNearItem could just be directly in EnvOb
+	/// </summary>
 	class ItemTracker
 	{
 		List<ItemObject> m_items;

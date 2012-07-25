@@ -6,6 +6,9 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
+	/// <summary>
+	/// Tracks items matching give criteria, sorted by the distance from a given location
+	/// </summary>
 	class TargetItemTracker
 	{
 		EnvironmentObject m_env;
