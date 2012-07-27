@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace Dwarrowdelf
 {
 	[Serializable]
-	[System.ComponentModel.TypeConverter(typeof(IntPoint3DConverter))]
+	[System.ComponentModel.TypeConverter(typeof(IntPoint3Converter))]
 	public struct IntPoint3 : IEquatable<IntPoint3>
 	{
 #if USE_3INTS

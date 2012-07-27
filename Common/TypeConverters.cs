@@ -42,7 +42,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class IntPoint3DConverter : TypeConverter
+	public sealed class IntPoint3Converter : TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
 		{
