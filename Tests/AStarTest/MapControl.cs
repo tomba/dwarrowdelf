@@ -26,7 +26,7 @@ using Dwarrowdelf.AStar;
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
  * BinaryHeap 3D: mem 12698760, ticks 962670
- * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3D)
+ * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3)
  * SimpleList 3D: mem 12699376, ticks 88453781
  * 
  * 1.1.2010		mem 12698760, ticks 962670
@@ -37,7 +37,7 @@ namespace AStarTest
 	{
 		public class TileInfo
 		{
-			public IntPoint3D Location { get; set; }
+			public IntPoint3 Location { get; set; }
 		}
 
 		Map m_map;
@@ -49,7 +49,7 @@ namespace AStarTest
 		int m_z;
 
 		int m_state;
-		IntPoint3D m_from, m_to;
+		IntPoint3 m_from, m_to;
 
 		bool m_removing;
 
@@ -109,7 +109,7 @@ namespace AStarTest
 			InvalidateTileData();
 		}
 
-		void OnTileArrangementChanged(IntSize gridSize, double tileSize, Point centerPos)
+		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
 			if (SomethingChanged != null)
 				SomethingChanged();
@@ -130,20 +130,20 @@ namespace AStarTest
 					var tile = grid[y, x];
 
 					var _ml = ScreenTileToMapTile(new Point(x, y));
-					var ml = new IntPoint3D(PointToIntPoint(_ml), m_z);
+					var ml = new IntPoint3(PointToIntPoint(_ml), m_z);
 
 					UpdateTile(tile, ml);
 				}
 			}
 		}
 
-		IntPoint PointToIntPoint(Point p)
+		IntPoint2 PointToIntPoint(Point p)
 		{
-			return new IntPoint((int)Math.Round(p.X), (int)Math.Round(p.Y));
+			return new IntPoint2((int)Math.Round(p.X), (int)Math.Round(p.Y));
 		}
 
 
-		void UpdateTile(RenderTileData tile, IntPoint3D ml)
+		void UpdateTile(RenderTileData tile, IntPoint3 ml)
 		{
 			tile.ClearTile();
 
@@ -198,7 +198,7 @@ namespace AStarTest
 				m_z = value;
 				InvalidateTileData();
 				var old = this.CurrentTileInfo.Location;
-				this.CurrentTileInfo.Location = new IntPoint3D(old.X, old.Y, m_z);
+				this.CurrentTileInfo.Location = new IntPoint3(old.X, old.Y, m_z);
 				Notify("CurrentTileInfo");
 			}
 		}
@@ -237,10 +237,10 @@ namespace AStarTest
 			}
 		}
 
-		public IntPoint3D ScreenPointToMapLocation(Point p)
+		public IntPoint3 ScreenPointToMapLocation(Point p)
 		{
 			var ml = ScreenPointToMapTile(p);
-			return new IntPoint3D((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
+			return new IntPoint3((int)Math.Round(ml.X), (int)Math.Round(ml.Y), this.Z);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
@@ -304,11 +304,11 @@ namespace AStarTest
 		}
 
 		public event Action<AStarResult> AStarDone;
-		IEnumerable<IntPoint3D> m_path;
+		IEnumerable<IntPoint3> m_path;
 		AStarResult m_result;
-		IDictionary<IntPoint3D, AStarNode> m_nodes;
+		IDictionary<IntPoint3, AStarNode> m_nodes;
 
-		void DoAStar(IntPoint3D src, IntPoint3D dst)
+		void DoAStar(IntPoint3 src, IntPoint3 dst)
 		{
 			long startBytes, stopBytes;
 			Stopwatch sw = new Stopwatch();
@@ -335,7 +335,7 @@ namespace AStarTest
 					return;
 				}
 
-				var pathList = new List<IntPoint3D>();
+				var pathList = new List<IntPoint3>();
 				var n = m_result.LastNode;
 				while (n.Parent != null)
 				{
@@ -374,7 +374,7 @@ namespace AStarTest
 								return;
 							}
 
-							var pathList = new List<IntPoint3D>();
+							var pathList = new List<IntPoint3>();
 							var n = m_result.LastNode;
 							while (n.Parent != null)
 							{
@@ -393,22 +393,22 @@ namespace AStarTest
 			}
 		}
 
-		IEnumerable<Direction> Dwarrowdelf.AStar.IAStarEnvironment.GetValidDirs(IntPoint3D p)
+		IEnumerable<Direction> Dwarrowdelf.AStar.IAStarEnvironment.GetValidDirs(IntPoint3 p)
 		{
 			return GetTileDirs(p);
 		}
 
-		int Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(IntPoint3D p)
+		int Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(IntPoint3 p)
 		{
 			return m_map.GetWeight(p);
 		}
 
-		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3D p)
+		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3 p)
 		{
 			return m_map.Bounds.Contains(p) && !m_map.GetBlocked(p);
 		}
 
-		void IAStarEnvironment.Callback(IDictionary<IntPoint3D, Dwarrowdelf.AStar.AStarNode> nodes)
+		void IAStarEnvironment.Callback(IDictionary<IntPoint3, Dwarrowdelf.AStar.AStarNode> nodes)
 		{
 			if (!this.Step)
 				return;
@@ -427,7 +427,7 @@ namespace AStarTest
 		AutoResetEvent m_contEvent = new AutoResetEvent(false);
 
 
-		IEnumerable<Direction> GetTileDirs(IntPoint3D p)
+		IEnumerable<Direction> GetTileDirs(IntPoint3 p)
 		{
 			var map = m_map;
 			foreach (var d in DirectionExtensions.PlanarDirections)

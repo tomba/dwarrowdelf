@@ -63,12 +63,12 @@ namespace AStarTest
 
 			if (From != Direction.None)
 			{
-				var iv = IntVector.FromDirection(From);
+				var iv = IntVector2.FromDirection(From);
 				var v = new Vector(iv.X, iv.Y);
 				v *= renderSize.Width / 4;
 				Point mp = new Point(renderSize.Width / 2, renderSize.Height / 2);
 				dc.DrawEllipse(Brushes.White, null, mp, 0.1, 0.1);
-				dc.DrawLine(new Pen(Brushes.White, 0.05), mp, mp + new Vector(v.X, -v.Y));
+				dc.DrawLine(new Pen(Brushes.White, 0.05), mp, mp + new Vector(v.X, v.Y));
 			}
 
 			if (this.Weight != 0)

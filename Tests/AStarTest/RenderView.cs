@@ -13,7 +13,7 @@ namespace AStarTest
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 
-		public void SetGridSize(IntSize size)
+		public void SetGridSize(IntSize2 size)
 		{
 			if (size.Width == this.Width && size.Height == this.Height)
 				return;

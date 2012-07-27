@@ -22,7 +22,7 @@ using Dwarrowdelf.AStar;
 /*
  * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
  * BinaryHeap 3D: mem 12698992, ticks 1289165
- * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3D)
+ * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3)
  * SimpleList 3D: mem 12699376, ticks 88453781
  * 
  */
@@ -93,14 +93,6 @@ namespace AStarTest
 
 			Canvas.SetLeft(m_path1, 0.5);
 			Canvas.SetTop(m_path1, 0.5);
-
-			var pl = new Polyline();
-			pl.Stroke = System.Windows.Media.Brushes.SlateGray;
-			pl.StrokeThickness = 0.1;
-			pl.Points.Add(new Point(3.5, 3.5));
-			pl.Points.Add(new Point(4.6, 4.5));
-			pl.Points.Add(new Point(5.5, 3.5));
-			m_canvas.Children.Add(pl);
 		}
 
 		void m_map_AStarDone(AStarResult res)
@@ -109,11 +101,11 @@ namespace AStarTest
 			var dirs = res.GetPathReverse();
 
 			m_path1.Points.Clear();
-			IntPoint p = new IntPoint(l.X, l.Y);
+			IntPoint2 p = new IntPoint2(l.X, l.Y);
 			m_path1.Points.Add(new Point(p.X, p.Y));
 			foreach (var d in dirs)
 			{
-				var v = IntVector.FromDirection(d);
+				var v = IntVector2.FromDirection(d);
 				p += v;
 				m_path1.Points.Add(new Point(p.X, p.Y));
 			}
@@ -134,7 +126,7 @@ namespace AStarTest
 		public int Z
 		{
 			get { return m_map.Z; }
-			set { m_map.Z = value; }
+			set { m_map.Z = value; CheckCanvas(); }
 		}
 
 		public double TileSize
@@ -162,7 +154,7 @@ namespace AStarTest
 			var p = m_map.MapTileToScreenPoint(new Point(-0.5, -0.5));
 
 			m_scaleTransform.ScaleX = m_map.TileSize;
-			m_scaleTransform.ScaleY = -m_map.TileSize;
+			m_scaleTransform.ScaleY = m_map.TileSize;
 
 			m_translateTransform.X = p.X;
 			m_translateTransform.Y = p.Y;

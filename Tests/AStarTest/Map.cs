@@ -21,68 +21,71 @@ namespace AStarTest
 		public Stairs Stairs;
 	}
 
-	class Map : ArrayGrid3D<AStarMapTile>
+	class Map
 	{
-		public IntCuboid Bounds { get; private set; }
+		public AStarMapTile[, ,] Grid { get; private set; }
+
+		public IntGrid3 Bounds { get; private set; }
 
 		public Map(int width, int height, int depth)
-			: base(width, height, depth)
 		{
-			this.Bounds = new IntCuboid(0, 0, 0, width, height, depth);
+			this.Grid = new AStarMapTile[depth, height, width];
+
+			this.Bounds = new IntGrid3(0, 0, 0, width, height, depth);
 
 			for (int y = 0; y < 350; ++y)
-				SetBlocked(new IntPoint3D(5, y, 0), true);
+				SetBlocked(new IntPoint3(5, y, 0), true);
 
 			for (int y = 2; y < 22; ++y)
-				SetBlocked(new IntPoint3D(14, y, 0), true);
+				SetBlocked(new IntPoint3(14, y, 0), true);
 
 			for (int y = 6; y < 11; ++y)
-				SetWeight(new IntPoint3D(10, y, 0), 40);
+				SetWeight(new IntPoint3(10, y, 0), 40);
 
 
 			for (int y = 6; y < 18; ++y)
-				SetBlocked(new IntPoint3D(3, y, 1), true);
+				SetBlocked(new IntPoint3(3, y, 1), true);
 
 			for (int y = 6; y < 11; ++y)
-				SetWeight(new IntPoint3D(5, y, 1), 40);
+				SetWeight(new IntPoint3(5, y, 1), 40);
 
 
-			SetStairs(new IntPoint3D(10, 10, 0), Stairs.Up);
-			SetStairs(new IntPoint3D(10, 10, 1), Stairs.Down);
+			SetStairs(new IntPoint3(10, 10, 0), Stairs.Up);
+			SetStairs(new IntPoint3(10, 10, 1), Stairs.Down);
 
-			SetStairs(new IntPoint3D(15, 12, 0), Stairs.Up);
-			SetStairs(new IntPoint3D(15, 12, 1), Stairs.Down);
+			SetStairs(new IntPoint3(15, 12, 0), Stairs.Up);
+			SetStairs(new IntPoint3(15, 12, 1), Stairs.Down);
 
 		}
 
-		public int GetWeight(IntPoint3D p)
+		public int GetWeight(IntPoint3 p)
 		{
-			return base.Grid[p.Z, p.Y, p.X].Weight;
+			return this.Grid[p.Z, p.Y, p.X].Weight;
 		}
 
-		public void SetWeight(IntPoint3D p, int weight)
+		public void SetWeight(IntPoint3 p, int weight)
 		{
-			base.Grid[p.Z, p.Y, p.X].Weight = weight;
+			this.Grid[p.Z, p.Y, p.X].Weight = weight;
 		}
 
-		public bool GetBlocked(IntPoint3D p)
+		public bool GetBlocked(IntPoint3 p)
 		{
-			return base.Grid[p.Z, p.Y, p.X].Blocked;
+			return this.Grid[p.Z, p.Y, p.X].Blocked;
 		}
 
-		public void SetBlocked(IntPoint3D p, bool blocked)
+		public void SetBlocked(IntPoint3 p, bool blocked)
 		{
-			base.Grid[p.Z, p.Y, p.X].Blocked = blocked;
+			this.Grid[p.Z, p.Y, p.X].Blocked = blocked;
 		}
 
-		public Stairs GetStairs(IntPoint3D p)
+		public Stairs GetStairs(IntPoint3 p)
 		{
-			return base.Grid[p.Z, p.Y, p.X].Stairs;
+			return this.Grid[p.Z, p.Y, p.X].Stairs;
 		}
 
-		public void SetStairs(IntPoint3D p, Stairs stairs)
+		public void SetStairs(IntPoint3 p, Stairs stairs)
 		{
-			base.Grid[p.Z, p.Y, p.X].Stairs = stairs;
+			this.Grid[p.Z, p.Y, p.X].Stairs = stairs;
 		}
 	}
 }
