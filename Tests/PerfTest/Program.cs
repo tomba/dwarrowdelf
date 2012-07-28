@@ -13,7 +13,8 @@ namespace PerfTest
 		{
 			var tests = new TestSuite[] 
 			{
-				new EnumConvTestSuite(),
+				new GenericIFaceAccessTestSuite(),
+				//new EnumConvTestSuite(),
 				//new IntPointTestSuite(),
 				//new ArrayAccessTestSuite(),
 				//new StructAccessTestSuite(),
@@ -90,12 +91,15 @@ namespace PerfTest
 				if (sw.ElapsedMilliseconds > 250)
 					break;
 
-				if (sw.ElapsedMilliseconds <= 1)
-					loops *= 128;
-				else if (sw.ElapsedMilliseconds <= 10)
-					loops *= 16;
-				else
-					loops *= 2;
+				checked
+				{
+					if (sw.ElapsedMilliseconds <= 1)
+						loops *= 128;
+					else if (sw.ElapsedMilliseconds <= 10)
+						loops *= 16;
+					else
+						loops *= 2;
+				}
 			}
 
 			var lps = loops / (sw.ElapsedMilliseconds / 1000.0);

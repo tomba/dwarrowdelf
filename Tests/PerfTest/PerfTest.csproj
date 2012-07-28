@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayAccess.cs" />
+    <Compile Include="GenericIFaceAccess.cs" />
     <Compile Include="EnumConv.cs" />
     <Compile Include="IntPointTest.cs" />
     <Compile Include="StructAccess.cs" />
