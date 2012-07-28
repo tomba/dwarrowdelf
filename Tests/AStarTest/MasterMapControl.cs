@@ -82,6 +82,7 @@ namespace AStarTest
 			m_path1.Stroke = System.Windows.Media.Brushes.SlateGray;
 			m_path1.StrokeThickness = 0.1;
 			m_path1.FillRule = FillRule.EvenOdd;
+			m_path1.IsHitTestVisible = false;
 			m_canvas.Children.Add(m_path1);
 
 			Canvas.SetLeft(m_path1, 0.5);
