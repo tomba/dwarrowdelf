@@ -23,14 +23,6 @@ using System.Threading;
 using Dwarrowdelf.Client.TileControl;
 using Dwarrowdelf.AStar;
 
-/*
- * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
- * BinaryHeap 3D: mem 12698760, ticks 962670
- * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3)
- * SimpleList 3D: mem 12699376, ticks 88453781
- * 
- * 1.1.2010		mem 12698760, ticks 962670
- */
 namespace AStarTest
 {
 	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
@@ -98,7 +90,7 @@ namespace AStarTest
 
 			base.OnInitialized(e);
 
-			base.CenterPos = new Point(10, 10);
+			base.CenterPos = new Point(5, 5);
 		}
 
 		void ClearMap()

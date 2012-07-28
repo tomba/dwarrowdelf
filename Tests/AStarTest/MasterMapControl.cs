@@ -19,13 +19,6 @@ using AStarTest;
 using System.Diagnostics;
 using Dwarrowdelf.AStar;
 
-/*
- * Benchmark pitkän palkin oikeasta alareunasta vasempaan:
- * BinaryHeap 3D: mem 12698992, ticks 1289165
- * BinaryHeap 3D: mem 10269648, ticks 1155656 (short IntPoint3)
- * SimpleList 3D: mem 12699376, ticks 88453781
- * 
- */
 namespace AStarTest
 {
 	class MasterMapControl : UserControl, INotifyPropertyChanged
