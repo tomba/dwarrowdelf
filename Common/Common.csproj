@@ -47,6 +47,7 @@
     <Compile Include="AI\MonsterAI.cs" />
     <Compile Include="AStar\AStarResult.cs" />
     <Compile Include="AStar\AStarTarget.cs" />
+    <Compile Include="AStar\AStar.cs" />
     <Compile Include="ChangeDatas.cs" />
     <Compile Include="DataTypes\DoublePoint3.cs" />
     <Compile Include="Hash.cs" />
@@ -134,7 +135,6 @@
     <Compile Include="Messages.cs" />
     <Compile Include="Net\TcpConnection.cs" />
     <Compile Include="Buildings.cs" />
-    <Compile Include="AStar\AStar.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3.cs" />
     <Compile Include="DataTypes\IntVector3.cs" />

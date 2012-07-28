@@ -37,16 +37,39 @@ namespace Dwarrowdelf.AStar
 
 	public static class AStarFinder
 	{
-		sealed class AStarState
+		public const int COST_DIAGONAL = 14;
+		public const int COST_STRAIGHT = 10;
+
+		/// <summary>
+		/// Find route from src to dst, using the given positionings
+		/// </summary>
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
+			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			public IAStarEnvironment Environment;
-			public IAStarTarget Target;
-			public IntPoint3 Src;
-			public DirectionSet SrcPositioning;
-			public IOpenList<AStarNode> OpenList;
-			public IDictionary<IntPoint3, AStarNode> NodeMap;
-			public CancellationToken CancellationToken;
+			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning),
+				maxNodeCount, cancellationToken);
 		}
+
+		/// <summary>
+		/// Flood-find the nearest location for which func returns true
+		/// </summary>
+		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
+		{
+			return Find(environment, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
+		}
+
+		/// <summary>
+		/// Find route from src to destination defined by IAstarTarget
+		/// </summary>
+		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
+			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
+		{
+			var astar = new AStarImpl(environment, src, srcPositioning, target, maxNodeCount, cancellationToken);
+			var status = astar.Find();
+			return new AStarResult(astar.Nodes, astar.LastNode, status);
+		}
+
+		/* Parallel */
 
 		/// <summary>
 		/// Returns if dst can be reached from src
@@ -176,209 +199,207 @@ namespace Dwarrowdelf.AStar
 			resBackward = rb;
 		}
 
-		/// <summary>
-		/// Flood-find the nearest location for which func returns true
-		/// </summary>
-		public static AStarResult FindNearest(IAStarEnvironment environment, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
-		{
-			return Find(environment, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
-		}
-
-		/// <summary>
-		/// Find route from src to dst, using the given positionings
-		/// </summary>
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
+		public static IEnumerable<AStarResult> FindMany(IAStarEnvironment environment,
+			IntPoint3 src, DirectionSet srcPositioning, Func<IntPoint3, bool> func,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return Find(environment, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning), maxNodeCount, cancellationToken);
+			return FindMany(environment, src, srcPositioning, new AStarDelegateTarget(func), maxNodeCount, cancellationToken);
 		}
 
-		/// <summary>
-		/// Find route from src to destination defined by IAstarTarget
-		/// </summary>
-		public static AStarResult Find(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
+		public static IEnumerable<AStarResult> FindMany(IAStarEnvironment environment,
+			IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			var state = new AStarState()
-			{
-				Environment = environment,
-				Src = src,
-				SrcPositioning = srcPositioning,
-				Target = target,
-				NodeMap = new Dictionary<IntPoint3, AStarNode>(),
-				OpenList = new BinaryHeap<AStarNode>(),
-				CancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None,
-			};
+			var astar = new AStarImpl(environment, src, srcPositioning, target, maxNodeCount, cancellationToken);
 
-			return FindInternal(state, maxNodeCount);
+			AStarStatus status;
+			while ((status = astar.Find()) == AStarStatus.Found)
+				yield return new AStarResult(astar.Nodes, astar.LastNode, status);
 		}
 
-		static void AddInitialNodes(AStarState state)
+		sealed class AStarImpl
 		{
-			var nodeMap = state.NodeMap;
-			var openList = state.OpenList;
+			readonly IAStarEnvironment m_environment;
+			readonly IntPoint3 m_src;
+			readonly DirectionSet m_srcPositioning;
+			readonly CancellationToken m_cancellationToken;
+			readonly int m_maxNodeCount;
 
-			IEnumerable<IntPoint3> nodeList;
+			IAStarTarget m_target;
+			IOpenList<AStarNode> m_openList;
+			Dictionary<IntPoint3, AStarNode> m_nodeMap;
 
-			nodeList = state.SrcPositioning.ToDirections().Select(d => state.Src + d);
+			public Dictionary<IntPoint3, AStarNode> Nodes { get { return m_nodeMap; } }
+			public AStarNode LastNode { get; private set; }
 
-			foreach (var p in nodeList.Where(p => state.Environment.CanEnter(p)))
+			public AStarImpl(IAStarEnvironment environment, IntPoint3 src, DirectionSet srcPositioning,
+				IAStarTarget target, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 			{
-				ushort g = 0;
-				ushort h = state.Target.GetHeuristic(p);
+				m_environment = environment;
+				m_src = src;
+				m_srcPositioning = srcPositioning;
+				m_maxNodeCount = maxNodeCount;
+				m_cancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None;
 
-				var node = new AStarNode(p, null);
-				node.G = g;
-				node.H = h;
-				openList.Add(node);
-				nodeMap.Add(p, node);
-			}
-		}
+				m_target = target;
+				m_nodeMap = new Dictionary<IntPoint3, AStarNode>();
+				m_openList = new BinaryHeap<AStarNode>();
 
-		static AStarResult FindInternal(AStarState state, int maxNodeCount)
-		{
-			//MyTrace.WriteLine("Start");
-
-			AddInitialNodes(state);
-
-			AStarNode lastNode = null;
-			var status = AStarStatus.NotFound;
-			var nodeMap = state.NodeMap;
-			var openList = state.OpenList;
-
-			while (!openList.IsEmpty)
-			{
-				if (state.CancellationToken.IsCancellationRequested)
-				{
-					status = AStarStatus.Cancelled;
-					break;
-				}
-
-				state.Environment.Callback(nodeMap);
-
-				var node = openList.Pop();
-				node.Closed = true;
-
-				if (state.Target.GetIsTarget(node.Loc))
-				{
-					lastNode = node;
-					status = AStarStatus.Found;
-					break;
-				}
-
-				CheckNeighbors(state, node);
-
-				if (nodeMap.Count > maxNodeCount)
-				{
-					status = AStarStatus.LimitExceeded;
-					break;
-				}
+				AddInitialNodes();
 			}
 
-			if (status == AStarStatus.LimitExceeded)
-				Trace.TraceWarning("AStar3D: Limit Exceeded");
-			else if (status == AStarStatus.NotFound)
-				Trace.TraceWarning("AStar3D: Not Found");
-
-			return new AStarResult(nodeMap, lastNode, status);
-		}
-
-		public const int COST_DIAGONAL = 14;
-		public const int COST_STRAIGHT = 10;
-
-		static ushort CostBetweenNodes(IntPoint3 from, IntPoint3 to)
-		{
-			ushort cost = (from - to).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
-			return cost;
-		}
-
-		static void CheckNeighbors(AStarState state, AStarNode parent)
-		{
-			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
+			public AStarStatus Find()
 			{
-				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+				//Debug.Print("Start");
 
-				AStarNode child;
-				state.NodeMap.TryGetValue(childLoc, out child);
-				//if (child != null && child.Closed)
-				//	continue;
+				var nodeMap = m_nodeMap;
+				var openList = m_openList;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
-				ushort h = state.Target.GetHeuristic(childLoc);
+				// If this is not the first loop, check the neighbors of the last node
+				if (this.LastNode != null)
+					CheckNeighbors(this.LastNode);
 
-				if (child == null)
+				while (!openList.IsEmpty)
 				{
-					child = new AStarNode(childLoc, parent);
-					child.G = g;
-					child.H = h;
-					state.OpenList.Add(child);
-					state.NodeMap.Add(childLoc, child);
-				}
-				else if (child.G > g)
-				{
-					child.Parent = parent;
-					child.G = g;
-					//MyTrace.WriteLine("{0} update", child.Loc);
+					if (m_cancellationToken.IsCancellationRequested)
+						return AStarStatus.Cancelled;
 
-					if (child.Closed == false)
-						state.OpenList.NodeUpdated(child);
-					else // Closed == true
-						UpdateParents(state, child);
+					if (nodeMap.Count > m_maxNodeCount)
+						return AStarStatus.LimitExceeded;
+
+					m_environment.Callback(nodeMap);
+
+					var node = openList.Pop();
+					node.Closed = true;
+
+					if (m_target.GetIsTarget(node.Loc))
+					{
+						this.LastNode = node;
+						return AStarStatus.Found;
+					}
+
+					CheckNeighbors(node);
 				}
+
+				return AStarStatus.NotFound;
 			}
-		}
 
-		static void UpdateParents(AStarState state, AStarNode parent)
-		{
-			//MyTrace.WriteLine("updating closed node {0}", parent.Loc);
-
-			Stack<AStarNode> queue = new Stack<AStarNode>();
-
-			foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
+			void AddInitialNodes()
 			{
-				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+				var nodeMap = m_nodeMap;
+				var openList = m_openList;
 
-				AStarNode child;
-				state.NodeMap.TryGetValue(childLoc, out child);
-				if (child == null)
-					continue;
+				IEnumerable<IntPoint3> nodeList;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
+				nodeList = m_srcPositioning.ToDirections().Select(d => m_src + d);
 
-				if (g < child.G)
+				foreach (var p in nodeList.Where(p => m_environment.CanEnter(p)))
 				{
-					//MyTrace.WriteLine("closed node {0} updated 1", childLoc);
+					ushort g = 0;
+					ushort h = m_target.GetHeuristic(p);
 
-					child.Parent = parent;
-					child.G = g;
-
-					queue.Push(child);
+					var node = new AStarNode(p, null);
+					node.G = g;
+					node.H = h;
+					openList.Add(node);
+					nodeMap.Add(p, node);
 				}
 			}
 
-			while (queue.Count > 0)
+			static ushort CostBetweenNodes(IntPoint3 from, IntPoint3 to)
 			{
-				parent = queue.Pop();
+				ushort cost = (from - to).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
+				return cost;
+			}
 
-				foreach (var dir in state.Environment.GetValidDirs(parent.Loc))
+			void CheckNeighbors(AStarNode parent)
+			{
+				foreach (var dir in m_environment.GetValidDirs(parent.Loc))
 				{
 					IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
 					AStarNode child;
-					state.NodeMap.TryGetValue(childLoc, out child);
+					m_nodeMap.TryGetValue(childLoc, out child);
+					//if (child != null && child.Closed)
+					//	continue;
+
+					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + m_environment.GetTileWeight(childLoc));
+					ushort h = m_target.GetHeuristic(childLoc);
+
+					if (child == null)
+					{
+						child = new AStarNode(childLoc, parent);
+						child.G = g;
+						child.H = h;
+						m_openList.Add(child);
+						m_nodeMap.Add(childLoc, child);
+					}
+					else if (child.G > g)
+					{
+						child.Parent = parent;
+						child.G = g;
+						//Debug.Print("{0} update", child.Loc);
+
+						if (child.Closed == false)
+							m_openList.NodeUpdated(child);
+						else // Closed == true
+							UpdateParents(child);
+					}
+				}
+			}
+
+			void UpdateParents(AStarNode parent)
+			{
+				//Debug.Print("updating closed node {0}", parent.Loc);
+
+				Stack<AStarNode> queue = new Stack<AStarNode>();
+
+				foreach (var dir in m_environment.GetValidDirs(parent.Loc))
+				{
+					IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+
+					AStarNode child;
+					m_nodeMap.TryGetValue(childLoc, out child);
 					if (child == null)
 						continue;
 
-					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + state.Environment.GetTileWeight(childLoc));
+					ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + m_environment.GetTileWeight(childLoc));
 
 					if (g < child.G)
 					{
-						//MyTrace.WriteLine("closed node {0} updated 2", childLoc);
+						//Debug.Print("closed node {0} updated 1", childLoc);
 
 						child.Parent = parent;
 						child.G = g;
 
 						queue.Push(child);
+					}
+				}
+
+				while (queue.Count > 0)
+				{
+					parent = queue.Pop();
+
+					foreach (var dir in m_environment.GetValidDirs(parent.Loc))
+					{
+						IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
+
+						AStarNode child;
+						m_nodeMap.TryGetValue(childLoc, out child);
+						if (child == null)
+							continue;
+
+						ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + m_environment.GetTileWeight(childLoc));
+
+						if (g < child.G)
+						{
+							//Debug.Print("closed node {0} updated 2", childLoc);
+
+							child.Parent = parent;
+							child.G = g;
+
+							queue.Push(child);
+						}
 					}
 				}
 			}
