@@ -7,8 +7,10 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	/// <summary>
-	/// Tracks all items in an env. XXX this class seems rather bad.
-	/// FindNearItem could just be directly in EnvOb
+	/// Tracks all items in an env.
+	/// This could/should keep different item categories in different lists, and
+	/// use http://blogs.msdn.com/b/devdev/archive/2007/06/07/k-nearest-neighbor-spatial-search.aspx
+	/// to speed up the search by distance.
 	/// </summary>
 	class ItemTracker
 	{
@@ -26,11 +28,28 @@ namespace Dwarrowdelf.Client
 			m_env.ObjectAdded += Environment_ObjectAdded;
 			m_env.ObjectRemoved += Environment_ObjectRemoved;
 			m_env.ObjectMoved += Environment_ObjectMoved;
-
-
 		}
 
-		public ItemObject FindNearItem(IntPoint3 location, IItemFilter filter)
+		public IEnumerable<ItemObject> GetItemsByDistance(IntPoint3 location, Func<ItemObject, bool> filter)
+		{
+			var items = m_items
+				.Where(filter)
+				.OrderBy(i => (i.Location - location).ManhattanLength);
+
+			return items;
+		}
+
+		public IEnumerable<ItemObject> GetItemsByDistance(IntPoint3 location, ItemCategory category, Func<ItemObject, bool> filter)
+		{
+			var items = m_items
+				.Where(i => i.ItemCategory == category)
+				.Where(filter)
+				.OrderBy(i => (i.Location - location).ManhattanLength);
+
+			return items;
+		}
+
+		public ItemObject GetReacableItemByDistance(IntPoint3 location, IItemFilter filter)
 		{
 			var items = m_items
 				.Where(i => i.IsReserved == false && i.IsInstalled == false && filter.Match(i))
@@ -81,6 +100,5 @@ namespace Dwarrowdelf.Client
 
 			// nop for now
 		}
-
 	}
 }

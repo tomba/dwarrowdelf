@@ -429,7 +429,7 @@ namespace Dwarrowdelf.Client
 
 				var filter = new AndItemFilter(bimi, biis);
 
-				var ob = this.Environment.ItemTracker.FindNearItem(this.Area.Center, filter);
+				var ob = this.Environment.ItemTracker.GetReacableItemByDistance(this.Area.Center, filter);
 
 				if (ob == null)
 					break;

@@ -15,9 +15,30 @@ namespace Dwarrowdelf.Client.UI
 {
 	sealed partial class InstallFurnitureDialog : Window
 	{
+		EnvironmentObject m_env;
+		IntPoint3 m_location;
+
 		public InstallFurnitureDialog()
 		{
 			InitializeComponent();
+		}
+
+		public void SetContext(EnvironmentObject env, IntPoint3 location)
+		{
+			m_env = env;
+			m_location = location;
+			SetTargetItem(ItemID.Door);
+		}
+
+		void SetTargetItem(ItemID itemID)
+		{
+			if (m_env == null)
+				return;
+
+			var items = m_env.ItemTracker.GetItemsByDistance(m_location, ItemCategory.Furniture,
+				i => i.ItemID == itemID && i.IsReserved == false && i.IsInstalled == false);
+
+			listBox.ItemsSource = items;
 		}
 
 		private void Ok_Button_Click(object sender, RoutedEventArgs e)
@@ -30,20 +51,15 @@ namespace Dwarrowdelf.Client.UI
 			get { return (ItemObject)listBox.SelectedItem; }
 		}
 
-		private void FilterItems(object sender, FilterEventArgs e)
+		private void RadioButton_Checked(object sender, RoutedEventArgs e)
 		{
-			var item = e.Item as ItemObject;
+			var b = (RadioButton)sender;
 
-			if (item == null)
-			{
-				e.Accepted = false;
-				return;
-			}
+			var str = (string)b.Content;
 
-			if (item.ItemCategory == ItemCategory.Furniture && item.IsReserved == false && item.IsInstalled == false)
-				e.Accepted = true;
-			else
-				e.Accepted = false;
+			var id = (ItemID)Enum.Parse(typeof(ItemID), str);
+
+			SetTargetItem(id);
 		}
 	}
 }

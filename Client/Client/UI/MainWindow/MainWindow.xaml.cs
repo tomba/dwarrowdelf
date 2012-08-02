@@ -136,7 +136,7 @@ namespace Dwarrowdelf.Client.UI
 						var p = selection.SelectionPoint;
 
 						var dlg = new InstallFurnitureDialog();
-						dlg.DataContext = env;
+						dlg.SetContext(env, p);
 
 						var res = dlg.ShowDialog();
 
