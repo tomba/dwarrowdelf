@@ -64,12 +64,12 @@ namespace Dwarrowdelf.Client.UI
 
 			if (update)
 			{
-				UpdateObjectList();
-
 				if (newEnv != null)
 					m_tileData = newEnv.GetTileData(newLoc);
 				else
 					m_tileData = TileData.UndefinedTileData;
+
+				UpdateObjectList();
 
 				if (oldEnv != newEnv)
 					Notify("Environment");
