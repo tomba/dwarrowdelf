@@ -18,10 +18,14 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		List<ConstructJobData> m_jobDataList;
 
-		public ConstructManager(EnvironmentObject ob)
+		Unreachables m_unreachables;
+
+		public ConstructManager(EnvironmentObject env)
 		{
-			m_environment = ob;
+			m_environment = env;
 			m_environment.World.JobManager.AddJobSource(this);
+
+			m_unreachables = new Unreachables(m_environment.World);
 
 			m_jobDataList = new List<ConstructJobData>();
 		}
@@ -34,6 +38,7 @@ namespace Dwarrowdelf.Client
 		void OnDeserialized()
 		{
 			m_environment.World.JobManager.AddJobSource(this);
+			m_unreachables = new Unreachables(m_environment.World);
 		}
 
 		public ConstructMode ContainsPoint(IntPoint3 p)
@@ -121,7 +126,8 @@ namespace Dwarrowdelf.Client
 			{
 				if (data.Job == null)
 				{
-					var item = m_environment.ItemTracker.GetReacableItemByDistance(living.Location, data.ItemFilter);
+					var item = m_environment.ItemTracker.GetReacableItemByDistance(living.Location, data.ItemFilter,
+						m_unreachables);
 
 					if (item == null)
 					{

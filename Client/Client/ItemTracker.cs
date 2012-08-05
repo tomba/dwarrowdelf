@@ -49,10 +49,12 @@ namespace Dwarrowdelf.Client
 			return items;
 		}
 
-		public ItemObject GetReacableItemByDistance(IntPoint3 location, IItemFilter filter)
+		public ItemObject GetReacableItemByDistance(IntPoint3 location, IItemFilter filter,
+			Unreachables unreachables)
 		{
 			var items = m_items
-				.Where(i => i.IsReserved == false && i.IsInstalled == false && filter.Match(i))
+				.Where(i => i.IsReserved == false && i.IsInstalled == false && unreachables.IsUnreachable(i.Location) == false)
+				.Where(i => filter.Match(i))
 				.OrderBy(i => (i.Location - location).ManhattanLength);
 
 			foreach (var item in items)
@@ -61,6 +63,8 @@ namespace Dwarrowdelf.Client
 
 				if (found)
 					return item;
+
+				unreachables.Add(item.Location);
 			}
 
 			return null;
@@ -99,6 +103,40 @@ namespace Dwarrowdelf.Client
 				return;
 
 			// nop for now
+		}
+	}
+
+	class Unreachables
+	{
+		// location : expiration tick
+		Dictionary<IntPoint3, int> m_map = new Dictionary<IntPoint3, int>();
+
+		World m_world;
+
+		public Unreachables(World world)
+		{
+			m_world = world;
+		}
+
+		public void Add(IntPoint3 p)
+		{
+			m_map[p] = m_world.TickNumber + 25;
+		}
+
+		public bool IsUnreachable(IntPoint3 p)
+		{
+			int tick;
+
+			if (m_map.TryGetValue(p, out tick) == false)
+				return false;
+
+			if (m_world.TickNumber >= tick)
+			{
+				m_map.Remove(p);
+				return false;
+			}
+
+			return true;
 		}
 	}
 }

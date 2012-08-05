@@ -41,6 +41,8 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		BuildingState m_buildingState;
 
+		Unreachables m_unreachables;
+
 		/// <summary>
 		/// For Design-time only
 		/// </summary>
@@ -75,6 +77,8 @@ namespace Dwarrowdelf.Client
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
 			this.BuildingState = Client.BuildingState.Functional;
+
+			m_unreachables = new Unreachables(world);
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)
@@ -126,6 +130,8 @@ namespace Dwarrowdelf.Client
 		public void OnDeserialized()
 		{
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
+
+			m_unreachables = new Unreachables(this.World);
 
 			if (m_currentJob != null)
 				GameData.Data.Jobs.Add(m_currentJob);
@@ -429,7 +435,7 @@ namespace Dwarrowdelf.Client
 
 				var filter = new AndItemFilter(bimi, biis);
 
-				var ob = this.Environment.ItemTracker.GetReacableItemByDistance(this.Area.Center, filter);
+				var ob = this.Environment.ItemTracker.GetReacableItemByDistance(this.Area.Center, filter, m_unreachables);
 
 				if (ob == null)
 					break;
