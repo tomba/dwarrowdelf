@@ -17,11 +17,7 @@
 	</Symbol>
 
 	<Symbol ID="Hidden">
-		<DrawingGfx DrawingName="Checkerboard" />
-	</Symbol>
-
-	<Symbol ID="Air">
-		<DrawingGfx DrawingName="Checkerboard" />
+		<DrawingGfx DrawingName="Checkerboard4" />
 	</Symbol>
 
 	<Symbol ID="Floor">

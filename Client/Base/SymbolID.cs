@@ -18,9 +18,6 @@ namespace Dwarrowdelf.Client
 		// Tile that has not been visible
 		Hidden,
 
-		// Empty tile above ground
-		Air,
-
 		/* floors */
 		Floor,
 		Sand,
