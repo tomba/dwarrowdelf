@@ -44,8 +44,8 @@
 
 	<Symbol ID="DesignationMine">
 		<CombinedGfx Opacity="0.75" >
-			<CharGfx Reverse="True" Outline="False" Char="▓" />
-			<CharGfx X="20" Y="40" W="60" H="60" Char="●" />
+			<DrawingGfx DrawingName="Ground" />
+			<DrawingGfx X="10" Y="10" W="80" H="80" DrawingName="Rock" />
 		</CombinedGfx>
 	</Symbol>
 
