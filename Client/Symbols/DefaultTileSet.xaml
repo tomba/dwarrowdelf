@@ -17,11 +17,11 @@
 	</Symbol>
 
 	<Symbol ID="Hidden">
-		<CharGfx Char="▒" />
+		<DrawingGfx DrawingName="Checkerboard" />
 	</Symbol>
 
 	<Symbol ID="Air">
-		<CharGfx Char="▒" />
+		<DrawingGfx DrawingName="Checkerboard" />
 	</Symbol>
 
 	<Symbol ID="Floor">
