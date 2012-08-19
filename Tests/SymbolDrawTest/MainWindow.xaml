@@ -13,7 +13,9 @@
 
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
-					<Image Width="64" Height="64" Source="{Binding}"/>
+					<Border BorderBrush="Blue" BorderThickness="1">
+						<Image Width="64" Height="64" Source="{Binding}"/>
+					</Border>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
