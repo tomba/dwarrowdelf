@@ -96,5 +96,6 @@ namespace Dwarrowdelf.Client
 
 		/* designations */
 		DesignationMine,
+		DesignationChannel,
 	}
 }

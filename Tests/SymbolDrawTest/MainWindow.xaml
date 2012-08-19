@@ -1,7 +1,8 @@
 ﻿<Window x:Class="SymbolDrawTest.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		Title="MainWindow" Height="350" Width="525">
+		Title="MainWindow" Height="350" Width="525"
+		WindowState="Maximized">
 	<Grid>
 		<ItemsControl Name="list" Background="DimGray">
 			<ItemsControl.ItemsPanel>
@@ -12,7 +13,7 @@
 
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
-					<Image Width="32" Height="32" Source="{Binding}"/>
+					<Image Width="64" Height="64" Source="{Binding}"/>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>

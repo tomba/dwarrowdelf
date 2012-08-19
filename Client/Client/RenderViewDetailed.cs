@@ -570,7 +570,7 @@ namespace Dwarrowdelf.Client
 					return SymbolID.StairsUp;
 
 				case DesignationType.Channel:
-					return SymbolID.DesignationMine;
+					return SymbolID.DesignationChannel;
 
 				case DesignationType.FellTree:
 					return SymbolID.Log;

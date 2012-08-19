@@ -314,7 +314,7 @@ namespace Dwarrowdelf.Client.Symbols
 			var bgColor = gfx.Background.HasValue ? gfx.Background.Value : GameColor.None;
 
 			var drawing = TileSetHelpers.DrawCharacter(gfx.Char, typeface, fontSize, fgColor, bgColor, outline,
-				outlineThickness, gfx.Reverse);
+				outlineThickness, gfx.Reverse, gfx.Mode);
 
 			drawing = TileSetHelpers.NormalizeDrawing(drawing, new Point(gfx.X, gfx.Y), new Size(gfx.W, gfx.H),
 				gfx.Rotate, !gfx.Opaque, gfx.Opacity);

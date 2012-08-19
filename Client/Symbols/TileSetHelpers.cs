@@ -12,7 +12,7 @@ namespace Dwarrowdelf.Client.Symbols
 	static class TileSetHelpers
 	{
 		public static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, GameColor color, GameColor bgColor,
-			bool drawOutline, double outlineThickness, bool reverse)
+			bool drawOutline, double outlineThickness, bool reverse, CharRenderMode mode)
 		{
 			Color c;
 			if (color == GameColor.None)
@@ -32,16 +32,55 @@ namespace Dwarrowdelf.Client.Symbols
 						typeFace,
 						fontSize, Brushes.Black);
 
-
 				var geometry = formattedText.BuildGeometry(new System.Windows.Point(0, 0));
 				var pen = drawOutline ? new Pen(Brushes.Black, outlineThickness) : null;
-				var boundingGeometry = new RectangleGeometry(pen != null ? geometry.GetRenderBounds(pen) : geometry.Bounds);
+				var bounds = pen != null ? geometry.GetRenderBounds(pen) : geometry.Bounds;
+
+				Rect bb;
+
+				switch (mode)
+				{
+					case CharRenderMode.Full:
+						{
+							double size = formattedText.Height;
+							bb = new Rect(bounds.X + bounds.Width / 2 - size / 2, 0, size, size);
+						}
+						break;
+
+					case CharRenderMode.Caps:
+						{
+							double size = typeFace.CapsHeight * fontSize;
+							bb = new Rect(bounds.X + bounds.Width / 2 - size / 2, formattedText.Baseline - size,
+								size, size);
+						}
+						break;
+
+					case CharRenderMode.Free:
+						bb = bounds;
+						break;
+
+					default:
+						throw new Exception();
+				}
 
 				if (reverse)
-					geometry = new CombinedGeometry(GeometryCombineMode.Exclude, boundingGeometry, geometry);
+					geometry = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(bb), geometry);
 
-				dc.DrawGeometry(bgBrush, null, boundingGeometry);
+				//dc.DrawRectangle(bgBrush, new Pen(Brushes.Red, 1), bb);
+				dc.DrawRectangle(bgBrush, null, bb);
+
 				dc.DrawGeometry(brush, pen, geometry);
+
+				/*
+				var dl = new Action<double>((y) =>
+					dc.DrawLine(new Pen(Brushes.Red, 1), new Point(bb.Left, y), new Point(bb.Right, y)));
+
+				dl(0);
+				dl(formattedText.Baseline);
+				dl(fontSize);
+				dl(formattedText.Height);
+				dl(formattedText.Baseline - typeFace.CapsHeight * fontSize);
+				*/
 			}
 
 			return dGroup;

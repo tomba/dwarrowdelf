@@ -9,6 +9,13 @@ using System.Windows.Media;
 
 namespace Dwarrowdelf.Client.Symbols
 {
+	public enum CharRenderMode
+	{
+		Free = 0,
+		Full,
+		Caps,
+	}
+
 	sealed class SymbolCollection : KeyedCollection<SymbolID, Symbol>
 	{
 		protected override SymbolID GetKeyForItem(Symbol item)
@@ -90,6 +97,7 @@ namespace Dwarrowdelf.Client.Symbols
 		public GameColor? Color { get; set; }
 		public GameColor? Background { get; set; }
 		public bool Reverse { get; set; }
+		public CharRenderMode Mode { get; set; }
 	}
 
 	sealed class DrawingGfx : VectorGfxBase

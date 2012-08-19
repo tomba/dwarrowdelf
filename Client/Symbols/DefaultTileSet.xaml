@@ -49,6 +49,10 @@
 		</CombinedGfx>
 	</Symbol>
 
+	<Symbol ID="DesignationChannel">
+		<CharGfx Char="_" Mode="Full" Reverse="True" />
+	</Symbol>
+	
 	<Symbol ID="ValuableOre">
 		<CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
 	</Symbol>
@@ -126,16 +130,16 @@
 	</Symbol>
 
 	<Symbol ID="Sheep">
-		<CharGfx Char="b" X="20" Y="40" W="60" H="60"/>
+		<CharGfx Char="b" Mode="Caps"/>
 	</Symbol>
 	<Symbol ID="Wolf">
-		<CharGfx Char="w" X="20" Y="40" W="60" H="60"/>
+		<CharGfx Char="w" Mode="Caps"/>
 	</Symbol>
 	<Symbol ID="Dragon">
-		<CharGfx Char="D" />
+		<CharGfx Char="D" Mode="Caps" />
 	</Symbol>
 	<Symbol ID="Orc">
-		<CharGfx Char="o" X="20" Y="40" W="60" H="60" />
+		<CharGfx Char="o" Mode="Caps" />
 	</Symbol>
 
 	<Symbol ID="UncutGem">
