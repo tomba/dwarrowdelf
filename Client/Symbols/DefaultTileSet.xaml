@@ -43,16 +43,13 @@
 	</Symbol>
 
 	<Symbol ID="DesignationMine">
-		<CombinedGfx Opacity="0.75" >
-			<DrawingGfx DrawingName="Ground" />
-			<DrawingGfx X="10" Y="10" W="80" H="80" DrawingName="Rock" />
-		</CombinedGfx>
+		<DrawingGfx DrawingName="Pick" Rotate="45" />
 	</Symbol>
 
 	<Symbol ID="DesignationChannel">
-		<CharGfx Char="_" Mode="Full" Reverse="True" />
+		<DrawingGfx DrawingName="Pick" Rotate="135" />
 	</Symbol>
-	
+
 	<Symbol ID="ValuableOre">
 		<CharGfx Outline="False" X="20" Y="20" W="60" H="60" Char="£" />
 	</Symbol>

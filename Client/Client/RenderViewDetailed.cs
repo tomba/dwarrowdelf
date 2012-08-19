@@ -486,15 +486,15 @@ namespace Dwarrowdelf.Client
 		{
 			SymbolID id;
 
-			id = GetDesignationSymbolAt(env.Designations, ml);
-			if (id != SymbolID.Undefined)
+			if (m_symbolToggler)
 			{
-				tile.SymbolID = id;
-				if (m_symbolToggler)
-					tile.Color = GameColor.DarkGray;
-				else
-					tile.Color = GameColor.LightGray;
-				return;
+				id = GetDesignationSymbolAt(env.Designations, ml);
+				if (id != SymbolID.Undefined)
+				{
+					tile.SymbolID = id;
+					tile.BgColor = GameColor.DimGray;
+					return;
+				}
 			}
 
 			id = GetConstructSymbolAt(env.ConstructManager, ml);

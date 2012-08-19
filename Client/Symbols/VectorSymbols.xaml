@@ -9,6 +9,16 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="Pick" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FF553C19" Geometry="F1 M 860,169L 866.667,169L 866.667,242.333L 860,242.333L 860,169 Z "/>
+					<GeometryDrawing Brush="#FF505050" Geometry="M 860.833,169L 826.667,175.667L 833.333,169L 860,162.333L 866.667,162.333L 893.333,169L 900,175.667L 866.667,169"/>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 	<DrawingBrush x:Key="Lines4" Stretch="Uniform">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>
@@ -52,11 +62,11 @@
 					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -20,282.333L 73.3333,295.667L 73.3333,302.333L -20,289L -20,282.333 Z "/>
 					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,295.667L 73.3334,309L 73.3334,315.667L -19.9999,302.333L -19.9999,295.667 Z "/>
 					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -20,309L 73.3333,322.333L 73.3333,329L -20,315.667L -20,309 Z "/>
-					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,322.333L 73.3333,335.667L 73.3333,342.333L -20,329L -19.9999,322.333 Z "/>
+					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,322.333L 73.3334,335.667L 73.3334,342.333L -20,329L -19.9999,322.333 Z "/>
 					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -20,335.667L 73.3333,349L 73.3333,355.667L -20,342.333L -20,335.667 Z "/>
-					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,349L 73.3333,362.333L 73.3333,369L -20,355.667L -19.9999,349 Z "/>
+					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,349L 73.3334,362.333L 73.3334,369L -20,355.667L -19.9999,349 Z "/>
 					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M 73.3333,289L 20,282.333L 73.3333,282.333"/>
-					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9999,362.333L 73.3334,375.667L 20.0001,375.667L -19.9999,369L -19.9999,362.333 Z "/>
+					<GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M -19.9998,362.333L 73.3335,375.667L 20.0002,375.667L -19.9999,369L -19.9998,362.333 Z "/>
 				</DrawingGroup.Children>
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
