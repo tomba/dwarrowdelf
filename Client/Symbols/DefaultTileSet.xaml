@@ -43,11 +43,11 @@
 	</Symbol>
 
 	<Symbol ID="DesignationMine">
-		<DrawingGfx DrawingName="Pick" Rotate="45" />
+		<DrawingGfx DrawingName="Pick" Rotate="0" />
 	</Symbol>
 
 	<Symbol ID="DesignationChannel">
-		<DrawingGfx DrawingName="Pick" Rotate="135" />
+		<DrawingGfx DrawingName="Pick" Rotate="-90" />
 	</Symbol>
 
 	<Symbol ID="ValuableOre">

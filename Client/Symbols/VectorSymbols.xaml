@@ -13,8 +13,8 @@
 		<DrawingBrush.Drawing>
 			<DrawingGroup>
 				<DrawingGroup.Children>
-					<GeometryDrawing Brush="#FF553C19" Geometry="F1 M 860,169L 866.667,169L 866.667,242.333L 860,242.333L 860,169 Z "/>
-					<GeometryDrawing Brush="#FF505050" Geometry="M 860.833,169L 826.667,175.667L 833.333,169L 860,162.333L 866.667,162.333L 893.333,169L 900,175.667L 866.667,169"/>
+					<GeometryDrawing Brush="#FF553C19" Geometry="F1 M 837.406,181.12L 842.12,176.406L 893.975,228.26L 889.261,232.974L 837.406,181.12 Z "/>
+					<GeometryDrawing Brush="#FF505050" Geometry="M 837.995,180.531L 818.55,209.404L 818.55,199.976L 832.692,176.406L 837.406,171.692L 860.976,157.55L 870.404,157.55L 842.12,176.406"/>
 				</DrawingGroup.Children>
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
