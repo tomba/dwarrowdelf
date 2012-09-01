@@ -109,6 +109,7 @@
     <Compile Include="SaveFileManager.cs" />
     <Compile Include="Skills.cs" />
     <Compile Include="TerrainGen\Clamper.cs" />
+    <Compile Include="TerrainGen\DungeonTerrainGenerator.cs" />
     <Compile Include="TerrainGen\DiamondSquare.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConsumeAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveFellTreeAssignment.cs" />

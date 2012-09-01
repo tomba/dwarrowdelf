@@ -41,5 +41,18 @@ namespace Dwarrowdelf
 		{
 			return value > max ? max : (value < min ? min : value);
 		}
+
+		/// <summary>
+		/// Return integer Log2 of an integer
+		/// </summary>
+		public static int Log2(int value)
+		{
+			int r = 0;
+
+			while ((value >>= 1) != 0)
+				r++;
+
+			return r;
+		}
 	}
 }

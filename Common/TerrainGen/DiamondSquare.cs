@@ -64,7 +64,7 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			var grid = ctx.Grid;
 
-			for (int pass = 0; pass < (int)Math.Log(grid.Width, 2); ++pass)
+			for (int pass = 0; pass < MyMath.Log2(grid.Width); ++pass)
 			{
 				var parts = (int)Math.Pow(2, pass);
 				var size = (grid.Width - 1) / parts;
