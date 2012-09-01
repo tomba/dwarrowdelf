@@ -13,6 +13,7 @@ namespace Dwarrowdelf.Client
 
 		public event Action<string> StatusChanged;
 
+		IGameFactory m_gameFactory;
 		IGame m_game;
 		Thread m_serverThread;
 		AppDomain m_serverDomain;
@@ -99,19 +100,13 @@ namespace Dwarrowdelf.Client
 				m_serverDomain = AppDomain.CreateDomain("ServerDomain", null, domainSetup);
 
 				appDomain = m_serverDomain;
-
-				UpdateStatus("Creating Game");
-
 			}
 			else
 			{
 				appDomain = AppDomain.CurrentDomain;
 			}
 
-			var gameFactory = (IGameFactory)appDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
-			m_game = gameFactory.CreateGame(GameMode.Fortress, gameDir);
-
-			UpdateStatus("Game Created");
+			m_gameFactory = (IGameFactory)appDomain.CreateInstanceFromAndUnwrap(serverPath, "Dwarrowdelf.Server.GameFactory");
 		}
 
 		void ServerMain(object arg)
@@ -121,19 +116,17 @@ namespace Dwarrowdelf.Client
 			Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 			Thread.CurrentThread.Name = "SMain";
 
-			m_game.Init();
-
 			if (m_save == Guid.Empty)
 			{
-				UpdateStatus("Creating World");
-				m_game.CreateWorld();
-				UpdateStatus("World Created");
+				UpdateStatus("Creating Game");
+				m_game = m_gameFactory.CreateGame(m_saveManager.GameDir, GameMode.Fortress, GameMap.Fortress);
+				UpdateStatus("Game Created");
 			}
 			else
 			{
-				UpdateStatus("Loading World");
-				m_game.LoadWorld(m_save);
-				UpdateStatus("World Loaded");
+				UpdateStatus("Loading Game");
+				m_game = m_gameFactory.LoadGame(m_saveManager.GameDir, m_save);
+				UpdateStatus("Game Loaded");
 			}
 
 			UpdateStatus("Starting Game");

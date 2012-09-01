@@ -7,7 +7,6 @@ namespace Dwarrowdelf.Server
 {
 	public interface IArea
 	{
-		World CreateWorld();
 		void SetupLivingAsControllable(LivingObject living);
 		LivingObject[] SetupWorldForNewPlayer(Player player);
 	}

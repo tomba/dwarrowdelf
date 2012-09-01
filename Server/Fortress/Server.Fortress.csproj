@@ -8,7 +8,7 @@
     <ProjectGuid>{982A809E-67C3-41EF-BF7B-C8CAFD288ADC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dwarrowdelf.Server</RootNamespace>
+    <RootNamespace>Dwarrowdelf.Server.Fortress</RootNamespace>
     <AssemblyName>Dwarrowdelf.Server.Fortress</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -40,15 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Area.cs" />
+    <Compile Include="DungeonWorldCreator.cs" />
+    <Compile Include="FortressGameManager.cs" />
     <Compile Include="DwarfAI.cs" />
     <Compile Include="EnvObserver.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Items\FoodGenerator.cs" />
     <Compile Include="Items\WaterGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WorldCreator.cs" />
-    <Compile Include="WorldPopulator.cs" />
+    <Compile Include="MountainWorldCreator.cs" />
+    <Compile Include="MountainWorldPopulator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

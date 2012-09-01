@@ -34,14 +34,12 @@ namespace Dwarrowdelf.Server
 				save = saveManager.GetLatestSaveFile();
 
 			var gf = new GameFactory();
-			var game = (Game)gf.CreateGame(GameMode.Fortress, gameDir);
-
-			game.Init();
+			GameEngine game;
 
 			if (save == Guid.Empty)
-				game.CreateWorld();
+				game = (GameEngine)gf.CreateGame(gameDir, GameMode.Fortress, GameMap.Fortress);
 			else
-				game.LoadWorld(save);
+				game = (GameEngine)gf.LoadGame(gameDir, save);
 
 			var keyThread = new Thread(KeyMain);
 			keyThread.Start(game);
@@ -60,7 +58,7 @@ namespace Dwarrowdelf.Server
 
 		static void KeyMain(object _game)
 		{
-			var game = (Game)_game;
+			var game = (GameEngine)_game;
 
 			Console.WriteLine("q - quit, s - signal, p - enable singlestep, r - disable singlestep, . - step");
 
@@ -77,7 +75,7 @@ namespace Dwarrowdelf.Server
 
 					case ConsoleKey.S:
 						Console.WriteLine("Signal");
-						game.Engine.SignalWorld();
+						game.SignalWorld();
 						break;
 
 					case ConsoleKey.P:

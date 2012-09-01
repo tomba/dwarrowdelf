@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 		public TimeSpan MinTickTime;
 	}
 
-	public class GameEngine
+	public class GameEngine : MarshalByRefObject, IGame
 	{
 		string m_gameDir;
 		World m_world;
@@ -63,18 +63,31 @@ namespace Dwarrowdelf.Server
 		/// </summary>
 		Thread m_gameThread;
 
-		public Game Game { get; private set; }
+		public IArea Area { get; private set; }
 
-		public GameEngine(Game game, string gameDir)
+
+		public static GameEngine Create(string gameDir, World world, IArea area)
 		{
-			this.Game = game;
+			var game = new GameEngine(gameDir);
+			game.Create(world, area);
+			return game;
+		}
+
+		public static GameEngine Load(string gameDir, Guid save)
+		{
+			throw new Exception();
+		}
+
+
+		GameEngine(string gameDir)
+		{
 			m_gameDir = gameDir;
 
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
 		}
 
-		public void Create()
+		void Create(World world, IArea area)
 		{
 			if (m_world != null)
 				throw new Exception();
@@ -82,7 +95,8 @@ namespace Dwarrowdelf.Server
 			this.LastSaveID = Guid.Empty;
 			this.LastLoadID = Guid.Empty;
 
-			m_world = this.Game.Area.CreateWorld();
+			m_world = world;
+			this.Area = area;
 		}
 
 		public Guid LastSaveID { get; private set; }
@@ -241,6 +255,11 @@ namespace Dwarrowdelf.Server
 			SignalWorld();
 		}
 
+		public void Connect(DirectConnection clientConnection)
+		{
+			DirectConnectionListener.NewConnection(clientConnection);
+		}
+
 		void _OnNewConnection(IConnection connection)
 		{
 			trace.TraceInformation("New connection");
@@ -292,7 +311,7 @@ namespace Dwarrowdelf.Server
 
 			var player = CreatePlayer(userID);
 
-			var controllables = this.Game.Area.SetupWorldForNewPlayer(player);
+			var controllables = this.Area.SetupWorldForNewPlayer(player);
 			foreach (var l in controllables)
 				player.AddControllable(l);
 
@@ -468,6 +487,11 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 
 			return saveData;
+		}
+
+		public override object InitializeLifetimeService()
+		{
+			return null;
 		}
 
 		[Serializable]

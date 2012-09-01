@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="IArea.cs" />
     <Compile Include="IPRunner.cs" />

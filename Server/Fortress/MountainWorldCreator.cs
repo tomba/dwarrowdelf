@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	static class WorldCreator
+	public static class MountainWorldCreator
 	{
 		const int MAP_SIZE = 8;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 20;
@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV);
 
-			WorldPopulator.FinalizeEnv(env);
+			MountainWorldPopulator.FinalizeEnv(env);
 		}
 
 		static TerrainData CreateTerrain()

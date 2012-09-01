@@ -7,32 +7,22 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public sealed class Area : IArea
+	public sealed class FortressGameManager : IArea
 	{
 		public World World { get; private set; }
 
 		EnvObserver m_envObserver;
 
-		public Area()
+		public FortressGameManager(World world)
 		{
-		}
-
-		#region IArea Members
-
-		public World CreateWorld()
-		{
-			this.World = new World(WorldTickMethod.Simultaneous);
-			this.World.Initialize(delegate
-				{
-					WorldCreator.InitializeWorld(this.World);
-				});
+			this.World = world;
 
 			// XXX
 			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
 			m_envObserver = new EnvObserver(env);
-
-			return this.World;
 		}
+
+		#region IArea Members
 
 		public void SetupLivingAsControllable(LivingObject living)
 		{
@@ -126,6 +116,9 @@ namespace Dwarrowdelf.Server.Fortress
 
 			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
 			{
+				if (env.Size.Plane.Contains(p) == false)
+					continue;
+
 				var z = FindSurface(env, p);
 
 				var r = new IntGrid2Z(p.X - size, p.Y - size, size * 2, size * 2, z);

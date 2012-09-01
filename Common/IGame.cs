@@ -10,19 +10,25 @@ namespace Dwarrowdelf
 	{
 		Undefined,
 		Fortress,
+		Adventure,
+	}
+
+	public enum GameMap
+	{
+		Undefined,
+		Fortress,
+		Adventure,
+		Arena,
 	}
 
 	public interface IGameFactory
 	{
-		IGame CreateGame(GameMode mode, string gameDir);
+		IGame CreateGame(string gameDir, GameMode mode, GameMap map);
+		IGame LoadGame(string gameDir, Guid save);
 	}
 
 	public interface IGame
 	{
-		void Init();
-		void CreateWorld();
-		void LoadWorld(Guid id);
-
 		void Run(EventWaitHandle serverStartWaitHandle);
 		void Stop();
 
