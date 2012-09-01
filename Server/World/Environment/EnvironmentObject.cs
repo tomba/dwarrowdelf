@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileGrid m_tileGrid;
 
-		ArrayGrid2D<byte> m_depthMap;
+		byte[,] m_depthMap;
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Server
 
 		void CreateDepthMap()
 		{
-			m_depthMap = new ArrayGrid2D<byte>(this.Size.Plane);
+			var depthMap = new byte[this.Size.Height, this.Size.Width];
 
 			Parallel.ForEach(this.Size.Plane.Range(), p =>
 			{
@@ -112,18 +112,20 @@ namespace Dwarrowdelf.Server
 
 					if (m_tileGrid.GetTileData(p3).IsEmpty == false)
 					{
-						m_depthMap[p] = (byte)z;
+						depthMap[p.Y, p.X] = (byte)z;
 						break;
 					}
 				}
 			});
+
+			m_depthMap = depthMap;
 		}
 
 		void SetSubterraneanFlags()
 		{
 			Parallel.ForEach(this.Size.Plane.Range(), p =>
 			{
-				int d = m_depthMap[p];
+				int d = GetDepth(p);
 
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
@@ -177,19 +179,29 @@ namespace Dwarrowdelf.Server
 			m_waterHandler.Rescan();
 		}
 
+		public int GetDepth(int x, int y)
+		{
+			return m_depthMap[y, x];
+		}
+
 		public int GetDepth(IntPoint2 p)
 		{
-			return m_depthMap[p];
+			return m_depthMap[p.Y, p.X];
+		}
+
+		void SetDepth(IntPoint2 p, byte depth)
+		{
+			m_depthMap[p.Y, p.X] = depth;
 		}
 
 		public IntPoint3 GetSurface(int x, int y)
 		{
-			return new IntPoint3(x, y, m_depthMap[x, y]);
+			return new IntPoint3(x, y, GetDepth(x, y));
 		}
 
 		public IntPoint3 GetSurface(IntPoint2 p)
 		{
-			return new IntPoint3(p.X, p.Y, m_depthMap[p.X, p.Y]);
+			return GetSurface(p.X, p.Y);
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 l)
@@ -270,14 +282,14 @@ namespace Dwarrowdelf.Server
 			}
 
 			var p2d = p.ToIntPoint();
-			int oldSurfaceLevel = m_depthMap[p2d];
+			int oldSurfaceLevel = GetDepth(p2d);
 			int newSurfaceLevel = oldSurfaceLevel;
 
 			if (data.IsEmpty == false && oldSurfaceLevel < p.Z)
 			{
 				// surface level has risen
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
-				m_depthMap[p2d] = (byte)p.Z;
+				SetDepth(p2d, (byte)p.Z);
 				newSurfaceLevel = p.Z;
 			}
 			else if (data.IsEmpty && oldSurfaceLevel == p.Z)
@@ -292,7 +304,7 @@ namespace Dwarrowdelf.Server
 					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						m_depthMap[p2d] = (byte)z;
+						SetDepth(p2d, (byte)p.Z);
 						newSurfaceLevel = z;
 						break;
 					}

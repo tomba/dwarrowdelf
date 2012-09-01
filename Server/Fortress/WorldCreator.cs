@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				for (int x = 0; x < w; ++x)
 				{
-					int z = heightMap[x, y];
+					int z = heightMap[y, x];
 
 					var p = new IntPoint3(x, y, z);
 
@@ -100,7 +100,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			grid.Size.Plane.Range().AsParallel().ForAll(p2d =>
 			{
-				int z = heightMap[p2d];
+				int z = heightMap[p2d.Y, p2d.X];
 
 				var p = new IntPoint3(p2d, z);
 
