@@ -77,7 +77,10 @@ namespace Dwarrowdelf.TerrainGen
 						continue;
 
 					td1.TerrainID = TerrainID.Hole;
+					td1.TerrainMaterialID = MaterialID.Granite;
+
 					td2.InteriorID = InteriorID.Stairs;
+					td2.InteriorMaterialID = MaterialID.Granite;
 
 					SetTileData(p1, td1);
 					SetTileData(p2, td2);
@@ -203,7 +206,9 @@ namespace Dwarrowdelf.TerrainGen
 
 			var td = new TileData();
 			td.TerrainID = TerrainID.NaturalFloor;
+			td.TerrainMaterialID = MaterialID.Granite;
 			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = MaterialID.Undefined;
 
 			int leafs = (int)Math.Pow(2, bsp.Depth - 1);
 
@@ -301,6 +306,7 @@ namespace Dwarrowdelf.TerrainGen
 			td.TerrainID = TerrainID.NaturalFloor;
 			td.TerrainMaterialID = MaterialID.Granite;
 			td.InteriorID = InteriorID.Empty;
+			td.InteriorMaterialID = MaterialID.Undefined;
 
 			if (horiz)
 			{
