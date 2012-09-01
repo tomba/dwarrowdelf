@@ -215,7 +215,6 @@ namespace TerrainGenTest
 					break;
 
 				case TerrainID.Empty:
-				case TerrainID.NaturalFloor:
 				case TerrainID.SlopeNorth:
 				case TerrainID.SlopeNorthEast:
 				case TerrainID.SlopeEast:
@@ -227,6 +226,28 @@ namespace TerrainGenTest
 					r = 0;
 					g = 0;
 					b = 0;
+					break;
+
+				case TerrainID.NaturalFloor:
+					switch (td.InteriorID)
+					{
+						case InteriorID.Empty:
+							r = g = b = 0;
+							break;
+
+						case InteriorID.Stairs:
+							r = 255;
+							g = b = 0;
+							break;
+
+						default:
+							throw new Exception();
+					}
+					break;
+
+				case TerrainID.Hole:
+					r = 255;
+					g = b = 0;
 					break;
 
 				default:

@@ -269,6 +269,9 @@ namespace TerrainGenTest
 
 		void UpdateTileInfo(IntPoint3 p)
 		{
+			if (m_terrain.HeightMap.Bounds.Contains(p.ToIntPoint()) == false)
+				return;
+
 			int h = m_terrain.HeightMap[p.ToIntPoint()];
 
 			zTextBlock.Text = String.Format("{0}/{1}", p, h);
