@@ -49,6 +49,9 @@ namespace Dwarrowdelf
 		{
 			Debug.Assert(dir.IsValid());
 
+			if (env.Contains(srcLoc) == false)
+				return false;
+
 			var td = env.GetTileData(srcLoc);
 
 			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
