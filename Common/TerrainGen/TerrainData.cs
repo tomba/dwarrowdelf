@@ -9,7 +9,7 @@ namespace Dwarrowdelf.TerrainGen
 	public sealed class TerrainData
 	{
 		public IntSize3 Size { get; private set; }
-		public TileGrid TileGrid { get; private set; }
+		public TileData[, ,] TileGrid { get; private set; }
 		public byte[,] HeightMap { get; private set; }
 
 		public int Width { get { return this.Size.Width; } }
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			this.Size = size;
 			this.HeightMap = new byte[size.Height, size.Width];
-			this.TileGrid = new TileGrid(size);
+			this.TileGrid = new TileData[size.Depth, size.Height, size.Width];
 		}
 
 		public bool Contains(IntPoint3 p)
@@ -38,59 +38,54 @@ namespace Dwarrowdelf.TerrainGen
 			return this.HeightMap[p.Y, p.X];
 		}
 
-		public TerrainID GetTerrainID(IntPoint3 l)
+		public TerrainID GetTerrainID(IntPoint3 p)
 		{
-			return this.TileGrid.GetTerrainID(l);
+			return this.TileGrid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3 l)
+		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
-			return this.TileGrid.GetTerrainMaterialID(l);
+			return this.TileGrid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3 l)
+		public InteriorID GetInteriorID(IntPoint3 p)
 		{
-			return this.TileGrid.GetInteriorID(l);
+			return this.TileGrid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3 l)
+		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
-			return this.TileGrid.GetInteriorMaterialID(l);
+			return this.TileGrid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3 l)
+		public TerrainInfo GetTerrain(IntPoint3 p)
 		{
-			return Terrains.GetTerrain(GetTerrainID(l));
+			return Terrains.GetTerrain(GetTerrainID(p));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3 l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3 p)
 		{
-			return Materials.GetMaterial(this.TileGrid.GetTerrainMaterialID(l));
+			return Materials.GetMaterial(GetTerrainMaterialID(p));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3 l)
+		public InteriorInfo GetInterior(IntPoint3 p)
 		{
-			return Interiors.GetInterior(GetInteriorID(l));
+			return Interiors.GetInterior(GetInteriorID(p));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3 l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3 p)
 		{
-			return Materials.GetMaterial(this.TileGrid.GetInteriorMaterialID(l));
+			return Materials.GetMaterial(GetInteriorMaterialID(p));
 		}
 
-		public TileData GetTileData(IntPoint3 l)
+		public TileData GetTileData(IntPoint3 p)
 		{
-			return this.TileGrid.GetTileData(l);
+			return this.TileGrid[p.Z, p.Y, p.X];
 		}
 
-		public byte GetWaterLevel(IntPoint3 l)
+		public byte GetWaterLevel(IntPoint3 p)
 		{
-			return this.TileGrid.GetWaterLevel(l);
-		}
-
-		public bool GetTileFlag(IntPoint3 l, TileFlags flag)
-		{
-			return (this.TileGrid.GetFlags(l) & flag) != 0;
+			return this.TileGrid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
 		public void SetTileData(IntPoint3 p, TileData data)
@@ -107,7 +102,7 @@ namespace Dwarrowdelf.TerrainGen
 
 				for (int z = p.Z - 1; z >= 0; --z)
 				{
-					if (this.TileGrid.GetTileData(new IntPoint3(p.X, p.Y, z)).IsEmpty == false)
+					if (GetTileData(new IntPoint3(p.X, p.Y, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
 						this.HeightMap[p.Y, p.X] = (byte)z;
@@ -116,15 +111,7 @@ namespace Dwarrowdelf.TerrainGen
 				}
 			}
 
-			this.TileGrid.SetTileData(p, data);
-		}
-
-		public void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
-		{
-			if (value)
-				this.TileGrid.SetFlags(l, flags);
-			else
-				this.TileGrid.ClearFlags(l, flags);
+			this.TileGrid[p.Z, p.Y, p.X] = data;
 		}
 	}
 }

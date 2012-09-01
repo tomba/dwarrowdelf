@@ -13,20 +13,16 @@ namespace Dwarrowdelf.TerrainGen
 	public class TerrainGenerator
 	{
 		IntSize3 m_size;
-
-		TileGrid m_tileGrid;
+		TerrainData m_data;
 
 		Tuple<double, double> m_rockLayerSlant;
 
 		Random m_random;
 
-		TerrainData m_data;
-
 		public TerrainGenerator(TerrainData data, Random random)
 		{
 			m_data = data;
 			m_size = data.Size;
-			m_tileGrid = data.TileGrid;
 			m_random = random;
 		}
 
@@ -346,12 +342,12 @@ namespace Dwarrowdelf.TerrainGen
 
 		void SetTileData(IntPoint3 p, TileData td)
 		{
-			m_tileGrid.SetTileData(p, td);
+			m_data.SetTileData(p, td);
 		}
 
 		TileData GetTileData(IntPoint3 p)
 		{
-			return m_tileGrid.GetTileData(p);
+			return m_data.GetTileData(p);
 		}
 
 		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)

@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
-		TileGrid m_tileGrid;
+		TileData[, ,] m_tileGrid;
 
 		byte[,] m_depthMap;
 
@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Server
 			m_tileGrid = terrain.TileGrid;
 			m_depthMap = terrain.HeightMap;
 
-			var size = m_tileGrid.Size;
+			var size = terrain.Size;
 			this.Width = size.Width;
 			this.Height = size.Height;
 			this.Depth = size.Depth;
@@ -108,9 +108,7 @@ namespace Dwarrowdelf.Server
 			{
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
-					var p3 = new IntPoint3(p, z);
-
-					if (m_tileGrid.GetTileData(p3).IsEmpty == false)
+					if (m_tileGrid[z, p.Y, p.X].IsEmpty == false)
 					{
 						depthMap[p.Y, p.X] = (byte)z;
 						break;
@@ -129,12 +127,10 @@ namespace Dwarrowdelf.Server
 
 				for (int z = this.Size.Depth - 1; z >= 0; --z)
 				{
-					var p3 = new IntPoint3(p, z);
-
 					if (z < d)
-						m_tileGrid.SetFlags(p3, TileFlags.Subterranean);
+						m_tileGrid[z, p.Y, p.X].Flags |= TileFlags.Subterranean;
 					else
-						m_tileGrid.ClearFlags(p3, TileFlags.Subterranean);
+						m_tileGrid[z, p.Y, p.X].Flags &= ~TileFlags.Subterranean;
 				}
 			});
 		}
@@ -204,59 +200,59 @@ namespace Dwarrowdelf.Server
 			return GetSurface(p.X, p.Y);
 		}
 
-		public TerrainID GetTerrainID(IntPoint3 l)
+		public TerrainID GetTerrainID(IntPoint3 p)
 		{
-			return m_tileGrid.GetTerrainID(l);
+			return m_tileGrid[p.Z, p.Y, p.X].TerrainID;
 		}
 
-		public MaterialID GetTerrainMaterialID(IntPoint3 l)
+		public MaterialID GetTerrainMaterialID(IntPoint3 p)
 		{
-			return m_tileGrid.GetTerrainMaterialID(l);
+			return m_tileGrid[p.Z, p.Y, p.X].TerrainMaterialID;
 		}
 
-		public InteriorID GetInteriorID(IntPoint3 l)
+		public InteriorID GetInteriorID(IntPoint3 p)
 		{
-			return m_tileGrid.GetInteriorID(l);
+			return m_tileGrid[p.Z, p.Y, p.X].InteriorID;
 		}
 
-		public MaterialID GetInteriorMaterialID(IntPoint3 l)
+		public MaterialID GetInteriorMaterialID(IntPoint3 p)
 		{
-			return m_tileGrid.GetInteriorMaterialID(l);
+			return m_tileGrid[p.Z, p.Y, p.X].InteriorMaterialID;
 		}
 
-		public TerrainInfo GetTerrain(IntPoint3 l)
+		public TerrainInfo GetTerrain(IntPoint3 p)
 		{
-			return Terrains.GetTerrain(GetTerrainID(l));
+			return Terrains.GetTerrain(GetTerrainID(p));
 		}
 
-		public MaterialInfo GetTerrainMaterial(IntPoint3 l)
+		public MaterialInfo GetTerrainMaterial(IntPoint3 p)
 		{
-			return Materials.GetMaterial(m_tileGrid.GetTerrainMaterialID(l));
+			return Materials.GetMaterial(GetTerrainMaterialID(p));
 		}
 
-		public InteriorInfo GetInterior(IntPoint3 l)
+		public InteriorInfo GetInterior(IntPoint3 p)
 		{
-			return Interiors.GetInterior(GetInteriorID(l));
+			return Interiors.GetInterior(GetInteriorID(p));
 		}
 
-		public MaterialInfo GetInteriorMaterial(IntPoint3 l)
+		public MaterialInfo GetInteriorMaterial(IntPoint3 p)
 		{
-			return Materials.GetMaterial(m_tileGrid.GetInteriorMaterialID(l));
+			return Materials.GetMaterial(GetInteriorMaterialID(p));
 		}
 
-		public TileData GetTileData(IntPoint3 l)
+		public TileData GetTileData(IntPoint3 p)
 		{
-			return m_tileGrid.GetTileData(l);
+			return m_tileGrid[p.Z, p.Y, p.X];
 		}
 
-		public byte GetWaterLevel(IntPoint3 l)
+		public byte GetWaterLevel(IntPoint3 p)
 		{
-			return m_tileGrid.GetWaterLevel(l);
+			return m_tileGrid[p.Z, p.Y, p.X].WaterLevel;
 		}
 
-		public bool GetTileFlags(IntPoint3 l, TileFlags flags)
+		public bool GetTileFlags(IntPoint3 p, TileFlags flags)
 		{
-			return (m_tileGrid.GetFlags(l) & flags) != 0;
+			return (m_tileGrid[p.Z, p.Y, p.X].Flags & flags) != 0;
 		}
 
 		public void SetTileData(IntPoint3 p, TileData data)
@@ -271,7 +267,7 @@ namespace Dwarrowdelf.Server
 			// retain the old flags
 			data.Flags = oldData.Flags;
 
-			m_tileGrid.SetTileData(p, data);
+			m_tileGrid[p.Z, p.Y, p.X] = data;
 
 			if (oldData.HasTree != data.HasTree)
 			{
@@ -301,7 +297,7 @@ namespace Dwarrowdelf.Server
 
 				for (int z = p.Z - 1; z >= 0; --z)
 				{
-					if (m_tileGrid.GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
+					if (GetTileData(new IntPoint3(p2d, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
 						SetDepth(p2d, (byte)p.Z);
@@ -333,23 +329,23 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		public void SetWaterLevel(IntPoint3 l, byte waterLevel)
+		public void SetWaterLevel(IntPoint3 p, byte waterLevel)
 		{
 			Debug.Assert(this.IsInitialized);
 			Debug.Assert(this.World.IsWritable);
 
 			this.Version += 1;
 
-			m_tileGrid.SetWaterLevel(l, waterLevel);
+			m_tileGrid[p.Z, p.Y, p.X].WaterLevel = waterLevel;
 
-			var data = m_tileGrid.GetTileData(l);
+			var data = GetTileData(p);
 
-			MapChanged(l, data);
+			MapChanged(p, data);
 
 			if (data.WaterLevel > 0)
-				m_waterHandler.AddWater(l);
+				m_waterHandler.AddWater(p);
 			else
-				m_waterHandler.RemoveWater(l);
+				m_waterHandler.RemoveWater(p);
 		}
 
 		void SetTileFlags(IntPoint3 l, TileFlags flags, bool value)
@@ -360,11 +356,11 @@ namespace Dwarrowdelf.Server
 			this.Version += 1;
 
 			if (value)
-				m_tileGrid.SetFlags(l, flags);
+				m_tileGrid[l.Z, l.Y, l.X].Flags |= flags;
 			else
-				m_tileGrid.ClearFlags(l, flags);
+				m_tileGrid[l.Z, l.Y, l.X].Flags &= ~flags;
 
-			var d = m_tileGrid.GetTileData(l);
+			var d = GetTileData(l);
 
 			MapChanged(l, d);
 		}
@@ -613,7 +609,7 @@ namespace Dwarrowdelf.Server
 					var msg = new Messages.MapDataTerrainsMessage()
 					{
 						Environment = this.ObjectID,
-						Bounds = new IntBox(0, 0, z, w, h, 1),
+						Bounds = new IntGrid3(0, 0, z, w, h, 1),
 						IsTerrainDataCompressed = true,
 						TerrainData = arr,
 					};
@@ -643,7 +639,7 @@ namespace Dwarrowdelf.Server
 								if (!visionTracker.Sees(p))
 									v = 0;
 								else
-									v = m_tileGrid.GetTileData(p).Raw;
+									v = GetTileData(p).Raw;
 
 								writer.Write(v);
 							}
@@ -671,7 +667,7 @@ namespace Dwarrowdelf.Server
 					if (!visionTracker.Sees(p))
 						v = 0;
 					else
-						v = m_tileGrid.GetTileData(p).Raw;
+						v = GetTileData(p).Raw;
 
 					streamWriter.Write(v);
 				}

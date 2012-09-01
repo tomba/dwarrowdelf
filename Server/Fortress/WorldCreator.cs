@@ -57,10 +57,10 @@ namespace Dwarrowdelf.Server.Fortress
 			var grid = terrain.TileGrid;
 			var heightMap = terrain.HeightMap;
 
-			int grassLimit = grid.Depth * 4 / 5;
+			int grassLimit = terrain.Depth * 4 / 5;
 
-			int w = grid.Width;
-			int h = grid.Height;
+			int w = terrain.Width;
+			int h = terrain.Height;
 
 			var materials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
 			for (int y = 0; y < h; ++y)
@@ -73,14 +73,14 @@ namespace Dwarrowdelf.Server.Fortress
 
 					if (z < grassLimit)
 					{
-						var td = grid.GetTileData(p);
+						var td = grid[p.Z, p.Y, p.X];
 
 						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil)
 						{
 							td.InteriorID = InteriorID.Grass;
 							td.InteriorMaterialID = materials[Helpers.GetRandomInt(materials.Length)].ID;
 
-							grid.SetTileData(p, td);
+							grid[p.Z, p.Y, p.X] = td;
 						}
 					}
 				}
@@ -98,13 +98,13 @@ namespace Dwarrowdelf.Server.Fortress
 			if (baseSeed == 0)
 				baseSeed = 1;
 
-			grid.Size.Plane.Range().AsParallel().ForAll(p2d =>
+			terrain.Size.Plane.Range().AsParallel().ForAll(p2d =>
 			{
 				int z = heightMap[p2d.Y, p2d.X];
 
 				var p = new IntPoint3(p2d, z);
 
-				var td = grid.GetTileData(p);
+				var td = grid[p.Z, p.Y, p.X];
 
 				if (td.InteriorID == InteriorID.Grass)
 				{
@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Server.Fortress
 					{
 						td.InteriorID = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
 						td.InteriorMaterialID = materials[r.Next(materials.Length)].ID;
-						grid.SetTileData(p, td);
+						grid[p.Z, p.Y, p.X] = td;
 					}
 				}
 			});
