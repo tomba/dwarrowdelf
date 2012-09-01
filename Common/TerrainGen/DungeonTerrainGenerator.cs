@@ -12,47 +12,40 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class DungeonTerrainGenerator
 	{
-		ArrayGrid2D<byte> m_heightMap;
-
 		IntSize3 m_size;
-
-		public ArrayGrid2D<byte> HeightMap { get { return m_heightMap; } }
-		public TileGrid TileGrid { get; private set; }
+		TerrainData m_data;
 
 		Random m_random;
 
-		public DungeonTerrainGenerator(IntSize3 size, Random random)
+		public DungeonTerrainGenerator(TerrainData data, Random random)
 		{
-			m_size = size;
+			m_data = data;
+			m_size = data.Size;
 			m_random = random;
 		}
 
 		public void Generate(int seed)
 		{
-			m_heightMap = GenerateTerrain(seed);
+			GenerateTerrain(seed);
 
 			CreateTileGrid();
 		}
 
-		ArrayGrid2D<byte> GenerateTerrain(int seed)
+		void GenerateTerrain(int seed)
 		{
-			var heightMap = new ArrayGrid2D<byte>(m_size.Width, m_size.Height);
+			var heightMap = m_data.HeightMap;
 
 			Parallel.For(0, m_size.Height, y =>
 				{
 					for (int x = 0; x < m_size.Width; ++x)
 					{
-						heightMap[x, y] = (byte)(m_size.Depth - 1);
+						heightMap[y, x] = (byte)(m_size.Depth - 1);
 					}
 				});
-
-			return heightMap;
 		}
 
 		void CreateTileGrid()
 		{
-			this.TileGrid = new TileGrid(m_size);
-
 			CreateBaseGrid();
 
 			CreateDungeon();
@@ -104,7 +97,7 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				for (int x = 0; x < width; ++x)
 				{
-					int surface = m_heightMap[x, y];
+					int surface = m_data.GetHeight(x, y);
 
 					for (int z = 0; z < depth; ++z)
 					{
@@ -420,12 +413,12 @@ namespace Dwarrowdelf.TerrainGen
 
 		void SetTileData(IntPoint3 p, TileData td)
 		{
-			this.TileGrid.SetTileData(p, td);
+			m_data.SetTileData(p, td);
 		}
 
 		TileData GetTileData(IntPoint3 p)
 		{
-			return this.TileGrid.GetTileData(p);
+			return m_data.GetTileData(p);
 		}
 	}
 }
