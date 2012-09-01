@@ -19,19 +19,21 @@ namespace Dwarrowdelf.Server.Fortress
 
 		public static void InitializeWorld(World world)
 		{
-			var environment = CreateEnv(world);
+			var terrain = CreateTerrain();
 
-			WorldPopulator.FinalizeEnv(environment);
+			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV);
+
+			WorldPopulator.FinalizeEnv(env);
 		}
 
-		static EnvironmentObject CreateEnv(World world)
+		static TerrainData CreateTerrain()
 		{
-			int sizeExp = MAP_SIZE;
-			int s = (int)Math.Pow(2, sizeExp);
+			int side = (int)Math.Pow(2, MAP_SIZE);
+			var size = new IntSize3(side, side, MAP_DEPTH);
 
-			var size = new IntSize3(s, s, MAP_DEPTH);
+			var terrain = new TerrainData(size);
 
-			var tg = new TerrainGenerator(size, Helpers.Random);
+			var tg = new TerrainGenerator(terrain, Helpers.Random);
 
 			var corners = new DiamondSquare.CornerData()
 			{
@@ -43,20 +45,18 @@ namespace Dwarrowdelf.Server.Fortress
 
 			tg.Generate(corners, 5, 0.75, 1, 2);
 
-			var grid = tg.TileGrid;
-			var heightMap = tg.HeightMap;
+			CreateGrass(terrain);
 
-			CreateGrass(grid, heightMap);
+			CreateTrees(terrain);
 
-			CreateTrees(grid, heightMap);
-
-			var envBuilder = new EnvironmentObjectBuilder(grid, heightMap, VisibilityMode.GlobalFOV);
-
-			return envBuilder.Create(world);
+			return terrain;
 		}
 
-		static void CreateGrass(TileGrid grid, ArrayGrid2D<byte> intHeightMap)
+		static void CreateGrass(TerrainData terrain)
 		{
+			var grid = terrain.TileGrid;
+			var heightMap = terrain.HeightMap;
+
 			int grassLimit = grid.Depth * 4 / 5;
 
 			int w = grid.Width;
@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				for (int x = 0; x < w; ++x)
 				{
-					int z = intHeightMap[x, y];
+					int z = heightMap[x, y];
 
 					var p = new IntPoint3(x, y, z);
 
@@ -87,8 +87,11 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 		}
 
-		static void CreateTrees(TileGrid grid, ArrayGrid2D<byte> heightMap)
+		static void CreateTrees(TerrainData terrain)
 		{
+			var grid = terrain.TileGrid;
+			var heightMap = terrain.HeightMap;
+
 			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
 
 			int baseSeed = Helpers.GetRandomInt();

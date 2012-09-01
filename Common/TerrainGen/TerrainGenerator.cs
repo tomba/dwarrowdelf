@@ -12,32 +12,34 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class TerrainGenerator
 	{
-		ArrayGrid2D<byte> m_heightMap;
-
 		IntSize3 m_size;
 
-		public ArrayGrid2D<byte> HeightMap { get { return m_heightMap; } }
-		public TileGrid TileGrid { get; private set; }
+		ArrayGrid2D<byte> m_heightMap;
+		TileGrid m_tileGrid;
 
 		Tuple<double, double> m_rockLayerSlant;
 
 		Random m_random;
 
-		public TerrainGenerator(IntSize3 size, Random random)
+		TerrainData m_data;
+
+		public TerrainGenerator(TerrainData data, Random random)
 		{
-			m_size = size;
+			m_data = data;
+			m_size = data.Size;
+			m_heightMap = data.HeightMap;
+			m_tileGrid = data.TileGrid;
 			m_random = random;
 		}
 
 		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
 		{
-			m_heightMap = GenerateTerrain(corners, range, h, seed, amplify);
+			GenerateTerrain(corners, range, h, seed, amplify);
 
 			CreateTileGrid();
 		}
 
-		ArrayGrid2D<byte> GenerateTerrain(DiamondSquare.CornerData corners, double range, double h,
-			int seed, double amplify)
+		void GenerateTerrain(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
 		{
 			// +1 for diamond square
 			var doubleHeightMap = new ArrayGrid2D<double>(m_size.Width + 1, m_size.Height + 1);
@@ -45,8 +47,6 @@ namespace Dwarrowdelf.TerrainGen
 			double min, max;
 
 			DiamondSquare.Render(doubleHeightMap, corners, range, h, seed, out min, out max);
-
-			var heightMap = new ArrayGrid2D<byte>(m_size.Width, m_size.Height);
 
 			Parallel.For(0, m_size.Height, y =>
 				{
@@ -66,26 +66,22 @@ namespace Dwarrowdelf.TerrainGen
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
-						heightMap[x, y] = (byte)Math.Round(v);
+						m_heightMap[x, y] = (byte)Math.Round(v);
 					}
 				});
-
-			return heightMap;
 		}
 
 		void CreateTileGrid()
 		{
-			this.TileGrid = new TileGrid(m_size);
-
 			CreateBaseGrid();
 
 			CreateOreVeins();
 
 			CreateOreClusters();
 
-			CreateSoil(this.TileGrid, this.HeightMap);
+			CreateSoil(m_tileGrid, m_heightMap);
 
-			CreateSlopes(this.TileGrid, this.HeightMap, m_random.Next());
+			CreateSlopes(m_tileGrid, m_heightMap, m_random.Next());
 		}
 
 		void CreateBaseGrid()
@@ -350,12 +346,12 @@ namespace Dwarrowdelf.TerrainGen
 
 		void SetTileData(IntPoint3 p, TileData td)
 		{
-			this.TileGrid.SetTileData(p, td);
+			m_tileGrid.SetTileData(p, td);
 		}
 
 		TileData GetTileData(IntPoint3 p)
 		{
-			return this.TileGrid.GetTileData(p);
+			return m_tileGrid.GetTileData(p);
 		}
 
 		void CreateOreCluster(IntPoint3 p, MaterialID oreMaterialID)

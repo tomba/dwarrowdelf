@@ -14,9 +14,9 @@ namespace Dwarrowdelf.Server
 	[SaveGameObjectByRef]
 	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		internal static EnvironmentObject Create(World world, EnvironmentObjectBuilder builder)
+		public static EnvironmentObject Create(World world, Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode)
 		{
-			var ob = new EnvironmentObject(builder);
+			var ob = new EnvironmentObject(terrain, visMode);
 			ob.Initialize(world);
 			return ob;
 		}
@@ -60,14 +60,14 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		EnvironmentObject(EnvironmentObjectBuilder builder)
+		EnvironmentObject(Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
-			this.VisibilityMode = builder.VisibilityMode;
+			this.VisibilityMode = visMode;
 
-			m_tileGrid = builder.Grid;
-			m_depthMap = builder.DepthMap;
+			m_tileGrid = terrain.TileGrid;
+			m_depthMap = terrain.HeightMap;
 
 			var size = m_tileGrid.Size;
 			this.Width = size.Width;

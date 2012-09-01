@@ -45,7 +45,6 @@
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="AreaObject.cs" />
-    <Compile Include="Environment\EnvironmentObjectBuilder.cs" />
     <Compile Include="Environment\EnvTreeHandler.cs" />
     <Compile Include="Environment\EnvWaterHandler.cs" />
     <Compile Include="IPlayer.cs" />

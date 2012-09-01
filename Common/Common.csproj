@@ -140,6 +140,7 @@
     <Compile Include="DataTypes\IntSize3.cs" />
     <Compile Include="DataTypes\IntVector3.cs" />
     <Compile Include="DataTypes\GameColor.cs" />
+    <Compile Include="TerrainGen\TerrainData.cs" />
     <Compile Include="TerrainGen\TerrainGenerator.cs" />
     <Compile Include="Terrains.cs" />
     <Compile Include="Interiors.cs" />
