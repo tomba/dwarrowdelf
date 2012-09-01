@@ -8,6 +8,7 @@ using System.Windows;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Dwarrowdelf;
+using Dwarrowdelf.TerrainGen;
 
 namespace TerrainGenTest
 {
@@ -32,23 +33,23 @@ namespace TerrainGenTest
 			m_sliceBmpYZ = new WriteableBitmap(size.Depth, size.Height, 96, 96, PixelFormats.Bgr32, null);
 		}
 
-		public void Render(ArrayGrid2D<byte> heightMap, TileGrid grid, IntPoint3 pos)
+		public void Render(TerrainData terrain, IntPoint3 pos)
 		{
 			if (pos.Z == m_size.Depth)
-				RenderTerrain(heightMap);
+				RenderTerrain(terrain);
 			else
-				RenderSliceXY(grid, pos.Z);
-			RenderSliceXZ(grid, pos.Y);
-			RenderSliceYZ(grid, pos.X);
+				RenderSliceXY(terrain, pos.Z);
+			RenderSliceXZ(terrain, pos.Y);
+			RenderSliceYZ(terrain, pos.X);
 		}
 
-		void RenderTerrain(ArrayGrid2D<byte> m_heightMap)
+		void RenderTerrain(TerrainData terrain)
 		{
 			int w = m_size.Width;
 			int h = m_size.Height;
 
-			int min = m_heightMap.Min();
-			int max = m_heightMap.Max();
+			int min = terrain.HeightMap.Min();
+			int max = terrain.HeightMap.Max();
 
 			m_sliceBmpXY.Lock();
 
@@ -61,7 +62,7 @@ namespace TerrainGenTest
 				{
 					for (int x = 0; x < w; ++x)
 					{
-						var v = m_heightMap[x, y];
+						var v = terrain.GetHeight(x, y);
 
 						int d = v - min;
 						double a = (double)d / (max - min);
@@ -81,7 +82,7 @@ namespace TerrainGenTest
 			m_sliceBmpXY.Unlock();
 		}
 
-		void RenderSliceXY(TileGrid grid, int level)
+		void RenderSliceXY(TerrainData terrain, int level)
 		{
 			int w = m_size.Width;
 			int h = m_size.Height;
@@ -98,7 +99,7 @@ namespace TerrainGenTest
 					for (int x = 0; x < w; ++x)
 					{
 						var p = new IntPoint3(x, y, level);
-						var td = grid.GetTileData(p);
+						var td = terrain.GetTileData(p);
 
 						uint c = GetTileColor(td);
 
@@ -113,7 +114,7 @@ namespace TerrainGenTest
 			m_sliceBmpXY.Unlock();
 		}
 
-		void RenderSliceXZ(TileGrid grid, int y)
+		void RenderSliceXZ(TerrainData terrain, int y)
 		{
 			int w = m_size.Width;
 			int h = m_size.Height;
@@ -133,7 +134,7 @@ namespace TerrainGenTest
 						int mz = d - z - 1;
 
 						var p = new IntPoint3(x, y, mz);
-						var td = grid.GetTileData(p);
+						var td = terrain.GetTileData(p);
 
 						uint c = GetTileColor(td);
 
@@ -148,7 +149,7 @@ namespace TerrainGenTest
 			m_sliceBmpXZ.Unlock();
 		}
 
-		void RenderSliceYZ(TileGrid grid, int x)
+		void RenderSliceYZ(TerrainData terrain, int x)
 		{
 			int w = m_size.Width;
 			int h = m_size.Height;
@@ -168,7 +169,7 @@ namespace TerrainGenTest
 						int mz = d - z - 1;
 
 						var p = new IntPoint3(x, y, mz);
-						var td = grid.GetTileData(p);
+						var td = terrain.GetTileData(p);
 
 						uint c = GetTileColor(td);
 

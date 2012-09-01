@@ -20,7 +20,8 @@ namespace TerrainGenTest
 {
 	public partial class MainWindow : Window
 	{
-		TerrainGenerator m_terrain;
+		TerrainData m_terrain;
+		TerrainGenerator m_terrainGen;
 		Renderer m_renderer;
 
 		public BitmapSource SliceBmpXY { get; private set; }
@@ -38,10 +39,11 @@ namespace TerrainGenTest
 		{
 			const int depth = 20;
 			const int sizeExp = 9;
-			int size = (int)Math.Pow(2, sizeExp);
+			int side = (int)Math.Pow(2, sizeExp);
 
-			m_size = new IntSize3(size, size, depth);
-			m_terrain = new TerrainGenerator(m_size, new Random(1));
+			m_size = new IntSize3(side, side, depth);
+			m_terrain = new TerrainData(m_size);
+			m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
 			m_renderer = new Renderer(m_size);
 
 			this.SliceBmpXY = m_renderer.SliceBmpXY;
@@ -218,12 +220,12 @@ namespace TerrainGenTest
 				SW = ParseDouble(cornerSWTextBox.Text),
 			};
 
-			m_terrain.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
+			m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
 		}
 
 		void Render()
 		{
-			m_renderer.Render(m_terrain.HeightMap, m_terrain.TileGrid, new IntPoint3(this.X, this.Y, this.Z));
+			m_renderer.Render(m_terrain, new IntPoint3(this.X, this.Y, this.Z));
 		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -269,14 +271,12 @@ namespace TerrainGenTest
 
 		void UpdateTileInfo(IntPoint3 p)
 		{
-			if (m_terrain.HeightMap.Bounds.Contains(p.ToIntPoint()) == false)
+			if (m_terrain.Contains(p) == false)
 				return;
 
-			int h = m_terrain.HeightMap[p.ToIntPoint()];
+			int h = m_terrain.GetHeight(p.ToIntPoint());
 
 			zTextBlock.Text = String.Format("{0}/{1}", p, h);
-
-			TileData td;
 
 			IntPoint3 mp;
 
@@ -287,8 +287,8 @@ namespace TerrainGenTest
 			else
 				return;
 
-			var terrainMat = m_terrain.TileGrid.GetTerrainMaterialID(mp);
-			var interiorMat = m_terrain.TileGrid.GetInteriorMaterialID(mp);
+			var terrainMat = m_terrain.GetTerrainMaterialID(mp);
+			var interiorMat = m_terrain.GetInteriorMaterialID(mp);
 
 			if (terrainMat == MaterialID.Undefined)
 				materialTextBlock.Text = "";
