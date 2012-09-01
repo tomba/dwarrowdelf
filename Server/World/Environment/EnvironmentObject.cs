@@ -721,11 +721,11 @@ namespace Dwarrowdelf.Server
 		{
 			public void Write(Newtonsoft.Json.JsonWriter writer, object value)
 			{
-				var grid = (TileGrid)value;
+				var grid = (TileData[, ,])value;
 
-				int w = grid.Grid.GetLength(2);
-				int h = grid.Grid.GetLength(1);
-				int d = grid.Grid.GetLength(0);
+				int w = grid.GetLength(2);
+				int h = grid.GetLength(1);
+				int d = grid.GetLength(0);
 
 				writer.WriteStartObject();
 
@@ -758,7 +758,7 @@ namespace Dwarrowdelf.Server
 						using (var bufferedStream = new BufferedStream(compressStream))
 						using (var streamWriter = new BinaryWriter(bufferedStream))
 						{
-							var srcArr = grid.Grid;
+							var srcArr = grid;
 
 							for (int y = 0; y < h; ++y)
 								for (int x = 0; x < w; ++x)
@@ -806,8 +806,7 @@ namespace Dwarrowdelf.Server
 				int h = ReadIntProperty(reader, "Height");
 				int d = ReadIntProperty(reader, "Depth");
 
-				var grid = new TileGrid(new IntSize3(w, h, d));
-				var dstArr = grid.Grid;
+				var grid = new TileData[d, h, w];
 
 				reader.Read();
 				if (reader.TokenType != Newtonsoft.Json.JsonToken.PropertyName || (string)reader.Value != "TileData")
@@ -846,7 +845,7 @@ namespace Dwarrowdelf.Server
 						{
 							for (int y = 0; y < h; ++y)
 								for (int x = 0; x < w; ++x)
-									dstArr[z, y, x].Raw = streamReader.ReadUInt64();
+									grid[z, y, x].Raw = streamReader.ReadUInt64();
 						}
 					}
 				});
