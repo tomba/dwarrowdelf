@@ -27,6 +27,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed class MasterMapControl : MapControl
 	{
 		public TileView HoverTileView { get; private set; }
+		public TileView FocusedTileView { get; private set; }
 		public TileAreaView SelectionTileAreaView { get; private set; }
 
 		Grid m_overlayGrid;
@@ -89,6 +90,7 @@ namespace Dwarrowdelf.Client.UI
 			this.TileSize = 16;
 
 			this.HoverTileView = new TileView();
+			this.FocusedTileView = new TileView();
 
 			m_overlayGrid = new Grid();
 			m_overlayGrid.ClipToBounds = true;
@@ -110,7 +112,32 @@ namespace Dwarrowdelf.Client.UI
 			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
 
 			m_dragService = new MapControlDragService(this);
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.FocusedControllableProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, OnFocusedControllableChanged);
 		}
+
+		LivingObject m_currentFocusedControllable;
+
+		void OnFocusedControllableChanged(object sender, EventArgs e)
+		{
+			if (m_currentFocusedControllable != null)
+				m_currentFocusedControllable.ObjectMoved -= OnFocusedControllableMoved;
+
+			var l = GameData.Data.FocusedControllable;
+
+			m_currentFocusedControllable = l;
+			if (l != null)
+				l.ObjectMoved += OnFocusedControllableMoved;
+
+			this.FocusedTileView.SetTarget(l.Environment, l.Location);
+		}
+
+		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
+		{
+			this.FocusedTileView.SetTarget(ob.Environment, ob.Location);
+		}
+
 
 		void OnEnvironmentChanged(EnvironmentObject env)
 		{

@@ -129,6 +129,7 @@
 
 				<!-- Focused Controllable -->
 				<GroupBox Header="Current" Grid.Row="2" Margin="2" >
+					<ui:SingleTileInfoControl DataContext="{Binding Path=FocusedTileView, ElementName=map, Mode=OneTime}"  Margin="2" />
 				</GroupBox>
 			</Grid>
 

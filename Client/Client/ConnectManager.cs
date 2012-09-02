@@ -174,6 +174,8 @@ namespace Dwarrowdelf.Client
 					mapControl.Environment = controllable.Environment;
 					mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
 					mapControl.Z = controllable.Location.Z;
+
+					GameData.Data.FocusedControllable = controllable;
 				}
 
 				if (Program.StartupStopwatch != null)
