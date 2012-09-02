@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameEngine.cs" />
-    <Compile Include="IArea.cs" />
+    <Compile Include="IGameManager.cs" />
     <Compile Include="IPRunner.cs" />
     <Compile Include="PlayerVision.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

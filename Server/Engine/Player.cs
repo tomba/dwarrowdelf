@@ -330,7 +330,7 @@ namespace Dwarrowdelf.Server
 
 				if (msg.IsControllable)
 				{
-					m_engine.Area.SetupLivingAsControllable(living);
+					m_engine.GameManager.SetupLivingAsControllable(living);
 				}
 				else
 				{

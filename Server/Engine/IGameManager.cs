@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	public interface IArea
+	public interface IGameManager
 	{
 		void SetupLivingAsControllable(LivingObject living);
 		LivingObject[] SetupWorldForNewPlayer(Player player);

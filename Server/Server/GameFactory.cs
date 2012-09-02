@@ -51,12 +51,13 @@ namespace Dwarrowdelf.Server
 				worldCreator(world);
 			});
 
-			IArea gameManager;
+			IGameManager gameManager;
 
 			switch (mode)
 			{
 				case GameMode.Fortress:
-					gameManager = new Fortress.FortressGameManager(world);
+					//gameManager = new Fortress.FortressGameManager(world);
+					gameManager = new Fortress.DungeonGameManager(world);
 					break;
 
 				case GameMode.Adventure:

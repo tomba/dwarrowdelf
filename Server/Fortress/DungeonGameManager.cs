@@ -7,31 +7,24 @@ using Dwarrowdelf;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	public sealed class FortressGameManager : IGameManager
+	public sealed class DungeonGameManager : IGameManager
 	{
 		public World World { get; private set; }
 
-		EnvObserver m_envObserver;
-
-		public FortressGameManager(World world)
+		public DungeonGameManager(World world)
 		{
 			this.World = world;
-
-			// XXX
-			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
-			m_envObserver = new EnvObserver(env);
 		}
 
 		#region IArea Members
 
 		public void SetupLivingAsControllable(LivingObject living)
 		{
-			living.SetAI(new DwarfAI(living, m_envObserver, 0));
 		}
 
 		public LivingObject[] SetupWorldForNewPlayer(Player player)
 		{
-			const int NUM_DWARVES = 7;
+			const int NUM_DWARVES = 1;
 
 			// XXX entry location
 			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
@@ -187,8 +180,6 @@ namespace Dwarrowdelf.Server.Fortress
 
 			Helpers.AddGem(dwarf);
 			Helpers.AddBattleGear(dwarf);
-
-			SetupLivingAsControllable(dwarf);
 
 			return dwarf;
 		}

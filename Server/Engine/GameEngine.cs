@@ -63,13 +63,13 @@ namespace Dwarrowdelf.Server
 		/// </summary>
 		Thread m_gameThread;
 
-		public IArea Area { get; private set; }
+		public IGameManager GameManager { get; private set; }
 
 
-		public static GameEngine Create(string gameDir, World world, IArea area)
+		public static GameEngine Create(string gameDir, World world, IGameManager gameManager)
 		{
 			var game = new GameEngine(gameDir);
-			game.Create(world, area);
+			game.Create(world, gameManager);
 			return game;
 		}
 
@@ -87,7 +87,7 @@ namespace Dwarrowdelf.Server
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
 		}
 
-		void Create(World world, IArea area)
+		void Create(World world, IGameManager gameManager)
 		{
 			if (m_world != null)
 				throw new Exception();
@@ -96,7 +96,7 @@ namespace Dwarrowdelf.Server
 			this.LastLoadID = Guid.Empty;
 
 			m_world = world;
-			this.Area = area;
+			this.GameManager = gameManager;
 		}
 
 		public Guid LastSaveID { get; private set; }
@@ -311,7 +311,7 @@ namespace Dwarrowdelf.Server
 
 			var player = CreatePlayer(userID);
 
-			var controllables = this.Area.SetupWorldForNewPlayer(player);
+			var controllables = this.GameManager.SetupWorldForNewPlayer(player);
 			foreach (var l in controllables)
 				player.AddControllable(l);
 
