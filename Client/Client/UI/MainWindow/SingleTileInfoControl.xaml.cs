@@ -14,12 +14,9 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	/// <summary>
-	/// Interaction logic for DockHoverControl.xaml
-	/// </summary>
-	sealed partial class DockHoverControl : UserControl
+	sealed partial class SingleTileInfoControl : UserControl
 	{
-		public DockHoverControl()
+		public SingleTileInfoControl()
 		{
 			InitializeComponent();
 		}

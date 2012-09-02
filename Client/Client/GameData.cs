@@ -202,5 +202,17 @@ namespace Dwarrowdelf.Client
 		}
 
 		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
+
+
+		public LivingObject FocusedControllable
+		{
+			get { return (LivingObject)GetValue(FocusedControllableProperty); }
+			set { SetValue(FocusedControllableProperty, value); }
+		}
+
+		public static readonly DependencyProperty FocusedControllableProperty =
+			DependencyProperty.Register("FocusedControllable", typeof(LivingObject), typeof(GameData), new UIPropertyMetadata(null));
+
+
 	}
 }

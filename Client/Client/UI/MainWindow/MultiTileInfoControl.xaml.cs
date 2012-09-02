@@ -14,9 +14,9 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed partial class DockSelectedControl : UserControl
+	sealed partial class MultiTileInfoControl : UserControl
 	{
-		public DockSelectedControl()
+		public MultiTileInfoControl()
 		{
 			this.InitializeComponent();
 		}

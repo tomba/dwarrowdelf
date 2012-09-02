@@ -167,11 +167,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow\DockHoverControl.xaml">
+    <Page Include="UI\MainWindow\SingleTileInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainWindow\DockSelectedControl.xaml">
+    <Page Include="UI\MainWindow\MultiTileInfoControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -285,11 +285,11 @@
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="EmbeddedServer.cs" />
     <Compile Include="Stockpile.cs" />
-    <Compile Include="UI\MainWindow\DockHoverControl.xaml.cs">
-      <DependentUpon>DockHoverControl.xaml</DependentUpon>
+    <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
+      <DependentUpon>SingleTileInfoControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainWindow\DockSelectedControl.xaml.cs">
-      <DependentUpon>DockSelectedControl.xaml</DependentUpon>
+    <Compile Include="UI\MainWindow\MultiTileInfoControl.xaml.cs">
+      <DependentUpon>MultiTileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow\MainWindowStatusBar.xaml.cs">
       <DependentUpon>MainWindowStatusBar.xaml</DependentUpon>

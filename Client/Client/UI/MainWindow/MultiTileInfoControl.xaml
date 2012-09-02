@@ -1,15 +1,14 @@
-﻿<UserControl
-			 x:ClassModifier="internal"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:local="clr-namespace:Dwarrowdelf.Client"
-	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-	mc:Ignorable="d"
-	x:Class="Dwarrowdelf.Client.UI.DockSelectedControl"
-	x:Name="UserControl"
-	d:DesignWidth="371" d:DesignHeight="314">
+﻿<UserControl x:ClassModifier="internal"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+			 mc:Ignorable="d"
+			 x:Class="Dwarrowdelf.Client.UI.MultiTileInfoControl"
+			 x:Name="UserControl"
+			 d:DesignWidth="371" d:DesignHeight="314">
 
 	<UserControl.Resources>
 		<ui:MyTerrainsConverter x:Key="myTerrainsConverter" />
@@ -18,15 +17,13 @@
 		<ui:MyBuildingsConverter x:Key="myBuildingsConverter" />
 	</UserControl.Resources>
 
-	<GroupBox Header="Selection">
-		<GroupBox.Resources>
+	<DockPanel>
+		<DockPanel.Resources>
 			<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
-		</GroupBox.Resources>
+		</DockPanel.Resources>
 
-		<DockPanel>
-
-			<StackPanel DockPanel.Dock="Top">
-				<TextBlock><InlineUIContainer>
+		<StackPanel DockPanel.Dock="Top">
+			<TextBlock><InlineUIContainer>
 						<TextBlock Text="Area:" />
 					</InlineUIContainer><Run Text=" "/><InlineUIContainer>
 						<TextBlock>
@@ -43,28 +40,27 @@
 						</TextBlock>
 					</InlineUIContainer></TextBlock>
 
-				<TextBlock><Run Text="Terrain: "/><InlineUIContainer>
+			<TextBlock><Run Text="Terrain: "/><InlineUIContainer>
 						<TextBlock Text="{Binding Terrains, Converter={StaticResource myTerrainsConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="Interior: "/><InlineUIContainer>
+			<TextBlock><Run Text="Interior: "/><InlineUIContainer>
 						<TextBlock Text="{Binding Interiors, Converter={StaticResource myInteriorsConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="Water: "/><InlineUIContainer>
+			<TextBlock><Run Text="Water: "/><InlineUIContainer>
 						<TextBlock Text="{Binding WaterLevels, Converter={StaticResource myWatersConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="AreaElements: "/><InlineUIContainer>
+			<TextBlock><Run Text="AreaElements: "/><InlineUIContainer>
 						<TextBlock Text="{Binding AreaElements, Converter={StaticResource myBuildingsConverter}}" />
 					</InlineUIContainer></TextBlock>
-				<TextBlock><Run Text="Flags: "/><InlineUIContainer>
+			<TextBlock><Run Text="Flags: "/><InlineUIContainer>
 						<TextBlock Text="{Binding Flags}" />
 					</InlineUIContainer></TextBlock>
-			</StackPanel>
+		</StackPanel>
 
-			<GroupBox Header="Objects">
-				<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+		<GroupBox Header="Objects">
+			<ListBox ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 						 BorderThickness="0"/>
-			</GroupBox>
+		</GroupBox>
 
-		</DockPanel>
-	</GroupBox>
+	</DockPanel>
 </UserControl>

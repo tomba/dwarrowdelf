@@ -453,6 +453,7 @@ namespace Dwarrowdelf.Client.UI
 			if (!selection.IsSelectionValid)
 			{
 				this.SelectionTileAreaView.Environment = null;
+				this.SelectionTileAreaView.Box = new IntGrid3();
 			}
 			else
 			{
