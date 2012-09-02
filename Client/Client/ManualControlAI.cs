@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 				if (this.Worker.CurrentAction != null)
 					return this.Worker.CurrentAction;
 
-				return new WaitAction(1);
+				return null;
 			}
 
 			m_currentAction = m_actions[0];
