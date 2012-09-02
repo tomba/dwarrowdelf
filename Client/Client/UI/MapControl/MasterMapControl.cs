@@ -572,11 +572,11 @@ namespace Dwarrowdelf.Client.UI
 				switch (value)
 				{
 					case "Char":
-						xaml = "SymbolInfosChar.xaml";
+						xaml = "DefaultTileSet.xaml";
 						break;
 
 					case "Gfx":
-						xaml = "SymbolInfosGfx.xaml";
+						xaml = "DefaultTileSet.xaml";
 						break;
 
 					default:
@@ -584,6 +584,8 @@ namespace Dwarrowdelf.Client.UI
 				}
 
 				var tileSet = new Dwarrowdelf.Client.Symbols.TileSet(xaml);
+				tileSet.Load();
+
 				GameData.Data.TileSet = tileSet;
 
 				m_tileSet = value;

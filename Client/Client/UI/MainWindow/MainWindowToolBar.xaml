@@ -16,8 +16,8 @@
 			<Button Content="Labor Manager" Click="Button_LaborManager_Click" />
 			<Separator />
 			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="100">
-				<ComboBoxItem Tag="SymbolInfosChar">Char</ComboBoxItem>
-				<ComboBoxItem Tag="SymbolInfosGfx">Gfx</ComboBoxItem>
+				<ComboBoxItem>Char</ComboBoxItem>
+				<ComboBoxItem>Gfx</ComboBoxItem>
 			</ComboBox>
 			<Separator />
 			<Button Click="StartServer_Button_Click">Start Server</Button>
