@@ -128,9 +128,14 @@ namespace Dwarrowdelf.Client.UI
 
 			m_currentFocusedControllable = l;
 			if (l != null)
+			{
 				l.ObjectMoved += OnFocusedControllableMoved;
-
-			this.FocusedTileView.SetTarget(l.Environment, l.Location);
+				this.FocusedTileView.SetTarget(l.Environment, l.Location);
+			}
+			else
+			{
+				this.FocusedTileView.ClearTarget();
+			}
 		}
 
 		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)

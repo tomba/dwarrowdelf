@@ -4,8 +4,13 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-			 mc:Ignorable="d" d:DesignHeight="98" d:DesignWidth="800">
+			 mc:Ignorable="d" d:DesignHeight="147" d:DesignWidth="930">
+
+	<UserControl.Resources>
+		<ui:ComboBoxNullConverter x:Key="nullConverter" />
+	</UserControl.Resources>
 
 	<ToolBarTray>
 		<ToolBar Band="1">
@@ -15,10 +20,22 @@
 			<Separator />
 			<Button Content="Labor Manager" Click="Button_LaborManager_Click" />
 			<Separator />
-			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="100">
+			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="75">
 				<ComboBoxItem>Char</ComboBoxItem>
 				<ComboBoxItem>Gfx</ComboBoxItem>
 			</ComboBox>
+			<Separator />
+
+			<Label Content="Focus" />
+			<ComboBox MinWidth="100" SelectedItem="{Binding Data.FocusedControllable, Converter={StaticResource nullConverter}}" >
+				<ComboBox.ItemsSource>
+					<CompositeCollection xmlns:sys="clr-namespace:System;assembly=mscorlib">
+						<sys:String>None</sys:String>
+						<CollectionContainer Collection="{Binding Source={x:Static local:GameData.Data}, Path=World.Controllables}" />
+					</CompositeCollection>
+				</ComboBox.ItemsSource>
+			</ComboBox>
+
 			<Separator />
 			<Button Click="StartServer_Button_Click">Start Server</Button>
 			<Separator />

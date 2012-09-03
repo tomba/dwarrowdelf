@@ -361,4 +361,22 @@ namespace Dwarrowdelf.Client.UI
 		ConstructPavement,
 		ConstructRemove,
 	}
+
+	class ComboBoxNullConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (value == null)
+				return "None";
+			return value;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		{
+			if (value is string && ((string)value) == "None")
+				return null;
+			return value;
+		}
+	}
+
 }
