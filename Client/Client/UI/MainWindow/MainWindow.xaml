@@ -37,6 +37,7 @@
 	</Window.Resources>
 
 	<DockPanel>
+		<ui:MainWindowMenuBar DockPanel.Dock="Top" />
 		<ui:MainWindowToolBar x:Name="mainWindowTools" DockPanel.Dock="Top" />
 
 		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />

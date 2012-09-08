@@ -16,8 +16,6 @@
 		<ToolBar Band="1">
 			<ToggleButton IsChecked="{Binding Path=MapControl.ShowVirtualSymbols, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}">Show Virtual Symbols</ToggleButton>
 			<Separator />
-			<Button Content="Open NetStats" Click="Button_OpenNetStats_Click" />
-			<Separator />
 			<Button Content="Labor Manager" Click="Button_LaborManager_Click" />
 			<Separator />
 			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="75">
@@ -35,18 +33,6 @@
 					</CompositeCollection>
 				</ComboBox.ItemsSource>
 			</ComboBox>
-
-			<Separator />
-			<Button Click="StartServer_Button_Click">Start Server</Button>
-			<Separator />
-			<Button Click="StopServer_Button_Click">Stop Server</Button>
-			<Separator />
-			<Button Click="Connect_Button_Click">Connect</Button>
-			<Separator />
-			<Button Click="Disconnect_Button_Click">Disconnect</Button>
-			<Separator />
-			<Button Click="Save_Button_Click">Save</Button>
-			<Button Click="Load_Button_Click">Load</Button>
 		</ToolBar>
 
 		<ToolBar Band="1">
@@ -55,26 +41,14 @@
 			<TextBox Text="{Binding Path=Value, ElementName=slider}" />
 		</ToolBar>
 
-		<ToolBar Band="2" BandIndex="1">
-			<Button Content="Open Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
-			<Separator />
-			<Button Content="Open FocusDebug" Command="ui:ClientCommands.OpenFocusDebugCommand" />
-			<Separator />
-			<Button Click="Button_Click_GC">GC</Button>
-			<Separator />
-			<Button Click="Button_Click_Break">Break</Button>
-			<Separator />
-			<ToggleButton Click="Button_Click_FullScreen">Full Screen</ToggleButton>
-		</ToolBar>
-
-		<ToolBar Band="2" BandIndex="0">
+		<ToolBar Band="1">
 			<ToggleButton Content="Run" Command="ui:ClientCommands.AutoAdvanceTurnCommand"
 							  IsChecked="{Binding Data.IsAutoAdvanceTurn, Mode=OneWay}" ToolTip="Shortcut: space" />
 			<Separator />
 			<Button Click="Button_Click_Step" ToolTip="Shortcut: .">Step</Button>
 		</ToolBar>
 
-		<ToolBar Band="2" BandIndex="2">
+		<ToolBar Band="2">
 			<ToolBar.Resources>
 
 				<ui:ClientToolModeToToolDataConverter x:Key="toolDataConverter" />

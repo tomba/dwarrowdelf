@@ -79,6 +79,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainWindow\MainWindowMenuBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\TestControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -218,6 +222,9 @@
     <Compile Include="DwarfAI.cs" />
     <Compile Include="ItemTracker.cs" />
     <Compile Include="Selectables.cs" />
+    <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
+      <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MapControl\TileView.cs" />
     <Compile Include="UI\MapControl\TileToolTipControl.xaml.cs">
       <DependentUpon>TileToolTipControl.xaml</DependentUpon>

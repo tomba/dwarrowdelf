@@ -66,101 +66,11 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		private void StartServer_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var task = GameData.Data.ConnectManager.StartServer();
-			task.ContinueWith((t) =>
-			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Start Server Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-		}
-
-		private void StopServer_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var task = GameData.Data.ConnectManager.StopServer();
-			task.ContinueWith((t) =>
-			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Stop Server Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-		}
-
-		private void Connect_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var task = GameData.Data.ConnectManager.ConnectPlayer();
-			task.ContinueWith((t) =>
-			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Connect Player Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-		}
-
-		private void Disconnect_Button_Click(object sender, RoutedEventArgs e)
-		{
-			var task = GameData.Data.ConnectManager.Disconnect();
-			task.ContinueWith((t) =>
-			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Disconnect Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
-		}
-
-
-		private void Save_Button_Click(object sender, RoutedEventArgs e)
-		{
-			if (GameData.Data.User == null)
-				return;
-
-			var msg = new SaveRequestMessage();
-
-			GameData.Data.User.Send(msg);
-		}
-
-		private void Load_Button_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-		private void Button_Click_FullScreen(object sender, RoutedEventArgs e)
-		{
-			var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
-
-			var wnd = App.MainWindow;
-
-			if (button.IsChecked.Value)
-			{
-				wnd.WindowStyle = System.Windows.WindowStyle.None;
-				wnd.Topmost = true;
-				wnd.WindowState = System.Windows.WindowState.Maximized;
-			}
-			else
-			{
-				wnd.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
-				wnd.Topmost = false;
-				wnd.WindowState = System.Windows.WindowState.Normal;
-			}
-		}
-
-
-		private void Button_OpenNetStats_Click(object sender, RoutedEventArgs e)
-		{
-			var netWnd = new UI.NetStatWindow();
-			netWnd.Owner = App.MainWindow;
-			netWnd.Show();
-		}
 
 		private void Button_Click_Step(object sender, RoutedEventArgs e)
 		{
 			if (GameData.Data.User != null)
 				GameData.Data.User.SendProceedTurn();
-		}
-
-		private void Button_Click_GC(object sender, RoutedEventArgs e)
-		{
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
-		}
-
-		private void Button_Click_Break(object sender, RoutedEventArgs e)
-		{
-			System.Diagnostics.Debugger.Break();
 		}
 
 

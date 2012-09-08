@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Dwarrowdelf.Client.UI.MainWindowMenuBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+             mc:Ignorable="d">
+	<Menu>
+		<MenuItem Header="File">
+			<MenuItem Header="Quit" Click="Quit_MenuItem_Click" />
+		</MenuItem>
+		<MenuItem Header="Server">
+			<MenuItem Header="Start" Click="StartServer_MenuItem_Click" />
+			<MenuItem Header="Stop" Click="StopServer_MenuItem_Click" />
+			<MenuItem Header="Connect" Click="Connect_MenuItem_Click" />
+			<MenuItem Header="Disconnect" Click="Disconnect_MenuItem_Click" />
+			<MenuItem Header="Save" Click="Save_MenuItem_Click" />
+			<MenuItem Header="Load" Click="Load_MenuItem_Click" />
+		</MenuItem>
+		<MenuItem Header="Debug">
+			<MenuItem Header="GC" Click="GC_MenuItem_Click" />
+			<MenuItem Header="Break" Click="Break_MenuItem_Click" />
+			<MenuItem Header="Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+			<MenuItem Header="FocusDebug" Command="ui:ClientCommands.OpenFocusDebugCommand" />
+			<MenuItem Header="NetStats" Click="NetStats_MenuItem_Click" />
+		</MenuItem>
+		<MenuItem Header="Window">
+			<MenuItem Header="Full Screen" Click="FullScreen_MenuItem_Click" />
+ 		</MenuItem>
+	</Menu>
+</UserControl>
