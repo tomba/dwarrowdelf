@@ -513,7 +513,7 @@ for p in area.Range():
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			var toolData = MainWindowToolBar.ToolDatas.Select(kvp => kvp.Value).FirstOrDefault(td => td.Key == e.Key);
+			var toolData = MapToolBar.ToolDatas.Select(kvp => kvp.Value).FirstOrDefault(td => td.Key == e.Key);
 
 			if (toolData != null)
 			{

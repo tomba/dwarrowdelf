@@ -38,7 +38,7 @@
 
 	<DockPanel>
 		<ui:MainWindowMenuBar DockPanel.Dock="Top" />
-		<ui:MainWindowToolBar x:Name="mainWindowTools" DockPanel.Dock="Top" />
+		<ui:MainWindowToolBar DockPanel.Dock="Top" />
 
 		<ui:MainWindowStatusBar DockPanel.Dock="Bottom" />
 
@@ -97,7 +97,9 @@
 			</GroupBox>
 
 			<!-- MAP -->
-			<ui:MasterMapControl Grid.Column="2" Grid.Row="0" UseLayoutRounding="True" x:Name="map" />
+			<ui:MasterMapControl UseLayoutRounding="True" x:Name="map" Grid.Column="2" Grid.Row="0" />
+			<ui:MapToolBar x:Name="mainWindowTools" Grid.Column="2" Grid.Row="0"
+						   HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
 			<!-- Events -->
 			<ListBox Grid.Column="2" Grid.Row="2"
