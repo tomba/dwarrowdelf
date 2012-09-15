@@ -112,37 +112,7 @@ namespace Dwarrowdelf.Client.UI
 			m_elementsService = new MapControlElementsService(this, m_elementCanvas);
 
 			m_dragService = new MapControlDragService(this);
-
-			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.FocusedControllableProperty, typeof(GameData));
-			dpd.AddValueChanged(GameData.Data, OnFocusedControllableChanged);
 		}
-
-		LivingObject m_currentFocusedControllable;
-
-		void OnFocusedControllableChanged(object sender, EventArgs e)
-		{
-			if (m_currentFocusedControllable != null)
-				m_currentFocusedControllable.ObjectMoved -= OnFocusedControllableMoved;
-
-			var l = GameData.Data.FocusedControllable;
-
-			m_currentFocusedControllable = l;
-			if (l != null)
-			{
-				l.ObjectMoved += OnFocusedControllableMoved;
-				this.FocusedTileView.SetTarget(l.Environment, l.Location);
-			}
-			else
-			{
-				this.FocusedTileView.ClearTarget();
-			}
-		}
-
-		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
-		{
-			this.FocusedTileView.SetTarget(ob.Environment, ob.Location);
-		}
-
 
 		void OnEnvironmentChanged(EnvironmentObject env)
 		{
@@ -233,9 +203,10 @@ namespace Dwarrowdelf.Client.UI
 		public int Columns { get { return this.GridSize.Width; } }
 		public int Rows { get { return this.GridSize.Height; } }
 
-		public double AnimatedTileSize	// XXX
+		// Override the TileSize property, so that we can stop the animation
+		public new double TileSize
 		{
-			get { return this.TileSize; }
+			get { return base.TileSize; }
 
 			set
 			{
@@ -243,7 +214,7 @@ namespace Dwarrowdelf.Client.UI
 				BeginAnimation(MapControl.TileSizeProperty, null);
 
 				value = MyMath.Clamp(value, MAXTILESIZE, MINTILESIZE);
-				this.TileSize = value;
+				base.TileSize = value;
 			}
 		}
 
@@ -509,14 +480,15 @@ namespace Dwarrowdelf.Client.UI
 			base.OnLostMouseCapture(e);
 		}
 
-		public Point AnimatedCenterPos	// XXX
+		// Override the CenterPos property, so that we can stop the animation
+		public new Point CenterPos
 		{
-			get { return this.CenterPos; }
+			get { return base.CenterPos; }
 
 			set
 			{
 				BeginAnimation(MapControl.CenterPosProperty, null);
-				this.CenterPos = value;
+				base.CenterPos = value;
 			}
 		}
 

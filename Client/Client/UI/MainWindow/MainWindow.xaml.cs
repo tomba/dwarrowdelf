@@ -24,6 +24,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		MovableObject m_followObject;
+		MovableObject m_focusedObject;
 
 		enum CloseStatus
 		{
@@ -480,6 +481,40 @@ for p in area.Range():
 				e.Accepted = false;
 		}
 
+		public MovableObject FocusedObject
+		{
+			get { return m_focusedObject; }
+
+			set
+			{
+				if (m_focusedObject == value)
+					return;
+
+				m_focusedObject = value;
+
+				if (value != null)
+				{
+					value.ObjectMoved += OnFocusedControllableMoved;
+					this.MapControl.FocusedTileView.SetTarget(value.Environment, value.Location);
+				}
+				else
+				{
+					this.MapControl.FocusedTileView.ClearTarget();
+				}
+
+				// always follow the focused ob for now
+				this.FollowObject = value;
+
+				Notify("FocusedObject");
+			}
+		}
+
+		void OnFocusedControllableMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
+		{
+			this.MapControl.FocusedTileView.SetTarget(ob.Environment, ob.Location);
+		}
+
+
 		public MovableObject FollowObject
 		{
 			get { return m_followObject; }
@@ -497,7 +532,7 @@ for p in area.Range():
 				if (m_followObject != null)
 				{
 					m_followObject.ObjectMoved += FollowedObjectMoved;
-					FollowedObjectMoved(m_followObject, m_followObject.Environment, m_followObject.Location);
+					map.ScrollTo(m_followObject.Environment, m_followObject.Location);
 				}
 
 				Notify("FollowObject");
@@ -507,8 +542,8 @@ for p in area.Range():
 		void FollowedObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc)
 		{
 			EnvironmentObject env = dst as EnvironmentObject;
-
-			map.ScrollTo(env, loc);
+			if (env != null)
+				map.CenterPos = new Point(loc.X, loc.Y);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)

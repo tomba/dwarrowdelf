@@ -68,8 +68,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var mt = m_mapControl.ScreenPointToMapTile(sp);
 
-			//m_mapControl.ScrollTo(mt);
-			m_mapControl.AnimatedCenterPos = mt;
+			m_mapControl.CenterPos = mt;
 		}
 
 		void OnDragAborted()

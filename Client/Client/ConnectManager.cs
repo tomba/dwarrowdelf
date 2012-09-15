@@ -172,10 +172,10 @@ namespace Dwarrowdelf.Client
 					var mapControl = App.MainWindow.MapControl;
 					mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
 					mapControl.Environment = controllable.Environment;
-					mapControl.AnimatedCenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
+					mapControl.CenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
 					mapControl.Z = controllable.Location.Z;
 
-					GameData.Data.FocusedControllable = controllable;
+					App.MainWindow.FocusedObject = controllable;
 				}
 
 				if (Program.StartupStopwatch != null)

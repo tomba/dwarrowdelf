@@ -6,7 +6,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-			 mc:Ignorable="d" d:DesignHeight="147" d:DesignWidth="930">
+			 mc:Ignorable="d">
 
 	<UserControl.Resources>
 		<ui:ComboBoxNullConverter x:Key="nullConverter" />
@@ -22,10 +22,23 @@
 				<ComboBoxItem>Char</ComboBoxItem>
 				<ComboBoxItem>Gfx</ComboBoxItem>
 			</ComboBox>
+
 			<Separator />
 
 			<Label Content="Focus" />
-			<ComboBox MinWidth="100" SelectedItem="{Binding Data.FocusedControllable, Converter={StaticResource nullConverter}}" >
+			<ComboBox MinWidth="100" SelectedItem="{Binding FocusedObject, Converter={StaticResource nullConverter}}" >
+				<ComboBox.ItemsSource>
+					<CompositeCollection xmlns:sys="clr-namespace:System;assembly=mscorlib">
+						<sys:String>None</sys:String>
+						<CollectionContainer Collection="{Binding Source={x:Static local:GameData.Data}, Path=World.Controllables}" />
+					</CompositeCollection>
+				</ComboBox.ItemsSource>
+			</ComboBox>
+
+			<Separator />
+
+			<Label Content="Follow" />
+			<ComboBox MinWidth="100" SelectedItem="{Binding FollowObject, Converter={StaticResource nullConverter}}" >
 				<ComboBox.ItemsSource>
 					<CompositeCollection xmlns:sys="clr-namespace:System;assembly=mscorlib">
 						<sys:String>None</sys:String>
