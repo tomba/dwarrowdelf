@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client.UI
 			mapControl.KeyUp += OnKeyUp;
 			mapControl.TextInput += OnTextInput;
 
-			this.Mode = KeyHandlerMode.MapControl;
+			this.Mode = KeyHandlerMode.LivingControl;
 		}
 
 		public KeyHandlerMode Mode { get; set; }
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client.UI
 			if (this.Mode == KeyHandlerMode.MapControl)
 				OnKeyDownMap(sender, e);
 			else
-			OnKeyDownLiving(sender, e);
+				OnKeyDownLiving(sender, e);
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
@@ -67,6 +67,7 @@ namespace Dwarrowdelf.Client.UI
 			if (dir != Direction.None)
 			{
 				var action = new MoveAction(dir);
+				action.MagicNumber = 1;
 				ob.RequestAction(action);
 			}
 		}
@@ -92,9 +93,15 @@ namespace Dwarrowdelf.Client.UI
 
 			if (text == ">")
 			{
+				var action = new MoveAction(Direction.Down);
+				action.MagicNumber = 1;
+				ob.RequestAction(action);
 			}
 			else if (text == "<")
 			{
+				var action = new MoveAction(Direction.Up);
+				action.MagicNumber = 1;
+				ob.RequestAction(action);
 			}
 			else
 			{

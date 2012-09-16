@@ -318,60 +318,52 @@ namespace Dwarrowdelf.Client
 		}
 
 
+		MyTraceSource turnTrace = new MyTraceSource("Dwarrowdelf.Turn", "ClientUser");
+
+		// LivingID, AnyObjectID or NullIObjectID
+		ObjectID m_currentLivingID;
+		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
+
 		// Called from change handler
 		void OnTurnEnded()
 		{
-			m_turnActionRequested = false;
+			turnTrace.TraceInformation("TurnEnd");
+			m_currentLivingID = ObjectID.NullObjectID;
 		}
 
 		void TurnActionRequested(ObjectID livingID)
 		{
-			trace.TraceVerbose("Turn Action requested for living: {0}", livingID);
+			turnTrace.TraceInformation("Turn Action requested for living: {0}", livingID);
 
-			Debug.Assert(m_turnActionRequested == false);
+			Debug.Assert(livingID != ObjectID.NullObjectID);
+			Debug.Assert(m_currentLivingID == ObjectID.NullObjectID);
 
-			m_turnActionRequested = true;
-
-			if (livingID == ObjectID.NullObjectID)
-			{
-				throw new Exception();
-			}
-			else if (livingID == ObjectID.AnyObjectID)
-			{
-				if (GameData.Data.IsAutoAdvanceTurn)
-					SendProceedTurn();
-			}
-			else
-			{
-				var living = m_world.GetObject<LivingObject>(livingID);
-				m_activeLiving = living;
-			}
-		}
-
-		bool m_turnActionRequested;
-		LivingObject m_activeLiving;
-		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
-
-		public void SignalLivingHasAction(LivingObject living, GameAction action)
-		{
-			if (m_turnActionRequested == false)
-				return;
-
-			if (m_activeLiving == null)
-				throw new Exception();
-
-			if (m_activeLiving != living)
-				throw new Exception();
-
-			m_actionMap[living] = action;
+			m_currentLivingID = livingID;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
 				SendProceedTurn();
 		}
 
+		public void SignalLivingHasAction(LivingObject living, GameAction action)
+		{
+			turnTrace.TraceInformation("SignalLivingHasAction({0}, {1}", living, action);
+
+			if (m_currentLivingID == ObjectID.NullObjectID)
+				return;
+
+			if (m_currentLivingID != ObjectID.AnyObjectID && living.ObjectID != m_currentLivingID)
+				throw new Exception();
+
+			m_actionMap[living] = action;
+
+			SendProceedTurn();
+		}
+
 		public void SendProceedTurn()
 		{
-			if (m_turnActionRequested == false)
+			turnTrace.TraceInformation("SendProceedTurn");
+
+			if (m_currentLivingID == ObjectID.NullObjectID)
 				return;
 
 			// livings which the user can control (ie. server not doing high priority action)
@@ -381,20 +373,21 @@ namespace Dwarrowdelf.Client
 			{
 				GameAction action;
 
-				if (m_actionMap.ContainsKey(living))
-					action = m_actionMap[living];
-				else
+				if (m_actionMap.TryGetValue(living, out action) == false)
 					action = living.DecideAction();
 
 				Debug.Assert(action == null || action.MagicNumber != 0);
 
 				if (action != living.CurrentAction)
+				{
+					turnTrace.TraceInformation("{0}: selecting new action {1}", living, action);
 					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
+				}
 			}
 
 			m_connection.Send(new ProceedTurnReplyMessage() { Actions = list.ToArray() });
 
-			m_activeLiving = null;
+			m_currentLivingID = ObjectID.NullObjectID;
 			m_actionMap.Clear();
 		}
 	}

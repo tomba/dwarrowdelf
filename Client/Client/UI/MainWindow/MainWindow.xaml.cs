@@ -543,7 +543,10 @@ for p in area.Range():
 		{
 			EnvironmentObject env = dst as EnvironmentObject;
 			if (env != null)
+			{
 				map.CenterPos = new Point(loc.X, loc.Y);
+				map.Z = loc.Z;
+			}
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
