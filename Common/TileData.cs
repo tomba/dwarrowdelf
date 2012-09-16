@@ -24,6 +24,7 @@ namespace Dwarrowdelf
 	{
 		[FieldOffset(0)]
 		public ulong Raw;
+		[NonSerialized]
 		[FieldOffset(0)]
 		public uint RawTile;	// contains only terrain & interior data
 
