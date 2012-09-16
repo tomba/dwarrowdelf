@@ -80,6 +80,7 @@ namespace Dwarrowdelf.Client
 
 			base.Deserialize(_data);
 
+			// XXX we currently always get the map size
 			if (!data.Size.IsEmpty)
 				m_tileGrid.SetSize(data.Size);
 
@@ -186,6 +187,23 @@ namespace Dwarrowdelf.Client
 		public void SetTerrains(Tuple<IntPoint3, TileData>[] tileDataList)
 		{
 			this.Version += 1;
+
+			int x, y, z;
+			x = y = z = 0;
+
+			foreach (var kvp in tileDataList)
+			{
+				IntPoint3 p = kvp.Item1;
+
+				if (x < p.X)
+					x = p.X;
+				if (y < p.Y)
+					y = p.Y;
+				if (z < p.Z)
+					z = p.Z;
+			}
+
+			m_tileGrid.Grow(new IntPoint3(x, y, z));
 
 			foreach (var kvp in tileDataList)
 			{

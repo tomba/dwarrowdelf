@@ -501,6 +501,13 @@ namespace Dwarrowdelf.Server
 			data.Size = this.Size;
 		}
 
+		public void SendIntoTo(IPlayer player)
+		{
+			var data = new MapData();
+			CollectObjectData(data, ObjectVisibility.Public);
+			player.Send(new Messages.ObjectDataMessage(data));
+		}
+
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
 			Debug.Assert(visibility != ObjectVisibility.None);

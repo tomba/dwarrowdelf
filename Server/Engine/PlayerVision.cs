@@ -248,11 +248,7 @@ namespace Dwarrowdelf.Server
 		{
 			m_environment.World.WorkEnded += HandleEndOfWork;
 
-			m_player.Send(new Messages.ObjectDataMessage(new MapData()
-			{
-				ObjectID = m_environment.ObjectID,
-				VisibilityMode = m_environment.VisibilityMode,
-			}));
+			m_environment.SendIntoTo(m_player);
 		}
 
 		public override void Stop()

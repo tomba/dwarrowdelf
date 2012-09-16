@@ -88,7 +88,8 @@ namespace Dwarrowdelf.Client
 
 					var ml = RenderDataLocationToMapLocation(x, y);
 
-					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, this.IsVisibilityCheckEnabled);
+					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml,
+						m_showVirtualSymbols, this.IsVisibilityCheckEnabled);
 				}
 			}
 #if !NONPARALLEL
@@ -99,7 +100,8 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml, bool showVirtualSymbols, bool isSeeAll)
+		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml,
+			bool showVirtualSymbols, bool isVisibilityCheckEnabled)
 		{
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
@@ -109,7 +111,7 @@ namespace Dwarrowdelf.Client
 
 			bool visible;
 
-			if (isSeeAll)
+			if (isVisibilityCheckEnabled == false)
 				visible = true;
 			else
 				visible = TileVisible(ml, env);

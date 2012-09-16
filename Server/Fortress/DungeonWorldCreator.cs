@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var terrain = CreateTerrain();
 
-			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV);
+			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS);
 		}
 
 		static TerrainData CreateTerrain()
