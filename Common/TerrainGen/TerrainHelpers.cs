@@ -116,7 +116,8 @@ namespace Dwarrowdelf.TerrainGen
 					{
 						var td = grid[p.Z, p.Y, p.X];
 
-						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil)
+						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil &&
+							td.IsTerrainFloor)
 						{
 							td.InteriorID = InteriorID.Grass;
 							td.InteriorMaterialID = materials[random.Next(materials.Length)].ID;
