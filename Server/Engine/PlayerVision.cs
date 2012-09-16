@@ -327,8 +327,11 @@ namespace Dwarrowdelf.Server
 			return newObjects.Except(oldObjects);
 		}
 
-		void SendNewTerrains(IEnumerable<IntPoint3> revealedLocations)
+		void SendNewTerrains(HashSet<IntPoint3> revealedLocations)
 		{
+			if (revealedLocations.Count == 0)
+				return;
+
 			var msg = new Messages.MapDataTerrainsListMessage()
 			{
 				Environment = m_environment.ObjectID,
