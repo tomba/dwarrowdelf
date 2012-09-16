@@ -10,7 +10,14 @@ namespace Dwarrowdelf.Server
 	{
 		int GetTotalTicks(MoveAction action)
 		{
-			var obs = this.Environment.GetContents(this.Location + action.Direction);
+			var dst = this.Location + action.Direction;
+			if (this.Environment.Contains(dst) == false)
+			{
+				SendFailReport(new MoveActionReport(this, action.Direction), "could not move (outside map)");
+				return -1;
+			}
+
+			var obs = this.Environment.GetContents(dst);
 			return obs.OfType<LivingObject>().Count() + 1;
 		}
 

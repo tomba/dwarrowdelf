@@ -112,6 +112,9 @@ namespace Dwarrowdelf.Server
 			return MoveTo(p);
 		}
 
+		/// <summary>
+		/// Move object to given location, without checking if there's a route from current location
+		/// </summary>
 		public bool MoveTo(IntPoint3 location)
 		{
 			Debug.Assert(this.World.IsWritable);
@@ -133,12 +136,18 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
+		/// <summary>
+		/// Move object to given direction, checking that it is possible to move
+		/// </summary>
 		public bool MoveDir(Direction dir)
 		{
 			Debug.Assert(this.World.IsWritable);
 
 			if (this.Environment == null)
 				throw new Exception();
+
+			if (EnvironmentHelpers.CanMoveFromTo(this, dir) == false)
+				return false;
 
 			var location = this.Location + dir;
 
