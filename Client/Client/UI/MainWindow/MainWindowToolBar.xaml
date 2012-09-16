@@ -18,6 +18,8 @@
 			<Separator />
 			<Button Content="Labor Manager" Click="Button_LaborManager_Click" />
 			<Separator />
+
+			<Label Content="TileSet" />
 			<ComboBox Text="{Binding Path=MapControl.TileSet, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}" MinWidth="75">
 				<ComboBoxItem>Char</ComboBoxItem>
 				<ComboBoxItem>Gfx</ComboBoxItem>
