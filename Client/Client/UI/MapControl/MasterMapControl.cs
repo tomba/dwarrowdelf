@@ -46,6 +46,8 @@ namespace Dwarrowdelf.Client.UI
 
 		public event Action<MapSelection> GotSelection;
 
+		KeyHandler m_keyHandler;
+
 		public MasterMapControl()
 		{
 			m_vc = new VisualCollection(this);
@@ -53,6 +55,8 @@ namespace Dwarrowdelf.Client.UI
 			this.Focusable = true;
 
 			this.SelectionTileAreaView = new TileAreaView();
+
+			m_keyHandler = new KeyHandler(this);
 		}
 
 		VisualCollection m_vc;
@@ -240,107 +244,6 @@ namespace Dwarrowdelf.Client.UI
 
 			var anim = new DoubleAnimation(tileSize, new Duration(TimeSpan.FromMilliseconds(ANIM_TIME_MS)), FillBehavior.HoldEnd);
 			BeginAnimation(MapControl.TileSizeProperty, anim, HandoffBehavior.SnapshotAndReplace);
-		}
-
-		static bool KeyIsDir(Key key)
-		{
-			switch (key)
-			{
-				case Key.Up: break;
-				case Key.Down: break;
-				case Key.Left: break;
-				case Key.Right: break;
-				case Key.Home: break;
-				case Key.End: break;
-				case Key.PageUp: break;
-				case Key.PageDown: break;
-				default:
-					return false;
-			}
-			return true;
-		}
-
-		void SetScrollDirection()
-		{
-			var dir = Direction.None;
-
-			if (Keyboard.IsKeyDown(Key.Home))
-				dir |= Direction.NorthWest;
-			else if (Keyboard.IsKeyDown(Key.PageUp))
-				dir |= Direction.NorthEast;
-			if (Keyboard.IsKeyDown(Key.PageDown))
-				dir |= Direction.SouthEast;
-			else if (Keyboard.IsKeyDown(Key.End))
-				dir |= Direction.SouthWest;
-
-			if (Keyboard.IsKeyDown(Key.Up))
-				dir |= Direction.North;
-			else if (Keyboard.IsKeyDown(Key.Down))
-				dir |= Direction.South;
-
-			if (Keyboard.IsKeyDown(Key.Left))
-				dir |= Direction.West;
-			else if (Keyboard.IsKeyDown(Key.Right))
-				dir |= Direction.East;
-
-			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
-
-			var v = IntVector2.FromDirection(dir);
-
-			if (fast)
-				v *= 4;
-
-			ScrollToDirection(v);
-		}
-
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
-			{
-				SetScrollDirection();
-			}
-			else if (e.Key == Key.Add)
-			{
-				ZoomIn();
-			}
-			else if (e.Key == Key.Subtract)
-			{
-				ZoomOut();
-			}
-
-			base.OnKeyDown(e);
-		}
-
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
-			{
-				SetScrollDirection();
-			}
-
-			base.OnKeyUp(e);
-		}
-
-		protected override void OnTextInput(TextCompositionEventArgs e)
-		{
-			string text = e.Text;
-
-			e.Handled = true;
-
-			if (text == ">")
-			{
-				this.Z--;
-			}
-			else if (text == "<")
-			{
-				this.Z++;
-			}
-			else
-			{
-				e.Handled = false;
-			}
-
-			base.OnTextInput(e);
 		}
 
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
