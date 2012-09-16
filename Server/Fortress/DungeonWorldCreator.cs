@@ -20,14 +20,20 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static TerrainData CreateTerrain()
 		{
+			var random = Helpers.Random;
+
 			int side = (int)Math.Pow(2, MAP_SIZE);
 			var size = new IntSize3(side, side, MAP_DEPTH);
 
 			var terrain = new TerrainData(size);
 
-			var tg = new DungeonTerrainGenerator(terrain, Helpers.Random);
+			var tg = new DungeonTerrainGenerator(terrain, random);
 
 			tg.Generate(1);
+
+			TerrainHelpers.CreateSoil(terrain, 9999);
+			TerrainHelpers.CreateGrass(terrain, random, 9999);
+			TerrainHelpers.CreateTrees(terrain, random);
 
 			return terrain;
 		}

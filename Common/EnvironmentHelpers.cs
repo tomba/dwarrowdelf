@@ -23,9 +23,9 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Determine if a living can move from its current location to dir
+		/// Determine if an object can move from its current location to dir
 		/// </summary>
-		public static bool CanMoveFromTo(ILivingObject living, Direction dir)
+		public static bool CanMoveFromTo(IMovableObject living, Direction dir)
 		{
 			var env = living.Environment;
 			var src = living.Location;

@@ -142,6 +142,7 @@
     <Compile Include="DataTypes\GameColor.cs" />
     <Compile Include="TerrainGen\TerrainData.cs" />
     <Compile Include="TerrainGen\TerrainGenerator.cs" />
+    <Compile Include="TerrainGen\TerrainHelpers.cs" />
     <Compile Include="Terrains.cs" />
     <Compile Include="Interiors.cs" />
     <Compile Include="Materials.cs" />
