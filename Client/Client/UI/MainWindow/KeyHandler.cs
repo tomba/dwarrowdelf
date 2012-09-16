@@ -7,6 +7,12 @@ using System.Windows.Input;
 
 namespace Dwarrowdelf.Client.UI
 {
+	enum KeyHandlerMode
+	{
+		MapControl,
+		LivingControl,
+	}
+
 	class KeyHandler
 	{
 		MasterMapControl m_mapControl;
@@ -18,9 +24,88 @@ namespace Dwarrowdelf.Client.UI
 			mapControl.KeyDown += OnKeyDown;
 			mapControl.KeyUp += OnKeyUp;
 			mapControl.TextInput += OnTextInput;
+
+			this.Mode = KeyHandlerMode.MapControl;
 		}
 
+		public KeyHandlerMode Mode { get; set; }
+
 		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (this.Mode == KeyHandlerMode.MapControl)
+				OnKeyDownMap(sender, e);
+			else
+			OnKeyDownLiving(sender, e);
+		}
+
+		void OnKeyUp(object sender, KeyEventArgs e)
+		{
+			if (this.Mode == KeyHandlerMode.MapControl)
+				OnKeyUpMap(sender, e);
+			else
+				OnKeyUpLiving(sender, e);
+		}
+
+		void OnTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (this.Mode == KeyHandlerMode.MapControl)
+				OnTextInputMap(sender, e);
+			else
+				OnTextInputLiving(sender, e);
+		}
+
+
+		void OnKeyDownLiving(object sender, KeyEventArgs e)
+		{
+			var ob = App.MainWindow.FocusedObject;
+
+			if (ob == null)
+				return;
+
+			var dir = KeyToDir(e.Key);
+
+			if (dir != Direction.None)
+			{
+				var action = new MoveAction(dir);
+				ob.RequestAction(action);
+			}
+		}
+
+		void OnKeyUpLiving(object sender, KeyEventArgs e)
+		{
+			var ob = App.MainWindow.FocusedObject;
+
+			if (ob == null)
+				return;
+		}
+
+		void OnTextInputLiving(object sender, TextCompositionEventArgs e)
+		{
+			var ob = App.MainWindow.FocusedObject;
+
+			if (ob == null)
+				return;
+
+			string text = e.Text;
+
+			e.Handled = true;
+
+			if (text == ">")
+			{
+			}
+			else if (text == "<")
+			{
+			}
+			else
+			{
+				e.Handled = false;
+			}
+		}
+
+
+
+
+		void OnKeyDownMap(object sender, KeyEventArgs e)
 		{
 			e.Handled = true;
 
@@ -42,7 +127,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnKeyUp(object sender, KeyEventArgs e)
+		void OnKeyUpMap(object sender, KeyEventArgs e)
 		{
 			e.Handled = true;
 
@@ -56,7 +141,7 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		void OnTextInput(object sender, TextCompositionEventArgs e)
+		void OnTextInputMap(object sender, TextCompositionEventArgs e)
 		{
 			string text = e.Text;
 
@@ -94,6 +179,22 @@ namespace Dwarrowdelf.Client.UI
 			return true;
 		}
 
+		static Direction KeyToDir(Key key)
+		{
+			switch (key)
+			{
+				case Key.Up: return Direction.North;
+				case Key.Down: return Direction.South;
+				case Key.Left: return Direction.West;
+				case Key.Right: return Direction.East;
+				case Key.Home: return Direction.NorthWest;
+				case Key.End: return Direction.SouthWest;
+				case Key.PageUp: return Direction.NorthEast;
+				case Key.PageDown: return Direction.SouthEast;
+				default: return Direction.None;
+			}
+		}
+
 		void SetScrollDirection()
 		{
 			var dir = Direction.None;
@@ -102,6 +203,7 @@ namespace Dwarrowdelf.Client.UI
 				dir |= Direction.NorthWest;
 			else if (Keyboard.IsKeyDown(Key.PageUp))
 				dir |= Direction.NorthEast;
+
 			if (Keyboard.IsKeyDown(Key.PageDown))
 				dir |= Direction.SouthEast;
 			else if (Keyboard.IsKeyDown(Key.End))

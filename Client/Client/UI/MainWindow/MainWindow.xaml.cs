@@ -24,7 +24,7 @@ namespace Dwarrowdelf.Client.UI
 	sealed partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		MovableObject m_followObject;
-		MovableObject m_focusedObject;
+		LivingObject m_focusedObject;
 
 		enum CloseStatus
 		{
@@ -481,7 +481,7 @@ for p in area.Range():
 				e.Accepted = false;
 		}
 
-		public MovableObject FocusedObject
+		public LivingObject FocusedObject
 		{
 			get { return m_focusedObject; }
 
