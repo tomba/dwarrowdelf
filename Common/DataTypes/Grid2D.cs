@@ -30,6 +30,11 @@ namespace Dwarrowdelf
 		public int Width { get { return m_grid.Width; } }
 		public int Height { get { return m_grid.Height; } }
 
+		public void Clear()
+		{
+			m_grid.Clear();
+		}
+
 		public T this[IntPoint2 l]
 		{
 			get

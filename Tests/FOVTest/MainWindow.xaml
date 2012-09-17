@@ -6,7 +6,8 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 		d:DesignHeight="350" d:DesignWidth="525"
 		SizeToContent="WidthAndHeight">
-	<UniformGrid x:Name="grid" Width="400" Height="400">
-
-	</UniformGrid>
+	<Grid>
+		<UniformGrid x:Name="grid" Width="1000" Height="1000" />
+		<Canvas x:Name="canvas" />
+	</Grid>
 </Window>
