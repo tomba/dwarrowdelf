@@ -31,6 +31,9 @@ namespace FOVTest
 
 			m_blockerMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
+			//m_blockerMap[2, 1] = true;
+
+			
 			m_blockerMap[12, 8] = true;
 			m_blockerMap[12, 9] = true;
 
@@ -50,7 +53,7 @@ namespace FOVTest
 			m_blockerMap[15, 7] = true;
 			m_blockerMap[15, 8] = true;
 			m_blockerMap[15, 9] = true;
-
+			
 			m_blockerMap.Origin = new IntVector2();
 
 			m_tileSize = 16;

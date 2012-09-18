@@ -9,14 +9,6 @@ namespace FOVTest
 {
 	class NewFov : ILOSAlgo
 	{
-		/*
-		 *     .
-		 *    ..
-		 *   .#.
-		 *  ..#.
-		 * @....
-		 * 
-		 */
 		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntPoint2, bool> blockerDelegate)
 		{
@@ -36,17 +28,22 @@ namespace FOVTest
 		void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntPoint2, bool> blockerDelegate, int startColumn, int octant, double startSlope, double endSlope, int id)
 		{
-			Debug.Print("Calc column {3}, id {0}, slope {1} -> {2}", id, startSlope, endSlope, startColumn);
+			//Debug.Print("{4}{0}: Calc, start col {3}, slope {1} -> {2}", id, startSlope, endSlope, startColumn, new string(' ', (id - 1) * 4));
 
 			if (startSlope > endSlope)
 				return;
 
 			for (int x = startColumn; x < visionRange; ++x)
 			{
-				bool blocked = false;
+				bool currentlyBlocked = false;
 				double newStart = 0;
 
-				for (int y = 0; y <= x; ++y)
+				int lowY = (int)Math.Floor(startSlope * x);
+				int highY = (int)Math.Ceiling(endSlope * x);
+
+				//Debug.Print("{0}{1}: col {2} lowY {3}, highY {4}", new string(' ', (id - 1) * 4), id, x, lowY, highY);
+
+				for (int y = lowY; y <= highY; ++y)
 				{
 					IntPoint2 translatedLocation = OctantTranslate(new IntPoint2(x, y), octant);
 					IntPoint2 mapLocation = translatedLocation + (IntVector2)viewerLocation;
@@ -57,61 +54,52 @@ namespace FOVTest
 						continue;
 					}
 
-					double lowerSlope = (y - 0.5) / (x + 0.5);
-					double upperSlope = (y + 0.5) / (x - 0.5);
 					double centerSlope = (double)y / x;
 
-					if (x == 13)
-						Debug.Print("{0},{1}   low {2:F2}, up {3:F2}, center {4:F2}", x, y, lowerSlope, upperSlope, centerSlope);
-
-					//if (x == 14 && y == 0)
-					//	Debugger.Break();
-					/*
-					if (lowerSlope < 0)
-						lowerSlope = 0;
-
-					if (upperSlope > 1)
-						upperSlope = 1;
-					*/
-					/*
-					if (startSlope > upperSlope)
-						continue;
-
-					if (endSlope < lowerSlope)
-						break;
-					*/
 					if (centerSlope < startSlope || centerSlope > endSlope)
+					{
+						//Debug.Print("{0}{1}: {2},{3}   center {4:F2} ouside arc", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 						continue;
+					}
+
+					//Debug.Print("{0}{1}: {2},{3}   center {4:F2} visible", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 
 					visibilityMap[translatedLocation] = true;
 
-					if (blocked)
+					bool tileBlocked = blockerDelegate(mapLocation);
+
+					double upperSlope = (y + 0.5) / (x - 0.5);
+
+					if (currentlyBlocked)
 					{
-						if (blockerDelegate(mapLocation))
+						if (tileBlocked)
 						{
 							newStart = upperSlope;
 							continue;
 						}
 						else
 						{
-							blocked = false;
+							currentlyBlocked = false;
 							startSlope = newStart;
+							//Debug.Print("{0}{1}: {2},{3}  new startSlope {4:F2}", new string(' ', (id - 1) * 4), id, x, y, startSlope);
 						}
 					}
 					else
 					{
-						if (blockerDelegate(mapLocation))
+						if (tileBlocked)
 						{
-							blocked = true;
+							currentlyBlocked = true;
+							newStart = upperSlope;
+
+							double lowerSlope = (y - 0.5) / (x + 0.5);
 
 							Calculate(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate, x + 1, octant,
 								startSlope, lowerSlope, id + 1);
-							newStart = upperSlope;
 						}
 					}
 				}
 
-				if (blocked)
+				if (currentlyBlocked)
 					break;
 			}
 		}
