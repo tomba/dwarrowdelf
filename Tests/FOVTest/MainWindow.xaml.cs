@@ -15,43 +15,45 @@ using Dwarrowdelf;
 
 namespace FOVTest
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
 	public partial class MainWindow : Window
 	{
-		NewFov m_los = new NewFov();
+		ILOSAlgo m_los = new NewFov();
 		int m_visionRange = 16;
-		Grid2D<bool> m_blockers;
-		Grid2D<FovData> m_vis;
+		Grid2D<bool> m_blockerMap;
+		Grid2D<bool> m_visionMap;
+		double m_tileSize;
 
 		public MainWindow()
 		{
-			m_blockers = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
-			m_vis = new Grid2D<FovData>(m_blockers.Width, m_blockers.Height);
-			m_vis.Origin = new IntVector2(m_visionRange, m_visionRange);
+			m_blockerMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
+			m_visionMap = new Grid2D<bool>(m_blockerMap.Width, m_blockerMap.Height);
+			m_visionMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
-			m_blockers.Origin = new IntVector2(m_visionRange, m_visionRange);
+			m_blockerMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
-			m_blockers[12, 8] = true;
-			m_blockers[12, 9] = true;
+			m_blockerMap[12, 8] = true;
+			m_blockerMap[12, 9] = true;
 
-			m_blockers[13, 0] = true;
-			m_blockers[13, 1] = true;
-			m_blockers[13, 4] = true;
-			m_blockers[13, 7] = true;
-			m_blockers[13, 8] = true;
-			m_blockers[13, 9] = true;
+			m_blockerMap[13, 0] = true;
+			m_blockerMap[13, 1] = true;
 
-			m_blockers[14, 7] = true;
-			m_blockers[14, 8] = true;
-			m_blockers[14, 9] = true;
+			m_blockerMap[13, 4] = true;
 
-			m_blockers[15, 7] = true;
-			m_blockers[15, 8] = true;
-			m_blockers[15, 9] = true;
+			m_blockerMap[13, 7] = true;
+			m_blockerMap[13, 8] = true;
+			m_blockerMap[13, 9] = true;
 
-			m_blockers.Origin = new IntVector2();
+			m_blockerMap[14, 7] = true;
+			m_blockerMap[14, 8] = true;
+			m_blockerMap[14, 9] = true;
+
+			m_blockerMap[15, 7] = true;
+			m_blockerMap[15, 8] = true;
+			m_blockerMap[15, 9] = true;
+
+			m_blockerMap.Origin = new IntVector2();
+
+			m_tileSize = 16;
 
 			InitializeComponent();
 		}
@@ -60,15 +62,17 @@ namespace FOVTest
 		{
 			base.OnInitialized(e);
 
-			grid.Columns = m_blockers.Width;
+			grid.Columns = m_blockerMap.Width;
 
 			for (int y = -m_visionRange; y <= m_visionRange; ++y)
 			{
 				for (int x = -m_visionRange; x <= m_visionRange; ++x)
 				{
 					var label = new Label();
-					label.BorderBrush = Brushes.Green;
-					label.BorderThickness = new Thickness(1);
+					label.Width = m_tileSize;
+					label.Height = m_tileSize;
+					label.BorderBrush = Brushes.Black;
+					label.BorderThickness = new Thickness(1, 1, 0, 0);
 					label.Tag = new IntPoint2(x, -y);
 					label.MouseDown += new MouseButtonEventHandler(label_MouseDown);
 					grid.Children.Add(label);
@@ -83,16 +87,16 @@ namespace FOVTest
 			var b = (Label)sender;
 			var p = (IntPoint2)b.Tag;
 
-			p = p + m_vis.Origin;
+			p = p + m_visionMap.Origin;
 
-			m_blockers[p] = !m_blockers[p];
+			m_blockerMap[p] = !m_blockerMap[p];
 
 			UpdateFOV();
 		}
 
 		void UpdateFOV()
 		{
-			m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_vis, new IntSize2(1000, 1000), p => m_blockers[p]);
+			m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
 
@@ -100,26 +104,24 @@ namespace FOVTest
 			{
 				var p = (IntPoint2)b.Tag;
 
-				var isBlocker = m_blockers[p + m_vis.Origin];
-				var fovData = m_vis[p];
+				if (p == new IntPoint2())
+				{
+					b.Background = Brushes.Red;
+					continue;
+				}
 
-				b.Content = fovData.id.ToString();
+				var isBlocker = m_blockerMap[p + m_visionMap.Origin];
+				var isVis = m_visionMap[p];
 
-				if (fovData.vis)
+				if (isVis)
 				{
 					if (isBlocker)
 					{
 						b.Background = Brushes.LightGray;
-						bool showLine = true;
+						bool showLine = false;
 
-						if (showLine)
+						if (showLine && p.X >= 0 && p.Y >= 0 && double.IsNaN(grid.ActualWidth) == false)
 						{
-
-							var w = grid.Width / (m_visionRange * 2 + 1);
-
-							var translatex = new Func<double, double>(v => (m_visionRange + v) * w + 0.5 * w);
-							var translatey = new Func<double, double>(v => (m_visionRange - v) * w + 0.5 * w);
-
 							var upperLine = CreateLine(new Point(0.0, 0.0), new Point(p.X - 0.5, p.Y + 0.5), Brushes.Yellow);
 							canvas.Children.Add(upperLine);
 
@@ -128,24 +130,24 @@ namespace FOVTest
 						}
 					}
 					else
-						b.Background = Brushes.DarkGray;
+						b.Background = Brushes.LightGreen;
 				}
 				else
 				{
 					if (isBlocker)
-						b.Background = Brushes.DarkRed;
+						b.Background = Brushes.DimGray;
 					else
-						b.Background = Brushes.Red;
+						b.Background = Brushes.DarkGreen;
 				}
 			}
 		}
 
 		Line CreateLine(Point p1, Point p2, Brush brush)
 		{
-			var w = grid.Width / (m_visionRange * 2 + 1);
+			var ts = m_tileSize;
 
-			var translatex = new Func<double, double>(v => (m_visionRange + v) * w + 0.5 * w);
-			var translatey = new Func<double, double>(v => (m_visionRange - v) * w + 0.5 * w);
+			var translatex = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
+			var translatey = new Func<double, double>(v => (m_visionRange - v) * ts + 0.5 * ts);
 
 			var line = new Line()
 			{
@@ -159,6 +161,32 @@ namespace FOVTest
 			};
 
 			return line;
+		}
+
+		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (this.IsInitialized == false)
+				return;
+
+			var cb = (ComboBox)sender;
+			var cbi = (ComboBoxItem)cb.SelectedItem;
+			int id = int.Parse((string)cbi.Tag);
+
+			switch (id)
+			{
+				case 1:
+					m_los = new NewFov();
+					break;
+
+				case 2:
+					m_los = new LOSShadowCast1();
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			UpdateFOV();
 		}
 	}
 }

@@ -6,8 +6,20 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 		d:DesignHeight="350" d:DesignWidth="525"
 		SizeToContent="WidthAndHeight">
-	<Grid>
-		<UniformGrid x:Name="grid" Width="1000" Height="1000" />
-		<Canvas x:Name="canvas" />
-	</Grid>
+	<DockPanel>
+
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<ComboBox SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
+					<ComboBoxItem Tag="1">ShadowCastRecursive</ComboBoxItem>
+					<ComboBoxItem Tag="2">ShadowCastOld</ComboBoxItem>
+				</ComboBox>
+			</ToolBar>
+		</ToolBarTray>
+
+		<Grid  HorizontalAlignment="Center" VerticalAlignment="Center">
+			<UniformGrid x:Name="grid" />
+			<Canvas x:Name="canvas" />
+		</Grid>
+	</DockPanel>
 </Window>
