@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define PERMISSIVE
+//#define MEDIUM_STRICT
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,6 +56,16 @@ namespace Dwarrowdelf
 						continue;
 					}
 
+					double lowerSlope = (y - 0.5) / (x + 0.5);
+					double upperSlope = (y + 0.5) / (x - 0.5);
+
+#if PERMISSIVE
+					if (upperSlope < startSlope || lowerSlope > endSlope)
+					{
+						//Debug.Print("{0}{1}: {2},{3}   center {4:F2} ouside arc", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
+						continue;
+					}
+#elif MEDIUM_STRICT
 					double centerSlope = (double)y / x;
 
 					if (centerSlope < startSlope || centerSlope > endSlope)
@@ -60,14 +73,14 @@ namespace Dwarrowdelf
 						//Debug.Print("{0}{1}: {2},{3}   center {4:F2} ouside arc", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 						continue;
 					}
-
+#else
+#error no mode defined
+#endif
 					//Debug.Print("{0}{1}: {2},{3}   center {4:F2} visible", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 
 					visibilityMap[translatedLocation] = true;
 
 					bool tileBlocked = blockerDelegate(mapLocation);
-
-					double upperSlope = (y + 0.5) / (x - 0.5);
 
 					if (currentlyBlocked)
 					{
@@ -89,8 +102,6 @@ namespace Dwarrowdelf
 						{
 							currentlyBlocked = true;
 							newStart = upperSlope;
-
-							double lowerSlope = (y - 0.5) / (x + 0.5);
 
 							Calculate(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate, x + 1, octant,
 								startSlope, lowerSlope, id + 1);
