@@ -11,8 +11,7 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class LivingObject : ConcreteObject, ILivingObject
 	{
-		// XXX not re-entrant
-		static ILOSAlgo s_losAlgo = new LOSShadowCast1();
+		static ILOSAlgo s_losAlgo = new ShadowCastRecursive();
 		// XXX we need a global lock
 		static object m_visionMapLock = new object();
 

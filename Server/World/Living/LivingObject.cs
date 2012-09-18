@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Server
 			//Debug.Print("[{0}]: {1}", this, String.Format(format, args));
 		}
 
-		static ILOSAlgo s_losAlgo = new LOSShadowCast1(); // XXX note: not re-entrant
+		static ILOSAlgo s_losAlgo = new ShadowCastRecursive();
 
 		uint m_losMapVersion;
 		IntPoint3 m_losLocation;
