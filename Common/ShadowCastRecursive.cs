@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Dwarrowdelf;
 using System.Diagnostics;
 
-namespace FOVTest
+namespace Dwarrowdelf
 {
-	class NewFov : ILOSAlgo
+	public class ShadowCastRecursive : ILOSAlgo
 	{
 		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntPoint2, bool> blockerDelegate)

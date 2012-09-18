@@ -17,7 +17,7 @@ namespace FOVTest
 {
 	public partial class MainWindow : Window
 	{
-		ILOSAlgo m_los = new NewFov();
+		ILOSAlgo m_los = new ShadowCastRecursive();
 		int m_visionRange = 16;
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
@@ -178,7 +178,7 @@ namespace FOVTest
 			switch (id)
 			{
 				case 1:
-					m_los = new NewFov();
+					m_los = new ShadowCastRecursive();
 					break;
 
 				case 2:
