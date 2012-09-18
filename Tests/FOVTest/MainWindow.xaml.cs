@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Dwarrowdelf;
+using System.Diagnostics;
 
 namespace FOVTest
 {
@@ -22,6 +23,8 @@ namespace FOVTest
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
 		double m_tileSize;
+
+		bool m_doPerfTest = false;
 
 		public MainWindow()
 		{
@@ -65,6 +68,12 @@ namespace FOVTest
 		{
 			base.OnInitialized(e);
 
+			if (m_doPerfTest)
+			{
+				UpdateFOV();
+				return;
+			}
+
 			grid.Columns = m_blockerMap.Width;
 
 			for (int y = -m_visionRange; y <= m_visionRange; ++y)
@@ -99,6 +108,24 @@ namespace FOVTest
 
 		void UpdateFOV()
 		{
+			if (m_doPerfTest)
+			{
+				m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				GC.Collect();
+
+				var sw = Stopwatch.StartNew();
+
+				m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+
+				sw.Stop();
+				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
+
+				return;
+			}
+
 			m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
