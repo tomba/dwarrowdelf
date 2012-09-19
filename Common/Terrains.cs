@@ -7,7 +7,7 @@ namespace Dwarrowdelf
 {
 	public enum TerrainID : byte
 	{
-		Undefined,
+		Undefined = 0,
 		Empty,
 		NaturalFloor,
 		BuiltFloor,

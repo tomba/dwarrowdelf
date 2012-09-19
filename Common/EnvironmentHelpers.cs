@@ -54,7 +54,7 @@ namespace Dwarrowdelf
 
 			var td = env.GetTileData(srcLoc);
 
-			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+			if (td.IsUndefined)
 				return false;
 
 			var srcTerrain = Terrains.GetTerrain(td.TerrainID);
@@ -104,7 +104,7 @@ namespace Dwarrowdelf
 
 			var td = env.GetTileData(dstLoc);
 
-			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+			if (td.IsUndefined)
 				return false;
 
 			var dstTerrain = Terrains.GetTerrain(td.TerrainID);
@@ -152,7 +152,7 @@ namespace Dwarrowdelf
 
 			var td = env.GetTileData(location);
 
-			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+			if (td.IsUndefined)
 				return false;
 
 			var terrain = Terrains.GetTerrain(td.TerrainID);
@@ -172,7 +172,7 @@ namespace Dwarrowdelf
 
 			var td = env.GetTileData(location);
 
-			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+			if (td.IsUndefined)
 				return false;
 
 			var terrain = Terrains.GetTerrain(td.TerrainID);
@@ -191,7 +191,7 @@ namespace Dwarrowdelf
 
 			var td = env.GetTileData(location);
 
-			if (td.TerrainID == TerrainID.Undefined || td.InteriorID == InteriorID.Undefined)
+			if (td.IsUndefined)
 				return false;
 
 			var terrain = Terrains.GetTerrain(td.TerrainID);

@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 	// Stored in TileData, needs to be byte
 	public enum MaterialID : byte
 	{
-		Undefined,
+		Undefined = 0,
 
 		// Alloys
 		Steel,

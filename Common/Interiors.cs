@@ -8,7 +8,7 @@ namespace Dwarrowdelf
 	// Stored in TileData, needs to be byte
 	public enum InteriorID : byte
 	{
-		Undefined,
+		Undefined = 0,
 		Empty,
 		BuiltWall,
 		Pavement,
