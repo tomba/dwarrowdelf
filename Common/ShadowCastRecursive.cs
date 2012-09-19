@@ -65,10 +65,14 @@ namespace Dwarrowdelf
 						//Debug.Print("{0}{1}: {2},{3}   center {4:F2} ouside arc", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 						continue;
 					}
+
+					bool tileBlocked = blockerDelegate(mapLocation);
 #elif MEDIUM_STRICT
 					double centerSlope = (double)y / x;
 
-					if (centerSlope < startSlope || centerSlope > endSlope)
+					bool tileBlocked = blockerDelegate(mapLocation);
+
+					if (!tileBlocked && (centerSlope < startSlope || centerSlope > endSlope))
 					{
 						//Debug.Print("{0}{1}: {2},{3}   center {4:F2} ouside arc", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 						continue;
@@ -79,8 +83,6 @@ namespace Dwarrowdelf
 					//Debug.Print("{0}{1}: {2},{3}   center {4:F2} visible", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 
 					visibilityMap[translatedLocation] = true;
-
-					bool tileBlocked = blockerDelegate(mapLocation);
 
 					if (currentlyBlocked)
 					{
