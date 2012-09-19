@@ -11,31 +11,76 @@ namespace Dwarrowdelf
 {
 	public class ShadowCastRecursive : ILOSAlgo
 	{
+		struct SCRData
+		{
+			public IntPoint2 ViewerLocation;
+			public int VisionRange;
+			public int VisionRangeSquared;
+			public Grid2D<bool> VisibilityMap;
+			public IntSize2 MapSize;
+			public Func<IntPoint2, bool> BlockerDelegate;
+		}
+
 		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntPoint2, bool> blockerDelegate)
 		{
-			visionRange += 1; // visionrange does not include the tile where the observer is
-
 			visibilityMap.Clear();
 
-			if (blockerDelegate(new IntPoint2(0, 0) + (IntVector2)viewerLocation))
+			if (blockerDelegate(viewerLocation) == true)
 				return;
 
 			visibilityMap[0, 0] = true;
 
+			SCRData data = new SCRData()
+			{
+				ViewerLocation = viewerLocation,
+				VisionRange = visionRange,
+				VisionRangeSquared = (visionRange + 1) * (visionRange + 1),	// +1 to get a bit bigger view area
+				VisibilityMap = visibilityMap,
+				MapSize = mapSize,
+				BlockerDelegate = blockerDelegate,
+			};
+
 			for (int octant = 0; octant < 8; ++octant)
-				Calculate(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate, 1, octant, 0.0, 1.0, 1);
+				Calculate(ref data, 1, octant, 0.0, 1.0, 1);
 		}
 
-		void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
-			Func<IntPoint2, bool> blockerDelegate, int startColumn, int octant, double startSlope, double endSlope, int id)
+		void Calculate(ref SCRData data, int startColumn, int octant, double startSlope, double endSlope, int id)
 		{
 			//Debug.Print("{4}{0}: Calc, start col {3}, slope {1} -> {2}", id, startSlope, endSlope, startColumn, new string(' ', (id - 1) * 4));
 
 			if (startSlope > endSlope)
 				return;
 
-			for (int x = startColumn; x < visionRange; ++x)
+			int maxX;
+
+			switch (octant)
+			{
+				case 0:
+				case 7:
+					maxX = Math.Min(data.VisionRange, data.MapSize.Width - data.ViewerLocation.X - 1);
+					break;
+
+				case 1:
+				case 2:
+					maxX = Math.Min(data.VisionRange, data.MapSize.Height - data.ViewerLocation.Y - 1);
+					break;
+
+				case 3:
+				case 4:
+					maxX = Math.Min(data.VisionRange, data.ViewerLocation.X);
+					break;
+
+				case 5:
+				case 6:
+					maxX = Math.Min(data.VisionRange, data.ViewerLocation.Y);
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			for (int x = startColumn; x <= maxX; ++x)
 			{
 				bool currentlyBlocked = false;
 				double newStart = 0;
@@ -43,16 +88,44 @@ namespace Dwarrowdelf
 				int lowY = (int)Math.Floor(startSlope * x);
 				int highY = (int)Math.Ceiling(endSlope * x);
 
+				switch (octant)
+				{
+					case 0:
+					case 3:
+						highY = Math.Min(highY, data.MapSize.Height - data.ViewerLocation.Y - 1);
+						break;
+
+					case 1:
+					case 6:
+						highY = Math.Min(highY, data.MapSize.Width - data.ViewerLocation.X - 1);
+						break;
+
+					case 7:
+					case 4:
+						highY = Math.Min(highY, data.ViewerLocation.Y);
+						break;
+
+					case 2:
+					case 5:
+						highY = Math.Min(highY, data.ViewerLocation.X);
+						break;
+
+					default:
+						throw new Exception();
+				}
+
 				//Debug.Print("{0}{1}: col {2} lowY {3}, highY {4}", new string(' ', (id - 1) * 4), id, x, lowY, highY);
 
 				for (int y = lowY; y <= highY; ++y)
 				{
 					IntPoint2 translatedLocation = OctantTranslate(new IntPoint2(x, y), octant);
-					IntPoint2 mapLocation = translatedLocation + (IntVector2)viewerLocation;
+					IntPoint2 mapLocation = translatedLocation.Offset(data.ViewerLocation.X, data.ViewerLocation.Y);
 
-					if (mapSize.Contains(mapLocation) == false || new IntVector2(x, y).Length > visionRange)
+					Debug.Assert(data.MapSize.Contains(mapLocation));
+
+					if (x * x + y * y > data.VisionRangeSquared)
 					{
-						visibilityMap[translatedLocation] = false;
+						data.VisibilityMap[translatedLocation] = false;
 						continue;
 					}
 
@@ -66,11 +139,11 @@ namespace Dwarrowdelf
 						continue;
 					}
 
-					bool tileBlocked = blockerDelegate(mapLocation);
+					bool tileBlocked = data.BlockerDelegate(mapLocation);
 #elif MEDIUM_STRICT
 					double centerSlope = (double)y / x;
 
-					bool tileBlocked = blockerDelegate(mapLocation);
+					bool tileBlocked = data.BlockerDelegate(mapLocation);
 
 					if (!tileBlocked && (centerSlope < startSlope || centerSlope > endSlope))
 					{
@@ -82,7 +155,7 @@ namespace Dwarrowdelf
 #endif
 					//Debug.Print("{0}{1}: {2},{3}   center {4:F2} visible", new string(' ', (id - 1) * 4), id, x, y, centerSlope);
 
-					visibilityMap[translatedLocation] = true;
+					data.VisibilityMap[translatedLocation] = true;
 
 					if (currentlyBlocked)
 					{
@@ -105,8 +178,7 @@ namespace Dwarrowdelf
 							currentlyBlocked = true;
 							newStart = upperSlope;
 
-							Calculate(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate, x + 1, octant,
-								startSlope, lowerSlope, id + 1);
+							Calculate(ref data, x + 1, octant, startSlope, lowerSlope, id + 1);
 						}
 					}
 				}

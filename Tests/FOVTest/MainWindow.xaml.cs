@@ -24,19 +24,23 @@ namespace FOVTest
 		Grid2D<bool> m_visionMap;
 		double m_tileSize;
 
+		IntPoint2 m_viewerLocation;
+
 		bool m_doPerfTest = false;
 
 		public MainWindow()
 		{
 			m_blockerMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
-			m_visionMap = new Grid2D<bool>(m_blockerMap.Width, m_blockerMap.Height);
+			m_visionMap = new Grid2D<bool>(m_visionRange * 2 + 1, m_visionRange * 2 + 1);
 			m_visionMap.Origin = new IntVector2(m_visionRange, m_visionRange);
+
+			m_viewerLocation = new IntPoint2(m_visionRange, m_visionRange);
 
 			m_blockerMap.Origin = new IntVector2(m_visionRange, m_visionRange);
 
 			//m_blockerMap[2, 1] = true;
 
-			
+
 			m_blockerMap[12, 8] = true;
 			m_blockerMap[12, 9] = true;
 
@@ -56,7 +60,7 @@ namespace FOVTest
 			m_blockerMap[15, 7] = true;
 			m_blockerMap[15, 8] = true;
 			m_blockerMap[15, 9] = true;
-			
+
 			m_blockerMap.Origin = new IntVector2();
 
 			m_tileSize = 16;
@@ -74,7 +78,7 @@ namespace FOVTest
 				return;
 			}
 
-			grid.Columns = m_blockerMap.Width;
+			grid.Columns = m_visionMap.Width;
 
 			for (int y = -m_visionRange; y <= m_visionRange; ++y)
 			{
@@ -85,13 +89,43 @@ namespace FOVTest
 					label.Height = m_tileSize;
 					label.BorderBrush = Brushes.Black;
 					label.BorderThickness = new Thickness(1, 1, 0, 0);
-					label.Tag = new IntPoint2(x, -y);
+					label.Tag = new IntPoint2(x, y);
 					label.MouseDown += new MouseButtonEventHandler(label_MouseDown);
 					grid.Children.Add(label);
 				}
 			}
 
+			Dispatcher.BeginInvoke(new Action(UpdateFOV), null);
+		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			var dir = KeyToDir(e.Key);
+
+			if (dir == Direction.None)
+			{
+				base.OnKeyDown(e);
+				return;
+			}
+
+			m_viewerLocation += dir;
 			UpdateFOV();
+		}
+
+		static Direction KeyToDir(Key key)
+		{
+			switch (key)
+			{
+				case Key.Up: return Direction.North;
+				case Key.Down: return Direction.South;
+				case Key.Left: return Direction.West;
+				case Key.Right: return Direction.East;
+				case Key.Home: return Direction.NorthWest;
+				case Key.End: return Direction.SouthWest;
+				case Key.PageUp: return Direction.NorthEast;
+				case Key.PageDown: return Direction.SouthEast;
+				default: return Direction.None;
+			}
 		}
 
 		void label_MouseDown(object sender, MouseButtonEventArgs e)
@@ -99,7 +133,7 @@ namespace FOVTest
 			var b = (Label)sender;
 			var p = (IntPoint2)b.Tag;
 
-			p = p + m_visionMap.Origin;
+			p = p.Offset(m_viewerLocation.X, m_viewerLocation.Y);
 
 			m_blockerMap[p] = !m_blockerMap[p];
 
@@ -126,7 +160,8 @@ namespace FOVTest
 				return;
 			}
 
-			m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+			m_los.Calculate(m_viewerLocation, m_visionRange, m_visionMap,
+				m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
 
@@ -140,7 +175,15 @@ namespace FOVTest
 					continue;
 				}
 
-				var isBlocker = m_blockerMap[p + m_visionMap.Origin];
+				var ml = p.Offset(m_viewerLocation.X, m_viewerLocation.Y);
+
+				if (m_blockerMap.Bounds.Contains(ml) == false)
+				{
+					b.Background = Brushes.DarkRed;
+					continue;
+				}
+
+				var isBlocker = m_blockerMap[ml];
 				var isVis = m_visionMap[p];
 
 				if (isVis)
@@ -177,7 +220,7 @@ namespace FOVTest
 			var ts = m_tileSize;
 
 			var translatex = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
-			var translatey = new Func<double, double>(v => (m_visionRange - v) * ts + 0.5 * ts);
+			var translatey = new Func<double, double>(v => (m_visionRange + v) * ts + 0.5 * ts);
 
 			var line = new Line()
 			{
