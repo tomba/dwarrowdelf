@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	public class ShadowCastRecursive : ILOSAlgo
+	public static class ShadowCastRecursive
 	{
 		struct SCRData
 		{
@@ -21,7 +21,7 @@ namespace Dwarrowdelf
 			public Func<IntPoint2, bool> BlockerDelegate;
 		}
 
-		public void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
+		public static void Calculate(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
 			Func<IntPoint2, bool> blockerDelegate)
 		{
 			visibilityMap.Clear();
@@ -45,7 +45,7 @@ namespace Dwarrowdelf
 				Calculate(ref data, 1, octant, 0.0, 1.0, 1);
 		}
 
-		void Calculate(ref SCRData data, int startColumn, int octant, double startSlope, double endSlope, int id)
+		static void Calculate(ref SCRData data, int startColumn, int octant, double startSlope, double endSlope, int id)
 		{
 			//Debug.Print("{4}{0}: Calc, start col {3}, slope {1} -> {2}", id, startSlope, endSlope, startColumn, new string(' ', (id - 1) * 4));
 

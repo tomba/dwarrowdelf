@@ -22,8 +22,6 @@ namespace Dwarrowdelf.Server
 			//Debug.Print("[{0}]: {1}", this, String.Format(format, args));
 		}
 
-		static ILOSAlgo s_losAlgo = new ShadowCastRecursive();
-
 		uint m_losMapVersion;
 		IntPoint3 m_losLocation;
 		Grid2D<bool> m_visionMap;
@@ -716,7 +714,7 @@ namespace Dwarrowdelf.Server
 
 			int z = this.Z;
 			var env = this.Environment;
-			s_losAlgo.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
+			ShadowCastRecursive.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
 				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
 			m_losMapVersion = this.Environment.Version;

@@ -18,7 +18,6 @@ namespace FOVTest
 {
 	public partial class MainWindow : Window
 	{
-		ILOSAlgo m_los = new ShadowCastRecursive();
 		int m_visionRange = 16;
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
@@ -144,7 +143,7 @@ namespace FOVTest
 		{
 			if (m_doPerfTest)
 			{
-				m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				ShadowCastRecursive.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
@@ -152,7 +151,7 @@ namespace FOVTest
 
 				var sw = Stopwatch.StartNew();
 
-				m_los.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				ShadowCastRecursive.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				sw.Stop();
 				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
@@ -160,7 +159,7 @@ namespace FOVTest
 				return;
 			}
 
-			m_los.Calculate(m_viewerLocation, m_visionRange, m_visionMap,
+			ShadowCastRecursive.Calculate(m_viewerLocation, m_visionRange, m_visionMap,
 				m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
@@ -248,11 +247,9 @@ namespace FOVTest
 			switch (id)
 			{
 				case 1:
-					m_los = new ShadowCastRecursive();
 					break;
 
 				case 2:
-					m_los = new LOSShadowCast1();
 					break;
 
 				default:

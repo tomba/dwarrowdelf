@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class LivingObject : ConcreteObject, ILivingObject
 	{
-		static ILOSAlgo s_losAlgo = new ShadowCastRecursive();
 		// XXX we need a global lock
 		static object m_visionMapLock = new object();
 
@@ -341,7 +340,7 @@ namespace Dwarrowdelf.Client
 				var env = this.Environment;
 				var z = this.Location.Z;
 
-				s_losAlgo.Calculate(this.Location.ToIntPoint(), visionRange,
+				ShadowCastRecursive.Calculate(this.Location.ToIntPoint(), visionRange,
 					m_visionMap, env.Size.Plane,
 					l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
 
