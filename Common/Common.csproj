@@ -159,7 +159,6 @@
     <Compile Include="DataTypes\IntPoint3.cs" />
     <Compile Include="IGame.cs" />
     <Compile Include="DataTypes\Grid2D.cs" />
-    <Compile Include="LOSShadowCast1.cs" />
     <Compile Include="MMLogTraceListener.cs" />
     <Compile Include="ObjectID.cs" />
     <Compile Include="GameAction.cs" />
