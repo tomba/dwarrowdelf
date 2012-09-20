@@ -69,6 +69,8 @@ namespace Dwarrowdelf.Client.UI
 				var action = new MoveAction(dir);
 				action.MagicNumber = 1;
 				ob.RequestAction(action);
+				e.Handled = true;
+				return;
 			}
 		}
 
