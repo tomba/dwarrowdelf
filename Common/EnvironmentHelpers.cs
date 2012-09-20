@@ -163,44 +163,6 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Can the tiles around the given tile be seen
-		/// </summary>
-		public static bool CanSeeThrough(IEnvironmentObject env, IntPoint3 location)
-		{
-			if (!env.Contains(location))
-				return false;
-
-			var td = env.GetTileData(location);
-
-			if (td.IsUndefined)
-				return false;
-
-			var terrain = Terrains.GetTerrain(td.TerrainID);
-			var interior = Interiors.GetInterior(td.InteriorID);
-
-			return terrain.IsSeeThrough && interior.IsSeeThrough;
-		}
-
-		/// <summary>
-		/// Can the tile below the given tile be seen
-		/// </summary>
-		public static bool CanSeeThroughDown(IEnvironmentObject env, IntPoint3 location)
-		{
-			if (!env.Contains(location))
-				return false;
-
-			var td = env.GetTileData(location);
-
-			if (td.IsUndefined)
-				return false;
-
-			var terrain = Terrains.GetTerrain(td.TerrainID);
-			var interior = Interiors.GetInterior(td.InteriorID);
-
-			return terrain.IsSeeThroughDown && interior.IsSeeThrough;
-		}
-
-		/// <summary>
 		/// Can the given tile be seen from any direction
 		/// </summary>
 		public static bool CanBeSeen(IEnvironmentObject env, IntPoint3 location)
@@ -211,7 +173,7 @@ namespace Dwarrowdelf
 			{
 				var p = location + d;
 
-				if (EnvironmentHelpers.CanSeeThrough(env, p))
+				if (env.GetTileData(p).IsSeeThrough)
 				{
 					hidden = false;
 					break;
@@ -219,7 +181,7 @@ namespace Dwarrowdelf
 			}
 
 			if (hidden)
-				hidden = !EnvironmentHelpers.CanSeeThroughDown(env, location + Direction.Up);
+				hidden = !env.GetTileData(location + Direction.Up).IsSeeThroughDown;
 
 			return !hidden;
 		}

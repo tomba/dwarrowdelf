@@ -93,5 +93,39 @@ namespace Dwarrowdelf
 		/// Is the tile a floor with empty or soft interior
 		/// </summary>
 		public bool IsClear { get { return this.TerrainID.IsFloor() && this.InteriorID.IsClear(); } }
+
+		/// <summary>
+		/// Can one see through this tile in planar directions
+		/// </summary>
+		public bool IsSeeThrough
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+				var interior = Interiors.GetInterior(this.InteriorID);
+
+				return terrain.IsSeeThrough && interior.IsSeeThrough;
+			}
+		}
+
+		/// <summary>
+		/// Can one see through this tile downwards
+		/// </summary>
+		public bool IsSeeThroughDown
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+				var interior = Interiors.GetInterior(this.InteriorID);
+
+				return terrain.IsSeeThroughDown && interior.IsSeeThrough;
+			}
+		}
 	}
 }

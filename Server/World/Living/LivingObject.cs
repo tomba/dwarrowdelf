@@ -715,7 +715,7 @@ namespace Dwarrowdelf.Server
 			int z = this.Z;
 			var env = this.Environment;
 			ShadowCastRecursive.Calculate(new IntPoint2(this.Location.X, this.Location.Y), this.VisionRange, m_visionMap, env.Size.Plane,
-				l => !EnvironmentHelpers.CanSeeThrough(env, new IntPoint3(l, z)));
+				p2 => !env.GetTileData(new IntPoint3(p2, z)).IsSeeThrough);
 
 			m_losMapVersion = this.Environment.Version;
 			m_losLocation = this.Location;
