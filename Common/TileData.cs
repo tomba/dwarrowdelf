@@ -50,17 +50,9 @@ namespace Dwarrowdelf
 		[FieldOffset(6)]
 		public byte WaterLevel;
 
-		public bool HasTree { get { return this.InteriorID == InteriorID.Tree || this.InteriorID == InteriorID.Sapling; } }
-
-		/// <summary>
-		/// Check if tile is TerrainID.Empty, MaterialID.Undefined, InteriorID.Empty, MaterialID.Undefined
-		/// </summary>
-		public bool IsEmpty { get { return this.RawTile == EmptyTileData.RawTile; } }
-
-		/// <summary>
-		/// Check if tile is TerrainID.Undefined, MaterialID.Undefined, InteriorID.Undefined, MaterialID.Undefined
-		/// </summary>
-		public bool IsUndefined { get { return this.RawTile == UndefinedTileData.RawTile; } }
+		[NonSerialized]
+		[FieldOffset(7)]
+		public byte Unused;
 
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
@@ -85,32 +77,21 @@ namespace Dwarrowdelf
 			InteriorMaterialID = MaterialID.Undefined,
 		};
 
-		public bool IsTerrainFloor
-		{
-			get
-			{
-				return this.TerrainID == Dwarrowdelf.TerrainID.NaturalFloor || this.TerrainID == Dwarrowdelf.TerrainID.BuiltFloor;
-			}
-		}
+		public bool HasTree { get { return this.InteriorID.IsTree(); } }
 
 		/// <summary>
-		/// Is Interior empty or a "soft" item that can be removed automatically
+		/// Check if tile is TerrainID.Empty, MaterialID.Undefined, InteriorID.Empty, MaterialID.Undefined
 		/// </summary>
-		public bool IsInteriorClear
-		{
-			get
-			{
-				return this.InteriorID == InteriorID.Empty || this.InteriorID == InteriorID.Grass ||
-					this.InteriorID == Dwarrowdelf.InteriorID.Sapling;
-			}
-		}
+		public bool IsEmpty { get { return this.RawTile == EmptyTileData.RawTile; } }
 
-		public bool IsClear
-		{
-			get
-			{
-				return this.IsTerrainFloor && this.IsInteriorClear;
-			}
-		}
+		/// <summary>
+		/// Check if tile is TerrainID.Undefined, MaterialID.Undefined, InteriorID.Undefined, MaterialID.Undefined
+		/// </summary>
+		public bool IsUndefined { get { return this.RawTile == UndefinedTileData.RawTile; } }
+
+		/// <summary>
+		/// Is the tile a floor with empty or soft interior
+		/// </summary>
+		public bool IsClear { get { return this.TerrainID.IsFloor() && this.InteriorID.IsClear(); } }
 	}
 }

@@ -179,6 +179,11 @@ namespace Dwarrowdelf
 			}
 		}
 
+		public static bool IsFloor(this TerrainID id)
+		{
+			return id == TerrainID.NaturalFloor || id == TerrainID.BuiltFloor;
+		}
+
 		public static TerrainInfo GetTerrain(TerrainID id)
 		{
 			return s_terrains[(int)id];

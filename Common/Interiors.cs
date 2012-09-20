@@ -77,6 +77,19 @@ namespace Dwarrowdelf
 			};
 		}
 
+		/// <summary>
+		/// Is Interior empty or a "soft" item that can be removed automatically
+		/// </summary>
+		public static bool IsClear(this InteriorID id)
+		{
+			return id == InteriorID.Empty || id == InteriorID.Grass || id == InteriorID.Sapling;
+		}
+
+		public static bool IsTree(this InteriorID id)
+		{
+			return id == InteriorID.Tree || id == InteriorID.Sapling;
+		}
+
 		public static InteriorInfo GetInterior(InteriorID id)
 		{
 			return s_interiors[(int)id];
