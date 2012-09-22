@@ -390,7 +390,7 @@ for p in area.Range():
 			dlg.Show();
 		}
 
-		protected override void OnSourceInitialized(EventArgs e)
+		protected override async void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
 
@@ -400,11 +400,14 @@ for p in area.Range():
 
 			if (ClientConfig.AutoConnect)
 			{
-				var task = GameData.Data.ConnectManager.StartServerAndConnectPlayer();
-				task.ContinueWith((t) =>
+				try
 				{
-					MessageBox.Show(this, t.Exception.ToString(), "Start and Connect failed");
-				}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+					await GameData.Data.ConnectManager.StartServerAndConnectPlayerAsync();
+				}
+				catch (Exception exc)
+				{
+					MessageBox.Show(this, exc.ToString(), "Start and Connect failed");
+				}
 			}
 		}
 
@@ -412,7 +415,7 @@ for p in area.Range():
 
 		public GameData Data { get { return GameData.Data; } }
 
-		protected override void OnClosing(CancelEventArgs e)
+		protected override async void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
 
@@ -427,25 +430,17 @@ for p in area.Range():
 					Properties.Settings.Default.MainWindowPlacement = p;
 					Properties.Settings.Default.Save();
 
-					var task = GameData.Data.ConnectManager.DisconnectAndStop();
-					task.ContinueWith((t) =>
+					try
 					{
-						if (t.Status != TaskStatus.RanToCompletion)
-						{
-							this.Dispatcher.BeginInvoke(new Action<Exception>((exc) =>
-							{
-								m_closeStatus = CloseStatus.None;
-								MessageBox.Show(exc.ToString(), "Error closing down");
-								Application.Current.Shutdown();
-							}
-							), t.Exception);
-						}
-						else
-						{
-							m_closeStatus = CloseStatus.Ready;
-							this.Dispatcher.BeginInvoke(new Action(() => Close()));
-						}
-					});
+						await GameData.Data.ConnectManager.DisconnectAndStopAsync();
+					}
+					catch (Exception exc)
+					{
+						MessageBox.Show(exc.ToString(), "Error closing down");
+					}
+
+					m_closeStatus = CloseStatus.Ready;
+					await this.Dispatcher.InvokeAsync(Close);
 
 					break;
 

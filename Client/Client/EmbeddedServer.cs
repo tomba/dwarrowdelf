@@ -21,8 +21,10 @@ namespace Dwarrowdelf.Client
 
 		public IGame Game { get { return m_game; } }
 
-		public void Start()
+		public Task StartAsync()
 		{
+			System.Windows.Threading.Dispatcher.CurrentDispatcher.VerifyAccess();
+
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
 				throw new Exception();
 
@@ -43,26 +45,42 @@ namespace Dwarrowdelf.Client
 			else
 				save = m_saveManager.GetLatestSaveFile();
 
-			using (var serverStartWaitHandle = new AutoResetEvent(false))
-			{
-				CreateEmbeddedServer(gameDir, save);
+			CreateEmbeddedServer(gameDir, save);
 
-				m_serverThread = new Thread(ServerMain);
-				m_serverThread.Start(serverStartWaitHandle);
+			var tcs = new TaskCompletionSource<object>();
 
-				var ok = serverStartWaitHandle.WaitOne(TimeSpan.FromSeconds(60));
-				if (!ok)
+			var serverStartWaitHandle = new AutoResetEvent(false);
+
+			ThreadPool.RegisterWaitForSingleObject(serverStartWaitHandle,
+				(o, timeout) =>
 				{
-					m_serverThread.Abort();
-					throw new Exception("Timeout waiting for server");
-				}
-			}
+					serverStartWaitHandle.Dispose();
+
+					if (timeout)
+					{
+						m_serverThread.Abort();
+						tcs.SetException(new Exception("Timeout waiting for server"));
+					}
+					else
+					{
+						tcs.SetResult(null);
+					}
+				},
+				null, TimeSpan.FromSeconds(60), true);
+
+			m_serverThread = new Thread(ServerMain);
+			m_serverThread.Start(serverStartWaitHandle);
+
+			return tcs.Task;
 		}
 
-		public void Stop()
+		public Task StopAsync()
 		{
-			m_game.Stop();
-			m_serverThread.Join();
+			return Task.Run(() =>
+			{
+				m_game.Stop();
+				m_serverThread.Join();
+			});
 		}
 
 		void OnServerStatusChange(string status)

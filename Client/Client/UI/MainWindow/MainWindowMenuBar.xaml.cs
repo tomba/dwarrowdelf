@@ -34,40 +34,52 @@ namespace Dwarrowdelf.Client.UI
 
 		/* SERVER */
 
-		private void StartServer_MenuItem_Click(object sender, RoutedEventArgs e)
+		async void StartServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var task = GameData.Data.ConnectManager.StartServer();
-			task.ContinueWith((t) =>
+			try
 			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Start Server Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+				await GameData.Data.ConnectManager.StartServerAsync();
+			}
+			catch (Exception exc)
+			{
+				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Start Server Failed");
+			}
 		}
 
-		private void StopServer_MenuItem_Click(object sender, RoutedEventArgs e)
+		async void StopServer_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var task = GameData.Data.ConnectManager.StopServer();
-			task.ContinueWith((t) =>
+			try
 			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Stop Server Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+				await GameData.Data.ConnectManager.StopServerAsync();
+			}
+			catch (Exception exc)
+			{
+				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Stop Server Failed");
+			}
 		}
 
-		private void Connect_MenuItem_Click(object sender, RoutedEventArgs e)
+		async void Connect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var task = GameData.Data.ConnectManager.ConnectPlayer();
-			task.ContinueWith((t) =>
+			try
 			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Connect Player Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+				await GameData.Data.ConnectManager.ConnectPlayerAsync();
+			}
+			catch (Exception exc)
+			{
+				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Connect Player Failed");
+			}
 		}
 
-		private void Disconnect_MenuItem_Click(object sender, RoutedEventArgs e)
+		async void Disconnect_MenuItem_Click(object sender, RoutedEventArgs e)
 		{
-			var task = GameData.Data.ConnectManager.Disconnect();
-			task.ContinueWith((t) =>
+			try
 			{
-				MessageBox.Show(Window.GetWindow(this), t.Exception.ToString(), "Disconnect Failed");
-			}, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+				await GameData.Data.ConnectManager.DisconnectAsync();
+			}
+			catch (Exception exc)
+			{
+				MessageBox.Show(Window.GetWindow(this), exc.ToString(), "Disconnect Failed");
+			}
 		}
 
 		private void Save_MenuItem_Click(object sender, RoutedEventArgs e)

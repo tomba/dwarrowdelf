@@ -72,73 +72,44 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public Task StartServerAndConnectPlayer()
+		public async Task StartServerAndConnectPlayerAsync()
 		{
 			if ((ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null) && GameData.Data.User != null)
-				return Task.Factory.StartNew(() => { });
+				return;
 
-			return Task.Factory.StartNew(() =>
+			try
 			{
-				try
-				{
-					StartServerSync();
+				await StartServerAsyncInt();
 
-					try
-					{
-						ConnectPlayerSync();
-					}
-					catch
-					{
-						StopServer();
-						throw;
-					}
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
+				await ConnectPlayerAsyncInt();
+			}
+			catch
+			{
+				var t = StopServerAsyncInt();
+				t.Wait();
+				throw;
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
 		}
 
-		public Task StartServer()
+		public async Task StartServerAsync()
+		{
+			try
+			{
+				await StartServerAsyncInt();
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
+		}
+
+		async Task StartServerAsyncInt()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null)
-				return Task.Factory.StartNew(() => { });
-
-			return Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					StartServerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
-		}
-
-		public Task ConnectPlayer()
-		{
-			if (GameData.Data.User != null)
-				return Task.Factory.StartNew(() => { });
-
-			return Task.Factory.StartNew(() =>
-			{
-				try
-				{
-					ConnectPlayerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
-		}
-
-		void StartServerSync()
-		{
-			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None)
 				return;
 
 			var server = new EmbeddedServer();
@@ -146,148 +117,140 @@ namespace Dwarrowdelf.Client
 
 			SetLogOnText("Starting server", 0);
 
-			server.Start();
+			await server.StartAsync();
 
-			m_dispatcher.Invoke(new Action(() =>
-			{
-				m_server = server;
-			}));
+			m_server = server;
 		}
 
-		void ConnectPlayerSync()
+		public async Task ConnectPlayerAsync()
+		{
+			if (GameData.Data.User != null)
+				return;
+
+			try
+			{
+				await ConnectPlayerAsyncInt();
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
+		}
+
+		async Task ConnectPlayerAsyncInt()
 		{
 			var player = new ClientUser();
 			player.DisconnectEvent += OnDisconnected;
 			player.StateChangedEvent += (state) => SetLogOnText(state.ToString(), 0);
 
-			player.LogOn("tomba");
+			await Task.Run(() => player.LogOn("tomba"));
 
-			m_dispatcher.Invoke(new Action(() =>
+			GameData.Data.User = player;
+
+			var controllable = GameData.Data.World.Controllables.FirstOrDefault();
+			if (controllable != null && controllable.Environment != null)
 			{
-				GameData.Data.User = player;
+				var mapControl = App.MainWindow.MapControl;
+				mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
+				mapControl.Environment = controllable.Environment;
+				mapControl.CenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
+				mapControl.Z = controllable.Location.Z;
 
-				var controllable = GameData.Data.World.Controllables.FirstOrDefault();
-				if (controllable != null && controllable.Environment != null)
-				{
-					var mapControl = App.MainWindow.MapControl;
-					mapControl.IsVisibilityCheckEnabled = !GameData.Data.User.IsSeeAll;
-					mapControl.Environment = controllable.Environment;
-					mapControl.CenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
-					mapControl.Z = controllable.Location.Z;
+				App.MainWindow.FocusedObject = controllable;
+			}
 
-					App.MainWindow.FocusedObject = controllable;
-				}
-
-				if (Program.StartupStopwatch != null)
-				{
-					Program.StartupStopwatch.Stop();
-					Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
-					Program.StartupStopwatch = null;
-				}
-			}));
+			if (Program.StartupStopwatch != null)
+			{
+				Program.StartupStopwatch.Stop();
+				Trace.WriteLine(String.Format("Startup {0} ms", Program.StartupStopwatch.ElapsedMilliseconds));
+				Program.StartupStopwatch = null;
+			}
 		}
 
 
 
-		public Task DisconnectAndStop()
+		public async Task DisconnectAndStopAsync()
 		{
 			if ((ClientConfig.EmbeddedServer != EmbeddedServerMode.None && m_server == null) && GameData.Data.User == null)
-				return Task.Factory.StartNew(() => { });
+				return;
 
-			return Task.Factory.StartNew(() =>
+			try
 			{
-				try
-				{
-					DisconnectSync();
+				await DisconnectAsyncInt();
 
-					StopServerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
+				await StopServerAsyncInt();
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
 		}
 
-		public Task StopServer()
+		public async Task StopServerAsync()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
-				return Task.Factory.StartNew(() => { });
+				return;
 
-			return Task.Factory.StartNew(() =>
+			try
 			{
-				try
-				{
-					StopServerSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
+				await StopServerAsyncInt();
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
 		}
 
-		public Task Disconnect()
+		public async Task DisconnectAsync()
 		{
 			if (GameData.Data.User == null)
-				return Task.Factory.StartNew(() => { });
+				return;
 
-			return Task.Factory.StartNew(() =>
+			try
 			{
-				try
-				{
-					DisconnectSync();
-				}
-				finally
-				{
-					CloseLoginDialog();
-				}
-			}, TaskCreationOptions.LongRunning);
+				await DisconnectAsyncInt();
+			}
+			finally
+			{
+				CloseLoginDialog();
+			}
 		}
 
-		void StopServerSync()
+		async Task StopServerAsyncInt()
 		{
 			if (ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server == null)
 				return;
 
 			SetLogOnText("Stopping server", 0);
 
-			m_server.Stop();
+			await m_server.StopAsync();
+
 			m_server = null;
 		}
 
 		AutoResetEvent m_disconnectEvent;
 
-		void DisconnectSync()
+		async Task DisconnectAsyncInt()
 		{
-			var player = (ClientUser)m_dispatcher.Invoke(new Func<ClientUser>(() =>
-			{
-				App.MainWindow.MapControl.Environment = null;
-				return GameData.Data.User;
-			}));
+			App.MainWindow.MapControl.Environment = null;
 
+			var player = GameData.Data.User;
 			if (player == null)
 				return;
 
 			m_disconnectEvent = new AutoResetEvent(false);
 
-			m_dispatcher.Invoke(new Action(() =>
-			{
-				SetLogOnText("Saving", 0);
-				ClientSaveManager.SaveEvent += OnGameSaved;
-				GameData.Data.User.Send(new SaveRequestMessage());
-			}));
+			SetLogOnText("Saving", 0);
+			ClientSaveManager.SaveEvent += OnGameSaved;
+			GameData.Data.User.Send(new SaveRequestMessage());
 
-			m_disconnectEvent.WaitOne();
+			await Task.Run(() => m_disconnectEvent.WaitOne());
 
-			m_dispatcher.Invoke(new Action(() =>
-			{
-				ClientSaveManager.SaveEvent -= OnGameSaved;
-				SetLogOnText("Logging Out", 0);
-				GameData.Data.User.SendLogOut();
-			}));
+			ClientSaveManager.SaveEvent -= OnGameSaved;
+			SetLogOnText("Logging Out", 0);
+			GameData.Data.User.SendLogOut();
 
-			m_disconnectEvent.WaitOne();
+			await Task.Run(() => m_disconnectEvent.WaitOne());
 
 			m_disconnectEvent.Dispose();
 			m_disconnectEvent = null;
