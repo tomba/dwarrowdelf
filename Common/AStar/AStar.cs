@@ -354,6 +354,18 @@ namespace Dwarrowdelf.AStar
 
 				Stack<AStarNode> queue = new Stack<AStarNode>();
 
+				UpdateNodes(parent, queue);
+
+				while (queue.Count > 0)
+				{
+					parent = queue.Pop();
+
+					UpdateNodes(parent, queue);
+				}
+			}
+
+			void UpdateNodes(AStarNode parent, Stack<AStarNode> queue)
+			{
 				foreach (var dir in m_environment.GetValidDirs(parent.Loc))
 				{
 					IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
@@ -373,33 +385,6 @@ namespace Dwarrowdelf.AStar
 						child.G = g;
 
 						queue.Push(child);
-					}
-				}
-
-				while (queue.Count > 0)
-				{
-					parent = queue.Pop();
-
-					foreach (var dir in m_environment.GetValidDirs(parent.Loc))
-					{
-						IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
-
-						AStarNode child;
-						m_nodeMap.TryGetValue(childLoc, out child);
-						if (child == null)
-							continue;
-
-						ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc) + m_environment.GetTileWeight(childLoc));
-
-						if (g < child.G)
-						{
-							//Debug.Print("closed node {0} updated 2", childLoc);
-
-							child.Parent = parent;
-							child.G = g;
-
-							queue.Push(child);
-						}
 					}
 				}
 			}
