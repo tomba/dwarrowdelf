@@ -6,6 +6,7 @@ using Dwarrowdelf.Messages;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Threading;
 
 namespace Dwarrowdelf.Client
 {
@@ -79,17 +80,14 @@ namespace Dwarrowdelf.Client
 		}
 
 		// XXX add cancellationtoken
-		public void LogOn(string name)
+		public async Task LogOn(string name)
 		{
-			if (Application.Current.Dispatcher.CheckAccess() == true)
-				throw new Exception();
-
 			this.State = ClientUserState.Connecting;
 
 			switch (ClientConfig.ConnectionType)
 			{
 				case ConnectionType.Tcp:
-					m_connection = TcpConnection.Connect();
+					m_connection = await TcpConnection.ConnectAsync();
 					break;
 
 				case ConnectionType.Direct:
@@ -107,36 +105,32 @@ namespace Dwarrowdelf.Client
 
 			this.State = ClientUserState.LoggingIn;
 
+			m_connection.NewMessageEvent += _OnNewMessages;
+			m_opEvent = new ManualResetEvent(false);
+
+			var tcs = new TaskCompletionSource<object>();
+
+			ThreadPool.RegisterWaitForSingleObject(m_opEvent,
+				(o, tout) =>
+				{
+					if (tout)
+						tcs.SetException(new Exception("timeout"));
+					else
+						tcs.SetResult(null);
+				},
+				null, TimeSpan.FromSeconds(60), true);
+
 			Send(new Messages.LogOnRequestMessage() { Name = name });
 
-			bool first = true;
+			await tcs.Task;
 
-			/* read messages from LogOnReplyBeginMessage to LogOnReplyEndMessage */
-			while (true)
-			{
-				var msg = m_connection.GetMessage();
-
-				if (first)
-				{
-					if ((msg is LogOnReplyBeginMessage) == false)
-						throw new Exception();
-					first = false;
-					this.State = ClientUserState.ReceivingLoginData;
-				}
-
-				Application.Current.Dispatcher.Invoke(new Action<ClientMessage>(OnReceiveMessage), msg);
-
-				if (msg is LogOnReplyEndMessage)
-					break;
-			}
+			m_opEvent.Dispose();
+			m_opEvent = null;
 
 			this.State = ClientUserState.LoggedIn;
-
-			m_connection.NewMessageEvent += _OnNewMessages;
-
-			// Invoke manually to flush possible messages in the queue
-			_OnNewMessages();
 		}
+
+		ManualResetEvent m_opEvent;
 
 		public void Send(ServerMessage msg)
 		{
@@ -217,6 +211,8 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(LogOnReplyBeginMessage msg)
 		{
+			this.State = ClientUserState.ReceivingLoginData;
+
 			m_world = new World();
 			GameData.Data.World = m_world;
 
@@ -233,6 +229,9 @@ namespace Dwarrowdelf.Client
 		{
 			if (msg.ClientData != null)
 				ClientSaveManager.Load(msg.ClientData);
+
+			if (m_opEvent != null)
+				m_opEvent.Set();
 		}
 
 		void HandleMessage(LogOutReplyMessage msg)

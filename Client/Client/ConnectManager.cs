@@ -143,7 +143,7 @@ namespace Dwarrowdelf.Client
 			player.DisconnectEvent += OnDisconnected;
 			player.StateChangedEvent += (state) => SetLogOnText(state.ToString(), 0);
 
-			await Task.Run(() => player.LogOn("tomba"));
+			await player.LogOn("tomba");
 
 			GameData.Data.User = player;
 

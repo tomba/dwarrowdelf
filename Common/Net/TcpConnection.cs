@@ -10,6 +10,7 @@ using System.IO;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
@@ -213,7 +214,7 @@ namespace Dwarrowdelf
 			}
 		}
 
-		public static TcpConnection Connect()
+		public async static Task<TcpConnection> ConnectAsync()
 		{
 			var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -224,7 +225,7 @@ namespace Dwarrowdelf
 
 			var remoteEndPoint = new IPEndPoint(IPAddress.Loopback, port);
 
-			socket.Connect(remoteEndPoint);
+			await Task.Factory.FromAsync(socket.BeginConnect, socket.EndConnect, remoteEndPoint, null);
 
 			return new TcpConnection(socket);
 		}
