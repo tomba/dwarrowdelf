@@ -402,12 +402,28 @@ for p in area.Range():
 			{
 				try
 				{
-					await GameData.Data.ConnectManager.StartServerAndConnectPlayerAsync();
+					await GameData.Data.ConnectManager.StartServerAsync();
 				}
 				catch (Exception exc)
 				{
-					MessageBox.Show(this, exc.ToString(), "Start and Connect failed");
+					MessageBox.Show(this, exc.ToString(), "Failed to start server");
+					return;
 				}
+
+				bool stopServer = false;
+
+				try
+				{
+					await GameData.Data.ConnectManager.ConnectPlayerAsync();
+				}
+				catch (Exception exc)
+				{
+					MessageBox.Show(this, exc.ToString(), "Connect failed");
+					stopServer = true;
+				}
+
+				if (stopServer)
+					await GameData.Data.ConnectManager.StopServerAsync();
 			}
 		}
 
@@ -432,7 +448,8 @@ for p in area.Range():
 
 					try
 					{
-						await GameData.Data.ConnectManager.DisconnectAndStopAsync();
+						await GameData.Data.ConnectManager.DisconnectAsync();
+						await GameData.Data.ConnectManager.StopServerAsync();
 					}
 					catch (Exception exc)
 					{

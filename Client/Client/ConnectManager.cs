@@ -72,29 +72,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public async Task StartServerAndConnectPlayerAsync()
-		{
-			if ((ClientConfig.EmbeddedServer == EmbeddedServerMode.None || m_server != null) && GameData.Data.User != null)
-				return;
-
-			try
-			{
-				await StartServerAsyncInt();
-
-				await ConnectPlayerAsyncInt();
-			}
-			catch
-			{
-				var t = StopServerAsyncInt();
-				t.Wait();
-				throw;
-			}
-			finally
-			{
-				CloseLoginDialog();
-			}
-		}
-
 		public async Task StartServerAsync()
 		{
 			try
@@ -167,24 +144,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-
-
-		public async Task DisconnectAndStopAsync()
-		{
-			if ((ClientConfig.EmbeddedServer != EmbeddedServerMode.None && m_server == null) && GameData.Data.User == null)
-				return;
-
-			try
-			{
-				await DisconnectAsyncInt();
-
-				await StopServerAsyncInt();
-			}
-			finally
-			{
-				CloseLoginDialog();
-			}
-		}
 
 		public async Task StopServerAsync()
 		{
