@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace Dwarrowdelf.Client.Symbols
 {
-	static class TileSetHelpers
+	public static class TileSetHelpers
 	{
 		public static Drawing DrawCharacter(char ch, Typeface typeFace, double fontSize, GameColor color, GameColor bgColor,
 			bool drawOutline, double outlineThickness, bool reverse, CharRenderMode mode)
