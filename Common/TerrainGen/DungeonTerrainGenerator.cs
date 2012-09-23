@@ -191,7 +191,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		void CreateDungeon()
 		{
-			int h = MyMath.Log2(m_size.Width) - 1;
+			int h = MyMath.Log2(m_size.Width) - 0;
 
 			var bsp = new BSPTree(h);
 
@@ -220,8 +220,8 @@ namespace Dwarrowdelf.TerrainGen
 				var n = bsp[i];
 				var grid = n.Grid;
 
-				var xm = GetRandomDouble(0.5, 0.9);
-				var ym = GetRandomDouble(0.5, 0.9);
+				var xm = GetRandomDouble(0.2, 0.5);
+				var ym = GetRandomDouble(0.2, 0.5);
 
 				int columns = (int)((grid.Columns - 1) * xm);
 				int rows = (int)((grid.Rows - 1) * ym);
