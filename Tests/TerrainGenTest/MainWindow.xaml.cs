@@ -21,7 +21,7 @@ namespace TerrainGenTest
 	public partial class MainWindow : Window
 	{
 		TerrainData m_terrain;
-		TerrainGenerator m_terrainGen;
+		DungeonTerrainGenerator m_terrainGen;
 		Renderer m_renderer;
 
 		public BitmapSource SliceBmpXY { get; private set; }
@@ -37,13 +37,13 @@ namespace TerrainGenTest
 
 		public MainWindow()
 		{
-			const int depth = 20;
+			const int depth = 5;
 			const int sizeExp = 9;
 			int side = (int)Math.Pow(2, sizeExp);
 
 			m_size = new IntSize3(side, side, depth);
 			m_terrain = new TerrainData(m_size);
-			m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
+			m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
 			m_renderer = new Renderer(m_size);
 
 			this.SliceBmpXY = m_renderer.SliceBmpXY;
@@ -220,7 +220,8 @@ namespace TerrainGenTest
 				SW = ParseDouble(cornerSWTextBox.Text),
 			};
 
-			m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
+			//m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
+			m_terrainGen.Generate(this.Seed);
 		}
 
 		void Render()
