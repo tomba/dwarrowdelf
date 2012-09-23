@@ -209,6 +209,7 @@ namespace Dwarrowdelf.Server
 
 			this.World.TurnStarting += OnTurnStart;
 			this.World.TickEnded += OnTickEnded;
+			this.World.HandleMessagesEvent += OnHandleMessagesEvent;
 
 			PipeConnectionListener.StartListening(_OnNewConnection);
 			TcpConnectionListener.StartListening(_OnNewConnection);
@@ -235,6 +236,7 @@ namespace Dwarrowdelf.Server
 			TcpConnectionListener.StopListening();
 			PipeConnectionListener.StopListening();
 
+			this.World.HandleMessagesEvent -= OnHandleMessagesEvent;
 			this.World.TickEnded -= OnTickEnded;
 			this.World.TurnStarting -= OnTurnStart;
 
@@ -260,23 +262,56 @@ namespace Dwarrowdelf.Server
 			DirectConnectionListener.NewConnection(clientConnection);
 		}
 
+		List<IConnection> m_newConns = new List<IConnection>();
+
+		// called in worker thread context
 		void _OnNewConnection(IConnection connection)
 		{
 			trace.TraceInformation("New connection");
-
-			// XXX timeout
-			var msg = connection.GetMessage();
-
-			var request = msg as Messages.LogOnRequestMessage;
-
-			if (request == null)
-				throw new Exception();
-
-			m_world.BeginInvokeInstant(new Action<IConnection, Messages.LogOnRequestMessage>(OnNewConnection), connection, request);
+			m_world.BeginInvokeInstant(new Action<IConnection>(OnNewConnection), connection);
 			SignalWorld();
 		}
 
-		void OnNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
+		void OnNewConnection(IConnection connection)
+		{
+			m_newConns.Add(connection);
+			connection.NewMessageEvent += SignalWorld;
+			CheckNewConnections();
+		}
+
+		void CheckNewConnections()
+		{
+			for (int i = m_newConns.Count - 1; i >= 0; --i)
+			{
+				var conn = m_newConns[i];
+
+				Messages.Message msg;
+
+				if (conn.TryGetMessage(out msg))
+				{
+					m_newConns.RemoveAt(i);
+
+					var request = msg as Messages.LogOnRequestMessage;
+					if (request == null)
+						throw new Exception("bad initial message received");
+
+					HandleNewConnection(conn, request);
+				}
+			}
+		}
+
+		void OnHandleMessagesEvent()
+		{
+			CheckNewConnections();
+
+			foreach (var player in m_players)
+			{
+				if (player.IsConnected)
+					player.HandleNewMessages();
+			}
+		}
+
+		void HandleNewConnection(IConnection connection, Messages.LogOnRequestMessage request)
 		{
 			VerifyAccess();
 
@@ -289,7 +324,7 @@ namespace Dwarrowdelf.Server
 
 			if (player == null)
 			{
-				m_world.BeginInvoke(new Action<IConnection, Messages.LogOnRequestMessage>(OnNewPlayer), connection, request);
+				m_world.BeginInvoke(new Action<IConnection, Messages.LogOnRequestMessage>(HandleNewPlayer), connection, request);
 				SignalWorld();
 			}
 			else
@@ -301,7 +336,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void OnNewPlayer(IConnection connection, Messages.LogOnRequestMessage request)
+		void HandleNewPlayer(IConnection connection, Messages.LogOnRequestMessage request)
 		{
 			var name = request.Name;
 

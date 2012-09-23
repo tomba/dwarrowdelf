@@ -110,12 +110,10 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(m_connection == null);
 
-			m_world.HandleMessagesEvent += HandleNewMessages;
 			m_world.WorldChanged += HandleWorldChange;
 			m_world.ReportReceived += HandleReport;
 
 			m_connection = connection;
-			m_connection.NewMessageEvent += _OnNewMessage;
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
@@ -156,11 +154,9 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("HandleDisconnect");
 
-			m_world.HandleMessagesEvent -= HandleNewMessages;
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
 
-			m_connection.NewMessageEvent -= _OnNewMessage;
 			m_connection = null;
 
 			this.IsProceedTurnRequestSent = false;
@@ -173,12 +169,6 @@ namespace Dwarrowdelf.Server
 		public void Disconnect()
 		{
 			m_connection.Disconnect();
-		}
-
-		void _OnNewMessage()
-		{
-			trace.TraceVerbose("_OnNewMessage");
-			m_engine.SignalWorld();
 		}
 
 		public void HandleNewMessages()
