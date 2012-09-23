@@ -41,11 +41,6 @@ namespace Dwarrowdelf
 			get { return m_remoteConnection != null; }
 		}
 
-		public Message GetMessage()
-		{
-			return m_msgQueue.Take();
-		}
-
 		public bool TryGetMessage(out Message msg)
 		{
 			return m_msgQueue.TryTake(out msg);

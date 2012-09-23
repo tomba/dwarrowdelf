@@ -56,38 +56,6 @@ namespace Dwarrowdelf
 			m_deserializerThread.Start();
 		}
 
-		public Message GetMessage()
-		{
-			Message msg;
-
-			if (TryGetMessage(out msg))
-				return msg;
-
-			using (ManualResetEventSlim ev = new ManualResetEventSlim(false))
-			{
-				Action handler = () => { ev.Set(); };
-
-				this.NewMessageEvent += handler;
-
-				if (TryGetMessage(out msg) == false)
-				{
-					ev.Wait();
-
-					if (TryGetMessage(out msg) == false)
-					{
-						if (this.IsConnected == false)
-							return null;
-
-						throw new Exception();
-					}
-				}
-
-				this.NewMessageEvent -= handler;
-			}
-
-			return msg;
-		}
-
 		public bool TryGetMessage(out Message msg)
 		{
 			return m_msgQueue.TryDequeue(out msg);

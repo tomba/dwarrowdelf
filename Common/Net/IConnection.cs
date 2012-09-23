@@ -15,7 +15,6 @@ namespace Dwarrowdelf
 
 		bool IsConnected { get; }
 
-		Message GetMessage();
 		bool TryGetMessage(out Message msg);
 
 		void Send(Message msg);
