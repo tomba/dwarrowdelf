@@ -103,9 +103,27 @@ namespace Dwarrowdelf.Server.Fortress
 
 		IntGrid2Z? FindStartLocation(EnvironmentObject env)
 		{
-			const int size = 3;
+			IntPoint2? stairs = null;
 
-			var center = env.Size.Plane.Center;
+			foreach( var p2 in env.Size.Plane.Range())
+			{
+				var z = FindSurface(env, p2);
+
+				var p = new IntPoint3(p2, z);
+				var td = env.GetTileData(p);
+				if (td.TerrainID == TerrainID.Hole)
+				{
+					stairs = p2;
+					break;
+				}
+			}
+
+			if (stairs.HasValue == false)
+				throw new Exception();
+
+			const int size = 2;
+
+			var center = stairs.Value;
 
 			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
 			{
