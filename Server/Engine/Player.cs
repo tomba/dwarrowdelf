@@ -116,7 +116,6 @@ namespace Dwarrowdelf.Server
 
 			m_connection = connection;
 			m_connection.NewMessageEvent += _OnNewMessage;
-			m_connection.DisconnectEvent += _OnDisconnect;
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
@@ -162,7 +161,6 @@ namespace Dwarrowdelf.Server
 			m_world.ReportReceived -= HandleReport;
 
 			m_connection.NewMessageEvent -= _OnNewMessage;
-			m_connection.DisconnectEvent -= _OnDisconnect;
 			m_connection = null;
 
 			this.IsProceedTurnRequestSent = false;
@@ -175,12 +173,6 @@ namespace Dwarrowdelf.Server
 		public void Disconnect()
 		{
 			m_connection.Disconnect();
-		}
-
-		void _OnDisconnect()
-		{
-			trace.TraceInformation("OnDisconnect");
-			m_engine.SignalWorld();
 		}
 
 		void _OnNewMessage()

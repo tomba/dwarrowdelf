@@ -23,6 +23,5 @@ namespace Dwarrowdelf
 		void Disconnect();
 
 		event Action NewMessageEvent;
-		event Action DisconnectEvent;
 	}
 }

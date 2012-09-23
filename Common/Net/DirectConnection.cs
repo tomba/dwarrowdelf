@@ -14,7 +14,6 @@ namespace Dwarrowdelf
 		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
 
 		public event Action NewMessageEvent;
-		public event Action DisconnectEvent;
 
 		public DirectConnection()
 		{
@@ -74,8 +73,9 @@ namespace Dwarrowdelf
 		{
 			m_remoteConnection = null;
 
-			if (this.DisconnectEvent != null)
-				DisconnectEvent();
+			var ev = this.NewMessageEvent;
+			if (ev != null)
+				ev();
 		}
 
 		public void Disconnect()
@@ -86,8 +86,9 @@ namespace Dwarrowdelf
 
 			remote.RemoteDisconnect();
 
-			if (this.DisconnectEvent != null)
-				DisconnectEvent();
+			var ev = this.NewMessageEvent;
+			if (ev != null)
+				ev();
 		}
 
 		public static DirectConnection Connect(IGame game)

@@ -38,7 +38,6 @@ namespace Dwarrowdelf
 		ConcurrentQueue<Message> m_msgQueue = new ConcurrentQueue<Message>();
 
 		public event Action NewMessageEvent;
-		public event Action DisconnectEvent;
 
 		public TcpConnection(Socket socket)
 		{
@@ -115,10 +114,6 @@ namespace Dwarrowdelf
 				m_socket.Shutdown(SocketShutdown.Both);
 				m_socket.Close();
 
-				if (this.DisconnectEvent != null)
-					DisconnectEvent();
-
-				// XXX this is to wake up possible waiters in GetMessage()
 				var ev = this.NewMessageEvent;
 				if (ev != null)
 					ev();

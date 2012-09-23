@@ -20,7 +20,6 @@ namespace Dwarrowdelf
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
 		public event Action NewMessageEvent;
-		public event Action DisconnectEvent;
 
 		BlockingCollection<Message> m_msgQueue = new BlockingCollection<Message>();
 
@@ -74,8 +73,9 @@ namespace Dwarrowdelf
 			{
 				trace.TraceInformation("[RX]: error {0}", e.Message);
 
-				if (this.DisconnectEvent != null)
-					DisconnectEvent();
+				var ev = this.NewMessageEvent;
+				if (ev != null)
+					ev();
 
 				m_msgQueue.CompleteAdding();
 			}

@@ -133,7 +133,6 @@ namespace Dwarrowdelf.Client
 			this.State = ClientUserState.LoggedIn;
 
 			m_connection.NewMessageEvent += _OnNewMessages;
-			m_connection.DisconnectEvent += _OnDisconnected;
 
 			// Invoke manually to flush possible messages in the queue
 			_OnNewMessages();
@@ -165,23 +164,6 @@ namespace Dwarrowdelf.Client
 			m_connection.Send(new Messages.LogOutRequestMessage());
 		}
 
-		void _OnDisconnected()
-		{
-			Application.Current.Dispatcher.BeginInvoke(new Action(OnDisconnected));
-		}
-
-		void OnDisconnected()
-		{
-			trace.TraceInformation("OnDisconnect");
-
-			GameData.Data.Jobs.Clear();
-			GameData.Data.World = null;
-
-			if (DisconnectEvent != null)
-				DisconnectEvent();
-		}
-
-
 		volatile bool m_onNewMessagesInvoked;
 
 		void _OnNewMessages()
@@ -205,6 +187,20 @@ namespace Dwarrowdelf.Client
 
 			while (m_connection.TryGetMessage(out msg))
 				OnReceiveMessage((ClientMessage)msg);
+
+			if (m_connection.IsConnected == false)
+				OnDisconnected();
+		}
+
+		void OnDisconnected()
+		{
+			trace.TraceInformation("OnDisconnect");
+
+			GameData.Data.Jobs.Clear();
+			GameData.Data.World = null;
+
+			if (DisconnectEvent != null)
+				DisconnectEvent();
 		}
 
 		public void OnReceiveMessage(ClientMessage msg)
