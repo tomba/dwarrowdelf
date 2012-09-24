@@ -173,7 +173,7 @@ namespace Dwarrowdelf
 			{
 				var p = location + d;
 
-				if (env.GetTileData(p).IsSeeThrough)
+				if (env.Contains(p) && env.GetTileData(p).IsSeeThrough)
 				{
 					hidden = false;
 					break;
@@ -181,7 +181,11 @@ namespace Dwarrowdelf
 			}
 
 			if (hidden)
-				hidden = !env.GetTileData(location + Direction.Up).IsSeeThroughDown;
+			{
+				var p = location + Direction.Up;
+				if (env.Contains(p) && env.GetTileData(p).IsSeeThroughDown)
+					hidden = false;
+			}
 
 			return !hidden;
 		}
