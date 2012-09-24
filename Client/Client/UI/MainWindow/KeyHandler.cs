@@ -62,6 +62,8 @@ namespace Dwarrowdelf.Client.UI
 			if (ob == null)
 				return;
 
+			e.Handled = true;
+
 			var dir = KeyToDir(e.Key);
 
 			if (dir != Direction.None)
@@ -69,8 +71,18 @@ namespace Dwarrowdelf.Client.UI
 				var action = new MoveAction(dir);
 				action.MagicNumber = 1;
 				ob.RequestAction(action);
-				e.Handled = true;
-				return;
+			}
+			else if (e.Key == Key.Add)
+			{
+				m_mapControl.ZoomIn();
+			}
+			else if (e.Key == Key.Subtract)
+			{
+				m_mapControl.ZoomOut();
+			}
+			else
+			{
+				e.Handled = false;
 			}
 		}
 
