@@ -120,6 +120,7 @@ namespace Dwarrowdelf.Server
 				IsSeeAll = this.IsSeeAll,
 				Tick = m_world.TickNumber,
 				LivingVisionMode = m_world.LivingVisionMode,
+				GameMode = m_world.GameMode,
 			});
 
 			if (m_seeAll)

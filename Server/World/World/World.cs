@@ -45,6 +45,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public WorldTickMethod TickMethod { get; private set; }
 
+		[SaveGameProperty]
+		public GameMode GameMode { get; private set; }
+
 		World()
 		{
 			m_preTickInvokeList = new InvokeList(this);
@@ -59,9 +62,10 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		public World(WorldTickMethod tickMethod)
+		public World(GameMode gameMode, WorldTickMethod tickMethod)
 			: this()
 		{
+			this.GameMode = gameMode;
 			this.TickMethod = tickMethod;
 
 			m_objectMap = new Dictionary<ObjectID, BaseObject>();

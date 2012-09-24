@@ -213,16 +213,15 @@ namespace Dwarrowdelf.Client
 		{
 			this.State = ClientUserState.ReceivingLoginData;
 
-			m_world = new World();
-			GameData.Data.World = m_world;
+			m_world = new World(msg.GameMode, msg.LivingVisionMode, msg.Tick);
 
 			m_reportHandler = new ReportHandler(m_world);
 			m_changeHandler = new ChangeHandler(m_world);
 			m_changeHandler.TurnEnded += OnTurnEnded;
 
-			m_world.SetLivingVisionMode(msg.LivingVisionMode);
-			m_world.SetTick(msg.Tick);
 			this.IsSeeAll = msg.IsSeeAll;
+
+			GameData.Data.World = m_world;
 		}
 
 		void HandleMessage(LogOnReplyEndMessage msg)

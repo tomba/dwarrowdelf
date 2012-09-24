@@ -11,21 +11,23 @@ namespace Dwarrowdelf.Server
 		{
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
 
-			World world;
+			WorldTickMethod tickMethod;
 
 			switch (mode)
 			{
 				case GameMode.Fortress:
-					world = new World(WorldTickMethod.Simultaneous);
+					tickMethod = WorldTickMethod.Simultaneous;
 					break;
 
 				case GameMode.Adventure:
-					world = new World(WorldTickMethod.Sequential);
+					tickMethod = WorldTickMethod.Sequential;
 					break;
 
 				default:
 					throw new Exception();
 			}
+
+			var world = new World(mode, tickMethod);
 
 			Action<World> worldCreator;
 

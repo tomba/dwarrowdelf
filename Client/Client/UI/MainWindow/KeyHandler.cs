@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
@@ -9,6 +10,7 @@ namespace Dwarrowdelf.Client.UI
 {
 	enum KeyHandlerMode
 	{
+		None,
 		MapControl,
 		LivingControl,
 	}
@@ -25,6 +27,21 @@ namespace Dwarrowdelf.Client.UI
 			mapControl.KeyUp += OnKeyUp;
 			mapControl.TextInput += OnTextInput;
 
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, (s, e) =>
+			{
+				var world = GameData.Data.World;
+
+				if (world == null || world.GameMode == GameMode.Undefined)
+					this.Mode = KeyHandlerMode.None;
+				else if (world.GameMode == GameMode.Adventure)
+					this.Mode = KeyHandlerMode.LivingControl;
+				else if (world.GameMode == GameMode.Fortress)
+					this.Mode = KeyHandlerMode.MapControl;
+				else
+					throw new Exception();
+			});
+
 			this.Mode = KeyHandlerMode.LivingControl;
 		}
 
@@ -34,7 +51,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (this.Mode == KeyHandlerMode.MapControl)
 				OnKeyDownMap(sender, e);
-			else
+			else if (this.Mode == KeyHandlerMode.LivingControl)
 				OnKeyDownLiving(sender, e);
 		}
 
@@ -42,7 +59,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (this.Mode == KeyHandlerMode.MapControl)
 				OnKeyUpMap(sender, e);
-			else
+			else if (this.Mode == KeyHandlerMode.LivingControl)
 				OnKeyUpLiving(sender, e);
 		}
 
@@ -50,7 +67,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			if (this.Mode == KeyHandlerMode.MapControl)
 				OnTextInputMap(sender, e);
-			else
+			else if (this.Mode == KeyHandlerMode.LivingControl)
 				OnTextInputLiving(sender, e);
 		}
 

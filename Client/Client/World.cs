@@ -29,15 +29,20 @@ namespace Dwarrowdelf.Client
 		// perhaps this is not needed in client side
 		public int UserID { get; set; }
 
-		LivingVisionMode m_livingVisionMode;
-		public LivingVisionMode LivingVisionMode { get { return m_livingVisionMode; } }
+		public LivingVisionMode LivingVisionMode { get; private set; }
+
+		public GameMode GameMode { get; private set; }
 
 #if TRACK_DESTRUCTED_OBJECTS
 		BaseGameObjectCollection m_destructedObjects = new BaseGameObjectCollection();
 #endif
 
-		public World()
+		public World(GameMode gameMode, LivingVisionMode livingVisionMode, int tick)
 		{
+			this.GameMode = gameMode;
+			this.LivingVisionMode = livingVisionMode;
+			this.TickNumber = tick;
+
 			m_objects = new BaseGameObjectCollection();
 			this.Objects = new ReadOnlyBaseGameObjectCollection(m_objects);
 
@@ -67,16 +72,6 @@ namespace Dwarrowdelf.Client
 		// XXX this could perhaps be removed
 		Random m_random = new Random();
 		public Random Random { get { return m_random; } }
-
-		public void SetTick(int tick)
-		{
-			this.TickNumber = tick;
-		}
-
-		public void SetLivingVisionMode(LivingVisionMode mode)
-		{
-			m_livingVisionMode = mode;
-		}
 
 		public void HandleChange(TickStartChangeData change)
 		{
