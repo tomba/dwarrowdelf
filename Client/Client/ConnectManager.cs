@@ -133,7 +133,8 @@ namespace Dwarrowdelf.Client
 				mapControl.CenterPos = new System.Windows.Point(controllable.Location.X, controllable.Location.Y);
 				mapControl.Z = controllable.Location.Z;
 
-				App.MainWindow.FocusedObject = controllable;
+				if (GameData.Data.World.GameMode == GameMode.Adventure)
+					App.MainWindow.FocusedObject = controllable;
 			}
 
 			if (Program.StartupStopwatch != null)

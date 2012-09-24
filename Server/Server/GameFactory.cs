@@ -20,7 +20,8 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case GameMode.Adventure:
-					tickMethod = WorldTickMethod.Sequential;
+					//tickMethod = WorldTickMethod.Sequential;
+					tickMethod = WorldTickMethod.Simultaneous;
 					break;
 
 				default:
@@ -34,12 +35,12 @@ namespace Dwarrowdelf.Server
 			switch (map)
 			{
 				case GameMap.Fortress:
-					//worldCreator = Fortress.MountainWorldCreator.InitializeWorld;
-					worldCreator = Fortress.DungeonWorldCreator.InitializeWorld;
+					worldCreator = Fortress.MountainWorldCreator.InitializeWorld;
 					break;
 
 				case GameMap.Adventure:
-					throw new Exception();
+					worldCreator = Fortress.DungeonWorldCreator.InitializeWorld;
+					break;
 
 				case GameMap.Arena:
 					throw new Exception();
@@ -58,12 +59,12 @@ namespace Dwarrowdelf.Server
 			switch (mode)
 			{
 				case GameMode.Fortress:
-					//gameManager = new Fortress.FortressGameManager(world);
-					gameManager = new Fortress.DungeonGameManager(world);
+					gameManager = new Fortress.FortressGameManager(world);
 					break;
 
 				case GameMode.Adventure:
-					throw new NotImplementedException();
+					gameManager = new Fortress.DungeonGameManager(world);
+					break;
 
 				default:
 					throw new Exception();

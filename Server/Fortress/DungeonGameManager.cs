@@ -119,7 +119,7 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 
 			if (stairs.HasValue == false)
-				throw new Exception();
+				stairs = env.Size.Plane.Center;
 
 			const int size = 2;
 
