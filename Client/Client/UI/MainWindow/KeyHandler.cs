@@ -80,6 +80,14 @@ namespace Dwarrowdelf.Client.UI
 			{
 				m_mapControl.ZoomOut();
 			}
+			else if (e.Key == Key.PageDown)
+			{
+				m_mapControl.Z--;
+			}
+			else if (e.Key == Key.PageUp)
+			{
+				m_mapControl.Z++;
+			}
 			else
 			{
 				e.Handled = false;
@@ -142,6 +150,14 @@ namespace Dwarrowdelf.Client.UI
 			{
 				m_mapControl.ZoomOut();
 			}
+			else if (e.Key == Key.PageDown)
+			{
+				m_mapControl.Z--;
+			}
+			else if (e.Key == Key.PageUp)
+			{
+				m_mapControl.Z++;
+			}
 			else
 			{
 				e.Handled = false;
@@ -166,34 +182,27 @@ namespace Dwarrowdelf.Client.UI
 		{
 			string text = e.Text;
 
-			e.Handled = true;
-
-			if (text == ">")
-			{
-				m_mapControl.Z--;
-			}
-			else if (text == "<")
-			{
-				m_mapControl.Z++;
-			}
-			else
-			{
-				e.Handled = false;
-			}
+			e.Handled = false;
 		}
 
 		static bool KeyIsDir(Key key)
 		{
 			switch (key)
 			{
-				case Key.Up: break;
-				case Key.Down: break;
-				case Key.Left: break;
-				case Key.Right: break;
-				case Key.Home: break;
-				case Key.End: break;
-				case Key.PageUp: break;
-				case Key.PageDown: break;
+				case Key.Up:
+				case Key.Down:
+				case Key.Left:
+				case Key.Right:
+				case Key.NumPad1:
+				case Key.NumPad2:
+				case Key.NumPad3:
+				case Key.NumPad4:
+				case Key.NumPad5:
+				case Key.NumPad6:
+				case Key.NumPad7:
+				case Key.NumPad8:
+					break;
+
 				default:
 					return false;
 			}
@@ -204,14 +213,23 @@ namespace Dwarrowdelf.Client.UI
 		{
 			switch (key)
 			{
-				case Key.Up: return Direction.North;
-				case Key.Down: return Direction.South;
-				case Key.Left: return Direction.West;
-				case Key.Right: return Direction.East;
-				case Key.Home: return Direction.NorthWest;
-				case Key.End: return Direction.SouthWest;
-				case Key.PageUp: return Direction.NorthEast;
-				case Key.PageDown: return Direction.SouthEast;
+				case Key.NumPad8:
+				case Key.Up:
+					return Direction.North;
+				case Key.NumPad2:
+				case Key.Down:
+					return Direction.South;
+				case Key.NumPad4:
+				case Key.Left:
+					return Direction.West;
+				case Key.NumPad6:
+				case Key.Right:
+					return Direction.East;
+
+				case Key.NumPad7: return Direction.NorthWest;
+				case Key.NumPad1: return Direction.SouthWest;
+				case Key.NumPad9: return Direction.NorthEast;
+				case Key.NumPad3: return Direction.SouthEast;
 				default: return Direction.None;
 			}
 		}
@@ -220,24 +238,24 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var dir = Direction.None;
 
-			if (Keyboard.IsKeyDown(Key.Home))
+			if (Keyboard.IsKeyDown(Key.NumPad7))
 				dir |= Direction.NorthWest;
-			else if (Keyboard.IsKeyDown(Key.PageUp))
+			else if (Keyboard.IsKeyDown(Key.NumPad9))
 				dir |= Direction.NorthEast;
 
-			if (Keyboard.IsKeyDown(Key.PageDown))
+			if (Keyboard.IsKeyDown(Key.NumPad3))
 				dir |= Direction.SouthEast;
-			else if (Keyboard.IsKeyDown(Key.End))
+			else if (Keyboard.IsKeyDown(Key.NumPad1))
 				dir |= Direction.SouthWest;
 
-			if (Keyboard.IsKeyDown(Key.Up))
+			if (Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.NumPad8))
 				dir |= Direction.North;
-			else if (Keyboard.IsKeyDown(Key.Down))
+			else if (Keyboard.IsKeyDown(Key.Down) || Keyboard.IsKeyDown(Key.NumPad2))
 				dir |= Direction.South;
 
-			if (Keyboard.IsKeyDown(Key.Left))
+			if (Keyboard.IsKeyDown(Key.Left) || Keyboard.IsKeyDown(Key.NumPad4))
 				dir |= Direction.West;
-			else if (Keyboard.IsKeyDown(Key.Right))
+			else if (Keyboard.IsKeyDown(Key.Right) || Keyboard.IsKeyDown(Key.NumPad6))
 				dir |= Direction.East;
 
 			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
