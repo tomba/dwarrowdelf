@@ -88,8 +88,7 @@ namespace Dwarrowdelf.Client
 
 					var ml = RenderDataLocationToMapLocation(x, y);
 
-					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml,
-						m_showVirtualSymbols, this.IsVisibilityCheckEnabled);
+					ResolveDetailed(out m_renderData.Grid[idx], this.Environment, ml, this.IsVisibilityCheckEnabled);
 				}
 			}
 #if !NONPARALLEL
@@ -100,8 +99,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml,
-			bool showVirtualSymbols, bool isVisibilityCheckEnabled)
+		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled)
 		{
 			tile = new RenderTileDetailed();
 			tile.IsValid = true;
@@ -124,7 +122,7 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Top.SymbolID == SymbolID.Undefined)
 				{
-					GetTopTile(p, env, ref tile.Top, showVirtualSymbols);
+					GetTopTile(p, env, ref tile.Top);
 
 					if (tile.Top.SymbolID != SymbolID.Undefined)
 						tile.TopDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
@@ -132,7 +130,7 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Object.SymbolID == SymbolID.Undefined)
 				{
-					GetObjectTile(p, env, ref tile.Object, showVirtualSymbols);
+					GetObjectTile(p, env, ref tile.Object);
 
 					if (tile.Object.SymbolID != SymbolID.Undefined)
 						tile.ObjectDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
@@ -140,7 +138,7 @@ namespace Dwarrowdelf.Client
 
 				if (tile.Interior.SymbolID == SymbolID.Undefined)
 				{
-					GetInteriorTile(p, env, ref tile.Interior, showVirtualSymbols, out seeThrough);
+					GetInteriorTile(p, env, ref tile.Interior, out seeThrough);
 
 					if (tile.Interior.SymbolID != SymbolID.Undefined)
 						tile.InteriorDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
@@ -149,7 +147,7 @@ namespace Dwarrowdelf.Client
 						break;
 				}
 
-				GetTerrainTile(p, env, ref tile.Terrain, showVirtualSymbols, out seeThrough);
+				GetTerrainTile(p, env, ref tile.Terrain, out seeThrough);
 
 				if (tile.Terrain.SymbolID != SymbolID.Undefined)
 					tile.TerrainDarknessLevel = GetDarknessForLevel(ml.Z - z + (visible ? 0 : 1));
@@ -168,7 +166,7 @@ namespace Dwarrowdelf.Client
 				tile.TerrainDarknessLevel = tile.InteriorDarknessLevel;
 		}
 
-		static void GetTerrainTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetTerrainTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
 		{
 			seeThrough = false;
 
@@ -225,7 +223,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case TerrainID.StairsDown:
-					tile.SymbolID = SymbolID.Floor;
+					tile.SymbolID = SymbolID.StairsDown;
 					break;
 
 				case TerrainID.SlopeNorth:
@@ -309,7 +307,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols, out bool seeThrough)
+		static void GetInteriorTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, out bool seeThrough)
 		{
 			var td = env.GetTileData(ml);
 
@@ -325,7 +323,10 @@ namespace Dwarrowdelf.Client
 			switch (td.InteriorID)
 			{
 				case InteriorID.Stairs:
-					tile.SymbolID = SymbolID.StairsUp;
+					if (td.TerrainID == TerrainID.StairsDown)
+						tile.SymbolID = SymbolID.StairsUpDown;
+					else
+						tile.SymbolID = SymbolID.StairsUp;
 					break;
 
 				case InteriorID.BuiltWall:
@@ -446,33 +447,9 @@ namespace Dwarrowdelf.Client
 				default:
 					throw new Exception();
 			}
-
-			if (showVirtualSymbols)
-			{
-				var pdown = ml + Direction.Down;
-
-				if (env.Contains(pdown))
-				{
-					var tddown = env.GetTileData(pdown);
-
-					if (tddown.InteriorID == InteriorID.Stairs)
-					{
-						if (td.InteriorID == InteriorID.Stairs)
-						{
-							tile.SymbolID = SymbolID.StairsUpDown;
-						}
-						else if (td.InteriorID == InteriorID.Empty)
-						{
-							tile.SymbolID = SymbolID.StairsDown;
-							var downMatInfo = Materials.GetMaterial(tddown.InteriorMaterialID);
-							tile.Color = downMatInfo.Color;
-						}
-					}
-				}
-			}
 		}
 
-		static void GetObjectTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetObjectTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile)
 		{
 			var ob = (ConcreteObject)env.GetFirstObject(ml);
 
@@ -484,7 +461,7 @@ namespace Dwarrowdelf.Client
 			tile.BgColor = GameColor.None;
 		}
 
-		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile, bool showVirtualSymbols)
+		static void GetTopTile(IntPoint3 ml, EnvironmentObject env, ref RenderTileLayer tile)
 		{
 			SymbolID id;
 

@@ -82,7 +82,7 @@ namespace Dwarrowdelf.Client
 
 					var ml = new IntPoint3(offsetX + x, offsetY + (rows - y - 1), offsetZ);
 
-					Resolve(out m_renderData.Grid[idx], this.Environment, ml, m_showVirtualSymbols, isSeeAll);
+					Resolve(out m_renderData.Grid[idx], this.Environment, ml, isSeeAll);
 				}
 			});
 
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void Resolve(out RenderTileSimple tile, EnvironmentObject env, IntPoint3 ml, bool showVirtualSymbols, bool isSeeAll)
+		static void Resolve(out RenderTileSimple tile, EnvironmentObject env, IntPoint3 ml, bool isSeeAll)
 		{
 			tile = new RenderTileSimple();
 			tile.IsValid = true;
@@ -109,10 +109,10 @@ namespace Dwarrowdelf.Client
 
 			var p = new IntPoint3(ml.X, ml.Y, z);
 
-			tile.SymbolID = GetTerrainTile(p, env, showVirtualSymbols);
+			tile.SymbolID = GetTerrainTile(p, env);
 		}
 
-		static SymbolID GetTerrainTile(IntPoint3 ml, EnvironmentObject env, bool showVirtualSymbols)
+		static SymbolID GetTerrainTile(IntPoint3 ml, EnvironmentObject env)
 		{
 			var flrID = env.GetTerrainID(ml);
 
@@ -121,33 +121,30 @@ namespace Dwarrowdelf.Client
 
 			if (flrID == TerrainID.Empty)
 			{
-				if (showVirtualSymbols)
-				{
-					var flrId2 = env.GetTerrain(ml + Direction.Down).ID;
+				var flrId2 = env.GetTerrain(ml + Direction.Down).ID;
 
-					if (flrId2.IsSlope())
+				if (flrId2.IsSlope())
+				{
+					switch (flrId2.ToDir().Reverse())
 					{
-						switch (flrId2.ToDir().Reverse())
-						{
-							case Direction.North:
-								return SymbolID.SlopeDownNorth;
-							case Direction.NorthEast:
-								return SymbolID.SlopeDownNorthEast;
-							case Direction.East:
-								return SymbolID.SlopeDownEast;
-							case Direction.SouthEast:
-								return SymbolID.SlopeDownSouthEast;
-							case Direction.South:
-								return SymbolID.SlopeDownSouth;
-							case Direction.SouthWest:
-								return SymbolID.SlopeDownSouthWest;
-							case Direction.West:
-								return SymbolID.SlopeDownWest;
-							case Direction.NorthWest:
-								return SymbolID.SlopeDownNorthWest;
-							default:
-								throw new Exception();
-						}
+						case Direction.North:
+							return SymbolID.SlopeDownNorth;
+						case Direction.NorthEast:
+							return SymbolID.SlopeDownNorthEast;
+						case Direction.East:
+							return SymbolID.SlopeDownEast;
+						case Direction.SouthEast:
+							return SymbolID.SlopeDownSouthEast;
+						case Direction.South:
+							return SymbolID.SlopeDownSouth;
+						case Direction.SouthWest:
+							return SymbolID.SlopeDownSouthWest;
+						case Direction.West:
+							return SymbolID.SlopeDownWest;
+						case Direction.NorthWest:
+							return SymbolID.SlopeDownNorthWest;
+						default:
+							throw new Exception();
 					}
 				}
 

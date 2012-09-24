@@ -168,18 +168,6 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		public bool ShowVirtualSymbols
-		{
-			get { return m_renderView.ShowVirtualSymbols; }
-
-			set
-			{
-				m_renderView.ShowVirtualSymbols = value;
-				InvalidateTileData();
-				Notify("ShowVirtualSymbols");
-			}
-		}
-
 		public EnvironmentObject Environment
 		{
 			get { return m_env; }

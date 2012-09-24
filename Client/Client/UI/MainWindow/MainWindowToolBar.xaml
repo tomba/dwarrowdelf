@@ -14,8 +14,6 @@
 
 	<ToolBarTray>
 		<ToolBar Band="1">
-			<ToggleButton IsChecked="{Binding Path=MapControl.ShowVirtualSymbols, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MainWindow, AncestorLevel=1}}">Show Virtual Symbols</ToggleButton>
-			<Separator />
 			<Button Content="Labor Manager" Click="Button_LaborManager_Click" />
 			<Separator />
 
