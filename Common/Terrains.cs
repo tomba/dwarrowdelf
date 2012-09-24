@@ -12,7 +12,7 @@ namespace Dwarrowdelf
 		NaturalFloor,
 		BuiltFloor,
 		NaturalWall,
-		Hole,	// used for stairs down
+		StairsDown,
 
 		SlopeNorth,
 		SlopeNorthEast,

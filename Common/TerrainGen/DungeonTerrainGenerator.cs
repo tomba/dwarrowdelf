@@ -76,7 +76,7 @@ namespace Dwarrowdelf.TerrainGen
 					if (td2.IsClear == false)
 						continue;
 
-					td1.TerrainID = TerrainID.Hole;
+					td1.TerrainID = TerrainID.StairsDown;
 					td1.TerrainMaterialID = MaterialID.Granite;
 
 					td2.InteriorID = InteriorID.Stairs;

@@ -164,7 +164,7 @@ namespace Dwarrowdelf.Client
 				case TerrainID.NaturalWall:
 					return SymbolID.Wall;
 
-				case TerrainID.Hole:
+				case TerrainID.StairsDown:
 					return SymbolID.Floor;
 
 				case TerrainID.SlopeNorth:

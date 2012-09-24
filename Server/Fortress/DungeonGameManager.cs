@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 				var p = new IntPoint3(p2, z);
 				var td = env.GetTileData(p);
-				if (td.TerrainID == TerrainID.Hole)
+				if (td.TerrainID == TerrainID.StairsDown)
 				{
 					stairs = p2;
 					break;

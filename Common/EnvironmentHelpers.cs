@@ -71,7 +71,7 @@ namespace Dwarrowdelf
 				return srcInter.ID == InteriorID.Stairs;
 
 			if (dir == Direction.Down)
-				return srcTerrain.ID == TerrainID.Hole;
+				return srcTerrain.ID == TerrainID.StairsDown;
 
 			if (dir.ContainsDown())
 			{
@@ -118,7 +118,7 @@ namespace Dwarrowdelf
 				return true;
 
 			if (dir == Direction.Up)
-				return dstTerrain.ID == TerrainID.Hole;
+				return dstTerrain.ID == TerrainID.StairsDown;
 
 			if (dir == Direction.Down)
 				return dstInter.ID == InteriorID.Stairs;

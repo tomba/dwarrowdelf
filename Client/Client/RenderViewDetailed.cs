@@ -224,7 +224,7 @@ namespace Dwarrowdelf.Client
 					tile.BgColor = GameColor.SlateGray;
 					break;
 
-				case TerrainID.Hole:
+				case TerrainID.StairsDown:
 					tile.SymbolID = SymbolID.Floor;
 					break;
 

@@ -141,7 +141,7 @@ namespace Dwarrowdelf.Server
 						var td2 = env.GetTileData(p + Direction.Up);
 						if (td2.TerrainID == TerrainID.NaturalFloor)
 						{
-							td2.TerrainID = TerrainID.Hole;
+							td2.TerrainID = TerrainID.StairsDown;
 							if (td2.InteriorID == InteriorID.Grass)
 							{
 								td2.InteriorID = InteriorID.Empty;
