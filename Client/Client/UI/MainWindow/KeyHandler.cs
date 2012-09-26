@@ -199,7 +199,20 @@ namespace Dwarrowdelf.Client.UI
 		{
 			string text = e.Text;
 
-			e.Handled = false;
+			e.Handled = true;
+
+			if (e.Text == ">")
+			{
+				m_mapControl.Z--;
+			}
+			else if (e.Text == "<")
+			{
+				m_mapControl.Z++;
+			}
+			else
+			{
+				e.Handled = false;
+			}
 		}
 
 		static bool KeyIsDir(Key key)
