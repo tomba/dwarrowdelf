@@ -324,9 +324,15 @@ namespace Dwarrowdelf.Client
 			{
 				case InteriorID.Stairs:
 					if (td.TerrainID == TerrainID.StairsDown)
+					{
 						tile.SymbolID = SymbolID.StairsUpDown;
+						// disable seethrough so that the terrain's stairsdown are not visible
+						seeThrough = false;
+					}
 					else
+					{
 						tile.SymbolID = SymbolID.StairsUp;
+					}
 					break;
 
 				case InteriorID.BuiltWall:
