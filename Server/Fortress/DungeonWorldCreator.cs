@@ -34,6 +34,28 @@ namespace Dwarrowdelf.Server.Fortress
 				throw new Exception();
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS, stairs.Value);
+
+
+			foreach (var p in IntPoint2.SquareSpiral(env.StartLocation.ToIntPoint(), env.Width / 2))
+			{
+				if (env.Size.Plane.Contains(p) == false)
+					continue;
+
+				var z = env.GetDepth(p);
+
+				var p3 = new IntPoint3(p, z);
+
+				if (EnvironmentHelpers.CanEnter(env, p3))
+				{
+					var livingBuilder = new LivingObjectBuilder(LivingID.Wolf);
+					var living = livingBuilder.Create(world);
+					living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
+					living.MoveTo(env, p3);
+
+					break;
+				}
+			}
+
 		}
 
 		static TerrainData CreateTerrain()
