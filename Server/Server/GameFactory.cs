@@ -20,8 +20,7 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case GameMode.Adventure:
-					//tickMethod = WorldTickMethod.Sequential;
-					tickMethod = WorldTickMethod.Simultaneous;
+					tickMethod = WorldTickMethod.Sequential;
 					break;
 
 				default:

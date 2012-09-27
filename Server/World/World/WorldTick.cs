@@ -140,8 +140,6 @@ namespace Dwarrowdelf.Server
 			VerifyAccess();
 			Debug.Assert(m_state == WorldState.TickOngoing);
 
-			Debug.Assert(false); // broken
-
 			if (m_livings.List.Count == 0)
 			{
 				trace.TraceVerbose("no livings to handled");
@@ -157,7 +155,12 @@ namespace Dwarrowdelf.Server
 			{
 				var living = m_livingEnumerator.Current;
 
+				trace.TraceVerbose("work loop, current {0}, HasAction {1}", living, living.HasAction);
+
 				if (m_livings.RemoveList.Contains(living))
+					forceMove = true;
+
+				if (living.Controller == null)
 					forceMove = true;
 
 				if (!forceMove && !living.HasAction)
@@ -200,7 +203,7 @@ namespace Dwarrowdelf.Server
 			MyTraceContext.ThreadTraceContext.Tick = this.TickNumber;
 			AddChange(new TickStartChange(this.TickNumber));
 
-			//trace.TraceInformation("-- Tick {0} started --", this.TickNumber);
+			trace.TraceVerbose("-- Tick {0} started --", this.TickNumber);
 
 			m_state = WorldState.TickOngoing;
 
@@ -242,6 +245,8 @@ namespace Dwarrowdelf.Server
 
 		void StartTurnSequential(LivingObject living)
 		{
+			trace.TraceVerbose("StartTurnSeq {0}", living);
+
 			living.TurnStarted();
 
 			AddChange(new TurnStartSequentialChange(living));
@@ -253,6 +258,8 @@ namespace Dwarrowdelf.Server
 
 		void EndTurnSequential(LivingObject living)
 		{
+			trace.TraceVerbose("EndTurnSeq {0}", living);
+
 			AddChange(new TurnEndSequentialChange(living));
 
 			if (TurnEnded != null)
@@ -263,7 +270,7 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
-			//trace.TraceInformation("-- Tick {0} ended --", this.TickNumber);
+			trace.TraceVerbose("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;
 
 			m_okToStartTick = false;
