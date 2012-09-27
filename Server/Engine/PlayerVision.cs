@@ -153,23 +153,6 @@ namespace Dwarrowdelf.Server
 			m_visibilityArray[p.Z, p.Y, p.X] = true;
 		}
 
-		// XXX move to EnvironmentHelpers?
-		static bool IsSeeThrough(TileData data)
-		{
-			var terrain = Terrains.GetTerrain(data.TerrainID);
-			var interior = Interiors.GetInterior(data.InteriorID);
-
-			return terrain.IsSeeThrough && interior.IsSeeThrough;
-		}
-
-		// XXX move to EnvironmentHelpers?
-		static bool IsSeeThroughDown(TileData data)
-		{
-			var terrain = Terrains.GetTerrain(data.TerrainID);
-
-			return terrain.IsSeeThroughDown;
-		}
-
 		void OnTerrainOrInteriorChanged(IntPoint3 location, TileData oldData, TileData newData)
 		{
 			if (GetVisible(location) == false)
@@ -177,8 +160,8 @@ namespace Dwarrowdelf.Server
 
 			var env = m_environment;
 
-			bool revealPlanar = IsSeeThrough(oldData) == false && IsSeeThrough(newData) == true;
-			bool revealDown = IsSeeThroughDown(oldData) == false && IsSeeThroughDown(newData) == true;
+			bool revealPlanar = oldData.IsSeeThrough == false && newData.IsSeeThrough == true;
+			bool revealDown = oldData.IsSeeThroughDown == false && newData.IsSeeThroughDown == true;
 
 			List<IntPoint3> revealed = new List<IntPoint3>();
 
