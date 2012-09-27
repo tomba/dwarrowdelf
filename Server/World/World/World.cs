@@ -52,14 +52,13 @@ namespace Dwarrowdelf.Server
 		{
 			m_preTickInvokeList = new InvokeList(this);
 			m_instantInvokeList = new InvokeList(this);
-
-			if (this.TickMethod == WorldTickMethod.Sequential)
-				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
 		World(SaveGameContext ctx)
 			: this()
 		{
+			if (this.TickMethod == WorldTickMethod.Sequential)
+				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
 		public World(GameMode gameMode, WorldTickMethod tickMethod)
@@ -75,6 +74,9 @@ namespace Dwarrowdelf.Server
 			m_objectIDcounterArray = new int[EnumHelpers.GetEnumMax<ObjectType>() + 1];
 
 			m_state = WorldState.Idle;
+
+			if (this.TickMethod == WorldTickMethod.Sequential)
+				m_livingEnumerator = new LivingEnumerator(m_livings.List);
 		}
 
 		public void Initialize(Action initializer)
