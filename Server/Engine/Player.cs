@@ -235,15 +235,6 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(this.IsConnected);
 
 			foreach (var living in this.Controllables)
-				living.SendTo(this, ObjectVisibility.All);
-
-			Send(new Messages.ControllablesDataMessage()
-			{
-				Operation = ControllablesDataMessage.Op.Add,
-				Controllables = this.Controllables.Select(l => l.ObjectID).ToArray()
-			});
-
-			foreach (var living in this.Controllables)
 			{
 				if (living.Environment != null)
 				{
@@ -251,6 +242,15 @@ namespace Dwarrowdelf.Server
 					tracker.HandleNewControllable(living);
 				}
 			}
+
+			foreach (var living in this.Controllables)
+				living.SendTo(this, ObjectVisibility.All);
+
+			Send(new Messages.ControllablesDataMessage()
+			{
+				Operation = ControllablesDataMessage.Op.Add,
+				Controllables = this.Controllables.Select(l => l.ObjectID).ToArray()
+			});
 		}
 
 		void OnControllableDestructed(IBaseObject ob)

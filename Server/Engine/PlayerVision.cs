@@ -231,7 +231,9 @@ namespace Dwarrowdelf.Server
 		{
 			m_environment.World.WorkEnded += HandleEndOfWork;
 
-			m_environment.SendIntoTo(m_player);
+			m_environment.SendIntroTo(m_player);
+
+			HandleNewTerrainsAndObjects(m_player.Controllables);
 		}
 
 		public override void Stop()

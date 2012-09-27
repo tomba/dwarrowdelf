@@ -147,8 +147,6 @@ namespace Dwarrowdelf.Server
 				return true;
 			}
 
-			bool forceMove = m_proceedTurn;
-
 			bool again = true;
 
 			while (true)
@@ -157,13 +155,12 @@ namespace Dwarrowdelf.Server
 
 				trace.TraceVerbose("work loop, current {0}, HasAction {1}", living, living.HasAction);
 
-				if (m_livings.RemoveList.Contains(living))
-					forceMove = true;
+				bool proceed = m_proceedTurn ||
+					m_livings.RemoveList.Contains(living) ||
+					living.Controller == null ||	// if not controlled
+					living.HasAction;				// if controlled, and has action
 
-				if (living.Controller == null)
-					forceMove = true;
-
-				if (!forceMove && !living.HasAction)
+				if (!proceed)
 				{
 					again = false;
 					break;
