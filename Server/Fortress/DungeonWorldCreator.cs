@@ -15,7 +15,25 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var terrain = CreateTerrain();
 
-			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS);
+			IntPoint3? stairs = null;
+
+			foreach (var p2 in terrain.Size.Plane.Range())
+			{
+				var z = terrain.GetHeight(p2);
+
+				var p = new IntPoint3(p2, z);
+				var td = terrain.GetTileData(p);
+				if (td.TerrainID == TerrainID.StairsDown)
+				{
+					stairs = p;
+					break;
+				}
+			}
+
+			if (stairs.HasValue == false)
+				throw new Exception();
+
+			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS, stairs.Value);
 		}
 
 		static TerrainData CreateTerrain()

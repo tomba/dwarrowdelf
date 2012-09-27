@@ -76,22 +76,6 @@ namespace Dwarrowdelf.Server.Fortress
 
 
 
-		int FindSurface(EnvironmentObject env, IntPoint2 p2)
-		{
-			for (int z = env.Depth - 1; z > 0; --z)
-			{
-				var p = new IntPoint3(p2.X, p2.Y, z);
-
-				var terrainID = env.GetTerrainID(p);
-				var interiorID = env.GetInteriorID(p);
-
-				if (terrainID != TerrainID.Empty || interiorID != InteriorID.Empty)
-					return z;
-			}
-
-			throw new Exception();
-		}
-
 		bool TestStartArea(EnvironmentObject env, IntGrid2Z r)
 		{
 			foreach (var p in r.Range())
@@ -112,14 +96,14 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			const int size = 3;
 
-			var center = env.Size.Plane.Center;
+			var center = env.StartLocation;
 
-			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
+			foreach (var p in IntPoint2.SquareSpiral(center.ToIntPoint(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
 
-				var z = FindSurface(env, p);
+				var z = env.GetDepth(p);
 
 				var r = new IntGrid2Z(p.X - size, p.Y - size, size * 2, size * 2, z);
 

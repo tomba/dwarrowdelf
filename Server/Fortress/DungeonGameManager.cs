@@ -69,22 +69,6 @@ namespace Dwarrowdelf.Server.Fortress
 
 
 
-		int FindSurface(EnvironmentObject env, IntPoint2 p2)
-		{
-			for (int z = env.Depth - 1; z > 0; --z)
-			{
-				var p = new IntPoint3(p2.X, p2.Y, z);
-
-				var terrainID = env.GetTerrainID(p);
-				var interiorID = env.GetInteriorID(p);
-
-				if (terrainID != TerrainID.Empty || interiorID != InteriorID.Empty)
-					return z;
-			}
-
-			throw new Exception();
-		}
-
 		bool TestStartArea(EnvironmentObject env, IntGrid2Z r)
 		{
 			foreach (var p in r.Range())
@@ -103,34 +87,16 @@ namespace Dwarrowdelf.Server.Fortress
 
 		IntGrid2Z? FindStartLocation(EnvironmentObject env)
 		{
-			IntPoint2? stairs = null;
-
-			foreach( var p2 in env.Size.Plane.Range())
-			{
-				var z = FindSurface(env, p2);
-
-				var p = new IntPoint3(p2, z);
-				var td = env.GetTileData(p);
-				if (td.TerrainID == TerrainID.StairsDown)
-				{
-					stairs = p2;
-					break;
-				}
-			}
-
-			if (stairs.HasValue == false)
-				stairs = env.Size.Plane.Center;
-
 			const int size = 2;
 
-			var center = stairs.Value;
+			var center = env.StartLocation;
 
-			foreach (var p in IntPoint2.SquareSpiral(center, env.Width))
+			foreach (var p in IntPoint2.SquareSpiral(center.ToIntPoint(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
 
-				var z = FindSurface(env, p);
+				var z = env.GetDepth(p);
 
 				var r = new IntGrid2Z(p.X - size, p.Y - size, size * 2, size * 2, z);
 

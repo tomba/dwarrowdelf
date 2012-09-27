@@ -21,7 +21,11 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var terrain = CreateTerrain();
 
-			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV);
+			// XXX this is where WorldPopulator creates some buildings
+			var p2 = new IntPoint2(terrain.Width / 2, terrain.Height / 2);
+			var startLoc = new IntPoint3(p2, terrain.GetHeight(p2));
+
+			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
 			MountainWorldPopulator.FinalizeEnv(env);
 		}

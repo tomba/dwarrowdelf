@@ -14,9 +14,10 @@ namespace Dwarrowdelf.Server
 	[SaveGameObjectByRef]
 	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
-		public static EnvironmentObject Create(World world, Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode)
+		public static EnvironmentObject Create(World world, Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode,
+			IntPoint3 startLocation)
 		{
-			var ob = new EnvironmentObject(terrain, visMode);
+			var ob = new EnvironmentObject(terrain, visMode, startLocation);
 			ob.Initialize(world);
 			return ob;
 		}
@@ -44,6 +45,9 @@ namespace Dwarrowdelf.Server
 
 		public IntSize3 Size { get { return new IntSize3(this.Width, this.Height, this.Depth); } }
 
+		[SaveGameProperty]
+		public IntPoint3 StartLocation { get; private set; }
+
 		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
 		HashSet<AreaObject> m_largeObjectSet;
 
@@ -60,7 +64,7 @@ namespace Dwarrowdelf.Server
 		{
 		}
 
-		EnvironmentObject(Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode)
+		EnvironmentObject(Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode, IntPoint3 startLocation)
 			: base(ObjectType.Environment)
 		{
 			this.Version = 1;
@@ -73,6 +77,8 @@ namespace Dwarrowdelf.Server
 			this.Width = size.Width;
 			this.Height = size.Height;
 			this.Depth = size.Depth;
+
+			this.StartLocation = startLocation;
 
 			SetSubterraneanFlags();
 
