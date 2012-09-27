@@ -404,6 +404,8 @@ namespace Dwarrowdelf.Server
 			return props;
 		}
 
+		public IPlayer Controller { get; set; }
+
 		public void SetAI(Dwarrowdelf.AI.IAI ai)
 		{
 			m_ai = ai;
