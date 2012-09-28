@@ -588,11 +588,11 @@ namespace Dwarrowdelf.Server
 						break;
 
 					case VisibilityMode.GlobalFOV:
-						tracker = new GlobalFOVVisionTracker(this, env);
+						tracker = new VisionTrackerGlobalFOV(this, env);
 						break;
 
 					case VisibilityMode.LivingLOS:
-						tracker = new LOSVisionTracker(this, env);
+						tracker = new VisionTrackerLOS(this, env);
 						break;
 
 					default:
