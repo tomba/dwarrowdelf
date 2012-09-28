@@ -229,7 +229,7 @@ namespace Dwarrowdelf.Server
 
 		public override void Start()
 		{
-			m_environment.World.WorkEnded += HandleEndOfWork;
+			m_environment.World.WorldChanged += OnWorldChanged;
 
 			m_environment.SendIntroTo(m_player);
 
@@ -238,18 +238,47 @@ namespace Dwarrowdelf.Server
 
 		public override void Stop()
 		{
-			m_environment.World.WorkEnded -= HandleEndOfWork;
+			m_environment.World.WorldChanged -= OnWorldChanged;
+		}
+
+		void OnWorldChanged(Change change)
+		{
+			if (change is ObjectMoveChange)
+			{
+				var c = (ObjectMoveChange)change;
+				var mo = (MovableObject)c.Object;
+
+				if ((c.Source == m_environment && EventIsNear(c.SourceLocation)) ||
+					(c.Destination == m_environment && EventIsNear(c.DestinationLocation)))
+					HandleNewTerrainsAndObjects(m_player.Controllables);
+			}
+			else if (change is ObjectMoveLocationChange)
+			{
+				var c = (ObjectMoveLocationChange)change;
+				var mo = (MovableObject)c.Object;
+
+				if (mo.Environment == m_environment && (EventIsNear(c.SourceLocation) || EventIsNear(c.DestinationLocation)))
+					HandleNewTerrainsAndObjects(m_player.Controllables);
+			}
+			else if (change is MapChange)
+			{
+				var c = (MapChange)change;
+
+				if (c.Environment == m_environment && EventIsNear(c.Location))
+					HandleNewTerrainsAndObjects(m_player.Controllables);
+			}
+		}
+
+		bool EventIsNear(IntPoint3 p)
+		{
+			return m_player.Controllables.Any(l =>
+				l.Environment == m_environment &&
+				(l.Location - p).ManhattanLength <= l.VisionRange);
 		}
 
 		public override bool Sees(IntPoint3 p)
 		{
 			return m_player.Controllables.Any(l => l.Sees(m_environment, p));
-		}
-
-		// Called from the world at the end of work
-		public void HandleEndOfWork()
-		{
-			HandleNewTerrainsAndObjects(m_player.Controllables);
 		}
 
 		void HandleNewTerrainsAndObjects(IList<LivingObject> friendlies)
@@ -260,8 +289,8 @@ namespace Dwarrowdelf.Server
 			m_oldKnownObjects = m_newKnownObjects;
 			m_newKnownObjects = CollectObjects(m_newKnownLocations);
 
-			var revealedLocations = CollectRevealedLocations(m_oldKnownLocations, m_newKnownLocations);
-			var revealedObjects = CollectRevealedObjects(m_oldKnownObjects, m_newKnownObjects);
+			var revealedLocations = m_newKnownLocations.Except(m_oldKnownLocations);
+			var revealedObjects = m_newKnownObjects.Except(m_oldKnownObjects);
 
 			SendNewTerrains(revealedLocations);
 			SendNewObjects(revealedObjects);
@@ -300,21 +329,9 @@ namespace Dwarrowdelf.Server
 			return knownObs;
 		}
 
-		// Collect locations that are newly visible
-		static HashSet<IntPoint3> CollectRevealedLocations(HashSet<IntPoint3> oldLocs, HashSet<IntPoint3> newLocs)
+		void SendNewTerrains(IEnumerable<IntPoint3> revealedLocations)
 		{
-			return new HashSet<IntPoint3>(newLocs.Except(oldLocs));
-		}
-
-		// Collect objects that are newly visible
-		static IEnumerable<MovableObject> CollectRevealedObjects(HashSet<MovableObject> oldObjects, HashSet<MovableObject> newObjects)
-		{
-			return newObjects.Except(oldObjects);
-		}
-
-		void SendNewTerrains(HashSet<IntPoint3> revealedLocations)
-		{
-			if (revealedLocations.Count == 0)
+			if (revealedLocations.Any() == false)
 				return;
 
 			var msg = new Messages.MapDataTerrainsListMessage()
