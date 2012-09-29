@@ -157,8 +157,7 @@ namespace Dwarrowdelf.Server
 
 				bool proceed = m_proceedTurn ||
 					m_livings.RemoveList.Contains(living) ||
-					living.Controller == null ||	// if not controlled
-					living.HasAction;				// if controlled, and has action
+					living.Controller == null;
 
 				if (!proceed)
 				{
@@ -170,7 +169,8 @@ namespace Dwarrowdelf.Server
 
 				living.TurnPreRun();
 
-				living.ProcessAction();
+				if (living.HasAction)
+					living.ProcessAction();
 
 				EndTurnSequential(living);
 
