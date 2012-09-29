@@ -15,12 +15,17 @@ namespace Dwarrowdelf.Client
 		// Note: MultiDomain is faster when using separate appdomain for server
 		// XXX MultiDomain doesn't seem to work with ClickOnce web install
 		//[LoaderOptimization(LoaderOptimization.MultiDomain)]
-		public static void Main()
+		public static void Main(string[] args)
 		{
 			Thread.CurrentThread.Name = "CMain";
 			MyTraceContext.ThreadTraceContext = new MyTraceContext("Client");
 
 			Trace.TraceInformation("Start");
+
+			if (args.Contains("adventure"))
+				ClientConfig.NewGameMode = GameMode.Adventure;
+			else if (args.Contains("fortress"))
+				ClientConfig.NewGameMode = GameMode.Fortress;
 
 			StartupStopwatch = Stopwatch.StartNew();
 
