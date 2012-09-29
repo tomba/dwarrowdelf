@@ -11,17 +11,19 @@
 			 d:DesignWidth="371" d:DesignHeight="314">
 
 	<UserControl.Resources>
-		<ui:MyTerrainsConverter x:Key="myTerrainsConverter" />
-		<ui:MyInteriorsConverter x:Key="myInteriorsConverter" />
-		<ui:MyWatersConverter x:Key="myWatersConverter" />
-		<ui:MyBuildingsConverter x:Key="myBuildingsConverter" />
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+
+			<ui:MyTerrainsConverter x:Key="myTerrainsConverter" />
+			<ui:MyInteriorsConverter x:Key="myInteriorsConverter" />
+			<ui:MyWatersConverter x:Key="myWatersConverter" />
+			<ui:MyBuildingsConverter x:Key="myBuildingsConverter" />
+		</ResourceDictionary>
 	</UserControl.Resources>
 
 	<DockPanel>
-		<DockPanel.Resources>
-			<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
-		</DockPanel.Resources>
-
 		<StackPanel DockPanel.Dock="Top">
 			<TextBlock><InlineUIContainer>
 						<TextBlock Text="Area:" />

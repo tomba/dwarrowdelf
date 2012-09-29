@@ -76,7 +76,7 @@
 										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
 					<TreeView.Resources>
-						<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+						<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/TreeViewTemplateDictionary.xaml" />
 					</TreeView.Resources>
 				</TreeView>
 			</DockPanel>
@@ -85,7 +85,7 @@
 			<GroupBox Header="Jobs" Grid.Row="2" Margin="2" >
 				<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}" BorderThickness="0">
 					<TreeView.Resources>
-						<ResourceDictionary Source="/UI/JobViewDictionary.xaml" />
+						<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/JobViewDictionary.xaml" />
 					</TreeView.Resources>
 
 					<TreeView.ContextMenu>
@@ -124,7 +124,8 @@
 
 				<!-- Selection -->
 				<GroupBox Header="Selection" Grid.Row="0" >
-					<ui:MultiTileInfoControl DataContext="{Binding Path=SelectionTileAreaView, ElementName=map, Mode=OneTime}"  Margin="2"/>
+					<ui:MultiTileInfoControl DataContext="{Binding Path=SelectionTileAreaView, ElementName=map, Mode=OneTime}"  Margin="2" />
+
 				</GroupBox>
 
 				<!-- Hover -->

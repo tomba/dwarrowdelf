@@ -23,13 +23,13 @@
 										  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 										  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Standard">
 			<TreeView.Resources>
-				<ResourceDictionary Source="/UI/TreeViewTemplateDictionary.xaml" />
+				<ResourceDictionary Source="TreeViewTemplateDictionary.xaml" />
 			</TreeView.Resources>
 		</TreeView>
 
 		<ListBox ItemsSource="{StaticResource list}">
 			<ListBox.Resources>
-				<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+				<ResourceDictionary Source="ListItemInfoTemplateDictionary.xaml" />
 			</ListBox.Resources>
 		</ListBox>
 	</UniformGrid>

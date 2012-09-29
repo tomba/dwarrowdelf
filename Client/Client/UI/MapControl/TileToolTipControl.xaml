@@ -27,7 +27,7 @@
 
 		<ItemsControl x:Name="objectBox" ItemsSource="{Binding Objects}" HorizontalContentAlignment="Stretch">
 			<ItemsControl.Resources>
-				<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+				<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
 			</ItemsControl.Resources>
 		</ItemsControl>
 	</StackPanel>

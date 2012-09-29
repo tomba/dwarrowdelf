@@ -8,7 +8,7 @@
 			 d:DesignHeight="300" d:DesignWidth="300">
 
 	<UserControl.Resources>
-		<ResourceDictionary Source="/UI/ListItemInfoTemplateDictionary.xaml" />
+		<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
 	</UserControl.Resources>
 
 	<Grid DockPanel.Dock="Top">
