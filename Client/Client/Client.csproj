@@ -97,6 +97,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainWindow\FocusedObjectStats.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow\MainWindowMenuBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -245,6 +249,9 @@
     <Compile Include="ItemTracker.cs" />
     <Compile Include="Selectables.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
+      <DependentUpon>FocusedObjectStats.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainWindow\KeyHandler.cs" />
     <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
       <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
