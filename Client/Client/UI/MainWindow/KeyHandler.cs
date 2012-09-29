@@ -85,9 +85,20 @@ namespace Dwarrowdelf.Client.UI
 
 			if (dir != Direction.None)
 			{
-				var action = new MoveAction(dir);
-				action.MagicNumber = 1;
-				ob.RequestAction(action);
+				var target = ob.Environment.GetContents(ob.Location + dir).OfType<LivingObject>().FirstOrDefault();
+
+				if (target == null)
+				{
+					var action = new MoveAction(dir);
+					action.MagicNumber = 1;
+					ob.RequestAction(action);
+				}
+				else
+				{
+					var action = new AttackAction(target);
+					action.MagicNumber = 1;
+					ob.RequestAction(action);
+				}
 			}
 			else if (e.Key == Key.Add)
 			{
