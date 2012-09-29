@@ -6,8 +6,14 @@
              mc:Ignorable="d">
 	<Grid Background="White">
 		<UniformGrid Columns="2">
+			<UniformGrid.Resources>
+				<Style TargetType="TextBlock">
+					<Setter Property="Margin" Value="2" />
+				</Style>
+			</UniformGrid.Resources>
+
 			<TextBlock Text="Str" />
-			<TextBlock Text="{Binding Strength, FallbackValue=123}" />
+			<TextBlock Text="{Binding Strength}" />
 			<TextBlock Text="Dex" />
 			<TextBlock Text="{Binding Dexterity}" />
 			<TextBlock Text="Con" />
