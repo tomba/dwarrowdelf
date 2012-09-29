@@ -9,6 +9,7 @@
 
 	<Application.Resources>
 		<BooleanToVisibilityConverter x:Key="boolToVisConverter" />
+		<ui:NullToVisibilityConverter x:Key="nullToVisConverter" />
 
 		<ui:ObjectIDConverter x:Key="objectIDConverter"/>
 		<ui:CapitalizeConverter x:Key="capitalizeConverter" />

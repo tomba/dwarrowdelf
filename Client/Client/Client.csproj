@@ -244,6 +244,7 @@
     <Compile Include="DwarfAI.cs" />
     <Compile Include="ItemTracker.cs" />
     <Compile Include="Selectables.cs" />
+    <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\KeyHandler.cs" />
     <Compile Include="UI\MainWindow\MainWindowMenuBar.xaml.cs">
       <DependentUpon>MainWindowMenuBar.xaml</DependentUpon>
