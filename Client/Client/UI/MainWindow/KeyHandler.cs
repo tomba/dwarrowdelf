@@ -49,37 +49,53 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
+			bool handled;
+
 			if (this.Mode == KeyHandlerMode.MapControl)
-				OnKeyDownMap(sender, e);
+				handled = HandleKeyDownMap(e);
 			else if (this.Mode == KeyHandlerMode.LivingControl)
-				OnKeyDownLiving(sender, e);
+				handled = HandleKeyDownLiving(e);
+			else
+				throw new Exception();
+
+			e.Handled = handled;
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
+			bool handled;
+
 			if (this.Mode == KeyHandlerMode.MapControl)
-				OnKeyUpMap(sender, e);
+				handled = HandleKeyUpMap(e);
 			else if (this.Mode == KeyHandlerMode.LivingControl)
-				OnKeyUpLiving(sender, e);
+				handled = HandleKeyUpLiving(e);
+			else
+				throw new Exception();
+
+			e.Handled = handled;
 		}
 
 		void OnTextInput(object sender, TextCompositionEventArgs e)
 		{
+			bool handled;
+
 			if (this.Mode == KeyHandlerMode.MapControl)
-				OnTextInputMap(sender, e);
+				handled = HandleTextInputMap(e);
 			else if (this.Mode == KeyHandlerMode.LivingControl)
-				OnTextInputLiving(sender, e);
+				handled = HandleTextInputLiving(e);
+			else
+				throw new Exception();
+
+			e.Handled = handled;
 		}
 
 
-		void OnKeyDownLiving(object sender, KeyEventArgs e)
+		bool HandleKeyDownLiving(KeyEventArgs e)
 		{
 			var ob = App.MainWindow.FocusedObject;
 
 			if (ob == null)
-				return;
-
-			e.Handled = true;
+				return false;
 
 			var dir = KeyToDir(e.Key);
 
@@ -99,130 +115,148 @@ namespace Dwarrowdelf.Client.UI
 					action.MagicNumber = 1;
 					ob.RequestAction(action);
 				}
+
+				return true;
 			}
-			else if (e.Key == Key.Add)
+
+			switch (e.Key)
 			{
-				m_mapControl.ZoomIn();
-			}
-			else if (e.Key == Key.Subtract)
-			{
-				m_mapControl.ZoomOut();
-			}
-			else if (e.Key == Key.PageDown)
-			{
-				m_mapControl.Z--;
-			}
-			else if (e.Key == Key.PageUp)
-			{
-				m_mapControl.Z++;
-			}
-			else
-			{
-				e.Handled = false;
+				case Key.OemPeriod:
+					if (GameData.Data.User != null)
+						GameData.Data.User.SendProceedTurn();
+					return true;
+
+				case Key.Add:
+					m_mapControl.ZoomIn();
+					return true;
+
+				case Key.Subtract:
+					m_mapControl.ZoomOut();
+					return true;
+
+				case Key.PageDown:
+					m_mapControl.Z--;
+					return true;
+
+				case Key.PageUp:
+					m_mapControl.Z++;
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
-		void OnKeyUpLiving(object sender, KeyEventArgs e)
+		bool HandleKeyUpLiving(KeyEventArgs e)
 		{
 			var ob = App.MainWindow.FocusedObject;
 
 			if (ob == null)
-				return;
+				return false;
+
+			return false;
 		}
 
-		void OnTextInputLiving(object sender, TextCompositionEventArgs e)
+		bool HandleTextInputLiving(TextCompositionEventArgs e)
 		{
 			var ob = App.MainWindow.FocusedObject;
 
 			if (ob == null)
-				return;
+				return false;
 
 			string text = e.Text;
 
-			e.Handled = true;
+			switch (text)
+			{
+				case ">":
+					{
+						var action = new MoveAction(Direction.Down);
+						action.MagicNumber = 1;
+						ob.RequestAction(action);
+					}
+					return true;
 
-			if (text == ">")
-			{
-				var action = new MoveAction(Direction.Down);
-				action.MagicNumber = 1;
-				ob.RequestAction(action);
-			}
-			else if (text == "<")
-			{
-				var action = new MoveAction(Direction.Up);
-				action.MagicNumber = 1;
-				ob.RequestAction(action);
-			}
-			else
-			{
-				e.Handled = false;
+				case "<":
+					{
+						var action = new MoveAction(Direction.Up);
+						action.MagicNumber = 1;
+						ob.RequestAction(action);
+					}
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
 
 
 
-		void OnKeyDownMap(object sender, KeyEventArgs e)
+		bool HandleKeyDownMap(KeyEventArgs e)
 		{
-			e.Handled = true;
-
 			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
 				SetScrollDirection();
+				return true;
 			}
-			else if (e.Key == Key.Add)
+
+			switch (e.Key)
 			{
-				m_mapControl.ZoomIn();
-			}
-			else if (e.Key == Key.Subtract)
-			{
-				m_mapControl.ZoomOut();
-			}
-			else if (e.Key == Key.PageDown)
-			{
-				m_mapControl.Z--;
-			}
-			else if (e.Key == Key.PageUp)
-			{
-				m_mapControl.Z++;
-			}
-			else
-			{
-				e.Handled = false;
+				case Key.OemPeriod:
+					if (GameData.Data.User != null)
+						GameData.Data.User.SendProceedTurn();
+					return true;
+
+				case Key.Add:
+					m_mapControl.ZoomIn();
+					return true;
+
+				case Key.Subtract:
+					m_mapControl.ZoomOut();
+					return true;
+
+				case Key.PageDown:
+					m_mapControl.Z--;
+					return true;
+
+				case Key.PageUp:
+					m_mapControl.Z++;
+					return true;
+
+				default:
+					return false;
 			}
 		}
 
-		void OnKeyUpMap(object sender, KeyEventArgs e)
+		bool HandleKeyUpMap(KeyEventArgs e)
 		{
-			e.Handled = true;
-
 			if (KeyIsDir(e.Key) || e.Key == Key.LeftShift || e.Key == Key.RightShift)
 			{
 				SetScrollDirection();
+				return true;
 			}
 			else
 			{
-				e.Handled = false;
+				return false;
 			}
 		}
 
-		void OnTextInputMap(object sender, TextCompositionEventArgs e)
+		bool HandleTextInputMap(TextCompositionEventArgs e)
 		{
 			string text = e.Text;
 
-			e.Handled = true;
+			switch (text)
+			{
+				case ">":
+					m_mapControl.Z--;
+					return true;
 
-			if (e.Text == ">")
-			{
-				m_mapControl.Z--;
-			}
-			else if (e.Text == "<")
-			{
-				m_mapControl.Z++;
-			}
-			else
-			{
-				e.Handled = false;
+				case "<":
+					m_mapControl.Z++;
+					return true;
+
+				default:
+					return false;
 			}
 		}
 

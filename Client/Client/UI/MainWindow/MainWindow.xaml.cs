@@ -579,11 +579,6 @@ for p in area.Range():
 
 			switch (e.Key)
 			{
-				case Key.OemPeriod:
-					if (GameData.Data.User != null)
-						GameData.Data.User.SendProceedTurn();
-					break;
-
 				case Key.Space:
 					ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
 					break;
