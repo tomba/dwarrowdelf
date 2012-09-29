@@ -137,7 +137,27 @@ namespace Dwarrowdelf.Client
 			if (m_save == Guid.Empty)
 			{
 				UpdateStatus("Creating Game");
-				m_game = m_gameFactory.CreateGame(m_saveManager.GameDir, GameMode.Fortress, GameMap.Fortress);
+
+				GameMode gameMode;
+				GameMap gameMap;
+
+				switch (ClientConfig.NewGameMode)
+				{
+					case GameMode.Fortress:
+						gameMode = GameMode.Fortress;
+						gameMap = GameMap.Fortress;
+						break;
+
+					case GameMode.Adventure:
+						gameMode = GameMode.Adventure;
+						gameMap = GameMap.Adventure;
+						break;
+
+					default:
+						throw new Exception();
+				}
+
+				m_game = m_gameFactory.CreateGame(m_saveManager.GameDir, gameMode, gameMap);
 				UpdateStatus("Game Created");
 			}
 			else

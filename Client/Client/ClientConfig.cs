@@ -30,5 +30,8 @@ namespace Dwarrowdelf.Client
 		public static bool ShowMousePos = false;
 		public static bool ShowCenterPos = false;
 		public static bool ShowTileSize = true;
+
+		// Game mode if new game is created
+		public static GameMode NewGameMode = GameMode.Fortress;
 	}
 }
