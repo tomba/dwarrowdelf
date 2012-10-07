@@ -79,6 +79,12 @@ namespace Dwarrowdelf.Client
 			this.State = ClientUserState.None;
 		}
 
+		public void ResetNetStats()
+		{
+			this.NetStats.Reset();
+			m_connection.ResetStats();
+		}
+
 		// XXX add cancellationtoken
 		public async Task LogOn(string name)
 		{

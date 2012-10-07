@@ -21,6 +21,11 @@ namespace Dwarrowdelf.Client.UI
 		}
 
 		public GameData Data { get { return GameData.Data; } }
+
+		private void Button_Click_1(object sender, RoutedEventArgs e)
+		{
+			this.Data.User.ResetNetStats();
+		}
 	}
 
 	sealed class NetStatWindowSample : ClientNetStatistics
@@ -33,6 +38,9 @@ namespace Dwarrowdelf.Client.UI
 			AddReceivedMessages(new Messages.ChangeMessage());
 			AddReceivedMessages(new Messages.ChangeMessage());
 			AddReceivedMessages(new Messages.ChangeMessage());
+
+			AddSentMessages(new Messages.ProceedTurnReplyMessage());
+			AddSentMessages(new Messages.ProceedTurnReplyMessage());
 		}
 	}
 }

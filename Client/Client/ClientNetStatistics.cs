@@ -66,6 +66,24 @@ namespace Dwarrowdelf.Client
 			m_timer.Tick += RefreshTick;
 		}
 
+		public void Reset()
+		{
+			m_sentMessages = 0;
+			m_sentBytes = 0;
+			m_receivedMessages = 0;
+			m_receivedBytes = 0;
+
+			Notify("SentMessages");
+			Notify("SentBytes");
+			Notify("ReceivedMessages");
+			Notify("ReceivedBytes");
+
+			m_receivedCountMap.Clear();
+			m_receivedMessageCounts.Clear();
+			m_sentCountMap.Clear();
+			m_sentMessageCounts.Clear();
+		}
+
 		void RefreshTick(object sender, EventArgs e)
 		{
 			m_timer.Stop();

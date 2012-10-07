@@ -12,6 +12,7 @@ namespace Dwarrowdelf
 		int SentBytes { get; }
 		int ReceivedMessages { get; }
 		int ReceivedBytes { get; }
+		void ResetStats();
 
 		bool IsConnected { get; }
 

@@ -43,6 +43,14 @@ namespace Dwarrowdelf
 
 		public bool IsConnected { get { return m_pipeStream.IsConnected; } }
 
+		public void ResetStats()
+		{
+			this.SentBytes = 0;
+			this.SentMessages = 0;
+			this.ReceivedBytes = 0;
+			this.ReceivedMessages = 0;
+		}
+
 		public bool TryGetMessage(out Message msg)
 		{
 			return m_msgQueue.TryTake(out msg);

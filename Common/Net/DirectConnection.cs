@@ -26,6 +26,14 @@ namespace Dwarrowdelf
 			m_remoteConnection.SetRemote(this);
 		}
 
+		public void ResetStats()
+		{
+			this.SentBytes = 0;
+			this.SentMessages = 0;
+			this.ReceivedBytes = 0;
+			this.ReceivedMessages = 0;
+		}
+
 		void SetRemote(DirectConnection remote)
 		{
 			m_remoteConnection = remote;
