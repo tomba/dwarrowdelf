@@ -102,7 +102,7 @@ namespace Dwarrowdelf.Client.TileControl
 				AddressU = TextureAddressMode.Wrap,
 				AddressV = TextureAddressMode.Wrap,
 				AddressW = TextureAddressMode.Wrap,
-				BorderColor = Colors.Black,
+				BorderColor = new Color4(0),
 				ComparisonFunction = Comparison.Never,
 				MaximumAnisotropy = 16,
 				MipLodBias = 0,
@@ -115,8 +115,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetupTileBuffer(IntSize2 renderTargetSize)
 		{
-			SafeDispose(ref m_tileBuffer);
-			SafeDispose(ref m_tileBufferView);
+			RemoveAndDispose(ref m_tileBuffer);
+			RemoveAndDispose(ref m_tileBufferView);
 
 			const int minTileSize = 2;
 			var tileBufferWidth = (int)System.Math.Ceiling((double)renderTargetSize.Width / minTileSize + 1) | 1;
@@ -149,7 +149,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void SetTileTextures(Texture2D textureArray)
 		{
-			SafeDispose(ref m_tileTextureView);
+			RemoveAndDispose(ref m_tileTextureView);
 
 			m_tileTextureView = ToDispose(new ShaderResourceView(m_device, textureArray, new ShaderResourceViewDescription()
 			{

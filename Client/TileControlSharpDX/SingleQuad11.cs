@@ -87,8 +87,8 @@ namespace Dwarrowdelf.Client.TileControl
 
 		void SetupRenderTarget(Texture2D renderTexture)
 		{
-			SafeDispose(ref m_renderTargetView);
-			SafeDispose(ref m_rasterizerState);
+			RemoveAndDispose(ref m_renderTargetView);
+			RemoveAndDispose(ref m_rasterizerState);
 
 			var renderWidth = renderTexture.Description.Width;
 			var renderHeight = renderTexture.Description.Height;
