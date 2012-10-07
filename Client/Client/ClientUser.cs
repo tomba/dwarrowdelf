@@ -155,7 +155,7 @@ namespace Dwarrowdelf.Client
 
 		public void SendLogOut()
 		{
-			m_connection.Send(new Messages.LogOutRequestMessage());
+			Send(new Messages.LogOutRequestMessage());
 		}
 
 		volatile bool m_onNewMessagesInvoked;
@@ -379,7 +379,7 @@ namespace Dwarrowdelf.Client
 				}
 			}
 
-			m_connection.Send(new ProceedTurnReplyMessage() { Actions = list.ToArray() });
+			Send(new ProceedTurnReplyMessage() { Actions = list.ToArray() });
 
 			m_currentLivingID = ObjectID.NullObjectID;
 			m_actionMap.Clear();
