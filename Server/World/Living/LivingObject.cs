@@ -45,7 +45,7 @@ namespace Dwarrowdelf.Server
 			this.LivingID = builder.LivingID;
 
 			m_maxHitPoints = m_hitPoints = builder.HitPoints;
-			m_armorClass = builder.AC;
+			m_naturalArmorClass = builder.NaturalAC;
 
 			m_strength = builder.Str;
 			m_dexterity = builder.Dex;
@@ -69,6 +69,8 @@ namespace Dwarrowdelf.Server
 					m_skillMap[kvp.Key] = kvp.Value;
 
 			m_armorSlots = new Dictionary<ArmorSlot, ItemObject>();
+
+			RecalcArmorClass();
 		}
 
 		LivingObject(SaveGameContext ctx)
@@ -84,6 +86,8 @@ namespace Dwarrowdelf.Server
 				kvp.Value.Wearer = this;
 			if (this.Weapon != null)
 				this.Weapon.Wielder = this;
+
+			RecalcArmorClass();
 		}
 
 		protected override void Initialize(World world)
@@ -214,12 +218,12 @@ namespace Dwarrowdelf.Server
 			set { if (m_size == value) return; m_size = value; NotifyInt(PropertyID.Size, value); }
 		}
 
-		[SaveGameProperty("ArmorClass")]
-		int m_armorClass;
-		public int ArmorClass
+		[SaveGameProperty("NaturalArmorClass")]
+		int m_naturalArmorClass;
+		public int NaturalArmorClass
 		{
-			get { return m_armorClass; }
-			set { if (m_armorClass == value) return; m_armorClass = value; NotifyInt(PropertyID.ArmorClass, value); }
+			get { return m_naturalArmorClass; }
+			set { if (m_naturalArmorClass == value) return; m_naturalArmorClass = value; NotifyInt(PropertyID.NaturalArmorClass, value); }
 		}
 
 		[SaveGameProperty("VisionRange")]
@@ -294,6 +298,8 @@ namespace Dwarrowdelf.Server
 			wearable.Wearer = this;
 			m_armorSlots[wearable.ArmorInfo.Slot] = wearable;
 
+			RecalcArmorClass();
+
 			this.World.AddChange(new WearArmorChange(this, wearable.ArmorInfo.Slot, wearable));
 		}
 
@@ -307,8 +313,22 @@ namespace Dwarrowdelf.Server
 			wearable.Wearer = null;
 			m_armorSlots.Remove(wearable.ArmorInfo.Slot);
 
+			RecalcArmorClass();
+
 			this.World.AddChange(new RemoveArmorChange(this, wearable.ArmorInfo.Slot));
 		}
+
+		void RecalcArmorClass()
+		{
+			int ac = this.NaturalArmorClass;
+
+			foreach (var kvp in m_armorSlots)
+				ac += kvp.Value.ArmorInfo.AC;
+
+			this.ArmorClass = ac;
+		}
+
+		public int ArmorClass { get; private set; }
 
 		public void WieldWeapon(ItemObject weapon)
 		{
@@ -377,6 +397,8 @@ namespace Dwarrowdelf.Server
 			player.Send(new Messages.ObjectDataMessage(data));
 
 			base.SendTo(player, visibility);
+
+			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
 		protected override Dictionary<PropertyID, object> SerializeProperties()
@@ -394,7 +416,7 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.Wisdom] = m_wisdom;
 			props[PropertyID.Charisma] = m_charisma;
 			props[PropertyID.Size] = m_size;
-			props[PropertyID.ArmorClass] = m_armorClass;
+			props[PropertyID.NaturalArmorClass] = m_naturalArmorClass;
 			props[PropertyID.VisionRange] = m_visionRange;
 			props[PropertyID.FoodFullness] = m_foodFullness;
 			props[PropertyID.WaterFullness] = m_waterFullness;
@@ -819,7 +841,7 @@ namespace Dwarrowdelf.Server
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
 		public LivingGender Gender { get; set; }
 		public int HitPoints;
-		public int AC;
+		public int NaturalAC;
 
 		public int Str, Dex, Con, Int, Wis, Cha, Siz;
 
@@ -831,7 +853,7 @@ namespace Dwarrowdelf.Server
 
 			this.Color = li.Color;
 			this.HitPoints = li.Level * 10;
-			this.AC = li.Level;
+			this.NaturalAC = li.NaturalAC;
 
 			Str = Dex = Con = Int = Wis = Cha = li.Level * 10;
 			Siz = li.Size;

@@ -150,6 +150,17 @@ namespace Dwarrowdelf.Messages
 	}
 
 	[Serializable]
+	public sealed class ObjectDataEndMessage : StateMessage
+	{
+		public ObjectID ObjectID { get; set; }
+
+		public override string ToString()
+		{
+			return String.Format("ObjectDataEndMessage {0}", this.ObjectID);
+		}
+	}
+
+	[Serializable]
 	public sealed class MapDataTerrainsMessage : StateMessage
 	{
 		public ObjectID Environment { get; set; }

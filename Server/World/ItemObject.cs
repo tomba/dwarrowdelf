@@ -218,6 +218,8 @@ namespace Dwarrowdelf.Server
 			player.Send(new Messages.ObjectDataMessage(data));
 
 			base.SendTo(player, visibility);
+
+			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
 		protected override Dictionary<PropertyID, object> SerializeProperties()

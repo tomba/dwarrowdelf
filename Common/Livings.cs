@@ -42,6 +42,7 @@ namespace Dwarrowdelf
 		public GameColor Color { get; internal set; }
 		public int Level { get; internal set; }
 		public int Size { get; internal set; }
+		public int NaturalAC { get; internal set; }
 	}
 
 	public static class Livings

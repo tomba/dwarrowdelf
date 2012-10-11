@@ -539,6 +539,8 @@ namespace Dwarrowdelf.Server
 			{
 				o.SendTo(player, ObjectVisibility.All);
 			}
+
+			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
 		void SendMapTiles(IPlayer player)

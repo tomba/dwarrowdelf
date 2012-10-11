@@ -25,11 +25,11 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
-		public override void Deserialize(BaseGameObjectData _data)
+		public override void DeserializeBegin(BaseGameObjectData _data)
 		{
 			var data = (MovableObjectData)_data;
 
-			base.Deserialize(_data);
+			base.DeserializeBegin(_data);
 
 			ContainerObject env = null;
 			if (data.Environment != ObjectID.NullObjectID)

@@ -74,11 +74,11 @@ namespace Dwarrowdelf.Client
 			this.World.AddEnvironment(this);
 		}
 
-		public override void Deserialize(BaseGameObjectData _data)
+		public override void DeserializeBegin(BaseGameObjectData _data)
 		{
 			var data = (MapData)_data;
 
-			base.Deserialize(_data);
+			base.DeserializeBegin(_data);
 
 			// XXX we currently always get the map size
 			if (!data.Size.IsEmpty)

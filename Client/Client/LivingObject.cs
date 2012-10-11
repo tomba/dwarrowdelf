@@ -56,7 +56,7 @@ namespace Dwarrowdelf.Client
 				Properties = props,
 			};
 
-			Deserialize(data);
+			DeserializeBegin(data);
 
 			var item = new ItemObject();
 			item.MoveTo(this, new IntPoint3());
@@ -72,14 +72,14 @@ namespace Dwarrowdelf.Client
 			m_enabledLabors.SetAll(true);
 		}
 
-		public override void Deserialize(BaseGameObjectData _data)
+		public override void DeserializeBegin(BaseGameObjectData _data)
 		{
 			var data = (LivingData)_data;
 
 			this.LivingInfo = Dwarrowdelf.Livings.GetLivingInfo(data.LivingID);
 			this.SymbolID = LivingSymbols.GetSymbol(this.LivingID);
 
-			base.Deserialize(_data);
+			base.DeserializeBegin(_data);
 
 			this.CurrentAction = data.CurrentAction;
 			this.ActionPriority = data.ActionPriority;
@@ -114,6 +114,13 @@ namespace Dwarrowdelf.Client
 				this.Weapon = this.World.FindOrCreateObject<ItemObject>(data.WeaponID);
 				this.Weapon.Wielder = this;
 			}
+		}
+
+		public override void DeserializeEnd()
+		{
+			base.DeserializeEnd();
+
+			RecalcArmorClass();
 		}
 
 		public LivingID LivingID { get { return this.LivingInfo.ID; } }
@@ -418,8 +425,8 @@ namespace Dwarrowdelf.Client
 					this.Size = (int)value;
 					break;
 
-				case PropertyID.ArmorClass:
-					this.ArmorClass = (int)value;
+				case PropertyID.NaturalArmorClass:
+					this.NaturalArmorClass = (int)value;
 					break;
 
 				case PropertyID.VisionRange:
@@ -525,6 +532,13 @@ namespace Dwarrowdelf.Client
 			private set { m_size = value; Notify("Size"); }
 		}
 
+		int m_naturalArmorClass;
+		public int NaturalArmorClass
+		{
+			get { return m_naturalArmorClass; }
+			private set { m_naturalArmorClass = value; Notify("NaturalArmorClass"); }
+		}
+
 		int m_armorClass;
 		public int ArmorClass
 		{
@@ -620,6 +634,8 @@ namespace Dwarrowdelf.Client
 
 			m_armorSlots.Add(new Tuple<ArmorSlot, ItemObject>(slot, wearable));
 			wearable.Wearer = this;
+
+			RecalcArmorClass();
 		}
 
 		public void RemoveArmor(ArmorSlot slot)
@@ -630,11 +646,22 @@ namespace Dwarrowdelf.Client
 				{
 					m_armorSlots[i].Item2.Wearer = null;
 					m_armorSlots.RemoveAt(i);
+					RecalcArmorClass();
 					return;
 				}
 			}
 
 			throw new Exception();
+		}
+
+		void RecalcArmorClass()
+		{
+			int ac = this.NaturalArmorClass;
+
+			foreach (var kvp in m_armorSlots)
+				ac += kvp.Item2.ArmorInfo.AC;
+
+			this.ArmorClass = ac;
 		}
 
 		public ItemObject Weapon { get; private set; }

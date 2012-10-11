@@ -71,6 +71,8 @@ namespace Dwarrowdelf.Server
 			CollectObjectData(data, visibility);
 
 			player.Send(new Messages.ObjectDataMessage(data));
+
+			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
 		}
 
 		protected override Dictionary<PropertyID, object> SerializeProperties()

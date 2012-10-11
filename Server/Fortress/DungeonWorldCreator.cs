@@ -52,6 +52,10 @@ namespace Dwarrowdelf.Server.Fortress
 					living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
 					living.MoveTo(env, p3);
 
+					var itemBuilder = new ItemObjectBuilder(ItemID.Helmet, MaterialID.Copper);
+					var item = itemBuilder.Create(world);
+					item.MoveTo(living);
+
 					break;
 				}
 			}

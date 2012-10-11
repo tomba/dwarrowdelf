@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 				this.Destructed(this);
 		}
 
-		public virtual void Deserialize(BaseGameObjectData data)
+		public virtual void DeserializeBegin(BaseGameObjectData data)
 		{
 			this.CreationTime = data.CreationTime;
 			this.CreationTick = data.CreationTick;
@@ -62,6 +62,10 @@ namespace Dwarrowdelf.Client
 
 			this.IsInitialized = true;
 			Notify("IsInitialized");
+		}
+
+		public virtual void DeserializeEnd()
+		{
 		}
 
 		public abstract void SetProperty(PropertyID propertyID, object value);

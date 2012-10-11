@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 				Area = new IntGrid2Z(new IntGrid2(0, 0, 4, 4), 9),
 			};
 
-			Deserialize(data);
+			DeserializeBegin(data);
 		}
 
 		public BuildingObject(World world, ObjectID objectID)
@@ -90,13 +90,13 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public override void Deserialize(BaseGameObjectData _data)
+		public override void DeserializeBegin(BaseGameObjectData _data)
 		{
 			var initialized = this.IsInitialized;
 
 			var data = (BuildingData)_data;
 
-			base.Deserialize(_data);
+			base.DeserializeBegin(_data);
 
 			this.BuildingInfo = Buildings.GetBuildingInfo(data.BuildingID);
 			this.Area = data.Area;

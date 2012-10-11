@@ -29,7 +29,7 @@ namespace Dwarrowdelf
 		Charisma,
 		Size,
 
-		ArmorClass,
+		NaturalArmorClass,
 
 		VisionRange,
 		FoodFullness,
@@ -87,7 +87,7 @@ namespace Dwarrowdelf
 			map[PropertyID.Charisma] = ObjectVisibility.Private;
 			map[PropertyID.Size] = ObjectVisibility.Public;
 
-			map[PropertyID.ArmorClass] = ObjectVisibility.Private;
+			map[PropertyID.NaturalArmorClass] = ObjectVisibility.Private;
 
 			map[PropertyID.VisionRange] = ObjectVisibility.Private;
 			map[PropertyID.FoodFullness] = ObjectVisibility.Private;
