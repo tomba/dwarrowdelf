@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client
 
 			Debug.Assert(ob.IsInitialized);
 
-			var wearable = m_world.FindOrCreateObject<ItemObject>(change.WearableID);
+			var wearable = m_world.GetObject<ItemObject>(change.WearableID);
 			ob.WearArmor(change.Slot, wearable);
 		}
 
@@ -138,7 +138,7 @@ namespace Dwarrowdelf.Client
 
 			Debug.Assert(ob.IsInitialized);
 
-			var weapon = m_world.FindOrCreateObject<ItemObject>(change.WeaponID);
+			var weapon = m_world.GetObject<ItemObject>(change.WeaponID);
 			ob.WieldWeapon(weapon);
 		}
 

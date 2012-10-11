@@ -263,7 +263,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var oid in msg.Controllables)
 			{
-				var l = m_world.FindOrCreateObject<LivingObject>(oid);
+				var l = m_world.GetObject<LivingObject>(oid);
 				l.IsControllable = b;
 			}
 		}
