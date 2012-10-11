@@ -276,6 +276,7 @@ namespace Dwarrowdelf.Client.UI
 				case Key.NumPad6:
 				case Key.NumPad7:
 				case Key.NumPad8:
+				case Key.NumPad9:
 					break;
 
 				default:
