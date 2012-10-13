@@ -242,6 +242,7 @@
     <Compile Include="ConnectManager.cs" />
     <Compile Include="ContainerObject.cs" />
     <Compile Include="ConstructManager.cs" />
+    <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="InstallFurnitureManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TargetItemTracker.cs" />
