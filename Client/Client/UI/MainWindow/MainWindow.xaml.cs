@@ -244,17 +244,58 @@ for p in area.Range():
 
 						if (res == true)
 						{
-							GameData.Data.User.Send(new CreateLivingMessage()
+							var args = new Dictionary<string, object>()
 							{
-								EnvironmentID = dialog.Environment.ObjectID,
-								Area = dialog.Area,
+								{ "envID", dialog.Environment.ObjectID },
+								{ "area", dialog.Area },
+								{ "name", dialog.LivingName },
+								{ "livingID", dialog.LivingID },
+								{ "isControllable", dialog.IsControllable },
+								{ "isGroup", dialog.IsGroup },
+							};
 
-								Name = dialog.LivingName,
-								LivingID = dialog.LivingID,
+							var script =
+@"env = world.GetObject(envID)
 
-								IsControllable = dialog.IsControllable,
-								IsGroup = dialog.IsGroup,
-							});
+if isGroup:
+	group = Dwarrowdelf.AI.Group()
+
+controllables = [ ]
+
+for p in area.Range():
+	livingBuilder = Dwarrowdelf.Server.LivingObjectBuilder(livingID)
+	livingBuilder.Name = name
+	living = livingBuilder.Create(world)
+
+	if isControllable:
+		engine.GameManager.SetupLivingAsControllable(living)
+	else:
+		if living.LivingCategory == Dwarrowdelf.LivingCategory.Herbivore:
+			ai = Dwarrowdelf.AI.HerbivoreAI(living, 0)
+			living.SetAI(ai)
+
+			if isGroup:
+				ai.Group = group
+
+		elif living.LivingCategory == Dwarrowdelf.LivingCategory.Carnivore:
+			ai = Dwarrowdelf.AI.CarnivoreAI(living, 0)
+			living.SetAI(ai)
+
+		elif living.LivingCategory == Dwarrowdelf.LivingCategory.Monster:
+			ai = Dwarrowdelf.AI.MonsterAI(living, 0)
+			living.SetAI(ai)
+
+	if isControllable:
+		controllables.append(living)
+
+	living.MoveTo(env, p);
+
+for l in controllables:
+	player.AddControllable(l)
+";
+							var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
+
+							GameData.Data.User.Send(msg);
 						}
 					}
 					break;

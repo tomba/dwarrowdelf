@@ -228,25 +228,4 @@ namespace Dwarrowdelf.Messages
 		public Guid ID;
 		public string Data;
 	}
-
-	// Debugging / Testing messages
-
-	[Serializable]
-	public abstract class DebugMessage : ServerMessage
-	{
-
-	}
-
-	[Serializable]
-	public sealed class CreateLivingMessage : DebugMessage
-	{
-		public ObjectID EnvironmentID;
-		public IntGrid2Z Area;
-
-		public string Name;
-		public LivingID LivingID;
-
-		public bool IsControllable;
-		public bool IsGroup;
-	}
 }

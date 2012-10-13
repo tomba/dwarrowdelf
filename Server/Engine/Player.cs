@@ -105,7 +105,7 @@ namespace Dwarrowdelf.Server
 			// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
 			System.Threading.Tasks.Task.Factory.StartNew(delegate
 			{
-				m_ipRunner = new IPRunner(m_world, Send);
+				m_ipRunner = new IPRunner(m_world, m_engine, this);
 			});
 		}
 
@@ -298,76 +298,6 @@ namespace Dwarrowdelf.Server
 			m_visionTrackers.Clear();
 
 			m_connection.Disconnect();
-		}
-
-		void ReceiveMessage(CreateLivingMessage msg)
-		{
-			var controllables = new List<LivingObject>();
-
-			Dwarrowdelf.AI.Group group = null;
-
-			if (msg.IsGroup)
-				group = new Dwarrowdelf.AI.Group();
-
-			var livingInfo = Livings.GetLivingInfo(msg.LivingID);
-
-			var env = this.World.FindObject<EnvironmentObject>(msg.EnvironmentID);
-
-			if (env == null)
-				throw new Exception();
-
-			foreach (var p in msg.Area.Range())
-			{
-				var livingBuilder = new LivingObjectBuilder(msg.LivingID)
-				{
-					Name = msg.Name,
-				};
-				var living = livingBuilder.Create(this.World);
-
-				if (msg.IsControllable)
-				{
-					m_engine.GameManager.SetupLivingAsControllable(living);
-				}
-				else
-				{
-					switch (livingInfo.Category)
-					{
-						case LivingCategory.Herbivore:
-							{
-								var ai = new Dwarrowdelf.AI.HerbivoreAI(living, 0);
-								living.SetAI(ai);
-
-								if (msg.IsGroup)
-									ai.Group = group;
-							}
-							break;
-
-						case LivingCategory.Carnivore:
-							{
-								var ai = new Dwarrowdelf.AI.CarnivoreAI(living, 0);
-								living.SetAI(ai);
-							}
-							break;
-
-						case LivingCategory.Monster:
-							{
-								var ai = new Dwarrowdelf.AI.MonsterAI(living, 0);
-								living.SetAI(ai);
-							}
-							break;
-					}
-				}
-
-				trace.TraceInformation("Created living {0}", living);
-
-				living.MoveTo(env, p);
-
-				if (msg.IsControllable)
-					controllables.Add(living);
-			}
-
-			foreach (var l in controllables)
-				AddControllable(l);
 		}
 
 		void ReceiveMessage(SetWorldConfigMessage msg)

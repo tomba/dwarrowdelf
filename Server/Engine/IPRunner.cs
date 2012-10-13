@@ -14,22 +14,22 @@ namespace Dwarrowdelf.Server
 		ScriptScope m_scriptScope;
 		MyStream m_scriptOutputStream;
 
-		Action<Messages.ClientMessage> m_sender;
+		Player m_player;
 
-		public IPRunner(World world, Action<Messages.ClientMessage> sender)
+		public IPRunner(World world, GameEngine engine, Player player)
 		{
-			m_sender = sender;
-			m_scriptOutputStream = new MyStream(sender);
+			m_player = player;
+			m_scriptOutputStream = new MyStream(player.Send);
 
 			m_scriptEngine = IronPython.Hosting.Python.CreateEngine();
 
 			InitRuntime(m_scriptEngine.Runtime);
 
 			m_exprScope = m_scriptEngine.CreateScope();
-			InitScope(m_exprScope, world);
+			InitScope(m_exprScope, world, engine, player);
 
 			m_scriptScope = m_scriptEngine.CreateScope();
-			InitScope(m_scriptScope, world);
+			InitScope(m_scriptScope, world, engine, player);
 		}
 
 		void InitRuntime(ScriptRuntime runtime)
@@ -44,11 +44,13 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void InitScope(ScriptScope scope, World world)
+		void InitScope(ScriptScope scope, World world, GameEngine engine, Player player)
 		{
 			var globals = new Dictionary<string, object>()
 			{
 				{ "world", world },
+				{ "engine", engine },
+				{ "player", player},
 				{ "get", new Func<object, BaseObject>(world.IPGet) },
 			};
 
@@ -70,7 +72,7 @@ namespace Dwarrowdelf.Server
 			catch (Exception e)
 			{
 				var str = "IP error:\n" + e.Message + "\n";
-				m_sender(new Messages.IPOutputMessage() { Text = str });
+				m_player.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
 
@@ -87,7 +89,7 @@ namespace Dwarrowdelf.Server
 			catch (Exception e)
 			{
 				var str = "IP error:\n" + e.Message + "\n";
-				m_sender(new Messages.IPOutputMessage() { Text = str });
+				m_player.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
 		sealed class MyStream : Stream
