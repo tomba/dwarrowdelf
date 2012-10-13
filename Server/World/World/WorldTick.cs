@@ -226,7 +226,7 @@ namespace Dwarrowdelf.Server
 			foreach (var living in m_livings.List)
 				living.TurnStarted();
 
-			AddChange(new TurnStartSimultaneousChange());
+			AddChange(new TurnStartChange(null));
 
 			if (TurnStarting != null)
 				TurnStarting(null);
@@ -234,7 +234,7 @@ namespace Dwarrowdelf.Server
 
 		void EndTurnSimultaneous()
 		{
-			AddChange(new TurnEndSimultaneousChange());
+			AddChange(new TurnEndChange());
 
 			if (TurnEnded != null)
 				TurnEnded(null);
@@ -246,7 +246,7 @@ namespace Dwarrowdelf.Server
 
 			living.TurnStarted();
 
-			AddChange(new TurnStartSequentialChange(living));
+			AddChange(new TurnStartChange(living));
 
 			if (TurnStarting != null)
 				TurnStarting(living);
@@ -257,7 +257,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceVerbose("EndTurnSeq {0}", living);
 
-			AddChange(new TurnEndSequentialChange(living));
+			AddChange(new TurnEndChange());
 
 			if (TurnEnded != null)
 				TurnEnded(living);

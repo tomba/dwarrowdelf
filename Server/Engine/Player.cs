@@ -148,9 +148,17 @@ namespace Dwarrowdelf.Server
 			if (this.World.IsTickOnGoing)
 			{
 				if (this.World.TickMethod == WorldTickMethod.Simultaneous)
-					SendProceedTurnRequest(null);
+				{
+					this.IsProceedTurnRequestSent = true;
+
+					var change = new TurnStartChange(null);
+					var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
+					Send(changeMsg);
+				}
 				else
+				{
 					throw new NotImplementedException();
+				}
 			}
 		}
 
@@ -470,38 +478,17 @@ namespace Dwarrowdelf.Server
 		{
 			m_changeHandler.HandleWorldChange(change);
 
-			if (change is TurnStartSimultaneousChange)
+			if (change is TurnStartChange)
 			{
-				SendProceedTurnRequest(null);
+				var c = (TurnStartChange)change;
+				if (c.Living == null || this.IsController(c.Living))
+					this.IsProceedTurnRequestSent = true;
 			}
-			else if (change is TurnStartSequentialChange)
-			{
-				var c = (TurnStartSequentialChange)change;
-				if (!this.IsController(c.Living))
-					return;
-
-				SendProceedTurnRequest(c.Living);
-			}
-			else if (change is TurnEndSimultaneousChange || change is TurnEndSequentialChange)
+			else if (change is TurnEndChange)
 			{
 				this.IsProceedTurnRequestSent = false;
 				this.IsProceedTurnReplyReceived = false;
 			}
-		}
-
-		void SendProceedTurnRequest(LivingObject living)
-		{
-			ObjectID id;
-
-			if (living == null)
-				id = ObjectID.AnyObjectID;
-			else
-				id = living.ObjectID;
-
-			this.IsProceedTurnRequestSent = true;
-
-			var msg = new ProceedTurnRequestMessage() { LivingID = id };
-			Send(msg);
 		}
 
 		Dictionary<EnvironmentObject, VisionTrackerBase> m_visionTrackers = new Dictionary<EnvironmentObject, VisionTrackerBase>();
@@ -726,11 +713,7 @@ namespace Dwarrowdelf.Server
 
 		bool CanSeeChange(Change change, IList<LivingObject> controllables)
 		{
-			if (change is TurnStartSimultaneousChange || change is TurnEndSimultaneousChange)
-			{
-				return true;
-			}
-			else if (change is TurnStartSequentialChange || change is TurnEndSequentialChange)
+			if (change is TurnStartChange || change is TurnEndChange)
 			{
 				return true;
 			}

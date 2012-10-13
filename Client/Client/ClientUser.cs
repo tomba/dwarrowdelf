@@ -224,6 +224,7 @@ namespace Dwarrowdelf.Client
 			m_reportHandler = new ReportHandler(m_world);
 			m_changeHandler = new ChangeHandler(m_world);
 			m_changeHandler.TurnEnded += OnTurnEnded;
+			m_changeHandler.TurnStarted += OnTurnStarted;
 
 			this.IsSeeAll = msg.IsSeeAll;
 
@@ -303,11 +304,6 @@ namespace Dwarrowdelf.Client
 			env.SetTerrains(msg.TileDataList);
 		}
 
-		void HandleMessage(ProceedTurnRequestMessage msg)
-		{
-			TurnActionRequested(msg.LivingID);
-		}
-
 		void HandleMessage(IPOutputMessage msg)
 		{
 			GameData.Data.AddIPMessage(msg);
@@ -331,15 +327,9 @@ namespace Dwarrowdelf.Client
 		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
 
 		// Called from change handler
-		void OnTurnEnded()
+		void OnTurnStarted(ObjectID livingID)
 		{
-			turnTrace.TraceInformation("TurnEnd");
-			m_currentLivingID = ObjectID.NullObjectID;
-		}
-
-		void TurnActionRequested(ObjectID livingID)
-		{
-			turnTrace.TraceInformation("Turn Action requested for living: {0}", livingID);
+			turnTrace.TraceInformation("TurnStart: {0}", livingID);
 
 			Debug.Assert(livingID != ObjectID.NullObjectID);
 			Debug.Assert(m_currentLivingID == ObjectID.NullObjectID);
@@ -348,6 +338,13 @@ namespace Dwarrowdelf.Client
 
 			if (GameData.Data.IsAutoAdvanceTurn)
 				SendProceedTurn();
+		}
+
+		// Called from change handler
+		void OnTurnEnded()
+		{
+			turnTrace.TraceInformation("TurnEnd");
+			m_currentLivingID = ObjectID.NullObjectID;
 		}
 
 		public void SignalLivingHasAction(LivingObject living, GameAction action)

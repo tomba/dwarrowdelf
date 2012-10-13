@@ -18,25 +18,16 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class TurnStartSimultaneousChangeData : ChangeData
+	public sealed class TurnStartChangeData : ChangeData
 	{
-	}
-
-	[Serializable]
-	public sealed class TurnEndSimultaneousChangeData : ChangeData
-	{
-	}
-
-	[Serializable]
-	public sealed class TurnStartSequentialChangeData : ChangeData
-	{
+		// Sequential : Living who's turn it is
+		// Simultaneous: AnyObjectID
 		public ObjectID LivingID;
 	}
 
 	[Serializable]
-	public sealed class TurnEndSequentialChangeData : ChangeData
+	public sealed class TurnEndChangeData : ChangeData
 	{
-		public ObjectID LivingID;
 	}
 
 	[Serializable]

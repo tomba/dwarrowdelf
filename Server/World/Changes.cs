@@ -26,57 +26,33 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
-	public sealed class TurnStartSimultaneousChange : Change
+	public sealed class TurnStartChange : Change
 	{
-		public TurnStartSimultaneousChange()
-		{
-		}
-
-		public override ChangeData ToChangeData()
-		{
-			return new TurnStartSimultaneousChangeData();
-		}
-	}
-
-	public sealed class TurnEndSimultaneousChange : Change
-	{
-		public TurnEndSimultaneousChange()
-		{
-		}
-
-		public override ChangeData ToChangeData()
-		{
-			return new TurnEndSimultaneousChangeData();
-		}
-	}
-
-	public sealed class TurnStartSequentialChange : Change
-	{
+		// Sequential : Living who's turn it is
+		// Simultaneous: null
 		public LivingObject Living { get; private set; }
 
-		public TurnStartSequentialChange(LivingObject living)
+		public TurnStartChange(LivingObject living)
 		{
 			this.Living = living;
 		}
 
 		public override ChangeData ToChangeData()
 		{
-			return new TurnStartSequentialChangeData() { LivingID = this.Living.ObjectID };
+			var oid = this.Living != null ? this.Living.ObjectID : ObjectID.AnyObjectID;
+			return new TurnStartChangeData() { LivingID = oid };
 		}
 	}
 
-	public sealed class TurnEndSequentialChange : Change
+	public sealed class TurnEndChange : Change
 	{
-		public LivingObject Living { get; private set; }
-
-		public TurnEndSequentialChange(LivingObject living)
+		public TurnEndChange()
 		{
-			this.Living = living;
 		}
 
 		public override ChangeData ToChangeData()
 		{
-			return new TurnEndSequentialChangeData() { LivingID = this.Living.ObjectID };
+			return new TurnEndChangeData();
 		}
 	}
 
