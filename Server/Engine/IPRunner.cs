@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Microsoft.Scripting.Hosting;
+using IronPython.Runtime;
 
 namespace Dwarrowdelf.Server
 {
@@ -71,7 +72,7 @@ namespace Dwarrowdelf.Server
 			}
 			catch (Exception e)
 			{
-				var str = "IP error:\n" + e.Message + "\n";
+				var str = e.Message;
 				m_player.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}
@@ -88,7 +89,7 @@ namespace Dwarrowdelf.Server
 			}
 			catch (Exception e)
 			{
-				var str = "IP error:\n" + e.Message + "\n";
+				var str = m_scriptEngine.GetService<ExceptionOperations>().FormatException(e);
 				m_player.Send(new Messages.IPOutputMessage() { Text = str });
 			}
 		}

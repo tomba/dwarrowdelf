@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 			}
 			catch (Exception e)
 			{
-				var str = "IP error:\n" + e.Message + "\n";
+				var str = e.Message;
 				m_sender(str);
 			}
 		}
