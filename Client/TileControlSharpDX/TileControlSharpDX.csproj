@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="SharpDX, Version=2.3.1.0, Culture=neutral, PublicKeyToken=627a3d6d1956f55a, processorArchitecture=MSIL">
@@ -76,8 +79,14 @@
     <Compile Include="SingleQuad11.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SingleQuad11.ps" />
-    <EmbeddedResource Include="SingleQuad11.vs" />
+    <None Include="SingleQuad11.ps" />
+    <EmbeddedResource Include="SingleQuad11.pso">
+      <DependentUpon>SingleQuad11.ps</DependentUpon>
+    </EmbeddedResource>
+    <None Include="SingleQuad11.vs" />
+    <EmbeddedResource Include="SingleQuad11.vso">
+      <DependentUpon>SingleQuad11.vs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

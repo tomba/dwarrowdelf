@@ -43,17 +43,16 @@ namespace Dwarrowdelf.Client.TileControl
 
 			var ass = System.Reflection.Assembly.GetCallingAssembly();
 
-			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.ps"))
-			using (var reader = new System.IO.StreamReader(stream))
-			{
-				var str = reader.ReadToEnd();
+			// fxc /T ps_4_0 /E PS /Fo SingleQuad11.pso SingleQuad11.ps
 
-				using (var bytecode = ShaderBytecode.Compile(str, "PS", "ps_4_0"))
-					Create(bytecode);
+			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.pso"))
+			{
+				var bytecode = ShaderBytecode.FromStream(stream);
+				Create(bytecode);
 			}
 		}
 
-		void Create(CompilationResult bytecode)
+		void Create(ShaderBytecode bytecode)
 		{
 			var context = m_device.ImmediateContext;
 
