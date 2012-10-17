@@ -116,4 +116,21 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+
+  <Target AfterTargets="BeforeBuild" Name="Shaders"
+    Inputs="SingleQuad11.ps;SingleQuad11.vs"
+    Outputs="SingleQuad11.pso;SingleQuad11.vso">
+
+    <PropertyGroup>
+      <FxcPath>C:/Program Files/Windows Kits/8.0/bin/x86</FxcPath>
+    </PropertyGroup>
+
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo SingleQuad11.pso SingleQuad11.ps" Outputs="SingleQuad11.pso" />
+    <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T vs_4_0 /E VS /Fo SingleQuad11.vso SingleQuad11.vs" />
+
+  </Target>
+
+  <Target AfterTargets="Clean" Name="CleanShaders">
+    <Delete Files="SingleQuad11.pso;SingleQuad11.vso" />
+  </Target>
 </Project>
