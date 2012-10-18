@@ -246,7 +246,7 @@ namespace TerrainGenTest
 					}
 					break;
 
-				case TerrainID.Hole:
+				case TerrainID.StairsDown:
 					r = 255;
 					g = b = 0;
 					break;

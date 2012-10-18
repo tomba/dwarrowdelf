@@ -13,6 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "..\NetSeri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FOVTest", "FOVTest\FOVTest.csproj", "{601C88A6-6474-47F7-96FD-D808D86DF1D1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31A965A2-096E-4854-9C11-993566986C4B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +29,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7E9C7EB0-BE4C-486F-A46B-60225851D953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E9C7EB0-BE4C-486F-A46B-60225851D953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E9C7EB0-BE4C-486F-A46B-60225851D953}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{7E9C7EB0-BE4C-486F-A46B-60225851D953}.Debug|x86.Build.0 = Debug|Any CPU
 		{7E9C7EB0-BE4C-486F-A46B-60225851D953}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +53,7 @@ Global
 		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x86.ActiveCfg = Release|Any CPU
 		{37D55AC1-BDAE-4C0C-8856-8867FE772B2B}.Release|x86.Build.0 = Release|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|x86.Build.0 = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,6 +61,7 @@ Global
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x86.ActiveCfg = Release|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|x86.Build.0 = Release|Any CPU
 		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|x86.Build.0 = Debug|Any CPU
 		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Release|Any CPU.ActiveCfg = Release|Any CPU
