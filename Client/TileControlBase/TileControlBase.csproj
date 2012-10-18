@@ -44,7 +44,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RenderTileSimple.cs" />
     <Compile Include="IRenderData.cs" />
     <Compile Include="ISymbolTileRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
