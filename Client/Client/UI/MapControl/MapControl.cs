@@ -53,40 +53,12 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			TileControl.ISymbolTileRenderer renderer;
-			IRenderView renderView;
+			if (!IsD3D10Supported())
+				return;
 
-			if (IsD3D10Supported())
-			{
-				var renderViewDetailed = new RenderViewDetailed();
-				var rendererD3D = new TileControl.RendererD3DSharpDX();
-				rendererD3D.RenderData = renderViewDetailed.RenderData;
-
-				renderer = rendererD3D;
-				renderView = renderViewDetailed;
-			}
-			else
-			{
-				// WPF renderer needs clipping
-				this.ClipToBounds = true;
-
-				bool detailed = true;
-
-				if (detailed)
-				{
-					var renderViewDetailed = new RenderViewDetailed();
-					renderer = new TileControl.RendererDetailedWPF(renderViewDetailed.RenderData);
-
-					renderView = renderViewDetailed;
-				}
-				else
-				{
-					var renderViewSimple = new RenderViewSimple();
-					renderer = new TileControl.RendererSimpleWPF(renderViewSimple.RenderData);
-
-					renderView = renderViewSimple;
-				}
-			}
+			var renderView = new RenderViewDetailed();
+			var renderer = new TileControl.RendererD3DSharpDX();
+			renderer.RenderData = renderView.RenderData;
 
 			m_renderer = renderer;
 			m_renderView = renderView;
@@ -104,12 +76,15 @@ namespace Dwarrowdelf.Client.UI
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			var renderSize = arrangeBounds;
+			if (m_renderView != null)
+			{
+				var renderSize = arrangeBounds;
 
-			var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
-			var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
+				var columns = (int)Math.Ceiling(renderSize.Width / MINTILESIZE + 1) | 1;
+				var rows = (int)Math.Ceiling(renderSize.Height / MINTILESIZE + 1) | 1;
 
-			m_renderView.SetMaxSize(new IntSize2(columns, rows));
+				m_renderView.SetMaxSize(new IntSize2(columns, rows));
+			}
 
 			return base.ArrangeOverride(arrangeBounds);
 		}

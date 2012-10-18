@@ -219,6 +219,9 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			trace.TraceVerbose("OnRender");
 
+			if (m_renderer == null)
+				return;
+
 			var renderSize = this.RenderSize;
 
 			if (m_tileLayoutInvalid)
