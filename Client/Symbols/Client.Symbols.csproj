@@ -61,11 +61,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="BitmapSymbols.pdn" />
-    <None Include="VectorSymbols.design" />
+    <None Include="DefaultTileSetBitmaps.pdn" />
+    <None Include="DefaultTileSetVectors.design" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="VectorSymbols.xaml">
+    <Page Include="DefaultTileSetVectors.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -75,7 +75,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="BitmapSymbols.png" />
+    <Resource Include="DefaultTileSetBitmaps.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

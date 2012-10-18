@@ -2,7 +2,7 @@
 <SymbolSet xmlns="clr-namespace:Dwarrowdelf.Client.Symbols"
 		   Name="Default"
 		   FontFamily="Arial" FontSize="64" Outline="True" OutlineThickness="0.5"
-		   Drawings="VectorSymbols.xaml" BitmapFile="BitmapSymbols.png" BitmapSizes="8,10,12,16,20,24">
+		   Drawings="DefaultTileSetVectors.xaml" BitmapFile="DefaultTileSetBitmaps.png" BitmapSizes="8,10,12,16,20,24">
 
 	<Symbol ID="Undefined">
 		<CharGfx Char="?" />
