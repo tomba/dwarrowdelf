@@ -480,11 +480,11 @@ namespace Dwarrowdelf.Client.UI
 				switch (value)
 				{
 					case "Char":
-						xaml = "DefaultTileSet.xaml";
+						xaml = "DefaultTileSet";
 						break;
 
 					case "Gfx":
-						xaml = "DefaultTileSet.xaml";
+						xaml = "DefaultTileSet";
 						break;
 
 					default:

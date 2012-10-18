@@ -32,14 +32,10 @@ namespace Dwarrowdelf.Client.Symbols
 			Symbols = new SymbolCollection();
 		}
 
-		public string Name { get; set; }
-
 		public FontFamily FontFamily { get; set; }
 		public double FontSize { get; set; }
 		public bool Outline { get; set; }
 		public double OutlineThickness { get; set; }
-		public string Drawings { get; set; }
-		public string BitmapFile { get; set; }
 		public string BitmapSizes { get; set; }
 
 		public SymbolCollection Symbols { get; set; }

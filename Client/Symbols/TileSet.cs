@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client.Symbols
 
 		static TileSet()
 		{
-			s_defaultTileSet = new TileSet("DefaultTileSet.xaml");
+			s_defaultTileSet = new TileSet("DefaultTileSet");
 			s_defaultTileSet.Load();
 		}
 
@@ -26,20 +26,19 @@ namespace Dwarrowdelf.Client.Symbols
 		BitmapSource m_bitmap;
 		int[] m_bitmapSizes;
 
+		public string Name { get; private set; }
+
 		public TileSet(string symbolInfoName)
 		{
-			m_symbolSet = LoadSymbolSet(symbolInfoName);
+			this.Name = symbolInfoName;
+			m_symbolSet = LoadSymbolSet(this.Name + ".xaml");
 		}
-
-		public string Name { get { return m_symbolSet.Name; } }
 
 		public void Load()
 		{
-			if (m_symbolSet.Drawings != null)
-				m_drawingResources = LoadDrawingResource(m_symbolSet.Drawings);
+			m_drawingResources = LoadDrawingResource(this.Name + "Vectors.xaml");
 
-			if (m_symbolSet.BitmapFile != null)
-				m_bitmap = LoadBitmapResource(m_symbolSet.BitmapFile);
+			m_bitmap = LoadBitmapResource(this.Name + "Bitmaps.png");
 
 			m_bitmapSizes = m_symbolSet.BitmapSizes.Split(',').Select(s => int.Parse(s)).ToArray();
 		}
@@ -79,8 +78,15 @@ namespace Dwarrowdelf.Client.Symbols
 			}
 			else
 			{
-				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + drawingsName, UriKind.Relative);
-				drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
+				try
+				{
+					var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + drawingsName, UriKind.Relative);
+					drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
+				}
+				catch (IOException)
+				{
+					return null;
+				}
 			}
 
 			var drawingMap = new Dictionary<string, Drawing>(drawingResources.Count);
@@ -98,10 +104,20 @@ namespace Dwarrowdelf.Client.Symbols
 
 		static BitmapFrame LoadBitmapResource(string name)
 		{
-			var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + name, UriKind.Relative);
-			var resStream = Application.GetResourceStream(uri);
+			Stream stream;
 
-			var decoder = PngBitmapDecoder.Create(resStream.Stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
+			try
+			{
+				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + name, UriKind.Relative);
+				var resStream = Application.GetResourceStream(uri);
+				stream = resStream.Stream;
+			}
+			catch (IOException)
+			{
+				return null;
+			}
+
+			var decoder = PngBitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
 			return decoder.Frames[0];
 		}
 
