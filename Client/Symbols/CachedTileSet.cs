@@ -20,6 +20,9 @@ namespace Dwarrowdelf.Client.Symbols
 			m_tileSet = tileSet;
 		}
 
+		public string Name { get { return m_tileSet.Name; } }
+		public DateTime ModTime { get { return m_tileSet.ModTime; } }
+
 		public Drawing GetDetailedDrawing(SymbolID symbolID, GameColor color)
 		{
 			int key = ((int)symbolID << 16) | (int)color;

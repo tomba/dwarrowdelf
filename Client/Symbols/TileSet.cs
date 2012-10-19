@@ -27,6 +27,7 @@ namespace Dwarrowdelf.Client.Symbols
 		int[] m_bitmapSizes;
 
 		public string Name { get; private set; }
+		public DateTime ModTime { get; private set; }
 
 		public TileSet(string symbolInfoName)
 		{
@@ -43,38 +44,50 @@ namespace Dwarrowdelf.Client.Symbols
 			m_bitmapSizes = m_symbolSet.BitmapSizes.Split(',').Select(s => int.Parse(s)).ToArray();
 		}
 
-		static SymbolSet LoadSymbolSet(string symbolInfoName)
+		SymbolSet LoadSymbolSet(string symbolInfoName)
 		{
 			var asm = System.Reflection.Assembly.GetExecutingAssembly();
 			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", symbolInfoName);
 
 			SymbolSet symbolSet;
+			DateTime date;
 
 			if (File.Exists(path))
 			{
 				using (var stream = File.OpenRead(path))
 					symbolSet = (Symbols.SymbolSet)System.Xaml.XamlServices.Load(stream);
+
+				date = File.GetLastWriteTime(path);
 			}
 			else
 			{
 				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + symbolInfoName, UriKind.Relative);
 				symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
+
+				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			}
+
+			if (date > this.ModTime)
+				this.ModTime = date;
 
 			return symbolSet;
 		}
 
-		static Dictionary<string, Drawing> LoadDrawingResource(string drawingsName)
+		Dictionary<string, Drawing> LoadDrawingResource(string drawingsName)
 		{
 			ResourceDictionary drawingResources;
 
 			var asm = System.Reflection.Assembly.GetExecutingAssembly();
 			var path = Path.Combine(Path.GetDirectoryName(asm.Location), "Symbols", drawingsName);
 
+			DateTime date;
+
 			if (File.Exists(path))
 			{
 				using (var stream = File.OpenRead(path))
 					drawingResources = (ResourceDictionary)System.Xaml.XamlServices.Load(stream);
+
+				date = File.GetLastWriteTime(path);
 			}
 			else
 			{
@@ -82,12 +95,17 @@ namespace Dwarrowdelf.Client.Symbols
 				{
 					var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + drawingsName, UriKind.Relative);
 					drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
+
+					date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
 				}
 				catch (IOException)
 				{
 					return null;
 				}
 			}
+
+			if (date > this.ModTime)
+				this.ModTime = date;
 
 			var drawingMap = new Dictionary<string, Drawing>(drawingResources.Count);
 
@@ -102,20 +120,25 @@ namespace Dwarrowdelf.Client.Symbols
 			return drawingMap;
 		}
 
-		static BitmapFrame LoadBitmapResource(string name)
+		BitmapFrame LoadBitmapResource(string name)
 		{
 			Stream stream;
+			DateTime date;
 
 			try
 			{
 				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + name, UriKind.Relative);
 				var resStream = Application.GetResourceStream(uri);
 				stream = resStream.Stream;
+				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
 			}
 			catch (IOException)
 			{
 				return null;
 			}
+
+			if (date > this.ModTime)
+				this.ModTime = date;
 
 			var decoder = PngBitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.Default);
 			return decoder.Frames[0];

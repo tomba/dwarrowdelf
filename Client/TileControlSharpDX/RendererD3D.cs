@@ -2,6 +2,7 @@
 using System.Windows;
 
 using SharpDX.Direct3D11;
+using System.IO;
 
 namespace Dwarrowdelf.Client.TileControl
 {
@@ -124,7 +125,45 @@ namespace Dwarrowdelf.Client.TileControl
 				m_tileTextureArray = null;
 			}
 
-			m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_tileSet);
+			// XXX what would be a better place for the cache?
+			var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
+			var textureName = m_tileSet.Name;
+
+			var texturePath = Path.Combine(cachePath, textureName + ".dds");
+			var textureInfoPath = Path.Combine(cachePath, textureName + ".dds.info");
+
+			var assDate = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+			if (File.Exists(texturePath) && File.Exists(textureInfoPath))
+			{
+				try
+				{
+					var lines = File.ReadAllLines(textureInfoPath);
+					var tileSetModTime = DateTime.FromBinary(long.Parse(lines[0]));
+					var assModTime = DateTime.FromBinary(long.Parse(lines[1]));
+
+					if (tileSetModTime == m_tileSet.ModTime && assModTime == assDate)
+					{
+						trace.TraceInformation("Loading textures from cache");
+						m_tileTextureArray = Texture2D.FromFile<Texture2D>(m_device, texturePath);
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			if (m_tileTextureArray == null)
+			{
+				m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_tileSet);
+
+				Texture2D.ToFile(m_device.ImmediateContext, m_tileTextureArray, ImageFileFormat.Dds, texturePath);
+
+				File.WriteAllLines(textureInfoPath, new string[] {
+					m_tileSet.ModTime.ToBinary().ToString(),
+					assDate.ToBinary().ToString(),
+				});
+			}
 
 			if (m_scene != null)
 				m_scene.SetTileTextures(m_tileTextureArray);
