@@ -122,7 +122,7 @@
     Outputs="SingleQuad11.pso;SingleQuad11.vso">
 
     <PropertyGroup>
-      <FxcPath>C:/Program Files/Windows Kits/8.0/bin/x86</FxcPath>
+      <FxcPath>$(MSBuildExtensionsPath32)/../Windows Kits/8.0/bin/x86</FxcPath>
     </PropertyGroup>
 
     <Exec Command="&quot;$(FxcPath)/fxc.exe&quot; /nologo /T ps_4_0 /E PS /Fo SingleQuad11.pso SingleQuad11.ps" Outputs="SingleQuad11.pso" />
