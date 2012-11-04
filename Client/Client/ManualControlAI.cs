@@ -5,13 +5,13 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Dwarrowdelf.AI;
 
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	sealed class ManualControlAI : AI.IAI, INotifyPropertyChanged
+	sealed class ManualControlAI : IAI, INotifyPropertyChanged
 	{
-		LivingObject m_worker;
 		ObservableCollection<GameAction> m_actions;
 		public ReadOnlyObservableCollection<GameAction> Actions { get; private set; }
 		GameAction m_currentAction;
@@ -19,9 +19,11 @@ namespace Dwarrowdelf.Client
 		byte m_id;
 		ushort m_magicNumber;
 
+		LivingObject Worker { get; set;}
+
 		public ManualControlAI(LivingObject worker, byte aiID)
 		{
-			m_worker = worker;
+			this.Worker = worker;
 			m_id = aiID;
 			m_actions = new ObservableCollection<GameAction>();
 			this.Actions = new ReadOnlyObservableCollection<GameAction>(m_actions);
@@ -32,8 +34,6 @@ namespace Dwarrowdelf.Client
 			this.Actions = new ReadOnlyObservableCollection<GameAction>(m_actions);
 		}
 
-		public string Name { get { return "ManualControlAI"; } }
-
 		public void AddAction(GameAction action)
 		{
 			m_actions.Add(action);
@@ -41,9 +41,11 @@ namespace Dwarrowdelf.Client
 
 		#region IAI Members
 
-		public ILivingObject Worker { get { return m_worker; } }
+		string IAI.Name { get { return "ManualControlAI"; } }
 
-		public GameAction DecideAction(ActionPriority priority)
+		ILivingObject IAI.Worker { get { return this.Worker; } }
+
+		GameAction IAI.DecideAction(ActionPriority priority)
 		{
 			if (this.Worker.HasAction)
 			{
@@ -73,7 +75,7 @@ namespace Dwarrowdelf.Client
 			return m_currentAction;
 		}
 
-		public void ActionStarted(ActionStartEvent e)
+		void IAI.ActionStarted(ActionStartEvent e)
 		{
 			if (m_currentAction == null)
 				return;
@@ -82,11 +84,11 @@ namespace Dwarrowdelf.Client
 				m_currentAction = null;
 		}
 
-		public void ActionProgress(ActionProgressEvent e)
+		void IAI.ActionProgress(ActionProgressEvent e)
 		{
 		}
 
-		public void ActionDone(ActionDoneEvent e)
+		void IAI.ActionDone(ActionDoneEvent e)
 		{
 			if (m_currentAction == null)
 				return;
