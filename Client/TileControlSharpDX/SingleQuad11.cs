@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			/* input layout */
 
-			var layout = ToDispose(new InputLayout(m_device, m_vertexShader.Signature, new[] {
+			var layout = ToDispose(new InputLayout(m_device, m_vertexShader.Bytecode, new[] {
 				new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
 			}));
 

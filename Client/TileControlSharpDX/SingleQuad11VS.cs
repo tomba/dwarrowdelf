@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client.TileControl
 		Device m_device;
 		VertexShader m_vertexShader;
 
-		public ShaderSignature Signature { get; private set; }
+		public ShaderBytecode Bytecode { get; private set; }
 
 		[StructLayout(LayoutKind.Sequential)]
 		struct ShaderData
@@ -36,6 +36,7 @@ namespace Dwarrowdelf.Client.TileControl
 			using (var stream = ass.GetManifestResourceStream("Dwarrowdelf.Client.TileControl.SingleQuad11.vso"))
 			{
 				var bytecode = ShaderBytecode.FromStream(stream);
+				this.Bytecode = bytecode;
 				Create(bytecode);
 			}
 		}
@@ -46,8 +47,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			m_vertexShader = ToDispose(new VertexShader(m_device, bytecode));
 			context.VertexShader.Set(m_vertexShader);
-
-			this.Signature = ToDispose(ShaderSignature.GetInputSignature(bytecode));
 
 			m_shaderDataBuffer = ToDispose(new Buffer(m_device, Utilities.SizeOf<ShaderData>(),
 				ResourceUsage.Default, BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0));
