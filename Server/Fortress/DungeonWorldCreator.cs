@@ -35,7 +35,11 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS, stairs.Value);
 
+			//CreateWolf(world, env);
+		}
 
+		static void CreateWolf(World world, EnvironmentObject env)
+		{
 			foreach (var p in IntPoint2.SquareSpiral(env.StartLocation.ToIntPoint(), env.Width / 2))
 			{
 				if (env.Size.Plane.Contains(p) == false)
@@ -59,7 +63,6 @@ namespace Dwarrowdelf.Server.Fortress
 					break;
 				}
 			}
-
 		}
 
 		static TerrainData CreateTerrain()
