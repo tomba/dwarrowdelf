@@ -157,12 +157,15 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_tileSet);
 
+				// texture saving requires d3dx11.dll
+				/*
 				Texture2D.ToFile(m_device.ImmediateContext, m_tileTextureArray, ImageFileFormat.Dds, texturePath);
 
 				File.WriteAllLines(textureInfoPath, new string[] {
 					m_tileSet.ModTime.ToBinary().ToString(),
 					assDate.ToBinary().ToString(),
 				});
+				 */
 			}
 
 			if (m_scene != null)
