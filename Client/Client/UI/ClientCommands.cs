@@ -19,6 +19,7 @@ namespace Dwarrowdelf.Client.UI
 		public static RoutedUICommand AutoAdvanceTurnCommand;
 		public static RoutedUICommand OpenConsoleCommand;
 		public static RoutedUICommand OpenFocusDebugCommand;
+		public static RoutedUICommand DropItemCommand;
 
 		static ClientCommands()
 		{
@@ -29,6 +30,8 @@ namespace Dwarrowdelf.Client.UI
 				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });
 
 			OpenFocusDebugCommand = new RoutedUICommand("Open FocusDebug", "OpenFocusDebug", typeof(ClientCommands));
+
+			DropItemCommand = new RoutedUICommand("Drop Item", "DropItem", typeof(ClientCommands));
 		}
 	}
 }

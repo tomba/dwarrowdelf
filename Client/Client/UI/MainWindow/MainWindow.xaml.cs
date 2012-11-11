@@ -265,9 +265,35 @@ namespace Dwarrowdelf.Client.UI
 
 			m_cmdHandler = new MainWindowCommandHandler(this);
 
-			mainWindowTools.InstallKeyBindings(this);
-
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
+
+			var dpd = DependencyPropertyDescriptor.FromProperty(GameData.WorldProperty, typeof(GameData));
+			dpd.AddValueChanged(GameData.Data, OnWorldChanged);
+		}
+
+		void OnWorldChanged(object sender, EventArgs ev)
+		{
+			var world = GameData.Data.World;
+
+			if (world == null)
+			{
+				// XXX remove handlers
+				return;
+			}
+
+			switch (world.GameMode)
+			{
+				case GameMode.Fortress:
+					mainWindowTools.InstallKeyBindings(this);
+					break;
+
+				case GameMode.Adventure:
+					m_cmdHandler.AddAdventureCommands();
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs ev)

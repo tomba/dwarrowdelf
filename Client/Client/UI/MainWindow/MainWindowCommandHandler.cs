@@ -19,6 +19,34 @@ namespace Dwarrowdelf.Client.UI
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler));
 		}
 
+		public void AddAdventureCommands()
+		{
+			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.DropItemCommand, DropItemHandler));
+			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.DropItemCommand, new GameKeyGesture(Key.D)));
+		}
+
+		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var living = m_mainWindow.FocusedObject;
+
+			if (living == null)
+				return;
+
+			var dlg = new InventoryItemSelectorDialog();
+			dlg.Owner = m_mainWindow;
+			dlg.DataContext = living;
+			dlg.Title = "Drop Item";
+			var ret = dlg.ShowDialog();
+			if (ret.HasValue && ret.Value == true)
+			{
+				var ob = dlg.SelectedItem;
+
+				var action = new DropItemAction(ob);
+				action.MagicNumber = 1;
+				living.RequestAction(action);
+			}
+		}
+
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
 		{
 			GameData.Data.IsAutoAdvanceTurn = !GameData.Data.IsAutoAdvanceTurn;

@@ -157,6 +157,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Windows\InventoryItemSelectorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Windows\FocusDebugWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -348,6 +352,9 @@
     </Compile>
     <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
       <DependentUpon>ConstructDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Windows\InventoryItemSelectorDialog.xaml.cs">
+      <DependentUpon>InventoryItemSelectorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\FocusDebugWindow.xaml.cs">
       <DependentUpon>FocusDebugWindow.xaml</DependentUpon>
