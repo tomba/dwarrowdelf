@@ -511,18 +511,6 @@ namespace Dwarrowdelf.Client.UI
 				return;
 			}
 
-			switch (e.Key)
-			{
-				case Key.Space:
-					ClientCommands.AutoAdvanceTurnCommand.Execute(null, this);
-					break;
-
-				default:
-					base.OnKeyDown(e);
-					return;
-			}
-
-			e.Handled = true;
 			base.OnKeyDown(e);
 		}
 

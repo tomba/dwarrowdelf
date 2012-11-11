@@ -22,7 +22,8 @@ namespace Dwarrowdelf.Client.UI
 
 		static ClientCommands()
 		{
-			AutoAdvanceTurnCommand = new RoutedUICommand("Auto-advance turn", "AutoAdvanceTurn", typeof(ClientCommands));
+			AutoAdvanceTurnCommand = new RoutedUICommand("Auto-advance turn", "AutoAdvanceTurn", typeof(ClientCommands),
+				new InputGestureCollection() { new KeyGesture(Key.Space) });
 
 			OpenConsoleCommand = new RoutedUICommand("Open Console", "OpenConsole", typeof(ClientCommands),
 				new InputGestureCollection() { new KeyGesture(Key.Enter, ModifierKeys.Control) });
