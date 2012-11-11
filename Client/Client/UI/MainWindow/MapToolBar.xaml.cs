@@ -14,8 +14,49 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
+	/* KeyGesture class doesn't like gestures without modifiers, so we need our own */
+	public sealed class GameKeyGesture : InputGesture
+	{
+		public GameKeyGesture(Key key)
+		{
+			this.Key = key;
+		}
+
+		public Key Key { get; private set; }
+
+		public override bool Matches(object targetElement, InputEventArgs inputEventArgs)
+		{
+			KeyEventArgs args = inputEventArgs as KeyEventArgs;
+			return args != null && Keyboard.Modifiers == ModifierKeys.None && this.Key == args.Key;
+		}
+	}
+
+	sealed class ToolData
+	{
+		public ToolData(ClientToolMode mode, string name, Key key, string groupName)
+		{
+			this.Mode = mode;
+			this.Name = name;
+			this.ToolTip = String.Format("{0} ({1})", this.Name, key);
+			this.GroupName = groupName;
+
+			this.Command = new RoutedUICommand(name, name, typeof(MapToolBar));
+			this.InputBinding = new InputBinding(this.Command, new GameKeyGesture(key));
+			this.InputBinding.CommandParameter = mode;
+		}
+
+		public ClientToolMode Mode { get; private set; }
+		public string Name { get; private set; }
+		public string GroupName { get; private set; }
+		public string ToolTip { get; private set; }
+		public RoutedUICommand Command { get; private set; }
+		public InputBinding InputBinding { get; private set; }
+	}
+
 	internal partial class MapToolBar : UserControl
 	{
+		public static readonly Dictionary<ClientToolMode, ToolData> ToolDatas;
+
 		static MapToolBar()
 		{
 			ToolDatas = new Dictionary<ClientToolMode, ToolData>();
@@ -49,6 +90,15 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
+		public void InstallKeyBindings(Window mw)
+		{
+			foreach (var kvp in MapToolBar.ToolDatas)
+			{
+				mw.CommandBindings.Add(new CommandBinding(kvp.Value.Command, (s, e) => this.ToolMode = (ClientToolMode)e.Parameter));
+				mw.InputBindings.Add(kvp.Value.InputBinding);
+			}
+		}
+
 		private void ToolBar_Loaded(object sender, RoutedEventArgs e)
 		{
 			// Hide the overflow control
@@ -57,8 +107,6 @@ namespace Dwarrowdelf.Client.UI
 			if (overflowGrid != null)
 				overflowGrid.Visibility = Visibility.Collapsed;
 		}
-
-		public static readonly Dictionary<ClientToolMode, ToolData> ToolDatas;
 
 		public event Action<ClientToolMode> ToolModeChanged;
 
@@ -180,24 +228,6 @@ namespace Dwarrowdelf.Client.UI
 			var toolData = (ToolData)item.DataContext;
 			this.ToolMode = toolData.Mode;
 		}
-	}
-
-	sealed class ToolData
-	{
-		public ToolData(ClientToolMode mode, string name, Key key, string groupName)
-		{
-			this.Mode = mode;
-			this.Name = name;
-			this.Key = key;
-			this.ToolTip = String.Format("{0} ({1})", this.Name, key);
-			this.GroupName = groupName;
-		}
-
-		public ClientToolMode Mode { get; private set; }
-		public string Name { get; private set; }
-		public string GroupName { get; private set; }
-		public Key Key { get; private set; }
-		public string ToolTip { get; private set; }
 	}
 
 	sealed class ClientToolModeToToolDataConverter : IValueConverter

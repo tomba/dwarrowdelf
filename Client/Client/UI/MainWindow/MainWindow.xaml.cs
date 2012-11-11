@@ -265,6 +265,8 @@ namespace Dwarrowdelf.Client.UI
 
 			m_cmdHandler = new MainWindowCommandHandler(this);
 
+			mainWindowTools.InstallKeyBindings(this);
+
 			AddHandler(UI.MapControl.MouseClickedEvent, new MouseButtonEventHandler(OnMouseClicked));
 		}
 
@@ -495,23 +497,12 @@ namespace Dwarrowdelf.Client.UI
 			}
 		}
 
-		protected override void OnKeyDown(KeyEventArgs e)
+		protected override void OnPreviewKeyDown(KeyEventArgs e)
 		{
-			var toolData = MapToolBar.ToolDatas.Select(kvp => kvp.Value).FirstOrDefault(td => td.Key == e.Key);
+			if (e.Key == Key.Escape)
+				map.Focus();
 
-			if (toolData != null)
-			{
-				this.mainWindowTools.ToolMode = toolData.Mode;
-
-				if (e.Key == Key.Escape)
-					map.Focus();
-
-				e.Handled = true;
-				base.OnKeyDown(e);
-				return;
-			}
-
-			base.OnKeyDown(e);
+			base.OnPreviewKeyDown(e);
 		}
 
 		internal EnvironmentObject Map
