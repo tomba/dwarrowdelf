@@ -45,6 +45,8 @@ namespace Dwarrowdelf.Client.UI
 				action.MagicNumber = 1;
 				living.RequestAction(action);
 			}
+
+			e.Handled = true;
 		}
 
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
