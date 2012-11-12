@@ -1,17 +1,17 @@
-﻿<Window x:Class="Dwarrowdelf.Client.UI.InventoryItemSelectorDialog"
+﻿<Window x:Class="Dwarrowdelf.Client.UI.ItemSelectorDialog"
 		x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="InventoryItemSelectorDialog" Height="300" Width="300"
-		FocusManager.FocusedElement="{Binding ElementName=invList}">
+		FocusManager.FocusedElement="{Binding ElementName=itemList}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="203*"/>
             <RowDefinition Height="67*"/>
         </Grid.RowDefinitions>
-        <ListBox Name="invList" ItemsSource="{Binding Inventory}" HorizontalContentAlignment="Stretch" 
+        <ListBox Name="itemList" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" 
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="31,10,23,22"
-                 SelectionChanged="invList_SelectionChanged"
+                 SelectionChanged="itemList_SelectionChanged"
                  >
             <ListBox.Resources>
                 <ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />

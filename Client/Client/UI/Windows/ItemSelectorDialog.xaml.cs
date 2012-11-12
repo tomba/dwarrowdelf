@@ -14,9 +14,9 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	internal partial class InventoryItemSelectorDialog : Window
+	internal partial class ItemSelectorDialog : Window
 	{
-		public InventoryItemSelectorDialog()
+		public ItemSelectorDialog()
 		{
 			InitializeComponent();
 		}
@@ -26,16 +26,16 @@ namespace Dwarrowdelf.Client.UI
 			this.DialogResult = true;
 		}
 
-		private void invList_SelectionChanged(object sender, RoutedEventArgs e)
+		private void itemList_SelectionChanged(object sender, RoutedEventArgs e)
 		{
-			okButton.IsEnabled = invList.SelectedItem != null;
+			okButton.IsEnabled = itemList.SelectedItem != null;
 		}
 
 		public ItemObject SelectedItem
 		{
 			get
 			{
-				return (ItemObject)invList.SelectedItem;
+				return (ItemObject)itemList.SelectedItem;
 			}
 		}
 	}

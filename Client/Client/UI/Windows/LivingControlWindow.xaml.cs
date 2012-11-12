@@ -85,20 +85,15 @@ namespace Dwarrowdelf.Client.UI
 
 			var obs = living.Environment.GetContents(living.Location).OfType<ItemObject>();
 
-			var wnd = new SelectItemsWindow();
-			wnd.DataContext = obs;
-			var b = wnd.ShowDialog();
+			var dlg = new ItemSelectorDialog();
+			dlg.DataContext = obs;
+			var b = dlg.ShowDialog();
 
 			if (!b.HasValue || b.Value == false)
 				return;
 
-			obs = wnd.SelectedItems;
-
-			foreach (ItemObject item in obs)
-			{
-				var action = new GetItemAction(item);
-				AddAction(action);
-			}
+			var action = new GetItemAction(dlg.SelectedItem);
+			AddAction(action);
 		}
 
 		private void WearButton_Click(object sender, RoutedEventArgs e)

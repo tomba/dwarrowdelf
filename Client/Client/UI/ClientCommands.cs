@@ -20,6 +20,7 @@ namespace Dwarrowdelf.Client.UI
 		public static RoutedUICommand OpenConsoleCommand;
 		public static RoutedUICommand OpenFocusDebugCommand;
 		public static RoutedUICommand DropItemCommand;
+		public static RoutedUICommand GetItemCommand;
 
 		static ClientCommands()
 		{
@@ -32,6 +33,7 @@ namespace Dwarrowdelf.Client.UI
 			OpenFocusDebugCommand = new RoutedUICommand("Open FocusDebug", "OpenFocusDebug", typeof(ClientCommands));
 
 			DropItemCommand = new RoutedUICommand("Drop Item", "DropItem", typeof(ClientCommands));
+			GetItemCommand = new RoutedUICommand("Get Item", "GetItem", typeof(ClientCommands));
 		}
 	}
 }

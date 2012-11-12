@@ -157,7 +157,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Windows\InventoryItemSelectorDialog.xaml">
+    <Page Include="UI\Windows\ItemSelectorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,10 +214,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainWindow\MainWindowStatusBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Windows\SelectItemsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -353,8 +349,8 @@
     <Compile Include="UI\Windows\ConstructDialog.xaml.cs">
       <DependentUpon>ConstructDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\InventoryItemSelectorDialog.xaml.cs">
-      <DependentUpon>InventoryItemSelectorDialog.xaml</DependentUpon>
+    <Compile Include="UI\Windows\ItemSelectorDialog.xaml.cs">
+      <DependentUpon>ItemSelectorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\FocusDebugWindow.xaml.cs">
       <DependentUpon>FocusDebugWindow.xaml</DependentUpon>
@@ -386,9 +382,6 @@
     </Compile>
     <Compile Include="UI\Windows\CreateItemDialog.xaml.cs">
       <DependentUpon>CreateItemDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\SelectItemsWindow.xaml.cs">
-      <DependentUpon>SelectItemsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\SetTerrainDialog.xaml.cs">
       <DependentUpon>SetTerrainDialog.xaml</DependentUpon>

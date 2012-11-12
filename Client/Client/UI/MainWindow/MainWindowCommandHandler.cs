@@ -23,6 +23,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.DropItemCommand, DropItemHandler));
 			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.DropItemCommand, new GameKeyGesture(Key.D)));
+
+			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.GetItemCommand, GetItemHandler));
+			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.GetItemCommand, new GameKeyGesture(Key.OemComma)));
 		}
 
 		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
@@ -32,16 +35,49 @@ namespace Dwarrowdelf.Client.UI
 			if (living == null)
 				return;
 
-			var dlg = new InventoryItemSelectorDialog();
+			var dlg = new ItemSelectorDialog();
 			dlg.Owner = m_mainWindow;
-			dlg.DataContext = living;
+			dlg.DataContext = living.Inventory;
 			dlg.Title = "Drop Item";
+
 			var ret = dlg.ShowDialog();
+
 			if (ret.HasValue && ret.Value == true)
 			{
 				var ob = dlg.SelectedItem;
 
 				var action = new DropItemAction(ob);
+				action.MagicNumber = 1;
+				living.RequestAction(action);
+			}
+
+			e.Handled = true;
+		}
+
+		void GetItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var living = m_mainWindow.FocusedObject;
+
+			if (living == null)
+				return;
+
+			var obs = living.Environment.GetContents(living.Location).OfType<ItemObject>();
+
+			if (obs.Any() == false)
+				return;
+
+			var dlg = new ItemSelectorDialog();
+			dlg.Owner = m_mainWindow;
+			dlg.DataContext = obs;
+			dlg.Title = "Get Item";
+
+			var ret = dlg.ShowDialog();
+
+			if (ret.HasValue && ret.Value == true)
+			{
+				var ob = dlg.SelectedItem;
+
+				var action = new GetItemAction(ob);
 				action.MagicNumber = 1;
 				living.RequestAction(action);
 			}
