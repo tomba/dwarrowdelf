@@ -26,6 +26,12 @@ namespace Dwarrowdelf.Client.UI
 
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.GetItemCommand, GetItemHandler));
 			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.GetItemCommand, new GameKeyGesture(Key.OemComma)));
+
+			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.RemoveItemCommand, RemoveItemHandler));
+			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.RemoveItemCommand, new GameKeyGesture(Key.R)));
+
+			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.WearItemCommand, WearItemHandler));
+			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.WearItemCommand, new GameKeyGesture(Key.W)));
 		}
 
 		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
@@ -78,6 +84,77 @@ namespace Dwarrowdelf.Client.UI
 				var ob = dlg.SelectedItem;
 
 				var action = new GetItemAction(ob);
+				action.MagicNumber = 1;
+				living.RequestAction(action);
+			}
+
+			e.Handled = true;
+		}
+
+		void RemoveItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var living = m_mainWindow.FocusedObject;
+
+			if (living == null)
+				return;
+
+			var obs = living.Inventory.OfType<ItemObject>().Where(o => o.IsWorn || o.IsWielded);
+
+			if (obs.Any() == false)
+				return;
+
+			var dlg = new ItemSelectorDialog();
+			dlg.Owner = m_mainWindow;
+			dlg.DataContext = obs;
+			dlg.Title = "Remove Item";
+
+			var ret = dlg.ShowDialog();
+
+			if (ret.HasValue && ret.Value == true)
+			{
+				var ob = dlg.SelectedItem;
+
+				GameAction action;
+				if (ob.IsArmor)
+					action = new RemoveArmorAction(ob);
+				else
+					action = new RemoveWeaponAction(ob);
+				action.MagicNumber = 1;
+				living.RequestAction(action);
+			}
+
+			e.Handled = true;
+		}
+
+		void WearItemHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var living = m_mainWindow.FocusedObject;
+
+			if (living == null)
+				return;
+
+			var obs = living.Inventory.OfType<ItemObject>()
+				.Where(o => (o.IsArmor && o.IsWorn == false) || (o.IsWeapon && o.IsWielded == false));
+
+			if (obs.Any() == false)
+				return;
+
+			var dlg = new ItemSelectorDialog();
+			dlg.Owner = m_mainWindow;
+			dlg.DataContext = obs;
+			dlg.Title = "Wear/Wield Item";
+
+			var ret = dlg.ShowDialog();
+
+			if (ret.HasValue && ret.Value == true)
+			{
+				var ob = dlg.SelectedItem;
+
+				GameAction action;
+				if (ob.IsArmor)
+					action = new WearArmorAction(ob);
+				else
+					action = new WieldWeaponAction(ob);
 				action.MagicNumber = 1;
 				living.RequestAction(action);
 			}
