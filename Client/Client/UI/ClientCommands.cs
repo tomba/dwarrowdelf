@@ -23,6 +23,7 @@ namespace Dwarrowdelf.Client.UI
 		public static RoutedUICommand GetItemCommand;
 		public static RoutedUICommand RemoveItemCommand;
 		public static RoutedUICommand WearItemCommand;
+		public static RoutedUICommand InventoryCommand;
 
 		static ClientCommands()
 		{
@@ -39,6 +40,8 @@ namespace Dwarrowdelf.Client.UI
 
 			RemoveItemCommand = new RoutedUICommand("Remove Item", "RemoveItem", typeof(ClientCommands));
 			WearItemCommand = new RoutedUICommand("Wear Item", "WearItem", typeof(ClientCommands));
+
+			InventoryCommand = new RoutedUICommand("Inventory", "Inventory", typeof(ClientCommands));
 		}
 	}
 }

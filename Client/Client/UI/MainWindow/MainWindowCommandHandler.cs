@@ -32,6 +32,9 @@ namespace Dwarrowdelf.Client.UI
 
 			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.WearItemCommand, WearItemHandler));
 			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.WearItemCommand, new GameKeyGesture(Key.W)));
+
+			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.InventoryCommand, InventoryHandler));
+			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.InventoryCommand, new GameKeyGesture(Key.I)));
 		}
 
 		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
@@ -160,6 +163,26 @@ namespace Dwarrowdelf.Client.UI
 			}
 
 			e.Handled = true;
+		}
+
+		void InventoryHandler(object sender, ExecutedRoutedEventArgs e)
+		{
+			var living = m_mainWindow.FocusedObject;
+
+			if (living == null)
+				return;
+
+			var obs = living.Inventory;
+
+			if (obs.Any() == false)
+				return;
+
+			var dlg = new ItemSelectorDialog();
+			dlg.Owner = m_mainWindow;
+			dlg.DataContext = obs;
+			dlg.Title = "Inventory";
+
+			dlg.ShowDialog();
 		}
 
 		void AutoAdvanceTurnHandler(object sender, ExecutedRoutedEventArgs e)
