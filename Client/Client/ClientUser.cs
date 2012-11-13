@@ -337,7 +337,10 @@ namespace Dwarrowdelf.Client
 			m_currentLivingID = livingID;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
-				SendProceedTurn();
+			{
+				if (App.MainWindow.FocusedObject == null || App.MainWindow.FocusedObject.HasAction)
+					SendProceedTurn();
+			}
 		}
 
 		// Called from change handler
