@@ -372,15 +372,37 @@ namespace Dwarrowdelf.Client
 			if (m_currentLivingID == ObjectID.NullObjectID)
 				return;
 
-			// livings which the user can control (ie. server not doing high priority action)
-			var livings = m_world.Controllables.Where(l => l.UserActionPossible());
 			var list = new List<Tuple<ObjectID, GameAction>>();
+
+			IEnumerable<LivingObject> livings;
+
+			if (m_currentLivingID == ObjectID.AnyObjectID)
+			{
+				// livings which the user can control (ie. server not doing high priority action)
+				livings = m_world.Controllables.Where(l => l.UserActionPossible());
+			}
+			else
+			{
+				var living = m_world.GetObject<LivingObject>(m_currentLivingID);
+				if (living.UserActionPossible() == false)
+					throw new NotImplementedException();
+				livings = new LivingObject[] { living };
+			}
+
+			var focusedObject = App.MainWindow.FocusedObject;
+
 			foreach (var living in livings)
 			{
 				GameAction action;
 
 				if (m_actionMap.TryGetValue(living, out action) == false)
-					action = living.DecideAction();
+				{
+					// skip AI if we're directly controlling the living
+					if (focusedObject != living)
+						action = living.DecideAction();
+					else
+						action = living.CurrentAction;
+				}
 
 				Debug.Assert(action == null || action.MagicNumber != 0);
 
