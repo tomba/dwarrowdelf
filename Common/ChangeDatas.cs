@@ -28,6 +28,9 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class TurnEndChangeData : ChangeData
 	{
+		// Sequential : Living who's turn it is
+		// Simultaneous: AnyObjectID
+		public ObjectID LivingID;
 	}
 
 	[Serializable]

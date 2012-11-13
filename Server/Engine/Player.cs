@@ -643,9 +643,15 @@ namespace Dwarrowdelf.Server
 
 		bool CanSeeChange(Change change, IList<LivingObject> controllables)
 		{
-			if (change is TurnStartChange || change is TurnEndChange)
+			if (change is TurnStartChange)
 			{
-				return true;
+				var c = (TurnStartChange)change;
+				return c.Living == null || m_player.IsController(c.Living);
+			}
+			else if (change is TurnEndChange)
+			{
+				var c = (TurnEndChange)change;
+				return c.Living == null || m_player.IsController(c.Living);
 			}
 			else if (change is TickStartChange)
 			{

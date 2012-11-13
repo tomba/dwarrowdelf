@@ -46,13 +46,19 @@ namespace Dwarrowdelf.Server
 
 	public sealed class TurnEndChange : Change
 	{
-		public TurnEndChange()
+		// Sequential : Living who's turn it is
+		// Simultaneous: null
+		public LivingObject Living { get; private set; }
+
+		public TurnEndChange(LivingObject living)
 		{
+			this.Living = living;
 		}
 
 		public override ChangeData ToChangeData()
 		{
-			return new TurnEndChangeData();
+			var oid = this.Living != null ? this.Living.ObjectID : ObjectID.AnyObjectID;
+			return new TurnEndChangeData() { LivingID = oid };
 		}
 	}
 

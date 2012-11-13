@@ -234,7 +234,7 @@ namespace Dwarrowdelf.Server
 
 		void EndTurnSimultaneous()
 		{
-			AddChange(new TurnEndChange());
+			AddChange(new TurnEndChange(null));
 
 			if (TurnEnded != null)
 				TurnEnded(null);
@@ -257,7 +257,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceVerbose("EndTurnSeq {0}", living);
 
-			AddChange(new TurnEndChange());
+			AddChange(new TurnEndChange(living));
 
 			if (TurnEnded != null)
 				TurnEnded(living);
