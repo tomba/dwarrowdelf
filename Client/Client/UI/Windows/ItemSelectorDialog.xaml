@@ -6,21 +6,20 @@
 		FocusManager.FocusedElement="{Binding ElementName=itemList}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="203*"/>
-            <RowDefinition Height="67*"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ListBox Name="itemList" ItemsSource="{Binding}" HorizontalContentAlignment="Stretch" 
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="31,10,23,22"
-                 SelectionChanged="itemList_SelectionChanged"
-                 >
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 SelectionChanged="itemList_SelectionChanged">
             <ListBox.Resources>
                 <ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />
             </ListBox.Resources>
         </ListBox>
 
-        <Button Name="okButton" Content="Ok" Margin="0,0,90,10" Grid.Row="1" IsEnabled="False"
+        <Button Name="okButton" Content="Ok" Margin="10,10,90,10" Grid.Row="1" IsEnabled="False"
                 IsDefault="True" Click="OkButton_Click" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
-        <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,10" Grid.Row="1" VerticalAlignment="Bottom" Width="75"
+        <Button Content="Cancel" HorizontalAlignment="Right" Margin="10,10,10,10" Grid.Row="1" VerticalAlignment="Bottom" Width="75"
                 IsCancel="True"/>
     </Grid>
 </Window>
