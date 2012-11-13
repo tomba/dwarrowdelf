@@ -198,7 +198,10 @@ namespace Dwarrowdelf.Client
 		static void IsAutoAdvanceTurnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			if (GameData.Data.User != null && (bool)e.NewValue == true)
-				GameData.Data.User.SendProceedTurn();
+			{
+				if (App.MainWindow.FocusedObject == null || App.MainWindow.FocusedObject.HasAction)
+					GameData.Data.User.SendProceedTurn();
+			}
 		}
 
 		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
