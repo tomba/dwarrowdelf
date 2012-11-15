@@ -249,6 +249,7 @@
     <Compile Include="DwarfAI.cs" />
     <Compile Include="ItemTracker.cs" />
     <Compile Include="Selectables.cs" />
+    <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
       <DependentUpon>FocusedObjectStats.xaml</DependentUpon>

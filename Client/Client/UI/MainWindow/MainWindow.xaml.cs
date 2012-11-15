@@ -40,17 +40,22 @@ namespace Dwarrowdelf.Client.UI
 
 		MainWindowCommandHandler m_cmdHandler;
 
+		public ClientTools ClientTools { get; private set; }
+
 		public MainWindow()
 		{
 			InitializeComponent();
 
-			this.MapControl.GotSelection += MapControl_GotSelection;
-			this.mainWindowTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
+			this.ClientTools = new ClientTools();
+			this.ClientTools.ToolModeChanged += MainWindowTools_ToolModeChanged;
+			this.ClientTools.ToolMode = ClientToolMode.Info;
 
-			this.mainWindowTools.ToolMode = ClientToolMode.Info;
+			this.MapControl.GotSelection += MapControl_GotSelection;
 
 			// for some reason this prevents the changing of focus from mapcontrol with cursor keys
 			KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Once);
+
+			mainWindowTools.SetClientTools(this.ClientTools);
 		}
 
 		void MainWindowTools_ToolModeChanged(ClientToolMode toolMode)
@@ -98,7 +103,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var env = this.Map;
 
-			switch (this.mainWindowTools.ToolMode)
+			switch (this.ClientTools.ToolMode)
 			{
 				case ClientToolMode.DesignationRemove:
 					env.Designations.RemoveArea(selection.SelectionBox);
@@ -219,7 +224,7 @@ namespace Dwarrowdelf.Client.UI
 					{
 						ConstructMode mode;
 
-						switch (this.mainWindowTools.ToolMode)
+						switch (this.ClientTools.ToolMode)
 						{
 							case ClientToolMode.ConstructWall:
 								mode = ConstructMode.Wall;
@@ -284,7 +289,7 @@ namespace Dwarrowdelf.Client.UI
 			switch (world.GameMode)
 			{
 				case GameMode.Fortress:
-					mainWindowTools.InstallKeyBindings(this);
+					this.ClientTools.InstallKeyBindings(this);
 					break;
 
 				case GameMode.Adventure:
@@ -298,7 +303,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs ev)
 		{
-			if (this.mainWindowTools.ToolMode == ClientToolMode.Info)
+			if (this.ClientTools.ToolMode == ClientToolMode.Info)
 			{
 				var env = this.MapControl.Environment;
 
