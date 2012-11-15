@@ -329,7 +329,7 @@ namespace Dwarrowdelf.Client
 		// Called from change handler
 		void OnTurnStarted(ObjectID livingID)
 		{
-			turnTrace.TraceInformation("TurnStart: {0}", livingID);
+			turnTrace.TraceVerbose("TurnStart: {0}", livingID);
 
 			Debug.Assert(livingID != ObjectID.NullObjectID);
 			Debug.Assert(m_currentLivingID == ObjectID.NullObjectID);
@@ -346,13 +346,13 @@ namespace Dwarrowdelf.Client
 		// Called from change handler
 		void OnTurnEnded()
 		{
-			turnTrace.TraceInformation("TurnEnd");
+			turnTrace.TraceVerbose("TurnEnd");
 			m_currentLivingID = ObjectID.NullObjectID;
 		}
 
 		public void SignalLivingHasAction(LivingObject living, GameAction action)
 		{
-			turnTrace.TraceInformation("SignalLivingHasAction({0}, {1}", living, action);
+			turnTrace.TraceVerbose("SignalLivingHasAction({0}, {1}", living, action);
 
 			if (m_currentLivingID == ObjectID.NullObjectID)
 				return;
@@ -367,7 +367,7 @@ namespace Dwarrowdelf.Client
 
 		public void SendProceedTurn()
 		{
-			turnTrace.TraceInformation("SendProceedTurn");
+			turnTrace.TraceVerbose("SendProceedTurn");
 
 			if (m_currentLivingID == ObjectID.NullObjectID)
 				return;
@@ -408,7 +408,7 @@ namespace Dwarrowdelf.Client
 
 				if (action != living.CurrentAction)
 				{
-					turnTrace.TraceInformation("{0}: selecting new action {1}", living, action);
+					turnTrace.TraceVerbose("{0}: selecting new action {1}", living, action);
 					list.Add(new Tuple<ObjectID, GameAction>(living.ObjectID, action));
 				}
 			}
