@@ -3,7 +3,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="InventoryItemSelectorDialog" Height="300" Width="300"
-		FocusManager.FocusedElement="{Binding ElementName=itemList}">
+		FocusManager.FocusedElement="{Binding ElementName=itemList}"
+        ResizeMode="CanResizeWithGrip" WindowStyle="ToolWindow" ShowInTaskbar="False">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
