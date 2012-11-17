@@ -70,6 +70,8 @@ namespace Dwarrowdelf.Client.UI
 		public GameKeyGesture(Key key, ModifierKeys modifiers)
 			: base(key, modifiers)
 		{
+			if (modifiers == ModifierKeys.None)
+				throw new Exception();
 		}
 
 		public override bool Matches(object targetElement, InputEventArgs inputEventArgs)

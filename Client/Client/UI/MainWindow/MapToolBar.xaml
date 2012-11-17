@@ -88,8 +88,8 @@
 			</RadioButton>
 
 			<Separator/>
-			<!-- Stockpile -->
 
+			<!-- Stockpile -->
 			<RadioButton Name="createStockpile" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateStockpile]}" />
 
@@ -101,6 +101,11 @@
 
 			<Separator/>
 
+			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" 
+						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructBuilding]}" />
+
+			<Separator/>
+
 			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateItem]}" />
 			<Separator/>
@@ -109,9 +114,6 @@
 			<Separator/>
 			<RadioButton Name="setTerrain" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[SetTerrain]}" />
-			<Separator/>
-			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" 
-						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructBuilding]}" />
 
 		</ToolBar>
 	</ToolBarTray>

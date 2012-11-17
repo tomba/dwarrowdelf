@@ -17,28 +17,29 @@ namespace Dwarrowdelf.Client.UI
 		{
 			ToolDatas = new Dictionary<ClientToolMode, ToolData>();
 
-			Action<ClientToolMode, string, Key, string> add = (i, n, k, g) => ToolDatas[i] = new ToolData(i, n, k, g);
+			Action<ToolData> add = (td) => ToolDatas[td.Mode] = td;
 
-			add(ClientToolMode.Info, "Info", Key.Escape, "");
+			add(new ToolData(ClientToolMode.Info, "Info", "", Key.Escape));
 
-			add(ClientToolMode.DesignationMine, "Mine", Key.M, "Designate");
-			add(ClientToolMode.DesignationStairs, "Mine stairs", Key.S, "Designate");
-			add(ClientToolMode.DesignationChannel, "Channel", Key.C, "Designate");
-			add(ClientToolMode.DesignationFellTree, "Fell tree", Key.F, "Designate");
-			add(ClientToolMode.DesignationRemove, "Remove", Key.R, "Designate");
+			add(new ToolData(ClientToolMode.DesignationMine, "Mine", "Designate", Key.M));
+			add(new ToolData(ClientToolMode.DesignationStairs, "Mine stairs", "Designate", Key.S));
+			add(new ToolData(ClientToolMode.DesignationChannel, "Channel", "Designate", Key.C));
+			add(new ToolData(ClientToolMode.DesignationFellTree, "Fell tree", "Designate", Key.F));
+			add(new ToolData(ClientToolMode.DesignationRemove, "Remove", "Designate", Key.R));
 
-			add(ClientToolMode.CreateStockpile, "Create stockpile", Key.P, "");
-			add(ClientToolMode.InstallFurniture, "Install furniture", Key.I, "");
+			add(new ToolData(ClientToolMode.CreateStockpile, "Create stockpile", "", Key.P));
+			add(new ToolData(ClientToolMode.InstallFurniture, "Install furniture", "", Key.I));
 
-			add(ClientToolMode.CreateLiving, "Create living", Key.L, "");
-			add(ClientToolMode.CreateItem, "Create item", Key.Z, "");
-			add(ClientToolMode.SetTerrain, "Set terrain", Key.T, "");
-			add(ClientToolMode.ConstructBuilding, "Create building", Key.B, "");
+			add(new ToolData(ClientToolMode.ConstructBuilding, "Create building", "", Key.B));
 
-			add(ClientToolMode.ConstructWall, "Wall", Key.W, "Construct");
-			add(ClientToolMode.ConstructFloor, "Floor", Key.O, "Construct");
-			add(ClientToolMode.ConstructPavement, "Pavement", Key.A, "Construct");
-			add(ClientToolMode.ConstructRemove, "Remove", Key.E, "Construct");
+			add(new ToolData(ClientToolMode.ConstructWall, "Wall", "Construct", Key.W));
+			add(new ToolData(ClientToolMode.ConstructFloor, "Floor", "Construct", Key.O));
+			add(new ToolData(ClientToolMode.ConstructPavement, "Pavement", "Construct", Key.A));
+			add(new ToolData(ClientToolMode.ConstructRemove, "Remove", "Construct", Key.E));
+
+			add(new ToolData(ClientToolMode.CreateLiving, "Create living", "", Key.L, ModifierKeys.Control));
+			add(new ToolData(ClientToolMode.CreateItem, "Create item", "", Key.I, ModifierKeys.Control));
+			add(new ToolData(ClientToolMode.SetTerrain, "Set terrain", "", Key.T, ModifierKeys.Control));
 		}
 
 		public event Action<ClientToolMode> ToolModeChanged;
@@ -61,33 +62,43 @@ namespace Dwarrowdelf.Client.UI
 	public enum ClientToolMode
 	{
 		None = 0,
+
 		Info,
+
 		DesignationRemove,
 		DesignationMine,
 		DesignationStairs,
 		DesignationChannel,
 		DesignationFellTree,
-		SetTerrain,
+
 		CreateStockpile,
-		CreateItem,
-		CreateLiving,
 		ConstructBuilding,
 		InstallFurniture,
+
 		ConstructWall,
 		ConstructFloor,
 		ConstructPavement,
 		ConstructRemove,
+
+		// Debug
+		SetTerrain,
+		CreateItem,
+		CreateLiving,
 	}
 
 	sealed class ToolData
 	{
-		public ToolData(ClientToolMode mode, string name, Key key, string groupName)
+		public ToolData(ClientToolMode mode, string name, string groupName, Key key, ModifierKeys modifiers = ModifierKeys.None)
 		{
 			this.Mode = mode;
 			this.Name = name;
 			this.GroupName = groupName;
 
-			var keyGesture = new GameKeyGesture(key);
+			GameKeyGesture keyGesture;
+			if (modifiers == ModifierKeys.None)
+				keyGesture = new GameKeyGesture(key);
+			else
+				keyGesture = new GameKeyGesture(key, modifiers);
 
 			this.Command = new RoutedUICommand(name, name, typeof(ClientTools),
 				new InputGestureCollection() { keyGesture });
