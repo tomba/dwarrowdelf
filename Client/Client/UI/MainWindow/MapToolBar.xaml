@@ -34,6 +34,7 @@
 
 				<Style x:Key="{x:Static ToolBar.RadioButtonStyleKey}" TargetType="RadioButton">
 					<Setter Property="Content" Value="{Binding}" />
+					<Setter Property="Command" Value="{Binding Command}" />
 					<Setter Property="ToolTip" Value="{Binding ToolTip}" />
 					<Setter Property="GroupName" Value="Tools" />
 					<Setter Property="Width" Value="64" />
@@ -41,29 +42,29 @@
 				</Style>
 
 				<Style x:Key="menuItemStyle" TargetType="MenuItem">
-					<Setter Property="ToolTip" Value="{Binding ToolTip}" />
 					<Setter Property="Header" Value="{Binding Name}" />
+					<Setter Property="Command" Value="{Binding Command}" />
 				</Style>
 
 			</ToolBar.Resources>
 
 			<!-- Info -->
-			<RadioButton Name="infoButton" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="infoButton" ContentTemplate="{StaticResource singleToolTemplate}"
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[Info]}" />
 
 			<Separator/>
 
 			<!-- Designation -->
-			<RadioButton Name="designationButton" ContentTemplate="{StaticResource multiToolTemplate}" Checked="RadioButton_Checked" ContextMenuService.Placement="Bottom"
+			<RadioButton Name="designationButton" ContentTemplate="{StaticResource multiToolTemplate}" ContextMenuService.Placement="Bottom"
 						 DataContext="{Binding Path=DesignationToolMode, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MapToolBar, AncestorLevel=1}, Converter={StaticResource toolDataConverter}}">
 
 				<RadioButton.ContextMenu>
 					<ContextMenu>
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationMine]}" Style="{StaticResource menuItemStyle}" Click="Designation_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationStairs]}" Style="{StaticResource menuItemStyle}" Click="Designation_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationChannel]}" Style="{StaticResource menuItemStyle}" Click="Designation_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationFellTree]}" Style="{StaticResource menuItemStyle}" Click="Designation_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationRemove]}" Style="{StaticResource menuItemStyle}" Click="Designation_MenuItem_Click" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationMine]}" Style="{StaticResource menuItemStyle}"  />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationStairs]}" Style="{StaticResource menuItemStyle}"  />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationChannel]}" Style="{StaticResource menuItemStyle}" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationFellTree]}" Style="{StaticResource menuItemStyle}" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[DesignationRemove]}" Style="{StaticResource menuItemStyle}" />
 					</ContextMenu>
 				</RadioButton.ContextMenu>
 
@@ -72,15 +73,15 @@
 			<Separator/>
 
 			<!-- Construct -->
-			<RadioButton Name="constructButton" ContentTemplate="{StaticResource multiToolTemplate}" Checked="RadioButton_Checked" ContextMenuService.Placement="Bottom"
+			<RadioButton Name="constructButton" ContentTemplate="{StaticResource multiToolTemplate}" ContextMenuService.Placement="Bottom"
 						 DataContext="{Binding Path=ConstructToolMode, RelativeSource={RelativeSource FindAncestor, AncestorType=ui:MapToolBar, AncestorLevel=1}, Converter={StaticResource toolDataConverter}}">
 
 				<RadioButton.ContextMenu>
 					<ContextMenu>
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructWall]}" Style="{StaticResource menuItemStyle}" Click="Construct_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructFloor]}" Style="{StaticResource menuItemStyle}" Click="Construct_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructPavement]}" Style="{StaticResource menuItemStyle}" Click="Construct_MenuItem_Click" />
-						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructRemove]}" Style="{StaticResource menuItemStyle}" Click="Construct_MenuItem_Click" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructWall]}" Style="{StaticResource menuItemStyle}" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructFloor]}" Style="{StaticResource menuItemStyle}" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructPavement]}" Style="{StaticResource menuItemStyle}" />
+						<MenuItem DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructRemove]}" Style="{StaticResource menuItemStyle}" />
 					</ContextMenu>
 				</RadioButton.ContextMenu>
 
@@ -89,27 +90,27 @@
 			<Separator/>
 			<!-- Stockpile -->
 
-			<RadioButton Name="createStockpile" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="createStockpile" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateStockpile]}" />
 
 			<Separator/>
 
 			<!-- Install Furniture -->
-			<RadioButton Name="installFurniture" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="installFurniture" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[InstallFurniture]}" />
 
 			<Separator/>
 
-			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateItem]}" />
 			<Separator/>
-			<RadioButton Name="createLiving" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="createLiving" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateLiving]}" />
 			<Separator/>
-			<RadioButton Name="setTerrain" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="setTerrain" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[SetTerrain]}" />
 			<Separator/>
-			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" Checked="RadioButton_Checked"
+			<RadioButton Name="constructBuilding" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[ConstructBuilding]}" />
 
 		</ToolBar>

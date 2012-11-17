@@ -103,15 +103,6 @@ namespace Dwarrowdelf.Client.UI
 			DependencyProperty.Register("DesignationToolMode", typeof(ClientToolMode), typeof(MapToolBar), new UIPropertyMetadata(ClientToolMode.DesignationMine));
 
 
-		private void Designation_MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var item = (MenuItem)sender;
-			var toolData = (ToolData)item.DataContext;
-
-			this.DesignationToolMode = toolData.Mode;
-			m_clientTools.ToolMode = toolData.Mode;
-		}
-
 		public ClientToolMode ConstructToolMode
 		{
 			get { return (ClientToolMode)GetValue(ConstructToolModeProperty); }
@@ -120,22 +111,5 @@ namespace Dwarrowdelf.Client.UI
 
 		public static readonly DependencyProperty ConstructToolModeProperty =
 			DependencyProperty.Register("ConstructToolMode", typeof(ClientToolMode), typeof(MapToolBar), new UIPropertyMetadata(ClientToolMode.ConstructWall));
-
-
-		private void Construct_MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var item = (MenuItem)sender;
-			var toolData = (ToolData)item.DataContext;
-
-			this.ConstructToolMode = toolData.Mode;
-			m_clientTools.ToolMode = toolData.Mode;
-		}
-
-		private void RadioButton_Checked(object sender, RoutedEventArgs e)
-		{
-			var item = (RadioButton)sender;
-			var toolData = (ToolData)item.DataContext;
-			m_clientTools.ToolMode = toolData.Mode;
-		}
 	}
 }

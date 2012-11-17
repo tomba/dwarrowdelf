@@ -41,15 +41,6 @@ namespace Dwarrowdelf.Client.UI
 			add(ClientToolMode.ConstructRemove, "Remove", Key.E, "Construct");
 		}
 
-		public void InstallKeyBindings(Window mw)
-		{
-			foreach (var kvp in ClientTools.ToolDatas)
-			{
-				mw.CommandBindings.Add(new CommandBinding(kvp.Value.Command, (s, e) => this.ToolMode = (ClientToolMode)e.Parameter));
-				mw.InputBindings.Add(kvp.Value.InputBinding);
-			}
-		}
-
 		public event Action<ClientToolMode> ToolModeChanged;
 
 		ClientToolMode m_toolMode;
@@ -57,30 +48,13 @@ namespace Dwarrowdelf.Client.UI
 		public ClientToolMode ToolMode
 		{
 			get { return m_toolMode; }
-			
+
 			set
 			{
 				m_toolMode = value;
 				if (this.ToolModeChanged != null)
 					this.ToolModeChanged(value);
 			}
-		}
-	}
-
-	/* KeyGesture class doesn't like gestures without modifiers, so we need our own */
-	public sealed class GameKeyGesture : InputGesture
-	{
-		public GameKeyGesture(Key key)
-		{
-			this.Key = key;
-		}
-
-		public Key Key { get; private set; }
-
-		public override bool Matches(object targetElement, InputEventArgs inputEventArgs)
-		{
-			KeyEventArgs args = inputEventArgs as KeyEventArgs;
-			return args != null && Keyboard.Modifiers == ModifierKeys.None && this.Key == args.Key;
 		}
 	}
 
@@ -111,12 +85,16 @@ namespace Dwarrowdelf.Client.UI
 		{
 			this.Mode = mode;
 			this.Name = name;
-			this.ToolTip = String.Format("{0} ({1})", this.Name, key);
 			this.GroupName = groupName;
 
-			this.Command = new RoutedUICommand(name, name, typeof(MapToolBar));
-			this.InputBinding = new InputBinding(this.Command, new GameKeyGesture(key));
-			this.InputBinding.CommandParameter = mode;
+			var keyGesture = new GameKeyGesture(key);
+
+			this.Command = new RoutedUICommand(name, name, typeof(ClientTools),
+				new InputGestureCollection() { keyGesture });
+
+			this.ToolTip = String.Format("{0} ({1})",
+				this.Name,
+				keyGesture.GetDisplayStringForCulture(System.Globalization.CultureInfo.CurrentCulture));
 		}
 
 		public ClientToolMode Mode { get; private set; }
@@ -124,7 +102,6 @@ namespace Dwarrowdelf.Client.UI
 		public string GroupName { get; private set; }
 		public string ToolTip { get; private set; }
 		public RoutedUICommand Command { get; private set; }
-		public InputBinding InputBinding { get; private set; }
 	}
 
 	sealed class ClientToolModeToToolDataConverter : IValueConverter

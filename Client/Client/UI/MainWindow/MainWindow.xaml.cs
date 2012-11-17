@@ -280,25 +280,12 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var world = GameData.Data.World;
 
+			this.CommandBindings.Clear();
+
 			if (world == null)
-			{
-				// XXX remove handlers
 				return;
-			}
 
-			switch (world.GameMode)
-			{
-				case GameMode.Fortress:
-					this.ClientTools.InstallKeyBindings(this);
-					break;
-
-				case GameMode.Adventure:
-					m_cmdHandler.AddAdventureCommands();
-					break;
-
-				default:
-					throw new Exception();
-			}
+			m_cmdHandler.AddCommandBindings(world.GameMode);
 		}
 
 		void OnMouseClicked(object sender, MouseButtonEventArgs ev)

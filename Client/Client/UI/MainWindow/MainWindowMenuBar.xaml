@@ -20,11 +20,15 @@
 		<MenuItem Header="Debug">
 			<MenuItem Header="GC" Click="GC_MenuItem_Click" />
 			<MenuItem Header="Break" Click="Break_MenuItem_Click" />
-			<MenuItem Header="Console" Command="ui:ClientCommands.OpenConsoleCommand" ToolTip="Shortcut: ctrl-enter" />
+			<MenuItem Header="Console" Command="ui:ClientCommands.OpenConsoleCommand" />
 			<MenuItem Header="FocusDebug" Command="ui:ClientCommands.OpenFocusDebugCommand" />
 			<MenuItem Header="NetStats" Click="NetStats_MenuItem_Click" />
 		</MenuItem>
-		<MenuItem Header="Window">
+        <MenuItem Header="Actions">
+            <MenuItem Header="Drop" Command="ui:ClientCommands.DropItemCommand" />
+            <MenuItem Header="Get" Command="ui:ClientCommands.GetItemCommand" />
+        </MenuItem>
+        <MenuItem Header="Window">
 			<MenuItem Header="Full Screen" Click="FullScreen_MenuItem_Click" />
  		</MenuItem>
 	</Menu>

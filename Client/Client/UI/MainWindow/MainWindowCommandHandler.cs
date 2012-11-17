@@ -13,28 +13,39 @@ namespace Dwarrowdelf.Client.UI
 		public MainWindowCommandHandler(MainWindow mainWindow)
 		{
 			m_mainWindow = mainWindow;
-
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler));
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler));
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler));
 		}
 
-		public void AddAdventureCommands()
+		public void AddCommandBindings(GameMode mode)
 		{
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.DropItemCommand, DropItemHandler));
-			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.DropItemCommand, new GameKeyGesture(Key.D)));
+			// add common bindings
+			m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+				new CommandBinding(ClientCommands.AutoAdvanceTurnCommand, AutoAdvanceTurnHandler),
+				new CommandBinding(ClientCommands.OpenConsoleCommand, OpenConsoleHandler),
+				new CommandBinding(ClientCommands.OpenFocusDebugCommand, OpenFocusDebugHandler),
+			});
 
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.GetItemCommand, GetItemHandler));
-			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.GetItemCommand, new GameKeyGesture(Key.OemComma)));
+			// add mode specific bindings
+			switch (mode)
+			{
+				case GameMode.Fortress:
+					foreach (var kvp in ClientTools.ToolDatas)
+					{
+						var toolMode = kvp.Value.Mode;
+						m_mainWindow.CommandBindings.Add(new CommandBinding(kvp.Value.Command,
+							(s, e) => m_mainWindow.ClientTools.ToolMode = toolMode));
+					}
+					break;
 
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.RemoveItemCommand, RemoveItemHandler));
-			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.RemoveItemCommand, new GameKeyGesture(Key.R)));
-
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.WearItemCommand, WearItemHandler));
-			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.WearItemCommand, new GameKeyGesture(Key.W)));
-
-			m_mainWindow.CommandBindings.Add(new CommandBinding(ClientCommands.InventoryCommand, InventoryHandler));
-			m_mainWindow.InputBindings.Add(new InputBinding(ClientCommands.InventoryCommand, new GameKeyGesture(Key.I)));
+				case GameMode.Adventure:
+					m_mainWindow.CommandBindings.AddRange(new CommandBinding[] {
+						new CommandBinding(ClientCommands.DropItemCommand, DropItemHandler),
+						new CommandBinding(ClientCommands.GetItemCommand, GetItemHandler),
+						new CommandBinding(ClientCommands.RemoveItemCommand, RemoveItemHandler),
+						new CommandBinding(ClientCommands.WearItemCommand, WearItemHandler),
+						new CommandBinding(ClientCommands.InventoryCommand, InventoryHandler),
+					});
+					break;
+			}
 		}
 
 		void DropItemHandler(object sender, ExecutedRoutedEventArgs e)
