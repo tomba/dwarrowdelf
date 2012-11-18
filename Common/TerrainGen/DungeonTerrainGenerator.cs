@@ -17,6 +17,10 @@ namespace Dwarrowdelf.TerrainGen
 
 		Random m_random;
 
+		Dictionary<int, IntGrid2[]> m_rooms = new Dictionary<int, IntGrid2[]>();
+
+		public Dictionary<int, IntGrid2[]> Rooms { get { return m_rooms; } }
+
 		public DungeonTerrainGenerator(TerrainData data, Random random)
 		{
 			m_data = data;
@@ -212,6 +216,8 @@ namespace Dwarrowdelf.TerrainGen
 
 			int leafs = (int)Math.Pow(2, bsp.Depth - 1);
 
+			var rooms = new List<IntGrid2>();
+
 			// Shrink the full sized leaf nodes for rooms
 			for (int l = 0; l < leafs; ++l)
 			{
@@ -231,7 +237,11 @@ namespace Dwarrowdelf.TerrainGen
 				n.Grid = new IntGrid2(x, y, columns, rows);
 
 				bsp[i] = n;
+
+				rooms.Add(n.Grid);
 			}
+
+			m_rooms[z] = rooms.ToArray();
 
 			for (int l = 0; l < leafs; ++l)
 			{
