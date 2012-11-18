@@ -59,7 +59,6 @@ namespace Dwarrowdelf.Server
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection");
 
-		bool IsProceedTurnRequestSent { get; set; }
 		public bool IsProceedTurnReplyReceived { get; private set; }
 		public event Action<Player> ProceedTurnReceived;
 
@@ -149,11 +148,8 @@ namespace Dwarrowdelf.Server
 			{
 				if (this.World.TickMethod == WorldTickMethod.Simultaneous)
 				{
-					this.IsProceedTurnRequestSent = true;
-
 					var change = new TurnStartChange(null);
-					var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
-					Send(changeMsg);
+					m_changeHandler.HandleWorldChange(change);
 				}
 				else
 				{
@@ -171,7 +167,6 @@ namespace Dwarrowdelf.Server
 
 			m_connection = null;
 
-			this.IsProceedTurnRequestSent = false;
 			this.IsProceedTurnReplyReceived = false;
 
 			if (DisconnectEvent != null)
@@ -311,9 +306,6 @@ namespace Dwarrowdelf.Server
 		{
 			try
 			{
-				if (this.IsProceedTurnRequestSent == false)
-					throw new Exception();
-
 				if (this.IsProceedTurnReplyReceived == true)
 					throw new Exception();
 
@@ -322,10 +314,19 @@ namespace Dwarrowdelf.Server
 					var actorOid = tuple.Item1;
 					var action = tuple.Item2;
 
+					if (m_world.CurrentLivingID != ObjectID.AnyObjectID && m_world.CurrentLivingID != actorOid)
+					{
+						trace.TraceWarning("received action request for living who's turn is not now: {0}", actorOid);
+						continue;
+					}
+
 					var living = this.Controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
+					{
+						trace.TraceWarning("received action request for non controlled living {0}", actorOid);
 						continue;
+					}
 
 					if (living.Controller != this)
 						throw new Exception();
@@ -408,17 +409,8 @@ namespace Dwarrowdelf.Server
 		{
 			m_changeHandler.HandleWorldChange(change);
 
-			if (change is TurnStartChange)
-			{
-				var c = (TurnStartChange)change;
-				if (c.Living == null || this.IsController(c.Living))
-					this.IsProceedTurnRequestSent = true;
-			}
-			else if (change is TurnEndChange)
-			{
-				this.IsProceedTurnRequestSent = false;
+			if (change is TurnEndChange)
 				this.IsProceedTurnReplyReceived = false;
-			}
 		}
 
 		Dictionary<EnvironmentObject, VisionTrackerBase> m_visionTrackers = new Dictionary<EnvironmentObject, VisionTrackerBase>();

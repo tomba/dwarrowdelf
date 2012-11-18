@@ -54,6 +54,9 @@ namespace Dwarrowdelf.Server
 
 	sealed class PlayerChangeHandler : ChangeHandler
 	{
+		// XXX should be saved
+		bool m_turnStartSent;
+
 		public PlayerChangeHandler(Player player)
 			: base(player)
 		{
@@ -129,12 +132,14 @@ namespace Dwarrowdelf.Server
 			if (change is TurnStartChange)
 			{
 				var c = (TurnStartChange)change;
-				return c.Living == null || m_player.IsController(c.Living);
+				m_turnStartSent = c.Living == null || m_player.IsController(c.Living);
+				return m_turnStartSent;
 			}
 			else if (change is TurnEndChange)
 			{
-				var c = (TurnEndChange)change;
-				return c.Living == null || m_player.IsController(c.Living);
+				var b = m_turnStartSent;
+				m_turnStartSent = false;
+				return b;
 			}
 			else if (change is TickStartChange)
 			{

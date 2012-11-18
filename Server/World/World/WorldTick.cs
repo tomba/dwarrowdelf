@@ -39,6 +39,9 @@ namespace Dwarrowdelf.Server
 		bool m_okToStartTick = false;
 		bool m_proceedTurn = false;
 
+		[SaveGameProperty]
+		public ObjectID CurrentLivingID { get; private set; }
+
 		public void SetOkToStartTick()
 		{
 			trace.TraceVerbose("SetOkToStartTick");
@@ -223,6 +226,8 @@ namespace Dwarrowdelf.Server
 
 		void StartTurnSimultaneous()
 		{
+			this.CurrentLivingID = ObjectID.AnyObjectID;
+
 			foreach (var living in m_livings.List)
 				living.TurnStarted();
 
@@ -238,11 +243,15 @@ namespace Dwarrowdelf.Server
 
 			if (TurnEnded != null)
 				TurnEnded(null);
+
+			this.CurrentLivingID = ObjectID.NullObjectID;
 		}
 
 		void StartTurnSequential(LivingObject living)
 		{
 			trace.TraceVerbose("StartTurnSeq {0}", living);
+
+			this.CurrentLivingID = living.ObjectID;
 
 			living.TurnStarted();
 
@@ -261,6 +270,8 @@ namespace Dwarrowdelf.Server
 
 			if (TurnEnded != null)
 				TurnEnded(living);
+
+			this.CurrentLivingID = ObjectID.NullObjectID;
 		}
 
 		void EndTick()
