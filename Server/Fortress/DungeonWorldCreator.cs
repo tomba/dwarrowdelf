@@ -11,20 +11,32 @@ namespace Dwarrowdelf.Server.Fortress
 		const int MAP_SIZE = 7;	// 2^AREA_SIZE
 		const int MAP_DEPTH = 5;
 
-		public static void InitializeWorld(World world)
-		{
-			Dictionary<int, IntGrid2[]> roomsDict;
+		World m_world;
+		EnvironmentObject m_env;
+		Dictionary<int, IntGrid2[]> m_rooms;
+		TerrainData m_terrainData;
 
-			var terrain = CreateTerrain(out roomsDict);
+		LivingInfo[] m_livingInfos;
+
+		public DungeonWorldCreator(World world)
+		{
+			m_world = world;
+
+			m_livingInfos = Livings.GetLivingInfos(LivingCategory.Monster | LivingCategory.Herbivore | LivingCategory.Carnivore).ToArray();
+		}
+
+		public void InitializeWorld(World world)
+		{
+			CreateTerrain();
 
 			IntPoint3? stairs = null;
 
-			foreach (var p2 in terrain.Size.Plane.Range())
+			foreach (var p2 in m_terrainData.Size.Plane.Range())
 			{
-				var z = terrain.GetHeight(p2);
+				var z = m_terrainData.GetHeight(p2);
 
 				var p = new IntPoint3(p2, z);
-				var td = terrain.GetTileData(p);
+				var td = m_terrainData.GetTileData(p);
 				if (td.TerrainID == TerrainID.StairsDown)
 				{
 					stairs = p;
@@ -35,26 +47,26 @@ namespace Dwarrowdelf.Server.Fortress
 			if (stairs.HasValue == false)
 				throw new Exception();
 
-			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.LivingLOS, stairs.Value);
+			m_env = EnvironmentObject.Create(world, m_terrainData, VisibilityMode.LivingLOS, stairs.Value);
 
-			CreateMonsters(env, roomsDict);
+			CreateMonsters();
 
-			CreateDebugMonsterAtEntry(env);
+			CreateDebugMonsterAtEntry();
 		}
 
-		static void CreateDebugMonsterAtEntry(EnvironmentObject env)
+		void CreateDebugMonsterAtEntry()
 		{
-			var pn = GetLocNearEntry(env);
+			var pn = GetLocNearEntry(m_env);
 			if (pn.HasValue)
 			{
-				var living = CreateRandomLiving(env.World, 1);
-				living.MoveTo(env, pn.Value);
+				var living = CreateRandomLiving(1);
+				living.MoveTo(m_env, pn.Value);
 			}
 		}
 
-		static void CreateMonsters(EnvironmentObject env, Dictionary<int, IntGrid2[]> roomsDict)
+		void CreateMonsters()
 		{
-			foreach (var kvp in roomsDict)
+			foreach (var kvp in m_rooms)
 			{
 				int z = kvp.Key;
 				var rooms = kvp.Value;
@@ -63,14 +75,14 @@ namespace Dwarrowdelf.Server.Fortress
 				{
 					var room = new IntGrid2Z(rooms[Helpers.GetRandomInt(rooms.Length)], z);
 
-					var pn = GetRandomRoomLoc(env, ref room);
+					var pn = GetRandomRoomLoc(m_env, ref room);
 					if (pn.HasValue == false)
 						continue;
 
 					var p = pn.Value;
 
-					var living = CreateRandomLiving(env.World, z);
-					living.MoveTo(env, p);
+					var living = CreateRandomLiving(z);
+					living.MoveTo(m_env, p);
 				}
 			}
 		}
@@ -96,11 +108,16 @@ namespace Dwarrowdelf.Server.Fortress
 			return null;
 		}
 
-		static LivingObject CreateRandomLiving(World world, int z)
+		LivingObject CreateRandomLiving(int z)
 		{
-			var livingBuilder = new LivingObjectBuilder(LivingID.Wolf);
-			var living = livingBuilder.Create(world);
+			var li = m_livingInfos[Helpers.GetRandomInt(m_livingInfos.Length)];
+
+			var livingBuilder = new LivingObjectBuilder(li.ID);
+			var living = livingBuilder.Create(m_world);
 			living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
+
+			Helpers.AddBattleGear(living);
+
 			return living;
 		}
 
@@ -122,7 +139,7 @@ namespace Dwarrowdelf.Server.Fortress
 			return null;
 		}
 
-		static TerrainData CreateTerrain(out Dictionary<int, IntGrid2[]> rooms)
+		void CreateTerrain()
 		{
 			var random = Helpers.Random;
 
@@ -139,9 +156,8 @@ namespace Dwarrowdelf.Server.Fortress
 			TerrainHelpers.CreateGrass(terrain, random, 9999);
 			TerrainHelpers.CreateTrees(terrain, random);
 
-			rooms = tg.Rooms;
-
-			return terrain;
+			m_rooms = tg.Rooms;
+			m_terrainData = terrain;
 		}
 	}
 }

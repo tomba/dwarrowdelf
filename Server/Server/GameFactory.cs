@@ -38,7 +38,8 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case GameMap.Adventure:
-					worldCreator = Fortress.DungeonWorldCreator.InitializeWorld;
+					var dwc = new Fortress.DungeonWorldCreator(world);
+					worldCreator = dwc.InitializeWorld;
 					break;
 
 				case GameMap.Arena:

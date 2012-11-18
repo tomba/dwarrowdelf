@@ -87,5 +87,12 @@ namespace Dwarrowdelf
 
 			return s_livings[(int)livingID];
 		}
+
+		public static IEnumerable<LivingInfo> GetLivingInfos(LivingCategory category)
+		{
+			Debug.Assert(category != LivingCategory.None);
+
+			return s_livings.Skip(1).Where(li => (li.Category & category) != 0);
+		}
 	}
 }

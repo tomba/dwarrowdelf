@@ -55,6 +55,7 @@ namespace Dwarrowdelf.Server.Fortress
 				var p = startLocs[Helpers.GetRandomInt(startLocs.Length - 1)];
 
 				var l = CreateDwarf(i);
+				l.Strength = 100;
 
 				if (!l.MoveTo(env, p))
 					throw new Exception();
