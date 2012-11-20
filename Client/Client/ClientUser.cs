@@ -223,8 +223,9 @@ namespace Dwarrowdelf.Client
 
 			m_reportHandler = new ReportHandler(m_world);
 			m_changeHandler = new ChangeHandler(m_world);
-			m_changeHandler.TurnEnded += OnTurnEnded;
-			m_changeHandler.TurnStarted += OnTurnStarted;
+
+			m_world.TurnEnded += OnTurnEnded;
+			m_world.TurnStarted += OnTurnStarted;
 
 			this.IsSeeAll = msg.IsSeeAll;
 
@@ -322,19 +323,13 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource turnTrace = new MyTraceSource("Dwarrowdelf.Turn", "ClientUser");
 
-		// LivingID, AnyObjectID or NullIObjectID
-		ObjectID m_currentLivingID;
 		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
+		bool m_proceedTurnSent;
 
-		// Called from change handler
+		// Called from world
 		void OnTurnStarted(ObjectID livingID)
 		{
 			turnTrace.TraceVerbose("TurnStart: {0}", livingID);
-
-			Debug.Assert(livingID != ObjectID.NullObjectID);
-			Debug.Assert(m_currentLivingID == ObjectID.NullObjectID);
-
-			m_currentLivingID = livingID;
 
 			if (livingID != ObjectID.AnyObjectID && m_world.Controllables.Contains(livingID) == false)
 				return;		// not our turn
@@ -346,18 +341,18 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		// Called from change handler
+		// Called from world
 		void OnTurnEnded()
 		{
 			turnTrace.TraceVerbose("TurnEnd");
-			m_currentLivingID = ObjectID.NullObjectID;
+			m_proceedTurnSent = false;
 		}
 
 		public void SignalLivingHasAction(LivingObject living, GameAction action)
 		{
 			turnTrace.TraceVerbose("SignalLivingHasAction({0}, {1}", living, action);
 
-			if (m_currentLivingID == ObjectID.NullObjectID)
+			if (m_world.CurrentLivingID == ObjectID.NullObjectID)
 			{
 				turnTrace.TraceWarning("SignalLivingHasAction when not our turn");
 				return;
@@ -372,9 +367,15 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("SendProceedTurn");
 
-			if (m_currentLivingID == ObjectID.NullObjectID)
+			if (m_world.CurrentLivingID == ObjectID.NullObjectID)
 			{
 				turnTrace.TraceWarning("SendProceedTurn when not our turn");
+				return;
+			}
+
+			if (m_proceedTurnSent)
+			{
+				turnTrace.TraceWarning("SendProceedTurn when proceed turn already sent");
 				return;
 			}
 
@@ -382,14 +383,14 @@ namespace Dwarrowdelf.Client
 
 			IEnumerable<LivingObject> livings;
 
-			if (m_currentLivingID == ObjectID.AnyObjectID)
+			if (m_world.CurrentLivingID == ObjectID.AnyObjectID)
 			{
 				// livings which the user can control (ie. server not doing high priority action)
 				livings = m_world.Controllables.Where(l => l.UserActionPossible());
 			}
 			else
 			{
-				var living = m_world.GetObject<LivingObject>(m_currentLivingID);
+				var living = m_world.GetObject<LivingObject>(m_world.CurrentLivingID);
 				if (living.UserActionPossible() == false)
 					throw new NotImplementedException();
 				livings = new LivingObject[] { living };
@@ -421,7 +422,7 @@ namespace Dwarrowdelf.Client
 
 			Send(new ProceedTurnReplyMessage() { Actions = list.ToArray() });
 
-			m_currentLivingID = ObjectID.NullObjectID;
+			m_proceedTurnSent = true;
 			m_actionMap.Clear();
 		}
 	}

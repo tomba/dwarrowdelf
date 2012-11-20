@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -73,6 +74,13 @@ namespace Dwarrowdelf.Client
 		Random m_random = new Random();
 		public Random Random { get { return m_random; } }
 
+		// LivingID, AnyObjectID or NullIObjectID
+		public ObjectID CurrentLivingID { get; private set; }
+
+		public event Action TickStarting;
+		public event Action<ObjectID> TurnStarted;
+		public event Action TurnEnded;
+
 		public void HandleChange(TickStartChangeData change)
 		{
 			this.TickNumber = change.TickNumber;
@@ -83,7 +91,24 @@ namespace Dwarrowdelf.Client
 			GameData.Data.AddTickGameEvent();
 		}
 
-		public event Action TickStarting;
+		public void HandleChange(TurnStartChangeData change)
+		{
+			Debug.Assert(this.CurrentLivingID == ObjectID.NullObjectID);
+			Debug.Assert(change.LivingID != ObjectID.NullObjectID);
+
+			this.CurrentLivingID = change.LivingID;
+
+			if (TurnStarted != null)
+				TurnStarted(change.LivingID);
+		}
+
+		public void HandleChange(TurnEndChangeData change)
+		{
+			this.CurrentLivingID = ObjectID.NullObjectID;
+
+			if (TurnEnded != null)
+				TurnEnded();
+		}
 
 		BaseObject ConstructObject(ObjectID objectID)
 		{

@@ -27,9 +27,6 @@ namespace Dwarrowdelf.Client
 
 		World m_world;
 
-		public event Action<ObjectID> TurnStarted;
-		public event Action TurnEnded;
-
 		public ChangeHandler(World world)
 		{
 			m_world = world;
@@ -190,14 +187,12 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(TurnStartChangeData change)
 		{
-			if (TurnStarted != null)
-				TurnStarted(change.LivingID);
+			m_world.HandleChange(change);
 		}
 
 		void HandleChange(TurnEndChangeData change)
 		{
-			if (TurnEnded != null)
-				TurnEnded();
+			m_world.HandleChange(change);
 		}
 
 		void HandleChange(ActionStartedChangeData change)
