@@ -72,6 +72,7 @@ namespace Dwarrowdelf.Client
 
 		// LivingID, AnyObjectID or NullIObjectID
 		public ObjectID CurrentLivingID { get; private set; }
+		public bool IsOurTurn { get; private set; }
 
 		public event Action TickStarting;
 		public event Action<ObjectID> TurnStarted;
@@ -92,15 +93,21 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(this.CurrentLivingID == ObjectID.NullObjectID);
 			Debug.Assert(change.LivingID != ObjectID.NullObjectID);
 
-			this.CurrentLivingID = change.LivingID;
+			var livingID = change.LivingID;
+
+			this.CurrentLivingID = livingID;
+
+			if (livingID == ObjectID.AnyObjectID || this.Controllables.Contains(livingID))
+				this.IsOurTurn = true;
 
 			if (TurnStarted != null)
-				TurnStarted(change.LivingID);
+				TurnStarted(livingID);
 		}
 
 		public void HandleChange(TurnEndChangeData change)
 		{
 			this.CurrentLivingID = ObjectID.NullObjectID;
+			this.IsOurTurn = false;
 
 			if (TurnEnded != null)
 				TurnEnded();

@@ -331,8 +331,8 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("TurnStart: {0}", livingID);
 
-			if (livingID != ObjectID.AnyObjectID && m_world.Controllables.Contains(livingID) == false)
-				return;		// not our turn
+			if (m_world.IsOurTurn == false)
+				return;
 
 			if (GameData.Data.IsAutoAdvanceTurn)
 			{
@@ -352,7 +352,7 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("SignalLivingHasAction({0}, {1}", living, action);
 
-			if (m_world.CurrentLivingID == ObjectID.NullObjectID)
+			if (m_world.IsOurTurn == false)
 			{
 				turnTrace.TraceWarning("SignalLivingHasAction when not our turn");
 				return;
@@ -367,7 +367,7 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("SendProceedTurn");
 
-			if (m_world.CurrentLivingID == ObjectID.NullObjectID)
+			if (m_world.IsOurTurn == false)
 			{
 				turnTrace.TraceWarning("SendProceedTurn when not our turn");
 				return;
