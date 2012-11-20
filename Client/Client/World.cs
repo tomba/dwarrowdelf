@@ -20,6 +20,7 @@ namespace Dwarrowdelf.Client
 		BaseGameObjectCollection m_rootObjects;
 		public ReadOnlyBaseGameObjectCollection RootObjects { get; private set; }
 
+		// XXX not currently used
 		EnvironmentCollection m_environments;
 		public ReadOnlyEnvironmentCollection Environments { get; private set; }
 
@@ -56,11 +57,6 @@ namespace Dwarrowdelf.Client
 			this.Controllables = new LivingCollection();
 
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
-		}
-
-		internal void AddEnvironment(EnvironmentObject env)
-		{
-			m_environments.Add(env);
 		}
 
 		int m_tickNumber;
@@ -144,6 +140,11 @@ namespace Dwarrowdelf.Client
 			m_objects.Add(ob);
 
 			m_rootObjects.Add(ob);
+
+			var env = ob as EnvironmentObject;
+			if (env != null)
+				m_environments.Add(env);
+
 			var movable = ob as MovableObject;
 			if (movable != null)
 				movable.PropertyChanged += MovablePropertyChanged;
@@ -179,6 +180,10 @@ namespace Dwarrowdelf.Client
 			var movable = ob as MovableObject;
 			if (movable != null)
 				movable.PropertyChanged -= MovablePropertyChanged;
+
+			var env = ob as EnvironmentObject;
+			if (env != null)
+				m_environments.Remove(env);
 
 			m_rootObjects.Remove(ob);
 

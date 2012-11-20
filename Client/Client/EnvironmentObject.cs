@@ -70,8 +70,6 @@ namespace Dwarrowdelf.Client
 			this.ConstructManager = new ConstructManager(this);
 
 			this.ItemTracker = new ItemTracker(this);
-
-			this.World.AddEnvironment(this);
 		}
 
 		public override void DeserializeBegin(BaseGameObjectData _data)
