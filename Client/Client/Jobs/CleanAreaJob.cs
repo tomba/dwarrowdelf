@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Client
 				if (m_map[p] != null)
 					return;
 
-				if (m_environment.GetInteriorID(p) != InteriorID.Empty)
+				if (m_environment.GetInteriorID(p).IsClear() == false)
 					return;
 			}
 
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 				{
 					var interiorID = m_environment.GetInteriorID(p);
 
-					if (interiorID != InteriorID.Empty)
+					if (!interiorID.IsClear())
 					{
 						IJob job;
 
