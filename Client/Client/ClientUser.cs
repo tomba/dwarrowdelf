@@ -324,7 +324,6 @@ namespace Dwarrowdelf.Client
 
 		// LivingID, AnyObjectID or NullIObjectID
 		ObjectID m_currentLivingID;
-		bool m_isOurTurn;
 		Dictionary<LivingObject, GameAction> m_actionMap = new Dictionary<LivingObject, GameAction>();
 
 		// Called from change handler
@@ -340,8 +339,6 @@ namespace Dwarrowdelf.Client
 			if (livingID != ObjectID.AnyObjectID && m_world.Controllables.Contains(livingID) == false)
 				return;		// not our turn
 
-			m_isOurTurn = true;
-
 			if (GameData.Data.IsAutoAdvanceTurn)
 			{
 				if (App.MainWindow.FocusedObject == null || App.MainWindow.FocusedObject.HasAction)
@@ -354,14 +351,13 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("TurnEnd");
 			m_currentLivingID = ObjectID.NullObjectID;
-			m_isOurTurn = false;
 		}
 
 		public void SignalLivingHasAction(LivingObject living, GameAction action)
 		{
 			turnTrace.TraceVerbose("SignalLivingHasAction({0}, {1}", living, action);
 
-			if (m_isOurTurn == false)
+			if (m_currentLivingID == ObjectID.NullObjectID)
 			{
 				turnTrace.TraceWarning("SignalLivingHasAction when not our turn");
 				return;
@@ -376,7 +372,7 @@ namespace Dwarrowdelf.Client
 		{
 			turnTrace.TraceVerbose("SendProceedTurn");
 
-			if (m_isOurTurn == false)
+			if (m_currentLivingID == ObjectID.NullObjectID)
 			{
 				turnTrace.TraceWarning("SendProceedTurn when not our turn");
 				return;
