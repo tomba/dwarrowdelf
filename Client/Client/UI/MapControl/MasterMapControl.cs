@@ -121,36 +121,39 @@ namespace Dwarrowdelf.Client.UI
 		void OnEnvironmentChanged(EnvironmentObject env)
 		{
 			this.Selection = new MapSelection();
-			UpdateHoverTileInfo();
+			UpdateHoverTileInfo(false);
 		}
 
 		void OnZChanged(int z)
 		{
-			UpdateHoverTileInfo();
+			UpdateHoverTileInfo(false);
 		}
 
 		void OnMouseLeave(object sender, MouseEventArgs e)
 		{
-			UpdateHoverTileInfo();
+			UpdateHoverTileInfo(false);
 		}
 
 		void OnMouseMove(object sender, MouseEventArgs e)
 		{
-			UpdateHoverTileInfo();
+			UpdateHoverTileInfo(true);
 		}
 
 		void OnTileLayoutChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
-			UpdateHoverTileInfo();
+			UpdateHoverTileInfo(false);
 		}
 
 		// used when tracking mouse position
 		public Point MousePos { get; private set; }
 		public IntPoint2 ScreenLocation { get; private set; }
 		bool m_updateHoverTileInfoQueued;
+		bool m_hoverTileMouseMove;
 
-		void UpdateHoverTileInfo()
+		void UpdateHoverTileInfo(bool mouseMove)
 		{
+			m_hoverTileMouseMove = mouseMove;
+
 			if (m_updateHoverTileInfoQueued)
 				return;
 
@@ -163,7 +166,7 @@ namespace Dwarrowdelf.Client.UI
 			Point p;
 			IntPoint2 sl;
 
-			if (!this.IsMouseOver)
+			if (!this.IsMouseOver || !m_hoverTileMouseMove)
 			{
 				p = new Point();
 				sl = new IntPoint2();
