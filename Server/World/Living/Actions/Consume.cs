@@ -38,8 +38,8 @@ namespace Dwarrowdelf.Server
 
 			ob.Destruct();
 
-			this.WaterFullness += refreshment;
-			this.FoodFullness += nutrition;
+			this.Hunger = Math.Max(this.Hunger - nutrition, 0);
+			this.Thirst = Math.Max(this.Thirst - refreshment, 0);
 
 			return true;
 		}

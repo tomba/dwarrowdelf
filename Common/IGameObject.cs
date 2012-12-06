@@ -100,8 +100,8 @@ namespace Dwarrowdelf
 
 		byte GetSkillLevel(SkillID skill);
 
-		int FoodFullness { get; }
-		int WaterFullness { get; }
+		int Hunger { get; }
+		int Thirst { get; }
 	}
 
 	public interface IItemObject : IConcreteObject

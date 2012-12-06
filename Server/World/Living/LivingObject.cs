@@ -58,8 +58,6 @@ namespace Dwarrowdelf.Server
 			m_gender = builder.Gender;
 
 			m_visionRange = builder.VisionRange;
-			m_foodFullness = builder.FoodFullness;
-			m_waterFullness = builder.WaterFullness;
 
 			m_assignment = "";
 
@@ -118,11 +116,8 @@ namespace Dwarrowdelf.Server
 		void OnTickStart()
 		{
 			// XXX track only for dwarves
-			if (this.FoodFullness > 0)
-				this.FoodFullness--;
-
-			if (this.WaterFullness > 0)
-				this.WaterFullness--;
+			this.Hunger++;
+			this.Thirst++;
 		}
 
 		[SaveGameProperty]
@@ -234,20 +229,20 @@ namespace Dwarrowdelf.Server
 			set { if (m_visionRange == value) return; m_visionRange = value; NotifyInt(PropertyID.VisionRange, value); m_visionMap = null; }
 		}
 
-		[SaveGameProperty("FoodFullness")]
-		int m_foodFullness;
-		public int FoodFullness
+		[SaveGameProperty("Hunger")]
+		int m_hunger;
+		public int Hunger
 		{
-			get { return m_foodFullness; }
-			set { if (m_foodFullness == value) return; m_foodFullness = value; NotifyInt(PropertyID.FoodFullness, value); }
+			get { return m_hunger; }
+			set { if (m_hunger == value) return; m_hunger = value; NotifyInt(PropertyID.Hunger, value); }
 		}
 
-		[SaveGameProperty("WaterFullness")]
-		int m_waterFullness;
-		public int WaterFullness
+		[SaveGameProperty("Thirst")]
+		int m_thirst;
+		public int Thirst
 		{
-			get { return m_waterFullness; }
-			set { if (m_waterFullness == value) return; m_waterFullness = value; NotifyInt(PropertyID.WaterFullness, value); }
+			get { return m_thirst; }
+			set { if (m_thirst == value) return; m_thirst = value; NotifyInt(PropertyID.Thirst, value); }
 		}
 
 		// String representation of assignment, for client use
@@ -418,8 +413,8 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.Size] = m_size;
 			props[PropertyID.NaturalArmorClass] = m_naturalArmorClass;
 			props[PropertyID.VisionRange] = m_visionRange;
-			props[PropertyID.FoodFullness] = m_foodFullness;
-			props[PropertyID.WaterFullness] = m_waterFullness;
+			props[PropertyID.Hunger] = m_hunger;
+			props[PropertyID.Thirst] = m_thirst;
 			props[PropertyID.Assignment] = m_assignment;
 			props[PropertyID.Gender] = m_gender;
 
@@ -836,8 +831,6 @@ namespace Dwarrowdelf.Server
 	{
 		public LivingID LivingID { get; set; }
 		public int VisionRange { get; set; }
-		public int FoodFullness { get; set; }
-		public int WaterFullness { get; set; }
 		public Dictionary<SkillID, byte> SkillMap { get; private set; }
 		public LivingGender Gender { get; set; }
 		public int HitPoints;
@@ -860,8 +853,6 @@ namespace Dwarrowdelf.Server
 
 			this.MaterialID = Dwarrowdelf.MaterialID.Flesh;
 			this.VisionRange = 10;
-			this.FoodFullness = 500;
-			this.WaterFullness = 500;
 
 			this.SkillMap = new Dictionary<SkillID, byte>();
 		}

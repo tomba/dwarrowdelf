@@ -32,8 +32,8 @@ namespace Dwarrowdelf
 		NaturalArmorClass,
 
 		VisionRange,
-		FoodFullness,
-		WaterFullness,
+		Hunger,
+		Thirst,
 
 		Assignment,
 		ReservedByStr,
@@ -90,8 +90,8 @@ namespace Dwarrowdelf
 			map[PropertyID.NaturalArmorClass] = ObjectVisibility.Private;
 
 			map[PropertyID.VisionRange] = ObjectVisibility.Private;
-			map[PropertyID.FoodFullness] = ObjectVisibility.Private;
-			map[PropertyID.WaterFullness] = ObjectVisibility.Private;
+			map[PropertyID.Hunger] = ObjectVisibility.Private;
+			map[PropertyID.Thirst] = ObjectVisibility.Private;
 
 			map[PropertyID.Gender] = ObjectVisibility.Public;
 

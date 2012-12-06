@@ -433,12 +433,12 @@ namespace Dwarrowdelf.Client
 					this.VisionRange = (int)value;
 					break;
 
-				case PropertyID.FoodFullness:
-					this.FoodFullness = (int)value;
+				case PropertyID.Hunger:
+					this.Hunger = (int)value;
 					break;
 
-				case PropertyID.WaterFullness:
-					this.WaterFullness = (int)value;
+				case PropertyID.Thirst:
+					this.Thirst = (int)value;
 					break;
 
 				case PropertyID.Assignment:
@@ -558,18 +558,18 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		int m_foodFullness;
-		public int FoodFullness
+		int m_hunger;
+		public int Hunger
 		{
-			get { return m_foodFullness; }
-			private set { m_foodFullness = value; Notify("FoodFullness"); }
+			get { return m_hunger; }
+			private set { m_hunger = value; Notify("Hunger"); }
 		}
 
-		int m_waterFullness;
-		public int WaterFullness
+		int m_thirst;
+		public int Thirst
 		{
-			get { return m_waterFullness; }
-			private set { m_waterFullness = value; Notify("WaterFullness"); }
+			get { return m_thirst; }
+			private set { m_thirst = value; Notify("Thirst"); }
 		}
 
 		string m_serverAssignment;

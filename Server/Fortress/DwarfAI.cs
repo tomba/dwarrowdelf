@@ -106,10 +106,10 @@ namespace Dwarrowdelf.Server.Fortress
 
 		IAssignment CreateFoodAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
 		{
-			if (priority == ActionPriority.High && worker.FoodFullness > 50)
+			if (priority == ActionPriority.High && worker.Hunger < 500)
 				return null;
 
-			if (priority == ActionPriority.Idle && worker.FoodFullness > 300)
+			if (priority == ActionPriority.Idle && worker.Hunger < 200)
 				return null;
 
 			var env = worker.Environment;
@@ -133,10 +133,10 @@ namespace Dwarrowdelf.Server.Fortress
 
 		IAssignment CreateDrinkAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
 		{
-			if (priority == ActionPriority.High && worker.WaterFullness > 50)
+			if (priority == ActionPriority.High && worker.Thirst < 500)
 				return null;
 
-			if (priority == ActionPriority.Idle && worker.WaterFullness > 300)
+			if (priority == ActionPriority.Idle && worker.Thirst < 200)
 				return null;
 
 			var env = worker.Environment;
