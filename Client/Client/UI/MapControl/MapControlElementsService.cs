@@ -71,8 +71,8 @@ namespace Dwarrowdelf.Client.UI
 
 		void UpdateScaleTransform()
 		{
-			m_scaleTransform.ScaleX = m_mapControl.TileSize;
-			m_scaleTransform.ScaleY = m_mapControl.TileSize;
+			m_scaleTransform.ScaleX = m_mapControl.TileSize / 10;
+			m_scaleTransform.ScaleY = m_mapControl.TileSize / 10;
 		}
 
 		void OnZChanged(int z)
@@ -97,14 +97,14 @@ namespace Dwarrowdelf.Client.UI
 			else if (element is ConstructionSite)
 				shape.Stroke = Brushes.Cyan;
 
-			shape.StrokeThickness = 0.1;
+			shape.StrokeThickness = 1;
 			shape.IsHitTestVisible = false;
-			shape.Width = element.Area.Columns;
-			shape.Height = element.Area.Rows;
+			shape.Width = element.Area.Columns * 10;
+			shape.Height = element.Area.Rows * 10;
 
 			var r = element.Area;
-			Canvas.SetLeft(shape, r.X);
-			Canvas.SetTop(shape, r.Y);
+			Canvas.SetLeft(shape, r.X * 10);
+			Canvas.SetTop(shape, r.Y * 10);
 			SetElementZ(shape, r.Z);
 
 			m_canvas.Children.Add(shape);
