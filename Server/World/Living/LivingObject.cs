@@ -118,6 +118,7 @@ namespace Dwarrowdelf.Server
 			// XXX track only for dwarves
 			this.Hunger++;
 			this.Thirst++;
+			this.Exhaustion++;
 		}
 
 		[SaveGameProperty]
@@ -243,6 +244,14 @@ namespace Dwarrowdelf.Server
 		{
 			get { return m_thirst; }
 			set { if (m_thirst == value) return; m_thirst = value; NotifyInt(PropertyID.Thirst, value); }
+		}
+
+		[SaveGameProperty("Exhaustion")]
+		int m_exhaustion;
+		public int Exhaustion
+		{
+			get { return m_exhaustion; }
+			set { if (m_exhaustion == value) return; m_exhaustion = value; NotifyInt(PropertyID.Exhaustion, value); }
 		}
 
 		// String representation of assignment, for client use
@@ -415,6 +424,7 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.VisionRange] = m_visionRange;
 			props[PropertyID.Hunger] = m_hunger;
 			props[PropertyID.Thirst] = m_thirst;
+			props[PropertyID.Exhaustion] = m_exhaustion;
 			props[PropertyID.Assignment] = m_assignment;
 			props[PropertyID.Gender] = m_gender;
 

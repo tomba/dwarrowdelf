@@ -104,6 +104,11 @@
 			<TextBlock Text="Thirst" />
 			<TextBlock Text="{Binding Hunger}" />
 			<TextBlock Text="{Binding Thirst}" />
+
+			<TextBlock Text="Exhaustion" />
+			<TextBlock Text="Dummy" />
+			<TextBlock Text="{Binding Exhaustion}" />
+			<TextBlock Text=""/>
 		</UniformGrid>
 	</Grid>
 

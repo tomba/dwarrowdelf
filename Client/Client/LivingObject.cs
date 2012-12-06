@@ -441,6 +441,10 @@ namespace Dwarrowdelf.Client
 					this.Thirst = (int)value;
 					break;
 
+				case PropertyID.Exhaustion:
+					this.Exhaustion = (int)value;
+					break;
+
 				case PropertyID.Assignment:
 					this.ServerAssignment = (string)value;
 					break;
@@ -570,6 +574,13 @@ namespace Dwarrowdelf.Client
 		{
 			get { return m_thirst; }
 			private set { m_thirst = value; Notify("Thirst"); }
+		}
+
+		int m_exhaustion;
+		public int Exhaustion
+		{
+			get { return m_exhaustion; }
+			private set { m_exhaustion = value; Notify("Exhaustion"); }
 		}
 
 		string m_serverAssignment;

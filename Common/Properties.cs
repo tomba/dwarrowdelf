@@ -34,6 +34,7 @@ namespace Dwarrowdelf
 		VisionRange,
 		Hunger,
 		Thirst,
+		Exhaustion,
 
 		Assignment,
 		ReservedByStr,
@@ -92,6 +93,7 @@ namespace Dwarrowdelf
 			map[PropertyID.VisionRange] = ObjectVisibility.Private;
 			map[PropertyID.Hunger] = ObjectVisibility.Private;
 			map[PropertyID.Thirst] = ObjectVisibility.Private;
+			map[PropertyID.Exhaustion] = ObjectVisibility.Private;
 
 			map[PropertyID.Gender] = ObjectVisibility.Public;
 
