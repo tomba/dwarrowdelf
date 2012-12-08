@@ -181,6 +181,15 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public sealed class SleepActionReport : ActionReport
+	{
+		public SleepActionReport(ILivingObject living)
+			: base(living)
+		{
+		}
+	}
+
+	[Serializable]
 	public abstract class ItemActionReport : ActionReport
 	{
 		public ObjectID ItemObjectID { get; private set; }

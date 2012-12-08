@@ -138,6 +138,32 @@ namespace Dwarrowdelf
 		}
 	}
 
+	[Serializable]
+	[SaveGameObjectByRef]
+	public sealed class SleepAction : GameAction
+	{
+		[SaveGameProperty]
+		public ObjectID Bed { get; private set; }
+		[SaveGameProperty]
+		public int SleepTicks { get; private set; }
+
+		public SleepAction(IItemObject bed, int ticks)
+		{
+			this.Bed = bed.ObjectID;
+			this.SleepTicks = ticks;
+		}
+
+		SleepAction(SaveGameContext ctx)
+			: base(ctx)
+		{
+		}
+
+		protected override string GetParams()
+		{
+			return String.Format("bed: {0}, ticks {1}", this.Bed, this.SleepTicks);
+		}
+	}
+
 	public enum MineActionType
 	{
 		None,

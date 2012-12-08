@@ -102,6 +102,7 @@ namespace Dwarrowdelf
 
 		int Hunger { get; }
 		int Thirst { get; }
+		int Exhaustion { get; }
 	}
 
 	public interface IItemObject : IConcreteObject
@@ -112,6 +113,8 @@ namespace Dwarrowdelf
 
 		object ReservedBy { get; set; }
 		bool IsReserved { get; }
+
+		bool IsInstalled { get; }
 
 		bool IsArmor { get; }
 		bool IsWeapon { get; }

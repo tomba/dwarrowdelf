@@ -72,6 +72,9 @@ namespace Dwarrowdelf.Server.Fortress
 				if (assignment != null)
 					return assignment;
 
+				assignment = CreateSleepAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
 
 				// loiter around
 
@@ -158,11 +161,40 @@ namespace Dwarrowdelf.Server.Fortress
 			return null;
 		}
 
+		IAssignment CreateSleepAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
+		{
+			if (priority == ActionPriority.High && worker.Exhaustion < 500)
+				return null;
+
+			if (priority == ActionPriority.Idle && worker.Exhaustion < 100)
+				return null;
+
+			var env = worker.Environment;
+
+			var ob = env.Inventory
+				.OfType<IItemObject>()
+				.Where(o => o.ItemID == ItemID.Bed)
+				.Where(o => o.IsReserved == false && o.IsInstalled)
+				.OrderBy(o => (o.Location - worker.Location).ManhattanLength)
+				.FirstOrDefault();
+
+			if (ob != null)
+			{
+				m_priorityAction = true;
+				var job = new MoveSleepAssignment(this, ob);
+				ob.ReservedBy = this;
+				return job;
+			}
+
+			return null;
+		}
+
 		protected override void JobStatusChangedOverride(IJob job, JobStatus status)
 		{
-			// XXX hacksor. Will get called when loiterjob is aborted, because we're gonne add a eating job. and at that point we've marked the consumeobject and priorityaction
+			// XXX hacksor. Will get called when loiterjob is aborted, because we're gonna add an eat job. 
+			// and at that point we've marked the consumeobject and priorityaction
 
-			if (!(job is MoveConsumeAssignment))
+			if (!(job is MoveConsumeAssignment) && !(job is MoveSleepAssignment))
 				return;
 
 			if (m_priorityAction)
@@ -183,6 +215,17 @@ namespace Dwarrowdelf.Server.Fortress
 				{
 					Debug.Assert(j.Item.ReservedBy == this);
 					j.Item.ReservedBy = null;
+				}
+			}
+
+			var j2 = job as Dwarrowdelf.Jobs.AssignmentGroups.MoveSleepAssignment;
+
+			if (j2 != null)
+			{
+				if (!j2.Bed.IsDestructed)
+				{
+					Debug.Assert(j2.Bed.ReservedBy == this);
+					j2.Bed.ReservedBy = null;
 				}
 			}
 		}

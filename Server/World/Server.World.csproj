@@ -54,6 +54,7 @@
     <Compile Include="Environment\EnvWaterHandler.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="Living\Actions\ConstructBuilding.cs" />
+    <Compile Include="Living\Actions\Sleep.cs" />
     <Compile Include="Living\Actions\WearArmor.cs" />
     <Compile Include="Living\Actions\RemoveArmor.cs" />
     <Compile Include="Living\Actions\RemoveWeapon.cs" />

@@ -282,5 +282,13 @@ namespace Dwarrowdelf.Client
 				GameData.Data.AddGameEvent(living, "{0} fails to fell tree: {1}", living, report.FailReason);
 		}
 
+		void HandleReport(SleepActionReport report)
+		{
+			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
+			if (report.Success)
+				GameData.Data.AddGameEvent(living, "{0} wakes up", living);
+			else
+				GameData.Data.AddGameEvent(living, "{0} fails to sleep: {1}", living, report.FailReason);
+		}
 	}
 }

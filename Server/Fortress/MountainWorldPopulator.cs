@@ -56,6 +56,16 @@ namespace Dwarrowdelf.Server.Fortress
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
+
+				p = p + new IntVector3(8, 0, 0);
+
+				td = env.GetTileData(p);
+				td.InteriorID = InteriorID.Grass;
+				td.InteriorMaterialID = MaterialID.HairGrass;
+				env.SetTileData(p, td);
+
+				var bed = CreateItem(env, ItemID.Bed, GetRandomMaterial(MaterialCategory.Wood), p);
+				bed.IsInstalled = true;
 			}
 
 			{

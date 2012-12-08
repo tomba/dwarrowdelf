@@ -56,6 +56,8 @@
     <Compile Include="ChangeDatas.cs" />
     <Compile Include="DataTypes\DoublePoint3.cs" />
     <Compile Include="Hash.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
+    <Compile Include="Jobs\Assignments\SleepAssignment.cs" />
     <Compile Include="MWCRandom.cs" />
     <Compile Include="Net\DirectConnectionListener.cs" />
     <Compile Include="Net\PipeConnectionListener.cs" />
