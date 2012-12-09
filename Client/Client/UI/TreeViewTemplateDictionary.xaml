@@ -70,12 +70,12 @@
 			<Image Grid.Column="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" VerticalAlignment="Center">
-					<TextBlock.Text>
-						<MultiBinding StringFormat="{}{0} ({1})">
-							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
-							<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
-						</MultiBinding>
-					</TextBlock.Text>
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} ({1})">
+						<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
+						<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 
 			<Grid.ToolTip>
@@ -100,36 +100,43 @@
 				<RowDefinition />
 				<RowDefinition />
 				<RowDefinition />
+				<RowDefinition />
 			</Grid.RowDefinitions>
 
 			<Image Grid.Column="0" Grid.Row="0" Stretch="Uniform" Height="24" Margin="4,0" VerticalAlignment="Center" Source="{StaticResource objectDrawingImage}" />
 
 			<TextBlock Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
-					<TextBlock.Text>
-						<MultiBinding StringFormat="{}{0} ({1})">
-							<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
-							<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
-						</MultiBinding>
-					</TextBlock.Text>
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} ({1})">
+						<Binding Path="Description" Converter="{StaticResource capitalizeConverter}" />
+						<Binding Path="ObjectID" Converter="{StaticResource objectIDConverter}" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 
 			<TextBlock Grid.Row="1" Grid.Column="1" FontWeight="Light">
-					<TextBlock.Text>
-						<MultiBinding StringFormat="{}{0} ({1}/{2})">
-							<Binding Path="CurrentAction" TargetNullValue="No action" />
-							<Binding Path="ActionTicksUsed" />
-							<Binding Path="ActionTotalTicks" />
-						</MultiBinding>
-					</TextBlock.Text>
+				<TextBlock.Text>
+					<MultiBinding StringFormat="{}{0} ({1}/{2})">
+						<Binding Path="CurrentAction" TargetNullValue="No action" />
+						<Binding Path="ActionTicksUsed" />
+						<Binding Path="ActionTotalTicks" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 
-			<TextBlock Grid.Row="2" Grid.Column="1" FontWeight="Light">
-					<TextBlock.Text>
-						<MultiBinding Converter="{StaticResource assignmentConverter}">
-							<Binding Path="ClientAssignment" />
-							<Binding Path="ServerAssignment" />
-						</MultiBinding>
-					</TextBlock.Text>
+			<TextBlock Grid.Row="2" Grid.Column="1" FontWeight="ExtraLight">
+				<TextBlock.Text>
+					<Binding Path="PreviousAction" TargetNullValue="No action" />
+				</TextBlock.Text>
+			</TextBlock>
+
+			<TextBlock Grid.Row="3" Grid.Column="1" FontWeight="Light">
+				<TextBlock.Text>
+					<MultiBinding Converter="{StaticResource assignmentConverter}">
+						<Binding Path="ClientAssignment" />
+						<Binding Path="ServerAssignment" />
+					</MultiBinding>
+				</TextBlock.Text>
 			</TextBlock>
 
 			<Grid.ContextMenu>
