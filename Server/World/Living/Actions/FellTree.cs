@@ -8,13 +8,14 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(FellTreeAction action)
+		ActionState ProcessAction(FellTreeAction action)
 		{
-			return GetTicks(SkillID.WoodCutting);
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = GetTicks(SkillID.WoodCutting);
 
-		bool PerformAction(FellTreeAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			IntPoint3 p = this.Location + new IntVector3(action.Direction);
 
 			var td = this.Environment.GetTileData(p);
@@ -25,7 +26,7 @@ namespace Dwarrowdelf.Server
 			if (id != InteriorID.Tree && id != InteriorID.Sapling)
 			{
 				SendFailReport(report, "not a tree");
-				return false;
+				return ActionState.Fail;
 			}
 
 			var material = td.InteriorMaterialID;
@@ -53,8 +54,7 @@ namespace Dwarrowdelf.Server
 
 			SendReport(report);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

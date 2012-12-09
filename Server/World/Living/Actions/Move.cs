@@ -8,21 +8,26 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(MoveAction action)
+		ActionState ProcessAction(MoveAction action)
 		{
 			var dst = this.Location + action.Direction;
-			if (this.Environment.Contains(dst) == false)
+
+			if (this.ActionTicksUsed == 1)
 			{
-				SendFailReport(new MoveActionReport(this, action.Direction), "could not move (outside map)");
-				return -1;
+				if (this.Environment.Contains(dst) == false)
+				{
+					SendFailReport(new MoveActionReport(this, action.Direction), "could not move (outside map)");
+					return ActionState.Fail;
+				}
+
+				// total ticks = number of livings on the destination tile + 1
+				this.ActionTotalTicks = this.Environment.GetContents(dst).OfType<LivingObject>().Count() + 1;
 			}
 
-			var obs = this.Environment.GetContents(dst);
-			return obs.OfType<LivingObject>().Count() + 1;
-		}
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
 
-		bool PerformAction(MoveAction action)
-		{
+			// drop the carried item if we no longer haul
 			if (this.CarriedItem != null)
 			{
 				var moveOk = this.CarriedItem.MoveTo(this.Environment, this.Location);
@@ -40,14 +45,11 @@ namespace Dwarrowdelf.Server
 			if (!ok)
 			{
 				SendFailReport(new MoveActionReport(this, action.Direction), "could not move (blocked?)");
-			}
-			else
-			{
-				SendReport(new MoveActionReport(this, action.Direction));
+				return ActionState.Fail;
 			}
 
-			return ok;
+			SendReport(new MoveActionReport(this, action.Direction));
+			return ActionState.Done;
 		}
-
 	}
 }

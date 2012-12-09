@@ -8,25 +8,26 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(DestructBuildingAction action)
+		ActionState ProcessAction(DestructBuildingAction action)
 		{
-			return 10;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 10;
 
-		bool PerformAction(DestructBuildingAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var building = this.World.FindObject<BuildingObject>(action.BuildingID);
 
 			if (building == null)
 			{
 				SendFailReport(new DestructBuildingActionReport(this, null), "no such building");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (!building.Area.Contains(this.Location))
 			{
 				SendFailReport(new DestructBuildingActionReport(this, building), "not at the building");
-				return false;
+				return ActionState.Fail;
 			}
 
 			// send report before destruct
@@ -34,8 +35,7 @@ namespace Dwarrowdelf.Server
 
 			building.Destruct();
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

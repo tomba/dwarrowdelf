@@ -8,12 +8,8 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		bool CheckWearArmor(WearArmorAction action)
+		bool CheckWearArmor(ItemObject item)
 		{
-			var itemID = action.ItemID;
-
-			var item = this.World.FindObject<ItemObject>(itemID);
-
 			if (item == null)
 			{
 				var report = new WearArmorActionReport(this, null);
@@ -49,29 +45,37 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int GetTotalTicks(WearArmorAction action)
+		ActionState ProcessAction(WearArmorAction action)
 		{
-			if (CheckWearArmor(action) == false)
-				return -1;
+			if (this.ActionTicksUsed == 1)
+			{
+				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
-			return 10;
+				if (CheckWearArmor(item) == false)
+					return ActionState.Fail;
+
+				this.ActionTotalTicks = 10;
+
+				return ActionState.Ok;
+			}
+			else if (this.ActionTicksUsed < this.ActionTotalTicks)
+			{
+				return ActionState.Ok;
+			}
+			else
+			{
+				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
+
+				if (CheckWearArmor(item) == false)
+					return ActionState.Fail;
+
+				this.WearArmor(item);
+
+				var report = new WearArmorActionReport(this, item);
+				SendReport(report);
+
+				return ActionState.Done;
+			}
 		}
-
-		bool PerformAction(WearArmorAction action)
-		{
-			if (CheckWearArmor(action) == false)
-				return false;
-
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
-
-			this.WearArmor(item);
-
-			var report = new WearArmorActionReport(this, item);
-			SendReport(report);
-
-			return true;
-		}
-
-
 	}
 }

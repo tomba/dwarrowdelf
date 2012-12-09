@@ -8,18 +8,22 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(SleepAction action)
+		ActionState ProcessAction(SleepAction action)
 		{
-			return action.SleepTicks;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = action.SleepTicks;
 
-		bool PerformAction(SleepAction action)
-		{
-			this.Exhaustion = Math.Max(this.Exhaustion - action.SleepTicks * 10, 0);
+			this.Exhaustion = Math.Max(this.Exhaustion - 10, 0);
 
-			SendReport(new SleepActionReport(this));
-
-			return true;
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+			{
+				return ActionState.Ok;
+			}
+			else
+			{
+				SendReport(new SleepActionReport(this));
+				return ActionState.Done;
+			}
 		}
 	}
 }

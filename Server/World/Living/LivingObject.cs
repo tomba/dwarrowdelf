@@ -525,44 +525,31 @@ namespace Dwarrowdelf.Server
 			// if action was cancelled just now, the actor misses the turn
 			if (action == null)
 			{
-				D("PerformAction: skipping");
+				D("ProcessAction: skipping");
 				return;
 			}
 
-			D("PerformAction: {0}", action);
-
-			bool ok = true;
-
-			int totalTicks = GetActionTotalTicks(action);
-
-			if (totalTicks == -1)
-				ok = false;
-			else
-				this.ActionTotalTicks = totalTicks;
+			D("ProcessAction: {0}", action);
 
 			this.ActionTicksUsed++;
 
-			if (ok && this.ActionTicksUsed < this.ActionTotalTicks)
-			{
-				HandleActionProgress();
-			}
-			else
-			{
-				if (ok)
-					ok = PerformAction(action);
+			var status = ProcessAction(action);
 
-				if (ok)
-				{
-					D("Action Done({0})", this.CurrentAction);
+			switch (status)
+			{
+				case ActionState.Ok:
+					HandleActionProgress();
+					break;
 
+				case ActionState.Done:
+					D("Action Done({0})", action);
 					HandleActionDone(ActionState.Done);
-				}
-				else
-				{
-					D("Action Failed({0})", this.CurrentAction);
+					break;
 
+				case ActionState.Fail:
+					D("Action Failed({0})", action);
 					HandleActionDone(ActionState.Fail);
-				}
+					break;
 			}
 		}
 

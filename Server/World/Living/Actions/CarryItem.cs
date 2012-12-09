@@ -8,13 +8,14 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(CarryItemAction action)
+		ActionState ProcessAction(CarryItemAction action)
 		{
-			return 1;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 1;
 
-		bool PerformAction(CarryItemAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var item = this.World.FindObject<ItemObject>(action.ItemID);
 
 			var report = new CarryItemActionReport(this, item);
@@ -22,33 +23,32 @@ namespace Dwarrowdelf.Server
 			if (item == null)
 			{
 				SendFailReport(report, "item not found");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (this.CarriedItem != null)
 			{
 				SendFailReport(report, "already carrying an item");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (item.Environment != this.Environment || item.Location != this.Location)
 			{
 				SendFailReport(report, "item not there");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (item.MoveTo(this) == false)
 			{
 				SendFailReport(report, "failed to move");
-				return false;
+				return ActionState.Fail;
 			}
 
 			this.CarriedItem = item;
 
 			SendReport(report);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

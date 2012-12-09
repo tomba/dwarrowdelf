@@ -8,14 +8,15 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(WaitAction action)
+		ActionState ProcessAction(WaitAction action)
 		{
-			return action.WaitTicks;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = action.WaitTicks;
 
-		bool PerformAction(WaitAction action)
-		{
-			return true;
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+			else
+				return ActionState.Done;
 		}
 	}
 }

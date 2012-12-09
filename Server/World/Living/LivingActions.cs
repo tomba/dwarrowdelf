@@ -10,8 +10,7 @@ namespace Dwarrowdelf.Server
 	{
 		sealed class ActionData
 		{
-			public Func<LivingObject, GameAction, bool> ActionHandler;
-			public Func<LivingObject, GameAction, int> GetTotalTicks;
+			public Func<LivingObject, GameAction, ActionState> ProcessAction;
 		}
 
 		static Dictionary<Type, ActionData> s_actionMethodMap;
@@ -24,18 +23,13 @@ namespace Dwarrowdelf.Server
 
 			foreach (var type in actionTypes)
 			{
-				var actionHandler = WrapperGenerator.CreateFuncWrapper<LivingObject, GameAction, bool>("PerformAction", type);
-				if (actionHandler == null)
-					throw new Exception(String.Format("No PerformAction method found for {0}", type.Name));
-
-				var tickInitializer = WrapperGenerator.CreateFuncWrapper<LivingObject, GameAction, int>("GetTotalTicks", type);
-				if (tickInitializer == null)
-					throw new Exception(String.Format("No GetTotalTicks method found for {0}", type.Name));
+				var processAction = WrapperGenerator.CreateFuncWrapper<LivingObject, GameAction, ActionState>("ProcessAction", type);
+				if (processAction == null)
+					throw new Exception(String.Format("No ProcessAction method found for {0}", type.Name));
 
 				s_actionMethodMap[type] = new ActionData()
 				{
-					ActionHandler = actionHandler,
-					GetTotalTicks = tickInitializer,
+					ProcessAction = processAction,
 				};
 			}
 		}
@@ -46,17 +40,9 @@ namespace Dwarrowdelf.Server
 			return 20 / (lvl / 26 + 1);
 		}
 
-		int GetActionTotalTicks(GameAction action)
+		ActionState ProcessAction(GameAction action)
 		{
-			var method = s_actionMethodMap[action.GetType()].GetTotalTicks;
-			return method(this, action);
-		}
-
-		bool PerformAction(GameAction action)
-		{
-			Debug.Assert(this.ActionTotalTicks <= this.ActionTicksUsed);
-
-			var method = s_actionMethodMap[action.GetType()].ActionHandler;
+			var method = s_actionMethodMap[action.GetType()].ProcessAction;
 			return method(this, action);
 		}
 	}

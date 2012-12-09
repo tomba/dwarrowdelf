@@ -8,19 +8,20 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(InstallItemAction action)
+		ActionState ProcessAction(InstallItemAction action)
 		{
-			return 6;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 6;
 
-		bool PerformAction(InstallItemAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var item = this.World.FindObject<ItemObject>(action.ItemID);
 
 			if (item == null)
 			{
 				SendFailReport(new InstallItemActionReport(this, null, action.Mode), "item doesn't exists");
-				return false;
+				return ActionState.Fail;
 			}
 
 			var report = new InstallItemActionReport(this, item, action.Mode);
@@ -28,7 +29,7 @@ namespace Dwarrowdelf.Server
 			if (item.Environment != this.Environment || item.Location != this.Location)
 			{
 				SendFailReport(report, "item not here");
-				return false;
+				return ActionState.Fail;
 			}
 
 			switch (action.Mode)
@@ -38,7 +39,7 @@ namespace Dwarrowdelf.Server
 					if (item.IsInstalled)
 					{
 						SendFailReport(report, "item already installed");
-						return false;
+						return ActionState.Fail;
 					}
 
 					item.IsInstalled = true;
@@ -50,7 +51,7 @@ namespace Dwarrowdelf.Server
 					if (!item.IsInstalled)
 					{
 						SendFailReport(report, "item not installed");
-						return false;
+						return ActionState.Fail;
 					}
 
 					item.IsInstalled = false;
@@ -63,8 +64,7 @@ namespace Dwarrowdelf.Server
 
 			SendReport(report);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

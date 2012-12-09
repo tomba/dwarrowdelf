@@ -8,21 +8,8 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(GetItemAction action)
+		bool CheckGetItemAction(ItemObject item)
 		{
-			return 1;
-		}
-
-		bool PerformAction(GetItemAction action)
-		{
-			if (this.Environment == null)
-			{
-				SendFailReport(new GetItemActionReport(this, null), "no environment");
-				return false;
-			}
-
-			var item = this.World.FindObject<ItemObject>(action.ItemID);
-
 			if (item == null)
 			{
 				SendFailReport(new GetItemActionReport(this, item), "item not found");
@@ -35,16 +22,37 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			return true;
+		}
+
+		ActionState ProcessAction(GetItemAction action)
+		{
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 1;
+
+			if (this.Environment == null)
+			{
+				SendFailReport(new GetItemActionReport(this, null), "no environment");
+				return ActionState.Fail;
+			}
+
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
+
+			if (CheckGetItemAction(item) == false)
+				return ActionState.Fail;
+
 			if (item.MoveTo(this) == false)
 			{
 				SendFailReport(new GetItemActionReport(this, item), "failed to move");
-				return false;
+				return ActionState.Fail;
 			}
 
 			SendReport(new GetItemActionReport(this, item));
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

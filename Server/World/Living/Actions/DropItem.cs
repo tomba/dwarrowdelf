@@ -8,21 +8,8 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(DropItemAction action)
+		bool CheckDropItemAction(ItemObject item)
 		{
-			return 1;
-		}
-
-		bool PerformAction(DropItemAction action)
-		{
-			if (this.Environment == null)
-			{
-				SendFailReport(new DropItemActionReport(this, null), "no environment");
-				return false;
-			}
-
-			var item = this.World.FindObject<ItemObject>(action.ItemID);
-
 			if (item == null)
 			{
 				SendFailReport(new DropItemActionReport(this, item), "item not found");
@@ -47,10 +34,32 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
+			return true;
+		}
+
+		ActionState ProcessAction(DropItemAction action)
+		{
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 1;
+
+			if (this.Environment == null)
+			{
+				SendFailReport(new DropItemActionReport(this, null), "no environment");
+				return ActionState.Fail;
+			}
+
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
+			var item = this.World.FindObject<ItemObject>(action.ItemID);
+
+			if (CheckDropItemAction(item) == false)
+				return ActionState.Fail;
+
 			if (item.MoveTo(this.Environment, this.Location) == false)
 			{
 				SendFailReport(new DropItemActionReport(this, item), "failed to move");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (this.CarriedItem == item)
@@ -58,8 +67,7 @@ namespace Dwarrowdelf.Server
 
 			SendReport(new DropItemActionReport(this, item));
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

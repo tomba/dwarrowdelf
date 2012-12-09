@@ -8,26 +8,27 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(AttackAction action)
+		ActionState ProcessAction(AttackAction action)
 		{
-			return 1;
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 1;
 
-		bool PerformAction(AttackAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var attacker = this;
 			var target = this.World.FindObject<LivingObject>(action.Target);
 
 			if (target == null)
 			{
 				SendFailReport(new AttackActionReport(this, null), "target doesn't exist");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (!attacker.Location.IsAdjacentTo(target.Location, DirectionSet.Planar))
 			{
 				SendFailReport(new AttackActionReport(this, target), "target isn't near");
-				return false;
+				return ActionState.Fail;
 			}
 
 			var roll = this.World.Random.Next(20) + 1;
@@ -95,8 +96,7 @@ namespace Dwarrowdelf.Server
 			if (hit)
 				target.ReceiveDamage(attacker, damageCategory, damage);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

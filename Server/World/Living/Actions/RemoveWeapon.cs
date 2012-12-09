@@ -8,12 +8,8 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		bool CheckRemoveWeapon(RemoveWeaponAction action)
+		bool CheckRemoveWeapon(ItemObject item)
 		{
-			var itemID = action.ItemID;
-
-			var item = this.World.FindObject<ItemObject>(itemID);
-
 			if (item == null)
 			{
 				var report = new RemoveWeaponActionReport(this, null);
@@ -49,27 +45,37 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		int GetTotalTicks(RemoveWeaponAction action)
+		ActionState ProcessAction(RemoveWeaponAction action)
 		{
-			if (CheckRemoveWeapon(action) == false)
-				return -1;
+			if (this.ActionTicksUsed == 1)
+			{
+				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
-			return 2;
-		}
+				if (CheckRemoveWeapon(item) == false)
+					return ActionState.Fail;
 
-		bool PerformAction(RemoveWeaponAction action)
-		{
-			if (CheckRemoveWeapon(action) == false)
-				return false;
+				this.ActionTotalTicks = 2;
 
-			var item = (ItemObject)this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID);
+				return ActionState.Ok;
+			}
+			else if (this.ActionTicksUsed < this.ActionTotalTicks)
+			{
+				return ActionState.Ok;
+			}
+			else
+			{
+				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
-			this.RemoveWeapon(item);
+				if (CheckRemoveWeapon(item) == false)
+					return ActionState.Fail;
 
-			var report = new RemoveWeaponActionReport(this, item);
-			SendReport(report);
+				this.RemoveWeapon(item);
 
-			return true;
+				var report = new RemoveWeaponActionReport(this, item);
+				SendReport(report);
+
+				return ActionState.Done;
+			}
 		}
 	}
 }

@@ -8,13 +8,14 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(MineAction action)
+		ActionState ProcessAction(MineAction action)
 		{
-			return GetTicks(SkillID.Mining);
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = GetTicks(SkillID.Mining);
 
-		bool PerformAction(MineAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var env = this.Environment;
 
 			var p = this.Location + action.Direction;
@@ -31,20 +32,20 @@ namespace Dwarrowdelf.Server
 						if (!terrain.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
-							return false;
+							return ActionState.Fail;
 						}
 
 						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
 							SendFailReport(report, "not not planar or up direction");
-							return false;
+							return ActionState.Fail;
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
 						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
-							return false;
+							return ActionState.Fail;
 						}
 
 						ItemObject item = null;
@@ -114,19 +115,19 @@ namespace Dwarrowdelf.Server
 						if (!terrain.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
-							return false;
+							return ActionState.Fail;
 						}
 
 						if (!action.Direction.IsPlanarUpDown())
 						{
 							SendFailReport(report, "not PlanarUpDown direction");
-							return false;
+							return ActionState.Fail;
 						}
 
 						if (id != TerrainID.NaturalWall)
 						{
 							SendFailReport(report, "not natural wall");
-							return false;
+							return ActionState.Fail;
 						}
 
 						// We can always create stairs down, but for other dirs we need access there
@@ -135,7 +136,7 @@ namespace Dwarrowdelf.Server
 							!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
-							return false;
+							return ActionState.Fail;
 						}
 
 						var td2 = env.GetTileData(p + Direction.Up);
@@ -169,14 +170,14 @@ namespace Dwarrowdelf.Server
 						if (!action.Direction.IsPlanar())
 						{
 							SendFailReport(report, "not not planar or up direction");
-							return false;
+							return ActionState.Fail;
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
 						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
-							return false;
+							return ActionState.Fail;
 						}
 
 						var td = env.GetTileData(p);
@@ -184,13 +185,13 @@ namespace Dwarrowdelf.Server
 						if (td.IsClear == false)
 						{
 							SendFailReport(report, "wrong type of tile");
-							return false;
+							return ActionState.Fail;
 						}
 
 						if (!env.Contains(p + Direction.Down))
 						{
 							SendFailReport(report, "tile not inside map");
-							return false;
+							return ActionState.Fail;
 						}
 
 						var tdd = env.GetTileData(p + Direction.Down);
@@ -208,7 +209,7 @@ namespace Dwarrowdelf.Server
 						else
 						{
 							SendFailReport(report, "tile down not empty");
-							return false;
+							return ActionState.Fail;
 						}
 
 						td.TerrainID = TerrainID.Empty;
@@ -233,8 +234,7 @@ namespace Dwarrowdelf.Server
 
 			SendReport(report);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

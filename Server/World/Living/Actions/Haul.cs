@@ -8,17 +8,20 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(HaulAction action)
+		ActionState ProcessAction(HaulAction action)
 		{
 			var dir = action.Direction;
 
-			var obs = this.Environment.GetContents(this.Location + dir);
-			return obs.OfType<LivingObject>().Count() + 2;
-		}
+			if (this.ActionTicksUsed == 1)
+			{
+				var obs = this.Environment.GetContents(this.Location + dir);
 
-		bool PerformAction(HaulAction action)
-		{
-			var dir = action.Direction;
+				this.ActionTotalTicks = obs.OfType<LivingObject>().Count() + 2;
+			}
+
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+
 			var itemID = action.ItemID;
 			var item = this.World.FindObject<ItemObject>(itemID);
 
@@ -27,13 +30,13 @@ namespace Dwarrowdelf.Server
 			if (item == null)
 			{
 				SendFailReport(report, "object doesn't exist");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (this.CarriedItem == null)
 			{
 				SendFailReport(report, "not carrying anything");
-				return false;
+				return ActionState.Fail;
 			}
 
 			Debug.Assert(this.CarriedItem.Parent == this);
@@ -41,7 +44,7 @@ namespace Dwarrowdelf.Server
 			if (this.CarriedItem != item)
 			{
 				SendFailReport(report, "already carrying another item");
-				return false;
+				return ActionState.Fail;
 			}
 
 			var ok = MoveDir(dir);
@@ -49,13 +52,12 @@ namespace Dwarrowdelf.Server
 			if (!ok)
 			{
 				SendFailReport(new HaulActionReport(this, action.Direction, item), "could not move (blocked?)");
-				return false;
+				return ActionState.Fail;
 			}
 
 			SendReport(report);
 
-			return true;
+			return ActionState.Done;
 		}
-
 	}
 }

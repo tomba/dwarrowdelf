@@ -8,14 +8,14 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		int GetTotalTicks(ConstructAction action)
+		ActionState ProcessAction(ConstructAction action)
 		{
-			return 6;
-			//return GetTicks(SkillID.WoodCutting);
-		}
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = 6;
 
-		bool PerformAction(ConstructAction action)
-		{
+			if (this.ActionTicksUsed < this.ActionTotalTicks)
+				return ActionState.Ok;
+				
 			var obs = action.ItemObjectIDs.Select(oid => this.World.FindObject<ItemObject>(oid)).ToArray();
 
 			var report = new ConstructActionReport(this, action.Mode);
@@ -23,25 +23,25 @@ namespace Dwarrowdelf.Server
 			if (obs.Any(ob => ob == null))
 			{
 				SendFailReport(report, "object not found");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (obs.Length == 0)
 			{
 				SendFailReport(report, "no objects given");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (obs.Length != 1)
 			{
 				SendFailReport(report, "too many objects given");
-				return false;
+				return ActionState.Fail;
 			}
 
 			if (obs.Any(ob => ob.Location != this.Location))
 			{
 				SendFailReport(report, "objects somewhere else");
-				return false;
+				return ActionState.Fail;
 			}
 
 			var item = obs[0];
@@ -58,13 +58,13 @@ namespace Dwarrowdelf.Server
 					if (WorkHelpers.ConstructFloorFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
-						return false;
+						return ActionState.Fail;
 					}
 
 					if (WorkHelpers.ConstructFloorItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
-						return false;
+						return ActionState.Fail;
 					}
 
 					positioning = DirectionSet.Planar;
@@ -75,13 +75,13 @@ namespace Dwarrowdelf.Server
 					if (WorkHelpers.ConstructPavementFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
-						return false;
+						return ActionState.Fail;
 					}
 
 					if (WorkHelpers.ConstructPavementItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
-						return false;
+						return ActionState.Fail;
 					}
 
 					positioning = DirectionSet.Exact;
@@ -92,19 +92,19 @@ namespace Dwarrowdelf.Server
 					if (WorkHelpers.ConstructWallFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
-						return false;
+						return ActionState.Fail;
 					}
 
 					if (WorkHelpers.ConstructWallItemFilter.Match(item) == false)
 					{
 						SendFailReport(report, "bad materials");
-						return false;
+						return ActionState.Fail;
 					}
 
 					if (env.GetContents(action.Location).Any())
 					{
 						SendFailReport(report, "location not empty");
-						return false;
+						return ActionState.Fail;
 					}
 
 					positioning = DirectionSet.Planar;
@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Server
 			if (this.Location.IsAdjacentTo(action.Location, positioning) == false)
 			{
 				SendFailReport(report, "bad location");
-				return false;
+				return ActionState.Fail;
 			}
 
 
@@ -148,9 +148,8 @@ namespace Dwarrowdelf.Server
 			}
 
 			env.SetTileData(action.Location, td);
-
-			return true;
+			
+			return ActionState.Done;
 		}
-
 	}
 }
