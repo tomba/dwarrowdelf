@@ -57,6 +57,18 @@ namespace Dwarrowdelf.Server.Fortress
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 				CreateItem(env, ItemID.Block, GetRandomMaterial(MaterialCategory.Rock), p);
 
+				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+				CreateItem(env, ItemID.UncutGem, GetRandomMaterial(MaterialCategory.Gem), p);
+
+				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+				CreateItem(env, ItemID.Bar, GetRandomMaterial(MaterialCategory.Metal), p);
+
+				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), p);
+
 				p = p + new IntVector3(8, 0, 0);
 
 				td = env.GetTileData(p);
