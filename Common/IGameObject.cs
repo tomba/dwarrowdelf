@@ -162,4 +162,13 @@ namespace Dwarrowdelf
 		/// </summary>
 		LivingLOS,
 	}
+
+	public enum GameSeason
+	{
+		Undefined = 0,
+		Spring,
+		Summer,
+		Autumn,
+		Winter,
+	}
 }

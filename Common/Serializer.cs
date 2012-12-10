@@ -14,7 +14,7 @@ namespace Dwarrowdelf
 			var changeTypes = Helpers.GetSubclasses(typeof(ChangeData));
 			var actionTypes = Helpers.GetSubclasses(typeof(GameAction));
 			var events = Helpers.GetSubclasses(typeof(GameEvent));
-			var extra = new Type[] { typeof(GameColor), typeof(LivingGender) };
+			var extra = new Type[] { typeof(GameColor), typeof(LivingGender), typeof(GameSeason) };
 			var reports = Helpers.GetSubclasses(typeof(GameReport));
 			var tileDataEnums = typeof(TileData).GetFields().Select(fi => fi.FieldType);
 			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
