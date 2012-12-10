@@ -417,31 +417,36 @@ namespace Dwarrowdelf.Server
 
 		public ObjectVisibility GetObjectVisibility(BaseObject ob)
 		{
-			var mo = ob as MovableObject;
-
-			if (mo == null)
+			switch (ob.ObjectType)
 			{
-				if ((ob is BuildingObject) == false)
-					throw new Exception();
+				case ObjectType.Item:
+				case ObjectType.Living:
+					{
+						var mo = (MovableObject)ob;
 
-				// XXX If the ob is not movable object, it's a building. Send all.
-				return ObjectVisibility.All;
-			}
+						for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
+						{
+							if (this.IsController(o))
+							{
+								// if this player is the controller of the object or any of the object's parent
+								return ObjectVisibility.All;
+							}
+						}
 
-			for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
-			{
-				if (this.IsController(o))
-				{
-					// if this player is the controller of the object or any of the object's parent
+						if (Sees(mo.Parent, mo.Location))
+							return ObjectVisibility.Public
+								| ObjectVisibility.Debug; // XXX debug also
+						else
+							return ObjectVisibility.None;
+					}
+
+				case ObjectType.Building:
+				case ObjectType.Environment:
 					return ObjectVisibility.All;
-				}
-			}
 
-			if (Sees(mo.Parent, mo.Location))
-				return ObjectVisibility.Public
-					| ObjectVisibility.Debug; // XXX debug also
-			else
-				return ObjectVisibility.None;
+				default:
+					throw new Exception();
+			}
 		}
 
 		/// <summary>
