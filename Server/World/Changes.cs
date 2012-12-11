@@ -62,6 +62,23 @@ namespace Dwarrowdelf.Server
 		}
 	}
 
+	public sealed class GameDateChange : Change
+	{
+		public int Year { get; private set; }
+		public GameSeason Season { get; private set; }
+
+		public GameDateChange(int Year, GameSeason season)
+		{
+			this.Year = Year;
+			this.Season = season;
+		}
+
+		public override ChangeData ToChangeData()
+		{
+			return new GameDateChangeData() { Year = this.Year, Season = this.Season };
+		}
+	}
+
 	public abstract class EnvironmentChange : Change
 	{
 		public EnvironmentObject Environment { get; private set; }

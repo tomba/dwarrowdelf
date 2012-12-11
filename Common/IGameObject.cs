@@ -8,6 +8,8 @@ namespace Dwarrowdelf
 	public interface IWorld
 	{
 		int TickNumber { get; }
+		int Year { get; }
+		GameSeason Season { get; }
 		event Action TickStarting;
 		Random Random { get; }
 	}
@@ -165,7 +167,6 @@ namespace Dwarrowdelf
 
 	public enum GameSeason
 	{
-		Undefined = 0,
 		Spring,
 		Summer,
 		Autumn,

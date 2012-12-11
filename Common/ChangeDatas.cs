@@ -34,6 +34,13 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
+	public sealed class GameDateChangeData : ChangeData
+	{
+		public int Year;
+		public GameSeason Season;
+	}
+
+	[Serializable]
 	public abstract class EnvironmentChangeData : ChangeData
 	{
 		public ObjectID EnvironmentID;

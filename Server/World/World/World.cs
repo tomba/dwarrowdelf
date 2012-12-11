@@ -77,6 +77,10 @@ namespace Dwarrowdelf.Server
 
 			if (this.TickMethod == WorldTickMethod.Sequential)
 				m_livingEnumerator = new LivingEnumerator(m_livings.List);
+
+			this.Year = 1;
+			this.YearOctant = 1;
+			this.Season = (GameSeason)((this.YearOctant + 7) / 2 % 4);
 		}
 
 		public void Initialize(Action initializer)

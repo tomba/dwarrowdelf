@@ -12,6 +12,16 @@
 
 		<Separator />
 
+		<TextBlock>Year</TextBlock>
+		<TextBlock Text="{Binding Data.World.Year, FallbackValue=-}" />
+
+		<Separator />
+
+		<TextBlock>Season</TextBlock>
+		<TextBlock Text="{Binding Data.World.Season, FallbackValue=-}" />
+
+		<Separator />
+
 		<TextBlock>Env</TextBlock>
 		<TextBlock Text="{Binding Path=MapControl.Environment, TargetNullValue=-}" />
 
@@ -87,12 +97,12 @@
 			<TextBlock Name="fpsTextBlock" Width="50" />
 		</StatusBar>
 
-        <StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowTileSize}, Converter={StaticResource boolToVisConverter}}">
-            <Separator />
+		<StatusBar Visibility="{Binding Source={x:Static local:ClientConfig.ShowTileSize}, Converter={StaticResource boolToVisConverter}}">
+			<Separator />
 
-            <TextBlock>TileSize</TextBlock>
-            <TextBlock Width="50" Text="{Binding MapControl.TileSize}" />
-        </StatusBar>
+			<TextBlock>TileSize</TextBlock>
+			<TextBlock Width="50" Text="{Binding MapControl.TileSize}" />
+		</StatusBar>
 
-    </StatusBar>
+	</StatusBar>
 </UserControl>

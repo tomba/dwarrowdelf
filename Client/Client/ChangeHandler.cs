@@ -195,6 +195,11 @@ namespace Dwarrowdelf.Client
 			m_world.HandleChange(change);
 		}
 
+		void HandleChange(GameDateChangeData change)
+		{
+			m_world.HandleChange(change);
+		}
+
 		void HandleChange(ActionStartedChangeData change)
 		{
 			//Debug.WriteLine("ActionStartedChange({0})", change.ObjectID);

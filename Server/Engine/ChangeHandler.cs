@@ -145,6 +145,10 @@ namespace Dwarrowdelf.Server
 			{
 				return true;
 			}
+			else if (change is GameDateChange)
+			{
+				return true;
+			}
 			else if (change is ObjectDestructedChange)
 			{
 				// XXX We should only send this if the player sees the object.

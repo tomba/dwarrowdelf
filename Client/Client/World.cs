@@ -66,6 +66,20 @@ namespace Dwarrowdelf.Client
 			private set { m_tickNumber = value; MyTraceContext.ThreadTraceContext.Tick = this.TickNumber; Notify("TickNumber"); }
 		}
 
+		int m_year;
+		public int Year
+		{
+			get { return m_year; }
+			private set { if (value == m_year) return; m_year = value; Notify("Year"); }
+		}
+
+		GameSeason m_season;
+		public GameSeason Season
+		{
+			get { return m_season; }
+			private set { if (value == m_season) return; m_season = value; Notify("Season"); }
+		}
+
 		// XXX this could perhaps be removed
 		Random m_random = new Random();
 		public Random Random { get { return m_random; } }
@@ -111,6 +125,12 @@ namespace Dwarrowdelf.Client
 
 			if (TurnEnded != null)
 				TurnEnded();
+		}
+
+		public void HandleChange(GameDateChangeData change)
+		{
+			this.Year = change.Year;
+			this.Season = change.Season;
 		}
 
 		BaseObject ConstructObject(ObjectID objectID)

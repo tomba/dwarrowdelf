@@ -23,6 +23,15 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public int TickNumber { get; private set; }
 
+		[SaveGameProperty]
+		public int Year { get; private set; }
+		[SaveGameProperty]
+		public int YearOctant { get; private set; }
+		[SaveGameProperty]
+		public GameSeason Season { get; private set; }
+
+		const int YEAR_LENGTH = 128;
+
 		enum WorldState
 		{
 			Idle,
@@ -204,6 +213,29 @@ namespace Dwarrowdelf.Server
 			AddChange(new TickStartChange(this.TickNumber));
 
 			trace.TraceVerbose("-- Tick {0} started --", this.TickNumber);
+
+			if (this.TickNumber % (YEAR_LENGTH / 8) == 0)
+			{
+				this.YearOctant = (this.YearOctant + 1) % 8;
+
+				if (this.YearOctant == 0)
+				{
+					this.Year++;
+
+					trace.TraceInformation("Year {0}", this.Year);
+
+					AddChange(new GameDateChange(this.Year, this.Season));
+				}
+
+				if (this.YearOctant % 2 == 1)
+				{
+					this.Season = (GameSeason)((this.YearOctant + 7) / 2 % 4);
+
+					trace.TraceInformation("Season {0}", this.Season);
+
+					AddChange(new GameDateChange(this.Year, this.Season));
+				}
+			}
 
 			m_state = WorldState.TickOngoing;
 
