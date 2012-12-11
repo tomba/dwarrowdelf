@@ -111,9 +111,9 @@ namespace Dwarrowdelf.Server
 				ReportReceived(report);
 		}
 
-		public WorldData GetWorldData()
+		public void SendTo(IPlayer player, ObjectVisibility visibility)
 		{
-			return new WorldData()
+			var data = new WorldData()
 			{
 				Tick = this.TickNumber,
 				Year = this.Year,
@@ -121,6 +121,20 @@ namespace Dwarrowdelf.Server
 				LivingVisionMode = this.LivingVisionMode,
 				GameMode = this.GameMode,
 			};
+
+			player.Send(new Messages.WorldDataMessage(data));
+
+			if ((visibility & ObjectVisibility.Private) != 0)
+			{
+				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
+				foreach (var ob in this.AllObjects)
+				{
+					var sob = ob as MovableObject;
+
+					if (sob == null || sob.Parent == null)
+						ob.SendTo(player, ObjectVisibility.All);
+				}
+			}
 		}
 	}
 }

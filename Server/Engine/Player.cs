@@ -122,19 +122,7 @@ namespace Dwarrowdelf.Server
 				IsSeeAll = this.IsSeeAll,
 			});
 
-			Send(new Messages.WorldDataMessage(m_world.GetWorldData()));
-
-			if (m_seeAll)
-			{
-				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
-				foreach (var ob in this.World.AllObjects)
-				{
-					var sob = ob as MovableObject;
-
-					if (sob == null || sob.Parent == null)
-						ob.SendTo(this, ObjectVisibility.All);
-				}
-			}
+			m_world.SendTo(this, this.IsSeeAll ? ObjectVisibility.All : ObjectVisibility.Public);
 
 			SendControllables();
 
