@@ -73,7 +73,7 @@ namespace Dwarrowdelf.Server
 
 			VerifyAccess();
 
-			EnterWriteLock();
+			this.IsWritable = true;
 
 			m_instantInvokeList.ProcessInvokeList();
 
@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Server
 			if (m_state == WorldState.TickDone)
 				EndTick();
 
-			ExitWriteLock();
+			this.IsWritable = false;
 
 			// no point in entering read lock here, as this thread is the only one that can get a write lock
 

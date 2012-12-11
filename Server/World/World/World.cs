@@ -24,8 +24,6 @@ namespace Dwarrowdelf.Server
 		// only for debugging
 		public bool IsWritable { get; private set; }
 
-		ReaderWriterLockSlim m_rwLock = new ReaderWriterLockSlim();
-
 		public event Action<Change> WorldChanged;
 		public event Action<GameReport> ReportReceived;
 
@@ -63,7 +61,7 @@ namespace Dwarrowdelf.Server
 			m_livings = new ProcessableList<LivingObject>();
 			m_random = new Random();
 
-			m_objectIDcounterArray = new int[EnumHelpers.GetEnumMax<ObjectType>() + 1];
+			m_objectIDcounterArray = new uint[EnumHelpers.GetEnumMax<ObjectType>() + 1];
 
 			m_state = WorldState.Idle;
 
@@ -77,7 +75,7 @@ namespace Dwarrowdelf.Server
 
 		public void Initialize(Action initializer)
 		{
-			EnterWriteLock();
+			this.IsWritable = true;
 
 			trace.TraceInformation("Initializing area");
 			var m_initSw = Stopwatch.StartNew();
@@ -87,7 +85,7 @@ namespace Dwarrowdelf.Server
 			m_initSw.Stop();
 			trace.TraceInformation("Initializing area took {0} ms", m_initSw.ElapsedMilliseconds);
 
-			ExitWriteLock();
+			this.IsWritable = false;
 		}
 
 		public Random Random { get { return m_random; } }
@@ -97,32 +95,6 @@ namespace Dwarrowdelf.Server
 		{
 			if (m_worldThread != null && m_worldThread != Thread.CurrentThread)
 				throw new Exception();
-		}
-
-		void EnterWriteLock()
-		{
-			m_rwLock.EnterWriteLock();
-#if DEBUG
-			this.IsWritable = true;
-#endif
-		}
-
-		void ExitWriteLock()
-		{
-#if DEBUG
-			this.IsWritable = false;
-#endif
-			m_rwLock.ExitWriteLock();
-		}
-
-		public void EnterReadLock()
-		{
-			m_rwLock.EnterReadLock();
-		}
-
-		public void ExitReadLock()
-		{
-			m_rwLock.ExitReadLock();
 		}
 
 		public void AddChange(Change change)
