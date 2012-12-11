@@ -81,6 +81,7 @@
     <Compile Include="Environment\EnvironmentObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MovableObject.cs" />
+    <Compile Include="World\WorldObjects.cs" />
     <Compile Include="World\World.cs" />
     <Compile Include="World\WorldInvoke.cs" />
     <Compile Include="World\WorldIronPython.cs" />
