@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server.Fortress
 			const int NUM_DWARVES = 1;
 
 			// XXX entry location
-			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+			var env = this.World.HackGetFirstEnv();
 
 			var startRect = FindStartLocation(env);
 

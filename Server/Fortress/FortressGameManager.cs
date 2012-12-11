@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Server.Fortress
 			this.World = world;
 
 			// XXX
-			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+			var env = this.World.HackGetFirstEnv();
 			m_envObserver = new EnvObserver(env);
 		}
 
@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server.Fortress
 			const int NUM_DWARVES = 7;
 
 			// XXX entry location
-			var env = this.World.AllObjects.OfType<EnvironmentObject>().First();
+			var env = this.World.HackGetFirstEnv();
 
 			var startRect = FindStartLocation(env);
 

@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Server
 			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents
-				foreach (var ob in this.AllObjects)
+				foreach (var ob in m_objectMap.Values)
 				{
 					var sob = ob as MovableObject;
 
