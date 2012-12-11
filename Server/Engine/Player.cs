@@ -120,10 +120,9 @@ namespace Dwarrowdelf.Server
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
 				IsSeeAll = this.IsSeeAll,
-				Tick = m_world.TickNumber,
-				LivingVisionMode = m_world.LivingVisionMode,
-				GameMode = m_world.GameMode,
 			});
+
+			Send(new Messages.WorldDataMessage(m_world.GetWorldData()));
 
 			if (m_seeAll)
 			{

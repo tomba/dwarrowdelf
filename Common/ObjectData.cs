@@ -6,6 +6,16 @@ using System.Text;
 namespace Dwarrowdelf
 {
 	[Serializable]
+	public sealed class WorldData
+	{
+		public int Tick { get; set; }
+		public int Year { get; set; }
+		public GameSeason Season { get; set; }
+		public LivingVisionMode LivingVisionMode { get; set; }
+		public GameMode GameMode { get; set; }
+	}
+
+	[Serializable]
 	public abstract class BaseGameObjectData
 	{
 		public ObjectID ObjectID { get; set; }

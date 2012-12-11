@@ -110,5 +110,17 @@ namespace Dwarrowdelf.Server
 			if (ReportReceived != null)
 				ReportReceived(report);
 		}
+
+		public WorldData GetWorldData()
+		{
+			return new WorldData()
+			{
+				Tick = this.TickNumber,
+				Year = this.Year,
+				Season = this.Season,
+				LivingVisionMode = this.LivingVisionMode,
+				GameMode = this.GameMode,
+			};
+		}
 	}
 }

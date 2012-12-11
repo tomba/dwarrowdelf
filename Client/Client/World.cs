@@ -39,11 +39,13 @@ namespace Dwarrowdelf.Client
 		BaseGameObjectCollection m_destructedObjects = new BaseGameObjectCollection();
 #endif
 
-		public World(GameMode gameMode, LivingVisionMode livingVisionMode, int tick)
+		public World(WorldData data)
 		{
-			this.GameMode = gameMode;
-			this.LivingVisionMode = livingVisionMode;
-			this.TickNumber = tick;
+			this.GameMode = data.GameMode;
+			this.LivingVisionMode = data.LivingVisionMode;
+			this.TickNumber = data.Tick;
+			this.Year = data.Year;
+			this.Season = data.Season;
 
 			m_objects = new BaseGameObjectCollection();
 			this.Objects = new ReadOnlyBaseGameObjectCollection(m_objects);

@@ -87,9 +87,6 @@ namespace Dwarrowdelf.Messages
 	public sealed class LogOnReplyBeginMessage : ClientMessage
 	{
 		public bool IsSeeAll { get; set; }
-		public int Tick { get; set; }
-		public LivingVisionMode LivingVisionMode { get; set; }
-		public GameMode GameMode { get; set; }
 	}
 
 	[Serializable]
@@ -130,6 +127,22 @@ namespace Dwarrowdelf.Messages
 		public override string ToString()
 		{
 			return String.Format("ChangeMessage {0}", this.ChangeData);
+		}
+	}
+
+	[Serializable]
+	public sealed class WorldDataMessage : StateMessage
+	{
+		public WorldData WorldData { get; set; }
+
+		public WorldDataMessage(WorldData worldData)
+		{
+			this.WorldData = worldData;
+		}
+
+		public override string ToString()
+		{
+			return String.Format("WorldDataMessage");
 		}
 	}
 
