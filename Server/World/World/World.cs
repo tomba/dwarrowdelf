@@ -29,9 +29,6 @@ namespace Dwarrowdelf.Server
 		public event Action<Change> WorldChanged;
 		public event Action<GameReport> ReportReceived;
 
-		InvokeList m_preTickInvokeList;
-		InvokeList m_instantInvokeList;
-
 		[SaveGameProperty]
 		Random m_random;
 

@@ -8,6 +8,9 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class World
 	{
+		InvokeList m_preTickInvokeList;
+		InvokeList m_instantInvokeList;
+
 		public void BeginInvoke(Delegate callback, params object[] args)
 		{
 			m_preTickInvokeList.BeginInvoke(callback, args);
