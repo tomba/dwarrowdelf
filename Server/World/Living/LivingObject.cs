@@ -682,6 +682,9 @@ namespace Dwarrowdelf.Server
 
 			if (action != this.CurrentAction)
 			{
+				// XXX Our AIs don't currently cancel their own actions, so have an assert here for now
+				Debug.Assert(action != null);
+
 				if (this.HasAction)
 				{
 					if (action != null && this.ActionPriority > priority)
