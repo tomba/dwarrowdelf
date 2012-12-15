@@ -12,14 +12,11 @@ namespace Dwarrowdelf.Jobs.Assignments
 	{
 		[SaveGameProperty]
 		readonly IItemObject m_bed;
-		[SaveGameProperty("Turns")]
-		readonly int m_turns;
 
-		public SleepAssignment(IJobObserver parent, IItemObject bed, int turns)
+		public SleepAssignment(IJobObserver parent, IItemObject bed)
 			: base(parent)
 		{
 			m_bed = bed;
-			m_turns = turns;
 		}
 
 		SleepAssignment(SaveGameContext ctx)
@@ -29,7 +26,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 
 		protected override GameAction PrepareNextActionOverride(out JobStatus progress)
 		{
-			var action = new SleepAction(m_bed, m_turns);
+			var action = new SleepAction(m_bed);
 			progress = JobStatus.Ok;
 			return action;
 		}

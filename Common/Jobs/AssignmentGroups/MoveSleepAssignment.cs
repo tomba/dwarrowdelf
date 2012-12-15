@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 					break;
 
 				case 1:
-					assignment = new SleepAssignment(this, this.Bed, 10);
+					assignment = new SleepAssignment(this, this.Bed);
 					break;
 
 				default:

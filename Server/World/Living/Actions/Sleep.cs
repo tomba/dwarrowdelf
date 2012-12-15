@@ -10,10 +10,12 @@ namespace Dwarrowdelf.Server
 	{
 		ActionState ProcessAction(SleepAction action)
 		{
-			if (this.ActionTicksUsed == 1)
-				this.ActionTotalTicks = action.SleepTicks;
+			const int exhaustion_per_tick = 10;
 
-			this.Exhaustion = Math.Max(this.Exhaustion - 10, 0);
+			if (this.ActionTicksUsed == 1)
+				this.ActionTotalTicks = this.Exhaustion / exhaustion_per_tick;
+
+			this.Exhaustion = Math.Max(this.Exhaustion - exhaustion_per_tick, 0);
 
 			if (this.ActionTicksUsed < this.ActionTotalTicks)
 			{

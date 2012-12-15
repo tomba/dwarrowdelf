@@ -144,13 +144,10 @@ namespace Dwarrowdelf
 	{
 		[SaveGameProperty]
 		public ObjectID Bed { get; private set; }
-		[SaveGameProperty]
-		public int SleepTicks { get; private set; }
 
-		public SleepAction(IItemObject bed, int ticks)
+		public SleepAction(IItemObject bed)
 		{
 			this.Bed = bed.ObjectID;
-			this.SleepTicks = ticks;
 		}
 
 		SleepAction(SaveGameContext ctx)
@@ -160,7 +157,7 @@ namespace Dwarrowdelf
 
 		protected override string GetParams()
 		{
-			return String.Format("bed: {0}, ticks {1}", this.Bed, this.SleepTicks);
+			return String.Format("bed: {0}", this.Bed);
 		}
 	}
 
