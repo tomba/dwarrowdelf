@@ -38,19 +38,23 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var worker = this.Worker;
 
-			bool hasAssignment = this.CurrentAssignment != null;
-			bool hasOtherAssignment = this.CurrentAssignment == null && this.Worker.HasAction;
+			bool hasAssignment = this.HasAssignment;
+			bool hasOtherAssignment = (this.HasAssignment == false) && this.Worker.HasAction;
 
 			if (priority == ActionPriority.High)
 			{
 				if (m_priorityAction)
 					return this.CurrentAssignment;
 
-				var assignment = CreateFoodAssignmentIfNeeded(worker, priority);
+				var assignment = CreateEatAssignmentIfNeeded(worker, priority);
 				if (assignment != null)
 					return assignment;
 
 				assignment = CreateDrinkAssignmentIfNeeded(worker, priority);
+				if (assignment != null)
+					return assignment;
+
+				assignment = CreateSleepAssignmentIfNeeded(worker, priority);
 				if (assignment != null)
 					return assignment;
 
@@ -64,7 +68,7 @@ namespace Dwarrowdelf.Server.Fortress
 				if (m_priorityAction)
 					return this.CurrentAssignment;
 
-				var assignment = CreateFoodAssignmentIfNeeded(worker, priority);
+				var assignment = CreateEatAssignmentIfNeeded(worker, priority);
 				if (assignment != null)
 					return assignment;
 
@@ -107,12 +111,12 @@ namespace Dwarrowdelf.Server.Fortress
 			}
 		}
 
-		IAssignment CreateFoodAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
+		IAssignment CreateEatAssignmentIfNeeded(ILivingObject worker, ActionPriority priority)
 		{
 			if (priority == ActionPriority.High && worker.Hunger < 500)
 				return null;
 
-			if (priority == ActionPriority.Idle && worker.Hunger < 200)
+			if (priority == ActionPriority.Idle && worker.Hunger < 100)
 				return null;
 
 			var env = worker.Environment;
@@ -139,7 +143,7 @@ namespace Dwarrowdelf.Server.Fortress
 			if (priority == ActionPriority.High && worker.Thirst < 500)
 				return null;
 
-			if (priority == ActionPriority.Idle && worker.Thirst < 200)
+			if (priority == ActionPriority.Idle && worker.Thirst < 100)
 				return null;
 
 			var env = worker.Environment;
