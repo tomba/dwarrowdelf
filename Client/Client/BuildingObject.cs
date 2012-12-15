@@ -375,7 +375,7 @@ namespace Dwarrowdelf.Client
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
 		{
-			bool fail = false;
+			StopCurrentJob();
 
 			var sourceItems = this.CurrentBuildOrder.SourceItems;
 			for (int i = 0; i < sourceItems.Length; ++i)
@@ -389,27 +389,31 @@ namespace Dwarrowdelf.Client
 			{
 				case JobStatus.Done:
 					trace.TraceInformation("build job done");
+
+					if (this.CurrentBuildOrder.IsRepeat == false)
+						RemoveBuildOrder(this.CurrentBuildOrder);
+					else
+						MoveToNextBuildOrder();
+
 					break;
 
 				case JobStatus.Abort:
 					trace.TraceError("Build item aborted");
+
+					MoveToNextBuildOrder();
+
 					break;
 
 				case JobStatus.Fail:
-					fail = true;
 					trace.TraceError("Build item failed");
+
+					RemoveBuildOrder(this.CurrentBuildOrder);
+
 					break;
 
 				default:
 					throw new Exception();
 			}
-
-			StopCurrentJob();
-
-			if (fail || this.CurrentBuildOrder.IsRepeat == false)
-				RemoveBuildOrder(this.CurrentBuildOrder);
-			else
-				MoveToNextBuildOrder();
 		}
 
 		void OnDestructStatusChanged(IJob job, JobStatus status)
