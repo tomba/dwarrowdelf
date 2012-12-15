@@ -19,9 +19,6 @@ namespace Dwarrowdelf.AI
 
 		public abstract string Name { get; }
 
-		[SaveGameProperty("NeedToAbort")]
-		bool m_needToAbort;
-
 		[SaveGameProperty]
 		IAssignment m_currentAssignment;
 		[SaveGameProperty]
@@ -34,39 +31,9 @@ namespace Dwarrowdelf.AI
 
 		public IAssignment CurrentAssignment { get { return m_currentAssignment; } }
 
+		public bool HasAssignment { get { return this.CurrentAssignment != null; } }
+
 		public ActionPriority CurrentPriority { get { return m_currentPriority; } }
-
-		public void Abort()
-		{
-			ClearCurrentAssignment();
-		}
-
-		void SetCurrentAssignment(IAssignment assignment, ActionPriority priority)
-		{
-			if (m_currentAssignment == assignment && m_currentPriority == priority)
-				return;
-
-			if (m_currentAssignment != null)
-			{
-				if (this.Worker.HasAction)
-					m_needToAbort = true;	// XXX what if worker has high priority server action?
-				m_currentAssignment.StatusChanged -= OnJobStatusChanged;
-			}
-
-			m_currentAssignment = assignment;
-			m_currentPriority = priority;
-
-			if (m_currentAssignment != null)
-				m_currentAssignment.StatusChanged += OnJobStatusChanged;
-
-			if (AssignmentChanged != null)
-				AssignmentChanged(assignment);
-		}
-
-		void ClearCurrentAssignment()
-		{
-			SetCurrentAssignment(null, ActionPriority.Undefined);
-		}
 
 		public event Action<IAssignment> AssignmentChanged;
 
@@ -92,8 +59,36 @@ namespace Dwarrowdelf.AI
 			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
 		}
 
+		public void Abort()
+		{
+			ClearCurrentAssignment();
+		}
+
+		void SetCurrentAssignment(IAssignment assignment, ActionPriority priority)
+		{
+			if (m_currentAssignment == assignment && m_currentPriority == priority)
+				return;
+
+			if (m_currentAssignment != null)
+				m_currentAssignment.StatusChanged -= OnJobStatusChanged;
+
+			m_currentAssignment = assignment;
+			m_currentPriority = priority;
+
+			if (m_currentAssignment != null)
+				m_currentAssignment.StatusChanged += OnJobStatusChanged;
+
+			if (AssignmentChanged != null)
+				AssignmentChanged(assignment);
+		}
+
+		void ClearCurrentAssignment()
+		{
+			SetCurrentAssignment(null, ActionPriority.Undefined);
+		}
+
 		/// <summary>
-		/// return New or current GameAction, possibly overriding the current action, or null to abort the current action
+		/// return new or current GameAction, possibly overriding the current action, or null to abort the current action
 		/// </summary>
 		/// <param name="priority"></param>
 		/// <returns></returns>
@@ -101,18 +96,24 @@ namespace Dwarrowdelf.AI
 		{
 			trace.TraceVerbose("DecideAction({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
 				priority,
-				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
-				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
-				this.CurrentAssignment != null && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
+				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
+				this.HasAssignment ? this.CurrentAssignment.ToString() : "<none>",
+				this.HasAssignment && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
 
-			if (this.CurrentAssignment != null)
-			{
-				// Action progress should keep us in sync
-				if (this.CurrentAssignment.CurrentAction == null)
-					Debug.Assert(this.Worker.CurrentAction == null);
-				else
-					Debug.Assert(this.CurrentAssignment.CurrentAction.MagicNumber == this.Worker.CurrentAction.MagicNumber);
-			}
+			// ActionStarted/Progress/Done events should keep us in sync. Verify it here.
+			Debug.Assert(
+				// Either we are not doing an assignment...
+				(this.HasAssignment == false) ||
+
+				// ... or if we are, and it doesn't have an action, the worker shouldn't be doing anything either...
+				(this.HasAssignment &&
+				this.CurrentAssignment.CurrentAction == null &&
+				this.Worker.CurrentAction == null) ||
+
+				// .. or if it has an action, the worker should be doing that action.
+				(this.HasAssignment &&
+				this.CurrentAssignment.CurrentAction != null &&
+				this.CurrentAssignment.CurrentAction.MagicNumber == this.Worker.CurrentAction.MagicNumber));
 
 			if (this.Worker.HasAction && this.Worker.ActionPriority > priority)
 			{
@@ -120,99 +121,85 @@ namespace Dwarrowdelf.AI
 				return this.Worker.CurrentAction;
 			}
 
-			var needToAbort = m_needToAbort;
-			m_needToAbort = false;
+			var assignment = GetNewOrCurrentAssignment(priority);
 
-			int loops = 0;
+			var oldAssignment = this.CurrentAssignment;
 
-			while (true)
+			if (assignment == null)
 			{
-				if (loops++ > 10)
-				{
-					trace.TraceWarning("Failed to assign job in 10 tries, aborting");
+				trace.TraceVerbose("DecideAction: No assignment");
+
+				if (oldAssignment == null)
 					return this.Worker.CurrentAction;
-				}
 
-				var assignment = GetNewOrCurrentAssignment(priority);
+				trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
+				oldAssignment.Abort();
 
-				var oldAssignment = this.CurrentAssignment;
+				ClearCurrentAssignment();
 
-				if (assignment == null)
-				{
-					trace.TraceVerbose("DecideAction: No assignment");
-
-					if (oldAssignment != null)
-					{
-						trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
-						oldAssignment.Abort();
-					}
-
-					ClearCurrentAssignment();
-
-					return needToAbort ? null : this.Worker.CurrentAction;
-				}
-
-				// are we doing this assignment for another priority level?
-				if (assignment == oldAssignment && this.CurrentPriority != priority)
-				{
-					Debug.Assert(assignment == oldAssignment);
-					Debug.Assert(assignment.Worker == this.Worker);
-					trace.TraceVerbose("DecideAction: Already doing an assignment for different priority level");
-					return this.Worker.CurrentAction;
-				}
-
-				// new assignment?
-				if (assignment != oldAssignment)
-				{
-					trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
-
-					Debug.Assert(assignment.IsAssigned == false);
-
-					assignment.Assign(this.Worker);
-					Debug.Assert(assignment.Status == JobStatus.Ok);
-
-					if (oldAssignment != null)
-					{
-						trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
-						oldAssignment.Abort();
-					}
-
-					SetCurrentAssignment(assignment, priority);
-				}
-
-				Debug.Assert(this.CurrentAssignment == assignment);
-
-				// are we already doing an action for this assignment?
-				if (assignment.CurrentAction != null)
-				{
-					trace.TraceVerbose("DecideAction: already doing an action");
-					//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
-					return this.Worker.CurrentAction;
-				}
-
-
-				var state = assignment.PrepareNextAction();
-
-				if (state == JobStatus.Ok)
-				{
-					var action = assignment.CurrentAction;
-					if (action == null)
-						throw new Exception();
-
-					m_magicNumber++;
-					if (m_magicNumber == 0)
-						m_magicNumber++;
-
-					action.MagicNumber = m_magicNumber | (m_id << 16);
-
-					trace.TraceVerbose("DecideAction: new action {0}", action);
-					return action;
-				}
-
-				trace.TraceVerbose("DecideAction: {0} in {1}, looking for new assignment", state, assignment);
-
-				// loop again
+				return null;
 			}
+
+			// are we doing this assignment for another priority level?
+			if (assignment == oldAssignment && this.CurrentPriority != priority)
+			{
+				Debug.Assert(assignment == oldAssignment);
+				Debug.Assert(assignment.Worker == this.Worker);
+				trace.TraceVerbose("DecideAction: Already doing an assignment for different priority level");
+				return this.Worker.CurrentAction;
+			}
+
+			// new assignment?
+			if (assignment != oldAssignment)
+			{
+				trace.TraceVerbose("DecideAction: New assignment {0}", assignment);
+
+				Debug.Assert(assignment.IsAssigned == false);
+
+				assignment.Assign(this.Worker);
+				Debug.Assert(assignment.Status == JobStatus.Ok);
+
+				if (oldAssignment != null)
+				{
+					trace.TraceVerbose("DecideAction: Aborting current assignment {0}", oldAssignment);
+					oldAssignment.Abort();
+				}
+
+				SetCurrentAssignment(assignment, priority);
+			}
+
+			Debug.Assert(this.CurrentAssignment == assignment);
+
+			// are we already doing an action for this assignment?
+			if (assignment.CurrentAction != null)
+			{
+				trace.TraceVerbose("DecideAction: already doing an action");
+				//Debug.Assert(assignment.CurrentAction == this.Worker.CurrentAction);
+				return this.Worker.CurrentAction;
+			}
+
+
+			var state = assignment.PrepareNextAction();
+
+			if (state == JobStatus.Ok)
+			{
+				var action = assignment.CurrentAction;
+				if (action == null)
+					throw new Exception();
+
+				m_magicNumber++;
+				if (m_magicNumber == 0)
+					m_magicNumber++;
+
+				action.MagicNumber = m_magicNumber | (m_id << 16);
+
+				trace.TraceVerbose("DecideAction: new action {0}", action);
+				return action;
+			}
+
+			trace.TraceVerbose("DecideAction: failed to start new action", state, assignment);
+
+			return this.Worker.CurrentAction;
 		}
 
 		/// <summary>
@@ -239,11 +226,11 @@ namespace Dwarrowdelf.AI
 		{
 			trace.TraceVerbose("ActionStarted({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
 				e.Action,
-				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
-				this.CurrentAssignment != null ? this.CurrentAssignment.ToString() : "<none>",
-				this.CurrentAssignment != null && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
+				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
+				this.HasAssignment ? this.CurrentAssignment.ToString() : "<none>",
+				this.HasAssignment && this.CurrentAssignment.CurrentAction != null ? this.CurrentAssignment.CurrentAction.ToString() : "<none>");
 
-			if (this.CurrentAssignment == null)
+			if (this.HasAssignment == false)
 			{
 				trace.TraceVerbose("ActionStarted: no assignment, so not for me");
 				return;
@@ -272,7 +259,7 @@ namespace Dwarrowdelf.AI
 
 			trace.TraceVerbose("ActionProgress({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
 				e.MagicNumber,
-				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
+				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
@@ -308,7 +295,7 @@ namespace Dwarrowdelf.AI
 
 			trace.TraceVerbose("ActionDone({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
 				e.MagicNumber, e.State,
-				this.Worker.CurrentAction != null ? this.Worker.CurrentAction.ToString() : "<none>",
+				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
