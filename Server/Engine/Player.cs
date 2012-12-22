@@ -83,10 +83,7 @@ namespace Dwarrowdelf.Server
 			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 
 			foreach (var l in this.Controllables)
-			{
-				l.Destructed += OnControllableDestructed; // XXX remove if player deleted
-				l.Controller = this;
-			}
+				InitControllable(l);
 
 			if (m_seeAll)
 				m_changeHandler = new AdminChangeHandler(this);
@@ -181,11 +178,23 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		void InitControllable(LivingObject living)
+		{
+			living.Destructed += OnControllableDestructed;
+			living.Controller = this;
+		}
+
+		void UninitControllable(LivingObject living)
+		{
+			living.Destructed -= OnControllableDestructed;
+			living.Controller = null;
+		}
+
 		public void AddControllable(LivingObject living)
 		{
 			m_controllables.Add(living);
-			living.Destructed += OnControllableDestructed;
-			living.Controller = this;
+
+			InitControllable(living);
 
 			if (this.IsConnected)
 			{
@@ -211,8 +220,9 @@ namespace Dwarrowdelf.Server
 		{
 			var ok = m_controllables.Remove(living);
 			Debug.Assert(ok);
-			living.Destructed -= OnControllableDestructed;
-			living.Controller = null;
+
+			UninitControllable(living);
+
 			Send(new Messages.ControllablesDataMessage()
 			{
 				Operation = ControllablesDataMessage.Op.Remove,
