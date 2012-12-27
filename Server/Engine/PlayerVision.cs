@@ -9,10 +9,13 @@ namespace Dwarrowdelf.Server
 {
 	abstract class VisionTrackerBase : IVisionTracker
 	{
+		public virtual void AddLiving(LivingObject living) { }
+		public virtual void RemoveLiving(LivingObject living) { }
+
 		public abstract void Start();
 		public abstract void Stop();
+
 		public abstract bool Sees(IntPoint3 p);
-		public virtual void HandleNewControllable(LivingObject living) { } // XXX update vision map
 	}
 
 	sealed class AdminVisionTracker : VisionTrackerBase

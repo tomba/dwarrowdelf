@@ -22,6 +22,35 @@ namespace Dwarrowdelf.Server
 
 			m_player = player;
 			m_environment = env;
+		}
+
+		public override void Start()
+		{
+			InitializeVisibilityArray();
+
+			m_environment.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
+
+			m_environment.SendTo(m_player, ObjectVisibility.Public);
+		}
+
+		public override void Stop()
+		{
+			m_environment.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
+
+			m_visibilityArray = null;
+		}
+
+		public override bool Sees(IntPoint3 p)
+		{
+			if (!m_environment.Contains(p))
+				return false;
+
+			return GetVisible(p);
+		}
+
+		void InitializeVisibilityArray()
+		{
+			var env = m_environment;
 
 			var bounds = env.Size;
 
@@ -67,26 +96,6 @@ namespace Dwarrowdelf.Server
 			sw.Stop();
 
 			Trace.TraceInformation("Initialize visibilityarray took {0} ms", sw.ElapsedMilliseconds);
-		}
-
-		public override void Start()
-		{
-			m_environment.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
-
-			m_environment.SendTo(m_player, ObjectVisibility.Public);
-		}
-
-		public override void Stop()
-		{
-			m_environment.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
-		}
-
-		public override bool Sees(IntPoint3 p)
-		{
-			if (!m_environment.Contains(p))
-				return false;
-
-			return GetVisible(p);
 		}
 
 		bool GetVisible(IntPoint3 p)

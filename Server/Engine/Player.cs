@@ -70,20 +70,20 @@ namespace Dwarrowdelf.Server
 			m_seeAll = false;
 
 			m_controllables = new List<LivingObject>();
-			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 
-			if (m_seeAll)
-				m_changeHandler = new AdminChangeHandler(this);
-			else
-				m_changeHandler = new PlayerChangeHandler(this);
+			Construct();
 		}
 
 		Player(SaveGameContext ctx)
 		{
-			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
+			InitControllables(m_controllables);
 
-			foreach (var l in this.Controllables)
-				InitControllable(l);
+			Construct();
+		}
+
+		void Construct()
+		{
+			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
 
 			if (m_seeAll)
 				m_changeHandler = new AdminChangeHandler(this);
@@ -107,6 +107,18 @@ namespace Dwarrowdelf.Server
 
 		public void Connect(IConnection connection)
 		{
+			OnConnected(connection);
+		}
+
+		public void Disconnect()
+		{
+			m_connection.Disconnect();
+		}
+
+		void OnConnected(IConnection connection)
+		{
+			trace.TraceInformation("OnConnected");
+
 			Debug.Assert(m_connection == null);
 
 			m_world.WorldChanged += HandleWorldChange;
@@ -121,7 +133,11 @@ namespace Dwarrowdelf.Server
 
 			m_world.SendTo(this, this.IsSeeAll ? ObjectVisibility.All : ObjectVisibility.Public);
 
-			SendControllables();
+			InitControllablesVisionTracker(m_controllables);
+			SendAddControllables(m_controllables);
+
+			foreach (var tracker in m_visionTrackers.Values)
+				tracker.Start();
 
 			Send(new Messages.LogOnReplyEndMessage()
 			{
@@ -142,14 +158,20 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void HandleDisconnect()
+		void OnDisconnected()
 		{
-			trace.TraceInformation("HandleDisconnect");
+			trace.TraceInformation("OnDisconnected");
+
+			m_connection = null;
+
+			foreach (var c in m_controllables)
+				UninitControllableVisionTracker(c);
+
+			foreach (var tracker in m_visionTrackers.Values)
+				tracker.Stop();
 
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
-
-			m_connection = null;
 
 			this.IsProceedTurnReplyReceived = false;
 
@@ -157,31 +179,47 @@ namespace Dwarrowdelf.Server
 				DisconnectEvent(this);
 		}
 
-		public void Disconnect()
+		// Called from game engine when creating new player, before the player object is connected
+		public void SetupControllablesForNewPlayer(IEnumerable<LivingObject> controllables)
 		{
-			m_connection.Disconnect();
+			AddControllables(controllables);
 		}
 
-		public void HandleNewMessages()
+		void AddControllables(IEnumerable<LivingObject> controllables)
 		{
-			trace.TraceVerbose("HandleNewMessages");
+			m_controllables.AddRange(controllables);
 
-			Message msg;
-			while (m_connection.TryGetMessage(out msg))
-				OnReceiveMessage(msg);
+			InitControllables(controllables);
 
-			if (!m_connection.IsConnected)
+			if (this.IsConnected)
 			{
-				trace.TraceInformation("HandleNewMessages, disconnected");
-
-				HandleDisconnect();
+				InitControllablesVisionTracker(controllables);
+				SendAddControllables(controllables);
 			}
 		}
 
-		void InitControllable(LivingObject living)
+		void RemoveControllable(LivingObject living)
 		{
-			living.Destructed += OnControllableDestructed;
-			living.Controller = this;
+			if (this.IsConnected)
+			{
+				SendRemoveControllable(living);
+
+				UninitControllableVisionTracker(living);
+			}
+
+			UninitControllable(living);
+
+			var ok = m_controllables.Remove(living);
+			Debug.Assert(ok);
+		}
+
+		void InitControllables(IEnumerable<LivingObject> controllables)
+		{
+			foreach (var c in controllables)
+			{
+				c.Destructed += OnControllableDestructed;
+				c.Controller = this;
+			}
 		}
 
 		void UninitControllable(LivingObject living)
@@ -190,66 +228,56 @@ namespace Dwarrowdelf.Server
 			living.Controller = null;
 		}
 
-		public void AddControllable(LivingObject living)
+		void InitControllablesVisionTracker(IEnumerable<LivingObject> controllables)
 		{
-			m_controllables.Add(living);
+			Debug.Assert(this.IsConnected);
 
-			InitControllable(living);
-
-			if (this.IsConnected)
+			foreach (var c in controllables)
 			{
-				// Always send object data when the living has became a controllable
-				living.SendTo(this, ObjectVisibility.All);
+				c.ParentChanged += OnControllableParentChanged;
 
-				Send(new Messages.ControllablesDataMessage()
+				if (c.Environment != null)
 				{
-					Operation = ControllablesDataMessage.Op.Add,
-					Controllables = new ObjectID[] { living.ObjectID }
-				});
-
-				// If the new controllable is in an environment, inform the vision tracker about this so it can update the vision data
-				if (living.Environment != null)
-				{
-					var tracker = GetVisionTrackerInternal(living.Environment);
-					tracker.HandleNewControllable(living);
+					var tracker = GetVisionTrackerInternal(c.Environment);
+					tracker.AddLiving(c);
 				}
 			}
 		}
 
-		void RemoveControllable(LivingObject living)
+		void UninitControllableVisionTracker(LivingObject living)
 		{
-			var ok = m_controllables.Remove(living);
-			Debug.Assert(ok);
+			living.ParentChanged -= OnControllableParentChanged;
 
-			UninitControllable(living);
+			if (living.Environment != null)
+			{
+				var tracker = GetVisionTrackerInternal(living.Environment);
+				tracker.RemoveLiving(living);
+			}
+		}
+
+		void SendAddControllables(IEnumerable<LivingObject> controllables)
+		{
+			Debug.Assert(this.IsConnected);
+
+			// Always send object data when the living has became a controllable
+			foreach (var c in controllables)
+				c.SendTo(this, ObjectVisibility.All);
+
+			Send(new Messages.ControllablesDataMessage()
+			{
+				Operation = ControllablesDataMessage.Op.Add,
+				Controllables = controllables.Select(c => c.ObjectID).ToArray(),
+			});
+		}
+
+		void SendRemoveControllable(LivingObject living)
+		{
+			Debug.Assert(this.IsConnected);
 
 			Send(new Messages.ControllablesDataMessage()
 			{
 				Operation = ControllablesDataMessage.Op.Remove,
 				Controllables = new ObjectID[] { living.ObjectID }
-			});
-		}
-
-		void SendControllables()
-		{
-			Debug.Assert(this.IsConnected);
-
-			foreach (var living in this.Controllables)
-			{
-				if (living.Environment != null)
-				{
-					var tracker = GetVisionTrackerInternal(living.Environment);
-					tracker.HandleNewControllable(living);
-				}
-			}
-
-			foreach (var living in this.Controllables)
-				living.SendTo(this, ObjectVisibility.All);
-
-			Send(new Messages.ControllablesDataMessage()
-			{
-				Operation = ControllablesDataMessage.Op.Add,
-				Controllables = this.Controllables.Select(l => l.ObjectID).ToArray()
 			});
 		}
 
@@ -271,7 +299,23 @@ namespace Dwarrowdelf.Server
 				Send(msg);
 		}
 
-		public void OnReceiveMessage(Message m)
+		public void HandleNewMessages()
+		{
+			trace.TraceVerbose("HandleNewMessages");
+
+			Message msg;
+			while (m_connection.TryGetMessage(out msg))
+				OnReceiveMessage(msg);
+
+			if (!m_connection.IsConnected)
+			{
+				trace.TraceInformation("HandleNewMessages, disconnected");
+
+				OnDisconnected();
+			}
+		}
+
+		void OnReceiveMessage(Message m)
 		{
 			trace.TraceVerbose("OnReceiveMessage({0})", m);
 
@@ -284,10 +328,6 @@ namespace Dwarrowdelf.Server
 		void ReceiveMessage(LogOutRequestMessage msg)
 		{
 			Send(new Messages.LogOutReplyMessage());
-
-			foreach (var kvp in m_visionTrackers)
-				kvp.Value.Stop();
-			m_visionTrackers.Clear();
 
 			m_connection.Disconnect();
 		}
@@ -481,10 +521,6 @@ namespace Dwarrowdelf.Server
 
 		VisionTrackerBase GetVisionTrackerInternal(EnvironmentObject env)
 		{
-			// XXX we send the initial mapdata in tracker.Start(). So if the player is not connected yet, we don't send the mapdata
-			if (!IsConnected)
-				throw new Exception();
-
 			if (m_seeAll)
 				return AdminVisionTracker.Tracker;
 
@@ -511,11 +547,28 @@ namespace Dwarrowdelf.Server
 				}
 
 				m_visionTrackers[env] = tracker;
-
-				tracker.Start();
 			}
 
 			return tracker;
+		}
+
+		void OnControllableParentChanged(LivingObject living, ContainerObject _src, ContainerObject _dst)
+		{
+			var src = _src as EnvironmentObject;
+
+			if (src != null)
+			{
+				var tracker = GetVisionTrackerInternal(src);
+				tracker.RemoveLiving(living);
+			}
+
+			var dst = _dst as EnvironmentObject;
+
+			if (dst != null)
+			{
+				var tracker = GetVisionTrackerInternal(src);
+				tracker.AddLiving(living);
+			}
 		}
 	}
 }

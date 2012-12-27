@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Server
 		}
 
 		protected virtual void OnParentChanging() { }
-		protected virtual void OnParentChanged() { }
+		protected virtual void OnParentChanged(ContainerObject src, ContainerObject dst) { }
 
 		protected virtual void OnLocationChanging() { }
 		protected virtual void OnLocationChanged() { }
@@ -174,7 +174,7 @@ namespace Dwarrowdelf.Server
 			if (dst != null)
 				dst.AddChild(this);
 
-			this.OnParentChanged();
+			this.OnParentChanged(src, dst);
 
 			this.World.AddChange(new ObjectMoveChange(this, src, srcLoc, dst, dstLoc));
 		}

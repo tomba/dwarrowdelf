@@ -347,8 +347,7 @@ namespace Dwarrowdelf.Server
 			var player = CreatePlayer(userID);
 
 			var controllables = this.GameManager.SetupWorldForNewPlayer(player);
-			foreach (var l in controllables)
-				player.AddControllable(l);
+			player.SetupControllablesForNewPlayer(controllables);
 
 			player.Connect(connection);
 			m_playersConnected++;

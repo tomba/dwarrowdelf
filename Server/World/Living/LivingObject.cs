@@ -706,9 +706,14 @@ namespace Dwarrowdelf.Server
 				this.Assignment = null;
 		}
 
-		protected override void OnParentChanged()
+		public event Action<LivingObject, ContainerObject, ContainerObject> ParentChanged;
+
+		protected override void OnParentChanged(ContainerObject src, ContainerObject dst)
 		{
 			m_losMapVersion = 0;
+
+			if (this.ParentChanged != null)
+				this.ParentChanged(this, src, dst);
 		}
 
 		void UpdateLOS()
