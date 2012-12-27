@@ -7,7 +7,7 @@
 		mc:Ignorable="d"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 		Title="NetStatWindow" Height="482" Width="347"
-		DataContext="{Binding RelativeSource={RelativeSource Self}, Path=Data.User.NetStats}"
+		DataContext="{Binding RelativeSource={RelativeSource Self}, Path=Data.NetStats}"
 		d:DataContext="{d:DesignInstance Type=ui:NetStatWindowSample, IsDesignTimeCreatable=True}">
 
 	<Grid>

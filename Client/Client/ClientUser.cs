@@ -71,17 +71,14 @@ namespace Dwarrowdelf.Client
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Connection", "ClientUser");
 
-		public ClientNetStatistics NetStats { get; private set; }
-
 		public ClientUser()
 		{
-			this.NetStats = new ClientNetStatistics();
 			this.State = ClientUserState.None;
 		}
 
 		public void ResetNetStats()
 		{
-			this.NetStats.Reset();
+			GameData.Data.NetStats.Reset();
 			m_connection.ResetStats();
 		}
 
@@ -154,9 +151,9 @@ namespace Dwarrowdelf.Client
 
 			m_connection.Send(msg);
 
-			this.NetStats.SentBytes = m_connection.SentBytes;
-			this.NetStats.SentMessages = m_connection.SentMessages;
-			this.NetStats.AddSentMessages(msg);
+			GameData.Data.NetStats.SentBytes = m_connection.SentBytes;
+			GameData.Data.NetStats.SentMessages = m_connection.SentMessages;
+			GameData.Data.NetStats.AddSentMessages(msg);
 		}
 
 		public void SendLogOut()
@@ -207,9 +204,9 @@ namespace Dwarrowdelf.Client
 		{
 			//trace.TraceVerbose("Received Message {0}", msg);
 
-			this.NetStats.ReceivedBytes = m_connection.ReceivedBytes;
-			this.NetStats.ReceivedMessages = m_connection.ReceivedMessages;
-			this.NetStats.AddReceivedMessages(msg);
+			GameData.Data.NetStats.ReceivedBytes = m_connection.ReceivedBytes;
+			GameData.Data.NetStats.ReceivedMessages = m_connection.ReceivedMessages;
+			GameData.Data.NetStats.AddReceivedMessages(msg);
 
 			var method = s_handlerMap[msg.GetType()];
 			method(this, msg);
