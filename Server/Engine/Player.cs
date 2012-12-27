@@ -41,10 +41,9 @@ namespace Dwarrowdelf.Server
 		int m_userID;
 		public int UserID { get { return m_userID; } }
 
-		// does this player sees all
+		// does this player see all
 		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
-
 		public bool IsSeeAll { get { return m_seeAll; } }
 
 		[SaveGameProperty("Controllables")]
