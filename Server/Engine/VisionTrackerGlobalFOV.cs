@@ -14,6 +14,8 @@ namespace Dwarrowdelf.Server
 	{
 		Player m_player;
 		EnvironmentObject m_environment;
+
+		int m_livingCount;
 		bool[, ,] m_visibilityArray;
 
 		public VisionTrackerGlobalFOV(Player player, EnvironmentObject env)
@@ -24,7 +26,24 @@ namespace Dwarrowdelf.Server
 			m_environment = env;
 		}
 
-		public override void Start()
+		public override void AddLiving(LivingObject living)
+		{
+			if (m_livingCount == 0)
+				Start();
+
+			m_livingCount++;
+		}
+
+		public override void RemoveLiving(LivingObject living)
+		{
+			m_livingCount--;
+			Debug.Assert(m_livingCount >= 0);
+
+			if (m_livingCount == 0)
+				Stop();
+		}
+
+		void Start()
 		{
 			InitializeVisibilityArray();
 
@@ -33,7 +52,7 @@ namespace Dwarrowdelf.Server
 			m_environment.SendTo(m_player, ObjectVisibility.Public);
 		}
 
-		public override void Stop()
+		void Stop()
 		{
 			m_environment.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
 

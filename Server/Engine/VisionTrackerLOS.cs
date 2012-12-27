@@ -12,6 +12,8 @@ namespace Dwarrowdelf.Server
 		Player m_player;
 		EnvironmentObject m_environment;
 
+		List<LivingObject> m_livings = new List<LivingObject>();
+
 		HashSet<IntPoint3> m_oldKnownLocations = new HashSet<IntPoint3>();
 		HashSet<MovableObject> m_oldKnownObjects = new HashSet<MovableObject>();
 
@@ -26,16 +28,33 @@ namespace Dwarrowdelf.Server
 			m_environment = env;
 		}
 
-		public override void Start()
+		public override void AddLiving(LivingObject living)
+		{
+			m_livings.Add(living);
+
+			if (m_livings.Count == 1)
+				Start();
+		}
+
+		public override void RemoveLiving(LivingObject living)
+		{
+			var ok = m_livings.Remove(living);
+			Debug.Assert(ok);
+
+			if (m_livings.Count == 0)
+				Stop();
+		}
+
+		void Start()
 		{
 			m_environment.World.WorldChanged += OnWorldChanged;
 
 			m_environment.SendIntroTo(m_player);
 
-			HandleNewTerrainsAndObjects(m_player.Controllables);
+			HandleNewTerrainsAndObjects();
 		}
 
-		public override void Stop()
+		void Stop()
 		{
 			m_environment.World.WorldChanged -= OnWorldChanged;
 		}
@@ -49,7 +68,7 @@ namespace Dwarrowdelf.Server
 
 				if ((c.Source == m_environment && EventIsNear(c.SourceLocation)) ||
 					(c.Destination == m_environment && EventIsNear(c.DestinationLocation)))
-					HandleNewTerrainsAndObjects(m_player.Controllables);
+					HandleNewTerrainsAndObjects();
 			}
 			else if (change is ObjectMoveLocationChange)
 			{
@@ -57,33 +76,31 @@ namespace Dwarrowdelf.Server
 				var mo = (MovableObject)c.Object;
 
 				if (mo.Environment == m_environment && (EventIsNear(c.SourceLocation) || EventIsNear(c.DestinationLocation)))
-					HandleNewTerrainsAndObjects(m_player.Controllables);
+					HandleNewTerrainsAndObjects();
 			}
 			else if (change is MapChange)
 			{
 				var c = (MapChange)change;
 
 				if (c.Environment == m_environment && EventIsNear(c.Location))
-					HandleNewTerrainsAndObjects(m_player.Controllables);
+					HandleNewTerrainsAndObjects();
 			}
 		}
 
 		bool EventIsNear(IntPoint3 p)
 		{
-			return m_player.Controllables.Any(l =>
-				l.Environment == m_environment &&
-				(l.Location - p).ManhattanLength <= l.VisionRange);
+			return m_livings.Any(l => (l.Location - p).ManhattanLength <= l.VisionRange);
 		}
 
 		public override bool Sees(IntPoint3 p)
 		{
-			return m_player.Controllables.Any(l => l.Sees(m_environment, p));
+			return m_livings.Any(l => l.Sees(m_environment, p));
 		}
 
-		void HandleNewTerrainsAndObjects(IList<LivingObject> friendlies)
+		void HandleNewTerrainsAndObjects()
 		{
 			m_oldKnownLocations = m_newKnownLocations;
-			m_newKnownLocations = CollectLocations(friendlies);
+			m_newKnownLocations = CollectLocations();
 
 			m_oldKnownObjects = m_newKnownObjects;
 			m_newKnownObjects = CollectObjects(m_newKnownLocations);
@@ -96,15 +113,12 @@ namespace Dwarrowdelf.Server
 		}
 
 		// Collect all locations that friendlies see
-		HashSet<IntPoint3> CollectLocations(IEnumerable<LivingObject> friendlies)
+		HashSet<IntPoint3> CollectLocations()
 		{
 			var knownLocs = new HashSet<IntPoint3>();
 
-			foreach (var l in friendlies)
+			foreach (var l in m_livings)
 			{
-				if (l.Environment != m_environment)
-					continue;
-
 				var locList = l.GetVisibleLocations().Select(p => new IntPoint3(p.X, p.Y, l.Z));
 
 				knownLocs.UnionWith(locList);

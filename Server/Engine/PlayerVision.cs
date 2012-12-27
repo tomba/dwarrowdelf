@@ -12,9 +12,6 @@ namespace Dwarrowdelf.Server
 		public virtual void AddLiving(LivingObject living) { }
 		public virtual void RemoveLiving(LivingObject living) { }
 
-		public abstract void Start();
-		public abstract void Stop();
-
 		public abstract bool Sees(IntPoint3 p);
 	}
 
@@ -27,11 +24,11 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		public override void Start()
+		public override void AddLiving(LivingObject living)
 		{
 		}
 
-		public override void Stop()
+		public override void RemoveLiving(LivingObject living)
 		{
 		}
 	}
@@ -41,6 +38,8 @@ namespace Dwarrowdelf.Server
 		Player m_player;
 		EnvironmentObject m_environment;
 
+		int m_livingCount;
+
 		public AllVisibleVisionTracker(Player player, EnvironmentObject env)
 		{
 			Debug.Assert(env.VisibilityMode == VisibilityMode.AllVisible);
@@ -49,13 +48,18 @@ namespace Dwarrowdelf.Server
 			m_environment = env;
 		}
 
-		public override void Start()
+		public override void AddLiving(LivingObject living)
 		{
-			m_environment.SendTo(m_player, ObjectVisibility.Public);
+			if (m_livingCount == 0)
+				m_environment.SendTo(m_player, ObjectVisibility.Public);
+
+			m_livingCount++;
 		}
 
-		public override void Stop()
+		public override void RemoveLiving(LivingObject living)
 		{
+			m_livingCount--;
+			Debug.Assert(m_livingCount >= 0);
 		}
 
 		public override bool Sees(IntPoint3 p)

@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Server
 			}
 
 			// can the player see the change?
-			if (!CanSeeChange(change, m_player.Controllables))
+			if (!CanSeeChange(change))
 				return;
 
 			// Send object data for an object that comes to the environment
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Server
 			Send(changeMsg);
 		}
 
-		bool CanSeeChange(Change change, IList<LivingObject> controllables)
+		bool CanSeeChange(Change change)
 		{
 			if (change is TurnStartChange)
 			{
@@ -163,7 +163,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (ObjectMoveChange)change;
 
-				if (controllables.Contains(c.Object))
+				if (m_player.IsController(c.Object))
 					return true;
 
 				if (m_player.Sees(c.Source, c.SourceLocation))
@@ -178,7 +178,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (ObjectMoveLocationChange)change;
 
-				if (controllables.Contains(c.Object))
+				if (m_player.IsController(c.Object))
 					return true;
 
 				// XXX
@@ -201,7 +201,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (PropertyChange)change;
 
-				if (controllables.Contains(c.Object))
+				if (m_player.IsController(c.Object))
 				{
 					return true;
 				}
@@ -220,17 +220,17 @@ namespace Dwarrowdelf.Server
 			else if (change is ActionStartedChange)
 			{
 				var c = (ActionStartedChange)change;
-				return controllables.Contains(c.Object);
+				return m_player.IsController(c.Object);
 			}
 			else if (change is ActionProgressChange)
 			{
 				var c = (ActionProgressChange)change;
-				return controllables.Contains(c.Object);
+				return m_player.IsController(c.Object);
 			}
 			else if (change is ActionDoneChange)
 			{
 				var c = (ActionDoneChange)change;
-				return controllables.Contains(c.Object);
+				return m_player.IsController(c.Object);
 			}
 
 			else if (change is ObjectChange)

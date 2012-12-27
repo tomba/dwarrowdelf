@@ -49,9 +49,8 @@ namespace Dwarrowdelf.Server
 
 		[SaveGameProperty("Controllables")]
 		List<LivingObject> m_controllables;
-		public ReadOnlyCollection<LivingObject> Controllables { get; private set; }
 
-		public bool IsController(BaseObject living) { return this.Controllables.Contains(living); }
+		public bool IsController(BaseObject living) { return m_controllables.Contains(living); }
 
 		IPRunner m_ipRunner;
 
@@ -83,8 +82,6 @@ namespace Dwarrowdelf.Server
 
 		void Construct()
 		{
-			this.Controllables = new ReadOnlyCollection<LivingObject>(m_controllables);
-
 			if (m_seeAll)
 				m_changeHandler = new AdminChangeHandler(this);
 			else
@@ -136,9 +133,6 @@ namespace Dwarrowdelf.Server
 			InitControllablesVisionTracker(m_controllables);
 			SendAddControllables(m_controllables);
 
-			foreach (var tracker in m_visionTrackers.Values)
-				tracker.Start();
-
 			Send(new Messages.LogOnReplyEndMessage()
 			{
 				ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
@@ -166,9 +160,6 @@ namespace Dwarrowdelf.Server
 
 			foreach (var c in m_controllables)
 				UninitControllableVisionTracker(c);
-
-			foreach (var tracker in m_visionTrackers.Values)
-				tracker.Stop();
 
 			m_world.WorldChanged -= HandleWorldChange;
 			m_world.ReportReceived -= HandleReport;
@@ -357,7 +348,7 @@ namespace Dwarrowdelf.Server
 						continue;
 					}
 
-					var living = this.Controllables.SingleOrDefault(l => l.ObjectID == actorOid);
+					var living = m_controllables.SingleOrDefault(l => l.ObjectID == actorOid);
 
 					if (living == null)
 					{
