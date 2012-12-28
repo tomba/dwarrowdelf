@@ -23,26 +23,34 @@ namespace Dwarrowdelf.Server
 		public TimeSpan MinTickTime;
 	}
 
+	[SaveGameObjectByRef]
 	public class GameEngine : MarshalByRefObject, IGame
 	{
 		string m_gameDir;
+
+		[SaveGameProperty]
 		World m_world;
+
+		[SaveGameProperty]
+		List<Player> m_players;
+
+		[SaveGameProperty]
+		GameConfig m_config;
+
+		[SaveGameProperty]
+		public Guid LastSaveID { get; private set; }
+		[SaveGameProperty]
+		public Guid LastLoadID { get; private set; }
+
+		[SaveGameProperty]
+		public GameMode GameMode { get; private set; }
+
+		int m_playersConnected;
 
 		volatile bool m_exit = false;
 		AutoResetEvent m_gameSignal = new AutoResetEvent(true);
 
-		int m_playersConnected;
-
-		List<Player> m_players = new List<Player>();
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Server.World", "Engine");
-
-		GameConfig m_config = new GameConfig
-		{
-			RequirePlayer = true,
-			MaxMoveTime = TimeSpan.Zero,
-			MinTickTime = TimeSpan.FromMilliseconds(50),
-		};
 
 		/// <summary>
 		/// Timer is used to start the tick after MinTickTime
@@ -66,41 +74,42 @@ namespace Dwarrowdelf.Server
 		public IGameManager GameManager { get; private set; }
 
 
-		public static GameEngine Create(string gameDir, World world, IGameManager gameManager)
+		public GameEngine(World world, GameMode mode)
 		{
-			var game = new GameEngine(gameDir);
-			game.Create(world, gameManager);
-			return game;
+			m_world = world;
+
+			this.GameMode = mode;
+
+			m_players = new List<Player>();
+
+			m_config = new GameConfig
+			{
+				RequirePlayer = true,
+				MaxMoveTime = TimeSpan.Zero,
+				MinTickTime = TimeSpan.FromMilliseconds(50),
+			};
+
+			m_minTickTimer = new Timer(this._MinTickTimerCallback);
+			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
+
+			this.LastSaveID = Guid.Empty;
+			this.LastLoadID = Guid.Empty;
 		}
 
-		public static GameEngine Load(string gameDir, Guid save)
+		GameEngine(SaveGameContext ctx)
 		{
-			throw new Exception();
-		}
-
-
-		GameEngine(string gameDir)
-		{
-			m_gameDir = gameDir;
-
 			m_minTickTimer = new Timer(this._MinTickTimerCallback);
 			m_maxMoveTimer = new Timer(this._MaxMoveTimerCallback);
 		}
 
-		void Create(World world, IGameManager gameManager)
+		public void Init(string gameDir, IGameManager gameManager)
 		{
-			if (m_world != null)
+			if (this.GameManager != null)
 				throw new Exception();
 
-			this.LastSaveID = Guid.Empty;
-			this.LastLoadID = Guid.Empty;
-
-			m_world = world;
+			m_gameDir = gameDir;
 			this.GameManager = gameManager;
 		}
-
-		public Guid LastSaveID { get; private set; }
-		public Guid LastLoadID { get; private set; }
 
 		public void Save()
 		{
@@ -118,30 +127,34 @@ namespace Dwarrowdelf.Server
 				return;
 			}
 
-			int tick = m_world.TickNumber;
+			this.LastSaveID = id;
 
 			var saveDir = Path.Combine(m_gameDir, id.ToString());
 
 			Directory.CreateDirectory(saveDir);
 
-			var now = DateTime.Now;
 
-			var saveEntry = new SaveEntry(id, now, tick);
+			/* Save game intro */
+			var saveEntry = new SaveEntry(id, DateTime.Now, m_world.TickNumber);
 
 			using (var stream = File.Create(Path.Combine(saveDir, "intro.json")))
 			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
 				serializer.Serialize(saveEntry);
 
-			var saveData = new SaveData()
-			{
-				World = this.World,
-				Players = m_players,
-				ID = id,
-			};
 
-			SaveWorld(saveData, Path.Combine(saveDir, "server.json"));
+			/* Save game */
 
-			this.LastSaveID = id;
+			var savePath = Path.Combine(saveDir, "server.json");
+
+			Trace.TraceInformation("Saving game {0}", savePath);
+			var watch = Stopwatch.StartNew();
+
+			using (var stream = File.Create(savePath))
+			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				serializer.Serialize(this);
+
+			watch.Stop();
+			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
 		}
 
 		public void SaveClientData(int userID, Guid id, string data)
@@ -174,19 +187,28 @@ namespace Dwarrowdelf.Server
 				return null;
 		}
 
-		public void Load(Guid id)
+		public static GameEngine Load(string gameDir, Guid id)
 		{
-			if (m_world != null)
-				throw new Exception();
+			var savePath = Path.Combine(gameDir, id.ToString(), "server.json");
 
-			var saveData = LoadWorld(Path.Combine(m_gameDir, id.ToString(), "server.json"));
+			Trace.TraceInformation("Loading game {0}", savePath);
+			var watch = Stopwatch.StartNew();
 
-			m_world = saveData.World;
+			GameEngine engine;
 
-			foreach (var p in saveData.Players)
-				AddPlayer(p);
+			using (var stream = File.OpenRead(savePath))
+			using (var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream))
+				engine = deserializer.Deserialize<GameEngine>();
 
-			this.LastLoadID = saveData.ID;
+			watch.Stop();
+			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
+
+			foreach (var p in engine.m_players)
+				engine.AddPlayer(p);
+
+			engine.LastLoadID = engine.LastSaveID;
+
+			return engine;
 		}
 
 		void VerifyAccess()
@@ -496,47 +518,9 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		static void SaveWorld(SaveData saveData, string savePath)
-		{
-			Trace.TraceInformation("Saving game {0}", savePath);
-			var watch = Stopwatch.StartNew();
-
-			using (var stream = File.Create(savePath))
-			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
-				serializer.Serialize(saveData);
-
-			watch.Stop();
-			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
-		}
-
-		static SaveData LoadWorld(string savePath)
-		{
-			Trace.TraceInformation("Loading game {0}", savePath);
-			var watch = Stopwatch.StartNew();
-
-			SaveData saveData;
-
-			using (var stream = File.OpenRead(savePath))
-			using (var deserializer = new Dwarrowdelf.SaveGameDeserializer(stream))
-				saveData = deserializer.Deserialize<SaveData>();
-
-			watch.Stop();
-			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
-
-			return saveData;
-		}
-
 		public override object InitializeLifetimeService()
 		{
 			return null;
-		}
-
-		[Serializable]
-		sealed class SaveData
-		{
-			public World World;
-			public List<Player> Players;
-			public Guid ID;
 		}
 	}
 }

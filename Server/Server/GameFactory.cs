@@ -54,28 +54,41 @@ namespace Dwarrowdelf.Server
 				worldCreator(world);
 			});
 
+			var engine = new GameEngine(world, mode);
+
+			InitGame(engine, gameDir);
+
+			return engine;
+		}
+
+		public IGame LoadGame(string gameDir, Guid save)
+		{
+			var engine = GameEngine.Load(gameDir, save);
+
+			InitGame(engine, gameDir);
+
+			return engine;
+		}
+
+		void InitGame(GameEngine engine, string gameDir)
+		{
 			IGameManager gameManager;
 
-			switch (mode)
+			switch (engine.GameMode)
 			{
 				case GameMode.Fortress:
-					gameManager = new Fortress.FortressGameManager(world);
+					gameManager = new Fortress.FortressGameManager(engine.World);
 					break;
 
 				case GameMode.Adventure:
-					gameManager = new Fortress.DungeonGameManager(world);
+					gameManager = new Fortress.DungeonGameManager(engine.World);
 					break;
 
 				default:
 					throw new Exception();
 			}
 
-			return GameEngine.Create(gameDir, world, gameManager);
-		}
-
-		public IGame LoadGame(string gameDir, Guid save)
-		{
-			return GameEngine.Load(gameDir, save);
+			engine.Init(gameDir, gameManager);
 		}
 
 		public override object InitializeLifetimeService()
