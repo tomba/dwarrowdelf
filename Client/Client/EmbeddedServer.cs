@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client
 
 			var gameDir = path;
 
-			bool cleanSaves = true;
+			bool cleanSaves = ClientConfig.CleanSaveDir;
 			Guid save = Guid.Empty;
 
 			m_saveManager = new SaveManager(gameDir);
