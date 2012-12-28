@@ -29,22 +29,21 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		GameEngine m_engine;
-		World m_world;
-
-		IConnection m_connection;
-		public bool IsConnected { get { return m_connection != null; } }
-
-		public World World { get { return m_world; } }
-
-		[SaveGameProperty("UserID")]
-		int m_userID;
-		public int UserID { get { return m_userID; } }
+		[SaveGameProperty]
+		public int UserID { get; private set; }
 
 		// does this player see all
 		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
-		public bool IsSeeAll { get { return m_seeAll; } }
+
+		[SaveGameProperty]
+		GameEngine m_engine;
+
+		[SaveGameProperty]
+		World m_world;
+
+		IConnection m_connection;
+		public bool IsConnected { get { return m_connection != null; } }
 
 		[SaveGameProperty("Controllables")]
 		List<LivingObject> m_controllables;
@@ -62,9 +61,13 @@ namespace Dwarrowdelf.Server
 
 		public event Action<Player> DisconnectEvent;
 
-		public Player(int userID)
+		public Player(int userID, GameEngine engine)
 		{
-			m_userID = userID;
+			this.UserID = userID;
+
+			m_engine = engine;
+			m_world = engine.World;
+
 			m_seeAll = false;
 
 			m_controllables = new List<LivingObject>();
@@ -81,24 +84,18 @@ namespace Dwarrowdelf.Server
 
 		void Construct()
 		{
-			if (m_seeAll)
-				m_changeHandler = new AdminChangeHandler(this);
-			else
-				m_changeHandler = new PlayerChangeHandler(this);
-		}
-
-		public void Init(GameEngine engine)
-		{
-			m_engine = engine;
-			m_world = m_engine.World;
-
-			trace.Header = String.Format("Player({0})", m_userID);
+			trace.Header = String.Format("Player({0})", this.UserID);
 
 			// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
 			System.Threading.Tasks.Task.Factory.StartNew(delegate
 			{
 				m_ipRunner = new IPRunner(m_world, m_engine, this);
 			});
+
+			if (m_seeAll)
+				m_changeHandler = new AdminChangeHandler(this);
+			else
+				m_changeHandler = new PlayerChangeHandler(this);
 		}
 
 		public void Connect(IConnection connection)
@@ -124,10 +121,10 @@ namespace Dwarrowdelf.Server
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
-				IsSeeAll = this.IsSeeAll,
+				IsSeeAll = m_seeAll,
 			});
 
-			m_world.SendTo(this, this.IsSeeAll ? ObjectVisibility.All : ObjectVisibility.Public);
+			m_world.SendTo(this, m_seeAll ? ObjectVisibility.All : ObjectVisibility.Public);
 
 			InitControllablesVisionTracker(m_controllables);
 			SendAddControllables(m_controllables);
@@ -137,9 +134,9 @@ namespace Dwarrowdelf.Server
 				ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
 			});
 
-			if (this.World.IsTickOnGoing)
+			if (m_world.IsTickOnGoing)
 			{
-				if (this.World.TickMethod == WorldTickMethod.Simultaneous)
+				if (m_world.TickMethod == WorldTickMethod.Simultaneous)
 				{
 					var change = new TurnStartChange(null);
 					m_changeHandler.HandleWorldChange(change);
@@ -376,7 +373,7 @@ namespace Dwarrowdelf.Server
 							throw new Exception("already has an action");
 					}
 
-					living.StartAction(action, ActionPriority.User, m_userID);
+					living.StartAction(action, ActionPriority.User, this.UserID);
 				}
 
 				this.IsProceedTurnReplyReceived = true;

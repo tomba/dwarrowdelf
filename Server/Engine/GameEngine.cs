@@ -381,7 +381,6 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 			m_players.Add(player);
-			player.Init(this);
 			player.ProceedTurnReceived += OnPlayerProceedTurnReceived;
 			player.DisconnectEvent += OnPlayerDisconnected;
 		}
@@ -409,7 +408,7 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 
 			trace.TraceInformation("Creating new player {0}", userID);
-			player = new Player(userID);
+			player = new Player(userID, this);
 
 			AddPlayer(player);
 
