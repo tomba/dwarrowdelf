@@ -71,15 +71,9 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class SaveEntry
 	{
-		public SaveEntry(Guid id, DateTime dateTime, int tick)
-		{
-			this.ID = id;
-			this.DateTime = dateTime;
-			this.Tick = tick;
-		}
-
 		public Guid ID;
 		public DateTime DateTime;
+		public GameMode GameMode;
 		public int Tick;
 	}
 }

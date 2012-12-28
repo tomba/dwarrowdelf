@@ -135,7 +135,13 @@ namespace Dwarrowdelf.Server
 
 
 			/* Save game intro */
-			var saveEntry = new SaveEntry(id, DateTime.Now, m_world.TickNumber);
+			var saveEntry = new SaveEntry()
+			{
+				ID = id,
+				DateTime = DateTime.Now,
+				GameMode = this.GameMode,
+				Tick = m_world.TickNumber,
+			};
 
 			using (var stream = File.Create(Path.Combine(saveDir, "intro.json")))
 			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
