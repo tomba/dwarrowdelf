@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
-	// XXX mvoe to server
+	// XXX move to server
 	public sealed class SaveManager
 	{
 		public string GameDir { get; private set; }
@@ -27,14 +27,16 @@ namespace Dwarrowdelf
 				try
 				{
 					var idStr = Path.GetFileName(dir);
-					var datetimeStr = File.ReadAllText(Path.Combine(dir, "TIMESTAMP"));
-					var tickStr = File.ReadAllText(Path.Combine(dir, "TICK"));
-
 					var id = Guid.Parse(idStr);
-					var dateTime = DateTime.ParseExact(datetimeStr, "u", CultureInfo.InvariantCulture);
-					var tick = int.Parse(tickStr);
 
-					var entry = new SaveEntry(id, dateTime, tick);
+					SaveEntry entry;
+
+					using (var stream = File.OpenRead(Path.Combine(dir, "intro.json")))
+					using (var serializer = new Dwarrowdelf.SaveGameDeserializer(stream))
+						entry = serializer.Deserialize<SaveEntry>();
+
+					if (id != entry.ID)
+						throw new Exception();
 
 					m_entries.Add(entry);
 				}
@@ -66,7 +68,8 @@ namespace Dwarrowdelf
 		}
 	}
 
-	sealed class SaveEntry
+	[Serializable]
+	public sealed class SaveEntry
 	{
 		public SaveEntry(Guid id, DateTime dateTime, int tick)
 		{
@@ -75,8 +78,8 @@ namespace Dwarrowdelf
 			this.Tick = tick;
 		}
 
-		public Guid ID { get; private set; }
-		public DateTime DateTime { get; private set; }
-		public int Tick { get; private set; }
+		public Guid ID;
+		public DateTime DateTime;
+		public int Tick;
 	}
 }

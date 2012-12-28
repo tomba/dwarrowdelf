@@ -126,19 +126,11 @@ namespace Dwarrowdelf.Server
 
 			var now = DateTime.Now;
 
-			File.WriteAllText(Path.Combine(saveDir, "TIMESTAMP"), now.ToString("u"));
-			File.WriteAllText(Path.Combine(saveDir, "TICK"), tick.ToString());
+			var saveEntry = new SaveEntry(id, now, tick);
 
-			using (var writer = File.CreateText(Path.Combine(saveDir, "_info.txt")))
-			{
-				writer.WriteLine("date {0:u}", now);
-				writer.WriteLine("tick {0}", tick);
-				writer.WriteLine("players");
-				foreach (var p in m_players)
-				{
-					writer.WriteLine("\t{0}: {1}", p.UserID, p.IsConnected ? "connected" : "not connected");
-				}
-			}
+			using (var stream = File.Create(Path.Combine(saveDir, "intro.json")))
+			using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream))
+				serializer.Serialize(saveEntry);
 
 			var saveData = new SaveData()
 			{
