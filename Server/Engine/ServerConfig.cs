@@ -7,6 +7,6 @@ namespace Dwarrowdelf.Server
 {
 	static class ServerConfig
 	{
-		public static bool DisableSaving = true;
+		public static bool DisableSaving = false;
 	}
 }
