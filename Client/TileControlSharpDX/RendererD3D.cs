@@ -38,7 +38,7 @@ namespace Dwarrowdelf.Client.TileControl
 			{
 				trace.TraceInformation("Frontbuffer available");
 
-				m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
+				m_interopImageSource.SetBackBufferDX11(m_renderTexture);
 				m_interopImageSource.InvalidateD3DImage();
 			}
 			else
@@ -53,7 +53,7 @@ namespace Dwarrowdelf.Client.TileControl
 		{
 			if (m_renderTexture != null)
 			{
-				m_interopImageSource.SetBackBufferSlimDX(null);
+				m_interopImageSource.SetBackBufferDX11(null);
 				m_renderTexture.Dispose();
 				m_renderTexture = null;
 			}
@@ -64,7 +64,7 @@ namespace Dwarrowdelf.Client.TileControl
 			trace.TraceInformation("CreateTextureRenderSurface {0}x{1}", width, height);
 			m_renderTexture = Helpers11.CreateTextureRenderSurface(m_device, width, height);
 			m_scene.SetRenderTarget(m_renderTexture);
-			m_interopImageSource.SetBackBufferSlimDX(m_renderTexture);
+			m_interopImageSource.SetBackBufferDX11(m_renderTexture);
 		}
 
 

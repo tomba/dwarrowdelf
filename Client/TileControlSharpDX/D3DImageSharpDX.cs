@@ -13,7 +13,7 @@ namespace Dwarrowdelf.Client.TileControl
 		[DllImport("user32.dll", SetLastError = false)]
 		static extern IntPtr GetDesktopWindow();
 
-		static int s_numActiveImages = 0;
+		static int s_numActiveClients = 0;
 		static D3D9.Direct3DEx s_context;
 		static D3D9.DeviceEx s_device;
 
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 		public void Dispose()
 		{
-			SetBackBufferSlimDX(null);
+			SetBackBufferDX11(null);
 
 			ShutdownD3D9();
 		}
@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 		}
 
-		public void SetBackBufferSlimDX(D3D11.Texture2D texture)
+		public void SetBackBufferDX11(D3D11.Texture2D texture)
 		{
 			if (m_sharedTexture != null)
 			{
@@ -55,8 +55,11 @@ namespace Dwarrowdelf.Client.TileControl
 				SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
 				Unlock();
 			}
-			else if (IsShareable(texture))
+			else
 			{
+				if (IsShareable(texture) == false)
+					throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
+
 				D3D9.Format format = TranslateFormat(texture);
 				if (format == D3D9.Format.Unknown)
 					throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
@@ -75,15 +78,11 @@ namespace Dwarrowdelf.Client.TileControl
 					Unlock();
 				}
 			}
-			else
-			{
-				throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
-			}
 		}
 
 		static void InitD3D9()
 		{
-			if (s_numActiveImages == 0)
+			if (s_numActiveClients == 0)
 			{
 				s_context = new D3D9.Direct3DEx();
 
@@ -99,26 +98,26 @@ namespace Dwarrowdelf.Client.TileControl
 					D3D9.CreateFlags.HardwareVertexProcessing | D3D9.CreateFlags.Multithreaded | D3D9.CreateFlags.FpuPreserve, presentparams);
 			}
 
-			s_numActiveImages++;
+			s_numActiveClients++;
 		}
 
 		static void ShutdownD3D9()
 		{
-			s_numActiveImages--;
+			s_numActiveClients--;
 
-			if (s_numActiveImages == 0)
+			if (s_numActiveClients != 0)
+				return;
+
+			if (s_device != null)
 			{
-				if (s_device != null)
-				{
-					s_device.Dispose();
-					s_device = null;
-				}
+				s_device.Dispose();
+				s_device = null;
+			}
 
-				if (s_context != null)
-				{
-					s_context.Dispose();
-					s_context = null;
-				}
+			if (s_context != null)
+			{
+				s_context.Dispose();
+				s_context = null;
 			}
 		}
 
