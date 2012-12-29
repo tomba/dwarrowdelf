@@ -119,6 +119,9 @@ namespace Dwarrowdelf.Server
 
 		bool GetVisible(IntPoint3 p)
 		{
+			if (m_visibilityArray == null)
+				return false;
+
 			return m_visibilityArray[p.Z, p.Y, p.X];
 		}
 
