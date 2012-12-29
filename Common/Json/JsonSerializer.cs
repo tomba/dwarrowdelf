@@ -225,7 +225,8 @@ namespace Dwarrowdelf
 				if (writeType)
 				{
 					m_writer.WritePropertyName("$type");
-					m_writer.WriteValue(typeInfo.Type.FullName);
+					// XXX fully qualified name is rather long...
+					m_writer.WriteValue(typeInfo.Type.AssemblyQualifiedName);
 				}
 
 				if (typeInfo.TypeClass == TypeClass.GameObject)

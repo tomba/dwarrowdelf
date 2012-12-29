@@ -287,7 +287,7 @@ namespace Dwarrowdelf
 
 				string typeName = (string)m_reader.Value;
 
-				var type = FindType(typeName);
+				var type = Type.GetType(typeName);
 				if (type == null)
 					throw new Exception("Unable to find type " + typeName);
 
@@ -299,18 +299,6 @@ namespace Dwarrowdelf
 			{
 				return null;
 			}
-		}
-
-		static Type FindType(string typeName)
-		{
-			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies())
-			{
-				var type = ass.GetType(typeName);
-				if (type != null)
-					return type;
-			}
-
-			return null;
 		}
 
 		object DeserializeArray(Type expectedType)
