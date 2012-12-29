@@ -39,6 +39,7 @@ namespace Dwarrowdelf
 	public sealed class BuildableItem
 	{
 		public string Key { get; internal set; }
+		public string FullKey { get; internal set; }
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
 		public MaterialID? MaterialID { get; internal set; }
@@ -134,6 +135,8 @@ namespace Dwarrowdelf
 				{
 					if (String.IsNullOrEmpty(bi.Key))
 						bi.Key = bi.ItemID.ToString();
+
+					bi.FullKey = String.Format("{0},{1}", building.BuildingID, bi.Key);
 				}
 
 				// verify BuildableItem key uniqueness
@@ -158,6 +161,11 @@ namespace Dwarrowdelf
 			Debug.Assert(s_buildings[(int)id] != null);
 
 			return s_buildings[(int)id];
+		}
+
+		public static BuildableItem FindBuildableItem(string buildableItemFullKey)
+		{
+			return s_buildings.SelectMany(bi => bi.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
 		}
 	}
 }

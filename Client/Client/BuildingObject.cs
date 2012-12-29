@@ -478,17 +478,18 @@ namespace Dwarrowdelf.Client
 		public BuildSpec(BuildableItem buildableItem)
 		{
 			this.BuildableItem = buildableItem;
-			this.BuildableItemKey = this.BuildableItem.Key;
+			this.BuildableItemFullKey = this.BuildableItem.FullKey;
 			this.ItemSpecs = new IItemFilter[this.BuildableItem.BuildMaterials.Count];
 		}
 
 		BuildSpec(SaveGameContext context)
 		{
-			// XXX BuildableItem is not restored properly. Needs to know the building ID...
+			this.BuildableItem = Buildings.FindBuildableItem(this.BuildableItemFullKey);
+			Debug.Assert(this.BuildableItem != null);
 		}
 
 		[SaveGameProperty]
-		string BuildableItemKey { get; set; }
+		string BuildableItemFullKey { get; set; }
 
 		public BuildableItem BuildableItem { get; private set; }
 
