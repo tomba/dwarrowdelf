@@ -44,18 +44,19 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		// XXX bad shuffle
 		void ShuffleArray(Direction[] array)
 		{
 			if (array.Length == 0)
 				return;
 
-			for (int i = array.Length - 1; i >= 0; i--)
+			var r = m_env.World.Random;
+
+			for (int i = array.Length - 1; i >= 1; i--)
 			{
-				var tmp = array[i];
-				int randomIndex = m_env.World.Random.Next(i + 1);
+				int randomIndex = r.Next(i + 1);
 
 				//Swap elements
+				var tmp = array[i];
 				array[i] = array[randomIndex];
 				array[randomIndex] = tmp;
 			}
