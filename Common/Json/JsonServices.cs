@@ -367,7 +367,8 @@ namespace Dwarrowdelf
 				entries.Add(entry);
 			}
 
-			entries.Sort(CompareEntries);
+			// XXX don't sort. this makes objectid deserialized first, which "fixes" issues with KeyedCollection
+			//entries.Sort(CompareEntries);
 
 			return entries.ToArray();
 		}
