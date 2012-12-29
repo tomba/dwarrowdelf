@@ -63,6 +63,8 @@ namespace Dwarrowdelf.Server
 
 		public IGame LoadGame(string gameDir, Guid save)
 		{
+			MyTraceContext.ThreadTraceContext = new MyTraceContext("Server");
+
 			var engine = GameEngine.Load(gameDir, save);
 
 			InitGame(engine, gameDir);
