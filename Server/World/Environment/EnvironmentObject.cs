@@ -101,6 +101,8 @@ namespace Dwarrowdelf.Server
 
 			this.World.TickStarting += Tick;
 
+			m_treeHandler = new EnvTreeHandler(this);
+
 			m_waterHandler = new EnvWaterHandler(this);
 
 			CreateDepthMap();
