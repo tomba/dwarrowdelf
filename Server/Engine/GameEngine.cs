@@ -210,7 +210,7 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);
 
 			foreach (var p in engine.m_players)
-				engine.AddPlayer(p);
+				engine.InitPlayer(p);
 
 			engine.LastLoadID = engine.LastSaveID;
 
@@ -383,10 +383,9 @@ namespace Dwarrowdelf.Server
 				throw new Exception();
 		}
 
-		void AddPlayer(Player player)
+		void InitPlayer(Player player)
 		{
 			VerifyAccess();
-			m_players.Add(player);
 			player.ProceedTurnReceived += OnPlayerProceedTurnReceived;
 			player.DisconnectEvent += OnPlayerDisconnected;
 		}
@@ -416,7 +415,8 @@ namespace Dwarrowdelf.Server
 			trace.TraceInformation("Creating new player {0}", userID);
 			player = new Player(userID, this);
 
-			AddPlayer(player);
+			m_players.Add(player);
+			InitPlayer(player);
 
 			return player;
 		}
