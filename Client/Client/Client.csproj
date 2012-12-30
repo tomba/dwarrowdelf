@@ -189,10 +189,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Windows\ConstructBuildingDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\Windows\CreateLivingDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -371,9 +367,6 @@
     </Compile>
     <Compile Include="UI\Windows\ConsoleDialog.xaml.cs">
       <DependentUpon>ConsoleDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Windows\ConstructBuildingDialog.xaml.cs">
-      <DependentUpon>ConstructBuildingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ClientCommands.cs" />
     <Compile Include="UI\Windows\CreateLivingDialog.xaml.cs">

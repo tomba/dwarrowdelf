@@ -78,7 +78,6 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case ClientToolMode.CreateStockpile:
-				case ClientToolMode.ConstructBuilding:
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
@@ -195,22 +194,6 @@ namespace Dwarrowdelf.Client.UI
 
 						if (res == true)
 							DebugScriptMessages.SendCreateLiving(dialog);
-					}
-					break;
-
-				case ClientToolMode.ConstructBuilding:
-					{
-						var dialog = new ConstructBuildingDialog();
-						dialog.Owner = this;
-						dialog.SetContext(env, selection.SelectionIntRectZ);
-						var res = dialog.ShowDialog();
-
-						if (res == true)
-						{
-							//var id = dialog.BuildingID;
-							//var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
-							//env.AddAreaElement(site);
-						}
 					}
 					break;
 
