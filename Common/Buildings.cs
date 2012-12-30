@@ -163,6 +163,24 @@ namespace Dwarrowdelf
 			return s_buildings[(int)id];
 		}
 
+		// XXX
+		public static BuildingInfo GetBuildingInfo(ItemID id)
+		{
+			BuildingID bid;
+
+			switch (id)
+			{
+				case ItemID.CarpentersWorkbench:
+					bid = BuildingID.Carpenter;
+					break;
+
+				default:
+					throw new Exception();
+			}
+
+			return GetBuildingInfo(bid);
+		}
+
 		public static BuildableItem FindBuildableItem(string buildableItemFullKey)
 		{
 			return s_buildings.SelectMany(bi => bi.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);

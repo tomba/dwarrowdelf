@@ -51,6 +51,7 @@ namespace Dwarrowdelf
 		}
 	}
 
+	// XXX remove
 	[Serializable]
 	public sealed class ConstructBuildingActionReport : ActionReport
 	{

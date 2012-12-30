@@ -17,11 +17,16 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			m_region = new Region();
 
+			var p = new IntPoint2(env.Width / 2, env.Height / 2);
+			m_region.Add(new IntGrid2Z(p, p + new IntVector2(2, 2), env.GetDepth(p)));
+
+			/*
 			foreach (var ob in env.GetLargeObjects())
 				AddLargeObject(ob);
 
 			env.LargeObjectAdded += OnLargeObjectAdded;
 			env.LargeObjectRemoved += OnLargeObjectRemoved;
+			 */
 		}
 
 		EnvObserver(SaveGameContext ctx)
@@ -34,7 +39,7 @@ namespace Dwarrowdelf.Server.Fortress
 		}
 
 		public IntPoint3? Center { get { return m_region.Center; } }
-
+		/*
 		IntGrid3 LargeObjectToBox(AreaObject ob)
 		{
 			var area = ob.Area;
@@ -64,5 +69,6 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			RemoveLargeObject(ob);
 		}
+		 */
 	}
 }

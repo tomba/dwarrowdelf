@@ -48,12 +48,6 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public IntPoint3 StartLocation { get; private set; }
 
-		[SaveGameProperty("LargeObjects", Converter = typeof(LargeObjectSetConv))]
-		HashSet<AreaObject> m_largeObjectSet;
-
-		public event Action<AreaObject> LargeObjectAdded;
-		public event Action<AreaObject> LargeObjectRemoved;
-
 		public event Action<IntPoint3, TileData, TileData> TerrainOrInteriorChanged;
 
 		EnvWaterHandler m_waterHandler;
@@ -85,8 +79,6 @@ namespace Dwarrowdelf.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
-
-			m_largeObjectSet = new HashSet<AreaObject>();
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -460,45 +452,6 @@ namespace Dwarrowdelf.Server
 			return EnvironmentHelpers.GetDirectionsFrom(this, p);
 		}
 
-		public void AddLargeObject(AreaObject ob)
-		{
-			Debug.Assert(this.World.IsWritable);
-
-			Debug.Assert(m_largeObjectSet.Any(b => b.Area.IntersectsWith(ob.Area)) == false);
-			Debug.Assert(ob.IsInitialized == false);
-
-			m_largeObjectSet.Add(ob);
-
-			if (this.LargeObjectAdded != null)
-				LargeObjectAdded(ob);
-		}
-
-		public void RemoveLargeObject(AreaObject ob)
-		{
-			Debug.Assert(this.World.IsWritable);
-			Debug.Assert(m_largeObjectSet.Contains(ob));
-
-			m_largeObjectSet.Remove(ob);
-
-			if (this.LargeObjectRemoved != null)
-				LargeObjectRemoved(ob);
-		}
-
-		public AreaObject GetLargeObjectAt(IntPoint3 p)
-		{
-			return m_largeObjectSet.SingleOrDefault(b => b.Contains(p));
-		}
-
-		public T GetLargeObjectAt<T>(IntPoint3 p) where T : AreaObject
-		{
-			return m_largeObjectSet.OfType<T>().SingleOrDefault(b => b.Contains(p));
-		}
-
-		public IEnumerable<AreaObject> GetLargeObjects()
-		{
-			return m_largeObjectSet;
-		}
-
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
 			base.CollectObjectData(baseData, visibility);
@@ -535,11 +488,6 @@ namespace Dwarrowdelf.Server
 
 				if (vis != ObjectVisibility.None)
 					ob.SendTo(player, vis);
-			}
-
-			foreach (var o in m_largeObjectSet)
-			{
-				o.SendTo(player, ObjectVisibility.All);
 			}
 
 			player.Send(new Messages.ObjectDataEndMessage() { ObjectID = this.ObjectID });
@@ -713,25 +661,6 @@ namespace Dwarrowdelf.Server
 
 		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3, AStar.AStarNode> nodes)
 		{
-		}
-
-		sealed class LargeObjectSetConv : Dwarrowdelf.ISaveGameConverter
-		{
-			public object ConvertToSerializable(object value)
-			{
-				var set = (HashSet<AreaObject>)value;
-				return set.ToArray();
-			}
-
-			public object ConvertFromSerializable(object value)
-			{
-				var arr = (AreaObject[])value;
-				return new HashSet<AreaObject>(arr);
-			}
-
-			public Type InputType { get { return typeof(HashSet<AreaObject>); } }
-
-			public Type OutputType { get { return typeof(AreaObject[]); } }
 		}
 
 		sealed class TileGridReaderWriter : ISaveGameReaderWriter

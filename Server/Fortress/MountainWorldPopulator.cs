@@ -106,25 +106,28 @@ namespace Dwarrowdelf.Server.Fortress
 			};
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smith, new IntGrid2Z(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToIntGrid3(), floorTile);
-				builder.Create(world, env);
+				var p = new IntPoint3(posx, posy, surface);
+				env.SetTileData(p, floorTile);
+				var item = CreateItem(env, ItemID.SmithsWorkbench, MaterialID.Iron, p);
+				item.IsInstalled = true;
 			}
 
 			posx += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Carpenter, new IntGrid2Z(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToIntGrid3(), floorTile);
-				builder.Create(world, env);
+				var p = new IntPoint3(posx, posy, surface);
+				env.SetTileData(p, floorTile);
+				var item = CreateItem(env, ItemID.CarpentersWorkbench, MaterialID.Iron, p);
+				item.IsInstalled = true;
 			}
 
 			posx += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Mason, new IntGrid2Z(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToIntGrid3(), floorTile);
-				builder.Create(world, env);
+				var p = new IntPoint3(posx, posy, surface);
+				env.SetTileData(p, floorTile);
+				var item = CreateItem(env, ItemID.MasonsWorkbench, MaterialID.Iron, p);
+				item.IsInstalled = true;
 			}
 
 			posx = env.Width / 2 - 10;
@@ -132,17 +135,19 @@ namespace Dwarrowdelf.Server.Fortress
 			posy += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Smelter, new IntGrid2Z(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToIntGrid3(), floorTile);
-				builder.Create(world, env);
+				var p = new IntPoint3(posx, posy, surface);
+				env.SetTileData(p, floorTile);
+				var item = CreateItem(env, ItemID.SmelterWorkbench, MaterialID.Iron, p);
+				item.IsInstalled = true;
 			}
 
 			posx += 4;
 
 			{
-				var builder = new BuildingObjectBuilder(BuildingID.Gemcutter, new IntGrid2Z(posx, posy, 3, 3, surface));
-				SetArea(env, builder.Area.ToIntGrid3(), floorTile);
-				builder.Create(world, env);
+				var p = new IntPoint3(posx, posy, surface);
+				env.SetTileData(p, floorTile);
+				var item = CreateItem(env, ItemID.GemcuttersWorkbench, MaterialID.Iron, p);
+				item.IsInstalled = true;
 			}
 		}
 

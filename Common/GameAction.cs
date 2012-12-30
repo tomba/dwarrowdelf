@@ -269,6 +269,8 @@ namespace Dwarrowdelf
 	public sealed class BuildItemAction : GameAction
 	{
 		[SaveGameProperty]
+		public ObjectID WorkbenchID { get; private set; }
+		[SaveGameProperty]
 		public ObjectID[] SourceObjectIDs { get; private set; }
 		[SaveGameProperty]
 		public string BuildableItemKey { get; private set; }
@@ -342,6 +344,7 @@ namespace Dwarrowdelf
 		}
 	}
 
+	// XXX remove
 	[Serializable]
 	[SaveGameObjectByRef]
 	public sealed class DestructBuildingAction : GameAction

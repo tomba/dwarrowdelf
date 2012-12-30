@@ -28,6 +28,12 @@ namespace Dwarrowdelf
 		Barrel,
 		Bucket,
 
+		SmithsWorkbench,
+		CarpentersWorkbench,
+		MasonsWorkbench,
+		SmelterWorkbench,
+		GemcuttersWorkbench,
+
 		Dagger,
 		ShortSword,
 		BattleAxe,

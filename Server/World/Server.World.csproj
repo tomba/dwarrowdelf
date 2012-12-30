@@ -45,15 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseObject.cs" />
-    <Compile Include="BuildingObject.cs" />
     <Compile Include="Changes.cs" />
     <Compile Include="Collections.cs" />
     <Compile Include="ContainerObject.cs" />
-    <Compile Include="AreaObject.cs" />
     <Compile Include="Environment\EnvTreeHandler.cs" />
     <Compile Include="Environment\EnvWaterHandler.cs" />
     <Compile Include="IPlayer.cs" />
-    <Compile Include="Living\Actions\ConstructBuilding.cs" />
     <Compile Include="Living\Actions\Sleep.cs" />
     <Compile Include="Living\Actions\WearArmor.cs" />
     <Compile Include="Living\Actions\RemoveArmor.cs" />
@@ -65,7 +62,6 @@
     <Compile Include="Living\Actions\BuildItem.cs" />
     <Compile Include="Living\Actions\Attack.cs" />
     <Compile Include="Living\Actions\WieldWeapon.cs" />
-    <Compile Include="Living\Actions\DestructBuilding.cs" />
     <Compile Include="Living\Actions\GetItem.cs" />
     <Compile Include="Living\Actions\DropItem.cs" />
     <Compile Include="Living\Actions\CarryItem.cs" />
