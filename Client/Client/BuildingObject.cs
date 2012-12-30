@@ -439,7 +439,7 @@ namespace Dwarrowdelf.Client
 
 				var filter = new AndItemFilter(bimi, biis);
 
-				var ob = this.Environment.ItemTracker.GetReacableItemByDistance(this.Area.Center, filter, m_unreachables);
+				var ob = this.Environment.ItemTracker.GetReachableItemByDistance(this.Area.Center, filter, m_unreachables);
 
 				if (ob == null)
 					break;

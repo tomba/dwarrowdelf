@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 			return items;
 		}
 
-		public ItemObject GetReacableItemByDistance(IntPoint3 location, IItemFilter filter,
+		public ItemObject GetReachableItemByDistance(IntPoint3 location, IItemFilter filter,
 			Unreachables unreachables)
 		{
 			var items = m_items

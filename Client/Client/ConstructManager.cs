@@ -126,7 +126,7 @@ namespace Dwarrowdelf.Client
 			{
 				if (data.Job == null)
 				{
-					var item = m_environment.ItemTracker.GetReacableItemByDistance(living.Location, data.ItemFilter,
+					var item = m_environment.ItemTracker.GetReachableItemByDistance(living.Location, data.ItemFilter,
 						m_unreachables);
 
 					if (item == null)
