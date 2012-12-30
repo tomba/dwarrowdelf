@@ -78,17 +78,4 @@ namespace Dwarrowdelf
 			return String.Format("LivingData {0}", this.ObjectID);
 		}
 	}
-
-	[Serializable]
-	public sealed class BuildingData : BaseGameObjectData
-	{
-		public BuildingID BuildingID { get; set; }
-		public ObjectID Environment { get; set; }
-		public IntGrid2Z Area { get; set; }
-
-		public override string ToString()
-		{
-			return String.Format("BuildingData {0}", this.ObjectID);
-		}
-	}
 }

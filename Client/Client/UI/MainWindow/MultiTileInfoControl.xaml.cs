@@ -62,8 +62,8 @@ namespace Dwarrowdelf.Client.UI
 		public MyWatersConverter() : base(item => item.ToString()) { }
 	}
 
-	sealed class MyBuildingsConverter : ListConverter<IAreaElement>
+	sealed class MyAreaElementsConverter : ListConverter<IAreaElement>
 	{
-		public MyBuildingsConverter() : base(item => item.Description) { }
+		public MyAreaElementsConverter() : base(item => item.Description) { }
 	}
 }
