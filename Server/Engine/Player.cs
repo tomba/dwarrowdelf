@@ -464,7 +464,6 @@ namespace Dwarrowdelf.Server
 							return ObjectVisibility.None;
 					}
 
-				case ObjectType.Building:
 				case ObjectType.Environment:
 					return ObjectVisibility.All;
 

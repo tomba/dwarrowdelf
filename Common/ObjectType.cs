@@ -11,6 +11,5 @@ namespace Dwarrowdelf
 		Environment,
 		Living,
 		Item,
-		Building,
 	}
 }

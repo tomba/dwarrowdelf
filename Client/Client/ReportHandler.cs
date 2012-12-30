@@ -168,26 +168,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void HandleReport(ConstructBuildingActionReport report)
-		{
-			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
-			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} builds {1}", living, report.BuildingID);
-			else
-				GameData.Data.AddGameEvent(living, "{0} fails to build {1}: {2}", living, report.BuildingID, report.FailReason);
-		}
-
-		void HandleReport(DestructBuildingActionReport report)
-		{
-			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
-			var building = m_world.FindObject<BuildingObject>(report.BuildingObjectID);
-
-			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} destructs {1}", living, building);
-			else
-				GameData.Data.AddGameEvent(living, "{0} fails to destruct {1}: {2}", living, building, report.FailReason);
-		}
-
 		void HandleReport(BuildItemActionReport report)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);

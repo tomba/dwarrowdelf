@@ -37,13 +37,6 @@ namespace Dwarrowdelf.Client.UI
 							App.MainWindow.MapControl.ScrollTo(movable.Environment, movable.Location);
 							return;
 						}
-
-						var building = baseObject as BuildingObject;
-						if (building != null && building.Environment != null)
-						{
-							App.MainWindow.MapControl.ScrollTo(building.Environment, building.Area.Center);
-							return;
-						}
 					}
 					break;
 

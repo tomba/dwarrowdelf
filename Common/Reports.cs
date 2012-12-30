@@ -51,31 +51,6 @@ namespace Dwarrowdelf
 		}
 	}
 
-	// XXX remove
-	[Serializable]
-	public sealed class ConstructBuildingActionReport : ActionReport
-	{
-		public BuildingID BuildingID { get; private set; }
-
-		public ConstructBuildingActionReport(ILivingObject living, BuildingID buildingID)
-			: base(living)
-		{
-			this.BuildingID = buildingID;
-		}
-	}
-
-	[Serializable]
-	public sealed class DestructBuildingActionReport : ActionReport
-	{
-		public ObjectID BuildingObjectID { get; private set; }
-
-		public DestructBuildingActionReport(ILivingObject living, IBuildingObject building)
-			: base(living)
-		{
-			this.BuildingObjectID = building != null ? building.ObjectID : ObjectID.NullObjectID;
-		}
-	}
-
 	[Serializable]
 	public sealed class MoveActionReport : ActionReport
 	{

@@ -37,9 +37,6 @@ namespace Dwarrowdelf.Client.UI
 			if (item is LivingObject)
 				return c.FindResource("livingTemplate") as DataTemplate;
 
-			if (item is BuildingObject)
-				return c.FindResource("buildingTemplate") as DataTemplate;
-
 			if (item is Stockpile)
 				return c.FindResource("stockpileTemplate") as DataTemplate;
 

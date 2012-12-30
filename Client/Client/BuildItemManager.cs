@@ -9,20 +9,14 @@ using System.Collections.Generic;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef(ClientObject = true)]
-	sealed class BuildingObject : BaseObject, IBuildingObject, IAreaElement, IJobSource, IJobObserver
+	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
+		ItemObject m_workbench;
+
 		public BuildingInfo BuildingInfo { get; private set; }
 		public EnvironmentObject Environment { get; set; }
 
-		IEnvironmentObject IAreaObject.Environment { get { return this.Environment as IEnvironmentObject; } }
-
-		public IntGrid2Z Area { get; set; }
-
 		public BuildingID BuildingID { get { return this.BuildingInfo.BuildingID; } }
-
-		public string Description { get { return Buildings.GetBuildingInfo(this.BuildingID).Name; } }
-		public SymbolID SymbolID { get { return Client.SymbolID.Contraption; } }
-		public GameColor EffectiveColor { get { return GameColor.Gray; } }
 
 		[SaveGameProperty]
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
@@ -31,99 +25,38 @@ namespace Dwarrowdelf.Client
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
 
 		[SaveGameProperty]
-		IAssignment m_destructJob;
-
-		[SaveGameProperty]
 		BuildOrder m_currentBuildOrder;
 		[SaveGameProperty]
 		IJobGroup m_currentJob;
 
-		[SaveGameProperty]
-		BuildingState m_buildingState;
-
 		Unreachables m_unreachables;
 
-		/// <summary>
-		/// For Design-time only
-		/// </summary>
-		public BuildingObject()
-			: this(null, ObjectID.NullObjectID)
+		// XXX design time
+		public BuildItemManager()
 		{
-			var r = new Random();
-
-			var props = new Tuple<PropertyID, object>[]
-			{
-			};
-
-			var data = new BuildingData()
-			{
-				ObjectID = new ObjectID(ObjectType.Living, (uint)r.Next(5000)),
-				CreationTick = r.Next(),
-				CreationTime = DateTime.Now,
-				Properties = props,
-
-				BuildingID = Dwarrowdelf.BuildingID.Smelter,
-				Area = new IntGrid2Z(new IntGrid2(0, 0, 4, 4), 9),
-			};
-
-			DeserializeBegin(data);
 		}
 
-		public BuildingObject(World world, ObjectID objectID)
-			: base(world, objectID)
+		public BuildItemManager(ItemObject workbench)
 		{
-			trace.Header = String.Format("Building({0})", objectID.Value);
+			trace.Header = String.Format("Building({0})", workbench.ObjectID.Value);
+
+			m_workbench = workbench;
+
+			this.Environment = workbench.Environment;
+
+			this.BuildingInfo = Buildings.GetBuildingInfo(m_workbench.ItemID);
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
-			this.BuildingState = Client.BuildingState.Functional;
+			m_unreachables = new Unreachables(workbench.World);
 
-			m_unreachables = new Unreachables(world);
+			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
-		public override void SetProperty(PropertyID propertyID, object value)
+		// XXX
+		public void Destruct()
 		{
-			switch (propertyID)
-			{
-				default:
-					throw new Exception();
-			}
-		}
-
-		public override void DeserializeBegin(BaseGameObjectData _data)
-		{
-			var initialized = this.IsInitialized;
-
-			var data = (BuildingData)_data;
-
-			base.DeserializeBegin(_data);
-
-			this.BuildingInfo = Buildings.GetBuildingInfo(data.BuildingID);
-			this.Area = data.Area;
-
-			// no env at design time
-			if (data.Environment != ObjectID.NullObjectID)
-			{
-				var env = this.World.GetObject<EnvironmentObject>(data.Environment);
-
-				this.Environment = env;
-
-				if (initialized == false)
-				{
-					env.AddAreaElement(this);
-
-					this.Environment.World.JobManager.AddJobSource(this);
-				}
-			}
-		}
-
-		public override void Destruct()
-		{
-			this.Environment.RemoveAreaElement(this);
-
 			this.Environment.World.JobManager.RemoveJobSource(this);
-
-			base.Destruct();
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -131,48 +64,23 @@ namespace Dwarrowdelf.Client
 		{
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
-			m_unreachables = new Unreachables(this.World);
+			m_unreachables = new Unreachables(m_workbench.World);
 
 			if (m_currentJob != null)
 				GameData.Data.Jobs.Add(m_currentJob);
-
-			if (m_destructJob != null)
-				GameData.Data.Jobs.Add(m_destructJob);
 		}
 
-		public bool Contains(IntPoint3 point)
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		void Notify(string property)
 		{
-			return this.Area.Contains(point);
+			if (this.PropertyChanged != null)
+				this.PropertyChanged(this, new PropertyChangedEventArgs(property));
 		}
 
-		public BuildingState BuildingState
-		{
-			get { return m_buildingState; }
-			set
-			{
-				m_buildingState = value;
-				Notify("BuildingState");
-			}
-		}
-
-		public void DestructBuilding()
-		{
-			this.BuildingState = Client.BuildingState.Destructing;
-
-			while (m_buildOrderQueue.Count > 0)
-				RemoveBuildOrder(m_buildOrderQueue[0]);
-		}
-
-		public void CancelDestructBuilding()
-		{
-			this.BuildingState = Client.BuildingState.Functional;
-
-			if (m_destructJob != null)
-			{
-				m_destructJob.Abort();
-				m_destructJob = null;
-			}
-		}
+		#endregion
 
 		BuildOrder CurrentBuildOrder
 		{
@@ -296,48 +204,32 @@ namespace Dwarrowdelf.Client
 			var env = this.Environment;
 			var living = (LivingObject)_living;
 
-			switch (this.BuildingState)
+			if (this.CurrentBuildOrder == null)
+				return null;
+
+			if (m_currentJob == null)
 			{
-				case Client.BuildingState.Functional:
-					if (this.CurrentBuildOrder == null)
-						return null;
+				var job = CreateJob(this.CurrentBuildOrder);
 
-					if (m_currentJob == null)
-					{
-						var job = CreateJob(this.CurrentBuildOrder);
-
-						if (job == null)
-						{
-							trace.TraceWarning("XXX failed to create job, removing build order");
-							RemoveBuildOrder(this.CurrentBuildOrder);
-							return null;
-						}
-
-						m_currentJob = job;
-
-						trace.TraceInformation("new build job created");
-					}
-
-					foreach (var a in m_currentJob.GetAssignments(living))
-					{
-						if (a.LaborID == LaborID.None || living.GetLaborEnabled(a.LaborID))
-							return m_currentJob.FindAssignment(living);
-					}
-
+				if (job == null)
+				{
+					trace.TraceWarning("XXX failed to create job, removing build order");
+					RemoveBuildOrder(this.CurrentBuildOrder);
 					return null;
+				}
 
-				case Client.BuildingState.Destructing:
-					if (m_destructJob != null)
-						return null;
+				m_currentJob = job;
 
-					return null;
-					//m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(this, this);
-					//GameData.Data.Jobs.Add(m_destructJob);
-					//return m_destructJob;
-
-				default:
-					throw new Exception();
+				trace.TraceInformation("new build job created");
 			}
+
+			foreach (var a in m_currentJob.GetAssignments(living))
+			{
+				if (a.LaborID == LaborID.None || living.GetLaborEnabled(a.LaborID))
+					return m_currentJob.FindAssignment(living);
+			}
+
+			return null;
 		}
 
 		IJobGroup CreateJob(BuildOrder order)
@@ -346,32 +238,19 @@ namespace Dwarrowdelf.Client
 
 			if (!ok)
 			{
-				GameData.Data.AddGameEvent(this, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
+				GameData.Data.AddGameEvent(m_workbench, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
 				return null;
 			}
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, this, order.BuildableItem.Key, order.SourceItems);
+			var job = new Jobs.JobGroups.BuildItemJob(this, m_workbench, order.BuildableItem.Key, order.SourceItems);
 			GameData.Data.Jobs.Add(job);
 			return job;
 		}
 
 		void IJobObserver.OnObservableJobStatusChanged(IJob job, JobStatus status)
 		{
-			switch (this.BuildingState)
-			{
-				case Client.BuildingState.Functional:
-					Debug.Assert(job is Jobs.JobGroups.BuildItemJob);
-					OnJobStatusChanged(job, status);
-					break;
-
-				case Client.BuildingState.Destructing:
-					//Debug.Assert(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment);
-					OnDestructStatusChanged(job, status);
-					break;
-
-				default:
-					throw new Exception();
-			}
+			Debug.Assert(job is Jobs.JobGroups.BuildItemJob);
+			OnJobStatusChanged(job, status);
 		}
 
 		void OnJobStatusChanged(IJob job, JobStatus status)
@@ -417,14 +296,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		void OnDestructStatusChanged(IJob job, JobStatus status)
-		{
-			// We don't care about the status. If the job failed, it will be retried automatically.
-
-			GameData.Data.Jobs.Remove(m_destructJob);
-			m_destructJob = null;
-		}
-
 		bool FindMaterials(BuildOrder order)
 		{
 			var buildableItem = order.BuildableItem;
@@ -440,7 +311,7 @@ namespace Dwarrowdelf.Client
 
 				var filter = new AndItemFilter(bimi, biis);
 
-				var ob = this.Environment.ItemTracker.GetReachableItemByDistance(this.Area.Center, filter, m_unreachables);
+				var ob = this.Environment.ItemTracker.GetReachableItemByDistance(m_workbench.Location, filter, m_unreachables);
 
 				if (ob == null)
 					break;
@@ -469,7 +340,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Building({0:x})", this.ObjectID.Value);
+			return String.Format("Building({0:x})", m_workbench.ObjectID.Value);
 		}
 	}
 
@@ -552,13 +423,5 @@ namespace Dwarrowdelf.Client
 		}
 
 		#endregion
-	}
-
-	[Flags]
-	enum BuildingState
-	{
-		Undefined = 0,
-		Functional = 1 << 1,
-		Destructing = 1 << 2,
 	}
 }

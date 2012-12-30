@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 	public sealed class BuildItemJob : JobGroup
 	{
 		[SaveGameProperty]
-		IBuildingObject m_workplace;
+		IItemObject m_workplace;
 		[SaveGameProperty]
 		IItemObject[] m_sourceObjects;
 		[SaveGameProperty]
@@ -20,7 +20,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		int m_state;
 
-		public BuildItemJob(IJobObserver parent, IBuildingObject workplace, string buildableItemKey, IEnumerable<IItemObject> sourceObjects)
+		public BuildItemJob(IJobObserver parent, IItemObject workplace, string buildableItemKey, IEnumerable<IItemObject> sourceObjects)
 			: base(parent)
 		{
 			m_workplace = workplace;
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 			m_state = 0;
 
-			AddSubJob(new FetchItems(this, m_workplace.Environment, m_workplace.Area.Center, sourceObjects));
+			AddSubJob(new FetchItems(this, m_workplace.Environment, m_workplace.Location, sourceObjects));
 		}
 
 		BuildItemJob(SaveGameContext ctx)

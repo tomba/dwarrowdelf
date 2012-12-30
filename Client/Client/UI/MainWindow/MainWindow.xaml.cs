@@ -90,6 +90,7 @@ namespace Dwarrowdelf.Client.UI
 					break;
 
 				case ClientToolMode.InstallFurniture:
+				case ClientToolMode.BuildItem:
 					this.MapControl.SelectionMode = MapSelectionMode.Point;
 					break;
 
@@ -151,6 +152,37 @@ namespace Dwarrowdelf.Client.UI
 
 							if (item != null)
 								env.InstallFurnitureManager.AddInstallJob(item, p);
+						}
+					}
+					break;
+
+				case ClientToolMode.BuildItem:
+					{
+						var p = selection.SelectionPoint;
+
+						// XXX
+						var workbench = env.GetContents(p).OfType<ItemObject>()
+							.SingleOrDefault(i => i.ItemCategory == ItemCategory.Furniture);
+
+						var ctrl = new BuildingEditControl();
+						var dlg = new Window();
+						dlg.Content = ctrl;
+						//dlg.SetContext(env, p);
+
+						var mgr = new BuildItemManager(workbench);
+
+						ctrl.DataContext = mgr;
+
+						var res = dlg.ShowDialog();
+
+						if (res == true)
+						{
+							/*
+							var item = dlg.SelectedItem;
+
+							if (item != null)
+								env.InstallFurnitureManager.AddInstallJob(item, p);
+							 */
 						}
 					}
 					break;

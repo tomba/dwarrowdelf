@@ -103,7 +103,6 @@ namespace Dwarrowdelf
 
 			switch (c)
 			{
-				case 'B': ot = Dwarrowdelf.ObjectType.Building; break;
 				case 'E': ot = Dwarrowdelf.ObjectType.Environment; break;
 				case 'I': ot = Dwarrowdelf.ObjectType.Item; break;
 				case 'L': ot = Dwarrowdelf.ObjectType.Living; break;
@@ -125,7 +124,6 @@ namespace Dwarrowdelf
 				char c;
 				switch (this.ObjectType)
 				{
-					case Dwarrowdelf.ObjectType.Building: c = 'B'; break;
 					case Dwarrowdelf.ObjectType.Environment: c = 'E'; break;
 					case Dwarrowdelf.ObjectType.Item: c = 'I'; break;
 					case Dwarrowdelf.ObjectType.Living: c = 'L'; break;

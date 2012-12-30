@@ -148,9 +148,6 @@ namespace Dwarrowdelf.Client
 				case ObjectType.Item:
 					return new ItemObject(this, objectID);
 
-				case ObjectType.Building:
-					return new BuildingObject(this, objectID);
-
 				default:
 					throw new Exception();
 			}

@@ -12,21 +12,22 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 	public sealed class MoveBuildItemAssignment : MoveBaseAssignment
 	{
 		[SaveGameProperty]
-		IBuildingObject m_workplace;
+		IItemObject m_workplace;
 		[SaveGameProperty]
 		IItemObject[] m_items;
 		[SaveGameProperty]
 		string m_buildableItemKey;
 
-		public MoveBuildItemAssignment(IJobObserver parent, IBuildingObject workplace, string buildableItemKey, IItemObject[] items)
-			: base(parent, workplace.Environment, workplace.Area.Center)
+		public MoveBuildItemAssignment(IJobObserver parent, IItemObject workplace, string buildableItemKey, IItemObject[] items)
+			: base(parent, workplace.Environment, workplace.Location)
 		{
 			m_workplace = workplace;
 			m_items = items;
 			m_buildableItemKey = buildableItemKey;
 
-			var bi = Buildings.GetBuildingInfo(workplace.BuildingInfo.BuildingID).FindBuildableItem(buildableItemKey);
-			this.LaborID = bi.LaborID;
+			// XXX
+			//var bi = Buildings.GetBuildingInfo(workplace.BuildingInfo.BuildingID).FindBuildableItem(buildableItemKey);
+			//this.LaborID = bi.LaborID;
 		}
 
 		MoveBuildItemAssignment(SaveGameContext ctx)
@@ -41,7 +42,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		protected override IAssignment CreateAssignment()
 		{
-			return new BuildItemAssignment(this, m_buildableItemKey, m_items);
+			return new BuildItemAssignment(this, m_workplace, m_buildableItemKey, m_items);
 		}
 
 		public override string ToString()

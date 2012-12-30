@@ -49,16 +49,10 @@ namespace Dwarrowdelf.Client.UI
 
 		private void DestructButtonClick(object sender, RoutedEventArgs e)
 		{
-			var building = (BuildingObject)this.DataContext;
-
-			building.DestructBuilding();
 		}
 
 		private void CancelDestructButtonClick(object sender, RoutedEventArgs e)
 		{
-			var building = (BuildingObject)this.DataContext;
-
-			building.CancelDestructBuilding();
 		}
 
 		private void buildQueueListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -81,27 +75,8 @@ namespace Dwarrowdelf.Client.UI
 
 			var bo = buildOrderEditControl.EditableBuildOrder.ToBuildOrder();
 
-			var building = (BuildingObject)this.DataContext;
+			var building = (BuildItemManager)this.DataContext;
 			building.AddBuildOrder(bo);
-		}
-	}
-
-	public sealed class BuildingStateToBoolConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			var state = (BuildingState)value;
-			BuildingState target;
-
-			if (Enum.TryParse((string)parameter, out target) == false)
-				throw new Exception();
-
-			return (state & target) != 0;
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

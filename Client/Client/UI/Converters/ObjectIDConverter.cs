@@ -23,7 +23,6 @@ namespace Dwarrowdelf.Client.UI
 				char c;
 				switch (oid.ObjectType)
 				{
-					case Dwarrowdelf.ObjectType.Building: c = 'B'; break;
 					case Dwarrowdelf.ObjectType.Environment: c = 'E'; break;
 					case Dwarrowdelf.ObjectType.Item: c = 'I'; break;
 					case Dwarrowdelf.ObjectType.Living: c = 'L'; break;

@@ -73,20 +73,4 @@ namespace Dwarrowdelf.Client
 		{
 		}
 	}
-
-	sealed class BuildingCollection : ObservableKeyedCollection<ObjectID, BuildingObject>
-	{
-		protected override ObjectID GetKeyForItem(BuildingObject building)
-		{
-			return building.ObjectID;
-		}
-	}
-
-	sealed class ReadOnlyBuildingCollection : ReadOnlyObservableKeyedCollection<ObjectID, BuildingObject>
-	{
-		public ReadOnlyBuildingCollection(BuildingCollection collection)
-			: base(collection)
-		{
-		}
-	}
 }

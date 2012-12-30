@@ -100,7 +100,13 @@
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[InstallFurniture]}" />
 
 			<Separator/>
-			
+
+			<!-- Build Item -->
+			<RadioButton Name="buildItem" ContentTemplate="{StaticResource singleToolTemplate}" 
+						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[BuildItem]}" />
+
+			<Separator/>
+
 			<RadioButton Name="createItem" ContentTemplate="{StaticResource singleToolTemplate}" 
 						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[CreateItem]}" />
 			<Separator/>

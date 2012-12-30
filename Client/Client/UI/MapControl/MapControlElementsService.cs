@@ -90,9 +90,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var shape = new Rectangle();
 
-			if (element is BuildingObject)
-				shape.Stroke = Brushes.DarkGray;
-			else if (element is Stockpile)
+			if (element is Stockpile)
 				shape.Stroke = Brushes.Gray;
 
 			shape.StrokeThickness = 1;

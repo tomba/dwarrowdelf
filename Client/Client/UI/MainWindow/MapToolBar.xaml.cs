@@ -84,6 +84,10 @@ namespace Dwarrowdelf.Client.UI
 					this.installFurniture.IsChecked = true;
 					break;
 
+				case ClientToolMode.BuildItem:
+					this.buildItem.IsChecked = true;
+					break;
+
 				default:
 					throw new Exception();
 			}

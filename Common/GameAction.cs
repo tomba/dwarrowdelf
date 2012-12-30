@@ -275,8 +275,9 @@ namespace Dwarrowdelf
 		[SaveGameProperty]
 		public string BuildableItemKey { get; private set; }
 
-		public BuildItemAction(string buildableItemKey, IEnumerable<IMovableObject> sourceItems)
+		public BuildItemAction(IItemObject workbench, string buildableItemKey, IEnumerable<IMovableObject> sourceItems)
 		{
+			this.WorkbenchID = workbench.ObjectID;
 			this.SourceObjectIDs = sourceItems.Select(i => i.ObjectID).ToArray();
 			this.BuildableItemKey = buildableItemKey;
 		}

@@ -19,10 +19,6 @@
 			<ui:LivingInfoControl />
 		</DataTemplate>
 
-		<DataTemplate x:Key="buildingTemplate">
-			<ui:BuildingInfoControl />
-		</DataTemplate>
-
 		<DataTemplate x:Key="stockpileTemplate">
 			<ui:StockpileInfoControl />
 		</DataTemplate>

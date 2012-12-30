@@ -8,12 +8,8 @@
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="472" d:DesignWidth="900"
-			 d:DataContext="{d:DesignInstance Type=local:BuildingObject, IsDesignTimeCreatable=True}"
+			 d:DataContext="{d:DesignInstance Type=local:BuildItemManager, IsDesignTimeCreatable=True}"
 			 x:Name="root">
-
-	<UserControl.Resources>
-		<ui:BuildingStateToBoolConverter x:Key="buildingStateConverter" />
-	</UserControl.Resources>
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -42,24 +38,12 @@
 					</Grid.RowDefinitions>
 					<TextBlock>BuildingID</TextBlock>
 					<TextBlock Text="{Binding BuildingID}" Grid.Column="1" />
-
-					<TextBlock Grid.Row="1">BuildingState</TextBlock>
-					<TextBlock Grid.Row="1" Text="{Binding BuildingState}" Grid.Column="1" />
-
-					<TextBlock Grid.Row="2">Area</TextBlock>
-					<TextBlock Text="{Binding Area}" Grid.Row="2" Grid.Column="1" />
-					<Button Content="Destruct" Grid.Column="2" Width="100" Click="DestructButtonClick"
-						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}" />
-					<Button Content="Cancel destruct" Grid.Column="2" Grid.Row="2" Width="100" Click="CancelDestructButtonClick"
-						IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Destructing}" />
-
 				</Grid>
 
 			</StackPanel>
 		</GroupBox>
 
-		<GroupBox Header="Build queue" Grid.Column="0" Grid.Row="1"
-				  IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
+		<GroupBox Header="Build queue" Grid.Column="0" Grid.Row="1">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
@@ -103,8 +87,7 @@
 			</Grid>
 		</GroupBox>
 
-		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1"
-				IsEnabled="{Binding BuildingState, Converter={StaticResource buildingStateConverter}, ConverterParameter=Functional}">
+		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1">
 
 			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" BuildingInfo="{Binding Path=DataContext.BuildingInfo, ElementName=root}"
 									  AddButtonClicked="buildOrderEditControl_AddButtonClicked" />
