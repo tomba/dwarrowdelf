@@ -317,59 +317,6 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public sealed class ConstructBuildingAction : GameAction
-	{
-		[SaveGameProperty]
-		public ObjectID EnvironmentID { get; private set; }
-		[SaveGameProperty]
-		public IntGrid2Z Area { get; private set; }
-		[SaveGameProperty]
-		public BuildingID BuildingID { get; private set; }
-
-		public ConstructBuildingAction(IEnvironmentObject env, IntGrid2Z area, BuildingID buildingID)
-		{
-			this.EnvironmentID = env.ObjectID;
-			this.Area = area;
-			this.BuildingID = buildingID;
-		}
-
-		ConstructBuildingAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-
-		protected override string GetParams()
-		{
-			return String.Join(", ", this.EnvironmentID.ToString(), this.Area.ToString(), this.BuildingID.ToString());
-		}
-	}
-
-	// XXX remove
-	[Serializable]
-	[SaveGameObjectByRef]
-	public sealed class DestructBuildingAction : GameAction
-	{
-		[SaveGameProperty]
-		public ObjectID BuildingID { get; private set; }
-
-		public DestructBuildingAction(ObjectID buildingID)
-		{
-			this.BuildingID = buildingID;
-		}
-
-		DestructBuildingAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-
-		protected override string GetParams()
-		{
-			return this.BuildingID.ToString();
-		}
-	}
-
-	[Serializable]
-	[SaveGameObjectByRef]
 	public abstract class ItemAction : GameAction
 	{
 		[SaveGameProperty]

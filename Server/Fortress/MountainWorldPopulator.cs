@@ -117,6 +117,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				var p = new IntPoint3(posx, posy, surface);
 				env.SetTileData(p, floorTile);
+				CreateItem(env, ItemID.Log, MaterialID.Oak, p);
 				var item = CreateItem(env, ItemID.CarpentersWorkbench, MaterialID.Iron, p);
 				item.IsInstalled = true;
 			}

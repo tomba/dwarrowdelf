@@ -296,7 +296,6 @@
     <Compile Include="UI\Converters\DrawingConverter.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
     <Compile Include="ConcreteObject.cs" />
-    <Compile Include="Jobs\ConstructBuildingJob.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
@@ -317,7 +316,6 @@
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
-    <Compile Include="ConstructionSite.cs" />
     <Compile Include="Jobs\CleanAreaJob.cs" />
     <Compile Include="Jobs\StoreToStockpileJob.cs" />
     <Compile Include="RenderViewDetailed.cs" />

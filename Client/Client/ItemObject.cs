@@ -307,7 +307,7 @@ namespace Dwarrowdelf.Client
 
 				var itemID = (ItemID)i;
 
-				var symbolID = symbolIDs.Single(sid => sid.ToString() == itemID.ToString());
+				var symbolID = symbolIDs.SingleOrDefault(sid => sid.ToString() == itemID.ToString());
 				s_symbols[i] = symbolID;
 			}
 

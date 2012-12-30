@@ -94,8 +94,6 @@ namespace Dwarrowdelf.Client.UI
 				shape.Stroke = Brushes.DarkGray;
 			else if (element is Stockpile)
 				shape.Stroke = Brushes.Gray;
-			else if (element is ConstructionSite)
-				shape.Stroke = Brushes.Cyan;
 
 			shape.StrokeThickness = 1;
 			shape.IsHitTestVisible = false;

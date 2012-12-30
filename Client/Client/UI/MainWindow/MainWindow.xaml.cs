@@ -207,9 +207,9 @@ namespace Dwarrowdelf.Client.UI
 
 						if (res == true)
 						{
-							var id = dialog.BuildingID;
-							var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
-							env.AddAreaElement(site);
+							//var id = dialog.BuildingID;
+							//var site = new ConstructionSite(env, id, selection.SelectionIntRectZ);
+							//env.AddAreaElement(site);
 						}
 					}
 					break;

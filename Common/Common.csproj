@@ -70,7 +70,6 @@
     <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveDestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\CarryItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\HaulToAreaAssignment.cs" />
@@ -78,7 +77,6 @@
     <Compile Include="Jobs\Assignments\FleeMoveAssignment.cs" />
     <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
-    <Compile Include="Jobs\Assignments\DestructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
     <Compile Include="AI\HerbivoreAI.cs" />
     <Compile Include="AI\Group.cs" />
@@ -90,8 +88,6 @@
     <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
     <Compile Include="Jobs\AssignmentGroups\PatrolAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveBaseAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConstructBuildingAssignment.cs" />
-    <Compile Include="Jobs\Assignments\ConstructBuildingAssignment.cs" />
     <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
     <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
     <Compile Include="Json\Attributes.cs" />

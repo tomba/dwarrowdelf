@@ -330,9 +330,10 @@ namespace Dwarrowdelf.Client
 					if (m_destructJob != null)
 						return null;
 
-					m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(this, this);
-					GameData.Data.Jobs.Add(m_destructJob);
-					return m_destructJob;
+					return null;
+					//m_destructJob = new Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment(this, this);
+					//GameData.Data.Jobs.Add(m_destructJob);
+					//return m_destructJob;
 
 				default:
 					throw new Exception();
@@ -364,7 +365,7 @@ namespace Dwarrowdelf.Client
 					break;
 
 				case Client.BuildingState.Destructing:
-					Debug.Assert(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment);
+					//Debug.Assert(job is Dwarrowdelf.Jobs.AssignmentGroups.MoveDestructBuildingAssignment);
 					OnDestructStatusChanged(job, status);
 					break;
 
