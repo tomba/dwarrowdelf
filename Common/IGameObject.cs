@@ -27,17 +27,6 @@ namespace Dwarrowdelf
 		event Action<IBaseObject> Destructed;
 	}
 
-	public interface IAreaObject : IBaseObject
-	{
-		IEnvironmentObject Environment { get; }
-		IntGrid2Z Area { get; }
-	}
-
-	public interface IBuildingObject : IAreaObject
-	{
-		BuildingInfo BuildingInfo { get; }
-	}
-
 	public interface IContainerObject : IBaseObject
 	{
 		IEnumerable<IMovableObject> Inventory { get; }

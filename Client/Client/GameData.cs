@@ -124,16 +124,6 @@ namespace Dwarrowdelf.Client
 			AddGameEvent(ob.Environment, ob.Location, message);
 		}
 
-		public void AddGameEvent(IAreaObject ob, string format, params object[] args)
-		{
-			AddGameEvent((EnvironmentObject)ob.Environment, ob.Area.Center, format, args);
-		}
-
-		public void AddGameEvent(IAreaObject ob, string message)
-		{
-			AddGameEvent((EnvironmentObject)ob.Environment, ob.Area.Center, message);
-		}
-
 		public void AddTickGameEvent()
 		{
 			if (m_previousWasTickEvent)
