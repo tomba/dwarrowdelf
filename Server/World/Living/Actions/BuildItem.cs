@@ -16,7 +16,7 @@ namespace Dwarrowdelf.Server
 				if (workbench == null)
 					throw new Exception();
 
-				var bi = Buildings.GetBuildingInfo(workbench.ItemID);
+				var bi = Buildings.GetBuildItemInfo(workbench.ItemID);
 
 				var buildableItem = bi.FindBuildableItem(action.BuildableItemKey);
 				if (buildableItem == null)
@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Server
 				 */
 
 
-				var bi2 = Buildings.GetBuildingInfo(workbench.ItemID);
+				var bi2 = Buildings.GetBuildItemInfo(workbench.ItemID);
 
 				var bi = bi2.FindBuildableItem(action.BuildableItemKey);
 

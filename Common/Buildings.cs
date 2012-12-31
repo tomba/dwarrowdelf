@@ -7,24 +7,14 @@ using System.Windows.Markup;
 
 namespace Dwarrowdelf
 {
-	public enum BuildingID
-	{
-		Undefined = 0,
-		Carpenter,
-		Mason,
-		Smith,
-		Smelter,
-		Gemcutter,
-	}
-
 	[ContentProperty("BuildableItems")]
-	public sealed class BuildingInfo
+	public sealed class BuildItemInfo
 	{
-		public BuildingID BuildingID { get; internal set; }
+		public ItemID WorkbenchID { get; internal set; }
 		public string Name { get; internal set; }
 		public List<BuildableItem> BuildableItems { get; internal set; }
 
-		public BuildingInfo()
+		public BuildItemInfo()
 		{
 			this.BuildableItems = new List<BuildableItem>();
 		}
@@ -102,13 +92,13 @@ namespace Dwarrowdelf
 
 	public static class Buildings
 	{
-		static BuildingInfo[] s_buildings;
+		static BuildItemInfo[] s_buildItemInfos;
 
 		static Buildings()
 		{
 			var asm = System.Reflection.Assembly.GetExecutingAssembly();
 
-			BuildingInfo[] buildings;
+			BuildItemInfo[] buildItemInfos;
 
 			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Buildings.xaml"))
 			{
@@ -117,26 +107,26 @@ namespace Dwarrowdelf
 					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
-					buildings = (BuildingInfo[])System.Xaml.XamlServices.Load(reader);
+					buildItemInfos = (BuildItemInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = buildings.Max(bi => (int)bi.BuildingID);
-			s_buildings = new BuildingInfo[max + 1];
+			var max = buildItemInfos.Max(bi => (int)bi.WorkbenchID);
+			s_buildItemInfos = new BuildItemInfo[max + 1];
 
-			foreach (var building in buildings)
+			foreach (var building in buildItemInfos)
 			{
-				if (s_buildings[(int)building.BuildingID] != null)
+				if (s_buildItemInfos[(int)building.WorkbenchID] != null)
 					throw new Exception();
 
 				if (building.Name == null)
-					building.Name = building.BuildingID.ToString();
+					building.Name = building.WorkbenchID.ToString();
 
 				foreach (var bi in building.BuildableItems)
 				{
 					if (String.IsNullOrEmpty(bi.Key))
 						bi.Key = bi.ItemID.ToString();
 
-					bi.FullKey = String.Format("{0},{1}", building.BuildingID, bi.Key);
+					bi.FullKey = String.Format("{0},{1}", building.WorkbenchID, bi.Key);
 				}
 
 				// verify BuildableItem key uniqueness
@@ -145,45 +135,27 @@ namespace Dwarrowdelf
 					if (g.Count() != 1)
 						throw new Exception();
 
-				s_buildings[(int)building.BuildingID] = building;
+				s_buildItemInfos[(int)building.WorkbenchID] = building;
 			}
 
-			s_buildings[0] = new BuildingInfo()
+			s_buildItemInfos[0] = new BuildItemInfo()
 			{
-				BuildingID = BuildingID.Undefined,
+				WorkbenchID = ItemID.Undefined,
 				Name = "<undefined>",
 			};
 		}
 
-		public static BuildingInfo GetBuildingInfo(BuildingID id)
+		public static BuildItemInfo GetBuildItemInfo(ItemID workbenchID)
 		{
-			Debug.Assert(id != BuildingID.Undefined);
-			Debug.Assert(s_buildings[(int)id] != null);
+			Debug.Assert(workbenchID != ItemID.Undefined);
+			Debug.Assert(s_buildItemInfos[(int)workbenchID] != null);
 
-			return s_buildings[(int)id];
-		}
-
-		// XXX
-		public static BuildingInfo GetBuildingInfo(ItemID id)
-		{
-			BuildingID bid;
-
-			switch (id)
-			{
-				case ItemID.CarpentersWorkbench:
-					bid = BuildingID.Carpenter;
-					break;
-
-				default:
-					throw new Exception();
-			}
-
-			return GetBuildingInfo(bid);
+			return s_buildItemInfos[(int)workbenchID];
 		}
 
 		public static BuildableItem FindBuildableItem(string buildableItemFullKey)
 		{
-			return s_buildings.SelectMany(bi => bi.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
+			return s_buildItemInfos.SelectMany(bi => bi.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
 		}
 	}
 }

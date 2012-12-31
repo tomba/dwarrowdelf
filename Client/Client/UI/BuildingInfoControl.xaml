@@ -7,14 +7,8 @@
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI">
 	<DockPanel>
 		<UniformGrid DockPanel.Dock="Top" Columns="2">
-			<TextBlock>BuildingID</TextBlock>
-			<TextBlock Text="{Binding BuildingID}" />
-
-			<TextBlock>BuildingState</TextBlock>
-			<TextBlock Text="{Binding BuildingState}" />
-
-			<TextBlock>Area</TextBlock>
-			<TextBlock Text="{Binding Area}" />
+			<TextBlock>WorkbenchID</TextBlock>
+			<TextBlock Text="{Binding Workbench.ItemID}" />
 		</UniformGrid>
 
 		<GroupBox Header="Build queue">

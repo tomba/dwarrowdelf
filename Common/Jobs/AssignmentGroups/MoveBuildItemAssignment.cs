@@ -25,9 +25,9 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_items = items;
 			m_buildableItemKey = buildableItemKey;
 
-			// XXX
-			//var bi = Buildings.GetBuildingInfo(workplace.BuildingInfo.BuildingID).FindBuildableItem(buildableItemKey);
-			//this.LaborID = bi.LaborID;
+			var bii = Buildings.GetBuildItemInfo(workplace.ItemID);
+			var bi = bii.FindBuildableItem(buildableItemKey);
+			this.LaborID = bi.LaborID;
 		}
 
 		MoveBuildItemAssignment(SaveGameContext ctx)

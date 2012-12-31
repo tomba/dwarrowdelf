@@ -13,10 +13,8 @@ namespace Dwarrowdelf.Client
 	{
 		public ItemObject Workbench { get; private set; }
 
-		public BuildingInfo BuildingInfo { get; private set; }
-		public EnvironmentObject Environment { get; set; }
-
-		public BuildingID BuildingID { get { return this.BuildingInfo.BuildingID; } }
+		public BuildItemInfo BuildItemInfo { get { return Buildings.GetBuildItemInfo(this.Workbench.ItemID); } }
+		public EnvironmentObject Environment { get { return this.Workbench.Environment; } }
 
 		[SaveGameProperty]
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
@@ -43,10 +41,6 @@ namespace Dwarrowdelf.Client
 			this.Workbench = workbench;
 			this.Workbench.Destructed += OnWorkbenchDestructed;
 
-			this.Environment = workbench.Environment;
-
-			this.BuildingInfo = Buildings.GetBuildingInfo(this.Workbench.ItemID);
-
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
 			m_unreachables = new Unreachables(workbench.World);
@@ -68,10 +62,6 @@ namespace Dwarrowdelf.Client
 		public void OnDeserialized()
 		{
 			this.Workbench.Destructed += OnWorkbenchDestructed;
-
-			this.Environment = this.Workbench.Environment;
-
-			this.BuildingInfo = Buildings.GetBuildingInfo(this.Workbench.ItemID);
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 

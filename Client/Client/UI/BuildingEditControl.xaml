@@ -36,8 +36,8 @@
 						<RowDefinition />
 						<RowDefinition />
 					</Grid.RowDefinitions>
-					<TextBlock>BuildingID</TextBlock>
-					<TextBlock Text="{Binding BuildingID}" Grid.Column="1" />
+					<TextBlock>WorkbenchID</TextBlock>
+					<TextBlock Text="{Binding Workbench.ItemID}" Grid.Column="1" />
 				</Grid>
 
 			</StackPanel>
@@ -89,7 +89,7 @@
 
 		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1">
 
-			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" BuildingInfo="{Binding Path=DataContext.BuildingInfo, ElementName=root}"
+			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" BuildItemInfo="{Binding Path=DataContext.BuildItemInfo, ElementName=root}"
 									  AddButtonClicked="buildOrderEditControl_AddButtonClicked" />
 
 		</GroupBox>
