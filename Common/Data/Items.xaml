@@ -24,11 +24,11 @@
 
 	<ItemInfo ID="Contraption" Category="Other" />
 
-	<ItemInfo ID="SmithsWorkbench" Category="Furniture" />
-	<ItemInfo ID="CarpentersWorkbench" Category="Furniture" />
-	<ItemInfo ID="MasonsWorkbench" Category="Furniture" />
-	<ItemInfo ID="SmelterWorkbench" Category="Furniture" />
-	<ItemInfo ID="GemcuttersWorkbench" Category="Furniture" />
+	<ItemInfo ID="SmithsWorkbench" Category="Workbench" />
+	<ItemInfo ID="CarpentersWorkbench" Category="Workbench" />
+	<ItemInfo ID="MasonsWorkbench" Category="Workbench" />
+	<ItemInfo ID="SmelterWorkbench" Category="Workbench" />
+	<ItemInfo ID="GemcuttersWorkbench" Category="Workbench" />
 
 	<!-- WEAPONS -->
 

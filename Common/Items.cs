@@ -65,6 +65,7 @@ namespace Dwarrowdelf
 		Corpse,
 		Weapon,
 		Armor,
+		Workbench,
 		Other,
 	}
 

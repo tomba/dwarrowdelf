@@ -160,29 +160,22 @@ namespace Dwarrowdelf.Client.UI
 					{
 						var p = selection.SelectionPoint;
 
-						// XXX
 						var workbench = env.GetContents(p).OfType<ItemObject>()
-							.SingleOrDefault(i => i.ItemCategory == ItemCategory.Furniture);
+							.SingleOrDefault(i => i.IsInstalled && i.ItemCategory == ItemCategory.Workbench);
+
+						if (workbench == null)
+							break;
 
 						var ctrl = new BuildingEditControl();
+						ctrl.DataContext = env.GetBuildItemManager(workbench);
+
 						var dlg = new Window();
 						dlg.Content = ctrl;
-						//dlg.SetContext(env, p);
-
-						var mgr = new BuildItemManager(workbench);
-
-						ctrl.DataContext = mgr;
 
 						var res = dlg.ShowDialog();
 
 						if (res == true)
 						{
-							/*
-							var item = dlg.SelectedItem;
-
-							if (item != null)
-								env.InstallFurnitureManager.AddInstallJob(item, p);
-							 */
 						}
 					}
 					break;

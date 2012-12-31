@@ -127,7 +127,8 @@ namespace Dwarrowdelf.Server
 			set
 			{
 				Debug.Assert(this.Environment != null);
-				Debug.Assert(this.ItemCategory == Dwarrowdelf.ItemCategory.Furniture);
+				Debug.Assert(this.ItemCategory == Dwarrowdelf.ItemCategory.Furniture ||
+					this.ItemCategory == Dwarrowdelf.ItemCategory.Workbench);
 				if (m_isInstalled == value) return; m_isInstalled = value; NotifyBool(PropertyID.IsInstalled, value);
 				CheckBlock();
 			}

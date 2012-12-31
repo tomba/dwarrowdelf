@@ -11,7 +11,7 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
-		ItemObject m_workbench;
+		public ItemObject Workbench { get; private set; }
 
 		public BuildingInfo BuildingInfo { get; private set; }
 		public EnvironmentObject Environment { get; set; }
@@ -22,7 +22,7 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
 		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
-		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Building");
+		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.BuildItemManager");
 
 		[SaveGameProperty]
 		BuildOrder m_currentBuildOrder;
@@ -38,13 +38,14 @@ namespace Dwarrowdelf.Client
 
 		public BuildItemManager(ItemObject workbench)
 		{
-			trace.Header = String.Format("Building({0})", workbench.ObjectID.Value);
+			trace.Header = String.Format("BuildItemManager({0})", workbench.ObjectID.Value);
 
-			m_workbench = workbench;
+			this.Workbench = workbench;
+			this.Workbench.Destructed += OnWorkbenchDestructed;
 
 			this.Environment = workbench.Environment;
 
-			this.BuildingInfo = Buildings.GetBuildingInfo(m_workbench.ItemID);
+			this.BuildingInfo = Buildings.GetBuildingInfo(this.Workbench.ItemID);
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
@@ -53,18 +54,30 @@ namespace Dwarrowdelf.Client
 			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
-		// XXX
-		public void Destruct()
+		void OnWorkbenchDestructed(BaseObject obj)
 		{
 			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			while (m_buildOrderQueue.Count > 0)
+				RemoveBuildOrder(m_buildOrderQueue[0]);
+
+			// XXX remove BuildItemManager from wherever they are stored
 		}
 
 		[OnSaveGamePostDeserialization]
 		public void OnDeserialized()
 		{
+			this.Workbench.Destructed += OnWorkbenchDestructed;
+
+			this.Environment = this.Workbench.Environment;
+
+			this.BuildingInfo = Buildings.GetBuildingInfo(this.Workbench.ItemID);
+
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
-			m_unreachables = new Unreachables(m_workbench.World);
+			m_unreachables = new Unreachables(this.Workbench.World);
+
+			this.Environment.World.JobManager.AddJobSource(this);
 
 			if (m_currentJob != null)
 				GameData.Data.Jobs.Add(m_currentJob);
@@ -238,11 +251,11 @@ namespace Dwarrowdelf.Client
 
 			if (!ok)
 			{
-				GameData.Data.AddGameEvent(m_workbench, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
+				GameData.Data.AddGameEvent(this.Workbench, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
 				return null;
 			}
 
-			var job = new Jobs.JobGroups.BuildItemJob(this, m_workbench, order.BuildableItem.Key, order.SourceItems);
+			var job = new Jobs.JobGroups.BuildItemJob(this, this.Workbench, order.BuildableItem.Key, order.SourceItems);
 			GameData.Data.Jobs.Add(job);
 			return job;
 		}
@@ -311,7 +324,7 @@ namespace Dwarrowdelf.Client
 
 				var filter = new AndItemFilter(bimi, biis);
 
-				var ob = this.Environment.ItemTracker.GetReachableItemByDistance(m_workbench.Location, filter, m_unreachables);
+				var ob = this.Environment.ItemTracker.GetReachableItemByDistance(this.Workbench.Location, filter, m_unreachables);
 
 				if (ob == null)
 					break;
@@ -340,7 +353,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Building({0:x})", m_workbench.ObjectID.Value);
+			return String.Format("Building({0:x})", this.Workbench.ObjectID.Value);
 		}
 	}
 
