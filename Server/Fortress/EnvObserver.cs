@@ -7,6 +7,9 @@ using Dwarrowdelf.Server;
 
 namespace Dwarrowdelf.Server.Fortress
 {
+	/// <summary>
+	/// Track interesting areas, and dwarves can idle around those
+	/// </summary>
 	[SaveGameObjectByRef]
 	class EnvObserver
 	{
@@ -17,16 +20,8 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			m_region = new Region();
 
-			var p = new IntPoint2(env.Width / 2, env.Height / 2);
-			m_region.Add(new IntGrid2Z(p, p + new IntVector2(2, 2), env.GetDepth(p)));
-
-			/*
-			foreach (var ob in env.GetLargeObjects())
-				AddLargeObject(ob);
-
-			env.LargeObjectAdded += OnLargeObjectAdded;
-			env.LargeObjectRemoved += OnLargeObjectRemoved;
-			 */
+			foreach (var ob in env.Inventory.OfType<ItemObject>().Where(item => item.ItemCategory == ItemCategory.Workbench))
+				m_region.Add(new IntGrid2Z(ob.Location.ToIntPoint() - new IntVector2(2, 2), new IntSize2(5, 5), ob.Location.Z));
 		}
 
 		EnvObserver(SaveGameContext ctx)
@@ -39,36 +34,5 @@ namespace Dwarrowdelf.Server.Fortress
 		}
 
 		public IntPoint3? Center { get { return m_region.Center; } }
-		/*
-		IntGrid3 LargeObjectToBox(AreaObject ob)
-		{
-			var area = ob.Area;
-
-			int d = 2;
-			return new IntGrid3(new IntPoint3(area.X1 - d, area.Y1 - d, area.Z), new IntPoint3(area.X2 + d, area.Y2 + d, area.Z + 1));
-		}
-
-		void AddLargeObject(AreaObject ob)
-		{
-			var c = LargeObjectToBox(ob);
-			m_region.Add(c);
-		}
-
-		void RemoveLargeObject(AreaObject ob)
-		{
-			var c = LargeObjectToBox(ob);
-			m_region.Remove(c);
-		}
-
-		void OnLargeObjectAdded(AreaObject ob)
-		{
-			AddLargeObject(ob);
-		}
-
-		void OnLargeObjectRemoved(AreaObject ob)
-		{
-			RemoveLargeObject(ob);
-		}
-		 */
 	}
 }
