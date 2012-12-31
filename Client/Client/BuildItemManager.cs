@@ -11,13 +11,43 @@ namespace Dwarrowdelf.Client
 	[SaveGameObjectByRef(ClientObject = true)]
 	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
+		[SaveGameProperty]
+		static List<BuildItemManager> s_buildItemManagers;
+
+		static BuildItemManager()
+		{
+		}
+
+		public static BuildItemManager GetBuildItemManager(ItemObject workbench)
+		{
+			if (s_buildItemManagers == null)
+				s_buildItemManagers = new List<BuildItemManager>();
+
+			var mgr = s_buildItemManagers.FirstOrDefault(m => m.Workbench == workbench);
+
+			if (mgr == null)
+			{
+				mgr = new BuildItemManager(workbench);
+				s_buildItemManagers.Add(mgr);
+			}
+
+			return mgr;
+		}
+
+		static void RemoveBuildItemManager(BuildItemManager mgr)
+		{
+			var ok = s_buildItemManagers.Remove(mgr);
+			Debug.Assert(ok);
+		}
+
+		[SaveGameProperty]
 		public ItemObject Workbench { get; private set; }
 
 		public BuildItemInfo BuildItemInfo { get { return Buildings.GetBuildItemInfo(this.Workbench.ItemID); } }
 		public EnvironmentObject Environment { get { return this.Workbench.Environment; } }
 
 		[SaveGameProperty]
-		ObservableCollection<BuildOrder> m_buildOrderQueue = new ObservableCollection<BuildOrder>();
+		ObservableCollection<BuildOrder> m_buildOrderQueue;
 		public ReadOnlyCollection<BuildOrder> BuildOrderQueue { get; private set; }
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.BuildItemManager");
@@ -36,41 +66,59 @@ namespace Dwarrowdelf.Client
 
 		public BuildItemManager(ItemObject workbench)
 		{
-			trace.Header = String.Format("BuildItemManager({0})", workbench.ObjectID.Value);
-
 			this.Workbench = workbench;
-			this.Workbench.Destructed += OnWorkbenchDestructed;
+			m_buildOrderQueue = new ObservableCollection<BuildOrder>();
 
-			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
-
-			m_unreachables = new Unreachables(workbench.World);
-
-			this.Environment.World.JobManager.AddJobSource(this);
-		}
-
-		void OnWorkbenchDestructed(BaseObject obj)
-		{
-			this.Environment.World.JobManager.RemoveJobSource(this);
-
-			while (m_buildOrderQueue.Count > 0)
-				RemoveBuildOrder(m_buildOrderQueue[0]);
-
-			// XXX remove BuildItemManager from wherever they are stored
+			Init();
 		}
 
 		[OnSaveGamePostDeserialization]
 		public void OnDeserialized()
 		{
+			Init();
+
+			if (m_currentJob != null)
+				GameData.Data.Jobs.Add(m_currentJob);
+		}
+
+		void Init()
+		{
+			trace.Header = String.Format("BuildItemManager({0})", this.Workbench.ObjectID.Value);
+
 			this.Workbench.Destructed += OnWorkbenchDestructed;
+			ItemObject.IsInstalledChanged += OnIsInstalledChanged;
 
 			this.BuildOrderQueue = new ReadOnlyObservableCollection<BuildOrder>(m_buildOrderQueue);
 
 			m_unreachables = new Unreachables(this.Workbench.World);
 
 			this.Environment.World.JobManager.AddJobSource(this);
+		}
 
-			if (m_currentJob != null)
-				GameData.Data.Jobs.Add(m_currentJob);
+		void OnWorkbenchDestructed(BaseObject obj)
+		{
+			Cleanup();
+		}
+
+		void OnIsInstalledChanged(ItemObject ob)
+		{
+			if (ob != this.Workbench)
+				return;
+
+			Cleanup();
+		}
+
+		void Cleanup()
+		{
+			this.Workbench.Destructed -= OnWorkbenchDestructed;
+			ItemObject.IsInstalledChanged -= OnIsInstalledChanged;
+
+			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			while (m_buildOrderQueue.Count > 0)
+				RemoveBuildOrder(m_buildOrderQueue[0]);
+
+			RemoveBuildItemManager(this);
 		}
 
 		#region INotifyPropertyChanged Members

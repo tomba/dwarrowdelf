@@ -51,9 +51,6 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public ConstructManager ConstructManager { get; private set; }
 
-		[SaveGameProperty]
-		List<BuildItemManager> m_buildItemManagers;
-
 		public ItemTracker ItemTracker { get; private set; }
 
 		public EnvironmentObject(World world, ObjectID objectID)
@@ -470,22 +467,6 @@ namespace Dwarrowdelf.Client
 		public IAreaElement GetElementAt(IntPoint3 p)
 		{
 			return m_areaElements.FirstOrDefault(e => e.Area.Contains(p));
-		}
-
-		public BuildItemManager GetBuildItemManager(ItemObject workbench)
-		{
-			if (m_buildItemManagers == null)
-				m_buildItemManagers = new List<BuildItemManager>();
-
-			var mgr = m_buildItemManagers.FirstOrDefault(m => m.Workbench == workbench);
-
-			if (mgr == null)
-			{
-				mgr = new BuildItemManager(workbench);
-				m_buildItemManagers.Add(mgr);
-			}
-
-			return mgr;
 		}
 	}
 }
