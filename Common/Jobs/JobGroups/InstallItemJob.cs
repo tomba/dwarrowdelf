@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Dwarrowdelf.Jobs.JobGroups
 {
 	[SaveGameObjectByRef]
-	public sealed class InstallFurnitureJob : JobGroup
+	public sealed class InstallItemJob : JobGroup
 	{
 		[SaveGameProperty]
 		IItemObject m_item;
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		[SaveGameProperty]
 		int m_state;
 
-		public InstallFurnitureJob(IJobObserver parent, IItemObject item, IEnvironmentObject env, IntPoint3 location)
+		public InstallItemJob(IJobObserver parent, IItemObject item, IEnvironmentObject env, IntPoint3 location)
 			: base(parent)
 		{
 			m_item = item;
@@ -29,7 +29,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			AddSubJob(new AssignmentGroups.FetchItemAssignment(this, env, location, item));
 		}
 
-		InstallFurnitureJob(SaveGameContext ctx)
+		InstallItemJob(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 			if (m_state == 0)
 			{
 				m_state = 1;
-				AddSubJob(new AssignmentGroups.MoveInstallFurnitureAssignment(this, m_item, InstallMode.Install));
+				AddSubJob(new AssignmentGroups.MoveInstallItemAssignment(this, m_item, InstallMode.Install));
 			}
 			else if (m_state == 1)
 			{
@@ -60,7 +60,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 
 		public override string ToString()
 		{
-			return "InstallFurnitureJob";
+			return "InstallItemJob";
 		}
 	}
 }

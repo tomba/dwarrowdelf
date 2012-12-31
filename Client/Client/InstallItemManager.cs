@@ -10,7 +10,7 @@ using Dwarrowdelf.Jobs.AssignmentGroups;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObjectByRef]
-	class InstallFurnitureManager : IJobSource, IJobObserver
+	class InstallItemManager : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		EnvironmentObject m_environment;
@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		List<InstallJobData> m_jobDataList;
 
-		public InstallFurnitureManager(EnvironmentObject ob)
+		public InstallItemManager(EnvironmentObject ob)
 		{
 			m_environment = ob;
 			m_environment.World.JobManager.AddJobSource(this);
@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Client
 			m_jobDataList = new List<InstallJobData>();
 		}
 
-		InstallFurnitureManager(SaveGameContext ctx)
+		InstallItemManager(SaveGameContext ctx)
 		{
 		}
 
@@ -89,11 +89,11 @@ namespace Dwarrowdelf.Client
 					switch (data.Mode)
 					{
 						case InstallMode.Install:
-							job = new InstallFurnitureJob(this, data.Item, m_environment, data.Location);
+							job = new InstallItemJob(this, data.Item, m_environment, data.Location);
 							break;
 
 						case InstallMode.Uninstall:
-							job = new MoveInstallFurnitureAssignment(this, data.Item, InstallMode.Uninstall);
+							job = new MoveInstallItemAssignment(this, data.Item, InstallMode.Uninstall);
 							break;
 
 						default:

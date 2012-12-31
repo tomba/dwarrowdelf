@@ -13,12 +13,12 @@ using System.Windows.Shapes;
 
 namespace Dwarrowdelf.Client.UI
 {
-	sealed partial class InstallFurnitureDialog : Window
+	sealed partial class InstallItemDialog : Window
 	{
 		EnvironmentObject m_env;
 		IntPoint3 m_location;
 
-		public InstallFurnitureDialog()
+		public InstallItemDialog()
 		{
 			InitializeComponent();
 		}

@@ -10,7 +10,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Jobs.AssignmentGroups
 {
 	[SaveGameObjectByRef]
-	public sealed class MoveInstallFurnitureAssignment : AssignmentGroup
+	public sealed class MoveInstallItemAssignment : AssignmentGroup
 	{
 		[SaveGameProperty("Item")]
 		readonly IItemObject m_item;
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 		[SaveGameProperty("State")]
 		int m_state;
 
-		public MoveInstallFurnitureAssignment(IJobObserver parent, IItemObject item, InstallMode mode)
+		public MoveInstallItemAssignment(IJobObserver parent, IItemObject item, InstallMode mode)
 			: base(parent)
 		{
 			m_item = item;
@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_state = 0;
 		}
 
-		MoveInstallFurnitureAssignment(SaveGameContext ctx)
+		MoveInstallItemAssignment(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -70,7 +70,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 
 		public override string ToString()
 		{
-			return "MoveInstallFurnitureAssignment";
+			return "MoveInstallItemAssignment";
 		}
 	}
 }

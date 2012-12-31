@@ -28,7 +28,7 @@ namespace Dwarrowdelf.Client.UI
 			add(new ToolData(ClientToolMode.DesignationRemove, "Remove", "Designate", Key.R));
 
 			add(new ToolData(ClientToolMode.CreateStockpile, "Create stockpile", "", Key.P));
-			add(new ToolData(ClientToolMode.InstallFurniture, "Install furniture", "", Key.I));
+			add(new ToolData(ClientToolMode.InstallItem, "Install item", "", Key.I));
 			add(new ToolData(ClientToolMode.BuildItem, "Build item", "", Key.B));
 
 			add(new ToolData(ClientToolMode.ConstructWall, "Wall", "Construct", Key.W));
@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Client.UI
 		DesignationFellTree,
 
 		CreateStockpile,
-		InstallFurniture,
+		InstallItem,
 		BuildItem,
 
 		ConstructWall,

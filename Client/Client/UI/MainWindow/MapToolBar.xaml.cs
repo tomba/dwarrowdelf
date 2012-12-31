@@ -80,8 +80,8 @@ namespace Dwarrowdelf.Client.UI
 					this.createStockpile.IsChecked = true;
 					break;
 
-				case ClientToolMode.InstallFurniture:
-					this.installFurniture.IsChecked = true;
+				case ClientToolMode.InstallItem:
+					this.installItem.IsChecked = true;
 					break;
 
 				case ClientToolMode.BuildItem:

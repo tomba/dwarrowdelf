@@ -68,7 +68,7 @@
     <Compile Include="EnumHelpers.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveInstallFurnitureAssignment.cs" />
+    <Compile Include="Jobs\AssignmentGroups\MoveInstallItemAssignment.cs" />
     <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
     <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
     <Compile Include="Jobs\Assignments\CarryItemAssignment.cs" />
@@ -81,7 +81,7 @@
     <Compile Include="AI\HerbivoreAI.cs" />
     <Compile Include="AI\Group.cs" />
     <Compile Include="Jobs\JobGroups\ConstructJob.cs" />
-    <Compile Include="Jobs\JobGroups\InstallFurnitureJob.cs" />
+    <Compile Include="Jobs\JobGroups\InstallItemJob.cs" />
     <Compile Include="Labors.cs" />
     <Compile Include="Livings.cs" />
     <Compile Include="Helpers.cs" />

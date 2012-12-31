@@ -95,9 +95,9 @@
 
 			<Separator/>
 
-			<!-- Install Furniture -->
-			<RadioButton Name="installFurniture" ContentTemplate="{StaticResource singleToolTemplate}" 
-						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[InstallFurniture]}" />
+			<!-- Install Item -->
+			<RadioButton Name="installItem" ContentTemplate="{StaticResource singleToolTemplate}" 
+						  DataContext="{Binding Source={x:Static ui:ClientTools.ToolDatas}, Path=.[InstallItem]}" />
 
 			<Separator/>
 

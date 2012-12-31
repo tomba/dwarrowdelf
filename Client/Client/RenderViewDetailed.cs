@@ -495,7 +495,7 @@ namespace Dwarrowdelf.Client
 
 			if (!m_symbolToggler)
 			{
-				id = GetInstallSymbolAt(env.InstallFurnitureManager, ml);
+				id = GetInstallSymbolAt(env.InstallItemManager, ml);
 				if (id != SymbolID.Undefined)
 				{
 					tile.SymbolID = id;
@@ -588,7 +588,7 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		static SymbolID GetInstallSymbolAt(InstallFurnitureManager mgr, IntPoint3 p)
+		static SymbolID GetInstallSymbolAt(InstallItemManager mgr, IntPoint3 p)
 		{
 			var item = mgr.ContainsPoint(p);
 

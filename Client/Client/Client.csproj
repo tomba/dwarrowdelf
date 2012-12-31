@@ -165,7 +165,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Windows\InstallFurnitureDialog.xaml">
+    <Page Include="UI\Windows\InstallItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -239,7 +239,7 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="ConstructManager.cs" />
     <Compile Include="DebugScriptMessages.cs" />
-    <Compile Include="InstallFurnitureManager.cs" />
+    <Compile Include="InstallItemManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TargetItemTracker.cs" />
     <Compile Include="DwarfAI.cs" />
@@ -350,8 +350,8 @@
     <Compile Include="UI\Windows\FocusDebugWindow.xaml.cs">
       <DependentUpon>FocusDebugWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Windows\InstallFurnitureDialog.xaml.cs">
-      <DependentUpon>InstallFurnitureDialog.xaml</DependentUpon>
+    <Compile Include="UI\Windows\InstallItemDialog.xaml.cs">
+      <DependentUpon>InstallItemDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Windows\LaborManagerDialog.xaml.cs">
       <DependentUpon>LaborManagerDialog.xaml</DependentUpon>

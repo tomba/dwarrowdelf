@@ -51,7 +51,7 @@ namespace Dwarrowdelf.Client.UI
 			var env = App.MainWindow.Map;
 			var ob = (ItemObject)this.DataContext;
 
-			env.InstallFurnitureManager.AddUninstallJob(ob);
+			env.InstallItemManager.AddUninstallJob(ob);
 		}
 	}
 }

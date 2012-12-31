@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Client
 		public Designation Designations { get; private set; }
 
 		[SaveGameProperty]
-		public InstallFurnitureManager InstallFurnitureManager { get; private set; }
+		public InstallItemManager InstallItemManager { get; private set; }
 
 		[SaveGameProperty]
 		public ConstructManager ConstructManager { get; private set; }
@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
 
 			this.Designations = new Designation(this);
-			this.InstallFurnitureManager = new InstallFurnitureManager(this);
+			this.InstallItemManager = new InstallItemManager(this);
 			this.ConstructManager = new ConstructManager(this);
 
 			this.ItemTracker = new ItemTracker(this);

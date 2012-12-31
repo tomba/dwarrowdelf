@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Client.UI
 					this.MapControl.SelectionMode = MapSelectionMode.Rectangle;
 					break;
 
-				case ClientToolMode.InstallFurniture:
+				case ClientToolMode.InstallItem:
 				case ClientToolMode.BuildItem:
 					this.MapControl.SelectionMode = MapSelectionMode.Point;
 					break;
@@ -137,11 +137,11 @@ namespace Dwarrowdelf.Client.UI
 					}
 					break;
 
-				case ClientToolMode.InstallFurniture:
+				case ClientToolMode.InstallItem:
 					{
 						var p = selection.SelectionPoint;
 
-						var dlg = new InstallFurnitureDialog();
+						var dlg = new InstallItemDialog();
 						dlg.SetContext(env, p);
 
 						var res = dlg.ShowDialog();
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 							var item = dlg.SelectedItem;
 
 							if (item != null)
-								env.InstallFurnitureManager.AddInstallJob(item, p);
+								env.InstallItemManager.AddInstallJob(item, p);
 						}
 					}
 					break;
