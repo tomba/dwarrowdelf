@@ -298,6 +298,9 @@ namespace Dwarrowdelf.Client
 			foreach (var ii in Items.GetItemInfos(ItemCategory.Armor))
 				set(ii.ID, SymbolID.Armor);
 
+			foreach (var ii in Items.GetItemInfos(ItemCategory.Workbench))
+				set(ii.ID, SymbolID.Workbench);
+
 			var symbolIDs = EnumHelpers.GetEnumValues<SymbolID>();
 
 			for (int i = 1; i < s_symbols.Length; ++i)

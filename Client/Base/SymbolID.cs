@@ -89,6 +89,8 @@ namespace Dwarrowdelf.Client
 		Weapon,
 		Armor,
 
+		Workbench,
+
 		Corpse,
 
 		/* top */

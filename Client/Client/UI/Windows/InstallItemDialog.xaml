@@ -6,25 +6,7 @@
 		Name="root" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="278" d:DesignWidth="380" SizeToContent="WidthAndHeight">
 
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition  />
-		</Grid.ColumnDefinitions>
-
-		<StackPanel Orientation="Vertical" Margin="4">
-			<StackPanel.Resources>
-				<Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-					<Setter Property="Margin" Value="2" />
-				</Style>
-			</StackPanel.Resources>
-
-			<RadioButton Checked="RadioButton_Checked" Content="Door" IsChecked="True" />
-			<RadioButton Checked="RadioButton_Checked" Content="Chair" />
-			<RadioButton Checked="RadioButton_Checked" Content="Table" />
-			<RadioButton Checked="RadioButton_Checked" Content="Bed" />
-		</StackPanel>
-
-		<ListBox Grid.Column="1" x:Name="listBox" HorizontalContentAlignment="Stretch"
+		<ListBox x:Name="listBox" HorizontalContentAlignment="Stretch"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="12,12,12,41">
 			<ListBox.Resources>
 				<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/ListItemInfoTemplateDictionary.xaml" />

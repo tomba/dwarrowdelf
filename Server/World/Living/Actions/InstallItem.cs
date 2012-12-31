@@ -32,6 +32,12 @@ namespace Dwarrowdelf.Server
 				return ActionState.Fail;
 			}
 
+			if (item.ItemInfo.IsInstallable == false)
+			{
+				SendFailReport(report, "item not installable");
+				return ActionState.Fail;
+			}
+
 			switch (action.Mode)
 			{
 				case InstallMode.Install:

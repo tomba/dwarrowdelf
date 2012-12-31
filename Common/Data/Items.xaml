@@ -15,20 +15,20 @@
 
 	<ItemInfo ID="Corpse" Category="Corpse" />
 
-	<ItemInfo ID="Chair" Category="Furniture" />
-	<ItemInfo ID="Table" Category="Furniture" />
-	<ItemInfo ID="Door" Category="Furniture" />
-	<ItemInfo ID="Bed" Category="Furniture" />
-	<ItemInfo ID="Barrel" Category="Furniture" />
-	<ItemInfo ID="Bucket" Category="Furniture" />
+	<ItemInfo ID="Chair" Category="Furniture" Flags="Installable" />
+	<ItemInfo ID="Table" Category="Furniture" Flags="Installable" />
+	<ItemInfo ID="Door" Category="Furniture" Flags="Installable" />
+	<ItemInfo ID="Bed" Category="Furniture" Flags="Installable" />
+	<ItemInfo ID="Barrel" Category="Furniture" Flags="Installable" />
+	<ItemInfo ID="Bucket" Category="Furniture" Flags="Installable" />
 
 	<ItemInfo ID="Contraption" Category="Other" />
 
-	<ItemInfo ID="SmithsWorkbench" Category="Workbench" />
-	<ItemInfo ID="CarpentersWorkbench" Category="Workbench" />
-	<ItemInfo ID="MasonsWorkbench" Category="Workbench" />
-	<ItemInfo ID="SmelterWorkbench" Category="Workbench" />
-	<ItemInfo ID="GemcuttersWorkbench" Category="Workbench" />
+	<ItemInfo ID="SmithsWorkbench" Name="smith's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="CarpentersWorkbench" Name="carpenter's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="MasonsWorkbench" Name="mason's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="SmelterWorkbench" Name="smelter's workbench" Category="Workbench" Flags="Installable" />
+	<ItemInfo ID="GemcuttersWorkbench" Name="gem cutter's workbench" Category="Workbench" Flags="Installable" />
 
 	<!-- WEAPONS -->
 

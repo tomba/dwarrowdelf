@@ -7,6 +7,13 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf
 {
+	[Flags]
+	public enum ItemFlags
+	{
+		None = 0,
+		Installable = 1 << 0,
+	}
+
 	public enum ItemID
 	{
 		Undefined = 0,
@@ -74,8 +81,11 @@ namespace Dwarrowdelf
 		public ItemID ID { get; internal set; }
 		public string Name { get; internal set; }
 		public ItemCategory Category { get; internal set; }
+		public ItemFlags Flags { get; internal set; }
 		public WeaponInfo WeaponInfo { get; internal set; }
 		public ArmorInfo ArmorInfo { get; internal set; }
+
+		public bool IsInstallable { get { return (this.Flags & ItemFlags.Installable) != 0; } }
 	}
 
 	public enum WeaponType

@@ -212,6 +212,10 @@
 		<CharGfx X="20" Y="60" W="60" H="40" Char="■" />
 	</Symbol>
 
+	<Symbol ID="Workbench">
+		<CharGfx Outline="False" Char="۩" />
+	</Symbol>
+
 	<Symbol ID="Corpse">
 		<CharGfx Char="%" />
 	</Symbol>

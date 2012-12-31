@@ -27,16 +27,9 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_env = env;
 			m_location = location;
-			SetTargetItem(ItemID.Door);
-		}
 
-		void SetTargetItem(ItemID itemID)
-		{
-			if (m_env == null)
-				return;
-
-			var items = m_env.ItemTracker.GetItemsByDistance(m_location, ItemCategory.Furniture,
-				i => i.ItemID == itemID && i.IsReserved == false && i.IsInstalled == false);
+			var items = m_env.ItemTracker.GetItemsByDistance(m_location,
+				i => i.ItemInfo.IsInstallable && i.IsReserved == false && i.IsInstalled == false);
 
 			listBox.ItemsSource = items;
 		}
@@ -49,17 +42,6 @@ namespace Dwarrowdelf.Client.UI
 		public ItemObject SelectedItem
 		{
 			get { return (ItemObject)listBox.SelectedItem; }
-		}
-
-		private void RadioButton_Checked(object sender, RoutedEventArgs e)
-		{
-			var b = (RadioButton)sender;
-
-			var str = (string)b.Content;
-
-			var id = (ItemID)Enum.Parse(typeof(ItemID), str);
-
-			SetTargetItem(id);
 		}
 	}
 }
