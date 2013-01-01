@@ -92,7 +92,7 @@ namespace Dwarrowdelf
 
 	public static class Buildings
 	{
-		static BuildItemInfo[] s_buildItemInfos;
+		static Dictionary<ItemID, BuildItemInfo> s_buildItemInfos;
 
 		static Buildings()
 		{
@@ -110,12 +110,11 @@ namespace Dwarrowdelf
 					buildItemInfos = (BuildItemInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			var max = buildItemInfos.Max(bi => (int)bi.WorkbenchID);
-			s_buildItemInfos = new BuildItemInfo[max + 1];
+			s_buildItemInfos = new Dictionary<ItemID, BuildItemInfo>(buildItemInfos.Length);
 
 			foreach (var building in buildItemInfos)
 			{
-				if (s_buildItemInfos[(int)building.WorkbenchID] != null)
+				if (s_buildItemInfos.ContainsKey(building.WorkbenchID))
 					throw new Exception();
 
 				if (building.Name == null)
@@ -135,27 +134,21 @@ namespace Dwarrowdelf
 					if (g.Count() != 1)
 						throw new Exception();
 
-				s_buildItemInfos[(int)building.WorkbenchID] = building;
+				s_buildItemInfos[building.WorkbenchID] = building;
 			}
-
-			s_buildItemInfos[0] = new BuildItemInfo()
-			{
-				WorkbenchID = ItemID.Undefined,
-				Name = "<undefined>",
-			};
 		}
 
 		public static BuildItemInfo GetBuildItemInfo(ItemID workbenchID)
 		{
 			Debug.Assert(workbenchID != ItemID.Undefined);
-			Debug.Assert(s_buildItemInfos[(int)workbenchID] != null);
+			Debug.Assert(s_buildItemInfos[workbenchID] != null);
 
-			return s_buildItemInfos[(int)workbenchID];
+			return s_buildItemInfos[workbenchID];
 		}
 
 		public static BuildableItem FindBuildableItem(string buildableItemFullKey)
 		{
-			return s_buildItemInfos.SelectMany(bi => bi.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
+			return s_buildItemInfos.SelectMany(kvp => kvp.Value.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
 		}
 	}
 }
