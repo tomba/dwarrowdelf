@@ -504,62 +504,42 @@ namespace Dwarrowdelf.Server
 #if !parallel
 			bool useCompression = false;
 
-			if (useCompression == false)
+			for (int z = 0; z < d; ++z)
 			{
-				for (int z = 0; z < d; ++z)
+				var bounds = new IntGrid3(0, 0, z, w, h, 1);
+
+				byte[] arr;
+
+				if (useCompression == false)
 				{
-					var bounds = new IntGrid3(0, 0, z, w, h, 1);
-
-					byte[] arr;
-
 					using (var memStream = new MemoryStream(bounds.Volume * TileData.SizeOf))
 					{
 						WriteTileData(memStream, bounds, visionTracker);
 						arr = memStream.ToArray();
 					}
-
-					var msg = new Messages.MapDataTerrainsMessage()
-					{
-						Environment = this.ObjectID,
-						Bounds = bounds,
-						IsTerrainDataCompressed = false,
-						TerrainData = arr,
-					};
-
-					player.Send(msg);
-					//Trace.TraceError("Sent {0}", z);
 				}
-			}
-			else
-			{
-				for (int z = 0; z < d; ++z)
+				else
 				{
-					var bounds = new IntGrid3(0, 0, z, w, h, 1);
-
-					byte[] arr;
-
 					using (var memStream = new MemoryStream())
 					{
 						using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
 						using (var bufferedStream = new BufferedStream(compressStream))
-						{
 							WriteTileData(bufferedStream, bounds, visionTracker);
-						}
 
 						arr = memStream.ToArray();
 					}
-
-					var msg = new Messages.MapDataTerrainsMessage()
-					{
-						Environment = this.ObjectID,
-						Bounds = bounds,
-						IsTerrainDataCompressed = true,
-						TerrainData = arr,
-					};
-
-					player.Send(msg);
-					//Trace.TraceError("Sent {0}", z);
 				}
+
+				var msg = new Messages.MapDataTerrainsMessage()
+				{
+					Environment = this.ObjectID,
+					Bounds = bounds,
+					IsTerrainDataCompressed = useCompression,
+					TerrainData = arr,
+				};
+
+				player.Send(msg);
+				//Trace.TraceError("Sent {0}", z);
 			}
 #else
 			var queue = new BlockingCollection<Tuple<int, byte[]>>();
@@ -587,29 +567,13 @@ namespace Dwarrowdelf.Server
 
 			Parallel.For(0, d, z =>
 			{
+				var bounds = new IntGrid3(0, 0, z, w, h, 1);
+
 				using (var memStream = new MemoryStream())
 				{
 					using (var compStream = new System.IO.Compression.DeflateStream(memStream, CompressionMode.Compress))
 					using (var bufferStream = new BufferedStream(compStream))
-					using (var writer = new BinaryWriter(bufferStream))
-					{
-						for (int y = 0; y < h; ++y)
-						{
-							for (int x = 0; x < w; ++x)
-							{
-								var p = new IntPoint3(x, y, z);
-
-								ulong v;
-
-								if (!visionTracker.Sees(p))
-									v = 0;
-								else
-									v = GetTileData(p).Raw;
-
-								writer.Write(v);
-							}
-						}
-					}
+						WriteTileData(bufferStream, bounds, visionTracker);
 
 					queue.Add(new Tuple<int, byte[]>(z, memStream.ToArray()));
 				}
@@ -621,9 +585,9 @@ namespace Dwarrowdelf.Server
 #endif
 		}
 
-		void WriteTileData(Stream memStream, IntGrid3 bounds, IVisionTracker visionTracker)
+		void WriteTileData(Stream stream, IntGrid3 bounds, IVisionTracker visionTracker)
 		{
-			using (var streamWriter = new BinaryWriter(memStream))
+			using (var writer = new BinaryWriter(stream))
 			{
 				foreach (var p in bounds.Range())
 				{
@@ -634,7 +598,7 @@ namespace Dwarrowdelf.Server
 					else
 						v = GetTileData(p).Raw;
 
-					streamWriter.Write(v);
+					writer.Write(v);
 				}
 			}
 		}

@@ -219,10 +219,12 @@ namespace Dwarrowdelf.Client
 		{
 			using (var reader = new BinaryReader(stream))
 			{
+				TileData td = new TileData();
+
 				foreach (IntPoint3 p in bounds.Range())
 				{
-					TileData td = new TileData();
 					td.Raw = reader.ReadUInt64();
+
 					m_tileGrid.SetTileData(p, td);
 
 					if (MapTileTerrainChanged != null)
@@ -239,6 +241,7 @@ namespace Dwarrowdelf.Client
 
 			//Trace.TraceError("Recv {0}", bounds.Z);
 
+#if !parallel
 			using (var memStream = new MemoryStream(tileDataList))
 			{
 				if (isCompressed == false)
@@ -251,7 +254,7 @@ namespace Dwarrowdelf.Client
 						ReadAndSetTileData(decompressStream, bounds);
 				}
 			}
-#if asd
+#else
 			Task.Factory.StartNew(() =>
 			{
 				var dstStream = new MemoryStream();
@@ -264,22 +267,8 @@ namespace Dwarrowdelf.Client
 				return dstStream;
 			}).ContinueWith(t =>
 			{
-				var stream = t.Result;
-
-				using (var streamReader = new BinaryReader(stream))
-				{
-					TileData td = new TileData();
-					foreach (IntPoint3 p in bounds.Range())
-					{
-						td.Raw = streamReader.ReadUInt64();
-						m_tileGrid.SetTileData(p, td);
-
-						if (MapTileTerrainChanged != null)
-							MapTileTerrainChanged(p);
-					}
-				}
-
-				stream.Dispose();
+				using (var stream = t.Result)
+					ReadAndSetTileData(stream, bounds);
 
 				//Trace.TraceError("done {0}", bounds.Z);
 
