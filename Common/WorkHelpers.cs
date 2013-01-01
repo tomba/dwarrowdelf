@@ -79,6 +79,11 @@ namespace Dwarrowdelf
 		{
 			return m_filters.Any(f => f.Match(item));
 		}
+
+		public override string ToString()
+		{
+			return String.Format("({0})", String.Join<IItemFilter>(" OR ", m_filters));
+		}
 	}
 
 	[Serializable]
@@ -104,6 +109,11 @@ namespace Dwarrowdelf
 		public bool Match(IItemObject item)
 		{
 			return m_filters.All(f => f.Match(item));
+		}
+
+		public override string ToString()
+		{
+			return String.Format("({0})", String.Join<IItemFilter>(" AND ", m_filters));
 		}
 	}
 
@@ -157,6 +167,13 @@ namespace Dwarrowdelf
 		public IEnumerable<ItemCategory> ItemCategories { get { return m_itemCategoryMask.EnumValues; } }
 		public IEnumerable<MaterialID> MaterialIDs { get { return m_materialIDMask.EnumValues; } }
 		public IEnumerable<MaterialCategory> MaterialCategories { get { return m_materialCategoryMask.EnumValues; } }
+
+		public override string ToString()
+		{
+			return String.Format("({0}, {1}, {2}, {3})",
+				m_itemIDMask, m_itemCategoryMask,
+				m_materialIDMask, m_materialCategoryMask);
+		}
 	}
 
 	[Serializable]
@@ -210,6 +227,11 @@ namespace Dwarrowdelf
 						yield return EnumConv.ToEnum<TEnum>(i);
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			return m_mask.ToString();
 		}
 	}
 
@@ -265,6 +287,11 @@ namespace Dwarrowdelf
 				}
 			}
 		}
+
+		public override string ToString()
+		{
+			return m_mask.ToString();
+		}
 	}
 
 	[Serializable]
@@ -315,6 +342,19 @@ namespace Dwarrowdelf
 						yield return EnumConv.ToEnum<TEnum>(i);
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			if (m_mask == null)
+				return "null";
+
+			StringBuilder sb = new StringBuilder(m_mask.Count);
+
+			foreach (bool b in m_mask)
+				sb.Append(b ? '1' : '0');
+
+			return sb.ToString();
 		}
 	}
 
