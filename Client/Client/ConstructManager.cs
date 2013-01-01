@@ -122,16 +122,22 @@ namespace Dwarrowdelf.Client
 			if (m_jobDataList.Count == 0)
 				return null;
 
+			int tick = m_environment.World.TickNumber;
+
 			foreach (var data in m_jobDataList)
 			{
 				if (data.Job == null)
 				{
+					if (data.NextTick > tick)
+						continue;
+
 					var item = m_environment.ItemTracker.GetReachableItemByDistance(living.Location, data.ItemFilter,
 						m_unreachables);
 
 					if (item == null)
 					{
 						Trace.TraceInformation("Failed to find materials");
+						data.NextTick = m_environment.World.TickNumber + 50;
 						continue;
 					}
 
@@ -168,8 +174,26 @@ namespace Dwarrowdelf.Client
 			data.Item.ReservedBy = null;
 			data.Item = null;
 
-			if (status == JobStatus.Done || status == JobStatus.Fail)
-				m_jobDataList.Remove(data);
+			switch (status)
+			{
+				case JobStatus.Done:
+					m_jobDataList.Remove(data);
+					break;
+
+				case JobStatus.Abort:
+					// XXX check if it's possible to build a wall here
+					// Retry immediately
+					break;
+
+				case JobStatus.Fail:
+					// XXX check if it's possible to build a wall here
+					// Retry a bit later
+					data.NextTick = m_environment.World.TickNumber + 50;
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
 		#endregion
@@ -184,6 +208,7 @@ namespace Dwarrowdelf.Client
 			// XXX item criteria
 			public ItemObject Item;
 			public ConstructJob Job;
+			public int NextTick;
 		}
 	}
 }
