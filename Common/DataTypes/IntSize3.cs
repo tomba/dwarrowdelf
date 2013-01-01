@@ -42,6 +42,11 @@ namespace Dwarrowdelf
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
 
+		public int Volume
+		{
+			get { return this.Width * this.Height * this.Depth; }
+		}
+
 		public IntSize2 Plane
 		{
 			get { return new IntSize2(this.Width, this.Height); }
