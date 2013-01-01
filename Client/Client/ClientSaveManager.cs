@@ -7,13 +7,24 @@ using System.IO;
 
 namespace Dwarrowdelf.Client
 {
+	[Serializable]
+	sealed class ClientSaveData
+	{
+		public BaseObject[] Objects;
+		public BuildItemManager[] BuildItemManagers;
+	}
+
 	static class ClientSaveManager
 	{
 		public static Action SaveEvent;
 
 		public static void Save(Guid id)
 		{
-			var saveData = GameData.Data.World.Objects.ToArray();
+			var saveData = new ClientSaveData()
+			{
+				Objects = GameData.Data.World.Objects.ToArray(),
+				BuildItemManagers = BuildItemManager.Managers.ToArray(),
+			};
 
 			Trace.TraceInformation("Saving client data");
 			var watch = Stopwatch.StartNew();
@@ -48,11 +59,17 @@ namespace Dwarrowdelf.Client
 			Trace.TraceInformation("Loading client data");
 			var watch = Stopwatch.StartNew();
 
+			ClientSaveData data;
+
 			using (var reader = new StringReader(dataStr))
 			{
 				var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
-				var data = deserializer.Deserialize<BaseObject[]>();
+				data = deserializer.Deserialize<ClientSaveData>();
 			}
+
+			// Note that BaseObjects are deserialized by the NetSerializer, so we don't need to do anything for them here.
+
+			BuildItemManager.Deserialize(data.BuildItemManagers);
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);

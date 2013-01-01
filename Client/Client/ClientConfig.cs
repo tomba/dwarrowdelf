@@ -35,6 +35,6 @@ namespace Dwarrowdelf.Client
 		public static GameMode NewGameMode = GameMode.Fortress;
 
 		// Delete all saves before starting
-		public static bool CleanSaveDir = true;
+		public static bool CleanSaveDir = false;
 	}
 }

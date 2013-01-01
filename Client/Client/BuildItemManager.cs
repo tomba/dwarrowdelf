@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObjectByRef]
 	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
 		[SaveGameProperty]
@@ -16,6 +16,16 @@ namespace Dwarrowdelf.Client
 
 		static BuildItemManager()
 		{
+		}
+
+		public static ReadOnlyCollection<BuildItemManager> Managers
+		{
+			get { return new ReadOnlyCollection<BuildItemManager>(s_buildItemManagers); }
+		}
+
+		public static void Deserialize(BuildItemManager[] managers)
+		{
+			s_buildItemManagers = new List<BuildItemManager>(managers);
 		}
 
 		public static BuildItemManager GetBuildItemManager(ItemObject workbench)
@@ -72,11 +82,14 @@ namespace Dwarrowdelf.Client
 			Init();
 		}
 
+		BuildItemManager(SaveGameContext ctx)
+		{
+			Init();
+		}
+
 		[OnSaveGamePostDeserialization]
 		public void OnDeserialized()
 		{
-			Init();
-
 			if (m_currentJob != null)
 				GameData.Data.Jobs.Add(m_currentJob);
 		}
@@ -391,7 +404,7 @@ namespace Dwarrowdelf.Client
 
 		public override string ToString()
 		{
-			return String.Format("Building({0:x})", this.Workbench.ObjectID.Value);
+			return String.Format("BuildItemManager({0:x})", this.Workbench.ObjectID.Value);
 		}
 	}
 
