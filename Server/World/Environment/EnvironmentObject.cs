@@ -504,42 +504,40 @@ namespace Dwarrowdelf.Server
 #if !parallel
 			bool useCompression = false;
 
-			for (int z = 0; z < d; ++z)
+			var size = new IntSize3(w, h, 1);
+
+			using (var memStream = new MemoryStream(size.Volume * TileData.SizeOf))
 			{
-				var bounds = new IntGrid3(0, 0, z, w, h, 1);
-
-				byte[] arr;
-
-				if (useCompression == false)
+				for (int z = 0; z < d; ++z)
 				{
-					using (var memStream = new MemoryStream(bounds.Volume * TileData.SizeOf))
+					memStream.SetLength(0);
+
+					var bounds = new IntGrid3(new IntPoint3(0, 0, z), size);
+
+					if (useCompression == false)
 					{
 						WriteTileData(memStream, bounds, visionTracker);
-						arr = memStream.ToArray();
 					}
-				}
-				else
-				{
-					using (var memStream = new MemoryStream())
+					else
 					{
 						using (var compressStream = new DeflateStream(memStream, CompressionMode.Compress, true))
 						using (var bufferedStream = new BufferedStream(compressStream))
 							WriteTileData(bufferedStream, bounds, visionTracker);
-
-						arr = memStream.ToArray();
 					}
+
+					var arr = memStream.ToArray();
+
+					var msg = new Messages.MapDataTerrainsMessage()
+					{
+						Environment = this.ObjectID,
+						Bounds = bounds,
+						IsTerrainDataCompressed = useCompression,
+						TerrainData = arr,
+					};
+
+					player.Send(msg);
+					//Trace.TraceError("Sent {0}", z);
 				}
-
-				var msg = new Messages.MapDataTerrainsMessage()
-				{
-					Environment = this.ObjectID,
-					Bounds = bounds,
-					IsTerrainDataCompressed = useCompression,
-					TerrainData = arr,
-				};
-
-				player.Send(msg);
-				//Trace.TraceError("Sent {0}", z);
 			}
 #else
 			var queue = new BlockingCollection<Tuple<int, byte[]>>();
@@ -587,7 +585,7 @@ namespace Dwarrowdelf.Server
 
 		void WriteTileData(Stream stream, IntGrid3 bounds, IVisionTracker visionTracker)
 		{
-			using (var writer = new BinaryWriter(stream))
+			using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
 			{
 				foreach (var p in bounds.Range())
 				{
