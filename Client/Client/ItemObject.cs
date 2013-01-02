@@ -110,25 +110,76 @@ namespace Dwarrowdelf.Client
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
-		LivingObject m_wearer;
-		public LivingObject Wearer
+		bool m_isWorn;
+		public bool IsWorn
 		{
-			get { return m_wearer; }
-			internal set { m_wearer = value; Notify("Wearer"); Notify("IsWorn"); }
+			get
+			{
+				return m_isWorn;
+			}
+
+			set
+			{
+				if (m_isWorn == value)
+					return;
+
+				m_isWorn = value;
+
+				var p = this.Parent as LivingObject;
+				if (p != null)
+					p.OnArmorIsWornChanged(this, value);
+
+				Notify("Wearer");
+				Notify("IsWorn");
+			}
 		}
 
-		LivingObject m_wielder;
-		public LivingObject Wielder
+		bool m_isWielded;
+		public bool IsWielded
 		{
-			get { return m_wielder; }
-			internal set { m_wielder = value; Notify("Wielder"); Notify("IsWielded"); }
+			get { return m_isWielded; }
+
+			set
+			{
+				if (m_isWielded == value)
+					return;
+
+				m_isWielded = value;
+
+				var p = this.Parent as LivingObject;
+				if (p != null)
+					p.OnWeaponIsWieldedChanged(this, value);
+
+				Notify("Wielder");
+				Notify("IsWielded");
+			}
 		}
+
 
 		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
 		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
 
-		public bool IsWorn { get { return this.Wearer != null; } }
-		public bool IsWielded { get { return this.Wielder != null; } }
+		public LivingObject Wearer
+		{
+			get
+			{
+				if (this.IsWorn)
+					return (LivingObject)this.Parent;
+				else
+					return null;
+			}
+		}
+
+		public LivingObject Wielder
+		{
+			get
+			{
+				if (this.IsWielded)
+					return (LivingObject)this.Parent;
+				else
+					return null;
+			}
+		}
 
 		int m_quality;
 		public int Quality
@@ -207,6 +258,14 @@ namespace Dwarrowdelf.Client
 
 				case PropertyID.IsClosed:
 					this.IsClosed = (bool)value;
+					break;
+
+				case PropertyID.IsWorn:
+					this.IsWorn = (bool)value;
+					break;
+
+				case PropertyID.IsWielded:
+					this.IsWielded = (bool)value;
 					break;
 
 				default:

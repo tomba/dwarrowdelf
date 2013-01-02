@@ -162,41 +162,70 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		LivingObject m_wearer;
+		[SaveGameProperty("IsWorn")]
+		bool m_isWorn;
+		public bool IsWorn
+		{
+			get { return m_isWorn; }
+
+			internal set
+			{
+				Debug.Assert(this.IsArmor);
+				Debug.Assert(this.Parent is LivingObject);
+
+				if (m_isWorn == value)
+					return;
+
+				m_isWorn = value;
+
+				NotifyBool(PropertyID.IsWorn, value);
+			}
+		}
+
+		[SaveGameProperty("IsWielded")]
+		bool m_isWielded;
+		public bool IsWielded
+		{
+			get { return m_isWielded; }
+
+			internal set
+			{
+				Debug.Assert(this.IsWeapon);
+				Debug.Assert(this.Parent is LivingObject);
+
+				if (m_isWielded == value)
+					return;
+
+				m_isWielded = value;
+
+				NotifyBool(PropertyID.IsWielded, value);
+			}
+		}
+
 		public LivingObject Wearer
 		{
 			get
 			{
-				Debug.Assert(this.IsArmor);
-				return m_wearer;
-			}
-			internal set
-			{
-				Debug.Assert(this.IsArmor);
-				m_wearer = value;
+				if (this.IsWorn)
+					return (LivingObject)this.Parent;
+				else
+					return null;
 			}
 		}
 
-		LivingObject m_wielder;
 		public LivingObject Wielder
 		{
 			get
 			{
-				Debug.Assert(this.IsWeapon);
-				return m_wielder;
-			}
-			internal set
-			{
-				Debug.Assert(this.IsWeapon);
-				m_wielder = value;
+				if (this.IsWielded)
+					return (LivingObject)this.Parent;
+				else
+					return null;
 			}
 		}
 
 		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
 		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
-
-		public bool IsWorn { get { return this.IsArmor && this.Wearer != null; } }
-		public bool IsWielded { get { return this.IsWeapon && this.Wielder != null; } }
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
@@ -232,6 +261,8 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.ReservedByStr] = m_reservedByStr;
 			props[PropertyID.IsInstalled] = m_isInstalled;
 			props[PropertyID.IsClosed] = m_isClosed;
+			props[PropertyID.IsWorn] = m_isWorn;
+			props[PropertyID.IsWielded] = m_isWielded;
 
 			return props;
 		}

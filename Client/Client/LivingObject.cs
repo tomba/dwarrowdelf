@@ -70,6 +70,9 @@ namespace Dwarrowdelf.Client
 			// XXX Create only for dwarves
 			m_enabledLabors = new BitArray(EnumHelpers.GetEnumMax<LaborID>() + 1);
 			m_enabledLabors.SetAll(true);
+
+			m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>();
+			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 		}
 
 		public override void DeserializeBegin(BaseGameObjectData _data)
@@ -94,26 +97,6 @@ namespace Dwarrowdelf.Client
 			else
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
-
-			if (data.ArmorSlots != null)
-			{
-				var l = data.ArmorSlots.Select(t => new Tuple<ArmorSlot, ItemObject>(t.Item1, this.World.FindOrCreateObject<ItemObject>(t.Item2)));
-				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>(l);
-				foreach (var tuple in m_armorSlots)
-					tuple.Item2.Wearer = this;
-			}
-			else
-			{
-				m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>();
-			}
-
-			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
-
-			if (data.WeaponID != ObjectID.NullObjectID)
-			{
-				this.Weapon = this.World.FindOrCreateObject<ItemObject>(data.WeaponID);
-				this.Weapon.Wielder = this;
-			}
 		}
 
 		public override void DeserializeEnd()
@@ -632,37 +615,39 @@ namespace Dwarrowdelf.Client
 			m_skills.Add(new Tuple<SkillID, byte>(skill, level));
 		}
 
-		public void WearArmor(ArmorSlot slot, ItemObject wearable)
+		internal void OnArmorIsWornChanged(ItemObject wearable, bool isWorn)
 		{
-			for (int i = 0; i < m_armorSlots.Count; ++i)
-			{
-				if (m_armorSlots[i].Item1 == slot)
-				{
-					m_armorSlots.RemoveAt(i);
-					break;
-				}
-			}
+			Debug.Assert(wearable.Parent == this);
 
-			m_armorSlots.Add(new Tuple<ArmorSlot, ItemObject>(slot, wearable));
-			wearable.Wearer = this;
+			var slot = wearable.ArmorInfo.Slot;
+
+			if (isWorn)
+			{
+				Debug.Assert(m_armorSlots.All(t => t.Item1 != slot));
+
+				m_armorSlots.Add(new Tuple<ArmorSlot, ItemObject>(slot, wearable));
+			}
+			else
+			{
+				int idx = -1;
+
+				for (int i = 0; i < m_armorSlots.Count; ++i)
+				{
+					if (m_armorSlots[i].Item1 == slot)
+					{
+						idx = i;
+						break;
+					}
+				}
+
+				if (idx == -1)
+					throw new Exception();
+
+				Debug.Assert(m_armorSlots[idx].Item2 == wearable);
+				m_armorSlots.RemoveAt(idx);
+			}
 
 			RecalcArmorClass();
-		}
-
-		public void RemoveArmor(ArmorSlot slot)
-		{
-			for (int i = 0; i < m_armorSlots.Count; ++i)
-			{
-				if (m_armorSlots[i].Item1 == slot)
-				{
-					m_armorSlots[i].Item2.Wearer = null;
-					m_armorSlots.RemoveAt(i);
-					RecalcArmorClass();
-					return;
-				}
-			}
-
-			throw new Exception();
 		}
 
 		void RecalcArmorClass()
@@ -677,18 +662,20 @@ namespace Dwarrowdelf.Client
 
 		public ItemObject Weapon { get; private set; }
 
-		public void WieldWeapon(ItemObject weapon)
+		internal void OnWeaponIsWieldedChanged(ItemObject weapon, bool isWielded)
 		{
-			this.Weapon = weapon;
-			weapon.Wielder = this;
-			Notify("Weapon");
-		}
+			Debug.Assert(weapon.Parent == this);
 
-		public void RemoveWeapon()
-		{
-			this.Weapon.Wielder = null;
-			this.Weapon = null;
-			Notify("Weapon");
+			if (isWielded)
+			{
+				this.Weapon = weapon;
+				Notify("Weapon");
+			}
+			else
+			{
+				this.Weapon = null;
+				Notify("Weapon");
+			}
 		}
 
 		protected override void ChildRemoved(MovableObject child)
@@ -697,11 +684,19 @@ namespace Dwarrowdelf.Client
 
 			if (item != null)
 			{
+				if (item.IsArmor && item.IsWorn)
+					throw new Exception();
+
+				if (item.IsWeapon && item.IsWielded)
+					throw new Exception();
+
 				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.
+				/*
 				if (item.IsArmor && item.IsWorn)
 					RemoveArmor(item.ArmorInfo.Slot);
 				else if (item.IsWeapon && item.IsWielded)
 					RemoveWeapon();
+				 */
 			}
 
 			base.ChildRemoved(child);

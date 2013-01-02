@@ -242,6 +242,19 @@ namespace Dwarrowdelf.Client
 			return (T)ob;
 		}
 
+		public T FindObjectOrNull<T>(ObjectID objectID) where T : BaseObject
+		{
+			if (objectID == ObjectID.NullObjectID)
+				return null;
+
+			var ob = FindObject(objectID);
+
+			if (ob == null)
+				return null;
+
+			return (T)ob;
+		}
+
 		public BaseObject GetObject(ObjectID objectID)
 		{
 			var ob = FindObject(objectID);

@@ -84,7 +84,7 @@ namespace Dwarrowdelf.Server
 					newObject.SendTo(m_player, vis);
 				}
 			}
-
+#if asf
 			// When an armor is worn by a non-controllable, the armor isn't known to the client. Thus we need to send the data of the armor here.
 			if (change is WearArmorChange)
 			{
@@ -110,7 +110,7 @@ namespace Dwarrowdelf.Server
 					// else it's being removed
 				}
 			}
-
+#endif
 			var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
 
 			Send(changeMsg);
@@ -190,6 +190,22 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (PropertyChange)change;
 
+				if (c.PropertyID == PropertyID.IsWorn || c.PropertyID == PropertyID.IsWielded)
+				{
+					Debugger.Break();
+				
+					var mo = (MovableObject)c.Object;
+
+					for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
+					{
+						var ov = m_player.GetObjectVisibility(o);
+						if ((ov & ObjectVisibility.Public) != 0)
+							return true;
+					}
+
+					return false;
+				}
+
 				if (m_player.IsController(c.Object))
 				{
 					return true;
@@ -202,7 +218,6 @@ namespace Dwarrowdelf.Server
 					if ((ov & vis) == 0)
 						return false;
 
-					// XXX how to check for non-ServerGameObjects? for example building objects
 					return true;
 				}
 			}

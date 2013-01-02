@@ -31,12 +31,6 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		[SaveGameProperty("ArmorSlots")]
-		Dictionary<ArmorSlot, ItemObject> m_armorSlots;
-
-		[SaveGameProperty("Weapon")]
-		public ItemObject Weapon { get; private set; }
-
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
 		{
@@ -66,8 +60,6 @@ namespace Dwarrowdelf.Server
 				if (kvp.Value != 0)
 					m_skillMap[kvp.Key] = kvp.Value;
 
-			m_armorSlots = new Dictionary<ArmorSlot, ItemObject>();
-
 			RecalcArmorClass();
 		}
 
@@ -80,11 +72,7 @@ namespace Dwarrowdelf.Server
 			if (aai != null)
 				aai.AssignmentChanged += OnAIAssignmentChanged;
 
-			foreach (var kvp in m_armorSlots)
-				kvp.Value.Wearer = this;
-			if (this.Weapon != null)
-				this.Weapon.Wielder = this;
-
+			// XXX inventory items are not present yet?
 			RecalcArmorClass();
 		}
 
@@ -295,41 +283,39 @@ namespace Dwarrowdelf.Server
 		public void WearArmor(ItemObject wearable)
 		{
 			Debug.Assert(wearable.IsArmor);
-			Debug.Assert(this.Inventory.Contains(wearable));
 			Debug.Assert(wearable.ArmorInfo != null);
-			Debug.Assert(!m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
+			Debug.Assert(wearable.Parent == this);
+			Debug.Assert(wearable.IsWorn == false);
 
-			wearable.Wearer = this;
-			m_armorSlots[wearable.ArmorInfo.Slot] = wearable;
+			var slot = wearable.ArmorInfo.Slot;
+
+			Debug.Assert(this.Inventory.OfType<ItemObject>().Where(i => i.IsArmor && i.IsWorn).All(i => i.ArmorInfo.Slot != slot));
+
+			wearable.IsWorn = true;
 
 			RecalcArmorClass();
-
-			this.World.AddChange(new WearArmorChange(this, wearable.ArmorInfo.Slot, wearable));
 		}
 
 		public void RemoveArmor(ItemObject wearable)
 		{
 			Debug.Assert(wearable.IsArmor);
-			Debug.Assert(m_armorSlots.ContainsKey(wearable.ArmorInfo.Slot));
-			Debug.Assert(m_armorSlots[wearable.ArmorInfo.Slot] == wearable);
-			Debug.Assert(wearable.Wearer == this);
+			Debug.Assert(wearable.ArmorInfo != null);
+			Debug.Assert(wearable.Parent == this);
+			Debug.Assert(wearable.IsWorn);
 
-			wearable.Wearer = null;
-			m_armorSlots.Remove(wearable.ArmorInfo.Slot);
+			wearable.IsWorn = false;
 
 			RecalcArmorClass();
-
-			this.World.AddChange(new RemoveArmorChange(this, wearable.ArmorInfo.Slot));
 		}
 
 		void RecalcArmorClass()
 		{
-			int ac = this.NaturalArmorClass;
+			var ac = this.Inventory
+				.OfType<ItemObject>()
+				.Where(i => i.IsArmor && i.IsWorn)
+				.Sum(i => i.ArmorInfo.AC);
 
-			foreach (var kvp in m_armorSlots)
-				ac += kvp.Value.ArmorInfo.AC;
-
-			this.ArmorClass = ac;
+			this.ArmorClass = this.NaturalArmorClass + ac;
 		}
 
 		public int ArmorClass { get; private set; }
@@ -337,14 +323,11 @@ namespace Dwarrowdelf.Server
 		public void WieldWeapon(ItemObject weapon)
 		{
 			Debug.Assert(weapon.IsWeapon);
-			Debug.Assert(this.Inventory.Contains(weapon));
 			Debug.Assert(weapon.WeaponInfo != null);
+			Debug.Assert(weapon.Parent == this);
 			Debug.Assert(this.Weapon == null);
 
-			this.Weapon = weapon;
-			weapon.Wielder = this;
-
-			this.World.AddChange(new WieldWeaponChange(this, weapon));
+			weapon.IsWielded = true;
 		}
 
 		public void RemoveWeapon(ItemObject weapon)
@@ -353,10 +336,16 @@ namespace Dwarrowdelf.Server
 			Debug.Assert(this.Weapon == weapon);
 			Debug.Assert(weapon.Wielder == this);
 
-			this.Weapon.Wielder = null;
-			this.Weapon = null;
+			weapon.IsWielded = false;
+		}
 
-			this.World.AddChange(new RemoveWeaponChange(this));
+		public ItemObject Weapon
+		{
+			get
+			{
+				// XXX cache the result
+				return this.Inventory.OfType<ItemObject>().SingleOrDefault(i => i.IsWielded);
+			}
 		}
 
 		[SaveGameProperty("CarriedItem")]
@@ -386,8 +375,8 @@ namespace Dwarrowdelf.Server
 				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
 			}
 
-			data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>(kvp.Key, kvp.Value.ObjectID)).ToArray();
-			data.WeaponID = this.Weapon != null ? this.Weapon.ObjectID : ObjectID.NullObjectID;
+			//data.ArmorSlots = m_armorSlots.Select(kvp => new Tuple<ArmorSlot, ObjectID>(kvp.Key, kvp.Value.ObjectID)).ToArray();
+			//data.WeaponID = this.Weapon != null ? this.Weapon.ObjectID : ObjectID.NullObjectID;
 		}
 
 		public override void SendTo(IPlayer player, ObjectVisibility visibility)

@@ -69,9 +69,9 @@ namespace Dwarrowdelf
 
 		public Tuple<SkillID, byte>[] Skills { get; set; }
 
-		public Tuple<ArmorSlot, ObjectID>[] ArmorSlots { get; set; }
+		//public Tuple<ArmorSlot, ObjectID>[] ArmorSlots { get; set; }
 
-		public ObjectID WeaponID { get; set; }
+		//public ObjectID WeaponID { get; set; }
 
 		public override string ToString()
 		{

@@ -29,13 +29,13 @@ namespace Dwarrowdelf.Client
 		{
 			var data = (MovableObjectData)_data;
 
-			base.DeserializeBegin(_data);
-
 			ContainerObject env = null;
 			if (data.Parent != ObjectID.NullObjectID)
 				env = this.World.FindOrCreateObject<ContainerObject>(data.Parent);
 
 			MoveTo(env, data.Location);
+
+			base.DeserializeBegin(_data);
 		}
 
 		public void MoveTo(ContainerObject dst, IntPoint3 dstLoc)
