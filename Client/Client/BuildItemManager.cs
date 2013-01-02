@@ -16,6 +16,7 @@ namespace Dwarrowdelf.Client
 
 		static BuildItemManager()
 		{
+			s_buildItemManagers = new List<BuildItemManager>();
 		}
 
 		public static ReadOnlyCollection<BuildItemManager> Managers
@@ -30,9 +31,6 @@ namespace Dwarrowdelf.Client
 
 		public static BuildItemManager GetBuildItemManager(ItemObject workbench)
 		{
-			if (s_buildItemManagers == null)
-				s_buildItemManagers = new List<BuildItemManager>();
-
 			var mgr = s_buildItemManagers.FirstOrDefault(m => m.Workbench == workbench);
 
 			if (mgr == null)
