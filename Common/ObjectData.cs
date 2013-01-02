@@ -42,7 +42,7 @@ namespace Dwarrowdelf
 	public abstract class MovableObjectData : GameObjectData
 	{
 		public IntPoint3 Location { get; set; }
-		public ObjectID Environment { get; set; }
+		public ObjectID Parent { get; set; }
 	}
 
 	/* Item in inventory or floor */

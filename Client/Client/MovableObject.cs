@@ -32,8 +32,8 @@ namespace Dwarrowdelf.Client
 			base.DeserializeBegin(_data);
 
 			ContainerObject env = null;
-			if (data.Environment != ObjectID.NullObjectID)
-				env = this.World.FindOrCreateObject<ContainerObject>(data.Environment);
+			if (data.Parent != ObjectID.NullObjectID)
+				env = this.World.FindOrCreateObject<ContainerObject>(data.Parent);
 
 			MoveTo(env, data.Location);
 		}

@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 
 			var data = (MovableObjectData)baseData;
 
-			data.Environment = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
+			data.Parent = this.Parent != null ? this.Parent.ObjectID : ObjectID.NullObjectID;
 			data.Location = this.Location;
 		}
 
