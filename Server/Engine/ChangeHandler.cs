@@ -84,33 +84,28 @@ namespace Dwarrowdelf.Server
 					newObject.SendTo(m_player, vis);
 				}
 			}
-#if asf
-			// When an armor is worn by a non-controllable, the armor isn't known to the client. Thus we need to send the data of the armor here.
-			if (change is WearArmorChange)
-			{
-				var c = (WearArmorChange)change;
 
-				if (m_player.IsController(c.Object) == false)
+			// When an item is equipped by a non-controllable, the item isn't known to the client.
+			// Thus we need to send the data of the item here, before sending the property change message.
+			// XXX should there be some kind of "visibility-changed" event?
+			if (change is PropertyChange)
+			{
+				var c = (PropertyChange)change;
+
+				if (c.PropertyID == PropertyID.IsEquipped)
 				{
-					if (c.Wearable != null)
-						c.Wearable.SendTo(m_player, ObjectVisibility.Public);
-					// else it's being removed
+					var item = (ItemObject)c.Object;
+
+					if (item.IsEquipped)
+					{
+						var equipper = (LivingObject)item.Parent;
+
+						if (m_player.IsController(equipper) == false)
+							item.SendTo(m_player, ObjectVisibility.Public);
+					}
 				}
 			}
 
-			// The same for weapons
-			if (change is WieldWeaponChange)
-			{
-				var c = (WieldWeaponChange)change;
-
-				if (m_player.IsController(c.Object) == false)
-				{
-					if (c.Weapon != null)
-						c.Weapon.SendTo(m_player, ObjectVisibility.Public);
-					// else it's being removed
-				}
-			}
-#endif
 			var changeMsg = new ChangeMessage() { ChangeData = change.ToChangeData() };
 
 			Send(changeMsg);
