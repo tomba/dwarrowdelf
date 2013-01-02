@@ -75,12 +75,8 @@
 					</TextBlock.Text>
 			</TextBlock>
 
-			<TextBlock Grid.Column="2" Visibility="{Binding IsWorn,Converter={StaticResource boolToVisConverter}}">
-				W
-			</TextBlock>
-
-			<TextBlock Grid.Column="2" Visibility="{Binding IsWielded,Converter={StaticResource boolToVisConverter}}">
-				w
+			<TextBlock Grid.Column="2" Visibility="{Binding IsEquipped,Converter={StaticResource boolToVisConverter}}">
+				e
 			</TextBlock>
 
 			<Grid.ToolTip>

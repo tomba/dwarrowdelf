@@ -178,36 +178,18 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	public sealed class WearArmorActionReport : ItemActionReport
+	public sealed class EquipItemActionReport : ItemActionReport
 	{
-		public WearArmorActionReport(ILivingObject living, IItemObject item)
+		public EquipItemActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
 		{
 		}
 	}
 
 	[Serializable]
-	public sealed class RemoveArmorActionReport : ItemActionReport
+	public sealed class UnequipItemActionReport : ItemActionReport
 	{
-		public RemoveArmorActionReport(ILivingObject living, IItemObject item)
-			: base(living, item)
-		{
-		}
-	}
-
-	[Serializable]
-	public sealed class WieldWeaponActionReport : ItemActionReport
-	{
-		public WieldWeaponActionReport(ILivingObject living, IItemObject item)
-			: base(living, item)
-		{
-		}
-	}
-
-	[Serializable]
-	public sealed class RemoveWeaponActionReport : ItemActionReport
-	{
-		public RemoveWeaponActionReport(ILivingObject living, IItemObject item)
+		public UnequipItemActionReport(ILivingObject living, IItemObject item)
 			: base(living, item)
 		{
 		}

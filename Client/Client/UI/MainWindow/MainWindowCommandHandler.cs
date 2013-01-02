@@ -112,7 +112,7 @@ namespace Dwarrowdelf.Client.UI
 			if (living == null)
 				return;
 
-			var obs = living.Inventory.OfType<ItemObject>().Where(o => o.IsWorn || o.IsWielded);
+			var obs = living.Inventory.OfType<ItemObject>().Where(o => o.IsEquipped);
 
 			if (obs.Any() == false)
 				return;
@@ -129,10 +129,10 @@ namespace Dwarrowdelf.Client.UI
 				var ob = dlg.SelectedItem;
 
 				GameAction action;
-				if (ob.IsArmor)
-					action = new RemoveArmorAction(ob);
+				if (ob.IsArmor || ob.IsWeapon)
+					action = new UnequipItemAction(ob);
 				else
-					action = new RemoveWeaponAction(ob);
+					throw new Exception();
 				action.MagicNumber = 1;
 				living.RequestAction(action);
 			}
@@ -148,7 +148,7 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var obs = living.Inventory.OfType<ItemObject>()
-				.Where(o => (o.IsArmor && o.IsWorn == false) || (o.IsWeapon && o.IsWielded == false));
+				.Where(o => ((o.IsArmor || o.IsWeapon) && o.IsEquipped == false));
 
 			if (obs.Any() == false)
 				return;
@@ -165,10 +165,10 @@ namespace Dwarrowdelf.Client.UI
 				var ob = dlg.SelectedItem;
 
 				GameAction action;
-				if (ob.IsArmor)
-					action = new WearArmorAction(ob);
+				if (ob.IsArmor || ob.IsWeapon)
+					action = new EquipItemAction(ob);
 				else
-					action = new WieldWeaponAction(ob);
+					throw new Exception();
 				action.MagicNumber = 1;
 				living.RequestAction(action);
 			}

@@ -110,71 +110,35 @@ namespace Dwarrowdelf.Client
 		public bool IsArmor { get { return this.ItemInfo.ArmorInfo != null; } }
 		public bool IsWeapon { get { return this.ItemInfo.WeaponInfo != null; } }
 
-		bool m_isWorn;
-		public bool IsWorn
+		bool m_isEquipped;
+		public bool IsEquipped
 		{
-			get
-			{
-				return m_isWorn;
-			}
+			get { return m_isEquipped; }
 
 			set
 			{
-				if (m_isWorn == value)
+				if (m_isEquipped == value)
 					return;
 
-				m_isWorn = value;
+				m_isEquipped = value;
 
 				var p = this.Parent as LivingObject;
 				if (p != null)
-					p.OnArmorIsWornChanged(this, value);
+					p.OnItemIsEquippedChanged(this, value);
 
-				Notify("Wearer");
-				Notify("IsWorn");
-			}
-		}
-
-		bool m_isWielded;
-		public bool IsWielded
-		{
-			get { return m_isWielded; }
-
-			set
-			{
-				if (m_isWielded == value)
-					return;
-
-				m_isWielded = value;
-
-				var p = this.Parent as LivingObject;
-				if (p != null)
-					p.OnWeaponIsWieldedChanged(this, value);
-
-				Notify("Wielder");
-				Notify("IsWielded");
+				Notify("Equipper");
+				Notify("IsEquipped");
 			}
 		}
 
 
-		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
-		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
+		ILivingObject IItemObject.Equipper { get { return this.Equipper; } }
 
-		public LivingObject Wearer
+		public LivingObject Equipper
 		{
 			get
 			{
-				if (this.IsWorn)
-					return (LivingObject)this.Parent;
-				else
-					return null;
-			}
-		}
-
-		public LivingObject Wielder
-		{
-			get
-			{
-				if (this.IsWielded)
+				if (this.IsEquipped)
 					return (LivingObject)this.Parent;
 				else
 					return null;
@@ -260,12 +224,8 @@ namespace Dwarrowdelf.Client
 					this.IsClosed = (bool)value;
 					break;
 
-				case PropertyID.IsWorn:
-					this.IsWorn = (bool)value;
-					break;
-
-				case PropertyID.IsWielded:
-					this.IsWielded = (bool)value;
+				case PropertyID.IsEquipped:
+					this.IsEquipped = (bool)value;
 					break;
 
 				default:

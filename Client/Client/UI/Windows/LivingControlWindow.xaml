@@ -30,7 +30,6 @@
 				<Button Content="Drop" Click="DropButton_Click" />
 				<Button Content="Get" Click="GetButton_Click" />
 				<Button Content="Wear" Click="WearButton_Click" />
-				<Button Content="Wield" Click="WieldButton_Click" />
 				<Button Content="Remove" Click="RemoveButton_Click" />
 			</StackPanel>
 		</GroupBox>

@@ -280,39 +280,51 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
-		public void WearArmor(ItemObject wearable)
+		public void EquipItem(ItemObject item)
 		{
-			Debug.Assert(wearable.IsArmor);
-			Debug.Assert(wearable.ArmorInfo != null);
-			Debug.Assert(wearable.Parent == this);
-			Debug.Assert(wearable.IsWorn == false);
+			Debug.Assert(item.Parent == this);
+			Debug.Assert(item.IsEquipped == false);
+			Debug.Assert((item.IsArmor && item.ArmorInfo != null) || (item.IsWeapon && item.WeaponInfo != null));
 
-			var slot = wearable.ArmorInfo.Slot;
+			if (item.IsArmor)
+			{
+				if (this.Inventory.OfType<ItemObject>().Where(i => i.IsArmor && i.IsEquipped)
+					.Any(i => i.ArmorInfo.Slot == item.ArmorInfo.Slot))
+					throw new Exception();
+			}
+			else if (item.IsWeapon)
+			{
+				if (this.Weapon != null)
+					throw new Exception();
+			}
+			else
+			{
+				throw new Exception();
+			}
 
-			Debug.Assert(this.Inventory.OfType<ItemObject>().Where(i => i.IsArmor && i.IsWorn).All(i => i.ArmorInfo.Slot != slot));
+			item.IsEquipped = true;
 
-			wearable.IsWorn = true;
-
-			RecalcArmorClass();
+			if (item.IsArmor)
+				RecalcArmorClass();
 		}
 
-		public void RemoveArmor(ItemObject wearable)
+		public void UnequipItem(ItemObject item)
 		{
-			Debug.Assert(wearable.IsArmor);
-			Debug.Assert(wearable.ArmorInfo != null);
-			Debug.Assert(wearable.Parent == this);
-			Debug.Assert(wearable.IsWorn);
+			Debug.Assert(item.Parent == this);
+			Debug.Assert(item.IsEquipped);
+			Debug.Assert((item.IsArmor && item.ArmorInfo != null) || (item.IsWeapon && item.WeaponInfo != null));
 
-			wearable.IsWorn = false;
+			item.IsEquipped = false;
 
-			RecalcArmorClass();
+			if (item.IsArmor)
+				RecalcArmorClass();
 		}
 
 		void RecalcArmorClass()
 		{
 			var ac = this.Inventory
 				.OfType<ItemObject>()
-				.Where(i => i.IsArmor && i.IsWorn)
+				.Where(i => i.IsArmor && i.IsEquipped)
 				.Sum(i => i.ArmorInfo.AC);
 
 			this.ArmorClass = this.NaturalArmorClass + ac;
@@ -320,31 +332,12 @@ namespace Dwarrowdelf.Server
 
 		public int ArmorClass { get; private set; }
 
-		public void WieldWeapon(ItemObject weapon)
-		{
-			Debug.Assert(weapon.IsWeapon);
-			Debug.Assert(weapon.WeaponInfo != null);
-			Debug.Assert(weapon.Parent == this);
-			Debug.Assert(this.Weapon == null);
-
-			weapon.IsWielded = true;
-		}
-
-		public void RemoveWeapon(ItemObject weapon)
-		{
-			Debug.Assert(weapon.IsWeapon);
-			Debug.Assert(this.Weapon == weapon);
-			Debug.Assert(weapon.Wielder == this);
-
-			weapon.IsWielded = false;
-		}
-
 		public ItemObject Weapon
 		{
 			get
 			{
 				// XXX cache the result
-				return this.Inventory.OfType<ItemObject>().SingleOrDefault(i => i.IsWielded);
+				return this.Inventory.OfType<ItemObject>().SingleOrDefault(i => i.IsWeapon && i.IsEquipped);
 			}
 		}
 
@@ -456,10 +449,8 @@ namespace Dwarrowdelf.Server
 			if (item != null)
 			{
 				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.
-				if (item.IsArmor && item.IsWorn)
-					RemoveArmor(item);
-				else if (item.IsWeapon && item.IsWielded)
-					RemoveWeapon(item);
+				if (item.IsEquipped)
+					UnequipItem(item);
 			}
 
 			base.OnChildRemoved(child);
@@ -481,10 +472,8 @@ namespace Dwarrowdelf.Server
 			// make a copy, as the collection will be modified
 			foreach (ItemObject item in this.Inventory.ToList())
 			{
-				if (item.IsArmor && item.IsWorn)
-					RemoveArmor(item);
-				else if (item.IsWeapon && item.IsWielded)
-					RemoveWeapon(item);
+				if (item.IsEquipped)
+					UnequipItem(item);
 
 				ok = item.MoveTo(this.Environment, this.Location);
 				if (!ok)

@@ -47,7 +47,7 @@ namespace Dwarrowdelf.Server
 
 		protected override bool OkToMove()
 		{
-			return !this.IsWorn && !this.IsWielded && !this.IsInstalled;
+			return !this.IsEquipped && !this.IsInstalled;
 		}
 
 		protected override void OnParentChanging()
@@ -162,70 +162,38 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		[SaveGameProperty("IsWorn")]
-		bool m_isWorn;
-		public bool IsWorn
+		[SaveGameProperty("IsEquipped")]
+		bool m_isEquipped;
+		public bool IsEquipped
 		{
-			get { return m_isWorn; }
+			get { return m_isEquipped; }
 
 			internal set
 			{
-				Debug.Assert(this.IsArmor);
+				Debug.Assert(this.IsWeapon || this.IsArmor);
 				Debug.Assert(this.Parent is LivingObject);
 
-				if (m_isWorn == value)
+				if (m_isEquipped == value)
 					return;
 
-				m_isWorn = value;
+				m_isEquipped = value;
 
-				NotifyBool(PropertyID.IsWorn, value);
+				NotifyBool(PropertyID.IsEquipped, value);
 			}
 		}
 
-		[SaveGameProperty("IsWielded")]
-		bool m_isWielded;
-		public bool IsWielded
-		{
-			get { return m_isWielded; }
-
-			internal set
-			{
-				Debug.Assert(this.IsWeapon);
-				Debug.Assert(this.Parent is LivingObject);
-
-				if (m_isWielded == value)
-					return;
-
-				m_isWielded = value;
-
-				NotifyBool(PropertyID.IsWielded, value);
-			}
-		}
-
-		public LivingObject Wearer
+		public LivingObject Equipper
 		{
 			get
 			{
-				if (this.IsWorn)
+				if (this.IsEquipped)
 					return (LivingObject)this.Parent;
 				else
 					return null;
 			}
 		}
 
-		public LivingObject Wielder
-		{
-			get
-			{
-				if (this.IsWielded)
-					return (LivingObject)this.Parent;
-				else
-					return null;
-			}
-		}
-
-		ILivingObject IItemObject.Wearer { get { return this.Wearer; } }
-		ILivingObject IItemObject.Wielder { get { return this.Wielder; } }
+		ILivingObject IItemObject.Equipper { get { return this.Equipper; } }
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{
@@ -261,8 +229,7 @@ namespace Dwarrowdelf.Server
 			props[PropertyID.ReservedByStr] = m_reservedByStr;
 			props[PropertyID.IsInstalled] = m_isInstalled;
 			props[PropertyID.IsClosed] = m_isClosed;
-			props[PropertyID.IsWorn] = m_isWorn;
-			props[PropertyID.IsWielded] = m_isWielded;
+			props[PropertyID.IsEquipped] = m_isEquipped;
 
 			return props;
 		}

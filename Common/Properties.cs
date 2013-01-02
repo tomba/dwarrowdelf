@@ -50,8 +50,7 @@ namespace Dwarrowdelf
 		IsInstalled,
 		IsClosed,
 
-		IsWorn,
-		IsWielded,
+		IsEquipped,
 	}
 
 	[Flags]
@@ -109,8 +108,7 @@ namespace Dwarrowdelf
 			map[PropertyID.ReservedByStr] = ObjectVisibility.Debug;
 			map[PropertyID.IsInstalled] = ObjectVisibility.Public;
 			map[PropertyID.IsClosed] = ObjectVisibility.Public;
-			map[PropertyID.IsWorn] = ObjectVisibility.Public;
-			map[PropertyID.IsWielded] = ObjectVisibility.Public;
+			map[PropertyID.IsEquipped] = ObjectVisibility.Public;
 
 			s_visibilityArray = new ObjectVisibility[EnumHelpers.GetEnumMax<PropertyID>() + 1];
 

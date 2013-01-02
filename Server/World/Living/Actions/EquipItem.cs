@@ -8,11 +8,11 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class LivingObject
 	{
-		bool CheckRemoveArmor(ItemObject item)
+		bool CheckEquipItem(ItemObject item)
 		{
 			if (item == null)
 			{
-				var report = new RemoveArmorActionReport(this, null);
+				var report = new EquipItemActionReport(this, null);
 				report.SetFail("object doesn't exist");
 				SendReport(report);
 				return false;
@@ -20,24 +20,24 @@ namespace Dwarrowdelf.Server
 
 			if (item.Parent != this)
 			{
-				var report = new RemoveArmorActionReport(this, item);
+				var report = new EquipItemActionReport(this, item);
 				report.SetFail("doesn't have the object");
 				SendReport(report);
 				return false;
 			}
 
-			if (!item.IsArmor)
+			if (!item.IsArmor || !item.IsWeapon)
 			{
-				var report = new RemoveArmorActionReport(this, item);
-				report.SetFail("not an armor");
+				var report = new EquipItemActionReport(this, item);
+				report.SetFail("not equippable");
 				SendReport(report);
 				return false;
 			}
 
-			if (item.IsWorn == false)
+			if (item.IsEquipped)
 			{
-				var report = new RemoveArmorActionReport(this, item);
-				report.SetFail("not worn");
+				var report = new EquipItemActionReport(this, item);
+				report.SetFail("already equipped");
 				SendReport(report);
 				return false;
 			}
@@ -45,13 +45,13 @@ namespace Dwarrowdelf.Server
 			return true;
 		}
 
-		ActionState ProcessAction(RemoveArmorAction action)
+		ActionState ProcessAction(EquipItemAction action)
 		{
 			if (this.ActionTicksUsed == 1)
 			{
 				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
-				if (CheckRemoveArmor(item) == false)
+				if (CheckEquipItem(item) == false)
 					return ActionState.Fail;
 
 				this.ActionTotalTicks = 10;
@@ -66,12 +66,12 @@ namespace Dwarrowdelf.Server
 			{
 				var item = this.Inventory.FirstOrDefault(o => o.ObjectID == action.ItemID) as ItemObject;
 
-				if (CheckRemoveArmor(item) == false)
+				if (CheckEquipItem(item) == false)
 					return ActionState.Fail;
 
-				this.RemoveArmor(item);
+				this.EquipItem(item);
 
-				var report = new RemoveArmorActionReport(this, item);
+				var report = new EquipItemActionReport(this, item);
 				SendReport(report);
 
 				return ActionState.Done;

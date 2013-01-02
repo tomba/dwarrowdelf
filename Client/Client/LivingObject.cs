@@ -615,7 +615,17 @@ namespace Dwarrowdelf.Client
 			m_skills.Add(new Tuple<SkillID, byte>(skill, level));
 		}
 
-		internal void OnArmorIsWornChanged(ItemObject wearable, bool isWorn)
+		internal void OnItemIsEquippedChanged(ItemObject item, bool isEquipped)
+		{
+			if (item.IsArmor)
+				OnArmorIsWornChanged(item, isEquipped);
+			else if (item.IsWeapon)
+				OnWeaponIsWieldedChanged(item, isEquipped);
+			else
+				throw new Exception();
+		}
+
+		void OnArmorIsWornChanged(ItemObject wearable, bool isWorn)
 		{
 			Debug.Assert(wearable.Parent == this);
 
@@ -662,7 +672,7 @@ namespace Dwarrowdelf.Client
 
 		public ItemObject Weapon { get; private set; }
 
-		internal void OnWeaponIsWieldedChanged(ItemObject weapon, bool isWielded)
+		void OnWeaponIsWieldedChanged(ItemObject weapon, bool isWielded)
 		{
 			Debug.Assert(weapon.Parent == this);
 
@@ -684,10 +694,8 @@ namespace Dwarrowdelf.Client
 
 			if (item != null)
 			{
-				if (item.IsArmor && item.IsWorn)
-					throw new Exception();
-
-				if (item.IsWeapon && item.IsWielded)
+				// XXX
+				if (item.IsEquipped)
 					throw new Exception();
 
 				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.

@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Server
 
 			// filter non-worn and non-wielded if not private visibility
 			if ((visibility & ObjectVisibility.Private) == 0)
-				items = items.OfType<ItemObject>().Where(o => o.IsWorn || o.IsWielded);
+				items = items.OfType<ItemObject>().Where(o => o.IsEquipped);
 
 			foreach (var o in items)
 				o.SendTo(player, visibility);

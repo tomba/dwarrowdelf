@@ -51,44 +51,29 @@ namespace Dwarrowdelf.Server.Fortress
 			var itemIDs = Items.GetItemInfos(ItemCategory.Armor).Where(ii => ii.ArmorInfo.Slot == slot).ToArray();
 			var itemID = itemIDs[Helpers.GetRandomInt(itemIDs.Length)].ID;
 
-			AddArmor(living, itemID);
-		}
-
-		public static void AddArmor(LivingObject living, ItemID itemID)
-		{
-			var world = living.World;
-
-			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-			var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
-
-			var itemBuilder = new ItemObjectBuilder(itemID, material);
-			var item = itemBuilder.Create(world);
-
-			item.MoveTo(living);
-
-			living.WearArmor(item);
-		}
-
-		public static void AddWeapon(LivingObject living, ItemID itemID)
-		{
-			var world = living.World;
-
-			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
-			var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
-
-			var itemBuilder = new ItemObjectBuilder(itemID, material);
-			var item = itemBuilder.Create(world);
-
-			item.MoveTo(living);
-
-			living.WieldWeapon(item);
+			AddEquipment(living, itemID);
 		}
 
 		public static void AddRandomWeapon(LivingObject living)
 		{
 			var itemIDs = Items.GetItemInfos(ItemCategory.Weapon).ToArray();
 			var itemID = itemIDs[Helpers.GetRandomInt(itemIDs.Length)].ID;
-			AddWeapon(living, itemID);
+			AddEquipment(living, itemID);
+		}
+
+		public static void AddEquipment(LivingObject living, ItemID itemID)
+		{
+			var world = living.World;
+
+			var materials = Materials.GetMaterials(MaterialCategory.Metal).ToArray();
+			var material = materials[Helpers.GetRandomInt(materials.Length)].ID;
+
+			var itemBuilder = new ItemObjectBuilder(itemID, material);
+			var item = itemBuilder.Create(world);
+
+			item.MoveTo(living);
+
+			living.EquipItem(item);
 		}
 	}
 }

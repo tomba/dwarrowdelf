@@ -22,15 +22,9 @@ namespace Dwarrowdelf.Server
 				return false;
 			}
 
-			if (item.IsWorn)
+			if (item.IsEquipped)
 			{
-				SendFailReport(new DropItemActionReport(this, item), "item worn");
-				return false;
-			}
-
-			if (item.IsWielded)
-			{
-				SendFailReport(new DropItemActionReport(this, item), "item wielded");
+				SendFailReport(new DropItemActionReport(this, item), "item equipped");
 				return false;
 			}
 

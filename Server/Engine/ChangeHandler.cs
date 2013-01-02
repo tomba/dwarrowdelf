@@ -190,7 +190,7 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (PropertyChange)change;
 
-				if (c.PropertyID == PropertyID.IsWorn || c.PropertyID == PropertyID.IsWielded)
+				if (c.PropertyID == PropertyID.IsEquipped)
 				{
 					Debugger.Break();
 				

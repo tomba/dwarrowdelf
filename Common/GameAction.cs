@@ -427,14 +427,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public sealed class WearArmorAction : ItemAction
+	public sealed class EquipItemAction : ItemAction
 	{
-		public WearArmorAction(IItemObject item)
+		public EquipItemAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		WearArmorAction(SaveGameContext ctx)
+		EquipItemAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}
@@ -442,44 +442,14 @@ namespace Dwarrowdelf
 
 	[Serializable]
 	[SaveGameObjectByRef]
-	public sealed class RemoveArmorAction : ItemAction
+	public sealed class UnequipItemAction : ItemAction
 	{
-		public RemoveArmorAction(IItemObject item)
+		public UnequipItemAction(IItemObject item)
 			: base(item)
 		{
 		}
 
-		RemoveArmorAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-	}
-
-	[Serializable]
-	[SaveGameObjectByRef]
-	public sealed class WieldWeaponAction : ItemAction
-	{
-		public WieldWeaponAction(IItemObject item)
-			: base(item)
-		{
-		}
-
-		WieldWeaponAction(SaveGameContext ctx)
-			: base(ctx)
-		{
-		}
-	}
-
-	[Serializable]
-	[SaveGameObjectByRef]
-	public sealed class RemoveWeaponAction : ItemAction
-	{
-		public RemoveWeaponAction(IItemObject item)
-			: base(item)
-		{
-		}
-
-		RemoveWeaponAction(SaveGameContext ctx)
+		UnequipItemAction(SaveGameContext ctx)
 			: base(ctx)
 		{
 		}

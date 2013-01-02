@@ -102,18 +102,7 @@ namespace Dwarrowdelf.Client.UI
 
 			foreach (ItemObject item in inventoryListBox.SelectedItems)
 			{
-				var action = new WearArmorAction(item);
-				AddAction(action);
-			}
-		}
-
-		private void WieldButton_Click(object sender, RoutedEventArgs e)
-		{
-			var living = (LivingObject)this.DataContext;
-
-			foreach (ItemObject item in inventoryListBox.SelectedItems)
-			{
-				var action = new WieldWeaponAction(item);
+				var action = new EquipItemAction(item);
 				AddAction(action);
 			}
 		}
@@ -126,10 +115,8 @@ namespace Dwarrowdelf.Client.UI
 			{
 				GameAction action;
 
-				if (item.IsArmor)
-					action = new RemoveArmorAction(item);
-				else if (item.IsWeapon)
-					action = new RemoveWeaponAction(item);
+				if (item.IsArmor || item.IsWeapon)
+					action = new UnequipItemAction(item);
 				else
 					continue;
 

@@ -113,11 +113,9 @@ namespace Dwarrowdelf
 		ArmorInfo ArmorInfo { get; }
 		WeaponInfo WeaponInfo { get; }
 
-		ILivingObject Wearer { get; }
-		ILivingObject Wielder { get; }
+		ILivingObject Equipper { get; }
 
-		bool IsWorn { get; }
-		bool IsWielded { get; }
+		bool IsEquipped { get; }
 
 		int NutritionalValue { get; }
 		int RefreshmentValue { get; }

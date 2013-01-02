@@ -111,22 +111,12 @@ namespace Dwarrowdelf.Client
 				GameData.Data.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, itemName, report.FailReason);
 		}
 
-		void HandleReport(WearArmorActionReport report)
+		void HandleReport(EquipItemActionReport report)
 		{
-			HandleItemActionReport(report, "wears", "wear");
+			HandleItemActionReport(report, "equips", "equip");
 		}
 
-		void HandleReport(RemoveArmorActionReport report)
-		{
-			HandleItemActionReport(report, "removes", "remove");
-		}
-
-		void HandleReport(WieldWeaponActionReport report)
-		{
-			HandleItemActionReport(report, "wields", "wield");
-		}
-
-		void HandleReport(RemoveWeaponActionReport report)
+		void HandleReport(UnequipItemActionReport report)
 		{
 			HandleItemActionReport(report, "removes", "remove");
 		}
