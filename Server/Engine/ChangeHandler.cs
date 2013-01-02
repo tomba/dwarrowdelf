@@ -185,10 +185,15 @@ namespace Dwarrowdelf.Server
 			{
 				var c = (PropertyChange)change;
 
+				// fast path for controllables
+				if (m_player.IsController(c.Object))
+					return true;
+
 				if (c.PropertyID == PropertyID.IsEquipped)
 				{
-					Debugger.Break();
-				
+					// XXX special handling for IsEquipped for now
+					// We see the prop change even if the item is inside a non-controllable
+
 					var mo = (MovableObject)c.Object;
 
 					for (MovableObject o = mo; o != null; o = o.Parent as MovableObject)
@@ -200,20 +205,12 @@ namespace Dwarrowdelf.Server
 
 					return false;
 				}
-
-				if (m_player.IsController(c.Object))
-				{
-					return true;
-				}
 				else
 				{
 					var vis = PropertyVisibilities.GetPropertyVisibility(c.PropertyID);
 					var ov = m_player.GetObjectVisibility(c.Object);
 
-					if ((ov & vis) == 0)
-						return false;
-
-					return true;
+					return (ov & vis) != 0;
 				}
 			}
 			else if (change is ActionStartedChange)
