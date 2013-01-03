@@ -60,6 +60,8 @@ namespace Dwarrowdelf.Client
 
 			var item = new ItemObject();
 			item.MoveTo(this, new IntPoint3());
+
+			DeserializeEnd();
 		}
 
 		public LivingObject(World world, ObjectID objectID)

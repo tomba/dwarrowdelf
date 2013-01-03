@@ -33,6 +33,7 @@ namespace Dwarrowdelf.Client
 			};
 
 			DeserializeBegin(data);
+			DeserializeEnd();
 		}
 
 		public ItemObject(World world, ObjectID objectID)
