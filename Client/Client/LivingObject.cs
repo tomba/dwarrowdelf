@@ -688,28 +688,6 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		protected override void ChildRemoved(MovableObject child)
-		{
-			var item = child as ItemObject;
-
-			if (item != null)
-			{
-				// XXX
-				if (item.IsEquipped)
-					throw new Exception();
-
-				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.
-				/*
-				if (item.IsArmor && item.IsWorn)
-					RemoveArmor(item.ArmorInfo.Slot);
-				else if (item.IsWeapon && item.IsWielded)
-					RemoveWeapon();
-				 */
-			}
-
-			base.ChildRemoved(child);
-		}
-
 		public void SetLaborEnabled(LaborID labor, bool set)
 		{
 			m_enabledLabors.Set((int)labor, set);

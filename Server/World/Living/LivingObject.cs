@@ -439,20 +439,6 @@ namespace Dwarrowdelf.Server
 				Die();
 		}
 
-		protected override void OnChildRemoved(MovableObject child)
-		{
-			var item = child as ItemObject;
-
-			if (item != null)
-			{
-				// If the armor/weapon is forcibly moved with MoveToLow, we handle it here.
-				if (item.IsEquipped)
-					UnequipItem(item);
-			}
-
-			base.OnChildRemoved(child);
-		}
-
 		public void Die()
 		{
 			Trace.TraceInformation("{0} dies", this);

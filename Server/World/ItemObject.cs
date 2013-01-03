@@ -56,6 +56,11 @@ namespace Dwarrowdelf.Server
 			if (this.IsInstalled)
 				this.IsInstalled = false;
 
+			// Ensure that the item is not equipped when moved. This can happen when forcibly moved.
+			// XXX we need to inform the equipper about this, to recalc AC & weapon
+			if (this.IsEquipped)
+				this.IsEquipped = false;
+
 			base.OnParentChanging();
 		}
 
