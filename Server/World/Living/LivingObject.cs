@@ -280,6 +280,12 @@ namespace Dwarrowdelf.Server
 				this.World.AddChange(new SkillChange(this, skill, level));
 		}
 
+		internal void OnItemIsEquippedChanged(ItemObject item, bool isEquipped)
+		{
+			if (item.IsArmor)
+				RecalcArmorClass();
+		}
+
 		public void EquipItem(ItemObject item)
 		{
 			Debug.Assert(item.Parent == this);
@@ -303,9 +309,6 @@ namespace Dwarrowdelf.Server
 			}
 
 			item.IsEquipped = true;
-
-			if (item.IsArmor)
-				RecalcArmorClass();
 		}
 
 		public void UnequipItem(ItemObject item)
@@ -315,9 +318,6 @@ namespace Dwarrowdelf.Server
 			Debug.Assert((item.IsArmor && item.ArmorInfo != null) || (item.IsWeapon && item.WeaponInfo != null));
 
 			item.IsEquipped = false;
-
-			if (item.IsArmor)
-				RecalcArmorClass();
 		}
 
 		void RecalcArmorClass()
