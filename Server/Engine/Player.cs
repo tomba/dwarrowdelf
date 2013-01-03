@@ -441,6 +441,9 @@ namespace Dwarrowdelf.Server
 
 		public ObjectVisibility GetObjectVisibility(BaseObject ob)
 		{
+			if (m_seeAll)
+				return ObjectVisibility.All;
+
 			switch (ob.ObjectType)
 			{
 				case ObjectType.Item:
