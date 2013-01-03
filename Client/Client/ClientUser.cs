@@ -282,13 +282,17 @@ namespace Dwarrowdelf.Client
 
 		void HandleObjectData(BaseGameObjectData data)
 		{
-			var ob = m_world.FindOrCreateObject<BaseObject>(data.ObjectID);
+			var ob = m_world.FindObject(data.ObjectID);
+
+			if (ob == null)
+				ob = m_world.CreateObject(data.ObjectID);
+
 			ob.DeserializeBegin(data);
 		}
 
 		void HandleMessage(ObjectDataEndMessage msg)
 		{
-			var ob = m_world.GetObject<BaseObject>(msg.ObjectID);
+			var ob = m_world.GetObject(msg.ObjectID);
 			ob.DeserializeEnd();
 		}
 

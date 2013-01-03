@@ -41,7 +41,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleChange(ObjectCreatedChangeData change)
 		{
-			var ob = m_world.CreateObject(change.ObjectID);
+			// Ignore. Client creates objects when receiving data for them.
 		}
 
 		void HandleChange(ObjectMoveChangeData change)
