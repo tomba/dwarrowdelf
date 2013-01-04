@@ -244,14 +244,24 @@ namespace Dwarrowdelf
 
 				var typeInfo = TypeInfo.GetTypeInfo(type);
 
-				if (typeInfo.TypeClass == TypeClass.Dictionary || typeInfo.TypeClass == TypeClass.GenericDictionary)
-					ob = DeserializeDictionary(typeInfo);
-				else if (typeInfo.TypeClass == TypeClass.GameObject)
-					ob = DeserializeGameObject(typeInfo, id);
-				else if (typeInfo.TypeClass == TypeClass.Serializable)
-					ob = DeserializeSerializable(typeInfo, id);
-				else
-					throw new Exception();
+				switch (typeInfo.TypeClass)
+				{
+					case TypeClass.Dictionary:
+					case TypeClass.GenericDictionary:
+						ob = DeserializeDictionary(typeInfo);
+						break;
+
+					case TypeClass.GameObject:
+						ob = DeserializeGameObject(typeInfo, id);
+						break;
+
+					case TypeClass.Serializable:
+						ob = DeserializeSerializable(typeInfo, id);
+						break;
+
+					default:
+						throw new Exception();
+				}
 			}
 
 			return ob;
@@ -443,9 +453,9 @@ namespace Dwarrowdelf
 
 				Read();
 
-				var conv = m_globalResolvers.GetGlobalResolver(type);
+				var resolver = m_globalResolvers.GetGlobalResolver(type);
 
-				ob = conv.FromRef(sid);
+				ob = resolver.FromRef(sid);
 
 				created = false;
 			}

@@ -185,20 +185,23 @@ namespace Dwarrowdelf
 				case TypeClass.Dictionary:
 					throw new NotImplementedException();
 
-				default:
-					WriteObject(ob, writeType, typeInfo);
+				case TypeClass.GameObject:
+				case TypeClass.Serializable:
+					WriteObject(ob, typeInfo, writeType);
 					break;
+
+				default:
+					throw new NotImplementedException();
 			}
 		}
 
 		void WriteConvertable(object ob, TypeInfo typeInfo)
 		{
-
 			var str = typeInfo.TypeConverter.ConvertToInvariantString(ob);
 			m_writer.WriteValue(str);
 		}
 
-		void WriteObject(object ob, bool writeType, TypeInfo typeInfo)
+		void WriteObject(object ob, TypeInfo typeInfo, bool writeType)
 		{
 			m_writer.WriteStartObject();
 
@@ -292,13 +295,12 @@ namespace Dwarrowdelf
 		{
 			var type = typeInfo.Type;
 
-
 			if (m_globalResolvers != null)
 			{
-				var globalConverter = m_globalResolvers.GetGlobalResolver(type);
-				if (globalConverter != null)
+				var globalResolver = m_globalResolvers.GetGlobalResolver(type);
+				if (globalResolver != null)
 				{
-					var id = globalConverter.ToRefID(ob);
+					var id = globalResolver.ToRefID(ob);
 					m_writer.WritePropertyName("$sid");
 					m_writer.WriteValue(id);
 				}
