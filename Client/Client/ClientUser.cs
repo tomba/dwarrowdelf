@@ -277,23 +277,20 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(ObjectDataMessage msg)
 		{
-			HandleObjectData(msg.ObjectData);
-		}
+			var data = msg.ObjectData;
 
-		void HandleObjectData(BaseGameObjectData data)
-		{
 			var ob = m_world.FindObject(data.ObjectID);
 
 			if (ob == null)
 				ob = m_world.CreateObject(data.ObjectID);
 
-			ob.DeserializeBegin(data);
+			ob.ReceiveObjectData(data);
 		}
 
 		void HandleMessage(ObjectDataEndMessage msg)
 		{
 			var ob = m_world.GetObject(msg.ObjectID);
-			ob.DeserializeEnd();
+			ob.ReceiveObjectDataEnd();
 		}
 
 		void HandleMessage(MapDataTerrainsMessage msg)

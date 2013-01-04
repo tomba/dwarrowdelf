@@ -72,11 +72,11 @@ namespace Dwarrowdelf.Client
 			this.ItemTracker = new ItemTracker(this);
 		}
 
-		public override void DeserializeBegin(BaseGameObjectData _data)
+		public override void ReceiveObjectData(BaseGameObjectData _data)
 		{
 			var data = (MapData)_data;
 
-			base.DeserializeBegin(_data);
+			base.ReceiveObjectData(_data);
 
 			// XXX we currently always get the map size
 			if (!data.Size.IsEmpty)

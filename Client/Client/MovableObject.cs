@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Client
 			base.Destruct();
 		}
 
-		public override void DeserializeBegin(BaseGameObjectData _data)
+		public override void ReceiveObjectData(BaseGameObjectData _data)
 		{
 			var data = (MovableObjectData)_data;
 
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.Client
 
 			MoveTo(env, data.Location);
 
-			base.DeserializeBegin(_data);
+			base.ReceiveObjectData(_data);
 		}
 
 		public void MoveTo(ContainerObject dst, IntPoint3 dstLoc)

@@ -32,8 +32,8 @@ namespace Dwarrowdelf.Client
 				Properties = props,
 			};
 
-			DeserializeBegin(data);
-			DeserializeEnd();
+			ReceiveObjectData(data);
+			ReceiveObjectDataEnd();
 		}
 
 		public ItemObject(World world, ObjectID objectID)
@@ -235,13 +235,13 @@ namespace Dwarrowdelf.Client
 			}
 		}
 
-		public override void DeserializeBegin(BaseGameObjectData _data)
+		public override void ReceiveObjectData(BaseGameObjectData _data)
 		{
 			var data = (ItemData)_data;
 
 			this.ItemInfo = Dwarrowdelf.Items.GetItemInfo(data.ItemID);
 
-			base.DeserializeBegin(_data);
+			base.ReceiveObjectData(_data);
 
 			var matInfo = this.Material;
 			switch (this.ItemID)

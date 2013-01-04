@@ -56,12 +56,12 @@ namespace Dwarrowdelf.Client
 				Properties = props,
 			};
 
-			DeserializeBegin(data);
+			ReceiveObjectData(data);
 
 			var item = new ItemObject();
 			item.MoveTo(this, new IntPoint3());
 
-			DeserializeEnd();
+			ReceiveObjectDataEnd();
 		}
 
 		public LivingObject(World world, ObjectID objectID)
@@ -77,14 +77,14 @@ namespace Dwarrowdelf.Client
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 		}
 
-		public override void DeserializeBegin(BaseGameObjectData _data)
+		public override void ReceiveObjectData(BaseGameObjectData _data)
 		{
 			var data = (LivingData)_data;
 
 			this.LivingInfo = Dwarrowdelf.Livings.GetLivingInfo(data.LivingID);
 			this.SymbolID = LivingSymbols.GetSymbol(this.LivingID);
 
-			base.DeserializeBegin(_data);
+			base.ReceiveObjectData(_data);
 
 			this.CurrentAction = data.CurrentAction;
 			this.ActionPriority = data.ActionPriority;
@@ -101,9 +101,9 @@ namespace Dwarrowdelf.Client
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 		}
 
-		public override void DeserializeEnd()
+		public override void ReceiveObjectDataEnd()
 		{
-			base.DeserializeEnd();
+			base.ReceiveObjectDataEnd();
 
 			RecalcArmorClass();
 		}
