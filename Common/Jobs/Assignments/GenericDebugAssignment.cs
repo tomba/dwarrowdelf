@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 	/// <summary>
 	/// For debug only
 	/// </summary>
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class GenericDebugAssignment : Assignment
 	{
 		[SaveGameProperty("Action")]

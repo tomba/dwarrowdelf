@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObject(ClientObject = true)]
 	sealed class ItemObject : ConcreteObject, IItemObject
 	{
 		/// <summary>

@@ -7,7 +7,7 @@ using Dwarrowdelf.Server;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class FoodGenerator : ItemObject
 	{
 		public static FoodGenerator Create(World world)

@@ -16,7 +16,7 @@ namespace Dwarrowdelf.AI
 		Fleeing,
 	}
 
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class HerbivoreAI : AssignmentAI, IJobObserver
 	{
 		[SaveGameProperty]

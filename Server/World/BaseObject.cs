@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	/* Abstract game object, without inventory or location. */
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class BaseObject : IBaseObject
 	{
 		[SaveGameProperty]

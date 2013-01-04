@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.AI
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class MonsterAI : AssignmentAI, IJobObserver
 	{
 		ILivingObject m_target;

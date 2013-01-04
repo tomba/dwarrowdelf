@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Server
 {
 	// Inherited in Area projects. Could be sealed otherwise.
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public class ItemObject : ConcreteObject, IItemObject
 	{
 		internal static ItemObject Create(World world, ItemObjectBuilder builder)

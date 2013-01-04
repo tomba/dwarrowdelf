@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
 		protected ConcreteObject(ObjectType objectType, ConcreteObjectBuilder builder)

@@ -11,7 +11,7 @@ namespace Dwarrowdelf.AI
 	/// <summary>
 	/// abstract AI that handles Assignments
 	/// </summary>
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class AssignmentAI : IAI
 	{
 		[SaveGameProperty]

@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class ConstructJob : JobGroup
 	{
 		[SaveGameProperty]

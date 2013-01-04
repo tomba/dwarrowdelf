@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.JobGroups
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class FetchItems : JobGroup
 	{
 		public FetchItems(IJobObserver parent, IEnvironmentObject env, IntPoint3 location, IEnumerable<IItemObject> items)

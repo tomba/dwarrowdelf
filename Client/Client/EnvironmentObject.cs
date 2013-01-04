@@ -18,7 +18,7 @@ namespace Dwarrowdelf.Client
 		Update,
 	}
 
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObject(ClientObject = true)]
 	sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
 		public event Action<MovableObject, IntPoint3, MapTileObjectChangeType> MapTileObjectChanged;

@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.AssignmentGroups;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	class InstallItemManager : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]

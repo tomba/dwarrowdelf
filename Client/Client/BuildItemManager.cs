@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
 		[SaveGameProperty]
@@ -406,7 +406,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	[SaveGameObjectByValue]
+	[SaveGameObject(ByValue = true)]
 	sealed class BuildSpec
 	{
 		public BuildSpec(BuildableItem buildableItem)
@@ -432,7 +432,7 @@ namespace Dwarrowdelf.Client
 		public IItemFilter[] ItemSpecs { get; private set; }
 	}
 
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	sealed class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;

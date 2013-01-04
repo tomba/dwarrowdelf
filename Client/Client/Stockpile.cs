@@ -6,7 +6,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]

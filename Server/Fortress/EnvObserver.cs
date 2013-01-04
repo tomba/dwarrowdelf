@@ -10,7 +10,7 @@ namespace Dwarrowdelf.Server.Fortress
 	/// <summary>
 	/// Track interesting areas, and dwarves can idle around those
 	/// </summary>
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	class EnvObserver
 	{
 		[SaveGameProperty]

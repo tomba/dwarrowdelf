@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObject(ClientObject = true)]
 	abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
 		static ConcreteObject()

@@ -6,7 +6,7 @@ namespace Dwarrowdelf.Client
 {
 	delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc);
 
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObject(ClientObject = true)]
 	abstract class MovableObject : ContainerObject, IMovableObject
 	{
 		public event ObjectMoved ObjectMoved;

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.AI
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class Group
 	{
 		[SaveGameProperty]

@@ -43,7 +43,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class GameAction
 	{
 		[SaveGameProperty]
@@ -66,7 +66,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class MoveAction : GameAction
 	{
 		[SaveGameProperty]
@@ -89,7 +89,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class HaulAction : GameAction
 	{
 		[SaveGameProperty]
@@ -116,7 +116,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class WaitAction : GameAction
 	{
 		[SaveGameProperty]
@@ -139,7 +139,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class SleepAction : GameAction
 	{
 		[SaveGameProperty]
@@ -181,7 +181,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class MineAction : GameAction
 	{
 		[SaveGameProperty]
@@ -207,7 +207,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class FellTreeAction : GameAction
 	{
 		[SaveGameProperty]
@@ -239,7 +239,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class ConstructAction : GameAction
 	{
 		public ConstructMode Mode { get; private set; }
@@ -265,7 +265,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class BuildItemAction : GameAction
 	{
 		[SaveGameProperty]
@@ -294,7 +294,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class AttackAction : GameAction
 	{
 		[SaveGameProperty]
@@ -317,7 +317,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class ItemAction : GameAction
 	{
 		[SaveGameProperty]
@@ -340,7 +340,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class DropItemAction : ItemAction
 	{
 		public DropItemAction(IItemObject item)
@@ -355,7 +355,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class GetItemAction : ItemAction
 	{
 		public GetItemAction(IItemObject item)
@@ -370,7 +370,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class CarryItemAction : ItemAction
 	{
 		public CarryItemAction(IItemObject item)
@@ -385,7 +385,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class ConsumeAction : ItemAction
 	{
 		public ConsumeAction(IItemObject consumable)
@@ -407,7 +407,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class InstallItemAction : ItemAction
 	{
 		[SaveGameProperty]
@@ -426,7 +426,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class EquipItemAction : ItemAction
 	{
 		public EquipItemAction(IItemObject item)
@@ -441,7 +441,7 @@ namespace Dwarrowdelf
 	}
 
 	[Serializable]
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class UnequipItemAction : ItemAction
 	{
 		public UnequipItemAction(IItemObject item)

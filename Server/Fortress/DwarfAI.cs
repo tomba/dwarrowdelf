@@ -11,7 +11,7 @@ using Dwarrowdelf.Jobs.AssignmentGroups;
 
 namespace Dwarrowdelf.Server.Fortress
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	sealed class DwarfAI : AssignmentAI, IJobObserver
 	{
 		[SaveGameProperty]

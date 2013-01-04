@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 		public TimeSpan MinTickTime;
 	}
 
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public class GameEngine : MarshalByRefObject, IGame
 	{
 		string m_gameDir;

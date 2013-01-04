@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public abstract class MovableObject : ContainerObject, IMovableObject
 	{
 		[SaveGameProperty]

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Server
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
 		public static EnvironmentObject Create(World world, Dwarrowdelf.TerrainGen.TerrainData terrain, VisibilityMode visMode,

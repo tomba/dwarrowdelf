@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef(ClientObject = true)]
+	[SaveGameObject(ClientObject = true)]
 	sealed class LivingObject : ConcreteObject, ILivingObject
 	{
 		// XXX we need a global lock

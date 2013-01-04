@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class SleepAssignment : Assignment
 	{
 		[SaveGameProperty]

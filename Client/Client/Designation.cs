@@ -14,7 +14,7 @@ namespace Dwarrowdelf.Client
 		Channel,
 	}
 
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	sealed class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]

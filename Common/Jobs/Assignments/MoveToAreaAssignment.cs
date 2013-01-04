@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Jobs.Assignments
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class MoveToAreaAssignment : MoveAssignmentBase
 	{
 		[SaveGameProperty("Dest")]

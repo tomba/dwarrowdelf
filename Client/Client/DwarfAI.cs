@@ -9,7 +9,7 @@ using Dwarrowdelf.Jobs.Assignments;
 
 namespace Dwarrowdelf.Client
 {
-	[SaveGameObjectByRef]
+	[SaveGameObject]
 	public sealed class DwarfAI : AssignmentAI, IJobObserver
 	{
 		enum DwarfState
