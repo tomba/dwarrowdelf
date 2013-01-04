@@ -11,15 +11,9 @@ using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
-	public interface ISaveGameDeserializerRefResolver
-	{
-		object Get(int id);
-		void Add(int id, object ob);
-	}
-
 	public sealed class SaveGameDeserializer : IDisposable
 	{
-		sealed class DefaultDeserializerRefResolver : ISaveGameDeserializerRefResolver
+		sealed class DeserializerRefResolver
 		{
 			Dictionary<int, object> m_refMap = new Dictionary<int, object>();
 
@@ -39,7 +33,7 @@ namespace Dwarrowdelf
 		}
 
 		JsonTextReader m_reader;
-		ISaveGameDeserializerRefResolver ReferenceResolver;
+		DeserializerRefResolver m_referenceResolver;
 		SaveGameConverterCache m_globalConverters;
 		SaveGameRefResolverCache m_globalResolvers;
 
@@ -54,7 +48,7 @@ namespace Dwarrowdelf
 		public SaveGameDeserializer(TextReader reader)
 		{
 			m_reader = new JsonTextReader(reader);
-			this.ReferenceResolver = new DefaultDeserializerRefResolver();
+			m_referenceResolver = new DeserializerRefResolver();
 		}
 
 		public SaveGameDeserializer(TextReader reader, IEnumerable<ISaveGameConverter> globalConverters)
@@ -224,7 +218,7 @@ namespace Dwarrowdelf
 
 				var id = (int)(long)m_reader.Value;
 
-				ob = this.ReferenceResolver.Get(id);
+				ob = m_referenceResolver.Get(id);
 
 				if (ob == null)
 					throw new Exception();
@@ -471,7 +465,7 @@ namespace Dwarrowdelf
 				method.Invoke(ob, null);
 
 			if (id != -1)
-				this.ReferenceResolver.Add(id, ob);
+				m_referenceResolver.Add(id, ob);
 
 			var entries = typeInfo.GameMemberEntries;
 			var values = new object[entries.Length];
@@ -544,7 +538,7 @@ namespace Dwarrowdelf
 				ob = FormatterServices.GetUninitializedObject(type);
 
 			if (id != -1)
-				this.ReferenceResolver.Add(id, ob);
+				m_referenceResolver.Add(id, ob);
 
 			var members = typeInfo.SerializableMembers;
 

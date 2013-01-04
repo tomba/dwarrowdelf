@@ -22,15 +22,9 @@ namespace Dwarrowdelf
 	 * 
 	 */
 
-	public interface ISaveGameSerializerRefResolver
-	{
-		int Create(object ob);
-		int Get(object ob);
-	}
-
 	public sealed class SaveGameSerializer : IDisposable
 	{
-		sealed class DefaultSerializerRefResolver : ISaveGameSerializerRefResolver
+		sealed class SerializerRefResolver
 		{
 			Dictionary<object, int> m_refMap = new Dictionary<object, int>();
 			int m_refNum;
@@ -55,7 +49,7 @@ namespace Dwarrowdelf
 		}
 
 		JsonTextWriter m_writer;
-		public ISaveGameSerializerRefResolver ReferenceResolver { get; set; }
+		SerializerRefResolver m_referenceResolver;
 		SaveGameConverterCache m_globalConverters;
 		SaveGameRefResolverCache m_globalResolvers;
 
@@ -63,7 +57,7 @@ namespace Dwarrowdelf
 		{
 			m_writer = new JsonTextWriter(new StreamWriter(stream));
 			m_writer.Formatting = Formatting.Indented;
-			this.ReferenceResolver = new DefaultSerializerRefResolver();
+			m_referenceResolver = new SerializerRefResolver();
 		}
 
 		public SaveGameSerializer(Stream stream, IEnumerable<ISaveGameConverter> globalConverters)
@@ -209,7 +203,7 @@ namespace Dwarrowdelf
 			m_writer.WriteComment(ob.ToString());
 
 			bool canRef = typeInfo.UseRef;
-			int id = canRef == false ? -1 : this.ReferenceResolver.Get(ob);
+			int id = canRef == false ? -1 : m_referenceResolver.Get(ob);
 
 			if (canRef && id != -1)
 			{
@@ -220,7 +214,7 @@ namespace Dwarrowdelf
 			{
 				if (canRef)
 				{
-					id = this.ReferenceResolver.Create(ob);
+					id = m_referenceResolver.Create(ob);
 					m_writer.WritePropertyName("$id");
 					m_writer.WriteValue(id);
 				}
