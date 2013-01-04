@@ -180,8 +180,11 @@ namespace Dwarrowdelf
 					throw new NotImplementedException();
 
 				case TypeClass.GameObject:
+					WriteGameObject(ob, typeInfo, writeType);
+					break;
+
 				case TypeClass.Serializable:
-					WriteObject(ob, typeInfo, writeType);
+					WriteSerializable(ob, typeInfo, writeType);
 					break;
 
 				default:
@@ -195,7 +198,7 @@ namespace Dwarrowdelf
 			m_writer.WriteValue(str);
 		}
 
-		void WriteObject(object ob, TypeInfo typeInfo, bool writeType)
+		void WriteGameObject(object ob, TypeInfo typeInfo, bool writeType)
 		{
 			m_writer.WriteStartObject();
 
@@ -226,12 +229,86 @@ namespace Dwarrowdelf
 					m_writer.WriteValue(typeInfo.Type.AssemblyQualifiedName);
 				}
 
-				if (typeInfo.TypeClass == TypeClass.GameObject)
-					SerializeGameObject(ob, typeInfo);
-				else if (typeInfo.TypeClass == TypeClass.Serializable)
-					SerializeSerializable(ob, typeInfo);
+				WriteGameObjectData(ob, typeInfo);
+			}
+
+			m_writer.WriteEndObject();
+		}
+
+		void WriteGameObjectData(object ob, TypeInfo typeInfo)
+		{
+			var type = typeInfo.Type;
+
+			if (m_globalResolvers != null)
+			{
+				var globalResolver = m_globalResolvers.GetGlobalResolver(type);
+				if (globalResolver != null)
+				{
+					var id = globalResolver.ToRefID(ob);
+					m_writer.WritePropertyName("$sid");
+					m_writer.WriteValue(id);
+				}
+			}
+
+			var serializingMethods = typeInfo.OnSerializingMethods;
+			foreach (var method in serializingMethods)
+				method.Invoke(ob, null);
+
+			var entries = typeInfo.GameMemberEntries;
+			var values = typeInfo.GetObjectData(ob);
+
+			for (int i = 0; i < entries.Length; ++i)
+			{
+				var entry = entries[i];
+				var value = values[i];
+
+				m_writer.WritePropertyName(entry.Name);
+
+				if (entry.ReaderWriter != null)
+				{
+					entry.ReaderWriter.Write(m_writer, value);
+				}
 				else
-					throw new Exception();
+				{
+					var memberType = entry.MemberType;
+
+					if (entry.Converter != null)
+						value = entry.Converter.ConvertToSerializable(value);
+
+					SerializeObject(value, memberType);
+				}
+			}
+
+			var serializedMethods = typeInfo.OnSerializedMethods;
+			foreach (var method in serializedMethods)
+				method.Invoke(ob, null);
+		}
+
+		void WriteSerializable(object ob, TypeInfo typeInfo, bool writeType)
+		{
+			m_writer.WriteStartObject();
+
+			m_writer.WriteWhitespace(" ");
+			m_writer.WriteComment(ob.ToString());
+
+			if (writeType)
+			{
+				m_writer.WritePropertyName("$type");
+				// XXX fully qualified name is rather long...
+				m_writer.WriteValue(typeInfo.Type.AssemblyQualifiedName);
+			}
+
+			var members = typeInfo.SerializableMembers;
+
+			var values = FormatterServices.GetObjectData(ob, members);
+
+			for (int i = 0; i < members.Length; ++i)
+			{
+				var member = (FieldInfo)members[i];
+				var value = values[i];
+
+				m_writer.WritePropertyName(member.Name);
+				SerializeObject(value, member.FieldType);
 			}
 
 			m_writer.WriteEndObject();
@@ -283,71 +360,6 @@ namespace Dwarrowdelf
 				SerializeObject(o, elemType);
 
 			m_writer.WriteEndArray();
-		}
-
-		void SerializeGameObject(object ob, TypeInfo typeInfo)
-		{
-			var type = typeInfo.Type;
-
-			if (m_globalResolvers != null)
-			{
-				var globalResolver = m_globalResolvers.GetGlobalResolver(type);
-				if (globalResolver != null)
-				{
-					var id = globalResolver.ToRefID(ob);
-					m_writer.WritePropertyName("$sid");
-					m_writer.WriteValue(id);
-				}
-			}
-
-			var serializingMethods = typeInfo.OnSerializingMethods;
-			foreach (var method in serializingMethods)
-				method.Invoke(ob, null);
-
-			var entries = typeInfo.GameMemberEntries;
-			var values = typeInfo.GetObjectData(ob);
-
-			for (int i = 0; i < entries.Length; ++i)
-			{
-				var entry = entries[i];
-				var value = values[i];
-
-				m_writer.WritePropertyName(entry.Name);
-
-				if (entry.ReaderWriter != null)
-				{
-					entry.ReaderWriter.Write(m_writer, value);
-				}
-				else
-				{
-					var memberType = entry.MemberType;
-
-					if (entry.Converter != null)
-						value = entry.Converter.ConvertToSerializable(value);
-
-					SerializeObject(value, memberType);
-				}
-			}
-
-			var serializedMethods = typeInfo.OnSerializedMethods;
-			foreach (var method in serializedMethods)
-				method.Invoke(ob, null);
-		}
-
-		void SerializeSerializable(object ob, TypeInfo typeInfo)
-		{
-			var members = typeInfo.SerializableMembers;
-
-			var values = FormatterServices.GetObjectData(ob, members);
-
-			for (int i = 0; i < members.Length; ++i)
-			{
-				var member = (FieldInfo)members[i];
-				var value = values[i];
-
-				m_writer.WritePropertyName(member.Name);
-				SerializeObject(value, member.FieldType);
-			}
 		}
 	}
 }
