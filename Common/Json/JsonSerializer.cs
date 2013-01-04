@@ -308,7 +308,7 @@ namespace Dwarrowdelf
 
 			var serializingMethods = typeInfo.OnSerializingMethods;
 			foreach (var method in serializingMethods)
-				method.Invoke(ob, new object[0]);
+				method.Invoke(ob, null);
 
 			var entries = typeInfo.GameMemberEntries;
 			var values = typeInfo.GetObjectData(ob);
@@ -337,7 +337,7 @@ namespace Dwarrowdelf
 
 			var serializedMethods = typeInfo.OnSerializedMethods;
 			foreach (var method in serializedMethods)
-				method.Invoke(ob, new object[0]);
+				method.Invoke(ob, null);
 		}
 
 		void SerializeSerializable(object ob, TypeInfo typeInfo)

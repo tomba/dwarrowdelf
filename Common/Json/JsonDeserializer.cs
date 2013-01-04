@@ -468,7 +468,7 @@ namespace Dwarrowdelf
 
 			var deserializingMethods = typeInfo.OnDeserializingMethods;
 			foreach (var method in deserializingMethods)
-				method.Invoke(ob, new object[0]);
+				method.Invoke(ob, null);
 
 			if (id != -1)
 				this.ReferenceResolver.Add(id, ob);
@@ -518,7 +518,7 @@ namespace Dwarrowdelf
 
 			var deserializedMethods = typeInfo.OnDeserializedMethods;
 			foreach (var method in deserializedMethods)
-				method.Invoke(ob, new object[0]);
+				method.Invoke(ob, null);
 
 			var postDeserMethods = typeInfo.OnGamePostDeserializationMethods;
 			foreach (var method in postDeserMethods)
