@@ -42,6 +42,53 @@ namespace Dwarrowdelf.Client
 
 		}
 
+		public override void ReceiveObjectData(BaseGameObjectData _data)
+		{
+			var data = (ItemData)_data;
+
+			this.ItemInfo = Dwarrowdelf.Items.GetItemInfo(data.ItemID);
+
+			base.ReceiveObjectData(_data);
+
+			CreateItemDescription();
+
+			SetSymbol();
+		}
+
+		void CreateItemDescription()
+		{
+			var matInfo = this.Material;
+
+			switch (this.ItemID)
+			{
+				case ItemID.UncutGem:
+					this.Description = "uncut " + matInfo.Name;
+					break;
+
+				case ItemID.Ore:
+					if (matInfo.ID == MaterialID.NativeGold)
+						this.Description = matInfo.Adjective + " nugget";
+					else
+						this.Description = matInfo.Adjective + " ore";
+					break;
+
+				case ItemID.Gem:
+					this.Description = matInfo.Name;
+					break;
+
+				case ItemID.Corpse:
+					this.Description = String.Format("corpse of {0}", this.Name);
+					break;
+
+				default:
+					if (this.Name != null)
+						this.Description = matInfo.Adjective + " " + this.Name;
+					else
+						this.Description = matInfo.Adjective + " " + this.ItemInfo.Name;
+					break;
+			}
+		}
+
 		public static event Action<ItemObject> IsReservedChanged;
 
 		[SaveGameProperty]
@@ -233,47 +280,6 @@ namespace Dwarrowdelf.Client
 					base.SetProperty(propertyID, value);
 					break;
 			}
-		}
-
-		public override void ReceiveObjectData(BaseGameObjectData _data)
-		{
-			var data = (ItemData)_data;
-
-			this.ItemInfo = Dwarrowdelf.Items.GetItemInfo(data.ItemID);
-
-			base.ReceiveObjectData(_data);
-
-			var matInfo = this.Material;
-			switch (this.ItemID)
-			{
-				case ItemID.UncutGem:
-					this.Description = "uncut " + matInfo.Name;
-					break;
-
-				case ItemID.Ore:
-					if (matInfo.ID == MaterialID.NativeGold)
-						this.Description = matInfo.Adjective + " nugget";
-					else
-						this.Description = matInfo.Adjective + " ore";
-					break;
-
-				case ItemID.Gem:
-					this.Description = matInfo.Name;
-					break;
-
-				case ItemID.Corpse:
-					this.Description = String.Format("corpse of {0}", this.Name);
-					break;
-
-				default:
-					if (this.Name != null)
-						this.Description = matInfo.Adjective + " " + this.Name;
-					else
-						this.Description = matInfo.Adjective + " " + this.ItemInfo.Name;
-					break;
-			}
-
-			SetSymbol();
 		}
 
 		public override string ToString()
