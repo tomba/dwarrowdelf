@@ -45,7 +45,6 @@ namespace Dwarrowdelf
 		public ObjectID Parent { get; set; }
 	}
 
-	/* Item in inventory or floor */
 	[Serializable]
 	public sealed class ItemData : MovableObjectData
 	{
@@ -68,10 +67,6 @@ namespace Dwarrowdelf
 		public int ActionUserID { get; set; }
 
 		public Tuple<SkillID, byte>[] Skills { get; set; }
-
-		//public Tuple<ArmorSlot, ObjectID>[] ArmorSlots { get; set; }
-
-		//public ObjectID WeaponID { get; set; }
 
 		public override string ToString()
 		{
