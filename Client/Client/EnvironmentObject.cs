@@ -74,7 +74,7 @@ namespace Dwarrowdelf.Client
 
 		public override void ReceiveObjectData(BaseGameObjectData _data)
 		{
-			var data = (MapData)_data;
+			var data = (EnvironmentObjectData)_data;
 
 			base.ReceiveObjectData(_data);
 

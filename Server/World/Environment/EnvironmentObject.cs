@@ -456,7 +456,7 @@ namespace Dwarrowdelf.Server
 		{
 			base.CollectObjectData(baseData, visibility);
 
-			var data = (MapData)baseData;
+			var data = (EnvironmentObjectData)baseData;
 
 			data.VisibilityMode = this.VisibilityMode;
 			data.Size = this.Size;
@@ -464,7 +464,7 @@ namespace Dwarrowdelf.Server
 
 		public void SendIntroTo(IPlayer player)
 		{
-			var data = new MapData();
+			var data = new EnvironmentObjectData();
 			CollectObjectData(data, ObjectVisibility.Public);
 			player.Send(new Messages.ObjectDataMessage(data));
 		}
@@ -473,7 +473,7 @@ namespace Dwarrowdelf.Server
 		{
 			Debug.Assert(visibility != ObjectVisibility.None);
 
-			var data = new MapData();
+			var data = new EnvironmentObjectData();
 			CollectObjectData(data, visibility);
 			player.Send(new Messages.ObjectDataMessage(data));
 
