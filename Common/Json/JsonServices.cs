@@ -79,6 +79,36 @@ namespace Dwarrowdelf
 			this.ReaderWriter = readerWriter;
 		}
 
+		public object GetValue(object ob)
+		{
+			var member = this.Member;
+
+			if (member.MemberType == MemberTypes.Field)
+			{
+				var field = (FieldInfo)member;
+				return field.GetValue(ob);
+			}
+			else if (member.MemberType == MemberTypes.Property)
+			{
+				var prop = (PropertyInfo)member;
+				return prop.GetValue(ob, null);
+			}
+			else
+				throw new Exception();
+		}
+
+		public void SetValue(object ob, object value)
+		{
+			var member = this.Member;
+
+			if (member.MemberType == MemberTypes.Field)
+				((FieldInfo)member).SetValue(ob, value);
+			else if (member.MemberType == MemberTypes.Property)
+				((PropertyInfo)member).SetValue(ob, value, null);
+			else
+				throw new Exception();
+		}
+
 		static Dictionary<Type, ISaveGameConverter> s_converterMap = new Dictionary<Type, ISaveGameConverter>();
 
 		static ISaveGameConverter GetConverter(Type converterType)
@@ -268,57 +298,6 @@ namespace Dwarrowdelf
 
 			return null;
 		}
-
-		public object[] GetObjectData(object ob)
-		{
-			var entries = this.GameMemberEntries;
-
-			object[] values = new object[entries.Length];
-
-			for (int i = 0; i < entries.Length; ++i)
-			{
-				var entry = entries[i];
-				object value;
-
-				if (entry.Member.MemberType == MemberTypes.Field)
-				{
-					var field = (FieldInfo)entry.Member;
-					value = field.GetValue(ob);
-				}
-				else if (entry.Member.MemberType == MemberTypes.Property)
-				{
-					var prop = (PropertyInfo)entry.Member;
-					value = prop.GetValue(ob, null);
-				}
-				else
-					throw new Exception();
-
-				values[i] = value;
-			}
-
-			return values;
-		}
-
-		public void PopulateObjectMembers(object ob, object[] values)
-		{
-			var entries = this.GameMemberEntries;
-
-			for (int i = 0; i < entries.Length; ++i)
-			{
-				var entry = entries[i];
-				var value = values[i];
-				var member = entry.Member;
-
-				if (member.MemberType == MemberTypes.Field)
-					((FieldInfo)member).SetValue(ob, value);
-				else if (member.MemberType == MemberTypes.Property)
-					((PropertyInfo)member).SetValue(ob, value, null);
-				else
-					throw new Exception();
-			}
-		}
-
-
 
 		static MemberEntry[] GetMemberEntries(Type type)
 		{

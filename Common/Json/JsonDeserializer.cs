@@ -468,7 +468,6 @@ namespace Dwarrowdelf
 				m_referenceResolver.Add(id, ob);
 
 			var entries = typeInfo.GameMemberEntries;
-			var values = new object[entries.Length];
 
 			while (true)
 			{
@@ -500,12 +499,10 @@ namespace Dwarrowdelf
 						value = entry.Converter.ConvertFromSerializable(value);
 				}
 
-				values[idx] = value;
+				entry.SetValue(ob, value);
 
 				Read();
 			}
-
-			typeInfo.PopulateObjectMembers(ob, values);
 
 			if (created)
 				typeInfo.DeserializeConstructor.Invoke(ob, new object[] { new SaveGameContext() });

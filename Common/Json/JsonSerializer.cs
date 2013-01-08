@@ -255,12 +255,11 @@ namespace Dwarrowdelf
 				method.Invoke(ob, null);
 
 			var entries = typeInfo.GameMemberEntries;
-			var values = typeInfo.GetObjectData(ob);
 
 			for (int i = 0; i < entries.Length; ++i)
 			{
 				var entry = entries[i];
-				var value = values[i];
+				var value = entry.GetValue(ob);
 
 				m_writer.WritePropertyName(entry.Name);
 
