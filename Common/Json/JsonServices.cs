@@ -38,7 +38,6 @@ namespace Dwarrowdelf
 		public Type MemberType { get; private set; }
 		public ISaveGameConverter Converter { get; private set; }
 		public ISaveGameReaderWriter ReaderWriter { get; private set; }
-		public bool UseOldList { get; private set; }
 
 		public MemberEntry(MemberInfo member)
 		{
@@ -73,14 +72,11 @@ namespace Dwarrowdelf
 			if (attr.ReaderWriter != null)
 				readerWriter = GetReaderWriter(attr.ReaderWriter);
 
-			bool useOldList = attr.UseOldList;
-
 			this.Member = member;
 			this.Name = name;
 			this.MemberType = memberType;
 			this.Converter = converter;
 			this.ReaderWriter = readerWriter;
-			this.UseOldList = useOldList;
 		}
 
 		static Dictionary<Type, ISaveGameConverter> s_converterMap = new Dictionary<Type, ISaveGameConverter>();
@@ -312,23 +308,6 @@ namespace Dwarrowdelf
 				var entry = entries[i];
 				var value = values[i];
 				var member = entry.Member;
-
-				if (entry.UseOldList && value != null)
-				{
-					IList dstList;
-
-					if (member.MemberType == MemberTypes.Field)
-						dstList = (IList)((FieldInfo)member).GetValue(ob);
-					else if (member.MemberType == MemberTypes.Property)
-						dstList = (IList)((PropertyInfo)member).GetValue(ob, null);
-					else
-						throw new Exception();
-
-					dstList.Clear();
-					var srcList = (IList)value;
-					foreach (var item in srcList)
-						dstList.Add(item);
-				}
 
 				if (member.MemberType == MemberTypes.Field)
 					((FieldInfo)member).SetValue(ob, value);

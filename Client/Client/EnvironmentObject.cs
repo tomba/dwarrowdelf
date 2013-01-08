@@ -38,7 +38,6 @@ namespace Dwarrowdelf.Client
 
 		public IntSize3 Size { get { return m_tileGrid.Size; } }
 
-		[SaveGameProperty(UseOldList = true)]
 		ObservableCollection<IAreaElement> m_areaElements;
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
