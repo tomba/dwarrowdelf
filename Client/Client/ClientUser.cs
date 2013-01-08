@@ -228,14 +228,17 @@ namespace Dwarrowdelf.Client
 
 			m_world.TurnEnded += OnTurnEnded;
 			m_world.TurnStarted += OnTurnStarted;
+		}
 
-			GameData.Data.World = m_world;
+		void HandleMessage(ClientDataMessage msg)
+		{
+			if (msg.ClientData != null)
+				ClientSaveManager.Load(m_world, msg.ClientData);
 		}
 
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
-			if (msg.ClientData != null)
-				ClientSaveManager.Load(m_world, msg.ClientData);
+			GameData.Data.World = m_world;
 
 			if (m_opEvent != null)
 				m_opEvent.Set();

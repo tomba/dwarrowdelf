@@ -111,7 +111,7 @@ namespace Dwarrowdelf.Server
 				ReportReceived(report);
 		}
 
-		public void SendTo(IPlayer player, ObjectVisibility visibility)
+		public void SendWorldData(IPlayer player)
 		{
 			var data = new WorldData()
 			{
@@ -123,7 +123,10 @@ namespace Dwarrowdelf.Server
 			};
 
 			player.Send(new Messages.WorldDataMessage(data));
+		}
 
+		public void SendTo(IPlayer player, ObjectVisibility visibility)
+		{
 			if ((visibility & ObjectVisibility.Private) != 0)
 			{
 				// Send all objects without a parent. Those with a parent will be sent in the inventories of the parents

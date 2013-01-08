@@ -92,6 +92,11 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class LogOnReplyEndMessage : ClientMessage
 	{
+	}
+
+	[Serializable]
+	public sealed class ClientDataMessage : ClientMessage
+	{
 		public string ClientData { get; set; }
 	}
 

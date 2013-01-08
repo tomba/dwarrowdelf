@@ -124,14 +124,20 @@ namespace Dwarrowdelf.Server
 				IsSeeAll = m_seeAll,
 			});
 
+			m_world.SendWorldData(this);
+
 			m_world.SendTo(this, m_seeAll ? ObjectVisibility.All : ObjectVisibility.Public);
 
 			InitControllablesVisionTracker(m_controllables);
 			SendAddControllables(m_controllables);
 
-			Send(new Messages.LogOnReplyEndMessage()
+			Send(new Messages.ClientDataMessage()
 			{
 				ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+			});
+
+			Send(new Messages.LogOnReplyEndMessage()
+			{
 			});
 
 			if (m_world.IsTickOnGoing)
