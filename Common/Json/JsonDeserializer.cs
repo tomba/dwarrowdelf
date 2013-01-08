@@ -478,28 +478,41 @@ namespace Dwarrowdelf
 
 				string propName = (string)m_reader.Value;
 
-				var idx = Array.FindIndex(entries, fi => fi.Name == propName);
-				var entry = entries[idx];
-
 				Read();
 
-				object value;
+				var idx = Array.FindIndex(entries, fi => fi.Name == propName);
 
-				if (entry.ReaderWriter != null)
+				if (idx == -1 && typeInfo.HasDelegate && propName == "$del")
 				{
-					value = entry.ReaderWriter.Read(m_reader);
+					var data = DeserializeObject(typeof(object));
+					((ISaveGameDelegate)ob).RestoreSaveData(data);
+				}
+				else if (idx == -1)
+				{
+					throw new Exception();
 				}
 				else
 				{
-					var memberType = entry.MemberType;
+					var entry = entries[idx];
 
-					value = DeserializeObject(memberType);
+					object value;
 
-					if (entry.Converter != null)
-						value = entry.Converter.ConvertFromSerializable(value);
+					if (entry.ReaderWriter != null)
+					{
+						value = entry.ReaderWriter.Read(m_reader);
+					}
+					else
+					{
+						var memberType = entry.MemberType;
+
+						value = DeserializeObject(memberType);
+
+						if (entry.Converter != null)
+							value = entry.Converter.ConvertFromSerializable(value);
+					}
+
+					entry.SetValue(ob, value);
 				}
-
-				entry.SetValue(ob, value);
 
 				Read();
 			}

@@ -10,6 +10,12 @@ using Newtonsoft.Json;
 
 namespace Dwarrowdelf
 {
+	public interface ISaveGameDelegate
+	{
+		object GetSaveData();
+		void RestoreSaveData(object data);
+	}
+
 	public interface ISaveGameConverter
 	{
 		object ConvertToSerializable(object value);
@@ -201,6 +207,8 @@ namespace Dwarrowdelf
 		public Type ElementType1 { get; private set; }
 		public Type ElementType2 { get; private set; }
 
+		public bool HasDelegate { get; private set; }
+
 		public TypeInfo(Type type)
 		{
 			this.Type = type;
@@ -269,6 +277,8 @@ namespace Dwarrowdelf
 
 				if (this.DeserializeConstructor == null && gameObjAttr.ClientObject == false)
 					throw new Exception(String.Format("Need Deserialize constructor for type {0}", type.Name));
+
+				this.HasDelegate = type.GetInterfaces().Contains(typeof(ISaveGameDelegate));
 			}
 			else if (type.Attributes.HasFlag(TypeAttributes.Serializable))
 			{

@@ -278,6 +278,17 @@ namespace Dwarrowdelf
 				}
 			}
 
+			if (typeInfo.HasDelegate)
+			{
+				var data = ((ISaveGameDelegate)ob).GetSaveData();
+
+				if (data != null)
+				{
+					m_writer.WritePropertyName("$del");
+					SerializeObject(data, typeof(object));
+				}
+			}
+
 			var serializedMethods = typeInfo.OnSerializedMethods;
 			foreach (var method in serializedMethods)
 				method.Invoke(ob, null);
