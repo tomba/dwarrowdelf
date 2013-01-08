@@ -18,11 +18,11 @@ namespace Dwarrowdelf.Client
 	{
 		public static Action SaveEvent;
 
-		public static void Save(Guid id)
+		public static void Save(World world, Guid id)
 		{
 			var saveData = new ClientSaveData()
 			{
-				Objects = GameData.Data.World.Objects.ToArray(),
+				Objects = world.Objects.ToArray(),
 				BuildItemManagers = BuildItemManager.Managers.ToArray(),
 			};
 
@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Client
 
 			using (var stream = new System.IO.MemoryStream())
 			{
-				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream, new[] { new ClientObjectRefResolver() }))
+				using (var serializer = new Dwarrowdelf.SaveGameSerializer(stream, new[] { new ClientObjectRefResolver(world) }))
 				{
 					serializer.Serialize(saveData);
 
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 				SaveEvent();
 		}
 
-		public static void Load(string dataStr)
+		public static void Load(World world, string dataStr)
 		{
 			Trace.TraceInformation("Loading client data");
 			var watch = Stopwatch.StartNew();
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.Client
 
 			using (var reader = new StringReader(dataStr))
 			{
-				var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver() });
+				var deserializer = new Dwarrowdelf.SaveGameDeserializer(reader, new[] { new ClientObjectRefResolver(world) });
 				data = deserializer.Deserialize<ClientSaveData>();
 			}
 
@@ -77,6 +77,13 @@ namespace Dwarrowdelf.Client
 
 		sealed class ClientObjectRefResolver : ISaveGameRefResolver
 		{
+			World m_world;
+
+			public ClientObjectRefResolver(World world)
+			{
+				m_world = world;
+			}
+
 			public int ToRefID(object value)
 			{
 				var ob = (BaseObject)value;
@@ -86,7 +93,7 @@ namespace Dwarrowdelf.Client
 			public object FromRef(int refID)
 			{
 				var oid = new ObjectID((uint)refID);
-				var ob = GameData.Data.World.GetObject(oid);
+				var ob = m_world.GetObject(oid);
 				return ob;
 			}
 

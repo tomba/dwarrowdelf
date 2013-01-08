@@ -143,12 +143,12 @@ namespace Dwarrowdelf.Client
 
 				if (value == true)
 				{
-					GameData.Data.World.Controllables.Add(this);
+					this.World.Controllables.Add(this);
 					this.AI = new DwarfAI(this);
 				}
 				else
 				{
-					GameData.Data.World.Controllables.Remove(this);
+					this.World.Controllables.Remove(this);
 					this.AI = null;
 				}
 

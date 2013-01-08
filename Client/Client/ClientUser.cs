@@ -235,7 +235,7 @@ namespace Dwarrowdelf.Client
 		void HandleMessage(LogOnReplyEndMessage msg)
 		{
 			if (msg.ClientData != null)
-				ClientSaveManager.Load(msg.ClientData);
+				ClientSaveManager.Load(m_world, msg.ClientData);
 
 			if (m_opEvent != null)
 				m_opEvent.Set();
@@ -272,7 +272,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(SaveClientDataRequestMessage msg)
 		{
-			ClientSaveManager.Save(msg.ID);
+			ClientSaveManager.Save(m_world, msg.ID);
 		}
 
 		void HandleMessage(ObjectDataMessage msg)
