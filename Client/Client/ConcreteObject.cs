@@ -7,17 +7,6 @@ namespace Dwarrowdelf.Client
 	[SaveGameObject(ClientObject = true)]
 	abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
-		static ConcreteObject()
-		{
-			GameData.Data.TileSetChanged += OnTileSetChanged;
-		}
-
-		static void OnTileSetChanged()
-		{
-			foreach (var ob in GameData.Data.World.Objects.OfType<ConcreteObject>())
-				ob.ReloadDrawing();
-		}
-
 		public ConcreteObject(World world, ObjectID objectID)
 			: base(world, objectID)
 		{
@@ -92,14 +81,6 @@ namespace Dwarrowdelf.Client
 
 				Notify("SymbolID");
 			}
-		}
-
-		void ReloadDrawing()
-		{
-			if (this.Environment != null)
-				this.Environment.OnObjectVisualChanged(this);
-
-			Notify("SymbolID");
 		}
 
 		MaterialID m_materialID;
