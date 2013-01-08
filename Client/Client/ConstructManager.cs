@@ -147,7 +147,7 @@ namespace Dwarrowdelf.Client
 					var job = new ConstructJob(this, data.Mode, new IItemObject[] { data.Item }, m_environment, data.Location);
 
 					data.Job = job;
-					GameData.Data.Jobs.Add(job);
+					m_environment.World.Jobs.Add(job);
 				}
 
 				var assignment = data.Job.FindAssignment(living);
@@ -167,7 +167,7 @@ namespace Dwarrowdelf.Client
 		{
 			var data = m_jobDataList.Single(d => d.Job == job);
 
-			GameData.Data.Jobs.Remove(job);
+			m_environment.World.Jobs.Remove(job);
 			data.Job = null;
 
 			Debug.Assert(data.Item.ReservedBy == this);

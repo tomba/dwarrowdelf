@@ -36,8 +36,6 @@ namespace Dwarrowdelf.Client
 
 		public GameData()
 		{
-			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
-
 			this.TileSet = new Dwarrowdelf.Client.Symbols.CachedTileSet(Dwarrowdelf.Client.Symbols.TileSet.Default);
 
 			m_gameEvents = new ObservableCollection<GameEvent>();
@@ -197,7 +195,5 @@ namespace Dwarrowdelf.Client
 					GameData.Data.User.SendProceedTurn();
 			}
 		}
-
-		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
 	}
 }

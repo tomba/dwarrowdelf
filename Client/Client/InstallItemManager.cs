@@ -101,7 +101,7 @@ namespace Dwarrowdelf.Client
 					}
 
 					data.Job = job;
-					GameData.Data.Jobs.Add(job);
+					m_environment.World.Jobs.Add(job);
 				}
 
 				IAssignment assignment;
@@ -134,7 +134,7 @@ namespace Dwarrowdelf.Client
 
 			m_jobDataList.Remove(data);
 
-			GameData.Data.Jobs.Remove(job);
+			m_environment.World.Jobs.Remove(job);
 
 			Debug.Assert(data.Item.ReservedBy == this);
 			data.Item.ReservedBy = null;

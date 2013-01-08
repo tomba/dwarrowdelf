@@ -193,8 +193,8 @@ namespace Dwarrowdelf.Client
 		{
 			trace.TraceInformation("OnDisconnect");
 
-			GameData.Data.Jobs.Clear();
-			GameData.Data.World = null;
+			m_world.Jobs.Clear();
+			m_world = null;
 
 			if (DisconnectEvent != null)
 				DisconnectEvent();

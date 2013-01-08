@@ -83,7 +83,7 @@
 
 			<!-- Jobs -->
 			<GroupBox Header="Jobs" Grid.Row="2" Margin="2" >
-				<TreeView Name="jobTreeView" ItemsSource="{Binding Data.Jobs}" BorderThickness="0">
+				<TreeView Name="jobTreeView" ItemsSource="{Binding Data.World.Jobs}" BorderThickness="0">
 					<TreeView.Resources>
 						<ResourceDictionary Source="/Dwarrowdelf.Client;component/UI/JobViewDictionary.xaml" />
 					</TreeView.Resources>

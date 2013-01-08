@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Client
 		void OnDeserialized()
 		{
 			foreach (var job in m_jobs)
-				GameData.Data.Jobs.Add(job);
+				this.Environment.World.Jobs.Add(job);
 		}
 
 		public void Destruct()
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Client
 
 			m_jobs.Add(job);
 
-			GameData.Data.Jobs.Add(job);
+			this.Environment.World.Jobs.Add(job);
 
 			ob.ReservedBy = this;
 
@@ -200,7 +200,7 @@ namespace Dwarrowdelf.Client
 
 			m_jobs.Remove(j);
 
-			GameData.Data.Jobs.Remove(j);
+			this.Environment.World.Jobs.Remove(j);
 		}
 
 		// XXX Silly algorithm. Fill the stockpile evenly.

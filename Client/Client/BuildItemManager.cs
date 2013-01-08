@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Client
 		public void OnDeserialized()
 		{
 			if (m_currentJob != null)
-				GameData.Data.Jobs.Add(m_currentJob);
+				this.Environment.World.Jobs.Add(m_currentJob);
 		}
 
 		void Init()
@@ -255,7 +255,7 @@ namespace Dwarrowdelf.Client
 			{
 				m_currentJob = null;
 
-				GameData.Data.Jobs.Remove(job);
+				this.Environment.World.Jobs.Remove(job);
 				if (job.Status == JobStatus.Ok)
 					job.Abort();
 			}
@@ -305,7 +305,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			var job = new Jobs.JobGroups.BuildItemJob(this, this.Workbench, order.BuildableItem.Key, order.SourceItems);
-			GameData.Data.Jobs.Add(job);
+			this.Environment.World.Jobs.Add(job);
 			return job;
 		}
 

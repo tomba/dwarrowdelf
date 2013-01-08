@@ -26,6 +26,9 @@ namespace Dwarrowdelf.Client
 
 		public LivingCollection Controllables { get; private set; }
 
+		// Used by the UI, hack?
+		public ObservableCollection<Dwarrowdelf.Jobs.IJob> Jobs { get; private set; }
+
 		public Dwarrowdelf.Jobs.JobManager JobManager { get; private set; }
 
 		// perhaps this is not needed in client side
@@ -57,6 +60,8 @@ namespace Dwarrowdelf.Client
 			this.Environments = new ReadOnlyEnvironmentCollection(m_environments);
 
 			this.Controllables = new LivingCollection();
+
+			this.Jobs = new ObservableCollection<Dwarrowdelf.Jobs.IJob>();
 
 			this.JobManager = new Dwarrowdelf.Jobs.JobManager(this);
 		}

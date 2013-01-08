@@ -66,7 +66,7 @@ namespace Dwarrowdelf.Client
 			{
 				var job = kvp.Value.Job;
 				if (job != null)
-					GameData.Data.Jobs.Add(job);
+					this.Environment.World.Jobs.Add(job);
 			}
 		}
 
@@ -209,7 +209,7 @@ namespace Dwarrowdelf.Client
 						throw new Exception();
 				}
 
-				GameData.Data.Jobs.Add(job);
+				this.Environment.World.Jobs.Add(job);
 				dt.Job = job;
 
 				return job;
@@ -260,7 +260,7 @@ namespace Dwarrowdelf.Client
 
 			if (job != null)
 			{
-				GameData.Data.Jobs.Remove(job);
+				this.Environment.World.Jobs.Remove(job);
 				if (job.Status == JobStatus.Ok)
 					job.Abort();
 
