@@ -38,9 +38,6 @@ namespace Dwarrowdelf.Client
 		{
 			this.TileSet = new Dwarrowdelf.Client.Symbols.CachedTileSet(Dwarrowdelf.Client.Symbols.TileSet.Default);
 
-			m_gameEvents = new ObservableCollection<GameEvent>();
-			this.GameEvents = new ReadOnlyObservableCollection<GameEvent>(m_gameEvents);
-
 			m_ipMessages = new ObservableCollection<Messages.IPOutputMessage>();
 			this.IPMessages = new ReadOnlyObservableCollection<Messages.IPOutputMessage>(m_ipMessages);
 
@@ -97,53 +94,6 @@ namespace Dwarrowdelf.Client
 		}
 
 		public event Action TileSetChanged;
-
-		bool m_previousWasTickEvent = true;
-
-		public void AddGameEvent(EnvironmentObject env, IntPoint3 location, string format, params object[] args)
-		{
-			AddGameEventInternal(env, location, String.Format(format, args));
-			m_previousWasTickEvent = false;
-		}
-
-		public void AddGameEvent(EnvironmentObject env, IntPoint3 location, string message)
-		{
-			AddGameEventInternal(env, location, message);
-			m_previousWasTickEvent = false;
-		}
-
-		public void AddGameEvent(MovableObject ob, string format, params object[] args)
-		{
-			AddGameEvent(ob.Environment, ob.Location, String.Format(format, args));
-		}
-
-		public void AddGameEvent(MovableObject ob, string message)
-		{
-			AddGameEvent(ob.Environment, ob.Location, message);
-		}
-
-		public void AddTickGameEvent()
-		{
-			if (m_previousWasTickEvent)
-				return;
-
-			AddGameEventInternal(null, new IntPoint3(), "---");
-
-			m_previousWasTickEvent = true;
-		}
-
-		void AddGameEventInternal(EnvironmentObject env, IntPoint3 location, string message)
-		{
-			if (m_gameEvents.Count > 100)
-				m_gameEvents.RemoveAt(0);
-
-			//Trace.TraceInformation(message);
-
-			m_gameEvents.Add(new GameEvent(message, env, location));
-		}
-
-		ObservableCollection<GameEvent> m_gameEvents;
-		public ReadOnlyObservableCollection<GameEvent> GameEvents { get; private set; }
 
 
 		public void AddIPMessage(Dwarrowdelf.Messages.IPOutputMessage msg)

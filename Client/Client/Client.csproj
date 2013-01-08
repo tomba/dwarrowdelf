@@ -239,6 +239,7 @@
     <Compile Include="ContainerObject.cs" />
     <Compile Include="ConstructManager.cs" />
     <Compile Include="DebugScriptMessages.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="InstallItemManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TargetItemTracker.cs" />

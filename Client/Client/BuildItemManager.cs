@@ -300,7 +300,7 @@ namespace Dwarrowdelf.Client
 
 			if (!ok)
 			{
-				GameData.Data.AddGameEvent(this.Workbench, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
+				Events.AddGameEvent(this.Workbench, "Failed to find materials for {0}.", this.CurrentBuildOrder.BuildableItemID);
 				return null;
 			}
 

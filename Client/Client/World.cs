@@ -106,7 +106,7 @@ namespace Dwarrowdelf.Client
 			if (TickStarting != null)
 				TickStarting();
 
-			GameData.Data.AddTickGameEvent();
+			Events.AddTickGameEvent();
 		}
 
 		public void HandleChange(TurnStartChangeData change)

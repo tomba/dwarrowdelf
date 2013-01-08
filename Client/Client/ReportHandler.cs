@@ -76,7 +76,7 @@ namespace Dwarrowdelf.Client
 		void HandleReport(DeathReport report)
 		{
 			var target = m_world.FindObject<LivingObject>(report.LivingObjectID);
-			GameData.Data.AddGameEvent(target, "{0} dies", target);
+			Events.AddGameEvent(target, "{0} dies", target);
 		}
 
 		void HandleReport(MoveActionReport report)
@@ -84,9 +84,9 @@ namespace Dwarrowdelf.Client
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 
 			if (report.Success == false && living.IsControllable)
-				GameData.Data.AddGameEvent(living, "{0} failed to move {1}: {2}", living, report.Direction, report.FailReason);
+				Events.AddGameEvent(living, "{0} failed to move {1}: {2}", living, report.Direction, report.FailReason);
 			//else
-			//	GameData.Data.AddGameEvent(living, "{0} moved {1}", living, report.Direction);
+			//	Events.AddGameEvent(living, "{0} moved {1}", living, report.Direction);
 		}
 
 		void HandleReport(HaulActionReport report)
@@ -95,9 +95,9 @@ namespace Dwarrowdelf.Client
 			var itemName = GetPrintableItemName(report.ItemObjectID);
 
 			if (report.Success == false)
-				GameData.Data.AddGameEvent(living, "{0} failed to haul {1} to {2}: {3}", living, itemName, report.Direction, report.FailReason);
+				Events.AddGameEvent(living, "{0} failed to haul {1} to {2}: {3}", living, itemName, report.Direction, report.FailReason);
 			//else
-			//	GameData.Data.AddGameEvent(living, "{0} hauled {1} to {2}", living, itemName, report.Direction);
+			//	Events.AddGameEvent(living, "{0} hauled {1} to {2}", living, itemName, report.Direction);
 		}
 
 		void HandleItemActionReport(ItemActionReport report, string verb1, string verb2)
@@ -106,9 +106,9 @@ namespace Dwarrowdelf.Client
 			var itemName = GetPrintableItemName(report.ItemObjectID);
 
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} {1} {2}", living, verb1, itemName);
+				Events.AddGameEvent(living, "{0} {1} {2}", living, verb1, itemName);
 			else
-				GameData.Data.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, itemName, report.FailReason);
+				Events.AddGameEvent(living, "{0} failed to {1} {2}: {3}", living, verb2, itemName, report.FailReason);
 		}
 
 		void HandleReport(EquipItemActionReport report)
@@ -164,9 +164,9 @@ namespace Dwarrowdelf.Client
 			var item = m_world.FindObject<ItemObject>(report.ItemObjectID);
 
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} builds item {1}", living, item);
+				Events.AddGameEvent(living, "{0} builds item {1}", living, item);
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to build item {1}: {2}", living, report.BuildableItemKey, report.FailReason);
+				Events.AddGameEvent(living, "{0} fails to build item {1}: {2}", living, report.BuildableItemKey, report.FailReason);
 		}
 
 		void HandleReport(ConstructActionReport report)
@@ -174,9 +174,9 @@ namespace Dwarrowdelf.Client
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} constructs {1}", living, report.Mode);
+				Events.AddGameEvent(living, "{0} constructs {1}", living, report.Mode);
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to construct {1}: {2}", living, report.Mode, report.FailReason);
+				Events.AddGameEvent(living, "{0} fails to construct {1}: {2}", living, report.Mode, report.FailReason);
 		}
 
 		void HandleReport(AttackActionReport report)
@@ -187,7 +187,7 @@ namespace Dwarrowdelf.Client
 
 			if (!report.Success)
 			{
-				GameData.Data.AddGameEvent(attacker, "{0} fails to attack {1}: {2}", aname, tname, report.FailReason);
+				Events.AddGameEvent(attacker, "{0} fails to attack {1}: {2}", aname, tname, report.FailReason);
 				return;
 			}
 
@@ -214,7 +214,7 @@ namespace Dwarrowdelf.Client
 				msg = String.Format("{0} misses {1}", aname, tname);
 			}
 
-			GameData.Data.AddGameEvent(attacker, msg);
+			Events.AddGameEvent(attacker, msg);
 		}
 
 		void HandleReport(MineActionReport report)
@@ -225,21 +225,21 @@ namespace Dwarrowdelf.Client
 				switch (report.MineActionType)
 				{
 					case MineActionType.Mine:
-						GameData.Data.AddGameEvent(living, "{0} mines {1} ({2})", living, report.Location, report.Direction);
+						Events.AddGameEvent(living, "{0} mines {1} ({2})", living, report.Location, report.Direction);
 						break;
 
 					case MineActionType.Stairs:
-						GameData.Data.AddGameEvent(living, "{0} creates stairs {1} ({2})", living, report.Location, report.Direction);
+						Events.AddGameEvent(living, "{0} creates stairs {1} ({2})", living, report.Location, report.Direction);
 						break;
 
 					case MineActionType.Channel:
-						GameData.Data.AddGameEvent(living, "{0} channels {1} ({2})", living, report.Location, report.Direction);
+						Events.AddGameEvent(living, "{0} channels {1} ({2})", living, report.Location, report.Direction);
 						break;
 				}
 			}
 			else
 			{
-				GameData.Data.AddGameEvent(living, "{0} fails to mine {1} ({2}): {3}", living, report.Location, report.Direction, report.FailReason);
+				Events.AddGameEvent(living, "{0} fails to mine {1} ({2}): {3}", living, report.Location, report.Direction, report.FailReason);
 			}
 		}
 
@@ -247,18 +247,18 @@ namespace Dwarrowdelf.Client
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.InteriorID);
+				Events.AddGameEvent(living, "{0} fells {1} {2}", living, report.MaterialID, report.InteriorID);
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to fell tree: {1}", living, report.FailReason);
+				Events.AddGameEvent(living, "{0} fails to fell tree: {1}", living, report.FailReason);
 		}
 
 		void HandleReport(SleepActionReport report)
 		{
 			var living = m_world.FindObject<LivingObject>(report.LivingObjectID);
 			if (report.Success)
-				GameData.Data.AddGameEvent(living, "{0} wakes up", living);
+				Events.AddGameEvent(living, "{0} wakes up", living);
 			else
-				GameData.Data.AddGameEvent(living, "{0} fails to sleep: {1}", living, report.FailReason);
+				Events.AddGameEvent(living, "{0} fails to sleep: {1}", living, report.FailReason);
 		}
 	}
 }

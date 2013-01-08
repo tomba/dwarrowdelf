@@ -188,7 +188,7 @@ namespace Dwarrowdelf.Client
 
 				case JobStatus.Abort:
 				case JobStatus.Fail:
-					GameData.Data.AddGameEvent(j.Item, "failed to store item to stockpile");
+					Events.AddGameEvent(j.Item, "failed to store item to stockpile");
 					break;
 
 				default:
