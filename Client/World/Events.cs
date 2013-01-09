@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	public sealed class GameEvent
+	public sealed class ClientEvent
 	{
 		public string Message { get; private set; }
 		public EnvironmentObject Environment { get; private set; }
 		public IntPoint3 Location { get; private set; }
 
-		public GameEvent(string str)
+		public ClientEvent(string str)
 		{
 			this.Message = str;
 		}
 
-		public GameEvent(string str, EnvironmentObject env, IntPoint3 location)
+		public ClientEvent(string str, EnvironmentObject env, IntPoint3 location)
 		{
 			this.Message = str;
 			this.Environment = env;
@@ -28,14 +28,14 @@ namespace Dwarrowdelf.Client
 
 	public static class Events
 	{
-		static ObservableCollection<GameEvent> s_events;
-		public static ReadOnlyObservableCollection<GameEvent> EventsCollection { get; private set; }
+		static ObservableCollection<ClientEvent> s_events;
+		public static ReadOnlyObservableCollection<ClientEvent> EventsCollection { get; private set; }
 		static bool s_previousWasTickEvent = true;
 
 		static Events()
 		{
-			s_events = new ObservableCollection<GameEvent>();
-			EventsCollection = new ReadOnlyObservableCollection<GameEvent>(s_events);
+			s_events = new ObservableCollection<ClientEvent>();
+			EventsCollection = new ReadOnlyObservableCollection<ClientEvent>(s_events);
 		}
 
 		public static void AddGameEvent(EnvironmentObject env, IntPoint3 location, string format, params object[] args)
@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Client
 
 			//Trace.TraceInformation(message);
 
-			s_events.Add(new GameEvent(message, env, location));
+			s_events.Add(new ClientEvent(message, env, location));
 		}
 	}
 }

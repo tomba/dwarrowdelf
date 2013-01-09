@@ -592,7 +592,7 @@ namespace Dwarrowdelf.Client.UI
 			if (e.AddedItems.Count != 1)
 				return;
 
-			var msg = (GameEvent)e.AddedItems[0];
+			var msg = (ClientEvent)e.AddedItems[0];
 
 			if (msg.Environment == null)
 				return;
