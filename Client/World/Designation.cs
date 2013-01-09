@@ -22,6 +22,7 @@ namespace Dwarrowdelf.Client
 
 		[SaveGameProperty]
 		Dictionary<IntPoint3, DesignationData> m_map;
+
 		[SaveGameProperty]
 		bool m_checkStatus;
 
@@ -43,16 +44,13 @@ namespace Dwarrowdelf.Client
 			this.Environment = env;
 
 			m_map = new Dictionary<IntPoint3, DesignationData>();
-
-			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
 		Designation(SaveGameContext ctx)
 		{
 		}
 
-		[OnSaveGamePostDeserialization]
-		void OnDeserialized()
+		public void Register()
 		{
 			this.Environment.World.JobManager.AddJobSource(this);
 
@@ -68,6 +66,14 @@ namespace Dwarrowdelf.Client
 				if (job != null)
 					this.Environment.World.Jobs.Add(job);
 			}
+		}
+
+		public void Unregister()
+		{
+			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			foreach (var kvp in m_map)
+				RemoveDesignation(kvp.Key);
 		}
 
 		void OnEnvironmentMapTileTerrainChanged(IntPoint3 obj)

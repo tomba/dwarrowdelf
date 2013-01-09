@@ -23,7 +23,6 @@ namespace Dwarrowdelf.Client
 		public ConstructManager(EnvironmentObject env)
 		{
 			m_environment = env;
-			m_environment.World.JobManager.AddJobSource(this);
 
 			m_unreachables = new Unreachables(m_environment.World);
 
@@ -34,11 +33,20 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		[OnSaveGamePostDeserialization]
+		[OnSaveGameDeserialized]
 		void OnDeserialized()
 		{
-			m_environment.World.JobManager.AddJobSource(this);
 			m_unreachables = new Unreachables(m_environment.World);
+		}
+
+		public void Register()
+		{
+			m_environment.World.JobManager.AddJobSource(this);
+		}
+
+		public void Unregister()
+		{
+			m_environment.World.JobManager.RemoveJobSource(this);
 		}
 
 		public ConstructMode ContainsPoint(IntPoint3 p)

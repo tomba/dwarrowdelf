@@ -19,8 +19,17 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject(ClientObject = true)]
-	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
+	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject, ISaveGameDelegate
 	{
+		[Serializable]
+		sealed class EnvironmentObjectClientData
+		{
+			public ObservableCollection<IAreaElement> AreaElements;
+			public Designation Designations;
+			public InstallItemManager InstallItemManager;
+			public ConstructManager ConstructManager;
+		}
+
 		/// <summary>
 		/// Object in a tile has moved
 		/// </summary>
@@ -53,15 +62,6 @@ namespace Dwarrowdelf.Client
 		ObservableCollection<IAreaElement> m_areaElements;
 		public ReadOnlyObservableCollection<IAreaElement> AreaElements { get; private set; }
 
-		[SaveGameProperty]
-		public Designation Designations { get; private set; }
-
-		[SaveGameProperty]
-		public InstallItemManager InstallItemManager { get; private set; }
-
-		[SaveGameProperty]
-		public ConstructManager ConstructManager { get; private set; }
-
 		public ItemTracker ItemTracker { get; private set; }
 
 		public EnvironmentObject(World world, ObjectID objectID)
@@ -76,11 +76,16 @@ namespace Dwarrowdelf.Client
 			m_areaElements = new ObservableCollection<IAreaElement>();
 			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
 
+			this.ItemTracker = new ItemTracker(this);
+
 			this.Designations = new Designation(this);
 			this.InstallItemManager = new InstallItemManager(this);
 			this.ConstructManager = new ConstructManager(this);
+		}
 
-			this.ItemTracker = new ItemTracker(this);
+		public override void Destruct()
+		{
+			base.Destruct();
 		}
 
 		public override void ReceiveObjectData(BaseGameObjectData _data)
@@ -96,10 +101,78 @@ namespace Dwarrowdelf.Client
 			this.VisibilityMode = data.VisibilityMode;
 		}
 
-		[OnSaveGameDeserialized]
-		void OnDeserialized()
+		object ISaveGameDelegate.GetSaveData()
 		{
+			return new EnvironmentObjectClientData()
+			{
+				AreaElements = m_areaElements,
+				Designations = this.Designations,
+				InstallItemManager = this.InstallItemManager,
+				ConstructManager = this.ConstructManager,
+			};
+		}
+
+		void ISaveGameDelegate.RestoreSaveData(object _data)
+		{
+			var data = (EnvironmentObjectClientData)_data;
+
+			m_areaElements = data.AreaElements;
 			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
+
+			this.Designations = data.Designations;
+			this.InstallItemManager = data.InstallItemManager;
+			this.ConstructManager = data.ConstructManager;
+		}
+
+		Designation m_designations;
+		public Designation Designations
+		{
+			get { return m_designations; }
+
+			private set
+			{
+				if (m_designations != null)
+					m_designations.Unregister();
+
+				m_designations = value;
+
+				if (m_designations != null)
+					m_designations.Register();
+			}
+		}
+
+		InstallItemManager m_installItemManager;
+		public InstallItemManager InstallItemManager
+		{
+			get { return m_installItemManager; }
+
+			private set
+			{
+				if (m_installItemManager != null)
+					m_installItemManager.Unregister();
+
+				m_installItemManager = value;
+
+				if (m_installItemManager != null)
+					m_installItemManager.Register();
+			}
+		}
+
+		ConstructManager m_constructManager;
+		public ConstructManager ConstructManager
+		{
+			get { return m_constructManager; }
+
+			private set
+			{
+				if (m_constructManager != null)
+					m_constructManager.Unregister();
+
+				m_constructManager = value;
+
+				if (m_constructManager != null)
+					m_constructManager.Register();
+			}
 		}
 
 		public override void SetProperty(PropertyID propertyID, object value)

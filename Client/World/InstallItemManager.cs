@@ -18,10 +18,9 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		List<InstallJobData> m_jobDataList;
 
-		public InstallItemManager(EnvironmentObject ob)
+		public InstallItemManager(EnvironmentObject env)
 		{
-			m_environment = ob;
-			m_environment.World.JobManager.AddJobSource(this);
+			m_environment = env;
 
 			m_jobDataList = new List<InstallJobData>();
 		}
@@ -30,10 +29,14 @@ namespace Dwarrowdelf.Client
 		{
 		}
 
-		[OnSaveGamePostDeserialization]
-		void OnDeserialized()
+		public void Register()
 		{
 			m_environment.World.JobManager.AddJobSource(this);
+		}
+
+		public void Unregister()
+		{
+			m_environment.World.JobManager.RemoveJobSource(this);
 		}
 
 		public void AddInstallJob(ItemObject item, IntPoint3 location)

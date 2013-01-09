@@ -23,6 +23,7 @@ namespace Dwarrowdelf.Jobs
 
 		public void AddJobSource(IJobSource jobSource)
 		{
+			Debug.Assert(m_jobSources.Contains(jobSource) == false);
 			m_jobSources.Add(jobSource);
 		}
 
