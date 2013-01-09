@@ -5,7 +5,7 @@ using Dwarrowdelf.Jobs;
 
 namespace Dwarrowdelf.Client
 {
-	enum DesignationType
+	public enum DesignationType
 	{
 		None,
 		Mine,
@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject]
-	sealed class Designation : IJobSource, IJobObserver
+	public sealed class Designation : IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }

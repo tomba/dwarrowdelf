@@ -7,7 +7,7 @@ using Dwarrowdelf.Jobs;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject]
-	sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
+	public sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
 	{
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }

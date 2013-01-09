@@ -11,25 +11,6 @@ using System.Windows.Threading;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class GameEvent
-	{
-		public string Message { get; private set; }
-		public EnvironmentObject Environment { get; private set; }
-		public IntPoint3 Location { get; private set; }
-
-		public GameEvent(string str)
-		{
-			this.Message = str;
-		}
-
-		public GameEvent(string str, EnvironmentObject env, IntPoint3 location)
-		{
-			this.Message = str;
-			this.Environment = env;
-			this.Location = location;
-		}
-	}
-
 	sealed class GameData : DependencyObject
 	{
 		public static readonly GameData Data = new GameData();

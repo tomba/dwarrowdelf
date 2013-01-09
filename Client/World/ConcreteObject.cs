@@ -5,7 +5,7 @@ using System.Linq;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject(ClientObject = true)]
-	abstract class ConcreteObject : MovableObject, IConcreteObject
+	public abstract class ConcreteObject : MovableObject, IConcreteObject
 	{
 		public ConcreteObject(World world, ObjectID objectID)
 			: base(world, objectID)

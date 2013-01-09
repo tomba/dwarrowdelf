@@ -231,20 +231,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="BaseObject.cs" />
     <Compile Include="ChangeHandler.cs" />
     <Compile Include="ClientConfig.cs" />
-    <Compile Include="Collections.cs" />
     <Compile Include="ConnectManager.cs" />
-    <Compile Include="ContainerObject.cs" />
-    <Compile Include="ConstructManager.cs" />
     <Compile Include="DebugScriptMessages.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="InstallItemManager.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="TargetItemTracker.cs" />
-    <Compile Include="DwarfAI.cs" />
-    <Compile Include="ItemTracker.cs" />
     <Compile Include="Selectables.cs" />
     <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
@@ -264,7 +255,6 @@
     </Compile>
     <Compile Include="UI\Converters\UIElementToDescConverter.cs" />
     <Compile Include="IPRunner.cs" />
-    <Compile Include="ManualControlAI.cs" />
     <Compile Include="ReportHandler.cs" />
     <Compile Include="UI\BaseObjectPropertiesControl.xaml.cs">
       <DependentUpon>BaseObjectPropertiesControl.xaml</DependentUpon>
@@ -292,7 +282,6 @@
     </Compile>
     <Compile Include="UI\Converters\DrawingConverter.cs" />
     <Compile Include="UI\ListBoxHelper.cs" />
-    <Compile Include="ConcreteObject.cs" />
     <Compile Include="UI\BuildingEditControl.xaml.cs">
       <DependentUpon>BuildingEditControl.xaml</DependentUpon>
     </Compile>
@@ -313,15 +302,10 @@
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
-    <Compile Include="Jobs\CleanAreaJob.cs" />
-    <Compile Include="Jobs\StoreToStockpileJob.cs" />
     <Compile Include="RenderViewDetailed.cs" />
     <Compile Include="RenderViewBase.cs" />
-    <Compile Include="Designation.cs" />
-    <Compile Include="IAreaElement.cs" />
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="EmbeddedServer.cs" />
-    <Compile Include="Stockpile.cs" />
     <Compile Include="UI\MainWindow\SingleTileInfoControl.xaml.cs">
       <DependentUpon>SingleTileInfoControl.xaml</DependentUpon>
     </Compile>
@@ -404,13 +388,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildItemManager.cs" />
     <Compile Include="ClientNetStatistics.cs" />
-    <Compile Include="LivingObject.cs" />
-    <Compile Include="ItemObject.cs" />
     <Compile Include="GameData.cs" />
-    <Compile Include="MovableObject.cs" />
-    <Compile Include="EnvironmentObject.cs" />
     <Compile Include="UI\ItemInfoControl.xaml.cs">
       <DependentUpon>ItemInfoControl.xaml</DependentUpon>
     </Compile>
@@ -428,7 +407,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ClientUser.cs" />
-    <Compile Include="World.cs" />
     <Resource Include="Images\splash.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -481,6 +459,10 @@
     <ProjectReference Include="..\Base\Client.Base.csproj">
       <Project>{1794F5B1-762E-40D2-A314-040487DEEFE2}</Project>
       <Name>Client.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\World\Client.World.csproj">
+      <Project>{1f2d0cae-43a7-49cd-8a03-69a67c1a68fd}</Project>
+      <Name>Client.World</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

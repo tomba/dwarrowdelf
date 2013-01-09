@@ -7,8 +7,9 @@
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:world="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.World"
 		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance Type=local:LivingObject, IsDesignTimeCreatable=True}">
+		d:DataContext="{d:DesignInstance Type=world:LivingObject, IsDesignTimeCreatable=True}">
 
 	<Window.Resources>
 		<DataTemplate x:Key="itemTemplate">

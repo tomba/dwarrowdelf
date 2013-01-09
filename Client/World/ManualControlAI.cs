@@ -10,7 +10,7 @@ using Dwarrowdelf.AI;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject]
-	sealed class ManualControlAI : IAI, INotifyPropertyChanged
+	public sealed class ManualControlAI : IAI, INotifyPropertyChanged
 	{
 		ObservableCollection<GameAction> m_actions;
 		public ReadOnlyObservableCollection<GameAction> Actions { get; private set; }

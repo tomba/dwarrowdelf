@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	enum MapTileObjectChangeType
+	public enum MapTileObjectChangeType
 	{
 		Add,
 		Remove,
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject(ClientObject = true)]
-	sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
+	public sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
 		/// <summary>
 		/// Object in a tile has moved

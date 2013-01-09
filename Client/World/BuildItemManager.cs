@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject]
-	sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
+	public sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
 		[SaveGameProperty]
 		static List<BuildItemManager> s_buildItemManagers;
@@ -407,7 +407,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject(ByValue = true)]
-	sealed class BuildSpec
+	public sealed class BuildSpec
 	{
 		public BuildSpec(BuildableItem buildableItem)
 		{
@@ -433,7 +433,7 @@ namespace Dwarrowdelf.Client
 	}
 
 	[SaveGameObject]
-	sealed class BuildOrder : INotifyPropertyChanged
+	public sealed class BuildOrder : INotifyPropertyChanged
 	{
 		bool m_isRepeat;
 		bool m_isSuspended;

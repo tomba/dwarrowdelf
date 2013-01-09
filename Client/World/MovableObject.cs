@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace Dwarrowdelf.Client
 {
-	delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc);
+	public delegate void ObjectMoved(MovableObject ob, ContainerObject dst, IntPoint3 loc);
 
 	[SaveGameObject(ClientObject = true)]
-	abstract class MovableObject : ContainerObject, IMovableObject
+	public abstract class MovableObject : ContainerObject, IMovableObject
 	{
 		public event ObjectMoved ObjectMoved;
 

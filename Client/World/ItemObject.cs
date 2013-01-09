@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject(ClientObject = true)]
-	sealed class ItemObject : ConcreteObject, IItemObject
+	public sealed class ItemObject : ConcreteObject, IItemObject
 	{
 		/// <summary>
 		/// For Design-time only
@@ -299,7 +299,7 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	static class ItemSymbols
+	public static class ItemSymbols
 	{
 		// ItemID -> SymbolID
 		static SymbolID[] s_symbols;

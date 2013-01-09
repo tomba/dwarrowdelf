@@ -4,17 +4,18 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Dwarrowdelf.Client"
+			 xmlns:world="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.World"
 			 xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="372" d:DesignWidth="714">
 	<UserControl.Resources>
-		<x:Array x:Key="list" Type="{x:Type local:BaseObject}">
-			<local:ItemObject />
-			<local:ItemObject />
-			<local:LivingObject />
-			<local:ItemObject />
-			<local:LivingObject />
-			<local:LivingObject />
+		<x:Array x:Key="list" Type="{x:Type world:BaseObject}">
+			<world:ItemObject />
+			<world:ItemObject />
+			<world:LivingObject />
+			<world:ItemObject />
+			<world:LivingObject />
+			<world:LivingObject />
 		</x:Array>
 	</UserControl.Resources>
 

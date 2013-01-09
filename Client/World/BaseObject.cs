@@ -7,7 +7,7 @@ using System.ComponentModel;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject(ClientObject = true)]
-	abstract class BaseObject : IBaseObject, INotifyPropertyChanged
+	public abstract class BaseObject : IBaseObject, INotifyPropertyChanged
 	{
 		public ObjectID ObjectID { get; private set; }
 		public ObjectType ObjectType { get { return this.ObjectID.ObjectType; } }

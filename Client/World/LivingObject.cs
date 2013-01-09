@@ -9,7 +9,7 @@ using System.Collections;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject(ClientObject = true)]
-	sealed class LivingObject : ConcreteObject, ILivingObject
+	public sealed class LivingObject : ConcreteObject, ILivingObject
 	{
 		// XXX we need a global lock
 		static object m_visionMapLock = new object();

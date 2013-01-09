@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class World : IWorld, INotifyPropertyChanged
+	public sealed class World : IWorld, INotifyPropertyChanged
 	{
 		BaseGameObjectCollection m_objects;
 		public ReadOnlyBaseGameObjectCollection Objects { get; private set; }

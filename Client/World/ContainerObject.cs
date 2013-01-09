@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	abstract class ContainerObject : BaseObject, IContainerObject
+	public abstract class ContainerObject : BaseObject, IContainerObject
 	{
 		MovableObjectCollection m_inventory;
 		public ReadOnlyMovableObjectCollection Inventory { get; private set; }

@@ -3,6 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="clr-namespace:Dwarrowdelf.Client"
 		xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
+		xmlns:world="clr-namespace:Dwarrowdelf.Client;assembly=Dwarrowdelf.Client.World"
 		Title="Dwarrowdelf" Height="720" Width="1200"
 		x:ClassModifier="internal"
 		x:Name="mainWindow"
@@ -105,7 +106,7 @@
 
 			<!-- Events -->
 			<ListBox Grid.Column="2" Grid.Row="2"
-					 ItemsSource="{Binding Source={x:Static local:Events.EventsCollection}}" SelectionMode="Single" ui:ListBoxExtenders.AutoScrollToEnd="True"
+					 ItemsSource="{Binding Source={x:Static world:Events.EventsCollection}}" SelectionMode="Single" ui:ListBoxExtenders.AutoScrollToEnd="True"
 					 ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
 					 SelectionChanged="MessageListBox_SelectionChanged">
 				<ListBox.ItemTemplate>

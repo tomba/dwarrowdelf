@@ -7,7 +7,26 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	static class Events
+	public sealed class GameEvent
+	{
+		public string Message { get; private set; }
+		public EnvironmentObject Environment { get; private set; }
+		public IntPoint3 Location { get; private set; }
+
+		public GameEvent(string str)
+		{
+			this.Message = str;
+		}
+
+		public GameEvent(string str, EnvironmentObject env, IntPoint3 location)
+		{
+			this.Message = str;
+			this.Environment = env;
+			this.Location = location;
+		}
+	}
+
+	public static class Events
 	{
 		static ObservableCollection<GameEvent> s_events;
 		public static ReadOnlyObservableCollection<GameEvent> EventsCollection { get; private set; }

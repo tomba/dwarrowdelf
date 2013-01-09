@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client
 {
-	interface IAreaElement
+	public interface IAreaElement
 	{
 		EnvironmentObject Environment { get; }
 		IntGrid2Z Area { get; }
