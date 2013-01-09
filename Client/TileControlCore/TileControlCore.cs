@@ -85,7 +85,11 @@ namespace Dwarrowdelf.Client.TileControl
 				//TODO: Managed cleanup code here, while managed refs still valid
 			}
 
-			m_renderer.Dispose();
+			if (m_renderer != null)
+			{
+				m_renderer.Dispose();
+				m_renderer = null;
+			}
 
 			m_disposed = true;
 		}
