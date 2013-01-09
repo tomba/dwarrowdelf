@@ -577,8 +577,8 @@ namespace Dwarrowdelf.Client
 			private set { m_serverAssignment = value; Notify("ServerAssignment"); }
 		}
 
-		string m_clientAssignment;
 		[SaveGameProperty]
+		string m_clientAssignment;
 		public string ClientAssignment
 		{
 			get { return m_clientAssignment; }
