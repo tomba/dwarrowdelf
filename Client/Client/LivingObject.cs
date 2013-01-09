@@ -286,11 +286,13 @@ namespace Dwarrowdelf.Client
 			this.ActionTicksUsed = 0;
 		}
 
+		static public event Action<LivingObject, GameAction> LivingRequestsAction;
+
 		public void RequestAction(GameAction action)
 		{
 			//Debug.Print("RequestAction({0}: {1})", this, action);
-
-			GameData.Data.User.SignalLivingHasAction(this, action);
+			if (LivingObject.LivingRequestsAction != null)
+				LivingObject.LivingRequestsAction(this, action);
 		}
 
 		public bool UserActionPossible()

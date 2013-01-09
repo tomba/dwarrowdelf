@@ -130,6 +130,8 @@ namespace Dwarrowdelf.Client
 			m_opEvent.Dispose();
 			m_opEvent = null;
 
+			LivingObject.LivingRequestsAction += OnLivingRequestsAction;
+
 			this.State = ClientUserState.LoggedIn;
 		}
 
@@ -192,6 +194,8 @@ namespace Dwarrowdelf.Client
 		void OnDisconnected()
 		{
 			trace.TraceInformation("OnDisconnect");
+
+			LivingObject.LivingRequestsAction -= OnLivingRequestsAction;
 
 			m_world.Jobs.Clear();
 			m_world = null;
@@ -352,7 +356,7 @@ namespace Dwarrowdelf.Client
 			m_proceedTurnSent = false;
 		}
 
-		public void SignalLivingHasAction(LivingObject living, GameAction action)
+		void OnLivingRequestsAction(LivingObject living, GameAction action)
 		{
 			turnTrace.TraceVerbose("SignalLivingHasAction({0}, {1}", living, action);
 
