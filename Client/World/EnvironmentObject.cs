@@ -47,7 +47,6 @@ namespace Dwarrowdelf.Client
 
 		GrowingTileGrid m_tileGrid;
 		Dictionary<IntPoint3, List<MovableObject>> m_objectMap;
-		List<MovableObject> m_objectList;
 
 		public event Action<MovableObject> ObjectAdded;
 		public event Action<MovableObject> ObjectRemoved;
@@ -71,7 +70,6 @@ namespace Dwarrowdelf.Client
 
 			m_tileGrid = new GrowingTileGrid();
 			m_objectMap = new Dictionary<IntPoint3, List<MovableObject>>();
-			m_objectList = new List<MovableObject>();
 
 			m_areaElements = new ObservableCollection<IAreaElement>();
 			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
@@ -387,11 +385,6 @@ namespace Dwarrowdelf.Client
 			return obs.AsReadOnly();
 		}
 
-		public IList<MovableObject> GetContents()
-		{
-			return m_objectList.AsReadOnly();
-		}
-
 		public MovableObject GetFirstObject(IntPoint3 l)
 		{
 			List<MovableObject> obs;
@@ -419,9 +412,6 @@ namespace Dwarrowdelf.Client
 			else
 				obs.Add(child);
 
-			Debug.Assert(!m_objectList.Contains(child));
-			m_objectList.Add(child);
-
 			if (MapTileObjectChanged != null)
 				MapTileObjectChanged(child, l, MapTileObjectChangeType.Add);
 
@@ -438,9 +428,6 @@ namespace Dwarrowdelf.Client
 			List<MovableObject> obs = m_objectMap[l];
 
 			bool removed = obs.Remove(child);
-			Debug.Assert(removed);
-
-			removed = m_objectList.Remove(child);
 			Debug.Assert(removed);
 
 			if (MapTileObjectChanged != null)
