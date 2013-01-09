@@ -21,8 +21,20 @@ namespace Dwarrowdelf.Client
 	[SaveGameObject(ClientObject = true)]
 	sealed class EnvironmentObject : ContainerObject, IEnvironmentObject
 	{
+		/// <summary>
+		/// Object in a tile has moved
+		/// </summary>
 		public event Action<MovableObject, IntPoint3, MapTileObjectChangeType> MapTileObjectChanged;
+
+		/// <summary>
+		/// Tile's terrain data changed
+		/// </summary>
 		public event Action<IntPoint3> MapTileTerrainChanged;
+
+		/// <summary>
+		/// Extra visual data for tile changed (designation, ...)
+		/// </summary>
+		public event Action<IntPoint3> MapTileExtraChanged;
 
 		GrowingTileGrid m_tileGrid;
 		Dictionary<IntPoint3, List<MovableObject>> m_objectMap;
@@ -408,6 +420,12 @@ namespace Dwarrowdelf.Client
 		{
 			if (MapTileObjectChanged != null)
 				MapTileObjectChanged(ob, ob.Location, MapTileObjectChangeType.Update);
+		}
+
+		internal void OnTileExtraChanged(IntPoint3 p)
+		{
+			if (this.MapTileExtraChanged != null)
+				this.MapTileExtraChanged(p);
 		}
 
 		public override string ToString()

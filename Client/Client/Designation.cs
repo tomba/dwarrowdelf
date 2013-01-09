@@ -144,7 +144,7 @@ namespace Dwarrowdelf.Client
 				m_map[p] = new DesignationData(type);
 				CheckTile(p);
 
-				GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(p);
+				this.Environment.OnTileExtraChanged(p);
 			}
 
 			if (origCount == 0 && m_map.Count > 0)
@@ -251,7 +251,7 @@ namespace Dwarrowdelf.Client
 				this.Environment.World.TickStarting -= OnTickStartEvent;
 			}
 
-			GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(p);
+			this.Environment.OnTileExtraChanged(p);
 		}
 
 		void RemoveJob(IntPoint3 p)

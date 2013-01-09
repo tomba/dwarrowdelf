@@ -49,7 +49,7 @@ namespace Dwarrowdelf.Client
 
 			m_jobDataList.Add(data);
 
-			GameData.Data.MainWindow.MapControl.InvalidateRenderViewTile(location);
+			m_environment.OnTileExtraChanged(location);
 		}
 
 		public void AddUninstallJob(ItemObject item)

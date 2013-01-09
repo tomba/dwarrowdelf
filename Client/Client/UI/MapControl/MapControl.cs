@@ -156,6 +156,7 @@ namespace Dwarrowdelf.Client.UI
 				{
 					m_env.MapTileTerrainChanged -= MapChangedCallback;
 					m_env.MapTileObjectChanged -= MapObjectChangedCallback;
+					m_env.MapTileExtraChanged -= OnMapTileExtraChanged;
 				}
 
 				m_env = value;
@@ -165,6 +166,7 @@ namespace Dwarrowdelf.Client.UI
 				{
 					m_env.MapTileTerrainChanged += MapChangedCallback;
 					m_env.MapTileObjectChanged += MapObjectChangedCallback;
+					m_env.MapTileExtraChanged += OnMapTileExtraChanged;
 				}
 
 				InvalidateTileData();
@@ -225,6 +227,14 @@ namespace Dwarrowdelf.Client.UI
 		void MapObjectChangedCallback(MovableObject ob, IntPoint3 l, MapTileObjectChangeType changetype)
 		{
 			if (!m_renderView.Contains(l))
+				return;
+
+			InvalidateTileData();
+		}
+
+		void OnMapTileExtraChanged(IntPoint3 p)
+		{
+			if (!m_renderView.Contains(p))
 				return;
 
 			InvalidateTileData();
