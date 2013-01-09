@@ -8,8 +8,14 @@ using System.Diagnostics;
 namespace Dwarrowdelf.Client
 {
 	[SaveGameObject(ClientObject = true)]
-	public sealed class ItemObject : ConcreteObject, IItemObject
+	public sealed class ItemObject : ConcreteObject, IItemObject, ISaveGameDelegate
 	{
+		[Serializable]
+		sealed class ItemObjectClientData
+		{
+			public BuildItemManager BuildItemManager;
+		}
+
 		/// <summary>
 		/// For Design-time only
 		/// </summary>
@@ -53,6 +59,33 @@ namespace Dwarrowdelf.Client
 			CreateItemDescription();
 
 			SetSymbol();
+		}
+
+		object ISaveGameDelegate.GetSaveData()
+		{
+			ItemObjectClientData data = null;
+
+			if (this.ItemCategory == Dwarrowdelf.ItemCategory.Workbench)
+			{
+				var buildItemManager = BuildItemManager.FindBuildItemManager(this);
+				if (buildItemManager != null)
+				{
+					if (data == null)
+						data = new ItemObjectClientData();
+
+					data.BuildItemManager = buildItemManager;
+				}
+			}
+
+			return data;
+		}
+
+		void ISaveGameDelegate.RestoreSaveData(object _data)
+		{
+			var data = (ItemObjectClientData)_data;
+
+			if (data.BuildItemManager != null)
+				BuildItemManager.AddBuildItemManager(data.BuildItemManager);
 		}
 
 		void CreateItemDescription()

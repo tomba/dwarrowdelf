@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Client
 	[SaveGameObject]
 	public sealed class BuildItemManager : IJobSource, IJobObserver, INotifyPropertyChanged
 	{
-		[SaveGameProperty]
 		static List<BuildItemManager> s_buildItemManagers;
 
 		static BuildItemManager()
@@ -19,17 +18,25 @@ namespace Dwarrowdelf.Client
 			s_buildItemManagers = new List<BuildItemManager>();
 		}
 
-		public static ReadOnlyCollection<BuildItemManager> Managers
+		internal static void AddBuildItemManager(BuildItemManager manager)
 		{
-			get { return new ReadOnlyCollection<BuildItemManager>(s_buildItemManagers); }
+			Debug.Assert(s_buildItemManagers.All(bim => bim.Workbench != manager.Workbench));
+
+			s_buildItemManagers.Add(manager);
 		}
 
-		public static void Deserialize(BuildItemManager[] managers)
+		static void RemoveBuildItemManager(BuildItemManager mgr)
 		{
-			s_buildItemManagers = new List<BuildItemManager>(managers);
+			var ok = s_buildItemManagers.Remove(mgr);
+			Debug.Assert(ok);
 		}
 
-		public static BuildItemManager GetBuildItemManager(ItemObject workbench)
+		public static BuildItemManager FindBuildItemManager(ItemObject workbench)
+		{
+			return s_buildItemManagers.FirstOrDefault(m => m.Workbench == workbench);
+		}
+
+		public static BuildItemManager FindOrCreateBuildItemManager(ItemObject workbench)
 		{
 			var mgr = s_buildItemManagers.FirstOrDefault(m => m.Workbench == workbench);
 
@@ -40,12 +47,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			return mgr;
-		}
-
-		static void RemoveBuildItemManager(BuildItemManager mgr)
-		{
-			var ok = s_buildItemManagers.Remove(mgr);
-			Debug.Assert(ok);
 		}
 
 		[SaveGameProperty]

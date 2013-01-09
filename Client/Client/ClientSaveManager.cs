@@ -11,7 +11,6 @@ namespace Dwarrowdelf.Client
 	sealed class ClientSaveData
 	{
 		public BaseObject[] Objects;
-		public BuildItemManager[] BuildItemManagers;
 	}
 
 	static class ClientSaveManager
@@ -23,7 +22,6 @@ namespace Dwarrowdelf.Client
 			var saveData = new ClientSaveData()
 			{
 				Objects = world.Objects.ToArray(),
-				BuildItemManagers = BuildItemManager.Managers.ToArray(),
 			};
 
 			Trace.TraceInformation("Saving client data");
@@ -68,8 +66,6 @@ namespace Dwarrowdelf.Client
 			}
 
 			// Note that BaseObjects are deserialized by the NetSerializer, so we don't need to do anything for them here.
-
-			BuildItemManager.Deserialize(data.BuildItemManagers);
 
 			watch.Stop();
 			Trace.TraceInformation("Loading game took {0}", watch.Elapsed);

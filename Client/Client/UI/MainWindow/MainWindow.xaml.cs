@@ -167,7 +167,7 @@ namespace Dwarrowdelf.Client.UI
 							break;
 
 						var ctrl = new BuildingEditControl();
-						ctrl.DataContext = BuildItemManager.GetBuildItemManager(workbench);
+						ctrl.DataContext = BuildItemManager.FindOrCreateBuildItemManager(workbench);
 
 						var dlg = new Window();
 						dlg.Content = ctrl;
