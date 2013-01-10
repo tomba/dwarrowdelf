@@ -363,13 +363,13 @@ namespace Dwarrowdelf.Client
 		{
 			var buildableItem = order.BuildableItem;
 
-			var numItems = buildableItem.BuildMaterials.Count;
+			var numItems = buildableItem.FixedBuildMaterials.Count;
 
 			int numFound = 0;
 
-			for (int i = 0; i < buildableItem.BuildMaterials.Count; ++i)
+			for (int i = 0; i < buildableItem.FixedBuildMaterials.Count; ++i)
 			{
-				var bimi = buildableItem.BuildMaterials[i];
+				var bimi = buildableItem.FixedBuildMaterials[i];
 				var biis = order.BuildSpec.ItemSpecs[i];
 
 				var filter = new AndItemFilter(bimi, biis);
@@ -414,7 +414,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.BuildableItem = buildableItem;
 			this.BuildableItemFullKey = this.BuildableItem.FullKey;
-			this.ItemSpecs = new IItemFilter[this.BuildableItem.BuildMaterials.Count];
+			this.ItemSpecs = new IItemFilter[this.BuildableItem.FixedBuildMaterials.Count];
 		}
 
 		BuildSpec(SaveGameContext context)
@@ -449,7 +449,7 @@ namespace Dwarrowdelf.Client
 			else
 				this.Name = this.BuildableItem.ItemInfo.Name;
 
-			this.SourceItems = new ItemObject[this.BuildableItem.BuildMaterials.Count];
+			this.SourceItems = new ItemObject[this.BuildableItem.FixedBuildMaterials.Count];
 		}
 
 		BuildOrder(SaveGameContext context)

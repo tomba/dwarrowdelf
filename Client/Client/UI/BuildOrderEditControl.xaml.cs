@@ -103,7 +103,7 @@ namespace Dwarrowdelf.Client.UI
 				m_buildableItem = value;
 
 				if (m_buildableItem != null)
-					this.BuildMaterialsView = m_buildableItem.BuildMaterials.Select(bimi => new BuildMaterialsView(bimi)).ToArray();
+					this.BuildMaterialsView = m_buildableItem.FixedBuildMaterials.Select(bimi => new BuildMaterialsView(bimi)).ToArray();
 				else
 					this.BuildMaterialsView = new BuildMaterialsView[0];
 
@@ -117,7 +117,7 @@ namespace Dwarrowdelf.Client.UI
 		{
 			var spec = new BuildSpec(this.BuildableItem);
 
-			for (int idx = 0; idx < spec.BuildableItem.BuildMaterials.Count; ++idx)
+			for (int idx = 0; idx < spec.BuildableItem.FixedBuildMaterials.Count; ++idx)
 			{
 				var itemIDs = this.BuildMaterialsView[idx].ItemIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
 				var materialIDs = this.BuildMaterialsView[idx].MaterialIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
@@ -151,7 +151,7 @@ namespace Dwarrowdelf.Client.UI
 		public SelectableItem<MaterialID>[] MaterialIDs { get; private set; }
 		MaterialCategory? MaterialCategory { get; set; }
 
-		public BuildMaterialsView(BuildableItemMaterialInfo matInfo)
+		public BuildMaterialsView(FixedMaterialFilter matInfo)
 		{
 			if (matInfo.ItemID.HasValue)
 			{

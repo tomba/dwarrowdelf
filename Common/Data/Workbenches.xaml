@@ -6,115 +6,115 @@
 	<WorkbenchInfo WorkbenchID="CarpentersWorkbench">
 
 		<BuildableItem ItemID="Chair" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Table" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Door" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Bed" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Barrel" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Bucket" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Contraption" SkillID="Carpentry" LaborID="Carpentry">
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
-			<BuildableItemMaterialInfo MaterialCategory="Gem" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood" />
+			<FixedMaterialFilter MaterialCategory="Gem" />
 		</BuildableItem>
 
 	</WorkbenchInfo>
 
 	<WorkbenchInfo WorkbenchID="MasonsWorkbench">
 		<BuildableItem ItemID="Block" SkillID="Masonry" LaborID="Masonry">
-			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+			<FixedMaterialFilter ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Door" SkillID="Masonry" LaborID="Masonry">
-			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+			<FixedMaterialFilter ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Chair" SkillID="Masonry" LaborID="Masonry">
-			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+			<FixedMaterialFilter ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Table" SkillID="Masonry" LaborID="Masonry">
-			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
+			<FixedMaterialFilter ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Contraption" SkillID="Masonry" LaborID="Masonry">
-			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
-			<BuildableItemMaterialInfo MaterialCategory="Gem" />
+			<FixedMaterialFilter ItemID="Rock" MaterialCategory="Rock" />
+			<FixedMaterialFilter MaterialCategory="Gem" />
 		</BuildableItem>
 	</WorkbenchInfo>
 
 	<WorkbenchInfo WorkbenchID="SmithsWorkbench">
 		<BuildableItem ItemID="BattleAxe" SkillID="BlackSmithing" LaborID="Weaponsmithing">
-			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+			<FixedMaterialFilter ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="ShortSword" SkillID="BlackSmithing" LaborID="Weaponsmithing">
-			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+			<FixedMaterialFilter ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Gauntlets" SkillID="BlackSmithing" LaborID="Armorsmithing">
-			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+			<FixedMaterialFilter ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
 		<BuildableItem ItemID="Gloves" SkillID="BlackSmithing" LaborID="Armorsmithing">
-			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
+			<FixedMaterialFilter ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
 	</WorkbenchInfo>
 
 	<WorkbenchInfo WorkbenchID="SmelterWorkbench">
 		<BuildableItem Key="LeadBar" ItemID="Bar" MaterialID="Lead" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Lead" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="Lead" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 		<BuildableItem Key="TinBar" ItemID="Bar" MaterialID="Tin" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="Tin" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 		<BuildableItem Key="GoldBar" ItemID="Bar" MaterialID="Gold" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeGold" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="NativeGold" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 		<BuildableItem Key="SilverBar" ItemID="Bar" MaterialID="Silver" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativeSilver" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="NativeSilver" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 		<BuildableItem Key="PlatinumBar" ItemID="Bar" MaterialID="Platinum" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="NativePlatinum" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="NativePlatinum" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 		<BuildableItem Key="SteelBar" ItemID="Bar" MaterialID="Steel" SkillID="Smelting" LaborID="FurnanceOperating">
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Iron" />
-			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Tin" />
-			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
+			<FixedMaterialFilter ItemID="Ore" MaterialID="Iron" />
+			<FixedMaterialFilter ItemID="Ore" MaterialID="Tin" />
+			<FixedMaterialFilter ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
 	</WorkbenchInfo>
 
 	<WorkbenchInfo WorkbenchID="GemcuttersWorkbench">
 		<BuildableItem ItemID="Gem" SkillID="GemCutting" LaborID="GemCutting">
-			<BuildableItemMaterialInfo ItemID="UncutGem" MaterialCategory="Gem" />
+			<FixedMaterialFilter ItemID="UncutGem" MaterialCategory="Gem" />
 		</BuildableItem>
 	</WorkbenchInfo>
 

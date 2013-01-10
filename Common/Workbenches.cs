@@ -24,7 +24,7 @@ namespace Dwarrowdelf
 		}
 	}
 
-	[ContentProperty("BuildMaterials")]
+	[ContentProperty("FixedBuildMaterials")]
 	public sealed class BuildableItem
 	{
 		public string Key { get; internal set; }
@@ -32,18 +32,18 @@ namespace Dwarrowdelf
 		public ItemID ItemID { get; internal set; }
 		public ItemInfo ItemInfo { get { return Items.GetItemInfo(this.ItemID); } }
 		public MaterialID? MaterialID { get; internal set; }
-		public List<BuildableItemMaterialInfo> BuildMaterials { get; internal set; }
 		public SkillID SkillID { get; internal set; }
 		public LaborID LaborID { get; internal set; }
+		public List<FixedMaterialFilter> FixedBuildMaterials { get; internal set; }
 
 		public BuildableItem()
 		{
-			BuildMaterials = new List<BuildableItemMaterialInfo>();
+			FixedBuildMaterials = new List<FixedMaterialFilter>();
 		}
 
-		public bool MatchItems(IItemObject[] obs)
+		public bool MatchBuildItems(IItemObject[] obs)
 		{
-			var materials = this.BuildMaterials;
+			var materials = this.FixedBuildMaterials;
 
 			if (obs.Length != materials.Count)
 				return false;
@@ -58,7 +58,8 @@ namespace Dwarrowdelf
 		}
 	}
 
-	public sealed class BuildableItemMaterialInfo : IItemMaterialFilter
+	// XXX ItemFilter could possibly be used instead of this
+	public sealed class FixedMaterialFilter : IItemMaterialFilter
 	{
 		public ItemID? ItemID { get; internal set; }
 		public ItemCategory? ItemCategory { get; internal set; }
