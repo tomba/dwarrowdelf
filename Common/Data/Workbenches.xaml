@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<x:Array Type="BuildItemInfo"
+<x:Array Type="WorkbenchInfo"
 		 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		 xmlns="clr-namespace:Dwarrowdelf">
 
-	<BuildItemInfo WorkbenchID="CarpentersWorkbench">
+	<WorkbenchInfo WorkbenchID="CarpentersWorkbench">
 
 		<BuildableItem ItemID="Chair" SkillID="Carpentry" LaborID="Carpentry">
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood" />
@@ -34,9 +34,9 @@
 			<BuildableItemMaterialInfo MaterialCategory="Gem" />
 		</BuildableItem>
 
-	</BuildItemInfo>
+	</WorkbenchInfo>
 
-	<BuildItemInfo WorkbenchID="MasonsWorkbench">
+	<WorkbenchInfo WorkbenchID="MasonsWorkbench">
 		<BuildableItem ItemID="Block" SkillID="Masonry" LaborID="Masonry">
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 		</BuildableItem>
@@ -57,9 +57,9 @@
 			<BuildableItemMaterialInfo ItemID="Rock" MaterialCategory="Rock" />
 			<BuildableItemMaterialInfo MaterialCategory="Gem" />
 		</BuildableItem>
-	</BuildItemInfo>
+	</WorkbenchInfo>
 
-	<BuildItemInfo WorkbenchID="SmithsWorkbench">
+	<WorkbenchInfo WorkbenchID="SmithsWorkbench">
 		<BuildableItem ItemID="BattleAxe" SkillID="BlackSmithing" LaborID="Weaponsmithing">
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
@@ -76,9 +76,9 @@
 			<BuildableItemMaterialInfo ItemID="Bar" MaterialCategory="Metal" />
 		</BuildableItem>
 
-	</BuildItemInfo>
+	</WorkbenchInfo>
 
-	<BuildItemInfo WorkbenchID="SmelterWorkbench">
+	<WorkbenchInfo WorkbenchID="SmelterWorkbench">
 		<BuildableItem Key="LeadBar" ItemID="Bar" MaterialID="Lead" SkillID="Smelting" LaborID="FurnanceOperating">
 			<BuildableItemMaterialInfo ItemID="Ore" MaterialID="Lead" />
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
@@ -110,12 +110,12 @@
 			<BuildableItemMaterialInfo ItemID="Log" MaterialCategory="Wood"/>
 		</BuildableItem>
 
-	</BuildItemInfo>
+	</WorkbenchInfo>
 
-	<BuildItemInfo WorkbenchID="GemcuttersWorkbench">
+	<WorkbenchInfo WorkbenchID="GemcuttersWorkbench">
 		<BuildableItem ItemID="Gem" SkillID="GemCutting" LaborID="GemCutting">
 			<BuildableItemMaterialInfo ItemID="UncutGem" MaterialCategory="Gem" />
 		</BuildableItem>
-	</BuildItemInfo>
+	</WorkbenchInfo>
 
 </x:Array>

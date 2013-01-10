@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			//CreateWaterTest(env);
 
-			CreateBuildings(env);
+			CreateWorkbenches(env);
 
 			{
 				var p = env.GetSurface(env.Width / 2 - 1, env.Height / 2 - 2);
@@ -88,7 +88,7 @@ namespace Dwarrowdelf.Server.Fortress
 			AddMonsters(env);
 		}
 
-		static void CreateBuildings(EnvironmentObject env)
+		static void CreateWorkbenches(EnvironmentObject env)
 		{
 			var world = env.World;
 

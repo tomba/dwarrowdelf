@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 			m_items = items;
 			m_buildableItemKey = buildableItemKey;
 
-			var bii = Buildings.GetBuildItemInfo(workplace.ItemID);
+			var bii = Workbenches.GetWorkbenchInfo(workplace.ItemID);
 			var bi = bii.FindBuildableItem(buildableItemKey);
 			this.LaborID = bi.LaborID;
 		}

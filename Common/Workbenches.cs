@@ -8,13 +8,13 @@ using System.Windows.Markup;
 namespace Dwarrowdelf
 {
 	[ContentProperty("BuildableItems")]
-	public sealed class BuildItemInfo
+	public sealed class WorkbenchInfo
 	{
 		public ItemID WorkbenchID { get; internal set; }
 		public string Name { get; internal set; }
 		public List<BuildableItem> BuildableItems { get; internal set; }
 
-		public BuildItemInfo()
+		public WorkbenchInfo()
 		{
 			this.BuildableItems = new List<BuildableItem>();
 		}
@@ -90,65 +90,65 @@ namespace Dwarrowdelf
 		public IEnumerable<MaterialCategory> MaterialCategories { get { if (this.MaterialCategory.HasValue) yield return this.MaterialCategory.Value; } }
 	}
 
-	public static class Buildings
+	public static class Workbenches
 	{
-		static Dictionary<ItemID, BuildItemInfo> s_buildItemInfos;
+		static Dictionary<ItemID, WorkbenchInfo> s_workbenchInfos;
 
-		static Buildings()
+		static Workbenches()
 		{
 			var asm = System.Reflection.Assembly.GetExecutingAssembly();
 
-			BuildItemInfo[] buildItemInfos;
+			WorkbenchInfo[] workbenchInfos;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Buildings.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Workbenches.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
 					LocalAssembly = asm,
 				};
 				using (var reader = new System.Xaml.XamlXmlReader(stream, settings))
-					buildItemInfos = (BuildItemInfo[])System.Xaml.XamlServices.Load(reader);
+					workbenchInfos = (WorkbenchInfo[])System.Xaml.XamlServices.Load(reader);
 			}
 
-			s_buildItemInfos = new Dictionary<ItemID, BuildItemInfo>(buildItemInfos.Length);
+			s_workbenchInfos = new Dictionary<ItemID, WorkbenchInfo>(workbenchInfos.Length);
 
-			foreach (var building in buildItemInfos)
+			foreach (var workbench in workbenchInfos)
 			{
-				if (s_buildItemInfos.ContainsKey(building.WorkbenchID))
+				if (s_workbenchInfos.ContainsKey(workbench.WorkbenchID))
 					throw new Exception();
 
-				if (building.Name == null)
-					building.Name = building.WorkbenchID.ToString();
+				if (workbench.Name == null)
+					workbench.Name = workbench.WorkbenchID.ToString();
 
-				foreach (var bi in building.BuildableItems)
+				foreach (var bi in workbench.BuildableItems)
 				{
 					if (String.IsNullOrEmpty(bi.Key))
 						bi.Key = bi.ItemID.ToString();
 
-					bi.FullKey = String.Format("{0},{1}", building.WorkbenchID, bi.Key);
+					bi.FullKey = String.Format("{0},{1}", workbench.WorkbenchID, bi.Key);
 				}
 
 				// verify BuildableItem key uniqueness
-				var grouped = building.BuildableItems.GroupBy(bi => bi.Key);
+				var grouped = workbench.BuildableItems.GroupBy(bi => bi.Key);
 				foreach (var g in grouped)
 					if (g.Count() != 1)
 						throw new Exception();
 
-				s_buildItemInfos[building.WorkbenchID] = building;
+				s_workbenchInfos[workbench.WorkbenchID] = workbench;
 			}
 		}
 
-		public static BuildItemInfo GetBuildItemInfo(ItemID workbenchID)
+		public static WorkbenchInfo GetWorkbenchInfo(ItemID workbenchID)
 		{
 			Debug.Assert(workbenchID != ItemID.Undefined);
-			Debug.Assert(s_buildItemInfos[workbenchID] != null);
+			Debug.Assert(s_workbenchInfos[workbenchID] != null);
 
-			return s_buildItemInfos[workbenchID];
+			return s_workbenchInfos[workbenchID];
 		}
 
 		public static BuildableItem FindBuildableItem(string buildableItemFullKey)
 		{
-			return s_buildItemInfos.SelectMany(kvp => kvp.Value.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
+			return s_workbenchInfos.SelectMany(kvp => kvp.Value.BuildableItems).SingleOrDefault(bi => bi.FullKey == buildableItemFullKey);
 		}
 	}
 }

@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		public ItemObject Workbench { get; private set; }
 
-		public BuildItemInfo BuildItemInfo { get { return Buildings.GetBuildItemInfo(this.Workbench.ItemID); } }
+		public WorkbenchInfo WorkbenchInfo { get { return Workbenches.GetWorkbenchInfo(this.Workbench.ItemID); } }
 		public EnvironmentObject Environment { get { return this.Workbench.Environment; } }
 
 		[SaveGameProperty]
@@ -419,7 +419,7 @@ namespace Dwarrowdelf.Client
 
 		BuildSpec(SaveGameContext context)
 		{
-			this.BuildableItem = Buildings.FindBuildableItem(this.BuildableItemFullKey);
+			this.BuildableItem = Workbenches.FindBuildableItem(this.BuildableItemFullKey);
 			Debug.Assert(this.BuildableItem != null);
 		}
 

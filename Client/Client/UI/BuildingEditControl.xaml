@@ -90,7 +90,7 @@
 
 		<GroupBox Header="Build" Grid.Column="1" Grid.Row="1">
 
-			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" BuildItemInfo="{Binding Path=DataContext.BuildItemInfo, ElementName=root}"
+			<ui:BuildOrderEditControl x:Name="buildOrderEditControl" WorkbenchInfo="{Binding Path=DataContext.WorkbenchInfo, ElementName=root}"
 									  AddButtonClicked="buildOrderEditControl_AddButtonClicked" />
 
 		</GroupBox>

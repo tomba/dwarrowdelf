@@ -139,7 +139,7 @@
     <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Net\TcpConnection.cs" />
-    <Compile Include="Buildings.cs" />
+    <Compile Include="Workbenches.cs" />
     <Compile Include="DataTypes\ArrayGrid3D.cs" />
     <Compile Include="DataTypes\IntSize3.cs" />
     <Compile Include="DataTypes\IntVector3.cs" />
@@ -194,7 +194,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Buildings.xaml">
+    <EmbeddedResource Include="Data\Workbenches.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

@@ -22,14 +22,14 @@ namespace Dwarrowdelf.Client.UI
 			InitializeComponent();
 		}
 
-		public BuildItemInfo BuildItemInfo
+		public WorkbenchInfo WorkbenchInfo
 		{
-			get { return (BuildItemInfo)GetValue(BuildItemInfoProperty); }
-			set { SetValue(BuildItemInfoProperty, value); }
+			get { return (WorkbenchInfo)GetValue(WorkbenchInfoProperty); }
+			set { SetValue(WorkbenchInfoProperty, value); }
 		}
 
-		public static readonly DependencyProperty BuildItemInfoProperty =
-			DependencyProperty.Register("BuildItemInfo", typeof(BuildItemInfo), typeof(BuildOrderEditControl), new UIPropertyMetadata(null));
+		public static readonly DependencyProperty WorkbenchInfoProperty =
+			DependencyProperty.Register("WorkbenchInfo", typeof(WorkbenchInfo), typeof(BuildOrderEditControl), new UIPropertyMetadata(null));
 
 		public BuildOrderEditable EditableBuildOrder
 		{
