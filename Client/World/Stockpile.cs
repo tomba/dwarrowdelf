@@ -9,6 +9,18 @@ namespace Dwarrowdelf.Client
 	[SaveGameObject]
 	public sealed class Stockpile : IAreaElement, IJobSource, IJobObserver
 	{
+		public static Stockpile CreateStockpile(EnvironmentObject environment, IntGrid2Z area)
+		{
+			var stockpile = new Stockpile(environment, area);
+			environment.AddAreaElement(stockpile);
+			return stockpile;
+		}
+
+		public static void DestructStockpile(Stockpile stockpile)
+		{
+			stockpile.Environment.RemoveAreaElement(stockpile);
+		}
+
 		[SaveGameProperty]
 		public EnvironmentObject Environment { get; private set; }
 
@@ -32,34 +44,34 @@ namespace Dwarrowdelf.Client
 		{
 			this.Environment = environment;
 			this.Area = area;
-			this.Criteria = null;
 
 			m_jobs = new List<StoreToStockpileJob>();
-
-			this.Environment.World.JobManager.AddJobSource(this);
-
-			this.Environment.ObjectRemoved += new Action<MovableObject>(Environment_ObjectRemoved);
-			this.Environment.ObjectMoved += new Action<MovableObject, IntPoint3>(Environment_ObjectMoved);
-
-			m_itemTracker = new TargetItemTracker(this.Environment, this.Area.Center,
-				o => o.IsReserved == false && o.IsStockpiled == false && o.IsInstalled == false && Match(o));
 		}
 
 		Stockpile(SaveGameContext ctx)
 		{
-			this.Environment.World.JobManager.AddJobSource(this);
 		}
 
-		[OnSaveGameDeserialized]
-		void OnDeserialized()
+		public void Register()
 		{
+			this.Environment.World.JobManager.AddJobSource(this);
+
+			this.Environment.ObjectRemoved += Environment_ObjectRemoved;
+			this.Environment.ObjectMoved += Environment_ObjectMoved;
+
+			m_itemTracker = new TargetItemTracker(this.Environment, this.Area.Center,
+				o => o.IsReserved == false && o.IsStockpiled == false && o.IsInstalled == false && Match(o));
+
 			foreach (var job in m_jobs)
 				this.Environment.World.Jobs.Add(job);
 		}
 
-		public void Destruct()
+		public void Unregister()
 		{
 			this.Environment.World.JobManager.RemoveJobSource(this);
+
+			this.Environment.ObjectRemoved -= Environment_ObjectRemoved;
+			this.Environment.ObjectMoved -= Environment_ObjectMoved;
 
 			var jobs = m_jobs.ToArray();
 

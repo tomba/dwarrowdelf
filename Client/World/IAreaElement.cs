@@ -7,6 +7,8 @@ namespace Dwarrowdelf.Client
 {
 	public interface IAreaElement
 	{
+		void Register();
+		void Unregister();
 		EnvironmentObject Environment { get; }
 		IntGrid2Z Area { get; }
 		string Description { get; }

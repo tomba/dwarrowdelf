@@ -49,8 +49,8 @@ namespace Dwarrowdelf.Client.UI
 				return;
 
 			var stockpile = (Stockpile)this.DataContext;
-			stockpile.Environment.RemoveAreaElement(stockpile);
-			stockpile.Destruct();
+			Stockpile.DestructStockpile(stockpile);
+
 			this.DataContext = null;
 
 			var wnd = Window.GetWindow(this);

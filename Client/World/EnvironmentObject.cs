@@ -116,6 +116,8 @@ namespace Dwarrowdelf.Client
 
 			m_areaElements = data.AreaElements;
 			this.AreaElements = new ReadOnlyObservableCollection<IAreaElement>(m_areaElements);
+			foreach (var element in m_areaElements)
+				element.Register();
 
 			this.Designations = data.Designations;
 			this.InstallItemManager = data.InstallItemManager;
@@ -520,12 +522,14 @@ namespace Dwarrowdelf.Client
 			Debug.Assert(!m_areaElements.Contains(element));
 			Debug.Assert(m_areaElements.All(s => (s.Area.IntersectsWith(element.Area)) == false));
 			m_areaElements.Add(element);
+			element.Register();
 		}
 
 		public void RemoveAreaElement(IAreaElement element)
 		{
 			this.Version++;
 
+			element.Unregister();
 			var ok = m_areaElements.Remove(element);
 			Debug.Assert(ok);
 		}

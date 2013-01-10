@@ -127,8 +127,7 @@ namespace Dwarrowdelf.Client.UI
 
 				case ClientToolMode.CreateStockpile:
 					{
-						var stockpile = new Stockpile(env, selection.SelectionIntRectZ);
-						env.AddAreaElement(stockpile);
+						var stockpile = Stockpile.CreateStockpile(env, selection.SelectionIntRectZ);
 
 						var dlg = new ObjectEditDialog();
 						dlg.DataContext = stockpile;
