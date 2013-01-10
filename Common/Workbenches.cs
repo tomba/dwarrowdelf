@@ -11,7 +11,6 @@ namespace Dwarrowdelf
 	public sealed class WorkbenchInfo
 	{
 		public ItemID WorkbenchID { get; internal set; }
-		public string Name { get; internal set; }
 		public List<BuildableItem> BuildableItems { get; internal set; }
 
 		public WorkbenchInfo()
@@ -116,9 +115,6 @@ namespace Dwarrowdelf
 			{
 				if (s_workbenchInfos.ContainsKey(workbench.WorkbenchID))
 					throw new Exception();
-
-				if (workbench.Name == null)
-					workbench.Name = workbench.WorkbenchID.ToString();
 
 				foreach (var bi in workbench.BuildableItems)
 				{
