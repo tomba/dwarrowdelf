@@ -370,7 +370,7 @@ namespace Dwarrowdelf.Client
 			for (int i = 0; i < buildableItem.FixedBuildMaterials.Count; ++i)
 			{
 				var bimi = buildableItem.FixedBuildMaterials[i];
-				var biis = order.BuildSpec.ItemSpecs[i];
+				var biis = order.UserItemFilters[i];
 
 				var filter = new AndItemFilter(bimi, biis);
 
@@ -407,32 +407,6 @@ namespace Dwarrowdelf.Client
 		}
 	}
 
-	[SaveGameObject(ByValue = true)]
-	public sealed class BuildSpec
-	{
-		public BuildSpec(BuildableItem buildableItem)
-		{
-			this.BuildableItem = buildableItem;
-			this.BuildableItemFullKey = this.BuildableItem.FullKey;
-			this.ItemSpecs = new IItemFilter[this.BuildableItem.FixedBuildMaterials.Count];
-		}
-
-		BuildSpec(SaveGameContext context)
-		{
-			this.BuildableItem = Workbenches.FindBuildableItem(this.BuildableItemFullKey);
-			Debug.Assert(this.BuildableItem != null);
-		}
-
-		[SaveGameProperty]
-		string BuildableItemFullKey { get; set; }
-
-		public BuildableItem BuildableItem { get; private set; }
-
-		// extra specs given by the user
-		[SaveGameProperty]
-		public IItemFilter[] ItemSpecs { get; private set; }
-	}
-
 	[SaveGameObject]
 	public sealed class BuildOrder : INotifyPropertyChanged
 	{
@@ -440,9 +414,10 @@ namespace Dwarrowdelf.Client
 		bool m_isSuspended;
 		bool m_isUnderWork;
 
-		public BuildOrder(BuildSpec spec)
+		public BuildOrder(BuildableItem buildableItem, IItemFilter[] userFilters)
 		{
-			this.BuildSpec = spec;
+			this.BuildableItem = buildableItem;
+			this.UserItemFilters = userFilters;
 
 			if (this.BuildableItem.MaterialID.HasValue)
 				this.Name = String.Format("{0} {1}", this.BuildableItem.MaterialID, this.BuildableItem.ItemInfo.Name);
@@ -454,16 +429,23 @@ namespace Dwarrowdelf.Client
 
 		BuildOrder(SaveGameContext context)
 		{
-			this.Name = this.BuildableItem.ItemInfo.Name;
+			Debug.Assert(this.BuildableItem != null);
+
+			if (this.BuildableItem.MaterialID.HasValue)
+				this.Name = String.Format("{0} {1}", this.BuildableItem.MaterialID, this.BuildableItem.ItemInfo.Name);
+			else
+				this.Name = this.BuildableItem.ItemInfo.Name;
+
 		}
+
+		[SaveGameProperty(Converter = typeof(BuildableItemSaveConverter))]
+		public BuildableItem BuildableItem { get; private set; }
+		public ItemID BuildableItemID { get { return this.BuildableItem.ItemID; } }
 
 		public string Name { get; private set; } // XXX just for UI
 
 		[SaveGameProperty]
-		public BuildSpec BuildSpec { get; private set; }
-
-		public BuildableItem BuildableItem { get { return this.BuildSpec.BuildableItem; } }
-		public ItemID BuildableItemID { get { return this.BuildSpec.BuildableItem.ItemID; } }
+		public IItemFilter[] UserItemFilters { get; private set; }
 
 		[SaveGameProperty]
 		public ItemObject[] SourceItems { get; private set; }
@@ -486,5 +468,30 @@ namespace Dwarrowdelf.Client
 		}
 
 		#endregion
+
+		sealed class BuildableItemSaveConverter : ISaveGameConverter
+		{
+			public object ConvertToSerializable(object value)
+			{
+				if (value == null)
+					return null;
+
+				var bi = (BuildableItem)value;
+				return bi.FullKey;
+			}
+
+			public object ConvertFromSerializable(object value)
+			{
+				if (value == null)
+					return null;
+
+				var key = (string)value;
+				return Workbenches.FindBuildableItem(key);
+			}
+
+			public Type InputType { get { return typeof(BuildableItem); } }
+
+			public Type OutputType { get { return typeof(string); } }
+		}
 	}
 }

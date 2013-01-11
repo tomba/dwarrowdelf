@@ -115,17 +115,19 @@ namespace Dwarrowdelf.Client.UI
 
 		public BuildOrder ToBuildOrder()
 		{
-			var spec = new BuildSpec(this.BuildableItem);
+			var numMaterials = this.BuildableItem.FixedBuildMaterials.Count;
 
-			for (int idx = 0; idx < spec.BuildableItem.FixedBuildMaterials.Count; ++idx)
+			var filters = new IItemFilter[numMaterials];
+
+			for (int idx = 0; idx < numMaterials; ++idx)
 			{
 				var itemIDs = this.BuildMaterialsView[idx].ItemIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
 				var materialIDs = this.BuildMaterialsView[idx].MaterialIDs.Where(i => i.IsSelected).Select(i => i.Value).ToArray();
 
-				spec.ItemSpecs[idx] = new ItemFilter(itemIDs, materialIDs);
+				filters[idx] = new ItemFilter(itemIDs, materialIDs);
 			}
 
-			var bo = new BuildOrder(spec);
+			var bo = new BuildOrder(this.BuildableItem, filters);
 
 			return bo;
 		}
