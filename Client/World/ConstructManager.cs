@@ -70,17 +70,17 @@ namespace Dwarrowdelf.Client
 			switch (mode)
 			{
 				case ConstructMode.Floor:
-					filter = WorkHelpers.ConstructFloorFilter;
+					filter = WorkHelpers.ConstructFloorTerrainFilter;
 					coreItemFilter = WorkHelpers.ConstructFloorItemFilter;
 					break;
 
 				case ConstructMode.Pavement:
-					filter = WorkHelpers.ConstructPavementFilter;
+					filter = WorkHelpers.ConstructPavementTerrainFilter;
 					coreItemFilter = WorkHelpers.ConstructPavementItemFilter;
 					break;
 
 				case ConstructMode.Wall:
-					filter = WorkHelpers.ConstructWallFilter;
+					filter = WorkHelpers.ConstructWallTerrainFilter;
 					coreItemFilter = WorkHelpers.ConstructWallItemFilter;
 					break;
 

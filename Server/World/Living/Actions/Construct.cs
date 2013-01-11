@@ -55,7 +55,7 @@ namespace Dwarrowdelf.Server
 			switch (action.Mode)
 			{
 				case ConstructMode.Floor:
-					if (WorkHelpers.ConstructFloorFilter.Match(td) == false)
+					if (WorkHelpers.ConstructFloorTerrainFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
 						return ActionState.Fail;
@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case ConstructMode.Pavement:
-					if (WorkHelpers.ConstructPavementFilter.Match(td) == false)
+					if (WorkHelpers.ConstructPavementTerrainFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
 						return ActionState.Fail;
@@ -89,7 +89,7 @@ namespace Dwarrowdelf.Server
 					break;
 
 				case ConstructMode.Wall:
-					if (WorkHelpers.ConstructWallFilter.Match(td) == false)
+					if (WorkHelpers.ConstructWallTerrainFilter.Match(td) == false)
 					{
 						SendFailReport(report, "unsuitable terrain");
 						return ActionState.Fail;

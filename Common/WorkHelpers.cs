@@ -177,14 +177,14 @@ namespace Dwarrowdelf
 
 	public static class WorkHelpers
 	{
-		public static readonly TerrainFilter ConstructFloorFilter = new TerrainFilter(
+		public static readonly TerrainFilter ConstructFloorTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.Empty },
 			new InteriorID[] { InteriorID.Empty });
 
 		public static readonly ItemFilter ConstructFloorItemFilter = new ItemFilter(ItemID.Block, MaterialCategory.Rock);
 
 
-		public static readonly TerrainFilter ConstructPavementFilter = new TerrainFilter(
+		public static readonly TerrainFilter ConstructPavementTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
 			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
 
@@ -195,7 +195,7 @@ namespace Dwarrowdelf
 			);
 
 
-		public static readonly TerrainFilter ConstructWallFilter = new TerrainFilter(
+		public static readonly TerrainFilter ConstructWallTerrainFilter = new TerrainFilter(
 			new TerrainID[] { TerrainID.NaturalFloor, TerrainID.BuiltFloor },
 			new InteriorID[] { InteriorID.Empty, InteriorID.Grass });
 
