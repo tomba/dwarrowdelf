@@ -55,6 +55,7 @@
     <Compile Include="AStar\AStar.cs" />
     <Compile Include="ChangeDatas.cs" />
     <Compile Include="DataTypes\DoublePoint3.cs" />
+    <Compile Include="DataTypes\EnumBitMasks.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
     <Compile Include="Jobs\Assignments\SleepAssignment.cs" />
