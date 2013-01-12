@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Client.UI
 			if (matInfo.ItemID.HasValue)
 			{
 				this.ItemIDs = new SelectableItem<ItemID>[] {
-					new SelectableItem<ItemID>(ItemSelChanged, matInfo.ItemID.Value) { IsSelected = true } 
+					new SelectableItem<ItemID>(ItemSelChanged, matInfo.ItemID.Value)
 				};
 			}
 			else if (matInfo.ItemCategory.HasValue)
@@ -177,7 +177,7 @@ namespace Dwarrowdelf.Client.UI
 			if (matInfo.MaterialID.HasValue)
 			{
 				this.MaterialIDs = new SelectableItem<MaterialID>[] {
-					new SelectableItem<MaterialID>(MatSelChanged, matInfo.MaterialID.Value) { IsSelected = true } 
+					new SelectableItem<MaterialID>(MatSelChanged, matInfo.MaterialID.Value)
 				};
 			}
 			else if (matInfo.MaterialCategory.HasValue)
@@ -210,7 +210,9 @@ namespace Dwarrowdelf.Client.UI
 
 				if (selected.Length == 0)
 				{
-					if (this.ItemCategory.HasValue)
+					if (this.ItemIDs.Length == 1)
+						return this.ItemIDs[0].Value.ToString();
+					else if (this.ItemCategory.HasValue)
 						return "Any " + this.ItemCategory.ToString();
 					else
 						return "Any";
@@ -236,7 +238,9 @@ namespace Dwarrowdelf.Client.UI
 
 				if (selected.Length == 0)
 				{
-					if (this.MaterialCategory.HasValue)
+					if (this.MaterialIDs.Length == 1)
+						return this.MaterialIDs[0].Value.ToString();
+					else if (this.MaterialCategory.HasValue)
 						return "Any " + this.MaterialCategory.ToString();
 					else
 						return "Any";
