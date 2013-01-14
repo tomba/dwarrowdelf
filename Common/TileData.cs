@@ -77,6 +77,9 @@ namespace Dwarrowdelf
 			InteriorMaterialID = MaterialID.Undefined,
 		};
 
+		/// <summary>
+		/// Is Interior a sapling or a full grown tree
+		/// </summary>
 		public bool HasTree { get { return this.InteriorID.IsTree(); } }
 
 		/// <summary>

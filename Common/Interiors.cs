@@ -85,6 +85,9 @@ namespace Dwarrowdelf
 			return id == InteriorID.Empty || id == InteriorID.Grass || id == InteriorID.Sapling;
 		}
 
+		/// <summary>
+		/// Is Interior a sapling or a full grown tree
+		/// </summary>
 		public static bool IsTree(this InteriorID id)
 		{
 			return id == InteriorID.Tree || id == InteriorID.Sapling;
