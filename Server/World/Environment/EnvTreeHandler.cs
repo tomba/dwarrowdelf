@@ -113,7 +113,7 @@ namespace Dwarrowdelf.Server
 
 			public int CompareTo(SaplingNode other)
 			{
-				return Comparer<int>.Default.Compare(this.Time, other.Time);
+				return this.Time.CompareTo(other.Time);
 			}
 		}
 	}
