@@ -44,24 +44,6 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void ShuffleArray(Direction[] array)
-		{
-			if (array.Length == 0)
-				return;
-
-			var r = m_env.World.Random;
-
-			for (int i = array.Length - 1; i >= 1; i--)
-			{
-				int randomIndex = r.Next(i + 1);
-
-				//Swap elements
-				var tmp = array[i];
-				array[i] = array[randomIndex];
-				array[randomIndex] = tmp;
-			}
-		}
-
 		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
 		{
 			if (!m_env.Contains(to))
@@ -111,7 +93,7 @@ namespace Dwarrowdelf.Server
 			}
 
 			var dirs = DirectionExtensions.CardinalUpDownDirections.ToArray();
-			ShuffleArray(dirs);
+			MyMath.ShuffleArray(dirs, m_env.World.Random);
 			bool curLevelChanged = false;
 
 			foreach (var d in dirs)

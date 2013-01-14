@@ -54,5 +54,24 @@ namespace Dwarrowdelf
 
 			return r;
 		}
+
+		/// <summary>
+		/// Shuffle the items in an array
+		/// </summary>
+		public static void ShuffleArray<T>(T[] array, Random random)
+		{
+			if (array.Length == 0)
+				return;
+
+			for (int i = array.Length - 1; i >= 1; i--)
+			{
+				int randomIndex = random.Next(i + 1);
+
+				//Swap elements
+				var tmp = array[i];
+				array[i] = array[randomIndex];
+				array[randomIndex] = tmp;
+			}
+		}
 	}
 }
