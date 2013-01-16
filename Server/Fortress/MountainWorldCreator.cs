@@ -34,7 +34,7 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			var random = Helpers.Random;
 
-			int side = (int)Math.Pow(2, MAP_SIZE);
+			int side = MyMath.Pow2(MAP_SIZE);
 			var size = new IntSize3(side, side, MAP_DEPTH);
 
 			var terrain = new TerrainData(size);

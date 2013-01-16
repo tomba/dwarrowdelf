@@ -203,7 +203,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			var bb = new IntGrid3(center.X - r, center.Y - r, center.Z - r, r * 2 + 1, r * 2 + 1, r * 2 + 1);
 
-			var rs = Math.Pow(r, 2);
+			var rs = MyMath.Square(r);
 
 			foreach (var p in bb.Range())
 			{
@@ -211,7 +211,7 @@ namespace Dwarrowdelf.TerrainGen
 				var x = p.X;
 				var z = p.Z;
 
-				var v = Math.Pow((x - center.X), 2) + Math.Pow((y - center.Y), 2) + Math.Pow((z - center.Z), 2);
+				var v = MyMath.Square(x - center.X) + MyMath.Square(y - center.Y) + MyMath.Square(z - center.Z);
 
 				if (rs >= v)
 				{

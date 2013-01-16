@@ -158,7 +158,7 @@ namespace Dwarrowdelf.TerrainGen
 			public BSPTree(int depth)
 			{
 				this.Depth = depth;
-				m_bsp = new BSPNode[(int)Math.Pow(2, depth) - 1];
+				m_bsp = new BSPNode[MyMath.Pow2(depth) - 1];
 			}
 
 			public BSPNode this[int idx]
@@ -214,7 +214,7 @@ namespace Dwarrowdelf.TerrainGen
 			td.InteriorID = InteriorID.Empty;
 			td.InteriorMaterialID = MaterialID.Undefined;
 
-			int leafs = (int)Math.Pow(2, bsp.Depth - 1);
+			int leafs = MyMath.Pow2(bsp.Depth - 1);
 
 			var rooms = new List<IntGrid2>();
 

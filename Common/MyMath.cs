@@ -43,6 +43,22 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// 2^n
+		/// </summary>
+		public static int Pow2(int n)
+		{
+			return 1 << n;
+		}
+
+		/// <summary>
+		/// n * n
+		/// </summary>
+		public static int Square(int n)
+		{
+			return n * n;
+		}
+
+		/// <summary>
 		/// Return integer Log2 of an integer
 		/// </summary>
 		public static int Log2(int value)
