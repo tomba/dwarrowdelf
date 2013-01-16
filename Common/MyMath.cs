@@ -56,6 +56,14 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// Is the number a power of two (2^n)
+		/// </summary>
+		public static bool IsPowerOfTwo(int x)
+		{
+			return x != 0 && (x & (x - 1)) == 0;
+		}
+
+		/// <summary>
 		/// Shuffle the items in an array
 		/// </summary>
 		public static void ShuffleArray<T>(T[] array, Random random)
