@@ -53,6 +53,9 @@ namespace Dwarrowdelf.Server
 		EnvWaterHandler m_waterHandler;
 		EnvTreeHandler m_treeHandler;
 
+		[SaveGameProperty]
+		int m_originalNumTrees;
+
 		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
 		{
@@ -79,6 +82,8 @@ namespace Dwarrowdelf.Server
 			m_contentArray = new KeyedObjectCollection[this.Depth];
 			for (int i = 0; i < size.Depth; ++i)
 				m_contentArray[i] = new KeyedObjectCollection();
+
+			m_originalNumTrees = this.Size.Range().Count(p => GetTileData(p).InteriorID.IsTree());
 		}
 
 		[OnSaveGamePostDeserialization]
@@ -93,7 +98,7 @@ namespace Dwarrowdelf.Server
 
 			this.World.TickStarting += Tick;
 
-			m_treeHandler = new EnvTreeHandler(this);
+			m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
 
 			m_waterHandler = new EnvWaterHandler(this);
 
@@ -141,7 +146,7 @@ namespace Dwarrowdelf.Server
 
 			world.TickStarting += Tick;
 
-			m_treeHandler = new EnvTreeHandler(this);
+			m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
 
 			m_waterHandler = new EnvWaterHandler(this);
 		}
@@ -268,14 +273,6 @@ namespace Dwarrowdelf.Server
 			data.Flags = oldData.Flags;
 
 			m_tileGrid[p.Z, p.Y, p.X] = data;
-
-			if (oldData.HasTree != data.HasTree)
-			{
-				if (data.HasTree)
-					m_treeHandler.AddTree();
-				else
-					m_treeHandler.RemoveTree();
-			}
 
 			var p2d = p.ToIntPoint();
 			int oldSurfaceLevel = GetDepth(p2d);

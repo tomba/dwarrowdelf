@@ -6,114 +6,113 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
+	// XXX tree growth is not so good. If the player clears an area, it's likely that the trees
+	// have grown elsewhere and the area will stay clear.
 	sealed class EnvTreeHandler
 	{
 		EnvironmentObject m_env;
-
-		C5.IntervalHeap<SaplingNode> m_saplingPriorityQueue = new C5.IntervalHeap<SaplingNode>();
 		int m_numTrees;
+		int[] m_randomArray;
+		int m_currentIdx;
+		int m_targetNumTrees;
 
-		public EnvTreeHandler(EnvironmentObject env)
+		public EnvTreeHandler(EnvironmentObject env, int targetNumTrees)
 		{
 			m_env = env;
-			ScanTreeTiles();
+			m_targetNumTrees = targetNumTrees;
+
+			m_randomArray = new int[env.Width * env.Height];
+			for (int i = 0; i < m_randomArray.Length; ++i)
+				m_randomArray[i] = (ushort)i;
+
+			MyMath.ShuffleArray(m_randomArray, m_env.World.Random);
+
+			m_numTrees = m_env.Size.Range().Count(p => m_env.GetTileData(p).InteriorID.IsTree());
+
+			m_env.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
 		}
 
-		int GetTimeToGrowTree()
+		void OnTerrainOrInteriorChanged(IntPoint3 p, TileData oldData, TileData newData)
 		{
-			return m_env.World.Random.Next(100) + 10;
-		}
-
-		void ScanTreeTiles()
-		{
-			int now = m_env.World.TickNumber;
-
-			m_numTrees = 0;
-
-			foreach (var p in m_env.Size.Range())
+			if (oldData.HasTree != newData.HasTree)
 			{
-				var interior = m_env.GetInteriorID(p);
-
-				switch (interior)
-				{
-					case InteriorID.Tree:
-						m_numTrees++;
-						break;
-
-					case InteriorID.Sapling:
-						m_numTrees++;
-
-						int t = GetTimeToGrowTree();
-						m_saplingPriorityQueue.Add(new SaplingNode(now + t, p));
-						break;
-				}
+				if (newData.HasTree)
+					AddTree();
+				else
+					RemoveTree();
 			}
 		}
 
-		public void AddTree()
+		void AddTree()
 		{
 			m_numTrees++;
+			//Debug.Print(m_numTrees.ToString());
 		}
 
-		public void RemoveTree()
+		void RemoveTree()
 		{
 			m_numTrees--;
-
 			Debug.Assert(m_numTrees >= 0);
+
+			//Debug.Print(m_numTrees.ToString());
 		}
 
 		public void Tick()
 		{
-			int now = m_env.World.TickNumber;
+			// go through all tiles in one year
+			int amount = m_env.Width * m_env.Height / World.YEAR_LENGTH;
 
-			while (m_saplingPriorityQueue.Count > 0)
+			var woodMaterials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
+			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
+			var r = m_env.World.Random;
+
+			for (int i = 0; i < amount; ++i)
 			{
-				var node = m_saplingPriorityQueue.FindMin();
+				var idx = m_currentIdx++;
 
-				if (node.Time > now)
-					break;
+				if (m_currentIdx == m_randomArray.Length)
+					m_currentIdx = 0;
 
-				m_saplingPriorityQueue.DeleteMin();
+				var tileIdx = m_randomArray[idx];
 
-				var td = m_env.GetTileData(node.Location);
+				int x, y;
+
+				y = Math.DivRem(tileIdx, m_env.Width, out x);
+
+				var p = m_env.GetSurface(x, y);
+
+				var td = m_env.GetTileData(p);
 
 				if (td.InteriorID == InteriorID.Sapling)
 				{
-					if (m_env.HasContents(node.Location))
+					if (r.Next(100) < 80)
 					{
-						int t = GetTimeToGrowTree();
-						m_saplingPriorityQueue.Add(new SaplingNode(now + t, node.Location));
-					}
-					else
-					{
+						// A sapling grows to a tree
 						td.InteriorID = InteriorID.Tree;
-						m_env.SetTileData(node.Location, td);
+						m_env.SetTileData(p, td);
 					}
 				}
-			}
-
-			int normalNumTrees = m_env.Width * m_env.Height / 10;
-
-			if (m_numTrees < normalNumTrees)
-			{
-				// XXX add saplings
-			}
-		}
-
-		sealed class SaplingNode : IComparable<SaplingNode>
-		{
-			public int Time { get; private set; }
-			public IntPoint3 Location { get; private set; }
-
-			public SaplingNode(int time, IntPoint3 p)
-			{
-				this.Time = time;
-				this.Location = p;
-			}
-
-			public int CompareTo(SaplingNode other)
-			{
-				return this.Time.CompareTo(other.Time);
+				else if (td.InteriorID == InteriorID.Tree)
+				{
+					/*
+					if (r.Next(100) < 20)
+					{
+						// A tree dies
+						td.InteriorID = InteriorID.Grass;
+						td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
+						m_env.SetTileData(p, td);
+					}*/
+				}
+				else if (td.IsClear && m_numTrees < m_targetNumTrees)
+				{
+					if (r.Next(100) < 60)
+					{
+						// A new sapling is planted
+						td.InteriorID = InteriorID.Sapling;
+						td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
+						m_env.SetTileData(p, td);
+					}
+				}
 			}
 		}
 	}

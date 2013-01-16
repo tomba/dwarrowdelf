@@ -30,7 +30,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public GameSeason Season { get; private set; }
 
-		// Length of game year in ticks
+		/// <summary>
+		/// Length of game year in ticks
+		/// </summary>
 		public const int YEAR_LENGTH = 128;
 
 		enum WorldState
