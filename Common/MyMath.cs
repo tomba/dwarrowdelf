@@ -80,6 +80,14 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
+		/// Return a zigzag number of i: 0, 1, -1, 2, -2, 3, -3, ...
+		/// </summary>
+		public static int ZigZag(int i)
+		{
+			return ((i + 1) >> 1) * (((i & 1) << 1) - 1);
+		}
+
+		/// <summary>
 		/// Shuffle the items in an array
 		/// </summary>
 		public static void ShuffleArray<T>(T[] array, Random random)
