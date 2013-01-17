@@ -37,7 +37,7 @@ namespace Dwarrowdelf.Server
 
 						if (!action.Direction.IsPlanar() && action.Direction != Direction.Up)
 						{
-							SendFailReport(report, "not not planar or up direction");
+							SendFailReport(report, "not planar or up direction");
 							return ActionState.Fail;
 						}
 
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Server
 					{
 						if (!action.Direction.IsPlanar())
 						{
-							SendFailReport(report, "not not planar or up direction");
+							SendFailReport(report, "not planar direction");
 							return ActionState.Fail;
 						}
 

@@ -36,7 +36,7 @@ namespace Dwarrowdelf.Client
 
 			public DesignationType Type;
 			public IJob Job;
-			public bool IsPossible;
+			public bool Reachable;
 		}
 
 		public Designation(EnvironmentObject env)
@@ -94,8 +94,22 @@ namespace Dwarrowdelf.Client
 		{
 			if (m_checkStatus)
 			{
+				var rm = new List<IntPoint3>();
+
 				foreach (var kvp in m_map)
-					CheckTile(kvp.Key);
+				{
+					var p = kvp.Key;
+					var data = kvp.Value;
+
+					if (GetTileValid(p, data.Type) == false)
+						rm.Add(p);
+
+					data.Reachable = GetTileReachable(p, data.Type);
+				}
+
+				foreach (var p in rm)
+					RemoveDesignation(p);
+
 				m_checkStatus = false;
 			}
 		}
@@ -104,39 +118,13 @@ namespace Dwarrowdelf.Client
 		{
 			int origCount = m_map.Count;
 
-			IEnumerable<IntPoint3> locations;
-
-			switch (type)
-			{
-				case DesignationType.Mine:
-					locations = area.Range()
-						.Where(p => this.Environment.Contains(p))
-						.Where(p => this.Environment.GetTerrain(p).IsMinable || this.Environment.GetHidden(p));
-					break;
-
-				case DesignationType.CreateStairs:
-					locations = area.Range()
-						.Where(p => this.Environment.Contains(p))
-						.Where(p => (this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall) || this.Environment.GetHidden(p));
-					break;
-
-				case DesignationType.Channel:
-					locations = area.Range()
-						.Where(p => this.Environment.Contains(p));
-					break;
-
-				case DesignationType.FellTree:
-					locations = area.Range()
-						.Where(p => this.Environment.Contains(p))
-						.Where(p => this.Environment.GetInterior(p).ID == InteriorID.Tree);
-					break;
-
-				default:
-					throw new Exception();
-			}
+			var locations = area.Range().Where(this.Environment.Contains);
 
 			foreach (var p in locations)
 			{
+				if (GetTileValid(p, type) == false)
+					continue;
+
 				DesignationData oldData;
 
 				if (m_map.TryGetValue(p, out oldData))
@@ -147,8 +135,9 @@ namespace Dwarrowdelf.Client
 					RemoveJob(p);
 				}
 
-				m_map[p] = new DesignationData(type);
-				CheckTile(p);
+				var data = new DesignationData(type);
+				data.Reachable = GetTileReachable(p, type);
+				m_map[p] = data;
 
 				this.Environment.OnTileExtraChanged(p);
 			}
@@ -170,7 +159,7 @@ namespace Dwarrowdelf.Client
 		IAssignment IJobSource.FindAssignment(ILivingObject living)
 		{
 			var designations = m_map
-				.Where(kvp => kvp.Value.IsPossible && kvp.Value.Job == null)
+				.Where(kvp => kvp.Value.Reachable && kvp.Value.Job == null)
 				.OrderBy(kvp => (kvp.Key - living.Location).Length);
 
 			foreach (var d in designations)
@@ -279,15 +268,37 @@ namespace Dwarrowdelf.Client
 			return m_map.First(e => e.Value.Job == job).Key;
 		}
 
-		void CheckTile(IntPoint3 p)
+		bool GetTileValid(IntPoint3 p, DesignationType type)
 		{
-			var data = m_map[p];
+			switch (type)
+			{
+				case DesignationType.Mine:
+					return this.Environment.GetHidden(p) ||
+						this.Environment.GetTerrain(p).IsMinable;
 
+				case DesignationType.CreateStairs:
+					return this.Environment.GetHidden(p) ||
+						(this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall);
+
+				case DesignationType.Channel:
+					// XXX
+					return true;
+
+				case DesignationType.FellTree:
+					return this.Environment.GetInterior(p).ID == InteriorID.Tree;
+
+				default:
+					throw new Exception();
+			}
+		}
+
+		bool GetTileReachable(IntPoint3 p, DesignationType type)
+		{
 			DirectionSet dirs;
 
 			// trivial validity check to remove AStar process for totally blocked tiles
 
-			switch (data.Type)
+			switch (type)
 			{
 				case DesignationType.Mine:
 					dirs = DirectionSet.Planar;
@@ -314,16 +325,8 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 			}
 
-			foreach (var d in dirs.ToDirections())
-			{
-				if (EnvironmentHelpers.CanEnter(this.Environment, p + d))
-				{
-					data.IsPossible = true;
-					return;
-				}
-			}
-
-			data.IsPossible = false;
+			return dirs.ToDirections()
+				.Any(d => EnvironmentHelpers.CanEnter(this.Environment, p + d));
 		}
 	}
 }
