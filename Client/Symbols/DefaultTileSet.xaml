@@ -168,6 +168,9 @@
 	<Symbol ID="DeciduousTree2">
 		<DrawingGfx DrawingName="DeciduousTree2" />
 	</Symbol>
+	<Symbol ID="DeadTree">
+		<DrawingGfx DrawingName="DeadTree" X="20" W="60" />
+	</Symbol>
 	<Symbol ID="Key">
 		<CharGfx Char="Ⱡ" />
 	</Symbol>

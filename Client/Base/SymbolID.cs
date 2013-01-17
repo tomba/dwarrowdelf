@@ -56,6 +56,7 @@ namespace Dwarrowdelf.Client
 		ConiferousTree2,
 		DeciduousTree,
 		DeciduousTree2,
+		DeadTree,
 		Grass,
 		Grass2,
 		Grass3,

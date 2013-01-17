@@ -15,6 +15,7 @@ namespace Dwarrowdelf
 		Stairs,
 		Sapling,
 		Tree,
+		DeadTree,
 		Ore,
 		Grass,
 	}

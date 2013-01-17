@@ -299,6 +299,7 @@ namespace Dwarrowdelf.Client
 			{
 				case InteriorID.Grass:
 				case InteriorID.Tree:
+				case InteriorID.DeadTree:
 				case InteriorID.Sapling:
 					return true;
 
@@ -429,7 +430,12 @@ namespace Dwarrowdelf.Client
 						}
 
 						tile.Color = GameColor.ForestGreen;
-						tile.BgColor = GameColor.Green;
+					}
+					break;
+
+				case InteriorID.DeadTree:
+					{
+						tile.SymbolID = SymbolID.DeadTree;
 					}
 					break;
 

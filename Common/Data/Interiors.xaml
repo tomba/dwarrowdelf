@@ -9,6 +9,7 @@
 	<InteriorInfo ID="Stairs" />
 	<InteriorInfo ID="Sapling" />
 	<InteriorInfo ID="Tree" Flags="Blocker" />
+	<InteriorInfo ID="DeadTree" Flags="Blocker" />
 	<InteriorInfo ID="Ore" />
 	<InteriorInfo ID="Grass" />
 
