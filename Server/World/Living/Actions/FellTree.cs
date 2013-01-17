@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 
 			this.Environment.SetTileData(p, td);
 
-			if (id == InteriorID.Tree || id == InteriorID.DeadTree)
+			if (id.IsFellableTree())
 			{
 				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{
