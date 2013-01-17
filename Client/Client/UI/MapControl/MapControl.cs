@@ -21,7 +21,7 @@ namespace Dwarrowdelf.Client.UI
 	/// <summary>
 	/// Wraps low level tilemap. Handles Environment, position.
 	/// </summary>
-	class MapControl : TileControl.TileControlBase, INotifyPropertyChanged
+	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged
 	{
 		IRenderView m_renderView;
 

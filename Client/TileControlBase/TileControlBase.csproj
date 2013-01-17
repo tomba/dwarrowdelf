@@ -48,8 +48,6 @@
     <Compile Include="ISymbolTileRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RenderData.cs" />
-    <Compile Include="RenderTileDetailed.cs" />
-    <Compile Include="TileControlBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
