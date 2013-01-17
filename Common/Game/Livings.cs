@@ -55,7 +55,7 @@ namespace Dwarrowdelf
 
 			LivingInfo[] livings;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Livings.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Livings.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{

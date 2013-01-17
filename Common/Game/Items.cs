@@ -134,7 +134,7 @@ namespace Dwarrowdelf
 
 			ItemInfo[] items;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Items.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Items.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{

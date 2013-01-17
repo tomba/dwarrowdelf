@@ -47,132 +47,132 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\AIHelpers.cs" />
-    <Compile Include="AI\CarnivoreAI.cs" />
-    <Compile Include="AI\MonsterAI.cs" />
-    <Compile Include="AStar\AStarResult.cs" />
-    <Compile Include="AStar\AStarTarget.cs" />
-    <Compile Include="AStar\AStar.cs" />
-    <Compile Include="ChangeDatas.cs" />
-    <Compile Include="DataTypes\DoublePoint3.cs" />
-    <Compile Include="DataTypes\EnumBitMasks.cs" />
-    <Compile Include="Hash.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
-    <Compile Include="Jobs\Assignments\SleepAssignment.cs" />
-    <Compile Include="MWCRandom.cs" />
-    <Compile Include="Net\DirectConnectionListener.cs" />
-    <Compile Include="Net\PipeConnectionListener.cs" />
-    <Compile Include="Net\TcpConnectionListener.cs" />
-    <Compile Include="DataTypes\ArrayGrid2D.cs" />
-    <Compile Include="DataTypes\DoubleVector3.cs" />
-    <Compile Include="DataTypes\Region.cs" />
-    <Compile Include="EnumHelpers.cs" />
-    <Compile Include="Events.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveInstallItemAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\FetchItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\ConstructAssignment.cs" />
-    <Compile Include="Jobs\Assignments\CarryItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\HaulToAreaAssignment.cs" />
-    <Compile Include="Jobs\Assignments\HaulAssignment.cs" />
-    <Compile Include="Jobs\Assignments\FleeMoveAssignment.cs" />
-    <Compile Include="Jobs\Assignments\InstallItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\GenericDebugAssignment.cs" />
-    <Compile Include="Jobs\Assignments\GrazeMoveAssignment.cs" />
-    <Compile Include="AI\HerbivoreAI.cs" />
-    <Compile Include="AI\Group.cs" />
-    <Compile Include="Jobs\JobGroups\ConstructJob.cs" />
-    <Compile Include="Jobs\JobGroups\InstallItemJob.cs" />
-    <Compile Include="Labors.cs" />
-    <Compile Include="Livings.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="Jobs\AssignmentGroups\AssignmentGroup.cs" />
-    <Compile Include="Jobs\AssignmentGroups\PatrolAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveBaseAssignment.cs" />
-    <Compile Include="Jobs\Assignments\MoveAssignmentBase.cs" />
-    <Compile Include="Jobs\Assignments\MoveToAreaAssignment.cs" />
-    <Compile Include="Json\Attributes.cs" />
-    <Compile Include="Json\JsonDeserializer.cs" />
-    <Compile Include="Json\JsonSerializer.cs" />
-    <Compile Include="DataTypes\IntGrid2Z.cs" />
-    <Compile Include="EnvironmentHelpers.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Items.cs" />
-    <Compile Include="Jobs\Assignments\AttackAssignment.cs" />
-    <Compile Include="Jobs\Assignments\RandomMoveAssignment.cs" />
-    <Compile Include="Json\JsonServices.cs" />
-    <Compile Include="MarkovNameGenerator.cs" />
-    <Compile Include="MyTraceSource.cs" />
-    <Compile Include="Net\DirectConnection.cs" />
-    <Compile Include="Net\GameNetStream.cs" />
-    <Compile Include="Net\IConnection.cs" />
-    <Compile Include="Net\PipeConnection.cs" />
-    <Compile Include="ObjectType.cs" />
-    <Compile Include="ReadOnlyArray.cs" />
-    <Compile Include="Reports.cs" />
-    <Compile Include="SaveFileManager.cs" />
-    <Compile Include="ShadowCastRecursive.cs" />
-    <Compile Include="Skills.cs" />
-    <Compile Include="TerrainGen\Clamper.cs" />
-    <Compile Include="TerrainGen\DungeonTerrainGenerator.cs" />
-    <Compile Include="TerrainGen\DiamondSquare.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveConsumeAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveFellTreeAssignment.cs" />
-    <Compile Include="Jobs\Assignments\ConsumeItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\FellTreeAssignment.cs" />
-    <Compile Include="Jobs\Assignments\WaitAssignment.cs" />
-    <Compile Include="Jobs\Assignments\MoveAssignment.cs" />
-    <Compile Include="Jobs\Assignments\GetItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\BuildItemAssignment.cs" />
-    <Compile Include="Jobs\Assignments\MineAssignment.cs" />
-    <Compile Include="AI\IAI.cs" />
-    <Compile Include="AI\AssignmentAI.cs" />
-    <Compile Include="AStar\OpenList.cs" />
-    <Compile Include="Jobs\Assignments\Assignment.cs" />
-    <Compile Include="Jobs\Assignments\DropItemAssignment.cs" />
-    <Compile Include="Jobs\IJob.cs" />
-    <Compile Include="Jobs\JobGroups\FellTreeParallelJob.cs" />
-    <Compile Include="Jobs\JobGroups\JobGroup.cs" />
-    <Compile Include="Jobs\JobGroups\FetchItems.cs" />
-    <Compile Include="Jobs\JobGroups\BuildItemJob.cs" />
-    <Compile Include="Jobs\JobManager.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
-    <Compile Include="Jobs\AssignmentGroups\MoveMineAssignment.cs" />
-    <Compile Include="Messages.cs" />
-    <Compile Include="Net\TcpConnection.cs" />
-    <Compile Include="Workbenches.cs" />
-    <Compile Include="DataTypes\ArrayGrid3D.cs" />
-    <Compile Include="DataTypes\IntSize3.cs" />
-    <Compile Include="DataTypes\IntVector3.cs" />
-    <Compile Include="DataTypes\GameColor.cs" />
-    <Compile Include="TerrainGen\TerrainData.cs" />
-    <Compile Include="TerrainGen\TerrainGenerator.cs" />
-    <Compile Include="TerrainGen\TerrainHelpers.cs" />
-    <Compile Include="Terrains.cs" />
-    <Compile Include="Interiors.cs" />
-    <Compile Include="Materials.cs" />
-    <Compile Include="MyMath.cs" />
-    <Compile Include="ObjectData.cs" />
-    <Compile Include="Properties.cs" />
-    <Compile Include="Serializer.cs" />
-    <Compile Include="DataTypes\IntGrid3.cs" />
-    <Compile Include="DataTypes\IntVector2.cs" />
-    <Compile Include="DataTypes\IntSize2.cs" />
-    <Compile Include="DataTypes\Direction.cs" />
-    <Compile Include="DataTypes\IntGrid2.cs" />
-    <Compile Include="DataTypes\IntPoint3.cs" />
-    <Compile Include="IGame.cs" />
-    <Compile Include="DataTypes\Grid2D.cs" />
-    <Compile Include="MMLogTraceListener.cs" />
-    <Compile Include="ObjectID.cs" />
-    <Compile Include="GameAction.cs" />
-    <Compile Include="IGameObject.cs" />
-    <Compile Include="DataTypes\IntPoint2.cs" />
+    <Compile Include="Game\AI\AIHelpers.cs" />
+    <Compile Include="Game\AI\CarnivoreAI.cs" />
+    <Compile Include="Game\AI\MonsterAI.cs" />
+    <Compile Include="Game\AStar\AStarResult.cs" />
+    <Compile Include="Game\AStar\AStarTarget.cs" />
+    <Compile Include="Game\AStar\AStar.cs" />
+    <Compile Include="Game\Messages\ChangeDatas.cs" />
+    <Compile Include="Lib\DataTypes\DoublePoint3.cs" />
+    <Compile Include="Lib\DataTypes\EnumBitMasks.cs" />
+    <Compile Include="Lib\Hash.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\SleepAssignment.cs" />
+    <Compile Include="Lib\MWCRandom.cs" />
+    <Compile Include="Game\Net\DirectConnectionListener.cs" />
+    <Compile Include="Game\Net\PipeConnectionListener.cs" />
+    <Compile Include="Game\Net\TcpConnectionListener.cs" />
+    <Compile Include="Lib\DataTypes\ArrayGrid2D.cs" />
+    <Compile Include="Lib\DataTypes\DoubleVector3.cs" />
+    <Compile Include="Lib\DataTypes\Region.cs" />
+    <Compile Include="Lib\EnumHelpers.cs" />
+    <Compile Include="Game\Messages\Events.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveConstructAssignment.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveInstallItemAssignment.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\FetchItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\ConstructAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\CarryItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\HaulToAreaAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\HaulAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\FleeMoveAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\InstallItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\GenericDebugAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\GrazeMoveAssignment.cs" />
+    <Compile Include="Game\AI\HerbivoreAI.cs" />
+    <Compile Include="Game\AI\Group.cs" />
+    <Compile Include="Game\Jobs\JobGroups\ConstructJob.cs" />
+    <Compile Include="Game\Jobs\JobGroups\InstallItemJob.cs" />
+    <Compile Include="Game\Labors.cs" />
+    <Compile Include="Game\Livings.cs" />
+    <Compile Include="Game\Helpers.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\AssignmentGroup.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\PatrolAssignment.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveBaseAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\MoveAssignmentBase.cs" />
+    <Compile Include="Game\Jobs\Assignments\MoveToAreaAssignment.cs" />
+    <Compile Include="Game\Json\Attributes.cs" />
+    <Compile Include="Game\Json\JsonDeserializer.cs" />
+    <Compile Include="Game\Json\JsonSerializer.cs" />
+    <Compile Include="Lib\DataTypes\IntGrid2Z.cs" />
+    <Compile Include="Game\EnvironmentHelpers.cs" />
+    <Compile Include="Lib\Extensions.cs" />
+    <Compile Include="Game\Items.cs" />
+    <Compile Include="Game\Jobs\Assignments\AttackAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\RandomMoveAssignment.cs" />
+    <Compile Include="Game\Json\JsonServices.cs" />
+    <Compile Include="Lib\MarkovNameGenerator.cs" />
+    <Compile Include="Lib\MyTraceSource.cs" />
+    <Compile Include="Game\Net\DirectConnection.cs" />
+    <Compile Include="Game\Net\GameNetStream.cs" />
+    <Compile Include="Game\Net\IConnection.cs" />
+    <Compile Include="Game\Net\PipeConnection.cs" />
+    <Compile Include="Game\ObjectType.cs" />
+    <Compile Include="Lib\ReadOnlyArray.cs" />
+    <Compile Include="Game\Messages\Reports.cs" />
+    <Compile Include="Game\SaveFileManager.cs" />
+    <Compile Include="Lib\ShadowCastRecursive.cs" />
+    <Compile Include="Game\Skills.cs" />
+    <Compile Include="Game\TerrainGen\Clamper.cs" />
+    <Compile Include="Game\TerrainGen\DungeonTerrainGenerator.cs" />
+    <Compile Include="Game\TerrainGen\DiamondSquare.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveConsumeAssignment.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveFellTreeAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\ConsumeItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\FellTreeAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\WaitAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\MoveAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\GetItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\BuildItemAssignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\MineAssignment.cs" />
+    <Compile Include="Game\AI\IAI.cs" />
+    <Compile Include="Game\AI\AssignmentAI.cs" />
+    <Compile Include="Game\AStar\OpenList.cs" />
+    <Compile Include="Game\Jobs\Assignments\Assignment.cs" />
+    <Compile Include="Game\Jobs\Assignments\DropItemAssignment.cs" />
+    <Compile Include="Game\Jobs\IJob.cs" />
+    <Compile Include="Game\Jobs\JobGroups\FellTreeParallelJob.cs" />
+    <Compile Include="Game\Jobs\JobGroups\JobGroup.cs" />
+    <Compile Include="Game\Jobs\JobGroups\FetchItems.cs" />
+    <Compile Include="Game\Jobs\JobGroups\BuildItemJob.cs" />
+    <Compile Include="Game\Jobs\JobManager.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveBuildItemAssignment.cs" />
+    <Compile Include="Game\Jobs\AssignmentGroups\MoveMineAssignment.cs" />
+    <Compile Include="Game\Messages\Messages.cs" />
+    <Compile Include="Game\Net\TcpConnection.cs" />
+    <Compile Include="Game\Workbenches.cs" />
+    <Compile Include="Lib\DataTypes\ArrayGrid3D.cs" />
+    <Compile Include="Lib\DataTypes\IntSize3.cs" />
+    <Compile Include="Lib\DataTypes\IntVector3.cs" />
+    <Compile Include="Lib\DataTypes\GameColor.cs" />
+    <Compile Include="Game\TerrainGen\TerrainData.cs" />
+    <Compile Include="Game\TerrainGen\TerrainGenerator.cs" />
+    <Compile Include="Game\TerrainGen\TerrainHelpers.cs" />
+    <Compile Include="Game\Terrains.cs" />
+    <Compile Include="Game\Interiors.cs" />
+    <Compile Include="Game\Materials.cs" />
+    <Compile Include="Lib\MyMath.cs" />
+    <Compile Include="Game\Messages\ObjectData.cs" />
+    <Compile Include="Game\Properties.cs" />
+    <Compile Include="Game\Serializer.cs" />
+    <Compile Include="Lib\DataTypes\IntGrid3.cs" />
+    <Compile Include="Lib\DataTypes\IntVector2.cs" />
+    <Compile Include="Lib\DataTypes\IntSize2.cs" />
+    <Compile Include="Lib\DataTypes\Direction.cs" />
+    <Compile Include="Lib\DataTypes\IntGrid2.cs" />
+    <Compile Include="Lib\DataTypes\IntPoint3.cs" />
+    <Compile Include="Game\IGame.cs" />
+    <Compile Include="Lib\DataTypes\Grid2D.cs" />
+    <Compile Include="Lib\MMLogTraceListener.cs" />
+    <Compile Include="Game\ObjectID.cs" />
+    <Compile Include="Game\Messages\GameAction.cs" />
+    <Compile Include="Game\IGameObject.cs" />
+    <Compile Include="Lib\DataTypes\IntPoint2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TileData.cs" />
-    <Compile Include="TypeConverters.cs" />
-    <Compile Include="WorkHelpers.cs" />
-    <Compile Include="WrapperGenerator.cs" />
+    <Compile Include="Game\TileData.cs" />
+    <Compile Include="Game\TypeConverters.cs" />
+    <Compile Include="Game\WorkHelpers.cs" />
+    <Compile Include="Lib\WrapperGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MemoryMappedLog\MMLog\MMLog.csproj">
@@ -185,38 +185,39 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Materials.xaml">
+    <EmbeddedResource Include="Game\Data\Materials.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Items.xaml">
+    <EmbeddedResource Include="Game\Data\Items.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Workbenches.xaml">
+    <EmbeddedResource Include="Game\Data\Workbenches.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Interiors.xaml">
+    <EmbeddedResource Include="Game\Data\Interiors.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Terrains.xaml">
+    <EmbeddedResource Include="Game\Data\Terrains.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Livings.xaml">
+    <EmbeddedResource Include="Game\Data\Livings.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 
 			WorkbenchInfo[] workbenchInfos;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Workbenches.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Workbenches.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{

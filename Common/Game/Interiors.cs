@@ -47,7 +47,7 @@ namespace Dwarrowdelf
 
 			InteriorInfo[] interiors;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Interiors.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Interiors.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{

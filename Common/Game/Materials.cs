@@ -117,7 +117,7 @@ namespace Dwarrowdelf
 
 			MaterialInfo[] materials;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Data.Materials.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Materials.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
