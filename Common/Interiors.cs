@@ -87,11 +87,11 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Is Interior a sapling or a full grown tree
+		/// Is Interior a sapling or a full grown tree (dead or alive)
 		/// </summary>
 		public static bool IsTree(this InteriorID id)
 		{
-			return id == InteriorID.Tree || id == InteriorID.Sapling;
+			return id == InteriorID.Tree || id == InteriorID.Sapling || id == InteriorID.DeadTree;
 		}
 
 		public static InteriorInfo GetInterior(InteriorID id)

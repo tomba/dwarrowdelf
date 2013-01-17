@@ -285,8 +285,10 @@ namespace Dwarrowdelf.Client
 					return true;
 
 				case DesignationType.FellTree:
-					return this.Environment.GetInterior(p).ID == InteriorID.Tree;
-
+					{
+						var id = this.Environment.GetInterior(p).ID;
+						return id == InteriorID.Tree || id == InteriorID.DeadTree;
+					}
 				default:
 					throw new Exception();
 			}

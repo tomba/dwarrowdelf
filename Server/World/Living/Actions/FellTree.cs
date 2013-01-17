@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server
 
 			var report = new FellTreeActionReport(this, action.Direction);
 
-			if (id != InteriorID.Tree && id != InteriorID.Sapling)
+			if (id.IsTree() == false)
 			{
 				SendFailReport(report, "not a tree");
 				return ActionState.Fail;
@@ -40,7 +40,7 @@ namespace Dwarrowdelf.Server
 
 			this.Environment.SetTileData(p, td);
 
-			if (id == InteriorID.Tree)
+			if (id == InteriorID.Tree || id == InteriorID.DeadTree)
 			{
 				var builder = new ItemObjectBuilder(ItemID.Log, material)
 				{
