@@ -43,7 +43,8 @@ namespace Dwarrowdelf.Client.UI
 				}
 
 				Notify("Environment");
-				NotifyTileChanges();
+				NotifyTileTerrainChanges();
+				NotifyTileObjectChanges();
 			}
 		}
 
@@ -56,17 +57,14 @@ namespace Dwarrowdelf.Client.UI
 				if (m_box == value)
 					return;
 
+				var old = m_box;
+
 				m_box = value;
 
 				Notify("Box");
-				NotifyTileChanges();
+				NotifyTileTerrainChanges();
+				NotifyTileObjectChanges(old, m_box);
 			}
-		}
-
-		void NotifyTileChanges()
-		{
-			NotifyTileTerrainChanges();
-			NotifyTileObjectChanges();
 		}
 
 		void NotifyTileTerrainChanges()
@@ -82,12 +80,33 @@ namespace Dwarrowdelf.Client.UI
 		{
 			m_objects.Clear();
 
-			if (this.Environment != null)
+			if (this.Environment == null)
+				return;
+
+			var obs = m_box.Range().SelectMany(p => m_environment.GetContents(p));
+			foreach (var ob in obs)
+				m_objects.Add(ob);
+		}
+
+		void NotifyTileObjectChanges(IntGrid3 oldGrid, IntGrid3 newGrid)
+		{
+			if (this.Environment == null)
 			{
-				var obs = m_box.Range().SelectMany(p => m_environment.GetContents(p));
-				foreach (var ob in obs)
-					m_objects.Add(ob);
+				m_objects.Clear();
+				return;
 			}
+
+			var rm = oldGrid.Range().Except(newGrid.Range())
+				.SelectMany(p => this.Environment.GetContents(p));
+
+			foreach (var ob in rm)
+				m_objects.Remove(ob);
+
+			var add = newGrid.Range().Except(oldGrid.Range())
+				.SelectMany(p => this.Environment.GetContents(p));
+
+			foreach (var ob in add)
+				m_objects.Add(ob);
 		}
 
 		void OnMapTerrainChanged(IntPoint3 l)
