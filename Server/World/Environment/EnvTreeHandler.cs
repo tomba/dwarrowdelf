@@ -94,14 +94,22 @@ namespace Dwarrowdelf.Server
 				}
 				else if (td.InteriorID == InteriorID.Tree)
 				{
-					/*
 					if (r.Next(100) < 20)
 					{
 						// A tree dies
+						td.InteriorID = InteriorID.DeadTree;
+						m_env.SetTileData(p, td);
+					}
+				}
+				else if (td.InteriorID == InteriorID.DeadTree)
+				{
+					if (r.Next(100) < 60)
+					{
+						// A dead tree disappears
 						td.InteriorID = InteriorID.Grass;
 						td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
 						m_env.SetTileData(p, td);
-					}*/
+					}
 				}
 				else if (td.IsClear && m_numTrees < m_targetNumTrees)
 				{
