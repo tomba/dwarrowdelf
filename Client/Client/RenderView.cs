@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	sealed class RenderViewDetailed : RenderViewBase<RenderTileDetailed>
+	sealed class RenderView : RenderViewBase<RenderTile>
 	{
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 		static bool m_symbolToggler;
 
-		public RenderViewDetailed()
+		public RenderView()
 		{
 			GameData.Data.Blink += OnBlink;
 		}
@@ -99,9 +99,9 @@ namespace Dwarrowdelf.Client
 			//Trace.WriteLine(String.Format("Resolve {0} ms", sw.ElapsedMilliseconds));
 		}
 
-		static void ResolveDetailed(out RenderTileDetailed tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled)
+		static void ResolveDetailed(out RenderTile tile, EnvironmentObject env, IntPoint3 ml, bool isVisibilityCheckEnabled)
 		{
-			tile = new RenderTileDetailed();
+			tile = new RenderTile();
 			tile.IsValid = true;
 
 			if (!env.Contains(ml))

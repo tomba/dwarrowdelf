@@ -126,8 +126,8 @@ namespace Dwarrowdelf.Client.TileControl
 				BindFlags = BindFlags.ShaderResource,
 				CpuAccessFlags = CpuAccessFlags.Write,
 				OptionFlags = ResourceOptionFlags.BufferStructured,
-				SizeInBytes = tileBufferWidth * tileBufferHeight * Marshal.SizeOf(typeof(RenderTileDetailed)),
-				StructureByteStride = Marshal.SizeOf(typeof(RenderTileDetailed)),
+				SizeInBytes = tileBufferWidth * tileBufferHeight * Marshal.SizeOf(typeof(RenderTile)),
+				StructureByteStride = Marshal.SizeOf(typeof(RenderTile)),
 				Usage = ResourceUsage.Dynamic,
 			}));
 
@@ -166,7 +166,7 @@ namespace Dwarrowdelf.Client.TileControl
 			context.PixelShader.SetShaderResource(0, m_tileTextureView);
 		}
 
-		public void SendMapData(RenderData<RenderTileDetailed> mapData, int columns, int rows)
+		public void SendMapData(RenderData<RenderTile> mapData, int columns, int rows)
 		{
 			m_shaderDataPerFrame.ColRow = new Vector2(columns, rows);
 

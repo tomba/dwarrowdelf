@@ -17,7 +17,6 @@ namespace Dwarrowdelf.Client
 		bool Contains(IntPoint3 ml);
 		bool IsVisibilityCheckEnabled { get; set; }
 		EnvironmentObject Environment { get; set; }
-		IRenderData RenderData { get; }
 
 		void Invalidate();
 		bool Invalidate(IntPoint3 ml);
@@ -42,7 +41,6 @@ namespace Dwarrowdelf.Client
 			m_renderData = new RenderData<T>();
 		}
 
-		IRenderData IRenderView.RenderData { get { return m_renderData; } }
 		public RenderData<T> RenderData { get { return m_renderData; } }
 
 		public abstract void Resolve();

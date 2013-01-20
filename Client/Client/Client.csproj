@@ -312,7 +312,7 @@
       <DependentUpon>StockpileInfoControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ListBoxExtenders.cs" />
-    <Compile Include="RenderViewDetailed.cs" />
+    <Compile Include="RenderView.cs" />
     <Compile Include="RenderViewBase.cs" />
     <Compile Include="ClientSaveManager.cs" />
     <Compile Include="EmbeddedServer.cs" />

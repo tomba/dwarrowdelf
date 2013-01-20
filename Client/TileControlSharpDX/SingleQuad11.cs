@@ -118,7 +118,7 @@ namespace Dwarrowdelf.Client.TileControl
 			m_pixelShader.SetTileTextures(textureArray);
 		}
 
-		public void SendMapData(RenderData<RenderTileDetailed> mapData, int columns, int rows)
+		public void SendMapData(RenderData<RenderTile> mapData, int columns, int rows)
 		{
 			m_pixelShader.SendMapData(mapData, columns, rows);
 		}

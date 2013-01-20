@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client.TileControl
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
-		public RenderData<RenderTileDetailed> RenderData { get; set; }
+		public RenderData<RenderTile> RenderData { get; set; }
 
 		public ITileSet TileSet
 		{

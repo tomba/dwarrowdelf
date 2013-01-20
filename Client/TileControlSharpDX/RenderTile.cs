@@ -15,7 +15,7 @@ namespace Dwarrowdelf.Client.TileControl
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	public struct RenderTileDetailed
+	public struct RenderTile
 	{
 		public RenderTileLayer Terrain;
 		public RenderTileLayer Interior;

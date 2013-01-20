@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dwarrowdelf.Client.TileControl
 {
-	public sealed class RenderData<T> : IRenderData where T : struct
+	public sealed class RenderData<T> where T : struct
 	{
 		public int Width { get { return this.Size.Width; } }
 		public int Height { get { return this.Size.Height; } }
