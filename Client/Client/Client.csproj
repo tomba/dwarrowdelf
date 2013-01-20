@@ -449,10 +449,6 @@
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server %28Server\Server%29</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TileControlBase\TileControlBase.csproj">
-      <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>
-      <Name>TileControlBase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TileControlCore\TileControlCore.csproj">
       <Project>{2DC159B4-2248-49B1-8665-210CDC0B6B09}</Project>
       <Name>TileControlCore</Name>
