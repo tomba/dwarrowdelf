@@ -77,6 +77,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Symbols\DefaultTileSet.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Symbols\DefaultTileSetVectors.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\BaseObjectPropertiesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -237,6 +243,10 @@
     <Compile Include="DebugScriptMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Selectables.cs" />
+    <Compile Include="Symbols\CachedTileSet.cs" />
+    <Compile Include="Symbols\Symbols.cs" />
+    <Compile Include="Symbols\TileSet.cs" />
+    <Compile Include="Symbols\TileSetHelpers.cs" />
     <Compile Include="UI\ClientTools.cs" />
     <Compile Include="UI\Converters\NullToVisibilityConverter.cs" />
     <Compile Include="UI\MainWindow\FocusedObjectStats.xaml.cs">
@@ -407,6 +417,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ClientUser.cs" />
+    <None Include="Symbols\DefaultTileSetVectors.design" />
+    <Resource Include="Symbols\DefaultTileSetBitmaps.png" />
+    <None Include="Symbols\DefaultTileSetBitmaps.pdn" />
     <Resource Include="Images\splash.png" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -435,10 +448,6 @@
     <ProjectReference Include="..\..\Server\Server\Server.csproj">
       <Project>{FE74FE0D-25FB-4DE3-BCCF-7028C28C49A2}</Project>
       <Name>Server %28Server\Server%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Symbols\Client.Symbols.csproj">
-      <Project>{E8C9A027-2A2C-425A-B57F-4D277C21E42F}</Project>
-      <Name>Client.Symbols</Name>
     </ProjectReference>
     <ProjectReference Include="..\TileControlBase\TileControlBase.csproj">
       <Project>{DFB171DC-7857-4172-A458-95A251AEAB21}</Project>

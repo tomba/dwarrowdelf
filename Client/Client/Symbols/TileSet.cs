@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Client.Symbols
 			}
 			else
 			{
-				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + symbolInfoName, UriKind.Relative);
+				var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + symbolInfoName, UriKind.Relative);
 				symbolSet = (Symbols.SymbolSet)Application.LoadComponent(uri);
 
 				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -93,7 +93,7 @@ namespace Dwarrowdelf.Client.Symbols
 			{
 				try
 				{
-					var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + drawingsName, UriKind.Relative);
+					var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + drawingsName, UriKind.Relative);
 					drawingResources = (ResourceDictionary)Application.LoadComponent(uri);
 
 					date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -127,7 +127,7 @@ namespace Dwarrowdelf.Client.Symbols
 
 			try
 			{
-				var uri = new Uri("/Dwarrowdelf.Client.Symbols;component/" + name, UriKind.Relative);
+				var uri = new Uri("/Dwarrowdelf.Client;component/Symbols/" + name, UriKind.Relative);
 				var resStream = Application.GetResourceStream(uri);
 				stream = resStream.Stream;
 				date = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
