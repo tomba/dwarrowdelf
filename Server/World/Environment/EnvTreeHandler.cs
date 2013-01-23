@@ -30,6 +30,15 @@ namespace Dwarrowdelf.Server
 			m_numTrees = m_env.Size.Range().Count(p => m_env.GetTileData(p).InteriorID.IsTree());
 
 			m_env.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
+
+			m_env.World.TickStarting += OnTick;
+		}
+
+		public void Destruct()
+		{
+			m_env.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
+
+			m_env.World.TickStarting -= OnTick;
 		}
 
 		void OnTerrainOrInteriorChanged(IntPoint3 p, TileData oldData, TileData newData)
@@ -57,7 +66,7 @@ namespace Dwarrowdelf.Server
 			//Debug.Print(m_numTrees.ToString());
 		}
 
-		public void Tick()
+		void OnTick()
 		{
 			// go through all tiles in one year
 			int amount = m_env.Width * m_env.Height / World.YEAR_LENGTH;

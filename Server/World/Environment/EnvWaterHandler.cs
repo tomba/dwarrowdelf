@@ -16,6 +16,13 @@ namespace Dwarrowdelf.Server
 		{
 			m_env = env;
 			ScanWaterTiles();
+
+			m_env.World.TickStarting += OnTick;
+		}
+
+		public void Destruct()
+		{
+			m_env.World.TickStarting -= OnTick;
 		}
 
 		public void AddWater(IntPoint3 p)
@@ -160,7 +167,7 @@ namespace Dwarrowdelf.Server
 				waterChangeMap[p] = curLevel;
 		}
 
-		public void HandleWater()
+		void OnTick()
 		{
 			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
 

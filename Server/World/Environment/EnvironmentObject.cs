@@ -96,9 +96,10 @@ namespace Dwarrowdelf.Server
 			foreach (var ob in this.Inventory)
 				m_contentArray[ob.Z].Add(ob);
 
-			this.World.TickStarting += Tick;
-
-			m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
+			if (this.World.GameMode == GameMode.Fortress)
+			{
+				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
+			}
 
 			m_waterHandler = new EnvWaterHandler(this);
 
@@ -144,16 +145,21 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 
-			world.TickStarting += Tick;
-
-			m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
+			if (this.World.GameMode == GameMode.Fortress)
+			{
+				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
+			}
 
 			m_waterHandler = new EnvWaterHandler(this);
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickStarting -= Tick;
+			if (m_treeHandler != null)
+				m_treeHandler.Destruct();
+
+			if (m_waterHandler != null)
+				m_waterHandler.Destruct();
 
 			base.Destruct();
 		}
@@ -166,12 +172,6 @@ namespace Dwarrowdelf.Server
 		public bool Contains(IntPoint3 p)
 		{
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
-		}
-
-		void Tick()
-		{
-			m_waterHandler.HandleWater();
-			m_treeHandler.Tick();
 		}
 
 		// XXX called by SetTerrain script
