@@ -52,6 +52,7 @@ namespace Dwarrowdelf.Server
 
 		EnvWaterHandler m_waterHandler;
 		EnvTreeHandler m_treeHandler;
+		EnvWildlifeHandler m_wildlifeHandler;
 
 		[SaveGameProperty]
 		int m_originalNumTrees;
@@ -148,6 +149,8 @@ namespace Dwarrowdelf.Server
 			if (this.World.GameMode == GameMode.Fortress)
 			{
 				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
+				m_wildlifeHandler = new EnvWildlifeHandler(this);
+				m_wildlifeHandler.Init();
 			}
 
 			m_waterHandler = new EnvWaterHandler(this);
@@ -178,6 +181,24 @@ namespace Dwarrowdelf.Server
 		public void ScanWaterTiles()
 		{
 			m_waterHandler.Rescan();
+		}
+
+		public IntPoint3 GetRandomSurfaceLocation()
+		{
+			IntPoint3 p;
+			int iter = 0;
+
+			do
+			{
+				if (iter++ > 10000)
+					throw new Exception();
+
+				int x = this.World.Random.Next(this.Width);
+				int y = this.World.Random.Next(this.Height);
+				p = GetSurface(x, y);
+			} while (!EnvironmentHelpers.CanEnter(this, p));
+
+			return p;
 		}
 
 		public int GetDepth(int x, int y)

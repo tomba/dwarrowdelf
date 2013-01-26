@@ -9,7 +9,6 @@ namespace Dwarrowdelf.Server.Fortress
 {
 	static class MountainWorldPopulator
 	{
-		const int NUM_SHEEP = 3;
 		const int NUM_ORCS = 3;
 
 		public static void FinalizeEnv(EnvironmentObject env)
@@ -165,19 +164,6 @@ namespace Dwarrowdelf.Server.Fortress
 		static void AddMonsters(EnvironmentObject env)
 		{
 			var world = env.World;
-
-			for (int i = 0; i < NUM_SHEEP; ++i)
-			{
-				var livingBuilder = new LivingObjectBuilder(LivingID.Sheep)
-				{
-					Color = GetRandomColor(),
-				};
-
-				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.HerbivoreAI(living, 0));
-
-				living.MoveTo(env, GetRandomSurfaceLocation(env));
-			}
 
 			for (int i = 0; i < NUM_ORCS; ++i)
 			{
