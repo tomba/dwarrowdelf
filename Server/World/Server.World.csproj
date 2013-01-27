@@ -51,6 +51,7 @@
     <Compile Include="Environment\EnvTreeHandler.cs" />
     <Compile Include="Environment\EnvWaterHandler.cs" />
     <Compile Include="Environment\EnvWildlifeHandler.cs" />
+    <Compile Include="Environment\TileGridReaderWriter.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="Living\Actions\Sleep.cs" />
     <Compile Include="Living\Actions\EquipItem.cs" />
