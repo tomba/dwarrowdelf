@@ -8,15 +8,19 @@ using System.Runtime.InteropServices;
 namespace Dwarrowdelf
 {
 	/// <summary>
-	/// Maintained by EnvironmentObject internally
+	/// Maintained by EnvironmentObject internally.
+	/// The flags are helper flags, they can be deduced from other data.
 	/// </summary>
 	[Flags]
-	public enum TileFlags : ushort
+	public enum TileFlags : byte
 	{
 		None = 0,
 		ItemBlocks = 1 << 0,	// an item in the tile blocks movement
 		Subterranean = 1 << 1,
 	}
+
+	//     0         1       2         3        4       5        6        7
+	// |TerID   |TerMatID|IntID   |IntMatID|Flags   |Water   |        |        |
 
 	[Serializable]
 	[StructLayout(LayoutKind.Explicit)]
@@ -47,12 +51,16 @@ namespace Dwarrowdelf
 		public TileFlags Flags;
 
 		[NonSerialized]
-		[FieldOffset(6)]
+		[FieldOffset(5)]
 		public byte WaterLevel;
 
 		[NonSerialized]
+		[FieldOffset(6)]
+		public byte Unused1;
+
+		[NonSerialized]
 		[FieldOffset(7)]
-		public byte Unused;
+		public byte Unused2;
 
 		public const int MinWaterLevel = 1;
 		public const int MaxWaterLevel = 7;
