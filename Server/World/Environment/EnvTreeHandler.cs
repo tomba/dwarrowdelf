@@ -12,7 +12,6 @@ namespace Dwarrowdelf.Server
 	{
 		EnvironmentObject m_env;
 		int m_numTrees;
-		int[] m_randomArray;
 		int m_currentIdx;
 		int m_targetNumTrees;
 
@@ -20,12 +19,6 @@ namespace Dwarrowdelf.Server
 		{
 			m_env = env;
 			m_targetNumTrees = targetNumTrees;
-
-			m_randomArray = new int[env.Width * env.Height];
-			for (int i = 0; i < m_randomArray.Length; ++i)
-				m_randomArray[i] = (ushort)i;
-
-			MyMath.ShuffleArray(m_randomArray, m_env.World.Random);
 
 			m_numTrees = m_env.Size.Range().Count(p => m_env.GetTileData(p).InteriorID.IsTree());
 
@@ -79,16 +72,10 @@ namespace Dwarrowdelf.Server
 			{
 				var idx = m_currentIdx++;
 
-				if (m_currentIdx == m_randomArray.Length)
+				if (m_currentIdx == m_env.Width * m_env.Height)
 					m_currentIdx = 0;
 
-				var tileIdx = m_randomArray[idx];
-
-				int x, y;
-
-				y = Math.DivRem(tileIdx, m_env.Width, out x);
-
-				var p = m_env.GetSurface(x, y);
+				var p = m_env.GetRandomSurfaceLocation(idx);
 
 				var td = m_env.GetTileData(p);
 

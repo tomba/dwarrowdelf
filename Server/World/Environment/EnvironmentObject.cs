@@ -57,6 +57,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		int m_originalNumTrees;
 
+		/* contains all (x,y) coordinates of the env in random order */
+		uint[] m_randomXYArray;
+
 		EnvironmentObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Environment)
 		{
@@ -146,6 +149,15 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 
+			m_randomXYArray = new uint[this.Width * this.Height];
+			for (int i = 0; i < m_randomXYArray.Length; ++i)
+			{
+				ushort x = (ushort)(i % this.Width);
+				ushort y = (ushort)(i / this.Width);
+				m_randomXYArray[i] = ((uint)x << 16) | y;
+			}
+			MyMath.ShuffleArray(m_randomXYArray, this.World.Random);
+
 			if (this.World.GameMode == GameMode.Fortress)
 			{
 				m_treeHandler = new EnvTreeHandler(this, m_originalNumTrees);
@@ -183,22 +195,34 @@ namespace Dwarrowdelf.Server
 			m_waterHandler.Rescan();
 		}
 
-		public IntPoint3 GetRandomSurfaceLocation()
+		public IntPoint3 GetRandomSurfaceLocation(int idx)
 		{
-			IntPoint3 p;
-			int iter = 0;
+			uint raw = m_randomXYArray[idx];
+			int x = (int)(raw >> 16);
+			int y = (int)(raw & 0xffff);
+			return GetSurface(x, y);
+		}
 
-			do
+		public IntPoint3 GetRandomEnterableSurfaceLocation()
+		{
+			int numXYs = this.Width * this.Height;
+
+			int idx = this.World.Random.Next(numXYs);
+
+			for (int i = 0; i < numXYs; ++i)
 			{
-				if (iter++ > 10000)
-					throw new Exception();
+				var p = GetRandomSurfaceLocation(idx);
 
-				int x = this.World.Random.Next(this.Width);
-				int y = this.World.Random.Next(this.Height);
-				p = GetSurface(x, y);
-			} while (!EnvironmentHelpers.CanEnter(this, p));
+				if (EnvironmentHelpers.CanEnter(this, p))
+					return p;
 
-			return p;
+				idx += 1;
+
+				if (idx == numXYs)
+					idx = 0;
+			}
+
+			throw new Exception();
 		}
 
 		public int GetDepth(int x, int y)

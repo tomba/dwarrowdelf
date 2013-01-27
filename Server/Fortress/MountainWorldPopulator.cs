@@ -15,10 +15,10 @@ namespace Dwarrowdelf.Server.Fortress
 		{
 			// Add items
 			for (int i = 0; i < 6; ++i)
-				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), GetRandomSurfaceLocation(env));
+				CreateItem(env, ItemID.Gem, GetRandomMaterial(MaterialCategory.Gem), env.GetRandomEnterableSurfaceLocation());
 
 			for (int i = 0; i < 6; ++i)
-				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), GetRandomSurfaceLocation(env));
+				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), env.GetRandomEnterableSurfaceLocation());
 
 			//CreateWaterTest(env);
 
@@ -178,7 +178,7 @@ namespace Dwarrowdelf.Server.Fortress
 				Helpers.AddGem(living);
 				Helpers.AddBattleGear(living);
 
-				living.MoveTo(env, GetRandomSurfaceLocation(env));
+				living.MoveTo(env, env.GetRandomEnterableSurfaceLocation());
 			}
 		}
 
@@ -197,26 +197,6 @@ namespace Dwarrowdelf.Server.Fortress
 		static GameColor GetRandomColor()
 		{
 			return (GameColor)Helpers.GetRandomInt(GameColorRGB.NUMCOLORS - 1) + 1;
-		}
-
-		static IntPoint3 GetRandomSurfaceLocation(EnvironmentObject env)
-		{
-			IntPoint3 p;
-			int iter = 0;
-
-			do
-			{
-				if (iter++ > 10000)
-					throw new Exception();
-
-				int x = Helpers.GetRandomInt(env.Width);
-				int y = Helpers.GetRandomInt(env.Height);
-				int z = env.GetDepth(new IntPoint2(x, y));
-
-				p = new IntPoint3(x, y, z);
-			} while (!EnvironmentHelpers.CanEnter(env, p));
-
-			return p;
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Dwarrowdelf.Server
 
 			var group = new AI.Group();
 
-			var center = m_env.GetRandomSurfaceLocation();
+			var center = m_env.GetRandomEnterableSurfaceLocation();
 
 			using (var iter = IntPoint2.SquareSpiral(center.ToIntPoint(), 20).GetEnumerator())
 			{
