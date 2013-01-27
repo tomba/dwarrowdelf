@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server.Fortress
 			CreateWorkbenches(env);
 
 			{
-				var p = env.GetSurface(env.Width / 2 - 1, env.Height / 2 - 2);
+				var p = env.GetSurfaceLocation(env.Width / 2 - 1, env.Height / 2 - 2);
 
 				var td = env.GetTileData(p);
 				td.InteriorID = InteriorID.Empty;
@@ -81,7 +81,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			{
 				var gen = FoodGenerator.Create(env.World);
-				gen.MoveTo(env, env.GetSurface(env.Width / 2 - 2, env.Height / 2 - 2));
+				gen.MoveTo(env, env.GetSurfaceLocation(env.Width / 2 - 2, env.Height / 2 - 2));
 			}
 
 			AddMonsters(env);
@@ -94,7 +94,7 @@ namespace Dwarrowdelf.Server.Fortress
 			int posx = env.Width / 2 - 10;
 			int posy = env.Height / 2 - 10;
 
-			var surface = env.GetDepth(new IntPoint2(posx, posy));
+			var surface = env.GetSurfaceLevel(new IntPoint2(posx, posy));
 
 			var floorTile = new TileData()
 			{

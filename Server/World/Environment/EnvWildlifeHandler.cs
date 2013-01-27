@@ -69,7 +69,7 @@ namespace Dwarrowdelf.Server
 						if (m_env.Size.Plane.Contains(p2) == false)
 							continue;
 
-						var p = m_env.GetSurface(p2);
+						var p = m_env.GetSurfaceLocation(p2);
 
 						if (EnvironmentHelpers.CanEnter(m_env, p) == false)
 							continue;

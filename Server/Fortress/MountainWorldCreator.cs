@@ -61,7 +61,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static void CreateWaterTest(EnvironmentObject env)
 		{
-			var pos = env.GetSurface(10, 30);
+			var pos = env.GetSurfaceLocation(10, 30);
 			int surface = pos.Z;
 
 			CreateWalls(env, new IntGrid2Z(pos.X, pos.Y, 3, 8, surface));

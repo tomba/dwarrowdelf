@@ -103,7 +103,7 @@ namespace Dwarrowdelf.Server.Fortress
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
 
-				var z = env.GetDepth(p);
+				var z = env.GetSurfaceLevel(p);
 
 				var r = new IntGrid2Z(p.X - size, p.Y - size, size * 2, size * 2, z);
 

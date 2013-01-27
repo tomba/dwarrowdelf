@@ -128,7 +128,7 @@ namespace Dwarrowdelf.Server.Fortress
 				if (env.Size.Plane.Contains(p) == false)
 					continue;
 
-				var z = env.GetDepth(p);
+				var z = env.GetSurfaceLevel(p);
 
 				var p3 = new IntPoint3(p, z);
 
