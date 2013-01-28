@@ -95,7 +95,7 @@ namespace Dwarrowdelf.TerrainGen
 			});
 		}
 
-		public static void CreateGrass(TerrainData terrain, Random random, int grassLimit)
+		public static void CreateVegetation(TerrainData terrain, Random random, int vegetationLimit)
 		{
 			var grid = terrain.TileGrid;
 			var heightMap = terrain.HeightMap;
@@ -103,38 +103,9 @@ namespace Dwarrowdelf.TerrainGen
 			int w = terrain.Width;
 			int h = terrain.Height;
 
-			var materials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
-			for (int y = 0; y < h; ++y)
-			{
-				for (int x = 0; x < w; ++x)
-				{
-					int z = heightMap[y, x];
-
-					var p = new IntPoint3(x, y, z);
-
-					if (z < grassLimit)
-					{
-						var td = grid[p.Z, p.Y, p.X];
-
-						if (Materials.GetMaterial(td.TerrainMaterialID).Category == MaterialCategory.Soil &&
-							(td.TerrainID.IsFloor() || td.TerrainID.IsSlope()))
-						{
-							td.InteriorID = InteriorID.Grass;
-							td.InteriorMaterialID = materials[random.Next(materials.Length)].ID;
-
-							grid[p.Z, p.Y, p.X] = td;
-						}
-					}
-				}
-			}
-		}
-
-		public static void CreateTrees(TerrainData terrain, Random random)
-		{
-			var grid = terrain.TileGrid;
-			var heightMap = terrain.HeightMap;
-
-			var materials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
+			var grassMaterials = Materials.GetMaterials(MaterialCategory.Grass).ToArray();
+			var woodMaterials = Materials.GetMaterials(MaterialCategory.Wood).ToArray();
+			var berryMaterials = Materials.GetMaterials(MaterialCategory.Berry).ToArray();
 
 			int baseSeed = random.Next();
 			if (baseSeed == 0)
@@ -146,19 +117,43 @@ namespace Dwarrowdelf.TerrainGen
 
 				var p = new IntPoint3(p2d, z);
 
+				if (z >= vegetationLimit)
+					return;
+
 				var td = grid[p.Z, p.Y, p.X];
 
-				if (td.InteriorID == InteriorID.Grass)
-				{
-					var r = new MWCRandom(p, baseSeed);
+				if (Materials.GetMaterial(td.TerrainMaterialID).Category != MaterialCategory.Soil)
+					return;
 
-					if (r.Next(8) == 0)
-					{
-						td.InteriorID = r.Next(2) == 0 ? InteriorID.Tree : InteriorID.Sapling;
-						td.InteriorMaterialID = materials[r.Next(materials.Length)].ID;
-						grid[p.Z, p.Y, p.X] = td;
-					}
+				if (td.TerrainID.IsFloor() == false && td.TerrainID.IsSlope() == false)
+					return;
+
+				var r = new MWCRandom(p, baseSeed);
+
+				int v = r.Next(100);
+
+				if (v >= 95)
+				{
+					td.InteriorID = InteriorID.Sapling;
+					td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
 				}
+				else if (v >= 90)
+				{
+					td.InteriorID = InteriorID.Tree;
+					td.InteriorMaterialID = woodMaterials[r.Next(woodMaterials.Length)].ID;
+				}
+				else if (v >= 80)
+				{
+					td.InteriorID = InteriorID.Shrub;
+					td.InteriorMaterialID = berryMaterials[r.Next(berryMaterials.Length)].ID;
+				}
+				else
+				{
+					td.InteriorID = InteriorID.Grass;
+					td.InteriorMaterialID = grassMaterials[r.Next(grassMaterials.Length)].ID;
+				}
+
+				grid[p.Z, p.Y, p.X] = td;
 			});
 		}
 	}

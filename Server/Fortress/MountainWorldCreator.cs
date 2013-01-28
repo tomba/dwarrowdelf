@@ -52,9 +52,7 @@ namespace Dwarrowdelf.Server.Fortress
 			tg.Generate(corners, 5, 0.75, 1, 2);
 
 			int grassLimit = terrain.Depth * 4 / 5;
-			TerrainHelpers.CreateGrass(terrain, random, grassLimit);
-
-			TerrainHelpers.CreateTrees(terrain, random);
+			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);
 
 			return terrain;
 		}
