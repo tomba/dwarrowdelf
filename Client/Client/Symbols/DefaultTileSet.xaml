@@ -37,6 +37,11 @@
 	<Symbol ID="Grass4">
 		<DrawingGfx DrawingName="Grass4" />
 	</Symbol>
+
+	<Symbol ID="Shrub">
+		<DrawingGfx DrawingName="Shrub" X="20" Y="40" W="60" H="60" />
+	</Symbol>
+
 	<Symbol ID="Wall">
 		<DrawingGfx DrawingName="Wall" />
 	</Symbol>

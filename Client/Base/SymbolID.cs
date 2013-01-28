@@ -61,6 +61,7 @@ namespace Dwarrowdelf.Client
 		Grass2,
 		Grass3,
 		Grass4,
+		Shrub,
 
 		/* Livings */
 		Player,

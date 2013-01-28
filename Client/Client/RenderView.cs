@@ -301,6 +301,7 @@ namespace Dwarrowdelf.Client
 				case InteriorID.Tree:
 				case InteriorID.DeadTree:
 				case InteriorID.Sapling:
+				case InteriorID.Shrub:
 					return true;
 
 				default:
@@ -436,6 +437,12 @@ namespace Dwarrowdelf.Client
 				case InteriorID.DeadTree:
 					{
 						tile.SymbolID = SymbolID.DeadTree;
+					}
+					break;
+
+				case InteriorID.Shrub:
+					{
+						tile.SymbolID = SymbolID.Shrub;
 					}
 					break;
 

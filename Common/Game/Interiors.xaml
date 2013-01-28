@@ -12,5 +12,6 @@
 	<InteriorInfo ID="DeadTree" Flags="Blocker" />
 	<InteriorInfo ID="Ore" />
 	<InteriorInfo ID="Grass" />
+	<InteriorInfo ID="Shrub" />
 
 </x:Array>

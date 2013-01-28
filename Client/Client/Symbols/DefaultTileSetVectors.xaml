@@ -9,6 +9,19 @@
 			</DrawingGroup>
 		</DrawingBrush.Drawing>
 	</DrawingBrush>
+	<DrawingBrush x:Key="Shrub" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FF00C800" Geometry="F1 M 593.433,557.998C 590.165,552.552 596.435,542.109 602.838,542.333C 609.241,542.557 615.777,553.448 612.642,558.669C 609.508,563.89 596.701,563.443 593.433,557.998 Z ">
+						<GeometryDrawing.Pen>
+							<Pen Thickness="2" LineJoin="Round" Brush="#FF006432"/>
+						</GeometryDrawing.Pen>
+					</GeometryDrawing>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
 	<DrawingBrush x:Key="Pick" Stretch="Uniform">
 		<DrawingBrush.Drawing>
 			<DrawingGroup>

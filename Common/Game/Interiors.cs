@@ -18,6 +18,7 @@ namespace Dwarrowdelf
 		DeadTree,
 		Ore,
 		Grass,
+		Shrub,
 	}
 
 	[Flags]

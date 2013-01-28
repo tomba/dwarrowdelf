@@ -73,6 +73,11 @@ namespace Dwarrowdelf
 		HairGrass,
 		RyeGrass,
 
+		// Berries
+		Blackberry,
+		Elderberry,
+		Gooseberry,
+
 		// Other
 		Flesh,
 		Water,
@@ -89,6 +94,7 @@ namespace Dwarrowdelf
 		Mineral,
 		Grass,
 		Consumable,
+		Berry,
 	}
 
 	public enum WoodMaterialCategory

@@ -64,6 +64,11 @@
 	<MaterialInfo ID="HairGrass" Category="Grass" Color="Green" />
 	<MaterialInfo ID="RyeGrass" Category="Grass" Color="Green" />
 
+	<!-- Berries -->
+	<MaterialInfo ID="Blackberry" Category="Berry" Color="Green" />
+	<MaterialInfo ID="Elderberry" Category="Berry" Color="Green" />
+	<MaterialInfo ID="Gooseberry" Category="Berry" Color="Green" />
+
 	<!-- Other -->
 	<MaterialInfo ID="Flesh" Category="Consumable" Color="Green" />
 	<MaterialInfo ID="Water" Category="Consumable" Color="Blue" />
