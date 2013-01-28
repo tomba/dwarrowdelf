@@ -185,32 +185,32 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Materials.xaml">
+    <EmbeddedResource Include="Game\Materials.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Items.xaml">
+    <EmbeddedResource Include="Game\Items.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Workbenches.xaml">
+    <EmbeddedResource Include="Game\Workbenches.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Interiors.xaml">
+    <EmbeddedResource Include="Game\Interiors.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Terrains.xaml">
+    <EmbeddedResource Include="Game\Terrains.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Game\Data\Livings.xaml">
+    <EmbeddedResource Include="Game\Livings.xaml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

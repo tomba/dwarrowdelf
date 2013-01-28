@@ -80,7 +80,7 @@ namespace Dwarrowdelf
 
 			TerrainInfo[] terrains;
 
-			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Data.Terrains.xaml"))
+			using (var stream = asm.GetManifestResourceStream("Dwarrowdelf.Game.Terrains.xaml"))
 			{
 				var settings = new System.Xaml.XamlXmlReaderSettings()
 				{
