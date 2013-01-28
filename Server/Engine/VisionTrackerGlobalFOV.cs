@@ -77,12 +77,6 @@ namespace Dwarrowdelf.Server
 
 			var sw = Stopwatch.StartNew();
 
-#if simple_version
-			bounds.Range().AsParallel().ForAll(p =>
-			{
-				m_visibilityArray[p.Z, p.Y, p.X] = EnvironmentHelpers.CanSeeThrough(env, p) || EnvironmentHelpers.CanBeSeen(env, p);
-			});
-#else
 			// XXX the optimization is not quite right. What if the player has dug a deep tunnel, and then blocked it.
 			// but let's keep this for now to speed things up.
 			// Perhaps the visibility array should be saved.
@@ -110,7 +104,6 @@ namespace Dwarrowdelf.Server
 				if (lvlIsHidden)
 					break;
 			}
-#endif
 
 			sw.Stop();
 
