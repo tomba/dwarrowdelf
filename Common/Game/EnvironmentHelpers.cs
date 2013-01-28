@@ -163,31 +163,22 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Can the given tile be seen from any direction
+		/// Can the given tile be seen from any adjacent tile
 		/// </summary>
 		public static bool CanBeSeen(IEnvironmentObject env, IntPoint3 location)
 		{
-			bool hidden = true;
-
 			foreach (var d in DirectionExtensions.PlanarDirections)
 			{
 				var p = location + d;
-
 				if (env.Contains(p) && env.GetTileData(p).IsSeeThrough)
-				{
-					hidden = false;
-					break;
-				}
+					return true;
 			}
 
-			if (hidden)
-			{
-				var p = location + Direction.Up;
-				if (env.Contains(p) && env.GetTileData(p).IsSeeThroughDown)
-					hidden = false;
-			}
+			var pu = location + Direction.Up;
+			if (env.Contains(pu) && env.GetTileData(pu).IsSeeThroughDown)
+				return true;
 
-			return !hidden;
+			return false;
 		}
 
 		/// <summary>
