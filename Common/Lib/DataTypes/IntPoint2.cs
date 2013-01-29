@@ -99,9 +99,7 @@ namespace Dwarrowdelf
 			var p = center;
 			var v = new IntVector2(1, 0);
 
-			int loop = 0;
-
-			while (true)
+			for (int loop = 0; loop < size * 2 - 1; ++loop)
 			{
 				for (int i = 0; i < loop / 2 + 1; ++i)
 				{
@@ -110,11 +108,6 @@ namespace Dwarrowdelf
 				}
 
 				v = v.FastRotate(2);
-
-				loop++;
-
-				if (loop == size * 2 - 1)
-					break;
 			}
 		}
 
