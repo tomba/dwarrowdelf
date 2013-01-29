@@ -111,6 +111,35 @@ namespace Dwarrowdelf
 			}
 		}
 
+		/// <summary>
+		/// Returns a diagonal square spiral
+		/// </summary>
+		/// <param name="center">Center of the spiral</param>
+		/// <param name="size">Length of a side of the spiral</param>
+		public static IEnumerable<IntPoint2> DiagonalSquareSpiral(IntPoint2 center, int size)
+		{
+			var p = center;
+			var v = new IntVector2(-1, 1);
+
+			yield return p;
+
+			for (int loop = 1; loop < size; ++loop)
+			{
+				p += new IntVector2(1, 0);
+
+				for (int t = 0; t < 4; ++t)
+				{
+					for (int i = 0; i < loop; ++i)
+					{
+						p += v;
+						yield return p;
+					}
+
+					v = v.FastRotate(2);
+				}
+			}
+		}
+
 		public override string ToString()
 		{
 			var info = System.Globalization.NumberFormatInfo.InvariantInfo;

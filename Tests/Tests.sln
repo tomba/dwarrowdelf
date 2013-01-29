@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{31A965
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpiralFill", "SpiralFill\SpiralFill.csproj", "{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,12 @@ Global
 		{601C88A6-6474-47F7-96FD-D808D86DF1D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{601C88A6-6474-47F7-96FD-D808D86DF1D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{601C88A6-6474-47F7-96FD-D808D86DF1D1}.Release|x86.ActiveCfg = Release|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55F7C18-CC9A-40A7-A7A6-4F4D2145BC8D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
