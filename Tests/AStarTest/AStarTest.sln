@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\Common\Comm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Base", "..\..\Client\Base\Client.Base.csproj", "{1794F5B1-762E-40D2-A314-040487DEEFE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlBase", "..\..\Client\TileControlBase\TileControlBase.csproj", "{DFB171DC-7857-4172-A458-95A251AEAB21}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMLog", "..\..\MemoryMappedLog\MMLog\MMLog.csproj", "{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TileControlCore", "..\..\Client\TileControlCore\TileControlCore.csproj", "{2DC159B4-2248-49B1-8665-210CDC0B6B09}"
@@ -19,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{788CEF
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetSerializer", "..\..\NetSerializer\NetSerializer\NetSerializer.csproj", "{85A11D07-8D18-42D5-ACCF-EF9744EFE825}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,10 +38,6 @@ Global
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1794F5B1-762E-40D2-A314-040487DEEFE2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFB171DC-7857-4172-A458-95A251AEAB21}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFB171DC-7857-4172-A458-95A251AEAB21}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB9BE647-9B8B-44EF-8D68-01DCDCAA2AEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +46,10 @@ Global
 		{2DC159B4-2248-49B1-8665-210CDC0B6B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DC159B4-2248-49B1-8665-210CDC0B6B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DC159B4-2248-49B1-8665-210CDC0B6B09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85A11D07-8D18-42D5-ACCF-EF9744EFE825}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
