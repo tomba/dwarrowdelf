@@ -4,20 +4,28 @@
 		Title="MainWindow"
 		mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
+		xmlns:local="clr-namespace:FOVTest"
 		d:DesignHeight="350" d:DesignWidth="525"
 		SizeToContent="WidthAndHeight">
+
+	<Window.Resources>
+		<ObjectDataProvider x:Key="losAlgos" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="local:LOSAlgo" />
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+	</Window.Resources>
 	<DockPanel>
 
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
-				<ComboBox SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged">
-					<ComboBoxItem Tag="1">ShadowCastRecursive</ComboBoxItem>
-					<ComboBoxItem Tag="2">ShadowCastOld</ComboBoxItem>
-				</ComboBox>
+				<ComboBox SelectedIndex="0" SelectionChanged="ComboBox_SelectionChanged"
+						  ItemsSource="{Binding Source={StaticResource losAlgos}}" />
 			</ToolBar>
 		</ToolBarTray>
 
-		<Grid  HorizontalAlignment="Center" VerticalAlignment="Center">
+		<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
 			<UniformGrid x:Name="grid" />
 			<Canvas x:Name="canvas" />
 		</Grid>

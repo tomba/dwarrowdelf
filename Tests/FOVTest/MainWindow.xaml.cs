@@ -16,14 +16,22 @@ using System.Diagnostics;
 
 namespace FOVTest
 {
+	enum LOSAlgo
+	{
+		ShadowCastRecursive,
+		ShadowCastRecursiveStrict,
+	}
+
 	public partial class MainWindow : Window
 	{
-		int m_visionRange = 16;
+		int m_visionRange = 12;
 		Grid2D<bool> m_blockerMap;
 		Grid2D<bool> m_visionMap;
 		double m_tileSize;
 
 		IntPoint2 m_viewerLocation;
+
+		Action<IntPoint2, int, Grid2D<bool>, IntSize2, Func<IntPoint2, bool>> m_algoDel = ShadowCastRecursive.Calculate;
 
 		bool m_doPerfTest = false;
 
@@ -39,7 +47,7 @@ namespace FOVTest
 
 			//m_blockerMap[2, 1] = true;
 
-
+			/*
 			m_blockerMap[12, 8] = true;
 			m_blockerMap[12, 9] = true;
 
@@ -59,7 +67,7 @@ namespace FOVTest
 			m_blockerMap[15, 7] = true;
 			m_blockerMap[15, 8] = true;
 			m_blockerMap[15, 9] = true;
-
+			*/
 			m_blockerMap.Origin = new IntVector2();
 
 			m_tileSize = 16;
@@ -139,11 +147,17 @@ namespace FOVTest
 			UpdateFOV();
 		}
 
+		void Calc(IntPoint2 viewerLocation, int visionRange, Grid2D<bool> visibilityMap, IntSize2 mapSize,
+			Func<IntPoint2, bool> blockerDelegate)
+		{
+			m_algoDel(viewerLocation, visionRange, visibilityMap, mapSize, blockerDelegate);
+		}
+
 		void UpdateFOV()
 		{
 			if (m_doPerfTest)
 			{
-				ShadowCastRecursive.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				GC.Collect();
 				GC.WaitForPendingFinalizers();
@@ -151,7 +165,7 @@ namespace FOVTest
 
 				var sw = Stopwatch.StartNew();
 
-				ShadowCastRecursive.Calculate(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
+				Calc(new IntPoint2(m_visionRange, m_visionRange), m_visionRange, m_visionMap, new IntSize2(1000, 1000), p => m_blockerMap[p]);
 
 				sw.Stop();
 				Trace.TraceInformation("Elapsed {0} ms", sw.ElapsedMilliseconds);
@@ -159,8 +173,7 @@ namespace FOVTest
 				return;
 			}
 
-			ShadowCastRecursive.Calculate(m_viewerLocation, m_visionRange, m_visionMap,
-				m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
+			Calc(m_viewerLocation, m_visionRange, m_visionMap, m_blockerMap.Bounds.Size, p => m_blockerMap[p]);
 
 			canvas.Children.Clear();
 
@@ -241,19 +254,21 @@ namespace FOVTest
 				return;
 
 			var cb = (ComboBox)sender;
-			var cbi = (ComboBoxItem)cb.SelectedItem;
-			int id = int.Parse((string)cbi.Tag);
+			var los = (LOSAlgo)cb.SelectedItem;
 
-			switch (id)
+			switch (los)
 			{
-				case 1:
+				case LOSAlgo.ShadowCastRecursive:
+					m_algoDel = ShadowCastRecursive.Calculate;
 					break;
 
-				case 2:
+				case LOSAlgo.ShadowCastRecursiveStrict:
+					m_algoDel = ShadowCastRecursiveStrict.Calculate;
 					break;
 
 				default:
-					throw new Exception();
+					m_algoDel = null;
+					break;
 			}
 
 			UpdateFOV();
