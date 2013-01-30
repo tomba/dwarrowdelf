@@ -56,9 +56,9 @@ namespace Dwarrowdelf.Client.UI
 			if (!IsD3D10Supported())
 				return;
 
-			var renderView = new RenderView();
-			var renderer = new TileControl.RendererD3DSharpDX();
-			renderer.RenderData = renderView.RenderData;
+			var renderData = new TileControl.RenderData<TileControl.RenderTile>();
+			var renderView = new RenderView(renderData);
+			var renderer = new TileControl.RendererD3DSharpDX(renderData);
 
 			m_renderer = renderer;
 			m_renderView = renderView;

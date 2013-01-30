@@ -20,8 +20,12 @@ namespace Dwarrowdelf.Client.TileControl
 
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
-		public RendererD3DSharpDX()
+		RenderData<RenderTile> m_renderData;
+
+		public RendererD3DSharpDX(RenderData<RenderTile> renderData)
 		{
+			m_renderData = renderData;
+
 			m_interopImageSource = new D3DImageSharpDX();
 			m_interopImageSource.IsFrontBufferAvailableChanged += OnIsFrontBufferAvailableChanged;
 
@@ -89,7 +93,7 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 
 			if (ctx.TileDataInvalid)
-				m_scene.SendMapData(this.RenderData, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
+				m_scene.SendMapData(m_renderData, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
 
 			if (ctx.TileRenderInvalid)
 			{
@@ -103,8 +107,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
-
-		public RenderData<RenderTile> RenderData { get; set; }
 
 		public ITileSet TileSet
 		{

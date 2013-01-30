@@ -17,7 +17,8 @@ namespace Dwarrowdelf.Client
 		const int MAXLEVEL = 4;
 		static bool m_symbolToggler;
 
-		public RenderView()
+		public RenderView(TileControl.RenderData<TileControl.RenderTile> renderData)
+			: base(renderData)
 		{
 			GameData.Data.Blink += OnBlink;
 		}

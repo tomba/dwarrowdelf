@@ -36,12 +36,10 @@ namespace Dwarrowdelf.Client
 		/* How many levels to show */
 		const int MAXLEVEL = 4;
 
-		protected RenderViewBase()
+		protected RenderViewBase(RenderData<T> renderData)
 		{
-			m_renderData = new RenderData<T>();
+			m_renderData = renderData;
 		}
-
-		public RenderData<T> RenderData { get { return m_renderData; } }
 
 		public abstract void Resolve();
 
