@@ -23,8 +23,8 @@ namespace Dwarrowdelf.Client.UI
 	/// </summary>
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged
 	{
-		IRenderView m_renderView;
-		TileControl.ISymbolTileRenderer m_renderer;
+		RenderView m_renderView;
+		TileControl.RendererD3DSharpDX m_renderer;
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;

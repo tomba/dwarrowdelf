@@ -9,22 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf.Client
 {
-	interface IRenderView
-	{
-		IntPoint3 CenterPos { get; set; }
-		void SetMaxSize(IntSize2 size);
-		void SetSize(IntSize2 size);
-		bool Contains(IntPoint3 ml);
-		bool IsVisibilityCheckEnabled { get; set; }
-		EnvironmentObject Environment { get; set; }
-
-		void Invalidate();
-		bool Invalidate(IntPoint3 ml);
-
-		void Resolve();
-	}
-
-	abstract class RenderViewBase<T> : IRenderView where T : struct
+	abstract class RenderViewBase<T> where T : struct
 	{
 		protected readonly RenderData<T> m_renderData;
 
