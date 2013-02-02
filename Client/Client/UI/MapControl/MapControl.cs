@@ -24,12 +24,11 @@ namespace Dwarrowdelf.Client.UI
 	class MapControl : TileControl.TileControlCore, INotifyPropertyChanged
 	{
 		IRenderView m_renderView;
+		TileControl.ISymbolTileRenderer m_renderer;
 
 		EnvironmentObject m_env;
 		public event Action<EnvironmentObject> EnvironmentChanged;
 		public event Action<int> ZChanged;
-
-		TileControl.ISymbolTileRenderer m_renderer;
 
 		public const double MAXTILESIZE = 64;
 		public const double MINTILESIZE = 2;
@@ -68,7 +67,7 @@ namespace Dwarrowdelf.Client.UI
 			this.TileLayoutChanged += OnTileArrangementChanged;
 			this.AboutToRender += OnAboutToRender;
 
-			m_renderer.TileSet = GameData.Data.TileSet;
+			m_renderer.SetTileSet(GameData.Data.TileSet);
 			GameData.Data.TileSetChanged += OnTileSetChanged;
 
 			base.OnInitialized(e);
@@ -91,7 +90,7 @@ namespace Dwarrowdelf.Client.UI
 
 		void OnTileSetChanged()
 		{
-			m_renderer.TileSet = GameData.Data.TileSet;
+			m_renderer.SetTileSet(GameData.Data.TileSet);
 			InvalidateTileRender();
 		}
 

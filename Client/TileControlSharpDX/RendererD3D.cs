@@ -16,8 +16,6 @@ namespace Dwarrowdelf.Client.TileControl
 
 		Texture2D m_tileTextureArray;
 
-		ITileSet m_tileSet;
-
 		MyTraceSource trace = new MyTraceSource("Dwarrowdelf.Render", "TileControl");
 
 		RenderData<RenderTile> m_renderData;
@@ -108,18 +106,7 @@ namespace Dwarrowdelf.Client.TileControl
 			drawingContext.DrawImage(m_interopImageSource, new Rect(renderSize));
 		}
 
-		public ITileSet TileSet
-		{
-			get { return m_tileSet; }
-
-			set
-			{
-				m_tileSet = value;
-				OnDrawingsChanged();
-			}
-		}
-
-		void OnDrawingsChanged()
+		public void SetTileSet(ITileSet tileSet)
 		{
 			if (m_tileTextureArray != null)
 			{
@@ -129,7 +116,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			// XXX what would be a better place for the cache?
 			var cachePath = Environment.GetFolderPath(Environment.SpecialFolder.InternetCache);
-			var textureName = m_tileSet.Name;
+			var textureName = tileSet.Name;
 
 			var texturePath = Path.Combine(cachePath, textureName + ".dds");
 			var textureInfoPath = Path.Combine(cachePath, textureName + ".dds.info");
@@ -144,7 +131,7 @@ namespace Dwarrowdelf.Client.TileControl
 					var tileSetModTime = DateTime.FromBinary(long.Parse(lines[0]));
 					var assModTime = DateTime.FromBinary(long.Parse(lines[1]));
 
-					if (tileSetModTime == m_tileSet.ModTime && assModTime == assDate)
+					if (tileSetModTime == tileSet.ModTime && assModTime == assDate)
 					{
 						trace.TraceInformation("Loading textures from cache");
 						m_tileTextureArray = Texture2D.FromFile<Texture2D>(m_device, texturePath);
@@ -157,7 +144,7 @@ namespace Dwarrowdelf.Client.TileControl
 
 			if (m_tileTextureArray == null)
 			{
-				m_tileTextureArray = Helpers11.CreateTextures11(m_device, m_tileSet);
+				m_tileTextureArray = Helpers11.CreateTextures11(m_device, tileSet);
 
 				// texture saving requires d3dx11.dll
 				/*

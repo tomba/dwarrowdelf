@@ -9,6 +9,6 @@ namespace Dwarrowdelf.Client.TileControl
 {
 	public interface ISymbolTileRenderer : ITileRenderer
 	{
-		ITileSet TileSet { get; set; }
+		void SetTileSet(ITileSet tileset);
 	}
 }
