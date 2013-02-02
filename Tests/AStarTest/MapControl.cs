@@ -52,7 +52,7 @@ namespace AStarTest
 
 		public event Action SomethingChanged;
 
-		RenderView m_renderView;
+		RenderData m_renderData;
 
 		public MapControl()
 		{
@@ -79,9 +79,9 @@ namespace AStarTest
 
 		protected override void OnInitialized(EventArgs e)
 		{
-			m_renderView = new RenderView();
+			m_renderData = new RenderData();
 
-			var renderer = new Renderer(m_renderView);
+			var renderer = new Renderer(m_renderData);
 
 			SetRenderer(renderer);
 
@@ -106,25 +106,23 @@ namespace AStarTest
 			if (SomethingChanged != null)
 				SomethingChanged();
 
-			m_renderView.SetGridSize(gridSize);
+			m_renderData.SetGridSize(gridSize);
 		}
 
 		void OnAboutToRender()
 		{
-			var width = m_renderView.Width;
-			var height = m_renderView.Height;
-			var grid = m_renderView.Grid;
+			var width = m_renderData.Width;
+			var height = m_renderData.Height;
+			var grid = m_renderData.Grid;
 
 			for (int y = 0; y < height; ++y)
 			{
 				for (int x = 0; x < width; ++x)
 				{
-					var tile = grid[y, x];
-
 					var _ml = ScreenTileToMapTile(new Point(x, y));
 					var ml = new IntPoint3(PointToIntPoint(_ml), m_z);
 
-					UpdateTile(tile, ml);
+					UpdateTile(ref grid[y, x], ml);
 				}
 			}
 		}
@@ -135,9 +133,9 @@ namespace AStarTest
 		}
 
 
-		void UpdateTile(RenderTileData tile, IntPoint3 ml)
+		void UpdateTile(ref RenderTileData tile, IntPoint3 ml)
 		{
-			tile.ClearTile();
+			tile = new RenderTileData(Brushes.Black);
 
 			if (!m_map.Bounds.Contains(ml))
 			{
