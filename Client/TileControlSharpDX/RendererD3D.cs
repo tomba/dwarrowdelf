@@ -91,7 +91,12 @@ namespace Dwarrowdelf.Client.TileControl
 			}
 
 			if (ctx.TileDataInvalid)
-				m_scene.SendMapData(m_renderData, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
+			{
+				if (ctx.RenderGridSize.Width != m_renderData.Width || ctx.RenderGridSize.Height != m_renderData.Height)
+					throw new Exception();
+
+				m_scene.SendMapData(m_renderData.Grid, ctx.RenderGridSize.Width, ctx.RenderGridSize.Height);
+			}
 
 			if (ctx.TileRenderInvalid)
 			{

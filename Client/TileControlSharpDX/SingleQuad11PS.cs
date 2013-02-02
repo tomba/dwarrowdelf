@@ -166,13 +166,13 @@ namespace Dwarrowdelf.Client.TileControl
 			context.PixelShader.SetShaderResource(0, m_tileTextureView);
 		}
 
-		public void SendMapData(RenderData<RenderTile> mapData, int columns, int rows)
+		public void SendMapData(RenderTile[] mapData, int columns, int rows)
 		{
 			m_shaderDataPerFrame.ColRow = new Vector2(columns, rows);
 
 			DataStream stream;
 			var box = m_device.ImmediateContext.MapSubresource(m_tileBuffer, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out stream);
-			stream.WriteRange(mapData.Grid, 0, mapData.Width * mapData.Height);
+			stream.WriteRange(mapData, 0, columns * rows);
 			m_device.ImmediateContext.UnmapSubresource(m_tileBuffer, 0);
 			stream.Dispose();
 		}
