@@ -59,6 +59,8 @@
     <Compile Include="Lib\Hash.cs" />
     <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
     <Compile Include="Game\Jobs\Assignments\SleepAssignment.cs" />
+    <Compile Include="Lib\LOS\RayCast.cs" />
+    <Compile Include="Lib\LOS\ShadowCastRecursiveStrict.cs" />
     <Compile Include="Lib\MWCRandom.cs" />
     <Compile Include="Game\Net\DirectConnectionListener.cs" />
     <Compile Include="Game\Net\PipeConnectionListener.cs" />
@@ -111,7 +113,7 @@
     <Compile Include="Lib\ReadOnlyArray.cs" />
     <Compile Include="Game\Messages\Reports.cs" />
     <Compile Include="Game\SaveFileManager.cs" />
-    <Compile Include="Lib\ShadowCastRecursive.cs" />
+    <Compile Include="Lib\LOS\ShadowCastRecursive.cs" />
     <Compile Include="Game\Skills.cs" />
     <Compile Include="Game\TerrainGen\Clamper.cs" />
     <Compile Include="Game\TerrainGen\DungeonTerrainGenerator.cs" />

@@ -20,6 +20,7 @@ namespace FOVTest
 	{
 		ShadowCastRecursive,
 		ShadowCastRecursiveStrict,
+		RayCast,
 	}
 
 	public partial class MainWindow : Window
@@ -31,7 +32,7 @@ namespace FOVTest
 
 		IntPoint2 m_viewerLocation;
 
-		Action<IntPoint2, int, Grid2D<bool>, IntSize2, Func<IntPoint2, bool>> m_algoDel = ShadowCastRecursive.Calculate;
+		Action<IntPoint2, int, Grid2D<bool>, IntSize2, Func<IntPoint2, bool>> m_algoDel = RayCast.Calculate;
 
 		bool m_doPerfTest = false;
 
@@ -256,6 +257,13 @@ namespace FOVTest
 			var cb = (ComboBox)sender;
 			var los = (LOSAlgo)cb.SelectedItem;
 
+			SelectAlgo(los);
+
+			UpdateFOV();
+		}
+
+		void SelectAlgo(LOSAlgo los)
+		{
 			switch (los)
 			{
 				case LOSAlgo.ShadowCastRecursive:
@@ -266,12 +274,14 @@ namespace FOVTest
 					m_algoDel = ShadowCastRecursiveStrict.Calculate;
 					break;
 
+				case LOSAlgo.RayCast:
+					m_algoDel = RayCast.Calculate;
+					break;
+
 				default:
 					m_algoDel = null;
 					break;
 			}
-
-			UpdateFOV();
 		}
 	}
 }
