@@ -94,6 +94,14 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Returns a square spiral, centered at center, covering an area of size * size
 		/// </summary>
+		/// <example>
+		/// Size = 5
+		/// 016 015 014 013 012
+		/// 017 004 003 002 011
+		/// 018 005 000 001 010
+		/// 019 006 007 008 009
+		/// 020 021 022 023 024
+		/// </example>
 		public static IEnumerable<IntPoint2> SquareSpiral(IntPoint2 center, int size)
 		{
 			var p = center;
@@ -114,6 +122,16 @@ namespace Dwarrowdelf
 		/// <summary>
 		/// Returns a diagonal square spiral
 		/// </summary>
+		/// <example>
+		/// Size = 4
+		/// ... ... ... 015 ... ... ...
+		/// ... ... 016 006 014 ... ...
+		/// ... 017 007 001 005 013 ...
+		/// 018 008 002 000 004 012 024
+		/// ... 019 009 003 011 023 ...
+		/// ... ... 020 010 022 ... ...
+		/// ... ... ... 021 ... ... ...
+		/// </example>
 		/// <param name="center">Center of the spiral</param>
 		/// <param name="size">Length of a side of the spiral</param>
 		public static IEnumerable<IntPoint2> DiagonalSquareSpiral(IntPoint2 center, int size)
