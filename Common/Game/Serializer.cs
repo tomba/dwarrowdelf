@@ -9,6 +9,7 @@ namespace Dwarrowdelf
 	{
 		static Serializer()
 		{
+			var dataTypes = new Type[] { typeof(IntGrid2), typeof(IntGrid2Z) };
 			var messageTypes = Helpers.GetSubclasses(typeof(Message));
 			var objectDataTypes = Helpers.GetSubclasses(typeof(BaseGameObjectData));
 			var changeTypes = Helpers.GetSubclasses(typeof(ChangeData));
@@ -17,7 +18,7 @@ namespace Dwarrowdelf
 			var extra = new Type[] { typeof(GameColor), typeof(LivingGender), typeof(GameSeason) };
 			var reports = Helpers.GetSubclasses(typeof(GameReport));
 			var tileDataEnums = typeof(TileData).GetFields().Select(fi => fi.FieldType);
-			var types = messageTypes.Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
+			var types = dataTypes.Concat(messageTypes).Concat(objectDataTypes).Concat(changeTypes).Concat(actionTypes).Concat(events)
 				.Concat(extra).Concat(reports).Concat(tileDataEnums);
 
 			NetSerializer.Serializer.Initialize(types.ToArray());
