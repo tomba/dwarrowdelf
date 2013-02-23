@@ -28,6 +28,10 @@ namespace Dwarrowdelf.AI
 		[SaveGameProperty]
 		FleeMoveAssignment m_fleeAssignment;
 
+		const int FLEE_TIME = 10;
+		[SaveGameProperty]
+		int m_fleeFinishedTick;
+
 		public Group Group
 		{
 			get { return m_group; }
@@ -84,6 +88,7 @@ namespace Dwarrowdelf.AI
 							trace.TraceInformation("Changing to Flee state, v = {0}", fleeVector);
 
 							this.State = HervivoreAIState.Fleeing;
+							m_fleeFinishedTick = worker.World.TickNumber + FLEE_TIME;
 							m_fleeAssignment = new FleeMoveAssignment(this);
 							m_fleeAssignment.SetFleeVector(fleeVector);
 							return m_fleeAssignment;
@@ -104,16 +109,26 @@ namespace Dwarrowdelf.AI
 							var fleeVector = GetFleeVector(enemies);
 
 							trace.TraceInformation("Updating fleevector: {0}", fleeVector);
+
+							m_fleeFinishedTick = worker.World.TickNumber + FLEE_TIME;
+
 							m_fleeAssignment.SetFleeVector(fleeVector);
 							return m_fleeAssignment;
 						}
+						else if (worker.World.TickNumber < m_fleeFinishedTick)
+						{
+							trace.TraceInformation("Continue fleeing");
+							return m_fleeAssignment;
+						}
+						else
+						{
+							m_fleeAssignment.Abort();
 
-						m_fleeAssignment.Abort();
+							trace.TraceInformation("Changing to Graze state");
 
-						trace.TraceInformation("Changing to Graze state");
-
-						this.State = HervivoreAIState.Grazing;
-						return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(this, this.Group);
+							this.State = HervivoreAIState.Grazing;
+							return new Dwarrowdelf.Jobs.Assignments.GrazeMoveAssignment(this, this.Group);
+						}
 					}
 
 				default:
