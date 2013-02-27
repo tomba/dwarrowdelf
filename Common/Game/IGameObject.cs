@@ -94,6 +94,8 @@ namespace Dwarrowdelf
 		int Hunger { get; }
 		int Thirst { get; }
 		int Exhaustion { get; }
+
+		MyTraceSource ActionTrace { get; }
 	}
 
 	public interface IItemObject : IConcreteObject

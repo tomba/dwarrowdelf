@@ -31,6 +31,11 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
+		public MyTraceSource ActionTrace
+		{
+			get { throw new Exception(); }
+		}
+
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
 		{

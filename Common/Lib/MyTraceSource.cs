@@ -3,18 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Dwarrowdelf
 {
-	public sealed class MyTraceSource : TraceSource
+	public sealed class MyTraceSource
 	{
 		string m_header;
 		public string Header { set { m_header = "[" + value + "] "; } }
 
+		public SourceLevels m_traceLevels { get; set; }
+
 		public MyTraceSource(string name, string header = null)
-			: base(name)
 		{
+			var settings = MyTraceSettings.Settings.DefaultTraceLevels[name];
+
 			this.Header = header;
+
+			if (settings != null)
+			{
+				switch (settings.Level)
+				{
+					case TraceLevel.Off:
+						m_traceLevels = SourceLevels.Off;
+						break;
+
+					case TraceLevel.Verbose:
+						m_traceLevels = SourceLevels.Verbose;
+						break;
+
+					case TraceLevel.Info:
+						m_traceLevels = SourceLevels.Information;
+						break;
+
+					case TraceLevel.Warning:
+						m_traceLevels = SourceLevels.Warning;
+						break;
+
+					case TraceLevel.Error:
+						m_traceLevels = SourceLevels.Error;
+						break;
+				}
+			}
 		}
 
 		[Conditional("TRACE")]
@@ -36,13 +66,13 @@ namespace Dwarrowdelf
 		}
 
 		[Conditional("TRACE")]
-		public new void TraceInformation(string message)
+		public void TraceInformation(string message)
 		{
 			Trace(TraceEventType.Information, message);
 		}
 
 		[Conditional("TRACE")]
-		public new void TraceInformation(string format, params object[] args)
+		public void TraceInformation(string format, params object[] args)
 		{
 			Trace(TraceEventType.Information, format, args);
 		}
@@ -62,26 +92,53 @@ namespace Dwarrowdelf
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string message)
 		{
-			if (this.Switch.ShouldTrace(eventType) && this.Listeners != null)
+			if ((((int)m_traceLevels) & ((int)eventType)) != 0)
 			{
-				TraceEvent(eventType, 0, m_header + message);
+				WriteLine(m_header + message);
 			}
 		}
 
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string format, params object[] args)
 		{
-			if (this.Switch.ShouldTrace(eventType) && this.Listeners != null)
+			if ((((int)m_traceLevels) & ((int)eventType)) != 0)
 			{
 				if (args == null || args.Length == 0)
 				{
-					TraceEvent(eventType, 0, m_header + format);
+					WriteLine(m_header + format);
 				}
 				else
 				{
-					TraceEvent(eventType, 0, m_header + format, args);
+					WriteLine(m_header + format, args);
 				}
 			}
+		}
+
+		void WriteLine(string format, params object[] args)
+		{
+			WriteLine(String.Format(format, args));
+		}
+
+		void WriteLine(string message)
+		{
+			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
+
+			string component;
+			int tick;
+
+			var ctx = MyTraceContext.ThreadTraceContext;
+			if (ctx != null)
+			{
+				component = ctx.Component;
+				tick = ctx.Tick;
+			}
+			else
+			{
+				component = "";
+				tick = -1;
+			}
+
+			MemoryMappedLog.MMLog.Append(tick, component, thread, message);
 		}
 	}
 }

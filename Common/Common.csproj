@@ -41,6 +41,7 @@
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -105,6 +106,7 @@
     <Compile Include="Game\Jobs\Assignments\RandomMoveAssignment.cs" />
     <Compile Include="Game\Json\JsonServices.cs" />
     <Compile Include="Lib\MarkovNameGenerator.cs" />
+    <Compile Include="Lib\MyTraceSettings.cs" />
     <Compile Include="Lib\MyTraceSource.cs" />
     <Compile Include="Game\Net\DirectConnection.cs" />
     <Compile Include="Game\Net\GameNetStream.cs" />
