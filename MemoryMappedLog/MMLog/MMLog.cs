@@ -76,6 +76,13 @@ namespace MemoryMappedLog
 		static EventWaitHandle s_writeEventHandle;
 		static Mutex s_indexMutex;
 
+		[ThreadStatic]
+		static BinaryWriter s_writer;
+		[ThreadStatic]
+		static BinaryReader s_reader;
+		[ThreadStatic]
+		static byte[] s_buffer;
+
 		static MMLog()
 		{
 			s_logHeaderSize = Marshal.SizeOf(typeof(LogHeader));
@@ -90,13 +97,19 @@ namespace MemoryMappedLog
 
 		public static void Append(int tick, string component, string thread, string header, string message)
 		{
-			var buffer = new byte[s_maxPayloadSize];
-			int len;
+			byte[] buffer = s_buffer;
 
-			using (var w = new BinaryWriter(new MemoryStream(buffer)))
-			{
-				len = LogEntry.Write(w, DateTime.Now, tick, component, thread, header, message);
-			}
+			if (buffer == null)
+				s_buffer = buffer = new byte[s_maxPayloadSize];
+
+			var writer = s_writer;
+
+			if (writer == null)
+				s_writer = writer = new BinaryWriter(new MemoryStream(buffer));
+			else
+				writer.Seek(0, SeekOrigin.Begin);
+
+			int len = LogEntry.Write(writer, DateTime.UtcNow, tick, component, thread, header, message);
 
 			int idx = IncrementCurrentIndex();
 			WriteArray(idx, buffer, len);
@@ -132,14 +145,22 @@ namespace MemoryMappedLog
 
 		static LogEntry ReadEntry(int entryIndex)
 		{
-			var buffer = new byte[s_maxPayloadSize];
+			byte[] buffer = s_buffer;
+
+			if (buffer == null)
+				s_buffer = buffer = new byte[s_maxPayloadSize];
+
+			var reader = s_reader;
+
+			if (reader == null)
+				s_reader = reader = new BinaryReader(new MemoryStream(buffer));
+			else
+				reader.BaseStream.Seek(0, SeekOrigin.Begin);
+
 			int len = ReadArray(entryIndex, buffer);
 
-			using (var r = new BinaryReader(new MemoryStream(buffer)))
-			{
-				var entry = new LogEntry(r);
-				return entry;
-			}
+			var entry = new LogEntry(reader);
+			return entry;
 		}
 
 		static int GetCurrentIndex()
