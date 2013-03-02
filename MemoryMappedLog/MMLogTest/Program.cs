@@ -13,7 +13,7 @@ namespace MemoryMappedLog
 
             while (true)
             {
-                MMLog.Append(123, "asd", "kala", String.Format("qwe {0}", i++));
+                MMLog.Append(123, "asd", "kala", "hdr", String.Format("qwe {0}", i++));
                 System.Threading.Thread.Sleep(2000);
             }
         }

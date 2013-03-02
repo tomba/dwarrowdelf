@@ -81,6 +81,7 @@
 					<GridViewColumn Header="Tick" Width="50" DisplayMemberBinding="{Binding Tick}" />
 					<GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
 					<GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
+					<GridViewColumn Header="Header" Width="60" DisplayMemberBinding="{Binding Header}" />
 					<GridViewColumn Header="Message">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>

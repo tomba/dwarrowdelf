@@ -15,15 +15,17 @@ namespace MemoryMappedLog
 		public int Tick { get; set; }
 		public string Component { get; set; }
 		public string Thread { get; set; }
+		public string Header { get; set; }
 		public string Message { get; set; }
 
-		public LogEntry(DateTime dateTime, int tick, string component = "", string thread = "", string message = "")
+		public LogEntry(DateTime dateTime, int tick)
 		{
 			this.DateTime = dateTime;
 			this.Tick = tick;
-			this.Component = component;
-			this.Thread = thread;
-			this.Message = message;
+			this.Component = "";
+			this.Thread = "";
+			this.Header = "";
+			this.Message = "";
 		}
 
 		public LogEntry(BinaryReader reader)
@@ -32,15 +34,18 @@ namespace MemoryMappedLog
 			this.Tick = reader.ReadInt32();
 			this.Component = reader.ReadString();
 			this.Thread = reader.ReadString();
+			this.Header = reader.ReadString();
 			this.Message = reader.ReadString();
 		}
 
-		public static int Write(BinaryWriter writer, DateTime dateTime, int tick, string component, string thread, string message)
+		public static int Write(BinaryWriter writer, DateTime dateTime, int tick, string component, string thread,
+			string header, string message)
 		{
 			writer.Write(dateTime.ToBinary());
 			writer.Write(tick);
 			writer.Write(component);
 			writer.Write(thread);
+			writer.Write(header);
 			writer.Write(message);
 			writer.Flush();
 			return (int)writer.BaseStream.Position;
@@ -83,14 +88,14 @@ namespace MemoryMappedLog
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
 		}
 
-		public static void Append(int tick, string component, string thread, string message)
+		public static void Append(int tick, string component, string thread, string header, string message)
 		{
 			var buffer = new byte[s_maxPayloadSize];
 			int len;
 
 			using (var w = new BinaryWriter(new MemoryStream(buffer)))
 			{
-				len = LogEntry.Write(w, DateTime.Now, tick, component, thread, message);
+				len = LogEntry.Write(w, DateTime.Now, tick, component, thread, header, message);
 			}
 
 			int idx = IncrementCurrentIndex();

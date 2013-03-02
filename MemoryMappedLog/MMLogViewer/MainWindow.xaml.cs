@@ -29,6 +29,7 @@ namespace MemoryMappedLog
 				this.Tick = logEntry.Tick;
 				this.Component = logEntry.Component;
 				this.Thread = logEntry.Thread;
+				this.Header = logEntry.Header;
 				this.Message = logEntry.Message;
 			}
 
@@ -37,6 +38,7 @@ namespace MemoryMappedLog
 			public int Tick { get; set; }
 			public string Component { get; set; }
 			public string Thread { get; set; }
+			public string Header { get; set; }
 			public string Message { get; set; }
 		}
 
@@ -82,9 +84,10 @@ namespace MemoryMappedLog
 		public MainWindow()
 		{
 			LogRules = new List<LogRule>();
-			LogRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.LightGreen });
-			LogRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.LightGreen });
+			LogRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.Lime });
+			LogRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.Lime });
 			LogRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
+			LogRules.Add(new LogRule() { Component = new Regex("^Client$"), Brush = Brushes.Gold });
 			LogRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
 
 			//m_logFile = File.CreateText("test.log");
@@ -273,7 +276,10 @@ namespace MemoryMappedLog
 
 		void OnMarkClicked(object sender, RoutedEventArgs e)
 		{
-			var entry = new LogEntry(DateTime.Now, 0, component: "Mark");
+			var entry = new LogEntry(DateTime.Now, 0)
+				{
+					Component = "Mark",
+				};
 			Add(entry);
 		}
 

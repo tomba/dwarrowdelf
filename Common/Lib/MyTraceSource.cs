@@ -9,8 +9,7 @@ namespace Dwarrowdelf
 {
 	public sealed class MyTraceSource
 	{
-		string m_header;
-		public string Header { set { m_header = "[" + value + "] "; } }
+		public string Header { get; set; }
 
 		public SourceLevels m_traceLevels { get; set; }
 
@@ -94,7 +93,7 @@ namespace Dwarrowdelf
 		{
 			if ((((int)m_traceLevels) & ((int)eventType)) != 0)
 			{
-				WriteLine(m_header + message);
+				WriteLine(message);
 			}
 		}
 
@@ -105,11 +104,11 @@ namespace Dwarrowdelf
 			{
 				if (args == null || args.Length == 0)
 				{
-					WriteLine(m_header + format);
+					WriteLine(format);
 				}
 				else
 				{
-					WriteLine(m_header + format, args);
+					WriteLine(format, args);
 				}
 			}
 		}
@@ -138,7 +137,7 @@ namespace Dwarrowdelf
 				tick = -1;
 			}
 
-			MemoryMappedLog.MMLog.Append(tick, component, thread, message);
+			MemoryMappedLog.MMLog.Append(tick, component, thread, this.Header, message);
 		}
 	}
 }

@@ -47,7 +47,7 @@ namespace Dwarrowdelf
 				tick = ctx.Tick;
 			}
 
-			MMLog.Append(tick, component, thread, message);
+			MMLog.Append(tick, component, thread, "", message);
 		}
 
 		public override void Fail(string message)
