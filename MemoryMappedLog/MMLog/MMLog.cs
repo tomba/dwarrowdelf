@@ -54,22 +54,12 @@ namespace MemoryMappedLog
 
 	public static class MMLog
 	{
-		struct LogHeader
-		{
-			public int CurrentIndex;
-		}
-
-		struct EntryHeader
-		{
-			public int PayloadLength;
-		}
-
 		const int EntrySize = 2048;
-		const int EntryCount = 1024;
+		const int EntryCount = 1023;
 
-		static readonly int s_logHeaderSize;
-		static readonly int s_entryHeaderSize;
-		static readonly int s_maxPayloadSize;
+		const int LogHeaderSize = 4;
+		const int EntryHeaderSize = 4;
+		const int MaxPayload = EntrySize - EntryHeaderSize;
 
 		static MemoryMappedFile s_mmf;
 		static MemoryMappedViewAccessor s_view;
@@ -85,11 +75,7 @@ namespace MemoryMappedLog
 
 		static MMLog()
 		{
-			s_logHeaderSize = Marshal.SizeOf(typeof(LogHeader));
-			s_entryHeaderSize = Marshal.SizeOf(typeof(EntryHeader));
-			s_maxPayloadSize = EntrySize - s_entryHeaderSize;
-
-			s_mmf = MemoryMappedFile.CreateOrOpen("MMLog.File", s_logHeaderSize + EntryCount * EntrySize);
+			s_mmf = MemoryMappedFile.CreateOrOpen("MMLog.File", LogHeaderSize + EntryCount * EntrySize);
 			s_view = s_mmf.CreateViewAccessor(0, 0);
 			s_writeEventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, "MMLog.WaitHandle");
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
@@ -100,7 +86,7 @@ namespace MemoryMappedLog
 			byte[] buffer = s_buffer;
 
 			if (buffer == null)
-				s_buffer = buffer = new byte[s_maxPayloadSize];
+				s_buffer = buffer = new byte[MaxPayload];
 
 			var writer = s_writer;
 
@@ -111,13 +97,20 @@ namespace MemoryMappedLog
 
 			int len = LogEntry.Write(writer, DateTime.UtcNow, tick, component, thread, header, message);
 
+			s_indexMutex.WaitOne();
+
 			int idx = IncrementCurrentIndex();
 			WriteArray(idx, buffer, len);
+
+			s_indexMutex.ReleaseMutex();
 		}
 
 		public static LogEntry[] ReadNewEntries(int sinceIdx, out int newIdx)
 		{
+			s_indexMutex.WaitOne();
 			newIdx = GetCurrentIndex();
+			s_indexMutex.ReleaseMutex();
+
 			var idx = sinceIdx;
 			//Console.WriteLine("old {0}, new {1}", idx, newIdx);
 
@@ -148,7 +141,7 @@ namespace MemoryMappedLog
 			byte[] buffer = s_buffer;
 
 			if (buffer == null)
-				s_buffer = buffer = new byte[s_maxPayloadSize];
+				s_buffer = buffer = new byte[MaxPayload];
 
 			var reader = s_reader;
 
@@ -165,59 +158,46 @@ namespace MemoryMappedLog
 
 		static int GetCurrentIndex()
 		{
-			s_indexMutex.WaitOne();
-			LogHeader header;
-			s_view.Read<LogHeader>(0, out header);
-			s_indexMutex.ReleaseMutex();
-			return header.CurrentIndex;
+			return s_view.ReadInt32(0);
 		}
 
 		static int IncrementCurrentIndex()
 		{
-			s_indexMutex.WaitOne();
-			LogHeader header;
-			s_view.Read<LogHeader>(0, out header);
-			var oldIdx = header.CurrentIndex;
+			int oldIdx = s_view.ReadInt32(0);
 			var newIdx = oldIdx + 1;
 			if (newIdx == EntryCount)
 				newIdx = 0;
-			header.CurrentIndex = newIdx;
-			s_view.Write<LogHeader>(0, ref header);
-			s_indexMutex.ReleaseMutex();
+			s_view.Write(0, newIdx);
 			return oldIdx;
 		}
 
 		static int GetEntryOffset(int entryIndex)
 		{
-			return s_logHeaderSize + entryIndex * EntrySize;
+			return LogHeaderSize + entryIndex * EntrySize;
 		}
 
 		static void WriteArray(int entryIndex, byte[] array, int len)
 		{
-			if (len > s_maxPayloadSize)
+			if (len > MaxPayload)
 				throw new Exception();
 
-			EntryHeader header;
-			header.PayloadLength = len;
-
 			int offset = GetEntryOffset(entryIndex);
-			s_view.Write<EntryHeader>(offset, ref header);
-			s_view.WriteArray<byte>(offset + s_entryHeaderSize, array, 0, len);
+			s_view.Write(offset, len);
+			s_view.WriteArray<byte>(offset + EntryHeaderSize, array, 0, len);
 			s_writeEventHandle.Set();
 		}
 
 		static int ReadArray(int entryIndex, byte[] array)
 		{
-			if (array.Length < s_maxPayloadSize)
+			if (array.Length < MaxPayload)
 				throw new Exception();
 
 			int offset = GetEntryOffset(entryIndex);
 
-			EntryHeader header;
-			s_view.Read<EntryHeader>(offset, out header);
+			int len = s_view.ReadInt32(offset);
 
-			int l = s_view.ReadArray<byte>(offset + s_entryHeaderSize, array, 0, header.PayloadLength);
-			if (l != header.PayloadLength)
+			int l = s_view.ReadArray<byte>(offset + EntryHeaderSize, array, 0, len);
+			if (l != len)
 				throw new Exception();
 
 			return l;
