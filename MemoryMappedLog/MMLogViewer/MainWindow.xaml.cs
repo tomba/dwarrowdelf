@@ -179,7 +179,8 @@ namespace MemoryMappedLog
 
 		void OnNewEntriesSafe()
 		{
-			this.Dispatcher.BeginInvoke(new Action(OnNewEntries));
+			this.Dispatcher.BeginInvoke(new Action(OnNewEntries),
+				System.Windows.Threading.DispatcherPriority.Background);
 			MMLog.RegisterChangeCallback(OnNewEntriesSafe);
 		}
 
