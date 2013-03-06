@@ -10,7 +10,6 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:client="clr-namespace:Dwarrowdelf.Client"
 	xmlns:ui="clr-namespace:Dwarrowdelf.Client.UI"
-	xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 	x:Name="root"
 	DataContext="{Binding}"
 	d:DataContext="{d:DesignInstance Type=ui:DesignStockpileSample, IsDesignTimeCreatable=True}">
