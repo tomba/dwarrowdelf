@@ -32,7 +32,7 @@ namespace Dwarrowdelf.Client
 
 		public BitArray EnabledLabors { get { return m_enabledLabors; } }
 
-		public MyTraceSource ActionTrace { get; private set; }
+		public MyTraceSource Trace { get; private set; }
 
 		/// <summary>
 		/// For Design-time only
@@ -78,7 +78,7 @@ namespace Dwarrowdelf.Client
 			m_armorSlots = new ObservableCollection<Tuple<ArmorSlot, ItemObject>>();
 			this.ArmorSlots = new ReadOnlyObservableCollection<Tuple<ArmorSlot, ItemObject>>(m_armorSlots);
 
-			this.ActionTrace = new MyTraceSource("Dwarrowdelf.LivingObject");
+			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject");
 		}
 
 		public override void ReceiveObjectData(BaseGameObjectData _data)
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.Client
 				m_skills = new ObservableCollection<Tuple<SkillID, byte>>();
 			this.Skills = new ReadOnlyObservableCollection<Tuple<SkillID, byte>>(m_skills);
 
-			this.ActionTrace.Header = String.Format("{0} ({1})", this.Description, this.ObjectID);
+			this.Trace.Header = String.Format("{0} ({1})", this.Description, this.ObjectID);
 		}
 
 		public override void ReceiveObjectDataEnd()

@@ -31,7 +31,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		public MyTraceSource ActionTrace
+		public MyTraceSource Trace
 		{
 			get { throw new Exception(); }
 		}
