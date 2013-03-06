@@ -11,7 +11,7 @@ namespace Dwarrowdelf
 	{
 		public string Header { get; set; }
 
-		public SourceLevels m_traceLevels { get; set; }
+		public SourceLevels TraceLevels { get; set; }
 
 		public MyTraceSource(string name, string header = null)
 		{
@@ -24,23 +24,23 @@ namespace Dwarrowdelf
 				switch (settings.Level)
 				{
 					case TraceLevel.Off:
-						m_traceLevels = SourceLevels.Off;
+						this.TraceLevels = SourceLevels.Off;
 						break;
 
 					case TraceLevel.Verbose:
-						m_traceLevels = SourceLevels.Verbose;
+						this.TraceLevels = SourceLevels.Verbose;
 						break;
 
 					case TraceLevel.Info:
-						m_traceLevels = SourceLevels.Information;
+						this.TraceLevels = SourceLevels.Information;
 						break;
 
 					case TraceLevel.Warning:
-						m_traceLevels = SourceLevels.Warning;
+						this.TraceLevels = SourceLevels.Warning;
 						break;
 
 					case TraceLevel.Error:
-						m_traceLevels = SourceLevels.Error;
+						this.TraceLevels = SourceLevels.Error;
 						break;
 				}
 			}
@@ -91,7 +91,7 @@ namespace Dwarrowdelf
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string message)
 		{
-			if ((((int)m_traceLevels) & ((int)eventType)) != 0)
+			if ((((int)this.TraceLevels) & ((int)eventType)) != 0)
 			{
 				WriteLine(message);
 			}
@@ -100,7 +100,7 @@ namespace Dwarrowdelf
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string format, params object[] args)
 		{
-			if ((((int)m_traceLevels) & ((int)eventType)) != 0)
+			if ((((int)this.TraceLevels) & ((int)eventType)) != 0)
 			{
 				if (args == null || args.Length == 0)
 				{
