@@ -15,33 +15,36 @@ namespace Dwarrowdelf
 
 		public MyTraceSource(string name, string header = null)
 		{
-			var settings = MyTraceSettings.Settings.DefaultTraceLevels[name];
-
 			this.Header = header;
 
-			if (settings != null)
+			if (MyTraceSettings.Settings != null)
 			{
-				switch (settings.Level)
+				var settings = MyTraceSettings.Settings.DefaultTraceLevels[name];
+
+				if (settings != null)
 				{
-					case TraceLevel.Off:
-						this.TraceLevels = SourceLevels.Off;
-						break;
+					switch (settings.Level)
+					{
+						case TraceLevel.Off:
+							this.TraceLevels = SourceLevels.Off;
+							break;
 
-					case TraceLevel.Verbose:
-						this.TraceLevels = SourceLevels.Verbose;
-						break;
+						case TraceLevel.Verbose:
+							this.TraceLevels = SourceLevels.Verbose;
+							break;
 
-					case TraceLevel.Info:
-						this.TraceLevels = SourceLevels.Information;
-						break;
+						case TraceLevel.Info:
+							this.TraceLevels = SourceLevels.Information;
+							break;
 
-					case TraceLevel.Warning:
-						this.TraceLevels = SourceLevels.Warning;
-						break;
+						case TraceLevel.Warning:
+							this.TraceLevels = SourceLevels.Warning;
+							break;
 
-					case TraceLevel.Error:
-						this.TraceLevels = SourceLevels.Error;
-						break;
+						case TraceLevel.Error:
+							this.TraceLevels = SourceLevels.Error;
+							break;
+					}
 				}
 			}
 		}
