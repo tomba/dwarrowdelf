@@ -22,6 +22,8 @@
 				<ToggleButton IsChecked="{Binding Path=Halt, ElementName=debugWindow, Mode=OneWayToSource}" >Halt</ToggleButton>
 				<Separator />
 				<Button Click="OnRulesClicked">Rules...</Button>
+				<Separator />
+				<Button Click="OnCopyClicked">Copy</Button>
 			</ToolBar>
 			<ToolBar>
 				<TextBox Name="filterTextBox" MinWidth="150" GotKeyboardFocus="filterTextBox_GotKeyboardFocus" LostKeyboardFocus="filterTextBox_LostKeyboardFocus"

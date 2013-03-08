@@ -270,6 +270,14 @@ namespace MemoryMappedLog
 				logListView.ScrollIntoView(last);
 		}
 
+
+		void OnCopyClicked(object sender, RoutedEventArgs e)
+		{
+			var item = (ViewableLogEntry)logListView.SelectedItem;
+
+			Clipboard.SetText(item.Message);
+		}
+
 		void OnClearClicked(object sender, RoutedEventArgs e)
 		{
 			m_debugCollection.Clear();
