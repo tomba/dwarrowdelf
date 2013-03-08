@@ -279,9 +279,6 @@ namespace Dwarrowdelf.Client
 		{
 			Debug.Assert(this.HasAction);
 
-			//if (e.State != ActionState.Done)
-			//	Debug.Print("ActionDone({0}, {1}, {2})", this, e.State, this.CurrentAction);
-
 			if (this.AI != null)
 				this.AI.ActionDone(e);
 
@@ -296,7 +293,6 @@ namespace Dwarrowdelf.Client
 
 		public void RequestAction(GameAction action)
 		{
-			//Debug.Print("RequestAction({0}: {1})", this, action);
 			if (LivingObject.LivingRequestsAction != null)
 				LivingObject.LivingRequestsAction(this, action);
 		}

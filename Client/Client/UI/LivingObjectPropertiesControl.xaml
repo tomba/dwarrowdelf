@@ -3,6 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:diag="clr-namespace:System.Diagnostics;assembly=System"
 			 mc:Ignorable="d">
 
 	<Grid>
@@ -110,6 +111,22 @@
 			<TextBlock Text="{Binding Exhaustion}" />
 			<TextBlock Text=""/>
 		</UniformGrid>
+		<GroupBox Header="Debug" Grid.Row="6">
+			<GroupBox.Resources>
+				<x:Array x:Key="traceLevels" Type="diag:SourceLevels">
+					<diag:SourceLevels>Off</diag:SourceLevels>
+					<diag:SourceLevels>Error</diag:SourceLevels>
+					<diag:SourceLevels>Warning</diag:SourceLevels>
+					<diag:SourceLevels>Information</diag:SourceLevels>
+					<diag:SourceLevels>Verbose</diag:SourceLevels>
+				</x:Array>
+			</GroupBox.Resources>
+
+			<GroupBox Header="ActionTrace" HorizontalAlignment="Left">
+				<ListBox ItemsSource="{Binding Source={StaticResource traceLevels}}"
+						 SelectedItem="{Binding Trace.TraceLevels}" />
+			</GroupBox>
+		</GroupBox>
 	</Grid>
 
 </UserControl>
