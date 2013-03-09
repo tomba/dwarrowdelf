@@ -192,35 +192,11 @@ namespace Dwarrowdelf.Client.TileControl
 
 			// Dispose unmanaged resources
 
-			if (m_scene != null)
-			{
-				m_scene.Dispose();
-				m_scene = null;
-			}
-
-			if (m_interopImageSource != null)
-			{
-				m_interopImageSource.Dispose();
-				m_interopImageSource = null;
-			}
-
-			if (m_renderTexture != null)
-			{
-				m_renderTexture.Dispose();
-				m_renderTexture = null;
-			}
-
-			if (m_tileTextureArray != null)
-			{
-				m_tileTextureArray.Dispose();
-				m_tileTextureArray = null;
-			}
-
-			if (m_device != null)
-			{
-				m_device.Dispose();
-				m_device = null;
-			}
+			DH.Dispose(ref m_scene);
+			DH.Dispose(ref m_interopImageSource);
+			DH.Dispose(ref m_renderTexture);
+			DH.Dispose(ref m_tileTextureArray);
+			DH.Dispose(ref m_device);
 
 			m_disposed = true;
 		}
