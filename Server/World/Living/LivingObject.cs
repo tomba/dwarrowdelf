@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server
 
 		public MyTraceSource Trace
 		{
-			get { throw new Exception(); }
+			get { return null; }
 		}
 
 		LivingObject(LivingObjectBuilder builder)

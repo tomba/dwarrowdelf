@@ -107,6 +107,7 @@
     <Compile Include="Game\Jobs\Assignments\RandomMoveAssignment.cs" />
     <Compile Include="Game\Json\JsonServices.cs" />
     <Compile Include="Lib\MarkovNameGenerator.cs" />
+    <Compile Include="Lib\MyTraceProxy.cs" />
     <Compile Include="Lib\MyTraceSettings.cs" />
     <Compile Include="Lib\MyTraceSource.cs" />
     <Compile Include="Game\Net\DirectConnection.cs" />

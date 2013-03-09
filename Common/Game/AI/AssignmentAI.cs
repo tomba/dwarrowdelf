@@ -37,7 +37,7 @@ namespace Dwarrowdelf.AI
 
 		public event Action<IAssignment> AssignmentChanged;
 
-		protected MyTraceSource trace;
+		protected MyTraceProxy trace;
 
 		protected AssignmentAI(SaveGameContext ctx)
 		{
@@ -50,13 +50,13 @@ namespace Dwarrowdelf.AI
 			m_id = aiID;
 
 			this.Worker = worker;
-			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
+			trace = new MyTraceProxy(this.Worker.Trace, "Dwarrowdelf.AssignmentAI");
 		}
 
 		[OnSaveGamePostDeserialization]
 		void OnPostDeserialization()
 		{
-			trace = new MyTraceSource("Dwarrowdelf.AssignmentAI", String.Format("AI {0}", this.Worker));
+			trace = new MyTraceProxy(this.Worker.Trace, "Dwarrowdelf.AssignmentAI");
 		}
 
 		public void Abort()

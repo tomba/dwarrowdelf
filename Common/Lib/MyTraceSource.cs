@@ -50,6 +50,12 @@ namespace Dwarrowdelf
 		}
 
 		[Conditional("TRACE")]
+		public void TraceError(string message)
+		{
+			Trace(TraceEventType.Error, message);
+		}
+
+		[Conditional("TRACE")]
 		public void TraceError(string format, params object[] args)
 		{
 			Trace(TraceEventType.Error, format, args);
