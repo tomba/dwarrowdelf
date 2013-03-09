@@ -36,6 +36,38 @@ namespace Dwarrowdelf
 			m_deserializerThread.Start();
 		}
 
+		#region IDisposable
+
+		bool m_disposed;
+
+		~PipeConnection()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				// Managed cleanup code here, while managed refs still valid
+				DH.Dispose(ref m_pipeStream);
+				DH.Dispose(ref m_stream);
+				DH.Dispose(ref m_msgQueue);
+			}
+
+			m_disposed = true;
+		}
+		#endregion
+
 		public int SentMessages { get; private set; }
 		public int SentBytes { get; private set; }
 		public int ReceivedMessages { get; private set; }

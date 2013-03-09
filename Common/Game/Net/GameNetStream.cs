@@ -15,6 +15,7 @@ namespace Dwarrowdelf
 		int m_totalRead;
 		int m_totalSent;
 
+		NetworkStream m_netStream;
 		BufferedStream m_recvStream;
 		BufferedStream m_sendStream;
 
@@ -22,9 +23,19 @@ namespace Dwarrowdelf
 		{
 			m_socket = socket;
 
-			var netStream = new NetworkStream(socket, false);
-			m_recvStream = new BufferedStream(netStream);
-			m_sendStream = new BufferedStream(netStream);
+			m_netStream = new NetworkStream(socket, false);
+			m_recvStream = new BufferedStream(m_netStream);
+			m_sendStream = new BufferedStream(m_netStream);
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			DH.Dispose(ref m_sendStream);
+			DH.Dispose(ref m_recvStream);
+			DH.Dispose(ref m_netStream);
+			DH.Dispose(ref m_socket);
+
+			base.Dispose(disposing);
 		}
 
 		public override bool CanRead { get { return true; } }

@@ -202,6 +202,8 @@ namespace Dwarrowdelf.Client
 
 			if (DisconnectEvent != null)
 				DisconnectEvent();
+
+			DH.Dispose(ref m_connection);
 		}
 
 		public void OnReceiveMessage(ClientMessage msg)

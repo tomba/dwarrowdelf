@@ -57,6 +57,7 @@
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Lib\DataTypes\DoublePoint3.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMasks.cs" />
+    <Compile Include="Lib\DisposeHelper.cs" />
     <Compile Include="Lib\Hash.cs" />
     <Compile Include="Game\Jobs\AssignmentGroups\MoveSleepAssignment.cs" />
     <Compile Include="Game\Jobs\Assignments\SleepAssignment.cs" />

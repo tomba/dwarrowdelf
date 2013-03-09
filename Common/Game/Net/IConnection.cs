@@ -6,7 +6,7 @@ using Dwarrowdelf.Messages;
 
 namespace Dwarrowdelf
 {
-	public interface IConnection
+	public interface IConnection : IDisposable
 	{
 		int SentMessages { get; }
 		int SentBytes { get; }

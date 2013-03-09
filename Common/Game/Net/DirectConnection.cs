@@ -26,6 +26,36 @@ namespace Dwarrowdelf
 			m_remoteConnection.SetRemote(this);
 		}
 
+		#region IDisposable
+
+		bool m_disposed;
+
+		~DirectConnection()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				// Managed cleanup code here, while managed refs still valid
+				DH.Dispose(ref m_msgQueue);
+			}
+
+			m_disposed = true;
+		}
+		#endregion
+
 		public void ResetStats()
 		{
 			this.SentBytes = 0;

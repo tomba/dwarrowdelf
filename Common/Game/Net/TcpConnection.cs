@@ -56,6 +56,37 @@ namespace Dwarrowdelf
 			m_deserializerThread.Start();
 		}
 
+		#region IDisposable
+
+		bool m_disposed;
+
+		~TcpConnection()
+		{
+			Dispose(false);
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		void Dispose(bool disposing)
+		{
+			if (m_disposed)
+				return;
+
+			if (disposing)
+			{
+				// Managed cleanup code here, while managed refs still valid
+				DH.Dispose(ref m_netStream);
+				DH.Dispose(ref m_socket);
+			}
+
+			m_disposed = true;
+		}
+		#endregion
+
 		public void ResetStats()
 		{
 			this.SentBytes = 0;

@@ -158,7 +158,7 @@ namespace Dwarrowdelf.Server
 		{
 			trace.TraceInformation("OnDisconnected");
 
-			m_connection = null;
+			DH.Dispose(ref m_connection);
 
 			foreach (var c in m_controllables)
 				UninitControllableVisionTracker(c);
