@@ -27,6 +27,19 @@ namespace Win32
 
 	public static class Helpers
 	{
+		static public void LoadWindowPlacement(Window window, WindowPlacement placement)
+		{
+			NativeMethods.LoadWindowPlacement(window, placement);
+		}
+
+		static public WindowPlacement SaveWindowPlacement(Window window)
+		{
+			return NativeMethods.SaveWindowPlacement(window);
+		}
+	}
+
+	static class NativeMethods
+	{
 		#region Win32 API declarations to set and get window placement
 		[DllImport("user32.dll")]
 		static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
