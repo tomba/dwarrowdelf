@@ -20,5 +20,14 @@ namespace Dwarrowdelf.Client.UI
 		{
 			InitializeComponent();
 		}
+
+		private void Button_Click_Server_Trace(object sender, RoutedEventArgs e)
+		{
+			var b = (Button)sender;
+			var traceLevel = (System.Diagnostics.SourceLevels)Enum.Parse(typeof(System.Diagnostics.SourceLevels), (string)b.Tag);
+			var living = (LivingObject)this.DataContext;
+
+			DebugScriptMessages.SendSetLivingTraceLevel(living, traceLevel);
+		}
 	}
 }

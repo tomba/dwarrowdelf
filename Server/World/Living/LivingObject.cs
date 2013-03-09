@@ -31,10 +31,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Skills")]
 		Dictionary<SkillID, byte> m_skillMap;
 
-		public MyTraceSource Trace
-		{
-			get { return null; }
-		}
+		public MyTraceSource Trace { get; private set; }
 
 		LivingObject(LivingObjectBuilder builder)
 			: base(ObjectType.Living, builder)
@@ -79,6 +76,9 @@ namespace Dwarrowdelf.Server
 
 			// XXX inventory items are not present yet?
 			RecalcArmorClass();
+
+			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject",
+				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
 		}
 
 		protected override void Initialize(World world)
@@ -86,6 +86,9 @@ namespace Dwarrowdelf.Server
 			base.Initialize(world);
 			world.AddLiving(this);
 			world.TickStarting += OnTickStart;
+
+			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject",
+				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
 		}
 
 		public override void Destruct()

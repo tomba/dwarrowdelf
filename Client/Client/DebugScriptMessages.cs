@@ -128,5 +128,25 @@ for l in controllables:
 
 			GameData.Data.User.Send(msg);
 		}
+
+		public static void SendSetLivingTraceLevel(LivingObject living, System.Diagnostics.SourceLevels traceLevel)
+		{
+			var args = new Dictionary<string, object>()
+			{
+				{ "livingID", living.ObjectID },
+				{ "traceLevel", traceLevel.ToString() },
+			};
+
+			var script =
+@"l = world.GetObject(livingID)
+t = l.Trace
+tl = t.TraceLevels.Parse(t.TraceLevels.GetType(), traceLevel)
+t.TraceLevels = tl
+";
+
+			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);
+
+			GameData.Data.User.Send(msg);
+		}
 	}
 }

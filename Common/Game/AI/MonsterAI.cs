@@ -22,16 +22,8 @@ namespace Dwarrowdelf.AI
 		public MonsterAI(ILivingObject ob, byte aiID)
 			: base(ob, aiID)
 		{
-			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
 		}
 
-		[OnSaveGamePostDeserialization]
-		void OnPostDeserialization()
-		{
-			trace = new MyTraceSource("Dwarrowdelf.MonsterAI", String.Format("AI {0}", this.Worker));
-		}
-
-		new MyTraceSource trace;
 		public override string Name { get { return "MonsterAI"; } }
 
 		// return new or current assignment, or null to cancel current assignment, or do nothing is no current assignment

@@ -122,10 +122,24 @@
 				</x:Array>
 			</GroupBox.Resources>
 
-			<GroupBox Header="ActionTrace" HorizontalAlignment="Left">
-				<ListBox ItemsSource="{Binding Source={StaticResource traceLevels}}"
+			<UniformGrid Columns="2">
+
+				<GroupBox Header="Client Trace">
+					<ListBox ItemsSource="{Binding Source={StaticResource traceLevels}}"
 						 SelectedItem="{Binding Trace.TraceLevels}" />
-			</GroupBox>
+				</GroupBox>
+
+				<GroupBox Header="Server Trace">
+					<StackPanel Orientation="Vertical" Margin="2">
+						<Button Content="Off" Tag="Off" Click="Button_Click_Server_Trace" />
+						<Button Content="Error" Tag="Error" Click="Button_Click_Server_Trace" />
+						<Button Content="Warning" Tag="Warning" Click="Button_Click_Server_Trace" />
+						<Button Content="Information" Tag="Information" Click="Button_Click_Server_Trace" />
+						<Button Content="Verbose" Tag="Verbose" Click="Button_Click_Server_Trace" />
+					</StackPanel>
+				</GroupBox>
+			</UniformGrid>
+
 		</GroupBox>
 	</Grid>
 
