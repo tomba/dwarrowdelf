@@ -11,7 +11,56 @@ namespace Dwarrowdelf
 	{
 		public string Header { get; set; }
 
-		public SourceLevels TraceLevels { get; set; }
+		SourceLevels m_sourceLevels;
+
+		public TraceLevel TraceLevel
+		{
+			get
+			{
+				switch (m_sourceLevels)
+				{
+					case SourceLevels.Off:
+						return TraceLevel.Off;
+					case SourceLevels.Error:
+						return TraceLevel.Error;
+					case SourceLevels.Warning:
+						return TraceLevel.Warning;
+					case SourceLevels.Information:
+						return TraceLevel.Info;
+					case SourceLevels.Verbose:
+						return TraceLevel.Verbose;
+					default:
+						return TraceLevel.Off;
+				}
+			}
+
+			set
+			{
+				switch (value)
+				{
+					case TraceLevel.Off:
+						m_sourceLevels = SourceLevels.Off;
+						break;
+
+					case TraceLevel.Verbose:
+						m_sourceLevels = SourceLevels.Verbose;
+						break;
+
+					case TraceLevel.Info:
+						m_sourceLevels = SourceLevels.Information;
+						break;
+
+					case TraceLevel.Warning:
+						m_sourceLevels = SourceLevels.Warning;
+						break;
+
+					case TraceLevel.Error:
+						m_sourceLevels = SourceLevels.Error;
+						break;
+				}
+			}
+		}
+
 
 		public MyTraceSource(string name, string header = null)
 		{
@@ -22,30 +71,7 @@ namespace Dwarrowdelf
 				var settings = MyTraceSettings.Settings.DefaultTraceLevels[name];
 
 				if (settings != null)
-				{
-					switch (settings.Level)
-					{
-						case TraceLevel.Off:
-							this.TraceLevels = SourceLevels.Off;
-							break;
-
-						case TraceLevel.Verbose:
-							this.TraceLevels = SourceLevels.Verbose;
-							break;
-
-						case TraceLevel.Info:
-							this.TraceLevels = SourceLevels.Information;
-							break;
-
-						case TraceLevel.Warning:
-							this.TraceLevels = SourceLevels.Warning;
-							break;
-
-						case TraceLevel.Error:
-							this.TraceLevels = SourceLevels.Error;
-							break;
-					}
-				}
+					this.TraceLevel = settings.Level;
 			}
 		}
 
@@ -100,34 +126,23 @@ namespace Dwarrowdelf
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string message)
 		{
-			if ((((int)this.TraceLevels) & ((int)eventType)) != 0)
-			{
-				WriteLine(message);
-			}
+			if ((((int)m_sourceLevels) & ((int)eventType)) != 0)
+				WriteLine(eventType, message);
 		}
 
 		[Conditional("TRACE")]
 		void Trace(TraceEventType eventType, string format, params object[] args)
 		{
-			if ((((int)this.TraceLevels) & ((int)eventType)) != 0)
+			if ((((int)m_sourceLevels) & ((int)eventType)) != 0)
 			{
 				if (args == null || args.Length == 0)
-				{
-					WriteLine(format);
-				}
+					WriteLine(eventType, format);
 				else
-				{
-					WriteLine(format, args);
-				}
+					WriteLine(eventType, String.Format(format, args));
 			}
 		}
 
-		void WriteLine(string format, params object[] args)
-		{
-			WriteLine(String.Format(format, args));
-		}
-
-		void WriteLine(string message)
+		void WriteLine(TraceEventType eventType, string message)
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
 

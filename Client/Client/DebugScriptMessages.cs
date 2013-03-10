@@ -140,8 +140,8 @@ for l in controllables:
 			var script =
 @"l = world.GetObject(livingID)
 t = l.Trace
-tl = t.TraceLevels.Parse(t.TraceLevels.GetType(), traceLevel)
-t.TraceLevels = tl
+tl = t.TraceLevel.Parse(t.TraceLevel.GetType(), traceLevel)
+t.TraceLevel = tl
 ";
 
 			var msg = new Dwarrowdelf.Messages.IPScriptMessage(script, args);

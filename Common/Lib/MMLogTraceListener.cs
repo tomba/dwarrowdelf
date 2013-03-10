@@ -28,12 +28,7 @@ namespace Dwarrowdelf
 
 		public override bool IsThreadSafe { get { return true; } }
 
-		public override void Write(string message)
-		{
-			WriteLine(message);
-		}
-
-		public override void WriteLine(string message)
+		void Append(TraceEventType eventType, string message)
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
 
@@ -48,6 +43,16 @@ namespace Dwarrowdelf
 			}
 
 			MMLog.Append(tick, component, thread, "", message);
+		}
+
+		public override void Write(string message)
+		{
+			Append(TraceEventType.Information, message);
+		}
+
+		public override void WriteLine(string message)
+		{
+			Append(TraceEventType.Information, message);
 		}
 
 		public override void Fail(string message)
@@ -68,15 +73,15 @@ namespace Dwarrowdelf
 
 		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
 		{
-			WriteLine(message);
+			Append(eventType, message);
 		}
 
 		public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string format, params object[] args)
 		{
 			if (args == null || args.Length == 0)
-				WriteLine(format);
+				Append(eventType, format);
 			else
-				WriteLine(String.Format(format, args));
+				Append(eventType, String.Format(format, args));
 		}
 	}
 }

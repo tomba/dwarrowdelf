@@ -113,20 +113,20 @@
 		</UniformGrid>
 		<GroupBox Header="Debug" Grid.Row="6">
 			<GroupBox.Resources>
-				<x:Array x:Key="traceLevels" Type="diag:SourceLevels">
-					<diag:SourceLevels>Off</diag:SourceLevels>
-					<diag:SourceLevels>Error</diag:SourceLevels>
-					<diag:SourceLevels>Warning</diag:SourceLevels>
-					<diag:SourceLevels>Information</diag:SourceLevels>
-					<diag:SourceLevels>Verbose</diag:SourceLevels>
+				<x:Array x:Key="traceLevel" Type="diag:TraceLevel">
+					<diag:TraceLevel>Off</diag:TraceLevel>
+					<diag:TraceLevel>Error</diag:TraceLevel>
+					<diag:TraceLevel>Warning</diag:TraceLevel>
+					<diag:TraceLevel>Info</diag:TraceLevel>
+					<diag:TraceLevel>Verbose</diag:TraceLevel>
 				</x:Array>
 			</GroupBox.Resources>
 
 			<UniformGrid Columns="2">
 
 				<GroupBox Header="Client Trace">
-					<ListBox ItemsSource="{Binding Source={StaticResource traceLevels}}"
-						 SelectedItem="{Binding Trace.TraceLevels}" />
+					<ListBox ItemsSource="{Binding Source={StaticResource traceLevel}}"
+						 SelectedItem="{Binding Trace.TraceLevel}" />
 				</GroupBox>
 
 				<GroupBox Header="Server Trace">
@@ -134,7 +134,7 @@
 						<Button Content="Off" Tag="Off" Click="Button_Click_Server_Trace" />
 						<Button Content="Error" Tag="Error" Click="Button_Click_Server_Trace" />
 						<Button Content="Warning" Tag="Warning" Click="Button_Click_Server_Trace" />
-						<Button Content="Information" Tag="Information" Click="Button_Click_Server_Trace" />
+						<Button Content="Info" Tag="Information" Click="Button_Click_Server_Trace" />
 						<Button Content="Verbose" Tag="Verbose" Click="Button_Click_Server_Trace" />
 					</StackPanel>
 				</GroupBox>
