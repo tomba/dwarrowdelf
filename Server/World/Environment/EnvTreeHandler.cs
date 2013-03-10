@@ -83,9 +83,13 @@ namespace Dwarrowdelf.Server
 				{
 					if (r.Next(100) < 80)
 					{
-						// A sapling grows to a tree
-						td.InteriorID = InteriorID.Tree;
-						m_env.SetTileData(p, td);
+						// any object prevents sapling from growing to tree
+						if (m_env.HasContents(p) == false)
+						{
+							// A sapling grows to a tree
+							td.InteriorID = InteriorID.Tree;
+							m_env.SetTileData(p, td);
+						}
 					}
 				}
 				else if (td.InteriorID == InteriorID.Tree)
