@@ -20,8 +20,6 @@ namespace Dwarrowdelf.Server.Fortress
 			for (int i = 0; i < 6; ++i)
 				CreateItem(env, ItemID.Rock, GetRandomMaterial(MaterialCategory.Rock), env.GetRandomEnterableSurfaceLocation());
 
-			//CreateWaterTest(env);
-
 			CreateWorkbenches(env);
 
 			{

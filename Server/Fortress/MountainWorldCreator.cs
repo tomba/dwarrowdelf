@@ -27,6 +27,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
+			//CreateWaterTest(env);
+
 			MountainWorldPopulator.FinalizeEnv(env);
 		}
 
@@ -59,14 +61,16 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static void CreateWaterTest(EnvironmentObject env)
 		{
-			var pos = env.GetSurfaceLocation(10, 30);
+			var p2 = new IntPoint2(env.Width / 2 + 10, env.Height / 2 - 10);
+			var pos = env.GetSurfaceLocation(p2);
+
 			int surface = pos.Z;
 
 			CreateWalls(env, new IntGrid2Z(pos.X, pos.Y, 3, 8, surface));
 			CreateWater(env, new IntGrid2Z(pos.X + 1, pos.Y + 1, 1, 6, surface));
 
-			int x = 15;
-			int y = 30;
+			int x = pos.X + 1;
+			int y = pos.Y + 1;
 
 			ClearTile(env, new IntPoint3(x, y, surface - 0));
 			ClearTile(env, new IntPoint3(x, y, surface - 1));
@@ -87,7 +91,7 @@ namespace Dwarrowdelf.Server.Fortress
 			{
 				// Add a water generator
 				var item = WaterGenerator.Create(env.World);
-				item.MoveTo(env, new IntPoint3(pos.X + 1, pos.Y + 2, surface));
+				item.MoveTo(env, new IntPoint3(x, y + 1, surface));
 			}
 		}
 
@@ -145,6 +149,9 @@ namespace Dwarrowdelf.Server.Fortress
 				for (int y = area.Y1; y <= area.Y2; ++y)
 				{
 					var p = new IntPoint3(x, y, area.Z);
+
+					ClearInside(env, p);
+
 					env.SetWaterLevel(p, TileData.MaxWaterLevel);
 				}
 			}
