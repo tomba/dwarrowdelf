@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace MemoryMappedLog
 
 			while (s_exit == false)
 			{
-				MMLog.Append(123, "asd", "kala", "hdr", String.Format("qwe {0}", i++));
+				MMLog.Append(TraceEventType.Information, 123, LogComponent.Client, "kala", "hdr", String.Format("qwe {0}", i++));
 				System.Threading.Thread.Sleep(1000);
 			}
 		}

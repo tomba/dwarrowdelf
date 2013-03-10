@@ -6,44 +6,45 @@ using System.IO.MemoryMappedFiles;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Diagnostics;
 
 namespace MemoryMappedLog
 {
+	public enum LogComponent
+	{
+		None = 0,
+		Server,
+		Client,
+	}
+
 	public sealed class LogEntry
 	{
 		public DateTime DateTime { get; set; }
+		public TraceEventType EventType { get; set; }
 		public int Tick { get; set; }
-		public string Component { get; set; }
+		public LogComponent Component { get; set; }
 		public string Thread { get; set; }
 		public string Header { get; set; }
 		public string Message { get; set; }
 
-		public LogEntry(DateTime dateTime, int tick)
-		{
-			this.DateTime = dateTime;
-			this.Tick = tick;
-			this.Component = "";
-			this.Thread = "";
-			this.Header = "";
-			this.Message = "";
-		}
-
 		public LogEntry(BinaryReader reader)
 		{
 			this.DateTime = DateTime.FromBinary(reader.ReadInt64());
+			this.EventType = (TraceEventType)reader.ReadInt32();
 			this.Tick = reader.ReadInt32();
-			this.Component = reader.ReadString();
+			this.Component = (LogComponent)reader.ReadByte();
 			this.Thread = reader.ReadString();
 			this.Header = reader.ReadString();
 			this.Message = reader.ReadString();
 		}
 
-		public static int Write(BinaryWriter writer, DateTime dateTime, int tick, string component, string thread,
-			string header, string message)
+		public static int Write(BinaryWriter writer, DateTime dateTime, TraceEventType eventType, int tick,
+			LogComponent component, string thread, string header, string message)
 		{
 			writer.Write(dateTime.ToBinary());
+			writer.Write((int)eventType);
 			writer.Write(tick);
-			writer.Write(component);
+			writer.Write((byte)component);
 			writer.Write(thread);
 			writer.Write(header);
 			writer.Write(message);
@@ -81,7 +82,8 @@ namespace MemoryMappedLog
 			s_indexMutex = new Mutex(false, "MMLog.Mutex");
 		}
 
-		public static void Append(int tick, string component, string thread, string header, string message)
+		public static void Append(TraceEventType eventType, int tick, LogComponent component, string thread,
+			string header, string message)
 		{
 			byte[] buffer = s_buffer;
 
@@ -95,7 +97,7 @@ namespace MemoryMappedLog
 			else
 				writer.Seek(0, SeekOrigin.Begin);
 
-			int len = LogEntry.Write(writer, DateTime.UtcNow, tick, component, thread, header, message);
+			int len = LogEntry.Write(writer, DateTime.UtcNow, eventType, tick, component, thread, header, message);
 
 			s_indexMutex.WaitOne();
 

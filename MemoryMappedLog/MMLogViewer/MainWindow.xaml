@@ -81,7 +81,8 @@
 					<GridViewColumn Header="Time" DisplayMemberBinding="{Binding DateTime,StringFormat='HH:mm:ss.ffff'}" />
 					<GridViewColumn Header="TimeDiff" DisplayMemberBinding="{Binding TimeDiff, Converter={StaticResource timeDiffConverter}}" />
 					<GridViewColumn Header="Tick" Width="40" DisplayMemberBinding="{Binding Tick}" />
-					<GridViewColumn Header="Component" Width="60" DisplayMemberBinding="{Binding Component}" />
+					<GridViewColumn Header="Type" Width="40" DisplayMemberBinding="{Binding EventType}" />
+					<GridViewColumn Header="Comp" Width="40" DisplayMemberBinding="{Binding Component}" />
 					<GridViewColumn Header="Thread" Width="60" DisplayMemberBinding="{Binding Thread}" />
 					<GridViewColumn Header="Header" Width="100" DisplayMemberBinding="{Binding Header}" />
 					<GridViewColumn Header="Message">

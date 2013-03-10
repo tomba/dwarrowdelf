@@ -16,6 +16,7 @@ using System.IO;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace MemoryMappedLog
 {
@@ -23,17 +24,54 @@ namespace MemoryMappedLog
 	{
 		public class ViewableLogEntry
 		{
+			public ViewableLogEntry()
+			{
+			}
+
 			public ViewableLogEntry(LogEntry logEntry)
 			{
 				this.DateTime = logEntry.DateTime;
+				switch (logEntry.EventType)
+				{
+					case TraceEventType.Critical:
+						this.EventType = "C";
+						break;
+					case TraceEventType.Error:
+						this.EventType = "E";
+						break;
+					case TraceEventType.Warning:
+						this.EventType = "W";
+						break;
+					case TraceEventType.Information:
+						this.EventType = "I";
+						break;
+					case TraceEventType.Verbose:
+						this.EventType = "V";
+						break;
+					default:
+						this.EventType = "";
+						break;
+				}
 				this.Tick = logEntry.Tick;
-				this.Component = logEntry.Component;
+				switch (logEntry.Component)
+				{
+					case LogComponent.Server:
+						this.Component = "S";
+						break;
+					case LogComponent.Client:
+						this.Component = "C";
+						break;
+					default:
+						this.Component = "";
+						break;
+				}
 				this.Thread = logEntry.Thread;
 				this.Header = logEntry.Header;
 				this.Message = logEntry.Message;
 			}
 
 			public DateTime DateTime { get; set; }
+			public string EventType { get; set; }
 			public TimeSpan TimeDiff { get; set; }
 			public int Tick { get; set; }
 			public string Component { get; set; }
@@ -86,9 +124,9 @@ namespace MemoryMappedLog
 			LogRules = new List<LogRule>();
 			LogRules.Add(new LogRule() { Message = new Regex("^Start$"), Brush = Brushes.Lime });
 			LogRules.Add(new LogRule() { Message = new Regex("^-- Tick .* started --$"), Brush = Brushes.Lime });
-			LogRules.Add(new LogRule() { Component = new Regex("^Server$"), Brush = Brushes.LightGray });
-			LogRules.Add(new LogRule() { Component = new Regex("^Client$"), Brush = Brushes.Gold });
-			LogRules.Add(new LogRule() { Component = new Regex("^Mark$"), Brush = Brushes.Blue });
+			LogRules.Add(new LogRule() { Component = new Regex("^S$"), Brush = Brushes.LightGray });
+			LogRules.Add(new LogRule() { Component = new Regex("^C$"), Brush = Brushes.Gold });
+			LogRules.Add(new LogRule() { Component = new Regex("^M$"), Brush = Brushes.Blue });
 
 			//m_logFile = File.CreateText("test.log");
 			m_logFile = null;
@@ -203,15 +241,19 @@ namespace MemoryMappedLog
 		public void Add(LogEntry entry)
 		{
 			var ve = new ViewableLogEntry(entry);
+			Add(ve);
+		}
 
+		public void Add(ViewableLogEntry entry)
+		{
 			if (m_debugCollection.Count > 0)
 			{
 				var last = m_debugCollection.Last();
-				var td = ve.DateTime - last.DateTime;
-				ve.TimeDiff = td;
+				var td = entry.DateTime - last.DateTime;
+				entry.TimeDiff = td;
 			}
 
-			m_debugCollection.Add(ve);
+			m_debugCollection.Add(entry);
 
 			var str = String.Format("{0} | {1}: {2}", entry.DateTime, entry.Component, entry.Message);
 
@@ -228,7 +270,7 @@ namespace MemoryMappedLog
 				m_debugCollection.RemoveAt(0);
 
 			if (m_scrollToEnd)
-				logListView.ScrollIntoView(ve);
+				logListView.ScrollIntoView(entry);
 		}
 
 		public void AddRange(IEnumerable<LogEntry> entries)
@@ -285,8 +327,9 @@ namespace MemoryMappedLog
 
 		void OnMarkClicked(object sender, RoutedEventArgs e)
 		{
-			var entry = new LogEntry(DateTime.Now, 0)
+			var entry = new ViewableLogEntry()
 				{
+					DateTime = DateTime.Now,
 					Component = "Mark",
 				};
 			Add(entry);

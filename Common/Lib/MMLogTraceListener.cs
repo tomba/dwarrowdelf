@@ -13,10 +13,22 @@ namespace Dwarrowdelf
 
 		public MyTraceContext(string component)
 		{
-			this.Component = component;
+			switch (component)
+			{
+				case "Server":
+					this.Component = LogComponent.Server;
+					break;
+
+				case "Client":
+					this.Component = LogComponent.Client;
+					break;
+
+				default:
+					throw new Exception();
+			}
 		}
 
-		public readonly string Component;
+		public readonly LogComponent Component;
 		public int Tick;
 	}
 
@@ -32,8 +44,8 @@ namespace Dwarrowdelf
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
 
-			string component = "";
-			int tick = -1;
+			LogComponent component;
+			int tick;
 
 			var ctx = MyTraceContext.ThreadTraceContext;
 			if (ctx != null)
@@ -41,8 +53,13 @@ namespace Dwarrowdelf
 				component = ctx.Component;
 				tick = ctx.Tick;
 			}
+			else
+			{
+				component = LogComponent.None;
+				tick = -1;
+			}
 
-			MMLog.Append(tick, component, thread, "", message);
+			MMLog.Append(eventType, tick, component, thread, "", message);
 		}
 
 		public override void Write(string message)

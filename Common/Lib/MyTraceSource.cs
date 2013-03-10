@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Threading;
+using MemoryMappedLog;
 
 namespace Dwarrowdelf
 {
@@ -146,7 +147,7 @@ namespace Dwarrowdelf
 		{
 			string thread = Thread.CurrentThread.Name ?? Thread.CurrentThread.ManagedThreadId.ToString();
 
-			string component;
+			LogComponent component;
 			int tick;
 
 			var ctx = MyTraceContext.ThreadTraceContext;
@@ -157,11 +158,11 @@ namespace Dwarrowdelf
 			}
 			else
 			{
-				component = "";
+				component = LogComponent.None;
 				tick = -1;
 			}
 
-			MemoryMappedLog.MMLog.Append(tick, component, thread, this.Header, message);
+			MMLog.Append(eventType, tick, component, thread, this.Header, message);
 		}
 	}
 }

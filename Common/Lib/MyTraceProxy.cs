@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Dwarrowdelf
 {
-
 	public sealed class MyTraceProxy
 	{
 		MyTraceSource m_traceSource;
