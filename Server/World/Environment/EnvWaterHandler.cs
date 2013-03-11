@@ -17,12 +17,12 @@ namespace Dwarrowdelf.Server
 			m_env = env;
 			ScanWaterTiles();
 
-			m_env.World.TickStarting += OnTick;
+			m_env.World.TickEnding += OnTick;
 		}
 
 		public void Destruct()
 		{
-			m_env.World.TickStarting -= OnTick;
+			m_env.World.TickEnding -= OnTick;
 		}
 
 		public void AddWater(IntPoint3 p)

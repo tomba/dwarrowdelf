@@ -10,7 +10,7 @@ namespace Dwarrowdelf
 		int TickNumber { get; }
 		int Year { get; }
 		GameSeason Season { get; }
-		event Action TickStarting;
+		event Action TickStarted;
 		Random Random { get; }
 	}
 

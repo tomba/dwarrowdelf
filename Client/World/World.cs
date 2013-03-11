@@ -95,7 +95,7 @@ namespace Dwarrowdelf.Client
 		public ObjectID CurrentLivingID { get; private set; }
 		public bool IsOurTurn { get; private set; }
 
-		public event Action TickStarting;
+		public event Action TickStarted;
 		public event Action<ObjectID> TurnStarted;
 		public event Action TurnEnded;
 
@@ -103,8 +103,8 @@ namespace Dwarrowdelf.Client
 		{
 			this.TickNumber = change.TickNumber;
 
-			if (TickStarting != null)
-				TickStarting();
+			if (TickStarted != null)
+				TickStarted();
 
 			Events.AddTickGameEvent();
 		}

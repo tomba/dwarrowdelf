@@ -24,14 +24,14 @@ namespace Dwarrowdelf.Server
 
 			m_env.TerrainOrInteriorChanged += OnTerrainOrInteriorChanged;
 
-			m_env.World.TickStarting += OnTick;
+			m_env.World.TickEnding += OnTick;
 		}
 
 		public void Destruct()
 		{
 			m_env.TerrainOrInteriorChanged -= OnTerrainOrInteriorChanged;
 
-			m_env.World.TickStarting -= OnTick;
+			m_env.World.TickEnding -= OnTick;
 		}
 
 		void OnTerrainOrInteriorChanged(IntPoint3 p, TileData oldData, TileData newData)

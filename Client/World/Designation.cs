@@ -57,7 +57,7 @@ namespace Dwarrowdelf.Client
 			if (m_map.Count > 0)
 			{
 				this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
-				this.Environment.World.TickStarting += OnTickStartEvent;
+				this.Environment.World.TickStarted += OnTickStartEvent;
 			}
 
 			foreach (var kvp in m_map)
@@ -145,7 +145,7 @@ namespace Dwarrowdelf.Client
 			if (origCount == 0 && m_map.Count > 0)
 			{
 				this.Environment.MapTileTerrainChanged += OnEnvironmentMapTileTerrainChanged;
-				this.Environment.World.TickStarting += OnTickStartEvent;
+				this.Environment.World.TickStarted += OnTickStartEvent;
 			}
 		}
 
@@ -243,7 +243,7 @@ namespace Dwarrowdelf.Client
 			if (m_map.Count == 0)
 			{
 				this.Environment.MapTileTerrainChanged -= OnEnvironmentMapTileTerrainChanged;
-				this.Environment.World.TickStarting -= OnTickStartEvent;
+				this.Environment.World.TickStarted -= OnTickStartEvent;
 			}
 
 			this.Environment.OnTileExtraChanged(p);

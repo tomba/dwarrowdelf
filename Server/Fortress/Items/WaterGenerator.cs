@@ -31,19 +31,19 @@ namespace Dwarrowdelf.Server.Fortress
 		WaterGenerator(SaveGameContext ctx)
 			: base(ctx)
 		{
-			this.World.TickStarting += OnTickStart;
+			this.World.TickStarted += OnTickStart;
 		}
 
 		protected override void Initialize(World world)
 		{
 			base.Initialize(world);
 
-			world.TickStarting += OnTickStart;
+			world.TickStarted += OnTickStart;
 		}
 
 		public override void Destruct()
 		{
-			this.World.TickStarting -= OnTickStart;
+			this.World.TickStarted -= OnTickStart;
 
 			base.Destruct();
 		}

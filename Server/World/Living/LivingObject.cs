@@ -68,7 +68,7 @@ namespace Dwarrowdelf.Server
 		LivingObject(SaveGameContext ctx)
 			: base(ctx, ObjectType.Living)
 		{
-			this.World.TickStarting += OnTickStart;
+			this.World.TickEnding += OnTickEnding;
 
 			var aai = m_ai as Dwarrowdelf.AI.AssignmentAI;
 			if (aai != null)
@@ -85,7 +85,7 @@ namespace Dwarrowdelf.Server
 		{
 			base.Initialize(world);
 			world.AddLiving(this);
-			world.TickStarting += OnTickStart;
+			world.TickEnding += OnTickEnding;
 
 			this.Trace = new MyTraceSource("Dwarrowdelf.LivingObject",
 				String.Format("{0} ({1})", this.Name ?? this.LivingInfo.Name, this.ObjectID));
@@ -104,12 +104,12 @@ namespace Dwarrowdelf.Server
 			this.ActionTicksUsed = 0;
 			this.ActionUserID = 0;
 
-			this.World.TickStarting -= OnTickStart;
+			this.World.TickEnding -= OnTickEnding;
 			this.World.RemoveLiving(this);
 			base.Destruct();
 		}
 
-		void OnTickStart()
+		void OnTickEnding()
 		{
 			// XXX track only for dwarves
 			this.Hunger++;

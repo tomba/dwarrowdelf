@@ -9,7 +9,21 @@ namespace Dwarrowdelf.Server
 {
 	public sealed partial class World
 	{
+		/// <summary>
+		/// Just before tick number is increased
+		/// </summary>
 		public event Action TickStarting;
+		/// <summary>
+		/// Tick has been started, before starting a turn
+		/// </summary>
+		public event Action TickStarted;
+		/// <summary>
+		/// After last turn, before the tick ends
+		/// </summary>
+		public event Action TickEnding;
+		/// <summary>
+		/// Tick has been ended
+		/// </summary>
 		public event Action TickEnded;
 
 		public event Action<LivingObject> TurnStarting;
@@ -211,6 +225,9 @@ namespace Dwarrowdelf.Server
 		{
 			VerifyAccess();
 
+			if (TickStarting != null)
+				TickStarting();
+
 			this.TickNumber++;
 			MyTraceContext.ThreadTraceContext.Tick = this.TickNumber;
 			AddChange(new TickStartChange(this.TickNumber));
@@ -242,8 +259,8 @@ namespace Dwarrowdelf.Server
 
 			m_state = WorldState.TickOngoing;
 
-			if (TickStarting != null)
-				TickStarting();
+			if (TickStarted != null)
+				TickStarted();
 
 			if (this.TickMethod == WorldTickMethod.Simultaneous)
 			{
@@ -312,6 +329,9 @@ namespace Dwarrowdelf.Server
 		void EndTick()
 		{
 			VerifyAccess();
+
+			if (TickEnding != null)
+				TickEnding();
 
 			trace.TraceVerbose("-- Tick {0} ended --", this.TickNumber);
 			m_state = WorldState.TickEnded;

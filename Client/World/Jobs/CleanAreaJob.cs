@@ -28,12 +28,12 @@ namespace Dwarrowdelf.Client
 			foreach (var p in m_area.Range())
 				m_map[p] = null;
 
-			m_environment.World.TickStarting += World_TickStarting;
+			m_environment.World.TickStarted += World_TickStarting;
 		}
 
 		protected override void Cleanup()
 		{
-			m_environment.World.TickStarting -= World_TickStarting;
+			m_environment.World.TickStarted -= World_TickStarting;
 		}
 
 		void World_TickStarting()
