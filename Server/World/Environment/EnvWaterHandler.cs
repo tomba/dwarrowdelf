@@ -51,6 +51,27 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
+		void OnTick()
+		{
+			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
+
+			foreach (var p in m_waterTiles)
+			{
+				if (m_env.GetWaterLevel(p) == 0)
+					throw new Exception();
+
+				HandleWaterAt(p, waterChangeMap);
+			}
+
+			foreach (var kvp in waterChangeMap)
+			{
+				var p = kvp.Key;
+				int level = kvp.Value;
+
+				m_env.SetWaterLevel(p, (byte)level);
+			}
+		}
+
 		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
 		{
 			if (!m_env.Contains(to))
@@ -82,45 +103,35 @@ namespace Dwarrowdelf.Server
 			throw new Exception();
 		}
 
-		void HandleWaterAt(IntPoint3 p, Dictionary<IntPoint3, int> waterChangeMap)
+		void HandleWaterAt(IntPoint3 src, Dictionary<IntPoint3, int> waterChangeMap)
 		{
-			int curLevel;
+			int srcLevel;
 
-			if (!waterChangeMap.TryGetValue(p, out curLevel))
-			{
-				curLevel = m_env.GetWaterLevel(p);
-				/* water evaporates */
-				/*
-				if (curLevel == 1 && s_waterRandom.Next(100) == 0)
-				{
-					waterChangeMap[p] = 0;
-					return;
-				}
-				 */
-			}
+			if (!waterChangeMap.TryGetValue(src, out srcLevel))
+				srcLevel = m_env.GetWaterLevel(src);
 
 			var dirs = DirectionExtensions.CardinalUpDownDirections.ToArray();
 			MyMath.ShuffleArray(dirs, m_env.World.Random);
-			bool curLevelChanged = false;
+			bool srcLevelChanged = false;
 
 			foreach (var d in dirs)
 			{
-				var pp = p + d;
+				var dst = src + d;
 
-				if (!CanWaterFlow(p, pp))
+				if (!CanWaterFlow(src, dst))
 					continue;
 
-				int neighLevel;
-				if (!waterChangeMap.TryGetValue(pp, out neighLevel))
-					neighLevel = m_env.GetWaterLevel(pp);
+				int dstLevel;
+				if (!waterChangeMap.TryGetValue(dst, out dstLevel))
+					dstLevel = m_env.GetWaterLevel(dst);
 
 				int flow;
 				if (d == Direction.Up)
 				{
-					if (curLevel > TileData.MaxWaterLevel)
+					if (srcLevel > TileData.MaxWaterLevel)
 					{
-						flow = curLevel - (neighLevel + TileData.MaxCompress) - 1;
-						flow = MyMath.Clamp(flow, curLevel - TileData.MaxWaterLevel, 0);
+						flow = srcLevel - (dstLevel + TileData.MaxCompress) - 1;
+						flow = MyMath.Clamp(flow, srcLevel - TileData.MaxWaterLevel, 0);
 					}
 					else
 						flow = 0;
@@ -128,22 +139,22 @@ namespace Dwarrowdelf.Server
 				}
 				else if (d == Direction.Down)
 				{
-					if (neighLevel < TileData.MaxWaterLevel)
-						flow = TileData.MaxWaterLevel - neighLevel;
-					else if (curLevel >= TileData.MaxWaterLevel)
-						flow = curLevel - neighLevel + TileData.MaxCompress;
+					if (dstLevel < TileData.MaxWaterLevel)
+						flow = TileData.MaxWaterLevel - dstLevel;
+					else if (srcLevel >= TileData.MaxWaterLevel)
+						flow = srcLevel - dstLevel + TileData.MaxCompress;
 					else
 						flow = 0;
 
-					flow = MyMath.Clamp(flow, curLevel, 0);
+					flow = MyMath.Clamp(flow, srcLevel, 0);
 				}
 				else
 				{
-					if (curLevel > TileData.MinWaterLevel && curLevel > neighLevel)
+					if (srcLevel > TileData.MinWaterLevel && srcLevel > dstLevel)
 					{
-						int diff = curLevel - neighLevel;
+						int diff = srcLevel - dstLevel;
 						flow = (diff + 5) / 6;
-						Debug.Assert(flow < curLevel);
+						Debug.Assert(flow < srcLevel);
 						//flow = Math.Min(flow, curLevel - 1);
 						//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
 					}
@@ -156,36 +167,15 @@ namespace Dwarrowdelf.Server
 				if (flow == 0)
 					continue;
 
-				curLevel -= flow;
-				neighLevel += flow;
+				srcLevel -= flow;
+				dstLevel += flow;
 
-				waterChangeMap[pp] = neighLevel;
-				curLevelChanged = true;
+				waterChangeMap[dst] = dstLevel;
+				srcLevelChanged = true;
 			}
 
-			if (curLevelChanged)
-				waterChangeMap[p] = curLevel;
-		}
-
-		void OnTick()
-		{
-			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
-
-			foreach (var p in m_waterTiles)
-			{
-				if (m_env.GetWaterLevel(p) == 0)
-					throw new Exception();
-
-				HandleWaterAt(p, waterChangeMap);
-			}
-
-			foreach (var kvp in waterChangeMap)
-			{
-				var p = kvp.Key;
-				int level = kvp.Value;
-
-				m_env.SetWaterLevel(p, (byte)level);
-			}
+			if (srcLevelChanged)
+				waterChangeMap[src] = srcLevel;
 		}
 	}
 }
