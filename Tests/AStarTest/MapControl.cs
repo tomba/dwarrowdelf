@@ -54,6 +54,10 @@ namespace AStarTest
 
 		RenderData m_renderData;
 
+		public event Action<IntPoint3, IEnumerable<Direction>> AStarDone;
+		HashSet<IntPoint3> m_path;
+		IDictionary<IntPoint3, AStarNode> m_nodes;
+
 		public MapControl()
 		{
 			this.SrcPos = this.DstPos = DirectionSet.Exact;
@@ -292,10 +296,6 @@ namespace AStarTest
 			set { m_pathLength = value; Notify("PathLength"); }
 		}
 
-		public event Action<IntPoint3, IEnumerable<Direction>> AStarDone;
-		IEnumerable<IntPoint3> m_path;
-		IDictionary<IntPoint3, AStarNode> m_nodes;
-
 		public IEnumerable<Direction> GetPathReverse(AStarNode lastNode)
 		{
 			if (lastNode == null)
@@ -343,19 +343,23 @@ namespace AStarTest
 
 				var lastNode = astar.LastNode;
 
-				var pathList = new List<IntPoint3>();
+				m_path = new HashSet<IntPoint3>();
+				var dirs = new List<Direction>();
+				int count = 0;
+
 				var n = lastNode;
 				while (n.Parent != null)
 				{
-					pathList.Add(n.Loc);
+					m_path.Add(n.Loc);
+					count++;
+					dirs.Add((n.Parent.Loc - n.Loc).ToDirection());
 					n = n.Parent;
 				}
-				m_path = pathList;
 
-				this.PathLength = GetPathReverse(lastNode).Count();
+				this.PathLength = count;
 
 				if (AStarDone != null)
-					AStarDone(lastNode.Loc, GetPathReverse(lastNode));
+					AStarDone(lastNode.Loc, dirs);
 
 				InvalidateTileData();
 			}
@@ -391,19 +395,23 @@ namespace AStarTest
 
 							var lastNode = astar.LastNode;
 
-							var pathList = new List<IntPoint3>();
+							m_path = new HashSet<IntPoint3>();
+							var dirs = new List<Direction>();
+							int count = 0;
+
 							var n = lastNode;
 							while (n.Parent != null)
 							{
-								pathList.Add(n.Loc);
+								m_path.Add(n.Loc);
+								count++;
+								dirs.Add((n.Parent.Loc - n.Loc).ToDirection());
 								n = n.Parent;
 							}
-							m_path = pathList;
 
-							this.PathLength = GetPathReverse(lastNode).Count();
+							this.PathLength = count;
 
 							if (AStarDone != null)
-								AStarDone(lastNode.Loc, GetPathReverse(lastNode));
+								AStarDone(lastNode.Loc, dirs);
 
 							InvalidateTileData();
 						}, TaskScheduler.FromCurrentSynchronizationContext());
