@@ -669,24 +669,5 @@ namespace Dwarrowdelf.Server
 		{
 			return String.Format("Environment({0})", this.ObjectID);
 		}
-
-		int AStar.IAStarEnvironment.GetTileWeight(IntPoint3 p)
-		{
-			return 0;
-		}
-
-		IEnumerable<Direction> AStar.IAStarEnvironment.GetValidDirs(IntPoint3 p)
-		{
-			return EnvironmentHelpers.GetDirectionsFrom(this, p);
-		}
-
-		bool AStar.IAStarEnvironment.CanEnter(IntPoint3 p)
-		{
-			return EnvironmentHelpers.CanEnter(this, p);
-		}
-
-		void AStar.IAStarEnvironment.Callback(IDictionary<IntPoint3, AStar.AStarNode> nodes)
-		{
-		}
 	}
 }

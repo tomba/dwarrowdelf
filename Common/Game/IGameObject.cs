@@ -32,7 +32,7 @@ namespace Dwarrowdelf
 		IEnumerable<IMovableObject> Inventory { get; }
 	}
 
-	public interface IEnvironmentObject : IContainerObject, AStar.IAStarEnvironment
+	public interface IEnvironmentObject : IContainerObject
 	{
 		VisibilityMode VisibilityMode { get; }
 

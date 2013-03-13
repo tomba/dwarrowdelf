@@ -205,5 +205,14 @@ namespace Dwarrowdelf
 
 			return Direction.None;
 		}
+
+		/// <summary>
+		/// Return enterable positions around the given location, based on positioning
+		/// </summary>
+		public static IEnumerable<IntPoint3> GetPositioningLocations(IEnvironmentObject env, IntPoint3 pos,
+			DirectionSet positioning)
+		{
+			return positioning.ToDirections().Select(d => pos + d).Where(p => CanEnter(env, p));
+		}
 	}
 }
