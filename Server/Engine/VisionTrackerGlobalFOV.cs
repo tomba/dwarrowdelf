@@ -90,7 +90,7 @@ namespace Dwarrowdelf.Server
 					{
 						var p = new IntPoint3(x, y, z);
 
-						var vis = env.GetTileData(p).IsSeeThrough || EnvironmentHelpers.CanBeSeen(env, p);
+						var vis = env.GetTileData(p).IsSeeThrough || env.CanBeSeen(p);
 
 						if (vis)
 						{

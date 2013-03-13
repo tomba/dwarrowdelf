@@ -213,7 +213,7 @@ namespace Dwarrowdelf.Server
 			{
 				var p = GetRandomSurfaceLocation(idx);
 
-				if (EnvironmentHelpers.CanEnter(this, p))
+				if (this.CanEnter(p))
 					return p;
 
 				idx += 1;
@@ -448,7 +448,7 @@ namespace Dwarrowdelf.Server
 			if (!this.Contains(p))
 				return false;
 
-			if (!EnvironmentHelpers.CanEnter(this, p))
+			if (!this.CanEnter(p))
 				return false;
 
 			return true;
@@ -471,7 +471,7 @@ namespace Dwarrowdelf.Server
 
 		public override bool OkToMoveChild(MovableObject ob, Direction dir, IntPoint3 dstLoc)
 		{
-			return EnvironmentHelpers.CanMoveFromTo(this, ob.Location, dir);
+			return EnvironmentExtensions.CanMoveFromTo(this, ob.Location, dir);
 		}
 
 		protected override void OnChildMoved(MovableObject child, IntPoint3 srcLoc, IntPoint3 dstLoc)
@@ -488,11 +488,6 @@ namespace Dwarrowdelf.Server
 			list.Add(child);
 		}
 
-
-		public IEnumerable<Direction> GetDirectionsFrom(IntPoint3 p)
-		{
-			return EnvironmentHelpers.GetDirectionsFrom(this, p);
-		}
 
 		protected override void CollectObjectData(BaseGameObjectData baseData, ObjectVisibility visibility)
 		{

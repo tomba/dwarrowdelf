@@ -46,7 +46,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				case MineActionType.Mine:
 					pos = DirectionSet.Planar;
 
-					if (EnvironmentHelpers.CanMoveFrom(env, down, Direction.Up))
+					if (env.CanMoveFrom(down, Direction.Up))
 						pos |= DirectionSet.Down;
 
 					break;
@@ -54,7 +54,7 @@ namespace Dwarrowdelf.Jobs.AssignmentGroups
 				case MineActionType.Stairs:
 					pos = DirectionSet.Planar | DirectionSet.Up;
 
-					if (EnvironmentHelpers.CanMoveFrom(env, down, Direction.Up))
+					if (env.CanMoveFrom(down, Direction.Up))
 						pos |= DirectionSet.Down;
 
 					break;

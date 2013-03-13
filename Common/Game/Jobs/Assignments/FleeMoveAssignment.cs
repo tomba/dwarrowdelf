@@ -60,16 +60,16 @@ namespace Dwarrowdelf.Jobs.Assignments
 			for (int i = 0; i < 7; ++i)
 			{
 				var v = ov.FastRotate(((i + 1) >> 1) * (((i % 2) << 1) - 1));
-				var d = EnvironmentHelpers.AdjustMoveDir(env, this.Worker.Location, v.ToDirection());
+				var d = env.AdjustMoveDir(this.Worker.Location, v.ToDirection());
 
 				if (d != Direction.None)
 					return new MoveAction(d);
 			}
 
-			if (EnvironmentHelpers.CanMoveFromTo(this.Worker, Direction.Up))
+			if (this.Worker.CanMoveTo(Direction.Up))
 				return new MoveAction(Direction.Up);
 
-			if (EnvironmentHelpers.CanMoveFromTo(this.Worker, Direction.Down))
+			if (this.Worker.CanMoveTo(Direction.Down))
 				return new MoveAction(Direction.Down);
 
 			return new WaitAction(1);

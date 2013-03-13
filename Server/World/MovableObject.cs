@@ -146,7 +146,7 @@ namespace Dwarrowdelf.Server
 			if (this.Environment == null)
 				throw new Exception();
 
-			if (EnvironmentHelpers.CanMoveFromTo(this, dir) == false)
+			if (LivingExtensions.CanMoveTo(this, dir) == false)
 				return false;
 
 			var location = this.Location + dir;

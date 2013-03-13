@@ -71,7 +71,7 @@ namespace Dwarrowdelf.Server
 
 						var p = m_env.GetSurfaceLocation(p2);
 
-						if (EnvironmentHelpers.CanEnter(m_env, p) == false)
+						if (m_env.CanEnter(p) == false)
 							continue;
 
 						var livingBuilder = new LivingObjectBuilder(livingID);

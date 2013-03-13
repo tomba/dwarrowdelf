@@ -99,7 +99,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 				var p3 = new IntPoint3(p, grid.Z);
 
-				if (EnvironmentHelpers.CanEnter(env, p3) == false)
+				if (env.CanEnter(p3) == false)
 					continue;
 
 				return p3;
@@ -130,7 +130,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 				var p3 = env.GetSurfaceLocation(p);
 
-				if (EnvironmentHelpers.CanEnter(env, p3))
+				if (env.CanEnter(p3))
 					return p3;
 			}
 

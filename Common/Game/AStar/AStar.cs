@@ -34,9 +34,9 @@ namespace Dwarrowdelf.AStar
 		public static AStarResult Find(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			var initLocs = EnvironmentHelpers.GetPositioningLocations(env, src, srcPositioning);
+			var initLocs = env.GetPositioningLocations(src, srcPositioning);
 
-			var astar = new AStarImpl(null, p => EnvironmentHelpers.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
+			var astar = new AStarImpl(null, p => EnvironmentExtensions.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
 			var status = astar.Find();
 			return new AStarResult(astar.Nodes, astar.LastNode, status);
 		}
@@ -182,9 +182,9 @@ namespace Dwarrowdelf.AStar
 			IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			var initLocs = EnvironmentHelpers.GetPositioningLocations(env, src, srcPositioning);
+			var initLocs = env.GetPositioningLocations(src, srcPositioning);
 
-			var astar = new AStarImpl(null, p => EnvironmentHelpers.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
+			var astar = new AStarImpl(null, p => EnvironmentExtensions.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
 
 			AStarStatus status;
 			while ((status = astar.Find()) == AStarStatus.Found)

@@ -303,13 +303,13 @@ namespace Dwarrowdelf.Client
 				case DesignationType.Mine:
 					dirs = DirectionSet.Planar;
 					// If the tile below has stairs, tile tile can be mined from below
-					if (EnvironmentHelpers.CanMoveFrom(this.Environment, p + Direction.Down, Direction.Up))
+					if (this.Environment.CanMoveFrom(p + Direction.Down, Direction.Up))
 						dirs |= DirectionSet.Down;
 					break;
 
 				case DesignationType.CreateStairs:
 					dirs = DirectionSet.Planar | DirectionSet.Up;
-					if (EnvironmentHelpers.CanMoveFrom(this.Environment, p + Direction.Down, Direction.Up))
+					if (this.Environment.CanMoveFrom(p + Direction.Down, Direction.Up))
 						dirs |= DirectionSet.Down;
 					break;
 
@@ -326,7 +326,7 @@ namespace Dwarrowdelf.Client
 			}
 
 			return dirs.ToDirections()
-				.Any(d => EnvironmentHelpers.CanEnter(this.Environment, p + d));
+				.Any(d => this.Environment.CanEnter(p + d));
 		}
 	}
 }

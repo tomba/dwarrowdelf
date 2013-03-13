@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Server
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
-						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
+						if (!env.CanMoveFrom(this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
 							return ActionState.Fail;
@@ -132,8 +132,7 @@ namespace Dwarrowdelf.Server
 
 						// We can always create stairs down, but for other dirs we need access there
 						// XXX ??? When we cannot move in planar dirs?
-						if (action.Direction != Direction.Down &&
-							!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
+						if (action.Direction != Direction.Down && !env.CanMoveFrom(this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
 							return ActionState.Fail;
@@ -174,7 +173,7 @@ namespace Dwarrowdelf.Server
 						}
 
 						// XXX is this necessary for planar dirs? we can always move in those dirs
-						if (!EnvironmentHelpers.CanMoveFrom(env, this.Location, action.Direction))
+						if (!env.CanMoveFrom(this.Location, action.Direction))
 						{
 							SendFailReport(report, "cannot reach");
 							return ActionState.Fail;

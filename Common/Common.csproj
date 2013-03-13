@@ -55,6 +55,7 @@
     <Compile Include="Game\AStar\AStarTarget.cs" />
     <Compile Include="Game\AStar\AStar.cs" />
     <Compile Include="Game\AStar\AStarImpl.cs" />
+    <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Lib\DataTypes\DoublePoint3.cs" />
     <Compile Include="Lib\DataTypes\EnumBitMasks.cs" />
@@ -101,7 +102,7 @@
     <Compile Include="Game\Json\JsonDeserializer.cs" />
     <Compile Include="Game\Json\JsonSerializer.cs" />
     <Compile Include="Lib\DataTypes\IntGrid2Z.cs" />
-    <Compile Include="Game\EnvironmentHelpers.cs" />
+    <Compile Include="Game\EnvironmentExtensions.cs" />
     <Compile Include="Lib\Extensions.cs" />
     <Compile Include="Game\Items.cs" />
     <Compile Include="Game\Jobs\Assignments\AttackAssignment.cs" />
