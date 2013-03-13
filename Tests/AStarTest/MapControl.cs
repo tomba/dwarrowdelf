@@ -25,7 +25,7 @@ using Dwarrowdelf.AStar;
 
 namespace AStarTest
 {
-	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore, INotifyPropertyChanged, Dwarrowdelf.AStar.IAStarEnvironment
+	class MapControl : Dwarrowdelf.Client.TileControl.TileControlCore, INotifyPropertyChanged
 	{
 		public class TileInfo
 		{
@@ -96,7 +96,6 @@ namespace AStarTest
 		void ClearMap()
 		{
 			m_path = null;
-			m_result = null;
 			m_nodes = null;
 			InvalidateTileData();
 		}
@@ -293,10 +292,22 @@ namespace AStarTest
 			set { m_pathLength = value; Notify("PathLength"); }
 		}
 
-		public event Action<AStarResult> AStarDone;
+		public event Action<IntPoint3, IEnumerable<Direction>> AStarDone;
 		IEnumerable<IntPoint3> m_path;
-		AStarResult m_result;
 		IDictionary<IntPoint3, AStarNode> m_nodes;
+
+		public IEnumerable<Direction> GetPathReverse(AStarNode lastNode)
+		{
+			if (lastNode == null)
+				yield break;
+
+			AStarNode n = lastNode;
+			while (n.Parent != null)
+			{
+				yield return (n.Parent.Loc - n.Loc).ToDirection();
+				n = n.Parent;
+			}
+		}
 
 		void DoAStar(IntPoint3 src, IntPoint3 dst)
 		{
@@ -305,9 +316,14 @@ namespace AStarTest
 			startBytes = GC.GetTotalMemory(true);
 			sw.Start();
 
+			var initLocs = this.SrcPos.ToDirections().Select(d => src + d)
+				.Where(p => m_map.Bounds.Contains(p) && !m_map.GetBlocked(p));
+
+			var astar = new AStarImpl(m_map.GetWeight, GetTileDirs, initLocs, new AStarDefaultTarget(dst, this.DstPos));
+
 			if (!this.Step)
 			{
-				m_result = AStarFinder.Find(this, src, this.SrcPos, dst, this.DstPos);
+				var status = astar.Find();
 
 				sw.Stop();
 				stopBytes = GC.GetTotalMemory(true);
@@ -315,18 +331,20 @@ namespace AStarTest
 				this.MemUsed = stopBytes - startBytes;
 				this.TicksUsed = sw.ElapsedTicks;
 
-				this.Status = m_result.Status;
-				m_nodes = m_result.Nodes;
+				this.Status = status;
+				m_nodes = astar.Nodes;
 
-				if (m_result.Status != AStarStatus.Found)
+				if (status != AStarStatus.Found)
 				{
 					m_path = null;
 					this.PathLength = 0;
 					return;
 				}
 
+				var lastNode = astar.LastNode;
+
 				var pathList = new List<IntPoint3>();
-				var n = m_result.LastNode;
+				var n = lastNode;
 				while (n.Parent != null)
 				{
 					pathList.Add(n.Loc);
@@ -334,18 +352,25 @@ namespace AStarTest
 				}
 				m_path = pathList;
 
-				this.PathLength = m_result.GetPathReverse().Count();
+				this.PathLength = GetPathReverse(lastNode).Count();
 
 				if (AStarDone != null)
-					AStarDone(m_result);
+					AStarDone(lastNode.Loc, GetPathReverse(lastNode));
 
 				InvalidateTileData();
 			}
 			else
 			{
+				astar.DebugCallback = AStarDebugCallback;
+
 				m_contEvent.Reset();
 
-				Task.Factory.StartNew(() => m_result = AStarFinder.Find(this, src, this.SrcPos, dst, this.DstPos))
+				AStarStatus status = AStarStatus.NotFound;
+
+				Task.Factory.StartNew(() =>
+					{
+						status = astar.Find();
+					})
 					.ContinueWith((task) =>
 						{
 							sw.Stop();
@@ -354,18 +379,20 @@ namespace AStarTest
 							this.MemUsed = stopBytes - startBytes;
 							this.TicksUsed = sw.ElapsedTicks;
 
-							this.Status = m_result.Status;
-							m_nodes = m_result.Nodes;
+							this.Status = status;
+							m_nodes = astar.Nodes;
 
-							if (m_result.Status != AStarStatus.Found)
+							if (status != AStarStatus.Found)
 							{
 								m_path = null;
 								this.PathLength = 0;
 								return;
 							}
 
+							var lastNode = astar.LastNode;
+
 							var pathList = new List<IntPoint3>();
-							var n = m_result.LastNode;
+							var n = lastNode;
 							while (n.Parent != null)
 							{
 								pathList.Add(n.Loc);
@@ -373,32 +400,17 @@ namespace AStarTest
 							}
 							m_path = pathList;
 
-							this.PathLength = m_result.GetPathReverse().Count();
+							this.PathLength = GetPathReverse(lastNode).Count();
 
 							if (AStarDone != null)
-								AStarDone(m_result);
+								AStarDone(lastNode.Loc, GetPathReverse(lastNode));
 
 							InvalidateTileData();
 						}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 		}
 
-		IEnumerable<Direction> Dwarrowdelf.AStar.IAStarEnvironment.GetValidDirs(IntPoint3 p)
-		{
-			return GetTileDirs(p);
-		}
-
-		int Dwarrowdelf.AStar.IAStarEnvironment.GetTileWeight(IntPoint3 p)
-		{
-			return m_map.GetWeight(p);
-		}
-
-		bool Dwarrowdelf.AStar.IAStarEnvironment.CanEnter(IntPoint3 p)
-		{
-			return m_map.Bounds.Contains(p) && !m_map.GetBlocked(p);
-		}
-
-		void IAStarEnvironment.Callback(IDictionary<IntPoint3, Dwarrowdelf.AStar.AStarNode> nodes)
+		void AStarDebugCallback(IDictionary<IntPoint3, Dwarrowdelf.AStar.AStarNode> nodes)
 		{
 			if (!this.Step)
 				return;

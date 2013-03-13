@@ -26,7 +26,7 @@ namespace Dwarrowdelf.AStar
 		}
 	}
 
-	sealed class AStarImpl
+	public sealed class AStarImpl
 	{
 		public const int COST_DIAGONAL = 14;
 		public const int COST_STRAIGHT = 10;
@@ -44,6 +44,8 @@ namespace Dwarrowdelf.AStar
 
 		public Dictionary<IntPoint3, AStarNode> Nodes { get { return m_nodeMap; } }
 		public AStarNode LastNode { get; private set; }
+
+		public Action<Dictionary<IntPoint3, AStarNode>> DebugCallback { get; set; }
 
 		public AStarImpl(Func<IntPoint3, int> getTileWeight, Func<IntPoint3, IEnumerable<Direction>> getValidDirs,
 			IEnumerable<IntPoint3> initialLocations,
@@ -89,6 +91,9 @@ namespace Dwarrowdelf.AStar
 
 				if (nodeMap.Count > m_maxNodeCount)
 					return AStarStatus.LimitExceeded;
+
+				if (DebugCallback != null)
+					DebugCallback(nodeMap);
 
 				var node = openList.Pop();
 				node.Closed = true;

@@ -61,7 +61,7 @@ namespace AStarTest
 
 			m_map = new MapControl();
 			m_map.SomethingChanged += new Action(m_map_SomethingChanged);
-			m_map.AStarDone += new Action<AStarResult>(m_map_AStarDone);
+			m_map.AStarDone += OnAStarDone;
 			grid.Children.Add((UIElement)m_map);
 
 			m_canvas = new Canvas();
@@ -89,11 +89,8 @@ namespace AStarTest
 			Canvas.SetTop(m_path1, 0.5);
 		}
 
-		void m_map_AStarDone(AStarResult res)
+		void OnAStarDone(IntPoint3 l, IEnumerable<Direction> dirs)
 		{
-			var l = res.LastNode.Loc;
-			var dirs = res.GetPathReverse();
-
 			m_path1.Points.Clear();
 			IntPoint2 p = new IntPoint2(l.X, l.Y);
 			m_path1.Points.Add(new Point(p.X, p.Y));
