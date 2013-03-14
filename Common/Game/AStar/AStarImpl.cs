@@ -31,8 +31,8 @@ namespace Dwarrowdelf.AStar
 		public const int COST_DIAGONAL = 14;
 		public const int COST_STRAIGHT = 10;
 
-		readonly CancellationToken m_cancellationToken;
-		readonly int m_maxNodeCount;
+		public CancellationToken CancellationToken { get; set; }
+		public int MaxNodeCount { get; set; }
 
 		readonly Func<IntPoint3, int> m_getTileWeight;
 		readonly Func<IntPoint3, IEnumerable<Direction>> m_getValidDirs;
@@ -47,14 +47,14 @@ namespace Dwarrowdelf.AStar
 
 		public Action<Dictionary<IntPoint3, AStarNode>> DebugCallback { get; set; }
 
-		public AStarImpl(Func<IntPoint3, int> getTileWeight, Func<IntPoint3, IEnumerable<Direction>> getValidDirs,
-			IEnumerable<IntPoint3> initialLocations,
-			IAStarTarget target, int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
+		public AStarImpl(IEnumerable<IntPoint3> initialLocations, IAStarTarget target, Func<IntPoint3,
+			IEnumerable<Direction>> getValidDirs, Func<IntPoint3, int> getTileWeight)
 		{
+			this.MaxNodeCount = 200000;
+			this.CancellationToken = CancellationToken.None;
+
 			m_getTileWeight = getTileWeight;
 			m_getValidDirs = getValidDirs;
-			m_maxNodeCount = maxNodeCount;
-			m_cancellationToken = cancellationToken.HasValue ? cancellationToken.Value : CancellationToken.None;
 
 			m_target = target;
 			m_nodeMap = new Dictionary<IntPoint3, AStarNode>();
@@ -86,10 +86,10 @@ namespace Dwarrowdelf.AStar
 
 			while (!openList.IsEmpty)
 			{
-				if (m_cancellationToken.IsCancellationRequested)
+				if (this.CancellationToken.IsCancellationRequested)
 					return AStarStatus.Cancelled;
 
-				if (nodeMap.Count > m_maxNodeCount)
+				if (nodeMap.Count > this.MaxNodeCount)
 					return AStarStatus.LimitExceeded;
 
 				if (DebugCallback != null)

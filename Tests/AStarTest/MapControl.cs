@@ -319,7 +319,7 @@ namespace AStarTest
 			var initLocs = this.SrcPos.ToDirections().Select(d => src + d)
 				.Where(p => m_map.Bounds.Contains(p) && !m_map.GetBlocked(p));
 
-			var astar = new AStarImpl(m_map.GetWeight, GetTileDirs, initLocs, new AStarDefaultTarget(dst, this.DstPos));
+			var astar = new AStarImpl(initLocs, new AStarDefaultTarget(dst, this.DstPos), GetTileDirs, m_map.GetWeight);
 
 			if (!this.Step)
 			{

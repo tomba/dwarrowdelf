@@ -36,7 +36,11 @@ namespace Dwarrowdelf.AStar
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
 
-			var astar = new AStarImpl(null, p => EnvironmentExtensions.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
+			var astar = new AStarImpl(initLocs, target, p => EnvironmentExtensions.GetDirectionsFrom(env, p), null);
+			astar.MaxNodeCount = maxNodeCount;
+			if (cancellationToken.HasValue)
+				astar.CancellationToken = cancellationToken.Value;
+
 			var status = astar.Find();
 			return new AStarResult(astar.Nodes, astar.LastNode, status);
 		}
@@ -184,7 +188,10 @@ namespace Dwarrowdelf.AStar
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
 
-			var astar = new AStarImpl(null, p => EnvironmentExtensions.GetDirectionsFrom(env, p), initLocs, target, maxNodeCount, cancellationToken);
+			var astar = new AStarImpl(initLocs, target, p => EnvironmentExtensions.GetDirectionsFrom(env, p), null);
+			astar.MaxNodeCount = maxNodeCount;
+			if (cancellationToken.HasValue)
+				astar.CancellationToken = cancellationToken.Value;
 
 			AStarStatus status;
 			while ((status = astar.Find()) == AStarStatus.Found)
