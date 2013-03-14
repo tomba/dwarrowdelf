@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Threading;
 using Dwarrowdelf.Client.TileControl;
-using Dwarrowdelf.AStar;
 
 namespace AStarTest
 {
@@ -319,7 +318,7 @@ namespace AStarTest
 			var initLocs = this.SrcPos.ToDirections().Select(d => src + d)
 				.Where(p => m_map.Bounds.Contains(p) && !m_map.GetBlocked(p));
 
-			var astar = new AStarImpl(initLocs, new AStarDefaultTarget(dst, this.DstPos), GetTileDirs, m_map.GetWeight);
+			var astar = new AStar(initLocs, new AStarDefaultTarget(dst, this.DstPos), GetTileDirs, m_map.GetWeight);
 
 			if (!this.Step)
 			{
@@ -418,7 +417,7 @@ namespace AStarTest
 			}
 		}
 
-		void AStarDebugCallback(IDictionary<IntPoint3, Dwarrowdelf.AStar.AStarNode> nodes)
+		void AStarDebugCallback(IDictionary<IntPoint3, AStarNode> nodes)
 		{
 			if (!this.Step)
 				return;

@@ -17,7 +17,6 @@ using System.ComponentModel;
 using Dwarrowdelf;
 using AStarTest;
 using System.Diagnostics;
-using Dwarrowdelf.AStar;
 
 namespace AStarTest
 {

@@ -122,7 +122,7 @@ namespace Dwarrowdelf.Jobs.Assignments
 				return JobStatus.Done;
 			}
 
-			var path = AStar.AStarFinder.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar);
+			var path = AStar.Find(m_target.Environment, worker.Location, m_dest, DirectionSet.Planar);
 
 			if (path == null)
 				return JobStatus.Abort;

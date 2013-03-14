@@ -59,7 +59,7 @@ namespace Dwarrowdelf.Client
 
 			foreach (var item in items)
 			{
-				var found = AStar.AStarFinder.CanReach(m_env, location, item.Location, DirectionSet.Exact);
+				var found = AStar.CanReach(m_env, location, item.Location, DirectionSet.Exact);
 
 				if (found)
 					return item;

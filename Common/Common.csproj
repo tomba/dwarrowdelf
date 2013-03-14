@@ -53,8 +53,8 @@
     <Compile Include="Game\AI\MonsterAI.cs" />
     <Compile Include="Game\AStar\AStarResult.cs" />
     <Compile Include="Game\AStar\AStarTarget.cs" />
+    <Compile Include="Game\AStar\AStarHelpers.cs" />
     <Compile Include="Game\AStar\AStar.cs" />
-    <Compile Include="Game\AStar\AStarImpl.cs" />
     <Compile Include="Game\LivingExtensions.cs" />
     <Compile Include="Game\Messages\ChangeDatas.cs" />
     <Compile Include="Lib\DataTypes\DoublePoint3.cs" />

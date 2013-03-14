@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Dwarrowdelf.AStar
+namespace Dwarrowdelf
 {
 	public interface IAStarTarget
 	{
@@ -33,9 +33,9 @@ namespace Dwarrowdelf.AStar
 #if !asd
 			int hDiagonal = Math.Min(Math.Min(Math.Abs(v.X), Math.Abs(v.Y)), Math.Abs(v.Z));
 			int hStraight = v.ManhattanLength;
-			int h = AStarImpl.COST_DIAGONAL * hDiagonal + AStarImpl.COST_STRAIGHT * (hStraight - 2 * hDiagonal);
+			int h = AStar.COST_DIAGONAL * hDiagonal + AStar.COST_STRAIGHT * (hStraight - 2 * hDiagonal);
 #else
-			int h = v.ManhattanLength * AStar.COST_STRAIGHT;
+			int h = v.ManhattanLength * AStarImpl.COST_STRAIGHT;
 #endif
 			return (ushort)h;
 		}
