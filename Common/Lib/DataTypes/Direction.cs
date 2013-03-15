@@ -148,11 +148,11 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static readonly ReadOnlyArray<Direction> PlanarDirections;
 		/// <summary>
-		/// Cardinal + Up & Down (6)
+		/// Cardinal + Up + Down (6)
 		/// </summary>
 		public static readonly ReadOnlyArray<Direction> CardinalUpDownDirections;
 		/// <summary>
-		/// Planar Directions + Up & Down (10)
+		/// Planar Directions + Up + Down (10)
 		/// </summary>
 		public static readonly ReadOnlyArray<Direction> PlanarUpDownDirections;
 
