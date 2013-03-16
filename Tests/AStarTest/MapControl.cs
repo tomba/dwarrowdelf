@@ -223,6 +223,7 @@ namespace AStarTest
 			}
 			else if (e.ChangedButton == MouseButton.Right)
 			{
+				// XXX doesn't work, tilecontrol only sends left button
 				m_removing = m_map.GetBlocked(ml);
 				m_map.SetBlocked(ml, !m_removing);
 				InvalidateTileData();
