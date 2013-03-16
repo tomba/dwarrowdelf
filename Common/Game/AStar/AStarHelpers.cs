@@ -16,8 +16,9 @@ namespace Dwarrowdelf
 		public static AStarResult Find(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IntPoint3 dst, DirectionSet dstPositioning,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return Find(env, src, srcPositioning, new AStarDefaultTarget(dst, dstPositioning),
-				maxNodeCount, cancellationToken);
+			var initLocs = env.GetPositioningLocations(src, srcPositioning);
+			var target = new AStarDefaultTarget(env, dst, dstPositioning);
+			return Find(initLocs, target, maxNodeCount, cancellationToken);
 		}
 
 		/// <summary>
@@ -25,23 +26,35 @@ namespace Dwarrowdelf
 		/// </summary>
 		public static AStarResult FindNearest(IEnvironmentObject env, IntPoint3 src, Func<IntPoint3, bool> func, int maxNodeCount = 200000)
 		{
-			return Find(env, src, DirectionSet.Exact, new AStarDelegateTarget(func), maxNodeCount);
+			var initLocs = env.GetPositioningLocations(src, DirectionSet.Exact);
+			var target = new AStarDelegateTarget(env, func);
+			return Find(initLocs, target, maxNodeCount);
 		}
 
 		/// <summary>
-		/// Find route from src to destination defined by IAstarTarget
+		/// Find route from src to destination area
 		/// </summary>
-		public static AStarResult Find(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IAStarTarget target,
+		public static AStarResult FindArea(IEnvironmentObject env, IntPoint3 src, DirectionSet srcPositioning, IntGrid3 dstArea,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
+			var target = new AStarAreaTarget(env, dstArea);
+			return Find(initLocs, target, maxNodeCount, cancellationToken);
+		}
 
-			var astar = new AStar(initLocs, target, p => EnvironmentExtensions.GetDirectionsFrom(env, p), null);
+		/// <summary>
+		/// Find route from init locations to destination defined by IAstarTarget
+		/// </summary>
+		public static AStarResult Find(IEnumerable<IntPoint3> initLocs, IAStarTarget target,
+			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
+		{
+			var astar = new AStar(initLocs, target);
 			astar.MaxNodeCount = maxNodeCount;
 			if (cancellationToken.HasValue)
 				astar.CancellationToken = cancellationToken.Value;
 
 			var status = astar.Find();
+
 			return new AStarResult(astar.Nodes, astar.LastNode, status);
 		}
 
@@ -179,7 +192,8 @@ namespace Dwarrowdelf
 			IntPoint3 src, DirectionSet srcPositioning, Func<IntPoint3, bool> func,
 			int maxNodeCount = 200000, CancellationToken? cancellationToken = null)
 		{
-			return FindMany(env, src, srcPositioning, new AStarDelegateTarget(func), maxNodeCount, cancellationToken);
+			var target = new AStarDelegateTarget(env, func);
+			return FindMany(env, src, srcPositioning, target, maxNodeCount, cancellationToken);
 		}
 
 		public static IEnumerable<AStarResult> FindMany(IEnvironmentObject env,
@@ -188,7 +202,7 @@ namespace Dwarrowdelf
 		{
 			var initLocs = env.GetPositioningLocations(src, srcPositioning);
 
-			var astar = new AStar(initLocs, target, p => EnvironmentExtensions.GetDirectionsFrom(env, p), null);
+			var astar = new AStar(initLocs, target);
 			astar.MaxNodeCount = maxNodeCount;
 			if (cancellationToken.HasValue)
 				astar.CancellationToken = cancellationToken.Value;

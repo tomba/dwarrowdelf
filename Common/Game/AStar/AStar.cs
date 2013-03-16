@@ -28,14 +28,8 @@ namespace Dwarrowdelf
 
 	public sealed partial class AStar
 	{
-		public const int COST_DIAGONAL = 14;
-		public const int COST_STRAIGHT = 10;
-
 		public CancellationToken CancellationToken { get; set; }
 		public int MaxNodeCount { get; set; }
-
-		readonly Func<IntPoint3, int> m_getTileWeight;
-		readonly Func<IntPoint3, IEnumerable<Direction>> m_getValidDirs;
 
 		readonly IAStarTarget m_target;
 
@@ -47,14 +41,10 @@ namespace Dwarrowdelf
 
 		public Action<Dictionary<IntPoint3, AStarNode>> DebugCallback { get; set; }
 
-		public AStar(IEnumerable<IntPoint3> initialLocations, IAStarTarget target,
-			Func<IntPoint3, IEnumerable<Direction>> getValidDirs, Func<IntPoint3, int> getTileWeight)
+		public AStar(IEnumerable<IntPoint3> initialLocations, IAStarTarget target)
 		{
 			this.MaxNodeCount = 200000;
 			this.CancellationToken = CancellationToken.None;
-
-			m_getTileWeight = getTileWeight;
-			m_getValidDirs = getValidDirs;
 
 			m_target = target;
 			m_nodeMap = new Dictionary<IntPoint3, AStarNode>();
@@ -110,15 +100,9 @@ namespace Dwarrowdelf
 			return AStarStatus.NotFound;
 		}
 
-		static ushort CostBetweenNodes(IntPoint3 from, IntPoint3 to)
-		{
-			ushort cost = (from - to).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
-			return cost;
-		}
-
 		void CheckNeighbors(AStarNode parent)
 		{
-			foreach (var dir in m_getValidDirs(parent.Loc))
+			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
 				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
@@ -127,9 +111,7 @@ namespace Dwarrowdelf
 				//if (child != null && child.Closed)
 				//	continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc));
-				if (m_getTileWeight != null)
-					g += (ushort)m_getTileWeight(childLoc);
+				ushort g = (ushort)(parent.G + m_target.GetCostBetween(parent.Loc, childLoc));
 				ushort h = m_target.GetHeuristic(childLoc);
 
 				if (child == null)
@@ -172,7 +154,7 @@ namespace Dwarrowdelf
 
 		void UpdateNodes(AStarNode parent, Stack<AStarNode> queue)
 		{
-			foreach (var dir in m_getValidDirs(parent.Loc))
+			foreach (var dir in m_target.GetValidDirs(parent.Loc))
 			{
 				IntPoint3 childLoc = parent.Loc + new IntVector3(dir);
 
@@ -181,9 +163,7 @@ namespace Dwarrowdelf
 				if (child == null)
 					continue;
 
-				ushort g = (ushort)(parent.G + CostBetweenNodes(parent.Loc, childLoc));
-				if (m_getTileWeight != null)
-					g += (ushort)m_getTileWeight(childLoc);
+				ushort g = (ushort)(parent.G + m_target.GetCostBetween(parent.Loc, childLoc));
 
 				if (g < child.G)
 				{

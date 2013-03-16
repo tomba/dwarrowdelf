@@ -217,7 +217,7 @@ namespace Dwarrowdelf.Server
 
 			m_currentSrc = src;
 
-			var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this, GetWaterDirs, null);
+			var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this);
 
 			var status = astar.Find();
 
@@ -246,8 +246,24 @@ namespace Dwarrowdelf.Server
 			m_waterChangeMap[dst] = dstLevel;
 		}
 
+		bool IAStarTarget.GetIsTarget(IntPoint3 p)
+		{
+			int l = GetCurrentWaterLevel(p);
+			return l < TileData.MaxWaterLevel;
+		}
+
+		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
+		{
+			return 0;
+		}
+
+		ushort IAStarTarget.GetCostBetween(IntPoint3 src, IntPoint3 dst)
+		{
+			return 0;
+		}
+
 		IntPoint3 m_currentSrc;
-		IEnumerable<Direction> GetWaterDirs(IntPoint3 p)
+		IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 p)
 		{
 			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{
@@ -263,17 +279,6 @@ namespace Dwarrowdelf.Server
 
 				yield return dir;
 			}
-		}
-
-		bool IAStarTarget.GetIsTarget(IntPoint3 p)
-		{
-			int l = GetCurrentWaterLevel(p);
-			return l < TileData.MaxWaterLevel;
-		}
-
-		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
-		{
-			return 0;
 		}
 	}
 }

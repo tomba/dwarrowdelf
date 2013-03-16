@@ -318,7 +318,7 @@ namespace AStarTest
 			var initLocs = this.SrcPos.ToDirections().Select(d => src + d)
 				.Where(p => m_map.Bounds.Contains(p) && !m_map.GetBlocked(p));
 
-			var astar = new AStar(initLocs, new AStarDefaultTarget(dst, this.DstPos), GetTileDirs, m_map.GetWeight);
+			var astar = new AStar(initLocs, new MyTarget(m_map, dst, this.DstPos));
 
 			if (!this.Step)
 			{
@@ -435,26 +435,6 @@ namespace AStarTest
 		public bool Step { get; set; }
 		AutoResetEvent m_contEvent = new AutoResetEvent(false);
 
-
-		IEnumerable<Direction> GetTileDirs(IntPoint3 p)
-		{
-			var map = m_map;
-			foreach (var d in DirectionExtensions.PlanarDirections)
-			{
-				var l = p + d;
-				if (map.Bounds.Contains(l) && map.GetBlocked(l) == false)
-					yield return d;
-			}
-
-			var stairs = m_map.GetStairs(p);
-
-			if (stairs == Stairs.Up || stairs == Stairs.UpDown)
-				yield return Direction.Up;
-
-			if (stairs == Stairs.Down || stairs == Stairs.UpDown)
-				yield return Direction.Down;
-		}
-
 		Point m_mapTile;
 
 		void OnDragStarted(Point pos)
@@ -496,5 +476,66 @@ namespace AStarTest
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
+
+		class MyTarget : IAStarTarget
+		{
+			const int COST_DIAGONAL = 14;
+			const int COST_STRAIGHT = 10;
+
+			Map m_env;
+			IntPoint3 m_destination;
+			DirectionSet m_positioning;
+
+			public MyTarget(Map env, IntPoint3 destination, DirectionSet positioning)
+			{
+				m_env = env;
+				m_destination = destination;
+				m_positioning = positioning;
+			}
+
+			bool IAStarTarget.GetIsTarget(IntPoint3 p)
+			{
+				return p.IsAdjacentTo(m_destination, m_positioning);
+			}
+
+			ushort IAStarTarget.GetHeuristic(IntPoint3 p)
+			{
+				var v = m_destination - p;
+
+				int hDiagonal = Math.Min(Math.Min(Math.Abs(v.X), Math.Abs(v.Y)), Math.Abs(v.Z));
+				int hStraight = v.ManhattanLength;
+				int h = COST_DIAGONAL * hDiagonal + COST_STRAIGHT * (hStraight - 2 * hDiagonal);
+
+				return (ushort)h;
+			}
+
+			ushort IAStarTarget.GetCostBetween(IntPoint3 src, IntPoint3 dst)
+			{
+				ushort cost = (src - dst).ManhattanLength == 1 ? (ushort)COST_STRAIGHT : (ushort)COST_DIAGONAL;
+				cost += (ushort)m_env.GetWeight(dst);
+				return cost;
+
+			}
+
+			IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 p)
+			{
+				var map = m_env;
+
+				foreach (var d in DirectionExtensions.PlanarDirections)
+				{
+					var l = p + d;
+					if (map.Bounds.Contains(l) && map.GetBlocked(l) == false)
+						yield return d;
+				}
+
+				var stairs = map.GetStairs(p);
+
+				if (stairs == Stairs.Up || stairs == Stairs.UpDown)
+					yield return Direction.Up;
+
+				if (stairs == Stairs.Down || stairs == Stairs.UpDown)
+					yield return Direction.Down;
+			}
+		}
 	}
 }
