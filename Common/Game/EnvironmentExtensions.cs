@@ -201,7 +201,7 @@ namespace Dwarrowdelf
 		public static IEnumerable<IntPoint3> GetPositioningLocations(this IEnvironmentObject env, IntPoint3 pos,
 			DirectionSet positioning)
 		{
-			return positioning.ToDirections().Select(d => pos + d).Where(p => CanEnter(env, p));
+			return positioning.ToSurroundingPoints(pos).Where(p => CanEnter(env, p));
 		}
 	}
 }

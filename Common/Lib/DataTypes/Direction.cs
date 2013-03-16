@@ -131,6 +131,30 @@ namespace Dwarrowdelf
 			}
 		}
 
+		public static IEnumerable<IntPoint3> ToSurroundingPoints(this DirectionSet dirset, IntPoint3 p)
+		{
+			int ds = (int)dirset;
+
+			for (int i = 0; i < 27; ++i)
+			{
+				if ((ds & (1 << i)) == 0)
+					continue;
+
+				int z = i / 9;
+				int y = (i % 9) / 3;
+				int x = (i % 3);
+
+				if (x == DirectionConsts.DirNeg)
+					x = -1;
+				if (y == DirectionConsts.DirNeg)
+					y = -1;
+				if (z == DirectionConsts.DirNeg)
+					z = -1;
+
+				yield return new IntPoint3(p.X + x, p.Y + y, p.Z + z);
+			}
+		}
+
 		/// <summary>
 		/// Cardinal Directions (4)
 		/// </summary>

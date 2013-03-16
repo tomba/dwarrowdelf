@@ -325,8 +325,7 @@ namespace Dwarrowdelf.Client
 					throw new Exception();
 			}
 
-			return dirs.ToDirections()
-				.Any(d => this.Environment.CanEnter(p + d));
+			return dirs.ToSurroundingPoints(p).Any(this.Environment.CanEnter);
 		}
 	}
 }
