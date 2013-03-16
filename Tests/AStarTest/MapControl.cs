@@ -330,6 +330,8 @@ namespace AStarTest
 				this.MemUsed = stopBytes - startBytes;
 				this.TicksUsed = sw.ElapsedTicks;
 
+				Trace.TraceInformation("Ticks {0}, Mem {1}", this.TicksUsed, this.MemUsed);
+
 				this.Status = status;
 				m_nodes = astar.Nodes;
 

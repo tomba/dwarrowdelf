@@ -17,9 +17,6 @@ namespace AStarTest
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
-
-			var listener = new MMLogTraceListener();
-			Debug.Listeners.Add(listener);
 		}
 	}
 }
