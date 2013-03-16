@@ -6,15 +6,17 @@ using System.Diagnostics;
 
 namespace Dwarrowdelf.Server
 {
-	sealed class EnvWaterHandler
+	sealed class EnvWaterHandler : IAStarTarget
 	{
 		EnvironmentObject m_env;
 
 		HashSet<IntPoint3> m_waterTiles = new HashSet<IntPoint3>();
+		Dictionary<IntPoint3, int> m_waterChangeMap = new Dictionary<IntPoint3, int>();
 
 		public EnvWaterHandler(EnvironmentObject env)
 		{
 			m_env = env;
+
 			ScanWaterTiles();
 
 			m_env.World.TickEnding += OnTick;
@@ -53,23 +55,23 @@ namespace Dwarrowdelf.Server
 
 		void OnTick()
 		{
-			Dictionary<IntPoint3, int> waterChangeMap = new Dictionary<IntPoint3, int>();
-
 			foreach (var p in m_waterTiles)
 			{
 				if (m_env.GetWaterLevel(p) == 0)
 					throw new Exception();
 
-				HandleWaterAt(p, waterChangeMap);
+				HandleWaterAt(p);
 			}
 
-			foreach (var kvp in waterChangeMap)
+			foreach (var kvp in m_waterChangeMap)
 			{
 				var p = kvp.Key;
 				int level = kvp.Value;
 
 				m_env.SetWaterLevel(p, (byte)level);
 			}
+
+			m_waterChangeMap.Clear();
 		}
 
 		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
@@ -103,17 +105,69 @@ namespace Dwarrowdelf.Server
 			throw new Exception();
 		}
 
-		void HandleWaterAt(IntPoint3 src, Dictionary<IntPoint3, int> waterChangeMap)
+		int GetCurrentWaterLevel(IntPoint3 p)
 		{
-			int srcLevel;
+			int l;
+			if (!m_waterChangeMap.TryGetValue(p, out l))
+				l = m_env.GetWaterLevel(p);
+			return l;
+		}
 
-			if (!waterChangeMap.TryGetValue(src, out srcLevel))
-				srcLevel = m_env.GetWaterLevel(src);
+		void HandleWaterAt(IntPoint3 src)
+		{
+			int srcLevel = GetCurrentWaterLevel(src);
 
-			var dirs = DirectionExtensions.CardinalUpDownDirections.ToArray();
+			if (srcLevel == 0)
+				return;
+
+			int origSrcLevel = srcLevel;
+
+			bool teleportDownNotPossible;
+
+			teleportDownNotPossible = HandleWaterFlowDown(src, ref srcLevel);
+
+			HandleWaterFlowPlanar(src, ref srcLevel);
+
+			if (teleportDownNotPossible == false)
+				HandleWaterFlowDownTeleport(src, ref srcLevel);
+
+			if (srcLevel != origSrcLevel)
+				m_waterChangeMap[src] = srcLevel;
+		}
+
+		/* returns if teleport down is not possible */
+		bool HandleWaterFlowDown(IntPoint3 src, ref int srcLevel)
+		{
+			if (srcLevel == 0)
+				return true;
+
+			var dst = src + Direction.Down;
+
+			if (CanWaterFlow(src, dst) == false)
+				return true;
+
+			int dstLevel = GetCurrentWaterLevel(dst);
+
+			if (dstLevel == TileData.MaxWaterLevel)
+				return false;
+
+			int flow = Math.Min(TileData.MaxWaterLevel - dstLevel, srcLevel);
+
+			srcLevel -= flow;
+			dstLevel += flow;
+
+			m_waterChangeMap[dst] = dstLevel;
+
+			return true;
+		}
+
+		void HandleWaterFlowPlanar(IntPoint3 src, ref int srcLevel)
+		{
+			if (srcLevel <= 1)
+				return;
+
+			var dirs = DirectionExtensions.CardinalDirections.ToArray();
 			MyMath.ShuffleArray(dirs, m_env.World.Random);
-			bool srcLevelChanged = false;
-
 			foreach (var d in dirs)
 			{
 				var dst = src + d;
@@ -121,48 +175,18 @@ namespace Dwarrowdelf.Server
 				if (!CanWaterFlow(src, dst))
 					continue;
 
-				int dstLevel;
-				if (!waterChangeMap.TryGetValue(dst, out dstLevel))
-					dstLevel = m_env.GetWaterLevel(dst);
+				int dstLevel = GetCurrentWaterLevel(dst);
 
 				int flow;
-				if (d == Direction.Up)
-				{
-					if (srcLevel > TileData.MaxWaterLevel)
-					{
-						flow = srcLevel - (dstLevel + TileData.MaxCompress) - 1;
-						flow = MyMath.Clamp(flow, srcLevel - TileData.MaxWaterLevel, 0);
-					}
-					else
-						flow = 0;
 
-				}
-				else if (d == Direction.Down)
-				{
-					if (dstLevel < TileData.MaxWaterLevel)
-						flow = TileData.MaxWaterLevel - dstLevel;
-					else if (srcLevel >= TileData.MaxWaterLevel)
-						flow = srcLevel - dstLevel + TileData.MaxCompress;
-					else
-						flow = 0;
+				if (srcLevel <= dstLevel)
+					continue;
 
-					flow = MyMath.Clamp(flow, srcLevel, 0);
-				}
-				else
-				{
-					if (srcLevel > TileData.MinWaterLevel && srcLevel > dstLevel)
-					{
-						int diff = srcLevel - dstLevel;
-						flow = (diff + 5) / 6;
-						Debug.Assert(flow < srcLevel);
-						//flow = Math.Min(flow, curLevel - 1);
-						//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
-					}
-					else
-					{
-						flow = 0;
-					}
-				}
+				int diff = srcLevel - dstLevel;
+				flow = (diff + 5) / 6;
+				Debug.Assert(flow < srcLevel);
+				//flow = Math.Min(flow, curLevel - 1);
+				//flow = IntClamp(flow, curLevel > 1 ? curLevel - 1 : 0, neighLevel > 1 ? -neighLevel + 1 : 0);
 
 				if (flow == 0)
 					continue;
@@ -170,12 +194,86 @@ namespace Dwarrowdelf.Server
 				srcLevel -= flow;
 				dstLevel += flow;
 
-				waterChangeMap[dst] = dstLevel;
-				srcLevelChanged = true;
+				m_waterChangeMap[dst] = dstLevel;
+
+				if (srcLevel <= 1)
+					return;
+			}
+		}
+
+		void HandleWaterFlowDownTeleport(IntPoint3 src, ref int srcLevel)
+		{
+			if (srcLevel == 0)
+				return;
+
+			var down = src + Direction.Down;
+
+			if (CanWaterFlow(src, down) == false)
+				return;
+
+			// this shouldn't happen, as HandleWaterFlowDown should've handled it
+			if (GetCurrentWaterLevel(down) < TileData.MaxWaterLevel)
+				return;
+
+			m_currentSrc = src;
+
+			var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this, GetWaterDirs, null);
+
+			var status = astar.Find();
+
+			if (status != AStarStatus.Found)
+				return;
+
+			var dst = astar.LastNode.Loc;
+			int dstLevel = GetCurrentWaterLevel(dst);
+
+			int flow;
+
+			if (dst.Z < src.Z)
+			{
+				flow = Math.Min(TileData.MaxWaterLevel - dstLevel, srcLevel);
+			}
+			else
+			{
+				int diff = srcLevel - dstLevel;
+				flow = (diff + 5) / 6;
+				Debug.Assert(flow < srcLevel);
 			}
 
-			if (srcLevelChanged)
-				waterChangeMap[src] = srcLevel;
+			srcLevel -= flow;
+			dstLevel += flow;
+
+			m_waterChangeMap[dst] = dstLevel;
+		}
+
+		IntPoint3 m_currentSrc;
+		IEnumerable<Direction> GetWaterDirs(IntPoint3 p)
+		{
+			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
+			{
+				var pp = p + dir;
+				if (pp == m_currentSrc)
+					continue;
+
+				if (pp.Z > m_currentSrc.Z)
+					continue;
+
+				if (CanWaterFlow(p, pp) == false)
+					continue;
+
+				yield return dir;
+			}
+		}
+
+		bool IAStarTarget.GetIsTarget(IntPoint3 p)
+		{
+			int l = GetCurrentWaterLevel(p);
+			return l < TileData.MaxWaterLevel;
+		}
+
+		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
+		{
+			return 0;
 		}
 	}
 }
