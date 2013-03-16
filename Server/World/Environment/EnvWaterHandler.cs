@@ -68,6 +68,7 @@ namespace Dwarrowdelf.Server
 				var p = kvp.Key;
 				int level = kvp.Value;
 
+				Debug.Assert(level >= 0 && level <= TileData.MaxWaterLevel);
 				m_env.SetWaterLevel(p, (byte)level);
 			}
 
@@ -132,7 +133,9 @@ namespace Dwarrowdelf.Server
 				HandleWaterFlowDownTeleport(src, ref srcLevel);
 
 			if (srcLevel != origSrcLevel)
+			{
 				m_waterChangeMap[src] = srcLevel;
+			}
 		}
 
 		/* returns if teleport down is not possible */
@@ -216,6 +219,7 @@ namespace Dwarrowdelf.Server
 				return;
 
 			m_currentSrc = src;
+			m_currentSrcLevel = srcLevel;
 
 			var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this);
 
@@ -236,8 +240,7 @@ namespace Dwarrowdelf.Server
 			else
 			{
 				int diff = srcLevel - dstLevel;
-				flow = (diff + 5) / 6;
-				Debug.Assert(flow < srcLevel);
+				flow = diff / 2;
 			}
 
 			srcLevel -= flow;
@@ -246,10 +249,13 @@ namespace Dwarrowdelf.Server
 			m_waterChangeMap[dst] = dstLevel;
 		}
 
+		IntPoint3 m_currentSrc;
+		int m_currentSrcLevel;
+
 		bool IAStarTarget.GetIsTarget(IntPoint3 p)
 		{
 			int l = GetCurrentWaterLevel(p);
-			return l < TileData.MaxWaterLevel;
+			return l < m_currentSrcLevel;
 		}
 
 		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
@@ -262,19 +268,18 @@ namespace Dwarrowdelf.Server
 			return 0;
 		}
 
-		IntPoint3 m_currentSrc;
-		IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 p)
+		IEnumerable<Direction> IAStarTarget.GetValidDirs(IntPoint3 from)
 		{
 			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{
-				var pp = p + dir;
-				if (pp == m_currentSrc)
+				var to = from + dir;
+				if (to == m_currentSrc)
 					continue;
 
-				if (pp.Z > m_currentSrc.Z)
+				if (to.Z > m_currentSrc.Z)
 					continue;
 
-				if (CanWaterFlow(p, pp) == false)
+				if (CanWaterFlow(from, to) == false)
 					continue;
 
 				yield return dir;
