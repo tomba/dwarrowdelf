@@ -111,8 +111,6 @@ namespace Dwarrowdelf
 
 		public static IEnumerable<Direction> ToDirections(this DirectionSet dirset)
 		{
-			List<Direction> dirs = new List<Direction>();
-
 			int ds = (int)dirset;
 
 			for (int i = 0; i < 27; ++i)
@@ -129,10 +127,8 @@ namespace Dwarrowdelf
 				d |= y << DirectionConsts.YShift;
 				d |= z << DirectionConsts.ZShift;
 
-				dirs.Add((Direction)d);
+				yield return (Direction)d;
 			}
-
-			return dirs;
 		}
 
 		/// <summary>
