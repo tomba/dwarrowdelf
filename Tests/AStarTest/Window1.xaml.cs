@@ -74,7 +74,7 @@ namespace AStarTest
 			{
 				e.Handled = true;
 				Direction dir = KeyToDir(e.Key);
-				var v = IntVector2.FromDirection(dir);;
+				var v = new IntVector2(dir);
 				map.CenterPos += new Vector(v.X, v.Y);
 			}
 			else if (e.Key == Key.Add)

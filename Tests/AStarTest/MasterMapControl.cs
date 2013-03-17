@@ -95,7 +95,7 @@ namespace AStarTest
 			m_path1.Points.Add(new Point(p.X, p.Y));
 			foreach (var d in dirs)
 			{
-				var v = IntVector2.FromDirection(d);
+				var v = new IntVector2(d);
 				p += v;
 				m_path1.Points.Add(new Point(p.X, p.Y));
 			}
