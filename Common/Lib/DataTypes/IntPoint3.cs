@@ -1,8 +1,8 @@
 ﻿
-#define USE_3INTS		// 96 bits
+//#define USE_3INTS		// 96 bits
 //#define USE_3SHORTS	// 48 bits
 //#define USE_1INT		// 32 bits
-//#define USE_1LONG		// 64 bits
+#define USE_1LONG		// 64 bits
 //#define USE_2INTS		// 64 bits
 
 using System;
