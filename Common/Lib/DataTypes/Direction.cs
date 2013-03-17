@@ -84,6 +84,12 @@ namespace Dwarrowdelf
 	{
 		public static bool Contains(this DirectionSet dirset, Direction dir)
 		{
+			var ds = dir.ToDirectionSet();
+			return (dirset & ds) != 0;
+		}
+
+		public static DirectionSet ToDirectionSet(this Direction dir)
+		{
 			int d = (int)dir;
 
 			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
@@ -96,7 +102,7 @@ namespace Dwarrowdelf
 
 			int bit = z * 9 + y * 3 + x;
 
-			return (((int)dirset) & (1 << bit)) != 0;
+			return (DirectionSet)(1 << bit);
 		}
 
 		public static IEnumerable<Direction> ToDirections(this DirectionSet dirset)
