@@ -38,22 +38,15 @@ namespace Dwarrowdelf
 		{
 			Debug.Assert(dir.IsValid());
 
-			int x, y, z;
+			int d = (int)dir;
 
-			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
-			if (z == DirectionConsts.DirNeg)
-				z = -1;
-
-			m_x = x;
-			m_y = y;
-			m_z = z;
+			m_x = (x ^ 1) - 1;
+			m_y = (y ^ 1) - 1;
+			m_z = (z ^ 1) - 1;
 		}
 
 		#region IEquatable<IntVector3> Members
@@ -151,24 +144,13 @@ namespace Dwarrowdelf
 		{
 			IntVector3 v = Normalize();
 
-			Direction dir = 0;
+			int d = 0;
 
-			if (v.X > 0)
-				dir |= Direction.East;
-			else if (v.X < 0)
-				dir |= Direction.West;
+			d |= ((v.X + 1) ^ 1) << DirectionConsts.XShift;
+			d |= ((v.Y + 1) ^ 1) << DirectionConsts.YShift;
+			d |= ((v.Z + 1) ^ 1) << DirectionConsts.ZShift;
 
-			if (v.Y > 0)
-				dir |= Direction.South;
-			else if (v.Y < 0)
-				dir |= Direction.North;
-
-			if (v.Z > 0)
-				dir |= Direction.Up;
-			else if (v.Z < 0)
-				dir |= Direction.Down;
-
-			return dir;
+			return (Direction)d;
 		}
 
 		public IntVector3 Reverse()
@@ -226,14 +208,13 @@ namespace Dwarrowdelf
 
 		public static Direction RotateDir(Direction dir, int rotate)
 		{
-			int x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int d = (int)dir;
 
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
+			x = (x ^ 1) - 1;
+			y = (y ^ 1) - 1;
 
 			var v = new IntVector3(x, y, 0);
 			v.FastRotate(rotate);

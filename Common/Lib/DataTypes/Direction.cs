@@ -8,13 +8,15 @@ namespace Dwarrowdelf
 	public static class DirectionConsts
 	{
 		public const int Mask = 0x3;
+		public const int FullMask = (Mask << XShift) | (Mask << YShift) | (Mask << ZShift);
+
+		public const int DirNeg = 1;		// 1 ^ 1 == 0
+		public const int DirNone = 0;		// 0 ^ 1 == 1
+		public const int DirPos = 3;		// 3 ^ 1 == 2
 
 		public const int XShift = 0;
 		public const int YShift = 2;
 		public const int ZShift = 4;
-
-		public const int DirPos = 1 << 0;
-		public const int DirNeg = 1 << 1;
 	}
 
 	[Flags]
@@ -26,8 +28,8 @@ namespace Dwarrowdelf
 		South = DirectionConsts.DirPos << DirectionConsts.YShift,
 		West = DirectionConsts.DirNeg << DirectionConsts.XShift,
 		East = DirectionConsts.DirPos << DirectionConsts.XShift,
-		Up = DirectionConsts.DirPos << DirectionConsts.ZShift,
 		Down = DirectionConsts.DirNeg << DirectionConsts.ZShift,
+		Up = DirectionConsts.DirPos << DirectionConsts.ZShift,
 
 		NorthWest = North | West,
 		NorthEast = North | East,
@@ -40,71 +42,59 @@ namespace Dwarrowdelf
 	{
 		None = 0,
 
-		/* Z = 0 */
-		/* Y = 0 */
-		Exact = 1 << 0,
-		East = 1 << 1,
-		West = 1 << 2,
+		DownNorthWest = 1 << 0,		// Z=0 Y=0 X=0
+		DownNorth = 1 << 1,			// Z=0 Y=0 X=1
+		DownNorthEast = 1 << 2,		// Z=0 Y=0 X=2
+		DownWest = 1 << 3,			// Z=0 Y=1 X=0
+		Down = 1 << 4,				// Z=0 Y=1 X=1
+		DownEast = 1 << 5,			// Z=0 Y=1 X=2
+		DownSouthWest = 1 << 6,		// Z=0 Y=2 X=0
+		DownSouth = 1 << 7,			// Z=0 Y=2 X=1
+		DownSouthEast = 1 << 8,		// Z=0 Y=2 X=2
 
-		/* Y = 1 */
-		North = 1 << 3,
-		NorthEast = 1 << 4,
-		NorthWest = 1 << 5,
+		NorthWest = 1 << 9,			// Z=1 Y=0 X=0
+		North = 1 << 10,			// Z=1 Y=0 X=1
+		NorthEast = 1 << 11,		// Z=1 Y=0 X=2
+		West = 1 << 12,				// Z=1 Y=1 X=0
+		Exact = 1 << 13,			// Z=1 Y=1 X=1
+		East = 1 << 14,				// Z=1 Y=1 X=2
+		SouthWest = 1 << 15,		// Z=1 Y=2 X=0
+		South = 1 << 16,			// Z=1 Y=2 X=1
+		SouthEast = 1 << 17,		// Z=1 Y=2 X=2
 
-		/* Y = 2 */
-		South = 1 << 6,
-		SouthEast = 1 << 7,
-		SouthWest = 1 << 8,
-
-		/* Z = 1 */
-		/* Y = 0 */
-		Up = 1 << 9,
-		UpEast = 1 << 10,
-		UpWest = 1 << 11,
-
-		/* Y = 1 */
-		UpNorth = 1 << 12,
-		UpNorthEast = 1 << 13,
-		UpNorthWest = 1 << 14,
-
-		/* Y = 2 */
-		UpSouth = 1 << 15,
-		UpSouthEast = 1 << 16,
-		UpSouthWest = 1 << 17,
-
-		/* Z = 2 */
-		/* Y = 0 */
-		Down = 1 << 18,
-		DownEast = 1 << 19,
-		DownWest = 1 << 20,
-
-		/* Y = 1 */
-		DownNorth = 1 << 21,
-		DownNorthEast = 1 << 22,
-		DownNorthWest = 1 << 23,
-
-		/* Y = 2 */
-		DownSouth = 1 << 24,
-		DownSouthEast = 1 << 25,
-		DownSouthWest = 1 << 26,
+		UpNorthWest = 1 << 18,		// Z=2 Y=0 X=0
+		UpNorth = 1 << 19,			// Z=2 Y=0 X=1
+		UpNorthEast = 1 << 20,		// Z=2 Y=0 X=2
+		UpWest = 1 << 21,			// Z=2 Y=1 X=0
+		Up = 1 << 22,				// Z=2 Y=1 X=1
+		UpEast = 1 << 23,			// Z=2 Y=1 X=2
+		UpSouthWest = 1 << 24,		// Z=2 Y=2 X=0
+		UpSouth = 1 << 25,			// Z=2 Y=2 X=1
+		UpSouthEast = 1 << 26,		// Z=2 Y=2 X=2
 
 		Cardinal = North | East | South | West,
 		Planar = North | NorthEast | East | SouthEast | South | SouthWest | West | NorthWest,
 		CardinalUpDown = Cardinal | Up | Down,
 		PlanarUpDown = Planar | Up | Down,
 
-		Any = ((1 << 27) - 1),
+		All = ((1 << 27) - 1),
 	}
 
 	public static class DirectionExtensions
 	{
 		public static bool Contains(this DirectionSet dirset, Direction dir)
 		{
-			int xSeg = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int ySeg = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			int zSeg = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			int d = (int)dir;
 
-			int bit = zSeg * 9 + ySeg * 3 + xSeg;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+
+			x ^= 1;
+			y ^= 1;
+			z ^= 1;
+
+			int bit = z * 9 + y * 3 + x;
 
 			return (((int)dirset) & (1 << bit)) != 0;
 		}
@@ -123,9 +113,10 @@ namespace Dwarrowdelf
 				int x = (i % 3);
 
 				int d = 0;
-				d |= x << DirectionConsts.XShift;
-				d |= y << DirectionConsts.YShift;
-				d |= z << DirectionConsts.ZShift;
+
+				d |= (x ^ 1) << DirectionConsts.XShift;
+				d |= (y ^ 1) << DirectionConsts.YShift;
+				d |= (z ^ 1) << DirectionConsts.ZShift;
 
 				yield return (Direction)d;
 			}
@@ -144,12 +135,9 @@ namespace Dwarrowdelf
 				int y = (i % 9) / 3;
 				int x = (i % 3);
 
-				if (x == DirectionConsts.DirNeg)
-					x = -1;
-				if (y == DirectionConsts.DirNeg)
-					y = -1;
-				if (z == DirectionConsts.DirNeg)
-					z = -1;
+				x = x - 1;
+				y = y - 1;
+				z = z - 1;
 
 				yield return new IntPoint3(p.X + x, p.Y + y, p.Z + z);
 			}
@@ -228,16 +216,21 @@ namespace Dwarrowdelf
 
 		public static Direction Reverse(this Direction dir)
 		{
-			uint d = (uint)dir;
+			int d = (int)dir;
 
-			if ((d & (DirectionConsts.Mask << DirectionConsts.XShift)) != 0)
-				d ^= DirectionConsts.Mask << DirectionConsts.XShift;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			if ((d & (DirectionConsts.Mask << DirectionConsts.YShift)) != 0)
-				d ^= DirectionConsts.Mask << DirectionConsts.YShift;
+			x = (2 - (x ^ 1)) ^ 1;
+			y = (2 - (y ^ 1)) ^ 1;
+			z = (2 - (z ^ 1)) ^ 1;
 
-			if ((d & (DirectionConsts.Mask << DirectionConsts.ZShift)) != 0)
-				d ^= DirectionConsts.Mask << DirectionConsts.ZShift;
+			d = 0;
+
+			d |= x << DirectionConsts.XShift;
+			d |= y << DirectionConsts.YShift;
+			d |= z << DirectionConsts.ZShift;
 
 			return (Direction)d;
 		}
@@ -269,12 +262,12 @@ namespace Dwarrowdelf
 
 		public static bool ContainsUp(this Direction dir)
 		{
-			return (dir & Direction.Up) != 0;
+			return ((int)dir & (DirectionConsts.Mask << DirectionConsts.ZShift)) == (int)Direction.Up;
 		}
 
 		public static bool ContainsDown(this Direction dir)
 		{
-			return (dir & Direction.Down) != 0;
+			return ((int)dir & (DirectionConsts.Mask << DirectionConsts.ZShift)) == (int)Direction.Down;
 		}
 
 		public static Direction ToPlanarDirection(this Direction dir)
@@ -286,13 +279,18 @@ namespace Dwarrowdelf
 
 		public static bool IsValid(this Direction dir)
 		{
-			int x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			int z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			int d = (int)dir;
 
-			const int pn = DirectionConsts.DirNeg | DirectionConsts.DirPos;
+			// Check for extra bits
+			if ((d & ~DirectionConsts.FullMask) != 0)
+				return false;
 
-			return x != pn && y != pn && z != pn;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+
+			// 0, 1, 3 are valid values
+			return x != 2 && y != 2 && z != 2;
 		}
 	}
 }

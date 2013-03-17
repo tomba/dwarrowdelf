@@ -336,7 +336,7 @@ namespace Dwarrowdelf.Client.UI
 
 			var fast = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
 
-			var v = IntVector2.FromDirection(dir);
+			var v = new IntVector2(dir);
 
 			if (fast)
 				v *= 4;

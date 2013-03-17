@@ -33,22 +33,15 @@ namespace Dwarrowdelf
 
 		public DoubleVector3(Direction dir)
 		{
-			double x, y, z;
+			int d = (int)dir;
 
-			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-			z = ((int)dir >> DirectionConsts.ZShift) & DirectionConsts.Mask;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
-			if (z == DirectionConsts.DirNeg)
-				z = -1;
-
-			m_x = x;
-			m_y = y;
-			m_z = z;
+			m_x = (x ^ 1) - 1;
+			m_y = (y ^ 1) - 1;
+			m_z = (z ^ 1) - 1;
 		}
 
 		public bool IsNull
@@ -159,24 +152,17 @@ namespace Dwarrowdelf
 		{
 			DoubleVector3 v = Normalize();
 
-			Direction dir = 0;
+			int d = 0;
 
-			if (v.X > 0)
-				dir |= Direction.East;
-			else if (v.X < 0)
-				dir |= Direction.West;
+			int x = (int)Math.Round(v.X);
+			int y = (int)Math.Round(v.Y);
+			int z = (int)Math.Round(v.Z);
 
-			if (v.Y > 0)
-				dir |= Direction.South;
-			else if (v.Y < 0)
-				dir |= Direction.North;
+			d |= ((x + 1) ^ 1) << DirectionConsts.XShift;
+			d |= ((y + 1) ^ 1) << DirectionConsts.YShift;
+			d |= ((z + 1) ^ 1) << DirectionConsts.ZShift;
 
-			if (v.Z > 0)
-				dir |= Direction.Up;
-			else if (v.Z < 0)
-				dir |= Direction.Down;
-
-			return dir;
+			return (Direction)d;
 		}
 
 		public DoubleVector3 Reverse()

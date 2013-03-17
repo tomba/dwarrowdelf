@@ -26,13 +26,13 @@ namespace Dwarrowdelf
 		{
 			Debug.Assert(dir.IsValid());
 
-			m_x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			m_y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int d = (int)dir;
 
-			if (m_x == DirectionConsts.DirNeg)
-				m_x = -1;
-			if (m_y == DirectionConsts.DirNeg)
-				m_y = -1;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
+
+			m_x = (x ^ 1) - 1;
+			m_y = (y ^ 1) - 1;
 		}
 
 		public bool IsNull
@@ -132,36 +132,14 @@ namespace Dwarrowdelf
 
 		public Direction ToDirection()
 		{
-			IntVector2 v = this.Normalize();
+			IntVector2 v = Normalize();
 
-			Direction dir = 0;
+			int d = 0;
 
-			if (v.X > 0)
-				dir |= Direction.East;
-			else if (v.X < 0)
-				dir |= Direction.West;
+			d |= ((v.X + 1) ^ 1) << DirectionConsts.XShift;
+			d |= ((v.Y + 1) ^ 1) << DirectionConsts.YShift;
 
-			if (v.Y > 0)
-				dir |= Direction.South;
-			else if (v.Y < 0)
-				dir |= Direction.North;
-
-			return dir;
-		}
-
-		public static IntVector2 FromDirection(Direction dir)
-		{
-			int x, y;
-
-			x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
-
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
-
-			return new IntVector2(x, y);
+			return (Direction)d;
 		}
 
 		public IntVector2 Reverse()
@@ -197,7 +175,7 @@ namespace Dwarrowdelf
 		/// <returns></returns>
 		public static IEnumerable<IntVector2> GetAllXYDirections(Direction startDir)
 		{
-			var v = FromDirection(startDir);
+			var v = new IntVector2(startDir);
 			for (int i = 0; i < 8; ++i)
 			{
 				v = v.FastRotate(1);
@@ -258,14 +236,13 @@ namespace Dwarrowdelf
 
 		public static Direction RotateDir(Direction dir, int rotate)
 		{
-			int x = ((int)dir >> DirectionConsts.XShift) & DirectionConsts.Mask;
-			int y = ((int)dir >> DirectionConsts.YShift) & DirectionConsts.Mask;
+			int d = (int)dir;
 
-			if (x == DirectionConsts.DirNeg)
-				x = -1;
+			int x = (d >> DirectionConsts.XShift) & DirectionConsts.Mask;
+			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 
-			if (y == DirectionConsts.DirNeg)
-				y = -1;
+			x = (x ^ 1) - 1;
+			y = (y ^ 1) - 1;
 
 			IntVector2 v = new IntVector2(x, y);
 			v = v.FastRotate(rotate);
