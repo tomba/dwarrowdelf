@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,13 +9,19 @@ namespace PerfTest
 {
 	abstract class IntPointTestBase
 	{
-		public int XLOOPS = 256;
-		public int YLOOPS = 256;
+		public int XLOOPS = 128;
+		public int YLOOPS = 128;
 		public int ZLOOPS = 16;
 	}
 
 	abstract class IntPointIntTestBase : IntPointTestBase
 	{
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		{
+			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+
 		#region IntPoint
 		public struct IntPoint3D : IEquatable<IntPoint3D>
 		{
@@ -109,6 +116,12 @@ namespace PerfTest
 
 	abstract class IntPointShortTestBase : IntPointTestBase
 	{
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		{
+			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+
 		#region IntPoint
 		public struct IntPoint3D : IEquatable<IntPoint3D>
 		{
@@ -201,8 +214,14 @@ namespace PerfTest
 		#endregion
 	}
 
-	abstract class IntPointLongBase : IntPointTestBase
+	abstract class IntPointLongTestBase : IntPointTestBase
 	{
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		{
+			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+
 		#region IntPoint
 		public struct IntPoint3D : IEquatable<IntPoint3D>
 		{
@@ -306,11 +325,16 @@ namespace PerfTest
 			}
 		}
 		#endregion
-
 	}
 
 	abstract class IntPointInt2TestBase : IntPointTestBase
 	{
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		protected IntPoint3D Add(IntPoint3D a, IntPoint3D b)
+		{
+			return new IntPoint3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+		}
+
 		#region IntPoint
 		public struct IntPoint3D : IEquatable<IntPoint3D>
 		{

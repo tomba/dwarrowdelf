@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace PerfTest
 {
@@ -15,8 +16,10 @@ namespace PerfTest
 				new IntPointShortForTest(),
 				new IntPointLongForTest(),
 				new IntPoint2IntForTest(),
+
 				new IntPointIntForeachTest(),
 				new IntPointShortForeachTest(),
+				new IntPointLongForeachTest(),
 			};
 
 			foreach (var test in tests)
@@ -41,6 +44,7 @@ namespace PerfTest
 								var q = new IntPoint3D(p.X, -1, -1);
 								if (r != q)
 									r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+								r = Add(r, p);
 							}
 
 					m_p = r;
@@ -66,6 +70,7 @@ namespace PerfTest
 								var q = new IntPoint3D(p.X, -1, -1);
 								if (r != q)
 									r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+								r = Add(r, p);
 							}
 
 					m_p = r;
@@ -73,7 +78,7 @@ namespace PerfTest
 			}
 		}
 
-		class IntPointLongForTest : IntPointLongBase, ITest
+		class IntPointLongForTest : IntPointLongTestBase, ITest
 		{
 			public IntPoint3D m_p;
 
@@ -91,6 +96,7 @@ namespace PerfTest
 								var q = new IntPoint3D(p.X, -1, -1);
 								if (r != q)
 									r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+								r = Add(r, p);
 							}
 
 					m_p = r;
@@ -116,6 +122,7 @@ namespace PerfTest
 								var q = new IntPoint3D(p.X, -1, -1);
 								if (r != q)
 									r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+								r = Add(r, p);
 							}
 
 					m_p = r;
@@ -138,6 +145,7 @@ namespace PerfTest
 						var q = new IntPoint3D(p.X, -1, -1);
 						if (r != q)
 							r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+						r = Add(r, p);
 					}
 
 					m_p = r;
@@ -160,6 +168,7 @@ namespace PerfTest
 						var q = new IntPoint3D(p.X, -1, -1);
 						if (r != q)
 							r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+						r = Add(r, p);
 					}
 
 					m_p = r;
@@ -167,6 +176,28 @@ namespace PerfTest
 			}
 		}
 
+		class IntPointLongForeachTest : IntPointLongTestBase, ITest
+		{
+			public IntPoint3D m_p;
+
+			public void DoTest(int loops)
+			{
+				while (loops-- > 0)
+				{
+					IntPoint3D r = new IntPoint3D();
+
+					foreach (var p in IntPoint3D.Range(XLOOPS, YLOOPS, ZLOOPS))
+					{
+						var q = new IntPoint3D(p.X, -1, -1);
+						if (r != q)
+							r = new IntPoint3D(r.X + p.X, r.Y + p.Y, r.Z + p.Z);
+						r = Add(r, p);
+					}
+
+					m_p = r;
+				}
+			}
+		}
 
 	}
 }
