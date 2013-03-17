@@ -46,21 +46,18 @@ namespace Dwarrowdelf
 			if (td.IsUndefined)
 				return false;
 
-			var srcTerrain = Terrains.GetTerrain(td.TerrainID);
-			var srcInter = Interiors.GetInterior(td.InteriorID);
-			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
-
-			if (srcInter.IsBlocker || srcTerrain.IsBlocker || itemBlocks)
+			// Perhaps this check is not needed
+			if (td.IsWalkable == false)
 				return false;
 
 			if (dir.IsPlanar())
 				return true;
 
 			if (dir == Direction.Up)
-				return srcInter.ID == InteriorID.Stairs;
+				return td.InteriorID == InteriorID.Stairs;
 
 			if (dir == Direction.Down)
-				return srcTerrain.ID == TerrainID.StairsDown;
+				return td.TerrainID == TerrainID.StairsDown;
 
 			if (dir.ContainsDown())
 			{
@@ -69,7 +66,7 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsUp())
 			{
-				if (!srcTerrain.ID.IsSlope())
+				if (!td.TerrainID.IsSlope())
 					return false;
 
 				if (env.GetTerrainID(srcLoc + Direction.Up) != TerrainID.Empty)
@@ -82,7 +79,7 @@ namespace Dwarrowdelf
 		}
 
 		/// <summary>
-		/// Determine if a living can move to dir to dstLoc, without considering the source
+		/// Determine if a living can move to dir, ending to dstLoc, without considering the source
 		/// </summary>
 		public static bool CanMoveTo(this IEnvironmentObject env, IntPoint3 dstLoc, Direction dir)
 		{
@@ -96,21 +93,17 @@ namespace Dwarrowdelf
 			if (td.IsUndefined)
 				return false;
 
-			var dstTerrain = Terrains.GetTerrain(td.TerrainID);
-			var dstInter = Interiors.GetInterior(td.InteriorID);
-			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
-
-			if (dstInter.IsBlocker || dstTerrain.IsBlocker || !dstTerrain.IsSupporting || itemBlocks)
+			if (td.IsWalkable == false)
 				return false;
 
 			if (dir.IsPlanar())
 				return true;
 
 			if (dir == Direction.Up)
-				return dstTerrain.ID == TerrainID.StairsDown;
+				return td.TerrainID == TerrainID.StairsDown;
 
 			if (dir == Direction.Down)
-				return dstInter.ID == InteriorID.Stairs;
+				return td.InteriorID == InteriorID.Stairs;
 
 			if (dir.ContainsUp())
 			{
@@ -119,7 +112,7 @@ namespace Dwarrowdelf
 
 			if (dir.ContainsDown())
 			{
-				if (!dstTerrain.ID.IsSlope())
+				if (!td.TerrainID.IsSlope())
 					return false;
 
 				if (env.GetTerrainID(dstLoc + Direction.Up) != TerrainID.Empty)
@@ -144,11 +137,7 @@ namespace Dwarrowdelf
 			if (td.IsUndefined)
 				return false;
 
-			var terrain = Terrains.GetTerrain(td.TerrainID);
-			var interior = Interiors.GetInterior(td.InteriorID);
-			var itemBlocks = (td.Flags & TileFlags.ItemBlocks) != 0;
-
-			return terrain.IsSupporting && !terrain.IsBlocker && !interior.IsBlocker && !itemBlocks;
+			return td.IsWalkable;
 		}
 
 		/// <summary>

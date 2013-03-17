@@ -185,11 +185,6 @@ namespace Dwarrowdelf.Client
 			return this.Size.Contains(p);
 		}
 
-		public bool IsWalkable(IntPoint3 l)
-		{
-			return GetInterior(l).IsBlocker == false;
-		}
-
 		public TerrainID GetTerrainID(IntPoint3 l)
 		{
 			return m_tileGrid.GetTerrainID(l);

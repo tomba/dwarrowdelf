@@ -84,16 +84,17 @@ namespace Dwarrowdelf.Server
 
 			Debug.Assert(v.IsNormal);
 
-			var dstTerrain = m_env.GetTerrain(to);
-			var dstInter = m_env.GetInterior(to);
+			var td = m_env.GetTileData(to);
 
-			if (dstTerrain.IsBlocker || dstInter.IsBlocker)
+			if (td.IsBlocker)
 				return false;
 
 			if (v.Z == 0)
 				return true;
 
 			Direction dir = v.ToDirection();
+
+			var dstTerrain = m_env.GetTerrain(to);
 
 			if (dir == Direction.Up)
 				return dstTerrain.IsPermeable == true;

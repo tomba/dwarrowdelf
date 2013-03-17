@@ -136,5 +136,38 @@ namespace Dwarrowdelf
 				return terrain.IsSeeThroughDown && interior.IsSeeThrough;
 			}
 		}
+
+		/// <summary>
+		/// Does the terrain, interior, or an item block entry
+		/// </summary>
+		public bool IsBlocker
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+				var interior = Interiors.GetInterior(this.InteriorID);
+
+				return terrain.IsBlocker || interior.IsBlocker || (this.Flags & TileFlags.ItemBlocks) != 0;
+			}
+		}
+
+		/// <summary>
+		/// The tile does not block, and can be stood upon
+		/// </summary>
+		public bool IsWalkable
+		{
+			get
+			{
+				if (this.IsUndefined)
+					throw new Exception();
+
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+
+				return this.IsBlocker == false && terrain.IsSupporting;
+			}
+		}
 	}
 }
