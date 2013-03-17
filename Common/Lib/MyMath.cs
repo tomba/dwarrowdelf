@@ -13,9 +13,24 @@ namespace Dwarrowdelf
 		/// <param name="m">Dividend</param>
 		/// <param name="n">Divisor</param>
 		/// <returns>Quotient</returns>
-		public static int DivRound(int m, int n)
+		public static int DivRoundUp(int m, int n)
 		{
-			return (m + (m >= 0 ? (n - 1) : -(n - 1))) / n;
+			return m > 0 ?
+				(m + n - 1) / n :
+				(m - n + 1) / n;
+		}
+
+		/// <summary>
+		/// Divide signed integer m with positive integer n, rounding to nearest integer
+		/// </summary>
+		/// <param name="m">Dividend</param>
+		/// <param name="n">Divisor</param>
+		/// <returns>Quotient</returns>
+		public static int DivRoundNearest(int m, int n)
+		{
+			return m > 0 ?
+				(m + n / 2) / n :
+				(m - n / 2) / n;
 		}
 
 		/// <summary>
