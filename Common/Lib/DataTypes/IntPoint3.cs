@@ -158,6 +158,11 @@ namespace Dwarrowdelf
 			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
 		}
 
+		public IntPoint3 Offset(int offsetX, int offsetY, int offsetZ)
+		{
+			return new IntPoint3(this.X + offsetX, this.Y + offsetY, this.Z + offsetZ);
+		}
+
 		public static bool operator ==(IntPoint3 left, IntPoint3 right)
 		{
 			return ((left.X == right.X) && (left.Y == right.Y) && (left.Z == right.Z));
