@@ -248,18 +248,6 @@ namespace Dwarrowdelf
 			v = v.FastRotate(rotate);
 			return v.ToDirection();
 		}
-
-		// XXX needs better name
-		public bool IsAdjacent
-		{
-			get
-			{
-				if (this.X <= 1 && this.X >= -1 && this.Y <= 1 && this.Y >= -1)
-					return true;
-				else
-					return false;
-			}
-		}
 	}
 
 }
