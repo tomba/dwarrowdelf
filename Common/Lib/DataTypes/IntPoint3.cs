@@ -1,11 +1,4 @@
-﻿
-//#define USE_3INTS		// 96 bits
-//#define USE_3SHORTS	// 48 bits
-//#define USE_1INT		// 32 bits
-#define USE_1LONG		// 64 bits
-//#define USE_2INTS		// 64 bits
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,68 +10,7 @@ namespace Dwarrowdelf
 	[System.ComponentModel.TypeConverter(typeof(IntPoint3Converter))]
 	public struct IntPoint3 : IEquatable<IntPoint3>
 	{
-#if USE_3INTS
-		readonly int m_x;
-		readonly int m_y;
-		readonly int m_z;
-
-		public int X { get { return m_x; } }
-		public int Y { get { return m_y; } }
-		public int Z { get { return m_z; } }
-
-		public IntPoint3(int x, int y, int z)
-		{
-			m_x = x;
-			m_y = y;
-			m_z = z;
-		}
-#elif USE_3SHORTS
-		readonly short m_x;
-		readonly short m_y;
-		readonly short m_z;
-
-		public int X { get { return m_x; } }
-		public int Y { get { return m_y; } }
-		public int Z { get { return m_z; } }
-
-		public IntPoint3(int x, int y, int z)
-		{
-			m_x = (short)x;
-			m_y = (short)y;
-			m_z = (short)z;
-		}
-#elif USE_1INT
-		readonly int m_value;
-
-		// X: 12 bits, from -2048 to 2047
-		// Y: 12 bits, from -2048 to 2047
-		// Z: 8 bits, from -128 to 127
-		const int x_width = 12;
-		const int y_width = 12;
-		const int z_width = 8;
-		const int x_mask = (1 << x_width) - 1;
-		const int y_mask = (1 << y_width) - 1;
-		const int z_mask = (1 << z_width) - 1;
-		const int x_shift = 0;
-		const int y_shift = x_width;
-		const int z_shift = x_width + y_width;
-		const int xyz_width = 32;
-
-		public int X { get { return (m_value << (xyz_width - x_width - x_shift)) >> (xyz_width - x_width); } }
-		public int Y { get { return (m_value << (xyz_width - y_width - y_shift)) >> (xyz_width - y_width); } }
-		public int Z { get { return (m_value << (xyz_width - z_width - z_shift)) >> (xyz_width - z_width); } }
-
-		public IntPoint3(int x, int y, int z)
-		{
-			m_value =
-				((x & x_mask) << x_shift) |
-				((y & y_mask) << y_shift) |
-				((z & z_mask) << z_shift);
-
-			System.Diagnostics.Debug.Assert(x == this.X && y == this.Y && z == this.Z);
-		}
-#elif USE_1LONG
-		readonly ulong m_value;
+		readonly long m_value;
 
 		// X: 24 bits, from -8388608 to 8388607
 		// Y: 24 bits, from -8388608 to 8388607
@@ -86,13 +18,13 @@ namespace Dwarrowdelf
 		const int x_width = 24;
 		const int y_width = 24;
 		const int z_width = 16;
+		const int xyz_width = 64;
 		const int x_mask = (1 << x_width) - 1;
 		const int y_mask = (1 << y_width) - 1;
 		const int z_mask = (1 << z_width) - 1;
 		const int x_shift = 0;
 		const int y_shift = x_width;
 		const int z_shift = x_width + y_width;
-		const int xyz_width = 64;
 
 		public int X { get { return (int)((m_value << (xyz_width - x_width - x_shift)) >> (xyz_width - x_width)); } }
 		public int Y { get { return (int)((m_value << (xyz_width - y_width - y_shift)) >> (xyz_width - y_width)); } }
@@ -101,39 +33,10 @@ namespace Dwarrowdelf
 		public IntPoint3(int x, int y, int z)
 		{
 			m_value =
-				((ulong)(x & x_mask) << x_shift) |
-				((ulong)(y & y_mask) << y_shift) |
-				((ulong)(z & z_mask) << z_shift);
-
-			System.Diagnostics.Debug.Assert(x == this.X && y == this.Y && z == this.Z);
+				((long)(x & x_mask) << x_shift) |
+				((long)(y & y_mask) << y_shift) |
+				((long)(z & z_mask) << z_shift);
 		}
-#elif USE_2INTS
-		readonly int m_value1;
-		readonly int m_value2;
-
-		// X: 32 bits
-		// Y: 24 bits
-		// Z: 8 bits
-		const int y_width = 24;
-		const int z_width = 8;
-		const int y_mask = (1 << y_width) - 1;
-		const int z_mask = (1 << z_width) - 1;
-		const int z_shift = 24;
-
-		public int X { get { return m_value1; } }
-		public int Y { get { return (m_value2 << 8) >> 8; } }
-		public int Z { get { return m_value2 >> 24; } }
-
-		public IntPoint3(int x, int y, int z)
-		{
-			m_value1 = x;
-			m_value2 = (y & y_mask) | ((z & z_mask) << z_shift);
-
-			System.Diagnostics.Debug.Assert(x == this.X && y == this.Y && z == this.Z);
-		}
-#else
-#error no operating mode for IntPoint3
-#endif
 
 		public IntPoint3(IntPoint2 p, int z)
 			: this(p.X, p.Y, z)

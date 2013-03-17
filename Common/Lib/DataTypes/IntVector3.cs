@@ -4,36 +4,48 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Dwarrowdelf
 {
 	[Serializable]
 	public struct IntVector3 : IEquatable<IntVector3>
 	{
-		// Note: this could be optimized by encoding all values into one int
+		readonly long m_value;
 
-		readonly int m_x;
-		readonly int m_y;
-		readonly int m_z;
+		// X: 24 bits, from -8388608 to 8388607
+		// Y: 24 bits, from -8388608 to 8388607
+		// Z: 16 bits, from -32768 to 32767
+		const int x_width = 24;
+		const int y_width = 24;
+		const int z_width = 16;
+		const int xyz_width = 64;
+		const int x_mask = (1 << x_width) - 1;
+		const int y_mask = (1 << y_width) - 1;
+		const int z_mask = (1 << z_width) - 1;
+		const int x_shift = 0;
+		const int y_shift = x_width;
+		const int z_shift = x_width + y_width;
 
-		public int X { get { return m_x; } }
-		public int Y { get { return m_y; } }
-		public int Z { get { return m_z; } }
+		public int X { get { return (int)((m_value << (xyz_width - x_width - x_shift)) >> (xyz_width - x_width)); } }
+		public int Y { get { return (int)((m_value << (xyz_width - y_width - y_shift)) >> (xyz_width - y_width)); } }
+		public int Z { get { return (int)((m_value << (xyz_width - z_width - z_shift)) >> (xyz_width - z_width)); } }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public IntVector3(int x, int y, int z)
 		{
-			m_x = x;
-			m_y = y;
-			m_z = z;
+			m_value =
+				((long)(x & x_mask) << x_shift) |
+				((long)(y & y_mask) << y_shift) |
+				((long)(z & z_mask) << z_shift);
 		}
 
 		public IntVector3(IntPoint3 p)
+			: this(p.X, p.Y, p.Z)
 		{
-			m_x = p.X;
-			m_y = p.Y;
-			m_z = p.Z;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public IntVector3(Direction dir)
 		{
 			Debug.Assert(dir.IsValid());
@@ -44,9 +56,14 @@ namespace Dwarrowdelf
 			int y = (d >> DirectionConsts.YShift) & DirectionConsts.Mask;
 			int z = (d >> DirectionConsts.ZShift) & DirectionConsts.Mask;
 
-			m_x = (x ^ 1) - 1;
-			m_y = (y ^ 1) - 1;
-			m_z = (z ^ 1) - 1;
+			x = (x ^ 1) - 1;
+			y = (y ^ 1) - 1;
+			z = (z ^ 1) - 1;
+
+			m_value =
+				((long)(x & x_mask) << x_shift) |
+				((long)(y & y_mask) << y_shift) |
+				((long)(z & z_mask) << z_shift);
 		}
 
 		#region IEquatable<IntVector3> Members
