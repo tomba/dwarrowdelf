@@ -169,5 +169,29 @@ namespace Dwarrowdelf
 				return this.IsBlocker == false && terrain.IsSupporting;
 			}
 		}
+
+		/// <summary>
+		/// Water can enter the tile
+		/// </summary>
+		public bool IsWaterPassable
+		{
+			get
+			{
+				// this should later be changed to handle bars etc.
+				return this.IsBlocker == false;
+			}
+		}
+
+		/// <summary>
+		/// Water can flow through the floor
+		/// </summary>
+		public bool IsPermeable
+		{
+			get
+			{
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+				return terrain.IsPermeable;
+			}
+		}
 	}
 }

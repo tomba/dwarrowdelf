@@ -77,34 +77,31 @@ namespace Dwarrowdelf.Server
 
 		bool CanWaterFlow(IntPoint3 from, IntPoint3 to)
 		{
+			Debug.Assert((to - from).IsNormal);
+
 			if (!m_env.Contains(to))
 				return false;
 
-			IntVector3 v = to - from;
+			var toTD = m_env.GetTileData(to);
 
-			Debug.Assert(v.IsNormal);
-
-			var td = m_env.GetTileData(to);
-
-			if (td.IsBlocker)
+			if (toTD.IsWaterPassable == false)
 				return false;
 
-			if (v.Z == 0)
+			int zDiff = to.Z - from.Z;
+
+			if (zDiff == 0)
 				return true;
 
-			Direction dir = v.ToDirection();
+			if (zDiff > 0)
+				return toTD.IsPermeable == true;
 
-			var dstTerrain = m_env.GetTerrain(to);
+			if (zDiff < 0)
+			{
+				var fromTD = m_env.GetTileData(from);
+				return fromTD.IsPermeable == true;
+			}
 
-			if (dir == Direction.Up)
-				return dstTerrain.IsPermeable == true;
-
-			var srcTerrain = m_env.GetTerrain(from);
-
-			if (dir == Direction.Down)
-				return srcTerrain.IsPermeable == true;
-
-			throw new Exception();
+			return false;
 		}
 
 		int GetCurrentWaterLevel(IntPoint3 p)
