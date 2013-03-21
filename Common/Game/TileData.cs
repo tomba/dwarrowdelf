@@ -193,5 +193,17 @@ namespace Dwarrowdelf
 				return terrain.IsPermeable;
 			}
 		}
+
+		/// <summary>
+		/// The tile can be mined
+		/// </summary>
+		public bool IsMinable
+		{
+			get
+			{
+				var terrain = Terrains.GetTerrain(this.TerrainID);
+				return terrain.IsMinable;
+			}
+		}
 	}
 }

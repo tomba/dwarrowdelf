@@ -22,14 +22,15 @@ namespace Dwarrowdelf.Server
 
 			var report = new MineActionReport(this, p, action.Direction, action.MineActionType);
 
+			var td = env.GetTileData(p);
+
 			switch (action.MineActionType)
 			{
 				case MineActionType.Mine:
 					{
-						var terrain = env.GetTerrain(p);
-						var id = terrain.ID;
+						var id = td.TerrainID;
 
-						if (!terrain.IsMinable)
+						if (!td.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
 							return ActionState.Fail;
@@ -86,7 +87,7 @@ namespace Dwarrowdelf.Server
 							item = builder.Create(this.World);
 						}
 
-						var td = new TileData()
+						env.SetTileData(p, new TileData()
 						{
 							TerrainID = TerrainID.NaturalFloor,
 							TerrainMaterialID = env.GetTerrainMaterialID(p),
@@ -94,9 +95,7 @@ namespace Dwarrowdelf.Server
 							InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined,
 							Flags = TileFlags.None,
 							WaterLevel = 0,
-						};
-
-						env.SetTileData(p, td);
+						});
 
 						if (item != null)
 						{
@@ -109,10 +108,9 @@ namespace Dwarrowdelf.Server
 
 				case MineActionType.Stairs:
 					{
-						var terrain = env.GetTerrain(p);
-						var id = terrain.ID;
+						var id = td.TerrainID;
 
-						if (!terrain.IsMinable)
+						if (!td.IsMinable)
 						{
 							SendFailReport(report, "not mineable");
 							return ActionState.Fail;
@@ -138,19 +136,19 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
-						var td2 = env.GetTileData(p + Direction.Up);
-						if (td2.TerrainID == TerrainID.NaturalFloor)
+						var tdu = env.GetTileData(p + Direction.Up);
+						if (tdu.TerrainID == TerrainID.NaturalFloor)
 						{
-							td2.TerrainID = TerrainID.StairsDown;
-							if (td2.InteriorID == InteriorID.Grass)
+							tdu.TerrainID = TerrainID.StairsDown;
+							if (tdu.InteriorID == InteriorID.Grass)
 							{
-								td2.InteriorID = InteriorID.Empty;
-								td2.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
+								tdu.InteriorID = InteriorID.Empty;
+								tdu.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
 							}
-							env.SetTileData(p + Direction.Up, td2);
+							env.SetTileData(p + Direction.Up, tdu);
 						}
 
-						var td = new TileData()
+						env.SetTileData(p, new TileData()
 						{
 							TerrainID = TerrainID.NaturalFloor,
 							TerrainMaterialID = env.GetTerrainMaterialID(p),
@@ -158,9 +156,7 @@ namespace Dwarrowdelf.Server
 							InteriorMaterialID = env.GetTerrainMaterialID(p),
 							Flags = TileFlags.None,
 							WaterLevel = 0,
-						};
-
-						env.SetTileData(p, td);
+						});
 					}
 					break;
 
@@ -178,8 +174,6 @@ namespace Dwarrowdelf.Server
 							SendFailReport(report, "cannot reach");
 							return ActionState.Fail;
 						}
-
-						var td = env.GetTileData(p);
 
 						if (td.IsClear == false)
 						{

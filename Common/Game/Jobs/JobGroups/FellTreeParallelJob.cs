@@ -42,7 +42,7 @@ namespace Dwarrowdelf.Jobs.JobGroups
 		{
 			var c = this.SubJobs.Count;
 
-			m_locs = m_area.Range().Where(p => !m_jobs.Any(i => i.Item1 == p) && m_environment.GetInterior(p).ID == InteriorID.Tree).Take(3 - c);
+			m_locs = m_area.Range().Where(p => !m_jobs.Any(i => i.Item1 == p) && m_environment.GetInteriorID(p) == InteriorID.Tree).Take(3 - c);
 
 			foreach (var p in m_locs)
 			{

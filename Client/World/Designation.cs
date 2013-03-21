@@ -270,22 +270,22 @@ namespace Dwarrowdelf.Client
 
 		bool GetTileValid(IntPoint3 p, DesignationType type)
 		{
+			var td = this.Environment.GetTileData(p);
+
 			switch (type)
 			{
 				case DesignationType.Mine:
-					return this.Environment.GetHidden(p) ||
-						this.Environment.GetTerrain(p).IsMinable;
+					return this.Environment.GetHidden(p) || td.IsMinable;
 
 				case DesignationType.CreateStairs:
-					return this.Environment.GetHidden(p) ||
-						(this.Environment.GetTerrain(p).IsMinable && this.Environment.GetTerrainID(p) == TerrainID.NaturalWall);
+					return this.Environment.GetHidden(p) || (td.IsMinable && td.TerrainID == TerrainID.NaturalWall);
 
 				case DesignationType.Channel:
 					// XXX
 					return true;
 
 				case DesignationType.FellTree:
-					return this.Environment.GetInteriorID(p).IsFellableTree();
+					return td.InteriorID.IsFellableTree();
 
 				default:
 					throw new Exception();
