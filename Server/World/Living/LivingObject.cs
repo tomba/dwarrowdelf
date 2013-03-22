@@ -102,7 +102,6 @@ namespace Dwarrowdelf.Server
 			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
 			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
-			this.ActionUserID = 0;
 
 			this.World.TickEnding -= OnTickEnding;
 			this.World.RemoveLiving(this);
@@ -371,7 +370,6 @@ namespace Dwarrowdelf.Server
 				data.ActionPriority = this.ActionPriority;
 				data.ActionTicksUsed = this.ActionTicksUsed;
 				data.ActionTotalTicks = this.ActionTotalTicks;
-				data.ActionUserID = this.ActionUserID;
 
 				data.Skills = m_skillMap.Select(kvp => new Tuple<SkillID, byte>(kvp.Key, kvp.Value)).ToArray();
 			}
@@ -529,7 +527,6 @@ namespace Dwarrowdelf.Server
 			var e = new ActionProgressEvent()
 			{
 				MagicNumber = this.CurrentAction.MagicNumber,
-				UserID = this.ActionUserID,
 				TicksUsed = this.ActionTicksUsed,
 				TotalTicks = this.ActionTotalTicks,
 			};
@@ -550,7 +547,6 @@ namespace Dwarrowdelf.Server
 			var e = new ActionDoneEvent()
 			{
 				MagicNumber = this.CurrentAction.MagicNumber,
-				UserID = this.ActionUserID,
 				State = state,
 				Action = this.CurrentAction,
 			};
@@ -566,7 +562,6 @@ namespace Dwarrowdelf.Server
 			this.CurrentAction = null;
 			this.ActionPriority = Dwarrowdelf.ActionPriority.Undefined;
 			this.ActionTotalTicks = this.ActionTicksUsed = 0;
-			this.ActionUserID = 0;
 
 			this.World.AddChange(c);
 		}
@@ -584,17 +579,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public ActionPriority ActionPriority { get; private set; }
 
-		[SaveGameProperty]
-		public int ActionUserID { get; private set; }
-
 		public void StartAction(GameAction action, ActionPriority priority)
 		{
-			StartAction(action, priority, 0);
-		}
-
-		public void StartAction(GameAction action, ActionPriority priority, int userID)
-		{
-			D("DoAction: {0}, uid: {1}", action, userID);
+			D("DoAction: {0}", action);
 
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(priority != ActionPriority.Undefined);
@@ -604,13 +591,11 @@ namespace Dwarrowdelf.Server
 			this.ActionPriority = priority;
 			this.ActionTotalTicks = 0;
 			this.ActionTicksUsed = 0;
-			this.ActionUserID = userID;
 
 			var e = new ActionStartEvent()
 			{
 				Action = action,
 				Priority = priority,
-				UserID = userID,
 			};
 
 			if (m_ai != null)
@@ -629,7 +614,7 @@ namespace Dwarrowdelf.Server
 			if (!this.HasAction)
 				throw new Exception();
 
-			D("CancelAction({0}, uid: {1})", this.CurrentAction, this.ActionUserID);
+			D("CancelAction({0})", this.CurrentAction);
 			HandleActionDone(ActionState.Abort);
 		}
 

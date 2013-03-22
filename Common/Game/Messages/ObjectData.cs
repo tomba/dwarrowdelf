@@ -64,7 +64,6 @@ namespace Dwarrowdelf
 		public ActionPriority ActionPriority { get; set; }
 		public int ActionTicksUsed { get; set; }
 		public int ActionTotalTicks { get; set; }
-		public int ActionUserID { get; set; }
 
 		public Tuple<SkillID, byte>[] Skills { get; set; }
 

@@ -94,7 +94,6 @@ namespace Dwarrowdelf.Client
 			this.ActionPriority = data.ActionPriority;
 			this.ActionTicksUsed = data.ActionTicksUsed;
 			this.ActionTotalTicks = data.ActionTotalTicks;
-			this.ActionUserID = data.ActionUserID;
 
 			this.Description = this.Name ?? this.LivingInfo.Name;
 
@@ -232,7 +231,6 @@ namespace Dwarrowdelf.Client
 		}
 
 		public bool HasAction { get { return this.CurrentAction != null; } }
-		public int ActionUserID { get; private set; }
 
 		public GameAction DecideAction()
 		{
@@ -258,7 +256,6 @@ namespace Dwarrowdelf.Client
 
 			this.CurrentAction = e.Action;
 			this.ActionPriority = e.Priority;
-			this.ActionUserID = e.UserID;
 
 			if (this.AI != null)
 				this.AI.ActionStarted(e);

@@ -31,9 +31,6 @@ namespace Dwarrowdelf.Client
 
 		public Dwarrowdelf.Jobs.JobManager JobManager { get; private set; }
 
-		// perhaps this is not needed in client side
-		public int UserID { get; set; }
-
 		public LivingVisionMode LivingVisionMode { get; private set; }
 
 		public GameMode GameMode { get; private set; }

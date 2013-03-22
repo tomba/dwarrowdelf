@@ -86,6 +86,7 @@ namespace Dwarrowdelf.Messages
 	[Serializable]
 	public sealed class LogOnReplyBeginMessage : ClientMessage
 	{
+		public int PlayerID { get; set; }
 		public bool IsSeeAll { get; set; }
 	}
 

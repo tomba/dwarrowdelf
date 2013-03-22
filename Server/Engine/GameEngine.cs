@@ -45,6 +45,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public GameMode GameMode { get; private set; }
 
+		[SaveGameProperty]
+		int m_playerIDCounter;
+
 		int m_playersConnected;
 
 		volatile bool m_exit = false;
@@ -81,6 +84,8 @@ namespace Dwarrowdelf.Server
 			this.GameMode = mode;
 
 			m_players = new List<Player>();
+
+			m_playerIDCounter = 100;
 
 			m_config = new GameConfig
 			{
@@ -163,7 +168,7 @@ namespace Dwarrowdelf.Server
 			Trace.TraceInformation("Saving game took {0}", watch.Elapsed);
 		}
 
-		public void SaveClientData(int userID, Guid id, string data)
+		public void SaveClientData(int playerID, Guid id, string data)
 		{
 			if (ServerConfig.DisableSaving)
 				return;
@@ -176,14 +181,14 @@ namespace Dwarrowdelf.Server
 			if (this.LastSaveID != id)
 				throw new Exception();
 
-			string saveFile = String.Format("client-{0}.json", userID);
+			string saveFile = String.Format("client-{0}.json", playerID);
 			File.WriteAllText(Path.Combine(saveDir, saveFile), data);
 		}
 
-		public string LoadClientData(int userID, Guid id)
+		public string LoadClientData(int playerID, Guid id)
 		{
 			var saveDir = Path.Combine(m_gameDir, id.ToString());
-			string saveFile = String.Format("client-{0}.json", userID);
+			string saveFile = String.Format("client-{0}.json", playerID);
 
 			saveFile = Path.Combine(saveDir, saveFile);
 
@@ -378,7 +383,7 @@ namespace Dwarrowdelf.Server
 		int GetUserID(string name)
 		{
 			if (name == "tomba")
-				return 1;
+				return 1234;
 			else
 				throw new Exception();
 		}
@@ -412,8 +417,10 @@ namespace Dwarrowdelf.Server
 			if (player != null)
 				throw new Exception();
 
-			trace.TraceInformation("Creating new player {0}", userID);
-			player = new Player(userID, this);
+			var playerID = m_playerIDCounter++;
+
+			trace.TraceInformation("Creating new player, uid {0}, pid {1}", userID, playerID);
+			player = new Player(userID, playerID, this);
 
 			m_players.Add(player);
 			InitPlayer(player);

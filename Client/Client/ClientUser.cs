@@ -65,6 +65,7 @@ namespace Dwarrowdelf.Client
 
 		IConnection m_connection;
 
+		public int PlayerID { get; private set; }
 		public bool IsSeeAll { get; private set; }
 
 		World m_world;
@@ -222,6 +223,7 @@ namespace Dwarrowdelf.Client
 		{
 			this.State = ClientUserState.ReceivingLoginData;
 
+			this.PlayerID = msg.PlayerID;
 			this.IsSeeAll = msg.IsSeeAll;
 		}
 

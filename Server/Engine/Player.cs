@@ -32,6 +32,9 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public int UserID { get; private set; }
 
+		[SaveGameProperty]
+		public int PlayerID { get; private set; }
+
 		// does this player see all
 		[SaveGameProperty("SeeAll")]
 		bool m_seeAll;
@@ -61,9 +64,10 @@ namespace Dwarrowdelf.Server
 
 		public event Action<Player> DisconnectEvent;
 
-		public Player(int userID, GameEngine engine)
+		public Player(int userID, int playerID, GameEngine engine)
 		{
 			this.UserID = userID;
+			this.PlayerID = playerID;
 
 			m_engine = engine;
 			m_world = engine.World;
@@ -84,7 +88,7 @@ namespace Dwarrowdelf.Server
 
 		void Construct()
 		{
-			trace.Header = String.Format("Player({0})", this.UserID);
+			trace.Header = String.Format("Player({0})", this.PlayerID);
 
 			// XXX creating IP engine takes some time. Do it in the background. Race condition with IP msg handlers
 			System.Threading.Tasks.Task.Factory.StartNew(delegate
@@ -121,6 +125,7 @@ namespace Dwarrowdelf.Server
 
 			Send(new Messages.LogOnReplyBeginMessage()
 			{
+				PlayerID = this.PlayerID,
 				IsSeeAll = m_seeAll,
 			});
 
@@ -133,7 +138,7 @@ namespace Dwarrowdelf.Server
 
 			Send(new Messages.ClientDataMessage()
 			{
-				ClientData = m_engine.LoadClientData(this.UserID, m_engine.LastLoadID),
+				ClientData = m_engine.LoadClientData(this.PlayerID, m_engine.LastLoadID),
 			});
 
 			Send(new Messages.LogOnReplyEndMessage()
@@ -379,7 +384,7 @@ namespace Dwarrowdelf.Server
 							throw new Exception("already has an action");
 					}
 
-					living.StartAction(action, ActionPriority.User, this.UserID);
+					living.StartAction(action, ActionPriority.User);
 				}
 
 				this.IsProceedTurnReplyReceived = true;
@@ -415,7 +420,7 @@ namespace Dwarrowdelf.Server
 
 		void ReceiveMessage(SaveClientDataReplyMessage msg)
 		{
-			m_engine.SaveClientData(this.UserID, msg.ID, msg.Data);
+			m_engine.SaveClientData(this.PlayerID, msg.ID, msg.Data);
 		}
 
 
