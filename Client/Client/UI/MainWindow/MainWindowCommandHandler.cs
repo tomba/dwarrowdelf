@@ -67,7 +67,7 @@ namespace Dwarrowdelf.Client.UI
 				var ob = dlg.SelectedItem;
 
 				var action = new DropItemAction(ob);
-				action.MagicNumber = 1;
+				action.GUID = new ActionGUID(living.World.PlayerID, 0);
 				living.RequestAction(action);
 			}
 
@@ -98,7 +98,7 @@ namespace Dwarrowdelf.Client.UI
 				var ob = dlg.SelectedItem;
 
 				var action = new GetItemAction(ob);
-				action.MagicNumber = 1;
+				action.GUID = new ActionGUID(living.World.PlayerID, 0);
 				living.RequestAction(action);
 			}
 
@@ -133,7 +133,7 @@ namespace Dwarrowdelf.Client.UI
 					action = new UnequipItemAction(ob);
 				else
 					throw new Exception();
-				action.MagicNumber = 1;
+				action.GUID = new ActionGUID(living.World.PlayerID, 0);
 				living.RequestAction(action);
 			}
 
@@ -169,7 +169,7 @@ namespace Dwarrowdelf.Client.UI
 					action = new EquipItemAction(ob);
 				else
 					throw new Exception();
-				action.MagicNumber = 1;
+				action.GUID = new ActionGUID(living.World.PlayerID, 0);
 				living.RequestAction(action);
 			}
 

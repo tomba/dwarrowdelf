@@ -229,7 +229,7 @@ namespace Dwarrowdelf.Client
 
 		void HandleMessage(WorldDataMessage msg)
 		{
-			m_world = new World(msg.WorldData);
+			m_world = new World(msg.WorldData, this.PlayerID);
 
 			m_reportHandler = new ReportHandler(m_world);
 			m_changeHandler = new ChangeHandler(m_world);
@@ -423,7 +423,7 @@ namespace Dwarrowdelf.Client
 						action = living.CurrentAction;
 				}
 
-				Debug.Assert(action == null || action.MagicNumber != 0);
+				Debug.Assert(action == null || action.GUID.IsNull == false);
 
 				if (action != living.CurrentAction)
 				{

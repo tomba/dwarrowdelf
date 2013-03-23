@@ -85,7 +85,7 @@ namespace Dwarrowdelf.Server
 
 			m_players = new List<Player>();
 
-			m_playerIDCounter = 100;
+			m_playerIDCounter = 2;
 
 			m_config = new GameConfig
 			{

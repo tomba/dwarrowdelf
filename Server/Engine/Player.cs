@@ -66,6 +66,10 @@ namespace Dwarrowdelf.Server
 
 		public Player(int userID, int playerID, GameEngine engine)
 		{
+			// player ID 0 is invalid, 1 is reserved for server
+			if (playerID == 0 || playerID == 1)
+				throw new Exception();
+
 			this.UserID = userID;
 			this.PlayerID = playerID;
 

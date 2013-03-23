@@ -129,9 +129,9 @@ namespace Dwarrowdelf.Client
 				m_isManuallyControlled = value;
 
 				if (m_isManuallyControlled)
-					this.AI = new ManualControlAI(this, 1);
+					this.AI = new ManualControlAI(this, this.World.PlayerID);
 				else
-					this.AI = new DwarfAI(this);
+					this.AI = new DwarfAI(this, this.World.PlayerID);
 
 				Notify("IsManuallyControlled");
 			}
@@ -149,7 +149,7 @@ namespace Dwarrowdelf.Client
 				if (value == true)
 				{
 					this.World.Controllables.Add(this);
-					this.AI = new DwarfAI(this);
+					this.AI = new DwarfAI(this, this.World.PlayerID);
 				}
 				else
 				{

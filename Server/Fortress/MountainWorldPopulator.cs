@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Server.Fortress
 				};
 
 				var living = livingBuilder.Create(world);
-				living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
+				living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, world.PlayerID));
 
 				Helpers.AddGem(living);
 				Helpers.AddBattleGear(living);

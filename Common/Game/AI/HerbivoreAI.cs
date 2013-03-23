@@ -48,8 +48,8 @@ namespace Dwarrowdelf.AI
 			}
 		}
 
-		public HerbivoreAI(ILivingObject ob, byte aiID)
-			: base(ob, aiID)
+		public HerbivoreAI(ILivingObject ob, int playerID)
+			: base(ob, playerID)
 		{
 			this.State = HervivoreAIState.Grazing;
 		}

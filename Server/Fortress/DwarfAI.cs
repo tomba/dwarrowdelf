@@ -20,8 +20,8 @@ namespace Dwarrowdelf.Server.Fortress
 		[SaveGameProperty]
 		EnvObserver m_envObserver;
 
-		public DwarfAI(ILivingObject ob, EnvObserver envObserver, byte aiID)
-			: base(ob, aiID)
+		public DwarfAI(ILivingObject ob, EnvObserver envObserver, int playerID)
+			: base(ob, playerID)
 		{
 			m_envObserver = envObserver;
 		}

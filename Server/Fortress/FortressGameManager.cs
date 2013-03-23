@@ -26,7 +26,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 		public void SetupLivingAsControllable(LivingObject living)
 		{
-			living.SetAI(new DwarfAI(living, m_envObserver, 0));
+			living.SetAI(new DwarfAI(living, m_envObserver, this.World.PlayerID));
 		}
 
 		public LivingObject[] SetupWorldForNewPlayer(Player player)

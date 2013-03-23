@@ -526,7 +526,7 @@ namespace Dwarrowdelf.Server
 
 			var e = new ActionProgressEvent()
 			{
-				MagicNumber = this.CurrentAction.MagicNumber,
+				GUID = this.CurrentAction.GUID,
 				TicksUsed = this.ActionTicksUsed,
 				TotalTicks = this.ActionTotalTicks,
 			};
@@ -546,9 +546,8 @@ namespace Dwarrowdelf.Server
 		{
 			var e = new ActionDoneEvent()
 			{
-				MagicNumber = this.CurrentAction.MagicNumber,
+				GUID = this.CurrentAction.GUID,
 				State = state,
-				Action = this.CurrentAction,
 			};
 
 			if (m_ai != null)
@@ -585,7 +584,7 @@ namespace Dwarrowdelf.Server
 
 			Debug.Assert(!this.HasAction);
 			Debug.Assert(priority != ActionPriority.Undefined);
-			Debug.Assert(action.MagicNumber != 0);
+			Debug.Assert(action.GUID.IsNull == false);
 
 			this.CurrentAction = action;
 			this.ActionPriority = priority;

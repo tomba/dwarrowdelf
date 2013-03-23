@@ -114,7 +114,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var livingBuilder = new LivingObjectBuilder(li.ID);
 			var living = livingBuilder.Create(m_world);
-			living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, 0));
+			living.SetAI(new Dwarrowdelf.AI.MonsterAI(living, m_world.PlayerID));
 
 			Helpers.AddBattleGear(living);
 

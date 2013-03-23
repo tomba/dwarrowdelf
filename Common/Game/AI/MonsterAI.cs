@@ -19,8 +19,8 @@ namespace Dwarrowdelf.AI
 		{
 		}
 
-		public MonsterAI(ILivingObject ob, byte aiID)
-			: base(ob, aiID)
+		public MonsterAI(ILivingObject ob, int playerID)
+			: base(ob, playerID)
 		{
 		}
 

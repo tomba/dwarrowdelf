@@ -42,12 +42,55 @@ namespace Dwarrowdelf
 		High,
 	}
 
+	// XXX ActionGUID could be much shorter. byte is enough for playerID and actionID
+	[Serializable]
+	public struct ActionGUID : IEquatable<ActionGUID>
+	{
+		public int PlayerID;
+		public int ActionID;
+
+		public ActionGUID(int playerID, int actionID)
+		{
+			this.PlayerID = playerID;
+			this.ActionID = actionID;
+		}
+
+		public bool IsNull { get { return this.PlayerID == 0 && this.ActionID == 0; } }
+
+		public override bool Equals(object obj)
+		{
+			if (obj is ActionGUID)
+				return this.Equals((ActionGUID)obj);
+			return false;
+		}
+
+		public bool Equals(ActionGUID other)
+		{
+			return this.PlayerID == other.PlayerID && this.ActionID == other.ActionID;
+		}
+
+		public override int GetHashCode()
+		{
+			return this.PlayerID ^ this.ActionID;
+		}
+
+		public static bool operator ==(ActionGUID lhs, ActionGUID rhs)
+		{
+			return lhs.Equals(rhs);
+		}
+
+		public static bool operator !=(ActionGUID lhs, ActionGUID rhs)
+		{
+			return !(lhs.Equals(rhs));
+		}
+	}
+
 	[Serializable]
 	[SaveGameObject]
 	public abstract class GameAction
 	{
 		[SaveGameProperty]
-		public int MagicNumber { get; set; }
+		public ActionGUID GUID { get; set; }
 
 		protected GameAction()
 		{

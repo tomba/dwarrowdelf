@@ -16,15 +16,15 @@ namespace Dwarrowdelf.Client
 		public ReadOnlyObservableCollection<GameAction> Actions { get; private set; }
 		GameAction m_currentAction;
 
-		byte m_id;
-		ushort m_magicNumber;
+		int m_playerID;
+		int m_actionIDCounter;
 
 		LivingObject Worker { get; set;}
 
-		public ManualControlAI(LivingObject worker, byte aiID)
+		public ManualControlAI(LivingObject worker, int playerID)
 		{
 			this.Worker = worker;
-			m_id = aiID;
+			m_playerID = playerID;
 			m_actions = new ObservableCollection<GameAction>();
 			this.Actions = new ReadOnlyObservableCollection<GameAction>(m_actions);
 		}
@@ -52,7 +52,7 @@ namespace Dwarrowdelf.Client
 				if (this.Worker.ActionPriority > priority)
 					return this.Worker.CurrentAction;
 
-				if (m_currentAction != null && this.Worker.CurrentAction.MagicNumber == m_currentAction.MagicNumber)
+				if (m_currentAction != null && this.Worker.CurrentAction.GUID == m_currentAction.GUID)
 					return this.Worker.CurrentAction;
 			}
 
@@ -66,11 +66,8 @@ namespace Dwarrowdelf.Client
 
 			m_currentAction = m_actions[0];
 
-			m_magicNumber++;
-			if (m_magicNumber == 0)
-				m_magicNumber++;
-
-			m_currentAction.MagicNumber = m_magicNumber | (m_id << 16);
+			var actionID = m_actionIDCounter++;
+			m_currentAction.GUID = new ActionGUID(m_playerID, actionID);
 
 			return m_currentAction;
 		}
@@ -80,7 +77,7 @@ namespace Dwarrowdelf.Client
 			if (m_currentAction == null)
 				return;
 
-			if (e.Action.MagicNumber != m_currentAction.MagicNumber)
+			if (e.Action.GUID != m_currentAction.GUID)
 				m_currentAction = null;
 		}
 
@@ -93,7 +90,7 @@ namespace Dwarrowdelf.Client
 			if (m_currentAction == null)
 				return;
 
-			if (e.MagicNumber == m_currentAction.MagicNumber)
+			if (e.GUID == m_currentAction.GUID)
 			{
 				Debug.Assert(m_actions[0] == m_currentAction);
 				m_currentAction = null;

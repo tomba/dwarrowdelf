@@ -77,7 +77,7 @@ namespace Dwarrowdelf.Server
 						var livingBuilder = new LivingObjectBuilder(livingID);
 
 						var living = livingBuilder.Create(world);
-						var ai = new Dwarrowdelf.AI.HerbivoreAI(living, 0);
+						var ai = new Dwarrowdelf.AI.HerbivoreAI(living, world.PlayerID);
 						ai.Group = group;
 						living.SetAI(ai);
 						living.MoveTo(m_env, p);

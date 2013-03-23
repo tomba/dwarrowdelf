@@ -38,6 +38,8 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty]
 		public GameMode GameMode { get; private set; }
 
+		public int PlayerID { get { return 1; } }
+
 		World()
 		{
 			m_preTickInvokeList = new InvokeList(this);

@@ -27,8 +27,8 @@ namespace Dwarrowdelf.Client
 		[SaveGameProperty]
 		ILivingObject m_target;
 
-		public DwarfAI(ILivingObject worker)
-			: base(worker, 1)
+		public DwarfAI(ILivingObject worker, int playerID)
+			: base(worker, playerID)
 		{
 			this.State = DwarfState.Working;
 		}

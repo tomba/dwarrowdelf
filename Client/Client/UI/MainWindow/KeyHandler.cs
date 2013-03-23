@@ -106,13 +106,13 @@ namespace Dwarrowdelf.Client.UI
 				if (target == null)
 				{
 					var action = new MoveAction(dir);
-					action.MagicNumber = 1;
+					action.GUID = new ActionGUID(ob.World.PlayerID, 0);
 					ob.RequestAction(action);
 				}
 				else
 				{
 					var action = new AttackAction(target);
-					action.MagicNumber = 1;
+					action.GUID = new ActionGUID(ob.World.PlayerID, 0);
 					ob.RequestAction(action);
 				}
 
@@ -171,7 +171,7 @@ namespace Dwarrowdelf.Client.UI
 				case ">":
 					{
 						var action = new MoveAction(Direction.Down);
-						action.MagicNumber = 1;
+						action.GUID = new ActionGUID(ob.World.PlayerID, 0);
 						ob.RequestAction(action);
 					}
 					return true;
@@ -179,7 +179,7 @@ namespace Dwarrowdelf.Client.UI
 				case "<":
 					{
 						var action = new MoveAction(Direction.Up);
-						action.MagicNumber = 1;
+						action.GUID = new ActionGUID(ob.World.PlayerID, 0);
 						ob.RequestAction(action);
 					}
 					return true;

@@ -25,9 +25,9 @@ namespace Dwarrowdelf.AI
 		ActionPriority m_currentPriority;
 
 		[SaveGameProperty]
-		byte m_id;
+		int m_playerID;
 		[SaveGameProperty]
-		ushort m_magicNumber;
+		int m_actionIDCounter;
 
 		public IAssignment CurrentAssignment { get { return m_currentAssignment; } }
 
@@ -45,9 +45,11 @@ namespace Dwarrowdelf.AI
 				m_currentAssignment.StatusChanged += OnJobStatusChanged;
 		}
 
-		protected AssignmentAI(ILivingObject worker, byte aiID)
+		protected AssignmentAI(ILivingObject worker, int playerID)
 		{
-			m_id = aiID;
+			Debug.Assert(playerID != 0);
+
+			m_playerID = playerID;
 
 			this.Worker = worker;
 			trace = new MyTraceProxy(this.Worker.Trace, "Dwarrowdelf.AssignmentAI");
@@ -113,7 +115,7 @@ namespace Dwarrowdelf.AI
 				// .. or if it has an action, the worker should be doing that action.
 				(this.HasAssignment &&
 				this.CurrentAssignment.CurrentAction != null &&
-				this.CurrentAssignment.CurrentAction.MagicNumber == this.Worker.CurrentAction.MagicNumber));
+				this.CurrentAssignment.CurrentAction.GUID == this.Worker.CurrentAction.GUID));
 
 			if (this.Worker.HasAction && this.Worker.ActionPriority > priority)
 			{
@@ -187,11 +189,9 @@ namespace Dwarrowdelf.AI
 				if (action == null)
 					throw new Exception();
 
-				m_magicNumber++;
-				if (m_magicNumber == 0)
-					m_magicNumber++;
+				int actionID = m_actionIDCounter++;
 
-				action.MagicNumber = m_magicNumber | (m_id << 16);
+				action.GUID = new ActionGUID(m_playerID, actionID);
 
 				trace.TraceVerbose("DecideAction: new action {0}", action);
 				return action;
@@ -244,7 +244,7 @@ namespace Dwarrowdelf.AI
 				return;
 			}
 
-			if (this.CurrentAssignment.CurrentAction.MagicNumber != e.Action.MagicNumber)
+			if (this.CurrentAssignment.CurrentAction.GUID != e.Action.GUID)
 			{
 				trace.TraceVerbose("ActionStarted: action started by someone else, cancel our current assignment");
 				throw new Exception();
@@ -258,13 +258,13 @@ namespace Dwarrowdelf.AI
 			var assignment = this.CurrentAssignment;
 
 			trace.TraceVerbose("ActionProgress({0}): Worker.Action = {1}, CurrentAssignment {2}, CurrentAssignment.Action = {3}",
-				e.MagicNumber,
+				e.GUID,
 				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
 			Debug.Assert(this.Worker.HasAction);
-			Debug.Assert(e.MagicNumber == this.Worker.CurrentAction.MagicNumber);
+			Debug.Assert(e.GUID == this.Worker.CurrentAction.GUID);
 
 			if (assignment == null)
 			{
@@ -279,7 +279,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			// does the action originate from us?
-			if (assignment.CurrentAction.MagicNumber != e.MagicNumber)
+			if (assignment.CurrentAction.GUID != e.GUID)
 			{
 				throw new NotImplementedException("implement cancel work");
 			}
@@ -294,13 +294,13 @@ namespace Dwarrowdelf.AI
 			var assignment = this.CurrentAssignment;
 
 			trace.TraceVerbose("ActionDone({0}, State {1}): Worker.Action = {2}, CurrentAssignment {3}, CurrentAssignment.Action = {4}",
-				e.MagicNumber, e.State,
+				e.GUID, e.State,
 				this.Worker.HasAction ? this.Worker.CurrentAction.ToString() : "<none>",
 				assignment != null ? assignment.ToString() : "<none>",
 				assignment != null && assignment.CurrentAction != null ? assignment.CurrentAction.ToString() : "<none>");
 
 			Debug.Assert(this.Worker.HasAction);
-			Debug.Assert(e.MagicNumber == this.Worker.CurrentAction.MagicNumber);
+			Debug.Assert(e.GUID == this.Worker.CurrentAction.GUID);
 
 			if (assignment == null)
 			{
@@ -309,7 +309,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			if (e.State == ActionState.Abort && assignment.CurrentAction != null &&
-				assignment.CurrentAction.MagicNumber != e.MagicNumber)
+				assignment.CurrentAction.GUID != e.GUID)
 			{
 				trace.TraceVerbose("ActionDone: cancel event for action not started by us, ignore");
 				return;
@@ -322,7 +322,7 @@ namespace Dwarrowdelf.AI
 			}
 
 			// does the action originate from us?
-			if (assignment.CurrentAction.MagicNumber != e.MagicNumber)
+			if (assignment.CurrentAction.GUID != e.GUID)
 			{
 				throw new NotImplementedException("implement cancel work");
 			}

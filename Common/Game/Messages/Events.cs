@@ -20,7 +20,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class ActionProgressEvent : GameEvent
 	{
-		public int MagicNumber { get; set; }
+		public ActionGUID GUID { get; set; }
 		public int TotalTicks { get; set; }
 		public int TicksUsed { get; set; }
 	}
@@ -28,8 +28,7 @@ namespace Dwarrowdelf
 	[Serializable]
 	public sealed class ActionDoneEvent : GameEvent
 	{
-		public int MagicNumber { get; set; }
+		public ActionGUID GUID { get; set; }
 		public ActionState State { get; set; }
-		public GameAction Action { get; set; }
 	}
 }
