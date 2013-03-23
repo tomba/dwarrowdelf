@@ -112,9 +112,8 @@ namespace TerrainGenTest
 			{
 				Stopwatch sw = Stopwatch.StartNew();
 
-				const int depth = 10;
-				const int sizeExp = 9;
-				int side = (int)Math.Pow(2, sizeExp);
+				int depth = this.Depth;
+				int side = this.Side;
 
 				m_size = new IntSize3(side, side, depth);
 				m_terrain = new TerrainData(m_size);
@@ -172,7 +171,6 @@ namespace TerrainGenTest
 		}
 
 
-
 		public int Side
 		{
 			get { return (int)GetValue(SideProperty); }
@@ -182,7 +180,14 @@ namespace TerrainGenTest
 		public static readonly DependencyProperty SideProperty =
 			DependencyProperty.Register("Side", typeof(int), typeof(MainWindow), new PropertyMetadata(512, ReCreateTerrain));
 
+		public int Depth
+		{
+			get { return (int)GetValue(DepthProperty); }
+			set { SetValue(DepthProperty, value); }
+		}
 
+		public static readonly DependencyProperty DepthProperty =
+			DependencyProperty.Register("Depth", typeof(int), typeof(MainWindow), new PropertyMetadata(40, ReCreateTerrain));
 
 		public double Amplify
 		{
@@ -223,7 +228,6 @@ namespace TerrainGenTest
 		public static readonly DependencyProperty SeedProperty =
 			DependencyProperty.Register("Seed", typeof(int), typeof(MainWindow), new UIPropertyMetadata(1, ReGenerateTerrain));
 
-
 		public double NWCorner
 		{
 			get { return (double)GetValue(NWCornerProperty); }
@@ -263,8 +267,6 @@ namespace TerrainGenTest
 		public static readonly DependencyProperty SWCornerProperty =
 			DependencyProperty.Register("SWCorner", typeof(double), typeof(MainWindow),
 			new PropertyMetadata(15.0, ReGenerateTerrain));
-
-
 
 		public int Z
 		{
@@ -311,17 +313,6 @@ namespace TerrainGenTest
 			mw.StartRenderTerrain();
 		}
 
-
-		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-		{
-			/*
-			var v = surfaceZoomSlider.Value;
-			int m = (int)Math.Pow(2, v - 1);
-
-			surfaceImage.Width = this.SurfaceBmp.PixelWidth * m;
-			surfaceImage.Height = this.SurfaceBmp.PixelHeight * m;
-			 */
-		}
 
 		int ParseInt(string str)
 		{
