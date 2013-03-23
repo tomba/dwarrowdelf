@@ -108,9 +108,9 @@
 
 			<GroupBox Header="TileData">
 				<StackPanel Orientation="Vertical">
+					<TextBlock Name="zTextBlock" Text="8" />
 					<TextBlock Name="materialTextBlock" Text="Granite" />
 					<TextBlock Name="oreTextBlock" Text="Diamond" />
-					<TextBlock Name="zTextBlock" Text="8" />
 				</StackPanel>
 			</GroupBox>
 

@@ -346,12 +346,12 @@ namespace TerrainGenTest
 
 		void UpdateTileInfo(IntPoint3 p)
 		{
-			if (m_terrain.Contains(p) == false)
+			if (m_terrain.Size.Plane.Contains(p.ToIntPoint()) == false)
 				return;
 
 			int h = m_terrain.GetHeight(p.ToIntPoint());
 
-			zTextBlock.Text = String.Format("{0}/{1}", p, h);
+			zTextBlock.Text = String.Format("{0} ({1})", p, h);
 
 			IntPoint3 mp;
 
