@@ -190,6 +190,10 @@ namespace TerrainGenTest
 
 			switch (td.TerrainID)
 			{
+				case TerrainID.Undefined:
+					r = g = b = 0;
+					break;
+
 				case TerrainID.NaturalWall:
 					MaterialID mat;
 

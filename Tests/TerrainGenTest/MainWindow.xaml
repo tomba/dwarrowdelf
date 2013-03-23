@@ -1,4 +1,5 @@
 ﻿<Window x:Class="TerrainGenTest.MainWindow"
+		x:ClassModifier="internal"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		Title="MainWindow" UseLayoutRounding="True"
@@ -110,7 +111,7 @@
 							  ScrollChanged="scrollViewerXY_ScrollChanged">
 				<Grid>
 					<Image Name="imageXY"
-						   Stretch="None" Source="{Binding SliceBmpXY, ElementName=root}"
+						   Stretch="None" Source="{Binding Renderer.SliceBmpXY, ElementName=root}"
 						   RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown"
 					   MouseMove="imageXY_MouseMove" />
@@ -137,7 +138,7 @@
 							  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
 							  Width="{Binding ElementName=scrollViewerXY,Path=ViewportWidth}">
 				<Image Name="imageXZ"
-					   Stretch="None" Source="{Binding SliceBmpXZ, ElementName=root}"
+					   Stretch="None" Source="{Binding Renderer.SliceBmpXZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageXZ_MouseLeftButtonDown"
 					   MouseMove="imageXZ_MouseMove"/>
@@ -148,7 +149,7 @@
 							  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
 							  Height="{Binding ElementName=scrollViewerXY,Path=ViewportHeight}">
 				<Image Name="imageYZ"
-					   Stretch="None" Source="{Binding SliceBmpYZ, ElementName=root}"
+					   Stretch="None" Source="{Binding Renderer.SliceBmpYZ, ElementName=root}"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
 					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"
 					   MouseMove="imageYZ_MouseMove"/>

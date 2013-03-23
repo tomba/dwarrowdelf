@@ -18,15 +18,11 @@ using System.Diagnostics;
 
 namespace TerrainGenTest
 {
-	public partial class MainWindow : Window
+	partial class MainWindow : Window
 	{
 		TerrainData m_terrain;
-		DungeonTerrainGenerator m_terrainGen;
-		Renderer m_renderer;
-
-		public BitmapSource SliceBmpXY { get; private set; }
-		public BitmapSource SliceBmpXZ { get; private set; }
-		public BitmapSource SliceBmpYZ { get; private set; }
+		TerrainGenerator m_terrainGen;
+		public Renderer Renderer { get; private set; }
 
 		IntSize3 m_size;
 
@@ -37,18 +33,22 @@ namespace TerrainGenTest
 
 		public MainWindow()
 		{
-			const int depth = 5;
+			const int depth = 10;
 			const int sizeExp = 9;
 			int side = (int)Math.Pow(2, sizeExp);
 
 			m_size = new IntSize3(side, side, depth);
 			m_terrain = new TerrainData(m_size);
-			m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-			m_renderer = new Renderer(m_size);
+			//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
+			m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
+			this.Renderer = new Renderer(m_size);
 
-			this.SliceBmpXY = m_renderer.SliceBmpXY;
-			this.SliceBmpXZ = m_renderer.SliceBmpXZ;
-			this.SliceBmpYZ = m_renderer.SliceBmpYZ;
+			m_timer = new DispatcherTimer();
+			m_timer.Interval = TimeSpan.FromMilliseconds(20);
+			m_timer.Tick += new EventHandler(OnTimerTick);
+
+			m_needGenerate = true;
+			m_needRender = true;
 
 			InitializeComponent();
 		}
@@ -57,16 +57,9 @@ namespace TerrainGenTest
 		{
 			base.OnInitialized(e);
 
-			m_timer = new DispatcherTimer();
-			m_timer.Interval = TimeSpan.FromMilliseconds(20);
-			m_timer.Tick += new EventHandler(OnTimerTick);
-
 			levelSlider.Minimum = 0;
 			levelSlider.Maximum = m_size.Depth;
 			this.Z = m_size.Depth;
-
-			Generate();
-			Render();
 		}
 
 		protected override void OnTextInput(TextCompositionEventArgs e)
@@ -93,18 +86,62 @@ namespace TerrainGenTest
 			base.OnTextInput(e);
 		}
 
+		void StartGenerateTerrain()
+		{
+			m_needGenerate = true;
+			m_needRender = true;
+
+			if (m_timer.IsEnabled == false)
+				m_timer.IsEnabled = true;
+		}
+
+		void StartRenderTerrain()
+		{
+			m_needRender = true;
+
+			if (m_timer.IsEnabled == false)
+				m_timer.IsEnabled = true;
+		}
+
 		void OnTimerTick(object sender, EventArgs e)
 		{
 			m_timer.IsEnabled = false;
 
 			if (m_needGenerate)
-				Generate();
+			{
+				Stopwatch sw = Stopwatch.StartNew();
+
+				var corners = new DiamondSquare.CornerData()
+				{
+					NW = ParseDouble(cornerNWTextBox.Text),
+					NE = ParseDouble(cornerNETextBox.Text),
+					SE = ParseDouble(cornerSETextBox.Text),
+					SW = ParseDouble(cornerSWTextBox.Text),
+				};
+
+				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
+				//m_terrainGen.Generate(this.Seed);
+
+				sw.Stop();
+
+				Trace.TraceInformation("Generate took {0} ms", sw.ElapsedMilliseconds);
+
+				m_needGenerate = false;
+			}
 
 			if (m_needRender)
-				Render();
+			{
+				Stopwatch sw = Stopwatch.StartNew();
 
-			m_needGenerate = false;
-			m_needRender = false;
+				this.Renderer.Render(m_terrain, new IntPoint3(this.X, this.Y, this.Z));
+
+				sw.Stop();
+
+				Trace.TraceInformation("Render took {0} ms", sw.ElapsedMilliseconds);
+
+				m_needRender = false;
+			}
+
 		}
 
 
@@ -181,21 +218,14 @@ namespace TerrainGenTest
 		{
 			var mw = (MainWindow)d;
 
-			mw.m_needGenerate = true;
-			mw.m_needRender = true;
-
-			if (mw.m_timer.IsEnabled == false)
-				mw.m_timer.IsEnabled = true;
+			mw.StartGenerateTerrain();
 		}
 
 		static void ReRender(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
 
-			mw.m_needRender = true;
-
-			if (mw.m_timer.IsEnabled == false)
-				mw.m_timer.IsEnabled = true;
+			mw.StartRenderTerrain();
 		}
 
 		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -203,31 +233,9 @@ namespace TerrainGenTest
 			if (!this.IsInitialized)
 				return;
 
-			Generate();
-			Render();
+			StartGenerateTerrain();
 		}
 
-
-
-
-		void Generate()
-		{
-			var corners = new DiamondSquare.CornerData()
-			{
-				NW = ParseDouble(cornerNWTextBox.Text),
-				NE = ParseDouble(cornerNETextBox.Text),
-				SE = ParseDouble(cornerSETextBox.Text),
-				SW = ParseDouble(cornerSWTextBox.Text),
-			};
-
-			//m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
-			m_terrainGen.Generate(this.Seed);
-		}
-
-		void Render()
-		{
-			m_renderer.Render(m_terrain, new IntPoint3(this.X, this.Y, this.Z));
-		}
 
 		private void zoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
