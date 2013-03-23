@@ -140,10 +140,10 @@ namespace TerrainGenTest
 
 				var corners = new DiamondSquare.CornerData()
 				{
-					NW = ParseDouble(cornerNWTextBox.Text),
-					NE = ParseDouble(cornerNETextBox.Text),
-					SE = ParseDouble(cornerSETextBox.Text),
-					SW = ParseDouble(cornerSWTextBox.Text),
+					NW = NWCorner,
+					NE = NECorner,
+					SW = SWCorner,
+					SE = SECorner,
 				};
 
 				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
@@ -179,7 +179,6 @@ namespace TerrainGenTest
 			set { SetValue(SideProperty, value); }
 		}
 
-		// Using a DependencyProperty as the backing store for Side.  This enables animation, styling, binding, etc...
 		public static readonly DependencyProperty SideProperty =
 			DependencyProperty.Register("Side", typeof(int), typeof(MainWindow), new PropertyMetadata(512, ReCreateTerrain));
 
@@ -223,6 +222,47 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty SeedProperty =
 			DependencyProperty.Register("Seed", typeof(int), typeof(MainWindow), new UIPropertyMetadata(1, ReGenerateTerrain));
+
+
+		public double NWCorner
+		{
+			get { return (double)GetValue(NWCornerProperty); }
+			set { SetValue(NWCornerProperty, value); }
+		}
+
+		public static readonly DependencyProperty NWCornerProperty =
+			DependencyProperty.Register("NWCorner", typeof(double), typeof(MainWindow),
+			new PropertyMetadata(10.0, ReGenerateTerrain));
+
+		public double NECorner
+		{
+			get { return (double)GetValue(NECornerProperty); }
+			set { SetValue(NECornerProperty, value); }
+		}
+
+		public static readonly DependencyProperty NECornerProperty =
+			DependencyProperty.Register("NECorner", typeof(double), typeof(MainWindow),
+			new PropertyMetadata(10.0, ReGenerateTerrain));
+
+		public double SECorner
+		{
+			get { return (double)GetValue(SECornerProperty); }
+			set { SetValue(SECornerProperty, value); }
+		}
+
+		public static readonly DependencyProperty SECornerProperty =
+			DependencyProperty.Register("SECorner", typeof(double), typeof(MainWindow),
+			new PropertyMetadata(10.0, ReGenerateTerrain));
+
+		public double SWCorner
+		{
+			get { return (double)GetValue(SWCornerProperty); }
+			set { SetValue(SWCornerProperty, value); }
+		}
+
+		public static readonly DependencyProperty SWCornerProperty =
+			DependencyProperty.Register("SWCorner", typeof(double), typeof(MainWindow),
+			new PropertyMetadata(15.0, ReGenerateTerrain));
 
 
 
@@ -269,14 +309,6 @@ namespace TerrainGenTest
 		{
 			var mw = (MainWindow)d;
 			mw.StartRenderTerrain();
-		}
-
-		private void cornerTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
-			if (!this.IsInitialized)
-				return;
-
-			StartGenerateTerrain();
 		}
 
 

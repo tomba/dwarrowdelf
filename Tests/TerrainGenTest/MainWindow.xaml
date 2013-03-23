@@ -60,10 +60,10 @@
 
 			<GroupBox Header="Corners" Grid.Column="2" Grid.Row="0" Grid.RowSpan="2">
 				<UniformGrid Margin="2">
-					<TextBox Text="10" Name="cornerSWTextBox" TextChanged="cornerTextBox_TextChanged" />
-					<TextBox Text="10" Name="cornerSETextBox" TextChanged="cornerTextBox_TextChanged" />
-					<TextBox Text="10" Name="cornerNWTextBox" TextChanged="cornerTextBox_TextChanged" />
-					<TextBox Text="15" Name="cornerNETextBox" TextChanged="cornerTextBox_TextChanged" />
+					<TextBox Text="{Binding ElementName=root, Path=SWCorner, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBox Text="{Binding ElementName=root, Path=SECorner, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBox Text="{Binding ElementName=root, Path=NWCorner, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBox Text="{Binding ElementName=root, Path=NECorner, UpdateSourceTrigger=PropertyChanged}" />
 				</UniformGrid>
 			</GroupBox>
 
