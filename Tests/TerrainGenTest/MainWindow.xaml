@@ -67,30 +67,39 @@
 				</UniformGrid>
 			</GroupBox>
 
-			<Rectangle Name="magnifier" Grid.Column="3" Grid.Row="0" Grid.RowSpan="2" Stroke="Red" StrokeThickness="2">
-				<Rectangle.Fill>
-					<VisualBrush x:Name="magnifierBrush" Stretch="UniformToFill"
+		</Grid>
+
+		<StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+			<Grid MinWidth="100" MinHeight="100">
+				<Rectangle Name="magnifier" Stroke="Red" StrokeThickness="2">
+					<Rectangle.Fill>
+						<VisualBrush x:Name="magnifierBrush" Stretch="UniformToFill"
 							 ViewboxUnits="Absolute" Viewbox="0,0,32,32"
 							 ViewportUnits="RelativeToBoundingBox" Viewport="0,0,1,1"
 							 Visual="{Binding ElementName=mapGrid}" />
-				</Rectangle.Fill>
-			</Rectangle>
+					</Rectangle.Fill>
+				</Rectangle>
 
-			<Rectangle Grid.Column="3" Grid.RowSpan="2" Stroke="Blue" StrokeThickness="1"
+				<Rectangle Stroke="Blue" StrokeThickness="1"
 						   Height="1" Opacity="0.2" VerticalAlignment="Center" IsHitTestVisible="False" />
 
-			<Rectangle Grid.Column="3" Grid.RowSpan="2" Stroke="Blue" StrokeThickness="1" 
+				<Rectangle Stroke="Blue" StrokeThickness="1" 
 						   Width="1" Opacity="0.2" HorizontalAlignment="Center" IsHitTestVisible="False" />
+			</Grid>
 
-			<GroupBox Header="TileData" Grid.Column="4" Grid.RowSpan="2">
+			<GroupBox Header="TileData">
 				<StackPanel Orientation="Vertical">
 					<TextBlock Name="materialTextBlock" Text="Granite" />
 					<TextBlock Name="oreTextBlock" Text="Diamond" />
 					<TextBlock Name="zTextBlock" Text="8" />
 				</StackPanel>
-
 			</GroupBox>
-		</Grid>
+
+			<Slider Name="levelSlider" Orientation="Vertical" Height="100" HorizontalAlignment="Center" Margin="4"
+							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
+							Value="{Binding ElementName=root, Path=Z, UpdateSourceTrigger=PropertyChanged}"/>
+
+		</StackPanel>
 
 		<Grid Name="mapGrid" MouseMove="mapGrid_MouseMove" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" >
 			<Grid.ColumnDefinitions>
@@ -162,13 +171,6 @@
 							ValueChanged="zoomSlider_ValueChanged" />
 
 		</Grid>
-
-		<Slider Grid.Column="0" Grid.Row="1" Name="levelSlider" Orientation="Vertical" Height="150"
-						HorizontalAlignment="Left" VerticalAlignment="Top"
-							Margin="4"
-							Interval="1" TickFrequency="1" IsSnapToTickEnabled="True"
-							Value="{Binding ElementName=root, Path=Z, UpdateSourceTrigger=PropertyChanged}"/>
-
 	</Grid>
 
 </Window>
