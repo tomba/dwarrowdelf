@@ -183,12 +183,6 @@
 					   MouseLeftButtonDown="imageYZ_MouseLeftButtonDown"
 					   MouseMove="imageYZ_MouseMove"/>
 			</ScrollViewer>
-
-			<Slider Name="zoomSlider" Grid.Column="0" Grid.Row="2" Visibility="Collapsed"
-						Orientation="Vertical" Height="75" HorizontalAlignment="Center"
-							IsDirectionReversed="True" Margin="4"
-							Minimum="1" Maximum="4" Interval="1" TickFrequency="1" IsSnapToTickEnabled="True" />
-
 		</Grid>
 	</Grid>
 
