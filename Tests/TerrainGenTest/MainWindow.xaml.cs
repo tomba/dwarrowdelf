@@ -15,10 +15,11 @@ using Dwarrowdelf;
 using Dwarrowdelf.TerrainGen;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace TerrainGenTest
 {
-	partial class MainWindow : Window
+	partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		TerrainData m_terrain;
 		TerrainGenerator m_terrainGen;
@@ -28,27 +29,15 @@ namespace TerrainGenTest
 
 		DispatcherTimer m_timer;
 
+		bool m_needCreate;
 		bool m_needGenerate;
 		bool m_needRender;
 
 		public MainWindow()
 		{
-			const int depth = 10;
-			const int sizeExp = 9;
-			int side = (int)Math.Pow(2, sizeExp);
-
-			m_size = new IntSize3(side, side, depth);
-			m_terrain = new TerrainData(m_size);
-			//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-			m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
-			this.Renderer = new Renderer(m_size);
-
 			m_timer = new DispatcherTimer();
 			m_timer.Interval = TimeSpan.FromMilliseconds(20);
 			m_timer.Tick += new EventHandler(OnTimerTick);
-
-			m_needGenerate = true;
-			m_needRender = true;
 
 			InitializeComponent();
 		}
@@ -57,9 +46,11 @@ namespace TerrainGenTest
 		{
 			base.OnInitialized(e);
 
-			levelSlider.Minimum = 0;
-			levelSlider.Maximum = m_size.Depth;
-			this.Z = m_size.Depth;
+			m_needCreate = true;
+			m_needGenerate = true;
+			m_needRender = true;
+
+			OnTimerTick(null, null);
 		}
 
 		protected override void OnTextInput(TextCompositionEventArgs e)
@@ -86,6 +77,16 @@ namespace TerrainGenTest
 			base.OnTextInput(e);
 		}
 
+		void StartCreateTerrain()
+		{
+			m_needCreate = true;
+			m_needGenerate = true;
+			m_needRender = true;
+
+			if (m_timer.IsEnabled == false)
+				m_timer.IsEnabled = true;
+		}
+
 		void StartGenerateTerrain()
 		{
 			m_needGenerate = true;
@@ -106,6 +107,32 @@ namespace TerrainGenTest
 		void OnTimerTick(object sender, EventArgs e)
 		{
 			m_timer.IsEnabled = false;
+
+			if (m_needCreate)
+			{
+				Stopwatch sw = Stopwatch.StartNew();
+
+				const int depth = 10;
+				const int sizeExp = 9;
+				int side = (int)Math.Pow(2, sizeExp);
+
+				m_size = new IntSize3(side, side, depth);
+				m_terrain = new TerrainData(m_size);
+				//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
+				m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
+				this.Renderer = new Renderer(m_size);
+				Notify("Renderer");
+
+				sw.Stop();
+
+				Trace.TraceInformation("Create took {0} ms", sw.ElapsedMilliseconds);
+
+				levelSlider.Minimum = 0;
+				levelSlider.Maximum = m_size.Depth;
+				this.Z = m_size.Depth;
+
+				m_needCreate = false;
+			}
 
 			if (m_needGenerate)
 			{
@@ -145,6 +172,19 @@ namespace TerrainGenTest
 		}
 
 
+
+		public int Side
+		{
+			get { return (int)GetValue(SideProperty); }
+			set { SetValue(SideProperty, value); }
+		}
+
+		// Using a DependencyProperty as the backing store for Side.  This enables animation, styling, binding, etc...
+		public static readonly DependencyProperty SideProperty =
+			DependencyProperty.Register("Side", typeof(int), typeof(MainWindow), new PropertyMetadata(512, ReCreateTerrain));
+
+
+
 		public double Amplify
 		{
 			get { return (double)GetValue(AmplifyProperty); }
@@ -153,7 +193,7 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty AmplifyProperty =
 			DependencyProperty.Register("Amplify", typeof(double), typeof(MainWindow),
-				new UIPropertyMetadata(2.0, ReGenerate));
+				new UIPropertyMetadata(2.0, ReGenerateTerrain));
 
 		public double HValue
 		{
@@ -163,7 +203,7 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty HValueProperty =
 			DependencyProperty.Register("HValue", typeof(double), typeof(MainWindow),
-			new UIPropertyMetadata(0.75, ReGenerate));
+			new UIPropertyMetadata(0.75, ReGenerateTerrain));
 
 		public double RangeValue
 		{
@@ -173,7 +213,7 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty RangeValueProperty =
 			DependencyProperty.Register("RangeValue", typeof(double), typeof(MainWindow),
-			new UIPropertyMetadata(5.0, ReGenerate));
+			new UIPropertyMetadata(5.0, ReGenerateTerrain));
 
 		public int Seed
 		{
@@ -182,7 +222,7 @@ namespace TerrainGenTest
 		}
 
 		public static readonly DependencyProperty SeedProperty =
-			DependencyProperty.Register("Seed", typeof(int), typeof(MainWindow), new UIPropertyMetadata(1, ReGenerate));
+			DependencyProperty.Register("Seed", typeof(int), typeof(MainWindow), new UIPropertyMetadata(1, ReGenerateTerrain));
 
 
 
@@ -193,7 +233,7 @@ namespace TerrainGenTest
 		}
 
 		public static readonly DependencyProperty ZProperty =
-			DependencyProperty.Register("Z", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+			DependencyProperty.Register("Z", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRenderTerrain));
 
 		public int X
 		{
@@ -202,7 +242,7 @@ namespace TerrainGenTest
 		}
 
 		public static readonly DependencyProperty XProperty =
-			DependencyProperty.Register("X", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+			DependencyProperty.Register("X", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRenderTerrain));
 
 		public int Y
 		{
@@ -211,20 +251,23 @@ namespace TerrainGenTest
 		}
 
 		public static readonly DependencyProperty YProperty =
-			DependencyProperty.Register("Y", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRender));
+			DependencyProperty.Register("Y", typeof(int), typeof(MainWindow), new UIPropertyMetadata(0, ReRenderTerrain));
 
-
-		static void ReGenerate(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		static void ReCreateTerrain(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
+			mw.StartCreateTerrain();
+		}
 
+		static void ReGenerateTerrain(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var mw = (MainWindow)d;
 			mw.StartGenerateTerrain();
 		}
 
-		static void ReRender(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		static void ReRenderTerrain(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var mw = (MainWindow)d;
-
 			mw.StartRenderTerrain();
 		}
 
@@ -379,6 +422,16 @@ namespace TerrainGenTest
 		{
 			scrollViewerXZ.ScrollToHorizontalOffset(((ScrollViewer)sender).HorizontalOffset);
 			scrollViewerYZ.ScrollToVerticalOffset(((ScrollViewer)sender).VerticalOffset);
+		}
+
+		#region INotifyPropertyChanged Members
+		public event PropertyChangedEventHandler PropertyChanged;
+		#endregion
+
+		protected void Notify(string propertyName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

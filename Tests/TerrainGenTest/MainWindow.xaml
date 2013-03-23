@@ -49,7 +49,7 @@
 				<DockPanel LastChildFill="True">
 					<TextBox DockPanel.Dock="Right" Width="50"
 					Text="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
-					<Slider Minimum="0" Maximum="100" 
+					<Slider Minimum="0" Maximum="20"
 							Value="{Binding ElementName=root, Path=RangeValue, UpdateSourceTrigger=PropertyChanged}"/>
 				</DockPanel>
 			</GroupBox>
