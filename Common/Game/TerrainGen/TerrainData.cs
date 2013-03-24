@@ -113,5 +113,10 @@ namespace Dwarrowdelf.TerrainGen
 
 			this.TileGrid[p.Z, p.Y, p.X] = data;
 		}
+
+		public void SetTileDataNoHeight(IntPoint3 p, TileData data)
+		{
+			this.TileGrid[p.Z, p.Y, p.X] = data;
+		}
 	}
 }

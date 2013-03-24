@@ -32,7 +32,7 @@ namespace Dwarrowdelf.TerrainGen
 
 						td.TerrainMaterialID = MaterialID.Loam;
 
-						data.SetTileData(p, td);
+						data.SetTileDataNoHeight(p, td);
 					}
 				}
 			}
@@ -90,7 +90,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					var td = data.GetTileData(p3d);
 					td.TerrainID = dir.ToSlope();
-					data.SetTileData(p3d, td);
+					data.SetTileDataNoHeight(p3d, td);
 				}
 			});
 		}

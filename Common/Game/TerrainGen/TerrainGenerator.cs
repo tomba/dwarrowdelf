@@ -122,6 +122,9 @@ namespace Dwarrowdelf.TerrainGen
 						var p = new IntPoint3(x, y, z);
 						var td = new TileData();
 
+						td.InteriorID = InteriorID.Empty;
+						td.InteriorMaterialID = MaterialID.Undefined;
+
 						if (z < surface)
 						{
 							td.TerrainID = TerrainID.NaturalWall;
@@ -134,22 +137,20 @@ namespace Dwarrowdelf.TerrainGen
 								_z += layers.Length;
 
 							td.TerrainMaterialID = layers[_z];
+							SetTileDataNoHeight(p, td);
 						}
 						else if (z == surface)
 						{
 							td.TerrainID = TerrainID.NaturalFloor;
 							td.TerrainMaterialID = GetTileData(new IntPoint3(x, y, z - 1)).TerrainMaterialID;
+							SetTileData(p, td);
 						}
 						else
 						{
 							td.TerrainID = TerrainID.Empty;
 							td.TerrainMaterialID = MaterialID.Undefined;
+							SetTileDataNoHeight(p, td);
 						}
-
-						td.InteriorID = InteriorID.Empty;
-						td.InteriorMaterialID = MaterialID.Undefined;
-
-						SetTileData(p, td);
 					}
 				}
 			});
@@ -244,7 +245,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
-			SetTileData(p, td);
+			SetTileDataNoHeight(p, td);
 		}
 
 		int GetRandomInt(int max)
@@ -260,6 +261,11 @@ namespace Dwarrowdelf.TerrainGen
 		void SetTileData(IntPoint3 p, TileData td)
 		{
 			m_data.SetTileData(p, td);
+		}
+
+		void SetTileDataNoHeight(IntPoint3 p, TileData td)
+		{
+			m_data.SetTileDataNoHeight(p, td);
 		}
 
 		TileData GetTileData(IntPoint3 p)
@@ -287,7 +293,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			td.InteriorID = InteriorID.Ore;
 			td.InteriorMaterialID = oreMaterialID;
-			SetTileData(p, td);
+			SetTileDataNoHeight(p, td);
 
 			if (count > 0)
 			{
