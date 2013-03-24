@@ -90,20 +90,17 @@
 
 		<StackPanel Orientation="Vertical" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top">
 			<Grid MinWidth="100" MinHeight="100">
-				<Rectangle Name="magnifier" Stroke="Red" StrokeThickness="2">
+				<Rectangle StrokeThickness="1" Stroke="Black">
 					<Rectangle.Fill>
 						<VisualBrush x:Name="magnifierBrush" Stretch="UniformToFill"
-							 ViewboxUnits="Absolute" Viewbox="0,0,32,32"
+							 ViewboxUnits="Absolute" Viewbox="0,0,16,16"
 							 ViewportUnits="RelativeToBoundingBox" Viewport="0,0,1,1"
 							 Visual="{Binding ElementName=mapGrid}" />
 					</Rectangle.Fill>
 				</Rectangle>
 
-				<Rectangle Stroke="Blue" StrokeThickness="1"
-						   Height="1" Opacity="0.2" VerticalAlignment="Center" IsHitTestVisible="False" />
-
-				<Rectangle Stroke="Blue" StrokeThickness="1" 
-						   Width="1" Opacity="0.2" HorizontalAlignment="Center" IsHitTestVisible="False" />
+				<Rectangle Stroke="Yellow" StrokeThickness="1" Height="1" VerticalAlignment="Center" IsHitTestVisible="False" />
+				<Rectangle Stroke="Yellow" StrokeThickness="1" Width="1" HorizontalAlignment="Center" IsHitTestVisible="False" />
 			</Grid>
 
 			<GroupBox Header="TileData">
