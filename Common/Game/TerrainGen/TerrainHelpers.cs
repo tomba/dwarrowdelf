@@ -65,8 +65,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					if (plane.Contains(t) && data.GetHeight(t) > z)
 					{
-						if (i < 8)
-							count++;
+						count++;
 						successive++;
 
 						if (successive == 3)
