@@ -114,6 +114,11 @@ namespace TerrainGenTest
 			m_sliceBmpXY.Unlock();
 		}
 
+		uint ColorToRaw(Color c)
+		{
+			return (uint)((c.R << 16) | (c.G << 8) | (c.B << 0));
+		}
+
 		void RenderSliceXZ(TerrainData terrain, int y)
 		{
 			int w = m_size.Width;
@@ -136,7 +141,12 @@ namespace TerrainGenTest
 						var p = new IntPoint3(x, y, mz);
 						var td = terrain.GetTileData(p);
 
-						uint c = GetTileColor(td);
+						uint c;
+
+						if (td.IsEmpty)
+							c = ColorToRaw(Colors.SkyBlue);
+						else
+							c = GetTileColor(td);
 
 						var ptr = pBackBuffer + z * stride + x;
 
@@ -171,7 +181,12 @@ namespace TerrainGenTest
 						var p = new IntPoint3(x, y, mz);
 						var td = terrain.GetTileData(p);
 
-						uint c = GetTileColor(td);
+						uint c;
+
+						if (td.IsEmpty)
+							c = ColorToRaw(Colors.SkyBlue);
+						else
+							c = GetTileColor(td);
 
 						var ptr = pBackBuffer + y * stride + z;
 

@@ -142,15 +142,15 @@
 					   MouseLeftButtonDown="imageXY_MouseLeftButtonDown"
 					   MouseMove="imageXY_MouseMove" />
 
-					<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Blue" StrokeThickness="1"
-						   Height="1" Opacity="0.2" VerticalAlignment="Top" IsHitTestVisible="False">
+					<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Stroke="Yellow" StrokeThickness="1"
+						   Height="1" Opacity="0.4" VerticalAlignment="Top" IsHitTestVisible="False">
 						<Rectangle.RenderTransform>
 							<TranslateTransform Y="{Binding ElementName=root,Path=Y}" />
 						</Rectangle.RenderTransform>
 					</Rectangle>
 
-					<Rectangle Grid.RowSpan="3" Stroke="Blue" StrokeThickness="1" 
-						   Width="1" Opacity="0.2" HorizontalAlignment="Left" IsHitTestVisible="False">
+					<Rectangle Grid.RowSpan="3" Stroke="Yellow" StrokeThickness="1" 
+						   Width="1" Opacity="0.4" HorizontalAlignment="Left" IsHitTestVisible="False">
 						<Rectangle.RenderTransform>
 							<TranslateTransform X="{Binding ElementName=root,Path=X}" />
 						</Rectangle.RenderTransform>
