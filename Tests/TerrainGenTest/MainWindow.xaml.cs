@@ -159,6 +159,7 @@ namespace TerrainGenTest
 			{
 				Stopwatch sw = Stopwatch.StartNew();
 
+				this.Renderer.ShowWaterEnabled = this.ShowWaterEnabled;
 				this.Renderer.Render(m_terrain, new IntPoint3(this.X, this.Y, this.Z));
 
 				sw.Stop();
@@ -188,6 +189,19 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty DepthProperty =
 			DependencyProperty.Register("Depth", typeof(int), typeof(MainWindow), new PropertyMetadata(40, ReCreateTerrain));
+
+
+
+		public bool ShowWaterEnabled
+		{
+			get { return (bool)GetValue(ShowWaterEnabledProperty); }
+			set { SetValue(ShowWaterEnabledProperty, value); }
+		}
+
+		public static readonly DependencyProperty ShowWaterEnabledProperty =
+			DependencyProperty.Register("ShowWaterEnabled", typeof(bool), typeof(MainWindow),
+			new PropertyMetadata(true, ReRenderTerrain));
+
 
 		public double Amplify
 		{

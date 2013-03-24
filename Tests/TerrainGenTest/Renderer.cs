@@ -24,6 +24,8 @@ namespace TerrainGenTest
 
 		IntSize3 m_size;
 
+		public bool ShowWaterEnabled { get; set; }
+
 		public Renderer(IntSize3 size)
 		{
 			m_size = size;
@@ -62,14 +64,37 @@ namespace TerrainGenTest
 				{
 					for (int x = 0; x < w; ++x)
 					{
-						var v = terrain.GetHeight(x, y);
+						int z = terrain.GetHeight(x, y);
 
-						int d = v - min;
+						TileData td;
+
+						while (true)
+						{
+							var p = new IntPoint3(x, y, z);
+							td = terrain.GetTileData(p);
+
+							if (this.ShowWaterEnabled && td.WaterLevel > 0)
+							{
+								var wl = terrain.GetWaterLevel(p + Direction.Up);
+								if (wl > 0)
+								{
+									z++;
+									continue;
+								}
+							}
+
+							break;
+						}
+
+						int d = z - min;
 						double a = (double)d / (max - min);
 
 						uint c = 31 + (uint)(a * (255 - 31));
 
-						c = (c << 16) | (c << 8) | (c << 0);
+						if (this.ShowWaterEnabled && td.WaterLevel > 0)
+							c = (0 << 16) | (0 << 8) | (c << 0);
+						else
+							c = (c << 16) | (c << 8) | (c << 0);
 
 						var ptr = pBackBuffer + y * stride + x;
 
@@ -143,7 +168,7 @@ namespace TerrainGenTest
 
 						uint c;
 
-						if (td.IsEmpty)
+						if (td.IsEmpty && td.WaterLevel == 0)
 							c = ColorToRaw(Colors.SkyBlue);
 						else
 							c = GetTileColor(td);
@@ -183,7 +208,7 @@ namespace TerrainGenTest
 
 						uint c;
 
-						if (td.IsEmpty)
+						if (td.IsEmpty && td.WaterLevel == 0)
 							c = ColorToRaw(Colors.SkyBlue);
 						else
 							c = GetTileColor(td);
@@ -202,6 +227,13 @@ namespace TerrainGenTest
 		uint GetTileColor(TileData td)
 		{
 			byte r, g, b;
+
+			if (td.WaterLevel > 0)
+			{
+				r = g = 0;
+				b = 255;
+				return (uint)((r << 16) | (g << 8) | (b << 0));
+			}
 
 			switch (td.TerrainID)
 			{

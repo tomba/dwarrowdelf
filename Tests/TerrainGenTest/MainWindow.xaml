@@ -51,6 +51,8 @@
 				</ComboBox>
 			</GroupBox>
 
+			<CheckBox Grid.Column="0" Grid.Row="1" Content="Show Water" IsChecked="{Binding ElementName=root, Path=ShowWaterEnabled}" />
+
 			<GroupBox Header="Seed" Grid.Column="2" Grid.Row="0">
 				<TextBox Text="{Binding ElementName=root, Path=Seed, UpdateSourceTrigger=PropertyChanged}"/>
 			</GroupBox>
