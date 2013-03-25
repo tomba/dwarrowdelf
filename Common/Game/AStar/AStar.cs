@@ -100,6 +100,19 @@ namespace Dwarrowdelf
 			return AStarStatus.NotFound;
 		}
 
+		public IEnumerable<AStarNode> GetPathNodesReverse()
+		{
+			if (this.LastNode == null)
+				yield break;
+
+			AStarNode n = this.LastNode;
+			while (n != null)
+			{
+				yield return n;
+				n = n.Parent;
+			}
+		}
+
 		public IEnumerable<Direction> GetPathReverse()
 		{
 			if (this.LastNode == null)
