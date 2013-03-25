@@ -100,6 +100,24 @@ namespace Dwarrowdelf
 			return AStarStatus.NotFound;
 		}
 
+		public IEnumerable<Direction> GetPathReverse()
+		{
+			if (this.LastNode == null)
+				yield break;
+
+			AStarNode n = this.LastNode;
+			while (n.Parent != null)
+			{
+				yield return (n.Parent.Loc - n.Loc).ToDirection();
+				n = n.Parent;
+			}
+		}
+
+		public IEnumerable<Direction> GetPath()
+		{
+			return GetPathReverse().Reverse().Select(d => d.Reverse());
+		}
+
 		void CheckNeighbors(AStarNode parent)
 		{
 			foreach (var dir in m_target.GetValidDirs(parent.Loc))
