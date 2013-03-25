@@ -53,6 +53,36 @@ namespace TerrainGenTest
 			OnTimerTick(null, null);
 		}
 
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			Vector v = new Vector();
+
+			switch (e.Key)
+			{
+				case Key.Right:
+					v = new Vector(1, 0);
+					break;
+				case Key.Left:
+					v = new Vector(-1, 0);
+					break;
+				case Key.Up:
+					v = new Vector(0, -1);
+					break;
+				case Key.Down:
+					v = new Vector(0, 1);
+					break;
+			}
+
+			if (v != new Vector())
+			{
+				Point p = Win32.GetCursorPos();
+				p += v;
+				Win32.SetCursorPos(p);
+			}
+
+			base.OnKeyDown(e);
+		}
+
 		protected override void OnTextInput(TextCompositionEventArgs e)
 		{
 			string text = e.Text;
