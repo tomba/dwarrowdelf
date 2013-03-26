@@ -10,14 +10,10 @@ namespace Dwarrowdelf.TerrainGen
 {
 	public class RiverGen
 	{
+		TerrainData m_terrain;
 		Random m_random;
 
 		IntPoint2[] m_riverPath;
-
-		Dictionary<IntPoint3, AStarNode> m_astarNodes;
-		HashSet<IntPoint3> m_pathPoints;
-
-		TerrainData m_terrain;
 
 		public RiverGen(TerrainData terrain, Random random)
 		{
