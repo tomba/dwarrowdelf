@@ -121,6 +121,9 @@ namespace Dwarrowdelf.TerrainGen
 
 				var td = grid[p.Z, p.Y, p.X];
 
+				if (td.WaterLevel > 0)
+					return;
+
 				if (Materials.GetMaterial(td.TerrainMaterialID).Category != MaterialCategory.Soil)
 					return;
 
