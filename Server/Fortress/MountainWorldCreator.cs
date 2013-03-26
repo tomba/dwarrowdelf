@@ -27,7 +27,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
-			CreateWaterTest(env);
+			//CreateWaterTest(env);
 
 			MountainWorldPopulator.FinalizeEnv(env);
 		}
