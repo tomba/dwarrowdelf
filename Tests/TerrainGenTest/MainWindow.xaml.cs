@@ -147,8 +147,6 @@ namespace TerrainGenTest
 
 				m_size = new IntSize3(side, side, depth);
 				m_terrain = new TerrainData(m_size);
-				//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-				m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
 				this.Renderer = new Renderer(m_size);
 				Notify("Renderer");
 
@@ -175,6 +173,8 @@ namespace TerrainGenTest
 					SE = SECorner,
 				};
 
+				//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
+				m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
 				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
 				//m_terrainGen.Generate(this.Seed);
 
