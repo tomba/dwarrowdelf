@@ -37,19 +37,27 @@ namespace Dwarrowdelf
 				m_w = 1;
 		}
 
+		/// <summary>
+		/// Get random Int32 [0, Int32.MaxValue)
+		/// </summary>
 		public int Next()
 		{
 			uint u = NextUint();
 			return (int)(u * ((double)(Int32.MaxValue - 1) / UInt32.MaxValue));
 		}
 
+		/// <summary>
+		/// Get random Int32 [0, exclusiveMax)
+		/// </summary>
 		public int Next(int exclusiveMax)
 		{
 			var d = NextDouble();
 			return (int)(d * exclusiveMax);
 		}
 
-		// 0 <= result <= UInt32.MaxValue
+		/// <summary>
+		/// Get random UInt32 [0, UInt32.MaxValue]
+		/// </summary>
 		public uint NextUint()
 		{
 			m_z = 36969 * (m_z & 65535) + (m_z >> 16);
@@ -57,7 +65,9 @@ namespace Dwarrowdelf
 			return (m_z << 16) + m_w;
 		}
 
-		// 0.0 <= result < 1.0
+		/// <summary>
+		/// Get random double [0.0, 1.0)
+		/// </summary>
 		public double NextDouble()
 		{
 			uint u = NextUint();
