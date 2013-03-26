@@ -33,14 +33,12 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			TerrainData m_terrain;
 			IntPoint3 m_origin;
-			MWCRandom m_r;
 			SideEdge m_sourceSide;
 
 			public MyTarget(TerrainData terrain, IntPoint3 origin, SideEdge sourceSide)
 			{
 				m_terrain = terrain;
 				m_origin = origin;
-				m_r = new MWCRandom(m_origin, 1);
 				m_sourceSide = sourceSide;
 			}
 
@@ -59,7 +57,8 @@ namespace Dwarrowdelf.TerrainGen
 			public ushort GetHeuristic(IntPoint3 p)
 			{
 				// Add a bit random so that the river doesn't go straight
-				return (ushort)(p.Z * 10 + m_r.Next(4));
+				var r = new MWCRandom(p, 1);
+				return (ushort)(p.Z * 10 + r.Next(4));
 			}
 
 			public ushort GetCostBetween(IntPoint3 src, IntPoint3 dst)
