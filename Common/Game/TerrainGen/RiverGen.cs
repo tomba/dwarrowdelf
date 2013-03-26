@@ -174,12 +174,8 @@ namespace Dwarrowdelf.TerrainGen
 					continue;
 				}
 
-				int tot = 0;
-				foreach (var p in riverPath)
-				{
-					var d = Math.Min(Math.Min(Math.Min(p.X, p.Y), m_terrain.Width - p.X - 1), m_terrain.Height - p.Y - 1);
-					tot += d;
-				}
+				int tot = riverPath.Aggregate(0, (a, p) =>
+					a + MyMath.Min(p.X, p.Y, m_terrain.Width - p.X - 1, m_terrain.Height - p.Y - 1));
 
 				int avg = tot / riverPath.Length;
 
