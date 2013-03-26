@@ -305,6 +305,9 @@ namespace Dwarrowdelf.Server
 			return (m_tileGrid[p.Z, p.Y, p.X].Flags & flags) != 0;
 		}
 
+		/// <summary>
+		/// Note: this does not change tile flags!
+		/// </summary>
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
 			Debug.Assert(this.IsInitialized);
@@ -315,6 +318,7 @@ namespace Dwarrowdelf.Server
 			var oldData = GetTileData(p);
 
 			// retain the old flags
+			Debug.Assert(data.Flags == oldData.Flags || data.Flags == 0);
 			data.Flags = oldData.Flags;
 
 			m_tileGrid[p.Z, p.Y, p.X] = data;

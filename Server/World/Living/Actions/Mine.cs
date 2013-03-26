@@ -213,6 +213,7 @@ namespace Dwarrowdelf.Server
 
 						if (clearDown)
 						{
+							tdd = env.GetTileData(p + Direction.Down);
 							tdd.TerrainID = TerrainID.NaturalFloor;
 							tdd.InteriorID = InteriorID.Empty;
 							tdd.InteriorMaterialID = Dwarrowdelf.MaterialID.Undefined;
