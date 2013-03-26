@@ -113,7 +113,7 @@ namespace Dwarrowdelf.TerrainGen
 					yu = y;
 				}
 
-				if (z - 10 > zu)
+				if (z - 2 > zu)
 					break;
 			}
 
@@ -129,7 +129,7 @@ namespace Dwarrowdelf.TerrainGen
 					yd = y;
 				}
 
-				if (z - 10 > zd)
+				if (z - 2 > zd)
 					break;
 			}
 
