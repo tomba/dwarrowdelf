@@ -290,7 +290,7 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty NECornerProperty =
 			DependencyProperty.Register("NECorner", typeof(double), typeof(MainWindow),
-			new PropertyMetadata(10.0, ReGenerateTerrain));
+			new PropertyMetadata(15.0, ReGenerateTerrain));
 
 		public double SECorner
 		{
@@ -310,7 +310,7 @@ namespace TerrainGenTest
 
 		public static readonly DependencyProperty SWCornerProperty =
 			DependencyProperty.Register("SWCorner", typeof(double), typeof(MainWindow),
-			new PropertyMetadata(15.0, ReGenerateTerrain));
+			new PropertyMetadata(10.0, ReGenerateTerrain));
 
 		public int Z
 		{
