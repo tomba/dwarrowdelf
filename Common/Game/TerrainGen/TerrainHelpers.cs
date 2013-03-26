@@ -22,7 +22,7 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				for (int x = 0; x < w; ++x)
 				{
-					int z = data.GetHeight(x, y);
+					int z = data.GetSurfaceLevel(x, y);
 
 					var p = new IntPoint3(x, y, z);
 
@@ -44,7 +44,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			plane.Range().AsParallel().ForAll(p =>
 			{
-				int z = data.GetHeight(p);
+				int z = data.GetSurfaceLevel(p);
 
 				int count = 0;
 				Direction dir = Direction.None;
@@ -63,7 +63,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					var t = p + d;
 
-					if (plane.Contains(t) && data.GetHeight(t) > z)
+					if (plane.Contains(t) && data.GetSurfaceLevel(t) > z)
 					{
 						count++;
 						successive++;
@@ -97,7 +97,7 @@ namespace Dwarrowdelf.TerrainGen
 		public static void CreateVegetation(TerrainData terrain, Random random, int vegetationLimit)
 		{
 			var grid = terrain.TileGrid;
-			var heightMap = terrain.HeightMap;
+			var heightMap = terrain.LevelMap;
 
 			int w = terrain.Width;
 			int h = terrain.Height;

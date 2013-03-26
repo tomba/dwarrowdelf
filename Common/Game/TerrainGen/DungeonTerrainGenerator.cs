@@ -37,13 +37,13 @@ namespace Dwarrowdelf.TerrainGen
 
 		void GenerateTerrain(int seed)
 		{
-			var heightMap = m_data.HeightMap;
+			var levelMap = m_data.LevelMap;
 
 			Parallel.For(0, m_size.Height, y =>
 				{
 					for (int x = 0; x < m_size.Width; ++x)
 					{
-						heightMap[y, x] = (byte)(m_size.Depth - 1);
+						levelMap[y, x] = (byte)(m_size.Depth - 1);
 					}
 				});
 		}
@@ -104,7 +104,7 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				for (int x = 0; x < width; ++x)
 				{
-					int surface = m_data.GetHeight(x, y);
+					int surface = m_data.GetSurfaceLevel(x, y);
 
 					for (int z = 0; z < depth; ++z)
 					{

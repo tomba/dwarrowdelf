@@ -393,7 +393,7 @@ namespace TerrainGenTest
 			if (m_terrain.Size.Plane.Contains(p.ToIntPoint()) == false)
 				return;
 
-			int h = m_terrain.GetHeight(p.ToIntPoint());
+			int h = m_terrain.GetSurfaceLevel(p.ToIntPoint());
 
 			zTextBlock.Text = String.Format("{0} ({1})", p, h);
 

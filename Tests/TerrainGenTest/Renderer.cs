@@ -50,8 +50,8 @@ namespace TerrainGenTest
 			int w = m_size.Width;
 			int h = m_size.Height;
 
-			int min = terrain.HeightMap.Min();
-			int max = terrain.HeightMap.Max();
+			int min = terrain.LevelMap.Min();
+			int max = terrain.LevelMap.Max();
 
 			m_sliceBmpXY.Lock();
 
@@ -64,7 +64,7 @@ namespace TerrainGenTest
 				{
 					for (int x = 0; x < w; ++x)
 					{
-						int z = terrain.GetHeight(x, y);
+						int z = terrain.GetSurfaceLevel(x, y);
 
 						TileData td;
 

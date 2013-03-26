@@ -10,7 +10,7 @@ namespace Dwarrowdelf.TerrainGen
 	{
 		public IntSize3 Size { get; private set; }
 		public TileData[, ,] TileGrid { get; private set; }
-		public byte[,] HeightMap { get; private set; }
+		public byte[,] LevelMap { get; private set; }
 
 		public int Width { get { return this.Size.Width; } }
 		public int Height { get { return this.Size.Height; } }
@@ -19,7 +19,7 @@ namespace Dwarrowdelf.TerrainGen
 		public TerrainData(IntSize3 size)
 		{
 			this.Size = size;
-			this.HeightMap = new byte[size.Height, size.Width];
+			this.LevelMap = new byte[size.Height, size.Width];
 			this.TileGrid = new TileData[size.Depth, size.Height, size.Width];
 		}
 
@@ -28,14 +28,24 @@ namespace Dwarrowdelf.TerrainGen
 			return p.X >= 0 && p.Y >= 0 && p.Z >= 0 && p.X < this.Width && p.Y < this.Height && p.Z < this.Depth;
 		}
 
-		public int GetHeight(int x, int y)
+		public int GetSurfaceLevel(int x, int y)
 		{
-			return this.HeightMap[y, x];
+			return this.LevelMap[y, x];
 		}
 
-		public int GetHeight(IntPoint2 p)
+		public int GetSurfaceLevel(IntPoint2 p)
 		{
-			return this.HeightMap[p.Y, p.X];
+			return this.LevelMap[p.Y, p.X];
+		}
+
+		public IntPoint3 GetSurfaceLocation(int x, int y)
+		{
+			return new IntPoint3(x, y, GetSurfaceLevel(x, y));
+		}
+
+		public IntPoint3 GetSurfaceLocation(IntPoint2 p)
+		{
+			return new IntPoint3(p, GetSurfaceLevel(p));
 		}
 
 		public TerrainID GetTerrainID(IntPoint3 p)
@@ -90,12 +100,12 @@ namespace Dwarrowdelf.TerrainGen
 
 		public void SetTileData(IntPoint3 p, TileData data)
 		{
-			if (data.IsEmpty == false && this.HeightMap[p.Y, p.X] < p.Z)
+			if (data.IsEmpty == false && this.LevelMap[p.Y, p.X] < p.Z)
 			{
 				Debug.Assert(p.Z >= 0 && p.Z < 256);
-				this.HeightMap[p.Y, p.X] = (byte)p.Z;
+				this.LevelMap[p.Y, p.X] = (byte)p.Z;
 			}
-			else if (data.IsEmpty && this.HeightMap[p.Y, p.X] == p.Z)
+			else if (data.IsEmpty && this.LevelMap[p.Y, p.X] == p.Z)
 			{
 				if (p.Z == 0)
 					throw new Exception();
@@ -105,7 +115,7 @@ namespace Dwarrowdelf.TerrainGen
 					if (GetTileData(new IntPoint3(p.X, p.Y, z)).IsEmpty == false)
 					{
 						Debug.Assert(z >= 0 && z < 256);
-						this.HeightMap[p.Y, p.X] = (byte)z;
+						this.LevelMap[p.Y, p.X] = (byte)z;
 						break;
 					}
 				}

@@ -25,7 +25,7 @@ namespace Dwarrowdelf.Server
 		[SaveGameProperty("Grid", ReaderWriter = typeof(TileGridReaderWriter))]
 		TileData[, ,] m_tileGrid;
 
-		byte[,] m_surfaceLevelMap;
+		byte[,] m_levelMap;
 
 		// XXX this is quite good for add/remove child, but bad for gettings objects at certain location
 		KeyedObjectCollection[] m_contentArray;
@@ -72,7 +72,7 @@ namespace Dwarrowdelf.Server
 			this.VisibilityMode = visMode;
 
 			m_tileGrid = terrain.TileGrid;
-			m_surfaceLevelMap = terrain.HeightMap;
+			m_levelMap = terrain.LevelMap;
 
 			var size = terrain.Size;
 			this.Width = size.Width;
@@ -107,12 +107,12 @@ namespace Dwarrowdelf.Server
 
 			m_waterHandler = new EnvWaterHandler(this);
 
-			CreateSurfaceLevelMap();
+			CreateLevelMap();
 		}
 
-		void CreateSurfaceLevelMap()
+		void CreateLevelMap()
 		{
-			var surfaceMap = new byte[this.Size.Height, this.Size.Width];
+			var levelMap = new byte[this.Size.Height, this.Size.Width];
 
 			Parallel.ForEach(this.Size.Plane.Range(), p =>
 			{
@@ -120,13 +120,13 @@ namespace Dwarrowdelf.Server
 				{
 					if (m_tileGrid[z, p.Y, p.X].IsEmpty == false)
 					{
-						surfaceMap[p.Y, p.X] = (byte)z;
+						levelMap[p.Y, p.X] = (byte)z;
 						break;
 					}
 				}
 			});
 
-			m_surfaceLevelMap = surfaceMap;
+			m_levelMap = levelMap;
 		}
 
 		void SetSubterraneanFlags()
@@ -227,17 +227,17 @@ namespace Dwarrowdelf.Server
 
 		public int GetSurfaceLevel(int x, int y)
 		{
-			return m_surfaceLevelMap[y, x];
+			return m_levelMap[y, x];
 		}
 
 		public int GetSurfaceLevel(IntPoint2 p)
 		{
-			return m_surfaceLevelMap[p.Y, p.X];
+			return m_levelMap[p.Y, p.X];
 		}
 
 		void SetSurfaceLevel(IntPoint2 p, byte level)
 		{
-			m_surfaceLevelMap[p.Y, p.X] = level;
+			m_levelMap[p.Y, p.X] = level;
 		}
 
 		public IntPoint3 GetSurfaceLocation(int x, int y)

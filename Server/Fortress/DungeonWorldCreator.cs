@@ -33,7 +33,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			foreach (var p2 in m_terrainData.Size.Plane.Range())
 			{
-				var z = m_terrainData.GetHeight(p2);
+				var z = m_terrainData.GetSurfaceLevel(p2);
 
 				var p = new IntPoint3(p2, z);
 				var td = m_terrainData.GetTileData(p);

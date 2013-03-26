@@ -36,13 +36,13 @@ namespace Dwarrowdelf.TerrainGen
 		void GenerateTerrain(DiamondSquare.CornerData corners, double range, double h, double amplify)
 		{
 			// +1 for diamond square
-			var doubleHeightMap = new ArrayGrid2D<double>(m_size.Width + 1, m_size.Height + 1);
+			var heightMap = new ArrayGrid2D<double>(m_size.Width + 1, m_size.Height + 1);
 
 			double min, max;
 
-			DiamondSquare.Render(doubleHeightMap, corners, range, h, m_random, out min, out max);
+			DiamondSquare.Render(heightMap, corners, range, h, m_random, out min, out max);
 
-			var heightMap = m_data.HeightMap;
+			var levelMap = m_data.LevelMap;
 
 			Parallel.For(0, m_size.Height, y =>
 				{
@@ -50,7 +50,7 @@ namespace Dwarrowdelf.TerrainGen
 
 					for (int x = 0; x < m_size.Width; ++x)
 					{
-						var v = doubleHeightMap[x, y];
+						var v = heightMap[x, y];
 
 						// normalize to 0.0 - 1.0
 						v = (v - min) / d;
@@ -62,7 +62,7 @@ namespace Dwarrowdelf.TerrainGen
 						v *= m_size.Depth / 2;
 						v += m_size.Depth / 2 - 1;
 
-						heightMap[y, x] = (byte)Math.Round(v);
+						levelMap[y, x] = (byte)Math.Round(v);
 					}
 				});
 		}
@@ -125,7 +125,7 @@ namespace Dwarrowdelf.TerrainGen
 			{
 				for (int x = 0; x < width; ++x)
 				{
-					int surface = m_data.GetHeight(x, y);
+					int surface = m_data.GetSurfaceLevel(x, y);
 
 					for (int z = 0; z < depth; ++z)
 					{
@@ -316,7 +316,7 @@ namespace Dwarrowdelf.TerrainGen
 		{
 			int x = GetRandomInt(m_size.Width);
 			int y = GetRandomInt(m_size.Height);
-			int maxZ = m_data.GetHeight(x, y);
+			int maxZ = m_data.GetSurfaceLevel(x, y);
 			int z = GetRandomInt(maxZ);
 
 			return new IntPoint3(x, y, z);

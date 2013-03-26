@@ -100,14 +100,14 @@ namespace Dwarrowdelf.TerrainGen
 			int side = m_terrain.Width;
 
 			int yo = r.Next(0, side);
-			int zo = m_terrain.GetHeight(MapCoord(yo, edge));
+			int zo = m_terrain.GetSurfaceLevel(MapCoord(yo, edge));
 
 			int yu = yo;
 			int zu = zo;
 
 			for (int y = yo - 1; y >= 0; --y)
 			{
-				int z = m_terrain.GetHeight(MapCoord(y, edge));
+				int z = m_terrain.GetSurfaceLevel(MapCoord(y, edge));
 				if (z < zu)
 				{
 					zu = z;
@@ -123,7 +123,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			for (int y = yo + 1; y < side; ++y)
 			{
-				int z = m_terrain.GetHeight(MapCoord(y, edge));
+				int z = m_terrain.GetSurfaceLevel(MapCoord(y, edge));
 				if (z < zd)
 				{
 					zd = z;
@@ -136,7 +136,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			int yf = zd < zu ? yd : yu;
 			var p2 = MapCoord(yf, edge);
-			return new IntPoint3(p2, m_terrain.GetHeight(p2));
+			return m_terrain.GetSurfaceLocation(p2);
 		}
 
 		public bool CreateRiverPath()
@@ -191,7 +191,7 @@ namespace Dwarrowdelf.TerrainGen
 
 		public void AdjustRiver()
 		{
-			int minZ = m_riverPath.Min(p => m_terrain.GetHeight(p));
+			int minZ = m_riverPath.Min(p => m_terrain.GetSurfaceLevel(p));
 
 			var pos = DirectionSet.Cardinal | DirectionSet.Exact;
 

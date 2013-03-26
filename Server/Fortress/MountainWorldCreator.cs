@@ -23,7 +23,7 @@ namespace Dwarrowdelf.Server.Fortress
 
 			// XXX this is where WorldPopulator creates some buildings
 			var p2 = new IntPoint2(terrain.Width / 2, terrain.Height / 2);
-			var startLoc = new IntPoint3(p2, terrain.GetHeight(p2));
+			var startLoc = terrain.GetSurfaceLocation(p2);
 
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
