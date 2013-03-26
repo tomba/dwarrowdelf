@@ -174,8 +174,8 @@ namespace TerrainGenTest
 				};
 
 				//m_terrainGen = new DungeonTerrainGenerator(m_terrain, new Random(1));
-				m_terrainGen = new TerrainGenerator(m_terrain, new Random(1));
-				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Seed, this.Amplify);
+				m_terrainGen = new TerrainGenerator(m_terrain, new Random(this.Seed));
+				m_terrainGen.Generate(corners, this.RangeValue, this.HValue, this.Amplify);
 				//m_terrainGen.Generate(this.Seed);
 
 				sw.Stop();

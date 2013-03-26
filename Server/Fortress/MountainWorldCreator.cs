@@ -34,7 +34,8 @@ namespace Dwarrowdelf.Server.Fortress
 
 		static TerrainData CreateTerrain()
 		{
-			var random = Helpers.Random;
+			//var random = Helpers.Random;
+			var random = new Random(1);
 
 			int side = MyMath.Pow2(MAP_SIZE);
 			var size = new IntSize3(side, side, MAP_DEPTH);
@@ -51,7 +52,7 @@ namespace Dwarrowdelf.Server.Fortress
 				SE = 10,
 			};
 
-			tg.Generate(corners, 5, 0.75, 1, 2);
+			tg.Generate(corners, 5, 0.75, 2);
 
 			int grassLimit = terrain.Depth * 4 / 5;
 			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);

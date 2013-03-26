@@ -26,21 +26,21 @@ namespace Dwarrowdelf.TerrainGen
 			m_random = random;
 		}
 
-		public void Generate(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
+		public void Generate(DiamondSquare.CornerData corners, double range, double h, double amplify)
 		{
-			GenerateTerrain(corners, range, h, seed, amplify);
+			GenerateTerrain(corners, range, h, amplify);
 
 			CreateTileGrid();
 		}
 
-		void GenerateTerrain(DiamondSquare.CornerData corners, double range, double h, int seed, double amplify)
+		void GenerateTerrain(DiamondSquare.CornerData corners, double range, double h, double amplify)
 		{
 			// +1 for diamond square
 			var doubleHeightMap = new ArrayGrid2D<double>(m_size.Width + 1, m_size.Height + 1);
 
 			double min, max;
 
-			DiamondSquare.Render(doubleHeightMap, corners, range, h, seed, out min, out max);
+			DiamondSquare.Render(doubleHeightMap, corners, range, h, m_random, out min, out max);
 
 			var heightMap = m_data.HeightMap;
 

@@ -27,7 +27,7 @@ namespace Dwarrowdelf.TerrainGen
 			public double Min;
 		}
 
-		public static void Render(ArrayGrid2D<double> grid, CornerData corners, double range, double h, int randomSeed,
+		public static void Render(ArrayGrid2D<double> grid, CornerData corners, double range, double h, Random random,
 			out double min, out double max)
 		{
 			if (grid.Width != grid.Height)
@@ -35,7 +35,7 @@ namespace Dwarrowdelf.TerrainGen
 
 			var ctx = new Context()
 			{
-				Random = new Random(randomSeed),
+				Random = random,
 				Grid = grid,
 				Corners = corners,
 				Range = range,
