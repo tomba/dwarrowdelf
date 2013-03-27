@@ -520,32 +520,35 @@ namespace Dwarrowdelf.Client
 
 			int wl = env.GetWaterLevel(ml);
 
-			if (wl == 0)
-				return;
+			if (wl > 0)
+			{
+				if (env.GetTileFlags(ml, TileFlags.WaterStatic))
+				{
+					id = SymbolID.Empty;
+				}
+				else
+				{
+					id = SymbolID.Water;
 
-			wl = wl * 100 / TileData.MaxWaterLevel;
-
-			id = SymbolID.Water;
-
-			if (wl > 80)
-			{
-				tile.Color = GameColor.Aqua;
-			}
-			else if (wl > 60)
-			{
-				tile.Color = GameColor.DodgerBlue;
-			}
-			else if (wl > 40)
-			{
-				tile.Color = GameColor.Blue;
-			}
-			else if (wl > 20)
-			{
-				tile.Color = GameColor.Blue;
-			}
-			else
-			{
-				tile.Color = GameColor.MediumBlue;
+					switch (wl)
+					{
+						case 7:
+							tile.Color = GameColor.Aqua;
+							break;
+						case 6:
+						case 5:
+							tile.Color = GameColor.DodgerBlue;
+							break;
+						case 4:
+						case 3:
+							tile.Color = GameColor.Blue;
+							break;
+						case 2:
+						case 1:
+							tile.Color = GameColor.MediumBlue;
+							break;
+					}
+				}
 			}
 
 			tile.BgColor = GameColor.DarkBlue;

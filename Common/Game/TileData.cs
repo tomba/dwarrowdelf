@@ -17,6 +17,7 @@ namespace Dwarrowdelf
 		None = 0,
 		ItemBlocks = 1 << 0,	// an item in the tile blocks movement
 		Subterranean = 1 << 1,
+		WaterStatic = 1 << 2,	// Water in the tile is static
 	}
 
 	//     0         1       2         3        4       5        6        7
