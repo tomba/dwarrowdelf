@@ -62,7 +62,11 @@
 	</Symbol>
 
 	<Symbol ID="Water">
-		<CharGfx X="10" Y="30" W="80" H="40" Char="~" />
+		<CharGfx X="10" Y="35" W="80" H="30" Char="~" />
+	</Symbol>
+
+	<Symbol ID="WaterDouble">
+		<CharGfx X="10" Y="30" W="80" H="40" Char="≈" />
 	</Symbol>
 
 	<Symbol ID="StairsUp">

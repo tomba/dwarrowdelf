@@ -97,6 +97,7 @@ namespace Dwarrowdelf.Client
 
 		/* top */
 		Water,
+		WaterDouble,
 
 		/* designations */
 		DesignationMine,

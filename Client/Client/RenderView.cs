@@ -523,31 +523,27 @@ namespace Dwarrowdelf.Client
 			if (wl > 0)
 			{
 				if (env.GetTileFlags(ml, TileFlags.WaterStatic))
-				{
-					id = SymbolID.Empty;
-				}
+					id = SymbolID.WaterDouble;
 				else
-				{
 					id = SymbolID.Water;
 
-					switch (wl)
-					{
-						case 7:
-							tile.Color = GameColor.Aqua;
-							break;
-						case 6:
-						case 5:
-							tile.Color = GameColor.DodgerBlue;
-							break;
-						case 4:
-						case 3:
-							tile.Color = GameColor.Blue;
-							break;
-						case 2:
-						case 1:
-							tile.Color = GameColor.MediumBlue;
-							break;
-					}
+				switch (wl)
+				{
+					case 7:
+						tile.Color = GameColor.Aqua;
+						break;
+					case 6:
+					case 5:
+						tile.Color = GameColor.DodgerBlue;
+						break;
+					case 4:
+					case 3:
+						tile.Color = GameColor.Blue;
+						break;
+					case 2:
+					case 1:
+						tile.Color = GameColor.MediumBlue;
+						break;
 				}
 			}
 
