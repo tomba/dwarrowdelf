@@ -49,5 +49,38 @@ namespace Dwarrowdelf.Client.UI
 
 		public static readonly DependencyProperty UserProperty =
 			DependencyProperty.Register("Data", typeof(SetTerrainData), typeof(SetTerrainDialog), new PropertyMetadata(new SetTerrainData()));
+
+		private void Button_Click_Preset(object sender, RoutedEventArgs e)
+		{
+			var b = (Button)sender;
+			var s = (string)b.Content;
+
+			var td = new TileData();
+
+			switch (s)
+			{
+				case "Empty":
+					td.TerrainID = TerrainID.Empty;
+					td.InteriorID = InteriorID.Empty;
+					break;
+
+				case "Wall":
+					td.TerrainID = TerrainID.NaturalWall;
+					td.TerrainMaterialID = MaterialID.Granite;
+					td.InteriorID = InteriorID.Empty;
+					break;
+
+				case "Floor":
+					td.TerrainID = TerrainID.NaturalFloor;
+					td.TerrainMaterialID = MaterialID.Granite;
+					td.InteriorID = InteriorID.Empty;
+					break;
+			}
+
+			terrainIDListBox.SelectedValue = td.TerrainID;
+			terrainMaterialListBox.SelectedValue = td.TerrainMaterialID;
+			interiorIDListBox.SelectedValue = td.InteriorID;
+			interiorMaterialListBox.SelectedValue = td.InteriorMaterialID;
+		}
 	}
 }

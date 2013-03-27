@@ -56,6 +56,14 @@
 			<CheckBox IsThreeState="True" IsChecked="{Binding Water}" Content="Water"/>
 		</UniformGrid>
 
+		<GroupBox Header="Presets" DockPanel.Dock="Top">
+			<StackPanel Orientation="Horizontal">
+				<Button Content="Empty" Click="Button_Click_Preset" />
+				<Button Content="Wall" Click="Button_Click_Preset" />
+				<Button Content="Floor" Click="Button_Click_Preset" />
+			</StackPanel>
+		</GroupBox>
+
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
