@@ -187,6 +187,12 @@ namespace Dwarrowdelf.Server
 							return ActionState.Fail;
 						}
 
+						if (env.HasContents(p))
+						{
+							SendFailReport(report, "tile contains objects");
+							return ActionState.Fail;
+						}
+
 						var tdd = env.GetTileData(p + Direction.Down);
 
 						bool clearDown;
