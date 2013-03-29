@@ -47,7 +47,7 @@ namespace Dwarrowdelf
 
 		public bool Equals(IntPoint3 other)
 		{
-			return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
+			return other.m_value == this.m_value;
 		}
 
 		#endregion
