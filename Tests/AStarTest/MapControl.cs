@@ -161,6 +161,8 @@ namespace AStarTest
 
 					if (m_path != null && m_path.Contains(ml))
 						tile.Brush = Brushes.DarkGray;
+					else if (node.Closed)
+						tile.Brush = Brushes.MidnightBlue;
 				}
 
 				if (m_map.GetBlocked(ml))
