@@ -2,4 +2,5 @@
 
 Palkin oikealta puolelta vasemmalle:
 
-16.3.2013	mem: 12721184	ticks: 1072706
+16.03.2013	Ticks 1072706, Mem 12721184
+28.03.2013	Ticks  809716, Mem 10290888
