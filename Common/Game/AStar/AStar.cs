@@ -13,8 +13,8 @@ namespace Dwarrowdelf
 	{
 		public IntPoint3 Loc { get; private set; }
 		public AStarNode Parent;
-		public ushort G { get; set; }
-		public ushort H { get; set; }
+		public ushort G { get; set; }	/* cost from the starting node, i.e. past path-cost */
+		public ushort H { get; set; }	/* heuristic to the goal, i.e. future path-cost */
 		public bool Closed { get; set; }
 
 		public int F { get { return G + H; } }
