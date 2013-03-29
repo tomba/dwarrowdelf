@@ -36,7 +36,7 @@ namespace Dwarrowdelf
 		readonly IOpenList<AStarNode> m_openList;
 		readonly Dictionary<IntPoint3, AStarNode> m_nodeMap;
 
-		public Dictionary<IntPoint3, AStarNode> Nodes { get { return m_nodeMap; } }
+		public Dictionary<IntPoint3, AStarNode> NodeMap { get { return m_nodeMap; } }
 		public AStarNode LastNode { get; private set; }
 
 		public Action<Dictionary<IntPoint3, AStarNode>> DebugCallback { get; set; }
@@ -100,17 +100,16 @@ namespace Dwarrowdelf
 			return AStarStatus.NotFound;
 		}
 
+		public IEnumerable<IntPoint3> GetPathLocationsReverse()
+		{
+			for (AStarNode n = this.LastNode; n != null; n = n.Parent)
+				yield return n.Loc;
+		}
+
 		public IEnumerable<AStarNode> GetPathNodesReverse()
 		{
-			if (this.LastNode == null)
-				yield break;
-
-			AStarNode n = this.LastNode;
-			while (n != null)
-			{
+			for (AStarNode n = this.LastNode; n != null; n = n.Parent)
 				yield return n;
-				n = n.Parent;
-			}
 		}
 
 		public IEnumerable<Direction> GetPathReverse()
@@ -118,12 +117,8 @@ namespace Dwarrowdelf
 			if (this.LastNode == null)
 				yield break;
 
-			AStarNode n = this.LastNode;
-			while (n.Parent != null)
-			{
+			for (AStarNode n = this.LastNode; n.Parent != null; n = n.Parent)
 				yield return (n.Parent.Loc - n.Loc).ToDirection();
-				n = n.Parent;
-			}
 		}
 
 		public IEnumerable<Direction> GetPath()
@@ -157,7 +152,6 @@ namespace Dwarrowdelf
 				{
 					child.Parent = parent;
 					child.G = g;
-					//Debug.Print("{0} update", child.Loc);
 
 					if (child.Closed == false)
 						m_openList.NodeUpdated(child);

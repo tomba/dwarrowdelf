@@ -15,18 +15,19 @@ namespace Dwarrowdelf
 
 	public sealed class AStarResult
 	{
-		public IDictionary<IntPoint3, AStarNode> Nodes { get; private set; }
 		public AStarNode LastNode { get; private set; }
 		public AStarStatus Status { get; private set; }
 
-		internal AStarResult(IDictionary<IntPoint3, AStarNode> nodes, AStarNode lastNode, AStarStatus status)
+		internal AStarResult(AStarStatus status, AStarNode lastNode)
 		{
-			if (nodes == null)
-				throw new ArgumentNullException();
-
-			this.Nodes = nodes;
 			this.LastNode = lastNode;
 			this.Status = status;
+		}
+
+		public IEnumerable<IntPoint3> GetPathLocationsReverse()
+		{
+			for (AStarNode n = this.LastNode; n != null; n = n.Parent)
+				yield return n.Loc;
 		}
 
 		public IEnumerable<Direction> GetPathReverse()
@@ -34,12 +35,8 @@ namespace Dwarrowdelf
 			if (this.LastNode == null)
 				yield break;
 
-			AStarNode n = this.LastNode;
-			while (n.Parent != null)
-			{
+			for (AStarNode n = this.LastNode; n.Parent != null; n = n.Parent)
 				yield return (n.Parent.Loc - n.Loc).ToDirection();
-				n = n.Parent;
-			}
 		}
 
 		public IEnumerable<Direction> GetPath()
@@ -47,5 +44,4 @@ namespace Dwarrowdelf
 			return GetPathReverse().Reverse().Select(d => d.Reverse());
 		}
 	}
-
 }

@@ -336,7 +336,7 @@ namespace AStarTest
 				Trace.TraceInformation("Ticks {0}, Mem {1}", this.TicksUsed, this.MemUsed);
 
 				this.Status = status;
-				m_nodes = astar.Nodes;
+				m_nodes = astar.NodeMap;
 
 				if (status != AStarStatus.Found)
 				{
@@ -345,25 +345,13 @@ namespace AStarTest
 					return;
 				}
 
-				var lastNode = astar.LastNode;
+				m_path = new HashSet<IntPoint3>(astar.GetPathLocationsReverse());
+				var dirs = astar.GetPathReverse().ToArray();
 
-				m_path = new HashSet<IntPoint3>();
-				var dirs = new List<Direction>();
-				int count = 0;
-
-				var n = lastNode;
-				while (n.Parent != null)
-				{
-					m_path.Add(n.Loc);
-					count++;
-					dirs.Add((n.Parent.Loc - n.Loc).ToDirection());
-					n = n.Parent;
-				}
-
-				this.PathLength = count;
+				this.PathLength = dirs.Length;
 
 				if (AStarDone != null)
-					AStarDone(lastNode.Loc, dirs);
+					AStarDone(astar.LastNode.Loc, dirs);
 
 				InvalidateTileData();
 			}
@@ -388,7 +376,7 @@ namespace AStarTest
 							this.TicksUsed = sw.ElapsedTicks;
 
 							this.Status = status;
-							m_nodes = astar.Nodes;
+							m_nodes = astar.NodeMap;
 
 							if (status != AStarStatus.Found)
 							{
@@ -397,25 +385,13 @@ namespace AStarTest
 								return;
 							}
 
-							var lastNode = astar.LastNode;
+							m_path = new HashSet<IntPoint3>(astar.GetPathLocationsReverse());
+							var dirs = astar.GetPathReverse().ToArray();
 
-							m_path = new HashSet<IntPoint3>();
-							var dirs = new List<Direction>();
-							int count = 0;
-
-							var n = lastNode;
-							while (n.Parent != null)
-							{
-								m_path.Add(n.Loc);
-								count++;
-								dirs.Add((n.Parent.Loc - n.Loc).ToDirection());
-								n = n.Parent;
-							}
-
-							this.PathLength = count;
+							this.PathLength = dirs.Length;
 
 							if (AStarDone != null)
-								AStarDone(lastNode.Loc, dirs);
+								AStarDone(astar.LastNode.Loc, dirs);
 
 							InvalidateTileData();
 						}, TaskScheduler.FromCurrentSynchronizationContext());

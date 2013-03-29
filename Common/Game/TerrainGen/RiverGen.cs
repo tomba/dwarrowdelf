@@ -151,17 +151,13 @@ namespace Dwarrowdelf.TerrainGen
 				var startLoc = FindStartLoc(m_random, edge);
 
 				var target = new MyTarget(m_terrain, startLoc, edge);
-				var astar = new AStar(new IntPoint3[] { startLoc }, target);
-				astar.MaxNodeCount = 500000; // XXX this should reflect the map size
+				int maxNodeCount = 500000; // XXX this should reflect the map size
+				var res = AStar.Find(new IntPoint3[] { startLoc }, target, maxNodeCount);
 
-				var res = astar.Find();
-
-				if (res != AStarStatus.Found)
+				if (res.Status != AStarStatus.Found)
 					continue;
 
-				Trace.TraceInformation("found route, {0} nodes", astar.Nodes.Count);
-
-				var riverPath = astar.GetPathNodesReverse().Select(n => n.Loc.ToIntPoint()).ToArray();
+				var riverPath = res.GetPathLocationsReverse().Select(p => p.ToIntPoint()).ToArray();
 
 				if (riverPath.Length < 100)
 				{

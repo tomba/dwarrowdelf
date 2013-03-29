@@ -55,7 +55,7 @@ namespace Dwarrowdelf
 
 			var status = astar.Find();
 
-			return new AStarResult(astar.Nodes, astar.LastNode, status);
+			return new AStarResult(status, astar.LastNode);
 		}
 
 		/* Parallel */
@@ -209,7 +209,7 @@ namespace Dwarrowdelf
 
 			AStarStatus status;
 			while ((status = astar.Find()) == AStarStatus.Found)
-				yield return new AStarResult(astar.Nodes, astar.LastNode, status);
+				yield return new AStarResult(status, astar.LastNode);
 		}
 	}
 }

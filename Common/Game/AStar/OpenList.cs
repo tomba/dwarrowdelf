@@ -21,7 +21,7 @@ namespace Dwarrowdelf
 
 	sealed class BinaryHeap<T> : IOpenList<T> where T : class, IOpenListNode
 	{
-		T[] m_openList = new T[128];
+		T[] m_openList;
 		int m_count;
 
 		public bool IsEmpty { get { return m_count == 0; } }
@@ -29,6 +29,16 @@ namespace Dwarrowdelf
 		static int Parent(int idx) { return idx / 2; }
 		static int Left(int idx) { return idx * 2; }
 		static int Right(int idx) { return idx * 2 + 1; }
+
+		public BinaryHeap()
+			: this(128)
+		{
+		}
+
+		public BinaryHeap(int capacity)
+		{
+			m_openList = new T[capacity];
+		}
 
 		public void Add(T node)
 		{
