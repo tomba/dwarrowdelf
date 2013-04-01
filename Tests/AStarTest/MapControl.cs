@@ -281,6 +281,13 @@ namespace AStarTest
 			set { m_ticksUsed = value; Notify("TicksUsed"); }
 		}
 
+		string m_gcCollections;
+		public string GCCollections
+		{
+			get { return m_gcCollections; }
+			set { m_gcCollections = value; Notify("GCCollections"); }
+		}
+
 		AStarStatus m_astarStatus;
 		public AStarStatus Status
 		{
@@ -319,7 +326,11 @@ namespace AStarTest
 		{
 			long startBytes, stopBytes;
 			Stopwatch sw = new Stopwatch();
+			GC.Collect();
 			startBytes = GC.GetTotalMemory(true);
+			int gc0 = GC.CollectionCount(0);
+			int gc1 = GC.CollectionCount(1);
+			int gc2 = GC.CollectionCount(2);
 			sw.Start();
 
 			var initLocs = this.SrcPos.ToDirections().Select(d => src + d)
@@ -332,10 +343,14 @@ namespace AStarTest
 				var status = astar.Find();
 
 				sw.Stop();
+				gc0 = GC.CollectionCount(0) - gc0;
+				gc1 = GC.CollectionCount(1) - gc1;
+				gc2 = GC.CollectionCount(2) - gc2;
 				stopBytes = GC.GetTotalMemory(true);
 
 				this.MemUsed = stopBytes - startBytes;
 				this.TicksUsed = sw.ElapsedTicks;
+				this.GCCollections = String.Format("{0}/{1}/{2}", gc0, gc1, gc2);
 
 				this.Status = status;
 				m_nodes = astar.NodeMap;
@@ -356,8 +371,8 @@ namespace AStarTest
 
 				InvalidateTileData();
 
-				Trace.TraceInformation("Ticks {0}, Mem {1}, Len {2}, NodeCount {3}", this.TicksUsed, this.MemUsed,
-					this.PathLength, this.NodeCount);
+				Trace.TraceInformation("Ticks {0}, Mem {1}, Len {2}, NodeCount {3}, GC {4}", this.TicksUsed, this.MemUsed,
+					this.PathLength, this.NodeCount, this.GCCollections);
 			}
 			else
 			{

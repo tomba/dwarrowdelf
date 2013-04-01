@@ -41,6 +41,10 @@
 		</ToolBarTray>
 
 		<StatusBar DockPanel.Dock="Bottom" >
+			<TextBlock>Status</TextBlock>
+			<TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=Status, Mode=OneWay}" />
+			<Separator />
 			<TextBlock>Memory</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
 					 Text="{Binding ElementName=map, Path=MemUsed, Mode=OneWay}" />
@@ -49,9 +53,9 @@
 			<TextBox Width="100" IsReadOnly="True"
 					 Text="{Binding ElementName=map, Path=TicksUsed, Mode=OneWay}" />
 			<Separator />
-			<TextBlock>Found</TextBlock>
+			<TextBlock>GC</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=Status, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=GCCollections, Mode=OneWay}" />
 			<Separator />
 			<TextBlock>Len</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
