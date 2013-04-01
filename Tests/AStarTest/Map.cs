@@ -56,6 +56,17 @@ namespace AStarTest
 			SetStairs(new IntPoint3(15, 12, 0), Stairs.Up);
 			SetStairs(new IntPoint3(15, 12, 1), Stairs.Down);
 
+			var r = new Random(4);
+			var bounds = new IntGrid2Z(16, 0, 30, 30, 0);
+			foreach (var p in bounds.Range())
+			{
+				var v = r.Next(100);
+				if (v < 30)
+					SetBlocked(p, true);
+				else if (v < 60)
+					SetWeight(p, v);
+			}
+
 		}
 
 		public int GetWeight(IntPoint3 p)

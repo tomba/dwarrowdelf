@@ -49,25 +49,25 @@ namespace AStarTest
 		public DirectionSet SrcPos { get; set; }
 		public DirectionSet DstPos { get; set; }
 
-		public event Action SomethingChanged;
-
 		RenderData m_renderData;
 
-		public event Action<IntPoint3, IEnumerable<Direction>> AStarDone;
 		HashSet<IntPoint3> m_path;
 		IDictionary<IntPoint3, AStarNode> m_nodes;
 
 		public MapControl()
 		{
+			this.ClipToBounds = true;
+
 			this.SrcPos = this.DstPos = DirectionSet.Exact;
 
 			//this.UseLayoutRounding = false;
+			//this.UseLayoutRounding = true;
 
 			this.CurrentTileInfo = new TileInfo();
 
 			this.Focusable = true;
 
-			this.TileSize = 32;
+			this.TileSize = 24;
 
 			m_map = new Map(MapWidth, MapHeight, MapDepth);
 
@@ -93,7 +93,7 @@ namespace AStarTest
 
 			base.OnInitialized(e);
 
-			base.CenterPos = new Point(5, 5);
+			base.CenterPos = new Point(19, 12);
 		}
 
 		void ClearMap()
@@ -105,9 +105,6 @@ namespace AStarTest
 
 		void OnTileArrangementChanged(IntSize2 gridSize, double tileSize, Point centerPos)
 		{
-			if (SomethingChanged != null)
-				SomethingChanged();
-
 			m_renderData.SetGridSize(gridSize);
 		}
 
@@ -298,6 +295,13 @@ namespace AStarTest
 			set { m_pathLength = value; Notify("PathLength"); }
 		}
 
+		int m_nodeCont;
+		public int NodeCount
+		{
+			get { return m_nodeCont; }
+			set { m_nodeCont = value; Notify("NodeCount"); }
+		}
+
 		public IEnumerable<Direction> GetPathReverse(AStarNode lastNode)
 		{
 			if (lastNode == null)
@@ -333,8 +337,6 @@ namespace AStarTest
 				this.MemUsed = stopBytes - startBytes;
 				this.TicksUsed = sw.ElapsedTicks;
 
-				Trace.TraceInformation("Ticks {0}, Mem {1}", this.TicksUsed, this.MemUsed);
-
 				this.Status = status;
 				m_nodes = astar.NodeMap;
 
@@ -342,6 +344,7 @@ namespace AStarTest
 				{
 					m_path = null;
 					this.PathLength = 0;
+					this.NodeCount = 0;
 					return;
 				}
 
@@ -349,11 +352,12 @@ namespace AStarTest
 				var dirs = astar.GetPathReverse().ToArray();
 
 				this.PathLength = dirs.Length;
-
-				if (AStarDone != null)
-					AStarDone(astar.LastNode.Loc, dirs);
+				this.NodeCount = astar.NodeMap.Count;
 
 				InvalidateTileData();
+
+				Trace.TraceInformation("Ticks {0}, Mem {1}, Len {2}, NodeCount {3}", this.TicksUsed, this.MemUsed,
+					this.PathLength, this.NodeCount);
 			}
 			else
 			{
@@ -382,6 +386,7 @@ namespace AStarTest
 							{
 								m_path = null;
 								this.PathLength = 0;
+								this.NodeCount = 0;
 								return;
 							}
 
@@ -389,9 +394,7 @@ namespace AStarTest
 							var dirs = astar.GetPathReverse().ToArray();
 
 							this.PathLength = dirs.Length;
-
-							if (AStarDone != null)
-								AStarDone(astar.LastNode.Loc, dirs);
+							this.NodeCount = astar.NodeMap.Count;
 
 							InvalidateTileData();
 						}, TaskScheduler.FromCurrentSynchronizationContext());
@@ -411,6 +414,35 @@ namespace AStarTest
 			}));
 
 			m_contEvent.WaitOne();
+		}
+
+		public void RunTest(int test)
+		{
+			switch (test)
+			{
+				case 1:
+					m_from = new IntPoint3(7, 6, 0);
+					m_to = new IntPoint3(12, 9, 0);
+					break;
+				case 2:
+					m_from = new IntPoint3(6, 0, 0);
+					m_to = new IntPoint3(0, 13, 1);
+					break;
+				case 3:
+					m_from = new IntPoint3(6, 0, 0);
+					m_to = new IntPoint3(0, 0, 0);
+					break;
+				case 4:
+					m_from = new IntPoint3(6, 0, 0);
+					m_to = new IntPoint3(37, 15, 0);
+					break;
+				default:
+					return;
+			}
+
+			ClearMap();
+			DoAStar(m_from, m_to);
+			m_state = 3;
 		}
 
 		public bool Step { get; set; }

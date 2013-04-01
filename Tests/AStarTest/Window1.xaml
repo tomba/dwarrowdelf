@@ -20,51 +20,60 @@
 	<DockPanel>
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
-				<ToggleButton IsChecked="{Binding ElementName=map, Path=TileControl.Step}">Step</ToggleButton>
+				<ToggleButton IsChecked="{Binding ElementName=map, Path=Step}">Step</ToggleButton>
 				<Separator />
 			</ToolBar>
 
 			<ToolBar>
 				<TextBlock>Src:</TextBlock>
-				<ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.SrcPos}" />
+				<ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=SrcPos}" />
 				<Separator />
 				<TextBlock>Dst:</TextBlock>
-				<ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=TileControl.DstPos}" />
+				<ComboBox Width="150" ItemsSource="{Binding Source={StaticResource AlignmentValues}}" SelectedItem="{Binding ElementName=map, Path=DstPos}" />
 			</ToolBar>
 
-
+			<ToolBar>
+				<Button Content="Test1" Tag="1" Click="Button_Click_Test1" />
+				<Button Content="Test2" Tag="2" Click="Button_Click_Test1" />
+				<Button Content="Test3" Tag="3" Click="Button_Click_Test1" />
+				<Button Content="Test4" Tag="4" Click="Button_Click_Test1" />
+			</ToolBar>
 		</ToolBarTray>
 
 		<StatusBar DockPanel.Dock="Bottom" >
 			<TextBlock>Memory</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=TileControl.MemUsed, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=MemUsed, Mode=OneWay}" />
 			<Separator />
 			<TextBlock>Ticks</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=TileControl.TicksUsed, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=TicksUsed, Mode=OneWay}" />
 			<Separator />
 			<TextBlock>Found</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=TileControl.Status, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=Status, Mode=OneWay}" />
 			<Separator />
 			<TextBlock>Len</TextBlock>
 			<TextBox Width="100" IsReadOnly="True"
-					 Text="{Binding ElementName=map, Path=TileControl.PathLength, Mode=OneWay}" />
+					 Text="{Binding ElementName=map, Path=PathLength, Mode=OneWay}" />
+			<Separator />
+			<TextBlock>Nodes</TextBlock>
+			<TextBox Width="100" IsReadOnly="True"
+					 Text="{Binding ElementName=map, Path=NodeCount, Mode=OneWay}" />
 			<Separator />
 			<TextBlock>Coords</TextBlock>
 			<TextBox Width="100" IsReadOnly="True">
 				<TextBox.Text>
 					<MultiBinding StringFormat="{}{0}, {1}, {2}">
-						<Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.X" Mode="OneWay" />
-						<Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.Y" Mode="OneWay" />
-						<Binding ElementName="map" Path="TileControl.CurrentTileInfo.Location.Z" Mode="OneWay" />
+						<Binding ElementName="map" Path="CurrentTileInfo.Location.X" Mode="OneWay" />
+						<Binding ElementName="map" Path="CurrentTileInfo.Location.Y" Mode="OneWay" />
+						<Binding ElementName="map" Path="CurrentTileInfo.Location.Z" Mode="OneWay" />
 					</MultiBinding>
 				</TextBox.Text>
 			</TextBox>
 			<Separator />
 		</StatusBar>
 
-		<local:MasterMapControl x:Name="map" />
+		<local:MapControl x:Name="map" />
 	</DockPanel>
 </Window>

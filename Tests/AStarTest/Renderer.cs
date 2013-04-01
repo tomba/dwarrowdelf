@@ -48,10 +48,11 @@ namespace AStarTest
 			dc.Pop();
 		}
 
+		bool m_renderDirection = true;
+		bool m_renderTexts = false;
+
 		void RenderTile(DrawingContext dc, int x, int y)
 		{
-			bool renderDetails = true;
-
 			var data = m_renderData.Grid[y, x];
 
 			var renderSize = new Size(1, 1);
@@ -71,10 +72,7 @@ namespace AStarTest
 				dc.DrawLine(new Pen(Brushes.White, 0.05), new Point(tri, renderSize.Height / 2), new Point(tri * 2, tri * 2));
 			}
 
-			if (!renderDetails)
-				return;
-
-			if (data.From != Direction.None)
+			if (m_renderDirection && data.From != Direction.None)
 			{
 				var iv = new IntVector2(data.From);
 				var v = new Vector(iv.X, iv.Y);
@@ -91,7 +89,7 @@ namespace AStarTest
 				dc.DrawText(ft, new Point(renderSize.Width - ft.Width - 0.02, 0));
 			}
 
-			if (data.G != 0 || data.H != 0)
+			if (m_renderTexts && (data.G != 0 || data.H != 0))
 			{
 				var ft = new FormattedText(data.G.ToString(), System.Globalization.CultureInfo.CurrentCulture,
 					FlowDirection.LeftToRight, new Typeface("Verdana"), 0.2, Brushes.White);

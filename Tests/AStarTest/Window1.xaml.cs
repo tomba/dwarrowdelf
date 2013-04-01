@@ -92,7 +92,7 @@ namespace AStarTest
 			}
 			else
 			{
-				map.TileControl.Signal();
+				map.Signal();
 			}
 		}
 
@@ -116,6 +116,13 @@ namespace AStarTest
 
 			e.Handled = true;
 			map.Z += new IntVector3(dir).Z;
+		}
+
+		private void Button_Click_Test1(object sender, RoutedEventArgs e)
+		{
+			var b = (Button)sender;
+			int test = int.Parse((string)b.Tag);
+			map.RunTest(test);
 		}
 	}
 }
