@@ -58,7 +58,7 @@ namespace Dwarrowdelf
 				return false;
 
 			IntPoint3 l = (IntPoint3)obj;
-			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+			return l.m_value == this.m_value;
 		}
 
 		public IntPoint3 Offset(int offsetX, int offsetY, int offsetZ)

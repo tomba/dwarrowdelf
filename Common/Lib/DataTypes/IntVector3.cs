@@ -70,7 +70,7 @@ namespace Dwarrowdelf
 
 		public bool Equals(IntVector3 other)
 		{
-			return ((other.X == this.X) && (other.Y == this.Y) && (other.Z == this.Z));
+			return other.m_value == this.m_value;
 		}
 
 		#endregion
@@ -81,7 +81,7 @@ namespace Dwarrowdelf
 				return false;
 
 			IntVector3 l = (IntVector3)obj;
-			return ((l.X == this.X) && (l.Y == this.Y) && (l.Z == this.Z));
+			return l.m_value == this.m_value;
 		}
 
 		public double Length
