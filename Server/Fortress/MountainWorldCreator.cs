@@ -28,6 +28,7 @@ namespace Dwarrowdelf.Server.Fortress
 			var env = EnvironmentObject.Create(world, terrain, VisibilityMode.GlobalFOV, startLoc);
 
 			//CreateWaterTest(env);
+			//CreateWaterRiverTest(env);
 
 			MountainWorldPopulator.FinalizeEnv(env);
 		}
@@ -58,6 +59,26 @@ namespace Dwarrowdelf.Server.Fortress
 			TerrainHelpers.CreateVegetation(terrain, random, grassLimit);
 
 			return terrain;
+		}
+
+		static void CreateWaterRiverTest(EnvironmentObject env)
+		{
+			var p = new IntPoint3(111, 44, 9);
+			for (int x = 0; x < 6; ++x)
+			{
+				env.SetTileData(p.Offset(x, 0, 0), new TileData()
+				{
+					InteriorID = InteriorID.Empty,
+					TerrainID = TerrainID.Empty,
+				});
+
+				env.SetTileData(p.Offset(x, 0, -1), new TileData()
+				{
+					InteriorID = InteriorID.Empty,
+					TerrainID = TerrainID.NaturalFloor,
+					TerrainMaterialID = MaterialID.Granite,
+				});
+			}
 		}
 
 		static void CreateWaterTest(EnvironmentObject env)
