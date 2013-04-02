@@ -121,45 +121,12 @@ namespace Dwarrowdelf.Server
 
 			int origSrcLevel = srcLevel;
 
-			bool teleportDownNotPossible;
-
-			teleportDownNotPossible = HandleWaterFlowDown(src, ref srcLevel);
+			HandleWaterFlowDown(src, ref srcLevel);
 
 			HandleWaterFlowPlanar(src, ref srcLevel);
 
-			if (teleportDownNotPossible == false)
-				HandleWaterFlowDownTeleport(src, ref srcLevel);
-
 			if (srcLevel != origSrcLevel)
-			{
 				m_waterChangeMap[src] = srcLevel;
-			}
-		}
-
-		/* returns if teleport down is not possible */
-		bool HandleWaterFlowDown(IntPoint3 src, ref int srcLevel)
-		{
-			if (srcLevel == 0)
-				return true;
-
-			var dst = src + Direction.Down;
-
-			if (CanWaterFlow(src, dst) == false)
-				return true;
-
-			int dstLevel = GetCurrentWaterLevel(dst);
-
-			if (dstLevel == TileData.MaxWaterLevel)
-				return false;
-
-			int flow = Math.Min(TileData.MaxWaterLevel - dstLevel, srcLevel);
-
-			srcLevel -= flow;
-			dstLevel += flow;
-
-			m_waterChangeMap[dst] = dstLevel;
-
-			return true;
 		}
 
 		void HandleWaterFlowPlanar(IntPoint3 src, ref int srcLevel)
@@ -202,7 +169,7 @@ namespace Dwarrowdelf.Server
 			}
 		}
 
-		void HandleWaterFlowDownTeleport(IntPoint3 src, ref int srcLevel)
+		void HandleWaterFlowDown(IntPoint3 src, ref int srcLevel)
 		{
 			if (srcLevel == 0)
 				return;
@@ -212,33 +179,34 @@ namespace Dwarrowdelf.Server
 			if (CanWaterFlow(src, down) == false)
 				return;
 
-			// this shouldn't happen, as HandleWaterFlowDown should've handled it
-			if (GetCurrentWaterLevel(down) < TileData.MaxWaterLevel)
-				return;
+			int downLevel = GetCurrentWaterLevel(down);
 
-			m_currentSrc = src;
-			m_currentSrcLevel = srcLevel;
-
-			var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this);
-
-			var status = astar.Find();
-
-			if (status != AStarStatus.Found)
-				return;
-
-			var dst = astar.LastNode.Loc;
-			int dstLevel = GetCurrentWaterLevel(dst);
-
+			IntPoint3 dst;
+			int dstLevel;
 			int flow;
 
-			if (dst.Z < src.Z)
+			if (downLevel < TileData.MaxWaterLevel)
 			{
-				flow = Math.Min(TileData.MaxWaterLevel - dstLevel, srcLevel);
+				dst = down;
+				dstLevel = downLevel;
+				flow = Math.Min(TileData.MaxWaterLevel - downLevel, srcLevel);
 			}
 			else
 			{
-				int diff = srcLevel - dstLevel;
-				flow = diff / 2;
+				m_currentSrc = src;
+				m_currentSrcLevel = srcLevel;
+
+				var astar = new AStar(new IntPoint3[] { src + Direction.Down }, this);
+
+				var status = astar.Find();
+
+				if (status != AStarStatus.Found)
+					return;
+
+				dst = astar.LastNode.Loc;
+				dstLevel = GetCurrentWaterLevel(dst);
+
+				flow = Math.Min(TileData.MaxWaterLevel - dstLevel, srcLevel);
 			}
 
 			srcLevel -= flow;
@@ -258,7 +226,7 @@ namespace Dwarrowdelf.Server
 
 		ushort IAStarTarget.GetHeuristic(IntPoint3 location)
 		{
-			return 0;
+			return (ushort)location.Z;
 		}
 
 		ushort IAStarTarget.GetCostBetween(IntPoint3 src, IntPoint3 dst)
@@ -271,10 +239,8 @@ namespace Dwarrowdelf.Server
 			foreach (var dir in DirectionExtensions.CardinalUpDownDirections)
 			{
 				var to = from + dir;
-				if (to == m_currentSrc)
-					continue;
 
-				if (to.Z > m_currentSrc.Z)
+				if (to.Z >= m_currentSrc.Z)
 					continue;
 
 				if (CanWaterFlow(from, to) == false)
